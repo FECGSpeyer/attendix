@@ -52,6 +52,14 @@ import '../../features/registration/presentation/pages/tenant_registration_page.
 import '../../features/parents/presentation/pages/parents_portal_page.dart';
 import '../../features/shifts/presentation/pages/shifts_list_page.dart';
 import '../../features/shifts/presentation/pages/shift_detail_page.dart';
+// LEGAL_HELP
+import '../../data/repositories/account_repository.dart';
+import '../../features/legal/presentation/pages/legal_page.dart';
+import '../../features/legal/presentation/pages/terms_page.dart';
+import '../../features/help/presentation/pages/help_page.dart';
+import '../../features/help/presentation/pages/help_article_page.dart';
+import '../../features/help/presentation/pages/help_glossary_page.dart';
+import '../../features/settings/presentation/pages/delete_account_page.dart';
 
 /// Listenable that notifies when auth state changes
 /// Used by GoRouter to re-evaluate redirects without recreating the router
@@ -134,6 +142,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       // Public tenant registration route - allow access without login
       final isTenantRegistration = state.matchedLocation.startsWith('/register/');
 
+      // LEGAL_HELP: Impressum & Datenschutz is public (Ionic /legal)
+      final isLegalRoute = state.matchedLocation == '/legal';
+      if (isLegalRoute) return null;
+
       // If not logged in and not on auth route or tenant registration, redirect to login
       if (!isLoggedIn && !isAuthRoute && !isTenantRegistration) {
         return '/login';
@@ -142,6 +154,19 @@ final routerProvider = Provider<GoRouter>((ref) {
       // If logged in and on auth route, redirect to tenant selection
       if (isLoggedIn && isAuthRoute) {
         return '/tenants';
+      }
+
+      // LEGAL_HELP: Terms consent gate (Ionic TermsGuard) — logged-in users
+      // without user_metadata.terms_accepted_at must accept first.
+      if (isLoggedIn && !isTenantRegistration) {
+        final termsAccepted =
+            ref.read(accountRepositoryProvider).hasAcceptedTerms;
+        final isTermsRoute = state.matchedLocation == '/terms';
+        if (!termsAccepted && !isTermsRoute) return '/terms';
+        if (termsAccepted && isTermsRoute) return '/tenants';
+        if (isTermsRoute) return null;
+      } else if (state.matchedLocation == '/terms') {
+        return '/login';
       }
 
       // SEC-006: Role-based access control for protected routes
@@ -212,6 +237,18 @@ final routerProvider = Provider<GoRouter>((ref) {
           final registerId = state.pathParameters['id'] ?? '';
           return TenantRegistrationPage(registerId: registerId);
         },
+      ),
+
+      // LEGAL_HELP: public legal page + terms consent gate
+      GoRoute(
+        path: '/legal',
+        name: 'legal',
+        builder: (context, state) => const LegalPage(),
+      ),
+      GoRoute(
+        path: '/terms',
+        name: 'terms',
+        builder: (context, state) => const TermsPage(),
       ),
 
       // Tenant selection
@@ -521,6 +558,31 @@ final routerProvider = Provider<GoRouter>((ref) {
                 path: 'parents',
                 name: 'parentsManagement',
                 builder: (context, state) => const ParentsPage(),
+              ),
+              // LEGAL_HELP: help center + account deletion
+              GoRoute(
+                path: 'help',
+                name: 'help',
+                builder: (context, state) => const HelpPage(),
+                routes: [
+                  GoRoute(
+                    path: 'article/:id',
+                    name: 'helpArticle',
+                    builder: (context, state) => HelpArticlePage(
+                      articleId: state.pathParameters['id'] ?? '',
+                    ),
+                  ),
+                  GoRoute(
+                    path: 'glossary',
+                    name: 'helpGlossary',
+                    builder: (context, state) => const HelpGlossaryPage(),
+                  ),
+                ],
+              ),
+              GoRoute(
+                path: 'delete-account',
+                name: 'deleteAccount',
+                builder: (context, state) => const DeleteAccountPage(),
               ),
             ],
           ),

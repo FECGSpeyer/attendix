@@ -9,6 +9,7 @@ import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/providers/user_preferences_provider.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../legal/presentation/widgets/legal_content_view.dart';
 
 /// Login page
 class LoginPage extends ConsumerStatefulWidget {
@@ -368,6 +369,25 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                             ),
                           ),
                         ],
+                        // LEGAL_HELP: Impressum & Datenschutz modal
+                        Text(
+                          ' | ',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: AppColors.medium,
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () => showLegalModal(context),
+                          child: Text(
+                            'Impressum & Datenschutz',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: AppColors.primary,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ],
