@@ -211,7 +211,8 @@ class IonEmptyState extends StatelessWidget {
                 ),
                 const SizedBox(height: 6),
               ],
-              Text(text, textAlign: TextAlign.center, style: const TextStyle(color: AppColors.medium)),
+              if (text.isNotEmpty)
+                Text(text, textAlign: TextAlign.center, style: const TextStyle(color: AppColors.medium)),
               if (action != null) ...[const SizedBox(height: 8), action!],
             ],
           ),
@@ -420,6 +421,7 @@ class IonStackedInput extends StatelessWidget {
     this.onFocusLost,
     this.enabled = true,
     this.autofocus = false,
+    this.helper,
   });
 
   final TextEditingController controller;
@@ -436,6 +438,9 @@ class IonStackedInput extends StatelessWidget {
   final bool enabled;
   final bool autofocus;
 
+  /// Ionic `helperText` shown below the input.
+  final String? helper;
+
   @override
   Widget build(BuildContext context) {
     Widget field = TextField(
@@ -446,7 +451,10 @@ class IonStackedInput extends StatelessWidget {
       maxLines: maxLines,
       keyboardType: keyboardType ?? (maxLines == 1 ? null : TextInputType.multiline),
       textCapitalization: textCapitalization,
-      decoration: ionStackedInputDecoration(label: label, hint: hint),
+      decoration: ionStackedInputDecoration(label: label, hint: hint).copyWith(
+        helperText: helper,
+        helperMaxLines: 4,
+      ),
       onChanged: onChanged,
     );
     if (onFocusLost != null) {
@@ -727,6 +735,46 @@ class IonSegment<T extends Object> extends StatelessWidget {
       selected: {value},
       showSelectedIcon: false,
       onSelectionChanged: onChanged == null ? null : (s) => onChanged!(s.first),
+    );
+  }
+}
+
+/// Ionic `ion-chip` (filled tint or outline, 0.5 opacity when disabled).
+class IonChip extends StatelessWidget {
+  const IonChip({
+    super.key,
+    required this.label,
+    required this.color,
+    this.outline = false,
+    this.disabled = false,
+    this.onTap,
+  });
+
+  final String label;
+  final Color color;
+  final bool outline;
+  final bool disabled;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final shape = StadiumBorder(
+      side: outline ? BorderSide(color: color.withValues(alpha: 0.32)) : BorderSide.none,
+    );
+    return Opacity(
+      opacity: disabled ? 0.5 : 1,
+      child: Material(
+        color: outline ? Colors.transparent : color.withValues(alpha: 0.12),
+        shape: shape,
+        child: InkWell(
+          customBorder: shape,
+          onTap: disabled ? null : onTap,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            child: Text(label, style: TextStyle(fontSize: 14, color: color)),
+          ),
+        ),
+      ),
     );
   }
 }
