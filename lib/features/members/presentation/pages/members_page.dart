@@ -6,6 +6,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../shared/widgets/loading/loading.dart';
 import '../../data/providers/members_providers.dart';
+import '../../../messages/presentation/widgets/notification_bell.dart'; // MESSAGES
 
 /// Members page - read-only list of all members for players/helpers
 class MembersPage extends ConsumerWidget {
@@ -22,6 +23,7 @@ class MembersPage extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Mitglieder'),
+        actions: const [NotificationBell()], // MESSAGES
       ),
       body: Column(
         children: [

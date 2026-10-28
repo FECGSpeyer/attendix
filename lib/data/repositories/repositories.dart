@@ -16,3 +16,6 @@ export 'viewer_repository.dart';
 export 'parent_repository.dart';
 export 'church_repository.dart';
 export 'usage_events_repository.dart';
+// MESSAGES
+export 'message_repository.dart';
+export 'user_notification_repository.dart';

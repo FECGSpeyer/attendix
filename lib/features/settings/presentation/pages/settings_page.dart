@@ -14,6 +14,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/string_utils.dart';
 import '../../../../shared/widgets/sheets/feedback_sheet.dart';
 import '../../../../shared/widgets/sheets/version_history_sheet.dart';
+import '../../../messages/presentation/widgets/notification_bell.dart'; // MESSAGES
 
 /// Settings page with role-based menu filtering
 class SettingsPage extends ConsumerWidget {
@@ -29,6 +30,7 @@ class SettingsPage extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Einstellungen'),
+        actions: const [NotificationBell()], // MESSAGES
       ),
       body: RefreshIndicator(
         onRefresh: () async {
@@ -183,6 +185,22 @@ class SettingsPage extends ConsumerWidget {
                   title: 'Stimmführer-Bereich',
                   subtitle: 'Deine Stimmgruppe verwalten',
                   onTap: () => context.push('/settings/voice-leader'),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppDimensions.paddingM),
+          ],
+
+          // MESSAGES: Kommunikation section - only for Admin/Responsible
+          if (role.isAdmin || role.isResponsible) ...[
+            _SettingsSection(
+              title: 'Kommunikation',
+              children: [
+                _SettingsTile(
+                  leading: const _SettingsIcon(icon: Icons.mail_outline),
+                  title: 'Mitteilungen',
+                  subtitle: 'Nachricht an alle senden',
+                  onTap: () => context.push('/settings/messages'),
                 ),
               ],
             ),

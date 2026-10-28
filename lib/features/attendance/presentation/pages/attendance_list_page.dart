@@ -18,6 +18,7 @@ import '../../../../shared/widgets/loading/loading.dart';
 import '../../../../shared/widgets/common/empty_state.dart';
 import '../../../../shared/widgets/display/percentage_badge.dart';
 import '../../../../shared/widgets/animations/animated_list_item.dart';
+import '../../../messages/presentation/widgets/notification_bell.dart'; // MESSAGES
 
 
 /// Attendance list page
@@ -90,6 +91,7 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
             tooltip: 'Kalender',
             onPressed: () => _showCalendarView(context, ref),
           ),
+          const NotificationBell(), // MESSAGES
         ],
       ),
       body: attendanceAsync.when(

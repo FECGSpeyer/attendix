@@ -20,6 +20,7 @@ import '../../../../shared/widgets/loading/loading.dart';
 import '../../../../shared/widgets/common/empty_state.dart';
 import '../../../../shared/widgets/animations/animated_list_item.dart';
 import '../widgets/handover_sheet.dart';
+import '../../../messages/presentation/widgets/notification_bell.dart'; // MESSAGES
 
 /// Provider for people list (active players only)
 final peopleListProvider = FutureProvider<List<Person>>((ref) async {
@@ -401,6 +402,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
                 ),
               ]
             : [
+                const NotificationBell(), // MESSAGES
                 // Selection mode toggle
                 IconButton(
                   icon: const Icon(Icons.checklist),
