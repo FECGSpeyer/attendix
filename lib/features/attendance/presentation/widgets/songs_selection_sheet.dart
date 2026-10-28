@@ -397,7 +397,6 @@ class SelectedSongsList extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         child: Text(
           context.l10n.attListNoSongsSelected,
-          style: const TextStyle(color: AppColors.medium),
         ),
       );
     }

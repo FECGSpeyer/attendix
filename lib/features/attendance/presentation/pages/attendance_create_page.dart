@@ -46,7 +46,8 @@ Future<bool> showAttendanceCreateSheet(BuildContext context) async {
     context: context,
     isScrollControlled: true,
     useSafeArea: true,
-    showDragHandle: false,
+    // UX_ATT: Ionic sheet modals show the grabber (handle) at the top
+    showDragHandle: true,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
     ),
@@ -85,8 +86,7 @@ Future<bool> showAttendanceCreateSheet(BuildContext context) async {
 ///
 /// UX_ATT: layout mirrors the Ionic addAttModal (inset grouped list:
 /// Datum, Typ, Dauer, Info-Text, Benötigte Personen, Ort, Werke, primary
-/// "Termin(e) hinzufügen" row). Uhrzeit and Notizen are Flutter-only extras
-/// and sit at the end of the first group.
+/// "Termin(e) hinzufügen" row).
 class AttendanceCreatePage extends ConsumerStatefulWidget {
   const AttendanceCreatePage({
     super.key,
@@ -131,9 +131,6 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
   int _durationDays = 1;
   // FN-003: Duration controller as state variable to prevent memory leak
   late final TextEditingController _durationController;
-
-  // Notes
-  String? _notes;
 
   // ATT_DETAIL: place for navigation (types with place_enabled)
   String? _place;
@@ -310,49 +307,29 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
                     setState(() => _place = value.trim().isEmpty ? null : value.trim()),
               ),
             ),
-          // Flutter-only: time range (Ionic takes the type's default times)
-          if (!isAllDay)
-            ListTile(
-              title: Text(context.l10n.exportTime),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TextButton(
-                    onPressed: () => _pickTime(isStart: true),
-                    child: Text(_getDisplayStartTime()),
-                  ),
-                  const Text('–'),
-                  TextButton(
-                    onPressed: () => _pickTime(isStart: false),
-                    child: Text(_getDisplayEndTime()),
-                  ),
-                ],
-              ),
-            ),
-          // Flutter-only: notes
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-            child: TextField(
-              maxLines: null,
-              textCapitalization: TextCapitalization.sentences,
-              decoration: InputDecoration(
-                labelText: context.l10n.attendanceFlutterNotesOptional,
-                border: InputBorder.none,
-              ),
-              onChanged: (value) => _notes = value,
-            ),
-          ),
+          // UX_ATT: no Flutter-only Uhrzeit/Notizen rows – Ionic takes the
+          // type's default times; both are edited on the Termin afterwards.
         ]),
 
         // Werke (only if type.manageSongs)
         if (showSongs) ...[
           _InsetListHeader(
             title: context.l10n.attListSongs,
-            trailing: IconButton(
-              icon: const Icon(Icons.add),
-              color: AppColors.primary,
-              tooltip: context.l10n.attListAddSongs,
-              onPressed: _addSongs,
+            // Ionic `<ion-button size="small">` with an add icon
+            trailing: SizedBox(
+              height: 28,
+              child: FilledButton(
+                onPressed: _addSongs,
+                style: FilledButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  minimumSize: const Size(36, 28),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                ),
+                child: Tooltip(
+                  message: context.l10n.attListAddSongs,
+                  child: const Icon(Icons.add, size: 18),
+                ),
+              ),
             ),
           ),
           _InsetGroup(
@@ -413,16 +390,10 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
           backgroundColor: Theme.of(context).brightness == Brightness.dark
               ? null
               : AppColors.light,
-          actions: [
-            if (widget.asSheet)
-              IconButton(
-                icon: const Icon(Icons.close),
-                tooltip: context.l10n.commonClose,
-                onPressed: _isLoading
-                    ? null
-                    : () => Navigator.of(context).pop(false),
-              ),
-          ],
+          // UX_ATT: Ionic addAttModal toolbar has only the title (closed by
+          // swiping the sheet down / tapping outside).
+          toolbarHeight: widget.asSheet ? 44 : null,
+          shape: widget.asSheet ? const Border() : null,
         ),
         body: body,
       ),
@@ -457,26 +428,6 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
     });
   }
 
-  /// Get display text for start time
-  /// Priority: 1. User-selected time (initialised from the type), 2. Placeholder
-  String _getDisplayStartTime() {
-    if (_startTime != null) {
-      return _formatTime(_startTime!);
-    }
-    // LOGIC_ATT: no tenant practice-time fallback (Ionic uses type times only)
-    return context.l10n.shiftsStartTime;
-  }
-
-  /// Get display text for end time
-  /// Priority: 1. User-selected time (initialised from the type), 2. Placeholder
-  String _getDisplayEndTime() {
-    if (_endTime != null) {
-      return _formatTime(_endTime!);
-    }
-    // LOGIC_ATT: no tenant practice-time fallback (Ionic uses type times only)
-    return context.l10n.attendanceFlutterEndTime;
-  }
-
   // UX_ATT: Ionic dateString ("dd.MM.yyyy" / attList.eventsSelected / noDate)
   String _getDateDisplayText() {
     if (_selectedDates.isEmpty) {
@@ -496,24 +447,6 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
 
     if (result != null) {
       setState(() => _selectedDates = result);
-    }
-  }
-
-  Future<void> _pickTime({required bool isStart}) async {
-    final time = await showTimePicker(
-      context: context,
-      initialTime: isStart
-          ? (_startTime ?? const TimeOfDay(hour: 19, minute: 0))
-          : (_endTime ?? const TimeOfDay(hour: 21, minute: 0)),
-    );
-    if (time != null) {
-      setState(() {
-        if (isStart) {
-          _startTime = time;
-        } else {
-          _endTime = time;
-        }
-      });
     }
   }
 
@@ -796,7 +729,7 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
       'typeInfo': _typeInfo ?? '',
       'start_time': resolvedStartTime,
       'end_time': resolvedEndTime,
-      'notes': _notes ?? '',
+      'notes': '', // Ionic addAttendance: this.notes is reset to ''
       // Ionic: options.durationDays ?? (all_day ? duration_days : 1)
       'duration_days': type.allDay == true ? _durationDays : 1,
       // ATT_DETAIL: place only for types with place_enabled
@@ -1064,16 +997,14 @@ class _InsetListHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 4, 8, 4),
+      // iOS (ionic-theme-ios26) list header: 0.9rem medium-tint label
+      padding: const EdgeInsets.fromLTRB(20, 8, 16, 4),
       child: Row(
         children: [
           Expanded(
             child: Text(
               title,
-              style: Theme.of(context)
-                  .textTheme
-                  .titleMedium
-                  ?.copyWith(fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 14.4, color: AppColors.medium),
             ),
           ),
           if (trailing != null) trailing!,
