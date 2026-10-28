@@ -29,6 +29,7 @@ import '../../../../data/models/song/song.dart';
 import '../../../../data/models/song/song_additional_field.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../shared/widgets/audio_player/audio_player_widget.dart';
+import '../../../../shared/widgets/layout/ionic_ios.dart';
 import '../../data/song_print_service.dart';
 import '../utils/song_utils.dart';
 import '../widgets/copy_to_tenant_sheet.dart';
@@ -241,11 +242,16 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
         ?.where((f) => f.instrumentId == 1 && SongUtils.isAudio(f))
         .firstOrNull;
 
-    return Scaffold(
+    final title = data.readOnly
+        ? '${song.number ?? ''} ${song.name}'.trim()
+        : context.l10n.songsEditSong;
+    // UX_SONGS_SELF: Ionic `ion-header collapse="condense"` (large title on iOS)
+    return CondenseHeader(
+      builder: (context, condensed) => Scaffold(
       appBar: AppBar(
-        title: Text(data.readOnly
-            ? '${song.number ?? ''} ${song.name}'.trim()
-            : context.l10n.songsEditSong),
+        title: CondenseTitle(condensed: condensed, child: Text(title)),
+        backgroundColor: condenseBarColor(context, condensed),
+        shape: condenseBarShape(context, condensed),
         actions: [
           if (sharingId != null && sharingId.isNotEmpty)
             IconButton(
@@ -276,28 +282,32 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
           _refresh();
           await ref.read(songDetailDataProvider(_params).future);
         },
+        // Ionic: one `ion-list inset` with item groups and list headers.
         child: ListView(
-          padding: const EdgeInsets.fromLTRB(
-              AppDimensions.paddingM, AppDimensions.paddingM, AppDimensions.paddingM, 96),
+          padding: const EdgeInsets.fromLTRB(0, AppDimensions.paddingS, 0, 96),
           children: [
+            IonLargeTitle(title),
             if (_saving) const LinearProgressIndicator(minHeight: 2),
             if (!data.readOnly) _buildEditForm(data),
             if (data.readOnly && (song.categoryIds?.isNotEmpty ?? false)) ...[
-              _SectionHeader(context.l10n.songsCategories),
-              Wrap(
-                spacing: 6,
-                runSpacing: 6,
-                children: [
-                  for (final id in song.categoryIds!)
-                    Chip(
-                      label: Text(
-                        data.categories.where((c) => c.id == id).firstOrNull?.name ??
-                            context.l10n.songsUnknownCategory,
-                      ),
-                      backgroundColor: AppColors.secondary.withAlpha(40),
-                    ),
-                ],
-              ),
+              IonListHeader(context.l10n.songsCategories),
+              IonInsetList(children: [
+                Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Wrap(
+                    spacing: 4,
+                    runSpacing: 4,
+                    children: [
+                      for (final id in song.categoryIds!)
+                        _IonChip(
+                          label: data.categories.where((c) => c.id == id).firstOrNull?.name ??
+                              context.l10n.songsUnknownCategory,
+                          color: AppColors.secondary,
+                        ),
+                    ],
+                  ),
+                ),
+              ]),
             ],
             if (data.readOnly &&
                 (song.withChoir ||
@@ -312,31 +322,37 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
             ),
             const SizedBox(height: AppDimensions.paddingM),
             if (data.readOnly && (song.link?.isNotEmpty ?? false))
-              Card(
-                child: ListTile(
-                  title: Text(context.l10n.songsOpenExternalLink,
-                      style: const TextStyle(color: AppColors.primary)),
-                  trailing: const Icon(Icons.open_in_new),
+              IonInsetList(children: [
+                IonItem(
+                  title: Text(context.l10n.songsOpenExternalLink),
+                  titleColor: AppColors.primary,
+                  detail: true,
                   onTap: () => launchUrl(Uri.parse(song.link!),
                       mode: LaunchMode.externalApplication),
                 ),
-              ),
+              ]),
             if (!data.readOnly)
-              Focus(
-                onFocusChange: (has) {
-                  if (!has) _update(data);
-                },
-                child: TextField(
-                  controller: _link,
-                  minLines: 1,
-                  maxLines: 5,
-                  keyboardType: TextInputType.url,
-                  decoration: InputDecoration(labelText: context.l10n.songsLink),
+              IonInsetList(children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                  child: Focus(
+                    onFocusChange: (has) {
+                      if (!has) _update(data);
+                    },
+                    child: TextField(
+                      controller: _link,
+                      minLines: 1,
+                      maxLines: 5,
+                      keyboardType: TextInputType.url,
+                      decoration: ionInputDecoration(context, label: context.l10n.songsLink),
+                    ),
+                  ),
                 ),
-              ),
+              ]),
             if (!data.isPublic) _CopyToOtherInstance(song: song),
           ],
         ),
+      ),
       ),
     );
   }
@@ -350,9 +366,9 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
 
   Widget _buildEditForm(SongDetailData data) {
     final fileIds = _idsFromFiles(data.song);
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(AppDimensions.paddingM),
+    return IonInsetList(children: [
+      Padding(
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -361,10 +377,10 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
               TextField(
                 controller: _prefix,
                 textCapitalization: TextCapitalization.sentences,
-                decoration: InputDecoration(
-                  labelText: context.l10n.songsPrefixOptional,
+                decoration: ionInputDecoration(
+                  context,
+                  label: context.l10n.songsPrefixOptional,
                   helperText: context.l10n.songsPrefixHelper,
-                  helperMaxLines: 2,
                 ),
               ),
             ),
@@ -374,7 +390,7 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
               TextField(
                 controller: _number,
                 keyboardType: TextInputType.number,
-                decoration: InputDecoration(labelText: context.l10n.songsNumber),
+                decoration: ionInputDecoration(context, label: context.l10n.songsNumber),
               ),
             ),
             const SizedBox(height: AppDimensions.paddingS),
@@ -383,13 +399,13 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
               TextField(
                 controller: _name,
                 textCapitalization: TextCapitalization.sentences,
-                decoration: InputDecoration(labelText: context.l10n.songsName),
+                decoration: ionInputDecoration(context, label: context.l10n.songsName),
               ),
             ),
             const SizedBox(height: AppDimensions.paddingS),
             DropdownButtonFormField<int?>(
               value: _difficulty,
-              decoration: InputDecoration(labelText: context.l10n.songsDifficulty),
+              decoration: ionInputDecoration(context, label: context.l10n.songsDifficulty),
               items: [
                 DropdownMenuItem(value: null, child: Text(context.l10n.songsNotDefined)),
                 DropdownMenuItem(value: 1, child: Text(context.l10n.songsEasy)),
@@ -447,52 +463,55 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
           ],
         ),
       ),
-    );
+    ]);
   }
 
   Widget _buildReadOnlyInstrumentation(SongDetailData data) {
     final song = data.song;
+    // Ionic: list header + item group with ion-chips (primary; groups in
+    // success / danger).
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _SectionHeader(context.l10n.songsInstrumentation),
-        Wrap(
-          spacing: 6,
-          runSpacing: 6,
-          children: [
-            if (song.withChoir)
-              Chip(
-                label: Text(context.l10n.songsChoirOrchestra),
-                backgroundColor: AppColors.primary.withAlpha(40),
-              ),
-            if (song.withSolo)
-              Chip(
-                label: Text(context.l10n.songsWithSoloSinging),
-                backgroundColor: AppColors.primary.withAlpha(40),
-              ),
-          ],
-        ),
-        if (data.isOrchestra && (song.instrumentIds?.isNotEmpty ?? false))
+        IonListHeader(context.l10n.songsInstrumentation),
+        IonInsetList(children: [
           Padding(
-            padding: const EdgeInsets.only(top: 6),
-            child: Wrap(
-              spacing: 6,
-              runSpacing: 6,
+            padding: const EdgeInsets.all(10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                for (final g in data.instruments)
-                  Builder(builder: (context) {
-                    final has = song.instrumentIds!.contains(g.id);
-                    final color = has ? AppColors.success : AppColors.danger;
-                    return Chip(
-                      label: Text(g.name, style: TextStyle(color: color, fontSize: 12)),
-                      backgroundColor: color.withAlpha(30),
-                      side: BorderSide(color: color.withAlpha(90)),
-                      visualDensity: VisualDensity.compact,
-                    );
-                  }),
+                if (song.withChoir || song.withSolo)
+                  Wrap(
+                    spacing: 4,
+                    runSpacing: 4,
+                    children: [
+                      if (song.withChoir)
+                        _IonChip(label: context.l10n.songsChoirOrchestra, color: AppColors.primary),
+                      if (song.withSolo)
+                        _IonChip(label: context.l10n.songsWithSoloSinging, color: AppColors.primary),
+                    ],
+                  ),
+                if (data.isOrchestra && (song.instrumentIds?.isNotEmpty ?? false))
+                  Padding(
+                    padding: EdgeInsets.only(top: song.withChoir || song.withSolo ? 4 : 0),
+                    child: Wrap(
+                      spacing: 4,
+                      runSpacing: 4,
+                      children: [
+                        for (final g in data.instruments)
+                          _IonChip(
+                            label: g.name,
+                            color: song.instrumentIds!.contains(g.id)
+                                ? AppColors.success
+                                : AppColors.danger,
+                          ),
+                      ],
+                    ),
+                  ),
               ],
             ),
           ),
+        ]),
       ],
     );
   }
@@ -501,9 +520,9 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _SectionHeader(context.l10n.peopleExtraFields),
-        Card(
-          child: Padding(
+        IonListHeader(context.l10n.peopleExtraFields),
+        IonInsetList(children: [
+          Padding(
             padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM),
             child: Column(
               children: [
@@ -511,7 +530,7 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
               ],
             ),
           ),
-        ),
+        ]),
       ],
     );
   }
@@ -535,7 +554,7 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
       final current = field.options.contains(value) ? value as String : null;
       return DropdownButtonFormField<String>(
         value: current,
-        decoration: InputDecoration(labelText: field.name),
+        decoration: ionInputDecoration(context, label: field.name),
         items: [
           for (final o in field.options) DropdownMenuItem(value: o, child: Text(o)),
         ],
@@ -555,7 +574,7 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
           controller: _fieldControllers[field.id],
           readOnly: data.readOnly,
           keyboardType: field.isNumber ? TextInputType.number : TextInputType.text,
-          decoration: InputDecoration(labelText: field.name),
+          decoration: ionInputDecoration(context, label: field.name),
         ),
       ),
     );
@@ -565,42 +584,46 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _SectionHeader(context.l10n.songsHistoryCount(data.history.length)),
-        Card(
-          child: Column(
-            children: [
-              for (final entry in data.history)
-                ListTile(
-                  dense: true,
-                  title: Text(
-                    '${SongUtils.formatDate(entry.attendanceDate ?? entry.date)}'
-                    '${(entry.typeTitle?.isNotEmpty ?? false) ? ' · ${entry.typeTitle}' : ''}',
-                  ),
-                  subtitle: (entry.conductorName?.isNotEmpty ?? false)
-                      ? Text(entry.conductorName!)
-                      : null,
+        IonListHeader(context.l10n.songsHistoryCount(data.history.length)),
+        // Ionic: h3 date · title (14px), p conductor (grey)
+        IonInsetList(
+          children: [
+            for (final entry in data.history)
+              IonItem(
+                title: Text(
+                  '${SongUtils.formatDate(entry.attendanceDate ?? entry.date)}'
+                  '${(entry.typeTitle?.isNotEmpty ?? false) ? ' · ${entry.typeTitle}' : ''}',
+                  style: const TextStyle(fontSize: 14),
                 ),
-            ],
-          ),
+                subtitle: (entry.conductorName?.isNotEmpty ?? false)
+                    ? Text(entry.conductorName!)
+                    : null,
+              ),
+          ],
         ),
       ],
     );
   }
 }
 
-class _SectionHeader extends StatelessWidget {
-  const _SectionHeader(this.title);
+/// Ionic `ion-chip [color]`: tinted pill (iOS 32px high, radius 16).
+class _IonChip extends StatelessWidget {
+  const _IonChip({required this.label, required this.color});
 
-  final String title;
+  final String label;
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(top: AppDimensions.paddingM, bottom: 6, left: 4),
-      child: Text(
-        title,
-        style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.medium),
+    return Container(
+      height: 32,
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(16),
       ),
+      child: Text(label, style: TextStyle(color: color, fontSize: 14)),
     );
   }
 }
@@ -700,18 +723,20 @@ class _CopyToOtherInstance extends ConsumerWidget {
     }).toList();
     if (allowed.isEmpty) return const SizedBox.shrink();
 
-    return Card(
-      margin: const EdgeInsets.only(top: AppDimensions.paddingM),
-      child: ListTile(
-        leading: const Icon(Icons.copy_outlined),
-        title: Text(context.l10n.songsCopyToOther),
-        onTap: () => showModalBottomSheet(
-          context: context,
-          isScrollControlled: true,
-          useSafeArea: true,
-          builder: (_) => CopyToTenantSheet(song: song, availableTenants: allowed),
+    return IonInsetList(
+      margin: const EdgeInsets.fromLTRB(16, 16, 16, 4),
+      children: [
+        IonItem(
+          leading: const Icon(Icons.copy_outlined, color: AppColors.medium),
+          title: Text(context.l10n.songsCopyToOther),
+          onTap: () => showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            useSafeArea: true,
+            builder: (_) => CopyToTenantSheet(song: song, availableTenants: allowed),
+          ),
         ),
-      ),
+      ],
     );
   }
 }
@@ -876,9 +901,9 @@ class _FilesSectionState extends ConsumerState<_FilesSection> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Row(
-          children: [
-            Expanded(child: _SectionHeader(context.l10n.songsFiles)),
+        IonListHeader(
+          context.l10n.songsFiles,
+          trailing: [
             if (data.readOnly && files.isNotEmpty)
               IconButton(
                 tooltip: context.l10n.songsDownloadAll,
@@ -938,29 +963,25 @@ class _FilesSectionState extends ConsumerState<_FilesSection> {
         FileDropTarget(
           enabled: !data.readOnly && !_busy,
           onFiles: _onFilesDropped,
-          builder: (context, hovering) => Card(
-            shape: hovering
-                ? RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    side: const BorderSide(color: AppColors.primary, width: 2),
-                  )
+          builder: (context, hovering) => IonInsetList(
+            border: hovering ? Border.all(color: AppColors.primary, width: 2) : null,
+            color: hovering
+                ? Color.alphaBlend(
+                    AppColors.primary.withAlpha(13), Theme.of(context).colorScheme.surface)
                 : null,
-            color: hovering ? Color.alphaBlend(AppColors.primary.withAlpha(13), Theme.of(context).cardColor) : null,
-            child: files.isEmpty
-                ? ListTile(title: Text(context.l10n.songsNoFiles))
-                : Column(
-                    children: [
-                      for (final file in sorted)
-                        ListTile(
-                          title: Text(file.fileName),
-                          trailing: SongBadge(
-                            color: SongUtils.fileBadgeColor(file),
-                            label: SongUtils.fileLabel(file, data.instruments),
-                          ),
-                          onTap: () => _openActions(file),
+            children: files.isEmpty
+                ? [IonItem(title: Text(context.l10n.songsNoFiles))]
+                : [
+                    for (final file in sorted)
+                      IonItem(
+                        title: Text(file.fileName),
+                        trailing: SongBadge(
+                          color: SongUtils.fileBadgeColor(file),
+                          label: SongUtils.fileLabel(file, data.instruments),
                         ),
-                    ],
-                  ),
+                        onTap: () => _openActions(file),
+                      ),
+                  ],
           ),
         ),
       ],

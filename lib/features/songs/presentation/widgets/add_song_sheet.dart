@@ -7,6 +7,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/song/song.dart';
 import '../utils/song_utils.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/layout/ionic_ios.dart';
 
 /// "Werk hinzufügen" (Ionic addSongsModal). Returns the id of the new song.
 class AddSongSheet extends ConsumerStatefulWidget {
@@ -143,50 +144,42 @@ class _AddSongSheetState extends ConsumerState<AddSongSheet> {
         .map((g) => g.name)
         .join(', ');
 
+    // UX_SONGS_SELF: Ionic addSongsModal: toolbar title, stacked ion-items,
+    // toggles and the "Hinzufügen" block button.
     return Padding(
       padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
-      child: SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          IonSheetHeader(title: context.l10n.songsAddSong),
+          Flexible(
+            child: SingleChildScrollView(
         padding: const EdgeInsets.all(AppDimensions.paddingM),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    context.l10n.songsAddSong,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.close),
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
-              ],
-            ),
             TextField(
               controller: _prefix,
               textCapitalization: TextCapitalization.sentences,
-              decoration: InputDecoration(
-                labelText: context.l10n.songsPrefixOptional,
+              decoration: ionInputDecoration(
+                context,
+                label: context.l10n.songsPrefixOptional,
                 helperText: context.l10n.songsPrefixHelper,
-                helperMaxLines: 2,
               ),
             ),
             const SizedBox(height: AppDimensions.paddingS),
             TextField(
               controller: _number,
               keyboardType: TextInputType.number,
-              decoration: InputDecoration(labelText: context.l10n.songsNumber),
+              decoration: ionInputDecoration(context, label: context.l10n.songsNumber),
             ),
             const SizedBox(height: AppDimensions.paddingS),
             TextField(
               controller: _name,
               textCapitalization: TextCapitalization.sentences,
-              decoration: InputDecoration(labelText: context.l10n.songsName),
+              decoration: ionInputDecoration(context, label: context.l10n.songsName),
             ),
             const SizedBox(height: AppDimensions.paddingS),
             TextField(
@@ -194,7 +187,7 @@ class _AddSongSheetState extends ConsumerState<AddSongSheet> {
               minLines: 1,
               maxLines: 4,
               keyboardType: TextInputType.url,
-              decoration: InputDecoration(labelText: context.l10n.songsLink),
+              decoration: ionInputDecoration(context, label: context.l10n.songsLink),
             ),
             SwitchListTile(
               contentPadding: EdgeInsets.zero,
@@ -233,6 +226,9 @@ class _AddSongSheetState extends ConsumerState<AddSongSheet> {
             ),
           ],
         ),
+            ),
+          ),
+        ],
       ),
     );
   }

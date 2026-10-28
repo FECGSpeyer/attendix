@@ -10,6 +10,7 @@ import '../../../../data/models/song/song.dart';
 import '../../data/song_print_service.dart';
 import 'song_file_opener.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/layout/ionic_ios.dart';
 
 /// Gruppenverzeichnis (Ionic groupDirectoryModal): pick a group, see all of
 /// its files across songs, open or print them as one folder.
@@ -66,76 +67,71 @@ class _GroupFilesSheetState extends ConsumerState<GroupFilesSheet> {
       maxChildSize: 1,
       expand: false,
       builder: (context, scrollController) {
+        // UX_SONGS_SELF: Ionic groupDirectoryModal: toolbar (back, title,
+        // print), centered note and an inset list of groups / files.
         return Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(
-                  AppDimensions.paddingS, AppDimensions.paddingS, AppDimensions.paddingS, 0),
-              child: Row(
-                children: [
-                  if (selected != null)
-                    IconButton(
-                      icon: const BackButtonIcon(),
-                      onPressed: () => setState(() => _selectedGroup = null),
-                    )
-                  else
-                    const SizedBox(width: AppDimensions.paddingS),
-                  Expanded(
-                    child: Text(
-                      selected?.name ?? context.l10n.songsChooseGroup,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                    ),
-                  ),
-                  if (selected != null && files.isNotEmpty)
-                    IconButton(
-                      tooltip: context.l10n.songsPrint,
-                      icon: const Icon(Icons.print_outlined),
-                      onPressed: _printFolder,
-                    ),
+            IonSheetHeader(
+              title: selected?.name ?? context.l10n.songsChooseGroup,
+              start: [
+                if (selected != null)
                   IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: () => Navigator.of(context).pop(),
+                    icon: const Icon(Icons.arrow_back),
+                    onPressed: () => setState(() => _selectedGroup = null),
                   ),
-                ],
-              ),
+              ],
+              end: [
+                if (selected != null && files.isNotEmpty)
+                  IconButton(
+                    tooltip: context.l10n.songsPrint,
+                    icon: const Icon(Icons.print_outlined),
+                    onPressed: _printFolder,
+                  ),
+              ],
             ),
-            Padding(
-              padding: const EdgeInsets.all(AppDimensions.paddingS),
-              child: Text(
-                context.l10n.songsOnlyGroupsWithFiles,
-                textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 13, color: AppColors.medium),
-              ),
-            ),
-            const Divider(height: 1),
             Expanded(
-              child: selected == null
-                  ? ListView(
-                      controller: scrollController,
-                      children: [
-                        for (final group in widget.groups)
-                          ListTile(
-                            title: Text(group.name),
-                            trailing: const Icon(Icons.chevron_right),
-                            onTap: () => setState(() => _selectedGroup = group),
-                          ),
-                      ],
-                    )
-                  : ListView(
-                      controller: scrollController,
-                      children: [
-                        for (final entry in files)
-                          ListTile(
-                            title: Text(entry.file.fileName),
-                            subtitle: Text(
-                              '${entry.song.prefix ?? ''}${entry.song.number ?? ''} ${entry.song.name}',
-                            ),
-                            onTap: () => openSongFile(context, entry.file),
-                          ),
-                      ],
+              child: ColoredBox(
+                color: Theme.of(context).scaffoldBackgroundColor,
+                child: ListView(
+                  controller: scrollController,
+                  padding: const EdgeInsets.only(bottom: AppDimensions.paddingL),
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(AppDimensions.paddingM),
+                      child: Text(
+                        context.l10n.songsOnlyGroupsWithFiles,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(fontSize: 13.6, color: AppColors.medium),
+                      ),
                     ),
+                    if (selected == null)
+                      IonInsetList(
+                        children: [
+                          for (final group in widget.groups)
+                            IonItem(
+                              title: Text(group.name),
+                              detail: true,
+                              onTap: () => setState(() => _selectedGroup = group),
+                            ),
+                        ],
+                      )
+                    else
+                      IonInsetList(
+                        children: [
+                          for (final entry in files)
+                            IonItem(
+                              title: Text(entry.file.fileName),
+                              subtitle: Text(
+                                '${entry.song.prefix ?? ''}${entry.song.number ?? ''} ${entry.song.name}',
+                              ),
+                              detail: true,
+                              onTap: () => openSongFile(context, entry.file),
+                            ),
+                        ],
+                      ),
+                  ],
+                ),
+              ),
             ),
           ],
         );
