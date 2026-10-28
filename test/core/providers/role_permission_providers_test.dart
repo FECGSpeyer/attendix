@@ -9,6 +9,8 @@ import 'package:attendix/data/repositories/extra_fields_repository.dart';
 import 'package:attendix/data/repositories/files_repository.dart';
 import 'package:attendix/features/settings/presentation/pages/extra_fields_page.dart';
 import 'package:attendix/features/settings/presentation/pages/files_page.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:attendix/core/providers/debug_providers.dart' show effectiveRoleProvider;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -49,6 +51,56 @@ void main() {
       expect(canCreateAttendanceFor(Role.helper, helperPerm), isFalse);
       expect(canCreateAttendanceFor(Role.helper, null), isTrue);
       expect(canCreateAttendanceFor(Role.viewer, null), isFalse);
+    });
+
+    // SOL_FIX2: nicht bestätigte Berechtigungen = verweigert
+    test('Helfer dürfen ohne bestätigte Berechtigungen nicht anlegen', () {
+      expect(canCreateAttendanceFor(Role.helper, null, permissionsConfirmed: false), isFalse);
+      expect(canCreateAttendanceFor(Role.voiceLeaderHelper, null, permissionsConfirmed: false), isFalse);
+      expect(canCreateAttendanceFor(Role.admin, null, permissionsConfirmed: false), isTrue);
+    });
+
+    test('permissionsConfirmed unterscheidet loading/error/data', () {
+      expect(permissionsConfirmed(const AsyncValue.loading()), isFalse);
+      expect(permissionsConfirmed(AsyncValue.error('x', StackTrace.empty)), isFalse);
+      expect(permissionsConfirmed(const AsyncValue.data([])), isTrue);
+      // Reload mit Wert der vorherigen Instanz
+      expect(
+        permissionsConfirmed(const AsyncLoading<List<TenantRolePermission>>()
+            .copyWithPrevious(const AsyncData([helperPerm]))),
+        isFalse,
+      );
+    });
+
+    test('Gruppen-Scope: fehlendes Profil/Gruppe = kein Zugriff', () {
+      expect(attendanceGroupScopeFor(Role.helper, helperPerm, null), const AttendanceGroupScope.denied());
+      expect(attendanceGroupScopeFor(Role.helper, helperPerm, 7), const AttendanceGroupScope.group(7));
+      expect(attendanceGroupScopeFor(Role.helper, null, null), const AttendanceGroupScope.all());
+      expect(attendanceGroupScopeFor(Role.admin, helperPerm, null), const AttendanceGroupScope.all());
+      const denied = AttendanceGroupScope.denied();
+      expect(denied.allowsGroup(7), isFalse);
+      expect(denied.allowsGroup(null), isFalse);
+      expect(const AttendanceGroupScope.group(7).allowsGroup(8), isFalse);
+      expect(const AttendanceGroupScope.all().allowsGroup(null), isTrue);
+    });
+
+    test('resolvedGroupScope: loading/error = verweigert', () {
+      expect(resolvedGroupScope(const AsyncValue.loading()).denied, isTrue);
+      expect(resolvedGroupScope(AsyncValue.error('x', StackTrace.empty)).denied, isTrue);
+      expect(resolvedGroupScope(const AsyncValue.data(AttendanceGroupScope.all())).isAll, isTrue);
+    });
+
+    test('Gruppen-Scope-Provider wartet auf Berechtigungen (Fehler → Fehler)', () async {
+      final container = ProviderContainer(overrides: [
+        effectiveRoleProvider.overrideWithValue(Role.helper),
+        rolePermissionsProvider.overrideWith((ref) async => throw Exception('offline')),
+      ]);
+      addTearDown(container.dispose);
+      expect(resolvedGroupScope(container.read(attendanceGroupScopeProvider)).denied, isTrue);
+      await expectLater(container.read(attendanceGroupScopeProvider.future), throwsException);
+      expect(resolvedGroupScope(container.read(attendanceGroupScopeProvider)).denied, isTrue);
+      expect(container.read(canCreateAttendanceProvider), isFalse);
+      expect(await confirmCanCreateAttendance(() => container.read(canCreateAttendanceConfirmedProvider.future)), isFalse);
     });
 
     test('Notizen/Checkliste nur für Helfer eingeschränkt', () {

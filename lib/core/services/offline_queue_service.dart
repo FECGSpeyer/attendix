@@ -29,9 +29,15 @@ class QueuedWrite {
     required this.createdAt,
     this.attendanceId,
     this.userId,
+    this.revision = 0,
   });
 
   final String id;
+
+  /// SOL_FIX2: bumped on every merge into this entry. flush() only removes
+  /// entries whose id AND revision were replayed, so a write merged in while
+  /// the flush was running is kept.
+  final int revision;
   final String personAttendanceId;
   final Map<String, dynamic> payload;
 
@@ -41,7 +47,7 @@ class QueuedWrite {
   final String? userId;
   final String createdAt;
 
-  QueuedWrite copyWith({Map<String, dynamic>? payload}) => QueuedWrite(
+  QueuedWrite copyWith({Map<String, dynamic>? payload, int? revision}) => QueuedWrite(
         id: id,
         personAttendanceId: personAttendanceId,
         payload: payload ?? this.payload,
@@ -49,6 +55,7 @@ class QueuedWrite {
         createdAt: createdAt,
         attendanceId: attendanceId,
         userId: userId,
+        revision: revision ?? this.revision,
       );
 
   factory QueuedWrite.fromJson(Map<String, dynamic> json) => QueuedWrite(
@@ -59,6 +66,7 @@ class QueuedWrite {
         createdAt: json['createdAt'] as String,
         attendanceId: json['attendanceId'] as int?,
         userId: json['userId'] as String?,
+        revision: json['revision'] as int? ?? 0,
       );
 
   Map<String, dynamic> toJson() => {
@@ -69,12 +77,50 @@ class QueuedWrite {
         'createdAt': createdAt,
         'attendanceId': attendanceId,
         'userId': userId,
+        'revision': revision,
       };
 }
 
 /// Persistent storage + merge logic of the offline queue.
 class OfflineQueueStore {
   static const String queueKey = 'offline_writes_v1';
+
+  /// SOL_FIX2: async mutex (lock chain) around every read-modify-write of the
+  /// persisted queue. Static because all store instances share one
+  /// SharedPreferences key.
+  static Future<void> _lockTail = Future<void>.value();
+
+  /// Runs [action] after all previously scheduled actions have finished.
+  static Future<T> synchronized<T>(Future<T> Function() action) {
+    final previous = _lockTail;
+    final done = Completer<void>();
+    _lockTail = done.future;
+    return previous.then((_) => action()).whenComplete(done.complete);
+  }
+
+  /// Atomically loads the queue, applies [change] and saves the result.
+  Future<List<QueuedWrite>> update(
+    List<QueuedWrite> Function(List<QueuedWrite> current) change,
+  ) {
+    return synchronized(() async {
+      final next = change(await load());
+      await save(next);
+      return next;
+    });
+  }
+
+  /// Removes exactly the replayed entries (same id AND revision). Entries
+  /// added or merged after the snapshot was taken stay in the queue.
+  static List<QueuedWrite> removeConfirmed(
+    List<QueuedWrite> current,
+    Iterable<QueuedWrite> confirmed,
+  ) {
+    final done = {for (final e in confirmed) '${e.id}#${e.revision}'};
+    return [
+      for (final e in current)
+        if (!done.contains('${e.id}#${e.revision}')) e,
+    ];
+  }
 
   Future<List<QueuedWrite>> load() async {
     try {
@@ -115,6 +161,7 @@ class OfflineQueueStore {
       final existing = result[index];
       result[index] = existing.copyWith(
         payload: {...existing.payload, ...entry.payload},
+        revision: existing.revision + 1,
       );
     } else {
       result.add(entry);
@@ -247,20 +294,18 @@ class OfflineQueueNotifier extends Notifier<int> {
     int? attendanceId,
     String? userId,
   }) async {
-    final queue = await _store.load();
-    final merged = OfflineQueueStore.merge(
-      queue,
-      QueuedWrite(
-        id: const Uuid().v4(),
-        personAttendanceId: personAttendanceId,
-        payload: payload,
-        tenantId: tenantId,
-        attendanceId: attendanceId,
-        userId: userId,
-        createdAt: DateTime.now().toIso8601String(),
-      ),
+    final entry = QueuedWrite(
+      id: const Uuid().v4(),
+      personAttendanceId: personAttendanceId,
+      payload: payload,
+      tenantId: tenantId,
+      attendanceId: attendanceId,
+      userId: userId,
+      createdAt: DateTime.now().toIso8601String(),
     );
-    await _store.save(merged);
+    // SOL_FIX2: serialized read-modify-write (concurrent enqueues no longer
+    // overwrite each other).
+    final merged = await _store.update((queue) => OfflineQueueStore.merge(queue, entry));
     state = merged.length;
   }
 
@@ -269,7 +314,7 @@ class OfflineQueueNotifier extends Notifier<int> {
     if (_flushing) return;
     _flushing = true;
     try {
-      final queue = await _store.load();
+      final queue = await OfflineQueueStore.synchronized(_store.load);
       if (queue.isEmpty) {
         state = 0;
         return;
@@ -277,10 +322,12 @@ class OfflineQueueNotifier extends Notifier<int> {
 
       final flushFn = ref.read(offlineFlushFnProvider);
       final failed = <QueuedWrite>[];
+      final confirmed = <QueuedWrite>[];
       final flushedAttendanceIds = <int>{};
       for (final entry in queue) {
         try {
           await flushFn(entry);
+          confirmed.add(entry);
           if (entry.attendanceId != null) {
             flushedAttendanceIds.add(entry.attendanceId!);
           }
@@ -290,8 +337,12 @@ class OfflineQueueNotifier extends Notifier<int> {
         }
       }
 
-      await _store.save(failed);
-      state = failed.length;
+      // SOL_FIX2: remove only the confirmed entries from the CURRENT queue
+      // (never overwrite it with the stale failure set).
+      final remaining = await _store.update(
+        (current) => OfflineQueueStore.removeConfirmed(current, confirmed),
+      );
+      state = remaining.length;
 
       if (failed.length < queue.length) {
         // Only refresh providers that are alive (avoid triggering fetches)

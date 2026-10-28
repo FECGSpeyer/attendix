@@ -14,8 +14,20 @@ import '../constants/enums.dart';
 /// sub-route [location] (e.g. `/attendance/42`), or `null` when access is fine
 /// or [location] is not an attendance sub-route. The list `/attendance` itself
 /// is left to the generic route table.
-String? attendanceDetailRedirect(String location, Role role) {
+///
+/// SOL_FIX2: `/attendance/new` additionally requires [canCreate], the
+/// resolved `canCreateAttendanceProvider` (helpers: role permission
+/// `attendance_create`, denied while permissions are not confirmed). Ionic
+/// only hides the "+" button (att-list.page.ts `canCreate`); a typed URL must
+/// not bypass it. Such users go back to the list.
+String? attendanceDetailRedirect(String location, Role role, {required bool canCreate}) {
   if (!location.startsWith('/attendance/')) return null;
-  if (role.canAddAttendance) return null;
-  return role.defaultRoute;
+  if (!role.canAddAttendance) return role.defaultRoute;
+  if (_isCreateRoute(location) && !canCreate) return '/attendance';
+  return null;
+}
+
+bool _isCreateRoute(String location) {
+  final path = Uri.parse(location).path;
+  return path == '/attendance/new' || path.startsWith('/attendance/new/');
 }

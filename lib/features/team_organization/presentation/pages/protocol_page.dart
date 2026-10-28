@@ -98,6 +98,10 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
   final Map<String, Timer> _timers = {};
   final Set<String> _pending = {};
 
+  /// SOL_FIX2: saves currently running, per section (chained so a section's
+  /// saves never overlap). Completes with false when the save failed.
+  final Map<String, Future<bool>> _inFlight = {};
+
   String? _activeId;
   int _savingCount = 0;
   DateTime? _lastSavedAt;
@@ -322,33 +326,63 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
     _timers[id] = Timer(_saveDebounce, () => _flush(id));
   }
 
-  Future<void> _flush(String id) async {
+  /// Saves section [id] now (after a save of the same section that is still
+  /// running). Returns false when the save failed (the section stays pending).
+  Future<bool> _flush(String id) {
     _timers.remove(id)?.cancel();
-    if (!_pending.remove(id)) return;
+    final previous = _inFlight[id];
+    final next = (previous ?? Future<bool>.value(true)).then((_) => _saveSectionNow(id));
+    _inFlight[id] = next;
+    next.whenComplete(() {
+      if (identical(_inFlight[id], next)) _inFlight.remove(id);
+    });
+    return next;
+  }
+
+  Future<bool> _saveSectionNow(String id) async {
+    if (!_pending.remove(id)) return true;
     final doc = _currentDoc(id);
-    if (doc == null) return;
-    setState(() {
+    if (doc == null) return true;
+    if (mounted) {
+      setState(() {
+        _docs[id] = doc;
+        _savingCount++;
+      });
+    } else {
       _docs[id] = doc;
       _savingCount++;
-    });
+    }
     try {
       final row = await _repo.saveSection(widget.attendanceId, id, doc: doc);
       _applyRow(row);
       _lastSavedAt = DateTime.now();
+      return true;
     } catch (_) {
       _pending.add(id);
       if (mounted && DateTime.now().difference(_lastErrorToast).inSeconds > 10) {
         _lastErrorToast = DateTime.now();
         ToastHelper.showError(context, context.l10n.protocolNotesSaveFailed);
       }
+      return false;
     } finally {
-      if (mounted) setState(() => _savingCount--);
+      if (mounted) {
+        setState(() => _savingCount--);
+      } else {
+        _savingCount--;
+      }
     }
   }
 
-  Future<void> _flushAll() async {
-    if (!_isLeader) return;
-    await Future.wait(_pending.toList().map(_flush));
+  /// Saves everything that is still waiting and awaits saves already running
+  /// (SOL_FIX2). Returns false when any section could not be saved.
+  Future<bool> _flushAll() async {
+    if (!_isLeader) return true;
+    // Running saves first: a failure puts the section back into _pending,
+    // the retry below decides the result.
+    await Future.wait(_inFlight.values.toList());
+    final ids = {..._pending, ..._inFlight.keys};
+    final results = await Future.wait(ids.map(_flush));
+    return results.every((ok) => ok);
   }
 
   /// Takes over meta data of the saved row; local notes and results stay.
@@ -672,7 +706,11 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
   // ── Publish ────────────────────────────────────────────────
 
   Future<void> _openPublish() async {
-    await _flushAll();
+    // SOL_FIX2: never offer publishing an incompletely saved protocol.
+    if (!await _flushAll()) {
+      if (mounted) ToastHelper.showError(context, context.l10n.protocolNotesSaveFailed);
+      return;
+    }
     // Other leaders may have written in other sections meanwhile.
     try {
       final row = await _repo.getProtocolForAttendance(widget.attendanceId);
@@ -852,7 +890,12 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
       builder: (_) => const Center(child: CircularProgressIndicator()),
     );
     try {
-      await _flushAll();
+      // SOL_FIX2: abort when a section could not be saved – do not publish
+      // or notify the team about an incomplete protocol.
+      if (!await _flushAll()) {
+        if (mounted) ToastHelper.showError(context, context.l10n.protocolNotesSaveFailed);
+        return;
+      }
       final row = await _repo.publish(widget.attendanceId);
       _applyRow(row);
 

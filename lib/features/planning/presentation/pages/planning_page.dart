@@ -68,6 +68,10 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   bool _sharePlan = false;
   bool _isOrgPlan = false;
   bool _loaded = false;
+
+  /// SOL_FIX2: the explicitly requested Termin could not be loaded. The
+  /// editor then shows an error and never falls back to another Termin.
+  bool _requestedNotFound = false;
   bool _hasChanges = false;
   Timer? _saveTimer;
 
@@ -92,27 +96,51 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   // Loading
   // ---------------------------------------------------------------------------
 
-  void _init(List<PlanAttendance> attendances) {
+  Future<void> _init(List<PlanAttendance> attendances) async {
     _loaded = true;
     _attendances = [...attendances];
     PlanAttendance? att;
-    if (widget.attendanceId != null) {
-      att = _attendances.where((a) => a.id == widget.attendanceId).firstOrNull;
+    final requestedId = widget.attendanceId;
+    if (requestedId != null) {
+      att = _attendances.where((a) => a.id == requestedId).firstOrNull;
+      // SOL_FIX2: a Termin outside the loaded season is loaded by id
+      // (tenant-filtered); never edit another Termin instead.
+      att ??= await _loadRequestedAttendance(requestedId);
+      if (!mounted) return;
+      if (att == null) {
+        setState(() => _requestedNotFound = true);
+        return;
+      }
+      if (!_attendances.any((a) => a.id == att!.id)) {
+        _attendances = [..._attendances, att]..sort((a, b) => b.date.compareTo(a.date));
+      }
+      _loadAttendance(att, planIndex: widget.initialPlanIndex);
+      return;
     }
-    if (att == null) {
-      // First upcoming Termin (list is sorted newest first).
-      final today = DateTime.now();
-      final todayDate = DateTime(today.year, today.month, today.day);
-      final upcoming = _attendances.where((a) {
-        final d = DateTime.tryParse(a.date);
-        return d != null && !DateTime(d.year, d.month, d.day).isBefore(todayDate);
-      }).toList();
-      att = upcoming.isNotEmpty ? upcoming.last : _attendances.firstOrNull;
-    }
+    // No Termin requested: first upcoming Termin (list is sorted newest first).
+    final today = DateTime.now();
+    final todayDate = DateTime(today.year, today.month, today.day);
+    final upcoming = _attendances.where((a) {
+      final d = DateTime.tryParse(a.date);
+      return d != null && !DateTime(d.year, d.month, d.day).isBefore(todayDate);
+    }).toList();
+    att = upcoming.isNotEmpty ? upcoming.last : _attendances.firstOrNull;
     if (att != null) {
-      _loadAttendance(att, planIndex: widget.attendanceId != null ? widget.initialPlanIndex : 0);
+      _loadAttendance(att);
     } else {
       setState(() {});
+    }
+  }
+
+  /// Requested Termin by id, scoped to the current tenant; null when it does
+  /// not exist, belongs to another tenant or could not be loaded.
+  Future<PlanAttendance?> _loadRequestedAttendance(int id) async {
+    try {
+      final repo = ref.read(planRepositoryWithTenantProvider);
+      if (!repo.hasTenantId) return null;
+      return await repo.getPlanAttendanceById(id);
+    } catch (_) {
+      return null;
     }
   }
 
@@ -996,7 +1024,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
 
     if (!_loaded && attendancesAsync.hasValue && !typesAsync.isLoading) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted && !_loaded) _init(attendancesAsync.value!);
+        if (mounted && !_loaded) unawaited(_init(attendancesAsync.value!));
       });
     }
 
@@ -1036,7 +1064,10 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
         body: attendancesAsync.when(
           loading: () => const Center(child: CircularProgressIndicator()),
           error: (e, _) => Center(child: Text(context.l10n.planningFlutterErrorWith(friendlyErrorMessage(e)))),
-          data: (_) => ListView(
+          // SOL_FIX2: requested Termin not reachable → error, no fallback
+          data: (_) => _requestedNotFound
+              ? Center(child: Text(context.l10n.attendanceFlutterNotFound))
+              : ListView(
             padding: const EdgeInsets.only(bottom: 96),
             children: [
               _buildAttendanceCard(att),

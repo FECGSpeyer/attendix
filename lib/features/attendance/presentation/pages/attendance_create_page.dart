@@ -18,6 +18,7 @@ import '../../../../core/utils/shift_utils.dart';
 import '../../../../core/utils/attendance_logic_utils.dart';
 import '../../../../core/providers/player_absence_providers.dart';
 import '../../../../core/providers/profile_providers.dart';
+import '../../../../core/providers/role_permission_providers.dart';
 import '../../../../core/providers/shift_providers.dart';
 import '../../../../data/models/player_absence/player_absence.dart';
 import '../../../../data/models/shift/shift_plan.dart';
@@ -631,6 +632,18 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
     }
 
     if (DemoGuard.blocked()) return; // DEMO_GUARD
+
+    // SOL_FIX2: enforce the resolved create permission in the write path
+    // (helpers: role permission attendance_create, freshly loaded; any
+    // loading error denies).
+    final mayCreate = await confirmCanCreateAttendance(
+      () => ref.read(canCreateAttendanceConfirmedProvider.future),
+    );
+    if (!mounted) return;
+    if (!mayCreate) {
+      ToastHelper.showError(context, context.l10n.attendanceFlutterNoPermission);
+      return;
+    }
 
     setState(() => _isLoading = true);
     widget.savingNotifier?.value = true;

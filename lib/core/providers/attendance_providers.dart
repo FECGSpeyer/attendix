@@ -8,6 +8,8 @@ import '../../data/repositories/repositories.dart';
 import 'attendance_type_providers.dart';
 import 'realtime_providers.dart';
 import 'tenant_providers.dart';
+import 'role_permission_providers.dart'; // SOL_FIX2
+import '../../l10n/l10n.dart';
 
 /// Initialized attendance repository with tenant context
 /// SOL_FIX1: per-tenant immutable instance, so a tenant switch never
@@ -332,6 +334,10 @@ class AttendanceNotifier extends Notifier<AsyncValue<void>> {
   Future<Attendance?> createAttendance(Attendance attendance) async {
     state = const AsyncValue.loading();
     try {
+      // SOL_FIX2: resolved create permission (helpers: attendance_create).
+      if (!await ref.read(canCreateAttendanceConfirmedProvider.future)) {
+        throw StateError(l10nWithoutContext.attendanceFlutterNoPermission);
+      }
       final result = await _repo.createAttendance(attendance);
       state = const AsyncValue.data(null);
       ref.invalidate(attendancesProvider);
