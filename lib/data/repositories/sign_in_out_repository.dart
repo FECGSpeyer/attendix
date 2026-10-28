@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/constants/enums.dart';
 import '../../core/utils/event_list_utils.dart';
 import '../models/attendance/attendance.dart';
+import '../../core/utils/duty_utils.dart';
 import 'base_repository.dart';
 
 /// Provider for SignInOutRepository (without tenant – use the WithTenant variant).
@@ -21,7 +22,7 @@ const String kSignoutAttendanceColumns =
 const String kSignoutAttendanceTypeColumns =
     'id, name, highlight, include_in_average, color, hide_name, all_day, '
     'duration_days, start_time, end_time, available_statuses, '
-    'default_status, registration_fields';
+    'default_status, registration_fields, duty_mode';
 
 /// Repository for self-service sign in/out operations
 class SignInOutRepository extends BaseRepository with TenantAwareRepository {
@@ -122,6 +123,33 @@ class SignInOutRepository extends BaseRepository with TenantAwareRepository {
     }
   }
 
+  /// DUTY: duty fields to write along with a status change (Ionic
+  /// syncDutyWithStatus). The id must already be validated for the tenant.
+  Future<Map<String, dynamic>> _dutyUpdateForStatus(
+    String personAttendanceId,
+    AttendanceStatus newStatus,
+  ) async {
+    final row = await supabase
+        .from('person_attendances')
+        .select('duty_state, attendance:attendance_id(attType:type_id(duty_mode))')
+        .eq('id', personAttendanceId)
+        .maybeSingle();
+    if (row == null || row['attendance']?['attType']?['duty_mode'] != true) {
+      return const {};
+    }
+    final current = row['duty_state'] as String?;
+    final next = dutyStateAfterStatus(current, newStatus);
+    if (next == current) return const {};
+    return {
+      'duty_state': next,
+      if (next == DutyState.confirmed) 'duty_reminder_sent': true,
+      if (next == DutyState.confirmed && current == null) ...{
+        'duty_assigned_by': supabase.auth.currentUser?.id,
+        'duty_assigned_at': DateTime.now().toUtc().toIso8601String(),
+      },
+    };
+  }
+
   /// Sign in to an attendance (status → Anwesend, like Ionic `signin`).
   ///
   /// [type] only selects the notification text (previous status).
@@ -144,9 +172,14 @@ class SignInOutRepository extends BaseRepository with TenantAwareRepository {
         );
       }
 
+      // DUTY: keep assignment and status in sync (Ionic syncDutyWithStatus)
+      final dutyUpdate =
+          await _dutyUpdateForStatus(personAttendanceId, AttendanceStatus.present);
+
       await _updatePersonAttendances(valid, {
         'status': AttendanceStatus.present.value,
         'notes': notes,
+        ...dutyUpdate,
       });
 
       await _notify(attId: personAttendanceId, type: type.telegramType, notes: notes);
@@ -347,7 +380,7 @@ class SignInOutRepository extends BaseRepository with TenantAwareRepository {
       // SEC: filtered by own person_id and attendance ids of this tenant.
       final pas = await supabase
           .from('person_attendances')
-          .select('id, attendance_id, status, notes, registration_answers')
+          .select('id, attendance_id, status, notes, registration_answers, duty_state')
           .eq('person_id', playerId)
           .inFilter('attendance_id', running.map((a) => a['id']).toList());
       final paMap = <int, Map<String, dynamic>>{
@@ -409,6 +442,7 @@ class SignInOutRepository extends BaseRepository with TenantAwareRepository {
           : const [],
       attendanceType: type,
       isMember: isMember,
+      dutyState: pa['duty_state'] as String?,
       registrationAnswers: pa['registration_answers'] is Map
           ? Map<String, dynamic>.from(pa['registration_answers'] as Map)
           : null,
@@ -472,6 +506,10 @@ class SignInOutRepository extends BaseRepository with TenantAwareRepository {
           // SEC: drop rows whose attendance belongs to a tenant the person
           // is not part of (defensive, like Ionic cross-tenant leak fix).
           .where((json) => tenantIds.contains(json['attendance']['tenantId']))
+          // DUTY: duties only show up for persons who were assigned
+          .where((json) =>
+              json['duty_state'] != null ||
+              json['attendance']['attType']?['duty_mode'] != true)
           .map((json) {
         final attendance = json['attendance'] as Map<String, dynamic>;
         final tenantId = _toInt(attendance['tenantId']) ?? 0;
@@ -565,6 +603,16 @@ class CrossTenantPersonAttendance {
   final Map<String, dynamic>? registrationAnswers;
   final String? legacyType;
 
+  /// DUTY: 'requested' | 'confirmed' | 'self' or null
+  final String? dutyState;
+
+  /// DUTY: Termin of a type in Dienst-Modus
+  bool get isDutyType => attendanceType?.dutyMode ?? false;
+
+  /// DUTY: own assignment that still waits for confirmation
+  bool get isDutyRequested =>
+      isDutyType && dutyState == DutyState.requested && !isCancelledStatus(status);
+
   CrossTenantPersonAttendance({
     this.id,
     this.personId,
@@ -594,6 +642,7 @@ class CrossTenantPersonAttendance {
     this.isMember = true,
     this.registrationAnswers,
     this.legacyType,
+    this.dutyState,
   });
 
   CrossTenantPersonAttendance copyWith({
@@ -630,6 +679,7 @@ class CrossTenantPersonAttendance {
       isMember: isMember,
       registrationAnswers: registrationAnswers ?? this.registrationAnswers,
       legacyType: legacyType,
+      dutyState: dutyState,
     );
   }
 

@@ -45,6 +45,8 @@ class Tenant with _$Tenant {
     @JsonKey(name: 'show_all_attendances_info_text') String? showAllAttendancesInfoText,
     @JsonKey(name: 'absence_reasons') List<String>? absenceReasons,
     @JsonKey(name: 'late_reasons') List<String>? lateReasons,
+    // DUTY: "Meine Termine" als Dienstplan-Ansicht
+    @JsonKey(name: 'duty_view') @Default(false) bool dutyView,
   }) = _Tenant;
 
   factory Tenant.fromJson(Map<String, dynamic> json) => _$TenantFromJson(json);

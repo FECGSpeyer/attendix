@@ -44,3 +44,5 @@ export 'public_song_repository.dart';
 // PROFILE_OFFLINE
 export 'profile_repository.dart';
 export 'notification_settings_repository.dart';
+// DUTY
+export 'duty_repository.dart';

@@ -74,7 +74,9 @@ mixin _$Tenant {
   @JsonKey(name: 'absence_reasons')
   List<String>? get absenceReasons => throw _privateConstructorUsedError;
   @JsonKey(name: 'late_reasons')
-  List<String>? get lateReasons => throw _privateConstructorUsedError;
+  List<String>? get lateReasons => throw _privateConstructorUsedError; // DUTY: "Meine Termine" als Dienstplan-Ansicht
+  @JsonKey(name: 'duty_view')
+  bool get dutyView => throw _privateConstructorUsedError;
 
   /// Serializes this Tenant to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -127,6 +129,7 @@ abstract class $TenantCopyWith<$Res> {
     String? showAllAttendancesInfoText,
     @JsonKey(name: 'absence_reasons') List<String>? absenceReasons,
     @JsonKey(name: 'late_reasons') List<String>? lateReasons,
+    @JsonKey(name: 'duty_view') bool dutyView,
   });
 }
 
@@ -179,6 +182,7 @@ class _$TenantCopyWithImpl<$Res, $Val extends Tenant>
     Object? showAllAttendancesInfoText = freezed,
     Object? absenceReasons = freezed,
     Object? lateReasons = freezed,
+    Object? dutyView = null,
   }) {
     return _then(
       _value.copyWith(
@@ -352,6 +356,11 @@ class _$TenantCopyWithImpl<$Res, $Val extends Tenant>
                     ? _value.lateReasons
                     : lateReasons // ignore: cast_nullable_to_non_nullable
                         as List<String>?,
+            dutyView:
+                null == dutyView
+                    ? _value.dutyView
+                    : dutyView // ignore: cast_nullable_to_non_nullable
+                        as bool,
           )
           as $Val,
     );
@@ -403,6 +412,7 @@ abstract class _$$TenantImplCopyWith<$Res> implements $TenantCopyWith<$Res> {
     String? showAllAttendancesInfoText,
     @JsonKey(name: 'absence_reasons') List<String>? absenceReasons,
     @JsonKey(name: 'late_reasons') List<String>? lateReasons,
+    @JsonKey(name: 'duty_view') bool dutyView,
   });
 }
 
@@ -454,6 +464,7 @@ class __$$TenantImplCopyWithImpl<$Res>
     Object? showAllAttendancesInfoText = freezed,
     Object? absenceReasons = freezed,
     Object? lateReasons = freezed,
+    Object? dutyView = null,
   }) {
     return _then(
       _$TenantImpl(
@@ -627,6 +638,11 @@ class __$$TenantImplCopyWithImpl<$Res>
                 ? _value._lateReasons
                 : lateReasons // ignore: cast_nullable_to_non_nullable
                     as List<String>?,
+        dutyView:
+            null == dutyView
+                ? _value.dutyView
+                : dutyView // ignore: cast_nullable_to_non_nullable
+                    as bool,
       ),
     );
   }
@@ -675,6 +691,7 @@ class _$TenantImpl implements _Tenant {
     this.showAllAttendancesInfoText,
     @JsonKey(name: 'absence_reasons') final List<String>? absenceReasons,
     @JsonKey(name: 'late_reasons') final List<String>? lateReasons,
+    @JsonKey(name: 'duty_view') this.dutyView = false,
   }) : _additionalFields = additionalFields,
        _registrationFields = registrationFields,
        _criticalRules = criticalRules,
@@ -833,9 +850,14 @@ class _$TenantImpl implements _Tenant {
     return EqualUnmodifiableListView(value);
   }
 
+  // DUTY: "Meine Termine" als Dienstplan-Ansicht
+  @override
+  @JsonKey(name: 'duty_view')
+  final bool dutyView;
+
   @override
   String toString() {
-    return 'Tenant(id: $id, createdAt: $createdAt, shortName: $shortName, longName: $longName, maintainTeachers: $maintainTeachers, showHolidays: $showHolidays, type: $type, withExcuses: $withExcuses, practiceStart: $practiceStart, practiceEnd: $practiceEnd, seasonStart: $seasonStart, parents: $parents, betaProgram: $betaProgram, showMembersList: $showMembersList, region: $region, role: $role, songSharingId: $songSharingId, additionalFields: $additionalFields, perc: $perc, percColor: $percColor, registerId: $registerId, autoApproveRegistrations: $autoApproveRegistrations, registrationFields: $registrationFields, favorite: $favorite, criticalRules: $criticalRules, timezone: $timezone, songAdditionalFields: $songAdditionalFields, filesEnabled: $filesEnabled, filesShared: $filesShared, filesMaxBytes: $filesMaxBytes, showAllAttendances: $showAllAttendances, showAllAttendancesInfoText: $showAllAttendancesInfoText, absenceReasons: $absenceReasons, lateReasons: $lateReasons)';
+    return 'Tenant(id: $id, createdAt: $createdAt, shortName: $shortName, longName: $longName, maintainTeachers: $maintainTeachers, showHolidays: $showHolidays, type: $type, withExcuses: $withExcuses, practiceStart: $practiceStart, practiceEnd: $practiceEnd, seasonStart: $seasonStart, parents: $parents, betaProgram: $betaProgram, showMembersList: $showMembersList, region: $region, role: $role, songSharingId: $songSharingId, additionalFields: $additionalFields, perc: $perc, percColor: $percColor, registerId: $registerId, autoApproveRegistrations: $autoApproveRegistrations, registrationFields: $registrationFields, favorite: $favorite, criticalRules: $criticalRules, timezone: $timezone, songAdditionalFields: $songAdditionalFields, filesEnabled: $filesEnabled, filesShared: $filesShared, filesMaxBytes: $filesMaxBytes, showAllAttendances: $showAllAttendances, showAllAttendancesInfoText: $showAllAttendancesInfoText, absenceReasons: $absenceReasons, lateReasons: $lateReasons, dutyView: $dutyView)';
   }
 
   @override
@@ -923,7 +945,9 @@ class _$TenantImpl implements _Tenant {
             const DeepCollectionEquality().equals(
               other._lateReasons,
               _lateReasons,
-            ));
+            ) &&
+            (identical(other.dutyView, dutyView) ||
+                other.dutyView == dutyView));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -964,6 +988,7 @@ class _$TenantImpl implements _Tenant {
     showAllAttendancesInfoText,
     const DeepCollectionEquality().hash(_absenceReasons),
     const DeepCollectionEquality().hash(_lateReasons),
+    dutyView,
   ]);
 
   /// Create a copy of Tenant
@@ -1021,6 +1046,7 @@ abstract class _Tenant implements Tenant {
     final String? showAllAttendancesInfoText,
     @JsonKey(name: 'absence_reasons') final List<String>? absenceReasons,
     @JsonKey(name: 'late_reasons') final List<String>? lateReasons,
+    @JsonKey(name: 'duty_view') final bool dutyView,
   }) = _$TenantImpl;
 
   factory _Tenant.fromJson(Map<String, dynamic> json) = _$TenantImpl.fromJson;
@@ -1110,7 +1136,10 @@ abstract class _Tenant implements Tenant {
   List<String>? get absenceReasons;
   @override
   @JsonKey(name: 'late_reasons')
-  List<String>? get lateReasons;
+  List<String>? get lateReasons; // DUTY: "Meine Termine" als Dienstplan-Ansicht
+  @override
+  @JsonKey(name: 'duty_view')
+  bool get dutyView;
 
   /// Create a copy of Tenant
   /// with the given fields replaced by the non-null parameter values.

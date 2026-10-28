@@ -20,6 +20,10 @@ import '../../../../shared/widgets/loading/loading.dart';
 import '../../../../shared/widgets/common/empty_state.dart';
 import '../../../messages/presentation/widgets/notification_bell.dart'; // MESSAGES
 import '../../../../shared/widgets/event_list/event_list_widgets.dart';
+import '../../../../core/providers/duty_providers.dart';
+import '../../../duty/presentation/pages/duty_distribute_page.dart';
+import '../../../duty/presentation/widgets/duty_actions.dart';
+import '../../../duty/presentation/widgets/my_duty_requests_section.dart';
 
 
 /// Attendance list page
@@ -88,6 +92,16 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
           ],
         ),
         actions: [
+          // DUTY: "Dienste verteilen" for leaders when the tenant uses the Dienstplan
+          if (role.isConductor && ref.watch(hasDutyTypesProvider))
+            IconButton(
+              icon: const Icon(Icons.shuffle),
+              tooltip: 'Dienste verteilen',
+              onPressed: () async {
+                final saved = await openDutyDistributePage(context);
+                if (saved && mounted) ref.invalidate(realtimeAttendanceListProvider);
+              },
+            ),
           IconButton(
             icon: const Icon(Icons.calendar_today),
             tooltip: 'Kalender',
@@ -133,6 +147,8 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
           // Use memoized categorized attendances (no more date parsing in build)
           final categorized = ref.watch(categorizedAttendancesProvider);
           final averagePercent = ref.watch(averageAttendancePercentProvider);
+          // DUTY: Besetzung of duty Termine by attendance id
+          final dutyTermine = ref.watch(dutyTermineByIdProvider).valueOrNull ?? const <int, DutyTermin>{};
 
           final current = categorized.current;
           final upcomingGroups = EventListUtils.groupByMonth(categorized.upcoming, (a) => a.date);
@@ -153,10 +169,18 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
                 ),
               if (!(type?.allDay ?? false)) EventListUtils.timeRange(att.startTime, att.endTime),
               att.place,
+              // DUTY: names of the assigned persons
+              if (dutyTermine[att.id] != null) dutyNames(dutyTermine[att.id]!),
             ]);
           }
 
           EventPill percentPill(Attendance att) {
+            // DUTY: Besetzung instead of % for duty Termine
+            final duty = dutyTermine[att.id];
+            if (duty != null) {
+              final badge = dutyBadge(duty);
+              return EventPill(label: badge.text, color: badge.color);
+            }
             final perc = (att.percentage ?? 0).round();
             return EventPill(label: '$perc%', color: EventListUtils.percentageColor(perc));
           }
@@ -190,6 +214,8 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
             child: ListView(
               padding: const EdgeInsets.only(bottom: 96),
               children: [
+                // DUTY: own duties waiting for confirmation
+                const MyDutyRequestsSection(),
                 // "Heute" / "Nächster Termin" – full-width card (Ionic ev-today)
                 if (current != null) ...[
                   EventMonthHeader(

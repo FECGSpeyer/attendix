@@ -41,3 +41,5 @@ export 'signout_providers.dart'; // ATTENDANCE_SIGNOUT
 // PROFILE_OFFLINE
 export 'profile_providers.dart';
 export 'notification_settings_providers.dart';
+// DUTY
+export 'duty_providers.dart';

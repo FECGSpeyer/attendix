@@ -175,6 +175,8 @@ class Attendance with _$Attendance {
     @_FlexibleStringConverter() String? description,
     @JsonKey(name: 'attachment_url') @_FlexibleStringConverter() String? attachmentUrl,
     @JsonKey(name: 'attachment_name') @_FlexibleStringConverter() String? attachmentName,
+    // DUTY: persons needed for this Termin (Dienst-Modus); null = type default
+    @JsonKey(name: 'duty_required') @_FlexibleIntConverter() int? dutyRequired,
   }) = _Attendance;
 
   factory Attendance.fromJson(Map<String, dynamic> json) =>
@@ -207,6 +209,10 @@ class PersonAttendance with _$PersonAttendance {
     @_FlexibleBoolConverter() @Default(false) bool paused,
     // ATTENDANCE_SIGNOUT: answers to the attendance type's registration fields
     @JsonKey(name: 'registration_answers') Map<String, dynamic>? registrationAnswers,
+    // DUTY: 'requested' | 'confirmed' | 'self' (null = not assigned / stand-in)
+    @JsonKey(name: 'duty_state') @_FlexibleStringConverter() String? dutyState,
+    @JsonKey(name: 'duty_assigned_by') @_FlexibleStringConverter() String? dutyAssignedBy,
+    @JsonKey(name: 'duty_assigned_at') @_FlexibleStringConverter() String? dutyAssignedAt,
   }) = _PersonAttendance;
 
   factory PersonAttendance.fromJson(Map<String, dynamic> json) =>
@@ -260,6 +266,13 @@ class AttendanceType with _$AttendanceType {
     // ATTENDANCE_SIGNOUT: place/navigation and registration fields per type
     @JsonKey(name: 'place_enabled') @_FlexibleBoolConverter() @Default(false) bool placeEnabled,
     @JsonKey(name: 'registration_fields') List<RegistrationField>? registrationFields,
+    // DUTY: Dienst-Modus (Dienstplan)
+    @JsonKey(name: 'duty_mode') @_FlexibleBoolConverter() @Default(false) bool dutyMode,
+    @JsonKey(name: 'duty_required') @_FlexibleIntConverter() int? dutyRequired,
+    @JsonKey(name: 'duty_self_signup') @Default(true) bool dutySelfSignup,
+    @JsonKey(name: 'duty_confirm_reminder_days') @_FlexibleIntConverter() int? dutyConfirmReminderDays,
+    @JsonKey(name: 'duty_notify_understaffed') @Default(true) bool dutyNotifyUnderstaffed,
+    @JsonKey(name: 'duty_urgent_hours') @_FlexibleIntConverter() int? dutyUrgentHours,
   }) = _AttendanceType;
 
   factory AttendanceType.fromJson(Map<String, dynamic> json) =>

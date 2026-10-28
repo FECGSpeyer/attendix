@@ -20,6 +20,8 @@ import '../widgets/plan_viewer_sheet.dart';
 import '../widgets/self_service_event_actions.dart';
 import '../widgets/upcoming_songs_sheet.dart';
 import '../widgets/self_service_absences.dart';
+import '../../../../core/providers/duty_providers.dart';
+import '../../../duty/presentation/widgets/self_service_duty_section.dart';
 import '../../../messages/presentation/widgets/notification_bell.dart'; // MESSAGES
 
 /// "Meine Termine" – self-service sign in/out of the current tenant
@@ -49,6 +51,7 @@ class SignoutPage extends ConsumerStatefulWidget {
 
 class _SignoutPageState extends ConsumerState<SignoutPage> {
   bool _showAllPast = false;
+  bool _showOtherTermine = false; // DUTY: "Weitere Termine" in the Dienstplan view
 
   SelfServiceEventActions _actions(Tenant? tenant, Person? player) {
     final notifier = ref.read(signoutNotifierProvider.notifier);
@@ -160,6 +163,8 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
     final playerAsync = ref.watch(currentSelfServicePlayerProvider);
     final dataAsync = ref.watch(signoutDataProvider);
     ref.watch(canAccessFilesProvider);
+    final useDutyView =
+        ref.watch(myDutyOverviewProvider).valueOrNull?.useDutyView ?? false; // DUTY
 
     if (isApplicant) {
       return Scaffold(
@@ -225,9 +230,19 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
                     textAlign: TextAlign.center,
                   ),
                 ),
-              ..._buildCurrent(data, actions, tenant),
-              ..._buildUpcoming(data, actions),
-              ..._buildPast(data, actions),
+              // DUTY: Dienstplan ("Bitte bestätigen", "Meine Dienste", "Offene Dienste");
+              // in the Dienstplan view the other Termine are collapsed.
+              SelfServiceDutySection(
+                showOtherTermine: _showOtherTermine,
+                otherTermineCount: data.upcoming.length + (data.current != null ? 1 : 0),
+                onToggleOtherTermine: () =>
+                    setState(() => _showOtherTermine = !_showOtherTermine),
+              ),
+              if (!useDutyView || _showOtherTermine) ...[
+                ..._buildCurrent(data, actions, tenant),
+                ..._buildUpcoming(data, actions),
+                ..._buildPast(data, actions),
+              ],
               if (player != null &&
                   data.current == null &&
                   data.upcoming.isEmpty &&
