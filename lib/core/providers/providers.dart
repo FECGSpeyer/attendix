@@ -47,3 +47,6 @@ export 'duty_providers.dart';
 export 'plan_providers.dart';
 // STATS_PEOPLE_FIXES
 export 'cross_tenant_person_providers.dart';
+
+// SETTINGS2
+export 'optional_tabs_providers.dart';

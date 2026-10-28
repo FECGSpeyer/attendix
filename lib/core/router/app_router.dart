@@ -157,6 +157,8 @@ const Map<String, RoleCheck> _protectedRoutes = {
   // DASHBOARD (Ionic Utils.isUrlAccessAllowed: Admin/Responsible)
   '/home-dashboard': _isAdminOrResponsible,
   '/settings/dashboard': _isAdminOrResponsible,
+  // SETTINGS2: optional "Org" tab (Ionic: Admin/Responsible)
+  '/org-plans-tab': _isAdminOrResponsible,
 };
 
 bool _isAdmin(Role role) => role.isAdmin;
@@ -861,6 +863,24 @@ final routerProvider = Provider<GoRouter>((ref) {
                 ref.read(isSuperDeveloperProvider) ? null : '/settings',
             builder: (context, state) => const UsageDashboardPage(),
           ),
+          // SETTINGS2: optional tabs (Ionic /tabs/songs-tab, /tabs/org-plans)
+          GoRoute(
+            path: '/songs-tab',
+            name: 'songsTab',
+            pageBuilder: (context, state) => AppPageTransitions.none(
+              child: const SongsListPage(),
+              state: state,
+            ),
+          ),
+          GoRoute(
+            path: '/org-plans-tab',
+            name: 'orgPlansTab',
+            pageBuilder: (context, state) => AppPageTransitions.none(
+              child: const OrgPlansPage(),
+              state: state,
+            ),
+          ),
+          // END SETTINGS2
         ],
       ),
       // SONGS: public routes, registered last so the wildcard share link

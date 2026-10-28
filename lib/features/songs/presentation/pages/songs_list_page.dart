@@ -8,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/song_filter_providers.dart';
 import '../../../../core/providers/song_providers.dart';
+import '../../../../core/providers/optional_tabs_providers.dart'; // SETTINGS2
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
@@ -90,6 +91,16 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
       context.push('/${widget.songSharingId}/$songId');
     } else {
       context.push('/settings/songs/$songId');
+    }
+  }
+
+  /// SETTINGS2: Ionic `toggleSongsTab`.
+  Future<void> _toggleSongsTab() async {
+    final current = ref.read(optionalTabsNotifierProvider).songs;
+    try {
+      await ref.read(optionalTabsNotifierProvider.notifier).setShowSongsTab(!current);
+    } catch (_) {
+      if (mounted) ToastHelper.showError(context, 'Fehler beim Speichern');
     }
   }
 
@@ -203,6 +214,9 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
                 // PEOPLE_IMPORT: song import (Ionic: Admin/Responsible only)
                 case 'import':
                   _openSongImport();
+                // SETTINGS2: "Als Tab anzeigen" / "Tab ausblenden"
+                case 'tab':
+                  _toggleSongsTab();
               }
             },
             itemBuilder: (context) => [
@@ -221,6 +235,20 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
                   child: ListTile(
                     leading: Icon(Icons.link),
                     title: Text('Link kopieren'),
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                ),
+              // SETTINGS2: Ionic toggleSongsTab (not on the public page)
+              if (!data.isPublic)
+                PopupMenuItem(
+                  value: 'tab',
+                  child: ListTile(
+                    leading: Icon(ref.watch(optionalTabsNotifierProvider).songs
+                        ? Icons.bookmark
+                        : Icons.bookmark_outline),
+                    title: Text(ref.watch(optionalTabsNotifierProvider).songs
+                        ? 'Tab ausblenden'
+                        : 'Als Tab anzeigen'),
                     contentPadding: EdgeInsets.zero,
                   ),
                 ),

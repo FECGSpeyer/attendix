@@ -246,6 +246,21 @@ class SongRepository extends BaseRepository with TenantAwareRepository {
     }
   }
 
+  /// SETTINGS2: Ionic org-settings `saveSongSync` — set the source tenant
+  /// whose songs this tenant uses (null = own songs).
+  /// `tenants` has no tenantId column - the row is the current tenant itself.
+  Future<void> updateSongSourceTenantId(int? sourceTenantId) async {
+    try {
+      await supabase
+          .from('tenants')
+          .update({'song_source_tenant_id': sourceTenantId})
+          .eq('id', currentTenantId);
+    } catch (e, stack) {
+      handleError(e, stack, 'updateSongSourceTenantId');
+      rethrow;
+    }
+  }
+
   /// Short names of the other instances sharing this song library
   /// (the source instance and every instance using the same source).
   /// `tenants` has no tenantId column - filtered by the song library owner.
