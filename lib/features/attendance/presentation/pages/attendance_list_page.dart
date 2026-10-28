@@ -43,6 +43,10 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
 
   /// Navigate to detail page, refresh list data when returning
   Future<void> _navigateToDetail(int attendanceId) async {
+    // LOGIC_ATT: Ionic openAttendance – only ADMIN/RESPONSIBLE and helpers
+    // open a Termin (viewers stay on the list).
+    final role = ref.read(effectiveRoleProvider);
+    if (!(role.isAdmin || role.isResponsible || role.isHelperRole)) return;
     await context.push('/attendance/$attendanceId');
     if (mounted) {
       ref.invalidate(realtimeAttendanceListProvider);
@@ -216,7 +220,8 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
           // ATT_DETAIL: Termintyp filter
           _buildTypeFilterButton(ref.watch(attendanceTypesProvider).valueOrNull ?? const []),
           // DUTY: "Dienste verteilen" for leaders when the tenant uses the Dienstplan
-          if (role.isConductor && ref.watch(hasDutyTypesProvider))
+          // LOGIC_ATT: Ionic isConductor = ADMIN || RESPONSIBLE (no viewer)
+          if ((role.isAdmin || role.isResponsible) && ref.watch(hasDutyTypesProvider))
             IconButton(
               icon: const Icon(Icons.shuffle),
               tooltip: context.l10n.attListDistributeDuties,

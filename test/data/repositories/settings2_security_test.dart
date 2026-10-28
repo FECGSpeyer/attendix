@@ -62,11 +62,13 @@ void main() {
       }
     });
 
-    test('percentage recalculation reads the flag of the current tenant only', () {
+    // LOGIC_ATT: attendance.percentage is no longer stored (not an Ionic
+    // column); any remaining flag read must still be tenant-scoped.
+    test('shift_excused_as_present reads use the current tenant only', () {
       final source = read('lib/data/repositories/attendance_repository.dart');
+      expect(source, isNot(contains("'percentage'")));
       final q = queries(source, 'tenants')
           .where((q) => q.contains('shift_excused_as_present'));
-      expect(q, isNotEmpty);
       for (final query in q) {
         expect(query, contains(".eq('id', currentTenantId)"));
       }

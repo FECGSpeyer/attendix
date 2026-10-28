@@ -242,6 +242,7 @@ class AttendancePersonTile extends StatelessWidget {
       );
       return;
     }
+    if (next == status) return; // LOGIC_ATT: not in the mapping → no change
     _onStatusChangedWithHaptic(next);
   }
 }

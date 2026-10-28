@@ -127,13 +127,14 @@ void main() {
     setUpAll(() => source = read(
         'lib/features/attendance/presentation/pages/attendance_detail_page.dart'));
 
-    test('song history re-insert is not skipped after the delete', () {
-      final sync = body(source, 'Future<void> _syncHistoryEntries(', 1600);
-      final del = sync.indexOf('.delete()');
-      final ins = sync.indexOf('.insert(entries)');
-      expect(del, greaterThan(-1));
-      expect(ins, greaterThan(del));
-      expect(sync.substring(del, ins), isNot(contains('if (!mounted) return;')));
+    // LOGIC_ATT: rows are synced one by one (Ionic add/update/remove
+    // history entry) – no bulk delete, and no early return in between.
+    test('song history sync never stops half-way', () {
+      final sync = body(source, 'Future<void> _syncHistoryEntries(', 2400);
+      expect(sync, contains('deleteHistoryEntry'));
+      expect(sync, contains('addHistoryEntries'));
+      expect(sync, isNot(contains('if (!mounted) return;')));
+      expect(sync, isNot(contains('.delete()')));
     });
 
     test('mutating menu actions and description are gated', () {

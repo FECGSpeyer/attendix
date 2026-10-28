@@ -15,6 +15,13 @@ import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/color_utils.dart';
 import '../../../../core/utils/shift_utils.dart';
+import '../../../../core/utils/attendance_logic_utils.dart';
+import '../../../../core/providers/player_absence_providers.dart';
+import '../../../../core/providers/profile_providers.dart';
+import '../../../../core/providers/shift_providers.dart';
+import '../../../../data/models/player_absence/player_absence.dart';
+import '../../../../data/models/shift/shift_plan.dart';
+import '../../../../data/repositories/profile_repository.dart' show ProfileExtraField;
 import '../../../../core/providers/duty_providers.dart';
 import '../../../../core/utils/duty_utils.dart';
 import '../../../../core/utils/toast_helper.dart';
@@ -138,6 +145,10 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
   // DUTY: persons needed per ISO weekday (Dienst-Modus), unavailability rules
   Map<int, int> _dutyRequiredByWeekday = {};
   List<PersonUnavailability> _unavailability = [];
+  // LOGIC_ATT: loaded in _createAttendances (Ionic addAttendance)
+  List<PlayerAbsence> _absences = const [];
+  List<ShiftPlan> _shifts = const [];
+  List<ProfileExtraField> _extraFields = const [];
 
   @override
   void initState() {
@@ -445,30 +456,22 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
   }
 
   /// Get display text for start time
-  /// Priority: 1. User-selected time, 2. Type default, 3. Tenant practice time, 4. Placeholder
+  /// Priority: 1. User-selected time (initialised from the type), 2. Placeholder
   String _getDisplayStartTime() {
     if (_startTime != null) {
       return _formatTime(_startTime!);
     }
-    // Fallback to tenant's practice start time
-    final tenant = ref.read(currentTenantProvider);
-    if (tenant?.practiceStart != null) {
-      return tenant!.practiceStart!;
-    }
+    // LOGIC_ATT: no tenant practice-time fallback (Ionic uses type times only)
     return context.l10n.shiftsStartTime;
   }
 
   /// Get display text for end time
-  /// Priority: 1. User-selected time, 2. Type default, 3. Tenant practice time, 4. Placeholder
+  /// Priority: 1. User-selected time (initialised from the type), 2. Placeholder
   String _getDisplayEndTime() {
     if (_endTime != null) {
       return _formatTime(_endTime!);
     }
-    // Fallback to tenant's practice end time
-    final tenant = ref.read(currentTenantProvider);
-    if (tenant?.practiceEnd != null) {
-      return tenant!.practiceEnd!;
-    }
+    // LOGIC_ATT: no tenant practice-time fallback (Ionic uses type times only)
     return context.l10n.attendanceFlutterEndTime;
   }
 
@@ -654,6 +657,25 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
       // DUTY: "Regelmäßig verhindert" rules (never throws)
       _unavailability = await ref.read(dutyRepositoryWithTenantProvider).getUnavailabilityForTenant();
 
+      // LOGIC_ATT: planned absences (Ionic getPlayerAbsencesForTenant, non-fatal)
+      try {
+        _absences = await ref.read(playerAbsenceRepositoryWithTenantProvider).getAbsencesForTenant();
+      } catch (_) {
+        _absences = const [];
+      }
+      // LOGIC_ATT: shift plans (Ionic db.shifts()) for the shift excuse
+      try {
+        _shifts = await ref.read(shiftsProvider.future);
+      } catch (_) {
+        _shifts = const [];
+      }
+      // LOGIC_ATT: organisation + tenant extra fields (Ionic getPersonExtraFields)
+      try {
+        _extraFields = await ref.read(personExtraFieldsProvider.future);
+      } catch (_) {
+        _extraFields = const [];
+      }
+
       // Create attendance for each selected date
       for (final date in _selectedDates) {
         final attendanceId = await _createSingleAttendance(date);
@@ -704,9 +726,10 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
     final tenant = _saveTenant;
     final type = _selectedType!;
 
-    // Normalize date to noon to avoid timezone issues
+    // Normalize date to noon to avoid timezone issues (Ionic
+    // createAttendanceForType: local 12:00 stored as ISO/UTC).
     final normalizedDate = DateTime(date.year, date.month, date.day, 12);
-    final dateString = DateFormat('yyyy-MM-dd').format(normalizedDate);
+    final dateString = normalizedDate.toUtc().toIso8601String();
 
     // Prepare checklist from type
     List<Map<String, dynamic>>? checklist;
@@ -733,18 +756,16 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
           'text': item.text,
           'deadlineHours': item.deadlineHours,
           'completed': false,
-          'dueDate': dueDate?.toIso8601String(),
+          // Ionic: dayjs(...).toISOString() (UTC with Z)
+          'dueDate': dueDate?.toUtc().toIso8601String(),
         };
       }).toList();
     }
 
-    // Resolve start/end times with fallbacks: user input > type default > tenant default
-    final resolvedStartTime = _startTime != null
-        ? _formatTime(_startTime!)
-        : (type.startTime ?? tenant?.practiceStart);
-    final resolvedEndTime = _endTime != null
-        ? _formatTime(_endTime!)
-        : (type.endTime ?? tenant?.practiceEnd);
+    // Start/end: user input (Flutter-only field) > type times (Ionic uses
+    // the type times only, no tenant fallback).
+    final resolvedStartTime = _startTime != null ? _formatTime(_startTime!) : type.startTime;
+    final resolvedEndTime = _endTime != null ? _formatTime(_endTime!) : type.endTime;
 
     // INTEGRATION: new Termine of a type marked as default org plan are
     // org plans (Ionic attendance-create: is_org_plan = type.is_default_org_plan).
@@ -755,13 +776,13 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
       'tenantId': tenant!.id,
       'date': dateString,
       'type_id': type.id,
-      'type': type.name,
       // Ionic attendance-create: typeInfo ?? '' (hide_name types)
       'typeInfo': _typeInfo ?? '',
       'start_time': resolvedStartTime,
       'end_time': resolvedEndTime,
-      'notes': _notes,
-      'duration_days': type.allDay == true ? _durationDays : null,
+      'notes': _notes ?? '',
+      // Ionic: options.durationDays ?? (all_day ? duration_days : 1)
+      'duration_days': type.allDay == true ? _durationDays : 1,
       // ATT_DETAIL: place only for types with place_enabled
       'place': type.placeEnabled ? _place : null,
       'checklist': checklist,
@@ -776,7 +797,12 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
     final attendanceId = response['id'] as int;
 
     // 2. Create PersonAttendance records for relevant players
-    await _createPersonAttendancesForRelevant(attendanceId, normalizedDate);
+    await _createPersonAttendancesForRelevant(
+      attendanceId,
+      normalizedDate,
+      startTime: resolvedStartTime,
+      endTime: resolvedEndTime,
+    );
 
     // 3. Create song history entries if songs were selected
     if (_songEntries.isNotEmpty) {
@@ -788,24 +814,28 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
 
   /// Create PersonAttendance records for players based on relevant groups
   Future<void> _createPersonAttendancesForRelevant(
-      int attendanceId, DateTime date) async {
+    int attendanceId,
+    DateTime date, {
+    String? startTime,
+    String? endTime,
+  }) async {
     final supabase = _saveClient!;
     final tenant = _saveTenant;
     final type = _selectedType!;
 
     if (tenant?.id == null) return;
 
-    // Get all active players (not left, not pending, not paused)
-    var query = supabase
+    // Get all active players (not left, not pending). Paused persons are
+    // dropped below like Ionic (`if (player.paused)`), so paused = NULL
+    // still counts as not paused.
+    final players = await supabase
         .from('player')
-        .select('id, instrument, shift_id, shift_start, shift_name, additional_fields')
+        .select('id, instrument, paused, shift_id, shift_start, shift_name, additional_fields')
         .eq('tenantId', tenant!.id!)
         .isFilter('left', null) // null = not archived
-        .isFilter('pending', false) // not pending
-        .eq('paused', false); // not paused
+        .isFilter('pending', false); // not pending
 
-    final players = await query;
-    final playerList = players as List;
+    final playerList = (players as List).where((p) => p['paused'] != true).toList();
     if (playerList.isEmpty) return;
 
     // Get default status from attendance type
@@ -837,11 +867,8 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
               player['additional_fields'] as Map<String, dynamic>?;
           final playerValue = playerAdditionalFields?[filterKey];
 
-          // Get default value from tenant's additional_fields
-          // Fix RT-001: Use firstOrNull instead of firstWhere with throwing orElse
-          final fieldDef = tenant.additionalFields?.where(
-            (f) => f.id == filterKey,
-          ).firstOrNull;
+          // LOGIC_ATT: organisation + tenant fields (Ionic getPersonExtraFields)
+          final fieldDef = _extraFields.where((f) => f.id == filterKey).firstOrNull;
 
           // If field definition not found (e.g., deleted), include player
           if (fieldDef == null) return true;
@@ -867,24 +894,30 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
       var notes = '';
 
       // Apply shift-based status if player has shift and not all-day event
-      final shiftId = player['shift_id'] as String?;
-      if (shiftId != null && type.allDay != true) {
-        final result = ShiftUtils.getStatusByShift(
-          shiftId: shiftId,
+      final shiftId = player['shift_id']?.toString();
+      if (shiftId != null && shiftId.isNotEmpty && type.allDay != true) {
+        final result = ShiftUtils.statusByShiftOrDefault(
+          shift: ShiftUtils.findShift(_shifts, shiftId),
           attendanceDate: date,
-          attendanceStart: type.startTime ?? '19:00',
-          attendanceEnd: type.endTime ?? '21:00',
-          defaultStatus: defaultStatus,
-          shiftStart: player['shift_start'] as String?,
-          shiftName: player['shift_name'] as String?,
+          attendanceStart: startTime ?? '19:00',
+          attendanceEnd: endTime ?? '21:00',
+          defaultStatus: status,
+          shiftStart: player['shift_start']?.toString(),
+          shiftName: player['shift_name']?.toString(),
         );
 
         status = result.status;
         notes = result.note;
       }
 
-      // DUTY: "Regelmäßig verhindert" → Entschuldigt
-      if (canExcuse) {
+      // LOGIC_ATT: planned absence on the day → Entschuldigt + reason
+      // (Ionic createAttendanceForType), else "Regelmäßig verhindert".
+      final personId = (player['id'] as num).toInt();
+      final absence = absenceOnDay(_absences, personId, date);
+      if (absence != null) {
+        status = AttendanceStatus.excused;
+        notes = absence.reason;
+      } else if (canExcuse) {
         final rule = matchingUnavailability(
             _unavailability, player['id'] as int, date.toIso8601String(), type.id);
         if (rule != null) {
@@ -897,7 +930,7 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
         'attendance_id': attendanceId,
         'person_id': player['id'],
         'status': status.value,
-        'notes': notes.isNotEmpty ? notes : null,
+        'notes': notes,
       });
     }
 

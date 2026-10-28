@@ -16,6 +16,11 @@ import '../../../../core/providers/church_providers.dart'; // ATT_DETAIL
 import '../../../../core/providers/group_providers.dart'; // ATT_DETAIL
 import '../../../../core/providers/profile_providers.dart'; // ATT_DETAIL
 import '../../../../core/utils/shift_utils.dart'; // ATT_DETAIL
+import '../../../../core/providers/shift_providers.dart'; // LOGIC_ATT
+import '../../../../core/providers/player_absence_providers.dart'; // LOGIC_ATT
+import '../../../../core/utils/attendance_logic_utils.dart'; // LOGIC_ATT
+import '../../../../data/models/player_absence/player_absence.dart'; // LOGIC_ATT
+import '../../../../data/models/shift/shift_plan.dart'; // LOGIC_ATT
 import '../../../../shared/widgets/sheets/church_overview_sheet.dart'; // ATT_DETAIL
 import '../widgets/attendance_detail/ad_hoc_reminder_sheet.dart'; // ATT_DETAIL
 import '../widgets/attendance_detail/add_persons_sheet.dart'; // ATT_DETAIL
@@ -107,17 +112,20 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
   bool _showAvatars = false;
   bool _showRegFields = true;
   bool _deletedHandled = false;
+  // LOGIC_ATT: person rows removed on this device (no "deletedByOther")
+  final Set<String> _ownDeletedPaIds = {};
   bool _isSendingReminder = false;
 
   @override
   void initState() {
     super.initState();
-    // Subscribe to realtime changes and ensure PersonAttendances exist after first frame
+    // Subscribe to realtime changes after first frame. LOGIC_ATT: like Ionic,
+    // opening a Termin never creates person rows; an empty Termin shows the
+    // "Neu laden" banner instead.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // Force fresh data from DB (handles cross-device changes and stale autoDispose cache)
       ref.invalidate(personAttendancesForAttendanceProvider(widget.attendanceId));
       _subscribeToRealtimeChanges();
-      _ensurePersonAttendancesExist();
       _setupProviderListener();
       _loadChecklistFromAttendance();
       _loadSongEntries();
@@ -138,84 +146,41 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
 
   /// Load song entries from attendance data with resolved names
   Future<void> _loadSongEntries() async {
-    final attendance = ref.read(attendanceDetailProvider(widget.attendanceId)).valueOrNull;
-    if (attendance == null) return;
-
-    final songIds = attendance.songs ?? [];
-    final conductorIds = attendance.conductors ?? [];
-
-    if (songIds.isEmpty) {
-      if (mounted) {
-        setState(() {
-          _songEntries = [];
-        });
-      }
+    final Attendance? attendance;
+    try {
+      attendance = await ref.read(attendanceDetailProvider(widget.attendanceId).future);
+    } catch (_) {
       return;
     }
+    if (attendance == null || !mounted) return;
 
-    // Load songs and conductors from providers to resolve names
-    final songs = await ref.read(songsProvider.future);
-    final conductors = await ref.read(activeConductorsProvider.future);
-    final allConductors = await ref.read(conductorsProvider.future);
-
-    // Prefer the history rows: they keep the conductor per song including
-    // "Anderer Dirigent" (otherConductor).
+    // LOGIC_ATT: like Ionic (getHistoryByAttendanceId) the history table is
+    // the only source; the legacy attendance.songs/conductors arrays are
+    // neither read nor written.
     try {
+      final songs = await ref.read(songsProvider.future);
+      final allConductors = await ref.read(conductorsProvider.future);
       final repo = ref.read(attendanceRepositoryWithTenantProvider);
-      if (repo.hasTenantId) {
-        final rows = await repo.getHistoryForAttendance(widget.attendanceId);
-        if (rows.isNotEmpty) {
-          final fromHistory = rows.map((row) {
-            final songId = row['songId'] as int;
-            final personId = row['person_id'] as int?;
-            final other = row['otherConductor'] as String?;
-            final song = songs.where((s) => s.id == songId).firstOrNull;
-            final conductor = allConductors.where((c) => c.id == personId).firstOrNull;
-            return SongHistoryEntry(
-              songId: songId,
-              songName: song?.displayName ?? context.l10n.historyFlutterUnknownSong,
-              conductorId: personId,
-              conductorName: conductor?.fullName,
-              otherConductor: other?.isNotEmpty == true ? other : null,
-            );
-          }).toList();
-          if (mounted) setState(() => _songEntries = fromHistory);
-          return;
-        }
-      }
+      if (!repo.hasTenantId) return;
+      final rows = await repo.getHistoryForAttendance(widget.attendanceId);
+      if (!mounted) return;
+      final fromHistory = rows.map((row) {
+        final songId = (row['songId'] as num).toInt();
+        final personId = (row['person_id'] as num?)?.toInt();
+        final other = row['otherConductor'] as String?;
+        final song = songs.where((s) => s.id == songId).firstOrNull;
+        final conductor = allConductors.where((c) => c.id == personId).firstOrNull;
+        return SongHistoryEntry(
+          songId: songId,
+          songName: song?.displayName ?? context.l10n.historyFlutterUnknownSong,
+          conductorId: personId,
+          conductorName: conductor?.fullName,
+          otherConductor: other?.isNotEmpty == true ? other : null,
+        );
+      }).toList();
+      setState(() => _songEntries = fromHistory);
     } catch (_) {
-      // fall back to the songs/conductors arrays below
-    }
-
-    // Create entries with resolved names
-    final entries = <SongHistoryEntry>[];
-    for (var i = 0; i < songIds.length; i++) {
-      final songId = songIds[i];
-      final conductorId = i < conductorIds.length ? conductorIds[i] : null;
-
-      // Find song name
-      final song = songs.where((s) => s.id == songId).firstOrNull;
-      final songName = song?.displayName ?? context.l10n.historyFlutterUnknownSong;
-
-      // Find conductor name
-      String? conductorName;
-      if (conductorId != null) {
-        final conductor = conductors.where((c) => c.id == conductorId).firstOrNull;
-        conductorName = conductor?.fullName;
-      }
-
-      entries.add(SongHistoryEntry(
-        songId: songId,
-        songName: songName,
-        conductorId: conductorId,
-        conductorName: conductorName,
-      ));
-    }
-
-    if (mounted) {
-      setState(() {
-        _songEntries = entries;
-      });
+      // songs accordion stays empty
     }
   }
 
@@ -281,6 +246,27 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
           ),
           callback: _onPersonAttendanceChange,
         )
+        // LOGIC_ATT: person rows deleted elsewhere (DELETE events carry
+        // only the old id and cannot be filtered by attendance_id)
+        .onPostgresChanges(
+          event: PostgresChangeEvent.delete,
+          schema: 'public',
+          table: 'person_attendances',
+          callback: _onPersonAttendanceDeleted,
+        )
+        // LOGIC_ATT: times, notes, plan … changed by another user
+        // (Ionic onAttRealtimeChanges → this.attendance = payload.new)
+        .onPostgresChanges(
+          event: PostgresChangeEvent.update,
+          schema: 'public',
+          table: 'attendance',
+          filter: PostgresChangeFilter(
+            type: PostgresChangeFilterType.eq,
+            column: 'id',
+            value: widget.attendanceId,
+          ),
+          callback: _onAttendanceUpdated,
+        )
         // ATT_DETAIL: Termin deleted by another user
         .onPostgresChanges(
           event: PostgresChangeEvent.delete,
@@ -301,23 +287,6 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     }
   }
 
-  /// Ensures PersonAttendance records exist for this attendance.
-  Future<void> _ensurePersonAttendancesExist() async {
-    final personAttendances = await ref.read(personAttendancesForAttendanceProvider(widget.attendanceId).future);
-    if (personAttendances.isNotEmpty) return;
-
-    final repo = ref.read(attendanceRepositoryWithTenantProvider);
-    if (!repo.hasTenantId) return;
-
-    final attendanceType = ref.read(attendanceTypeForAttendanceProvider(widget.attendanceId)).valueOrNull;
-    final defaultStatus = attendanceType?.defaultStatus ?? AttendanceStatus.neutral;
-
-    await repo.ensurePersonAttendances(widget.attendanceId, defaultStatus.value);
-
-    if (!mounted) return;
-    ref.invalidate(personAttendancesForAttendanceProvider(widget.attendanceId));
-  }
-
   void _onPersonAttendanceChange(dynamic payload) {
     if (_isDisposed) return;
 
@@ -325,6 +294,14 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     if (newRecord == null || newRecord.isEmpty) return;
 
     final personId = newRecord['person_id'] as int?;
+    // LOGIC_ATT: a person added on another device → reload the rows so the
+    // new person shows up.
+    if (payload is PostgresChangePayload && payload.eventType == PostgresChangeEvent.insert) {
+      if (personId != null && !_personAttendanceIds.containsKey(personId) && mounted) {
+        ref.invalidate(personAttendancesForAttendanceProvider(widget.attendanceId));
+      }
+      return;
+    }
     if (personId != null && _savingPersonIds.contains(personId)) return;
 
     final statusValue = newRecord['status'];
@@ -649,7 +626,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                   ),
 
                   // ATT_DETAIL: no persons could be loaded
-                  if (persons.isEmpty && helperGroupId == null)
+                  if ((persons.isEmpty || _noPersonRows) && helperGroupId == null)
                     SliverToBoxAdapter(child: _buildLoadFailedBanner()),
 
                   AttendanceGrid(
@@ -883,12 +860,18 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
 
   /// Persons that are part of this Termin (have a person_attendances row).
   /// Before the rows are loaded all candidates are shown.
+  // LOGIC_ATT: only persons with a row in this Termin (Ionic
+  // attendance.persons); an empty Termin shows nobody (no auto-fill).
   List<Person> _personsInAttendance(List<Person> persons) {
     final rows = ref.read(filteredPersonAttendancesForAttendanceProvider(widget.attendanceId)).valueOrNull;
-    if (rows == null || rows.isEmpty) return persons;
-    final ids = _personAttendanceIds.keys.toSet();
+    if (rows == null || rows.isEmpty) return const [];
+    final ids = {for (final r in rows) r.personId};
     return persons.where((p) => ids.contains(p.id)).toList();
   }
+
+  /// Ionic personsLoadFailed: the Termin has no person rows at all.
+  bool get _noPersonRows =>
+      ref.read(filteredPersonAttendancesForAttendanceProvider(widget.attendanceId)).valueOrNull?.isEmpty ?? false;
 
   // UX_ATT: persons counted in the Ionic header title (helper group +
   // status filter applied, like Ionic `filteredPlayers`).
@@ -1183,6 +1166,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       final type = ref.read(attendanceTypeForAttendanceProvider(widget.attendanceId)).valueOrNull;
       final defaultStatus = type?.defaultStatus ?? AttendanceStatus.neutral;
       final date = DateTime.tryParse(attendance?.date ?? '') ?? DateTime.now();
+      final shifts = await ref.read(shiftsProvider.future).catchError((_) => <ShiftPlan>[]);
       final all = [...candidates.matching, ...candidates.others];
       final records = <PersonAttendance>[];
       for (final personId in selected) {
@@ -1191,8 +1175,8 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
         var status = defaultStatus;
         var notes = '';
         if (person.shiftId != null && type?.allDay != true) {
-          final result = ShiftUtils.getStatusByShift(
-            shiftId: person.shiftId,
+          final result = ShiftUtils.statusByShiftOrDefault(
+            shift: ShiftUtils.findShift(shifts, person.shiftId),
             attendanceDate: date,
             attendanceStart: type?.startTime ?? '19:00',
             attendanceEnd: type?.endTime ?? '21:00',
@@ -1296,6 +1280,32 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       if (mounted) ToastHelper.showError(context, context.l10n.attendanceSendFailed);
     } finally {
       _isSendingReminder = false;
+    }
+  }
+
+  /// LOGIC_ATT: Ionic onAttRealtimeChanges – another user changed the Termin
+  /// (times, notes, plan, deadline …): reload it.
+  void _onAttendanceUpdated(PostgresChangePayload payload) {
+    if (_isDisposed || !mounted) return;
+    final id = payload.newRecord['id'];
+    if (id == null || id.toString() != widget.attendanceId.toString()) return;
+    ref.invalidate(attendanceDetailProvider(widget.attendanceId));
+  }
+
+  /// LOGIC_ATT: Ionic onPersonAttRealtimeChanges – a shown person row was
+  /// deleted by someone else: toast "deletedByOther" and leave the page.
+  void _onPersonAttendanceDeleted(PostgresChangePayload payload) {
+    if (_isDisposed || !mounted || _deletedHandled) return;
+    final oldId = payload.oldRecord['id']?.toString();
+    if (oldId == null) return;
+    if (_ownDeletedPaIds.remove(oldId)) return;
+    if (!_personAttendanceIds.values.contains(oldId)) return;
+    _deletedHandled = true;
+    ToastHelper.showError(context, context.l10n.attendanceDeletedByOther);
+    if (context.canPop()) {
+      context.pop();
+    } else {
+      context.go('/attendance');
     }
   }
 
@@ -1597,8 +1607,10 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       if (attendance != null) {
         final attendanceDate = DateTime.tryParse(attendance.date);
         if (attendanceDate != null) {
-          final defaultDeadline = attendanceDate.subtract(const Duration(days: 1));
-          deadlineStr = defaultDeadline.toIso8601String();
+          // LOGIC_ATT: Ionic onDeadlineToggleChanged (day before at type
+          // start hour + 2, or the Termin day when that is already past)
+          final type = ref.read(attendanceTypeForAttendanceProvider(widget.attendanceId)).valueOrNull;
+          deadlineStr = defaultDeadline(attendanceDate, type?.startTime).toUtc().toIso8601String();
         }
       }
     }
@@ -1668,7 +1680,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       if (!repo.hasTenantId) return;
       await repo.updateAttendance(
         widget.attendanceId,
-        {'deadline': finalDeadline.toIso8601String()},
+        {'deadline': finalDeadline.toUtc().toIso8601String()},
       );
 
       ref.invalidate(attendanceDetailProvider(widget.attendanceId));
@@ -1951,26 +1963,11 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       final attendance = ref.read(attendanceDetailProvider(widget.attendanceId)).valueOrNull;
       if (!repo.hasTenantId || attendance == null) return;
 
-      final songIds = _songEntries.map((e) => e.songId).toList();
-      final conductorIds = _songEntries
-          .map((e) => e.conductorId)
-          .where((id) => id != null)
-          .toList();
-
-      // 1. Update attendance table with songs/conductors arrays
-      await repo.updateAttendance(
-        widget.attendanceId,
-        {
-          'songs': songIds,
-          'conductors': conductorIds,
-        },
-      );
-
-      // 2. Sync history table: delete old entries and create new ones
+      // LOGIC_ATT: like Ionic only the history table is written (no legacy
+      // attendance.songs / conductors), row by row so unchanged entries keep
+      // their id, created_at and visible flag.
       await _syncHistoryEntries(attendance.date);
 
-      // 3. Invalidate providers
-      ref.invalidate(attendanceDetailProvider(widget.attendanceId));
       ref.invalidate(currentSongsProvider);
       ref.invalidate(songHistoryProvider(null));
     } catch (e) {
@@ -1982,45 +1979,55 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     }
   }
 
-  /// Sync history table entries for this attendance
+  /// Sync the history rows of this Termin with [_songEntries].
   Future<void> _syncHistoryEntries(String date) async {
-    // TODO(sprint-2b): migrate history-table delete + insert to a new
-    // HistoryRepository. Both Supabase calls in this method (delete on
-    // history, insert on history) will move there together so they stay
-    // testable against tenantId.
-    final supabase = ref.read(supabaseClientProvider);
-    final tenant = ref.read(currentTenantProvider);
-    if (tenant?.id == null) return;
-    // Snapshot before the first await: the re-insert must run even if the
-    // page is closed meanwhile, otherwise the deleted history is lost.
-    final songEntries = List.of(_songEntries);
+    final repo = ref.read(attendanceRepositoryWithTenantProvider);
     final attendanceId = widget.attendanceId;
+    final songEntries = List.of(_songEntries);
 
-    // Delete existing history entries for this attendance
-    await supabase
-        .from('history')
-        .delete()
-        .eq('attendance_id', attendanceId)
-        .eq('tenantId', tenant!.id!);
+    final rows = await repo.getHistoryForAttendance(attendanceId);
+    final plan = planHistorySync(
+      [
+        for (final r in rows)
+          (
+            id: (r['id'] as num).toInt(),
+            songId: (r['songId'] as num).toInt(),
+            personId: (r['person_id'] as num?)?.toInt(),
+            otherConductor: r['otherConductor'] as String?,
+          ),
+      ],
+      [
+        for (final e in songEntries)
+          (
+            songId: e.songId,
+            personId: e.otherConductor?.isNotEmpty == true ? null : e.conductorId,
+            otherConductor: e.otherConductor?.isNotEmpty == true ? e.otherConductor : null,
+          ),
+      ],
+    );
 
-    // Create new history entries if there are songs
-    if (songEntries.isNotEmpty) {
-      final entries = songEntries.map((entry) {
-        return {
-          // Ionic History columns: songId (camelCase), person_id,
-          // otherConductor, visible. conductorName is not a column.
-          'songId': entry.songId,
+    for (final id in plan.delete) {
+      await repo.deleteHistoryEntry(id);
+    }
+    for (final u in plan.update) {
+      await repo.updateHistoryEntry(u.id, {
+        'person_id': u.entry.personId,
+        'otherConductor': u.entry.otherConductor,
+      });
+    }
+    // Ionic addSongsToHistory: History columns songId (camelCase),
+    // person_id, otherConductor, visible: true, date of the Termin.
+    await repo.addHistoryEntries([
+      for (final e in plan.insert)
+        {
+          'songId': e.songId,
           'attendance_id': attendanceId,
           'date': date,
-          'tenantId': tenant.id,
-          'person_id': entry.otherConductor?.isNotEmpty == true ? null : entry.conductorId,
-          'otherConductor': entry.otherConductor,
+          'person_id': e.personId,
+          'otherConductor': e.otherConductor,
           'visible': true,
-        };
-      }).toList();
-
-      await supabase.from('history').insert(entries);
-    }
+        },
+    ]);
   }
 
   // ATTENDANCE_SIGNOUT: conductor change, date change, place, files folder,
@@ -2155,19 +2162,33 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
         if (checklist != null) 'checklist': checklist,
       });
       await repo.updateHistoryDatesForAttendance(widget.attendanceId, normalizedIso);
-      if (reset && type != null) {
-        await repo.resetPersonAttendancesForAttendance(widget.attendanceId, type.defaultStatus);
-        if (mounted) {
-          setState(() {
-            for (final id in _localStatuses.keys.toList()) {
-              _localStatuses[id] = type.defaultStatus;
-              _personNotes[id] = null;
-            }
-          });
+      if (type != null) {
+        // LOGIC_ATT: Ionic changeAttendanceDate – absences on the new day
+        // excuse persons still on the default status (or everyone when
+        // reset), reset the rest, then re-run the shift computation.
+        final rows = await ref.refresh(personAttendancesForAttendanceProvider(widget.attendanceId).future);
+        List<PlayerAbsence> absences;
+        try {
+          absences = await ref.read(playerAbsenceRepositoryWithTenantProvider).getAbsencesForTenant();
+        } catch (_) {
+          absences = const []; // non-fatal — proceed without absence check
         }
+        final updates = dateChangeStatusUpdates(
+          rows: [
+            for (final r in rows)
+              if (r.id != null && r.personId != null)
+                (id: r.id!, personId: r.personId!, status: r.status, notes: r.notes),
+          ],
+          absences: absences,
+          newDay: normalized,
+          defaultStatus: type.defaultStatus,
+          resetStatuses: reset,
+        );
+        for (final u in updates) {
+          await repo.updatePersonAttendance(u.id, {'status': u.status.value, 'notes': u.notes});
+        }
+        await repo.updateShiftAssignmentsForAttendance(widget.attendanceId);
       }
-      // Hook: absences on the new day and shift re-evaluation belong to the
-      // absences / duty-roster packages.
 
       if (mounted) setState(() => _checklistLoaded = false);
       ref.invalidate(attendanceDetailProvider(widget.attendanceId));
@@ -2305,6 +2326,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     if (selectedTime == null || !mounted) return;
 
     final timeStr = '${selectedTime.hour.toString().padLeft(2, '0')}:${selectedTime.minute.toString().padLeft(2, '0')}';
+    final previous = attendance.startTime;
 
     try {
       final repo = ref.read(attendanceRepositoryWithTenantProvider);
@@ -2313,8 +2335,15 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
         widget.attendanceId,
         {'start_time': timeStr},
       );
+      // LOGIC_ATT: Ionic onInfoChanged – the time window moved, re-run the
+      // shift computation for everyone in this Termin.
+      if (timeStr != previous) {
+        await repo.updateShiftAssignmentsForAttendance(widget.attendanceId);
+        ref.invalidate(personAttendancesForAttendanceProvider(widget.attendanceId));
+      }
 
       ref.invalidate(attendanceDetailProvider(widget.attendanceId));
+      if (!mounted) return;
       ToastHelper.showSuccess(context, context.l10n.attendanceFlutterStartTimeUpdated);
     } catch (e) {
       if (mounted) {
@@ -2346,6 +2375,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     if (selectedTime == null || !mounted) return;
 
     final timeStr = '${selectedTime.hour.toString().padLeft(2, '0')}:${selectedTime.minute.toString().padLeft(2, '0')}';
+    final previous = attendance.endTime;
 
     try {
       final repo = ref.read(attendanceRepositoryWithTenantProvider);
@@ -2354,8 +2384,15 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
         widget.attendanceId,
         {'end_time': timeStr},
       );
+      // LOGIC_ATT: Ionic onInfoChanged – the time window moved, re-run the
+      // shift computation for everyone in this Termin.
+      if (timeStr != previous) {
+        await repo.updateShiftAssignmentsForAttendance(widget.attendanceId);
+        ref.invalidate(personAttendancesForAttendanceProvider(widget.attendanceId));
+      }
 
       ref.invalidate(attendanceDetailProvider(widget.attendanceId));
+      if (!mounted) return;
       ToastHelper.showSuccess(context, context.l10n.attendanceFlutterEndTimeUpdated);
     } catch (e) {
       if (mounted) {
@@ -2381,7 +2418,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       await exportService.exportAttendanceToExcel(
         context: context,
         attendance: attendance,
-        persons: persons,
+        persons: _personsInAttendance(persons),
         statuses: _localStatuses,
         tenantName: tenant.shortName,
       );
@@ -2426,6 +2463,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
 
     try {
       final repo = ref.read(attendanceRepositoryWithTenantProvider);
+      _ownDeletedPaIds.add(personAttendanceId);
       await repo.deletePersonAttendance(personAttendanceId);
       if (!mounted) return;
 
@@ -2606,10 +2644,6 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       if (ref.read(attendanceTypeForAttendanceProvider(widget.attendanceId)).valueOrNull?.dutyMode ?? false) {
         ref.invalidate(personAttendancesForAttendanceProvider(widget.attendanceId));
       }
-
-      // Fire-and-forget: update stored percentage for consistency
-      ref.read(attendanceNotifierProvider.notifier)
-          .recalculatePercentage(widget.attendanceId);
     } catch (e) {
       if (mounted) {
         if (previousStatus != null) {
