@@ -42,12 +42,11 @@ jobs:
         run: flutter build web --release --base-href /
 
       - name: Deploy to Cloudflare Pages
-        uses: cloudflare/pages-action@v1
+        # cloudflare/pages-action is gone from GitHub (28.10.2026); wrangler-action is its successor.
+        # Preview deployments for PRs, production for master
+        uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: attendix
-          directory: build/web
+          command: pages deploy build/web --project-name=attendix --branch=${{ github.head_ref || github.ref_name }}
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
-          # Preview deployments for PRs, production for main
-          branch: ${{ github.head_ref || github.ref_name }}
