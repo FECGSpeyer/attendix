@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart' show FileOptions;
 
 import '../../core/constants/enums.dart';
 import '../../core/utils/duty_utils.dart';
+import '../../core/utils/paged_query.dart';
 import '../../core/utils/shift_utils.dart';
 import '../models/attendance/attendance.dart';
 import '../models/shift/shift_plan.dart';
@@ -29,15 +30,26 @@ final attendanceRepositoryForTenantProvider =
 class AttendanceRepository extends BaseRepository with TenantAwareRepository {
   AttendanceRepository(super.ref);
 
-  /// Get all attendances for the current tenant
+  /// Ionic `getCurrentAttDate()`: the tenant's season start, fallback
+  /// 2023-01-01 (lower bound of `getAttendance(false, ...)`).
+  static DateTime currentAttDate(String? seasonStart) =>
+      (seasonStart != null ? DateTime.tryParse(seasonStart) : null) ??
+      DateTime(2023, 1, 1);
+
+  /// Ionic `getAttendance(all, withPersonAttendance)`: all attendances of the
+  /// current tenant after [since] (default 2020-01-01 = Ionic `all`), newest
+  /// first, without a row limit.
+  ///
+  /// PARITY_A (R1): no default limit / 180-day window any more; all pages are
+  /// loaded (PostgREST max-rows). [limit] is only applied when given.
   Future<List<Attendance>> getAttendances({
     DateTime? since,
     bool withPersonAttendances = false,
-    int limit = 50,
+    int? limit,
   }) async {
     try {
-      final sinceDate = since ?? DateTime.now().subtract(const Duration(days: 180));
-      
+      final sinceDate = since ?? DateTime(2020, 1, 1);
+
       String selectQuery = '*';
       if (withPersonAttendances) {
         selectQuery = '''*, persons:person_attendances(
@@ -47,16 +59,32 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
         )''';
       }
 
-      final response = await supabase
-          .from('attendance')
-          .select(selectQuery)
-          .eq('tenantId', currentTenantId)
-          .gt('date', sinceDate.toIso8601String())
-          .order('date', ascending: false)
-          .limit(limit);
+      final List<Map<String, dynamic>> rows;
+      if (limit != null) {
+        final response = await supabase
+            .from('attendance')
+            .select(selectQuery)
+            .eq('tenantId', currentTenantId)
+            .gt('date', sinceDate.toIso8601String())
+            .order('date', ascending: false)
+            .limit(limit);
+        rows = (response as List).cast<Map<String, dynamic>>();
+      } else {
+        rows = await fetchAllPages<Map<String, dynamic>>((from, to) async {
+          final page = await supabase
+              .from('attendance')
+              .select(selectQuery)
+              .eq('tenantId', currentTenantId)
+              .gt('date', sinceDate.toIso8601String())
+              .order('date', ascending: false)
+              .order('id', ascending: true)
+              .range(from, to);
+          return (page as List).cast<Map<String, dynamic>>();
+        });
+      }
 
-      return (response as List)
-          .map((e) => _parseAttendance(e as Map<String, dynamic>, withPersonAttendances))
+      return rows
+          .map((e) => _parseAttendance(e, withPersonAttendances))
           .toList();
     } catch (e, stack) {
       handleError(e, stack, 'getAttendances');
@@ -571,18 +599,12 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
         final newStatus = rawStatus is AttendanceStatus
             ? rawStatus
             : AttendanceStatus.fromValue((rawStatus as num?)?.toInt() ?? 0);
-        final current = validation['duty_state'] as String?;
-        final next = dutyStateAfterStatus(current, newStatus);
-        if (next != current) {
-          updates['duty_state'] = next;
-          if (next == DutyState.confirmed) {
-            updates['duty_reminder_sent'] = true;
-            if (current == null) {
-              updates['duty_assigned_by'] = supabase.auth.currentUser?.id;
-              updates['duty_assigned_at'] = DateTime.now().toUtc().toIso8601String();
-            }
-          }
-        }
+        updates.addAll(dutySyncFieldsForStatus(
+          isDutyTermin: true,
+          currentDutyState: validation['duty_state'] as String?,
+          newStatus: newStatus,
+          userId: supabase.auth.currentUser?.id,
+        ));
       }
 
       final attendanceTenantId = validation['attendance']?['tenantId'];

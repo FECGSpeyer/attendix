@@ -138,17 +138,12 @@ class SignInOutRepository extends BaseRepository with TenantAwareRepository {
     if (row == null || row['attendance']?['attType']?['duty_mode'] != true) {
       return const {};
     }
-    final current = row['duty_state'] as String?;
-    final next = dutyStateAfterStatus(current, newStatus);
-    if (next == current) return const {};
-    return {
-      'duty_state': next,
-      if (next == DutyState.confirmed) 'duty_reminder_sent': true,
-      if (next == DutyState.confirmed && current == null) ...{
-        'duty_assigned_by': supabase.auth.currentUser?.id,
-        'duty_assigned_at': DateTime.now().toUtc().toIso8601String(),
-      },
-    };
+    return dutySyncFieldsForStatus(
+      isDutyTermin: true,
+      currentDutyState: row['duty_state'] as String?,
+      newStatus: newStatus,
+      userId: supabase.auth.currentUser?.id,
+    );
   }
 
   /// Sign in to an attendance (status → Anwesend, like Ionic `signin`).

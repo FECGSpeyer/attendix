@@ -369,32 +369,4 @@ class CrossTenantPersonRepository extends BaseRepository
   }
 
   static final _viewerRole = Role.viewer.value;
-
-  /// Propagate shared identity fields (firstName, lastName, birthday, email,
-  /// phone) to all rows with the same global_person_id in linked tenants
-  /// (Ionic player.service updatePlayer).
-  Future<void> propagateSharedFields({
-    required String globalPersonId,
-    required int excludePlayerId,
-    required Map<String, dynamic> fields,
-    required List<int> linkedTenantIds,
-  }) async {
-    const shared = ['firstName', 'lastName', 'birthday', 'email', 'phone'];
-    final patch = <String, dynamic>{
-      for (final key in shared)
-        if (fields.containsKey(key)) key: fields[key],
-    };
-    if (patch.isEmpty) return;
-    try {
-      await supabase
-          .from('player')
-          .update(patch)
-          .eq('global_person_id', globalPersonId)
-          .neq('id', excludePlayerId)
-          .inFilter('tenantId', [currentTenantId, ...linkedTenantIds]);
-    } catch (e, stack) {
-      handleError(e, stack, 'propagateSharedFields');
-      rethrow;
-    }
-  }
 }

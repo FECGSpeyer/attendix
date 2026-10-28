@@ -153,13 +153,18 @@ void main() {
   group('SOL_FIX1 shift status in backfill', () {
     final src = _read('lib/data/repositories/player_repository.dart');
 
-    test('addPlayerToAttendancesByDate applies the shift plan', () {
+    test('addPlayerToAttendancesByDate uses the type default like Ionic (PARITY_A D4)',
+        () {
       final body = _method(src, 'Future<void> addPlayerToAttendancesByDate(');
-      expect(body, contains('date, start_time, end_time'));
-      expect(body,
-          contains('_loadShiftPlan(player.shiftId, tenantId: targetTenantId)'));
-      expect(body, contains('_initialStatus(player, type, att, shift)'));
-      expect(body, isNot(contains("'notes': '',")));
+      expect(body, isNot(contains('_loadShiftPlan(')));
+      expect(body, isNot(contains('_initialStatus(')));
+      expect(body, contains("'notes': '',"));
+      expect(body, contains("'status': type.defaultStatus,"));
+    });
+
+    test('auto unpause history text matches Ionic (PARITY_A D5)', () {
+      expect(src, contains("'Automatisch reaktiviert (Pausendatum erreicht)'"));
+      expect(src, isNot(contains('Pausenzeit abgelaufen')));
     });
 
     test('addToUpcomingAttendances shares the same computation', () {

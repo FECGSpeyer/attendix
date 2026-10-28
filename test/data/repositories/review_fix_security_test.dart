@@ -26,12 +26,12 @@ void main() {
       expect(existingBranch, isNot(contains('addUserToTenant')));
     });
 
-    test('only left rows are reactivated, active rows are never overwritten',
+    test('an existing row of the tenant is overwritten like Ionic (PARITY_A D3)',
         () {
       final reactivate = body(source, 'final existing = await supabase', 1200);
-      expect(reactivate, contains(".select('id, left')"));
+      expect(reactivate, contains(".select('id')"));
       expect(reactivate, contains(".eq('tenantId', tenantId)"));
-      expect(reactivate, contains("existing['left'] == null"));
+      expect(reactivate, isNot(contains("existing['left'] == null")));
       expect(reactivate, contains('reactivationPlayerData(playerData)'));
     });
 

@@ -401,12 +401,9 @@ class _ExportPageState extends ConsumerState<ExportPage> {
         // (Ionic: getAttendance(false, true) + date < today).
         final attendanceRepo =
             ref.read(attendanceRepositoryForTenantProvider(tenantId));
-        final seasonStart = tenant.seasonStart != null
-            ? DateTime.tryParse(tenant.seasonStart!)
-            : null;
+        // PARITY_A (R1): Ionic getCurrentAttDate() bound, all pages.
         final attendances = await attendanceRepo.getAttendances(
-          since: seasonStart ?? DateTime(2020, 1, 1),
-          limit: 10000,
+          since: AttendanceRepository.currentAttDate(tenant.seasonStart),
         );
         final now = DateTime.now();
         final startOfToday = DateTime(now.year, now.month, now.day);

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../../core/constants/enums.dart';
+import '../../core/utils/duty_utils.dart';
 import '../../core/utils/event_list_utils.dart';
 import '../models/player_absence/player_absence.dart';
 import 'base_repository.dart';
@@ -116,7 +117,7 @@ class PlayerAbsenceRepository extends BaseRepository with TenantAwareRepository 
   ) async {
     final response = await supabase
         .from('person_attendances')
-        .select('id, status, notes, attendance:attendance_id!inner(date, duration_days, type_id, tenantId)')
+        .select('id, status, notes, duty_state, attendance:attendance_id!inner(date, duration_days, type_id, tenantId, attType:type_id(duty_mode))')
         .eq('person_id', personId)
         .eq('attendance.tenantId', currentTenantId)
         // One day of slack: the exact local-day check happens below.
@@ -162,6 +163,15 @@ class PlayerAbsenceRepository extends BaseRepository with TenantAwareRepository 
     return day.compareTo(from) >= 0 && day.compareTo(until) <= 0;
   }
 
+  /// Duty fields for a status change of [row] (from [_upcomingInRange]).
+  Map<String, dynamic> _dutySync(Map<String, dynamic> row, AttendanceStatus status) =>
+      dutySyncFieldsForStatus(
+        isDutyTermin: row['attendance']?['attType']?['duty_mode'] == true,
+        currentDutyState: row['duty_state'] as String?,
+        newStatus: status,
+        userId: supabase.auth.currentUser?.id,
+      );
+
   static int _statusOf(dynamic raw) {
     if (raw is int) return raw;
     return int.tryParse(raw?.toString() ?? '') ?? AttendanceStatus.neutral.value;
@@ -190,6 +200,8 @@ class PlayerAbsenceRepository extends BaseRepository with TenantAwareRepository 
               'notes': reason,
               'changed_at': DateTime.now().toUtc().toIso8601String(),
               'changed_by': supabase.auth.currentUser?.id,
+              // PARITY_A (D2): Ionic updatePersonAttendance → syncDutyWithStatus
+              ..._dutySync(row, AttendanceStatus.excused),
             })
             .eq('id', row['id'])
             .eq('person_id', personId);
@@ -240,6 +252,8 @@ class PlayerAbsenceRepository extends BaseRepository with TenantAwareRepository 
               'notes': '',
               'changed_at': DateTime.now().toUtc().toIso8601String(),
               'changed_by': supabase.auth.currentUser?.id,
+              // PARITY_A (D2): Ionic updatePersonAttendance → syncDutyWithStatus
+              ..._dutySync(row, AttendanceStatus.fromValue(status)),
             })
             .eq('id', row['id'])
             .eq('person_id', absence.personId);

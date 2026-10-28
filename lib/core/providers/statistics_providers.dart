@@ -77,7 +77,7 @@ final filteredAttendancesForStatsProvider =
   final attendances = await repo.getAttendances(
     since: dateRange.start,
     withPersonAttendances: false,
-    limit: 500, // Higher limit for statistics
+    // PARITY_A (R1): Ionic stats loads all Termine (no limit).
   );
 
   // Filter to only include dates within the range

@@ -44,6 +44,29 @@ String? dutyStateAfterStatus(String? current, AttendanceStatus status) {
   return current;
 }
 
+/// Duty fields to write along with a status change of a person_attendances
+/// row (Ionic `syncDutyWithStatus`, utilities/db-helpers.ts). Returns an empty
+/// map when the Termin is not of a duty type or the duty state is unchanged.
+Map<String, dynamic> dutySyncFieldsForStatus({
+  required bool isDutyTermin,
+  required String? currentDutyState,
+  required AttendanceStatus newStatus,
+  required String? userId,
+  DateTime? now,
+}) {
+  if (!isDutyTermin) return const {};
+  final next = dutyStateAfterStatus(currentDutyState, newStatus);
+  if (next == currentDutyState) return const {};
+  return {
+    'duty_state': next,
+    if (next == DutyState.confirmed) 'duty_reminder_sent': true,
+    if (next == DutyState.confirmed && currentDutyState == null) ...{
+      'duty_assigned_by': userId,
+      'duty_assigned_at': (now ?? DateTime.now()).toUtc().toIso8601String(),
+    },
+  };
+}
+
 bool isDutyType(AttendanceType? type) => type?.dutyMode ?? false;
 
 /// Persons needed for a Termin (at least 1).

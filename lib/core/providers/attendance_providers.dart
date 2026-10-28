@@ -25,7 +25,12 @@ final attendancesProvider = FutureProvider<List<Attendance>>((ref) async {
   
   if (!repo.hasTenantId) return [];
   
-  return repo.getAttendances();
+  // PARITY_A (R1): Ionic att-list getAttendance(false, ...) -> all Termine
+  // after getCurrentAttDate() (season start, fallback 2023-01-01).
+  final tenant = ref.watch(currentTenantProvider);
+  return repo.getAttendances(
+    since: AttendanceRepository.currentAttDate(tenant?.seasonStart),
+  );
 });
 
 /// Provider for upcoming attendances

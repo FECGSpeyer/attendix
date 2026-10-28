@@ -745,13 +745,13 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
       });
       ref.read(trackingServiceProvider).track(TrackingEvent.playerUpdated);
 
-      // STATS_PEOPLE_FIXES: role sync (main group / voice leader) and
-      // shared identity propagation (global_person_id)
+      // STATS_PEOPLE_FIXES: role sync (main group / voice leader).
+      // PARITY_A (D1): Ionic updatePlayer only changes this one row - no
+      // propagation of identity fields to linked tenants.
       await _syncRolesAfterSave(
         isGeneral: isGeneral,
         assignVoiceLeaderRole: assignVoiceLeaderRole,
       );
-      await _propagateSharedIdentityFields();
 
       // Ionic syncPlayerWithUpcomingAttendancesByAdditionalFields
       // DB_REVIEW_REST (M2): Ionic person.page only syncs extra-field
@@ -925,33 +925,6 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
       }
     }
     await _loadUserRole();
-  }
-
-  /// Ionic player.service updatePlayer(): propagate shared identity fields
-  /// to all rows with the same global_person_id in linked tenants.
-  Future<void> _propagateSharedIdentityFields() async {
-    final globalId = widget.person.globalPersonId;
-    final personId = widget.person.id;
-    if (globalId == null || globalId.isEmpty || personId == null) return;
-    try {
-      final linkedIds = await ref.read(linkedTenantIdsProvider.future);
-      await ref
-          .read(crossTenantPersonRepositoryWithTenantProvider)
-          .propagateSharedFields(
-            globalPersonId: globalId,
-            excludePlayerId: personId,
-            linkedTenantIds: linkedIds,
-            fields: {
-              'firstName': _draft.firstName,
-              'lastName': _draft.lastName,
-              'birthday': _draft.birthday,
-              'email': _draft.email?.isEmpty ?? true ? null : _draft.email,
-              'phone': _draft.phone?.isEmpty ?? true ? null : _draft.phone,
-            },
-          );
-    } catch (_) {
-      // Non-critical: the person itself was saved
-    }
   }
 
   /// Email edits trigger a cross-tenant lookup (Ionic onEmailBlur).
