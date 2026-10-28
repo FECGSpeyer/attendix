@@ -7,7 +7,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../core/services/attendance_detail_cache.dart'
-    show isAuthOrPermissionError, isOfflineFallbackError, purgeOfflineReadCachesFor; // SOL_FIX7, SOL_FIX8
+    show
+        OfflineReadCacheGuard,
+        isAuthOrPermissionError,
+        isOfflineFallbackError,
+        purgeOfflineReadCachesFor; // SOL_FIX7, SOL_FIX8, SOL_FIX9
 import '../../core/services/offline_queue_service.dart'
     show connectivityCheckProvider;
 import '../models/song/song.dart';
@@ -86,14 +90,19 @@ class SongRepository extends BaseRepository with TenantAwareRepository {
   static String offlineSongsCacheKey(String userId, int tenantId) =>
       'offline_songs_v1_${userId}_$tenantId';
 
-  /// Cache key of the signed-in user, null (no cache) when signed out.
-  String? _offlineSongsKey(int tenantId) {
+  /// Signed-in auth user, null when signed out (or no auth client in tests).
+  String? _signedInUserId() {
     try {
-      final userId = supabase.auth.currentUser?.id;
-      return userId == null ? null : offlineSongsCacheKey(userId, tenantId);
+      return supabase.auth.currentUser?.id;
     } catch (_) {
       return null; // no auth client (tests) → no cache
     }
+  }
+
+  /// Cache key of the signed-in user, null (no cache) when signed out.
+  String? _offlineSongsKey(int tenantId) {
+    final userId = _signedInUserId();
+    return userId == null ? null : offlineSongsCacheKey(userId, tenantId);
   }
 
   /// Get all songs of the (effective) song tenant.
@@ -107,6 +116,12 @@ class SongRepository extends BaseRepository with TenantAwareRepository {
     // cache key use the same id.
     final tenantId = songTenantId;
     final cacheKey = _offlineSongsKey(tenantId); // SOL_FIX7
+    // SOL_FIX9: cache session captured before the load; a result arriving
+    // after sign-out / account switch / cache clear is not stored.
+    final cacheGuard = OfflineReadCacheGuard.capture(
+      userId: _signedInUserId(),
+      currentUserId: _signedInUserId,
+    );
     // Shared connectivity check (offline_queue_service), never throws.
     if (!await ref.read(connectivityCheckProvider)()) {
       return await _readOfflineSongs(cacheKey) ?? const [];
@@ -131,7 +146,7 @@ class SongRepository extends BaseRepository with TenantAwareRepository {
         songs.addAll(page);
         if (page.length < _pageSize) break;
       }
-      unawaited(_writeOfflineSongs(cacheKey, rawRows));
+      unawaited(_writeOfflineSongs(cacheKey, rawRows, cacheGuard));
       return songs;
     } catch (e, stack) {
       // SOL_FIX8: access revoked -> delete the user's offline copies of this
@@ -176,10 +191,16 @@ class SongRepository extends BaseRepository with TenantAwareRepository {
   }
 
   /// Caches the raw `songs` rows (lossless, like Ionic storing the rows).
-  Future<void> _writeOfflineSongs(String? key, List<dynamic> rows) async {
+  /// SOL_FIX9: skipped when [guard]'s session has ended in the meantime.
+  Future<void> _writeOfflineSongs(
+    String? key,
+    List<dynamic> rows,
+    OfflineReadCacheGuard guard,
+  ) async {
     if (key == null) return;
     try {
       final prefs = await SharedPreferences.getInstance();
+      if (!guard.isCurrent) return;
       await prefs.setString(key, jsonEncode(rows));
     } catch (_) {
       // Cache is best effort (quota, private mode).

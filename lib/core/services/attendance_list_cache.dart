@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../data/models/attendance/attendance.dart';
+import 'attendance_detail_cache.dart' show OfflineReadCacheGuard;
 
 /// LOGIC_SELF: offline read cache of the attendance list (Ionic att-list
 /// `offline_att_list_v1_<tenantId>` in Ionic Storage). The list is stored
@@ -17,9 +18,17 @@ class AttendanceListCache {
   static String keyFor(String userId, int tenantId) =>
       'offline_att_list_v1_${userId}_$tenantId';
 
-  Future<void> save(String userId, int tenantId, List<Attendance> attendances) async {
+  /// SOL_FIX9: with a [guard] (captured before the load), nothing is stored
+  /// once that session has ended (sign-out / account switch / cache clear).
+  Future<void> save(
+    String userId,
+    int tenantId,
+    List<Attendance> attendances, {
+    OfflineReadCacheGuard? guard,
+  }) async {
     try {
       final prefs = await SharedPreferences.getInstance();
+      if (guard != null && !guard.isCurrent) return;
       await prefs.setString(
         keyFor(userId, tenantId),
         jsonEncode({

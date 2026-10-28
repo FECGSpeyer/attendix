@@ -220,11 +220,16 @@ class OfflineQueueStore {
 /// cache (`persons` part, matched by tenant + person_attendances id), so a
 /// Termin opened offline later does not show the stale cached status again.
 /// Entries without attendanceId update every cached Termin of their tenant.
+///
+/// SOL_FIX9: with a [guard], nothing is written once its session has ended
+/// (the cache was cleared on sign-out / account switch in the meantime).
 Future<void> applyConfirmedWritesToDetailCache(
   List<QueuedWrite> confirmed, {
   AttendanceDetailCache cache = const AttendanceDetailCache(),
+  OfflineReadCacheGuard? guard,
 }) async {
   if (confirmed.isEmpty) return;
+  if (guard != null && !guard.isCurrent) return;
   try {
     // cache key → (tenant, user) of the confirmed writes
     final keys = <String, ({int tenantId, String? userId})>{};
@@ -254,7 +259,9 @@ Future<void> applyConfirmedWritesToDetailCache(
         tenantId: entry.value.tenantId,
         userId: entry.value.userId,
       );
-      if (!identical(updated, cached)) await cache.save(entry.key, updated);
+      if (!identical(updated, cached)) {
+        await cache.save(entry.key, updated, guard: guard);
+      }
     }
   } catch (e) {
     debugPrint('[OfflineQueue] detail cache update failed: $e');
@@ -288,6 +295,49 @@ final offlineQueueUserIdProvider = Provider<String? Function()>((ref) {
   };
 });
 
+/// SOL_FIX9: identity of the current auth session (null when signed out).
+/// Taken from the access token's `session_id` claim, which stays the same
+/// across token refreshes but changes on every new sign-in; falls back to
+/// the user id when the token carries no such claim. Read at call time.
+final offlineQueueSessionIdProvider = Provider<String? Function()>((ref) {
+  return () {
+    try {
+      final session = Supabase.instance.client.auth.currentSession;
+      if (session == null) return null;
+      return authSessionIdentity(session.accessToken) ?? 'user:${session.user.id}';
+    } catch (_) {
+      return null;
+    }
+  };
+});
+
+/// SOL_FIX9: `session_id` claim of a Supabase access token (JWT), or null
+/// when the token cannot be decoded or has no such claim.
+String? authSessionIdentity(String accessToken) {
+  try {
+    final parts = accessToken.split('.');
+    if (parts.length != 3) return null;
+    final payload = jsonDecode(
+      utf8.decode(base64Url.decode(base64Url.normalize(parts[1]))),
+    );
+    if (payload is! Map) return null;
+    final id = payload['session_id'];
+    return id is String && id.isNotEmpty ? id : null;
+  } catch (_) {
+    return null;
+  }
+}
+
+/// SOL_FIX9: auth events (sign-out ends a running replay). Empty stream
+/// when Supabase is not initialised (tests).
+final offlineQueueAuthEventsProvider = Provider<Stream<AuthChangeEvent>>((ref) {
+  try {
+    return Supabase.instance.client.auth.onAuthStateChange.map((s) => s.event);
+  } catch (_) {
+    return const Stream<AuthChangeEvent>.empty();
+  }
+});
+
 /// Replays one queued write against Supabase.
 typedef OfflineFlushFn = Future<void> Function(QueuedWrite entry);
 
@@ -310,10 +360,26 @@ class OfflineQueueNotifier extends Notifier<int> {
   bool _initialized = false;
   bool _flushing = false;
 
+  /// SOL_FIX9: a flush was requested while one was running (e.g. account
+  /// switch aborted the replay) → run again afterwards for the new session.
+  bool _flushRequested = false;
+
+  /// SOL_FIX9: auth session generation. Bumped on sign-out and on every
+  /// user change; a replay started in an older generation stops.
+  int _sessionGeneration = 0;
+
   OfflineQueueStore get _store => ref.read(offlineQueueStoreProvider);
 
   @override
   int build() {
+    // SOL_FIX9: a sign-out ends a running replay immediately.
+    final authSub = ref.read(offlineQueueAuthEventsProvider).listen(
+      (event) {
+        if (event == AuthChangeEvent.signedOut) _sessionGeneration++;
+      },
+      onError: (Object _) {},
+    );
+    ref.onDispose(authSub.cancel);
     // Replay when the connection comes back
     ref.listen<AsyncValue<bool>>(connectivityProvider, (previous, next) {
       final wasOnline = previous?.valueOrNull;
@@ -342,6 +408,8 @@ class OfflineQueueNotifier extends Notifier<int> {
   /// (login, logout, account switch). Other users' writes stay persisted
   /// but are never replayed or shown under this account.
   Future<void> onUserChanged() async {
+    // SOL_FIX9: (synchronously) end a replay of the previous session.
+    _sessionGeneration++;
     final own = ownedBy(await _store.load(), _currentUserId);
     state = own.length;
     if (own.isNotEmpty && await ref.read(connectivityCheckProvider)()) {
@@ -404,83 +472,129 @@ class OfflineQueueNotifier extends Notifier<int> {
   /// SOL_FIX4: writes of other users are kept but never replayed under this
   /// session; legacy entries without a user cannot be attributed and are
   /// dropped.
+  ///
+  /// SOL_FIX9: a flush requested while one is running runs again right
+  /// after it (so a new account's writes are replayed after an aborted
+  /// replay of the previous one).
   Future<void> flush() async {
-    if (_flushing) return;
+    if (_flushing) {
+      _flushRequested = true;
+      return;
+    }
     _flushing = true;
     try {
-      final userId = _currentUserId;
-      if (userId == null) {
-        state = 0;
-        return;
-      }
-      final all = await OfflineQueueStore.synchronized(_store.load);
-      final legacy = [for (final e in all) if (e.userId == null) e];
-      if (legacy.isNotEmpty) {
-        debugPrint('[OfflineQueue] dropping ${legacy.length} unattributed writes');
-        await _store.update(
-          (current) => OfflineQueueStore.removeConfirmed(current, legacy),
-        );
-      }
-      final queue = ownedBy(all, userId);
-      if (queue.isEmpty) {
-        state = 0;
-        return;
-      }
-
-      final flushFn = ref.read(offlineFlushFnProvider);
-      final failed = <QueuedWrite>[];
-      final confirmed = <QueuedWrite>[];
-      final flushedAttendanceIds = <int>{};
-      for (final entry in queue) {
-        try {
-          await flushFn(entry);
-          confirmed.add(entry);
-          if (entry.attendanceId != null) {
-            flushedAttendanceIds.add(entry.attendanceId!);
-          }
-        } catch (e) {
-          debugPrint('[OfflineQueue] flush failed for ${entry.id}: $e');
-          failed.add(entry);
-        }
-      }
-
-      // SOL_FIX2: bring the offline detail cache up to date first, then
-      // remove only the confirmed entries from the CURRENT queue
-      // (never overwrite it with the stale failure set).
-      await applyConfirmedWritesToDetailCache(confirmed);
-      final remaining = await _store.update(
-        (current) => OfflineQueueStore.removeConfirmed(current, confirmed),
-      );
-      state = ownedBy(remaining, userId).length;
-
-      if (failed.length < queue.length) {
-        // Only refresh providers that are alive (avoid triggering fetches)
-        for (final id in flushedAttendanceIds) {
-          if (ref.exists(attendanceByIdProvider(id))) {
-            ref.invalidate(attendanceByIdProvider(id));
-          }
-        }
-        if (ref.exists(attendancesProvider)) ref.invalidate(attendancesProvider);
-        if (ref.exists(playerAttendancePercentagesProvider)) {
-          ref.invalidate(playerAttendancePercentagesProvider);
-        }
-      }
-
-      if (failed.isEmpty) {
-        try {
-          rootScaffoldMessengerKey.currentState?.showSnackBar(
-            SnackBar(
-              content: Text(l10nWithoutContext.svcOfflineSaved),
-              backgroundColor: Colors.green,
-              behavior: SnackBarBehavior.floating,
-            ),
-          );
-        } catch (_) {
-          // No messenger available (e.g. tests)
-        }
-      }
+      do {
+        _flushRequested = false;
+        await _flushOnce();
+      } while (_flushRequested);
     } finally {
       _flushing = false;
+    }
+  }
+
+  /// SOL_FIX9: the replay is bound to the auth session it started in (user
+  /// id, auth session identity and [_sessionGeneration]). Before EACH write
+  /// the session is checked again; on sign-out or account switch the replay
+  /// stops at once and the not yet replayed writes stay queued for their
+  /// user — they never run with another session's rights / changed_by.
+  Future<void> _flushOnce() async {
+    final userIdFn = ref.read(offlineQueueUserIdProvider);
+    final sessionIdFn = ref.read(offlineQueueSessionIdProvider);
+    final userId = userIdFn();
+    if (userId == null) {
+      state = 0;
+      return;
+    }
+    final sessionId = sessionIdFn();
+    final generation = _sessionGeneration;
+    bool sessionUnchanged() {
+      if (_sessionGeneration != generation) return false;
+      try {
+        return userIdFn() == userId && sessionIdFn() == sessionId;
+      } catch (_) {
+        return false;
+      }
+    }
+
+    // Offline detail cache updates belong to the same session.
+    final cacheGuard = OfflineReadCacheGuard.capture(
+      userId: userId,
+      currentUserId: userIdFn,
+    );
+
+    final all = await OfflineQueueStore.synchronized(_store.load);
+    final legacy = [for (final e in all) if (e.userId == null) e];
+    if (legacy.isNotEmpty) {
+      debugPrint('[OfflineQueue] dropping ${legacy.length} unattributed writes');
+      await _store.update(
+        (current) => OfflineQueueStore.removeConfirmed(current, legacy),
+      );
+    }
+    final queue = ownedBy(all, userId);
+    if (queue.isEmpty) {
+      state = 0;
+      return;
+    }
+
+    final flushFn = ref.read(offlineFlushFnProvider);
+    final failed = <QueuedWrite>[];
+    final confirmed = <QueuedWrite>[];
+    final flushedAttendanceIds = <int>{};
+    var aborted = false;
+    for (final entry in queue) {
+      // SOL_FIX9: re-check the session right before every write.
+      if (!sessionUnchanged()) {
+        aborted = true;
+        debugPrint('[OfflineQueue] session changed – replay stopped');
+        break;
+      }
+      try {
+        await flushFn(entry);
+        confirmed.add(entry);
+        if (entry.attendanceId != null) {
+          flushedAttendanceIds.add(entry.attendanceId!);
+        }
+      } catch (e) {
+        debugPrint('[OfflineQueue] flush failed for ${entry.id}: $e');
+        failed.add(entry);
+      }
+    }
+
+    // SOL_FIX2: bring the offline detail cache up to date first, then
+    // remove only the confirmed entries from the CURRENT queue
+    // (never overwrite it with the stale failure set).
+    await applyConfirmedWritesToDetailCache(confirmed, guard: cacheGuard);
+    final remaining = await _store.update(
+      (current) => OfflineQueueStore.removeConfirmed(current, confirmed),
+    );
+    // SOL_FIX9: count for whoever is signed in now.
+    state = ownedBy(remaining, aborted ? userIdFn() : userId).length;
+
+    if (confirmed.isNotEmpty) {
+      // Only refresh providers that are alive (avoid triggering fetches)
+      for (final id in flushedAttendanceIds) {
+        if (ref.exists(attendanceByIdProvider(id))) {
+          ref.invalidate(attendanceByIdProvider(id));
+        }
+      }
+      if (ref.exists(attendancesProvider)) ref.invalidate(attendancesProvider);
+      if (ref.exists(playerAttendancePercentagesProvider)) {
+        ref.invalidate(playerAttendancePercentagesProvider);
+      }
+    }
+
+    if (failed.isEmpty && !aborted) {
+      try {
+        rootScaffoldMessengerKey.currentState?.showSnackBar(
+          SnackBar(
+            content: Text(l10nWithoutContext.svcOfflineSaved),
+            backgroundColor: Colors.green,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      } catch (_) {
+        // No messenger available (e.g. tests)
+      }
     }
   }
 }
