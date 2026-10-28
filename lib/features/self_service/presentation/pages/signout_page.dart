@@ -7,6 +7,7 @@ import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/self_service_providers.dart';
 import '../../../../core/providers/role_permission_providers.dart';
 import '../../../../core/providers/signout_providers.dart';
+import '../../../../core/providers/team_org_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/providers/user_preferences_provider.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -23,6 +24,7 @@ import '../widgets/self_service_absences.dart';
 import '../../../../core/providers/duty_providers.dart';
 import '../../../duty/presentation/widgets/self_service_duty_section.dart';
 import '../../../messages/presentation/widgets/notification_bell.dart'; // MESSAGES
+import '../../../team_organization/presentation/widgets/my_tasks_card.dart'; // INTEGRATION
 
 /// "Meine Termine" – self-service sign in/out of the current tenant
 /// (Ionic `selfService/signout`).
@@ -84,6 +86,7 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
     ref.invalidate(signoutDataProvider);
     ref.invalidate(currentSelfServicePlayerProvider);
     ref.invalidate(upcomingSongsProvider);
+    ref.invalidate(myTasksProvider); // INTEGRATION
     await ref.read(signoutDataProvider.future);
   }
 
@@ -225,6 +228,8 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
             children: [
               if (player != null) _buildGreeting(player, data),
               if (player != null) ..._buildTiles(player),
+              // INTEGRATION: "Meine Aufgaben" (Teamorganisation, Ionic app-my-tasks)
+              if (player != null) const MyTasksCard(),
               // PEOPLE_IMPORT: planned absences + self pause
               if (player != null) const SelfServiceAbsenceSection(),
               if (player == null)

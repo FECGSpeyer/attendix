@@ -8,6 +8,8 @@ import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/dashboard/dashboard_models.dart';
 import '../../../../data/models/tenant/tenant.dart';
+import '../../../messages/presentation/widgets/notification_bell.dart';
+import '../../../team_organization/presentation/widgets/my_tasks_card.dart';
 import '../widgets/event_cards.dart';
 import '../widgets/people_cards.dart';
 
@@ -24,7 +26,7 @@ class HomeDashboardPage extends ConsumerWidget {
         DashboardCardIds.criticalPersons => const CriticalPersonsCard(),
         DashboardCardIds.currentSongs => const CurrentSongsCard(),
         DashboardCardIds.currentPlan => const CurrentPlanCard(),
-        // "Meine Aufgaben" (Teamorganisation) is not ported yet.
+        DashboardCardIds.myTasks => const MyTasksCard(),
         _ => null,
       };
 
@@ -49,6 +51,7 @@ class HomeDashboardPage extends ConsumerWidget {
             icon: const Icon(Icons.settings_outlined),
             onPressed: () => context.push('/settings/dashboard'),
           ),
+          const NotificationBell(), // INTEGRATION (Ionic app-notification-bell)
         ],
       ),
       body: RefreshIndicator(
