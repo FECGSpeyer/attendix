@@ -332,13 +332,14 @@ class AttendanceNotifier extends Notifier<AsyncValue<void>> {
   AttendanceRepository get _repo => ref.read(attendanceRepositoryWithTenantProvider);
 
   Future<Attendance?> createAttendance(Attendance attendance) async {
+    final repo = _repo; // SOL_FIX4: bind the tenant repository before the first await.
     state = const AsyncValue.loading();
     try {
       // SOL_FIX2: resolved create permission (helpers: attendance_create).
       if (!await ref.read(canCreateAttendanceConfirmedProvider.future)) {
         throw StateError(l10nWithoutContext.attendanceFlutterNoPermission);
       }
-      final result = await _repo.createAttendance(attendance);
+      final result = await repo.createAttendance(attendance);
       state = const AsyncValue.data(null);
       ref.invalidate(attendancesProvider);
       ref.invalidate(upcomingAttendancesProvider);

@@ -12,6 +12,7 @@ QueuedWrite _write(String paId, Map<String, dynamic> payload) => QueuedWrite(
       personAttendanceId: paId,
       payload: payload,
       tenantId: 42,
+      userId: 'u1',
       createdAt: '2026-01-01T00:00:00.000',
     );
 
@@ -58,12 +59,14 @@ void main() {
     late bool online;
     late List<QueuedWrite> flushed;
     late bool failFlush;
+    String? currentUser;
 
     ProviderContainer createContainer() {
       final container = ProviderContainer(overrides: [
         connectivityProvider.overrideWith((ref) => const Stream<bool>.empty()),
         connectivityCheckProvider.overrideWithValue(() async => online),
         currentTenantIdProvider.overrideWithValue(42),
+        offlineQueueUserIdProvider.overrideWithValue(() => currentUser),
         offlineFlushFnProvider.overrideWithValue((entry) async {
           if (failFlush) throw Exception('network');
           flushed.add(entry);
@@ -78,6 +81,7 @@ void main() {
       online = true;
       flushed = [];
       failFlush = false;
+      currentUser = 'u1';
     });
 
     test('does not queue while online', () async {
@@ -135,7 +139,7 @@ void main() {
       final container = createContainer();
       final notifier = container.read(offlineQueueNotifierProvider.notifier);
       await Future.wait([
-        for (var i = 0; i < 20; i++) notifier.enqueue('pa$i', {'status': i}, tenantId: 42),
+        for (var i = 0; i < 20; i++) notifier.enqueue('pa$i', {'status': i}, tenantId: 42, userId: 'u1'),
       ]);
       final stored = await OfflineQueueStore().load();
       expect(stored.map((e) => e.personAttendanceId).toSet().length, 20);
@@ -149,19 +153,20 @@ void main() {
         connectivityProvider.overrideWith((ref) => const Stream<bool>.empty()),
         connectivityCheckProvider.overrideWithValue(() async => online),
         currentTenantIdProvider.overrideWithValue(42),
+        offlineQueueUserIdProvider.overrideWithValue(() => 'u1'),
         offlineFlushFnProvider.overrideWithValue((entry) async {
           if (!injected) {
             injected = true;
             // a new write and a merge into the entry being replayed
-            await container.read(offlineQueueNotifierProvider.notifier).enqueue('paNew', {'status': 9}, tenantId: 42);
-            await container.read(offlineQueueNotifierProvider.notifier).enqueue('pa1', {'notes': 'later'}, tenantId: 42);
+            await container.read(offlineQueueNotifierProvider.notifier).enqueue('paNew', {'status': 9}, tenantId: 42, userId: 'u1');
+            await container.read(offlineQueueNotifierProvider.notifier).enqueue('pa1', {'notes': 'later'}, tenantId: 42, userId: 'u1');
           }
           flushed.add(entry);
         }),
       ]);
       addTearDown(container.dispose);
       final notifier = container.read(offlineQueueNotifierProvider.notifier);
-      await notifier.enqueue('pa1', {'status': 1}, tenantId: 42);
+      await notifier.enqueue('pa1', {'status': 1}, tenantId: 42, userId: 'u1');
 
       await notifier.flush();
       final stored = await OfflineQueueStore().load();
@@ -238,6 +243,94 @@ void main() {
       await second.read(offlineQueueNotifierProvider.notifier).init();
       expect(flushed.length, 1);
       expect(second.read(offlinePendingCountProvider), 0);
+    });
+
+    // SOL_FIX4: the persisted queue belongs to the account that wrote it.
+    test('enqueueIfOffline records the auth user and refuses without one', () async {
+      online = false;
+      final container = createContainer();
+      final notifier = container.read(offlineQueueNotifierProvider.notifier);
+      expect(await notifier.enqueueIfOffline('pa1', {'status': 1}), isTrue);
+      expect((await OfflineQueueStore().load()).single.userId, 'u1');
+
+      currentUser = null;
+      expect(await notifier.enqueueIfOffline('pa2', {'status': 1}), isFalse);
+      expect((await OfflineQueueStore().load()), hasLength(1));
+    });
+
+    test('writes of another user are never replayed, but kept', () async {
+      online = false;
+      final container = createContainer();
+      final notifier = container.read(offlineQueueNotifierProvider.notifier);
+      await notifier.enqueueIfOffline('pa1', {'status': 1}, attendanceId: 5);
+
+      // account switch u1 → u2 before the connection comes back
+      currentUser = 'u2';
+      await notifier.enqueueIfOffline('pa1', {'status': 4}, attendanceId: 5);
+      final stored = await OfflineQueueStore().load();
+      expect(stored, hasLength(2), reason: 'u2 never merges into u1');
+      expect(container.read(offlinePendingCountProvider), 1);
+
+      online = true;
+      await notifier.flush();
+      expect(flushed.map((e) => (e.userId, e.payload['status'])), [('u2', 4)]);
+      final left = await OfflineQueueStore().load();
+      expect(left.single.userId, 'u1');
+      expect(container.read(offlinePendingCountProvider), 0);
+
+      // u1 signs in again → their write is replayed now
+      currentUser = 'u1';
+      await notifier.onUserChanged();
+      expect(flushed.map((e) => e.userId), ['u2', 'u1']);
+      expect(await OfflineQueueStore().load(), isEmpty);
+    });
+
+    test('nothing is replayed while signed out', () async {
+      online = false;
+      final container = createContainer();
+      final notifier = container.read(offlineQueueNotifierProvider.notifier);
+      await notifier.enqueueIfOffline('pa1', {'status': 1});
+      currentUser = null;
+      online = true;
+      await notifier.flush();
+      expect(flushed, isEmpty);
+      expect(await OfflineQueueStore().load(), hasLength(1));
+      expect(container.read(offlinePendingCountProvider), 0);
+    });
+
+    test('legacy entries without a user are dropped, not replayed', () async {
+      await OfflineQueueStore().save([
+        QueuedWrite(
+          id: 'legacy',
+          personAttendanceId: 'pa9',
+          payload: const {'status': 1},
+          tenantId: 42,
+          createdAt: 'then',
+        ),
+      ]);
+      final container = createContainer();
+      await container.read(offlineQueueNotifierProvider.notifier).flush();
+      expect(flushed, isEmpty);
+      expect(await OfflineQueueStore().load(), isEmpty);
+    });
+
+    test('pending overlay only shows the signed-in user\'s writes', () {
+      final rows = [
+        {'id': 'pa1', 'status': 0},
+      ];
+      final queue = [
+        QueuedWrite(
+          id: 'x',
+          personAttendanceId: 'pa1',
+          payload: const {'status': 2},
+          tenantId: 42,
+          userId: 'u2',
+          createdAt: 'now',
+        ),
+      ];
+      expect(OfflineQueueStore.overlayPending(rows, queue, tenantId: 42, userId: 'u1').first['status'], 0);
+      expect(OfflineQueueStore.overlayPending(rows, queue, tenantId: 42, userId: null).first['status'], 0);
+      expect(OfflineQueueStore.overlayPending(rows, queue, tenantId: 42, userId: 'u2').first['status'], 2);
     });
   });
 

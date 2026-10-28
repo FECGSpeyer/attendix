@@ -27,6 +27,7 @@ QueuedWrite _write(String paId, Map<String, dynamic> payload, int tenantId) =>
       personAttendanceId: paId,
       payload: payload,
       tenantId: tenantId,
+      userId: 'u1',
       createdAt: '2026-10-28T10:00:00Z',
     );
 
@@ -223,7 +224,7 @@ void main() {
         _write('a', {'status': 2}, 7),
         _write('a', {'notes': 'krank'}, 7),
         _write('b', {'status': 4}, 8), // other tenant → ignored
-      ], tenantId: 7);
+      ], tenantId: 7, userId: 'u1');
       expect(result[0], {'id': 'a', 'status': 2, 'notes': 'krank'});
       expect(result[1], {'id': 'b', 'status': 1, 'notes': 'x'});
       // Source rows are not mutated (the cache keeps server data).
@@ -236,7 +237,8 @@ void main() {
       ];
       expect(
           identical(
-              OfflineQueueStore.overlayPending(rows, const [], tenantId: 1),
+              OfflineQueueStore.overlayPending(rows, const [],
+                  tenantId: 1, userId: 'u1'),
               rows),
           isTrue);
     });

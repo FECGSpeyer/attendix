@@ -209,12 +209,15 @@ class TeamTaskNotifier extends Notifier<AsyncValue<void>> {
   }
 
   Future<TeamTask> create(TeamTask task, {bool notify = false}) async {
+    // SOL_FIX4: bind the tenant repository before the first await.
+    final repo = _repo;
+    final protocolRepo = ref.read(protocolRepositoryWithTenantProvider);
     state = const AsyncValue.loading();
     try {
-      final created = await _repo.createTask(task);
+      final created = await repo.createTask(task);
       state = const AsyncValue.data(null);
       if (notify && created.id != null) {
-        await ref.read(protocolRepositoryWithTenantProvider).notifyTeam({'type': 'task_assigned', 'taskId': created.id});
+        await protocolRepo.notifyTeam({'type': 'task_assigned', 'taskId': created.id});
       }
       _invalidate(created);
       return created;
@@ -225,12 +228,15 @@ class TeamTaskNotifier extends Notifier<AsyncValue<void>> {
   }
 
   Future<TeamTask> update(String id, Map<String, dynamic> updates, {bool notify = false}) async {
+    // SOL_FIX4: bind the tenant repository before the first await.
+    final repo = _repo;
+    final protocolRepo = ref.read(protocolRepositoryWithTenantProvider);
     state = const AsyncValue.loading();
     try {
-      final updated = await _repo.updateTask(id, updates);
+      final updated = await repo.updateTask(id, updates);
       state = const AsyncValue.data(null);
       if (notify) {
-        await ref.read(protocolRepositoryWithTenantProvider).notifyTeam({'type': 'task_assigned', 'taskId': id});
+        await protocolRepo.notifyTeam({'type': 'task_assigned', 'taskId': id});
       }
       _invalidate(updated);
       return updated;
@@ -293,16 +299,19 @@ class AgendaItemNotifier extends Notifier<AsyncValue<void>> {
 
   /// Accept / reject a member's suggestion and notify the proposer.
   Future<void> decide(String id, Map<String, dynamic> changes) async {
+    // SOL_FIX4: bind the tenant repository before the first await.
+    final protocolRepo = ref.read(protocolRepositoryWithTenantProvider);
     await update(id, changes);
-    await ref.read(protocolRepositoryWithTenantProvider).notifyTeam({'type': 'proposal_decided', 'agendaItemId': id});
+    await protocolRepo.notifyTeam({'type': 'proposal_decided', 'agendaItemId': id});
   }
 
   Future<void> propose(String title, String? description) async {
+    final repo = _repo; // SOL_FIX4: bind the tenant repository before the first await.
     state = const AsyncValue.loading();
     try {
       final person = await ref.read(teamPersonProvider.future);
       if (person?.id == null) throw Exception(l10nWithoutContext.dbNoPersonFound);
-      await _repo.proposeAgendaItem(title: title, description: description, proposedBy: person!.id!);
+      await repo.proposeAgendaItem(title: title, description: description, proposedBy: person!.id!);
       state = const AsyncValue.data(null);
       ref.invalidate(agendaItemsProvider);
     } catch (e, stack) {

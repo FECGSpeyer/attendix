@@ -257,6 +257,8 @@ class RiverpodPushHost implements PushHost {
     final readType = target.markReadType;
     if (readType != null) {
       try {
+        // tenant-read-after-await: intended — the push may have switched to
+        // its target tenant above; markMatchingRead must run there.
         final repo = _ref.read(userNotificationRepositoryWithTenantProvider);
         if (repo.hasTenantId) {
           await repo.markMatchingRead(readType,

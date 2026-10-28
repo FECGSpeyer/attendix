@@ -35,6 +35,7 @@ import '../../../../core/services/tracking/tracking_service.dart';
 import '../../../../core/utils/demo_guard.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
+import '../../../../core/utils/people_shift_status.dart' show shiftAssignmentChanged; // SOL_FIX4
 
 /// Provider for single person with group name
 final personProvider =
@@ -770,7 +771,16 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
 
       // LOGIC_PEOPLE: Ionic updatePlayer(..., updateShifts) →
       // updateShiftAssignmentsForPerson when the shift plan changed.
-      if (_selectedShiftId != person.shiftId) {
+      // SOL_FIX4: shift name and start date change the computed shift
+      // status too, so any of the three fields triggers the recalculation.
+      if (shiftAssignmentChanged(
+        oldShiftId: person.shiftId,
+        oldShiftName: person.shiftName,
+        oldShiftStart: person.shiftStart,
+        newShiftId: _selectedShiftId,
+        newShiftName: _selectedShiftName,
+        newShiftStart: _shiftStart,
+      )) {
         await repo.updateShiftAssignmentsForPerson(person.copyWith(
           shiftId: _selectedShiftId,
           shiftName: _selectedShiftName,

@@ -5,6 +5,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../data/repositories/attendance_repository.dart';
@@ -45,6 +46,10 @@ class QueuedWrite {
   /// Tenant the write belongs to (replayed with this tenant's validation).
   final int tenantId;
   final int? attendanceId;
+
+  /// SOL_FIX4: auth user that made the write. Entries are only replayed
+  /// (and overlaid) for this user; entries without a user (written by an
+  /// older app version) cannot be attributed and are dropped on flush.
   final String? userId;
   final String createdAt;
 
@@ -153,11 +158,14 @@ class OfflineQueueStore {
   }
 
   /// Last-write-wins: merge into an existing entry for the same
-  /// personAttendanceId, otherwise append.
+  /// personAttendanceId (SOL_FIX4: of the same user and tenant — a write of
+  /// user B never merges into a pending write of user A), otherwise append.
   static List<QueuedWrite> merge(List<QueuedWrite> queue, QueuedWrite entry) {
     final result = List<QueuedWrite>.of(queue);
-    final index = result.indexWhere(
-        (e) => e.personAttendanceId == entry.personAttendanceId);
+    final index = result.indexWhere((e) =>
+        e.personAttendanceId == entry.personAttendanceId &&
+        e.userId == entry.userId &&
+        e.tenantId == entry.tenantId);
     if (index >= 0) {
       final existing = result[index];
       result[index] = existing.copyWith(
@@ -175,14 +183,20 @@ class OfflineQueueStore {
   /// change made offline does not revert to the cached status/notes when
   /// the Termin is reopened. Matches by tenant + record id; entries of other
   /// tenants are ignored. Rows are copied, never mutated.
+  ///
+  /// SOL_FIX4: only writes of [userId] are overlaid; without a signed-in
+  /// user nothing is overlaid (another account's pending writes stay
+  /// invisible).
   static List<dynamic> overlayPending(
     List<dynamic> rows,
     List<QueuedWrite> queue, {
     required int tenantId,
+    required String? userId,
   }) {
+    if (userId == null) return rows;
     final pending = <String, Map<String, dynamic>>{};
     for (final e in queue) {
-      if (e.tenantId != tenantId) continue;
+      if (e.tenantId != tenantId || e.userId != userId) continue;
       pending[e.personAttendanceId] = {
         ...?pending[e.personAttendanceId],
         ...e.payload,
@@ -212,23 +226,30 @@ Future<void> applyConfirmedWritesToDetailCache(
 }) async {
   if (confirmed.isEmpty) return;
   try {
-    final keys = <String, int>{}; // cache key → tenant
+    // cache key → (tenant, user) of the confirmed writes
+    final keys = <String, ({int tenantId, String? userId})>{};
     List<String>? allKeys;
     for (final e in confirmed) {
+      final owner = (tenantId: e.tenantId, userId: e.userId);
       if (e.attendanceId != null) {
-        keys[AttendanceDetailCache.keyFor(e.tenantId, e.attendanceId!, 'persons')] = e.tenantId;
+        keys[AttendanceDetailCache.keyFor(e.tenantId, e.attendanceId!, 'persons')] = owner;
       } else {
         allKeys ??= (await SharedPreferences.getInstance()).getKeys().toList();
         final prefix = 'offline_att_detail_v1_${e.tenantId}_';
         for (final k in allKeys) {
-          if (k.startsWith(prefix) && k.endsWith('_persons')) keys[k] = e.tenantId;
+          if (k.startsWith(prefix) && k.endsWith('_persons')) keys[k] = owner;
         }
       }
     }
     for (final entry in keys.entries) {
       final cached = await cache.load(entry.key);
       if (cached is! List) continue;
-      final updated = OfflineQueueStore.overlayPending(cached, confirmed, tenantId: entry.value);
+      final updated = OfflineQueueStore.overlayPending(
+        cached,
+        confirmed,
+        tenantId: entry.value.tenantId,
+        userId: entry.value.userId,
+      );
       if (!identical(updated, cached)) await cache.save(entry.key, updated);
     }
   } catch (e) {
@@ -247,6 +268,18 @@ final connectivityCheckProvider = Provider<Future<bool> Function()>((ref) {
       return results.any((r) => r != ConnectivityResult.none);
     } catch (_) {
       return true; // Unknown -> assume online, write directly
+    }
+  };
+});
+
+/// SOL_FIX4: id of the signed-in auth user (null when signed out or when
+/// Supabase is not initialised, e.g. in tests). Read at call time.
+final offlineQueueUserIdProvider = Provider<String? Function()>((ref) {
+  return () {
+    try {
+      return Supabase.instance.client.auth.currentUser?.id;
+    } catch (_) {
+      return null;
     }
   };
 });
@@ -288,13 +321,26 @@ class OfflineQueueNotifier extends Notifier<int> {
     return 0;
   }
 
+  String? get _currentUserId => ref.read(offlineQueueUserIdProvider)();
+
+  /// SOL_FIX4: pending writes of [userId] (none without a signed-in user).
+  static List<QueuedWrite> ownedBy(List<QueuedWrite> queue, String? userId) =>
+      userId == null ? const [] : [for (final e in queue) if (e.userId == userId) e];
+
   /// Load the persisted queue and flush it if online (Ionic init()).
   Future<void> init() async {
     if (_initialized) return;
     _initialized = true;
-    final queue = await _store.load();
-    state = queue.length;
-    if (queue.isNotEmpty && await ref.read(connectivityCheckProvider)()) {
+    await onUserChanged();
+  }
+
+  /// SOL_FIX4: recount for the now signed-in user and replay their writes
+  /// (login, logout, account switch). Other users' writes stay persisted
+  /// but are never replayed or shown under this account.
+  Future<void> onUserChanged() async {
+    final own = ownedBy(await _store.load(), _currentUserId);
+    state = own.length;
+    if (own.isNotEmpty && await ref.read(connectivityCheckProvider)()) {
       await flush();
     }
   }
@@ -312,11 +358,15 @@ class OfflineQueueNotifier extends Notifier<int> {
     if (online) return false;
     final tenantId = ref.read(currentTenantIdProvider);
     if (tenantId == null) return false;
+    // SOL_FIX4: record the author so the write is only replayed for them.
+    final userId = _currentUserId;
+    if (userId == null) return false;
     await enqueue(
       personAttendanceId,
       payload,
       tenantId: tenantId,
       attendanceId: attendanceId,
+      userId: userId,
     );
     return true;
   }
@@ -326,8 +376,8 @@ class OfflineQueueNotifier extends Notifier<int> {
     String personAttendanceId,
     Map<String, dynamic> payload, {
     required int tenantId,
+    required String userId,
     int? attendanceId,
-    String? userId,
   }) async {
     final entry = QueuedWrite(
       id: const Uuid().v4(),
@@ -341,15 +391,33 @@ class OfflineQueueNotifier extends Notifier<int> {
     // SOL_FIX2: serialized read-modify-write (concurrent enqueues no longer
     // overwrite each other).
     final merged = await _store.update((queue) => OfflineQueueStore.merge(queue, entry));
-    state = merged.length;
+    state = ownedBy(merged, _currentUserId).length;
   }
 
-  /// Replay all queued writes. Failed writes stay in the queue.
+  /// Replay the queued writes of the signed-in user. Failed writes stay in
+  /// the queue.
+  ///
+  /// SOL_FIX4: writes of other users are kept but never replayed under this
+  /// session; legacy entries without a user cannot be attributed and are
+  /// dropped.
   Future<void> flush() async {
     if (_flushing) return;
     _flushing = true;
     try {
-      final queue = await OfflineQueueStore.synchronized(_store.load);
+      final userId = _currentUserId;
+      if (userId == null) {
+        state = 0;
+        return;
+      }
+      final all = await OfflineQueueStore.synchronized(_store.load);
+      final legacy = [for (final e in all) if (e.userId == null) e];
+      if (legacy.isNotEmpty) {
+        debugPrint('[OfflineQueue] dropping ${legacy.length} unattributed writes');
+        await _store.update(
+          (current) => OfflineQueueStore.removeConfirmed(current, legacy),
+        );
+      }
+      final queue = ownedBy(all, userId);
       if (queue.isEmpty) {
         state = 0;
         return;
@@ -379,7 +447,7 @@ class OfflineQueueNotifier extends Notifier<int> {
       final remaining = await _store.update(
         (current) => OfflineQueueStore.removeConfirmed(current, confirmed),
       );
-      state = remaining.length;
+      state = ownedBy(remaining, userId).length;
 
       if (failed.length < queue.length) {
         // Only refresh providers that are alive (avoid triggering fetches)

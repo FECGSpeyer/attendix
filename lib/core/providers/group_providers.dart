@@ -173,11 +173,12 @@ class GroupNotifier extends Notifier<AsyncValue<void>> {
     Map<int, int> categorySortOrders, {
     Map<int, int> groupSortOrders = const {},
   }) async {
+    final repo = _repo; // SOL_FIX4: bind the tenant repository before the first await.
     state = const AsyncValue.loading();
     try {
-      await _repo.updateGroupCategorySortOrders(categorySortOrders);
+      await repo.updateGroupCategorySortOrders(categorySortOrders);
       if (groupSortOrders.isNotEmpty) {
-        await _repo.updateGroupSortOrders(groupSortOrders);
+        await repo.updateGroupSortOrders(groupSortOrders);
       }
       state = const AsyncValue.data(null);
       ref.invalidate(groupCategoriesProvider);

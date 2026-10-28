@@ -591,10 +591,11 @@ class SongCategoryNotifier extends Notifier<AsyncValue<void>> {
 
   /// Add a new song category
   Future<SongCategory?> add(String name) async {
+    final repo = _repo; // SOL_FIX4: bind the tenant repository before the first await.
     state = const AsyncValue.loading();
     try {
-      final categories = await _repo.getSongCategories();
-      final result = await _repo.addSongCategory(
+      final categories = await repo.getSongCategories();
+      final result = await repo.addSongCategory(
         name: name,
         index: categories.length,
       );

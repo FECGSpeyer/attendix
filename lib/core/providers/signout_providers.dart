@@ -221,8 +221,10 @@ class SignoutNotifier extends Notifier<AsyncValue<void>> {
       ids,
     );
     return _run(() async {
-      await _repo.signOut(ids, reason, isLateComing: isLate, isSelf: true);
+      // SOL_FIX4: bind the tenant repository before the first await.
+      final repo = _repo;
       final dutyRepo = ref.read(dutyRepositoryWithTenantProvider);
+      await repo.signOut(ids, reason, isLateComing: isLate, isSelf: true);
       for (final attendanceId in cancelledDuties) {
         // notify never throws; fire-and-forget like Ionic (`void notify`)
         unawaited(dutyRepo.notify(DutyNotifyType.understaffed, attendanceId));
