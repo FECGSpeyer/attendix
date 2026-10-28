@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 
 import '../../../../core/providers/organisation_providers.dart';
 import '../../../../core/providers/plan_providers.dart';
@@ -141,24 +142,35 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
     );
     if (action == null || !mounted) return;
     if (action == 'rename') {
-      final title = await showPlanTextPrompt(
-        context,
-        title: 'Vorlage umbenennen',
-        initialValue: tpl.title,
-        hint: 'Name der Vorlage...',
-      );
-      if (title == null || title.trim().isEmpty) return;
-      _updateTemplate(index, tpl.copyWith(title: title.trim()));
+      await _renameTemplate(index);
     } else {
-      setState(() {
-        _templates = [..._templates!]..removeAt(index);
-        if (_selected == index) {
-          _selected = null;
-        } else if (_selected != null && _selected! > index) {
-          _selected = _selected! - 1;
-        }
-      });
+      await _removeTemplate(index);
     }
+  }
+
+  Future<void> _renameTemplate(int index) async {
+    final tpl = _templates![index];
+    final title = await showPlanTextPrompt(
+      context,
+      title: 'Vorlage umbenennen',
+      initialValue: tpl.title,
+      hint: 'Name der Vorlage...',
+      confirmText: 'Speichern',
+    );
+    if (title == null || title.trim().isEmpty) return;
+    _updateTemplate(index, tpl.copyWith(title: title.trim()));
+    await _saveTemplates();
+  }
+
+  Future<void> _removeTemplate(int index) async {
+    setState(() {
+      _templates = [..._templates!]..removeAt(index);
+      if (_selected == index) {
+        _selected = null;
+      } else if (_selected != null && _selected! > index) {
+        _selected = _selected! - 1;
+      }
+    });
     await _saveTemplates();
   }
 
@@ -302,24 +314,37 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
                           },
                           children: [
                             for (var i = 0; i < _defaultFields.length; i++)
-                              ListTile(
+                              // Ionic: ion-item-sliding with an expandable trash option
+                              // (full swipe deletes).
+                              Slidable(
                                 key: ValueKey('df-${_defaultFields[i].id}-$i'),
-                                title: Text(_defaultFields[i].name),
-                                subtitle: (_defaultFields[i].conductor ?? '').isNotEmpty
-                                    ? Text(_defaultFields[i].conductor!)
-                                    : null,
-                                onTap: () => _editDefaultField(i),
-                                trailing: Row(
-                                  mainAxisSize: MainAxisSize.min,
+                                endActionPane: ActionPane(
+                                  motion: const DrawerMotion(),
+                                  extentRatio: 0.2,
+                                  dismissible: DismissiblePane(onDismissed: () => _removeDefaultField(i)),
                                   children: [
-                                    Text('${_defaultFields[i].time} min'),
-                                    IconButton(
-                                      tooltip: 'Löschen',
-                                      icon: const Icon(Icons.delete_outline),
-                                      onPressed: () => _removeDefaultField(i),
+                                    SlidableAction(
+                                      onPressed: (_) => _removeDefaultField(i),
+                                      backgroundColor: AppColors.danger,
+                                      foregroundColor: Colors.white,
+                                      icon: Icons.delete,
                                     ),
-                                    ReorderableDragStartListener(index: i, child: const Icon(Icons.drag_handle)),
                                   ],
+                                ),
+                                child: ListTile(
+                                  title: Text(_defaultFields[i].name),
+                                  subtitle: (_defaultFields[i].conductor ?? '').isNotEmpty
+                                      ? Text(_defaultFields[i].conductor!)
+                                      : null,
+                                  onTap: () => _editDefaultField(i),
+                                  trailing: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text('${_defaultFields[i].time} min'),
+                                      const SizedBox(width: 8),
+                                      ReorderableDragStartListener(index: i, child: const Icon(Icons.drag_handle)),
+                                    ],
+                                  ),
                                 ),
                               ),
                           ],
@@ -353,17 +378,34 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
     final end = _computeEnd(tpl);
     final start = PlanUtils.formatTime(tpl.time);
     return [
-      ListTile(
-        title: Text(tpl.title ?? ''),
-        subtitle: Text('$count ${count == 1 ? 'Feld' : 'Felder'}${duration.isNotEmpty ? ' · $duration' : ''}'),
-        onTap: () => setState(() => _selected = expanded ? null : i),
-        onLongPress: () => _templateOptions(i),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
+      // Ionic: ion-item-sliding with "Umbenennen" (pencil) and delete (trash).
+      Slidable(
+        key: ValueKey('tpl-$i-${tpl.title}'),
+        endActionPane: ActionPane(
+          motion: const DrawerMotion(),
+          extentRatio: 0.4,
           children: [
-            IconButton(icon: const Icon(Icons.more_horiz), onPressed: () => _templateOptions(i)),
-            Icon(expanded ? Icons.expand_less : Icons.expand_more, color: AppColors.medium),
+            SlidableAction(
+              onPressed: (_) => _renameTemplate(i),
+              backgroundColor: AppColors.primary,
+              foregroundColor: Colors.white,
+              icon: Icons.edit_outlined,
+            ),
+            SlidableAction(
+              onPressed: (_) => _removeTemplate(i),
+              backgroundColor: AppColors.danger,
+              foregroundColor: Colors.white,
+              icon: Icons.delete_outline,
+            ),
           ],
+        ),
+        child: ListTile(
+          title: Text(tpl.title ?? ''),
+          subtitle: Text('$count ${count == 1 ? 'Feld' : 'Felder'}${duration.isNotEmpty ? ' · $duration' : ''}'),
+          onTap: () => setState(() => _selected = expanded ? null : i),
+          // Desktop/mouse fallback for the swipe options.
+          onLongPress: () => _templateOptions(i),
+          trailing: Icon(expanded ? Icons.expand_less : Icons.expand_more, color: AppColors.medium),
         ),
       ),
       if (expanded) ...[
