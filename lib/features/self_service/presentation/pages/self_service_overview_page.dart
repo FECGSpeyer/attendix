@@ -10,6 +10,7 @@ import '../../../../core/utils/event_list_utils.dart';
 import '../../../../shared/widgets/event_list/event_list_widgets.dart';
 import '../widgets/plan_viewer_sheet.dart';
 import '../widgets/self_service_event_actions.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../messages/presentation/widgets/notification_bell.dart'; // MESSAGES
 
 /// "Übersicht" – all Termine of the user across all tenants
@@ -73,11 +74,11 @@ class _SelfServiceOverviewPageState
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Alle Termine'),
+        title: Text(context.l10n.selfServiceAllEvents),
         actions: [
           IconButton(
             icon: const Icon(Icons.info_outline),
-            tooltip: 'Legende',
+            tooltip: context.l10n.signoutLegend,
             onPressed: () => showEventLegendSheet(context),
           ),
           const NotificationBell(), // MESSAGES
@@ -89,9 +90,9 @@ class _SelfServiceOverviewPageState
             child: SizedBox(
               width: double.infinity,
               child: SegmentedButton<String>(
-                segments: const [
-                  ButtonSegment(value: 'chronological', label: Text('Chronologisch')),
-                  ButtonSegment(value: 'byTenant', label: Text('Nach Instanz')),
+                segments: [
+                  ButtonSegment(value: 'chronological', label: Text(context.l10n.selfServiceChronological)),
+                  ButtonSegment(value: 'byTenant', label: Text(context.l10n.selfServiceByInstance)),
                 ],
                 selected: {_groupingMode},
                 onSelectionChanged: (value) =>
@@ -102,13 +103,13 @@ class _SelfServiceOverviewPageState
         ),
       ),
       body: attendancesAsync.when(
-        loading: () => const Center(
+        loading: () => Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               CircularProgressIndicator(),
               SizedBox(height: 12),
-              Text('Termine werden geladen...'),
+              Text(context.l10n.selfServiceLoadingEvents),
             ],
           ),
         ),
@@ -118,8 +119,8 @@ class _SelfServiceOverviewPageState
             children: [
               const Icon(Icons.error_outline, size: 48, color: AppColors.danger),
               const SizedBox(height: 8),
-              Text('Fehler: $error', textAlign: TextAlign.center),
-              TextButton(onPressed: _refresh, child: const Text('Erneut versuchen')),
+              Text(context.l10n.signoutFlutterError(error), textAlign: TextAlign.center),
+              TextButton(onPressed: _refresh, child: Text(context.l10n.messagesRetry)),
             ],
           ),
         ),
@@ -190,7 +191,7 @@ class _SelfServiceOverviewPageState
         if (past && actions.hasFilesFolder(att))
           IconButton(
             icon: const Icon(Icons.folder_open_outlined),
-            tooltip: 'Dateiablage öffnen',
+            tooltip: context.l10n.signoutOpenFiles,
             onPressed: () => openFilesFolderRoute(context, att.filesFolder!),
           ),
         EventPill.status(att.status, past: past),
@@ -210,7 +211,7 @@ class _SelfServiceOverviewPageState
         : past.take(EventListUtils.pastPreviewCount).toList();
     return [
       if (current != null) ...[
-        EventMonthHeader(label: current.isRunning ? 'Heute' : 'Nächster Termin'),
+        EventMonthHeader(label: current.isRunning ? context.l10n.teamOrgTodayCap : context.l10n.teamOrgNextEvent),
         EventTodayCard(
           date: current.date,
           title: current.eventTitle,
@@ -223,7 +224,7 @@ class _SelfServiceOverviewPageState
           onMore: () => actions.presentActions(context, current, hideQuickActions: true),
         ),
       ],
-      EventSectionHeader(title: 'Anstehend', count: upcoming.length),
+      EventSectionHeader(title: context.l10n.signoutUpcoming, count: upcoming.length),
       for (final group in groups) ...[
         EventMonthHeader(label: group.label),
         EventListCard(children: [
@@ -231,18 +232,20 @@ class _SelfServiceOverviewPageState
         ]),
       ],
       if (upcoming.isEmpty)
-        const Padding(
+        Padding(
           padding: EdgeInsets.all(24),
-          child: Text('Keine anstehenden Termine',
+          child: Text(context.l10n.selfServiceNoUpcoming,
               textAlign: TextAlign.center, style: TextStyle(color: AppColors.medium)),
         ),
       if (past.isNotEmpty) ...[
-        EventSectionHeader(title: 'Vergangen', count: past.length),
+        EventSectionHeader(title: context.l10n.signoutPast, count: past.length),
         EventListCard(children: [
           for (final att in pastPreview) _row(att, actions, showTenant: true),
           if (past.length > EventListUtils.pastPreviewCount)
             EventMoreLink(
-              label: _showAllPast ? 'Weniger anzeigen' : 'Alle ${past.length} anzeigen',
+              label: _showAllPast
+                  ? context.l10n.signoutFlutterShowLess
+                  : context.l10n.signoutFlutterShowAll(past.length),
               onTap: () => setState(() => _showAllPast = !_showAllPast),
             ),
         ]),
@@ -259,10 +262,10 @@ class _SelfServiceOverviewPageState
       grouped.putIfAbsent(att.tenantId, () => []).add(att);
     }
     if (grouped.isEmpty) {
-      return const [
+      return [
         Padding(
           padding: EdgeInsets.all(24),
-          child: Text('Keine Termine gefunden',
+          child: Text(context.l10n.selfServiceNoEvents,
               textAlign: TextAlign.center, style: TextStyle(color: AppColors.medium)),
         ),
       ];

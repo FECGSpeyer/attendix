@@ -1,0 +1,274 @@
+{
+  "de": {
+    "login": {
+      "flutter": {
+        "resetLinkSent": "Wir haben einen Link zum Zurücksetzen deines Passworts an {email} gesendet.",
+        "checkSpam": "Bitte prüfe auch deinen Spam-Ordner.",
+        "backToLogin": "Zurück zum Login",
+        "otherEmail": "Andere E-Mail verwenden",
+        "resetIntro": "Gib deine E-Mail-Adresse ein und wir senden dir einen Link zum Zurücksetzen.",
+        "sendLink": "Link senden",
+        "newPassword": "Neues Passwort",
+        "confirmEmail": "E-Mail bestätigen",
+        "confirmEmailSent": "Wir haben dir eine E-Mail an {email} gesendet. Bitte klicke auf den Link darin, um deinen Account zu aktivieren.",
+        "toLogin": "Zum Login",
+        "haveAccount": "Bereits ein Konto?",
+        "accessDenied": "Der Zugriff wurde verweigert.",
+        "linkFailed": "Der Link konnte nicht verarbeitet werden."
+      }
+    },
+    "tenantRegister": {
+      "flutter": {
+        "loadError": "Fehler beim Laden: {error}",
+        "invalidLink": "Ungültiger Registrierungslink.",
+        "toLogin": "Zur Anmeldung",
+        "registrationAt": "Registrierung bei",
+        "loadGroupsFailed": "Fehler beim Laden der Gruppen",
+        "groupRequired": "Gruppe ist erforderlich",
+        "maxSize": "Max. 15 MB",
+        "loadChurchesFailed": "Fehler beim Laden der Gemeinden",
+        "minFiveChars": "Mindestens 5 Zeichen",
+        "signInExisting": "Melde dich mit deinem bestehenden Account an.",
+        "termsLink": "Nutzungsbedingungen und Datenschutzerklärung",
+        "termsAccept": " akzeptieren",
+        "createChurchFailed": "Fehler beim Erstellen der Gemeinde.",
+        "registerFailedRetry": "Fehler beim Registrieren. Bitte versuche es erneut."
+      }
+    },
+    "register": {
+      "flutter": {
+        "mainGroupInfo": "Was ist die Hauptgruppe?"
+      }
+    },
+    "tenantSelect": {
+      "flutter": {
+        "deleted": "Instanz gelöscht",
+        "newTenant": "Neue Instanz",
+        "tenantSelection": "Instanzauswahl",
+        "loadFailed": "Fehler beim Laden",
+        "emptyTitle": "Keine Instanzen",
+        "emptyText": "Du bist noch keiner Instanz zugeordnet. Bitte wende dich an einen Administrator oder lege eine neue Instanz an.",
+        "detailsTitle": "Instanz-Details",
+        "detailsLoadFailed": "Fehler beim Laden der Instanz-Details",
+        "notFound": "Instanz nicht gefunden",
+        "noRole": "Keine Rolle",
+        "info": "Informationen",
+        "createdAt": "Erstellt am",
+        "region": "Region",
+        "yourRole": "Deine Rolle",
+        "dangerZone": "Gefahrenzone",
+        "deleteTenant": "Instanz löschen",
+        "deleteTenantHint": "Diese Gruppe unwiderruflich löschen",
+        "deleteAllData": "Alle Daten dieser Instanz werden unwiderruflich gelöscht.",
+        "enterNameToConfirm": "Bitte gib den Namen der Instanz ein, um das Löschen zu bestätigen:"
+      }
+    },
+    "signout": {
+      "flutter": {
+        "switchTenantFailed": "Instanz konnte nicht gewechselt werden",
+        "error": "Fehler: {error}",
+        "noPerson": "Für dein Konto wurde in dieser Instanz keine Person gefunden.",
+        "eventsCount": "{count} Termine",
+        "showLess": "Weniger anzeigen",
+        "showAll": "Alle {count} anzeigen",
+        "signoutFailed": "Abmeldung fehlgeschlagen. Bitte versuche es erneut.",
+        "fieldsSaveFailed": "Anmeldefelder konnten nicht gespeichert werden.",
+        "signinFailed": "Anmeldung fehlgeschlagen. Bitte versuche es erneut.",
+        "noteSaveFailed": "Notiz konnte nicht gespeichert werden.",
+        "linkOpenFailed": "Link konnte nicht geöffnet werden",
+        "fileOpenFailed": "Datei konnte nicht geöffnet werden",
+        "fileDownloadFailed": "Datei konnte nicht heruntergeladen werden",
+        "noPrintableScores": "Keine druckbaren Noten gefunden.",
+        "filesSkipped": "{count} Datei(en) konnten nicht eingebunden werden.",
+        "printAllScores": "Alle Noten drucken",
+        "noCurrentSongs": "Keine aktuellen Werke",
+        "absenceSaveFailed": "Abwesenheit konnte nicht gespeichert werden"
+      }
+    },
+    "selfService": {
+      "flutter": {
+        "noKids": "Keine Kinder gefunden",
+        "noKidsHint": "Es wurden keine Kinder mit Ihrem\nEltern-Account verknüpft.",
+        "noValidEntries": "Keine gültigen Einträge gefunden",
+        "switchFailed": "Fehler beim Wechseln: {error}",
+        "signInUntil": "Anmelden bis {date} Uhr",
+        "child": "Kind"
+      }
+    },
+    "settings": {
+      "flutter": {
+        "confirmEmailChange": "Bitte bestätige die Änderung über den Link in der E-Mail an deine neue Adresse.",
+        "sameEmail": "Das ist bereits deine E-Mail-Adresse.",
+        "changeEmailFailed": "Fehler beim Ändern der E-Mail-Adresse: {error}",
+        "currentEmail": "Aktuell: {email}",
+        "newEmailPh": "Neue E-Mail-Adresse...",
+        "noProfile": "Kein Profil gefunden"
+      }
+    },
+    "notif": {
+      "flutter": {
+        "loadFailed": "Fehler beim Laden: {error}",
+        "updateFailed": "Fehler beim Aktualisieren der Konfiguration",
+        "telegramOpenFailed": "Konnte Telegram nicht öffnen",
+        "configNotFound": "Konfiguration nicht gefunden",
+        "userIdCopied": "Benutzer-Id kopiert"
+      }
+    },
+    "admin": {
+      "flutter": {
+        "addFailed": "Fehler beim Hinzufügen"
+      }
+    },
+    "dashSettings": {
+      "flutter": {
+        "saveFailed": "Fehler beim Speichern: {error}",
+        "reorder": "Reihenfolge ändern"
+      }
+    },
+    "homeDashboard": {
+      "flutter": {
+        "timeRange": "{time} Uhr",
+        "loadFailed": "Fehler beim Laden: {error}",
+        "join": "Beitritt",
+        "exit": "Austritt",
+        "pause": "Pause"
+      }
+    }
+  },
+  "en": {
+    "login": {
+      "flutter": {
+        "resetLinkSent": "We sent a link to reset your password to {email}.",
+        "checkSpam": "Please also check your spam folder.",
+        "backToLogin": "Back to login",
+        "otherEmail": "Use a different email",
+        "resetIntro": "Enter your email address and we will send you a reset link.",
+        "sendLink": "Send link",
+        "newPassword": "New password",
+        "confirmEmail": "Confirm email",
+        "confirmEmailSent": "We sent an email to {email}. Please click the link in it to activate your account.",
+        "toLogin": "Go to login",
+        "haveAccount": "Already have an account?",
+        "accessDenied": "Access was denied.",
+        "linkFailed": "The link could not be processed."
+      }
+    },
+    "tenantRegister": {
+      "flutter": {
+        "loadError": "Error while loading: {error}",
+        "invalidLink": "Invalid registration link.",
+        "toLogin": "Go to sign in",
+        "registrationAt": "Registration at",
+        "loadGroupsFailed": "Error loading groups",
+        "groupRequired": "Group is required",
+        "maxSize": "Max. 15 MB",
+        "loadChurchesFailed": "Error loading churches",
+        "minFiveChars": "At least 5 characters",
+        "signInExisting": "Sign in with your existing account.",
+        "termsLink": "Terms of use and privacy policy",
+        "termsAccept": " accept",
+        "createChurchFailed": "Error creating the church.",
+        "registerFailedRetry": "Registration failed. Please try again."
+      }
+    },
+    "register": {
+      "flutter": {
+        "mainGroupInfo": "What is the main group?"
+      }
+    },
+    "tenantSelect": {
+      "flutter": {
+        "deleted": "Instance deleted",
+        "newTenant": "New instance",
+        "tenantSelection": "Instance selection",
+        "loadFailed": "Error while loading",
+        "emptyTitle": "No instances",
+        "emptyText": "You are not assigned to any instance yet. Please contact an administrator or create a new instance.",
+        "detailsTitle": "Instance details",
+        "detailsLoadFailed": "Error loading the instance details",
+        "notFound": "Instance not found",
+        "noRole": "No role",
+        "info": "Information",
+        "createdAt": "Created on",
+        "region": "Region",
+        "yourRole": "Your role",
+        "dangerZone": "Danger zone",
+        "deleteTenant": "Delete instance",
+        "deleteTenantHint": "Permanently delete this group",
+        "deleteAllData": "All data of this instance will be permanently deleted.",
+        "enterNameToConfirm": "Please enter the name of the instance to confirm the deletion:"
+      }
+    },
+    "signout": {
+      "flutter": {
+        "switchTenantFailed": "Could not switch instance",
+        "error": "Error: {error}",
+        "noPerson": "No person was found for your account in this instance.",
+        "eventsCount": "{count} events",
+        "showLess": "Show less",
+        "showAll": "Show all {count}",
+        "signoutFailed": "Sign-out failed. Please try again.",
+        "fieldsSaveFailed": "Registration fields could not be saved.",
+        "signinFailed": "Sign-in failed. Please try again.",
+        "noteSaveFailed": "Note could not be saved.",
+        "linkOpenFailed": "Link could not be opened",
+        "fileOpenFailed": "File could not be opened",
+        "fileDownloadFailed": "File could not be downloaded",
+        "noPrintableScores": "No printable scores found.",
+        "filesSkipped": "{count} file(s) could not be included.",
+        "printAllScores": "Print all scores",
+        "noCurrentSongs": "No current pieces",
+        "absenceSaveFailed": "Absence could not be saved"
+      }
+    },
+    "selfService": {
+      "flutter": {
+        "noKids": "No children found",
+        "noKidsHint": "No children are linked to your\nparent account.",
+        "noValidEntries": "No valid entries found",
+        "switchFailed": "Error while switching: {error}",
+        "signInUntil": "Sign in until {date}",
+        "child": "Child"
+      }
+    },
+    "settings": {
+      "flutter": {
+        "confirmEmailChange": "Please confirm the change via the link in the email sent to your new address.",
+        "sameEmail": "That is already your email address.",
+        "changeEmailFailed": "Error changing the email address: {error}",
+        "currentEmail": "Current: {email}",
+        "newEmailPh": "New email address...",
+        "noProfile": "No profile found"
+      }
+    },
+    "notif": {
+      "flutter": {
+        "loadFailed": "Error while loading: {error}",
+        "updateFailed": "Error updating the configuration",
+        "telegramOpenFailed": "Could not open Telegram",
+        "configNotFound": "Configuration not found",
+        "userIdCopied": "User ID copied"
+      }
+    },
+    "admin": {
+      "flutter": {
+        "addFailed": "Error while adding"
+      }
+    },
+    "dashSettings": {
+      "flutter": {
+        "saveFailed": "Error while saving: {error}",
+        "reorder": "Change order"
+      }
+    },
+    "homeDashboard": {
+      "flutter": {
+        "timeRange": "{time}",
+        "loadFailed": "Error while loading: {error}",
+        "join": "Joined",
+        "exit": "Left",
+        "pause": "Pause"
+      }
+    }
+  }
+}

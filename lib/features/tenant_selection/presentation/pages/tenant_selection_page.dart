@@ -13,6 +13,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../core/utils/demo_guard.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../../core/providers/dashboard_providers.dart'; // DASHBOARD
 
 /// Tenant selection page
@@ -173,11 +174,8 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
                   child: Card(
                     margin: EdgeInsets.zero,
                     child: SwitchListTile(
-                      title: const Text('Instanzauswahl aktivieren'),
-                      subtitle: const Text(
-                        'Wenn diese Option aktiv ist, wirst du vor dem Öffnen der '
-                        'App immer gefragt, welche Instanz du öffnen möchtest.',
-                      ),
+                      title: Text(context.l10n.settingsEnableTenantSelect),
+                      subtitle: Text(context.l10n.settingsTenantSelectHelper),
                       value: prefs.wantInstanceSelection,
                       onChanged:
                           (value) => ref
@@ -201,11 +199,11 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
       ToastHelper.showSuccess(
         context,
         setFavorite
-            ? 'Die Instanz „${tenant.longName}“ wurde als Favorit gesetzt.'
-            : 'Die Instanz „${tenant.longName}“ wurde als Favorit entfernt.',
+            ? context.l10n.settingsFavoriteSet(tenant.longName)
+            : context.l10n.settingsFavoriteRemoved(tenant.longName),
       );
     } catch (_) {
-      if (mounted) ToastHelper.showError(context, 'Fehler beim Speichern');
+      if (mounted) ToastHelper.showError(context, context.l10n.svcSaveFailed);
     }
   }
 
@@ -214,7 +212,7 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
     if (tenant.id == null) return;
     // Ionic canDeleteTenant(): admin && !db.isDemo().
     if (tenant.role != Role.admin.value || DemoGuard.isDemo) { // DEMO_GUARD
-      ToastHelper.showError(context, 'Du kannst diese Instanz nicht löschen.');
+      ToastHelper.showError(context, context.l10n.settingsCannotDeleteTenant);
       return;
     }
     final controller = TextEditingController();
@@ -226,24 +224,22 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
             (dialogContext) => StatefulBuilder(
               builder:
                   (dialogContext, setDialogState) => AlertDialog(
-                    title: const Text('Instanz löschen?'),
+                    title: Text(dialogContext.l10n.settingsDeleteTenant),
                     content: Column(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           error ??
-                              'Möchtest du die Instanz „${tenant.longName}“ wirklich '
-                                  'löschen? Dies kann nicht rückgängig gemacht werden! '
-                                  'Wenn du die Instanz wirklich löschen willst, dann '
-                                  'gebe den Namen der Instanz ein:',
+                              dialogContext.l10n
+                                  .settingsDeleteTenantMessage(tenant.longName),
                         ),
                         const SizedBox(height: 12),
                         TextField(
                           controller: controller,
                           autofocus: true,
-                          decoration: const InputDecoration(
-                            hintText: 'Name der Instanz eingeben...',
+                          decoration: InputDecoration(
+                            hintText: dialogContext.l10n.settingsTenantNamePh,
                           ),
                         ),
                       ],
@@ -251,7 +247,7 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
                     actions: [
                       TextButton(
                         onPressed: () => Navigator.of(dialogContext).pop(false),
-                        child: const Text('Abbrechen'),
+                        child: Text(dialogContext.l10n.commonCancel),
                       ),
                       TextButton(
                         style: TextButton.styleFrom(
@@ -264,11 +260,11 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
                             setDialogState(
                               () =>
                                   error =
-                                      'Der eingegebene Name ist nicht korrekt.',
+                                      dialogContext.l10n.settingsWrongName,
                             );
                           }
                         },
-                        child: const Text('Löschen'),
+                        child: Text(dialogContext.l10n.commonDelete),
                       ),
                     ],
                   ),
@@ -276,9 +272,9 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
       );
       if (confirmed != true || !mounted) return;
       await deleteTenant(ref, tenant.id!);
-      if (mounted) ToastHelper.showSuccess(context, 'Instanz gelöscht');
+      if (mounted) ToastHelper.showSuccess(context, context.l10n.tenantSelectFlutterDeleted);
     } catch (_) {
-      if (mounted) ToastHelper.showError(context, 'Fehler beim Löschen');
+      if (mounted) ToastHelper.showError(context, context.l10n.svcDeleteFailed);
     } finally {
       controller.dispose();
     }
@@ -309,26 +305,28 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          tooltip: 'Neue Instanz',
+          tooltip: context.l10n.tenantSelectFlutterNewTenant,
           icon: const Icon(Icons.add),
           onPressed: () => context.push('/register'),
         ),
-        title: Text(count == null ? 'Instanzen' : 'Instanzen ($count)'),
+        title: Text(count == null
+            ? context.l10n.orgTenants
+            : context.l10n.settingsTenantsCount(count)),
         actions: [
           IconButton(
-            tooltip: 'Instanzauswahl',
+            tooltip: context.l10n.tenantSelectFlutterTenantSelection,
             icon: const Icon(Icons.settings_outlined),
             onPressed: _openInstanceSettings,
           ),
           if (currentTenant == null)
             IconButton(
-              tooltip: 'Abmelden',
+              tooltip: context.l10n.registerLogout,
               icon: const Icon(Icons.logout),
               onPressed: _logout,
             )
           else
             IconButton(
-              tooltip: 'Schließen',
+              tooltip: context.l10n.commonClose,
               icon: const Icon(Icons.close),
               onPressed: () => context.go('/settings'),
             ),
@@ -348,7 +346,7 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
                   ),
                   const SizedBox(height: AppDimensions.paddingM),
                   Text(
-                    'Fehler beim Laden',
+                    context.l10n.tenantSelectFlutterLoadFailed,
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                   const SizedBox(height: AppDimensions.paddingS),
@@ -360,7 +358,7 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
                   const SizedBox(height: AppDimensions.paddingL),
                   ElevatedButton(
                     onPressed: () => ref.refresh(userTenantsProvider),
-                    child: const Text('Erneut versuchen'),
+                    child: Text(context.l10n.messagesRetry),
                   ),
                 ],
               ),
@@ -380,13 +378,12 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
                     ),
                     const SizedBox(height: AppDimensions.paddingL),
                     Text(
-                      'Keine Instanzen',
+                      context.l10n.tenantSelectFlutterEmptyTitle,
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
                     const SizedBox(height: AppDimensions.paddingS),
                     Text(
-                      'Du bist noch keiner Instanz zugeordnet. '
-                      'Bitte wende dich an einen Administrator oder lege eine neue Instanz an.',
+                      context.l10n.tenantSelectFlutterEmptyText,
                       style: Theme.of(
                         context,
                       ).textTheme.bodyMedium?.copyWith(color: AppColors.medium),
@@ -396,7 +393,7 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
                     OutlinedButton.icon(
                       onPressed: () => context.push('/register'),
                       icon: const Icon(Icons.add),
-                      label: const Text('Neue Instanz anlegen'),
+                      label: Text(context.l10n.registerTitle),
                     ),
                   ],
                 ),
@@ -505,9 +502,9 @@ class _TenantTile extends StatelessWidget {
                   color: AppColors.primary,
                   borderRadius: BorderRadius.circular(6),
                 ),
-                child: const Text(
-                  'Aktuell',
-                  style: TextStyle(
+                child: Text(
+                  context.l10n.settingsCurrent,
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
@@ -518,7 +515,7 @@ class _TenantTile extends StatelessWidget {
               const Icon(Icons.star, size: 18, color: AppColors.warning),
             // Flutter-only: instance details (members, delete) page
             IconButton(
-              tooltip: 'Details',
+              tooltip: context.l10n.tasksDetails,
               icon: const Icon(Icons.info_outline, color: AppColors.medium),
               onPressed: () {
                 if (tenant.id != null) {

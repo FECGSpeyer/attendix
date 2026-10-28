@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/config/supabase_config.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../core/utils/demo_guard.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Shows the "Passwort ändern" dialog (Ionic settings changePassword alert).
 Future<void> showChangePasswordDialog(BuildContext context) async {
@@ -13,7 +14,7 @@ Future<void> showChangePasswordDialog(BuildContext context) async {
     builder: (_) => const ChangePasswordDialog(),
   );
   if (changed == true && context.mounted) {
-    ToastHelper.showSuccess(context, 'Das Passwort wurde erfolgreich geändert');
+    ToastHelper.showSuccess(context, context.l10n.settingsPasswordChanged);
   }
 }
 
@@ -26,7 +27,7 @@ Future<void> showChangeEmailDialog(BuildContext context) async {
   if (changed == true && context.mounted) {
     ToastHelper.showSuccess(
       context,
-      'Bitte bestätige die Änderung über den Link in der E-Mail an deine neue Adresse.',
+      context.l10n.settingsFlutterConfirmEmailChange,
     );
   }
 }
@@ -56,12 +57,12 @@ class _ChangePasswordDialogState extends ConsumerState<ChangePasswordDialog> {
   Future<void> _submit() async {
     final password = _passwordController.text;
     if (password != _confirmController.text) {
-      ToastHelper.showError(context, 'Die Passwörter stimmen nicht überein.');
+      ToastHelper.showError(context, context.l10n.settingsPasswordsMismatch);
       return;
     }
     if (password.length < 6) {
       ToastHelper.showError(
-          context, 'Das Passwort muss mindestens 6 Zeichen lang sein.');
+          context, context.l10n.settingsPasswordTooShort);
       return;
     }
 
@@ -76,7 +77,7 @@ class _ChangePasswordDialogState extends ConsumerState<ChangePasswordDialog> {
       if (mounted) {
         ToastHelper.showError(
           context,
-          'Fehler beim Ändern deines Passworts. Bitte versuche es später erneut.',
+          context.l10n.settingsPasswordFailed,
         );
       }
     } finally {
@@ -87,7 +88,7 @@ class _ChangePasswordDialogState extends ConsumerState<ChangePasswordDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Passwort ändern'),
+      title: Text(context.l10n.settingsChangePassword),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -96,7 +97,7 @@ class _ChangePasswordDialogState extends ConsumerState<ChangePasswordDialog> {
             obscureText: _obscure,
             autofocus: true,
             decoration: InputDecoration(
-              hintText: 'Neues Passwort eingeben...',
+              hintText: context.l10n.settingsNewPasswordPh,
               prefixIcon: const Icon(Icons.lock_outline),
               suffixIcon: IconButton(
                 icon: Icon(_obscure ? Icons.visibility : Icons.visibility_off),
@@ -108,9 +109,9 @@ class _ChangePasswordDialogState extends ConsumerState<ChangePasswordDialog> {
           TextField(
             controller: _confirmController,
             obscureText: _obscure,
-            decoration: const InputDecoration(
-              hintText: 'Passwort wiederholen...',
-              prefixIcon: Icon(Icons.lock_outline),
+            decoration: InputDecoration(
+              hintText: context.l10n.settingsRepeatPasswordPh,
+              prefixIcon: const Icon(Icons.lock_outline),
             ),
             onSubmitted: (_) => _submit(),
           ),
@@ -119,7 +120,7 @@ class _ChangePasswordDialogState extends ConsumerState<ChangePasswordDialog> {
       actions: [
         TextButton(
           onPressed: _isLoading ? null : () => Navigator.of(context).pop(false),
-          child: const Text('Abbrechen'),
+          child: Text(context.l10n.commonCancel),
         ),
         ElevatedButton(
           onPressed: _isLoading ? null : _submit,
@@ -129,7 +130,7 @@ class _ChangePasswordDialogState extends ConsumerState<ChangePasswordDialog> {
                   height: 20,
                   child: CircularProgressIndicator(strokeWidth: 2),
                 )
-              : const Text('Ändern'),
+              : Text(context.l10n.settingsChange),
         ),
       ],
     );
@@ -159,12 +160,12 @@ class _ChangeEmailDialogState extends ConsumerState<ChangeEmailDialog> {
   Future<void> _submit() async {
     final email = _emailController.text.trim().toLowerCase();
     if (!_emailRegex.hasMatch(email)) {
-      ToastHelper.showError(context, 'Bitte gib eine gültige E-Mail-Adresse ein.');
+      ToastHelper.showError(context, context.l10n.settingsFlutterInvalidEmail);
       return;
     }
     final supabase = ref.read(supabaseClientProvider);
     if (email == supabase.auth.currentUser?.email?.toLowerCase()) {
-      ToastHelper.showError(context, 'Das ist bereits deine E-Mail-Adresse.');
+      ToastHelper.showError(context, context.l10n.settingsFlutterSameEmail);
       return;
     }
 
@@ -174,7 +175,7 @@ class _ChangeEmailDialogState extends ConsumerState<ChangeEmailDialog> {
       if (mounted) Navigator.of(context).pop(true);
     } catch (e) {
       if (mounted) {
-        ToastHelper.showError(context, 'Fehler beim Ändern der E-Mail-Adresse: $e');
+        ToastHelper.showError(context, context.l10n.settingsFlutterChangeEmailFailed(e));
       }
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -186,22 +187,22 @@ class _ChangeEmailDialogState extends ConsumerState<ChangeEmailDialog> {
     final currentEmail =
         ref.read(supabaseClientProvider).auth.currentUser?.email ?? '';
     return AlertDialog(
-      title: const Text('E-Mail ändern'),
+      title: Text(context.l10n.settingsFlutterChangeEmail),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (currentEmail.isNotEmpty) ...[
-            Text('Aktuell: $currentEmail'),
+            Text(context.l10n.settingsFlutterCurrentEmail(currentEmail)),
             const SizedBox(height: 12),
           ],
           TextField(
             controller: _emailController,
             autofocus: true,
             keyboardType: TextInputType.emailAddress,
-            decoration: const InputDecoration(
-              hintText: 'Neue E-Mail-Adresse...',
-              prefixIcon: Icon(Icons.email_outlined),
+            decoration: InputDecoration(
+              hintText: context.l10n.settingsFlutterNewEmailPh,
+              prefixIcon: const Icon(Icons.email_outlined),
             ),
             onSubmitted: (_) => _submit(),
           ),
@@ -210,7 +211,7 @@ class _ChangeEmailDialogState extends ConsumerState<ChangeEmailDialog> {
       actions: [
         TextButton(
           onPressed: _isLoading ? null : () => Navigator.of(context).pop(false),
-          child: const Text('Abbrechen'),
+          child: Text(context.l10n.commonCancel),
         ),
         ElevatedButton(
           onPressed: _isLoading ? null : _submit,
@@ -220,7 +221,7 @@ class _ChangeEmailDialogState extends ConsumerState<ChangeEmailDialog> {
                   height: 20,
                   child: CircularProgressIndicator(strokeWidth: 2),
                 )
-              : const Text('Ändern'),
+              : Text(context.l10n.settingsChange),
         ),
       ],
     );

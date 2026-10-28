@@ -85,7 +85,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       debugPrint('Demo login error: $e');
       if (mounted) {
         setState(() => _errorMessage =
-            'Ein unerwarteter Fehler ist aufgetreten. Bitte versuche es erneut.');
+            context.l10n.loginFlutterUnexpectedError);
       }
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -164,6 +164,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     // The root messenger outlives this page (the auth redirect may already
     // have left /login when linking finishes).
     final messenger = ScaffoldMessenger.maybeOf(context);
+    final l10n = context.l10n;
     final result = await ref.read(teamsServiceProvider).ssoLink(() async {
       await ref.read(authFlowServiceProvider).signInWithPassword(
             _emailController.text.trim(),
@@ -171,8 +172,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           );
     });
     final message = result.ok
-        ? 'Microsoft-Konto verknüpft. Du wirst künftig automatisch angemeldet.'
-        : (result.error ?? 'Verknüpfung fehlgeschlagen');
+        ? l10n.loginToastMsLinked
+        : (result.error ?? l10n.svcLinkFailed);
     messenger?.showSnackBar(SnackBar(
       content: Text(message),
       backgroundColor: result.ok ? AppColors.success : AppColors.danger,
@@ -587,11 +588,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
           // TEAMS: link-mode note replaces the mode segment
           if (_teamsLinkMode)
-            const Text(
-              'Verknüpfe dein Attendix-Konto einmalig mit Microsoft. Melde '
-              'dich mit deinen Attendix-Zugangsdaten an – danach wirst du in '
-              'Teams automatisch angemeldet.',
-              style: TextStyle(color: AppColors.medium),
+            Text(
+              context.l10n.loginLinkNote,
+              style: const TextStyle(color: AppColors.medium),
             )
           else
           // AUTH: mode segment (Passwort / Code per E-Mail)
@@ -683,7 +682,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
             const SizedBox(height: AppDimensions.paddingS),
             _primaryButton(
                 _teamsLinkMode
-                    ? 'Verknüpfen & anmelden' // TEAMS
+                    ? context.l10n.loginLinkAndSignIn // TEAMS
                     : context.l10n.loginSignIn,
                 _login),
           ] else if (!_otpSent) ...[

@@ -149,6 +149,12 @@ abstract class AppLocalizations {
   /// **'Auswertung'**
   String get adminEvaluation;
 
+  /// admin.flutter.addFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Hinzufügen'**
+  String get adminFlutterAddFailed;
+
   /// admin.gb
   ///
   /// In de, this message translates to:
@@ -3803,6 +3809,18 @@ abstract class AppLocalizations {
   /// **'Karten'**
   String get dashSettingsCards;
 
+  /// dashSettings.flutter.reorder
+  ///
+  /// In de, this message translates to:
+  /// **'Reihenfolge ändern'**
+  String get dashSettingsFlutterReorder;
+
+  /// dashSettings.flutter.saveFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Speichern: {error}'**
+  String dashSettingsFlutterSaveFailed(Object error);
+
   /// dashSettings.reorderHint
   ///
   /// In de, this message translates to:
@@ -7163,6 +7181,36 @@ abstract class AppLocalizations {
   /// **'Termine'**
   String get homeDashboardEvents;
 
+  /// homeDashboard.flutter.exit
+  ///
+  /// In de, this message translates to:
+  /// **'Austritt'**
+  String get homeDashboardFlutterExit;
+
+  /// homeDashboard.flutter.join
+  ///
+  /// In de, this message translates to:
+  /// **'Beitritt'**
+  String get homeDashboardFlutterJoin;
+
+  /// homeDashboard.flutter.loadFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Laden: {error}'**
+  String homeDashboardFlutterLoadFailed(Object error);
+
+  /// homeDashboard.flutter.pause
+  ///
+  /// In de, this message translates to:
+  /// **'Pause'**
+  String get homeDashboardFlutterPause;
+
+  /// homeDashboard.flutter.timeRange
+  ///
+  /// In de, this message translates to:
+  /// **'{time} Uhr'**
+  String homeDashboardFlutterTimeRange(Object time);
+
   /// homeDashboard.inDays
   ///
   /// In de, this message translates to:
@@ -7739,11 +7787,89 @@ abstract class AppLocalizations {
   /// **'E-Mail oder Passwort ist falsch. Falls du kein Passwort gesetzt hast, kannst du dich stattdessen mit einem Code per E-Mail anmelden.'**
   String get loginFailedMessage;
 
+  /// login.flutter.accessDenied
+  ///
+  /// In de, this message translates to:
+  /// **'Der Zugriff wurde verweigert.'**
+  String get loginFlutterAccessDenied;
+
+  /// login.flutter.backToLogin
+  ///
+  /// In de, this message translates to:
+  /// **'Zurück zum Login'**
+  String get loginFlutterBackToLogin;
+
+  /// login.flutter.checkSpam
+  ///
+  /// In de, this message translates to:
+  /// **'Bitte prüfe auch deinen Spam-Ordner.'**
+  String get loginFlutterCheckSpam;
+
+  /// login.flutter.confirmEmail
+  ///
+  /// In de, this message translates to:
+  /// **'E-Mail bestätigen'**
+  String get loginFlutterConfirmEmail;
+
+  /// login.flutter.confirmEmailSent
+  ///
+  /// In de, this message translates to:
+  /// **'Wir haben dir eine E-Mail an {email} gesendet. Bitte klicke auf den Link darin, um deinen Account zu aktivieren.'**
+  String loginFlutterConfirmEmailSent(Object email);
+
   /// login.flutter.enterPassword
   ///
   /// In de, this message translates to:
   /// **'Bitte Passwort eingeben'**
   String get loginFlutterEnterPassword;
+
+  /// login.flutter.haveAccount
+  ///
+  /// In de, this message translates to:
+  /// **'Bereits ein Konto?'**
+  String get loginFlutterHaveAccount;
+
+  /// login.flutter.linkFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Der Link konnte nicht verarbeitet werden.'**
+  String get loginFlutterLinkFailed;
+
+  /// login.flutter.newPassword
+  ///
+  /// In de, this message translates to:
+  /// **'Neues Passwort'**
+  String get loginFlutterNewPassword;
+
+  /// login.flutter.otherEmail
+  ///
+  /// In de, this message translates to:
+  /// **'Andere E-Mail verwenden'**
+  String get loginFlutterOtherEmail;
+
+  /// login.flutter.resetIntro
+  ///
+  /// In de, this message translates to:
+  /// **'Gib deine E-Mail-Adresse ein und wir senden dir einen Link zum Zurücksetzen.'**
+  String get loginFlutterResetIntro;
+
+  /// login.flutter.resetLinkSent
+  ///
+  /// In de, this message translates to:
+  /// **'Wir haben einen Link zum Zurücksetzen deines Passworts an {email} gesendet.'**
+  String loginFlutterResetLinkSent(Object email);
+
+  /// login.flutter.sendLink
+  ///
+  /// In de, this message translates to:
+  /// **'Link senden'**
+  String get loginFlutterSendLink;
+
+  /// login.flutter.toLogin
+  ///
+  /// In de, this message translates to:
+  /// **'Zum Login'**
+  String get loginFlutterToLogin;
 
   /// login.flutter.unexpectedError
   ///
@@ -8464,6 +8590,36 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Terminerinnerungen'**
   String get notifEventReminders;
+
+  /// notif.flutter.configNotFound
+  ///
+  /// In de, this message translates to:
+  /// **'Konfiguration nicht gefunden'**
+  String get notifFlutterConfigNotFound;
+
+  /// notif.flutter.loadFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Laden: {error}'**
+  String notifFlutterLoadFailed(Object error);
+
+  /// notif.flutter.telegramOpenFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Konnte Telegram nicht öffnen'**
+  String get notifFlutterTelegramOpenFailed;
+
+  /// notif.flutter.updateFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Aktualisieren der Konfiguration'**
+  String get notifFlutterUpdateFailed;
+
+  /// notif.flutter.userIdCopied
+  ///
+  /// In de, this message translates to:
+  /// **'Benutzer-Id kopiert'**
+  String get notifFlutterUserIdCopied;
 
   /// notif.linked
   ///
@@ -13445,6 +13601,12 @@ abstract class AppLocalizations {
   /// **'Bitte füllen Sie alle Felder aus.'**
   String get registerFillAllToast;
 
+  /// register.flutter.mainGroupInfo
+  ///
+  /// In de, this message translates to:
+  /// **'Was ist die Hauptgruppe?'**
+  String get registerFlutterMainGroupInfo;
+
   /// register.fullName
   ///
   /// In de, this message translates to:
@@ -14045,6 +14207,42 @@ abstract class AppLocalizations {
   /// **'Anmeldefrist: {date}'**
   String selfServiceDeadline(Object date);
 
+  /// selfService.flutter.child
+  ///
+  /// In de, this message translates to:
+  /// **'Kind'**
+  String get selfServiceFlutterChild;
+
+  /// selfService.flutter.noKids
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Kinder gefunden'**
+  String get selfServiceFlutterNoKids;
+
+  /// selfService.flutter.noKidsHint
+  ///
+  /// In de, this message translates to:
+  /// **'Es wurden keine Kinder mit Ihrem\nEltern-Account verknüpft.'**
+  String get selfServiceFlutterNoKidsHint;
+
+  /// selfService.flutter.noValidEntries
+  ///
+  /// In de, this message translates to:
+  /// **'Keine gültigen Einträge gefunden'**
+  String get selfServiceFlutterNoValidEntries;
+
+  /// selfService.flutter.signInUntil
+  ///
+  /// In de, this message translates to:
+  /// **'Anmelden bis {date} Uhr'**
+  String selfServiceFlutterSignInUntil(Object date);
+
+  /// selfService.flutter.switchFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Wechseln: {error}'**
+  String selfServiceFlutterSwitchFailed(Object error);
+
   /// selfService.loadingEvents
   ///
   /// In de, this message translates to:
@@ -14507,6 +14705,18 @@ abstract class AppLocalizations {
   /// **'E-Mail ändern'**
   String get settingsFlutterChangeEmail;
 
+  /// settings.flutter.changeEmailFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Ändern der E-Mail-Adresse: {error}'**
+  String settingsFlutterChangeEmailFailed(Object error);
+
+  /// settings.flutter.confirmEmailChange
+  ///
+  /// In de, this message translates to:
+  /// **'Bitte bestätige die Änderung über den Link in der E-Mail an deine neue Adresse.'**
+  String get settingsFlutterConfirmEmailChange;
+
   /// settings.flutter.copyLinkFailed
   ///
   /// In de, this message translates to:
@@ -14518,6 +14728,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Fehler beim Erstellen: {error}'**
   String settingsFlutterCreateFailed(Object error);
+
+  /// settings.flutter.currentEmail
+  ///
+  /// In de, this message translates to:
+  /// **'Aktuell: {email}'**
+  String settingsFlutterCurrentEmail(Object email);
 
   /// settings.flutter.emailRequired
   ///
@@ -14554,6 +14770,18 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Fehler beim Laden: {error}'**
   String settingsFlutterLoadFailed(Object error);
+
+  /// settings.flutter.newEmailPh
+  ///
+  /// In de, this message translates to:
+  /// **'Neue E-Mail-Adresse...'**
+  String get settingsFlutterNewEmailPh;
+
+  /// settings.flutter.noProfile
+  ///
+  /// In de, this message translates to:
+  /// **'Kein Profil gefunden'**
+  String get settingsFlutterNoProfile;
 
   /// settings.flutter.parentRemoved
   ///
@@ -14674,6 +14902,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'{name} wurde reaktiviert'**
   String settingsFlutterReactivated(Object name);
+
+  /// settings.flutter.sameEmail
+  ///
+  /// In de, this message translates to:
+  /// **'Das ist bereits deine E-Mail-Adresse.'**
+  String get settingsFlutterSameEmail;
 
   /// settings.flutter.userMgmt.add
   ///
@@ -16252,6 +16486,114 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Bitte fülle alle Pflichtfelder aus'**
   String get signoutFillRequired;
+
+  /// signout.flutter.absenceSaveFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Abwesenheit konnte nicht gespeichert werden'**
+  String get signoutFlutterAbsenceSaveFailed;
+
+  /// signout.flutter.error
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler: {error}'**
+  String signoutFlutterError(Object error);
+
+  /// signout.flutter.eventsCount
+  ///
+  /// In de, this message translates to:
+  /// **'{count} Termine'**
+  String signoutFlutterEventsCount(Object count);
+
+  /// signout.flutter.fieldsSaveFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Anmeldefelder konnten nicht gespeichert werden.'**
+  String get signoutFlutterFieldsSaveFailed;
+
+  /// signout.flutter.fileDownloadFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Datei konnte nicht heruntergeladen werden'**
+  String get signoutFlutterFileDownloadFailed;
+
+  /// signout.flutter.fileOpenFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Datei konnte nicht geöffnet werden'**
+  String get signoutFlutterFileOpenFailed;
+
+  /// signout.flutter.filesSkipped
+  ///
+  /// In de, this message translates to:
+  /// **'{count} Datei(en) konnten nicht eingebunden werden.'**
+  String signoutFlutterFilesSkipped(Object count);
+
+  /// signout.flutter.linkOpenFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Link konnte nicht geöffnet werden'**
+  String get signoutFlutterLinkOpenFailed;
+
+  /// signout.flutter.noCurrentSongs
+  ///
+  /// In de, this message translates to:
+  /// **'Keine aktuellen Werke'**
+  String get signoutFlutterNoCurrentSongs;
+
+  /// signout.flutter.noPerson
+  ///
+  /// In de, this message translates to:
+  /// **'Für dein Konto wurde in dieser Instanz keine Person gefunden.'**
+  String get signoutFlutterNoPerson;
+
+  /// signout.flutter.noPrintableScores
+  ///
+  /// In de, this message translates to:
+  /// **'Keine druckbaren Noten gefunden.'**
+  String get signoutFlutterNoPrintableScores;
+
+  /// signout.flutter.noteSaveFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Notiz konnte nicht gespeichert werden.'**
+  String get signoutFlutterNoteSaveFailed;
+
+  /// signout.flutter.printAllScores
+  ///
+  /// In de, this message translates to:
+  /// **'Alle Noten drucken'**
+  String get signoutFlutterPrintAllScores;
+
+  /// signout.flutter.showAll
+  ///
+  /// In de, this message translates to:
+  /// **'Alle {count} anzeigen'**
+  String signoutFlutterShowAll(Object count);
+
+  /// signout.flutter.showLess
+  ///
+  /// In de, this message translates to:
+  /// **'Weniger anzeigen'**
+  String get signoutFlutterShowLess;
+
+  /// signout.flutter.signinFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Anmeldung fehlgeschlagen. Bitte versuche es erneut.'**
+  String get signoutFlutterSigninFailed;
+
+  /// signout.flutter.signoutFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Abmeldung fehlgeschlagen. Bitte versuche es erneut.'**
+  String get signoutFlutterSignoutFailed;
+
+  /// signout.flutter.switchTenantFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Instanz konnte nicht gewechselt werden'**
+  String get signoutFlutterSwitchTenantFailed;
 
   /// signout.giveReason
   ///
@@ -19925,6 +20267,90 @@ abstract class AppLocalizations {
   /// **'Vorname'**
   String get tenantRegisterFirstName;
 
+  /// tenantRegister.flutter.createChurchFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Erstellen der Gemeinde.'**
+  String get tenantRegisterFlutterCreateChurchFailed;
+
+  /// tenantRegister.flutter.groupRequired
+  ///
+  /// In de, this message translates to:
+  /// **'Gruppe ist erforderlich'**
+  String get tenantRegisterFlutterGroupRequired;
+
+  /// tenantRegister.flutter.invalidLink
+  ///
+  /// In de, this message translates to:
+  /// **'Ungültiger Registrierungslink.'**
+  String get tenantRegisterFlutterInvalidLink;
+
+  /// tenantRegister.flutter.loadChurchesFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Laden der Gemeinden'**
+  String get tenantRegisterFlutterLoadChurchesFailed;
+
+  /// tenantRegister.flutter.loadError
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Laden: {error}'**
+  String tenantRegisterFlutterLoadError(Object error);
+
+  /// tenantRegister.flutter.loadGroupsFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Laden der Gruppen'**
+  String get tenantRegisterFlutterLoadGroupsFailed;
+
+  /// tenantRegister.flutter.maxSize
+  ///
+  /// In de, this message translates to:
+  /// **'Max. 15 MB'**
+  String get tenantRegisterFlutterMaxSize;
+
+  /// tenantRegister.flutter.minFiveChars
+  ///
+  /// In de, this message translates to:
+  /// **'Mindestens 5 Zeichen'**
+  String get tenantRegisterFlutterMinFiveChars;
+
+  /// tenantRegister.flutter.registerFailedRetry
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Registrieren. Bitte versuche es erneut.'**
+  String get tenantRegisterFlutterRegisterFailedRetry;
+
+  /// tenantRegister.flutter.registrationAt
+  ///
+  /// In de, this message translates to:
+  /// **'Registrierung bei'**
+  String get tenantRegisterFlutterRegistrationAt;
+
+  /// tenantRegister.flutter.signInExisting
+  ///
+  /// In de, this message translates to:
+  /// **'Melde dich mit deinem bestehenden Account an.'**
+  String get tenantRegisterFlutterSignInExisting;
+
+  /// tenantRegister.flutter.termsAccept
+  ///
+  /// In de, this message translates to:
+  /// **' akzeptieren'**
+  String get tenantRegisterFlutterTermsAccept;
+
+  /// tenantRegister.flutter.termsLink
+  ///
+  /// In de, this message translates to:
+  /// **'Nutzungsbedingungen und Datenschutzerklärung'**
+  String get tenantRegisterFlutterTermsLink;
+
+  /// tenantRegister.flutter.toLogin
+  ///
+  /// In de, this message translates to:
+  /// **'Zur Anmeldung'**
+  String get tenantRegisterFlutterToLogin;
+
   /// tenantRegister.haveAccount
   ///
   /// In de, this message translates to:
@@ -20098,6 +20524,120 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Registrierung'**
   String get tenantRegisterTitle;
+
+  /// tenantSelect.flutter.createdAt
+  ///
+  /// In de, this message translates to:
+  /// **'Erstellt am'**
+  String get tenantSelectFlutterCreatedAt;
+
+  /// tenantSelect.flutter.dangerZone
+  ///
+  /// In de, this message translates to:
+  /// **'Gefahrenzone'**
+  String get tenantSelectFlutterDangerZone;
+
+  /// tenantSelect.flutter.deleteAllData
+  ///
+  /// In de, this message translates to:
+  /// **'Alle Daten dieser Instanz werden unwiderruflich gelöscht.'**
+  String get tenantSelectFlutterDeleteAllData;
+
+  /// tenantSelect.flutter.deleteTenant
+  ///
+  /// In de, this message translates to:
+  /// **'Instanz löschen'**
+  String get tenantSelectFlutterDeleteTenant;
+
+  /// tenantSelect.flutter.deleteTenantHint
+  ///
+  /// In de, this message translates to:
+  /// **'Diese Gruppe unwiderruflich löschen'**
+  String get tenantSelectFlutterDeleteTenantHint;
+
+  /// tenantSelect.flutter.deleted
+  ///
+  /// In de, this message translates to:
+  /// **'Instanz gelöscht'**
+  String get tenantSelectFlutterDeleted;
+
+  /// tenantSelect.flutter.detailsLoadFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Laden der Instanz-Details'**
+  String get tenantSelectFlutterDetailsLoadFailed;
+
+  /// tenantSelect.flutter.detailsTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Instanz-Details'**
+  String get tenantSelectFlutterDetailsTitle;
+
+  /// tenantSelect.flutter.emptyText
+  ///
+  /// In de, this message translates to:
+  /// **'Du bist noch keiner Instanz zugeordnet. Bitte wende dich an einen Administrator oder lege eine neue Instanz an.'**
+  String get tenantSelectFlutterEmptyText;
+
+  /// tenantSelect.flutter.emptyTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Instanzen'**
+  String get tenantSelectFlutterEmptyTitle;
+
+  /// tenantSelect.flutter.enterNameToConfirm
+  ///
+  /// In de, this message translates to:
+  /// **'Bitte gib den Namen der Instanz ein, um das Löschen zu bestätigen:'**
+  String get tenantSelectFlutterEnterNameToConfirm;
+
+  /// tenantSelect.flutter.info
+  ///
+  /// In de, this message translates to:
+  /// **'Informationen'**
+  String get tenantSelectFlutterInfo;
+
+  /// tenantSelect.flutter.loadFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Laden'**
+  String get tenantSelectFlutterLoadFailed;
+
+  /// tenantSelect.flutter.newTenant
+  ///
+  /// In de, this message translates to:
+  /// **'Neue Instanz'**
+  String get tenantSelectFlutterNewTenant;
+
+  /// tenantSelect.flutter.noRole
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Rolle'**
+  String get tenantSelectFlutterNoRole;
+
+  /// tenantSelect.flutter.notFound
+  ///
+  /// In de, this message translates to:
+  /// **'Instanz nicht gefunden'**
+  String get tenantSelectFlutterNotFound;
+
+  /// tenantSelect.flutter.region
+  ///
+  /// In de, this message translates to:
+  /// **'Region'**
+  String get tenantSelectFlutterRegion;
+
+  /// tenantSelect.flutter.tenantSelection
+  ///
+  /// In de, this message translates to:
+  /// **'Instanzauswahl'**
+  String get tenantSelectFlutterTenantSelection;
+
+  /// tenantSelect.flutter.yourRole
+  ///
+  /// In de, this message translates to:
+  /// **'Deine Rolle'**
+  String get tenantSelectFlutterYourRole;
 
   /// terms.acceptAfter
   ///

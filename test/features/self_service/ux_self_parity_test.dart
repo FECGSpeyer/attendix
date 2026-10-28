@@ -72,7 +72,7 @@ void main() {
 
     test('pause / unpause are header buttons', () {
       final appBar = source.substring(source.indexOf('PreferredSizeWidget _buildAppBar'));
-      expect(appBar.indexOf('selfServicePause'), lessThan(appBar.indexOf("tooltip: 'Legende'")));
+      expect(appBar.indexOf('selfServicePause'), lessThan(appBar.indexOf('tooltip: context.l10n.signoutLegend')));
       expect(appBar, contains('selfServiceUnpause'));
     });
   });

@@ -40,6 +40,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get adminEvaluation => 'Analytics';
 
   @override
+  String get adminFlutterAddFailed => 'Error while adding';
+
+  @override
   String adminGb(Object value) {
     return '$value GB';
   }
@@ -2161,6 +2164,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dashSettingsCards => 'Cards';
 
   @override
+  String get dashSettingsFlutterReorder => 'Change order';
+
+  @override
+  String dashSettingsFlutterSaveFailed(Object error) {
+    return 'Error while saving: $error';
+  }
+
+  @override
   String get dashSettingsReorderHint => 'Tap the icon at the top right to change the order by drag & drop.';
 
   @override
@@ -4079,6 +4090,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeDashboardEvents => 'Events';
 
   @override
+  String get homeDashboardFlutterExit => 'Left';
+
+  @override
+  String get homeDashboardFlutterJoin => 'Joined';
+
+  @override
+  String homeDashboardFlutterLoadFailed(Object error) {
+    return 'Error while loading: $error';
+  }
+
+  @override
+  String get homeDashboardFlutterPause => 'Pause';
+
+  @override
+  String homeDashboardFlutterTimeRange(Object time) {
+    return '$time';
+  }
+
+  @override
   String homeDashboardInDays(Object count) {
     return 'in $count days';
   }
@@ -4401,7 +4431,50 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loginFailedMessage => 'Email or password is incorrect. If you have not set a password, you can sign in with a code by email instead.';
 
   @override
+  String get loginFlutterAccessDenied => 'Access was denied.';
+
+  @override
+  String get loginFlutterBackToLogin => 'Back to login';
+
+  @override
+  String get loginFlutterCheckSpam => 'Please also check your spam folder.';
+
+  @override
+  String get loginFlutterConfirmEmail => 'Confirm email';
+
+  @override
+  String loginFlutterConfirmEmailSent(Object email) {
+    return 'We sent an email to $email. Please click the link in it to activate your account.';
+  }
+
+  @override
   String get loginFlutterEnterPassword => 'Please enter your password';
+
+  @override
+  String get loginFlutterHaveAccount => 'Already have an account?';
+
+  @override
+  String get loginFlutterLinkFailed => 'The link could not be processed.';
+
+  @override
+  String get loginFlutterNewPassword => 'New password';
+
+  @override
+  String get loginFlutterOtherEmail => 'Use a different email';
+
+  @override
+  String get loginFlutterResetIntro => 'Enter your email address and we will send you a reset link.';
+
+  @override
+  String loginFlutterResetLinkSent(Object email) {
+    return 'We sent a link to reset your password to $email.';
+  }
+
+  @override
+  String get loginFlutterSendLink => 'Send link';
+
+  @override
+  String get loginFlutterToLogin => 'Go to login';
 
   @override
   String get loginFlutterUnexpectedError => 'An unexpected error occurred. Please try again.';
@@ -4842,6 +4915,23 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notifEventReminders => 'Event reminders';
+
+  @override
+  String get notifFlutterConfigNotFound => 'Configuration not found';
+
+  @override
+  String notifFlutterLoadFailed(Object error) {
+    return 'Error while loading: $error';
+  }
+
+  @override
+  String get notifFlutterTelegramOpenFailed => 'Could not open Telegram';
+
+  @override
+  String get notifFlutterUpdateFailed => 'Error updating the configuration';
+
+  @override
+  String get notifFlutterUserIdCopied => 'User ID copied';
 
   @override
   String get notifLinked => 'Account linked';
@@ -7708,6 +7798,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get registerFillAllToast => 'Please fill in all fields.';
 
   @override
+  String get registerFlutterMainGroupInfo => 'What is the main group?';
+
+  @override
   String get registerFullName => 'Full name';
 
   @override
@@ -8016,6 +8109,28 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get selfServiceFlutterChild => 'Child';
+
+  @override
+  String get selfServiceFlutterNoKids => 'No children found';
+
+  @override
+  String get selfServiceFlutterNoKidsHint => 'No children are linked to your\nparent account.';
+
+  @override
+  String get selfServiceFlutterNoValidEntries => 'No valid entries found';
+
+  @override
+  String selfServiceFlutterSignInUntil(Object date) {
+    return 'Sign in until $date';
+  }
+
+  @override
+  String selfServiceFlutterSwitchFailed(Object error) {
+    return 'Error while switching: $error';
+  }
+
+  @override
   String get selfServiceLoadingEvents => 'Loading events...';
 
   @override
@@ -8279,11 +8394,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsFlutterChangeEmail => 'Change email';
 
   @override
+  String settingsFlutterChangeEmailFailed(Object error) {
+    return 'Error changing the email address: $error';
+  }
+
+  @override
+  String get settingsFlutterConfirmEmailChange => 'Please confirm the change via the link in the email sent to your new address.';
+
+  @override
   String get settingsFlutterCopyLinkFailed => 'Link could not be copied';
 
   @override
   String settingsFlutterCreateFailed(Object error) {
     return 'Error while creating: $error';
+  }
+
+  @override
+  String settingsFlutterCurrentEmail(Object email) {
+    return 'Current: $email';
   }
 
   @override
@@ -8307,6 +8435,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String settingsFlutterLoadFailed(Object error) {
     return 'Error while loading: $error';
   }
+
+  @override
+  String get settingsFlutterNewEmailPh => 'New email address...';
+
+  @override
+  String get settingsFlutterNoProfile => 'No profile found';
 
   @override
   String get settingsFlutterParentRemoved => 'Parent removed';
@@ -8377,6 +8511,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String settingsFlutterReactivated(Object name) {
     return '$name has been reactivated';
   }
+
+  @override
+  String get settingsFlutterSameEmail => 'That is already your email address.';
 
   @override
   String get settingsFlutterUserMgmtAdd => 'Add user';
@@ -9302,6 +9439,68 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get signoutFillRequired => 'Please fill in all required fields';
+
+  @override
+  String get signoutFlutterAbsenceSaveFailed => 'Absence could not be saved';
+
+  @override
+  String signoutFlutterError(Object error) {
+    return 'Error: $error';
+  }
+
+  @override
+  String signoutFlutterEventsCount(Object count) {
+    return '$count events';
+  }
+
+  @override
+  String get signoutFlutterFieldsSaveFailed => 'Registration fields could not be saved.';
+
+  @override
+  String get signoutFlutterFileDownloadFailed => 'File could not be downloaded';
+
+  @override
+  String get signoutFlutterFileOpenFailed => 'File could not be opened';
+
+  @override
+  String signoutFlutterFilesSkipped(Object count) {
+    return '$count file(s) could not be included.';
+  }
+
+  @override
+  String get signoutFlutterLinkOpenFailed => 'Link could not be opened';
+
+  @override
+  String get signoutFlutterNoCurrentSongs => 'No current pieces';
+
+  @override
+  String get signoutFlutterNoPerson => 'No person was found for your account in this instance.';
+
+  @override
+  String get signoutFlutterNoPrintableScores => 'No printable scores found.';
+
+  @override
+  String get signoutFlutterNoteSaveFailed => 'Note could not be saved.';
+
+  @override
+  String get signoutFlutterPrintAllScores => 'Print all scores';
+
+  @override
+  String signoutFlutterShowAll(Object count) {
+    return 'Show all $count';
+  }
+
+  @override
+  String get signoutFlutterShowLess => 'Show less';
+
+  @override
+  String get signoutFlutterSigninFailed => 'Sign-in failed. Please try again.';
+
+  @override
+  String get signoutFlutterSignoutFailed => 'Sign-out failed. Please try again.';
+
+  @override
+  String get signoutFlutterSwitchTenantFailed => 'Could not switch instance';
 
   @override
   String get signoutGiveReason => 'Please give a reason!';
@@ -11316,6 +11515,50 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tenantRegisterFirstName => 'First name';
 
   @override
+  String get tenantRegisterFlutterCreateChurchFailed => 'Error creating the church.';
+
+  @override
+  String get tenantRegisterFlutterGroupRequired => 'Group is required';
+
+  @override
+  String get tenantRegisterFlutterInvalidLink => 'Invalid registration link.';
+
+  @override
+  String get tenantRegisterFlutterLoadChurchesFailed => 'Error loading churches';
+
+  @override
+  String tenantRegisterFlutterLoadError(Object error) {
+    return 'Error while loading: $error';
+  }
+
+  @override
+  String get tenantRegisterFlutterLoadGroupsFailed => 'Error loading groups';
+
+  @override
+  String get tenantRegisterFlutterMaxSize => 'Max. 15 MB';
+
+  @override
+  String get tenantRegisterFlutterMinFiveChars => 'At least 5 characters';
+
+  @override
+  String get tenantRegisterFlutterRegisterFailedRetry => 'Registration failed. Please try again.';
+
+  @override
+  String get tenantRegisterFlutterRegistrationAt => 'Registration at';
+
+  @override
+  String get tenantRegisterFlutterSignInExisting => 'Sign in with your existing account.';
+
+  @override
+  String get tenantRegisterFlutterTermsAccept => ' accept';
+
+  @override
+  String get tenantRegisterFlutterTermsLink => 'Terms of use and privacy policy';
+
+  @override
+  String get tenantRegisterFlutterToLogin => 'Go to sign in';
+
+  @override
   String get tenantRegisterHaveAccount => 'Already have an account? Click here';
 
   @override
@@ -11403,6 +11646,63 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tenantRegisterTitle => 'Registration';
+
+  @override
+  String get tenantSelectFlutterCreatedAt => 'Created on';
+
+  @override
+  String get tenantSelectFlutterDangerZone => 'Danger zone';
+
+  @override
+  String get tenantSelectFlutterDeleteAllData => 'All data of this instance will be permanently deleted.';
+
+  @override
+  String get tenantSelectFlutterDeleteTenant => 'Delete instance';
+
+  @override
+  String get tenantSelectFlutterDeleteTenantHint => 'Permanently delete this group';
+
+  @override
+  String get tenantSelectFlutterDeleted => 'Instance deleted';
+
+  @override
+  String get tenantSelectFlutterDetailsLoadFailed => 'Error loading the instance details';
+
+  @override
+  String get tenantSelectFlutterDetailsTitle => 'Instance details';
+
+  @override
+  String get tenantSelectFlutterEmptyText => 'You are not assigned to any instance yet. Please contact an administrator or create a new instance.';
+
+  @override
+  String get tenantSelectFlutterEmptyTitle => 'No instances';
+
+  @override
+  String get tenantSelectFlutterEnterNameToConfirm => 'Please enter the name of the instance to confirm the deletion:';
+
+  @override
+  String get tenantSelectFlutterInfo => 'Information';
+
+  @override
+  String get tenantSelectFlutterLoadFailed => 'Error while loading';
+
+  @override
+  String get tenantSelectFlutterNewTenant => 'New instance';
+
+  @override
+  String get tenantSelectFlutterNoRole => 'No role';
+
+  @override
+  String get tenantSelectFlutterNotFound => 'Instance not found';
+
+  @override
+  String get tenantSelectFlutterRegion => 'Region';
+
+  @override
+  String get tenantSelectFlutterTenantSelection => 'Instance selection';
+
+  @override
+  String get tenantSelectFlutterYourRole => 'Your role';
 
   @override
   String get termsAcceptAfter => '.';

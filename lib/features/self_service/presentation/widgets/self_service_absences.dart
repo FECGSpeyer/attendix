@@ -13,6 +13,7 @@ import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../people/presentation/widgets/planned_absences.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Self-service planned absences and self pause (Ionic signout page).
 ///
@@ -51,7 +52,7 @@ Future<void> selfServiceReportAbsence(
       );
   if (!context.mounted) return;
   if (count == null) {
-    ToastHelper.showError(context, 'Abwesenheit konnte nicht gespeichert werden');
+    ToastHelper.showError(context, context.l10n.signoutFlutterAbsenceSaveFailed);
     return;
   }
   _refreshAfterAbsenceChange(ref);
@@ -78,7 +79,7 @@ Future<void> selfServicePause(BuildContext context, WidgetRef ref, Person player
     await repo.pausePlayer(player, untilIso, pauseText);
     _refreshAfterAbsenceChange(ref);
   } catch (e) {
-    if (context.mounted) ToastHelper.showError(context, 'Fehler: $e');
+    if (context.mounted) ToastHelper.showError(context, context.l10n.signoutFlutterError(e));
   }
 }
 
@@ -86,9 +87,9 @@ Future<void> selfServicePause(BuildContext context, WidgetRef ref, Person player
 Future<void> selfServiceUnpause(BuildContext context, WidgetRef ref, Person player) async {
   final confirmed = await DialogHelper.showConfirmation(
     context,
-    title: 'Pausierung beenden',
-    message: 'Möchtest du deine Pausierung wirklich beenden und wieder aktiv werden?',
-    confirmText: 'Reaktivieren',
+    title: context.l10n.signoutEndPause,
+    message: context.l10n.signoutEndPauseMessage,
+    confirmText: context.l10n.signoutReactivate,
   );
   if (!confirmed || !context.mounted) return;
   try {
@@ -96,7 +97,7 @@ Future<void> selfServiceUnpause(BuildContext context, WidgetRef ref, Person play
     await repo.unpausePlayer(player, historyText: 'Selbst reaktiviert');
     _refreshAfterAbsenceChange(ref);
   } catch (e) {
-    if (context.mounted) ToastHelper.showError(context, 'Fehler: $e');
+    if (context.mounted) ToastHelper.showError(context, context.l10n.signoutFlutterError(e));
   }
 }
 
@@ -144,11 +145,11 @@ class _SelfServicePlannedAbsencesState extends ConsumerState<SelfServicePlannedA
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Padding(
-            padding: EdgeInsets.fromLTRB(16, 14, 16, 4),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 14, 16, 4),
             child: Text(
-              'Geplante Abwesenheiten',
-              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+              context.l10n.signoutPlannedAbsences,
+              style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
             ),
           ),
           for (final absence in absences)
@@ -221,7 +222,7 @@ class _SelfServiceAbsenceSheetState extends State<SelfServiceAbsenceSheet> {
 
   void _confirm() {
     if (!_valid) {
-      ToastHelper.showError(context, 'Bitte fülle alle Pflichtfelder aus');
+      ToastHelper.showError(context, context.l10n.signoutFillRequired);
       return;
     }
     Navigator.of(context).pop(AbsenceInput(
@@ -240,7 +241,7 @@ class _SelfServiceAbsenceSheetState extends State<SelfServiceAbsenceSheet> {
           const Icon(Icons.calendar_today_outlined, size: 18, color: AppColors.medium),
           const SizedBox(width: 6),
           Text(
-            _from == null ? 'Starttag wählen' : 'Endtag wählen',
+            _from == null ? context.l10n.signoutChooseStart : context.l10n.signoutChooseEnd,
             style: theme.textTheme.bodyMedium?.copyWith(color: AppColors.medium),
           ),
         ],
@@ -252,7 +253,7 @@ class _SelfServiceAbsenceSheetState extends State<SelfServiceAbsenceSheet> {
           const SizedBox(width: 6),
           Expanded(
             child: Text(
-              '${DateFormat('dd.MM.').format(_from!)} – ${DateFormat('dd.MM.yyyy').format(_until!)}',
+              '${DateFormat(dateFmt(DateFmtKind.dayMonth)).format(_from!)} – ${DateFormat(dateFmt()).format(_until!)}',
               style: theme.textTheme.bodyLarge?.copyWith(
                 color: AppColors.primary,
                 fontWeight: FontWeight.w600,
@@ -261,7 +262,7 @@ class _SelfServiceAbsenceSheetState extends State<SelfServiceAbsenceSheet> {
           ),
           IconButton(
             icon: const Icon(Icons.cancel_outlined, color: AppColors.medium),
-            tooltip: 'Zurücksetzen',
+            tooltip: context.l10n.dateDialogReset,
             onPressed: _reset,
           ),
         ],
@@ -284,12 +285,12 @@ class _SelfServiceAbsenceSheetState extends State<SelfServiceAbsenceSheet> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             AppBar(
-              title: const Text('Abwesenheit melden'),
+              title: Text(context.l10n.signoutReportAbsence),
               automaticallyImplyLeading: false,
               actions: [
                 IconButton(
                   icon: const Icon(Icons.close),
-                  tooltip: 'Schließen',
+                  tooltip: context.l10n.commonClose,
                   onPressed: () => Navigator.of(context).pop(),
                 ),
               ],
@@ -304,9 +305,9 @@ class _SelfServiceAbsenceSheetState extends State<SelfServiceAbsenceSheet> {
                   minLines: 1,
                   maxLines: 4,
                   onChanged: (_) => setState(() {}),
-                  decoration: const InputDecoration(
-                    labelText: 'Grund *',
-                    hintText: 'z.B. Urlaub, Krankheit...',
+                  decoration: InputDecoration(
+                    labelText: context.l10n.signoutReasonRequired,
+                    hintText: context.l10n.signoutReasonPlaceholder,
                     floatingLabelBehavior: FloatingLabelBehavior.always,
                     border: InputBorder.none,
                   ),
@@ -322,12 +323,11 @@ class _SelfServiceAbsenceSheetState extends State<SelfServiceAbsenceSheet> {
               onDateChanged: _onPick,
             ),
             if (widget.showLongAbsenceHint)
-              const Padding(
-                padding: EdgeInsets.fromLTRB(16, 8, 16, 0),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
                 child: Text(
-                  'Für längere Abwesenheiten empfiehlt sich die Pausieren-Funktion, '
-                  'damit du nicht in neuen Terminen erscheinst.',
-                  style: TextStyle(color: AppColors.warningDark),
+                  context.l10n.signoutLongAbsenceHint,
+                  style: const TextStyle(color: AppColors.warningDark),
                 ),
               ),
             Padding(
@@ -335,7 +335,7 @@ class _SelfServiceAbsenceSheetState extends State<SelfServiceAbsenceSheet> {
               child: FilledButton.icon(
                 onPressed: _valid ? _confirm : null,
                 icon: const Icon(Icons.calendar_today_outlined),
-                label: const Text('Abwesenheit eintragen'),
+                label: Text(context.l10n.signoutEnterAbsence),
               ),
             ),
           ],
@@ -367,7 +367,7 @@ class _SelfPauseSheetState extends State<_SelfPauseSheet> {
   void _confirm() {
     final reason = _reasonController.text.trim();
     if (reason.isEmpty) {
-      ToastHelper.showWarning(context, 'Bitte gib einen Grund an!');
+      ToastHelper.showWarning(context, context.l10n.signoutGiveReason);
       return;
     }
     Navigator.of(context).pop((reason: reason, until: _until));
@@ -384,12 +384,12 @@ class _SelfPauseSheetState extends State<_SelfPauseSheet> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             AppBar(
-              title: const Text('Pausieren'),
+              title: Text(context.l10n.signoutPause),
               automaticallyImplyLeading: false,
               actions: [
                 IconButton(
                   icon: const Icon(Icons.close),
-                  tooltip: 'Schließen',
+                  tooltip: context.l10n.commonClose,
                   onPressed: () => Navigator.of(context).pop(),
                 ),
               ],
@@ -401,9 +401,9 @@ class _SelfPauseSheetState extends State<_SelfPauseSheet> {
                 textCapitalization: TextCapitalization.sentences,
                 minLines: 3,
                 maxLines: 5,
-                decoration: const InputDecoration(
-                  labelText: 'Grund',
-                  hintText: 'Warum möchtest du pausieren?',
+                decoration: InputDecoration(
+                  labelText: context.l10n.excuseReason,
+                  hintText: context.l10n.signoutPauseReasonPlaceholder,
                   floatingLabelBehavior: FloatingLabelBehavior.always,
                 ),
               ),
@@ -411,10 +411,10 @@ class _SelfPauseSheetState extends State<_SelfPauseSheet> {
             // Ionic: accordion "Pausiert bis (optional)" with inline calendar
             ListTile(
               tileColor: Theme.of(context).colorScheme.surfaceContainerHighest,
-              title: const Text('Pausiert bis (optional)'),
+              title: Text(context.l10n.signoutPausedUntil),
               subtitle: Text(_until != null
-                  ? DateFormat('dd.MM.yyyy').format(_until!)
-                  : 'Kein Enddatum gewählt'),
+                  ? DateFormat(dateFmt()).format(_until!)
+                  : context.l10n.signoutNoEndDate),
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -440,7 +440,7 @@ class _SelfPauseSheetState extends State<_SelfPauseSheet> {
               child: FilledButton(
                 style: FilledButton.styleFrom(backgroundColor: AppColors.warning),
                 onPressed: _confirm,
-                child: const Text('Pausieren bestätigen'),
+                child: Text(context.l10n.signoutConfirmPause),
               ),
             ),
           ],

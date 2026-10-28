@@ -9,6 +9,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/church/church.dart';
+import '../../../../l10n/l10n.dart';
 
 const int _gb = 1024 * 1024 * 1024;
 
@@ -58,7 +59,7 @@ class _AdministrationPageState extends ConsumerState<AdministrationPage> {
     if (raw.isNotEmpty && (gb == null || gb <= 0)) {
       ToastHelper.showWarning(
         context,
-        'Bitte eine Zahl größer 0 eingeben oder das Feld leeren (unbegrenzt).',
+        context.l10n.adminInvalidLimit,
       );
       return;
     }
@@ -72,43 +73,45 @@ class _AdministrationPageState extends ConsumerState<AdministrationPage> {
     if (ok) {
       ToastHelper.showSuccess(
         context,
-        bytes == null ? 'Speicher: unbegrenzt' : 'Speicherlimit: ${_fmtGb(gb!)} GB',
+        bytes == null
+            ? context.l10n.adminStorageUnlimited
+            : context.l10n.adminStorageLimit(_fmtGb(gb!)),
       );
     } else {
       final prev = _toGb(info?.maxBytes);
       _limitController.text = prev == null ? '' : _fmtGb(prev);
-      ToastHelper.showError(context, 'Fehler beim Speichern');
+      ToastHelper.showError(context, context.l10n.svcSaveFailed);
     }
   }
 
   Future<void> _addChurch() async {
     final name = await DialogHelper.showTextInput(
       context,
-      title: 'Gemeinde hinzufügen',
-      hint: 'Name der Gemeinde',
-      confirmText: 'Hinzufügen',
+      title: context.l10n.adminAddChurch,
+      hint: context.l10n.adminChurchName,
+      confirmText: context.l10n.attendanceAdd,
     );
     if (name == null || !mounted) return;
     if (name.trim().isEmpty) {
-      ToastHelper.showWarning(context, 'Bitte gib gültige Werte ein.');
+      ToastHelper.showWarning(context, context.l10n.adminInvalidValues);
       return;
     }
     final id = await ref.read(churchNotifierProvider.notifier).createChurch(name.trim());
     if (!mounted) return;
     if (id != null) {
-      ToastHelper.showSuccess(context, 'Die Gemeinde wurde erfolgreich hinzugefügt.');
+      ToastHelper.showSuccess(context, context.l10n.adminChurchAdded);
     } else {
-      ToastHelper.showError(context, 'Fehler beim Hinzufügen');
+      ToastHelper.showError(context, context.l10n.adminFlutterAddFailed);
     }
   }
 
   Future<void> _rename(Church church) async {
     final name = await DialogHelper.showTextInput(
       context,
-      title: 'Gemeinde umbenennen',
+      title: context.l10n.adminRenameChurch,
       initialValue: church.name,
-      hint: 'Name der Gemeinde',
-      confirmText: 'Speichern',
+      hint: context.l10n.adminChurchName,
+      confirmText: context.l10n.commonSave,
     );
     final trimmed = name?.trim() ?? '';
     if (trimmed.isEmpty || church.id == null || !mounted) return;
@@ -117,8 +120,8 @@ class _AdministrationPageState extends ConsumerState<AdministrationPage> {
         .renameChurch(church.id!, trimmed);
     if (!mounted) return;
     ok
-        ? ToastHelper.showSuccess(context, 'Gemeinde umbenannt')
-        : ToastHelper.showError(context, 'Fehler beim Umbenennen');
+        ? ToastHelper.showSuccess(context, context.l10n.adminChurchRenamed)
+        : ToastHelper.showError(context, context.l10n.adminRenameFailed);
   }
 
   Future<void> _merge(List<(String, String)> pairs, {required String title, required String message, required String confirm}) async {
@@ -133,14 +136,14 @@ class _AdministrationPageState extends ConsumerState<AdministrationPage> {
     final count = await ref.read(administrationNotifierProvider.notifier).mergeChurches(pairs);
     if (!mounted) return;
     if (count == null) {
-      ToastHelper.showError(context, 'Fehler beim Zusammenführen');
+      ToastHelper.showError(context, context.l10n.adminMergeFailed);
     } else if (pairs.length > 1) {
       ToastHelper.showSuccess(
         context,
-        '$count Person(en) aktualisiert, ${pairs.length} Duplikat(e) entfernt',
+        context.l10n.adminMergedAll(count, pairs.length),
       );
     } else {
-      ToastHelper.showSuccess(context, 'Zusammengeführt: $count Person(en) aktualisiert');
+      ToastHelper.showSuccess(context, context.l10n.adminMerged(count));
     }
   }
 
@@ -152,7 +155,7 @@ class _AdministrationPageState extends ConsumerState<AdministrationPage> {
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
-          title: Text('„${source.name}“ zusammenführen mit...'),
+          title: Text(context.l10n.adminMergeWith(source.name)),
           content: SizedBox(
             width: double.maxFinite,
             child: ListView(
@@ -171,11 +174,11 @@ class _AdministrationPageState extends ConsumerState<AdministrationPage> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Abbrechen'),
+              child: Text(context.l10n.commonCancel),
             ),
             ElevatedButton(
               onPressed: () => Navigator.of(context).pop(selected),
-              child: const Text('Zusammenführen'),
+              child: Text(context.l10n.adminMerge),
             ),
           ],
         ),
@@ -185,10 +188,9 @@ class _AdministrationPageState extends ConsumerState<AdministrationPage> {
     final target = targets.firstWhere((c) => c.id == targetId);
     await _merge(
       [(targetId, source.id!)],
-      title: 'Bestätigen',
-      message:
-          '„${source.name}“ wird gelöscht und alle Personen zu „${target.name}“ verschoben. Fortfahren?',
-      confirm: 'Zusammenführen',
+      title: context.l10n.commonConfirm,
+      message: context.l10n.adminMergeMoveMessage(source.name, target.name),
+      confirm: context.l10n.adminMerge,
     );
   }
 
@@ -209,22 +211,22 @@ class _AdministrationPageState extends ConsumerState<AdministrationPage> {
     final duplicates = findChurchDuplicates(churches);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Administration')),
+      appBar: AppBar(title: Text(context.l10n.adminTitle)),
       body: ListView(
         padding: const EdgeInsets.symmetric(vertical: 8),
         children: [
-          const _Header('Auswertung'),
+          _Header(context.l10n.adminEvaluation),
           Card(
             margin: const EdgeInsets.symmetric(horizontal: 16),
             child: ListTile(
               leading: const Icon(Icons.analytics_outlined),
-              title: const Text('Usage Dashboard'),
+              title: Text(context.l10n.usageTitle),
               trailing: const Icon(Icons.chevron_right, color: AppColors.medium),
               onTap: () => context.push('/dashboard'),
             ),
           ),
           const SizedBox(height: 16),
-          _Header('Speicher Dateiablage: ${tenant?.longName ?? ''}'),
+          _Header(context.l10n.adminStorageFor(tenant?.longName ?? '')),
           Card(
             margin: const EdgeInsets.symmetric(horizontal: 16),
             child: Column(
@@ -236,10 +238,10 @@ class _AdministrationPageState extends ConsumerState<AdministrationPage> {
                     focusNode: _limitFocus,
                     enabled: !saving,
                     keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                    decoration: const InputDecoration(
-                      labelText: 'Max. Speicher (GB)',
-                      hintText: 'Unbegrenzt',
-                      helperText: 'Leer lassen für unbegrenzt. Neue Instanzen starten mit 5 GB.',
+                    decoration: InputDecoration(
+                      labelText: context.l10n.adminMaxStorage,
+                      hintText: context.l10n.adminUnlimited,
+                      helperText: context.l10n.adminLimitHelper,
                       helperMaxLines: 2,
                     ),
                     onSubmitted: (_) => _saveFilesLimit(),
@@ -247,9 +249,9 @@ class _AdministrationPageState extends ConsumerState<AdministrationPage> {
                 ),
                 if (storage.valueOrNull?.usedBytes != null)
                   ListTile(
-                    title: const Text('Aktuell belegt'),
+                    title: Text(context.l10n.adminCurrentlyUsed),
                     trailing: Text(
-                      '${_fmtGb(_toGb(storage.value!.usedBytes)!)} GB',
+                      context.l10n.adminGb(_fmtGb(_toGb(storage.value!.usedBytes)!)),
                       style: const TextStyle(color: AppColors.medium),
                     ),
                   ),
@@ -257,7 +259,7 @@ class _AdministrationPageState extends ConsumerState<AdministrationPage> {
             ),
           ),
           const SizedBox(height: 16),
-          _Header('Gemeinden (${churches.length})'),
+          _Header(context.l10n.adminChurchesCount(churches.length)),
           Card(
             margin: const EdgeInsets.symmetric(horizontal: 16),
             clipBehavior: Clip.antiAlias,
@@ -273,31 +275,29 @@ class _AdministrationPageState extends ConsumerState<AdministrationPage> {
                           color: AppColors.warning.withAlpha((0.25 * 255).round()),
                           child: ListTile(
                             leading: const Icon(Icons.warning_amber_outlined),
-                            title: Text('${duplicates.length} Duplikat-Gruppe(n) gefunden'),
-                            subtitle: const Text(
-                              'Gemeinden mit gleichem Namen können zusammengeführt werden.',
-                            ),
+                            title: Text(context.l10n.adminDuplicateGroups(duplicates.length)),
+                            subtitle: Text(context.l10n.adminDuplicatesHint),
                           ),
                         ),
                         for (final g in duplicates)
                           ListTile(
                             title: Text(g.target.name),
-                            subtitle: Text('${g.duplicates.length + 1}x vorhanden'),
+                            subtitle: Text(context.l10n.adminTimesPresent(g.duplicates.length + 1)),
                             trailing: Wrap(
                               spacing: 4,
                               children: [
                                 for (final dup in g.duplicates)
                                   OutlinedButton.icon(
                                     icon: const Icon(Icons.merge_type, size: 16),
-                                    label: const Text('Zusammenführen'),
+                                    label: Text(context.l10n.adminMerge),
                                     onPressed: saving
                                         ? null
                                         : () => _merge(
                                               [(g.target.id!, dup.id!)],
-                                              title: 'Gemeinden zusammenführen',
-                                              message:
-                                                  '„${dup.name}“ wird in „${g.target.name}“ zusammengeführt. Alle Personen werden aktualisiert. Fortfahren?',
-                                              confirm: 'Zusammenführen',
+                                              title: context.l10n.adminMergeChurches,
+                                              message: context.l10n
+                                                  .adminMergeMessage(dup.name, g.target.name),
+                                              confirm: context.l10n.adminMerge,
                                             ),
                                   ),
                               ],
@@ -305,9 +305,9 @@ class _AdministrationPageState extends ConsumerState<AdministrationPage> {
                           ),
                         ListTile(
                           leading: const Icon(Icons.merge_type, color: AppColors.warningDark),
-                          title: const Text(
-                            'Alle Duplikate zusammenführen',
-                            style: TextStyle(color: AppColors.warningDark),
+                          title: Text(
+                            context.l10n.adminMergeAllDuplicates,
+                            style: const TextStyle(color: AppColors.warningDark),
                           ),
                           onTap: saving
                               ? null
@@ -318,17 +318,17 @@ class _AdministrationPageState extends ConsumerState<AdministrationPage> {
                                   ];
                                   _merge(
                                     pairs,
-                                    title: 'Alle Duplikate zusammenführen',
-                                    message:
-                                        '${pairs.length} Duplikat(e) in ${duplicates.length} Gruppe(n) werden zusammengeführt. Fortfahren?',
-                                    confirm: 'Alle zusammenführen',
+                                    title: context.l10n.adminMergeAllDuplicates,
+                                    message: context.l10n
+                                        .adminMergeAllMessage(pairs.length, duplicates.length),
+                                    confirm: context.l10n.adminMergeAll,
                                   );
                                 },
                         ),
                         const Divider(height: 1),
                       ],
                       ListTile(
-                        title: const Text('Alle Gemeinden anzeigen'),
+                        title: Text(context.l10n.adminShowAllChurches),
                         trailing: Icon(
                           _showAllChurches ? Icons.expand_less : Icons.expand_more,
                         ),
@@ -343,12 +343,12 @@ class _AdministrationPageState extends ConsumerState<AdministrationPage> {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 IconButton(
-                                  tooltip: 'Gemeinde umbenennen',
+                                  tooltip: context.l10n.adminRenameChurch,
                                   icon: const Icon(Icons.edit_outlined, color: AppColors.medium),
                                   onPressed: saving ? null : () => _rename(c),
                                 ),
                                 IconButton(
-                                  tooltip: 'Zusammenführen',
+                                  tooltip: context.l10n.adminMerge,
                                   icon: const Icon(Icons.merge_type, color: AppColors.medium),
                                   onPressed: saving ? null : () => _mergeManual(c, churches),
                                 ),
@@ -358,9 +358,9 @@ class _AdministrationPageState extends ConsumerState<AdministrationPage> {
                       const Divider(height: 1),
                       ListTile(
                         leading: const Icon(Icons.add, color: AppColors.primary),
-                        title: const Text(
-                          'Gemeinde hinzufügen',
-                          style: TextStyle(color: AppColors.primary),
+                        title: Text(
+                          context.l10n.adminAddChurch,
+                          style: const TextStyle(color: AppColors.primary),
                         ),
                         onTap: _addChurch,
                       ),

@@ -21,6 +21,7 @@ import '../../../auth/data/auth_flow_service.dart';
 import '../../../auth/presentation/widgets/otp_widgets.dart';
 import '../../../legal/presentation/widgets/legal_content_view.dart';
 import '../../data/providers/registration_providers.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Public tenant registration page
 class TenantRegistrationPage extends ConsumerStatefulWidget {
@@ -88,7 +89,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Registrierung'),
+        title: Text(context.l10n.tenantRegisterTitle),
         leading: IconButton(
           icon: const Icon(Icons.close),
           onPressed: () {
@@ -102,10 +103,10 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
       ),
       body: tenantAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => _buildErrorState('Fehler beim Laden: $error'),
+        error: (error, stack) => _buildErrorState(context.l10n.tenantRegisterFlutterLoadError(error)),
         data: (tenant) {
           if (tenant == null) {
-            return _buildErrorState('Ungültiger Registrierungslink.');
+            return _buildErrorState(context.l10n.tenantRegisterFlutterInvalidLink);
           }
           return _buildForm(tenant);
         },
@@ -134,7 +135,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
             const SizedBox(height: AppDimensions.paddingL),
             ElevatedButton(
               onPressed: () => context.go('/login'),
-              child: const Text('Zur Anmeldung'),
+              child: Text(context.l10n.tenantRegisterFlutterToLogin),
             ),
           ],
         ),
@@ -185,7 +186,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Registrierung bei',
+                          context.l10n.tenantRegisterFlutterRegistrationAt,
                           style: Theme.of(context).textTheme.bodySmall?.copyWith(
                                 color: AppColors.medium,
                               ),
@@ -205,7 +206,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
           ),
           const SizedBox(height: AppDimensions.paddingS),
           Text(
-            'Registriere dich über dieses Formular für die oben genannte Instanz.',
+            context.l10n.tenantRegisterIntro,
             style: Theme.of(context).textTheme.bodyMedium,
           ),
           const SizedBox(height: AppDimensions.paddingL),
@@ -215,7 +216,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
 
           // Personal data section
           Text(
-            'Persönliche Daten',
+            context.l10n.tenantRegisterPersonalData,
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
@@ -224,8 +225,8 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
           TextFormField(
             controller: _firstNameController,
             textCapitalization: TextCapitalization.words,
-            decoration: const InputDecoration(
-              labelText: 'Vorname *',
+            decoration: InputDecoration(
+              labelText: '${context.l10n.tenantRegisterFirstName} *',
               prefixIcon: Icon(Icons.person_outlined),
             ),
             onSaved: (value) => _formData.firstName = value?.trim() ?? '',
@@ -234,8 +235,8 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
           TextFormField(
             controller: _lastNameController,
             textCapitalization: TextCapitalization.words,
-            decoration: const InputDecoration(
-              labelText: 'Nachname *',
+            decoration: InputDecoration(
+              labelText: '${context.l10n.tenantRegisterLastName} *',
               prefixIcon: Icon(Icons.person_outlined),
             ),
             onSaved: (value) => _formData.lastName = value?.trim() ?? '',
@@ -245,16 +246,16 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
           // Group selection
           groupsAsync.when(
             loading: () => const Center(child: CircularProgressIndicator()),
-            error: (_, __) => const Text('Fehler beim Laden der Gruppen'),
+            error: (_, __) => Text(context.l10n.tenantRegisterFlutterLoadGroupsFailed),
             data: (groups) {
               _noGroupsAvailable = groups.isEmpty;
               if (groups.isEmpty) {
                 return Card(
                   color: AppColors.danger.withValues(alpha: 0.1),
-                  child: const Padding(
+                  child: Padding(
                     padding: EdgeInsets.all(AppDimensions.paddingM),
                     child: Text(
-                      'Registrierung aktuell nicht möglich: Der Administrator hat noch keine Gruppen angelegt. Bitte versuche es später erneut.',
+                      context.l10n.tenantRegisterNoGroups,
                       style: TextStyle(color: AppColors.danger),
                     ),
                   ),
@@ -264,8 +265,8 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
               _formData.groupId ??= groups.first['id'] as int;
               return DropdownButtonFormField<int>(
                 value: _formData.groupId,
-                decoration: const InputDecoration(
-                  labelText: 'Gruppe *',
+                decoration: InputDecoration(
+                  labelText: '${context.l10n.commonGroupLabelGroup} *',
                   prefixIcon: Icon(Icons.group_outlined),
                 ),
                 items: groups.map((g) {
@@ -276,7 +277,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
                 }).toList(),
                 validator: (value) {
                   if (value == null) {
-                    return 'Gruppe ist erforderlich';
+                    return context.l10n.tenantRegisterFlutterGroupRequired;
                   }
                   return null;
                 },
@@ -302,8 +303,8 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
             const SizedBox(height: AppDimensions.paddingM),
             TextFormField(
               controller: _phoneController,
-              decoration: const InputDecoration(
-                labelText: 'Handynummer',
+              decoration: InputDecoration(
+                labelText: context.l10n.tenantRegisterPhone,
                 prefixIcon: Icon(Icons.phone_outlined),
               ),
               keyboardType: TextInputType.phone,
@@ -317,8 +318,8 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
           // Notes field
           const SizedBox(height: AppDimensions.paddingM),
           TextFormField(
-            decoration: const InputDecoration(
-              labelText: 'Bemerkungen (optional)',
+            decoration: InputDecoration(
+              labelText: context.l10n.tenantRegisterNotes,
               prefixIcon: Icon(Icons.notes_outlined),
               alignLabelWithHint: true,
             ),
@@ -341,7 +342,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
                     height: 24,
                     child: CircularProgressIndicator(strokeWidth: 2),
                   )
-                : const Text('Registrierung abschließen'),
+                : Text(context.l10n.tenantRegisterFinish),
           ),
 
           const SizedBox(height: AppDimensions.paddingL),
@@ -351,14 +352,14 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
   }
 
   Widget _buildBirthdayField() {
-    final dateFormat = DateFormat('dd.MM.yyyy');
+    final dateFormat = DateFormat(dateFmt());
     // FN-007: Use state-managed controller and update text on date change
     if (_formData.birthDate != null && _birthdayController.text.isEmpty) {
       _birthdayController.text = dateFormat.format(_formData.birthDate!);
     }
     return TextFormField(
       decoration: InputDecoration(
-        labelText: 'Geburtsdatum',
+        labelText: context.l10n.tenantRegisterBirthDate,
         prefixIcon: const Icon(Icons.cake_outlined),
         suffixIcon: const Icon(Icons.calendar_today),
         hintText: _formData.birthDate != null
@@ -488,7 +489,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
           widgets.add(
             StatefulBuilder(
               builder: (context, setFieldState) {
-                final dateFormat = DateFormat('dd.MM.yyyy');
+                final dateFormat = DateFormat(dateFmt());
                 final currentValue = _formData.additionalFields[field.id];
                 final currentDate = currentValue != null
                     ? DateTime.tryParse(currentValue.toString())
@@ -567,8 +568,8 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
                       children: [
                         Text(
                           _profileImageBytes != null
-                              ? 'Passbild ändern'
-                              : 'Wähle ein Passbild aus (max. 15 MB)',
+                              ? context.l10n.tenantRegisterReplacePicture
+                              : context.l10n.tenantRegisterChoosePicture,
                           style: const TextStyle(
                             color: AppColors.primary,
                             fontWeight: FontWeight.w500,
@@ -576,7 +577,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
                         ),
                         const SizedBox(height: 2),
                         Text(
-                          'Max. 15 MB',
+                          context.l10n.tenantRegisterFlutterMaxSize,
                           style: Theme.of(context).textTheme.bodySmall?.copyWith(
                                 color: AppColors.medium,
                               ),
@@ -622,7 +623,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
       if (bytes.length > 15 * 1024 * 1024) {
         if (mounted) {
           ToastHelper.showError(context,
-              'Das ausgewählte Bild ist zu groß. Bitte wähle ein Bild unter 15 MB.');
+              context.l10n.tenantRegisterPictureTooLarge);
         }
         return;
       }
@@ -631,7 +632,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
     } catch (e) {
       if (mounted) {
         ToastHelper.showError(context,
-            'Fehler beim ändern des Passbildes, versuche es später erneut');
+            context.l10n.tenantRegisterPictureFailed);
       }
     }
   }
@@ -641,7 +642,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
 
     return churchesAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (_, __) => const Text('Fehler beim Laden der Gemeinden'),
+      error: (_, __) => Text(context.l10n.tenantRegisterFlutterLoadChurchesFailed),
       data: (churches) {
         return StatefulBuilder(
           builder: (context, setFieldState) {
@@ -654,15 +655,15 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
               children: [
                 DropdownButtonFormField<String>(
                   decoration: InputDecoration(
-                    labelText: field.name.isNotEmpty ? field.name : 'Gemeinde',
+                    labelText: field.name.isNotEmpty ? field.name : context.l10n.exportChurch,
                     prefixIcon: const Icon(Icons.church_outlined),
                   ),
                   value: selectedChurchId,
                   isExpanded: true,
                   items: [
-                    const DropdownMenuItem<String>(
+                    DropdownMenuItem<String>(
                       value: '',
-                      child: Text('Nicht gelistet'),
+                      child: Text(context.l10n.tenantRegisterNotListed),
                     ),
                     ...churches.map((c) => DropdownMenuItem<String>(
                           value: c.id,
@@ -681,11 +682,11 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
                 if (isCustom) ...[
                   const SizedBox(height: AppDimensions.paddingM),
                   TextFormField(
-                    decoration: const InputDecoration(
-                      labelText: 'Gemeinde nicht gelistet? Bitte Namen eingeben',
-                      hintText: 'Name deiner Gemeinde',
-                      prefixIcon: Icon(Icons.edit),
-                      helperText: 'Mindestens 5 Zeichen',
+                    decoration: InputDecoration(
+                      labelText: context.l10n.tenantRegisterChurchNotListed,
+                      hintText: context.l10n.tenantRegisterChurchNamePlaceholder,
+                      prefixIcon: const Icon(Icons.edit),
+                      helperText: context.l10n.tenantRegisterFlutterMinFiveChars,
                     ),
                     onSaved: (value) {
                       _formData.additionalFields['_custom_church'] =
@@ -718,7 +719,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
 
       if (existing != null && mounted) {
         ToastHelper.showWarning(
-            context, 'Sie sind bereits in dieser Instanz registriert.');
+            context, context.l10n.tenantRegisterAlreadyRegistered);
         context.go('/login');
         return;
       }
@@ -739,26 +740,26 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
         builder: (context) => StatefulBuilder(
           builder: (context, setDialogState) {
             return AlertDialog(
-              title: const Text('Anmelden'),
+              title: Text(context.l10n.loginSignIn),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Text('Melde dich mit deinem bestehenden Account an.'),
+                  Text(context.l10n.tenantRegisterFlutterSignInExisting),
                   const SizedBox(height: 16),
                   TextField(
                     controller: emailController,
-                    decoration: const InputDecoration(
-                      labelText: 'E-Mail',
-                      prefixIcon: Icon(Icons.email_outlined),
+                    decoration: InputDecoration(
+                      labelText: context.l10n.loginEmail,
+                      prefixIcon: const Icon(Icons.email_outlined),
                     ),
                     keyboardType: TextInputType.emailAddress,
                   ),
                   const SizedBox(height: 12),
                   TextField(
                     controller: passwordController,
-                    decoration: const InputDecoration(
-                      labelText: 'Passwort',
-                      prefixIcon: Icon(Icons.lock_outlined),
+                    decoration: InputDecoration(
+                      labelText: context.l10n.loginPassword,
+                      prefixIcon: const Icon(Icons.lock_outlined),
                     ),
                     obscureText: true,
                   ),
@@ -771,7 +772,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(context, false),
-                  child: const Text('Abbrechen'),
+                  child: Text(context.l10n.commonCancel),
                 ),
                 ElevatedButton(
                   onPressed: () async {
@@ -784,15 +785,15 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
                     } on LoginFailure catch (failure) {
                       setDialogState(() {
                         loginError = failure.message ??
-                            'Bitte bestätige zuerst deine E-Mail-Adresse.';
+                            context.l10n.authConfirmEmailFirst;
                       });
                     } catch (e) {
                       setDialogState(() {
-                        loginError = 'Fehler beim Anmelden';
+                        loginError = context.l10n.dbLoginFailed;
                       });
                     }
                   },
-                  child: const Text('Anmelden'),
+                  child: Text(context.l10n.loginSignIn),
                 ),
               ],
             );
@@ -817,7 +818,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
   List<Widget> _buildAccountSection() {
     final theme = Theme.of(context);
     final title = Text(
-      'Account',
+      context.l10n.tenantRegisterAccount,
       style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
     );
 
@@ -831,7 +832,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
           child: ListTile(
             leading: const Icon(Icons.verified_user_outlined,
                 color: AppColors.success),
-            title: Text('Du bist angemeldet als $email.'),
+            title: Text(context.l10n.tenantRegisterSignedInAs(email)),
           ),
         ),
         const SizedBox(height: AppDimensions.paddingL),
@@ -844,7 +845,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
         alignment: Alignment.centerLeft,
         child: TextButton(
           onPressed: _isLoading ? null : _showLoginDialogForCurrentTenant,
-          child: const Text('Account bereits vorhanden? Hier klicken'),
+          child: Text(context.l10n.tenantRegisterHaveAccount),
         ),
       ),
       AuthModeSegment(
@@ -863,9 +864,9 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
       TextFormField(
         controller: _emailController,
         readOnly: _mode == AuthMode.otp && _otpSent,
-        decoration: const InputDecoration(
-          labelText: 'E-Mail Adresse *',
-          prefixIcon: Icon(Icons.email_outlined),
+        decoration: InputDecoration(
+          labelText: '${context.l10n.tenantRegisterEmailAddress} *',
+          prefixIcon: const Icon(Icons.email_outlined),
         ),
         keyboardType: TextInputType.emailAddress,
         autofillHints: const [AutofillHints.email],
@@ -875,10 +876,10 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
       if (_mode == AuthMode.password) ...[
         TextFormField(
           decoration: InputDecoration(
-            labelText: 'Passwort *',
+            labelText: '${context.l10n.loginPassword} *',
             prefixIcon: const Icon(Icons.lock_outlined),
             suffixIcon: IconButton(
-              tooltip: 'Passwort anzeigen',
+              tooltip: context.l10n.loginShowPassword,
               icon: Icon(_obscurePassword ? Icons.visibility : Icons.visibility_off),
               onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
             ),
@@ -891,7 +892,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
         const SizedBox(height: AppDimensions.paddingM),
         TextFormField(
           decoration: InputDecoration(
-            labelText: 'Passwort bestätigen *',
+            labelText: '${context.l10n.registerModalConfirmPassword} *',
             prefixIcon: const Icon(Icons.lock_outlined),
             suffixIcon: IconButton(
               icon: Icon(_obscureConfirmPassword
@@ -919,12 +920,12 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
         if (!_otpSent)
           OutlinedButton(
             onPressed: _isLoading ? null : _requestCode,
-            child: const Text('Code senden'),
+            child: Text(context.l10n.loginSendCode),
           )
         else ...[
           OutlinedButton(
             onPressed: _isLoading ? null : _verifyCode,
-            child: const Text('Code bestätigen'),
+            child: Text(context.l10n.tenantRegisterConfirmCode),
           ),
           Center(
             child: ResendCodeButton(
@@ -950,15 +951,15 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
         children: [
           InkWell(
             onTap: () => showLegalModal(context),
-            child: const Text(
-              'Nutzungsbedingungen und Datenschutzerklärung',
-              style: TextStyle(
+            child: Text(
+              context.l10n.tenantRegisterFlutterTermsLink,
+              style: const TextStyle(
                 color: AppColors.primary,
                 decoration: TextDecoration.underline,
               ),
             ),
           ),
-          const Text(' akzeptieren'),
+          Text(context.l10n.tenantRegisterFlutterTermsAccept),
         ],
       ),
     );
@@ -974,12 +975,12 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
   Future<void> _requestCode() async {
     final email = _emailController.text.trim().toLowerCase();
     if (!isValidEmail(email)) {
-      ToastHelper.showError(context, 'Bitte eine gültige E-Mail Adresse eingeben.');
+      ToastHelper.showError(context, context.l10n.loginToastInvalidEmail);
       return;
     }
     if (!_privacyAccepted) {
       ToastHelper.showError(context,
-          'Bitte akzeptiere die Nutzungsbedingungen und Datenschutzerklärung.');
+          context.l10n.tenantRegisterAcceptTermsToast);
       return;
     }
     setState(() => _isLoading = true);
@@ -1047,7 +1048,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
         if (birthday != null &&
             (tenant?.registrationFields ?? const []).contains('birthDate')) {
           _formData.birthDate = birthday;
-          _birthdayController.text = DateFormat('dd.MM.yyyy').format(birthday);
+          _birthdayController.text = DateFormat(dateFmt()).format(birthday);
         }
       });
     } catch (e) {
@@ -1058,36 +1059,36 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
   /// Ionic validate(): first error as toast.
   String? _validate(Tenant tenant) {
     if (_noGroupsAvailable) {
-      return 'Registrierung nicht möglich: Es sind keine Gruppen verfügbar.';
+      return context.l10n.tenantRegisterNoGroupsToast;
     }
     if (!_isLoggedIn) {
       if (!_privacyAccepted) {
-        return 'Bitte akzeptiere die Nutzungsbedingungen und Datenschutzerklärung.';
+        return context.l10n.tenantRegisterAcceptTermsToast;
       }
       if (!isValidEmail(_formData.email)) {
-        return 'Bitte eine gültige E-Mail Adresse eingeben.';
+        return context.l10n.loginToastInvalidEmail;
       }
       if (_formData.password.length < 6) {
-        return 'Das Passwort muss mindestens 6 Zeichen lang sein.';
+        return context.l10n.tenantRegisterPasswordTooShort;
       }
       if (_formData.password != _formData.confirmPassword) {
-        return 'Die Passwörter stimmen nicht überein.';
+        return context.l10n.tenantRegisterPasswordMismatch;
       }
     }
     if (_formData.firstName.isEmpty || _formData.lastName.isEmpty) {
-      return 'Bitte geben Sie Ihren Vor- und Nachnamen an.';
+      return context.l10n.tenantRegisterNameRequired;
     }
     final registrationFields = tenant.registrationFields ?? const [];
     if (registrationFields.contains('picture') && _profileImageBytes == null) {
-      return 'Bitte wählen Sie ein Passbild aus.';
+      return context.l10n.tenantRegisterPictureRequired;
     }
     if (registrationFields.contains('birthDate') && _formData.birthDate == null) {
-      return 'Bitte geben Sie ein gültiges Geburtsdatum an.';
+      return context.l10n.tenantRegisterBirthDateRequired;
     }
     if (registrationFields.contains('phone') &&
         !isValidPhoneNumber(
             (_formData.phone ?? '').replaceAll(RegExp(r'\s+'), ''))) {
-      return 'Bitte geben Sie eine gültige Telefonnummer an.';
+      return context.l10n.tenantRegisterPhoneRequired;
     }
 
     for (final field in tenant.additionalFields ?? const <ExtraField>[]) {
@@ -1097,15 +1098,15 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
         case 'text':
         case 'textarea':
           if (value is! String || value.trim().isEmpty) {
-            return 'Bitte füllen Sie das Feld "${field.name}" aus.';
+            return context.l10n.tenantRegisterFieldRequired(field.name);
           }
         case 'number':
           if (value == null || num.tryParse(value.toString()) == null) {
-            return 'Bitte geben Sie eine gültige Zahl für das Feld "${field.name}" ein.';
+            return context.l10n.tenantRegisterFieldNumber(field.name);
           }
         case 'date':
           if (value == null || DateTime.tryParse(value.toString()) == null) {
-            return 'Bitte geben Sie ein gültiges Datum für das Feld "${field.name}" ein.';
+            return context.l10n.tenantRegisterFieldDate(field.name);
           }
         case 'boolean':
           final boolValue = value is bool
@@ -1113,14 +1114,14 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
               : (field.defaultValue is bool ? field.defaultValue as bool : false);
           _formData.additionalFields[field.id] = boolValue;
           if (!boolValue && field.name.toLowerCase().contains('einverständnis')) {
-            return 'Sie müssen dem Feld "${field.name}" zustimmen, um fortzufahren.';
+            return context.l10n.tenantRegisterFieldAccept(field.name);
           }
         case 'bfecg_church':
-          if (value is! String) return 'Bitte wählen Sie eine Gemeinde aus.';
+          if (value is! String) return context.l10n.tenantRegisterChurchRequired;
           final custom =
               _formData.additionalFields['_custom_church']?.toString() ?? '';
           if (value.isEmpty && custom.trim().length < 5) {
-            return 'Bitte geben Sie den Namen Ihrer Gemeinde ein.';
+            return context.l10n.tenantRegisterChurchNameRequired;
           }
       }
     }
@@ -1150,7 +1151,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
       } else {
         setState(() => _isLoading = false);
         if (!mounted) return;
-        ToastHelper.showError(context, 'Fehler beim Erstellen der Gemeinde.');
+        ToastHelper.showError(context, context.l10n.tenantRegisterFlutterCreateChurchFailed);
         return;
       }
     }
@@ -1168,12 +1169,12 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
     setState(() => _isLoading = false);
 
     if (!result.success) {
-      final message = result.errorMessage ?? 'Unbekannt';
+      final message = result.errorMessage ?? context.l10n.commonUnknown;
       ToastHelper.showError(
         context,
-        message.startsWith('Fehler beim Erstellen des Accounts')
+        message.startsWith(context.l10n.dbCreateAccountFailed)
             ? message
-            : 'Fehler bei der Registrierung: $message',
+            : context.l10n.tenantRegisterFailed(message),
       );
       return;
     }
@@ -1181,12 +1182,12 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
     await showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Registrierung erfolgreich'),
+        title: Text(context.l10n.tenantRegisterSuccessHeader),
         content: Text(result.successMessage),
         actions: [
           FilledButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('OK'),
+            child: Text(context.l10n.commonOk),
           ),
         ],
       ),

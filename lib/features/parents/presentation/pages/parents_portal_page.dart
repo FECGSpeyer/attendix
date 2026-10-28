@@ -15,6 +15,7 @@ import '../../../self_service/presentation/widgets/plan_viewer_sheet.dart';
 import '../../data/providers/parents_providers.dart';
 import '../../../../core/services/tracking/tracking_event.dart';
 import '../../../../core/services/tracking/tracking_service.dart';
+import '../../../../l10n/l10n.dart';
 import '../widgets/parents_header_widgets.dart'; // PROFILE_OFFLINE
 import '../../../../core/providers/song_providers.dart'; // PROFILE_OFFLINE
 import '../../../messages/presentation/widgets/notification_bell.dart'; // MESSAGES
@@ -77,19 +78,19 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
   List<Widget> _chips(ParentAttendanceGroup g) => [
         if (g.hasPlan)
           EventChip(
-            label: 'Ablaufplan',
+            label: context.l10n.signoutRunSheet,
             icon: Icons.description_outlined,
             onTap: () => _showPlanViewer(g),
           ),
         if (g.description != null && g.description!.isNotEmpty)
           EventChip(
-            label: 'Infos',
+            label: context.l10n.signoutInfos,
             icon: Icons.info_outline,
             onTap: () => showEventDescriptionSheet(context, g.description!),
           ),
         if (g.attachmentUrl != null && g.attachmentUrl!.isNotEmpty)
           EventChip(
-            label: 'Anhang',
+            label: context.l10n.selfServiceAttachment,
             icon: Icons.attach_file,
             onTap: () => openEventAttachment(g.attachmentUrl!),
           ),
@@ -112,7 +113,7 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
         actions: [
           IconButton(
             icon: const Icon(Icons.info_outline),
-            tooltip: 'Legende',
+            tooltip: context.l10n.signoutLegend,
             onPressed: () => showEventLegendSheet(context),
           ),
           const NotificationBell(), // MESSAGES
@@ -126,20 +127,20 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
         ),
         data: (children) {
           if (children.isEmpty) {
-            return const Center(
+            return Center(
               child: Padding(
-                padding: EdgeInsets.all(24),
+                padding: const EdgeInsets.all(24),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.family_restroom, size: 64, color: AppColors.medium),
-                    SizedBox(height: 12),
-                    Text('Keine Kinder gefunden'),
-                    SizedBox(height: 4),
+                    const Icon(Icons.family_restroom, size: 64, color: AppColors.medium),
+                    const SizedBox(height: 12),
+                    Text(context.l10n.selfServiceFlutterNoKids),
+                    const SizedBox(height: 4),
                     Text(
-                      'Es wurden keine Kinder mit Ihrem\nEltern-Account verknüpft.',
+                      context.l10n.selfServiceFlutterNoKidsHint,
                       textAlign: TextAlign.center,
-                      style: TextStyle(color: AppColors.medium),
+                      style: const TextStyle(color: AppColors.medium),
                     ),
                   ],
                 ),
@@ -170,7 +171,7 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
                   children: [
                     ParentsWelcomeCard(kids: children), // PROFILE_OFFLINE
                     if (current != null) ...[
-                      const EventMonthHeader(label: 'Heute'),
+                      EventMonthHeader(label: context.l10n.teamOrgTodayCap),
                       EventTodayCard(
                         date: current.date,
                         title: _title(current),
@@ -190,12 +191,12 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
                           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                           child: OutlinedButton(
                             onPressed: () => _showActions(current),
-                            child: const Text('Alle Kinder an- bzw. abmelden'),
+                            child: Text(context.l10n.selfServiceAllKidsSignInOut),
                           ),
                         ),
                     ],
                     if (upcoming.isNotEmpty) ...[
-                      EventSectionHeader(title: 'Anstehend', count: upcoming.length),
+                      EventSectionHeader(title: context.l10n.signoutUpcoming, count: upcoming.length),
                       for (final group in groups) ...[
                         EventMonthHeader(label: group.label),
                         for (final g in group.items)
@@ -229,7 +230,7 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
                                 if (children.length != 1)
                                   TextButton(
                                     onPressed: () => _showActions(g),
-                                    child: const Text('Alle'),
+                                    child: Text(context.l10n.commonAll),
                                   ),
                               ],
                             ),
@@ -237,7 +238,7 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
                       ],
                     ],
                     if (past.isNotEmpty) ...[
-                      EventSectionHeader(title: 'Vergangen', count: past.length),
+                      EventSectionHeader(title: context.l10n.signoutPast, count: past.length),
                       EventListCard(children: [
                         for (final g in pastPreview)
                           EventRow(
@@ -265,18 +266,20 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
                           ),
                         if (past.length > EventListUtils.pastPreviewCount)
                           EventMoreLink(
-                            label: _showAllPast ? 'Weniger anzeigen' : 'Alle ${past.length} anzeigen',
+                            label: _showAllPast
+                                ? context.l10n.signoutFlutterShowLess
+                                : context.l10n.signoutFlutterShowAll(past.length),
                             onTap: () => setState(() => _showAllPast = !_showAllPast),
                           ),
                       ]),
                     ],
                     if (attendances.isEmpty)
-                      const Padding(
-                        padding: EdgeInsets.all(24),
+                      Padding(
+                        padding: const EdgeInsets.all(24),
                         child: Text(
-                          'Keine Termine gefunden',
+                          context.l10n.selfServiceNoEvents,
                           textAlign: TextAlign.center,
-                          style: TextStyle(color: AppColors.medium),
+                          style: const TextStyle(color: AppColors.medium),
                         ),
                       ),
                   ],
@@ -296,7 +299,7 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
         .whereType<String>()
         .toList();
     if (ids.isEmpty) {
-      ToastHelper.showWarning(context, 'Keine gültigen Einträge gefunden');
+      ToastHelper.showWarning(context, context.l10n.selfServiceFlutterNoValidEntries);
       return;
     }
 
@@ -335,48 +338,48 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
               if (showSignIn)
                 ListTile(
                   leading: const Icon(Icons.check_circle_outline),
-                  title: const Text('Anmelden'),
+                  title: Text(ctx.l10n.signoutSignIn),
                   onTap: () => Navigator.pop(ctx, 'signin'),
                 ),
               if (showSignOut)
                 ListTile(
                   leading: const Icon(Icons.cancel_outlined),
-                  title: const Text('Abmelden'),
+                  title: Text(ctx.l10n.signoutSignOut),
                   onTap: () => Navigator.pop(ctx, 'signout'),
                 ),
               if (showLate)
                 ListTile(
                   leading: const Icon(Icons.schedule),
-                  title: const Text('Verspätung eintragen'),
+                  title: Text(ctx.l10n.signoutEnterLate),
                   onTap: () => Navigator.pop(ctx, 'late'),
                 ),
               if (group.sharePlan && group.plan != null)
                 ListTile(
                   leading: const Icon(Icons.description_outlined),
-                  title: const Text('Ablaufplan anzeigen'),
+                  title: Text(ctx.l10n.signoutShowRunSheet),
                   onTap: () => Navigator.pop(ctx, 'plan'),
                 ),
               if (group.description?.isNotEmpty ?? false)
                 ListTile(
                   leading: const Icon(Icons.info_outline),
-                  title: const Text('Beschreibung anzeigen'),
+                  title: Text(ctx.l10n.signoutShowDescription),
                   onTap: () => Navigator.pop(ctx, 'description'),
                 ),
               if (group.attachmentUrl?.isNotEmpty ?? false)
                 ListTile(
                   leading: const Icon(Icons.attach_file),
-                  title: const Text('Anhang öffnen'),
+                  title: Text(ctx.l10n.signoutOpenAttachment),
                   onTap: () => Navigator.pop(ctx, 'attachment'),
                 ),
               if (group.place?.isNotEmpty ?? false)
                 ListTile(
                   leading: const Icon(Icons.navigation_outlined),
-                  title: const Text('Navigation öffnen'),
+                  title: Text(ctx.l10n.signoutOpenNavigation),
                   onTap: () => Navigator.pop(ctx, 'navigation'),
                 ),
               ListTile(
                 leading: const Icon(Icons.close, color: AppColors.danger),
-                title: const Text('Abbrechen', style: TextStyle(color: AppColors.danger)),
+                title: Text(ctx.l10n.commonCancel, style: const TextStyle(color: AppColors.danger)),
                 onTap: () => Navigator.pop(ctx),
               ),
             ],
@@ -412,10 +415,10 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
     }
     if (!mounted) return;
     if (ref.read(parentSignInOutNotifierProvider).hasError) {
-      ToastHelper.showError(context, 'Anmeldung fehlgeschlagen. Bitte versuche es erneut.');
+      ToastHelper.showError(context, context.l10n.signoutFlutterSigninFailed);
     } else {
       ref.read(trackingServiceProvider).track(TrackingEvent.parentSignIn, properties: {'count': ids.length});
-      ToastHelper.showSuccess(context, 'Danke für die Anmeldung 🙂');
+      ToastHelper.showSuccess(context, context.l10n.selfServiceThanksForSignIn);
     }
   }
 
@@ -434,21 +437,21 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
         .signOut(ids, reason, isLateComing: isLate);
     if (!mounted) return;
     if (ref.read(parentSignInOutNotifierProvider).hasError) {
-      ToastHelper.showError(context, 'Abmeldung fehlgeschlagen. Bitte versuche es erneut.');
+      ToastHelper.showError(context, context.l10n.signoutFlutterSignoutFailed);
     } else {
       ref.read(trackingServiceProvider).track(TrackingEvent.parentSignOut, properties: {'count': ids.length, 'isLate': isLate});
       ToastHelper.showSuccess(
         context,
         isLate
-            ? 'Vielen Dank für die Info und Gottes Segen!'
-            : 'Vielen Dank für die rechtzeitige Abmeldung und Gottes Segen!',
+            ? context.l10n.selfServiceParentsThanksLate
+            : context.l10n.selfServiceParentsThanksSignout,
       );
     }
   }
 
   Future<void> _showPlanViewer(ParentAttendanceGroup group) async {
     if (!group.hasPlan) {
-      ToastHelper.showWarning(context, 'Kein Ablaufplan verfügbar');
+      ToastHelper.showWarning(context, context.l10n.planningNoPlanAvailable);
       return;
     }
     final first = group.childAttendances.firstOrNull;
@@ -482,8 +485,8 @@ class _ErrorView extends StatelessWidget {
         children: [
           const Icon(Icons.error_outline, size: 48, color: AppColors.danger),
           const SizedBox(height: 8),
-          Text('Fehler: $error', textAlign: TextAlign.center),
-          TextButton(onPressed: onRetry, child: const Text('Erneut versuchen')),
+          Text(context.l10n.signoutFlutterError(error), textAlign: TextAlign.center),
+          TextButton(onPressed: onRetry, child: Text(context.l10n.messagesRetry)),
         ],
       ),
     );

@@ -6,6 +6,7 @@ import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../data/help_content_service.dart';
 import '../../data/help_models.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Help center overview: search, glossary entry and topic accordions.
 ///
@@ -39,7 +40,7 @@ class _HelpPageState extends ConsumerState<HelpPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Hilfe'),
+        title: Text(context.l10n.helpTitle),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(64),
           child: Padding(
@@ -52,7 +53,7 @@ class _HelpPageState extends ConsumerState<HelpPage> {
             child: TextField(
               controller: _searchController,
               decoration: InputDecoration(
-                hintText: 'Frage oder Stichwort suchen...',
+                hintText: context.l10n.helpSearchPlaceholder,
                 prefixIcon: const Icon(Icons.search),
                 isDense: true,
                 suffixIcon: _searchTerm.isEmpty
@@ -85,12 +86,12 @@ class _HelpPageState extends ConsumerState<HelpPage> {
           child: Column(
             children: [
               if (results.isEmpty)
-                ListTile(title: Text('Keine Treffer für „$term“.')),
+                ListTile(title: Text(context.l10n.helpNoHits(term))),
               for (final article in results.articles)
                 ListTile(
                   leading: const Icon(Icons.description_outlined),
                   title: Text(article.title),
-                  subtitle: const Text('Artikel'),
+                  subtitle: Text(context.l10n.helpArticles),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () => _openArticle(article.id),
                 ),
@@ -98,7 +99,7 @@ class _HelpPageState extends ConsumerState<HelpPage> {
                 ListTile(
                   leading: const Icon(Icons.menu_book_outlined),
                   title: Text(g.term),
-                  subtitle: const Text('Glossar'),
+                  subtitle: Text(context.l10n.helpGlossary),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: _openGlossary,
                 ),
@@ -124,13 +125,13 @@ class _HelpPageState extends ConsumerState<HelpPage> {
             horizontal: AppDimensions.paddingS,
             vertical: AppDimensions.paddingXS,
           ),
-          child: Text('Nachschlagen', style: headerStyle),
+          child: Text(context.l10n.helpLookup, style: headerStyle),
         ),
         Card(
           margin: EdgeInsets.zero,
           child: ListTile(
             leading: const Icon(Icons.menu_book_outlined),
-            title: const Text('Glossar'),
+            title: Text(context.l10n.helpGlossary),
             trailing: const Icon(Icons.chevron_right),
             onTap: _openGlossary,
           ),
@@ -141,7 +142,7 @@ class _HelpPageState extends ConsumerState<HelpPage> {
             horizontal: AppDimensions.paddingS,
             vertical: AppDimensions.paddingXS,
           ),
-          child: Text('Themen', style: headerStyle),
+          child: Text(context.l10n.helpTopics, style: headerStyle),
         ),
         Card(
           margin: EdgeInsets.zero,

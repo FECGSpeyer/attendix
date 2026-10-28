@@ -9,6 +9,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/repositories/account_repository.dart';
 import '../widgets/legal_content_view.dart';
+import '../../../../l10n/l10n.dart';
 
 /// One-time consent gate (`/terms`): the user must accept the terms and
 /// privacy policy before using the app.
@@ -43,7 +44,7 @@ class _TermsPageState extends ConsumerState<TermsPage> {
   Future<void> _accept() async {
     if (!_privacyAccepted) {
       ToastHelper.showError(context,
-          'Bitte akzeptiere die Nutzungsbedingungen und Datenschutzerklärung.');
+          context.l10n.termsPleaseAccept);
       return;
     }
     setState(() => _saving = true);
@@ -54,11 +55,11 @@ class _TermsPageState extends ConsumerState<TermsPage> {
       if (!mounted) return;
       context.go('/login');
       ToastHelper.showWarning(
-          context, 'Deine Sitzung ist abgelaufen. Bitte melde dich erneut an.');
+          context, context.l10n.termsSessionExpired);
     } catch (_) {
       if (mounted) {
         ToastHelper.showError(
-            context, 'Fehler beim Speichern. Bitte versuche es erneut.');
+            context, context.l10n.termsSaveFailed);
       }
     } finally {
       if (mounted) setState(() => _saving = false);
@@ -71,7 +72,7 @@ class _TermsPageState extends ConsumerState<TermsPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Datenschutz & Nutzung'),
+        title: Text(context.l10n.termsTitle),
         automaticallyImplyLeading: false,
       ),
       body: SafeArea(
@@ -87,16 +88,14 @@ class _TermsPageState extends ConsumerState<TermsPage> {
                     size: 64, color: AppColors.primary),
                 const SizedBox(height: AppDimensions.paddingM),
                 Text(
-                  'Kurz bevor es losgeht',
+                  context.l10n.termsBeforeStart,
                   textAlign: TextAlign.center,
                   style: theme.textTheme.titleLarge
                       ?.copyWith(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: AppDimensions.paddingS),
                 Text(
-                  'Um Attendix nutzen zu können, benötigen wir einmalig deine '
-                  'Zustimmung zu unseren Nutzungsbedingungen und der '
-                  'Datenschutzerklärung.',
+                  context.l10n.termsIntro,
                   textAlign: TextAlign.center,
                   style: theme.textTheme.bodyMedium
                       ?.copyWith(color: AppColors.medium),
@@ -106,33 +105,24 @@ class _TermsPageState extends ConsumerState<TermsPage> {
                   margin: EdgeInsets.zero,
                   child: Column(
                     children: [
-                      const ListTile(
-                        leading: Icon(Icons.lock_outline,
+                      ListTile(
+                        leading: const Icon(Icons.lock_outline,
                             color: AppColors.primary),
-                        title: Text('Deine Daten sind sicher'),
-                        subtitle: Text(
-                          'Wir speichern nur die Daten, die für den Betrieb '
-                          'der App notwendig sind, und geben sie nicht an '
-                          'Dritte weiter.',
-                        ),
+                        title: Text(context.l10n.termsSafe),
+                        subtitle: Text(context.l10n.termsSafeText),
                       ),
                       const Divider(height: 1),
-                      const ListTile(
-                        leading: Icon(Icons.people_outline,
+                      ListTile(
+                        leading: const Icon(Icons.people_outline,
                             color: AppColors.primary),
-                        title: Text('Wofür werden deine Daten genutzt?'),
-                        subtitle: Text(
-                          'Ausschließlich zur Verwaltung deiner Anwesenheit '
-                          'und zur Kommunikation innerhalb deiner Gruppe oder '
-                          'deines Chores.',
-                        ),
+                        title: Text(context.l10n.termsUsage),
+                        subtitle: Text(context.l10n.termsUsageText),
                       ),
                       const Divider(height: 1),
                       ListTile(
                         leading: const Icon(Icons.description_outlined,
                             color: AppColors.primary),
-                        title: const Text(
-                            'Datenschutzerklärung & Impressum lesen'),
+                        title: Text(context.l10n.termsRead),
                         trailing: const Icon(Icons.chevron_right),
                         onTap: () => showLegalModal(context),
                       ),
@@ -149,19 +139,16 @@ class _TermsPageState extends ConsumerState<TermsPage> {
                         setState(() => _privacyAccepted = v ?? false),
                     title: Text.rich(
                       TextSpan(children: [
-                        const TextSpan(
-                          text: 'Ich akzeptiere die Nutzungsbedingungen und '
-                              'habe die ',
-                        ),
+                        TextSpan(text: '${context.l10n.termsAcceptBefore} '),
                         TextSpan(
-                          text: 'Datenschutzerklärung',
+                          text: context.l10n.termsPrivacy,
                           style: const TextStyle(
                             color: AppColors.primary,
                             decoration: TextDecoration.underline,
                           ),
                           recognizer: _privacyRecognizer,
                         ),
-                        const TextSpan(text: ' gelesen.'),
+                        TextSpan(text: ' ${context.l10n.termsAcceptAfter}'),
                       ]),
                     ),
                   ),
@@ -176,7 +163,7 @@ class _TermsPageState extends ConsumerState<TermsPage> {
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
                       : const Icon(Icons.check_circle_outline),
-                  label: const Text('Akzeptieren und fortfahren'),
+                  label: Text(context.l10n.termsAcceptContinue),
                 ),
               ],
             ),

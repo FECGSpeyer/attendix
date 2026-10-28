@@ -6,6 +6,7 @@ import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../data/auth_flow_service.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Forgot password page
 class ForgotPasswordPage extends ConsumerStatefulWidget {
@@ -68,7 +69,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
           icon: const Icon(Icons.arrow_back),
           onPressed: () => context.go('/login'),
         ),
-        title: const Text('Passwort zurücksetzen'),
+        title: Text(context.l10n.loginResetHeader),
       ),
       body: SafeArea(
         child: Center(
@@ -103,7 +104,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
         ),
         const SizedBox(height: AppDimensions.paddingL),
         Text(
-          'E-Mail gesendet',
+          context.l10n.messagesEmailSent,
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
             fontWeight: FontWeight.bold,
           ),
@@ -111,7 +112,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
         ),
         const SizedBox(height: AppDimensions.paddingM),
         Text(
-          'Wir haben einen Link zum Zurücksetzen deines Passworts an ${_emailController.text.trim()} gesendet.',
+          context.l10n.loginFlutterResetLinkSent(_emailController.text.trim()),
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
             color: AppColors.medium,
           ),
@@ -119,7 +120,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
         ),
         const SizedBox(height: AppDimensions.paddingS),
         Text(
-          'Bitte prüfe auch deinen Spam-Ordner.',
+          context.l10n.loginFlutterCheckSpam,
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
             color: AppColors.medium,
           ),
@@ -130,13 +131,13 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
           width: double.infinity,
           child: ElevatedButton(
             onPressed: () => context.go('/login'),
-            child: const Text('Zurück zum Login'),
+            child: Text(context.l10n.loginFlutterBackToLogin),
           ),
         ),
         const SizedBox(height: AppDimensions.paddingM),
         TextButton(
           onPressed: () => setState(() => _emailSent = false),
-          child: const Text('Andere E-Mail verwenden'),
+          child: Text(context.l10n.loginFlutterOtherEmail),
         ),
       ],
     );
@@ -159,7 +160,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
 
           // Title
           Text(
-            'Passwort vergessen?',
+            context.l10n.loginForgotPassword,
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.bold,
             ),
@@ -167,7 +168,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
           ),
           const SizedBox(height: AppDimensions.paddingS),
           Text(
-            'Gib deine E-Mail-Adresse ein und wir senden dir einen Link zum Zurücksetzen.',
+            context.l10n.loginFlutterResetIntro,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               color: AppColors.medium,
             ),
@@ -182,16 +183,16 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
             textInputAction: TextInputAction.done,
             autocorrect: false,
             autofocus: true,
-            decoration: const InputDecoration(
-              labelText: 'E-Mail',
+            decoration: InputDecoration(
+              labelText: context.l10n.loginEmail,
               prefixIcon: Icon(Icons.email_outlined),
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Bitte E-Mail eingeben';
+                return context.l10n.loginToastEnterEmail;
               }
               if (!isValidEmail(value)) {
-                return 'Bitte eine gültige E-Mail Adresse eingeben.';
+                return context.l10n.loginToastInvalidEmail;
               }
               return null;
             },
@@ -210,7 +211,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                       height: 20,
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
-                  : const Text('Link senden'),
+                  : Text(context.l10n.loginFlutterSendLink),
             ),
           ),
           const SizedBox(height: AppDimensions.paddingM),
@@ -218,7 +219,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
           // Back to login
           TextButton(
             onPressed: () => context.go('/login'),
-            child: const Text('Zurück zum Login'),
+            child: Text(context.l10n.loginFlutterBackToLogin),
           ),
         ],
       ),

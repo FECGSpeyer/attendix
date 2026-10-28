@@ -15,6 +15,7 @@ import '../../../../data/models/person/person.dart';
 import '../../../../data/models/song/song.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../data/providers/parents_providers.dart';
+import '../../../../l10n/l10n.dart';
 
 /// App bar title of the parents page (Ionic: tenant switcher when the user
 /// has more than one tenant, otherwise the tenant's long name).
@@ -25,12 +26,12 @@ class ParentsTenantTitle extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final tenant = ref.watch(currentTenantProvider);
     final tenants = ref.watch(userTenantsProvider).valueOrNull ?? const <Tenant>[];
-    final name = tenant?.longName ?? 'Termine';
+    final name = tenant?.longName ?? context.l10n.tabsEvents;
 
     if (tenants.length <= 1) return Text(name);
 
     return PopupMenuButton<Tenant>(
-      tooltip: 'Instanz wechseln',
+      tooltip: context.l10n.settingsSwitchTenant,
       onSelected: (t) => _switchTenant(context, ref, t),
       itemBuilder: (_) => [
         for (final t in tenants)
@@ -48,9 +49,9 @@ class ParentsTenantTitle extends ConsumerWidget {
                       color: AppColors.primary,
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: const Text(
-                      'Aktuell',
-                      style: TextStyle(color: Colors.white, fontSize: 11),
+                    child: Text(
+                      context.l10n.signoutCurrent,
+                      style: const TextStyle(color: Colors.white, fontSize: 11),
                     ),
                   ),
               ],
@@ -83,7 +84,7 @@ class ParentsTenantTitle extends ConsumerWidget {
       prefsNotifier.updateCurrentTenantId(tenant.id!);
     } catch (e) {
       if (context.mounted) {
-        ToastHelper.showError(context, 'Fehler beim Wechseln: $e');
+        ToastHelper.showError(context, context.l10n.selfServiceFlutterSwitchFailed(e));
       }
     }
   }
@@ -110,13 +111,13 @@ class ParentsWelcomeCard extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Shalom!',
+              context.l10n.selfServiceShalom,
               style: theme.textTheme.headlineSmall
                   ?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: AppDimensions.paddingXS),
             Text(
-              'Du verwaltest ${kids.length} ${kids.length == 1 ? 'Kind' : 'Kinder'}:',
+              context.l10n.selfServiceYouManageKids(kids.length),
             ),
             const SizedBox(height: AppDimensions.paddingS),
             Wrap(
@@ -136,7 +137,7 @@ class ParentsWelcomeCard extends ConsumerWidget {
               const SizedBox(height: AppDimensions.paddingS),
               TextButton(
                 onPressed: () => showCurrentSongsSheet(context, songs),
-                child: const Text('Aktuelle Werke anzeigen'),
+                child: Text(context.l10n.selfServiceShowCurrentSongs),
               ),
             ],
           ],
@@ -194,7 +195,7 @@ class _KidChip extends StatelessWidget {
 String _formatSongDate(String date) {
   final parsed = DateTime.tryParse(date);
   if (parsed == null) return date;
-  return DateFormat('EEE, dd.MM.yyyy', 'de_DE').format(parsed);
+  return DateFormat('EEE, ${dateFmt()}', currentIntlLocale()).format(parsed);
 }
 
 /// "Aktuelle Werke" sheet: songs of upcoming Termine grouped by date.
@@ -210,7 +211,7 @@ Future<void> showCurrentSongsSheet(
       heightFactor: groups.length > 1 ? 0.8 : 0.6,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Aktuelle Werke'),
+          title: Text(sheetContext.l10n.signoutCurrentSongs),
           automaticallyImplyLeading: false,
           leading: IconButton(
             icon: const Icon(Icons.close),
@@ -240,7 +241,7 @@ Future<void> showCurrentSongsSheet(
                             '${his.song!.number ?? ''}. ${his.song!.name}',
                           ),
                           subtitle: (his.conductorName ?? '').isNotEmpty
-                              ? Text('Dirigent: ${his.conductorName}')
+                              ? Text(sheetContext.l10n.signoutConductor(his.conductorName!))
                               : null,
                           trailing: (his.song!.link ?? '').isNotEmpty
                               ? const Icon(Icons.download_outlined)
@@ -286,6 +287,7 @@ Future<void> showParentsLegendSheet(BuildContext context) {
         title: Text(label),
       );
 
+  final l10n = context.l10n;
   return showModalBottomSheet(
     context: context,
     isScrollControlled: true,
@@ -294,18 +296,23 @@ Future<void> showParentsLegendSheet(BuildContext context) {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const ListTile(
-              title: Text('Legende',
-                  style: TextStyle(fontWeight: FontWeight.bold)),
+            ListTile(
+              title: Text(l10n.signoutLegend,
+                  style: const TextStyle(fontWeight: FontWeight.bold)),
             ),
-            row('Zugesagt', AttendanceStatus.present.color,
-                'Zugesagt / Anwesend'),
-            row('Entschuldigt', AttendanceStatus.excused.color, 'Entschuldigt'),
-            row('Abwesend', AttendanceStatus.absent.color, 'Abwesend'),
-            row('Verspätet', AttendanceStatus.late.color, 'Verspätet'),
-            row('Verspätung gemeldet', AttendanceStatus.lateExcused.color,
-                'Verspätung gemeldet (entschuldigt)'),
-            row('Neutral', AttendanceStatus.neutral.color, 'Neutral'),
+            // Ionic parents legend (pill / label pairs).
+            row(l10n.signoutLegendAccepted, AttendanceStatus.present.color,
+                l10n.signoutLegendAcceptedPresent),
+            row(l10n.commonStatusExcused, AttendanceStatus.excused.color,
+                l10n.commonStatusExcused),
+            row(l10n.commonStatusAbsent, AttendanceStatus.absent.color,
+                l10n.commonStatusAbsent),
+            row(l10n.signoutLegendLate, AttendanceStatus.late.color,
+                l10n.commonStatusLate),
+            row(l10n.signoutLegendLateReported, AttendanceStatus.lateExcused.color,
+                l10n.signoutLegendLateReportedExcused),
+            row(l10n.commonStatusNeutral, AttendanceStatus.neutral.color,
+                l10n.commonStatusNeutral),
             const SizedBox(height: AppDimensions.paddingM),
           ],
         ),

@@ -11,6 +11,7 @@ import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../songs/data/song_print_service.dart';
 import 'song_options_sheet.dart';
+import '../../../../l10n/l10n.dart';
 
 /// "Aktuelle Werke" sheet (Ionic signout songsModal): one inset list per
 /// Termin, rows "Nr. Name" / "Dirigent: …", red rows when there are no notes
@@ -29,7 +30,7 @@ class UpcomingSongsSheet extends ConsumerWidget {
     final entries = collectCurrentSongPrintEntries(groups, instrumentId, isChoir: isChoir);
     if (!context.mounted) return;
     if (entries.isEmpty) {
-      ToastHelper.showWarning(context, 'Keine Noten für dein Instrument gefunden.');
+      ToastHelper.showWarning(context, context.l10n.signoutNoScoresFound);
       return;
     }
     final result = await ref
@@ -37,10 +38,10 @@ class UpcomingSongsSheet extends ConsumerWidget {
         .printEntries(entries, 'aktuelle_noten.pdf');
     if (!context.mounted || result == null) return;
     if (result.pageCount == 0) {
-      ToastHelper.showWarning(context, 'Keine druckbaren Noten gefunden.');
+      ToastHelper.showWarning(context, context.l10n.signoutFlutterNoPrintableScores);
     } else if (result.skipped > 0) {
       ToastHelper.showWarning(
-          context, '${result.skipped} Datei(en) konnten nicht eingebunden werden.');
+          context, context.l10n.signoutFlutterFilesSkipped(result.skipped));
     }
   }
 
@@ -74,20 +75,20 @@ class UpcomingSongsSheet extends ConsumerWidget {
                 child: Row(
                   children: [
                     IconButton(
-                      tooltip: 'Schließen',
+                      tooltip: context.l10n.commonClose,
                       icon: const Icon(Icons.close),
                       onPressed: () => Navigator.of(context).pop(),
                     ),
                     Expanded(
                       child: Text(
-                        'Aktuelle Werke',
+                        context.l10n.signoutCurrentSongs,
                         textAlign: TextAlign.center,
                         style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
                       ),
                     ),
                     // MISC2: Ionic signout printAllCurrentFiles
                     IconButton(
-                      tooltip: 'Alle Noten drucken',
+                      tooltip: context.l10n.signoutFlutterPrintAllScores,
                       icon: const Icon(Icons.print_outlined),
                       onPressed: () => _printAllCurrentFiles(context, ref),
                     ),
@@ -103,20 +104,20 @@ class UpcomingSongsSheet extends ConsumerWidget {
                       children: [
                         const Icon(Icons.error_outline, size: 48, color: AppColors.danger),
                         const SizedBox(height: AppDimensions.paddingM),
-                        Text('Fehler: $error'),
+                        Text(context.l10n.signoutFlutterError(error)),
                         TextButton(
                           onPressed: () => ref.invalidate(upcomingSongsProvider),
-                          child: const Text('Erneut versuchen'),
+                          child: Text(context.l10n.messagesRetry),
                         ),
                       ],
                     ),
                   ),
                   data: (songGroups) {
                     if (songGroups.isEmpty) {
-                      return const Center(
+                      return Center(
                         child: Text(
-                          'Keine aktuellen Werke',
-                          style: TextStyle(color: AppColors.medium),
+                          context.l10n.signoutFlutterNoCurrentSongs,
+                          style: const TextStyle(color: AppColors.medium),
                         ),
                       );
                     }
@@ -233,12 +234,12 @@ class _SongListItem extends StatelessWidget {
       iconColor: fg,
       title: Text(number.isEmpty ? song.name : '$number. ${song.name}'),
       subtitle: conductorName != null && conductorName!.isNotEmpty
-          ? Text('Dirigent: $conductorName')
+          ? Text(context.l10n.signoutConductor(conductorName!))
           : null,
       trailing: song.link != null && song.link!.isNotEmpty
           ? IconButton(
               icon: const Icon(Icons.download_outlined),
-              tooltip: 'Notenlink öffnen',
+              tooltip: context.l10n.signoutOpenScoreLink,
               onPressed: () => openSongLink(context, song.link!),
             )
           : null,

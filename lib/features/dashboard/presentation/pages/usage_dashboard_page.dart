@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/providers/dashboard_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/dashboard/dashboard_models.dart';
+import '../../../../l10n/l10n.dart';
 
 const _palette = [
   Color(0xFF2DD36F), Color(0xFF3880FF), Color(0xFFFFC409), Color(0xFFEB445A),
@@ -51,16 +52,16 @@ class UsageDashboardPage extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Usage Dashboard'),
+        title: Text(context.l10n.usageTitle),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(52),
           child: Padding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
             child: SegmentedButton<int>(
-              segments: const [
-                ButtonSegment(value: 7, label: Text('7 Tage')),
-                ButtonSegment(value: 30, label: Text('30 Tage')),
-                ButtonSegment(value: 90, label: Text('90 Tage')),
+              segments: [
+                ButtonSegment(value: 7, label: Text(context.l10n.usageDays7)),
+                ButtonSegment(value: 30, label: Text(context.l10n.usageDays30)),
+                ButtonSegment(value: 90, label: Text(context.l10n.usageDays90)),
               ],
               selected: {range},
               onSelectionChanged: (s) =>
@@ -71,26 +72,26 @@ class UsageDashboardPage extends ConsumerWidget {
       ),
       body: async.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => _empty(),
+        error: (e, _) => _empty(context),
         data: (data) {
-          if (data.kpis.totalEvents <= 0) return _empty();
+          if (data.kpis.totalEvents <= 0) return _empty(context);
           return _content(context, data, range);
         },
       ),
     );
   }
 
-  Widget _empty() => const Center(
+  Widget _empty(BuildContext context) => Center(
         child: Padding(
-          padding: EdgeInsets.all(24),
+          padding: const EdgeInsets.all(24),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.bar_chart, size: 48, color: AppColors.medium),
-              SizedBox(height: 12),
+              const Icon(Icons.bar_chart, size: 48, color: AppColors.medium),
+              const SizedBox(height: 12),
               Text(
-                'Keine Events im gewählten Zeitraum.',
-                style: TextStyle(color: AppColors.medium),
+                context.l10n.usageNoEvents,
+                style: const TextStyle(color: AppColors.medium),
               ),
             ],
           ),
@@ -113,15 +114,15 @@ class UsageDashboardPage extends ConsumerWidget {
           mainAxisSpacing: 12,
           childAspectRatio: 1.9,
           children: [
-            _Kpi('Events gesamt', '${data.kpis.totalEvents}'),
-            _Kpi('Aktive Instanzen', '${data.kpis.distinctTenants}'),
-            _Kpi('Aktiv (7T)', '${data.kpis.activeTenants7d}'),
-            _Kpi('Top Event', topNames.isNotEmpty ? topNames.first.label : '—', small: true),
+            _Kpi(context.l10n.usageTotalEvents, '${data.kpis.totalEvents}'),
+            _Kpi(context.l10n.usageActiveTenants, '${data.kpis.distinctTenants}'),
+            _Kpi(context.l10n.usageActive7, '${data.kpis.activeTenants7d}'),
+            _Kpi(context.l10n.usageTopEvent, topNames.isNotEmpty ? topNames.first.label : '—', small: true),
           ],
         ),
         const SizedBox(height: 16),
         _ChartCard(
-          title: 'Events pro Tag',
+          title: context.l10n.usageEventsPerDay,
           height: 280,
           child: LineChart(
             LineChartData(
@@ -171,12 +172,12 @@ class UsageDashboardPage extends ConsumerWidget {
           ),
         ),
         _ChartCard(
-          title: 'Top Events',
+          title: context.l10n.usageTopEvents,
           height: 36.0 * math.max(topNames.length, 1) + 16,
           child: _HorizontalBars(rows: topNames),
         ),
         _ChartCard(
-          title: 'Top Instanzen',
+          title: context.l10n.usageTopTenants,
           height: 280,
           child: BarChart(
             BarChartData(
@@ -215,7 +216,7 @@ class UsageDashboardPage extends ConsumerWidget {
           ),
         ),
         _ChartCard(
-          title: 'Event-Verteilung',
+          title: context.l10n.usageDistribution,
           height: 320,
           child: _Doughnut(
             rows: topNames,
@@ -223,7 +224,7 @@ class UsageDashboardPage extends ConsumerWidget {
           ),
         ),
         _ChartCard(
-          title: 'Geräte',
+          title: context.l10n.usageDevices,
           height: 280,
           child: _Doughnut(
             rows: data.byDevice,

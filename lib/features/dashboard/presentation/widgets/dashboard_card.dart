@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Colour family of a dashboard tile / chip / header strip
 /// (Ionic global.scss `.tile-*` and `.strip-*`, "Kachel" design).
@@ -229,10 +231,14 @@ class DashTile extends StatelessWidget {
       'Jan', 'Feb', 'März', 'Apr', 'Mai', 'Juni',
       'Juli', 'Aug', 'Sept', 'Okt', 'Nov', 'Dez',
     ];
+    // Ionic dashboard-date: dayjs 'MMM' in the UI language without dots.
+    final month = currentLanguage() == 'de'
+        ? months[date.month - 1]
+        : DateFormat('MMM', currentIntlLocale()).format(date).replaceAll('.', '');
     return DashTile(
       tone: tone,
       main: '${date.day}',
-      sub: months[date.month - 1],
+      sub: month,
       solid: solid,
     );
   }

@@ -11,6 +11,7 @@ import '../../../../data/repositories/account_repository.dart';
 import '../../../legal/presentation/widgets/legal_content_view.dart';
 import '../../data/auth_flow_service.dart';
 import '../widgets/otp_widgets.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Register page (Ionic login/register-modal).
 class RegisterPage extends ConsumerStatefulWidget {
@@ -80,20 +81,20 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
   Future<void> _register() async {
     final email = _emailController.text.trim();
     if (!isValidEmail(email)) {
-      setState(() => _errorMessage = 'Ungültige E-Mail-Adresse');
+      setState(() => _errorMessage = context.l10n.registerModalInvalidEmail);
       return;
     }
     if (_passwordController.text != _confirmPasswordController.text) {
-      setState(() => _errorMessage = 'Passwörter stimmen nicht überein');
+      setState(() => _errorMessage = context.l10n.registerModalPasswordMismatch);
       return;
     }
     if (_passwordController.text.length < 6) {
       setState(
-          () => _errorMessage = 'Passwort muss mindestens 6 Zeichen lang sein');
+          () => _errorMessage = context.l10n.registerModalPasswordTooShort);
       return;
     }
     if (!_privacyAccepted) {
-      setState(() => _errorMessage = 'Bitte stimme der Datenschutzerklärung zu');
+      setState(() => _errorMessage = context.l10n.registerModalAcceptPrivacyToast);
       return;
     }
 
@@ -128,7 +129,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
         } catch (_) {
           if (!mounted) return;
           setState(() => _errorMessage =
-              'Deine E-Mail-Adresse existiert bereits. Bitte melde dich an.');
+              context.l10n.dbEmailExists);
           return;
         }
       }
@@ -136,7 +137,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
       if (!mounted) return;
       if (response.session != null) return; // auto-confirmed → router
       ToastHelper.showSuccess(context,
-          'Registrierung erfolgreich, bitte bestätige deine E-Mail-Adresse.');
+          context.l10n.loginToastRegistered);
       setState(() {
         _registrationSuccess = true;
       });
@@ -146,16 +147,16 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
       if (e is AuthException) {
         errorMessage = switch (e.message) {
           'User already registered' =>
-            'Deine E-Mail-Adresse existiert bereits. Bitte melde dich an.',
+            context.l10n.dbEmailExists,
           _ when e.message.contains('password') =>
-            'Das Passwort erfüllt nicht die Sicherheitsanforderungen.',
+            context.l10n.dbWeakPasswordRequirements,
           _ when e.message.contains('rate limit') || e.message.contains('Too many') =>
-            'Zu viele Anfragen. Bitte warte einen Moment und versuche es erneut.',
-          _ when e.message.contains('email') => 'Ungültige E-Mail-Adresse',
-          _ => 'Fehler beim Registrieren',
+            context.l10n.dbTooManyRequests,
+          _ when e.message.contains('email') => context.l10n.registerModalInvalidEmail,
+          _ => context.l10n.registerModalFailed,
         };
       } else {
-        errorMessage = 'Fehler beim Registrieren';
+        errorMessage = context.l10n.registerModalFailed;
       }
       setState(() {
         _errorMessage = errorMessage;
@@ -173,11 +174,11 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
   Future<void> _requestCode() async {
     final email = _emailController.text.trim();
     if (!isValidEmail(email)) {
-      setState(() => _errorMessage = 'Ungültige E-Mail-Adresse');
+      setState(() => _errorMessage = context.l10n.registerModalInvalidEmail);
       return;
     }
     if (!_privacyAccepted) {
-      setState(() => _errorMessage = 'Bitte stimme der Datenschutzerklärung zu');
+      setState(() => _errorMessage = context.l10n.registerModalAcceptPrivacyToast);
       return;
     }
     setState(() {
@@ -244,7 +245,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                     ),
                     const SizedBox(height: AppDimensions.paddingL),
                     Text(
-                      'E-Mail bestätigen',
+                      context.l10n.loginFlutterConfirmEmail,
                       style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
@@ -252,15 +253,14 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                     ),
                     const SizedBox(height: AppDimensions.paddingM),
                     Text(
-                      'Wir haben dir eine E-Mail an ${_emailController.text} gesendet. '
-                      'Bitte klicke auf den Link darin, um deinen Account zu aktivieren.',
+                      context.l10n.loginFlutterConfirmEmailSent(_emailController.text),
                       style: Theme.of(context).textTheme.bodyMedium,
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: AppDimensions.paddingXL),
                     ElevatedButton(
                       onPressed: () => context.go('/login'),
-                      child: const Text('Zum Login'),
+                      child: Text(context.l10n.loginFlutterToLogin),
                     ),
                   ],
                 ),
@@ -280,7 +280,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
               ? null
               : () => context.canPop() ? context.pop() : context.go('/login'),
         ),
-        title: const Text('Registrieren'),
+        title: Text(context.l10n.registerModalTitle),
       ),
       body: SafeArea(
         child: Center(
@@ -296,19 +296,19 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                   children: [
                     // AUTH: intro (Ionic registerModal.welcome/intro/hint)
                     Text(
-                      'Willkommen bei Attendix!',
+                      context.l10n.registerModalWelcome,
                       style: theme.textTheme.titleLarge
                           ?.copyWith(fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: AppDimensions.paddingS),
-                    const Text(
-                      'Lege einen Account an, um deine Anwesenheit zu verwalten oder eine neue Instanz für deine Gruppe, deinen Chor oder dein Orchester zu erstellen.',
+                    Text(
+                      context.l10n.registerModalIntro,
                     ),
                     const SizedBox(height: AppDimensions.paddingS),
                     Text(
                       _mode == AuthMode.otp
-                          ? 'Nach der Registrierung senden wir dir einen 6-stelligen Code per E-Mail. Gib ihn hier ein, um deinen Account zu aktivieren.'
-                          : 'Nach der Registrierung senden wir dir eine Bestätigungs-E-Mail. Bitte klicke auf den Link darin, um deinen Account zu aktivieren.',
+                          ? context.l10n.registerModalHintOtp
+                          : context.l10n.registerModalHintPassword,
                       style: theme.textTheme.bodySmall
                           ?.copyWith(color: AppColors.medium),
                     ),
@@ -353,9 +353,9 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                       autocorrect: false,
                       readOnly: _mode == AuthMode.otp && _otpSent,
                       autofillHints: const [AutofillHints.email],
-                      decoration: const InputDecoration(
-                        labelText: 'E-Mail',
-                        hintText: 'deine@email.de',
+                      decoration: InputDecoration(
+                        labelText: context.l10n.loginEmail,
+                        hintText: context.l10n.registerModalEmailPlaceholder,
                         prefixIcon: Icon(Icons.email_outlined),
                       ),
                     ),
@@ -369,11 +369,11 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                         textInputAction: TextInputAction.next,
                         autofillHints: const [AutofillHints.newPassword],
                         decoration: InputDecoration(
-                          labelText: 'Passwort',
-                          hintText: 'Mindestens 6 Zeichen',
+                          labelText: context.l10n.loginPassword,
+                          hintText: context.l10n.registerModalPasswordPlaceholder,
                           prefixIcon: const Icon(Icons.lock_outlined),
                           suffixIcon: IconButton(
-                            tooltip: 'Passwort anzeigen',
+                            tooltip: context.l10n.loginShowPassword,
                             icon: Icon(
                               _obscurePassword
                                   ? Icons.visibility_outlined
@@ -395,9 +395,9 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                         obscureText: _obscurePassword,
                         textInputAction: TextInputAction.done,
                         onFieldSubmitted: (_) => _onSubmit(),
-                        decoration: const InputDecoration(
-                          labelText: 'Passwort bestätigen',
-                          hintText: 'Passwort erneut eingeben',
+                        decoration: InputDecoration(
+                          labelText: context.l10n.registerModalConfirmPassword,
+                          hintText: context.l10n.registerModalConfirmPasswordPlaceholder,
                           prefixIcon: Icon(Icons.lock_outlined),
                         ),
                       ),
@@ -421,19 +421,18 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                       title: Wrap(
                         crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
-                          const Text(
-                              'Ich akzeptiere die Nutzungsbedingungen und habe die '),
+                          Text('${context.l10n.registerModalPrivacyBefore} '),
                           InkWell(
                             onTap: () => showLegalModal(context),
-                            child: const Text(
-                              'Datenschutzerklärung',
-                              style: TextStyle(
+                            child: Text(
+                              context.l10n.registerModalPrivacyLink,
+                              style: const TextStyle(
                                 color: AppColors.primary,
                                 decoration: TextDecoration.underline,
                               ),
                             ),
                           ),
-                          const Text(' gelesen.'),
+                          Text(context.l10n.registerModalPrivacyAfter),
                         ],
                       ),
                     ),
@@ -451,10 +450,10 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                               ),
                             )
                           : Text(_mode == AuthMode.password
-                              ? 'Registrieren'
+                              ? context.l10n.registerModalTitle
                               : _otpSent
-                                  ? 'Bestätigen'
-                                  : 'Code senden'),
+                                  ? context.l10n.registerModalConfirm
+                                  : context.l10n.loginSendCode),
                     ),
                     if (_mode == AuthMode.otp && _otpSent)
                       Center(
@@ -470,10 +469,10 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text('Bereits ein Konto?'),
+                        Text(context.l10n.loginFlutterHaveAccount),
                         TextButton(
                           onPressed: () => context.go('/login'),
-                          child: const Text('Anmelden'),
+                          child: Text(context.l10n.loginSignIn),
                         ),
                       ],
                     ),

@@ -3,6 +3,7 @@
 library;
 
 import '../../core/constants/enums.dart';
+import '../../l10n/l10n.dart';
 
 /// Default IANA timezone. Dart cannot read the browser's IANA zone without a
 /// plugin, so new tenants start with the app's default (Tenant model default).
@@ -48,6 +49,8 @@ List<Map<String, dynamic>> buildDefaultAttendanceTypes({
   required int tenantId,
   required String type,
 }) {
+  // Ionic translates the default type names in the active language.
+  final l10n = l10nWithoutContext;
   final isGeneral = type == 'general';
   final p = AttendanceStatus.present.value;
   final e = AttendanceStatus.excused.value;
@@ -83,8 +86,9 @@ List<Map<String, dynamic>> buildDefaultAttendanceTypes({
 
   return [
     typeRow(
-      name: isGeneral ? 'Treffen' : 'Probe',
-      planningTitle: isGeneral ? 'Treffen' : 'Probenplan',
+      name: isGeneral ? l10n.defaultsTypesMeeting : l10n.defaultsTypesRehearsal,
+      planningTitle:
+          isGeneral ? l10n.defaultsTypesMeeting : l10n.defaultsTypesRehearsalPlan,
       color: 'primary',
       statuses: [p, e, l, a],
       defaultStatus: p,
@@ -94,8 +98,8 @@ List<Map<String, dynamic>> buildDefaultAttendanceTypes({
     ),
     if (!isGeneral)
       typeRow(
-        name: 'Vortrag',
-        planningTitle: 'Vortrag',
+        name: l10n.defaultsTypesPerformance,
+        planningTitle: l10n.defaultsTypesPerformance,
         color: 'secondary',
         statuses: [p, e, l, a, n],
         defaultStatus: n,
@@ -104,8 +108,8 @@ List<Map<String, dynamic>> buildDefaultAttendanceTypes({
         manageSongs: true,
       ),
     typeRow(
-      name: 'Sonstiges',
-      planningTitle: 'Sonstiges',
+      name: l10n.commonOther,
+      planningTitle: l10n.commonOther,
       color: 'tertiary',
       statuses: [p, e, l, a, n],
       defaultStatus: n,

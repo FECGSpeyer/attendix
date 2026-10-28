@@ -70,3 +70,30 @@ class HelpSearchResults {
 
   bool get isEmpty => articles.isEmpty && glossaryTerms.isEmpty;
 }
+
+/// English (or other UI language) translation of one German help article,
+/// keyed by the article id (Ionic `HelpArticleTranslation`).
+class HelpArticleTranslation {
+  const HelpArticleTranslation({
+    required this.title,
+    required this.keywords,
+    required this.body,
+  });
+
+  final String title;
+  final List<String> keywords;
+  final String body;
+}
+
+/// Translation of one German glossary term (Ionic `GlossaryTermTranslation`).
+class GlossaryTermTranslation {
+  const GlossaryTermTranslation({
+    required this.term,
+    this.aliases = const [],
+    required this.definition,
+  });
+
+  final String term;
+  final List<String> aliases;
+  final String definition;
+}

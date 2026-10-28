@@ -12,6 +12,7 @@ import '../../../core/services/offline_queue_service.dart'
 import '../../../core/theme/app_colors.dart';
 import 'auth_flow_service.dart';
 import 'browser_url.dart';
+import '../../../l10n/l10n.dart';
 
 /// Route of the "Neues Passwort" page.
 const String kNewPasswordRoute = '/new-password';
@@ -45,15 +46,15 @@ Future<void> _processLink(WidgetRef ref, GoRouter router, AuthLink link) async {
     case AuthLinkOutcome.recovery:
       router.go(kNewPasswordRoute);
     case AuthLinkOutcome.signupConfirmed:
-      _toast('E-Mail-Adresse bestätigt. Willkommen!', AppColors.success);
+      _toast(l10nWithoutContext.appEmailConfirmed, AppColors.success);
       router.go('/tenants');
     case AuthLinkOutcome.failed:
       _toast(
         link.errorDescription != null
             ? authLinkErrorText(link)
             : link.looksLikeRecovery
-                ? 'Der Link zum Zurücksetzen ist ungültig oder abgelaufen.'
-                : 'Der Bestätigungslink ist ungültig oder abgelaufen.',
+                ? l10nWithoutContext.appResetLinkInvalid
+                : l10nWithoutContext.appConfirmLinkInvalid,
         AppColors.danger,
       );
       router.go('/login');
@@ -81,11 +82,11 @@ String authLinkErrorText(AuthLink link) {
   final description = (link.errorDescription ?? '').toLowerCase();
   if (description.contains('expired') || description.contains('invalid')) {
     return link.looksLikeRecovery
-        ? 'Der Link zum Zurücksetzen ist ungültig oder abgelaufen.'
-        : 'Der Bestätigungslink ist ungültig oder abgelaufen.';
+        ? l10nWithoutContext.appResetLinkInvalid
+        : l10nWithoutContext.appConfirmLinkInvalid;
   }
   if (description.contains('denied')) {
-    return 'Der Zugriff wurde verweigert.';
+    return l10nWithoutContext.loginFlutterAccessDenied;
   }
-  return 'Der Link konnte nicht verarbeitet werden.';
+  return l10nWithoutContext.loginFlutterLinkFailed;
 }

@@ -15,6 +15,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../core/services/tracking/tracking_event.dart';
 import '../../../../core/services/tracking/tracking_service.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Notifications settings page (Ionic notifications.page).
 ///
@@ -60,7 +61,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
         _subscribe(user.id);
       }
     } catch (e) {
-      if (mounted) ToastHelper.showError(context, 'Fehler beim Laden: $e');
+      if (mounted) ToastHelper.showError(context, context.l10n.notifFlutterLoadFailed(e));
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -101,7 +102,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
       if (mounted) {
         setState(() => _config = previous);
         ToastHelper.showError(
-            context, 'Fehler beim Aktualisieren der Konfiguration');
+            context, context.l10n.notifFlutterUpdateFailed);
       }
     }
   }
@@ -113,7 +114,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
     try {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     } catch (_) {
-      if (mounted) ToastHelper.showError(context, 'Konnte Telegram nicht öffnen');
+      if (mounted) ToastHelper.showError(context, context.l10n.notifFlutterTelegramOpenFailed);
     }
   }
 
@@ -122,10 +123,10 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
     if (current == null) return;
     final confirmed = await DialogHelper.showConfirmation(
       context,
-      title: 'Möchtest du die Verbindung wirklich trennen?',
-      message: 'Die Verbindung kann jederzeit wiederhergestellt werden',
-      confirmText: 'Ja',
-      cancelText: 'Abbrechen',
+      title: context.l10n.notifDisconnectConfirm,
+      message: context.l10n.notifDisconnectHint,
+      confirmText: context.l10n.commonYes,
+      cancelText: context.l10n.commonCancel,
     );
     if (!confirmed) return;
     await _updateConfig(current.copyWith(telegramChatId: ''));
@@ -136,11 +137,11 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
     final config = _config;
     if (_isLoading || config == null) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Benachrichtigungen')),
+        appBar: AppBar(title: Text(context.l10n.notifTitle)),
         body: Center(
           child: _isLoading
               ? const CircularProgressIndicator()
-              : const Text('Konfiguration nicht gefunden'),
+              : Text(context.l10n.notifFlutterConfigNotFound),
         ),
       );
     }
@@ -150,7 +151,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
     final hasDutyTypes = ref.watch(tenantHasDutyTypesProvider).valueOrNull ?? false;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Benachrichtigungen')),
+      appBar: AppBar(title: Text(context.l10n.notifTitle)),
       body: ListView(
         padding: const EdgeInsets.all(AppDimensions.paddingM),
         children: [
@@ -159,7 +160,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
             child: Column(
               children: [
                 SwitchListTile(
-                  title: const Text('Benachrichtigungen aktivieren'),
+                  title: Text(context.l10n.notifEnable),
                   value: config.enabled,
                   onChanged: (v) => _updateConfig(config.copyWith(enabled: v)),
                 ),
@@ -173,11 +174,11 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
                     Icons.telegram,
                     color: isConnected ? AppColors.success : const Color(0xFF0088CC),
                   ),
-                  title: const Text('Telegramverknüpfung'),
+                  title: Text(context.l10n.notifTelegram),
                   subtitle: isConnected
-                      ? const Text(
-                          'Konto erfolgreich verknüpft',
-                          style: TextStyle(color: AppColors.success),
+                      ? Text(
+                          context.l10n.notifLinked,
+                          style: const TextStyle(color: AppColors.success),
                         )
                       : null,
                   trailing: isConnected
@@ -185,29 +186,28 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
                           onPressed: _disconnectTelegram,
                           style: TextButton.styleFrom(
                               foregroundColor: AppColors.danger),
-                          child: const Text('Trennen'),
+                          child: Text(context.l10n.notifDisconnect),
                         )
                       : ElevatedButton(
                           onPressed: _connectTelegram,
-                          child: const Text('Verbinden'),
+                          child: Text(context.l10n.notifConnect),
                         ),
                 ),
                 if (config.pushEnabled && isConnected) ...[
                   const Divider(height: 1),
                   SwitchListTile(
-                    title: const Text('Beide Kanäle gleichzeitig'),
-                    subtitle: const Text(
-                        'Push und Telegram werden parallel gesendet, nicht nur als Fallback.'),
+                    title: Text(context.l10n.notifBothChannels),
+                    subtitle: Text(context.l10n.notifBothChannelsHelper),
                     value: config.pushAndTelegram,
                     onChanged: (v) =>
                         _updateConfig(config.copyWith(pushAndTelegram: v)),
                   ),
                   if (!config.pushAndTelegram)
-                    const Padding(
-                      padding: EdgeInsets.fromLTRB(16, 0, 16, 12),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
                       child: Text(
-                        'Push wird bevorzugt. Telegram wird nur als Fallback genutzt, wenn keine Push-Zustellung möglich ist.',
-                        style: TextStyle(fontSize: 12, color: AppColors.medium),
+                        context.l10n.notifPushPreferred,
+                        style: const TextStyle(fontSize: 12, color: AppColors.medium),
                       ),
                     ),
                 ],
@@ -215,75 +215,75 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
             ),
           ),
           if (config.enabled) ...[
-            const _SectionTitle('Benachrichtigungen'),
+            _SectionTitle(context.l10n.notifTitle),
             Card(
               margin: EdgeInsets.zero,
               child: Column(
                 children: [
                   _toggle(
-                    'App-Updates',
-                    'Erhalte Benachrichtigungen über App-Updates sobald verfügbar',
+                    context.l10n.notifAppUpdates,
+                    context.l10n.notifAppUpdatesHelper,
                     config.updates,
                     (v) => config.copyWith(updates: v),
                   ),
                   _toggle(
-                    'Geburtstage',
-                    'Erhalte täglich um 8:00 Uhr eine Benachrichtigung, falls jemand heute Geburtstag hat',
+                    context.l10n.notifBirthdays,
+                    context.l10n.notifBirthdaysHelper,
                     config.birthdays,
                     (v) => config.copyWith(birthdays: v),
                   ),
                   _toggle(
-                    'Mitteilungen',
-                    'Nachrichten von Admins und Verantwortlichen deiner Instanz',
+                    context.l10n.notifAnnouncements,
+                    context.l10n.notifAnnouncementsHelper,
                     config.messages,
                     (v) => config.copyWith(messages: v),
                   ),
                   _toggle(
-                    'Terminerinnerungen',
+                    context.l10n.notifEventReminders,
                     null,
                     config.reminders,
                     (v) => config.copyWith(reminders: v),
                   ),
                   if (hasDutyTypes)
                     _toggle(
-                      'Dienste',
-                      'Wenn du für einen Dienst eingeteilt wirst, an die Bestätigung erinnert wirst oder jemand zum Einspringen gesucht wird. Dringende Anfragen kommen trotzdem an.',
+                      context.l10n.notifDuties,
+                      context.l10n.notifDutiesHelper,
                       config.duties != false,
                       (v) => config.copyWith(duties: v),
                     ),
                   _toggle(
-                    'Checklisten-Erinnerungen',
-                    'Erhalte Erinnerungen für fällige To-Dos in deiner Checkliste. Nur möglich, wenn du Verantwortlicher einer Gruppe bist.',
+                    context.l10n.notifChecklist,
+                    context.l10n.notifChecklistHelper,
                     config.checklist,
                     (v) => config.copyWith(checklist: v),
                   ),
                   _toggle(
-                    'Aufgaben-Erinnerungen',
-                    'Erhalte Erinnerungen 2 Tage vor Fälligkeit von Aufgaben, für die du verantwortlich bist.',
+                    context.l10n.notifTasks,
+                    context.l10n.notifTasksHelper,
                     config.tasks,
                     (v) => config.copyWith(tasks: v),
                   ),
                   _toggle(
-                    'Anmeldungen',
-                    _responsibleOnly,
+                    context.l10n.notifSignIns,
+                    context.l10n.notifResponsibleOnly,
                     config.signins,
                     (v) => config.copyWith(signins: v),
                   ),
                   _toggle(
-                    'Abmeldungen',
-                    _responsibleOnly,
+                    context.l10n.notifSignOuts,
+                    context.l10n.notifResponsibleOnly,
                     config.signouts,
                     (v) => config.copyWith(signouts: v),
                   ),
                   _toggle(
-                    'Neue Problemfälle',
-                    _responsibleOnly,
+                    context.l10n.notifNewProblemCases,
+                    context.l10n.notifResponsibleOnly,
                     config.criticals,
                     (v) => config.copyWith(criticals: v),
                   ),
                   _toggle(
-                    'Neu-Registrierungen',
-                    _responsibleOnly,
+                    context.l10n.notifNewRegistrations,
+                    context.l10n.notifResponsibleOnly,
                     config.registrations,
                     (v) => config.copyWith(registrations: v),
                     last: true,
@@ -292,7 +292,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
               ),
             ),
             if (tenants.isNotEmpty) ...[
-              const _SectionTitle('Instanz-Einstellungen'),
+              _SectionTitle(context.l10n.notifTenantSettings),
               Card(
                 margin: EdgeInsets.zero,
                 child: Column(
@@ -317,9 +317,6 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
       ),
     );
   }
-
-  static const _responsibleOnly =
-      'Nur möglich, wenn du Verantwortlicher einer Gruppe bist.';
 
   Widget _toggle(
     String title,
@@ -352,17 +349,17 @@ class _UserIdTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: const Text('Benutzer-Id', style: TextStyle(fontSize: 12)),
+      title: Text(context.l10n.notifUserId, style: const TextStyle(fontSize: 12)),
       subtitle: SelectableText(
         userId,
         style: const TextStyle(fontFamily: 'monospace'),
       ),
       trailing: IconButton(
         icon: const Icon(Icons.copy, size: 18),
-        tooltip: 'Kopieren',
+        tooltip: context.l10n.songsCopy,
         onPressed: () {
           Clipboard.setData(ClipboardData(text: userId));
-          ToastHelper.showSuccess(context, 'Benutzer-Id kopiert');
+          ToastHelper.showSuccess(context, context.l10n.notifFlutterUserIdCopied);
         },
       ),
     );

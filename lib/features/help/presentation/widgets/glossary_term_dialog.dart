@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../data/help_models.dart';
 import 'help_markdown.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Shows a glossary definition (port of Ionic `HelpGlossaryPopoverComponent`).
 Future<void> showGlossaryTermDialog(BuildContext context, GlossaryTerm term) {
@@ -15,7 +16,7 @@ Future<void> showGlossaryTermDialog(BuildContext context, GlossaryTerm term) {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Schließen'),
+          child: Text(context.l10n.commonClose),
         ),
       ],
     ),

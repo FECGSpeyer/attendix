@@ -5,18 +5,19 @@ import '../../../../core/providers/dashboard_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/dashboard/dashboard_models.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Card labels (Ionic `CARD_LABELS`).
-const Map<String, String> dashboardCardLabels = {
-  DashboardCardIds.birthdays: 'Geburtstage',
-  DashboardCardIds.nextEvent: 'Termine',
-  DashboardCardIds.memberChanges: 'Mitglieder-Veränderungen',
-  DashboardCardIds.absences: 'Abwesenheiten & Pausierungen',
-  DashboardCardIds.criticalPersons: 'Problemfälle',
-  DashboardCardIds.currentSongs: 'Aktuelle Werke',
-  DashboardCardIds.currentPlan: 'Aktueller Ablaufplan',
-  DashboardCardIds.myTasks: 'Meine Aufgaben',
-};
+Map<String, String> dashboardCardLabels(AppLocalizations l10n) => {
+      DashboardCardIds.birthdays: l10n.homeDashboardBirthdays,
+      DashboardCardIds.nextEvent: l10n.homeDashboardEvents,
+      DashboardCardIds.memberChanges: l10n.homeDashboardMemberChanges,
+      DashboardCardIds.absences: l10n.homeDashboardAbsences,
+      DashboardCardIds.criticalPersons: l10n.homeDashboardProblemCases,
+      DashboardCardIds.currentSongs: l10n.homeDashboardCurrentSongs,
+      DashboardCardIds.currentPlan: l10n.homeDashboardCurrentPlan,
+      DashboardCardIds.myTasks: l10n.tasksMyTasks,
+    };
 
 /// Dashboard settings (Ionic `settings/dashboard`): tab toggle, card
 /// visibility and order. Stored per tenant in Supabase user_metadata.
@@ -34,7 +35,7 @@ class _DashboardSettingsPageState extends ConsumerState<DashboardSettingsPage> {
     try {
       await action();
     } catch (e) {
-      if (mounted) ToastHelper.showError(context, 'Fehler beim Speichern: $e');
+      if (mounted) ToastHelper.showError(context, context.l10n.dashSettingsFlutterSaveFailed(e));
     }
   }
 
@@ -47,10 +48,12 @@ class _DashboardSettingsPageState extends ConsumerState<DashboardSettingsPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Dashboard'),
+        title: Text(context.l10n.tabsDashboard),
         actions: [
           IconButton(
-            tooltip: _isReordering ? 'Fertig' : 'Reihenfolge ändern',
+            tooltip: _isReordering
+                ? context.l10n.personDone
+                : context.l10n.dashSettingsFlutterReorder,
             icon: Icon(_isReordering ? Icons.check : Icons.reorder),
             onPressed: () => setState(() => _isReordering = !_isReordering),
           ),
@@ -59,17 +62,17 @@ class _DashboardSettingsPageState extends ConsumerState<DashboardSettingsPage> {
       body: ListView(
         padding: const EdgeInsets.symmetric(vertical: 8),
         children: [
-          const _Header('Tab'),
+          _Header(context.l10n.dashSettingsTab),
           Card(
             margin: const EdgeInsets.symmetric(horizontal: 16),
             child: SwitchListTile(
-              title: const Text('Dashboard-Tab anzeigen'),
+              title: Text(context.l10n.dashSettingsShowTab),
               value: settings.showTab,
               onChanged: (v) => _guard(() => notifier.setShowTab(v)),
             ),
           ),
           const SizedBox(height: 16),
-          const _Header('Karten'),
+          _Header(context.l10n.dashSettingsCards),
           Card(
             margin: const EdgeInsets.symmetric(horizontal: 16),
             clipBehavior: Clip.antiAlias,
@@ -91,7 +94,7 @@ class _DashboardSettingsPageState extends ConsumerState<DashboardSettingsPage> {
                                 child: const Icon(Icons.drag_handle),
                               )
                             : null,
-                        title: Text(dashboardCardLabels[shown[i].id] ?? shown[i].id),
+                        title: Text(dashboardCardLabels(context.l10n)[shown[i].id] ?? shown[i].id),
                         trailing: Switch(
                           value: shown[i].visible,
                           onChanged: _isReordering
@@ -104,17 +107,17 @@ class _DashboardSettingsPageState extends ConsumerState<DashboardSettingsPage> {
                 const Divider(height: 1),
                 ListTile(
                   leading: const Icon(Icons.refresh, color: AppColors.medium),
-                  title: const Text('Zurücksetzen', style: TextStyle(color: AppColors.medium)),
+                  title: Text(context.l10n.dashSettingsReset, style: const TextStyle(color: AppColors.medium)),
                   onTap: () => _guard(notifier.resetCards),
                 ),
               ],
             ),
           ),
-          const Padding(
-            padding: EdgeInsets.fromLTRB(16, 8, 16, 16),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
             child: Text(
-              'Tippe auf das Symbol oben rechts, um die Reihenfolge per Drag & Drop anzupassen.',
-              style: TextStyle(fontSize: 13.5, color: AppColors.medium),
+              context.l10n.dashSettingsReorderHint,
+              style: const TextStyle(fontSize: 13.5, color: AppColors.medium),
             ),
           ),
         ],
