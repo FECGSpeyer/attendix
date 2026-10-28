@@ -482,7 +482,9 @@ class AppTheme {
                 TextStyle(fontSize: 16, color: textPrimary))
             : null,
       ),
-      // ion-modal sheet (iOS 26 theme: --border-radius 30px on sheets).
+      // ion-modal sheet (iOS 26 theme: --border-radius 30px on sheets;
+      // PARITY_R3: Ionic md modal `--border-radius: 0` on phones – the
+      // desktop size/radius comes from IonModalTheme).
       bottomSheetTheme: BottomSheetThemeData(
         backgroundColor: ios && isDark ? AppColors.iosModalDark : cardColor,
         surfaceTintColor: Colors.transparent,
@@ -492,10 +494,11 @@ class AppTheme {
             ? (isDark ? const Color(0xFF404040) : const Color(0xFFC8C7CC))
             : null,
         dragHandleSize: ios ? const Size(36, 5) : null,
-        shape: RoundedRectangleBorder(
-          borderRadius:
-              BorderRadius.vertical(top: Radius.circular(ios ? 30 : 16)),
-        ),
+        shape: ios
+            ? const RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+              )
+            : const RoundedRectangleBorder(),
       ),
       expansionTileTheme: const ExpansionTileThemeData(
         shape: Border(),

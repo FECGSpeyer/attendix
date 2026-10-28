@@ -85,6 +85,8 @@ Future<T?> showAppActionSheet<T>(
     isScrollControlled: true,
     showDragHandle: false,
     shape: const RoundedRectangleBorder(),
+    // PARITY_R3: Ionic md action sheet `--max-width: 500px`, centred.
+    constraints: const BoxConstraints(maxWidth: 500),
     builder: (ctx) => _MaterialActionSheet<T>(
       title: title,
       message: message,
