@@ -19,6 +19,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../settings/presentation/widgets/ion_condense.dart'; // UX_SETTINGS (WAVE 8)
 import '../../../settings/presentation/widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
 import '../../../../core/utils/error_message.dart';
+import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset, IonRefresher; // IOS_R6
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Short date "Mo, 03.11.2026" (Ionic dayjs `dd, ${dateFmt()}`).
@@ -182,7 +183,10 @@ class _OrgPlansPageState extends ConsumerState<OrgPlansPage> {
     // UX_SETTINGS (WAVE 8): org-plans.page.html — condense title and
     // inset lists on the light page (iOS).
     return IonCondense(builder: (context, collapsed) => Scaffold(
-      appBar: AppBar(
+      // IOS_R6: Ionic `ion-content fullscreen` under the translucent header
+      extendBodyBehindAppBar: ionIsIos(context),
+      // IOS_R6: `ion-header translucent` (blur once condensed)
+      appBar: IonTranslucentAppBar(condensed: collapsed, child: AppBar(
         title: IonCondenseTitle(context.l10n.plansOrgPlans, collapsed: collapsed),
         actions: [
           // SETTINGS2: Ionic toggleOrgTab ("Als Tab anzeigen" / "Tab ausblenden")
@@ -217,14 +221,15 @@ class _OrgPlansPageState extends ConsumerState<OrgPlansPage> {
               onPressed: () => _managePublicLink(key),
             ),
         ],
-      ),
-      body: RefreshIndicator.adaptive(
+      )),
+      body: IonRefresher(
         onRefresh: () async {
           ref.invalidate(orgPlansProvider);
           await ref.read(orgPlansProvider.future).catchError((_) => <OrgPlanEntry>[]);
         },
         child: ListView(
           children: [
+            const IonContentTopInset(), // IOS_R6
             IonLargeTitle(context.l10n.plansOrgPlans),
             if (orgAsync.isLoading)
               const Padding(padding: EdgeInsets.all(24), child: Center(child: AppSpinner()))

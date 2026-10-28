@@ -6,6 +6,8 @@ import '../../data/help_content_service.dart';
 import '../widgets/glossary_term_dialog.dart';
 import '../widgets/help_markdown.dart';
 import '../../../../l10n/l10n.dart';
+import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset; // IOS_R6
+import 'package:attendix/shared/widgets/adaptive/adaptive_platform.dart' show useIosLook; // IOS_R6
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 
 /// Single help article with tappable glossary references.
@@ -23,21 +25,29 @@ class HelpArticlePage extends ConsumerWidget {
 
     return Scaffold(
       // UX_SETTINGS (WAVE 8): help-article.page.html — arrow-back button.
-      appBar: AppBar(
+      // IOS_R6: Ionic `ion-content fullscreen` under the
+      // `ion-header translucent` (no large title: always blurred)
+      extendBodyBehindAppBar: useIosLook(context),
+      appBar: IonTranslucentAppBar(child: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.of(context).maybePop(),
         ),
         title: Text(article?.title ?? context.l10n.helpTitle),
-      ),
+      )),
       body: article == null
-          ? Padding(
+          ? SafeArea( // IOS_R6: below the translucent toolbar
+              bottom: false,
+              child: Padding(
               padding: const EdgeInsets.all(AppDimensions.paddingM),
               child: Text(context.l10n.helpArticleNotFound),
-            )
+            ))
           : SingleChildScrollView(
               padding: EdgeInsets.fromLTRB(AppDimensions.paddingM, AppDimensions.paddingM, AppDimensions.paddingM, scrollEndPadding(context, base: AppDimensions.paddingM)),
-              child: Center(
+              child: Column(
+                children: [
+                  const IonContentTopInset(), // IOS_R6
+                  Center(
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 720),
                   child: HelpMarkdown(
@@ -48,6 +58,8 @@ class HelpArticlePage extends ConsumerWidget {
                     },
                   ),
                 ),
+              ),
+                ],
               ),
             ),
     );

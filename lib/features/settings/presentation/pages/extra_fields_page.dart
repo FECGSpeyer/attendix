@@ -12,6 +12,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../data/repositories/extra_fields_repository.dart';
 import '../../../../l10n/l10n.dart';
+import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset; // IOS_R6
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 import '../widgets/ion_condense.dart'; // UX_SETTINGS (WAVE 8)
 import '../widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
@@ -502,7 +503,10 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
       // UX_SETTINGS (WAVE 8): extra-fields.page.html — arrow-back, condense
       // title, checkmark save, inset groups with header "+" buttons.
       child: IonCondense(builder: (context, collapsed) => Scaffold(
-        appBar: AppBar(
+        // IOS_R6: Ionic `ion-content fullscreen` under the translucent header
+        extendBodyBehindAppBar: ionIsIos(context),
+        // IOS_R6: `ion-header translucent` (blur once condensed)
+        appBar: IonTranslucentAppBar(condensed: collapsed, child: AppBar(
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () => Navigator.of(context).maybePop(),
@@ -516,10 +520,11 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
               onPressed: _saving ? null : _save,
             ),
           ],
-        ),
+        )),
         body: ListView(
           padding: EdgeInsets.fromLTRB(ionListMargin(context), ionIsIos(context) ? 0 : 16, ionListMargin(context), 16),
           children: [
+            const IonContentTopInset(), // IOS_R6
             IonLargeTitle(context.l10n.extraFieldsTitle, padding: const EdgeInsets.only(bottom: 4)),
             if (ionIsIos(context)) const SizedBox(height: 16),
             _buildSection(ExtraFieldTarget.person, context.l10n.extraFieldsForPersons),

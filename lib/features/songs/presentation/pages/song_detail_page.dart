@@ -250,10 +250,13 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
     // UX_SONGS_SELF: Ionic `ion-header collapse="condense"` (large title on iOS)
     return CondenseHeader(
       builder: (context, condensed) => Scaffold(
-      appBar: AppBar(
+      // IOS_R6: Ionic `ion-content fullscreen` under the translucent header
+      extendBodyBehindAppBar: isIosLook(context),
+      // IOS_R6: `ion-header [translucent]` (blur once condensed)
+      appBar: IonTranslucentAppBar(
+        condensed: condensed,
+        child: AppBar(
         title: CondenseTitle(condensed: condensed, child: Text(title)),
-        backgroundColor: condenseBarColor(context, condensed),
-        shape: condenseBarShape(context, condensed),
         // IOS_FORMS2: iOS → the end ion-buttons share one glass capsule
         actions: [
           if ((sharingId != null && sharingId.isNotEmpty) || !data.readOnly)
@@ -273,6 +276,7 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
             ]),
         ],
       ),
+      ),
       floatingActionButton: TabBarFab.wrap(aufnahme == null
           ? null
           : FloatingActionButton(
@@ -283,7 +287,7 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
               child: const Icon(Icons.play_arrow),
             )),
       bottomNavigationBar: data.isPublic ? const AudioPlayerWidget() : null,
-      body: RefreshIndicator.adaptive(
+      body: IonRefresher( // IOS_R6
         onRefresh: () async {
           _refresh();
           await ref.read(songDetailDataProvider(_params).future);
@@ -292,6 +296,7 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
         child: ListView(
           padding: EdgeInsets.fromLTRB(0, AppDimensions.paddingS, 0, scrollEndPadding(context, base: 16, fabRoom: 80)),
           children: [
+            const IonContentTopInset(), // IOS_R6
             IonLargeTitle(title),
             if (_saving) const LinearProgressIndicator(minHeight: 2),
             if (!data.readOnly) _buildEditForm(data),

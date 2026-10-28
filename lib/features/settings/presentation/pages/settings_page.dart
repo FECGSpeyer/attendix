@@ -56,6 +56,7 @@ import '../../../history/presentation/pages/history_page.dart' show showHistoryM
 // PARITY_R5
 import '../../../statistics/presentation/pages/statistics_page.dart' show showStatisticsModal;
 import '../../../export/presentation/pages/export_page.dart' show showExportModal;
+import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset, IonRefresher; // IOS_R6
 
 /// "Mehr" tab — UX_SETTINGS: same sections, order and role visibility as the
 /// Ionic settings page (src/app/settings/settings/settings.page.html):
@@ -119,7 +120,10 @@ class SettingsPage extends ConsumerWidget {
     void openTenants() => showTenantsSheet(context);
 
     return Scaffold(
-      appBar: AppBar(
+      // IOS_R6: Ionic `ion-content fullscreen` under the
+      // `ion-header translucent` (no large title: always blurred)
+      extendBodyBehindAppBar: ios,
+      appBar: IonTranslucentAppBar(child: AppBar(
         // Ionic: tenant switcher (long name + chevron) in `ion-buttons
         // slot="start"`. iOS: left aligned glass button, no title (with
         // several tenants TenantSwitcherTitle draws the capsule itself,
@@ -131,7 +135,7 @@ class SettingsPage extends ConsumerWidget {
             : TenantSwitcherTitle(fallbackTitle: l10n.settingsSettings),
         // IOS_SHELL: iOS → bell in a glass circle
         actions: const [ToolbarButtonGroup(children: [NotificationBell()])], // MESSAGES
-      ),
+      )),
       // Ionic: `@if (isIos)` ion-fab (apps-outline) opens the instance list.
       // IOS_SHELL: rendered in the tab bar row (right of the floating bar).
       floatingActionButton: ios
@@ -144,7 +148,7 @@ class SettingsPage extends ConsumerWidget {
               ),
             )
           : null,
-      body: RefreshIndicator.adaptive(
+      body: IonRefresher( // IOS_R6
         onRefresh: () async {
           ref.invalidate(currentTenantProvider);
           ref.invalidate(userTenantsProvider);
@@ -168,6 +172,7 @@ class SettingsPage extends ConsumerWidget {
                   AppDimensions.paddingM,
                   scrollEndPadding(context, base: AppDimensions.paddingM)),
           children: [
+            const IonContentTopInset(), // IOS_R6
             // IOS_SETTINGS2: no Flutter-only PWA install hint here — Ionic
             // only shows its "Attendix als App" promo card.
             const AppPromoCard(), // SETTINGS2: "📱 Attendix als App"

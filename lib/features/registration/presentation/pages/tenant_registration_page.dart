@@ -25,6 +25,8 @@ import '../../data/providers/registration_providers.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/common/error_state_view.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../shared/widgets/layout/ionic_ios.dart'
+    show IonTranslucentAppBar, IonContentTopInset; // IOS_R6
 
 /// Public tenant registration page
 class TenantRegistrationPage extends ConsumerStatefulWidget {
@@ -99,10 +101,19 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
   Widget build(BuildContext context) {
     final tenantAsync = ref.watch(tenantByRegisterIdProvider(widget.registerId));
 
+    final ios = ionIsIos(context);
+    final hasData = tenantAsync.valueOrNull != null;
     return Scaffold(
+      // IOS_R6: Ionic `ion-content [fullscreen]` under the translucent header
+      extendBodyBehindAppBar: ios,
       // Ionic tenant-register: no back/close on the left, a home button on
       // the right (goHome()).
-      appBar: AppBar(
+      // IOS_R6: `ion-header [translucent]` (blur once the large title has
+      // scrolled away; always while there is no large title).
+      appBar: IonTranslucentAppBar(
+        condensed: !hasData,
+        condensedListenable: hasData ? _showToolbarTitle : null,
+        child: AppBar(
         title: ionIsIos(context) &&
                 ref.watch(tenantByRegisterIdProvider(widget.registerId)).valueOrNull !=
                     null
@@ -124,6 +135,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
             onPressed: _goHome,
           ),
         ],
+      ),
       ),
       body: tenantAsync.when(
         // A retry shows the spinner again instead of the stale error.
@@ -204,6 +216,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
         controller: _scrollController,
         padding: const EdgeInsets.only(bottom: 32),
         children: [
+          const IonContentTopInset(), // IOS_R6
           // ion-header collapse="condense": large title on iOS
           if (ios)
             Padding(

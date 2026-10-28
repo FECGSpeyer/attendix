@@ -21,6 +21,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../settings/presentation/widgets/ion_condense.dart'; // UX_SETTINGS (WAVE 8)
 import '../../../settings/presentation/widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
 import '../../../../core/utils/error_message.dart';
+import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset; // IOS_R6
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
@@ -182,7 +183,10 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
     // blocks read as a plain list on the page with caps subtitles.
     return IonCondense(builder: (context, collapsed) => Scaffold(
       backgroundColor: ios ? _plainPageBackground(context) : null,
-      appBar: AppBar(title: IonCondenseTitle(context.l10n.notifTitle, collapsed: collapsed)),
+      // IOS_R6: Ionic `ion-content fullscreen` under the translucent header
+      extendBodyBehindAppBar: ionIsIos(context),
+      // IOS_R6: `ion-header translucent` (blur once condensed)
+      appBar: IonTranslucentAppBar(condensed: collapsed, background: _plainPageBackground(context), child: AppBar(title: IonCondenseTitle(context.l10n.notifTitle, collapsed: collapsed))),
       body: _noHoverOnIos(context, ListView(
         padding: ios
             ? EdgeInsets.fromLTRB(16, 0, 16, scrollEndPadding(context, base: 24))
@@ -190,6 +194,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
                 AppDimensions.paddingM,
                 scrollEndPadding(context, base: AppDimensions.paddingM)),
         children: [
+          const IonContentTopInset(), // IOS_R6
           IonLargeTitle(context.l10n.notifTitle, padding: const EdgeInsets.only(bottom: 4)),
           _group(
             context,

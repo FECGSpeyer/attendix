@@ -10,6 +10,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/plan/plan.dart';
 import '../../../planning/presentation/widgets/plan_field_dialogs.dart';
 import '../../../../l10n/l10n.dart';
+import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset; // IOS_R6
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 import '../../../settings/presentation/widgets/ion_condense.dart'; // UX_SETTINGS (WAVE 8)
 import '../../../settings/presentation/widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
@@ -156,7 +157,10 @@ class _OrgPersonFieldsPageState extends ConsumerState<OrgPersonFieldsPage> {
     // UX_SETTINGS (WAVE 8): org-person-fields.page.html — arrow-back,
     // condense title, intro item + "Für Personen" inset list with header "+".
     return IonCondense(builder: (context, collapsed) => Scaffold(
-      appBar: AppBar(
+      // IOS_R6: Ionic `ion-content fullscreen` under the translucent header
+      extendBodyBehindAppBar: ionIsIos(context),
+      // IOS_R6: `ion-header translucent` (blur once condensed)
+      appBar: IonTranslucentAppBar(condensed: collapsed, child: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.of(context).maybePop(),
@@ -169,13 +173,14 @@ class _OrgPersonFieldsPageState extends ConsumerState<OrgPersonFieldsPage> {
             onPressed: _saving || !isSuperAdmin || org?.id == null ? null : () => _save(org!.id!),
           ),
         ],
-      ),
+      )),
       body: _fields == null
           ? const Center(child: AppSpinner())
           : ios
               ? ListView(
                   padding: EdgeInsets.fromLTRB(16, 0, 16, scrollEndPadding(context, base: 24)),
                   children: [
+                    const IonContentTopInset(), // IOS_R6
                     IonLargeTitle(context.l10n.orgPersonFields, padding: const EdgeInsets.only(bottom: 4)),
                     const SizedBox(height: 16),
                     SettingsListSection(

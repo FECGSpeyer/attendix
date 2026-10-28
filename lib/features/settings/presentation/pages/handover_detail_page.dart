@@ -16,6 +16,9 @@ import '../../../../data/repositories/player_repository.dart';
 import 'handover_page.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
+import '../widgets/ion_condense.dart'; // IOS_R6
+import '../widgets/settings_list.dart' show ionIsIos; // IOS_R6
+import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset; // IOS_R6
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 
@@ -178,8 +181,12 @@ class _HandoverDetailPageState extends ConsumerState<HandoverDetailPage> {
   @override
   Widget build(BuildContext context) {
     final data = widget.data;
-    return Scaffold(
-      appBar: AppBar(title: Text(context.l10n.handoverTitle)),
+    // IOS_R6: Ionic `ion-header collapse="condense"` (large title on iOS)
+    return IonCondense(builder: (context, collapsed) => Scaffold(
+      // IOS_R6: Ionic `ion-content fullscreen` under the translucent header
+      extendBodyBehindAppBar: ionIsIos(context),
+      // IOS_R6: `ion-header translucent` + `collapse="condense"`
+      appBar: IonTranslucentAppBar(condensed: collapsed, child: AppBar(title: IonCondenseTitle(context.l10n.handoverTitle, collapsed: collapsed))),
       floatingActionButton: TabBarFab.wrap(data == null || _loading
           ? null
           : FloatingActionButton(
@@ -196,8 +203,10 @@ class _HandoverDetailPageState extends ConsumerState<HandoverDetailPage> {
       body: data == null || _loading
           ? const Center(child: AppSpinner())
           : ListView(
-              padding: EdgeInsets.fromLTRB(AppDimensions.paddingM, AppDimensions.paddingM, AppDimensions.paddingM, scrollEndPadding(context, base: 16, fabRoom: 84)),
+              padding: EdgeInsets.fromLTRB(AppDimensions.paddingM, ionIsIos(context) ? 0 : AppDimensions.paddingM, AppDimensions.paddingM, scrollEndPadding(context, base: 16, fabRoom: 84)), // IOS_R6: large title on top
               children: [
+                const IonContentTopInset(), // IOS_R6
+                IonLargeTitle(context.l10n.handoverTitle, padding: const EdgeInsets.only(bottom: 4)), // IOS_R6
                 Text(context.l10n.handoverGroupMapping,
                     style: Theme.of(context).textTheme.titleSmall),
                 const SizedBox(height: AppDimensions.paddingS),
@@ -218,6 +227,6 @@ class _HandoverDetailPageState extends ConsumerState<HandoverDetailPage> {
                 ),
               ],
             ),
-    );
+    ));
   }
 }

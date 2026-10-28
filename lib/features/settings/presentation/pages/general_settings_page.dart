@@ -24,6 +24,7 @@ import '../widgets/settings_list.dart'; // UX_SETTINGS
 import '../widgets/ion_condense.dart'; // UX_SETTINGS (WAVE 8)
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
+import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset; // IOS_R6
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// German holiday regions
@@ -410,7 +411,10 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
       },
       // UX_SETTINGS (WAVE 8): ion-header collapse="condense" + arrow-back
       child: IonCondense(builder: (context, collapsed) => Scaffold(
-      appBar: AppBar(
+      // IOS_R6: Ionic `ion-content fullscreen` under the translucent header
+      extendBodyBehindAppBar: ionIsIos(context),
+      // IOS_R6: `ion-header translucent` (blur once condensed)
+      appBar: IonTranslucentAppBar(condensed: collapsed, child: AppBar(
         title: IonCondenseTitle(context.l10n.settingsSettings, collapsed: collapsed),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -422,7 +426,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
             }
           },
         ),
-      ),
+      )),
       // UX_SETTINGS: Ionic saves via FAB (save-outline)
       floatingActionButton: _isLoading
           ? null
@@ -449,6 +453,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
                   96,
                 ),
                 children: [
+                  const IonContentTopInset(), // IOS_R6
                   IonLargeTitle(context.l10n.settingsSettings, padding: const EdgeInsets.only(bottom: 4)),
                   if (ionIsIos(context)) const SizedBox(height: 16),
                   // UX_SETTINGS: sections in Ionic order (general.page.html)

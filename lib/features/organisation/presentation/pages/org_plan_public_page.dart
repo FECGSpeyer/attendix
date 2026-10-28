@@ -14,6 +14,7 @@ import '../../../planning/presentation/widgets/plan_field_dialogs.dart';
 import '../../../planning/presentation/widgets/plan_view_list.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../shared/widgets/layout/ionic_ios.dart'; // IOS_R6
 
 /// Public list of all org plans via `/org-plan?key=<public_plan_key>`
 /// (Ionic `OrgPlanPublicPage`). No login required.
@@ -261,10 +262,20 @@ class _OrgPlanPublicPageState extends ConsumerState<OrgPlanPublicPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
+    final title =
+        _orgName.isNotEmpty ? _orgName : context.l10n.plansFlutterOrgPlansTitle;
+    // IOS_R6: Ionic `ion-header collapse="condense"` (large title on iOS)
+    final top = [const IonContentTopInset(), IonLargeTitle(title)];
+    return CondenseHeader(
+      builder: (context, condensed) => Scaffold(
+      // IOS_R6: Ionic `ion-content fullscreen` under the translucent header
+      extendBodyBehindAppBar: isIosLook(context),
+      // IOS_R6: `ion-header translucent` (blur once condensed)
+      appBar: IonTranslucentAppBar(
+        condensed: condensed,
+        child: AppBar(
         automaticallyImplyLeading: false,
-        title: Text(_orgName.isNotEmpty ? _orgName : context.l10n.plansFlutterOrgPlansTitle),
+        title: CondenseTitle(condensed: condensed, child: Text(title)),
         actions: [
           IconButton(
             tooltip: context.l10n.plansSubscribeCalendar,
@@ -279,10 +290,20 @@ class _OrgPlanPublicPageState extends ConsumerState<OrgPlanPublicPage> {
             ),
         ],
       ),
-      body: _loading
+      ),
+      body: _loading && !isIosLook(context)
           ? const Center(child: AppSpinner())
+          : _loading
+          ? ListView(children: [
+              ...top, // IOS_R6
+              const Padding(
+                  padding: EdgeInsets.all(24),
+                  child: Center(child: AppSpinner())),
+            ])
           : _notFound
-              ? Padding(
+              ? ListView(children: [
+                  ...top, // IOS_R6
+                  Padding(
                   padding: const EdgeInsets.all(16),
                   child: Card(
                     child: Padding(
@@ -290,12 +311,14 @@ class _OrgPlanPublicPageState extends ConsumerState<OrgPlanPublicPage> {
                       child: Text(context.l10n.plansLinkInvalid),
                     ),
                   ),
-                )
-              : RefreshIndicator.adaptive(
+                ),
+                ])
+              : IonRefresher( // IOS_R6
                   onRefresh: _loadPlans,
                   child: ListView(
                     padding: const EdgeInsets.only(bottom: 24),
                     children: [
+                      ...top, // IOS_R6
                       if (_upcoming.isEmpty)
                         ListTile(
                           leading: const Icon(Icons.event_outlined, color: AppColors.medium),
@@ -306,6 +329,7 @@ class _OrgPlanPublicPageState extends ConsumerState<OrgPlanPublicPage> {
                     ],
                   ),
                 ),
+      ),
     );
   }
 }

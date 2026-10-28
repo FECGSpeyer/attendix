@@ -222,10 +222,13 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
     // UX_SONGS_SELF: Ionic `ion-header collapse="condense"` (large title on iOS)
     return CondenseHeader(
       builder: (context, condensed) => Scaffold(
-      appBar: AppBar(
+      // IOS_R6: Ionic `ion-content fullscreen` under the translucent header
+      extendBodyBehindAppBar: isIosLook(context),
+      // IOS_R6: `ion-header translucent` (blur once condensed)
+      appBar: IonTranslucentAppBar(
+        condensed: condensed,
+        child: AppBar(
         title: CondenseTitle(condensed: condensed, child: Text(title)),
-        backgroundColor: condenseBarColor(context, condensed),
-        shape: condenseBarShape(context, condensed),
         automaticallyImplyLeading: !data.isPublic,
         // IOS_SHELL: iOS → menu button in a glass circle
         actions: [
@@ -305,6 +308,7 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
           ]),
         ],
       ),
+      ),
       // IOS_SHELL: iOS → ion-fab in the tab bar row
       floatingActionButton: isAdmin
           ? TabBarFab(
@@ -317,10 +321,11 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
               ),
             )
           : null,
-      body: RefreshIndicator.adaptive(
+      body: IonRefresher( // IOS_R6
         onRefresh: _refresh,
         child: CustomScrollView(
           slivers: [
+            const SliverIonContentTopInset(), // IOS_R6
             SliverToBoxAdapter(child: IonLargeTitle(title)),
             if (data.categories.isNotEmpty)
               SliverToBoxAdapter(

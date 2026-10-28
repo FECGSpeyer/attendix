@@ -23,6 +23,7 @@ import '../widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
 import '../../../organisation/presentation/widgets/type_default_org_plan_toggle.dart'; // ORG_PLANS
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
+import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset; // IOS_R6
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 
@@ -210,7 +211,10 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
       child: Scaffold(
         // UX_SETTINGS (WAVE 8): type.page.html — no title, arrow-back,
         // red trash at the end, save via FAB (save-outline).
-        appBar: AppBar(
+        // IOS_R6: Ionic `ion-content fullscreen` under the
+        // `ion-header translucent` (no large title: always blurred)
+        extendBodyBehindAppBar: useIosLook(context),
+        appBar: IonTranslucentAppBar(child: AppBar(
           leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: _onBackPressed,
@@ -222,7 +226,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
             onPressed: _deleteType,
           ),
         ],
-      ),
+      )),
       floatingActionButton: TabBarFab.wrap(FloatingActionButton(
         onPressed: _hasChanges ? _save : null,
         tooltip: context.l10n.commonSave,
@@ -234,6 +238,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
         child: ListView(
           padding: EdgeInsets.fromLTRB(AppDimensions.paddingM, AppDimensions.paddingM, AppDimensions.paddingM, scrollEndPadding(context, base: AppDimensions.paddingM)),
           children: [
+            const IonContentTopInset(), // IOS_R6
             // Usage warning
             if (_usageCount > 0) ...[
               Card(

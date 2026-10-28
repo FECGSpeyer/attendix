@@ -10,6 +10,7 @@ import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/church/church.dart';
 import '../../../../l10n/l10n.dart';
+import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset; // IOS_R6
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 import '../../../settings/presentation/widgets/ion_condense.dart'; // UX_SETTINGS (WAVE 8)
 import '../../../settings/presentation/widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
@@ -231,10 +232,14 @@ class _AdministrationPageState extends ConsumerState<AdministrationPage> {
     // UX_SETTINGS (WAVE 8): administration.page.html — condense title,
     // inset lists (Auswertung / Speicher / Gemeinden) on the light page.
     return IonCondense(builder: (context, collapsed) => Scaffold(
-      appBar: AppBar(title: IonCondenseTitle(context.l10n.adminTitle, collapsed: collapsed)),
+      // IOS_R6: Ionic `ion-content fullscreen` under the translucent header
+      extendBodyBehindAppBar: ionIsIos(context),
+      // IOS_R6: `ion-header translucent` (blur once condensed)
+      appBar: IonTranslucentAppBar(condensed: collapsed, child: AppBar(title: IonCondenseTitle(context.l10n.adminTitle, collapsed: collapsed))),
       body: ListView(
         padding: EdgeInsets.fromLTRB(16, ios ? 0 : 8, 16, scrollEndPadding(context, base: 24)),
         children: [
+          const IonContentTopInset(), // IOS_R6
           IonLargeTitle(context.l10n.adminTitle, padding: const EdgeInsets.only(bottom: 4)),
           if (ios) const SizedBox(height: 16),
           SettingsListSection(
