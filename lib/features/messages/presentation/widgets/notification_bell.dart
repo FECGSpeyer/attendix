@@ -49,6 +49,8 @@ class NotificationBell extends ConsumerWidget {
       isScrollControlled: true,
       useSafeArea: true,
       showDragHandle: true,
+      // ion-content color="light" behind the inset list
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       builder:
           (_) => DraggableScrollableSheet(
             expand: false,
@@ -252,9 +254,26 @@ class _NotificationCenterState extends ConsumerState<_NotificationCenter> {
     return '';
   }
 
+  List<Widget> _headerButtons(int unread, List<UserNotification> list) => [
+        if (unread > 0)
+          IconButton(
+            tooltip: context.l10n.bellMarkAllRead,
+            color: AppColors.primary,
+            icon: const Icon(Icons.done_all),
+            onPressed: _markAll,
+          ),
+        if (list.isNotEmpty)
+          IconButton(
+            tooltip: context.l10n.bellDeleteAll,
+            icon: const Icon(Icons.delete_outline, color: AppColors.danger),
+            onPressed: _deleteAll,
+          ),
+      ];
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final ios = Theme.of(context).platform == TargetPlatform.iOS;
     final listAsync = ref.watch(userNotificationsProvider(_allTenants));
     final unread = ref.watch(unreadNotificationCountProvider).valueOrNull ?? 0;
     final tenants = ref.watch(userTenantsProvider).valueOrNull ?? const <Tenant>[];
@@ -262,23 +281,36 @@ class _NotificationCenterState extends ConsumerState<_NotificationCenter> {
 
     return Column(
       children: [
+        // ion-toolbar: ion-title (centred on iOS) + end buttons
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM),
+          padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingS),
           child: Row(
             children: [
-              Expanded(child: Text(context.l10n.bellTitle, style: theme.textTheme.titleLarge)),
-              if (unread > 0)
-                IconButton(
-                  tooltip: context.l10n.bellMarkAllRead,
-                  icon: const Icon(Icons.done_all),
-                  onPressed: _markAll,
+              if (ios) const SizedBox(width: 96),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 8),
+                  child: Text(
+                    context.l10n.bellTitle,
+                    textAlign: ios ? TextAlign.center : TextAlign.start,
+                    style: TextStyle(
+                      fontSize: ios ? 17 : 20,
+                      fontWeight: FontWeight.w600,
+                      color: theme.colorScheme.onSurface,
+                    ),
+                  ),
                 ),
-              if (list.isNotEmpty)
-                IconButton(
-                  tooltip: context.l10n.bellDeleteAll,
-                  icon: const Icon(Icons.delete_outline, color: AppColors.danger),
-                  onPressed: _deleteAll,
-                ),
+              ),
+              if (ios)
+                SizedBox(
+                  width: 96,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: _headerButtons(unread, list),
+                  ),
+                )
+              else
+                ..._headerButtons(unread, list),
             ],
           ),
         ),
@@ -326,86 +358,126 @@ class _NotificationCenterState extends ConsumerState<_NotificationCenter> {
                         Center(child: Text(context.l10n.bellNone)),
                       ],
                     )
-                    : ListView.separated(
+                    : ListView(
                       controller: widget.scrollController,
                       physics: const AlwaysScrollableScrollPhysics(),
-                      itemCount: list.length,
-                      separatorBuilder: (_, __) => const Divider(height: 1),
-                      itemBuilder: (context, i) {
-                        final n = list[i];
-                        final read = _isRead(n);
-                        final tenantName = _allTenants ? _tenantName(n, tenants) : '';
-                        return Slidable(
-                          key: ValueKey(n.id),
-                          startActionPane: ActionPane(
-                            motion: const DrawerMotion(),
-                            extentRatio: 0.22,
-                            children: [
-                              SlidableAction(
-                                onPressed: (_) => _toggleRead(n),
-                                backgroundColor: AppColors.primary,
-                                foregroundColor: Colors.white,
-                                icon:
-                                    read ? Icons.mark_email_unread_outlined : Icons.drafts_outlined,
-                              ),
-                            ],
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      children: [
+                        // ion-list [inset]: one rounded group
+                        Container(
+                          margin: EdgeInsets.symmetric(horizontal: ios ? 20 : 16),
+                          decoration: BoxDecoration(
+                            color: theme.cardTheme.color ?? theme.colorScheme.surface,
+                            borderRadius: BorderRadius.circular(ios ? 28 : 16),
                           ),
-                          endActionPane: ActionPane(
-                            motion: const DrawerMotion(),
-                            extentRatio: 0.22,
+                          clipBehavior: Clip.antiAlias,
+                          child: Column(
                             children: [
-                              SlidableAction(
-                                onPressed: (_) => _guard(() => _notifier.deleteOne(n)),
-                                backgroundColor: AppColors.danger,
-                                foregroundColor: Colors.white,
-                                icon: Icons.delete_outline,
-                              ),
-                            ],
-                          ),
-                          child: ListTile(
-                            onTap: () => _onTap(n),
-                            leading:
-                                read
-                                    ? const SizedBox(width: 10)
-                                    : Container(
-                                      width: 10,
-                                      height: 10,
-                                      decoration: const BoxDecoration(
-                                        color: AppColors.primary,
-                                        shape: BoxShape.circle,
-                                      ),
-                                    ),
-                            minLeadingWidth: 10,
-                            title: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                if (tenantName.isNotEmpty)
-                                  Text(
-                                    tenantName,
-                                    style: theme.textTheme.labelSmall?.copyWith(
-                                      color: AppColors.medium,
-                                    ),
-                                  ),
-                                Text(
-                                  n.body,
-                                  style: read ? null : const TextStyle(fontWeight: FontWeight.w600),
-                                ),
+                              for (var i = 0; i < list.length; i++) ...[
+                                if (i > 0) const Divider(height: 0.5, thickness: 0.5, indent: 16),
+                                _buildRow(list[i], tenants, ios),
                               ],
-                            ),
-                            subtitle: Text(
-                              n.createdAt == null
-                                  ? ''
-                                  : DateFormat('${dateFmt()} HH:mm').format(n.createdAt!.toLocal()),
-                              style: theme.textTheme.bodySmall?.copyWith(color: AppColors.medium),
-                            ),
-                            trailing: n.isNavigable ? const Icon(Icons.chevron_right) : null,
+                            ],
                           ),
-                        );
-                      },
+                        ),
+                      ],
                     ),
           ),
         ),
       ],
+    );
+  }
+
+  /// ion-item-sliding: start = read/unread (primary), end = delete (danger);
+  /// unread dot (danger) at the start, tenant tag, body, date note, detail
+  /// chevron for navigable rows.
+  Widget _buildRow(UserNotification n, List<Tenant> tenants, bool ios) {
+    final read = _isRead(n);
+    final tenantName = _allTenants ? _tenantName(n, tenants) : '';
+    final theme = Theme.of(context);
+    return Slidable(
+      key: ValueKey(n.id),
+      startActionPane: ActionPane(
+        motion: const DrawerMotion(),
+        extentRatio: 0.22,
+        children: [
+          SlidableAction(
+            onPressed: (_) => _toggleRead(n),
+            backgroundColor: AppColors.primary,
+            foregroundColor: Colors.white,
+            icon: read ? Icons.mark_email_unread_outlined : Icons.drafts_outlined,
+          ),
+        ],
+      ),
+      endActionPane: ActionPane(
+        motion: const DrawerMotion(),
+        extentRatio: 0.22,
+        children: [
+          SlidableAction(
+            onPressed: (_) => _guard(() => _notifier.deleteOne(n)),
+            backgroundColor: AppColors.danger,
+            foregroundColor: Colors.white,
+            icon: Icons.delete_outline,
+          ),
+        ],
+      ),
+      child: InkWell(
+        onTap: () => _onTap(n),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 10, 12, 10),
+          child: Row(
+            children: [
+              if (!read) ...[
+                Container(
+                  width: 10,
+                  height: 10,
+                  decoration: const BoxDecoration(
+                    color: AppColors.danger,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                const SizedBox(width: 12),
+              ],
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (tenantName.isNotEmpty)
+                      Text(
+                        tenantName,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.medium,
+                        ),
+                      ),
+                    Text(
+                      n.body,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      n.createdAt == null
+                          ? ''
+                          : DateFormat('${dateFmt()} HH:mm').format(n.createdAt!.toLocal()),
+                      style: const TextStyle(fontSize: 11, color: AppColors.medium),
+                    ),
+                  ],
+                ),
+              ),
+              if (n.isNavigable)
+                Icon(
+                  Icons.chevron_right,
+                  size: 22,
+                  color: AppColors.medium.withValues(alpha: 0.6),
+                ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

@@ -466,6 +466,9 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
         title: _isSelectionMode
             ? Text(context.l10n.peopleFlutterSelectedCount(_selectedPlayerIds.length))
             : TenantSwitcherTitle(fallbackTitle: context.l10n.commonPeople),
+        centerTitle: _isSelectionMode
+            ? null
+            : TenantSwitcherTitle.centerTitle(ref), // UX_AUTH
         leading: _isSelectionMode
             ? IconButton(
                 icon: const Icon(Icons.close),

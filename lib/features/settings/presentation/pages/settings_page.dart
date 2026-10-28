@@ -97,6 +97,7 @@ class SettingsPage extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         // Ionic: tenant switcher (long name + chevron) in the header
+        centerTitle: TenantSwitcherTitle.centerTitle(ref), // UX_AUTH
         title: TenantSwitcherTitle(fallbackTitle: l10n.settingsSettings),
         actions: const [NotificationBell()], // MESSAGES
       ),

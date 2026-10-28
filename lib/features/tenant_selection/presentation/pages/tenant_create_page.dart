@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/constants/app_constants.dart';
 import '../../../../core/constants/enums.dart';
 import '../../../../core/utils/device_timezone.dart';
 import '../../../../core/providers/tenant_providers.dart';
@@ -11,12 +10,19 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/repositories/tenant_create_repository.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../core/config/supabase_config.dart';
+import '../../../../core/providers/legal_providers.dart';
+import '../../../../core/providers/push_providers.dart';
+import '../../../../data/repositories/base_repository.dart';
+import '../../../auth/presentation/widgets/ion_form_list.dart';
 
 /// AUTH: Ionic "Neue Instanz anlegen" (register.page) – 3 steps:
 /// 1. Art der Gruppe, 2. Name + Kürzel, 3. Hauptgruppe, then summary.
 class TenantCreatePage extends ConsumerStatefulWidget {
-  const TenantCreatePage({super.key});
+  const TenantCreatePage({super.key, this.canDismiss = true});
+
+  /// False when the user has no instance yet (Ionic full-page register).
+  final bool canDismiss;
 
   @override
   ConsumerState<TenantCreatePage> createState() => _TenantCreatePageState();
@@ -113,255 +119,443 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
   bool get _isComplete =>
       _longName.isNotEmpty && _shortName.isNotEmpty && _mainGroupName.isNotEmpty;
 
+  /// Ionic register.page `canDismiss = Boolean(db.tenantUser())`: a user
+  /// without any instance cannot leave the page, only log out or delete
+  /// the account via the account menu.
+  bool get _canDismiss => widget.canDismiss;
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final texts = TenantTypeTexts.of(_selectedType, l10n);
     final theme = Theme.of(context);
+    final ios = ionIsIos(context);
+    final margin = ionInsetMargin(context);
+    // register.page.scss: ion-list-header ion-label 1rem / 600
+    const headerStyle = TextStyle(fontSize: 16, fontWeight: FontWeight.w600);
+    final inputStyle = ionItemInputStyle(context);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.registerTitle),
-        leading: IconButton(
-          icon: const Icon(Icons.close),
-          onPressed: _isLoading
-              ? null
-              : () => context.canPop() ? context.pop() : context.go('/tenants'),
+    return PopScope(
+      canPop: _canDismiss,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(l10n.registerTitle),
+          automaticallyImplyLeading: false,
+          actions: [
+            if (_canDismiss)
+              IconButton(
+                icon: const Icon(Icons.close),
+                tooltip: l10n.commonClose,
+                onPressed: _isLoading
+                    ? null
+                    : () => context.canPop()
+                        ? context.pop()
+                        : context.go('/tenants'),
+              )
+            else
+              // Ionic register-account-menu popover: Abmelden / Konto löschen
+              PopupMenuButton<String>(
+                key: const ValueKey('register-account-menu'),
+                icon: Icon(ios ? Icons.more_horiz : Icons.more_vert),
+                position: PopupMenuPosition.under,
+                onSelected: (value) =>
+                    value == 'logout' ? _logout() : _confirmDeleteAccount(),
+                itemBuilder: (context) => [
+                  PopupMenuItem(
+                    value: 'logout',
+                    child: Row(children: [
+                      const Icon(Icons.logout),
+                      const SizedBox(width: 12),
+                      Text(l10n.registerLogout),
+                    ]),
+                  ),
+                  PopupMenuItem(
+                    value: 'delete',
+                    child: Row(children: [
+                      const Icon(Icons.delete_outline, color: AppColors.danger),
+                      const SizedBox(width: 12),
+                      Text(l10n.registerDeleteAccount,
+                          style: const TextStyle(color: AppColors.danger)),
+                    ]),
+                  ),
+                ],
+              ),
+          ],
         ),
-      ),
-      body: ListView(
-        padding: const EdgeInsets.all(AppDimensions.paddingM),
-        children: [
-          // Intro card
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(AppDimensions.paddingM),
+        body: ListView(
+          padding: const EdgeInsets.only(top: 8),
+          children: [
+            // Intro card (ion-card: rocket icon above the centred title)
+            _IonCard(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      const Icon(Icons.rocket_launch_outlined,
-                          color: AppColors.primary),
-                      const SizedBox(width: AppDimensions.paddingS),
-                      Text(l10n.registerWelcome,
-                          style: theme.textTheme.titleMedium
-                              ?.copyWith(fontWeight: FontWeight.bold)),
-                    ],
-                  ),
-                  const SizedBox(height: AppDimensions.paddingS),
-                  // Ionic register.introHtml (inline <strong>).
-                  Text.rich(TextSpan(children: _inlineHtml(l10n.registerIntroHtml))),
-                ],
-              ),
-            ),
-          ),
-
-          // Join hint
-          Card(
-            color: AppColors.warning.withValues(alpha: 0.1),
-            child: Padding(
-              padding: const EdgeInsets.all(AppDimensions.paddingM),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+                  const Icon(Icons.rocket_launch_outlined,
+                      size: 48, color: AppColors.primary),
+                  const SizedBox(height: 8),
                   Text(
-                    l10n.registerJoinHeading,
-                    style: theme.textTheme.bodyMedium
-                        ?.copyWith(fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(l10n.registerJoinText),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: AppDimensions.paddingM),
-
-          // Step 1
-          _StepHeader(badge: '1', title: l10n.registerStep1),
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(AppDimensions.paddingM),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  DropdownButtonFormField<String>(
-                    value: _selectedType,
-                    isExpanded: true,
-                    decoration: InputDecoration(
-                      labelText: l10n.registerGroupType,
-                      helperText: l10n.registerGroupTypeQuestion,
+                    l10n.registerWelcome,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 20.8,
+                      fontWeight: FontWeight.w600,
+                      color: theme.colorScheme.onSurface,
                     ),
-                    items: [
-                      for (final entry in TenantTypeTexts.byType(l10n).entries)
-                        DropdownMenuItem(
-                          value: entry.key,
-                          child: Row(
-                            children: [
-                              Icon(entry.value.icon, size: 20),
-                              const SizedBox(width: AppDimensions.paddingS),
-                              Text(entry.value.option),
-                            ],
-                          ),
-                        ),
-                    ],
-                    onChanged: _isLoading
-                        ? null
-                        : (value) =>
-                            setState(() => _selectedType = value ?? 'general'),
                   ),
-                  const SizedBox(height: AppDimensions.paddingM),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Icon(Icons.check_circle,
-                          color: AppColors.success, size: 18),
-                      const SizedBox(width: AppDimensions.paddingS),
-                      Expanded(child: Text(texts.help)),
-                    ],
+                  const SizedBox(height: 12),
+                  // Ionic register.introHtml (inline <strong>).
+                  Text.rich(
+                    TextSpan(
+                      children: _inlineHtml(l10n.registerIntroHtml),
+                      style: const TextStyle(
+                          fontSize: 14, height: 1.5, color: AppColors.medium),
+                    ),
+                    textAlign: TextAlign.center,
                   ),
                 ],
               ),
             ),
-          ),
-          const SizedBox(height: AppDimensions.paddingM),
 
-          // Step 2
-          _StepHeader(badge: '2', title: l10n.registerStep2),
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(AppDimensions.paddingM),
-              child: Column(
-                children: [
-                  TextField(
-                    controller: _longNameController,
-                    maxLength: 50,
-                    textCapitalization: TextCapitalization.words,
-                    decoration: InputDecoration(
-                      labelText: l10n.registerFullName,
-                      hintText: texts.namePlaceholder,
-                      helperText: l10n.registerFullNameHelper,
-                    ),
-                  ),
-                  const SizedBox(height: AppDimensions.paddingS),
-                  TextField(
-                    controller: _shortNameController,
-                    textCapitalization: TextCapitalization.sentences,
-                    decoration: InputDecoration(
-                      labelText: l10n.registerShortName,
-                      hintText: texts.shortPlaceholder,
-                      helperText: l10n.registerShortNameHelper,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: AppDimensions.paddingM),
-
-          // Step 3
-          _StepHeader(
-            badge: '3',
-            title: l10n.registerStep3,
-            trailing: IconButton(
-              tooltip: l10n.registerFlutterMainGroupInfo,
-              icon: const Icon(Icons.help_outline),
-              onPressed: _showMainGroupInfo,
-            ),
-          ),
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(AppDimensions.paddingM),
-              child: TextField(
-                controller: _mainGroupNameController,
-                textCapitalization: TextCapitalization.sentences,
-                decoration: InputDecoration(
-                  labelText: l10n.registerMainGroupName,
-                  hintText: texts.mainGroupPlaceholder,
-                  helperText: l10n.registerMainGroupHelper,
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: AppDimensions.paddingM),
-
-          // Summary
-          _StepHeader(badge: '✓', title: l10n.registerSummary),
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(AppDimensions.paddingM),
-              child: _isComplete
-                  ? Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text.rich(TextSpan(children: [
-                          TextSpan(
-                            text: _longName,
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          TextSpan(text: ' ($_shortName)'),
-                        ])),
-                        const SizedBox(height: 4),
-                        Text(l10n.registerSummaryType(texts.label)),
-                        const SizedBox(height: 4),
-                        Text(l10n.registerSummaryMainGroup(_mainGroupName)),
-                      ],
-                    )
-                  : Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
+            // Join hint (.hint-card: 4px primary border on the left)
+            _IonCard(
+              padding: EdgeInsets.zero,
+              child: IntrinsicHeight(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Container(width: 4, color: AppColors.primary),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Icon(Icons.error_outline,
-                                color: AppColors.medium, size: 18),
-                            const SizedBox(width: AppDimensions.paddingS),
-                            Expanded(
-                              child: Text(l10n.registerFillAll),
+                            Text(
+                              l10n.registerJoinHeading,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                                color: theme.colorScheme.onSurface,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              l10n.registerJoinText,
+                              style: const TextStyle(
+                                fontSize: 14.4,
+                                height: 1.4,
+                                color: Color(0xFF808289),
+                              ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 4),
-                        for (final missing in [
-                          if (_longName.isEmpty) l10n.registerMissingName,
-                          if (_shortName.isEmpty) l10n.registerMissingShortName,
-                          if (_mainGroupName.isEmpty) l10n.registerMissingMainGroup,
-                        ])
-                          Padding(
-                            padding: const EdgeInsets.only(left: 26, top: 2),
-                            child: Text('• $missing',
-                                style: TextStyle(color: AppColors.medium)),
-                          ),
-                      ],
+                      ),
                     ),
+                  ],
+                ),
+              ),
             ),
-          ),
-          const SizedBox(height: AppDimensions.paddingM),
 
-          FilledButton.icon(
-            onPressed: (_isLoading || !_isComplete) ? null : _createTenant,
-            icon: _isLoading
-                ? const SizedBox(
-                    width: 18,
-                    height: 18,
-                    child: AppSpinner(strokeWidth: 2),
-                  )
-                : const Icon(Icons.add_circle_outline),
-            label: Text(_isLoading
-                ? l10n.registerCreating
-                : l10n.registerCreate),
-          ),
-          const SizedBox(height: AppDimensions.paddingXL),
-        ],
+            // Step 1: Art der Gruppe (ion-select, action-sheet interface)
+            IonListHeader(l10n.registerStep1,
+                leading: const _StepBadge('1'), style: headerStyle),
+            IonInsetGroup(
+              margin: EdgeInsets.symmetric(horizontal: margin),
+              children: [
+                IonItem(
+                  key: const ValueKey('tenant-type-select'),
+                  onTap: _isLoading ? null : () => _chooseType(context),
+                  title: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(l10n.registerGroupType,
+                          style: TextStyle(fontSize: ios ? 14 : 12)),
+                      const SizedBox(height: 4),
+                      Text(texts.option, style: inputStyle),
+                    ],
+                  ),
+                  end: const Icon(Icons.arrow_drop_down,
+                      color: AppColors.medium),
+                ),
+              ],
+            ),
+            // .helper-text below the group
+            Padding(
+              padding: EdgeInsets.fromLTRB(margin + 16, 8, margin + 16, 16),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.only(top: 1),
+                    child: Icon(Icons.check_circle,
+                        color: AppColors.success, size: 17.6),
+                  ),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      texts.help,
+                      style: const TextStyle(
+                          fontSize: 13.6, color: AppColors.medium),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // Step 2: Name + Kürzel
+            IonListHeader(l10n.registerStep2,
+                leading: const _StepBadge('2'), style: headerStyle),
+            IonInsetGroup(
+              margin: EdgeInsets.fromLTRB(margin, 0, margin, 16),
+              children: [
+                IonInputItem(
+                  child: TextField(
+                    controller: _longNameController,
+                    maxLength: 50,
+                    style: inputStyle,
+                    textCapitalization: TextCapitalization.words,
+                    decoration: ionItemInputDecoration(
+                      context,
+                      l10n.registerFullName,
+                      hint: texts.namePlaceholder,
+                      helper: l10n.registerFullNameHelper,
+                    ),
+                  ),
+                ),
+                IonInputItem(
+                  child: TextField(
+                    controller: _shortNameController,
+                    style: inputStyle,
+                    textCapitalization: TextCapitalization.sentences,
+                    decoration: ionItemInputDecoration(
+                      context,
+                      l10n.registerShortName,
+                      hint: texts.shortPlaceholder,
+                      helper: l10n.registerShortNameHelper,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+
+            // Step 3: Hauptgruppe (+ help popover)
+            IonListHeader(
+              l10n.registerStep3,
+              leading: const _StepBadge('3'),
+              style: headerStyle,
+              trailing: IconButton(
+                tooltip: l10n.registerFlutterMainGroupInfo,
+                visualDensity: VisualDensity.compact,
+                color: AppColors.primary,
+                icon: const Icon(Icons.help_outline),
+                onPressed: _showMainGroupInfo,
+              ),
+            ),
+            IonInsetGroup(
+              margin: EdgeInsets.fromLTRB(margin, 0, margin, 16),
+              children: [
+                IonInputItem(
+                  child: TextField(
+                    controller: _mainGroupNameController,
+                    style: inputStyle,
+                    textCapitalization: TextCapitalization.sentences,
+                    decoration: ionItemInputDecoration(
+                      context,
+                      l10n.registerMainGroupName,
+                      hint: texts.mainGroupPlaceholder,
+                      helper: l10n.registerMainGroupHelper,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+
+            // Summary
+            IonListHeader(l10n.registerSummary,
+                leading: const _StepBadge('✓'), style: headerStyle),
+            IonInsetGroup(
+              margin: EdgeInsets.symmetric(horizontal: margin),
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+                  child: DefaultTextStyle.merge(
+                    style: const TextStyle(fontSize: 14),
+                    child: _isComplete
+                        ? Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text.rich(TextSpan(children: [
+                                TextSpan(
+                                  text: _longName,
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                TextSpan(text: ' ($_shortName)'),
+                              ])),
+                              const SizedBox(height: 8),
+                              Text(l10n.registerSummaryType(texts.label),
+                                  style: const TextStyle(
+                                      color: Color(0xFF999999))),
+                              const SizedBox(height: 8),
+                              Text(
+                                  l10n.registerSummaryMainGroup(
+                                      _mainGroupName),
+                                  style: const TextStyle(
+                                      color: Color(0xFF999999))),
+                            ],
+                          )
+                        : DefaultTextStyle.merge(
+                            style: const TextStyle(color: AppColors.medium),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    const Icon(Icons.error_outline,
+                                        color: AppColors.medium, size: 16),
+                                    const SizedBox(width: 4),
+                                    Expanded(
+                                        child: Text(l10n.registerFillAll)),
+                                  ],
+                                ),
+                                const SizedBox(height: 8),
+                                for (final missing in [
+                                  if (_longName.isEmpty)
+                                    l10n.registerMissingName,
+                                  if (_shortName.isEmpty)
+                                    l10n.registerMissingShortName,
+                                  if (_mainGroupName.isEmpty)
+                                    l10n.registerMissingMainGroup,
+                                ])
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 8, top: 4, bottom: 4),
+                                    child: Text('•  $missing',
+                                        style:
+                                            const TextStyle(fontSize: 14.4)),
+                                  ),
+                              ],
+                            ),
+                          ),
+                  ),
+                ),
+              ],
+            ),
+
+            // ion-button expand="block" class="ion-margin"
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: FilledButton.icon(
+                onPressed: (_isLoading || !_isComplete) ? null : _createTenant,
+                icon: _isLoading
+                    ? const SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Icon(Icons.add_circle_outline),
+                label: Text(
+                    _isLoading ? l10n.registerCreating : l10n.registerCreate),
+              ),
+            ),
+            const SizedBox(height: 40), // .spacer
+          ],
+        ),
       ),
     );
   }
 
+  /// Ionic ion-select `interface="action-sheet"` with the header
+  /// "Was beschreibt deine Gruppe am besten?".
+  Future<void> _chooseType(BuildContext context) async {
+    final l10n = context.l10n;
+    final options = TenantTypeTexts.byType(l10n);
+    final selected = await showModalBottomSheet<String>(
+      context: context,
+      useSafeArea: true,
+      builder: (sheetContext) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+              child: Text(
+                l10n.registerGroupTypeQuestion,
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 13, color: AppColors.medium),
+              ),
+            ),
+            for (final entry in options.entries)
+              ListTile(
+                leading: Icon(entry.value.icon),
+                title: Text(entry.value.option),
+                trailing: entry.key == _selectedType
+                    ? const Icon(Icons.check, color: AppColors.primary)
+                    : null,
+                onTap: () => Navigator.of(sheetContext).pop(entry.key),
+              ),
+          ],
+        ),
+      ),
+    );
+    if (selected != null && mounted) {
+      setState(() => _selectedType = selected);
+    }
+  }
+
+  /// Ionic register.page logout(): sign out and back to the login page.
+  Future<void> _logout() async {
+    final supabase = ref.read(supabaseClientProvider);
+    await ref.read(currentTenantProvider.notifier).clearTenant();
+    await removePushTokenBeforeSignOut(ref); // PUSH
+    await supabase.auth.signOut();
+    if (mounted) context.go('/login');
+  }
+
+  /// DB_REVIEW_REST (F4): Ionic register.page confirmDeleteAccount.
+  Future<void> _confirmDeleteAccount() async {
+    final l10n = context.l10n;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(l10n.registerDeleteHeader),
+        content: Text(l10n.registerDeleteMessage),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: Text(l10n.commonCancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            style: TextButton.styleFrom(foregroundColor: AppColors.danger),
+            child: Text(l10n.registerDeleteConfirm),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+
+    ToastHelper.showInfo(context, l10n.registerDeleteRunning);
+    try {
+      await ref.read(accountNotifierProvider.notifier).deleteAccount();
+      if (!mounted) return;
+      ToastHelper.showSuccess(context, l10n.registerDeleteDone);
+      context.go('/login');
+    } catch (e) {
+      if (!mounted) return;
+      final message = e is RepositoryException ? e.message : e.toString();
+      ToastHelper.showError(
+        context,
+        l10n.registerDeleteFailed(
+            message.isEmpty ? l10n.commonUnknown : message),
+      );
+    }
+  }
+
   /// Ionic main-group info popover (register.mainGroupInfoHtml).
   Future<void> _showMainGroupInfo() {
-    return showAppDialog<void>(
+    return showDialog<void>(
       context: context,
-      builder: (ctx) => AppAlertDialog(
+      builder: (ctx) => AlertDialog(
         // Ionic register.mainGroupInfoHtml (rendered as HTML popover).
         content: SingleChildScrollView(
           child: _HtmlBlocks(html: ctx.l10n.registerMainGroupInfoHtml),
@@ -489,41 +683,60 @@ class _HtmlBlocks extends StatelessWidget {
   }
 }
 
-class _StepHeader extends StatelessWidget {
-  const _StepHeader({required this.badge, required this.title, this.trailing});
+/// `.step-badge`: 24 px primary circle with the step number.
+class _StepBadge extends StatelessWidget {
+  const _StepBadge(this.text);
 
-  final String badge;
-  final String title;
-  final Widget? trailing;
+  final String text;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(
-          left: AppDimensions.paddingXS, bottom: AppDimensions.paddingXS),
-      child: Row(
-        children: [
-          CircleAvatar(
-            radius: 12,
-            backgroundColor: AppColors.primary,
-            child: Text(
-              badge,
-              style: const TextStyle(
-                  color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
-            ),
+    return Container(
+      width: 24,
+      height: 24,
+      alignment: Alignment.center,
+      decoration: const BoxDecoration(
+        color: AppColors.primary,
+        shape: BoxShape.circle,
+      ),
+      child: Text(
+        text,
+        style: const TextStyle(
+            color: Colors.white, fontSize: 13.6, fontWeight: FontWeight.w600),
+      ),
+    );
+  }
+}
+
+/// `ion-card`: 16 px margin, white rounded card (iOS 26 theme: 24 px
+/// corners, soft shadow; MD: 4 px corners, elevation 1).
+class _IonCard extends StatelessWidget {
+  const _IonCard({required this.child, this.padding});
+
+  final Widget child;
+  final EdgeInsetsGeometry? padding;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final ios = ionIsIos(context);
+    return Container(
+      margin: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+      decoration: BoxDecoration(
+        color: theme.cardTheme.color ?? theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(ios ? 24 : 4),
+        boxShadow: [
+          BoxShadow(
+            color: ios ? const Color(0x1F000000) : const Color(0x33000000),
+            blurRadius: ios ? 12 : 2,
+            offset: Offset(0, ios ? 4 : 1),
           ),
-          const SizedBox(width: AppDimensions.paddingS),
-          Expanded(
-            child: Text(
-              title,
-              style: Theme.of(context)
-                  .textTheme
-                  .titleSmall
-                  ?.copyWith(fontWeight: FontWeight.w600),
-            ),
-          ),
-          if (trailing != null) trailing!,
         ],
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Padding(
+        padding: padding ?? const EdgeInsets.fromLTRB(20, 20, 20, 8),
+        child: child,
       ),
     );
   }

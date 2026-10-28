@@ -262,6 +262,8 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
 
     return Scaffold(
       appBar: AppBar(
+        // UX_AUTH: Ionic keeps the tenant switcher left (ion-buttons slot=start).
+        centerTitle: TenantSwitcherTitle.centerTitle(ref),
         // SETTINGS2: Ionic att-list header tenant switcher
         title: _condense.toolbarTitle(
           enabled: largeTitle,

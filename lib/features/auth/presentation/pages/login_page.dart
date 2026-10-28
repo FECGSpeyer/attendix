@@ -466,16 +466,45 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     );
   }
 
+  /// Ionic `ion-button size="small" fill="clear"` (13 px label).
+  static final ButtonStyle _smallClearButton = TextButton.styleFrom(
+    textStyle: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+    padding: const EdgeInsets.symmetric(horizontal: 8),
+    minimumSize: const Size(0, 32),
+  );
+
   /// Ionic login.page.scss: ion-item with stacked label and a primary-tinted
   /// bottom line instead of a filled/outlined field.
   InputDecoration _ionInputDecoration(String label, {Widget? suffixIcon}) =>
-      ionStackedInputDecoration(label, suffixIcon: suffixIcon);
+      ionStackedInputDecoration(
+        label,
+        suffixIcon: suffixIcon,
+        labelColor: Theme.of(context).colorScheme.onSurface,
+      );
+
+  /// Height of the password-mode form; the code mode keeps the card at this
+  /// height like Ionic (the card does not shrink when switching modes).
+  final _formBoxKey = GlobalKey();
+  double? _passwordFormHeight;
+
+  void _measurePasswordForm() {
+    if (_mode != AuthMode.password || _otpSent) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final box = _formBoxKey.currentContext?.findRenderObject() as RenderBox?;
+      if (!mounted || box == null || !box.hasSize) return;
+      if (_passwordFormHeight != box.size.height) {
+        setState(() => _passwordFormHeight = box.size.height);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final cardColor = Theme.of(context).cardTheme.color ??
         Theme.of(context).colorScheme.surface;
-    const footerStyle = TextStyle(fontSize: 13, color: Colors.white);
+    // Ionic .version: white ion-label (15 pt), wraps onto two lines.
+    const footerStyle = TextStyle(fontSize: 15, color: Colors.white);
+    _measurePasswordForm();
 
     // Ionic login: background photo, centered card (60 % / 95 % under
     // 700px, max 500px) with the round app logo overlapping its top edge and
@@ -490,15 +519,16 @@ class _LoginPageState extends ConsumerState<LoginPage> {
             errorBuilder: (_, __, ___) =>
                 const ColoredBox(color: AppColors.primary),
           ),
-          SafeArea(
-            child: LayoutBuilder(
+          // Ionic .around: absolutely centred in the full screen
+          // (top/left 50 % + translate(-50 %, -50 %)), not below a safe area.
+          LayoutBuilder(
               builder: (context, constraints) {
                 final width = constraints.maxWidth;
                 final cardWidth =
                     (width < 700 ? width * 0.95 : width * 0.6).clamp(0.0, 500.0);
                 return Center(
                   child: SingleChildScrollView(
-                    padding: const EdgeInsets.only(top: 80, bottom: 56),
+                    padding: const EdgeInsets.symmetric(vertical: 64),
                     child: SizedBox(
                       width: cardWidth,
                       child: Stack(
@@ -506,7 +536,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         alignment: Alignment.topCenter,
                         children: [
                           Container(
-                            padding: const EdgeInsets.fromLTRB(24, 28, 24, 24),
+                            padding: const EdgeInsets.fromLTRB(24, 28, 24, 45),
                             decoration: BoxDecoration(
                               color: cardColor,
                               borderRadius: BorderRadius.circular(20),
@@ -520,13 +550,24 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                               ],
                             ),
                             child: Padding(
-                              // room for the overlapping logo (115 - 80) + 2rem
-                              padding: const EdgeInsets.only(top: 35 + 32),
-                              child: _buildForm(context),
+                              // logo bottom (70 px below the card edge) +
+                              // ~70 px to the segment, as on the iPhone.
+                              padding: const EdgeInsets.only(top: 112),
+                              child: ConstrainedBox(
+                                constraints: BoxConstraints(
+                                  minHeight: _mode == AuthMode.password
+                                      ? 0
+                                      : (_passwordFormHeight ?? 0),
+                                ),
+                                child: KeyedSubtree(
+                                  key: _formBoxKey,
+                                  child: _buildForm(context),
+                                ),
+                              ),
                             ),
                           ),
                           Positioned(
-                            top: -80,
+                            top: -44.5,
                             child: Container(
                               width: 115,
                               height: 115,
@@ -560,7 +601,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   ),
                 );
               },
-            ),
           ),
           Positioned(
             left: 0,
@@ -591,14 +631,12 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 children: [
                   Text(context.l10n.loginVersion(AppConstants.appVersion),
                       style: footerStyle),
-                  if (AppConstants.demoMail.isNotEmpty &&
-                      AppConstants.demoPassword.isNotEmpty) ...[
-                    const Text(' | ', style: footerStyle),
-                    GestureDetector(
-                      onTap: _startDemo,
-                      child: Text(context.l10n.loginStartDemo, style: footerStyle),
-                    ),
-                  ],
+                  // Ionic always shows "Demo starten" (environment.demoMail).
+                  const Text(' | ', style: footerStyle),
+                  GestureDetector(
+                    onTap: _startDemo,
+                    child: Text(context.l10n.loginStartDemo, style: footerStyle),
+                  ),
                   // LEGAL_HELP: Impressum & Datenschutz modal
                   const Text(' | ', style: footerStyle),
                   GestureDetector(
@@ -636,11 +674,12 @@ class _LoginPageState extends ConsumerState<LoginPage> {
             enabled: !_isLoading,
             onChanged: _setMode,
           ),
-          const SizedBox(height: AppDimensions.paddingM),
+          const SizedBox(height: AppDimensions.paddingL),
 
           // Email field
           TextFormField(
             controller: _emailController,
+            style: ionStackedInputStyle,
             keyboardType: TextInputType.emailAddress,
             textInputAction: _mode == AuthMode.password
                 ? TextInputAction.next
@@ -668,6 +707,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
             // Password field
             TextFormField(
               controller: _passwordController,
+              style: ionStackedInputStyle,
               obscureText: _obscurePassword,
               textInputAction: TextInputAction.done,
               autofillHints: const [AutofillHints.password],
@@ -702,10 +742,12 @@ class _LoginPageState extends ConsumerState<LoginPage> {
             Wrap(
               children: [
                 TextButton(
+                  style: _smallClearButton,
                   onPressed: _openRegister,
                   child: Text(context.l10n.loginRegister),
                 ),
                 TextButton(
+                  style: _smallClearButton,
                   onPressed: _forgotPassword,
                   child: Text(context.l10n.loginForgotPassword),
                 ),
@@ -721,6 +763,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
             Align(
               alignment: Alignment.centerLeft,
               child: TextButton(
+                style: _smallClearButton,
                 onPressed: _openRegister,
                 child: Text(context.l10n.loginRegister),
               ),

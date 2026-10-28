@@ -270,8 +270,12 @@ void main() {
 
   test('F4 account deletion without an instance', () {
     final page = read('lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart');
-    expect(page, contains('registerDeleteAccount'));
-    expect(page, contains('accountNotifierProvider.notifier).deleteAccount()'));
+    // UX_AUTH: like Ionic, a user without an instance lands on the
+    // (non-dismissable) register page whose account menu offers the deletion.
+    expect(page, contains('TenantCreatePage(canDismiss: false)'));
+    final create = read('lib/features/tenant_selection/presentation/pages/tenant_create_page.dart');
+    expect(create, contains('registerDeleteAccount'));
+    expect(create, contains('accountNotifierProvider.notifier).deleteAccount()'));
     // "Neue Instanz" opens the tenant creation, not the (redirected) sign-up.
     expect(page, isNot(contains("context.push('/register')")));
     expect(page, contains("context.push('/tenants/new')"));
