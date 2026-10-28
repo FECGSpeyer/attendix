@@ -34,14 +34,6 @@ jobs:
         run: |
           echo "SUPABASE_URL=${{ secrets.SUPABASE_URL }}" >> .env
           echo "SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}" >> .env
-          # DEMO_GUARD: optional demo account ("Demo starten", write-protected)
-          # Repo secrets may be named DEMO_EMAIL/DEMO_PASSWORD or DEMOMAIL/DEMOPASSWORD.
-          # Passed via env so special characters in the password stay literal.
-          printf 'DEMO_EMAIL=%s\n' "$DEMO_EMAIL" >> .env
-          printf 'DEMO_PASSWORD=%s\n' "$DEMO_PASSWORD" >> .env
-        env:
-          DEMO_EMAIL: ${{ secrets.DEMO_EMAIL || secrets.DEMOMAIL }}
-          DEMO_PASSWORD: ${{ secrets.DEMO_PASSWORD || secrets.DEMOPASSWORD }}
 
       - name: Run tests
         run: flutter test
@@ -49,18 +41,12 @@ jobs:
       - name: Build web
         run: flutter build web --release --base-href /
 
-      - name: Verify Cloudflare _headers (Teams frame-ancestors)
-        # flutter build web copies web/* into build/web; fail loudly if not.
-        run: |
-          test -f build/web/_headers || cp web/_headers build/web/_headers
-          grep -q "frame-ancestors" build/web/_headers
-
       - name: Deploy to Cloudflare Pages
-        # cloudflare/pages-action is no longer resolvable; wrangler-action is its successor
+        # cloudflare/pages-action is gone from GitHub (28.10.2026); wrangler-action is its successor.
+        # Preview deployments for PRs, production for master
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
-          # Preview deployments for PRs, production for main
           command: pages deploy build/web --project-name=attendix --branch=${{ github.head_ref || github.ref_name }}
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
