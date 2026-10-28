@@ -1029,12 +1029,16 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
 
     final entries = _songEntries.map((entry) {
       return {
-        'song_id': entry.songId,
+        // Ionic History columns: songId (camelCase), person_id,
+        // otherConductor, visible. conductorName is not a column.
+        'songId': entry.songId,
         'attendance_id': attendanceId,
         'date': dateString,
         'tenantId': tenant!.id,
-        'conductorName': entry.conductorName,
+        'person_id':
+            entry.otherConductor?.isNotEmpty == true ? null : entry.conductorId,
         'otherConductor': entry.otherConductor,
+        'visible': true,
       };
     }).toList();
 

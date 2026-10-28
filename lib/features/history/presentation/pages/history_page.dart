@@ -400,10 +400,11 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
       await supabase.from('history').insert(
         songIds.map((songId) => {
           'tenantId': tenant!.id!,
-          'song_id': songId,
+          'songId': songId,
           'person_id': conductorId,
           'otherConductor': otherConductor,
           'date': dateStr,
+          'visible': true,
         }).toList(),
       );
 

@@ -142,7 +142,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
         final rows = await repo.getHistoryForAttendance(widget.attendanceId);
         if (rows.isNotEmpty) {
           final fromHistory = rows.map((row) {
-            final songId = row['song_id'] as int;
+            final songId = row['songId'] as int;
             final personId = row['person_id'] as int?;
             final other = row['otherConductor'] as String?;
             final song = songs.where((s) => s.id == songId).firstOrNull;
@@ -1365,13 +1365,15 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     if (_songEntries.isNotEmpty) {
       final entries = _songEntries.map((entry) {
         return {
-          'song_id': entry.songId,
+          // Ionic History columns: songId (camelCase), person_id,
+          // otherConductor, visible. conductorName is not a column.
+          'songId': entry.songId,
           'attendance_id': widget.attendanceId,
           'date': date,
           'tenantId': tenant.id,
           'person_id': entry.otherConductor?.isNotEmpty == true ? null : entry.conductorId,
-          'conductorName': entry.conductorName,
           'otherConductor': entry.otherConductor,
+          'visible': true,
         };
       }).toList();
 

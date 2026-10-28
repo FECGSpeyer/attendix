@@ -12,26 +12,36 @@ final performanceHistoryProvider = FutureProvider<List<HistoryEntry>>((ref) asyn
 
   if (tenant == null) return [];
 
+  // Ionic HistoryService.getHistory: only visible rows; column is `songId`
+  // (camelCase). conductorName is computed from the person join.
   final response = await supabase
       .from('history')
-      .select('*, song:songs(name, number)')
+      .select('*, song:songId(name, number), person:person_id(firstName, lastName), attendance:attendance_id(date)')
       .eq('tenantId', tenant.id!)
-      .order('date', ascending: false)
-      .limit(200);
+      .eq('visible', true)
+      .order('date', ascending: false);
 
   return (response as List).map((e) {
     final songData = e['song'] as Map<String, dynamic>?;
+    final person = e['person'] as Map<String, dynamic>?;
+    final attendance = e['attendance'] as Map<String, dynamic>?;
+    final otherConductor = e['otherConductor'] as String?;
     return HistoryEntry(
       id: e['id'] as int?,
-      songId: e['song_id'] as int,
+      songId: e['songId'] as int,
       songName: songData?['name'] as String?,
       songNumber: songData?['number']?.toString(),
       personId: e['person_id'] as int?,
-      conductorName: e['conductorName'] as String?,
-      otherConductor: e['otherConductor'] as String?,
-      date: e['date'] as String? ?? DateTime.now().toIso8601String(),
+      conductorName: person != null
+          ? '${person['firstName'] ?? ''} ${person['lastName'] ?? ''}'.trim()
+          : otherConductor,
+      otherConductor: otherConductor,
+      // Ionic groups by attendance.date ?? date.
+      date: attendance?['date'] as String? ??
+          e['date'] as String? ??
+          DateTime.now().toIso8601String(),
       attendanceId: e['attendance_id'] as int?,
-      count: e['count'] as int? ?? 1,
+      count: 1,
     );
   }).toList();
 });
