@@ -57,6 +57,52 @@ final personAttendancesProvider = FutureProvider.family<List<PersonAttendance>, 
   return repo.getPersonAttendancesForPerson(personId);
 });
 
+// ATT_DETAIL
+/// Termintyp filter of the attendance list (Ionic att-list `filterTypeId`).
+/// `null` = "Alle anzeigen".
+final attendanceListTypeFilterProvider = StateProvider<String?>((ref) => null);
+
+/// Status counts (anwesend / entschuldigt / abwesend) of one Termin, used by
+/// the "Heute / Nächster Termin" card (Ionic att-list getStatusCounts).
+final attendanceStatusCountsProvider =
+    FutureProvider.autoDispose.family<AttendanceStatusCounts, int>((ref, attendanceId) async {
+  ref.watch(attendanceRefetchCounter);
+  final repo = ref.watch(attendanceRepositoryWithTenantProvider);
+  if (!repo.hasTenantId) return const AttendanceStatusCounts();
+  final rows = await repo.getPersonAttendancesForAttendances([attendanceId]);
+  return AttendanceStatusCounts.fromStatuses(rows.map((r) => r.status));
+});
+
+/// Counts like Ionic getStatusCounts: Verspätet counts as present,
+/// Verspätet entschuldigt as excused.
+class AttendanceStatusCounts {
+  const AttendanceStatusCounts({this.present = 0, this.excused = 0, this.absent = 0});
+
+  factory AttendanceStatusCounts.fromStatuses(Iterable<AttendanceStatus> statuses) {
+    var present = 0, excused = 0, absent = 0;
+    for (final s in statuses) {
+      switch (s) {
+        case AttendanceStatus.present:
+        case AttendanceStatus.late:
+          present++;
+        case AttendanceStatus.excused:
+        case AttendanceStatus.lateExcused:
+          excused++;
+        case AttendanceStatus.absent:
+          absent++;
+        default:
+          break;
+      }
+    }
+    return AttendanceStatusCounts(present: present, excused: excused, absent: absent);
+  }
+
+  final int present;
+  final int excused;
+  final int absent;
+}
+// END ATT_DETAIL
+
 /// Data class for categorized attendances (memoized)
 class CategorizedAttendances {
   final Attendance? current;
@@ -72,7 +118,11 @@ class CategorizedAttendances {
 
 /// Provider that categorizes and sorts attendances (computed once per data change)
 final categorizedAttendancesProvider = Provider<CategorizedAttendances>((ref) {
-  final attendances = ref.watch(realtimeAttendanceListProvider).valueOrNull ?? [];
+  final all = ref.watch(realtimeAttendanceListProvider).valueOrNull ?? [];
+  // ATT_DETAIL: Termintyp filter of the list ("Alle anzeigen" = null)
+  final typeFilter = ref.watch(attendanceListTypeFilterProvider);
+  final attendances =
+      typeFilter == null ? all : all.where((a) => a.typeId == typeFilter).toList();
 
   final now = DateTime.now();
 

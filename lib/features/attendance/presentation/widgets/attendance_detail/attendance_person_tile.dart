@@ -28,6 +28,10 @@ class AttendancePersonTile extends StatelessWidget {
     this.clickMode = false,
     this.registrationSummary,
     this.onEditRegistrationFields,
+    this.showAvatar = true,
+    this.extraLine,
+    this.onSendReminder,
+    this.showModifierInfo = true,
   });
 
   final Person person;
@@ -45,6 +49,19 @@ class AttendancePersonTile extends StatelessWidget {
 
   /// "Anmeldefelder bearbeiten" – only when the type has registration fields.
   final VoidCallback? onEditRegistrationFields;
+
+  // ATT_DETAIL
+  /// "Bilder anzeigen" view option.
+  final bool showAvatar;
+
+  /// Extra line under the name (active sort value · group).
+  final String? extraLine;
+
+  /// "Erinnerung senden" for this person (null = not available).
+  final VoidCallback? onSendReminder;
+
+  /// "Wer hat geändert?" (not for Helfer, like Ionic openMoreSheet).
+  final bool showModifierInfo;
 
   @override
   Widget build(BuildContext context) {
@@ -108,12 +125,13 @@ class AttendancePersonTile extends StatelessWidget {
             icon: hasNotes ? Icons.edit_note : Icons.note_add,
             label: 'Notiz',
           ),
+          // ATT_DETAIL: "Mehr" sheet (Wer hat geändert? / Erinnerung senden)
           SlidableAction(
-            onPressed: (_) => onShowModifierInfo(),
+            onPressed: (_) => _showMoreSheet(context),
             backgroundColor: AppColors.tertiary,
             foregroundColor: Colors.white,
-            icon: Icons.info_outline,
-            label: 'Info',
+            icon: Icons.more_horiz,
+            label: 'Mehr',
           ),
         ],
       ),
@@ -130,7 +148,8 @@ class AttendancePersonTile extends StatelessWidget {
             ),
             child: Row(
               children: [
-                // Avatar
+                // Avatar ("Bilder anzeigen")
+                if (showAvatar) ...[
                 CircleAvatar(
                   radius: 20,
                   backgroundColor: status.color.withValues(alpha: 0.2),
@@ -146,6 +165,7 @@ class AttendancePersonTile extends StatelessWidget {
                       : null,
                 ),
                 const SizedBox(width: AppDimensions.paddingM),
+                ],
 
                 // Name and notes
                 Expanded(
@@ -178,6 +198,13 @@ class AttendancePersonTile extends StatelessWidget {
                               ),
                             ),
                           ],
+                        ),
+                      if (extraLine?.isNotEmpty == true)
+                        Text(
+                          extraLine!,
+                          style: const TextStyle(fontSize: 12, color: AppColors.medium),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       if (registrationSummary?.isNotEmpty == true)
                         Text(
@@ -213,6 +240,56 @@ class AttendancePersonTile extends StatelessWidget {
     );
     if (result == null) return;
     onNoteChanged(result.isEmpty ? null : result);
+  }
+
+  /// Person action sheet (Ionic openMoreSheet).
+  Future<void> _showMoreSheet(BuildContext context) async {
+    await showModalBottomSheet<void>(
+      context: context,
+      builder: (ctx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              title: Text(person.fullName, style: const TextStyle(fontWeight: FontWeight.bold)),
+            ),
+            const Divider(height: 1),
+            if (onEditRegistrationFields != null)
+              ListTile(
+                leading: const Icon(Icons.edit_note),
+                title: const Text('Anmeldefelder bearbeiten'),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  onEditRegistrationFields!();
+                },
+              ),
+            if (showModifierInfo)
+              ListTile(
+                leading: const Icon(Icons.info_outline),
+                title: const Text('Wer hat geändert?'),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  onShowModifierInfo();
+                },
+              ),
+            if (onSendReminder != null)
+              ListTile(
+                leading: const Icon(Icons.notifications_outlined),
+                title: const Text('Erinnerung senden'),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  onSendReminder!();
+                },
+              ),
+            ListTile(
+              leading: const Icon(Icons.close),
+              title: const Text('Abbrechen'),
+              onTap: () => Navigator.pop(ctx),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   /// Trigger haptic feedback and change status

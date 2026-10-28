@@ -15,6 +15,8 @@ import '../../../../core/utils/color_utils.dart';
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/event_list_utils.dart';
 import '../../../../data/models/attendance/attendance.dart';
+import '../../../../data/models/plan/plan.dart'; // ATT_DETAIL
+import '../../../planning/presentation/pages/plan_viewer_page.dart'; // ATT_DETAIL
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../shared/widgets/loading/loading.dart';
 import '../../../../shared/widgets/common/empty_state.dart';
@@ -60,6 +62,115 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
     }
   }
 
+  // ATT_DETAIL: Ablaufplan on the list (Ionic hasPlan / openPlanViewer)
+  /// Beobachter never see the Ablaufplan.
+  bool _hasPlan(Attendance att) {
+    if (ref.read(effectiveRoleProvider).isViewer) return false;
+    final fields = att.plan?['fields'];
+    return fields is List && fields.isNotEmpty;
+  }
+
+  /// Opens the Ablaufplan read-only; a Termin running today starts in live mode.
+  Future<void> _openPlanViewer(Attendance att) async {
+    Plan? plan;
+    try {
+      plan = Plan.fromJson(att.plan!);
+    } catch (_) {
+      return;
+    }
+    await showPlanViewer(
+      context,
+      attendance: PlanAttendance(
+        id: att.id,
+        date: att.date,
+        durationDays: att.durationDays,
+        plan: plan,
+        typeId: att.typeId,
+        typeInfo: att.typeInfo,
+        startTime: att.startTime,
+        sharePlan: att.sharePlan,
+      ),
+      plan: plan,
+      title: (plan.title?.trim().isNotEmpty ?? false)
+          ? plan.title!.trim()
+          : (att.typeInfo?.isNotEmpty ?? false)
+              ? att.typeInfo!
+              : 'Ablaufplan',
+      defaultLive: EventListUtils.isRunning(att.date, att.durationDays),
+    );
+  }
+
+  /// Termintyp filter popover (Ionic att-list "options" popover).
+  Widget _buildTypeFilterButton(List<AttendanceType> types) {
+    final filter = ref.watch(attendanceListTypeFilterProvider);
+    final active = filter != null;
+    return PopupMenuButton<String>(
+      tooltip: 'Filter',
+      icon: Icon(Icons.tune, color: active ? AppColors.primary : null),
+      onSelected: (value) => ref.read(attendanceListTypeFilterProvider.notifier).state =
+          value == '__all__' ? null : value,
+      itemBuilder: (context) => [
+        PopupMenuItem<String>(
+          value: '__all__',
+          child: Row(
+            children: [
+              const SizedBox(width: 20),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  'Alle anzeigen',
+                  style: TextStyle(color: !active ? AppColors.primary : null),
+                ),
+              ),
+              if (!active) const Icon(Icons.check, color: AppColors.primary, size: 20),
+            ],
+          ),
+        ),
+        for (final type in types)
+          if (type.id != null)
+            PopupMenuItem<String>(
+              value: type.id!,
+              child: Row(
+                children: [
+                  Icon(Icons.circle, size: 20, color: ColorUtils.parseNamedColor(type.color)),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      type.name,
+                      style: TextStyle(color: filter == type.id ? AppColors.primary : null),
+                    ),
+                  ),
+                  if (filter == type.id)
+                    const Icon(Icons.check, color: AppColors.primary, size: 20),
+                ],
+              ),
+            ),
+      ],
+    );
+  }
+
+  /// "{n} anwesend · {n} entschuldigt · {n} abwesend" line of the today card.
+  Widget _buildTodayStats(Attendance att) {
+    final counts = ref.watch(attendanceStatusCountsProvider(att.id!)).valueOrNull;
+    if (counts == null) return const SizedBox.shrink();
+    final style = Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.medium);
+    return Padding(
+      padding: const EdgeInsets.only(top: 6),
+      child: Wrap(
+        spacing: 12,
+        runSpacing: 4,
+        children: [
+          Text('${(att.percentage ?? 0).round()} %',
+              style: style?.copyWith(fontWeight: FontWeight.bold, color: AppColors.dark)),
+          Text('${counts.present} anwesend', style: style),
+          if (counts.excused > 0) Text('${counts.excused} entschuldigt', style: style),
+          if (counts.absent > 0) Text('${counts.absent} abwesend', style: style),
+        ],
+      ),
+    );
+  }
+  // END ATT_DETAIL
+
   String _formatDateForDialog(String dateString) {
     final date = DateTime.tryParse(dateString);
     if (date == null) return dateString;
@@ -102,6 +213,8 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
                 if (saved && mounted) ref.invalidate(realtimeAttendanceListProvider);
               },
             ),
+          // ATT_DETAIL: Termintyp filter
+          _buildTypeFilterButton(ref.watch(attendanceTypesProvider).valueOrNull ?? const []),
           IconButton(
             icon: const Icon(Icons.calendar_today),
             tooltip: 'Kalender',
@@ -126,7 +239,8 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
           onAction: () => ref.invalidate(realtimeAttendanceListProvider),
         ),
         data: (attendances) {
-          if (attendances.isEmpty) {
+          // ATT_DETAIL: an active type filter without matches still shows the list
+          if (attendances.isEmpty && ref.watch(attendanceListTypeFilterProvider) == null) {
             return EmptyStateWidget(
               icon: Icons.fact_check_outlined,
               title: 'Keine Anwesenheiten',
@@ -230,12 +344,24 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
                       title: current.displayTitle,
                       meta: meta(current, withDate: true),
                       status: percentPill(current),
+                      // ATT_DETAIL: status counters (not for duty Termine)
+                      extraHeader: [
+                        if (dutyTermine[current.id] == null && current.id != null)
+                          _buildTodayStats(current),
+                      ],
                       actions: [
                         FilledButton.icon(
                           onPressed: () => _navigateToDetail(current.id!),
                           icon: const Icon(Icons.fact_check_outlined, size: 18),
-                          label: const Text('Anwesenheit erfassen'),
+                          label: Text(_hasPlan(current) ? 'Anwesenheit' : 'Anwesenheit erfassen'),
                         ),
+                        // ATT_DETAIL: Ablaufplan
+                        if (_hasPlan(current))
+                          OutlinedButton.icon(
+                            onPressed: () => _openPlanViewer(current),
+                            icon: const Icon(Icons.description_outlined, size: 18),
+                            label: const Text('Ablaufplan'),
+                          ),
                       ],
                     ),
                   ),
@@ -255,7 +381,17 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
                             subtitle: meta(att),
                             highlight: highlightedTypeIds.contains(att.typeId),
                             onTap: () => _navigateToDetail(att.id!),
-                            trailing: [percentPill(att)],
+                            trailing: [
+                              // ATT_DETAIL: "Ablaufplan anzeigen"
+                              if (_hasPlan(att))
+                                IconButton(
+                                  tooltip: 'Ablaufplan anzeigen',
+                                  visualDensity: VisualDensity.compact,
+                                  icon: const Icon(Icons.description_outlined, color: AppColors.primary),
+                                  onPressed: () => _openPlanViewer(att),
+                                ),
+                              percentPill(att),
+                            ],
                           ),
                         ),
                     ]),
