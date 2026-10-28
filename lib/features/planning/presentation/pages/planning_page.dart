@@ -22,6 +22,7 @@ import '../widgets/plan_fields_editor.dart';
 import '../widgets/plan_song_helper.dart';
 import '../widgets/plan_view_list.dart';
 import '../widgets/register_plan_sheet.dart';
+import '../../../../core/providers/branding_providers.dart'; // MISC2
 
 /// Provider for songs list (for adding to plan)
 final planSongsProvider = FutureProvider<List<Song>>((ref) async {
@@ -809,6 +810,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       ref,
       title: 'Aktionen',
       fileName: fileName,
+      includeBranding: ref.read(includeBrandingProvider), // MISC2
       pages: () => [
         att == null
             ? PlanExportPage(
@@ -836,6 +838,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
               for (var i = 0; i < plans.length; i++) _exportPage(att, i, i == _planIndex ? current : plans[i]),
             ],
             fileName: fileName,
+            includeBranding: ref.read(includeBrandingProvider), // MISC2
           );
         }
       },
@@ -1051,6 +1054,13 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
                 ),
               ),
             ],
+            // MISC2: "Branding einbeziehen" (only when logo/text configured)
+            if (ref.watch(hasBrandingProvider))
+              SwitchListTile(
+                title: const Text('Branding einbeziehen'),
+                value: ref.watch(includeBrandingProvider),
+                onChanged: (v) => ref.read(includeBrandingProvider.notifier).state = v,
+              ),
             Row(
               children: [
                 Expanded(

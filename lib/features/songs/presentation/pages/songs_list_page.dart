@@ -23,6 +23,7 @@ import '../widgets/group_files_sheet.dart';
 import '../widgets/song_categories_sheet.dart';
 import '../widgets/song_filter_sheet.dart';
 import 'song_import_page.dart';
+import '../../../../core/providers/branding_providers.dart'; // MISC2
 
 /// Songs list (Ionic `songs.page`).
 ///
@@ -101,7 +102,9 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
   Future<void> _exportPdf(SongsListData data, List<Song> filtered, SongViewOptions view) async {
     final tenant = data.publicTenant ?? ref.read(currentTenantProvider);
     try {
+      final branding = data.isPublic ? null : await resolvePdfBranding(ref); // MISC2
       await ref.read(songPrintServiceProvider).exportSongsCatalogPdf(
+            branding: branding,
             songs: filtered,
             tenantShortName: tenant?.shortName ?? '',
             viewOpts: view.opts,
