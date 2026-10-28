@@ -13,6 +13,7 @@ import '../widgets/plan_export_actions.dart';
 import '../widgets/plan_field_dialogs.dart';
 import '../widgets/plan_fields_editor.dart';
 import '../widgets/plan_view_list.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Public plan link without login (Ionic `SharedPlanPage`, route `/plan`).
 ///
@@ -161,7 +162,7 @@ class _SharedPlanPageState extends ConsumerState<SharedPlanPage> {
       return;
     }
     _shared = plan;
-    _title = (plan.planTitle?.isNotEmpty ?? false) ? plan.planTitle! : 'Ablaufplan';
+    _title = (plan.planTitle?.isNotEmpty ?? false) ? plan.planTitle! : l10nWithoutContext.plansRunSheet;
     _date = plan.date ?? '';
     _time = plan.time ?? '';
     _end = plan.endTime ?? '';
@@ -234,7 +235,7 @@ class _SharedPlanPageState extends ConsumerState<SharedPlanPage> {
         await _repo.updateSharedPlan(key, editKey, fields: _fields, title: _title, time: _time);
       }
     } catch (_) {
-      if (mounted) ToastHelper.showError(context, 'Fehler beim Speichern');
+      if (mounted) ToastHelper.showError(context, context.l10n.plansSaveFailed);
     }
   }
 
@@ -242,9 +243,9 @@ class _SharedPlanPageState extends ConsumerState<SharedPlanPage> {
     if (!_editMode) return;
     final title = await showPlanTextPrompt(
       context,
-      title: 'Titel bearbeiten',
+      title: context.l10n.plansEditTitle,
       initialValue: _title,
-      hint: 'Titel',
+      hint: context.l10n.plansTitle,
     );
     if (title == null || title.trim().isEmpty) return;
     setState(() => _title = title.trim());
@@ -256,7 +257,7 @@ class _SharedPlanPageState extends ConsumerState<SharedPlanPage> {
     final m = PlanUtils.parseTimeToMinutes(_time) ?? 10 * 60;
     final picked = await showTimePicker(
       context: context,
-      helpText: 'Startzeit bearbeiten',
+      helpText: context.l10n.plansEditStartTime,
       initialTime: TimeOfDay(hour: m ~/ 60, minute: m % 60),
       builder: (ctx, child) => MediaQuery(
         data: MediaQuery.of(ctx).copyWith(alwaysUse24HourFormat: true),
@@ -272,9 +273,9 @@ class _SharedPlanPageState extends ConsumerState<SharedPlanPage> {
   Future<void> _showAddMenu() async {
     final action = await showPlanActionSheet<String>(
       context,
-      actions: const [
-        PlanSheetAction('field', 'Feld hinzufügen', icon: Icons.add),
-        PlanSheetAction('note', 'Notizfeld hinzufügen', icon: Icons.sticky_note_2_outlined),
+      actions: [
+        PlanSheetAction('field', context.l10n.planningAddField, icon: Icons.add),
+        PlanSheetAction('note', context.l10n.planningAddNoteField, icon: Icons.sticky_note_2_outlined),
       ],
     );
     if (action == null || !mounted) return;
@@ -282,10 +283,10 @@ class _SharedPlanPageState extends ConsumerState<SharedPlanPage> {
     if (action == 'field') {
       final r = await showPlanFieldDialog(
         context,
-        title: 'Feld hinzufügen',
-        conductorHint: 'Ausführender (optional)',
+        title: context.l10n.planningAddField,
+        conductorHint: context.l10n.plansPerformerOptional,
         withMinutes: false,
-        confirmText: 'Hinzufügen',
+        confirmText: context.l10n.attendanceAdd,
       );
       if (r == null) return;
       setState(() => _fields = [
@@ -295,10 +296,10 @@ class _SharedPlanPageState extends ConsumerState<SharedPlanPage> {
     } else {
       final r = await showPlanFieldDialog(
         context,
-        title: 'Notizfeld hinzufügen',
-        nameLabel: 'Notiz',
-        nameHint: 'Notiz eingeben...',
-        emptyNameMessage: 'Bitte eine Notiz eingeben.',
+        title: context.l10n.planningAddNoteField,
+        nameLabel: context.l10n.planningNote,
+        nameHint: context.l10n.planningEnterNote,
+        emptyNameMessage: context.l10n.plansEnterNotePlease,
         withConductor: false,
         withInfo: false,
         withMinutes: false,
@@ -316,7 +317,7 @@ class _SharedPlanPageState extends ConsumerState<SharedPlanPage> {
   Future<void> _export() async {
     final date = _dateTime;
     final label = _labels.isNotEmpty ? ' · ${_labels[_planIndex]}' : '';
-    final title = _title.isNotEmpty ? _title : 'Ablaufplan';
+    final title = _title.isNotEmpty ? _title : context.l10n.plansRunSheet;
     await showPlanExportSheet(
       context,
       ref,
@@ -349,13 +350,13 @@ class _SharedPlanPageState extends ConsumerState<SharedPlanPage> {
         actions: [
           if (liveNow)
             IconButton(
-              tooltip: 'Live',
+              tooltip: context.l10n.planningFlutterLive,
               icon: Icon(_live ? Icons.radio_button_checked : Icons.radio_button_unchecked,
                   color: _live ? Colors.red : null),
               onPressed: () => setState(() => _live = !_live),
             ),
           if (!_loading && !_notFound)
-            IconButton(tooltip: 'Exportieren', icon: const Icon(Icons.ios_share), onPressed: _export),
+            IconButton(tooltip: context.l10n.planningExport, icon: const Icon(Icons.ios_share), onPressed: _export),
         ],
       ),
       body: _buildBody(date),
@@ -365,12 +366,12 @@ class _SharedPlanPageState extends ConsumerState<SharedPlanPage> {
   Widget _buildBody(DateTime? date) {
     if (_loading) return const Center(child: CircularProgressIndicator());
     if (_notFound) {
-      return const Padding(
-        padding: EdgeInsets.all(16),
+      return Padding(
+        padding: const EdgeInsets.all(16),
         child: Card(
           child: Padding(
-            padding: EdgeInsets.all(16),
-            child: Text('Plan nicht gefunden. Der Link ist möglicherweise abgelaufen oder ungültig.'),
+            padding: const EdgeInsets.all(16),
+            child: Text(context.l10n.plansNotFound),
           ),
         ),
       );
@@ -397,13 +398,13 @@ class _SharedPlanPageState extends ConsumerState<SharedPlanPage> {
                 ),
                 onTap: _editMode ? _editTitle : null,
                 trailing: _editMode
-                    ? IconButton(tooltip: 'Hinzufügen', icon: const Icon(Icons.add), onPressed: _showAddMenu)
+                    ? IconButton(tooltip: context.l10n.attendanceAdd, icon: const Icon(Icons.add), onPressed: _showAddMenu)
                     : null,
               ),
               if (_editMode) ...[
                 ListTile(
-                  title: const Text('Start'),
-                  trailing: Text('${PlanUtils.formatTime(_time)} Uhr'),
+                  title: Text(context.l10n.attendanceStartLabel),
+                  trailing: Text(context.l10n.attendanceTimeOClock(PlanUtils.formatTime(_time))),
                   onTap: _editStartTime,
                 ),
                 PlanFieldsEditor(
@@ -416,8 +417,8 @@ class _SharedPlanPageState extends ConsumerState<SharedPlanPage> {
                 ),
                 if (_end.isNotEmpty)
                   ListTile(
-                    title: const Text('Ende'),
-                    trailing: Text('${PlanUtils.formatTime(_end)} Uhr'),
+                    title: Text(context.l10n.attendanceEnd),
+                    trailing: Text(context.l10n.attendanceTimeOClock(PlanUtils.formatTime(_end))),
                   ),
               ] else
                 PlanViewList(plan: _plan, date: date, liveMode: _live),

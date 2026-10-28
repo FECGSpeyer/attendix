@@ -9,17 +9,18 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/plan/plan.dart';
 import '../../../planning/presentation/widgets/plan_field_dialogs.dart';
+import '../../../../l10n/l10n.dart';
 
-const _fieldTypes = <String, String>{
-  'text': 'Text',
-  'textarea': 'Textbereich',
-  'number': 'Zahl',
-  'date': 'Datum',
-  'boolean': 'Ja/Nein',
-  'select': 'Auswahl',
-};
+Map<String, String> _fieldTypes(AppLocalizations l10n) => <String, String>{
+      'text': l10n.typeSettingsText,
+      'textarea': l10n.extraFieldsTextarea,
+      'number': l10n.extraFieldsNumber,
+      'date': l10n.attendanceDate,
+      'boolean': l10n.extraFieldsYesNo,
+      'select': l10n.extraFieldsSelect,
+    };
 
-String _typeName(String type) => _fieldTypes[type] ?? 'Unbekannt';
+String _typeName(AppLocalizations l10n, String type) => _fieldTypes(l10n)[type] ?? l10n.commonUnknown;
 
 /// Field id of an org-wide extra field (Ionic `org_<orgId>_<name>`).
 String orgFieldId(int orgId, String name) =>
@@ -52,7 +53,7 @@ class _OrgPersonFieldsPageState extends ConsumerState<OrgPersonFieldsPage> {
     if (field == null || !mounted) return;
     final id = orgFieldId(orgId, field.name);
     if (_fields!.any((f) => f.id == id)) {
-      ToastHelper.showError(context, 'Ein Zusatzfeld mit diesem Namen existiert bereits.');
+      ToastHelper.showError(context, context.l10n.orgFieldsNameExists);
       return;
     }
     setState(() => _fields = [..._fields!, field.copyWith(id: id)]);
@@ -75,9 +76,9 @@ class _OrgPersonFieldsPageState extends ConsumerState<OrgPersonFieldsPage> {
   Future<void> _remove(int index) async {
     final ok = await showPlanConfirm(
       context,
-      title: 'Zusatzfeld löschen?',
-      message: 'Möchtest du das Zusatzfeld „${_fields![index].name}“ wirklich löschen?',
-      confirmText: 'Löschen',
+      title: context.l10n.extraFieldsDeleteField,
+      message: context.l10n.extraFieldsDeleteFieldMessage(_fields![index].name),
+      confirmText: context.l10n.commonDelete,
       destructive: true,
     );
     if (ok) setState(() => _fields = [..._fields!]..removeAt(index));
@@ -87,11 +88,11 @@ class _OrgPersonFieldsPageState extends ConsumerState<OrgPersonFieldsPage> {
     if (!_isSuperAdmin) return;
     for (final f in _fields!) {
       if (f.name.trim().isEmpty || !f.id.startsWith('org_${orgId}_')) {
-        ToastHelper.showError(context, 'Ungültige Organisations-Zusatzfelder.');
+        ToastHelper.showError(context, context.l10n.orgFieldsInvalid);
         return;
       }
       if (f.type == 'select' && f.options.isEmpty) {
-        ToastHelper.showError(context, 'Das Auswahlfeld „${f.name}“ benötigt Optionen.');
+        ToastHelper.showError(context, context.l10n.orgFieldsNeedsOptions(f.name));
         return;
       }
     }
@@ -103,9 +104,9 @@ class _OrgPersonFieldsPageState extends ConsumerState<OrgPersonFieldsPage> {
     setState(() => _saving = false);
     if (ok) {
       _originalIds = current;
-      ToastHelper.showSuccess(context, 'Organisations-Zusatzfelder gespeichert.');
+      ToastHelper.showSuccess(context, context.l10n.orgFieldsSaved);
     } else {
-      ToastHelper.showError(context, 'Fehler beim Speichern');
+      ToastHelper.showError(context, context.l10n.extraFieldsSaveFailed);
     }
   }
 
@@ -120,10 +121,10 @@ class _OrgPersonFieldsPageState extends ConsumerState<OrgPersonFieldsPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Personen-Zusatzfelder'),
+        title: Text(context.l10n.orgPersonFields),
         actions: [
           IconButton(
-            tooltip: 'Speichern',
+            tooltip: context.l10n.commonSave,
             icon: const Icon(Icons.check),
             onPressed: _saving || !isSuperAdmin || org?.id == null ? null : () => _save(org!.id!),
           ),
@@ -134,23 +135,23 @@ class _OrgPersonFieldsPageState extends ConsumerState<OrgPersonFieldsPage> {
           : ListView(
               padding: const EdgeInsets.only(bottom: 24),
               children: [
-                const ListTile(
-                  leading: Icon(Icons.info_outline, color: AppColors.medium),
+                ListTile(
+                  leading: const Icon(Icons.info_outline, color: AppColors.medium),
                   title: Text(
-                    'Diese Felder und ihre Werte gelten für dieselbe Person gemeinsam in allen Instanzen der Organisation.',
-                    style: TextStyle(fontSize: 13, color: AppColors.medium),
+                    context.l10n.orgFieldsIntro,
+                    style: const TextStyle(fontSize: 13, color: AppColors.medium),
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(16, 8, 4, 0),
                   child: Row(
                     children: [
-                      const Expanded(
-                        child: Text('ZUSÄTZLICHE FELDER FÜR PERSONEN',
-                            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.medium)),
+                      Expanded(
+                        child: Text(context.l10n.extraFieldsForPersons.toUpperCase(),
+                            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.medium)),
                       ),
                       IconButton(
-                        tooltip: 'Neues Feld hinzufügen',
+                        tooltip: context.l10n.extraFieldsAddNew,
                         icon: const Icon(Icons.add),
                         onPressed: isSuperAdmin && org?.id != null ? () => _add(org!.id!) : null,
                       ),
@@ -160,7 +161,7 @@ class _OrgPersonFieldsPageState extends ConsumerState<OrgPersonFieldsPage> {
                 Card(
                   margin: const EdgeInsets.symmetric(horizontal: 12),
                   child: _fields!.isEmpty
-                      ? const ListTile(title: Text('Es wurden noch keine organisationsweiten Zusatzfelder hinzugefügt.'))
+                      ? ListTile(title: Text(context.l10n.orgFieldsNone))
                       : ReorderableListView(
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
@@ -186,14 +187,15 @@ class _OrgPersonFieldsPageState extends ConsumerState<OrgPersonFieldsPage> {
 
   Widget _fieldTile(int i, bool isSuperAdmin) {
     final f = _fields![i];
-    final mode = f.displayMode == 'underneath' ? 'Unter dem Namen' : 'Als Chip';
+    final l10n = context.l10n;
+    final mode = f.displayMode == 'underneath' ? l10n.extraFieldsUnderName : l10n.extraFieldsAsChip;
     return ListTile(
       key: ValueKey(f.id),
       title: Text(f.name),
       subtitle: Text([
-        'Typ: ${_typeName(f.type)}',
-        'Anzeige: $mode',
-        if (f.visibleToPlayers) 'Für Mitglieder sichtbar${f.editableByPlayers ? ' (bearbeitbar)' : ''}',
+        l10n.extraFieldsTypeLine(_typeName(l10n, f.type)),
+        l10n.extraFieldsDisplayLine(mode),
+        if (f.visibleToPlayers) '${l10n.extraFieldsVisible}${f.editableByPlayers ? l10n.extraFieldsEditableSuffix : ''}',
       ].join('\n')),
       isThreeLine: true,
       trailing: Row(
@@ -250,12 +252,12 @@ class _FieldEditorSheetState extends State<_FieldEditorSheet> {
   void _submit() {
     final name = _name.text.trim();
     if (name.isEmpty) {
-      ToastHelper.showError(context, 'Bitte gib einen gültigen Namen für das Zusatzfeld ein.');
+      ToastHelper.showError(context, context.l10n.extraFieldsInvalidName);
       return;
     }
     final options = _options.map((c) => c.text.trim()).where((o) => o.isNotEmpty).toList();
     if (_type == 'select' && options.isEmpty) {
-      ToastHelper.showError(context, 'Bitte füge mindestens eine Auswahloption hinzu.');
+      ToastHelper.showError(context, context.l10n.orgFieldsAddOption);
       return;
     }
     final dynamic defaultValue = switch (_type) {
@@ -289,63 +291,63 @@ class _FieldEditorSheetState extends State<_FieldEditorSheet> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(_isEdit ? 'Feld bearbeiten' : 'Neues Feld hinzufügen', style: Theme.of(context).textTheme.titleLarge),
+              Text(_isEdit ? context.l10n.typeSettingsEditField : context.l10n.extraFieldsAddNew, style: Theme.of(context).textTheme.titleLarge),
               const SizedBox(height: 12),
               if (_isEdit)
                 ListTile(
                   contentPadding: EdgeInsets.zero,
-                  title: const Text('Typ'),
-                  trailing: Text(_typeName(_type)),
+                  title: Text(context.l10n.typeSettingsType),
+                  trailing: Text(_typeName(context.l10n, _type)),
                 )
               else
                 DropdownButtonFormField<String>(
                   value: _type,
-                  decoration: const InputDecoration(labelText: 'Typ'),
+                  decoration: InputDecoration(labelText: context.l10n.typeSettingsType),
                   items: [
-                    for (final e in _fieldTypes.entries) DropdownMenuItem(value: e.key, child: Text(e.value)),
+                    for (final e in _fieldTypes(context.l10n).entries) DropdownMenuItem(value: e.key, child: Text(e.value)),
                   ],
                   onChanged: (v) => setState(() => _type = v ?? 'text'),
                 ),
               TextField(
                 controller: _name,
                 textCapitalization: TextCapitalization.sentences,
-                decoration: const InputDecoration(labelText: 'Name'),
+                decoration: InputDecoration(labelText: context.l10n.typeSettingsName),
               ),
               DropdownButtonFormField<String>(
                 value: _displayMode,
-                decoration: const InputDecoration(labelText: 'Anzeige in Listen'),
-                items: const [
-                  DropdownMenuItem(value: 'chip', child: Text('Als Chip')),
-                  DropdownMenuItem(value: 'underneath', child: Text('Unter dem Namen')),
+                decoration: InputDecoration(labelText: context.l10n.extraFieldsDisplay),
+                items: [
+                  DropdownMenuItem(value: 'chip', child: Text(context.l10n.extraFieldsAsChip)),
+                  DropdownMenuItem(value: 'underneath', child: Text(context.l10n.extraFieldsUnderName)),
                 ],
                 onChanged: (v) => setState(() => _displayMode = v ?? 'chip'),
               ),
               SwitchListTile(
                 contentPadding: EdgeInsets.zero,
-                title: const Text('Für Mitglieder sichtbar'),
-                subtitle: const Text('Aktivieren, damit Mitglieder dieses Feld in ihren Stammdaten sehen können.'),
+                title: Text(context.l10n.extraFieldsVisible),
+                subtitle: Text(context.l10n.extraFieldsVisibleHelper),
                 value: _visible,
                 onChanged: (v) => setState(() => _visible = v),
               ),
               if (_visible)
                 SwitchListTile(
                   contentPadding: EdgeInsets.zero,
-                  title: const Text('Von Mitgliedern bearbeitbar'),
-                  subtitle: const Text('Aktivieren, damit Mitglieder den Wert selbst ändern können.'),
+                  title: Text(context.l10n.extraFieldsEditable),
+                  subtitle: Text(context.l10n.extraFieldsEditableHelper),
                   value: _editable,
                   onChanged: (v) => setState(() => _editable = v),
                 ),
               if (_type == 'select') ...[
                 Row(
                   children: [
-                    const Expanded(child: Text('Optionen', style: TextStyle(fontWeight: FontWeight.bold))),
+                    Expanded(child: Text(context.l10n.typeSettingsOptions, style: const TextStyle(fontWeight: FontWeight.bold))),
                     IconButton(
                       icon: const Icon(Icons.add),
                       onPressed: () => setState(() => _options.add(TextEditingController())),
                     ),
                   ],
                 ),
-                if (_options.isEmpty) const Text('Keine Optionen ausgewählt'),
+                if (_options.isEmpty) Text(context.l10n.extraFieldsNoOptionsSelected),
                 for (var i = 0; i < _options.length; i++)
                   Row(
                     children: [
@@ -354,8 +356,8 @@ class _FieldEditorSheetState extends State<_FieldEditorSheet> {
                           controller: _options[i],
                           textCapitalization: TextCapitalization.sentences,
                           decoration: InputDecoration(
-                            hintText: 'Wert eingeben...',
-                            helperText: i == 0 ? 'Erste Option ist der Standardwert' : null,
+                            hintText: context.l10n.extraFieldsValuePh,
+                            helperText: i == 0 ? context.l10n.orgFieldsFlutterFirstOptionDefault : null,
                           ),
                         ),
                       ),
@@ -368,7 +370,7 @@ class _FieldEditorSheetState extends State<_FieldEditorSheet> {
               ] else if (_type == 'boolean')
                 SwitchListTile(
                   contentPadding: EdgeInsets.zero,
-                  title: const Text('Standardwert'),
+                  title: Text(context.l10n.extraFieldsDefaultValue),
                   value: _boolDefault,
                   onChanged: (v) => setState(() => _boolDefault = v),
                 )
@@ -376,12 +378,12 @@ class _FieldEditorSheetState extends State<_FieldEditorSheet> {
                 TextField(
                   controller: _default,
                   keyboardType: _type == 'number' ? TextInputType.number : TextInputType.text,
-                  decoration: InputDecoration(labelText: _isEdit ? 'Standardwert' : 'Standardwert (optional)'),
+                  decoration: InputDecoration(labelText: _isEdit ? context.l10n.extraFieldsDefaultValue : context.l10n.extraFieldsDefaultOptional),
                 ),
               const SizedBox(height: 16),
               FilledButton(
                 onPressed: _submit,
-                child: Text(_isEdit ? 'Änderungen übernehmen' : 'Feld hinzufügen'),
+                child: Text(_isEdit ? context.l10n.orgFieldsApplyChanges : context.l10n.typeSettingsAddField),
               ),
             ],
           ),

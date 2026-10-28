@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/providers/organisation_providers.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/organisation/organisation.dart';
+import '../../../../l10n/l10n.dart';
 
 /// UX_SETTINGS: Ionic org-settings `openOrganisationAlert()`.
 ///
@@ -29,7 +30,7 @@ Future<void> showOrganisationLinkDialog(BuildContext context, WidgetRef ref) asy
     context: context,
     builder: (ctx) => StatefulBuilder(
       builder: (ctx, setState) => AlertDialog(
-        title: const Text('Organisation auswählen'),
+        title: Text(context.l10n.orgSelect),
         content: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -46,11 +47,11 @@ Future<void> showOrganisationLinkDialog(BuildContext context, WidgetRef ref) asy
           ),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.of(ctx).pop(), child: const Text('Abbrechen')),
-          TextButton(onPressed: () => Navigator.of(ctx).pop('choose'), child: const Text('Auswählen')),
+          TextButton(onPressed: () => Navigator.of(ctx).pop(), child: Text(context.l10n.commonCancel)),
+          TextButton(onPressed: () => Navigator.of(ctx).pop('choose'), child: Text(context.l10n.orgChoose)),
           TextButton(
             onPressed: () => Navigator.of(ctx).pop('create'),
-            child: const Text('Neue Organisation erstellen'),
+            child: Text(context.l10n.orgCreateNew),
           ),
         ],
       ),
@@ -62,14 +63,14 @@ Future<void> showOrganisationLinkDialog(BuildContext context, WidgetRef ref) asy
     await showCreateOrganisationDialog(context, ref);
   } else if (result == 'choose') {
     if (selected == null) {
-      ToastHelper.showWarning(context, 'Bitte wähle eine Organisation aus.');
+      ToastHelper.showWarning(context, context.l10n.orgPleaseSelect);
       return;
     }
     final ok = await ref.read(organisationNotifierProvider.notifier).linkCurrentTenant(selected!);
     if (!context.mounted) return;
     ok
-        ? ToastHelper.showSuccess(context, 'Die Organisation wurde erfolgreich ausgewählt.')
-        : ToastHelper.showError(context, 'Fehler beim Verknüpfen');
+        ? ToastHelper.showSuccess(context, context.l10n.orgSelected)
+        : ToastHelper.showError(context, context.l10n.linkPersonsFailed);
   }
 }
 
@@ -80,16 +81,16 @@ Future<void> showCreateOrganisationDialog(BuildContext context, WidgetRef ref) a
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Organisation erstellen'),
+        title: Text(context.l10n.orgCreate),
         content: TextField(
           controller: controller,
           autofocus: true,
           textCapitalization: TextCapitalization.words,
-          decoration: const InputDecoration(hintText: 'Name eingeben...'),
+          decoration: InputDecoration(hintText: context.l10n.orgNamePh),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: const Text('Abbrechen')),
-          TextButton(onPressed: () => Navigator.of(ctx).pop(true), child: const Text('Hinzufügen')),
+          TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: Text(context.l10n.commonCancel)),
+          TextButton(onPressed: () => Navigator.of(ctx).pop(true), child: Text(context.l10n.attendanceAdd)),
         ],
       ),
     );
@@ -100,8 +101,8 @@ Future<void> showCreateOrganisationDialog(BuildContext context, WidgetRef ref) a
     if (org?.id != null) await notifier.linkCurrentTenant(org!.id!);
     if (!context.mounted) return;
     org != null
-        ? ToastHelper.showSuccess(context, 'Die Organisation wurde erfolgreich erstellt.')
-        : ToastHelper.showError(context, 'Fehler beim Erstellen der Organisation');
+        ? ToastHelper.showSuccess(context, context.l10n.orgCreated)
+        : ToastHelper.showError(context, context.l10n.svcCreateOrgFailed);
   } finally {
     controller.dispose();
   }

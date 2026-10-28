@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../core/services/plan_export_service.dart';
 import '../../../../core/utils/plan_utils.dart';
 import '../../../../data/models/plan/plan.dart';
 import '../widgets/plan_export_actions.dart';
 import '../widgets/plan_view_list.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Read-only Ablaufplan with chips for several plans, live mode and export
 /// (Ionic `PlanViewerComponent`). Opened as full screen dialog.
@@ -71,14 +73,14 @@ class _PlanViewerPageState extends ConsumerState<PlanViewerPage> {
   String get _title {
     final t = _plan.title?.trim();
     if (t != null && t.isNotEmpty) return t;
-    return widget.title ?? 'Ablaufplan';
+    return widget.title ?? context.l10n.plansRunSheet;
   }
 
   PlanExportPage _page(int i) {
     final p = _plans[i];
     final date = _labels.isNotEmpty ? PlanUtils.planDate(widget.attendance, i, _plans) : DateTime.tryParse(widget.attendance.date);
     final label = _labels.isNotEmpty ? ' · ${_labels[i]}' : '';
-    final title = (p.title?.trim().isNotEmpty ?? false) ? p.title!.trim() : (widget.title ?? 'Ablaufplan');
+    final title = (p.title?.trim().isNotEmpty ?? false) ? p.title!.trim() : (widget.title ?? context.l10n.plansRunSheet);
     return PlanExportPage(
       title: title,
       subtitle: '${PlanUtils.longDate(date)}$label',
@@ -95,8 +97,8 @@ class _PlanViewerPageState extends ConsumerState<PlanViewerPage> {
         context: context,
         builder: (ctx) => SafeArea(
           child: Column(mainAxisSize: MainAxisSize.min, children: [
-            ListTile(title: Text('Nur ${_labels[_index]}'), onTap: () => Navigator.pop(ctx, false)),
-            ListTile(title: Text('Alle ${_labels.length} Pläne'), onTap: () => Navigator.pop(ctx, true)),
+            ListTile(title: Text(ctx.l10n.planningOnlyLabel(_labels[_index])), onTap: () => Navigator.pop(ctx, false)),
+            ListTile(title: Text(ctx.l10n.planningAllPlans(_labels.length)), onTap: () => Navigator.pop(ctx, true)),
           ]),
         ),
       );
@@ -120,22 +122,22 @@ class _PlanViewerPageState extends ConsumerState<PlanViewerPage> {
       appBar: AppBar(
         // Ionic: modal with close button at the start.
         leading: IconButton(
-          tooltip: 'Schließen',
+          tooltip: context.l10n.commonClose,
           icon: const Icon(Icons.close),
           onPressed: () => Navigator.of(context).maybePop(),
         ),
-        title: Text(date != null ? '${date.day.toString().padLeft(2, '0')}.${date.month.toString().padLeft(2, '0')}.${date.year}' : _title),
+        title: Text(date != null ? DateFormat(dateFmt()).format(date) : _title),
         actions: [
           if (_isLiveNow())
             IconButton(
-              tooltip: _live ? 'Live-Modus beenden' : 'Live-Modus',
+              tooltip: _live ? context.l10n.planningFlutterLiveModeEnd : context.l10n.planningFlutterLiveMode,
               icon: Icon(_live ? Icons.radio_button_checked : Icons.radio_button_unchecked,
                   color: _live ? Colors.red : null),
               onPressed: () => setState(() => _live = !_live),
             ),
           if (widget.onEdit != null)
             IconButton(
-              tooltip: 'Ablaufplan bearbeiten',
+              tooltip: context.l10n.attendanceEditRunSheet,
               icon: const Icon(Icons.edit_outlined),
               onPressed: () {
                 Navigator.of(context).pop();
@@ -143,7 +145,7 @@ class _PlanViewerPageState extends ConsumerState<PlanViewerPage> {
               },
             ),
           IconButton(
-            tooltip: 'Exportieren',
+            tooltip: context.l10n.planningExport,
             icon: const Icon(Icons.ios_share),
             onPressed: _export,
           ),
@@ -162,9 +164,9 @@ class _PlanViewerPageState extends ConsumerState<PlanViewerPage> {
               }),
             ),
           if (_plan.fields.isEmpty)
-            const Padding(
-              padding: EdgeInsets.all(24),
-              child: Text('Kein Ablaufplan verfügbar.'),
+            Padding(
+              padding: const EdgeInsets.all(24),
+              child: Text(context.l10n.planningNoPlanAvailable),
             )
           else
             Card(

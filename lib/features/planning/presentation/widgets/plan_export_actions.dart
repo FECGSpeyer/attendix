@@ -10,6 +10,7 @@ import '../../../../core/services/plan_export_service.dart';
 import '../../../../core/services/telegram_service.dart';
 import '../../../../core/utils/toast_helper.dart';
 import 'plan_field_dialogs.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Export formats of an Ablaufplan.
 enum PlanExportAction { pdf, pdf2x, image, telegram, telegram2x, telegramImage }
@@ -30,25 +31,26 @@ Future<void> showPlanExportSheet(
   WidgetRef ref, {
   required List<PlanExportPage> Function() pages,
   required String fileName,
-  String title = 'Exportieren',
+  String? title,
   bool withImage = true,
   List<PlanSheetAction<String>> extraActions = const [],
   Future<void> Function(String action)? onExtraAction,
   bool includeBranding = true,
 }) async {
   final chatId = planTelegramChatId(ref);
+  final l10n = context.l10n;
   final action = await showPlanActionSheet<String>(
     context,
-    title: title,
+    title: title ?? l10n.planningExport,
     actions: [
       ...extraActions,
-      const PlanSheetAction('pdf', 'PDF (A4)', icon: Icons.picture_as_pdf_outlined),
-      const PlanSheetAction('pdf2x', 'PDF (2x A5)', icon: Icons.content_copy_outlined),
-      if (withImage) const PlanSheetAction('image', 'Bild (A4)', icon: Icons.image_outlined),
-      if (chatId != null) ...const [
-        PlanSheetAction('telegram', 'Per Telegram senden (PDF)', icon: Icons.send_outlined),
-        PlanSheetAction('telegram2x', 'Per Telegram senden (PDF 2x A5)', icon: Icons.send_outlined),
-        PlanSheetAction('telegramImage', 'Per Telegram senden (Bild)', icon: Icons.send_outlined),
+      PlanSheetAction('pdf', l10n.planningFlutterPdfA4, icon: Icons.picture_as_pdf_outlined),
+      PlanSheetAction('pdf2x', l10n.planningFlutterPdf2xA5, icon: Icons.content_copy_outlined),
+      if (withImage) PlanSheetAction('image', l10n.plansImageA4, icon: Icons.image_outlined),
+      if (chatId != null) ...[
+        PlanSheetAction('telegram', l10n.attendanceTelegramPdf, icon: Icons.send_outlined),
+        PlanSheetAction('telegram2x', l10n.planningFlutterTelegramPdf2x, icon: Icons.send_outlined),
+        PlanSheetAction('telegramImage', l10n.attendanceTelegramImage, icon: Icons.send_outlined),
       ],
     ],
   );
@@ -72,7 +74,7 @@ Future<void> runPlanExport(
   bool includeBranding = true,
 }) async {
   if (pages.isEmpty || pages.every((p) => p.fields.isEmpty)) {
-    ToastHelper.showWarning(context, 'Kein Plan verfügbar');
+    ToastHelper.showWarning(context, context.l10n.planningNoPlan);
     return;
   }
   final service = ref.read(planExportServiceProvider);
@@ -91,7 +93,7 @@ Future<void> runPlanExport(
       case PlanExportAction.telegramImage:
         final chatId = planTelegramChatId(ref);
         if (chatId == null) {
-          if (context.mounted) ToastHelper.showError(context, 'Telegram nicht konfiguriert');
+          if (context.mounted) ToastHelper.showError(context, context.l10n.planningFlutterTelegramNotConfigured);
           return;
         }
         final asImage = action == PlanExportAction.telegramImage;
@@ -104,10 +106,10 @@ Future<void> runPlanExport(
               chatId: chatId,
               asImage: asImage,
             );
-        if (context.mounted) ToastHelper.showSuccess(context, 'Plan wird per Telegram gesendet...');
+        if (context.mounted) ToastHelper.showSuccess(context, context.l10n.planningSendingTelegram);
     }
   } catch (e) {
-    if (context.mounted) ToastHelper.showError(context, 'Fehler beim Export: $e');
+    if (context.mounted) ToastHelper.showError(context, context.l10n.planningFlutterExportFailed(e));
   }
 }
 
@@ -122,14 +124,14 @@ Future<void> sharePlanLink(BuildContext context, String url, {String? title}) as
     }
   } catch (_) {
     await Clipboard.setData(ClipboardData(text: url));
-    if (context.mounted) ToastHelper.showSuccess(context, 'Link in Zwischenablage kopiert');
+    if (context.mounted) ToastHelper.showSuccess(context, context.l10n.planningLinkCopied);
   }
 }
 
 /// Copies text and shows a toast.
-Future<void> copyPlanLink(BuildContext context, String url, {String message = 'Link kopiert'}) async {
+Future<void> copyPlanLink(BuildContext context, String url, {String? message}) async {
   await Clipboard.setData(ClipboardData(text: url));
-  if (context.mounted) ToastHelper.showSuccess(context, message);
+  if (context.mounted) ToastHelper.showSuccess(context, message ?? context.l10n.plansLinkCopied);
 }
 
 /// Public link to a route of this app (e.g. `/plan?key=…`).

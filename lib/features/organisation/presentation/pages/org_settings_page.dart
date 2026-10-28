@@ -12,6 +12,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/organisation/organisation.dart';
 import '../../../planning/presentation/widgets/plan_field_dialogs.dart';
 import '../widgets/org_song_sync_section.dart'; // SETTINGS2
+import '../../../../l10n/l10n.dart';
 import '../widgets/org_link_dialogs.dart'; // UX_SETTINGS
 
 /// Organisation settings (Ionic `OrgSettingsPage`, route `/settings/org-settings`).
@@ -21,34 +22,34 @@ class OrgSettingsPage extends ConsumerWidget {
   Future<void> _rename(BuildContext context, WidgetRef ref, Organisation org) async {
     final name = await showPlanTextPrompt(
       context,
-      title: 'Organisation umbenennen',
+      title: context.l10n.orgRename,
       initialValue: org.name,
-      hint: 'Name eingeben...',
+      hint: context.l10n.orgNamePh,
     );
     if (name == null) return;
     if (name.trim().isEmpty) {
-      if (context.mounted) ToastHelper.showWarning(context, 'Bitte gib einen gültigen Namen ein.');
+      if (context.mounted) ToastHelper.showWarning(context, context.l10n.orgValidName);
       return;
     }
     final ok = await ref.read(planSettingsNotifierProvider.notifier).updateOrgName(name.trim());
     if (!context.mounted) return;
-    ok ? ToastHelper.showSuccess(context, 'Organisation umbenannt') : ToastHelper.showError(context, 'Fehler beim Speichern');
+    ok ? ToastHelper.showSuccess(context, context.l10n.orgRenamed) : ToastHelper.showError(context, context.l10n.plansSaveFailed);
   }
 
   Future<void> _unlink(BuildContext context, WidgetRef ref, Organisation org) async {
     final ok = await showPlanConfirm(
       context,
-      title: 'Organisation von Instanz trennen?',
-      message: 'Möchtest du die Organisation „${org.name}“ wirklich von der Instanz trennen?',
-      confirmText: 'Trennen',
+      title: context.l10n.orgUnlink,
+      message: context.l10n.orgUnlinkMessage(org.name),
+      confirmText: context.l10n.orgUnlinkButton,
       destructive: true,
     );
     if (!ok || org.id == null) return;
     final success = await ref.read(organisationNotifierProvider.notifier).unlinkCurrentTenant(org.id!);
     if (!context.mounted) return;
     success
-        ? ToastHelper.showSuccess(context, 'Die Organisation wurde erfolgreich von der Instanz getrennt.')
-        : ToastHelper.showError(context, 'Fehler beim Trennen');
+        ? ToastHelper.showSuccess(context, context.l10n.orgUnlinked)
+        : ToastHelper.showError(context, context.l10n.orgFlutterUnlinkFailed);
   }
 
   @override
@@ -61,26 +62,26 @@ class OrgSettingsPage extends ConsumerWidget {
     final others = linked.where((t) => t.id != tenant?.id).toList();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Organisation')),
+      appBar: AppBar(title: Text(context.l10n.orgTitle)),
       body: orgAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('Fehler: $e')),
+        error: (e, _) => Center(child: Text(context.l10n.planningFlutterErrorWith(e))),
         data: (org) {
           if (org == null) {
             return ListView(
               children: [
                 _Section(children: [
                   ListTile(
-                    title: const Text('Keine Organisation verknüpft'),
+                    title: Text(context.l10n.orgNoneLinked),
                     subtitle: Text(isSuperAdmin
-                        ? 'Erstelle eine neue Organisation oder verknüpfe diese Instanz mit einer bestehenden, um Personen organisationsweit zu verbinden und gemeinsame Pläne zu nutzen.'
-                        : 'Diese Instanz ist keiner Organisation zugewiesen. Nur Administratoren können Organisationen verwalten.'),
+                        ? context.l10n.orgNoneIntro
+                        : context.l10n.orgNoneAdminOnly),
                   ),
                   if (isSuperAdmin)
                     ListTile(
                       leading: const Icon(Icons.add_circle_outline, color: AppColors.primary),
-                      title: const Text('Organisation erstellen / verknüpfen',
-                          style: TextStyle(color: AppColors.primary)),
+                      title: Text(context.l10n.orgCreateOrLink,
+                          style: const TextStyle(color: AppColors.primary)),
                       onTap: () => showOrganisationLinkDialog(context, ref), // UX_SETTINGS
                     ),
                 ]),
@@ -90,66 +91,66 @@ class OrgSettingsPage extends ConsumerWidget {
           return ListView(
             padding: const EdgeInsets.only(bottom: 24),
             children: [
-              _Section(title: 'Organisation', children: [
+              _Section(title: context.l10n.orgTitle, children: [
                 ListTile(
                   leading: const Icon(Icons.business_outlined),
                   title: Text(org.name),
-                  subtitle: isSuperAdmin ? const Text('Tippen zum Umbenennen') : null,
+                  subtitle: isSuperAdmin ? Text(context.l10n.orgTapRename) : null,
                   trailing: isSuperAdmin ? const Icon(Icons.chevron_right) : null,
                   onTap: isSuperAdmin ? () => _rename(context, ref, org) : null,
                 ),
                 if (isSuperAdmin)
                   ListTile(
                     leading: const Icon(Icons.link_off, color: AppColors.danger),
-                    title: const Text('Instanz trennen', style: TextStyle(color: AppColors.danger)),
+                    title: Text(context.l10n.orgUnlinkTenant, style: const TextStyle(color: AppColors.danger)),
                     onTap: () => _unlink(context, ref, org),
                   ),
               ]),
-              _Section(title: 'Darstellung & Pläne', children: [
+              _Section(title: context.l10n.orgAppearancePlans, children: [
                 // UX_SETTINGS: Ionic org-settings → Branding
                 ListTile(
                   leading: const Icon(Icons.palette_outlined),
-                  title: const Text('Branding'),
+                  title: Text(context.l10n.generalSettingsBranding),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () => context.push('/settings/general/branding'),
                 ),
                 ListTile(
                   leading: const Icon(Icons.description_outlined),
-                  title: const Text('Planvorlagen & Felder'),
+                  title: Text(context.l10n.orgTemplatesTitle),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () => context.push('/settings/org-settings/planning-templates'),
                 ),
                 ListTile(
                   leading: const Icon(Icons.calendar_month_outlined),
-                  title: const Text('Org-Pläne'),
+                  title: Text(context.l10n.orgOrgPlans),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () => context.push('/settings/org-plans'),
                 ),
               ]),
               if (isSuperAdmin)
-                _Section(title: 'Personen', children: [
+                _Section(title: context.l10n.orgPersons, children: [
                   // UX_SETTINGS: Ionic org-settings → Personen verknüpfen
                   ListTile(
                     leading: const Icon(Icons.merge_type),
-                    title: const Text('Personen verknüpfen'),
-                    subtitle: const Text('Personen aus verschiedenen Instanzen miteinander verbinden'),
+                    title: Text(context.l10n.linkPersonsTitle),
+                    subtitle: Text(context.l10n.orgLinkPersonsHint),
                     trailing: const Icon(Icons.chevron_right),
                     onTap: () => context.push('/settings/general/link-persons'),
                   ),
                   ListTile(
                     leading: const Icon(Icons.list_alt),
-                    title: const Text('Personen-Zusatzfelder'),
-                    subtitle: const Text('Felder und Werte für verknüpfte Personen gemeinsam verwalten'),
+                    title: Text(context.l10n.orgPersonFields),
+                    subtitle: Text(context.l10n.orgPersonFieldsHint),
                     trailing: const Icon(Icons.chevron_right),
                     onTap: () => context.push('/settings/org-settings/person-fields'),
                   ),
                 ]),
               // UX_SETTINGS: Ionic org-settings → Übergabe (admins/responsibles)
               if (role.isAdmin || role.isResponsible)
-                _Section(title: 'Übergabe', children: [
+                _Section(title: context.l10n.orgHandover, children: [
                   ListTile(
                     leading: const Icon(Icons.swap_horiz),
-                    title: const Text('Personenübergabe'),
+                    title: Text(context.l10n.handoverTitle),
                     trailing: const Icon(Icons.chevron_right),
                     onTap: () => context.push('/settings/handover'),
                   ),
@@ -158,11 +159,11 @@ class OrgSettingsPage extends ConsumerWidget {
               if (isSuperAdmin && others.isNotEmpty)
                 OrgSongSyncSection(linkedTenants: others),
               if (others.isNotEmpty)
-                _Section(title: 'Instanzen', children: [
+                _Section(title: context.l10n.orgTenants, children: [
                   ListTile(
                     leading: const Icon(Icons.layers_outlined),
                     title: Text(tenant?.shortName ?? ''),
-                    subtitle: const Text('Diese Instanz'),
+                    subtitle: Text(context.l10n.orgThisTenant),
                   ),
                   for (final t in others)
                     ListTile(

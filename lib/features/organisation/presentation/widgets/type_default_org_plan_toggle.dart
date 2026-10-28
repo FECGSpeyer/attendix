@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/providers/organisation_providers.dart';
 import '../../../../core/providers/plan_providers.dart';
 import '../../../../core/utils/toast_helper.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Toggle "Ablaufplan ist standardmäßig ein Organisationsplan"
 /// (`attendance_types.is_default_org_plan`). Only shown when the tenant
@@ -31,7 +32,7 @@ class _TypeDefaultOrgPlanToggleState extends ConsumerState<TypeDefaultOrgPlanTog
         .firstOrNull;
     final value = _value ?? type?.isDefaultOrgPlan ?? false;
     return SwitchListTile(
-      title: const Text('Ablaufplan ist standardmäßig ein Organisationsplan'),
+      title: Text(context.l10n.typeSettingsOrgPlanDefault),
       value: value,
       onChanged: type == null
           ? null
@@ -40,7 +41,7 @@ class _TypeDefaultOrgPlanToggleState extends ConsumerState<TypeDefaultOrgPlanTog
               final ok = await ref.read(planSettingsNotifierProvider.notifier).setTypeDefaultOrgPlan(widget.typeId, v);
               if (!ok && context.mounted) {
                 setState(() => _value = !v);
-                ToastHelper.showError(context, 'Fehler beim Speichern');
+                ToastHelper.showError(context, context.l10n.plansSaveFailed);
               }
             },
     );

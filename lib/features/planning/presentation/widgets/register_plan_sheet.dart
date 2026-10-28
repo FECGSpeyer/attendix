@@ -14,6 +14,7 @@ import '../../../../core/services/register_plan_service.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/person/person.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Show the register plan sheet
 Future<void> showRegisterPlanSheet(BuildContext context) async {
@@ -68,16 +69,25 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
           ),
           // Header
           ListTile(
-            title: const Text(
-              'Registerprobenplan',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            title: Text(
+              context.l10n.planningSectionalPlan,
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
             ),
             subtitle: Text(
               tenant?.type == 'choir'
-                  ? 'Sopran, Alt, Tenor, Bass'
+                  ? [
+                      context.l10n.planningSoprano,
+                      context.l10n.planningAlto,
+                      context.l10n.planningTenor,
+                      context.l10n.planningBass,
+                    ].join(', ')
                   : tenant?.type == 'orchestra'
-                      ? 'Streicher, Holzbläser, Sonstige'
-                      : 'Gruppen 1-3',
+                      ? [
+                          context.l10n.planningStrings,
+                          context.l10n.planningWoodwinds,
+                          context.l10n.commonOtherPlural,
+                        ].join(', ')
+                      : context.l10n.planningFlutterSectionalGroups,
             ),
             trailing: IconButton(
               icon: const Icon(Icons.close),
@@ -103,7 +113,7 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
   ) {
     return playersAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (e, _) => Center(child: Text('Fehler: $e')),
+      error: (e, _) => Center(child: Text(context.l10n.planningFlutterErrorWith(e))),
       data: (players) {
         // Filter to only show conductors/voice leaders (players with specific roles)
         // Use isLeader or groupName patterns to identify potential conductors
@@ -128,9 +138,9 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Gesamtdauer',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                    Text(
+                      context.l10n.planningFlutterTotalDuration,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 8),
                     Row(
@@ -139,9 +149,9 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
                           child: TextField(
                             controller: _minutesController,
                             keyboardType: TextInputType.number,
-                            decoration: const InputDecoration(
-                              suffixText: 'Minuten',
-                              border: OutlineInputBorder(),
+                            decoration: InputDecoration(
+                              suffixText: context.l10n.planningMinutes,
+                              border: const OutlineInputBorder(),
                             ),
                             onChanged: (value) {
                               final mins = int.tryParse(value);
@@ -186,12 +196,12 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
-                          'Dirigenten/Stimmführer auswählen',
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                        Text(
+                          context.l10n.planningFlutterSelectConductors,
+                          style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                         Text(
-                          '${_selectedConductorIds.length} ausgewählt',
+                          context.l10n.planningFlutterSelectedCount(_selectedConductorIds.length),
                           style: TextStyle(color: AppColors.medium),
                         ),
                       ],
@@ -204,14 +214,14 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
                           color: AppColors.warning.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(AppDimensions.borderRadiusS),
                         ),
-                        child: const Row(
+                        child: Row(
                           children: [
-                            Icon(Icons.info_outline, color: AppColors.warning),
-                            SizedBox(width: 8),
+                            const Icon(Icons.info_outline, color: AppColors.warning),
+                            const SizedBox(width: 8),
                             Expanded(
                               child: Text(
-                                'Bitte mindestens eine Person auswählen',
-                                style: TextStyle(color: AppColors.warning),
+                                context.l10n.planningFlutterSelectOnePerson,
+                                style: const TextStyle(color: AppColors.warning),
                               ),
                             ),
                           ],
@@ -259,7 +269,7 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
                     ? null
                     : () => _generatePlan(players),
                 icon: const Icon(Icons.auto_awesome),
-                label: const Text('Plan generieren'),
+                label: Text(context.l10n.planningFlutterGeneratePlan),
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.all(AppDimensions.paddingM),
                 ),
@@ -285,15 +295,15 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 _StatColumn(
-                  label: 'Gesamt',
-                  value: '${plan.totalMinutes} Min.',
+                  label: context.l10n.churchOverviewTotal,
+                  value: context.l10n.planningFlutterMinAbbr(plan.totalMinutes),
                 ),
                 _StatColumn(
-                  label: 'Pro Einheit',
-                  value: '${plan.minutesPerUnit} Min.',
+                  label: context.l10n.planningFlutterPerUnit,
+                  value: context.l10n.planningFlutterMinAbbr(plan.minutesPerUnit),
                 ),
                 _StatColumn(
-                  label: 'Dirigenten',
+                  label: context.l10n.planningConductors,
                   value: '${plan.conductors.length}',
                 ),
               ],
@@ -310,11 +320,11 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
           color: AppColors.primary.withValues(alpha: 0.1),
           child: Row(
             children: [
-              const SizedBox(
+              SizedBox(
                 width: 60,
                 child: Text(
-                  'Zeit',
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                  context.l10n.planningFlutterTime,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
               ),
               ...plan.groups.map((group) => Expanded(
@@ -401,7 +411,7 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
                       setState(() => _generatedPlan = null);
                     },
                     icon: const Icon(Icons.refresh),
-                    label: const Text('Neu generieren'),
+                    label: Text(context.l10n.planningFlutterRegenerate),
                   ),
                 ),
                 const SizedBox(width: AppDimensions.paddingM),
@@ -409,7 +419,7 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
                   child: ElevatedButton.icon(
                     onPressed: _sharePlan,
                     icon: const Icon(Icons.share),
-                    label: const Text('Teilen'),
+                    label: Text(context.l10n.attendanceShare),
                   ),
                 ),
               ],
@@ -426,7 +436,7 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
         .toList();
 
     if (selectedConductors.isEmpty) {
-      ToastHelper.showWarning(context, 'Bitte mindestens eine Person auswählen');
+      ToastHelper.showWarning(context, context.l10n.planningFlutterSelectOnePerson);
       return;
     }
 
@@ -442,7 +452,7 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
 
       setState(() => _generatedPlan = plan);
     } catch (e) {
-      ToastHelper.showError(context, 'Fehler bei der Generierung: $e');
+      ToastHelper.showError(context, context.l10n.planningFlutterGenerateFailed(e));
     }
   }
 
@@ -452,20 +462,20 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
     final format = await showDialog<String>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Format wählen'),
+        title: Text(ctx.l10n.planningFlutterChooseFormat),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
               leading: const Icon(Icons.picture_as_pdf),
-              title: const Text('Als PDF'),
-              subtitle: const Text('Druckbar, A4 Querformat'),
+              title: Text(ctx.l10n.planningFlutterAsPdf),
+              subtitle: Text(ctx.l10n.planningFlutterAsPdfHint),
               onTap: () => Navigator.pop(ctx, 'pdf'),
             ),
             ListTile(
               leading: const Icon(Icons.text_snippet),
-              title: const Text('Als Text'),
-              subtitle: const Text('Zum Kopieren'),
+              title: Text(ctx.l10n.planningFlutterAsText),
+              subtitle: Text(ctx.l10n.planningFlutterAsTextHint),
               onTap: () => Navigator.pop(ctx, 'text'),
             ),
           ],
@@ -473,7 +483,7 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Abbrechen'),
+            child: Text(ctx.l10n.commonCancel),
           ),
         ],
       ),
@@ -491,14 +501,15 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
   Future<void> _exportPdf() async {
     final tenant = ref.read(currentTenantProvider);
     final plan = _generatedPlan!;
-    final date = DateFormat('dd.MM.yyyy').format(DateTime.now());
+    final date = DateFormat(dateFmt()).format(DateTime.now());
+    final l10n = context.l10n;
     // MISC2: letterhead with tenant/org branding (Ionic addBrandingHeader)
     final branding = ref.read(includeBrandingProvider) ? await resolvePdfBranding(ref) : null;
 
     final pdf = pw.Document();
 
     // Build table data
-    final headers = ['Zeit', ...plan.groups];
+    final headers = [l10n.planningFlutterTime, ...plan.groups];
     final data = plan.entries.map((entry) {
       return [
         entry.time,
@@ -515,8 +526,9 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
           children: [
             buildPdfBrandingHeader(
               branding: branding,
-              title: '${tenant?.shortName ?? 'Gruppe'} Registerprobenplan',
-              subtitle: 'Stand: $date | ${plan.totalMinutes} Min. | ${plan.minutesPerUnit} Min./Einheit',
+              title: l10n.planningSectionalPlanTitle(tenant?.shortName ?? l10n.commonGroupLabelGroup),
+              subtitle: '${l10n.planningAsOf(date)} | ${l10n.planningFlutterMinAbbr(plan.totalMinutes)} | '
+                  '${l10n.planningFlutterMinPerUnit(plan.minutesPerUnit)}',
             ),
             pw.TableHelper.fromTextArray(
               headers: headers,
@@ -537,7 +549,7 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
             ),
             pw.SizedBox(height: 16),
             pw.Text(
-              'Dirigenten: ${plan.conductors.join(', ')}',
+              '${l10n.planningConductors}: ${plan.conductors.join(', ')}',
               style: const pw.TextStyle(fontSize: 9),
             ),
           ],
@@ -547,7 +559,7 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
 
     await Printing.layoutPdf(
       onLayout: (format) async => pdf.save(),
-      name: '${tenant?.shortName ?? 'Gruppe'}_Registerprobenplan_$date.pdf',
+      name: '${tenant?.shortName ?? l10n.commonGroupLabelGroup}_${l10n.planningSectionalPlan}_${date.replaceAll('/', '.')}.pdf',
     );
   }
 
@@ -558,7 +570,7 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
     await showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Registerprobenplan'),
+        title: Text(context.l10n.planningSectionalPlan),
         content: SingleChildScrollView(
           child: SelectableText(
             text,
@@ -568,7 +580,7 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Schließen'),
+            child: Text(context.l10n.commonClose),
           ),
         ],
       ),

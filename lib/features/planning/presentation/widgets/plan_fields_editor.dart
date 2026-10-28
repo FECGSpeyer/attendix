@@ -6,6 +6,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/plan_utils.dart';
 import '../../../../data/models/plan/plan.dart';
 import 'plan_field_dialogs.dart';
+import '../../../../l10n/l10n.dart';
 
 /// A row of the editor: a field, or the "Unterpunkt hinzufügen" row closing an open block.
 class _EditorRow {
@@ -36,7 +37,7 @@ class PlanFieldsEditor extends StatefulWidget {
     this.blockTemplateNames = const {},
     this.fieldWarning,
     this.showTimes = true,
-    this.emptyText = 'Keine Programmpunkte',
+    this.emptyText,
     this.onAddTopics,
   });
 
@@ -53,7 +54,7 @@ class PlanFieldsEditor extends StatefulWidget {
   /// Optional red warning line under a field (e.g. missing instrument groups of a song).
   final String? Function(PlanField field)? fieldWarning;
   final bool showTimes;
-  final String emptyText;
+  final String? emptyText;
 
   /// "Themen aufnehmen" on the Tagesordnung insert marker (Ionic `openAgendaPicker`).
   final VoidCallback? onAddTopics;
@@ -151,11 +152,11 @@ class _PlanFieldsEditorState extends State<PlanFieldsEditor> {
     final isNote = PlanUtils.isNote(field);
     final result = await showPlanFieldDialog(
       context,
-      title: 'Feld bearbeiten',
-      nameLabel: isNote ? 'Notiz' : 'Programmpunkt',
-      nameHint: isNote ? 'Notiz eingeben...' : 'Programmpunkt eingeben...',
-      infoHint: 'Info-Text (optional)...',
-      confirmText: 'Updaten',
+      title: context.l10n.planningEditField,
+      nameLabel: isNote ? context.l10n.planningNote : context.l10n.planningItem,
+      nameHint: isNote ? context.l10n.planningEnterNote : context.l10n.planningEnterItem,
+      infoHint: context.l10n.planningInfoOptionalEllipsis,
+      confirmText: context.l10n.planningUpdate,
       initialName: field.name,
       initialConductor: field.conductor,
       initialInfo: field.info,
@@ -205,10 +206,10 @@ class _PlanFieldsEditorState extends State<PlanFieldsEditor> {
   Future<void> _addSubItem(PlanField head) async {
     final result = await showPlanFieldDialog(
       context,
-      title: 'Unterpunkt hinzufügen',
+      title: context.l10n.planningAddSubItem,
       subtitle: head.name,
-      nameHint: 'Programmpunkt, z. B. Gruppenlied',
-      infoHint: 'Info-Text (optional), z. B. Liedtitel',
+      nameHint: context.l10n.planningSubItemPlaceholder,
+      infoHint: context.l10n.planningSubItemInfoPlaceholder,
       initialMinutes: 5,
     );
     if (result == null) return;
@@ -233,15 +234,16 @@ class _PlanFieldsEditorState extends State<PlanFieldsEditor> {
     final action = await showPlanActionSheet<String>(
       context,
       title: head.name,
-      subtitle: '${children.length} ${children.length == 1 ? 'Unterpunkt' : 'Unterpunkte'} · $minutes min',
+      subtitle: context.l10n.planningBlockSubHeader(children.length, minutes),
       actions: [
-        const PlanSheetAction('edit', 'Block bearbeiten', icon: Icons.edit_outlined),
-        const PlanSheetAction('add', 'Unterpunkt hinzufügen', icon: Icons.add),
+        PlanSheetAction('edit', context.l10n.planningEditBlock, icon: Icons.edit_outlined),
+        PlanSheetAction('add', context.l10n.planningAddSubItem, icon: Icons.add),
         if (widget.onSaveBlockTemplate != null && children.isNotEmpty)
-          PlanSheetAction('template', exists ? 'Vorlage aktualisieren' : 'Als Vorlage speichern',
+          PlanSheetAction('template', exists ? context.l10n.planningUpdateTemplate : context.l10n.planningSaveAsTemplate,
               icon: Icons.bookmark_add_outlined),
-        const PlanSheetAction('dissolve', 'Block auflösen', icon: Icons.call_split),
-        const PlanSheetAction('delete', 'Block mit Unterpunkten löschen', icon: Icons.delete_outline, destructive: true),
+        PlanSheetAction('dissolve', context.l10n.planningDissolveBlock, icon: Icons.call_split),
+        PlanSheetAction('delete', context.l10n.planningDeleteBlockWithItems,
+            icon: Icons.delete_outline, destructive: true),
       ],
     );
     if (!mounted || action == null) return;
@@ -263,13 +265,13 @@ class _PlanFieldsEditorState extends State<PlanFieldsEditor> {
   Future<void> _editGroup(PlanField head) async {
     final result = await showPlanFieldDialog(
       context,
-      title: 'Block bearbeiten',
-      nameLabel: 'Name',
-      nameHint: 'Name',
-      conductorLabel: 'Ausführung',
-      conductorHint: 'Ausführung (optional)',
-      confirmText: 'Speichern',
-      emptyNameMessage: 'Bitte einen Namen eingeben.',
+      title: context.l10n.planningEditBlock,
+      nameLabel: context.l10n.planningName,
+      nameHint: context.l10n.planningName,
+      conductorLabel: context.l10n.planningPerformance,
+      conductorHint: context.l10n.planningPerformanceOptional,
+      confirmText: context.l10n.commonSave,
+      emptyNameMessage: context.l10n.planningEnterNamePlease,
       initialName: head.name,
       initialConductor: head.conductor,
       initialInfo: head.info,
@@ -291,15 +293,15 @@ class _PlanFieldsEditorState extends State<PlanFieldsEditor> {
     final choice = await showDialog<String>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Block löschen?'),
-        content: Text('„${head.name}“ hat $count ${count == 1 ? 'Unterpunkt' : 'Unterpunkte'}.'),
+        title: Text(ctx.l10n.planningDeleteBlockConfirm),
+        content: Text(ctx.l10n.planningBlockHasItems(head.name, count)),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Abbrechen')),
-          TextButton(onPressed: () => Navigator.pop(ctx, 'dissolve'), child: const Text('Nur Block auflösen')),
+          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(ctx.l10n.commonCancel)),
+          TextButton(onPressed: () => Navigator.pop(ctx, 'dissolve'), child: Text(ctx.l10n.planningOnlyDissolve)),
           FilledButton(
             style: FilledButton.styleFrom(backgroundColor: Theme.of(ctx).colorScheme.error),
             onPressed: () => Navigator.pop(ctx, 'all'),
-            child: const Text('Alles löschen'),
+            child: Text(ctx.l10n.planningDeleteAll),
           ),
         ],
       ),
@@ -329,7 +331,7 @@ class _PlanFieldsEditorState extends State<PlanFieldsEditor> {
       return Padding(
         padding: const EdgeInsets.all(24),
         child: Center(
-          child: Text(widget.emptyText, style: const TextStyle(color: AppColors.medium)),
+          child: Text(widget.emptyText ?? context.l10n.planningFlutterNoItems, style: const TextStyle(color: AppColors.medium)),
         ),
       );
     }
@@ -377,10 +379,10 @@ class _PlanFieldsEditorState extends State<PlanFieldsEditor> {
         child: ListTile(
           dense: true,
           leading: const Icon(Icons.commit, color: AppColors.medium),
-          title: const Text('Einfügeposition Tagesordnung', style: TextStyle(color: AppColors.medium)),
+          title: Text(context.l10n.planningAgendaInsertPos, style: const TextStyle(color: AppColors.medium)),
           trailing: Row(mainAxisSize: MainAxisSize.min, children: [
             if (widget.onAddTopics != null)
-              TextButton(onPressed: widget.onAddTopics, child: const Text('Themen aufnehmen')),
+              TextButton(onPressed: widget.onAddTopics, child: Text(context.l10n.attendanceAddTopics)),
             dragHandle,
           ]),
         ),
@@ -422,7 +424,7 @@ class _PlanFieldsEditorState extends State<PlanFieldsEditor> {
                   color: AppColors.primary.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: Text('${PlanUtils.displayMinutes(field, _fields)} min', style: const TextStyle(fontSize: 12)),
+                child: Text(context.l10n.planningMinShort(PlanUtils.displayMinutes(field, _fields)), style: const TextStyle(fontSize: 12)),
               )
             : _MinutesInput(
                 key: ValueKey('min-${field.id}'),
@@ -448,7 +450,7 @@ class _PlanFieldsEditorState extends State<PlanFieldsEditor> {
           contentPadding: EdgeInsets.only(left: isHead ? 0 : 16, right: 0),
           leading: isHead
               ? IconButton(
-                  tooltip: _collapsed.contains(field.id) ? 'Block aufklappen' : 'Block einklappen',
+                  tooltip: _collapsed.contains(field.id) ? context.l10n.planningExpandBlock : context.l10n.planningCollapseBlock,
                   icon: Icon(_collapsed.contains(field.id) ? Icons.chevron_right : Icons.expand_more),
                   onPressed: () => setState(() {
                     if (!_collapsed.remove(field.id)) _collapsed.add(field.id);
@@ -496,7 +498,7 @@ class _PlanFieldsEditorState extends State<PlanFieldsEditor> {
               onPressed: (_) => _toggleIndent(index),
               backgroundColor: AppColors.medium,
               foregroundColor: Colors.white,
-              label: isChild ? 'Ausrücken' : 'Einrücken',
+              label: isChild ? context.l10n.planningOutdent : context.l10n.planningIndent,
             ),
           SlidableAction(
             onPressed: (_) => _removeField(index),
@@ -551,11 +553,11 @@ class _MinutesInputState extends State<_MinutesInput> {
         keyboardType: TextInputType.number,
         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
         textAlign: TextAlign.center,
-        decoration: const InputDecoration(
-          hintText: 'min',
+        decoration: InputDecoration(
+          hintText: context.l10n.planningMinPlaceholder,
           isDense: true,
           border: InputBorder.none,
-          contentPadding: EdgeInsets.symmetric(vertical: 8),
+          contentPadding: const EdgeInsets.symmetric(vertical: 8),
         ),
         onChanged: widget.onChanged,
       ),
@@ -578,7 +580,7 @@ class _AddSubItemRow extends StatelessWidget {
       child: ListTile(
         dense: true,
         leading: const Icon(Icons.add, color: AppColors.primary),
-        title: const Text('Unterpunkt hinzufügen', style: TextStyle(color: AppColors.primary)),
+        title: Text(context.l10n.planningAddSubItem, style: const TextStyle(color: AppColors.primary)),
         onTap: onTap,
       ),
     );

@@ -4047,6 +4047,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get orgFieldsApplyChanges => 'Änderungen übernehmen';
 
   @override
+  String get orgFieldsFlutterFirstOptionDefault => 'Erste Option ist der Standardwert';
+
+  @override
   String get orgFieldsIntro => 'Diese Felder und ihre Werte gelten für dieselbe Person gemeinsam in allen Instanzen der Organisation.';
 
   @override
@@ -4068,6 +4071,23 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get orgFieldsTitle => 'Personen-Zusatzfelder';
+
+  @override
+  String orgFlutterFieldCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Felder',
+      one: '$count Feld',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get orgFlutterNoFields => 'Keine Felder';
+
+  @override
+  String get orgFlutterUnlinkFailed => 'Fehler beim Trennen';
 
   @override
   String get orgHandover => 'Übergabe';
@@ -5386,6 +5406,130 @@ class AppLocalizationsDe extends AppLocalizations {
   String get planningFirstEvent => 'Dies ist die aktuell erste Veranstaltung';
 
   @override
+  String get planningFlutterAsPdf => 'Als PDF';
+
+  @override
+  String get planningFlutterAsPdfHint => 'Druckbar, A4 Querformat';
+
+  @override
+  String get planningFlutterAsText => 'Als Text';
+
+  @override
+  String get planningFlutterAsTextHint => 'Zum Kopieren';
+
+  @override
+  String planningFlutterBlockEntry(Object name, Object min) {
+    return 'Programmblock: $name ($min min)';
+  }
+
+  @override
+  String get planningFlutterChooseFormat => 'Format wählen';
+
+  @override
+  String planningFlutterErrorWith(Object error) {
+    return 'Fehler: $error';
+  }
+
+  @override
+  String planningFlutterExportFailed(Object error) {
+    return 'Fehler beim Export: $error';
+  }
+
+  @override
+  String planningFlutterFieldEntry(Object name, Object min) {
+    return 'Feld: $name ($min min)';
+  }
+
+  @override
+  String planningFlutterGenerateFailed(Object error) {
+    return 'Fehler bei der Generierung: $error';
+  }
+
+  @override
+  String get planningFlutterGeneratePlan => 'Plan generieren';
+
+  @override
+  String get planningFlutterLive => 'Live';
+
+  @override
+  String get planningFlutterLiveMode => 'Live-Modus';
+
+  @override
+  String get planningFlutterLiveModeEnd => 'Live-Modus beenden';
+
+  @override
+  String planningFlutterMinAbbr(Object min) {
+    return '$min Min.';
+  }
+
+  @override
+  String planningFlutterMinPerUnit(Object min) {
+    return '$min Min./Einheit';
+  }
+
+  @override
+  String get planningFlutterNoEvents => 'Keine Termine vorhanden';
+
+  @override
+  String get planningFlutterNoItems => 'Keine Programmpunkte';
+
+  @override
+  String get planningFlutterPdf2xA5 => 'PDF (2x A5)';
+
+  @override
+  String get planningFlutterPdfA4 => 'PDF (A4)';
+
+  @override
+  String get planningFlutterPerUnit => 'Pro Einheit';
+
+  @override
+  String planningFlutterPlanPosition(Object index, Object total) {
+    return '$index von $total';
+  }
+
+  @override
+  String get planningFlutterRegenerate => 'Neu generieren';
+
+  @override
+  String planningFlutterSaveFailedWith(Object error) {
+    return 'Fehler beim Speichern: $error';
+  }
+
+  @override
+  String get planningFlutterSectionalGroups => 'Gruppen 1-3';
+
+  @override
+  String get planningFlutterSelectConductors => 'Dirigenten/Stimmführer auswählen';
+
+  @override
+  String get planningFlutterSelectOnePerson => 'Bitte mindestens eine Person auswählen';
+
+  @override
+  String planningFlutterSelectedCount(Object count) {
+    return '$count ausgewählt';
+  }
+
+  @override
+  String planningFlutterShareFailedWith(Object error) {
+    return 'Fehler beim Teilen: $error';
+  }
+
+  @override
+  String get planningFlutterTelegramNotConfigured => 'Telegram nicht konfiguriert';
+
+  @override
+  String get planningFlutterTelegramPdf2x => 'Per Telegram senden (PDF 2x A5)';
+
+  @override
+  String get planningFlutterTime => 'Zeit';
+
+  @override
+  String get planningFlutterTotalDuration => 'Gesamtdauer';
+
+  @override
+  String get planningFlutterUnshareAction => 'Freigabe aufheben';
+
+  @override
   String get planningGroupName => 'Gruppenname';
 
   @override
@@ -5649,6 +5793,28 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get plansFillDurations => 'Bitte alle Dauern ausfüllen.';
+
+  @override
+  String get plansFlutterAddToOrg => 'Zur Organisation hinzufügen';
+
+  @override
+  String plansFlutterFieldsCount(Object count) {
+    return '$count Felder';
+  }
+
+  @override
+  String get plansFlutterHideTab => 'Tab ausblenden';
+
+  @override
+  String plansFlutterInOrg(Object name) {
+    return 'In Organisation \"$name\"';
+  }
+
+  @override
+  String get plansFlutterOrgPlansTitle => 'Organisationspläne';
+
+  @override
+  String get plansFlutterShowAsTab => 'Als Tab anzeigen';
 
   @override
   String get plansImageA4 => 'Bild (A4)';

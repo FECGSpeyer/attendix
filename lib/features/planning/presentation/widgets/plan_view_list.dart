@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/plan_utils.dart';
 import '../../../../data/models/plan/plan.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Read-only list of an Ablaufplan with optional live mode (countdown of the
 /// running Programmpunkt), ported from Ionic `PlanViewerComponent`.
@@ -84,11 +85,11 @@ class _PlanViewListState extends State<PlanViewList> {
       children.add(ListTile(
         dense: true,
         leading: const Icon(Icons.play_arrow, color: AppColors.success),
-        title: const Text('Start', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(context.l10n.attendanceStartLabel, style: const TextStyle(fontWeight: FontWeight.bold)),
         subtitle: startCountdown.isNotEmpty
             ? Text(startCountdown, style: const TextStyle(color: AppColors.primary))
             : null,
-        trailing: Text('${PlanUtils.formatTime(plan.time)} Uhr'),
+        trailing: Text(context.l10n.attendanceTimeOClock(PlanUtils.formatTime(plan.time))),
       ));
     }
 
@@ -129,7 +130,7 @@ class _PlanViewListState extends State<PlanViewList> {
                   style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                 ),
               )
-            : Text('${PlanUtils.displayMinutes(f, fields)} min',
+            : Text(context.l10n.planningMinShort(PlanUtils.displayMinutes(f, fields)),
                 style: TextStyle(fontWeight: isHead ? FontWeight.bold : FontWeight.normal));
       }
       final extra = widget.trailingBuilder?.call(i);
@@ -180,8 +181,8 @@ class _PlanViewListState extends State<PlanViewList> {
         children.add(ListTile(
           dense: true,
           leading: const Icon(Icons.stop, color: AppColors.danger),
-          title: const Text('Ende', style: TextStyle(fontWeight: FontWeight.bold)),
-          trailing: Text('$end Uhr'),
+          title: Text(context.l10n.attendanceEnd, style: const TextStyle(fontWeight: FontWeight.bold)),
+          trailing: Text(context.l10n.attendanceTimeOClock(end)),
         ));
       }
     }
@@ -218,7 +219,7 @@ class PlanChips extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(right: 6),
               child: ChoiceChip(
-                label: Text(i == todayIndex ? '${labels[i]} · heute' : labels[i]),
+                label: Text(i == todayIndex ? '${labels[i]} ${context.l10n.planningToday}' : labels[i]),
                 selected: i == selected,
                 onSelected: (_) {
                   if (i != selected) onSelected(i);

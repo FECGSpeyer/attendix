@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/config/supabase_config.dart';
@@ -14,16 +15,21 @@ import '../../../../data/models/plan/plan.dart';
 import '../../../planning/presentation/pages/plan_viewer_page.dart';
 import '../../../planning/presentation/widgets/plan_export_actions.dart';
 import '../../../planning/presentation/widgets/plan_field_dialogs.dart';
+import '../../../../l10n/l10n.dart';
 
-/// Short German date "Mo, 03.11.2026".
+/// Short date "Mo, 03.11.2026" (Ionic dayjs `dd, ${dateFmt()}`).
 String orgPlanDate(String date) {
   final d = DateTime.tryParse(date);
   if (d == null) return '';
-  const days = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
-  return '${days[d.weekday - 1]}, ${d.day.toString().padLeft(2, '0')}.${d.month.toString().padLeft(2, '0')}.${d.year}';
+  const minDays = {
+    'de': ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'],
+    'en': ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'],
+  };
+  final day = minDays[currentLanguage()]?[d.weekday - 1] ?? DateFormat('E', currentIntlLocale()).format(d);
+  return '$day, ${DateFormat(dateFmt()).format(d)}';
 }
 
-String orgPlanPoints(int count) => count == 1 ? '1 Punkt' : '$count Punkte';
+String orgPlanPoints(int count) => l10nWithoutContext.plansPoints(count);
 
 /// Opens an org plan entry in the plan viewer (live by default on its day).
 Future<void> openOrgPlanEntry(BuildContext context, OrgPlanEntry entry) {
@@ -53,33 +59,35 @@ class _OrgPlansPageState extends ConsumerState<OrgPlansPage> {
     final action = await showPlanActionSheet<String>(
       context,
       title: entry.title,
-      actions: const [PlanSheetAction('delete', 'Plan löschen', icon: Icons.delete_outline, destructive: true)],
+      actions: [
+        PlanSheetAction('delete', context.l10n.planningDeletePlan, icon: Icons.delete_outline, destructive: true),
+      ],
     );
     if (action != 'delete') return;
     final ok = await ref.read(planSettingsNotifierProvider.notifier).deleteAdHocOrgPlan(entry.sharedPlan!.id);
-    if (!ok && mounted) ToastHelper.showError(context, 'Fehler beim Löschen');
+    if (!ok && mounted) ToastHelper.showError(context, context.l10n.plansDeleteFailed);
   }
 
   Future<void> _subscribeCalendar(String key) async {
     final base = '${SupabaseConfig.supabaseUrl}/functions/v1/ical-org-plans?key=$key';
     final link = await showPlanActionSheet<String>(
       context,
-      title: 'Kalender abonnieren',
+      title: context.l10n.plansSubscribeCalendar,
       actions: [
-        PlanSheetAction(base, 'Einfach (1 Termin je Plan)', icon: Icons.event),
-        PlanSheetAction('$base&detailed=true', 'Detailliert (je Programmpunkt)', icon: Icons.event_note),
+        PlanSheetAction(base, context.l10n.plansSimpleCalendar, icon: Icons.event),
+        PlanSheetAction('$base&detailed=true', context.l10n.plansDetailedCalendar, icon: Icons.event_note),
       ],
     );
     if (link == null || !mounted) return;
     await showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Kalender abonnieren'),
-        content: SelectableText('Kopiere den folgenden Link in deine Kalender-App:\n\n$link'),
+        title: Text(ctx.l10n.plansSubscribeCalendar),
+        content: SelectableText(ctx.l10n.plansCalendarLinkMessage(link)),
         actions: [
           TextButton(
             onPressed: () => copyPlanLink(ctx, link),
-            child: const Text('Link kopieren'),
+            child: Text(ctx.l10n.plansCopyLink),
           ),
           TextButton(
             onPressed: () {
@@ -91,9 +99,9 @@ class _OrgPlansPageState extends ConsumerState<OrgPlansPage> {
                 mode: LaunchMode.externalApplication,
               );
             },
-            child: const Text('Anleitung öffnen'),
+            child: Text(ctx.l10n.plansOpenGuide),
           ),
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Schließen')),
+          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(ctx.l10n.commonClose)),
         ],
       ),
     );
@@ -105,10 +113,10 @@ class _OrgPlansPageState extends ConsumerState<OrgPlansPage> {
       final url = planPublicUrl('/org-plan?key=$key');
       final action = await showPlanActionSheet<String>(
         context,
-        title: 'Öffentlicher Link',
-        actions: const [
-          PlanSheetAction('copy', 'Link kopieren', icon: Icons.copy),
-          PlanSheetAction('revoke', 'Link widerrufen', icon: Icons.link_off, destructive: true),
+        title: context.l10n.plansPublicLink,
+        actions: [
+          PlanSheetAction('copy', context.l10n.plansCopyLink, icon: Icons.copy),
+          PlanSheetAction('revoke', context.l10n.plansRevokeLink, icon: Icons.link_off, destructive: true),
         ],
       );
       if (!mounted) return;
@@ -116,23 +124,23 @@ class _OrgPlansPageState extends ConsumerState<OrgPlansPage> {
         await copyPlanLink(context, url);
       } else if (action == 'revoke') {
         final ok = await notifier.revokePublicPlanKey();
-        if (mounted && ok) ToastHelper.showSuccess(context, 'Link widerrufen');
+        if (mounted && ok) ToastHelper.showSuccess(context, context.l10n.plansRevokeLink);
       }
       return;
     }
     final newKey = await notifier.generatePublicPlanKey();
     if (!mounted) return;
     if (newKey == null) {
-      ToastHelper.showError(context, 'Fehler beim Erstellen des Links');
+      ToastHelper.showError(context, context.l10n.plansLinkFailed);
       return;
     }
-    await copyPlanLink(context, planPublicUrl('/org-plan?key=$newKey'), message: 'Link erstellt und kopiert');
+    await copyPlanLink(context, planPublicUrl('/org-plan?key=$newKey'), message: context.l10n.plansLinkCreated);
   }
 
   void _showHistory(List<OrgPlanEntry> past) {
     Navigator.of(context).push(MaterialPageRoute(
       builder: (_) => Scaffold(
-        appBar: AppBar(title: const Text('Vergangene Pläne')),
+        appBar: AppBar(title: Text(context.l10n.plansPastPlans)),
         body: ListView(children: [for (final e in past) _entryTile(e)]),
       ),
     ));
@@ -169,13 +177,13 @@ class _OrgPlansPageState extends ConsumerState<OrgPlansPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Org-Pläne'),
+        title: Text(context.l10n.plansOrgPlans),
         actions: [
           // SETTINGS2: Ionic toggleOrgTab ("Als Tab anzeigen" / "Tab ausblenden")
           IconButton(
             tooltip: ref.watch(optionalTabsNotifierProvider).orgPlans
-                ? 'Tab ausblenden'
-                : 'Als Tab anzeigen',
+                ? context.l10n.plansFlutterHideTab
+                : context.l10n.plansFlutterShowAsTab,
             icon: Icon(ref.watch(optionalTabsNotifierProvider).orgPlans
                 ? Icons.bookmark
                 : Icons.bookmark_outline),
@@ -186,19 +194,19 @@ class _OrgPlansPageState extends ConsumerState<OrgPlansPage> {
                     .read(optionalTabsNotifierProvider.notifier)
                     .setShowOrgPlansTab(!current);
               } catch (_) {
-                if (context.mounted) ToastHelper.showError(context, 'Fehler beim Speichern');
+                if (context.mounted) ToastHelper.showError(context, context.l10n.plansSaveFailed);
               }
             },
           ),
           if (key != null)
             IconButton(
-              tooltip: 'Kalender abonnieren',
+              tooltip: context.l10n.plansSubscribeCalendar,
               icon: const Icon(Icons.calendar_month_outlined),
               onPressed: () => _subscribeCalendar(key),
             ),
           if (org != null)
             IconButton(
-              tooltip: 'Öffentlicher Link',
+              tooltip: context.l10n.plansPublicLink,
               icon: Icon(key != null ? Icons.link : Icons.add_link),
               onPressed: () => _managePublicLink(key),
             ),
@@ -214,24 +222,23 @@ class _OrgPlansPageState extends ConsumerState<OrgPlansPage> {
             if (orgAsync.isLoading)
               const Padding(padding: EdgeInsets.all(24), child: Center(child: CircularProgressIndicator()))
             else if (org == null)
-              const ListTile(
-                leading: Icon(Icons.info_outline, color: AppColors.medium),
-                title: Text('Diese Instanz ist keiner Organisation zugeordnet.'),
+              ListTile(
+                leading: const Icon(Icons.info_outline, color: AppColors.medium),
+                title: Text(context.l10n.plansNoOrg),
               )
             else
               ...plansAsync.when(
                 loading: () => [
                   const Padding(padding: EdgeInsets.all(24), child: Center(child: CircularProgressIndicator())),
                 ],
-                error: (e, _) => [ListTile(title: Text('Fehler: $e'))],
+                error: (e, _) => [ListTile(title: Text(context.l10n.planningFlutterErrorWith(e)))],
                 data: (entries) {
                   final split = splitOrgPlanEntries(entries);
                   return [
                     if (split.upcoming.isEmpty)
-                      const ListTile(
-                        leading: Icon(Icons.event_outlined, color: AppColors.medium),
-                        title: Text(
-                            'Keine bevorstehenden Org-Pläne. Pläne können über die Ablaufplanung zur Organisation hinzugefügt werden.'),
+                      ListTile(
+                        leading: const Icon(Icons.event_outlined, color: AppColors.medium),
+                        title: Text(context.l10n.plansNoUpcomingOrgPlans),
                       )
                     else
                       Card(
@@ -244,14 +251,14 @@ class _OrgPlansPageState extends ConsumerState<OrgPlansPage> {
                         children: [
                           ListTile(
                             leading: const Icon(Icons.add_circle_outline, color: AppColors.primary),
-                            title: const Text('Ablaufplanung öffnen', style: TextStyle(color: AppColors.primary)),
+                            title: Text(context.l10n.plansOpenPlanning, style: const TextStyle(color: AppColors.primary)),
                             trailing: const Icon(Icons.chevron_right),
                             onTap: () => context.push('/settings/org-plans/planung'),
                           ),
                           if (split.past.isNotEmpty)
                             ListTile(
                               leading: const Icon(Icons.history, color: AppColors.medium),
-                              title: const Text('Vergangene Pläne', style: TextStyle(color: AppColors.medium)),
+                              title: Text(context.l10n.plansPastPlans, style: const TextStyle(color: AppColors.medium)),
                               onTap: () => _showHistory(split.past),
                             ),
                         ],
@@ -262,11 +269,10 @@ class _OrgPlansPageState extends ConsumerState<OrgPlansPage> {
                         margin: const EdgeInsets.all(12),
                         child: ListTile(
                           leading: const Icon(Icons.public, color: AppColors.success),
-                          title: const Text(
-                              'Öffentlicher Link aktiv. Alle Org-Pläne sind für jeden mit dem Link einsehbar.'),
+                          title: Text(context.l10n.plansPublicLinkActive),
                           trailing: TextButton(
                             onPressed: () => _managePublicLink(key),
-                            child: const Text('Verwalten'),
+                            child: Text(context.l10n.plansManage),
                           ),
                         ),
                       ),

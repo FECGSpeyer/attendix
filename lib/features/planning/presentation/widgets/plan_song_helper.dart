@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/utils/plan_utils.dart';
 import '../../../../data/models/plan/plan.dart';
 import '../../../../data/models/song/song.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Song related helpers of the Ablaufplan editor (Ionic `PlanningPage`
 /// `onSongsChange`, `addCurrentSongs`, `resolvePlaceholderFields`).
@@ -119,9 +120,9 @@ class _SongPickerState extends State<_SongPicker> {
               padding: const EdgeInsets.all(12),
               child: TextField(
                 autofocus: true,
-                decoration: const InputDecoration(
-                  hintText: 'Werk suchen...',
-                  prefixIcon: Icon(Icons.search),
+                decoration: InputDecoration(
+                  hintText: context.l10n.attListSearchSong,
+                  prefixIcon: const Icon(Icons.search),
                 ),
                 onChanged: (v) => setState(() => _query = v),
               ),
