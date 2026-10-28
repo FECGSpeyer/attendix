@@ -39,3 +39,5 @@ export 'import_repository.dart';
 export 'agenda_item_repository.dart';
 export 'task_repository.dart';
 export 'protocol_repository.dart';
+// SONGS
+export 'public_song_repository.dart';

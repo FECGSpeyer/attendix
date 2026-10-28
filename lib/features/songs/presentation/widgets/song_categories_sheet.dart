@@ -57,7 +57,7 @@ class _SongCategoriesSheetState extends ConsumerState<SongCategoriesSheet> {
                     const SizedBox(width: AppDimensions.paddingS),
                     Expanded(
                       child: Text(
-                        'Kategorien verwalten',
+                        'Werk-Kategorien',
                         style:
                             Theme.of(context).textTheme.titleMedium?.copyWith(
                                   fontWeight: FontWeight.bold,
