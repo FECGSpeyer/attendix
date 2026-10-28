@@ -41,11 +41,18 @@ class FakeClient implements PushMessagingClient {
   /// SOL_FIX17: when set, the next getToken waits for it (one-shot).
   Completer<void>? tokenGate;
 
+  /// SOL_FIX18: when set, EVERY getToken waits for it (APNs not there yet).
+  Completer<void>? sharedTokenGate;
+  int tokenCalls = 0;
+
   @override
   Future<String?> getToken() async {
+    tokenCalls++;
     final gate = tokenGate;
     tokenGate = null;
     if (gate != null) await gate.future;
+    final shared = sharedTokenGate;
+    if (shared != null) await shared.future;
     return token;
   }
   @override
@@ -145,7 +152,11 @@ void main() {
   late FakePrompt prompt;
   late FakeHost host;
 
-  PushService build({bool native = true, String platform = 'android'}) =>
+  PushService build({
+    bool native = true,
+    String platform = 'android',
+    Duration tokenResolveTimeout = const Duration(seconds: 12),
+  }) =>
       PushService(
         client: client,
         tokens: tokens,
@@ -153,6 +164,7 @@ void main() {
         host: host,
         isNativePlatform: native,
         platform: platform,
+        tokenResolveTimeout: tokenResolveTimeout,
       );
 
   setUp(() {
@@ -249,9 +261,11 @@ void main() {
     expect(tokens.removed, ['tok-1']);
     expect(client.deletes, 1);
     expect(android.currentToken, isNull);
-    await android.removeToken(); // idempotent
-    expect(tokens.removed, hasLength(1));
-    expect(client.deletes, 1);
+    // Repeating it (signedOut event after the logout button) is harmless:
+    // SOL_FIX18 resolves the device token again and revokes FCM again.
+    await android.removeToken();
+    expect(tokens.removed, ['tok-1', 'tok-1']);
+    expect(client.deletes, 2);
     client.deletes = 0;
 
     final ios = build(platform: 'ios');
@@ -438,7 +452,8 @@ void main() {
       gate.complete();
       await registering;
       expect(tokens.saved, isEmpty);
-      expect(tokens.log, isEmpty);
+      // SOL_FIX18: the logout resolved the device token itself.
+      expect(tokens.log, ['delete:tok-1']);
       expect(s.currentToken, isNull);
     });
 
@@ -489,6 +504,76 @@ void main() {
       await stale;
       expect(tokens.saved, ['android:tok-1'], reason: 'stale run wrote nothing');
       expect(s.currentToken, 'tok-1');
+    });
+  });
+
+  // SOL_FIX18: Sol review of 1c9b642 – after an app restart the logout can
+  // come before getToken() returned; the rows of the previous app run must
+  // still be deleted and the FCM token revoked.
+  group('logout before the device token is known', () {
+    test('app restart: logout waits for the device token and deletes it', () async {
+      final apns = Completer<void>();
+      client.sharedTokenGate = apns;
+      final s = build(platform: 'ios');
+      unawaited(s.start()); // bootstrap
+      final registering = s.promptAndEnable(); // initialSession
+      await pumpEventQueue();
+      expect(s.currentToken, isNull, reason: 'registration still waiting');
+
+      final removing = s.removeToken();
+      await pumpEventQueue();
+      expect(tokens.removed, isEmpty, reason: 'waits for the token');
+      expect(client.deletes, 0, reason: 'FCM token revoked after the rows');
+
+      apns.complete();
+      await removing;
+      await registering;
+      expect(tokens.log, ['delete:tok-1'], reason: 'old row deleted, none written');
+      expect(tokens.saved, isEmpty);
+      expect(client.deletes, 1);
+      expect(s.currentToken, isNull);
+    });
+
+    test('logout without any registration in this app run deletes the token', () async {
+      final s = build();
+      await s.removeToken();
+      expect(client.initializations, 1);
+      expect(tokens.removed, ['tok-1']);
+      expect(client.deletes, 1);
+    });
+
+    test('no token at all: no row delete, FCM token revoked anyway', () async {
+      client.token = null;
+      final s = build();
+      await s.removeToken();
+      expect(tokens.removed, isEmpty);
+      expect(client.deletes, 1);
+    });
+
+    test('a token that never comes does not block the logout', () async {
+      client.sharedTokenGate = Completer<void>(); // never completes
+      final s = build(tokenResolveTimeout: const Duration(milliseconds: 20));
+      await s.removeToken();
+      expect(tokens.removed, isEmpty);
+      expect(client.deletes, 1);
+    });
+
+    test('missing Firebase: no token lookup, delete call is a harmless no-op', () async {
+      client.available = false;
+      final s = build();
+      await s.removeToken();
+      expect(client.tokenCalls, 0);
+      expect(tokens.removed, isEmpty);
+      expect(client.deletes, 1);
+    });
+
+    test('a resolved token is deleted once next to the session tokens', () async {
+      final s = build();
+      await s.initPush();
+      client.token = 'tok-new';
+      await s.removeToken();
+      expect(tokens.removed, ['tok-1', 'tok-new']);
+      expect(client.deletes, 1);
     });
   });
 }

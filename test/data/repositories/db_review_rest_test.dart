@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:attendix/core/constants/enums.dart';
@@ -240,6 +241,28 @@ void main() {
       expect(aasa, contains('WJ62LFJT38.de.attendix.attendix'));
       expect(aasa, contains('MXM3YWAKPL.io.stephanus.attendix'));
       expect(File('web/.well-known/assetlinks.json').existsSync(), isTrue);
+    });
+
+    test('SOL_FIX18: AASA is valid JSON and lists the team the iOS project signs with', () {
+      final aasa = jsonDecode(read('web/.well-known/apple-app-site-association'))
+          as Map<String, dynamic>;
+      final details = ((aasa['applinks'] as Map)['details'] as List).cast<Map>();
+      final byId = {for (final d in details) d['appID'] as String: d['paths'] as List};
+      final team = RegExp(r'DEVELOPMENT_TEAM = (\w+);')
+          .allMatches(read('ios/Runner.xcodeproj/project.pbxproj'))
+          .map((m) => m.group(1)!)
+          .toSet();
+      expect(team, {'MXM3YWAKPL'});
+      // Flutter app (signed with MXM3YWAKPL) + the Ionic app IDs.
+      for (final id in [
+        'MXM3YWAKPL.de.attendix.attendix',
+        'WJ62LFJT38.de.attendix.attendix',
+        'MXM3YWAKPL.io.stephanus.attendix',
+      ]) {
+        expect(byId, contains(id), reason: id);
+      }
+      expect(byId['MXM3YWAKPL.de.attendix.attendix'],
+          byId['WJ62LFJT38.de.attendix.attendix']);
     });
   });
 

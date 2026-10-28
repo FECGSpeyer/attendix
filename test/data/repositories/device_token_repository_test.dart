@@ -37,6 +37,18 @@ void main() {
       expect(source, contains(".eq('user_id', userId)\n          .neq('token', token)"));
     });
 
+    test('SOL_FIX18: logout delete is scoped by token AND user', () {
+      final start = source.indexOf('Future<void> removeToken(String token) async');
+      final body = source.substring(start, source.indexOf('\n  }\n', start));
+      expect(body, contains('if (userId == null) return;'));
+      final delete = RegExp("\\.from\\('device_tokens'\\)[^;]*;", dotAll: true)
+          .firstMatch(body)!
+          .group(0)!;
+      expect(delete, contains('.delete()'));
+      expect(delete, contains(".eq('token', token)"));
+      expect(delete, contains(".eq('user_id', userId)"));
+    });
+
     test('upsert writes the Ionic columns', () {
       final upsert =
           queries('device_tokens').where((q) => q.contains('.upsert(')).single;

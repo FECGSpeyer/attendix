@@ -55,7 +55,12 @@ class PushService {
     required this.host,
     required this.isNativePlatform,
     required this.platform,
+    this.tokenResolveTimeout = const Duration(seconds: 12),
   });
+
+  /// SOL_FIX18: how long [removeToken] waits for the device token (iOS
+  /// waits up to 10 s for APNs, see FirebasePushMessagingClient.getToken).
+  final Duration tokenResolveTimeout;
 
   final PushMessagingClient client;
   final DeviceTokenStore tokens;
@@ -317,6 +322,10 @@ class PushService {
   /// token refresh listener stopped) so no running registration can write
   /// again, then waits for the writes already in flight, and only then
   /// deletes the rows – a late upsert cannot recreate them.
+  ///
+  /// SOL_FIX18: also deletes the rows of the device token it resolves
+  /// itself (registration not finished yet), and always revokes the FCM
+  /// token.
   Future<void> removeToken() async {
     if (!isNativePlatform) return;
     _generation++;
@@ -326,7 +335,7 @@ class PushService {
     _tokenRefreshSub = null;
     final current = _currentToken;
     _currentToken = null;
-    final toDelete = {if (current != null) current, ..._sessionTokens};
+    final toDelete = <String>{if (current != null) current, ..._sessionTokens};
     _sessionTokens.clear();
     final inFlight = _pendingWrites.toList();
 
@@ -335,9 +344,16 @@ class PushService {
     } catch (e) {
       _log('token refresh cancel failed', e);
     }
+    // SOL_FIX18: after an app restart the logout can come before the
+    // registration's getToken() returned – [toDelete] is then empty although
+    // the rows of the previous app run still carry this device's token.
+    // Resolve the device token here as well, independent of the
+    // registration, so those rows are deleted too.
+    final resolved = await _resolveDeviceToken();
+    if (resolved != null) toDelete.add(resolved);
     if (inFlight.isNotEmpty) await Future.wait(inFlight);
-    if (toDelete.isEmpty) return;
 
+    // Scoped by token value and user (DeviceTokenRepository.removeToken).
     for (final token in toDelete) {
       try {
         await tokens.removeToken(token);
@@ -346,12 +362,30 @@ class PushService {
       }
     }
     // Ionic deletes the FCM token on iOS only; SOL_FIX17: on Android too,
-    // so the token of the signed-out account stops being valid. The client
-    // never throws (no-op without Firebase); guarded anyway (PWA rule).
+    // so the token of the signed-out account stops being valid. SOL_FIX18:
+    // always, also when no token was known or resolved. The client never
+    // throws (no-op without Firebase); guarded anyway (PWA rule).
     try {
       await client.deleteToken();
     } catch (e) {
       _log('Failed to delete FCM token', e);
+    }
+  }
+
+  /// SOL_FIX18: this device's current FCM token, or null (no Firebase, no
+  /// token, or no answer within [tokenResolveTimeout] – the logout must not
+  /// hang). Waits for the shared initialisation first.
+  Future<String?> _resolveDeviceToken() async {
+    try {
+      await _ensureInitialized();
+      if (!_available) return null;
+      final token = await client
+          .getToken()
+          .timeout(tokenResolveTimeout, onTimeout: () => null);
+      return token != null && token.isNotEmpty ? token : null;
+    } catch (e) {
+      _log('resolving the device token failed', e);
+      return null;
     }
   }
 

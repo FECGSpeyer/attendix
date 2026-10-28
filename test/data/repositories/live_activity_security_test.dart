@@ -80,6 +80,26 @@ void main() {
         expect(swift, contains('case "$method"'), reason: method);
       }
     });
+
+    test('SOL_FIX18: native uploads are gated and awaited on close', () {
+      final swift = File('ios/Runner/LiveActivityPlugin.swift').readAsStringSync();
+      expect(swift, contains('case "setRegistrationOpen": setRegistrationOpen(args, result)'));
+      expect(swift, contains('LiveActivityTokenReporter.shared.setUploadsOpen(open)'));
+      // upload() bails out while closed and tracks every request.
+      final upload = swift.substring(swift.indexOf('private func upload('));
+      expect(upload, contains('guard uploadsOpen,'));
+      expect(upload, contains('group.enter()'));
+      expect(upload, contains('group.leave()'));
+      expect(swift, contains('uploads.notify(queue: .main, execute: completion)'));
+      // Balanced braces / parentheses as a cheap syntax sanity check.
+      expect('{'.allMatches(swift).length, '}'.allMatches(swift).length);
+      expect('('.allMatches(swift).length, ')'.allMatches(swift).length);
+      // Dart closes before it deletes rows and re-opens on init.
+      final end = service.substring(service.indexOf('Future<void> endSession('));
+      expect(end.indexOf('_setNativeRegistrationOpen(false)'),
+          lessThan(end.indexOf('_host.removeTokens(')));
+      expect(service, contains('await _setNativeRegistrationOpen(true);'));
+    });
   });
 
   group('Notifications page toggle', () {
