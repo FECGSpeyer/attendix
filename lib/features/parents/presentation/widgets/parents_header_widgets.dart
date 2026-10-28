@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/constants/app_constants.dart';
@@ -17,7 +16,7 @@ import '../../../../data/models/tenant/tenant.dart';
 import '../../data/providers/parents_providers.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // PARITY_R5
+import '../../../../shared/widgets/layout/ionic_ios.dart'; // IOS_PAGES3
 
 /// App bar title of the parents page (Ionic: tenant switcher when the user
 /// has more than one tenant, otherwise the tenant's long name).
@@ -222,13 +221,11 @@ class _KidChip extends StatelessWidget {
   }
 }
 
-String _formatSongDate(String date) {
-  final parsed = DateTime.tryParse(date);
-  if (parsed == null) return date;
-  return DateFormat('EEE, ${dateFmt()}', currentIntlLocale()).format(parsed);
-}
-
-/// "Aktuelle Werke" sheet: songs of upcoming Termine grouped by date.
+/// "Aktuelle Werke" sheet (Ionic parents `songsModal`): toolbar with the
+/// close button at the start, light content with one inset list per Termin
+/// (list header = Ionic group key "DD.MM.YYYY | Typ"), button rows
+/// "Nr. Name" / "Dirigent: …" with the download icon when the song has a
+/// link; tapping a row opens the link.
 Future<void> showCurrentSongsSheet(
   BuildContext context,
   List<({String date, List<SongHistory> history})> groups,
@@ -239,58 +236,58 @@ Future<void> showCurrentSongsSheet(
     isScrollControlled: true,
     useSafeArea: true,
     builder: (sheetContext) => FractionallySizedBox(
+      // Ionic breakpoints: 0.8 (several Termine) / 0.6 (one Termin)
       heightFactor: groups.length > 1 ? 0.8 : 0.6,
-      child: Scaffold(
-        appBar: AppBar(
-          toolbarHeight: ionModalToolbarHeight(context), // PARITY_R5
-          title: Text(sheetContext.l10n.signoutCurrentSongs),
-          automaticallyImplyLeading: false,
-          leading: IconButton(
-            icon: const Icon(Icons.close),
-            onPressed: () => Navigator.of(sheetContext).pop(),
-          ),
-        ),
-        body: ListView(
-          padding: const EdgeInsets.all(AppDimensions.paddingM),
-          children: [
-            for (final group in groups) ...[
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                    vertical: AppDimensions.paddingS),
-                child: Text(
-                  _formatSongDate(group.date),
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-              ),
-              Card(
-                margin: EdgeInsets.zero,
-                child: Column(
-                  children: [
-                    for (final his in group.history)
-                      if (his.song != null)
-                        ListTile(
-                          title: Text(
-                            '${his.song!.number ?? ''}. ${his.song!.name}',
-                          ),
-                          subtitle: (his.conductorName ?? '').isNotEmpty
-                              ? Text(sheetContext.l10n.signoutConductor(his.conductorName!))
-                              : null,
-                          trailing: (his.song!.link ?? '').isNotEmpty
-                              ? const Icon(Icons.download_outlined)
-                              : null,
-                          onTap: (his.song!.link ?? '').isNotEmpty
-                              ? () => launchUrl(
-                                    Uri.parse(his.song!.link!),
-                                    mode: LaunchMode.externalApplication,
-                                  )
-                              : null,
-                        ),
-                  ],
-                ),
+      child: Column(
+        children: [
+          // IOS_PAGES3: Ionic ion-toolbar – close (start) + title
+          IonSheetHeader(
+            title: sheetContext.l10n.signoutCurrentSongs,
+            start: [
+              IconButton(
+                tooltip: sheetContext.l10n.commonClose,
+                icon: const Icon(Icons.close),
+                onPressed: () => Navigator.of(sheetContext).pop(),
               ),
             ],
-          ],
-        ),
+          ),
+          Expanded(
+            child: ColoredBox(
+              color: Theme.of(sheetContext).scaffoldBackgroundColor,
+              child: ListView(
+                padding: const EdgeInsets.only(bottom: AppDimensions.paddingL),
+                children: [
+                  for (final group in groups) ...[
+                    IonListHeader(group.date),
+                    IonInsetList(
+                      children: [
+                        for (final his in group.history)
+                          if (his.song != null)
+                            IonItem(
+                              title: Text('${his.song!.number ?? ''}. ${his.song!.name}'),
+                              subtitle: (his.conductorName ?? '').isNotEmpty
+                                  ? Text(sheetContext.l10n.signoutConductor(his.conductorName!))
+                                  : null,
+                              trailing: (his.song!.link ?? '').isNotEmpty
+                                  ? const Icon(Icons.download_outlined)
+                                  : null,
+                              // Ionic `ion-item button` → iOS detail chevron
+                              detail: true,
+                              onTap: () {
+                                final link = his.song!.link ?? '';
+                                if (link.isEmpty) return;
+                                launchUrl(Uri.parse(link),
+                                    mode: LaunchMode.externalApplication);
+                              },
+                            ),
+                      ],
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     ),
   );

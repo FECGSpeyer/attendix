@@ -244,11 +244,17 @@ class _MessageComposePageState extends ConsumerState<MessageComposePage> {
 
     return Scaffold(
       appBar: AppBar(
-        leading: TextButton(
-          onPressed: _sending ? null : () => Navigator.of(context).pop(),
-          child: Text(l10n.commonCancel),
+        // IOS_PAGES3: iOS → the start ion-button in a Liquid Glass capsule
+        leading: Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: ToolbarButtonGroup(children: [
+            TextButton(
+              onPressed: _sending ? null : () => Navigator.of(context).pop(),
+              child: Text(l10n.commonCancel),
+            ),
+          ]),
         ),
-        leadingWidth: 100,
+        leadingWidth: useIosLook(context) ? 150 : 100,
         title: Text(l10n.messagesNewMessage),
       ),
       body: Stack(

@@ -131,16 +131,8 @@ class _SongCategoriesSheetState extends ConsumerState<SongCategoriesSheet> {
                   },
                 ),
               ),
-              // Hint
-              Padding(
-                padding: const EdgeInsets.all(AppDimensions.paddingM),
-                child: Text(
-                  context.l10n.songsFlutterReorderCategoriesHint,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: AppColors.medium,
-                      ),
-                ),
-              ),
+              // IOS_PAGES3: no footer hint – Ionic shows only the reorder
+              // handles in the list.
             ],
           ),
         );

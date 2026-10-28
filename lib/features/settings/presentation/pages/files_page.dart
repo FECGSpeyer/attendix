@@ -910,15 +910,8 @@ class _FilesPageState extends ConsumerState<FilesPage> {
             ]),
         ],
       ),
-      // Ionic has no FAB (upload lives in the toolbar menu); Flutter keeps
-      // it on Material only.
-      floatingActionButton: canAccess && canEdit && !ionIsIos(context)
-          ? FloatingActionButton(
-              onPressed: _upload,
-              tooltip: context.l10n.filesUpload,
-              child: const Icon(Icons.cloud_upload_outlined),
-            )
-          : null,
+      // IOS_PAGES3: Ionic has no FAB in either mode – upload lives in the
+      // toolbar menu (⋮ → Hochladen).
       body: isRoleLoading
           ? const Center(child: AppSpinner())
           : !canAccess
@@ -946,52 +939,39 @@ class _FilesPageState extends ConsumerState<FilesPage> {
 
   Widget _buildBreadcrumbs() {
     final segments = _pathSegments;
-    if (ionIsIos(context)) {
-      // Ionic .breadcrumbs-container: medium crumbs (0.88rem/500), the
-      // active (last) one in primary, chevron separators.
-      Widget crumb(String label, String path, bool active) => GestureDetector(
-            onTap: () => _navigateTo(path),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
-              child: Text(
-                label,
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: active ? AppColors.primary : AppColors.medium,
-                ),
+    // IOS_PAGES3: same breadcrumbs in md mode (files.page.scss is mode-free).
+    // Ionic .breadcrumbs-container: medium crumbs (0.88rem/500), the
+    // active (last) one in primary, chevron separators.
+    Widget crumb(String label, String path, bool active) => GestureDetector(
+          onTap: () => _navigateTo(path),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+            child: Text(
+              label,
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: active ? AppColors.primary : AppColors.medium,
               ),
             ),
-          );
-      final crumbs = <Widget>[crumb(context.l10n.filesRoot, '', segments.isEmpty)];
-      for (var i = 0; i < segments.length; i++) {
-        crumbs.add(const Icon(CupertinoIcons.chevron_forward, size: 14, color: AppColors.medium));
-        crumbs.add(crumb(
-          segments[i],
-          segments.sublist(0, i + 1).join('/'),
-          i == segments.length - 1,
-        ));
-      }
-      return SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.fromLTRB(10, 14, 10, 12),
-        child: Row(children: crumbs),
-      );
-    }
-    final chips = <Widget>[
-      TextButton(onPressed: () => _navigateTo(''), child: Text(context.l10n.filesRoot)),
-    ];
+          ),
+        );
+    final crumbs = <Widget>[crumb(context.l10n.filesRoot, '', segments.isEmpty)];
     for (var i = 0; i < segments.length; i++) {
-      chips.add(const Icon(Icons.chevron_right, size: 18, color: AppColors.medium));
-      chips.add(TextButton(
-        onPressed: () => _navigateTo(segments.sublist(0, i + 1).join('/')),
-        child: Text(segments[i]),
+      crumbs.add(Icon(
+          ionIsIos(context) ? CupertinoIcons.chevron_forward : Icons.chevron_right,
+          size: ionIsIos(context) ? 14 : 18,
+          color: AppColors.medium));
+      crumbs.add(crumb(
+        segments[i],
+        segments.sublist(0, i + 1).join('/'),
+        i == segments.length - 1,
       ));
     }
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingS),
-      child: Row(children: chips),
+      padding: const EdgeInsets.fromLTRB(10, 14, 10, 12),
+      child: Row(children: crumbs),
     );
   }
 
@@ -1144,13 +1124,13 @@ class _FilesPageState extends ConsumerState<FilesPage> {
         ),
       );
     } else {
+      // IOS_PAGES3: Ionic folder-outline / document-outline for every
+      // entry; md start icons in the 54 % text colour, no primary tint.
       leading = Icon(
-        entry.isFolder
-            ? Icons.folder_outlined
-            : FilesSearch.isAudio(entry)
-                ? Icons.audiotrack_outlined
-                : Icons.description_outlined,
-        color: ios ? null : (entry.isFolder ? AppColors.primary : null),
+        entry.isFolder ? Icons.folder_outlined : Icons.insert_drive_file_outlined,
+        color: ios
+            ? null
+            : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.54),
       );
     }
 

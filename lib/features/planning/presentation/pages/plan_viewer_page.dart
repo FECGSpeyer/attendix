@@ -10,6 +10,8 @@ import '../widgets/plan_view_list.dart';
 import '../widgets/ion_items.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/adaptive/adaptive_platform.dart' show useIosLook; // IOS_PAGES3
+import '../../../../shared/widgets/adaptive/app_toolbar.dart' show ToolbarButtonGroup; // IOS_PAGES3
 
 /// Read-only Ablaufplan with chips for several plans, live mode and export
 /// (Ionic `PlanViewerComponent`). Opened as full screen dialog.
@@ -130,13 +132,18 @@ class _PlanViewerPageState extends ConsumerState<PlanViewerPage> {
     return Scaffold(
       appBar: AppBar(
         // Ionic: modal with close button at the start.
-        leading: IconButton(
-          tooltip: context.l10n.commonClose,
-          icon: const Icon(Icons.close),
-          onPressed: () => Navigator.of(context).maybePop(),
-        ),
+        // IOS_PAGES3: iOS → ion-buttons in a Liquid Glass capsule.
+        leadingWidth: useIosLook(context) ? 68 : null,
+        leading: ToolbarButtonGroup(children: [
+          IconButton(
+            tooltip: context.l10n.commonClose,
+            icon: const Icon(Icons.close),
+            onPressed: () => Navigator.of(context).maybePop(),
+          ),
+        ]),
         title: Text(date != null ? DateFormat(dateFmt()).format(date) : _title),
         actions: [
+          ToolbarButtonGroup(children: [
           if (_isLiveNow())
             IconButton(
               tooltip: _live ? context.l10n.planningFlutterLiveModeEnd : context.l10n.planningFlutterLiveMode,
@@ -159,6 +166,7 @@ class _PlanViewerPageState extends ConsumerState<PlanViewerPage> {
             icon: const Icon(Icons.ios_share),
             onPressed: _export,
           ),
+          ]),
         ],
       ),
       body: ListView(

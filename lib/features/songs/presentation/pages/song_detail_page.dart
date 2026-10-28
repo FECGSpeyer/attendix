@@ -408,10 +408,11 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
                 decoration: ionInputDecoration(context, label: context.l10n.songsName),
               ),
             ),
-            const SizedBox(height: AppDimensions.paddingS),
-            DropdownButtonFormField<int?>(
+            // IOS_PAGES3: Ionic `ion-select [label]` (popover): label at
+            // the start, value + toggle icon at the end, item line below.
+            _InlineSelect<int?>(
+              label: context.l10n.songsDifficulty,
               value: _difficulty,
-              decoration: ionInputDecoration(context, label: context.l10n.songsDifficulty),
               items: [
                 DropdownMenuItem(value: null, child: Text(context.l10n.songsNotDefined)),
                 DropdownMenuItem(value: 1, child: Text(context.l10n.songsEasy)),
@@ -423,6 +424,7 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
                 _update(data);
               },
             ),
+            const Divider(height: 0.5, thickness: 0.5),
             SwitchListTile.adaptive(
               contentPadding: EdgeInsets.zero,
               title: Text(context.l10n.songsChoirOrchestra),
@@ -432,6 +434,7 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
                 _update(data);
               },
             ),
+            const Divider(height: 0.5, thickness: 0.5),
             SwitchListTile.adaptive(
               contentPadding: EdgeInsets.zero,
               title: Text(context.l10n.songsWithSoloSinging),
@@ -441,7 +444,8 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
                 _update(data);
               },
             ),
-            if (data.isOrchestra)
+            const Divider(height: 0.5, thickness: 0.5),
+            if (data.isOrchestra) ...[
               _MultiSelectTile<int>(
                 title: context.l10n.songsInstrumentation,
                 options: [
@@ -454,6 +458,8 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
                   _update(data);
                 },
               ),
+              const Divider(height: 0.5, thickness: 0.5),
+            ],
             _MultiSelectTile<String>(
               title: context.l10n.songsCategories,
               options: [
@@ -532,7 +538,14 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
             padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM),
             child: Column(
               children: [
-                for (final field in data.additionalFields) _buildField(data, field),
+                // IOS_PAGES3: one ion-item per field, item lines between
+                for (var i = 0; i < data.additionalFields.length; i++) ...[
+                  if (i > 0 &&
+                      (data.additionalFields[i - 1].isBoolean ||
+                          data.additionalFields[i - 1].isSelect))
+                    const Divider(height: 0.5, thickness: 0.5),
+                  _buildField(data, data.additionalFields[i]),
+                ],
               ],
             ),
           ),
@@ -558,9 +571,10 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
     }
     if (field.isSelect) {
       final current = field.options.contains(value) ? value as String : null;
-      return DropdownButtonFormField<String>(
+      // IOS_PAGES3: Ionic `ion-select interface="popover" [label]`
+      return _InlineSelect<String>(
+        label: field.name,
         value: current,
-        decoration: ionInputDecoration(context, label: field.name),
         items: [
           for (final o in field.options) DropdownMenuItem(value: o, child: Text(o)),
         ],
@@ -634,6 +648,57 @@ class _IonChip extends StatelessWidget {
   }
 }
 
+/// IOS_PAGES3: Ionic `ion-select [label]` inside an `ion-item`: label at
+/// the start, the selected value (medium) with the toggle icon at the end.
+class _InlineSelect<T> extends StatelessWidget {
+  const _InlineSelect({
+    required this.label,
+    required this.value,
+    required this.items,
+    required this.onChanged,
+  });
+
+  final String label;
+  final T? value;
+  final List<DropdownMenuItem<T>> items;
+  final ValueChanged<T?>? onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return ConstrainedBox(
+      constraints: BoxConstraints(minHeight: isIosLook(context) ? 52 : 48),
+      child: Row(
+        children: [
+          Text(label, style: Theme.of(context).textTheme.bodyLarge),
+          const SizedBox(width: 16),
+          Expanded(
+            child: DropdownButtonHideUnderline(
+              child: AppDropdownButton<T>(
+                value: value,
+                isExpanded: true,
+                alignment: AlignmentDirectional.centerEnd,
+                items: items,
+                selectedItemBuilder: (context) => [
+                  for (final it in items)
+                    Align(
+                      alignment: AlignmentDirectional.centerEnd,
+                      child: DefaultTextStyle.merge(
+                        style: const TextStyle(color: AppColors.medium),
+                        overflow: TextOverflow.ellipsis,
+                        child: it.child,
+                      ),
+                    ),
+                ],
+                onChanged: onChanged,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 /// Multi select (Ionic `ion-select multiple interface="modal"`).
 /// Options: (value, label, disabled).
 class _MultiSelectTile<T> extends StatelessWidget {
@@ -696,11 +761,31 @@ class _MultiSelectTile<T> extends StatelessWidget {
         .where((o) => selected.contains(o.$1))
         .map((o) => o.$2)
         .join(', ');
+    // IOS_PAGES3: Ionic `ion-select multiple [label]`: label at the
+    // start, the selected names (ellipsised) and the toggle icon at the end.
     return ListTile(
       contentPadding: EdgeInsets.zero,
       title: Text(title),
-      subtitle: Text(names.isEmpty ? '-' : names, maxLines: 3, overflow: TextOverflow.ellipsis),
-      trailing: const Icon(Icons.arrow_drop_down),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: MediaQuery.sizeOf(context).width * 0.4,
+            ),
+            child: Text(
+              names,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(color: AppColors.medium),
+            ),
+          ),
+          const SizedBox(width: 4),
+          isIosLook(context)
+              ? const IonSelectIcon()
+              : const Icon(Icons.arrow_drop_down),
+        ],
+      ),
       onTap: options.isEmpty ? null : () => _open(context),
     );
   }
