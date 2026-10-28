@@ -16,6 +16,9 @@ export '../../data/repositories/sign_in_out_repository.dart'
 /// Provider for all person attendances across all tenants for the current user
 final allPersonAttendancesAcrossTenantsProvider =
     FutureProvider<List<CrossTenantPersonAttendance>>((ref) async {
+  // SOL_FIX14: per-user data – reload when the account changes.
+  final userId = ref.watch(currentAuthUserIdProvider);
+  if (userId == null) return const [];
   final repo = ref.watch(signInOutRepositoryProvider);
   return repo.getAllPersonAttendancesAcrossTenants();
 });

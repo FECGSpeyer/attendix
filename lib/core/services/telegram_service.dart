@@ -371,11 +371,11 @@ final telegramServiceProvider = Provider<TelegramService>((ref) {
 
 /// Provider for notification config
 final notificationConfigProvider = FutureProvider<NotificationConfig?>((ref) async {
-  final supabase = ref.watch(supabaseClientProvider);
-  final user = supabase.auth.currentUser;
+  // SOL_FIX14: per-user data – reload when the account changes.
+  final userId = ref.watch(currentAuthUserIdProvider);
 
-  if (user == null) return null;
+  if (userId == null) return null;
 
   final telegramService = ref.watch(telegramServiceProvider);
-  return telegramService.getNotificationConfig(user.id);
+  return telegramService.getNotificationConfig(userId);
 });

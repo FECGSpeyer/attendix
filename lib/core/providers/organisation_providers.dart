@@ -18,8 +18,8 @@ final currentOrganisationProvider = FutureProvider<Organisation?>((ref) async {
 
 /// Provider for all organisations the current user has access to
 final userOrganisationsProvider = FutureProvider<List<Organisation>>((ref) async {
-  final supabase = ref.watch(supabaseClientProvider);
-  final userId = supabase.auth.currentUser?.id;
+  // SOL_FIX14: per-user data – reload when the account changes.
+  final userId = ref.watch(currentAuthUserIdProvider);
   if (userId == null) return [];
 
   final repo = ref.watch(organisationRepositoryProvider);

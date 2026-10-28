@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/constants/enums.dart';
+import '../../core/services/cross_tenant_service.dart' show CrossTenantService;
 import '../../core/utils/event_list_utils.dart';
 import '../models/attendance/attendance.dart';
 import '../../core/utils/duty_utils.dart';
@@ -473,8 +474,8 @@ class SignInOutRepository extends BaseRepository with TenantAwareRepository {
   /// IOS_ATT_PAGES: same scope as Ionic –
   /// * tenants = the user's `tenantUsers` memberships (not every `player`
   ///   row linked to the account),
-  /// * one person per tenant (`getPersonIdForTenant` uses `.single()`:
-  ///   no or several linked persons → the tenant is skipped),
+  /// * one person per tenant: the active linked row (SOL_FIX14 – Ionic's
+  ///   `.single()` skipped tenants with several rows; no row → skipped),
   /// * only Termine after the tenant's `seasonStart` (default 2023-01-01),
   /// * tenant label `longName || shortName`, colour by membership order,
   /// * sorted by date ascending.
@@ -529,14 +530,18 @@ class SignInOutRepository extends BaseRepository with TenantAwareRepository {
     required String tenantColor,
   }) async {
     // SEC: the person of the user in this tenant (tenantId + appId).
+    // SOL_FIX14: load every linked row incl. pending / left and pick the
+    // active one (same choice as CrossTenantService.getPersonIdForTenant).
+    // Ionic's `.single()` fails when the account has several rows in the
+    // tenant (e.g. an archived and a new active one) and the tenant's
+    // Termine vanished from the Übersicht.
     final persons = await supabase
         .from('player')
-        .select('id')
+        .select('id, pending, left')
         .eq('tenantId', tenantId)
         .eq('appId', userId);
-    // Ionic `.single()`: no or several linked persons → no Termine.
-    if ((persons as List).length != 1) return const [];
-    final personId = _toInt(persons.first['id']);
+    final personId = CrossTenantService.pickPersonIdForTenant(
+        (persons as List).cast<Map<String, dynamic>>());
     if (personId == null) return const [];
 
     // SEC: person_attendances has no tenantId – the inner join on attendance

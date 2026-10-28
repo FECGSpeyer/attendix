@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../../../core/config/supabase_config.dart';
 import '../../../../data/models/song/song.dart';
 
 /// Group of songs for a specific date/attendance
@@ -22,7 +23,8 @@ class UpcomingSongGroup {
 final upcomingSongsProvider =
     FutureProvider<List<UpcomingSongGroup>>((ref) async {
   final supabase = Supabase.instance.client;
-  final userId = supabase.auth.currentUser?.id;
+  // SOL_FIX14: per-user data – reload when the account changes.
+  final userId = ref.watch(currentAuthUserIdProvider);
   if (userId == null) return [];
 
   // Get all person records for this user
@@ -125,7 +127,8 @@ final upcomingSongsProvider =
 /// Provider to get the current user's instrument ID
 final currentPlayerInstrumentProvider = FutureProvider<int?>((ref) async {
   final supabase = Supabase.instance.client;
-  final userId = supabase.auth.currentUser?.id;
+  // SOL_FIX14: per-user data – reload when the account changes.
+  final userId = ref.watch(currentAuthUserIdProvider);
   if (userId == null) return null;
 
   final response = await supabase

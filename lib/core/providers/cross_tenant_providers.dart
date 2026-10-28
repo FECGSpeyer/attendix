@@ -16,9 +16,9 @@ final crossTenantServiceProvider = Provider<CrossTenantService>((ref) {
 final crossTenantAttendancesProvider =
     FutureProvider<List<CrossTenantPersonAttendance>>((ref) async {
   final service = ref.watch(crossTenantServiceProvider);
+  // SOL_FIX14: per-user data – reload when the account changes.
+  final userId = ref.watch(currentAuthUserIdProvider);
   final tenants = await ref.watch(userTenantsProvider.future);
-  final supabase = ref.watch(supabaseClientProvider);
-  final userId = supabase.auth.currentUser?.id;
 
   if (userId == null || tenants.isEmpty) return [];
 

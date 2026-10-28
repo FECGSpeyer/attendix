@@ -52,6 +52,21 @@ final currentUserProvider = StreamProvider<User?>((ref) {
   return auth.onAuthStateChange.map((event) => event.session?.user);
 });
 
+/// SOL_FIX14: id of the signed-in account. Notifies only when the account
+/// changes (login, logout, account switch) – not on token refreshes – so
+/// per-user providers can `ref.watch` it and reload for the new account
+/// even when the tenant stays the same. Before the auth stream's first
+/// event it falls back to the client's current user.
+final currentAuthUserIdProvider = Provider<String?>((ref) {
+  final streamed = ref.watch(currentUserProvider);
+  if (streamed.hasValue) return streamed.value?.id;
+  try {
+    return ref.watch(supabaseAuthProvider).currentUser?.id;
+  } catch (_) {
+    return null;
+  }
+});
+
 /// Current session provider
 final currentSessionProvider = StreamProvider<Session?>((ref) {
   final auth = ref.watch(supabaseAuthProvider);

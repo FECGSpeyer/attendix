@@ -59,8 +59,8 @@ class CrossTenantService {
   }
 
   /// Ionic getPersonIdForTenant row choice: first active (not pending, not
-  /// archived) row, otherwise the first row.
-  @visibleForTesting
+  /// archived) row, otherwise the first row. Also used by the Übersicht
+  /// (SignInOutRepository, SOL_FIX14).
   static int? pickPersonIdForTenant(List<Map<String, dynamic>> rows) {
     if (rows.isEmpty) return null;
     final active = rows.where((p) =>
