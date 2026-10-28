@@ -1,6 +1,24 @@
 {
   "versions": [
     {
+      "version": "0.3.0",
+      "date": "28.10.2026",
+      "changes": [
+        "✨ Dashboard mit Kacheln (Geburtstage, Termine, Problemfälle, Abwesenheiten, Werke, Ablaufplan)",
+        "✨ Dienstplan: Dienste einteilen, bestätigen, verteilen, regelmäßig verhindert",
+        "✨ Teamorganisation: Themen, Aufgaben und Protokolle (ersetzt Besprechungen)",
+        "✨ Mitteilungen und Benachrichtigungs-Glocke",
+        "✨ Ablaufpläne: mehrere pro Termin, Programmblöcke, öffentliche Planung und Org-Pläne",
+        "✨ Dateiablage, Rollen & Berechtigungen, Zusatzfelder, Branding, Personen verknüpfen",
+        "✨ Termine im Karten-Layout, Zusagen/Verspätung/Absagen mit Gründen, Ort und Anmeldefelder",
+        "✨ Bulk-Bearbeitung, Personen- und Werke-Import, Personenübergabe, geplante Abwesenheiten",
+        "✨ Werke: Kategorien, Synchronisierung zwischen Instanzen, öffentlicher Werk-Link",
+        "✨ Hilfe-Center, Impressum & Datenschutz, Konto löschen",
+        "✨ Offline-Warteschlange, Profilkarte mit Stammdaten, Passwort/E-Mail ändern",
+        "🐛 Werk-Historie nutzt die richtigen Spalten, Anmeldung zu Terminen funktioniert wieder"
+      ]
+    },
+    {
       "version": "0.2.1",
       "date": "25.6.2026",
       "changes": [

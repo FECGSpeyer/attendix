@@ -8,7 +8,7 @@ class AppConstants {
   AppConstants._();
 
   static const String appName = 'Attendix';
-  static const String appVersion = '0.2.1';
+  static const String appVersion = '0.3.0';
 
   /// Demo credentials from environment (for development only)
   /// SEC-009: Only expose in debug mode
