@@ -128,6 +128,7 @@ class _ShiftsListPageState extends ConsumerState<ShiftsListPage> {
             child: Column(
               children: [
                 AppBar(
+                  toolbarHeight: ionModalToolbarHeight(context), // PARITY_R5
                   automaticallyImplyLeading: false,
                   primary: false,
                   title: Text(sheetContext.l10n.shiftsCreate),

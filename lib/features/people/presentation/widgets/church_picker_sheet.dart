@@ -4,6 +4,7 @@ import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/church/church.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // PARITY_R5
 
 /// Label of a `bfecg_church` value (Ionic person.page getChurchLabel).
 String churchLabel(dynamic value, List<Church> churches) {
@@ -67,6 +68,7 @@ class _ChurchPickerState extends State<_ChurchPicker> {
 
     return Scaffold(
       appBar: AppBar(
+        toolbarHeight: ionModalToolbarHeight(context), // PARITY_R5
         title: Text(widget.title),
         automaticallyImplyLeading: false,
         actions: [

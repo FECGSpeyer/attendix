@@ -160,6 +160,7 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
       // Ionic: ion-content color="light" (grey grouped background).
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
+        toolbarHeight: ionModalToolbarHeight(context), // PARITY_R5
         automaticallyImplyLeading: false,
         title: Text(l10n.planningSectionalPlan),
         actions: [

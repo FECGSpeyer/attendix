@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../adaptive/adaptive_platform.dart';
+import '../adaptive/app_toolbar.dart' show kIonModalToolbarHeight; // PARITY_R5
+import 'ion_modal_handle.dart' show kIonModalSheetRadius; // PARITY_R5
 
 /// Page building blocks that mirror Ionic components as they render in
 /// **iOS mode** (iPhone app and iPhone Safari PWA, @rdlabo ionic-theme-ios26)
@@ -14,6 +16,19 @@ import '../adaptive/adaptive_platform.dart';
 /// True when the app runs with the iOS look (Ionic `mode="ios"`).
 /// Same as the shared adaptive [useIosLook].
 bool isIosLook(BuildContext context) => useIosLook(context);
+
+/// PARITY_R5: background of an `ion-content` without `color` (pages with
+/// plain `ion-list`s or white inset lists, e.g. Team-Organisation, Export,
+/// Lehrer, Gruppen): `--ion-background-color` – white, iOS dark #000, md
+/// dark the theme page (#121212). Pages with `ion-content color="light"`
+/// keep the scaffold default (#f4f5f8).
+Color? ionPlainContentBackground(BuildContext context) {
+  final theme = Theme.of(context);
+  if (theme.brightness == Brightness.dark) {
+    return useIosLook(context) ? AppColors.iosPlainPageDark : null;
+  }
+  return theme.colorScheme.surface;
+}
 
 /// Ionic iOS metrics (ionic-theme-ios26).
 class IonIos {
@@ -495,13 +510,17 @@ class IonSheetHeader extends StatelessWidget {
       ),
     );
     final header = Container(
-      height: 56,
+      // PARITY_R5: iOS sheet toolbar 64pt (ionic-theme-ios27 modal-sheet
+      // `--min-height: 64px`, no padding); md toolbar 56.
+      height: ios ? kIonModalToolbarHeight : 56,
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        // Matches the bottom sheet's rounded top corners (PARITY_R3: md
-        // sheets are square like Ionic md modals).
+        // Matches the bottom sheet's rounded top corners (ios27
+        // `.modal-sheet --border-radius: 32px`; PARITY_R3: md sheets are
+        // square like Ionic md modals).
         borderRadius: ios
-            ? const BorderRadius.vertical(top: Radius.circular(16))
+            ? const BorderRadius.vertical(
+                top: Radius.circular(kIonModalSheetRadius))
             : null,
       ),
       child: _PrimaryIconButtons(

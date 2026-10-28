@@ -214,6 +214,7 @@ class _PlanShareSheetState extends State<_PlanShareSheet> {
     return Column(
       children: [
         AppBar(
+          toolbarHeight: ionModalToolbarHeight(context), // PARITY_R5
           automaticallyImplyLeading: false,
           primary: false,
           title: Text(l10n.attendanceShareRunSheet),

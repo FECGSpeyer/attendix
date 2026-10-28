@@ -228,6 +228,7 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
           child: Column(
             children: [
               AppBar(
+                toolbarHeight: ionModalToolbarHeight(context), // PARITY_R5
                 automaticallyImplyLeading: false,
                 leading: IconButton(
                   icon: const Icon(Icons.close),
@@ -332,6 +333,8 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
     final l10n = context.l10n;
 
     return Scaffold(
+      // PARITY_R5: page colour of the team-org page shows through.
+      backgroundColor: Colors.transparent,
       floatingActionButton: TabBarFab.wrap(FloatingActionButton(
         heroTag: 'team-org-add-topic',
         tooltip: l10n.teamOrgCreateTopic,
@@ -673,6 +676,7 @@ class _SuggestSheetState extends ConsumerState<_SuggestSheet> {
         mainAxisSize: MainAxisSize.min,
         children: [
           AppBar(
+            toolbarHeight: ionModalToolbarHeight(context), // PARITY_R5
             automaticallyImplyLeading: false,
             leading: TextButton(onPressed: () => Navigator.of(context).pop(), child: Text(l10n.commonCancel)),
             leadingWidth: 100,

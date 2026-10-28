@@ -26,6 +26,24 @@ void showStatusOverviewSheet(
   );
 }
 
+/// PARITY_R5: counts of the Ionic `StatusInfoComponent`: every person row
+/// of the Termin (`players` = all person_attendances, only narrowed to the
+/// helper's group – never by the search or the status filter); a person
+/// without a known status counts as Neutral.
+({Map<AttendanceStatus, int> counts, int total}) statusOverviewCounts(
+  Iterable<int> personIds,
+  Map<int, AttendanceStatus> statuses,
+) {
+  final counts = {for (final s in AttendanceStatus.values) s: 0};
+  var total = 0;
+  for (final id in personIds) {
+    final s = statuses[id] ?? AttendanceStatus.neutral;
+    counts[s] = counts[s]! + 1;
+    total++;
+  }
+  return (counts: counts, total: total);
+}
+
 /// Statuses of the Ionic status overview, in Ionic order
 /// (`getAvailableStatuses`).
 const _overviewOrder = [
@@ -121,7 +139,8 @@ class StatusOverviewSheet extends StatelessWidget {
           decoration: BoxDecoration(
             color: background,
             borderRadius: ios
-                ? const BorderRadius.vertical(top: Radius.circular(30))
+                ? const BorderRadius.vertical(
+                    top: Radius.circular(kIonModalSheetRadius)) // PARITY_R5
                 : null,
           ),
           clipBehavior: Clip.antiAlias,

@@ -198,66 +198,7 @@ extension on _ChangePasswordDialogState {
   }
 }
 
-/// IOS_FORMS1: text input of an iOS `ion-alert` (`.alert-input`): 16pt
-/// text, 7pt padding and radius, 0.55pt grey border on the page
-/// background, 10pt above each input.
-class IosAlertInput extends StatelessWidget {
-  const IosAlertInput({
-    super.key,
-    required this.controller,
-    this.placeholder,
-    this.obscureText = false,
-    this.autofocus = false,
-    this.keyboardType,
-    this.onSubmitted,
-  });
-
-  final TextEditingController controller;
-  final String? placeholder;
-  final bool obscureText;
-  final bool autofocus;
-  final TextInputType? keyboardType;
-  final ValueChanged<String>? onSubmitted;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final dark = theme.brightness == Brightness.dark;
-    final border = OutlineInputBorder(
-      borderRadius: BorderRadius.circular(7),
-      borderSide: BorderSide(
-        color: dark ? const Color(0xFF404040) : const Color(0xFFBFBFBF),
-        width: 0.55,
-      ),
-    );
-    return Padding(
-      padding: const EdgeInsets.only(top: 10),
-      child: TextField(
-        controller: controller,
-        obscureText: obscureText,
-        autofocus: autofocus,
-        keyboardType: keyboardType,
-        onSubmitted: onSubmitted,
-        style: TextStyle(fontSize: 16, color: theme.colorScheme.onSurface),
-        decoration: InputDecoration(
-          hintText: placeholder,
-          hintStyle: TextStyle(
-            fontSize: 16,
-            color: dark ? const Color(0xFF8C8C8C) : const Color(0xFF999999),
-          ),
-          isDense: true,
-          filled: true,
-          fillColor: dark ? Colors.black : Colors.white,
-          contentPadding: const EdgeInsets.all(7),
-          border: border,
-          enabledBorder: border,
-          focusedBorder: border,
-          disabledBorder: border,
-        ),
-      ),
-    );
-  }
-}
+// PARITY_R5: IosAlertInput moved to the shared adaptive app_dialog.dart.
 
 /// Dialog for changing the own login e-mail address
 class ChangeEmailDialog extends ConsumerStatefulWidget {

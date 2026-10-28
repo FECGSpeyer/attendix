@@ -28,6 +28,9 @@ import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 import '../../../../core/services/native/native_file_service.dart'; // NATIVE_MISC
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
+import '../../../../shared/widgets/layout/ionic_ios.dart' show ionPlainContentBackground; // PARITY_R5
+import '../../../../shared/widgets/dialogs/ion_modal.dart' show showIonModal; // PARITY_R5
+import 'package:go_router/go_router.dart'; // PARITY_R5
 
 /// Export Page
 ///
@@ -35,8 +38,29 @@ import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 /// Port of Ionic export.page.ts: standard fields + tenant extra fields
 /// (additional_fields), custom empty columns, sorting, season-wide
 /// attendance export.
+/// PARITY_R5: Ionic settings `openExport()` presents the ExportPage with
+/// `modalController.create({ component, presentingElement })`: on iOS a
+/// card modal ([showIosCardModal]), in md mode a regular `ion-modal`
+/// ([showIonModal]: full screen on phones, centred card on desktop).
+Future<void> showExportModal(BuildContext context) {
+  if (useIosLook(context)) {
+    return showIosCardModal<void>(
+      context,
+      backgroundColor: ionPlainContentBackground(context),
+      builder: (_) => const ExportPage(asModal: true),
+    );
+  }
+  return showIonModal<void>(
+    context,
+    builder: (_) => const ExportPage(asModal: true),
+  );
+}
+
 class ExportPage extends ConsumerStatefulWidget {
-  const ExportPage({super.key});
+  const ExportPage({super.key, this.asModal = false});
+
+  /// Presented by [showExportModal]: the ✕ closes the modal.
+  final bool asModal;
 
   @override
   ConsumerState<ExportPage> createState() => _ExportPageState();
@@ -129,19 +153,28 @@ class _ExportPageState extends ConsumerState<ExportPage> {
         .map((f) => exportFieldLabel(f, context.l10n))
         .join(', ');
 
-    final ios = ionIsIos(context);
-    // UX_SETTINGS (WAVE 8): export.page.html is a modal — iOS shows the
-    // close "x" at the end of the toolbar instead of a back button.
+    // UX_SETTINGS (WAVE 8) / PARITY_R5: export.page.html is a modal – the
+    // close "x" sits at the end of the toolbar (iOS and md), no back button.
     return Scaffold(
+      // PARITY_R5: export.page.html `<ion-content>` without colour → white.
+      backgroundColor: ionPlainContentBackground(context),
       appBar: AppBar(
-        automaticallyImplyLeading: !ios,
+        automaticallyImplyLeading: false,
         title: Text(context.l10n.exportTitle),
         actions: [
-          if (ios)
+          ToolbarButtonGroup(children: [
             IconButton(
               icon: const Icon(Icons.close),
-              onPressed: () => Navigator.of(context).maybePop(),
+              tooltip: context.l10n.commonClose,
+              onPressed: () {
+                if (widget.asModal || Navigator.of(context).canPop()) {
+                  Navigator.of(context).maybePop();
+                } else {
+                  context.go('/settings');
+                }
+              },
             ),
+          ]),
         ],
       ),
       body: ListView(

@@ -202,6 +202,8 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
       // Ionic: ion-card, content centered (global ion-card-content rule)
       return Scaffold(
         appBar: _buildAppBar(tenant, tenants),
+        // PARITY_R5: same white (dark: black) page as the Termin list
+        backgroundColor: eventPageBackground(context),
         body: Align(
           alignment: Alignment.topCenter,
           child: Card(

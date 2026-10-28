@@ -63,6 +63,7 @@ class _CopyShiftToTenantSheetState
           children: [
             // Header
             AppBar(
+              toolbarHeight: ionModalToolbarHeight(context), // PARITY_R5
               title: Text(context.l10n.shiftsCopyToTenant),
               leading: IconButton(
                 icon: const Icon(Icons.close),

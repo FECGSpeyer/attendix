@@ -16,6 +16,7 @@ import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 import '../../../people/presentation/widgets/ion/ion_widgets.dart'; // UX_PEOPLE
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
+import '../../../../shared/widgets/layout/ionic_ios.dart' show ionPlainContentBackground; // PARITY_R5
 
 /// Instruments list page — grouped by category with player counts.
 /// Supports drag & drop reordering (sort_order) like Ionic instrument-list.
@@ -577,6 +578,8 @@ class _InstrumentEditDialogState extends ConsumerState<_InstrumentEditDialog> {
   Widget build(BuildContext context) {
     final showMusicFields = !_isChoir && !_isGeneral && !_isMain;
     return Scaffold(
+      // PARITY_R5: instrument.page.html `<ion-content>` without colour → white.
+      backgroundColor: ionPlainContentBackground(context),
       appBar: AppBar(
         title: Text(widget.group?.name ?? context.l10n.instrumentsAddGroup),
         automaticallyImplyLeading: false,

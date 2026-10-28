@@ -138,9 +138,23 @@ class IosCircleIcon extends StatelessWidget {
   }
 }
 
+/// PARITY_R5: height of the header toolbar of an iOS card or sheet modal
+/// (ionic-theme-ios27 `ion-modal.modal-card / .modal-sheet ion-header
+/// ion-toolbar:first-of-type { padding-top: 0; padding-bottom: 0;
+/// --min-height: 64px }`). The same value as [kIosCardModalToolbarHeight].
+const double kIonModalToolbarHeight = 64;
+
+/// PARITY_R5: `toolbarHeight` for an [AppBar] inside a sheet / card modal:
+/// [kIonModalToolbarHeight] on iOS, null (theme default) elsewhere. Without
+/// it an app bar in a bottom sheet would get the page toolbar height of
+/// [IonToolbarMetrics] (≈73pt in the browser).
+double? ionModalToolbarHeight(BuildContext context) =>
+    useIosLook(context) ? kIonModalToolbarHeight : null;
+
 /// IOS_LOOK: header of a sheet / modal like an Ionic `ion-modal` toolbar:
 /// centred semibold 17pt title, optional start button (e.g. "Abbrechen"),
 /// end button (default: [IonCloseButton]) and a hairline below.
+/// PARITY_R5: 64pt high like every iOS sheet / card modal toolbar.
 class IonModalHeader extends StatelessWidget implements PreferredSizeWidget {
   const IonModalHeader({
     super.key,
@@ -160,7 +174,7 @@ class IonModalHeader extends StatelessWidget implements PreferredSizeWidget {
   final bool showDivider;
 
   @override
-  Size get preferredSize => const Size.fromHeight(56);
+  Size get preferredSize => const Size.fromHeight(kIonModalToolbarHeight);
 
   @override
   Widget build(BuildContext context) {
@@ -168,7 +182,7 @@ class IonModalHeader extends StatelessWidget implements PreferredSizeWidget {
     final end = trailing ??
         (showClose ? IonCloseButton(onPressed: onClose) : null);
     return Container(
-      height: 56,
+      height: kIonModalToolbarHeight,
       decoration: BoxDecoration(
         border: showDivider
             ? Border(

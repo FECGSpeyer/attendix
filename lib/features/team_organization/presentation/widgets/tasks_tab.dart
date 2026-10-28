@@ -55,6 +55,8 @@ class _TasksTabState extends ConsumerState<TasksTab> {
     final l10n = context.l10n;
 
     return Scaffold(
+      // PARITY_R5: page colour of the team-org page shows through.
+      backgroundColor: Colors.transparent,
       floatingActionButton: TabBarFab.wrap(isLeader
           ? FloatingActionButton(
               heroTag: 'team-org-add-task',

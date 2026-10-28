@@ -7,6 +7,7 @@ import '../../../planning/presentation/widgets/ion_items.dart';
 import '../widgets/protocols_tab.dart';
 import '../widgets/tasks_tab.dart';
 import '../widgets/topics_tab.dart';
+import '../../../../shared/widgets/layout/ionic_ios.dart' show ionPlainContentBackground; // PARITY_R5
 
 /// Teamorganisation: one page for leadership and members. RLS decides what
 /// each person sees; the tabs only change their actions.
@@ -45,6 +46,9 @@ class _TeamOrganizationPageState extends ConsumerState<TeamOrganizationPage>
     ref.watch(teamPersonProvider);
 
     return Scaffold(
+      // PARITY_R5: team-organization.page.html `<ion-content>` without
+      // colour → white page (the inset lists sit on it).
+      backgroundColor: ionPlainContentBackground(context),
       appBar: AppBar(
         title: Text(context.l10n.teamOrgTitle),
         // Ionic: ion-segment in a second toolbar (iOS segmented control).
