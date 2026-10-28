@@ -9,8 +9,13 @@ import '../../../../data/models/person/person.dart';
 import '../../data/providers/voice_leader_providers.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../people/presentation/widgets/ion/ion_widgets.dart'; // UX_PEOPLE
 
-/// Voice Leader page - shows members of the same voice group
+/// Voice Leader page - shows members of the same voice group.
+///
+/// UX_PEOPLE: Ionic settings/voice-leader — `ion-content color="light"`,
+/// light group header (icon, name, member count), inset ion-list with
+/// 48px avatars, contact links and upcoming absence badges.
 class VoiceLeaderPage extends ConsumerWidget {
   const VoiceLeaderPage({super.key});
 
@@ -20,6 +25,7 @@ class VoiceLeaderPage extends ConsumerWidget {
     final groupNameAsync = ref.watch(voiceGroupNameProvider);
 
     return Scaffold(
+      backgroundColor: ionLightColor(context),
       appBar: AppBar(
         title: Text(context.l10n.voiceLeaderMyVoice),
       ),
@@ -30,84 +36,77 @@ class VoiceLeaderPage extends ConsumerWidget {
           await ref.read(voiceGroupMembersProvider.future);
         },
         child: membersAsync.when(
-          loading: () => const Center(child: AppSpinner()),
-          error: (error, stack) => Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(Icons.error_outline, size: 64, color: AppColors.danger),
-                const SizedBox(height: AppDimensions.paddingM),
-                Text(
-                  context.l10n.voiceLeaderLoadFailed,
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                const SizedBox(height: AppDimensions.paddingS),
-                Text(
-                  error.toString(),
-                  style: Theme.of(context).textTheme.bodySmall,
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: AppDimensions.paddingL),
-                ElevatedButton(
-                  onPressed: () => ref.invalidate(voiceGroupMembersProvider),
-                  child: Text(context.l10n.messagesRetry),
-                ),
-              ],
+          loading: () => const Padding(
+            padding: EdgeInsets.all(32),
+            child: Align(
+              alignment: Alignment.topCenter,
+              child: AppSpinner(),
             ),
           ),
+          error: (error, stack) => ListView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            children: [
+              IonNoData(
+                icon: Icons.error_outline,
+                label: context.l10n.voiceLeaderLoadFailed,
+                message: error.toString(),
+                actions: [
+                  (
+                    context.l10n.messagesRetry,
+                    () => ref.invalidate(voiceGroupMembersProvider),
+                  ),
+                ],
+              ),
+            ],
+          ),
           data: (members) {
-            if (members.isEmpty) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(
-                      Icons.group_off_outlined,
-                      size: 64,
-                      color: AppColors.medium,
-                    ),
-                    const SizedBox(height: AppDimensions.paddingM),
-                    Text(
-                      context.l10n.voiceLeaderNoMembers,
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                    const SizedBox(height: AppDimensions.paddingS),
-                    Text(
-                      context.l10n.voiceLeaderFlutterNoGroup,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: AppColors.medium,
-                          ),
-                    ),
-                  ],
-                ),
-              );
-            }
-
-            final groupName = groupNameAsync.valueOrNull ?? context.l10n.voiceLeaderFlutterVoiceGroup;
+            final groupName = groupNameAsync.valueOrNull ??
+                context.l10n.voiceLeaderFlutterVoiceGroup;
 
             return ListView(
-              padding: const EdgeInsets.all(AppDimensions.paddingM),
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.only(bottom: AppDimensions.paddingL),
               children: [
-                // Group header
-                _GroupHeader(
-                  groupName: groupName,
-                  memberCount: members.length,
-                ),
-                const SizedBox(height: AppDimensions.paddingM),
-
-                // Members list
-                Card(
-                  margin: EdgeInsets.zero,
-                  child: Column(
-                    children: [
-                      for (int i = 0; i < members.length; i++) ...[
-                        _MemberTile(member: members[i]),
-                        if (i < members.length - 1)
-                          const Divider(height: 1, indent: 72),
+                _GroupHeader(groupName: groupName, memberCount: members.length),
+                if (members.isEmpty)
+                  // Ionic .no-data-message
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 16),
+                    child: Column(
+                      children: [
+                        Icon(
+                          Icons.people_outline,
+                          size: 48,
+                          color: AppColors.medium.withValues(alpha: 0.5),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          context.l10n.voiceLeaderNoMembers,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(color: AppColors.medium),
+                        ),
                       ],
-                    ],
+                    ),
+                  )
+                else
+                  // ion-list [inset]="true"
+                  Container(
+                    margin: const EdgeInsets.all(16),
+                    clipBehavior: Clip.antiAlias,
+                    decoration: BoxDecoration(
+                      color: ionContentBackground(context),
+                      borderRadius: BorderRadius.circular(ionIsIos(context) ? 10 : 4),
+                    ),
+                    child: Column(
+                      children: [
+                        for (var i = 0; i < members.length; i++)
+                          _MemberTile(
+                            member: members[i],
+                            last: i == members.length - 1,
+                          ),
+                      ],
+                    ),
                   ),
-                ),
               ],
             );
           },
@@ -117,7 +116,8 @@ class VoiceLeaderPage extends ConsumerWidget {
   }
 }
 
-/// Group header showing name and member count
+/// Ionic `.group-header`: light background, primary people icon, bold
+/// group name and grey member count.
 class _GroupHeader extends StatelessWidget {
   const _GroupHeader({
     required this.groupName,
@@ -129,228 +129,25 @@ class _GroupHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Container(
-          width: 48,
-          height: 48,
-          decoration: BoxDecoration(
-            color: AppColors.primary.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(AppDimensions.borderRadiusM),
-          ),
-          child: const Icon(
-            Icons.people,
-            color: AppColors.primary,
-          ),
-        ),
-        const SizedBox(width: AppDimensions.paddingM),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                groupName,
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-              ),
-              Text(
-                context.l10n.voiceLeaderFlutterMemberCount(memberCount),
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: AppColors.medium,
-                    ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-/// Member tile showing person info and upcoming absences
-class _MemberTile extends StatelessWidget {
-  const _MemberTile({required this.member});
-
-  final VoiceGroupMember member;
-
-  Future<void> _launchUrl(String url) async {
-    final uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final person = member.person;
-    final absences = member.upcomingAbsences;
-
-    return Padding(
-      padding: const EdgeInsets.all(AppDimensions.paddingM),
+    return Container(
+      color: ionLightColor(context),
+      padding: const EdgeInsets.all(16),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Avatar
-          CircleAvatar(
-            radius: 24,
-            backgroundColor: AppColors.primaryLight,
-            backgroundImage: person.img != null ? NetworkImage(person.img!) : null,
-            child: person.img == null
-                ? Text(
-                    person.initials,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  )
-                : null,
-          ),
-          const SizedBox(width: AppDimensions.paddingM),
-
-          // Info
+          const Icon(Icons.people_outline, size: 24, color: AppColors.primary),
+          const SizedBox(width: 8),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Name row with badges
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        person.fullName,
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.w600,
-                            ),
-                      ),
-                    ),
-                    if (person.isLeader)
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 6,
-                          vertical: 2,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.primary,
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: Text(
-                          context.l10n.voiceLeaderSfShort,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                  ],
+                Text(
+                  groupName,
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
                 ),
-
-                const SizedBox(height: 4),
-
-                // Contact info
-                if (person.email != null && person.email!.isNotEmpty)
-                  InkWell(
-                    onTap: () => _launchUrl('mailto:${person.email}'),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 2),
-                      child: Row(
-                        children: [
-                          const Icon(
-                            Icons.email_outlined,
-                            size: 14,
-                            color: AppColors.medium,
-                          ),
-                          const SizedBox(width: 4),
-                          Expanded(
-                            child: Text(
-                              person.email!,
-                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: AppColors.primary,
-                                  ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-
-                if (person.phone != null && person.phone!.isNotEmpty)
-                  InkWell(
-                    onTap: () => _launchUrl('tel:${person.phone}'),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 2),
-                      child: Row(
-                        children: [
-                          const Icon(
-                            Icons.phone_outlined,
-                            size: 14,
-                            color: AppColors.medium,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            person.phone!,
-                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                  color: AppColors.primary,
-                                ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-
-                if ((person.email == null || person.email!.isEmpty) &&
-                    (person.phone == null || person.phone!.isEmpty))
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 2),
-                    child: Row(
-                      children: [
-                        const Icon(
-                          Icons.contact_mail_outlined,
-                          size: 14,
-                          color: AppColors.medium,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          context.l10n.voiceLeaderNoContact,
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: AppColors.medium,
-                              ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                // Upcoming absences
-                if (absences.isNotEmpty) ...[
-                  const SizedBox(height: 8),
-                  Wrap(
-                    spacing: 4,
-                    runSpacing: 4,
-                    children: [
-                      ...absences.take(5).map((absence) {
-                        return _AbsenceChip(absence: absence);
-                      }),
-                      if (absences.length > 5)
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                          decoration: BoxDecoration(
-                            color: AppColors.medium.withValues(alpha: 0.15),
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: Text(
-                            context.l10n.voiceLeaderFlutterMoreCount(absences.length - 5),
-                            style: const TextStyle(
-                              fontSize: 11,
-                              color: AppColors.medium,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                    ],
-                  ),
-                ],
+                Text(
+                  context.l10n.voiceLeaderFlutterMemberCount(memberCount),
+                  style: const TextStyle(fontSize: 13.6, color: AppColors.medium),
+                ),
               ],
             ),
           ),
@@ -360,47 +157,142 @@ class _MemberTile extends StatelessWidget {
   }
 }
 
-/// Chip showing an upcoming absence
-class _AbsenceChip extends StatelessWidget {
-  const _AbsenceChip({required this.absence});
+/// Ionic `.person-item`: avatar (48px), bold name with "SF"/Einteilung
+/// badges, mail/phone links and the upcoming absences.
+class _MemberTile extends StatelessWidget {
+  const _MemberTile({required this.member, required this.last});
 
-  final UpcomingAbsence absence;
+  final VoiceGroupMember member;
+  final bool last;
 
-  Color get _chipColor {
-    switch (absence.status) {
-      case 2: // excused
-        return AppColors.warning;
-      case 4: // absent
-        return AppColors.danger;
-      case 5: // late_excused
-        return AppColors.warning;
-      default:
-        return AppColors.medium;
+  Future<void> _launchUrl(String url) async {
+    try {
+      final uri = Uri.parse(url);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri);
+      }
+    } catch (_) {
+      // PWA may not support mailto:/tel: links
     }
+  }
+
+  static const _smallBadge = TextStyle(fontSize: 10.4, fontWeight: FontWeight.w700);
+
+  Widget _contactLink(IconData icon, String text, String url) {
+    return InkWell(
+      onTap: () => _launchUrl(url),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: AppColors.primary),
+          const SizedBox(width: 4),
+          Flexible(
+            child: Text(
+              text,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(fontSize: 14.4, color: AppColors.primary),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    final person = member.person;
+    final absences = member.upcomingAbsences;
+    final einteilung = person.additionalFields?['einteilung'];
+    final hasEmail = person.email != null && person.email!.isNotEmpty;
+    final hasPhone = person.phone != null && person.phone!.isNotEmpty;
     final dateFormat = DateFormat(dateFmt(DateFmtKind.dayMonth));
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-      decoration: BoxDecoration(
-        color: _chipColor.withValues(alpha: 0.15),
-        borderRadius: BorderRadius.circular(4),
-        border: Border.all(
-          color: _chipColor.withValues(alpha: 0.3),
-          width: 1,
-        ),
-      ),
-      child: Text(
-        '${dateFormat.format(absence.date)}${absence.typeName != null ? ' ${absence.typeName}' : ''}',
-        style: TextStyle(
-          fontSize: 11,
-          color: _chipColor,
-          fontWeight: FontWeight.w500,
+    return IonItem(
+      lines: !last,
+      start: IonAvatar(url: person.img, size: 48),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 2),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Wrap(
+              crossAxisAlignment: WrapCrossAlignment.center,
+              spacing: 8,
+              runSpacing: 4,
+              children: [
+                Text(
+                  person.fullName,
+                  style: IonText.h2(context).copyWith(fontWeight: FontWeight.w700),
+                ),
+                if (person.isLeader)
+                  IonBadge(
+                    text: context.l10n.voiceLeaderSfShort,
+                    color: AppColors.primary,
+                  ),
+                if (einteilung is String && einteilung.isNotEmpty)
+                  IonBadge(text: einteilung, color: AppColors.medium),
+              ],
+            ),
+            const SizedBox(height: 4),
+            if (hasEmail) _contactLink(Icons.mail_outline, person.email!, 'mailto:${person.email}'),
+            if (hasEmail && hasPhone) const SizedBox(height: 4),
+            if (hasPhone) _contactLink(Icons.call_outlined, person.phone!, 'tel:${person.phone}'),
+            if (!hasEmail && !hasPhone)
+              Text(
+                context.l10n.voiceLeaderNoContact,
+                style: const TextStyle(fontSize: 13.6, color: AppColors.medium),
+              ),
+            if (absences.isNotEmpty)
+              Container(
+                width: double.infinity,
+                margin: const EdgeInsets.only(top: 8),
+                padding: const EdgeInsets.only(top: 8),
+                decoration: BoxDecoration(
+                  border: Border(top: BorderSide(color: ionLineColor(context))),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      context.l10n.voiceLeaderUpcomingAbsences,
+                      style: const TextStyle(fontSize: 12.8, color: AppColors.medium),
+                    ),
+                    const SizedBox(height: 4),
+                    Wrap(
+                      spacing: 4,
+                      runSpacing: 4,
+                      children: [
+                        for (final absence in absences)
+                          DefaultTextStyle.merge(
+                            style: _smallBadge,
+                            child: IonBadge(
+                              text: '${dateFormat.format(absence.date)}'
+                                  '${absence.typeName != null ? ' ${absence.typeName}' : ''}',
+                              color: _absenceColor(absence.status),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+          ],
         ),
       ),
     );
+  }
+
+  /// Ionic getAbsenceColor: excused/late excused → warning, absent →
+  /// danger, otherwise medium.
+  static Color _absenceColor(int status) {
+    switch (status) {
+      case 2:
+      case 5:
+        return AppColors.warning;
+      case 4:
+        return AppColors.danger;
+      default:
+        return AppColors.medium;
+    }
   }
 }

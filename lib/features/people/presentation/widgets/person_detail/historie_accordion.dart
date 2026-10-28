@@ -15,6 +15,7 @@ import '../../../../../core/utils/demo_guard.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../../core/utils/error_message.dart';
 import '../../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../ion/ion_widgets.dart';
 
 /// Toggle to show all history entries (including before season start).
 final showAllHistoryProvider = StateProvider.autoDispose<bool>((ref) => false);
@@ -40,33 +41,11 @@ class HistorieAccordion extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Card(
-      margin: const EdgeInsets.symmetric(
-        horizontal: AppDimensions.paddingM,
-        vertical: AppDimensions.paddingXS,
-      ),
-      child: Column(
-        children: [
-          ListTile(
-            title: Text(
-              context.l10n.personHistory,
-              style: const TextStyle(fontWeight: FontWeight.w600),
-            ),
-            trailing: Icon(isExpanded ? Icons.expand_less : Icons.expand_more),
-            onTap: onToggle,
-          ),
-          if (isExpanded)
-            Padding(
-              padding: const EdgeInsets.fromLTRB(
-                AppDimensions.paddingM,
-                0,
-                AppDimensions.paddingM,
-                AppDimensions.paddingM,
-              ),
-              child: _buildContent(context, ref),
-            ),
-        ],
-      ),
+    return IonAccordion(
+      title: context.l10n.personHistory,
+      expanded: isExpanded,
+      onToggle: onToggle,
+      child: _buildContent(context, ref),
     );
   }
 
@@ -120,7 +99,7 @@ class HistorieAccordion extends ConsumerWidget {
             // Season filter toggle
             if (seasonStart != null)
               Padding(
-                padding: const EdgeInsets.only(top: AppDimensions.paddingS),
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
                 child: Row(
                   children: [
                     Text(
@@ -175,43 +154,14 @@ class HistorieAccordion extends ConsumerWidget {
                 ? AppColors.warning
                 : AppColors.danger;
 
-        return Container(
-          padding: const EdgeInsets.symmetric(vertical: AppDimensions.paddingM),
-          decoration: BoxDecoration(
-            border: Border(bottom: BorderSide(color: Colors.grey.shade200)),
-          ),
-          child: Row(
-            children: [
-              Expanded(
-                child: Text(
-                  lateCount > 0
-                      ? context.l10n.personAverageLate(lateCount)
-                      : context.l10n.personAverage,
-                  style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 4,
-                ),
-                decoration: BoxDecoration(
-                  color: badgeColor,
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                child: Text(
-                  '$percentage%',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                  ),
-                ),
-              ),
-            ],
+        // Ionic: ion-item "Durchschnitt" + ion-badge slot="end"
+        return IonItem(
+          end: [IonBadge(text: '$percentage%', color: badgeColor)],
+          child: Text(
+            lateCount > 0
+                ? context.l10n.personAverageLate(lateCount)
+                : context.l10n.personAverage,
+            style: IonText.h2(context),
           ),
         );
       },
@@ -270,70 +220,30 @@ class HistorieAccordion extends ConsumerWidget {
     final isAttendance = type == PlayerHistoryType.attendance.value;
     final isDeletable = canEdit && !isAttendance;
 
-    final content = InkWell(
-      // Ionic onHisItemClicked: note entries open the old note.
+    // Ionic: ion-item with h2 title, h3 text/notes, ion-badge slot="end"
+    final content = IonItem(
       onTap:
           type == PlayerHistoryType.notes.value && date != null
               ? () => _showOldNote(context, date, text)
               : null,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: AppDimensions.paddingM),
-        decoration: BoxDecoration(
-          border: Border(bottom: BorderSide(color: Colors.grey.shade100)),
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(titleStr, style: const TextStyle(fontSize: 15)),
-                  if (notes != null && notes.isNotEmpty)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 2),
-                      child: Text(
-                        notes,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey.shade600,
-                        ),
-                      ),
-                    ),
-                  if (!isAttendance && bodyText.isNotEmpty)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 2),
-                      child: Text(
-                        bodyText,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey.shade600,
-                        ),
-                      ),
-                    ),
-                ],
-              ),
+      end: [
+        if (badgeText != null) IonBadge(text: badgeText, color: badgeColor!),
+      ],
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(titleStr, style: IonText.h2(context)),
+          if (notes != null && notes.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(top: 2),
+              child: Text(notes, style: IonText.h3(context)),
             ),
-            if (badgeText != null)
-              Container(
-                width: 32,
-                height: 32,
-                decoration: BoxDecoration(
-                  color: badgeColor,
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                child: Center(
-                  child: Text(
-                    badgeText,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                  ),
-                ),
-              ),
-          ],
-        ),
+          if (!isAttendance && bodyText.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(top: 2),
+              child: Text(bodyText, style: IonText.h3(context)),
+            ),
+        ],
       ),
     );
 

@@ -4,6 +4,7 @@ import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../data/models/person/person.dart';
 import '../../../../../l10n/l10n.dart';
+import '../ion/ion_widgets.dart';
 
 /// Accordion section for problem person management.
 class ProblemfallAccordion extends StatelessWidget {
@@ -32,23 +33,11 @@ class ProblemfallAccordion extends StatelessWidget {
   Widget build(BuildContext context) {
     if (!person.isCritical) return const SizedBox.shrink();
 
-    return Card(
-      margin: const EdgeInsets.symmetric(
-        horizontal: AppDimensions.paddingM,
-        vertical: AppDimensions.paddingXS,
-      ),
-      child: Column(
-        children: [
-          ListTile(
-            title: Text(
-              context.l10n.peopleProblemCase,
-              style: const TextStyle(fontWeight: FontWeight.w600),
-            ),
-            trailing: Icon(isExpanded ? Icons.expand_less : Icons.expand_more),
-            onTap: onToggle,
-          ),
-          if (isExpanded)
-            Padding(
+    return IonAccordion(
+      title: context.l10n.peopleProblemCase,
+      expanded: isExpanded,
+      onToggle: onToggle,
+      child: Padding(
               padding: const EdgeInsets.fromLTRB(
                 AppDimensions.paddingM,
                 0,
@@ -57,8 +46,6 @@ class ProblemfallAccordion extends StatelessWidget {
               ),
               child: _buildContent(context),
             ),
-        ],
-      ),
     );
   }
 

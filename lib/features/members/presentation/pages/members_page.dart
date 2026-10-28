@@ -8,53 +8,60 @@ import '../../data/providers/members_providers.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 import '../../../messages/presentation/widgets/notification_bell.dart'; // MESSAGES
+import '../../../people/presentation/widgets/ion/ion_widgets.dart'; // UX_PEOPLE
 
 /// Members page - read-only list of all members for players/helpers
-/// (Ionic people/members: searchbar, optional "Einteilung" segment,
-/// "Personen (n)" header, primary group dividers, "Stimmführer" badge).
-class MembersPage extends ConsumerWidget {
+/// (Ionic people/members: condensed title, searchbar, optional "Einteilung"
+/// segment, "Personen (n)" header, primary group dividers, "Stimmführer"
+/// badge). UX_PEOPLE: Ionic iOS look via the people lane ion widgets.
+class MembersPage extends ConsumerStatefulWidget {
   const MembersPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<MembersPage> createState() => _MembersPageState();
+}
+
+class _MembersPageState extends ConsumerState<MembersPage> {
+  late final TextEditingController _searchController =
+      TextEditingController(text: ref.read(membersSearchTermProvider));
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _refresh() async {
+    ref.invalidate(membersGroupedProvider);
+    ref.invalidate(personExtraFieldsProvider);
+    await ref.read(membersGroupedProvider.future);
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final groupsAsync = ref.watch(filteredMembersGroupedProvider);
-    final searchTerm = ref.watch(membersSearchTermProvider);
     final einteilungOptions = ref.watch(membersEinteilungOptionsProvider);
     final einteilung = ref.watch(membersEinteilungFilterProvider);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(context.l10n.peopleMembers),
-        actions: const [NotificationBell()], // MESSAGES
-      ),
-      body: Column(
-        children: [
-          // ion-searchbar
-          Padding(
-            padding: const EdgeInsets.fromLTRB(
-              AppDimensions.paddingM,
-              AppDimensions.paddingS,
-              AppDimensions.paddingM,
-              AppDimensions.paddingS,
-            ),
-            child: SearchBar(
-              hintText: context.l10n.peopleSearchPerson,
-              elevation: const WidgetStatePropertyAll(0),
-              leading: const Icon(Icons.search),
-              trailing: [
-                if (searchTerm.isNotEmpty)
-                  IconButton(
-                    icon: const Icon(Icons.clear),
-                    onPressed: () => ref.read(membersSearchTermProvider.notifier).state = '',
-                  ),
-              ],
-              onChanged: (value) => ref.read(membersSearchTermProvider.notifier).state = value,
-            ),
+    return IonPage(
+      title: context.l10n.peopleMembers,
+      actions: const [NotificationBell()], // MESSAGES
+      onRefresh: _refresh,
+      slivers: [
+        // ion-searchbar
+        SliverToBoxAdapter(
+          child: IonSearchbar(
+            controller: _searchController,
+            placeholder: context.l10n.peopleSearchPerson,
+            onChanged: (value) =>
+                ref.read(membersSearchTermProvider.notifier).state = value,
           ),
+        ),
 
-          // ion-segment (scrollable) on the "einteilung" extra field
-          if (einteilungOptions.isNotEmpty)
-            SizedBox(
+        // ion-segment (scrollable, mode="md") on the "einteilung" extra field
+        if (einteilungOptions.isNotEmpty)
+          SliverToBoxAdapter(
+            child: SizedBox(
               height: 48,
               child: ListView(
                 scrollDirection: Axis.horizontal,
@@ -69,63 +76,45 @@ class MembersPage extends ConsumerWidget {
                 ],
               ),
             ),
+          ),
 
-          Expanded(
-            child: RefreshIndicator.adaptive(
-              onRefresh: () async {
-                ref.invalidate(membersGroupedProvider);
-                ref.invalidate(personExtraFieldsProvider);
-                await ref.read(membersGroupedProvider.future);
-              },
-              child: groupsAsync.when(
-                loading: () => const Center(child: AppSpinner()),
-                error: (error, stack) => ListView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  children: [
-                    _NoData(text: context.l10n.peopleMembersLoadFailed),
-                  ],
-                ),
-                data: (groups) {
-                  final count = groups.fold<int>(0, (sum, g) => sum + g.members.length);
-                  if (count == 0) {
-                    return ListView(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      children: [_NoData(text: context.l10n.peopleNoMembersFound)],
-                    );
-                  }
-
-                  return ListView(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    padding: const EdgeInsets.only(bottom: AppDimensions.paddingL),
-                    children: [
-                      // ion-list-header
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(
-                          AppDimensions.paddingM,
-                          AppDimensions.paddingM,
-                          AppDimensions.paddingM,
-                          AppDimensions.paddingS,
-                        ),
-                        child: Text(
-                          context.l10n.peoplePeopleCount(count),
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.w700,
-                              ),
-                        ),
-                      ),
-                      for (final group in groups) ...[
-                        _GroupDivider(label: '${group.groupId == -1 ? context.l10n.peopleNoGroupAssigned : group.groupName} (${group.members.length})'),
-                        for (final member in group.members)
-                          _MemberTile(key: ValueKey(member.id), person: member),
-                      ],
-                    ],
-                  );
-                },
+        ...groupsAsync.when(
+          loading: () => [
+            const SliverToBoxAdapter(
+              child: SizedBox(
+                height: 200,
+                child: Center(child: AppSpinner()),
               ),
             ),
-          ),
-        ],
-      ),
+          ],
+          error: (error, stack) => [
+            SliverToBoxAdapter(child: _NoData(text: context.l10n.peopleMembersLoadFailed)),
+          ],
+          data: (groups) {
+            final count = groups.fold<int>(0, (sum, g) => sum + g.members.length);
+            if (count == 0) {
+              return [
+                SliverToBoxAdapter(child: _NoData(text: context.l10n.peopleNoMembersFound)),
+              ];
+            }
+            return [
+              SliverList.list(
+                children: [
+                  IonListHeader(text: context.l10n.peoplePeopleCount(count)),
+                  for (final group in groups) ...[
+                    IonItemDivider(
+                      color: AppColors.primary,
+                      text: '${group.groupId == -1 ? context.l10n.peopleNoGroupAssigned : group.groupName} (${group.members.length})',
+                    ),
+                    for (final member in group.members)
+                      _MemberTile(key: ValueKey(member.id), person: member),
+                  ],
+                ],
+              ),
+            ];
+          },
+        ),
+      ],
     );
   }
 }
@@ -160,30 +149,8 @@ class _SegmentTab extends StatelessWidget {
   }
 }
 
-/// Ionic `ion-item-divider color="primary"`.
-class _GroupDivider extends StatelessWidget {
-  const _GroupDivider({required this.label});
-
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppDimensions.paddingM,
-        vertical: AppDimensions.paddingS,
-      ),
-      color: AppColors.primary,
-      child: Text(
-        label,
-        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
-      ),
-    );
-  }
-}
-
-/// Ionic `.no-data-message`: people icon + text.
+/// Ionic `.no-data-message`: people icon (48px, 50% opacity) + text,
+/// 200px high.
 class _NoData extends StatelessWidget {
   const _NoData({required this.text});
 
@@ -191,20 +158,21 @@ class _NoData extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 64, horizontal: AppDimensions.paddingL),
+    return SizedBox(
+      height: 200,
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.people_outline, size: 64, color: AppColors.medium),
+          Icon(Icons.people_outline, size: 48, color: AppColors.medium.withValues(alpha: 0.5)),
           const SizedBox(height: AppDimensions.paddingM),
-          Text(text, textAlign: TextAlign.center, style: const TextStyle(color: AppColors.medium)),
+          Text(text, textAlign: TextAlign.center, style: const TextStyle(color: AppColors.medium, fontSize: 15.2)),
         ],
       ),
     );
   }
 }
 
-/// Single member row (name + "Stimmführer" badge).
+/// Single member row: ion-item with name and "Stimmführer" badge.
 class _MemberTile extends StatelessWidget {
   const _MemberTile({super.key, required this.person});
 
@@ -212,26 +180,12 @@ class _MemberTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        ListTile(
-          title: Text(person.fullName),
-          trailing: person.isLeader
-              ? Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                  decoration: BoxDecoration(
-                    color: AppColors.primary,
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: Text(
-                    context.l10n.peopleVoiceLeader,
-                    style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600),
-                  ),
-                )
-              : null,
-        ),
-        const Divider(height: 1, indent: AppDimensions.paddingM),
+    return IonItem(
+      end: [
+        if (person.isLeader)
+          IonBadge(text: context.l10n.peopleVoiceLeader, color: AppColors.primary),
       ],
+      child: Text(person.fullName, style: IonText.h2(context)),
     );
   }
 }

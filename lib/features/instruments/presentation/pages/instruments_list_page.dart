@@ -14,6 +14,7 @@ import '../widgets/instrument_categories_sheet.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../people/presentation/widgets/ion/ion_widgets.dart'; // UX_PEOPLE
 
 /// Instruments list page — grouped by category with player counts.
 /// Supports drag & drop reordering (sort_order) like Ionic instrument-list.
@@ -76,84 +77,89 @@ class _InstrumentsListPageState extends ConsumerState<InstrumentsListPage> {
     final tenant = ref.watch(currentTenantProvider);
     final count = groupsAsync.valueOrNull?.length ?? 0;
 
-    return Scaffold(
-      // Ionic header: back, "Gruppen (n)", reorder toggle + categories
-      appBar: AppBar(
-        title: Text(context.l10n.instrumentsGroupsCount(count)),
-        leading: IconButton(
-          icon: const BackButtonIcon(),
-          onPressed: () => context.go('/settings'),
-        ),
-        actions: [
-          if (isAdmin) ...[
-            IconButton(
-              icon: Icon(_isReordering ? Icons.check : Icons.swap_vert),
-              tooltip: _isReordering
-                  ? context.l10n.peopleFlutterSaveOrder
-                  : context.l10n.peopleReorder,
-              onPressed: groupsAsync.hasValue
-                  ? () => _toggleReorder(groupsAsync.value!,
-                      categoriesAsync.valueOrNull ?? const [])
-                  : null,
-            ),
-            IconButton(
-              icon: const Icon(Icons.sell_outlined),
-              onPressed: () => showInstrumentCategoriesSheet(context),
-              tooltip: context.l10n.instrumentsCategories,
+    Future<void> refresh() async {
+      ref.invalidate(groupsProvider);
+      ref.invalidate(groupCategoriesProvider);
+      ref.invalidate(playerCountsForGroupsProvider);
+      await ref.read(groupsProvider.future);
+    }
+
+    // UX_PEOPLE: Ionic instrument-list — back, "Gruppen (n)" (condensed
+    // large title on iOS), reorder toggle + categories, plain ion-list.
+    return IonPage(
+      title: context.l10n.instrumentsGroupsCount(count),
+      leading: IconButton(
+        icon: const BackButtonIcon(),
+        onPressed: () => context.go('/settings'),
+      ),
+      actions: [
+        if (isAdmin) ...[
+          IconButton(
+            icon: Icon(_isReordering ? Icons.check : Icons.swap_vert),
+            tooltip: _isReordering
+                ? context.l10n.peopleFlutterSaveOrder
+                : context.l10n.peopleReorder,
+            onPressed: groupsAsync.hasValue
+                ? () => _toggleReorder(groupsAsync.value!,
+                    categoriesAsync.valueOrNull ?? const [])
+                : null,
+          ),
+          IconButton(
+            icon: const Icon(Icons.sell_outlined),
+            onPressed: () => showInstrumentCategoriesSheet(context),
+            tooltip: context.l10n.instrumentsCategories,
+          ),
+        ],
+      ],
+      onRefresh: refresh,
+      slivers: [
+        ...groupsAsync.when(
+          loading: () => [
+            const SliverFillRemaining(
+              hasScrollBody: false,
+              child: Center(child: AppSpinner()),
             ),
           ],
-        ],
-      ),
-      body: groupsAsync.when(
-        loading: () => const Center(child: AppSpinner()),
-        error: (error, stack) => Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.error_outline, size: 64, color: AppColors.danger),
-              const SizedBox(height: AppDimensions.paddingM),
-              Text(context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(error))),
-              const SizedBox(height: AppDimensions.paddingM),
-              ElevatedButton(
-                onPressed: () => ref.invalidate(groupsProvider),
-                child: Text(context.l10n.messagesRetry),
+          error: (error, stack) => [
+            SliverFillRemaining(
+              hasScrollBody: false,
+              child: IonNoData(
+                icon: Icons.error_outline,
+                label: context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(error)),
+                actions: [
+                  (context.l10n.messagesRetry, () => ref.invalidate(groupsProvider)),
+                ],
               ),
-            ],
-          ),
-        ),
-        data: (groups) {
-          final categories = categoriesAsync.valueOrNull ?? [];
-          final playerCounts = playerCountsAsync.valueOrNull ?? {};
-          final sections = _isReordering && _reorderSections != null
-              ? _reorderSections!
-              : groupInstrumentsByCategory(groups, categories);
-
-          return RefreshIndicator.adaptive(
-            onRefresh: () async {
-              ref.invalidate(groupsProvider);
-              ref.invalidate(groupCategoriesProvider);
-              ref.invalidate(playerCountsForGroupsProvider);
-              await ref.read(groupsProvider.future);
-            },
-            child: _GroupedInstrumentsList(
-              sections: sections,
-              playerCounts: playerCounts,
-              tenantType: tenant?.type,
-              isReordering: _isReordering,
-              onReorder: _onReorder,
-              onEdit: isAdmin
-                  ? (group) => _openInstrumentPage(context, ref, group,
-                      categories, tenantType: tenant?.type)
-                  : null,
             ),
-          );
-        },
-      ),
+          ],
+          data: (groups) {
+            final categories = categoriesAsync.valueOrNull ?? [];
+            final playerCounts = playerCountsAsync.valueOrNull ?? {};
+            final sections = _isReordering && _reorderSections != null
+                ? _reorderSections!
+                : groupInstrumentsByCategory(groups, categories);
+            return [
+              SliverToBoxAdapter(
+                child: _GroupedInstrumentsList(
+                  sections: sections,
+                  playerCounts: playerCounts,
+                  tenantType: tenant?.type,
+                  isReordering: _isReordering,
+                  onReorder: _onReorder,
+                  onEdit: isAdmin
+                      ? (group) => _openInstrumentPage(context, ref, group,
+                          categories, tenantType: tenant?.type)
+                      : null,
+                ),
+              ),
+            ];
+          },
+        ),
+      ],
       floatingActionButton: isAdmin
-          ? FloatingActionButton(
+          ? IonFabButton(
               onPressed: () => _showAddGroupSheet(
                   context, ref, categoriesAsync.valueOrNull ?? const []),
-              child: const Icon(Icons.add),
             )
           : null,
     );
@@ -181,26 +187,18 @@ class _GroupedInstrumentsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.only(bottom: 88),
-      physics: const AlwaysScrollableScrollPhysics(),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        // Ionic: ion-item color="primary" lines="none" with info icon
         if (isReordering)
-          Container(
-            color: AppColors.primary,
-            padding: const EdgeInsets.symmetric(
-                horizontal: AppDimensions.paddingM, vertical: 10),
-            child: Row(
-              children: [
-                const Icon(Icons.info, color: Colors.white),
-                const SizedBox(width: AppDimensions.paddingM),
-                Expanded(
-                  child: Text(
-                    context.l10n.instrumentsDragGroups,
-                    style: const TextStyle(color: Colors.white, fontSize: 13),
-                  ),
-                ),
-              ],
+          IonItem(
+            lines: false,
+            background: AppColors.primary,
+            start: const Icon(Icons.info, color: Colors.white),
+            child: Text(
+              context.l10n.instrumentsDragGroups,
+              style: IonText.p(context).copyWith(color: Colors.white),
             ),
           ),
         for (final section in sections) ...[
@@ -209,6 +207,7 @@ class _GroupedInstrumentsList extends StatelessWidget {
             ReorderableListView(
               key: ValueKey('section-${section.categoryId}'),
               shrinkWrap: true,
+              padding: EdgeInsets.zero,
               physics: const NeverScrollableScrollPhysics(),
               buildDefaultDragHandles: false,
               onReorder: (o, n) => onReorder(section, o, n),
@@ -246,20 +245,7 @@ class _SectionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      color: AppColors.primary,
-      padding: const EdgeInsets.symmetric(
-          horizontal: AppDimensions.paddingM, vertical: 6),
-      child: Text(
-        '$title ($count)',
-        style: const TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.w600,
-          fontSize: 14,
-        ),
-      ),
-    );
+    return IonItemDivider(text: '$title ($count)', color: AppColors.primary);
   }
 }
 
@@ -298,80 +284,43 @@ class _GroupListItem extends StatelessWidget {
     final clefText =
         (group.clefs ?? const <String>[]).map((c) => _clefLabel(context.l10n, c)).join(', ');
 
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        child: Container(
-          decoration: BoxDecoration(
-            border: Border(
-              bottom:
-                  BorderSide(color: Theme.of(context).dividerColor, width: 0.5),
+    final hasStart = dragIndex != null || group.sortOrder != null;
+    return IonItem(
+      onTap: onTap,
+      start: hasStart
+          ? Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (dragIndex != null) ...[
+                  ReorderableDragStartListener(
+                    index: dragIndex!,
+                    child: const Icon(Icons.reorder, color: AppColors.medium),
+                  ),
+                  if (group.sortOrder != null) const SizedBox(width: 16),
+                ],
+                if (group.sortOrder != null)
+                  IonBadge(text: '${group.sortOrder}', color: AppColors.medium),
+              ],
+            )
+          : null,
+      end: [
+        IonBadge(
+          text: context.l10n.commonPersons(playerCount),
+          color: playerCount == 0 ? AppColors.danger : AppColors.primary,
+        ),
+      ],
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(title, style: IonText.h2(context)),
+          if (group.maingroup != true &&
+              !_isChoirOrGeneral &&
+              clefText.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(top: 2),
+              child: Text(clefText, style: IonText.h3(context)),
             ),
-          ),
-          padding: const EdgeInsets.symmetric(
-              horizontal: AppDimensions.paddingM, vertical: 10),
-          child: Row(
-            children: [
-              if (dragIndex != null) ...[
-                ReorderableDragStartListener(
-                  index: dragIndex!,
-                  child: const Icon(Icons.reorder, color: AppColors.medium),
-                ),
-                const SizedBox(width: AppDimensions.paddingM),
-              ],
-              if (group.sortOrder != null) ...[
-                _Badge(text: '${group.sortOrder}', color: AppColors.medium),
-                const SizedBox(width: AppDimensions.paddingM),
-              ],
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(title,
-                        style: const TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w500)),
-                    if (group.maingroup != true &&
-                        !_isChoirOrGeneral &&
-                        clefText.isNotEmpty)
-                      Text(clefText, style: const TextStyle(fontSize: 14)),
-                  ],
-                ),
-              ),
-              _Badge(
-                text: context.l10n.commonPersons(playerCount),
-                color: playerCount == 0 ? AppColors.danger : AppColors.primary,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// Ionic ion-badge
-class _Badge extends StatelessWidget {
-  const _Badge({required this.text, required this.color});
-
-  final String text;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Text(
-        text,
-        style: const TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.w600,
-          color: Colors.white,
-        ),
+        ],
       ),
     );
   }

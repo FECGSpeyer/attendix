@@ -7,7 +7,7 @@ import '../../../../../core/constants/enums.dart';
 import '../../../../../core/providers/tenant_providers.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../data/models/person/person.dart';
-import '../../../../../shared/widgets/editable/editable_info_row.dart';
+import '../ion/ion_widgets.dart';
 import '../../../../../shared/widgets/sheets/field_editor_sheet.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
@@ -62,32 +62,14 @@ class AccountAccordion extends ConsumerWidget {
       return const SizedBox.shrink();
     }
 
-    return Card(
-      margin: const EdgeInsets.symmetric(
-        horizontal: AppDimensions.paddingM,
-        vertical: AppDimensions.paddingXS,
-      ),
-      child: Column(
-        children: [
-          ListTile(
-            title: Text(
-              context.l10n.personAccount,
-              style: const TextStyle(fontWeight: FontWeight.w600),
-            ),
-            trailing: Icon(isExpanded ? Icons.expand_less : Icons.expand_more),
-            onTap: onToggle,
-          ),
-          if (isExpanded)
-            Padding(
-              padding: const EdgeInsets.fromLTRB(
-                AppDimensions.paddingM,
-                0,
-                AppDimensions.paddingM,
-                AppDimensions.paddingM,
-              ),
-              child: _buildContent(context, ref),
-            ),
-        ],
+    return IonAccordion(
+      title: context.l10n.personAccount,
+      expanded: isExpanded,
+      onToggle: onToggle,
+      // UX_PEOPLE: ion-items span the full width, other content is inset.
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: AppDimensions.paddingM),
+        child: _buildContent(context, ref),
       ),
     );
   }
@@ -99,7 +81,7 @@ class AccountAccordion extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Email
-        EditableInfoRow(
+        IonFieldRow(
           icon: Icons.email,
           label: context.l10n.peopleEmail,
           value: (draftEmail ?? person.email) ?? context.l10n.personFlutterNotSpecified,
@@ -113,7 +95,9 @@ class AccountAccordion extends ConsumerWidget {
             person.appId == null &&
             onSearchOtherInstance != null &&
             ((draftEmail ?? person.email)?.trim().isNotEmpty ?? false))
-          Align(
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingS),
+            child: Align(
             alignment: Alignment.centerLeft,
             child: TextButton.icon(
               onPressed: onSearchOtherInstance,
@@ -121,10 +105,11 @@ class AccountAccordion extends ConsumerWidget {
               label: Text(context.l10n.personFlutterSearchOtherInstance),
             ),
           ),
+          ),
 
         // Account linked status
         if (person.appId != null) ...[
-          InfoRow(
+          IonFieldRow(
             icon: Icons.badge,
             label: context.l10n.personAccount,
             value: context.l10n.personFlutterLinked,
@@ -132,16 +117,22 @@ class AccountAccordion extends ConsumerWidget {
           const SizedBox(height: AppDimensions.paddingM),
 
           // Role selector
-          _buildRoleSelector(context, tenant?.id),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM),
+            child: _buildRoleSelector(context, tenant?.id),
+          ),
           const SizedBox(height: AppDimensions.paddingM),
 
           // Unlink button
           if (canEdit)
-            OutlinedButton.icon(
-              onPressed: onUnlinkAccount,
-              icon: const Icon(Icons.link_off, color: AppColors.danger),
-              label: Text(context.l10n.personFlutterUnlinkAccount),
-              style: OutlinedButton.styleFrom(foregroundColor: AppColors.danger),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM),
+              child: OutlinedButton.icon(
+                onPressed: onUnlinkAccount,
+                icon: const Icon(Icons.link_off, color: AppColors.danger),
+                label: Text(context.l10n.personFlutterUnlinkAccount),
+                style: OutlinedButton.styleFrom(foregroundColor: AppColors.danger),
+              ),
             ),
         ],
 
@@ -149,13 +140,17 @@ class AccountAccordion extends ConsumerWidget {
         if (person.appId == null && person.email != null) ...[
           const SizedBox(height: AppDimensions.paddingM),
           if (canEdit)
-            FilledButton.icon(
-              onPressed: onCreateAccount,
-              icon: const Icon(Icons.person_add),
-              label: Text(context.l10n.personFlutterCreateAccount),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM),
+              child: FilledButton.icon(
+                onPressed: onCreateAccount,
+                icon: const Icon(Icons.person_add),
+                label: Text(context.l10n.personFlutterCreateAccount),
+              ),
             ),
           if (!canEdit)
             Container(
+              margin: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM),
               padding: const EdgeInsets.all(AppDimensions.paddingM),
               decoration: BoxDecoration(
                 color: AppColors.primary.withValues(alpha: 0.1),
@@ -178,7 +173,8 @@ class AccountAccordion extends ConsumerWidget {
 
         // PEOPLE2: Ionic account help (person.accountHelp / existingUserHint)
         if (canEdit)
-          Align(
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingS),
             alignment: Alignment.centerLeft,
             child: TextButton.icon(
               onPressed: () => _showHelp(context),
@@ -189,6 +185,7 @@ class AccountAccordion extends ConsumerWidget {
 
         if (person.appId == null && person.email == null)
           Container(
+            margin: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM),
             padding: const EdgeInsets.all(AppDimensions.paddingM),
             decoration: BoxDecoration(
               color: AppColors.warning.withValues(alpha: 0.1),
