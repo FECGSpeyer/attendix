@@ -324,6 +324,8 @@ List<Song> _applyDefaultInstruments(List<Song> songs, List<Group> groups, bool i
 /// Returns null if a public sharing id is invalid.
 final songsListDataProvider =
     FutureProvider.autoDispose.family<SongsListData?, String?>((ref, sharingId) async {
+  // SOL_FIX16: account link before the first await (see account_scoped test).
+  ref.watch(currentAuthUserIdProvider);
   if (sharingId != null) {
     final repo = ref.watch(publicSongRepositoryProvider);
     final shared = await repo.getTenantBySongSharingId(sharingId);
@@ -431,6 +433,8 @@ class SongDetailData {
 
 final songDetailDataProvider = FutureProvider.autoDispose
     .family<SongDetailData?, SongDetailParams>((ref, params) async {
+  // SOL_FIX16: account link before the first await (see account_scoped test).
+  ref.watch(currentAuthUserIdProvider);
   if (params.sharingId != null) {
     final repo = ref.watch(publicSongRepositoryProvider);
     final shared = await repo.getTenantBySongSharingId(params.sharingId!);
