@@ -366,7 +366,10 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
   // Fields
   // ---------------------------------------------------------------------------
 
-  Future<void> _showAddMenu() async {
+  /// Ionic `ion-popover` (trigger="add-trigger") anchored below the "+"
+  /// button of the run-sheet header: plain items, then dividers with small
+  /// bold section labels for org fields and block templates.
+  Future<void> _showAddMenu(BuildContext anchorContext) async {
     final loggedIn = _loggedIn;
     final isGeneral = ref.read(currentTenantProvider)?.type == 'general';
     final org = loggedIn ? ref.read(currentOrganisationProvider).valueOrNull : null;
@@ -374,21 +377,48 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
     final blockTemplates = loggedIn
         ? (ref.read(planBlockTemplatesProvider).valueOrNull ?? const <PlanBlockTemplate>[])
         : const <PlanBlockTemplate>[];
-    final action = await showPlanActionSheet<String>(
-      context,
-      actions: [
-        PlanSheetAction('field', context.l10n.planningAddField, icon: Icons.add),
-        PlanSheetAction('group', context.l10n.planningAddBlock, icon: Icons.view_agenda_outlined),
-        PlanSheetAction('note', context.l10n.planningAddNoteField, icon: Icons.sticky_note_2_outlined),
+    final l10n = context.l10n;
+    PopupMenuItem<String> item(String value, String label, [String? note]) => PopupMenuItem<String>(
+          value: value,
+          child: Text.rich(TextSpan(children: [
+            TextSpan(text: label),
+            if (note != null) TextSpan(text: ' $note', style: const TextStyle(color: AppColors.medium)),
+          ])),
+        );
+    PopupMenuItem<String> section(String label) => PopupMenuItem<String>(
+          enabled: false,
+          height: 32,
+          child: Text(label,
+              style: TextStyle(
+                  fontSize: 12, fontWeight: FontWeight.bold, color: Theme.of(context).textTheme.bodyMedium?.color)),
+        );
+    final box = anchorContext.findRenderObject() as RenderBox;
+    final overlay = Navigator.of(anchorContext).overlay!.context.findRenderObject() as RenderBox;
+    final topLeft = box.localToGlobal(Offset(0, box.size.height), ancestor: overlay);
+    final bottomRight = box.localToGlobal(box.size.bottomRight(Offset.zero), ancestor: overlay);
+    final action = await showMenu<String>(
+      context: anchorContext,
+      position: RelativeRect.fromRect(Rect.fromPoints(topLeft, bottomRight), Offset.zero & overlay.size),
+      items: [
+        item('field', l10n.planningAddField),
+        item('group', l10n.planningAddBlock),
+        item('note', l10n.planningAddNoteField),
         if (loggedIn && !isGeneral) ...[
-          PlanSheetAction('current', context.l10n.planningAddCurrentSongs, icon: Icons.library_music_outlined),
-          if (_songs.isNotEmpty) PlanSheetAction('song', context.l10n.planningAddSong, icon: Icons.music_note_outlined),
+          item('current', l10n.planningAddCurrentSongs),
+          if (_songs.isNotEmpty) item('song', l10n.planningAddSong),
         ],
-        for (var i = 0; i < orgFields.length; i++)
-          PlanSheetAction('orgfield:$i', context.l10n.planningFlutterFieldEntry(orgFields[i].name, orgFields[i].time)),
-        for (final tpl in blockTemplates)
-          PlanSheetAction(
-              'block:${tpl.id}', context.l10n.planningFlutterBlockEntry(tpl.name, PlanUtils.templateMinutes(tpl))),
+        if (orgFields.isNotEmpty) ...[
+          const PopupMenuDivider(),
+          section(l10n.planningFields),
+          for (var i = 0; i < orgFields.length; i++)
+            item('orgfield:$i', orgFields[i].name, l10n.planningMinShort(orgFields[i].time)),
+        ],
+        if (blockTemplates.isNotEmpty) ...[
+          const PopupMenuDivider(),
+          section(l10n.planningBlocks),
+          for (final tpl in blockTemplates)
+            item('block:${tpl.id}', tpl.name, l10n.planningMinShort(PlanUtils.templateMinutes(tpl))),
+        ],
       ],
     );
     if (action == null || !mounted) return;
@@ -712,126 +742,146 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
           : ListView(
               padding: centeredListPadding(context, bottom: 32),
               children: [
-                Card(
+                // Ionic: ion-list [inset]="true" with full-width item lines.
+                _InsetList(
                   margin: const EdgeInsets.all(AppDimensions.paddingM),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    child: Column(
+                  // lines="none" on the action items
+                  dividerCount: 3,
+                  children: [
+                    // ion-input labelPlacement="stacked" (no box)
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 10, 16, 6),
+                      child: Focus(
+                        onFocusChange: (f) {
+                          if (!f) _changed();
+                        },
+                        child: TextField(
+                          controller: _titleController,
+                          textCapitalization: TextCapitalization.sentences,
+                          decoration: InputDecoration(
+                            labelText: context.l10n.plansTitle,
+                            hintText: context.l10n.plansRunSheet,
+                            floatingLabelBehavior: FloatingLabelBehavior.always,
+                            filled: false,
+                            isDense: true,
+                            border: InputBorder.none,
+                            enabledBorder: InputBorder.none,
+                            focusedBorder: InputBorder.none,
+                            contentPadding: const EdgeInsets.only(top: 6, bottom: 4),
+                          ),
+                        ),
+                      ),
+                    ),
+                    // ion-select interface="popover": label left, value right
+                    _InlineSelect<String>(
+                      key: ValueKey('tpl-$_templateId'),
+                      label: context.l10n.plansTemplate,
+                      value: _templateId,
+                      items: [
+                        for (final t in publicPlanningTemplates)
+                          DropdownMenuItem(value: t.id, child: Text(t.name)),
+                        if (loggedIn && orgTemplates.isNotEmpty) ...[
+                          DropdownMenuItem(value: '', enabled: false, child: Text(context.l10n.plansOrgTemplates)),
+                          for (var i = 0; i < orgTemplates.length; i++)
+                            DropdownMenuItem(
+                                value: 'org:$i', child: Text(context.l10n.plansOrgSuffix(orgTemplates[i].title ?? ''))),
+                        ],
+                      ],
+                      onChanged: _onTemplateChange,
+                    ),
+                    _InlineSelect<String>(
+                      key: ValueKey('brand-$_brandingId'),
+                      label: context.l10n.plansBranding,
+                      value: _brandingId,
+                      items: [
+                        for (final b in publicBrandings)
+                          DropdownMenuItem(
+                              value: b.id, child: Text(b.id == 'none' ? context.l10n.coreFlutterNoBranding : b.name)),
+                      ],
+                      onChanged: (v) {
+                        setState(() => _brandingId = v ?? 'none');
+                        _changed();
+                      },
+                    ),
+                    ListTile(
+                      title: Text(context.l10n.plansDate),
+                      trailing: IonDatetimeChip(
+                        text: DateFormat(dateFmt()).format(_date),
+                        onTap: _pickDate,
+                      ),
+                    ),
+                    ListTile(
+                      leading: const Icon(Icons.refresh, color: AppColors.primary),
+                      title: Text(context.l10n.plansRestoreTemplate, style: const TextStyle(color: AppColors.primary)),
+                      onTap: _resetToTemplate,
+                    ),
+                    if (org != null)
+                      ListTile(
+                        leading: Icon(_isOrgPlan ? Icons.check_circle : Icons.business_outlined,
+                            color: _isOrgPlan ? AppColors.success : AppColors.primary),
+                        title: Text(
+                          _isOrgPlan ? context.l10n.plansFlutterInOrg(org.name) : context.l10n.plansFlutterAddToOrg,
+                          style: TextStyle(color: _isOrgPlan ? AppColors.success : AppColors.primary),
+                        ),
+                        onTap: _toggleOrg,
+                      ),
+                    if (loggedIn)
+                      ListTile(
+                        leading: const Icon(Icons.add_circle_outline, color: AppColors.medium),
+                        title: Text(context.l10n.plansNewPlan, style: const TextStyle(color: AppColors.medium)),
+                        onTap: _newPlan,
+                      ),
+                  ],
+                ),
+                // ion-list-header: bold title with the "+" popover trigger
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(32, 8, 20, 0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(context.l10n.planningRunSheet,
+                            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                      ),
+                      Builder(
+                        builder: (anchor) => IconButton(
+                          key: const ValueKey('plan-add-trigger'),
+                          color: AppColors.primary,
+                          tooltip: context.l10n.planningAddField,
+                          icon: const Icon(Icons.add),
+                          onPressed: () => _showAddMenu(anchor),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                _InsetList(
+                  margin: const EdgeInsets.fromLTRB(AppDimensions.paddingM, 4, AppDimensions.paddingM, 0),
+                  dividerCount: 1,
+                  children: [
+                    ListTile(
+                      title: Text(context.l10n.attendanceStartLabel),
+                      trailing: IonDatetimeChip(text: _time, onTap: _pickTime),
+                    ),
+                    Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: Focus(
-                            onFocusChange: (f) {
-                              if (!f) _changed();
-                            },
-                            child: TextField(
-                              controller: _titleController,
-                              textCapitalization: TextCapitalization.sentences,
-                              decoration: InputDecoration(labelText: context.l10n.plansTitle, hintText: context.l10n.plansRunSheet),
-                            ),
-                          ),
+                        PlanFieldsEditor(
+                          fields: _fields,
+                          startTime: _time,
+                          onChanged: (f) {
+                            setState(() => _fields = f);
+                            _changed();
+                          },
                         ),
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-                          child: DropdownButtonFormField<String>(
-                            key: ValueKey('tpl-$_templateId'),
-                            value: _templateId,
-                            isExpanded: true,
-                            decoration: InputDecoration(labelText: context.l10n.plansTemplate),
-                            items: [
-                              for (final t in publicPlanningTemplates)
-                                DropdownMenuItem(value: t.id, child: Text(t.name)),
-                              if (loggedIn && orgTemplates.isNotEmpty) ...[
-                                DropdownMenuItem(
-                                    value: '', enabled: false, child: Text(context.l10n.plansOrgTemplates)),
-                                for (var i = 0; i < orgTemplates.length; i++)
-                                  DropdownMenuItem(value: 'org:$i', child: Text(context.l10n.plansOrgSuffix(orgTemplates[i].title ?? ''))),
-                              ],
-                            ],
-                            onChanged: _onTemplateChange,
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-                          child: DropdownButtonFormField<String>(
-                            key: ValueKey('brand-$_brandingId'),
-                            value: _brandingId,
-                            isExpanded: true,
-                            decoration: InputDecoration(labelText: context.l10n.plansBranding),
-                            items: [
-                              for (final b in publicBrandings)
-                                DropdownMenuItem(
-                                    value: b.id,
-                                    child: Text(b.id == 'none' ? context.l10n.coreFlutterNoBranding : b.name)),
-                            ],
-                            onChanged: (v) {
-                              setState(() => _brandingId = v ?? 'none');
-                              _changed();
-                            },
-                          ),
-                        ),
-                        ListTile(
-                          title: Text(context.l10n.plansDate),
-                          trailing: TextButton(
-                            onPressed: _pickDate,
-                            child: Text(DateFormat(dateFmt()).format(_date)),
-                          ),
-                        ),
-                        ListTile(
-                          leading: const Icon(Icons.refresh, color: AppColors.primary),
-                          title: Text(context.l10n.plansRestoreTemplate, style: const TextStyle(color: AppColors.primary)),
-                          onTap: _resetToTemplate,
-                        ),
-                        if (org != null)
+                        if (_fields.isNotEmpty)
                           ListTile(
-                            leading: Icon(_isOrgPlan ? Icons.check_circle : Icons.business_outlined,
-                                color: _isOrgPlan ? AppColors.success : AppColors.primary),
-                            title: Text(
-                              _isOrgPlan ? context.l10n.plansFlutterInOrg(org.name) : context.l10n.plansFlutterAddToOrg,
-                              style: TextStyle(color: _isOrgPlan ? AppColors.success : AppColors.primary),
-                            ),
-                            onTap: _toggleOrg,
-                          ),
-                        if (loggedIn)
-                          ListTile(
-                            leading: const Icon(Icons.add_circle_outline, color: AppColors.medium),
-                            title: Text(context.l10n.plansNewPlan, style: const TextStyle(color: AppColors.medium)),
-                            onTap: _newPlan,
+                            title: Text(context.l10n.attendanceEnd),
+                            // Ionic: disabled ion-datetime-button (same chip, read-only)
+                            trailing: IonDatetimeChip(text: _end),
                           ),
                       ],
                     ),
-                  ),
-                ),
-                Card(
-                  margin: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      ListTile(
-                        title: Text(context.l10n.planningRunSheet, style: const TextStyle(fontWeight: FontWeight.bold)),
-                        trailing: IconButton(icon: const Icon(Icons.add), onPressed: _showAddMenu),
-                      ),
-                      ListTile(
-                        title: Text(context.l10n.attendanceStartLabel),
-                        trailing: TextButton(onPressed: _pickTime, child: Text(context.l10n.attendanceTimeOClock(_time))),
-                      ),
-                      const Divider(height: 1),
-                      PlanFieldsEditor(
-                        fields: _fields,
-                        startTime: _time,
-                        onChanged: (f) {
-                          setState(() => _fields = f);
-                          _changed();
-                        },
-                      ),
-                      if (_fields.isNotEmpty)
-                        ListTile(
-                          title: Text(context.l10n.attendanceEnd),
-                          trailing: Text(context.l10n.attendanceTimeOClock(_end), style: const TextStyle(fontWeight: FontWeight.bold)),
-                        ),
-                    ],
-                  ),
+                  ],
                 ),
                 Padding(
                   padding: const EdgeInsets.all(AppDimensions.paddingM),
@@ -953,6 +1003,113 @@ class _MyPlanTile extends ConsumerWidget {
         subtitle: Text('$date${count > 0 ? ' · ${context.l10n.plansFlutterFieldsCount(count)}' : ''}'),
         trailing: const Icon(Icons.chevron_right, color: AppColors.medium),
         onTap: () => Navigator.pop(context, plan),
+      ),
+    );
+  }
+}
+
+
+/// Ionic `ion-list [inset]="true"`: rounded white card; the first
+/// [dividerCount] children are separated by full-width item lines.
+class _InsetList extends StatelessWidget {
+  const _InsetList({required this.children, required this.margin, this.dividerCount = 0});
+
+  final List<Widget> children;
+  final EdgeInsets margin;
+  final int dividerCount;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: margin,
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          for (var i = 0; i < children.length; i++) ...[
+            children[i],
+            if (i < dividerCount && i < children.length - 1) const Divider(height: 1, indent: 16),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+/// Ionic `ion-select` inside an `ion-item` (interface="popover"): the label on
+/// the left, the selected value with a caret on the right, no field box.
+class _InlineSelect<T> extends StatelessWidget {
+  const _InlineSelect({
+    super.key,
+    required this.label,
+    required this.value,
+    required this.items,
+    required this.onChanged,
+  });
+
+  final String label;
+  final T? value;
+  final List<DropdownMenuItem<T>> items;
+  final ValueChanged<T?> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 16, right: 12),
+      child: Row(
+        children: [
+          Text(label, style: Theme.of(context).textTheme.bodyLarge),
+          const SizedBox(width: 16),
+          Expanded(
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<T>(
+                value: value,
+                isExpanded: true,
+                alignment: AlignmentDirectional.centerEnd,
+                items: items,
+                selectedItemBuilder: (context) => [
+                  for (final it in items)
+                    Align(
+                      alignment: AlignmentDirectional.centerEnd,
+                      child: DefaultTextStyle.merge(
+                        style: const TextStyle(color: AppColors.medium),
+                        overflow: TextOverflow.ellipsis,
+                        child: it.child,
+                      ),
+                    ),
+                ],
+                onChanged: onChanged,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Ionic `ion-datetime-button`: grey rounded chip showing the date/time
+/// (no "Uhr" suffix). Without [onTap] it is read-only (disabled datetime).
+class IonDatetimeChip extends StatelessWidget {
+  const IonDatetimeChip({super.key, required this.text, this.onTap});
+
+  final String text;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final background = isDark ? const Color(0xFF2C2C2E) : const Color(0xFFEDEEF0);
+    return Material(
+      color: background,
+      borderRadius: BorderRadius.circular(8),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(8),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          child: Text(text, style: Theme.of(context).textTheme.bodyLarge),
+        ),
       ),
     );
   }

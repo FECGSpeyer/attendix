@@ -29,6 +29,8 @@ class AppTheme {
     final divider = isDark ? AppColors.dividerDark : AppColors.dividerLight;
     final inputFill =
         isDark ? AppColors.inputFillDark : AppColors.inputFillLight;
+    // Ionic global `ion-button[disabled] { opacity: .5 }` on primary buttons.
+    final disabledPrimary = AppColors.primary.withValues(alpha: 0.5);
 
     final base =
         isDark
@@ -155,12 +157,17 @@ class AppTheme {
           shape: RoundedRectangleBorder(borderRadius: radius10),
           backgroundColor: AppColors.primary,
           foregroundColor: Colors.white,
+          // Ionic: a disabled ion-button keeps its colour at opacity 0.5.
+          disabledBackgroundColor: disabledPrimary,
+          disabledForegroundColor: Colors.white,
         ),
       ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
           shape: RoundedRectangleBorder(borderRadius: radius10),
+          disabledBackgroundColor: disabledPrimary,
+          disabledForegroundColor: Colors.white,
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(

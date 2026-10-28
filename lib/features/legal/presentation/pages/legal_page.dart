@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/constants/app_constants.dart';
 import '../widgets/legal_content_view.dart';
 import '../../../../l10n/l10n.dart';
 
@@ -13,7 +12,10 @@ class LegalPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
+      // Ionic legal page: plain (white) content background.
+      backgroundColor: theme.cardTheme.color ?? theme.colorScheme.surface,
       appBar: AppBar(
         title: Text(context.l10n.legalTitle),
         leading: IconButton(
@@ -22,15 +24,8 @@ class LegalPage extends StatelessWidget {
               context.canPop() ? context.pop() : context.go('/login'),
         ),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(AppDimensions.paddingM),
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 800),
-            child: const LegalContentView(),
-          ),
-        ),
-      ),
+      // Scrolls itself, capped at 800px; loading/error centred.
+      body: const LegalContentView(),
     );
   }
 }

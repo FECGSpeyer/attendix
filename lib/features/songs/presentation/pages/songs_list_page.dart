@@ -48,6 +48,7 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
   Timer? _searchDebounce;
   String _search = '';
   bool _pruned = false;
+  bool _invalidLinkToastShown = false;
 
   bool get _isPublic => widget.songSharingId != null;
 
@@ -139,21 +140,43 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
     final isAdmin = !_isPublic && (role.isAdmin || role.isResponsible);
     final data = dataAsync.valueOrNull;
 
-    if (dataAsync.hasError && data == null) {
+    // UX_PRELOGIN: while a retry is running show the skeleton again instead
+    // of the stale error (provider keeps the error during the refresh).
+    if (dataAsync.hasError && !dataAsync.isLoading && data == null) {
       return Scaffold(
         appBar: AppBar(title: Text(context.l10n.settingsSongs)),
         body: ErrorStateView(error: dataAsync.error, onRetry: _refresh),
       );
     }
 
-    if (dataAsync.hasValue && data == null) {
-      // Invalid public sharing link (or no tenant selected)
+    if (dataAsync.hasValue && !dataAsync.isLoading && data == null) {
+      // Invalid public sharing link (or no tenant selected). Ionic: toast
+      // "Ungültiger Freigabe-Link." over the empty songs page, which keeps
+      // its back button.
+      if (_isPublic && !_invalidLinkToastShown) {
+        _invalidLinkToastShown = true;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) {
+            ToastHelper.showInfo(context, context.l10n.songsInvalidShareLink);
+          }
+        });
+      }
       return Scaffold(
-        appBar: AppBar(title: Text(context.l10n.settingsSongs)),
-        body: ErrorStateView(
-          icon: Icons.link_off,
-          message: context.l10n.songsInvalidShareLink,
+        appBar: AppBar(
+          title: Text(context.l10n.settingsSongs),
+          leading: _isPublic
+              ? BackButton(
+                  onPressed: () =>
+                      context.canPop() ? context.pop() : context.go('/login'),
+                )
+              : null,
         ),
+        body: _isPublic
+            ? const SizedBox.shrink()
+            : ErrorStateView(
+                icon: Icons.link_off,
+                message: context.l10n.songsInvalidShareLink,
+              ),
       );
     }
 

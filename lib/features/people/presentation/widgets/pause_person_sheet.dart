@@ -192,6 +192,7 @@ class _PauseSheetState extends State<_PauseSheet> {
               label: Text(context.l10n.peoplePause),
               style: FilledButton.styleFrom(
                 backgroundColor: AppColors.warning,
+                disabledBackgroundColor: AppColors.warning.withValues(alpha: 0.5),
                 padding:
                     const EdgeInsets.symmetric(vertical: AppDimensions.paddingM),
               ),

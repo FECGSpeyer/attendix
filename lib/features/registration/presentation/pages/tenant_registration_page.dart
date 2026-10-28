@@ -22,7 +22,6 @@ import '../../../auth/presentation/widgets/otp_widgets.dart';
 import '../../../legal/presentation/widgets/legal_content_view.dart';
 import '../../data/providers/registration_providers.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/common/error_state_view.dart';
 
 /// Public tenant registration page
@@ -90,28 +89,28 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
     final tenantAsync = ref.watch(tenantByRegisterIdProvider(widget.registerId));
 
     return Scaffold(
+      // Ionic tenant-register: no back/close on the left, a home button on
+      // the right (goHome()).
       appBar: AppBar(
         title: Text(context.l10n.tenantRegisterTitle),
-        leading: IconButton(
-          icon: const Icon(Icons.close),
-          onPressed: () {
-            if (context.canPop()) {
-              context.pop();
-            } else {
-              context.go('/login');
-            }
-          },
-        ),
+        automaticallyImplyLeading: false,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.home_outlined),
+            tooltip: context.l10n.coreFlutterRouterGoHome,
+            onPressed: _goHome,
+          ),
+        ],
       ),
       body: tenantAsync.when(
+        // A retry shows the spinner again instead of the stale error.
+        skipLoadingOnRefresh: false,
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => _buildErrorState(
-          context.l10n.tenantRegisterFlutterLoadError(friendlyErrorMessage(error, context.l10n)),
-          error: error,
-        ),
+        error: (error, stack) => _buildErrorState(error: error),
         data: (tenant) {
           if (tenant == null) {
-            return _buildErrorState(context.l10n.tenantRegisterFlutterInvalidLink);
+            return _buildErrorState(
+                message: context.l10n.tenantRegisterFlutterInvalidLink);
           }
           return _buildForm(tenant);
         },
@@ -119,9 +118,25 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
     );
   }
 
-  Widget _buildErrorState(String message, {Object? error}) {
+  /// Ionic `goHome()`: signed-in member of a tenant -> that tenant's home,
+  /// otherwise the login page.
+  void _goHome() {
+    final user = ref.read(supabaseAuthProvider).currentUser;
+    final tenant = ref.read(currentTenantProvider);
+    final role = ref.read(currentRoleProvider);
+    if (user != null && tenant?.id != null && role != Role.none) {
+      context.go(homeRouteFor(role, tenant!.id, user.userMetadata));
+    } else {
+      context.go('/login');
+    }
+  }
+
+  /// Load failure (with retry) or invalid link: same centred
+  /// [ErrorStateView] as the other pre-login pages.
+  Widget _buildErrorState({String? message, Object? error}) {
     return ErrorStateView(
       error: error,
+      title: error != null ? context.l10n.coreFlutterLoadFailed : null,
       message: message,
       onRetry: error == null
           ? null

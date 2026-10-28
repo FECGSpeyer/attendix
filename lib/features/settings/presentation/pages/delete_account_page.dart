@@ -192,6 +192,8 @@ class _DeleteAccountPageState extends ConsumerState<DeleteAccountPage> {
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.danger,
               foregroundColor: Colors.white,
+              disabledBackgroundColor: AppColors.danger.withValues(alpha: 0.5),
+              disabledForegroundColor: Colors.white,
             ),
             onPressed: !_canDelete || isDeleting ? null : _deleteAccount,
             icon: isDeleting

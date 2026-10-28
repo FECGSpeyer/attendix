@@ -2471,6 +2471,10 @@
   "@coreFlutterInvalidCopyCount": {
     "description": "core.flutter.invalidCopyCount"
   },
+  "coreFlutterLoadFailed": "Fehler beim Laden",
+  "@coreFlutterLoadFailed": {
+    "description": "core.flutter.loadFailed"
+  },
   "coreFlutterNewVersionAvailable": "Neue Version verfügbar",
   "@coreFlutterNewVersionAvailable": {
     "description": "core.flutter.newVersionAvailable"
