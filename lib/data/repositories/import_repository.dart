@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/utils/db_helpers.dart';
 import '../models/person/person.dart';
 import '../models/tenant/tenant.dart';
 import 'base_repository.dart';
@@ -57,6 +58,8 @@ class ImportRepository extends BaseRepository with TenantAwareRepository {
       final data = Map<String, dynamic>.from(playerData)
         ..remove('id');
       data['tenantId'] = currentTenantId;
+      // DB_FIX: Ionic importPlayers → addPlayer sets the id client-side
+      data['id'] = generateIonicId();
 
       final response = await supabase
           .from('player')

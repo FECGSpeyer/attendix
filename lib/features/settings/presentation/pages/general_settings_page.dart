@@ -223,7 +223,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
         'maintainTeachers': _maintainTeachers,
         'withExcuses': _withExcuses,
         'parents': _parents,
-        'show_members_list': _showMembersList,
+        'showMembersList': _showMembersList, // DB_FIX: column is camelCase
         'shift_excused_as_present': _shiftExcusedAsPresent, // SETTINGS2
         // ATTENDANCE_SIGNOUT
         'show_all_attendances': _showAllAttendances,

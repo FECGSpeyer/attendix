@@ -131,15 +131,15 @@ void main() {
     });
     tearDown(() => container.dispose());
 
-    test('failing time follow-up still returns the saved type', () async {
+    // DB_FIX: like Ionic, saving a type never rewrites existing Termine.
+    test('saving times returns the type and leaves Termine untouched',
+        () async {
       when(() => typeRepo.updateType('t1', any())).thenAnswer((_) async => saved);
-      when(() => attRepo.updateFutureAttendanceTimes('t1',
-              startTime: any(named: 'startTime'), endTime: any(named: 'endTime')))
-          .thenThrow(Exception('boom'));
       final result = await container
           .read(attendanceTypeNotifierProvider.notifier)
-          .updateType('t1', {'start_time': '19:00'});
+          .updateType('t1', {'start_time': '19:00', 'end_time': '21:00'});
       expect(result, saved);
+      verifyZeroInteractions(attRepo);
     });
 
     test('failed save returns null without follow-up', () async {
@@ -148,8 +148,7 @@ void main() {
           .read(attendanceTypeNotifierProvider.notifier)
           .updateType('t1', {'start_time': '19:00'});
       expect(result, isNull);
-      verifyNever(() => attRepo.updateFutureAttendanceTimes(any(),
-          startTime: any(named: 'startTime'), endTime: any(named: 'endTime')));
+      verifyZeroInteractions(attRepo);
     });
 
     test('DemoModeException is rethrown', () async {

@@ -8,6 +8,7 @@ import '../models/shift/shift_plan.dart';
 import '../../core/utils/people_shift_status.dart';
 import '../../core/utils/person_matcher.dart';
 import '../../core/utils/text_utils.dart';
+import '../../core/utils/db_helpers.dart';
 import 'base_repository.dart';
 import 'user_registration_repository.dart';
 import '../../l10n/l10n.dart';
@@ -344,18 +345,26 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
     return result;
   }
 
-  /// Person JSON without computed fields (shared by create / reactivate).
+  /// DB_FIX: insert / reactivate payload like Ionic addPlayer:
+  /// `pickPersonFields({...player, tenantId, id: Utils.getId()})`.
+  ///
+  /// Only whitelisted `player` columns are sent (Person.toJson also holds
+  /// client-only keys such as `telegramId` → PGRST204). Null values are
+  /// dropped: they correspond to Ionic's undefined form fields, which JSON
+  /// serialisation omits, so DB defaults / existing values (e.g. `img` of a
+  /// reactivated row) stay intact. `img` is not part of pickPersonFields; a
+  /// non-data URL (adopted picture of a cross-tenant match) is still sent,
+  /// mirroring Ionic sanitizeImg.
   Map<String, dynamic> _personInsertData(Person player) {
-    final data = player.toJson();
-    data.remove('groupName');
-    data.remove('firstOfInstrument');
-    data.remove('instrumentLength');
-    data.remove('teacherName');
-    data.remove('criticalReasonText');
-    data.remove('person_attendances');
-    data.remove('percentage');
-    data.remove('created_at');
+    final data = pickPersonFields(player.toJson())
+      ..remove('created_at')
+      ..removeWhere((_, v) => v == null);
+    data['id'] = generateIonicId();
     data['tenantId'] = currentTenantId;
+    final img = player.img;
+    if (img != null && img.isNotEmpty && !img.startsWith('data:')) {
+      data['img'] = img;
+    }
     return data;
   }
 
@@ -370,21 +379,13 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
     }
 
     try {
-      final data = player.toJson();
-      // Remove read-only and computed fields
-      data.remove('id');
-      data.remove('created_at');
-      data.remove('createdAt');
-      data.remove('groupName');
-      data.remove('firstOfInstrument');
-      data.remove('instrumentLength');
-      data.remove('teacherName');
-      data.remove('criticalReasonText');
-      data.remove('isPresent');
-      data.remove('text');
-      data.remove('attStatus');
-      data.remove('person_attendances');
-      data.remove('percentage');
+      // DB_FIX: Ionic updatePlayer → update(pickPersonFields(player)) without
+      // id / created_at (no img, no client-only keys like telegramId).
+      // tenantId stays out of the body: the row is filtered by it.
+      final data = pickPersonFields(player.toJson())
+        ..remove('id')
+        ..remove('created_at')
+        ..remove('tenantId');
 
       final response = await supabase
           .from('player')
@@ -1496,6 +1497,8 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
             .select()
             .single();
       } else {
+        // DB_FIX: Ionic copy/transfer → addPlayer sets the id (Utils.getId)
+        newPlayerData['id'] = generateIonicId();
         created = await supabase
             .from('player')
             .insert(newPlayerData)

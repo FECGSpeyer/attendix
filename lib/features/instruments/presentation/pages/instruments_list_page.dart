@@ -578,7 +578,6 @@ class _InstrumentEditDialogState extends ConsumerState<_InstrumentEditDialog> {
   }
 
   late final TextEditingController _nameController;
-  late final TextEditingController _shortNameController;
   late final TextEditingController _notesController;
   late final TextEditingController _rangeController;
   late final TextEditingController _synonymsController;
@@ -595,7 +594,6 @@ class _InstrumentEditDialogState extends ConsumerState<_InstrumentEditDialog> {
     super.initState();
     final group = widget.group;
     _nameController = TextEditingController(text: group?.name ?? '');
-    _shortNameController = TextEditingController(text: group?.shortName ?? '');
     _notesController = TextEditingController(text: group?.notes ?? '');
     _rangeController = TextEditingController(text: group?.range ?? '');
     _synonymsController = TextEditingController(text: group?.synonyms ?? '');
@@ -610,7 +608,6 @@ class _InstrumentEditDialogState extends ConsumerState<_InstrumentEditDialog> {
   @override
   void dispose() {
     _nameController.dispose();
-    _shortNameController.dispose();
     _notesController.dispose();
     _rangeController.dispose();
     _synonymsController.dispose();
@@ -750,12 +747,9 @@ class _InstrumentEditDialogState extends ConsumerState<_InstrumentEditDialog> {
               minLines: 1,
               maxLines: 5,
             ),
-            const SizedBox(height: AppDimensions.paddingM),
-            // Flutter extra (not in Ionic): short name used in exports
-            TextFormField(
-              controller: _shortNameController,
-              decoration: InputDecoration(labelText: context.l10n.instrumentsFlutterShortName),
-            ),
+            // DB_FIX: the Flutter-only "Kurzname" field was removed —
+            // `instruments` has no shortName column (Ionic pickGroupFields),
+            // so every group save failed with PGRST204.
             const SizedBox(height: AppDimensions.paddingL),
             FilledButton(
               onPressed: _save,
@@ -782,13 +776,6 @@ class _InstrumentEditDialogState extends ConsumerState<_InstrumentEditDialog> {
         'tuning': _selectedTuning,
         'clefs': _selectedClefs.map((c) => c.toLowerCase()).toList(),
       };
-
-      final shortName = _shortNameController.text.trim();
-      if (shortName.isNotEmpty) {
-        result['shortName'] = shortName;
-      } else {
-        result['shortName'] = null;
-      }
 
       // Category — send the value even if null to clear it
       result['category'] = _selectedCategoryId;

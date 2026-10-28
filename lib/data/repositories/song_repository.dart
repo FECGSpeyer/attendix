@@ -171,13 +171,25 @@ class SongRepository extends BaseRepository with TenantAwareRepository {
   Future<Song> createSong(Song song) async {
     ensureNotDemo('createSong'); // DEMO_GUARD
     try {
-      final data = song.toJson();
-      // Remove computed/read-only fields
-      data.remove('id');
-      data.remove('files');
-      data.remove('created_at');
-      data.remove('createdAt');
-
+      // DB_FIX: explicit payload like Ionic songs.page addSong →
+      // insert({number, name, link, withChoir, withSolo, instrument_ids,
+      // prefix, tenantId}). Song.toJson would also send `composer` (no such
+      // column → PGRST204) and nulls over column defaults. Optional song
+      // columns are only sent when set.
+      final data = <String, dynamic>{
+        'number': song.number,
+        'name': song.name,
+        if (song.link != null) 'link': song.link,
+        'withChoir': song.withChoir,
+        'withSolo': song.withSolo,
+        'instrument_ids': song.instrumentIds ?? const <int>[],
+        'prefix': song.prefix ?? '',
+        if (song.difficulty != null) 'difficulty': song.difficulty,
+        if (song.category != null) 'category': song.category,
+        if (song.categoryIds != null) 'category_ids': song.categoryIds,
+        if (song.additionalFields != null)
+          'additional_fields': song.additionalFields,
+      };
       // Set tenant ID (effective song tenant)
       data['tenantId'] = songTenantId;
 
