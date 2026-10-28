@@ -45,6 +45,16 @@ void main() {
       }
     });
 
+    test('SOL_FIX17: the session guard is re-checked right before the upsert', () {
+      final save = source.substring(
+          source.indexOf('Future<void> saveToken(\n'), source.indexOf('Future<void> removeToken(String token) async'));
+      final upsertAt = save.indexOf("await supabase.from('device_tokens').upsert(");
+      final lastCheck = save.lastIndexOf('if (stale()) return;', upsertAt);
+      expect(lastCheck, greaterThan(0));
+      expect(save.substring(lastCheck, upsertAt), isNot(contains('await')));
+      expect('if (stale()) return;'.allMatches(save).length, 3);
+    });
+
     test('push_enabled is only updated on the own notifications row', () {
       final q = queries('notifications').single;
       expect(q, contains("{'push_enabled': enabled}"));

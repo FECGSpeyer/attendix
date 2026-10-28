@@ -10,7 +10,10 @@ final deviceTokenRepositoryProvider = Provider<DeviceTokenRepository>((ref) {
 /// Storage of the device push token and the push switch (Ionic PushService
 /// `saveToken` / `removeToken` / `togglePush` / `enablePushInDb`).
 abstract class DeviceTokenStore {
-  Future<void> saveToken(String token, String platform);
+  /// SOL_FIX17: [isCurrent] is re-checked before every write; once it
+  /// returns false (logout started meanwhile) the save stops, so a late
+  /// upsert never recreates the row that the logout deletes.
+  Future<void> saveToken(String token, String platform, {bool Function()? isCurrent});
   Future<void> removeToken(String token);
   Future<void> setPushEnabled(bool enabled);
 }
@@ -35,11 +38,17 @@ class DeviceTokenRepository extends BaseRepository implements DeviceTokenStore {
 
   /// Ionic saveToken: one token per user, one user per token, then upsert.
   @override
-  Future<void> saveToken(String token, String platform) async {
+  Future<void> saveToken(
+    String token,
+    String platform, {
+    bool Function()? isCurrent,
+  }) async {
+    bool stale() => isCurrent != null && !isCurrent();
     final userId = _userId;
     // Ionic: "Save Token Error: no authenticated user found" → nothing saved
     if (userId == null) return;
     try {
+      if (stale()) return;
       // Remove this token from other users (a token belongs to one user)
       await supabase
           .from('device_tokens')
@@ -47,6 +56,7 @@ class DeviceTokenRepository extends BaseRepository implements DeviceTokenStore {
           .eq('token', token)
           .neq('user_id', userId);
 
+      if (stale()) return;
       // Remove other tokens of this user (one token per user)
       await supabase
           .from('device_tokens')
@@ -54,6 +64,8 @@ class DeviceTokenRepository extends BaseRepository implements DeviceTokenStore {
           .eq('user_id', userId)
           .neq('token', token);
 
+      // SOL_FIX17: last check right before the upsert.
+      if (stale()) return;
       // Upsert the current token (insert or update)
       await supabase.from('device_tokens').upsert({
         'user_id': userId,
