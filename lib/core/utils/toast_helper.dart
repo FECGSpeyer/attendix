@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../theme/app_colors.dart';
+import 'demo_guard.dart';
 
 /// Helper class for showing toast messages (SnackBars)
 ///
@@ -8,6 +9,9 @@ import '../theme/app_colors.dart';
 class ToastHelper {
   /// Shows a success toast with green background
   static void showSuccess(BuildContext context, String message) {
+    // DEMO_GUARD: the operation was blocked (notifiers may swallow the
+    // DemoModeException); don't claim success right after the demo toast.
+    if (DemoGuard.recentlyShown) return;
     _showToast(
       context,
       message,
@@ -18,6 +22,13 @@ class ToastHelper {
 
   /// Shows an error toast with red background
   static void showError(BuildContext context, String message) {
+    // DEMO_GUARD: a blocked demo mutation already showed Ionic's warning
+    // toast; don't stack the generic error toast of the same operation.
+    if (DemoGuard.recentlyShown) return;
+    if (message.contains(kDemoRestrictedMessage)) {
+      showDemoRestricted(context);
+      return;
+    }
     _showToast(
       context,
       message,
@@ -43,6 +54,12 @@ class ToastHelper {
       backgroundColor: Colors.orange,
       icon: Icons.warning,
     );
+  }
+
+  /// DEMO_GUARD: Ionic `Utils.showToast(translate('people.demoUnavailable'),
+  /// 'warning')`.
+  static void showDemoRestricted(BuildContext context) {
+    showWarning(context, kDemoRestrictedMessage);
   }
 
   /// Shows a persistent update available snackbar (does not auto-dismiss)

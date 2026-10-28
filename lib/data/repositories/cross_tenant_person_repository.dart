@@ -168,6 +168,7 @@ class CrossTenantPersonRepository extends BaseRepository
     String globalPersonId, {
     required List<int> linkedTenantIds,
   }) async {
+    ensureNotDemo('setGlobalPersonId'); // DEMO_GUARD
     if (playerIds.isEmpty) return;
     try {
       await supabase

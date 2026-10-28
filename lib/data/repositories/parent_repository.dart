@@ -33,6 +33,7 @@ class ParentRepository extends BaseRepository with TenantAwareRepository {
 
   /// Create a new parent
   Future<ParentModel> createParent(ParentModel parent) async {
+    ensureNotDemo('createParent'); // DEMO_GUARD
     try {
       final data = parent.toJson();
       data.remove('id');
@@ -54,6 +55,7 @@ class ParentRepository extends BaseRepository with TenantAwareRepository {
 
   /// Delete a parent
   Future<void> deleteParent(int id) async {
+    ensureNotDemo('deleteParent'); // DEMO_GUARD
     try {
       await supabase
           .from('parents')

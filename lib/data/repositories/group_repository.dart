@@ -89,6 +89,7 @@ class GroupRepository extends BaseRepository with TenantAwareRepository {
 
   /// Create a new group/instrument
   Future<Group> createGroup(Map<String, dynamic> data) async {
+    ensureNotDemo('createGroup'); // DEMO_GUARD
     try {
       // Create a sanitized copy — don't mutate caller's map
       final sanitized = Map<String, dynamic>.from(data);
@@ -122,6 +123,7 @@ class GroupRepository extends BaseRepository with TenantAwareRepository {
 
   /// Update a group
   Future<Group> updateGroup(int id, Map<String, dynamic> updates) async {
+    ensureNotDemo('updateGroup'); // DEMO_GUARD
     try {
       // Remove read-only fields
       updates.remove('id');
@@ -202,6 +204,7 @@ class GroupRepository extends BaseRepository with TenantAwareRepository {
   /// Delete a group
   /// BL-008: Throws if players are still assigned to the group
   Future<void> deleteGroup(int id) async {
+    ensureNotDemo('deleteGroup'); // DEMO_GUARD
     try {
       // BL-008: Check for assigned players before deletion
       final playerCount = await getPlayerCountInGroup(id);
@@ -249,6 +252,7 @@ class GroupRepository extends BaseRepository with TenantAwareRepository {
   Future<GroupCategory> createGroupCategory({
     required String name,
   }) async {
+    ensureNotDemo('createGroupCategory'); // DEMO_GUARD
     try {
       // RT-008: Use maybeSingle() to avoid StateError
       final response = await supabase
@@ -275,6 +279,7 @@ class GroupRepository extends BaseRepository with TenantAwareRepository {
 
   /// Update a group category
   Future<GroupCategory> updateGroupCategory(int id, Map<String, dynamic> updates) async {
+    ensureNotDemo('updateGroupCategory'); // DEMO_GUARD
     try {
       updates.remove('id');
       updates.remove('created_at');
@@ -305,6 +310,7 @@ class GroupRepository extends BaseRepository with TenantAwareRepository {
   /// Persist new sort_order values for instruments (id -> sort_order).
   /// Ionic: instrument-list.page.ts saveOrder()
   Future<void> updateGroupSortOrders(Map<int, int> sortOrders) async {
+    ensureNotDemo('updateGroupSortOrders'); // DEMO_GUARD
     try {
       for (final entry in sortOrders.entries) {
         await supabase
@@ -322,6 +328,7 @@ class GroupRepository extends BaseRepository with TenantAwareRepository {
   /// Persist new sort_order values for group categories (id -> sort_order).
   /// Ionic: group-category.service.ts updateGroupCategorySortOrder()
   Future<void> updateGroupCategorySortOrders(Map<int, int> sortOrders) async {
+    ensureNotDemo('updateGroupCategorySortOrders'); // DEMO_GUARD
     try {
       for (final entry in sortOrders.entries) {
         await supabase
@@ -338,6 +345,7 @@ class GroupRepository extends BaseRepository with TenantAwareRepository {
 
   /// Delete a group category
   Future<void> deleteGroupCategory(int id) async {
+    ensureNotDemo('deleteGroupCategory'); // DEMO_GUARD
     try {
       await supabase
           .from('group_categories')

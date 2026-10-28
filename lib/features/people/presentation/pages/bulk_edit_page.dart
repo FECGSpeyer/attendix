@@ -14,6 +14,7 @@ import '../../../../data/models/church/church.dart';
 import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../data/models/tenant/tenant.dart';
+import '../../../../core/providers/demo_providers.dart'; // DEMO_GUARD
 
 /// A field that can be bulk edited.
 class _FieldOption {
@@ -137,6 +138,11 @@ class _BulkEditPageState extends ConsumerState<BulkEditPage> {
   Future<void> _save() async {
     final field = _selected;
     if (field == null || _changedCount == 0) return;
+    // DEMO_GUARD: Ionic `if (db.isDemo()) showToast(people.demoUnavailable)`.
+    if (ref.read(isDemoProvider)) {
+      ToastHelper.showDemoRestricted(context);
+      return;
+    }
 
     setState(() => _isSaving = true);
     final repo = ref.read(playerRepositoryWithTenantProvider);

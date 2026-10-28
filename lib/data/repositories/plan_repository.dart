@@ -76,6 +76,7 @@ class PlanRepository extends BaseRepository with TenantAwareRepository {
 
   /// Updates plan related columns of a Termin (plan, extra_plans, share flags).
   Future<PlanAttendance> updateAttendancePlanFields(int id, Map<String, dynamic> updates) async {
+    ensureNotDemo('updateAttendancePlanFields'); // DEMO_GUARD
     try {
       final data = Map<String, dynamic>.fromEntries(
         updates.entries.where((e) => _allowedAttendanceKeys.contains(e.key)),
@@ -131,6 +132,7 @@ class PlanRepository extends BaseRepository with TenantAwareRepository {
 
   /// Sets `attendance_types.is_default_org_plan`.
   Future<void> setTypeDefaultOrgPlan(String typeId, bool value) async {
+    ensureNotDemo('setTypeDefaultOrgPlan'); // DEMO_GUARD
     try {
       await supabase
           .from('attendance_types')
@@ -170,6 +172,7 @@ class PlanRepository extends BaseRepository with TenantAwareRepository {
 
   /// Saves all block templates (admins only, enforced by RLS `admins_update_tenants`).
   Future<void> saveBlockTemplates(List<PlanBlockTemplate> templates) async {
+    ensureNotDemo('saveBlockTemplates'); // DEMO_GUARD
     try {
       // tenants: filter by its own id (= currentTenantId)
       await supabase

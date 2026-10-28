@@ -103,6 +103,7 @@ class TaskRepository extends BaseRepository with TenantAwareRepository {
   }
 
   Future<TeamTask> createTask(TeamTask task) async {
+    ensureNotDemo('createTask'); // DEMO_GUARD
     try {
       final data = <String, dynamic>{
         'title': task.title,
@@ -133,6 +134,7 @@ class TaskRepository extends BaseRepository with TenantAwareRepository {
   /// Updates the given columns (snake_case keys). Members may only change
   /// `status` (enforced by the trigger tasks_guard_member_update).
   Future<TeamTask> updateTask(String id, Map<String, dynamic> updates) async {
+    ensureNotDemo('updateTask'); // DEMO_GUARD
     try {
       final data = Map<String, dynamic>.from(updates)
         ..remove('id')
@@ -160,6 +162,7 @@ class TaskRepository extends BaseRepository with TenantAwareRepository {
   }
 
   Future<void> deleteTask(String id) async {
+    ensureNotDemo('deleteTask'); // DEMO_GUARD
     try {
       final response = await supabase
           .from('tasks')

@@ -48,6 +48,7 @@ import '../widgets/attendance_detail/attendance_detail_widgets.dart';
 import '../widgets/attendance_legend_sheet.dart';
 import '../widgets/attendance_status_overview_sheet.dart';
 import '../widgets/songs_selection_sheet.dart';
+import '../../../../core/utils/demo_guard.dart';
 import '../../../team_organization/presentation/widgets/attendance_protocol_section.dart'; // PROTOCOL
 
 /// Attendance detail/taking page
@@ -2492,6 +2493,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     );
 
     if (source == null) return;
+    if (DemoGuard.blocked()) return; // DEMO_GUARD
 
     try {
       final picker = ImagePicker();

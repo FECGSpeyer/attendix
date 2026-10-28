@@ -60,6 +60,7 @@ class AdminRepository extends BaseRepository with TenantAwareRepository {
 
   /// Ionic `createAdmin` → `registerUser(email, '', Role.ADMIN)`.
   Future<void> createAdmin(String rawEmail) async {
+    ensureNotDemo('createAdmin'); // DEMO_GUARD
     final email = rawEmail.trim().toLowerCase();
     try {
       // 1. Already in this tenant? Promote to admin (Ionic getAppIdByEmail).
@@ -134,6 +135,7 @@ class AdminRepository extends BaseRepository with TenantAwareRepository {
 
   /// Ionic `removeUserFromTenant(appId, tenantId, deleteAdmin: true)`.
   Future<void> removeAdmin(String userId) async {
+    ensureNotDemo('removeAdmin'); // DEMO_GUARD
     try {
       await supabase
           .from('tenantUsers')

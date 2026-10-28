@@ -3,6 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../core/config/supabase_config.dart';
+import '../../core/utils/demo_guard.dart';
+
+export '../../core/utils/demo_guard.dart' show DemoModeException, kDemoRestrictedMessage;
 
 /// Base class for all repositories
 /// Provides common functionality like Supabase access and error handling
@@ -21,8 +24,35 @@ abstract class BaseRepository {
     throw UnimplementedError('Override in subclass or use mixin');
   }
 
+  /// DEMO_GUARD: Ionic `checkDemoRestriction()`.
+  ///
+  /// Call at the start of every mutation that Ionic's db.service blocks for
+  /// the demo account. Shows the warning toast
+  /// "Diese Funktion ist im Demo-Modus nicht verfügbar." and throws
+  /// [DemoModeException] when the signed-in user is the demo account.
+  void ensureNotDemo(String operation) {
+    DemoGuard.check(_currentUserEmail(), operation);
+  }
+
+  /// Ionic `isDemo()`.
+  bool get isDemo => DemoGuard.isDemoEmail(_currentUserEmail());
+
+  String? _currentUserEmail() {
+    try {
+      return supabase.auth.currentUser?.email;
+    } catch (_) {
+      // Supabase not initialised (tests) → never demo.
+      return null;
+    }
+  }
+
   /// Handle Supabase errors consistently
   T handleError<T>(Object error, StackTrace stack, String operation) {
+    // DEMO_GUARD: keep the typed demo error so the UI can show its text.
+    if (error is DemoModeException) {
+      Error.throwWithStackTrace(error, stack);
+    }
+
     // SEC-006: Only log errors in debug mode to avoid exposing internal structure
     if (kDebugMode) {
       debugPrint('[$runtimeType] Error in $operation: $error');

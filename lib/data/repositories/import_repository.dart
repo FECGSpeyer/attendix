@@ -50,6 +50,7 @@ class ImportRepository extends BaseRepository with TenantAwareRepository {
 
   /// Insert one imported person into the current tenant.
   Future<Person> insertPlayer(Map<String, dynamic> playerData) async {
+    ensureNotDemo('insertPlayer'); // DEMO_GUARD
     try {
       final data = Map<String, dynamic>.from(playerData)
         ..remove('id');
@@ -94,6 +95,7 @@ class ImportRepository extends BaseRepository with TenantAwareRepository {
 
   /// Insert one imported song into the current tenant.
   Future<Map<String, dynamic>> insertSong(Map<String, dynamic> songData) async {
+    ensureNotDemo('insertSong'); // DEMO_GUARD
     try {
       final data = Map<String, dynamic>.from(songData)..remove('id');
       data['tenantId'] = currentTenantId;

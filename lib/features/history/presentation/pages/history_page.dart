@@ -13,6 +13,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/history/history_entry.dart';
 import '../../../../data/models/song/song.dart';
 import '../../history_utils.dart';
+import '../../../../core/utils/demo_guard.dart';
 
 /// History Page - Song performance history
 class HistoryPage extends ConsumerStatefulWidget {
@@ -435,6 +436,7 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
     String? otherConductor,
     required DateTime date,
   }) async {
+    if (DemoGuard.blocked()) return; // DEMO_GUARD
     try {
       final supabase = ref.read(supabaseClientProvider);
       final tenant = ref.read(currentTenantProvider);
@@ -492,6 +494,7 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
     );
 
     if (!confirmed) return;
+    if (DemoGuard.blocked()) return; // DEMO_GUARD
 
     try {
       final supabase = ref.read(supabaseClientProvider);

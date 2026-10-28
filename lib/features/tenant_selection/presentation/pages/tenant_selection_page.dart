@@ -12,6 +12,7 @@ import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/tenant/tenant.dart';
+import '../../../../core/utils/demo_guard.dart';
 import '../../../../core/providers/dashboard_providers.dart'; // DASHBOARD
 
 /// Tenant selection page
@@ -211,7 +212,8 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
   /// Ionic deleteInstance: only admins; alert with the instance name input.
   Future<void> _deleteInstance(Tenant tenant) async {
     if (tenant.id == null) return;
-    if (tenant.role != Role.admin.value) {
+    // Ionic canDeleteTenant(): admin && !db.isDemo().
+    if (tenant.role != Role.admin.value || DemoGuard.isDemo) { // DEMO_GUARD
       ToastHelper.showError(context, 'Du kannst diese Instanz nicht löschen.');
       return;
     }

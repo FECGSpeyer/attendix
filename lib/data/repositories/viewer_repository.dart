@@ -33,6 +33,7 @@ class ViewerRepository extends BaseRepository with TenantAwareRepository {
 
   /// Create a new viewer
   Future<Viewer> createViewer(Viewer viewer) async {
+    ensureNotDemo('createViewer'); // DEMO_GUARD
     try {
       final data = viewer.toJson();
       data.remove('id');
@@ -54,6 +55,7 @@ class ViewerRepository extends BaseRepository with TenantAwareRepository {
 
   /// Delete a viewer
   Future<void> deleteViewer(int id) async {
+    ensureNotDemo('deleteViewer'); // DEMO_GUARD
     try {
       await supabase
           .from('viewers')

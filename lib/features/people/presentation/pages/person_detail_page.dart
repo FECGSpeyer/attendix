@@ -31,6 +31,7 @@ import '../widgets/duplicate_candidates_card.dart';
 import '../widgets/person_detail/person_detail.dart';
 import '../../../../core/services/tracking/tracking_event.dart';
 import '../../../../core/services/tracking/tracking_service.dart';
+import '../../../../core/utils/demo_guard.dart';
 
 /// Provider for single person with group name
 final personProvider =
@@ -1629,6 +1630,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     final notifier = ref.read(playerNotifierProvider.notifier);
     final tenant = ref.read(currentTenantProvider);
     final person = widget.person;
+    if (DemoGuard.blocked()) return; // DEMO_GUARD
 
     try {
       await notifier.unlinkAccount(person);

@@ -56,6 +56,7 @@ class ExtraFieldsRepository extends BaseRepository with TenantAwareRepository {
     required List<ExtraField> personFields,
     required List<ExtraField> songFields,
   }) async {
+    ensureNotDemo('saveFields'); // DEMO_GUARD
     try {
       await supabase.from('tenants').update({
         'additional_fields': personFields.map(extraFieldToJson).toList(),
@@ -129,6 +130,7 @@ class ExtraFieldsRepository extends BaseRepository with TenantAwareRepository {
   /// Ersetzt [oldValue] durch [newValue] für ein Feld bei allen Personen.
   /// Gibt die Anzahl aktualisierter Personen zurück.
   Future<int> updateFieldValue(String fieldId, dynamic oldValue, dynamic newValue) async {
+    ensureNotDemo('updateFieldValue'); // DEMO_GUARD
     try {
       final rows = await _loadRows('player');
       var count = 0;
@@ -149,6 +151,7 @@ class ExtraFieldsRepository extends BaseRepository with TenantAwareRepository {
 
   /// Setzt den Wert eines Feldes bei allen Personen auf [defaultValue].
   Future<int> resetFieldValues(String fieldId, dynamic defaultValue) async {
+    ensureNotDemo('resetFieldValues'); // DEMO_GUARD
     try {
       final rows = await _loadRows('player');
       var count = 0;

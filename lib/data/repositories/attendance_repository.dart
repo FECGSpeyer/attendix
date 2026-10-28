@@ -103,6 +103,7 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
   /// Create a new attendance
   /// BL-002: Checks for duplicate attendances on the same date
   Future<Attendance> createAttendance(Attendance attendance) async {
+    ensureNotDemo('createAttendance'); // DEMO_GUARD
     try {
       // BL-002: Check for existing attendance on the same date
       final existing = await supabase
@@ -142,6 +143,7 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
 
   /// Update an existing attendance
   Future<Attendance> updateAttendance(int id, Map<String, dynamic> updates) async {
+    ensureNotDemo('updateAttendance'); // DEMO_GUARD
     try {
       // Remove read-only fields
       updates.remove('id');
@@ -174,6 +176,7 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
 
   /// Delete an attendance
   Future<void> deleteAttendance(int id) async {
+    ensureNotDemo('deleteAttendance'); // DEMO_GUARD
     try {
       await supabase
           .from('attendance')
@@ -802,6 +805,7 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
 
   /// Moves the song history of a Termin to its new date.
   Future<void> updateHistoryDatesForAttendance(int attendanceId, String date) async {
+    ensureNotDemo('updateHistoryDatesForAttendance'); // DEMO_GUARD
     try {
       await supabase
           .from('history')
@@ -910,6 +914,7 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
     Uint8List bytes,
     String fileName,
   ) async {
+    ensureNotDemo('uploadAttachment'); // DEMO_GUARD
     try {
       await _assertAttendanceInTenant(attendanceId, 'uploadAttachment');
       final path = attachmentPath(attendanceId, fileName);
@@ -931,6 +936,7 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
 
   /// Removes the attachment file and clears url + name on the attendance row.
   Future<void> removeAttachment(int attendanceId, String? fileName) async {
+    ensureNotDemo('removeAttachment'); // DEMO_GUARD
     try {
       await _assertAttendanceInTenant(attendanceId, 'removeAttachment');
       if (fileName != null && fileName.isNotEmpty) {

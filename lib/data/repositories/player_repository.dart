@@ -240,6 +240,7 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
 
   /// Create a new player
   Future<Person> createPlayer(Person player) async {
+    ensureNotDemo('createPlayer'); // DEMO_GUARD
     try {
       final data = player.toJson();
       // Remove computed fields
@@ -269,6 +270,7 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
 
   /// Update an existing player
   Future<Person> updatePlayer(Person player) async {
+    ensureNotDemo('updatePlayer'); // DEMO_GUARD
     if (player.id == null) {
       throw RepositoryException(
         message: 'Player ID is required for update',
@@ -323,6 +325,7 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
   /// Read-only fields (id, tenantId, created_at) are stripped from the
   /// input map before the update is sent.
   Future<void> updatePlayerFields(int id, Map<String, dynamic> updates) async {
+    ensureNotDemo('updatePlayerFields'); // DEMO_GUARD
     try {
       updates.remove('id');
       updates.remove('tenantId');
@@ -341,6 +344,7 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
 
   /// Archive a player (soft delete)
   Future<void> archivePlayer(Person player, String leftDate, String? reason) async {
+    ensureNotDemo('archivePlayer'); // DEMO_GUARD
     if (player.id == null) {
       throw RepositoryException(
         message: 'Player ID is required for archive',
@@ -376,6 +380,7 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
 
   /// Reactivate an archived player
   Future<void> reactivatePlayer(Person player) async {
+    ensureNotDemo('reactivatePlayer'); // DEMO_GUARD
     if (player.id == null) {
       throw RepositoryException(
         message: 'Player ID is required for reactivate',
@@ -410,6 +415,7 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
 
   /// Delete a player permanently
   Future<void> deletePlayer(int playerId) async {
+    ensureNotDemo('deletePlayer'); // DEMO_GUARD
     try {
       await supabase
           .from('player')
@@ -434,6 +440,7 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
     String reason, {
     String? pauseFrom,
   }) async {
+    ensureNotDemo('pausePlayer'); // DEMO_GUARD
     if (player.id == null) {
       throw RepositoryException(
         message: 'Player ID is required for pause',
@@ -473,6 +480,7 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
 
   /// Unpause a player
   Future<void> unpausePlayer(Person player, {String historyText = 'Pause beendet'}) async {
+    ensureNotDemo('unpausePlayer'); // DEMO_GUARD
     if (player.id == null) {
       throw RepositoryException(
         message: 'Player ID is required for unpause',
@@ -679,6 +687,7 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
 
   /// Approve a pending player
   Future<void> approvePlayer(Person player) async {
+    ensureNotDemo('approvePlayer'); // DEMO_GUARD
     if (player.id == null) {
       throw RepositoryException(
         message: 'Player ID is required',
@@ -715,6 +724,7 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
 
   /// Decline a pending player - archives them with a reason
   Future<void> declinePlayer(Person player, String reason) async {
+    ensureNotDemo('declinePlayer'); // DEMO_GUARD
     if (player.id == null) {
       throw RepositoryException(
         message: 'Player ID is required',
@@ -762,6 +772,7 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
     int newInstrumentId,
     String? reason,
   ) async {
+    ensureNotDemo('updatePlayerInstrument'); // DEMO_GUARD
     if (player.id == null) {
       throw RepositoryException(
         message: 'Player ID is required',
@@ -865,6 +876,7 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
 
   /// Reset late count for a player (mark as resolved after conversation)
   Future<Person> resetLateCount(Person player) async {
+    ensureNotDemo('resetLateCount'); // DEMO_GUARD
     if (player.id == null) {
       throw RepositoryException(
         message: 'Player ID is required for resetLateCount',
@@ -903,6 +915,7 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
 
   /// Resolve critical status for a player
   Future<Person> resolveCritical(Person player, String? notes) async {
+    ensureNotDemo('resolveCritical'); // DEMO_GUARD
     if (player.id == null) {
       throw RepositoryException(
         message: 'Player ID is required for resolveCritical',
@@ -943,6 +956,7 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
 
   /// Link an existing account to a player
   Future<Person> linkAccount(Person player, String appId) async {
+    ensureNotDemo('linkAccount'); // DEMO_GUARD
     if (player.id == null) {
       throw RepositoryException(
         message: 'Player ID is required for linkAccount',
@@ -968,6 +982,7 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
 
   /// Unlink account from a player
   Future<Person> unlinkAccount(Person player) async {
+    ensureNotDemo('unlinkAccount'); // DEMO_GUARD
     if (player.id == null) {
       throw RepositoryException(
         message: 'Player ID is required for unlinkAccount',
@@ -1069,6 +1084,7 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
     required String sourceTenantName,
     required bool stayInInstance,
   }) async {
+    ensureNotDemo('handoverPlayer'); // DEMO_GUARD
     if (player.id == null) {
       throw RepositoryException(
         message: 'Player ID is required for handover',
@@ -1171,6 +1187,7 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
     required bool stayInInstance,
     void Function(int current, int total, String playerName)? onProgress,
   }) async {
+    ensureNotDemo('handoverPlayers'); // DEMO_GUARD
     final results = {'success': 0, 'duplicate': 0, 'error': 0};
 
     for (var i = 0; i < players.length; i++) {
@@ -1210,6 +1227,7 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
   /// Persist the manual order of players inside their group
   /// (Ionic list.page savePlayerOrder). [orders] maps player id → sort_order.
   Future<void> savePlayerOrder(Map<int, int> orders) async {
+    ensureNotDemo('savePlayerOrder'); // DEMO_GUARD
     try {
       for (final entry in orders.entries) {
         await supabase

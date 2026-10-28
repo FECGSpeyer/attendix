@@ -8,6 +8,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/shift/shift_plan.dart';
 import '../../../../data/models/tenant/tenant.dart';
+import '../../../../core/utils/demo_guard.dart';
 
 /// Sheet for copying a shift plan to another tenant
 class CopyShiftToTenantSheet extends ConsumerStatefulWidget {
@@ -271,6 +272,7 @@ class _CopyShiftToTenantSheetState
 
   Future<void> _copyShift() async {
     if (_targetTenantId == null) return;
+    if (DemoGuard.blocked()) return; // DEMO_GUARD
 
     setState(() {
       _isCopying = true;

@@ -34,6 +34,7 @@ import '../widgets/settings_admins_sheet.dart';
 import '../widgets/calendar_subscription_dialog.dart';
 import '../widgets/settings_list.dart';
 import 'left_players_page.dart' show leftPlayersProvider;
+import '../../../../core/providers/demo_providers.dart'; // DEMO_GUARD
 
 /// "Mehr" tab — UX_SETTINGS: same sections, order and role visibility as the
 /// Ionic settings page (src/app/settings/settings/settings.page.html):
@@ -59,8 +60,7 @@ class SettingsPage extends ConsumerWidget {
     final parentsEnabled = tenant?.parents == true;
     final canAccessFiles = ref.watch(canAccessFilesProvider);
     final isSuperDeveloper = ref.watch(isSuperDeveloperProvider);
-    final userEmail = ref.watch(supabaseClientProvider).auth.currentUser?.email;
-    final isDemo = AppConstants.demoMail.isNotEmpty && userEmail == AppConstants.demoMail;
+    final isDemo = ref.watch(isDemoProvider); // DEMO_GUARD
 
     // MEDIA_REALTIME: live pending card (Ionic `pending-player-changes` channel)
     final pendingCount =

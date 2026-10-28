@@ -13,6 +13,7 @@ import '../../../../../core/utils/toast_helper.dart';
 import '../../../../../data/models/person/person.dart';
 import '../../../../../shared/widgets/sheets/image_viewer_sheet.dart';
 import '../../pages/person_detail_page.dart';
+import '../../../../../core/utils/demo_guard.dart';
 
 /// Header widget displaying person avatar, group, and attendance stats.
 class PersonHeader extends ConsumerWidget {
@@ -219,6 +220,7 @@ class PersonHeader extends ConsumerWidget {
         return;
       }
 
+      if (DemoGuard.blocked()) return; // DEMO_GUARD
       final supabase = ref.read(supabaseClientProvider);
       final tenant = ref.read(currentTenantProvider);
       final personId = person.id;
@@ -296,6 +298,7 @@ class PersonHeader extends ConsumerWidget {
     if (confirmed != true || !context.mounted) return;
 
     try {
+      if (DemoGuard.blocked()) return; // DEMO_GUARD
       final supabase = ref.read(supabaseClientProvider);
       final tenant = ref.read(currentTenantProvider);
       final personId = person.id;

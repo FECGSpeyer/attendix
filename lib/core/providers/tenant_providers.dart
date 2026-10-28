@@ -6,6 +6,7 @@ import '../../core/config/supabase_config.dart';
 import '../../data/models/tenant/tenant.dart';
 import '../constants/enums.dart';
 import 'user_preferences_provider.dart';
+import '../utils/demo_guard.dart';
 
 const _tenantIdKey = 'current_tenant_id';
 
@@ -263,6 +264,7 @@ Future<void> toggleTenantFavorite(WidgetRef ref, int tenantId, bool favorite) as
 
 /// Delete a tenant (admin-only, cascading)
 Future<void> deleteTenant(WidgetRef ref, int tenantId) async {
+  DemoGuard.checkCurrent('deleteInstance'); // DEMO_GUARD
   final supabase = ref.read(supabaseClientProvider);
   final userId = supabase.auth.currentUser?.id;
   if (userId == null) throw Exception('Nicht eingeloggt');

@@ -15,6 +15,7 @@ import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../core/providers/user_registration_providers.dart'; // AUTH
 import '../widgets/import_widgets.dart';
+import '../../../../core/providers/demo_providers.dart'; // DEMO_GUARD
 
 enum _Step { file, mapping, preview }
 
@@ -151,6 +152,11 @@ class _PersonImportPageState extends ConsumerState<PersonImportPage> {
     final toImport = _importable;
     if (toImport.isEmpty) {
       ToastHelper.showWarning(context, 'Keine importierbaren Personen.');
+      return;
+    }
+    // DEMO_GUARD: Ionic `if (db.isDemo()) showToast(people.demoUnavailable)`.
+    if (ref.read(isDemoProvider)) {
+      ToastHelper.showDemoRestricted(context);
       return;
     }
 

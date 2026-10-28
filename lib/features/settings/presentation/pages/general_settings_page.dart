@@ -18,6 +18,7 @@ import '../../../../core/providers/group_providers.dart'; // SETTINGS2
 import '../../../../data/models/tenant/tenant.dart';
 import '../widgets/critical_rule_card.dart';
 import '../widgets/critical_rule_sheet.dart';
+import '../../../../core/utils/demo_guard.dart';
 import '../widgets/settings_list.dart'; // UX_SETTINGS
 
 /// German holiday regions
@@ -191,6 +192,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
       }
     }
     if (!_formKey.currentState!.validate()) return;
+    if (DemoGuard.blocked()) return; // DEMO_GUARD
 
     setState(() => _isSaving = true);
 
