@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/models/instrument/instrument.dart';
 import '../../data/repositories/repositories.dart';
 import 'tenant_providers.dart';
+import '../services/tracking/tracking_event.dart';
+import '../services/tracking/tracking_service.dart';
 
 /// Initialized group repository with tenant context
 final groupRepositoryWithTenantProvider = Provider<GroupRepository>((ref) {
@@ -82,6 +84,7 @@ class GroupNotifier extends Notifier<AsyncValue<void>> {
     state = const AsyncValue.loading();
     try {
       final result = await _repo.createGroup(data);
+      ref.read(trackingServiceProvider).track(TrackingEvent.instrumentAdded, properties: {'maingroup': data['maingroup'] ?? false});
       state = const AsyncValue.data(null);
       ref.invalidate(groupsProvider);
       ref.invalidate(groupsMapProvider);
@@ -96,6 +99,7 @@ class GroupNotifier extends Notifier<AsyncValue<void>> {
     state = const AsyncValue.loading();
     try {
       final result = await _repo.updateGroup(id, updates);
+      ref.read(trackingServiceProvider).track(TrackingEvent.instrumentUpdated);
       state = const AsyncValue.data(null);
       ref.invalidate(groupsProvider);
       ref.invalidate(groupsMapProvider);
@@ -110,6 +114,7 @@ class GroupNotifier extends Notifier<AsyncValue<void>> {
     state = const AsyncValue.loading();
     try {
       await _repo.deleteGroup(id);
+      ref.read(trackingServiceProvider).track(TrackingEvent.instrumentRemoved);
       state = const AsyncValue.data(null);
       ref.invalidate(groupsProvider);
       ref.invalidate(groupsMapProvider);

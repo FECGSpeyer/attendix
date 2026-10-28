@@ -7,6 +7,9 @@ import '../constants/enums.dart';
 import '../providers/tenant_providers.dart';
 import 'page_transitions.dart';
 import 'tracking_observer.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' show AuthChangeEvent; // MISC2
+import '../services/tracking/tracking_event.dart'; // MISC2
+import '../services/tracking/tracking_service.dart'; // MISC2
 import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/auth/presentation/pages/register_page.dart';
 import '../../features/auth/presentation/pages/forgot_password_page.dart';
@@ -102,7 +105,8 @@ import '../../features/planning/presentation/pages/shared_plan_page.dart';
 /// Used by GoRouter to re-evaluate redirects without recreating the router
 class AuthChangeNotifier extends ChangeNotifier {
   AuthChangeNotifier(this._ref) {
-    _ref.listen(authStateProvider, (_, __) {
+    _ref.listen(authStateProvider, (_, next) {
+      if (next.valueOrNull?.event == AuthChangeEvent.signedIn) _ref.read(trackingServiceProvider).track(TrackingEvent.login); // MISC2
       notifyListeners();
     });
   }

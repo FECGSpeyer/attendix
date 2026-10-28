@@ -33,6 +33,8 @@ import '../utils/song_utils.dart';
 import '../widgets/copy_to_tenant_sheet.dart';
 import '../widgets/file_upload_sheet.dart';
 import '../widgets/song_file_opener.dart';
+import '../../../../core/services/tracking/tracking_event.dart';
+import '../../../../core/services/tracking/tracking_service.dart';
 
 /// Song detail page (Ionic `songs/song`): inline editing for admins and
 /// responsibles, read-only view for everybody else and for the public share
@@ -154,6 +156,7 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
 
   void _copyShareLink(String sharingId, int songId) {
     Clipboard.setData(ClipboardData(text: SongUtils.shareLink(sharingId, songId)));
+    ref.read(trackingServiceProvider).track(TrackingEvent.songShared);
     ToastHelper.showSuccess(context, 'Der Link wurde in die Zwischenablage kopiert');
   }
 

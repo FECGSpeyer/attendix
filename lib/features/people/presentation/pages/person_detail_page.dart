@@ -24,6 +24,8 @@ import '../widgets/person_match_suggestions.dart';
 import 'package:uuid/uuid.dart';
 import '../widgets/handover_sheet.dart';
 import '../widgets/person_detail/person_detail.dart';
+import '../../../../core/services/tracking/tracking_event.dart';
+import '../../../../core/services/tracking/tracking_service.dart';
 
 /// Provider for single person with group name
 final personProvider =
@@ -639,6 +641,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
         'testResult': _draft.testResult?.isEmpty ?? true ? null : _draft.testResult,
         'email': _draft.email?.isEmpty ?? true ? null : _draft.email,
       });
+      ref.read(trackingServiceProvider).track(TrackingEvent.playerUpdated);
 
       // STATS_PEOPLE_FIXES: role sync (main group / voice leader) and
       // shared identity propagation (global_person_id)
