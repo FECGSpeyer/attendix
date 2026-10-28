@@ -129,7 +129,7 @@ class _SelfServiceOverviewPageState
         data: (attendances) {
           final current = upcomingAll.isNotEmpty ? upcomingAll.first : null;
           final upcoming = upcomingAll.length > 1 ? upcomingAll.sublist(1) : const <CrossTenantPersonAttendance>[];
-          return RefreshIndicator(
+          return RefreshIndicator.adaptive(
             onRefresh: _refresh,
             child: ListView(
               padding: const EdgeInsets.only(bottom: 32),

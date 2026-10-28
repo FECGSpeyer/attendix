@@ -171,7 +171,7 @@ class _MessageDetailPageState extends ConsumerState<MessageDetailPage> {
             padding: const EdgeInsets.all(AppDimensions.paddingM),
             children: children,
           );
-          return isManager ? RefreshIndicator(onRefresh: _refresh, child: list) : list;
+          return isManager ? RefreshIndicator.adaptive(onRefresh: _refresh, child: list) : list;
         },
       ),
     );

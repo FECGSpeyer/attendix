@@ -78,7 +78,7 @@ class _PendingPlayersPageState extends ConsumerState<PendingPlayersPage> {
             );
           }
 
-          return RefreshIndicator(
+          return RefreshIndicator.adaptive(
             onRefresh: () async {
               ref.invalidate(realtimePendingPlayersProvider);
               await ref.read(realtimePendingPlayersProvider.future);

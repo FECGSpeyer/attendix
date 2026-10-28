@@ -353,7 +353,7 @@ class _AdminsTab extends ConsumerWidget {
           );
         }
 
-        return RefreshIndicator(
+        return RefreshIndicator.adaptive(
           // FN-005: await provider.future to show spinner until data loads
           onRefresh: () async {
             ref.invalidate(tenantUsersProvider);
@@ -401,7 +401,7 @@ class _ViewersTab extends ConsumerWidget {
           );
         }
 
-        return RefreshIndicator(
+        return RefreshIndicator.adaptive(
           // FN-005: await provider.future to show spinner until data loads
           onRefresh: () async {
             ref.invalidate(tenantUsersProvider);
@@ -449,7 +449,7 @@ class _ParentsTab extends ConsumerWidget {
           );
         }
 
-        return RefreshIndicator(
+        return RefreshIndicator.adaptive(
           // FN-005: await provider.future to show spinner until data loads
           onRefresh: () async {
             ref.invalidate(tenantUsersProvider);
@@ -500,7 +500,7 @@ class _AllUsersTab extends ConsumerWidget {
           ![Role.admin, Role.responsible, Role.player, Role.viewer].contains(u.roleEnum)
         ).toList();
 
-        return RefreshIndicator(
+        return RefreshIndicator.adaptive(
           // FN-005: await provider.future to show spinner until data loads
           onRefresh: () async {
             ref.invalidate(tenantUsersProvider);

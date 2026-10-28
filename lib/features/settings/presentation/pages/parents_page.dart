@@ -53,7 +53,7 @@ class ParentsPage extends ConsumerWidget {
         ),
         // UX_SETTINGS: Ionic modal layout — hint card on top, then the list
         data: (parents) {
-          return RefreshIndicator(
+          return RefreshIndicator.adaptive(
             onRefresh: () async {
               ref.invalidate(parentsProvider);
               await ref.read(parentsProvider.future);

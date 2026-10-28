@@ -91,7 +91,7 @@ class _TasksTabState extends ConsumerState<TasksTab> {
             return l10n.teamOrgEmptyPerson;
           }
 
-          return RefreshIndicator(
+          return RefreshIndicator.adaptive(
             onRefresh: () async => ref.invalidate(teamTasksProvider),
             child: ListView(
               physics: const AlwaysScrollableScrollPhysics(),

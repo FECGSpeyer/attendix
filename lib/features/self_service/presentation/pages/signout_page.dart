@@ -248,7 +248,7 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
             ],
           ),
         ),
-        data: (data) => RefreshIndicator(
+        data: (data) => RefreshIndicator.adaptive(
           onRefresh: _refresh,
           child: ListView(
             padding: const EdgeInsets.only(bottom: 32),

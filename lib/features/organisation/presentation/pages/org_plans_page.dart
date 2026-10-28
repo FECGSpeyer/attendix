@@ -214,7 +214,7 @@ class _OrgPlansPageState extends ConsumerState<OrgPlansPage> {
             ),
         ],
       ),
-      body: RefreshIndicator(
+      body: RefreshIndicator.adaptive(
         onRefresh: () async {
           ref.invalidate(orgPlansProvider);
           await ref.read(orgPlansProvider.future).catchError((_) => <OrgPlanEntry>[]);

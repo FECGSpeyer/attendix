@@ -64,7 +64,7 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> {
       ),
       // UX_SETTINGS: sections in Ionic order (stats.page.html); the period
       // ("📅 Zeitraum") is always visible so it can be changed when empty.
-      body: RefreshIndicator(
+      body: RefreshIndicator.adaptive(
         onRefresh: () async {
           ref.invalidate(filteredAttendancesForStatsProvider);
           ref.invalidate(activePlayersForStatsProvider);

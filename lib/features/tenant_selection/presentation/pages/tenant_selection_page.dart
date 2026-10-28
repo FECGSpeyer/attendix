@@ -458,7 +458,7 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
             );
           }
 
-          return RefreshIndicator(
+          return RefreshIndicator.adaptive(
             onRefresh: () async => ref.refresh(userTenantsProvider.future),
             child: ListView(
               padding: const EdgeInsets.all(AppDimensions.paddingM),

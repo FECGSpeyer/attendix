@@ -136,7 +136,7 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
                   );
                 }
 
-                return RefreshIndicator(
+                return RefreshIndicator.adaptive(
                   onRefresh: () async {
                     ref.invalidate(performanceHistoryProvider);
                     await ref.read(performanceHistoryProvider.future);

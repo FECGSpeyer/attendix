@@ -100,7 +100,7 @@ class SettingsPage extends ConsumerWidget {
         title: TenantSwitcherTitle(fallbackTitle: l10n.settingsSettings),
         actions: const [NotificationBell()], // MESSAGES
       ),
-      body: RefreshIndicator(
+      body: RefreshIndicator.adaptive(
         onRefresh: () async {
           ref.invalidate(currentTenantProvider);
           ref.invalidate(userTenantsProvider);

@@ -117,7 +117,7 @@ class _ProtocolsTabState extends ConsumerState<ProtocolsTab> {
               ),
             );
 
-        return RefreshIndicator(
+        return RefreshIndicator.adaptive(
           onRefresh: () async => ref.invalidate(protocolsProvider),
           child: ListView(
             physics: const AlwaysScrollableScrollPhysics(),

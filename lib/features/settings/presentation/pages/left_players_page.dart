@@ -75,7 +75,7 @@ class LeftPlayersPage extends ConsumerWidget {
             );
           }
 
-          return RefreshIndicator(
+          return RefreshIndicator.adaptive(
             // FN-010: await provider.future to show spinner until data loads
             onRefresh: () async {
               ref.invalidate(leftPlayersProvider);

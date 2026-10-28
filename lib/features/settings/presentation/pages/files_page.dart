@@ -907,7 +907,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
                     child: Text(context.l10n.filesNoAccess, textAlign: TextAlign.center),
                   ),
                 )
-              : RefreshIndicator(
+              : RefreshIndicator.adaptive(
                   onRefresh: _loadEntries,
                   child: ListView(
                     physics: const AlwaysScrollableScrollPhysics(),

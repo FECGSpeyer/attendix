@@ -170,7 +170,7 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
                   ? past
                   : past.take(EventListUtils.pastPreviewCount).toList();
               final groups = EventListUtils.groupByMonth(upcoming, (g) => g.date);
-              return RefreshIndicator(
+              return RefreshIndicator.adaptive(
                 onRefresh: () async {
                   ref.invalidate(currentSongsProvider); // PROFILE_OFFLINE
                   ref.invalidate(parentChildrenProvider);

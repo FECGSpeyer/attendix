@@ -54,7 +54,7 @@ class MessageListPage extends ConsumerWidget {
         onPressed: () => _compose(context),
         child: const Icon(Icons.add),
       ),
-      body: RefreshIndicator(
+      body: RefreshIndicator.adaptive(
         onRefresh: () => ref.refresh(messagesProvider.future),
         child: messagesAsync.when(
           loading: () => const Center(child: AppSpinner()),

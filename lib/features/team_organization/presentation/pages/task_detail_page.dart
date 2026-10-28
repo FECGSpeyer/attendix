@@ -113,7 +113,7 @@ class _TaskDetailPageState extends ConsumerState<TaskDetailPage> {
                     ],
                   ),
                 )
-              : RefreshIndicator(
+              : RefreshIndicator.adaptive(
                   onRefresh: () async => ref.invalidate(taskByIdProvider(widget.taskId)),
                   child: _buildBody(context, task, isLeader, me?.id, types, today),
                 ),

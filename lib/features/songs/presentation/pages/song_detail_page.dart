@@ -272,7 +272,7 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
               child: const Icon(Icons.play_arrow),
             ),
       bottomNavigationBar: data.isPublic ? const AudioPlayerWidget() : null,
-      body: RefreshIndicator(
+      body: RefreshIndicator.adaptive(
         onRefresh: () async {
           _refresh();
           await ref.read(songDetailDataProvider(_params).future);

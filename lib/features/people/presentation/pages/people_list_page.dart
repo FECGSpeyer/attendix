@@ -666,7 +666,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
                 }
                 children.add(const SizedBox(height: 88));
 
-                return RefreshIndicator(
+                return RefreshIndicator.adaptive(
                   onRefresh: () async {
                     // FN-007: manual refresh (realtime handles live updates)
                     ref.invalidate(realtimePlayersProvider);

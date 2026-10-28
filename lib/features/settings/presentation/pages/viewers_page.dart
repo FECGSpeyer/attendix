@@ -53,7 +53,7 @@ class ViewersPage extends ConsumerWidget {
         ),
         // UX_SETTINGS: Ionic modal layout — hint card on top, then the list
         data: (viewers) {
-          return RefreshIndicator(
+          return RefreshIndicator.adaptive(
             onRefresh: () async {
               ref.invalidate(viewersProvider);
               await ref.read(viewersProvider.future);

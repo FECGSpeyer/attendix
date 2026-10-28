@@ -299,7 +299,7 @@ class _NotificationCenterState extends ConsumerState<_NotificationCenter> {
           ),
         ),
         Expanded(
-          child: RefreshIndicator(
+          child: RefreshIndicator.adaptive(
             onRefresh: () async {
               _readOverrides.clear();
               ref.invalidate(unreadNotificationCountProvider);

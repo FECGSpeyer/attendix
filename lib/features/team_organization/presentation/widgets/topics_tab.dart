@@ -347,7 +347,7 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
           final numbers = topNumbers(next?.fields);
           final nextAgendaIds = tops.tops.map(fieldAgendaItemId).toSet();
 
-          return RefreshIndicator(
+          return RefreshIndicator.adaptive(
             onRefresh: () async {
               ref.invalidate(agendaItemsProvider);
               ref.invalidate(protocolsProvider);
@@ -518,7 +518,7 @@ class _MemberTopics extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final itemsAsync = ref.watch(agendaItemsProvider);
     final l10n = context.l10n;
-    return RefreshIndicator(
+    return RefreshIndicator.adaptive(
       onRefresh: () async => ref.invalidate(agendaItemsProvider),
       child: ListView(
         physics: const AlwaysScrollableScrollPhysics(),

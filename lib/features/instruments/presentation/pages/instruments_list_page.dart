@@ -128,7 +128,7 @@ class _InstrumentsListPageState extends ConsumerState<InstrumentsListPage> {
               ? _reorderSections!
               : groupInstrumentsByCategory(groups, categories);
 
-          return RefreshIndicator(
+          return RefreshIndicator.adaptive(
             onRefresh: () async {
               ref.invalidate(groupsProvider);
               ref.invalidate(groupCategoriesProvider);

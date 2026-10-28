@@ -51,7 +51,7 @@ class TeachersListPage extends ConsumerWidget {
           ),
         ),
         data: (teachers) {
-          return RefreshIndicator(
+          return RefreshIndicator.adaptive(
             onRefresh: () async {
               ref.invalidate(teachersProvider);
               ref.invalidate(studentCountsProvider);

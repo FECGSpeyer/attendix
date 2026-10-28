@@ -287,7 +287,7 @@ class _OrgPlanPublicPageState extends ConsumerState<OrgPlanPublicPage> {
                     ),
                   ),
                 )
-              : RefreshIndicator(
+              : RefreshIndicator.adaptive(
                   onRefresh: _loadPlans,
                   child: ListView(
                     padding: const EdgeInsets.only(bottom: 24),

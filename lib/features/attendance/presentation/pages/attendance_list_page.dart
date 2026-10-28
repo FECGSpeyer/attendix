@@ -369,7 +369,7 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
             );
           }
 
-          return RefreshIndicator(
+          return RefreshIndicator.adaptive(
             onRefresh: () async {
               // FN-008: invalidate to trigger fresh fetch from realtime provider
               ref.invalidate(realtimeAttendanceListProvider);

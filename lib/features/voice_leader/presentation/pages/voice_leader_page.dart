@@ -23,7 +23,7 @@ class VoiceLeaderPage extends ConsumerWidget {
       appBar: AppBar(
         title: Text(context.l10n.voiceLeaderMyVoice),
       ),
-      body: RefreshIndicator(
+      body: RefreshIndicator.adaptive(
         onRefresh: () async {
           ref.invalidate(voiceGroupMembersProvider);
           ref.invalidate(voiceGroupNameProvider);

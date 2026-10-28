@@ -71,7 +71,7 @@ class MembersPage extends ConsumerWidget {
             ),
 
           Expanded(
-            child: RefreshIndicator(
+            child: RefreshIndicator.adaptive(
               onRefresh: () async {
                 ref.invalidate(membersGroupedProvider);
                 ref.invalidate(personExtraFieldsProvider);
