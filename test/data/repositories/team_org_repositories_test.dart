@@ -83,7 +83,26 @@ void main() {
       });
 
       test('attendance queries filter by tenantId', () {
-        expectAllFiltered(protocolSource, 'attendance', ".eq('tenantId', currentTenantId)", skipInserts: false);
+        expectAllFiltered(protocolSource, 'attendance', ".eq('tenantId', currentTenantId)");
+      });
+
+      test('quick-create forces the current tenant on new Termine', () {
+        final inserts = queriesOn(protocolSource, 'attendance').where((q) => q.contains('.insert('));
+        expect(inserts, isNotEmpty);
+        for (final q in inserts) {
+          expect(q, contains("'tenantId': currentTenantId"));
+        }
+      });
+
+      test('persons for a new Termin are read from the current tenant only', () {
+        expectAllFiltered(protocolSource, 'player', ".eq('tenantId', currentTenantId)");
+      });
+
+      test('person_attendances insert checks the Termin tenant first', () {
+        final idx = protocolSource.indexOf(".from('person_attendances')");
+        expect(idx, greaterThan(-1));
+        final before = protocolSource.substring(protocolSource.lastIndexOf('Future<', idx), idx);
+        expect(before, contains('_ensureAttendanceOfTenant'));
       });
 
       test('protocol RPCs verify the attendance belongs to the tenant', () {

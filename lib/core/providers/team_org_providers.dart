@@ -42,6 +42,16 @@ final protocolTypesProvider = FutureProvider<List<ProtocolType>>((ref) async {
   return repo.getProtocolTypes();
 });
 
+/// Protocol settings of one attendance type (null while loading / unknown).
+final protocolTypeByIdProvider = Provider.family<ProtocolType?, String?>((ref, typeId) {
+  if (typeId == null) return null;
+  final types = ref.watch(protocolTypesProvider).valueOrNull ?? const <ProtocolType>[];
+  for (final t in types) {
+    if (t.id == typeId) return t;
+  }
+  return null;
+});
+
 /// Teamorganisation is visible once at least one type has protocols enabled.
 final teamOrgEnabledProvider = Provider<bool>((ref) {
   final types = ref.watch(protocolTypesProvider).valueOrNull;
@@ -130,6 +140,13 @@ final agendaItemHistoryProvider =
 });
 
 // ── Protocols / attendances ────────────────────────────────
+
+/// Protocol of one Termin (null when none was started yet).
+final protocolForAttendanceProvider = FutureProvider.family<Protocol?, int>((ref, attendanceId) async {
+  final repo = ref.watch(protocolRepositoryWithTenantProvider);
+  if (!repo.hasTenantId) return null;
+  return repo.getProtocolForAttendance(attendanceId);
+});
 
 final protocolsProvider = FutureProvider<List<Protocol>>((ref) async {
   final repo = ref.watch(protocolRepositoryWithTenantProvider);

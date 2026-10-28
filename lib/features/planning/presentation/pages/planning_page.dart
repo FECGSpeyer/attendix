@@ -9,6 +9,7 @@ import '../../../../core/providers/debug_providers.dart';
 import '../../../../core/providers/organisation_providers.dart';
 import '../../../../core/providers/plan_providers.dart';
 import '../../../../core/providers/song_providers.dart';
+import '../../../../core/providers/team_org_providers.dart'; // PROTOCOL
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/services/plan_export_service.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -16,6 +17,8 @@ import '../../../../core/utils/plan_utils.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/plan/plan.dart';
 import '../../../../data/models/song/song.dart';
+import '../../../../data/models/team_org/team_org.dart' show ProtocolAttendance; // PROTOCOL
+import '../../../team_organization/presentation/widgets/agenda_picker_sheet.dart'; // PROTOCOL
 import '../widgets/plan_export_actions.dart';
 import '../widgets/plan_field_dialogs.dart';
 import '../widgets/plan_fields_editor.dart';
@@ -601,6 +604,10 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     final org = ref.read(currentOrganisationProvider).valueOrNull;
     final orgTemplates = org?.planningTemplates ?? const <Plan>[];
     final orgFields = org?.defaultFields ?? const <PlanField>[];
+    // PROTOCOL: Tagesordnung of protocol types (topics only live in the first plan)
+    final hasProtocol = ref.read(protocolTypeByIdProvider(_att?.typeId))?.enableProtocol ?? false;
+    final canAddTopics = _att?.id != null && _planIndex == 0 && hasProtocol && ref.read(isTeamLeaderProvider);
+    final canInsertAgenda = hasProtocol && _planIndex == 0 && !_fields.any(PlanUtils.isAgendaPlaceholder);
 
     final action = await showModalBottomSheet<String>(
       context: context,
@@ -634,6 +641,17 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
                       title: const Text('Werk hinzufügen'),
                       onTap: () => Navigator.pop(ctx, 'song')),
               ],
+              // PROTOCOL
+              if (canAddTopics)
+                ListTile(
+                    leading: const Icon(Icons.playlist_add_circle_outlined, color: AppColors.primary),
+                    title: const Text('Themen aufnehmen'),
+                    onTap: () => Navigator.pop(ctx, 'topics')),
+              if (canInsertAgenda)
+                ListTile(
+                    leading: const Icon(Icons.commit, color: AppColors.medium),
+                    title: const Text('Tagesordnung einfügen'),
+                    onTap: () => Navigator.pop(ctx, 'agenda')),
               if (blockTemplates.isNotEmpty) ...[
                 const Divider(),
                 const _MenuHeader('Programmblöcke'),
@@ -712,7 +730,58 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
         await _addSong();
       case 'plan':
         await _addPlan();
+      case 'agenda': // PROTOCOL
+        _addAgendaPlaceholder();
+      case 'topics': // PROTOCOL
+        await _openAgendaPicker();
     }
+  }
+
+  // PROTOCOL: Ionic `addAgendaItemsPlaceholder` (the marker takes no time).
+  void _addAgendaPlaceholder() {
+    if (_fields.any(PlanUtils.isAgendaPlaceholder)) {
+      ToastHelper.showWarning(context, 'Ein Tagesordnungs-Platzhalter ist bereits vorhanden');
+      return;
+    }
+    setState(() => _fields = [
+          ..._fields,
+          const PlanField(id: PlanUtils.agendaPlaceholderId, name: 'Tagesordnung', time: '0'),
+        ]);
+    _changed();
+  }
+
+  // PROTOCOL: Ionic `openAgendaPicker` — saves what is on screen first, so the
+  // picker inserts into the current plan, then takes over the saved plan.
+  Future<void> _openAgendaPicker() async {
+    final att = _att;
+    if (att?.id == null) return;
+    if (_validate()) await _save();
+    if (!mounted) return;
+    ProtocolAttendance? protocolAtt;
+    try {
+      protocolAtt = await ref.read(protocolRepositoryWithTenantProvider).getAttendance(att!.id!);
+    } catch (_) {}
+    if (protocolAtt == null || !mounted) return;
+    final title = _titleController.text.trim();
+    if (_fields.isNotEmpty) {
+      protocolAtt = protocolAtt.copyWith(plan: {
+        ...?protocolAtt.plan,
+        'time': _time,
+        'end': _end,
+        'fields': _fields.map((f) => f.toJson()).toList(),
+        if (title.isNotEmpty) 'title': title,
+      });
+    }
+    final type = ref.read(protocolTypeByIdProvider(att!.typeId));
+    final saved = await showAgendaPickerSheet(context, attendance: protocolAtt, type: type);
+    if (saved == null || !mounted) return;
+    try {
+      final plan = Plan.fromJson(saved);
+      _replaceAtt(att.copyWith(plan: plan));
+      _loadPlan(att, plan);
+      _hasChanges = true;
+      ref.invalidate(planAttendanceByIdProvider(att.id!));
+    } catch (_) {}
   }
 
   // ---------------------------------------------------------------------------
@@ -880,6 +949,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     final typesAsync = ref.watch(planAttendanceTypesProvider);
     ref.watch(planSongsProvider);
     ref.watch(currentSongsProvider);
+    ref.watch(protocolTypesProvider); // PROTOCOL: keeps the protocol settings loaded
     final blockTemplates = ref.watch(planBlockTemplatesProvider).valueOrNull ?? const <PlanBlockTemplate>[];
     final role = ref.watch(effectiveRoleProvider);
 

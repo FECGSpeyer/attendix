@@ -218,6 +218,55 @@ class ProtocolRepository extends BaseRepository with TenantAwareRepository {
     }
   }
 
+  // ── Quick-create Termin (Ionic promptCreateProtocolAttendance) ──
+
+  /// Active persons a new Termin can be created for (not archived, pending or paused).
+  Future<List<Map<String, dynamic>>> getPersonsForNewAttendance() async {
+    try {
+      final response = await supabase
+          .from('player')
+          .select('id, instrument, additional_fields')
+          .eq('tenantId', currentTenantId)
+          .isFilter('left', null)
+          .eq('pending', false)
+          .eq('paused', false);
+      return (response as List).map((e) => Map<String, dynamic>.from(e as Map)).toList();
+    } catch (e, stack) {
+      handleError(e, stack, 'getPersonsForNewAttendance');
+      rethrow;
+    }
+  }
+
+  /// Creates a Termin (tenant forced to the current one) and returns its id.
+  Future<int> createAttendance(Map<String, dynamic> row) async {
+    try {
+      final response = await supabase
+          .from('attendance')
+          .insert({...row, 'tenantId': currentTenantId})
+          .select('id')
+          .single();
+      return (response['id'] as num).toInt();
+    } catch (e, stack) {
+      handleError(e, stack, 'createAttendance');
+      rethrow;
+    }
+  }
+
+  /// Inserts the person attendances of a new Termin. `person_attendances` has
+  /// no tenant column; the Termin is checked to belong to the current tenant first.
+  Future<void> createPersonAttendances(int attendanceId, List<Map<String, dynamic>> rows) async {
+    if (rows.isEmpty) return;
+    try {
+      await _ensureAttendanceOfTenant(attendanceId);
+      await supabase
+          .from('person_attendances')
+          .insert([for (final r in rows) {...r, 'attendance_id': attendanceId}]);
+    } catch (e, stack) {
+      handleError(e, stack, 'createPersonAttendances');
+      rethrow;
+    }
+  }
+
   /// Sends a team notification via the `team-notify` edge function
   /// (assignment, published protocol, decided suggestion). Never throws.
   Future<void> notifyTeam(Map<String, dynamic> body) async {

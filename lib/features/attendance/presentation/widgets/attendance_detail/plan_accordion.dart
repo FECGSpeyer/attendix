@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/providers/plan_providers.dart';
+import '../../../../../core/providers/team_org_providers.dart'; // PROTOCOL
 import '../../../../../core/services/plan_export_service.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/utils/plan_utils.dart';
@@ -12,6 +13,7 @@ import '../../../../planning/presentation/pages/plan_viewer_page.dart';
 import '../../../../planning/presentation/widgets/plan_export_actions.dart';
 import '../../../../planning/presentation/widgets/plan_field_dialogs.dart';
 import '../../../../planning/presentation/widgets/plan_view_list.dart';
+import '../../../../team_organization/presentation/widgets/attendance_protocol_section.dart'; // PROTOCOL
 
 /// Accordion widget for displaying attendance plan/schedule.
 ///
@@ -148,6 +150,16 @@ class _PlanAccordionState extends ConsumerState<PlanAccordion> {
         ? ''
         : (plan.end.isNotEmpty ? PlanUtils.formatTime(plan.end) : PlanUtils.computeEnd(startTime, plan.fields));
     final date = plan == null ? null : PlanUtils.planDate(att, _planIndex, plans) ?? DateTime.tryParse(att.date);
+    // PROTOCOL: Tagesordnung of protocol types ("Themen aufnehmen", TOP → Thema)
+    final protocolType = ref.watch(protocolTypeByIdProvider(widget.attendance.typeId));
+    final hasProtocol = protocolType?.enableProtocol ?? false;
+    final canAddTopics = hasProtocol && ref.watch(isTeamLeaderProvider) && _planIndex == 0 && widget.attendance.id != null;
+    final addTopicsButton = TextButton.icon(
+      onPressed: () => openAgendaPickerForAttendance(context, ref,
+          attendanceId: widget.attendance.id!, type: protocolType),
+      icon: const Icon(Icons.add_circle_outline, size: 18),
+      label: const Text('Themen aufnehmen'),
+    );
 
     return Card(
       margin: const EdgeInsets.symmetric(
@@ -160,7 +172,7 @@ class _PlanAccordionState extends ConsumerState<PlanAccordion> {
         leading: const Icon(Icons.schedule, color: AppColors.primary),
         title: Row(
           children: [
-            const Text('Ablaufplan'),
+            Text(hasProtocol ? 'Ablaufplan & Tagesordnung' : 'Ablaufplan'),
             const SizedBox(width: 8),
             if (hasPlan && startTime.isNotEmpty)
               Flexible(
@@ -209,6 +221,7 @@ class _PlanAccordionState extends ConsumerState<PlanAccordion> {
                     'Kein Ablaufplan vorhanden',
                     style: TextStyle(color: AppColors.medium),
                   ),
+                  if (canAddTopics) addTopicsButton,
                   const SizedBox(height: AppDimensions.paddingM),
                   FilledButton.icon(
                     onPressed: widget.onCreate ?? widget.onEdit,
@@ -225,7 +238,14 @@ class _PlanAccordionState extends ConsumerState<PlanAccordion> {
                 selected: _planIndex,
                 onSelected: (i) => setState(() => _planIndex = i),
               ),
-            PlanViewList(plan: plan, date: date, showStartEnd: false),
+            PlanViewList(
+              plan: plan,
+              date: date,
+              showStartEnd: false,
+              onFieldTap: hasProtocol && plan.fields.any((f) => f.agendaItemId != null)
+                  ? (i) => openPlanFieldTopic(context, ref, plan.fields[i].agendaItemId)
+                  : null,
+            ),
           ],
           const Divider(height: 1),
           Padding(
@@ -254,6 +274,7 @@ class _PlanAccordionState extends ConsumerState<PlanAccordion> {
                   icon: const Icon(Icons.edit, size: 18),
                   label: const Text('Bearbeiten'),
                 ),
+                if (hasPlan && canAddTopics) addTopicsButton,
                 if (hasPlan) ...[
                   TextButton.icon(
                     onPressed: () => showPlanViewer(

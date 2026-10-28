@@ -5,10 +5,12 @@
 /// Supported: paragraphs, headings, bullet/ordered/task lists (nested),
 /// blockquotes, code blocks, hard breaks and the marks bold, italic,
 /// underline, strike, code and link. The block nodes `taskRef` and
-/// `agendaItemRef` (atoms of the Ionic editor) cannot be edited in Quill; they
-/// are kept aside as [TiptapDocParts.refs] and appended again when saving, so
-/// the task ↔ section mapping of the protocol stays intact.
+/// `agendaItemRef` (atoms of the Ionic editor) become Quill block embeds of the
+/// same type (data = JSON of the node attrs) at their position, so they are
+/// shown as chips in the text and written back in place when saving.
 library;
+
+import 'dart:convert';
 
 typedef Json = Map<String, dynamic>;
 
@@ -18,11 +20,35 @@ class TiptapDocParts {
   /// Quill Delta ops (always ends with a newline).
   final List<Json> ops;
 
-  /// taskRef / agendaItemRef nodes of the doc, in order.
+  /// taskRef / agendaItemRef nodes of the doc, in order (they are also part
+  /// of [ops] as embeds).
   final List<Json> refs;
 }
 
-const _refTypes = {'taskRef', 'agendaItemRef'};
+/// Quill embed types of the reference nodes.
+const taskRefEmbedType = 'taskRef';
+const agendaItemRefEmbedType = 'agendaItemRef';
+const _refTypes = {taskRefEmbedType, agendaItemRefEmbedType};
+
+/// Delta insert of a reference node (block embed).
+Json refEmbedInsert(Json node) => {
+      node['type'].toString(): jsonEncode(_map(node['attrs'])),
+    };
+
+/// Tiptap node of a reference embed (`{taskRef: '{"id":…}'}`), or null.
+Json? refNodeFromEmbed(dynamic insert) {
+  if (insert is! Map || insert.length != 1) return null;
+  final type = insert.keys.first.toString();
+  if (!_refTypes.contains(type)) return null;
+  final raw = insert.values.first;
+  Json attrs;
+  try {
+    attrs = raw is String ? _map(jsonDecode(raw)) : _map(raw);
+  } catch (_) {
+    attrs = {};
+  }
+  return {'type': type, 'attrs': attrs};
+}
 
 Json _map(dynamic v) => v is Map ? Map<String, dynamic>.from(v) : <String, dynamic>{};
 List<Json> _children(Json node) =>
@@ -33,6 +59,16 @@ List<Json> _children(Json node) =>
 TiptapDocParts tiptapToDelta(Map<String, dynamic>? doc) {
   final ops = <Json>[];
   final refs = <Json>[];
+
+  /// Reference node as a block embed on its own line.
+  void addRef(Json node) {
+    refs.add(node);
+    if (ops.isNotEmpty && !(ops.last['insert'] is String && (ops.last['insert'] as String).endsWith('\n'))) {
+      ops.add({'insert': '\n'});
+    }
+    ops.add({'insert': refEmbedInsert(node)});
+    ops.add({'insert': '\n'});
+  }
 
   void addInline(List<Json> nodes) {
     for (final n in nodes) {
@@ -62,7 +98,7 @@ TiptapDocParts tiptapToDelta(Map<String, dynamic>? doc) {
       } else if (type == 'hardBreak') {
         ops.add({'insert': '\n'});
       } else if (_refTypes.contains(type)) {
-        refs.add(n);
+        addRef(n);
       } else {
         addInline(_children(n));
       }
@@ -91,7 +127,8 @@ TiptapDocParts tiptapToDelta(Map<String, dynamic>? doc) {
           }
           walkList(child, depth + 1);
         } else if (_refTypes.contains(ct)) {
-          refs.add(child);
+          addRef(child);
+          wroteLine = true;
         } else {
           addInline(_children(child));
           newline(attrs);
@@ -131,7 +168,7 @@ TiptapDocParts tiptapToDelta(Map<String, dynamic>? doc) {
         newline();
       case 'taskRef':
       case 'agendaItemRef':
-        refs.add(node);
+        addRef(node);
       default:
         addInline(_children(node));
         newline();
@@ -139,26 +176,45 @@ TiptapDocParts tiptapToDelta(Map<String, dynamic>? doc) {
   }
 
   if (doc != null) walkBlock(doc['type'] == null ? {'type': 'doc', ...doc} : doc);
-  if (ops.isEmpty || !(ops.last['insert'] as String).endsWith('\n')) newline();
+  if (ops.isEmpty || ops.last['insert'] is! String || !(ops.last['insert'] as String).endsWith('\n')) newline();
   return TiptapDocParts(ops, refs);
 }
 
 // ── Delta → Tiptap ─────────────────────────────────────────
 
 class _Line {
-  _Line(this.inline, this.attrs);
+  _Line(this.inline, this.attrs, [this.ref]);
   final List<Json> inline;
   final Json attrs;
+
+  /// Reference node when the line is a taskRef / agendaItemRef embed.
+  final Json? ref;
   String get text => inline.map((n) => n['text'] ?? '').join();
 }
 
 List<_Line> _deltaLines(List<dynamic> ops) {
   final lines = <_Line>[];
   var current = <Json>[];
+  var skipNewline = false;
   for (final raw in ops) {
     final op = _map(raw);
-    final insert = op['insert'];
-    if (insert is! String) continue; // embeds (images etc.) are not supported
+    var insert = op['insert'];
+    final ref = refNodeFromEmbed(insert);
+    if (ref != null) {
+      if (current.isNotEmpty) {
+        lines.add(_Line(current, const {}));
+        current = <Json>[];
+      }
+      lines.add(_Line(const [], const {}, ref));
+      skipNewline = true; // the embed's own line break
+      continue;
+    }
+    if (insert is! String) continue; // other embeds (images etc.) are not supported
+    if (skipNewline) {
+      skipNewline = false;
+      if (insert.startsWith('\n')) insert = insert.substring(1);
+      if (insert.isEmpty) continue;
+    }
     final attrs = _map(op['attributes']);
     final parts = insert.split('\n');
     for (var i = 0; i < parts.length; i++) {
@@ -230,11 +286,12 @@ List<Json> _buildLists(List<_Line> lines, int depth) {
   return result;
 }
 
-/// Builds a Tiptap doc from Quill Delta ops and appends the kept [refs].
+/// Builds a Tiptap doc from Quill Delta ops (reference embeds stay in place)
+/// and appends [refs] (legacy callers that kept references aside).
 Map<String, dynamic> deltaToTiptap(List<dynamic> ops, [List<Json> refs = const []]) {
   final lines = _deltaLines(ops);
   // Quill always ends with an empty line; drop trailing empty plain lines.
-  while (lines.isNotEmpty && lines.last.inline.isEmpty && lines.last.attrs.isEmpty) {
+  while (lines.isNotEmpty && lines.last.ref == null && lines.last.inline.isEmpty && lines.last.attrs.isEmpty) {
     lines.removeLast();
   }
   final content = <Json>[];
@@ -242,9 +299,12 @@ Map<String, dynamic> deltaToTiptap(List<dynamic> ops, [List<Json> refs = const [
   while (i < lines.length) {
     final line = lines[i];
     final a = line.attrs;
-    if (a['list'] != null) {
+    if (line.ref != null) {
+      content.add(line.ref!);
+      i++;
+    } else if (a['list'] != null) {
       final group = <_Line>[];
-      while (i < lines.length && lines[i].attrs['list'] != null) {
+      while (i < lines.length && lines[i].ref == null && lines[i].attrs['list'] != null) {
         group.add(lines[i]);
         i++;
       }
@@ -258,14 +318,14 @@ Map<String, dynamic> deltaToTiptap(List<dynamic> ops, [List<Json> refs = const [
       i++;
     } else if (a['blockquote'] == true) {
       final paras = <Json>[];
-      while (i < lines.length && lines[i].attrs['blockquote'] == true) {
+      while (i < lines.length && lines[i].ref == null && lines[i].attrs['blockquote'] == true) {
         paras.add(_paragraph(lines[i].inline));
         i++;
       }
       content.add({'type': 'blockquote', 'content': paras});
     } else if (a['code-block'] == true) {
       final texts = <String>[];
-      while (i < lines.length && lines[i].attrs['code-block'] == true) {
+      while (i < lines.length && lines[i].ref == null && lines[i].attrs['code-block'] == true) {
         texts.add(lines[i].text);
         i++;
       }

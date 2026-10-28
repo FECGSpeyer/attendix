@@ -1,11 +1,13 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:printing/printing.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/constants/enums.dart';
@@ -17,6 +19,8 @@ import '../../../../data/repositories/protocol_repository.dart';
 import '../../protocol_pdf.dart';
 import '../../team_org_utils.dart';
 import '../../tiptap_delta.dart';
+import '../../protocol_layout.dart';
+import '../widgets/protocol_editor.dart';
 import '../widgets/task_form_sheet.dart';
 import '../widgets/tasks_tab.dart' show TeamOrgBadge, outcomeColor;
 
@@ -91,7 +95,6 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
 
   final Map<String, QuillController> _controllers = {};
   final Map<String, StreamSubscription<DocChange>> _subscriptions = {};
-  final Map<String, List<Map<String, dynamic>>> _refs = {};
   final Map<String, Timer> _timers = {};
   final Set<String> _pending = {};
 
@@ -102,13 +105,37 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
   Timer? _liveTimer;
   ({String fieldId, int remainingMinutes})? _live;
 
+  // Wide layout (Tagesordnung | Notizen zum Punkt | Allgemeine Notizen)
+  ColumnWidths _widths = defaultColumnWidths;
+  String? _resizing;
+  final Map<String, FocusNode> _focusNodes = {};
+  final FocusNode _pageFocus = FocusNode(debugLabel: 'protocol-page');
+
   @override
   void initState() {
     super.initState();
     _repo = ref.read(protocolRepositoryWithTenantProvider);
     _isLeader = ref.read(isTeamLeaderProvider);
     _load();
+    _loadWidths();
   }
+
+  Future<void> _loadWidths() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final widths = parseColumnWidths(prefs.getString(protocolColumnWidthsKey));
+      if (mounted) setState(() => _widths = widths);
+    } catch (_) {}
+  }
+
+  Future<void> _storeWidths() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(protocolColumnWidthsKey, encodeColumnWidths(_widths));
+    } catch (_) {}
+  }
+
+  FocusNode _focusFor(String id) => _focusNodes.putIfAbsent(id, () => FocusNode(debugLabel: 'protocol-$id'));
 
   @override
   void dispose() {
@@ -125,6 +152,10 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
     for (final c in _controllers.values) {
       c.dispose();
     }
+    for (final f in _focusNodes.values) {
+      f.dispose();
+    }
+    _pageFocus.dispose();
     super.dispose();
   }
 
@@ -259,7 +290,6 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
     final existing = _controllers[id];
     if (existing != null) return existing;
     final parts = tiptapToDelta(_docs[id]);
-    _refs[id] = parts.refs;
     Document document;
     try {
       document = Document.fromJson(parts.ops);
@@ -283,7 +313,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
   Map<String, dynamic>? _currentDoc(String id) {
     final c = _controllers[id];
     if (c == null) return _docs[id];
-    return deltaToTiptap(c.document.toDelta().toJson(), _refs[id] ?? const []);
+    return deltaToTiptap(c.document.toDelta().toJson());
   }
 
   void _queueSave(String id) {
@@ -376,11 +406,8 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
     final result = <String, String>{};
     final ids = {..._docs.keys, ..._controllers.keys};
     for (final id in ids) {
-      final refs = _refs[id];
-      final refIds = refs != null
-          ? refs.where((r) => r['type'] == 'taskRef').map((r) => (r['attrs'] as Map?)?['id']?.toString())
-          : taskRefIds(_docs[id]);
-      for (final tid in refIds.whereType<String>()) {
+      if (id.startsWith('leftover:')) continue;
+      for (final tid in taskRefIds(_currentDoc(id))) {
         result.putIfAbsent(tid, () => id);
       }
     }
@@ -425,9 +452,10 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
       contextLabel: section?.title ?? 'Allgemeine Notizen',
     );
     if (task?.id == null || !mounted) return;
-    // Put a task reference into the section's notes so it maps to the section.
-    _controllerFor(sectionId);
-    (_refs[sectionId] ??= []).add(taskRefNode(id: task!.id!, title: task.title, status: task.status));
+    // Put a task reference into the section's notes (at the cursor) so it maps to the section.
+    final node = taskRefNode(id: task!.id!, title: task.title, status: task.status);
+    insertRefEmbed(_controllerFor(sectionId), taskRefEmbedType, Map<String, dynamic>.from(node['attrs'] as Map));
+    setState(() => _tasks = [..._tasks.where((t) => t.id != task.id), task]);
     _pending.add(sectionId);
     await _flush(sectionId);
     try {
@@ -874,7 +902,15 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
 
   @override
   Widget build(BuildContext context) {
-    final showFooter = _isLeader && !_loading && !_loadFailed && !_notAvailable && _attendance != null;
+    if (_isLeader) ref.watch(agendaItemsProvider); // topics for "/tagesordnung"
+    return LayoutBuilder(builder: (context, constraints) {
+      final wide = constraints.maxWidth >= protocolWideBreakpoint;
+      return _buildScaffold(context, wide);
+    });
+  }
+
+  Widget _buildScaffold(BuildContext context, bool wide) {
+    final showFooter = _isLeader && !wide && !_loading && !_loadFailed && !_notAvailable && _attendance != null;
     return PopScope(
       onPopInvokedWithResult: (didPop, _) {
         if (didPop) unawaited(_flushAll());
@@ -946,7 +982,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                         ),
                       )
                     : _isLeader
-                        ? _buildEditLayout(context)
+                        ? (wide ? _buildWideLayout(context) : _buildEditLayout(context))
                         : _buildReadLayout(context),
       ),
     );
@@ -1117,69 +1153,33 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
     if (mounted) setState(() {});
   }
 
-  Widget _editor(QuillController controller, {bool editable = true}) {
-    if (!editable || controller.readOnly) {
-      return QuillEditor.basic(
-        controller: controller,
-        config: const QuillEditorConfig(showCursor: false, scrollable: false),
-      );
+  /// Live task statuses for the task chips in the notes.
+  Map<String, String> get _taskStatuses => {
+        for (final t in _tasks)
+          if (t.id != null) t.id!: t.status,
+      };
+
+  /// Open topics offered by "/tagesordnung".
+  List<AgendaItem> get _openTopics => (ref.read(agendaItemsProvider).valueOrNull ?? const <AgendaItem>[])
+      .where((i) => i.status == 'open' && (i.proposalStatus == null || i.proposalStatus == 'accepted'))
+      .toList();
+
+  Widget _editor(QuillController controller, {bool editable = true, bool expands = false}) {
+    String? sectionId;
+    for (final e in _controllers.entries) {
+      if (identical(e.value, controller)) sectionId = e.key;
     }
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        QuillSimpleToolbar(
-          controller: controller,
-          config: const QuillSimpleToolbarConfig(
-            multiRowsDisplay: false,
-            showBoldButton: true,
-            showItalicButton: true,
-            showUnderLineButton: true,
-            showStrikeThrough: true,
-            showColorButton: false,
-            showBackgroundColorButton: false,
-            showInlineCode: false,
-            showCodeBlock: false,
-            showLink: true,
-            showSearchButton: false,
-            showSubscript: false,
-            showSuperscript: false,
-            showFontFamily: false,
-            showFontSize: false,
-            showHeaderStyle: true,
-            showListNumbers: true,
-            showListBullets: true,
-            showListCheck: true,
-            showQuote: true,
-            showIndent: true,
-            showAlignmentButtons: false,
-            showDirection: false,
-            showUndo: true,
-            showRedo: true,
-            showClearFormat: false,
-            showDividers: false,
-            showSmallButton: false,
-            showLineHeightButton: false,
-            showClipboardCut: false,
-            showClipboardCopy: false,
-            showClipboardPaste: false,
-          ),
-        ),
-        Container(
-          constraints: const BoxConstraints(minHeight: 140),
-          decoration: BoxDecoration(
-            border: Border.all(color: Theme.of(context).dividerColor),
-            borderRadius: BorderRadius.circular(AppDimensions.borderRadiusM),
-          ),
-          child: QuillEditor.basic(
-            controller: controller,
-            config: const QuillEditorConfig(
-              scrollable: false,
-              placeholder: 'Notizen …',
-              padding: EdgeInsets.all(AppDimensions.paddingS),
-            ),
-          ),
-        ),
-      ],
+    final canWrite = editable && !controller.readOnly && sectionId != null && !sectionId.startsWith('leftover:');
+    return ProtocolEditor(
+      key: ValueKey('editor-$sectionId'),
+      controller: controller,
+      editable: canWrite,
+      expands: expands,
+      taskStatuses: _taskStatuses,
+      agendaItems: canWrite ? _openTopics : const [],
+      onCreateTask: canWrite ? () => _createTask(sectionId!) : null,
+      onOpenTask: (id) => context.push('/settings/tasks/$id'),
+      onOpenTopic: _isLeader ? (id) => context.push('/settings/agenda-items/$id') : null,
     );
   }
 
@@ -1383,12 +1383,445 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(l.title, style: Theme.of(context).textTheme.titleSmall),
+                Text(
+                  'Dieser Punkt steht nicht mehr im Ablaufplan. Die Notizen bleiben erhalten.',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.medium),
+                ),
                 _editor(_controllerFor('leftover:${l.key}', readOnly: true), editable: false),
               ],
             ),
           ),
         ),
     ];
+  }
+
+  // ── Wide layout (Ionic B4) ─────────────────────────────────
+
+  List<String> get _sectionIds => _sections.map((s) => s.id).toList();
+
+  /// Selects a point (and focuses its editor in the wide layout).
+  void _activate(String id, {bool focus = false}) {
+    setState(() => _activeId = id);
+    if (focus) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _focusNodes[id]?.requestFocus();
+      });
+    }
+  }
+
+  void _nextSection() {
+    final next = nextSectionId(_sectionIds, _activeId);
+    if (next != null) _activate(next, focus: true);
+  }
+
+  void _previousSection() {
+    final prev = previousSectionId(_sectionIds, _activeId);
+    if (prev != null) _activate(prev, focus: true);
+  }
+
+  void _setWidth(String side, double width, double container) {
+    setState(() {
+      _widths = side == 'left'
+          ? (left: clampSideWidth(width, _widths.right, container), right: _widths.right)
+          : (left: _widths.left, right: clampSideWidth(width, _widths.left, container));
+    });
+  }
+
+  void _resetWidth(String side) {
+    setState(() {
+      _widths = side == 'left'
+          ? (left: defaultSideWidth, right: _widths.right)
+          : (left: _widths.left, right: defaultSideWidth);
+    });
+    _storeWidths();
+  }
+
+  /// Drag handle between two columns: drag, arrow keys (Shift = bigger
+  /// steps), Home or double-click resets.
+  Widget _resizer(String side, double container) {
+    final active = _resizing == side;
+    final current = side == 'left' ? _widths.left : _widths.right;
+    return Tooltip(
+      message: 'Ziehen, um die Breite anzupassen (Doppelklick setzt zurück)',
+      waitDuration: const Duration(milliseconds: 800),
+      child: Focus(
+        onKeyEvent: (node, event) {
+          if (event is! KeyDownEvent && event is! KeyRepeatEvent) return KeyEventResult.ignored;
+          final step = HardwareKeyboard.instance.isShiftPressed ? 48.0 : 16.0;
+          final grow = side == 'left' ? LogicalKeyboardKey.arrowRight : LogicalKeyboardKey.arrowLeft;
+          final shrink = side == 'left' ? LogicalKeyboardKey.arrowLeft : LogicalKeyboardKey.arrowRight;
+          if (event.logicalKey == grow) {
+            _setWidth(side, current + step, container);
+          } else if (event.logicalKey == shrink) {
+            _setWidth(side, current - step, container);
+          } else if (event.logicalKey == LogicalKeyboardKey.home) {
+            _resetWidth(side);
+            return KeyEventResult.handled;
+          } else {
+            return KeyEventResult.ignored;
+          }
+          _storeWidths();
+          return KeyEventResult.handled;
+        },
+        child: Builder(builder: (context) {
+          final focused = Focus.of(context).hasFocus;
+          return MouseRegion(
+            cursor: SystemMouseCursors.resizeColumn,
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () => Focus.of(context).requestFocus(),
+              onDoubleTap: () => _resetWidth(side),
+              onHorizontalDragStart: (_) => setState(() => _resizing = side),
+              onHorizontalDragUpdate: (d) {
+                final w = side == 'left' ? _widths.left + d.delta.dx : _widths.right - d.delta.dx;
+                _setWidth(side, w, container);
+              },
+              onHorizontalDragEnd: (_) {
+                setState(() => _resizing = null);
+                _storeWidths();
+              },
+              child: SizedBox(
+                width: resizerWidth,
+                child: Center(
+                  child: Container(
+                    width: 2,
+                    color: active || focused ? AppColors.primary : Theme.of(context).dividerColor,
+                  ),
+                ),
+              ),
+            ),
+          );
+        }),
+      ),
+    );
+  }
+
+  Color _dotColor(String id) {
+    final o = _outcomes[id];
+    if (o != null) return outcomeColor(o);
+    return _hasNotes(id) ? AppColors.primary : Colors.transparent;
+  }
+
+  String _dotLabel(String id) {
+    final o = _outcomes[id];
+    if (o != null) return outcomeLabels[o] ?? o;
+    return _hasNotes(id) ? 'Notiert' : 'Offen';
+  }
+
+  Widget _sideLabel(String text) => Padding(
+        padding: const EdgeInsets.fromLTRB(4, AppDimensions.paddingM, 4, 4),
+        child: Text(text.toUpperCase(),
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(color: AppColors.medium, letterSpacing: 0.6)),
+      );
+
+  Widget _liveBar() {
+    _Section? liveSec;
+    for (final s in _sections) {
+      if (s.id == _live?.fieldId) liveSec = s;
+    }
+    if (_live == null || liveSec == null) return const SizedBox.shrink();
+    final hasNext = nextSectionId(_sectionIds, _activeId) != null;
+    final label = liveSec.topNumber != null ? 'TOP ${liveSec.topNumber}' : liveSec.name;
+    return Card(
+      color: AppColors.danger.withValues(alpha: 0.08),
+      child: ListTile(
+        dense: true,
+        leading: const Icon(Icons.circle, color: AppColors.danger, size: 12),
+        title: Text('Läuft: $label · noch ${_live!.remainingMinutes} min'),
+        trailing: hasNext ? TextButton(onPressed: _nextSection, child: const Text('Nächster Punkt')) : null,
+      ),
+    );
+  }
+
+  Widget _buildWideLayout(BuildContext context) {
+    final theme = Theme.of(context);
+    final map = _taskSectionMap;
+    _Section? active;
+    for (final s in _sections) {
+      if (s.id == _activeId) active = s;
+    }
+    _Leftover? activeLeftover;
+    for (final l in _leftovers) {
+      if (l.key == _activeId) activeLeftover = l;
+    }
+
+    final left = ListView(
+      padding: const EdgeInsets.all(AppDimensions.paddingM),
+      children: [
+        Text(_title, style: theme.textTheme.titleLarge),
+        Text([_dateLabel, if (_timeRange.isNotEmpty) _timeRange].join(' · '), style: theme.textTheme.bodySmall),
+        Text(_statusLine,
+            style: theme.textTheme.bodySmall?.copyWith(color: _isPublished ? AppColors.success : AppColors.medium)),
+        const SizedBox(height: AppDimensions.paddingS),
+        _liveBar(),
+        _sideLabel('Ablaufplan'),
+        Card(
+          margin: EdgeInsets.zero,
+          child: Column(
+            children: [
+              for (final s in _sections)
+                ListTile(
+                  dense: true,
+                  selected: _activeId == s.id,
+                  selectedTileColor: AppColors.primary.withValues(alpha: 0.08),
+                  shape: _live?.fieldId == s.id
+                      ? const Border(left: BorderSide(color: AppColors.danger, width: 3))
+                      : null,
+                  leading: SizedBox(width: 40, child: Text(s.start ?? '', style: theme.textTheme.bodySmall)),
+                  minLeadingWidth: 40,
+                  title: Text(s.title, maxLines: 2, overflow: TextOverflow.ellipsis),
+                  subtitle: (s.conductor != null || s.duration > 0)
+                      ? Text([s.conductor, if (s.duration > 0) '${s.duration} min'].whereType<String>().join(' · '))
+                      : null,
+                  trailing: Tooltip(
+                    message: _dotLabel(s.id),
+                    child: Container(
+                      width: 10,
+                      height: 10,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: _dotColor(s.id),
+                        border: Border.all(color: _outcomes[s.id] != null ? _dotColor(s.id) : AppColors.medium),
+                      ),
+                    ),
+                  ),
+                  onTap: () => _activate(s.id, focus: true),
+                ),
+              for (final l in _leftovers)
+                ListTile(
+                  dense: true,
+                  selected: _activeId == l.key,
+                  leading: const SizedBox(width: 40, child: Icon(Icons.archive_outlined, size: 18)),
+                  minLeadingWidth: 40,
+                  title: Text(l.title),
+                  subtitle: const Text('Weitere Notizen'),
+                  onTap: () => _activate(l.key),
+                ),
+              ListTile(
+                dense: true,
+                leading: const SizedBox(width: 40, child: Icon(Icons.add, size: 18, color: AppColors.primary)),
+                minLeadingWidth: 40,
+                title: const Text('Punkt', style: TextStyle(color: AppColors.primary)),
+                onTap: _addSpontaneousTopic,
+              ),
+            ],
+          ),
+        ),
+        _sideLabel('Anwesend'),
+        _attendeeRow(),
+        const SizedBox(height: AppDimensions.paddingM),
+        FilledButton(
+          onPressed: _openPublish,
+          child: Text(_isPublished ? 'Erneut freigeben' : 'Protokoll freigeben'),
+        ),
+      ],
+    );
+
+    Widget main;
+    if (active != null) {
+      final s = active;
+      final kicker = [
+        if (s.topNumber != null) 'TOP ${s.topNumber}',
+        if (s.start != null) s.start!,
+        if (s.duration > 0) '${s.duration} min',
+      ].join(' · ');
+      main = Padding(
+        padding: const EdgeInsets.all(AppDimensions.paddingM),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            if (kicker.isNotEmpty) Text(kicker, style: theme.textTheme.labelMedium?.copyWith(color: AppColors.medium)),
+            Text(s.name, style: theme.textTheme.headlineSmall),
+            const SizedBox(height: AppDimensions.paddingS),
+            Wrap(
+              spacing: AppDimensions.paddingM,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                if (s.isTop) _outcomeSelector(s.id),
+                if (s.conductor != null) Text('Verantwortlich: ${s.conductor}', style: theme.textTheme.bodySmall),
+              ],
+            ),
+            const SizedBox(height: AppDimensions.paddingS),
+            Expanded(
+              child: ListView(
+                children: [
+                  ProtocolEditor(
+                    key: ValueKey('wide-editor-${s.id}'),
+                    controller: _controllerFor(s.id),
+                    focusNode: _focusFor(s.id),
+                    minHeight: 260,
+                    onNextPoint: _nextSection,
+                    onPreviousPoint: _previousSection,
+                    taskStatuses: _taskStatuses,
+                    agendaItems: _openTopics,
+                    onCreateTask: () => _createTask(s.id),
+                    onOpenTask: (id) => context.push('/settings/tasks/$id'),
+                    onOpenTopic: (id) => context.push('/settings/agenda-items/$id'),
+                  ),
+                  _taskList(_tasksFor(s.id, map)),
+                ],
+              ),
+            ),
+            const Divider(height: 1),
+            Padding(
+              padding: const EdgeInsets.only(top: AppDimensions.paddingS),
+              child: Row(
+                children: [
+                  OutlinedButton.icon(
+                    onPressed: () => _createTask(s.id),
+                    icon: const Icon(Icons.add_circle_outline),
+                    label: const Text('Aufgabe'),
+                  ),
+                  const SizedBox(width: AppDimensions.paddingM),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: theme.dividerColor),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Text('⌘/Strg ↓', style: theme.textTheme.labelSmall),
+                  ),
+                  const SizedBox(width: 6),
+                  Text('Nächster Punkt', style: theme.textTheme.bodySmall),
+                  const Spacer(),
+                  if (_savingCount > 0)
+                    const Padding(
+                      padding: EdgeInsets.only(right: 6),
+                      child: SizedBox(width: 12, height: 12, child: CircularProgressIndicator(strokeWidth: 2)),
+                    ),
+                  Flexible(child: Text(_saveLabel, style: theme.textTheme.bodySmall, overflow: TextOverflow.ellipsis)),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+    } else if (activeLeftover != null) {
+      final l = activeLeftover;
+      main = ListView(
+        padding: const EdgeInsets.all(AppDimensions.paddingM),
+        children: [
+          Text('Weitere Notizen', style: theme.textTheme.labelMedium?.copyWith(color: AppColors.medium)),
+          Text(l.title, style: theme.textTheme.headlineSmall),
+          Text('Dieser Punkt steht nicht mehr im Ablaufplan. Die Notizen bleiben erhalten.',
+              style: theme.textTheme.bodySmall),
+          const SizedBox(height: AppDimensions.paddingS),
+          _editor(_controllerFor('leftover:${l.key}', readOnly: true), editable: false),
+          _taskList(_tasksFor(l.key, map)),
+        ],
+      );
+    } else {
+      main = Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.list, size: 56, color: AppColors.medium),
+            const SizedBox(height: AppDimensions.paddingS),
+            Text(_sections.isNotEmpty ? 'Wähle links einen Punkt aus.' : 'Der Ablaufplan ist noch leer.',
+                style: theme.textTheme.titleMedium),
+            const SizedBox(height: AppDimensions.paddingS),
+            OutlinedButton(onPressed: _addSpontaneousTopic, child: const Text('Punkt hinzufügen')),
+          ],
+        ),
+      );
+    }
+
+    final right = ListView(
+      padding: const EdgeInsets.all(AppDimensions.paddingM),
+      children: [
+        Row(
+          children: [
+            Expanded(child: Text('Allgemeine Notizen', style: theme.textTheme.titleMedium)),
+            IconButton(
+              tooltip: 'Aufgabe zu den allgemeinen Notizen',
+              icon: const Icon(Icons.add_circle_outline, color: AppColors.primary),
+              onPressed: () => _createTask(protocolGeneralSectionId),
+            ),
+          ],
+        ),
+        Text('Immer sichtbar, unabhängig vom Punkt', style: theme.textTheme.bodySmall),
+        const SizedBox(height: AppDimensions.paddingS),
+        ProtocolEditor(
+          key: const ValueKey('wide-editor-general'),
+          controller: _controllerFor(protocolGeneralSectionId),
+          focusNode: _focusFor(protocolGeneralSectionId),
+          onNextPoint: _nextSection,
+          onPreviousPoint: _previousSection,
+          taskStatuses: _taskStatuses,
+          agendaItems: _openTopics,
+          onCreateTask: () => _createTask(protocolGeneralSectionId),
+          onOpenTask: (id) => context.push('/settings/tasks/$id'),
+          onOpenTopic: (id) => context.push('/settings/agenda-items/$id'),
+        ),
+        _sideLabel('Aufgaben dieser Sitzung · ${_tasks.length}'),
+        if (_tasks.isEmpty)
+          Text('Noch keine Aufgaben. Lege sie direkt bei einem Punkt an.', style: theme.textTheme.bodySmall)
+        else
+          Card(
+            margin: EdgeInsets.zero,
+            child: Column(
+              children: [
+                for (final t in _tasks)
+                  ListTile(
+                    dense: true,
+                    leading: Icon(
+                      t.status == 'completed' ? Icons.check_circle : Icons.radio_button_unchecked,
+                      color: t.status == 'completed' ? AppColors.success : AppColors.medium,
+                    ),
+                    title: Text(
+                      t.title,
+                      style: t.status == 'completed' ? const TextStyle(decoration: TextDecoration.lineThrough) : null,
+                    ),
+                    subtitle: Text([
+                      _sectionLabelOfTask(t, map),
+                      t.responsiblePerson?.firstName,
+                    ].whereType<String>().where((x) => x.isNotEmpty).join(' · ')),
+                    onTap: () => context.push('/settings/tasks/${t.id}'),
+                  ),
+              ],
+            ),
+          ),
+      ],
+    );
+
+    return LayoutBuilder(builder: (context, constraints) {
+      final container = constraints.maxWidth;
+      final leftW = clampSideWidth(_widths.left, _widths.right, container);
+      final rightW = clampSideWidth(_widths.right, leftW, container);
+      return CallbackShortcuts(
+        bindings: {
+          const SingleActivator(LogicalKeyboardKey.arrowDown, control: true): _nextSection,
+          const SingleActivator(LogicalKeyboardKey.arrowDown, meta: true): _nextSection,
+          const SingleActivator(LogicalKeyboardKey.arrowUp, control: true): _previousSection,
+          const SingleActivator(LogicalKeyboardKey.arrowUp, meta: true): _previousSection,
+        },
+        child: Focus(
+          focusNode: _pageFocus,
+          autofocus: true,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              SizedBox(width: leftW, child: left),
+              _resizer('left', container),
+              Expanded(child: main),
+              _resizer('right', container),
+              SizedBox(width: rightW, child: right),
+            ],
+          ),
+        ),
+      );
+    });
+  }
+
+  /// "TOP 2" / point name / "Allgemein" of the section a task belongs to.
+  String? _sectionLabelOfTask(TeamTask t, Map<String, String> map) {
+    final id = map[t.id];
+    if (id == null) return null;
+    if (id == protocolGeneralSectionId) return 'Allgemein';
+    for (final s in _sections) {
+      if (s.id == id) return s.topNumber != null ? 'TOP ${s.topNumber}' : s.name;
+    }
+    return null;
   }
 
   Widget _buildReadLayout(BuildContext context) {
