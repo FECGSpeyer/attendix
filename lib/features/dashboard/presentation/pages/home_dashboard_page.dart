@@ -12,6 +12,7 @@ import '../../../messages/presentation/widgets/notification_bell.dart';
 import '../../../team_organization/presentation/widgets/my_tasks_card.dart';
 import '../widgets/event_cards.dart';
 import '../widgets/people_cards.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Home dashboard tab (Ionic `home-dashboard`): configurable set of cards in a
 /// masonry-like grid (1 / 2 / 3 columns depending on width).
@@ -44,10 +45,10 @@ class HomeDashboardPage extends ConsumerWidget {
       appBar: AppBar(
         title: tenants.length > 1
             ? _TenantSwitcher(tenants: tenants, current: tenant)
-            : const Text('Dashboard'),
+            : Text(context.l10n.tabsDashboard),
         actions: [
           IconButton(
-            tooltip: 'Dashboard konfigurieren',
+            tooltip: context.l10n.homeDashboardConfigure,
             icon: const Icon(Icons.settings_outlined),
             onPressed: () => context.push('/settings/dashboard'),
           ),
@@ -66,15 +67,15 @@ class HomeDashboardPage extends ConsumerWidget {
                       children: [
                         const Icon(Icons.grid_view, size: 48, color: AppColors.medium),
                         const SizedBox(height: 16),
-                        const Text(
-                          'Alle Karten sind ausgeblendet. Konfiguriere das Dashboard unter Einstellungen.',
+                        Text(
+                          context.l10n.homeDashboardAllHidden,
                           textAlign: TextAlign.center,
-                          style: TextStyle(color: AppColors.medium),
+                          style: const TextStyle(color: AppColors.medium),
                         ),
                         const SizedBox(height: 16),
                         OutlinedButton(
                           onPressed: () => context.push('/settings/dashboard'),
-                          child: const Text('Dashboard konfigurieren'),
+                          child: Text(context.l10n.homeDashboardConfigure),
                         ),
                       ],
                     ),
@@ -140,7 +141,7 @@ class _TenantSwitcher extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return PopupMenuButton<Tenant>(
-      tooltip: 'Instanz wechseln',
+      tooltip: context.l10n.settingsSwitchTenant,
       onSelected: (t) => _switch(context, ref, t),
       itemBuilder: (context) => [
         for (final t in tenants)
@@ -157,9 +158,9 @@ class _TenantSwitcher extends ConsumerWidget {
                       color: AppColors.primary,
                       borderRadius: BorderRadius.circular(6),
                     ),
-                    child: const Text(
-                      'Aktuell',
-                      style: TextStyle(color: Colors.white, fontSize: 11),
+                    child: Text(
+                      context.l10n.homeDashboardCurrent,
+                      style: const TextStyle(color: Colors.white, fontSize: 11),
                     ),
                   ),
               ],
@@ -171,7 +172,7 @@ class _TenantSwitcher extends ConsumerWidget {
         children: [
           Flexible(
             child: Text(
-              current?.longName ?? 'Dashboard',
+              current?.longName ?? context.l10n.tabsDashboard,
               overflow: TextOverflow.ellipsis,
             ),
           ),

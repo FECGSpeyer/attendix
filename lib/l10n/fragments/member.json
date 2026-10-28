@@ -114,6 +114,26 @@
         "configNotFound": "Konfiguration nicht gefunden",
         "userIdCopied": "Benutzer-Id kopiert"
       }
+    },
+    "admin": {
+      "flutter": {
+        "addFailed": "Fehler beim Hinzufügen"
+      }
+    },
+    "dashSettings": {
+      "flutter": {
+        "saveFailed": "Fehler beim Speichern: {error}",
+        "reorder": "Reihenfolge ändern"
+      }
+    },
+    "homeDashboard": {
+      "flutter": {
+        "timeRange": "{time} Uhr",
+        "loadFailed": "Fehler beim Laden: {error}",
+        "join": "Beitritt",
+        "exit": "Austritt",
+        "pause": "Pause"
+      }
     }
   },
   "en": {
@@ -230,6 +250,26 @@
         "telegramOpenFailed": "Could not open Telegram",
         "configNotFound": "Configuration not found",
         "userIdCopied": "User ID copied"
+      }
+    },
+    "admin": {
+      "flutter": {
+        "addFailed": "Error while adding"
+      }
+    },
+    "dashSettings": {
+      "flutter": {
+        "saveFailed": "Error while saving: {error}",
+        "reorder": "Change order"
+      }
+    },
+    "homeDashboard": {
+      "flutter": {
+        "timeRange": "{time}",
+        "loadFailed": "Error while loading: {error}",
+        "join": "Joined",
+        "exit": "Left",
+        "pause": "Pause"
       }
     }
   }

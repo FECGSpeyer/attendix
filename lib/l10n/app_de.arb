@@ -42,6 +42,10 @@
   "@adminEvaluation": {
     "description": "admin.evaluation"
   },
+  "adminFlutterAddFailed": "Fehler beim Hinzufügen",
+  "@adminFlutterAddFailed": {
+    "description": "admin.flutter.addFailed"
+  },
   "adminGb": "{value} GB",
   "@adminGb": {
     "description": "admin.gb",
@@ -1943,6 +1947,17 @@
   "dashSettingsCards": "Karten",
   "@dashSettingsCards": {
     "description": "dashSettings.cards"
+  },
+  "dashSettingsFlutterReorder": "Reihenfolge ändern",
+  "@dashSettingsFlutterReorder": {
+    "description": "dashSettings.flutter.reorder"
+  },
+  "dashSettingsFlutterSaveFailed": "Fehler beim Speichern: {error}",
+  "@dashSettingsFlutterSaveFailed": {
+    "description": "dashSettings.flutter.saveFailed",
+    "placeholders": {
+      "error": {}
+    }
   },
   "dashSettingsReorderHint": "Tippe auf das Symbol oben rechts, um die Reihenfolge per Drag & Drop anzupassen.",
   "@dashSettingsReorderHint": {
@@ -4229,6 +4244,32 @@
   "homeDashboardEvents": "Termine",
   "@homeDashboardEvents": {
     "description": "homeDashboard.events"
+  },
+  "homeDashboardFlutterExit": "Austritt",
+  "@homeDashboardFlutterExit": {
+    "description": "homeDashboard.flutter.exit"
+  },
+  "homeDashboardFlutterJoin": "Beitritt",
+  "@homeDashboardFlutterJoin": {
+    "description": "homeDashboard.flutter.join"
+  },
+  "homeDashboardFlutterLoadFailed": "Fehler beim Laden: {error}",
+  "@homeDashboardFlutterLoadFailed": {
+    "description": "homeDashboard.flutter.loadFailed",
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "homeDashboardFlutterPause": "Pause",
+  "@homeDashboardFlutterPause": {
+    "description": "homeDashboard.flutter.pause"
+  },
+  "homeDashboardFlutterTimeRange": "{time} Uhr",
+  "@homeDashboardFlutterTimeRange": {
+    "description": "homeDashboard.flutter.timeRange",
+    "placeholders": {
+      "time": {}
+    }
   },
   "homeDashboardInDays": "in {count} Tagen",
   "@homeDashboardInDays": {

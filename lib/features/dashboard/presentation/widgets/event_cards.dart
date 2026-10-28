@@ -16,11 +16,12 @@ import '../../../../data/models/dashboard/dashboard_models.dart';
 import '../../../../data/models/plan/plan.dart';
 import '../../../planning/presentation/pages/plan_viewer_page.dart';
 import 'dashboard_card.dart';
+import '../../../../l10n/l10n.dart';
 
 String _timeRange(Attendance a) {
   if (a.startTime == null || a.startTime!.isEmpty) return '';
   final end = a.endTime != null && a.endTime!.isNotEmpty ? ' – ${a.endTime}' : '';
-  return ' · ${a.startTime}$end Uhr';
+  return ' · ${l10nWithoutContext.homeDashboardFlutterTimeRange('${a.startTime}$end')}';
 }
 
 DashTone _percTone(int perc) {
@@ -50,26 +51,26 @@ class NextEventCard extends ConsumerWidget {
 
     return DashboardCard(
       icon: Icons.calendar_today_outlined,
-      title: 'Termine',
-      subtitle: 'Nächster & letzter Termin',
+      title: context.l10n.homeDashboardEvents,
+      subtitle: context.l10n.homeDashboardNextAndLast,
       strip: DashStrips.event,
       child: async.when(
         loading: () => const DashLoading(),
-        error: (e, _) => DashEmptyRow(icon: Icons.error_outline, text: 'Fehler beim Laden: $e'),
+        error: (e, _) => DashEmptyRow(icon: Icons.error_outline, text: context.l10n.homeDashboardFlutterLoadFailed(e)),
         data: (s) {
           final next = s.nextEvent;
           final last = s.lastEvent;
           if (next == null && last == null) {
-            return const DashEmptyRow(
+            return DashEmptyRow(
               icon: Icons.calendar_today_outlined,
-              text: 'Keine Termine gefunden.',
+              text: context.l10n.homeDashboardNoEvents,
             );
           }
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               if (next != null) ...[
-                const DashDivider('Nächster Termin'),
+                DashDivider(context.l10n.teamOrgNextEvent),
                 _nextRow(context, next, () => open(next.attendance.id), canOpen),
                 if ((next.attendance.notes ?? '').isNotEmpty)
                   Padding(
@@ -94,7 +95,7 @@ class NextEventCard extends ConsumerWidget {
                 ],
               ],
               if (last != null) ...[
-                const DashDivider('Letzter Termin'),
+                DashDivider(context.l10n.homeDashboardLastEvent),
                 DashRow(
                   onTap: canOpen ? () => open(last.attendance.id) : null,
                   showDivider: false,
@@ -103,8 +104,8 @@ class NextEventCard extends ConsumerWidget {
                     tone: DashTone.muted,
                   ),
                   title: last.attendance.typeInfo ?? '',
-                  subtitle:
-                      '${s.lastPresent}/${s.lastTotal} anwesend · ${s.lastExcused} entschuldigt',
+                  subtitle: context.l10n
+                      .homeDashboardLastSummary(s.lastPresent, s.lastTotal, s.lastExcused),
                   trailing: DashChip(label: '${s.lastPerc}%', tone: _percTone(s.lastPerc)),
                 ),
               ],
@@ -162,15 +163,16 @@ class NextEventCard extends ConsumerWidget {
       );
     }
 
+    final l10n = context.l10n;
     final excusedLabel = s.nextShiftWorkers > 0
-        ? 'Abgemeldet\n${s.nextShiftWorkers} Schicht'
-        : 'Abgemeldet';
+        ? '${l10n.homeDashboardSignedOut}\n${l10n.homeDashboardShiftCount(s.nextShiftWorkers)}'
+        : l10n.homeDashboardSignedOut;
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
       child: Row(
         children: [
-          box(DashTone.green, '${s.nextPresent}', 'Anwesend'),
+          box(DashTone.green, '${s.nextPresent}', l10n.commonStatusPresent),
           const SizedBox(width: 8),
           box(
             DashTone.orange,
@@ -179,7 +181,7 @@ class NextEventCard extends ConsumerWidget {
             onTap: s.nextExcused > 0 ? () => _showExcused(context, s) : null,
           ),
           const SizedBox(width: 8),
-          box(DashTone.muted, '${s.nextNeutral}', 'Offen'),
+          box(DashTone.muted, '${s.nextNeutral}', l10n.protocolOpen),
         ],
       ),
     );
@@ -193,14 +195,14 @@ class NextEventCard extends ConsumerWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('Durchschnitt', style: TextStyle(fontSize: 13, color: AppColors.medium)),
+              Text(context.l10n.homeDashboardAverage, style: const TextStyle(fontSize: 13, color: AppColors.medium)),
               Text.rich(
                 TextSpan(children: [
                   TextSpan(
                     text: '${s.nextPerc}%',
                     style: const TextStyle(fontWeight: FontWeight.w700),
                   ),
-                  TextSpan(text: ' · ${s.nextTotal} gesamt'),
+                  TextSpan(text: ' · ${context.l10n.homeDashboardTotalCount(s.nextTotal)}'),
                 ]),
                 style: const TextStyle(fontSize: 13, color: AppColors.medium),
               ),
@@ -235,7 +237,7 @@ class NextEventCard extends ConsumerWidget {
           children: [
             Padding(
               padding: const EdgeInsets.only(bottom: 8),
-              child: Text('Abmeldungen', style: Theme.of(context).textTheme.titleMedium),
+              child: Text(context.l10n.homeDashboardSignOuts, style: Theme.of(context).textTheme.titleMedium),
             ),
             Expanded(
               child: ListView(
@@ -258,8 +260,8 @@ class NextEventCard extends ConsumerWidget {
                             : AppColors.primary,
                         labelStyle: const TextStyle(color: Colors.white, fontSize: 12),
                         label: Text(
-                          '${p.status == AttendanceStatus.lateExcused ? 'Entsch. verspätet' : 'Entschuldigt'}'
-                          '${isWorkExcused(p.notes) ? ' · Schicht' : ''}',
+                          '${p.status == AttendanceStatus.lateExcused ? context.l10n.homeDashboardLateExcusedShort : context.l10n.commonStatusExcused}'
+                          '${isWorkExcused(p.notes) ? ' · ${context.l10n.homeDashboardShift}' : ''}',
                         ),
                       ),
                     ),
@@ -282,17 +284,17 @@ class CurrentSongsCard extends ConsumerWidget {
     final async = ref.watch(dashboardCurrentSongsProvider);
     return DashboardCard(
       icon: Icons.music_note_outlined,
-      title: 'Aktuelle Werke',
-      subtitle: 'Geplante Werke',
+      title: context.l10n.homeDashboardCurrentSongs,
+      subtitle: context.l10n.homeDashboardPlannedSongs,
       strip: DashStrips.songs,
       child: async.when(
         loading: () => const DashLoading(),
-        error: (e, _) => DashEmptyRow(icon: Icons.error_outline, text: 'Fehler beim Laden: $e'),
+        error: (e, _) => DashEmptyRow(icon: Icons.error_outline, text: context.l10n.homeDashboardFlutterLoadFailed(e)),
         data: (entries) {
           if (entries.isEmpty) {
-            return const DashEmptyRow(
+            return DashEmptyRow(
               icon: Icons.music_note_outlined,
-              text: 'Keine geplanten Werke.',
+              text: context.l10n.homeDashboardNoPlannedSongs,
             );
           }
           return Column(
@@ -361,9 +363,9 @@ class _CurrentPlanCardState extends ConsumerState<CurrentPlanCard> {
   Widget build(BuildContext context) {
     final async = ref.watch(dashboardCurrentPlanProvider);
     return async.when(
-      loading: () => const DashboardCard(
+      loading: () => DashboardCard(
         icon: Icons.list_alt,
-        title: 'Aktueller Ablaufplan',
+        title: context.l10n.homeDashboardCurrentPlan,
         subtitle: '',
         strip: DashStrips.plan,
         child: DashLoading(),
@@ -462,14 +464,16 @@ class _CurrentPlanCardState extends ConsumerState<CurrentPlanCard> {
       }
     }
 
-    final dateLabel = isToday ? 'Heute' : DashboardUtils.longDate(data.planDay);
-    final planTimes =
-        '${DashboardUtils.formatTime(plan['time']?.toString())} – ${DashboardUtils.formatTime(plan['end']?.toString())} Uhr'
-        ' · $positionCount ${positionCount == 1 ? 'Position' : 'Positionen'}';
+    final dateLabel = isToday ? context.l10n.teamOrgTodayCap : DashboardUtils.longDate(data.planDay);
+    final planTimes = context.l10n.homeDashboardPlanTimes(
+      DashboardUtils.formatTime(plan['time']?.toString()),
+      DashboardUtils.formatTime(plan['end']?.toString()),
+      positionCount,
+    );
 
     return DashboardCard(
       icon: Icons.list_alt,
-      title: 'Aktueller Ablaufplan',
+      title: context.l10n.homeDashboardCurrentPlan,
       subtitle: typeName,
       strip: DashStrips.plan,
       onTap: () => _openPlan(context, data, typeName),
@@ -480,9 +484,9 @@ class _CurrentPlanCardState extends ConsumerState<CurrentPlanCard> {
                 color: AppColors.danger,
                 borderRadius: BorderRadius.circular(6),
               ),
-              child: const Text(
-                'Live',
-                style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w700),
+              child: Text(
+                context.l10n.homeDashboardLive,
+                style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w700),
               ),
             )
           : null,

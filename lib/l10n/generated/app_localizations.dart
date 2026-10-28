@@ -149,6 +149,12 @@ abstract class AppLocalizations {
   /// **'Auswertung'**
   String get adminEvaluation;
 
+  /// admin.flutter.addFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Hinzufügen'**
+  String get adminFlutterAddFailed;
+
   /// admin.gb
   ///
   /// In de, this message translates to:
@@ -2650,6 +2656,18 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Karten'**
   String get dashSettingsCards;
+
+  /// dashSettings.flutter.reorder
+  ///
+  /// In de, this message translates to:
+  /// **'Reihenfolge ändern'**
+  String get dashSettingsFlutterReorder;
+
+  /// dashSettings.flutter.saveFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Speichern: {error}'**
+  String dashSettingsFlutterSaveFailed(Object error);
 
   /// dashSettings.reorderHint
   ///
@@ -5704,6 +5722,36 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Termine'**
   String get homeDashboardEvents;
+
+  /// homeDashboard.flutter.exit
+  ///
+  /// In de, this message translates to:
+  /// **'Austritt'**
+  String get homeDashboardFlutterExit;
+
+  /// homeDashboard.flutter.join
+  ///
+  /// In de, this message translates to:
+  /// **'Beitritt'**
+  String get homeDashboardFlutterJoin;
+
+  /// homeDashboard.flutter.loadFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Laden: {error}'**
+  String homeDashboardFlutterLoadFailed(Object error);
+
+  /// homeDashboard.flutter.pause
+  ///
+  /// In de, this message translates to:
+  /// **'Pause'**
+  String get homeDashboardFlutterPause;
+
+  /// homeDashboard.flutter.timeRange
+  ///
+  /// In de, this message translates to:
+  /// **'{time} Uhr'**
+  String homeDashboardFlutterTimeRange(Object time);
 
   /// homeDashboard.inDays
   ///

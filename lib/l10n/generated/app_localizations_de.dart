@@ -40,6 +40,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get adminEvaluation => 'Auswertung';
 
   @override
+  String get adminFlutterAddFailed => 'Fehler beim Hinzufügen';
+
+  @override
   String adminGb(Object value) {
     return '$value GB';
   }
@@ -1497,6 +1500,14 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get dashSettingsCards => 'Karten';
+
+  @override
+  String get dashSettingsFlutterReorder => 'Reihenfolge ändern';
+
+  @override
+  String dashSettingsFlutterSaveFailed(Object error) {
+    return 'Fehler beim Speichern: $error';
+  }
 
   @override
   String get dashSettingsReorderHint => 'Tippe auf das Symbol oben rechts, um die Reihenfolge per Drag & Drop anzupassen.';
@@ -3230,6 +3241,25 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get homeDashboardEvents => 'Termine';
+
+  @override
+  String get homeDashboardFlutterExit => 'Austritt';
+
+  @override
+  String get homeDashboardFlutterJoin => 'Beitritt';
+
+  @override
+  String homeDashboardFlutterLoadFailed(Object error) {
+    return 'Fehler beim Laden: $error';
+  }
+
+  @override
+  String get homeDashboardFlutterPause => 'Pause';
+
+  @override
+  String homeDashboardFlutterTimeRange(Object time) {
+    return '$time Uhr';
+  }
 
   @override
   String homeDashboardInDays(Object count) {
