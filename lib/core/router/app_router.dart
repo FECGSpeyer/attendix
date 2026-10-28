@@ -30,7 +30,6 @@ import '../../features/settings/presentation/pages/attendance_types_page.dart';
 import '../../features/settings/presentation/pages/attendance_type_edit_page.dart';
 import '../../features/settings/presentation/pages/user_management_page.dart';
 import '../../features/settings/presentation/pages/pending_players_page.dart';
-import '../../features/settings/presentation/pages/batch_account_creation_page.dart';
 import '../../features/settings/presentation/pages/left_players_page.dart';
 import '../../features/settings/presentation/pages/viewers_page.dart';
 import '../../features/settings/presentation/pages/parents_page.dart';
@@ -139,7 +138,6 @@ const Map<String, RoleCheck> _protectedRoutes = {
   // (Ionic), which gates access itself; no role check here.
   '/settings/shifts': _isAdminOrResponsible,
   '/settings/pending': _isAdminOrResponsible,
-  '/settings/batch-accounts': _isAdmin,
   '/settings/left': _isAdminOrResponsible,
   // SETTINGS_EXT
   '/settings/role-permissions': _isAdminOrResponsible,
@@ -777,11 +775,6 @@ final routerProvider = Provider<GoRouter>((ref) {
                 path: 'pending',
                 name: 'pendingPlayers',
                 builder: (context, state) => const PendingPlayersPage(),
-              ),
-              GoRoute(
-                path: 'batch-accounts',
-                name: 'batchAccountCreation',
-                builder: (context, state) => const BatchAccountCreationPage(),
               ),
               GoRoute(
                 path: 'left',

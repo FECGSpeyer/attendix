@@ -19,10 +19,24 @@ import 'tenant_create_page.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 import '../../../../core/providers/dashboard_providers.dart'; // DASHBOARD
 import '../../../../core/providers/push_providers.dart'; // PUSH
+import '../../../settings/presentation/widgets/settings_sheet.dart'; // IOS_SETTINGS2
+
+/// IOS_SETTINGS2: Ionic settings "Instanz wechseln" row (and the iOS
+/// `apps-outline` fab) open the instances `ion-modal` as a sheet
+/// (`[breakpoints]="[0, 0.5, 1]"`, initial 0.5) instead of a page.
+Future<void> showTenantsSheet(BuildContext context) => showSettingsSheet<void>(
+      context,
+      initialBreakpoint: 0.5,
+      builder: (_) => const TenantSelectionPage(sheet: true),
+    );
 
 /// Tenant selection page
 class TenantSelectionPage extends ConsumerStatefulWidget {
-  const TenantSelectionPage({super.key});
+  const TenantSelectionPage({super.key, this.sheet = false});
+
+  /// IOS_SETTINGS2: shown as the Ionic instances sheet from the settings
+  /// page (no auto navigation, header "+" / title / cog only).
+  final bool sheet;
 
   @override
   ConsumerState<TenantSelectionPage> createState() =>
@@ -37,6 +51,7 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
   void initState() {
     super.initState();
     // Try auto-navigation after the first frame
+    if (widget.sheet) return; // IOS_SETTINGS2: opened by the user
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _tryAutoNavigation();
     });
@@ -144,6 +159,12 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
     // IOS_SHELL: same lifecycle guard as _tryAutoNavigation.
     final container = ProviderScope.containerOf(context, listen: false);
     final router = GoRouter.of(context);
+    final sheetNavigator = widget.sheet ? Navigator.of(context) : null;
+    // IOS_SETTINGS2: Ionic onTenantChange — tapping the current instance in
+    // the sheet does nothing.
+    if (widget.sheet && tenant.id == ref.read(currentTenantProvider)?.id) {
+      return;
+    }
 
     // Get the user's role FIRST, before any state changes
     final role = await _getTenantUserRole(tenant.id!, container: container);
@@ -161,14 +182,16 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
     final prefsNotifier =
         container.read(userPreferencesNotifierProvider.notifier);
 
-    // Navigate FIRST - before auth sync can cause rebuilds
-    router.go(
-      homeRouteFor(
-        role,
-        tenant.id,
-        container.read(supabaseAuthProvider).currentUser?.userMetadata,
-      ),
+    final home = homeRouteFor(
+      role,
+      tenant.id,
+      container.read(supabaseAuthProvider).currentUser?.userMetadata,
     ); // DASHBOARD
+
+    // Navigate FIRST - before auth sync can cause rebuilds
+    // IOS_SETTINGS2: Ionic `modal?.dismiss()` before navigating.
+    sheetNavigator?.pop();
+    router.go(home);
 
     // Auth sync AFTER navigation (fire and forget, notifier captured above)
     prefsNotifier.updateCurrentTenantId(tenant.id!);
@@ -317,7 +340,7 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
 
     // Ionic routeAfterAuth: no instance → the full-page "Neue Instanz
     // anlegen" (register.page, not dismissable, account menu).
-    if (tenantsAsync.hasValue && count == 0) {
+    if (!widget.sheet && tenantsAsync.hasValue && count == 0) {
       return const TenantCreatePage(canDismiss: false);
     }
 
@@ -325,36 +348,58 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
     // (settings.page.html): "+" (Neue Instanz) left, title "Instanzen (n)",
     // cog (Instanzauswahl) right; inset list with short/long name, "Aktuell"
     // badge, favorite star and swipe actions Löschen / Favorit.
+    // IOS_SETTINGS2: Ionic openCreateInstanceModal dismisses the sheet first.
+    void createInstance() {
+      if (widget.sheet) {
+        final router = GoRouter.of(context);
+        Navigator.of(context).pop();
+        router.push('/tenants/new');
+      } else {
+        context.push('/tenants/new');
+      }
+    }
+
+    final title = count == null
+        ? context.l10n.orgTenants
+        : context.l10n.settingsTenantsCount(count);
+    final addButton = IconButton(
+      tooltip: context.l10n.tenantSelectFlutterNewTenant,
+      icon: const Icon(Icons.add),
+      onPressed: createInstance,
+    );
+    final settingsButton = IconButton(
+      tooltip: context.l10n.tenantSelectFlutterTenantSelection,
+      icon: const Icon(Icons.settings_outlined),
+      onPressed: _openInstanceSettings,
+    );
+
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          tooltip: context.l10n.tenantSelectFlutterNewTenant,
-          icon: const Icon(Icons.add),
-          onPressed: () => context.push('/tenants/new'),
-        ),
-        title: Text(count == null
-            ? context.l10n.orgTenants
-            : context.l10n.settingsTenantsCount(count)),
-        actions: [
-          IconButton(
-            tooltip: context.l10n.tenantSelectFlutterTenantSelection,
-            icon: const Icon(Icons.settings_outlined),
-            onPressed: _openInstanceSettings,
-          ),
-          if (currentTenant == null)
-            IconButton(
-              tooltip: context.l10n.registerLogout,
-              icon: const Icon(Icons.logout),
-              onPressed: _logout,
+      appBar: widget.sheet
+          ? settingsSheetBar(
+              context,
+              title: title,
+              leading: addButton,
+              actions: [settingsButton],
             )
-          else
-            IconButton(
-              tooltip: context.l10n.commonClose,
-              icon: const Icon(Icons.close),
-              onPressed: () => context.go('/settings'),
+          : AppBar(
+              leading: addButton,
+              title: Text(title),
+              actions: [
+                settingsButton,
+                if (currentTenant == null)
+                  IconButton(
+                    tooltip: context.l10n.registerLogout,
+                    icon: const Icon(Icons.logout),
+                    onPressed: _logout,
+                  )
+                else
+                  IconButton(
+                    tooltip: context.l10n.commonClose,
+                    icon: const Icon(Icons.close),
+                    onPressed: () => context.go('/settings'),
+                  ),
+              ],
             ),
-        ],
-      ),
       body: tenantsAsync.when(
         loading: () => const Center(child: AppSpinner()),
         error:

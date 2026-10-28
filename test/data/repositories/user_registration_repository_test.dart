@@ -78,7 +78,7 @@ void main() {
     for (final path in [
       'lib/data/services/auth_service.dart',
       'lib/features/people/presentation/pages/person_import_page.dart',
-      'lib/features/settings/presentation/pages/batch_account_creation_page.dart',
+      'lib/features/settings/presentation/pages/settings_page.dart',
       'lib/features/people/presentation/pages/person_detail_page.dart',
       'lib/features/settings/presentation/pages/viewers_page.dart',
       'lib/features/settings/presentation/pages/parents_page.dart',

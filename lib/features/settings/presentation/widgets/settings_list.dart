@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../shared/widgets/layout/ionic_ios.dart' as ion; // IOS_SETTINGS2
 
 // UX_SETTINGS (WAVE 8): the settings lane renders Ionic **iOS mode** on
 // iOS (iPhone app and iPhone Safari) and keeps the Material (Ionic md) look
@@ -15,17 +16,24 @@ bool ionIsIos(BuildContext context) =>
 
 /// Ionic iOS metrics shared by the settings lane.
 abstract final class IonIos {
-  /// ios26 structured-list: `ion-item-group` border radius.
-  static const double groupRadius = 24;
+  /// ios26 structured-list: `ion-list inset` margin from the screen edge.
+  /// IOS_SETTINGS2: shared value (20pt), same as the auth lane.
+  static const double insetMargin = ion.IonIos.insetMargin;
 
-  /// ios26: `ion-item --min-height` inside inset groups.
-  static const double itemMinHeight = 52;
+  /// ios26 structured-list: `ion-item-group` border radius (28pt).
+  static const double groupRadius = ion.IonIos.groupRadius;
+
+  /// ios26: `ion-item --min-height` inside inset groups (53pt).
+  static const double itemMinHeight = ion.IonIos.itemMinHeight;
+
+  /// ios26: item font size inside inset groups (17pt).
+  static const double itemFontSize = ion.IonIos.itemFontSize;
 
   /// `ion-item --padding-start`.
   static const double itemPaddingStart = 16;
 
-  /// ios26: native padding-right of items in inset groups.
-  static const double itemPaddingEnd = 18;
+  /// ios26: native padding-right of items in inset groups (16pt).
+  static const double itemPaddingEnd = ion.IonIos.itemPaddingEnd;
 
   /// `::slotted(ion-icon)` font-size 1.6em.
   static const double itemIconSize = 26;
@@ -77,9 +85,14 @@ abstract final class IonIos {
           : Colors.white;
 }
 
+/// IOS_SETTINGS2: horizontal page padding around inset lists — the ios26
+/// inset margin (20pt) on iOS, 16 elsewhere (Ionic md).
+double ionListMargin(BuildContext context) =>
+    ionIsIos(context) ? IonIos.insetMargin : AppDimensions.paddingM;
+
 /// Ionic iOS item metrics for any [ListTile]/[SwitchListTile] placed in an
-/// inset group: 52pt rows, 16pt insets, 26pt start icons in the text
-/// colour, grey `p` lines.
+/// inset group: 53pt rows, 17pt labels, 16pt insets, 26pt start icons in the
+/// text colour, grey `p` lines.
 Widget ionIosListTileTheme(BuildContext context, {required Widget child}) {
   // SF default tracking (Ionic sets no letter-spacing on items).
   final base = (Theme.of(context).textTheme.bodyLarge ?? const TextStyle())
@@ -95,8 +108,8 @@ Widget ionIosListTileTheme(BuildContext context, {required Widget child}) {
     minLeadingWidth: IonIos.itemIconSize,
     iconColor: IonIos.text(context),
     titleTextStyle: base.copyWith(
-      fontSize: 16,
-      height: 1.25,
+      fontSize: IonIos.itemFontSize,
+      height: 20.3333 / 17,
       color: IonIos.text(context),
     ),
     subtitleTextStyle: base.copyWith(
@@ -277,7 +290,7 @@ class IonListHeader extends StatelessWidget {
 }
 
 /// Ionic iOS `ion-item-group` in an inset list: white rounded group (ios26
-/// radius 24) with inset hairlines between the items.
+/// radius 28) with inset hairlines between the items.
 class IonInsetGroup extends StatelessWidget {
   const IonInsetGroup({
     super.key,

@@ -11,20 +11,19 @@ import '../../../../data/repositories/admin_repository.dart';
 import '../../../auth/data/auth_flow_service.dart';
 import '../../../../l10n/l10n.dart';
 import 'settings_list.dart'; // UX_SETTINGS (WAVE 8)
+import 'settings_sheet.dart'; // IOS_SETTINGS2
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// SETTINGS2: Ionic settings "Administratoren" modal (super admins only):
 /// list with "Erstellt am", tap to remove, + to add an admin by e-mail.
+///
+/// IOS_SETTINGS2: Ionic `trigger="admins-button"` sheet
+/// (`[breakpoints]="[0, 1]"`, initial 1, toolbar with the title only).
 Future<void> showAdminsSheet(BuildContext context) {
-  return showModalBottomSheet<void>(
-    context: context,
-    isScrollControlled: true,
-    useSafeArea: true,
-    builder: (_) => const FractionallySizedBox(
-      heightFactor: 0.9,
-      child: _AdminsSheet(),
-    ),
+  return showSettingsSheet<void>(
+    context,
+    builder: (_) => const _AdminsSheet(),
   );
 }
 
@@ -101,16 +100,7 @@ class _AdminsSheet extends ConsumerWidget {
     final busy = ref.watch(adminNotifierProvider).isLoading;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(context.l10n.settingsAdmins),
-        automaticallyImplyLeading: false,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.close),
-            onPressed: () => Navigator.pop(context),
-          ),
-        ],
-      ),
+      appBar: settingsSheetBar(context, title: context.l10n.settingsAdmins),
       floatingActionButton: FloatingActionButton(
         onPressed: busy ? null : () => _add(context, ref),
         child: busy
@@ -121,7 +111,7 @@ class _AdminsSheet extends ConsumerWidget {
       // UX_SETTINGS (WAVE 8): Ionic admins modal — hint card with the
       // shield icon, then one inset list (h3 e-mail, p created-at).
       body: ListView(
-        padding: const EdgeInsets.fromLTRB(16, 16, 16, 88),
+        padding: EdgeInsets.fromLTRB(ionListMargin(context), 16, ionListMargin(context), 88),
         children: [
           SettingsHintCard(
             icon: Icons.verified_user_outlined,

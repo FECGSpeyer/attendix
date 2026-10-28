@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../shared/widgets/layout/ionic_ios.dart' as ion; // IOS_SETTINGS2
 
 /// UX_AUTH: building blocks for the Ionic `ion-list [inset]="true"` forms of
 /// the auth / registration / tenant / profile screens.
@@ -15,13 +16,18 @@ bool ionIsIos(BuildContext context) =>
     Theme.of(context).platform == TargetPlatform.iOS;
 
 /// Horizontal margin of an inset list (`ion-list [inset]`).
-double ionInsetMargin(BuildContext context) => ionIsIos(context) ? 20 : 16;
+/// IOS_SETTINGS2: iOS values shared with the settings lane
+/// ([ion.IonIos] in shared/widgets/layout/ionic_ios.dart).
+double ionInsetMargin(BuildContext context) =>
+    ionIsIos(context) ? ion.IonIos.insetMargin : 16;
 
 /// Corner radius of an inset group.
-double ionInsetRadius(BuildContext context) => ionIsIos(context) ? 28 : 16;
+double ionInsetRadius(BuildContext context) =>
+    ionIsIos(context) ? ion.IonIos.groupRadius : 16;
 
 /// `ion-label` font size inside an inset item (17 px on iOS, 16 px in MD).
-double ionItemFontSize(BuildContext context) => ionIsIos(context) ? 17 : 16;
+double ionItemFontSize(BuildContext context) =>
+    ionIsIos(context) ? ion.IonIos.itemFontSize : 16;
 
 /// `ion-color-medium-tint` used for list headers and notes.
 const Color ionMediumTint = Color(0xFF9D9FA6);
@@ -204,7 +210,7 @@ class IonItem extends StatelessWidget {
       ],
     );
     content = ConstrainedBox(
-      constraints: BoxConstraints(minHeight: minHeight ?? (ios ? 53 : 48)),
+      constraints: BoxConstraints(minHeight: minHeight ?? (ios ? ion.IonIos.itemMinHeight : 48)),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: content,

@@ -8,6 +8,7 @@ import '../../../../data/repositories/user_registration_repository.dart'
 import '../../../../core/providers/parent_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../widgets/settings_list.dart'; // UX_SETTINGS
+import '../widgets/settings_sheet.dart'; // IOS_SETTINGS2
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/parent/parent_model.dart';
 import '../../../../l10n/l10n.dart';
@@ -15,21 +16,33 @@ import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Parents Page - manage parents of players
+/// IOS_SETTINGS2: Ionic settings "parents-button" opens the "Eltern" sheet
+/// (`[breakpoints]="[0, 1]"`, initial 1, toolbar with the title only).
+Future<void> showParentsSheet(BuildContext context) => showSettingsSheet<void>(
+      context,
+      builder: (_) => const ParentsPage(sheet: true),
+    );
+
 class ParentsPage extends ConsumerWidget {
-  const ParentsPage({super.key});
+  const ParentsPage({super.key, this.sheet = false});
+
+  /// Presented as the Ionic sheet (no back button) instead of a route.
+  final bool sheet;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final parentsAsync = ref.watch(parentsProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(context.l10n.settingsParents),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.pop(),
-        ),
-      ),
+      appBar: sheet
+          ? settingsSheetBar(context, title: context.l10n.settingsParents)
+          : AppBar(
+              title: Text(context.l10n.settingsParents),
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () => context.pop(),
+              ),
+            ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showAddParentDialog(context, ref),
         child: const Icon(Icons.add),
@@ -62,8 +75,8 @@ class ParentsPage extends ConsumerWidget {
             // h2 name / h3 e-mail; tapping an item asks to remove it.
             child: ListView(
               physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.fromLTRB(
-                AppDimensions.paddingM, AppDimensions.paddingM, AppDimensions.paddingM, 88),
+              padding: EdgeInsets.fromLTRB(
+                ionListMargin(context), AppDimensions.paddingM, ionListMargin(context), 88),
               children: [
                 SettingsHintCard(
                   icon: Icons.favorite_border,
