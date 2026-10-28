@@ -44,7 +44,7 @@ activity, so `Activity.request` produces nothing visible.
    - `SWIFT_VERSION` = `5.0`, `TARGETED_DEVICE_FAMILY` = `1,2`
    - `MARKETING_VERSION` / `CURRENT_PROJECT_VERSION`: set them to `$(FLUTTER_BUILD_NAME)`
      and `$(FLUTTER_BUILD_NUMBER)` so they match the app (App Store rejects mismatches).
-   - Signing: same team as Runner (`WJ62LFJT38`), automatic signing.
+   - Signing: same team as Runner (`MXM3YWAKPL`), automatic signing.
 6. Frameworks of the extension: `WidgetKit.framework` and `SwiftUI.framework`
    (the template adds them).
 7. Build Phases of **Runner**: the *Embed Foundation Extensions* phase must contain
