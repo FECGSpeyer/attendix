@@ -56,8 +56,9 @@ void main() {
           reason: 'UPDATE must target validated ids:\n$q',
         );
       }
-      // assign/unassign/confirm/decline validate first
-      for (final method in ['assign', 'unassign', 'confirm', 'decline']) {
+      // assign/unassign/confirm validate first ("Kann nicht" goes through
+      // SignInOutRepository.signOut, REVIEW_FIX3)
+      for (final method in ['assign', 'unassign', 'confirm']) {
         final start = source.indexOf('Future<void> $method(');
         expect(start, greaterThan(-1), reason: '$method missing');
         final body = source.substring(start, source.indexOf('handleError', start));

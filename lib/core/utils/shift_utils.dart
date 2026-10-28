@@ -79,11 +79,6 @@ class ShiftUtils {
   /// Note written on shift-excused rows (stored DB value, not translated).
   static const String shiftNote = 'Schichtbedingt';
 
-  /// Ionic `Utils.isWorkExcused`: the row was excused because of a shift
-  /// or work ("Schichtbedingt" / "Arbeitsbedingt").
-  static bool isWorkExcused(String? notes) =>
-      notes != null && (notes.contains('Schichtbedingt') || notes.contains('Arbeitsbedingt'));
-
   /// Shift plan with [shiftId] from [shifts] (Ionic `db.shifts().find`).
   static ShiftPlan? findShift(List<ShiftPlan> shifts, String? shiftId) {
     if (shiftId == null || shiftId.isEmpty) return null;
@@ -254,7 +249,7 @@ class ShiftUtils {
     for (final pa in rows) {
       final person = persons[pa.personId];
       final shift = findShift(shifts, person?.shiftId);
-      final shiftExcused = isWorkExcused(pa.notes) && pa.status == AttendanceStatus.excused;
+      final shiftExcused = isWorkExcusedNote(pa.notes) && pa.status == AttendanceStatus.excused;
 
       if (shift != null) {
         // Ionic passes undefined times to dayjs (invalid → no overlap).

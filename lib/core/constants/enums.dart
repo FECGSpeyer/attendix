@@ -274,7 +274,8 @@ enum FieldType {
 }
 
 /// SETTINGS2: Ionic `Utils.isWorkExcused` — absence note marks a shift- or
-/// work-related excuse.
+/// work-related excuse ("Schichtbedingt" / "Arbeitsbedingt"). Single
+/// implementation (REVIEW_FIX3).
 bool isWorkExcusedNote(String? notes) =>
     notes != null &&
     (notes.contains('Schichtbedingt') || notes.contains('Arbeitsbedingt'));

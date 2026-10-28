@@ -143,28 +143,6 @@ class DutyRepository extends BaseRepository with TenantAwareRepository {
     }
   }
 
-  /// "Kann nicht": the person cancels (Entschuldigt with reason) and the group
-  /// is informed when the duty becomes understaffed. duty_state is kept.
-  Future<void> decline(String personAttendanceId, int attendanceId, String reason) async {
-    try {
-      final validIds = await _validIdsForTenant([personAttendanceId]);
-      if (validIds.isEmpty) {
-        throw RepositoryException(message: l10nWithoutContext.coreFlutterAccessDenied, operation: 'decline');
-      }
-      // person_attendances has no tenantId: id validated above via attendance.tenantId
-      await supabase.from('person_attendances').update({
-        'status': AttendanceStatus.excused.value,
-        'notes': reason,
-        'changed_by': _userId,
-        'changed_at': _nowIso(),
-      }).eq('id', validIds.first);
-      await notify(DutyNotifyType.understaffed, attendanceId);
-    } catch (e, stack) {
-      handleError(e, stack, 'decline');
-      rethrow;
-    }
-  }
-
   /// "Ich übernehme": atomic on the server (RPC checks membership), first one wins.
   Future<DutyTakeResult> take(int attendanceId) async {
     try {

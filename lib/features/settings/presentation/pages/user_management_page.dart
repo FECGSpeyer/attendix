@@ -7,8 +7,6 @@ import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/parent_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/providers/viewer_providers.dart';
-import '../../../../data/models/parent/parent_model.dart';
-import '../../../../data/models/viewer/viewer.dart';
 import '../../../../core/providers/user_registration_providers.dart'; // AUTH
 import '../../../../data/repositories/user_registration_repository.dart'; // AUTH
 import '../../../../core/theme/app_colors.dart';
@@ -172,44 +170,31 @@ class UserManagementPage extends ConsumerWidget {
     if (!registration.hasTenantId) return;
 
     try {
-      // AUTH: Ionic createAdmin → registerUser: links an existing account (and
-      // informs it) or creates a new account server-side via the
-      // attendix-user Edge Function, which sends the "set password" mail.
-      final normalizedEmail = email.toLowerCase().trim();
-      final appId = await registration.registerUser(
-        email: normalizedEmail,
-        name: role == Role.viewer || role == Role.parent ? firstName : '',
-        role: role,
-      );
-
-      // LOGIC_PEOPLE: Ionic db.createViewer / createParent also insert the
-      // `viewers` / `parents` row (first + last name) and, for parents, set
-      // tenantUsers.parent_id so the parents portal works.
-      if (role == Role.viewer) {
-        final created = await ref.read(viewerNotifierProvider.notifier).createViewer(
-              Viewer(
-                appId: appId,
-                email: normalizedEmail,
+      if (role == Role.viewer || role == Role.parent) {
+        // REVIEW_FIX3: shared invite flow (Ionic db.createViewer /
+        // createParent): registerUser → viewers/parents row (→ parent_id).
+        if (role == Role.viewer) {
+          await ref.read(viewerNotifierProvider.notifier).invite(
+                email: email,
                 firstName: firstName,
                 lastName: lastName,
-              ),
-            );
-        if (created == null) {
-          throw AccountFlowException(l10nWithoutContext.dbAddViewerFailed);
-        }
-      } else if (role == Role.parent) {
-        final created = await ref.read(parentNotifierProvider.notifier).createParent(
-              ParentModel(
-                appId: appId,
-                email: normalizedEmail,
+              );
+        } else {
+          await ref.read(parentNotifierProvider.notifier).invite(
+                email: email,
                 firstName: firstName,
                 lastName: lastName,
-              ),
-            );
-        if (created?.id == null) {
-          throw AccountFlowException(l10nWithoutContext.dbAddParentFailed);
+              );
         }
-        await registration.linkParentToTenantUser(appId, created!.id!);
+      } else {
+        // AUTH: Ionic createAdmin → registerUser: links an existing account
+        // (and informs it) or creates a new account server-side via the
+        // attendix-user Edge Function, which sends the "set password" mail.
+        await registration.registerUser(
+          email: email.toLowerCase().trim(),
+          name: '',
+          role: role,
+        );
       }
 
       ref.invalidate(tenantUsersProvider);

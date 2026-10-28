@@ -245,17 +245,21 @@ class RegistrationService {
         }
       }
 
-      // Ionic: addPlayerToAttendancesByDate when not pending.
+      // Ionic addPlayer: addPlayerToAttendancesByDate(data) with the
+      // inserted / reactivated row when not pending. Re-read the stored row
+      // so the type filters see the registrant's real `additional_fields`
+      // (and `joined`, which a reactivation keeps).
       if (!pending) {
         try {
+          final storedRow = await supabase
+              .from('player')
+              .select('*')
+              .eq('id', playerId)
+              .eq('tenantId', tenantId)
+              .single();
           final playerRepo = PlayerRepository(_ref)..setTenantId(tenantId);
-          await playerRepo.addToUpcomingAttendances(Person(
-            id: playerId,
-            firstName: formData.firstName,
-            lastName: formData.lastName,
-            instrument: formData.groupId,
-            tenantId: tenantId,
-          ));
+          await playerRepo
+              .addPlayerToAttendancesByDate(registrationBackfillPerson(storedRow));
         } catch (e) {
           debugPrint('Attendance backfill failed: $e');
         }
@@ -277,6 +281,11 @@ class RegistrationService {
     }
   }
 }
+
+/// Person used for the attendance backfill after a self registration:
+/// the stored player row (Ionic passes the inserted/updated `data`).
+Person registrationBackfillPerson(Map<String, dynamic> storedRow) =>
+    Person.fromJson(storedRow);
 
 /// Fields written when a former (left) member registers again: keeps the
 /// existing `history`, `joined` and `playsSince` (Ionic reactivation).

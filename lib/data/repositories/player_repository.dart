@@ -253,18 +253,8 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
   Future<Person> createPlayer(Person player) async {
     ensureNotDemo('createPlayer'); // DEMO_GUARD
     try {
-      final data = player.toJson();
-      // Remove computed fields
-      data.remove('groupName');
-      data.remove('firstOfInstrument');
-      data.remove('instrumentLength');
-      data.remove('teacherName');
-      data.remove('criticalReasonText');
-      data.remove('person_attendances');
-      data.remove('percentage');
-      
-      // Set tenant ID
-      data['tenantId'] = currentTenantId;
+      // Computed fields stripped, tenantId set (shared with reactivation).
+      final data = _personInsertData(player);
 
       final response = await supabase
           .from('player')

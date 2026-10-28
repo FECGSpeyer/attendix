@@ -1,12 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../core/services/offline_queue_service.dart'
+    show connectivityCheckProvider;
 import '../models/song/song.dart';
 import '../models/song/song_additional_field.dart';
 import 'base_repository.dart';
@@ -69,18 +70,6 @@ class SongRepository extends BaseRepository with TenantAwareRepository {
   /// Ionic song.service `offline_songs_v1_<tenantId>` storage key.
   static String offlineSongsCacheKey(int tenantId) => 'offline_songs_v1_$tenantId';
 
-  /// Connectivity check, overridable in tests. Never throws (PWA-safe).
-  static Future<bool> Function() isOnline = _defaultIsOnline;
-
-  static Future<bool> _defaultIsOnline() async {
-    try {
-      final results = await Connectivity().checkConnectivity();
-      return results.any((r) => r != ConnectivityResult.none);
-    } catch (_) {
-      return true;
-    }
-  }
-
   /// Get all songs of the (effective) song tenant.
   /// PostgREST caps each response, so songs are loaded in pages.
   ///
@@ -89,7 +78,8 @@ class SongRepository extends BaseRepository with TenantAwareRepository {
   /// load also falls back to the cache when one exists.
   Future<List<Song>> getSongs() async {
     final tenantId = songTenantId;
-    if (!await isOnline()) {
+    // Shared connectivity check (offline_queue_service), never throws.
+    if (!await ref.read(connectivityCheckProvider)()) {
       return await _readOfflineSongs(tenantId) ?? const [];
     }
     try {

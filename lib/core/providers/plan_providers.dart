@@ -4,6 +4,7 @@ import '../../data/models/organisation/organisation.dart';
 import '../../data/models/plan/plan.dart';
 import '../../data/repositories/org_plan_repository.dart';
 import '../../data/repositories/plan_repository.dart';
+import '../utils/attendance_percentage_utils.dart' show attendanceListStartDate;
 import '../utils/plan_utils.dart';
 import 'organisation_providers.dart';
 import 'tenant_providers.dart';
@@ -19,16 +20,12 @@ final planRepositoryWithTenantProvider = Provider<PlanRepository>((ref) {
   return repo;
 });
 
-/// Ionic `db.getCurrentAttDate()`: season start, fallback 2023-01-01.
-String planAttendancesSince(String? seasonStart) =>
-    (seasonStart != null && seasonStart.isNotEmpty) ? seasonStart : DateTime.utc(2023).toIso8601String();
-
 /// Termine of the current season with their plans (newest first)
 final planAttendancesProvider = FutureProvider<List<PlanAttendance>>((ref) async {
   final repo = ref.watch(planRepositoryWithTenantProvider);
   if (!repo.hasTenantId) return [];
   final seasonStart = ref.watch(currentTenantProvider.select((t) => t?.seasonStart));
-  return repo.getPlanAttendances(since: planAttendancesSince(seasonStart));
+  return repo.getPlanAttendances(since: attendanceListStartDate(seasonStart));
 });
 
 /// One Termin with its plans

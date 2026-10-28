@@ -13,7 +13,6 @@ import '../../../../core/utils/demo_guard.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 
-/// Sheet for copying a song to another tenant
 /// `instrument_ids` of a copied song (Ionic copySongToTenant): the mapped
 /// target instrument ids of the copied files, without null and the reserved
 /// ids 1 and 2, de-duplicated in first-seen order.
@@ -23,6 +22,7 @@ List<int> copiedSongInstrumentIds(Iterable<int?> mappedIds) => mappedIds
     .toSet()
     .toList();
 
+/// Sheet for copying a song to another tenant
 class CopyToTenantSheet extends ConsumerStatefulWidget {
   final Song song;
   final List<Tenant> availableTenants;

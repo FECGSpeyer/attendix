@@ -10,6 +10,7 @@ import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/color_utils.dart';
+import '../../../../core/utils/demo_guard.dart';
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/attendance/attendance.dart';
@@ -1413,6 +1414,9 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
         setState(() => _hasChanges = false);
         await _offerDutyView(); // DUTY
       }
+    } on DemoModeException {
+      // DEMO_GUARD: the demo warning toast was already shown.
+      return;
     } catch (e) {
       if (mounted) {
         ToastHelper.showError(context, context.l10n.typeSettingsUpdateFailed);
