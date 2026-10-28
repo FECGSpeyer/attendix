@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/import_mapper.dart';
+import '../../../../l10n/l10n.dart';
 
 /// A selectable mapping target. `key == null` means "Ignorieren".
 typedef ImportTargetOption = ({String? key, String label});
@@ -32,14 +33,14 @@ class ImportFileStep extends StatelessWidget {
             children: [
               ListTile(
                 leading: const Icon(Icons.cloud_upload_outlined, color: AppColors.primary),
-                title: const Text('Datei auswählen',
-                    style: TextStyle(color: AppColors.primary)),
+                title: Text(context.l10n.peopleChooseFile,
+                    style: const TextStyle(color: AppColors.primary)),
                 onTap: onPickFile,
               ),
               const Divider(height: 1),
               ListTile(
                 leading: const Icon(Icons.download_outlined),
-                title: const Text('Vorlage herunterladen'),
+                title: Text(context.l10n.peopleDownloadTemplate),
                 onTap: onDownloadTemplate,
               ),
             ],
@@ -82,7 +83,7 @@ class ImportMappingStep extends StatelessWidget {
       children: [
         Text.rich(TextSpan(children: [
           TextSpan(text: fileName, style: const TextStyle(fontWeight: FontWeight.bold)),
-          TextSpan(text: ' — $rowCount ${rowCount == 1 ? 'Zeile' : 'Zeilen'}'),
+          TextSpan(text: ' — ${context.l10n.peopleFileRows(rowCount)}'),
         ])),
         const SizedBox(height: AppDimensions.paddingS),
         Text(intro),
@@ -95,7 +96,7 @@ class ImportMappingStep extends StatelessWidget {
               value: mapping[header],
               isExpanded: true,
               decoration: InputDecoration(labelText: header),
-              hint: const Text('Feld wählen...'),
+              hint: Text(context.l10n.peopleChooseFieldPlaceholder),
               items: [
                 for (final opt in options)
                   DropdownMenuItem<String?>(value: opt.key, child: Text(opt.label)),
@@ -139,11 +140,11 @@ class ImportSummaryChips extends StatelessWidget {
       spacing: AppDimensions.paddingS,
       runSpacing: AppDimensions.paddingXS,
       children: [
-        chip('$ready bereit', AppColors.success),
-        if (warnings > 0) chip('$warnings mit Hinweis', AppColors.warning),
+        chip(context.l10n.peopleReady(ready), AppColors.success),
+        if (warnings > 0) chip(context.l10n.peopleWithHint(warnings), AppColors.warning),
         if (duplicates > 0)
-          chip('$duplicates ${duplicates == 1 ? 'Duplikat' : 'Duplikate'}', AppColors.medium),
-        if (errors > 0) chip('$errors fehlerhaft', AppColors.danger),
+          chip(context.l10n.peopleDuplicates(duplicates), AppColors.medium),
+        if (errors > 0) chip(context.l10n.peopleFaulty(errors), AppColors.danger),
       ],
     );
   }
@@ -210,7 +211,7 @@ class ImportBottomBar extends StatelessWidget {
         ),
         child: Row(
           children: [
-            TextButton(onPressed: onBack, child: const Text('Zurück')),
+            TextButton(onPressed: onBack, child: Text(context.l10n.commonBack)),
             const Spacer(),
             FilledButton(onPressed: onPrimary, child: Text(primaryLabel)),
           ],
@@ -227,14 +228,14 @@ Future<void> showImportFailures(
   required List<String> lines,
 }) {
   final shown = lines.take(10).map((l) => '• $l').join('\n');
-  final more = lines.length > 10 ? '\n… und ${lines.length - 10} weitere' : '';
+  final more = lines.length > 10 ? '\n${context.l10n.peopleAndMore(lines.length - 10)}' : '';
   return showDialog<void>(
     context: context,
     builder: (context) => AlertDialog(
       title: Text(title),
       content: SingleChildScrollView(child: Text('$shown$more')),
       actions: [
-        TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK')),
+        TextButton(onPressed: () => Navigator.pop(context), child: Text(context.l10n.commonOk)),
       ],
     ),
   );

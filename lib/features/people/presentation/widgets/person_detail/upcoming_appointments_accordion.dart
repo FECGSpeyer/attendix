@@ -6,6 +6,7 @@ import '../../../../../core/config/supabase_config.dart';
 import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/providers/tenant_providers.dart';
 import '../../../../../core/theme/app_colors.dart';
+import '../../../../../l10n/l10n.dart';
 
 /// Provider for upcoming attendances (future dates) for a person.
 final upcomingAttendancesProvider =
@@ -129,7 +130,7 @@ class _UpcomingAppointmentsCardState extends State<_UpcomingAppointmentsCard> {
         children: [
           ListTile(
             title: Text(
-              'Anstehende Termine (${widget.appointments.length})',
+              context.l10n.personUpcomingEvents(widget.appointments.length),
               style: const TextStyle(fontWeight: FontWeight.w600),
             ),
             trailing:
@@ -161,7 +162,7 @@ class _UpcomingAppointmentsCardState extends State<_UpcomingAppointmentsCard> {
     final status = item['status'] as int? ?? 0;
     final notes = item['notes']?.toString();
 
-    final dateStr = date != null ? DateFormat('dd.MM.yyyy').format(date) : '';
+    final dateStr = date != null ? DateFormat(dateFmt()).format(date) : '';
     final titleStr =
         meetingName.isNotEmpty ? '$dateStr | $meetingName' : dateStr;
 

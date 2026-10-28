@@ -3704,6 +3704,29 @@ class AppLocalizationsDe extends AppLocalizations {
   String get instrumentsEs => 'Es';
 
   @override
+  String get instrumentsFlutterAddFailed => 'Fehler beim Hinzufügen';
+
+  @override
+  String instrumentsFlutterClef(Object clef) {
+    return '$clef-Schlüssel';
+  }
+
+  @override
+  String get instrumentsFlutterClefs => 'Notenschlüssel';
+
+  @override
+  String get instrumentsFlutterGenerateSynonyms => 'Synonyme generieren';
+
+  @override
+  String get instrumentsFlutterNoCategories => 'Keine Kategorien';
+
+  @override
+  String get instrumentsFlutterNoCategoriesHint => 'Tippe + um eine Kategorie zu erstellen';
+
+  @override
+  String get instrumentsFlutterShortName => 'Kurzname';
+
+  @override
   String get instrumentsGeneratingSynonyms => 'Synonyme werden generiert...';
 
   @override
@@ -4759,6 +4782,186 @@ class AppLocalizationsDe extends AppLocalizations {
   String get peopleFirstName => 'Vorname';
 
   @override
+  String get peopleFlutterAgeFrom => 'Ab';
+
+  @override
+  String get peopleFlutterAgeSuffix => 'J.';
+
+  @override
+  String get peopleFlutterAgeTo => 'Bis';
+
+  @override
+  String get peopleFlutterAttention => 'Achtung';
+
+  @override
+  String peopleFlutterBulkUpdated(Object count) {
+    return '$count Person(en) aktualisiert';
+  }
+
+  @override
+  String get peopleFlutterCreateAnyway => 'Trotzdem erstellen';
+
+  @override
+  String get peopleFlutterDefaultView => 'Standard';
+
+  @override
+  String get peopleFlutterDeselectAll => 'Auswahl aufheben';
+
+  @override
+  String peopleFlutterDuplicateMessage(Object name, Object count) {
+    return 'Eine Person mit dem Namen \"$name\" existiert bereits (${count}x). Trotzdem erstellen?';
+  }
+
+  @override
+  String peopleFlutterErrorWith(Object error) {
+    return 'Fehler: $error';
+  }
+
+  @override
+  String get peopleFlutterFirstNameRequired => 'Vorname ist erforderlich';
+
+  @override
+  String get peopleFlutterGroupsLoadFailed => 'Fehler beim Laden der Gruppen';
+
+  @override
+  String peopleFlutterHandoverCopied(Object count) {
+    return '$count Spieler erfolgreich kopiert';
+  }
+
+  @override
+  String get peopleFlutterHandoverCopy => 'Kopieren';
+
+  @override
+  String peopleFlutterHandoverCopyConfirm(Object count, Object tenant) {
+    return '$count Spieler nach \"$tenant\" kopieren?';
+  }
+
+  @override
+  String get peopleFlutterHandoverCopyNote => 'Die ausgewählten Spieler werden in die Ziel-Instanz kopiert. Sie bleiben in dieser Instanz aktiv. Der App-Zugang muss in der Ziel-Instanz neu verknüpft werden.';
+
+  @override
+  String get peopleFlutterHandoverCopyQuestion => 'Spieler kopieren?';
+
+  @override
+  String get peopleFlutterHandoverCopyTitle => 'Spieler kopieren';
+
+  @override
+  String peopleFlutterHandoverCount(Object count, Object total) {
+    return '$count von $total Spieler';
+  }
+
+  @override
+  String get peopleFlutterHandoverMappingHint => 'Ordne die Gruppen der Quell-Instanz den Gruppen der Ziel-Instanz zu:';
+
+  @override
+  String get peopleFlutterHandoverMode => 'Modus';
+
+  @override
+  String get peopleFlutterHandoverModeCopy => 'Spieler werden kopiert (bleiben hier aktiv)';
+
+  @override
+  String get peopleFlutterHandoverModeTransfer => 'Spieler werden übertragen (hier archiviert)';
+
+  @override
+  String get peopleFlutterHandoverNoMapping => '-- Nicht zuordnen --';
+
+  @override
+  String get peopleFlutterHandoverNoPermission => 'Keine Berechtigung in der Ziel-Instanz';
+
+  @override
+  String get peopleFlutterHandoverNoTenants => 'Keine anderen Instanzen verfügbar';
+
+  @override
+  String get peopleFlutterHandoverNoTenantsHint => 'Du hast nur Zugriff auf eine Instanz. Um Spieler zu übertragen, benötigst du Zugriff auf mindestens zwei Instanzen.';
+
+  @override
+  String peopleFlutterHandoverPartialCopied(Object success, Object duplicate, Object error) {
+    return '$success kopiert, $duplicate bereits vorhanden, $error fehlgeschlagen';
+  }
+
+  @override
+  String peopleFlutterHandoverPartialTransferred(Object success, Object duplicate, Object error) {
+    return '$success übertragen, $duplicate bereits vorhanden, $error fehlgeschlagen';
+  }
+
+  @override
+  String get peopleFlutterHandoverPreparing => 'Bereite Übertragung vor...';
+
+  @override
+  String peopleFlutterHandoverProgress(Object name, Object current, Object total) {
+    return 'Übertrage $name ($current/$total)...';
+  }
+
+  @override
+  String get peopleFlutterHandoverTargetNotFound => 'Ziel-Instanz nicht gefunden';
+
+  @override
+  String peopleFlutterHandoverTransferConfirm(Object count, Object tenant) {
+    return '$count Spieler an \"$tenant\" übertragen? Die Spieler werden in dieser Instanz archiviert. Dieser Vorgang kann nicht rückgängig gemacht werden.';
+  }
+
+  @override
+  String get peopleFlutterHandoverTransferNote => 'Die ausgewählten Spieler werden in die Ziel-Instanz übertragen. Sie werden in dieser Instanz archiviert und der App-Zugang wird getrennt. Dieser Vorgang kann nicht rückgängig gemacht werden.';
+
+  @override
+  String get peopleFlutterHandoverTransferQuestion => 'Spieler übertragen?';
+
+  @override
+  String get peopleFlutterHandoverTransferTitle => 'Spieler übertragen';
+
+  @override
+  String peopleFlutterHandoverTransferred(Object count) {
+    return '$count Spieler erfolgreich übertragen';
+  }
+
+  @override
+  String get peopleFlutterHandoverTransferring => 'Wird übertragen...';
+
+  @override
+  String get peopleFlutterHint => 'Hinweis';
+
+  @override
+  String get peopleFlutterLastNameRequired => 'Nachname ist erforderlich';
+
+  @override
+  String get peopleFlutterListLoadFailed => 'Die Personenliste konnte nicht geladen werden.';
+
+  @override
+  String get peopleFlutterLoadFailed => 'Fehler beim Laden';
+
+  @override
+  String get peopleFlutterNotesHint => 'Zusätzliche Informationen...';
+
+  @override
+  String peopleFlutterOptional(Object label) {
+    return '$label (optional)';
+  }
+
+  @override
+  String peopleFlutterPausedToast(Object name) {
+    return '$name wurde pausiert';
+  }
+
+  @override
+  String get peopleFlutterPossibleDuplicate => 'Mögliches Duplikat';
+
+  @override
+  String get peopleFlutterSaveOrder => 'Reihenfolge speichern';
+
+  @override
+  String peopleFlutterSelectedCount(Object count) {
+    return '$count ausgewählt';
+  }
+
+  @override
+  String peopleFlutterTransferCount(Object count) {
+    return '$count übertragen';
+  }
+
+  @override
+  String get peopleFlutterTransferPeople => 'Personen übertragen';
+
+  @override
   String get peopleFromToday => 'Ab heute';
 
   @override
@@ -5225,6 +5428,257 @@ class AppLocalizationsDe extends AppLocalizations {
   String personExistsWithName(Object tenant, Object name) {
     return 'In der Instanz \"$tenant\" existiert bereits eine Person mit dem Namen \"$name\".';
   }
+
+  @override
+  String get personFlutterAbsenceDeleteFailed => 'Abwesenheit konnte nicht gelöscht werden';
+
+  @override
+  String get personFlutterAbsenceSaveFailed => 'Abwesenheit konnte nicht gespeichert werden';
+
+  @override
+  String get personFlutterAccountCreatedMail => 'Account erstellt. Passwort-E-Mail wurde gesendet.';
+
+  @override
+  String get personFlutterAllEntries => 'Alle Einträge';
+
+  @override
+  String get personFlutterApprove => 'Genehmigen';
+
+  @override
+  String personFlutterApproveMessage(Object name) {
+    return '$name als Mitglied freischalten?';
+  }
+
+  @override
+  String get personFlutterApproveQuestion => 'Person genehmigen?';
+
+  @override
+  String get personFlutterApproved => 'Person wurde genehmigt';
+
+  @override
+  String get personFlutterArchiveReasonHint => 'Warum verlässt die Person?';
+
+  @override
+  String personFlutterAttendanceLate(Object count) {
+    return 'Anwesenheit (${count}x zu spät)';
+  }
+
+  @override
+  String personFlutterChooseLabel(Object label) {
+    return '$label auswählen';
+  }
+
+  @override
+  String get personFlutterChooseRange => 'Zeitraum wählen';
+
+  @override
+  String get personFlutterCreateAccount => 'Account erstellen';
+
+  @override
+  String personFlutterCreateAccountFailed(Object name, Object error) {
+    return '$name - Fehler beim Erstellen des Accounts: $error';
+  }
+
+  @override
+  String personFlutterCreateAccountMessage(Object name, Object email) {
+    return 'Für $name wird ein Account mit der E-Mail $email erstellt. Die Person erhält eine E-Mail zum Setzen des Passworts.';
+  }
+
+  @override
+  String get personFlutterCreateAccountQuestion => 'Account erstellen?';
+
+  @override
+  String get personFlutterCritical => 'Kritisch';
+
+  @override
+  String personFlutterDeclineMessage(Object name) {
+    return '$name wird abgelehnt und archiviert.';
+  }
+
+  @override
+  String get personFlutterDeclineReasonHint => 'Warum wird die Person abgelehnt?';
+
+  @override
+  String get personFlutterDeclined => 'Person wurde abgelehnt';
+
+  @override
+  String get personFlutterEmailRequiredForAccount => 'Um einen Account zu erstellen, muss eine E-Mail-Adresse hinterlegt werden.';
+
+  @override
+  String get personFlutterFrequentLate => 'Häufige Verspätungen';
+
+  @override
+  String personFlutterFromSeasonStart(Object date) {
+    return 'Ab Saisonstart ($date)';
+  }
+
+  @override
+  String get personFlutterInstrumentsHint => 'z.B. Klavier, Gitarre';
+
+  @override
+  String personFlutterLateCount(Object count, Object threshold) {
+    return '$count× zu spät (Schwelle: $threshold)';
+  }
+
+  @override
+  String personFlutterLateUnexcusedCount(Object count, Object threshold) {
+    return '$count× unentschuldigt zu spät (Schwelle: $threshold)';
+  }
+
+  @override
+  String get personFlutterLinked => 'Verknüpft';
+
+  @override
+  String get personFlutterMatchFound => 'Person in anderer Instanz gefunden?';
+
+  @override
+  String get personFlutterMore => 'Mehr';
+
+  @override
+  String get personFlutterNoAccountLinked => 'Kein Account verknüpft. Ein Dirigent kann einen Account erstellen.';
+
+  @override
+  String get personFlutterNoEmail => 'Keine E-Mail-Adresse vorhanden';
+
+  @override
+  String get personFlutterNoHistory => 'Keine Historie vorhanden';
+
+  @override
+  String get personFlutterNoNote => 'Keine Notiz';
+
+  @override
+  String get personFlutterNoNotes => 'Keine Notizen';
+
+  @override
+  String get personFlutterNoPermissionArchive => 'Keine Berechtigung zum Archivieren';
+
+  @override
+  String get personFlutterNoPermissionCreateAccount => 'Keine Berechtigung zum Erstellen von Accounts';
+
+  @override
+  String get personFlutterNoPermissionEdit => 'Keine Berechtigung zum Bearbeiten';
+
+  @override
+  String get personFlutterNoPermissionPause => 'Keine Berechtigung zum Pausieren';
+
+  @override
+  String get personFlutterNoPermissionReactivate => 'Keine Berechtigung zum Reaktivieren';
+
+  @override
+  String get personFlutterNoPermissionRoles => 'Keine Berechtigung zum Ändern von Rollen';
+
+  @override
+  String get personFlutterNoPermissionUnlink => 'Keine Berechtigung zum Aufheben von Account-Verknüpfungen';
+
+  @override
+  String get personFlutterNoShiftPlan => 'Kein Schichtplan';
+
+  @override
+  String personFlutterNoneLabel(Object label) {
+    return 'Keine $label';
+  }
+
+  @override
+  String personFlutterNoneLabelMasc(Object label) {
+    return 'Kein $label';
+  }
+
+  @override
+  String get personFlutterNotAssigned => 'Nicht zugewiesen';
+
+  @override
+  String get personFlutterNotFound => 'Person nicht gefunden';
+
+  @override
+  String get personFlutterNotSelected => 'Nicht ausgewählt';
+
+  @override
+  String get personFlutterNotSpecified => 'Nicht angegeben';
+
+  @override
+  String get personFlutterNotesHint => 'Notizen zur Person...';
+
+  @override
+  String get personFlutterOtherDutiesHint => 'Weitere Aufgaben...';
+
+  @override
+  String personFlutterOtherInstancesCount(Object count) {
+    return 'Andere Instanzen ($count)';
+  }
+
+  @override
+  String personFlutterPausedUntil(Object date) {
+    return 'Pausiert bis $date';
+  }
+
+  @override
+  String get personFlutterPending => 'Ausstehend';
+
+  @override
+  String get personFlutterProblemSolved => 'Problemfall gelöst';
+
+  @override
+  String get personFlutterRangeHint => 'z.B. C3 - C5';
+
+  @override
+  String get personFlutterRemarksHint => 'Was wurde besprochen?';
+
+  @override
+  String get personFlutterRequired => 'Pflichtfeld';
+
+  @override
+  String get personFlutterRoleAdmin => 'Dirigent (Admin)';
+
+  @override
+  String get personFlutterRoleNone => 'Keine Rolle';
+
+  @override
+  String personFlutterRoleUpdateFailed(Object error) {
+    return 'Rolle konnte nicht angepasst werden: $error';
+  }
+
+  @override
+  String get personFlutterSaveOnly => 'Nur speichern';
+
+  @override
+  String get personFlutterSearchOtherInstance => 'In anderer Instanz suchen';
+
+  @override
+  String get personFlutterSeasonOnly => 'Nur Saison';
+
+  @override
+  String get personFlutterShowAll => 'Alle anzeigen';
+
+  @override
+  String get personFlutterTalkedToHint => 'Bestätigen, dass das Problem besprochen wurde';
+
+  @override
+  String get personFlutterTestResultHint => 'Ergebnis eingeben...';
+
+  @override
+  String get personFlutterUnlink => 'Verknüpfung aufheben';
+
+  @override
+  String get personFlutterUnlinkAccount => 'Account-Verknüpfung aufheben';
+
+  @override
+  String personFlutterUnlinkMessage(Object name) {
+    return 'Die Account-Verknüpfung für $name wird aufgehoben. Die Person kann sich dann nicht mehr in der App anmelden.';
+  }
+
+  @override
+  String get personFlutterUnlinkQuestion => 'Account-Verknüpfung aufheben?';
+
+  @override
+  String get personFlutterUnlinked => 'Account-Verknüpfung aufgehoben';
+
+  @override
+  String personFlutterUploadFailedWith(Object error) {
+    return 'Fehler beim Hochladen: $error';
+  }
+
+  @override
+  String get personFlutterUploadingPhoto => 'Lade Passbild hoch...';
 
   @override
   String get personFromRequired => 'Von *';
@@ -9672,6 +10126,20 @@ class AppLocalizationsDe extends AppLocalizations {
   String get teachersFillAll => 'Bitte fülle alle Felder aus...';
 
   @override
+  String get teachersFlutterDelete => 'Lehrer löschen';
+
+  @override
+  String teachersFlutterDeleteConfirm(Object name) {
+    return 'Möchtest du \"$name\" wirklich löschen?';
+  }
+
+  @override
+  String get teachersFlutterDeleted => 'Lehrer gelöscht';
+
+  @override
+  String get teachersFlutterLoadFailed => 'Lehrer konnten nicht geladen werden';
+
+  @override
   String get teachersInstruments => 'Instrumente';
 
   @override
@@ -10811,6 +11279,22 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get usageTotalEvents => 'Events gesamt';
+
+  @override
+  String voiceLeaderFlutterMemberCount(Object count) {
+    return '$count Mitglieder';
+  }
+
+  @override
+  String voiceLeaderFlutterMoreCount(Object count) {
+    return '+$count weitere';
+  }
+
+  @override
+  String get voiceLeaderFlutterNoGroup => 'Du bist noch keiner Stimmgruppe zugeordnet.';
+
+  @override
+  String get voiceLeaderFlutterVoiceGroup => 'Stimmgruppe';
 
   @override
   String get voiceLeaderLoadFailed => 'Fehler beim Laden der Gruppenmitglieder.';

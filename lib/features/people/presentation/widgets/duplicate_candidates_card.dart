@@ -9,6 +9,7 @@ import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/person_matcher.dart';
 import '../../../../data/models/person/person.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Same-tenant, account-less people similar to a pending applicant
 /// (Ionic person.page loadDuplicateCandidates).
@@ -57,21 +58,16 @@ class _DuplicateCandidatesCardState
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Personen zusammenführen'),
-        content: Text(
-          '$name wird mit der bestehenden Person $candidateName '
-          'zusammengeführt. Deren Anwesenheitsdaten bleiben erhalten, der neu '
-          'registrierte Account wird $candidateName zugeordnet. Dies kann nicht '
-          'rückgängig gemacht werden.',
-        ),
+        title: Text(context.l10n.personMergePeople),
+        content: Text(context.l10n.personMergeMessage(name, candidateName)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Abbrechen'),
+            child: Text(context.l10n.commonCancel),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Zusammenführen'),
+            child: Text(context.l10n.personMerge),
           ),
         ],
       ),
@@ -79,6 +75,7 @@ class _DuplicateCandidatesCardState
     if (confirmed != true || !mounted) return;
 
     final messenger = ScaffoldMessenger.of(context);
+    final l10n = context.l10n;
     setState(() => _merging = true);
     try {
       final tenantUser = await ref.read(currentTenantUserProvider.future);
@@ -89,16 +86,16 @@ class _DuplicateCandidatesCardState
           .read(playerRepositoryWithTenantProvider)
           .mergePendingPlayerIntoExisting(p, candidate, approverEmail: approver);
       messenger.showSnackBar(
-        const SnackBar(
-          content: Text('Die Personen wurden erfolgreich zusammengeführt'),
+        SnackBar(
+          content: Text(l10n.personMerged),
           backgroundColor: AppColors.success,
         ),
       );
       widget.onMerged();
     } catch (_) {
       messenger.showSnackBar(
-        const SnackBar(
-          content: Text('Fehler beim Zusammenführen der Personen'),
+        SnackBar(
+          content: Text(l10n.personMergeFailed),
           backgroundColor: AppColors.danger,
         ),
       );
@@ -124,11 +121,11 @@ class _DuplicateCandidatesCardState
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const ListTile(
-            leading: Icon(Icons.people_alt_outlined, color: AppColors.warning),
+          ListTile(
+            leading: const Icon(Icons.people_alt_outlined, color: AppColors.warning),
             title: Text(
-              'Ähnliche Person bereits vorhanden',
-              style: TextStyle(fontWeight: FontWeight.w600),
+              context.l10n.personSimilarExists,
+              style: const TextStyle(fontWeight: FontWeight.w600),
             ),
           ),
           if (_merging) const LinearProgressIndicator(),
@@ -143,7 +140,7 @@ class _DuplicateCandidatesCardState
               ].join(' · ')),
               trailing: TextButton(
                 onPressed: _merging ? null : () => _confirmMerge(m.candidate),
-                child: const Text('Zusammenführen'),
+                child: Text(context.l10n.personMerge),
               ),
             ),
         ],

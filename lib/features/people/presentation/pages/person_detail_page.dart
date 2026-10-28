@@ -32,6 +32,7 @@ import '../widgets/person_detail/person_detail.dart';
 import '../../../../core/services/tracking/tracking_event.dart';
 import '../../../../core/services/tracking/tracking_service.dart';
 import '../../../../core/utils/demo_guard.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Provider for single person with group name
 final personProvider =
@@ -218,7 +219,7 @@ final personHistoryProvider =
       final typeName = attType['name']?.toString() ?? '';
       meetingName = (typeInfo != null && typeInfo.isNotEmpty) ? typeInfo : typeName;
     } else {
-      meetingName = typeInfo ?? attendance?['type']?.toString() ?? 'Anwesenheit';
+      meetingName = typeInfo ?? attendance?['type']?.toString() ?? l10nWithoutContext.peopleAttendance;
     }
 
     final statusValue = a['status'];
@@ -293,22 +294,22 @@ class PersonDetailPage extends ConsumerWidget {
 
     return personAsync.when(
       loading: () => Scaffold(
-        appBar: AppBar(title: const Text('Person')),
+        appBar: AppBar(title: Text(context.l10n.tasksPerson)),
         body: const Center(child: CircularProgressIndicator()),
       ),
       error: (error, stack) => Scaffold(
-        appBar: AppBar(title: const Text('Person')),
+        appBar: AppBar(title: Text(context.l10n.tasksPerson)),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Icon(Icons.error_outline, size: 64, color: AppColors.danger),
               const SizedBox(height: AppDimensions.paddingM),
-              Text('Fehler: $error'),
+              Text(context.l10n.peopleFlutterErrorWith(error)),
               const SizedBox(height: AppDimensions.paddingM),
               ElevatedButton(
                 onPressed: () => ref.refresh(personProvider(personId)),
-                child: const Text('Erneut versuchen'),
+                child: Text(context.l10n.messagesRetry),
               ),
             ],
           ),
@@ -317,8 +318,8 @@ class PersonDetailPage extends ConsumerWidget {
       data: (person) {
         if (person == null) {
           return Scaffold(
-            appBar: AppBar(title: const Text('Person')),
-            body: const Center(child: Text('Person nicht gefunden')),
+            appBar: AppBar(title: Text(context.l10n.tasksPerson)),
+            body: Center(child: Text(context.l10n.personFlutterNotFound)),
           );
         }
         return _PersonDetailContent(person: person, personId: personId);
@@ -563,8 +564,8 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     if (_draft.firstName.isEmpty || _draft.lastName.isEmpty) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Vorname und Nachname sind erforderlich'),
+          SnackBar(
+            content: Text(context.l10n.personEnterNames),
             backgroundColor: AppColors.danger,
           ),
         );
@@ -576,8 +577,8 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     if (!currentRole.canEdit) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Keine Berechtigung zum Bearbeiten'),
+          SnackBar(
+            content: Text(context.l10n.personFlutterNoPermissionEdit),
             backgroundColor: AppColors.danger,
           ),
         );
@@ -595,8 +596,8 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
         RegExp(r'^[\w-\.+]+@([\w-]+\.)+[\w-]{2,}$').hasMatch(newEmail);
     if (newEmail.isNotEmpty && emailChanged && !emailValid) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Bitte gib eine gültige E-Mail-Adresse ein'),
+        SnackBar(
+          content: Text(context.l10n.personInvalidEmail),
           backgroundColor: AppColors.danger,
         ),
       );
@@ -609,21 +610,20 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
       final create = await showDialog<bool>(
         context: context,
         builder: (ctx) => AlertDialog(
-          title: const Text('E-Mail Adresse hinzugefügt'),
-          content: const Text(
-              'Möchtest du gleich ein Konto für die Person anlegen?'),
+          title: Text(context.l10n.personEmailAdded),
+          content: Text(context.l10n.personCreateAccountNow),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx),
-              child: const Text('Abbrechen'),
+              child: Text(context.l10n.commonCancel),
             ),
             TextButton(
               onPressed: () => Navigator.pop(ctx, false),
-              child: const Text('Nur speichern'),
+              child: Text(context.l10n.personFlutterSaveOnly),
             ),
             FilledButton(
               onPressed: () => Navigator.pop(ctx, true),
-              child: const Text('Ja'),
+              child: Text(context.l10n.commonYes),
             ),
           ],
         ),
@@ -757,8 +757,8 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Änderungen gespeichert'),
+          SnackBar(
+            content: Text(context.l10n.personUpdated),
             backgroundColor: AppColors.success,
           ),
         );
@@ -767,7 +767,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Fehler beim Speichern: $e'),
+            content: Text(context.l10n.personUpdateFailedWith(e)),
             backgroundColor: AppColors.danger,
           ),
         );
@@ -795,24 +795,20 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     return showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Stimmführer aktivieren'),
-        content: Text(
-          'Mit der Stimmführer-Rolle kann $name die Kontaktdaten und '
-          'anstehenden Termine aller Personen in der Stimme einsehen. '
-          'Soll die Rolle vergeben werden?',
-        ),
+        title: Text(context.l10n.personEnableVoiceLeader),
+        content: Text(context.l10n.personVoiceLeaderMessage(name)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Abbrechen'),
+            child: Text(context.l10n.commonCancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Nur Stimmführer-Status'),
+            child: Text(context.l10n.personVoiceLeaderStatusOnly),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Mit Rolle speichern'),
+            child: Text(context.l10n.personSaveWithRole),
           ),
         ],
       ),
@@ -871,7 +867,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Rolle konnte nicht angepasst werden: $e'),
+            content: Text(context.l10n.personFlutterRoleUpdateFailed(e)),
             backgroundColor: AppColors.warning,
           ),
         );
@@ -945,8 +941,8 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     final group = groups.where((g) => g.name == chosen.groupName).firstOrNull;
     if (group?.id != null) _onFieldChanged('instrument', group!.id);
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Die Daten wurden erfolgreich übernommen'),
+      SnackBar(
+        content: Text(context.l10n.personDataTaken),
         backgroundColor: AppColors.success,
       ),
     );
@@ -968,9 +964,8 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     if (!mounted) return;
     if (matches.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-              'Es wurde keine passende Person in einer anderen Instanz gefunden'),
+        SnackBar(
+          content: Text(context.l10n.personNoMatchOther),
           backgroundColor: AppColors.danger,
         ),
       );
@@ -983,8 +978,8 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
         child: ListView(
           shrinkWrap: true,
           children: [
-            const ListTile(
-              title: Text('Eintrag auswählen',
+            ListTile(
+              title: Text(context.l10n.personChooseEntry,
                   style: TextStyle(fontWeight: FontWeight.bold)),
             ),
             for (final m in matches)
@@ -996,7 +991,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
               ),
             ListTile(
               leading: const Icon(Icons.close),
-              title: const Text('Abbrechen'),
+              title: Text(context.l10n.commonCancel),
               onTap: () => Navigator.pop(ctx),
             ),
           ],
@@ -1023,8 +1018,8 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
       ref.invalidate(realtimePlayersProvider);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Die E-Mail Adresse wurde erfolgreich aktualisiert'),
+          SnackBar(
+            content: Text(context.l10n.personEmailUpdated),
             backgroundColor: AppColors.success,
           ),
         );
@@ -1032,7 +1027,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Fehler: $e'), backgroundColor: AppColors.danger),
+          SnackBar(content: Text(context.l10n.peopleFlutterErrorWith(e)), backgroundColor: AppColors.danger),
         );
       }
     }
@@ -1056,8 +1051,8 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
       ref.invalidate(realtimePlayersProvider);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Benutzer wurde erfolgreich zugewiesen'),
+          SnackBar(
+            content: Text(context.l10n.personUserAssigned),
             backgroundColor: AppColors.success,
           ),
         );
@@ -1065,7 +1060,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Fehler: $e'), backgroundColor: AppColors.danger),
+          SnackBar(content: Text(context.l10n.peopleFlutterErrorWith(e)), backgroundColor: AppColors.danger),
         );
       }
     }
@@ -1075,8 +1070,8 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     final currentRole = ref.read(currentRoleProvider);
     if (!currentRole.canEdit) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Keine Berechtigung zum Pausieren'),
+        SnackBar(
+          content: Text(context.l10n.personFlutterNoPermissionPause),
           backgroundColor: AppColors.danger,
         ),
       );
@@ -1095,8 +1090,8 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     if (!currentRole.canEdit) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Keine Berechtigung zum Reaktivieren'),
+          SnackBar(
+            content: Text(context.l10n.personFlutterNoPermissionReactivate),
             backgroundColor: AppColors.danger,
           ),
         );
@@ -1108,20 +1103,20 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     final person = widget.person;
 
     try {
-      await repository.unpausePlayer(person, historyText: 'Person wieder aktiv');
+      await repository.unpausePlayer(person, historyText: context.l10n.peopleActiveAgain);
 
       ref.invalidate(personProvider(widget.personId));
       ref.invalidate(realtimePlayersProvider);
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Person wurde reaktiviert'), backgroundColor: AppColors.success),
+          SnackBar(content: Text(context.l10n.personReactivated), backgroundColor: AppColors.success),
         );
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Fehler: $e'), backgroundColor: AppColors.danger),
+          SnackBar(content: Text(context.l10n.peopleFlutterErrorWith(e)), backgroundColor: AppColors.danger),
         );
       }
     }
@@ -1136,14 +1131,14 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
         context: context,
         builder: (context) => StatefulBuilder(
           builder: (context, setDialogState) => AlertDialog(
-            title: const Text('Person archivieren'),
+            title: Text(context.l10n.peopleArchiveTitle(widget.person.fullName)),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 ListTile(
                   contentPadding: EdgeInsets.zero,
-                  title: const Text('Austrittsdatum'),
-                  subtitle: Text(DateFormat('dd.MM.yyyy').format(archiveDate)),
+                  title: Text(context.l10n.peopleLeaveDate),
+                  subtitle: Text(DateFormat(dateFmt()).format(archiveDate)),
                   trailing: const Icon(Icons.calendar_today),
                   onTap: () async {
                     final date = await showDatePicker(
@@ -1160,22 +1155,22 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
                 const SizedBox(height: AppDimensions.paddingM),
                 TextField(
                   controller: noteController,
-                  decoration: const InputDecoration(
-                    labelText: 'Grund (optional)',
-                    hintText: 'Warum verlässt die Person?',
+                  decoration: InputDecoration(
+                    labelText: context.l10n.dutyReasonOptional,
+                    hintText: context.l10n.personFlutterArchiveReasonHint,
                   ),
                   maxLines: 2,
                 ),
               ],
             ),
             actions: [
-              TextButton(onPressed: () => Navigator.pop(context), child: const Text('Abbrechen')),
+              TextButton(onPressed: () => Navigator.pop(context), child: Text(context.l10n.commonCancel)),
               FilledButton(
                 style: FilledButton.styleFrom(backgroundColor: AppColors.danger),
                 onPressed: () {
                   Navigator.pop(context, {'date': archiveDate.toIso8601String(), 'note': noteController.text});
                 },
-                child: const Text('Archivieren'),
+                child: Text(context.l10n.peopleArchive),
               ),
             ],
           ),
@@ -1195,8 +1190,8 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     if (!currentRole.canEdit) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Keine Berechtigung zum Archivieren'),
+          SnackBar(
+            content: Text(context.l10n.personFlutterNoPermissionArchive),
             backgroundColor: AppColors.danger,
           ),
         );
@@ -1215,14 +1210,14 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Person wurde archiviert'), backgroundColor: AppColors.success),
+          SnackBar(content: Text(context.l10n.personArchived), backgroundColor: AppColors.success),
         );
         context.pop();
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Fehler: $e'), backgroundColor: AppColors.danger),
+          SnackBar(content: Text(context.l10n.peopleFlutterErrorWith(e)), backgroundColor: AppColors.danger),
         );
       }
     }
@@ -1240,8 +1235,8 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Verspätungen zurückgesetzt'),
+          SnackBar(
+            content: Text(context.l10n.personLateCounterReset),
             backgroundColor: AppColors.success,
           ),
         );
@@ -1249,7 +1244,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Fehler: $e'), backgroundColor: AppColors.danger),
+          SnackBar(content: Text(context.l10n.peopleFlutterErrorWith(e)), backgroundColor: AppColors.danger),
         );
       }
     }
@@ -1272,8 +1267,8 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
           _problemNotes = '';
         });
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Problemfall gelöst'),
+          SnackBar(
+            content: Text(context.l10n.personFlutterProblemSolved),
             backgroundColor: AppColors.success,
           ),
         );
@@ -1281,7 +1276,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Fehler: $e'), backgroundColor: AppColors.danger),
+          SnackBar(content: Text(context.l10n.peopleFlutterErrorWith(e)), backgroundColor: AppColors.danger),
         );
       }
     }
@@ -1291,16 +1286,16 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Person genehmigen?'),
-        content: Text('${widget.person.fullName} als Mitglied freischalten?'),
+        title: Text(context.l10n.personFlutterApproveQuestion),
+        content: Text(context.l10n.personFlutterApproveMessage(widget.person.fullName)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Abbrechen'),
+            child: Text(context.l10n.commonCancel),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Genehmigen'),
+            child: Text(context.l10n.personFlutterApprove),
           ),
         ],
       ),
@@ -1317,8 +1312,8 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Person wurde genehmigt'),
+          SnackBar(
+            content: Text(context.l10n.personFlutterApproved),
             backgroundColor: AppColors.success,
           ),
         );
@@ -1327,7 +1322,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Fehler: $e'), backgroundColor: AppColors.danger),
+          SnackBar(content: Text(context.l10n.peopleFlutterErrorWith(e)), backgroundColor: AppColors.danger),
         );
       }
     }
@@ -1339,17 +1334,17 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
       final reason = await showDialog<String>(
         context: context,
         builder: (context) => AlertDialog(
-          title: const Text('Person ablehnen'),
+          title: Text(context.l10n.personDeclinePerson),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('${widget.person.fullName} wird abgelehnt und archiviert.'),
+              Text(context.l10n.personFlutterDeclineMessage(widget.person.fullName)),
               const SizedBox(height: AppDimensions.paddingM),
               TextField(
                 controller: reasonController,
-                decoration: const InputDecoration(
-                  labelText: 'Grund *',
-                  hintText: 'Warum wird die Person abgelehnt?',
+                decoration: InputDecoration(
+                  labelText: context.l10n.peopleReasonRequired,
+                  hintText: context.l10n.personFlutterDeclineReasonHint,
                   border: OutlineInputBorder(),
                 ),
                 maxLines: 2,
@@ -1360,20 +1355,20 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Abbrechen'),
+              child: Text(context.l10n.commonCancel),
             ),
             FilledButton(
               style: FilledButton.styleFrom(backgroundColor: AppColors.danger),
               onPressed: () {
                 if (reasonController.text.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Bitte Grund angeben')),
+                    SnackBar(content: Text(context.l10n.signoutGiveReason)),
                   );
                   return;
                 }
                 Navigator.pop(context, reasonController.text);
               },
-              child: const Text('Ablehnen'),
+              child: Text(context.l10n.personDecline),
             ),
           ],
         ),
@@ -1389,8 +1384,8 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Person wurde abgelehnt'),
+          SnackBar(
+            content: Text(context.l10n.personFlutterDeclined),
             backgroundColor: AppColors.success,
           ),
         );
@@ -1399,7 +1394,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Fehler: $e'), backgroundColor: AppColors.danger),
+          SnackBar(content: Text(context.l10n.peopleFlutterErrorWith(e)), backgroundColor: AppColors.danger),
         );
       }
     } finally {
@@ -1416,18 +1411,18 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
           children: [
             ListTile(
               leading: const Icon(Icons.check_circle, color: AppColors.success),
-              title: const Text('Person genehmigen'),
+              title: Text(context.l10n.personApprovePerson),
               onTap: () { Navigator.pop(context); _approvePerson(); },
             ),
             ListTile(
               leading: const Icon(Icons.cancel, color: AppColors.danger),
-              title: const Text('Person ablehnen'),
+              title: Text(context.l10n.personDeclinePerson),
               onTap: () { Navigator.pop(context); _declinePerson(); },
             ),
             const Divider(),
             ListTile(
               leading: const Icon(Icons.close),
-              title: const Text('Abbrechen'),
+              title: Text(context.l10n.commonCancel),
               onTap: () => Navigator.pop(context),
             ),
           ],
@@ -1467,21 +1462,21 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
             mainAxisSize: MainAxisSize.min,
             children: [
               if (widget.person.appId == null && isAdmin)
-                option('Meinen Benutzer zuweisen', _assignMyAccount),
+                option(context.l10n.personAssignMyUser, _assignMyAccount),
               if (widget.person.paused)
-                option('Wieder aktivieren', _unpausePerson)
+                option(context.l10n.personReactivate, _unpausePerson)
               else
-                option('Pausieren', _showPauseDialog),
-              option('In andere Instanz übertragen', _showTransferSheet),
-              option('In andere Instanz kopieren',
+                option(context.l10n.peoplePause, _showPauseDialog),
+              option(context.l10n.personTransferOther, _showTransferSheet),
+              option(context.l10n.personCopyOther,
                   () => _showTransferSheet(copy: true)),
-              option('Archivieren', _showArchiveDialog, destructive: true),
+              option(context.l10n.peopleArchive, _showArchiveDialog, destructive: true),
               if (!isSelf && isAdmin)
-                option('Entfernen', _showDeleteDialog, destructive: true),
+                option(context.l10n.commonRemove, _showDeleteDialog, destructive: true),
               const Divider(height: 1),
               ListTile(
-                title: const Text(
-                  'Abbrechen',
+                title: Text(
+                  context.l10n.commonCancel,
                   textAlign: TextAlign.center,
                   style: TextStyle(fontWeight: FontWeight.w600),
                 ),
@@ -1512,20 +1507,17 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Person entfernen'),
-        content: const Text(
-          'Möchtest du die Person wirklich entfernen? Alle zugehörigen Daten '
-          '(Abwesenheiten, Notizen, etc.) gehen dabei verloren!',
-        ),
+        title: Text(context.l10n.attendanceRemovePerson),
+        content: Text(context.l10n.personRemovePersonMessage),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Abbrechen'),
+            child: Text(context.l10n.commonCancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             style: TextButton.styleFrom(foregroundColor: AppColors.danger),
-            child: const Text('Ja'),
+            child: Text(context.l10n.commonYes),
           ),
         ],
       ),
@@ -1535,11 +1527,11 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     try {
       await ref.read(playerNotifierProvider.notifier).deletePlayer(widget.personId);
       if (mounted) {
-        ToastHelper.showSuccess(context, 'Die Person wurde erfolgreich entfernt');
+        ToastHelper.showSuccess(context, context.l10n.personRemoved);
         context.pop();
       }
     } catch (e) {
-      if (mounted) ToastHelper.showError(context, 'Fehler: $e');
+      if (mounted) ToastHelper.showError(context, context.l10n.peopleFlutterErrorWith(e));
     }
   }
 
@@ -1548,8 +1540,8 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     if (!currentUserRole.isConductor) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Keine Berechtigung zum Ändern von Rollen'),
+          SnackBar(
+            content: Text(context.l10n.personFlutterNoPermissionRoles),
             backgroundColor: AppColors.danger,
           ),
         );
@@ -1575,7 +1567,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
         setState(() => _userRole = newRole);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Rolle geändert'),
+            content: Text(context.l10n.personRoleUpdated),
             backgroundColor: AppColors.success,
           ),
         );
@@ -1583,7 +1575,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Fehler: $e'), backgroundColor: AppColors.danger),
+          SnackBar(content: Text(context.l10n.peopleFlutterErrorWith(e)), backgroundColor: AppColors.danger),
         );
       }
     }
@@ -1593,20 +1585,17 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Account-Verknüpfung aufheben?'),
-        content: Text(
-          'Die Account-Verknüpfung für ${widget.person.fullName} wird aufgehoben. '
-          'Die Person kann sich dann nicht mehr in der App anmelden.',
-        ),
+        title: Text(context.l10n.personFlutterUnlinkQuestion),
+        content: Text(context.l10n.personFlutterUnlinkMessage(widget.person.fullName)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Abbrechen'),
+            child: Text(context.l10n.commonCancel),
           ),
           FilledButton(
             style: FilledButton.styleFrom(backgroundColor: AppColors.danger),
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Verknüpfung aufheben'),
+            child: Text(context.l10n.personFlutterUnlink),
           ),
         ],
       ),
@@ -1618,8 +1607,8 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     if (!currentUserRole.isConductor) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Keine Berechtigung zum Aufheben von Account-Verknüpfungen'),
+          SnackBar(
+            content: Text(context.l10n.personFlutterNoPermissionUnlink),
             backgroundColor: AppColors.danger,
           ),
         );
@@ -1648,8 +1637,8 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Account-Verknüpfung aufgehoben'),
+          SnackBar(
+            content: Text(context.l10n.personFlutterUnlinked),
             backgroundColor: AppColors.success,
           ),
         );
@@ -1657,7 +1646,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Fehler: $e'), backgroundColor: AppColors.danger),
+          SnackBar(content: Text(context.l10n.peopleFlutterErrorWith(e)), backgroundColor: AppColors.danger),
         );
       }
     }
@@ -1668,8 +1657,8 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     if (!currentRole.isConductor) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Keine Berechtigung zum Erstellen von Accounts'),
+          SnackBar(
+            content: Text(context.l10n.personFlutterNoPermissionCreateAccount),
             backgroundColor: AppColors.danger,
           ),
         );
@@ -1680,8 +1669,8 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     if (person.email == null || person.email!.isEmpty) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Keine E-Mail-Adresse vorhanden'),
+          SnackBar(
+            content: Text(context.l10n.personFlutterNoEmail),
             backgroundColor: AppColors.danger,
           ),
         );
@@ -1692,20 +1681,17 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     final confirmed = !confirm ? true : await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Account erstellen?'),
-        content: Text(
-          'Für ${person.fullName} wird ein Account mit der E-Mail '
-          '${person.email} erstellt. Die Person erhält eine E-Mail '
-          'zum Setzen des Passworts.',
-        ),
+        title: Text(context.l10n.personFlutterCreateAccountQuestion),
+        content: Text(context.l10n.personFlutterCreateAccountMessage(
+            person.fullName, person.email ?? '')),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Abbrechen'),
+            child: Text(context.l10n.commonCancel),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Account erstellen'),
+            child: Text(context.l10n.personFlutterCreateAccount),
           ),
         ],
       ),
@@ -1724,8 +1710,8 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Account erstellt. Passwort-E-Mail wurde gesendet.'),
+          SnackBar(
+            content: Text(context.l10n.personFlutterAccountCreatedMail),
             backgroundColor: AppColors.success,
           ),
         );
@@ -1734,8 +1720,8 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(
-                '${person.firstName} ${person.lastName} - Fehler beim Erstellen des Accounts: $e'),
+            content: Text(context.l10n.personFlutterCreateAccountFailed(
+                '${person.firstName} ${person.lastName}', e)),
             backgroundColor: AppColors.danger,
           ),
         );
@@ -1757,11 +1743,11 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
         final shouldDiscard = await showDialog<bool>(
           context: context,
           builder: (context) => AlertDialog(
-            title: const Text('Änderungen verwerfen?'),
-            content: const Text('Du hast ungespeicherte Änderungen. Möchtest du diese verwerfen?'),
+            title: Text(context.l10n.personDiscardChanges),
+            content: Text(context.l10n.personDiscardChangesMessage),
             actions: [
-              TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Abbrechen')),
-              FilledButton(onPressed: () => Navigator.pop(context, true), child: const Text('Verwerfen')),
+              TextButton(onPressed: () => Navigator.pop(context, false), child: Text(context.l10n.commonCancel)),
+              FilledButton(onPressed: () => Navigator.pop(context, true), child: Text(context.l10n.rolePermDiscard)),
             ],
           ),
         );
@@ -1775,8 +1761,8 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
         appBar: AppBar(
           title: canEdit
               ? Text(widget.person.pending
-                  ? 'Person genehmigen'
-                  : 'Person bearbeiten')
+                  ? context.l10n.personApprovePerson
+                  : context.l10n.personEditPerson)
               : null,
           backgroundColor: person.isCritical ? AppColors.danger : null,
           foregroundColor: person.isCritical ? Colors.white : null,
@@ -1883,7 +1869,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
                 margin: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM, vertical: AppDimensions.paddingXS),
                 child: ListTile(
                   leading: const Icon(Icons.event_busy_outlined, color: AppColors.primary),
-                  title: const Text('Regelmäßig verhindert', style: TextStyle(color: AppColors.primary)),
+                  title: Text(context.l10n.signoutRegularlyUnavailable, style: TextStyle(color: AppColors.primary)),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () => openUnavailabilityPage(
                     context,
@@ -1901,7 +1887,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
         floatingActionButton: _hasChanges
             ? FloatingActionButton(
                 onPressed: _isSaving ? null : _saveChanges,
-                tooltip: 'Speichern',
+                tooltip: context.l10n.commonSave,
                 child: _isSaving
                     ? const SizedBox(
                         width: 20,
@@ -1922,12 +1908,12 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
                             (person.email?.isNotEmpty ?? false)
                         ? FloatingActionButton(
                             onPressed: () => _createAccount(person),
-                            tooltip: 'Account erstellen',
+                            tooltip: context.l10n.personFlutterCreateAccount,
                             child: const Icon(Icons.key_outlined),
                           )
                         : FloatingActionButton(
                             onPressed: _showMoreActions,
-                            tooltip: 'Mehr',
+                            tooltip: context.l10n.personFlutterMore,
                             child: const Icon(Icons.more_horiz),
                           ),
       ),

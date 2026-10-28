@@ -101,9 +101,9 @@ void main() {
 
     test('person history delete uses the Ionic alert and toast texts', () {
       final src = _read('lib/features/people/presentation/widgets/person_detail/historie_accordion.dart');
-      expect(src, contains("'Eintrag unwiderruflich entfernen?'"));
-      expect(src, contains("'Eintrag wurde erfolgreich entfernt.'"));
-      expect(src, contains("'Notiz geändert'"));
+      expect(src, contains('l10n.personRemoveEntry')); // 'Eintrag unwiderruflich entfernen?'
+      expect(src, contains('l10n.personEntryRemoved')); // 'Eintrag wurde erfolgreich entfernt.'
+      expect(src, contains('l10n.personNoteChanged')); // 'Notiz geändert'
     });
   });
 }

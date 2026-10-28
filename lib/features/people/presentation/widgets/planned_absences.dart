@@ -10,8 +10,9 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/player_absence/player_absence.dart';
 import 'person_detail/upcoming_appointments_accordion.dart';
 import '../../../../core/utils/date_helper.dart';
+import '../../../../l10n/l10n.dart';
 
-final _dateFormat = DateFormat('dd.MM.yyyy');
+DateFormat get _dateFormat => DateFormat(dateFmt());
 
 String _fmt(String isoDate) {
   final d = DateTime.tryParse(isoDate);
@@ -20,8 +21,8 @@ String _fmt(String isoDate) {
 
 /// Toast text after entering an absence (Ionic: signout.absenceEntered[Count]).
 String absenceEnteredMessage(int count) {
-  if (count <= 0) return 'Abwesenheit eingetragen';
-  return 'Abwesenheit eingetragen ($count ${count == 1 ? 'Termin' : 'Termine'} entschuldigt)';
+  if (count <= 0) return l10nWithoutContext.signoutAbsenceEntered;
+  return l10nWithoutContext.signoutAbsenceEnteredCount(count);
 }
 
 /// Input of the "Abwesenheit eintragen" sheet.
@@ -97,9 +98,9 @@ class _AbsenceInputSheetState extends State<_AbsenceInputSheet> {
       initialDateRange: _from != null && _until != null
           ? DateTimeRange(start: _from!, end: _until!)
           : null,
-      locale: const Locale('de', 'DE'),
-      helpText: 'Zeitraum wählen',
-      saveText: 'Übernehmen',
+      locale: Locale(currentLanguage()),
+      helpText: context.l10n.personFlutterChooseRange,
+      saveText: context.l10n.commonApply,
     );
     if (range != null) {
       setState(() {
@@ -111,7 +112,7 @@ class _AbsenceInputSheetState extends State<_AbsenceInputSheet> {
 
   void _submit() {
     if (!_isValid) {
-      ToastHelper.showError(context, 'Bitte fülle alle Pflichtfelder aus');
+      ToastHelper.showError(context, context.l10n.signoutFillRequired);
       return;
     }
     Navigator.of(context).pop(AbsenceInput(
@@ -133,7 +134,7 @@ class _AbsenceInputSheetState extends State<_AbsenceInputSheet> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             AppBar(
-              title: const Text('Abwesenheit eintragen'),
+              title: Text(context.l10n.personEnterAbsence),
               automaticallyImplyLeading: false,
               actions: [
                 IconButton(
@@ -149,27 +150,27 @@ class _AbsenceInputSheetState extends State<_AbsenceInputSheet> {
                 textCapitalization: TextCapitalization.sentences,
                 minLines: 1,
                 maxLines: 4,
-                decoration: const InputDecoration(
-                  labelText: 'Grund *',
-                  hintText: 'z.B. Urlaub, Krankheit...',
+                decoration: InputDecoration(
+                  labelText: context.l10n.signoutReasonRequired,
+                  hintText: context.l10n.signoutReasonPlaceholder,
                 ),
                 onChanged: (_) => setState(() {}),
               ),
             ),
             ListTile(
               leading: const Icon(Icons.event),
-              title: const Text('Von *'),
+              title: Text(context.l10n.personFromRequired),
               subtitle: Text(_from != null
                   ? _dateFormat.format(_from!)
-                  : 'Kein Datum gewählt'),
+                  : context.l10n.personNoDateChosen),
               onTap: _pickRange,
             ),
             ListTile(
               leading: const Icon(Icons.event_available),
-              title: const Text('Bis *'),
+              title: Text(context.l10n.personUntilRequired),
               subtitle: Text(_until != null
                   ? _dateFormat.format(_until!)
-                  : 'Kein Datum gewählt'),
+                  : context.l10n.personNoDateChosen),
               trailing: _from != null
                   ? IconButton(
                       icon: const Icon(Icons.cancel_outlined,
@@ -187,12 +188,8 @@ class _AbsenceInputSheetState extends State<_AbsenceInputSheet> {
                 padding: const EdgeInsets.all(AppDimensions.paddingM),
                 child: Text(
                   widget.forOther
-                      ? 'Für längere Abwesenheiten empfiehlt sich die '
-                          'Pausieren-Funktion, damit die Person nicht in neuen '
-                          'Terminen erscheint.'
-                      : 'Für längere Abwesenheiten empfiehlt sich die '
-                          'Pausieren-Funktion, damit du nicht in neuen Terminen '
-                          'erscheinst.',
+                      ? context.l10n.personLongAbsenceHint
+                      : context.l10n.signoutLongAbsenceHint,
                   style: const TextStyle(color: AppColors.warning),
                 ),
               ),
@@ -201,7 +198,7 @@ class _AbsenceInputSheetState extends State<_AbsenceInputSheet> {
               child: FilledButton.icon(
                 onPressed: _isValid ? _submit : null,
                 icon: const Icon(Icons.calendar_month),
-                label: const Text('Abwesenheit eintragen'),
+                label: Text(context.l10n.personEnterAbsence),
               ),
             ),
           ],
@@ -235,7 +232,7 @@ Future<bool> addPlannedAbsenceFlow(
       );
   if (!context.mounted) return count != null;
   if (count == null) {
-    ToastHelper.showError(context, 'Abwesenheit konnte nicht gespeichert werden');
+    ToastHelper.showError(context, context.l10n.personFlutterAbsenceSaveFailed);
     return false;
   }
   ref.invalidate(upcomingAttendancesProvider(personId));
@@ -252,14 +249,11 @@ Future<bool> deletePlannedAbsenceFlow(
 }) async {
   final confirmed = await DialogHelper.showConfirmation(
     context,
-    title: 'Abwesenheit löschen',
+    title: context.l10n.signoutDeleteAbsence,
     message: selfService
-        ? 'Soll die Abwesenheit gelöscht werden? Bereits entschuldigte Termine in '
-            'diesem Zeitraum werden auf den Standardstatus des jeweiligen Termintyps '
-            'zurückgesetzt.'
-        : 'Soll die Abwesenheit gelöscht werden? Bereits entschuldigte Termine in '
-            'diesem Zeitraum werden auf "Neutral" zurückgesetzt.',
-    confirmText: 'Löschen',
+        ? context.l10n.signoutDeleteAbsenceMessage
+        : context.l10n.personDeleteAbsenceMessage,
+    confirmText: context.l10n.commonDelete,
     isDestructive: true,
   );
   if (!confirmed || !context.mounted) return false;
@@ -269,9 +263,9 @@ Future<bool> deletePlannedAbsenceFlow(
   if (!context.mounted) return ok;
   if (ok) {
     ref.invalidate(upcomingAttendancesProvider(absence.personId));
-    ToastHelper.showSuccess(context, 'Abwesenheit gelöscht');
+    ToastHelper.showSuccess(context, context.l10n.signoutAbsenceDeleted);
   } else {
-    ToastHelper.showError(context, 'Abwesenheit konnte nicht gelöscht werden');
+    ToastHelper.showError(context, context.l10n.personFlutterAbsenceDeleteFailed);
   }
   return ok;
 }
@@ -294,7 +288,7 @@ class PlannedAbsenceTile extends StatelessWidget {
       subtitle: absence.reason.isNotEmpty ? Text(absence.reason) : null,
       trailing: IconButton(
         icon: const Icon(Icons.delete_outline, color: AppColors.danger),
-        tooltip: 'Abwesenheit löschen',
+        tooltip: context.l10n.signoutDeleteAbsence,
         onPressed: onDelete,
       ),
     );
@@ -336,8 +330,8 @@ class _PlannedAbsencesAccordionState
           ListTile(
             title: Text(
               absences.isNotEmpty
-                  ? 'Abwesenheiten (${absences.length})'
-                  : 'Abwesenheiten',
+                  ? context.l10n.personAbsencesCount(absences.length)
+                  : context.l10n.personAbsences,
               style: const TextStyle(fontWeight: FontWeight.w600),
             ),
             trailing: Icon(_isExpanded ? Icons.expand_less : Icons.expand_more),
@@ -350,17 +344,17 @@ class _PlannedAbsencesAccordionState
                 onDelete: () => deletePlannedAbsenceFlow(context, ref, absence),
               ),
             if (absences.isEmpty)
-              const ListTile(
+              ListTile(
                 title: Text(
-                  'Keine Abwesenheiten eingetragen',
-                  style: TextStyle(color: AppColors.medium),
+                  context.l10n.personNoAbsences,
+                  style: const TextStyle(color: AppColors.medium),
                 ),
               ),
             ListTile(
               leading: const Icon(Icons.add_circle_outline, color: AppColors.primary),
-              title: const Text(
-                'Abwesenheit hinzufügen',
-                style: TextStyle(color: AppColors.primary),
+              title: Text(
+                context.l10n.personAddAbsence,
+                style: const TextStyle(color: AppColors.primary),
               ),
               onTap: () => addPlannedAbsenceFlow(
                 context,
