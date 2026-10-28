@@ -18,6 +18,8 @@ import '../../../../data/models/tenant/tenant.dart';
 import '../../../../core/services/tracking/tracking_event.dart';
 import '../../../../core/services/tracking/tracking_service.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../settings/presentation/widgets/ion_condense.dart'; // UX_SETTINGS (WAVE 8)
+import '../../../settings/presentation/widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
 import '../../../../core/utils/error_message.dart';
 
 /// Notifications settings page (Ionic notifications.page).
@@ -165,30 +167,35 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
     final tenants = ref.watch(userTenantsProvider).valueOrNull ?? const <Tenant>[];
     final hasDutyTypes = ref.watch(tenantHasDutyTypesProvider).valueOrNull ?? false;
 
-    return Scaffold(
-      appBar: AppBar(title: Text(context.l10n.notifTitle)),
+    final ios = ionIsIos(context);
+    // UX_SETTINGS (WAVE 8): notifications.page.html — condense title, an
+    // ion-card per block (ios26 radius 24 + shadow), uppercase
+    // ion-card-subtitle above the category and tenant cards.
+    return IonCondense(builder: (context, collapsed) => Scaffold(
+      appBar: AppBar(title: IonCondenseTitle(context.l10n.notifTitle, collapsed: collapsed)),
       body: ListView(
-        padding: const EdgeInsets.all(AppDimensions.paddingM),
+        padding: ios
+            ? const EdgeInsets.fromLTRB(16, 0, 16, 24)
+            : const EdgeInsets.all(AppDimensions.paddingM),
         children: [
-          Card(
-            margin: EdgeInsets.zero,
-            child: Column(
-              children: [
+          IonLargeTitle(context.l10n.notifTitle, padding: const EdgeInsets.only(bottom: 4)),
+          _group(
+            context,
+            top: true,
+            [
                 SwitchListTile(
                   title: Text(context.l10n.notifEnable),
                   value: config.enabled,
                   onChanged: (v) => _updateConfig(config.copyWith(enabled: v)),
                 ),
-                if (!isConnected) ...[
-                  const Divider(height: 1),
-                  _UserIdTile(userId: config.id),
-                ],
-                const Divider(height: 1),
+                if (!isConnected) _UserIdTile(userId: config.id),
                 ListTile(
-                  leading: Icon(
-                    Icons.telegram,
-                    color: isConnected ? AppColors.success : const Color(0xFF0088CC),
-                  ),
+                  leading: ios
+                      ? null
+                      : Icon(
+                          Icons.telegram,
+                          color: isConnected ? AppColors.success : const Color(0xFF0088CC),
+                        ),
                   title: Text(context.l10n.notifTelegram),
                   subtitle: isConnected
                       ? Text(
@@ -197,10 +204,13 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
                         )
                       : null,
                   trailing: isConnected
-                      ? TextButton(
+                      // Ionic: solid ion-button color="danger"
+                      ? ElevatedButton(
                           onPressed: _disconnectTelegram,
-                          style: TextButton.styleFrom(
-                              foregroundColor: AppColors.danger),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.danger,
+                            foregroundColor: Colors.white,
+                          ),
                           child: Text(context.l10n.notifDisconnect),
                         )
                       : ElevatedButton(
@@ -209,54 +219,46 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
                         ),
                 ),
                 // PUSH: Ionic `@if (isNative)` – push switch in the native apps
-                if (isNativePushPlatform) ...[
-                  const Divider(height: 1),
+                if (isNativePushPlatform)
                   SwitchListTile(
                     title: Text(context.l10n.notifPush),
                     value: config.pushEnabled,
                     onChanged: (v) => _togglePush(config, v),
                   ),
-                ],
                 // LIVE_ACTIVITY: only app builds with the native Live Activity side (iOS)
-                if (ref.read(liveActivityServiceProvider).hasNativePlugin) ...[
-                  const Divider(height: 1),
-                  SwitchListTile(
-                    title: Text(context.l10n.notifLiveActivity),
-                    subtitle: Text(LiveActivityService.isSupportedPlatform
+                if (ref.read(liveActivityServiceProvider).hasNativePlugin)
+                  IonToggleItem(
+                    title: context.l10n.notifLiveActivity,
+                    helper: LiveActivityService.isSupportedPlatform
                         ? context.l10n.notifLiveActivityHelperIos
-                        : context.l10n.notifLiveActivityHelper),
+                        : context.l10n.notifLiveActivityHelper,
                     value: config.liveActivity != false,
                     onChanged: (v) => _toggleLiveActivity(config, v),
                   ),
-                ],
                 // LIVE_ACTIVITY end
-                if (config.pushEnabled && isConnected) ...[
-                  const Divider(height: 1),
-                  SwitchListTile(
-                    title: Text(context.l10n.notifBothChannels),
-                    subtitle: Text(context.l10n.notifBothChannelsHelper),
+                if (config.pushEnabled && isConnected)
+                  IonToggleItem(
+                    title: context.l10n.notifBothChannels,
+                    helper: context.l10n.notifBothChannelsHelper,
                     value: config.pushAndTelegram,
                     onChanged: (v) =>
                         _updateConfig(config.copyWith(pushAndTelegram: v)),
                   ),
-                  if (!config.pushAndTelegram)
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-                      child: Text(
-                        context.l10n.notifPushPreferred,
-                        style: const TextStyle(fontSize: 12, color: AppColors.medium),
-                      ),
+                if (config.pushEnabled && isConnected && !config.pushAndTelegram)
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                    child: Text(
+                      context.l10n.notifPushPreferred,
+                      style: const TextStyle(fontSize: 12, color: AppColors.medium),
                     ),
-                ],
-              ],
-            ),
+                  ),
+            ],
           ),
           if (config.enabled) ...[
             _SectionTitle(context.l10n.notifTitle),
-            Card(
-              margin: EdgeInsets.zero,
-              child: Column(
-                children: [
+            _group(
+              context,
+              [
                   _toggle(
                     context.l10n.notifAppUpdates,
                     context.l10n.notifAppUpdatesHelper,
@@ -323,17 +325,14 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
                     context.l10n.notifResponsibleOnly,
                     config.registrations,
                     (v) => config.copyWith(registrations: v),
-                    last: true,
                   ),
-                ],
-              ),
+              ],
             ),
             if (tenants.isNotEmpty) ...[
               _SectionTitle(context.l10n.notifTenantSettings),
-              Card(
-                margin: EdgeInsets.zero,
-                child: Column(
-                  children: [
+              _group(
+                context,
+                [
                     for (final tenant in tenants)
                       if (tenant.id != null)
                         SwitchListTile(
@@ -344,12 +343,33 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
                           onChanged: (_) =>
                               _updateConfig(config.toggleTenant(tenant.id!)),
                         ),
-                  ],
-                ),
-              ),
-            ],
+              ],
+            ),
           ],
-          const SizedBox(height: AppDimensions.paddingL),
+          ],
+          if (!ios) const SizedBox(height: AppDimensions.paddingL),
+        ],
+      ),
+    ));
+  }
+
+  /// One Ionic `ion-card` holding items. iOS: ios26 card (radius 24,
+  /// shadow, margin-bottom 24) with inset hairlines; md: Material card.
+  Widget _group(BuildContext context, List<Widget> children, {bool top = false}) {
+    if (ionIsIos(context)) {
+      return IonCardBox(
+        margin: EdgeInsets.only(top: top ? 8 : 0, bottom: 24),
+        child: IonInsetGroup(children: children),
+      );
+    }
+    return Card(
+      margin: EdgeInsets.zero,
+      child: Column(
+        children: [
+          for (var i = 0; i < children.length; i++) ...[
+            if (i > 0) const Divider(height: 1),
+            children[i],
+          ],
         ],
       ),
     );
@@ -359,21 +379,13 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
     String title,
     String? helper,
     bool value,
-    NotificationConfig Function(bool) update, {
-    bool last = false,
-  }) {
-    return Column(
-      children: [
-        SwitchListTile(
-          title: Text(title),
-          subtitle: helper != null
-              ? Text(helper, style: const TextStyle(fontSize: 12))
-              : null,
-          value: value,
-          onChanged: (v) => _updateConfig(update(v)),
-        ),
-        if (!last) const Divider(height: 1),
-      ],
+    NotificationConfig Function(bool) update,
+  ) {
+    return IonToggleItem(
+      title: title,
+      helper: helper,
+      value: value,
+      onChanged: (v) => _updateConfig(update(v)),
     );
   }
 }
@@ -386,7 +398,10 @@ class _UserIdTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: Text(context.l10n.notifUserId, style: const TextStyle(fontSize: 12)),
+      title: Text(
+        context.l10n.notifUserId,
+        style: TextStyle(fontSize: ionIsIos(context) ? 14 : 12),
+      ),
       subtitle: SelectableText(
         userId,
         style: const TextStyle(fontFamily: 'monospace'),
@@ -410,6 +425,24 @@ class _SectionTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (ionIsIos(context)) {
+      // ion-card-subtitle (ios): 12px bold uppercase, letter-spacing .4,
+      // step-600 grey; margin-left 1.5rem from the screen edge.
+      return Padding(
+        padding: const EdgeInsets.fromLTRB(8, 0, 8, 4),
+        child: Text(
+          title.toUpperCase(),
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 0.4,
+            color: Theme.of(context).brightness == Brightness.dark
+                ? const Color(0xFF999999)
+                : const Color(0xFF666666),
+          ),
+        ),
+      );
+    }
     return Padding(
       padding: const EdgeInsets.fromLTRB(
         AppDimensions.paddingS,
