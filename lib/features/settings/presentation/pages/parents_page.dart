@@ -225,7 +225,7 @@ class ParentsPage extends ConsumerWidget {
     if (confirmed == true && context.mounted) {
       try {
         final notifier = ref.read(parentNotifierProvider.notifier);
-        await notifier.deleteParent(parent.id!);
+        await notifier.deleteParent(parent.id!, appId: parent.appId);
 
         if (context.mounted) {
           ToastHelper.showSuccess(context, context.l10n.settingsFlutterParentRemoved);

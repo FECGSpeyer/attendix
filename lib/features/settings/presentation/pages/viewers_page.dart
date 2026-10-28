@@ -220,7 +220,7 @@ class ViewersPage extends ConsumerWidget {
     if (confirmed == true && context.mounted) {
       try {
         final notifier = ref.read(viewerNotifierProvider.notifier);
-        await notifier.deleteViewer(viewer.id!);
+        await notifier.deleteViewer(viewer.id!, appId: viewer.appId);
 
         if (context.mounted) {
           ToastHelper.showSuccess(context, context.l10n.settingsFlutterViewerRemoved);

@@ -1,7 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/parent/parent_model.dart';
+import '../../core/constants/enums.dart';
+import '../../l10n/l10n.dart';
 import 'base_repository.dart';
+import 'user_registration_repository.dart' show AccountFlowException;
 
 /// Provider for ParentRepository
 final parentRepositoryProvider = Provider<ParentRepository>((ref) {
@@ -53,18 +56,41 @@ class ParentRepository extends BaseRepository with TenantAwareRepository {
     }
   }
 
-  /// Delete a parent
-  Future<void> deleteParent(int id) async {
+  /// Delete a parent.
+  ///
+  /// LOGIC_PEOPLE: Ionic db.deleteParent — first revokes the account's access
+  /// (removeEmailFromAuth → tenantUsers row of this tenant, admins are kept)
+  /// and aborts when that fails; then deletes the `parents` row.
+  Future<void> deleteParent(int id, {String? appId}) async {
     ensureNotDemo('deleteParent'); // DEMO_GUARD
+    if (appId != null && appId.isNotEmpty) {
+      try {
+        final admin = await supabase
+            .from('tenantUsers')
+            .select('userId')
+            .eq('tenantId', currentTenantId)
+            .eq('role', Role.admin.value)
+            .eq('userId', appId)
+            .limit(1);
+        if ((admin as List).isEmpty) {
+          await supabase
+              .from('tenantUsers')
+              .delete()
+              .eq('tenantId', currentTenantId)
+              .eq('userId', appId);
+        }
+      } catch (_) {
+        throw AccountFlowException(l10nWithoutContext.dbRemoveAuthEmailFailed);
+      }
+    }
     try {
       await supabase
           .from('parents')
           .delete()
           .eq('id', id)
           .eq('tenantId', currentTenantId);
-    } catch (e, stack) {
-      handleError(e, stack, 'deleteParent');
-      rethrow;
+    } catch (_) {
+      throw AccountFlowException(l10nWithoutContext.dbDeleteParentFailed);
     }
   }
 }

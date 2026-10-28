@@ -55,13 +55,21 @@ void main() {
         'syncPlayerWithUpcomingAttendances',
       ]) {
         final b = body(source, name);
-        expect(b, contains(".eq('tenantId', currentTenantId)"),
+        // LOGIC_PEOPLE: addPlayerToAttendancesByDate can target the handover
+        // tenant (`targetTenantId = tenantId ?? currentTenantId`).
+        expect(
+            b.contains(".eq('tenantId', currentTenantId)") ||
+                (b.contains('tenantId ?? currentTenantId') &&
+                    b.contains(".eq('tenantId', targetTenantId)")),
+            isTrue,
             reason: '$name must filter attendances by tenant');
       }
+      // LOGIC_PEOPLE: optional explicit tenant (handover target), defaulting
+      // to the current tenant.
       expect(body(source, 'existingAttendanceIds'),
-          contains(".eq('attendance.tenantId', currentTenantId)"));
+          contains(".eq('attendance.tenantId', tenantId ?? currentTenantId)"));
       expect(body(source, 'loadTypeFilters'),
-          contains(".eq('tenant_id', currentTenantId)"));
+          contains(".eq('tenant_id', tenantId ?? currentTenantId)"));
     });
   });
 

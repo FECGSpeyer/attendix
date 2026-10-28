@@ -160,31 +160,19 @@ class _PendingPlayersPageState extends ConsumerState<PendingPlayersPage> {
     // BL-006: Guard against double-click
     if (_processingIds.contains(playerId)) return;
 
-    final confirmed = await showDialog<bool>(
+    // LOGIC_PEOPLE: Ionic person.page declinePlayer — a reason is required
+    // ("Person ablehnen" / "Gib einen Grund an." + textarea).
+    final reason = await showDialog<String>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(context.l10n.settingsFlutterPendingDeclineTitle),
-        content: Text(context.l10n.settingsFlutterPendingDeclineMessage(player.fullName)),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: Text(context.l10n.commonCancel),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: AppColors.danger),
-            onPressed: () => Navigator.of(ctx).pop(true),
-            child: Text(context.l10n.personDecline),
-          ),
-        ],
-      ),
+      builder: (ctx) => _DeclineReasonDialog(name: player.fullName),
     );
 
-    if (confirmed != true || !mounted) return;
+    if (reason == null || reason.isEmpty || !mounted) return;
 
     setState(() => _processingIds.add(playerId));
 
     try {
-      await ref.read(playerNotifierProvider.notifier).declinePlayer(player, 'Abgelehnt');
+      await ref.read(playerNotifierProvider.notifier).declinePlayer(player, reason);
 
       if (mounted) {
         ToastHelper.showSuccess(context, context.l10n.settingsFlutterPendingDeclined);
@@ -198,6 +186,74 @@ class _PendingPlayersPageState extends ConsumerState<PendingPlayersPage> {
         setState(() => _processingIds.remove(playerId));
       }
     }
+  }
+}
+
+/// Reason prompt for declining (Ionic alert with textarea; empty reason
+/// shows "Bitte gib einen Grund an!" and keeps the dialog open).
+class _DeclineReasonDialog extends StatefulWidget {
+  const _DeclineReasonDialog({required this.name});
+
+  final String name;
+
+  @override
+  State<_DeclineReasonDialog> createState() => _DeclineReasonDialogState();
+}
+
+class _DeclineReasonDialogState extends State<_DeclineReasonDialog> {
+  final _controller = TextEditingController();
+  bool _missing = false;
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text(context.l10n.personDeclinePerson),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(context.l10n.personGiveReasonShort),
+          if (_missing) ...[
+            const SizedBox(height: 8),
+            Text(
+              context.l10n.signoutGiveReason,
+              style: const TextStyle(color: AppColors.danger),
+            ),
+          ],
+          const SizedBox(height: 12),
+          TextField(
+            controller: _controller,
+            autofocus: true,
+            maxLines: 3,
+            decoration: const InputDecoration(border: OutlineInputBorder()),
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: Text(context.l10n.commonCancel),
+        ),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(backgroundColor: AppColors.danger),
+          onPressed: () {
+            final text = _controller.text.trim();
+            if (text.isEmpty) {
+              setState(() => _missing = true);
+              return;
+            }
+            Navigator.of(context).pop(text);
+          },
+          child: Text(context.l10n.personDecline),
+        ),
+      ],
+    );
   }
 }
 
