@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../l10n/l10n.dart';
+import 'settings_list.dart';
 
 /// Editable list of absence / late reasons (Ionic general settings
 /// "Abwesenheits- & Verspätungsgründe").
@@ -48,11 +49,23 @@ class ReasonsListEditor extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // UX_SETTINGS (WAVE 8): ion-accordion — header item (h2 + p count),
+    // inset rows with a red trash button, then "+ Grund hinzufügen"
+    // (primary) and, only for an empty list, "Standard wiederherstellen".
+    final ios = ionIsIos(context);
+    final pad = ios
+        ? const EdgeInsets.only(left: IonIos.itemPaddingStart, right: IonIos.itemPaddingEnd)
+        : const EdgeInsets.symmetric(horizontal: 16);
     return ExpansionTile(
-      tilePadding: EdgeInsets.zero,
+      tilePadding: pad,
+      shape: const Border(),
+      collapsedShape: const Border(),
+      iconColor: ios ? IonIos.text(context).withValues(alpha: 0.4) : null,
+      collapsedIconColor: ios ? IonIos.text(context).withValues(alpha: 0.4) : null,
       title: Text(title),
       subtitle: Text(
         context.l10n.generalSettingsReasonsCount(reasons.length),
+        style: ios ? TextStyle(fontSize: 14, color: IonIos.labelP(context)) : null,
       ),
       children: [
         ReorderableListView(
@@ -69,10 +82,10 @@ class ReasonsListEditor extends StatelessWidget {
             for (var i = 0; i < reasons.length; i++)
               ListTile(
                 key: ValueKey('reason-$i-${reasons[i]}'),
-                contentPadding: EdgeInsets.zero,
+                contentPadding: pad,
                 leading: ReorderableDragStartListener(
                   index: i,
-                  child: const Icon(Icons.drag_handle),
+                  child: Icon(Icons.drag_handle, color: ios ? IonIos.note(context) : null),
                 ),
                 title: Text(reasons[i]),
                 trailing: IconButton(
@@ -83,21 +96,29 @@ class ReasonsListEditor extends StatelessWidget {
               ),
           ],
         ),
-        Wrap(
-          spacing: 8,
-          children: [
-            TextButton.icon(
-              onPressed: () => _add(context),
-              icon: const Icon(Icons.add),
-              label: Text(context.l10n.generalSettingsAddReason),
-            ),
-            TextButton.icon(
-              onPressed: () => onChanged([...defaults]),
-              icon: const Icon(Icons.restore),
-              label: Text(context.l10n.generalSettingsRestoreDefaults),
-            ),
-          ],
+        ListTile(
+          contentPadding: pad,
+          onTap: () => _add(context),
+          title: Text.rich(
+            TextSpan(children: [
+              const WidgetSpan(
+                alignment: PlaceholderAlignment.middle,
+                child: Icon(Icons.add_circle_outline, size: 18, color: AppColors.primary),
+              ),
+              TextSpan(text: ' ${context.l10n.generalSettingsAddReason}'),
+            ]),
+            style: const TextStyle(color: AppColors.primary),
+          ),
         ),
+        if (reasons.isEmpty)
+          ListTile(
+            contentPadding: pad,
+            onTap: () => onChanged([...defaults]),
+            title: Text(
+              context.l10n.generalSettingsRestoreDefaults,
+              style: const TextStyle(color: AppColors.medium),
+            ),
+          ),
       ],
     );
   }

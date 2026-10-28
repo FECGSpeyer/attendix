@@ -130,6 +130,7 @@ class SettingsListSection extends StatelessWidget {
     required this.children,
     this.footer,
     this.dividerIndent,
+    this.icons = true,
   });
 
   final String? title;
@@ -145,6 +146,10 @@ class SettingsListSection extends StatelessWidget {
   /// Where the inset lines between items start. Defaults to the label start
   /// of items with a start icon ([SettingsListTile]).
   final double? dividerIndent;
+
+  /// Whether the items carry a start icon. iOS: plain items get their inset
+  /// lines at the 16pt item padding instead of after the icon.
+  final bool icons;
 
   @override
   Widget build(BuildContext context) {
@@ -203,7 +208,8 @@ class SettingsListSection extends StatelessWidget {
   }
 
   Widget _buildIos(BuildContext context) {
-    final indent = dividerIndent ?? IonIos.iconDividerIndent;
+    final indent = dividerIndent ??
+        (icons ? IonIos.iconDividerIndent : IonIos.itemPaddingStart);
     return Padding(
       padding: const EdgeInsets.only(bottom: IonIos.sectionSpacing),
       child: Column(
@@ -258,7 +264,12 @@ class IonListHeader extends StatelessWidget {
                 ),
               ),
             ),
-            if (action != null) action!,
+            // ion-list-header ion-button: small, bottom aligned.
+            if (action != null)
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxHeight: 32),
+                child: action!,
+              ),
           ],
         ),
       ),
@@ -635,6 +646,202 @@ class IonCardBox extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Ionic `ion-item` + stacked `ion-label` + `ion-input` (+ helperText).
+///
+/// iOS: plain row inside the inset group — 14px label in the text colour,
+/// borderless 16px input below, 12px #737373 helper. md: the app's filled
+/// Material field with floating label (unchanged look).
+class IonStackedField extends StatelessWidget {
+  const IonStackedField({
+    super.key,
+    this.label,
+    this.helper,
+    this.hint,
+    required this.builder,
+  });
+
+  final String? label;
+  final String? helper;
+  final String? hint;
+
+  /// Builds the field with the platform decoration.
+  final Widget Function(InputDecoration decoration) builder;
+
+  /// Helper/error text colour of iOS inputs (`--ion-color-step-550`).
+  static const Color iosHelper = Color(0xFF737373);
+
+  @override
+  Widget build(BuildContext context) {
+    if (!ionIsIos(context)) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppDimensions.paddingM,
+          vertical: AppDimensions.paddingS,
+        ),
+        child: builder(InputDecoration(
+          labelText: label,
+          helperText: helper,
+          helperMaxLines: 4,
+          hintText: hint,
+        )),
+      );
+    }
+    final base = (Theme.of(context).textTheme.bodyLarge ?? const TextStyle())
+        .copyWith(letterSpacing: 0);
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(
+        IonIos.itemPaddingStart,
+        10,
+        IonIos.itemPaddingEnd,
+        8,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (label != null)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 4),
+              child: Text(
+                label!,
+                style: base.copyWith(fontSize: 14, color: IonIos.text(context)),
+              ),
+            ),
+          Theme(
+            // ion-input: 16px text without Material letter spacing.
+            data: Theme.of(context).copyWith(
+              textTheme: Theme.of(context).textTheme.copyWith(
+                    bodyLarge: base.copyWith(fontSize: 16),
+                    titleMedium: base.copyWith(fontSize: 16),
+                  ),
+            ),
+            child: builder(InputDecoration(
+              border: InputBorder.none,
+              enabledBorder: InputBorder.none,
+              focusedBorder: InputBorder.none,
+              errorBorder: InputBorder.none,
+              focusedErrorBorder: InputBorder.none,
+              disabledBorder: InputBorder.none,
+              filled: false,
+              isDense: true,
+              contentPadding: const EdgeInsets.symmetric(vertical: 6),
+              hintText: hint,
+              hintStyle: base.copyWith(fontSize: 16, color: IonIos.note(context)),
+              helperText: helper,
+              helperMaxLines: 4,
+              helperStyle: base.copyWith(fontSize: 12, color: iosHelper),
+              errorStyle: base.copyWith(fontSize: 12, color: AppColors.danger),
+            )),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Ionic stacked `ion-label` + read-only value (e.g. a date input that
+/// opens a picker). md: a [ListTile] with the value as subtitle.
+class IonStackedValue extends StatelessWidget {
+  const IonStackedValue({
+    super.key,
+    required this.label,
+    required this.value,
+    this.helper,
+    this.onTap,
+    this.trailing,
+  });
+
+  final String label;
+  final String value;
+  final String? helper;
+  final VoidCallback? onTap;
+  final Widget? trailing;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!ionIsIos(context)) {
+      return ListTile(
+        title: Text(label),
+        subtitle: Text(helper == null ? value : '$value\n$helper'),
+        isThreeLine: helper != null,
+        trailing: trailing,
+        onTap: onTap,
+      );
+    }
+    final base = (Theme.of(context).textTheme.bodyLarge ?? const TextStyle())
+        .copyWith(letterSpacing: 0);
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(
+          IonIos.itemPaddingStart,
+          10,
+          IonIos.itemPaddingEnd,
+          10,
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(label, style: base.copyWith(fontSize: 14, color: IonIos.text(context))),
+                  const SizedBox(height: 4),
+                  Text(value, style: base.copyWith(fontSize: 16, color: IonIos.text(context))),
+                  if (helper != null) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      helper!,
+                      style: base.copyWith(fontSize: 12, color: IonStackedField.iosHelper),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            if (trailing != null) trailing!,
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Ionic `ion-toggle` with `helperText` as a list row: title + 12px helper.
+/// The switch itself is the platform [SwitchListTile] (restyled app-wide by
+/// the iOS look lane).
+class IonToggleItem extends StatelessWidget {
+  const IonToggleItem({
+    super.key,
+    required this.title,
+    this.helper,
+    required this.value,
+    required this.onChanged,
+  });
+
+  final String title;
+  final String? helper;
+  final bool value;
+  final ValueChanged<bool>? onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final ios = ionIsIos(context);
+    return SwitchListTile(
+      title: Text(title),
+      subtitle: helper == null
+          ? null
+          : Text(
+              helper!,
+              style: TextStyle(
+                fontSize: 12,
+                color: ios ? IonStackedField.iosHelper : AppColors.medium,
+              ),
+            ),
+      value: value,
+      onChanged: onChanged,
     );
   }
 }

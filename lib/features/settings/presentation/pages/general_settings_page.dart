@@ -21,6 +21,7 @@ import '../widgets/critical_rule_sheet.dart';
 import '../../../../core/utils/demo_guard.dart';
 import '../../../../core/utils/page_reload.dart'; // LOGIC_SETTINGS
 import '../widgets/settings_list.dart'; // UX_SETTINGS
+import '../widgets/ion_condense.dart'; // UX_SETTINGS (WAVE 8)
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 
@@ -406,11 +407,12 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
       onPopInvokedWithResult: (didPop, _) {
         if (!didPop) _showUnsavedChangesDialog();
       },
-      child: Scaffold(
+      // UX_SETTINGS (WAVE 8): ion-header collapse="condense" + arrow-back
+      child: IonCondense(builder: (context, collapsed) => Scaffold(
       appBar: AppBar(
-        title: Text(context.l10n.settingsSettings),
+        title: IonCondenseTitle(context.l10n.settingsSettings, collapsed: collapsed),
         leading: IconButton(
-          icon: const BackButtonIcon(),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
             if (_hasChanges) {
               _showUnsavedChangesDialog();
@@ -439,85 +441,88 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
           : Form(
               key: _formKey,
               child: ListView(
-                padding: const EdgeInsets.fromLTRB(
+                padding: EdgeInsets.fromLTRB(
                   AppDimensions.paddingM,
-                  AppDimensions.paddingM,
+                  ionIsIos(context) ? 0 : AppDimensions.paddingM,
                   AppDimensions.paddingM,
                   96,
                 ),
                 children: [
+                  IonLargeTitle(context.l10n.settingsSettings, padding: const EdgeInsets.only(bottom: 4)),
+                  if (ionIsIos(context)) const SizedBox(height: 16),
                   // UX_SETTINGS: sections in Ionic order (general.page.html)
                   // ============ ALLGEMEIN ============
                   SettingsListSection(
                     title: context.l10n.generalSettingsGeneral,
+                    icons: false,
                     children: [
-                      _padded(TextFormField(
-                        controller: _longNameController,
-                        textCapitalization: TextCapitalization.words,
-                        decoration: InputDecoration(labelText: context.l10n.generalSettingsTenantName),
-                        onChanged: (_) => _markChanged(),
-                      )),
-                      _padded(TextFormField(
-                        controller: _shortNameController,
-                        decoration: InputDecoration(
-                          labelText: context.l10n.generalSettingsTenantShort,
-                          helperText: context.l10n.generalSettingsShortNameHelper,
+                      IonStackedField(
+                        label: context.l10n.generalSettingsTenantName,
+                        builder: (decoration) => TextFormField(
+                          controller: _longNameController,
+                          textCapitalization: TextCapitalization.words,
+                          decoration: decoration,
+                          onChanged: (_) => _markChanged(),
                         ),
-                        validator: (v) => v?.trim().isEmpty ?? true ? context.l10n.generalSettingsShortNameEmpty : null,
-                        onChanged: (_) => _markChanged(),
-                      )),
+                      ),
+                      IonStackedField(
+                        label: context.l10n.generalSettingsTenantShort,
+                        helper: context.l10n.generalSettingsShortNameHelper,
+                        builder: (decoration) => TextFormField(
+                          controller: _shortNameController,
+                          decoration: decoration,
+                          validator: (v) => v?.trim().isEmpty ?? true ? context.l10n.generalSettingsShortNameEmpty : null,
+                          onChanged: (_) => _markChanged(),
+                        ),
+                      ),
                     ],
                   ),
 
                   // ============ ANWESENHEITEN ============
                   SettingsListSection(
                     title: context.l10n.generalSettingsAttendance,
+                    icons: false,
                     children: [
-                      ListTile(
-                        title: Text(context.l10n.generalSettingsSeasonStart),
-                        subtitle: Text(
-                          '${_seasonStart != null ? DateFormat(dateFmt()).format(_seasonStart!) : context.l10n.personNotSet}\n'
-                          '${context.l10n.generalSettingsSeasonHelper}',
-                        ),
-                        isThreeLine: true,
-                        trailing: const Icon(Icons.calendar_today_outlined),
+                      IonStackedValue(
+                        label: context.l10n.generalSettingsSeasonStart,
+                        value: _seasonStart != null
+                            ? DateFormat(dateFmt()).format(_seasonStart!)
+                            : context.l10n.personNotSet,
+                        helper: context.l10n.generalSettingsSeasonHelper,
+                        trailing: ionIsIos(context) ? null : const Icon(Icons.calendar_today_outlined),
                         onTap: _selectSeasonStart,
                       ),
                       // Flutter: Probenzeiten (Standardzeiten für neue Termine)
-                      _padded(Row(
-                        children: [
-                          Expanded(
-                            child: TextFormField(
-                              controller: _practiceStartController,
-                              decoration: InputDecoration(labelText: context.l10n.generalSettingsFlutterPracticeStart, hintText: '19:00'),
-                              readOnly: true,
-                              onTap: () => _selectTime(_practiceStartController),
-                            ),
-                          ),
-                          const SizedBox(width: AppDimensions.paddingM),
-                          Expanded(
-                            child: TextFormField(
-                              controller: _practiceEndController,
-                              decoration: InputDecoration(labelText: context.l10n.generalSettingsFlutterPracticeEnd, hintText: '21:30'),
-                              readOnly: true,
-                              onTap: () => _selectTime(_practiceEndController),
-                            ),
-                          ),
-                        ],
-                      )),
-                      ListTile(
-                        title: Text(context.l10n.generalSettingsAttTypes),
-                        trailing: const Icon(Icons.chevron_right),
+                      IonStackedField(
+                        label: context.l10n.generalSettingsFlutterPracticeStart,
+                        hint: '19:00',
+                        builder: (decoration) => TextFormField(
+                          controller: _practiceStartController,
+                          decoration: decoration,
+                          readOnly: true,
+                          onTap: () => _selectTime(_practiceStartController),
+                        ),
+                      ),
+                      IonStackedField(
+                        label: context.l10n.generalSettingsFlutterPracticeEnd,
+                        hint: '21:30',
+                        builder: (decoration) => TextFormField(
+                          controller: _practiceEndController,
+                          decoration: decoration,
+                          readOnly: true,
+                          onTap: () => _selectTime(_practiceEndController),
+                        ),
+                      ),
+                      SettingsListTile(
+                        title: context.l10n.generalSettingsAttTypes,
                         onTap: () => context.push('/settings/types'),
                       ),
-                      ListTile(
-                        title: Text(context.l10n.generalSettingsShiftPlans),
-                        trailing: const Icon(Icons.chevron_right),
+                      SettingsListTile(
+                        title: context.l10n.generalSettingsShiftPlans,
                         onTap: () => context.push('/settings/shifts'),
                       ),
-                      ListTile(
-                        title: Text(context.l10n.generalSettingsBranding),
-                        trailing: const Icon(Icons.chevron_right),
+                      SettingsListTile(
+                        title: context.l10n.generalSettingsBranding,
                         onTap: () => context.push('/settings/general/branding'),
                       ),
                       _toggle(
@@ -541,20 +546,22 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
                           (v) => _dutyView = v,
                         ),
                       if (_showAllAttendances)
-                        _padded(TextFormField(
-                          controller: _showAllInfoTextController,
-                          decoration: InputDecoration(
-                            labelText: context.l10n.generalSettingsForeignInfo,
-                            hintText: context.l10n.generalSettingsForeignInfoPh,
+                        IonStackedField(
+                          label: context.l10n.generalSettingsForeignInfo,
+                          hint: context.l10n.generalSettingsForeignInfoPh,
+                          builder: (decoration) => TextFormField(
+                            controller: _showAllInfoTextController,
+                            decoration: decoration,
+                            onChanged: (_) => _markChanged(),
                           ),
-                          onChanged: (_) => _markChanged(),
-                        )),
+                        ),
                     ],
                   ),
 
                   // ============ ABWESENHEITS- & VERSPÄTUNGSGRÜNDE ============
                   SettingsListSection(
                     title: context.l10n.generalSettingsReasons,
+                    icons: false,
                     children: [
                       ReasonsListEditor(
                         title: context.l10n.generalSettingsAbsenceReasons,
@@ -580,6 +587,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
                   // ============ REGISTRIERUNG ============
                   SettingsListSection(
                     title: context.l10n.generalSettingsRegistration,
+                    icons: false,
                     children: [
                       _toggle(
                         context.l10n.generalSettingsAllowRegister,
@@ -621,7 +629,12 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
                         _padded(Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(context.l10n.generalSettingsRegisterFields, style: const TextStyle(fontWeight: FontWeight.w600)),
+                            Text(
+                              context.l10n.generalSettingsRegisterFields,
+                              style: ionIsIos(context)
+                                  ? const TextStyle(fontSize: 14)
+                                  : const TextStyle(fontWeight: FontWeight.w600),
+                            ),
                             const SizedBox(height: AppDimensions.paddingS),
                             Wrap(
                               spacing: AppDimensions.paddingS,
@@ -642,6 +655,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
                   // ============ WERK-DATENBANK ============
                   SettingsListSection(
                     title: context.l10n.generalSettingsSongDb,
+                    icons: false,
                     children: [
                       _toggle(
                         context.l10n.generalSettingsShareSongs,
@@ -663,21 +677,15 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
                   // ============ SONSTIGES ============
                   SettingsListSection(
                     title: context.l10n.generalSettingsOther,
+                    icons: false,
                     children: [
                       Builder(builder: (context) {
                         final t = ref.watch(currentTenantProvider);
                         final total = (t?.additionalFields?.length ?? 0) + (t?.songAdditionalFields?.length ?? 0);
-                        return ListTile(
-                          title: Text(context.l10n.settingsExtraFields),
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                total == 0 ? context.l10n.generalSettingsNone : context.l10n.generalSettingsFlutterFieldsCount(total),
-                                style: const TextStyle(color: AppColors.medium),
-                              ),
-                              const Icon(Icons.chevron_right),
-                            ],
+                        return SettingsListTile(
+                          title: context.l10n.settingsExtraFields,
+                          trailing: IonNote(
+                            total == 0 ? context.l10n.generalSettingsNone : context.l10n.generalSettingsFlutterFieldsCount(total),
                           ),
                           onTap: () => context.push('/settings/general/extra-fields'),
                         );
@@ -709,9 +717,11 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
                         (v) => _showHolidays = v,
                       ),
                       if (_showHolidays)
-                        _padded(DropdownButtonFormField<String>(
+                        IonStackedField(
+                          label: context.l10n.generalSettingsHolidayState,
+                          builder: (decoration) => DropdownButtonFormField<String>(
                           value: _selectedRegion,
-                          decoration: InputDecoration(labelText: context.l10n.generalSettingsHolidayState),
+                          decoration: decoration,
                           items: _holidayRegions
                               .map((r) => DropdownMenuItem(
                                   value: r.$1,
@@ -728,6 +738,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
                   // ============ PROBLEMFALL-REGELN ============
                   SettingsListSection(
                     title: context.l10n.generalSettingsCriticalRules,
+                    icons: false,
                     headerAction: IconButton(
                       icon: const Icon(Icons.add, color: AppColors.primary),
                       tooltip: context.l10n.generalSettingsNewRule,
@@ -736,8 +747,13 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
                     children: [
                       if (_criticalRules.isEmpty)
                         ListTile(
-                          subtitle: Text(
+                          // Ionic: <ion-label><p> (grey 14px)
+                          title: Text(
                             context.l10n.generalSettingsNoRules,
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: ionIsIos(context) ? IonIos.labelP(context) : AppColors.medium,
+                            ),
                           ),
                         ),
                       for (var index = 0; index < _criticalRules.length; index++)
@@ -751,7 +767,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
                 ],
               ),
             ),
-    ),
+    )),
     );
   }
 
@@ -764,9 +780,9 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
       );
 
   /// Ionic `ion-toggle` with `helperText`.
-  Widget _toggle(String title, String helper, bool value, void Function(bool) apply) => SwitchListTile(
-        title: Text(title),
-        subtitle: Text(helper, style: const TextStyle(fontSize: 12, color: AppColors.medium)),
+  Widget _toggle(String title, String helper, bool value, void Function(bool) apply) => IonToggleItem(
+        title: title,
+        helper: helper,
         value: value,
         onChanged: (v) {
           setState(() => apply(v));
