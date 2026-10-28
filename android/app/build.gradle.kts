@@ -5,6 +5,14 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+// PUSH: google-services.json is not in the repo (like Ionic). Without it the
+// app builds and runs, push is just unavailable (docs/push-setup.md).
+if (file("google-services.json").exists()) {
+    apply(plugin = "com.google.gms.google-services")
+} else {
+    logger.warn("google-services.json not found, google-services plugin not applied. Push Notifications won't work")
+}
+
 android {
     namespace = "de.attendix.attendix"
     compileSdk = flutter.compileSdkVersion

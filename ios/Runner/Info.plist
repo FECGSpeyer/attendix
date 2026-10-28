@@ -48,6 +48,7 @@
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>audio</string>
+		<string>remote-notification</string>
 	</array>
 	<!-- LIVE_ACTIVITY: Ablaufplan Live Activity / Dynamic Island + its deep link attendix://live-plan -->
 	<key>NSSupportsLiveActivities</key>

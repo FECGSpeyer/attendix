@@ -15,6 +15,7 @@ import '../../../../data/models/tenant/tenant.dart';
 import '../../../../core/utils/demo_guard.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/providers/dashboard_providers.dart'; // DASHBOARD
+import '../../../../core/providers/push_providers.dart'; // PUSH
 
 /// Tenant selection page
 class TenantSelectionPage extends ConsumerStatefulWidget {
@@ -283,6 +284,7 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
   Future<void> _logout() async {
     final supabase = ref.read(supabaseClientProvider);
     await ref.read(currentTenantProvider.notifier).clearTenant();
+    await removePushTokenBeforeSignOut(ref); // PUSH
     await supabase.auth.signOut();
     if (mounted) context.go('/login');
   }

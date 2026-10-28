@@ -7,6 +7,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/config/supabase_config.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/notification_settings_providers.dart';
+import '../../../../core/providers/push_providers.dart'; // PUSH
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/services/telegram_service.dart';
 import '../../../../core/services/live_activity_service.dart'; // LIVE_ACTIVITY
@@ -21,9 +22,9 @@ import '../../../../core/utils/error_message.dart';
 
 /// Notifications settings page (Ionic notifications.page).
 ///
-/// Telegram connection, master switch, notification categories and the
-/// per-tenant toggles. Push / Live Activity toggles are native-only in Ionic
-/// and are not available in the PWA (Live Activity: iOS app only).
+/// Telegram connection, master switch, push switch (native apps only, like
+/// Ionic `isNative`), Live Activity switch (iOS app only), notification
+/// categories and the per-tenant toggles.
 class NotificationsPage extends ConsumerStatefulWidget {
   const NotificationsPage({super.key});
 
@@ -115,6 +116,12 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
     await ref.read(liveActivityServiceProvider).setEnabled(enabled);
   }
 
+  /// PUSH: Ionic togglePush – sets `push_enabled` and registers the device.
+  Future<void> _togglePush(NotificationConfig current, bool enabled) async {
+    setState(() => _config = current.copyWith(pushEnabled: enabled));
+    await ref.read(pushServiceProvider).togglePush(enabled);
+  }
+
   Future<void> _connectTelegram() async {
     final userId = ref.read(supabaseClientProvider).auth.currentUser?.id;
     if (userId == null) return;
@@ -201,6 +208,15 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
                           child: Text(context.l10n.notifConnect),
                         ),
                 ),
+                // PUSH: Ionic `@if (isNative)` – push switch in the native apps
+                if (isNativePushPlatform) ...[
+                  const Divider(height: 1),
+                  SwitchListTile(
+                    title: Text(context.l10n.notifPush),
+                    value: config.pushEnabled,
+                    onChanged: (v) => _togglePush(config, v),
+                  ),
+                ],
                 // LIVE_ACTIVITY: only app builds with the native Live Activity side (iOS)
                 if (ref.read(liveActivityServiceProvider).hasNativePlugin) ...[
                   const Divider(height: 1),

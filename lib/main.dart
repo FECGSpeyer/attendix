@@ -19,6 +19,7 @@ import 'core/theme/app_theme.dart';
 import 'core/utils/toast_helper.dart';
 import 'features/auth/data/auth_link_listener.dart'; // AUTH
 import 'core/services/teams/teams_service.dart'; // TEAMS
+import 'core/providers/push_providers.dart'; // PUSH
 import 'l10n/l10n.dart'; // I18N_INFRA
 
 void main() async {
@@ -82,6 +83,8 @@ class _AttendixAppState extends ConsumerState<AttendixApp> {
         () => ref.read(offlineQueueNotifierProvider.notifier).init());
     // AUTH: password-recovery / signup-confirmation links (Ionic handleAuthUrl)
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      // PUSH: native push listeners + token registration (no-op on the web)
+      if (mounted && isNativePushPlatform) ref.read(pushBootstrapProvider);
       if (mounted) initAuthLinkHandling(ref, ref.read(routerProvider));
       // LIVE_ACTIVITY: iOS Live Activity for running Ablaufpläne (no-op elsewhere)
       if (mounted) ref.read(liveActivityBootstrapProvider);

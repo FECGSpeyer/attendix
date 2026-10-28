@@ -227,6 +227,9 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
     final player = playerAsync.valueOrNull;
     final actions = _actions(tenant, player);
     final loaded = dataAsync.valueOrNull;
+    // PUSH: also react when a push tap sets the id while this page is open
+    // (Ionic effect on pendingAttendanceId).
+    ref.watch(pendingAttendanceIdProvider);
     if (loaded != null) _openPendingAttendance(loaded, actions);
 
     return Scaffold(
