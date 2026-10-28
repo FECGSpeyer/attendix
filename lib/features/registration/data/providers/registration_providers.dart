@@ -86,7 +86,7 @@ class RegistrationService {
   /// Fresh registration repository scoped to [tenantId] (the registration
   /// tenant is usually not the app's current tenant).
   UserRegistrationRepository _registrationRepo(int tenantId) =>
-      UserRegistrationRepository(_ref)..setTenantId(tenantId);
+      UserRegistrationRepository(_ref)..bindTenantId(tenantId);
 
   /// Register the current (or a new) user for [tenant].
   ///
@@ -259,7 +259,7 @@ class RegistrationService {
               .eq('id', playerId)
               .eq('tenantId', tenantId)
               .single();
-          final playerRepo = PlayerRepository(_ref)..setTenantId(tenantId);
+          final playerRepo = PlayerRepository(_ref)..bindTenantId(tenantId);
           await playerRepo
               .addPlayerToAttendancesByDate(registrationBackfillPerson(storedRow));
         } catch (e) {

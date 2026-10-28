@@ -258,7 +258,7 @@ final offlineFlushFnProvider = Provider<OfflineFlushFn>((ref) {
   return (entry) async {
     // Fresh repository instance so the replay uses the tenant of the entry
     // without touching the shared (current tenant) repository.
-    final repo = AttendanceRepository(ref)..setTenantId(entry.tenantId);
+    final repo = AttendanceRepository(ref)..bindTenantId(entry.tenantId);
     await repo.updatePersonAttendance(
       entry.personAttendanceId,
       Map<String, dynamic>.from(entry.payload),

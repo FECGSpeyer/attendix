@@ -14,23 +14,50 @@ import '../../l10n/l10n.dart';
 // ── Repositories with tenant ────────────────────────────────
 
 final agendaItemRepositoryWithTenantProvider = Provider<AgendaItemRepository>((ref) {
-  final repo = ref.watch(agendaItemRepositoryProvider);
-  final tenantId = ref.watch(currentTenantIdProvider);
-  if (tenantId != null) repo.setTenantId(tenantId);
+  final tenant = ref.watch(currentTenantIdProvider);
+  return ref.watch(agendaItemRepositoryForTenantProvider(tenant));
+});
+
+/// TENANT_BIND: one immutable [AgendaItemRepository] per tenant (`bindTenantId`),
+/// so a tenant switch never changes the tenant of a running flow and
+/// cross-tenant work uses its own bound instance. `null` (no tenant)
+/// yields an unbound instance with `hasTenantId == false`.
+final agendaItemRepositoryForTenantProvider =
+    Provider.family<AgendaItemRepository, int?>((ref, tenantId) {
+  final repo = AgendaItemRepository(ref);
+  if (tenantId != null) repo.bindTenantId(tenantId);
   return repo;
 });
 
 final taskRepositoryWithTenantProvider = Provider<TaskRepository>((ref) {
-  final repo = ref.watch(taskRepositoryProvider);
-  final tenantId = ref.watch(currentTenantIdProvider);
-  if (tenantId != null) repo.setTenantId(tenantId);
+  final tenant = ref.watch(currentTenantIdProvider);
+  return ref.watch(taskRepositoryForTenantProvider(tenant));
+});
+
+/// TENANT_BIND: one immutable [TaskRepository] per tenant (`bindTenantId`),
+/// so a tenant switch never changes the tenant of a running flow and
+/// cross-tenant work uses its own bound instance. `null` (no tenant)
+/// yields an unbound instance with `hasTenantId == false`.
+final taskRepositoryForTenantProvider =
+    Provider.family<TaskRepository, int?>((ref, tenantId) {
+  final repo = TaskRepository(ref);
+  if (tenantId != null) repo.bindTenantId(tenantId);
   return repo;
 });
 
 final protocolRepositoryWithTenantProvider = Provider<ProtocolRepository>((ref) {
-  final repo = ref.watch(protocolRepositoryProvider);
-  final tenantId = ref.watch(currentTenantIdProvider);
-  if (tenantId != null) repo.setTenantId(tenantId);
+  final tenant = ref.watch(currentTenantIdProvider);
+  return ref.watch(protocolRepositoryForTenantProvider(tenant));
+});
+
+/// TENANT_BIND: one immutable [ProtocolRepository] per tenant (`bindTenantId`),
+/// so a tenant switch never changes the tenant of a running flow and
+/// cross-tenant work uses its own bound instance. `null` (no tenant)
+/// yields an unbound instance with `hasTenantId == false`.
+final protocolRepositoryForTenantProvider =
+    Provider.family<ProtocolRepository, int?>((ref, tenantId) {
+  final repo = ProtocolRepository(ref);
+  if (tenantId != null) repo.bindTenantId(tenantId);
   return repo;
 });
 

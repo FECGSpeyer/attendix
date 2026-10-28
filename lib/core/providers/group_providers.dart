@@ -8,13 +8,18 @@ import '../services/tracking/tracking_service.dart';
 
 /// Initialized group repository with tenant context
 final groupRepositoryWithTenantProvider = Provider<GroupRepository>((ref) {
-  final repo = ref.watch(groupRepositoryProvider);
   final tenant = ref.watch(currentTenantIdProvider);
-  
-  if (tenant != null) {
-    repo.setTenantId(tenant);
-  }
-  
+  return ref.watch(groupRepositoryForTenantProvider(tenant));
+});
+
+/// TENANT_BIND: one immutable [GroupRepository] per tenant (`bindTenantId`),
+/// so a tenant switch never changes the tenant of a running flow and
+/// cross-tenant work uses its own bound instance. `null` (no tenant)
+/// yields an unbound instance with `hasTenantId == false`.
+final groupRepositoryForTenantProvider =
+    Provider.family<GroupRepository, int?>((ref, tenantId) {
+  final repo = GroupRepository(ref);
+  if (tenantId != null) repo.bindTenantId(tenantId);
   return repo;
 });
 

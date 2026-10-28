@@ -10,9 +10,18 @@ import '../../l10n/l10n.dart';
 
 /// Repository mit Tenant-Kontext
 final rolePermissionRepositoryWithTenantProvider = Provider<RolePermissionRepository>((ref) {
-  final repo = ref.watch(rolePermissionRepositoryProvider);
-  final tenantId = ref.watch(currentTenantIdProvider);
-  if (tenantId != null) repo.setTenantId(tenantId);
+  final tenant = ref.watch(currentTenantIdProvider);
+  return ref.watch(rolePermissionRepositoryForTenantProvider(tenant));
+});
+
+/// TENANT_BIND: one immutable [RolePermissionRepository] per tenant (`bindTenantId`),
+/// so a tenant switch never changes the tenant of a running flow and
+/// cross-tenant work uses its own bound instance. `null` (no tenant)
+/// yields an unbound instance with `hasTenantId == false`.
+final rolePermissionRepositoryForTenantProvider =
+    Provider.family<RolePermissionRepository, int?>((ref, tenantId) {
+  final repo = RolePermissionRepository(ref);
+  if (tenantId != null) repo.bindTenantId(tenantId);
   return repo;
 });
 

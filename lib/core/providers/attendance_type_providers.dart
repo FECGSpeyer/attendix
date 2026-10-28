@@ -7,13 +7,18 @@ import 'tenant_providers.dart';
 
 /// Initialized attendance type repository with tenant context
 final attendanceTypeRepositoryWithTenantProvider = Provider<AttendanceTypeRepository>((ref) {
-  final repo = ref.watch(attendanceTypeRepositoryProvider);
   final tenant = ref.watch(currentTenantIdProvider);
+  return ref.watch(attendanceTypeRepositoryForTenantProvider(tenant));
+});
 
-  if (tenant != null) {
-    repo.setTenantId(tenant);
-  }
-
+/// TENANT_BIND: one immutable [AttendanceTypeRepository] per tenant (`bindTenantId`),
+/// so a tenant switch never changes the tenant of a running flow and
+/// cross-tenant work uses its own bound instance. `null` (no tenant)
+/// yields an unbound instance with `hasTenantId == false`.
+final attendanceTypeRepositoryForTenantProvider =
+    Provider.family<AttendanceTypeRepository, int?>((ref, tenantId) {
+  final repo = AttendanceTypeRepository(ref);
+  if (tenantId != null) repo.bindTenantId(tenantId);
   return repo;
 });
 

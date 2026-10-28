@@ -6,9 +6,18 @@ import 'tenant_providers.dart';
 
 /// ImportRepository with tenant context
 final importRepositoryWithTenantProvider = Provider<ImportRepository>((ref) {
-  final repo = ref.watch(importRepositoryProvider);
-  final tenantId = ref.watch(currentTenantIdProvider);
-  if (tenantId != null) repo.setTenantId(tenantId);
+  final tenant = ref.watch(currentTenantIdProvider);
+  return ref.watch(importRepositoryForTenantProvider(tenant));
+});
+
+/// TENANT_BIND: one immutable [ImportRepository] per tenant (`bindTenantId`),
+/// so a tenant switch never changes the tenant of a running flow and
+/// cross-tenant work uses its own bound instance. `null` (no tenant)
+/// yields an unbound instance with `hasTenantId == false`.
+final importRepositoryForTenantProvider =
+    Provider.family<ImportRepository, int?>((ref, tenantId) {
+  final repo = ImportRepository(ref);
+  if (tenantId != null) repo.bindTenantId(tenantId);
   return repo;
 });
 

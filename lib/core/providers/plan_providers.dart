@@ -14,9 +14,18 @@ import '../../l10n/l10n.dart';
 
 /// PlanRepository with tenant set
 final planRepositoryWithTenantProvider = Provider<PlanRepository>((ref) {
-  final repo = ref.watch(planRepositoryProvider);
-  final tenantId = ref.watch(currentTenantIdProvider);
-  if (tenantId != null) repo.setTenantId(tenantId);
+  final tenant = ref.watch(currentTenantIdProvider);
+  return ref.watch(planRepositoryForTenantProvider(tenant));
+});
+
+/// TENANT_BIND: one immutable [PlanRepository] per tenant (`bindTenantId`),
+/// so a tenant switch never changes the tenant of a running flow and
+/// cross-tenant work uses its own bound instance. `null` (no tenant)
+/// yields an unbound instance with `hasTenantId == false`.
+final planRepositoryForTenantProvider =
+    Provider.family<PlanRepository, int?>((ref, tenantId) {
+  final repo = PlanRepository(ref);
+  if (tenantId != null) repo.bindTenantId(tenantId);
   return repo;
 });
 

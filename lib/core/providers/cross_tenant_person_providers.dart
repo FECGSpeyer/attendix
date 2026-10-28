@@ -5,11 +5,19 @@ import 'organisation_providers.dart';
 import 'tenant_providers.dart';
 
 /// CrossTenantPersonRepository with the current tenant set
-final crossTenantPersonRepositoryWithTenantProvider =
-    Provider<CrossTenantPersonRepository>((ref) {
-  final repo = ref.watch(crossTenantPersonRepositoryProvider);
-  final tenantId = ref.watch(currentTenantIdProvider);
-  if (tenantId != null) repo.setTenantId(tenantId);
+final crossTenantPersonRepositoryWithTenantProvider = Provider<CrossTenantPersonRepository>((ref) {
+  final tenant = ref.watch(currentTenantIdProvider);
+  return ref.watch(crossTenantPersonRepositoryForTenantProvider(tenant));
+});
+
+/// TENANT_BIND: one immutable [CrossTenantPersonRepository] per tenant (`bindTenantId`),
+/// so a tenant switch never changes the tenant of a running flow and
+/// cross-tenant work uses its own bound instance. `null` (no tenant)
+/// yields an unbound instance with `hasTenantId == false`.
+final crossTenantPersonRepositoryForTenantProvider =
+    Provider.family<CrossTenantPersonRepository, int?>((ref, tenantId) {
+  final repo = CrossTenantPersonRepository(ref);
+  if (tenantId != null) repo.bindTenantId(tenantId);
   return repo;
 });
 
