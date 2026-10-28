@@ -92,21 +92,48 @@ class AppAlertDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (!useIosLook(context)) {
+      // PARITY_R3: Ionic md `ion-alert` – 4px radius, 20/500 title,
+      // grey 16px message, flat UPPERCASE primary text buttons aligned
+      // right; 3+ buttons stacked (`alert-button-group-vertical`).
+      final theme = Theme.of(context);
+      final mdActions = [
+        for (final a in actions ?? const <Widget>[])
+          if (a is! Spacer) mdAlertActionFrom(context, a),
+      ];
       return AlertDialog(
         icon: icon,
         title: title,
         content: content,
-        actions: actions,
-        contentPadding: contentPadding,
-        titlePadding: titlePadding,
-        actionsPadding: actionsPadding,
+        actions: mdActions.isEmpty
+            ? null
+            : [MdAlertButtonGroup(children: mdActions)],
+        contentPadding: contentPadding ??
+            EdgeInsets.fromLTRB(24, title == null ? 20 : 0, 24, 20),
+        titlePadding: titlePadding ??
+            EdgeInsets.fromLTRB(24, 20, 24, content == null ? 20 : 15),
+        actionsPadding: actionsPadding ?? const EdgeInsets.all(8),
         actionsAlignment: actionsAlignment,
-        insetPadding: insetPadding,
+        insetPadding: insetPadding ??
+            const EdgeInsets.symmetric(horizontal: 48, vertical: 24),
         scrollable: scrollable,
         backgroundColor: backgroundColor,
-        shape: shape,
-        titleTextStyle: titleTextStyle,
-        contentTextStyle: contentTextStyle,
+        shape: shape ??
+            const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(4))),
+        titleTextStyle: titleTextStyle ??
+            TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w500,
+              color: theme.colorScheme.onSurface,
+            ),
+        contentTextStyle: contentTextStyle ??
+            TextStyle(
+              fontSize: 16,
+              height: 1.4,
+              color: theme.brightness == Brightness.dark
+                  ? const Color(0xFF8C8C8C)
+                  : const Color(0xFF737373),
+            ),
         semanticLabel: semanticLabel,
       );
     }
@@ -166,10 +193,90 @@ Widget iosAlertActionFrom(BuildContext context, Widget action) {
     return IosAlertButton(
       onPressed: action.onPressed,
       destructive: destructive,
+      bold: false,
       child: action.child ?? const SizedBox.shrink(),
     );
   }
   return action;
+}
+
+/// PARITY_R3: converts a Material dialog action into an Ionic md alert
+/// button: a flat primary text button with an UPPERCASE label (Ionic md
+/// `.alert-button`: 14px, weight 500, `text-transform: uppercase`, padding
+/// 10px, 2px radius). Filled/elevated buttons become text buttons too –
+/// Ionic md alerts only have flat buttons.
+Widget mdAlertActionFrom(BuildContext context, Widget action) {
+  if (action is! ButtonStyleButton) return action;
+  final primary = Theme.of(context).colorScheme.primary;
+  Widget child = action.child ?? const SizedBox.shrink();
+  if (child is Text && child.data != null) {
+    child = Text(
+      child.data!.toUpperCase(),
+      key: child.key,
+      style: child.style,
+      textAlign: TextAlign.end,
+      maxLines: child.maxLines,
+      overflow: child.overflow,
+    );
+  }
+  return TextButton(
+    onPressed: action.onPressed,
+    onLongPress: action.onLongPress,
+    focusNode: action.focusNode,
+    autofocus: action.autofocus,
+    style: TextButton.styleFrom(
+      foregroundColor: primary,
+      disabledForegroundColor: primary.withValues(alpha: 0.38),
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      padding: const EdgeInsets.all(10),
+      minimumSize: const Size(48, 36),
+      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      alignment: Alignment.centerRight,
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(2))),
+      textStyle: const TextStyle(
+        fontSize: 14,
+        height: 20 / 14,
+        fontWeight: FontWeight.w500,
+      ),
+    ),
+    child: child,
+  );
+}
+
+/// PARITY_R3: Ionic md `.alert-button-group`: one or two buttons sit in a
+/// right-aligned row (8px apart, wrapping upwards when they do not fit –
+/// `flex-wrap: wrap-reverse`), three or more are stacked full width with
+/// right-aligned labels (`.alert-button-group-vertical`).
+class MdAlertButtonGroup extends StatelessWidget {
+  const MdAlertButtonGroup({super.key, required this.children});
+
+  final List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) {
+    if (children.length > 2) {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          for (final c in children)
+            Padding(padding: const EdgeInsets.only(right: 8), child: c),
+        ],
+      );
+    }
+    return Padding(
+      padding: const EdgeInsets.only(right: 8),
+      child: OverflowBar(
+        alignment: MainAxisAlignment.end,
+        spacing: 8,
+        overflowAlignment: OverflowBarAlignment.end,
+        overflowDirection: VerticalDirection.up,
+        children: children,
+      ),
+    );
+  }
 }
 
 bool _isDanger(Color? c, Color error) {
@@ -239,7 +346,7 @@ class IosAlertCard extends StatelessWidget {
       body = DefaultTextStyle.merge(style: messageStyle, child: body);
       body = Padding(
         padding:
-            contentPadding ?? const EdgeInsets.fromLTRB(22, 0, 22, 18),
+            contentPadding ?? const EdgeInsets.fromLTRB(30, 0, 30, 21),
         child: body,
       );
       body = scrollable
@@ -258,8 +365,8 @@ class IosAlertCard extends StatelessWidget {
         ),
       if (title != null)
         Padding(
-          padding: EdgeInsets.fromLTRB(22, icon != null ? 10 : 22, 22,
-              body != null ? 8 : 18),
+          padding: EdgeInsets.fromLTRB(30, icon != null ? 10 : 22, 30,
+              body != null ? 7 : 19),
           child: DefaultTextStyle.merge(style: titleStyle, child: title!),
         )
       else
@@ -267,17 +374,8 @@ class IosAlertCard extends StatelessWidget {
       if (body != null) body,
       if (actions.isNotEmpty)
         Padding(
-          padding: const EdgeInsets.fromLTRB(14, 0, 14, 14),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              for (var i = 0; i < actions.length; i++) ...[
-                if (i > 0) const SizedBox(height: 8),
-                actions[i],
-              ],
-            ],
-          ),
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+          child: _IosAlertButtonGroup(actions: actions),
         ),
     ];
 
@@ -303,7 +401,7 @@ class IosAlertCard extends StatelessWidget {
                 child: Material(
                   type: MaterialType.transparency,
                   child: IosGlassSurface(
-                    borderRadius: const BorderRadius.all(Radius.circular(28)),
+                    borderRadius: const BorderRadius.all(Radius.circular(34)),
                     opacity: b == Brightness.dark ? 0.86 : 0.9,
                     blur: 20,
                     child: Column(
@@ -319,6 +417,52 @@ class IosAlertCard extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+/// PARITY_R3: iOS `.alert-button-group` – exactly two buttons sit side by
+/// side (each `min-width: calc(50% - 4px)`, 8px gap) as long as both labels
+/// fit into half the width (`flex-wrap: wrap` otherwise puts them on two
+/// lines); one or three and more buttons are stacked
+/// (`.alert-button-group-vertical`).
+class _IosAlertButtonGroup extends StatelessWidget {
+  const _IosAlertButtonGroup({required this.actions});
+
+  final List<Widget> actions;
+
+  Widget _stacked() => Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          for (var i = 0; i < actions.length; i++) ...[
+            if (i > 0) const SizedBox(height: 8),
+            actions[i],
+          ],
+        ],
+      );
+
+  @override
+  Widget build(BuildContext context) {
+    if (actions.length != 2 || actions.any((a) => a is! IosAlertButton)) {
+      return _stacked();
+    }
+    final scaler = MediaQuery.textScalerOf(context);
+    final direction = Directionality.of(context);
+    return LayoutBuilder(builder: (context, constraints) {
+      final half = (constraints.maxWidth - 8) / 2;
+      final fits = actions.every((a) {
+        final w = (a as IosAlertButton).labelWidth(scaler, direction);
+        return w == null || w <= half;
+      });
+      if (!fits) return _stacked();
+      return Row(
+        children: [
+          Expanded(child: actions[0]),
+          const SizedBox(width: 8),
+          Expanded(child: actions[1]),
+        ],
+      );
+    });
   }
 }
 
@@ -340,6 +484,31 @@ class IosAlertButton extends StatelessWidget {
   final bool bold;
   final double minHeight;
   final Widget? icon;
+
+  /// Ionic iOS 26 `.alert-button { padding: 12px }`.
+  static const double _hPadding = 12;
+
+  TextStyle _labelStyle(Color? color) => TextStyle(
+        fontSize: 17,
+        fontWeight: bold ? FontWeight.w600 : FontWeight.w500,
+        color: color,
+      );
+
+  /// Natural width of the button (label + padding) when its child is a
+  /// plain [Text]; null when it cannot be measured (e.g. a spinner).
+  double? labelWidth(TextScaler scaler, TextDirection direction) {
+    final c = child;
+    if (c is! Text || c.data == null) return null;
+    final painter = TextPainter(
+      text: TextSpan(text: c.data, style: _labelStyle(null).merge(c.style)),
+      textDirection: direction,
+      textScaler: scaler,
+      maxLines: 1,
+    )..layout();
+    final w = painter.width + 2 * _hPadding + (icon == null ? 0 : 28);
+    painter.dispose();
+    return w;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -367,17 +536,14 @@ class IosAlertButton extends StatelessWidget {
           child: ConstrainedBox(
             constraints: BoxConstraints(minHeight: minHeight),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+              padding: const EdgeInsets.symmetric(
+                  horizontal: _hPadding, vertical: 8),
               child: Center(
                 child: IconTheme.merge(
                   data: IconThemeData(color: color, size: 20),
                   child: DefaultTextStyle.merge(
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 17,
-                      fontWeight: bold ? FontWeight.w600 : FontWeight.w500,
-                      color: color,
-                    ),
+                    style: _labelStyle(color),
                     child: icon == null
                         ? child
                         : Row(

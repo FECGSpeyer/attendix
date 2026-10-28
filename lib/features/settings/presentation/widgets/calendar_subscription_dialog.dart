@@ -68,7 +68,7 @@ Future<void> showCalendarSubscriptionDialog(BuildContext context, WidgetRef ref)
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Padding(
-                    padding: EdgeInsets.fromLTRB(22, 0, 22, personal ? 21 : 18),
+                    padding: EdgeInsets.fromLTRB(30, 0, 30, personal ? 21 : 19),
                     child: SelectableText(ctx.l10n.settingsCalendarMessage(link)),
                   ),
                   if (personal)
@@ -97,7 +97,9 @@ Future<void> showCalendarSubscriptionDialog(BuildContext context, WidgetRef ref)
                   ],
                 ],
               ),
-        actions: _mdStackedActions(ctx, [
+        // 3 buttons: stacked (iOS pills / md right-aligned uppercase),
+        // laid out centrally by AppAlertDialog.
+        actions: [
           TextButton(
             onPressed: () async {
               final finalLink = hideExcused ? '$link&hideExcused=1' : link;
@@ -132,32 +134,10 @@ Future<void> showCalendarSubscriptionDialog(BuildContext context, WidgetRef ref)
             onPressed: () => Navigator.of(ctx).pop(),
             child: Text(ctx.l10n.commonClose),
           ),
-        ]),
+        ],
       ),
     ),
   );
-}
-
-/// IOS_FORMS1 (md): Ionic md alert with more than two buttons
-/// (`.alert-button-group-vertical`): uppercase text buttons stacked and
-/// right-aligned. iOS keeps the given buttons (rendered as pills).
-List<Widget> _mdStackedActions(BuildContext context, List<TextButton> buttons) {
-  if (useIosLook(context)) return buttons;
-  return [
-    Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        for (final b in buttons)
-          TextButton(
-            onPressed: b.onPressed,
-            child: b.child is Text
-                ? Text(((b.child as Text).data ?? '').toUpperCase())
-                : b.child!,
-          ),
-      ],
-    ),
-  ];
 }
 
 /// IOS_FORMS1 (md): checkbox input of an Ionic md `ion-alert` – hairlines
