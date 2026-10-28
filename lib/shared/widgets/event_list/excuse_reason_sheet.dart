@@ -4,6 +4,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/quill_utils.dart';
 import '../../../data/models/attendance/attendance.dart';
 import '../../../l10n/l10n.dart';
+import '../layout/ionic_ios.dart';
 
 // Internal sentinel for the free-text option (never stored).
 const String _customReason = 'Sonstiger Grund';
@@ -86,35 +87,41 @@ class _ExcuseReasonSheetState extends State<_ExcuseReasonSheet> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Row(
-                children: [
+              // UX_SONGS_SELF: Ionic excuse-reason-picker toolbar:
+              // close (start), title, checkmark (end, strong)
+              IonSheetHeader(
+                title: widget.isLate ? context.l10n.excuseLate : context.l10n.excuseSignOut,
+                start: [
                   IconButton(
                     icon: const Icon(Icons.close),
                     tooltip: context.l10n.commonCancel,
                     onPressed: () => Navigator.of(context).pop(),
                   ),
-                  Expanded(
-                    child: Text(
-                      widget.isLate ? context.l10n.excuseLate : context.l10n.excuseSignOut,
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                  ),
+                ],
+                end: [
                   IconButton(
                     icon: const Icon(Icons.check),
                     tooltip: context.l10n.commonConfirm,
-                    color: AppColors.primary,
                     onPressed: _confirmable ? _confirm : null,
                   ),
                 ],
               ),
+              // Ionic ion-radio (justify start, label end, lines full); iOS
+              // draws a checkmark for the selected reason.
               for (final reason in [...widget.reasons, _customReason])
-                RadioListTile<String>(
-                  value: reason,
-                  groupValue: _selection,
-                  onChanged: (v) => setState(() => _selection = v ?? _selection),
-                  title: Text(reason == _customReason ? context.l10n.excuseCustomOption : reason),
-                ),
+                if (isIosLook(context))
+                  _IosRadioRow(
+                    label: reason == _customReason ? context.l10n.excuseCustomOption : reason,
+                    selected: _selection == reason,
+                    onTap: () => setState(() => _selection = reason),
+                  )
+                else
+                  RadioListTile<String>(
+                    value: reason,
+                    groupValue: _selection,
+                    onChanged: (v) => setState(() => _selection = v ?? _selection),
+                    title: Text(reason == _customReason ? context.l10n.excuseCustomOption : reason),
+                  ),
               if (_selection == _customReason)
                 Padding(
                   padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
@@ -141,6 +148,42 @@ class _ExcuseReasonSheetState extends State<_ExcuseReasonSheet> {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _IosRadioRow extends StatelessWidget {
+  const _IosRadioRow({required this.label, required this.selected, required this.onTap});
+
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        constraints: const BoxConstraints(minHeight: 48),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        decoration: BoxDecoration(
+          border: Border(
+            bottom: BorderSide(color: Theme.of(context).dividerColor, width: 0.5),
+          ),
+        ),
+        child: Row(
+          children: [
+            SizedBox(
+              width: 24,
+              child: selected
+                  ? const Icon(Icons.check, color: AppColors.primary, size: 22)
+                  : null,
+            ),
+            const SizedBox(width: 16),
+            Expanded(child: Text(label, style: const TextStyle(fontSize: 16))),
+          ],
         ),
       ),
     );
@@ -338,24 +381,17 @@ class _RegistrationFieldsSheetState extends State<_RegistrationFieldsSheet> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        widget.editMode
-                            ? context.l10n.attendanceRegFields
-                            : context.l10n.coreFlutterRegistration,
-                        style: Theme.of(context).textTheme.titleLarge,
-                      ),
-                    ),
-                    TextButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      child: Text(context.l10n.commonCancel),
-                    ),
-                  ],
-                ),
+              // UX_SONGS_SELF: Ionic modal toolbar (title, cancel at end)
+              IonSheetHeader(
+                title: widget.editMode
+                    ? context.l10n.attendanceRegFields
+                    : context.l10n.coreFlutterRegistration,
+                end: [
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: Text(context.l10n.commonCancel),
+                  ),
+                ],
               ),
               for (final f in widget.fields) _buildField(f),
               if (_error != null)
