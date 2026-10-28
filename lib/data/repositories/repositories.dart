@@ -58,3 +58,5 @@ export 'admin_repository.dart'; // SETTINGS2
 export 'user_registration_repository.dart';
 // I18N_INFRA
 export 'user_language_repository.dart';
+// LIVE_ACTIVITY
+export 'live_activity_repository.dart';

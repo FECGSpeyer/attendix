@@ -58,3 +58,5 @@ export 'user_registration_providers.dart';
 export 'demo_providers.dart';
 // I18N_INFRA
 export 'locale_provider.dart';
+// LIVE_ACTIVITY
+export 'live_activity_providers.dart';

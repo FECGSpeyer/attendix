@@ -49,5 +49,22 @@
 	<array>
 		<string>audio</string>
 	</array>
+	<!-- LIVE_ACTIVITY: Ablaufplan Live Activity / Dynamic Island + its deep link attendix://live-plan -->
+	<key>NSSupportsLiveActivities</key>
+	<true/>
+	<key>NSSupportsLiveActivitiesFrequentUpdates</key>
+	<true/>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>de.attendix.attendix</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>attendix</string>
+			</array>
+		</dict>
+	</array>
+	<!-- LIVE_ACTIVITY end -->
 </dict>
 </plist>

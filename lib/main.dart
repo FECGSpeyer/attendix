@@ -14,6 +14,7 @@ import 'core/router/app_router.dart';
 import 'core/router/legacy_url.dart'; // LINKS_STARTUP
 import 'core/services/app_update_service.dart';
 import 'core/services/offline_queue_service.dart'; // PROFILE_OFFLINE
+import 'core/services/live_activity_service.dart'; // LIVE_ACTIVITY
 import 'core/theme/app_theme.dart';
 import 'core/utils/toast_helper.dart';
 import 'features/auth/data/auth_link_listener.dart'; // AUTH
@@ -82,6 +83,8 @@ class _AttendixAppState extends ConsumerState<AttendixApp> {
     // AUTH: password-recovery / signup-confirmation links (Ionic handleAuthUrl)
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) initAuthLinkHandling(ref, ref.read(routerProvider));
+      // LIVE_ACTIVITY: iOS Live Activity for running Ablaufpläne (no-op elsewhere)
+      if (mounted) ref.read(liveActivityBootstrapProvider);
       // TEAMS: silent Microsoft SSO inside a Teams tab, once detection is done
       final teams = ref.read(teamsServiceProvider);
       unawaited(teams.init().then((_) {

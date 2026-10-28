@@ -9,6 +9,7 @@ import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/notification_settings_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/services/telegram_service.dart';
+import '../../../../core/services/live_activity_service.dart'; // LIVE_ACTIVITY
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
@@ -22,7 +23,7 @@ import '../../../../core/utils/error_message.dart';
 ///
 /// Telegram connection, master switch, notification categories and the
 /// per-tenant toggles. Push / Live Activity toggles are native-only in Ionic
-/// and are not available in the PWA.
+/// and are not available in the PWA (Live Activity: iOS app only).
 class NotificationsPage extends ConsumerStatefulWidget {
   const NotificationsPage({super.key});
 
@@ -106,6 +107,12 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
             context, context.l10n.notifFlutterUpdateFailed);
       }
     }
+  }
+
+  // LIVE_ACTIVITY: Ionic toggleLiveActivity (save setting, then end/sync activities)
+  Future<void> _toggleLiveActivity(NotificationConfig config, bool enabled) async {
+    await _updateConfig(config.copyWith(liveActivity: enabled));
+    await ref.read(liveActivityServiceProvider).setEnabled(enabled);
   }
 
   Future<void> _connectTelegram() async {
@@ -194,6 +201,19 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
                           child: Text(context.l10n.notifConnect),
                         ),
                 ),
+                // LIVE_ACTIVITY: only app builds with the native Live Activity side (iOS)
+                if (ref.read(liveActivityServiceProvider).hasNativePlugin) ...[
+                  const Divider(height: 1),
+                  SwitchListTile(
+                    title: Text(context.l10n.notifLiveActivity),
+                    subtitle: Text(LiveActivityService.isSupportedPlatform
+                        ? context.l10n.notifLiveActivityHelperIos
+                        : context.l10n.notifLiveActivityHelper),
+                    value: config.liveActivity != false,
+                    onChanged: (v) => _toggleLiveActivity(config, v),
+                  ),
+                ],
+                // LIVE_ACTIVITY end
                 if (config.pushEnabled && isConnected) ...[
                   const Divider(height: 1),
                   SwitchListTile(

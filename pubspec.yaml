@@ -77,6 +77,7 @@ dependencies:
   vsc_quill_delta_to_html: ^1.0.5
   flutter_quill_delta_from_html: ^1.5.3
   connectivity_plus: ^7.0.0
+  timezone: ^0.10.1 # LIVE_ACTIVITY: tenant time zone for Ablaufplan Live Activity
 
 dev_dependencies:
   flutter_test:
