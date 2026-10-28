@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/duty_providers.dart';
@@ -8,6 +9,7 @@ import '../../../../core/utils/duty_utils.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/attendance/attendance.dart';
 import '../../../../data/models/duty/person_unavailability.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Opens "Dienste verteilen". Returns true when assignments were saved.
 Future<bool> openDutyDistributePage(BuildContext context) async {
@@ -72,7 +74,7 @@ class _DutyDistributePageState extends ConsumerState<DutyDistributePage> {
     _selectedTypeIds = ref.read(dutyTypesProvider).map((t) => t.id).whereType<String>().toSet();
   }
 
-  String _fmt(DateTime d) => '${d.day.toString().padLeft(2, '0')}.${d.month.toString().padLeft(2, '0')}.${d.year}';
+  String _fmt(DateTime d) => DateFormat(dateFmt()).format(d);
 
   String _dateLabel(DutyTermin t) {
     final d = DateTime.tryParse(t.attendance.date)?.toLocal();
@@ -95,9 +97,10 @@ class _DutyDistributePageState extends ConsumerState<DutyDistributePage> {
 
   Future<void> _calculate() async {
     if (_selectedTypeIds.isEmpty) {
-      ToastHelper.showWarning(context, 'Bitte wähle mindestens einen Termintyp');
+      ToastHelper.showWarning(context, context.l10n.dutyChooseTypeMin);
       return;
     }
+    final l10n = context.l10n;
     setState(() => _loading = true);
     try {
       final repo = ref.read(dutyRepositoryWithTenantProvider);
@@ -128,7 +131,7 @@ class _DutyDistributePageState extends ConsumerState<DutyDistributePage> {
       _run();
       setState(() => _preview = true);
     } catch (e) {
-      if (mounted) ToastHelper.showError(context, 'Fehler: $e');
+      if (mounted) ToastHelper.showError(context, l10n.dutyFlutterErrorWith(e));
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -205,14 +208,14 @@ class _DutyDistributePageState extends ConsumerState<DutyDistributePage> {
         return c != 0 ? c : a.fullName.compareTo(b.fullName);
       });
     if (options.isEmpty && current == null) {
-      ToastHelper.showWarning(context, 'Niemand sonst ist für diesen Termin verfügbar');
+      ToastHelper.showWarning(context, context.l10n.dutyNobodyElse);
       return;
     }
     const none = '__none';
     final value = await showDialog<String>(
       context: context,
       builder: (ctx) => SimpleDialog(
-        title: Text(current != null ? '${current.firstName ?? ''} tauschen' : 'Person wählen'),
+        title: Text(current != null ? context.l10n.dutySwap(current.firstName ?? '') : context.l10n.dutyChoosePerson),
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -222,7 +225,7 @@ class _DutyDistributePageState extends ConsumerState<DutyDistributePage> {
           if (current != null)
             SimpleDialogOption(
               onPressed: () => Navigator.of(ctx).pop(none),
-              child: const Text('Niemand (Platz offen lassen)'),
+              child: Text(context.l10n.dutyNobody),
             ),
           for (final o in options)
             SimpleDialogOption(
@@ -260,13 +263,13 @@ class _DutyDistributePageState extends ConsumerState<DutyDistributePage> {
     if (!mounted) return;
     setState(() => _saving = false);
     if (!ok) {
-      ToastHelper.showError(context, 'Fehler beim Einteilen');
+      ToastHelper.showError(context, context.l10n.svcAssignFailed);
       return;
     }
     final total = _plannedTotal;
     ToastHelper.showSuccess(
       context,
-      '${total == 1 ? '1 Dienst eingeteilt' : '$total Dienste eingeteilt'}. Alle bekommen eine Push-Nachricht.',
+      context.l10n.dutyAssignedToast(total),
     );
     Navigator.of(context).pop(true);
   }
@@ -278,20 +281,20 @@ class _DutyDistributePageState extends ConsumerState<DutyDistributePage> {
         leading: _preview
             ? IconButton(
                 icon: const Icon(Icons.arrow_back),
-                tooltip: 'Zurück',
+                tooltip: context.l10n.commonBack,
                 onPressed: () => setState(() => _preview = false),
               )
             : IconButton(
                 icon: const Icon(Icons.close),
-                tooltip: 'Abbrechen',
+                tooltip: context.l10n.commonCancel,
                 onPressed: () => Navigator.of(context).pop(false),
               ),
-        title: Text(_preview ? 'Vorschlag' : 'Dienste verteilen'),
+        title: Text(_preview ? context.l10n.teamOrgProposal : context.l10n.attListDistributeDuties),
         actions: [
           if (_preview)
             IconButton(
               icon: const Icon(Icons.shuffle),
-              tooltip: 'Neu verteilen',
+              tooltip: context.l10n.dutyRedistribute,
               onPressed: _run,
             ),
         ],
@@ -307,7 +310,9 @@ class _DutyDistributePageState extends ConsumerState<DutyDistributePage> {
                 padding: const EdgeInsets.all(AppDimensions.paddingM),
                 child: FilledButton(
                   onPressed: _saving || _plannedTotal == 0 ? null : _save,
-                  child: Text(_plannedTotal > 0 ? '$_plannedTotal Einteilungen speichern' : 'Nichts zu verteilen'),
+                  child: Text(_plannedTotal > 0
+                      ? context.l10n.dutyFlutterSaveAssignments(_plannedTotal)
+                      : context.l10n.dutyFlutterNothingToDistribute),
                 ),
               ),
             )
@@ -325,15 +330,15 @@ class _DutyDistributePageState extends ConsumerState<DutyDistributePage> {
     return ListView(
       padding: const EdgeInsets.all(AppDimensions.paddingM),
       children: [
-        _header('Zeitraum'),
+        _header(context.l10n.dutyPeriod),
         Card(
           child: Column(children: [
-            ListTile(title: const Text('Von'), trailing: Text(_fmt(_from)), onTap: () => _pickDate(true)),
-            ListTile(title: const Text('Bis'), trailing: Text(_fmt(_to)), onTap: () => _pickDate(false)),
+            ListTile(title: Text(context.l10n.dutyFrom), trailing: Text(_fmt(_from)), onTap: () => _pickDate(true)),
+            ListTile(title: Text(context.l10n.dutyTo), trailing: Text(_fmt(_to)), onTap: () => _pickDate(false)),
           ]),
         ),
         if (dutyTypes.length > 1) ...[
-          _header('Termintypen'),
+          _header(context.l10n.dutyEventTypes),
           Card(
             child: Column(children: [
               for (final t in dutyTypes)
@@ -348,65 +353,62 @@ class _DutyDistributePageState extends ConsumerState<DutyDistributePage> {
             ]),
           ),
         ],
-        _header('Regeln'),
+        _header(context.l10n.dutyRules),
         Card(
           child: Column(children: [
             ListTile(
-              title: const Text('Höchstens pro Person'),
+              title: Text(context.l10n.dutyMaxPerPerson),
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   IconButton(
                     icon: const Icon(Icons.remove_circle_outline),
-                    tooltip: 'Weniger',
+                    tooltip: context.l10n.attListLess,
                     onPressed: _maxPerPerson <= 1 ? null : () => setState(() => _maxPerPerson--),
                   ),
                   Text('$_maxPerPerson'),
                   IconButton(
                     icon: const Icon(Icons.add_circle_outline),
-                    tooltip: 'Mehr',
+                    tooltip: context.l10n.attListMore,
                     onPressed: _maxPerPerson >= 10 ? null : () => setState(() => _maxPerPerson++),
                   ),
                 ],
               ),
             ),
             SwitchListTile(
-              title: const Text('Nicht zweimal am selben Tag'),
+              title: Text(context.l10n.dutyNotTwiceSameDay),
               value: _notTwiceSameDay,
               onChanged: (v) => setState(() => _notTwiceSameDay = v),
             ),
           ]),
         ),
-        const Padding(
-          padding: EdgeInsets.all(AppDimensions.paddingS),
+        Padding(
+          padding: const EdgeInsets.all(AppDimensions.paddingS),
           child: Text(
-            'Nur offene Plätze werden gefüllt, bestehende Einteilungen bleiben. Wer abgesagt hat oder '
-            'regelmäßig verhindert ist, wird nicht eingeteilt. Wer bisher am wenigsten Dienste hat, '
-            'kommt zuerst dran.',
-            style: TextStyle(color: AppColors.medium, fontSize: 13),
+            context.l10n.dutyDistributeHint,
+            style: const TextStyle(color: AppColors.medium, fontSize: 13),
           ),
         ),
         const SizedBox(height: AppDimensions.paddingM),
-        FilledButton(onPressed: _calculate, child: const Text('Vorschlag berechnen')),
+        FilledButton(onPressed: _calculate, child: Text(context.l10n.dutyCalculate)),
       ],
     );
   }
 
   Widget _buildPreview() {
     if (_rows.isEmpty) {
-      return const Center(
+      return Center(
         child: Padding(
-          padding: EdgeInsets.all(AppDimensions.paddingL),
-          child: Text('Im Zeitraum gibt es keine Termine mit Dienst-Modus.', textAlign: TextAlign.center),
+          padding: const EdgeInsets.all(AppDimensions.paddingL),
+          child: Text(context.l10n.dutyNoDutyEvents, textAlign: TextAlign.center),
         ),
       );
     }
     final planned = _plannedTotal;
     final missing = _missingTotal;
-    final plannedText = planned == 1 ? '1 Einteilung' : '$planned Einteilungen';
     final summary = missing > 0
-        ? '$plannedText geplant, ${missing == 1 ? '1 Platz bleibt' : '$missing Plätze bleiben'} offen.'
-        : '$plannedText geplant.';
+        ? context.l10n.dutyPlannedSummaryMissing(planned, missing)
+        : context.l10n.dutyPlannedSummary(planned);
 
     final names = <int, String>{
       for (final t in _termine)
@@ -422,7 +424,7 @@ class _DutyDistributePageState extends ConsumerState<DutyDistributePage> {
     return ListView(
       padding: const EdgeInsets.all(AppDimensions.paddingM),
       children: [
-        Text('$summary Tippe auf einen Namen zum Tauschen.', style: const TextStyle(color: AppColors.medium)),
+        Text('$summary ${context.l10n.dutyTapToSwap}', style: const TextStyle(color: AppColors.medium)),
         const SizedBox(height: AppDimensions.paddingS),
         Card(
           child: Column(children: [
@@ -453,7 +455,7 @@ class _DutyDistributePageState extends ConsumerState<DutyDistributePage> {
                           ),
                         for (var i = 0; i < row.missing; i++)
                           ActionChip(
-                            label: const Text('offen', style: TextStyle(color: AppColors.danger)),
+                            label: Text(context.l10n.dutyOpen, style: const TextStyle(color: AppColors.danger)),
                             side: const BorderSide(color: AppColors.danger),
                             visualDensity: VisualDensity.compact,
                             onPressed: () => _change(row),
@@ -465,21 +467,21 @@ class _DutyDistributePageState extends ConsumerState<DutyDistributePage> {
               ),
           ]),
         ),
-        _header('Dienste pro Person im Zeitraum'),
+        _header(context.l10n.dutyDutiesPerPerson),
         Card(
           child: Column(children: [
             for (final e in counts)
               ListTile(
                 dense: true,
                 title: Text(names[e.key]!),
-                trailing: Text('${e.value.count}${e.value.planned > 0 ? ' (+${e.value.planned} neu)' : ''}'),
+                trailing: Text('${e.value.count}${e.value.planned > 0 ? ' ${context.l10n.dutyFlutterPlannedNew(e.value.planned)}' : ''}'),
               ),
           ]),
         ),
-        const Padding(
-          padding: EdgeInsets.all(AppDimensions.paddingS),
-          child: Text('Grau = schon eingeteilt, bleibt unverändert.',
-              style: TextStyle(color: AppColors.medium, fontSize: 13)),
+        Padding(
+          padding: const EdgeInsets.all(AppDimensions.paddingS),
+          child: Text(context.l10n.dutyGreyHint,
+              style: const TextStyle(color: AppColors.medium, fontSize: 13)),
         ),
       ],
     );

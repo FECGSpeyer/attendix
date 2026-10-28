@@ -5,6 +5,7 @@ import '../../../../core/providers/duty_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/duty_utils.dart';
 import '../../../../core/utils/toast_helper.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Shared UI actions of the Dienstplan (confirm / decline / take).
 
@@ -33,9 +34,9 @@ Color dutyFillColor(DutyFill fill) {
 String dutyNames(DutyTermin t) {
   final names = t.persons.where(occupiesDuty).map((p) {
     final name = p.firstName ?? '';
-    return p.dutyState == DutyState.requested ? '$name (angefragt)' : name;
+    return p.dutyState == DutyState.requested ? l10nWithoutContext.dutyFlutterNameRequested(name) : name;
   }).toList();
-  return names.isNotEmpty ? names.join(', ') : 'noch niemand eingeteilt';
+  return names.isNotEmpty ? names.join(', ') : l10nWithoutContext.dutyFlutterNobodyAssigned;
 }
 
 /// Small colored pill used for duty badges.
@@ -70,9 +71,9 @@ Future<void> confirmDutyAction(
   final ok = await ref.read(dutyNotifierProvider.notifier).confirm(personAttendanceId, attendanceId);
   if (!context.mounted) return;
   if (ok) {
-    ToastHelper.showSuccess(context, 'Danke, dein Dienst ist bestätigt 🙂');
+    ToastHelper.showSuccess(context, context.l10n.signoutDutyConfirmed);
   } else {
-    ToastHelper.showError(context, 'Fehler beim Bestätigen');
+    ToastHelper.showError(context, context.l10n.svcConfirmFailed);
   }
 }
 
@@ -87,18 +88,18 @@ Future<bool> declineDutyAction(
   final reason = await showDialog<String>(
     context: context,
     builder: (ctx) => AlertDialog(
-      title: const Text('Kann nicht'),
+      title: Text(context.l10n.signoutCannot),
       content: TextField(
         controller: controller,
         maxLines: 3,
-        decoration: const InputDecoration(hintText: 'Grund (optional)'),
+        decoration: InputDecoration(hintText: context.l10n.dutyReasonOptional),
         autofocus: true,
       ),
       actions: [
-        TextButton(onPressed: () => Navigator.of(ctx).pop(), child: const Text('Abbrechen')),
+        TextButton(onPressed: () => Navigator.of(ctx).pop(), child: Text(context.l10n.commonCancel)),
         ElevatedButton(
           onPressed: () => Navigator.of(ctx).pop(controller.text.trim()),
-          child: const Text('Bestätigen'),
+          child: Text(context.l10n.commonConfirm),
         ),
       ],
     ),
@@ -108,9 +109,9 @@ Future<bool> declineDutyAction(
   final ok = await ref.read(dutyNotifierProvider.notifier).decline(personAttendanceId, attendanceId, reason);
   if (!context.mounted) return ok;
   if (ok) {
-    ToastHelper.showSuccess(context, 'Abgesagt, das Team wird informiert.');
+    ToastHelper.showSuccess(context, context.l10n.dutyDeclinedToast);
   } else {
-    ToastHelper.showError(context, 'Fehler beim Abmelden');
+    ToastHelper.showError(context, context.l10n.dutyFlutterDeclineFailed);
   }
   return ok;
 }
@@ -121,12 +122,12 @@ Future<void> takeDutyAction(BuildContext context, WidgetRef ref, int attendanceI
   if (!context.mounted) return;
   switch (result) {
     case DutyTakeResult.ok:
-      ToastHelper.showSuccess(context, 'Danke, du bist eingetragen 🙂');
+      ToastHelper.showSuccess(context, context.l10n.signoutDutySignedUp);
     case DutyTakeResult.full:
-      ToastHelper.showWarning(context, 'Jemand war schneller, der Dienst ist schon voll.');
+      ToastHelper.showWarning(context, context.l10n.signoutDutyFull);
     case null:
-      ToastHelper.showError(context, 'Fehler beim Eintragen');
+      ToastHelper.showError(context, context.l10n.svcSignUpFailed);
     default:
-      ToastHelper.showWarning(context, 'Du kannst diesen Dienst nicht übernehmen.');
+      ToastHelper.showWarning(context, context.l10n.signoutDutyNotAllowed);
   }
 }

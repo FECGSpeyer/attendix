@@ -1993,6 +1993,51 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get dutyFlutterAllFilled => 'all filled';
+
+  @override
+  String get dutyFlutterDeclineFailed => 'Error while declining';
+
+  @override
+  String get dutyFlutterDeleteFailed => 'Error while deleting';
+
+  @override
+  String dutyFlutterErrorWith(Object error) {
+    return 'Error: $error';
+  }
+
+  @override
+  String dutyFlutterNameRequested(Object name) {
+    return '$name (requested)';
+  }
+
+  @override
+  String get dutyFlutterNobodyAssigned => 'nobody assigned yet';
+
+  @override
+  String get dutyFlutterNothingToDistribute => 'Nothing to distribute';
+
+  @override
+  String dutyFlutterPlannedNew(Object count) {
+    return '(+$count new)';
+  }
+
+  @override
+  String dutyFlutterSaveAssignments(Object count) {
+    return 'Save $count assignments';
+  }
+
+  @override
+  String dutyFlutterTimeOClock(Object time) {
+    return '$time';
+  }
+
+  @override
+  String dutyFlutterUnassignMessage(Object name) {
+    return '$name will then no longer be assigned.';
+  }
+
+  @override
   String get dutyForWhichTypes => 'For which event types?';
 
   @override

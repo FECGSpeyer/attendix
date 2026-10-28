@@ -56,6 +56,21 @@
         "start": "Start",
         "dayN": "Tag {n}"
       }
+    },
+    "duty": {
+      "flutter": {
+        "nameRequested": "{name} (angefragt)",
+        "nobodyAssigned": "noch niemand eingeteilt",
+        "declineFailed": "Fehler beim Abmelden",
+        "unassignMessage": "{name} ist dann nicht mehr eingeteilt.",
+        "errorWith": "Fehler: {error}",
+        "allFilled": "alles besetzt",
+        "timeOClock": "{time} Uhr",
+        "deleteFailed": "Fehler beim Löschen",
+        "saveAssignments": "{count} Einteilungen speichern",
+        "nothingToDistribute": "Nichts zu verteilen",
+        "plannedNew": "(+{count} neu)"
+      }
     }
   },
   "en": {
@@ -114,6 +129,21 @@
         "addSegmentsHint": "Add segments to see the preview",
         "start": "Start",
         "dayN": "Day {n}"
+      }
+    },
+    "duty": {
+      "flutter": {
+        "nameRequested": "{name} (requested)",
+        "nobodyAssigned": "nobody assigned yet",
+        "declineFailed": "Error while declining",
+        "unassignMessage": "{name} will then no longer be assigned.",
+        "errorWith": "Error: {error}",
+        "allFilled": "all filled",
+        "timeOClock": "{time}",
+        "deleteFailed": "Error while deleting",
+        "saveAssignments": "Save {count} assignments",
+        "nothingToDistribute": "Nothing to distribute",
+        "plannedNew": "(+{count} new)"
       }
     }
   }

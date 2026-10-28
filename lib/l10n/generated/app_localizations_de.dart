@@ -1987,6 +1987,51 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get dutyFlutterAllFilled => 'alles besetzt';
+
+  @override
+  String get dutyFlutterDeclineFailed => 'Fehler beim Abmelden';
+
+  @override
+  String get dutyFlutterDeleteFailed => 'Fehler beim Löschen';
+
+  @override
+  String dutyFlutterErrorWith(Object error) {
+    return 'Fehler: $error';
+  }
+
+  @override
+  String dutyFlutterNameRequested(Object name) {
+    return '$name (angefragt)';
+  }
+
+  @override
+  String get dutyFlutterNobodyAssigned => 'noch niemand eingeteilt';
+
+  @override
+  String get dutyFlutterNothingToDistribute => 'Nichts zu verteilen';
+
+  @override
+  String dutyFlutterPlannedNew(Object count) {
+    return '(+$count neu)';
+  }
+
+  @override
+  String dutyFlutterSaveAssignments(Object count) {
+    return '$count Einteilungen speichern';
+  }
+
+  @override
+  String dutyFlutterTimeOClock(Object time) {
+    return '$time Uhr';
+  }
+
+  @override
+  String dutyFlutterUnassignMessage(Object name) {
+    return '$name ist dann nicht mehr eingeteilt.';
+  }
+
+  @override
   String get dutyForWhichTypes => 'Für welche Termintypen?';
 
   @override

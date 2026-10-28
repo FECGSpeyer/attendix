@@ -7,6 +7,7 @@ import '../../../../core/providers/duty_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/duty_utils.dart';
 import 'duty_actions.dart';
+import '../../../../l10n/l10n.dart';
 
 /// "Deine Dienste: bitte bestätigen" on the attendance list: own upcoming
 /// assignments that still wait for confirmation (leaders confirm their own
@@ -25,7 +26,7 @@ class MyDutyRequestsSection extends ConsumerWidget {
         Padding(
           padding: const EdgeInsets.only(bottom: AppDimensions.paddingS, top: AppDimensions.paddingXS),
           child: Text(
-            'Deine Dienste: bitte bestätigen',
+            context.l10n.dutyMyRequestsTitle,
             style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
           ),
         ),
@@ -50,13 +51,13 @@ class MyDutyRequestsSection extends ConsumerWidget {
                   ),
                   OutlinedButton(
                     onPressed: () => declineDutyAction(context, ref, r.pa.id!, r.termin.attendance.id!),
-                    child: const Text('Kann nicht'),
+                    child: Text(context.l10n.signoutCannot),
                   ),
                   const SizedBox(width: 6),
                   FilledButton(
                     style: FilledButton.styleFrom(backgroundColor: AppColors.success),
                     onPressed: () => confirmDutyAction(context, ref, r.pa.id!, r.termin.attendance.id!),
-                    child: const Text('Bestätigen'),
+                    child: Text(context.l10n.commonConfirm),
                   ),
                 ],
               ),

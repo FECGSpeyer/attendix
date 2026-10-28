@@ -2575,6 +2575,68 @@
       }
     }
   },
+  "dutyFlutterAllFilled": "alles besetzt",
+  "@dutyFlutterAllFilled": {
+    "description": "duty.flutter.allFilled"
+  },
+  "dutyFlutterDeclineFailed": "Fehler beim Abmelden",
+  "@dutyFlutterDeclineFailed": {
+    "description": "duty.flutter.declineFailed"
+  },
+  "dutyFlutterDeleteFailed": "Fehler beim Löschen",
+  "@dutyFlutterDeleteFailed": {
+    "description": "duty.flutter.deleteFailed"
+  },
+  "dutyFlutterErrorWith": "Fehler: {error}",
+  "@dutyFlutterErrorWith": {
+    "description": "duty.flutter.errorWith",
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "dutyFlutterNameRequested": "{name} (angefragt)",
+  "@dutyFlutterNameRequested": {
+    "description": "duty.flutter.nameRequested",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "dutyFlutterNobodyAssigned": "noch niemand eingeteilt",
+  "@dutyFlutterNobodyAssigned": {
+    "description": "duty.flutter.nobodyAssigned"
+  },
+  "dutyFlutterNothingToDistribute": "Nichts zu verteilen",
+  "@dutyFlutterNothingToDistribute": {
+    "description": "duty.flutter.nothingToDistribute"
+  },
+  "dutyFlutterPlannedNew": "(+{count} neu)",
+  "@dutyFlutterPlannedNew": {
+    "description": "duty.flutter.plannedNew",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "dutyFlutterSaveAssignments": "{count} Einteilungen speichern",
+  "@dutyFlutterSaveAssignments": {
+    "description": "duty.flutter.saveAssignments",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "dutyFlutterTimeOClock": "{time} Uhr",
+  "@dutyFlutterTimeOClock": {
+    "description": "duty.flutter.timeOClock",
+    "placeholders": {
+      "time": {}
+    }
+  },
+  "dutyFlutterUnassignMessage": "{name} ist dann nicht mehr eingeteilt.",
+  "@dutyFlutterUnassignMessage": {
+    "description": "duty.flutter.unassignMessage",
+    "placeholders": {
+      "name": {}
+    }
+  },
   "dutyForWhichTypes": "Für welche Termintypen?",
   "@dutyForWhichTypes": {
     "description": "duty.forWhichTypes"

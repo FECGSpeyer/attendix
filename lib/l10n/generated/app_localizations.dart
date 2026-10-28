@@ -3503,6 +3503,72 @@ abstract class AppLocalizations {
   /// **'{count, plural, one {{count} Termin angepasst} other {{count} Termine angepasst}}'**
   String dutyEventsAdjusted(num count);
 
+  /// duty.flutter.allFilled
+  ///
+  /// In de, this message translates to:
+  /// **'alles besetzt'**
+  String get dutyFlutterAllFilled;
+
+  /// duty.flutter.declineFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Abmelden'**
+  String get dutyFlutterDeclineFailed;
+
+  /// duty.flutter.deleteFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Löschen'**
+  String get dutyFlutterDeleteFailed;
+
+  /// duty.flutter.errorWith
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler: {error}'**
+  String dutyFlutterErrorWith(Object error);
+
+  /// duty.flutter.nameRequested
+  ///
+  /// In de, this message translates to:
+  /// **'{name} (angefragt)'**
+  String dutyFlutterNameRequested(Object name);
+
+  /// duty.flutter.nobodyAssigned
+  ///
+  /// In de, this message translates to:
+  /// **'noch niemand eingeteilt'**
+  String get dutyFlutterNobodyAssigned;
+
+  /// duty.flutter.nothingToDistribute
+  ///
+  /// In de, this message translates to:
+  /// **'Nichts zu verteilen'**
+  String get dutyFlutterNothingToDistribute;
+
+  /// duty.flutter.plannedNew
+  ///
+  /// In de, this message translates to:
+  /// **'(+{count} neu)'**
+  String dutyFlutterPlannedNew(Object count);
+
+  /// duty.flutter.saveAssignments
+  ///
+  /// In de, this message translates to:
+  /// **'{count} Einteilungen speichern'**
+  String dutyFlutterSaveAssignments(Object count);
+
+  /// duty.flutter.timeOClock
+  ///
+  /// In de, this message translates to:
+  /// **'{time} Uhr'**
+  String dutyFlutterTimeOClock(Object time);
+
+  /// duty.flutter.unassignMessage
+  ///
+  /// In de, this message translates to:
+  /// **'{name} ist dann nicht mehr eingeteilt.'**
+  String dutyFlutterUnassignMessage(Object name);
+
   /// duty.forWhichTypes
   ///
   /// In de, this message translates to:

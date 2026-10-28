@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/attendance_detail_providers.dart';
@@ -14,6 +15,7 @@ import '../../../../data/models/attendance/attendance.dart';
 import '../../../../data/models/duty/person_unavailability.dart';
 import 'duty_actions.dart';
 import 'duty_assign_sheet.dart';
+import '../../../../l10n/l10n.dart';
 
 /// "Besetzung" block on the attendance detail page for Termine of duty types.
 class DutyStaffingSection extends ConsumerStatefulWidget {
@@ -50,7 +52,8 @@ class _DutyStaffingSectionState extends ConsumerState<DutyStaffingSection> {
     final available = players.where((p) => (p.dutyState ?? '').isEmpty && !isCancelled(p)).toList();
     final unavailable = players.where(isCancelled).toList();
     final fillColor = dutyFillColor(dutyFill(players, _required));
-    final neededText = _required == 1 ? 'Benötigt: 1 Person' : 'Benötigt: $_required Personen';
+    final l10n = context.l10n;
+    final neededText = l10n.attendanceNeeded(_required);
 
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM, vertical: AppDimensions.paddingXS),
@@ -61,7 +64,7 @@ class _DutyStaffingSectionState extends ConsumerState<DutyStaffingSection> {
             leading: const Icon(Icons.headset_mic_outlined, color: AppColors.primary),
             title: Row(
               children: [
-                const Text('Besetzung', style: TextStyle(fontWeight: FontWeight.w600)),
+                Text(l10n.attendanceStaffing, style: const TextStyle(fontWeight: FontWeight.w600)),
                 const SizedBox(width: 8),
                 DutyPill(text: '${occupants.length}/$_required', color: fillColor),
               ],
@@ -73,13 +76,13 @@ class _DutyStaffingSectionState extends ConsumerState<DutyStaffingSection> {
                     children: [
                       IconButton(
                         icon: const Icon(Icons.remove),
-                        tooltip: 'Weniger Personen benötigt',
+                        tooltip: l10n.attendanceFewerPeopleNeeded,
                         onPressed: _required <= 1 || _busy ? null : () => _changeRequired(-1),
                       ),
                       Text('$_required'),
                       IconButton(
                         icon: const Icon(Icons.add),
-                        tooltip: 'Mehr Personen benötigt',
+                        tooltip: l10n.attendanceMorePeopleNeeded,
                         onPressed: _busy ? null : () => _changeRequired(1),
                       ),
                     ],
@@ -91,18 +94,18 @@ class _DutyStaffingSectionState extends ConsumerState<DutyStaffingSection> {
             ListTile(
               dense: true,
               title: Text(pa.fullName),
-              subtitle: pa.dutyState == DutyState.self ? const Text('selbst eingetragen') : null,
+              subtitle: pa.dutyState == DutyState.self ? Text(l10n.attendanceSelfSignedUp) : null,
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   DutyPill(
-                    text: pa.dutyState == DutyState.requested ? 'angefragt' : 'bestätigt',
+                    text: pa.dutyState == DutyState.requested ? l10n.attendanceRequested : l10n.attendanceConfirmed,
                     color: pa.dutyState == DutyState.requested ? AppColors.warningDark : AppColors.successDark,
                   ),
                   if (canManage)
                     IconButton(
                       icon: const Icon(Icons.cancel_outlined, color: AppColors.medium),
-                      tooltip: 'Austragen',
+                      tooltip: l10n.attendanceUnassign,
                       onPressed: () => _unassign(pa),
                     ),
                 ],
@@ -113,19 +116,19 @@ class _DutyStaffingSectionState extends ConsumerState<DutyStaffingSection> {
                 padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
                 child: Row(
                   children: [
-                    const Expanded(
-                      child: Text('Du bist eingeteilt · Bitte bestätigen',
-                          style: TextStyle(color: AppColors.medium, fontSize: 13)),
+                    Expanded(
+                      child: Text('${l10n.signoutYouAreAssigned} · ${l10n.signoutPleaseConfirm}',
+                          style: const TextStyle(color: AppColors.medium, fontSize: 13)),
                     ),
                     OutlinedButton(
                       onPressed: () => declineDutyAction(context, ref, pa.id!, _attendanceId),
-                      child: const Text('Kann nicht'),
+                      child: Text(l10n.signoutCannot),
                     ),
                     const SizedBox(width: 8),
                     FilledButton(
                       style: FilledButton.styleFrom(backgroundColor: AppColors.success),
                       onPressed: () => confirmDutyAction(context, ref, pa.id!, _attendanceId),
-                      child: const Text('Bestätigen'),
+                      child: Text(l10n.commonConfirm),
                     ),
                   ],
                 ),
@@ -134,30 +137,30 @@ class _DutyStaffingSectionState extends ConsumerState<DutyStaffingSection> {
           if (canManage)
             ListTile(
               leading: const Icon(Icons.person_add_alt_outlined, color: AppColors.primary),
-              title: const Text('Person einteilen', style: TextStyle(color: AppColors.primary)),
+              title: Text(l10n.attendanceAssignPerson, style: const TextStyle(color: AppColors.primary)),
               onTap: _busy ? null : () => _openAssign(players, occupants.length),
             ),
           if (canManage && available.isNotEmpty) ...[
-            _divider('Verfügbar'),
+            _divider(l10n.attendanceAvailable),
             for (final pa in available)
               ListTile(
                 dense: true,
                 title: Text(pa.fullName),
                 trailing: OutlinedButton(
                   onPressed: _busy ? null : () => _assign([pa.id!]),
-                  child: const Text('Einteilen'),
+                  child: Text(l10n.attendanceAssign),
                 ),
               ),
           ],
           if (unavailable.isNotEmpty) ...[
-            _divider('Kann nicht'),
+            _divider(l10n.signoutCannot),
             for (final pa in unavailable)
               ListTile(
                 dense: true,
                 title: Text(pa.fullName),
                 subtitle: (pa.notes ?? '').isNotEmpty ? Text(pa.notes!) : null,
                 trailing: DutyPill(
-                  text: (pa.dutyState ?? '').isNotEmpty ? 'abgesagt' : 'abgemeldet',
+                  text: (pa.dutyState ?? '').isNotEmpty ? l10n.attendanceDeclined : l10n.attendanceSignedOut,
                   color: AppColors.medium,
                 ),
               ),
@@ -177,7 +180,7 @@ class _DutyStaffingSectionState extends ConsumerState<DutyStaffingSection> {
     final next = (_required + delta) < 1 ? 1 : _required + delta;
     setState(() => _localRequired = next);
     final ok = await ref.read(dutyNotifierProvider.notifier).updateDutyRequired(_attendanceId, next);
-    if (!ok && mounted) ToastHelper.showError(context, 'Fehler beim Speichern');
+    if (!ok && mounted) ToastHelper.showError(context, context.l10n.extraFieldsSaveFailed);
   }
 
   Future<void> _assign(List<String> ids) async {
@@ -188,30 +191,29 @@ class _DutyStaffingSectionState extends ConsumerState<DutyStaffingSection> {
     if (ok) {
       ToastHelper.showSuccess(
         context,
-        ids.length == 1
-            ? 'Eingeteilt, die Person wird benachrichtigt'
-            : 'Eingeteilt, die Personen werden benachrichtigt',
+        context.l10n.attendanceAssignedNotified(ids.length),
       );
     } else {
-      ToastHelper.showError(context, 'Fehler beim Einteilen');
+      ToastHelper.showError(context, context.l10n.svcAssignFailed);
     }
   }
 
   Future<void> _unassign(PersonAttendance pa) async {
     final confirmed = await DialogHelper.showConfirmation(
       context,
-      title: 'Aus dem Dienst austragen?',
-      message: '${pa.firstName ?? ''} ist dann nicht mehr eingeteilt.',
-      confirmText: 'Austragen',
+      title: context.l10n.attendanceUnassignConfirm,
+      message: context.l10n.dutyFlutterUnassignMessage(pa.firstName ?? ''),
+      confirmText: context.l10n.attendanceUnassign,
       isDestructive: true,
     );
     if (!confirmed || !mounted) return;
     final ok = await ref.read(dutyNotifierProvider.notifier).unassign(pa.id!, _attendanceId);
-    if (!ok && mounted) ToastHelper.showError(context, 'Fehler beim Austragen');
+    if (!ok && mounted) ToastHelper.showError(context, context.l10n.svcUnassignFailed);
   }
 
   /// Sheet "Person einteilen": candidates sorted by their duties in the Termin's month.
   Future<void> _openAssign(List<PersonAttendance> players, int occupied) async {
+    final l10n = context.l10n;
     setState(() => _busy = true);
     try {
       final repo = ref.read(dutyRepositoryWithTenantProvider);
@@ -251,9 +253,11 @@ class _DutyStaffingSectionState extends ConsumerState<DutyStaffingSection> {
                 unavailability, pa.personId!, widget.attendance.date, widget.attendance.typeId);
         var note = '';
         if (isCancelled(pa)) {
-          note = (pa.notes ?? '').isNotEmpty ? 'Kann nicht: ${pa.notes}' : 'Kann nicht';
+          note = (pa.notes ?? '').isNotEmpty ? l10n.attendanceCannotWithNote(pa.notes!) : l10n.signoutCannot;
         } else if (rule != null) {
-          note = rule.reason.isNotEmpty ? 'Regelmäßig verhindert: ${rule.reason}' : 'Regelmäßig verhindert';
+          note = rule.reason.isNotEmpty
+              ? l10n.attendanceRegularlyUnavailableWithReason(rule.reason)
+              : l10n.signoutRegularlyUnavailable;
         }
         return DutyCandidate(
           personAttendanceId: pa.id!,
@@ -272,13 +276,13 @@ class _DutyStaffingSectionState extends ConsumerState<DutyStaffingSection> {
         title: '${widget.attendanceType.name} · $dateLabel',
         openPlaces: (_required - occupied).clamp(0, 999),
         candidates: list,
-        monthLabel: monthNames[date.month - 1],
+        monthLabel: DateFormat.MMMM(currentIntlLocale()).format(date),
       );
       if (selected != null && selected.isNotEmpty && mounted) {
         await _assign(selected);
       }
     } catch (e) {
-      if (mounted) ToastHelper.showError(context, 'Fehler: $e');
+      if (mounted) ToastHelper.showError(context, l10n.dutyFlutterErrorWith(e));
     } finally {
       if (mounted && _busy) setState(() => _busy = false);
     }
