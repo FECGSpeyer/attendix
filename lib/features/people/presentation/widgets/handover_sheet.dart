@@ -202,6 +202,9 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
                           minimumSize: const Size(double.infinity, 48),
                           backgroundColor:
                               _stayInInstance ? null : AppColors.warning,
+                          disabledBackgroundColor: _stayInInstance
+                              ? null
+                              : AppColors.warning.withValues(alpha: 0.5),
                         ),
                       ),
                     ],

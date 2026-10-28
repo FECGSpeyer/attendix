@@ -1899,6 +1899,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get coreFlutterInvalidCopyCount => 'Invalid number of copies';
 
   @override
+  String get coreFlutterLoadFailed => 'Error loading';
+
+  @override
   String get coreFlutterNewVersionAvailable => 'New version available';
 
   @override

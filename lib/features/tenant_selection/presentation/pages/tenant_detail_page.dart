@@ -340,6 +340,9 @@ Future<void> _showDeleteTenantDialog(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.danger,
                     foregroundColor: Colors.white,
+                    disabledBackgroundColor:
+                        AppColors.danger.withValues(alpha: 0.5),
+                    disabledForegroundColor: Colors.white,
                   ),
                   child: Text(context.l10n.registerDeleteConfirm),
                 ),

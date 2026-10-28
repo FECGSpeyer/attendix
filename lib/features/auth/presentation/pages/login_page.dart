@@ -14,6 +14,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../legal/presentation/widgets/legal_content_view.dart';
 import '../../data/auth_flow_service.dart';
 import '../widgets/otp_widgets.dart';
+import 'register_page.dart';
 import '../../../../core/providers/dashboard_providers.dart'; // DASHBOARD
 import '../../../../core/services/teams/teams_service.dart'; // TEAMS
 import '../../../../l10n/l10n.dart';
@@ -35,7 +36,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   final _cooldown = ResendCooldown();
   bool _isLoading = false;
   bool _obscurePassword = true;
-  String? _errorMessage;
+  /// `/forgot-password` deep link (→ `/login?reset=1`) opens the reset alert once.
+  bool _resetHandled = false;
   // AUTH: passwordless e-mail code mode (Ionic otpMode/otpSent)
   AuthMode _mode = AuthMode.password;
   bool _otpSent = false;
@@ -43,17 +45,79 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   // found no linked account; only inside Teams).
   bool _teamsLinkMode = false;
 
+  @override
+  void initState() {
+    super.initState();
+    // Ionic: "Anmelden"/"Code senden" stay disabled until the fields are filled.
+    for (final c in [_emailController, _passwordController, _otpController]) {
+      c.addListener(_onFieldChanged);
+    }
+  }
+
+  void _onFieldChanged() {
+    if (mounted) setState(() {});
+  }
+
   // TEAMS
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if (!ref.read(isInTeamsProvider)) return;
+    Map<String, String> query;
     try {
-      _teamsLinkMode =
-          GoRouterState.of(context).uri.queryParameters['teamsLink'] == '1';
+      query = GoRouterState.of(context).uri.queryParameters;
     } catch (_) {
-      _teamsLinkMode = false;
+      query = const {};
     }
+    _teamsLinkMode = ref.read(isInTeamsProvider) && query['teamsLink'] == '1';
+    // AUTH: legacy `/forgot-password` route redirects here with reset=1.
+    if (!_resetHandled && query['reset'] == '1') {
+      _resetHandled = true;
+      final email = query['email'];
+      if (email != null && email.isNotEmpty) _emailController.text = email;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _forgotPassword();
+      });
+    }
+  }
+
+  /// Ionic `[disabled]="!registerForm.form.valid"` (password mode),
+  /// `!registerCredentials.email` (send code) and `!otpCode` (verify).
+  bool get _canSubmit {
+    if (_mode == AuthMode.password) {
+      return _emailController.text.isNotEmpty &&
+          _passwordController.text.isNotEmpty;
+    }
+    if (!_otpSent) return _emailController.text.isNotEmpty;
+    return _otpController.text.isNotEmpty;
+  }
+
+  /// Ionic shows login errors as danger toasts (db.login / Utils.showToast),
+  /// not inside the card.
+  /// A null message means a dialog explains the failure instead.
+  void _showError(String? message) {
+    if (message != null) ToastHelper.showError(context, message);
+  }
+
+  /// Ionic `forgotPassword()`: alert "Passwort zurücksetzen" with the login
+  /// e-mail prefilled, buttons Abbrechen / Zurücksetzen → db.resetPassword
+  /// (success/danger toast).
+  Future<void> _forgotPassword() async {
+    final email = await DialogHelper.showTextInput(
+      context,
+      title: context.l10n.loginResetHeader,
+      initialValue: _emailController.text.trim(),
+      hint: context.l10n.loginEmailPlaceholder,
+      confirmText: context.l10n.loginResetConfirm,
+      cancelText: context.l10n.commonCancel,
+      keyboardType: TextInputType.emailAddress,
+    );
+    if (email == null || !mounted) return;
+    final (ok, message) =
+        await ref.read(authFlowServiceProvider).resetPassword(email.trim());
+    if (!mounted) return;
+    ok
+        ? ToastHelper.showSuccess(context, message)
+        : ToastHelper.showError(context, message);
   }
 
   @override
@@ -70,10 +134,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   /// touching the form. The demo account is write-protected (DEMO_GUARD).
   Future<void> _startDemo() async {
     if (_isLoading) return;
-    setState(() {
-      _isLoading = true;
-      _errorMessage = null;
-    });
+    setState(() => _isLoading = true);
     try {
       final user = await ref.read(authFlowServiceProvider).signInWithPassword(
             AppConstants.demoMail,
@@ -81,13 +142,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           );
       if (mounted) await _routeAfterAuth(user);
     } on LoginFailure catch (failure) {
-      if (mounted) setState(() => _errorMessage = failure.message);
+      if (mounted) _showError(failure.message);
     } catch (e) {
       debugPrint('Demo login error: $e');
-      if (mounted) {
-        setState(() => _errorMessage =
-            context.l10n.loginFlutterUnexpectedError);
-      }
+      if (mounted) _showError(context.l10n.loginFlutterUnexpectedError);
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -98,7 +156,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       _mode = mode;
       _otpSent = false;
       _otpController.clear();
-      _errorMessage = null;
     });
     _cooldown.reset();
   }
@@ -115,10 +172,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   Future<void> _login() async {
     if (!_formKey.currentState!.validate()) return;
 
-    setState(() {
-      _isLoading = true;
-      _errorMessage = null;
-    });
+    setState(() => _isLoading = true);
 
     try {
       if (_teamsLinkMode) {
@@ -132,7 +186,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       if (mounted) await _routeAfterAuth(user);
     } on LoginFailure catch (failure) {
       if (!mounted) return;
-      setState(() => _errorMessage = failure.message);
+      _showError(failure.message);
       switch (failure.kind) {
         case LoginFailureKind.emailNotConfirmed:
           await _promptResendConfirmation();
@@ -146,9 +200,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     } catch (e) {
       debugPrint('Login error: $e');
       if (!mounted) return;
-      setState(() {
-        _errorMessage = context.l10n.loginFlutterUnexpectedError;
-      });
+      _showError(context.l10n.loginFlutterUnexpectedError);
     } finally {
       if (mounted) {
         setState(() {
@@ -192,13 +244,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   Future<void> _requestCode() async {
     final email = _emailController.text.trim();
     if (!isValidEmail(email)) {
-      setState(() => _errorMessage = context.l10n.loginToastInvalidEmail);
+      _showError(context.l10n.loginToastInvalidEmail);
       return;
     }
-    setState(() {
-      _isLoading = true;
-      _errorMessage = null;
-    });
+    setState(() => _isLoading = true);
     final result = await ref
         .read(authFlowServiceProvider)
         .sendEmailOtp(email, allowCreate: false);
@@ -209,7 +258,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       _cooldown.start();
       ToastHelper.showSuccess(context, result.message);
     } else {
-      setState(() => _errorMessage = result.message);
+      _showError(result.message);
       if (result.noAccount) await _promptRegister();
     }
   }
@@ -217,17 +266,14 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   Future<void> _verifyCode() async {
     final code = _otpController.text.trim();
     if (code.isEmpty || _isLoading) return;
-    setState(() {
-      _isLoading = true;
-      _errorMessage = null;
-    });
+    setState(() => _isLoading = true);
     final result = await ref
         .read(authFlowServiceProvider)
         .verifyEmailOtp(_emailController.text.trim(), code);
     if (!mounted) return;
     setState(() => _isLoading = false);
     if (!result.success) {
-      setState(() => _errorMessage = result.message);
+      _showError(result.message);
       return;
     }
     final user = ref.read(supabaseClientProvider).auth.currentUser;
@@ -253,12 +299,21 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     }
   }
 
-  void _openRegister() {
+  /// Ionic `register()`: RegisterModalComponent as a modal over the login
+  /// page. On `registered` show the toast, on `signedIn` route like a login.
+  Future<void> _openRegister() async {
     final email = _emailController.text.trim();
-    final path = email.isNotEmpty
-        ? '/register?email=${Uri.encodeComponent(email)}'
-        : '/register';
-    context.push(path);
+    final outcome = await showRegisterModal(
+      context,
+      email: email.isNotEmpty ? email : null,
+    );
+    if (!mounted || outcome == null) return;
+    if (outcome == RegisterOutcome.signedIn) {
+      final user = ref.read(supabaseClientProvider).auth.currentUser;
+      if (user != null) await _routeAfterAuth(user);
+    } else {
+      ToastHelper.showSuccess(context, context.l10n.loginToastRegistered);
+    }
   }
 
   /// Ionic promptResendConfirmation(): "E-Mail nicht bestätigt".
@@ -395,7 +450,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
   Widget _primaryButton(String label, VoidCallback onPressed) {
     return ElevatedButton(
-      onPressed: _isLoading ? null : onPressed,
+      onPressed: _isLoading || !_canSubmit ? null : onPressed,
       child: _isLoading
           ? const SizedBox(
               height: 20,
@@ -546,31 +601,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Error message
-          if (_errorMessage != null) ...[
-            Container(
-              padding: const EdgeInsets.all(AppDimensions.paddingM),
-              decoration: BoxDecoration(
-                color: AppColors.danger.withValues(alpha: 0.1),
-                borderRadius:
-                    BorderRadius.circular(AppDimensions.borderRadiusM),
-              ),
-              child: Row(
-                children: [
-                  const Icon(Icons.error_outline, color: AppColors.danger),
-                  const SizedBox(width: AppDimensions.paddingS),
-                  Expanded(
-                    child: Text(
-                      _errorMessage!,
-                      style: const TextStyle(color: AppColors.danger),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: AppDimensions.paddingM),
-          ],
-
           // TEAMS: link-mode note replaces the mode segment
           if (_teamsLinkMode)
             Text(
@@ -654,12 +684,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   child: Text(context.l10n.loginRegister),
                 ),
                 TextButton(
-                  onPressed: () {
-                    final email = _emailController.text.trim();
-                    context.push(email.isNotEmpty
-                        ? '/forgot-password?email=${Uri.encodeComponent(email)}'
-                        : '/forgot-password');
-                  },
+                  onPressed: _forgotPassword,
                   child: Text(context.l10n.loginForgotPassword),
                 ),
               ],

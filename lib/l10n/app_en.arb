@@ -544,6 +544,7 @@
   "coreFlutterImportSongNameRequired": "Name is required",
   "coreFlutterImportSongNumberExists": "Song number already exists in this instance",
   "coreFlutterInvalidCopyCount": "Invalid number of copies",
+  "coreFlutterLoadFailed": "Error loading",
   "coreFlutterNewVersionAvailable": "New version available",
   "coreFlutterNoBranding": "No branding",
   "coreFlutterNoConnection": "No internet connection",

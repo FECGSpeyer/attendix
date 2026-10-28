@@ -205,8 +205,19 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
     final data = dataAsync.valueOrNull;
 
     if (data == null) {
+      final sharingId = widget.songSharingId;
       return Scaffold(
-        appBar: AppBar(title: Text(context.l10n.songsFlutterSong)),
+        appBar: AppBar(
+          title: Text(context.l10n.songsFlutterSong),
+          // Ionic: back button with defaultHref = the share link's list.
+          leading: sharingId != null
+              ? BackButton(
+                  onPressed: () => context.canPop()
+                      ? context.pop()
+                      : context.go('/$sharingId'),
+                )
+              : null,
+        ),
         body: dataAsync.isLoading
             ? const Center(child: CircularProgressIndicator())
             : dataAsync.hasError

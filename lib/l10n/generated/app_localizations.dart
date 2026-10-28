@@ -3359,6 +3359,12 @@ abstract class AppLocalizations {
   /// **'Ungültige Kopienanzahl'**
   String get coreFlutterInvalidCopyCount;
 
+  /// core.flutter.loadFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Laden'**
+  String get coreFlutterLoadFailed;
+
   /// core.flutter.newVersionAvailable
   ///
   /// In de, this message translates to:

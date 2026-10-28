@@ -13,12 +13,39 @@ import '../../data/auth_flow_service.dart';
 import '../widgets/otp_widgets.dart';
 import '../../../../l10n/l10n.dart';
 import '../widgets/ion_input_decoration.dart';
+import '../../../../shared/widgets/dialogs/ion_modal.dart';
+
+/// How the registration ended (Ionic register-modal dismiss data).
+enum RegisterOutcome {
+  /// Password sign-up done, confirmation mail sent (`{ success: true }`).
+  registered,
+
+  /// The user is signed in (OTP registration or existing account,
+  /// `{ success: true, signedIn: true }`).
+  signedIn,
+}
+
+/// Opens the registration like Ionic `register()` on the login page: a
+/// centred 600 × 500 modal on desktop, full screen on phones.
+Future<RegisterOutcome?> showRegisterModal(BuildContext context,
+    {String? email}) {
+  return showIonModal<RegisterOutcome>(
+    context,
+    builder: (_) => RegisterPage(email: email, isModal: true),
+  );
+}
 
 /// Register page (Ionic login/register-modal).
+///
+/// Shown as a modal from the login page ([showRegisterModal]); the
+/// `/register` route renders the same widget full screen for deep links.
 class RegisterPage extends ConsumerStatefulWidget {
-  const RegisterPage({super.key, this.email});
+  const RegisterPage({super.key, this.email, this.isModal = false});
 
   final String? email;
+
+  /// Presented via [showRegisterModal]: pops with a [RegisterOutcome].
+  final bool isModal;
 
   @override
   ConsumerState<RegisterPage> createState() => _RegisterPageState();
@@ -33,8 +60,6 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
   final _cooldown = ResendCooldown();
   bool _isLoading = false;
   bool _obscurePassword = true;
-  String? _errorMessage;
-  bool _registrationSuccess = false;
   // LEGAL_HELP: privacy consent (Ionic register modal)
   bool _privacyAccepted = false;
   // AUTH: passwordless registration with an e-mail code
@@ -47,7 +72,37 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
     if (widget.email != null && widget.email!.isNotEmpty) {
       _emailController.text = widget.email!;
     }
+    // Ionic: the submit button is disabled until the fields are filled.
+    for (final c in [
+      _emailController,
+      _passwordController,
+      _confirmPasswordController,
+      _otpController,
+    ]) {
+      c.addListener(_onFieldChanged);
+    }
   }
+
+  void _onFieldChanged() {
+    if (mounted) setState(() {});
+  }
+
+  /// Ionic `canSubmit` / `[disabled]` per mode.
+  bool get _canSubmit {
+    if (_isLoading) return false;
+    final hasEmail = _emailController.text.isNotEmpty;
+    if (_mode == AuthMode.password) {
+      return hasEmail &&
+          _passwordController.text.isNotEmpty &&
+          _confirmPasswordController.text.isNotEmpty &&
+          _privacyAccepted;
+    }
+    if (!_otpSent) return hasEmail && _privacyAccepted;
+    return _otpController.text.isNotEmpty;
+  }
+
+  /// Ionic `Utils.showToast(..., 'danger')` instead of an inline error box.
+  void _showError(String message) => ToastHelper.showError(context, message);
 
   @override
   void dispose() {
@@ -65,12 +120,33 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
       _mode = mode;
       _otpSent = false;
       _otpController.clear();
-      _errorMessage = null;
     });
     _cooldown.reset();
   }
 
-  void _close() => context.canPop() ? context.pop() : context.go('/login');
+  void _close() {
+    if (widget.isModal || Navigator.of(context).canPop()) {
+      Navigator.of(context).pop();
+    } else {
+      context.go('/login');
+    }
+  }
+
+  /// Ionic: the modal dismisses only on success; the login page then shows
+  /// the "registered" toast or routes the signed-in user.
+  void _finish(RegisterOutcome outcome) {
+    if (widget.isModal) {
+      Navigator.of(context).pop(outcome);
+      return;
+    }
+    // `/register` deep link: same follow-up as the login page.
+    if (outcome == RegisterOutcome.registered) {
+      ToastHelper.showSuccess(context, context.l10n.loginToastRegistered);
+      context.go('/login');
+    } else {
+      context.go('/tenants');
+    }
+  }
 
   void _onSubmit() {
     if (_mode == AuthMode.otp) {
@@ -84,27 +160,23 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
   Future<void> _register() async {
     final email = _emailController.text.trim();
     if (!isValidEmail(email)) {
-      setState(() => _errorMessage = context.l10n.registerModalInvalidEmail);
+      _showError(context.l10n.registerModalInvalidEmail);
       return;
     }
     if (_passwordController.text != _confirmPasswordController.text) {
-      setState(() => _errorMessage = context.l10n.registerModalPasswordMismatch);
+      _showError(context.l10n.registerModalPasswordMismatch);
       return;
     }
     if (_passwordController.text.length < 6) {
-      setState(
-          () => _errorMessage = context.l10n.registerModalPasswordTooShort);
+      _showError(context.l10n.registerModalPasswordTooShort);
       return;
     }
     if (!_privacyAccepted) {
-      setState(() => _errorMessage = context.l10n.registerModalAcceptPrivacyToast);
+      _showError(context.l10n.registerModalAcceptPrivacyToast);
       return;
     }
 
-    setState(() {
-      _isLoading = true;
-      _errorMessage = null;
-    });
+    setState(() => _isLoading = true);
 
     try {
       final supabase = ref.read(supabaseClientProvider);
@@ -128,22 +200,21 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
             email: email,
             password: _passwordController.text,
           );
-          return; // Signed in – the router takes over.
+          if (mounted) _finish(RegisterOutcome.signedIn);
+          return;
         } catch (_) {
           if (!mounted) return;
-          setState(() => _errorMessage =
-              context.l10n.dbEmailExists);
+          _showError(context.l10n.dbEmailExists);
           return;
         }
       }
 
       if (!mounted) return;
-      if (response.session != null) return; // auto-confirmed → router
-      ToastHelper.showSuccess(context,
-          context.l10n.loginToastRegistered);
-      setState(() {
-        _registrationSuccess = true;
-      });
+      if (response.session != null) {
+        _finish(RegisterOutcome.signedIn); // auto-confirmed
+        return;
+      }
+      _finish(RegisterOutcome.registered);
     } catch (e) {
       if (!mounted) return;
       String errorMessage;
@@ -161,9 +232,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
       } else {
         errorMessage = context.l10n.registerModalFailed;
       }
-      setState(() {
-        _errorMessage = errorMessage;
-      });
+      _showError(errorMessage);
     } finally {
       if (mounted) {
         setState(() {
@@ -177,17 +246,14 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
   Future<void> _requestCode() async {
     final email = _emailController.text.trim();
     if (!isValidEmail(email)) {
-      setState(() => _errorMessage = context.l10n.registerModalInvalidEmail);
+      _showError(context.l10n.registerModalInvalidEmail);
       return;
     }
     if (!_privacyAccepted) {
-      setState(() => _errorMessage = context.l10n.registerModalAcceptPrivacyToast);
+      _showError(context.l10n.registerModalAcceptPrivacyToast);
       return;
     }
-    setState(() {
-      _isLoading = true;
-      _errorMessage = null;
-    });
+    setState(() => _isLoading = true);
     final result = await ref
         .read(authFlowServiceProvider)
         .sendEmailOtp(email, allowCreate: true);
@@ -198,85 +264,44 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
       _cooldown.start();
       ToastHelper.showSuccess(context, result.message);
     } else {
-      setState(() => _errorMessage = result.message);
+      _showError(result.message);
     }
   }
 
   Future<void> _verifyCode() async {
     final code = _otpController.text.trim();
     if (code.isEmpty || _isLoading) return;
-    setState(() {
-      _isLoading = true;
-      _errorMessage = null;
-    });
+    setState(() => _isLoading = true);
     final service = ref.read(authFlowServiceProvider);
     final result =
         await service.verifyEmailOtp(_emailController.text.trim(), code);
     if (!result.success) {
       if (!mounted) return;
-      setState(() {
-        _isLoading = false;
-        _errorMessage = result.message;
-      });
+      setState(() => _isLoading = false);
+      _showError(result.message);
       return;
     }
     // Stamp terms acceptance — the checkbox was accepted before requesting.
     await service.stampTermsAccepted();
     if (!mounted) return;
     setState(() => _isLoading = false);
-    // Signed in: new users without a tenant land on the tenant page.
-    context.go('/tenants');
+    // Signed in: the login page routes (new users land on the tenant page).
+    _finish(RegisterOutcome.signedIn);
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_registrationSuccess) {
-      return Scaffold(
-        body: SafeArea(
-          child: Center(
-            child: Padding(
-              padding: const EdgeInsets.all(AppDimensions.paddingL),
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: AppDimensions.maxFormWidth),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(
-                      Icons.mark_email_read_outlined,
-                      size: 80,
-                      color: AppColors.success,
-                    ),
-                    const SizedBox(height: AppDimensions.paddingL),
-                    Text(
-                      context.l10n.loginFlutterConfirmEmail,
-                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: AppDimensions.paddingM),
-                    Text(
-                      context.l10n.loginFlutterConfirmEmailSent(_emailController.text),
-                      style: Theme.of(context).textTheme.bodyMedium,
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: AppDimensions.paddingXL),
-                    ElevatedButton(
-                      onPressed: () => context.go('/login'),
-                      child: Text(context.l10n.loginFlutterToLogin),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-      );
-    }
-
     final theme = Theme.of(context);
+    // Ionic register-modal.component.scss
+    const introStyle =
+        TextStyle(fontSize: 15.2, height: 1.4, color: Color(0xFF86888F));
+    const hintStyle =
+        TextStyle(fontSize: 13.6, height: 1.4, color: AppColors.medium);
+    const privacyStyle = TextStyle(fontSize: 14.4, height: 1.4);
+    const actionGap = SizedBox(height: 4); // .actions gap: 0.25rem
     // Ionic register-modal: modal page on the plain background colour with
-    // a close button on the right (no back arrow).
+    // a close button on the right (no back arrow). Content starts at the top
+    // (ion-content + ion-padding), no vertical centring.
     return Scaffold(
       backgroundColor: theme.cardTheme.color ?? theme.colorScheme.surface,
       appBar: AppBar(
@@ -291,36 +316,35 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
         ],
       ),
       body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(AppDimensions.paddingL),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(AppDimensions.paddingM),
+          child: Align(
+            alignment: Alignment.topCenter,
             child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: AppDimensions.maxFormWidth),
+              constraints:
+                  const BoxConstraints(maxWidth: AppDimensions.maxFormWidth),
               child: Form(
                 key: _formKey,
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     // AUTH: intro (Ionic registerModal.welcome/intro/hint)
                     Text(
                       context.l10n.registerModalWelcome,
-                      style: theme.textTheme.titleLarge
-                          ?.copyWith(fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.w500),
                     ),
                     const SizedBox(height: AppDimensions.paddingS),
-                    Text(
-                      context.l10n.registerModalIntro,
-                    ),
+                    Text(context.l10n.registerModalIntro, style: introStyle),
                     const SizedBox(height: AppDimensions.paddingS),
                     Text(
                       _mode == AuthMode.otp
                           ? context.l10n.registerModalHintOtp
                           : context.l10n.registerModalHintPassword,
-                      style: theme.textTheme.bodySmall
-                          ?.copyWith(color: AppColors.medium),
+                      style: hintStyle,
                     ),
-                    const SizedBox(height: AppDimensions.paddingL),
+                    const SizedBox(height: AppDimensions.paddingM),
 
                     AuthModeSegment(
                       mode: _mode,
@@ -328,30 +352,6 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                       onChanged: _setMode,
                     ),
                     const SizedBox(height: AppDimensions.paddingM),
-
-                    // Error message
-                    if (_errorMessage != null) ...[
-                      Container(
-                        padding: const EdgeInsets.all(AppDimensions.paddingM),
-                        decoration: BoxDecoration(
-                          color: AppColors.danger.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(AppDimensions.borderRadiusM),
-                        ),
-                        child: Row(
-                          children: [
-                            const Icon(Icons.error_outline, color: AppColors.danger),
-                            const SizedBox(width: AppDimensions.paddingS),
-                            Expanded(
-                              child: Text(
-                                _errorMessage!,
-                                style: const TextStyle(color: AppColors.danger),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: AppDimensions.paddingM),
-                    ],
 
                     // Email field
                     TextFormField(
@@ -401,10 +401,13 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                         controller: _confirmPasswordController,
                         obscureText: _obscurePassword,
                         textInputAction: TextInputAction.done,
-                        onFieldSubmitted: (_) => _onSubmit(),
+                        onFieldSubmitted: (_) {
+                          if (_canSubmit) _onSubmit();
+                        },
                         decoration: ionStackedInputDecoration(
                           context.l10n.registerModalConfirmPassword,
-                          hint: context.l10n.registerModalConfirmPasswordPlaceholder,
+                          hint: context
+                              .l10n.registerModalConfirmPasswordPlaceholder,
                         ),
                       ),
                       const SizedBox(height: AppDimensions.paddingM),
@@ -424,35 +427,46 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                       controlAffinity: ListTileControlAffinity.leading,
                       onChanged: (v) =>
                           setState(() => _privacyAccepted = v ?? false),
-                      title: Wrap(
-                        crossAxisAlignment: WrapCrossAlignment.center,
-                        children: [
-                          Text('${context.l10n.registerModalPrivacyBefore} '),
-                          InkWell(
-                            onTap: () => showLegalModal(context),
-                            child: Text(
-                              context.l10n.registerModalPrivacyLink,
-                              style: const TextStyle(
-                                color: AppColors.primary,
-                                decoration: TextDecoration.underline,
+                      title: Text.rich(
+                        TextSpan(
+                          style: privacyStyle,
+                          children: [
+                            TextSpan(
+                                text:
+                                    '${context.l10n.registerModalPrivacyBefore} '),
+                            WidgetSpan(
+                              alignment: PlaceholderAlignment.baseline,
+                              baseline: TextBaseline.alphabetic,
+                              child: InkWell(
+                                onTap: () => showLegalModal(context),
+                                child: Text(
+                                  context.l10n.registerModalPrivacyLink,
+                                  style: privacyStyle.copyWith(
+                                    color: AppColors.primary,
+                                    decoration: TextDecoration.underline,
+                                    decorationColor: AppColors.primary,
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
-                          Text(context.l10n.registerModalPrivacyAfter),
-                        ],
+                            TextSpan(
+                                text: context.l10n.registerModalPrivacyAfter),
+                          ],
+                        ),
                       ),
                     ),
                     const SizedBox(height: AppDimensions.paddingM),
 
                     ElevatedButton(
-                      onPressed: _isLoading || !_privacyAccepted ? null : _onSubmit,
+                      onPressed: _canSubmit ? _onSubmit : null,
                       child: _isLoading
                           ? const SizedBox(
                               height: 20,
                               width: 20,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
-                                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                valueColor:
+                                    AlwaysStoppedAnimation<Color>(Colors.white),
                               ),
                             )
                           : Text(_mode == AuthMode.password
@@ -461,7 +475,8 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                                   ? context.l10n.registerModalConfirm
                                   : context.l10n.loginSendCode),
                     ),
-                    if (_mode == AuthMode.otp && _otpSent)
+                    if (_mode == AuthMode.otp && _otpSent) ...[
+                      actionGap,
                       Center(
                         child: ResendCodeButton(
                           cooldown: _cooldown,
@@ -469,8 +484,8 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                           onResend: _requestCode,
                         ),
                       ),
-                    const SizedBox(height: AppDimensions.paddingL),
-
+                    ],
+                    actionGap,
                     // Ionic: clear "Abbrechen" button closes the modal.
                     TextButton(
                       onPressed: _isLoading ? null : _close,

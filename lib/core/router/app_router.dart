@@ -12,7 +12,6 @@ import '../services/tracking/tracking_event.dart'; // MISC2
 import '../services/tracking/tracking_service.dart'; // MISC2
 import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/auth/presentation/pages/register_page.dart';
-import '../../features/auth/presentation/pages/forgot_password_page.dart';
 import '../../features/auth/presentation/pages/new_password_page.dart'; // AUTH
 import '../../features/tenant_selection/presentation/pages/tenant_selection_page.dart';
 import '../../features/tenant_selection/presentation/pages/tenant_create_page.dart';
@@ -376,12 +375,18 @@ final routerProvider = Provider<GoRouter>((ref) {
           email: state.uri.queryParameters['email'],
         ),
       ),
+      // UX_PRELOGIN: Ionic has no reset page, only the login alert
+      // "Passwort zurücksetzen" → old links open it on /login.
       GoRoute(
         path: '/forgot-password',
         name: 'forgotPassword',
-        builder: (context, state) => ForgotPasswordPage(
-          email: state.uri.queryParameters['email'], // AUTH
-        ),
+        redirect: (context, state) {
+          final email = state.uri.queryParameters['email'];
+          return Uri(path: '/login', queryParameters: {
+            'reset': '1',
+            if (email != null && email.isNotEmpty) 'email': email,
+          }).toString();
+        },
       ),
       // AUTH: set a new password after a recovery link
       GoRoute(
