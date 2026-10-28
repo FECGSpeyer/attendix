@@ -9,7 +9,11 @@ import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/providers/user_preferences_provider.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/utils/dialog_helper.dart';
+import '../../../../core/utils/toast_helper.dart';
 import '../../../legal/presentation/widgets/legal_content_view.dart';
+import '../../data/auth_flow_service.dart';
+import '../widgets/otp_widgets.dart';
 import '../../../../core/providers/dashboard_providers.dart'; // DASHBOARD
 
 /// Login page
@@ -24,21 +28,48 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _otpController = TextEditingController();
+  final _cooldown = ResendCooldown();
   bool _isLoading = false;
   bool _obscurePassword = true;
   String? _errorMessage;
+  // AUTH: passwordless e-mail code mode (Ionic otpMode/otpSent)
+  AuthMode _mode = AuthMode.password;
+  bool _otpSent = false;
 
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+    _otpController.dispose();
+    _cooldown.dispose();
     super.dispose();
   }
 
   void _startDemo() {
+    _setMode(AuthMode.password);
     _emailController.text = AppConstants.demoMail;
     _passwordController.text = AppConstants.demoPassword;
     _login();  // Fire-and-forget OK — _login has its own try-catch + mounted checks
+  }
+
+  void _setMode(AuthMode mode) {
+    setState(() {
+      _mode = mode;
+      _otpSent = false;
+      _otpController.clear();
+      _errorMessage = null;
+    });
+    _cooldown.reset();
+  }
+
+  /// Ionic onEnter(): route Enter/submit to the action of the current mode.
+  void _onSubmit() {
+    if (_mode == AuthMode.otp) {
+      _otpSent ? _verifyCode() : _requestCode();
+    } else {
+      _login();
+    }
   }
 
   Future<void> _login() async {
@@ -50,64 +81,30 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     });
 
     try {
-      final supabase = ref.read(supabaseClientProvider);
-      final response = await supabase.auth.signInWithPassword(
-        email: _emailController.text.trim(),
-        password: _passwordController.text,
-      );
-
-      if (response.user != null && mounted) {
-        // Check if user wants to skip tenant selection
-        final userPrefs =
-            UserPreferences.fromUserMetadata(response.user!.userMetadata);
-
-        if (!userPrefs.wantInstanceSelection &&
-            userPrefs.currentTenantId != null) {
-          // Try to auto-navigate to saved tenant
-          final navigated = await _tryAutoNavigateToTenant(
-            userPrefs.currentTenantId!,
+      final user = await ref.read(authFlowServiceProvider).signInWithPassword(
+            _emailController.text.trim(),
+            _passwordController.text,
           );
-          if (navigated) return;
-        }
-
-        // Default: show tenant selection
-        if (mounted) {
-          context.go('/tenants');
-        }
-      } else if (mounted) {
-        setState(() {
-          _errorMessage =
-              'Login fehlgeschlagen. Benutzer konnte nicht authentifiziert werden.';
-        });
+      if (mounted) await _routeAfterAuth(user);
+    } on LoginFailure catch (failure) {
+      if (!mounted) return;
+      setState(() => _errorMessage = failure.message);
+      switch (failure.kind) {
+        case LoginFailureKind.emailNotConfirmed:
+          await _promptResendConfirmation();
+        case LoginFailureKind.invalidCredentials:
+          await _promptSwitchToOtp();
+        case LoginFailureKind.userNotFound:
+          await _promptRegister();
+        case LoginFailureKind.other:
+          break;
       }
     } catch (e) {
       debugPrint('Login error: $e');
-      String errorMessage;
-      if (e is AuthException) {
-        errorMessage = switch (e.message) {
-          'Invalid login credentials' =>
-            'E-Mail oder Passwort ist falsch.',
-          'Email not confirmed' =>
-            'Bitte bestätige zuerst deine E-Mail-Adresse.',
-          'User not found' =>
-            'Kein Konto mit dieser E-Mail gefunden.',
-          'Too many requests' =>
-            'Zu viele Versuche. Bitte warte einen Moment.',
-          'User banned' || 'User is banned' =>
-            'Dein Konto wurde gesperrt. Bitte kontaktiere den Administrator.',
-          _ when e.message.contains('rate limit') =>
-            'Zu viele Anfragen. Bitte warte einen Moment.',
-          _ when e.message.contains('network') =>
-            'Netzwerkfehler. Bitte prüfe deine Internetverbindung.',
-          _ => 'Login fehlgeschlagen: ${e.message}',
-        };
-      } else {
-        errorMessage =
-            'Ein unerwarteter Fehler ist aufgetreten. Bitte versuche es erneut.';
-      }
       if (!mounted) return;
       setState(() {
-        _errorMessage = errorMessage;
+        _errorMessage =
+            'Ein unerwarteter Fehler ist aufgetreten. Bitte versuche es erneut.';
       });
     } finally {
       if (mounted) {
@@ -116,6 +113,156 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         });
       }
     }
+  }
+
+  /// Ionic requestCode(): sign-in only, never creates a new account.
+  Future<void> _requestCode() async {
+    final email = _emailController.text.trim();
+    if (!isValidEmail(email)) {
+      setState(() =>
+          _errorMessage = 'Bitte eine gültige E-Mail Adresse eingeben.');
+      return;
+    }
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+    final result = await ref
+        .read(authFlowServiceProvider)
+        .sendEmailOtp(email, allowCreate: false);
+    if (!mounted) return;
+    setState(() => _isLoading = false);
+    if (result.success) {
+      setState(() => _otpSent = true);
+      _cooldown.start();
+      ToastHelper.showSuccess(context, result.message);
+    } else {
+      setState(() => _errorMessage = result.message);
+      if (result.noAccount) await _promptRegister();
+    }
+  }
+
+  Future<void> _verifyCode() async {
+    final code = _otpController.text.trim();
+    if (code.isEmpty || _isLoading) return;
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+    final result = await ref
+        .read(authFlowServiceProvider)
+        .verifyEmailOtp(_emailController.text.trim(), code);
+    if (!mounted) return;
+    setState(() => _isLoading = false);
+    if (!result.success) {
+      setState(() => _errorMessage = result.message);
+      return;
+    }
+    final user = ref.read(supabaseClientProvider).auth.currentUser;
+    if (user != null) await _routeAfterAuth(user);
+  }
+
+  /// Navigate after a successful sign-in (Ionic routeAfterAuth).
+  Future<void> _routeAfterAuth(User user) async {
+    // Check if user wants to skip tenant selection
+    final userPrefs = UserPreferences.fromUserMetadata(user.userMetadata);
+
+    if (!userPrefs.wantInstanceSelection && userPrefs.currentTenantId != null) {
+      // Try to auto-navigate to saved tenant
+      final navigated = await _tryAutoNavigateToTenant(
+        userPrefs.currentTenantId!,
+      );
+      if (navigated) return;
+    }
+
+    // Default: show tenant selection
+    if (mounted) {
+      context.go('/tenants');
+    }
+  }
+
+  void _openRegister() {
+    final email = _emailController.text.trim();
+    final path = email.isNotEmpty
+        ? '/register?email=${Uri.encodeComponent(email)}'
+        : '/register';
+    context.push(path);
+  }
+
+  /// Ionic promptResendConfirmation(): "E-Mail nicht bestätigt".
+  Future<void> _promptResendConfirmation() async {
+    final controller = TextEditingController(text: _emailController.text.trim());
+    final target = await showDialog<String>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('E-Mail nicht bestätigt'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Deine E-Mail-Adresse wurde noch nicht bestätigt. Möchtest du die Bestätigungs-E-Mail erneut senden?',
+            ),
+            const SizedBox(height: AppDimensions.paddingM),
+            TextField(
+              controller: controller,
+              keyboardType: TextInputType.emailAddress,
+              decoration: const InputDecoration(hintText: 'E-Mail eingeben...'),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Abbrechen'),
+          ),
+          FilledButton(
+            onPressed: () {
+              final value = controller.text.trim();
+              if (value.isEmpty) {
+                ToastHelper.showWarning(
+                    ctx, 'Bitte gib deine E-Mail-Adresse ein.');
+                return;
+              }
+              Navigator.pop(ctx, value);
+            },
+            child: const Text('Erneut senden'),
+          ),
+        ],
+      ),
+    );
+    controller.dispose();
+    if (target == null || !mounted) return;
+    final (ok, message) =
+        await ref.read(authFlowServiceProvider).resendConfirmationEmail(target);
+    if (!mounted) return;
+    ok
+        ? ToastHelper.showSuccess(context, message)
+        : ToastHelper.showError(context, message);
+  }
+
+  /// Ionic promptRegister(): "Kein Konto gefunden".
+  Future<void> _promptRegister() async {
+    final register = await DialogHelper.showConfirmation(
+      context,
+      title: 'Kein Konto gefunden',
+      message:
+          'Für diese E-Mail-Adresse existiert noch kein Konto. Möchtest du dich jetzt registrieren?',
+      confirmText: 'Registrieren',
+    );
+    if (register && mounted) _openRegister();
+  }
+
+  /// Ionic promptSwitchToOtp(): wrong password → offer code login.
+  Future<void> _promptSwitchToOtp() async {
+    final switchMode = await DialogHelper.showConfirmation(
+      context,
+      title: 'Anmeldung fehlgeschlagen',
+      message:
+          'E-Mail oder Passwort ist falsch. Falls du kein Passwort gesetzt hast, kannst du dich stattdessen mit einem Code per E-Mail anmelden.',
+      confirmText: 'Code per E-Mail',
+    );
+    if (switchMode && mounted) _setMode(AuthMode.otp);
   }
 
   /// Try to auto-navigate to the saved tenant
@@ -176,6 +323,22 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
     if (response == null) return Role.none;
     return Role.fromValue(response['role'] as int? ?? 99);
+  }
+
+  Widget _primaryButton(String label, VoidCallback onPressed) {
+    return ElevatedButton(
+      onPressed: _isLoading ? null : onPressed,
+      child: _isLoading
+          ? const SizedBox(
+              height: 20,
+              width: 20,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+              ),
+            )
+          : Text(label),
+    );
   }
 
   @override
@@ -242,103 +405,125 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       const SizedBox(height: AppDimensions.paddingM),
                     ],
 
+                    // AUTH: mode segment (Passwort / Code per E-Mail)
+                    AuthModeSegment(
+                      mode: _mode,
+                      enabled: !_isLoading,
+                      onChanged: _setMode,
+                    ),
+                    const SizedBox(height: AppDimensions.paddingM),
+
                     // Email field
                     TextFormField(
                       controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
-                      textInputAction: TextInputAction.next,
+                      textInputAction: _mode == AuthMode.password
+                          ? TextInputAction.next
+                          : TextInputAction.go,
                       autocorrect: false,
+                      readOnly: _mode == AuthMode.otp && _otpSent,
+                      autofillHints: const [AutofillHints.email],
+                      onFieldSubmitted: _mode == AuthMode.otp && !_otpSent
+                          ? (_) => _requestCode()
+                          : null,
                       decoration: const InputDecoration(
                         labelText: 'E-Mail',
                         prefixIcon: Icon(Icons.email_outlined),
                       ),
                       validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Bitte E-Mail eingeben';
+                        if (value == null || value.trim().isEmpty) {
+                          return 'Bitte gib deine E-Mail-Adresse ein.';
                         }
-                        if (!value.contains('@')) {
-                          return 'Bitte gültige E-Mail eingeben';
+                        if (!isValidEmail(value)) {
+                          return 'Bitte eine gültige E-Mail Adresse eingeben.';
                         }
                         return null;
                       },
                     ),
                     const SizedBox(height: AppDimensions.paddingM),
 
-                    // Password field
-                    TextFormField(
-                      controller: _passwordController,
-                      obscureText: _obscurePassword,
-                      textInputAction: TextInputAction.done,
-                      onFieldSubmitted: (_) => _login(),
-                      decoration: InputDecoration(
-                        labelText: 'Passwort',
-                        prefixIcon: const Icon(Icons.lock_outlined),
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            _obscurePassword
-                                ? Icons.visibility_outlined
-                                : Icons.visibility_off_outlined,
+                    if (_mode == AuthMode.password) ...[
+                      // Password field
+                      TextFormField(
+                        controller: _passwordController,
+                        obscureText: _obscurePassword,
+                        textInputAction: TextInputAction.done,
+                        autofillHints: const [AutofillHints.password],
+                        onFieldSubmitted: (_) => _onSubmit(),
+                        decoration: InputDecoration(
+                          labelText: 'Passwort',
+                          prefixIcon: const Icon(Icons.lock_outlined),
+                          suffixIcon: IconButton(
+                            tooltip: 'Passwort anzeigen',
+                            icon: Icon(
+                              _obscurePassword
+                                  ? Icons.visibility_outlined
+                                  : Icons.visibility_off_outlined,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _obscurePassword = !_obscurePassword;
+                              });
+                            },
                           ),
-                          onPressed: () {
-                            setState(() {
-                              _obscurePassword = !_obscurePassword;
-                            });
-                          },
                         ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Bitte Passwort eingeben';
+                          }
+                          return null;
+                        },
                       ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Bitte Passwort eingeben';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: AppDimensions.paddingS),
+                      const SizedBox(height: AppDimensions.paddingS),
 
-                    // Forgot password link
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: TextButton(
-                        onPressed: () => context.push('/forgot-password'),
-                        child: const Text('Passwort vergessen?'),
+                      // Register + forgot password links (Ionic)
+                      Wrap(
+                        alignment: WrapAlignment.spaceBetween,
+                        children: [
+                          TextButton(
+                            onPressed: _openRegister,
+                            child: const Text('Registrieren'),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              final email = _emailController.text.trim();
+                              context.push(email.isNotEmpty
+                                  ? '/forgot-password?email=${Uri.encodeComponent(email)}'
+                                  : '/forgot-password');
+                            },
+                            child: const Text('Passwort vergessen?'),
+                          ),
+                        ],
                       ),
-                    ),
-                    const SizedBox(height: AppDimensions.paddingM),
-
-                    // Login button
-                    ElevatedButton(
-                      onPressed: _isLoading ? null : _login,
-                      child: _isLoading
-                          ? const SizedBox(
-                              height: 20,
-                              width: 20,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                              ),
-                            )
-                          : const Text('Anmelden'),
-                    ),
-                    const SizedBox(height: AppDimensions.paddingL),
-
-                    // Register link
-                    Wrap(
-                      alignment: WrapAlignment.center,
-                      crossAxisAlignment: WrapCrossAlignment.center,
-                      children: [
-                        const Text('Noch kein Konto?'),
-                        TextButton(
-                          onPressed: () {
-                            final email = _emailController.text.trim();
-                            final path = email.isNotEmpty
-                                ? '/register?email=${Uri.encodeComponent(email)}'
-                                : '/register';
-                            context.push(path);
-                          },
+                      const SizedBox(height: AppDimensions.paddingM),
+                      _primaryButton('Anmelden', _login),
+                    ] else if (!_otpSent) ...[
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: TextButton(
+                          onPressed: _openRegister,
                           child: const Text('Registrieren'),
                         ),
-                      ],
-                    ),
+                      ),
+                      const SizedBox(height: AppDimensions.paddingM),
+                      _primaryButton('Code senden', _requestCode),
+                    ] else ...[
+                      OtpCodeField(
+                        controller: _otpController,
+                        enabled: !_isLoading,
+                        onCompleted: (_) => _verifyCode(),
+                      ),
+                      const SizedBox(height: AppDimensions.paddingM),
+                      _primaryButton('Anmelden', _verifyCode),
+                      const SizedBox(height: AppDimensions.paddingS),
+                      Center(
+                        child: ResendCodeButton(
+                          cooldown: _cooldown,
+                          enabled: !_isLoading,
+                          onResend: _requestCode,
+                        ),
+                      ),
+                    ],
                     const SizedBox(height: AppDimensions.paddingL),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,

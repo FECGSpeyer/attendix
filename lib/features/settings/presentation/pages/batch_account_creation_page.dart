@@ -2,14 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/constants/app_constants.dart';
-import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/player_providers.dart';
-import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/person/person.dart';
-import '../../../../data/services/auth_service.dart';
+import '../../../../core/providers/user_registration_providers.dart'; // AUTH
 
 /// Page for batch creating accounts for players without accounts
 class BatchAccountCreationPage extends ConsumerStatefulWidget {
@@ -41,11 +39,14 @@ class _BatchAccountCreationPageState
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text('Fehler: $e')),
         data: (players) {
+          // Ionic getPlayersWithoutAccount: not pending, not left, e-mail, no appId
           final eligible = players
               .where((p) =>
                   (p.appId == null || p.appId!.isEmpty) &&
+                  !p.pending &&
+                  p.left == null &&
                   p.email != null &&
-                  p.email!.isNotEmpty)
+                  p.email!.trim().isNotEmpty)
               .toList();
 
           final noEmail = players
@@ -263,13 +264,14 @@ class _BatchAccountCreationPageState
     return '$first$last'.toUpperCase();
   }
 
+  /// Ionic settings showAlertForAccountsCreation(): confirm listing all names.
   Future<void> _confirmAndCreateAccounts(List<Person> players) async {
     final confirmed = await DialogHelper.showConfirmation(
       context,
-      title: 'Accounts erstellen',
-      message: 'Für ${players.length} Spieler werden Accounts erstellt. '
-          'Jeder Spieler erhält eine E-Mail zum Setzen des Passworts.',
-      confirmText: 'Erstellen',
+      title: 'Accounts anlegen',
+      message: 'Folgende Accounts werden angelegt: '
+          '${players.map((p) => '${p.firstName} ${p.lastName}').join(', ')}',
+      confirmText: 'Fortfahren',
       cancelText: 'Abbrechen',
     );
 
@@ -277,10 +279,8 @@ class _BatchAccountCreationPageState
     await _createAccounts(players);
   }
 
+  /// AUTH: server-side account creation (attendix-user Edge Function).
   Future<void> _createAccounts(List<Person> players) async {
-    final tenantId = ref.read(currentTenantIdProvider);
-    if (tenantId == null) return;
-
     setState(() {
       _isRunning = true;
       _processed = 0;
@@ -290,45 +290,25 @@ class _BatchAccountCreationPageState
       _errors.clear();
     });
 
-    final authService = ref.read(authServiceProvider);
-
-    for (final player in players) {
-      try {
-        await authService.createAccountForPerson(
-          person: player,
-          role: Role.player,
-          tenantId: tenantId,
-        );
-        if (mounted) {
-          setState(() {
-            _succeeded++;
-          });
-        }
-      } catch (e) {
-        if (mounted) {
-          setState(() {
-            _failed++;
-            _errors.add(
-                '${player.firstName} ${player.lastName}: $e');
-          });
-        }
-      }
-      if (mounted) {
-        setState(() => _processed++);
-      }
-    }
-
-    // Refresh player list
-    ref.invalidate(playersProvider);
+    final result = await ref
+        .read(accountCreationNotifierProvider.notifier)
+        .createAccounts(players, onProgress: (done, _) {
+      if (mounted) setState(() => _processed = done);
+    });
 
     if (mounted) {
-      setState(() => _isRunning = false);
-      if (_failed == 0) {
+      setState(() {
+        _isRunning = false;
+        _succeeded = result.created;
+        _failed = result.errors.length;
+        _errors.addAll(result.errors);
+      });
+      if (!result.hasErrors) {
         ToastHelper.showSuccess(
-            context, '$_succeeded Accounts erfolgreich erstellt');
+            context, 'Die Accounts wurden erfolgreich angelegt');
       } else {
-        ToastHelper.showError(
-            context, '$_succeeded erstellt, $_failed fehlgeschlagen');
+        ToastHelper.showError(context,
+            'Fehler beim Erstellen der Accounts: ${result.errors.first}');
       }
     }
   }

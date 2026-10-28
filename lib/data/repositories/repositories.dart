@@ -53,3 +53,5 @@ export 'public_plan_repository.dart';
 // STATS_PEOPLE_FIXES
 export 'cross_tenant_person_repository.dart';
 export 'tenant_create_repository.dart'; // STATS_PEOPLE_FIXES
+// AUTH
+export 'user_registration_repository.dart';

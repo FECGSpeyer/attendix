@@ -12,6 +12,7 @@ import 'core/services/app_update_service.dart';
 import 'core/services/offline_queue_service.dart'; // PROFILE_OFFLINE
 import 'core/theme/app_theme.dart';
 import 'core/utils/toast_helper.dart';
+import 'features/auth/data/auth_link_listener.dart'; // AUTH
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -57,6 +58,10 @@ class _AttendixAppState extends ConsumerState<AttendixApp> {
     // PROFILE_OFFLINE: replay queued offline attendance writes
     Future.microtask(
         () => ref.read(offlineQueueNotifierProvider.notifier).init());
+    // AUTH: password-recovery / signup-confirmation links (Ionic handleAuthUrl)
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) initAuthLinkHandling(ref, ref.read(routerProvider));
+    });
   }
 
   @override

@@ -1,9 +1,12 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../constants/enums.dart';
 import '../../data/models/person/person.dart';
 import '../../data/repositories/repositories.dart';
 import 'tenant_providers.dart';
 import 'group_providers.dart';
+import 'user_registration_providers.dart'; // AUTH
 
 /// Initialized player repository with tenant context
 final playerRepositoryWithTenantProvider = Provider<PlayerRepository>((ref) {
@@ -181,6 +184,7 @@ class PlayerNotifier extends Notifier<AsyncValue<void>> {
     state = const AsyncValue.loading();
     try {
       await _repo.approvePlayer(player);
+      await _notifyApproval(player); // AUTH
       state = const AsyncValue.data(null);
       ref.invalidate(pendingPlayersProvider);
       ref.invalidate(playersProvider);
@@ -193,12 +197,43 @@ class PlayerNotifier extends Notifier<AsyncValue<void>> {
     state = const AsyncValue.loading();
     try {
       await _repo.declinePlayer(player, reason);
+      await _notifyReject(player); // AUTH
       state = const AsyncValue.data(null);
       ref.invalidate(pendingPlayersProvider);
       ref.invalidate(playersProvider);
       ref.invalidate(archivedPlayersProvider);
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
+    }
+  }
+
+  // AUTH: Ionic approvePlayer/declinePlayer – applicant becomes PLAYER and
+  // gets the approve/reject mail via the attendix-user Edge Function.
+  // Mail failures are non-blocking (the person is already updated).
+  Future<void> _notifyApproval(Person player) async {
+    final registration = ref.read(userRegistrationRepositoryWithTenantProvider);
+    if (!registration.hasTenantId) return;
+    try {
+      if (player.appId != null && player.appId!.isNotEmpty) {
+        await registration.updateTenantUserRole(player.appId!, Role.player);
+      }
+      if (player.email != null && player.email!.isNotEmpty) {
+        await registration.informUserAboutApproval(
+            player.email!, player.firstName, Role.player);
+      }
+    } catch (e) {
+      debugPrint('approvePlayer: notify failed (non-blocking): $e');
+    }
+  }
+
+  Future<void> _notifyReject(Person player) async {
+    final registration = ref.read(userRegistrationRepositoryWithTenantProvider);
+    if (!registration.hasTenantId) return;
+    if (player.email == null || player.email!.isEmpty) return;
+    try {
+      await registration.informUserAboutReject(player.email!, player.firstName);
+    } catch (e) {
+      debugPrint('declinePlayer: notify failed (non-blocking): $e');
     }
   }
 
