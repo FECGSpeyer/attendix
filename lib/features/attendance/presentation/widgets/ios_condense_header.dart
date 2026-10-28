@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../../shared/widgets/layout/ionic_ios.dart' show IonSearchIcon; // PARITY_R5
+
 /// UX_ATT: true when the page should render Ionic's iOS mode (iPhone app and
 /// Flutter web in iPhone Safari). Elsewhere the Material (Ionic md) look stays.
 bool isIosLook(BuildContext context) =>
@@ -162,7 +164,8 @@ class IonSearchbar extends StatelessWidget {
           textAlignVertical: TextAlignVertical.center,
           decoration: InputDecoration(
             hintText: hintText,
-            prefixIcon: const Icon(Icons.search),
+            // PARITY_R5: ios27 search-outline in the text colour
+            prefixIcon: ios ? const IonSearchIcon() : const Icon(Icons.search),
             suffixIcon: clear,
             filled: ios ? false : null,
             border: ios ? InputBorder.none : null,

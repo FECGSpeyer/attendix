@@ -57,8 +57,11 @@ class ToolbarButtonGroup extends StatelessWidget {
   }
 }
 
-/// IOS_LOOK: close button of an `ion-modal` header: a 44pt light-grey circle
-/// with a black ✕ on iOS, the Material [CloseButton] elsewhere.
+/// IOS_LOOK: close button of an `ion-modal` header (`ion-buttons slot="end"`
+/// > `ion-button` > close icon), the Material [CloseButton] elsewhere.
+/// PARITY_R5: iOS = the ios27 toolbar button – a 44pt white Liquid Glass
+/// circle with a black ✕, 12pt from the edge (same as a single-button
+/// [ToolbarButtonGroup], e.g. the register modal ✕), not a grey disc.
 class IonCloseButton extends StatelessWidget {
   const IonCloseButton({super.key, this.onPressed, this.tooltip});
 
@@ -76,13 +79,13 @@ class IonCloseButton extends StatelessWidget {
       );
     }
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 12),
       child: Semantics(
         button: true,
         label: tooltip ?? context.l10n.commonClose,
         child: GestureDetector(
           onTap: onTap,
-          child: const IosCircleIcon(icon: Icons.close, filled: true),
+          child: const IosCircleIcon(icon: Icons.close, size: 44),
         ),
       ),
     );

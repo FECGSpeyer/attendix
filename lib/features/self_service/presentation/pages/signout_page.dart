@@ -178,10 +178,16 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
       // IOS_SHELL: tenant capsule left like ion-buttons slot="start"
       centerTitle: tenants.length > 1 ? false : null,
       automaticallyImplyLeading: false,
-      // IOS_THEME2: toolbar matches the white (dark: black) Termin page
-      backgroundColor: condenseBarColor(context, condensed,
-          pageBackground: eventPageBackground(context)),
-      shape: condenseBarShape(context, condensed),
+      // IOS_THEME2: toolbar matches the white (dark: black) Termin page.
+      // PARITY_R5: iOS translucent header (blur once condensed).
+      backgroundColor: isIosLook(context)
+          ? Colors.transparent
+          : condenseBarColor(context, condensed,
+              pageBackground: eventPageBackground(context)),
+      shape: isIosLook(context)
+          ? const Border()
+          : condenseBarShape(context, condensed),
+      flexibleSpace: IonTranslucentBarBackground(visible: condensed),
       // IOS_SHELL: iOS → one glass capsule (ion-buttons slot="end")
       actions: [ToolbarButtonGroup(children: buttons)],
     );
@@ -243,6 +249,8 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
       enabled: tenants.length <= 1 && player != null,
       builder: (context, condensed) => Scaffold(
       appBar: _buildAppBar(tenant, tenants, player: player, condensed: condensed),
+      // PARITY_R5: Ionic `ion-content fullscreen` under the translucent header
+      extendBodyBehindAppBar: isIosLook(context),
       // IOS_ATT_PAGES: Ionic iOS page is white, rows sit directly on it
       backgroundColor: eventPageBackground(context),
       body: dataAsync.when(
@@ -258,10 +266,13 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
             ],
           ),
         ),
-        data: (data) => RefreshIndicator.adaptive(
+        data: (data) => Builder(builder: (body) => RefreshIndicator.adaptive(
           onRefresh: _refresh,
+          edgeOffset: ionTranslucentTopPadding(body, isIosLook(context)),
           child: ListView(
-            padding: EdgeInsets.only(bottom: scrollEndPadding(context, base: 32)),
+            padding: EdgeInsets.only(
+                top: ionTranslucentTopPadding(body, isIosLook(context)), // PARITY_R5
+                bottom: scrollEndPadding(context, base: 32)),
             children: [
               if (player != null)
                 IonLargeTitle(tenant?.shortName ?? '', enabled: tenants.length <= 1),
@@ -319,7 +330,7 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
                 ),
             ],
           ),
-        ),
+        )),
       ),
       ),
     );
@@ -347,6 +358,7 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
           else
             CircleAvatar(
               radius: 24,
+              backgroundColor: Colors.transparent, // PARITY_R5
               backgroundImage: NetworkImage(player.img!),
             ),
           const SizedBox(width: 12),

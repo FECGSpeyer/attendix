@@ -7,119 +7,57 @@ import '../../helpers/widget_test_helpers.dart';
 
 void main() {
   widgetTestGroup('Avatar', () {
-    group('initials display', () {
-      widgetTest('shows initials when no image URL provided', (tester) async {
-        await tester.pumpApp(
-          const Avatar(
-            firstName: 'Max',
-            lastName: 'Mustermann',
-          ),
-        );
-
-        expect(find.text('MM'), findsOneWidget);
-      });
-
-      widgetTest('shows initials when image URL is empty', (tester) async {
-        await tester.pumpApp(
-          const Avatar(
-            firstName: 'Anna',
-            lastName: 'Schmidt',
-            imageUrl: '',
-          ),
-        );
-
-        expect(find.text('AS'), findsOneWidget);
-      });
-
-      widgetTest('calculates initials correctly from first letters',
+    // PARITY_R5: Ionic shows assets/icon/avatar-placeholder.svg for people
+    // without a picture (iOS and md) – no teal initials disc.
+    group('placeholder', () {
+      widgetTest('shows the Ionic placeholder when no image URL provided',
           (tester) async {
         await tester.pumpApp(
-          const Avatar(
-            firstName: 'hans',
-            lastName: 'peter',
-          ),
+          const Avatar(firstName: 'Max', lastName: 'Mustermann'),
         );
 
-        // Should be uppercase
-        expect(find.text('HP'), findsOneWidget);
+        expect(find.byType(IonAvatarPlaceholder), findsOneWidget);
+        expect(find.text('MM'), findsNothing);
+        expect(find.byType(CircleAvatar), findsNothing);
       });
 
-      widgetTest('handles empty firstName gracefully', (tester) async {
+      widgetTest('shows the placeholder when image URL is empty',
+          (tester) async {
         await tester.pumpApp(
-          const Avatar(
-            firstName: '',
-            lastName: 'Müller',
-          ),
+          const Avatar(firstName: 'Anna', lastName: 'Schmidt', imageUrl: ''),
         );
 
-        expect(find.text('M'), findsOneWidget);
+        expect(find.byType(IonAvatarPlaceholder), findsOneWidget);
       });
 
-      widgetTest('handles empty lastName gracefully', (tester) async {
-        await tester.pumpApp(
-          const Avatar(
-            firstName: 'Lisa',
-            lastName: '',
-          ),
-        );
+      widgetTest('handles empty names', (tester) async {
+        await tester.pumpApp(const Avatar(firstName: '', lastName: ''));
 
-        expect(find.text('L'), findsOneWidget);
-      });
-
-      widgetTest('handles both names empty', (tester) async {
-        await tester.pumpApp(
-          const Avatar(
-            firstName: '',
-            lastName: '',
-          ),
-        );
-
-        // Should show empty string in CircleAvatar
-        expect(find.byType(CircleAvatar), findsOneWidget);
+        expect(find.byType(IonAvatarPlaceholder), findsOneWidget);
       });
     });
 
     group('size parameter', () {
       widgetTest('default size is 40', (tester) async {
         await tester.pumpApp(
-          const Avatar(
-            firstName: 'Test',
-            lastName: 'User',
-          ),
+          const Avatar(firstName: 'Test', lastName: 'User'),
         );
 
-        final circleAvatar = tester.widget<CircleAvatar>(
-          find.byType(CircleAvatar),
-        );
-        expect(circleAvatar.radius, 20); // size / 2
+        final placeholder = tester.widget<IonAvatarPlaceholder>(
+            find.byType(IonAvatarPlaceholder));
+        expect(placeholder.size, 40);
       });
 
       widgetTest('respects custom size parameter', (tester) async {
         await tester.pumpApp(
-          const Avatar(
-            firstName: 'Test',
-            lastName: 'User',
-            size: 60,
-          ),
+          const Avatar(firstName: 'Test', lastName: 'User', size: 60),
         );
 
-        final circleAvatar = tester.widget<CircleAvatar>(
-          find.byType(CircleAvatar),
-        );
-        expect(circleAvatar.radius, 30); // 60 / 2
-      });
-
-      widgetTest('adjusts font size based on avatar size', (tester) async {
-        await tester.pumpApp(
-          const Avatar(
-            firstName: 'Test',
-            lastName: 'User',
-            size: 100,
-          ),
-        );
-
-        final text = tester.widget<Text>(find.text('TU'));
-        expect(text.style?.fontSize, 40); // size * 0.4
+        expect(
+            tester
+                .widget<IonAvatarPlaceholder>(find.byType(IonAvatarPlaceholder))
+                .size,
+            60);
       });
     });
 
@@ -136,7 +74,7 @@ void main() {
         expect(find.byType(CachedNetworkImage), findsOneWidget);
       });
 
-      widgetTest('shows initials as placeholder while image loads',
+      widgetTest('shows the placeholder while the image loads',
           (tester) async {
         await tester.pumpApp(
           const Avatar(
@@ -146,35 +84,8 @@ void main() {
           ),
         );
 
-        // CachedNetworkImage will show placeholder initially
-        // which should be the initials avatar
         await tester.pump();
-        expect(find.text('TU'), findsOneWidget);
-      });
-    });
-
-    group('styling', () {
-      widgetTest('uses CircleAvatar widget', (tester) async {
-        await tester.pumpApp(
-          const Avatar(
-            firstName: 'Test',
-            lastName: 'User',
-          ),
-        );
-
-        expect(find.byType(CircleAvatar), findsOneWidget);
-      });
-
-      widgetTest('initials text is bold', (tester) async {
-        await tester.pumpApp(
-          const Avatar(
-            firstName: 'Test',
-            lastName: 'User',
-          ),
-        );
-
-        final text = tester.widget<Text>(find.text('TU'));
-        expect(text.style?.fontWeight, FontWeight.bold);
+        expect(find.byType(IonAvatarPlaceholder), findsOneWidget);
       });
     });
   });

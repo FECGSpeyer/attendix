@@ -1,3 +1,6 @@
+import 'dart:ui' as ui;
+
+import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
@@ -111,6 +114,75 @@ class _CondenseHeaderState extends State<CondenseHeader> {
       child: widget.builder(context, _condensed),
     );
   }
+}
+
+/// PARITY_R5: Ionic `ion-header translucent` over `ion-content fullscreen`
+/// (ionic-theme-ios27 `utils/translucent`): on iOS the content scrolls
+/// under the toolbar (use with `Scaffold.extendBodyBehindAppBar` and
+/// [ionTranslucentTopPadding]); once the large title is condensed the
+/// toolbar shows the page colour at 20 % over an 8pt backdrop blur with a
+/// hairline in `rgba(text, .08)`. Use as `AppBar.flexibleSpace` with a
+/// transparent app bar background. Renders nothing outside iOS or while
+/// the large title is visible.
+class IonTranslucentBarBackground extends StatelessWidget {
+  const IonTranslucentBarBackground({super.key, required this.visible});
+
+  /// true once the large title is condensed.
+  final bool visible;
+
+  /// ios27 `backdrop-filter: blur(8px)`.
+  static const double blurSigma = 8;
+
+  /// ios27 `rgba(content background, .2)`.
+  static const double tintOpacity = 0.2;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!visible || !isIosLook(context)) return const SizedBox.shrink();
+    final theme = Theme.of(context);
+    final dark = theme.brightness == Brightness.dark;
+    return ClipRect(
+      child: BackdropFilter(
+        filter: ui.ImageFilter.blur(sigmaX: blurSigma, sigmaY: blurSigma),
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: (dark ? Colors.black : Colors.white)
+                .withValues(alpha: tintOpacity),
+            border: Border(
+              bottom: BorderSide(
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.08),
+                width: 0.5,
+              ),
+            ),
+          ),
+          child: const SizedBox.expand(),
+        ),
+      ),
+    );
+  }
+}
+
+/// PARITY_R5: top padding of a scroll view in the body of a Scaffold with
+/// `extendBodyBehindAppBar` (the app bar incl. status bar); 0 otherwise.
+/// [bodyContext] must be below the Scaffold (e.g. a [Builder] in `body`).
+double ionTranslucentTopPadding(BuildContext bodyContext, bool extended) =>
+    extended ? MediaQuery.paddingOf(bodyContext).top : 0;
+
+/// PARITY_R5: search icon of an iOS `ion-searchbar` (ionic-theme-ios27):
+/// the outline magnifier (ionicons search-outline) 1.375rem wide – ≈22pt
+/// box, ≈20pt glyph – in the text colour (`--icon-color:
+/// var(--ion-text-color)`), not the grey 16pt system glyph.
+class IonSearchIcon extends StatelessWidget {
+  const IonSearchIcon({super.key});
+
+  static const double size = 22;
+
+  @override
+  Widget build(BuildContext context) => Icon(
+        CupertinoIcons.search,
+        size: size,
+        color: Theme.of(context).colorScheme.onSurface,
+      );
 }
 
 /// Toolbar title that fades in when the large title is condensed.
@@ -252,7 +324,7 @@ class IonSearchbar extends StatelessWidget {
           child: Row(
             children: [
               const SizedBox(width: 12),
-              Icon(Icons.search, size: 20, color: iconColor),
+              const IonSearchIcon(), // PARITY_R5
               const SizedBox(width: 6),
               Expanded(
                 child: TextField(

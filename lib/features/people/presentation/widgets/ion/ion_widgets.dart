@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import '../../../../../core/theme/app_colors.dart';
 import 'package:attendix/shared/widgets/adaptive/app_toolbar.dart' show ToolbarButtonGroup; // IOS_SHELL2
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
+import 'package:attendix/shared/widgets/display/avatar.dart' show IonAvatarPlaceholder; // PARITY_R5
 
 /// True when the page should look like Ionic's iOS mode.
 bool ionIsIos(BuildContext context) =>
@@ -312,17 +313,8 @@ class IonAvatar extends StatelessWidget {
   Widget build(BuildContext context) {
     final s = size ?? (ionIsIos(context) ? 36.0 : 40.0);
     final hasImage = url != null && url!.isNotEmpty && !url!.contains('.svg');
-    final placeholder = Container(
-      width: s,
-      height: s,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: _isDark(context)
-            ? const Color(0xFF3A3A3C)
-            : const Color(0xFFC5C5C5),
-      ),
-      child: Icon(Icons.person, size: s * 0.72, color: Colors.white),
-    );
+    // PARITY_R5: Ionic avatar-placeholder.svg (no coloured disc).
+    final placeholder = IonAvatarPlaceholder(size: s);
     if (!hasImage) return placeholder;
     return ClipOval(
       child: Image.network(
@@ -571,7 +563,8 @@ Widget ionCondenseHeader(
         ? const EdgeInsetsDirectional.only(start: 16)
         : null,
     transitionBetweenRoutes: false,
-    backgroundColor: bg.withValues(alpha: 0.92),
+    // PARITY_R5: ios27 translucent header – 20 % page colour + blur.
+    backgroundColor: bg.withValues(alpha: 0.2),
     // ios26 toolbars have no hairline
     border: null,
   );

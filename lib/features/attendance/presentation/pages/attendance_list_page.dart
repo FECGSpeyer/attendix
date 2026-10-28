@@ -30,6 +30,8 @@ import '../widgets/ios_condense_header.dart'; // UX_ATT
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 import '../../../../shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL
+import '../../../../shared/widgets/layout/ionic_ios.dart'
+    show IonTranslucentBarBackground, ionTranslucentTopPadding; // PARITY_R5
 
 
 /// Attendance list page
@@ -262,8 +264,21 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
     final singleTenant = (ref.watch(userTenantsProvider).valueOrNull?.length ?? 0) <= 1;
     final largeTitle = isIosLook(context) && singleTenant;
 
+    final ios = isIosLook(context);
     return Scaffold(
+      // PARITY_R5: Ionic `ion-content fullscreen` under the translucent header
+      extendBodyBehindAppBar: ios,
       appBar: AppBar(
+        // PARITY_R5: ion-header translucent – page colour at 20 % over a
+        // backdrop blur once the large title is condensed (always with the
+        // tenant switcher, which has no large title).
+        backgroundColor: ios ? Colors.transparent : null,
+        shape: ios ? const Border() : null,
+        flexibleSpace: ValueListenableBuilder<bool>(
+          valueListenable: _condense.collapsed,
+          builder: (context, collapsed, _) =>
+              IonTranslucentBarBackground(visible: collapsed || !largeTitle),
+        ),
         // UX_AUTH: Ionic keeps the tenant switcher left (ion-buttons slot=start).
         centerTitle: TenantSwitcherTitle.centerTitle(ref),
         // SETTINGS2: Ionic att-list header tenant switcher
@@ -440,7 +455,8 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
           final currentDuty = current == null ? null : dutyTermine[current.id];
           final averageRounded = averagePercent?.round() ?? 0;
 
-          return RefreshIndicator.adaptive(
+          return Builder(builder: (body) => RefreshIndicator.adaptive(
+            edgeOffset: ionTranslucentTopPadding(body, ios),
             onRefresh: () async {
               // FN-008: invalidate to trigger fresh fetch from realtime provider
               ref.invalidate(realtimeAttendanceListProvider);
@@ -448,7 +464,9 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
             child: _condense.listen(
               child: ListView(
                 // Room for the FAB below the last card (Ionic marginBottom)
-                padding: EdgeInsets.only(bottom: scrollEndPadding(context, base: 16, fabRoom: 80)),
+                padding: EdgeInsets.only(
+                    top: ionTranslucentTopPadding(body, ios), // PARITY_R5
+                    bottom: scrollEndPadding(context, base: 16, fabRoom: 80)),
                 children: [
                   if (largeTitle) IosLargeTitle(context.l10n.attListEvents),
                   // DUTY: own duties waiting for confirmation
@@ -574,7 +592,7 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
                 ],
               ),
             ),
-          );
+          ));
         },
       ),
       // FAB only for roles that can add attendances (not VIEWER).

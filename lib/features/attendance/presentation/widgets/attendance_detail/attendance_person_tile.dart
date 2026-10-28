@@ -14,6 +14,7 @@ import 'attendance_grid.dart' show collapseHtmlWhitespace;
 import 'status_chip.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../../shared/widgets/display/avatar.dart' show IonAvatarPlaceholder; // PARITY_R5
 
 /// Person row of the attendance detail page.
 ///
@@ -87,20 +88,16 @@ class AttendancePersonTile extends StatelessWidget {
         child: Row(
           children: [
             if (showAvatar) ...[
-              CircleAvatar(
-                radius: 18,
-                backgroundColor: AppColors.light,
-                backgroundImage:
-                    person.img != null ? NetworkImage(person.img!) : null,
-                child:
-                    person.img == null
-                        ? const Icon(
-                          Icons.person,
-                          color: AppColors.medium,
-                          size: 20,
-                        )
-                        : null,
-              ),
+              // PARITY_R5: Ionic `ion-avatar` – the picture without a fill,
+              // otherwise assets/icon/avatar-placeholder.svg.
+              if (person.img != null && person.img!.isNotEmpty)
+                CircleAvatar(
+                  radius: 18,
+                  backgroundColor: Colors.transparent,
+                  backgroundImage: NetworkImage(person.img!),
+                )
+              else
+                const IonAvatarPlaceholder(size: 36),
               const SizedBox(width: 16),
             ],
             Expanded(
