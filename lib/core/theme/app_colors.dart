@@ -54,7 +54,7 @@ class AppColors {
   // Background colors. Ionic runs the iOS theme with inset lists: grouped
   // light-grey page background, white cards/lists; dark: black page with
   // #1c1c1d cards (variables.scss attendix-dark-theme-ios-body).
-  static const Color backgroundLight = Color(0xFFF2F2F7);
+  static const Color backgroundLight = Color(0xFFF4F5F8); // ion-color-light
   static const Color backgroundDark = Color(0xFF000000);
   static const Color surfaceLight = Color(0xFFFFFFFF);
   static const Color surfaceDark = Color(0xFF1C1C1D);
@@ -64,6 +64,29 @@ class AppColors {
   // Input fill on white cards
   static const Color inputFillLight = Color(0xFFF4F5F8);
   static const Color inputFillDark = Color(0xFF2C2C2E);
+
+  // IOS_LOOK: Ionic iOS mode colours (variables.scss + Ionic iOS defaults).
+  // Light: ion-content color="light" (#f4f5f8), white items, toolbar
+  // #f7f7f7 with a rgba(0,0,0,.2) hairline, text #000.
+  // Dark (attendix-dark-theme-body/-ios-body): color="light" is #222428,
+  // items #000, cards #1c1c1d, toolbar step-50 #0d0d0d, border step-150,
+  // modals step-100 #1a1a1a.
+  static const Color iosPageLight = Color(0xFFF4F5F8);
+  static const Color iosPageDark = Color(0xFF222428);
+  static const Color iosItemDark = Color(0xFF000000);
+  static const Color iosToolbarLight = Color(0xFFF7F7F7);
+  static const Color iosToolbarDark = Color(0xFF0D0D0D);
+  static const Color iosToolbarBorderLight = Color(0x33000000);
+  static const Color iosToolbarBorderDark = Color(0xFF262626);
+  static const Color iosItemBorderLight = Color(0xFFC8C7CC);
+  static const Color iosItemBorderDark = Color(0xFF404040);
+  static const Color iosModalDark = Color(0xFF1A1A1A);
+  static const Color iosTextLight = Color(0xFF000000);
+  static const Color iosNoteLight = Color(0xFF737373);
+  static const Color iosNoteDark = Color(0xFF8C8C8C);
+  static const Color iosMediumDark = Color(0xFF989AA2);
+  // ion-button[disabled] in the iOS 26 theme: step-200 grey, white label.
+  static const Color iosDisabledButton = Color(0xFFCCCCCC);
 
   // Text colors
   static const Color textPrimaryLight = Color(0xFF222428);

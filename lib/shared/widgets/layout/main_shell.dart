@@ -10,9 +10,11 @@ import '../../../core/providers/optional_tabs_providers.dart'; // SETTINGS2
 import '../../../core/providers/tenant_providers.dart';
 import '../../../data/models/tenant/tenant.dart';
 import '../../../l10n/l10n.dart'; // I18N_INFRA
+import '../adaptive/adaptive_platform.dart'; // IOS_LOOK
 import '../audio_player/audio_player_widget.dart';
 import '../debug/debug_role_fab.dart';
 import '../dialogs/native_app_ad.dart'; // LINKS_STARTUP
+import 'ios_tab_bar.dart'; // IOS_LOOK
 import 'root_back_button_scope.dart'; // NATIVE_MISC
 
 /// Represents a navigation destination with its route
@@ -217,9 +219,20 @@ class MainShell extends ConsumerWidget {
       ),
       // Debug FAB only visible in debug mode
       floatingActionButton: kDebugMode ? const DebugRoleFab() : null,
-      // UX_NAV: Ionic ion-tab-bar has a hairline on top; no selection pill
+      // IOS_LOOK: iOS → Ionic iOS 26 floating Liquid Glass tab bar;
+      // elsewhere ion-tab-bar md with a hairline on top and no selection pill
       // (see navigationBarTheme in app_theme.dart).
-      bottomNavigationBar: DecoratedBox(
+      bottomNavigationBar: useIosLook(context)
+          ? IosTabBar(
+              selectedIndex: selectedIndex.clamp(0, destinations.length - 1),
+              onSelected: (index) =>
+                  _onItemTapped(context, index, destinations),
+              items: [
+                for (final d in destinations)
+                  IosTabBarItem(icon: d.icon, label: d.label),
+              ],
+            )
+          : DecoratedBox(
         decoration: BoxDecoration(
           border: Border(
             top: BorderSide(color: Theme.of(context).dividerColor, width: 0.5),
