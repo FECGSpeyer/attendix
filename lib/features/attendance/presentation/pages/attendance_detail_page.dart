@@ -727,27 +727,16 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
           // counts live in "Statusübersicht"). On iOS Ionic shows a FAB that
           // opens the Ablaufplan editor (isIos && attendance → editPlan()).
           floatingActionButton: isIosLook(context) && !ref.watch(effectiveRoleProvider).isViewer
-              ? SizedBox(
-                  width: 61,
-                  height: 61,
-                  child: FloatingActionButton(
-                    heroTag: 'att-detail-plan-fab',
-                    onPressed: () async {
-                      final hasChanges =
-                          await context.push<bool>('/planning?attendanceId=${widget.attendanceId}');
-                      if (hasChanges == true && mounted) {
-                        setState(() => _planAccordionExpanded = true);
-                      }
-                    },
-                    shape: const CircleBorder(),
-                    elevation: 4,
-                    backgroundColor: Theme.of(context).brightness == Brightness.dark
-                        ? const Color(0xB8272727)
-                        : const Color(0xB8FFFFFF),
-                    foregroundColor:
-                        Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
-                    child: const Icon(Icons.format_list_bulleted, size: 26),
-                  ),
+              ? IonFabButton(
+                  heroTag: 'att-detail-plan-fab',
+                  icon: Icons.format_list_bulleted,
+                  onPressed: () async {
+                    final hasChanges =
+                        await context.push<bool>('/planning?attendanceId=${widget.attendanceId}');
+                    if (hasChanges == true && mounted) {
+                      setState(() => _planAccordionExpanded = true);
+                    }
+                  },
                 )
               : null,
         );

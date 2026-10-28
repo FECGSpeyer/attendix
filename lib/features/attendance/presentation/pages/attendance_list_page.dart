@@ -243,31 +243,11 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
 
   /// UX_ATT: round "+" FAB bottom right (Ionic ion-fab). On iOS the Ionic
   /// iOS 26 theme draws it as a 61 px white glass button with a dark icon.
-  Widget _buildFab(BuildContext context) {
-    if (!isIosLook(context)) {
-      return FloatingActionButton(
+  Widget _buildFab(BuildContext context) => IonFabButton(
         onPressed: _openCreate,
         tooltip: context.l10n.attListAddEvent,
-        shape: const CircleBorder(),
-        child: const Icon(Icons.add),
+        icon: Icons.add,
       );
-    }
-    final dark = Theme.of(context).brightness == Brightness.dark;
-    return SizedBox(
-      width: 61,
-      height: 61,
-      child: FloatingActionButton(
-        onPressed: _openCreate,
-        tooltip: context.l10n.attListAddEvent,
-        shape: const CircleBorder(),
-        elevation: 4,
-        highlightElevation: 2,
-        backgroundColor: dark ? const Color(0xB8272727) : const Color(0xB8FFFFFF),
-        foregroundColor: dark ? Colors.white : Colors.black,
-        child: const Icon(Icons.add, size: 28),
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {

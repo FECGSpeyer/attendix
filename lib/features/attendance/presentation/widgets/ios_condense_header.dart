@@ -77,3 +77,122 @@ class IosLargeTitle extends StatelessWidget {
     );
   }
 }
+
+/// UX_ATT: Ionic `ion-fab-button`. Material (md) keeps the round primary FAB;
+/// iOS uses the ionic-theme-ios26 look: 61 px white glass circle with a dark
+/// icon (dark mode: dark glass, white icon).
+class IonFabButton extends StatelessWidget {
+  const IonFabButton({
+    super.key,
+    required this.onPressed,
+    required this.icon,
+    this.tooltip,
+    this.heroTag,
+  });
+
+  final VoidCallback? onPressed;
+  final IconData icon;
+  final String? tooltip;
+  final Object? heroTag;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!isIosLook(context)) {
+      return FloatingActionButton(
+        heroTag: heroTag,
+        onPressed: onPressed,
+        tooltip: tooltip,
+        shape: const CircleBorder(),
+        child: Icon(icon),
+      );
+    }
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    return SizedBox(
+      width: 61,
+      height: 61,
+      child: FloatingActionButton(
+        heroTag: heroTag,
+        onPressed: onPressed,
+        tooltip: tooltip,
+        shape: const CircleBorder(),
+        elevation: 4,
+        highlightElevation: 2,
+        backgroundColor: dark ? const Color(0xB8272727) : const Color(0xB8FFFFFF),
+        foregroundColor: dark ? Colors.white : Colors.black,
+        child: Icon(icon, size: 28),
+      ),
+    );
+  }
+}
+
+/// UX_ATT: Ionic `ion-searchbar`. iOS (ionic-theme-ios26): 44 px glass pill
+/// with the search icon at the start; md: the regular filled text field.
+class IonSearchbar extends StatelessWidget {
+  const IonSearchbar({
+    super.key,
+    required this.controller,
+    required this.hintText,
+    required this.onChanged,
+  });
+
+  final TextEditingController controller;
+  final String hintText;
+  final ValueChanged<String> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final ios = isIosLook(context);
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    return ValueListenableBuilder<TextEditingValue>(
+      valueListenable: controller,
+      builder: (context, value, _) {
+        final clear = value.text.isEmpty
+            ? null
+            : IconButton(
+                icon: Icon(ios ? Icons.cancel : Icons.clear, size: ios ? 18 : null),
+                color: ios ? Colors.grey : null,
+                onPressed: () {
+                  controller.clear();
+                  onChanged('');
+                },
+              );
+        final field = TextField(
+          controller: controller,
+          onChanged: onChanged,
+          textAlignVertical: TextAlignVertical.center,
+          decoration: InputDecoration(
+            hintText: hintText,
+            prefixIcon: const Icon(Icons.search),
+            suffixIcon: clear,
+            filled: ios ? false : null,
+            border: ios ? InputBorder.none : null,
+            enabledBorder: ios ? InputBorder.none : null,
+            focusedBorder: ios ? InputBorder.none : null,
+            isDense: ios,
+            contentPadding: ios ? const EdgeInsets.symmetric(vertical: 12) : null,
+          ),
+        );
+        if (!ios) {
+          return Padding(padding: const EdgeInsets.all(16), child: field);
+        }
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
+          child: Container(
+            height: 44,
+            decoration: BoxDecoration(
+              color: dark ? const Color(0xB8272727) : const Color(0xB8FFFFFF),
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: (dark ? Colors.black : const Color(0xFFDCDCDC)).withValues(alpha: 0.82),
+                  blurRadius: 10,
+                ),
+              ],
+            ),
+            child: field,
+          ),
+        );
+      },
+    );
+  }
+}
