@@ -17,6 +17,7 @@ export '../utils/dashboard_logic.dart';
 import 'attendance_type_providers.dart';
 import 'church_providers.dart';
 import 'debug_providers.dart';
+import 'team_org_providers.dart';
 import 'tenant_providers.dart';
 
 // =============================================================================
@@ -155,9 +156,9 @@ final dashboardSettingsNotifierProvider =
   DashboardSettingsNotifier.new,
 );
 
-/// Teamorganisation (Ionic `db.teamOrgEnabled()`, needed for the "Meine
-/// Aufgaben" card) is not ported to Flutter yet, so the card stays hidden.
-final dashboardTeamOrgEnabledProvider = Provider<bool>((ref) => false);
+/// Teamorganisation (Ionic `db.teamOrgEnabled()`): the "Meine Aufgaben" card
+/// exists once at least one Termintyp has "Protokoll & Tagesordnung".
+final dashboardTeamOrgEnabledProvider = Provider<bool>((ref) => ref.watch(teamOrgEnabledProvider));
 
 /// Whether the dashboard tab is shown (Ionic `showDashboardTab`).
 final showDashboardTabProvider = Provider<bool>((ref) {
@@ -253,6 +254,7 @@ void refreshDashboardCards(WidgetRef ref) {
   ref.invalidate(dashboardNextEventProvider);
   ref.invalidate(dashboardCurrentSongsProvider);
   ref.invalidate(dashboardCurrentPlanProvider);
+  ref.invalidate(myTasksProvider);
 }
 
 // =============================================================================

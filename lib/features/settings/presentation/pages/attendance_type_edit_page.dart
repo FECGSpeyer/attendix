@@ -13,6 +13,8 @@ import '../../../../core/utils/color_utils.dart';
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/attendance/attendance.dart';
+import '../../../../core/providers/team_org_providers.dart'; // PROTOCOL
+import '../widgets/type_protocol_settings.dart'; // PROTOCOL
 import '../widgets/registration_fields_editor.dart'; // ATTENDANCE_SIGNOUT
 import '../../../organisation/presentation/widgets/type_default_org_plan_toggle.dart'; // ORG_PLANS
 
@@ -75,6 +77,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
   String _planningTitle = '';
   List<int> _relevantGroups = [];
   Map<String, dynamic>? _additionalFieldsFilter;
+  TypeProtocolSettings _protocol = const TypeProtocolSettings(); // PROTOCOL
 
   // DUTY: Dienst-Modus (Dienstplan)
   bool _dutyMode = false;
@@ -105,6 +108,13 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
         final repo = ref.read(attendanceTypeRepositoryWithTenantProvider);
         _usageCount = await repo.getAttendanceCountForType(widget.typeId);
       } catch (_) {}
+
+      // PROTOCOL: enable_protocol etc. are not part of the AttendanceType model
+      try {
+        final types = await ref.read(protocolRepositoryWithTenantProvider).getProtocolTypes();
+        _protocol = TypeProtocolSettings.fromType(types.where((t) => t.id == widget.typeId).firstOrNull);
+      } catch (_) {}
+      if (!mounted) return;
 
       setState(() {
         _originalType = type;
@@ -478,6 +488,19 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                       _hasChanges = true;
                     }),
                     contentPadding: EdgeInsets.zero,
+                  ),
+                  // PROTOCOL: Protokoll & Tagesordnung
+                  TypeProtocolSettingsTiles(
+                    settings: _protocol,
+                    hasPlaceholder: hasAgendaPlaceholder(_planFields),
+                    onChanged: (v) => setState(() {
+                      _protocol = v;
+                      _hasChanges = true;
+                    }),
+                    onInsertPlaceholder: () => setState(() {
+                      if (!hasAgendaPlaceholder(_planFields)) _planFields.add(agendaPlaceholderField());
+                      _hasChanges = true;
+                    }),
                   ),
                   // ATTENDANCE_SIGNOUT: place / navigation
                   SwitchListTile(
@@ -1403,9 +1426,11 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
         'duty_confirm_reminder_days': _dutyConfirmReminderDays,
         'duty_notify_understaffed': _dutyNotifyUnderstaffed,
         'duty_urgent_hours': _dutyUrgentHours,
+        ..._protocol.toUpdate(), // PROTOCOL
       };
 
       await ref.read(attendanceTypeNotifierProvider.notifier).updateType(widget.typeId, updates);
+      ref.invalidate(protocolTypesProvider); // PROTOCOL
 
       if (mounted) {
         ToastHelper.showSuccess(context, 'Änderungen gespeichert');

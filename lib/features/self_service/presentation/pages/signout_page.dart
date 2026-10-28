@@ -23,6 +23,7 @@ import '../widgets/self_service_absences.dart';
 import '../../../../core/providers/duty_providers.dart';
 import '../../../duty/presentation/widgets/self_service_duty_section.dart';
 import '../../../messages/presentation/widgets/notification_bell.dart'; // MESSAGES
+import '../../../team_organization/presentation/widgets/my_tasks_card.dart'; // PROTOCOL
 
 /// "Meine Termine" – self-service sign in/out of the current tenant
 /// (Ionic `selfService/signout`).
@@ -218,6 +219,8 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
             children: [
               if (player != null) _buildGreeting(player, data),
               if (player != null) ..._buildTiles(player),
+              // PROTOCOL: "Meine Aufgaben" (hidden without Teamorganisation / open tasks)
+              if (player != null) const MyTasksCard(),
               // PEOPLE_IMPORT: planned absences + self pause
               if (player != null) const SelfServiceAbsenceSection(),
               if (player != null && SignoutPage.extraSectionsBuilder != null)
