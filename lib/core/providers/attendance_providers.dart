@@ -259,7 +259,7 @@ final playerAttendancePercentagesProvider =
   while (true) {
     var query = supabase
         .from('person_attendances')
-        .select('person_id, status, notes, attendance:attendance_id!inner(date, tenantId, type_id)')
+        .select('person_id, status, notes, duty_state, attendance:attendance_id!inner(date, tenantId, type_id)')
         .eq('attendance.tenantId', tenant.id!)
         .lte('attendance.date', now);
 
@@ -283,6 +283,12 @@ final playerAttendancePercentagesProvider =
       .where((t) => t.includeInAverage && t.id != null)
       .map((t) => t.id!)
       .toSet();
+  // LOGIC_PEOPLE: duties only count for persons who were assigned
+  // (Ionic: `type.duty_mode && !personAttendance.duty_state` → skip).
+  final dutyTypeIds = types
+      .where((t) => t.dutyMode && t.id != null)
+      .map((t) => t.id!)
+      .toSet();
 
   // Group by person_id
   final totals = <int, int>{};
@@ -293,6 +299,11 @@ final playerAttendancePercentagesProvider =
     if (personId == null) continue;
     final typeId = (a['attendance'] as Map?)?['type_id']?.toString();
     if (typeId == null || !includedTypeIds.contains(typeId)) continue;
+    final dutyState = a['duty_state'];
+    if (dutyTypeIds.contains(typeId) &&
+        (dutyState == null || (dutyState is String && dutyState.isEmpty))) {
+      continue;
+    }
     totals[personId] = (totals[personId] ?? 0) + 1;
     final status = a['status'] as int?;
     // BL-003: Use centralized definition for which statuses count as attended

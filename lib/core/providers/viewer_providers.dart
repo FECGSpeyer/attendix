@@ -47,16 +47,17 @@ class ViewerNotifier extends Notifier<AsyncValue<void>> {
   }
 
   /// Delete a viewer
-  Future<bool> deleteViewer(int id) async {
+  /// Throws on failure (LOGIC_PEOPLE: pages must not show success toasts).
+  Future<bool> deleteViewer(int id, {String? appId}) async {
     state = const AsyncValue.loading();
     try {
-      await _repo.deleteViewer(id);
+      await _repo.deleteViewer(id, appId: appId);
       state = const AsyncValue.data(null);
       ref.invalidate(viewersProvider);
       return true;
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
-      return false;
+      rethrow;
     }
   }
 }

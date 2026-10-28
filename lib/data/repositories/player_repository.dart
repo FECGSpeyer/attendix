@@ -1,8 +1,11 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/constants/enums.dart';
 import '../models/person/person.dart';
 import '../models/instrument/instrument.dart';
+import '../models/shift/shift_plan.dart';
+import '../../core/utils/people_shift_status.dart';
 import '../../core/utils/person_matcher.dart';
 import '../../core/utils/text_utils.dart';
 import 'base_repository.dart';
@@ -13,6 +16,10 @@ import '../../l10n/l10n.dart';
 final playerRepositoryProvider = Provider<PlayerRepository>((ref) {
   return PlayerRepository(ref);
 });
+
+/// Ionic DEFAULT_IMAGE (placeholder avatar).
+const String kDefaultPersonImage =
+    'https://ionicframework.com/docs/img/demos/avatar.svg';
 
 /// Repository for player/person operations
 class PlayerRepository extends BaseRepository with TenantAwareRepository {
@@ -174,8 +181,8 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
   }
 
   /// Returns players whose `parent_id` equals [parentId], in the current
-  /// tenant. Filters out pending (`pending IS false`, like Ionic) and left
-  /// players.
+  /// tenant. Filters out pending and left players (matches `isFilter`
+  /// semantics used by the parents portal).
   ///
   /// Note: the DB column is `parent_id` (snake_case). Confirmed against
   /// existing repository methods and the Ionic db.service.ts.
@@ -272,6 +279,86 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
     }
   }
 
+  /// LOGIC_PEOPLE: Ionic db.addPlayer(player, register, role).
+  ///
+  /// With [register] and an e-mail the account is registered/linked right
+  /// away (registerUser with [role]). When the account already has a player
+  /// row in this tenant (e.g. a returning member who left), that row is
+  /// reactivated (`left = null`, fields overwritten) instead of inserting a
+  /// duplicate. Non-pending persons are added to every Termin since their
+  /// join date.
+  Future<Person> addPlayer(
+    Person player, {
+    required bool register,
+    required Role role,
+  }) async {
+    ensureNotDemo('addPlayer'); // DEMO_GUARD
+    var person = player;
+    final email = player.email?.trim() ?? '';
+    if (register && email.isNotEmpty) {
+      final appId = await _registration().registerUser(
+        email: email,
+        name: player.firstName,
+        role: role,
+      );
+      person = person.copyWith(appId: appId);
+    }
+
+    Person result;
+    final appId = person.appId;
+    Map<String, dynamic>? existing;
+    if (appId != null && appId.isNotEmpty) {
+      existing = await supabase
+          .from('player')
+          .select('id')
+          .eq('appId', appId)
+          .eq('tenantId', currentTenantId)
+          .limit(1)
+          .maybeSingle();
+    }
+
+    if (existing != null && existing['id'] != null) {
+      try {
+        final data = _personInsertData(person)
+          ..remove('id')
+          ..['left'] = null;
+        final updated = await supabase
+            .from('player')
+            .update(data)
+            .eq('id', existing['id'])
+            .eq('tenantId', currentTenantId)
+            .select()
+            .single();
+        result = Person.fromJson(updated);
+      } catch (e, stack) {
+        handleError(e, stack, 'addPlayer');
+        rethrow;
+      }
+    } else {
+      result = await createPlayer(person);
+    }
+
+    if (!person.pending) {
+      await addPlayerToAttendancesByDate(result);
+    }
+    return result;
+  }
+
+  /// Person JSON without computed fields (shared by create / reactivate).
+  Map<String, dynamic> _personInsertData(Person player) {
+    final data = player.toJson();
+    data.remove('groupName');
+    data.remove('firstOfInstrument');
+    data.remove('instrumentLength');
+    data.remove('teacherName');
+    data.remove('criticalReasonText');
+    data.remove('person_attendances');
+    data.remove('percentage');
+    data.remove('created_at');
+    data['tenantId'] = currentTenantId;
+    return data;
+  }
+
   /// Update an existing player
   Future<Person> updatePlayer(Person player) async {
     ensureNotDemo('updatePlayer'); // DEMO_GUARD
@@ -357,13 +444,27 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
     }
 
     try {
+      // LOGIC_PEOPLE: Ionic db.archivePlayer — revoke the account's access
+      // (tenantUsers, guarded for admins / other linked persons) and clear
+      // appId only when the person has an account AND an e-mail.
+      var clearAppId = false;
+      final appId = player.appId;
+      if (appId != null &&
+          appId.isNotEmpty &&
+          (player.email ?? '').isNotEmpty) {
+        await removeUserFromTenant(appId, personId: player.id);
+        clearAppId = true;
+      }
+
       // Add history entry
       final history = List<Map<String, dynamic>>.from(
         player.history.map((e) => e.toJson()),
       );
       history.add({
         'date': DateTime.now().toUtc().toIso8601String(),
-        'text': reason ?? 'Kein Grund angegeben',
+        'text': (reason == null || reason.isEmpty)
+            ? 'Kein Grund angegeben'
+            : reason,
         'type': PlayerHistoryType.archived.value,
       });
 
@@ -372,13 +473,72 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
           .update({
             'left': leftDate,
             'history': history,
-            'appId': null,
+            if (clearAppId) 'appId': null,
           })
           .eq('id', player.id!)
           .eq('tenantId', currentTenantId);
+
+      // Ionic removePlayerFromUpcomingAttendances(id, left): drop the person
+      // from every Termin after the leave date.
+      await removeFromUpcomingAttendances(player.id!, from: leftDate);
     } catch (e, stack) {
       handleError(e, stack, 'archivePlayer');
       rethrow;
+    }
+  }
+
+  /// LOGIC_PEOPLE: Ionic db.removeUserFromTenant — removes the account's
+  /// access (tenantUsers row) from the current tenant.
+  ///
+  /// Without [deleteAdmin] nothing happens when the account is ADMIN here,
+  /// and with [personId] access is kept while the same account is still
+  /// linked to another active person of this tenant.
+  Future<void> removeUserFromTenant(
+    String appId, {
+    int? personId,
+    bool deleteAdmin = false,
+  }) async {
+    ensureNotDemo('removeUserFromTenant'); // DEMO_GUARD
+    try {
+      if (deleteAdmin) {
+        await supabase
+            .from('tenantUsers')
+            .delete()
+            .eq('tenantId', currentTenantId)
+            .eq('role', Role.admin.value)
+            .eq('userId', appId);
+        return;
+      }
+
+      final admin = await supabase
+          .from('tenantUsers')
+          .select('userId')
+          .eq('tenantId', currentTenantId)
+          .eq('role', Role.admin.value)
+          .eq('userId', appId)
+          .limit(1);
+      if ((admin as List).isNotEmpty) return;
+
+      if (personId != null) {
+        final others = await supabase
+            .from('player')
+            .select('id')
+            .eq('tenantId', currentTenantId)
+            .eq('appId', appId)
+            .isFilter('left', null)
+            .neq('id', personId)
+            .limit(1);
+        if ((others as List).isNotEmpty) return;
+      }
+
+      await supabase
+          .from('tenantUsers')
+          .delete()
+          .eq('tenantId', currentTenantId)
+          .eq('userId', appId);
+    } catch (e) {
+      // Ionic: throw new Error(translate('db.removeFromTenantFailed'))
+      throw AccountFlowException(l10nWithoutContext.dbRemoveFromTenantFailed);
     }
   }
 
@@ -392,6 +552,18 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
       );
     }
 
+    // LOGIC_PEOPLE: Ionic db.activatePlayer — (re)create the account when an
+    // e-mail is set, history 'Person wieder aktiviert', left = null, then add
+    // the person to upcoming Termine (with shift / extra-field filters).
+    var person = player;
+    if ((player.email ?? '').trim().isNotEmpty) {
+      final appId = await _registration().createPlayerAccount(
+        player,
+        mainGroupId: await _mainGroupId(),
+      );
+      person = person.copyWith(appId: appId);
+    }
+
     try {
       // Add history entry
       final history = List<Map<String, dynamic>>.from(
@@ -399,7 +571,7 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
       );
       history.add({
         'date': DateTime.now().toUtc().toIso8601String(),
-        'text': 'Person wurde reaktiviert',
+        'text': 'Person wieder aktiviert',
         'type': PlayerHistoryType.returned.value,
       });
 
@@ -415,10 +587,34 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
       handleError(e, stack, 'reactivatePlayer');
       rethrow;
     }
+
+    await addToUpcomingAttendances(person);
   }
 
-  /// Delete a player permanently
-  Future<void> deletePlayer(int playerId) async {
+  /// Registration repository bound to the current tenant.
+  UserRegistrationRepository _registration() {
+    final repo = ref.read(userRegistrationRepositoryProvider);
+    repo.setTenantId(currentTenantId);
+    return repo;
+  }
+
+  /// Main group (Hauptgruppe) of [tenantId] (default: current tenant).
+  Future<int?> _mainGroupId({int? tenantId}) async {
+    final row = await supabase
+        .from('instruments')
+        .select('id')
+        .eq('tenantId', tenantId ?? currentTenantId)
+        .eq('maingroup', true)
+        .limit(1)
+        .maybeSingle();
+    return row?['id'] as int?;
+  }
+
+  /// Delete a player permanently.
+  ///
+  /// LOGIC_PEOPLE: Ionic db.removePlayer — afterwards the account's access
+  /// to this tenant is removed (guarded like [removeUserFromTenant]).
+  Future<void> deletePlayer(int playerId, {String? appId}) async {
     ensureNotDemo('deletePlayer'); // DEMO_GUARD
     try {
       await supabase
@@ -429,6 +625,9 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
     } catch (e, stack) {
       handleError(e, stack, 'deletePlayer');
       rethrow;
+    }
+    if (appId != null && appId.isNotEmpty) {
+      await removeUserFromTenant(appId, personId: playerId);
     }
   }
 
@@ -558,9 +757,15 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
     }
   }
 
-  /// Add player to all upcoming attendances (based on relevant groups)
+  /// Add player to all upcoming attendances.
+  ///
+  /// LOGIC_PEOPLE: Ionic db.addPlayerToUpcomingAttendances — respects the
+  /// type's `relevant_groups` AND `additional_fields_filter`, and (for
+  /// non all-day types) sets status/notes from the person's shift plan
+  /// (Utils.getStatusByShift, e.g. "Entschuldigt" + 'Schichtbedingt').
   Future<void> addToUpcomingAttendances(Person player) async {
-    if (player.id == null) return;
+    final playerId = player.id;
+    if (playerId == null) return;
 
     try {
       final today = DateTime.now().toIso8601String().substring(0, 10);
@@ -568,77 +773,149 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
       // Get upcoming attendances for this tenant
       final upcomingAttendances = await supabase
           .from('attendance')
-          .select('id, type_id')
+          .select('id, type_id, date, start_time, end_time')
           .eq('tenantId', currentTenantId)
           .gte('date', today);
 
       if ((upcomingAttendances as List).isEmpty) return;
 
-      // Get attendance types to check relevant_groups and default_status
-      final types = await supabase
-          .from('attendance_types')
-          .select('id, relevant_groups, default_status')
-          .eq('tenant_id', currentTenantId);
+      final types = await _loadTypeFilters();
+      final defaults = await _loadExtraFieldDefaults();
+      final existing = await _existingAttendanceIds(playerId);
+      final shift = await _loadShiftPlan(player.shiftId);
 
-      final typeMap = <dynamic, Map<String, dynamic>>{};
-      for (final t in types as List) {
-        final id = t['id']; // Can be int or String
-        final groups = t['relevant_groups'];
-        final defaultStatusRaw = t['default_status'];
+      final rows = <Map<String, dynamic>>[];
+      for (final att in upcomingAttendances) {
+        if (existing.contains(att['id']?.toString())) continue;
+        final type = types.where((t) => t.id == att['type_id']).firstOrNull;
+        if (type == null) continue;
+        if (!_matchesType(player, type, defaults, checkPaused: false)) continue;
 
-        // Convert String name to Integer value (DB stores "present", "neutral", etc.)
-        int defaultStatusInt;
-        if (defaultStatusRaw is int) {
-          defaultStatusInt = defaultStatusRaw;
-        } else if (defaultStatusRaw is String) {
-          defaultStatusInt = AttendanceStatus.values
-              .firstWhere(
-                (s) => s.name == defaultStatusRaw,
-                orElse: () => AttendanceStatus.neutral,
-              )
-              .value;
-        } else {
-          defaultStatusInt = AttendanceStatus.neutral.value;
+        var status = type.defaultStatus;
+        var notes = '';
+        if (shift != null && !type.allDay) {
+          final result = peopleStatusByShift(
+            shift: shift,
+            attDate: att['date']?.toString() ?? '',
+            attendanceStart:
+                att['start_time']?.toString() ?? type.startTime ?? '',
+            attendanceEnd: att['end_time']?.toString() ?? type.endTime ?? '',
+            defaultStatus: AttendanceStatus.fromValue(status),
+            shiftStart: player.shiftStart,
+            shiftName: player.shiftName,
+          );
+          status = result.status.value;
+          notes = result.note;
         }
 
-        typeMap[id] = {
-          'relevant_groups': groups is List ? groups : [],
-          'default_status': defaultStatusInt,
-        };
+        rows.add({
+          'attendance_id': att['id'],
+          'person_id': playerId,
+          'notes': notes,
+          'status': status,
+        });
       }
-
-      for (final attendance in upcomingAttendances) {
-        final attendanceId = attendance['id']; // Can be int or String (UUID)
-        final typeId = attendance['type_id'];
-        final typeData = typeId != null ? typeMap[typeId] : null;
-        final relevantGroups = (typeData?['relevant_groups'] as List?) ?? [];
-        final defaultStatus = typeData?['default_status'] ?? 0;
-
-        // Check if player's instrument is in relevant groups (or all groups allowed)
-        final isRelevant = relevantGroups.isEmpty ||
-            relevantGroups.contains(player.instrument);
-
-        if (isRelevant) {
-          // Check if entry already exists
-          final existing = await supabase
-              .from('person_attendances')
-              .select('id')
-              .eq('attendance_id', attendanceId)
-              .eq('person_id', player.id!)
-              .maybeSingle();
-
-          if (existing == null) {
-            await supabase.from('person_attendances').insert({
-              'attendance_id': attendanceId,
-              'person_id': player.id,
-              'status': defaultStatus, // Use default status from attendance type
-            });
-          }
-        }
+      if (rows.isNotEmpty) {
+        await supabase.from('person_attendances').insert(rows);
       }
     } catch (e, stack) {
       handleError(e, stack, 'addToUpcomingAttendances');
       rethrow; // Rethrow to see error in UI
+    }
+  }
+
+  /// Shift plan of the current tenant by id (null when unset / missing).
+  Future<ShiftPlan?> _loadShiftPlan(String? shiftId) async {
+    if (shiftId == null || shiftId.isEmpty) return null;
+    final row = await supabase
+        .from('shifts')
+        .select('*')
+        .eq('id', shiftId)
+        .eq('tenant_id', currentTenantId)
+        .maybeSingle();
+    return row == null ? null : ShiftPlan.fromJson(row);
+  }
+
+  /// LOGIC_PEOPLE: Ionic db.updateShiftAssignmentsForPerson — after a shift
+  /// change, reset the person's future shift-excused entries to the type
+  /// default and re-apply the (new) shift plan.
+  Future<void> updateShiftAssignmentsForPerson(Person person) async {
+    final personId = person.id;
+    if (personId == null) return;
+    try {
+      final rows = await supabase
+          .from('person_attendances')
+          .select(
+              'id, status, notes, attendance:attendance_id!inner(id, date, type_id, start_time, end_time, tenantId)')
+          .eq('person_id', personId)
+          .eq('attendance.tenantId', currentTenantId);
+      final types = await _loadTypeFilters();
+      final shift = await _loadShiftPlan(person.shiftId);
+      final today = DateTime.now();
+      final todayStart = DateTime(today.year, today.month, today.day);
+
+      bool isPast(Map att) {
+        final d = DateTime.tryParse(att['date']?.toString() ?? '');
+        if (d == null) return true;
+        return DateTime(d.year, d.month, d.day).isBefore(todayStart);
+      }
+
+      final entries = (rows as List)
+          .map((r) => Map<String, dynamic>.from(r as Map))
+          .where((r) => r['attendance'] is Map && !isPast(r['attendance'] as Map))
+          .toList();
+
+      // Phase 1: reset future shift-excused entries to the type default.
+      for (final r in entries) {
+        final att = r['attendance'] as Map;
+        if (!isWorkExcusedNote(r['notes'] as String?) ||
+            r['status'] != AttendanceStatus.excused.value) {
+          continue;
+        }
+        final type = types.where((t) => t.id == att['type_id']).firstOrNull;
+        if (type == null) continue;
+        await supabase
+            .from('person_attendances')
+            .update({'status': type.defaultStatus, 'notes': ''})
+            .eq('id', r['id'])
+            .eq('person_id', personId);
+        r['status'] = type.defaultStatus;
+        r['notes'] = '';
+      }
+
+      // Phase 2: apply the new shift.
+      if (shift == null) return;
+      for (final r in entries) {
+        final att = r['attendance'] as Map;
+        final type = types.where((t) => t.id == att['type_id']).firstOrNull;
+        if (type == null) continue;
+        ({AttendanceStatus status, String note}) result;
+        try {
+          result = peopleStatusByShift(
+            shift: shift,
+            attDate: att['date']?.toString() ?? '',
+            attendanceStart:
+                att['start_time']?.toString() ?? type.startTime ?? '',
+            attendanceEnd: att['end_time']?.toString() ?? type.endTime ?? '',
+            defaultStatus: AttendanceStatus.fromValue(type.defaultStatus),
+            shiftStart: person.shiftStart,
+            shiftName: person.shiftName,
+          );
+        } catch (_) {
+          continue; // shift_name not in the new plan — skip like Ionic
+        }
+        if (result.status == AttendanceStatus.excused &&
+            r['status'] == type.defaultStatus) {
+          await supabase
+              .from('person_attendances')
+              .update({'status': result.status.value, 'notes': result.note})
+              .eq('id', r['id'])
+              .eq('person_id', personId);
+        }
+      }
+    } catch (e, stack) {
+      handleError(e, stack, 'updateShiftAssignmentsForPerson');
+      rethrow;
     }
   }
 
@@ -705,7 +982,8 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
       );
       history.add({
         'date': DateTime.now().toUtc().toIso8601String(),
-        'text': 'Genehmigt',
+        // LOGIC_PEOPLE: Ionic history text incl. the approver.
+        'text': 'Person genehmigt von ${_actorEmail()}',
         'type': PlayerHistoryType.approved.value,
       });
 
@@ -718,11 +996,22 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
           .eq('id', player.id!)
           .eq('tenantId', currentTenantId);
 
-      // Add to upcoming attendances (same as unpause)
-      await addToUpcomingAttendances(player);
+      // LOGIC_PEOPLE: Ionic approvePlayer → addPlayerToAttendancesByDate
+      // (every Termin since the join date, with group / extra-field filters).
+      await addPlayerToAttendancesByDate(player);
     } catch (e, stack) {
       handleError(e, stack, 'approvePlayer');
       rethrow;
+    }
+  }
+
+  /// E-mail of the signed-in user (Ionic `tenantUser().email`) for history
+  /// entries like 'Person genehmigt von …'.
+  String _actorEmail() {
+    try {
+      return supabase.auth.currentUser?.email ?? '';
+    } catch (_) {
+      return '';
     }
   }
 
@@ -742,7 +1031,8 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
       );
       history.add({
         'date': DateTime.now().toUtc().toIso8601String(),
-        'text': reason,
+        // LOGIC_PEOPLE: Ionic history text incl. decliner and reason.
+        'text': 'Person abgelehnt von ${_actorEmail()}: $reason',
         'type': PlayerHistoryType.declined.value,
       });
 
@@ -756,13 +1046,10 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
           .eq('id', player.id!)
           .eq('tenantId', currentTenantId);
 
-      // Remove from tenantUsers if linked
-      if (player.appId != null) {
-        await supabase
-            .from('tenantUsers')
-            .delete()
-            .eq('userId', player.appId!)
-            .eq('tenantId', currentTenantId);
+      // Ionic removeUserFromTenant(appId, false, id): keeps admins and
+      // accounts still linked to another active person.
+      if (player.appId != null && player.appId!.isNotEmpty) {
+        await removeUserFromTenant(player.appId!, personId: player.id);
       }
     } catch (e, stack) {
       handleError(e, stack, 'declinePlayer');
@@ -889,21 +1176,12 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
     }
 
     try {
-      // Add history entry
-      final history = List<Map<String, dynamic>>.from(
-        player.history.map((e) => e.toJson()),
-      );
-      history.add({
-        'date': DateTime.now().toUtc().toIso8601String(),
-        'text': 'Verspätungen besprochen und zurückgesetzt',
-        'type': PlayerHistoryType.notes.value,
-      });
-
+      // LOGIC_PEOPLE: Ionic person.page resetLateCount only sets lastSolve
+      // (no history entry).
       final response = await supabase
           .from('player')
           .update({
             'lastSolve': DateTime.now().toUtc().toIso8601String(),
-            'history': history,
           })
           .eq('id', player.id!)
           .eq('tenantId', currentTenantId)
@@ -934,7 +1212,8 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
       );
       history.add({
         'date': DateTime.now().toUtc().toIso8601String(),
-        'text': notes ?? 'Problemfall besprochen und gelöst',
+        // LOGIC_PEOPLE: Ionic pushes `this.notes` as is (may be empty).
+        'text': notes ?? '',
         'type': PlayerHistoryType.criticalPerson.value,
       });
 
@@ -943,7 +1222,7 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
           .update({
             'isCritical': false,
             'lastSolve': DateTime.now().toUtc().toIso8601String(),
-            'criticalReason': null,
+            // Ionic keeps criticalReason untouched.
             'history': history,
           })
           .eq('id', player.id!)
@@ -994,10 +1273,18 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
       );
     }
 
+    // LOGIC_PEOPLE: Ionic person.page removeUserFromTenant →
+    // db.removeUserFromTenant(appId, false, id) (keeps admins / accounts
+    // linked to another active person) and then clears email AND appId.
+    final appId = player.appId;
+    if (appId != null && appId.isNotEmpty) {
+      await removeUserFromTenant(appId, personId: player.id);
+    }
+
     try {
       final response = await supabase
           .from('player')
-          .update({'appId': null})
+          .update({'appId': null, 'email': null})
           .eq('id', player.id!)
           .eq('tenantId', currentTenantId)
           .select()
@@ -1017,12 +1304,12 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
   static const int handoverDuplicate = 1;
   static const int handoverError = 2;
 
-  /// Check if a player already exists in the target tenant
-  /// Uses email or appId for duplicate detection
+  /// Check if a player already exists in the target tenant.
+  ///
+  /// LOGIC_PEOPLE: Ionic db.personExistsInTenant — e-mail (ilike, trimmed),
+  /// then first + last name (ilike) as fallback.
   Future<bool> playerExistsInTenant(Person player, int targetTenantId) async {
     try {
-      // Check by email if available — case-insensitive & trimmed like Ionic
-      // (`.ilike('email', normalized)`); empty emails never match (B10-007/008)
       final email = normalizeEmailForMatch(player.email);
       if (email != null) {
         final byEmail = await supabase
@@ -1034,18 +1321,18 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
         if ((byEmail as List).isNotEmpty) return true;
       }
 
-      // Check by appId if available
-      if (player.appId != null && player.appId!.isNotEmpty) {
-        final byAppId = await supabase
-            .from('player')
-            .select('id')
-            .eq('tenantId', targetTenantId)
-            .eq('appId', player.appId!)
-            .limit(1);
-        if ((byAppId as List).isNotEmpty) return true;
-      }
+      final firstName = player.firstName.trim();
+      final lastName = player.lastName.trim();
+      if (firstName.isEmpty && lastName.isEmpty) return false;
 
-      return false;
+      final byName = await supabase
+          .from('player')
+          .select('id')
+          .eq('tenantId', targetTenantId)
+          .ilike('firstName', escapeLikePattern(firstName))
+          .ilike('lastName', escapeLikePattern(lastName))
+          .limit(1);
+      return (byName as List).isNotEmpty;
     } catch (e, stack) {
       handleError(e, stack, 'playerExistsInTenant');
       rethrow;
@@ -1079,6 +1366,14 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
   /// [sourceTenantName] - Name of source tenant for history entry
   /// [stayInInstance] - If true, copies player (COPIED_FROM/TO), otherwise transfers (TRANSFERRED_FROM/TO)
   ///
+  /// LOGIC_PEOPLE: Ionic db.handoverPerson — the target person is created
+  /// FIRST (account linked/registered in the target instance with
+  /// RESPONSIBLE for the target main group, else PLAYER; an existing row of
+  /// the same account is reactivated; attendances since today are
+  /// backfilled). Only then is the source updated (history; on transfer
+  /// `left`), so a failed insert never archives the source. The source keeps
+  /// its appId like in Ionic.
+  ///
   /// Returns handoverSuccess, handoverDuplicate, or handoverError
   Future<int> handoverPlayer({
     required Person player,
@@ -1103,78 +1398,127 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
         return handoverDuplicate;
       }
 
-      // Determine history types based on stayInInstance
-      final sourceHistoryType = stayInInstance
-          ? PlayerHistoryType.copiedTo
-          : PlayerHistoryType.transferredTo;
-      final targetHistoryType = stayInInstance
-          ? PlayerHistoryType.copiedFrom
-          : PlayerHistoryType.transferredFrom;
+      final now = DateTime.now();
+      final nowIso = now.toUtc().toIso8601String();
+      final todayUtc =
+          DateTime.utc(now.year, now.month, now.day).toIso8601String();
 
-      final now = DateTime.now().toUtc().toIso8601String();
-
-      // 1. Update source player with history entry
-      final sourceHistory = List<Map<String, dynamic>>.from(
-        player.history.map((e) => e.toJson()),
-      );
-      sourceHistory.add({
-        'date': now,
-        'text': stayInInstance
-            ? 'Kopiert nach $targetTenantName'
-            : 'Übertragen nach $targetTenantName',
-        'type': sourceHistoryType.value,
-      });
-
-      final sourceUpdate = <String, dynamic>{
-        'history': sourceHistory,
-      };
-
-      // If transferring (not copying), archive the source player
-      if (!stayInInstance) {
-        sourceUpdate['left'] = now.substring(0, 10); // Date only
-        sourceUpdate['appId'] = null; // Unlink account
-      }
-
-      await supabase
-          .from('player')
-          .update(sourceUpdate)
-          .eq('id', player.id!)
-          .eq('tenantId', currentTenantId);
-
-      // 2. Create new player in target tenant
+      // 1. Create the person in the target tenant (Ionic addPlayer).
       final targetHistory = <Map<String, dynamic>>[
         {
-          'date': now,
-          'text': stayInInstance
-              ? 'Kopiert von $sourceTenantName'
-              : 'Übertragen von $sourceTenantName',
-          'type': targetHistoryType.value,
+          'date': nowIso,
+          'text':
+              'Person wurde von der Instanz "$sourceTenantName" übertragen.',
+          'type': (stayInInstance
+                  ? PlayerHistoryType.copiedFrom
+                  : PlayerHistoryType.transferredFrom)
+              .value,
         },
       ];
+
+      String? appId = player.appId;
+      final email = player.email?.trim() ?? '';
+      if (email.isNotEmpty) {
+        final targetMainGroup = await _mainGroupId(tenantId: targetTenantId);
+        final role = targetGroupId != null && targetGroupId == targetMainGroup
+            ? Role.responsible
+            : Role.player;
+        appId = await _registration().registerUser(
+          email: email,
+          name: player.firstName,
+          role: role,
+          tenantId: targetTenantId,
+        );
+      }
+
+      final img = (player.img ?? '').isNotEmpty &&
+              !(player.img!.startsWith('data:'))
+          ? player.img
+          : kDefaultPersonImage;
 
       final newPlayerData = <String, dynamic>{
         'tenantId': targetTenantId,
         'firstName': player.firstName,
         'lastName': player.lastName,
-        'email': player.email,
-        'birthday': player.birthday,
-        'joined': player.joined ?? now.substring(0, 10),
-        'phone': player.phone,
-        'notes': player.notes,
         'instrument': targetGroupId,
-        'isLeader': false, // Reset leader status
-        'isCritical': false, // Reset critical status
-        'pending': false,
-        'paused': false,
+        'img': img,
+        'joined': todayUtc,
+        'email': player.email,
+        'appId': appId,
+        'hasTeacher': player.hasTeacher,
+        'teacher': player.teacher,
+        'playsSince': player.playsSince,
+        'correctBirthday': player.correctBirthday,
+        'birthday': player.birthday,
+        'isLeader': false,
+        'isCritical': false,
+        'notes': player.notes,
         'history': targetHistory,
-        // Don't copy: appId (user must re-link), img, shift_id, etc.
+        'pending': false,
+        'self_register': false,
       };
 
-      await supabase.from('player').insert(newPlayerData);
+      Map<String, dynamic>? existingRow;
+      if (appId != null && appId.isNotEmpty) {
+        existingRow = await supabase
+            .from('player')
+            .select('id')
+            .eq('appId', appId)
+            .eq('tenantId', targetTenantId)
+            .limit(1)
+            .maybeSingle();
+      }
+
+      final Map<String, dynamic> created;
+      if (existingRow != null && existingRow['id'] != null) {
+        // Ionic: reactivate the previous row of this account.
+        created = await supabase
+            .from('player')
+            .update({...newPlayerData, 'left': null})
+            .eq('id', existingRow['id'])
+            .eq('tenantId', targetTenantId)
+            .select()
+            .single();
+      } else {
+        created = await supabase
+            .from('player')
+            .insert(newPlayerData)
+            .select()
+            .single();
+      }
+
+      final createdPerson = Person.fromJson(created);
+      await addPlayerToAttendancesByDate(createdPerson,
+          tenantId: targetTenantId);
+
+      // 2. Update the source (history; transfer also sets `left`).
+      final sourceHistory = List<Map<String, dynamic>>.from(
+        player.history.map((e) => e.toJson()),
+      );
+      sourceHistory.add({
+        'date': nowIso,
+        'text': stayInInstance
+            ? 'Person wurde zu "$targetTenantName" kopiert.'
+            : 'Person wurde zu "$targetTenantName" übertragen.',
+        'type': (stayInInstance
+                ? PlayerHistoryType.copiedTo
+                : PlayerHistoryType.transferredTo)
+            .value,
+      });
+
+      await supabase
+          .from('player')
+          .update({
+            'history': sourceHistory,
+            if (!stayInInstance) 'left': nowIso,
+          })
+          .eq('id', player.id!)
+          .eq('tenantId', currentTenantId);
 
       return handoverSuccess;
-    } catch (e, stack) {
-      handleError(e, stack, 'handoverPlayer');
+    } catch (e) {
+      if (e is DemoModeException) rethrow;
+      debugPrint('handoverPlayer failed: $e');
       return handoverError;
     }
   }
@@ -1419,11 +1763,12 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
   }
 
   /// Attendance types of the current tenant with parsed filter data.
-  Future<List<_TypeFilter>> _loadTypeFilters() async {
+  Future<List<_TypeFilter>> _loadTypeFilters({int? tenantId}) async {
     final types = await supabase
         .from('attendance_types')
-        .select('id, relevant_groups, default_status, additional_fields_filter')
-        .eq('tenant_id', currentTenantId);
+        .select(
+            'id, relevant_groups, default_status, additional_fields_filter, all_day, start_time, end_time')
+        .eq('tenant_id', tenantId ?? currentTenantId);
     return (types as List).map((t) {
       final raw = t['default_status'];
       final status = raw is int
@@ -1440,16 +1785,19 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
         defaultStatus: status,
         filterKey: filter is Map ? filter['key']?.toString() : null,
         filterOption: filter is Map ? filter['option'] : null,
+        allDay: t['all_day'] == true,
+        startTime: t['start_time'] as String?,
+        endTime: t['end_time'] as String?,
       );
     }).toList();
   }
 
   /// Default values of the tenant's extra fields (for filter matching).
-  Future<Map<String, dynamic>> _loadExtraFieldDefaults() async {
+  Future<Map<String, dynamic>> _loadExtraFieldDefaults({int? tenantId}) async {
     final row = await supabase
         .from('tenants')
         .select('additional_fields')
-        .eq('id', currentTenantId)
+        .eq('id', tenantId ?? currentTenantId)
         .maybeSingle();
     final fields = row?['additional_fields'];
     return {
@@ -1481,9 +1829,14 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
   /// Ionic db.addPlayerToAttendancesByDate: add the person to every
   /// attendance after their join date (or today when unknown) that matches
   /// the type's group / extra field filters.
-  Future<void> addPlayerToAttendancesByDate(Person player) async {
+  ///
+  /// [tenantId] targets another tenant (Ionic handover: backfill in the
+  /// target instance); defaults to the current tenant.
+  Future<void> addPlayerToAttendancesByDate(Person player,
+      {int? tenantId}) async {
     final playerId = player.id;
     if (playerId == null) return;
+    final targetTenantId = tenantId ?? currentTenantId;
     try {
       final joined = player.joined != null && player.joined!.length >= 10
           ? player.joined!.substring(0, 10)
@@ -1491,13 +1844,14 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
       final attendances = await supabase
           .from('attendance')
           .select('id, type_id')
-          .eq('tenantId', currentTenantId)
+          .eq('tenantId', targetTenantId)
           .gt('date', joined);
       if ((attendances as List).isEmpty) return;
 
-      final types = await _loadTypeFilters();
-      final defaults = await _loadExtraFieldDefaults();
-      final existing = await _existingAttendanceIds(playerId);
+      final types = await _loadTypeFilters(tenantId: targetTenantId);
+      final defaults = await _loadExtraFieldDefaults(tenantId: targetTenantId);
+      final existing =
+          await _existingAttendanceIds(playerId, tenantId: targetTenantId);
 
       final rows = <Map<String, dynamic>>[];
       for (final att in attendances) {
@@ -1602,12 +1956,13 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
 
   /// Attendance ids (as strings) the player already has rows for, restricted
   /// to the current tenant via the attendance join.
-  Future<Set<String>> _existingAttendanceIds(int playerId) async {
+  Future<Set<String>> _existingAttendanceIds(int playerId,
+      {int? tenantId}) async {
     final rows = await supabase
         .from('person_attendances')
         .select('attendance_id, attendance:attendance_id!inner(tenantId)')
         .eq('person_id', playerId)
-        .eq('attendance.tenantId', currentTenantId);
+        .eq('attendance.tenantId', tenantId ?? currentTenantId);
     return (rows as List)
         .map((r) => r['attendance_id']?.toString())
         .whereType<String>()
@@ -1667,6 +2022,9 @@ class _TypeFilter {
     required this.defaultStatus,
     this.filterKey,
     this.filterOption,
+    this.allDay = false,
+    this.startTime,
+    this.endTime,
   });
 
   final dynamic id;
@@ -1674,4 +2032,7 @@ class _TypeFilter {
   final int defaultStatus;
   final String? filterKey;
   final dynamic filterOption;
+  final bool allDay;
+  final String? startTime;
+  final String? endTime;
 }

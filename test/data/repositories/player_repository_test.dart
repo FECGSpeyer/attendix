@@ -41,9 +41,12 @@ void main() {
 
         for (final match in updateQueries) {
           final query = match.group(0)!;
+          // LOGIC_PEOPLE: the handover reactivates a row in the explicit
+          // target tenant (cross-tenant by design, Ionic handoverPerson).
           expect(
-            query,
-            contains(".eq('tenantId', currentTenantId)"),
+            query.contains(".eq('tenantId', currentTenantId)") ||
+                query.contains(".eq('tenantId', targetTenantId)"),
+            isTrue,
             reason: 'UPDATE query missing tenantId filter:\n$query',
           );
         }

@@ -4,7 +4,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/config/supabase_config.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/constants/enums.dart';
+import '../../../../core/providers/parent_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
+import '../../../../core/providers/viewer_providers.dart';
+import '../../../../data/models/parent/parent_model.dart';
+import '../../../../data/models/viewer/viewer.dart';
 import '../../../../core/providers/user_registration_providers.dart'; // AUTH
 import '../../../../data/repositories/user_registration_repository.dart'; // AUTH
 import '../../../../core/theme/app_colors.dart';
@@ -144,11 +148,25 @@ class UserManagementPage extends ConsumerWidget {
     );
 
     if (result != null && context.mounted) {
-      await _addUser(context, ref, result['email'], Role.fromValue(result['role']));
+      await _addUser(
+        context,
+        ref,
+        result['email'] as String,
+        Role.fromValue(result['role'] as int),
+        firstName: result['firstName'] as String? ?? '',
+        lastName: result['lastName'] as String? ?? '',
+      );
     }
   }
 
-  Future<void> _addUser(BuildContext context, WidgetRef ref, String email, Role role) async {
+  Future<void> _addUser(
+    BuildContext context,
+    WidgetRef ref,
+    String email,
+    Role role, {
+    String firstName = '',
+    String lastName = '',
+  }) async {
     final registration = ref.read(userRegistrationRepositoryWithTenantProvider);
     if (!registration.hasTenantId) return;
 
@@ -156,11 +174,42 @@ class UserManagementPage extends ConsumerWidget {
       // AUTH: Ionic createAdmin → registerUser: links an existing account (and
       // informs it) or creates a new account server-side via the
       // attendix-user Edge Function, which sends the "set password" mail.
-      await registration.registerUser(
-        email: email.toLowerCase().trim(),
-        name: '',
+      final normalizedEmail = email.toLowerCase().trim();
+      final appId = await registration.registerUser(
+        email: normalizedEmail,
+        name: role == Role.viewer || role == Role.parent ? firstName : '',
         role: role,
       );
+
+      // LOGIC_PEOPLE: Ionic db.createViewer / createParent also insert the
+      // `viewers` / `parents` row (first + last name) and, for parents, set
+      // tenantUsers.parent_id so the parents portal works.
+      if (role == Role.viewer) {
+        final created = await ref.read(viewerNotifierProvider.notifier).createViewer(
+              Viewer(
+                appId: appId,
+                email: normalizedEmail,
+                firstName: firstName,
+                lastName: lastName,
+              ),
+            );
+        if (created == null) {
+          throw AccountFlowException(l10nWithoutContext.dbAddViewerFailed);
+        }
+      } else if (role == Role.parent) {
+        final created = await ref.read(parentNotifierProvider.notifier).createParent(
+              ParentModel(
+                appId: appId,
+                email: normalizedEmail,
+                firstName: firstName,
+                lastName: lastName,
+              ),
+            );
+        if (created?.id == null) {
+          throw AccountFlowException(l10nWithoutContext.dbAddParentFailed);
+        }
+        await registration.linkParentToTenantUser(appId, created!.id!);
+      }
 
       ref.invalidate(tenantUsersProvider);
 
@@ -191,10 +240,17 @@ class _AddUserDialog extends StatefulWidget {
 
 class _AddUserDialogState extends State<_AddUserDialog> {
   final _emailController = TextEditingController();
+  final _firstNameController = TextEditingController();
+  final _lastNameController = TextEditingController();
   Role _selectedRole = Role.viewer;
+
+  bool get _needsName =>
+      _selectedRole == Role.viewer || _selectedRole == Role.parent;
 
   @override
   void dispose() {
+    _firstNameController.dispose();
+    _lastNameController.dispose();
     _emailController.dispose();
     super.dispose();
   }
@@ -230,6 +286,22 @@ class _AddUserDialogState extends State<_AddUserDialog> {
               if (role != null) setState(() => _selectedRole = role);
             },
           ),
+          // LOGIC_PEOPLE: viewers / parents need a name (Ionic createViewer /
+          // createParent insert firstName + lastName).
+          if (_needsName) ...[
+            const SizedBox(height: AppDimensions.paddingM),
+            TextField(
+              controller: _firstNameController,
+              decoration: InputDecoration(labelText: context.l10n.peopleFirstName),
+              textCapitalization: TextCapitalization.words,
+            ),
+            const SizedBox(height: AppDimensions.paddingS),
+            TextField(
+              controller: _lastNameController,
+              decoration: InputDecoration(labelText: context.l10n.peopleLastName),
+              textCapitalization: TextCapitalization.words,
+            ),
+          ],
         ],
       ),
       actions: [
@@ -244,9 +316,17 @@ class _AddUserDialogState extends State<_AddUserDialog> {
               ToastHelper.showError(context, context.l10n.loginToastInvalidEmail);
               return;
             }
+            final firstName = _firstNameController.text.trim();
+            final lastName = _lastNameController.text.trim();
+            if (_needsName && (firstName.isEmpty || lastName.isEmpty)) {
+              ToastHelper.showError(context, context.l10n.personEnterNames);
+              return;
+            }
             Navigator.of(context).pop({
               'email': email,
               'role': _selectedRole.value,
+              if (_needsName) 'firstName': firstName,
+              if (_needsName) 'lastName': lastName,
             });
           },
           child: Text(context.l10n.attendanceAdd),

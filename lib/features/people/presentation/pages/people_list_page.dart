@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../../core/utils/people_sort.dart';
 import '../../../../core/config/supabase_config.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/attendance_providers.dart';
@@ -284,10 +285,11 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
 
     switch (_sortOption) {
       case 'firstName':
-        sorted.sort((a, b) => a.firstName.compareTo(b.firstName));
+        // LOGIC_PEOPLE: Ionic localeCompare (case/umlaut aware)
+        sorted.sort((a, b) => localeCompareDe(a.firstName, b.firstName));
         break;
       case 'lastName':
-        sorted.sort((a, b) => a.lastName.compareTo(b.lastName));
+        sorted.sort((a, b) => localeCompareDe(a.lastName, b.lastName));
         break;
       case 'birthdayAsc':
         sorted.sort((a, b) {
@@ -341,14 +343,9 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
         });
         break;
       case 'testResult':
-        sorted.sort((a, b) {
-          final aVal = double.tryParse(a.testResult ?? '');
-          final bVal = double.tryParse(b.testResult ?? '');
-          if (aVal == null && bVal == null) return 0;
-          if (aVal == null) return 1;
-          if (bVal == null) return -1;
-          return bVal.compareTo(aVal); // descending
-        });
+        // LOGIC_PEOPLE: Ionic strips '%' ("85%") and counts missing as 0.
+        sorted.sort((a, b) => testResultValue(b.testResult)
+            .compareTo(testResultValue(a.testResult))); // descending
         break;
       case 'attAsc':
       case 'attDesc':
@@ -1353,7 +1350,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
 
     if (confirmed == true && mounted && person.id != null) {
       try {
-        await ref.read(playerNotifierProvider.notifier).deletePlayer(person.id!);
+        await ref.read(playerNotifierProvider.notifier).deletePlayer(person.id!, appId: person.appId);
         if (mounted) ToastHelper.showSuccess(context, context.l10n.peopleRemoved);
       } catch (e) {
         if (mounted) ToastHelper.showError(context, context.l10n.peopleFlutterErrorWith(e));

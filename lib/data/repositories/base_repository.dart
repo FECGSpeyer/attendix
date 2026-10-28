@@ -14,6 +14,11 @@ abstract class BaseRepository {
 
   final Ref _ref;
 
+  /// Riverpod ref for repositories that compose other repositories
+  /// (LOGIC_PEOPLE: player flows that create/link accounts).
+  @protected
+  Ref get ref => _ref;
+
   /// Get Supabase client
   SupabaseClient get supabase => _ref.read(supabaseClientProvider);
 

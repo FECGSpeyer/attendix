@@ -105,8 +105,10 @@ class PlayerNotifier extends Notifier<AsyncValue<void>> {
       ref.invalidate(playersProvider);
       return result;
     } catch (e, stack) {
+      // LOGIC_PEOPLE: surface errors to the caller (Ionic shows a toast);
+      // swallowing them made pages show success toasts on failure.
       state = AsyncValue.error(e, stack);
-      return null;
+      rethrow;
     }
   }
 
@@ -120,8 +122,10 @@ class PlayerNotifier extends Notifier<AsyncValue<void>> {
       ref.invalidate(playerByIdProvider(player.id!));
       return result;
     } catch (e, stack) {
+      // LOGIC_PEOPLE: surface errors to the caller (Ionic shows a toast);
+      // swallowing them made pages show success toasts on failure.
       state = AsyncValue.error(e, stack);
-      return null;
+      rethrow;
     }
   }
 
@@ -133,7 +137,8 @@ class PlayerNotifier extends Notifier<AsyncValue<void>> {
       ref.invalidate(playersProvider);
       ref.invalidate(archivedPlayersProvider);
     } catch (e, stack) {
-      state = AsyncValue.error(e, stack);
+      state = AsyncValue.error(e, stack); // LOGIC_PEOPLE: rethrow
+      rethrow;
     }
   }
 
@@ -145,7 +150,8 @@ class PlayerNotifier extends Notifier<AsyncValue<void>> {
       ref.invalidate(playersProvider);
       ref.invalidate(archivedPlayersProvider);
     } catch (e, stack) {
-      state = AsyncValue.error(e, stack);
+      state = AsyncValue.error(e, stack); // LOGIC_PEOPLE: rethrow
+      rethrow;
     }
   }
 
@@ -157,7 +163,8 @@ class PlayerNotifier extends Notifier<AsyncValue<void>> {
       ref.invalidate(playersProvider);
       ref.invalidate(playerByIdProvider(player.id!));
     } catch (e, stack) {
-      state = AsyncValue.error(e, stack);
+      state = AsyncValue.error(e, stack); // LOGIC_PEOPLE: rethrow
+      rethrow;
     }
   }
 
@@ -169,19 +176,23 @@ class PlayerNotifier extends Notifier<AsyncValue<void>> {
       ref.invalidate(playersProvider);
       ref.invalidate(playerByIdProvider(player.id!));
     } catch (e, stack) {
-      state = AsyncValue.error(e, stack);
+      state = AsyncValue.error(e, stack); // LOGIC_PEOPLE: rethrow
+      rethrow;
     }
   }
 
-  Future<void> deletePlayer(int playerId) async {
+  /// Ionic db.removePlayer: deletes the person and (when [appId] is set)
+  /// removes the account's access to this instance.
+  Future<void> deletePlayer(int playerId, {String? appId}) async {
     state = const AsyncValue.loading();
     try {
-      await _repo.deletePlayer(playerId);
+      await _repo.deletePlayer(playerId, appId: appId);
       ref.read(trackingServiceProvider).track(TrackingEvent.playerRemoved);
       state = const AsyncValue.data(null);
       ref.invalidate(playersProvider);
     } catch (e, stack) {
-      state = AsyncValue.error(e, stack);
+      state = AsyncValue.error(e, stack); // LOGIC_PEOPLE: rethrow
+      rethrow;
     }
   }
 
@@ -194,7 +205,8 @@ class PlayerNotifier extends Notifier<AsyncValue<void>> {
       ref.invalidate(pendingPlayersProvider);
       ref.invalidate(playersProvider);
     } catch (e, stack) {
-      state = AsyncValue.error(e, stack);
+      state = AsyncValue.error(e, stack); // LOGIC_PEOPLE: rethrow
+      rethrow;
     }
   }
 
@@ -208,7 +220,8 @@ class PlayerNotifier extends Notifier<AsyncValue<void>> {
       ref.invalidate(playersProvider);
       ref.invalidate(archivedPlayersProvider);
     } catch (e, stack) {
-      state = AsyncValue.error(e, stack);
+      state = AsyncValue.error(e, stack); // LOGIC_PEOPLE: rethrow
+      rethrow;
     }
   }
 
@@ -251,8 +264,10 @@ class PlayerNotifier extends Notifier<AsyncValue<void>> {
       ref.invalidate(playerByIdProvider(player.id!));
       return result;
     } catch (e, stack) {
+      // LOGIC_PEOPLE: surface errors to the caller (Ionic shows a toast);
+      // swallowing them made pages show success toasts on failure.
       state = AsyncValue.error(e, stack);
-      return null;
+      rethrow;
     }
   }
 
@@ -266,8 +281,10 @@ class PlayerNotifier extends Notifier<AsyncValue<void>> {
       ref.invalidate(playerByIdProvider(player.id!));
       return result;
     } catch (e, stack) {
+      // LOGIC_PEOPLE: surface errors to the caller (Ionic shows a toast);
+      // swallowing them made pages show success toasts on failure.
       state = AsyncValue.error(e, stack);
-      return null;
+      rethrow;
     }
   }
 
@@ -280,8 +297,10 @@ class PlayerNotifier extends Notifier<AsyncValue<void>> {
       ref.invalidate(playerByIdProvider(player.id!));
       return result;
     } catch (e, stack) {
+      // LOGIC_PEOPLE: surface errors to the caller (Ionic shows a toast);
+      // swallowing them made pages show success toasts on failure.
       state = AsyncValue.error(e, stack);
-      return null;
+      rethrow;
     }
   }
 
@@ -294,8 +313,10 @@ class PlayerNotifier extends Notifier<AsyncValue<void>> {
       ref.invalidate(playerByIdProvider(player.id!));
       return result;
     } catch (e, stack) {
+      // LOGIC_PEOPLE: surface errors to the caller (Ionic shows a toast);
+      // swallowing them made pages show success toasts on failure.
       state = AsyncValue.error(e, stack);
-      return null;
+      rethrow;
     }
   }
 }

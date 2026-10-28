@@ -1,4 +1,3 @@
-import '../../../../core/providers/user_registration_providers.dart'; // AUTH
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -7,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/player_providers.dart';
 import '../../../../core/providers/realtime_providers.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -562,40 +562,6 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
     return main?.id != null && main!.id == _selectedInstrument;
   }
 
-  /// Ionic: "Möchtest du gleich ein Konto für die Person anlegen?" — the
-  /// account is created server-side via AuthService.createAccountForPerson.
-  Future<void> _offerAccountCreation(Person created) async {
-    final create = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(context.l10n.personEmailAdded),
-        content: Text(context.l10n.personCreateAccountNow),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: Text(context.l10n.commonNo),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            child: Text(context.l10n.commonYes),
-          ),
-        ],
-      ),
-    );
-    if (create != true || !mounted) return;
-    final tenantId = ref.read(currentTenantIdProvider);
-    if (tenantId == null) return;
-    try {
-      // AUTH: server-side account creation (attendix-user Edge Function)
-      await ref.read(accountCreationNotifierProvider.notifier).createAccount(created);
-      if (mounted) {
-        ToastHelper.showSuccess(context, context.l10n.personAccountCreated);
-      }
-    } catch (e) {
-      if (mounted) ToastHelper.showError(context, context.l10n.peopleFlutterErrorWith(e));
-    }
-  }
-
   Widget _dateTile({
     required IconData icon,
     required String label,
@@ -907,15 +873,17 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
         correctBirthday: _birthday != null,
       );
 
-      final created = await repo.createPlayer(person);
+      // LOGIC_PEOPLE: Ionic addPerson → db.addPlayer(player, Boolean(email),
+      // role): the account is registered right away when an e-mail is set
+      // (RESPONSIBLE for the main group, else PLAYER), an existing row of the
+      // same account is reactivated instead of duplicated, and the person is
+      // added to all Termine since the join date.
+      await repo.addPlayer(
+        person,
+        register: person.email != null && person.email!.isNotEmpty,
+        role: _isMainGroup ? Role.responsible : Role.player,
+      );
       ref.read(trackingServiceProvider).track(TrackingEvent.playerAdded, properties: {'instrumentId': person.instrument});
-      // Ionic addPlayer → addPlayerToAttendancesByDate (best effort)
-      try {
-        await repo.addPlayerToAttendancesByDate(created);
-      } catch (_) {}
-      if (mounted && created.email != null && created.email!.isNotEmpty) {
-        await _offerAccountCreation(created);
-      }
 
       // Invalidate the people list to trigger refresh
       ref.invalidate(realtimePlayersProvider);
@@ -927,7 +895,8 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
       }
     } catch (e) {
       if (mounted) {
-        ToastHelper.showError(context, context.l10n.peopleFlutterErrorWith(e));
+        // Ionic: person.addFailed
+        ToastHelper.showError(context, context.l10n.personAddFailed(e));
       }
     } finally {
       if (mounted) {

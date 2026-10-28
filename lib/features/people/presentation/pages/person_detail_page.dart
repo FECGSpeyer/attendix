@@ -9,6 +9,7 @@ import '../../../../core/constants/app_constants.dart';
 import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/duty_providers.dart';
 import '../../../../core/providers/group_providers.dart';
+import '../../../../core/providers/organisation_providers.dart';
 import '../../../../core/providers/player_providers.dart';
 import '../../../../core/providers/profile_providers.dart';
 import '../../../../core/providers/realtime_providers.dart';
@@ -461,7 +462,27 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
 
     setState(() => _isLoadingRole = true);
     try {
-      final role = await _getUserRole(appId, tenantId);
+      var role = await _getUserRole(appId, tenantId);
+
+      // LOGIC_PEOPLE: Ionic person.page ngOnInit — repair a half-approved
+      // account (pending=false but role still APPLICANT) by promoting it to
+      // RESPONSIBLE (main group) or PLAYER.
+      if (role == Role.applicant && !widget.person.pending) {
+        try {
+          final mainGroupId = (await ref.read(mainGroupProvider.future))?.id;
+          final promoted = mainGroupId != null &&
+                  widget.person.instrument == mainGroupId
+              ? Role.responsible
+              : Role.player;
+          await ref
+              .read(userRegistrationRepositoryWithTenantProvider)
+              .updateTenantUserRole(appId, promoted);
+          role = promoted;
+        } catch (_) {
+          // Leave role as-is; admin can retry via approve or role selector.
+        }
+      }
+
       if (mounted) {
         setState(() {
           _userRole = role ?? Role.player;
@@ -705,9 +726,13 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
         'shift_name': _selectedShiftName,
         'shift_start': _shiftStart?.toIso8601String(),
         'parent_id': _selectedParentId,
-        'correctBirthday': true,
+        // LOGIC_PEOPLE: Ionic sets correctBirthday only when the birthday
+        // was edited (onBirthdayChange / manual input).
+        'correctBirthday':
+            _changedFields.contains('birthday') || person.correctBirthday,
         'history': updatedHistory,
-        'additional_fields': localAdditional.isNotEmpty ? localAdditional : null,
+        // Ionic writes `additional_fields: localAdditionalFields` ({}).
+        'additional_fields': localAdditional,
         'otherOrchestras': _draft.otherOrchestras,
         'range': _draft.range?.isEmpty ?? true ? null : _draft.range,
         'instruments': _draft.instruments?.isEmpty ?? true ? null : _draft.instruments,
@@ -736,6 +761,16 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
           oldAdditionalFields: person.additionalFields,
         );
       } catch (_) {}
+
+      // LOGIC_PEOPLE: Ionic updatePlayer(..., updateShifts) →
+      // updateShiftAssignmentsForPerson when the shift plan changed.
+      if (_selectedShiftId != person.shiftId) {
+        await repo.updateShiftAssignmentsForPerson(person.copyWith(
+          shiftId: _selectedShiftId,
+          shiftName: _selectedShiftName,
+          shiftStart: _shiftStart?.toIso8601String(),
+        ));
+      }
 
       ref.invalidate(personProvider(widget.personId));
       ref.invalidate(realtimePlayersProvider);
@@ -1434,7 +1469,20 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
   /// Ionic person.page openMoreMenu (action sheet, same option order):
   /// Meinen Benutzer zuweisen, Wieder aktivieren / Pausieren, In andere
   /// Instanz übertragen / kopieren, Archivieren, Entfernen, Abbrechen.
-  void _showMoreActions() {
+  Future<void> _showMoreActions() async {
+    // LOGIC_PEOPLE: Ionic shows transfer/copy only `if (this.organisation
+    // && this.tenants.length)` (other instances of the organisation).
+    var canTransfer = false;
+    try {
+      final organisation = await ref.read(currentOrganisationProvider.future);
+      if (organisation != null) {
+        canTransfer = (await ref.read(linkedTenantsProvider.future)).isNotEmpty;
+      }
+    } catch (_) {
+      canTransfer = false;
+    }
+    if (!mounted) return;
+
     final role = ref.read(currentRoleProvider);
     final isAdmin = role.isAdmin || role.isResponsible;
     final userId = ref.read(supabaseClientProvider).auth.currentUser?.id;
@@ -1467,11 +1515,14 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
                 option(context.l10n.personReactivate, _unpausePerson)
               else
                 option(context.l10n.peoplePause, _showPauseDialog),
-              option(context.l10n.personTransferOther, _showTransferSheet),
-              option(context.l10n.personCopyOther,
-                  () => _showTransferSheet(copy: true)),
+              if (canTransfer) ...[
+                option(context.l10n.personTransferOther, _showTransferSheet),
+                option(context.l10n.personCopyOther,
+                    () => _showTransferSheet(copy: true)),
+              ],
               option(context.l10n.peopleArchive, _showArchiveDialog, destructive: true),
-              if (!isSelf && isAdmin)
+              // Ionic: shown whenever the person is not the current user.
+              if (!isSelf)
                 option(context.l10n.commonRemove, _showDeleteDialog, destructive: true),
               const Divider(height: 1),
               ListTile(
@@ -1525,7 +1576,10 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     if (confirmed != true || !mounted) return;
 
     try {
-      await ref.read(playerNotifierProvider.notifier).deletePlayer(widget.personId);
+      await ref.read(playerNotifierProvider.notifier).deletePlayer(
+            widget.personId,
+            appId: widget.person.appId,
+          );
       if (mounted) {
         ToastHelper.showSuccess(context, context.l10n.personRemoved);
         context.pop();
@@ -1617,21 +1671,14 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     }
 
     final notifier = ref.read(playerNotifierProvider.notifier);
-    final tenant = ref.read(currentTenantProvider);
     final person = widget.person;
     if (DemoGuard.blocked()) return; // DEMO_GUARD
 
     try {
+      // LOGIC_PEOPLE: the repository removes tenant access like Ionic
+      // removeUserFromTenant (keeps admins / accounts linked to another
+      // active person) and clears email + appId.
       await notifier.unlinkAccount(person);
-
-      if (person.appId != null && tenant?.id != null) {
-        final supabase = ref.read(supabaseClientProvider);
-        await supabase
-            .from('tenantUsers')
-            .delete()
-            .eq('userId', person.appId!)
-            .eq('tenantId', tenant!.id!);
-      }
 
       ref.invalidate(personProvider(widget.personId));
 

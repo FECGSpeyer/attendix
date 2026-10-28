@@ -47,16 +47,17 @@ class ParentNotifier extends Notifier<AsyncValue<void>> {
   }
 
   /// Delete a parent
-  Future<bool> deleteParent(int id) async {
+  /// Throws on failure (LOGIC_PEOPLE: pages must not show success toasts).
+  Future<bool> deleteParent(int id, {String? appId}) async {
     state = const AsyncValue.loading();
     try {
-      await _repo.deleteParent(id);
+      await _repo.deleteParent(id, appId: appId);
       state = const AsyncValue.data(null);
       ref.invalidate(parentsProvider);
       return true;
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
-      return false;
+      rethrow;
     }
   }
 }
