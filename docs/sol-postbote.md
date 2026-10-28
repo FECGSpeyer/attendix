@@ -12,8 +12,9 @@ Konten mit (Aufbau, Einrichtung und Sicherheit in werkbank unter `docs/sol-postb
    Schwerpunkte und was Sol besonders prüfen soll. Optionale Zeilen:
    - `Effort: high` für Delta-Reviews, Doku und kleine Mechanik (Standard ist `xhigh`).
    - `Konto: Olli` oder `Konto: Leon` erzwingt ein Konto (sonst Olli zuerst, Leon als Ersatz).
-   - `Modell: Astra` lässt GPT Astra (`gpt-6.1-astra`) statt Sol prüfen, `Modell: Sol` ist der Standard
-     (`gpt-6.1-sol`). Der Kommentarkopf nennt das gelaufene Modell.
+   - `Modell: Astra` lässt GPT Astra (`gpt-6-astra`) statt Sol prüfen, `Modell: Sol` ist der Standard
+     (`gpt-6.1-sol`). Astra verbraucht mehr Kontingent, also nur gezielt nutzen. Der Kommentarkopf nennt das
+     gelaufene Modell.
 2. Danach das Label `review:sol` an den PR setzen.
 3. Warten, nicht blockierend: Alle fünf Minuten schaut der Postbote nach. Die Antwort kommt als Kommentar
    `Sol-Review (<Modell>, <Effort>, <Konto>) zu Kopf <sha> …`, die erste Zeile des Berichts ist
