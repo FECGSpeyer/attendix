@@ -141,6 +141,13 @@ final agendaItemHistoryProvider =
 
 // ── Protocols / attendances ────────────────────────────────
 
+/// Protocol of one Termin (null when none was started yet).
+final protocolForAttendanceProvider = FutureProvider.family<Protocol?, int>((ref, attendanceId) async {
+  final repo = ref.watch(protocolRepositoryWithTenantProvider);
+  if (!repo.hasTenantId) return null;
+  return repo.getProtocolForAttendance(attendanceId);
+});
+
 final protocolsProvider = FutureProvider<List<Protocol>>((ref) async {
   final repo = ref.watch(protocolRepositoryWithTenantProvider);
   if (!repo.hasTenantId) return [];

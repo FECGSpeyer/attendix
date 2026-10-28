@@ -37,6 +37,7 @@ import '../widgets/attendance_detail/attendance_detail_widgets.dart';
 import '../widgets/attendance_legend_sheet.dart';
 import '../widgets/attendance_status_overview_sheet.dart';
 import '../widgets/songs_selection_sheet.dart';
+import '../../../team_organization/presentation/widgets/attendance_protocol_section.dart'; // PROTOCOL
 
 /// Attendance detail/taking page
 class AttendanceDetailPage extends ConsumerStatefulWidget {
@@ -585,6 +586,9 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                             onRemove: _removeSongEntry,
                             onTap: _onSongEntryTap,
                           ),
+
+                        // PROTOCOL: Protokoll-Karte + "Aufgaben aus diesem Termin"
+                        AttendanceProtocolSection(attendanceId: widget.attendanceId, typeId: attendance.typeId),
 
                         // ORG_PLANS: observers (viewer role) must not see the plan
                         if (!ref.watch(effectiveRoleProvider).isViewer)
