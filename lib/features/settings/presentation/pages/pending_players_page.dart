@@ -28,7 +28,7 @@ class _PendingPlayersPageState extends ConsumerState<PendingPlayersPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Ausstehende Registrierungen'),
+        title: const Text('Ausstehende Personen'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => context.pop(),
@@ -215,8 +215,13 @@ class _PendingPlayerItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // UX_PEOPLE: Ionic opens the person page in approve mode on tap
+    // (duplicate check / merge + approve/decline sheet).
     return Card(
       margin: const EdgeInsets.only(bottom: AppDimensions.paddingS),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+      onTap: player.id == null ? null : () => context.push('/people/${player.id}'),
       child: Padding(
         padding: const EdgeInsets.all(AppDimensions.paddingM),
         child: Column(
@@ -304,6 +309,7 @@ class _PendingPlayerItem extends StatelessWidget {
             ),
           ],
         ),
+      ),
       ),
     );
   }

@@ -247,29 +247,32 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
     }
 
     return Scaffold(
+      // Ionic person.page (create): title "Person hinzufügen", save via the
+      // person-add FAB.
       appBar: AppBar(
-        title: const Text('Neue Person'),
+        title: const Text('Person hinzufügen'),
         leading: IconButton(
           icon: const Icon(Icons.close),
           onPressed: () => context.pop(),
         ),
-        actions: [
-          TextButton(
-            onPressed: _isLoading ? null : _save,
-            child: _isLoading
-                ? const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : const Text('Speichern'),
-          ),
-        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        key: const Key('person_create_save'),
+        tooltip: 'Speichern',
+        onPressed: _isLoading ? null : _save,
+        child: _isLoading
+            ? const SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+              )
+            : const Icon(Icons.person_add_alt_1_outlined),
       ),
       body: Form(
         key: _formKey,
         child: ListView(
-          padding: const EdgeInsets.all(AppDimensions.paddingM),
+          padding: const EdgeInsets.fromLTRB(AppDimensions.paddingM,
+              AppDimensions.paddingM, AppDimensions.paddingM, 96),
           children: [
             // First Name
             TextFormField(
