@@ -438,13 +438,24 @@ class OfflineQueueNotifier extends Notifier<int> {
     Map<String, dynamic> payload, {
     int? attendanceId,
   }) async {
-    final online = await ref.read(connectivityCheckProvider)();
-    if (online) return false;
+    // SOL_FIX12: capture author, tenant and session BEFORE the first await,
+    // so an account / tenant switch during the connectivity check can never
+    // attribute A's action to B (and never falls back to a direct write).
     final tenantId = ref.read(currentTenantIdProvider);
-    if (tenantId == null) return false;
     // SOL_FIX4: record the author so the write is only replayed for them.
     final userId = _currentUserId;
-    if (userId == null) return false;
+    final sessionIdFn = ref.read(offlineQueueSessionIdProvider);
+    final sessionId = sessionIdFn();
+    final generation = _sessionGeneration;
+    final online = await ref.read(connectivityCheckProvider)();
+    if (_sessionGeneration != generation ||
+        _currentUserId != userId ||
+        sessionIdFn() != sessionId ||
+        ref.read(currentTenantIdProvider) != tenantId) {
+      throw const OfflineSessionChangedException();
+    }
+    if (online) return false;
+    if (tenantId == null || userId == null) return false;
     await enqueue(
       personAttendanceId,
       payload,
