@@ -8,6 +8,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../data/repositories/song_repository.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../settings/presentation/widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
 
 /// SETTINGS2: Ionic org-settings "Werk-Synchronisierung" (super admin only).
 ///
@@ -76,20 +77,7 @@ class _OrgSongSyncSectionState extends ConsumerState<OrgSongSyncSection> {
     final settings = ref.watch(songTenantSettingsProvider);
     final current = settings.valueOrNull?.songSourceTenantId;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
-          child: Text(
-            context.l10n.orgSongSync.toUpperCase(),
-            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.medium),
-          ),
-        ),
-        Card(
-          margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-          child: Column(
-            children: [
+    final items = <Widget>[
               ListTile(
                 leading: const Icon(Icons.sync),
                 title: Text(context.l10n.orgSongSyncIntro),
@@ -119,8 +107,27 @@ class _OrgSongSyncSectionState extends ConsumerState<OrgSongSyncSection> {
                         onChanged: (v) => _save(current, v),
                       ),
               ),
-            ],
+    ];
+    // UX_SETTINGS (WAVE 8): Ionic inset list with list header on iOS.
+    if (ionIsIos(context)) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: SettingsListSection(title: context.l10n.orgSongSync, children: items),
+      );
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
+          child: Text(
+            context.l10n.orgSongSync.toUpperCase(),
+            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.medium),
           ),
+        ),
+        Card(
+          margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+          child: Column(children: items),
         ),
       ],
     );
