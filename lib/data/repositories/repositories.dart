@@ -41,3 +41,6 @@ export 'task_repository.dart';
 export 'protocol_repository.dart';
 // SONGS
 export 'public_song_repository.dart';
+// PROFILE_OFFLINE
+export 'profile_repository.dart';
+export 'notification_settings_repository.dart';

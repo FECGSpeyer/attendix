@@ -20,6 +20,7 @@ import '../../../../core/providers/role_permission_providers.dart';
 import '../../../../core/providers/song_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/services/export_service.dart';
+import '../../../../core/services/offline_queue_service.dart'; // PROFILE_OFFLINE
 import '../../../../core/services/telegram_service.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/dialog_helper.dart';
@@ -503,8 +504,12 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                       builder: (context, ref, _) {
                         final isOnline = ref.watch(connectivityProvider).valueOrNull ?? true;
                         if (isOnline) return const SizedBox.shrink();
+                        // PROFILE_OFFLINE: show pending offline writes
+                        final pending = ref.watch(offlinePendingCountProvider);
                         return MaterialBanner(
-                          content: const Text('Keine Internetverbindung. Änderungen werden möglicherweise nicht gespeichert.'),
+                          content: Text(pending > 0
+                              ? 'Offline – $pending ausstehend. Änderungen werden gespeichert, sobald du wieder online bist.'
+                              : 'Offline – Änderungen werden gespeichert, sobald du wieder online bist.'),
                           leading: const Icon(Icons.wifi_off, color: AppColors.warning),
                           backgroundColor: AppColors.warning.withAlpha(30),
                           actions: [
@@ -1933,6 +1938,13 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
           _localStatuses[personId] = previousStatus;
         });
       }
+      return;
+    }
+
+    // PROFILE_OFFLINE: queue the change while offline (Ionic OfflineQueueService)
+    if (await ref.read(offlineQueueNotifierProvider.notifier).enqueueIfOffline(
+        personAttendanceId, {'status': status.value},
+        attendanceId: widget.attendanceId)) {
       return;
     }
 

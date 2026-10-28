@@ -8,13 +8,13 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/event_list_utils.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/attendance/attendance.dart';
-import '../../../../data/models/person/person.dart';
 import '../../../../data/repositories/sign_in_out_repository.dart';
 import '../../../../shared/widgets/event_list/event_list_widgets.dart';
 import '../../../../shared/widgets/event_list/excuse_reason_sheet.dart';
 import '../../../self_service/presentation/widgets/plan_viewer_sheet.dart';
-import '../../../self_service/presentation/widgets/upcoming_songs_sheet.dart';
 import '../../data/providers/parents_providers.dart';
+import '../widgets/parents_header_widgets.dart'; // PROFILE_OFFLINE
+import '../../../../core/providers/song_providers.dart'; // PROFILE_OFFLINE
 import '../../../messages/presentation/widgets/notification_bell.dart'; // MESSAGES
 
 /// Parents Portal Page (Ionic `selfService/parents`) in the card layout:
@@ -95,7 +95,6 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
 
   @override
   Widget build(BuildContext context) {
-    final tenant = ref.watch(currentTenantProvider);
     final childrenAsync = ref.watch(parentChildrenProvider);
     final attendancesAsync = ref.watch(childrenAttendancesProvider);
     final current = ref.watch(currentParentAttendanceProvider);
@@ -107,7 +106,7 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(tenant?.longName.isNotEmpty == true ? tenant!.longName : 'Termine'),
+        title: const ParentsTenantTitle(), // PROFILE_OFFLINE: tenant switcher
         actions: [
           IconButton(
             icon: const Icon(Icons.info_outline),
@@ -159,6 +158,7 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
               final groups = EventListUtils.groupByMonth(upcoming, (g) => g.date);
               return RefreshIndicator(
                 onRefresh: () async {
+                  ref.invalidate(currentSongsProvider); // PROFILE_OFFLINE
                   ref.invalidate(parentChildrenProvider);
                   ref.invalidate(childrenAttendancesProvider);
                   await ref.read(childrenAttendancesProvider.future);
@@ -166,7 +166,7 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
                 child: ListView(
                   padding: const EdgeInsets.only(bottom: 32),
                   children: [
-                    _ChildrenOverviewCard(children: children),
+                    ParentsWelcomeCard(kids: children), // PROFILE_OFFLINE
                     if (current != null) ...[
                       const EventMonthHeader(label: 'Heute'),
                       EventTodayCard(
@@ -481,71 +481,6 @@ class _ErrorView extends StatelessWidget {
           Text('Fehler: $error', textAlign: TextAlign.center),
           TextButton(onPressed: onRetry, child: const Text('Erneut versuchen')),
         ],
-      ),
-    );
-  }
-}
-
-/// "Shalom!" card with the children and their percentage.
-class _ChildrenOverviewCard extends ConsumerWidget {
-  const _ChildrenOverviewCard({required this.children});
-
-  final List<Person> children;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return Card(
-      margin: const EdgeInsets.fromLTRB(16, 12, 16, 4),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Shalom!',
-                style: Theme.of(context)
-                    .textTheme
-                    .headlineSmall
-                    ?.copyWith(fontWeight: FontWeight.bold)),
-            const SizedBox(height: 4),
-            Text(children.length == 1
-                ? 'Du verwaltest 1 Kind:'
-                : 'Du verwaltest ${children.length} Kinder:'),
-            const SizedBox(height: 8),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                for (final child in children)
-                  Builder(builder: (context) {
-                    final stats = child.id != null ? ref.watch(childStatsProvider(child.id!)) : null;
-                    return Chip(
-                      label: Text(child.firstName),
-                      avatar: stats == null
-                          ? null
-                          : CircleAvatar(
-                              backgroundColor: EventListUtils.percentageColor(stats.percentage),
-                              child: FittedBox(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(2),
-                                  child: Text('${stats.percentage}%',
-                                      style: const TextStyle(color: Colors.white)),
-                                ),
-                              ),
-                            ),
-                    );
-                  }),
-              ],
-            ),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: TextButton(
-                onPressed: () => showUpcomingSongsSheet(context),
-                child: const Text('Aktuelle Werke anzeigen'),
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }

@@ -38,3 +38,6 @@ export 'import_providers.dart';
 // TEAM_ORG
 export 'team_org_providers.dart';
 export 'signout_providers.dart'; // ATTENDANCE_SIGNOUT
+// PROFILE_OFFLINE
+export 'profile_providers.dart';
+export 'notification_settings_providers.dart';
