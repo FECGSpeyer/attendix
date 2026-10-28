@@ -11,6 +11,7 @@ import '../../../../data/repositories/account_repository.dart';
 import '../../../public_links/presentation/pages/open_file_page.dart';
 import '../widgets/legal_content_view.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../settings/presentation/widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
 
 /// One-time consent gate (`/terms`): the user must accept the terms and
 /// privacy policy before using the app.
@@ -68,6 +69,25 @@ class _TermsPageState extends ConsumerState<TermsPage> {
     }
   }
 
+  /// Ionic info item: primary start icon, h3 (600) + p (0.85rem, medium).
+  Widget _infoItem(IconData icon, String title, String text) {
+    return SettingsListTile(
+      icon: icon,
+      iconColor: AppColors.primary,
+      title: title,
+      titleWidget: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
+          const SizedBox(height: 2),
+          Text(text,
+              style: const TextStyle(fontSize: 13.6, color: AppColors.medium)),
+        ],
+      ),
+      detail: false,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -85,77 +105,73 @@ class _TermsPageState extends ConsumerState<TermsPage> {
             child: ListView(
               padding: const EdgeInsets.all(AppDimensions.paddingM),
               children: [
-                const SizedBox(height: AppDimensions.paddingL),
-                const Icon(Icons.verified_user_outlined,
-                    size: 64, color: AppColors.primary),
-                const SizedBox(height: AppDimensions.paddingM),
+                // UX_SETTINGS (WAVE 8): terms.page.html — centred hero
+                // (shield icon 3.5rem, h2 1.4rem bold, medium p), inset info
+                // list with primary icons, inset accept list, block button.
+                const Padding(
+                  padding: EdgeInsets.fromLTRB(24, 32, 24, 12),
+                  child: Icon(Icons.verified_user_outlined,
+                      size: 56, color: AppColors.primary),
+                ),
                 Text(
                   context.l10n.termsBeforeStart,
                   textAlign: TextAlign.center,
                   style: theme.textTheme.titleLarge
-                      ?.copyWith(fontWeight: FontWeight.bold),
+                      ?.copyWith(fontSize: 22.4, fontWeight: FontWeight.w700),
                 ),
                 const SizedBox(height: AppDimensions.paddingS),
-                Text(
-                  context.l10n.termsIntro,
-                  textAlign: TextAlign.center,
-                  style: theme.textTheme.bodyMedium
-                      ?.copyWith(color: AppColors.medium),
-                ),
-                const SizedBox(height: AppDimensions.paddingL),
-                Card(
-                  margin: EdgeInsets.zero,
-                  child: Column(
-                    children: [
-                      ListTile(
-                        leading: const Icon(Icons.lock_outline,
-                            color: AppColors.primary),
-                        title: Text(context.l10n.termsSafe),
-                        subtitle: Text(context.l10n.termsSafeText),
-                      ),
-                      const Divider(height: 1),
-                      ListTile(
-                        leading: const Icon(Icons.people_outline,
-                            color: AppColors.primary),
-                        title: Text(context.l10n.termsUsage),
-                        subtitle: Text(context.l10n.termsUsageText),
-                      ),
-                      const Divider(height: 1),
-                      ListTile(
-                        leading: const Icon(Icons.description_outlined,
-                            color: AppColors.primary),
-                        title: Text(context.l10n.termsRead),
-                        trailing: const Icon(Icons.chevron_right),
-                        onTap: () => showLegalModal(context),
-                      ),
-                    ],
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(8, 0, 8, 16),
+                  child: Text(
+                    context.l10n.termsIntro,
+                    textAlign: TextAlign.center,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                        fontSize: 15.2, height: 1.5, color: AppColors.medium),
                   ),
                 ),
-                const SizedBox(height: AppDimensions.paddingM),
-                Card(
-                  margin: EdgeInsets.zero,
-                  child: CheckboxListTile(
-                    value: _privacyAccepted,
-                    controlAffinity: ListTileControlAffinity.leading,
-                    onChanged: (v) =>
-                        setState(() => _privacyAccepted = v ?? false),
-                    title: Text.rich(
-                      TextSpan(children: [
-                        TextSpan(text: '${context.l10n.termsAcceptBefore} '),
-                        TextSpan(
-                          text: context.l10n.termsPrivacy,
-                          style: const TextStyle(
-                            color: AppColors.primary,
-                            decoration: TextDecoration.underline,
-                          ),
-                          recognizer: _privacyRecognizer,
-                        ),
-                        TextSpan(text: ' ${context.l10n.termsAcceptAfter}'),
-                      ]),
+                SettingsListSection(
+                  children: [
+                    _infoItem(Icons.lock_outline, context.l10n.termsSafe,
+                        context.l10n.termsSafeText),
+                    _infoItem(Icons.people_outline, context.l10n.termsUsage,
+                        context.l10n.termsUsageText),
+                    SettingsListTile(
+                      icon: Icons.description_outlined,
+                      iconColor: AppColors.primary,
+                      title: context.l10n.termsRead,
+                      titleWidget: Text(
+                        context.l10n.termsRead,
+                        style: const TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                      onTap: () => showLegalModal(context),
                     ),
-                  ),
+                  ],
                 ),
-                const SizedBox(height: AppDimensions.paddingL),
+                SettingsListSection(
+                  icons: false,
+                  children: [
+                    CheckboxListTile(
+                      value: _privacyAccepted,
+                      controlAffinity: ListTileControlAffinity.leading,
+                      onChanged: (v) =>
+                          setState(() => _privacyAccepted = v ?? false),
+                      title: Text.rich(
+                        TextSpan(children: [
+                          TextSpan(text: '${context.l10n.termsAcceptBefore} '),
+                          TextSpan(
+                            text: context.l10n.termsPrivacy,
+                            style: const TextStyle(
+                              color: AppColors.primary,
+                              decoration: TextDecoration.underline,
+                            ),
+                            recognizer: _privacyRecognizer,
+                          ),
+                          TextSpan(text: ' ${context.l10n.termsAcceptAfter}'),
+                        ]),
+                      ),
+                    ),
+                  ],
+                ),
                 ElevatedButton.icon(
                   onPressed: !_privacyAccepted || _saving ? null : _accept,
                   icon: _saving

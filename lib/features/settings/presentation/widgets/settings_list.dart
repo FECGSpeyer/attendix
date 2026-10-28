@@ -857,3 +857,122 @@ class IonToggleItem extends StatelessWidget {
     );
   }
 }
+
+/// Ionic `ion-searchbar` in a toolbar. iOS (ios26): 60pt row, glass field
+/// (44pt, radius 20, 72 % white, soft shadow) with the search icon 12pt in;
+/// md: the app's filled Material field.
+class IonSearchbar extends StatelessWidget {
+  const IonSearchbar({
+    super.key,
+    required this.controller,
+    required this.hint,
+    required this.onChanged,
+  });
+
+  final TextEditingController controller;
+  final String hint;
+  final ValueChanged<String> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    void clear() {
+      controller.clear();
+      onChanged('');
+    }
+
+    if (!ionIsIos(context)) {
+      return Padding(
+        padding: const EdgeInsets.fromLTRB(
+          AppDimensions.paddingM,
+          0,
+          AppDimensions.paddingM,
+          AppDimensions.paddingS,
+        ),
+        child: ValueListenableBuilder<TextEditingValue>(
+          valueListenable: controller,
+          builder: (context, value, _) => TextField(
+            controller: controller,
+            decoration: InputDecoration(
+              hintText: hint,
+              prefixIcon: const Icon(Icons.search),
+              isDense: true,
+              suffixIcon: value.text.isEmpty
+                  ? null
+                  : IconButton(icon: const Icon(Icons.clear), onPressed: clear),
+            ),
+            onChanged: onChanged,
+          ),
+        ),
+      );
+    }
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    final grey = dark ? const Color(0xFF8E8E93) : const Color(0xFF8A8A8E);
+    return SizedBox(
+      height: 60,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: dark
+                ? const Color(0xFF2C2C2E).withValues(alpha: 0.72)
+                : Colors.white.withValues(alpha: 0.72),
+            borderRadius: BorderRadius.circular(20),
+            border: Border(
+              top: BorderSide(
+                color: dark ? Colors.white12 : Colors.white,
+                width: 0.5,
+              ),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: dark
+                    ? Colors.black.withValues(alpha: 0.5)
+                    : const Color(0xFFDCDCDC).withValues(alpha: 0.82),
+                blurRadius: 10,
+              ),
+            ],
+          ),
+          child: ValueListenableBuilder<TextEditingValue>(
+            valueListenable: controller,
+            builder: (context, value, _) => Row(
+              children: [
+                const SizedBox(width: 12),
+                Icon(CupertinoIcons.search, size: 20, color: grey),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: TextField(
+                    controller: controller,
+                    onChanged: onChanged,
+                    style: TextStyle(fontSize: 16, color: IonIos.text(context)),
+                    decoration: InputDecoration(
+                      hintText: hint,
+                      hintStyle: TextStyle(fontSize: 16, color: grey),
+                      border: InputBorder.none,
+                      enabledBorder: InputBorder.none,
+                      focusedBorder: InputBorder.none,
+                      filled: false,
+                      isDense: true,
+                      contentPadding: EdgeInsets.zero,
+                    ),
+                  ),
+                ),
+                if (value.text.isNotEmpty)
+                  GestureDetector(
+                    onTap: clear,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Icon(
+                        CupertinoIcons.clear_circled_solid,
+                        size: 18,
+                        color: grey,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
