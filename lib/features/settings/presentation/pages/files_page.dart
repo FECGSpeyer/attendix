@@ -1,4 +1,5 @@
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -24,6 +25,7 @@ import '../../../../shared/widgets/sheets/image_viewer_sheet.dart';
 import '../../../../core/services/tracking/tracking_event.dart';
 import '../../../../core/services/tracking/tracking_service.dart';
 import '../../../../l10n/l10n.dart';
+import '../widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
 import '../../../../core/utils/file_mime.dart';
 import '../../../../core/utils/error_message.dart';
 
@@ -855,8 +857,9 @@ class _FilesPageState extends ConsumerState<FilesPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(context.l10n.filesTitle),
+        // UX_SETTINGS (WAVE 8): files.page.html — arrow-back button.
         leading: IconButton(
-          icon: const BackButtonIcon(),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () => context.canPop() ? context.pop() : context.go('/settings'),
         ),
         actions: [
@@ -912,7 +915,9 @@ class _FilesPageState extends ConsumerState<FilesPage> {
             ),
         ],
       ),
-      floatingActionButton: canAccess && canEdit
+      // Ionic has no FAB (upload lives in the toolbar menu); Flutter keeps
+      // it on Material only.
+      floatingActionButton: canAccess && canEdit && !ionIsIos(context)
           ? FloatingActionButton(
               onPressed: _upload,
               tooltip: context.l10n.filesUpload,
@@ -946,6 +951,38 @@ class _FilesPageState extends ConsumerState<FilesPage> {
 
   Widget _buildBreadcrumbs() {
     final segments = _pathSegments;
+    if (ionIsIos(context)) {
+      // Ionic .breadcrumbs-container: medium crumbs (0.88rem/500), the
+      // active (last) one in primary, chevron separators.
+      Widget crumb(String label, String path, bool active) => GestureDetector(
+            onTap: () => _navigateTo(path),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+              child: Text(
+                label,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: active ? AppColors.primary : AppColors.medium,
+                ),
+              ),
+            ),
+          );
+      final crumbs = <Widget>[crumb(context.l10n.filesRoot, '', segments.isEmpty)];
+      for (var i = 0; i < segments.length; i++) {
+        crumbs.add(const Icon(CupertinoIcons.chevron_forward, size: 14, color: AppColors.medium));
+        crumbs.add(crumb(
+          segments[i],
+          segments.sublist(0, i + 1).join('/'),
+          i == segments.length - 1,
+        ));
+      }
+      return SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.fromLTRB(10, 14, 10, 12),
+        child: Row(children: crumbs),
+      );
+    }
     final chips = <Widget>[
       TextButton(onPressed: () => _navigateTo(''), child: Text(context.l10n.filesRoot)),
     ];
@@ -995,6 +1032,36 @@ class _FilesPageState extends ConsumerState<FilesPage> {
   }
 
   Widget _buildSearch() {
+    if (ionIsIos(context)) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: IonSearchbar(
+                  controller: _searchController,
+                  hint: context.l10n.filesSearchPlaceholder,
+                  onChanged: (_) {},
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: IconButton(
+                  icon: const Icon(CupertinoIcons.question_circle, color: AppColors.medium),
+                  onPressed: _showSearchHelp,
+                ),
+              ),
+            ],
+          ),
+          if (_hasSearchTerm)
+            Padding(
+              padding: const EdgeInsets.only(left: 8),
+              child: TextButton(onPressed: _searchController.clear, child: Text(context.l10n.filesResetSearch)),
+            ),
+        ],
+      );
+    }
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM, vertical: AppDimensions.paddingS),
       child: Column(
@@ -1039,6 +1106,17 @@ class _FilesPageState extends ConsumerState<FilesPage> {
     if (filtered.isEmpty) {
       return [_EmptyCard(icon: Icons.search, text: context.l10n.filesNoHits(_searchController.text))];
     }
+    if (ionIsIos(context)) {
+      return [
+        Padding(
+          padding: const EdgeInsets.all(16),
+          child: IonInsetGroup(
+            dividerIndent: IonIos.iconDividerIndent,
+            children: [for (final e in filtered) _buildEntryTile(e)],
+          ),
+        ),
+      ];
+    }
     return [
       Card(
         margin: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM),
@@ -1056,14 +1134,16 @@ class _FilesPageState extends ConsumerState<FilesPage> {
 
   Widget _buildEntryTile(StorageEntry entry) {
     final preview = _imagePreviewUrls[entry.path];
+    final ios = ionIsIos(context);
     Widget leading;
     if (preview != null) {
+      // ion-thumbnail.file-thumb: 38px, radius 6
       leading = ClipRRect(
-        borderRadius: BorderRadius.circular(4),
+        borderRadius: BorderRadius.circular(ios ? 6 : 4),
         child: Image.network(
           preview,
-          width: 40,
-          height: 40,
+          width: ios ? 38 : 40,
+          height: ios ? 38 : 40,
           fit: BoxFit.cover,
           errorBuilder: (_, __, ___) => const Icon(Icons.image_outlined),
         ),
@@ -1075,7 +1155,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
             : FilesSearch.isAudio(entry)
                 ? Icons.audiotrack_outlined
                 : Icons.description_outlined,
-        color: entry.isFolder ? AppColors.primary : null,
+        color: ios ? null : (entry.isFolder ? AppColors.primary : null),
       );
     }
 
@@ -1088,7 +1168,9 @@ class _FilesPageState extends ConsumerState<FilesPage> {
     }
 
     return ListTile(
-      leading: SizedBox(width: 40, height: 40, child: Center(child: leading)),
+      leading: ios
+          ? (preview != null ? leading : SizedBox(width: IonIos.itemIconSize, child: Center(child: leading)))
+          : SizedBox(width: 40, height: 40, child: Center(child: leading)),
       title: Text(entry.name),
       subtitle: subtitle != null ? Text(subtitle) : null,
       onTap: () => _openEntry(entry),
@@ -1108,13 +1190,20 @@ class _EmptyCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
+    final ios = ionIsIos(context);
+    return IonCardBox(
       margin: const EdgeInsets.all(AppDimensions.paddingM),
       child: Padding(
         padding: const EdgeInsets.all(AppDimensions.paddingL),
         child: Column(
           children: [
-            Icon(icon, size: 48, color: AppColors.medium),
+            Icon(
+              icon,
+              size: 48,
+              color: ios
+                  ? IonIos.text(context).withValues(alpha: 0.6)
+                  : AppColors.medium,
+            ),
             const SizedBox(height: AppDimensions.paddingS),
             Text(text, textAlign: TextAlign.center),
           ],
