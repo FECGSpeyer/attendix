@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../../core/config/supabase_config.dart';
+import '../../../../core/providers/branding_providers.dart';
 import '../../../../core/services/plan_export_service.dart';
 import '../../../../core/services/telegram_service.dart';
 import '../../../../core/utils/toast_helper.dart';
@@ -33,6 +34,7 @@ Future<void> showPlanExportSheet(
   bool withImage = true,
   List<PlanSheetAction<String>> extraActions = const [],
   Future<void> Function(String action)? onExtraAction,
+  bool includeBranding = true,
 }) async {
   final chatId = planTelegramChatId(ref);
   final action = await showPlanActionSheet<String>(
@@ -56,7 +58,8 @@ Future<void> showPlanExportSheet(
     return;
   }
   final parsed = PlanExportAction.values.byName(action);
-  await runPlanExport(context, ref, parsed, pages: pages(), fileName: fileName);
+  await runPlanExport(context, ref, parsed,
+      pages: pages(), fileName: fileName, includeBranding: includeBranding);
 }
 
 /// Runs one export action.
@@ -66,6 +69,7 @@ Future<void> runPlanExport(
   PlanExportAction action, {
   required List<PlanExportPage> pages,
   required String fileName,
+  bool includeBranding = true,
 }) async {
   if (pages.isEmpty || pages.every((p) => p.fields.isEmpty)) {
     ToastHelper.showWarning(context, 'Kein Plan verfügbar');
@@ -74,12 +78,14 @@ Future<void> runPlanExport(
   final service = ref.read(planExportServiceProvider);
   final sideBySide = action == PlanExportAction.pdf2x || action == PlanExportAction.telegram2x;
   try {
+    // MISC2: tenant/org branding in the letterhead (Ionic buildTenantBranding)
+    final branding = includeBranding ? await resolvePdfBranding(ref) : null;
     switch (action) {
       case PlanExportAction.pdf:
       case PlanExportAction.pdf2x:
-        await service.sharePdf(pages, sideBySide: sideBySide, fileName: fileName);
+        await service.sharePdf(pages, sideBySide: sideBySide, fileName: fileName, branding: branding);
       case PlanExportAction.image:
-        await service.shareImage(pages, fileName: fileName);
+        await service.shareImage(pages, fileName: fileName, branding: branding);
       case PlanExportAction.telegram:
       case PlanExportAction.telegram2x:
       case PlanExportAction.telegramImage:
@@ -90,8 +96,8 @@ Future<void> runPlanExport(
         }
         final asImage = action == PlanExportAction.telegramImage;
         final bytes = asImage
-            ? await service.buildImage(pages)
-            : await service.buildPdf(pages, sideBySide: sideBySide);
+            ? await service.buildImage(pages, branding: branding)
+            : await service.buildPdf(pages, sideBySide: sideBySide, branding: branding);
         await ref.read(telegramServiceProvider).sendPlanPerTelegram(
               fileBytes: bytes,
               name: '${_safeName(fileName)}${sideBySide ? '_2x' : ''}',

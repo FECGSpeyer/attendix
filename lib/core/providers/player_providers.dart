@@ -4,6 +4,8 @@ import '../../data/models/person/person.dart';
 import '../../data/repositories/repositories.dart';
 import 'tenant_providers.dart';
 import 'group_providers.dart';
+import '../services/tracking/tracking_event.dart';
+import '../services/tracking/tracking_service.dart';
 
 /// Initialized player repository with tenant context
 final playerRepositoryWithTenantProvider = Provider<PlayerRepository>((ref) {
@@ -95,6 +97,7 @@ class PlayerNotifier extends Notifier<AsyncValue<void>> {
     state = const AsyncValue.loading();
     try {
       final result = await _repo.createPlayer(player);
+      ref.read(trackingServiceProvider).track(TrackingEvent.playerAdded, properties: {'instrumentId': player.instrument});
       state = const AsyncValue.data(null);
       ref.invalidate(playersProvider);
       return result;
@@ -108,6 +111,7 @@ class PlayerNotifier extends Notifier<AsyncValue<void>> {
     state = const AsyncValue.loading();
     try {
       final result = await _repo.updatePlayer(player);
+      ref.read(trackingServiceProvider).track(TrackingEvent.playerUpdated);
       state = const AsyncValue.data(null);
       ref.invalidate(playersProvider);
       ref.invalidate(playerByIdProvider(player.id!));
@@ -170,6 +174,7 @@ class PlayerNotifier extends Notifier<AsyncValue<void>> {
     state = const AsyncValue.loading();
     try {
       await _repo.deletePlayer(playerId);
+      ref.read(trackingServiceProvider).track(TrackingEvent.playerRemoved);
       state = const AsyncValue.data(null);
       ref.invalidate(playersProvider);
     } catch (e, stack) {

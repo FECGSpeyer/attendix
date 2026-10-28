@@ -22,6 +22,8 @@ import '../../../profile/presentation/widgets/profile_hero_card.dart';
 import '../../../../shared/widgets/sheets/version_history_sheet.dart';
 import '../../../messages/presentation/widgets/notification_bell.dart'; // MESSAGES
 import '../../../organisation/presentation/widgets/org_plans_settings_section.dart'; // ORG_PLANS
+import '../../../../core/services/certificate_service.dart'; // MISC2
+import '../widgets/vorkurs_certificates.dart'; // MISC2
 
 /// Settings page with role-based menu filtering
 class SettingsPage extends ConsumerWidget {
@@ -251,6 +253,13 @@ class SettingsPage extends ConsumerWidget {
                   subtitle: 'Personen an andere Instanzen der Organisation übergeben',
                   onTap: () => context.push('/settings/handover'),
                 ),
+                // MISC2: Urkunden generieren (Vorkurs tenants only)
+                if (role.isAdmin && isVorkursTenantName(tenant?.shortName, tenant?.longName))
+                  _SettingsTile(
+                    leading: const _SettingsIcon(icon: Icons.workspace_premium_outlined),
+                    title: 'Urkunden generieren',
+                    onTap: () => generateVorkursCertificates(context, ref),
+                  ),
               ],
             ),
             const SizedBox(height: AppDimensions.paddingM),

@@ -13,6 +13,8 @@ import '../../../../shared/widgets/event_list/event_list_widgets.dart';
 import '../../../../shared/widgets/event_list/excuse_reason_sheet.dart';
 import '../../../self_service/presentation/widgets/plan_viewer_sheet.dart';
 import '../../data/providers/parents_providers.dart';
+import '../../../../core/services/tracking/tracking_event.dart';
+import '../../../../core/services/tracking/tracking_service.dart';
 import '../widgets/parents_header_widgets.dart'; // PROFILE_OFFLINE
 import '../../../../core/providers/song_providers.dart'; // PROFILE_OFFLINE
 import '../../../messages/presentation/widgets/notification_bell.dart'; // MESSAGES
@@ -412,6 +414,7 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
     if (ref.read(parentSignInOutNotifierProvider).hasError) {
       ToastHelper.showError(context, 'Anmeldung fehlgeschlagen. Bitte versuche es erneut.');
     } else {
+      ref.read(trackingServiceProvider).track(TrackingEvent.parentSignIn, properties: {'count': ids.length});
       ToastHelper.showSuccess(context, 'Danke für die Anmeldung 🙂');
     }
   }
@@ -433,6 +436,7 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
     if (ref.read(parentSignInOutNotifierProvider).hasError) {
       ToastHelper.showError(context, 'Abmeldung fehlgeschlagen. Bitte versuche es erneut.');
     } else {
+      ref.read(trackingServiceProvider).track(TrackingEvent.parentSignOut, properties: {'count': ids.length, 'isLate': isLate});
       ToastHelper.showSuccess(
         context,
         isLate

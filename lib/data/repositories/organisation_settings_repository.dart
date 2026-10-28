@@ -41,6 +41,28 @@ class OrganisationSettingsRepository extends BaseRepository with TenantAwareRepo
     }
   }
 
+  /// MISC2: Branding source for exports (Ionic db.getBrandingSource):
+  /// organisation logo/text when set, otherwise the instance's own
+  /// `tenants.logo_url` / `tenants.branding_text`.
+  Future<({String? logoUrl, String? text})> getBrandingSource() async {
+    try {
+      final org = await getCurrentOrganisation();
+      if ((org?.logoUrl?.isNotEmpty ?? false) || (org?.brandingText?.isNotEmpty ?? false)) {
+        return (logoUrl: org!.logoUrl, text: org.brandingText);
+      }
+      final row = await supabase
+          .from('tenants')
+          .select('logo_url, branding_text')
+          // `tenants` has no tenantId column — its primary key IS the tenant id.
+          .eq('id', currentTenantId)
+          .maybeSingle();
+      return (logoUrl: row?['logo_url'] as String?, text: row?['branding_text'] as String?);
+    } catch (e, stack) {
+      handleError(e, stack, 'getBrandingSource');
+      rethrow;
+    }
+  }
+
   Future<int> _requireOrganisationId(String operation) async {
     final org = await getCurrentOrganisation();
     final id = org?.id;

@@ -20,6 +20,8 @@ import '../../../../core/utils/person_matcher.dart';
 import '../../../../data/repositories/cross_tenant_person_repository.dart';
 import '../widgets/person_match_suggestions.dart';
 import 'people_list_page.dart';
+import '../../../../core/services/tracking/tracking_event.dart';
+import '../../../../core/services/tracking/tracking_service.dart';
 
 /// Page for creating a new person
 class PersonCreatePage extends ConsumerStatefulWidget {
@@ -551,6 +553,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
       );
 
       await repo.createPlayer(person);
+      ref.read(trackingServiceProvider).track(TrackingEvent.playerAdded, properties: {'instrumentId': person.instrument});
 
       // Invalidate the people list to trigger refresh
       ref.invalidate(peopleListProvider);

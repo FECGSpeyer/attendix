@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
+import '../../../../core/services/ai_service.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/instrument_sort.dart';
 import '../../../../core/utils/tenant_label_utils.dart';
@@ -350,7 +351,7 @@ class _GroupListItem extends StatelessWidget {
       parts.add('in ${group.tuning}');
     }
     if (group.clefs != null && group.clefs!.isNotEmpty) {
-      parts.add(group.clefs!.map((c) => '${c.toUpperCase()}-Schlüssel').join(', '));
+      parts.add(group.clefs!.map(_clefLabel).join(', '));
     }
     if (parts.isEmpty) return null;
     return Text(parts.join(' · '));
@@ -458,8 +459,12 @@ const _tuningOptions = ['C', 'Es', 'B', 'F'];
 /// Clef options
 const _clefOptions = ['G', 'F', 'C'];
 
+/// MISC2: localized clef names (Ionic common.clef.*)
+const _clefNames = {'G': 'Violinschlüssel', 'F': 'Bassschlüssel', 'C': 'Altschlüssel'};
+String _clefLabel(String clef) => _clefNames[clef.toUpperCase()] ?? '${clef.toUpperCase()}-Schlüssel';
+
 /// Dialog for editing/creating an instrument with all fields
-class _InstrumentEditDialog extends StatefulWidget {
+class _InstrumentEditDialog extends ConsumerStatefulWidget {
   const _InstrumentEditDialog({
     this.group,
     required this.categories,
@@ -471,10 +476,31 @@ class _InstrumentEditDialog extends StatefulWidget {
   final String? tenantType;
 
   @override
-  State<_InstrumentEditDialog> createState() => _InstrumentEditDialogState();
+  ConsumerState<_InstrumentEditDialog> createState() => _InstrumentEditDialogState();
 }
 
-class _InstrumentEditDialogState extends State<_InstrumentEditDialog> {
+class _InstrumentEditDialogState extends ConsumerState<_InstrumentEditDialog> {
+  bool _generatingSynonyms = false;
+
+  // MISC2: Ionic instrument.page generateSynonyms (synonyms-gpt Edge Function)
+  Future<void> _generateSynonyms() async {
+    final name = _nameController.text.trim();
+    if (name.isEmpty) {
+      ToastHelper.showError(context, 'Bitte gib zuerst einen Namen an!');
+      return;
+    }
+    setState(() => _generatingSynonyms = true);
+    try {
+      final synonyms = await ref.read(aiServiceProvider).getGroupSynonyms(name);
+      _synonymsController.text = synonyms;
+      if (mounted) ToastHelper.showSuccess(context, 'Synonyme erfolgreich generiert!');
+    } catch (_) {
+      if (mounted) ToastHelper.showError(context, 'Fehler beim Generieren der Synonyme');
+    } finally {
+      if (mounted) setState(() => _generatingSynonyms = false);
+    }
+  }
+
   late final TextEditingController _nameController;
   late final TextEditingController _shortNameController;
   late final TextEditingController _notesController;
@@ -610,7 +636,7 @@ class _InstrumentEditDialogState extends State<_InstrumentEditDialog> {
                   children: _clefOptions.map((clef) {
                     final isSelected = _selectedClefs.contains(clef);
                     return FilterChip(
-                      label: Text('$clef-Schlüssel'),
+                      label: Text('${_clefLabel(clef)} ($clef)'),
                       selected: isSelected,
                       onSelected: (selected) {
                         setState(() {
@@ -639,9 +665,26 @@ class _InstrumentEditDialogState extends State<_InstrumentEditDialog> {
                 // Synonyms
                 TextFormField(
                   controller: _synonymsController,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     labelText: 'Synonyme',
                     hintText: 'z.B. Geige, Fidel',
+                    helperText:
+                        'Definiere Synonyme um beim Hinzufügen von Dateien zu Werken die Instrumente automatisch zuordnen zu können. Synonyme durch Komma trennen.',
+                    helperMaxLines: 4,
+                    suffixIcon: _generatingSynonyms
+                        ? const Padding(
+                            padding: EdgeInsets.all(12),
+                            child: SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
+                          )
+                        : IconButton(
+                            tooltip: 'Synonyme generieren',
+                            icon: const Icon(Icons.auto_awesome_outlined),
+                            onPressed: _generateSynonyms,
+                          ),
                   ),
                 ),
                 const SizedBox(height: AppDimensions.paddingM),

@@ -104,6 +104,7 @@ flutter:
     - assets/images/
     - assets/icons/
     - assets/version_history.json
+    - assets/certificates/urkunde-vorkurs.jpg
     - .env
 
 # App Icon Configuration

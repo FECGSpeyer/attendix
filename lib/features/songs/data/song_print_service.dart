@@ -7,6 +7,7 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 
+import '../../../core/services/pdf_branding.dart';
 import '../../../data/models/song/song.dart';
 import '../../../data/models/song/song_additional_field.dart';
 import '../presentation/utils/song_utils.dart';
@@ -126,6 +127,7 @@ class SongPrintService {
     required bool showLastSung,
     required bool isOrchestra,
     required List<SongAdditionalField> additionalFields,
+    PdfBranding? branding,
   }) async {
     final date = DateFormat('dd.MM.yyyy').format(DateTime.now());
     final extraFields =
@@ -160,16 +162,11 @@ class SongPrintService {
     doc.addPage(pw.MultiPage(
       pageFormat: PdfPageFormat.a4,
       margin: const pw.EdgeInsets.fromLTRB(28, 28, 28, 40),
-      header: (_) => pw.Container(
-        margin: const pw.EdgeInsets.only(bottom: 12),
-        child: pw.Column(
-          crossAxisAlignment: pw.CrossAxisAlignment.start,
-          children: [
-            pw.Text('$tenantShortName Werkverzeichnis',
-                style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold)),
-            pw.Text('Stand: $date', style: const pw.TextStyle(fontSize: 10)),
-          ],
-        ),
+      // MISC2: letterhead with tenant/org branding (Ionic addBrandingHeader)
+      header: (_) => buildPdfBrandingHeader(
+        branding: branding,
+        title: '$tenantShortName Werkverzeichnis',
+        subtitle: 'Stand: $date',
       ),
       build: (_) => [
         pw.TableHelper.fromTextArray(

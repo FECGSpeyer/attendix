@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/repositories/teacher_repository.dart';
 import 'group_providers.dart';
 import 'tenant_providers.dart';
+import '../services/tracking/tracking_event.dart';
+import '../services/tracking/tracking_service.dart';
 
 /// Initialized teacher repository with tenant context
 final teacherRepositoryWithTenantProvider = Provider<TeacherRepository>((ref) {
@@ -76,6 +78,7 @@ class TeacherNotifier extends Notifier<AsyncValue<void>> {
     state = const AsyncValue.loading();
     try {
       final result = await _repo.createTeacher(teacher);
+      ref.read(trackingServiceProvider).track(TrackingEvent.teacherAdded);
       state = const AsyncValue.data(null);
       ref.invalidate(teachersProvider);
       return result;
@@ -89,6 +92,7 @@ class TeacherNotifier extends Notifier<AsyncValue<void>> {
     state = const AsyncValue.loading();
     try {
       final result = await _repo.updateTeacher(id, updates);
+      ref.read(trackingServiceProvider).track(TrackingEvent.teacherUpdated);
       state = const AsyncValue.data(null);
       ref.invalidate(teachersProvider);
       ref.invalidate(teacherByIdProvider(id));

@@ -18,6 +18,8 @@ import '../../../../data/models/person/person.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../data/repositories/attendance_repository.dart';
 import '../../export_fields.dart';
+import '../../../../core/services/tracking/tracking_event.dart';
+import '../../../../core/services/tracking/tracking_service.dart';
 
 /// Export Page
 ///
@@ -404,6 +406,7 @@ class _ExportPageState extends ConsumerState<ExportPage> {
 
       final exportService = ExportService();
       final date = DateFormat('dd.MM.yyyy').format(DateTime.now());
+      ref.read(trackingServiceProvider).track(TrackingEvent.reportExported, properties: {'format': _exportType == 'pdf' ? 'pdf' : 'xlsx', 'kind': _contentType == 'player' ? 'player' : 'attendance'});
 
       if (_contentType == 'player') {
         if (_exportType == 'pdf') {
