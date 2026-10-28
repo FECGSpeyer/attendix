@@ -27,6 +27,10 @@ import 'l10n/l10n.dart'; // I18N_INFRA
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  // Like Ionic's `?ionic:mode=ios|md`: on the web `?mode=ios` forces the
+  // iPhone look (and `?mode=md` the Material look) regardless of the browser.
+  if (kIsWeb) applyWebModeOverride(Uri.base);
+
   // I18N_INFRA: date symbols for every enabled language (de_DE, en_GB) and
   // the start language: stored choice -> device language -> 'de'.
   for (final lang in enabledLanguages) {
@@ -162,4 +166,21 @@ class _AttendixAppState extends ConsumerState<AttendixApp> {
       },
     );
   }
+}
+
+/// Web only: `?mode=ios` / `?ionic:mode=ios` → iOS look, `md` → Material.
+@visibleForTesting
+TargetPlatform? webModeOverride(Uri uri) {
+  final mode = (uri.queryParameters['mode'] ?? uri.queryParameters['ionic:mode'])
+      ?.toLowerCase();
+  return switch (mode) {
+    'ios' => TargetPlatform.iOS,
+    'md' => TargetPlatform.android,
+    _ => null,
+  };
+}
+
+void applyWebModeOverride(Uri uri) {
+  final platform = webModeOverride(uri);
+  if (platform != null) debugDefaultTargetPlatformOverride = platform;
 }
