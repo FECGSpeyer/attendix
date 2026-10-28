@@ -14,6 +14,8 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../data/models/tenant/tenant.dart';
+import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
 
 /// Sheet for transferring players to another tenant (handover)
 class HandoverSheet extends ConsumerStatefulWidget {
@@ -106,7 +108,7 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
             // Header
             AppBar(
               title: Text(
-                _stayInInstance ? 'Spieler kopieren' : 'Spieler übertragen',
+                _stayInInstance ? context.l10n.peopleFlutterHandoverCopyTitle : context.l10n.peopleFlutterHandoverTransferTitle,
               ),
               leading: IconButton(
                 icon: const Icon(Icons.close),
@@ -119,7 +121,7 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
             Expanded(
               child: tenantsAsync.when(
                 loading: () => const Center(child: CircularProgressIndicator()),
-                error: (e, _) => Center(child: Text('Fehler: $e')),
+                error: (e, _) => Center(child: Text(context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e)))),
                 data: (tenants) {
                   // Filter out current tenant
                   final availableTenants = tenants
@@ -192,14 +194,17 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
                                 ? Icons.copy
                                 : Icons.swap_horiz),
                         label: Text(_isTransferring
-                            ? 'Wird übertragen...'
+                            ? context.l10n.peopleFlutterHandoverTransferring
                             : _stayInInstance
-                                ? 'Kopieren'
-                                : 'Übertragen'),
+                                ? context.l10n.peopleFlutterHandoverCopy
+                                : context.l10n.handoverTransfer),
                         style: ElevatedButton.styleFrom(
                           minimumSize: const Size(double.infinity, 48),
                           backgroundColor:
                               _stayInInstance ? null : AppColors.warning,
+                          disabledBackgroundColor: _stayInInstance
+                              ? null
+                              : AppColors.warning.withValues(alpha: 0.5),
                         ),
                       ),
                     ],
@@ -223,17 +228,16 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
             const Icon(Icons.business_outlined,
                 size: 64, color: AppColors.medium),
             const SizedBox(height: AppDimensions.paddingM),
-            const Text(
-              'Keine anderen Instanzen verfügbar',
-              style: TextStyle(
+            Text(
+              context.l10n.peopleFlutterHandoverNoTenants,
+              style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w500,
               ),
             ),
             const SizedBox(height: AppDimensions.paddingS),
             Text(
-              'Du hast nur Zugriff auf eine Instanz. '
-              'Um Spieler zu übertragen, benötigst du Zugriff auf mindestens zwei Instanzen.',
+              context.l10n.peopleFlutterHandoverNoTenantsHint,
               textAlign: TextAlign.center,
               style: TextStyle(color: AppColors.medium),
             ),
@@ -264,7 +268,7 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
                 const Icon(Icons.people, color: AppColors.primary),
                 const SizedBox(width: AppDimensions.paddingS),
                 Text(
-                  '${players.length} von ${widget.selectedPlayers.length} Spieler',
+                  context.l10n.peopleFlutterHandoverCount(players.length, widget.selectedPlayers.length),
                   style: const TextStyle(
                     fontWeight: FontWeight.w600,
                     fontSize: 16,
@@ -282,7 +286,7 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
                     Padding(
                       padding: const EdgeInsets.only(right: AppDimensions.paddingXS),
                       child: FilterChip(
-                        label: const Text('Alle'),
+                        label: Text(context.l10n.commonAll),
                         selected: _sourceGroupFilter == null,
                         onSelected: (_) => setState(() => _sourceGroupFilter = null),
                         visualDensity: VisualDensity.compact,
@@ -325,7 +329,7 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
               Padding(
                 padding: const EdgeInsets.only(top: AppDimensions.paddingS),
                 child: Text(
-                  '... und ${players.length - 10} weitere',
+                  context.l10n.peopleAndMore(players.length - 10),
                   style: const TextStyle(color: AppColors.medium),
                 ),
               ),
@@ -349,11 +353,11 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
           SizedBox(
             width: 70,
             child: TextField(
-              decoration: const InputDecoration(
-                labelText: 'Ab',
+              decoration: InputDecoration(
+                labelText: context.l10n.peopleFlutterAgeFrom,
                 isDense: true,
-                contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                suffixText: 'J.',
+                contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                suffixText: context.l10n.peopleFlutterAgeSuffix,
               ),
               keyboardType: TextInputType.number,
               onChanged: (value) => setState(() {
@@ -367,11 +371,11 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
           SizedBox(
             width: 70,
             child: TextField(
-              decoration: const InputDecoration(
-                labelText: 'Bis',
+              decoration: InputDecoration(
+                labelText: context.l10n.peopleFlutterAgeTo,
                 isDense: true,
-                contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                suffixText: 'J.',
+                contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                suffixText: context.l10n.peopleFlutterAgeSuffix,
               ),
               keyboardType: TextInputType.number,
               onChanged: (value) => setState(() {
@@ -402,9 +406,9 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Modus',
-              style: TextStyle(
+            Text(
+              context.l10n.peopleFlutterHandoverMode,
+              style: const TextStyle(
                 fontWeight: FontWeight.w600,
                 color: AppColors.medium,
               ),
@@ -412,11 +416,11 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
             const SizedBox(height: AppDimensions.paddingS),
             SwitchListTile(
               contentPadding: EdgeInsets.zero,
-              title: const Text('Spieler in dieser Instanz behalten'),
+              title: Text(context.l10n.handoverKeepInTenant),
               subtitle: Text(
                 _stayInInstance
-                    ? 'Spieler werden kopiert (bleiben hier aktiv)'
-                    : 'Spieler werden übertragen (hier archiviert)',
+                    ? context.l10n.peopleFlutterHandoverModeCopy
+                    : context.l10n.peopleFlutterHandoverModeTransfer,
                 style: TextStyle(
                   color: _stayInInstance ? AppColors.success : AppColors.warning,
                 ),
@@ -441,9 +445,9 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Ziel-Instanz',
-              style: TextStyle(
+            Text(
+              context.l10n.handoverTargetTenant,
+              style: const TextStyle(
                 fontWeight: FontWeight.w600,
                 color: AppColors.medium,
               ),
@@ -502,24 +506,24 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Gruppen-Zuordnung',
-              style: TextStyle(
+            Text(
+              context.l10n.handoverGroupMapping,
+              style: const TextStyle(
                 fontWeight: FontWeight.w600,
                 color: AppColors.medium,
               ),
             ),
             const SizedBox(height: AppDimensions.paddingS),
-            const Text(
-              'Ordne die Gruppen der Quell-Instanz den Gruppen der Ziel-Instanz zu:',
-              style: TextStyle(color: AppColors.medium, fontSize: 12),
+            Text(
+              context.l10n.peopleFlutterHandoverMappingHint,
+              style: const TextStyle(color: AppColors.medium, fontSize: 12),
             ),
             const SizedBox(height: AppDimensions.paddingM),
             ...instrumentIds.map((instrumentId) {
               final sourceGroup = sourceGroups.firstWhere(
                 (g) => g.id == instrumentId,
                 // BL-008: Consistent fallback label
-                orElse: () => Group(id: instrumentId, name: 'Ohne Gruppe'),
+                orElse: () => Group(id: instrumentId, name: context.l10n.peopleNoGroupAssigned),
               );
 
               // Auto-map if not already mapped
@@ -554,9 +558,9 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
                           ),
                         ),
                         items: [
-                          const DropdownMenuItem(
+                          DropdownMenuItem(
                             value: null,
-                            child: Text('-- Nicht zuordnen --'),
+                            child: Text(context.l10n.peopleFlutterHandoverNoMapping),
                           ),
                           ..._targetGroups.map((g) => DropdownMenuItem(
                                 value: g.id,
@@ -599,7 +603,7 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
                 ),
                 const SizedBox(width: AppDimensions.paddingS),
                 Text(
-                  _stayInInstance ? 'Hinweis' : 'Achtung',
+                  _stayInInstance ? context.l10n.peopleFlutterHint : context.l10n.peopleFlutterAttention,
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
                     color:
@@ -611,12 +615,8 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
             const SizedBox(height: AppDimensions.paddingS),
             Text(
               _stayInInstance
-                  ? 'Die ausgewählten Spieler werden in die Ziel-Instanz kopiert. '
-                      'Sie bleiben in dieser Instanz aktiv. '
-                      'Der App-Zugang muss in der Ziel-Instanz neu verknüpft werden.'
-                  : 'Die ausgewählten Spieler werden in die Ziel-Instanz übertragen. '
-                      'Sie werden in dieser Instanz archiviert und der App-Zugang wird getrennt. '
-                      'Dieser Vorgang kann nicht rückgängig gemacht werden.',
+                  ? context.l10n.peopleFlutterHandoverCopyNote
+                  : context.l10n.peopleFlutterHandoverTransferNote,
               style: const TextStyle(color: AppColors.medium),
             ),
           ],
@@ -654,7 +654,7 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
           final sourceGroup = sourceGroups.firstWhere(
             (g) => g.id == instrumentId,
             // BL-008: Consistent fallback label
-            orElse: () => Group(id: instrumentId, name: 'Ohne Gruppe'),
+            orElse: () => Group(id: instrumentId, name: context.l10n.peopleNoGroupAssigned),
           );
           _groupMapping[instrumentId] = _autoMapGroup(sourceGroup, _targetGroups);
         }
@@ -666,8 +666,8 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
       }
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Fehler beim Laden der Gruppen'),
+          SnackBar(
+            content: Text(context.l10n.peopleFlutterGroupsLoadFailed),
             backgroundColor: Colors.red,
           ),
         );
@@ -721,6 +721,7 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
   }
 
   Future<void> _performHandover(Tenant? currentTenant) async {
+    final playerRepo = ref.read(playerRepositoryWithTenantProvider);
     if (_targetTenantId == null || currentTenant == null) return;
 
     // BL-002: Check if user has edit permission in target tenant
@@ -729,7 +730,7 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
       if (mounted) {
         ToastHelper.showError(
           context,
-          'Keine Berechtigung in der Ziel-Instanz',
+          context.l10n.peopleFlutterHandoverNoPermission,
         );
       }
       return;
@@ -739,7 +740,7 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
     final tenants = ref.read(userTenantsProvider).valueOrNull ?? [];
     final targetTenant = tenants.where((t) => t.id == _targetTenantId).firstOrNull;
     if (targetTenant == null) {
-      if (mounted) ToastHelper.showError(context, 'Ziel-Instanz nicht gefunden');
+      if (mounted) ToastHelper.showError(context, context.l10n.peopleFlutterHandoverTargetNotFound);
       return;
     }
 
@@ -750,25 +751,21 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
     if (!mounted) return;
     final confirmed = await DialogHelper.showConfirmation(
       context,
-      title: isTransfer ? 'Spieler übertragen?' : 'Spieler kopieren?',
+      title: isTransfer ? context.l10n.peopleFlutterHandoverTransferQuestion : context.l10n.peopleFlutterHandoverCopyQuestion,
       message: isTransfer
-          ? '$playerCount Spieler an "${targetTenant.name}" übertragen? '
-            'Die Spieler werden in dieser Instanz archiviert. '
-            'Dieser Vorgang kann nicht rückgängig gemacht werden.'
-          : '$playerCount Spieler nach "${targetTenant.name}" kopieren?',
-      confirmText: isTransfer ? 'Übertragen' : 'Kopieren',
+          ? context.l10n.peopleFlutterHandoverTransferConfirm(playerCount, targetTenant.name)
+          : context.l10n.peopleFlutterHandoverCopyConfirm(playerCount, targetTenant.name),
+      confirmText: isTransfer ? context.l10n.handoverTransfer : context.l10n.peopleFlutterHandoverCopy,
       isDestructive: isTransfer,
     );
     if (!confirmed) return;
 
     setState(() {
       _isTransferring = true;
-      _progressMessage = 'Bereite Übertragung vor...';
+      _progressMessage = context.l10n.peopleFlutterHandoverPreparing;
     });
 
     try {
-      final playerRepo = ref.read(playerRepositoryWithTenantProvider);
-
       final results = await playerRepo.handoverPlayers(
         players: playersToTransfer,
         targetTenantId: _targetTenantId!,
@@ -779,7 +776,7 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
         onProgress: (current, total, name) {
           if (mounted) {
             setState(() {
-              _progressMessage = 'Übertrage $name ($current/$total)...';
+              _progressMessage = context.l10n.peopleFlutterHandoverProgress(name, current, total);
             });
           }
         },
@@ -789,25 +786,28 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
       // when this sheet returns true
 
       if (mounted) {
-        final action = _stayInInstance ? 'kopiert' : 'übertragen';
         if (results['error']! > 0 || results['duplicate']! > 0) {
           ToastHelper.showWarning(
             context,
-            '${results['success']} $action, '
-            '${results['duplicate']} bereits vorhanden, '
-            '${results['error']} fehlgeschlagen',
+            _stayInInstance
+                ? context.l10n.peopleFlutterHandoverPartialCopied(
+                    results['success']!, results['duplicate']!, results['error']!)
+                : context.l10n.peopleFlutterHandoverPartialTransferred(
+                    results['success']!, results['duplicate']!, results['error']!),
           );
         } else {
           ToastHelper.showSuccess(
             context,
-            '${results['success']} Spieler erfolgreich $action',
+            _stayInInstance
+                ? context.l10n.peopleFlutterHandoverCopied(results['success']!)
+                : context.l10n.peopleFlutterHandoverTransferred(results['success']!),
           );
         }
         Navigator.pop(context, true);
       }
     } catch (e) {
       if (mounted) {
-        ToastHelper.showError(context, 'Fehler: $e');
+        ToastHelper.showError(context, context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e)));
       }
     } finally {
       if (mounted) {

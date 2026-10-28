@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- PUSH: Push Notifications capability (Ionic AppRelease.entitlements).
+	     Xcode switches to "production" when archiving for the App Store. -->
+	<key>aps-environment</key>
+	<string>development</string>
+	<!-- DB_REVIEW_REST (F1): Universal Links like Ionic AppRelease.entitlements.
+	     attendix.de/.well-known/apple-app-site-association must list
+	     WJ62LFJT38.de.attendix.attendix (see web/.well-known). -->
+	<key>com.apple.developer.associated-domains</key>
+	<array>
+		<string>applinks:attendix.de</string>
+	</array>
+</dict>
+</plist>

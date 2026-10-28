@@ -1,4 +1,9 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <!-- NATIVE_MISC: audio_service lock-screen controls (Ionic capacitor-media-session) -->
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"/>
     <application
         android:label="attendix"
         android:name="${applicationName}"
@@ -24,13 +29,64 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+            <!-- DB_REVIEW_REST (F1): App Links like Ionic AndroidManifest.xml.
+                 attendix.de/.well-known/assetlinks.json must list this package
+                 (de.attendix.attendix) with its release signing fingerprint. -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" android:host="attendix.de" />
+            </intent-filter>
+            <!-- DB_REVIEW_REST (F2): tap on the Ablaufplan notification -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="attendix" android:host="live-plan" />
+            </intent-filter>
+            <!-- DB_REVIEW_REST (F1): links are handled in Dart via app_links and
+                 the LiveActivity channel, not by Flutter's built-in deep linking. -->
+            <meta-data android:name="flutter_deeplinking_enabled" android:value="false" />
         </activity>
+        <!-- DB_REVIEW_REST (F2): handles silent "live_plan" data pushes (Android
+             live plan notification while the app is closed) and forwards
+             everything else to the firebase_messaging plugin service it replaces
+             (Ionic LivePlanMessagingService). -->
+        <service android:name=".liveplan.LivePlanMessagingService" android:exported="false">
+            <intent-filter android:priority="10">
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+        <service android:name="io.flutter.plugins.firebase.messaging.FlutterFirebaseMessagingService" tools:node="remove" />
+        <!-- NATIVE_MISC: audio_service media notification / lock-screen controls -->
+        <service android:name="com.ryanheise.audioservice.AudioService"
+            android:foregroundServiceType="mediaPlayback"
+            android:exported="true" tools:ignore="Instantiatable">
+            <intent-filter>
+                <action android:name="android.media.browse.MediaBrowserService" />
+            </intent-filter>
+        </service>
+        <receiver android:name="com.ryanheise.audioservice.MediaButtonReceiver"
+            android:exported="true" tools:ignore="Instantiatable">
+            <intent-filter>
+                <action android:name="android.intent.action.MEDIA_BUTTON" />
+            </intent-filter>
+        </receiver>
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+        <!-- PUSH: send-push.ts targets android channel_id "default" (created in MainActivity) -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="default" />
     </application>
+    <!-- PUSH: Android 13+ notification permission (Ionic manifest) -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- DB_REVIEW_REST (F2): Android 16 "Live Update" (promoted ongoing notification) -->
+    <uses-permission android:name="android.permission.POST_PROMOTED_NOTIFICATIONS" />
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and
          https://developer.android.com/reference/android/content/Intent#ACTION_PROCESS_TEXT.

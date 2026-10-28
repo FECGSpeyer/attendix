@@ -1,6 +1,94 @@
 {
   "versions": [
     {
+      "version": "0.8.0",
+      "date": "28.10.2026",
+      "changes": [
+        "🐛 Alle Lese- und Schreibzugriffe auf die Datenbank an die bisherige App angeglichen",
+        "🐛 Dienste werden beim Entschuldigen und Zurücksetzen wie gewohnt mitaktualisiert",
+        "🐛 Personendaten werden nicht mehr in andere Gruppen kopiert",
+        "✨ Organisationsfelder in Personenliste, Export und Mehrfachbearbeitung",
+        "🔒 Zusätzliche Absicherung beim Wechsel zwischen Gruppen"
+      ]
+    },
+    {
+      "version": "0.7.0",
+      "date": "28.10.2026",
+      "changes": [
+        "✨ Push-Benachrichtigungen in der iOS- und Android-App inkl. Badge am App-Icon",
+        "✨ Live Activities: laufender Ablaufplan auf dem Sperrbildschirm (iOS)",
+        "✨ Dateien und Noten öffnen in der App im System-Viewer, Steuerung auf dem Sperrbildschirm",
+        "✨ Hinweis 'Update installieren', wenn im Store eine neue Version bereitsteht",
+        "🎨 Anmeldung, Registrierung und 'Passwort zurücksetzen' wie in der bisherigen App",
+        "🎨 Öffentlicher Ablaufplaner im gewohnten Aussehen",
+        "✨ Termine auch offline ansehen, Änderungen werden nachgereicht",
+        "🔒 Beobachter können Termine nicht mehr per Link öffnen"
+      ]
+    },
+    {
+      "version": "0.6.0",
+      "date": "28.10.2026",
+      "changes": [
+        "✨ Schichtpläne bestimmen den Status bei neuen Terminen, Datums- und Zeitänderungen",
+        "✨ Registerprobenplan wie in der bisherigen App (Gruppen, Dirigenten, Telegram)",
+        "✨ Termin- und Liederliste auch offline verfügbar",
+        "🎨 Anmeldung, Registrierung und Fehlermeldungen wie gewohnt, mit 'Erneut versuchen'",
+        "🔒 Archivieren, Löschen und Ablehnen entfernen den Zugang sauber",
+        "🐛 Prozentwerte und Statistiken rechnen wie in der bisherigen App",
+        "🐛 Eltern sehen wieder alle ihre Kinder",
+        "🐛 Neue Termintypen und Gruppenlöschung speichern korrekt"
+      ]
+    },
+    {
+      "version": "0.5.0",
+      "date": "28.10.2026",
+      "changes": [
+        "🌍 App auf Englisch verfügbar (Einstellungen → System → Sprache)",
+        "✨ Microsoft-Teams-Tab mit automatischer Anmeldung",
+        "✨ Demo-Modus mit Schreibschutz wie in der bisherigen App",
+        "✨ Alte Links (E-Mails, Lesezeichen) öffnen die richtige Seite und Instanz",
+        "✨ Audio-Steuerung auf dem Sperrbildschirm, Noten per Drag & Drop hochladen",
+        "🎨 Werke, Export, Mitglieder, Vorlagen und Termintypen wie gewohnt bedienbar",
+        "🔒 Beobachter können Termine nicht mehr verändern",
+        "🐛 Erneute Registrierung überschreibt keine bestehenden Mitglieder mehr",
+        "🐛 Gruppenwechsel aktualisiert kommende Termine"
+      ]
+    },
+    {
+      "version": "0.4.0",
+      "date": "28.10.2026",
+      "changes": [
+        "🎨 Aussehen und Bedienung wie in der bisherigen App: Farben, Kopfzeilen, Tab-Leiste, Login, Instanzauswahl",
+        "🎨 Termine, Personen, Meine Termine und Einstellungen in gewohnter Reihenfolge und mit gewohnten Menüs",
+        "✨ Login mit Code per E-Mail, Passwort zurücksetzen, bessere Fehlermeldungen",
+        "✨ Accounts werden serverseitig angelegt, Registrierung für Instanzen mit Nutzungsbedingungen",
+        "✨ Termin-Detail: Filter, Sortierung, Person hinzufügen, Erinnerungen senden, Beschreibung & Anhang, Checkliste",
+        "✨ Protokoll und Aufgaben direkt im Termin, Schnell-Termin aus der Teamorganisation",
+        "✨ Personen: Pausieren ab Datum, Duplikate zusammenführen, Reihenfolge anpassen, Gemeinde-Übersicht",
+        "✨ Administratoren verwalten, Werk-Synchronisierung, Werke/Org-Pläne als Tab",
+        "✨ Branding auf Exporten, Urkunden für Vorkurse, Noten drucken, Dateien per Telegram senden",
+        "🐛 Historie, Benachrichtigungs-Links und Offline-Speichern korrigiert"
+      ]
+    },
+    {
+      "version": "0.3.0",
+      "date": "28.10.2026",
+      "changes": [
+        "✨ Dashboard mit Kacheln (Geburtstage, Termine, Problemfälle, Abwesenheiten, Werke, Ablaufplan)",
+        "✨ Dienstplan: Dienste einteilen, bestätigen, verteilen, regelmäßig verhindert",
+        "✨ Teamorganisation: Themen, Aufgaben und Protokolle (ersetzt Besprechungen)",
+        "✨ Mitteilungen und Benachrichtigungs-Glocke",
+        "✨ Ablaufpläne: mehrere pro Termin, Programmblöcke, öffentliche Planung und Org-Pläne",
+        "✨ Dateiablage, Rollen & Berechtigungen, Zusatzfelder, Branding, Personen verknüpfen",
+        "✨ Termine im Karten-Layout, Zusagen/Verspätung/Absagen mit Gründen, Ort und Anmeldefelder",
+        "✨ Bulk-Bearbeitung, Personen- und Werke-Import, Personenübergabe, geplante Abwesenheiten",
+        "✨ Werke: Kategorien, Synchronisierung zwischen Instanzen, öffentlicher Werk-Link",
+        "✨ Hilfe-Center, Impressum & Datenschutz, Konto löschen",
+        "✨ Offline-Warteschlange, Profilkarte mit Stammdaten, Passwort/E-Mail ändern",
+        "🐛 Werk-Historie nutzt die richtigen Spalten, Anmeldung zu Terminen funktioniert wieder"
+      ]
+    },
+    {
       "version": "0.2.1",
       "date": "25.6.2026",
       "changes": [

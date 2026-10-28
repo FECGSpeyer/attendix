@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import '../../../l10n/l10n.dart';
 
 part 'shift_definition.freezed.dart';
 part 'shift_definition.g.dart';
@@ -40,8 +41,8 @@ extension ShiftDefinitionExtension on ShiftDefinition {
   /// Display text for the shift segment
   String get displayText {
     if (free) {
-      return 'Frei ($startTime - $endTime)';
+      return l10nWithoutContext.coreFlutterShiftFreeRange(startTime, endTime);
     }
-    return 'Arbeit ($startTime - $endTime, ${duration}h)';
+    return l10nWithoutContext.coreFlutterShiftWorkRange(startTime, endTime, duration);
   }
 }

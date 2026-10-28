@@ -6,13 +6,18 @@ import 'tenant_providers.dart';
 
 /// Initialized shift repository with tenant context
 final shiftRepositoryWithTenantProvider = Provider<ShiftRepository>((ref) {
-  final repo = ref.watch(shiftRepositoryProvider);
   final tenant = ref.watch(currentTenantIdProvider);
+  return ref.watch(shiftRepositoryForTenantProvider(tenant));
+});
 
-  if (tenant != null) {
-    repo.setTenantId(tenant);
-  }
-
+/// TENANT_BIND: one immutable [ShiftRepository] per tenant (`bindTenantId`),
+/// so a tenant switch never changes the tenant of a running flow and
+/// cross-tenant work uses its own bound instance. `null` (no tenant)
+/// yields an unbound instance with `hasTenantId == false`.
+final shiftRepositoryForTenantProvider =
+    Provider.family<ShiftRepository, int?>((ref, tenantId) {
+  final repo = ShiftRepository(ref);
+  if (tenantId != null) repo.bindTenantId(tenantId);
   return repo;
 });
 

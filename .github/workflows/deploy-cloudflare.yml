@@ -34,6 +34,9 @@ jobs:
         run: |
           echo "SUPABASE_URL=${{ secrets.SUPABASE_URL }}" >> .env
           echo "SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}" >> .env
+          # DEMO_GUARD: optional demo account ("Demo starten", write-protected)
+          echo "DEMO_EMAIL=${{ secrets.DEMO_EMAIL }}" >> .env
+          echo "DEMO_PASSWORD=${{ secrets.DEMO_PASSWORD }}" >> .env
 
       - name: Run tests
         run: flutter test
@@ -41,13 +44,18 @@ jobs:
       - name: Build web
         run: flutter build web --release --base-href /
 
+      - name: Verify Cloudflare _headers (Teams frame-ancestors)
+        # flutter build web copies web/* into build/web; fail loudly if not.
+        run: |
+          test -f build/web/_headers || cp web/_headers build/web/_headers
+          grep -q "frame-ancestors" build/web/_headers
+
       - name: Deploy to Cloudflare Pages
-        uses: cloudflare/pages-action@v1
+        # cloudflare/pages-action is no longer resolvable; wrangler-action is its successor
+        uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: attendix
-          directory: build/web
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
           # Preview deployments for PRs, production for main
-          branch: ${{ github.head_ref || github.ref_name }}
+          command: pages deploy build/web --project-name=attendix --branch=${{ github.head_ref || github.ref_name }}

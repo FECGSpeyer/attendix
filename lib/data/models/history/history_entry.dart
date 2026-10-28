@@ -1,3 +1,5 @@
+import '../../../l10n/l10n.dart';
+
 /// Song history entry model
 class HistoryEntry {
   final int? id;
@@ -26,7 +28,7 @@ class HistoryEntry {
 
   factory HistoryEntry.fromJson(Map<String, dynamic> json) => HistoryEntry(
         id: json['id'] as int?,
-        songId: json['song_id'] as int,
+        songId: json['songId'] as int,
         songName: json['name'] as String?,
         songNumber: json['number']?.toString(),
         personId: json['person_id'] as int?,
@@ -37,7 +39,8 @@ class HistoryEntry {
         count: json['count'] as int? ?? 0,
       );
 
-  String get displayConductor => conductorName ?? otherConductor ?? 'Unbekannt';
+  String get displayConductor =>
+      conductorName ?? otherConductor ?? l10nWithoutContext.commonUnknown;
 
   String get formattedDate {
     final dateObj = DateTime.tryParse(date);

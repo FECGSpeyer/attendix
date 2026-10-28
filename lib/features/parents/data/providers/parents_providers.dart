@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/attendance_providers.dart';
@@ -6,6 +7,9 @@ import '../../../../core/providers/player_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../data/repositories/sign_in_out_repository.dart';
+import '../../../../core/providers/signout_providers.dart';
+import '../../../../core/utils/event_list_utils.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Statistics for a child
 class ChildStats {
@@ -39,6 +43,14 @@ class ChildPersonAttendance {
   final String? typeId;
   final int childId;
   final String childName;
+  // ATTENDANCE_SIGNOUT: card layout fields
+  final String childFirstName;
+  final int? durationDays;
+  final String? place;
+  final String? description;
+  final String? attachmentUrl;
+  final String? attachmentName;
+  final String? legacyType;
 
   ChildPersonAttendance({
     this.id,
@@ -56,25 +68,19 @@ class ChildPersonAttendance {
     this.typeId,
     required this.childId,
     required this.childName,
+    this.childFirstName = '',
+    this.durationDays,
+    this.place,
+    this.description,
+    this.attachmentUrl,
+    this.attachmentName,
+    this.legacyType,
   });
 
-  bool get isPast {
-    if (date == null) return false;
-    final attendanceDate = DateTime.tryParse(date!);
-    if (attendanceDate == null) return false;
-    final today = DateTime.now();
-    final todayStart = DateTime(today.year, today.month, today.day);
-    return attendanceDate.isBefore(todayStart);
-  }
+  /// Past only after the last day of a multi-day Termin.
+  bool get isPast => EventListUtils.hasEnded(date, durationDays);
 
-  bool get isUpcoming {
-    if (date == null) return false;
-    final attendanceDate = DateTime.tryParse(date!);
-    if (attendanceDate == null) return false;
-    final today = DateTime.now();
-    final todayStart = DateTime(today.year, today.month, today.day);
-    return !attendanceDate.isBefore(todayStart);
-  }
+  bool get isUpcoming => date != null && !isPast;
 
   bool get isDeadlinePassed {
     if (deadline == null) return false;
@@ -102,22 +108,18 @@ class ChildPersonAttendance {
 
     final now = DateTime.now();
     if (now.isAfter(deadlineDate)) {
-      return 'Anmeldefrist abgelaufen';
+      return l10nWithoutContext.signoutDeadlinePassed;
     }
 
-    final day = deadlineDate.day.toString().padLeft(2, '0');
-    final month = deadlineDate.month.toString().padLeft(2, '0');
-    final year = deadlineDate.year;
-    final hour = deadlineDate.hour.toString().padLeft(2, '0');
-    final minute = deadlineDate.minute.toString().padLeft(2, '0');
-    return 'Anmelden bis $day.$month.$year $hour:$minute Uhr';
+    return l10nWithoutContext.selfServiceFlutterSignInUntil(
+        DateFormat('${dateFmt()} HH:mm').format(deadlineDate));
   }
 
   String get displayTitle {
     if (typeInfo != null && typeInfo!.isNotEmpty) {
       return typeInfo!;
     }
-    return 'Termin';
+    return l10nWithoutContext.attendanceEventFallback;
   }
 }
 
@@ -132,6 +134,14 @@ class ParentAttendanceGroup {
   final Map<String, dynamic>? plan;
   final bool sharePlan;
   final List<ChildPersonAttendance> childAttendances;
+  // ATTENDANCE_SIGNOUT: card layout fields
+  final String? typeId;
+  final int? durationDays;
+  final String? place;
+  final String? description;
+  final String? attachmentUrl;
+  final String? attachmentName;
+  final String? legacyType;
 
   ParentAttendanceGroup({
     required this.attendanceId,
@@ -143,18 +153,22 @@ class ParentAttendanceGroup {
     this.plan,
     this.sharePlan = false,
     required this.childAttendances,
+    this.typeId,
+    this.durationDays,
+    this.place,
+    this.description,
+    this.attachmentUrl,
+    this.attachmentName,
+    this.legacyType,
   });
 
-  bool get isPast {
-    if (date == null) return false;
-    final attendanceDate = DateTime.tryParse(date!);
-    if (attendanceDate == null) return false;
-    final today = DateTime.now();
-    final todayStart = DateTime(today.year, today.month, today.day);
-    return attendanceDate.isBefore(todayStart);
-  }
+  /// Past only after the last day of a multi-day Termin.
+  bool get isPast => EventListUtils.hasEnded(date, durationDays);
 
   bool get isUpcoming => !isPast;
+
+  /// Starts today or still running ("Heute").
+  bool get isRunning => EventListUtils.isRunning(date, durationDays);
 
   bool get isDeadlinePassed {
     if (deadline == null) return false;
@@ -176,15 +190,11 @@ class ParentAttendanceGroup {
 
     final now = DateTime.now();
     if (now.isAfter(deadlineDate)) {
-      return 'Anmeldefrist abgelaufen';
+      return l10nWithoutContext.signoutDeadlinePassed;
     }
 
-    final day = deadlineDate.day.toString().padLeft(2, '0');
-    final month = deadlineDate.month.toString().padLeft(2, '0');
-    final year = deadlineDate.year;
-    final hour = deadlineDate.hour.toString().padLeft(2, '0');
-    final minute = deadlineDate.minute.toString().padLeft(2, '0');
-    return 'Anmelden bis $day.$month.$year $hour:$minute Uhr';
+    return l10nWithoutContext.selfServiceFlutterSignInUntil(
+        DateFormat('${dateFmt()} HH:mm').format(deadlineDate));
   }
 
   bool get allChildrenResponded =>
@@ -194,7 +204,7 @@ class ParentAttendanceGroup {
     if (typeInfo != null && typeInfo!.isNotEmpty) {
       return typeInfo!;
     }
-    return 'Termin';
+    return l10nWithoutContext.attendanceEventFallback;
   }
 }
 
@@ -227,6 +237,11 @@ final childrenAttendancesProvider =
       if (child.id != null) child.id!: '${child.firstName} ${child.lastName}',
   };
 
+  final childFirstNameMap = {
+    for (final child in children)
+      if (child.id != null) child.id!: child.firstName,
+  };
+
   // Fetch all person attendances for children via repository
   final rows = await repo.getPersonAttendancesForPersons(childIds);
 
@@ -249,7 +264,14 @@ final childrenAttendancesProvider =
       sharePlan: attendance?['share_plan'] == true,
       typeId: attendance?['type_id']?.toString(),
       childId: personId ?? 0,
-      childName: childNameMap[personId] ?? 'Kind',
+      childName: childNameMap[personId] ?? l10nWithoutContext.selfServiceFlutterChild,
+      childFirstName: childFirstNameMap[personId] ?? l10nWithoutContext.selfServiceFlutterChild,
+      durationDays: (attendance?['duration_days'] as num?)?.toInt(),
+      place: attendance?['place'] as String?,
+      description: attendance?['description'] as String?,
+      attachmentUrl: attendance?['attachment_url'] as String?,
+      attachmentName: attendance?['attachment_name'] as String?,
+      legacyType: attendance?['type'] as String?,
     );
   }).toList();
 });
@@ -285,6 +307,13 @@ final parentAttendanceGroupsProvider =
       plan: first.plan,
       sharePlan: first.sharePlan,
       childAttendances: childAtts,
+      typeId: first.typeId,
+      durationDays: first.durationDays,
+      place: first.place,
+      description: first.description,
+      attachmentUrl: first.attachmentUrl,
+      attachmentName: first.attachmentName,
+      legacyType: first.legacyType,
     );
   }).toList();
 });
@@ -316,10 +345,10 @@ final pastParentAttendancesProvider =
   return past.take(10).toList();
 });
 
-/// Provider for current (next) attendance
+/// Provider for the running Termin ("Heute" card, like Ionic parents page)
 final currentParentAttendanceProvider = Provider<ParentAttendanceGroup?>((ref) {
   final upcoming = ref.watch(upcomingParentAttendancesProvider);
-  return upcoming.isNotEmpty ? upcoming.first : null;
+  return upcoming.where((g) => g.isRunning).firstOrNull;
 });
 
 /// Provider for child statistics
@@ -337,12 +366,15 @@ final childStatsProvider = Provider.family<ChildStats, int>((ref, childId) {
     );
   }
 
-  final attended = childAttendances.where((a) => a.attended).length;
-  final late = childAttendances
-      .where((a) =>
-          a.status == AttendanceStatus.late ||
-          a.status == AttendanceStatus.lateExcused)
+  // SETTINGS2: Ionic parents.page — shift-excused counts as present (tenant flag)
+  final shiftExcused =
+      ref.watch(currentTenantProvider)?.shiftExcusedAsPresent ?? false;
+  final attended = childAttendances
+      .where((a) => a.status
+          .countsAsAttended(notes: a.notes, shiftExcusedAsPresent: shiftExcused))
       .length;
+  final late =
+      childAttendances.where((a) => a.status == AttendanceStatus.late).length;
 
   return ChildStats(
     // BL-002: Safe division - avoid division by zero
@@ -360,7 +392,8 @@ class ParentSignInOutNotifier extends Notifier<AsyncValue<void>> {
   @override
   AsyncValue<void> build() => const AsyncValue.data(null);
 
-  SignInOutRepository get _repo => ref.read(signInOutRepositoryProvider);
+  SignInOutRepository get _repo =>
+      ref.read(signInOutRepositoryWithTenantProvider);
 
   /// Sign in a child to an attendance
   Future<void> signIn(
@@ -387,7 +420,7 @@ class ParentSignInOutNotifier extends Notifier<AsyncValue<void>> {
     state = const AsyncValue.loading();
     try {
       await _repo.signOut(personAttendanceIds, reason,
-          isLateComing: isLateComing);
+          isLateComing: isLateComing, isParents: true);
       state = const AsyncValue.data(null);
       ref.invalidate(childrenAttendancesProvider);
     } catch (e, stack) {

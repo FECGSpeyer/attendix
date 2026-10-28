@@ -5,6 +5,7 @@ import '../../core/constants/enums.dart';
 import '../../data/models/person/person.dart';
 import '../../data/repositories/sign_in_out_repository.dart';
 import 'player_providers.dart';
+import 'signout_providers.dart';
 import 'tenant_providers.dart';
 
 export '../../core/constants/enums.dart' show AttendanceStatus;
@@ -79,11 +80,8 @@ final attendanceStatsProvider = Provider<AttendanceStats>((ref) {
   }
 
   final attended = relevant.where((a) => a.attended).length;
-  final late = relevant
-      .where((a) =>
-          a.status == AttendanceStatus.late ||
-          a.status == AttendanceStatus.lateExcused)
-      .length;
+  // Like Ionic overview: only unexcused late arrivals of all past Termine
+  final late = past.where((a) => a.status == AttendanceStatus.late).length;
 
   return AttendanceStats(
     percentage: (attended / relevant.length * 100).round(),
@@ -98,7 +96,8 @@ class SignInOutNotifier extends Notifier<AsyncValue<void>> {
   @override
   AsyncValue<void> build() => const AsyncValue.data(null);
 
-  SignInOutRepository get _repo => ref.read(signInOutRepositoryProvider);
+  SignInOutRepository get _repo =>
+      ref.read(signInOutRepositoryWithTenantProvider);
 
   /// Sign in to an attendance
   Future<void> signIn(
@@ -108,7 +107,8 @@ class SignInOutNotifier extends Notifier<AsyncValue<void>> {
   }) async {
     state = const AsyncValue.loading();
     try {
-      await _repo.signIn(personAttendanceId, type, notes: notes);
+      await _repo.signIn(personAttendanceId, type,
+          notes: notes, ownAcrossTenants: true);
       state = const AsyncValue.data(null);
       ref.invalidate(allPersonAttendancesAcrossTenantsProvider);
     } catch (e, stack) {
@@ -124,7 +124,8 @@ class SignInOutNotifier extends Notifier<AsyncValue<void>> {
   }) async {
     state = const AsyncValue.loading();
     try {
-      await _repo.signOut(personAttendanceIds, reason, isLateComing: isLateComing);
+      await _repo.signOut(personAttendanceIds, reason,
+          isLateComing: isLateComing, ownAcrossTenants: true);
       state = const AsyncValue.data(null);
       ref.invalidate(allPersonAttendancesAcrossTenantsProvider);
     } catch (e, stack) {
@@ -136,7 +137,8 @@ class SignInOutNotifier extends Notifier<AsyncValue<void>> {
   Future<void> updateNote(String personAttendanceId, String note) async {
     state = const AsyncValue.loading();
     try {
-      await _repo.updateAttendanceNote(personAttendanceId, note);
+      await _repo.updateAttendanceNote(personAttendanceId, note,
+          ownAcrossTenants: true);
       state = const AsyncValue.data(null);
       ref.invalidate(allPersonAttendancesAcrossTenantsProvider);
     } catch (e, stack) {

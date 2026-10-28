@@ -9,6 +9,8 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/color_utils.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/attendance/attendance.dart';
+import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
 
 /// Attendance Types List Page
 ///
@@ -30,17 +32,19 @@ class _AttendanceTypesPageState extends ConsumerState<AttendanceTypesPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Anwesenheitstypen'),
+        title: Text(context.l10n.typeSettingsTypes),
         actions: [
           if (_isReordering)
-            TextButton(
+            IconButton(
+              // UX_SETTINGS: Ionic checkmark to save the order
+              icon: const Icon(Icons.check),
+              tooltip: context.l10n.commonSave,
               onPressed: _saveOrder,
-              child: const Text('Speichern'),
             )
           else
             IconButton(
-              icon: const Icon(Icons.reorder),
-              tooltip: 'Reihenfolge ändern',
+              icon: const Icon(Icons.repeat),
+              tooltip: context.l10n.typeSettingsFlutterReorder,
               onPressed: () {
                 setState(() {
                   _isReordering = true;
@@ -52,7 +56,7 @@ class _AttendanceTypesPageState extends ConsumerState<AttendanceTypesPage> {
       ),
       body: typesAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => Center(child: Text('Fehler: $error')),
+        error: (error, stack) => Center(child: Text(context.l10n.settingsFlutterErrorDetail(friendlyErrorMessage(error)))),
         data: (types) {
           final displayTypes = _isReordering ? _localTypes : types;
 
@@ -63,12 +67,12 @@ class _AttendanceTypesPageState extends ConsumerState<AttendanceTypesPage> {
                 children: [
                   const Icon(Icons.category_outlined, size: 64, color: AppColors.medium),
                   const SizedBox(height: 16),
-                  const Text('Keine Anwesenheitstypen vorhanden'),
+                  Text(context.l10n.typeSettingsFlutterNoTypes),
                   const SizedBox(height: 16),
                   ElevatedButton.icon(
                     onPressed: () => _showCreateDialog(context),
                     icon: const Icon(Icons.add),
-                    label: const Text('Typ erstellen'),
+                    label: Text(context.l10n.typeSettingsFlutterCreateType),
                   ),
                 ],
               ),
@@ -84,14 +88,14 @@ class _AttendanceTypesPageState extends ConsumerState<AttendanceTypesPage> {
                   color: AppColors.primary.withValues(alpha: 0.08),
                   borderRadius: BorderRadius.circular(AppDimensions.borderRadiusS),
                 ),
-                child: const Row(
+                child: Row(
                   children: [
-                    Icon(Icons.info_outline, color: AppColors.primary, size: 20),
-                    SizedBox(width: AppDimensions.paddingS),
+                    const Icon(Icons.info_outline, color: AppColors.primary, size: 20),
+                    const SizedBox(width: AppDimensions.paddingS),
                     Expanded(
                       child: Text(
-                        'Anwesenheitstypen definieren die verschiedenen Termine deiner Gruppe. Jeder Typ hat eigene Einstellungen für Status, Uhrzeit und Programm.',
-                        style: TextStyle(fontSize: 13, color: AppColors.dark),
+                        context.l10n.typeSettingsTypesIntro,
+                        style: const TextStyle(fontSize: 13, color: AppColors.dark),
                       ),
                     ),
                   ],
@@ -167,17 +171,17 @@ class _AttendanceTypesPageState extends ConsumerState<AttendanceTypesPage> {
         });
 
         if (mounted) {
-          ToastHelper.showSuccess(context, 'Reihenfolge gespeichert');
+          ToastHelper.showSuccess(context, context.l10n.typeSettingsOrderSaved);
         }
       } else {
         if (mounted) {
-          ToastHelper.showError(context, 'Fehler beim Speichern. Bitte erneut versuchen.');
+          ToastHelper.showError(context, context.l10n.typeSettingsFlutterSaveOrderFailed);
         }
       }
     } catch (e) {
       // BL-008: Keep local changes on error - DO NOT reset _isReordering or _localTypes
       if (mounted) {
-        ToastHelper.showError(context, 'Fehler beim Speichern. Bitte erneut versuchen.');
+        ToastHelper.showError(context, context.l10n.typeSettingsFlutterSaveOrderFailed);
       }
     }
   }
@@ -192,70 +196,91 @@ class _AttendanceTypesPageState extends ConsumerState<AttendanceTypesPage> {
     final result = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Neuer Anwesenheitstyp'),
+        title: Text(context.l10n.typeSettingsFlutterNewType),
         content: TextField(
           controller: nameController,
-          decoration: const InputDecoration(
-            labelText: 'Name',
-            hintText: 'z.B. Probe, Konzert, Generalprobe',
+          decoration: InputDecoration(
+            labelText: context.l10n.typeSettingsName,
+            hintText: context.l10n.typeSettingsFlutterNamePh,
           ),
           autofocus: true,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Abbrechen'),
+            child: Text(context.l10n.commonCancel),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, nameController.text),
-            child: const Text('Erstellen'),
+            child: Text(context.l10n.filesCreate),
           ),
         ],
       ),
     );
 
-    if (result != null && result.trim().isNotEmpty) {
-      await _createType(result.trim());
+    if (result == null) return;
+    // LOGIC_SETTINGS: Ionic validate() — name required
+    if (result.trim().isEmpty) {
+      if (context.mounted) {
+        ToastHelper.showError(context, context.l10n.typeSettingsEnterName);
+      }
+      return;
     }
+    await _createType(result.trim());
   }
 
   Future<void> _createType(String name) async {
+    // LOGIC_SETTINGS: Ionic TypePage isNew defaults (index 999, empty
+    // default_plan, relevant_groups [], reminders []); statuses are written
+    // as numbers by the repository.
+    final newType = buildNewAttendanceType(name);
+
     try {
-      final currentTypes = ref.read(attendanceTypesProvider).valueOrNull ?? [];
+      final created = await ref
+          .read(attendanceTypeNotifierProvider.notifier)
+          .createType(newType);
 
-      final newType = AttendanceType(
-        name: name,
-        defaultStatus: AttendanceStatus.present,
-        availableStatuses: [
-          AttendanceStatus.neutral,
-          AttendanceStatus.present,
-          AttendanceStatus.absent,
-          AttendanceStatus.excused,
-          AttendanceStatus.late,
-        ],
-        manageSongs: false,
-        startTime: '19:00',
-        endTime: '20:30',
-        relevantGroups: [],
-        index: currentTypes.length,
-        visible: true,
-        color: 'primary',
-        highlight: false,
-        hideName: false,
-        includeInAverage: true,
-      );
-
-      await ref.read(attendanceTypeNotifierProvider.notifier).createType(newType);
-
-      if (mounted) {
-        ToastHelper.showSuccess(context, 'Anwesenheitstyp "$name" erstellt');
+      if (!mounted) return;
+      ToastHelper.showSuccess(context, context.l10n.typeSettingsCreated);
+      // Ionic configures the full type in the create modal; here the edit
+      // page of the new type opens so all settings (incl. duty view) follow.
+      if (created.id != null) {
+        context.push('/settings/types/${created.id}');
       }
     } catch (e) {
       if (mounted) {
-        ToastHelper.showError(context, 'Fehler beim Erstellen: $e');
+        ToastHelper.showError(context, context.l10n.typeSettingsCreateFailed);
       }
     }
   }
+}
+
+/// LOGIC_SETTINGS: defaults of a new type as in Ionic type.page.ts (isNew).
+AttendanceType buildNewAttendanceType(String name) {
+  return AttendanceType(
+    name: name.trim(),
+    planningTitle: '',
+    defaultStatus: AttendanceStatus.present,
+    availableStatuses: const [
+      AttendanceStatus.neutral,
+      AttendanceStatus.present,
+      AttendanceStatus.absent,
+      AttendanceStatus.excused,
+      AttendanceStatus.late,
+    ],
+    manageSongs: false,
+    startTime: '19:00',
+    endTime: '20:30',
+    relevantGroups: const [],
+    index: 999,
+    visible: true,
+    color: 'primary',
+    highlight: false,
+    hideName: false,
+    includeInAverage: true,
+    reminders: const [],
+    defaultPlan: const {'time': '', 'end': '', 'fields': <dynamic>[]},
+  );
 }
 
 class _AttendanceTypeTile extends StatelessWidget {
@@ -289,7 +314,7 @@ class _AttendanceTypeTile extends StatelessWidget {
       ),
       title: Text(type.name),
       subtitle: Text(
-        _getSubtitle(),
+        _getSubtitle(context.l10n),
         style: TextStyle(color: AppColors.medium, fontSize: 12),
       ),
       trailing: trailing,
@@ -297,7 +322,7 @@ class _AttendanceTypeTile extends StatelessWidget {
     );
   }
 
-  String _getSubtitle() {
+  String _getSubtitle(AppLocalizations l10n) {
     final parts = <String>[];
 
     if (type.startTime != null && type.endTime != null) {
@@ -305,13 +330,13 @@ class _AttendanceTypeTile extends StatelessWidget {
     }
 
     if (type.manageSongs) {
-      parts.add('Mit Programm');
+      parts.add(l10n.typeSettingsFlutterWithProgramme);
     }
 
     if (!type.visible) {
-      parts.add('Ausgeblendet');
+      parts.add(l10n.typeSettingsFlutterHidden);
     }
 
-    return parts.isEmpty ? 'Standard' : parts.join(' • ');
+    return parts.isEmpty ? l10n.agendaDefault : parts.join(' • ');
   }
 }

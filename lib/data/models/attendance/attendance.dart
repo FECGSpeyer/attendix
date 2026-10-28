@@ -1,5 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:intl/intl.dart';
 import '../../../core/constants/enums.dart';
+import '../../../l10n/l10n.dart';
 
 part 'attendance.freezed.dart';
 part 'attendance.g.dart';
@@ -169,6 +171,14 @@ class Attendance with _$Attendance {
     @_FlexibleIntListConverter() List<int>? conductors,
     Map<String, dynamic>? players,
     @JsonKey(name: 'share_plan') @_FlexibleBoolConverter() @Default(false) bool sharePlan,
+    // ATTENDANCE_SIGNOUT: place, files folder, description & attachment
+    @_FlexibleStringConverter() String? place,
+    @JsonKey(name: 'files_folder') @_FlexibleStringConverter() String? filesFolder,
+    @_FlexibleStringConverter() String? description,
+    @JsonKey(name: 'attachment_url') @_FlexibleStringConverter() String? attachmentUrl,
+    @JsonKey(name: 'attachment_name') @_FlexibleStringConverter() String? attachmentName,
+    // DUTY: persons needed for this Termin (Dienst-Modus); null = type default
+    @JsonKey(name: 'duty_required') @_FlexibleIntConverter() int? dutyRequired,
   }) = _Attendance;
 
   factory Attendance.fromJson(Map<String, dynamic> json) =>
@@ -199,6 +209,12 @@ class PersonAttendance with _$PersonAttendance {
     @_FlexibleBoolConverter() @Default(false) bool highlight,
     @_FlexibleStringConverter() String? left,
     @_FlexibleBoolConverter() @Default(false) bool paused,
+    // ATTENDANCE_SIGNOUT: answers to the attendance type's registration fields
+    @JsonKey(name: 'registration_answers') Map<String, dynamic>? registrationAnswers,
+    // DUTY: 'requested' | 'confirmed' | 'self' (null = not assigned / stand-in)
+    @JsonKey(name: 'duty_state') @_FlexibleStringConverter() String? dutyState,
+    @JsonKey(name: 'duty_assigned_by') @_FlexibleStringConverter() String? dutyAssignedBy,
+    @JsonKey(name: 'duty_assigned_at') @_FlexibleStringConverter() String? dutyAssignedAt,
   }) = _PersonAttendance;
 
   factory PersonAttendance.fromJson(Map<String, dynamic> json) =>
@@ -249,10 +265,59 @@ class AttendanceType with _$AttendanceType {
     List<ChecklistItem>? checklist,
     // Field from Ionic that was missing
     @JsonKey(name: 'planning_title') @_FlexibleStringConverter() String? planningTitle,
+    // ATTENDANCE_SIGNOUT: place/navigation and registration fields per type
+    @JsonKey(name: 'place_enabled') @_FlexibleBoolConverter() @Default(false) bool placeEnabled,
+    @JsonKey(name: 'registration_fields') List<RegistrationField>? registrationFields,
+    // DUTY: Dienst-Modus (Dienstplan)
+    @JsonKey(name: 'duty_mode') @_FlexibleBoolConverter() @Default(false) bool dutyMode,
+    @JsonKey(name: 'duty_required') @_FlexibleIntConverter() int? dutyRequired,
+    @JsonKey(name: 'duty_self_signup') @Default(true) bool dutySelfSignup,
+    @JsonKey(name: 'duty_confirm_reminder_days') @_FlexibleIntConverter() int? dutyConfirmReminderDays,
+    @JsonKey(name: 'duty_notify_understaffed') @Default(true) bool dutyNotifyUnderstaffed,
+    @JsonKey(name: 'duty_urgent_hours') @_FlexibleIntConverter() int? dutyUrgentHours,
   }) = _AttendanceType;
 
   factory AttendanceType.fromJson(Map<String, dynamic> json) =>
       _$AttendanceTypeFromJson(json);
+}
+
+/// Type of a registration field (Anmeldefeld) of an attendance type.
+/// Stored as string in `attendance_types.registration_fields` (jsonb).
+abstract final class RegistrationFieldType {
+  static const text = 'text';
+  static const boolean = 'boolean';
+  static const select = 'select';
+  static const multiSelect = 'multi_select';
+
+  /// German label shown in settings
+  static String label(String type) {
+    switch (type) {
+      case text:
+        return l10nWithoutContext.typeSettingsText;
+      case boolean:
+        return l10nWithoutContext.typeSettingsYesNo;
+      case select:
+        return l10nWithoutContext.typeSettingsSingle;
+      case multiSelect:
+        return l10nWithoutContext.typeSettingsMulti;
+      default:
+        return type;
+    }
+  }
+}
+
+/// Registration field (Anmeldefeld) asked when a person signs in to a Termin.
+@freezed
+class RegistrationField with _$RegistrationField {
+  const factory RegistrationField({
+    required String id,
+    @Default('') String label,
+    @Default(RegistrationFieldType.text) String type,
+    List<String>? options,
+  }) = _RegistrationField;
+
+  factory RegistrationField.fromJson(Map<String, dynamic> json) =>
+      _$RegistrationFieldFromJson(json);
 }
 
 /// Extension for Attendance
@@ -261,13 +326,17 @@ extension AttendanceExtension on Attendance {
   String get formattedDate {
     final dateObj = DateTime.tryParse(date);
     if (dateObj == null) return date;
-    return '${dateObj.day.toString().padLeft(2, '0')}.${dateObj.month.toString().padLeft(2, '0')}.${dateObj.year}';
+    return DateFormat(dateFmt()).format(dateObj);
   }
 
   /// Weekday name
   String get weekdayName {
     final dateObj = DateTime.tryParse(date);
     if (dateObj == null) return '';
+    if (currentLanguage() != 'de') {
+      final name = DateFormat('EEE', currentIntlLocale()).format(dateObj);
+      return name.length > 2 ? name.substring(0, 2) : name;
+    }
     const weekdays = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
     return weekdays[dateObj.weekday - 1];
   }
@@ -286,9 +355,9 @@ extension AttendanceExtension on Attendance {
   String _formatTypeForDisplay(String type) {
     switch (type.toLowerCase()) {
       case 'uebung':
-        return 'Probe';
+        return l10nWithoutContext.defaultsTypesRehearsal;
       case 'vortrag':
-        return 'Vortrag';
+        return l10nWithoutContext.defaultsTypesPerformance;
       default:
         // Capitalize first letter for unknown types
         return type.isNotEmpty
@@ -316,7 +385,7 @@ extension AttendanceExtension on Attendance {
     }
 
     // 3. Otherwise show "Datum | Typ-Name"
-    final typeName = attendanceType?.name ?? (type != null ? _formatTypeForDisplay(type!) : 'Anwesenheit');
+    final typeName = attendanceType?.name ?? (type != null ? _formatTypeForDisplay(type!) : l10nWithoutContext.peopleAttendance);
     return '$weekdayName, $formattedDate | $typeName';
   }
 
@@ -326,7 +395,7 @@ extension AttendanceExtension on Attendance {
     if (typeInfo != null && typeInfo!.isNotEmpty) {
       return typeInfo!;
     }
-    return type != null ? _formatTypeForDisplay(type!) : 'Anwesenheit';
+    return type != null ? _formatTypeForDisplay(type!) : l10nWithoutContext.peopleAttendance;
   }
 }
 
@@ -343,17 +412,17 @@ extension PersonAttendanceExtension on PersonAttendance {
   String get statusLabel {
     switch (status) {
       case AttendanceStatus.present:
-        return 'Anwesend';
+        return l10nWithoutContext.commonStatusPresent;
       case AttendanceStatus.absent:
-        return 'Abwesend';
+        return l10nWithoutContext.commonStatusAbsent;
       case AttendanceStatus.excused:
-        return 'Entschuldigt';
+        return l10nWithoutContext.commonStatusExcused;
       case AttendanceStatus.late:
-        return 'Verspätet';
+        return l10nWithoutContext.commonStatusLateShort;
       case AttendanceStatus.lateExcused:
-        return 'Verspätet (entsch.)';
+        return l10nWithoutContext.attendanceLateExcusedParen;
       case AttendanceStatus.neutral:
-        return 'Unbekannt';
+        return l10nWithoutContext.commonUnknown;
     }
   }
 

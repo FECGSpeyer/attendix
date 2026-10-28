@@ -23,7 +23,7 @@ _$TenantImpl _$$TenantImplFromJson(Map<String, dynamic> json) => _$TenantImpl(
   seasonStart: json['seasonStart'] as String?,
   parents: json['parents'] as bool? ?? false,
   betaProgram: json['betaProgram'] as bool? ?? false,
-  showMembersList: json['show_members_list'] as bool? ?? false,
+  showMembersList: json['showMembersList'] as bool? ?? false,
   region: json['region'] as String?,
   role: (json['role'] as num?)?.toInt(),
   songSharingId: json['song_sharing_id'] as String?,
@@ -46,6 +46,25 @@ _$TenantImpl _$$TenantImplFromJson(Map<String, dynamic> json) => _$TenantImpl(
           ?.map((e) => CriticalRule.fromJson(e as Map<String, dynamic>))
           .toList(),
   timezone: json['timezone'] as String? ?? 'Europe/Berlin',
+  songAdditionalFields:
+      (json['song_additional_fields'] as List<dynamic>?)
+          ?.map((e) => ExtraField.fromJson(e as Map<String, dynamic>))
+          .toList(),
+  filesEnabled: json['files_enabled'] as bool? ?? false,
+  filesShared: json['files_shared'] as bool? ?? false,
+  filesMaxBytes: (json['files_max_bytes'] as num?)?.toInt(),
+  showAllAttendances: json['show_all_attendances'] as bool? ?? false,
+  showAllAttendancesInfoText: json['show_all_attendances_info_text'] as String?,
+  absenceReasons:
+      (json['absence_reasons'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
+  lateReasons:
+      (json['late_reasons'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
+  dutyView: json['duty_view'] as bool? ?? false,
+  shiftExcusedAsPresent: json['shift_excused_as_present'] as bool? ?? false,
 );
 
 Map<String, dynamic> _$$TenantImplToJson(_$TenantImpl instance) =>
@@ -63,7 +82,7 @@ Map<String, dynamic> _$$TenantImplToJson(_$TenantImpl instance) =>
       'seasonStart': instance.seasonStart,
       'parents': instance.parents,
       'betaProgram': instance.betaProgram,
-      'show_members_list': instance.showMembersList,
+      'showMembersList': instance.showMembersList,
       'region': instance.region,
       'role': instance.role,
       'song_sharing_id': instance.songSharingId,
@@ -76,6 +95,16 @@ Map<String, dynamic> _$$TenantImplToJson(_$TenantImpl instance) =>
       'favorite': instance.favorite,
       'critical_rules': instance.criticalRules,
       'timezone': instance.timezone,
+      'song_additional_fields': instance.songAdditionalFields,
+      'files_enabled': instance.filesEnabled,
+      'files_shared': instance.filesShared,
+      'files_max_bytes': instance.filesMaxBytes,
+      'show_all_attendances': instance.showAllAttendances,
+      'show_all_attendances_info_text': instance.showAllAttendancesInfoText,
+      'absence_reasons': instance.absenceReasons,
+      'late_reasons': instance.lateReasons,
+      'duty_view': instance.dutyView,
+      'shift_excused_as_present': instance.shiftExcusedAsPresent,
     };
 
 _$ExtraFieldImpl _$$ExtraFieldImplFromJson(Map<String, dynamic> json) =>
@@ -86,6 +115,9 @@ _$ExtraFieldImpl _$$ExtraFieldImplFromJson(Map<String, dynamic> json) =>
       defaultValue: json['defaultValue'],
       options:
           (json['options'] as List<dynamic>?)?.map((e) => e as String).toList(),
+      visibleToPlayers: json['visibleToPlayers'] as bool?,
+      editableByPlayers: json['editableByPlayers'] as bool?,
+      displayMode: json['displayMode'] as String?,
     );
 
 Map<String, dynamic> _$$ExtraFieldImplToJson(_$ExtraFieldImpl instance) =>
@@ -95,6 +127,9 @@ Map<String, dynamic> _$$ExtraFieldImplToJson(_$ExtraFieldImpl instance) =>
       'type': instance.type,
       'defaultValue': instance.defaultValue,
       'options': instance.options,
+      'visibleToPlayers': instance.visibleToPlayers,
+      'editableByPlayers': instance.editableByPlayers,
+      'displayMode': instance.displayMode,
     };
 
 _$CriticalRuleImpl _$$CriticalRuleImplFromJson(Map<String, dynamic> json) =>

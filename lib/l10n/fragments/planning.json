@@ -1,0 +1,92 @@
+{
+  "de": {
+    "org": {
+      "flutter": {
+        "unlinkFailed": "Fehler beim Trennen",
+        "fieldCount": "{count, plural, one {# Feld} other {# Felder}}",
+        "noFields": "Keine Felder"
+      }
+    },
+    "planning": {
+      "flutter": {
+        "errorWith": "Fehler: {error}",
+        "live": "Live",
+        "pdfA4": "PDF (A4)",
+        "pdf2xA5": "PDF (2x A5)",
+        "telegramPdf2x": "Per Telegram senden (PDF 2x A5)",
+        "telegramNotConfigured": "Telegram nicht konfiguriert",
+        "exportFailed": "Fehler beim Export: {error}",
+        "liveMode": "Live-Modus",
+        "liveModeEnd": "Live-Modus beenden",
+        "noItems": "Keine Programmpunkte",
+        "fieldEntry": "Feld: {name} ({min} min)",
+        "blockEntry": "Programmblock: {name} ({min} min)",
+        "saveFailedWith": "Fehler beim Speichern: {error}",
+        "shareFailedWith": "Fehler beim Teilen: {error}",
+        "planPosition": "{index} von {total}",
+        "unshareAction": "Freigabe aufheben",
+        "noEvents": "Keine Termine vorhanden"
+      }
+    },
+    "orgFields": {
+      "flutter": {
+        "firstOptionDefault": "Erste Option ist der Standardwert"
+      }
+    },
+    "plans": {
+      "flutter": {
+        "hideTab": "Tab ausblenden",
+        "showAsTab": "Als Tab anzeigen",
+        "orgPlansTitle": "Organisationspläne",
+        "inOrg": "In Organisation \"{name}\"",
+        "addToOrg": "Zur Organisation hinzufügen",
+        "fieldsCount": "{count} Felder"
+      }
+    }
+  },
+  "en": {
+    "org": {
+      "flutter": {
+        "unlinkFailed": "Error while unlinking",
+        "fieldCount": "{count, plural, one {# field} other {# fields}}",
+        "noFields": "No fields"
+      }
+    },
+    "planning": {
+      "flutter": {
+        "errorWith": "Error: {error}",
+        "live": "Live",
+        "pdfA4": "PDF (A4)",
+        "pdf2xA5": "PDF (2x A5)",
+        "telegramPdf2x": "Send via Telegram (PDF 2x A5)",
+        "telegramNotConfigured": "Telegram is not configured",
+        "exportFailed": "Export failed: {error}",
+        "liveMode": "Live mode",
+        "liveModeEnd": "End live mode",
+        "noItems": "No programme items",
+        "fieldEntry": "Field: {name} ({min} min)",
+        "blockEntry": "Programme block: {name} ({min} min)",
+        "saveFailedWith": "Error while saving: {error}",
+        "shareFailedWith": "Error while sharing: {error}",
+        "planPosition": "{index} of {total}",
+        "unshareAction": "Stop sharing",
+        "noEvents": "No events available"
+      }
+    },
+    "orgFields": {
+      "flutter": {
+        "firstOptionDefault": "The first option is the default value"
+      }
+    },
+    "plans": {
+      "flutter": {
+        "hideTab": "Hide tab",
+        "showAsTab": "Show as tab",
+        "orgPlansTitle": "Organisation plans",
+        "inOrg": "In organisation \"{name}\"",
+        "addToOrg": "Add to organisation",
+        "fieldsCount": "{count} fields"
+      }
+    }
+  }
+}

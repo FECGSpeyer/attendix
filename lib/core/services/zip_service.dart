@@ -7,6 +7,7 @@ import '../../data/models/song/song.dart';
 import 'zip_service_stub.dart'
     if (dart.library.io) 'zip_service_io.dart'
     if (dart.library.html) 'zip_service_web.dart' as platform;
+import '../../l10n/l10n.dart';
 
 /// Service for creating and sharing ZIP archives
 class ZipService {
@@ -16,7 +17,7 @@ class ZipService {
     required String songName,
   }) async {
     if (files.isEmpty) {
-      throw Exception('Keine Dateien zum Herunterladen');
+      throw Exception(l10nWithoutContext.coreFlutterNoFilesToDownload);
     }
 
     // Create archive
@@ -42,13 +43,13 @@ class ZipService {
     }
 
     if (archive.isEmpty) {
-      throw Exception('Keine Dateien konnten heruntergeladen werden');
+      throw Exception(l10nWithoutContext.coreFlutterNoFilesDownloaded);
     }
 
     // Encode to ZIP
     final zipData = ZipEncoder().encode(archive);
     if (zipData == null) {
-      throw Exception('ZIP konnte nicht erstellt werden');
+      throw Exception(l10nWithoutContext.coreFlutterZipFailed);
     }
 
     // Generate safe filename

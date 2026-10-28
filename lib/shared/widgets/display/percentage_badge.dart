@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../l10n/l10n.dart';
 
 /// A badge that displays a percentage value with color coding
 /// - Green (success): >= 75%
@@ -85,13 +86,13 @@ class LargePercentageBadge extends StatelessWidget {
     required this.percentage,
     this.size = 80,
     this.showLabel = true,
-    this.label = 'Anwesenheit',
+    this.label,
   });
 
   final double percentage;
   final double size;
   final bool showLabel;
-  final String label;
+  final String? label;
 
   Color get _color {
     if (percentage >= 75) return AppColors.success;
@@ -136,7 +137,7 @@ class LargePercentageBadge extends StatelessWidget {
         if (showLabel) ...[
           const SizedBox(height: AppDimensions.paddingS),
           Text(
-            label,
+            label ?? context.l10n.peopleAttendance,
             style: TextStyle(
               fontSize: 12,
               color: AppColors.medium,

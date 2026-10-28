@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/player_providers.dart';
+import '../../../../core/providers/realtime_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/person/person.dart';
-import '../../../people/presentation/pages/people_list_page.dart';
+import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
 
 /// Provider for left (archived) players using repository
 final leftPlayersProvider = FutureProvider<List<Person>>((ref) async {
@@ -26,9 +29,9 @@ class LeftPlayersPage extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Ehemalige Mitglieder'),
+        title: Text(context.l10n.settingsArchive),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const BackButtonIcon(),
           onPressed: () => context.pop(),
         ),
       ),
@@ -40,11 +43,11 @@ class LeftPlayersPage extends ConsumerWidget {
             children: [
               const Icon(Icons.error_outline, size: 64, color: AppColors.danger),
               const SizedBox(height: AppDimensions.paddingM),
-              Text('Fehler: $e'),
+              Text(context.l10n.settingsFlutterErrorDetail(friendlyErrorMessage(e))),
               const SizedBox(height: AppDimensions.paddingM),
               ElevatedButton(
                 onPressed: () => ref.invalidate(leftPlayersProvider),
-                child: const Text('Erneut versuchen'),
+                child: Text(context.l10n.messagesRetry),
               ),
             ],
           ),
@@ -58,12 +61,12 @@ class LeftPlayersPage extends ConsumerWidget {
                   const Icon(Icons.history_outlined, size: 80, color: AppColors.medium),
                   const SizedBox(height: AppDimensions.paddingL),
                   Text(
-                    'Keine ehemaligen Mitglieder',
+                    context.l10n.settingsNoArchived,
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                   const SizedBox(height: AppDimensions.paddingS),
                   Text(
-                    'Hier erscheinen archivierte Mitglieder',
+                    context.l10n.settingsFlutterArchiveHint,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppColors.medium),
                   ),
                 ],
@@ -96,19 +99,20 @@ class LeftPlayersPage extends ConsumerWidget {
   }
 
   Future<void> _reactivatePlayer(BuildContext context, WidgetRef ref, Person player) async {
+    final repository = ref.read(playerRepositoryWithTenantProvider);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Mitglied reaktivieren?'),
-        content: Text('Möchtest du ${player.fullName} wieder aktivieren?'),
+        title: Text(ctx.l10n.peopleReactivateConfirm),
+        content: Text(ctx.l10n.settingsFlutterReactivateMessage(player.fullName)),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Abbrechen'),
+            child: Text(ctx.l10n.commonCancel),
           ),
           ElevatedButton(
             onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('Reaktivieren'),
+            child: Text(ctx.l10n.signoutReactivate),
           ),
         ],
       ),
@@ -116,18 +120,18 @@ class LeftPlayersPage extends ConsumerWidget {
 
     if (confirmed == true && context.mounted) {
       try {
-        final repository = ref.read(playerRepositoryWithTenantProvider);
         await repository.reactivatePlayer(player);
 
         ref.invalidate(leftPlayersProvider);
-        ref.invalidate(peopleListProvider);
+        ref.invalidate(realtimePlayersProvider);
+        ref.invalidate(playersProvider);
 
         if (context.mounted) {
-          ToastHelper.showSuccess(context, '${player.fullName} wurde reaktiviert');
+          ToastHelper.showSuccess(context, context.l10n.settingsFlutterReactivated(player.fullName));
         }
       } catch (e) {
         if (context.mounted) {
-          ToastHelper.showError(context, 'Fehler: $e');
+          ToastHelper.showError(context, context.l10n.settingsFlutterErrorDetail(friendlyErrorMessage(e)));
         }
       }
     }
@@ -175,14 +179,14 @@ class _LeftPlayerItem extends StatelessWidget {
               ),
             if (player.left != null)
               Text(
-                'Ausgetreten: ${_formatDate(player.left!)}',
+                context.l10n.settingsLeftOn(_formatDate(player.left!)),
                 style: TextStyle(fontSize: 12, color: AppColors.warning),
               ),
           ],
         ),
         trailing: IconButton(
           icon: const Icon(Icons.restore, color: AppColors.success),
-          tooltip: 'Reaktivieren',
+          tooltip: context.l10n.signoutReactivate,
           onPressed: onReactivate,
         ),
       ),
@@ -192,6 +196,6 @@ class _LeftPlayerItem extends StatelessWidget {
   String _formatDate(String dateStr) {
     final date = DateTime.tryParse(dateStr);
     if (date == null) return dateStr;
-    return '${date.day.toString().padLeft(2, '0')}.${date.month.toString().padLeft(2, '0')}.${date.year}';
+    return DateFormat(dateFmt()).format(date);
   }
 }
