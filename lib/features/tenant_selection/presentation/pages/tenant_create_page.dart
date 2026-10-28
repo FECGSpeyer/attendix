@@ -11,6 +11,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/repositories/tenant_create_repository.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// AUTH: Ionic "Neue Instanz anlegen" (register.page) – 3 steps:
 /// 1. Art der Gruppe, 2. Name + Kürzel, 3. Hauptgruppe, then summary.
@@ -343,7 +344,7 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
                 ? const SizedBox(
                     width: 18,
                     height: 18,
-                    child: CircularProgressIndicator(strokeWidth: 2),
+                    child: AppSpinner(strokeWidth: 2),
                   )
                 : const Icon(Icons.add_circle_outline),
             label: Text(_isLoading
@@ -358,9 +359,9 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
 
   /// Ionic main-group info popover (register.mainGroupInfoHtml).
   Future<void> _showMainGroupInfo() {
-    return showDialog<void>(
+    return showAppDialog<void>(
       context: context,
-      builder: (ctx) => AlertDialog(
+      builder: (ctx) => AppAlertDialog(
         // Ionic register.mainGroupInfoHtml (rendered as HTML popover).
         content: SingleChildScrollView(
           child: _HtmlBlocks(html: ctx.l10n.registerMainGroupInfoHtml),

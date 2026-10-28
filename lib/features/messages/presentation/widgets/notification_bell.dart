@@ -14,6 +14,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../data/models/user_notification/user_notification.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Notification bell for page app bars (port of Ionic `NotificationBellComponent`).
 ///
@@ -204,10 +205,10 @@ class _NotificationCenterState extends ConsumerState<_NotificationCenter> {
     required String confirmText,
     bool destructive = false,
   }) async {
-    final result = await showDialog<bool>(
+    final result = await showAppDialog<bool>(
       context: context,
       builder:
-          (ctx) => AlertDialog(
+          (ctx) => AppAlertDialog(
             title: Text(title),
             content: Text(message),
             actions: [
@@ -283,7 +284,7 @@ class _NotificationCenterState extends ConsumerState<_NotificationCenter> {
         ),
         Padding(
           padding: const EdgeInsets.all(AppDimensions.paddingS),
-          child: SegmentedButton<bool>(
+          child: AppSegmentedButton<bool>(
             showSelectedIcon: false,
             segments: [
               ButtonSegment(value: false, label: Text(context.l10n.bellCurrentInstance)),
@@ -298,7 +299,7 @@ class _NotificationCenterState extends ConsumerState<_NotificationCenter> {
           ),
         ),
         Expanded(
-          child: RefreshIndicator(
+          child: RefreshIndicator.adaptive(
             onRefresh: () async {
               _readOverrides.clear();
               ref.invalidate(unreadNotificationCountProvider);
@@ -311,7 +312,7 @@ class _NotificationCenterState extends ConsumerState<_NotificationCenter> {
                       controller: widget.scrollController,
                       children: const [
                         SizedBox(height: 80),
-                        Center(child: CircularProgressIndicator()),
+                        Center(child: AppSpinner()),
                       ],
                     )
                     : list.isEmpty

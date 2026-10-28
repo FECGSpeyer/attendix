@@ -19,6 +19,7 @@ import 'register_page.dart';
 import '../../../../core/providers/dashboard_providers.dart'; // DASHBOARD
 import '../../../../core/services/teams/teams_service.dart'; // TEAMS
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 import '../widgets/ion_input_decoration.dart'; // I18N_INFRA
 
 /// Login page
@@ -320,9 +321,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   /// Ionic promptResendConfirmation(): "E-Mail nicht bestätigt".
   Future<void> _promptResendConfirmation() async {
     final controller = TextEditingController(text: _emailController.text.trim());
-    final target = await showDialog<String>(
+    final target = await showAppDialog<String>(
       context: context,
-      builder: (ctx) => AlertDialog(
+      builder: (ctx) => AppAlertDialog(
         title: Text(ctx.l10n.loginNotConfirmedHeader),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -456,7 +457,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           ? const SizedBox(
               height: 20,
               width: 20,
-              child: CircularProgressIndicator(
+              child: AppSpinner(
                 strokeWidth: 2,
                 valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
               ),

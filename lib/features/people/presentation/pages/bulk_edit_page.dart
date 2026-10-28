@@ -17,6 +17,7 @@ import '../../../../data/models/person/person.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../data/repositories/shared_person_fields.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 import '../../../../core/providers/demo_providers.dart'; // DEMO_GUARD
 
 /// A field that can be bulk edited.
@@ -501,7 +502,7 @@ class _ValueEditor extends StatelessWidget {
         case 'isLeader':
           return Align(
             alignment: Alignment.centerRight,
-            child: Switch(value: value == true, onChanged: onChanged),
+            child: Switch.adaptive(value: value == true, onChanged: onChanged),
           );
         case 'notes':
           return _text(hint: context.l10n.peopleNotePlaceholder);
@@ -524,7 +525,7 @@ class _ValueEditor extends StatelessWidget {
       case FieldType.boolean:
         return Align(
           alignment: Alignment.centerRight,
-          child: Switch(value: value == true, onChanged: onChanged),
+          child: Switch.adaptive(value: value == true, onChanged: onChanged),
         );
       case FieldType.select:
         return _dropdown<String>([
@@ -540,7 +541,7 @@ class _ValueEditor extends StatelessWidget {
         final current = DateTime.tryParse(value?.toString() ?? '');
         return OutlinedButton(
           onPressed: () async {
-            final picked = await showDatePicker(
+            final picked = await showAppDatePicker(
               context: context,
               initialDate: current ?? DateTime.now(),
               firstDate: DateTime(1900),

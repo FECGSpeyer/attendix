@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Colour family of a dashboard tile / chip / header strip
 /// (Ionic global.scss `.tile-*` and `.strip-*`, "Kachel" design).
@@ -149,7 +150,7 @@ class DashLoading extends StatelessWidget {
           child: SizedBox(
             width: 24,
             height: 24,
-            child: CircularProgressIndicator(strokeWidth: 2.5),
+            child: AppSpinner(strokeWidth: 2.5),
           ),
         ),
       );

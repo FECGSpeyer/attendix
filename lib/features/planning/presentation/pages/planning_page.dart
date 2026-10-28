@@ -31,6 +31,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../songs/presentation/utils/song_utils.dart';
 import '../../../../core/providers/branding_providers.dart'; // MISC2
 import '../../../../core/utils/error_message.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Provider for songs list (for adding to plan)
 final planSongsProvider = FutureProvider<List<Song>>((ref) async {
@@ -384,9 +385,9 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     }
     await _save();
     if (!mounted) return;
-    final choice = await showDialog<String>(
+    final choice = await showAppDialog<String>(
       context: context,
-      builder: (ctx) => AlertDialog(
+      builder: (ctx) => AppAlertDialog(
         title: Text(ctx.l10n.planningAddAnotherPlan),
         content: Text(ctx.l10n.planningAddAnotherPlanMessage),
         actions: [
@@ -994,7 +995,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
 
   Future<void> _pickTime() async {
     final m = PlanUtils.parseTimeToMinutes(_time) ?? (17 * 60 + 50);
-    final picked = await showTimePicker(
+    final picked = await showAppTimePicker(
       context: context,
       initialTime: TimeOfDay(hour: m ~/ 60, minute: m % 60),
       builder: (ctx, child) => MediaQuery(
@@ -1063,7 +1064,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
           child: const Icon(Icons.more_horiz),
         ),
         body: attendancesAsync.when(
-          loading: () => const Center(child: CircularProgressIndicator()),
+          loading: () => const Center(child: AppSpinner()),
           error: (e, _) => Center(child: Text(context.l10n.planningFlutterErrorWith(friendlyErrorMessage(e)))),
           // SOL_FIX2: requested Termin not reachable → error, no fallback
           data: (_) => _requestedNotFound
@@ -1163,7 +1164,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
                 subtitle: Text(att.notes!),
               ),
             if (att != null) ...[
-              SwitchListTile(
+              SwitchListTile.adaptive(
                 title: Text(context.l10n.planningShareWithMembers),
                 value: _sharePlan,
                 onChanged: (v) async {
@@ -1176,7 +1177,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
                 },
               ),
               if (org != null)
-                SwitchListTile(
+                SwitchListTile.adaptive(
                   title: Text(context.l10n.planningOrgPlan),
                   value: _isOrgPlan,
                   onChanged: (v) async {
@@ -1207,7 +1208,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
             ],
             // MISC2: "Branding einbeziehen" (only when logo/text configured)
             if (ref.watch(hasBrandingProvider))
-              SwitchListTile(
+              SwitchListTile.adaptive(
                 title: Text(context.l10n.planningIncludeBranding),
                 value: ref.watch(includeBrandingProvider),
                 onChanged: (v) => ref.read(includeBrandingProvider.notifier).state = v,

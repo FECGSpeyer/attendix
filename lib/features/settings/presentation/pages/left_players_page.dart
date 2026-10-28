@@ -11,6 +11,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Provider for left (archived) players using repository
 final leftPlayersProvider = FutureProvider<List<Person>>((ref) async {
@@ -36,7 +37,7 @@ class LeftPlayersPage extends ConsumerWidget {
         ),
       ),
       body: playersAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => const Center(child: AppSpinner()),
         error: (e, _) => Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -74,7 +75,7 @@ class LeftPlayersPage extends ConsumerWidget {
             );
           }
 
-          return RefreshIndicator(
+          return RefreshIndicator.adaptive(
             // FN-010: await provider.future to show spinner until data loads
             onRefresh: () async {
               ref.invalidate(leftPlayersProvider);
@@ -100,9 +101,9 @@ class LeftPlayersPage extends ConsumerWidget {
 
   Future<void> _reactivatePlayer(BuildContext context, WidgetRef ref, Person player) async {
     final repository = ref.read(playerRepositoryWithTenantProvider);
-    final confirmed = await showDialog<bool>(
+    final confirmed = await showAppDialog<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
+      builder: (ctx) => AppAlertDialog(
         title: Text(ctx.l10n.peopleReactivateConfirm),
         content: Text(ctx.l10n.settingsFlutterReactivateMessage(player.fullName)),
         actions: [

@@ -4,6 +4,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/quill_utils.dart';
 import '../../../data/models/attendance/attendance.dart';
 import '../../../l10n/l10n.dart';
+import '../adaptive/adaptive.dart'; // IOS_LOOK
 
 // Internal sentinel for the free-text option (never stored).
 const String _customReason = 'Sonstiger Grund';
@@ -268,7 +269,7 @@ class _RegistrationFieldsSheetState extends State<_RegistrationFieldsSheet> {
   Widget _buildField(RegistrationField field) {
     switch (field.type) {
       case RegistrationFieldType.boolean:
-        return SwitchListTile(
+        return SwitchListTile.adaptive(
           title: Text(field.label),
           value: _answers[field.id] == true,
           onChanged: (v) => setState(() => _answers[field.id] = v),
@@ -414,9 +415,9 @@ Future<String?> showEventNoteDialog(
   String initialValue = '',
 }) async {
   final controller = TextEditingController(text: initialValue);
-  final result = await showDialog<String>(
+  final result = await showAppDialog<String>(
     context: context,
-    builder: (ctx) => AlertDialog(
+    builder: (ctx) => AppAlertDialog(
       title: Text(title),
       content: TextField(
         controller: controller,

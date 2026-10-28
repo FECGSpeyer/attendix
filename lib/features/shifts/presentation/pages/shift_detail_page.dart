@@ -15,6 +15,7 @@ import '../widgets/copy_shift_to_tenant_sheet.dart';
 import '../widgets/shift_preview_sheet.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Shift Detail Page
 ///
@@ -97,7 +98,7 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
         ],
       ),
       body: shiftAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => const Center(child: AppSpinner()),
         error: (error, stack) => Center(child: Text(context.l10n.shiftsFlutterErrorWith(friendlyErrorMessage(error)))),
         data: (shift) {
           if (shift == null) {
@@ -115,7 +116,7 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
             ? const SizedBox(
                 width: 20,
                 height: 20,
-                child: CircularProgressIndicator(
+                child: AppSpinner(
                   strokeWidth: 2,
                   color: Colors.white,
                 ),
@@ -459,17 +460,17 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
     bool isFree = segment.free;
 
     try {
-      return await showDialog<ShiftDefinition>(
+      return await showAppDialog<ShiftDefinition>(
         context: context,
         builder: (context) => StatefulBuilder(
-          builder: (context, setDialogState) => AlertDialog(
+          builder: (context, setDialogState) => AppAlertDialog(
             title: Text(context.l10n.shiftsFlutterEditSegment),
             content: SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   // Free toggle
-                  SwitchListTile(
+                  SwitchListTile.adaptive(
                     title: Text(context.l10n.shiftsFree),
                     subtitle: Text(context.l10n.shiftsFlutterFreeHint),
                     value: isFree,
@@ -492,7 +493,7 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
                           hour: int.tryParse(parts.isNotEmpty ? parts[0] : '8') ?? 8,
                           minute: int.tryParse(parts.length > 1 ? parts[1] : '0') ?? 0,
                         );
-                        final time = await showTimePicker(
+                        final time = await showAppTimePicker(
                           context: context,
                           initialTime: initialTime,
                         );
@@ -609,9 +610,9 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
       message = l10n.shiftsFlutterDeleteConfirmUsed(usageCount);
     }
 
-    final confirmed = await showDialog<bool>(
+    final confirmed = await showAppDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (context) => AppAlertDialog(
         title: Text(l10n.shiftsDelete),
         content: Text(message),
         actions: [
@@ -866,7 +867,7 @@ class _ShiftInstanceTileState extends State<_ShiftInstanceTile> {
   }
 
   Future<void> _selectDate(BuildContext context, DateTime currentDate) async {
-    final selected = await showDatePicker(
+    final selected = await showAppDatePicker(
       context: context,
       initialDate: currentDate,
       firstDate: DateTime(2020),

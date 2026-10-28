@@ -36,6 +36,7 @@ import '../../../../core/services/tracking/tracking_service.dart';
 import '../../../../core/utils/demo_guard.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 import '../../../../core/utils/people_shift_status.dart' show shiftAssignmentChanged; // SOL_FIX4
 
 /// Provider for single person with group name
@@ -300,7 +301,7 @@ class PersonDetailPage extends ConsumerWidget {
     return personAsync.when(
       loading: () => Scaffold(
         appBar: AppBar(title: Text(context.l10n.tasksPerson)),
-        body: const Center(child: CircularProgressIndicator()),
+        body: const Center(child: AppSpinner()),
       ),
       error: (error, stack) => Scaffold(
         appBar: AppBar(title: Text(context.l10n.tasksPerson)),
@@ -639,9 +640,9 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     var createAccountAfterSave = false;
     var assignVoiceLeaderRole = false;
     if (emailChanged && emailValid && widget.person.appId == null) {
-      final create = await showDialog<bool>(
+      final create = await showAppDialog<bool>(
         context: context,
-        builder: (ctx) => AlertDialog(
+        builder: (ctx) => AppAlertDialog(
           title: Text(context.l10n.personEmailAdded),
           content: Text(context.l10n.personCreateAccountNow),
           actions: [
@@ -852,9 +853,9 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
   /// false = status only, null = cancel.
   Future<bool?> _showVoiceLeaderDialog() {
     final name = '${_draft.firstName} ${_draft.lastName}';
-    return showDialog<bool>(
+    return showAppDialog<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
+      builder: (ctx) => AppAlertDialog(
         title: Text(context.l10n.personEnableVoiceLeader),
         content: Text(context.l10n.personVoiceLeaderMessage(name)),
         actions: [
@@ -1007,31 +1008,18 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
       return;
     }
 
-    final chosen = await showModalBottomSheet<CrossTenantPersonCandidate>(
-      context: context,
-      builder: (ctx) => SafeArea(
-        child: ListView(
-          shrinkWrap: true,
-          children: [
-            ListTile(
-              title: Text(context.l10n.personChooseEntry,
-                  style: TextStyle(fontWeight: FontWeight.bold)),
-            ),
-            for (final m in matches)
-              ListTile(
-                leading: const Icon(Icons.person_search),
-                title: Text(m.candidate.label),
-                subtitle: Text(m.reason),
-                onTap: () => Navigator.pop(ctx, m.candidate),
-              ),
-            ListTile(
-              leading: const Icon(Icons.close),
-              title: Text(context.l10n.commonCancel),
-              onTap: () => Navigator.pop(ctx),
-            ),
-          ],
-        ),
-      ),
+    final chosen = await showAppActionSheet<CrossTenantPersonCandidate>(
+      context,
+      title: context.l10n.personChooseEntry,
+      actions: [
+        for (final m in matches)
+          AppActionSheetAction(
+            value: m.candidate,
+            icon: Icons.person_search,
+            label: m.candidate.label,
+            subtitle: m.reason,
+          ),
+      ],
     );
     if (chosen == null || !mounted) return;
     final email = chosen.person.email?.trim();
@@ -1161,10 +1149,10 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     DateTime archiveDate = DateTime.now();
 
     try {
-      final result = await showDialog<Map<String, dynamic>>(
+      final result = await showAppDialog<Map<String, dynamic>>(
         context: context,
         builder: (context) => StatefulBuilder(
-          builder: (context, setDialogState) => AlertDialog(
+          builder: (context, setDialogState) => AppAlertDialog(
             title: Text(context.l10n.peopleArchiveTitle(widget.person.fullName)),
             content: Column(
               mainAxisSize: MainAxisSize.min,
@@ -1175,7 +1163,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
                   subtitle: Text(DateFormat(dateFmt()).format(archiveDate)),
                   trailing: const Icon(Icons.calendar_today),
                   onTap: () async {
-                    final date = await showDatePicker(
+                    final date = await showAppDatePicker(
                       context: context,
                       initialDate: archiveDate,
                       firstDate: DateTime(2000),
@@ -1317,9 +1305,9 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
   }
 
   Future<void> _approvePerson() async {
-    final confirmed = await showDialog<bool>(
+    final confirmed = await showAppDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (context) => AppAlertDialog(
         title: Text(context.l10n.personFlutterApproveQuestion),
         content: Text(context.l10n.personFlutterApproveMessage(widget.person.fullName)),
         actions: [
@@ -1365,9 +1353,9 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
   Future<void> _declinePerson() async {
     final reasonController = TextEditingController();
     try {
-      final reason = await showDialog<String>(
+      final reason = await showAppDialog<String>(
         context: context,
-        builder: (context) => AlertDialog(
+        builder: (context) => AppAlertDialog(
           title: Text(context.l10n.personDeclinePerson),
           content: Column(
             mainAxisSize: MainAxisSize.min,
@@ -1436,33 +1424,25 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     }
   }
 
-  void _showPendingActions() {
-    showModalBottomSheet(
-      context: context,
-      builder: (context) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: const Icon(Icons.check_circle, color: AppColors.success),
-              title: Text(context.l10n.personApprovePerson),
-              onTap: () { Navigator.pop(context); _approvePerson(); },
-            ),
-            ListTile(
-              leading: const Icon(Icons.cancel, color: AppColors.danger),
-              title: Text(context.l10n.personDeclinePerson),
-              onTap: () { Navigator.pop(context); _declinePerson(); },
-            ),
-            const Divider(),
-            ListTile(
-              leading: const Icon(Icons.close),
-              title: Text(context.l10n.commonCancel),
-              onTap: () => Navigator.pop(context),
-            ),
-          ],
+  Future<void> _showPendingActions() async {
+    final action = await showAppActionSheet<VoidCallback>(
+      context,
+      actions: [
+        AppActionSheetAction(
+          value: _approvePerson,
+          icon: Icons.check_circle,
+          color: AppColors.success,
+          label: context.l10n.personApprovePerson,
         ),
-      ),
+        AppActionSheetAction(
+          value: _declinePerson,
+          icon: Icons.cancel,
+          label: context.l10n.personDeclinePerson,
+          destructive: true,
+        ),
+      ],
     );
+    action?.call();
   }
 
   /// Ionic person.page openMoreMenu (action sheet, same option order):
@@ -1487,56 +1467,31 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     final userId = ref.read(supabaseClientProvider).auth.currentUser?.id;
     final isSelf = widget.person.appId != null && widget.person.appId == userId;
 
-    Widget option(String text, VoidCallback onTap, {bool destructive = false}) {
-      return ListTile(
-        title: Text(
-          text,
-          textAlign: TextAlign.center,
-          style: destructive ? const TextStyle(color: AppColors.danger) : null,
-        ),
-        onTap: () {
-          Navigator.pop(context);
-          onTap();
-        },
-      );
-    }
+    AppActionSheetAction<VoidCallback> option(String text, VoidCallback onTap,
+            {bool destructive = false}) =>
+        AppActionSheetAction(value: onTap, label: text, destructive: destructive);
 
-    showModalBottomSheet(
-      context: context,
-      builder: (context) => SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (widget.person.appId == null && isAdmin)
-                option(context.l10n.personAssignMyUser, _assignMyAccount),
-              if (widget.person.paused)
-                option(context.l10n.personReactivate, _unpausePerson)
-              else
-                option(context.l10n.peoplePause, _showPauseDialog),
-              if (canTransfer) ...[
-                option(context.l10n.personTransferOther, _showTransferSheet),
-                option(context.l10n.personCopyOther,
-                    () => _showTransferSheet(copy: true)),
-              ],
-              option(context.l10n.peopleArchive, _showArchiveDialog, destructive: true),
-              // Ionic: shown whenever the person is not the current user.
-              if (!isSelf)
-                option(context.l10n.commonRemove, _showDeleteDialog, destructive: true),
-              const Divider(height: 1),
-              ListTile(
-                title: Text(
-                  context.l10n.commonCancel,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontWeight: FontWeight.w600),
-                ),
-                onTap: () => Navigator.pop(context),
-              ),
-            ],
-          ),
-        ),
-      ),
+    final action = await showAppActionSheet<VoidCallback>(
+      context,
+      actions: [
+        if (widget.person.appId == null && isAdmin)
+          option(context.l10n.personAssignMyUser, _assignMyAccount),
+        if (widget.person.paused)
+          option(context.l10n.personReactivate, _unpausePerson)
+        else
+          option(context.l10n.peoplePause, _showPauseDialog),
+        if (canTransfer) ...[
+          option(context.l10n.personTransferOther, _showTransferSheet),
+          option(context.l10n.personCopyOther,
+              () => _showTransferSheet(copy: true)),
+        ],
+        option(context.l10n.peopleArchive, _showArchiveDialog, destructive: true),
+        // Ionic: shown whenever the person is not the current user.
+        if (!isSelf)
+          option(context.l10n.commonRemove, _showDeleteDialog, destructive: true),
+      ],
     );
+    action?.call();
   }
 
   Future<void> _showTransferSheet({bool copy = false}) async {
@@ -1554,9 +1509,9 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
 
   /// Ionic: alert "Person entfernen" → Abbrechen / Ja.
   Future<void> _showDeleteDialog() async {
-    final confirmed = await showDialog<bool>(
+    final confirmed = await showAppDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (context) => AppAlertDialog(
         title: Text(context.l10n.attendanceRemovePerson),
         content: Text(context.l10n.personRemovePersonMessage),
         actions: [
@@ -1635,9 +1590,9 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
   }
 
   Future<void> _unlinkAccount() async {
-    final confirmed = await showDialog<bool>(
+    final confirmed = await showAppDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (context) => AppAlertDialog(
         title: Text(context.l10n.personFlutterUnlinkQuestion),
         content: Text(context.l10n.personFlutterUnlinkMessage(widget.person.fullName)),
         actions: [
@@ -1724,9 +1679,9 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
       return;
     }
 
-    final confirmed = !confirm ? true : await showDialog<bool>(
+    final confirmed = !confirm ? true : await showAppDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (context) => AppAlertDialog(
         title: Text(context.l10n.personFlutterCreateAccountQuestion),
         content: Text(context.l10n.personFlutterCreateAccountMessage(
             person.fullName, person.email ?? '')),
@@ -1786,9 +1741,9 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
       canPop: !_hasChanges,
       onPopInvokedWithResult: (didPop, result) async {
         if (didPop) return;
-        final shouldDiscard = await showDialog<bool>(
+        final shouldDiscard = await showAppDialog<bool>(
           context: context,
-          builder: (context) => AlertDialog(
+          builder: (context) => AppAlertDialog(
             title: Text(context.l10n.personDiscardChanges),
             content: Text(context.l10n.personDiscardChangesMessage),
             actions: [
@@ -1938,7 +1893,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
                     ? const SizedBox(
                         width: 20,
                         height: 20,
-                        child: CircularProgressIndicator(
+                        child: AppSpinner(
                             strokeWidth: 2, color: Colors.white),
                       )
                     : const Icon(Icons.save_outlined),

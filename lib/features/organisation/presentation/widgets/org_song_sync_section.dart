@@ -8,6 +8,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../data/repositories/song_repository.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// SETTINGS2: Ionic org-settings "Werk-Synchronisierung" (super admin only).
 ///
@@ -27,9 +28,9 @@ class _OrgSongSyncSectionState extends ConsumerState<OrgSongSyncSection> {
   bool _saving = false;
 
   Future<bool> _confirmDeactivation() async {
-    final result = await showDialog<bool>(
+    final result = await showAppDialog<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
+      builder: (ctx) => AppAlertDialog(
         title: Text(context.l10n.orgDisableSync),
         content: Text(context.l10n.orgDisableSyncMessage),
         actions: [
@@ -100,7 +101,7 @@ class _OrgSongSyncSectionState extends ConsumerState<OrgSongSyncSection> {
                     ? const SizedBox(
                         width: 20,
                         height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
+                        child: AppSpinner(strokeWidth: 2),
                       )
                     : DropdownButton<int?>(
                         value: widget.linkedTenants.any((t) => t.id == current) ||

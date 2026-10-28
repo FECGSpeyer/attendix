@@ -14,6 +14,7 @@ import '../../../../data/models/tenant/tenant.dart';
 import '../../../../data/repositories/organisation_repository.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 class PersonLinkMatch {
   PersonLinkMatch(this.match);
@@ -166,7 +167,7 @@ class _LinkPersonsPageState extends ConsumerState<LinkPersonsPage> {
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.linkPersonsTitle)),
       body: _loading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(child: AppSpinner())
           : _groups.isEmpty
               ? Center(
                   child: Padding(

@@ -33,6 +33,7 @@ import '../../../../core/services/tracking/tracking_event.dart';
 import '../../../../core/services/tracking/tracking_service.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Page for creating a new person
 class PersonCreatePage extends ConsumerStatefulWidget {
@@ -265,7 +266,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
             ? const SizedBox(
                 width: 20,
                 height: 20,
-                child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                child: AppSpinner(strokeWidth: 2, color: Colors.white),
               )
             : const Icon(Icons.person_add_alt_1_outlined),
       ),
@@ -489,7 +490,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
         );
 
       case 'boolean':
-        return SwitchListTile(
+        return SwitchListTile.adaptive(
           title: Text(field.name),
           value: _additionalFieldValues[field.id] as bool? ?? true,
           onChanged: (value) => setState(() => _additionalFieldValues[field.id] = value),
@@ -507,7 +508,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
           ),
           trailing: const Icon(Icons.calendar_today),
           onTap: () async {
-            final date = await showDatePicker(
+            final date = await showAppDatePicker(
               context: context,
               initialDate: currentDate ?? DateTime.now(),
               firstDate: DateTime(1900),
@@ -587,7 +588,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
             )
           : null,
       onTap: () async {
-        final picked = await showDatePicker(
+        final picked = await showAppDatePicker(
           context: context,
           initialDate: value ?? DateTime.now(),
           firstDate: DateTime(1900),
@@ -659,7 +660,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
           onChanged: (v) => setState(() => _parentId = v),
         ),
       if ((tenant?.maintainTeachers ?? false) && !isMain) ...[
-        SwitchListTile(
+        SwitchListTile.adaptive(
           contentPadding: EdgeInsets.zero,
           title: Text(context.l10n.personPlaysWithTeacher),
           value: _hasTeacher,
@@ -684,7 +685,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
           ),
       ],
       if (!isGeneral && !isMain)
-        SwitchListTile(
+        SwitchListTile.adaptive(
           contentPadding: EdgeInsets.zero,
           title: Text(context.l10n.peopleVoiceLeader),
           value: _isLeader,
@@ -723,7 +724,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
               ),
           ],
         ),
-        SwitchListTile(
+        SwitchListTile.adaptive(
           contentPadding: EdgeInsets.zero,
           title: Text(context.l10n.peopleCandidate),
           value: _examinee,
@@ -803,7 +804,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
 
   Future<void> _pickBirthday() async {
     final now = DateTime.now();
-    final picked = await showDatePicker(
+    final picked = await showAppDatePicker(
       context: context,
       initialDate: _birthday ?? DateTime(now.year - 20),
       firstDate: DateTime(1900),

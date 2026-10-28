@@ -14,6 +14,7 @@ import '../../../../data/models/attendance/attendance.dart';
 import '../../../../data/models/duty/person_unavailability.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Opens "Regelmäßig verhindert" for a person (as a full screen dialog).
 Future<void> openUnavailabilityPage(
@@ -165,7 +166,7 @@ class _UnavailabilityPageState extends ConsumerState<UnavailabilityPage> {
     final editing = _editing;
     if (editing == null) return;
     final now = DateTime.now();
-    final picked = await showDatePicker(
+    final picked = await showAppDatePicker(
       context: context,
       initialDate: DateTime.tryParse(editing.validUntil ?? '') ?? now,
       firstDate: DateTime(now.year - 1),
@@ -225,7 +226,7 @@ class _UnavailabilityPageState extends ConsumerState<UnavailabilityPage> {
     final rulesAsync = ref.watch(unavailabilityByPersonProvider(widget.personId));
     final types = ref.watch(attendanceTypesProvider).valueOrNull ?? const <AttendanceType>[];
     return rulesAsync.when(
-      loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () => const Center(child: AppSpinner()),
       error: (e, _) => Center(child: Text(context.l10n.dutyFlutterErrorWith(friendlyErrorMessage(e)))),
       data: (rules) => ListView(
         padding: const EdgeInsets.all(AppDimensions.paddingM),

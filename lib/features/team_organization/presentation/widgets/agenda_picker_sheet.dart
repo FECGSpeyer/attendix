@@ -9,6 +9,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/team_org/team_org.dart';
 import '../../../../l10n/l10n.dart';
 import '../../team_org_utils.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// "Themen aufnehmen": picks open topics (and creates new ones inline) and
 /// inserts them as TOPs into a Termin's Ablaufplan. Unchecking a TOP that is
@@ -284,7 +285,7 @@ class _AgendaPickerSheetState extends ConsumerState<AgendaPickerSheet> {
           ),
           Expanded(
             child: _loading
-                ? const Center(child: CircularProgressIndicator())
+                ? const Center(child: AppSpinner())
                 : ListView(
                     children: [
                       if (_canCreateFromSearch)

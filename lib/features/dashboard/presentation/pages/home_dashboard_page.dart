@@ -55,7 +55,7 @@ class HomeDashboardPage extends ConsumerWidget {
           const NotificationBell(), // INTEGRATION (Ionic app-notification-bell)
         ],
       ),
-      body: RefreshIndicator(
+      body: RefreshIndicator.adaptive(
         onRefresh: () async => refreshDashboardCards(ref),
         child: widgets.isEmpty
             ? ListView(

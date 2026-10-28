@@ -21,6 +21,7 @@ import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../l10n/l10n.dart';
 import 'plan_export_actions.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Opens the Registerprobenplan modal (Ionic `isPlanModalOpen`, a sheet with
 /// breakpoints `[0, 1]`, i.e. full height).
@@ -163,7 +164,7 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
         ],
       ),
       body: _loading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(child: AppSpinner())
           : ListView(
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
               children: [

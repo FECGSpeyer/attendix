@@ -22,6 +22,7 @@ import '../../../../../shared/widgets/sheets/selection_sheet.dart';
 import '../church_picker_sheet.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../../core/utils/error_message.dart';
+import '../../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Ionic VoS "Andere Orchester" options
 const otherOrchestraOptions = ['SoS', 'GoS', 'BoS'];
@@ -672,10 +673,10 @@ class AllgemeinAccordion extends ConsumerWidget {
       editable: canEdit,
       onEdit: () async {
         final current = Set<String>.from(selected);
-        final result = await showDialog<List<String>>(
+        final result = await showAppDialog<List<String>>(
           context: context,
           builder: (ctx) => StatefulBuilder(
-            builder: (ctx, setState) => AlertDialog(
+            builder: (ctx, setState) => AppAlertDialog(
               title: Text(context.l10n.personOtherOrchestras),
               content: Column(
                 mainAxisSize: MainAxisSize.min,

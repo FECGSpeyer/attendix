@@ -13,6 +13,7 @@ import '../../../songs/data/song_print_service.dart';
 import 'song_options_sheet.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// "Aktuelle Werke" sheet (Ionic signout songsModal): one inset list per
 /// Termin, rows "Nr. Name" / "Dirigent: …", red rows when there are no notes
@@ -98,7 +99,7 @@ class UpcomingSongsSheet extends ConsumerWidget {
               ),
               Expanded(
                 child: songsAsync.when(
-                  loading: () => const Center(child: CircularProgressIndicator()),
+                  loading: () => const Center(child: AppSpinner()),
                   error: (error, stack) => Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,

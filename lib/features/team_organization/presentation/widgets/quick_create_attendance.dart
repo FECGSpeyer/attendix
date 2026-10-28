@@ -22,6 +22,7 @@ import '../../../../data/models/shift/shift_plan.dart';
 import '../../../../data/models/team_org/team_org.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Protocol-enabled, visible types a Termin can be created for ad hoc
 /// (Ionic `protocolAttendanceTypes`), ordered by index.
@@ -186,10 +187,10 @@ Future<int?> promptCreateProtocolAttendance(BuildContext context, WidgetRef ref)
   var type = types.first;
   if (types.length > 1) {
     String? selected = type.id;
-    final chosen = await showDialog<String>(
+    final chosen = await showAppDialog<String>(
       context: context,
       builder: (ctx) => StatefulBuilder(
-        builder: (ctx, setLocal) => AlertDialog(
+        builder: (ctx, setLocal) => AppAlertDialog(
           title: Text(ctx.l10n.dateDialogWhichType),
           content: Column(
             mainAxisSize: MainAxisSize.min,
@@ -216,7 +217,7 @@ Future<int?> promptCreateProtocolAttendance(BuildContext context, WidgetRef ref)
 
   final now = DateTime.now();
   final today = DateTime(now.year, now.month, now.day);
-  final day = await showDatePicker(
+  final day = await showAppDatePicker(
     context: context,
     initialDate: today,
     firstDate: today,

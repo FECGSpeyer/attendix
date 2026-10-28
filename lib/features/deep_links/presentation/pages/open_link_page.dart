@@ -9,6 +9,7 @@ import '../../../../core/providers/user_preferences_provider.dart';
 import '../../../../core/router/legacy_routes.dart';
 import '../../../../core/utils/dashboard_logic.dart';
 import '../../../../data/models/tenant/tenant.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// LINKS_STARTUP: resolves the tenant for an in-app link before opening it.
 ///
@@ -90,6 +91,6 @@ class _OpenLinkPageState extends ConsumerState<OpenLinkPage> {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    return const Scaffold(body: Center(child: AppSpinner()));
   }
 }

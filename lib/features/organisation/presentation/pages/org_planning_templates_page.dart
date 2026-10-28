@@ -12,6 +12,7 @@ import '../../../../data/models/plan/plan.dart';
 import '../../../planning/presentation/widgets/plan_field_dialogs.dart';
 import '../../../planning/presentation/widgets/plan_fields_editor.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// "Planvorlagen & Felder" of the organisation (Ionic `OrgPlanningTemplatesPage`).
 ///
@@ -243,7 +244,7 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
   Future<void> _pickStart(int index) async {
     final tpl = _templates![index];
     final m = PlanUtils.parseTimeToMinutes(tpl.time) ?? 600;
-    final picked = await showTimePicker(
+    final picked = await showAppTimePicker(
       context: context,
       helpText: context.l10n.shiftsStartTime,
       initialTime: TimeOfDay(hour: m ~/ 60, minute: m % 60),
@@ -291,7 +292,7 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.orgTemplatesTitle)),
       body: _templates == null
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(child: AppSpinner())
           : ListView(
               padding: const EdgeInsets.only(bottom: 32),
               children: [

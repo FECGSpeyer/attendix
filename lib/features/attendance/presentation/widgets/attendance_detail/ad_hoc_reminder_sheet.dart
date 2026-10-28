@@ -145,7 +145,7 @@ class _AdHocReminderFormState extends State<_AdHocReminderForm> {
               ),
             ),
             if (widget.hasNeutralPersons)
-              SwitchListTile(
+              SwitchListTile.adaptive(
                 contentPadding: EdgeInsets.zero,
                 value: _neutralOnly,
                 onChanged: (v) => setState(() => _neutralOnly = v),

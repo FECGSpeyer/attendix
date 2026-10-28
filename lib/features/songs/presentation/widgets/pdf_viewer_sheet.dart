@@ -7,6 +7,7 @@ import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Bottom sheet for viewing PDF files in-app
 class PdfViewerSheet extends StatefulWidget {
@@ -177,7 +178,7 @@ class _PdfViewerSheetState extends State<PdfViewerSheet> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const CircularProgressIndicator(),
+            const AppSpinner(),
             const SizedBox(height: AppDimensions.paddingM),
             Text(context.l10n.songsFlutterPdfLoading),
           ],
@@ -242,10 +243,10 @@ class _PdfViewerSheetState extends State<PdfViewerSheet> {
       builders: PdfViewPinchBuilders<DefaultBuilderOptions>(
         options: const DefaultBuilderOptions(),
         documentLoaderBuilder: (_) => const Center(
-          child: CircularProgressIndicator(),
+          child: AppSpinner(),
         ),
         pageLoaderBuilder: (_) => const Center(
-          child: CircularProgressIndicator(),
+          child: AppSpinner(),
         ),
         errorBuilder: (_, error) => Center(
           child: Text(context.l10n.songsFlutterErrorWith(friendlyErrorMessage(error))),
@@ -364,10 +365,10 @@ class _FullscreenPdfViewerState extends State<_FullscreenPdfViewer> {
               builders: PdfViewPinchBuilders<DefaultBuilderOptions>(
                 options: const DefaultBuilderOptions(),
                 documentLoaderBuilder: (_) => const Center(
-                  child: CircularProgressIndicator(color: Colors.white),
+                  child: AppSpinner(color: Colors.white),
                 ),
                 pageLoaderBuilder: (_) => const Center(
-                  child: CircularProgressIndicator(color: Colors.white),
+                  child: AppSpinner(color: Colors.white),
                 ),
               ),
             ),

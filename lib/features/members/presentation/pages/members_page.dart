@@ -6,6 +6,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/person/person.dart';
 import '../../data/providers/members_providers.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 import '../../../messages/presentation/widgets/notification_bell.dart'; // MESSAGES
 
 /// Members page - read-only list of all members for players/helpers
@@ -70,14 +71,14 @@ class MembersPage extends ConsumerWidget {
             ),
 
           Expanded(
-            child: RefreshIndicator(
+            child: RefreshIndicator.adaptive(
               onRefresh: () async {
                 ref.invalidate(membersGroupedProvider);
                 ref.invalidate(personExtraFieldsProvider);
                 await ref.read(membersGroupedProvider.future);
               },
               child: groupsAsync.when(
-                loading: () => const Center(child: CircularProgressIndicator()),
+                loading: () => const Center(child: AppSpinner()),
                 error: (error, stack) => ListView(
                   physics: const AlwaysScrollableScrollPhysics(),
                   children: [

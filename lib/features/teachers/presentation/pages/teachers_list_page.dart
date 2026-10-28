@@ -13,6 +13,7 @@ import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/repositories/teacher_repository.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Teacher list (Ionic teachers.page): "Lehrer", rows with name, instrument
 /// names and a "n Spieler" badge; FAB opens the "Lehrer hinzufügen" sheet,
@@ -30,7 +31,7 @@ class TeachersListPage extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.teachersTitle)),
       body: teachersAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => const Center(child: AppSpinner()),
         error: (error, stack) => Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -50,7 +51,7 @@ class TeachersListPage extends ConsumerWidget {
           ),
         ),
         data: (teachers) {
-          return RefreshIndicator(
+          return RefreshIndicator.adaptive(
             onRefresh: () async {
               ref.invalidate(teachersProvider);
               ref.invalidate(studentCountsProvider);
@@ -293,10 +294,10 @@ class _TeacherFormState extends State<_TeacherForm> {
 
   Future<void> _pickInstruments() async {
     final selected = Set<int>.from(_selectedInstruments);
-    final result = await showDialog<Set<int>>(
+    final result = await showAppDialog<Set<int>>(
       context: context,
       builder: (ctx) => StatefulBuilder(
-        builder: (ctx, setDialogState) => AlertDialog(
+        builder: (ctx, setDialogState) => AppAlertDialog(
           title: Text(context.l10n.teachersInstruments),
           content: SizedBox(
             width: double.maxFinite,
@@ -384,7 +385,7 @@ class _TeacherFormState extends State<_TeacherForm> {
             trailing: const Icon(Icons.arrow_drop_down),
             onTap: _pickInstruments,
           ),
-          SwitchListTile(
+          SwitchListTile.adaptive(
             contentPadding: EdgeInsets.zero,
             title: Text(context.l10n.teachersPrivate),
             value: _private,

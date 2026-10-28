@@ -11,6 +11,7 @@ import '../../../../data/repositories/admin_repository.dart';
 import '../../../auth/data/auth_flow_service.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// SETTINGS2: Ionic settings "Administratoren" modal (super admins only):
 /// list with "Erstellt am", tap to remove, + to add an admin by e-mail.
@@ -67,9 +68,9 @@ class _AdminsSheet extends ConsumerWidget {
       ToastHelper.showError(context, context.l10n.settingsCannotRemoveSelf);
       return;
     }
-    final ok = await showDialog<bool>(
+    final ok = await showAppDialog<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
+      builder: (ctx) => AppAlertDialog(
         title: Text(ctx.l10n.settingsRemoveAdmin),
         content: Text(ctx.l10n.settingsRemoveMessage(admin.email ?? '')),
         actions: [
@@ -113,7 +114,7 @@ class _AdminsSheet extends ConsumerWidget {
         onPressed: busy ? null : () => _add(context, ref),
         child: busy
             ? const SizedBox(
-                width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
+                width: 20, height: 20, child: AppSpinner(strokeWidth: 2))
             : const Icon(Icons.add),
       ),
       body: ListView(
@@ -138,7 +139,7 @@ class _AdminsSheet extends ConsumerWidget {
             loading: () => [
               const Padding(
                 padding: EdgeInsets.all(24),
-                child: Center(child: CircularProgressIndicator()),
+                child: Center(child: AppSpinner()),
               ),
             ],
             error: (e, _) => [ListTile(title: Text(context.l10n.settingsFlutterErrorDetail(_errorText(e))))],

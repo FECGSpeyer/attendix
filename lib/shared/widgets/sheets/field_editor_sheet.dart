@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../l10n/l10n.dart';
+import '../adaptive/adaptive.dart'; // IOS_LOOK
 
 /// A reusable BottomSheet for editing text/multiline fields.
 /// Shows a text field with title, optional hint, and save/cancel buttons.
@@ -204,7 +205,7 @@ class DateEditorSheet {
     DateTime? lastDate,
   }) async {
     final now = DateTime.now();
-    return showDatePicker(
+    return showAppDatePicker(
       context: context,
       initialDate: initialDate ?? now,
       firstDate: firstDate ?? DateTime(1900),

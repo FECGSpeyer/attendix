@@ -29,6 +29,7 @@ import 'planning_page.dart' show planSongsProvider;
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/layout/centered_content.dart';
 import '../../../../core/utils/error_message.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Predefined template of the public planning page (Ionic `PUBLIC_PLANNING_TEMPLATES`).
 class PublicPlanningTemplate {
@@ -682,7 +683,7 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
   // ---------------------------------------------------------------------------
 
   Future<void> _pickDate() async {
-    final picked = await showDatePicker(
+    final picked = await showAppDatePicker(
       context: context,
       initialDate: _date,
       firstDate: DateTime(2000),
@@ -696,7 +697,7 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
 
   Future<void> _pickTime() async {
     final m = PlanUtils.parseTimeToMinutes(_time) ?? 600;
-    final picked = await showTimePicker(
+    final picked = await showAppTimePicker(
       context: context,
       initialTime: TimeOfDay(hour: m ~/ 60, minute: m % 60),
       builder: (ctx, child) => MediaQuery(
@@ -738,7 +739,7 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
         ],
       ),
       body: !_ready
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(child: AppSpinner())
           : ListView(
               padding: centeredListPadding(context, bottom: 32),
               children: [
@@ -915,7 +916,7 @@ class _MyPlansSheet extends ConsumerWidget {
             ),
             Expanded(
               child: plansAsync.when(
-                loading: () => const Center(child: CircularProgressIndicator()),
+                loading: () => const Center(child: AppSpinner()),
                 error: (e, _) => Center(child: Text(context.l10n.planningFlutterErrorWith(friendlyErrorMessage(e)))),
                 data: (plans) {
                   if (plans.isEmpty) {

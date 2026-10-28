@@ -13,6 +13,7 @@ import '../../../../data/models/attendance/attendance.dart';
 import '../../../../data/models/duty/person_unavailability.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Opens "Dienste verteilen". Returns true when assignments were saved.
 Future<bool> openDutyDistributePage(BuildContext context) async {
@@ -92,7 +93,7 @@ class _DutyDistributePageState extends ConsumerState<DutyDistributePage> {
   }
 
   Future<void> _pickDate(bool from) async {
-    final picked = await showDatePicker(
+    final picked = await showAppDatePicker(
       context: context,
       initialDate: from ? _from : _to,
       firstDate: DateTime(2020),
@@ -231,9 +232,9 @@ class _DutyDistributePageState extends ConsumerState<DutyDistributePage> {
       return;
     }
     const none = '__none';
-    final value = await showDialog<String>(
+    final value = await showAppDialog<String>(
       context: context,
-      builder: (ctx) => SimpleDialog(
+      builder: (ctx) => AppSimpleDialog(
         title: Text(current != null ? context.l10n.dutySwap(current.firstName ?? '') : context.l10n.dutyChoosePerson),
         children: [
           Padding(
@@ -319,7 +320,7 @@ class _DutyDistributePageState extends ConsumerState<DutyDistributePage> {
         ],
       ),
       body: _loading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(child: AppSpinner())
           : _preview
               ? _buildPreview()
               : _buildRules(),
@@ -394,7 +395,7 @@ class _DutyDistributePageState extends ConsumerState<DutyDistributePage> {
                 ],
               ),
             ),
-            SwitchListTile(
+            SwitchListTile.adaptive(
               title: Text(context.l10n.dutyNotTwiceSameDay),
               value: _notTwiceSameDay,
               onChanged: (v) => setState(() => _notTwiceSameDay = v),

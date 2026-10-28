@@ -208,7 +208,7 @@ class EditableToggleRow extends StatelessWidget {
               ],
             ),
           ),
-          Switch(
+          Switch.adaptive(
             value: value,
             onChanged: editable ? onChanged : null,
             activeColor: AppColors.success,

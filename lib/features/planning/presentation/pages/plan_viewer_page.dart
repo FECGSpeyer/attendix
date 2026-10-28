@@ -8,6 +8,7 @@ import '../../../../data/models/plan/plan.dart';
 import '../widgets/plan_export_actions.dart';
 import '../widgets/plan_view_list.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Read-only Ablaufplan with chips for several plans, live mode and export
 /// (Ionic `PlanViewerComponent`). Opened as full screen dialog.
@@ -93,14 +94,12 @@ class _PlanViewerPageState extends ConsumerState<PlanViewerPage> {
   Future<void> _export() async {
     var all = false;
     if (_labels.length > 1) {
-      final scope = await showModalBottomSheet<bool>(
-        context: context,
-        builder: (ctx) => SafeArea(
-          child: Column(mainAxisSize: MainAxisSize.min, children: [
-            ListTile(title: Text(ctx.l10n.planningOnlyLabel(_labels[_index])), onTap: () => Navigator.pop(ctx, false)),
-            ListTile(title: Text(ctx.l10n.planningAllPlans(_labels.length)), onTap: () => Navigator.pop(ctx, true)),
-          ]),
-        ),
+      final scope = await showAppActionSheet<bool>(
+        context,
+        actions: [
+          AppActionSheetAction(value: false, label: context.l10n.planningOnlyLabel(_labels[_index])),
+          AppActionSheetAction(value: true, label: context.l10n.planningAllPlans(_labels.length)),
+        ],
       );
       if (scope == null) return;
       all = scope;

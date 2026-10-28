@@ -91,7 +91,7 @@ class _TasksTabState extends ConsumerState<TasksTab> {
             return l10n.teamOrgEmptyPerson;
           }
 
-          return RefreshIndicator(
+          return RefreshIndicator.adaptive(
             onRefresh: () async => ref.invalidate(teamTasksProvider),
             child: ListView(
               physics: const AlwaysScrollableScrollPhysics(),
@@ -165,7 +165,7 @@ class _TasksTabState extends ConsumerState<TasksTab> {
                 if (archivedCount > 0 || _includeArchived)
                   Card(
                     margin: const EdgeInsets.only(top: AppDimensions.paddingM),
-                    child: SwitchListTile(
+                    child: SwitchListTile.adaptive(
                       value: _includeArchived,
                       onChanged: (v) => setState(() => _includeArchived = v),
                       title: Text(l10n.teamOrgShowOlderDone),

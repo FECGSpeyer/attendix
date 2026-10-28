@@ -12,6 +12,7 @@ import '../../../../l10n/l10n.dart';
 import '../../team_org_utils.dart';
 import '../widgets/task_form_sheet.dart';
 import '../widgets/tasks_tab.dart' show TeamOrgBadge, priorityColor;
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Aufgabe: leadership edits everything (task form) and can delete; the
 /// responsible person only changes the status.
@@ -99,7 +100,7 @@ class _TaskDetailPageState extends ConsumerState<TaskDetailPage> {
             )
           : null,
       body: taskAsync.isLoading && task == null
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(child: AppSpinner())
           : task == null
               ? Center(
                   child: Column(
@@ -112,7 +113,7 @@ class _TaskDetailPageState extends ConsumerState<TaskDetailPage> {
                     ],
                   ),
                 )
-              : RefreshIndicator(
+              : RefreshIndicator.adaptive(
                   onRefresh: () async => ref.invalidate(taskByIdProvider(widget.taskId)),
                   child: _buildBody(context, task, isLeader, me?.id, types, today),
                 ),
@@ -157,7 +158,7 @@ class _TaskDetailPageState extends ConsumerState<TaskDetailPage> {
         const SizedBox(height: 4),
         Text(assignee, style: theme.textTheme.bodyMedium?.copyWith(color: AppColors.medium)),
         const SizedBox(height: AppDimensions.paddingM),
-        SegmentedButton<String>(
+        AppSegmentedButton<String>(
           segments: [
             for (final s in const ['open', 'in_progress', 'completed'])
               ButtonSegment(value: s, label: Text(taskStatusLabels[s]!)),

@@ -10,6 +10,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Pending Players Page - shows self-registered members awaiting approval
 /// BL-006: Converted to StatefulWidget to track processing state
@@ -37,7 +38,7 @@ class _PendingPlayersPageState extends ConsumerState<PendingPlayersPage> {
         ),
       ),
       body: playersAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => const Center(child: AppSpinner()),
         error: (e, _) => Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -77,7 +78,7 @@ class _PendingPlayersPageState extends ConsumerState<PendingPlayersPage> {
             );
           }
 
-          return RefreshIndicator(
+          return RefreshIndicator.adaptive(
             onRefresh: () async {
               ref.invalidate(realtimePendingPlayersProvider);
               await ref.read(realtimePendingPlayersProvider.future);
@@ -112,9 +113,9 @@ class _PendingPlayersPageState extends ConsumerState<PendingPlayersPage> {
     // BL-006: Guard against double-click
     if (_processingIds.contains(playerId)) return;
 
-    final confirmed = await showDialog<bool>(
+    final confirmed = await showAppDialog<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
+      builder: (ctx) => AppAlertDialog(
         title: Text(context.l10n.settingsFlutterPendingApproveTitle),
         content: Text(context.l10n.settingsFlutterPendingApproveMessage(player.fullName)),
         actions: [
@@ -163,7 +164,7 @@ class _PendingPlayersPageState extends ConsumerState<PendingPlayersPage> {
 
     // LOGIC_PEOPLE: Ionic person.page declinePlayer — a reason is required
     // ("Person ablehnen" / "Gib einen Grund an." + textarea).
-    final reason = await showDialog<String>(
+    final reason = await showAppDialog<String>(
       context: context,
       builder: (ctx) => _DeclineReasonDialog(name: player.fullName),
     );
@@ -213,7 +214,7 @@ class _DeclineReasonDialogState extends State<_DeclineReasonDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
+    return AppAlertDialog(
       title: Text(context.l10n.personDeclinePerson),
       content: Column(
         mainAxisSize: MainAxisSize.min,
@@ -344,7 +345,7 @@ class _PendingPlayerItem extends StatelessWidget {
                   const SizedBox(
                     width: 24,
                     height: 24,
-                    child: CircularProgressIndicator(strokeWidth: 2),
+                    child: AppSpinner(strokeWidth: 2),
                   )
                 else ...[
                   OutlinedButton.icon(

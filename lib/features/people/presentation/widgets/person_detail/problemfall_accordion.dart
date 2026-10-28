@@ -98,7 +98,7 @@ class ProblemfallAccordion extends StatelessWidget {
         ],
 
         // Problem solved toggle
-        SwitchListTile(
+        SwitchListTile.adaptive(
           contentPadding: EdgeInsets.zero,
           title: Text(context.l10n.personTalkedTo),
           subtitle: Text(context.l10n.personFlutterTalkedToHint),

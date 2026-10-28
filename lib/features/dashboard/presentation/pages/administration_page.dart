@@ -10,6 +10,7 @@ import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/church/church.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 const int _gb = 1024 * 1024 * 1024;
 
@@ -151,10 +152,10 @@ class _AdministrationPageState extends ConsumerState<AdministrationPage> {
     final targets = churches.where((c) => c.id != source.id).toList();
     if (targets.isEmpty) return;
     String? selected = targets.first.id;
-    final targetId = await showDialog<String>(
+    final targetId = await showAppDialog<String>(
       context: context,
       builder: (context) => StatefulBuilder(
-        builder: (context, setDialogState) => AlertDialog(
+        builder: (context, setDialogState) => AppAlertDialog(
           title: Text(context.l10n.adminMergeWith(source.name)),
           content: SizedBox(
             width: double.maxFinite,
@@ -266,7 +267,7 @@ class _AdministrationPageState extends ConsumerState<AdministrationPage> {
             child: churchesAsync.isLoading && churches.isEmpty
                 ? const Padding(
                     padding: EdgeInsets.all(20),
-                    child: Center(child: CircularProgressIndicator()),
+                    child: Center(child: AppSpinner()),
                   )
                 : Column(
                     children: [

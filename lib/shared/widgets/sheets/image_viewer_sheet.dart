@@ -5,6 +5,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../l10n/l10n.dart';
+import '../adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Fullscreen image viewer (Ionic image viewer):
 /// - pinch / mouse wheel zoom (1x - 5x), pan when zoomed
@@ -224,7 +225,7 @@ class _ImageViewerSheetState extends State<ImageViewerSheet>
                             imageUrl: widget.url,
                             fit: BoxFit.contain,
                             placeholder: (context, url) => const Center(
-                              child: CircularProgressIndicator(color: Colors.white),
+                              child: AppSpinner(color: Colors.white),
                             ),
                             errorWidget: (context, url, error) => Center(
                               child: Column(

@@ -12,6 +12,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/parent/parent_model.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Parents Page - manage parents of players
 class ParentsPage extends ConsumerWidget {
@@ -34,7 +35,7 @@ class ParentsPage extends ConsumerWidget {
         child: const Icon(Icons.add),
       ),
       body: parentsAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => const Center(child: AppSpinner()),
         error: (e, _) => Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -52,7 +53,7 @@ class ParentsPage extends ConsumerWidget {
         ),
         // UX_SETTINGS: Ionic modal layout — hint card on top, then the list
         data: (parents) {
-          return RefreshIndicator(
+          return RefreshIndicator.adaptive(
             onRefresh: () async {
               ref.invalidate(parentsProvider);
               await ref.read(parentsProvider.future);
@@ -88,9 +89,9 @@ class ParentsPage extends ConsumerWidget {
     final lastNameController = TextEditingController();
     final formKey = GlobalKey<FormState>();
 
-    final result = await showDialog<bool>(
+    final result = await showAppDialog<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
+      builder: (ctx) => AppAlertDialog(
         title: Text(context.l10n.settingsAddParent),
         content: Form(
           key: formKey,
@@ -184,9 +185,9 @@ class ParentsPage extends ConsumerWidget {
   }
 
   Future<void> _deleteParent(BuildContext context, WidgetRef ref, ParentModel parent) async {
-    final confirmed = await showDialog<bool>(
+    final confirmed = await showAppDialog<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
+      builder: (ctx) => AppAlertDialog(
         title: Text(context.l10n.settingsRemoveParent),
         content: Text(context.l10n.settingsRemoveMessage(parent.firstName)),
         actions: [

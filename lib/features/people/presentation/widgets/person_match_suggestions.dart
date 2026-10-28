@@ -4,6 +4,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/person_matcher.dart';
 import '../../../../data/repositories/cross_tenant_person_repository.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Inline typeahead list of possible matches in linked tenants
 /// (Ionic person.page `name-suggestions`).
@@ -122,9 +123,9 @@ Future<CrossTenantPersonCandidate?> showEmailTakenDialog(
 ) {
   if (matches.length == 1) {
     final m = matches.first;
-    return showDialog<CrossTenantPersonCandidate>(
+    return showAppDialog<CrossTenantPersonCandidate>(
       context: context,
-      builder: (ctx) => AlertDialog(
+      builder: (ctx) => AppAlertDialog(
         title: Text(context.l10n.personEmailTaken),
         content: Text(
           context.l10n.personEmailUsedBy('${m.person.firstName} ${m.person.lastName}'),
@@ -142,9 +143,9 @@ Future<CrossTenantPersonCandidate?> showEmailTakenDialog(
       ),
     );
   }
-  return showDialog<CrossTenantPersonCandidate>(
+  return showAppDialog<CrossTenantPersonCandidate>(
     context: context,
-    builder: (ctx) => SimpleDialog(
+    builder: (ctx) => AppSimpleDialog(
       title: Text(context.l10n.personEmailTaken),
       children: [
         Padding(

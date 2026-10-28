@@ -8,6 +8,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/song/song.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Bottom sheet for managing song categories (CRUD)
 class SongCategoriesSheet extends ConsumerStatefulWidget {
@@ -85,7 +86,7 @@ class _SongCategoriesSheetState extends ConsumerState<SongCategoriesSheet> {
               Expanded(
                 child: categoriesAsync.when(
                   loading: () => const Center(
-                    child: CircularProgressIndicator(),
+                    child: AppSpinner(),
                   ),
                   error: (error, _) => Center(
                     child: Column(
@@ -181,9 +182,9 @@ class _SongCategoriesSheetState extends ConsumerState<SongCategoriesSheet> {
   Future<void> _showAddCategoryDialog(BuildContext context) async {
     final controller = TextEditingController();
 
-    final result = await showDialog<String>(
+    final result = await showAppDialog<String>(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (context) => AppAlertDialog(
         title: Text(context.l10n.songsAddCategory),
         content: TextField(
           controller: controller,
@@ -223,9 +224,9 @@ class _SongCategoriesSheetState extends ConsumerState<SongCategoriesSheet> {
       BuildContext context, SongCategory category) async {
     final controller = TextEditingController(text: category.name);
 
-    final result = await showDialog<String>(
+    final result = await showAppDialog<String>(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (context) => AppAlertDialog(
         title: Text(context.l10n.songsEditCategory),
         content: TextField(
           controller: controller,
@@ -263,9 +264,9 @@ class _SongCategoriesSheetState extends ConsumerState<SongCategoriesSheet> {
 
   Future<void> _showDeleteConfirmation(
       BuildContext context, SongCategory category) async {
-    final confirmed = await showDialog<bool>(
+    final confirmed = await showAppDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (context) => AppAlertDialog(
         title: Text(context.l10n.songsDeleteCategory),
         content: Text(context.l10n.songsDeleteCategoryMessage),
         actions: [

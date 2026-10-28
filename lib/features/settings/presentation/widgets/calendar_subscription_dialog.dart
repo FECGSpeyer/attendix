@@ -9,6 +9,7 @@ import '../../../../core/providers/profile_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// iCal feed URL of the Supabase edge function `ical-tenant`
 /// (Ionic settings `openCalendarSubscription()`).
@@ -39,10 +40,10 @@ Future<void> showCalendarSubscriptionDialog(BuildContext context, WidgetRef ref)
   final isIos = Theme.of(context).platform == TargetPlatform.iOS;
   var hideExcused = false;
 
-  await showDialog<void>(
+  await showAppDialog<void>(
     context: context,
     builder: (ctx) => StatefulBuilder(
-      builder: (ctx, setState) => AlertDialog(
+      builder: (ctx, setState) => AppAlertDialog(
         title: Text(ctx.l10n.settingsSubscribeCalendar),
         content: Column(
           mainAxisSize: MainAxisSize.min,

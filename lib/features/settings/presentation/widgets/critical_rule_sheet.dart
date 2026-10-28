@@ -8,6 +8,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/attendance/attendance.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Bottom sheet for creating or editing a critical rule
 class CriticalRuleSheet extends StatefulWidget {
@@ -316,7 +317,7 @@ class _CriticalRuleSheetState extends State<CriticalRuleSheet> {
                   style: Theme.of(context).textTheme.titleSmall,
                 ),
                 const Spacer(),
-                SegmentedButton<CriticalRuleOperator>(
+                AppSegmentedButton<CriticalRuleOperator>(
                   segments: [
                     ButtonSegment(
                       value: CriticalRuleOperator.or,

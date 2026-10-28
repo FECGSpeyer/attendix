@@ -21,6 +21,7 @@ import '../widgets/parents_header_widgets.dart'; // PROFILE_OFFLINE
 import '../../../../core/providers/song_providers.dart'; // PROFILE_OFFLINE
 import '../../../messages/presentation/widgets/notification_bell.dart'; // MESSAGES
 import '../../../../core/utils/error_message.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Parents Portal Page (Ionic `selfService/parents`) in the card layout:
 /// children with percentage, "Heute" card with one row per child, upcoming
@@ -125,7 +126,7 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
         ],
       ),
       body: childrenAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => const Center(child: AppSpinner()),
         error: (error, stack) => _ErrorView(
           error: error,
           onRetry: () => ref.invalidate(parentChildrenProvider),
@@ -154,7 +155,7 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
           }
 
           return attendancesAsync.when(
-            loading: () => const Center(child: CircularProgressIndicator()),
+            loading: () => const Center(child: AppSpinner()),
             error: (error, stack) => _ErrorView(
               error: error,
               onRetry: () => ref.invalidate(childrenAttendancesProvider),
@@ -169,7 +170,7 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
                   ? past
                   : past.take(EventListUtils.pastPreviewCount).toList();
               final groups = EventListUtils.groupByMonth(upcoming, (g) => g.date);
-              return RefreshIndicator(
+              return RefreshIndicator.adaptive(
                 onRefresh: () async {
                   ref.invalidate(currentSongsProvider); // PROFILE_OFFLINE
                   ref.invalidate(parentChildrenProvider);
@@ -344,72 +345,20 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
       }
     }
 
-    final action = await showModalBottomSheet<String>(
-      context: context,
-      builder: (ctx) => SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                title: Text(
-                  child != null ? '${child.childFirstName} · ${_title(group)}' : _title(group),
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-                subtitle: Text(_meta(group, withDate: true)),
-              ),
-              const Divider(height: 1),
-              if (showSignIn)
-                ListTile(
-                  leading: const Icon(Icons.check_circle_outline),
-                  title: Text(ctx.l10n.signoutSignIn),
-                  onTap: () => Navigator.pop(ctx, 'signin'),
-                ),
-              if (showSignOut)
-                ListTile(
-                  leading: const Icon(Icons.cancel_outlined),
-                  title: Text(ctx.l10n.signoutSignOut),
-                  onTap: () => Navigator.pop(ctx, 'signout'),
-                ),
-              if (showLate)
-                ListTile(
-                  leading: const Icon(Icons.schedule),
-                  title: Text(ctx.l10n.signoutEnterLate),
-                  onTap: () => Navigator.pop(ctx, 'late'),
-                ),
-              if (group.sharePlan && group.plan != null)
-                ListTile(
-                  leading: const Icon(Icons.description_outlined),
-                  title: Text(ctx.l10n.signoutShowRunSheet),
-                  onTap: () => Navigator.pop(ctx, 'plan'),
-                ),
-              if (group.description?.isNotEmpty ?? false)
-                ListTile(
-                  leading: const Icon(Icons.info_outline),
-                  title: Text(ctx.l10n.signoutShowDescription),
-                  onTap: () => Navigator.pop(ctx, 'description'),
-                ),
-              if (group.attachmentUrl?.isNotEmpty ?? false)
-                ListTile(
-                  leading: const Icon(Icons.attach_file),
-                  title: Text(ctx.l10n.signoutOpenAttachment),
-                  onTap: () => Navigator.pop(ctx, 'attachment'),
-                ),
-              if (group.place?.isNotEmpty ?? false)
-                ListTile(
-                  leading: const Icon(Icons.navigation_outlined),
-                  title: Text(ctx.l10n.signoutOpenNavigation),
-                  onTap: () => Navigator.pop(ctx, 'navigation'),
-                ),
-              ListTile(
-                leading: const Icon(Icons.close, color: AppColors.danger),
-                title: Text(ctx.l10n.commonCancel, style: const TextStyle(color: AppColors.danger)),
-                onTap: () => Navigator.pop(ctx),
-              ),
-            ],
-          ),
-        ),
-      ),
+    final action = await showAppActionSheet<String>(
+      context,
+      title: child != null ? '${child.childFirstName} · ${_title(group)}' : _title(group),
+      message: _meta(group, withDate: true),
+      cancelDestructive: true,
+      actions: [
+        if (showSignIn) AppActionSheetAction(value: 'signin', icon: Icons.check_circle_outline, label: context.l10n.signoutSignIn),
+        if (showSignOut) AppActionSheetAction(value: 'signout', icon: Icons.cancel_outlined, label: context.l10n.signoutSignOut),
+        if (showLate) AppActionSheetAction(value: 'late', icon: Icons.schedule, label: context.l10n.signoutEnterLate),
+        if (group.sharePlan && group.plan != null) AppActionSheetAction(value: 'plan', icon: Icons.description_outlined, label: context.l10n.signoutShowRunSheet),
+        if (group.description?.isNotEmpty ?? false) AppActionSheetAction(value: 'description', icon: Icons.info_outline, label: context.l10n.signoutShowDescription),
+        if (group.attachmentUrl?.isNotEmpty ?? false) AppActionSheetAction(value: 'attachment', icon: Icons.attach_file, label: context.l10n.signoutOpenAttachment),
+        if (group.place?.isNotEmpty ?? false) AppActionSheetAction(value: 'navigation', icon: Icons.navigation_outlined, label: context.l10n.signoutOpenNavigation),
+      ],
     );
     if (action == null || !mounted) return;
 

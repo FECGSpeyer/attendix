@@ -31,7 +31,7 @@ class _TypeDefaultOrgPlanToggleState extends ConsumerState<TypeDefaultOrgPlanTog
         ?.where((t) => t.id == widget.typeId)
         .firstOrNull;
     final value = _value ?? type?.isDefaultOrgPlan ?? false;
-    return SwitchListTile(
+    return SwitchListTile.adaptive(
       title: Text(context.l10n.typeSettingsOrgPlanDefault),
       value: value,
       onChanged: type == null

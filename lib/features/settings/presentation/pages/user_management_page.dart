@@ -13,6 +13,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// TenantUser model
 class TenantUser {
@@ -141,7 +142,7 @@ class UserManagementPage extends ConsumerWidget {
     final tenant = ref.read(currentTenantProvider);
     final showParents = tenant?.parents ?? false;
 
-    final result = await showDialog<Map<String, dynamic>>(
+    final result = await showAppDialog<Map<String, dynamic>>(
       context: context,
       builder: (ctx) => _AddUserDialog(showParents: showParents),
     );
@@ -243,7 +244,7 @@ class _AddUserDialogState extends State<_AddUserDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
+    return AppAlertDialog(
       title: Text(context.l10n.settingsFlutterUserMgmtAdd),
       content: Column(
         mainAxisSize: MainAxisSize.min,
@@ -329,7 +330,7 @@ class _AdminsTab extends ConsumerWidget {
     final usersAsync = ref.watch(tenantUsersProvider);
 
     return usersAsync.when(
-      loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () => const Center(child: AppSpinner()),
       error: (error, _) => Center(child: Text(context.l10n.settingsFlutterErrorDetail(friendlyErrorMessage(error)))),
       data: (users) {
         final admins = users.where((u) => u.roleEnum == Role.admin).toList();
@@ -352,7 +353,7 @@ class _AdminsTab extends ConsumerWidget {
           );
         }
 
-        return RefreshIndicator(
+        return RefreshIndicator.adaptive(
           // FN-005: await provider.future to show spinner until data loads
           onRefresh: () async {
             ref.invalidate(tenantUsersProvider);
@@ -376,7 +377,7 @@ class _ViewersTab extends ConsumerWidget {
     final usersAsync = ref.watch(tenantUsersProvider);
 
     return usersAsync.when(
-      loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () => const Center(child: AppSpinner()),
       error: (error, _) => Center(child: Text(context.l10n.settingsFlutterErrorDetail(friendlyErrorMessage(error)))),
       data: (users) {
         final viewers = users.where((u) => u.roleEnum == Role.viewer).toList();
@@ -400,7 +401,7 @@ class _ViewersTab extends ConsumerWidget {
           );
         }
 
-        return RefreshIndicator(
+        return RefreshIndicator.adaptive(
           // FN-005: await provider.future to show spinner until data loads
           onRefresh: () async {
             ref.invalidate(tenantUsersProvider);
@@ -424,7 +425,7 @@ class _ParentsTab extends ConsumerWidget {
     final usersAsync = ref.watch(tenantUsersProvider);
 
     return usersAsync.when(
-      loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () => const Center(child: AppSpinner()),
       error: (error, _) => Center(child: Text(context.l10n.settingsFlutterErrorDetail(friendlyErrorMessage(error)))),
       data: (users) {
         final parents = users.where((u) => u.roleEnum == Role.parent).toList();
@@ -448,7 +449,7 @@ class _ParentsTab extends ConsumerWidget {
           );
         }
 
-        return RefreshIndicator(
+        return RefreshIndicator.adaptive(
           // FN-005: await provider.future to show spinner until data loads
           onRefresh: () async {
             ref.invalidate(tenantUsersProvider);
@@ -474,7 +475,7 @@ class _AllUsersTab extends ConsumerWidget {
     final usersAsync = ref.watch(tenantUsersProvider);
 
     return usersAsync.when(
-      loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () => const Center(child: AppSpinner()),
       error: (error, _) => Center(child: Text(context.l10n.settingsFlutterErrorDetail(friendlyErrorMessage(error)))),
       data: (users) {
         if (users.isEmpty) {
@@ -499,7 +500,7 @@ class _AllUsersTab extends ConsumerWidget {
           ![Role.admin, Role.responsible, Role.player, Role.viewer].contains(u.roleEnum)
         ).toList();
 
-        return RefreshIndicator(
+        return RefreshIndicator.adaptive(
           // FN-005: await provider.future to show spinner until data loads
           onRefresh: () async {
             ref.invalidate(tenantUsersProvider);
@@ -668,9 +669,9 @@ class _UserTile extends ConsumerWidget {
 
       // Warn on self-demotion (Issue #2)
       if (isCurrentUser) {
-        final confirmed = await showDialog<bool>(
+        final confirmed = await showAppDialog<bool>(
           context: context,
-          builder: (ctx) => AlertDialog(
+          builder: (ctx) => AppAlertDialog(
             title: Text(context.l10n.settingsFlutterUserMgmtSelfDemoteTitle),
             content: Text(
               context.l10n.settingsFlutterUserMgmtSelfDemoteMessage,

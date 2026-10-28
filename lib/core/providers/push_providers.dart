@@ -24,6 +24,7 @@ import '../services/tracking/tracking_service.dart';
 import 'message_providers.dart';
 import 'signout_providers.dart';
 import 'tenant_providers.dart';
+import '../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Whether native push exists on this platform (Ionic
 /// `Capacitor.isNativePlatform()`): iOS / Android apps, never the PWA.
@@ -175,11 +176,11 @@ class RiverpodPushHost implements PushHost {
     await waitUntilReadyForNavigation();
     final context = _context;
     if (context == null || !context.mounted) return null;
-    return showDialog<bool>(
+    return showAppDialog<bool>(
       context: context,
       builder: (dialogContext) {
         final l10n = dialogContext.l10n;
-        return AlertDialog(
+        return AppAlertDialog(
           title: Text(l10n.svcPushTitle),
           content: Text(l10n.svcPushPrompt),
           actions: [
@@ -201,12 +202,12 @@ class RiverpodPushHost implements PushHost {
   Future<bool> showForegroundAlert(PushMessage message) async {
     final context = _context;
     if (context == null || !context.mounted) return false;
-    final result = await showDialog<bool>(
+    final result = await showAppDialog<bool>(
       context: context,
       builder: (dialogContext) {
         final l10n = dialogContext.l10n;
         final title = message.title ?? '';
-        return AlertDialog(
+        return AppAlertDialog(
           title: Text(title.isNotEmpty ? title : l10n.svcNotification),
           content: Text(message.body ?? ''),
           actions: [

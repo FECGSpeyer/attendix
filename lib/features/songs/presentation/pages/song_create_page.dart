@@ -6,6 +6,7 @@ import '../../../../core/providers/song_providers.dart';
 import '../widgets/add_song_sheet.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Full page variant of "Werk hinzufügen" (route `/settings/songs/new`).
 /// The songs list opens the same form as a sheet (like the Ionic modal).
@@ -18,7 +19,7 @@ class SongCreatePage extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.songsAddSong)),
       body: dataAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => const Center(child: AppSpinner()),
         error: (e, _) => Center(child: Text(context.l10n.songsFlutterErrorWith(friendlyErrorMessage(e)))),
         data: (data) => data == null
             ? const SizedBox.shrink()

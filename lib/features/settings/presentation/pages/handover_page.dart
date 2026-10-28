@@ -13,6 +13,7 @@ import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Data handed from the handover page to the detail page
 /// (Ionic: DataService.setHandoverData).
@@ -77,7 +78,7 @@ class _HandoverPageState extends ConsumerState<HandoverPage> {
 
   Future<void> _pickDate() async {
     final now = DateTime.now();
-    final picked = await showDatePicker(
+    final picked = await showAppDatePicker(
       context: context,
       initialDate: _date.isAfter(now) ? now : _date,
       firstDate: DateTime(1900),
@@ -168,13 +169,13 @@ class _HandoverPageState extends ConsumerState<HandoverPage> {
           Card(
             child: Column(
               children: [
-                SwitchListTile(
+                SwitchListTile.adaptive(
                   title: Text(context.l10n.handoverKeepInTenant),
                   subtitle: Text(context.l10n.handoverKeepHelper),
                   value: _stayInInstance,
                   onChanged: (v) => setState(() => _stayInInstance = v),
                 ),
-                SwitchListTile(
+                SwitchListTile.adaptive(
                   title: Text(context.l10n.handoverRespectMainGroup),
                   subtitle: Text(context.l10n.handoverMainGroupHelper),
                   value: _includeMainGroup,
@@ -256,7 +257,7 @@ class _HandoverPageState extends ConsumerState<HandoverPage> {
           ),
           const SizedBox(height: AppDimensions.paddingM),
           if (playersAsync.isLoading)
-            const Center(child: CircularProgressIndicator())
+            const Center(child: AppSpinner())
           else if (filtered.isEmpty)
             Card(
               child: Padding(

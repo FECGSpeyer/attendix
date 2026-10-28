@@ -10,6 +10,7 @@ import '../../../../../data/models/person/person.dart';
 import '../../../../../shared/widgets/editable/editable_info_row.dart';
 import '../../../../../shared/widgets/sheets/field_editor_sheet.dart';
 import '../../../../../l10n/l10n.dart';
+import '../../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Accordion section displaying account information.
 class AccountAccordion extends ConsumerWidget {
@@ -216,7 +217,7 @@ class AccountAccordion extends ConsumerWidget {
     }
 
     if (isLoadingRole) {
-      return const Center(child: CircularProgressIndicator());
+      return const Center(child: AppSpinner());
     }
 
     final currentRole = userRole ?? Role.player;
@@ -277,9 +278,9 @@ class AccountAccordion extends ConsumerWidget {
   }
 
   void _showHelp(BuildContext context) {
-    showDialog<void>(
+    showAppDialog<void>(
       context: context,
-      builder: (ctx) => AlertDialog(
+      builder: (ctx) => AppAlertDialog(
         title: Text(context.l10n.personHelp),
         content: Column(
           mainAxisSize: MainAxisSize.min,

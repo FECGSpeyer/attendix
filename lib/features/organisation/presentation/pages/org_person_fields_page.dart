@@ -10,6 +10,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/plan/plan.dart';
 import '../../../planning/presentation/widgets/plan_field_dialogs.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 Map<String, String> _fieldTypes(AppLocalizations l10n) => <String, String>{
       'text': l10n.typeSettingsText,
@@ -131,7 +132,7 @@ class _OrgPersonFieldsPageState extends ConsumerState<OrgPersonFieldsPage> {
         ],
       ),
       body: _fields == null
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(child: AppSpinner())
           : ListView(
               padding: const EdgeInsets.only(bottom: 24),
               children: [
@@ -322,7 +323,7 @@ class _FieldEditorSheetState extends State<_FieldEditorSheet> {
                 ],
                 onChanged: (v) => setState(() => _displayMode = v ?? 'chip'),
               ),
-              SwitchListTile(
+              SwitchListTile.adaptive(
                 contentPadding: EdgeInsets.zero,
                 title: Text(context.l10n.extraFieldsVisible),
                 subtitle: Text(context.l10n.extraFieldsVisibleHelper),
@@ -330,7 +331,7 @@ class _FieldEditorSheetState extends State<_FieldEditorSheet> {
                 onChanged: (v) => setState(() => _visible = v),
               ),
               if (_visible)
-                SwitchListTile(
+                SwitchListTile.adaptive(
                   contentPadding: EdgeInsets.zero,
                   title: Text(context.l10n.extraFieldsEditable),
                   subtitle: Text(context.l10n.extraFieldsEditableHelper),
@@ -368,7 +369,7 @@ class _FieldEditorSheetState extends State<_FieldEditorSheet> {
                     ],
                   ),
               ] else if (_type == 'boolean')
-                SwitchListTile(
+                SwitchListTile.adaptive(
                   contentPadding: EdgeInsets.zero,
                   title: Text(context.l10n.extraFieldsDefaultValue),
                   value: _boolDefault,

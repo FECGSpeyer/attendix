@@ -17,6 +17,7 @@ import '../../pages/person_detail_page.dart';
 import '../../../../../core/utils/demo_guard.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../../core/utils/error_message.dart';
+import '../../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 import '../../../../../core/utils/profile_image_path.dart'; // DB_REVIEW_REST
 
 /// Header widget displaying person avatar, group, and attendance stats.
@@ -134,7 +135,7 @@ class PersonHeader extends ConsumerWidget {
     );
   }
 
-  void _onAvatarTap(BuildContext context, WidgetRef ref) {
+  Future<void> _onAvatarTap(BuildContext context, WidgetRef ref) async {
     if (!canEdit && !_hasImage) return;
 
     // If not editable but has image, just view it
@@ -150,53 +151,43 @@ class PersonHeader extends ConsumerWidget {
     // Capture outer context before bottom sheet builder shadows it
     final outerContext = context;
 
-    // Show action sheet
-    showModalBottomSheet(
-      context: context,
-      builder: (sheetContext) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: const Icon(Icons.photo_camera),
-              title: Text(context.l10n.settingsReplacePhoto),
-              onTap: () {
-                Navigator.pop(sheetContext);
-                _replacePhoto(outerContext, ref);
-              },
-            ),
-            if (_hasImage)
-              ListTile(
-                leading: const Icon(Icons.delete, color: AppColors.danger),
-                title: Text(context.l10n.personRemovePhoto),
-                onTap: () {
-                  Navigator.pop(sheetContext);
-                  _removePhoto(outerContext, ref);
-                },
-              ),
-            if (_hasImage)
-              ListTile(
-                leading: const Icon(Icons.visibility),
-                title: Text(context.l10n.settingsViewPhoto),
-                onTap: () {
-                  Navigator.pop(sheetContext);
-                  showImageViewerSheet(
-                    outerContext,
-                    url: person.img!,
-                    fileName: '${person.fullName}.jpg',
-                  );
-                },
-              ),
-            const Divider(),
-            ListTile(
-              leading: const Icon(Icons.close),
-              title: Text(context.l10n.commonCancel),
-              onTap: () => Navigator.pop(sheetContext),
-            ),
-          ],
+    // Show action sheet (IOS_LOOK: adaptive ion-action-sheet)
+    final action = await showAppActionSheet<String>(
+      context,
+      actions: [
+        AppActionSheetAction(
+          value: 'replace',
+          icon: Icons.photo_camera,
+          label: context.l10n.settingsReplacePhoto,
         ),
-      ),
+        if (_hasImage)
+          AppActionSheetAction(
+            value: 'remove',
+            icon: Icons.delete,
+            label: context.l10n.personRemovePhoto,
+            destructive: true,
+          ),
+        if (_hasImage)
+          AppActionSheetAction(
+            value: 'view',
+            icon: Icons.visibility,
+            label: context.l10n.settingsViewPhoto,
+          ),
+      ],
     );
+    if (!outerContext.mounted) return;
+    switch (action) {
+      case 'replace':
+        _replacePhoto(outerContext, ref);
+      case 'remove':
+        _removePhoto(outerContext, ref);
+      case 'view':
+        showImageViewerSheet(
+          outerContext,
+          url: person.img!,
+          fileName: '${person.fullName}.jpg',
+        );
+    }
   }
 
   Future<void> _replacePhoto(BuildContext context, WidgetRef ref) async {
@@ -284,9 +275,9 @@ class PersonHeader extends ConsumerWidget {
   }
 
   Future<void> _removePhoto(BuildContext context, WidgetRef ref) async {
-    final confirmed = await showDialog<bool>(
+    final confirmed = await showAppDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (context) => AppAlertDialog(
         title: Text(context.l10n.personRemovePhoto),
         content: Text(context.l10n.personRemovePhotoMessage),
         actions: [

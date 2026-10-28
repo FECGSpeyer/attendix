@@ -13,6 +13,7 @@ import '../../../../data/models/instrument/instrument.dart';
 import '../widgets/instrument_categories_sheet.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Instruments list page — grouped by category with player counts.
 /// Supports drag & drop reordering (sort_order) like Ionic instrument-list.
@@ -104,7 +105,7 @@ class _InstrumentsListPageState extends ConsumerState<InstrumentsListPage> {
         ],
       ),
       body: groupsAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => const Center(child: AppSpinner()),
         error: (error, stack) => Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -127,7 +128,7 @@ class _InstrumentsListPageState extends ConsumerState<InstrumentsListPage> {
               ? _reorderSections!
               : groupInstrumentsByCategory(groups, categories);
 
-          return RefreshIndicator(
+          return RefreshIndicator.adaptive(
             onRefresh: () async {
               ref.invalidate(groupsProvider);
               ref.invalidate(groupCategoriesProvider);
@@ -728,7 +729,7 @@ class _InstrumentEditDialogState extends ConsumerState<_InstrumentEditDialog> {
                           child: SizedBox(
                             width: 20,
                             height: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2),
+                            child: AppSpinner(strokeWidth: 2),
                           ),
                         )
                       : IconButton(
@@ -795,9 +796,9 @@ class _InstrumentEditDialogState extends ConsumerState<_InstrumentEditDialog> {
 
   /// Ionic: alert "Bestätigen" / "Gruppe wirklich löschen?" → Abbrechen / Ja.
   void _confirmDelete(BuildContext context) async {
-    final confirmed = await showDialog<bool>(
+    final confirmed = await showAppDialog<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
+      builder: (ctx) => AppAlertDialog(
         title: Text(context.l10n.commonConfirm),
         content: Text(context.l10n.instrumentsDeleteGroup),
         actions: [

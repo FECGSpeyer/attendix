@@ -11,6 +11,7 @@ import '../../../../data/repositories/account_repository.dart';
 import '../../../public_links/presentation/pages/open_file_page.dart';
 import '../widgets/legal_content_view.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// One-time consent gate (`/terms`): the user must accept the terms and
 /// privacy policy before using the app.
@@ -162,7 +163,7 @@ class _TermsPageState extends ConsumerState<TermsPage> {
                       ? const SizedBox(
                           width: 18,
                           height: 18,
-                          child: CircularProgressIndicator(strokeWidth: 2),
+                          child: AppSpinner(strokeWidth: 2),
                         )
                       : const Icon(Icons.check_circle_outline),
                   label: Text(context.l10n.termsAcceptContinue),

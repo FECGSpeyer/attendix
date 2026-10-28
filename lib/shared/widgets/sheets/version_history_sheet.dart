@@ -8,6 +8,7 @@ import '../../../core/models/version_history.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../l10n/l10n.dart';
 import '../../../core/utils/error_message.dart';
+import '../adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Bottom sheet showing version history (What's New)
 class VersionHistorySheet extends StatefulWidget {
@@ -112,7 +113,7 @@ class _VersionHistorySheetState extends State<VersionHistorySheet> {
 
   Widget _buildContent(ScrollController scrollController) {
     if (_isLoading) {
-      return const Center(child: CircularProgressIndicator());
+      return const Center(child: AppSpinner());
     }
 
     if (_error != null) {

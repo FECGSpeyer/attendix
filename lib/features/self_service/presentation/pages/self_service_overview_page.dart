@@ -13,6 +13,7 @@ import '../widgets/self_service_event_actions.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../messages/presentation/widgets/notification_bell.dart'; // MESSAGES
 import '../../../../core/utils/error_message.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// "Übersicht" – all Termine of the user across all tenants
 /// (Ionic `selfService/overview`) in the card layout.
@@ -90,7 +91,7 @@ class _SelfServiceOverviewPageState
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
             child: SizedBox(
               width: double.infinity,
-              child: SegmentedButton<String>(
+              child: AppSegmentedButton<String>(
                 segments: [
                   ButtonSegment(value: 'chronological', label: Text(context.l10n.selfServiceChronological)),
                   ButtonSegment(value: 'byTenant', label: Text(context.l10n.selfServiceByInstance)),
@@ -108,7 +109,7 @@ class _SelfServiceOverviewPageState
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              CircularProgressIndicator(),
+              AppSpinner(),
               SizedBox(height: 12),
               Text(context.l10n.selfServiceLoadingEvents),
             ],
@@ -128,7 +129,7 @@ class _SelfServiceOverviewPageState
         data: (attendances) {
           final current = upcomingAll.isNotEmpty ? upcomingAll.first : null;
           final upcoming = upcomingAll.length > 1 ? upcomingAll.sublist(1) : const <CrossTenantPersonAttendance>[];
-          return RefreshIndicator(
+          return RefreshIndicator.adaptive(
             onRefresh: _refresh,
             child: ListView(
               padding: const EdgeInsets.only(bottom: 32),

@@ -17,10 +17,10 @@ void main() {
 
   group('AttendanceTypeEditPage - Time Input', () {
     test('uses showTimePicker for time selection', () {
-      // Should have a method that calls showTimePicker
+      // Should have a method that calls the (adaptive, IOS_LOOK) time picker
       expect(
         pageSource,
-        contains('showTimePicker'),
+        contains('showAppTimePicker'),
         reason: 'Time selection should use showTimePicker instead of TextFormField',
       );
     });

@@ -5,6 +5,7 @@ import '../../../../core/providers/organisation_providers.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/organisation/organisation.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// UX_SETTINGS: Ionic org-settings `openOrganisationAlert()`.
 ///
@@ -26,10 +27,10 @@ Future<void> showOrganisationLinkDialog(BuildContext context, WidgetRef ref) asy
   }
 
   int? selected = organisations.first.id;
-  final result = await showDialog<String>(
+  final result = await showAppDialog<String>(
     context: context,
     builder: (ctx) => StatefulBuilder(
-      builder: (ctx, setState) => AlertDialog(
+      builder: (ctx, setState) => AppAlertDialog(
         title: Text(context.l10n.orgSelect),
         content: SingleChildScrollView(
           child: Column(
@@ -78,9 +79,9 @@ Future<void> showOrganisationLinkDialog(BuildContext context, WidgetRef ref) asy
 Future<void> showCreateOrganisationDialog(BuildContext context, WidgetRef ref) async {
   final controller = TextEditingController();
   try {
-    final ok = await showDialog<bool>(
+    final ok = await showAppDialog<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
+      builder: (ctx) => AppAlertDialog(
         title: Text(context.l10n.orgCreate),
         content: TextField(
           controller: controller,

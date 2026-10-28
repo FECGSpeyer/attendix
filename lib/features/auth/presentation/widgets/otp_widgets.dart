@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../data/auth_flow_service.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 import '../../../../l10n/l10n.dart'; // I18N_INFRA
 
 /// AUTH: Login-Modus (Ionic ion-segment "Passwort" / "Code per E-Mail").
@@ -24,7 +25,7 @@ class AuthModeSegment extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SegmentedButton<AuthMode>(
+    return AppSegmentedButton<AuthMode>(
       segments: [
         ButtonSegment(
           value: AuthMode.password,

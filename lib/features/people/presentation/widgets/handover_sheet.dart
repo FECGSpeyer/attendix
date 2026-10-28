@@ -16,6 +16,7 @@ import '../../../../data/models/person/person.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Sheet for transferring players to another tenant (handover)
 class HandoverSheet extends ConsumerStatefulWidget {
@@ -120,7 +121,7 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
             // Content
             Expanded(
               child: tenantsAsync.when(
-                loading: () => const Center(child: CircularProgressIndicator()),
+                loading: () => const Center(child: AppSpinner()),
                 error: (e, _) => Center(child: Text(context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e)))),
                 data: (tenants) {
                   // Filter out current tenant
@@ -188,7 +189,7 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
                                 width: 20,
                                 height: 20,
                                 child:
-                                    CircularProgressIndicator(strokeWidth: 2),
+                                    AppSpinner(strokeWidth: 2),
                               )
                             : Icon(_stayInInstance
                                 ? Icons.copy
@@ -414,7 +415,7 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
               ),
             ),
             const SizedBox(height: AppDimensions.paddingS),
-            SwitchListTile(
+            SwitchListTile.adaptive(
               contentPadding: EdgeInsets.zero,
               title: Text(context.l10n.handoverKeepInTenant),
               subtitle: Text(

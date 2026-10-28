@@ -302,7 +302,7 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
               child: const Icon(Icons.add),
             )
           : null,
-      body: RefreshIndicator(
+      body: RefreshIndicator.adaptive(
         onRefresh: _refresh,
         child: CustomScrollView(
           slivers: [

@@ -7,6 +7,7 @@ import '../../../features/public_links/presentation/pages/app_redirect_page.dart
     show appStoreUrl, playStoreUrl;
 import 'native_app_ad_storage.dart';
 import '../../../l10n/l10n.dart';
+import '../adaptive/adaptive.dart'; // IOS_LOOK
 
 /// LINKS_STARTUP: set on a fresh sign-in (Ionic `listenToAuthChanges`
 /// SIGNED_IN → `showNativeAppAd`); consumed once the app shell is visible.
@@ -30,9 +31,9 @@ Future<void> showNativeAppAdDialog(
   BuildContext context,
   NativeAppAdStore store,
 ) {
-  return showDialog<void>(
+  return showAppDialog<void>(
     context: context,
-    builder: (dialogContext) => AlertDialog(
+    builder: (dialogContext) => AppAlertDialog(
       title: Text(dialogContext.l10n.appNativeAdHeader),
       content: Text(dialogContext.l10n.appNativeAdMessage(store.name)),
       actions: [

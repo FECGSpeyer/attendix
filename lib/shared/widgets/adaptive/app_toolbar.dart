@@ -1,0 +1,194 @@
+import 'package:flutter/material.dart';
+
+import '../../../l10n/l10n.dart';
+import 'adaptive_platform.dart';
+
+/// IOS_LOOK: header buttons of an `ion-toolbar` in the Ionic iOS 26 theme:
+/// all `ion-button`s of one `ion-buttons` slot share one 44pt Liquid Glass
+/// capsule with black icons. Elsewhere the children are a plain [Row].
+///
+/// Use it as the only entry of `AppBar.actions` (or as `leading`):
+/// `actions: [ToolbarButtonGroup(children: [IconButton(...), ...])]`.
+class ToolbarButtonGroup extends StatelessWidget {
+  const ToolbarButtonGroup({super.key, required this.children});
+
+  final List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!useIosLook(context)) {
+      return Row(mainAxisSize: MainAxisSize.min, children: children);
+    }
+    final fg = Theme.of(context).colorScheme.onSurface;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      child: IosGlassSurface(
+        borderRadius: const BorderRadius.all(Radius.circular(22)),
+        blur: 2,
+        child: SizedBox(
+          height: 44,
+          child: IconButtonTheme(
+            data: IconButtonThemeData(
+              style: IconButton.styleFrom(
+                foregroundColor: fg,
+                minimumSize: const Size(44, 44),
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                iconSize: 22,
+              ),
+            ),
+            child: TextButtonTheme(
+              data: TextButtonThemeData(
+                style: TextButton.styleFrom(
+                  foregroundColor: fg,
+                  minimumSize: const Size(44, 44),
+                  padding: const EdgeInsets.symmetric(horizontal: 14),
+                  textStyle: const TextStyle(
+                      fontSize: 17, fontWeight: FontWeight.w500),
+                ),
+              ),
+              child: Row(mainAxisSize: MainAxisSize.min, children: children),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// IOS_LOOK: close button of an `ion-modal` header: a 44pt light-grey circle
+/// with a black ✕ on iOS, the Material [CloseButton] elsewhere.
+class IonCloseButton extends StatelessWidget {
+  const IonCloseButton({super.key, this.onPressed, this.tooltip});
+
+  final VoidCallback? onPressed;
+  final String? tooltip;
+
+  @override
+  Widget build(BuildContext context) {
+    final onTap = onPressed ?? () => Navigator.of(context).maybePop();
+    if (!useIosLook(context)) {
+      return IconButton(
+        icon: const Icon(Icons.close),
+        tooltip: tooltip ?? context.l10n.commonClose,
+        onPressed: onTap,
+      );
+    }
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      child: Semantics(
+        button: true,
+        label: tooltip ?? context.l10n.commonClose,
+        child: GestureDetector(
+          onTap: onTap,
+          child: const IosCircleIcon(icon: Icons.close, filled: true),
+        ),
+      ),
+    );
+  }
+}
+
+/// A 36–44pt round icon in the iOS 26 look – used for the back chevron and
+/// close buttons. [filled] gives the light-grey modal close style, otherwise
+/// the Liquid Glass circle of the toolbar back button.
+class IosCircleIcon extends StatelessWidget {
+  const IosCircleIcon({
+    super.key,
+    required this.icon,
+    this.filled = false,
+    this.size = 40,
+    this.iconSize = 22,
+  });
+
+  final IconData icon;
+  final bool filled;
+  final double size;
+  final double iconSize;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final b = theme.brightness;
+    final fg = theme.colorScheme.onSurface;
+    final glyph = Icon(icon, size: iconSize, color: fg);
+    if (filled) {
+      return Container(
+        width: size,
+        height: size,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: b == Brightness.dark
+              ? const Color(0xFF3A3A3C)
+              : const Color(0xFFE9E9EB),
+        ),
+        child: glyph,
+      );
+    }
+    return SizedBox(
+      width: size,
+      height: size,
+      child: IosGlassSurface(
+        borderRadius: BorderRadius.circular(size / 2),
+        blur: 2,
+        child: Center(child: glyph),
+      ),
+    );
+  }
+}
+
+/// IOS_LOOK: header of a sheet / modal like an Ionic `ion-modal` toolbar:
+/// centred semibold 17pt title, optional start button (e.g. "Abbrechen"),
+/// end button (default: [IonCloseButton]) and a hairline below.
+class IonModalHeader extends StatelessWidget implements PreferredSizeWidget {
+  const IonModalHeader({
+    super.key,
+    required this.title,
+    this.leading,
+    this.trailing,
+    this.showClose = true,
+    this.onClose,
+    this.showDivider = true,
+  });
+
+  final Widget title;
+  final Widget? leading;
+  final Widget? trailing;
+  final bool showClose;
+  final VoidCallback? onClose;
+  final bool showDivider;
+
+  @override
+  Size get preferredSize => const Size.fromHeight(56);
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final end = trailing ??
+        (showClose ? IonCloseButton(onPressed: onClose) : null);
+    return Container(
+      height: 56,
+      decoration: BoxDecoration(
+        border: showDivider
+            ? Border(
+                bottom: BorderSide(color: theme.dividerColor, width: 0.5))
+            : null,
+      ),
+      child: NavigationToolbar(
+        leading: leading,
+        trailing: end,
+        middle: DefaultTextStyle.merge(
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            fontSize: 17,
+            fontWeight: FontWeight.w600,
+            color: theme.colorScheme.onSurface,
+          ),
+          child: title,
+        ),
+        centerMiddle: true,
+        middleSpacing: 8,
+      ),
+    );
+  }
+}

@@ -10,6 +10,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/color_utils.dart';
 import '../../../../data/models/attendance/attendance.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Calendar highlight info for a specific date
 class CalendarHighlight {
@@ -430,7 +431,7 @@ class MultiDateCalendarDialog extends StatelessWidget {
     BuildContext context, {
     required List<DateTime> initialDates,
   }) {
-    return showDialog<List<DateTime>>(
+    return showAppDialog<List<DateTime>>(
       context: context,
       builder: (context) => MultiDateCalendarDialog(
         initialDates: initialDates,

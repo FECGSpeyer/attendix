@@ -7,10 +7,11 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../core/utils/demo_guard.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Shows the "Passwort ändern" dialog (Ionic settings changePassword alert).
 Future<void> showChangePasswordDialog(BuildContext context) async {
-  final changed = await showDialog<bool>(
+  final changed = await showAppDialog<bool>(
     context: context,
     builder: (_) => const ChangePasswordDialog(),
   );
@@ -21,7 +22,7 @@ Future<void> showChangePasswordDialog(BuildContext context) async {
 
 /// Shows the "E-Mail ändern" dialog.
 Future<void> showChangeEmailDialog(BuildContext context) async {
-  final changed = await showDialog<bool>(
+  final changed = await showAppDialog<bool>(
     context: context,
     builder: (_) => const ChangeEmailDialog(),
   );
@@ -88,7 +89,7 @@ class _ChangePasswordDialogState extends ConsumerState<ChangePasswordDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
+    return AppAlertDialog(
       title: Text(context.l10n.settingsChangePassword),
       content: Column(
         mainAxisSize: MainAxisSize.min,
@@ -129,7 +130,7 @@ class _ChangePasswordDialogState extends ConsumerState<ChangePasswordDialog> {
               ? const SizedBox(
                   width: 20,
                   height: 20,
-                  child: CircularProgressIndicator(strokeWidth: 2),
+                  child: AppSpinner(strokeWidth: 2),
                 )
               : Text(context.l10n.settingsChange),
         ),
@@ -187,7 +188,7 @@ class _ChangeEmailDialogState extends ConsumerState<ChangeEmailDialog> {
   Widget build(BuildContext context) {
     final currentEmail =
         ref.read(supabaseClientProvider).auth.currentUser?.email ?? '';
-    return AlertDialog(
+    return AppAlertDialog(
       title: Text(context.l10n.settingsFlutterChangeEmail),
       content: Column(
         mainAxisSize: MainAxisSize.min,
@@ -220,7 +221,7 @@ class _ChangeEmailDialogState extends ConsumerState<ChangeEmailDialog> {
               ? const SizedBox(
                   width: 20,
                   height: 20,
-                  child: CircularProgressIndicator(strokeWidth: 2),
+                  child: AppSpinner(strokeWidth: 2),
                 )
               : Text(context.l10n.settingsChange),
         ),

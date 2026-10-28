@@ -23,6 +23,7 @@ import '../../../legal/presentation/widgets/legal_content_view.dart';
 import '../../data/providers/registration_providers.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/common/error_state_view.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Public tenant registration page
 class TenantRegistrationPage extends ConsumerStatefulWidget {
@@ -105,7 +106,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
       body: tenantAsync.when(
         // A retry shows the spinner again instead of the stale error.
         skipLoadingOnRefresh: false,
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => const Center(child: AppSpinner()),
         error: (error, stack) => _buildErrorState(error: error),
         data: (tenant) {
           if (tenant == null) {
@@ -248,7 +249,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
 
           // Group selection
           groupsAsync.when(
-            loading: () => const Center(child: CircularProgressIndicator()),
+            loading: () => const Center(child: AppSpinner()),
             error: (_, __) => Text(context.l10n.tenantRegisterFlutterLoadGroupsFailed),
             data: (groups) {
               _noGroupsAvailable = groups.isEmpty;
@@ -343,7 +344,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
                 ? const SizedBox(
                     width: 24,
                     height: 24,
-                    child: CircularProgressIndicator(strokeWidth: 2),
+                    child: AppSpinner(strokeWidth: 2),
                   )
                 : Text(context.l10n.tenantRegisterFinish),
           ),
@@ -372,7 +373,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
       readOnly: true,
       controller: _birthdayController,
       onTap: () async {
-        final date = await showDatePicker(
+        final date = await showAppDatePicker(
           context: context,
           initialDate: _formData.birthDate ?? DateTime(DateTime.now().year - 18),
           firstDate: DateTime(1900),
@@ -445,7 +446,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
                 final value = _formData.additionalFields[field.id] as bool? ??
                     field.defaultValue as bool? ??
                     false;
-                return SwitchListTile(
+                return SwitchListTile.adaptive(
                   title: Text(field.name),
                   value: value,
                   onChanged: (newValue) {
@@ -508,7 +509,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
                     text: currentDate != null ? dateFormat.format(currentDate) : '',
                   ),
                   onTap: () async {
-                    final date = await showDatePicker(
+                    final date = await showAppDatePicker(
                       context: context,
                       initialDate: currentDate ?? DateTime.now(),
                       firstDate: DateTime(1900),
@@ -644,7 +645,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
     final churchesAsync = ref.watch(churchesProvider);
 
     return churchesAsync.when(
-      loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () => const Center(child: AppSpinner()),
       error: (_, __) => Text(context.l10n.tenantRegisterFlutterLoadChurchesFailed),
       data: (churches) {
         return StatefulBuilder(
@@ -738,11 +739,11 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
     var loginError = '';
 
     try {
-      final result = await showDialog<bool>(
+      final result = await showAppDialog<bool>(
         context: context,
         builder: (context) => StatefulBuilder(
           builder: (context, setDialogState) {
-            return AlertDialog(
+            return AppAlertDialog(
               title: Text(context.l10n.loginSignIn),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -1182,9 +1183,9 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
       return;
     }
 
-    await showDialog(
+    await showAppDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (context) => AppAlertDialog(
         title: Text(context.l10n.tenantRegisterSuccessHeader),
         content: Text(result.successMessage),
         actions: [

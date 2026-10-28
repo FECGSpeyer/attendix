@@ -9,6 +9,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/shift/shift_plan.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Shifts List Page
 ///
@@ -37,7 +38,7 @@ class _ShiftsListPageState extends ConsumerState<ShiftsListPage> {
           // Shifts list
           Expanded(
             child: shiftsAsync.when(
-              loading: () => const Center(child: CircularProgressIndicator()),
+              loading: () => const Center(child: AppSpinner()),
               error: (error, stack) => Center(child: Text(context.l10n.shiftsFlutterErrorWith(friendlyErrorMessage(error)))),
               data: (shifts) {
                 if (shifts.isEmpty) {
@@ -133,9 +134,9 @@ class _ShiftsListPageState extends ConsumerState<ShiftsListPage> {
     final descriptionController = TextEditingController();
 
     try {
-      final result = await showDialog<Map<String, String>?>(
+      final result = await showAppDialog<Map<String, String>?>(
         context: context,
-        builder: (context) => AlertDialog(
+        builder: (context) => AppAlertDialog(
           title: Text(context.l10n.shiftsCreate),
           content: Column(
             mainAxisSize: MainAxisSize.min,

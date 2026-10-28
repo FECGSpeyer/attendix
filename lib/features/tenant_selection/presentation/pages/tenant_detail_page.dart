@@ -11,6 +11,7 @@ import '../../../../core/utils/string_utils.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Page showing tenant details and danger zone (delete)
 class TenantDetailPage extends ConsumerWidget {
@@ -24,7 +25,7 @@ class TenantDetailPage extends ConsumerWidget {
 
     return tenantsAsync.when(
       loading: () => const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
+        body: Center(child: AppSpinner()),
       ),
       error: (error, _) => Scaffold(
         appBar: AppBar(title: Text(context.l10n.tenantSelectFlutterDetailsTitle)),
@@ -296,13 +297,13 @@ Future<void> _showDeleteTenantDialog(
   final controller = TextEditingController();
 
   try {
-    final confirmed = await showDialog<bool>(
+    final confirmed = await showAppDialog<bool>(
       context: context,
       builder: (context) {
         return StatefulBuilder(
           builder: (context, setDialogState) {
             final matches = controller.text.trim() == tenantName;
-            return AlertDialog(
+            return AppAlertDialog(
               title: Text(context.l10n.tenantSelectFlutterDeleteTenant),
               content: Column(
                 mainAxisSize: MainAxisSize.min,

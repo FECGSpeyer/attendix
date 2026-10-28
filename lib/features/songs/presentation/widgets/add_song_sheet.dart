@@ -7,6 +7,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/song/song.dart';
 import '../utils/song_utils.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// "Werk hinzufügen" (Ionic addSongsModal). Returns the id of the new song.
 class AddSongSheet extends ConsumerStatefulWidget {
@@ -98,10 +99,10 @@ class _AddSongSheetState extends ConsumerState<AddSongSheet> {
   Future<void> _pickInstruments() async {
     final groups = widget.data.instruments;
     final selection = [..._instrumentIds];
-    final result = await showDialog<List<int>>(
+    final result = await showAppDialog<List<int>>(
       context: context,
       builder: (ctx) => StatefulBuilder(
-        builder: (ctx, setLocal) => AlertDialog(
+        builder: (ctx, setLocal) => AppAlertDialog(
           title: Text(context.l10n.songsInstrumentation),
           content: SizedBox(
             width: double.maxFinite,
@@ -196,13 +197,13 @@ class _AddSongSheetState extends ConsumerState<AddSongSheet> {
               keyboardType: TextInputType.url,
               decoration: InputDecoration(labelText: context.l10n.songsLink),
             ),
-            SwitchListTile(
+            SwitchListTile.adaptive(
               contentPadding: EdgeInsets.zero,
               title: Text(context.l10n.songsChoirOrchestra),
               value: _withChoir,
               onChanged: (v) => setState(() => _withChoir = v),
             ),
-            SwitchListTile(
+            SwitchListTile.adaptive(
               contentPadding: EdgeInsets.zero,
               title: Text(context.l10n.songsWithSoloSinging),
               value: _withSolo,
@@ -227,7 +228,7 @@ class _AddSongSheetState extends ConsumerState<AddSongSheet> {
                   ? const SizedBox(
                       width: 18,
                       height: 18,
-                      child: CircularProgressIndicator(strokeWidth: 2),
+                      child: AppSpinner(strokeWidth: 2),
                     )
                   : Text(context.l10n.attendanceAdd),
             ),

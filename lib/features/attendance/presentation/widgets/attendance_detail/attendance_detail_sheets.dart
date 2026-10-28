@@ -7,6 +7,7 @@ import '../../../../../core/theme/app_colors.dart';
 import '../../../../../data/models/person/person.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../../core/utils/error_message.dart';
+import '../../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Result of [showPersonNoteSheet]: `null` = cancelled, `''` = delete note,
 /// anything else = the new note.
@@ -22,55 +23,24 @@ Future<String?> showPersonNoteSheet(
   const delete = '__delete__';
   final hasNote = currentNote?.isNotEmpty == true;
 
-  final choice = await showModalBottomSheet<String>(
-    context: context,
-    isScrollControlled: true,
-    showDragHandle: true,
-    builder: (ctx) => SafeArea(
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(context.l10n.attendanceAddNote, style: Theme.of(ctx).textTheme.titleMedium),
-                  if (hasNote)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 4),
-                      child: Text(
-                        context.l10n.attendanceCurrentNote(currentNote ?? ''),
-                        style: const TextStyle(color: AppColors.medium),
-                      ),
-                    ),
-                ],
-              ),
-            ),
-            for (final reason in presetReasons)
-              ListTile(
-                title: Text(reason),
-                onTap: () => Navigator.pop(ctx, reason),
-              ),
-            ListTile(
-              title: Text(context.l10n.attendanceCustomNoteEllipsis),
-              onTap: () => Navigator.pop(ctx, custom),
-            ),
-            if (hasNote)
-              ListTile(
-                title: Text(context.l10n.attendanceDeleteNote, style: const TextStyle(color: AppColors.danger)),
-                onTap: () => Navigator.pop(ctx, delete),
-              ),
-            ListTile(
-              title: Text(context.l10n.commonCancel),
-              onTap: () => Navigator.pop(ctx),
-            ),
-          ],
-        ),
+  final choice = await showAppActionSheet<String>(
+    context,
+    title: context.l10n.attendanceAddNote,
+    message: hasNote ? context.l10n.attendanceCurrentNote(currentNote ?? '') : null,
+    actions: [
+      for (final reason in presetReasons)
+        AppActionSheetAction(value: reason, label: reason),
+      AppActionSheetAction(
+        value: custom,
+        label: context.l10n.attendanceCustomNoteEllipsis,
       ),
-    ),
+      if (hasNote)
+        AppActionSheetAction(
+          value: delete,
+          label: context.l10n.attendanceDeleteNote,
+          destructive: true,
+        ),
+    ],
   );
 
   if (choice == null) return null;
@@ -81,9 +51,9 @@ Future<String?> showPersonNoteSheet(
   // Custom note: prefill only when the current note is not a preset reason.
   final isPreset = hasNote && presetReasons.contains(currentNote);
   final controller = TextEditingController(text: isPreset ? '' : (currentNote ?? ''));
-  final result = await showDialog<String>(
+  final result = await showAppDialog<String>(
     context: context,
-    builder: (ctx) => AlertDialog(
+    builder: (ctx) => AppAlertDialog(
       title: Text(context.l10n.attendanceCustomNote),
       content: TextField(
         controller: controller,
@@ -126,10 +96,10 @@ Future<ConductorChoice?> showConductorChangeDialog(
   final hasOther = currentOtherConductor?.isNotEmpty == true;
   int? selected = hasOther ? otherValue : currentConductorId;
 
-  final picked = await showDialog<int>(
+  final picked = await showAppDialog<int>(
     context: context,
     builder: (ctx) => StatefulBuilder(
-      builder: (ctx, setState) => AlertDialog(
+      builder: (ctx, setState) => AppAlertDialog(
         title: Text(context.l10n.attendanceChangeConductor),
         contentPadding: const EdgeInsets.only(top: 12),
         content: SizedBox(
@@ -172,9 +142,9 @@ Future<ConductorChoice?> showConductorChangeDialog(
   if (!context.mounted) return null;
 
   final controller = TextEditingController(text: currentOtherConductor ?? '');
-  final name = await showDialog<String>(
+  final name = await showAppDialog<String>(
     context: context,
-    builder: (ctx) => AlertDialog(
+    builder: (ctx) => AppAlertDialog(
       title: Text(context.l10n.attListEnterConductor),
       content: TextField(
         controller: controller,
@@ -318,7 +288,7 @@ class _FilesFolderPickerState extends State<_FilesFolderPicker> {
               child: _loading
                   ? const Padding(
                       padding: EdgeInsets.all(24),
-                      child: Center(child: CircularProgressIndicator()),
+                      child: Center(child: AppSpinner()),
                     )
                   : ListView(
                       shrinkWrap: true,

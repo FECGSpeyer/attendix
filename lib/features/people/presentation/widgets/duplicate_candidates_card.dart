@@ -10,6 +10,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/person_matcher.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Same-tenant, account-less people similar to a pending applicant
 /// (Ionic person.page loadDuplicateCandidates).
@@ -56,9 +57,9 @@ class _DuplicateCandidatesCardState
     final p = widget.person;
     final name = '${p.firstName} ${p.lastName}';
     final candidateName = '${candidate.firstName} ${candidate.lastName}';
-    final confirmed = await showDialog<bool>(
+    final confirmed = await showAppDialog<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
+      builder: (ctx) => AppAlertDialog(
         title: Text(context.l10n.personMergePeople),
         content: Text(context.l10n.personMergeMessage(name, candidateName)),
         actions: [

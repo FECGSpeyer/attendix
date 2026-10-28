@@ -12,6 +12,7 @@ import '../../../../data/repositories/cross_tenant_person_repository.dart';
 import '../../../../core/utils/date_helper.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 final _fmt = DateFormat('dd.MM.yyyy');
 
@@ -134,7 +135,7 @@ class _PauseSheetState extends State<_PauseSheet> {
                     )
                   : null,
               onTap: () async {
-                final date = await showDatePicker(
+                final date = await showAppDatePicker(
                   context: context,
                   initialDate: _from ?? today,
                   firstDate: DateTime(today.year - 5),
@@ -160,7 +161,7 @@ class _PauseSheetState extends State<_PauseSheet> {
                     )
                   : null,
               onTap: () async {
-                final date = await showDatePicker(
+                final date = await showAppDatePicker(
                   context: context,
                   initialDate: _until ?? today.add(const Duration(days: 30)),
                   firstDate: today,
@@ -304,10 +305,10 @@ Future<List<LinkedTenantRef>?> _askPauseInOtherTenants(
   List<LinkedTenantRef> tenants,
 ) {
   final selected = <int>{};
-  return showDialog<List<LinkedTenantRef>>(
+  return showAppDialog<List<LinkedTenantRef>>(
     context: context,
     builder: (ctx) => StatefulBuilder(
-      builder: (ctx, setState) => AlertDialog(
+      builder: (ctx, setState) => AppAlertDialog(
         title: Text(context.l10n.peoplePauseOthers),
         content: SingleChildScrollView(
           child: Column(

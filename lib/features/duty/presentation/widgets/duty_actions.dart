@@ -6,6 +6,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/duty_utils.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Shared UI actions of the Dienstplan (confirm / decline / take).
 
@@ -85,9 +86,9 @@ Future<bool> declineDutyAction(
   int attendanceId,
 ) async {
   final controller = TextEditingController();
-  final reason = await showDialog<String>(
+  final reason = await showAppDialog<String>(
     context: context,
-    builder: (ctx) => AlertDialog(
+    builder: (ctx) => AppAlertDialog(
       title: Text(context.l10n.signoutCannot),
       content: TextField(
         controller: controller,
