@@ -132,13 +132,16 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
         leadingWidth: multiTenant ? MediaQuery.sizeOf(context).width * 0.55 : null,
         backgroundColor: condenseBarColor(context, condensed),
         shape: condenseBarShape(context, condensed),
+        // IOS_SHELL: iOS → one glass capsule (ion-buttons slot="end")
         actions: [
-          IconButton(
-            icon: const Icon(Icons.info_outline),
-            tooltip: context.l10n.signoutLegend,
-            onPressed: () => showEventLegendSheet(context),
-          ),
-          const NotificationBell(), // MESSAGES
+          ToolbarButtonGroup(children: [
+            IconButton(
+              icon: const Icon(Icons.info_outline),
+              tooltip: context.l10n.signoutLegend,
+              onPressed: () => showEventLegendSheet(context),
+            ),
+            const NotificationBell(), // MESSAGES
+          ]),
         ],
       ),
       body: childrenAsync.when(

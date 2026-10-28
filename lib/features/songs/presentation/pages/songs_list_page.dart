@@ -29,6 +29,8 @@ import '../../../../core/providers/branding_providers.dart'; // MISC2
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/common/error_state_view.dart';
+import '../../../../shared/widgets/adaptive/app_toolbar.dart'; // IOS_SHELL
+import '../../../../shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL
 
 /// Songs list (Ionic `songs.page`).
 ///
@@ -224,7 +226,9 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
         backgroundColor: condenseBarColor(context, condensed),
         shape: condenseBarShape(context, condensed),
         automaticallyImplyLeading: !data.isPublic,
+        // IOS_SHELL: iOS → menu button in a glass circle
         actions: [
+          ToolbarButtonGroup(children: [
           PopupMenuButton<String>(
             icon: const Icon(Icons.more_vert),
             tooltip: context.l10n.songsFlutterMenu,
@@ -297,15 +301,19 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
               ),
             ],
           ),
+          ]),
         ],
       ),
+      // IOS_SHELL: iOS → ion-fab in the tab bar row
       floatingActionButton: isAdmin
-          ? FloatingActionButton(
-              onPressed: () async {
-                final id = await showAddSongSheet(context, data);
-                if (id != null && mounted) _openSong(id);
-              },
-              child: const Icon(Icons.add),
+          ? TabBarFab(
+              child: FloatingActionButton(
+                onPressed: () async {
+                  final id = await showAddSongSheet(context, data);
+                  if (id != null && mounted) _openSong(id);
+                },
+                child: const Icon(Icons.add),
+              ),
             )
           : null,
       body: RefreshIndicator.adaptive(

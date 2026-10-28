@@ -41,6 +41,8 @@ import '../../../../core/providers/demo_providers.dart'; // DEMO_GUARD
 import '../../../../l10n/l10n.dart';
 import '../widgets/language_picker_tile.dart';
 import '../../../../core/providers/push_providers.dart'; // PUSH
+import '../../../../shared/widgets/adaptive/app_toolbar.dart'; // IOS_SHELL
+import '../../../../shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL
 
 /// "Mehr" tab — UX_SETTINGS: same sections, order and role visibility as the
 /// Ionic settings page (src/app/settings/settings/settings.page.html):
@@ -109,15 +111,19 @@ class SettingsPage extends ConsumerWidget {
         title: ios && TenantSwitcherTitle.centerTitle(ref) == null
             ? IonHeaderPill(child: TenantSwitcherTitle(fallbackTitle: l10n.settingsSettings))
             : TenantSwitcherTitle(fallbackTitle: l10n.settingsSettings),
-        actions: const [NotificationBell()], // MESSAGES
+        // IOS_SHELL: iOS → bell in a glass circle
+        actions: const [ToolbarButtonGroup(children: [NotificationBell()])], // MESSAGES
       ),
       // Ionic: `@if (isIos)` ion-fab (apps-outline) opens the instance list.
+      // IOS_SHELL: rendered in the tab bar row (right of the floating bar).
       floatingActionButton: ios
-          ? FloatingActionButton(
-              heroTag: 'settingsTenantsFab',
-              onPressed: openTenants,
-              tooltip: l10n.settingsSwitchTenant,
-              child: const Icon(Icons.apps),
+          ? TabBarFab(
+              child: FloatingActionButton(
+                heroTag: 'settingsTenantsFab',
+                onPressed: openTenants,
+                tooltip: l10n.settingsSwitchTenant,
+                child: const Icon(Icons.apps),
+              ),
             )
           : null,
       body: RefreshIndicator.adaptive(

@@ -29,6 +29,7 @@ import '../../../../shared/widgets/tenant/tenant_switcher_title.dart'; // SETTIN
 import '../widgets/ios_condense_header.dart'; // UX_ATT
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL
 
 
 /// Attendance list page
@@ -274,7 +275,9 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
           ),
         ),
         // UX_ATT: Ionic order: Filter, Dienste verteilen, Glocke
+        // IOS_SHELL: iOS → one glass capsule (ion-buttons slot="end")
         actions: [
+          ToolbarButtonGroup(children: [
           // ATT_DETAIL: Termintyp filter
           _buildTypeFilterButton(ref.watch(attendanceTypesProvider).valueOrNull ?? const []),
           // DUTY: "Dienste verteilen" for leaders when the tenant uses the Dienstplan
@@ -289,6 +292,7 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
               },
             ),
           const NotificationBell(), // MESSAGES
+          ]),
         ],
       ),
       // IOS_ATT_PAGES: Ionic iOS page is white, rows sit directly on it
@@ -575,8 +579,9 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
       ),
       // FAB only for roles that can add attendances (not VIEWER).
       // SETTINGS_EXT: Helfer abhängig von Rollenberechtigung attendance_create
+      // IOS_SHELL: iOS → ion-fab in the tab bar row
       floatingActionButton: ref.watch(canCreateAttendanceProvider)
-          ? _buildFab(context)
+          ? TabBarFab(child: _buildFab(context))
           : null,
     );
   }

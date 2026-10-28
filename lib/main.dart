@@ -145,6 +145,12 @@ class _AttendixAppState extends ConsumerState<AttendixApp> {
       themeMode: ref.watch(teamsThemeModeProvider) ?? ThemeMode.system, // TEAMS
       routerConfig: router,
       scaffoldMessengerKey: rootScaffoldMessengerKey, // PROFILE_OFFLINE
+      // IOS_SHELL: Ionic iOS has no tooltips – hide Material tooltips (tap /
+      // long-press / hover) on iOS; their semantics labels stay.
+      builder: (context, child) => TooltipVisibility(
+        visible: Theme.of(context).platform != TargetPlatform.iOS,
+        child: child ?? const SizedBox.shrink(),
+      ),
       // I18N_INFRA: UI language from localeProvider (de default, en optional)
       locale: locale,
       localizationsDelegates: const [

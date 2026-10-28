@@ -45,7 +45,8 @@ class _MembersPageState extends ConsumerState<MembersPage> {
 
     return IonPage(
       title: context.l10n.peopleMembers,
-      actions: const [NotificationBell()], // MESSAGES
+      // IOS_SHELL: iOS → bell in a glass circle
+      actions: const [ToolbarButtonGroup(children: [NotificationBell()])], // MESSAGES
       onRefresh: _refresh,
       slivers: [
         // ion-searchbar

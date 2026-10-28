@@ -39,6 +39,7 @@ import 'person_import_page.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL
 
 /// People list page
 class PeopleListPage extends ConsumerStatefulWidget {
@@ -422,7 +423,8 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
         ionCondenseHeader(
           context,
           title: tenantTitle,
-          trailing: const NotificationBell(), // MESSAGES
+          // IOS_SHELL: bell alone → glass circle
+          trailing: const ToolbarButtonGroup(children: [NotificationBell()]), // MESSAGES
         ),
       if (ios) CupertinoSliverRefreshControl(onRefresh: _refresh),
       // Search bar + options button (Ionic div.flex: ion-searchbar (86%) +
@@ -580,7 +582,9 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
               : null
           // Ionic: FAB "add" only for admins
           : isAdmin
-              ? IonFabButton(onPressed: () => context.push('/people/new'))
+              // IOS_SHELL: iOS → ion-fab in the tab bar row
+              ? TabBarFab(
+                  child: IonFabButton(onPressed: () => context.push('/people/new')))
               : null,
     );
   }
@@ -656,7 +660,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
             child: TenantSwitcherTitle(fallbackTitle: tenantTitle),
           ),
         ),
-        actions: const [NotificationBell()], // MESSAGES
+        actions: const [ToolbarButtonGroup(children: [NotificationBell()])], // MESSAGES, IOS_SHELL
       );
     }
     // Ionic: only the notification bell in the header; filter, sort, view
@@ -664,7 +668,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
     return AppBar(
       title: TenantSwitcherTitle(fallbackTitle: context.l10n.commonPeople),
       centerTitle: TenantSwitcherTitle.centerTitle(ref), // UX_AUTH
-      actions: const [NotificationBell()], // MESSAGES
+      actions: const [ToolbarButtonGroup(children: [NotificationBell()])], // MESSAGES, IOS_SHELL
     );
   }
 

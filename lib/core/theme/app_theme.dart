@@ -137,11 +137,14 @@ class AppTheme {
       canvasColor: surface,
       dividerColor: divider,
       // ion-header (iOS): light toolbar, hairline border, centered 17pt title.
+      // IOS_SHELL: Ionic headers are `translucent` (iOS 26 theme:
+      // `--background: transparent`), i.e. they show the page background
+      // (white / black) instead of a grey bar – keep only the hairline.
       appBarTheme: AppBarTheme(
         elevation: 0,
         scrolledUnderElevation: 0,
         centerTitle: true,
-        backgroundColor: bar,
+        backgroundColor: ios ? Colors.transparent : bar,
         surfaceTintColor: Colors.transparent,
         foregroundColor: textPrimary,
         iconTheme: IconThemeData(color: barIcon),
