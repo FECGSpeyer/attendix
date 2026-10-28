@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../planning/presentation/widgets/ion_items.dart';
 import '../../../../l10n/l10n.dart';
 
 /// A person that can be assigned to a duty.
@@ -40,6 +40,8 @@ Future<List<String>?> showDutyAssignSheet(
     context: context,
     isScrollControlled: true,
     useSafeArea: true,
+    // Ionic: ion-content color="light".
+    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
     builder: (ctx) => DraggableScrollableSheet(
       expand: false,
       initialChildSize: 0.75,
@@ -116,70 +118,89 @@ class _DutyAssignSheetState extends State<_DutyAssignSheet> {
     final places = context.l10n.dutyPlacesFree(widget.openPlaces);
     return Column(
       children: [
-        ListTile(
+        // Ionic toolbar: close at the start, centered title with `.sub` line.
+        AppBar(
+          automaticallyImplyLeading: false,
+          primary: false,
           leading: IconButton(
             icon: const Icon(Icons.close),
             tooltip: context.l10n.commonCancel,
             onPressed: () => Navigator.of(context).pop(),
           ),
-          title: Text(context.l10n.attendanceAssignPerson, style: const TextStyle(fontWeight: FontWeight.w600)),
-          subtitle: Text('${widget.title} · $places'),
+          title: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(context.l10n.attendanceAssignPerson),
+              Text('${widget.title} · $places',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w400, color: AppColors.medium)),
+            ],
+          ),
         ),
-        const Divider(height: 1),
         Expanded(
           child: _sorted.isEmpty
-              ? Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(AppDimensions.paddingL),
-                    child: Text(
-                      context.l10n.dutyAllAssigned,
-                      textAlign: TextAlign.center,
-                    ),
+              ? Padding(
+                  padding: const EdgeInsets.all(32),
+                  child: Text(
+                    context.l10n.dutyAllAssigned,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(color: AppColors.medium),
                   ),
                 )
               : ListView(
                   controller: widget.scrollController,
+                  padding: const EdgeInsets.only(bottom: 16),
                   children: [
-                    for (final c in _sorted)
-                      Opacity(
-                        opacity: c.unavailableNote.isNotEmpty ? 0.55 : 1,
-                        child: CheckboxListTile(
-                          controlAffinity: ListTileControlAffinity.leading,
-                          value: _selected.contains(c.personAttendanceId),
-                          onChanged: (_) => setState(() {
-                            if (!_selected.remove(c.personAttendanceId)) {
-                              _selected.add(c.personAttendanceId);
-                            }
-                          }),
-                          title: Text(c.name),
-                          subtitle: Text(_subtitle(c)),
-                        ),
-                      ),
+                    IonInsetList(
+                      dividerIndent: 56,
+                      children: [
+                        for (final c in _sorted)
+                          Opacity(
+                            // Ionic `.dim`
+                            opacity: c.unavailableNote.isNotEmpty ? 0.55 : 1,
+                            child: CheckboxListTile(
+                              controlAffinity: ListTileControlAffinity.leading,
+                              value: _selected.contains(c.personAttendanceId),
+                              onChanged: (_) => setState(() {
+                                if (!_selected.remove(c.personAttendanceId)) {
+                                  _selected.add(c.personAttendanceId);
+                                }
+                              }),
+                              title: Text(c.name),
+                              subtitle: Text(_subtitle(c), style: const TextStyle(color: AppColors.medium)),
+                            ),
+                          ),
+                      ],
+                    ),
+                    // Ionic `.hint`
                     Padding(
-                      padding: const EdgeInsets.all(AppDimensions.paddingM),
+                      padding: const EdgeInsets.fromLTRB(32, 16, 32, 0),
                       child: Text(
                         context.l10n.dutyAssignHint,
-                        style: const TextStyle(color: AppColors.medium, fontSize: 13),
+                        style: const TextStyle(color: AppColors.medium, fontSize: 13, height: 1.35),
                       ),
                     ),
                     if (_selected.length > widget.openPlaces)
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM),
+                        padding: const EdgeInsets.fromLTRB(32, 12, 32, 0),
                         child: Text(
                           context.l10n.dutyOverbooked,
-                          style: const TextStyle(color: AppColors.warningDark, fontSize: 13),
+                          style: const TextStyle(color: AppColors.warningDark, fontSize: 13, height: 1.35),
                         ),
                       ),
                   ],
                 ),
         ),
+        // Ionic footer: round block button on the light background.
         SafeArea(
           top: false,
           child: Padding(
-            padding: const EdgeInsets.all(AppDimensions.paddingM),
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
             child: SizedBox(
               width: double.infinity,
               child: FilledButton(
+                style: FilledButton.styleFrom(shape: const StadiumBorder()),
                 onPressed: _selected.isEmpty ? null : () => Navigator.of(context).pop(_selected.toList()),
                 child: Text(_confirmLabel),
               ),

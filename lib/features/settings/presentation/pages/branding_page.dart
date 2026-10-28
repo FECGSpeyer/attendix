@@ -9,6 +9,7 @@ import '../../../../core/providers/organisation_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../l10n/l10n.dart';
+import '../widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
@@ -104,8 +105,20 @@ class _BrandingPageState extends ConsumerState<BrandingPage> {
     final orgAsync = ref.watch(brandingOrganisationProvider);
     final hasOrg = orgAsync.valueOrNull != null;
 
+    final ios = ionIsIos(context);
+    final pStyle = TextStyle(
+      fontSize: 14,
+      color: ios ? IonIos.labelP(context) : AppColors.medium,
+    );
+
+    // UX_SETTINGS (WAVE 8): branding.page.html — arrow-back, checkmark save,
+    // intro / logo / text as inset lists, block save button.
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.of(context).maybePop(),
+        ),
         title: Text(context.l10n.generalSettingsBranding),
         actions: [
           if (hasOrg)
@@ -120,16 +133,20 @@ class _BrandingPageState extends ConsumerState<BrandingPage> {
         error: (e, _) => Center(child: Text(context.l10n.settingsFlutterLoadFailed(friendlyErrorMessage(e)))),
         data: (org) {
           if (org == null) {
-            return Padding(
+            return ListView(
               padding: const EdgeInsets.all(AppDimensions.paddingM),
-              child: Card(
-                child: ListTile(
-                  leading: const Icon(Icons.info_outline, color: AppColors.medium),
-                  title: Text(
-                    context.l10n.brandingOrgOnly,
-                  ),
+              children: [
+                SettingsListSection(
+                  children: [
+                    SettingsListTile(
+                      icon: Icons.info_outline,
+                      iconColor: AppColors.medium,
+                      title: '',
+                      titleWidget: Text(context.l10n.brandingOrgOnly, style: pStyle),
+                    ),
+                  ],
                 ),
-              ),
+              ],
             );
           }
           if (!_initialized) {
@@ -142,62 +159,66 @@ class _BrandingPageState extends ConsumerState<BrandingPage> {
               ListView(
                 padding: const EdgeInsets.all(AppDimensions.paddingM),
                 children: [
-                  Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(AppDimensions.paddingM),
-                      child: Text(
-                        context.l10n.brandingIntro,
-                      ),
-                    ),
+                  SettingsListSection(
+                    icons: false,
+                    children: [
+                      ListTile(title: Text(context.l10n.brandingIntro, style: pStyle)),
+                    ],
                   ),
-                  const SizedBox(height: AppDimensions.paddingM),
-                  Text(context.l10n.brandingLogo,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.primary,
-                          )),
-                  const SizedBox(height: AppDimensions.paddingS),
-                  Card(
-                    child: Column(
-                      children: [
-                        if (_logoUrl.isNotEmpty)
-                          Padding(
-                            padding: const EdgeInsets.all(AppDimensions.paddingM),
-                            child: Image.network(
-                              _logoUrl,
-                              height: 120,
-                              fit: BoxFit.contain,
-                              errorBuilder: (_, __, ___) => const Icon(Icons.broken_image_outlined, size: 48),
+                  SettingsListSection(
+                    title: context.l10n.brandingLogo,
+                    children: [
+                      if (_logoUrl.isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          child: Center(
+                            child: Container(
+                              constraints: const BoxConstraints(maxWidth: 200, maxHeight: 120),
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Image.network(
+                                _logoUrl,
+                                fit: BoxFit.contain,
+                                errorBuilder: (_, __, ___) => const Icon(Icons.broken_image_outlined, size: 48),
+                              ),
                             ),
                           ),
-                        ListTile(
-                          leading: const Icon(Icons.image_outlined, color: AppColors.primary),
-                          title: Text(
-                            _logoUrl.isNotEmpty ? context.l10n.brandingFlutterReplaceLogo : context.l10n.brandingFlutterUploadLogo,
-                            style: const TextStyle(color: AppColors.primary),
-                          ),
-                          onTap: _busy ? null : _selectLogo,
                         ),
-                        if (_logoUrl.isNotEmpty)
-                          ListTile(
-                            leading: const Icon(Icons.delete_outline, color: AppColors.danger),
-                            title: Text(context.l10n.brandingRemoveLogo, style: const TextStyle(color: AppColors.danger)),
-                            onTap: _busy ? null : _removeLogo,
-                          ),
-                      ],
-                    ),
+                      SettingsListTile(
+                        icon: Icons.image_outlined,
+                        color: AppColors.primary,
+                        detail: false,
+                        title: _logoUrl.isNotEmpty ? context.l10n.brandingFlutterReplaceLogo : context.l10n.brandingFlutterUploadLogo,
+                        onTap: _busy ? null : _selectLogo,
+                      ),
+                      if (_logoUrl.isNotEmpty)
+                        SettingsListTile(
+                          icon: Icons.delete_outline,
+                          color: AppColors.danger,
+                          detail: false,
+                          title: context.l10n.brandingRemoveLogo,
+                          onTap: _busy ? null : _removeLogo,
+                        ),
+                    ],
                   ),
-                  const SizedBox(height: AppDimensions.paddingM),
-                  TextField(
-                    controller: _textController,
-                    maxLength: 60,
-                    textCapitalization: TextCapitalization.sentences,
-                    decoration: InputDecoration(
-                      labelText: context.l10n.brandingText,
-                      hintText: context.l10n.brandingTextPh,
-                    ),
+                  SettingsListSection(
+                    icons: false,
+                    children: [
+                      IonStackedField(
+                        label: context.l10n.brandingText,
+                        hint: context.l10n.brandingTextPh,
+                        builder: (decoration) => TextField(
+                          controller: _textController,
+                          maxLength: 60,
+                          textCapitalization: TextCapitalization.sentences,
+                          decoration: decoration.copyWith(counterText: ios ? '' : null),
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: AppDimensions.paddingM),
                   ElevatedButton(
                     onPressed: _busy ? null : _save,
                     child: Text(context.l10n.commonSave),

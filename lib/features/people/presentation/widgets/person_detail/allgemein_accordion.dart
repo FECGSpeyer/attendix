@@ -16,7 +16,7 @@ import '../../../../../data/models/parent/parent_model.dart';
 import '../../../../../data/models/person/person.dart';
 import '../../../../../data/models/shift/shift_plan.dart';
 import '../../../../../data/models/tenant/tenant.dart';
-import '../../../../../shared/widgets/editable/editable_info_row.dart';
+import '../ion/ion_widgets.dart';
 import '../../../../../shared/widgets/sheets/field_editor_sheet.dart';
 import '../../../../../shared/widgets/sheets/selection_sheet.dart';
 import '../church_picker_sheet.dart';
@@ -48,6 +48,11 @@ List<ExtraField> personExtraFields(WidgetRef ref, Tenant? tenant) {
 /// Callback type for person field changes.
 typedef PersonFieldChanged = void Function(String field, dynamic value);
 
+/// UX_PEOPLE: the Ionic person page shows these parts in different places:
+/// names (inline under the header), notes (above the accordions), the
+/// "Allgemein" accordion and the separate "Zusatzfelder" accordion.
+enum AllgemeinPart { general, names, notes, extraFields }
+
 /// Accordion widget displaying general person information with inline editing.
 class AllgemeinAccordion extends ConsumerWidget {
   const AllgemeinAccordion({
@@ -68,7 +73,11 @@ class AllgemeinAccordion extends ConsumerWidget {
     this.additionalFieldValues,
     this.isMainGroup = false,
     this.otherOrchestras,
+    this.part = AllgemeinPart.general,
   });
+
+  /// Which part of the Ionic person page this widget renders.
+  final AllgemeinPart part;
 
   final Person person;
   final bool isExpanded;
@@ -102,139 +111,116 @@ class AllgemeinAccordion extends ConsumerWidget {
     final isChoir = tenant?.type == 'choir';
     final isVoS = tenant?.shortName == 'VoS';
 
-    return Card(
-      margin: const EdgeInsets.symmetric(
-        horizontal: AppDimensions.paddingM,
-        vertical: AppDimensions.paddingXS,
-      ),
-      child: Column(
-        children: [
-          ListTile(
-            title: Text(
-              context.l10n.attendanceGeneral,
-              style: const TextStyle(fontWeight: FontWeight.w600),
-            ),
-            trailing: Icon(isExpanded ? Icons.expand_less : Icons.expand_more),
-            onTap: onToggle,
+    switch (part) {
+      case AllgemeinPart.names:
+        // Ionic ion-grid: Vorname | Nachname side by side
+        return _buildNameFields(context);
+      case AllgemeinPart.notes:
+        // Ionic: "Notizen" textarea above the accordions (existing && isAdmin)
+        return _buildNotesField(context);
+      case AllgemeinPart.extraFields:
+        // Ionic accordion "Zusatzfelder"
+        if (extraFields.isEmpty) return const SizedBox.shrink();
+        return IonAccordion(
+          title: context.l10n.peopleExtraFields,
+          expanded: isExpanded,
+          onToggle: onToggle,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: extraFields
+                .map((field) => _buildExtraField(context, field, additionalFields))
+                .toList(),
           ),
-          if (isExpanded)
-            Padding(
-              padding: const EdgeInsets.fromLTRB(
-                AppDimensions.paddingM,
-                0,
-                AppDimensions.paddingM,
-                AppDimensions.paddingM,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Name fields
-                  _buildNameFields(context),
-                  const Divider(height: 24),
+        );
+      case AllgemeinPart.general:
+        break;
+    }
 
-                  // Notes
-                  _buildNotesField(context),
+    // Ionic accordion "Allgemein", field order of person.page.html
+    return IonAccordion(
+      title: context.l10n.attendanceGeneral,
+      expanded: isExpanded,
+      onToggle: onToggle,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // Gruppe
+          _buildGroupField(context, ref),
 
-                  // Group
-                  _buildGroupField(context, ref),
+          // Stimmumfang (choir)
+          if (isChoir) _buildRangeField(context),
 
-                  // Phone
-                  _buildPhoneField(context),
+          // Telefonnummer
+          _buildPhoneField(context),
 
-                  // Birthday
-                  if (person.birthday != null || canEdit)
-                    _buildDateField(
-                      context,
-                      icon: Icons.cake,
-                      label: context.l10n.peopleBirthday,
-                      value: person.birthday,
-                      fieldKey: 'birthday',
-                      highlight: !person.correctBirthday,
-                      highlightColor: AppColors.warning,
-                    ),
-
-                  // Plays Since (Ionic: !general && !choir && !mainGroup)
-                  if ((person.playsSince != null || canEdit) &&
-                      !isGeneral &&
-                      !isChoir &&
-                      !isMainGroup)
-                    _buildDateField(
-                      context,
-                      icon: Icons.music_note,
-                      label: context.l10n.personPlaysSince,
-                      value: person.playsSince,
-                      fieldKey: 'playsSince',
-                    ),
-
-                  // Joined
-                  if (person.joined != null || canEdit)
-                    _buildDateField(
-                      context,
-                      icon: Icons.login,
-                      label: context.l10n.personJoinedOn,
-                      value: person.joined,
-                      fieldKey: 'joined',
-                    ),
-
-                  // Is Leader toggle (Ionic: !general && !mainGroup)
-                  if (!isGeneral && !isMainGroup) _buildIsLeaderField(context),
-
-                  // Has Teacher toggle (Ionic: maintainTeachers && !mainGroup)
-                  if ((tenant?.maintainTeachers ?? false) && !isMainGroup)
-                    _buildHasTeacherField(context, ref),
-
-                  // Shift Plan
-                  _buildShiftPlanField(context, ref),
-
-                  // Parent (Ionic: parents enabled && !mainGroup)
-                  if ((tenant?.parents ?? false) && !isMainGroup)
-                    _buildParentField(context, ref),
-
-                  // Other Exercise
-                  if (person.otherExercise != null || canEdit)
-                    _buildOtherExerciseField(context),
-
-                  // Choir-specific: Stimmumfang (range)
-                  if (tenant != null && tenant.type == 'choir')
-                    _buildRangeField(context),
-
-                  // Choir-specific: Instrumente
-                  if (tenant != null && tenant.type == 'choir')
-                    _buildInstrumentsField(context),
-
-                  // VoS: Andere Orchester
-                  if (isVoS && !isMainGroup &&
-                      (canEdit ||
-                          (otherOrchestras ?? person.otherOrchestras ?? [])
-                              .isNotEmpty))
-                    _buildOtherOrchestrasField(context),
-
-                  // Non-general: Prüfling (examinee)
-                  if (tenant != null && tenant.type != 'general')
-                    _buildExamineeField(context),
-
-                  // Non-general: Testergebnis (testResult)
-                  if (tenant != null && tenant.type != 'general')
-                    _buildTestResultField(context),
-
-                  // Extra Fields
-                  if (extraFields.isNotEmpty) ...[
-                    const Divider(height: 32),
-                    Text(
-                      context.l10n.peopleExtraFields,
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.primary,
-                          ),
-                    ),
-                    const SizedBox(height: AppDimensions.paddingS),
-                    ...extraFields.map(
-                      (field) => _buildExtraField(context, field, additionalFields),
-                    ),
-                  ],
-                ],
-              ),
+          // Geburtstag (warning item when not confirmed)
+          if (person.birthday != null || canEdit)
+            _buildDateField(
+              context,
+              icon: Icons.cake,
+              label: context.l10n.peopleBirthday,
+              value: person.birthday,
+              fieldKey: 'birthday',
+              highlight: !person.correctBirthday && canEdit,
+              highlightColor: AppColors.warning,
             ),
+
+          // Spielt seit (!general && !choir && !mainGroup)
+          if ((person.playsSince != null || canEdit) &&
+              !isGeneral &&
+              !isChoir &&
+              !isMainGroup)
+            _buildDateField(
+              context,
+              icon: Icons.music_note,
+              label: context.l10n.personPlaysSince,
+              value: person.playsSince,
+              fieldKey: 'playsSince',
+            ),
+
+          // Beigetreten am
+          if (person.joined != null || canEdit)
+            _buildDateField(
+              context,
+              icon: Icons.login,
+              label: context.l10n.personJoinedOn,
+              value: person.joined,
+              fieldKey: 'joined',
+            ),
+
+          // Eltern (parents enabled && !mainGroup)
+          if ((tenant?.parents ?? false) && !isMainGroup)
+            _buildParentField(context, ref),
+
+          // Spielt bei Lehrer + Lehrer (maintainTeachers && !mainGroup)
+          if ((tenant?.maintainTeachers ?? false) && !isMainGroup)
+            _buildHasTeacherField(context, ref),
+
+          // Stimmführer (!general && !mainGroup)
+          if (!isGeneral && !isMainGroup) _buildIsLeaderField(context),
+
+          // Instrumente (choir && !mainGroup)
+          if (isChoir && !isMainGroup) _buildInstrumentsField(context),
+
+          // Andere Orchester (VoS)
+          if (isVoS && !isMainGroup &&
+              (canEdit ||
+                  (otherOrchestras ?? person.otherOrchestras ?? []).isNotEmpty))
+            _buildOtherOrchestrasField(context),
+
+          // Prüfling (VoS && !mainGroup && (!readOnly || examinee))
+          if (isVoS && !isMainGroup && (canEdit || person.examinee))
+            _buildExamineeField(context),
+
+          // Testergebnis (VoS && !mainGroup)
+          if (isVoS && !isMainGroup) _buildTestResultField(context),
+
+          // Schichtplan / Schicht
+          _buildShiftPlanField(context, ref),
+
+          // Sonstige Dienste (!readOnly || otherExercise)
+          if (person.otherExercise != null || canEdit)
+            _buildOtherExerciseField(context),
         ],
       ),
     );
@@ -244,7 +230,7 @@ class AllgemeinAccordion extends ConsumerWidget {
     return Row(
       children: [
         Expanded(
-          child: EditableInfoRow(
+          child: IonFieldRow(
             icon: Icons.person,
             label: context.l10n.peopleFirstName,
             value: person.firstName,
@@ -260,7 +246,7 @@ class AllgemeinAccordion extends ConsumerWidget {
           ),
         ),
         Expanded(
-          child: EditableInfoRow(
+          child: IonFieldRow(
             icon: Icons.person_outline,
             label: context.l10n.peopleLastName,
             value: person.lastName,
@@ -283,7 +269,7 @@ class AllgemeinAccordion extends ConsumerWidget {
     final notes = person.notes;
     if (notes == null && !canEdit) return const SizedBox.shrink();
 
-    return EditableInfoRow(
+    return IonFieldRow(
       icon: Icons.notes,
       label: context.l10n.peopleNotes,
       value: notes ?? context.l10n.personFlutterNoNotes,
@@ -312,7 +298,7 @@ class AllgemeinAccordion extends ConsumerWidget {
             ? groups[currentGroupId] ?? context.l10n.commonUnknown
             : context.l10n.personFlutterNotAssigned;
 
-        return EditableInfoRow(
+        return IonFieldRow(
           icon: Icons.group,
           label: groupLabel(tenantType),
           value: groupName,
@@ -347,7 +333,7 @@ class AllgemeinAccordion extends ConsumerWidget {
     final phone = person.phone;
     if (phone == null && !canEdit) return const SizedBox.shrink();
 
-    return EditableInfoRow(
+    return IonFieldRow(
       icon: Icons.phone,
       label: context.l10n.peoplePhone,
       value: phone ?? context.l10n.personFlutterNotSpecified,
@@ -375,7 +361,7 @@ class AllgemeinAccordion extends ConsumerWidget {
   }) {
     final displayValue = value != null ? _formatDate(value) : context.l10n.personFlutterNotSpecified;
 
-    return EditableInfoRow(
+    return IonFieldRow(
       icon: icon,
       label: label,
       value: displayValue,
@@ -400,7 +386,7 @@ class AllgemeinAccordion extends ConsumerWidget {
   Widget _buildIsLeaderField(BuildContext context) {
     final value = isLeader ?? person.isLeader;
 
-    return EditableToggleRow(
+    return IonToggleRow(
       icon: Icons.star,
       label: context.l10n.peopleVoiceLeader,
       value: value,
@@ -415,7 +401,7 @@ class AllgemeinAccordion extends ConsumerWidget {
 
     return Column(
       children: [
-        EditableToggleRow(
+        IonToggleRow(
           icon: Icons.school,
           label: context.l10n.personPlaysWithTeacher,
           value: hasTeacherValue,
@@ -447,8 +433,8 @@ class AllgemeinAccordion extends ConsumerWidget {
         final teacherName = teacher?.name ?? context.l10n.personFlutterNotSelected;
 
         return Padding(
-          padding: const EdgeInsets.only(left: AppDimensions.paddingL),
-          child: EditableInfoRow(
+          padding: EdgeInsets.zero,
+          child: IonFieldRow(
             icon: Icons.person,
             label: context.l10n.peopleTeacher,
             value: teacherName,
@@ -493,7 +479,7 @@ class AllgemeinAccordion extends ConsumerWidget {
 
         return Column(
           children: [
-            EditableInfoRow(
+            IonFieldRow(
               icon: Icons.schedule,
               label: context.l10n.personShiftPlan,
               value: shiftName,
@@ -543,7 +529,7 @@ class AllgemeinAccordion extends ConsumerWidget {
 
     return Padding(
       padding: const EdgeInsets.only(left: AppDimensions.paddingL),
-      child: EditableInfoRow(
+      child: IonFieldRow(
         icon: Icons.access_time,
         label: context.l10n.personShift,
         value: currentShiftName ?? context.l10n.personFlutterNotSelected,
@@ -583,7 +569,7 @@ class AllgemeinAccordion extends ConsumerWidget {
 
     return Padding(
       padding: const EdgeInsets.only(left: AppDimensions.paddingL),
-      child: EditableInfoRow(
+      child: IonFieldRow(
         icon: Icons.calendar_today,
         label: context.l10n.personStartDate,
         value: displayValue,
@@ -615,7 +601,7 @@ class AllgemeinAccordion extends ConsumerWidget {
         final parent = parents.where((p) => p.id == currentParentId).firstOrNull;
         final parentName = parent?.fullName ?? context.l10n.personFlutterNotAssigned;
 
-        return EditableInfoRow(
+        return IonFieldRow(
           icon: Icons.family_restroom,
           label: context.l10n.personParents,
           value: parentName,
@@ -649,7 +635,7 @@ class AllgemeinAccordion extends ConsumerWidget {
   Widget _buildOtherExerciseField(BuildContext context) {
     final otherExercise = person.otherExercise;
 
-    return EditableInfoRow(
+    return IonFieldRow(
       icon: Icons.work,
       label: context.l10n.peopleOtherDuties,
       value: otherExercise ?? context.l10n.personFlutterNotSpecified,
@@ -666,7 +652,7 @@ class AllgemeinAccordion extends ConsumerWidget {
 
   Widget _buildOtherOrchestrasField(BuildContext context) {
     final selected = otherOrchestras ?? person.otherOrchestras ?? const [];
-    return EditableInfoRow(
+    return IonFieldRow(
       icon: Icons.groups_2_outlined,
       label: context.l10n.personOtherOrchestras,
       value: selected.isEmpty ? context.l10n.generalSettingsNone : selected.join(', '),
@@ -729,7 +715,7 @@ class AllgemeinAccordion extends ConsumerWidget {
       return Consumer(
         builder: (context, ref, _) {
           final churches = ref.watch(churchesProvider).valueOrNull ?? const [];
-          return EditableInfoRow(
+          return IonFieldRow(
             icon: Icons.church_outlined,
             label: field.name,
             value: churchLabel(value, churches),
@@ -751,7 +737,7 @@ class AllgemeinAccordion extends ConsumerWidget {
     }
 
     if (field.type == 'boolean') {
-      return EditableToggleRow(
+      return IonToggleRow(
         icon: icon,
         label: field.name,
         value: value == true,
@@ -760,7 +746,7 @@ class AllgemeinAccordion extends ConsumerWidget {
       );
     }
 
-    return EditableInfoRow(
+    return IonFieldRow(
       icon: icon,
       label: field.name,
       value: displayValue,
@@ -838,7 +824,7 @@ class AllgemeinAccordion extends ConsumerWidget {
     final rangeValue = person.range;
     if (rangeValue == null && !canEdit) return const SizedBox.shrink();
 
-    return EditableInfoRow(
+    return IonFieldRow(
       icon: Icons.music_note_outlined,
       label: context.l10n.personVocalRange,
       value: rangeValue ?? context.l10n.personFlutterNotSpecified,
@@ -857,7 +843,7 @@ class AllgemeinAccordion extends ConsumerWidget {
     final instrumentsValue = person.instruments;
     if (instrumentsValue == null && !canEdit) return const SizedBox.shrink();
 
-    return EditableInfoRow(
+    return IonFieldRow(
       icon: Icons.piano_outlined,
       label: context.l10n.peopleInstruments,
       value: instrumentsValue ?? context.l10n.personFlutterNotSpecified,
@@ -873,7 +859,7 @@ class AllgemeinAccordion extends ConsumerWidget {
   }
 
   Widget _buildExamineeField(BuildContext context) {
-    return EditableToggleRow(
+    return IonToggleRow(
       icon: Icons.school_outlined,
       label: context.l10n.peopleCandidate,
       value: person.examinee,
@@ -886,7 +872,7 @@ class AllgemeinAccordion extends ConsumerWidget {
     final testResultValue = person.testResult;
     if (testResultValue == null && !canEdit) return const SizedBox.shrink();
 
-    return EditableInfoRow(
+    return IonFieldRow(
       icon: Icons.assignment_outlined,
       label: context.l10n.peopleTestResult,
       value: testResultValue ?? context.l10n.personFlutterNotSpecified,

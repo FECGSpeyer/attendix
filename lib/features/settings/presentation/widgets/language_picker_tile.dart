@@ -1,9 +1,11 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/providers/locale_provider.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../l10n/l10n.dart';
+import 'settings_list.dart';
 
 /// I18N_INFRA – Ionic settings "System" item:
 /// `ion-item` with `language-outline` icon and an `ion-select
@@ -17,6 +19,7 @@ class LanguagePickerTile extends ConsumerWidget {
     if (enabledLanguages.length <= 1) return const SizedBox.shrink();
     final l10n = context.l10n;
     final current = ref.watch(localeProvider).languageCode;
+    final ios = ionIsIos(context);
 
     return PopupMenuButton<String>(
       key: const Key('languagePicker'),
@@ -34,27 +37,17 @@ class LanguagePickerTile extends ConsumerWidget {
             child: Text(languageNames[lang] ?? lang),
           ),
       ],
-      child: ListTile(
-        leading: const Icon(Icons.language, color: AppColors.medium),
-        title: Row(
+      // UX_SETTINGS (WAVE 8): same item look as the other System entries;
+      // label + green ion-badge "NEU", the selected value at the end.
+      child: SettingsListTile(
+        icon: Icons.language,
+        title: l10n.settingsLanguageTitle,
+        detail: false,
+        titleWidget: Row(
           children: [
             Flexible(child: Text(l10n.settingsLanguageTitle)),
-            const SizedBox(width: 8),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-              decoration: BoxDecoration(
-                color: AppColors.success,
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: Text(
-                l10n.settingsNew,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 10,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
+            const SizedBox(width: 6),
+            IonBadge(text: l10n.settingsNew, color: AppColors.success),
           ],
         ),
         trailing: Row(
@@ -62,9 +55,19 @@ class LanguagePickerTile extends ConsumerWidget {
           children: [
             Text(
               languageNames[current] ?? current,
-              style: const TextStyle(color: AppColors.medium),
+              style: TextStyle(
+                fontSize: 16,
+                color: ios ? IonIos.text(context) : AppColors.medium,
+              ),
             ),
-            const Icon(Icons.arrow_drop_down, color: AppColors.medium),
+            const SizedBox(width: 4),
+            ios
+                ? Icon(
+                    CupertinoIcons.chevron_up_chevron_down,
+                    size: 16,
+                    color: IonIos.text(context).withValues(alpha: 0.33),
+                  )
+                : const Icon(Icons.arrow_drop_down, color: AppColors.medium),
           ],
         ),
       ),

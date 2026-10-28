@@ -18,6 +18,7 @@ import '../../history_utils.dart';
 import '../../../../core/utils/demo_guard.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 import '../../../attendance/presentation/widgets/ios_condense_header.dart'; // UX_ATT
 
 /// History Page - Song performance history
@@ -68,7 +69,7 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
           // History list
           Expanded(
             child: historyAsync.when(
-              loading: () => const Center(child: CircularProgressIndicator()),
+              loading: () => const Center(child: AppSpinner()),
               error:
                   (e, _) => Center(
                     child: Column(
@@ -132,7 +133,7 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
                   );
                 }
 
-                return RefreshIndicator(
+                return RefreshIndicator.adaptive(
                   onRefresh: () async {
                     ref.invalidate(performanceHistoryProvider);
                     await ref.read(performanceHistoryProvider.future);
@@ -327,7 +328,7 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
                   trailing: IconButton(
                     icon: const Icon(Icons.calendar_today_outlined, color: AppColors.primary),
                     onPressed: () async {
-                      final date = await showDatePicker(
+                      final date = await showAppDatePicker(
                         context: sheetContext,
                         initialDate: selectedDate,
                         firstDate: DateTime(2000),
@@ -377,9 +378,9 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
   Future<String?> _askOtherConductor(BuildContext context) async {
     final controller = TextEditingController();
     try {
-      return await showDialog<String>(
+      return await showAppDialog<String>(
         context: context,
-        builder: (context) => AlertDialog(
+        builder: (context) => AppAlertDialog(
           title: Text(context.l10n.attListEnterConductor),
           content: TextField(
             controller: controller,

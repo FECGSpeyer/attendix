@@ -8,6 +8,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/color_utils.dart';
 import '../../../../core/utils/event_list_utils.dart';
 import '../../../../shared/widgets/event_list/event_list_widgets.dart';
+import '../../../../shared/widgets/layout/ionic_ios.dart';
 import '../widgets/plan_viewer_sheet.dart';
 import '../widgets/self_service_event_actions.dart';
 import '../../../../l10n/l10n.dart';
@@ -74,9 +75,14 @@ class _SelfServiceOverviewPageState
     ref.watch(canAccessFilesProvider);
     final actions = _actions();
 
-    return Scaffold(
+    // UX_SONGS_SELF: Ionic condensed large title + segment toolbar.
+    return CondenseHeader(
+      builder: (context, condensed) => Scaffold(
       appBar: AppBar(
-        title: Text(context.l10n.selfServiceAllEvents),
+        title: CondenseTitle(
+          condensed: condensed,
+          child: Text(context.l10n.selfServiceAllEvents),
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.info_outline),
@@ -88,32 +94,41 @@ class _SelfServiceOverviewPageState
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(52),
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+            padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
             child: SizedBox(
               width: double.infinity,
-              child: AppSegmentedButton<String>(
-                segments: [
-                  ButtonSegment(value: 'chronological', label: Text(context.l10n.selfServiceChronological)),
-                  ButtonSegment(value: 'byTenant', label: Text(context.l10n.selfServiceByInstance)),
+              child: IonSegment<String>(
+                items: [
+                  IonSegmentItem(value: 'chronological', label: Text(context.l10n.selfServiceChronological)),
+                  IonSegmentItem(value: 'byTenant', label: Text(context.l10n.selfServiceByInstance)),
                 ],
-                selected: {_groupingMode},
-                onSelectionChanged: (value) =>
-                    setState(() => _groupingMode = value.first),
+                value: _groupingMode,
+                onChanged: (value) => setState(() => _groupingMode = value),
               ),
             ),
           ),
         ),
       ),
       body: attendancesAsync.when(
-        loading: () => Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              AppSpinner(),
-              SizedBox(height: 12),
-              Text(context.l10n.selfServiceLoadingEvents),
-            ],
-          ),
+        // Ionic: ion-card with spinner and text at the top
+        loading: () => ListView(
+          children: [
+            IonLargeTitle(context.l10n.selfServiceAllEvents),
+            Card(
+              margin: const EdgeInsets.all(16),
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const AppSpinner(),
+                    const SizedBox(height: 8),
+                    Text(context.l10n.selfServiceLoadingEvents, textAlign: TextAlign.center),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
         error: (error, stack) => Center(
           child: Column(
@@ -134,8 +149,14 @@ class _SelfServiceOverviewPageState
             child: ListView(
               padding: const EdgeInsets.only(bottom: 32),
               children: [
+                IonLargeTitle(context.l10n.selfServiceAllEvents),
+                // Ionic `.ev-summary.overview-summary`: card, margin 8 16 0
                 if (past.isNotEmpty)
-                  EventSummary(percentage: stats.percentage, lateCount: stats.lateCount),
+                  Card(
+                    margin: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                    child: EventSummary(percentage: stats.percentage, lateCount: stats.lateCount),
+                  ),
                 if (_groupingMode == 'chronological')
                   ..._buildChronological(current, upcoming, past, actions)
                 else
@@ -144,6 +165,7 @@ class _SelfServiceOverviewPageState
             ),
           );
         },
+      ),
       ),
     );
   }
@@ -215,6 +237,7 @@ class _SelfServiceOverviewPageState
       if (current != null) ...[
         EventMonthHeader(label: current.isRunning ? context.l10n.teamOrgTodayCap : context.l10n.teamOrgNextEvent),
         EventTodayCard(
+          bordered: true,
           date: current.date,
           title: current.eventTitle,
           meta: current.eventMeta(withDate: true, withPlace: false),
@@ -233,11 +256,12 @@ class _SelfServiceOverviewPageState
           for (final att in group.items) _row(att, actions, showTenant: true),
         ]),
       ],
+      // Ionic `.ev-empty`: margin 12 20, medium
       if (upcoming.isEmpty)
         Padding(
-          padding: EdgeInsets.all(24),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
           child: Text(context.l10n.selfServiceNoUpcoming,
-              textAlign: TextAlign.center, style: TextStyle(color: AppColors.medium)),
+              style: const TextStyle(color: AppColors.medium)),
         ),
       if (past.isNotEmpty) ...[
         EventSectionHeader(title: context.l10n.signoutPast, count: past.length),
@@ -266,9 +290,9 @@ class _SelfServiceOverviewPageState
     if (grouped.isEmpty) {
       return [
         Padding(
-          padding: EdgeInsets.all(24),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
           child: Text(context.l10n.selfServiceNoEvents,
-              textAlign: TextAlign.center, style: TextStyle(color: AppColors.medium)),
+              style: const TextStyle(color: AppColors.medium)),
         ),
       ];
     }

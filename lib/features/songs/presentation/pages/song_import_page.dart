@@ -11,6 +11,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../people/presentation/widgets/import_widgets.dart';
 import '../../../../core/providers/demo_providers.dart'; // DEMO_GUARD
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/layout/ionic_ios.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
@@ -279,9 +280,11 @@ class _SongImportPageState extends ConsumerState<SongImportPage> {
           errors: errorCount,
         ),
         const SizedBox(height: AppDimensions.paddingS),
-        Card(
-          child: Column(
-            children: [
+        // Ionic ion-list inset (iOS radius, inset hairlines)
+        IonInsetList(
+          margin: EdgeInsets.zero,
+          grouped: false,
+          children: [
               for (final row in _mappedRows)
                 Opacity(
                   opacity: row.isImportable ? 1 : 0.6,
@@ -293,8 +296,7 @@ class _SongImportPageState extends ConsumerState<SongImportPage> {
                         : ImportRowMessages(errors: row.errors, warnings: row.warnings),
                   ),
                 ),
-            ],
-          ),
+          ],
         ),
       ],
     );

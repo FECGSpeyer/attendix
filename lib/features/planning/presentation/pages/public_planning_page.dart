@@ -25,11 +25,14 @@ import '../widgets/plan_export_actions.dart';
 import '../widgets/plan_field_dialogs.dart';
 import '../widgets/plan_fields_editor.dart';
 import '../widgets/plan_song_helper.dart';
+import '../widgets/ion_items.dart';
 import 'planning_page.dart' show planSongsProvider;
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/layout/centered_content.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+
+export '../widgets/ion_items.dart' show IonDatetimeChip;
 
 /// Predefined template of the public planning page (Ionic `PUBLIC_PLANNING_TEMPLATES`).
 class PublicPlanningTemplate {
@@ -561,11 +564,11 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
   }
 
   Future<void> _openMyPlans() async {
-    final plan = await showModalBottomSheet<SharedPlan>(
-      context: context,
-      isScrollControlled: true,
+    // Ionic: full ion-modal (MyPlansComponent).
+    final plan = await Navigator.of(context, rootNavigator: true).push<SharedPlan>(MaterialPageRoute(
+      fullscreenDialog: true,
       builder: (_) => const _MyPlansSheet(),
-    );
+    ));
     if (plan != null) _loadPlan(plan);
   }
 
@@ -728,21 +731,21 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
     }
     final orgTemplates = org?.planningTemplates ?? const <Plan>[];
 
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: widget.inApp,
-        title: Text(context.l10n.plansPlanning),
-        actions: [
-          if (loggedIn)
-            IconButton(tooltip: context.l10n.plansMyPlans, icon: const Icon(Icons.list), onPressed: _openMyPlans),
-          IconButton(tooltip: context.l10n.plansShareExport, icon: const Icon(Icons.ios_share), onPressed: _shareCurrentPlan),
-        ],
-      ),
-      body: !_ready
+    // Ionic: ion-header + `collapse="condense"` large title (iOS).
+    return IonCondenseScaffold(
+      automaticallyImplyLeading: widget.inApp,
+      title: context.l10n.plansPlanning,
+      actions: [
+        if (loggedIn)
+          IconButton(tooltip: context.l10n.plansMyPlans, icon: const Icon(Icons.list), onPressed: _openMyPlans),
+        IconButton(tooltip: context.l10n.plansShareExport, icon: const Icon(Icons.ios_share), onPressed: _shareCurrentPlan),
+      ],
+      bodyBuilder: (context, largeTitle) => !_ready
           ? const Center(child: AppSpinner())
           : ListView(
               padding: centeredListPadding(context, bottom: 32),
               children: [
+                if (largeTitle != null) largeTitle,
                 // Ionic: ion-list [inset]="true" with full-width item lines.
                 _InsetList(
                   margin: const EdgeInsets.all(AppDimensions.paddingM),
@@ -774,7 +777,7 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
                       ),
                     ),
                     // ion-select interface="popover": label left, value right
-                    _InlineSelect<String>(
+                    IonSelect<String>(
                       key: ValueKey('tpl-$_templateId'),
                       label: context.l10n.plansTemplate,
                       value: _templateId,
@@ -790,7 +793,7 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
                       ],
                       onChanged: _onTemplateChange,
                     ),
-                    _InlineSelect<String>(
+                    IonSelect<String>(
                       key: ValueKey('brand-$_brandingId'),
                       label: context.l10n.plansBranding,
                       value: _brandingId,
@@ -836,23 +839,18 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
                 ),
                 // ion-list-header: bold title with the "+" popover trigger
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(32, 8, 20, 0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Text(context.l10n.planningRunSheet,
-                            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                  padding: const EdgeInsets.fromLTRB(AppDimensions.paddingM, 8, AppDimensions.paddingM, 0),
+                  child: IonListHeader(
+                    title: context.l10n.planningRunSheet,
+                    trailing: Builder(
+                      builder: (anchor) => IconButton(
+                        key: const ValueKey('plan-add-trigger'),
+                        color: AppColors.primary,
+                        tooltip: context.l10n.planningAddField,
+                        icon: const Icon(Icons.add),
+                        onPressed: () => _showAddMenu(anchor),
                       ),
-                      Builder(
-                        builder: (anchor) => IconButton(
-                          key: const ValueKey('plan-add-trigger'),
-                          color: AppColors.primary,
-                          tooltip: context.l10n.planningAddField,
-                          icon: const Icon(Icons.add),
-                          onPressed: () => _showAddMenu(anchor),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
                 _InsetList(
@@ -905,46 +903,33 @@ class _MyPlansSheet extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final plansAsync = ref.watch(mySharedPlansProvider);
-    return SafeArea(
-      child: SizedBox(
-        height: MediaQuery.of(context).size.height * 0.85,
-        child: Column(
+    return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: Text(context.l10n.plansMyPlans),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: Text(context.l10n.commonClose)),
+        ],
+      ),
+      body: plansAsync.when(
+        loading: () => const Center(child: AppSpinner()),
+        error: (e, _) => Center(child: Text(context.l10n.planningFlutterErrorWith(friendlyErrorMessage(e)))),
+        // Ionic: inset list, ion-item-sliding with a danger option; empty
+        // text as a centered grey item.
+        data: (plans) => ListView(
+          padding: const EdgeInsets.only(bottom: 16),
           children: [
-            ListTile(
-              title: Text(context.l10n.plansMyPlans, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-              trailing: TextButton(onPressed: () => Navigator.pop(context), child: Text(context.l10n.commonClose)),
-            ),
-            Expanded(
-              child: plansAsync.when(
-                loading: () => const Center(child: AppSpinner()),
-                error: (e, _) => Center(child: Text(context.l10n.planningFlutterErrorWith(friendlyErrorMessage(e)))),
-                data: (plans) {
-                  if (plans.isEmpty) {
-                    return Center(
-                      child: Text(context.l10n.plansNoPlans, style: const TextStyle(color: AppColors.medium)),
-                    );
-                  }
-                  // Ionic: inset list, ion-item-sliding with a danger option
-                  return ListView(
-                    padding: const EdgeInsets.all(AppDimensions.paddingM),
-                    children: [
-                      Card(
-                        margin: EdgeInsets.zero,
-                        clipBehavior: Clip.antiAlias,
-                        child: SlidableAutoCloseBehavior(
-                          child: Column(
-                            children: [
-                              for (var i = 0; i < plans.length; i++) ...[
-                                if (i > 0) const Divider(height: 1),
-                                _MyPlanTile(plan: plans[i]),
-                              ],
-                            ],
-                          ),
+            SlidableAutoCloseBehavior(
+              child: IonInsetList(
+                children: plans.isEmpty
+                    ? [
+                        Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Text(context.l10n.plansNoPlans,
+                              textAlign: TextAlign.center, style: const TextStyle(color: AppColors.medium)),
                         ),
-                      ),
-                    ],
-                  );
-                },
+                      ]
+                    : [for (final p in plans) _MyPlanTile(plan: p)],
               ),
             ),
           ],
@@ -1003,7 +988,7 @@ class _MyPlanTile extends ConsumerWidget {
       child: ListTile(
         title: Text(title),
         subtitle: Text('$date${count > 0 ? ' · ${context.l10n.plansFlutterFieldsCount(count)}' : ''}'),
-        trailing: const Icon(Icons.chevron_right, color: AppColors.medium),
+        trailing: const IonDetailIcon(),
         onTap: () => Navigator.pop(context, plan),
       ),
     );
@@ -1033,85 +1018,6 @@ class _InsetList extends StatelessWidget {
             if (i < dividerCount && i < children.length - 1) const Divider(height: 1, indent: 16),
           ],
         ],
-      ),
-    );
-  }
-}
-
-/// Ionic `ion-select` inside an `ion-item` (interface="popover"): the label on
-/// the left, the selected value with a caret on the right, no field box.
-class _InlineSelect<T> extends StatelessWidget {
-  const _InlineSelect({
-    super.key,
-    required this.label,
-    required this.value,
-    required this.items,
-    required this.onChanged,
-  });
-
-  final String label;
-  final T? value;
-  final List<DropdownMenuItem<T>> items;
-  final ValueChanged<T?> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 16, right: 12),
-      child: Row(
-        children: [
-          Text(label, style: Theme.of(context).textTheme.bodyLarge),
-          const SizedBox(width: 16),
-          Expanded(
-            child: DropdownButtonHideUnderline(
-              child: DropdownButton<T>(
-                value: value,
-                isExpanded: true,
-                alignment: AlignmentDirectional.centerEnd,
-                items: items,
-                selectedItemBuilder: (context) => [
-                  for (final it in items)
-                    Align(
-                      alignment: AlignmentDirectional.centerEnd,
-                      child: DefaultTextStyle.merge(
-                        style: const TextStyle(color: AppColors.medium),
-                        overflow: TextOverflow.ellipsis,
-                        child: it.child,
-                      ),
-                    ),
-                ],
-                onChanged: onChanged,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-/// Ionic `ion-datetime-button`: grey rounded chip showing the date/time
-/// (no "Uhr" suffix). Without [onTap] it is read-only (disabled datetime).
-class IonDatetimeChip extends StatelessWidget {
-  const IonDatetimeChip({super.key, required this.text, this.onTap});
-
-  final String text;
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final background = isDark ? const Color(0xFF2C2C2E) : const Color(0xFFEDEEF0);
-    return Material(
-      color: background,
-      borderRadius: BorderRadius.circular(8),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(8),
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-          child: Text(text, style: Theme.of(context).textTheme.bodyLarge),
-        ),
       ),
     );
   }

@@ -15,6 +15,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/message/message.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../settings/presentation/widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
 
 /// Opens the full-screen compose dialog. Returns the new message id when sent.
 Future<String?> openMessageCompose(BuildContext context) {
@@ -221,7 +222,14 @@ class _MessageComposePageState extends ConsumerState<MessageComposePage> {
     final groups = ref.watch(groupsProvider).valueOrNull ?? [];
     final l10n = context.l10n;
 
-    Widget header(String text) => Padding(
+    // UX_SETTINGS (WAVE 8): message-compose.component.html — inset lists
+    // with ion-list-header labels on the light page (iOS).
+    Widget header(String text) => ionIsIos(context)
+        ? Padding(
+            padding: const EdgeInsets.only(top: 16),
+            child: IonListHeader(title: text),
+          )
+        : Padding(
       padding: const EdgeInsets.fromLTRB(
         AppDimensions.paddingS,
         AppDimensions.paddingL,
@@ -248,8 +256,7 @@ class _MessageComposePageState extends ConsumerState<MessageComposePage> {
           ListView(
             padding: const EdgeInsets.all(AppDimensions.paddingM),
             children: [
-              Card(
-                margin: EdgeInsets.zero,
+              _ComposeBox(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: AppDimensions.paddingM,
@@ -272,9 +279,7 @@ class _MessageComposePageState extends ConsumerState<MessageComposePage> {
                 ),
               ),
               const SizedBox(height: AppDimensions.paddingM),
-              Card(
-                margin: EdgeInsets.zero,
-                clipBehavior: Clip.antiAlias,
+              _ComposeBox(
                 child: Column(
                   children: [
                     QuillSimpleToolbar(
@@ -327,8 +332,7 @@ class _MessageComposePageState extends ConsumerState<MessageComposePage> {
                 ),
               ),
               header(l10n.messagesRecipients),
-              Card(
-                margin: EdgeInsets.zero,
+              _ComposeBox(
                 child: Builder(
                   builder: (context) {
                     void onAudience(_Audience? v) {
@@ -390,8 +394,7 @@ class _MessageComposePageState extends ConsumerState<MessageComposePage> {
                 ),
               ),
               header(l10n.messagesSendVia),
-              Card(
-                margin: EdgeInsets.zero,
+              _ComposeBox(
                 child: Column(
                   children: [
                     SwitchListTile.adaptive(
@@ -421,9 +424,17 @@ class _MessageComposePageState extends ConsumerState<MessageComposePage> {
                   ],
                 ),
               ),
+              // Ionic .summary: margin 0 20px, 0.85rem medium-shade.
               Padding(
-                padding: const EdgeInsets.all(AppDimensions.paddingM),
-                child: _buildSummary(theme),
+                padding: const EdgeInsets.fromLTRB(4, 16, 4, 16),
+                child: DefaultTextStyle.merge(
+                  style: const TextStyle(
+                    fontSize: 13.6,
+                    height: 1.4,
+                    color: Color(0xFF808289),
+                  ),
+                  child: _buildSummary(theme),
+                ),
               ),
               FilledButton.icon(
                 onPressed: _canSend ? _confirmSend : null,
@@ -518,4 +529,26 @@ List<TextSpan> _strongSpans(String html) {
   }
   if (last < html.length) spans.add(TextSpan(text: html.substring(last)));
   return spans;
+}
+
+/// Ionic `ion-list [inset]` box: iOS item group (radius 24, item
+/// background); md: the Material card.
+class _ComposeBox extends StatelessWidget {
+  const _ComposeBox({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!ionIsIos(context)) {
+      return Card(margin: EdgeInsets.zero, clipBehavior: Clip.antiAlias, child: child);
+    }
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(IonIos.groupRadius),
+      child: Material(
+        color: IonIos.itemBackground(context),
+        child: ionIosListTileTheme(context, child: child),
+      ),
+    );
+  }
 }

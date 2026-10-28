@@ -3,12 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/song_providers.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/instrument/instrument.dart';
 import '../../data/song_print_service.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../shared/widgets/layout/ionic_ios.dart';
 
 /// "Aktuelle Werke" sheet (Ionic currentSongsModal)
 class CurrentSongsSheet extends ConsumerWidget {
@@ -66,68 +66,51 @@ class CurrentSongsSheet extends ConsumerWidget {
       maxChildSize: 1,
       expand: false,
       builder: (context, scrollController) {
+        // UX_SONGS_SELF: Ionic currentSongsModal: toolbar (title + print),
+        // light content with one inset list (list header per date).
         return Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(
-                  AppDimensions.paddingM, AppDimensions.paddingS, AppDimensions.paddingS, 0),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      context.l10n.songsCurrent,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                    ),
-                  ),
-                  if (canPrint)
-                    IconButton(
-                      tooltip: context.l10n.songsPrintScores,
-                      icon: const Icon(Icons.print_outlined),
-                      onPressed: () => _printNotesForGroup(context, ref),
-                    ),
+            IonSheetHeader(
+              title: context.l10n.songsCurrent,
+              end: [
+                if (canPrint)
                   IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: () => Navigator.of(context).pop(),
+                    tooltip: context.l10n.songsPrintScores,
+                    icon: const Icon(Icons.print_outlined),
+                    onPressed: () => _printNotesForGroup(context, ref),
                   ),
-                ],
-              ),
+              ],
             ),
-            const Divider(height: 1),
             Expanded(
-              child: ListView(
-                controller: scrollController,
-                padding: const EdgeInsets.only(bottom: AppDimensions.paddingL),
-                children: [
-                  for (final group in data.currentSongs) ...[
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(
-                          AppDimensions.paddingM, AppDimensions.paddingM, AppDimensions.paddingM, 4),
-                      child: Text(
-                        group.date,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.medium,
-                        ),
+              child: ColoredBox(
+                color: Theme.of(context).scaffoldBackgroundColor,
+                child: ListView(
+                  controller: scrollController,
+                  padding: const EdgeInsets.only(bottom: AppDimensions.paddingL),
+                  children: [
+                    for (final group in data.currentSongs) ...[
+                      IonListHeader(group.date),
+                      IonInsetList(
+                        children: [
+                          for (final his in group.history)
+                            if (his.song != null)
+                              IonItem(
+                                title: Text(
+                                  '${his.song!.prefix ?? ''}${his.song!.number ?? ''} ${his.song!.name}',
+                                ),
+                                detail: true,
+                                onTap: his.song!.id == null
+                                    ? null
+                                    : () {
+                                        Navigator.of(context).pop();
+                                        onOpenSong(his.song!.id!);
+                                      },
+                              ),
+                        ],
                       ),
-                    ),
-                    for (final his in group.history)
-                      if (his.song != null)
-                        ListTile(
-                          dense: true,
-                          title: Text(
-                            '${his.song!.prefix ?? ''}${his.song!.number ?? ''} ${his.song!.name}',
-                          ),
-                          onTap: his.song!.id == null
-                              ? null
-                              : () {
-                                  Navigator.of(context).pop();
-                                  onOpenSong(his.song!.id!);
-                                },
-                        ),
+                    ],
                   ],
-                ],
+                ),
               ),
             ),
           ],

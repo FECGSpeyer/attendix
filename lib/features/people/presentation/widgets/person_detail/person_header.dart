@@ -5,7 +5,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../../core/config/supabase_config.dart';
-import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/constants/table_names.dart';
 import '../../../../../core/providers/realtime_providers.dart';
 import '../../../../../core/providers/tenant_providers.dart';
@@ -20,18 +19,24 @@ import '../../../../../core/utils/error_message.dart';
 import '../../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 import '../../../../../core/utils/profile_image_path.dart'; // DB_REVIEW_REST
 
-/// Header widget displaying person avatar, group, and attendance stats.
+/// UX_PEOPLE: Ionic person.page `.profile-header`: 120px avatar with white
+/// ring and shadow, camera badge when editable, name (h1) with a pencil
+/// button that shows the name inputs.
 class PersonHeader extends ConsumerWidget {
   const PersonHeader({
     super.key,
     required this.person,
     required this.statsAsync,
     this.canEdit = false,
+    this.onEditName,
   });
 
   final Person person;
   final AsyncValue<Map<String, dynamic>> statsAsync;
   final bool canEdit;
+
+  /// Ionic `editingName = true` (pencil next to the name).
+  final VoidCallback? onEditName;
 
   bool get _hasImage =>
       person.img != null &&
@@ -40,96 +45,111 @@ class PersonHeader extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Container(
-      padding: const EdgeInsets.all(AppDimensions.paddingL),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            person.isCritical ? AppColors.danger : AppColors.primary,
-            (person.isCritical ? AppColors.danger : AppColors.primary)
-                .withValues(alpha: 0.7),
-          ],
-        ),
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    final ringColor = dark ? Colors.black : Colors.white;
+    final placeholder = Container(
+      color: dark ? const Color(0xFF222428) : AppColors.light,
+      alignment: Alignment.bottomCenter,
+      child: Icon(
+        Icons.person,
+        size: 104,
+        color: dark ? const Color(0xFF555555) : const Color(0xFFC5C5C5),
       ),
+    );
+    final name = '${person.firstName} ${person.lastName}'.trim();
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 24, 16, 12),
       child: Column(
         children: [
           GestureDetector(
             onTap: () => _onAvatarTap(context, ref),
-            child: Hero(
-              tag: 'person-${person.id}',
-              child: CircleAvatar(
-                radius: 50,
-                backgroundColor: Colors.white,
-                backgroundImage: _hasImage ? NetworkImage(person.img!) : null,
-                child: !_hasImage
-                    ? Text(
-                        person.initials,
-                        style: const TextStyle(
-                          fontSize: 36,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.primary,
-                        ),
-                      )
-                    : null,
-              ),
-            ),
-          ),
-          const SizedBox(height: AppDimensions.paddingM),
-          if (person.groupName != null)
-            Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppDimensions.paddingM,
-                vertical: AppDimensions.paddingXS,
-              ),
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.2),
-                borderRadius:
-                    BorderRadius.circular(AppDimensions.borderRadiusS),
-              ),
-              child: Text(
-                person.groupName!,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
-          const SizedBox(height: AppDimensions.paddingM),
-          statsAsync.when(
-            loading: () => const SizedBox.shrink(),
-            error: (_, __) => const SizedBox.shrink(),
-            data: (stats) => Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _StatItem(
-                  value: '${stats['percentage']}%',
-                  label: stats['lateCount'] > 0
-                      ? context.l10n.personFlutterAttendanceLate(stats['lateCount'] as int)
-                      : context.l10n.peopleAttendance,
-                  color: stats['percentage'] >= 75
-                      ? AppColors.success
-                      : stats['percentage'] >= 50
-                          ? AppColors.warning
-                          : AppColors.danger,
-                ),
-                Container(
-                  width: 1,
-                  height: 40,
-                  margin: const EdgeInsets.symmetric(
-                    horizontal: AppDimensions.paddingL,
+            child: SizedBox(
+              width: 120,
+              height: 120,
+              child: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  Hero(
+                    tag: 'person-${person.id}',
+                    child: Container(
+                      width: 120,
+                      height: 120,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(color: ringColor, width: 3),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Color(0x2E000000),
+                            offset: Offset(0, 4),
+                            blurRadius: 16,
+                          ),
+                        ],
+                      ),
+                      child: ClipOval(
+                        child: _hasImage
+                            ? Image.network(
+                                person.img!,
+                                fit: BoxFit.cover,
+                                errorBuilder: (_, __, ___) => placeholder,
+                              )
+                            : placeholder,
+                      ),
+                    ),
                   ),
-                  color: Colors.white.withValues(alpha: 0.3),
-                ),
-                _StatItem(
-                  value: '${stats['attended']}/${stats['total']}',
-                  label: context.l10n.tabsEvents,
-                  color: Colors.white,
-                ),
-              ],
+                  if (canEdit)
+                    Positioned(
+                      right: 2,
+                      bottom: 2,
+                      child: Container(
+                        width: 34,
+                        height: 34,
+                        decoration: BoxDecoration(
+                          color: AppColors.primary,
+                          shape: BoxShape.circle,
+                          border: Border.all(color: ringColor, width: 3),
+                        ),
+                        child: const Icon(Icons.camera_alt,
+                            size: 16, color: Colors.white),
+                      ),
+                    ),
+                ],
+              ),
             ),
           ),
+          if (name.isNotEmpty || onEditName != null)
+            Padding(
+              padding: const EdgeInsets.only(top: 14),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Flexible(
+                    child: Text(
+                      name,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 21.6,
+                        fontWeight: FontWeight.w600,
+                        height: 1.2,
+                      ),
+                    ),
+                  ),
+                  if (onEditName != null) ...[
+                    const SizedBox(width: 4),
+                    SizedBox(
+                      height: 28,
+                      width: 28,
+                      child: IconButton(
+                        padding: EdgeInsets.zero,
+                        tooltip: context.l10n.personEditName,
+                        icon: const Icon(Icons.edit_note,
+                            size: 20, color: AppColors.medium),
+                        onPressed: onEditName,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
         ],
       ),
     );
@@ -336,38 +356,3 @@ class PersonHeader extends ConsumerWidget {
   }
 }
 
-class _StatItem extends StatelessWidget {
-  const _StatItem({
-    required this.value,
-    required this.label,
-    required this.color,
-  });
-
-  final String value;
-  final String label;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text(
-          value,
-          style: TextStyle(
-            color: color,
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          label,
-          style: TextStyle(
-            color: Colors.white.withValues(alpha: 0.8),
-            fontSize: 12,
-          ),
-        ),
-      ],
-    );
-  }
-}

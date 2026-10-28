@@ -66,7 +66,7 @@ void main() {
 
   test('Teachers list uses Ionic texts', () {
     final src = read('lib/features/teachers/presentation/pages/teachers_list_page.dart');
-    expect(src, contains('AppBar(title: Text(context.l10n.teachersTitle))'));
+    expect(src, contains('title: context.l10n.teachersTitle,'));
     expect(src, contains('l10n.teachersPlayerCount(count)'));
     expect(src, contains('l10n.teachersAdd'));
     expect(src, contains('l10n.teachersUpdate'));

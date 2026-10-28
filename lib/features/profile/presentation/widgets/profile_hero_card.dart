@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -49,14 +50,20 @@ class ProfileHeroCard extends ConsumerWidget {
         ),
     ];
 
-    // settings.page.scss .hero-card: 16 px radius, 16 px padding, flat white
-    // block (ion-item background), 8 px gap below.
+    // UX_SETTINGS (WAVE 8): settings.page.scss .hero-card — margin
+    // 12 16 8 (page padding supplies top/sides), radius 16, padding 16,
+    // 52pt avatar, 1.15rem bold name, 0.85rem medium role, medium chevron.
+    final ios = theme.platform == TargetPlatform.iOS;
     return Padding(
-      padding: const EdgeInsets.only(bottom: AppDimensions.paddingS),
-      child: Material(
-        color: theme.cardTheme.color ?? theme.colorScheme.surface,
-        borderRadius: BorderRadius.circular(16),
+      padding: EdgeInsets.only(bottom: ios ? 8 : AppDimensions.paddingM),
+      child: Card(
+        margin: EdgeInsets.zero,
         clipBehavior: Clip.antiAlias,
+        elevation: 0,
+        color: ios
+            ? (theme.brightness == Brightness.dark ? AppColors.surfaceDark : Colors.white)
+            : null,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         child: InkWell(
           onTap: () => showMasterDataSheet(context),
           child: Padding(
@@ -100,8 +107,11 @@ class ProfileHeroCard extends ConsumerWidget {
                         ],
                       ),
                     ),
-                    const Icon(Icons.chevron_right,
-                        size: 18, color: AppColors.medium),
+                    Icon(
+                      ios ? CupertinoIcons.chevron_forward : Icons.chevron_right,
+                      size: ios ? 17.6 : null,
+                      color: AppColors.medium,
+                    ),
                   ],
                 ),
                 if (chips.isNotEmpty) ...[
@@ -130,7 +140,8 @@ class _StatChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      // .stat-chip: 0.8rem, 8 px radius, 4/8 padding, primary 10 % tint
+      // .stat-chip: radius 8, padding 4/8, 0.8rem, primary 10 % background,
+      // 0.9rem icon in primary-shade, gap 5.
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         color: AppColors.primary.withValues(alpha: 0.1),

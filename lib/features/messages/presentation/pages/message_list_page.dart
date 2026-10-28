@@ -10,7 +10,7 @@ import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/message/message.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../../shared/widgets/common/empty_state.dart';
+import '../../../settings/presentation/widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
 import '../message_format.dart';
 import 'message_compose_page.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
@@ -72,13 +72,7 @@ class MessageListPage extends ConsumerWidget {
                 physics: const AlwaysScrollableScrollPhysics(),
                 children: [
                   const SizedBox(height: 48),
-                  EmptyStateWidget(
-                    icon: Icons.campaign_outlined,
-                    title: l10n.messagesNone,
-                    subtitle: l10n.messagesNoneHint,
-                    actionLabel: l10n.messagesWriteFirst,
-                    onAction: () => _compose(context),
-                  ),
+                  _MessagesEmptyState(onCompose: () => _compose(context)),
                 ],
               );
             }
@@ -90,34 +84,20 @@ class MessageListPage extends ConsumerWidget {
                 AppDimensions.paddingM,
                 96,
               ),
+              // UX_SETTINGS (WAVE 8): message-list.page.html — list header
+              // "Gesendet" + one inset list of sliding detail items.
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(
-                    left: AppDimensions.paddingS,
-                    bottom: AppDimensions.paddingS,
-                  ),
-                  child: Text(
-                    l10n.messagesSent,
-                    style: Theme.of(
-                      context,
-                    ).textTheme.titleSmall?.copyWith(color: AppColors.medium),
-                  ),
-                ),
-                Card(
-                  clipBehavior: Clip.antiAlias,
-                  margin: EdgeInsets.zero,
-                  child: Column(
-                    children: [
-                      for (var i = 0; i < messages.length; i++) ...[
-                        if (i > 0) const Divider(height: 1),
-                        _MessageRow(
-                          item: messages[i],
-                          onTap: () => context.push('/messages/${messages[i].message.id}'),
-                          onDelete: () => _delete(context, ref, messages[i].message),
-                        ),
-                      ],
-                    ],
-                  ),
+                SettingsListSection(
+                  title: l10n.messagesSent,
+                  icons: false,
+                  children: [
+                    for (final item in messages)
+                      _MessageRow(
+                        item: item,
+                        onTap: () => context.push('/messages/${item.message.id}'),
+                        onDelete: () => _delete(context, ref, item.message),
+                      ),
+                  ],
                 ),
               ],
             );
@@ -139,6 +119,7 @@ class _MessageRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final m = item.message;
     final theme = Theme.of(context);
+    final ios = ionIsIos(context);
     final subtitle = [
       MessageFormat.date(m.createdAt),
       if (m.senderName != null && m.senderName!.isNotEmpty) m.senderName!,
@@ -162,35 +143,62 @@ class _MessageRow extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.all(AppDimensions.paddingM),
+          padding: ios
+              ? const EdgeInsets.fromLTRB(
+                  IonIos.itemPaddingStart, 10, IonIos.itemPaddingEnd, 10)
+              : const EdgeInsets.all(AppDimensions.paddingM),
           child: Row(
             children: [
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // h2 (600)
                     Text(
                       m.title,
-                      style: theme.textTheme.titleMedium,
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontSize: ios ? 16 : null,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: ios ? 0 : null,
+                      ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 2),
+                    // p
                     Text(
                       subtitle,
-                      style: theme.textTheme.bodySmall?.copyWith(color: AppColors.medium),
-                    ),
-                    const SizedBox(height: AppDimensions.paddingS),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(3),
-                      child: LinearProgressIndicator(
-                        value: item.readPercent / 100,
-                        minHeight: 6,
-                        backgroundColor: AppColors.medium.withValues(alpha: 0.2),
-                        valueColor: const AlwaysStoppedAnimation(AppColors.success),
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: ios ? IonIos.labelP(context) : AppColors.medium,
                       ),
                     ),
-                    const SizedBox(height: 6),
+                    const SizedBox(height: 8),
+                    // .bar: 5px, radius 3, step-150 track, primary fill
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(3),
+                      child: SizedBox(
+                        height: 5,
+                        child: Stack(
+                          children: [
+                            Positioned.fill(
+                              child: ColoredBox(
+                                color: theme.brightness == Brightness.dark
+                                    ? const Color(0xFF3A3A3C)
+                                    : const Color(0xFFE3E3E8),
+                              ),
+                            ),
+                            FractionallySizedBox(
+                              widthFactor: (item.readPercent / 100).clamp(0.0, 1.0),
+                              heightFactor: 1,
+                              child: const ColoredBox(color: AppColors.primary),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    // .meta: 0.8rem medium, tabular numbers
                     Row(
                       children: [
                         Expanded(
@@ -198,31 +206,82 @@ class _MessageRow extends StatelessWidget {
                             m.isSending
                                 ? context.l10n.messagesSending
                                 : context.l10n.messagesReadOf(item.stats.read, m.recipientCount),
-                            style: theme.textTheme.bodySmall,
+                            style: const TextStyle(
+                              fontSize: 12.8,
+                              color: AppColors.medium,
+                              fontFeatures: [FontFeature.tabularFigures()],
+                            ),
                           ),
                         ),
                         if (item.stats.problems > 0)
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                            decoration: BoxDecoration(
-                              color: AppColors.warning,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Text(
-                              MessageFormat.problems(item.stats.problems),
-                              style: theme.textTheme.labelSmall?.copyWith(color: Colors.black),
-                            ),
+                          IonBadge(
+                            text: MessageFormat.problems(item.stats.problems),
+                            color: AppColors.warning,
+                            textColor: Colors.black,
                           ),
                       ],
                     ),
                   ],
                 ),
               ),
-              const SizedBox(width: AppDimensions.paddingS),
-              const Icon(Icons.chevron_right, color: AppColors.medium),
+              SizedBox(width: ios ? 8 : AppDimensions.paddingS),
+              ios
+                  ? const IonDetailChevron()
+                  : const Icon(Icons.chevron_right, color: AppColors.medium),
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// Ionic `.empty-state`: 88pt primary-tinted circle with the megaphone,
+/// h2 1.25rem/600, medium hint, round "write first" button.
+class _MessagesEmptyState extends StatelessWidget {
+  const _MessagesEmptyState({required this.onCompose});
+
+  final VoidCallback onCompose;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 32),
+      child: Column(
+        children: [
+          Container(
+            width: 88,
+            height: 88,
+            margin: const EdgeInsets.only(bottom: 20),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: AppColors.primary.withValues(alpha: 0.12),
+            ),
+            child: const Icon(Icons.campaign_outlined, size: 42, color: AppColors.primary),
+          ),
+          Text(
+            l10n.messagesNone,
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+          ),
+          const SizedBox(height: 8),
+          ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 320),
+            child: Text(
+              l10n.messagesNoneHint,
+              textAlign: TextAlign.center,
+              style: const TextStyle(height: 1.4, color: AppColors.medium),
+            ),
+          ),
+          const SizedBox(height: 24),
+          ElevatedButton.icon(
+            style: ElevatedButton.styleFrom(shape: const StadiumBorder()),
+            onPressed: onCompose,
+            icon: const Icon(Icons.edit_note),
+            label: Text(l10n.messagesWriteFirst),
+          ),
+        ],
       ),
     );
   }

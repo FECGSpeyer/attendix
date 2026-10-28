@@ -200,23 +200,34 @@ class SongBadge extends StatelessWidget {
   final String? label;
   final IconData? icon;
 
+  /// Ionic `--ion-color-*-contrast`: black on warning / medium.
+  static Color contrastOf(Color color) =>
+      color == AppColors.warning || color == AppColors.medium
+          ? Colors.black
+          : Colors.white;
+
   @override
   Widget build(BuildContext context) {
+    // Ionic ion-badge: iOS radius 10 / padding 3 8, md radius 4 / padding
+    // 3 4; 13px bold, global `margin-left: .25rem`.
+    final ios = Theme.of(context).platform == TargetPlatform.iOS;
+    final fg = contrastOf(color);
     return Container(
       margin: const EdgeInsets.only(left: 4),
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      padding: EdgeInsets.symmetric(horizontal: ios ? 8 : 4, vertical: 3),
       decoration: BoxDecoration(
         color: color,
-        borderRadius: BorderRadius.circular(4),
+        borderRadius: BorderRadius.circular(ios ? 10 : 4),
       ),
       child: icon != null
-          ? Icon(icon, size: 14, color: Colors.white)
+          ? Icon(icon, size: 14, color: fg)
           : Text(
               label ?? '',
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
+              style: TextStyle(
+                color: fg,
+                fontSize: 13,
+                fontWeight: FontWeight.w700,
+                height: 1.1,
               ),
             ),
     );

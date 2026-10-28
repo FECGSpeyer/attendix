@@ -15,6 +15,7 @@ import '../../../../core/providers/legal_providers.dart';
 import '../../../../core/providers/push_providers.dart';
 import '../../../../data/repositories/base_repository.dart';
 import '../../../auth/presentation/widgets/ion_form_list.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// AUTH: Ionic "Neue Instanz anlegen" (register.page) – 3 steps:
 /// 1. Art der Gruppe, 2. Name + Kürzel, 3. Hauptgruppe, then summary.
@@ -450,7 +451,7 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
                     ? const SizedBox(
                         width: 18,
                         height: 18,
-                        child: CircularProgressIndicator(strokeWidth: 2),
+                        child: AppSpinner(strokeWidth: 2),
                       )
                     : const Icon(Icons.add_circle_outline),
                 label: Text(
@@ -469,33 +470,19 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
   Future<void> _chooseType(BuildContext context) async {
     final l10n = context.l10n;
     final options = TenantTypeTexts.byType(l10n);
-    final selected = await showModalBottomSheet<String>(
-      context: context,
-      useSafeArea: true,
-      builder: (sheetContext) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-              child: Text(
-                l10n.registerGroupTypeQuestion,
-                textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 13, color: AppColors.medium),
-              ),
-            ),
-            for (final entry in options.entries)
-              ListTile(
-                leading: Icon(entry.value.icon),
-                title: Text(entry.value.option),
-                trailing: entry.key == _selectedType
-                    ? const Icon(Icons.check, color: AppColors.primary)
-                    : null,
-                onTap: () => Navigator.of(sheetContext).pop(entry.key),
-              ),
-          ],
-        ),
-      ),
+    // IOS_LOOK: Ionic action sheet (adaptive).
+    final selected = await showAppActionSheet<String>(
+      context,
+      title: l10n.registerGroupTypeQuestion,
+      actions: [
+        for (final entry in options.entries)
+          AppActionSheetAction(
+            value: entry.key,
+            label: entry.value.option,
+            icon: entry.value.icon,
+            color: entry.key == _selectedType ? AppColors.primary : null,
+          ),
+      ],
     );
     if (selected != null && mounted) {
       setState(() => _selectedType = selected);
@@ -514,9 +501,9 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
   /// DB_REVIEW_REST (F4): Ionic register.page confirmDeleteAccount.
   Future<void> _confirmDeleteAccount() async {
     final l10n = context.l10n;
-    final confirmed = await showDialog<bool>(
+    final confirmed = await showAppDialog<bool>(
       context: context,
-      builder: (dialogContext) => AlertDialog(
+      builder: (dialogContext) => AppAlertDialog(
         title: Text(l10n.registerDeleteHeader),
         content: Text(l10n.registerDeleteMessage),
         actions: [
@@ -553,9 +540,9 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
 
   /// Ionic main-group info popover (register.mainGroupInfoHtml).
   Future<void> _showMainGroupInfo() {
-    return showDialog<void>(
+    return showAppDialog<void>(
       context: context,
-      builder: (ctx) => AlertDialog(
+      builder: (ctx) => AppAlertDialog(
         // Ionic register.mainGroupInfoHtml (rendered as HTML popover).
         content: SingleChildScrollView(
           child: _HtmlBlocks(html: ctx.l10n.registerMainGroupInfoHtml),

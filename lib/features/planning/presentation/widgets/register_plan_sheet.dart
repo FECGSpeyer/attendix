@@ -20,6 +20,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../l10n/l10n.dart';
+import 'ion_items.dart';
 import 'plan_export_actions.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
@@ -155,7 +156,8 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: theme.colorScheme.surfaceContainerLow,
+      // Ionic: ion-content color="light" (grey grouped background).
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: Text(l10n.planningSectionalPlan),
@@ -195,14 +197,29 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
                 ]),
                 const SizedBox(height: 16),
                 _insetList([
+                  // Ionic: ion-input with an inline start label.
                   ListTile(
                     leading: const Icon(Icons.schedule, color: AppColors.medium),
-                    title: TextField(
-                      controller: _minutesController,
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9.]'))],
-                      decoration: InputDecoration(labelText: l10n.planningTimeMinutes, border: InputBorder.none),
-                      onChanged: (_) => setState(() {}),
+                    title: Row(
+                      children: [
+                        Text(l10n.planningTimeMinutes),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: TextField(
+                            controller: _minutesController,
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9.]'))],
+                            decoration: const InputDecoration(
+                              border: InputBorder.none,
+                              enabledBorder: InputBorder.none,
+                              focusedBorder: InputBorder.none,
+                              filled: false,
+                              isDense: true,
+                            ),
+                            onChanged: (_) => setState(() {}),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ]),
@@ -239,19 +256,12 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
   }
 
   Widget _listHeader(String label, VoidCallback onAdd) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 16, bottom: 4),
-      child: Row(
-        children: [
-          Expanded(
-            child: Text(label, style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
-          ),
-          IconButton(
-            icon: const Icon(Icons.add_circle_outline),
-            color: AppColors.primary,
-            onPressed: onAdd,
-          ),
-        ],
+    return IonListHeader(
+      title: label,
+      trailing: IconButton(
+        icon: const Icon(Icons.add_circle_outline),
+        color: AppColors.primary,
+        onPressed: onAdd,
       ),
     );
   }
@@ -285,7 +295,14 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
       title: TextField(
         controller: controller,
         textCapitalization: capitalization,
-        decoration: InputDecoration(hintText: hint, border: InputBorder.none),
+        decoration: InputDecoration(
+          hintText: hint,
+          border: InputBorder.none,
+          enabledBorder: InputBorder.none,
+          focusedBorder: InputBorder.none,
+          filled: false,
+          isDense: true,
+        ),
       ),
       trailing: onRemove == null
           ? null

@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -22,6 +23,7 @@ import '../../export_fields.dart';
 import '../../../../core/services/tracking/tracking_event.dart';
 import '../../../../core/services/tracking/tracking_service.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../settings/presentation/widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 import '../../../../core/services/native/native_file_service.dart'; // NATIVE_MISC
@@ -126,9 +128,20 @@ class _ExportPageState extends ConsumerState<ExportPage> {
         .map((f) => exportFieldLabel(f, context.l10n))
         .join(', ');
 
+    final ios = ionIsIos(context);
+    // UX_SETTINGS (WAVE 8): export.page.html is a modal — iOS shows the
+    // close "x" at the end of the toolbar instead of a back button.
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: !ios,
         title: Text(context.l10n.exportTitle),
+        actions: [
+          if (ios)
+            IconButton(
+              icon: const Icon(Icons.close),
+              onPressed: () => Navigator.of(context).maybePop(),
+            ),
+        ],
       ),
       body: ListView(
         padding: const EdgeInsets.only(bottom: AppDimensions.paddingL),
@@ -142,26 +155,10 @@ class _ExportPageState extends ConsumerState<ExportPage> {
           // "Felder" multi select
           ListTile(
             title: Text(context.l10n.exportFields),
-            trailing: ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: MediaQuery.sizeOf(context).width * 0.55),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Flexible(
-                    child: Text(
-                      selectedAvailable,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(color: AppColors.medium),
-                    ),
-                  ),
-                  const Icon(Icons.arrow_drop_down, color: AppColors.medium),
-                ],
-              ),
-            ),
+            trailing: _SelectValue(selectedAvailable, maxWidthFactor: 0.55),
             onTap: () => _pickFields(available),
           ),
-          const Divider(height: 1),
+          _itemLine(context, indent: 0),
           // Selected fields: reorder via handle, swipe left to remove (Ionic
           // ion-reorder-group + ion-item-sliding)
           SlidableAutoCloseBehavior(
@@ -211,7 +208,7 @@ class _ExportPageState extends ConsumerState<ExportPage> {
                             ),
                           ),
                         ),
-                        const Divider(height: 1, indent: 16),
+                        _itemLine(context),
                       ],
                     ),
                   ),
@@ -548,27 +545,61 @@ class _SelectItem<T> extends StatelessWidget {
           ],
           child: ListTile(
             title: Text(label),
-            trailing: ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: MediaQuery.sizeOf(context).width * 0.5),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Flexible(
-                    child: Text(
-                      current,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(color: AppColors.medium),
-                    ),
-                  ),
-                  const Icon(Icons.arrow_drop_down, color: AppColors.medium),
-                ],
+            trailing: _SelectValue(current),
+          ),
+        ),
+        _itemLine(context),
+      ],
+    );
+  }
+}
+
+/// Ionic item line: iOS 0.55px #c8c7cc inset hairline, md 1px divider.
+Widget _itemLine(BuildContext context, {double indent = 16}) => ionIsIos(context)
+    ? Divider(height: 0.5, thickness: 0.5, indent: indent, color: IonIos.line(context))
+    : Divider(height: 1, indent: indent);
+
+/// Ionic `ion-select` value + icon at the end of an item. iOS: value in the
+/// text colour and the `chevron-expand` icon (opacity .33); md: grey value
+/// and caret.
+class _SelectValue extends StatelessWidget {
+  const _SelectValue(this.text, {this.maxWidthFactor = 0.5});
+
+  final String text;
+  final double maxWidthFactor;
+
+  @override
+  Widget build(BuildContext context) {
+    final ios = ionIsIos(context);
+    return ConstrainedBox(
+      constraints: BoxConstraints(maxWidth: MediaQuery.sizeOf(context).width * maxWidthFactor),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Flexible(
+            child: Text(
+              text,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: ios ? 16 : null,
+                color: ios ? IonIos.text(context) : AppColors.medium,
               ),
             ),
           ),
-        ),
-        const Divider(height: 1, indent: 16),
-      ],
+          if (ios)
+            Padding(
+              padding: const EdgeInsets.only(left: 8),
+              child: Icon(
+                CupertinoIcons.chevron_up_chevron_down,
+                size: 16,
+                color: IonIos.text(context).withValues(alpha: 0.33),
+              ),
+            )
+          else
+            const Icon(Icons.arrow_drop_down, color: AppColors.medium),
+        ],
+      ),
     );
   }
 }
