@@ -34,6 +34,7 @@ OfflineCacheScope? _cacheScope(Ref ref, int tenantId) {
 
 /// Provider for attendance detail with tenant-scoped query
 final attendanceDetailProvider = FutureProvider.autoDispose.family<Attendance?, int>((ref, attendanceId) async {
+  ref.watch(currentAuthUserIdProvider); // SOL_FIX15: reload per account (RLS)
   final supabase = ref.watch(supabaseClientProvider);
   final tenant = ref.watch(currentTenantProvider);
 
@@ -60,6 +61,7 @@ final attendanceDetailProvider = FutureProvider.autoDispose.family<Attendance?, 
 /// Provider for attendance type of a specific attendance
 /// FN-005: Added tenant_id filter for multi-tenant security
 final attendanceTypeForAttendanceProvider = FutureProvider.autoDispose.family<AttendanceType?, int>((ref, attendanceId) async {
+  ref.watch(currentAuthUserIdProvider); // SOL_FIX15: reload per account (RLS)
   final attendance = await ref.watch(attendanceDetailProvider(attendanceId).future);
   if (attendance?.typeId == null) return null;
 
@@ -91,6 +93,7 @@ final attendanceTypeForAttendanceProvider = FutureProvider.autoDispose.family<At
 /// which gets attendances for a specific PERSON. This one gets persons for a specific ATTENDANCE.
 /// SEC-017: Added tenant filter via inner join with attendance table
 final personAttendancesForAttendanceProvider = FutureProvider.autoDispose.family<List<PersonAttendance>, int>((ref, attendanceId) async {
+  ref.watch(currentAuthUserIdProvider); // SOL_FIX15: reload per account (RLS)
   final supabase = ref.watch(supabaseClientProvider);
   final tenant = ref.watch(currentTenantProvider);
 
@@ -149,6 +152,7 @@ final filteredPersonAttendancesForAttendanceProvider = FutureProvider.autoDispos
 
 /// Provider for all persons in tenant (for attendance taking)
 final allPersonsForAttendanceProvider = FutureProvider.autoDispose<List<Person>>((ref) async {
+  ref.watch(currentAuthUserIdProvider); // SOL_FIX15: reload per account (RLS)
   final supabase = ref.watch(supabaseClientProvider);
   final tenant = ref.watch(currentTenantProvider);
 

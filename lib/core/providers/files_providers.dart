@@ -1,5 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../config/supabase_config.dart'
+    show AccountScopeKey, currentAuthUserIdProvider;
+
 import '../../data/models/organisation/organisation.dart';
 import '../../data/repositories/extra_fields_repository.dart';
 import '../../data/repositories/files_repository.dart';
@@ -18,10 +21,21 @@ final filesRepositoryWithTenantProvider = Provider<FilesRepository>((ref) {
 /// so a tenant switch never changes the tenant of a running flow and
 /// cross-tenant work uses its own bound instance. `null` (no tenant)
 /// yields an unbound instance with `hasTenantId == false`.
+///
+/// SOL_FIX15: the instance also follows the signed-in account, so every
+/// provider built on it reloads on an account switch (RLS results and
+/// role-dependent data never outlive the account that loaded them).
 final filesRepositoryForTenantProvider =
     Provider.family<FilesRepository, int?>((ref, tenantId) {
+  final userId = ref.watch(currentAuthUserIdProvider);
+  return ref.watch(
+      _filesRepositoryForAccountProvider((tenantId: tenantId, userId: userId)));
+});
+
+final _filesRepositoryForAccountProvider =
+    Provider.family<FilesRepository, AccountScopeKey>((ref, key) {
   final repo = FilesRepository(ref);
-  if (tenantId != null) repo.bindTenantId(tenantId);
+  if (key.tenantId != null) repo.bindTenantId(key.tenantId!);
   return repo;
 });
 
@@ -46,10 +60,21 @@ final extraFieldsRepositoryWithTenantProvider = Provider<ExtraFieldsRepository>(
 /// so a tenant switch never changes the tenant of a running flow and
 /// cross-tenant work uses its own bound instance. `null` (no tenant)
 /// yields an unbound instance with `hasTenantId == false`.
+///
+/// SOL_FIX15: the instance also follows the signed-in account, so every
+/// provider built on it reloads on an account switch (RLS results and
+/// role-dependent data never outlive the account that loaded them).
 final extraFieldsRepositoryForTenantProvider =
     Provider.family<ExtraFieldsRepository, int?>((ref, tenantId) {
+  final userId = ref.watch(currentAuthUserIdProvider);
+  return ref.watch(
+      _extraFieldsRepositoryForAccountProvider((tenantId: tenantId, userId: userId)));
+});
+
+final _extraFieldsRepositoryForAccountProvider =
+    Provider.family<ExtraFieldsRepository, AccountScopeKey>((ref, key) {
   final repo = ExtraFieldsRepository(ref);
-  if (tenantId != null) repo.bindTenantId(tenantId);
+  if (key.tenantId != null) repo.bindTenantId(key.tenantId!);
   return repo;
 });
 
@@ -63,10 +88,21 @@ final organisationSettingsRepositoryWithTenantProvider = Provider<OrganisationSe
 /// so a tenant switch never changes the tenant of a running flow and
 /// cross-tenant work uses its own bound instance. `null` (no tenant)
 /// yields an unbound instance with `hasTenantId == false`.
+///
+/// SOL_FIX15: the instance also follows the signed-in account, so every
+/// provider built on it reloads on an account switch (RLS results and
+/// role-dependent data never outlive the account that loaded them).
 final organisationSettingsRepositoryForTenantProvider =
     Provider.family<OrganisationSettingsRepository, int?>((ref, tenantId) {
+  final userId = ref.watch(currentAuthUserIdProvider);
+  return ref.watch(
+      _organisationSettingsRepositoryForAccountProvider((tenantId: tenantId, userId: userId)));
+});
+
+final _organisationSettingsRepositoryForAccountProvider =
+    Provider.family<OrganisationSettingsRepository, AccountScopeKey>((ref, key) {
   final repo = OrganisationSettingsRepository(ref);
-  if (tenantId != null) repo.bindTenantId(tenantId);
+  if (key.tenantId != null) repo.bindTenantId(key.tenantId!);
   return repo;
 });
 

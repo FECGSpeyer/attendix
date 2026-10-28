@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../models/person/person.dart';
+import 'attendance_repository.dart' show OfflineSessionChangedException;
 import 'base_repository.dart';
 import 'shared_person_fields.dart';
 import '../../l10n/l10n.dart';
@@ -101,6 +102,18 @@ class OwnProfile {
 class ProfileRepository extends BaseRepository
     with TenantAwareRepository, SharedPersonFieldsRepository {
   ProfileRepository(super.ref);
+
+  /// SOL_FIX15: write flows on the own profile run for the account that
+  /// started them. The caller captures user + auth session before its first
+  /// await (`OfflineWriteSession.capture`) and passes [isSessionCurrent];
+  /// it is checked right before every mutation, so an account switch A→B
+  /// mid-flow never writes A's master data into B's rows (or propagates it
+  /// to B's other instances).
+  void _ensureSession(bool Function()? isSessionCurrent) {
+    if (isSessionCurrent != null && !isSessionCurrent()) {
+      throw const OfflineSessionChangedException();
+    }
+  }
 
   String get _userId {
     final id = supabase.auth.currentUser?.id;
@@ -252,8 +265,9 @@ class ProfileRepository extends BaseRepository
   Future<void> updateSharedFieldValues(
     int organisationId,
     String personKey,
-    Map<String, dynamic> values,
-  ) async {
+    Map<String, dynamic> values, {
+    bool Function()? isSessionCurrent, // SOL_FIX15
+  }) async {
     ensureNotDemo('updateSharedFieldValues'); // DEMO_GUARD
     if (values.isEmpty) return;
     try {
@@ -278,6 +292,7 @@ class ProfileRepository extends BaseRepository
                 'value': e.value,
               })
           .toList();
+      _ensureSession(isSessionCurrent); // SOL_FIX15
       await supabase
           .from('tenant_group_person_fields')
           .upsert(rows, onConflict: 'tenant_group,person_key,field_id');
@@ -294,15 +309,19 @@ class ProfileRepository extends BaseRepository
   /// `player` rows (Ionic matches by appId). [additionalFields] are tenant
   /// specific and are only written to the current tenant's row.
   Future<void> updateOwnProfile({
+    required String userId,
+    required bool Function() isSessionCurrent,
     required Map<String, dynamic> personalData,
     Map<String, dynamic>? additionalFields,
     String? churchId,
   }) async {
     ensureNotDemo('updateOwnProfile'); // DEMO_GUARD
     try {
-      final userId = _userId;
+      // SOL_FIX15: [userId] was captured by the caller before its first
+      // await – never re-read here.
 
       // 1. Current tenant row incl. tenant-specific extra fields
+      _ensureSession(isSessionCurrent);
       await supabase
           .from('player')
           .update({
@@ -314,11 +333,11 @@ class ProfileRepository extends BaseRepository
 
       // 2. Sync personal data to the user's own rows in other tenants.
       //    Scoped to appId == auth uid (own data only, enforced by RLS too).
-      await _syncOwnPersonalData(userId, personalData);
+      await _syncOwnPersonalData(userId, personalData, isSessionCurrent);
 
       // 3. Church sync across own rows (Ionic: only if a church was set before)
       if (churchId != null) {
-        await _syncOwnChurch(userId, churchId);
+        await _syncOwnChurch(userId, churchId, isSessionCurrent);
       }
     } catch (e, stack) {
       handleError(e, stack, 'updateOwnProfile');
@@ -329,6 +348,7 @@ class ProfileRepository extends BaseRepository
   Future<void> _syncOwnPersonalData(
     String userId,
     Map<String, dynamic> personalData,
+    bool Function() isSessionCurrent,
   ) async {
     final rows = await supabase
         .from('player')
@@ -336,6 +356,7 @@ class ProfileRepository extends BaseRepository
         .eq('appId', userId)
         .neq('tenantId', currentTenantId);
     for (final row in (rows as List).cast<Map<String, dynamic>>()) {
+      _ensureSession(isSessionCurrent); // SOL_FIX15
       await supabase
           .from('player')
           .update(personalData)
@@ -345,7 +366,11 @@ class ProfileRepository extends BaseRepository
     }
   }
 
-  Future<void> _syncOwnChurch(String userId, String churchId) async {
+  Future<void> _syncOwnChurch(
+    String userId,
+    String churchId,
+    bool Function() isSessionCurrent,
+  ) async {
     final rows = await supabase
         .from('player')
         .select('id, tenantId, additional_fields')
@@ -356,6 +381,7 @@ class ProfileRepository extends BaseRepository
       final current = fields['bfecg_church'];
       if (current != null && current != '' && current != churchId) {
         fields['bfecg_church'] = churchId;
+        _ensureSession(isSessionCurrent); // SOL_FIX15
         await supabase
             .from('player')
             .update({'additional_fields': fields})
@@ -369,14 +395,16 @@ class ProfileRepository extends BaseRepository
   /// Upload a new Passbild (Ionic ImageService.updateImage with own appId).
   /// Returns the public URL.
   Future<String> uploadOwnImage({
+    required String userId,
+    required bool Function() isSessionCurrent,
     required int playerId,
     required Uint8List bytes,
     String? contentType,
   }) async {
     ensureNotDemo('uploadOwnImage'); // DEMO_GUARD
     try {
-      final userId = _userId;
       final fileName = '$playerId';
+      _ensureSession(isSessionCurrent); // SOL_FIX15
       await supabase.storage.from('profiles').uploadBinary(
             fileName,
             bytes,
@@ -388,12 +416,13 @@ class ProfileRepository extends BaseRepository
       // client-side only (ProfileNotifier.updateImage).
       final url = supabase.storage.from('profiles').getPublicUrl(fileName);
 
+      _ensureSession(isSessionCurrent); // SOL_FIX15
       await supabase
           .from('player')
           .update({'img': url})
           .eq('tenantId', currentTenantId)
           .eq('appId', userId);
-      await _syncOwnPersonalData(userId, {'img': url});
+      await _syncOwnPersonalData(userId, {'img': url}, isSessionCurrent);
 
       return url;
     } catch (e, stack) {
@@ -403,19 +432,24 @@ class ProfileRepository extends BaseRepository
   }
 
   /// Remove the own Passbild (Ionic ImageService.removeImage with own appId).
-  Future<void> removeOwnImage(String imgUrl) async {
+  Future<void> removeOwnImage(
+    String imgUrl, {
+    required String userId,
+    required bool Function() isSessionCurrent,
+  }) async {
     ensureNotDemo('removeOwnImage'); // DEMO_GUARD
     try {
-      final userId = _userId;
+      _ensureSession(isSessionCurrent); // SOL_FIX15
       await supabase
           .from('player')
           .update({'img': ''})
           .eq('tenantId', currentTenantId)
           .eq('appId', userId);
-      await _syncOwnPersonalData(userId, {'img': ''});
+      await _syncOwnPersonalData(userId, {'img': ''}, isSessionCurrent);
 
       final fileName = Uri.tryParse(imgUrl)?.pathSegments.lastOrNull;
       if (fileName != null && fileName.isNotEmpty) {
+        _ensureSession(isSessionCurrent); // SOL_FIX15
         await supabase.storage.from('profiles').remove([fileName]);
       }
     } catch (e, stack) {

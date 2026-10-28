@@ -1,5 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../config/supabase_config.dart'
+    show AccountScopeKey, currentAuthUserIdProvider;
+
 import '../../data/repositories/teacher_repository.dart';
 import 'group_providers.dart';
 import 'tenant_providers.dart';
@@ -16,10 +19,21 @@ final teacherRepositoryWithTenantProvider = Provider<TeacherRepository>((ref) {
 /// so a tenant switch never changes the tenant of a running flow and
 /// cross-tenant work uses its own bound instance. `null` (no tenant)
 /// yields an unbound instance with `hasTenantId == false`.
+///
+/// SOL_FIX15: the instance also follows the signed-in account, so every
+/// provider built on it reloads on an account switch (RLS results and
+/// role-dependent data never outlive the account that loaded them).
 final teacherRepositoryForTenantProvider =
     Provider.family<TeacherRepository, int?>((ref, tenantId) {
+  final userId = ref.watch(currentAuthUserIdProvider);
+  return ref.watch(
+      _teacherRepositoryForAccountProvider((tenantId: tenantId, userId: userId)));
+});
+
+final _teacherRepositoryForAccountProvider =
+    Provider.family<TeacherRepository, AccountScopeKey>((ref, key) {
   final repo = TeacherRepository(ref);
-  if (tenantId != null) repo.bindTenantId(tenantId);
+  if (key.tenantId != null) repo.bindTenantId(key.tenantId!);
   return repo;
 });
 

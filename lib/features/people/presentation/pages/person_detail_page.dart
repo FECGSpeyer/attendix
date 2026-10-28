@@ -70,6 +70,7 @@ final personProvider =
 /// Provider for person attendance statistics
 final personAttendanceStatsProvider =
     FutureProvider.family<Map<String, dynamic>, int>((ref, personId) async {
+  ref.watch(currentAuthUserIdProvider); // SOL_FIX15: reload per account
   final supabase = ref.watch(supabaseClientProvider);
   final tenant = ref.watch(currentTenantProvider);
 

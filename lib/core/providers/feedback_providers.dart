@@ -14,10 +14,21 @@ final feedbackRepositoryWithTenantProvider = Provider<FeedbackRepository>((ref) 
 /// so a tenant switch never changes the tenant of a running flow and
 /// cross-tenant work uses its own bound instance. `null` (no tenant)
 /// yields an unbound instance with `hasTenantId == false`.
+///
+/// SOL_FIX15: the instance also follows the signed-in account, so every
+/// provider built on it reloads on an account switch (RLS results and
+/// role-dependent data never outlive the account that loaded them).
 final feedbackRepositoryForTenantProvider =
     Provider.family<FeedbackRepository, int?>((ref, tenantId) {
+  final userId = ref.watch(currentAuthUserIdProvider);
+  return ref.watch(
+      _feedbackRepositoryForAccountProvider((tenantId: tenantId, userId: userId)));
+});
+
+final _feedbackRepositoryForAccountProvider =
+    Provider.family<FeedbackRepository, AccountScopeKey>((ref, key) {
   final repo = FeedbackRepository(ref);
-  if (tenantId != null) repo.bindTenantId(tenantId);
+  if (key.tenantId != null) repo.bindTenantId(key.tenantId!);
   return repo;
 });
 

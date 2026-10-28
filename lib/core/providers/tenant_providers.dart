@@ -303,6 +303,7 @@ Future<void> deleteTenant(WidgetRef ref, int tenantId) async {
 
 /// Provider for member count of a specific tenant
 final tenantMemberCountProvider = FutureProvider.family<int, int>((ref, tenantId) async {
+  ref.watch(currentAuthUserIdProvider); // SOL_FIX15: reload per account
   final supabase = ref.watch(supabaseClientProvider);
 
   final response = await supabase

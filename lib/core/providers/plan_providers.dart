@@ -23,10 +23,21 @@ final planRepositoryWithTenantProvider = Provider<PlanRepository>((ref) {
 /// so a tenant switch never changes the tenant of a running flow and
 /// cross-tenant work uses its own bound instance. `null` (no tenant)
 /// yields an unbound instance with `hasTenantId == false`.
+///
+/// SOL_FIX15: the instance also follows the signed-in account, so every
+/// provider built on it reloads on an account switch (RLS results and
+/// role-dependent data never outlive the account that loaded them).
 final planRepositoryForTenantProvider =
     Provider.family<PlanRepository, int?>((ref, tenantId) {
+  final userId = ref.watch(currentAuthUserIdProvider);
+  return ref.watch(
+      _planRepositoryForAccountProvider((tenantId: tenantId, userId: userId)));
+});
+
+final _planRepositoryForAccountProvider =
+    Provider.family<PlanRepository, AccountScopeKey>((ref, key) {
   final repo = PlanRepository(ref);
-  if (tenantId != null) repo.bindTenantId(tenantId);
+  if (key.tenantId != null) repo.bindTenantId(key.tenantId!);
   return repo;
 });
 
@@ -137,6 +148,7 @@ class OrgPlanEntry {
 
 /// Org plans of the current organisation (Termine + ad-hoc plans)
 final orgPlansProvider = FutureProvider<List<OrgPlanEntry>>((ref) async {
+  ref.watch(currentAuthUserIdProvider); // SOL_FIX15: reload per account
   final org = await ref.watch(currentOrganisationProvider.future);
   if (org?.id == null) return [];
   final repo = ref.watch(orgPlanRepositoryProvider);

@@ -1,5 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../config/supabase_config.dart'
+    show AccountScopeKey, currentAuthUserIdProvider;
+
 import '../../data/models/person/person.dart';
 import '../../data/models/team_org/team_org.dart';
 import '../../data/repositories/agenda_item_repository.dart';
@@ -22,10 +25,21 @@ final agendaItemRepositoryWithTenantProvider = Provider<AgendaItemRepository>((r
 /// so a tenant switch never changes the tenant of a running flow and
 /// cross-tenant work uses its own bound instance. `null` (no tenant)
 /// yields an unbound instance with `hasTenantId == false`.
+///
+/// SOL_FIX15: the instance also follows the signed-in account, so every
+/// provider built on it reloads on an account switch (RLS results and
+/// role-dependent data never outlive the account that loaded them).
 final agendaItemRepositoryForTenantProvider =
     Provider.family<AgendaItemRepository, int?>((ref, tenantId) {
+  final userId = ref.watch(currentAuthUserIdProvider);
+  return ref.watch(
+      _agendaItemRepositoryForAccountProvider((tenantId: tenantId, userId: userId)));
+});
+
+final _agendaItemRepositoryForAccountProvider =
+    Provider.family<AgendaItemRepository, AccountScopeKey>((ref, key) {
   final repo = AgendaItemRepository(ref);
-  if (tenantId != null) repo.bindTenantId(tenantId);
+  if (key.tenantId != null) repo.bindTenantId(key.tenantId!);
   return repo;
 });
 
@@ -38,10 +52,21 @@ final taskRepositoryWithTenantProvider = Provider<TaskRepository>((ref) {
 /// so a tenant switch never changes the tenant of a running flow and
 /// cross-tenant work uses its own bound instance. `null` (no tenant)
 /// yields an unbound instance with `hasTenantId == false`.
+///
+/// SOL_FIX15: the instance also follows the signed-in account, so every
+/// provider built on it reloads on an account switch (RLS results and
+/// role-dependent data never outlive the account that loaded them).
 final taskRepositoryForTenantProvider =
     Provider.family<TaskRepository, int?>((ref, tenantId) {
+  final userId = ref.watch(currentAuthUserIdProvider);
+  return ref.watch(
+      _taskRepositoryForAccountProvider((tenantId: tenantId, userId: userId)));
+});
+
+final _taskRepositoryForAccountProvider =
+    Provider.family<TaskRepository, AccountScopeKey>((ref, key) {
   final repo = TaskRepository(ref);
-  if (tenantId != null) repo.bindTenantId(tenantId);
+  if (key.tenantId != null) repo.bindTenantId(key.tenantId!);
   return repo;
 });
 
@@ -54,10 +79,21 @@ final protocolRepositoryWithTenantProvider = Provider<ProtocolRepository>((ref) 
 /// so a tenant switch never changes the tenant of a running flow and
 /// cross-tenant work uses its own bound instance. `null` (no tenant)
 /// yields an unbound instance with `hasTenantId == false`.
+///
+/// SOL_FIX15: the instance also follows the signed-in account, so every
+/// provider built on it reloads on an account switch (RLS results and
+/// role-dependent data never outlive the account that loaded them).
 final protocolRepositoryForTenantProvider =
     Provider.family<ProtocolRepository, int?>((ref, tenantId) {
+  final userId = ref.watch(currentAuthUserIdProvider);
+  return ref.watch(
+      _protocolRepositoryForAccountProvider((tenantId: tenantId, userId: userId)));
+});
+
+final _protocolRepositoryForAccountProvider =
+    Provider.family<ProtocolRepository, AccountScopeKey>((ref, key) {
   final repo = ProtocolRepository(ref);
-  if (tenantId != null) repo.bindTenantId(tenantId);
+  if (key.tenantId != null) repo.bindTenantId(key.tenantId!);
   return repo;
 });
 

@@ -48,10 +48,21 @@ final dashboardRepositoryWithTenantProvider = Provider<DashboardRepository>((ref
 /// so a tenant switch never changes the tenant of a running flow and
 /// cross-tenant work uses its own bound instance. `null` (no tenant)
 /// yields an unbound instance with `hasTenantId == false`.
+///
+/// SOL_FIX15: the instance also follows the signed-in account, so every
+/// provider built on it reloads on an account switch (RLS results and
+/// role-dependent data never outlive the account that loaded them).
 final dashboardRepositoryForTenantProvider =
     Provider.family<DashboardRepository, int?>((ref, tenantId) {
+  final userId = ref.watch(currentAuthUserIdProvider);
+  return ref.watch(
+      _dashboardRepositoryForAccountProvider((tenantId: tenantId, userId: userId)));
+});
+
+final _dashboardRepositoryForAccountProvider =
+    Provider.family<DashboardRepository, AccountScopeKey>((ref, key) {
   final repo = DashboardRepository(ref);
-  if (tenantId != null) repo.bindTenantId(tenantId);
+  if (key.tenantId != null) repo.bindTenantId(key.tenantId!);
   return repo;
 });
 
@@ -64,10 +75,21 @@ final administrationRepositoryWithTenantProvider = Provider<AdministrationReposi
 /// so a tenant switch never changes the tenant of a running flow and
 /// cross-tenant work uses its own bound instance. `null` (no tenant)
 /// yields an unbound instance with `hasTenantId == false`.
+///
+/// SOL_FIX15: the instance also follows the signed-in account, so every
+/// provider built on it reloads on an account switch (RLS results and
+/// role-dependent data never outlive the account that loaded them).
 final administrationRepositoryForTenantProvider =
     Provider.family<AdministrationRepository, int?>((ref, tenantId) {
+  final userId = ref.watch(currentAuthUserIdProvider);
+  return ref.watch(
+      _administrationRepositoryForAccountProvider((tenantId: tenantId, userId: userId)));
+});
+
+final _administrationRepositoryForAccountProvider =
+    Provider.family<AdministrationRepository, AccountScopeKey>((ref, key) {
   final repo = AdministrationRepository(ref);
-  if (tenantId != null) repo.bindTenantId(tenantId);
+  if (key.tenantId != null) repo.bindTenantId(key.tenantId!);
   return repo;
 });
 
@@ -100,6 +122,8 @@ class DashboardSettings {
 class DashboardSettingsNotifier extends Notifier<DashboardSettings> {
   @override
   DashboardSettings build() {
+    // SOL_FIX15: user_metadata of the signed-in account – rebuild per account.
+    ref.watch(currentAuthUserIdProvider);
     final tenantId = ref.watch(currentTenantIdProvider);
     if (tenantId == null) return DashboardSettings(cards: defaultDashboardCards());
     final metadata = ref.read(supabaseAuthProvider).currentUser?.userMetadata;

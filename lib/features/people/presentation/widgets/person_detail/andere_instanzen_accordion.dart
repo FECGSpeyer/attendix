@@ -14,6 +14,7 @@ import '../ion/ion_widgets.dart';
 final otherTenantsProvider =
     FutureProvider.family<List<Map<String, dynamic>>, String>(
         (ref, appId) async {
+  ref.watch(currentAuthUserIdProvider); // SOL_FIX15: reload per account
   final supabase = ref.watch(supabaseClientProvider);
   final currentTenant = ref.watch(currentTenantProvider);
 

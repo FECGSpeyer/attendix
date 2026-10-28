@@ -9,6 +9,8 @@ import '../../core/utils/paged_query.dart';
 import '../../core/utils/shift_utils.dart';
 import '../models/attendance/attendance.dart';
 import '../models/shift/shift_plan.dart';
+import '../../core/config/supabase_config.dart'
+    show AccountScopeKey, currentAuthUserIdProvider;
 import 'base_repository.dart';
 import '../../l10n/l10n.dart';
 
@@ -19,10 +21,21 @@ final attendanceRepositoryProvider = Provider<AttendanceRepository>((ref) {
 
 /// SOL_FIX1: one immutable repository instance per tenant (see
 /// playerRepositoryForTenantProvider).
+///
+/// SOL_FIX15: the instance also follows the signed-in account, so every
+/// provider built on it reloads on an account switch (RLS results and
+/// role-dependent data never outlive the account that loaded them).
 final attendanceRepositoryForTenantProvider =
     Provider.family<AttendanceRepository, int?>((ref, tenantId) {
+  final userId = ref.watch(currentAuthUserIdProvider);
+  return ref.watch(
+      _attendanceRepositoryForAccountProvider((tenantId: tenantId, userId: userId)));
+});
+
+final _attendanceRepositoryForAccountProvider =
+    Provider.family<AttendanceRepository, AccountScopeKey>((ref, key) {
   final repo = AttendanceRepository(ref);
-  if (tenantId != null) repo.bindTenantId(tenantId);
+  if (key.tenantId != null) repo.bindTenantId(key.tenantId!);
   return repo;
 });
 

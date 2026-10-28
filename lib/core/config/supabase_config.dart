@@ -67,6 +67,10 @@ final currentAuthUserIdProvider = Provider<String?>((ref) {
   }
 });
 
+/// SOL_FIX15: key of the per-(tenant, account) repository instances behind
+/// every `*RepositoryForTenantProvider`.
+typedef AccountScopeKey = ({int? tenantId, String? userId});
+
 /// Current session provider
 final currentSessionProvider = StreamProvider<Session?>((ref) {
   final auth = ref.watch(supabaseAuthProvider);

@@ -2,6 +2,9 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../config/supabase_config.dart'
+    show AccountScopeKey, currentAuthUserIdProvider;
+
 import '../../data/repositories/sign_in_out_repository.dart';
 import '../constants/enums.dart';
 import '../utils/duty_utils.dart';
@@ -24,10 +27,21 @@ final signInOutRepositoryWithTenantProvider = Provider<SignInOutRepository>((ref
 /// so a tenant switch never changes the tenant of a running flow and
 /// cross-tenant work uses its own bound instance. `null` (no tenant)
 /// yields an unbound instance with `hasTenantId == false`.
+///
+/// SOL_FIX15: the instance also follows the signed-in account, so every
+/// provider built on it reloads on an account switch (RLS results and
+/// role-dependent data never outlive the account that loaded them).
 final signInOutRepositoryForTenantProvider =
     Provider.family<SignInOutRepository, int?>((ref, tenantId) {
+  final userId = ref.watch(currentAuthUserIdProvider);
+  return ref.watch(
+      _signInOutRepositoryForAccountProvider((tenantId: tenantId, userId: userId)));
+});
+
+final _signInOutRepositoryForAccountProvider =
+    Provider.family<SignInOutRepository, AccountScopeKey>((ref, key) {
   final repo = SignInOutRepository(ref);
-  if (tenantId != null) repo.bindTenantId(tenantId);
+  if (key.tenantId != null) repo.bindTenantId(key.tenantId!);
   return repo;
 });
 

@@ -22,10 +22,21 @@ final messageRepositoryWithTenantProvider = Provider<MessageRepository>((ref) {
 /// so a tenant switch never changes the tenant of a running flow and
 /// cross-tenant work uses its own bound instance. `null` (no tenant)
 /// yields an unbound instance with `hasTenantId == false`.
+///
+/// SOL_FIX15: the instance also follows the signed-in account, so every
+/// provider built on it reloads on an account switch (RLS results and
+/// role-dependent data never outlive the account that loaded them).
 final messageRepositoryForTenantProvider =
     Provider.family<MessageRepository, int?>((ref, tenantId) {
+  final userId = ref.watch(currentAuthUserIdProvider);
+  return ref.watch(
+      _messageRepositoryForAccountProvider((tenantId: tenantId, userId: userId)));
+});
+
+final _messageRepositoryForAccountProvider =
+    Provider.family<MessageRepository, AccountScopeKey>((ref, key) {
   final repo = MessageRepository(ref);
-  if (tenantId != null) repo.bindTenantId(tenantId);
+  if (key.tenantId != null) repo.bindTenantId(key.tenantId!);
   return repo;
 });
 
@@ -154,10 +165,21 @@ final userNotificationRepositoryWithTenantProvider = Provider<UserNotificationRe
 /// so a tenant switch never changes the tenant of a running flow and
 /// cross-tenant work uses its own bound instance. `null` (no tenant)
 /// yields an unbound instance with `hasTenantId == false`.
+///
+/// SOL_FIX15: the instance also follows the signed-in account, so every
+/// provider built on it reloads on an account switch (RLS results and
+/// role-dependent data never outlive the account that loaded them).
 final userNotificationRepositoryForTenantProvider =
     Provider.family<UserNotificationRepository, int?>((ref, tenantId) {
+  final userId = ref.watch(currentAuthUserIdProvider);
+  return ref.watch(
+      _userNotificationRepositoryForAccountProvider((tenantId: tenantId, userId: userId)));
+});
+
+final _userNotificationRepositoryForAccountProvider =
+    Provider.family<UserNotificationRepository, AccountScopeKey>((ref, key) {
   final repo = UserNotificationRepository(ref);
-  if (tenantId != null) repo.bindTenantId(tenantId);
+  if (key.tenantId != null) repo.bindTenantId(key.tenantId!);
   return repo;
 });
 

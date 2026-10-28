@@ -9,6 +9,7 @@ import 'tenant_providers.dart';
 
 /// Provider for the current tenant's organisation
 final currentOrganisationProvider = FutureProvider<Organisation?>((ref) async {
+  ref.watch(currentAuthUserIdProvider); // SOL_FIX15: reload per account
   final tenantId = ref.watch(currentTenantIdProvider);
   if (tenantId == null) return null;
 
@@ -29,12 +30,14 @@ final userOrganisationsProvider = FutureProvider<List<Organisation>>((ref) async
 /// Provider for all tenants of a specific organisation
 final organisationTenantsProvider =
     FutureProvider.family<List<Tenant>, int>((ref, organisationId) async {
+  ref.watch(currentAuthUserIdProvider); // SOL_FIX15: reload per account
   final repo = ref.watch(organisationRepositoryProvider);
   return repo.getInstancesOfOrganisation(organisationId);
 });
 
 /// Provider for other tenants from the same organisation as the current tenant
 final linkedTenantsProvider = FutureProvider<List<Tenant>>((ref) async {
+  ref.watch(currentAuthUserIdProvider); // SOL_FIX15: reload per account
   final tenantId = ref.watch(currentTenantIdProvider);
   if (tenantId == null) return [];
 
@@ -44,6 +47,7 @@ final linkedTenantsProvider = FutureProvider<List<Tenant>>((ref) async {
 
 /// Provider for all linked tenants (from all organisations)
 final allLinkedTenantsProvider = FutureProvider<List<Tenant>>((ref) async {
+  ref.watch(currentAuthUserIdProvider); // SOL_FIX15: reload per account
   final tenantId = ref.watch(currentTenantIdProvider);
   if (tenantId == null) return [];
 
@@ -54,6 +58,7 @@ final allLinkedTenantsProvider = FutureProvider<List<Tenant>>((ref) async {
 /// Provider for all persons from an organisation's tenants
 final organisationPersonsProvider =
     FutureProvider.family<List<Person>, List<Tenant>>((ref, tenants) async {
+  ref.watch(currentAuthUserIdProvider); // SOL_FIX15: reload per account
   if (tenants.isEmpty) return [];
 
   final repo = ref.watch(organisationRepositoryProvider);
