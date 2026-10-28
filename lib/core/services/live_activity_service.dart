@@ -164,6 +164,15 @@ class LiveActivityService {
   /// Account whose tokens are registered on this device (null = none).
   String? get sessionUserId => _sessionUserId;
 
+  /// SOL_FIX16: session generation, bumped synchronously by [endSession]
+  /// (logout / account switch). Every running init / sync captures it at
+  /// its start and re-checks it before each native change and token
+  /// registration, so a fetch that returns after logout never starts
+  /// activities with the previous account's plans again.
+  int _generation = 0;
+
+  bool _isStale(int generation) => generation != _generation;
+
   /// True when this build has the native side (Ionic `hasNativePlugin`);
   /// controls the toggle in the notification settings.
   bool get hasNativePlugin => _platformSupported;
@@ -217,11 +226,23 @@ class LiveActivityService {
   /// session) this device's token rows of that account are deleted as
   /// well, so the server stops pushing that account's plans to it.
   Future<void> endSession({String? removeTokensOf}) async {
+    // SOL_FIX16: invalidate running init / sync calls and reset the session
+    // state synchronously, before the first await, so neither a stale fetch
+    // nor a late reset can touch the next session.
+    _generation++;
+    _syncing = false;
     stopLoop();
     _lifecycle?.dispose();
     _lifecycle = null;
     _lastKeys.clear();
     _pendingUri = null;
+    final sessionUserId = _sessionUserId;
+    final savedTokens = {..._savedTokens};
+    _savedTokens.clear();
+    _sessionUserId = null;
+    _loadedTenantId = null;
+    _started = false;
+    _enabled = true;
     if (_platformSupported) {
       try {
         await _channel.invokeMethod<void>('endAll');
@@ -230,8 +251,8 @@ class LiveActivityService {
       }
     }
     final owner = removeTokensOf;
-    if (owner != null && (_sessionUserId == null || _sessionUserId == owner)) {
-      final tokens = {..._savedTokens, ...await _deviceTokens()}.toList();
+    if (owner != null && (sessionUserId == null || sessionUserId == owner)) {
+      final tokens = {...savedTokens, ...await _deviceTokens()}.toList();
       if (tokens.isNotEmpty) {
         try {
           await _host.removeTokens(userId: owner, tokens: tokens);
@@ -240,11 +261,6 @@ class LiveActivityService {
         }
       }
     }
-    _savedTokens.clear();
-    _sessionUserId = null;
-    _loadedTenantId = null;
-    _started = false;
-    _enabled = true;
   }
 
   /// Tokens the native side currently holds (start + activity tokens).
@@ -264,22 +280,29 @@ class LiveActivityService {
 
   Future<void> init() async {
     if (!_platformSupported) return;
+    final generation = _generation;
+    bool supported;
     try {
       final result = await _channel.invokeMapMethod<String, dynamic>('isAvailable');
-      _supported = result?['available'] == true;
+      supported = result?['available'] == true;
     } catch (_) {
-      _supported = false;
+      supported = false;
     }
+    if (_isStale(generation)) return;
+    _supported = supported;
     if (!_supported) {
       await _flushPendingUri();
       return;
     }
 
     await LiveTimezone.ensureInitialized();
-    _enabled = await _loadEnabled();
+    final enabled = await _loadEnabled();
+    if (_isStale(generation)) return;
+    _enabled = enabled;
     if (!_started) {
       _started = true;
-      await _registerTokens();
+      await _registerTokens(generation);
+      if (_isStale(generation)) return;
       if (_listenToLifecycle) {
         try {
           _lifecycle = AppLifecycleListener(
@@ -291,6 +314,7 @@ class LiveActivityService {
         }
       }
     }
+    if (_isStale(generation)) return;
     await startLoop();
     await _flushPendingUri();
   }
@@ -332,6 +356,7 @@ class LiveActivityService {
   /// Starts, updates and ends Live Activities to match the plans running right now.
   Future<void> sync() async {
     if (!_supported || _syncing) return;
+    final generation = _generation;
     if (_host.tenantId == null) {
       // SOL_FIX15: no tenant (logged out / cleared) → nothing may stay
       // on the lock screen.
@@ -346,9 +371,12 @@ class LiveActivityService {
     _syncing = true;
     try {
       final running = _enabled ? await runningPlans() : null;
+      // SOL_FIX16: plans loaded for a session that has ended meanwhile.
+      if (_isStale(generation)) return;
       final candidates = running?.candidates ?? const <LivePlanCandidate>[];
       final attendanceIds = running?.attendanceIds;
       final listed = await _channel.invokeMapMethod<String, dynamic>('list');
+      if (_isStale(generation)) return;
       final activities = ((listed?['activities'] as List?) ?? const [])
           .map(LiveActivityTarget.fromMap)
           .whereType<LiveActivityTarget>()
@@ -362,6 +390,8 @@ class LiveActivityService {
         if (isRunning && _lastKeys[k] == stateKey) continue;
         // Ionic: iOS gets iosLiveState, Android the raw state.
         final shown = (_isAndroid ? c.state : iosLiveState(c.state)).toMap();
+        // SOL_FIX16: re-checked before every native change.
+        if (_isStale(generation)) return;
         if (c.state.phase == 'ended') {
           if (isRunning) {
             await _channel.invokeMethod<void>('end', {
@@ -391,6 +421,7 @@ class LiveActivityService {
       for (final a in activities) {
         if (!wanted.contains(a.key) &&
             (attendanceIds == null || attendanceIds.contains(a.attendanceId))) {
+          if (_isStale(generation)) return;
           await _channel.invokeMethod<void>('end', {
             'attendanceId': a.attendanceId,
             'planKey': a.planKey,
@@ -402,7 +433,8 @@ class LiveActivityService {
     } catch (e) {
       _log('sync', e);
     } finally {
-      _syncing = false;
+      // A stale sync must not release the flag of the next session's sync.
+      if (!_isStale(generation)) _syncing = false;
     }
   }
 
@@ -443,30 +475,44 @@ class LiveActivityService {
     );
   }
 
-  Future<void> _registerTokens() async {
+  Future<void> _registerTokens(int generation) async {
     if (_isAndroid) {
       // Tells the server this build can show live plan notifications (no
       // ActivityKit token on Android) – Ionic registerTokenListeners.
-      await _saveToken('start', 'android');
+      await _saveToken('start', 'android', generation: generation);
     } else {
       // Lets the native side register update tokens itself while the app only runs in the background.
       try {
+        if (_isStale(generation)) return;
         await _channel.invokeMethod<void>('configure', {'url': _host.apiUrl, 'key': _host.apiKey});
       } catch (_) {}
     }
     try {
+      if (_isStale(generation)) return;
       final tokens = await _channel.invokeMapMethod<String, dynamic>('getTokens');
       final start = tokens?['pushToStartToken'];
-      if (start is String && start.isNotEmpty) await _saveToken('start', start);
+      if (start is String && start.isNotEmpty) {
+        await _saveToken('start', start, generation: generation);
+      }
       for (final raw in (tokens?['activityTokens'] as List?) ?? const []) {
         final target = LiveActivityTarget.fromMap(raw);
         final token = raw is Map ? raw['token'] : null;
-        if (token is String) await _saveToken('update', token, target);
+        if (token is String) {
+          await _saveToken('update', token, target: target, generation: generation);
+        }
       }
     } catch (_) {}
   }
 
-  Future<void> _saveToken(String kind, String token, [LiveActivityTarget? target]) async {
+  /// [generation]: the session the registration started in (SOL_FIX16);
+  /// native token events pass none and use the current session.
+  Future<void> _saveToken(
+    String kind,
+    String token, {
+    LiveActivityTarget? target,
+    int? generation,
+  }) async {
+    if (generation != null && _isStale(generation)) return;
     final userId = _host.userId;
     if (userId == null || token.isEmpty) return;
     // SOL_FIX15: tokens belong to the account of this session only.
@@ -496,7 +542,9 @@ class LiveActivityService {
       case 'activityToken':
         final token = args is Map ? args['token'] : null;
         final target = LiveActivityTarget.fromMap(args);
-        if (token is String && target != null) await _saveToken('update', token, target);
+        if (token is String && target != null) {
+          await _saveToken('update', token, target: target);
+        }
         return null;
       case 'openUrl':
         if (args is String) await openFromUrl(Uri.parse(args));

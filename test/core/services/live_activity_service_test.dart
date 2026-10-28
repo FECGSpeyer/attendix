@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:attendix/core/constants/enums.dart';
@@ -29,10 +30,25 @@ class FakeHost implements LiveActivityHost {
   String get apiUrl => 'https://example.supabase.co';
   @override
   String get apiKey => 'anon';
+  /// SOL_FIX16: when set, the next call waits for it (one-shot).
+  Completer<void>? enabledGate;
+  Completer<void>? attendancesGate;
+
   @override
-  Future<bool> loadEnabled() async => enabled;
+  Future<bool> loadEnabled() async {
+    final gate = enabledGate;
+    enabledGate = null;
+    if (gate != null) await gate.future;
+    return enabled;
+  }
+
   @override
-  Future<List<PlanAttendance>> loadAttendances(DateTime from, DateTime to) async => attendances;
+  Future<List<PlanAttendance>> loadAttendances(DateTime from, DateTime to) async {
+    final gate = attendancesGate;
+    attendancesGate = null;
+    if (gate != null) await gate.future;
+    return attendances;
+  }
   @override
   Future<Map<String, String>> typeNames() async => {'t1': 'Probe'};
   @override
@@ -348,6 +364,69 @@ void main() {
       await s.endSession(removeTokensOf: 'user-2');
       expect(host.removed, isEmpty);
       s.dispose();
+    });
+
+    // SOL_FIX16: a fetch that returns after logout must not touch the
+    // lock screen or register tokens for the ended session.
+    test('a sync returning after logout starts nothing again', () async {
+      final host = FakeHost(attendances: [attendance()]);
+      final s = service(host);
+      await s.onTenantReady(7, hasTenantUser: true, userId: 'user-1');
+      s.stopLoop();
+      expect(methods(), contains('start'));
+
+      final gate = Completer<void>();
+      host.attendancesGate = gate;
+      final pending = s.sync(); // waits for A's plans
+      await pumpEventQueue();
+      await endLiveActivitiesBeforeSignOut(s, 'user-1');
+      calls.clear();
+
+      gate.complete();
+      await pending;
+      expect(methods(), isEmpty);
+      expect(s.isLoopRunning, isFalse);
+    });
+
+    test('the next session syncs while a stale sync is still running', () async {
+      final host = FakeHost(attendances: [attendance()]);
+      final s = service(host);
+      await s.onTenantReady(7, hasTenantUser: true, userId: 'user-1');
+      s.stopLoop();
+
+      final gate = Completer<void>();
+      host.attendancesGate = gate;
+      final stale = s.sync();
+      await pumpEventQueue();
+
+      host.userId = 'user-2';
+      await s.onTenantReady(7, hasTenantUser: true, userId: 'user-2');
+      s.stopLoop();
+      expect(methods().where((m) => m == 'start').length, 2);
+      calls.clear();
+
+      gate.complete();
+      await stale;
+      expect(methods(), isEmpty);
+      s.dispose();
+    });
+
+    test('an init returning after logout registers no tokens', () async {
+      final host = FakeHost(attendances: [attendance()]);
+      final gate = Completer<void>();
+      host.enabledGate = gate;
+      final s = service(host);
+      final pending = s.onTenantReady(7, hasTenantUser: true, userId: 'user-1');
+      await pumpEventQueue();
+      await s.endSession();
+      calls.clear();
+
+      gate.complete();
+      await pending;
+      expect(host.saved, isEmpty);
+      expect(methods(), isEmpty);
+      expect(s.isLoopRunning, isFalse);
+      expect(s.sessionUserId, isNull);
     });
 
     test('logout is wired before sign-out', () {
