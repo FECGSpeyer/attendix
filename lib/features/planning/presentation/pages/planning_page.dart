@@ -82,7 +82,8 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   PlanAttendanceType? _typeOf(PlanAttendance? att) =>
       att?.typeId == null ? null : _types.where((t) => t.id == att!.typeId).firstOrNull;
 
-  String get _end => PlanUtils.computeEnd(_time, _fields);
+  /// Ionic `calculateEnd`: stored as "YYYY-MM-DDTHH:mm".
+  String get _end => PlanUtils.computeEndIso(_time, _fields);
 
   // ---------------------------------------------------------------------------
   // Loading
@@ -218,12 +219,18 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     _saveTimer = Timer(const Duration(milliseconds: 400), _save);
   }
 
+  /// Ionic `validate`: start time, at least one field, a duration on every field.
   bool _validate({bool showToast = false}) {
-    if (_time.isEmpty || _fields.isEmpty) {
-      if (showToast) ToastHelper.showWarning(context, context.l10n.planningChooseFieldMin);
-      return false;
+    switch (PlanUtils.validate(_time, _fields)) {
+      case PlanValidation.ok:
+        return true;
+      case PlanValidation.noFields:
+        if (showToast) ToastHelper.showWarning(context, context.l10n.planningChooseFieldMin);
+        return false;
+      case PlanValidation.missingTime:
+        if (showToast) ToastHelper.showWarning(context, context.l10n.planningFillRequired);
+        return false;
     }
-    return true;
   }
 
   Future<void> _save() async {
@@ -368,7 +375,8 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       id: PlanUtils.uuid(),
       day: PlanUtils.nextFreeDay(current, plans),
       time: time.isEmpty ? _time : time,
-      end: copy ? _end : (time.isEmpty ? _time : time),
+      // Ionic: `dayjs().hour(..).minute(..).format('YYYY-MM-DDTHH:mm')`
+      end: copy ? _end : PlanUtils.computeEndIso(time.isEmpty ? _time : time, const []),
       fields: copy
           ? _fields.where((f) => f.agendaItemId == null && !PlanUtils.isAgendaPlaceholder(f)).toList()
           : const [],
@@ -888,9 +896,10 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     return '${d.day.toString().padLeft(2, '0')}_${d.month.toString().padLeft(2, '0')}_${d.year}';
   }
 
+  /// Ionic `showOptions`: export entries only with fields (validated on
+  /// click), the Registerprobenplan always for choir / orchestra.
   Future<void> _showOptions() async {
-    if (!_validate(showToast: true)) return;
-    await _save();
+    if (_validate()) await _save();
     if (!mounted) return;
     final att = _att;
     final tenant = ref.read(currentTenantProvider);
@@ -904,6 +913,8 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       title: context.l10n.personActions,
       fileName: fileName,
       includeBranding: ref.read(includeBrandingProvider), // MISC2
+      showExports: _fields.isNotEmpty,
+      beforeExport: () => _validate(showToast: true),
       pages: () => [
         att == null
             ? PlanExportPage(
@@ -915,14 +926,14 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
             : _exportPage(att, _planIndex, current),
       ],
       extraActions: [
-        if (plans.length > 1)
+        if (_fields.isNotEmpty && plans.length > 1)
           PlanSheetAction('all', context.l10n.planningExportPdfAll, icon: Icons.picture_as_pdf),
         if (showSectional)
           PlanSheetAction('sectional', context.l10n.planningCreateSectionalPlan, icon: Icons.groups),
       ],
       onExtraAction: (a) async {
         if (a == 'sectional') {
-          await showRegisterPlanSheet(context);
+          await showRegisterPlanSheet(context, attendanceDate: DateTime.tryParse(att?.date ?? ''));
         } else if (a == 'all' && att != null) {
           await runPlanExport(
             context,
@@ -1067,7 +1078,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
                     if (_fields.isNotEmpty)
                       ListTile(
                         title: Text(context.l10n.attendanceEnd),
-                        trailing: Text(context.l10n.attendanceTimeOClock(_end), style: const TextStyle(fontWeight: FontWeight.bold)),
+                        trailing: Text(context.l10n.attendanceTimeOClock(PlanUtils.formatTime(_end)), style: const TextStyle(fontWeight: FontWeight.bold)),
                       ),
                   ],
                 ),

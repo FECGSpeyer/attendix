@@ -19,11 +19,16 @@ final planRepositoryWithTenantProvider = Provider<PlanRepository>((ref) {
   return repo;
 });
 
-/// All Termine of the instance with their plans (newest first)
+/// Ionic `db.getCurrentAttDate()`: season start, fallback 2023-01-01.
+String planAttendancesSince(String? seasonStart) =>
+    (seasonStart != null && seasonStart.isNotEmpty) ? seasonStart : DateTime.utc(2023).toIso8601String();
+
+/// Termine of the current season with their plans (newest first)
 final planAttendancesProvider = FutureProvider<List<PlanAttendance>>((ref) async {
   final repo = ref.watch(planRepositoryWithTenantProvider);
   if (!repo.hasTenantId) return [];
-  return repo.getPlanAttendances();
+  final seasonStart = ref.watch(currentTenantProvider.select((t) => t?.seasonStart));
+  return repo.getPlanAttendances(since: planAttendancesSince(seasonStart));
 });
 
 /// One Termin with its plans

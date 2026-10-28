@@ -37,10 +37,24 @@ class PlanExportPage {
 class PlanExportService {
   const PlanExportService();
 
+  /// Font size / cell padding (mm) steps of Ionic's A4 auto-fit
+  /// (`createPlanExport` probe1-3: 11 → 9 → 8 → 7).
+  static const List<PlanExportStyle> a4FitSteps = [
+    PlanExportStyle(11, 3.5),
+    PlanExportStyle(9, 2),
+    PlanExportStyle(8, 1.5),
+    PlanExportStyle(7, 1),
+  ];
+
+  /// Style of one A5 half in the "2x A5" layout (Ionic: font 8, padding 2 mm).
+  static const PlanExportStyle sideBySideStyle = PlanExportStyle(8, 2);
+
   /// Builds the PDF. Every page in [pages] becomes its own PDF page.
   ///
   /// [branding] (logo + text) is drawn in the letterhead of every page
   /// (Ionic `Utils.addBrandingHeader`); without it only title/subtitle/rule.
+  /// A4 plans shrink font and padding step by step until they fit on one
+  /// page, like Ionic `createPlanExport`.
   Future<Uint8List> buildPdf(List<PlanExportPage> pages, {bool sideBySide = false, PdfBranding? branding}) async {
     final doc = pw.Document();
     for (final page in pages) {
@@ -63,19 +77,41 @@ class PlanExportService {
           ),
         ));
       } else {
-        doc.addPage(pw.MultiPage(
-          pageFormat: PdfPageFormat.a4,
-          margin: const pw.EdgeInsets.fromLTRB(36, 28, 36, 36),
-          header: (_) => buildPdfBrandingHeader(
-            branding: branding,
-            title: page.title,
-            subtitle: page.subtitle,
-          ),
-          build: (_) => [_planContent(page, small: false)],
-        ));
+        final style = await fitA4Style(page, branding: branding);
+        _addA4Page(doc, page, branding, style);
       }
     }
     return doc.save();
+  }
+
+  /// Ionic dry-run auto-fit: the first step whose table fits on one A4 page;
+  /// the smallest step when none does.
+  Future<PlanExportStyle> fitA4Style(PlanExportPage page, {PdfBranding? branding}) async {
+    for (var i = 0; i < a4FitSteps.length - 1; i++) {
+      if (await a4PageCount(page, a4FitSteps[i], branding: branding) <= 1) return a4FitSteps[i];
+    }
+    return a4FitSteps.last;
+  }
+
+  /// Number of A4 pages [page] takes with [style] (probe render).
+  Future<int> a4PageCount(PlanExportPage page, PlanExportStyle style, {PdfBranding? branding}) async {
+    final probe = pw.Document();
+    _addA4Page(probe, page, branding, style);
+    await probe.save();
+    return probe.document.pdfPageList.pages.length;
+  }
+
+  void _addA4Page(pw.Document doc, PlanExportPage page, PdfBranding? branding, PlanExportStyle style) {
+    doc.addPage(pw.MultiPage(
+      pageFormat: PdfPageFormat.a4,
+      margin: const pw.EdgeInsets.fromLTRB(36, 28, 36, 36),
+      header: (_) => buildPdfBrandingHeader(
+        branding: branding,
+        title: page.title,
+        subtitle: page.subtitle,
+      ),
+      build: (_) => [_planContent(page, style: style, small: false)],
+    ));
   }
 
   /// Renders the first page of the PDF as PNG (for "Als Bild").
@@ -111,15 +147,17 @@ class PlanExportService {
           subtitle: page.subtitle,
           compact: true,
         ),
-        _planContent(page, small: true),
+        _planContent(page, style: sideBySideStyle, small: true),
       ],
     );
   }
 
-  pw.Widget _planContent(PlanExportPage page, {required bool small}) {
-    final fontSize = small ? 8.0 : 11.0;
-    final pad = small ? 3.0 : 5.0;
+  pw.Widget _planContent(PlanExportPage page, {required PlanExportStyle style, required bool small}) {
+    final fontSize = style.fontSize;
+    final pad = style.paddingMm * PdfPageFormat.mm;
     final fields = page.fields;
+    // Ionic `fieldDisplayName(field, topNumbers(fields))`: "TOP n · Titel".
+    final numbers = PlanUtils.topNumbers(fields);
     final hasConductors = fields.any((f) => (f.conductor ?? '').trim().isNotEmpty);
     final start = PlanUtils.parseTimeToMinutes(page.time) ?? 0;
 
@@ -186,7 +224,7 @@ class PlanExportService {
         rows.add(pw.TableRow(
           decoration: const pw.BoxDecoration(color: PdfColor.fromInt(0xFFEBEBEB)),
           children: [
-            cell(f.name, italic: true, color: PdfColors.grey700),
+            cell(PlanUtils.fieldDisplayName(f, numbers), italic: true, color: PdfColors.grey700),
             for (var i = 1; i < colCount; i++) pw.SizedBox(),
           ],
         ));
@@ -201,7 +239,7 @@ class PlanExportService {
         children: [
           cell(l10n.attendanceTimeOClock(PlanUtils.formatMinutes(current)),
               color: child ? PdfColors.grey700 : null),
-          nameCell(f, f.name, bold: head, indent: child ? 6 : 0),
+          nameCell(f, PlanUtils.fieldDisplayName(f, numbers), bold: head, indent: child ? 5 * PdfPageFormat.mm : 0),
           if (hasConductors) cell(f.conductor ?? ''),
           cell(l10n.attendanceMinutesShort(minutes), bold: head),
         ],
@@ -209,27 +247,25 @@ class PlanExportService {
       current += PlanUtils.fieldMinutes(f);
     }
 
-    final endText = (page.end != null && page.end!.isNotEmpty)
-        ? PlanUtils.formatTime(page.end)
-        : PlanUtils.formatMinutes(current);
-
-    return pw.Column(
-      crossAxisAlignment: pw.CrossAxisAlignment.start,
-      children: [
-        pw.Table(
-          columnWidths: {
-            0: pw.FixedColumnWidth(small ? 46 : 64),
-            1: const pw.FlexColumnWidth(3),
-            if (hasConductors) 2: const pw.FlexColumnWidth(2),
-            (hasConductors ? 3 : 2): pw.FixedColumnWidth(small ? 36 : 50),
-          },
-          children: rows,
-        ),
-        pw.SizedBox(height: 6),
-        pw.Text(l10n.coreFlutterExportEndAt(endText), style: pw.TextStyle(fontSize: fontSize, fontWeight: pw.FontWeight.bold)),
-      ],
+    // Ionic draws only the table (no extra "Ende" line).
+    return pw.Table(
+      columnWidths: {
+        0: pw.FixedColumnWidth((small ? 20 : 28) * PdfPageFormat.mm),
+        1: const pw.FlexColumnWidth(3),
+        if (hasConductors) 2: const pw.FlexColumnWidth(2),
+        (hasConductors ? 3 : 2): pw.FixedColumnWidth(small ? 36 : 50),
+      },
+      children: rows,
     );
   }
+}
+
+/// Font size (pt) and cell padding (mm) of a plan export table.
+class PlanExportStyle {
+  const PlanExportStyle(this.fontSize, this.paddingMm);
+
+  final double fontSize;
+  final double paddingMm;
 }
 
 final planExportServiceProvider = Provider<PlanExportService>((ref) => const PlanExportService());

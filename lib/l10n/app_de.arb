@@ -8973,22 +8973,6 @@
   "@planningFirstEvent": {
     "description": "planning.firstEvent"
   },
-  "planningFlutterAsPdf": "Als PDF",
-  "@planningFlutterAsPdf": {
-    "description": "planning.flutter.asPdf"
-  },
-  "planningFlutterAsPdfHint": "Druckbar, A4 Querformat",
-  "@planningFlutterAsPdfHint": {
-    "description": "planning.flutter.asPdfHint"
-  },
-  "planningFlutterAsText": "Als Text",
-  "@planningFlutterAsText": {
-    "description": "planning.flutter.asText"
-  },
-  "planningFlutterAsTextHint": "Zum Kopieren",
-  "@planningFlutterAsTextHint": {
-    "description": "planning.flutter.asTextHint"
-  },
   "planningFlutterBlockEntry": "Programmblock: {name} ({min} min)",
   "@planningFlutterBlockEntry": {
     "description": "planning.flutter.blockEntry",
@@ -8996,10 +8980,6 @@
       "name": {},
       "min": {}
     }
-  },
-  "planningFlutterChooseFormat": "Format wählen",
-  "@planningFlutterChooseFormat": {
-    "description": "planning.flutter.chooseFormat"
   },
   "planningFlutterErrorWith": "Fehler: {error}",
   "@planningFlutterErrorWith": {
@@ -9023,17 +9003,6 @@
       "min": {}
     }
   },
-  "planningFlutterGenerateFailed": "Fehler bei der Generierung: {error}",
-  "@planningFlutterGenerateFailed": {
-    "description": "planning.flutter.generateFailed",
-    "placeholders": {
-      "error": {}
-    }
-  },
-  "planningFlutterGeneratePlan": "Plan generieren",
-  "@planningFlutterGeneratePlan": {
-    "description": "planning.flutter.generatePlan"
-  },
   "planningFlutterLive": "Live",
   "@planningFlutterLive": {
     "description": "planning.flutter.live"
@@ -9045,20 +9014,6 @@
   "planningFlutterLiveModeEnd": "Live-Modus beenden",
   "@planningFlutterLiveModeEnd": {
     "description": "planning.flutter.liveModeEnd"
-  },
-  "planningFlutterMinAbbr": "{min} Min.",
-  "@planningFlutterMinAbbr": {
-    "description": "planning.flutter.minAbbr",
-    "placeholders": {
-      "min": {}
-    }
-  },
-  "planningFlutterMinPerUnit": "{min} Min./Einheit",
-  "@planningFlutterMinPerUnit": {
-    "description": "planning.flutter.minPerUnit",
-    "placeholders": {
-      "min": {}
-    }
   },
   "planningFlutterNoEvents": "Keine Termine vorhanden",
   "@planningFlutterNoEvents": {
@@ -9076,10 +9031,6 @@
   "@planningFlutterPdfA4": {
     "description": "planning.flutter.pdfA4"
   },
-  "planningFlutterPerUnit": "Pro Einheit",
-  "@planningFlutterPerUnit": {
-    "description": "planning.flutter.perUnit"
-  },
   "planningFlutterPlanPosition": "{index} von {total}",
   "@planningFlutterPlanPosition": {
     "description": "planning.flutter.planPosition",
@@ -9088,34 +9039,11 @@
       "total": {}
     }
   },
-  "planningFlutterRegenerate": "Neu generieren",
-  "@planningFlutterRegenerate": {
-    "description": "planning.flutter.regenerate"
-  },
   "planningFlutterSaveFailedWith": "Fehler beim Speichern: {error}",
   "@planningFlutterSaveFailedWith": {
     "description": "planning.flutter.saveFailedWith",
     "placeholders": {
       "error": {}
-    }
-  },
-  "planningFlutterSectionalGroups": "Gruppen 1-3",
-  "@planningFlutterSectionalGroups": {
-    "description": "planning.flutter.sectionalGroups"
-  },
-  "planningFlutterSelectConductors": "Dirigenten/Stimmführer auswählen",
-  "@planningFlutterSelectConductors": {
-    "description": "planning.flutter.selectConductors"
-  },
-  "planningFlutterSelectOnePerson": "Bitte mindestens eine Person auswählen",
-  "@planningFlutterSelectOnePerson": {
-    "description": "planning.flutter.selectOnePerson"
-  },
-  "planningFlutterSelectedCount": "{count} ausgewählt",
-  "@planningFlutterSelectedCount": {
-    "description": "planning.flutter.selectedCount",
-    "placeholders": {
-      "count": {}
     }
   },
   "planningFlutterShareFailedWith": "Fehler beim Teilen: {error}",
@@ -9132,14 +9060,6 @@
   "planningFlutterTelegramPdf2x": "Per Telegram senden (PDF 2x A5)",
   "@planningFlutterTelegramPdf2x": {
     "description": "planning.flutter.telegramPdf2x"
-  },
-  "planningFlutterTime": "Zeit",
-  "@planningFlutterTime": {
-    "description": "planning.flutter.time"
-  },
-  "planningFlutterTotalDuration": "Gesamtdauer",
-  "@planningFlutterTotalDuration": {
-    "description": "planning.flutter.totalDuration"
   },
   "planningFlutterUnshareAction": "Freigabe aufheben",
   "@planningFlutterUnshareAction": {
