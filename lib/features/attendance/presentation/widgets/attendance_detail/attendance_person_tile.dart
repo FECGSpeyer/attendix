@@ -72,58 +72,78 @@ class AttendancePersonTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final hasNotes = notes?.isNotEmpty == true;
-    final medium = Theme.of(context).textTheme.bodySmall?.copyWith(
-          color: AppColors.medium,
-          fontSize: 12.5,
-        );
+    final medium = Theme.of(
+      context,
+    ).textTheme.bodySmall?.copyWith(color: AppColors.medium, fontSize: 12.5);
 
-    final content = Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      child: Row(
-        children: [
-          if (showAvatar) ...[
-            CircleAvatar(
-              radius: 20,
-              backgroundColor: AppColors.light,
-              backgroundImage: person.img != null ? NetworkImage(person.img!) : null,
-              child: person.img == null
-                  ? const Icon(Icons.person, color: AppColors.medium)
-                  : null,
+    // UX_ATT: Ionic iOS ion-item: 16 px start padding, 36 px avatar with
+    // 16 px gap, h2 17 px name, h3 15 px note, 0.78rem medium extra lines.
+    final content = ConstrainedBox(
+      constraints: const BoxConstraints(minHeight: 52),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        child: Row(
+          children: [
+            if (showAvatar) ...[
+              CircleAvatar(
+                radius: 18,
+                backgroundColor: AppColors.light,
+                backgroundImage:
+                    person.img != null ? NetworkImage(person.img!) : null,
+                child:
+                    person.img == null
+                        ? const Icon(
+                          Icons.person,
+                          color: AppColors.medium,
+                          size: 20,
+                        )
+                        : null,
+              ),
+              const SizedBox(width: 16),
+            ],
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(person.fullName, style: const TextStyle(fontSize: 17)),
+                  if (hasNotes)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 2),
+                      child: Text(
+                        notes!,
+                        style: const TextStyle(fontSize: 15),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  if (registrationSummary?.isNotEmpty == true)
+                    Text(
+                      registrationSummary!,
+                      style: medium,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  if (extraLine?.isNotEmpty == true)
+                    Text(
+                      extraLine!,
+                      style: medium,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                ],
+              ),
             ),
-            const SizedBox(width: 16),
+            const SizedBox(width: 8),
+            if (clickMode)
+              AttendanceStatusBadge(status: status)
+            else
+              _StatusSelect(
+                status: status,
+                options: ionicSelectableStatuses(availableStatuses),
+                onChanged: _onStatusChangedWithHaptic,
+              ),
           ],
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  person.fullName,
-                  style: Theme.of(context).textTheme.bodyLarge,
-                ),
-                if (hasNotes)
-                  Text(
-                    notes!,
-                    style: Theme.of(context).textTheme.bodyMedium,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                if (registrationSummary?.isNotEmpty == true)
-                  Text(registrationSummary!, style: medium, maxLines: 2, overflow: TextOverflow.ellipsis),
-                if (extraLine?.isNotEmpty == true)
-                  Text(extraLine!, style: medium, maxLines: 1, overflow: TextOverflow.ellipsis),
-              ],
-            ),
-          ),
-          const SizedBox(width: 8),
-          if (clickMode)
-            AttendanceStatusBadge(status: status)
-          else
-            _StatusSelect(
-              status: status,
-              options: ionicSelectableStatuses(availableStatuses),
-              onChanged: _onStatusChangedWithHaptic,
-            ),
-        ],
+        ),
       ),
     );
 
@@ -132,6 +152,16 @@ class AttendancePersonTile extends StatelessWidget {
       endActionPane: ActionPane(
         motion: const ScrollMotion(),
         extentRatio: 0.36,
+        // UX_ATT: the Notiz option is `expandable` in Ionic: a full swipe
+        // opens the note sheet (ionSwipe → addNote).
+        dismissible: DismissiblePane(
+          closeOnCancel: true,
+          confirmDismiss: () async {
+            await _showNoteDialog(context);
+            return false;
+          },
+          onDismissed: () {},
+        ),
         children: [
           SlidableAction(
             onPressed: (_) => _showMoreSheet(context),
@@ -149,16 +179,20 @@ class AttendancePersonTile extends StatelessWidget {
       ),
       child: Material(
         color: Theme.of(context).colorScheme.surface,
-        child: clickMode
-            ? InkWell(onTap: () => _cycleStatus(context), child: content)
-            : content,
+        child:
+            clickMode
+                ? InkWell(onTap: () => _cycleStatus(context), child: content)
+                : content,
       ),
     );
   }
 
   /// Note action sheet with the tenant's absence reasons (Ionic `addNote`).
   Future<void> _showNoteDialog(BuildContext context) async {
-    final tenant = ProviderScope.containerOf(context, listen: false).read(currentTenantProvider);
+    final tenant = ProviderScope.containerOf(
+      context,
+      listen: false,
+    ).read(currentTenantProvider);
     final result = await showPersonNoteSheet(
       context,
       currentNote: notes,
@@ -170,11 +204,17 @@ class AttendancePersonTile extends StatelessWidget {
 
   /// Person action sheet (Ionic openMoreSheet, same option order).
   Future<void> _showMoreSheet(BuildContext context) async {
-    final canLateExcused = clickMode && availableStatuses.contains(AttendanceStatus.late);
+    final canLateExcused =
+        clickMode && availableStatuses.contains(AttendanceStatus.late);
     await showModalBottomSheet<void>(
       context: context,
       builder: (ctx) {
-        Widget option(String label, IconData icon, VoidCallback onTap, {bool destructive = false}) {
+        Widget option(
+          String label,
+          IconData icon,
+          VoidCallback onTap, {
+          bool destructive = false,
+        }) {
           final color = destructive ? AppColors.danger : null;
           return ListTile(
             leading: Icon(icon, color: color),
@@ -195,27 +235,57 @@ class AttendancePersonTile extends StatelessWidget {
                   padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
                   child: Text(
                     person.fullName,
-                    style: const TextStyle(color: AppColors.medium, fontSize: 13),
+                    style: const TextStyle(
+                      color: AppColors.medium,
+                      fontSize: 13,
+                    ),
                   ),
                 ),
                 if (status != AttendanceStatus.neutral)
-                  option(context.l10n.attendanceSetNeutral, Icons.remove_circle_outline,
-                      () => _onStatusChangedWithHaptic(AttendanceStatus.neutral)),
+                  option(
+                    context.l10n.attendanceSetNeutral,
+                    Icons.remove_circle_outline,
+                    () => _onStatusChangedWithHaptic(AttendanceStatus.neutral),
+                  ),
                 if (canLateExcused)
-                  option(context.l10n.commonStatusLateExcused, Icons.schedule,
-                      () => _onStatusChangedWithHaptic(AttendanceStatus.lateExcused)),
+                  option(
+                    context.l10n.commonStatusLateExcused,
+                    Icons.schedule,
+                    () => _onStatusChangedWithHaptic(
+                      AttendanceStatus.lateExcused,
+                    ),
+                  ),
                 if (onEditRegistrationFields != null)
-                  option(context.l10n.attendanceEditRegFields, Icons.edit_outlined, onEditRegistrationFields!),
+                  option(
+                    context.l10n.attendanceEditRegFields,
+                    Icons.edit_outlined,
+                    onEditRegistrationFields!,
+                  ),
                 if (showModifierInfo) ...[
-                  option(context.l10n.attendanceWhoChanged, Icons.info_outline, onShowModifierInfo),
-                  option(context.l10n.attendanceRemovePerson, Icons.delete_outline, onRemoveFromAttendance,
-                      destructive: true),
+                  option(
+                    context.l10n.attendanceWhoChanged,
+                    Icons.info_outline,
+                    onShowModifierInfo,
+                  ),
+                  option(
+                    context.l10n.attendanceRemovePerson,
+                    Icons.delete_outline,
+                    onRemoveFromAttendance,
+                    destructive: true,
+                  ),
                 ],
                 if (onSendReminder != null)
-                  option(context.l10n.attendanceSendReminderShort, Icons.notifications_outlined, onSendReminder!),
+                  option(
+                    context.l10n.attendanceSendReminderShort,
+                    Icons.notifications_outlined,
+                    onSendReminder!,
+                  ),
                 const Divider(height: 1),
                 ListTile(
-                  title: Text(context.l10n.commonCancel, textAlign: TextAlign.center),
+                  title: Text(
+                    context.l10n.commonCancel,
+                    textAlign: TextAlign.center,
+                  ),
                   onTap: () => Navigator.pop(ctx),
                 ),
               ],
@@ -236,10 +306,7 @@ class AttendancePersonTile extends StatelessWidget {
   void _cycleStatus(BuildContext context) {
     final next = nextClickStatus(status, availableStatuses);
     if (next == null) {
-      ToastHelper.showError(
-        context,
-        context.l10n.attendanceStatusChangeFailed,
-      );
+      ToastHelper.showError(context, context.l10n.attendanceStatusChangeFailed);
       return;
     }
     if (next == status) return; // LOGIC_ATT: not in the mapping → no change

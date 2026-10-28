@@ -3,7 +3,6 @@ import 'package:intl/intl.dart';
 
 import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/theme/app_colors.dart';
-import '../../../../../core/utils/color_utils.dart';
 import '../../../../../data/models/attendance/attendance.dart';
 import '../../../../../core/utils/date_helper.dart';
 import '../../../../../l10n/l10n.dart';
@@ -166,11 +165,12 @@ class _GeneralInfoAccordionState extends State<GeneralInfoAccordion> {
           if (widget.attendanceType != null)
             ListTile(
               title: Text(context.l10n.attListType),
+              // UX_ATT: plain `<ion-badge slot="end">` = primary, iOS radius 10
               trailing: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
-                  color: ColorUtils.parseNamedColor(widget.attendanceType!.color),
-                  borderRadius: BorderRadius.circular(6),
+                  color: AppColors.primary,
+                  borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
                   widget.attendanceType!.name,
@@ -238,7 +238,10 @@ class _GeneralInfoAccordionState extends State<GeneralInfoAccordion> {
             if (hasDeadline)
               ListTile(
                 title: Text(context.l10n.attendanceDeadlineDate),
-                trailing: Text(formattedDeadline ?? '', style: valueStyle),
+                trailing: _DatetimeButton(
+                  label: formattedDeadline ?? '',
+                  onTap: widget.onDeadlineSelect,
+                ),
                 onTap: widget.onDeadlineSelect,
                 dense: true,
               ),
@@ -248,13 +251,19 @@ class _GeneralInfoAccordionState extends State<GeneralInfoAccordion> {
           if (!isAllDay) ...[
             ListTile(
               title: Text(context.l10n.attendanceStart),
-              trailing: Text(_formatTime(widget.attendance.startTime), style: valueStyle),
+              trailing: _DatetimeButton(
+                label: _formatTime(widget.attendance.startTime),
+                onTap: widget.onStartTimeSelect,
+              ),
               onTap: widget.onStartTimeSelect,
               dense: true,
             ),
             ListTile(
               title: Text(context.l10n.attendanceEnd),
-              trailing: Text(_formatTime(widget.attendance.endTime), style: valueStyle),
+              trailing: _DatetimeButton(
+                label: _formatTime(widget.attendance.endTime),
+                onTap: widget.onEndTimeSelect,
+              ),
               onTap: widget.onEndTimeSelect,
               dense: true,
             ),
@@ -361,5 +370,36 @@ class _GeneralInfoAccordionState extends State<GeneralInfoAccordion> {
   String _formatTime(String? value) {
     if (value == null || value.isEmpty) return '--:--';
     return DateHelper.hhmm(value);
+  }
+}
+
+/// UX_ATT: Ionic `ion-datetime-button`: grey rounded value button.
+class _DatetimeButton extends StatelessWidget {
+  const _DatetimeButton({required this.label, required this.onTap});
+
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    return Material(
+      color: dark ? const Color(0xFF2C2C2E) : const Color(0xFFEDEEF0),
+      borderRadius: BorderRadius.circular(8),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(8),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: 17,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

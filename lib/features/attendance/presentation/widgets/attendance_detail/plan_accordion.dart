@@ -9,7 +9,6 @@ import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/utils/plan_utils.dart';
 import '../../../../../data/models/attendance/attendance.dart';
 import '../../../../../data/models/plan/plan.dart';
-import '../../../../planning/presentation/pages/plan_viewer_page.dart';
 import '../../../../planning/presentation/widgets/plan_export_actions.dart';
 import '../../../../planning/presentation/widgets/plan_field_dialogs.dart';
 import '../../../../planning/presentation/widgets/plan_view_list.dart';
@@ -209,17 +208,8 @@ class _PlanAccordionState extends ConsumerState<PlanAccordion> {
               title: Text(context.l10n.attendanceShare, style: primaryStyle),
               onTap: () => _export(att, plans, _planIndex),
             ),
-            // Flutter-only extra: read-only / live plan viewer
-            ListTile(
-              dense: true,
-              leading: const Icon(Icons.play_circle_outline, color: AppColors.primary),
-              title: Text(context.l10n.signoutShowRunSheet, style: primaryStyle),
-              onTap: () => showPlanViewer(
-                context,
-                attendance: att,
-                title: _title(att, plan),
-              ),
-            ),
+            // UX_ATT: no extra "Ablaufplan anzeigen" row (not in Ionic; the
+            // viewer opens from the Termine list).
           ],
         ],
       ),

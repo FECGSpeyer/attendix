@@ -44,24 +44,24 @@ class ChecklistAccordion extends StatelessWidget {
       child: ExpansionTile(
         shape: const Border(),
         collapsedShape: const Border(),
+        // UX_ATT: Ionic header: label + solid `ion-badge slot="end"`
+        // (success when everything is done, else primary).
         title: Row(
           children: [
-            Text(context.l10n.attendanceChecklist),
+            Expanded(child: Text(context.l10n.attendanceChecklist)),
             const SizedBox(width: 8),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
               decoration: BoxDecoration(
-                color: progress == 1.0
-                    ? AppColors.success.withValues(alpha: 0.2)
-                    : AppColors.primary.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(12),
+                color: progress == 1.0 ? AppColors.success : AppColors.primary,
+                borderRadius: BorderRadius.circular(10),
               ),
               child: Text(
                 '$completedCount/$totalCount',
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: progress == 1.0 ? AppColors.success : AppColors.primary,
+                style: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
                 ),
               ),
             ),
@@ -146,13 +146,7 @@ class ChecklistAccordion extends StatelessWidget {
             title: Text(context.l10n.attendanceAddTodo, style: const TextStyle(color: AppColors.primary)),
             onTap: onAdd,
           ),
-          // Flutter-only shortcut (Ionic: menu "Checkliste zurücksetzen")
-          ListTile(
-            dense: true,
-            leading: const Icon(Icons.restore, color: AppColors.medium),
-            title: Text(context.l10n.attendanceResetChecklist, style: const TextStyle(color: AppColors.medium)),
-            onTap: onRestore,
-          ),
+          // UX_ATT: "Checkliste zurücksetzen" lives in the header menu (Ionic)
         ],
       ),
     );
