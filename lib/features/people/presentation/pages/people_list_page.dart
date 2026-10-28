@@ -20,6 +20,8 @@ import '../../../../shared/widgets/loading/loading.dart';
 import '../../../../shared/widgets/common/empty_state.dart';
 import '../../../../shared/widgets/animations/animated_list_item.dart';
 import '../widgets/handover_sheet.dart';
+import 'bulk_edit_page.dart';
+import 'person_import_page.dart';
 
 /// Provider for people list (active players only)
 final peopleListProvider = FutureProvider<List<Person>>((ref) async {
@@ -463,6 +465,35 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
                   tooltip: 'Ansicht',
                   onPressed: _showViewOptionsDialog,
                 ),
+                // PEOPLE_IMPORT: bulk edit + import (Ionic: isAdmin = Admin/Responsible)
+                if (ref.watch(currentRoleProvider).isAdmin ||
+                    ref.watch(currentRoleProvider).isResponsible)
+                  PopupMenuButton<String>(
+                    icon: const Icon(Icons.more_vert),
+                    tooltip: 'Mehr',
+                    onSelected: (value) {
+                      if (value == 'bulkEdit') _openBulkEdit();
+                      if (value == 'import') _openImport();
+                    },
+                    itemBuilder: (context) => const [
+                      PopupMenuItem(
+                        value: 'bulkEdit',
+                        child: ListTile(
+                          leading: Icon(Icons.edit),
+                          title: Text('Bulk-Bearbeitung'),
+                          contentPadding: EdgeInsets.zero,
+                        ),
+                      ),
+                      PopupMenuItem(
+                        value: 'import',
+                        child: ListTile(
+                          leading: Icon(Icons.cloud_upload_outlined),
+                          title: Text('Personen importieren'),
+                          contentPadding: EdgeInsets.zero,
+                        ),
+                      ),
+                    ],
+                  ),
               ],
       ),
       body: Column(
@@ -761,6 +792,36 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
         _selectedPlayerIds.add(playerId);
       }
     });
+  }
+
+  // PEOPLE_IMPORT: open bulk edit with the currently filtered persons
+  Future<void> _openBulkEdit() async {
+    final people = ref.read(realtimePlayersProvider).valueOrNull ?? [];
+    final players = _sortPeople(_filterPeople(people));
+    final updated = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(
+        fullscreenDialog: true,
+        builder: (_) => BulkEditPage(players: players),
+      ),
+    );
+    if (updated == true && mounted) {
+      ref.invalidate(realtimePlayersProvider);
+      ref.invalidate(peopleListProvider);
+    }
+  }
+
+  // PEOPLE_IMPORT: open the person import
+  Future<void> _openImport() async {
+    final imported = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(
+        fullscreenDialog: true,
+        builder: (_) => const PersonImportPage(),
+      ),
+    );
+    if (imported == true && mounted) {
+      ref.invalidate(realtimePlayersProvider);
+      ref.invalidate(peopleListProvider);
+    }
   }
 
   Future<void> _showHandoverSheet() async {

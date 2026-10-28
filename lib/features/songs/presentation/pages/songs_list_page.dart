@@ -16,6 +16,7 @@ import '../../../../data/models/song/song_filter.dart';
 import '../widgets/song_filter_sheet.dart';
 import '../widgets/song_categories_sheet.dart';
 import '../widgets/group_files_sheet.dart';
+import 'song_import_page.dart';
 
 /// Songs list page with filter and sort support
 class SongsListPage extends ConsumerStatefulWidget {
@@ -74,6 +75,22 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
         if (isConductor) showSongCategoriesSheet(context);
       case 'share':
         _shareSongLink(ref, context);
+      // PEOPLE_IMPORT: song import (Ionic: Admin/Responsible only)
+      case 'import':
+        _openSongImport(ref, context);
+    }
+  }
+
+  Future<void> _openSongImport(WidgetRef ref, BuildContext context) async {
+    final imported = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(
+        fullscreenDialog: true,
+        builder: (_) => const SongImportPage(),
+      ),
+    );
+    if (imported == true) {
+      ref.invalidate(songsProvider);
+      ref.invalidate(realtimeSongsProvider);
     }
   }
 
@@ -226,6 +243,18 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
                   ),
                 ),
               ],
+              // PEOPLE_IMPORT: song import (Admin/Responsible)
+              if (currentRole.isAdmin || currentRole.isResponsible)
+                const PopupMenuItem(
+                  value: 'import',
+                  child: Row(
+                    children: [
+                      Icon(Icons.cloud_upload_outlined, size: 20),
+                      SizedBox(width: 12),
+                      Text('Werke importieren'),
+                    ],
+                  ),
+                ),
             ],
           ),
         ],

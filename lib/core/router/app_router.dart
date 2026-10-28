@@ -52,6 +52,9 @@ import '../../features/registration/presentation/pages/tenant_registration_page.
 import '../../features/parents/presentation/pages/parents_portal_page.dart';
 import '../../features/shifts/presentation/pages/shifts_list_page.dart';
 import '../../features/shifts/presentation/pages/shift_detail_page.dart';
+// PEOPLE_IMPORT
+import '../../features/settings/presentation/pages/handover_page.dart';
+import '../../features/settings/presentation/pages/handover_detail_page.dart';
 
 /// Listenable that notifies when auth state changes
 /// Used by GoRouter to re-evaluate redirects without recreating the router
@@ -84,6 +87,8 @@ const Map<String, RoleCheck> _protectedRoutes = {
   '/settings/pending': _isAdminOrResponsible,
   '/settings/batch-accounts': _isAdmin,
   '/settings/left': _isAdminOrResponsible,
+  // PEOPLE_IMPORT
+  '/settings/handover': _isAdminOrResponsible,
 
   // Conductor routes (Admin, Responsible, Viewer)
   '/settings/teachers': _isConductor,
@@ -521,6 +526,23 @@ final routerProvider = Provider<GoRouter>((ref) {
                 path: 'parents',
                 name: 'parentsManagement',
                 builder: (context, state) => const ParentsPage(),
+              ),
+              // PEOPLE_IMPORT: Personenübergabe (Ionic settings/handover)
+              GoRoute(
+                path: 'handover',
+                name: 'handover',
+                builder: (context, state) => const HandoverPage(),
+                routes: [
+                  GoRoute(
+                    path: 'detail',
+                    name: 'handoverDetail',
+                    builder: (context, state) => HandoverDetailPage(
+                      data: state.extra is HandoverData
+                          ? state.extra as HandoverData
+                          : null,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

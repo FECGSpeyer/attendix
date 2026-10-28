@@ -16,3 +16,6 @@ export 'viewer_repository.dart';
 export 'parent_repository.dart';
 export 'church_repository.dart';
 export 'usage_events_repository.dart';
+// PEOPLE_IMPORT
+export 'player_absence_repository.dart';
+export 'import_repository.dart';

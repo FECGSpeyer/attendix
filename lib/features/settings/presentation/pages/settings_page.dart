@@ -222,6 +222,13 @@ class SettingsPage extends ConsumerWidget {
                   subtitle: 'Archivierte Mitglieder verwalten',
                   onTap: () => context.push('/settings/left'),
                 ),
+                // PEOPLE_IMPORT: Personenübergabe (Ionic org-settings "Übergabe")
+                _SettingsTile(
+                  leading: const _SettingsIcon(icon: Icons.swap_horiz),
+                  title: 'Personenübergabe',
+                  subtitle: 'Personen an andere Instanzen der Organisation übergeben',
+                  onTap: () => context.push('/settings/handover'),
+                ),
               ],
             ),
             const SizedBox(height: AppDimensions.paddingM),
