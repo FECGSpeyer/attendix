@@ -14,6 +14,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../data/services/auth_service.dart';
+import '../widgets/planned_absences.dart';
 import '../widgets/handover_sheet.dart';
 import '../widgets/person_detail/person_detail.dart';
 
@@ -1572,6 +1573,9 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
 
             // Upcoming Appointments Accordion
             UpcomingAppointmentsAccordion(personId: widget.personId),
+
+            // PEOPLE_IMPORT: Planned absences (Ionic person.page "Abwesenheiten")
+            if (canEdit) PlannedAbsencesAccordion(personId: widget.personId),
 
             // Other Tenants Accordion (only if person has an account)
             if (widget.person.appId != null)

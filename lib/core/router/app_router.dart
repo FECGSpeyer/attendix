@@ -76,6 +76,9 @@ import '../../features/dashboard/presentation/pages/home_dashboard_page.dart';
 import '../../features/dashboard/presentation/pages/dashboard_settings_page.dart';
 import '../../features/dashboard/presentation/pages/administration_page.dart';
 import '../../features/dashboard/presentation/pages/usage_dashboard_page.dart';
+// PEOPLE_IMPORT
+import '../../features/settings/presentation/pages/handover_page.dart';
+import '../../features/settings/presentation/pages/handover_detail_page.dart';
 
 /// Listenable that notifies when auth state changes
 /// Used by GoRouter to re-evaluate redirects without recreating the router
@@ -114,6 +117,8 @@ const Map<String, RoleCheck> _protectedRoutes = {
   // END SETTINGS_EXT
   // MESSAGES
   '/settings/messages': _isAdminOrResponsible,
+  // PEOPLE_IMPORT
+  '/settings/handover': _isAdminOrResponsible,
 
   // Conductor routes (Admin, Responsible, Viewer)
   '/settings/teachers': _isConductor,
@@ -666,6 +671,23 @@ final routerProvider = Provider<GoRouter>((ref) {
                 redirect: (context, state) =>
                     ref.read(isSuperDeveloperProvider) ? null : '/settings',
                 builder: (context, state) => const AdministrationPage(),
+              ),
+              // PEOPLE_IMPORT: Personenübergabe (Ionic settings/handover)
+              GoRoute(
+                path: 'handover',
+                name: 'handover',
+                builder: (context, state) => const HandoverPage(),
+                routes: [
+                  GoRoute(
+                    path: 'detail',
+                    name: 'handoverDetail',
+                    builder: (context, state) => HandoverDetailPage(
+                      data: state.extra is HandoverData
+                          ? state.extra as HandoverData
+                          : null,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

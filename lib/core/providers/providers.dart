@@ -32,3 +32,6 @@ export 'files_providers.dart';
 export 'message_providers.dart';
 // DASHBOARD
 export 'dashboard_providers.dart';
+// PEOPLE_IMPORT
+export 'player_absence_providers.dart';
+export 'import_providers.dart';

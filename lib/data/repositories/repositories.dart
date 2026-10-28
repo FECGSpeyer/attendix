@@ -32,3 +32,6 @@ export 'user_notification_repository.dart';
 // DASHBOARD
 export 'dashboard_repository.dart';
 export 'administration_repository.dart';
+// PEOPLE_IMPORT
+export 'player_absence_repository.dart';
+export 'import_repository.dart';

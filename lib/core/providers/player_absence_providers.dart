@@ -1,0 +1,130 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../data/models/player_absence/player_absence.dart';
+import '../../data/repositories/player_absence_repository.dart';
+import '../constants/enums.dart';
+import 'tenant_providers.dart';
+
+/// PlayerAbsenceRepository with tenant context
+final playerAbsenceRepositoryWithTenantProvider =
+    Provider<PlayerAbsenceRepository>((ref) {
+  final repo = ref.watch(playerAbsenceRepositoryProvider);
+  final tenantId = ref.watch(currentTenantIdProvider);
+  if (tenantId != null) repo.setTenantId(tenantId);
+  return repo;
+});
+
+/// Planned absences of one person (sorted by from_date)
+final playerAbsencesByPersonIdProvider =
+    FutureProvider.family<List<PlayerAbsence>, int>((ref, personId) async {
+  final repo = ref.watch(playerAbsenceRepositoryWithTenantProvider);
+  if (!repo.hasTenantId) return [];
+  return repo.getAbsencesForPerson(personId);
+});
+
+/// All planned absences of the current tenant
+final playerAbsencesProvider = FutureProvider<List<PlayerAbsence>>((ref) async {
+  final repo = ref.watch(playerAbsenceRepositoryWithTenantProvider);
+  if (!repo.hasTenantId) return [];
+  return repo.getAbsencesForTenant();
+});
+
+/// `tenant_role_permissions` absence flags for a role (by role value)
+final roleAbsencePermissionsByRoleProvider =
+    FutureProvider.family<RoleAbsencePermissions, int>((ref, role) async {
+  final repo = ref.watch(playerAbsenceRepositoryWithTenantProvider);
+  if (!repo.hasTenantId) return const RoleAbsencePermissions();
+  try {
+    return await repo.getRoleAbsencePermissions(role);
+  } catch (_) {
+    // Table may be missing on older backends -> treat as not permitted.
+    return const RoleAbsencePermissions();
+  }
+});
+
+/// Ionic person page: `canManagePlannedAbsences = isAdmin || perm.player_planned_absence`
+/// (isAdmin = Admin or Responsible).
+final canManagePlannedAbsencesProvider = Provider<bool>((ref) {
+  final role = ref.watch(currentRoleProvider);
+  if (role == Role.admin || role == Role.responsible) return true;
+  return ref
+          .watch(roleAbsencePermissionsByRoleProvider(role.value))
+          .valueOrNull
+          ?.playerPlannedAbsence ??
+      false;
+});
+
+/// Self-service: may the current user report planned absences?
+/// (Ionic signout page: permission of the user's own role)
+final canSelfReportAbsenceProvider = Provider<bool>((ref) {
+  final role = ref.watch(currentRoleProvider);
+  return ref
+          .watch(roleAbsencePermissionsByRoleProvider(role.value))
+          .valueOrNull
+          ?.playerPlannedAbsence ??
+      false;
+});
+
+
+/// Mutations for planned absences
+class PlayerAbsenceNotifier extends Notifier<AsyncValue<void>> {
+  @override
+  AsyncValue<void> build() => const AsyncValue.data(null);
+
+  PlayerAbsenceRepository get _repo =>
+      ref.read(playerAbsenceRepositoryWithTenantProvider);
+
+  /// Adds the absence and excuses all upcoming attendances in range.
+  /// Returns the number of excused attendances, or null on error.
+  Future<int?> addAbsence({
+    required int personId,
+    required String fromDate,
+    required String untilDate,
+    required String reason,
+  }) async {
+    state = const AsyncValue.loading();
+    try {
+      await _repo.addAbsence(
+        personId: personId,
+        fromDate: fromDate,
+        untilDate: untilDate,
+        reason: reason,
+      );
+      final count = await _repo.excuseUpcomingAttendances(
+        personId: personId,
+        fromDate: fromDate,
+        untilDate: untilDate,
+        reason: reason,
+      );
+      state = const AsyncValue.data(null);
+      ref.invalidate(playerAbsencesByPersonIdProvider(personId));
+      ref.invalidate(playerAbsencesProvider);
+      return count;
+    } catch (e, stack) {
+      state = AsyncValue.error(e, stack);
+      return null;
+    }
+  }
+
+  /// Deletes the absence and resets the attendances it excused.
+  Future<bool> deleteAbsence(PlayerAbsence absence) async {
+    if (absence.id == null) return false;
+    state = const AsyncValue.loading();
+    try {
+      await _repo.deleteAbsence(absence.id!);
+      await _repo.resetExcusedAttendances(absence: absence);
+      state = const AsyncValue.data(null);
+      ref.invalidate(playerAbsencesByPersonIdProvider(absence.personId));
+      ref.invalidate(playerAbsencesProvider);
+      return true;
+    } catch (e, stack) {
+      state = AsyncValue.error(e, stack);
+      return false;
+    }
+  }
+}
+
+final playerAbsenceNotifierProvider =
+    NotifierProvider<PlayerAbsenceNotifier, AsyncValue<void>>(
+  PlayerAbsenceNotifier.new,
+);

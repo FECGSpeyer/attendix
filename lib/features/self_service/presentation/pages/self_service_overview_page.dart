@@ -13,6 +13,7 @@ import '../../../../data/models/person/person.dart';
 import '../widgets/plan_viewer_sheet.dart';
 import '../widgets/upcoming_songs_sheet.dart';
 import '../../../messages/presentation/widgets/notification_bell.dart'; // MESSAGES
+import '../widgets/self_service_absences.dart';
 
 /// Self-Service Overview Page
 ///
@@ -128,6 +129,9 @@ class _SelfServiceOverviewPageState
                     onShowSongs: () => showUpcomingSongsSheet(context),
                   ),
                 ),
+
+                // PEOPLE_IMPORT: planned absences + self pause
+                const SliverToBoxAdapter(child: SelfServiceAbsenceSection()),
 
                 // Current Attendance Card
                 if (currentAttendance != null)

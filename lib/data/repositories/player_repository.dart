@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/constants/enums.dart';
 import '../models/person/person.dart';
+import '../models/instrument/instrument.dart';
 import 'base_repository.dart';
 
 /// Provider for PlayerRepository
@@ -458,7 +459,7 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
   }
 
   /// Unpause a player
-  Future<void> unpausePlayer(Person player) async {
+  Future<void> unpausePlayer(Person player, {String historyText = 'Pause beendet'}) async {
     if (player.id == null) {
       throw RepositoryException(
         message: 'Player ID is required for unpause',
@@ -473,7 +474,7 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
       );
       history.add({
         'date': DateTime.now().toIso8601String(),
-        'text': 'Pause beendet',
+        'text': historyText,
         'type': PlayerHistoryType.unpaused.value,
       });
 
@@ -1006,6 +1007,24 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
       return false;
     } catch (e, stack) {
       handleError(e, stack, 'playerExistsInTenant');
+      rethrow;
+    }
+  }
+
+  /// Groups of a handover target tenant (cross-tenant read by design, the
+  /// query is scoped to the explicit target tenantId).
+  Future<List<Group>> getTargetTenantGroups(int targetTenantId) async {
+    try {
+      final response = await supabase
+          .from('instruments')
+          .select('*')
+          .eq('tenantId', targetTenantId)
+          .order('name');
+      return (response as List)
+          .map((e) => Group.fromJson(e as Map<String, dynamic>))
+          .toList();
+    } catch (e, stack) {
+      handleError(e, stack, 'getTargetTenantGroups');
       rethrow;
     }
   }
