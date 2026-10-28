@@ -2523,6 +2523,30 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get filesFlutterAscending => 'Aufsteigend';
+
+  @override
+  String get filesFlutterDescending => 'Absteigend';
+
+  @override
+  String get filesFlutterMovePh => 'z. B. Dokumente/2026';
+
+  @override
+  String get filesFlutterOpenDownload => 'Datei öffnen/downloaden';
+
+  @override
+  String get filesFlutterOpenFolder => 'Ordner öffnen';
+
+  @override
+  String get filesFlutterOpenLinkFailed => 'Link konnte nicht geöffnet werden';
+
+  @override
+  String get filesFlutterShareFolderLink => 'Link zu diesem Ordner teilen';
+
+  @override
+  String get filesFlutterShareRootLink => 'Link zur Dateiablage teilen';
+
+  @override
   String get filesFolderCreated => 'Ordner wurde erstellt.';
 
   @override

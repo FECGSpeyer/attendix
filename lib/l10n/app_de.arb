@@ -3278,6 +3278,38 @@
       "names": {}
     }
   },
+  "filesFlutterAscending": "Aufsteigend",
+  "@filesFlutterAscending": {
+    "description": "files.flutter.ascending"
+  },
+  "filesFlutterDescending": "Absteigend",
+  "@filesFlutterDescending": {
+    "description": "files.flutter.descending"
+  },
+  "filesFlutterMovePh": "z. B. Dokumente/2026",
+  "@filesFlutterMovePh": {
+    "description": "files.flutter.movePh"
+  },
+  "filesFlutterOpenDownload": "Datei öffnen/downloaden",
+  "@filesFlutterOpenDownload": {
+    "description": "files.flutter.openDownload"
+  },
+  "filesFlutterOpenFolder": "Ordner öffnen",
+  "@filesFlutterOpenFolder": {
+    "description": "files.flutter.openFolder"
+  },
+  "filesFlutterOpenLinkFailed": "Link konnte nicht geöffnet werden",
+  "@filesFlutterOpenLinkFailed": {
+    "description": "files.flutter.openLinkFailed"
+  },
+  "filesFlutterShareFolderLink": "Link zu diesem Ordner teilen",
+  "@filesFlutterShareFolderLink": {
+    "description": "files.flutter.shareFolderLink"
+  },
+  "filesFlutterShareRootLink": "Link zur Dateiablage teilen",
+  "@filesFlutterShareRootLink": {
+    "description": "files.flutter.shareRootLink"
+  },
   "filesFolderCreated": "Ordner wurde erstellt.",
   "@filesFolderCreated": {
     "description": "files.folderCreated"

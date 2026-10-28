@@ -136,6 +136,18 @@
         "firstOptionDefault": "Erste Option ist der Standardwert",
         "leaveMessage": "Du hast ungespeicherte Änderungen. Möchtest du die Seite trotzdem verlassen?"
       }
+    },
+    "files": {
+      "flutter": {
+        "openLinkFailed": "Link konnte nicht geöffnet werden",
+        "movePh": "z. B. Dokumente/2026",
+        "openFolder": "Ordner öffnen",
+        "openDownload": "Datei öffnen/downloaden",
+        "shareFolderLink": "Link zu diesem Ordner teilen",
+        "shareRootLink": "Link zur Dateiablage teilen",
+        "ascending": "Aufsteigend",
+        "descending": "Absteigend"
+      }
     }
   },
   "en": {
@@ -274,6 +286,18 @@
       "flutter": {
         "firstOptionDefault": "The first option is the default value",
         "leaveMessage": "You have unsaved changes. Do you want to leave the page anyway?"
+      }
+    },
+    "files": {
+      "flutter": {
+        "openLinkFailed": "Link could not be opened",
+        "movePh": "e.g. Documents/2026",
+        "openFolder": "Open folder",
+        "openDownload": "Open/download file",
+        "shareFolderLink": "Share link to this folder",
+        "shareRootLink": "Share link to the file storage",
+        "ascending": "Ascending",
+        "descending": "Descending"
       }
     }
   }

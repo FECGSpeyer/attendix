@@ -4427,6 +4427,54 @@ abstract class AppLocalizations {
   /// **'Folgende Datei(en) existieren bereits: {names}. Möchtest du diese überschreiben?'**
   String filesExistsMessage(Object names);
 
+  /// files.flutter.ascending
+  ///
+  /// In de, this message translates to:
+  /// **'Aufsteigend'**
+  String get filesFlutterAscending;
+
+  /// files.flutter.descending
+  ///
+  /// In de, this message translates to:
+  /// **'Absteigend'**
+  String get filesFlutterDescending;
+
+  /// files.flutter.movePh
+  ///
+  /// In de, this message translates to:
+  /// **'z. B. Dokumente/2026'**
+  String get filesFlutterMovePh;
+
+  /// files.flutter.openDownload
+  ///
+  /// In de, this message translates to:
+  /// **'Datei öffnen/downloaden'**
+  String get filesFlutterOpenDownload;
+
+  /// files.flutter.openFolder
+  ///
+  /// In de, this message translates to:
+  /// **'Ordner öffnen'**
+  String get filesFlutterOpenFolder;
+
+  /// files.flutter.openLinkFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Link konnte nicht geöffnet werden'**
+  String get filesFlutterOpenLinkFailed;
+
+  /// files.flutter.shareFolderLink
+  ///
+  /// In de, this message translates to:
+  /// **'Link zu diesem Ordner teilen'**
+  String get filesFlutterShareFolderLink;
+
+  /// files.flutter.shareRootLink
+  ///
+  /// In de, this message translates to:
+  /// **'Link zur Dateiablage teilen'**
+  String get filesFlutterShareRootLink;
+
   /// files.folderCreated
   ///
   /// In de, this message translates to:
