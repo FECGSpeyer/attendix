@@ -37,10 +37,15 @@ void main() {
       expect(source, contains(".eq('user_id', userId)\n          .neq('token', token)"));
     });
 
-    test('SOL_FIX18: logout delete is scoped by token AND user', () {
-      final start = source.indexOf('Future<void> removeToken(String token) async');
+    test('SOL_FIX18/19: logout delete is scoped by token AND the captured user', () {
+      final start = source.indexOf(
+          'Future<void> removeToken(String token, {required String userId}) async');
+      expect(start, greaterThan(-1));
       final body = source.substring(start, source.indexOf('\n  }\n', start));
-      expect(body, contains('if (userId == null) return;'));
+      expect(body, contains('if (userId.isEmpty) return;'));
+      // SOL_FIX19: the user comes from the caller (captured at logout
+      // start), never re-read from the session when the delete runs.
+      expect(body, isNot(contains('_userId')));
       final delete = RegExp("\\.from\\('device_tokens'\\)[^;]*;", dotAll: true)
           .firstMatch(body)!
           .group(0)!;
@@ -59,7 +64,8 @@ void main() {
 
     test('SOL_FIX17: the session guard is re-checked right before the upsert', () {
       final save = source.substring(
-          source.indexOf('Future<void> saveToken(\n'), source.indexOf('Future<void> removeToken(String token) async'));
+          source.indexOf('Future<void> saveToken(\n'),
+          source.indexOf('Future<void> removeToken(String token, {required String userId}) async'));
       final upsertAt = save.indexOf("await supabase.from('device_tokens').upsert(");
       final lastCheck = save.lastIndexOf('if (stale()) return;', upsertAt);
       expect(lastCheck, greaterThan(0));

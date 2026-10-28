@@ -14,7 +14,13 @@ abstract class DeviceTokenStore {
   /// returns false (logout started meanwhile) the save stops, so a late
   /// upsert never recreates the row that the logout deletes.
   Future<void> saveToken(String token, String platform, {bool Function()? isCurrent});
-  Future<void> removeToken(String token);
+
+  /// SOL_FIX19: the signed-in user, read by the logout cleanup at its start.
+  String? get currentUserId;
+
+  /// SOL_FIX19: deletes [token]'s row of [userId] – the user captured when
+  /// the logout started, never whoever is signed in once the delete runs.
+  Future<void> removeToken(String token, {required String userId});
   Future<void> setPushEnabled(bool enabled);
 }
 
@@ -35,6 +41,9 @@ class DeviceTokenRepository extends BaseRepository implements DeviceTokenStore {
   DeviceTokenRepository(super.ref);
 
   String? get _userId => supabase.auth.currentUser?.id;
+
+  @override
+  String? get currentUserId => _userId;
 
   /// Ionic saveToken: one token per user, one user per token, then upsert.
   @override
@@ -87,10 +96,12 @@ class DeviceTokenRepository extends BaseRepository implements DeviceTokenStore {
   /// SOL_FIX18: scoped by the token value AND the signed-in user, so the
   /// logout only ever removes the own account's row of this device. Without
   /// a user (already signed out) RLS would reject it anyway – nothing to do.
+  ///
+  /// SOL_FIX19: [userId] is the account captured when the logout started
+  /// (PushService.removeToken), not the one signed in when this runs.
   @override
-  Future<void> removeToken(String token) async {
-    final userId = _userId;
-    if (userId == null) return;
+  Future<void> removeToken(String token, {required String userId}) async {
+    if (userId.isEmpty) return;
     try {
       await supabase
           .from('device_tokens')

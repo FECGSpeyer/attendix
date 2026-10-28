@@ -161,18 +161,22 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
     }
     final repo = ref.read(extraFieldsRepositoryWithTenantProvider);
     if (!repo.hasTenantId) return;
+    // SOL_FIX19: the tenant the fields are saved for, captured up front.
+    final tenantId = repo.currentTenantId;
     setState(() => _saving = true);
     try {
       await repo.saveFields(personFields: _personFields, songFields: _songFields);
       await repo.sanitizeValues(table: 'player', definitions: _personFields, churchIds: _churchIds);
       await repo.sanitizeValues(table: 'songs', definitions: _songFields);
 
-      final tenant = ref.read(currentTenantProvider);
-      if (tenant != null) {
-        await ref.read(currentTenantProvider.notifier).setTenantLocal(
-              tenant.copyWith(additionalFields: _personFields, songAdditionalFields: _songFields),
-            );
-      }
+      // SOL_FIX19: only into the local state of that same tenant.
+      await ref.read(currentTenantProvider.notifier).updateTenantLocalIfCurrent(
+            tenantId,
+            (current) => current.copyWith(
+              additionalFields: _personFields,
+              songAdditionalFields: _songFields,
+            ),
+          );
       if (!mounted) return;
       setState(() => _hasChanges = false);
       ToastHelper.showSuccess(context, context.l10n.extraFieldsSaved);

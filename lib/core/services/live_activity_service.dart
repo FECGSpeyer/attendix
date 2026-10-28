@@ -245,7 +245,35 @@ class LiveActivityService {
   /// With [removeTokensOf] (call BEFORE `auth.signOut()`, RLS needs the
   /// session) this device's token rows of that account are deleted as
   /// well, so the server stops pushing that account's plans to it.
-  Future<void> endSession({String? removeTokensOf}) async {
+  ///
+  /// SOL_FIX19: the returned teardown is tracked; [init] (the next session)
+  /// and [sync] wait for every running teardown, so its global `endAll` and
+  /// token delete never hit the activities / rows of the next session.
+  Future<void> endSession({String? removeTokensOf}) {
+    late final Future<void> teardown;
+    teardown = _endSession(removeTokensOf).whenComplete(() {
+      _teardowns.remove(teardown);
+    });
+    _teardowns.add(teardown);
+    return teardown;
+  }
+
+  /// SOL_FIX19: session teardowns ([endSession]) that are still running.
+  final Set<Future<void>> _teardowns = {};
+
+  /// SOL_FIX19: completes once no teardown is running any more (also the
+  /// ones started while waiting).
+  Future<void> _awaitTeardowns() async {
+    while (_teardowns.isNotEmpty) {
+      try {
+        await Future.wait(_teardowns.toList());
+      } catch (e) {
+        _log('teardown', e);
+      }
+    }
+  }
+
+  Future<void> _endSession(String? removeTokensOf) async {
     // SOL_FIX16: invalidate running init / sync calls and reset the session
     // state synchronously, before the first await, so neither a stale fetch
     // nor a late reset can touch the next session.
@@ -323,7 +351,16 @@ class LiveActivityService {
 
   Future<void> init() async {
     if (!_platformSupported) return;
+    // Captured before waiting: a teardown that is already running bumped it
+    // synchronously, one that starts while this waits makes this init stale.
     final generation = _generation;
+    // SOL_FIX19: the previous session's teardown (logout: native uploads,
+    // `endAll`, token delete) must be over before this session starts
+    // activities or registers tokens – its `endAll` would end them.
+    if (_teardowns.isNotEmpty) {
+      await _awaitTeardowns();
+      if (_isStale(generation)) return;
+    }
     // SOL_FIX18: bound to the enable toggle as well – a setEnabled() that
     // runs while this init loads the setting wins over the loaded value.
     final epoch = _enableEpoch;
@@ -408,6 +445,9 @@ class LiveActivityService {
   /// Starts, updates and ends Live Activities to match the plans running right now.
   Future<void> sync() async {
     if (!_supported || _syncing) return;
+    // SOL_FIX19: no native changes while a session teardown runs (its
+    // `endAll` would end them); the next [init] syncs once it is over.
+    if (_teardowns.isNotEmpty) return;
     final generation = _generation;
     final epoch = _enableEpoch;
     // SOL_FIX16 session generation + SOL_FIX17 enable epoch.

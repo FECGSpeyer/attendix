@@ -55,8 +55,19 @@ class FakeClient implements PushMessagingClient {
     if (shared != null) await shared.future;
     return token;
   }
+  /// SOL_FIX19: shared order log with [FakeTokens.log] (set by the test).
+  List<String>? log;
+
   @override
-  Future<void> deleteToken() async => deletes++;
+  Future<void> deleteToken() async {
+    deletes++;
+    log?.add('fcm-delete');
+    // FCM hands out a new token after deleteToken.
+    if (rotateOnDelete != null) token = rotateOnDelete;
+  }
+
+  /// SOL_FIX19: the token getToken returns after a deleteToken.
+  String? rotateOnDelete;
   @override
   Stream<String> get onTokenRefresh => refresh.stream;
   @override
@@ -98,9 +109,17 @@ class FakeTokens implements DeviceTokenStore {
     log.add('upsert:$token');
   }
 
+  /// SOL_FIX19: the signed-in user; the cleanup captures it at its start.
+  String? userId = 'user-a';
+  final removedFor = <String>[];
+
   @override
-  Future<void> removeToken(String token) async {
+  String? get currentUserId => userId;
+
+  @override
+  Future<void> removeToken(String token, {required String userId}) async {
     removed.add(token);
+    removedFor.add(userId);
     log.add('delete:$token');
   }
   @override
@@ -261,11 +280,11 @@ void main() {
     expect(tokens.removed, ['tok-1']);
     expect(client.deletes, 1);
     expect(android.currentToken, isNull);
-    // Repeating it (signedOut event after the logout button) is harmless:
-    // SOL_FIX18 resolves the device token again and revokes FCM again.
+    // SOL_FIX19: the signedOut event after the logout button joins the
+    // finished cleanup instead of running (and revoking FCM) again.
     await android.removeToken();
-    expect(tokens.removed, ['tok-1', 'tok-1']);
-    expect(client.deletes, 2);
+    expect(tokens.removed, ['tok-1']);
+    expect(client.deletes, 1);
     client.deletes = 0;
 
     final ios = build(platform: 'ios');
@@ -574,6 +593,94 @@ void main() {
       await s.removeToken();
       expect(tokens.removed, ['tok-1', 'tok-new']);
       expect(client.deletes, 1);
+    });
+  });
+
+  // SOL_FIX19: Sol review of afa5b15 – the signedOut cleanup must not
+  // overlap the next login's registration.
+  group('logout cleanup vs. next login', () {
+    test('button + signedOut share one cleanup run', () async {
+      final apns = Completer<void>();
+      client.sharedTokenGate = apns;
+      final s = build(platform: 'ios');
+      final button = s.removeToken();
+      final signedOut = s.removeToken(); // listener, cleanup still running
+      expect(identical(button, signedOut), isTrue);
+      apns.complete();
+      await Future.wait([button, signedOut]);
+      expect(tokens.removed, ['tok-1']);
+      expect(client.deletes, 1);
+      expect(client.tokenCalls, 1);
+
+      // Still the same run after it finished (no registration in between).
+      expect(identical(s.removeToken(), button), isTrue);
+      expect(client.deletes, 1);
+    });
+
+    test('a login during the cleanup waits for it and registers a fresh token', () async {
+      client.log = tokens.log; // one order log for rows and FCM
+      final apns = Completer<void>();
+      client.sharedTokenGate = apns; // the cleanup's token lookup is slow
+      client.rotateOnDelete = 'tok-b';
+      final s = build(platform: 'ios');
+
+      final cleanup = s.removeToken(); // signedOut of user A
+      await pumpEventQueue();
+      // User B signs in while A's cleanup still resolves the token.
+      tokens.userId = 'user-b';
+      final registering = s.promptAndEnable();
+      await pumpEventQueue();
+      expect(tokens.saved, isEmpty, reason: 'registration waits');
+      expect(client.deletes, 0);
+
+      apns.complete();
+      await cleanup;
+      await registering;
+      // A's cleanup: captured user A, deletes A's row with the old token,
+      // revokes it – all before B asks FCM for its token.
+      expect(tokens.removedFor, ['user-a']);
+      expect(tokens.removed, ['tok-1']);
+      expect(client.deletes, 1);
+      expect(tokens.log, ['delete:tok-1', 'fcm-delete', 'upsert:tok-b']);
+      expect(tokens.saved, ['ios:tok-b']);
+      expect(s.currentToken, 'tok-b');
+    });
+
+    test('the cleanup keeps the user captured at its start', () async {
+      final gate = Completer<void>();
+      tokens.afterCheckGate = gate;
+      final s = build();
+      final registering = s.initPush(); // A's upsert in flight
+      await pumpEventQueue();
+
+      final cleanup = s.removeToken(); // A logs out
+      tokens.userId = 'user-b'; // B is signed in before the delete runs
+      gate.complete();
+      await cleanup;
+      await registering;
+      expect(tokens.removedFor, everyElement('user-a'));
+      expect(tokens.removedFor, isNotEmpty);
+    });
+
+    test('signed out elsewhere (no user): no row delete, FCM revoked', () async {
+      tokens.userId = null;
+      final s = build();
+      await s.removeToken();
+      expect(tokens.removed, isEmpty);
+      expect(client.deletes, 1);
+    });
+
+    test('a logout after the next registration runs a new cleanup', () async {
+      final s = build();
+      await s.initPush();
+      await s.removeToken();
+      expect(client.deletes, 1);
+
+      tokens.userId = 'user-b';
+      await s.promptAndEnable();
+      await s.removeToken();
+      expect(client.deletes, 2);
+      expect(tokens.removedFor, ['user-a', 'user-b']);
     });
   });
 }
