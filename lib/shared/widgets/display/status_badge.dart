@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/constants/enums.dart';
+import '../../../l10n/l10n.dart';
 
 /// Badge variant styles
 enum StatusBadgeVariant {
@@ -61,19 +62,20 @@ class StatusBadge extends StatelessWidget {
   }
 
   String get _label {
+    final l10n = l10nWithoutContext;
     switch (status) {
       case AttendanceStatus.present:
-        return 'Anwesend';
+        return l10n.commonStatusPresent;
       case AttendanceStatus.absent:
-        return 'Abwesend';
+        return l10n.commonStatusAbsent;
       case AttendanceStatus.excused:
-        return 'Entschuldigt';
+        return l10n.commonStatusExcused;
       case AttendanceStatus.late:
-        return 'Verspätet';
+        return l10n.commonStatusLateShort;
       case AttendanceStatus.lateExcused:
-        return 'Versp. entsch.';
+        return l10n.commonStatusLateExcusedShort;
       case AttendanceStatus.neutral:
-        return 'Neutral';
+        return l10n.commonStatusNeutral;
     }
   }
 

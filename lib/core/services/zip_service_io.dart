@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
+import '../../l10n/l10n.dart';
 
 /// Save and share ZIP file on native platforms (iOS, Android, macOS)
 Future<void> saveZipFile(Uint8List data, String fileName) async {
@@ -12,6 +13,6 @@ Future<void> saveZipFile(Uint8List data, String fileName) async {
 
   await Share.shareXFiles(
     [XFile(file.path)],
-    text: 'Song-Dateien',
+    text: l10nWithoutContext.coreFlutterSongFiles,
   );
 }

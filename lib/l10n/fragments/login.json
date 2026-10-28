@@ -1,0 +1,18 @@
+{
+  "de": {
+    "login": {
+      "flutter": {
+        "unexpectedError": "Ein unerwarteter Fehler ist aufgetreten. Bitte versuche es erneut.",
+        "enterPassword": "Bitte Passwort eingeben"
+      }
+    }
+  },
+  "en": {
+    "login": {
+      "flutter": {
+        "unexpectedError": "An unexpected error occurred. Please try again.",
+        "enterPassword": "Please enter your password"
+      }
+    }
+  }
+}

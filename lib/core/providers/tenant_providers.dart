@@ -6,6 +6,8 @@ import '../../core/config/supabase_config.dart';
 import '../../data/models/tenant/tenant.dart';
 import '../constants/enums.dart';
 import 'user_preferences_provider.dart';
+import '../utils/demo_guard.dart';
+import '../../l10n/l10n.dart';
 
 const _tenantIdKey = 'current_tenant_id';
 
@@ -30,6 +32,10 @@ class CurrentTenantNotifier extends StateNotifier<Tenant?> {
   }
 
   final Ref ref;
+
+  /// LINKS_STARTUP: set once a tenant was chosen explicitly (selection,
+  /// deep link). The async restore below must not override that choice.
+  bool _explicitlySet = false;
 
   /// Initialize tenant from local cache and sync with server
   Future<void> _initializeTenant() async {
@@ -71,6 +77,7 @@ class CurrentTenantNotifier extends StateNotifier<Tenant?> {
           .eq('userId', userId)
           .maybeSingle();
 
+      if (_explicitlySet) return; // LINKS_STARTUP
       // User no longer has access to this tenant
       if (tenantUserResponse == null) {
         debugPrint('User no longer has access to tenant $tenantId');
@@ -85,6 +92,7 @@ class CurrentTenantNotifier extends StateNotifier<Tenant?> {
           .eq('id', tenantId)
           .maybeSingle();
 
+      if (_explicitlySet) return; // LINKS_STARTUP
       if (response != null) {
         state = Tenant.fromJson(response);
       } else {
@@ -104,6 +112,7 @@ class CurrentTenantNotifier extends StateNotifier<Tenant?> {
   /// Use this for navigation scenarios where auth events would interrupt navigation.
   /// After navigation completes, call updateCurrentTenantId separately.
   Future<void> setTenantLocal(Tenant? tenant) async {
+    _explicitlySet = true; // LINKS_STARTUP
     state = tenant;
 
     final prefs = await SharedPreferences.getInstance();
@@ -256,9 +265,10 @@ Future<void> toggleTenantFavorite(WidgetRef ref, int tenantId, bool favorite) as
 
 /// Delete a tenant (admin-only, cascading)
 Future<void> deleteTenant(WidgetRef ref, int tenantId) async {
+  DemoGuard.checkCurrent('deleteInstance'); // DEMO_GUARD
   final supabase = ref.read(supabaseClientProvider);
   final userId = supabase.auth.currentUser?.id;
-  if (userId == null) throw Exception('Nicht eingeloggt');
+  if (userId == null) throw Exception(l10nWithoutContext.coreFlutterNotLoggedIn);
 
   // Verify user is admin of this tenant before deleting
   final tenantUser = await supabase
@@ -269,7 +279,7 @@ Future<void> deleteTenant(WidgetRef ref, int tenantId) async {
       .maybeSingle();
 
   if (tenantUser == null || tenantUser['role'] != Role.admin.value) {
-    throw Exception('Keine Berechtigung zum Löschen');
+    throw Exception(l10nWithoutContext.svcNoDeletePermission);
   }
 
   // Delete the tenant — Supabase cascading handles related records

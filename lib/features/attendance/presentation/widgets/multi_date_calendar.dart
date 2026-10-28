@@ -9,6 +9,7 @@ import '../../../../core/services/holiday_service.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/color_utils.dart';
 import '../../../../data/models/attendance/attendance.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Calendar highlight info for a specific date
 class CalendarHighlight {
@@ -66,7 +67,7 @@ class _MultiDateCalendarState extends ConsumerState<MultiDateCalendar> {
           lastDay: DateTime.now().add(const Duration(days: 730)),
           focusedDay: _focusedDay,
           calendarFormat: _calendarFormat,
-          locale: 'de_DE',
+          locale: currentIntlLocale(),
           startingDayOfWeek: StartingDayOfWeek.monday,
           // Multi-select: a day is selected if it's in our list
           selectedDayPredicate: (day) => _isSelected(day),
@@ -228,7 +229,7 @@ class _MultiDateCalendarState extends ConsumerState<MultiDateCalendar> {
       return CalendarHighlight(
         backgroundColor: AppColors.danger.withValues(alpha: 0.18),
         textColor: AppColors.danger,
-        tooltip: 'Feiertag',
+        tooltip: context.l10n.attendanceFlutterHoliday,
       );
     }
 
@@ -241,7 +242,7 @@ class _MultiDateCalendarState extends ConsumerState<MultiDateCalendar> {
       return CalendarHighlight(
         backgroundColor: AppColors.medium.withValues(alpha: 0.18),
         textColor: AppColors.medium,
-        tooltip: 'Schulferien',
+        tooltip: context.l10n.attendanceFlutterSchoolHolidays,
       );
     }
 
@@ -307,7 +308,7 @@ class _MultiDateCalendarState extends ConsumerState<MultiDateCalendar> {
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    'Feiertag',
+                    context.l10n.attendanceFlutterHoliday,
                     style: TextStyle(fontSize: 12, color: AppColors.dark),
                   ),
                 ],
@@ -328,7 +329,7 @@ class _MultiDateCalendarState extends ConsumerState<MultiDateCalendar> {
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    'Ferien',
+                    context.l10n.attListSchoolHolidays,
                     style: TextStyle(fontSize: 12, color: AppColors.dark),
                   ),
                 ],
@@ -365,10 +366,10 @@ class MultiDateCalendarDialog extends StatelessWidget {
               padding: const EdgeInsets.all(16),
               child: Row(
                 children: [
-                  const Expanded(
+                  Expanded(
                     child: Text(
-                      'Datum auswählen',
-                      style: TextStyle(
+                      context.l10n.attendanceFlutterSelectDate,
+                      style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
@@ -408,12 +409,12 @@ class MultiDateCalendarDialog extends StatelessWidget {
                 children: [
                   TextButton(
                     onPressed: () => Navigator.of(context).pop(),
-                    child: const Text('Abbrechen'),
+                    child: Text(context.l10n.commonCancel),
                   ),
                   const SizedBox(width: 8),
                   FilledButton(
                     onPressed: () => Navigator.of(context).pop(selectedDates),
-                    child: const Text('Übernehmen'),
+                    child: Text(context.l10n.commonApply),
                   ),
                 ],
               ),

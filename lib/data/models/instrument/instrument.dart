@@ -25,6 +25,7 @@ class Instrument with _$Instrument {
     String? range,
     String? synonyms,
     String? tuning,
+    @JsonKey(name: 'sort_order') int? sortOrder,
   }) = _Instrument;
 
   factory Instrument.fromJson(Map<String, dynamic> json) =>
@@ -49,6 +50,8 @@ class Group with _$Group {
     String? range,
     List<String>? clefs,
     String? notes,
+    /// Order of the instrument in the score (1, 2, 3...). NULL = alphabetical.
+    @JsonKey(name: 'sort_order') int? sortOrder,
     @JsonKey(includeToJson: false) GroupCategory? categoryData,
   }) = _Group;
 
@@ -63,6 +66,7 @@ class GroupCategory with _$GroupCategory {
     int? tenantId,
     required String name,
     @JsonKey(name: 'created_at') DateTime? createdAt,
+    @JsonKey(name: 'sort_order') int? sortOrder,
   }) = _GroupCategory;
 
   factory GroupCategory.fromJson(Map<String, dynamic> json) =>

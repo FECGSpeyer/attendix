@@ -4,6 +4,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../data/models/attendance/attendance.dart';
+import '../../../../../l10n/l10n.dart';
 
 /// Deadline status for checklist items
 enum DeadlineStatus { normal, warning, overdue }
@@ -41,10 +42,11 @@ class ChecklistAccordion extends StatelessWidget {
         vertical: AppDimensions.paddingXS,
       ),
       child: ExpansionTile(
-        leading: const Icon(Icons.checklist, color: AppColors.primary),
+        shape: const Border(),
+        collapsedShape: const Border(),
         title: Row(
           children: [
-            const Text('Checkliste'),
+            Text(context.l10n.attendanceChecklist),
             const SizedBox(width: 8),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
@@ -67,11 +69,11 @@ class ChecklistAccordion extends StatelessWidget {
         ),
         children: [
           if (checklist.isEmpty)
-            const Padding(
-              padding: EdgeInsets.all(AppDimensions.paddingM),
+            Padding(
+              padding: const EdgeInsets.all(AppDimensions.paddingM),
               child: Text(
-                'Keine To-Dos vorhanden',
-                style: TextStyle(color: AppColors.medium),
+                context.l10n.attendanceFlutterNoTodos,
+                style: const TextStyle(color: AppColors.medium),
               ),
             )
           else
@@ -100,8 +102,7 @@ class ChecklistAccordion extends StatelessWidget {
                       onPressed: (_) => onRemove(index),
                       backgroundColor: AppColors.danger,
                       foregroundColor: Colors.white,
-                      icon: Icons.delete,
-                      label: 'Löschen',
+                      icon: Icons.delete_outline,
                     ),
                   ],
                 ),
@@ -138,24 +139,19 @@ class ChecklistAccordion extends StatelessWidget {
                 ),
               );
             }),
-          const Divider(height: 1),
-          Padding(
-            padding: const EdgeInsets.all(AppDimensions.paddingS),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                TextButton.icon(
-                  onPressed: onAdd,
-                  icon: const Icon(Icons.add, size: 18),
-                  label: const Text('To-Do hinzufügen'),
-                ),
-                TextButton.icon(
-                  onPressed: onRestore,
-                  icon: const Icon(Icons.restore, size: 18),
-                  label: const Text('Wiederherstellen'),
-                ),
-              ],
-            ),
+          // UX_ATT: Ionic "To-Do hinzufügen" row (primary, add-circle icon)
+          ListTile(
+            dense: true,
+            leading: const Icon(Icons.add_circle_outline, color: AppColors.primary),
+            title: Text(context.l10n.attendanceAddTodo, style: const TextStyle(color: AppColors.primary)),
+            onTap: onAdd,
+          ),
+          // Flutter-only shortcut (Ionic: menu "Checkliste zurücksetzen")
+          ListTile(
+            dense: true,
+            leading: const Icon(Icons.restore, color: AppColors.medium),
+            title: Text(context.l10n.attendanceResetChecklist, style: const TextStyle(color: AppColors.medium)),
+            onTap: onRestore,
           ),
         ],
       ),
