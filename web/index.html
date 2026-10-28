@@ -94,6 +94,33 @@
     };
   </script>
 
+  <!-- TEAMS: Microsoft Teams tab support (same teams-js version as the Ionic app).
+       Teams always frames the app, so the SDK is only loaded inside an iframe;
+       regular browser/PWA visits load nothing. Dart reads these globals
+       (lib/core/services/teams/teams_sdk_web.dart). -->
+  <script>
+    (function () {
+      var framed;
+      try {
+        framed = window.self !== window.top;
+      } catch (e) {
+        // Cross-origin access to window.top throws – only when framed.
+        framed = true;
+      }
+      window.attendixInIframe = framed;
+      if (!framed) return;
+      window.attendixTeamsSdk = new Promise(function (resolve) {
+        var s = document.createElement('script');
+        s.src = 'https://cdn.jsdelivr.net/npm/@microsoft/teams-js@2.54.0/dist/umd/MicrosoftTeams.min.js';
+        s.integrity = 'sha384-PIuQ2V7hlz4b1x3G1mPCYYZiWTjxzRTL6bf547xR9ARsAeNv2DAzti86LQnFCwlo';
+        s.crossOrigin = 'anonymous';
+        s.onload = function () { resolve(!!window.microsoftTeams); };
+        s.onerror = function () { resolve(false); };
+        document.head.appendChild(s);
+      });
+    })();
+  </script>
+
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>

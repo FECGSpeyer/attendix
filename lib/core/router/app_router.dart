@@ -238,7 +238,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       final isLegalRoute = state.matchedLocation == '/legal';
       if (isLegalRoute) return null;
       // INTEGRATION: Teams tab config is a top-level public route in Ionic
-      // (outside the tabs/login guard); the Flutter page is a static hint.
+      // (outside the tabs/login guard); it only works inside Teams (TEAMS).
       if (state.matchedLocation == '/teams-config') return null;
       // SONGS: public routes (song share links, /app, /open-file) need no
       // login; /open-file handles auth itself and stashes the link.
@@ -398,7 +398,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         name: 'terms',
         builder: (context, state) => const TermsPage(),
       ),
-      // TEAM_ORG: Microsoft Teams tab configuration (hint only)
+      // TEAM_ORG: Microsoft Teams tab configuration (TEAMS: instance picker)
       GoRoute(
         path: '/teams-config',
         name: 'teamsConfig',

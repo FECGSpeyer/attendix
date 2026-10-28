@@ -14,6 +14,7 @@ import 'core/services/offline_queue_service.dart'; // PROFILE_OFFLINE
 import 'core/theme/app_theme.dart';
 import 'core/utils/toast_helper.dart';
 import 'features/auth/data/auth_link_listener.dart'; // AUTH
+import 'core/services/teams/teams_service.dart'; // TEAMS
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -36,6 +37,8 @@ void main() async {
   // LINKS_STARTUP: path links (/tabs/..., /open-attendance?..) → #/... so the
   // hash-based router sees them (after Supabase read auth params from the URL)
   if (kIsWeb) promoteLegacyPathToHash();
+  // TEAMS: detect a Microsoft Teams tab (no-op outside an iframe / on native)
+  await TeamsService.instance.init();
 
   runApp(
     const ProviderScope(
@@ -66,6 +69,15 @@ class _AttendixAppState extends ConsumerState<AttendixApp> {
     // AUTH: password-recovery / signup-confirmation links (Ionic handleAuthUrl)
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) initAuthLinkHandling(ref, ref.read(routerProvider));
+      // TEAMS: silent Microsoft SSO inside a Teams tab
+      if (mounted && ref.read(teamsServiceProvider).isInTeams()) {
+        trySsoSignIn(
+          teams: ref.read(teamsServiceProvider),
+          hasSession:
+              ref.read(supabaseClientProvider).auth.currentSession != null,
+          go: (location) => ref.read(routerProvider).go(location),
+        );
+      }
     });
   }
 
@@ -90,7 +102,7 @@ class _AttendixAppState extends ConsumerState<AttendixApp> {
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
-      themeMode: ThemeMode.system,
+      themeMode: ref.watch(teamsThemeModeProvider) ?? ThemeMode.system, // TEAMS
       routerConfig: router,
       scaffoldMessengerKey: rootScaffoldMessengerKey, // PROFILE_OFFLINE
       localizationsDelegates: const [
