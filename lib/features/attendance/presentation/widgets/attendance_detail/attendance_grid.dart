@@ -269,7 +269,8 @@ class AttendanceGrid extends StatelessWidget {
   }
 }
 
-/// Ionic `ion-item-divider color="primary" sticky` (iOS: 17 px semibold).
+/// Ionic `ion-item-divider color="primary" sticky` (iOS: 17 px semibold,
+/// md: 14 px regular).
 class _GroupDivider extends StatelessWidget {
   const _GroupDivider({required this.label, this.topRadius});
 
@@ -289,18 +290,20 @@ class _GroupDivider extends StatelessWidget {
             ? null
             : BorderRadius.only(topLeft: topRadius!, topRight: topRadius!),
       ),
-      // IOS_DETAIL: iOS divider row ≈28 pt (Material keeps 30 + 6/6).
+      // IOS_DETAIL: iOS divider row ≈28 pt, 17 px semibold.
+      // PARITY_R3: Ionic md item-divider: min-height 30, 14 px regular
+      // (`font-size: .875rem`, no weight), label margin 13/10.
       constraints: BoxConstraints(minHeight: ios ? 28 : 30),
       padding: ios
           ? const EdgeInsets.fromLTRB(16, 3, 16, 3)
-          : const EdgeInsets.fromLTRB(16, 6, 16, 6),
+          : const EdgeInsets.fromLTRB(16, 13, 16, 10),
       alignment: AlignmentDirectional.centerStart,
       child: Text(
         label,
         style: TextStyle(
           color: Colors.white,
-          fontWeight: FontWeight.w600,
-          fontSize: 17,
+          fontWeight: ios ? FontWeight.w600 : FontWeight.w400,
+          fontSize: ios ? 17 : 14,
           height: ios ? 1.2 : null,
         ),
       ),
