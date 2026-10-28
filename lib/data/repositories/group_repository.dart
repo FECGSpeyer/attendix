@@ -163,15 +163,23 @@ class GroupRepository extends BaseRepository with TenantAwareRepository {
     }
   }
 
-  /// Get count of players assigned to a group
-  Future<int> getPlayerCountInGroup(int groupId) async {
+  /// Get count of players assigned to a group.
+  /// LOGIC_SETTINGS: with [includeArchived] also archived (left) people count
+  /// (Ionic instrument.page.ts:delete uses `getPlayers(true)`).
+  Future<int> getPlayerCountInGroup(
+    int groupId, {
+    bool includeArchived = false,
+  }) async {
     try {
-      final response = await supabase
+      var query = supabase
           .from('player')
           .select('id')
           .eq('tenantId', currentTenantId)
-          .eq('instrument', groupId)
-          .isFilter('left', null); // Only active players
+          .eq('instrument', groupId);
+      if (!includeArchived) {
+        query = query.isFilter('left', null); // Only active players
+      }
+      final response = await query;
 
       return (response as List).length;
     } catch (e, stack) {
@@ -208,7 +216,9 @@ class GroupRepository extends BaseRepository with TenantAwareRepository {
     ensureNotDemo('deleteGroup'); // DEMO_GUARD
     try {
       // BL-008: Check for assigned players before deletion
-      final playerCount = await getPlayerCountInGroup(id);
+      // LOGIC_SETTINGS: archived people block deletion too (Ionic parity)
+      final playerCount =
+          await getPlayerCountInGroup(id, includeArchived: true);
       if (playerCount > 0) {
         throw RepositoryException(
           message: l10nWithoutContext.coreFlutterRepoGroupHasPlayers(playerCount),

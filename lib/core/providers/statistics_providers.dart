@@ -11,8 +11,8 @@ import '../../data/models/person/person.dart';
 import '../../data/repositories/attendance_repository.dart';
 import '../../data/repositories/player_repository.dart';
 import 'attendance_type_providers.dart';
+import 'group_providers.dart'; // LOGIC_SETTINGS
 import 'tenant_providers.dart';
-import '../../l10n/l10n.dart';
 
 /// Date range for statistics filtering
 class StatisticsDateRange {
@@ -80,9 +80,13 @@ final filteredAttendancesForStatsProvider =
   );
 
   // Filter to only include dates within the range
+  // LOGIC_SETTINGS: Ionic stats only uses Termine before tomorrow
+  final now = DateTime.now();
+  final tomorrow = DateTime(now.year, now.month, now.day + 1);
   return attendances.where((a) {
     final date = DateTime.tryParse(a.date);
     if (date == null) return false;
+    if (!date.isBefore(tomorrow)) return false;
     return date.isAfter(dateRange.start.subtract(const Duration(days: 1))) &&
         date.isBefore(dateRange.end.add(const Duration(days: 1)));
   }).toList();
@@ -127,6 +131,8 @@ final allPersonAttendancesForStatsProvider =
         lastName: personData?['lastName'],
         instrument: personData?['instrument'],
         groupName: null, // We'll get group name from players
+        // LOGIC_SETTINGS: needed for Ionic averagePersons (duty Termine)
+        dutyState: e['duty_state']?.toString(),
       );
     }).toList();
   } catch (e, stack) {
@@ -156,6 +162,26 @@ final activePlayersForStatsProvider = FutureProvider<List<Person>>((ref) async {
     final isNotLeft = p.left == null || p.left!.isEmpty;
     return isNotLeft && !p.paused;
   }).toList();
+});
+
+/// LOGIC_SETTINGS: attendances of the period with the percentage recomputed
+/// like Ionic stats.page.ts (Utils.getPercentage(averagePersons(...),
+/// shift_excused_as_present)) instead of the stored `attendance.percentage`,
+/// which Ionic never writes.
+final statsAttendancesProvider = Provider<List<Attendance>>((ref) {
+  final attendances =
+      ref.watch(filteredAttendancesForStatsProvider).valueOrNull ?? const [];
+  final personAttendances =
+      ref.watch(allPersonAttendancesForStatsProvider).valueOrNull ?? const [];
+  final types = ref.watch(attendanceTypesProvider).valueOrNull ?? const [];
+  final shiftExcused =
+      ref.watch(currentTenantProvider)?.shiftExcusedAsPresent ?? false;
+  return recomputeAttendancePercentages(
+    attendances,
+    personAttendances,
+    types,
+    shiftExcusedAsPresent: shiftExcused,
+  );
 });
 
 /// Computed statistics from attendances
@@ -195,10 +221,9 @@ class AttendanceStatistics {
 
 /// Provider for computed statistics
 final attendanceStatisticsProvider = Provider<AttendanceStatistics>((ref) {
-  final attendancesAsync = ref.watch(filteredAttendancesForStatsProvider);
+  // LOGIC_SETTINGS: recomputed percentages (Ionic parity)
+  final attendances = ref.watch(statsAttendancesProvider);
   final personAttendancesAsync = ref.watch(allPersonAttendancesForStatsProvider);
-
-  final attendances = attendancesAsync.valueOrNull ?? [];
   final personAttendances = personAttendancesAsync.valueOrNull ?? [];
 
   if (attendances.isEmpty) {
@@ -267,25 +292,24 @@ class TrendChartData {
 }
 
 final trendChartDataProvider = Provider<TrendChartData>((ref) {
-  final attendancesAsync = ref.watch(filteredAttendancesForStatsProvider);
+  // LOGIC_SETTINGS: recomputed percentages (Ionic parity)
+  final attendances = ref.watch(statsAttendancesProvider);
+  if (attendances.isEmpty) {
+    return const TrendChartData(labels: [], values: []);
+  }
 
-  return attendancesAsync.maybeWhen(
-    data: (attendances) {
-      // Sort by date and take last 20
-      final sorted = [...attendances]
-        ..sort((a, b) => a.date.compareTo(b.date));
-      final last20 = sorted.length > 20 ? sorted.sublist(sorted.length - 20) : sorted;
+  // Sort by date and take last 20
+  final sorted = [...attendances]..sort((a, b) => a.date.compareTo(b.date));
+  final last20 =
+      sorted.length > 20 ? sorted.sublist(sorted.length - 20) : sorted;
 
-      return TrendChartData(
-        labels: last20.map((a) {
-          final date = DateTime.tryParse(a.date);
-          if (date == null) return '';
-          return '${date.day}.${date.month}';
-        }).toList(),
-        values: last20.map((a) => a.percentage ?? 0.0).toList(),
-      );
-    },
-    orElse: () => const TrendChartData(labels: [], values: []),
+  return TrendChartData(
+    labels: last20.map((a) {
+      final date = DateTime.tryParse(a.date);
+      if (date == null) return '';
+      return '${date.day}.${date.month}';
+    }).toList(),
+    values: last20.map((a) => a.percentage ?? 0.0).toList(),
   );
 });
 
@@ -303,52 +327,22 @@ class GroupChartData {
 }
 
 final groupChartDataProvider = Provider<List<GroupChartData>>((ref) {
-  final personAttendancesAsync = ref.watch(allPersonAttendancesForStatsProvider);
-  final playersAsync = ref.watch(activePlayersForStatsProvider);
-
-  final personAttendances = personAttendancesAsync.valueOrNull ?? [];
-  final players = playersAsync.valueOrNull ?? [];
+  final personAttendances =
+      ref.watch(allPersonAttendancesForStatsProvider).valueOrNull ?? [];
+  final players = ref.watch(activePlayersForStatsProvider).valueOrNull ?? [];
+  final groups = ref.watch(groupsProvider).valueOrNull ?? const [];
 
   if (personAttendances.isEmpty || players.isEmpty) return [];
 
-  // Create player map for group lookup
-  final playerGroupMap = <int, String>{};
-  for (final player in players) {
-    if (player.id != null) {
-      playerGroupMap[player.id!] = player.groupName ?? l10nWithoutContext.peopleNoGroupAssigned;
-    }
-  }
-
-  // Group stats by instrument
-  final Map<String, ({int present, int total})> groupStats = {};
-
-  for (final pa in personAttendances) {
-    if (pa.personId == null) continue;
-
-    final groupName = playerGroupMap[pa.personId] ?? l10nWithoutContext.peopleNoGroupAssigned;
-    final current = groupStats[groupName] ?? (present: 0, total: 0);
-
-    final isPresent = pa.status.countsAsPresent;
-
-    groupStats[groupName] = (
-      present: current.present + (isPresent ? 1 : 0),
-      total: current.total + 1,
-    );
-  }
-
-  // Convert to chart data and sort
-  final result = groupStats.entries.map((e) {
-    final percentage =
-        e.value.total > 0 ? (e.value.present / e.value.total * 100) : 0.0;
-    return GroupChartData(
-      name: e.key,
-      percentage: percentage,
-      count: e.value.total,
-    );
-  }).toList()
-    ..sort((a, b) => b.percentage.compareTo(a.percentage));
-
-  return result;
+  // LOGIC_SETTINGS: Ionic initInstrumentBarChart — group via
+  // player.instrument, only active people (left/paused are skipped).
+  return computeGroupAttendanceRates(personAttendances, players, groups)
+      .map((g) => GroupChartData(
+            name: g.name,
+            percentage: g.percentage.toDouble(),
+            count: g.total,
+          ))
+      .toList();
 });
 
 /// Data for top players chart
@@ -524,43 +518,18 @@ final ageDistributionProvider = Provider<List<AgeDistributionData>>((ref) {
 
 /// Average age per instrument
 final avgAgePerInstrumentProvider = Provider<List<GroupChartData>>((ref) {
-  final playersAsync = ref.watch(activePlayersForStatsProvider);
-  final players = playersAsync.valueOrNull ?? [];
+  final players = ref.watch(activePlayersForStatsProvider).valueOrNull ?? [];
+  final groups = ref.watch(groupsProvider).valueOrNull ?? const [];
 
   if (players.isEmpty) return [];
 
-  final now = DateTime.now();
-  final Map<String, List<int>> groupAges = {};
-
-  for (final player in players) {
-    if (player.birthday != null) {
-      final birthday = DateTime.tryParse(player.birthday!);
-      if (birthday != null) {
-        final age = now.year -
-            birthday.year -
-            ((now.month < birthday.month ||
-                    (now.month == birthday.month && now.day < birthday.day))
-                ? 1
-                : 0);
-
-        final groupName = player.groupName ?? l10nWithoutContext.peopleNoGroupAssigned;
-        groupAges.putIfAbsent(groupName, () => []).add(age);
-      }
-    }
-  }
-
-  // BL-002: Filter empty groups and safely calculate average
-  final result = groupAges.entries
-      .where((e) => e.value.isNotEmpty)
-      .map((e) {
-    final avgAge = e.value.reduce((a, b) => a + b) / e.value.length;
-    return GroupChartData(
-      name: '${e.key} (${e.value.length})',
-      percentage: avgAge,
-      count: e.value.length,
-    );
-  }).toList()
-    ..sort((a, b) => b.percentage.compareTo(a.percentage));
-
-  return result;
+  // LOGIC_SETTINGS: Ionic initAvgAgePerInstrumentChart — group via
+  // player.instrument (groupName is never filled on Person).
+  return computeAverageAgePerGroup(players, groups)
+      .map((g) => GroupChartData(
+            name: '${g.name} (${g.count})',
+            percentage: g.avgAge.toDouble(),
+            count: g.count,
+          ))
+      .toList();
 });

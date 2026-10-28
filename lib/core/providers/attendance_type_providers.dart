@@ -51,7 +51,9 @@ class AttendanceTypeNotifier extends Notifier<AsyncValue<void>> {
 
   AttendanceTypeRepository get _repo => ref.read(attendanceTypeRepositoryWithTenantProvider);
 
-  Future<AttendanceType?> createType(AttendanceType type) async {
+  /// LOGIC_SETTINGS: rethrows on failure so the caller shows
+  /// `typeSettings.createFailed` (Ionic createType) instead of a success toast.
+  Future<AttendanceType> createType(AttendanceType type) async {
     state = const AsyncValue.loading();
     try {
       final result = await _repo.createType(type);
@@ -60,7 +62,7 @@ class AttendanceTypeNotifier extends Notifier<AsyncValue<void>> {
       return result;
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
-      return null;
+      rethrow;
     }
   }
 
@@ -71,6 +73,8 @@ class AttendanceTypeNotifier extends Notifier<AsyncValue<void>> {
       state = const AsyncValue.data(null);
       ref.invalidate(attendanceTypesProvider);
       ref.invalidate(attendanceTypeByIdProvider(id));
+      // LOGIC_SETTINGS: failed save -> no follow-up updates, caller shows error
+      if (result == null) return null;
 
       // If start_time or end_time changed, update future attendance records
       final hasTimeChange = updates.containsKey('start_time') || updates.containsKey('end_time');

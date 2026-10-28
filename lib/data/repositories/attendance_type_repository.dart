@@ -43,45 +43,52 @@ class AttendanceTypeRepository extends BaseRepository with TenantAwareRepository
     }
   }
 
-  /// Create a new attendance type
-  Future<AttendanceType?> createType(AttendanceType type) async {
+  /// LOGIC_SETTINGS: Insert payload for a new attendance type, matching
+  /// Ionic `addAttendanceType` (type.page.ts isNew defaults):
+  /// - `default_status` / `available_statuses` are NUMERIC (DB columns are
+  ///   `number` / `number[]`), never the enum names.
+  /// - `relevant_groups` is always a list (`[]`), never null.
+  /// - `default_plan` is always `{time, end, fields: []}`, never null.
+  /// - `reminders` defaults to `[]`, `index` to the given index (Ionic: 999).
+  static Map<String, dynamic> buildInsertData(
+    AttendanceType type,
+    int tenantId,
+  ) {
+    return {
+      'name': type.name,
+      'planning_title': type.planningTitle ?? '',
+      'tenant_id': tenantId,
+      'default_status': type.defaultStatus.value,
+      'available_statuses':
+          (type.availableStatuses ?? const []).map((s) => s.value).toList(),
+      'default_plan': type.defaultPlan ??
+          <String, dynamic>{'time': '', 'end': '', 'fields': <dynamic>[]},
+      'relevant_groups': type.relevantGroups ?? <int>[],
+      'start_time': type.startTime,
+      'end_time': type.endTime,
+      'manage_songs': type.manageSongs,
+      'visible': type.visible,
+      'color': type.color,
+      'highlight': type.highlight,
+      'hide_name': type.hideName,
+      'include_in_average': type.includeInAverage,
+      'all_day': type.allDay,
+      'duration_days': type.durationDays,
+      'notification': type.notification,
+      'reminders': type.reminders ?? <int>[],
+      'additional_fields_filter': type.additionalFieldsFilter,
+      'checklist': type.checklist?.map((c) => c.toJson()).toList(),
+      'index': type.index ?? 999,
+    };
+  }
+
+  /// Create a new attendance type.
+  /// LOGIC_SETTINGS: errors are rethrown (Ionic throws after `svc.addTypeFailed`)
+  /// so callers never report success for a failed insert.
+  Future<AttendanceType> createType(AttendanceType type) async {
     ensureNotDemo('createType'); // DEMO_GUARD
     try {
-      // Get max index first
-      final maxIndexResponse = await supabase
-          .from('attendance_types')
-          .select('index')
-          .eq('tenant_id', currentTenantId)
-          .order('index', ascending: false)
-          .limit(1);
-
-      final maxIndex = (maxIndexResponse as List).isNotEmpty
-          ? (maxIndexResponse[0]['index'] as int? ?? 0)
-          : 0;
-
-      final data = {
-        'name': type.name,
-        'tenant_id': currentTenantId,
-        'default_status': type.defaultStatus.name,
-        'available_statuses': type.availableStatuses?.map((s) => s.name).toList(),
-        'default_plan': type.defaultPlan,
-        'relevant_groups': type.relevantGroups,
-        'start_time': type.startTime,
-        'end_time': type.endTime,
-        'manage_songs': type.manageSongs,
-        'visible': type.visible,
-        'color': type.color,
-        'highlight': type.highlight,
-        'hide_name': type.hideName,
-        'include_in_average': type.includeInAverage,
-        'all_day': type.allDay,
-        'duration_days': type.durationDays,
-        'notification': type.notification,
-        'reminders': type.reminders,
-        'additional_fields_filter': type.additionalFieldsFilter,
-        'checklist': type.checklist?.map((c) => c.toJson()).toList(),
-        'index': maxIndex + 1,
-      };
+      final data = buildInsertData(type, currentTenantId);
 
       final response = await supabase
           .from('attendance_types')
@@ -92,7 +99,7 @@ class AttendanceTypeRepository extends BaseRepository with TenantAwareRepository
       return AttendanceType.fromJson(response);
     } catch (e, stack) {
       handleError(e, stack, 'createType');
-      return null;
+      rethrow;
     }
   }
 

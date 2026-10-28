@@ -217,48 +217,69 @@ class _AttendanceTypesPageState extends ConsumerState<AttendanceTypesPage> {
       ),
     );
 
-    if (result != null && result.trim().isNotEmpty) {
-      await _createType(result.trim());
+    if (result == null) return;
+    // LOGIC_SETTINGS: Ionic validate() — name required
+    if (result.trim().isEmpty) {
+      if (context.mounted) {
+        ToastHelper.showError(context, context.l10n.typeSettingsEnterName);
+      }
+      return;
     }
+    await _createType(result.trim());
   }
 
   Future<void> _createType(String name) async {
+    // LOGIC_SETTINGS: Ionic TypePage isNew defaults (index 999, empty
+    // default_plan, relevant_groups [], reminders []); statuses are written
+    // as numbers by the repository.
+    final newType = buildNewAttendanceType(name);
+
     try {
-      final currentTypes = ref.read(attendanceTypesProvider).valueOrNull ?? [];
+      final created = await ref
+          .read(attendanceTypeNotifierProvider.notifier)
+          .createType(newType);
 
-      final newType = AttendanceType(
-        name: name,
-        defaultStatus: AttendanceStatus.present,
-        availableStatuses: [
-          AttendanceStatus.neutral,
-          AttendanceStatus.present,
-          AttendanceStatus.absent,
-          AttendanceStatus.excused,
-          AttendanceStatus.late,
-        ],
-        manageSongs: false,
-        startTime: '19:00',
-        endTime: '20:30',
-        relevantGroups: [],
-        index: currentTypes.length,
-        visible: true,
-        color: 'primary',
-        highlight: false,
-        hideName: false,
-        includeInAverage: true,
-      );
-
-      await ref.read(attendanceTypeNotifierProvider.notifier).createType(newType);
-
-      if (mounted) {
-        ToastHelper.showSuccess(context, context.l10n.typeSettingsFlutterCreatedNamed(name));
+      if (!mounted) return;
+      ToastHelper.showSuccess(context, context.l10n.typeSettingsCreated);
+      // Ionic configures the full type in the create modal; here the edit
+      // page of the new type opens so all settings (incl. duty view) follow.
+      if (created.id != null) {
+        context.push('/settings/types/${created.id}');
       }
     } catch (e) {
       if (mounted) {
-        ToastHelper.showError(context, context.l10n.settingsFlutterCreateFailed(e));
+        ToastHelper.showError(context, context.l10n.typeSettingsCreateFailed);
       }
     }
   }
+}
+
+/// LOGIC_SETTINGS: defaults of a new type as in Ionic type.page.ts (isNew).
+AttendanceType buildNewAttendanceType(String name) {
+  return AttendanceType(
+    name: name.trim(),
+    planningTitle: '',
+    defaultStatus: AttendanceStatus.present,
+    availableStatuses: const [
+      AttendanceStatus.neutral,
+      AttendanceStatus.present,
+      AttendanceStatus.absent,
+      AttendanceStatus.excused,
+      AttendanceStatus.late,
+    ],
+    manageSongs: false,
+    startTime: '19:00',
+    endTime: '20:30',
+    relevantGroups: const [],
+    index: 999,
+    visible: true,
+    color: 'primary',
+    highlight: false,
+    hideName: false,
+    includeInAverage: true,
+    reminders: const [],
+    defaultPlan: const {'time': '', 'end': '', 'fields': <dynamic>[]},
+  );
 }
 
 class _AttendanceTypeTile extends StatelessWidget {

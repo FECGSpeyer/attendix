@@ -338,6 +338,9 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
                 key: ValueKey('shift_$index'),
                 instance: _shifts[index],
                 index: index,
+                // LOGIC_SETTINGS: Ionic disables name/date/remove when the
+                // plan is used by persons (they reference shift_name).
+                isUsed: usageCount > 0,
                 onNameChanged: (name) => _updateShiftName(index, name),
                 onDateChanged: (date) => _updateShiftDate(index, date),
                 onDelete: () => _deleteShiftInstance(index),
@@ -756,6 +759,7 @@ class _DefinitionSegmentTile extends StatelessWidget {
 class _ShiftInstanceTile extends StatefulWidget {
   final ShiftInstance instance;
   final int index;
+  final bool isUsed;
   final ValueChanged<String> onNameChanged;
   final ValueChanged<DateTime> onDateChanged;
   final VoidCallback onDelete;
@@ -765,6 +769,7 @@ class _ShiftInstanceTile extends StatefulWidget {
     super.key,
     required this.instance,
     required this.index,
+    this.isUsed = false,
     required this.onNameChanged,
     required this.onDateChanged,
     required this.onDelete,
@@ -818,6 +823,7 @@ class _ShiftInstanceTileState extends State<_ShiftInstanceTile> {
                 isDense: true,
               ),
               controller: _nameController,
+              enabled: !widget.isUsed,
               onChanged: widget.onNameChanged,
             ),
             const SizedBox(height: AppDimensions.paddingS),
@@ -827,7 +833,9 @@ class _ShiftInstanceTileState extends State<_ShiftInstanceTile> {
               children: [
                 Expanded(
                   child: InkWell(
-                    onTap: () => _selectDate(context, date),
+                    onTap: widget.isUsed
+                        ? null
+                        : () => _selectDate(context, date),
                     child: InputDecorator(
                       decoration: InputDecoration(
                         labelText: context.l10n.shiftsStartDate,
@@ -844,8 +852,8 @@ class _ShiftInstanceTileState extends State<_ShiftInstanceTile> {
                   child: Text(context.l10n.shiftsFlutterPreview),
                 ),
                 IconButton(
-                  icon: Icon(Icons.delete_outline, color: AppColors.danger),
-                  onPressed: widget.onDelete,
+                  icon: Icon(Icons.delete_outline, color: widget.isUsed ? AppColors.medium : AppColors.danger),
+                  onPressed: widget.isUsed ? null : widget.onDelete,
                   tooltip: context.l10n.commonDelete,
                 ),
               ],
