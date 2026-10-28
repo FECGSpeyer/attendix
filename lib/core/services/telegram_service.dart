@@ -273,7 +273,13 @@ class TelegramService {
         );
 
     // Get public URL
-    final url = _supabase.storage.from('attendances').getPublicUrl(fileName);
+    // Ionic 4.17.6: `?download=` so Telegram shows the readable name
+    // (without the random collision suffix of the storage key).
+    final url = downloadUrl(
+      _supabase.storage.from('attendances').getPublicUrl(fileName),
+      name,
+      extension,
+    );
 
     // Send via Telegram
     final functionName = asImage ? 'send-photo' : 'send-document';
@@ -296,6 +302,18 @@ class TelegramService {
   /// `[A-Za-z0-9_\s-]` becomes `-`, collapse whitespace / dashes, trim dashes,
   /// then `_<100-999><extension>`.
   static String encodeFilename(String name, String extension, {Random? random}) {
+    final sanitized = cleanName(name);
+    final randomNumber = 100 + (random ?? Random()).nextInt(900);
+    return '${sanitized}_$randomNumber$extension';
+  }
+
+  /// Ionic 4.17.6 `publicUrl?download=<cleanName + extension>`.
+  static String downloadUrl(String publicUrl, String name, String extension) =>
+      '$publicUrl?download=${Uri.encodeComponent(cleanName(name) + extension)}';
+
+  /// Ionic `cleanName` / `encodeFilename` sanitising (without the suffix);
+  /// empty results become `file`.
+  static String cleanName(String name) {
     final buffer = StringBuffer();
     for (final rune in name.runes) {
       final char = String.fromCharCode(rune);
@@ -310,8 +328,7 @@ class TelegramService {
         .replaceAll(RegExp(r'-+'), '-')
         .replaceAll(RegExp(r'^-+|-+$'), '')
         .trim();
-    final randomNumber = 100 + (random ?? Random()).nextInt(900);
-    return '${sanitized.isEmpty ? 'file' : sanitized}_$randomNumber$extension';
+    return sanitized.isEmpty ? 'file' : sanitized;
   }
 
   /// Base letters of the precomposed Latin letters that NFD decomposes
