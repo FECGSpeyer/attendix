@@ -53,12 +53,8 @@ void main() {
       expect(absenceSource, contains("data['tenant_id'] = currentTenantId"));
     });
 
-    test('tenant_role_permissions query filters by tenant_id', () {
-      final query = RegExp(
-        r"\.from\('tenant_role_permissions'\)[^;]+",
-        multiLine: true,
-      ).firstMatch(absenceSource)!.group(0)!;
-      expect(query, contains(".eq('tenant_id', currentTenantId)"));
+    test('role flags are not queried here (single source: RolePermissionRepository)', () {
+      expect(absenceSource, isNot(contains("'tenant_role_permissions'")));
     });
 
     test('person_attendances reads use tenant-scoped inner join', () {

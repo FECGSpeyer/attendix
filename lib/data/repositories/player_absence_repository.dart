@@ -98,25 +98,6 @@ class PlayerAbsenceRepository extends BaseRepository with TenantAwareRepository 
     }
   }
 
-  /// Read the absence/self-pause flags of `tenant_role_permissions` for a role.
-  /// Missing row -> all false (Ionic: `!!perm?.flag`).
-  Future<RoleAbsencePermissions> getRoleAbsencePermissions(int role) async {
-    try {
-      final response = await supabase
-          .from('tenant_role_permissions')
-          .select('player_self_pause, player_planned_absence')
-          .eq('tenant_id', currentTenantId)
-          .eq('role', role)
-          .maybeSingle();
-
-      if (response == null) return const RoleAbsencePermissions();
-      return RoleAbsencePermissions.fromJson(response);
-    } catch (e, stack) {
-      handleError(e, stack, 'getRoleAbsencePermissions');
-      rethrow;
-    }
-  }
-
   /// Upcoming (today or later) person_attendances of [personId] in the
   /// current tenant whose attendance date lies within [fromDate]..[untilDate].
   Future<List<Map<String, dynamic>>> _upcomingInRange(

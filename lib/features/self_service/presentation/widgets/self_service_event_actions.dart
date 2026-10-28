@@ -9,20 +9,13 @@ import '../../../../data/repositories/sign_in_out_repository.dart';
 import '../../../../shared/widgets/event_list/event_list_widgets.dart';
 import '../../../../shared/widgets/event_list/excuse_reason_sheet.dart';
 
-/// Route of the Dateiablage (files module). Hook point: the Termin chip
-/// "Dateien" navigates there with `?path=<folder>` once the route exists.
+/// Route of the Dateiablage (files module, `/settings/files?path=<folder>`).
 const String kFilesRoute = '/settings/files';
 
-/// Opens the Dateiablage folder of a Termin if the files module is available.
+/// Opens the Dateiablage folder of a Termin (Ionic openFilesFolder).
 Future<void> openFilesFolderRoute(BuildContext context, String path) async {
   final uri = Uri(path: kFilesRoute, queryParameters: {'path': path});
-  final router = GoRouter.of(context);
-  final match = router.configuration.findMatch(uri);
-  if (match.isError) {
-    ToastHelper.showInfo(context, 'Die Dateiablage ist in dieser Version noch nicht verfügbar.');
-    return;
-  }
-  await router.push(uri.toString());
+  await GoRouter.of(context).push(uri.toString());
 }
 
 /// Direct buttons of the current card (Zusagen / Verspätung / Absagen).
