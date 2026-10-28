@@ -956,6 +956,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
   /// Ionic onFilterChanged('otherInstance'): pick a linked instance and show
   /// only people whose account is also a member there.
   Future<void> _selectOtherInstanceFilter() async {
+    final crossTenantPersonRepo = ref.read(crossTenantPersonRepositoryWithTenantProvider);
     final linked = await ref.read(allLinkedTenantsProvider.future);
     if (!mounted) return;
     if (linked.isEmpty) {
@@ -978,8 +979,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
     if (chosen == null || chosen.id == null || !mounted) return;
     try {
       final linkedIds = await ref.read(linkedTenantIdsProvider.future);
-      final ids = await ref
-          .read(crossTenantPersonRepositoryWithTenantProvider)
+      final ids = await crossTenantPersonRepo
           .getUserIdsInTenant(chosen.id!, linkedTenantIds: linkedIds);
       if (!mounted) return;
       setState(() {
@@ -1200,6 +1200,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
 
   /// Ionic unpausePlayer: alert "Person wieder aktivieren?" → Aktivieren.
   Future<void> _unpausePerson(Person person) async {
+    final repository = ref.read(playerRepositoryWithTenantProvider);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -1218,7 +1219,6 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
     );
     if (confirmed != true || !mounted) return;
 
-    final repository = ref.read(playerRepositoryWithTenantProvider);
     try {
       await repository.unpausePlayer(person, historyText: context.l10n.peopleActiveAgain);
       // Realtime handles the refresh automatically

@@ -721,6 +721,7 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
   }
 
   Future<void> _performHandover(Tenant? currentTenant) async {
+    final playerRepo = ref.read(playerRepositoryWithTenantProvider);
     if (_targetTenantId == null || currentTenant == null) return;
 
     // BL-002: Check if user has edit permission in target tenant
@@ -765,8 +766,6 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
     });
 
     try {
-      final playerRepo = ref.read(playerRepositoryWithTenantProvider);
-
       final results = await playerRepo.handoverPlayers(
         players: playersToTransfer,
         targetTenantId: _targetTenantId!,

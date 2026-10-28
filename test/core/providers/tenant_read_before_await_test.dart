@@ -10,8 +10,9 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 
+// `ref\n    .read(...)` (formatter line breaks) counts as well.
 final _readRepo =
-    RegExp(r'ref\.read\(\s*\w+RepositoryWithTenantProvider');
+    RegExp(r'ref\s*\.read\(\s*\w+RepositoryWithTenantProvider');
 final _getter = RegExp(
     r'get\s+(\w+)\s*=>\s*_?ref\.read\(\s*\w+Repository(?:WithTenant|ForTenant)Provider');
 final _asyncBody = RegExp(r'\)\s*async\s*\{');
@@ -117,6 +118,24 @@ class X {
           reason: 'Hoist the repository read before the first await:\n'
               '${violations.join('\n')}');
     });
+
+    // UI_TENANT_HOIST: UI handlers (often after a confirmation dialog) must
+    // capture their tenant-bound repositories before the first await, too.
+    for (final dir in ['lib/features', 'lib/shared']) {
+      test('no UI code in $dir reads a tenant repository after an await', () {
+        final files = Directory(dir)
+            .listSync(recursive: true)
+            .whereType<File>()
+            .where((f) => f.path.endsWith('.dart'));
+        final violations = <String>[
+          for (final f in files)
+            ...findReadsAfterAwait(f.path, f.readAsStringSync()),
+        ];
+        expect(violations, isEmpty,
+            reason: 'Hoist the repository read before the first await:\n'
+                '${violations.join('\n')}');
+      });
+    }
 
     test('approvePlayer binds player + registration repositories up front', () {
       final src =

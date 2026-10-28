@@ -815,13 +815,14 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   // PROTOCOL: Ionic `openAgendaPicker` — saves what is on screen first, so the
   // picker inserts into the current plan, then takes over the saved plan.
   Future<void> _openAgendaPicker() async {
+    final protocolRepo = ref.read(protocolRepositoryWithTenantProvider);
     final att = _att;
     if (att?.id == null) return;
     if (_validate()) await _save();
     if (!mounted) return;
     ProtocolAttendance? protocolAtt;
     try {
-      protocolAtt = await ref.read(protocolRepositoryWithTenantProvider).getAttendance(att!.id!);
+      protocolAtt = await protocolRepo.getAttendance(att!.id!);
     } catch (_) {}
     if (protocolAtt == null || !mounted) return;
     final title = _titleController.text.trim();

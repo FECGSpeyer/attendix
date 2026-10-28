@@ -399,6 +399,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
   /// Ionic getSharedPersonFieldValues: organisation field values are shared
   /// across the tenants of an organisation.
   Future<void> _loadSharedFieldValues() async {
+    final repo = ref.read(profileRepositoryWithTenantProvider);
     try {
       final fields = await ref.read(personExtraFieldsProvider.future);
       _orgFieldIds = fields
@@ -406,7 +407,6 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
           .map((f) => f.id)
           .toSet();
       if (_orgFieldIds.isEmpty) return;
-      final repo = ref.read(profileRepositoryWithTenantProvider);
       _orgId = await repo.getOrganisationId();
       final key = _personKey;
       if (_orgId == null || key == null) return;
@@ -458,6 +458,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
   Future<void> _loadUserRole() async {
     if (widget.person.appId == null) return;
     final tenant = ref.read(currentTenantProvider);
+    final userRegistrationRepo = ref.read(userRegistrationRepositoryWithTenantProvider);
     final appId = widget.person.appId;
     final tenantId = tenant?.id;
 
@@ -477,8 +478,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
                   widget.person.instrument == mainGroupId
               ? Role.responsible
               : Role.player;
-          await ref
-              .read(userRegistrationRepositoryWithTenantProvider)
+          await userRegistrationRepo
               .updateTenantUserRole(appId, promoted);
           role = promoted;
         } catch (_) {
@@ -582,6 +582,8 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
   }
 
   Future<void> _saveChanges() async {
+    final repo = ref.read(playerRepositoryWithTenantProvider);
+    final crossTenantPersonRepo = ref.read(crossTenantPersonRepositoryWithTenantProvider);
     if (_isSaving || !_hasChanges) return;
 
     // Validate required fields
@@ -678,7 +680,6 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
       // appointmentsProvider, _getUserRole, _updateUserRole, _unlinkAccount)
       // are Sprint 2b scope — they need TenantUserRepository which doesn't
       // exist yet.
-      final repo = ref.read(playerRepositoryWithTenantProvider);
       final person = widget.person;
 
       // Build history entries for tracked changes
@@ -751,7 +752,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
         isGeneral: isGeneral,
         assignVoiceLeaderRole: assignVoiceLeaderRole,
       );
-      await _propagateSharedIdentityFields();
+      await _propagateSharedIdentityFields(crossTenantPersonRepo);
 
       // Ionic syncPlayerWithUpcomingAttendancesByAdditionalFields
       // DB_REVIEW_REST (M2): Ionic person.page only syncs extra-field
@@ -929,14 +930,16 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
 
   /// Ionic player.service updatePlayer(): propagate shared identity fields
   /// to all rows with the same global_person_id in linked tenants.
-  Future<void> _propagateSharedIdentityFields() async {
+  /// UI_TENANT_HOIST: [crossTenantPersonRepo] is bound by the caller before
+  /// its first await.
+  Future<void> _propagateSharedIdentityFields(
+      CrossTenantPersonRepository crossTenantPersonRepo) async {
     final globalId = widget.person.globalPersonId;
     final personId = widget.person.id;
     if (globalId == null || globalId.isEmpty || personId == null) return;
     try {
       final linkedIds = await ref.read(linkedTenantIdsProvider.future);
-      await ref
-          .read(crossTenantPersonRepositoryWithTenantProvider)
+      await crossTenantPersonRepo
           .propagateSharedFields(
             globalPersonId: globalId,
             excludePlayerId: personId,
@@ -963,12 +966,12 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
   }
 
   Future<void> _lookupEmailInOtherInstances(String email) async {
+    final crossTenantPersonRepo = ref.read(crossTenantPersonRepositoryWithTenantProvider);
     if (emailsMatch(email, widget.person.email)) return;
     List<CrossTenantPersonCandidate> matches;
     try {
       final linkedIds = await ref.read(linkedTenantIdsProvider.future);
-      matches = await ref
-          .read(crossTenantPersonRepositoryWithTenantProvider)
+      matches = await crossTenantPersonRepo
           .getPossiblePersonsByEmail(email, linkedTenantIds: linkedIds);
     } catch (_) {
       return;
@@ -1002,11 +1005,12 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
   /// Ionic searchPerson(): find this person in a linked tenant, adopt the
   /// email and link both rows via a shared global_person_id.
   Future<void> _searchPersonInOtherInstance() async {
+    final playerRepo = ref.read(playerRepositoryWithTenantProvider);
+    final repo = ref.read(crossTenantPersonRepositoryWithTenantProvider);
     final person = widget.person;
     final personId = person.id;
     if (personId == null) return;
     final linkedIds = await ref.read(linkedTenantIdsProvider.future);
-    final repo = ref.read(crossTenantPersonRepositoryWithTenantProvider);
     final matches = await repo.getPossiblePersonsByName(
       _draft.firstName,
       _draft.lastName,
@@ -1055,8 +1059,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
 
     try {
       final globalId = chosen.person.globalPersonId ?? const Uuid().v4();
-      await ref
-          .read(playerRepositoryWithTenantProvider)
+      await playerRepo
           .updatePlayerFields(personId, {
         'email': email,
         'global_person_id': globalId,
@@ -1086,14 +1089,14 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
 
   /// Ionic assignMyAccount(): link the current user to this person.
   Future<void> _assignMyAccount() async {
+    final playerRepo = ref.read(playerRepositoryWithTenantProvider);
     final personId = widget.person.id;
     final user = ref.read(supabaseClientProvider).auth.currentUser;
     if (personId == null || user == null) return;
     final tenantUser = await ref.read(currentTenantUserProvider.future);
     final email = tenantUser?.email ?? user.email;
     try {
-      await ref
-          .read(playerRepositoryWithTenantProvider)
+      await playerRepo
           .updatePlayerFields(personId, {
         'appId': user.id,
         'email': email,

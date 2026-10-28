@@ -77,9 +77,11 @@ class _AgendaPickerSheetState extends ConsumerState<AgendaPickerSheet> {
   }
 
   Future<void> _load() async {
+    final agendaItemRepo = ref.read(agendaItemRepositoryWithTenantProvider);
+    final protocolRepo = ref.read(protocolRepositoryWithTenantProvider);
     try {
-      final items = await ref.read(agendaItemRepositoryWithTenantProvider).getAgendaItems();
-      final protocols = await ref.read(protocolRepositoryWithTenantProvider).getProtocols();
+      final items = await agendaItemRepo.getAgendaItems();
+      final protocols = await protocolRepo.getProtocols();
       final postponed = postponedAgendaItemIds(protocols);
       final postponedDate = <String, String>{};
       for (final p in protocols) {

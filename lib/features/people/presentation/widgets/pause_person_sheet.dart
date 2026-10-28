@@ -213,11 +213,12 @@ Future<bool> pausePersonFlow(
   WidgetRef ref,
   Person person,
 ) async {
+  final repo = ref.read(playerRepositoryWithTenantProvider);
+  final crossRepo = ref.read(crossTenantPersonRepositoryWithTenantProvider);
   final input = await showPauseSheet(context, person);
   if (input == null || !context.mounted) return false;
 
   final messenger = ScaffoldMessenger.of(context);
-  final repo = ref.read(playerRepositoryWithTenantProvider);
   final text = buildPauseHistoryText(input.reason,
       from: input.from, until: input.until);
   final until = input.until != null ? DateHelper.isoDay(input.until!) : null;
@@ -246,7 +247,6 @@ Future<bool> pausePersonFlow(
   try {
     final linkedIds = await ref.read(linkedTenantIdsProvider.future);
     if (linkedIds.isEmpty) return true;
-    final crossRepo = ref.read(crossTenantPersonRepositoryWithTenantProvider);
     final memberOf =
         await crossRepo.getLinkedTenantsOfUser(appId, linkedTenantIds: linkedIds);
     // Only offer instances where the current user may pause people.

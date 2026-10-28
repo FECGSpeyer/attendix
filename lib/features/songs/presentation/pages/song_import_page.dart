@@ -101,6 +101,7 @@ class _SongImportPageState extends ConsumerState<SongImportPage> {
   }
 
   Future<void> _proceedToPreview() async {
+    final importRepo = ref.read(importRepositoryWithTenantProvider);
     if (!mappingSongHasRequired(_mapping)) {
       ToastHelper.showWarning(context, context.l10n.songsMapNumberName);
       return;
@@ -110,8 +111,7 @@ class _SongImportPageState extends ConsumerState<SongImportPage> {
       final mapped = mapSongRows(_rawRows, _mapping, _ctx);
       // Ionic getExistingNumbers: effective song library (Werk-Synchronisierung).
       final settings = await ref.read(songTenantSettingsProvider.future);
-      final existing = await ref
-          .read(importRepositoryWithTenantProvider)
+      final existing = await importRepo
           .getExistingSongKeys(songTenantId: settings.songSourceTenantId);
       setState(() {
         _mappedRows = detectSongDuplicates(mapped, existing);

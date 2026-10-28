@@ -67,6 +67,8 @@ class _OpenAttendancePageState extends ConsumerState<OpenAttendancePage> {
       // INTEGRATION: opening a Termin via a mail/Telegram link marks its
       // notification-center entries read (Ionic, best-effort).
       try {
+        // tenant-read-after-await: the link deliberately switched to its
+        // tenant above; the notifications must be marked in that tenant.
         final repo = ref.read(userNotificationRepositoryWithTenantProvider);
         if (repo.hasTenantId) await repo.markReadByAttendance(attendanceId);
       } catch (_) {}

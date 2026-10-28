@@ -281,12 +281,13 @@ class _FilesPageState extends ConsumerState<FilesPage> {
   }
 
   Future<void> _loadImagePreviews() async {
+    final repo = _repo; // UI_TENANT_HOIST: bind before the first await
     _imagePreviewUrls.clear();
     final images = _entries.where(FilesSearch.isImage).toList();
     if (images.isEmpty) return;
     final results = await Future.wait(images.map((e) async {
       try {
-        return MapEntry(e.path, await _repo.getSignedFileUrl(e.path, expiresInSeconds: 3600));
+        return MapEntry(e.path, await repo.getSignedFileUrl(e.path, expiresInSeconds: 3600));
       } catch (_) {
         return MapEntry(e.path, '');
       }
@@ -423,6 +424,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
   }
 
   Future<void> _createFolder() async {
+    final repo = _repo; // UI_TENANT_HOIST: bind before the first await
     if (!_canEdit) {
       ToastHelper.showWarning(context, context.l10n.filesNoEditRights);
       return;
@@ -435,7 +437,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
     );
     if (name == null || name.trim().isEmpty || !mounted) return;
     try {
-      await _repo.createFolder(_currentPath, name);
+      await repo.createFolder(_currentPath, name);
       if (mounted) ToastHelper.showSuccess(context, context.l10n.filesFolderCreated);
       await _loadEntries();
     } catch (e) {
@@ -444,6 +446,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
   }
 
   Future<void> _renameEntry(StorageEntry entry) async {
+    final repo = _repo; // UI_TENANT_HOIST: bind before the first await
     final name = await DialogHelper.showTextInput(
       context,
       title: entry.isFolder ? context.l10n.filesRenameFolder : context.l10n.filesRenameFile,
@@ -453,7 +456,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
     );
     if (name == null || name.trim().isEmpty || !mounted) return;
     try {
-      await _repo.renameEntry(entry.path, name, isFolder: entry.isFolder);
+      await repo.renameEntry(entry.path, name, isFolder: entry.isFolder);
       if (mounted) ToastHelper.showSuccess(context, context.l10n.filesRenamed);
       await _loadEntries();
     } catch (e) {
@@ -462,6 +465,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
   }
 
   Future<void> _moveEntry(StorageEntry entry) async {
+    final repo = _repo; // UI_TENANT_HOIST: bind before the first await
     final controller = TextEditingController();
     final target = await showDialog<String>(
       context: context,
@@ -488,7 +492,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
     controller.dispose();
     if (target == null || !mounted) return;
     try {
-      await _repo.moveEntry(entry.path, target, isFolder: entry.isFolder);
+      await repo.moveEntry(entry.path, target, isFolder: entry.isFolder);
       if (mounted) ToastHelper.showSuccess(context, context.l10n.filesMoved);
       await _loadEntries();
     } catch (e) {
@@ -497,6 +501,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
   }
 
   Future<void> _deleteEntry(StorageEntry entry) async {
+    final repo = _repo; // UI_TENANT_HOIST: bind before the first await
     final confirmed = await DialogHelper.showConfirmation(
       context,
       title: entry.isFolder ? context.l10n.filesDeleteFolder : context.l10n.filesDeleteFile,
@@ -506,7 +511,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
     );
     if (!confirmed || !mounted) return;
     try {
-      await _repo.deleteEntry(entry.path, isFolder: entry.isFolder);
+      await repo.deleteEntry(entry.path, isFolder: entry.isFolder);
       if (mounted) ToastHelper.showSuccess(context, context.l10n.filesDeleted);
       await _loadEntries();
     } catch (e) {

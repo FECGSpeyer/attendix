@@ -100,13 +100,14 @@ class _LinkPersonsPageState extends ConsumerState<LinkPersonsPage> {
   }
 
   Future<void> _load() async {
+    final organisationSettingsRepo = ref.read(organisationSettingsRepositoryWithTenantProvider);
     try {
       try {
         final prefs = await SharedPreferences.getInstance();
         _ignoredKeys.addAll(prefs.getStringList(_storageKey) ?? const []);
       } catch (_) {}
 
-      final org = await ref.read(organisationSettingsRepositoryWithTenantProvider).getCurrentOrganisation();
+      final org = await organisationSettingsRepo.getCurrentOrganisation();
       if (org?.id == null) return;
       final orgRepo = ref.read(organisationRepositoryProvider);
       _tenants = await orgRepo.getInstancesOfOrganisation(org!.id!);

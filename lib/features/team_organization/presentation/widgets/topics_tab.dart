@@ -118,6 +118,7 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
   }
 
   Future<void> _topAction(PlanField top, ProtocolAttendance att, ProtocolType? type) async {
+    final protocolRepo = ref.read(protocolRepositoryWithTenantProvider);
     final action = await showModalBottomSheet<String>(
       context: context,
       builder: (ctx) => SafeArea(
@@ -140,7 +141,7 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
       context.push('/settings/agenda-items/$agendaId');
     } else if (action == 'remove' && agendaId != null) {
       try {
-        await addTopicsToAttendance(ref.read(protocolRepositoryWithTenantProvider), att, type, const [],
+        await addTopicsToAttendance(protocolRepo, att, type, const [],
             removeIds: [agendaId]);
         ref.invalidate(upcomingProtocolAttendancesProvider);
         if (mounted) ToastHelper.showInfo(context, context.l10n.teamOrgRemovedStays);

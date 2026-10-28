@@ -97,12 +97,13 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
   }
 
   Future<void> _loadType() async {
+    final repo = ref.read(attendanceTypeRepositoryWithTenantProvider);
+    final protocolRepo = ref.read(protocolRepositoryWithTenantProvider);
     final type = await ref.read(attendanceTypeByIdProvider(widget.typeId).future);
 
     if (type != null && mounted) {
       // Fetch usage count
       try {
-        final repo = ref.read(attendanceTypeRepositoryWithTenantProvider);
         _usageCount = await repo.getAttendanceCountForType(widget.typeId);
         // SETTINGS2: "Instanz-Name vor Werken"
         _planningPrefixInstanceName =
@@ -111,7 +112,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
 
       // PROTOCOL: enable_protocol etc. are not part of the AttendanceType model
       try {
-        final types = await ref.read(protocolRepositoryWithTenantProvider).getProtocolTypes();
+        final types = await protocolRepo.getProtocolTypes();
         _protocol = TypeProtocolSettings.fromType(types.where((t) => t.id == widget.typeId).firstOrNull);
       } catch (_) {}
       if (!mounted) return;
@@ -919,6 +920,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
   /// DUTY: after the first Termintyp with Dienst-Modus ask once whether
   /// "Meine Termine" should become the Dienstplan view.
   Future<void> _offerDutyView() async {
+    final dutyRepo = ref.read(dutyRepositoryWithTenantProvider);
     if (!_dutyMode || _dutyModeAtLoad) return;
     _dutyModeAtLoad = true;
     final tenant = ref.read(currentTenantProvider);
@@ -934,7 +936,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
     );
     if (!useIt || !mounted) return;
     try {
-      await ref.read(dutyRepositoryWithTenantProvider).setDutyView(true);
+      await dutyRepo.setDutyView(true);
       await ref.read(currentTenantProvider.notifier).setTenantLocal(tenant.copyWith(dutyView: true));
       if (mounted) ToastHelper.showSuccess(context, context.l10n.typeSettingsDutyViewActive);
     } catch (_) {
