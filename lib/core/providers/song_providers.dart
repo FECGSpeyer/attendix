@@ -597,7 +597,11 @@ class SongCategoryNotifier extends Notifier<AsyncValue<void>> {
       final categories = await repo.getSongCategories();
       final result = await repo.addSongCategory(
         name: name,
-        index: categories.length,
+        // Sol review: deleting no longer renumbers, so continue after the
+        // highest index instead of using the count (avoids duplicates).
+        index: categories.fold<int>(
+                -1, (m, c) => c.index > m ? c.index : m) +
+            1,
       );
       state = const AsyncValue.data(null);
       ref.invalidate(songCategoriesProvider);

@@ -64,7 +64,7 @@ void main() {
           expect(q, contains(".eq('tenant_group', organisationId)"));
         }
       }
-      expect(src, contains(".inFilter('person_key', personKeys)"));
+      expect(src, contains(".inFilter('person_key', chunk)"));
       expect(src, contains("'person_key': 'global:\$globalPersonId'"));
     });
 

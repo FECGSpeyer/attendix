@@ -16,6 +16,7 @@ import '../../../../core/providers/realtime_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/providers/user_registration_providers.dart'; // AUTH
 import '../../../../core/theme/app_colors.dart';
+import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../data/services/auth_service.dart';
@@ -583,6 +584,12 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
 
   Future<void> _saveChanges() async {
     final repo = ref.read(playerRepositoryWithTenantProvider);
+    // Sol review: capture tenant + main group before the first async gap so
+    // role sync after saving can never target a tenant switched to meanwhile.
+    final roleTenantId = ref.read(currentTenantIdProvider);
+    final mainGroupFuture = ref
+        .read(mainGroupProvider.future)
+        .then<Group?>((g) => g, onError: (Object _) => null);
     if (_isSaving || !_hasChanges) return;
 
     // Validate required fields
@@ -749,6 +756,8 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
       // PARITY_A (D1): Ionic updatePlayer only changes this one row - no
       // propagation of identity fields to linked tenants.
       await _syncRolesAfterSave(
+        tenantId: roleTenantId,
+        mainGroupFuture: mainGroupFuture,
         isGeneral: isGeneral,
         assignVoiceLeaderRole: assignVoiceLeaderRole,
       );
@@ -869,16 +878,17 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
   /// Ionic continueUpdatingPlayer(): main group ⇄ responsible role and
   /// voice leader role assignment/removal.
   Future<void> _syncRolesAfterSave({
+    required int? tenantId,
+    required Future<Group?> mainGroupFuture,
     required bool isGeneral,
     required bool assignVoiceLeaderRole,
   }) async {
     final appId = widget.person.appId;
-    final tenantId = ref.read(currentTenantIdProvider);
     if (appId == null || tenantId == null) return;
     final auth = ref.read(authServiceProvider);
 
     try {
-      final mainId = (await ref.read(mainGroupProvider.future))?.id;
+      final mainId = (await mainGroupFuture)?.id;
       final oldGroup = widget.person.instrument;
       if (mainId != null &&
           ((oldGroup != _selectedGroupId && _selectedGroupId == mainId) ||

@@ -1,4 +1,5 @@
 import '../models/person/person.dart';
+import '../../core/utils/paged_query.dart';
 import 'base_repository.dart';
 
 /// PARITY_B: organisation person fields (`tenant_group_person_fields`).
@@ -60,14 +61,27 @@ mixin SharedPersonFieldsRepository on BaseRepository {
   ) async {
     if (personKeys.isEmpty) return {};
     try {
-      final response = await supabase
-          .from('tenant_group_person_fields')
-          .select('person_key, field_id, value')
-          .eq('tenant_group', organisationId)
-          .inFilter('person_key', personKeys);
+      // Sol review: page through the rows (PostgREST max-rows) with a stable
+      // order, and chunk the key list so the `in` filter URL stays short.
+      const chunkSize = 100;
+      final rows = <Map<String, dynamic>>[];
+      for (var i = 0; i < personKeys.length; i += chunkSize) {
+        final chunk = personKeys.sublist(
+            i, (i + chunkSize).clamp(0, personKeys.length));
+        rows.addAll(await fetchAllPages<Map<String, dynamic>>((from, to) async {
+          final page = await supabase
+              .from('tenant_group_person_fields')
+              .select('person_key, field_id, value')
+              .eq('tenant_group', organisationId)
+              .inFilter('person_key', chunk)
+              .order('id')
+              .range(from, to);
+          return (page as List).cast<Map<String, dynamic>>();
+        }));
+      }
 
       final values = <String, Map<String, dynamic>>{};
-      for (final row in (response as List).cast<Map<String, dynamic>>()) {
+      for (final row in rows) {
         final key = row['person_key'].toString();
         (values[key] ??= {})[row['field_id'].toString()] = row['value'];
       }
