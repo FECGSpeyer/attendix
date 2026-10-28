@@ -9365,6 +9365,286 @@
   "@shiftsFixedOptional": {
     "description": "shifts.fixedOptional"
   },
+  "shiftsFlutterAddSegment": "Segment hinzufügen",
+  "@shiftsFlutterAddSegment": {
+    "description": "shifts.flutter.addSegment"
+  },
+  "shiftsFlutterAddSegmentsHint": "Füge Segmente hinzu, um die Vorschau zu sehen",
+  "@shiftsFlutterAddSegmentsHint": {
+    "description": "shifts.flutter.addSegmentsHint"
+  },
+  "shiftsFlutterAddShift": "Schicht hinzufügen",
+  "@shiftsFlutterAddShift": {
+    "description": "shifts.flutter.addShift"
+  },
+  "shiftsFlutterAssigningPeople": "Weise {count} Personen zu...",
+  "@shiftsFlutterAssigningPeople": {
+    "description": "shifts.flutter.assigningPeople",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "shiftsFlutterCopyAssignments": "Zuweisungen kopieren",
+  "@shiftsFlutterCopyAssignments": {
+    "description": "shifts.flutter.copyAssignments"
+  },
+  "shiftsFlutterCopyAssignmentsHint": "{count, plural, one {{count} Person nutzt} other {{count} Personen nutzen}} diesen Schichtplan. Versuche passende Personen in der Ziel-Instanz zuzuweisen.",
+  "@shiftsFlutterCopyAssignmentsHint": {
+    "description": "shifts.flutter.copyAssignmentsHint",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "shiftsFlutterCopyFailedWith": "Fehler beim Kopieren: {error}",
+  "@shiftsFlutterCopyFailedWith": {
+    "description": "shifts.flutter.copyFailedWith",
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "shiftsFlutterCopyInfo": "Der Schichtplan \"{name}\" wird in die ausgewählte Instanz kopiert. Die Definition und feste Schichten werden übernommen.",
+  "@shiftsFlutterCopyInfo": {
+    "description": "shifts.flutter.copyInfo",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "shiftsFlutterCopyInfoAssignments": "Zuweisungen werden anhand der App-ID (appId) der Personen gemappt.",
+  "@shiftsFlutterCopyInfoAssignments": {
+    "description": "shifts.flutter.copyInfoAssignments"
+  },
+  "shiftsFlutterCopyingShort": "Wird kopiert...",
+  "@shiftsFlutterCopyingShort": {
+    "description": "shifts.flutter.copyingShort"
+  },
+  "shiftsFlutterCreateFailed": "Fehler beim Erstellen: {error}",
+  "@shiftsFlutterCreateFailed": {
+    "description": "shifts.flutter.createFailed",
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "shiftsFlutterCreated": "Schichtplan \"{name}\" erstellt",
+  "@shiftsFlutterCreated": {
+    "description": "shifts.flutter.created",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "shiftsFlutterCreatingPlan": "Erstelle Schichtplan...",
+  "@shiftsFlutterCreatingPlan": {
+    "description": "shifts.flutter.creatingPlan"
+  },
+  "shiftsFlutterCycle": "Zyklus: {count} Tage",
+  "@shiftsFlutterCycle": {
+    "description": "shifts.flutter.cycle",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "shiftsFlutterCycleDays": "{count}-Tage-Zyklus",
+  "@shiftsFlutterCycleDays": {
+    "description": "shifts.flutter.cycleDays",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "shiftsFlutterDayN": "Tag {n}",
+  "@shiftsFlutterDayN": {
+    "description": "shifts.flutter.dayN",
+    "placeholders": {
+      "n": {}
+    }
+  },
+  "shiftsFlutterDeleteConfirm": "Möchtest du diesen Schichtplan wirklich löschen?",
+  "@shiftsFlutterDeleteConfirm": {
+    "description": "shifts.flutter.deleteConfirm"
+  },
+  "shiftsFlutterDeleteConfirmUsed": "{count, plural, one {{count} Mitglied nutzen diesen Schichtplan.} other {{count} Mitglieder nutzen diesen Schichtplan.}} Möchtest du ihn trotzdem löschen?",
+  "@shiftsFlutterDeleteConfirmUsed": {
+    "description": "shifts.flutter.deleteConfirmUsed",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "shiftsFlutterDescriptionHint": "z.B. Früh, Spät, Nacht",
+  "@shiftsFlutterDescriptionHint": {
+    "description": "shifts.flutter.descriptionHint"
+  },
+  "shiftsFlutterDurationHint": "z.B. 8.0",
+  "@shiftsFlutterDurationHint": {
+    "description": "shifts.flutter.durationHint"
+  },
+  "shiftsFlutterEditSegment": "Segment bearbeiten",
+  "@shiftsFlutterEditSegment": {
+    "description": "shifts.flutter.editSegment"
+  },
+  "shiftsFlutterErrorWith": "Fehler: {error}",
+  "@shiftsFlutterErrorWith": {
+    "description": "shifts.flutter.errorWith",
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "shiftsFlutterFirstSegment": "Erstes Segment",
+  "@shiftsFlutterFirstSegment": {
+    "description": "shifts.flutter.firstSegment"
+  },
+  "shiftsFlutterFixedHint": "Feste Schichten definieren konkrete Startdaten für den Schichtzyklus.",
+  "@shiftsFlutterFixedHint": {
+    "description": "shifts.flutter.fixedHint"
+  },
+  "shiftsFlutterFixedShifts": "Feste Schichten",
+  "@shiftsFlutterFixedShifts": {
+    "description": "shifts.flutter.fixedShifts"
+  },
+  "shiftsFlutterFreeHint": "Mitarbeiter ist an diesem Tag frei",
+  "@shiftsFlutterFreeHint": {
+    "description": "shifts.flutter.freeHint"
+  },
+  "shiftsFlutterInfoText": "Schichtpläne ermöglichen automatische Entschuldigungen basierend auf Arbeitsschichten. Weise einem Mitglied einen Schichtplan zu, um Konflikte mit Terminen automatisch zu erkennen.",
+  "@shiftsFlutterInfoText": {
+    "description": "shifts.flutter.infoText"
+  },
+  "shiftsFlutterInfoTitle": "Automatische Entschuldigungen",
+  "@shiftsFlutterInfoTitle": {
+    "description": "shifts.flutter.infoTitle"
+  },
+  "shiftsFlutterLabelHint": "z.B. Frühdienst",
+  "@shiftsFlutterLabelHint": {
+    "description": "shifts.flutter.labelHint"
+  },
+  "shiftsFlutterNameHint": "z.B. 3-Schicht-System",
+  "@shiftsFlutterNameHint": {
+    "description": "shifts.flutter.nameHint"
+  },
+  "shiftsFlutterNext30From": "Nächste 30 Tage ab {date}",
+  "@shiftsFlutterNext30From": {
+    "description": "shifts.flutter.next30From",
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "shiftsFlutterNext30Today": "Nächste 30 Tage ab heute",
+  "@shiftsFlutterNext30Today": {
+    "description": "shifts.flutter.next30Today"
+  },
+  "shiftsFlutterNoDefinition": "Keine Definition",
+  "@shiftsFlutterNoDefinition": {
+    "description": "shifts.flutter.noDefinition"
+  },
+  "shiftsFlutterNoDefinitionYet": "Keine Definition vorhanden",
+  "@shiftsFlutterNoDefinitionYet": {
+    "description": "shifts.flutter.noDefinitionYet"
+  },
+  "shiftsFlutterNoFixed": "Keine festen Schichten",
+  "@shiftsFlutterNoFixed": {
+    "description": "shifts.flutter.noFixed"
+  },
+  "shiftsFlutterNoSegments": "Keine Schicht-Segmente definiert",
+  "@shiftsFlutterNoSegments": {
+    "description": "shifts.flutter.noSegments"
+  },
+  "shiftsFlutterNotFound": "Schichtplan nicht gefunden",
+  "@shiftsFlutterNotFound": {
+    "description": "shifts.flutter.notFound"
+  },
+  "shiftsFlutterNote": "Hinweis",
+  "@shiftsFlutterNote": {
+    "description": "shifts.flutter.note"
+  },
+  "shiftsFlutterOneDay": "1 Tag",
+  "@shiftsFlutterOneDay": {
+    "description": "shifts.flutter.oneDay"
+  },
+  "shiftsFlutterPlan": "Schichtplan",
+  "@shiftsFlutterPlan": {
+    "description": "shifts.flutter.plan"
+  },
+  "shiftsFlutterPreview": "Vorschau",
+  "@shiftsFlutterPreview": {
+    "description": "shifts.flutter.preview"
+  },
+  "shiftsFlutterPreviewOf": "Vorschau: {name}",
+  "@shiftsFlutterPreviewOf": {
+    "description": "shifts.flutter.previewOf",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "shiftsFlutterRepeatTimes": "{count}x wiederholen",
+  "@shiftsFlutterRepeatTimes": {
+    "description": "shifts.flutter.repeatTimes",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "shiftsFlutterRepetitionsHint": "Anzahl aufeinanderfolgender Tage",
+  "@shiftsFlutterRepetitionsHint": {
+    "description": "shifts.flutter.repetitionsHint"
+  },
+  "shiftsFlutterSearchingPeople": "Suche passende Personen in Ziel-Instanz...",
+  "@shiftsFlutterSearchingPeople": {
+    "description": "shifts.flutter.searchingPeople"
+  },
+  "shiftsFlutterSegments": "{count, plural, one {{count} Segment} other {{count} Segmente}}",
+  "@shiftsFlutterSegments": {
+    "description": "shifts.flutter.segments",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "shiftsFlutterShiftsCount": "{count, plural, one {{count} Schicht} other {{count} Schichten}}",
+  "@shiftsFlutterShiftsCount": {
+    "description": "shifts.flutter.shiftsCount",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "shiftsFlutterStart": "Start",
+  "@shiftsFlutterStart": {
+    "description": "shifts.flutter.start"
+  },
+  "shiftsFlutterStartDateToday": "Startdatum: Heute ({date})",
+  "@shiftsFlutterStartDateToday": {
+    "description": "shifts.flutter.startDateToday",
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "shiftsFlutterStartDateWith": "Startdatum: {date} ({name})",
+  "@shiftsFlutterStartDateWith": {
+    "description": "shifts.flutter.startDateWith",
+    "placeholders": {
+      "date": {},
+      "name": {}
+    }
+  },
+  "shiftsFlutterTargetTenant": "Ziel-Instanz",
+  "@shiftsFlutterTargetTenant": {
+    "description": "shifts.flutter.targetTenant"
+  },
+  "shiftsFlutterUsage": "{count, plural, one {{count} Mitglied nutzen diesen Schichtplan} other {{count} Mitglieder nutzen diesen Schichtplan}}",
+  "@shiftsFlutterUsage": {
+    "description": "shifts.flutter.usage",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "shiftsFlutterWillCopy": "Wird kopiert:",
+  "@shiftsFlutterWillCopy": {
+    "description": "shifts.flutter.willCopy"
+  },
   "shiftsFree": "Frei",
   "@shiftsFree": {
     "description": "shifts.free"

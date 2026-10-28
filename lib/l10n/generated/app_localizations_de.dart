@@ -7136,6 +7136,233 @@ class AppLocalizationsDe extends AppLocalizations {
   String get shiftsFixedOptional => 'Feste Schichten (optional)';
 
   @override
+  String get shiftsFlutterAddSegment => 'Segment hinzufügen';
+
+  @override
+  String get shiftsFlutterAddSegmentsHint => 'Füge Segmente hinzu, um die Vorschau zu sehen';
+
+  @override
+  String get shiftsFlutterAddShift => 'Schicht hinzufügen';
+
+  @override
+  String shiftsFlutterAssigningPeople(Object count) {
+    return 'Weise $count Personen zu...';
+  }
+
+  @override
+  String get shiftsFlutterCopyAssignments => 'Zuweisungen kopieren';
+
+  @override
+  String shiftsFlutterCopyAssignmentsHint(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Personen nutzen',
+      one: '$count Person nutzt',
+    );
+    return '$_temp0 diesen Schichtplan. Versuche passende Personen in der Ziel-Instanz zuzuweisen.';
+  }
+
+  @override
+  String shiftsFlutterCopyFailedWith(Object error) {
+    return 'Fehler beim Kopieren: $error';
+  }
+
+  @override
+  String shiftsFlutterCopyInfo(Object name) {
+    return 'Der Schichtplan \"$name\" wird in die ausgewählte Instanz kopiert. Die Definition und feste Schichten werden übernommen.';
+  }
+
+  @override
+  String get shiftsFlutterCopyInfoAssignments => 'Zuweisungen werden anhand der App-ID (appId) der Personen gemappt.';
+
+  @override
+  String get shiftsFlutterCopyingShort => 'Wird kopiert...';
+
+  @override
+  String shiftsFlutterCreateFailed(Object error) {
+    return 'Fehler beim Erstellen: $error';
+  }
+
+  @override
+  String shiftsFlutterCreated(Object name) {
+    return 'Schichtplan \"$name\" erstellt';
+  }
+
+  @override
+  String get shiftsFlutterCreatingPlan => 'Erstelle Schichtplan...';
+
+  @override
+  String shiftsFlutterCycle(Object count) {
+    return 'Zyklus: $count Tage';
+  }
+
+  @override
+  String shiftsFlutterCycleDays(Object count) {
+    return '$count-Tage-Zyklus';
+  }
+
+  @override
+  String shiftsFlutterDayN(Object n) {
+    return 'Tag $n';
+  }
+
+  @override
+  String get shiftsFlutterDeleteConfirm => 'Möchtest du diesen Schichtplan wirklich löschen?';
+
+  @override
+  String shiftsFlutterDeleteConfirmUsed(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Mitglieder nutzen diesen Schichtplan.',
+      one: '$count Mitglied nutzen diesen Schichtplan.',
+    );
+    return '$_temp0 Möchtest du ihn trotzdem löschen?';
+  }
+
+  @override
+  String get shiftsFlutterDescriptionHint => 'z.B. Früh, Spät, Nacht';
+
+  @override
+  String get shiftsFlutterDurationHint => 'z.B. 8.0';
+
+  @override
+  String get shiftsFlutterEditSegment => 'Segment bearbeiten';
+
+  @override
+  String shiftsFlutterErrorWith(Object error) {
+    return 'Fehler: $error';
+  }
+
+  @override
+  String get shiftsFlutterFirstSegment => 'Erstes Segment';
+
+  @override
+  String get shiftsFlutterFixedHint => 'Feste Schichten definieren konkrete Startdaten für den Schichtzyklus.';
+
+  @override
+  String get shiftsFlutterFixedShifts => 'Feste Schichten';
+
+  @override
+  String get shiftsFlutterFreeHint => 'Mitarbeiter ist an diesem Tag frei';
+
+  @override
+  String get shiftsFlutterInfoText => 'Schichtpläne ermöglichen automatische Entschuldigungen basierend auf Arbeitsschichten. Weise einem Mitglied einen Schichtplan zu, um Konflikte mit Terminen automatisch zu erkennen.';
+
+  @override
+  String get shiftsFlutterInfoTitle => 'Automatische Entschuldigungen';
+
+  @override
+  String get shiftsFlutterLabelHint => 'z.B. Frühdienst';
+
+  @override
+  String get shiftsFlutterNameHint => 'z.B. 3-Schicht-System';
+
+  @override
+  String shiftsFlutterNext30From(Object date) {
+    return 'Nächste 30 Tage ab $date';
+  }
+
+  @override
+  String get shiftsFlutterNext30Today => 'Nächste 30 Tage ab heute';
+
+  @override
+  String get shiftsFlutterNoDefinition => 'Keine Definition';
+
+  @override
+  String get shiftsFlutterNoDefinitionYet => 'Keine Definition vorhanden';
+
+  @override
+  String get shiftsFlutterNoFixed => 'Keine festen Schichten';
+
+  @override
+  String get shiftsFlutterNoSegments => 'Keine Schicht-Segmente definiert';
+
+  @override
+  String get shiftsFlutterNotFound => 'Schichtplan nicht gefunden';
+
+  @override
+  String get shiftsFlutterNote => 'Hinweis';
+
+  @override
+  String get shiftsFlutterOneDay => '1 Tag';
+
+  @override
+  String get shiftsFlutterPlan => 'Schichtplan';
+
+  @override
+  String get shiftsFlutterPreview => 'Vorschau';
+
+  @override
+  String shiftsFlutterPreviewOf(Object name) {
+    return 'Vorschau: $name';
+  }
+
+  @override
+  String shiftsFlutterRepeatTimes(Object count) {
+    return '${count}x wiederholen';
+  }
+
+  @override
+  String get shiftsFlutterRepetitionsHint => 'Anzahl aufeinanderfolgender Tage';
+
+  @override
+  String get shiftsFlutterSearchingPeople => 'Suche passende Personen in Ziel-Instanz...';
+
+  @override
+  String shiftsFlutterSegments(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Segmente',
+      one: '$count Segment',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String shiftsFlutterShiftsCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Schichten',
+      one: '$count Schicht',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get shiftsFlutterStart => 'Start';
+
+  @override
+  String shiftsFlutterStartDateToday(Object date) {
+    return 'Startdatum: Heute ($date)';
+  }
+
+  @override
+  String shiftsFlutterStartDateWith(Object date, Object name) {
+    return 'Startdatum: $date ($name)';
+  }
+
+  @override
+  String get shiftsFlutterTargetTenant => 'Ziel-Instanz';
+
+  @override
+  String shiftsFlutterUsage(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Mitglieder nutzen diesen Schichtplan',
+      one: '$count Mitglied nutzen diesen Schichtplan',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get shiftsFlutterWillCopy => 'Wird kopiert:';
+
+  @override
   String get shiftsFree => 'Frei';
 
   @override
