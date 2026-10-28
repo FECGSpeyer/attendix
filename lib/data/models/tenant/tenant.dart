@@ -47,6 +47,8 @@ class Tenant with _$Tenant {
     @JsonKey(name: 'late_reasons') List<String>? lateReasons,
     // DUTY: "Meine Termine" als Dienstplan-Ansicht
     @JsonKey(name: 'duty_view') @Default(false) bool dutyView,
+    // SETTINGS2: schicht-/arbeitsbedingt entschuldigt zählt als anwesend
+    @JsonKey(name: 'shift_excused_as_present') @Default(false) bool shiftExcusedAsPresent,
   }) = _Tenant;
 
   factory Tenant.fromJson(Map<String, dynamic> json) => _$TenantFromJson(json);

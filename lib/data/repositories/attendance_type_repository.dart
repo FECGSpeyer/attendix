@@ -112,6 +112,23 @@ class AttendanceTypeRepository extends BaseRepository with TenantAwareRepository
     }
   }
 
+  /// SETTINGS2: `planning_prefix_instance_name` ("Instanz-Name vor Werken").
+  /// Not part of the shared AttendanceType model, so read it directly.
+  Future<bool> getPlanningPrefixInstanceName(String typeId) async {
+    try {
+      final response = await supabase
+          .from('attendance_types')
+          .select('planning_prefix_instance_name')
+          .eq('id', typeId)
+          .eq('tenant_id', currentTenantId)
+          .maybeSingle();
+      return response?['planning_prefix_instance_name'] == true;
+    } catch (e, stack) {
+      handleError(e, stack, 'getPlanningPrefixInstanceName');
+      return false;
+    }
+  }
+
   /// Check if attendance type is used by any attendances
   Future<int> getAttendanceCountForType(String typeId) async {
     try {

@@ -156,7 +156,7 @@ final playerAttendancePercentagesProvider =
   while (true) {
     var query = supabase
         .from('person_attendances')
-        .select('person_id, status, attendance:attendance_id!inner(date, tenantId, type_id)')
+        .select('person_id, status, notes, attendance:attendance_id!inner(date, tenantId, type_id)')
         .eq('attendance.tenantId', tenant.id!)
         .lte('attendance.date', now);
 
@@ -193,7 +193,11 @@ final playerAttendancePercentagesProvider =
     totals[personId] = (totals[personId] ?? 0) + 1;
     final status = a['status'] as int?;
     // BL-003: Use centralized definition for which statuses count as attended
-    if (AttendanceStatus.fromValue(status ?? 0).countsAsPresent) {
+    // SETTINGS2: shift_excused_as_present (Ionic getModifiedPlayersForList)
+    if (AttendanceStatus.fromValue(status ?? 0).countsAsAttended(
+      notes: a['notes'] as String?,
+      shiftExcusedAsPresent: tenant.shiftExcusedAsPresent,
+    )) {
       attended[personId] = (attended[personId] ?? 0) + 1;
     }
   }

@@ -82,23 +82,21 @@ class _CriticalRuleSheetState extends State<CriticalRuleSheet> {
 
   void _save() {
     // Validation
-    if (_selectedTypeIds.isEmpty) {
-      ToastHelper.showError(context, 'Bitte wähle mindestens eine Terminart');
-      return;
-    }
+    // SETTINGS2: Ionic addCriticalRule validation. An empty type list means
+    // "Alle Typen" (evaluate-critical-rules treats [] as every type).
     if (_selectedStatuses.isEmpty) {
-      ToastHelper.showError(context, 'Bitte wähle mindestens einen Status');
+      ToastHelper.showError(context, 'Bitte wähle mindestens einen Status aus.');
       return;
     }
     final threshold = int.tryParse(_thresholdController.text);
     if (threshold == null || threshold <= 0) {
-      ToastHelper.showError(context, 'Bitte gib einen gültigen Schwellenwert ein');
+      ToastHelper.showError(context, 'Der Schwellenwert muss größer als 0 sein.');
       return;
     }
     if (_periodType == CriticalRulePeriodType.days) {
       final days = int.tryParse(_periodDaysController.text);
       if (days == null || days <= 0) {
-        ToastHelper.showError(context, 'Bitte gib eine gültige Anzahl Tage ein');
+        ToastHelper.showError(context, 'Der Zeitraum muss größer als 0 sein.');
         return;
       }
     }
@@ -164,9 +162,14 @@ class _CriticalRuleSheetState extends State<CriticalRuleSheet> {
 
             // Attendance types selection
             Text(
-              'Terminarten',
+              'Anwesenheits-Typen',
               style: Theme.of(context).textTheme.titleSmall,
             ),
+            if (_selectedTypeIds.isEmpty)
+              Text(
+                'Alle Typen',
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
             const SizedBox(height: AppDimensions.paddingS),
             Wrap(
               spacing: 8,

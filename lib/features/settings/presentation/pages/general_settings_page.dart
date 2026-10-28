@@ -15,6 +15,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/providers/duty_providers.dart';
 import '../../../../core/providers/organisation_providers.dart';
+import '../../../../core/providers/group_providers.dart'; // SETTINGS2
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../data/models/organisation/organisation.dart';
 import '../widgets/critical_rule_card.dart';
@@ -69,6 +70,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
   bool _showMembersList = false;
   bool _showHolidays = false;
   bool _dutyView = false; // DUTY: "Meine Termine" als Dienstplan-Ansicht
+  bool _shiftExcusedAsPresent = false; // SETTINGS2
 
   // ATTENDANCE_SIGNOUT: show all Termine + absence/late reasons
   bool _showAllAttendances = false;
@@ -133,6 +135,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
       _absenceReasons = EventListUtils.absenceReasonsOf(tenant.absenceReasons);
       _lateReasons = EventListUtils.lateReasonsOf(tenant.lateReasons);
       _dutyView = tenant.dutyView; // DUTY
+      _shiftExcusedAsPresent = tenant.shiftExcusedAsPresent; // SETTINGS2
       _songSharingEnabled = tenant.songSharingId != null && tenant.songSharingId!.isNotEmpty;
       _songSharingId = tenant.songSharingId;
       _registrationEnabled = tenant.registerId != null && tenant.registerId!.isNotEmpty;
@@ -163,7 +166,31 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
     }
   }
 
+  /// SETTINGS2: Ionic `hasSelectableGroups` — at least one non-main group.
+  bool get _hasSelectableGroups =>
+      (ref.read(groupsProvider).valueOrNull ?? const []).any((g) => g.maingroup != true);
+
   Future<void> _saveSettings() async {
+    // SETTINGS2: Ionic saveGeneralSettings validation toasts
+    if (_longNameController.text.trim().isEmpty) {
+      ToastHelper.showError(context, 'Der Gruppenname darf nicht leer sein.');
+      return;
+    }
+    if (_shortNameController.text.trim().isEmpty) {
+      ToastHelper.showError(context, 'Der Kurzname darf nicht leer sein.');
+      return;
+    }
+    if (_registrationEnabled) {
+      final groups = await ref.read(groupsProvider.future);
+      if (!mounted) return;
+      if (!groups.any((g) => g.maingroup != true)) {
+        ToastHelper.showError(
+          context,
+          'Registrierung kann nicht aktiviert werden: Bitte lege zuerst mindestens eine Gruppe an.',
+        );
+        return;
+      }
+    }
     if (!_formKey.currentState!.validate()) return;
 
     setState(() => _isSaving = true);
@@ -192,6 +219,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
         'withExcuses': _withExcuses,
         'parents': _parents,
         'show_members_list': _showMembersList,
+        'shift_excused_as_present': _shiftExcusedAsPresent, // SETTINGS2
         // ATTENDANCE_SIGNOUT
         'show_all_attendances': _showAllAttendances,
         'show_all_attendances_info_text': _showAllInfoTextController.text.trim().isNotEmpty
@@ -220,6 +248,13 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
         }).toList(),
       }).eq('id', tenantId);
 
+      // SETTINGS2: Ionic re-evaluates the Problemfall rules right away
+      try {
+        await supabase.functions.invoke('evaluate-critical-rules');
+      } catch (e) {
+        debugPrint('Could not trigger critical rules evaluation: $e');
+      }
+
       // Refresh tenant data
       ref.invalidate(currentTenantProvider);
       ref.invalidate(userTenantsProvider);
@@ -227,7 +262,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Text('Einstellungen gespeichert. Lade die App neu, damit alle Änderungen wirksam werden.'),
+            content: const Text('Einstellungen gespeichert. Bitte lade die Seite neu, um die Änderungen zu sehen.'),
             duration: const Duration(seconds: 5),
             action: SnackBarAction(
               label: 'OK',
@@ -490,16 +525,18 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
                       _markChanged();
                     },
                   ),
-                  SwitchListTile(
-                    contentPadding: EdgeInsets.zero,
-                    title: const Text('Dirigenten verwalten'),
-                    subtitle: const Text('Separate Dirigenten-Liste führen'),
-                    value: _maintainTeachers,
-                    onChanged: (v) {
-                      setState(() => _maintainTeachers = v);
-                      _markChanged();
-                    },
-                  ),
+                  // SETTINGS2: Ionic "Lehrer pflegen" (only for orchestras)
+                  if (ref.watch(currentTenantProvider)?.type == 'orchestra')
+                    SwitchListTile(
+                      contentPadding: EdgeInsets.zero,
+                      title: const Text('Lehrer pflegen'),
+                      subtitle: const Text('Aktivieren, um die Lehrer der Spieler verwalten zu können.'),
+                      value: _maintainTeachers,
+                      onChanged: (v) {
+                        setState(() => _maintainTeachers = v);
+                        _markChanged();
+                      },
+                    ),
                   SwitchListTile(
                     contentPadding: EdgeInsets.zero,
                     title: const Text('Eltern-Modus'),
@@ -517,6 +554,20 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
                     value: _showMembersList,
                     onChanged: (v) {
                       setState(() => _showMembersList = v);
+                      _markChanged();
+                    },
+                  ),
+                  // SETTINGS2: Ionic "Schicht-/Arbeitsbedingt = Anwesend"
+                  SwitchListTile(
+                    contentPadding: EdgeInsets.zero,
+                    title: const Text('Schicht-/Arbeitsbedingt = Anwesend'),
+                    subtitle: const Text(
+                      'Aktivieren, um schicht- oder arbeitsbedingt entschuldigte Abwesenheiten '
+                      'als anwesend für die prozentuale Berechnung zu werten.',
+                    ),
+                    value: _shiftExcusedAsPresent,
+                    onChanged: (v) {
+                      setState(() => _shiftExcusedAsPresent = v);
                       _markChanged();
                     },
                   ),
@@ -638,6 +689,20 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
                       _markChanged();
                     },
                   ),
+                  // SETTINGS2: Ionic noGroupsYet hint
+                  if (_registrationEnabled &&
+                      ref.watch(groupsProvider).hasValue &&
+                      !_hasSelectableGroups)
+                    Card(
+                      color: AppColors.warning.withValues(alpha: 0.15),
+                      child: const ListTile(
+                        leading: Icon(Icons.warning_amber_outlined, color: AppColors.warning),
+                        title: Text(
+                          'Es sind noch keine Gruppen vorhanden. Bitte lege zuerst mindestens eine '
+                          'Gruppe an, bevor du die Registrierung aktivierst.',
+                        ),
+                      ),
+                    ),
                   if (_registrationEnabled) ...[
                     ListTile(
                       contentPadding: EdgeInsets.zero,
