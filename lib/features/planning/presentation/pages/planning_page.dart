@@ -1,65 +1,27 @@
-import 'dart:typed_data';
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/attendance_detail_providers.dart';
-import '../../../../core/providers/attendance_providers.dart';
-import '../../../../core/providers/attendance_type_providers.dart';
+import '../../../../core/providers/debug_providers.dart';
+import '../../../../core/providers/organisation_providers.dart';
+import '../../../../core/providers/plan_providers.dart';
 import '../../../../core/providers/song_providers.dart';
-import '../../../../core/services/export_service.dart';
-import '../../../../core/services/telegram_service.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/utils/toast_helper.dart';
-import '../../../../data/models/attendance/attendance.dart';
-import '../../../../data/models/song/song.dart';
 import '../../../../core/providers/tenant_providers.dart';
+import '../../../../core/services/plan_export_service.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/utils/plan_utils.dart';
+import '../../../../core/utils/toast_helper.dart';
+import '../../../../data/models/plan/plan.dart';
+import '../../../../data/models/song/song.dart';
+import '../widgets/plan_export_actions.dart';
+import '../widgets/plan_field_dialogs.dart';
+import '../widgets/plan_fields_editor.dart';
+import '../widgets/plan_song_helper.dart';
+import '../widgets/plan_view_list.dart';
 import '../widgets/register_plan_sheet.dart';
-
-/// Field Selection for planning
-class FieldSelection {
-  String id;
-  String name;
-  String time;
-  String? conductor;
-  int? songId;
-  bool isNote;
-
-  FieldSelection({
-    required this.id,
-    required this.name,
-    required this.time,
-    this.conductor,
-    this.songId,
-    this.isNote = false,
-  });
-
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        'time': time,
-        'conductor': conductor,
-        'songId': songId,
-        'isNote': isNote,
-      };
-
-  factory FieldSelection.fromJson(Map<String, dynamic> json) => FieldSelection(
-        id: json['id'] as String,
-        name: json['name'] as String,
-        time: json['time'] as String,
-        conductor: json['conductor'] as String?,
-        songId: json['songId'] as int?,
-        isNote: json['isNote'] as bool? ?? false,
-      );
-}
-
-/// Provider for upcoming attendances
-final upcomingAttendancesProvider = FutureProvider<List<Attendance>>((ref) async {
-  final repo = ref.watch(attendanceRepositoryWithTenantProvider);
-  if (!repo.hasTenantId) return [];
-  return repo.getUpcomingAttendances(limit: 20);
-});
 
 /// Provider for songs list (for adding to plan)
 final planSongsProvider = FutureProvider<List<Song>>((ref) async {
@@ -68,1226 +30,1059 @@ final planSongsProvider = FutureProvider<List<Song>>((ref) async {
   return repo.getSongs();
 });
 
-/// Planning Page
+/// Ablaufplan editor of a Termin (Ionic `PlanningPage`).
+///
+/// Supports several plans per Termin (`attendance.extra_plans`), Programmblöcke,
+/// block templates, org templates / default fields, share links and the
+/// org plan flag.
 class PlanningPage extends ConsumerStatefulWidget {
+  const PlanningPage({super.key, this.attendanceId, this.initialPlanIndex = 0});
+
   final int? attendanceId;
 
-  const PlanningPage({super.key, this.attendanceId});
+  /// Plan to open first when the Termin has several.
+  final int initialPlanIndex;
 
   @override
   ConsumerState<PlanningPage> createState() => _PlanningPageState();
 }
 
 class _PlanningPageState extends ConsumerState<PlanningPage> {
-  int? _selectedAttendanceId;
-  TimeOfDay _startTime = const TimeOfDay(hour: 17, minute: 50);
-  TimeOfDay? _endTime;
-  List<FieldSelection> _fields = [
-    FieldSelection(id: 'default', name: 'Wort', time: '10'),
-  ];
-  bool _hasChanges = false;
-  bool _initialLoadDone = false;
+  List<PlanAttendance> _attendances = [];
+  int? _attId;
+  int _planIndex = 0;
+  String _time = '17:50';
+  List<PlanField> _fields = [];
+  final _titleController = TextEditingController();
   bool _sharePlan = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _selectedAttendanceId = widget.attendanceId;
-  }
-
-  /// Invalidate providers when leaving the page so other pages see updated data
-  void _invalidateProvidersOnExit() {
-    if (_hasChanges && _selectedAttendanceId != null) {
-      ref.invalidate(attendanceDetailProvider(_selectedAttendanceId!));
-      ref.invalidate(upcomingAttendancesProvider);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final attendancesAsync = ref.watch(upcomingAttendancesProvider);
-    final songsAsync = ref.watch(planSongsProvider);
-
-    return PopScope(
-      canPop: false,
-      onPopInvokedWithResult: (didPop, _) {
-        if (!didPop) {
-          _invalidateProvidersOnExit();
-          Navigator.of(context).pop(_hasChanges);
-        }
-      },
-      child: Scaffold(
-      appBar: AppBar(
-        title: const Text('Probenplan'),
-        actions: [
-          IconButton(
-            icon: Icon(
-              _sharePlan ? Icons.visibility : Icons.visibility_off_outlined,
-              color: _sharePlan ? AppColors.success : null,
-            ),
-            onPressed: _selectedAttendanceId != null ? _toggleSharePlan : null,
-            tooltip: _sharePlan ? 'Plan wird geteilt' : 'Plan teilen',
-          ),
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: () => _resetToDefault(attendancesAsync.valueOrNull ?? []),
-            tooltip: 'Zurücksetzen',
-          ),
-          PopupMenuButton<String>(
-            onSelected: (value) {
-              if (value == 'export') {
-                _exportPlan();
-              } else if (value == 'register_plan') {
-                showRegisterPlanSheet(context);
-              }
-            },
-            itemBuilder: (context) => [
-              const PopupMenuItem(
-                value: 'export',
-                child: Row(
-                  children: [
-                    Icon(Icons.picture_as_pdf),
-                    SizedBox(width: 8),
-                    Text('Als PDF exportieren'),
-                  ],
-                ),
-              ),
-              const PopupMenuItem(
-                value: 'register_plan',
-                child: Row(
-                  children: [
-                    Icon(Icons.groups),
-                    SizedBox(width: 8),
-                    Text('Registerprobenplan'),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-      body: Column(
-        children: [
-          // Attendance selector
-          attendancesAsync.when(
-            loading: () => const LinearProgressIndicator(),
-            error: (e, _) => Padding(
-              padding: const EdgeInsets.all(AppDimensions.paddingM),
-              child: Text('Fehler: $e'),
-            ),
-            data: (attendances) {
-              if (attendances.isEmpty) {
-                return const Padding(
-                  padding: EdgeInsets.all(AppDimensions.paddingM),
-                  child: Text('Keine kommenden Termine'),
-                );
-              }
-
-              // Load plan on first build
-              if (!_initialLoadDone) {
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  if (!mounted) return;
-                  _initialLoadDone = true;
-
-                  // If attendanceId was passed, find and load that attendance
-                  if (_selectedAttendanceId != null) {
-                    final att = attendances.where((a) => a.id == _selectedAttendanceId).firstOrNull;
-                    if (att != null) {
-                      _loadPlanFromAttendance(att);
-                    }
-                  } else if (attendances.isNotEmpty) {
-                    // Auto-select first if none selected
-                    setState(() {
-                      _selectedAttendanceId = attendances.first.id;
-                    });
-                    _loadPlanFromAttendance(attendances.first);
-                  }
-                });
-              }
-
-              return Card(
-                margin: const EdgeInsets.all(AppDimensions.paddingM),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  child: Row(
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.chevron_left),
-                        onPressed: () => _navigateAttendance(attendances, -1),
-                      ),
-                      Expanded(
-                        child: DropdownButton<int>(
-                          value: _selectedAttendanceId,
-                          isExpanded: true,
-                          underline: const SizedBox.shrink(),
-                          items: attendances.map((att) {
-                            return DropdownMenuItem(
-                              value: att.id,
-                              child: Text(
-                                '${att.formattedDate} - ${att.typeInfo ?? att.type ?? "Termin"}',
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            );
-                          }).toList(),
-                          onChanged: (value) {
-                            if (value != null) {
-                              setState(() => _selectedAttendanceId = value);
-                              final att = attendances.where((a) => a.id == value).firstOrNull;
-                              if (att != null) {
-                                _loadPlanFromAttendance(att);
-                              }
-                            }
-                          },
-                        ),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.chevron_right),
-                        onPressed: () => _navigateAttendance(attendances, 1),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            },
-          ),
-
-          // Time selector
-          Card(
-            margin: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM),
-            child: Padding(
-              padding: const EdgeInsets.all(AppDimensions.paddingM),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: InkWell(
-                      onTap: () => _selectStartTime(),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Beginn',
-                            style: TextStyle(
-                              color: AppColors.medium,
-                              fontSize: 12,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            _formatTime(_startTime),
-                            style: const TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const Icon(Icons.arrow_forward, color: AppColors.medium),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text(
-                          'Ende',
-                          style: TextStyle(
-                            color: AppColors.medium,
-                            fontSize: 12,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          _endTime != null ? _formatTime(_endTime!) : '--:--',
-                          style: const TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-
-          const SizedBox(height: 8),
-
-          // Fields list
-          Expanded(
-            child: _fields.isEmpty
-                ? Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(Icons.playlist_add, size: 64, color: AppColors.medium),
-                        const SizedBox(height: 16),
-                        const Text('Keine Programmpunkte'),
-                        const SizedBox(height: 8),
-                        ElevatedButton.icon(
-                          onPressed: () => _showAddFieldDialog(songsAsync.valueOrNull ?? []),
-                          icon: const Icon(Icons.add),
-                          label: const Text('Programmpunkt hinzufügen'),
-                        ),
-                      ],
-                    ),
-                  )
-                : ReorderableListView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM),
-                    itemCount: _fields.length,
-                    onReorder: (oldIndex, newIndex) {
-                      setState(() {
-                        if (newIndex > oldIndex) newIndex -= 1;
-                        final item = _fields.removeAt(oldIndex);
-                        _fields.insert(newIndex, item);
-                      });
-                      _calculateEnd();
-                      _savePlan();
-                    },
-                    itemBuilder: (context, index) {
-                      final field = _fields[index];
-                      final calculatedTime = _calculateTimeAtIndex(index);
-
-                      return Dismissible(
-                        key: ValueKey('${field.id}_$index'),
-                        direction: DismissDirection.endToStart,
-                        background: Container(
-                          alignment: Alignment.centerRight,
-                          padding: const EdgeInsets.only(right: 16),
-                          color: AppColors.danger,
-                          child: const Icon(Icons.delete, color: Colors.white),
-                        ),
-                        onDismissed: (_) {
-                          setState(() => _fields.removeAt(index));
-                          _calculateEnd();
-                          _savePlan();
-                        },
-                        child: Card(
-                          margin: const EdgeInsets.only(bottom: 8),
-                          child: ListTile(
-                            leading: field.isNote
-                                ? const Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(Icons.note_outlined, color: AppColors.info),
-                                    ],
-                                  )
-                                : Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        calculatedTime,
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: AppColors.primary,
-                                        ),
-                                      ),
-                                      Text(
-                                        '${field.time} min',
-                                        style: TextStyle(
-                                          fontSize: 11,
-                                          color: AppColors.medium,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                            title: Text(
-                              field.name,
-                              style: TextStyle(
-                                fontWeight: FontWeight.w500,
-                                fontStyle: field.isNote ? FontStyle.italic : FontStyle.normal,
-                              ),
-                            ),
-                            subtitle: field.conductor != null && field.conductor!.isNotEmpty
-                                ? Text(field.conductor!)
-                                : field.isNote
-                                    ? Text('Notiz', style: TextStyle(color: AppColors.info, fontSize: 12))
-                                    : null,
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                IconButton(
-                                  icon: const Icon(Icons.edit, size: 20),
-                                  onPressed: () => _editField(index),
-                                ),
-                                const Icon(Icons.drag_handle),
-                              ],
-                            ),
-                            onTap: () => _editField(index),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-          ),
-        ],
-      ),
-      floatingActionButton: _buildFloatingButtons(songsAsync.valueOrNull ?? []),
-      ),
-    );
-  }
-
-  Widget _buildFloatingButtons(List<Song> songs) {
-    final notificationConfig = ref.watch(notificationConfigProvider).valueOrNull;
-    final hasTelegram = notificationConfig?.telegramChatId != null &&
-        notificationConfig!.telegramChatId!.isNotEmpty;
-
-    if (!hasTelegram) {
-      return FloatingActionButton(
-        onPressed: () => _showAddFieldDialog(songs),
-        child: const Icon(Icons.add),
-      );
-    }
-
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        FloatingActionButton.small(
-          heroTag: 'telegram',
-          onPressed: _showTelegramOptions,
-          backgroundColor: AppColors.info,
-          child: const Icon(Icons.send, size: 20),
-        ),
-        const SizedBox(height: 12),
-        FloatingActionButton(
-          heroTag: 'add',
-          onPressed: () => _showAddFieldDialog(songs),
-          child: const Icon(Icons.add),
-        ),
-      ],
-    );
-  }
-
-  Future<void> _showTelegramOptions() async {
-    final result = await showModalBottomSheet<String>(
-      context: context,
-      builder: (ctx) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: const Icon(Icons.picture_as_pdf),
-              title: const Text('PDF (A4)'),
-              subtitle: const Text('Standard-Format'),
-              onTap: () => Navigator.pop(ctx, 'pdf'),
-            ),
-            ListTile(
-              leading: const Icon(Icons.content_cut),
-              title: const Text('PDF (2x A5)'),
-              subtitle: const Text('Zwei Pläne auf einer Seite'),
-              onTap: () => Navigator.pop(ctx, '2xa5'),
-            ),
-            ListTile(
-              leading: const Icon(Icons.image),
-              title: const Text('Als Bild'),
-              subtitle: const Text('Für schnelle Vorschau'),
-              onTap: () => Navigator.pop(ctx, 'image'),
-            ),
-            const SizedBox(height: 8),
-          ],
-        ),
-      ),
-    );
-    if (result != null && mounted) await _sendViaTelegram(result);
-  }
-
-  Future<void> _sendViaTelegram(String format) async {
-    if (_fields.isEmpty) {
-      ToastHelper.showWarning(context, 'Keine Programmpunkte zum Senden');
-      return;
-    }
-
-    final tenant = ref.read(currentTenantProvider);
-    final notificationConfig = ref.read(notificationConfigProvider).valueOrNull;
-
-    if (tenant == null || notificationConfig?.telegramChatId == null) {
-      ToastHelper.showError(context, 'Telegram nicht konfiguriert');
-      return;
-    }
-
-    // Get date for filename
-    String dateStr = DateTime.now().toIso8601String().substring(0, 10);
-    if (_selectedAttendanceId != null) {
-      final attendances = ref.read(upcomingAttendancesProvider).valueOrNull ?? [];
-      final selected = attendances.where((a) => a.id == _selectedAttendanceId).firstOrNull;
-      if (selected != null) {
-        dateStr = selected.formattedDate;
-      }
-    }
-
-    try {
-      ToastHelper.showInfo(context, 'Sende Plan...');
-
-      final exportService = ExportService();
-      final telegramService = ref.read(telegramServiceProvider);
-
-      late final Uint8List bytes;
-
-      if (format == '2xa5') {
-        // Generate 2xA5 PDF
-        bytes = await exportService.generatePlan2xA5PdfBytes(
-          tenantName: tenant.shortName,
-          date: dateStr,
-          startTime: _formatTime(_startTime),
-          endTime: _endTime != null ? _formatTime(_endTime!) : null,
-          fields: _fields.map((f) => f.toJson()).toList(),
-        );
-      } else {
-        // Generate standard A4 PDF (also used for 'image' since we can't easily convert)
-        bytes = await exportService.generatePlanPdfBytes(
-          tenantName: tenant.shortName,
-          date: dateStr,
-          startTime: _formatTime(_startTime),
-          endTime: _endTime != null ? _formatTime(_endTime!) : null,
-          fields: _fields.map((f) => f.toJson()).toList(),
-        );
-      }
-
-      await telegramService.sendPlanPerTelegram(
-        fileBytes: bytes,
-        name: '${tenant.shortName}_Plan_$dateStr',
-        chatId: notificationConfig!.telegramChatId!,
-        asImage: format == 'image',
-      );
-
-      if (mounted) {
-        ToastHelper.showSuccess(context, 'Plan gesendet!');
-      }
-    } catch (e) {
-      if (mounted) {
-        ToastHelper.showError(context, 'Fehler beim Senden: $e');
-      }
-    }
-  }
-
-  void _navigateAttendance(List<Attendance> attendances, int direction) {
-    if (_selectedAttendanceId == null) return;
-
-    final currentIndex = attendances.indexWhere((a) => a.id == _selectedAttendanceId);
-    final newIndex = currentIndex + direction;
-
-    if (newIndex >= 0 && newIndex < attendances.length) {
-      setState(() => _selectedAttendanceId = attendances[newIndex].id);
-      _loadPlanFromAttendance(attendances[newIndex]);
-    }
-  }
-
-  void _loadPlanFromAttendance(Attendance attendance) {
-    setState(() => _sharePlan = attendance.sharePlan);
-    if (attendance.plan != null && (attendance.plan as Map).isNotEmpty) {
-      _loadExistingPlan(attendance.plan!);
-    } else if (attendance.typeId != null) {
-      _loadDefaultPlanFromType(attendance.typeId!, attendance);
-    } else {
-      _setDefaultFields(attendance);
-    }
-    _applyStartTimeFromType(attendance);
-    _calculateEnd();
-  }
-
-  void _loadExistingPlan(Map<String, dynamic> plan) {
-    try {
-      final fields = (plan['fields'] as List?)
-          ?.map((f) => FieldSelection.fromJson(f as Map<String, dynamic>))
-          .toList();
-
-      if (fields != null && fields.isNotEmpty) {
-        setState(() => _fields = fields);
-      }
-
-      // Parse time
-      final timeStr = plan['time'] as String?;
-      if (timeStr != null && timeStr.isNotEmpty) {
-        final parts = timeStr.split(':');
-        if (parts.length >= 2) {
-          setState(() {
-            _startTime = TimeOfDay(
-              hour: int.tryParse(parts[0]) ?? 17,
-              minute: int.tryParse(parts[1]) ?? 50,
-            );
-          });
-        }
-      }
-    } catch (e) {
-      // Plan parsing failed, keep defaults
-    }
-  }
-
-  void _loadDefaultPlanFromType(String typeId, Attendance attendance) {
-    final types = ref.read(attendanceTypesProvider).valueOrNull ?? [];
-    final type = types.where((t) => t.id == typeId).firstOrNull;
-
-    if (type?.defaultPlan == null ||
-        (type!.defaultPlan!['fields'] as List?)?.isEmpty != false) {
-      _setDefaultFields(attendance);
-      return;
-    }
-
-    final currentSongsData = ref.read(currentSongsProvider).valueOrNull ?? [];
-    final historyFlat = currentSongsData.expand((e) => e.history).toList();
-
-    final fields = <FieldSelection>[];
-    int placeholderIdx = 0;
-
-    for (final field in type.defaultPlan!['fields'] as List) {
-      final f = field as Map<String, dynamic>;
-      final id = f['id'] as String? ?? '';
-
-      if (id.startsWith('song-placeholder-')) {
-        // Replace with actual song from history
-        if (placeholderIdx < historyFlat.length) {
-          final h = historyFlat[placeholderIdx++];
-          fields.add(FieldSelection(
-            id: h.songId.toString(),
-            name: '${h.song?.number ?? ''}. ${h.song?.name ?? 'Werk'}'.replaceFirst('. ', '').trim(),
-            time: f['time'] as String? ?? '20',
-            conductor: h.conductorName ?? h.song?.conductor,
-            songId: h.songId,
-          ));
-        }
-      } else {
-        fields.add(FieldSelection.fromJson(f));
-      }
-    }
-
-    setState(() => _fields = fields.isEmpty
-        ? [FieldSelection(id: 'default', name: 'Wort', time: '10')]
-        : fields);
-  }
-
-  void _setDefaultFields(Attendance attendance) {
-    setState(() {
-      _fields = [FieldSelection(id: 'default', name: 'Wort', time: '10')];
-      _startTime = attendance.type == 'uebung'
-          ? const TimeOfDay(hour: 17, minute: 50)
-          : const TimeOfDay(hour: 10, minute: 0);
-    });
-  }
-
-  void _applyStartTimeFromType(Attendance attendance) {
-    if (attendance.typeId == null) return;
-    final types = ref.read(attendanceTypesProvider).valueOrNull ?? [];
-    final type = types.where((t) => t.id == attendance.typeId).firstOrNull;
-
-    if (type?.startTime != null && type!.startTime!.isNotEmpty) {
-      final parts = type.startTime!.split(':');
-      if (parts.length >= 2) {
-        setState(() => _startTime = TimeOfDay(
-              hour: int.tryParse(parts[0]) ?? 17,
-              minute: int.tryParse(parts[1]) ?? 50,
-            ));
-      }
-    }
-  }
-
-  String _formatTime(TimeOfDay time) {
-    final hour = time.hour.toString().padLeft(2, '0');
-    final minute = time.minute.toString().padLeft(2, '0');
-    return '$hour:$minute';
-  }
-
-  String _calculateTimeAtIndex(int index) {
-    int totalMinutes = _startTime.hour * 60 + _startTime.minute;
-
-    for (int i = 0; i < index; i++) {
-      totalMinutes += int.tryParse(_fields[i].time) ?? 0;
-    }
-
-    final hour = (totalMinutes ~/ 60) % 24;
-    final minute = totalMinutes % 60;
-    return '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
-  }
-
-  void _resetToDefault(List<Attendance> attendances) {
-    if (_selectedAttendanceId == null) {
-      setState(() => _fields = [FieldSelection(id: 'default', name: 'Wort', time: '10')]);
-      _calculateEnd();
-      return;
-    }
-    final attendance = attendances.where((a) => a.id == _selectedAttendanceId).firstOrNull;
-    if (attendance == null) {
-      setState(() => _fields = [FieldSelection(id: 'default', name: 'Wort', time: '10')]);
-      _calculateEnd();
-      return;
-    }
-    // Reload from type's default plan
-    if (attendance.typeId != null) {
-      _loadDefaultPlanFromType(attendance.typeId!, attendance);
-    } else {
-      _setDefaultFields(attendance);
-    }
-    _applyStartTimeFromType(attendance);
-    _calculateEnd();
-    _savePlan();
-  }
-
-  void _calculateEnd() {
-    int totalMinutes = _startTime.hour * 60 + _startTime.minute;
-
-    for (final field in _fields) {
-      totalMinutes += int.tryParse(field.time) ?? 0;
-    }
-
-    setState(() {
-      _endTime = TimeOfDay(
-        hour: (totalMinutes ~/ 60) % 24,
-        minute: totalMinutes % 60,
-      );
-    });
-  }
-
-  Future<void> _selectStartTime() async {
-    final time = await showTimePicker(
-      context: context,
-      initialTime: _startTime,
-    );
-
-    if (time != null) {
-      setState(() => _startTime = time);
-      _calculateEnd();
-      _savePlan();
-    }
-  }
-
-  Future<void> _showAddFieldDialog(List<Song> songs) async {
-    final existingSongIds = _fields
-        .where((f) => f.songId != null)
-        .map((f) => f.songId!)
-        .toSet();
-
-    final result = await showModalBottomSheet<FieldSelection>(
-      context: context,
-      isScrollControlled: true,
-      builder: (context) => _AddFieldSheet(
-        songs: songs,
-        existingSongIds: existingSongIds,
-        onAddMultiple: (newFields) {
-          setState(() => _fields.addAll(newFields));
-          _calculateEnd();
-          _savePlan();
-        },
-      ),
-    );
-
-    if (result != null) {
-      setState(() => _fields.add(result));
-      _calculateEnd();
-      _savePlan();
-    }
-  }
-
-  Future<void> _editField(int index) async {
-    final field = _fields[index];
-    final nameController = TextEditingController(text: field.name);
-    final conductorController = TextEditingController(text: field.conductor ?? '');
-    final timeController = TextEditingController(text: field.time);
-
-    final result = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(field.isNote ? 'Notiz bearbeiten' : 'Feld bearbeiten'),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: nameController,
-                decoration: InputDecoration(labelText: field.isNote ? 'Notiz *' : 'Name *'),
-                maxLines: field.isNote ? 2 : 1,
-              ),
-              if (!field.isNote) ...[
-                const SizedBox(height: 12),
-                TextField(
-                  controller: conductorController,
-                  decoration: const InputDecoration(labelText: 'Ausführender'),
-                ),
-                const SizedBox(height: 12),
-                TextField(
-                  controller: timeController,
-                  decoration: const InputDecoration(
-                    labelText: 'Dauer (Minuten)',
-                    suffixText: 'min',
-                  ),
-                  keyboardType: TextInputType.number,
-                ),
-              ],
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Abbrechen'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              if (nameController.text.trim().isEmpty) {
-                ToastHelper.showWarning(context, 'Bitte einen Namen eingeben');
-                return;
-              }
-              Navigator.pop(context, true);
-            },
-            child: const Text('Speichern'),
-          ),
-        ],
-      ),
-    );
-
-    if (result == true) {
-      setState(() {
-        _fields[index] = FieldSelection(
-          id: field.id,
-          name: nameController.text.trim(),
-          conductor: field.isNote ? null : conductorController.text.trim(),
-          time: field.isNote ? '0' : (timeController.text.trim().isNotEmpty ? timeController.text.trim() : '10'),
-          songId: field.songId,
-          isNote: field.isNote,
-        );
-      });
-      _calculateEnd();
-      _savePlan();
-    }
-  }
-
-  Future<void> _toggleSharePlan() async {
-    if (_selectedAttendanceId == null) return;
-    final repo = ref.read(attendanceRepositoryWithTenantProvider);
-    if (!repo.hasTenantId) return;
-
-    final newValue = !_sharePlan;
-    setState(() => _sharePlan = newValue);
-
-    try {
-      await repo.updateAttendance(_selectedAttendanceId!, {
-        'share_plan': newValue,
-      });
-      _hasChanges = true;
-    } catch (e) {
-      // Rollback on failure
-      if (mounted) setState(() => _sharePlan = !newValue);
-    }
-  }
-
-  Future<void> _savePlan() async {
-    if (_selectedAttendanceId == null) return;
-
-    // BL-004: tenantId is enforced inside the repository
-    final repo = ref.read(attendanceRepositoryWithTenantProvider);
-    if (!repo.hasTenantId) return;
-
-    try {
-      await repo.updateAttendance(_selectedAttendanceId!, {
-        'plan': {
-          'time': _formatTime(_startTime),
-          'end': _endTime != null ? _formatTime(_endTime!) : null,
-          'fields': _fields.map((f) => f.toJson()).toList(),
-        },
-      });
-
-      // Mark as changed so providers are invalidated on exit
-      _hasChanges = true;
-    } catch (e) {
-      // Silent fail - auto-save
-    }
-  }
-
-  Future<void> _exportPlan() async {
-    if (_fields.isEmpty) {
-      ToastHelper.showWarning(context, 'Keine Programmpunkte zum Exportieren');
-      return;
-    }
-
-    // Show format selection dialog
-    final format = await showDialog<String>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Export-Format'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: const Icon(Icons.description),
-              title: const Text('A4 (Standard)'),
-              subtitle: const Text('Ein Plan pro Seite'),
-              onTap: () => Navigator.pop(context, 'a4'),
-            ),
-            ListTile(
-              leading: const Icon(Icons.content_cut),
-              title: const Text('2x A5 auf A4'),
-              subtitle: const Text('Zwei identische Pläne (Querformat)'),
-              onTap: () => Navigator.pop(context, '2xa5'),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Abbrechen'),
-          ),
-        ],
-      ),
-    );
-
-    if (format == null || !mounted) return;
-
-    final tenant = ref.read(currentTenantProvider);
-    if (tenant == null) {
-      ToastHelper.showError(context, 'Kein Tenant ausgewählt');
-      return;
-    }
-
-    // Get the selected attendance date if available
-    String dateStr = DateTime.now().toIso8601String().substring(0, 10);
-    if (_selectedAttendanceId != null) {
-      final attendances = ref.read(upcomingAttendancesProvider).valueOrNull ?? [];
-      final selected = attendances.where((a) => a.id == _selectedAttendanceId).firstOrNull;
-      if (selected != null) {
-        dateStr = selected.formattedDate;
-      }
-    }
-
-    try {
-      final exportService = ExportService();
-
-      if (format == '2xa5') {
-        await exportService.exportPlanPdf2xA5(
-          context: context,
-          tenantName: tenant.shortName,
-          date: dateStr,
-          startTime: _formatTime(_startTime),
-          endTime: _endTime != null ? _formatTime(_endTime!) : null,
-          fields: _fields.map((f) => f.toJson()).toList(),
-        );
-      } else {
-        await exportService.exportPlanPdf(
-          context: context,
-          tenantName: tenant.shortName,
-          date: dateStr,
-          startTime: _formatTime(_startTime),
-          endTime: _endTime != null ? _formatTime(_endTime!) : null,
-          fields: _fields.map((f) => f.toJson()).toList(),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        ToastHelper.showError(context, 'Fehler beim Export: $e');
-      }
-    }
-  }
-}
-
-/// Bottom sheet for adding a new field
-class _AddFieldSheet extends ConsumerStatefulWidget {
-  final List<Song> songs;
-  final Set<int> existingSongIds;
-  final void Function(List<FieldSelection>) onAddMultiple;
-
-  const _AddFieldSheet({
-    required this.songs,
-    required this.existingSongIds,
-    required this.onAddMultiple,
-  });
-
-  @override
-  ConsumerState<_AddFieldSheet> createState() => _AddFieldSheetState();
-}
-
-class _AddFieldSheetState extends ConsumerState<_AddFieldSheet> with SingleTickerProviderStateMixin {
-  late TabController _tabController;
-  final _nameController = TextEditingController();
-  final _conductorController = TextEditingController();
-  final _timeController = TextEditingController(text: '20');
-  final _noteController = TextEditingController();
-  String _searchQuery = '';
-
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 3, vsync: this);
-  }
+  bool _isOrgPlan = false;
+  bool _loaded = false;
+  bool _hasChanges = false;
+  Timer? _saveTimer;
 
   @override
   void dispose() {
-    _tabController.dispose();
-    _nameController.dispose();
-    _conductorController.dispose();
-    _timeController.dispose();
-    _noteController.dispose();
+    _saveTimer?.cancel();
+    _titleController.dispose();
     super.dispose();
   }
 
-  Future<void> _addCurrentSongs(BuildContext sheetContext) async {
-    final currentSongsData = ref.read(currentSongsProvider).valueOrNull ?? [];
-    final historyFlat = currentSongsData.expand((e) => e.history).toList();
+  PlanAttendance? get _att => _attendances.where((a) => a.id == _attId).firstOrNull;
 
-    // Filter to songs not already in the plan
-    final newFields = historyFlat
-        .where((h) => h.songId != null && !widget.existingSongIds.contains(h.songId))
-        .map((h) => FieldSelection(
-              id: h.songId.toString(),
-              name: '${h.song?.number ?? ''}. ${h.song?.name ?? 'Werk'}'.replaceFirst('. ', '').trim(),
-              time: '20',
-              conductor: h.conductorName ?? h.song?.conductor,
-              songId: h.songId,
-            ))
-        .toList();
+  List<PlanAttendanceType> get _types => ref.read(planAttendanceTypesProvider).valueOrNull ?? const [];
 
-    // Remove duplicates by songId
-    final seenIds = <int>{};
-    final uniqueFields = <FieldSelection>[];
-    for (final field in newFields) {
-      if (field.songId != null && !seenIds.contains(field.songId)) {
-        seenIds.add(field.songId!);
-        uniqueFields.add(field);
-      }
+  PlanAttendanceType? _typeOf(PlanAttendance? att) =>
+      att?.typeId == null ? null : _types.where((t) => t.id == att!.typeId).firstOrNull;
+
+  String get _end => PlanUtils.computeEnd(_time, _fields);
+
+  // ---------------------------------------------------------------------------
+  // Loading
+  // ---------------------------------------------------------------------------
+
+  void _init(List<PlanAttendance> attendances) {
+    _loaded = true;
+    _attendances = [...attendances];
+    PlanAttendance? att;
+    if (widget.attendanceId != null) {
+      att = _attendances.where((a) => a.id == widget.attendanceId).firstOrNull;
     }
-
-    if (uniqueFields.isEmpty) {
-      ToastHelper.showInfo(sheetContext, 'Alle aktuellen Werke bereits im Plan');
-      return;
+    if (att == null) {
+      // First upcoming Termin (list is sorted newest first).
+      final today = DateTime.now();
+      final todayDate = DateTime(today.year, today.month, today.day);
+      final upcoming = _attendances.where((a) {
+        final d = DateTime.tryParse(a.date);
+        return d != null && !DateTime(d.year, d.month, d.day).isBefore(todayDate);
+      }).toList();
+      att = upcoming.isNotEmpty ? upcoming.last : _attendances.firstOrNull;
     }
+    if (att != null) {
+      _loadAttendance(att, planIndex: widget.attendanceId != null ? widget.initialPlanIndex : 0);
+    } else {
+      setState(() {});
+    }
+  }
 
-    final count = uniqueFields.length;
-    widget.onAddMultiple(uniqueFields);
-    Navigator.pop(sheetContext);
-    // Use a post-frame callback to show toast after sheet is closed
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (context.mounted) {
-        ToastHelper.showSuccess(context, '$count Werke hinzugefügt');
-      }
+  /// Ionic `Utils.getPlanningTitle`.
+  String _defaultTitle(PlanAttendance? att) {
+    final type = _typeOf(att);
+    final info = att?.typeInfo ?? '';
+    final pt = type?.planningTitle ?? '';
+    if (pt.isNotEmpty && info.isNotEmpty) return '$pt ($info)';
+    if (pt.isNotEmpty) return pt;
+    if (info.isNotEmpty) return info;
+    if ((type?.name ?? '').isNotEmpty) return type!.name;
+    return 'Probenplan';
+  }
+
+  /// Ionic `resolveOrgPlan`: stored flag once a plan exists, otherwise the type default.
+  bool _resolveOrgPlan(PlanAttendance att) {
+    if (att.plan != null) return att.isOrgPlan;
+    return _typeOf(att)?.isDefaultOrgPlan ?? false;
+  }
+
+  void _loadAttendance(PlanAttendance att, {int planIndex = 0}) {
+    final plans = PlanUtils.allPlans(att);
+    final index = planIndex < plans.length ? planIndex : 0;
+    setState(() {
+      _attId = att.id;
+      _planIndex = index;
+      _sharePlan = att.sharePlan;
+      _isOrgPlan = _resolveOrgPlan(att);
+    });
+    if (plans.isNotEmpty) {
+      _loadPlan(att, plans[index]);
+    } else {
+      final tenant = ref.read(currentTenantProvider);
+      final isPractice = att.type == 'uebung';
+      final start = (att.startTime?.isNotEmpty ?? false)
+          ? att.startTime!
+          : (isPractice ? (tenant?.practiceStart ?? '17:50') : '10:00');
+      final formatted = PlanUtils.formatTime(start);
+      setState(() {
+        _time = formatted.isEmpty ? '17:50' : formatted;
+        _titleController.text = _defaultTitle(att);
+        _fields = [const PlanField(id: 'Wort', name: 'Wort', time: '10')];
+      });
+      _applyTypeDefaultPlan(att, save: false);
+    }
+  }
+
+  void _loadPlan(PlanAttendance att, Plan plan) {
+    final history = _history;
+    setState(() {
+      _titleController.text = plan.title ?? _defaultTitle(att);
+      final t = PlanUtils.formatTime(plan.time);
+      if (t.isNotEmpty) _time = t;
+      _fields = plan.fields.map((f) {
+        var field = f;
+        if ((field.conductor ?? '').isEmpty) {
+          final h = history.where((h) => h.songId?.toString() == field.id).firstOrNull;
+          if (h?.conductorName != null) field = field.copyWith(conductor: h!.conductorName);
+        }
+        if (PlanUtils.isAgendaPlaceholder(field)) field = field.copyWith(time: '0');
+        return field;
+      }).toList();
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final filteredSongs = widget.songs.where((song) {
-      if (_searchQuery.isEmpty) return true;
-      final query = _searchQuery.toLowerCase();
-      return song.name.toLowerCase().contains(query) ||
-          (song.fullNumber.toLowerCase().contains(query));
-    }).toList();
+  List<SongHistory> get _history =>
+      (ref.read(currentSongsProvider).valueOrNull ?? const []).expand((e) => e.history).toList();
 
-    return DraggableScrollableSheet(
-      initialChildSize: 0.7,
-      minChildSize: 0.5,
-      maxChildSize: 0.95,
-      expand: false,
-      builder: (context, scrollController) => Column(
-        children: [
-          Container(
-            margin: const EdgeInsets.only(top: 8),
-            width: 40,
-            height: 4,
-            decoration: BoxDecoration(
-              color: Colors.grey[300],
-              borderRadius: BorderRadius.circular(2),
-            ),
+  List<Song> get _songs => ref.read(planSongsProvider).valueOrNull ?? const [];
+
+  /// Ionic `onAttChange` without plan / "Plan zurücksetzen".
+  void _applyTypeDefaultPlan(PlanAttendance att, {bool save = true}) {
+    final type = _typeOf(att);
+    final defaults = type?.defaultPlan?.fields ?? const <PlanField>[];
+    if (defaults.isNotEmpty) {
+      setState(() {
+        final t = PlanUtils.formatTime(type?.startTime);
+        if (t.isNotEmpty) _time = t;
+        _fields = PlanSongHelper.resolvePlaceholders(
+          defaults,
+          history: _history,
+          songs: _songs,
+          prefix: _songPrefix(type),
+        );
+      });
+    } else if (save) {
+      setState(() => _fields = []);
+    }
+    if (save) _changed();
+  }
+
+  String Function(Song song) _songPrefix(PlanAttendanceType? type) {
+    final tenant = ref.read(currentTenantProvider);
+    return (song) =>
+        type?.planningPrefixInstanceName == true ? '${tenant?.longName ?? ''}: ' : '${song.number ?? ''}. ';
+  }
+
+  // ---------------------------------------------------------------------------
+  // Saving
+  // ---------------------------------------------------------------------------
+
+  void _changed() {
+    _fields = PlanUtils.normalizeGroups(_fields);
+    _hasChanges = true;
+    _saveTimer?.cancel();
+    _saveTimer = Timer(const Duration(milliseconds: 400), _save);
+  }
+
+  bool _validate({bool showToast = false}) {
+    if (_time.isEmpty || _fields.isEmpty) {
+      if (showToast) ToastHelper.showWarning(context, 'Bitte wähle mindestens ein Feld aus.');
+      return false;
+    }
+    return true;
+  }
+
+  Future<void> _save() async {
+    _saveTimer?.cancel();
+    final att = _att;
+    if (att?.id == null || !_validate()) return;
+    final plans = PlanUtils.allPlans(att);
+    final title = _titleController.text.trim();
+    final base = _planIndex < plans.length ? plans[_planIndex] : const Plan();
+    final current = base.copyWith(
+      time: _time,
+      end: _end,
+      fields: _fields,
+      title: title.isEmpty ? null : title,
+    );
+    final Map<String, dynamic> update;
+    if (plans.length < 2) {
+      update = {'plan': current.toJson()};
+    } else {
+      plans[_planIndex] = current;
+      update = PlanUtils.splitPlans(plans);
+    }
+    try {
+      final saved = await ref.read(planRepositoryWithTenantProvider).updateAttendancePlanFields(att!.id!, update);
+      _replaceAtt(saved);
+    } catch (e) {
+      if (mounted) ToastHelper.showError(context, 'Fehler beim Speichern: $e');
+    }
+  }
+
+  Future<void> _savePlans(PlanAttendance att, List<Plan> plans) async {
+    final saved = await ref
+        .read(planRepositoryWithTenantProvider)
+        .updateAttendancePlanFields(att.id!, PlanUtils.splitPlans(plans));
+    _replaceAtt(saved);
+    _hasChanges = true;
+  }
+
+  void _replaceAtt(PlanAttendance saved) {
+    if (!mounted) return;
+    setState(() {
+      _attendances = [for (final a in _attendances) a.id == saved.id ? saved : a];
+    });
+  }
+
+  Future<void> _updateFlags(Map<String, dynamic> updates) async {
+    final att = _att;
+    if (att?.id == null) return;
+    final saved = await ref.read(planRepositoryWithTenantProvider).updateAttendancePlanFields(att!.id!, updates);
+    _replaceAtt(saved);
+    _hasChanges = true;
+  }
+
+  void _invalidateOnExit() {
+    if (!_hasChanges) return;
+    ref.invalidate(planAttendancesProvider);
+    if (_attId != null) {
+      ref.invalidate(attendanceDetailProvider(_attId!));
+      ref.invalidate(planAttendanceByIdProvider(_attId!));
+    }
+    ref.invalidate(orgPlansProvider);
+  }
+
+  // ---------------------------------------------------------------------------
+  // Termin navigation
+  // ---------------------------------------------------------------------------
+
+  Future<void> _selectAttendance(int? id) async {
+    if (id == null || id == _attId) return;
+    await _save();
+    final att = _attendances.where((a) => a.id == id).firstOrNull;
+    if (att != null) _loadAttendance(att);
+  }
+
+  Future<void> _navigate(int direction) async {
+    final i = _attendances.indexWhere((a) => a.id == _attId);
+    // List is sorted newest first: "Nächste" goes to a smaller index.
+    final target = i - direction;
+    if (target < 0) {
+      ToastHelper.showWarning(context, 'Dies ist die aktuell erste Veranstaltung');
+      return;
+    }
+    if (target >= _attendances.length) {
+      ToastHelper.showWarning(context, 'Dies ist die aktuell letzte Veranstaltung');
+      return;
+    }
+    await _selectAttendance(_attendances[target].id);
+  }
+
+  String _attLabel(PlanAttendance a) {
+    final d = DateTime.tryParse(a.date);
+    final date = d == null
+        ? a.date
+        : '${d.day.toString().padLeft(2, '0')}.${d.month.toString().padLeft(2, '0')}.${d.year}';
+    final type = _typeOf(a);
+    final title = (a.typeInfo?.isNotEmpty ?? false) ? a.typeInfo! : (type?.name ?? '');
+    return '$date $title';
+  }
+
+  // ---------------------------------------------------------------------------
+  // Several plans
+  // ---------------------------------------------------------------------------
+
+  Future<void> _selectPlan(int index) async {
+    if (_att == null || index == _planIndex) return;
+    await _save();
+    final updated = _att!;
+    setState(() => _planIndex = index);
+    _loadPlan(updated, PlanUtils.allPlans(updated)[index]);
+  }
+
+  Future<void> _addPlan() async {
+    if (_att == null) {
+      ToastHelper.showWarning(context, 'Bitte wähle zuerst einen Termin aus.');
+      return;
+    }
+    if (!_validate()) {
+      ToastHelper.showWarning(context, 'Lege zuerst einen Ablauf für diesen Plan an.');
+      return;
+    }
+    await _save();
+    if (!mounted) return;
+    final choice = await showDialog<String>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Weiteren Ablaufplan anlegen'),
+        content: const Text('Soll der neue Plan den aktuellen Ablauf übernehmen oder leer starten?'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Abbrechen')),
+          TextButton(onPressed: () => Navigator.pop(ctx, 'empty'), child: const Text('Leer')),
+          FilledButton(onPressed: () => Navigator.pop(ctx, 'copy'), child: const Text('Kopie')),
+        ],
+      ),
+    );
+    if (choice == null) return;
+    final copy = choice == 'copy';
+    final current = _att!;
+    final plans = PlanUtils.withDays(current, PlanUtils.allPlans(current));
+    final type = _typeOf(current);
+    final time = copy ? _time : PlanUtils.formatTime(type?.startTime ?? current.startTime ?? _time);
+    final newPlan = Plan(
+      id: PlanUtils.uuid(),
+      day: PlanUtils.nextFreeDay(current, plans),
+      time: time.isEmpty ? _time : time,
+      end: copy ? _end : (time.isEmpty ? _time : time),
+      fields: copy
+          ? _fields.where((f) => f.agendaItemId == null && !PlanUtils.isAgendaPlaceholder(f)).toList()
+          : const [],
+      title: copy && _titleController.text.trim().isNotEmpty ? _titleController.text.trim() : null,
+    );
+    plans.add(newPlan);
+    try {
+      await _savePlans(current, plans);
+      setState(() => _planIndex = plans.length - 1);
+      _loadPlan(_att!, newPlan);
+    } catch (e) {
+      if (mounted) ToastHelper.showError(context, 'Fehler beim Speichern: $e');
+    }
+  }
+
+  Future<void> _showPlanOptions() async {
+    final att = _att;
+    if (att == null) return;
+    final plans = PlanUtils.allPlans(att);
+    final index = _planIndex;
+    final action = await showPlanActionSheet<String>(
+      context,
+      title: 'Plan „${PlanUtils.planLabel(att, index, plans)}“',
+      subtitle: '${index + 1} von ${plans.length}',
+      actions: [
+        const PlanSheetAction('rename', 'Umbenennen', icon: Icons.edit_outlined),
+        if (PlanUtils.dayOptions(att).isNotEmpty)
+          const PlanSheetAction('day', 'Anderem Tag zuordnen', icon: Icons.event),
+        if (index > 0) const PlanSheetAction('left', 'Nach links verschieben', icon: Icons.chevron_left),
+        if (index < plans.length - 1)
+          const PlanSheetAction('right', 'Nach rechts verschieben', icon: Icons.chevron_right),
+        const PlanSheetAction('delete', 'Plan löschen', icon: Icons.delete_outline, destructive: true),
+      ],
+    );
+    if (action == null || !mounted) return;
+    await _save();
+    if (!mounted) return;
+    final current = _att!;
+    final list = PlanUtils.withDays(current, PlanUtils.allPlans(current));
+    try {
+      switch (action) {
+        case 'rename':
+          final auto = PlanUtils.planLabel(current, index, [for (final p in list) p.copyWith(label: null)]);
+          final label = await showPlanTextPrompt(
+            context,
+            title: 'Plan umbenennen',
+            message: 'Leer lassen für den automatischen Namen.',
+            initialValue: list[index].label,
+            hint: auto,
+            allowEmpty: true,
+          );
+          if (label == null) return;
+          list[index] = list[index].copyWith(label: label.isEmpty ? null : label);
+          await _savePlans(current, list);
+        case 'day':
+          final options = PlanUtils.dayOptions(current);
+          final day = await showPlanActionSheet<int>(
+            context,
+            title: 'Tag zuordnen',
+            actions: [
+              for (final o in options)
+                PlanSheetAction(o.day, o.label, icon: list[index].day == o.day ? Icons.check : null),
+            ],
+          );
+          if (day == null) return;
+          final moved = list[index].copyWith(day: day);
+          list[index] = moved;
+          list.sort((a, b) => (a.day ?? 0).compareTo(b.day ?? 0));
+          await _savePlans(current, list);
+          setState(() => _planIndex = list.indexOf(moved));
+        case 'left':
+        case 'right':
+          final to = index + (action == 'left' ? -1 : 1);
+          final tmp = list[index];
+          list[index] = list[to];
+          list[to] = tmp;
+          await _savePlans(current, list);
+          setState(() => _planIndex = to);
+        case 'delete':
+          final ok = await showPlanConfirm(
+            context,
+            title: 'Plan löschen?',
+            message: 'Der Plan „${PlanUtils.planLabel(current, index, list)}“ wird gelöscht.',
+            confirmText: 'Löschen',
+            destructive: true,
+          );
+          if (!ok) return;
+          list.removeAt(index);
+          await _savePlans(current, list);
+          final newIndex = list.isEmpty ? 0 : index.clamp(0, list.length - 1);
+          setState(() => _planIndex = newIndex);
+          if (list.isNotEmpty) _loadPlan(_att!, list[newIndex]);
+      }
+    } catch (e) {
+      if (mounted) ToastHelper.showError(context, 'Fehler beim Speichern: $e');
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Adding fields
+  // ---------------------------------------------------------------------------
+
+  Future<void> _addField() async {
+    final r = await showPlanFieldDialog(context,
+        title: 'Feld hinzufügen', nameHint: 'Freitext eingeben...', initialMinutes: 20);
+    if (r == null) return;
+    setState(() => _fields = [
+          ..._fields,
+          PlanField(id: r.name, name: r.name, conductor: r.conductor, info: r.info, time: '${r.minutes ?? 20}'),
+        ]);
+    _changed();
+  }
+
+  Future<void> _addNote() async {
+    final r = await showPlanFieldDialog(context,
+        title: 'Notizfeld hinzufügen',
+        nameLabel: 'Notiz',
+        nameHint: 'Notiz eingeben...',
+        emptyNameMessage: 'Bitte eine Notiz eingeben.',
+        withConductor: false,
+        withInfo: false,
+        withMinutes: false);
+    if (r == null) return;
+    setState(() => _fields = [..._fields, PlanField(id: 'noteFld ${r.name}', name: r.name, conductor: '', time: '0')]);
+    _changed();
+  }
+
+  Future<void> _addGroup() async {
+    final r = await showPlanFieldDialog(
+      context,
+      title: 'Programmblock hinzufügen',
+      message: 'Die Dauer ergibt sich aus den Unterpunkten.',
+      nameLabel: 'Name',
+      nameHint: 'Name, z. B. Programm Jugendchor',
+      conductorLabel: 'Ausführung',
+      conductorHint: 'Ausführung (optional)',
+      confirmText: 'Anlegen',
+      emptyNameMessage: 'Bitte einen Namen eingeben.',
+      withMinutes: false,
+    );
+    if (r == null || !mounted) return;
+    final head = PlanUtils.newGroupHead(r.name, conductor: r.conductor, info: r.info);
+    setState(() => _fields = [..._fields, head]);
+    _changed();
+    final sub = await showPlanFieldDialog(
+      context,
+      title: 'Unterpunkt hinzufügen',
+      subtitle: head.name,
+      nameHint: 'Programmpunkt, z. B. Gruppenlied',
+      infoHint: 'Info-Text (optional), z. B. Liedtitel',
+      initialMinutes: 5,
+    );
+    if (sub == null) return;
+    setState(() => _fields = PlanUtils.addSubItem(
+          _fields,
+          head.id,
+          PlanField(
+            id: 'fld-${PlanUtils.uuid()}',
+            name: sub.name,
+            conductor: sub.conductor,
+            info: sub.info,
+            time: '${sub.minutes ?? 5}',
           ),
-          TabBar(
-            controller: _tabController,
-            tabs: const [
-              Tab(text: 'Werk auswählen'),
-              Tab(text: 'Freitext'),
-              Tab(text: 'Notiz'),
+        ));
+    _changed();
+  }
+
+  void _addCurrentSongs() {
+    final added = PlanSongHelper.currentSongFields(
+      _fields,
+      history: _history,
+      songs: _songs,
+      prefix: _songPrefix(_typeOf(_att)),
+    );
+    if (added.isEmpty) return;
+    setState(() => _fields = [..._fields, ...added]);
+    _changed();
+  }
+
+  Future<void> _addSong() async {
+    final song = await showPlanSongPicker(context, _songs);
+    if (song == null) return;
+    setState(() => _fields = [
+          ..._fields,
+          PlanSongHelper.songField(song, history: _history, prefix: _songPrefix(_typeOf(_att))),
+        ]);
+    _changed();
+  }
+
+  void _insertBlockTemplate(PlanBlockTemplate tpl) {
+    setState(() => _fields = [..._fields, ...PlanUtils.cloneBlock(tpl.fields)]);
+    _changed();
+  }
+
+  Future<void> _deleteBlockTemplate(PlanBlockTemplate tpl) async {
+    final ok = await showPlanConfirm(
+      context,
+      title: 'Vorlage löschen?',
+      message: 'Die Vorlage „${tpl.name}“ wird gelöscht. Bestehende Pläne bleiben unverändert.',
+      confirmText: 'Löschen',
+      destructive: true,
+    );
+    if (ok) await ref.read(planSettingsNotifierProvider.notifier).deleteBlockTemplate(tpl.id);
+  }
+
+  Future<void> _saveBlockTemplate(PlanField head) async {
+    final ok = await ref.read(planSettingsNotifierProvider.notifier).saveBlockAsTemplate(_fields, head.id);
+    if (!mounted) return;
+    if (ok) {
+      ToastHelper.showSuccess(context, '„${head.name}“ als Vorlage gespeichert');
+    } else {
+      ToastHelper.showError(context, 'Die Vorlage konnte nicht gespeichert werden.');
+    }
+  }
+
+  void _applyOrgTemplate(Plan tpl) {
+    setState(() {
+      // Ionic applyTemplate resolves placeholders without the Termin type.
+      _fields = PlanSongHelper.resolvePlaceholders(tpl.fields,
+          history: _history, songs: _songs, prefix: _songPrefix(null));
+      final t = PlanUtils.formatTime(tpl.time);
+      if (t.isNotEmpty) _time = t;
+    });
+    _changed();
+  }
+
+  void _addOrgField(PlanField field) {
+    setState(() => _fields = [..._fields, field]);
+    _changed();
+  }
+
+  Future<void> _showAddMenu() async {
+    final role = ref.read(effectiveRoleProvider);
+    final tenant = ref.read(currentTenantProvider);
+    final isGeneral = tenant?.type == 'general';
+    final blockTemplates = ref.read(planBlockTemplatesProvider).valueOrNull ?? const <PlanBlockTemplate>[];
+    final org = ref.read(currentOrganisationProvider).valueOrNull;
+    final orgTemplates = org?.planningTemplates ?? const <Plan>[];
+    final orgFields = org?.defaultFields ?? const <PlanField>[];
+
+    final action = await showModalBottomSheet<String>(
+      context: context,
+      isScrollControlled: true,
+      builder: (ctx) => SafeArea(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxHeight: MediaQuery.of(ctx).size.height * 0.8),
+          child: ListView(
+            shrinkWrap: true,
+            children: [
+              ListTile(
+                  leading: const Icon(Icons.add),
+                  title: const Text('Feld hinzufügen'),
+                  onTap: () => Navigator.pop(ctx, 'field')),
+              ListTile(
+                  leading: const Icon(Icons.view_agenda_outlined),
+                  title: const Text('Programmblock hinzufügen'),
+                  onTap: () => Navigator.pop(ctx, 'group')),
+              ListTile(
+                  leading: const Icon(Icons.sticky_note_2_outlined),
+                  title: const Text('Notizfeld hinzufügen'),
+                  onTap: () => Navigator.pop(ctx, 'note')),
+              if (!isGeneral) ...[
+                ListTile(
+                    leading: const Icon(Icons.library_music_outlined),
+                    title: const Text('Aktuelle Werke hinzufügen'),
+                    onTap: () => Navigator.pop(ctx, 'current')),
+                if (_songs.isNotEmpty)
+                  ListTile(
+                      leading: const Icon(Icons.music_note_outlined),
+                      title: const Text('Werk hinzufügen'),
+                      onTap: () => Navigator.pop(ctx, 'song')),
+              ],
+              if (blockTemplates.isNotEmpty) ...[
+                const Divider(),
+                const _MenuHeader('Programmblöcke'),
+                for (final tpl in blockTemplates)
+                  ListTile(
+                    title: Text(tpl.name),
+                    subtitle: Text('${PlanUtils.templateMinutes(tpl)} min'),
+                    onTap: () => Navigator.pop(ctx, 'block:${tpl.id}'),
+                    trailing: role.isAdmin
+                        ? IconButton(
+                            tooltip: 'Vorlage löschen',
+                            icon: const Icon(Icons.delete_outline),
+                            onPressed: () => Navigator.pop(ctx, 'delblock:${tpl.id}'),
+                          )
+                        : null,
+                  ),
+              ],
+              if (orgTemplates.isNotEmpty) ...[
+                const Divider(),
+                const _MenuHeader('Vorlagen'),
+                for (var i = 0; i < orgTemplates.length; i++)
+                  ListTile(title: Text(orgTemplates[i].title ?? ''), onTap: () => Navigator.pop(ctx, 'tpl:$i')),
+              ],
+              if (orgFields.isNotEmpty) ...[
+                const Divider(),
+                const _MenuHeader('Felder'),
+                for (var i = 0; i < orgFields.length; i++)
+                  ListTile(
+                    title: Text(orgFields[i].name),
+                    subtitle: Text('${orgFields[i].time} min'),
+                    onTap: () => Navigator.pop(ctx, 'orgfield:$i'),
+                  ),
+              ],
+              if (_att != null) ...[
+                const Divider(),
+                ListTile(
+                  leading: const Icon(Icons.copy_outlined, color: AppColors.medium),
+                  title: const Text('Weiteren Ablaufplan anlegen', style: TextStyle(color: AppColors.medium)),
+                  onTap: () => Navigator.pop(ctx, 'plan'),
+                ),
+              ],
             ],
           ),
-          Expanded(
-            child: TabBarView(
-              controller: _tabController,
-              children: [
-                // Songs tab
-                Column(
+        ),
+      ),
+    );
+    if (action == null || !mounted) return;
+    if (action.startsWith('block:')) {
+      final tpl = blockTemplates.where((t) => t.id == action.substring(6)).firstOrNull;
+      if (tpl != null) _insertBlockTemplate(tpl);
+      return;
+    }
+    if (action.startsWith('delblock:')) {
+      final tpl = blockTemplates.where((t) => t.id == action.substring(9)).firstOrNull;
+      if (tpl != null) await _deleteBlockTemplate(tpl);
+      return;
+    }
+    if (action.startsWith('tpl:')) {
+      _applyOrgTemplate(orgTemplates[int.parse(action.substring(4))]);
+      return;
+    }
+    if (action.startsWith('orgfield:')) {
+      _addOrgField(orgFields[int.parse(action.substring(9))]);
+      return;
+    }
+    switch (action) {
+      case 'field':
+        await _addField();
+      case 'group':
+        await _addGroup();
+      case 'note':
+        await _addNote();
+      case 'current':
+        _addCurrentSongs();
+      case 'song':
+        await _addSong();
+      case 'plan':
+        await _addPlan();
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Share / export
+  // ---------------------------------------------------------------------------
+
+  Future<void> _shareLink() async {
+    final att = _att;
+    if (att?.id == null) {
+      ToastHelper.showWarning(context, 'Bitte wähle zuerst einen Termin aus.');
+      return;
+    }
+    await _save();
+    if (!mounted) return;
+    final action = await showPlanActionSheet<String>(
+      context,
+      title: 'Link teilen',
+      actions: [
+        const PlanSheetAction('read', 'Nur-Lesen-Link', icon: Icons.link),
+        const PlanSheetAction('edit', 'Bearbeitungs-Link', icon: Icons.edit_note),
+        if (att!.shareKey != null)
+          const PlanSheetAction('revoke', 'Freigabe aufheben', icon: Icons.link_off, destructive: true),
+      ],
+    );
+    if (action == null || !mounted) return;
+    try {
+      if (action == 'revoke') {
+        final ok = await showPlanConfirm(
+          context,
+          title: 'Freigabe aufheben?',
+          message: 'Der öffentliche Link wird ungültig. Fortfahren?',
+          confirmText: 'Aufheben',
+          destructive: true,
+        );
+        if (!ok) return;
+        await _updateFlags({'share_key': null, 'share_edit_key': null});
+        if (mounted) ToastHelper.showSuccess(context, 'Freigabe aufgehoben');
+        return;
+      }
+      final edit = action == 'edit';
+      var shareKey = att.shareKey;
+      var editKey = att.shareEditKey;
+      if (shareKey == null) {
+        shareKey = PlanUtils.randomKey();
+        editKey = PlanUtils.randomKey();
+        await _updateFlags({'share_key': shareKey, 'share_edit_key': editKey});
+      } else if (edit && editKey == null) {
+        editKey = PlanUtils.randomKey();
+        await _updateFlags({'share_edit_key': editKey});
+      }
+      final base = '/plan?id=${att.id}&key=$shareKey';
+      final url = planPublicUrl(edit ? '$base&edit=$editKey' : base);
+      if (mounted) await sharePlanLink(context, url, title: _effectiveTitle);
+    } catch (e) {
+      if (mounted) ToastHelper.showError(context, 'Fehler beim Teilen: $e');
+    }
+  }
+
+  String get _effectiveTitle {
+    final t = _titleController.text.trim();
+    return t.isNotEmpty ? t : _defaultTitle(_att);
+  }
+
+  PlanExportPage _exportPage(PlanAttendance att, int index, Plan plan) {
+    final plans = PlanUtils.allPlans(att);
+    final date = PlanUtils.planDate(att, index, plans.isEmpty ? [plan] : plans) ?? DateTime.tryParse(att.date);
+    final label = plans.length > 1 ? ' · ${PlanUtils.planLabel(att, index, plans)}' : '';
+    final title = (plan.title?.trim().isNotEmpty ?? false) ? plan.title!.trim() : _defaultTitle(att);
+    return PlanExportPage(
+      title: title,
+      subtitle: '${PlanUtils.longDate(date)}$label',
+      time: plan.time,
+      end: plan.end,
+      fields: plan.fields,
+    );
+  }
+
+  String get _fileDate {
+    final d = DateTime.tryParse(_att?.date ?? '') ?? DateTime.now();
+    return '${d.day.toString().padLeft(2, '0')}_${d.month.toString().padLeft(2, '0')}_${d.year}';
+  }
+
+  Future<void> _showOptions() async {
+    if (!_validate(showToast: true)) return;
+    await _save();
+    if (!mounted) return;
+    final att = _att;
+    final tenant = ref.read(currentTenantProvider);
+    final showSectional = tenant?.type == 'choir' || tenant?.type == 'orchestra';
+    final plans = PlanUtils.allPlans(att);
+    final current = Plan(time: _time, end: _end, fields: _fields, title: _effectiveTitle);
+    final fileName = '${_effectiveTitle}_$_fileDate';
+    await showPlanExportSheet(
+      context,
+      ref,
+      title: 'Aktionen',
+      fileName: fileName,
+      pages: () => [
+        att == null
+            ? PlanExportPage(
+                title: _effectiveTitle,
+                subtitle: PlanUtils.longDate(DateTime.now()),
+                time: _time,
+                end: _end,
+                fields: _fields)
+            : _exportPage(att, _planIndex, current),
+      ],
+      extraActions: [
+        if (plans.length > 1)
+          const PlanSheetAction('all', 'PDF exportieren (alle Pläne)', icon: Icons.picture_as_pdf),
+        if (showSectional) const PlanSheetAction('sectional', 'Registerprobenplan erstellen', icon: Icons.groups),
+      ],
+      onExtraAction: (a) async {
+        if (a == 'sectional') {
+          await showRegisterPlanSheet(context);
+        } else if (a == 'all' && att != null) {
+          await runPlanExport(
+            context,
+            ref,
+            PlanExportAction.pdf,
+            pages: [
+              for (var i = 0; i < plans.length; i++) _exportPage(att, i, i == _planIndex ? current : plans[i]),
+            ],
+            fileName: fileName,
+          );
+        }
+      },
+    );
+  }
+
+  Future<void> _resetPlan() async {
+    final ok = await showPlanConfirm(
+      context,
+      title: 'Plan zurücksetzen',
+      message: 'Möchtest du den Plan für diese Veranstaltung wirklich zurücksetzen? Alle Änderungen gehen verloren.',
+      confirmText: 'Zurücksetzen',
+    );
+    if (ok && _att != null) _applyTypeDefaultPlan(_att!);
+  }
+
+  Future<void> _pickTime() async {
+    final m = PlanUtils.parseTimeToMinutes(_time) ?? (17 * 60 + 50);
+    final picked = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay(hour: m ~/ 60, minute: m % 60),
+      builder: (ctx, child) => MediaQuery(
+        data: MediaQuery.of(ctx).copyWith(alwaysUse24HourFormat: true),
+        child: child!,
+      ),
+    );
+    if (picked == null) return;
+    setState(() => _time = PlanUtils.formatMinutes(picked.hour * 60 + picked.minute));
+    _changed();
+  }
+
+  // ---------------------------------------------------------------------------
+  // Build
+  // ---------------------------------------------------------------------------
+
+  @override
+  Widget build(BuildContext context) {
+    final attendancesAsync = ref.watch(planAttendancesProvider);
+    final typesAsync = ref.watch(planAttendanceTypesProvider);
+    ref.watch(planSongsProvider);
+    ref.watch(currentSongsProvider);
+    final blockTemplates = ref.watch(planBlockTemplatesProvider).valueOrNull ?? const <PlanBlockTemplate>[];
+    final role = ref.watch(effectiveRoleProvider);
+
+    if (!_loaded && attendancesAsync.hasValue && !typesAsync.isLoading) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && !_loaded) _init(attendancesAsync.value!);
+      });
+    }
+
+    final att = _att;
+    final plans = PlanUtils.allPlans(att);
+    final labels = att == null || plans.length < 2
+        ? const <String>[]
+        : [for (var i = 0; i < plans.length; i++) PlanUtils.planLabel(att, i, plans)];
+
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) async {
+        if (didPop) return;
+        await _save();
+        _invalidateOnExit();
+        if (context.mounted) Navigator.of(context).pop(_hasChanges);
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Ablaufplan erstellen'),
+          actions: [
+            IconButton(tooltip: 'Link teilen', icon: const Icon(Icons.link), onPressed: _shareLink),
+            IconButton(tooltip: 'Aktionen', icon: const Icon(Icons.more_horiz), onPressed: _showOptions),
+          ],
+        ),
+        floatingActionButton: FloatingActionButton(
+          tooltip: 'Hinzufügen',
+          onPressed: _showAddMenu,
+          child: const Icon(Icons.add),
+        ),
+        body: attendancesAsync.when(
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (e, _) => Center(child: Text('Fehler: $e')),
+          data: (_) => ListView(
+            padding: const EdgeInsets.only(bottom: 96),
+            children: [
+              _buildAttendanceCard(att),
+              Card(
+                margin: const EdgeInsets.fromLTRB(
+                    AppDimensions.paddingM, 0, AppDimensions.paddingM, AppDimensions.paddingM),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: TextField(
-                        decoration: InputDecoration(
-                          hintText: 'Suchen...',
-                          prefixIcon: const Icon(Icons.search),
-                          suffixIcon: _searchQuery.isNotEmpty
-                              ? IconButton(
-                                  icon: const Icon(Icons.clear),
-                                  onPressed: () => setState(() => _searchQuery = ''),
-                                )
-                              : null,
-                        ),
-                        onChanged: (v) => setState(() => _searchQuery = v),
-                      ),
+                    ListTile(
+                      title: const Text('Ablauf', style: TextStyle(fontWeight: FontWeight.bold)),
+                      trailing: IconButton(icon: const Icon(Icons.add), onPressed: _showAddMenu),
                     ),
-                    // "Add current songs" button
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: SizedBox(
-                        width: double.infinity,
-                        child: OutlinedButton.icon(
-                          onPressed: () => _addCurrentSongs(context),
-                          icon: const Icon(Icons.library_add),
-                          label: const Text('Aktuelle Werke hinzufügen'),
+                    if (labels.isNotEmpty)
+                      PlanChips(
+                        labels: labels,
+                        selected: _planIndex,
+                        onSelected: _selectPlan,
+                        trailing: IconButton(
+                          tooltip: 'Plan-Optionen',
+                          icon: const Icon(Icons.more_horiz),
+                          onPressed: _showPlanOptions,
                         ),
                       ),
+                    ListTile(
+                      title: const Text('Start'),
+                      trailing: TextButton(onPressed: _pickTime, child: Text('$_time Uhr')),
                     ),
-                    const SizedBox(height: 8),
-                    Expanded(
-                      child: ListView.builder(
-                        controller: scrollController,
-                        itemCount: filteredSongs.length,
-                        itemBuilder: (context, index) {
-                          final song = filteredSongs[index];
-                          return ListTile(
-                            leading: song.fullNumber.isNotEmpty
-                                ? CircleAvatar(
-                                    backgroundColor: AppColors.primary.withValues(alpha: 0.1),
-                                    child: Text(
-                                      song.fullNumber,
-                                      style: const TextStyle(
-                                        fontSize: 12,
-                                        color: AppColors.primary,
-                                      ),
-                                    ),
-                                  )
-                                : const CircleAvatar(
-                                    child: Icon(Icons.music_note),
-                                  ),
-                            title: Text(song.name),
-                            subtitle: song.conductor != null ? Text(song.conductor!) : null,
-                            onTap: () {
-                              Navigator.pop(
-                                context,
-                                FieldSelection(
-                                  id: song.id.toString(),
-                                  name: song.displayName,
-                                  time: '20',
-                                  conductor: song.conductor,
-                                  songId: song.id,
-                                ),
-                              );
-                            },
-                          );
-                        },
+                    const Divider(height: 1),
+                    PlanFieldsEditor(
+                      fields: _fields,
+                      startTime: _time,
+                      onChanged: (f) {
+                        setState(() => _fields = f);
+                        _changed();
+                      },
+                      blockTemplateNames: blockTemplates.map((t) => t.name).toSet(),
+                      onSaveBlockTemplate: role.isAdmin ? _saveBlockTemplate : null,
+                    ),
+                    if (_fields.isNotEmpty)
+                      ListTile(
+                        title: const Text('Ende'),
+                        trailing: Text('$_end Uhr', style: const TextStyle(fontWeight: FontWeight.bold)),
                       ),
-                    ),
                   ],
                 ),
-                // Freetext tab
-                SingleChildScrollView(
-                  controller: scrollController,
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    children: [
-                      TextField(
-                        controller: _nameController,
-                        decoration: const InputDecoration(
-                          labelText: 'Programmpunkt *',
-                          hintText: 'z.B. "Begrüßung", "Pause"',
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      TextField(
-                        controller: _conductorController,
-                        decoration: const InputDecoration(
-                          labelText: 'Ausführender (optional)',
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      TextField(
-                        controller: _timeController,
-                        decoration: const InputDecoration(
-                          labelText: 'Dauer (Minuten)',
-                          suffixText: 'min',
-                        ),
-                        keyboardType: TextInputType.number,
-                      ),
-                      const SizedBox(height: 24),
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            if (_nameController.text.trim().isEmpty) {
-                              ToastHelper.showWarning(context, 'Bitte einen Namen eingeben');
-                              return;
-                            }
-                            Navigator.pop(
-                              context,
-                              FieldSelection(
-                                id: 'custom_${DateTime.now().millisecondsSinceEpoch}',
-                                name: _nameController.text.trim(),
-                                conductor: _conductorController.text.trim(),
-                                time: _timeController.text.trim().isNotEmpty
-                                    ? _timeController.text.trim()
-                                    : '10',
-                              ),
-                            );
-                          },
-                          child: const Text('Hinzufügen'),
-                        ),
-                      ),
-                    ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAttendanceCard(PlanAttendance? att) {
+    final org = ref.watch(currentOrganisationProvider).valueOrNull;
+    return Card(
+      margin: const EdgeInsets.all(AppDimensions.paddingM),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            ListTile(
+              title: const Text('Zugehörige Anwesenheit', style: TextStyle(fontWeight: FontWeight.bold)),
+              trailing: IconButton(
+                  tooltip: 'Plan zurücksetzen', icon: const Icon(Icons.refresh), onPressed: _resetPlan),
+            ),
+            if (_attendances.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: DropdownButtonFormField<int>(
+                  key: ValueKey(_attId),
+                  isExpanded: true,
+                  value: _attId,
+                  decoration: const InputDecoration(labelText: 'Aktuelle'),
+                  items: [
+                    for (final a in _attendances)
+                      if (a.id != null)
+                        DropdownMenuItem(value: a.id, child: Text(_attLabel(a), overflow: TextOverflow.ellipsis)),
+                  ],
+                  onChanged: _selectAttendance,
+                ),
+              )
+            else
+              const ListTile(title: Text('Keine Termine vorhanden')),
+            if (att != null && (att.notes ?? '').isNotEmpty)
+              ListTile(
+                title: const Text('Anwesenheitsnotizen', style: TextStyle(fontSize: 12, color: AppColors.medium)),
+                subtitle: Text(att.notes!),
+              ),
+            if (att != null) ...[
+              SwitchListTile(
+                title: const Text('Plan mit Mitgliedern teilen'),
+                value: _sharePlan,
+                onChanged: (v) async {
+                  setState(() => _sharePlan = v);
+                  try {
+                    await _updateFlags({'share_plan': v});
+                  } catch (_) {
+                    if (mounted) setState(() => _sharePlan = !v);
+                  }
+                },
+              ),
+              if (org != null)
+                SwitchListTile(
+                  title: const Text('Organisationsplan'),
+                  value: _isOrgPlan,
+                  onChanged: (v) async {
+                    setState(() => _isOrgPlan = v);
+                    try {
+                      await _updateFlags({'is_org_plan': v});
+                    } catch (_) {
+                      if (mounted) setState(() => _isOrgPlan = !v);
+                    }
+                  },
+                ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Focus(
+                  onFocusChange: (f) {
+                    if (!f) _changed();
+                  },
+                  child: TextField(
+                    controller: _titleController,
+                    textCapitalization: TextCapitalization.sentences,
+                    decoration: const InputDecoration(
+                      labelText: 'Ablaufplan Überschrift',
+                      hintText: 'Standardtitel verwenden',
+                    ),
                   ),
                 ),
-                // Note tab (no time duration)
-                SingleChildScrollView(
-                  controller: scrollController,
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: AppColors.info.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(Icons.info_outline, color: AppColors.info),
-                            const SizedBox(width: 8),
-                            const Expanded(
-                              child: Text(
-                                'Notizen haben keine Zeitdauer und erscheinen im PDF als Hinweis.',
-                                style: TextStyle(fontSize: 13),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      TextField(
-                        controller: _noteController,
-                        decoration: const InputDecoration(
-                          labelText: 'Notiz *',
-                          hintText: 'z.B. "Pause", "Hinweis: ..."',
-                        ),
-                        maxLines: 2,
-                      ),
-                      const SizedBox(height: 24),
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            if (_noteController.text.trim().isEmpty) {
-                              ToastHelper.showWarning(context, 'Bitte eine Notiz eingeben');
-                              return;
-                            }
-                            Navigator.pop(
-                              context,
-                              FieldSelection(
-                                id: 'noteFld_${DateTime.now().millisecondsSinceEpoch}',
-                                name: _noteController.text.trim(),
-                                time: '0',
-                                isNote: true,
-                              ),
-                            );
-                          },
-                          child: const Text('Hinzufügen'),
-                        ),
-                      ),
-                    ],
+              ),
+            ],
+            Row(
+              children: [
+                Expanded(
+                  child: TextButton.icon(
+                    onPressed: () => _navigate(-1),
+                    icon: const Icon(Icons.arrow_back),
+                    label: const Text('Vorige'),
+                  ),
+                ),
+                Expanded(
+                  child: TextButton.icon(
+                    onPressed: () => _navigate(1),
+                    icon: const Icon(Icons.arrow_forward),
+                    label: const Text('Nächste'),
                   ),
                 ),
               ],
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
+}
+
+class _MenuHeader extends StatelessWidget {
+  const _MenuHeader(this.text);
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+        child: Text(text, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: AppColors.medium)),
+      );
 }

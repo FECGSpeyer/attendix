@@ -1,0 +1,184 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../models/plan/plan.dart';
+import 'base_repository.dart';
+
+/// Provider for PublicPlanRepository
+final publicPlanRepositoryProvider = Provider<PublicPlanRepository>((ref) {
+  return PublicPlanRepository(ref);
+});
+
+/// Organisation found by its public plan key.
+class PublicOrg {
+  const PublicOrg({required this.id, required this.name});
+  final int id;
+  final String name;
+}
+
+/// Public plan access without login (routes /plan, /planung, /org-plan).
+///
+/// There is no tenant context here. Every query is scoped by a secret key
+/// instead of tenantId:
+/// - attendance: `.eq('id', id).eq('share_key', key)` (edits additionally
+///   require `share_edit_key`)
+/// - shared_plans: the row id IS the access token; edits require `edit_key`
+/// - tenant_groups: `.eq('public_plan_key', key)`; org plans are then read
+///   with `.inFilter('tenantId', <instances of that org>)` + `is_org_plan`
+class PublicPlanRepository extends BaseRepository {
+  PublicPlanRepository(super.ref);
+
+  static const String _sharedAttendanceColumns =
+      'id, date, duration_days, plan, extra_plans, type_id, typeInfo, share_key, share_edit_key';
+
+  /// A Termin shared with `share_key`.
+  Future<PlanAttendance?> getSharedAttendancePlan(int id, String key) async {
+    try {
+      final response = await supabase
+          .from('attendance')
+          .select(_sharedAttendanceColumns)
+          .eq('id', id)
+          .eq('share_key', key)
+          .maybeSingle();
+      if (response == null) return null;
+      return PlanAttendance.fromJson(response);
+    } catch (e, stack) {
+      handleError(e, stack, 'getSharedAttendancePlan');
+      rethrow;
+    }
+  }
+
+  /// Saves edits of a shared Termin plan (edit link).
+  Future<void> updateSharedAttendancePlan(
+    int id,
+    String key,
+    String editKey,
+    Map<String, dynamic> planColumns,
+  ) async {
+    try {
+      final data = Map<String, dynamic>.fromEntries(
+        planColumns.entries.where((e) => e.key == 'plan' || e.key == 'extra_plans'),
+      );
+      await supabase
+          .from('attendance')
+          .update(data)
+          .eq('id', id)
+          .eq('share_key', key)
+          .eq('share_edit_key', editKey);
+    } catch (e, stack) {
+      handleError(e, stack, 'updateSharedAttendancePlan');
+      rethrow;
+    }
+  }
+
+  /// An ad-hoc plan by its id (= key).
+  Future<SharedPlan?> getSharedPlan(String key) async {
+    try {
+      final response = await supabase
+          .from('shared_plans')
+          .select('*')
+          .eq('id', key)
+          .maybeSingle();
+      if (response == null) return null;
+      return SharedPlan.fromJson(response);
+    } catch (e, stack) {
+      handleError(e, stack, 'getSharedPlan');
+      rethrow;
+    }
+  }
+
+  /// Saves edits of an ad-hoc plan (edit link).
+  Future<void> updateSharedPlan(String key, String editKey, {required List<PlanField> fields, String? title, String? time}) async {
+    try {
+      await supabase
+          .from('shared_plans')
+          .update({
+            'fields': fields.map((f) => f.toJson()).toList(),
+            if (title != null) 'plan_title': title,
+            if (time != null) 'time': time,
+          })
+          .eq('id', key)
+          .eq('edit_key', editKey);
+    } catch (e, stack) {
+      handleError(e, stack, 'updateSharedPlan');
+      rethrow;
+    }
+  }
+
+  /// Anonymous one-off share from /planung (no creator).
+  Future<void> insertAnonymousSharedPlan(SharedPlan plan) async {
+    try {
+      final data = plan.toJson()
+        ..remove('creator_user_id')
+        ..remove('created_at')
+        ..remove('org_id');
+      await supabase.from('shared_plans').insert(data);
+    } catch (e, stack) {
+      handleError(e, stack, 'insertAnonymousSharedPlan');
+      rethrow;
+    }
+  }
+
+  /// Organisation with this public plan key.
+  Future<PublicOrg?> getOrgByPublicKey(String key) async {
+    try {
+      final response = await supabase
+          .from('tenant_groups')
+          .select('id, name')
+          .eq('public_plan_key', key)
+          .maybeSingle();
+      if (response == null) return null;
+      return PublicOrg(id: response['id'] as int, name: response['name'] as String? ?? '');
+    } catch (e, stack) {
+      handleError(e, stack, 'getOrgByPublicKey');
+      rethrow;
+    }
+  }
+
+  /// All public plans of an organisation (Termine flagged as org plan + ad-hoc org plans).
+  Future<({List<PlanAttendance> attendances, List<SharedPlan> adHoc})> getPublicOrgPlans(int orgId) async {
+    try {
+      final tgts = await supabase
+          .from('tenant_group_tenants')
+          .select('tenant_id, tenant:tenant_id(longName)')
+          .eq('tenant_group', orgId);
+
+      final names = <int, String>{};
+      for (final row in tgts as List) {
+        final id = row['tenant_id'];
+        if (id is int) {
+          final tenant = row['tenant'];
+          names[id] = tenant is Map ? (tenant['longName'] as String? ?? '') : '';
+        }
+      }
+
+      var attendances = <PlanAttendance>[];
+      if (names.isNotEmpty) {
+        final rows = await supabase
+            .from('attendance')
+            .select('id, date, plan, typeInfo, tenantId')
+            .inFilter('tenantId', names.keys.toList())
+            .eq('is_org_plan', true)
+            .not('plan', 'is', null)
+            .order('date', ascending: true);
+        attendances = (rows as List).map((e) {
+          final att = PlanAttendance.fromJson(e as Map<String, dynamic>);
+          return att.copyWith(tenantName: names[att.tenantId] ?? '');
+        }).toList();
+      }
+
+      final adHocRows = await supabase
+          .from('shared_plans')
+          .select('*')
+          .eq('org_id', orgId)
+          .order('date', ascending: true);
+      final adHoc = (adHocRows as List)
+          .map((e) => SharedPlan.fromJson(e as Map<String, dynamic>))
+          .toList();
+
+      return (attendances: attendances, adHoc: adHoc);
+    } catch (e, stack) {
+      handleError(e, stack, 'getPublicOrgPlans');
+      rethrow;
+    }
+  }
+}
