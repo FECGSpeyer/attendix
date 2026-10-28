@@ -114,10 +114,10 @@ void main() {
   });
 
   test('isWorkExcused', () {
-    expect(ShiftUtils.isWorkExcused('Schichtbedingt'), isTrue);
-    expect(ShiftUtils.isWorkExcused('Arbeitsbedingt (Nachtdienst)'), isTrue);
-    expect(ShiftUtils.isWorkExcused('Urlaub'), isFalse);
-    expect(ShiftUtils.isWorkExcused(null), isFalse);
+    expect(isWorkExcusedNote('Schichtbedingt'), isTrue);
+    expect(isWorkExcusedNote('Arbeitsbedingt (Nachtdienst)'), isTrue);
+    expect(isWorkExcusedNote('Urlaub'), isFalse);
+    expect(isWorkExcusedNote(null), isFalse);
   });
 
   group('ShiftUtils.shiftUpdatesForAttendance (Ionic updateShiftAssignmentsForAttendance)', () {

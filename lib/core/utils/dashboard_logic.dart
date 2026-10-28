@@ -5,6 +5,7 @@ import '../../data/models/church/church.dart';
 import '../../data/models/dashboard/dashboard_event.dart';
 import '../../data/models/dashboard/dashboard_models.dart';
 import '../constants/enums.dart';
+import 'attendance_percentage_utils.dart';
 import 'dashboard_utils.dart';
 
 // Pure (Riverpod-free) dashboard logic, ported from the Ionic home-dashboard
@@ -139,7 +140,7 @@ NextEventSummary computeNextEventSummary(
     nextTotal: np.length,
     nextPresent: np.where((p) => isPresent(p.status)).length,
     nextExcused: excused.length,
-    nextShiftWorkers: excused.where((p) => isWorkExcused(p.notes)).length,
+    nextShiftWorkers: excused.where((p) => isWorkExcusedNote(p.notes)).length,
     nextNeutral: np.where((p) => p.status == AttendanceStatus.neutral).length,
     nextExcusedPersons: excused,
   );
@@ -255,32 +256,20 @@ CurrentPlanData? selectCurrentPlan(
   return null;
 }
 
-/// Helper used by the cards: Ionic `Utils.isWorkExcused`.
-bool isWorkExcused(String? notes) =>
-    notes != null &&
-    (notes.contains('Schichtbedingt') || notes.contains('Arbeitsbedingt'));
-
 /// Ionic `Utils.getPercentage`: share of present persons (late and
 /// late-excused count as present; shift-excused optionally too).
+/// Thin wrapper around [attendanceRowsPercentage] (no duty filter).
 int attendancePercentage(
   List<PersonAttendance> persons, {
   bool shiftExcusedAsPresent = false,
-}) {
-  if (persons.isEmpty) return 0;
-  var present = 0;
-  for (final p in persons) {
-    if (p.status == AttendanceStatus.present ||
-        p.status == AttendanceStatus.late ||
-        p.status == AttendanceStatus.lateExcused) {
-      present++;
-    } else if (shiftExcusedAsPresent &&
-        p.status == AttendanceStatus.excused &&
-        isWorkExcused(p.notes)) {
-      present++;
-    }
-  }
-  return (present / persons.length * 100).round();
-}
+}) =>
+    (attendanceRowsPercentage(
+              persons.map(attendanceCountRowOf),
+              null,
+              shiftExcusedAsPresent: shiftExcusedAsPresent,
+            ) ??
+            0)
+        .round();
 
 /// Duplicate church group (same normalised name).
 class ChurchDuplicateGroup {

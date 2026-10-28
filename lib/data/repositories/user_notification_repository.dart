@@ -50,6 +50,12 @@ class UserNotificationRepository extends BaseRepository with TenantAwareReposito
   /// instances the user has left (Ionic getAllNotifications).
   /// Cross-tenant by design: the feed rows belong to the user, so this query
   /// is keyed on `user_id` only (RLS: own rows).
+  ///
+  /// MULTI-TENANT EXCEPTION (CLAUDE.md rule 1, REVIEW_FIX3): no tenantId
+  /// filter on purpose. Safe because RLS on `user_notifications` restricts
+  /// select/update/delete to `user_id = auth.uid()` (Ionic
+  /// supabase/sql/user_notifications.sql "owner can … notifications").
+  /// Listed in the allow-list of user_notification_repository_test.dart.
   Future<List<UserNotification>> getAllNotifications({int limit = 50}) async {
     try {
       final response = await supabase
@@ -147,6 +153,12 @@ class UserNotificationRepository extends BaseRepository with TenantAwareReposito
   /// Marks all unread entries in all of the user's tenants read.
   /// Cross-tenant by design (Ionic markAllReadAllTenants): keyed on
   /// `user_id` only, so rows of left instances are included.
+  ///
+  /// MULTI-TENANT EXCEPTION (CLAUDE.md rule 1, REVIEW_FIX3): no tenantId
+  /// filter on purpose. Safe because RLS on `user_notifications` restricts
+  /// select/update/delete to `user_id = auth.uid()` (Ionic
+  /// supabase/sql/user_notifications.sql "owner can … notifications").
+  /// Listed in the allow-list of user_notification_repository_test.dart.
   Future<void> markAllReadAllTenants() async {
     try {
       await supabase
@@ -177,6 +189,12 @@ class UserNotificationRepository extends BaseRepository with TenantAwareReposito
   /// Deletes all entries in all of the user's tenants.
   /// Cross-tenant by design (Ionic deleteAllAllTenants): keyed on
   /// `user_id` only, so rows of left instances are included.
+  ///
+  /// MULTI-TENANT EXCEPTION (CLAUDE.md rule 1, REVIEW_FIX3): no tenantId
+  /// filter on purpose. Safe because RLS on `user_notifications` restricts
+  /// select/update/delete to `user_id = auth.uid()` (Ionic
+  /// supabase/sql/user_notifications.sql "owner can … notifications").
+  /// Listed in the allow-list of user_notification_repository_test.dart.
   Future<void> deleteAllAllTenants() async {
     try {
       await supabase

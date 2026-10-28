@@ -4,6 +4,7 @@ import 'dart:math';
 
 import 'package:attendix/core/providers/plan_providers.dart';
 import 'package:attendix/core/services/plan_export_service.dart';
+import 'package:attendix/core/utils/attendance_percentage_utils.dart';
 import 'package:attendix/core/services/register_plan_service.dart';
 import 'package:attendix/core/services/telegram_service.dart';
 import 'package:attendix/core/utils/plan_utils.dart';
@@ -161,8 +162,8 @@ void main() {
       expect(fn, contains(".eq('tenantId', currentTenantId)"));
       expect(fn, contains(".gt('date', since)"));
       expect(fn, isNot(contains('.limit(')));
-      expect(planAttendancesSince('2025-09-01'), '2025-09-01');
-      expect(planAttendancesSince(null), startsWith('2023-01-01'));
+      expect(attendanceListStartDate('2025-09-01'), '2025-09-01');
+      expect(attendanceListStartDate(null), startsWith('2023-01-01'));
     });
   });
 

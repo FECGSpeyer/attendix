@@ -262,7 +262,7 @@ class NextEventCard extends ConsumerWidget {
                         labelStyle: const TextStyle(color: Colors.white, fontSize: 12),
                         label: Text(
                           '${p.status == AttendanceStatus.lateExcused ? context.l10n.homeDashboardLateExcusedShort : context.l10n.commonStatusExcused}'
-                          '${isWorkExcused(p.notes) ? ' · ${context.l10n.homeDashboardShift}' : ''}',
+                          '${isWorkExcusedNote(p.notes) ? ' · ${context.l10n.homeDashboardShift}' : ''}',
                         ),
                       ),
                     ),

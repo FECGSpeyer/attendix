@@ -1,8 +1,7 @@
 import '../../data/models/attendance/attendance.dart';
 import '../../data/models/instrument/instrument.dart';
 import '../../data/models/person/person.dart';
-import 'dashboard_logic.dart' show attendancePercentage;
-import 'duty_utils.dart' show averagePersons;
+import 'attendance_percentage_utils.dart';
 
 /// Average attendance percentage over all attendances whose type has
 /// `include_in_average = true`. Attendances with an unknown type are excluded
@@ -48,12 +47,15 @@ List<Attendance> recomputeAttendancePercentages(
       if (t.id != null) t.id!: t,
   };
   return attendances.map((a) {
-    final persons = averagePersons(byAttendance[a.id], typeById[a.typeId]);
-    final perc = attendancePercentage(
-      persons,
-      shiftExcusedAsPresent: shiftExcusedAsPresent,
-    );
-    return a.copyWith(percentage: perc.toDouble());
+    // A duty Termin with nobody assigned counts as 0 % here (stats page).
+    final perc = attendanceRowsPercentage(
+          (byAttendance[a.id] ?? const <PersonAttendance>[])
+              .map(attendanceCountRowOf),
+          typeById[a.typeId],
+          shiftExcusedAsPresent: shiftExcusedAsPresent,
+        ) ??
+        0;
+    return a.copyWith(percentage: perc);
   }).toList();
 }
 

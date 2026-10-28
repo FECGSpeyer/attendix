@@ -210,7 +210,9 @@ class _SharedPlanPageState extends ConsumerState<SharedPlanPage> {
     final key = widget.shareKey!;
     final editKey = widget.editKey!;
     final start = PlanUtils.parseTimeToMinutes(_time);
-    if (start != null) _end = PlanUtils.computeEnd(PlanUtils.formatTime(_time), _fields);
+    // REVIEW_FIX3: same stored format as planning_page (Ionic calculateEnd:
+    // "YYYY-MM-DDTHH:mm").
+    if (start != null) _end = PlanUtils.computeEndIso(_time, _fields);
     try {
       final att = _att;
       if (att?.id != null) {

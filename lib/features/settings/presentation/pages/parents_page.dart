@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_constants.dart';
-import '../../../../core/constants/enums.dart';
-import '../../../../core/providers/user_registration_providers.dart'; // AUTH
+import '../../../../data/repositories/user_registration_repository.dart'
+    show AccountFlowException;
 import '../../../../core/providers/parent_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../widgets/settings_list.dart'; // UX_SETTINGS
@@ -164,37 +164,17 @@ class ParentsPage extends ConsumerWidget {
 
     if (result == true && context.mounted) {
       try {
-        final notifier = ref.read(parentNotifierProvider.notifier);
-        // AUTH: Ionic db.createParent: account via registerUser (attendix-user
-        // Edge Function for new e-mails, inform mail for existing accounts).
-        final appId = await ref
-            .read(userRegistrationRepositoryWithTenantProvider)
-            .registerUser(
-              email: emailController.text.trim(),
-              name: firstNameController.text.trim(),
-              role: Role.parent,
+        // REVIEW_FIX3: shared invite flow (Ionic db.createParent).
+        await ref.read(parentNotifierProvider.notifier).invite(
+              email: emailController.text,
+              firstName: firstNameController.text,
+              lastName: lastNameController.text,
             );
-        final parent = ParentModel(
-          appId: appId,
-          email: emailController.text.trim(),
-          firstName: firstNameController.text.trim(),
-          lastName: lastNameController.text.trim(),
-        );
-
-        final created = await notifier.createParent(parent);
-        if (created?.id != null) {
-          await ref
-              .read(userRegistrationRepositoryWithTenantProvider)
-              .linkParentToTenantUser(appId, created!.id!);
-        }
-
         if (context.mounted) {
-          if (created == null) {
-            ToastHelper.showError(context, context.l10n.settingsFlutterAddFailed);
-          } else {
-            ToastHelper.showSuccess(context, context.l10n.settingsUserCreated);
-          }
+          ToastHelper.showSuccess(context, context.l10n.settingsUserCreated);
         }
+      } on AccountFlowException catch (e) {
+        if (context.mounted) ToastHelper.showError(context, e.message);
       } catch (e) {
         if (context.mounted) {
           ToastHelper.showError(context, context.l10n.settingsFlutterErrorDetail(friendlyErrorMessage(e)));

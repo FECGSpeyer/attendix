@@ -1,8 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../constants/enums.dart' show Role;
 import '../../data/models/viewer/viewer.dart';
+import '../../data/repositories/user_registration_repository.dart'
+    show AccountFlowException;
 import '../../data/repositories/viewer_repository.dart';
+import '../../l10n/l10n.dart';
 import 'tenant_providers.dart';
+import 'user_registration_providers.dart';
 
 /// Provider for ViewerRepository with tenant context
 final viewerRepositoryWithTenantProvider = Provider<ViewerRepository>((ref) {
@@ -44,6 +49,40 @@ class ViewerNotifier extends Notifier<AsyncValue<void>> {
       state = AsyncValue.error(e, stack);
       return null;
     }
+  }
+
+  /// REVIEW_FIX3: Ionic db.createViewer — the single invite flow used by the
+  /// viewers page and the user management page.
+  ///
+  /// registerUser (links an existing account or creates one via the
+  /// attendix-user Edge Function) → insert the `viewers` row. Like Ionic, a
+  /// failed insert is not rolled back (the account may have existed before);
+  /// it throws [AccountFlowException] with `db.addViewerFailed` so the page
+  /// reports it instead of leaving a silent orphan. Other errors
+  /// (registerUser, demo guard) are rethrown unchanged.
+  Future<Viewer> invite({
+    required String email,
+    required String firstName,
+    required String lastName,
+  }) async {
+    final trimmedEmail = email.trim();
+    final appId = await ref
+        .read(userRegistrationRepositoryWithTenantProvider)
+        .registerUser(
+          email: trimmedEmail,
+          name: firstName.trim(),
+          role: Role.viewer,
+        );
+    final created = await createViewer(Viewer(
+      appId: appId,
+      email: trimmedEmail,
+      firstName: firstName.trim(),
+      lastName: lastName.trim(),
+    ));
+    if (created == null) {
+      throw AccountFlowException(l10nWithoutContext.dbAddViewerFailed);
+    }
+    return created;
   }
 
   /// Delete a viewer

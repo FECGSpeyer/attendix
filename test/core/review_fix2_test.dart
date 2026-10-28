@@ -88,9 +88,11 @@ void main() {
   });
 
   test('locale-dependent provider labels watch localeProvider', () {
+    // REVIEW_FIX3: the statistics group labels are no longer localized
+    // (computeGroupAttendanceRates / computeAverageAgePerGroup), so the
+    // statistics providers must not watch localeProvider any more.
     final stats = src('lib/core/providers/statistics_providers.dart');
-    expect(
-        RegExp(r'ref\.watch\(localeProvider\)').allMatches(stats).length, 2);
+    expect(stats, isNot(contains('ref.watch(localeProvider)')));
     final songs = src('lib/core/providers/song_providers.dart');
     expect(songs, contains('ref.watch(localeProvider)'));
     expect(songs, contains('conductorsLabel ?? l10nWithoutContext.songsConductors'));

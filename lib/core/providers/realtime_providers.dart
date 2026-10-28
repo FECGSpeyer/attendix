@@ -106,6 +106,31 @@ final realtimePlayersProvider = StreamProvider.autoDispose<List<Person>>((ref) a
   }
 });
 
+/// Ids of the attendances currently loaded by [realtimeAttendanceListProvider].
+///
+/// A plain mutable holder (no notifications): the list writes it after each
+/// load, the realtime subscription reads it to drop DELETE events of other
+/// tenants. The subscription cannot read the list provider itself because
+/// the list watches the subscription (circular dependency).
+class LoadedAttendanceIds {
+  Set<int>? ids;
+}
+
+final loadedAttendanceIdsProvider =
+    Provider<LoadedAttendanceIds>((ref) => LoadedAttendanceIds());
+
+/// Whether an unfiltered attendance DELETE event concerns the loaded list.
+/// Supabase delivers DELETE events without column filters, so events of other
+/// tenants arrive too; only ids of the loaded list trigger a refetch.
+/// [knownIds] null (list not loaded yet) → relevant.
+bool isRelevantAttendanceDelete(
+    Map<String, dynamic> oldRecord, Set<int>? knownIds) {
+  final id = (oldRecord['id'] as num?)?.toInt();
+  if (id == null) return false;
+  if (knownIds == null) return true;
+  return knownIds.contains(id);
+}
+
 /// Attendance list with client-side calculated percentages.
 /// Watches the realtime subscription to auto-refresh on DB changes.
 final realtimeAttendanceListProvider = FutureProvider.autoDispose<List<Attendance>>((ref) async {
@@ -162,6 +187,8 @@ final realtimeAttendanceListProvider = FutureProvider.autoDispose<List<Attendanc
       ),
     );
   }).toList();
+  ref.read(loadedAttendanceIdsProvider).ids =
+      attendances.map((a) => a.id).whereType<int>().toSet();
   await cache.save(tenantId, attendances);
   return attendances;
 });
@@ -192,12 +219,20 @@ final _attendanceRealtimeSubscriptionProvider = Provider.autoDispose<void>((ref)
         callback: onChanged,
       )
       // DELETE events are not filtered by Supabase (old record = id only):
-      // listen unfiltered, the refetch itself is tenant-filtered.
+      // listen unfiltered and only refetch when the deleted id is in the
+      // loaded list (same pattern as players / isRelevantSongDelete).
       .onPostgresChanges(
         event: PostgresChangeEvent.delete,
         schema: 'public',
         table: 'attendance',
-        callback: onChanged,
+        callback: (payload) {
+          if (isRelevantAttendanceDelete(
+            payload.oldRecord,
+            ref.read(loadedAttendanceIdsProvider).ids,
+          )) {
+            onChanged(payload);
+          }
+        },
       )
       .onPostgresChanges(
         event: PostgresChangeEvent.update,
