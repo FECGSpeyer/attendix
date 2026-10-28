@@ -270,7 +270,8 @@ void main() {
       // centred and narrower than the screen
       final mid = (a.left + b.right) / 2;
       expect(mid, closeTo(400, 30));
-      expect(b.right - a.left, lessThan(400));
+      // (test font: 1em glyphs, 15pt labels + 13pt padding → ≈420 of 800)
+      expect(b.right - a.left, lessThan(500));
       // black labels
       final style = tester.widget<RichText>(find.descendant(
           of: find.text('Chronologisch'), matching: find.byType(RichText)).first);

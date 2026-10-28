@@ -78,8 +78,16 @@ abstract final class IonIos {
           ? const Color(0xFF404040)
           : AppColors.dividerLight;
 
-  /// ion-item-group background (`--ion-item-background`).
+  /// ion-item-group background (`--ion-item-background`): white, dark #000
+  /// on the #222428 grouped page (IOS_R4, variables.scss
+  /// attendix-dark-theme-ios-body; settings.page.scss `ion-item-group`).
   static Color itemBackground(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark
+          ? AppColors.iosInsetItemDark
+          : Colors.white;
+
+  /// `ion-card` background (`--ion-card-background`): white, dark #1c1c1d.
+  static Color cardBackground(BuildContext context) =>
       Theme.of(context).brightness == Brightness.dark
           ? AppColors.surfaceDark
           : Colors.white;
@@ -658,7 +666,7 @@ class IonCardBox extends StatelessWidget {
         child: ClipRRect(
           borderRadius: BorderRadius.circular(IonIos.groupRadius),
           child: Material(
-            color: color ?? IonIos.itemBackground(context),
+            color: color ?? IonIos.cardBackground(context),
             child: DefaultTextStyle.merge(
               style: TextStyle(
                 fontSize: 14,

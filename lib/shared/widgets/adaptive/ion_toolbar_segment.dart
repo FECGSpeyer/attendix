@@ -7,8 +7,10 @@ import 'app_segmented_button.dart';
 /// IOS_ATT_PAGES: `ion-segment` inside an `ion-toolbar` (header) without a
 /// colour, as Ionic renders it in iOS mode (ionic-theme-ios26 `.in-toolbar`):
 /// neutral grey track (`rgba(text, .065)`), white selected pill with a soft
-/// shadow, black 14.5 pt labels, 48 pt high, as wide as its labels (equal
-/// segment widths) and centred in the toolbar.
+/// shadow, black 15 pt labels, 48 pt high, as wide as its labels (equal
+/// segment widths, 13 pt label padding, min 70 pt each) and centred in the
+/// 74 pt segment toolbar (theme `--min-height: 68px` + 3 pt toolbar padding
+/// above and below) – IOS_R4.
 ///
 /// Outside iOS it falls back to the full-width [IonSegment] (Material).
 class IonToolbarSegment<T> extends StatelessWidget {
@@ -25,10 +27,12 @@ class IonToolbarSegment<T> extends StatelessWidget {
 
   /// Height of the toolbar row that holds the segment.
   static double toolbarHeight(BuildContext context) =>
-      useIosLook(context) ? 56 : 52;
+      useIosLook(context) ? 74 : 52;
 
   static const double _height = 48;
-  static const double _minSegmentWidth = 65;
+
+  /// ion-segment-button (ios): `min-width: 70px`.
+  static const double _minSegmentWidth = 70;
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +62,8 @@ class IonToolbarSegment<T> extends StatelessWidget {
         curve: Curves.easeOut,
         constraints: const BoxConstraints(minWidth: _minSegmentWidth),
         margin: const EdgeInsets.symmetric(vertical: 2),
-        padding: const EdgeInsets.symmetric(horizontal: 8),
+        // ion-segment-button (ios) --padding-start/end: 13px
+        padding: const EdgeInsets.symmetric(horizontal: 13),
         alignment: Alignment.center,
         decoration: BoxDecoration(
           color: checked ? pill : Colors.transparent,
@@ -76,7 +81,8 @@ class IonToolbarSegment<T> extends StatelessWidget {
           overflow: TextOverflow.ellipsis,
           textAlign: TextAlign.center,
           style: TextStyle(
-            fontSize: 14.5,
+            // ios27 `.in-toolbar ion-segment-button { font-size: .94rem }`
+            fontSize: 15,
             fontWeight: FontWeight.w500,
             color: text,
           ),
@@ -107,7 +113,7 @@ class IonToolbarSegment<T> extends StatelessWidget {
 
     return Center(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+        padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Container(
           height: _height,
           padding: const EdgeInsets.symmetric(horizontal: 2),

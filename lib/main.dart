@@ -27,6 +27,7 @@ import 'core/services/teams/teams_service.dart'; // TEAMS
 import 'core/providers/push_providers.dart'; // PUSH
 import 'l10n/l10n.dart'; // I18N_INFRA
 import 'shared/widgets/dialogs/ion_modal.dart'; // PARITY_R3
+import 'shared/widgets/adaptive/app_toolbar.dart' show IonToolbarMetrics; // IOS_R4
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -163,7 +164,10 @@ class _AttendixAppState extends ConsumerState<AttendixApp> {
       builder: (context, child) => TooltipVisibility(
         visible: false,
         // PARITY_R3: Ionic ion-modal sheet sizes (600 wide on desktop).
-        child: IonModalTheme(child: child ?? const SizedBox.shrink()),
+        child: IonModalTheme(
+          // IOS_R4: Ionic iOS toolbar height (safe area dependent)
+          child: IonToolbarMetrics(child: child ?? const SizedBox.shrink()),
+        ),
       ),
       // I18N_INFRA: UI language from localeProvider (de default, en optional)
       locale: locale,

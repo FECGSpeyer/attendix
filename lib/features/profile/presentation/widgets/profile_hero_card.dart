@@ -61,7 +61,8 @@ class ProfileHeroCard extends ConsumerWidget {
         clipBehavior: Clip.antiAlias,
         elevation: 0,
         color: ios
-            ? (theme.brightness == Brightness.dark ? AppColors.surfaceDark : Colors.white)
+            // IOS_R4: .hero-card background --ion-item-background (#000)
+            ? (theme.brightness == Brightness.dark ? AppColors.iosInsetItemDark : Colors.white)
             : null,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         child: InkWell(

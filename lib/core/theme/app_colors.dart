@@ -72,11 +72,16 @@ class AppColors {
   // items #000, cards #1c1c1d, toolbar step-50 #0d0d0d, border step-150,
   // modals step-100 #1a1a1a.
   static const Color iosPageLight = Color(0xFFF4F5F8);
-  // IOS_THEME2: as rendered on an iPhone in dark mode the pages are pure
-  // black and cards / inset groups / rows dark grey (--ion-card-background
-  // #1c1c1d) – not the inverted #222428 page with black rows.
-  static const Color iosPageDark = Color(0xFF000000);
+  // IOS_R4: the scaffold default is the `ion-content color="light"` page
+  // (most Ionic pages, incl. Mehr and its sub pages) – #f4f5f8 in light and
+  // --ion-color-light #222428 in dark – with `ion-item-group`s / items in
+  // --ion-item-background (white / #000). Plain pages (ion-content without
+  // colour: Termine, Personen, Benachrichtigungen) set black explicitly
+  // ([iosPlainPageDark]); ion-cards keep --ion-card-background #1c1c1d.
+  static const Color iosPageDark = Color(0xFF222428);
   static const Color iosItemDark = Color(0xFF1C1C1D);
+  static const Color iosPlainPageDark = Color(0xFF000000);
+  static const Color iosInsetItemDark = Color(0xFF000000);
   static const Color iosToolbarLight = Color(0xFFF7F7F7);
   static const Color iosToolbarDark = Color(0xFF0D0D0D);
   static const Color iosToolbarBorderLight = Color(0x33000000);
