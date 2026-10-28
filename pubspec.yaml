@@ -77,6 +77,11 @@ dependencies:
   vsc_quill_delta_to_html: ^1.0.5
   flutter_quill_delta_from_html: ^1.5.3
   connectivity_plus: ^7.0.0
+  # PUSH: native push (iOS/Android only, see docs/push-setup.md)
+  firebase_core: ^3.13.0
+  firebase_messaging: ^15.2.5
+  # PUSH: pinned (AGP 8.3 / Kotlin 1.7 build); 1.2.10 needs AGP 8.13 / Kotlin 2.3
+  app_badge_plus: 1.2.3
 
 dev_dependencies:
   flutter_test:

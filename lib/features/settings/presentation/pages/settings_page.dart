@@ -38,6 +38,7 @@ import '../../../../core/providers/demo_providers.dart'; // DEMO_GUARD
 // I18N_INFRA
 import '../../../../l10n/l10n.dart';
 import '../widgets/language_picker_tile.dart';
+import '../../../../core/providers/push_providers.dart'; // PUSH
 
 /// "Mehr" tab — UX_SETTINGS: same sections, order and role visibility as the
 /// Ionic settings page (src/app/settings/settings/settings.page.html):
@@ -477,6 +478,7 @@ class SettingsPage extends ConsumerWidget {
                     // Ionic logs out directly (no confirmation)
                     final supabase = ref.read(supabaseClientProvider);
                     final tenantNotifier = ref.read(currentTenantProvider.notifier);
+                    await removePushTokenBeforeSignOut(ref); // PUSH
                     await supabase.auth.signOut();
                     await tenantNotifier.clearTenant();
                     if (context.mounted) context.go('/login');

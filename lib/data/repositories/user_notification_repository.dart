@@ -150,6 +150,27 @@ class UserNotificationRepository extends BaseRepository with TenantAwareReposito
     }
   }
 
+  /// PUSH: marks the unread entries matching a tapped push read (Ionic
+  /// markMatchingRead: same type, and the same Termin when given).
+  Future<void> markMatchingRead(String type, {String? attendanceId}) async {
+    try {
+      var query = supabase
+          .from('user_notifications')
+          .update({'read': true})
+          .eq('user_id', _userId)
+          .eq('tenantId', currentTenantId)
+          .eq('type', type)
+          .eq('read', false);
+      if (attendanceId != null && attendanceId.isNotEmpty) {
+        query = query.eq('data->>attendanceId', attendanceId);
+      }
+      await query;
+    } catch (e, stack) {
+      handleError(e, stack, 'markMatchingRead');
+      rethrow;
+    }
+  }
+
   /// Marks all unread entries in all of the user's tenants read.
   /// Cross-tenant by design (Ionic markAllReadAllTenants): keyed on
   /// `user_id` only, so rows of left instances are included.

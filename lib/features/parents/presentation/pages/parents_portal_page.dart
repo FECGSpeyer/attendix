@@ -106,6 +106,9 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
     final upcomingAll = ref.watch(upcomingParentAttendancesProvider);
     final past = ref.watch(pastParentAttendancesProvider);
     ref.watch(attendanceTypesProvider);
+    // PUSH: rebuild when a push tap sets the pending Termin while this page
+    // is open (Ionic effect on pendingAttendanceId).
+    ref.watch(pendingAttendanceIdProvider);
 
     final upcoming = upcomingAll.where((g) => !g.isRunning).toList();
 
