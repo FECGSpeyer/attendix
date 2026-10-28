@@ -13,6 +13,7 @@ import '../../../../core/utils/color_utils.dart';
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/attendance/attendance.dart';
+import '../../../../shared/widgets/common/swipe_actions.dart';
 import '../../../../core/providers/team_org_providers.dart'; // PROTOCOL
 import '../widgets/type_protocol_settings.dart'; // PROTOCOL
 import '../widgets/registration_fields_editor.dart'; // ATTENDANCE_SIGNOUT
@@ -617,27 +618,29 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                         itemBuilder: (context, index) {
                           final field = _planFields[index];
                           final isSongPlaceholder = (field['id'] as String? ?? '').startsWith('song-placeholder');
-                          return ListTile(
+                          // Ionic: ion-item-sliding, expandable trash option
+                          // (full swipe deletes), reorder handle at the end.
+                          return SwipeActions.delete(
                             key: ValueKey('plan-field-${field['id']}'),
-                            leading: ReorderableDragStartListener(
-                              index: index,
-                              child: const Icon(Icons.drag_handle),
+                            fullSwipe: true,
+                            onDelete: () => setState(() {
+                              _planFields.removeAt(index);
+                              _hasChanges = true;
+                            }),
+                            child: ListTile(
+                              title: Text(
+                                field['name'] as String? ?? '',
+                                style: isSongPlaceholder
+                                    ? const TextStyle(fontStyle: FontStyle.italic)
+                                    : null,
+                              ),
+                              subtitle: Text('${field['time'] ?? '0'} Min.'),
+                              trailing: ReorderableDragStartListener(
+                                index: index,
+                                child: const Icon(Icons.drag_handle),
+                              ),
+                              onTap: () => _editPlanField(index),
                             ),
-                            title: Text(
-                              field['name'] as String? ?? '',
-                              style: isSongPlaceholder
-                                  ? const TextStyle(fontStyle: FontStyle.italic)
-                                  : null,
-                            ),
-                            subtitle: Text('${field['time'] ?? '0'} Min.'),
-                            trailing: IconButton(
-                              icon: const Icon(Icons.close, size: 20),
-                              onPressed: () => setState(() {
-                                _planFields.removeAt(index);
-                                _hasChanges = true;
-                              }),
-                            ),
-                            onTap: () => _editPlanField(index),
                           );
                         },
                       ),
@@ -706,24 +709,23 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                       },
                       itemBuilder: (context, index) {
                         final item = _checklist[index];
-                        return ListTile(
+                        // Ionic: ion-item-sliding with a trash option,
+                        // deadline text as subtitle, reorder handle at the end.
+                        return SwipeActions.delete(
                           key: ValueKey('checklist-${item.id}'),
-                          leading: ReorderableDragStartListener(
-                            index: index,
-                            child: const Icon(Icons.drag_handle),
+                          onDelete: () => setState(() {
+                            _checklist.removeAt(index);
+                            _hasChanges = true;
+                          }),
+                          child: ListTile(
+                            title: Text(item.text),
+                            subtitle: Text(_checklistDeadlineText(item.deadlineHours)),
+                            trailing: ReorderableDragStartListener(
+                              index: index,
+                              child: const Icon(Icons.drag_handle),
+                            ),
+                            onTap: () => _editChecklistItem(index),
                           ),
-                          title: Text(item.text),
-                          subtitle: item.deadlineHours != null
-                              ? Text('Frist: ${_formatReminderHours(item.deadlineHours!)} vorher')
-                              : null,
-                          trailing: IconButton(
-                            icon: const Icon(Icons.close, size: 20),
-                            onPressed: () => setState(() {
-                              _checklist.removeAt(index);
-                              _hasChanges = true;
-                            }),
-                          ),
-                          onTap: () => _editChecklistItem(index),
                         );
                       },
                     ),
@@ -1300,16 +1302,13 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
     }
   }
 
-  String _formatReminderHours(int hours) {
-    if (hours < 24) return '$hours Std.';
+  /// Ionic getChecklistDeadlineText / getFormattedReminder.
+  String _checklistDeadlineText(int? hours) {
+    if (hours == null) return 'Keine Deadline';
+    if (hours == 0) return 'Zur gleichen Zeit';
+    if (hours < 24) return hours == 1 ? '1 Stunde vorher' : '$hours Stunden vorher';
     final days = hours ~/ 24;
-    final remaining = hours % 24;
-    if (remaining == 0) {
-      if (days == 7) return '1 Woche';
-      if (days == 14) return '2 Wochen';
-      return '$days ${days == 1 ? 'Tag' : 'Tage'}';
-    }
-    return '$days ${days == 1 ? 'Tag' : 'Tage'} $remaining Std.';
+    return days == 1 ? '1 Tag vorher' : '$days Tage vorher';
   }
 
   Future<void> _onBackPressed() async {
