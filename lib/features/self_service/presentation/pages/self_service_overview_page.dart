@@ -263,7 +263,7 @@ class _SelfServiceOverviewPageState
       EventSectionHeader(title: context.l10n.signoutUpcoming, count: upcoming.length),
       for (final group in groups) ...[
         EventMonthHeader(label: group.label),
-        EventListCard(iosPlain: true, children: [
+        EventListCard(plain: true, children: [
           for (final att in group.items) _row(att, actions, showTenant: true),
         ]),
       ],
@@ -276,7 +276,7 @@ class _SelfServiceOverviewPageState
         ),
       if (past.isNotEmpty) ...[
         EventSectionHeader(title: context.l10n.signoutPast, count: past.length),
-        EventListCard(iosPlain: true, children: [
+        EventListCard(plain: true, children: [
           for (final att in pastPreview) _row(att, actions, showTenant: true),
           if (past.length > EventListUtils.pastPreviewCount)
             EventMoreLink(
@@ -321,7 +321,7 @@ class _SelfServiceOverviewPageState
           ),
         ),
       ));
-      widgets.add(EventListCard(iosPlain: true, children: [
+      widgets.add(EventListCard(plain: true, children: [
         for (final att in sorted) _row(att, actions, showTenant: false),
       ]));
     }

@@ -16,10 +16,12 @@ class AppPopoverMenuItem<T> {
     this.subtitle,
     this.color,
     this.submenu = false,
+    this.submenuItems,
     this.destructive = false,
   });
 
-  /// Returned by [showAppPopoverMenu] when the entry is tapped.
+  /// Returned by [showAppPopoverMenu] when the entry is tapped (entries with
+  /// [submenuItems] open their nested popover instead).
   final T value;
   final String label;
 
@@ -33,11 +35,41 @@ class AppPopoverMenuItem<T> {
   /// text colour – Ionic iOS popover icons are black.
   final Color? color;
 
-  /// The entry opens a sub menu (Ionic `detail="true"` → chevron on iOS).
+  /// The entry opens a sub menu (Ionic `detail="true"` → chevron).
   final bool submenu;
+
+  /// PARITY_R3: entries of a nested `ion-popover` (`side="start"`,
+  /// `dismissOnSelect=false`) opened by this entry. Called again after
+  /// every tap in the nested popover so checkboxes reflect the new state;
+  /// the parent menu stays open.
+  final List<AppPopoverSubItem> Function()? submenuItems;
 
   /// Red label and icon.
   final bool destructive;
+
+  bool get _hasChevron => submenu || submenuItems != null;
+}
+
+/// PARITY_R3: one row of a nested popover (`ion-item button
+/// detail="false"`): a checkbox (`ion-checkbox slot="start"`) when
+/// [checked] is set, otherwise an optional icon. [onTap] runs immediately
+/// and the popover stays open.
+class AppPopoverSubItem {
+  const AppPopoverSubItem({
+    required this.label,
+    required this.onTap,
+    this.subtitle,
+    this.checked,
+    this.icon,
+    this.color,
+  });
+
+  final String label;
+  final String? subtitle;
+  final bool? checked;
+  final IconData? icon;
+  final Color? color;
+  final VoidCallback onTap;
 }
 
 /// IOS_DETAIL: menu behind a toolbar button (Ionic `ion-popover` with an
@@ -45,16 +77,24 @@ class AppPopoverMenuItem<T> {
 ///
 /// - iOS: the Ionic iOS 26 popover – a frosted, rounded (24) card right
 ///   below [context]'s widget (the trigger button), 44 pt rows with black
-///   icons, a chevron on [AppPopoverMenuItem.submenu] entries and no
-///   pre-selected row.
-/// - elsewhere: the Material popup menu ([showMenu]) at the button, like
-///   [PopupMenuButton].
+///   icons.
+/// - elsewhere (PARITY_R3): the Ionic md popover – white card (radius 4,
+///   md shadow, 250 wide) right below the trigger, 48 px rows with grey
+///   24 px icons.
+///
+/// Both: a chevron on sub menu entries, no pre-selected/highlighted row,
+/// and entries with [AppPopoverMenuItem.submenuItems] open a nested popover
+/// to the left of the entry (Ionic `side="start"`). A tap outside closes
+/// everything; a tap on another entry closes the nested popover first.
 ///
 /// [context] must be the trigger button's context (use a [Builder]).
-/// Returns the tapped entry's value, or null when dismissed.
+/// [itemsBuilder] (optional) rebuilds the entries while a nested popover
+/// changes state (e.g. the "Filter aktiv" subtitle). Returns the tapped
+/// entry's value, or null when dismissed.
 Future<T?> showAppPopoverMenu<T>({
   required BuildContext context,
   required List<AppPopoverMenuItem<T>> items,
+  List<AppPopoverMenuItem<T>> Function()? itemsBuilder,
   double iosWidth = 250,
 }) {
   final button = context.findRenderObject()! as RenderBox;
@@ -64,40 +104,16 @@ Future<T?> showAppPopoverMenu<T>({
     button.localToGlobal(Offset.zero, ancestor: overlay),
     button.localToGlobal(button.size.bottomRight(Offset.zero), ancestor: overlay),
   );
-
-  if (!useIosLook(context)) {
-    // IOS_THEME2: Ionic md popover opens below its trigger (nothing under
-    // the pointer gets highlighted) and shows a chevron on sub menus.
-    final below = Rect.fromLTWH(anchor.left, anchor.bottom, anchor.width, 0);
-    return showMenu<T>(
-      context: context,
-      position: RelativeRect.fromRect(below, Offset.zero & overlay.size),
-      items: [
-        for (final item in items)
-          PopupMenuItem<T>(
-            value: item.value,
-            child: ListTile(
-              leading: item.icon == null
-                  ? null
-                  : Icon(item.icon, color: _itemColor(item)),
-              title: Text(item.label, style: TextStyle(color: _itemColor(item))),
-              subtitle: item.subtitle == null ? null : Text(item.subtitle!),
-              trailing: item.submenu
-                  ? const Icon(Icons.chevron_right, color: AppColors.medium)
-                  : null,
-              contentPadding: EdgeInsets.zero,
-            ),
-          ),
-      ],
-    );
-  }
+  final ios = useIosLook(context);
 
   return navigator.push<T>(
-    _IosPopoverRoute<T>(
+    _PopoverRoute<T>(
+      ios: ios,
       anchor: anchor,
       overlaySize: overlay.size,
       items: items,
-      width: iosWidth,
+      itemsBuilder: itemsBuilder,
+      width: ios ? iosWidth : 250,
       barrierLabel: context.l10n.commonClose,
       capturedThemes: InheritedTheme.capture(from: context, to: navigator.context),
     ),
@@ -107,19 +123,23 @@ Future<T?> showAppPopoverMenu<T>({
 Color? _itemColor(AppPopoverMenuItem<dynamic> item) =>
     item.destructive ? AppColors.danger : item.color;
 
-class _IosPopoverRoute<T> extends PopupRoute<T> {
-  _IosPopoverRoute({
+class _PopoverRoute<T> extends PopupRoute<T> {
+  _PopoverRoute({
+    required this.ios,
     required this.anchor,
     required this.overlaySize,
     required this.items,
+    required this.itemsBuilder,
     required this.width,
     required this.barrierLabel,
     required this.capturedThemes,
   });
 
+  final bool ios;
   final Rect anchor;
   final Size overlaySize;
   final List<AppPopoverMenuItem<T>> items;
+  final List<AppPopoverMenuItem<T>> Function()? itemsBuilder;
   final double width;
   final CapturedThemes capturedThemes;
 
@@ -144,136 +164,346 @@ class _IosPopoverRoute<T> extends PopupRoute<T> {
     Animation<double> animation,
     Animation<double> secondaryAnimation,
   ) {
-    final media = MediaQuery.of(context);
-    const margin = 8.0;
-    final w = math.min(width, overlaySize.width - 2 * margin);
-    // Right-aligned with the trigger button, kept on screen.
-    final right = (overlaySize.width - anchor.right)
-        .clamp(margin, math.max(margin, overlaySize.width - w - margin))
-        .toDouble();
-    final top = anchor.bottom + 6;
-    final maxHeight = math.max(
-      120.0,
-      overlaySize.height - top - media.padding.bottom - margin,
-    );
-    final curved = CurvedAnimation(
-      parent: animation,
-      curve: Curves.easeOutCubic,
-      reverseCurve: Curves.easeIn,
-    );
-
     return capturedThemes.wrap(
       MediaQuery.removePadding(
         context: context,
         removeTop: true,
         removeBottom: true,
-        child: Stack(
-          children: [
-            Positioned(
-              top: top,
-              right: right,
-              width: w,
-              child: FadeTransition(
-                opacity: curved,
-                child: ScaleTransition(
-                  scale: Tween<double>(begin: 0.85, end: 1).animate(curved),
-                  alignment: Alignment.topRight,
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(maxHeight: maxHeight),
-                    child: _IosPopoverCard<T>(items: items),
-                  ),
-                ),
-              ),
-            ),
-          ],
+        child: _PopoverLayer<T>(
+          route: this,
+          animation: animation,
+          bottomPadding: MediaQuery.of(context).padding.bottom,
         ),
       ),
     );
   }
 }
 
-class _IosPopoverCard<T> extends StatelessWidget {
-  const _IosPopoverCard({required this.items});
+class _PopoverLayer<T> extends StatefulWidget {
+  const _PopoverLayer({
+    required this.route,
+    required this.animation,
+    required this.bottomPadding,
+  });
 
-  final List<AppPopoverMenuItem<T>> items;
+  final _PopoverRoute<T> route;
+  final Animation<double> animation;
+  final double bottomPadding;
+
+  @override
+  State<_PopoverLayer<T>> createState() => _PopoverLayerState<T>();
+}
+
+class _PopoverLayerState<T> extends State<_PopoverLayer<T>> {
+  static const _margin = 8.0;
+
+  final _stackKey = GlobalKey();
+  late List<AppPopoverMenuItem<T>> _items = widget.route.items;
+
+  /// Index of the entry whose nested popover is open.
+  int? _openIndex;
+  Rect? _openRowRect;
+
+  void _refresh() {
+    setState(() {
+      final builder = widget.route.itemsBuilder;
+      if (builder != null) _items = builder();
+    });
+  }
+
+  void _onRowTap(int index, BuildContext rowContext) {
+    final item = _items[index];
+    if (item.submenuItems == null) {
+      Navigator.of(context).pop<T>(item.value);
+      return;
+    }
+    if (_openIndex == index) return; // Ionic: tapping the trigger keeps it
+    final row = rowContext.findRenderObject() as RenderBox?;
+    final stack = _stackKey.currentContext?.findRenderObject() as RenderBox?;
+    if (row == null || stack == null) return;
+    final topLeft = row.localToGlobal(Offset.zero, ancestor: stack);
+    setState(() {
+      _openIndex = index;
+      _openRowRect = topLeft & row.size;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return IosGlassSurface(
-      // IOS_THEME2: ionic-theme-ios26 popover radius 24.
-      borderRadius: const BorderRadius.all(Radius.circular(24)),
-      opacity: 0.9,
-      blur: 20,
-      child: Material(
-        type: MaterialType.transparency,
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(vertical: 6),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              for (final item in items) _IosPopoverRow<T>(item: item),
-            ],
+    final route = widget.route;
+    final ios = route.ios;
+    final size = route.overlaySize;
+    final anchor = route.anchor;
+    final w = math.min(route.width, size.width - 2 * _margin);
+    // iOS: right-aligned with the trigger button. md (`alignment: start`):
+    // left edge at the trigger, pushed back into the viewport.
+    final double left;
+    if (ios) {
+      final right = (size.width - anchor.right)
+          .clamp(_margin, math.max(_margin, size.width - w - _margin))
+          .toDouble();
+      left = size.width - right - w;
+    } else {
+      left = anchor.left
+          .clamp(_margin, math.max(_margin, size.width - w - _margin))
+          .toDouble();
+    }
+    final top = anchor.bottom + (ios ? 6 : 0);
+    final maxHeight = math.max(
+      120.0,
+      size.height - top - widget.bottomPadding - _margin,
+    );
+    final curved = CurvedAnimation(
+      parent: widget.animation,
+      curve: Curves.easeOutCubic,
+      reverseCurve: Curves.easeIn,
+    );
+
+    final children = <Widget>[
+      Positioned(
+        top: top,
+        left: left,
+        width: w,
+        child: FadeTransition(
+          opacity: curved,
+          child: ScaleTransition(
+            scale: Tween<double>(begin: ios ? 0.85 : 0.8, end: 1).animate(curved),
+            alignment: ios ? Alignment.topRight : Alignment.topLeft,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxHeight: maxHeight),
+              child: _PopoverCard(
+                ios: ios,
+                // Ionic: a tap inside the parent (not on the trigger)
+                // dismisses the nested popover.
+                onBackgroundTap: _openIndex == null
+                    ? null
+                    : () => setState(() => _openIndex = null),
+                children: [
+                  for (var i = 0; i < _items.length; i++)
+                    Builder(
+                      builder: (rowContext) => _PopoverRow(
+                        ios: ios,
+                        icon: _items[i].icon,
+                        label: _items[i].label,
+                        subtitle: _items[i].subtitle,
+                        color: _itemColor(_items[i]),
+                        chevron: _items[i]._hasChevron,
+                        onTap: () {
+                          if (_openIndex != null && _openIndex != i) {
+                            setState(() => _openIndex = null);
+                          }
+                          _onRowTap(i, rowContext);
+                        },
+                      ),
+                    ),
+                ],
+              ),
+            ),
           ),
         ),
       ),
+    ];
+
+    final openIndex = _openIndex;
+    final rowRect = _openRowRect;
+    if (openIndex != null && rowRect != null && openIndex < _items.length) {
+      final sub = _items[openIndex].submenuItems!();
+      // Nested popovers keep Ionic's default width (iOS `--width: 200px`,
+      // md 250px).
+      final sw = math.min(ios ? 200.0 : 250.0, size.width - 2 * _margin);
+      // side="start": right edge at the trigger's left edge, top aligned;
+      // pushed back into the viewport when there is no room.
+      final subLeft = (left - sw)
+          .clamp(_margin, math.max(_margin, size.width - sw - _margin))
+          .toDouble();
+      final subTop = rowRect.top;
+      children.add(
+        Positioned(
+          top: subTop,
+          left: subLeft,
+          width: sw,
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxHeight: math.max(
+                120.0,
+                size.height - subTop - widget.bottomPadding - _margin,
+              ),
+            ),
+            child: _PopoverCard(
+              ios: ios,
+              children: [
+                for (final s in sub)
+                  _PopoverRow(
+                    ios: ios,
+                    icon: s.icon,
+                    checked: s.checked,
+                    label: s.label,
+                    subtitle: s.subtitle,
+                    color: s.color,
+                    onTap: () {
+                      s.onTap();
+                      _refresh();
+                    },
+                  ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Stack(key: _stackKey, children: children);
+  }
+}
+
+class _PopoverCard extends StatelessWidget {
+  const _PopoverCard({
+    required this.ios,
+    required this.children,
+    this.onBackgroundTap,
+  });
+
+  final bool ios;
+  final List<Widget> children;
+  final VoidCallback? onBackgroundTap;
+
+  @override
+  Widget build(BuildContext context) {
+    Widget list = SingleChildScrollView(
+      padding: EdgeInsets.symmetric(vertical: ios ? 6 : 8),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: children,
+      ),
+    );
+    if (onBackgroundTap != null) {
+      list = GestureDetector(
+        behavior: HitTestBehavior.translucent,
+        onTap: onBackgroundTap,
+        child: list,
+      );
+    }
+    if (ios) {
+      return IosGlassSurface(
+        // IOS_THEME2: ionic-theme-ios26 popover radius 24.
+        borderRadius: const BorderRadius.all(Radius.circular(24)),
+        opacity: 0.9,
+        blur: 20,
+        child: Material(type: MaterialType.transparency, child: list),
+      );
+    }
+    // Ionic md popover: --background (item colour), radius 4, md shadow
+    // (elevation ≈8).
+    final theme = Theme.of(context);
+    return Material(
+      color: theme.colorScheme.surface,
+      surfaceTintColor: Colors.transparent,
+      elevation: 8,
+      borderRadius: BorderRadius.circular(4),
+      clipBehavior: Clip.antiAlias,
+      child: list,
     );
   }
 }
 
-class _IosPopoverRow<T> extends StatelessWidget {
-  const _IosPopoverRow({required this.item});
+class _PopoverRow extends StatelessWidget {
+  const _PopoverRow({
+    required this.ios,
+    required this.label,
+    required this.onTap,
+    this.icon,
+    this.checked,
+    this.subtitle,
+    this.color,
+    this.chevron = false,
+  });
 
-  final AppPopoverMenuItem<T> item;
+  final bool ios;
+  final String label;
+  final VoidCallback onTap;
+  final IconData? icon;
+  final bool? checked;
+  final String? subtitle;
+  final Color? color;
+  final bool chevron;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final fg = _itemColor(item) ?? theme.colorScheme.onSurface;
+    final onSurface = theme.colorScheme.onSurface;
+    final fg = color ?? onSurface;
+    // md: `ion-icon` in an item = rgba(text, .54), 24 px, 32 px gap.
+    final iconColor = color ?? (ios ? onSurface : onSurface.withValues(alpha: 0.54));
+
+    Widget? leading;
+    if (checked != null) {
+      leading = IgnorePointer(
+        child: SizedBox(
+          width: 24,
+          height: 24,
+          child: Checkbox(
+            value: checked,
+            onChanged: (_) {},
+            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            visualDensity: VisualDensity.compact,
+          ),
+        ),
+      );
+    } else if (icon != null) {
+      leading = Icon(icon, size: ios ? 22 : 24, color: iconColor);
+    }
+
     return InkWell(
-      // iOS: grey press highlight, no ripple, nothing highlighted initially.
-      splashFactory: NoSplash.splashFactory,
-      highlightColor: IosGlass.overlayButton(theme.brightness),
-      onTap: () => Navigator.of(context).pop<T>(item.value),
+      // No ripple on iOS, grey press highlight; nothing highlighted
+      // initially (no focus / initial value).
+      splashFactory: ios ? NoSplash.splashFactory : null,
+      highlightColor: ios ? IosGlass.overlayButton(theme.brightness) : null,
+      canRequestFocus: false,
+      onTap: onTap,
       child: ConstrainedBox(
-        constraints: const BoxConstraints(minHeight: 44),
+        constraints: BoxConstraints(minHeight: ios ? 44 : 48),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: ios ? 8 : 10),
           child: Row(
             children: [
-              if (item.icon != null) ...[
-                Icon(item.icon, size: 22, color: fg),
-                const SizedBox(width: 14),
+              if (leading != null) ...[
+                leading,
+                SizedBox(width: ios ? 14 : (checked != null ? 16 : 32)),
               ],
               Expanded(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      item.label,
-                      style: TextStyle(fontSize: 16, color: fg),
-                    ),
-                    if (item.subtitle != null)
+                    Text(label, style: TextStyle(fontSize: 16, color: fg)),
+                    if (subtitle != null)
                       Padding(
                         padding: const EdgeInsets.only(top: 2),
                         child: Text(
-                          item.subtitle!,
-                          style: const TextStyle(
-                            fontSize: 13,
-                            color: AppColors.medium,
+                          subtitle!,
+                          style: TextStyle(
+                            fontSize: ios ? 13 : 14,
+                            color: ios
+                                ? AppColors.medium
+                                : (theme.brightness == Brightness.dark
+                                    ? const Color(0xFF999999)
+                                    : const Color(0xFF666666)),
                           ),
                         ),
                       ),
                   ],
                 ),
               ),
-              if (item.submenu) ...[
+              if (chevron) ...[
                 const SizedBox(width: 6),
                 Icon(
                   Icons.chevron_right,
-                  size: 22,
-                  color: AppColors.medium.withValues(alpha: 0.6),
+                  size: ios ? 22 : 20,
+                  // Ionic detail icon: iOS medium; md text colour at .25.
+                  color: ios
+                      ? AppColors.medium.withValues(alpha: 0.6)
+                      : onSurface.withValues(alpha: 0.25),
                 ),
               ],
             ],

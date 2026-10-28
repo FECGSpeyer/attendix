@@ -62,17 +62,21 @@ class _MembersPageState extends ConsumerState<MembersPage> {
         // ion-segment (scrollable, mode="md") on the "einteilung" extra field
         if (einteilungOptions.isNotEmpty)
           SliverToBoxAdapter(
-            child: SizedBox(
-              height: 48,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM),
-                children: [
+            // PARITY_R3: md segment on every platform
+            // (members.page.scss `margin: 8px 16px`).
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: IonSegment<String>(
+                forceMd: true,
+                scrollable: true,
+                value: einteilung,
+                onChanged: (option) =>
+                    ref.read(membersEinteilungFilterProvider.notifier).state = option,
+                items: [
                   for (final option in ['all', ...einteilungOptions])
-                    _SegmentTab(
-                      label: option == 'all' ? context.l10n.commonAll : option,
-                      selected: einteilung == option,
-                      onTap: () => ref.read(membersEinteilungFilterProvider.notifier).state = option,
+                    IonSegmentItem<String>(
+                      value: option,
+                      label: Text(option == 'all' ? context.l10n.commonAll : option),
                     ),
                 ],
               ),
@@ -116,36 +120,6 @@ class _MembersPageState extends ConsumerState<MembersPage> {
           },
         ),
       ],
-    );
-  }
-}
-
-/// Ionic `ion-segment-button` look: label with an underline when selected.
-class _SegmentTab extends StatelessWidget {
-  const _SegmentTab({required this.label, required this.selected, required this.onTap});
-
-  final String label;
-  final bool selected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final color = selected ? AppColors.primary : AppColors.medium;
-    return InkWell(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM),
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          border: Border(
-            bottom: BorderSide(color: selected ? AppColors.primary : Colors.transparent, width: 2),
-          ),
-        ),
-        child: Text(
-          label.toUpperCase(),
-          style: TextStyle(color: color, fontWeight: FontWeight.w600, fontSize: 13, letterSpacing: 0.5),
-        ),
-      ),
     );
   }
 }

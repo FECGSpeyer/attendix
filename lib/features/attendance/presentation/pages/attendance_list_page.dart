@@ -497,7 +497,7 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
                     EventSectionHeader(title: context.l10n.signoutUpcoming, count: categorized.upcoming.length),
                     for (final group in upcomingGroups) ...[
                       EventMonthHeader(label: group.label),
-                      EventListCard(iosPlain: true, children: [
+                      EventListCard(plain: true, children: [
                         for (final att in group.items)
                           slidable(
                             att,
@@ -540,7 +540,7 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
 
                   if (past.isNotEmpty) ...[
                     EventSectionHeader(title: context.l10n.signoutPast, count: past.length),
-                    EventListCard(iosPlain: true, children: [
+                    EventListCard(plain: true, children: [
                       // UX_ATT: Ionic ev-summary "Durchschnitt" + pill inside the list
                       EventSummaryRow(
                         label: context.l10n.attListAverage,

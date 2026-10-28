@@ -103,9 +103,10 @@ void main() {
     expect(find.byType(AlertDialog), findsOneWidget);
     expect(find.text('Mit Übernachtung?'), findsOneWidget);
     // Sign-in mode: no "Abbrechen", only "Anmelden"
-    expect(find.text('Abbrechen'), findsNothing);
+    expect(find.text('ABBRECHEN'), findsNothing);
     await tester.tap(find.text('Ja'));
-    await tester.tap(find.text('Anmelden'));
+    // PARITY_R3: Ionic md alert buttons are UPPERCASE
+    await tester.tap(find.text('ANMELDEN'));
     await tester.pumpAndSettle();
     expect(result, {'f1': true});
   });

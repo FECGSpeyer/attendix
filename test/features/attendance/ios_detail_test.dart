@@ -190,18 +190,75 @@ void main() {
       expect(result, 'legend');
     });
 
-    widgetTest('Material: popup menu fallback', (tester) async {
+    widgetTest('Material: Ionic md popover card, returns the value', (tester) async {
       String? result;
       await tester.pumpApp(host((v) => result = v));
       await tester.tap(find.byIcon(Icons.more_vert));
       await tester.pumpAndSettle();
-      expect(find.byType(PopupMenuItem<String>), findsNWidgets(2));
+      // PARITY_R3: own md popover (no Material popup menu items)
+      expect(find.byType(PopupMenuItem<String>), findsNothing);
       // IOS_THEME2: Ionic md popover shows the sub menu chevron too.
       expect(find.byIcon(Icons.chevron_right), findsOneWidget);
       await tester.tap(find.text('Status-Filter'));
       await tester.pumpAndSettle();
       expect(result, 'filter');
     });
+
+    for (final platform in [TargetPlatform.android, TargetPlatform.iOS]) {
+      widgetTest('nested popover stays open and toggles ($platform)', (tester) async {
+        final filter = <String>{};
+        String? result = 'unset';
+        List<AppPopoverMenuItem<String>> items() => [
+              AppPopoverMenuItem(
+                value: 'filter',
+                label: 'Status-Filter',
+                subtitle: filter.isEmpty ? null : 'Filter aktiv (${filter.length})',
+                submenuItems: () => [
+                  for (final s in ['Anwesend', 'Abwesend'])
+                    AppPopoverSubItem(
+                      label: s,
+                      checked: filter.contains(s),
+                      onTap: () => filter.contains(s) ? filter.remove(s) : filter.add(s),
+                    ),
+                ],
+              ),
+              const AppPopoverMenuItem(value: 'legend', label: 'Legende'),
+            ];
+        final wrap = platform == TargetPlatform.iOS ? ios : (Widget w) => w;
+        await tester.pumpApp(wrap(Scaffold(
+            appBar: AppBar(actions: [
+              Builder(
+                builder: (bc) => IconButton(
+                  icon: const Icon(Icons.more_vert),
+                  onPressed: () async {
+                    result = await showAppPopoverMenu<String>(
+                        context: bc, items: items(), itemsBuilder: items);
+                  },
+                ),
+              ),
+            ]),
+          )));
+        await tester.tap(find.byIcon(Icons.more_vert));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('Status-Filter'));
+        await tester.pumpAndSettle();
+        expect(find.text('Anwesend'), findsOneWidget);
+        await tester.tap(find.text('Anwesend'));
+        await tester.pumpAndSettle();
+        // both popovers still open, parent entry updated
+        expect(filter, {'Anwesend'});
+        expect(find.text('Filter aktiv (1)'), findsOneWidget);
+        expect(
+          tester.widget<Checkbox>(find.byType(Checkbox).first).value,
+          isTrue,
+        );
+        // another parent entry closes the nested popover and returns its value
+        await tester.tap(find.text('Legende'));
+        await tester.pumpAndSettle();
+        expect(result, 'legend');
+        expect(find.text('Anwesend'), findsNothing);
+      });
+    }
   });
 
   test('detail page: Ionic group order + popover menu wiring (source)', () {
@@ -211,5 +268,8 @@ void main() {
     expect(src, isNot(contains('PopupMenuButton<String>(')));
     expect(src, contains("highlight: _statusFilter.isNotEmpty, submenu: true"));
     expect(src, contains("context.l10n.attendanceView, submenu: true"));
+    // PARITY_R3: nested popovers instead of bottom sheets
+    expect(src, contains('submenuItems: _statusFilterSubItems'));
+    expect(src, contains('submenuItems: _viewSubItems'));
   });
 }

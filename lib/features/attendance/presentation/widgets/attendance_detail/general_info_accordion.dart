@@ -221,18 +221,10 @@ class _GeneralInfoAccordionState extends State<GeneralInfoAccordion> {
                   line: true,
                   child: Row(
                     children: [
+                      // PARITY_R3: the toggle's helperText is not shown
+                      // on iOS (toggle without its own label).
                       Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(context.l10n.attendanceSetDeadline, style: const TextStyle(fontSize: 16)),
-                            const SizedBox(height: 4),
-                            Text(
-                              context.l10n.attendanceDeadlineHelper,
-                              style: const TextStyle(fontSize: 12, color: AppColors.medium),
-                            ),
-                          ],
-                        ),
+                        child: Text(context.l10n.attendanceSetDeadline, style: const TextStyle(fontSize: 16)),
                       ),
                       const SizedBox(width: 12),
                       Switch.adaptive(value: hasDeadline, onChanged: widget.onDeadlineToggle),

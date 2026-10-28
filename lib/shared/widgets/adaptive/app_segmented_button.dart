@@ -112,6 +112,7 @@ class IonSegment<T> extends StatelessWidget {
     this.scrollable = false,
     this.neutral = true,
     this.fitContent = false,
+    this.forceMd = false,
   });
 
   final List<IonSegmentItem<T>> items;
@@ -130,15 +131,22 @@ class IonSegment<T> extends StatelessWidget {
   /// is centred by the caller instead of filling the row.
   final bool fitContent;
 
+  /// PARITY_R3: `<ion-segment mode="md">` – the md tab style on every
+  /// platform (Ionic songs categories, export, members Einteilung).
+  final bool forceMd;
+
   /// iOS height (ionic-theme-ios26 `min-height: 31px`).
   static const double height = 31;
+
+  /// md `ion-segment-button` max-width.
+  static const double mdButtonMaxWidth = 360;
 
   /// md height (`ion-segment-button` md min-height 48px).
   static const double mdHeight = 48;
 
   @override
   Widget build(BuildContext context) {
-    if (!useIosLook(context)) return _buildMd(context);
+    if (forceMd || !useIosLook(context)) return _buildMd(context);
     final theme = Theme.of(context);
     final dark = theme.brightness == Brightness.dark;
     final labelColor = theme.colorScheme.onSurface;
@@ -309,7 +317,17 @@ class IonSegment<T> extends StatelessWidget {
       type: MaterialType.transparency,
       child: scrollable
           ? SingleChildScrollView(scrollDirection: Axis.horizontal, child: row)
-          : row,
+          : natural
+              ? row
+              // PARITY_R3: md `ion-segment-button { max-width: 360px }` –
+              // on wide screens the buttons stay 360 wide, centred.
+              : Center(
+                  child: ConstrainedBox(
+                    constraints:
+                        BoxConstraints(maxWidth: mdButtonMaxWidth * items.length),
+                    child: row,
+                  ),
+                ),
     );
   }
 }

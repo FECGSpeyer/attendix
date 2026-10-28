@@ -31,9 +31,10 @@ void main() {
     expect(find.text('Attendix als App verfügbar!'), findsOneWidget);
     expect(find.textContaining('Jetzt im Play Store herunterladen!'),
         findsOneWidget);
-    expect(find.text('Zum Play Store'), findsOneWidget);
+    // PARITY_R3: Ionic md alert buttons are UPPERCASE
+    expect(find.text('ZUM PLAY STORE'), findsOneWidget);
 
-    await tester.tap(find.text('Später'));
+    await tester.tap(find.text('SPÄTER'));
     await tester.pumpAndSettle();
     expect(find.text('Attendix als App verfügbar!'), findsNothing);
   });

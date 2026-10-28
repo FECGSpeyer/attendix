@@ -21,13 +21,18 @@ Future<T?> showIonModal<T>(
 }) {
   final size = MediaQuery.sizeOf(context);
   if (isIonModalCard(size)) {
+    final ios = useIosLook(context);
     return showAppDialog<T>(
       context: context,
       useRootNavigator: true,
       builder: (ctx) => Dialog(
         insetPadding: const EdgeInsets.all(16),
         clipBehavior: Clip.antiAlias,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        // PARITY_R3: Ionic md desktop modal `--border-radius: 2px` with a
+        // `0 28px 48px rgba(0,0,0,.4)` shadow; iOS 10px.
+        elevation: ios ? null : 24,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(ios ? 10 : 2)),
         child: SizedBox(width: width, height: height, child: builder(ctx)),
       ),
     );
@@ -35,4 +40,43 @@ Future<T?> showIonModal<T>(
   return Navigator.of(context, rootNavigator: true).push<T>(
     MaterialPageRoute<T>(fullscreenDialog: true, builder: builder),
   );
+}
+
+/// PARITY_R3: Ionic `ion-modal` sizes for sheet modals (and
+/// `showModalBottomSheet`) app-wide. Wraps the app's navigator
+/// (`MaterialApp.builder`).
+///
+/// - Ionic md/iOS at ≥ 768 × 600 (`@media (min-width: 768px) and
+///   (min-height: 600px) { --width: 600px }`): sheets are 600 px wide,
+///   centred and anchored at the bottom; md uses `--border-radius: 2px`
+///   there.
+/// - below: sheets span the full width (Ionic `--width: 100%`; Material 3
+///   would cap them at 640).
+class IonModalTheme extends StatelessWidget {
+  const IonModalTheme({super.key, required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final wide = isIonModalCard(MediaQuery.sizeOf(context));
+    final sheet = theme.bottomSheetTheme;
+    final ios = theme.platform == TargetPlatform.iOS;
+    return Theme(
+      data: theme.copyWith(
+        bottomSheetTheme: sheet.copyWith(
+          constraints: wide
+              ? const BoxConstraints(maxWidth: 600)
+              : const BoxConstraints(),
+          shape: !ios && wide
+              ? const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(2)))
+              : sheet.shape,
+          clipBehavior: !ios && wide ? Clip.antiAlias : sheet.clipBehavior,
+        ),
+      ),
+      child: child,
+    );
+  }
 }

@@ -15,7 +15,7 @@ void main() {
       );
 
   group('AppAlertDialog', () {
-    testWidgets('iOS: frosted card with stacked pill buttons, same result',
+    testWidgets('iOS: frosted card, two pill buttons side by side',
         (tester) async {
       await tester.pumpWidget(app(const SizedBox()));
       final ctx = tester.element(find.byType(Scaffold));
@@ -27,11 +27,11 @@ void main() {
           actions: [
             TextButton(
                 onPressed: () => Navigator.pop(c, false),
-                child: const Text('Abbrechen')),
+                child: const Text('Nein')),
             TextButton(
               onPressed: () => Navigator.pop(c, true),
               style: TextButton.styleFrom(foregroundColor: Colors.red),
-              child: const Text('Löschen'),
+              child: const Text('Weg'),
             ),
           ],
         ),
@@ -45,13 +45,98 @@ void main() {
           .toList();
       expect(buttons[0].destructive, isFalse);
       expect(buttons[1].destructive, isTrue);
-      // stacked vertically: "Abbrechen" above the action
-      expect(tester.getTopLeft(find.text('Abbrechen')).dy,
-          lessThan(tester.getTopLeft(find.text('Löschen')).dy));
-      await tester.tap(find.text('Löschen'));
+      // (the test font is wide: labels must be short to fit half the card)
+      // PARITY_R3: two buttons side by side (Ionic iOS alert-button-group)
+      expect(tester.getCenter(find.text('Nein')).dy,
+          tester.getCenter(find.text('Weg')).dy);
+      expect(tester.getCenter(find.text('Nein')).dx,
+          lessThan(tester.getCenter(find.text('Weg')).dx));
+      await tester.tap(find.text('Weg'));
       await tester.pumpAndSettle();
       expect(await result, isTrue);
     }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
+
+    testWidgets('iOS: two long labels wrap onto two lines', (tester) async {
+      await tester.pumpWidget(app(const SizedBox()));
+      final ctx = tester.element(find.byType(Scaffold));
+      showAppDialog<void>(
+        context: ctx,
+        builder: (c) => AppAlertDialog(
+          title: const Text('T'),
+          actions: [
+            TextButton(onPressed: () {}, child: const Text('Abbrechen')),
+            TextButton(onPressed: () {}, child: const Text('Herunterladen')),
+          ],
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(tester.getTopLeft(find.text('Abbrechen')).dy,
+          lessThan(tester.getTopLeft(find.text('Herunterladen')).dy));
+    }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
+
+    testWidgets('iOS: three buttons are stacked', (tester) async {
+      await tester.pumpWidget(app(const SizedBox()));
+      final ctx = tester.element(find.byType(Scaffold));
+      showAppDialog<void>(
+        context: ctx,
+        builder: (c) => AppAlertDialog(
+          title: const Text('T'),
+          actions: [
+            TextButton(onPressed: () {}, child: const Text('Eins')),
+            TextButton(onPressed: () {}, child: const Text('Zwei')),
+            TextButton(onPressed: () {}, child: const Text('Drei')),
+          ],
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(tester.getTopLeft(find.text('Eins')).dy,
+          lessThan(tester.getTopLeft(find.text('Zwei')).dy));
+      expect(tester.getTopLeft(find.text('Zwei')).dy,
+          lessThan(tester.getTopLeft(find.text('Drei')).dy));
+    }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
+
+    testWidgets('md: uppercase text buttons, right-aligned; 3+ stacked',
+        (tester) async {
+      await tester.pumpWidget(app(const SizedBox()));
+      final ctx = tester.element(find.byType(Scaffold));
+      showAppDialog<void>(
+        context: ctx,
+        builder: (c) => AppAlertDialog(
+          title: const Text('T'),
+          actions: [
+            TextButton(onPressed: () {}, child: const Text('Abbrechen')),
+            ElevatedButton(onPressed: () {}, child: const Text('Ändern')),
+          ],
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('ABBRECHEN'), findsOneWidget);
+      expect(find.text('ÄNDERN'), findsOneWidget);
+      expect(find.byType(ElevatedButton), findsNothing);
+      expect(tester.getCenter(find.text('ABBRECHEN')).dy,
+          tester.getCenter(find.text('ÄNDERN')).dy);
+      Navigator.of(ctx).pop();
+      await tester.pumpAndSettle();
+
+      showAppDialog<void>(
+        context: ctx,
+        builder: (c) => AppAlertDialog(
+          title: const Text('T'),
+          actions: [
+            TextButton(onPressed: () {}, child: const Text('Eins')),
+            TextButton(onPressed: () {}, child: const Text('Zwei')),
+            TextButton(onPressed: () {}, child: const Text('Drei')),
+          ],
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(tester.getTopLeft(find.text('EINS')).dy,
+          lessThan(tester.getTopLeft(find.text('ZWEI')).dy));
+      // right-aligned labels
+      expect(tester.getTopRight(find.text('EINS')).dx,
+          moreOrLessEquals(tester.getTopRight(find.text('DREI')).dx,
+              epsilon: 1));
+    }, variant: TargetPlatformVariant.only(TargetPlatform.android));
 
     testWidgets('Android: plain Material AlertDialog', (tester) async {
       await tester.pumpWidget(app(const SizedBox()));
