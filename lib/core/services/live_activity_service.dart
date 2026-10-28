@@ -84,19 +84,23 @@ abstract class LiveActivityHost {
 /// app closed the `live-activity-tick` Edge Function does it via push, using
 /// the tokens registered here.
 ///
-/// Talks to ios/Runner/LiveActivityPlugin.swift over [channelName]. No-op on
-/// web and Android; every native call is wrapped in try/catch, so builds
-/// without the native side simply skip everything.
+/// Talks to ios/Runner/LiveActivityPlugin.swift and (DB_REVIEW_REST F2)
+/// android/.../liveplan/LiveActivityPlugin.kt (ongoing "Ablaufplan"
+/// notification, Ionic LiveActivityPlugin.java) over [channelName]. No-op on
+/// web; every native call is wrapped in try/catch, so builds without the
+/// native side simply skip everything.
 class LiveActivityService {
   LiveActivityService({
     required LiveActivityHost host,
     MethodChannel? channel,
     bool? platformSupported,
+    bool? isAndroid,
     int Function()? now,
     bool listenToLifecycle = true,
   })  : _host = host,
         _channel = channel ?? const MethodChannel(channelName),
         _platformSupported = platformSupported ?? isSupportedPlatform,
+        _isAndroid = isAndroid ?? isAndroidPlatform,
         _now = now ?? (() => DateTime.now().millisecondsSinceEpoch),
         _listenToLifecycle = listenToLifecycle;
 
@@ -108,10 +112,21 @@ class LiveActivityService {
   /// Multi-day Termine can have started up to this many days ago.
   static const int lookbackDays = 14;
 
-  /// Native iOS app (not the PWA on an iPhone).
+  /// Native iOS or Android app (not the PWA).
   static bool get isSupportedPlatform {
     try {
-      return !kIsWeb && defaultTargetPlatform == TargetPlatform.iOS;
+      return !kIsWeb &&
+          (defaultTargetPlatform == TargetPlatform.iOS ||
+              defaultTargetPlatform == TargetPlatform.android);
+    } catch (_) {
+      return false;
+    }
+  }
+
+  /// Native Android app: live plan notification instead of a Live Activity.
+  static bool get isAndroidPlatform {
+    try {
+      return !kIsWeb && defaultTargetPlatform == TargetPlatform.android;
     } catch (_) {
       return false;
     }
@@ -120,6 +135,7 @@ class LiveActivityService {
   final LiveActivityHost _host;
   final MethodChannel _channel;
   final bool _platformSupported;
+  final bool _isAndroid;
   final int Function() _now;
   final bool _listenToLifecycle;
 
@@ -252,7 +268,8 @@ class LiveActivityService {
         final stateKey = liveStateKey(c.state);
         final isRunning = activities.any((a) => a.key == k);
         if (isRunning && _lastKeys[k] == stateKey) continue;
-        final shown = iosLiveState(c.state).toMap();
+        // Ionic: iOS gets iosLiveState, Android the raw state.
+        final shown = (_isAndroid ? c.state : iosLiveState(c.state)).toMap();
         if (c.state.phase == 'ended') {
           if (isRunning) {
             await _channel.invokeMethod<void>('end', {
@@ -335,10 +352,16 @@ class LiveActivityService {
   }
 
   Future<void> _registerTokens() async {
-    // Lets the native side register update tokens itself while the app only runs in the background.
-    try {
-      await _channel.invokeMethod<void>('configure', {'url': _host.apiUrl, 'key': _host.apiKey});
-    } catch (_) {}
+    if (_isAndroid) {
+      // Tells the server this build can show live plan notifications (no
+      // ActivityKit token on Android) – Ionic registerTokenListeners.
+      await _saveToken('start', 'android');
+    } else {
+      // Lets the native side register update tokens itself while the app only runs in the background.
+      try {
+        await _channel.invokeMethod<void>('configure', {'url': _host.apiUrl, 'key': _host.apiKey});
+      } catch (_) {}
+    }
     try {
       final tokens = await _channel.invokeMapMethod<String, dynamic>('getTokens');
       final start = tokens?['pushToStartToken'];
@@ -488,7 +511,8 @@ class RiverpodLiveActivityHost implements LiveActivityHost {
           userId: userId,
           kind: kind,
           token: token,
-          platform: 'ios',
+          // Ionic Capacitor.getPlatform() (DB_REVIEW_REST F2)
+          platform: LiveActivityService.isAndroidPlatform ? 'android' : 'ios',
           attendanceId: attendanceId,
           planKey: planKey,
         );

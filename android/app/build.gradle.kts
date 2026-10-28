@@ -50,3 +50,13 @@ android {
 flutter {
     source = "../.."
 }
+
+// DB_REVIEW_REST (F2): Android live plan notification (NotificationCompat) and
+// LivePlanMessagingService (RemoteMessage). The plugins only declare these as
+// `implementation`, so the app module needs them on its own compile classpath.
+// Same Firebase BoM as firebase_core 3.15.x (FirebaseSDKVersion).
+dependencies {
+    implementation("androidx.core:core-ktx:1.13.1")
+    implementation(platform("com.google.firebase:firebase-bom:33.16.0"))
+    implementation("com.google.firebase:firebase-messaging")
+}
