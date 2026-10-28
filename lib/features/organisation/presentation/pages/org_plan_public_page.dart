@@ -12,7 +12,6 @@ import '../../../../data/repositories/public_plan_repository.dart';
 import '../../../planning/presentation/widgets/plan_export_actions.dart';
 import '../../../planning/presentation/widgets/plan_field_dialogs.dart';
 import '../../../planning/presentation/widgets/plan_view_list.dart';
-import 'org_plans_page.dart' show orgPlanDate, orgPlanPoints;
 
 /// Public list of all org plans via `/org-plan?key=<public_plan_key>`
 /// (Ionic `OrgPlanPublicPage`). No login required.
@@ -187,38 +186,44 @@ class _OrgPlanPublicPageState extends ConsumerState<OrgPlanPublicPage> {
     );
   }
 
-  Widget _planCard(OrgPlanEntry e) {
-    final live = _live.contains(e.key);
-    final liveNow = _isLiveNow(e);
+  /// Ionic: one inset list per plan with an accordion (first one open);
+  /// header = Instanz + date (+ live toggle), content = Exportieren, title, plan.
+  Widget _planCard(OrgPlanEntry e, {bool initiallyExpanded = false, bool past = false}) {
+    final live = !past && _live.contains(e.key);
+    final liveNow = !past && _isLiveNow(e);
     return Card(
-      margin: const EdgeInsets.fromLTRB(12, 12, 12, 0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+      margin: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+      clipBehavior: Clip.antiAlias,
+      child: ExpansionTile(
+        key: PageStorageKey('org-plan-${e.key}-$past'),
+        initiallyExpanded: initiallyExpanded,
+        shape: const Border(),
+        collapsedShape: const Border(),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (e.tenantLabel.isNotEmpty)
+              Text(e.tenantLabel, style: const TextStyle(fontSize: 12, color: AppColors.medium)),
+            Text(PlanUtils.longDate(e.dateTime)),
+          ],
+        ),
+        trailing: liveNow
+            ? IconButton(
+                tooltip: 'Live',
+                icon: Icon(live ? Icons.radio_button_checked : Icons.radio_button_unchecked,
+                    color: live ? AppColors.danger : AppColors.primary),
+                onPressed: () => setState(() => live ? _live.remove(e.key) : _live.add(e.key)),
+              )
+            : null,
         children: [
+          const Divider(height: 1),
           ListTile(
-            title: Text(e.title, style: const TextStyle(fontWeight: FontWeight.bold)),
-            subtitle: Text([
-              PlanUtils.longDate(e.dateTime),
-              if (e.tenantLabel.isNotEmpty) e.tenantLabel,
-            ].join(' · ')),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (liveNow)
-                  IconButton(
-                    tooltip: 'Live',
-                    icon: Icon(live ? Icons.radio_button_checked : Icons.radio_button_unchecked,
-                        color: live ? Colors.red : null),
-                    onPressed: () => setState(() => live ? _live.remove(e.key) : _live.add(e.key)),
-                  ),
-                IconButton(
-                  tooltip: 'Exportieren',
-                  icon: const Icon(Icons.ios_share),
-                  onPressed: () => _export(e),
-                ),
-              ],
-            ),
+            leading: const Icon(Icons.ios_share, color: AppColors.primary),
+            title: const Text('Exportieren', style: TextStyle(color: AppColors.primary)),
+            onTap: () => _export(e),
           ),
+          const Divider(height: 1),
+          ListTile(title: Text(e.title)),
           PlanViewList(plan: e.plan, date: e.dateTime, liveMode: live),
         ],
       ),
@@ -227,24 +232,22 @@ class _OrgPlanPublicPageState extends ConsumerState<OrgPlanPublicPage> {
 
   void _showHistory() {
     Navigator.of(context).push(MaterialPageRoute(
-      builder: (_) => Scaffold(
-        appBar: AppBar(title: const Text('Vergangene Pläne')),
-        body: ListView(
-          children: [
-            for (final e in _past)
-              ListTile(
-                title: Text(e.title),
-                subtitle: Text(
-                    '${orgPlanDate(e.date)}${e.fieldCount > 0 ? ' · ${orgPlanPoints(e.fieldCount)}' : ''}'
-                    '${e.tenantLabel.isNotEmpty ? '\n${e.tenantLabel}' : ''}'),
-                onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                  builder: (_) => Scaffold(
-                    appBar: AppBar(title: Text(orgPlanDate(e.date))),
-                    body: ListView(children: [_planCard(e)]),
-                  ),
-                )),
-              ),
+      fullscreenDialog: true,
+      builder: (ctx) => Scaffold(
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          title: const Text('Vergangene Pläne'),
+          actions: [
+            IconButton(
+              tooltip: 'Schließen',
+              icon: const Icon(Icons.close),
+              onPressed: () => Navigator.of(ctx).pop(),
+            ),
           ],
+        ),
+        body: ListView(
+          padding: const EdgeInsets.only(bottom: 24),
+          children: [for (final e in _past) _planCard(e, past: true)],
         ),
       ),
     ));
@@ -255,13 +258,18 @@ class _OrgPlanPublicPageState extends ConsumerState<OrgPlanPublicPage> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: Text(_orgName.isNotEmpty ? _orgName : 'Org-Pläne'),
+        title: Text(_orgName.isNotEmpty ? _orgName : 'Organisationspläne'),
         actions: [
-          if (!_notFound && !_loading)
+          IconButton(
+            tooltip: 'Kalender abonnieren',
+            icon: const Icon(Icons.calendar_month_outlined),
+            onPressed: _subscribeCalendar,
+          ),
+          if (_past.isNotEmpty)
             IconButton(
-              tooltip: 'Kalender abonnieren',
-              icon: const Icon(Icons.calendar_month_outlined),
-              onPressed: _subscribeCalendar,
+              tooltip: 'Vergangene Pläne',
+              icon: const Icon(Icons.schedule),
+              onPressed: _showHistory,
             ),
         ],
       ),
@@ -287,16 +295,8 @@ class _OrgPlanPublicPageState extends ConsumerState<OrgPlanPublicPage> {
                           leading: Icon(Icons.event_outlined, color: AppColors.medium),
                           title: Text('Keine bevorstehenden Org-Pläne vorhanden.'),
                         ),
-                      for (final e in _upcoming) _planCard(e),
-                      if (_past.isNotEmpty)
-                        Padding(
-                          padding: const EdgeInsets.all(12),
-                          child: OutlinedButton.icon(
-                            onPressed: _showHistory,
-                            icon: const Icon(Icons.history),
-                            label: const Text('Vergangene Pläne'),
-                          ),
-                        ),
+                      for (var i = 0; i < _upcoming.length; i++)
+                        _planCard(_upcoming[i], initiallyExpanded: i == 0),
                     ],
                   ),
                 ),
