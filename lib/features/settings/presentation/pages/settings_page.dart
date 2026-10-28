@@ -13,6 +13,9 @@ import '../../../../core/services/pwa_service.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/string_utils.dart';
 import '../../../../shared/widgets/sheets/feedback_sheet.dart';
+// PROFILE_OFFLINE
+import '../../../profile/presentation/widgets/account_dialogs.dart';
+import '../../../profile/presentation/widgets/profile_hero_card.dart';
 import '../../../../shared/widgets/sheets/version_history_sheet.dart';
 
 /// Settings page with role-based menu filtering
@@ -41,6 +44,8 @@ class SettingsPage extends ConsumerWidget {
         children: [
           // PWA Install Hint (only shown on mobile web)
           const _PwaInstallHint(),
+          // PROFILE_OFFLINE: profile card ("Meine Stammdaten")
+          const ProfileHeroCard(),
           // Tenant info section
           if (tenant != null) ...[
             _SettingsSection(
@@ -286,6 +291,23 @@ class SettingsPage extends ConsumerWidget {
                 title: 'Profil',
                 subtitle: 'Persönliche Daten bearbeiten',
                 onTap: () => context.push('/settings/profile'),
+              ),
+              // PROFILE_OFFLINE: account actions (Ionic system section)
+              if (!role.canSeeNotifications)
+                _SettingsTile(
+                  leading: const _SettingsIcon(icon: Icons.notifications),
+                  title: 'Benachrichtigungen',
+                  onTap: () => context.push('/settings/notifications'),
+                ),
+              _SettingsTile(
+                leading: const _SettingsIcon(icon: Icons.key),
+                title: 'Passwort ändern',
+                onTap: () => showChangePasswordDialog(context),
+              ),
+              _SettingsTile(
+                leading: const _SettingsIcon(icon: Icons.alternate_email),
+                title: 'E-Mail ändern',
+                onTap: () => showChangeEmailDialog(context),
               ),
               _SettingsTile(
                 leading: _SettingsIcon(

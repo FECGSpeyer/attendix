@@ -1,233 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-
-import 'package:intl/intl.dart';
 
 import '../../../../core/config/supabase_config.dart';
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/providers/profile_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/providers/user_preferences_provider.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
+import '../widgets/account_dialogs.dart';
+import '../widgets/master_data_sheet.dart';
+import '../widgets/profile_helpers.dart';
+import '../widgets/profile_hero_card.dart';
 
-/// Profile page for viewing and editing user profile
-class ProfilePage extends ConsumerStatefulWidget {
+/// Profile page: own master data, account security and app preferences.
+///
+/// Master data editing follows the Ionic settings "Meine Stammdaten" modal.
+class ProfilePage extends ConsumerWidget {
   const ProfilePage({super.key});
 
   @override
-  ConsumerState<ProfilePage> createState() => _ProfilePageState();
-}
-
-class _ProfilePageState extends ConsumerState<ProfilePage> {
-  final _formKey = GlobalKey<FormState>();
-  final _firstNameController = TextEditingController();
-  final _lastNameController = TextEditingController();
-  final _phoneController = TextEditingController();
-  DateTime? _birthday;
-
-  bool _isLoading = false;  // RT-012: Start false, set true after guard check
-  bool _isSaving = false;
-  bool _isEditing = false;
-  Map<String, dynamic>? _profileData;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadProfile();
-  }
-
-  @override
-  void dispose() {
-    _firstNameController.dispose();
-    _lastNameController.dispose();
-    _phoneController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _loadProfile() async {
-    // RT-012: Guard against concurrent loads
-    if (_isLoading) return;
-
-    setState(() => _isLoading = true);
-
-    try {
-      final supabase = ref.read(supabaseClientProvider);
-      final user = supabase.auth.currentUser;
-      final tenant = ref.read(currentTenantProvider);
-
-      if (user == null) {
-        throw Exception('Nicht angemeldet');
-      }
-
-      // Load tenant user profile
-      Map<String, dynamic>? tenantUser;
-      if (tenant?.id != null) {
-        final response = await supabase
-            .from('tenantUsers')
-            .select('*')
-            .eq('userId', user.id)
-            .eq('tenantId', tenant!.id!)
-            .maybeSingle();
-        tenantUser = response;
-      }
-
-      // Load player profile if exists
-      Map<String, dynamic>? player;
-      // RT-007: Safe playerId extraction
-      final playerId = tenantUser?['playerId'];
-      if (playerId != null) {
-        // FN-002: Use correct table name 'player' (not 'players')
-        final playerResponse = await supabase
-            .from('player')
-            .select('*')
-            .eq('id', playerId)
-            .maybeSingle();
-        player = playerResponse;
-      }
-
-      // RT-012: Build profile data in local variable first
-      final profileData = {
-        'email': user.email,
-        'userId': user.id,
-        'firstName': player?['firstName'] ?? tenantUser?['firstName'] ?? '',
-        'lastName': player?['lastName'] ?? tenantUser?['lastName'] ?? '',
-        'phone': player?['phone'] ?? tenantUser?['phone'] ?? '',
-        'birthday': player?['birthday'] ?? '',
-        'tenantRole': tenantUser?['role'],
-        'playerId': tenantUser?['playerId'],
-      };
-
-      // RT-012: Check mounted before setState
-      if (!mounted) return;
-
-      // RT-012: Atomic assignment after all async work
-      _profileData = profileData;
-      _firstNameController.text = profileData['firstName'] ?? '';
-      _lastNameController.text = profileData['lastName'] ?? '';
-      _phoneController.text = profileData['phone'] ?? '';
-      final birthdayStr = profileData['birthday'] as String?;
-      _birthday = birthdayStr != null && birthdayStr.isNotEmpty
-          ? DateTime.tryParse(birthdayStr)
-          : null;
-
-    } catch (e) {
-      if (mounted) {
-        ToastHelper.showError(context, 'Fehler beim Laden: $e');
-      }
-    } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
-    }
-  }
-
-  Future<void> _saveProfile() async {
-    if (!_formKey.currentState!.validate()) return;
-
-    setState(() => _isSaving = true);
-
-    try {
-      final supabase = ref.read(supabaseClientProvider);
-      final tenant = ref.read(currentTenantProvider);
-      final userId = supabase.auth.currentUser?.id;
-
-      final tenantId = tenant?.id;
-      if (userId == null || tenantId == null) {
-        throw Exception('Nicht angemeldet');
-      }
-
-      // Update tenant user
-      await supabase
-          .from('tenantUsers')
-          .update({
-            'firstName': _firstNameController.text.trim(),
-            'lastName': _lastNameController.text.trim(),
-            'phone': _phoneController.text.trim(),
-          })
-          .eq('userId', userId)
-          .eq('tenantId', tenantId);
-
-      // Update player if linked
-      // RT-006: Extract to local variable for null-safety
-      final playerId = _profileData?['playerId'];
-      if (playerId != null) {
-        // FN-002: Use correct table name 'player' (not 'players')
-        await supabase
-            .from('player')
-            .update({
-              'firstName': _firstNameController.text.trim(),
-              'lastName': _lastNameController.text.trim(),
-              'phone': _phoneController.text.trim(),
-              'birthday': _birthday?.toIso8601String().split('T')[0],
-            })
-            .eq('id', playerId)
-            .eq('tenantId', tenantId);
-      }
-
-      if (mounted) {
-        ToastHelper.showSuccess(context, 'Profil gespeichert');
-        setState(() => _isEditing = false);
-        _loadProfile();
-      }
-    } catch (e) {
-      if (mounted) {
-        ToastHelper.showError(context, 'Fehler: $e');
-      }
-    } finally {
-      if (mounted) {
-        setState(() => _isSaving = false);
-      }
-    }
-  }
-
-  Future<void> _pickBirthday() async {
-    final picked = await showDatePicker(
-      context: context,
-      initialDate: _birthday ?? DateTime(2000, 1, 1),
-      firstDate: DateTime(1920),
-      lastDate: DateTime.now(),
-      locale: const Locale('de', 'DE'),
-    );
-    if (picked != null) {
-      setState(() => _birthday = picked);
-    }
-  }
-
-  Future<void> _changePassword() async {
-    final result = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => _ChangePasswordDialog(),
-    );
-
-    if (result == true && mounted) {
-      ToastHelper.showSuccess(context, 'Passwort erfolgreich geändert');
-    }
-  }
-
-  String _getRoleName(int? role) {
-    switch (role) {
-      case 5:
-        return 'Administrator';
-      case 4:
-        return 'Verantwortlicher';
-      case 3:
-        return 'Dirigent';
-      case 2:
-        return 'Betrachter';
-      case 1:
-        return 'Elternteil';
-      case 0:
-        return 'Mitglied';
-      default:
-        return 'Unbekannt';
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final tenant = ref.watch(currentTenantProvider);
+    final role = ref.watch(currentRoleProvider);
+    final profileAsync = ref.watch(ownProfileProvider);
+    final email =
+        ref.watch(supabaseClientProvider).auth.currentUser?.email ?? '-';
 
     return Scaffold(
       appBar: AppBar(
@@ -236,408 +35,153 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
           icon: const Icon(Icons.arrow_back),
           onPressed: () => context.pop(),
         ),
-        actions: [
-          if (!_isLoading && !_isEditing)
-            IconButton(
-              icon: const Icon(Icons.edit),
-              tooltip: 'Bearbeiten',
-              onPressed: () => setState(() => _isEditing = true),
-            ),
-          if (_isEditing)
-            IconButton(
-              icon: const Icon(Icons.close),
-              tooltip: 'Abbrechen',
-              onPressed: () {
-                setState(() => _isEditing = false);
-                _loadProfile();
-              },
-            ),
-        ],
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : Form(
-              key: _formKey,
-              child: ListView(
-                padding: const EdgeInsets.all(AppDimensions.paddingM),
-                children: [
-                  // Avatar section
-                  Center(
-                    child: Stack(
-                      children: [
-                        CircleAvatar(
-                          radius: 50,
-                          backgroundColor: AppColors.primary.withValues(alpha: 0.1),
-                          child: Text(
-                            _getInitials(),
-                            style: const TextStyle(
-                              fontSize: 32,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.primary,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: AppDimensions.paddingL),
-
-                  // Email (read-only)
-                  _buildInfoTile(
-                    icon: Icons.email_outlined,
-                    label: 'E-Mail',
-                    value: _profileData?['email'] ?? '-',
-                  ),
-
-                  // Tenant & Role
-                  if (tenant != null)
-                    _buildInfoTile(
-                      icon: Icons.groups_outlined,
-                      label: 'Aktuelle Gruppe',
-                      value: tenant.shortName,
-                      subtitle: _getRoleName(_profileData?['tenantRole']),
-                    ),
-
-                  const SizedBox(height: AppDimensions.paddingM),
-                  const Divider(),
-                  const SizedBox(height: AppDimensions.paddingM),
-
-                  // Editable fields
-                  Text(
-                    'Persönliche Daten',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: AppDimensions.paddingM),
-
-                  // First Name
-                  TextFormField(
-                    controller: _firstNameController,
-                    enabled: _isEditing,
-                    textCapitalization: TextCapitalization.words,
-                    decoration: const InputDecoration(
-                      labelText: 'Vorname',
-                      prefixIcon: Icon(Icons.person_outline),
-                    ),
-                    // FN-008: Add required validator
-                    validator: (value) {
-                      if (value == null || value.trim().isEmpty) {
-                        return 'Vorname ist erforderlich';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: AppDimensions.paddingM),
-
-                  // Last Name
-                  TextFormField(
-                    controller: _lastNameController,
-                    enabled: _isEditing,
-                    textCapitalization: TextCapitalization.words,
-                    decoration: const InputDecoration(
-                      labelText: 'Nachname',
-                      prefixIcon: Icon(Icons.person_outline),
-                    ),
-                    // FN-008: Add required validator
-                    validator: (value) {
-                      if (value == null || value.trim().isEmpty) {
-                        return 'Nachname ist erforderlich';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: AppDimensions.paddingM),
-
-                  // Phone
-                  TextFormField(
-                    controller: _phoneController,
-                    enabled: _isEditing,
-                    keyboardType: TextInputType.phone,
-                    decoration: const InputDecoration(
-                      labelText: 'Telefon',
-                      prefixIcon: Icon(Icons.phone_outlined),
-                    ),
-                    // FN-008: Add optional phone validator
-                    validator: (value) {
-                      if (value != null && value.trim().isNotEmpty) {
-                        final phoneRegex = RegExp(r'^[\d\s\+\-\(\)]+$');
-                        if (value.trim().length < 6) {
-                          return 'Telefonnummer zu kurz';
-                        }
-                        if (!phoneRegex.hasMatch(value)) {
-                          return 'Ungültige Telefonnummer';
-                        }
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: AppDimensions.paddingM),
-
-                  // Birthday
-                  GestureDetector(
-                    onTap: _isEditing ? _pickBirthday : null,
-                    child: AbsorbPointer(
-                      child: TextFormField(
-                        enabled: _isEditing,
-                        decoration: InputDecoration(
-                          labelText: 'Geburtsdatum',
-                          prefixIcon: const Icon(Icons.cake_outlined),
-                          suffixIcon: _isEditing ? const Icon(Icons.calendar_today, size: 18) : null,
-                        ),
-                        controller: TextEditingController(
-                          text: _birthday != null
-                              ? DateFormat('dd.MM.yyyy').format(_birthday!)
-                              : '',
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  if (_isEditing) ...[
-                    const SizedBox(height: AppDimensions.paddingL),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: _isSaving ? null : _saveProfile,
-                        child: _isSaving
-                            ? const SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: CircularProgressIndicator(strokeWidth: 2),
-                              )
-                            : const Text('Speichern'),
-                      ),
-                    ),
-                  ],
-
-                  const SizedBox(height: AppDimensions.paddingXL),
-                  const Divider(),
-                  const SizedBox(height: AppDimensions.paddingM),
-
-                  // Security section
-                  Text(
-                    'Sicherheit',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: AppDimensions.paddingM),
-
-                  ListTile(
-                    leading: const Icon(Icons.lock_outline),
-                    title: const Text('Passwort ändern'),
-                    subtitle: const Text('Neues Passwort festlegen'),
-                    trailing: const Icon(Icons.chevron_right),
-                    onTap: _changePassword,
-                  ),
-
-                  const SizedBox(height: AppDimensions.paddingXL),
-                  const Divider(),
-                  const SizedBox(height: AppDimensions.paddingM),
-
-                  // App Settings section
-                  Text(
-                    'App-Einstellungen',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                  ),
-                  const SizedBox(height: AppDimensions.paddingM),
-
-                  // Instance Selection Toggle
-                  Consumer(
-                    builder: (context, ref, _) {
-                      final prefs = ref.watch(userPreferencesProvider);
-                      return SwitchListTile(
-                        secondary: const Icon(Icons.swap_horiz),
-                        title: const Text('Gruppenauswahl beim Start'),
-                        subtitle: const Text(
-                          'Immer beim Öffnen der App nach der Gruppe fragen',
-                        ),
-                        value: prefs.wantInstanceSelection,
-                        onChanged: (value) async {
-                          try {
-                            await ref
-                                .read(userPreferencesNotifierProvider.notifier)
-                                .updatePreferences(wantInstanceSelection: value);
-                            if (context.mounted) {
-                              ToastHelper.showSuccess(
-                                context,
-                                value
-                                    ? 'Gruppenauswahl aktiviert'
-                                    : 'Gruppenauswahl deaktiviert',
-                              );
-                            }
-                          } catch (e) {
-                            if (context.mounted) {
-                              ToastHelper.showError(
-                                context,
-                                'Einstellung konnte nicht gespeichert werden',
-                              );
-                            }
-                          }
-                        },
-                      );
-                    },
-                  ),
-                ],
-              ),
-            ),
-    );
-  }
-
-  Widget _buildInfoTile({
-    required IconData icon,
-    required String label,
-    required String value,
-    String? subtitle,
-  }) {
-    return ListTile(
-      leading: Icon(icon, color: AppColors.primary),
-      title: Text(label, style: const TextStyle(fontSize: 12, color: AppColors.medium)),
-      subtitle: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(value, style: const TextStyle(fontSize: 16)),
-          if (subtitle != null)
-            Text(subtitle, style: const TextStyle(fontSize: 12, color: AppColors.medium)),
-        ],
-      ),
-    );
-  }
-
-  String _getInitials() {
-    final first = _firstNameController.text.trim();
-    final last = _lastNameController.text.trim();
-    if (first.isEmpty && last.isEmpty) {
-      return (_profileData?['email'] as String?)?.substring(0, 1).toUpperCase() ?? '?';
-    }
-    return '${first.isNotEmpty ? first[0] : ''}${last.isNotEmpty ? last[0] : ''}'.toUpperCase();
-  }
-}
-
-/// Dialog for changing password
-class _ChangePasswordDialog extends ConsumerStatefulWidget {
-  @override
-  ConsumerState<_ChangePasswordDialog> createState() =>
-      _ChangePasswordDialogState();
-}
-
-class _ChangePasswordDialogState extends ConsumerState<_ChangePasswordDialog> {
-  final _formKey = GlobalKey<FormState>();
-  final _passwordController = TextEditingController();
-  final _confirmController = TextEditingController();
-  bool _obscurePassword = true;
-  bool _obscureConfirm = true;
-  bool _isLoading = false;
-
-  @override
-  void dispose() {
-    _passwordController.dispose();
-    _confirmController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _changePassword() async {
-    if (!_formKey.currentState!.validate()) return;
-
-    setState(() => _isLoading = true);
-
-    try {
-      final supabase = ref.read(supabaseClientProvider);
-      await supabase.auth.updateUser(
-        UserAttributes(password: _passwordController.text),
-      );
-      if (mounted) {
-        Navigator.of(context).pop(true);
-      }
-    } catch (e) {
-      if (mounted) {
-        ToastHelper.showError(context, 'Fehler: $e');
-      }
-    } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: const Text('Passwort ändern'),
-      content: Form(
-        key: _formKey,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
+      body: RefreshIndicator(
+        onRefresh: () async {
+          ref.invalidate(ownProfileProvider);
+          ref.invalidate(personExtraFieldsProvider);
+          await ref.read(ownProfileProvider.future);
+        },
+        child: ListView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: const EdgeInsets.all(AppDimensions.paddingM),
           children: [
-            TextFormField(
-              controller: _passwordController,
-              obscureText: _obscurePassword,
-              decoration: InputDecoration(
-                labelText: 'Neues Passwort',
-                prefixIcon: const Icon(Icons.lock_outline),
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    _obscurePassword ? Icons.visibility : Icons.visibility_off,
-                  ),
-                  onPressed: () =>
-                      setState(() => _obscurePassword = !_obscurePassword),
-                ),
+            const ProfileHeroCard(),
+            if (profileAsync.isLoading)
+              const Padding(
+                padding: EdgeInsets.all(AppDimensions.paddingL),
+                child: Center(child: CircularProgressIndicator()),
               ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Bitte Passwort eingeben';
-                }
-                if (value.length < 6) {
-                  return 'Mindestens 6 Zeichen';
-                }
-                return null;
-              },
+            _Section(
+              title: 'Konto',
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.email_outlined,
+                      color: AppColors.primary),
+                  title: const Text('E-Mail'),
+                  subtitle: Text(email),
+                ),
+                if (tenant != null)
+                  ListTile(
+                    leading: const Icon(Icons.groups_outlined,
+                        color: AppColors.primary),
+                    title: Text(tenant.longName.isNotEmpty
+                        ? tenant.longName
+                        : tenant.shortName),
+                    subtitle: Text(profileRoleName(role)),
+                  ),
+                if (profileAsync.valueOrNull != null)
+                  ListTile(
+                    leading: const Icon(Icons.badge_outlined,
+                        color: AppColors.primary),
+                    title: const Text('Meine Stammdaten'),
+                    trailing: const Icon(Icons.chevron_right),
+                    onTap: () => showMasterDataSheet(context),
+                  ),
+              ],
             ),
-            const SizedBox(height: 16),
-            TextFormField(
-              controller: _confirmController,
-              obscureText: _obscureConfirm,
-              decoration: InputDecoration(
-                labelText: 'Passwort bestätigen',
-                prefixIcon: const Icon(Icons.lock_outline),
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    _obscureConfirm ? Icons.visibility : Icons.visibility_off,
-                  ),
-                  onPressed: () =>
-                      setState(() => _obscureConfirm = !_obscureConfirm),
+            const SizedBox(height: AppDimensions.paddingM),
+            _Section(
+              title: 'Sicherheit',
+              children: [
+                ListTile(
+                  leading:
+                      const Icon(Icons.key_outlined, color: AppColors.primary),
+                  title: const Text('Passwort ändern'),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => showChangePasswordDialog(context),
                 ),
-              ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Bitte Passwort bestätigen';
-                }
-                if (value != _passwordController.text) {
-                  return 'Passwörter stimmen nicht überein';
-                }
-                return null;
-              },
+                ListTile(
+                  leading: const Icon(Icons.alternate_email,
+                      color: AppColors.primary),
+                  title: const Text('E-Mail ändern'),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => showChangeEmailDialog(context),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppDimensions.paddingM),
+            _Section(
+              title: 'App-Einstellungen',
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.notifications_outlined,
+                      color: AppColors.primary),
+                  title: const Text('Benachrichtigungen'),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => context.push('/settings/notifications'),
+                ),
+                Consumer(
+                  builder: (context, ref, _) {
+                    final prefs = ref.watch(userPreferencesProvider);
+                    return SwitchListTile(
+                      secondary: const Icon(Icons.swap_horiz),
+                      title: const Text('Gruppenauswahl beim Start'),
+                      subtitle: const Text(
+                        'Immer beim Öffnen der App nach der Gruppe fragen',
+                      ),
+                      value: prefs.wantInstanceSelection,
+                      onChanged: (value) async {
+                        try {
+                          await ref
+                              .read(userPreferencesNotifierProvider.notifier)
+                              .updatePreferences(wantInstanceSelection: value);
+                          if (context.mounted) {
+                            ToastHelper.showSuccess(
+                              context,
+                              value
+                                  ? 'Gruppenauswahl aktiviert'
+                                  : 'Gruppenauswahl deaktiviert',
+                            );
+                          }
+                        } catch (_) {
+                          if (context.mounted) {
+                            ToastHelper.showError(
+                              context,
+                              'Einstellung konnte nicht gespeichert werden',
+                            );
+                          }
+                        }
+                      },
+                    );
+                  },
+                ),
+              ],
             ),
           ],
         ),
       ),
-      actions: [
-        TextButton(
-          onPressed: _isLoading ? null : () => Navigator.of(context).pop(false),
-          child: const Text('Abbrechen'),
+    );
+  }
+}
+
+class _Section extends StatelessWidget {
+  const _Section({required this.title, required this.children});
+
+  final String title;
+  final List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppDimensions.paddingS,
+            vertical: AppDimensions.paddingXS,
+          ),
+          child: Text(
+            title,
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  color: AppColors.medium,
+                  fontWeight: FontWeight.w600,
+                ),
+          ),
         ),
-        ElevatedButton(
-          onPressed: _isLoading ? null : _changePassword,
-          child: _isLoading
-              ? const SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                )
-              : const Text('Speichern'),
+        Card(
+          margin: EdgeInsets.zero,
+          child: Column(children: children),
         ),
       ],
     );

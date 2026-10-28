@@ -21,3 +21,6 @@ export 'attendance_detail_providers.dart';
 export 'pwa_providers.dart';
 export 'teacher_providers.dart';
 export 'history_providers.dart';
+// PROFILE_OFFLINE
+export 'profile_providers.dart';
+export 'notification_settings_providers.dart';

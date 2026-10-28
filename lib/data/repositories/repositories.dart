@@ -16,3 +16,6 @@ export 'viewer_repository.dart';
 export 'parent_repository.dart';
 export 'church_repository.dart';
 export 'usage_events_repository.dart';
+// PROFILE_OFFLINE
+export 'profile_repository.dart';
+export 'notification_settings_repository.dart';

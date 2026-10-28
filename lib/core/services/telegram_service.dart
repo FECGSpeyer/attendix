@@ -19,6 +19,16 @@ class NotificationConfig {
   final bool reminders;
   final bool checklist;
   final List<int>? enabledTenants;
+  final bool tasks;
+  final bool messages;
+  final bool pushEnabled;
+  final bool pushAndTelegram;
+
+  /// Dienste notifications; null counts as on (Ionic).
+  final bool? duties;
+
+  /// Live Activity (native only); null counts as on (Ionic).
+  final bool? liveActivity;
 
   NotificationConfig({
     required this.id,
@@ -34,6 +44,12 @@ class NotificationConfig {
     this.reminders = true,
     this.checklist = true,
     this.enabledTenants,
+    this.tasks = true,
+    this.messages = true,
+    this.pushEnabled = false,
+    this.pushAndTelegram = false,
+    this.duties,
+    this.liveActivity,
   });
 
   factory NotificationConfig.fromJson(Map<String, dynamic> json) => NotificationConfig(
@@ -49,7 +65,17 @@ class NotificationConfig {
         criticals: json['criticals'] as bool? ?? true,
         reminders: json['reminders'] as bool? ?? true,
         checklist: json['checklist'] as bool? ?? true,
-        enabledTenants: (json['enabled_tenants'] as List?)?.cast<int>(),
+        // Ionic maps enabled_tenants with Number() (may be stored as strings)
+        enabledTenants: (json['enabled_tenants'] as List?)
+            ?.map((e) => e is int ? e : int.tryParse(e.toString()))
+            .whereType<int>()
+            .toList(),
+        tasks: json['tasks'] as bool? ?? true,
+        messages: json['messages'] as bool? ?? true,
+        pushEnabled: json['push_enabled'] as bool? ?? false,
+        pushAndTelegram: json['push_and_telegram'] as bool? ?? false,
+        duties: json['duties'] as bool?,
+        liveActivity: json['live_activity'] as bool?,
       );
 
   Map<String, dynamic> toJson() => {
@@ -65,6 +91,12 @@ class NotificationConfig {
         'reminders': reminders,
         'checklist': checklist,
         'enabled_tenants': enabledTenants,
+        'tasks': tasks,
+        'messages': messages,
+        'push_enabled': pushEnabled,
+        'push_and_telegram': pushAndTelegram,
+        if (duties != null) 'duties': duties,
+        if (liveActivity != null) 'live_activity': liveActivity,
       };
 
   NotificationConfig copyWith({
@@ -83,6 +115,12 @@ class NotificationConfig {
     bool? checklist,
     List<int>? enabledTenants,
     bool clearEnabledTenants = false,
+    bool? tasks,
+    bool? messages,
+    bool? pushEnabled,
+    bool? pushAndTelegram,
+    bool? duties,
+    bool? liveActivity,
   }) =>
       NotificationConfig(
         id: id ?? this.id,
@@ -98,7 +136,28 @@ class NotificationConfig {
         reminders: reminders ?? this.reminders,
         checklist: checklist ?? this.checklist,
         enabledTenants: clearEnabledTenants ? null : (enabledTenants ?? this.enabledTenants),
+        tasks: tasks ?? this.tasks,
+        messages: messages ?? this.messages,
+        pushEnabled: pushEnabled ?? this.pushEnabled,
+        pushAndTelegram: pushAndTelegram ?? this.pushAndTelegram,
+        duties: duties ?? this.duties,
+        liveActivity: liveActivity ?? this.liveActivity,
       );
+
+  /// Ionic isTenantEnabled: empty / missing list means no tenant enabled.
+  bool isTenantEnabled(int tenantId) =>
+      enabledTenants?.contains(tenantId) ?? false;
+
+  /// Ionic toggleTenant: add or remove the tenant from enabled_tenants.
+  NotificationConfig toggleTenant(int tenantId) {
+    final current = List<int>.of(enabledTenants ?? const []);
+    if (current.contains(tenantId)) {
+      current.remove(tenantId);
+    } else {
+      current.add(tenantId);
+    }
+    return copyWith(enabledTenants: current);
+  }
 
   bool get isConnected => telegramChatId != null && telegramChatId!.isNotEmpty;
 }
@@ -129,9 +188,13 @@ class TelegramService {
       final newConfig = NotificationConfig(
         id: userId,
         createdAt: DateTime.now(),
+        telegramChatId: '',
       );
 
-      await _supabase.from('notifications').insert(newConfig.toJson());
+      await _supabase.from('notifications').insert({
+        ...newConfig.toJson(),
+        'created_at': newConfig.createdAt!.toIso8601String(),
+      });
       return newConfig;
     }
 

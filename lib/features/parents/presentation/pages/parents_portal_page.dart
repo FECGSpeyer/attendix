@@ -3,13 +3,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/constants/enums.dart';
+import '../../../../core/providers/song_providers.dart'; // PROFILE_OFFLINE
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/date_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
-import '../../../../data/models/person/person.dart';
 import '../../../../data/repositories/sign_in_out_repository.dart';
 import '../../../self_service/presentation/widgets/plan_viewer_sheet.dart';
 import '../../data/providers/parents_providers.dart';
+import '../widgets/parents_header_widgets.dart'; // PROFILE_OFFLINE
 
 /// Parents Portal Page
 ///
@@ -32,12 +33,13 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Termine'),
+        // PROFILE_OFFLINE: tenant switcher + Ionic legend
+        title: const ParentsTenantTitle(),
         actions: [
           IconButton(
             icon: const Icon(Icons.info_outline),
             tooltip: 'Legende',
-            onPressed: () => _showLegend(context),
+            onPressed: () => showParentsLegendSheet(context),
           ),
         ],
       ),
@@ -97,6 +99,7 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
             data: (attendances) {
               return RefreshIndicator(
                 onRefresh: () async {
+                  ref.invalidate(currentSongsProvider); // PROFILE_OFFLINE
                   ref.invalidate(parentChildrenProvider);
                   ref.invalidate(childrenAttendancesProvider);
                   await ref.read(childrenAttendancesProvider.future);
@@ -105,7 +108,8 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
                   slivers: [
                     // Children Overview Card
                     SliverToBoxAdapter(
-                      child: _ChildrenOverviewCard(children: children),
+                      // PROFILE_OFFLINE: Ionic welcome card
+                      child: ParentsWelcomeCard(kids: children),
                     ),
 
                     // Current Attendance
@@ -182,48 +186,6 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
           );
         },
       ),
-    );
-  }
-
-  void _showLegend(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      builder: (context) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const ListTile(
-              title: Text(
-                'Legende',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-            ),
-            const Divider(),
-            _legendItem(Icons.check, AttendanceStatus.present.color, 'Anwesend'),
-            _legendItem(Icons.event_busy, AttendanceStatus.excused.color, 'Entschuldigt'),
-            _legendItem(Icons.close, AttendanceStatus.absent.color, 'Abwesend'),
-            _legendItem(Icons.schedule, AttendanceStatus.late.color, 'Verspätet'),
-            _legendItem(Icons.remove, AttendanceStatus.neutral.color, 'Neutral'),
-            const SizedBox(height: AppDimensions.paddingM),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _legendItem(IconData icon, Color color, String label) {
-    return ListTile(
-      leading: Container(
-        width: 32,
-        height: 32,
-        decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.15),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Icon(icon, color: color, size: 18),
-      ),
-      title: Text(label),
-      dense: true,
     );
   }
 
@@ -689,88 +651,6 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
         );
       }
     }
-  }
-}
-
-/// Card showing all children with their attendance percentage
-class _ChildrenOverviewCard extends ConsumerWidget {
-  const _ChildrenOverviewCard({required this.children});
-
-  final List<Person> children;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return Card(
-      margin: const EdgeInsets.all(AppDimensions.paddingM),
-      child: Padding(
-        padding: const EdgeInsets.all(AppDimensions.paddingM),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                const Icon(Icons.family_restroom, color: AppColors.primary),
-                const SizedBox(width: AppDimensions.paddingS),
-                const Text(
-                  'Meine Kinder',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: AppDimensions.paddingM),
-            Wrap(
-              spacing: AppDimensions.paddingS,
-              runSpacing: AppDimensions.paddingS,
-              children: children.map((child) {
-                final stats = ref.watch(childStatsProvider(child.id ?? 0));
-                return _ChildChip(
-                  name: '${child.firstName} ${child.lastName}',
-                  percentage: stats.percentage,
-                );
-              }).toList(),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-/// Chip showing child name and attendance percentage
-class _ChildChip extends StatelessWidget {
-  const _ChildChip({
-    required this.name,
-    required this.percentage,
-  });
-
-  final String name;
-  final int percentage;
-
-  @override
-  Widget build(BuildContext context) {
-    final color = percentage >= 75
-        ? AppColors.success
-        : percentage >= 50
-            ? AppColors.warning
-            : AppColors.danger;
-
-    return Chip(
-      avatar: CircleAvatar(
-        backgroundColor: color,
-        child: Text(
-          '$percentage',
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 10,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
-      label: Text(name),
-    );
   }
 }
 
