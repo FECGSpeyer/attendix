@@ -12,5 +12,11 @@ if [[ ! -f "$src" ]]; then
   echo "missing $src" >&2
   exit 1
 fi
-grep -E "$allowed" "$src" > "$out" || true
+# DEMO_* values are single-quoted like in CI: flutter_dotenv treats an
+# unquoted '#' as a comment start and interpolates '$'.
+grep -E "$allowed" "$src" | awk -F= -v OFS== '{
+  key = $1; sub(/^[^=]*=/, "")
+  if (key ~ /^DEMO_/ && $0 !~ /^[\x27"]/) $0 = "\x27" $0 "\x27"
+  print key "=" $0
+}' > "$out" || true
 echo "wrote $out with keys: $(cut -d= -f1 "$out" | tr '\n' ' ')"
