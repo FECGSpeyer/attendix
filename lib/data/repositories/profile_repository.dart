@@ -257,6 +257,19 @@ class ProfileRepository extends BaseRepository
     ensureNotDemo('updateSharedFieldValues'); // DEMO_GUARD
     if (values.isEmpty) return;
     try {
+      // Sol review: tenant_group_person_fields has no tenantId. Only write
+      // into an organisation the bound tenant belongs to, so a stale
+      // organisation id (e.g. after a tenant switch) can never leak writes.
+      final membership = await supabase
+          .from('tenant_group_tenants')
+          .select('tenant_group')
+          .eq('tenant_group', organisationId)
+          .eq('tenant_id', currentTenantId)
+          .maybeSingle();
+      if (membership == null) {
+        throw StateError(
+            'Organisation $organisationId does not belong to tenant $currentTenantId');
+      }
       final rows = values.entries
           .map((e) => {
                 'tenant_group': organisationId,

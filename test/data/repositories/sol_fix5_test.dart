@@ -34,5 +34,16 @@ void main() {
           File('lib/core/providers/song_providers.dart').readAsStringSync();
       expect(src, isNot(contains('index: categories.length')));
     });
+
+    test('shared field writes validate the organisation against the tenant',
+        () {
+      final src = File('lib/data/repositories/profile_repository.dart')
+          .readAsStringSync();
+      final start = src.indexOf('Future<void> updateSharedFieldValues(');
+      final body = src.substring(start, src.indexOf('.upsert(rows', start));
+      expect(body, contains("from('tenant_group_tenants')"));
+      expect(body, contains(".eq('tenant_id', currentTenantId)"));
+      expect(body, contains(".eq('tenant_group', organisationId)"));
+    });
   });
 }
