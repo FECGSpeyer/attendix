@@ -537,7 +537,8 @@ class _HistoryGroup extends StatelessWidget {
                     style: const TextStyle(fontWeight: FontWeight.w500),
                   ),
                   subtitle: Text(entry.displayConductor),
-                  trailing: entry.count > 1
+                  // INTEGRATION: Ionic badge "{count} Probe(n)" (count != 0)
+                  trailing: entry.count > 0
                       ? Container(
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
@@ -545,7 +546,7 @@ class _HistoryGroup extends StatelessWidget {
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
-                            '${entry.count}x',
+                            entry.count == 1 ? '1 Probe' : '${entry.count} Proben',
                             style: const TextStyle(
                               color: AppColors.primary,
                               fontWeight: FontWeight.bold,
