@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/providers/profile_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/person/person.dart';
-import '../../../../shared/widgets/loading/loading.dart';
 import '../../data/providers/members_providers.dart';
 import '../../../messages/presentation/widgets/notification_bell.dart'; // MESSAGES
 
 /// Members page - read-only list of all members for players/helpers
+/// (Ionic people/members: searchbar, optional "Einteilung" segment,
+/// "Personen (n)" header, primary group dividers, "Stimmführer" badge).
 class MembersPage extends ConsumerWidget {
   const MembersPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final groupsAsync = ref.watch(filteredMembersGroupedProvider);
-    final allGroupsAsync = ref.watch(membersGroupedProvider);
-    final totalCount = ref.watch(memberCountProvider);
     final searchTerm = ref.watch(membersSearchTermProvider);
-    final groupFilter = ref.watch(membersGroupFilterProvider);
+    final einteilungOptions = ref.watch(membersEinteilungOptionsProvider);
+    final einteilung = ref.watch(membersEinteilungFilterProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -27,173 +27,96 @@ class MembersPage extends ConsumerWidget {
       ),
       body: Column(
         children: [
-          // Search bar
+          // ion-searchbar
           Padding(
-            padding: const EdgeInsets.all(AppDimensions.paddingM),
-            child: TextField(
-              decoration: InputDecoration(
-                hintText: 'Person suchen...',
-                prefixIcon: const Icon(Icons.search),
-                suffixIcon: searchTerm.isNotEmpty
-                    ? IconButton(
-                        icon: const Icon(Icons.clear),
-                        onPressed: () {
-                          ref.read(membersSearchTermProvider.notifier).state = '';
-                        },
-                      )
-                    : null,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppDimensions.borderRadiusM),
-                ),
-                filled: true,
-                fillColor: Theme.of(context).colorScheme.surfaceContainerHighest,
-              ),
-              onChanged: (value) {
-                ref.read(membersSearchTermProvider.notifier).state = value;
-              },
+            padding: const EdgeInsets.fromLTRB(
+              AppDimensions.paddingM,
+              AppDimensions.paddingS,
+              AppDimensions.paddingM,
+              AppDimensions.paddingS,
+            ),
+            child: SearchBar(
+              hintText: 'Person suchen...',
+              elevation: const WidgetStatePropertyAll(0),
+              leading: const Icon(Icons.search),
+              trailing: [
+                if (searchTerm.isNotEmpty)
+                  IconButton(
+                    icon: const Icon(Icons.clear),
+                    onPressed: () => ref.read(membersSearchTermProvider.notifier).state = '',
+                  ),
+              ],
+              onChanged: (value) => ref.read(membersSearchTermProvider.notifier).state = value,
             ),
           ),
 
-          // Group filter chips
-          allGroupsAsync.whenOrNull(
-            data: (allGroups) {
-              if (allGroups.length <= 1) return null;
-              return SizedBox(
-                height: 40,
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM),
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(right: AppDimensions.paddingS),
-                      child: FilterChip(
-                        label: const Text('Alle'),
-                        selected: groupFilter == null,
-                        onSelected: (_) {
-                          ref.read(membersGroupFilterProvider.notifier).state = null;
-                        },
-                      ),
+          // ion-segment (scrollable) on the "einteilung" extra field
+          if (einteilungOptions.isNotEmpty)
+            SizedBox(
+              height: 48,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM),
+                children: [
+                  for (final option in ['all', ...einteilungOptions])
+                    _SegmentTab(
+                      label: option == 'all' ? 'Alle' : option,
+                      selected: einteilung == option,
+                      onTap: () => ref.read(membersEinteilungFilterProvider.notifier).state = option,
                     ),
-                    ...allGroups.map((g) => Padding(
-                          padding: const EdgeInsets.only(right: AppDimensions.paddingS),
-                          child: FilterChip(
-                            label: Text(g.groupName),
-                            selected: groupFilter == g.groupId,
-                            onSelected: (_) {
-                              ref.read(membersGroupFilterProvider.notifier).state =
-                                  groupFilter == g.groupId ? null : g.groupId;
-                            },
-                          ),
-                        )),
-                  ],
-                ),
-              );
-            },
-          ) ?? const SizedBox.shrink(),
-          const SizedBox(height: AppDimensions.paddingS),
+                ],
+              ),
+            ),
 
-          // Members list
           Expanded(
             child: RefreshIndicator(
               onRefresh: () async {
                 ref.invalidate(membersGroupedProvider);
+                ref.invalidate(personExtraFieldsProvider);
                 await ref.read(membersGroupedProvider.future);
               },
               child: groupsAsync.when(
-                loading: () => const GroupedListSkeleton(),
-                error: (error, stack) => Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.error_outline, size: 64, color: AppColors.danger),
-                      const SizedBox(height: AppDimensions.paddingM),
-                      Text(
-                        'Fehler beim Laden',
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
-                      const SizedBox(height: AppDimensions.paddingL),
-                      ElevatedButton(
-                        onPressed: () => ref.invalidate(membersGroupedProvider),
-                        child: const Text('Erneut versuchen'),
-                      ),
-                    ],
-                  ),
+                loading: () => const Center(child: CircularProgressIndicator()),
+                error: (error, stack) => ListView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  children: const [
+                    _NoData(text: 'Mitglieder konnten nicht geladen werden.'),
+                  ],
                 ),
                 data: (groups) {
-                  if (groups.isEmpty) {
-                    return Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(
-                            Icons.group_off_outlined,
-                            size: 64,
-                            color: AppColors.medium,
-                          ),
-                          const SizedBox(height: AppDimensions.paddingM),
-                          Text(
-                            searchTerm.isNotEmpty
-                                ? 'Keine Ergebnisse'
-                                : 'Keine Mitglieder',
-                            style: Theme.of(context).textTheme.titleMedium,
-                          ),
-                          if (searchTerm.isNotEmpty) ...[
-                            const SizedBox(height: AppDimensions.paddingS),
-                            Text(
-                              'Keine Mitglieder für "$searchTerm" gefunden.',
-                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: AppColors.medium,
-                                  ),
-                            ),
-                          ],
-                        ],
-                      ),
+                  final count = groups.fold<int>(0, (sum, g) => sum + g.members.length);
+                  if (count == 0) {
+                    return ListView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      children: const [_NoData(text: 'Keine Mitglieder gefunden.')],
                     );
                   }
 
-                  return ListView.builder(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppDimensions.paddingM,
-                    ),
-                    // +1 for header, +1 for card wrapper (contains all groups), +1 for footer
-                    itemCount: 3,
-                    itemBuilder: (context, index) {
-                      if (index == 0) {
-                        // Header with total count
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: AppDimensions.paddingS,
-                          ),
-                          child: Text(
-                            'Personen ($totalCount)',
-                            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                                  color: AppColors.medium,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                          ),
-                        );
-                      }
-                      if (index == 2) {
-                        // Footer spacing
-                        return const SizedBox(height: AppDimensions.paddingL);
-                      }
-                      // Groups card
-                      return Card(
-                        margin: EdgeInsets.zero,
-                        child: Column(
-                          children: [
-                            for (int i = 0; i < groups.length; i++) ...[
-                              _GroupSection(
-                                key: ValueKey(groups[i].groupName),
-                                group: groups[i],
-                              ),
-                              if (i < groups.length - 1)
-                                const Divider(height: 1),
-                            ],
-                          ],
+                  return ListView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: const EdgeInsets.only(bottom: AppDimensions.paddingL),
+                    children: [
+                      // ion-list-header
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(
+                          AppDimensions.paddingM,
+                          AppDimensions.paddingM,
+                          AppDimensions.paddingM,
+                          AppDimensions.paddingS,
                         ),
-                      );
-                    },
+                        child: Text(
+                          'Personen ($count)',
+                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.w700,
+                              ),
+                        ),
+                      ),
+                      for (final group in groups) ...[
+                        _GroupDivider(label: '${group.groupName} (${group.members.length})'),
+                        for (final member in group.members)
+                          _MemberTile(key: ValueKey(member.id), person: member),
+                      ],
+                    ],
                   );
                 },
               ),
@@ -205,43 +128,81 @@ class MembersPage extends ConsumerWidget {
   }
 }
 
-/// Section for a single group with its members
-class _GroupSection extends StatelessWidget {
-  const _GroupSection({super.key, required this.group});
+/// Ionic `ion-segment-button` look: label with an underline when selected.
+class _SegmentTab extends StatelessWidget {
+  const _SegmentTab({required this.label, required this.selected, required this.onTap});
 
-  final MembersGroup group;
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Group header
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppDimensions.paddingM,
-            vertical: AppDimensions.paddingS,
-          ),
-          color: AppColors.primary.withValues(alpha: 0.05),
-          child: Text(
-            '${group.groupName} (${group.members.length})',
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.primary,
-                ),
+    final color = selected ? AppColors.primary : AppColors.medium;
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          border: Border(
+            bottom: BorderSide(color: selected ? AppColors.primary : Colors.transparent, width: 2),
           ),
         ),
-
-        // Members
-        for (final member in group.members)
-          _MemberTile(key: ValueKey(member.id), person: member),
-      ],
+        child: Text(
+          label.toUpperCase(),
+          style: TextStyle(color: color, fontWeight: FontWeight.w600, fontSize: 13, letterSpacing: 0.5),
+        ),
+      ),
     );
   }
 }
 
-/// Single member tile
+/// Ionic `ion-item-divider color="primary"`.
+class _GroupDivider extends StatelessWidget {
+  const _GroupDivider({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppDimensions.paddingM,
+        vertical: AppDimensions.paddingS,
+      ),
+      color: AppColors.primary,
+      child: Text(
+        label,
+        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+      ),
+    );
+  }
+}
+
+/// Ionic `.no-data-message`: people icon + text.
+class _NoData extends StatelessWidget {
+  const _NoData({required this.text});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 64, horizontal: AppDimensions.paddingL),
+      child: Column(
+        children: [
+          const Icon(Icons.people_outline, size: 64, color: AppColors.medium),
+          const SizedBox(height: AppDimensions.paddingM),
+          Text(text, textAlign: TextAlign.center, style: const TextStyle(color: AppColors.medium)),
+        ],
+      ),
+    );
+  }
+}
+
+/// Single member row (name + "Stimmführer" badge).
 class _MemberTile extends StatelessWidget {
   const _MemberTile({super.key, required this.person});
 
@@ -249,37 +210,26 @@ class _MemberTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      dense: true,
-      title: Row(
-        children: [
-          Expanded(
-            child: Text(
-              person.fullName,
-              style: const TextStyle(fontWeight: FontWeight.w500),
-            ),
-          ),
-          if (person.isLeader)
-            Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 6,
-                vertical: 2,
-              ),
-              decoration: BoxDecoration(
-                color: AppColors.primary,
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: const Text(
-                'Sf',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 10,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-        ],
-      ),
+    return Column(
+      children: [
+        ListTile(
+          title: Text(person.fullName),
+          trailing: person.isLeader
+              ? Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: AppColors.primary,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: const Text(
+                    'Stimmführer',
+                    style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600),
+                  ),
+                )
+              : null,
+        ),
+        const Divider(height: 1, indent: AppDimensions.paddingM),
+      ],
     );
   }
 }
