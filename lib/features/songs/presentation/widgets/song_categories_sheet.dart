@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/song_providers.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/song/song.dart';
 
 /// Bottom sheet for managing song categories (CRUD)
@@ -53,8 +54,6 @@ class _SongCategoriesSheetState extends ConsumerState<SongCategoriesSheet> {
                 padding: const EdgeInsets.all(AppDimensions.paddingM),
                 child: Row(
                   children: [
-                    const Icon(Icons.category, color: AppColors.primary),
-                    const SizedBox(width: AppDimensions.paddingS),
                     Expanded(
                       child: Text(
                         'Werk-Kategorien',
@@ -67,7 +66,7 @@ class _SongCategoriesSheetState extends ConsumerState<SongCategoriesSheet> {
                     IconButton(
                       icon: const Icon(Icons.add),
                       onPressed: () => _showAddCategoryDialog(context),
-                      tooltip: 'Neue Kategorie',
+                      tooltip: 'Kategorie hinzufügen',
                     ),
                     IconButton(
                       icon: const Icon(Icons.close),
@@ -109,25 +108,14 @@ class _SongCategoriesSheetState extends ConsumerState<SongCategoriesSheet> {
 
                     if (displayCategories.isEmpty) {
                       return Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(
-                              Icons.category_outlined,
-                              size: 64,
-                              color: AppColors.medium,
-                            ),
-                            const SizedBox(height: AppDimensions.paddingM),
-                            Text(
-                              'Keine Kategorien',
-                              style: Theme.of(context).textTheme.titleMedium,
-                            ),
-                            const SizedBox(height: AppDimensions.paddingS),
-                            const Text(
-                              'Tippe + um eine Kategorie zu erstellen',
-                              style: TextStyle(color: AppColors.medium),
-                            ),
-                          ],
+                        // Ionic: plain centred text
+                        child: Padding(
+                          padding: const EdgeInsets.all(AppDimensions.paddingM),
+                          child: Text(
+                            'Es wurden noch keine Kategorien angelegt.',
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
                         ),
                       );
                     }
@@ -194,12 +182,11 @@ class _SongCategoriesSheetState extends ConsumerState<SongCategoriesSheet> {
     final result = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Neue Kategorie'),
+        title: const Text('Kategorie hinzufügen'),
         content: TextField(
           controller: controller,
           decoration: const InputDecoration(
-            labelText: 'Name',
-            hintText: 'z.B. Weihnachten',
+            hintText: 'Name der Kategorie',
           ),
           autofocus: true,
           textCapitalization: TextCapitalization.sentences,
@@ -216,14 +203,17 @@ class _SongCategoriesSheetState extends ConsumerState<SongCategoriesSheet> {
                 Navigator.of(context).pop(name);
               }
             },
-            child: const Text('Erstellen'),
+            child: const Text('Hinzufügen'),
           ),
         ],
       ),
     );
 
     if (result != null && mounted) {
-      await ref.read(songCategoryNotifierProvider.notifier).add(result);
+      final created = await ref.read(songCategoryNotifierProvider.notifier).add(result);
+      if (created != null && context.mounted) {
+        ToastHelper.showSuccess(context, 'Kategorie hinzugefügt');
+      }
     }
   }
 
@@ -238,7 +228,7 @@ class _SongCategoriesSheetState extends ConsumerState<SongCategoriesSheet> {
         content: TextField(
           controller: controller,
           decoration: const InputDecoration(
-            labelText: 'Name',
+            hintText: 'Name der Kategorie',
           ),
           autofocus: true,
           textCapitalization: TextCapitalization.sentences,
@@ -262,9 +252,10 @@ class _SongCategoriesSheetState extends ConsumerState<SongCategoriesSheet> {
     );
 
     if (result != null && category.id != null && mounted) {
-      await ref
+      final ok = await ref
           .read(songCategoryNotifierProvider.notifier)
           .update(category.id!, result);
+      if (ok && context.mounted) ToastHelper.showSuccess(context, 'Kategorie gespeichert');
     }
   }
 
@@ -273,9 +264,9 @@ class _SongCategoriesSheetState extends ConsumerState<SongCategoriesSheet> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Kategorie löschen?'),
-        content: Text(
-            'Möchtest du die Kategorie "${category.name}" wirklich löschen?'),
+        title: const Text('Kategorie löschen'),
+        content: const Text(
+            'Möchten Sie diese Kategorie wirklich löschen? Alle Werke in dieser Kategorie werden keiner neuen Kategorie zugewiesen.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
@@ -293,9 +284,10 @@ class _SongCategoriesSheetState extends ConsumerState<SongCategoriesSheet> {
     );
 
     if (confirmed == true && category.id != null && mounted) {
-      await ref
+      final ok = await ref
           .read(songCategoryNotifierProvider.notifier)
           .delete(category.id!);
+      if (ok && context.mounted) ToastHelper.showSuccess(context, 'Kategorie gelöscht');
     }
   }
 }

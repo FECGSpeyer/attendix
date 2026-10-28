@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
 import 'package:printing/printing.dart';
 
@@ -45,6 +46,69 @@ class _ExportPageState extends ConsumerState<ExportPage> {
   List<ExtraField> get _extraFields =>
       ref.read(currentTenantProvider)?.additionalFields ?? const [];
 
+  void _setContentType(String value) {
+    if (value == _contentType) return;
+    setState(() {
+      _contentType = value;
+      _sortField = 'gruppe';
+      _sortAscending = true;
+      _selectedFields = value == 'player'
+          ? [...defaultPlayerExportFields]
+          : [...defaultAttendanceExportFields];
+    });
+  }
+
+  /// Ionic `ion-select multiple` "Felder": keeps the current order of the
+  /// fields that stay selected, appends newly selected ones.
+  Future<void> _pickFields(List<String> available) async {
+    final selection = {..._selectedFields};
+    final result = await showDialog<Set<String>>(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setLocal) => AlertDialog(
+          title: const Text('Felder'),
+          content: SizedBox(
+            width: double.maxFinite,
+            child: ListView(
+              shrinkWrap: true,
+              children: [
+                for (final f in available)
+                  CheckboxListTile(
+                    dense: true,
+                    title: Text(f),
+                    value: selection.contains(f),
+                    onChanged: (v) => setLocal(() {
+                      v == true ? selection.add(f) : selection.remove(f);
+                    }),
+                  ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('Abbrechen'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, selection),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      ),
+    );
+    if (result == null || !mounted) return;
+    setState(() {
+      _selectedFields = [
+        // custom (free text) columns are not part of `available` and stay
+        for (final f in _selectedFields)
+          if (result.contains(f) || !available.contains(f)) f,
+        for (final f in available)
+          if (result.contains(f) && !_selectedFields.contains(f)) f,
+      ];
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final tenant = ref.watch(currentTenantProvider);
@@ -54,265 +118,157 @@ class _ExportPageState extends ConsumerState<ExportPage> {
     if (!sortOptions.any((o) => o.value == _sortField)) {
       _sortField = 'gruppe';
     }
+    final selectedAvailable = _selectedFields.where(available.contains).join(', ');
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Daten exportieren'),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(AppDimensions.paddingM),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Content type selector
-            _buildSection(
-              title: 'Inhalt',
-              child: SegmentedButton<String>(
-                segments: const [
-                  ButtonSegment(value: 'player', label: Text('Spieler')),
-                  ButtonSegment(value: 'attendance', label: Text('Anwesenheit')),
+      body: ListView(
+        padding: const EdgeInsets.only(bottom: AppDimensions.paddingL),
+        children: [
+          // Ionic `ion-segment mode="md"`: Spieler | Anwesenheit
+          _ExportSegment(
+            value: _contentType,
+            options: const [('player', 'Spieler'), ('attendance', 'Anwesenheit')],
+            onChanged: _setContentType,
+          ),
+          // "Felder" multi select
+          ListTile(
+            title: const Text('Felder'),
+            trailing: ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: MediaQuery.sizeOf(context).width * 0.55),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Flexible(
+                    child: Text(
+                      selectedAvailable,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(color: AppColors.medium),
+                    ),
+                  ),
+                  const Icon(Icons.arrow_drop_down, color: AppColors.medium),
                 ],
-                selected: {_contentType},
-                onSelectionChanged: (value) {
-                  setState(() {
-                    _contentType = value.first;
-                    _sortField = 'gruppe';
-                    _sortAscending = true;
-                    _selectedFields = value.first == 'player'
-                        ? [...defaultPlayerExportFields]
-                        : [...defaultAttendanceExportFields];
-                  });
-                },
               ),
             ),
-            const SizedBox(height: AppDimensions.paddingL),
-
-            // Field selection
-            _buildSection(
-              title: 'Felder',
-              child: Column(
-                children: [
-                  ReorderableListView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: _selectedFields.length,
-                    onReorder: (oldIndex, newIndex) {
-                      setState(() {
-                        if (newIndex > oldIndex) newIndex--;
-                        final item = _selectedFields.removeAt(oldIndex);
-                        _selectedFields.insert(newIndex, item);
-                      });
-                    },
-                    itemBuilder: (context, index) {
-                      final field = _selectedFields[index];
-                      return Card(
-                        key: ValueKey('$field-$index'),
-                        margin: const EdgeInsets.only(bottom: 4),
-                        child: ListTile(
-                          leading: const Icon(Icons.drag_handle),
+            onTap: () => _pickFields(available),
+          ),
+          const Divider(height: 1),
+          // Selected fields: reorder via handle, swipe left to remove (Ionic
+          // ion-reorder-group + ion-item-sliding)
+          SlidableAutoCloseBehavior(
+            child: ReorderableListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              buildDefaultDragHandles: false,
+              itemCount: _selectedFields.length,
+              onReorder: (oldIndex, newIndex) {
+                setState(() {
+                  if (newIndex > oldIndex) newIndex--;
+                  final item = _selectedFields.removeAt(oldIndex);
+                  _selectedFields.insert(newIndex, item);
+                });
+              },
+              itemBuilder: (context, index) {
+                final field = _selectedFields[index];
+                return Slidable(
+                  key: ValueKey('$field-$index'),
+                  endActionPane: ActionPane(
+                    motion: const DrawerMotion(),
+                    extentRatio: 0.22,
+                    children: [
+                      SlidableAction(
+                        onPressed: (_) => setState(() => _selectedFields.removeAt(index)),
+                        backgroundColor: AppColors.danger,
+                        foregroundColor: Colors.white,
+                        icon: Icons.delete,
+                      ),
+                    ],
+                  ),
+                  child: Material(
+                    color: Theme.of(context).colorScheme.surface,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ListTile(
                           title: Text(field),
                           subtitle: available.contains(field)
                               ? null
                               : const Text('Eigenes Feld (leer)'),
-                          trailing: IconButton(
-                            icon: const Icon(Icons.remove_circle_outline),
-                            onPressed: () {
-                              setState(() => _selectedFields.removeAt(index));
-                            },
+                          trailing: ReorderableDragStartListener(
+                            index: index,
+                            child: const Padding(
+                              padding: EdgeInsets.all(8),
+                              child: Icon(Icons.reorder, color: AppColors.medium),
+                            ),
                           ),
                         ),
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: PopupMenuButton<String>(
-                          onSelected: (field) {
-                            setState(() {
-                              if (!_selectedFields.contains(field)) {
-                                _selectedFields.add(field);
-                              }
-                            });
-                          },
-                          itemBuilder: (context) => available
-                              .where((f) => !_selectedFields.contains(f))
-                              .map((f) => PopupMenuItem(
-                                    value: f,
-                                    child: Text(f),
-                                  ))
-                              .toList(),
-                          child: _outlinedButtonLike(
-                              Icons.add, 'Feld hinzufügen'),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: InkWell(
-                          onTap: _addCustomField,
-                          borderRadius: BorderRadius.circular(8),
-                          child: _outlinedButtonLike(
-                              Icons.edit_note, 'Extrafeld hinzufügen'),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: AppDimensions.paddingL),
-
-            // Sorting
-            _buildSection(
-              title: 'Sortierung',
-              child: Row(
-                children: [
-                  Expanded(
-                    flex: 3,
-                    child: DropdownButtonFormField<String>(
-                      value: _sortField,
-                      isExpanded: true,
-                      decoration: const InputDecoration(
-                        labelText: 'Sortieren nach',
-                        border: OutlineInputBorder(),
-                        isDense: true,
-                      ),
-                      items: sortOptions
-                          .map((o) => DropdownMenuItem(
-                                value: o.value,
-                                child: Text(o.label,
-                                    overflow: TextOverflow.ellipsis),
-                              ))
-                          .toList(),
-                      onChanged: (v) {
-                        if (v != null) setState(() => _sortField = v);
-                      },
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    flex: 2,
-                    child: DropdownButtonFormField<bool>(
-                      value: _sortAscending,
-                      isExpanded: true,
-                      decoration: const InputDecoration(
-                        labelText: 'Reihenfolge',
-                        border: OutlineInputBorder(),
-                        isDense: true,
-                      ),
-                      items: const [
-                        DropdownMenuItem(value: true, child: Text('Aufsteigend (A–Z)')),
-                        DropdownMenuItem(value: false, child: Text('Absteigend (Z–A)')),
-                      ],
-                      onChanged: (v) {
-                        if (v != null) setState(() => _sortAscending = v);
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: AppDimensions.paddingL),
-
-            // Export type selector
-            _buildSection(
-              title: 'Export-Typ',
-              child: SegmentedButton<String>(
-                segments: const [
-                  ButtonSegment(value: 'pdf', label: Text('PDF')),
-                  ButtonSegment(value: 'excel', label: Text('Excel')),
-                ],
-                selected: {_exportType},
-                onSelectionChanged: (value) {
-                  setState(() => _exportType = value.first);
-                },
-              ),
-            ),
-            const SizedBox(height: AppDimensions.paddingXL),
-
-            // PDF limit hint for attendance export
-            if (_contentType == 'attendance' && _exportType == 'pdf')
-              Padding(
-                padding: const EdgeInsets.only(bottom: AppDimensions.paddingM),
-                child: Card(
-                  color: AppColors.info.withAlpha(26),
-                  child: const Padding(
-                    padding: EdgeInsets.all(AppDimensions.paddingS),
-                    child: Row(
-                      children: [
-                        Icon(Icons.info_outline, size: 16, color: AppColors.info),
-                        SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            'PDF-Export ist auf die letzten 8 Termine begrenzt. Für alle Termine der Saison nutze den Excel-Export.',
-                            style: TextStyle(fontSize: 12, color: AppColors.info),
-                          ),
-                        ),
+                        const Divider(height: 1, indent: 16),
                       ],
                     ),
                   ),
+                );
+              },
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: FilledButton(
+                style: FilledButton.styleFrom(
+                  visualDensity: VisualDensity.compact,
+                  textStyle: const TextStyle(fontSize: 13),
                 ),
-              ),
-
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: _isExporting ? null : _export,
-                icon: _isExporting
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : Icon(_exportType == 'pdf'
-                        ? Icons.picture_as_pdf
-                        : Icons.table_chart),
-                label: Padding(
-                  padding: const EdgeInsets.all(AppDimensions.paddingM),
-                  child: Text(_isExporting ? 'Exportiere...' : 'Exportieren'),
-                ),
+                onPressed: _addCustomField,
+                child: const Text('Extrafeld hinzufügen'),
               ),
             ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _outlinedButtonLike(IconData icon, String label) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-      decoration: BoxDecoration(
-        border: Border.all(color: AppColors.medium),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, size: 20),
-          const SizedBox(width: 8),
-          Flexible(child: Text(label, overflow: TextOverflow.ellipsis)),
+          ),
+          _SelectItem<String>(
+            label: 'Sortieren nach',
+            value: _sortField,
+            options: [for (final o in sortOptions) (o.value, o.label)],
+            onChanged: (v) => setState(() => _sortField = v),
+          ),
+          _SelectItem<bool>(
+            label: 'Reihenfolge',
+            value: _sortAscending,
+            options: const [(true, 'Aufsteigend (A–Z)'), (false, 'Absteigend (Z–A)')],
+            onChanged: (v) => setState(() => _sortAscending = v),
+          ),
+          _SelectItem<String>(
+            label: 'Export-Typ',
+            value: _exportType,
+            options: const [('pdf', 'PDF'), ('excel', 'Excel')],
+            onChanged: (v) => setState(() => _exportType = v),
+          ),
+          // Flutter hint: the PDF attendance export is limited to 8 dates
+          if (_contentType == 'attendance' && _exportType == 'pdf')
+            const Padding(
+              padding: EdgeInsets.fromLTRB(16, 8, 16, 0),
+              child: Text(
+                'PDF-Export ist auf die letzten 8 Termine begrenzt. Für alle Termine der Saison nutze den Excel-Export.',
+                style: TextStyle(fontSize: 12, color: AppColors.medium),
+              ),
+            ),
+          Padding(
+            padding: const EdgeInsets.all(AppDimensions.paddingM),
+            child: FilledButton(
+              onPressed: _isExporting ? null : _export,
+              child: _isExporting
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Text('Exportieren'),
+            ),
+          ),
         ],
       ),
-    );
-  }
-
-  Widget _buildSection({required String title, required Widget child}) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-            color: AppColors.medium,
-          ),
-        ),
-        const SizedBox(height: 8),
-        child,
-      ],
     );
   }
 
@@ -498,5 +454,106 @@ class _ExportPageState extends ConsumerState<ExportPage> {
   /// Share/download the Excel file (works on web/PWA as well)
   Future<void> _shareExcel(Uint8List bytes, String baseName) async {
     await Printing.sharePdf(bytes: bytes, filename: '$baseName.xlsx');
+  }
+}
+
+/// Ionic `ion-segment mode="md"` spanning the full width.
+class _ExportSegment extends StatelessWidget {
+  const _ExportSegment({
+    required this.value,
+    required this.options,
+    required this.onChanged,
+  });
+
+  final String value;
+  final List<(String, String)> options;
+  final ValueChanged<String> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        for (final o in options)
+          Expanded(
+            child: InkWell(
+              onTap: () => onChanged(o.$1),
+              child: Container(
+                height: 48,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(
+                      color: value == o.$1 ? AppColors.primary : Colors.transparent,
+                      width: 2,
+                    ),
+                  ),
+                ),
+                child: Text(
+                  o.$2.toUpperCase(),
+                  style: TextStyle(
+                    color: value == o.$1 ? AppColors.primary : AppColors.medium,
+                    fontWeight: FontWeight.w500,
+                    letterSpacing: 0.6,
+                  ),
+                ),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+/// Ionic `ion-item` with `ion-select interface="popover"`: label left,
+/// current value right, popup menu on tap.
+class _SelectItem<T> extends StatelessWidget {
+  const _SelectItem({
+    required this.label,
+    required this.value,
+    required this.options,
+    required this.onChanged,
+  });
+
+  final String label;
+  final T value;
+  final List<(T, String)> options;
+  final ValueChanged<T> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final current = options.where((o) => o.$1 == value).firstOrNull?.$2 ?? '';
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        PopupMenuButton<T>(
+          initialValue: value,
+          onSelected: onChanged,
+          itemBuilder: (_) => [
+            for (final o in options) PopupMenuItem<T>(value: o.$1, child: Text(o.$2)),
+          ],
+          child: ListTile(
+            title: Text(label),
+            trailing: ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: MediaQuery.sizeOf(context).width * 0.5),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Flexible(
+                    child: Text(
+                      current,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(color: AppColors.medium),
+                    ),
+                  ),
+                  const Icon(Icons.arrow_drop_down, color: AppColors.medium),
+                ],
+              ),
+            ),
+          ),
+        ),
+        const Divider(height: 1, indent: 16),
+      ],
+    );
   }
 }

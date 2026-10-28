@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -863,57 +864,86 @@ class _MyPlansSheet extends ConsumerWidget {
                       child: Text('Keine Pläne vorhanden.', style: TextStyle(color: AppColors.medium)),
                     );
                   }
-                  return ListView.builder(
-                    itemCount: plans.length,
-                    itemBuilder: (_, i) {
-                      final plan = plans[i];
-                      final d = DateTime.tryParse(plan.date ?? '');
-                      final date = d == null
-                          ? ''
-                          : '${d.day.toString().padLeft(2, '0')}.${d.month.toString().padLeft(2, '0')}.${d.year}';
-                      final count = plan.fields.length;
-                      final title = (plan.planTitle?.isNotEmpty ?? false) ? plan.planTitle! : 'Ablaufplan';
-                      return Dismissible(
-                        key: ValueKey(plan.id),
-                        direction: DismissDirection.endToStart,
-                        background: Container(
-                          color: AppColors.danger,
-                          alignment: Alignment.centerRight,
-                          padding: const EdgeInsets.only(right: 16),
-                          child: const Icon(Icons.delete_outline, color: Colors.white),
+                  // Ionic: inset list, ion-item-sliding with a danger option
+                  return ListView(
+                    padding: const EdgeInsets.all(AppDimensions.paddingM),
+                    children: [
+                      Card(
+                        margin: EdgeInsets.zero,
+                        clipBehavior: Clip.antiAlias,
+                        child: SlidableAutoCloseBehavior(
+                          child: Column(
+                            children: [
+                              for (var i = 0; i < plans.length; i++) ...[
+                                if (i > 0) const Divider(height: 1),
+                                _MyPlanTile(plan: plans[i]),
+                              ],
+                            ],
+                          ),
                         ),
-                        confirmDismiss: (_) async {
-                          final ok = await showPlanConfirm(
-                            context,
-                            title: 'Plan löschen',
-                            message: '"$title" endgültig löschen?',
-                            confirmText: 'Löschen',
-                            destructive: true,
-                          );
-                          if (!ok) return false;
-                          try {
-                            await ref.read(planRepositoryWithTenantProvider).deleteMySharedPlan(plan.id);
-                            ref.invalidate(mySharedPlansProvider);
-                            return true;
-                          } catch (_) {
-                            if (context.mounted) ToastHelper.showError(context, 'Fehler beim Löschen');
-                            return false;
-                          }
-                        },
-                        child: ListTile(
-                          title: Text(title),
-                          subtitle: Text('$date${count > 0 ? ' · $count Felder' : ''}'),
-                          trailing: const Icon(Icons.chevron_right, color: AppColors.medium),
-                          onTap: () => Navigator.pop(context, plan),
-                        ),
-                      );
-                    },
+                      ),
+                    ],
                   );
                 },
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _MyPlanTile extends ConsumerWidget {
+  const _MyPlanTile({required this.plan});
+
+  final SharedPlan plan;
+
+  /// Ionic `deletePlan`: alert, then delete.
+  Future<void> _delete(BuildContext context, WidgetRef ref, String title) async {
+    final ok = await showPlanConfirm(
+      context,
+      title: 'Plan löschen',
+      message: '"$title" endgültig löschen?',
+      confirmText: 'Löschen',
+      destructive: true,
+    );
+    if (!ok) return;
+    try {
+      await ref.read(planRepositoryWithTenantProvider).deleteMySharedPlan(plan.id);
+      ref.invalidate(mySharedPlansProvider);
+    } catch (_) {
+      if (context.mounted) ToastHelper.showError(context, 'Fehler beim Löschen');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final d = DateTime.tryParse(plan.date ?? '');
+    final date = d == null
+        ? ''
+        : '${d.day.toString().padLeft(2, '0')}.${d.month.toString().padLeft(2, '0')}.${d.year}';
+    final count = plan.fields.length;
+    final title = (plan.planTitle?.isNotEmpty ?? false) ? plan.planTitle! : 'Ablaufplan';
+    return Slidable(
+      key: ValueKey(plan.id),
+      endActionPane: ActionPane(
+        motion: const DrawerMotion(),
+        extentRatio: 0.22,
+        children: [
+          SlidableAction(
+            onPressed: (_) => _delete(context, ref, title),
+            backgroundColor: AppColors.danger,
+            foregroundColor: Colors.white,
+            icon: Icons.delete_outline,
+          ),
+        ],
+      ),
+      child: ListTile(
+        title: Text(title),
+        subtitle: Text('$date${count > 0 ? ' · $count Felder' : ''}'),
+        trailing: const Icon(Icons.chevron_right, color: AppColors.medium),
+        onTap: () => Navigator.pop(context, plan),
       ),
     );
   }

@@ -405,19 +405,29 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
                 ),
               )
             else
-              SliverList.separated(
-                itemCount: filtered.length,
-                separatorBuilder: (_, __) => const Divider(height: 1, indent: 16),
-                itemBuilder: (context, index) {
-                  final song = filtered[index];
-                  return _SongListItem(
-                    key: ValueKey(song.id),
-                    song: song,
-                    data: data,
-                    view: view,
-                    onTap: song.id == null ? null : () => _openSong(song.id!),
-                  );
-                },
+              // Ionic `ion-list [inset]="true"`: rounded card around the songs
+              SliverPadding(
+                padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM),
+                sliver: DecoratedSliver(
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).cardColor,
+                    borderRadius: BorderRadius.circular(AppDimensions.borderRadiusL),
+                  ),
+                  sliver: SliverList.separated(
+                    itemCount: filtered.length,
+                    separatorBuilder: (_, __) => const Divider(height: 1, indent: 16),
+                    itemBuilder: (context, index) {
+                      final song = filtered[index];
+                      return _SongListItem(
+                        key: ValueKey(song.id),
+                        song: song,
+                        data: data,
+                        view: view,
+                        onTap: song.id == null ? null : () => _openSong(song.id!),
+                      );
+                    },
+                  ),
+                ),
               ),
             const SliverToBoxAdapter(child: SizedBox(height: 88)),
           ],
@@ -427,7 +437,8 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
   }
 }
 
-/// Horizontal category segment ("Alle" + categories), Ionic `ion-segment`
+/// Ionic `ion-segment [scrollable]="true" mode="md"`: horizontally
+/// scrollable segment buttons ("Alle" + categories) with an underline.
 class _CategorySegment extends StatelessWidget {
   const _CategorySegment({
     required this.categories,
@@ -441,30 +452,66 @@ class _CategorySegment extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final entries = <(String?, String)>[
+      (null, 'Alle'),
+      for (final c in categories)
+        if (c.id != null) (c.id, c.name),
+    ];
     return SizedBox(
       height: 48,
       child: ListView(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM, vertical: 6),
+        padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingS),
         children: [
-          Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: ChoiceChip(
-              label: const Text('Alle'),
-              selected: selected == null,
-              onSelected: (_) => onSelected(null),
-            ),
-          ),
-          for (final c in categories)
-            Padding(
-              padding: const EdgeInsets.only(right: 8),
-              child: ChoiceChip(
-                label: Text(c.name),
-                selected: selected == c.id,
-                onSelected: (_) => onSelected(c.id),
-              ),
+          for (final e in entries)
+            _SegmentButton(
+              label: e.$2,
+              selected: selected == e.$1,
+              onTap: () => onSelected(e.$1),
             ),
         ],
+      ),
+    );
+  }
+}
+
+class _SegmentButton extends StatelessWidget {
+  const _SegmentButton({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = selected ? AppColors.primary : AppColors.medium;
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        constraints: const BoxConstraints(minWidth: 72),
+        padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          border: Border(
+            bottom: BorderSide(
+              color: selected ? AppColors.primary : Colors.transparent,
+              width: 2,
+            ),
+          ),
+        ),
+        child: Text(
+          label.toUpperCase(),
+          style: TextStyle(
+            color: color,
+            fontWeight: FontWeight.w500,
+            fontSize: 14,
+            letterSpacing: 0.6,
+          ),
+        ),
       ),
     );
   }
