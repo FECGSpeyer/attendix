@@ -14,12 +14,11 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/providers/duty_providers.dart';
-import '../../../../core/providers/organisation_providers.dart';
 import '../../../../core/providers/group_providers.dart'; // SETTINGS2
 import '../../../../data/models/tenant/tenant.dart';
-import '../../../../data/models/organisation/organisation.dart';
 import '../widgets/critical_rule_card.dart';
 import '../widgets/critical_rule_sheet.dart';
+import '../widgets/settings_list.dart'; // UX_SETTINGS
 
 /// German holiday regions
 const _holidayRegions = [
@@ -372,7 +371,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
     final link = '$baseUrl$id';
     await Clipboard.setData(ClipboardData(text: link));
     if (mounted) {
-      ToastHelper.showSuccess(context, 'Link kopiert');
+      ToastHelper.showSuccess(context, 'Der Link wurde in die Zwischenablage kopiert');
     }
   }
 
@@ -385,7 +384,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
       },
       child: Scaffold(
       appBar: AppBar(
-        title: const Text('Allgemeine Einstellungen'),
+        title: const Text('Einstellungen'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -396,433 +395,352 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
             }
           },
         ),
-        actions: [
-          if (_hasChanges)
-            TextButton(
-              onPressed: _isSaving ? null : _saveSettings,
-              child: _isSaving
-                  ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
-                  : const Text('Speichern'),
-            ),
-        ],
       ),
+      // UX_SETTINGS: Ionic saves via FAB (save-outline)
+      floatingActionButton: _isLoading
+          ? null
+          : FloatingActionButton(
+              onPressed: _isSaving ? null : _saveSettings,
+              tooltip: 'Speichern',
+              child: _isSaving
+                  ? const SizedBox(
+                      width: 22,
+                      height: 22,
+                      child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                    )
+                  : const Icon(Icons.save_outlined),
+            ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : Form(
               key: _formKey,
               child: ListView(
-                padding: const EdgeInsets.all(AppDimensions.paddingM),
+                padding: const EdgeInsets.fromLTRB(
+                  AppDimensions.paddingM,
+                  AppDimensions.paddingM,
+                  AppDimensions.paddingM,
+                  96,
+                ),
                 children: [
-                  // Basic info section
-                  _buildSectionHeader('Grunddaten'),
-                  TextFormField(
-                    controller: _shortNameController,
-                    decoration: const InputDecoration(
-                      labelText: 'Kurzname *',
-                      helperText: 'Wird in der Navigation angezeigt',
-                    ),
-                    validator: (v) => v?.trim().isEmpty ?? true ? 'Erforderlich' : null,
-                    onChanged: (_) => _markChanged(),
-                  ),
-                  const SizedBox(height: AppDimensions.paddingM),
-                  TextFormField(
-                    controller: _longNameController,
-                    decoration: const InputDecoration(
-                      labelText: 'Vollständiger Name',
-                    ),
-                    onChanged: (_) => _markChanged(),
-                  ),
-
-                  const SizedBox(height: AppDimensions.paddingXL),
-
-                  // Season section
-                  _buildSectionHeader('Saison'),
-                  ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    title: const Text('Saisonstart'),
-                    subtitle: Text(
-                      _seasonStart != null
-                          ? DateFormat('dd.MM.yyyy').format(_seasonStart!)
-                          : 'Nicht festgelegt',
-                    ),
-                    trailing: const Icon(Icons.calendar_today),
-                    onTap: _selectSeasonStart,
-                  ),
-
-                  const SizedBox(height: AppDimensions.paddingXL),
-
-                  // Practice times section
-                  _buildSectionHeader('Probenzeiten'),
-                  Row(
+                  // UX_SETTINGS: sections in Ionic order (general.page.html)
+                  // ============ ALLGEMEIN ============
+                  SettingsListSection(
+                    title: 'Allgemein',
                     children: [
-                      Expanded(
-                        child: TextFormField(
-                          controller: _practiceStartController,
-                          decoration: const InputDecoration(
-                            labelText: 'Beginn',
-                            hintText: '19:00',
-                          ),
-                          readOnly: true,
-                          onTap: () => _selectTime(_practiceStartController),
+                      _padded(TextFormField(
+                        controller: _longNameController,
+                        textCapitalization: TextCapitalization.words,
+                        decoration: const InputDecoration(labelText: 'Instanz-Name'),
+                        onChanged: (_) => _markChanged(),
+                      )),
+                      _padded(TextFormField(
+                        controller: _shortNameController,
+                        decoration: const InputDecoration(
+                          labelText: 'Instanz-Kürzel',
+                          helperText: 'Wird vor allem als Dateiname bei Exports verwendet',
                         ),
+                        validator: (v) => v?.trim().isEmpty ?? true ? 'Erforderlich' : null,
+                        onChanged: (_) => _markChanged(),
+                      )),
+                    ],
+                  ),
+
+                  // ============ ANWESENHEITEN ============
+                  SettingsListSection(
+                    title: 'Anwesenheiten',
+                    children: [
+                      ListTile(
+                        title: const Text('Saisonbeginn'),
+                        subtitle: Text(
+                          '${_seasonStart != null ? DateFormat('dd.MM.yyyy').format(_seasonStart!) : 'Nicht festgelegt'}\n'
+                          'Anwesenheiten werden erst ab diesem Datum bei den Personen berücksichtigt',
+                        ),
+                        isThreeLine: true,
+                        trailing: const Icon(Icons.calendar_today_outlined),
+                        onTap: _selectSeasonStart,
                       ),
-                      const SizedBox(width: AppDimensions.paddingM),
-                      Expanded(
-                        child: TextFormField(
-                          controller: _practiceEndController,
-                          decoration: const InputDecoration(
-                            labelText: 'Ende',
-                            hintText: '21:30',
+                      // Flutter: Probenzeiten (Standardzeiten für neue Termine)
+                      _padded(Row(
+                        children: [
+                          Expanded(
+                            child: TextFormField(
+                              controller: _practiceStartController,
+                              decoration: const InputDecoration(labelText: 'Probenbeginn', hintText: '19:00'),
+                              readOnly: true,
+                              onTap: () => _selectTime(_practiceStartController),
+                            ),
                           ),
-                          readOnly: true,
-                          onTap: () => _selectTime(_practiceEndController),
+                          const SizedBox(width: AppDimensions.paddingM),
+                          Expanded(
+                            child: TextFormField(
+                              controller: _practiceEndController,
+                              decoration: const InputDecoration(labelText: 'Probenende', hintText: '21:30'),
+                              readOnly: true,
+                              onTap: () => _selectTime(_practiceEndController),
+                            ),
+                          ),
+                        ],
+                      )),
+                      ListTile(
+                        title: const Text('Anwesenheits-Typen'),
+                        trailing: const Icon(Icons.chevron_right),
+                        onTap: () => context.push('/settings/types'),
+                      ),
+                      ListTile(
+                        title: const Text('Schichtpläne'),
+                        trailing: const Icon(Icons.chevron_right),
+                        onTap: () => context.push('/settings/shifts'),
+                      ),
+                      ListTile(
+                        title: const Text('Branding'),
+                        trailing: const Icon(Icons.chevron_right),
+                        onTap: () => context.push('/settings/general/branding'),
+                      ),
+                      _toggle(
+                        'Schicht-/Arbeitsbedingt = Anwesend',
+                        'Aktivieren, um schicht- oder arbeitsbedingt entschuldigte Abwesenheiten '
+                            'als anwesend für die prozentuale Berechnung zu werten.',
+                        _shiftExcusedAsPresent,
+                        (v) => _shiftExcusedAsPresent = v,
+                      ),
+                      _toggle(
+                        'Alle Termine für Mitglieder sichtbar',
+                        'Aktivieren, damit Mitglieder auf der Abmelde-Seite alle Termine der Instanz '
+                            'sehen können (nicht nur eigene). Eigene Termine werden hervorgehoben.',
+                        _showAllAttendances,
+                        (v) => _showAllAttendances = v,
+                      ),
+                      // DUTY: Dienstplan-Ansicht (only when a type uses Dienst-Modus)
+                      if (ref.watch(hasDutyTypesProvider))
+                        _toggle(
+                          'Dienstplan-Ansicht für Meine Termine',
+                          '„Meine Termine“ zeigt für Personen aus einem Dienst-Team zuerst ihre Dienste, offene '
+                              'Dienste und Zahlen statt der Anwesenheitsquote. Andere Termine stehen eingeklappt darunter.',
+                          _dutyView,
+                          (v) => _dutyView = v,
                         ),
+                      if (_showAllAttendances)
+                        _padded(TextFormField(
+                          controller: _showAllInfoTextController,
+                          decoration: const InputDecoration(
+                            labelText: 'Info-Text für fremde Termine',
+                            hintText: 'Du bist bei diesem Termin nicht dabei.',
+                          ),
+                          onChanged: (_) => _markChanged(),
+                        )),
+                    ],
+                  ),
+
+                  // ============ ABWESENHEITS- & VERSPÄTUNGSGRÜNDE ============
+                  SettingsListSection(
+                    title: 'Abwesenheits- & Verspätungsgründe',
+                    children: [
+                      ReasonsListEditor(
+                        title: 'Abwesenheitsgründe',
+                        reasons: _absenceReasons,
+                        defaults: EventListUtils.defaultAbsenceReasons,
+                        onChanged: (list) {
+                          setState(() => _absenceReasons = list);
+                          _markChanged();
+                        },
+                      ),
+                      ReasonsListEditor(
+                        title: 'Verspätungsgründe',
+                        reasons: _lateReasons,
+                        defaults: EventListUtils.defaultLateReasons,
+                        onChanged: (list) {
+                          setState(() => _lateReasons = list);
+                          _markChanged();
+                        },
                       ),
                     ],
                   ),
 
-                  const SizedBox(height: AppDimensions.paddingXL),
-
-                  // Holidays section
-                  _buildSectionHeader('Feiertage'),
-                  SwitchListTile(
-                    contentPadding: EdgeInsets.zero,
-                    title: const Text('Feiertage im Kalender anzeigen'),
-                    subtitle: const Text('Feiertage werden im Kalender hervorgehoben'),
-                    value: _showHolidays,
-                    onChanged: (v) {
-                      setState(() => _showHolidays = v);
-                      _markChanged();
-                    },
-                  ),
-                  if (_showHolidays)
-                    DropdownButtonFormField<String>(
-                      value: _selectedRegion,
-                      decoration: const InputDecoration(
-                        labelText: 'Bundesland',
+                  // ============ REGISTRIERUNG ============
+                  SettingsListSection(
+                    title: 'Registrierung',
+                    children: [
+                      _toggle(
+                        'Registrierung erlauben',
+                        'Aktivieren, um neuen Personen die Registrierung in dieser Instanz zu erlauben. '
+                            'Der Link wird automatisch generiert und kann nach dem Speichern kopiert werden.',
+                        _registrationEnabled,
+                        (v) {
+                          _registrationEnabled = v;
+                          if (v && _registerId == null) _registerId = const Uuid().v4();
+                        },
                       ),
-                      items: _holidayRegions.map((r) => DropdownMenuItem(
-                        value: r.$1,
-                        child: Text(r.$2),
-                      )).toList(),
-                      onChanged: (v) {
-                        setState(() => _selectedRegion = v ?? '');
-                        _markChanged();
-                      },
-                    ),
-
-                  const SizedBox(height: AppDimensions.paddingXL),
-
-                  // Features section
-                  _buildSectionHeader('Funktionen'),
-                  SwitchListTile(
-                    contentPadding: EdgeInsets.zero,
-                    title: const Text('Entschuldigungen'),
-                    subtitle: const Text('Erlaubt "Entschuldigt" als Status'),
-                    value: _withExcuses,
-                    onChanged: (v) {
-                      setState(() => _withExcuses = v);
-                      _markChanged();
-                    },
-                  ),
-                  // SETTINGS2: Ionic "Lehrer pflegen" (only for orchestras)
-                  if (ref.watch(currentTenantProvider)?.type == 'orchestra')
-                    SwitchListTile(
-                      contentPadding: EdgeInsets.zero,
-                      title: const Text('Lehrer pflegen'),
-                      subtitle: const Text('Aktivieren, um die Lehrer der Spieler verwalten zu können.'),
-                      value: _maintainTeachers,
-                      onChanged: (v) {
-                        setState(() => _maintainTeachers = v);
-                        _markChanged();
-                      },
-                    ),
-                  SwitchListTile(
-                    contentPadding: EdgeInsets.zero,
-                    title: const Text('Eltern-Modus'),
-                    subtitle: const Text('Erlaubt Eltern ihre Kinder an-/abzumelden'),
-                    value: _parents,
-                    onChanged: (v) {
-                      setState(() => _parents = v);
-                      _markChanged();
-                    },
-                  ),
-                  SwitchListTile(
-                    contentPadding: EdgeInsets.zero,
-                    title: const Text('Mitgliederliste für alle'),
-                    subtitle: const Text('Aktivieren, um Mitgliedern (Spieler, Helfer, Stimmführer) eine Übersicht aller Personen anzuzeigen'),
-                    value: _showMembersList,
-                    onChanged: (v) {
-                      setState(() => _showMembersList = v);
-                      _markChanged();
-                    },
-                  ),
-                  // SETTINGS2: Ionic "Schicht-/Arbeitsbedingt = Anwesend"
-                  SwitchListTile(
-                    contentPadding: EdgeInsets.zero,
-                    title: const Text('Schicht-/Arbeitsbedingt = Anwesend'),
-                    subtitle: const Text(
-                      'Aktivieren, um schicht- oder arbeitsbedingt entschuldigte Abwesenheiten '
-                      'als anwesend für die prozentuale Berechnung zu werten.',
-                    ),
-                    value: _shiftExcusedAsPresent,
-                    onChanged: (v) {
-                      setState(() => _shiftExcusedAsPresent = v);
-                      _markChanged();
-                    },
-                  ),
-                  // ATTENDANCE_SIGNOUT: show all Termine for members
-                  SwitchListTile(
-                    contentPadding: EdgeInsets.zero,
-                    title: const Text('Alle Termine für Mitglieder sichtbar'),
-                    subtitle: const Text(
-                      'Aktivieren, damit Mitglieder auf der Abmelde-Seite alle Termine der Instanz '
-                      'sehen können (nicht nur eigene). Eigene Termine werden hervorgehoben.',
-                    ),
-                    value: _showAllAttendances,
-                    onChanged: (v) {
-                      setState(() => _showAllAttendances = v);
-                      _markChanged();
-                    },
-                  ),
-                  if (_showAllAttendances)
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: AppDimensions.paddingS),
-                      child: TextFormField(
-                        controller: _showAllInfoTextController,
-                        decoration: const InputDecoration(
-                          labelText: 'Info-Text für fremde Termine',
-                          hintText: 'Du bist bei diesem Termin nicht dabei.',
-                          border: OutlineInputBorder(),
+                      // SETTINGS2: Ionic noGroupsYet hint
+                      if (_registrationEnabled &&
+                          ref.watch(groupsProvider).hasValue &&
+                          !_hasSelectableGroups)
+                        Container(
+                          color: AppColors.warning,
+                          child: const ListTile(
+                            leading: Icon(Icons.warning_amber_outlined, color: Colors.black87),
+                            title: Text(
+                              'Es sind noch keine Gruppen vorhanden. Bitte lege zuerst mindestens eine '
+                              'Gruppe an, bevor du die Registrierung aktivierst.',
+                              style: TextStyle(color: Colors.black87),
+                            ),
+                          ),
                         ),
-                        onChanged: (_) => _markChanged(),
-                      ),
-                    ),
-
-                  const SizedBox(height: AppDimensions.paddingXL),
-
-                  // ATTENDANCE_SIGNOUT: absence / late reasons
-                  _buildSectionHeader('Abwesenheits- & Verspätungsgründe'),
-                  ReasonsListEditor(
-                    title: 'Abwesenheitsgründe',
-                    reasons: _absenceReasons,
-                    defaults: EventListUtils.defaultAbsenceReasons,
-                    onChanged: (list) {
-                      setState(() => _absenceReasons = list);
-                      _markChanged();
-                    },
-                  ),
-                  ReasonsListEditor(
-                    title: 'Verspätungsgründe',
-                    reasons: _lateReasons,
-                    defaults: EventListUtils.defaultLateReasons,
-                    onChanged: (list) {
-                      setState(() => _lateReasons = list);
-                      _markChanged();
-                    },
-                  ),
-                  // DUTY: Dienstplan-Ansicht (only when a type uses Dienst-Modus)
-                  if (ref.watch(hasDutyTypesProvider))
-                    SwitchListTile(
-                      contentPadding: EdgeInsets.zero,
-                      title: const Text('Dienstplan-Ansicht für Meine Termine'),
-                      subtitle: const Text(
-                        '„Meine Termine“ zeigt für Personen aus einem Dienst-Team zuerst ihre Dienste, offene '
-                        'Dienste und Zahlen statt der Anwesenheitsquote. Andere Termine stehen eingeklappt darunter.',
-                      ),
-                      value: _dutyView,
-                      onChanged: (v) {
-                        setState(() => _dutyView = v);
-                        _markChanged();
-                      },
-                    ),
-
-                  const SizedBox(height: AppDimensions.paddingXL),
-
-                  // Song sharing section
-                  _buildSectionHeader('Lied-Teilen'),
-                  SwitchListTile(
-                    contentPadding: EdgeInsets.zero,
-                    title: const Text('Aktiviert'),
-                    subtitle: const Text('Lieder öffentlich über Link teilen'),
-                    value: _songSharingEnabled,
-                    onChanged: (v) {
-                      setState(() {
-                        _songSharingEnabled = v;
-                        if (v && _songSharingId == null) {
-                          _songSharingId = const Uuid().v4();
-                        }
-                      });
-                      _markChanged();
-                    },
-                  ),
-                  if (_songSharingEnabled && _songSharingId != null)
-                    ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      title: const Text('Sharing-Link'),
-                      subtitle: Text(
-                        'https://attendix.de/songs/$_songSharingId',
-                        style: const TextStyle(fontSize: 12),
-                      ),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.copy),
-                        onPressed: () => _copyLink('https://attendix.de/songs/', _songSharingId),
-                      ),
-                    ),
-
-                  const SizedBox(height: AppDimensions.paddingXL),
-
-                  // Self-registration section
-                  _buildSectionHeader('Selbst-Registrierung'),
-                  SwitchListTile(
-                    contentPadding: EdgeInsets.zero,
-                    title: const Text('Aktiviert'),
-                    subtitle: const Text('Neue Mitglieder können sich selbst registrieren'),
-                    value: _registrationEnabled,
-                    onChanged: (v) {
-                      setState(() {
-                        _registrationEnabled = v;
-                        if (v && _registerId == null) {
-                          _registerId = const Uuid().v4();
-                        }
-                      });
-                      _markChanged();
-                    },
-                  ),
-                  // SETTINGS2: Ionic noGroupsYet hint
-                  if (_registrationEnabled &&
-                      ref.watch(groupsProvider).hasValue &&
-                      !_hasSelectableGroups)
-                    Card(
-                      color: AppColors.warning.withValues(alpha: 0.15),
-                      child: const ListTile(
-                        leading: Icon(Icons.warning_amber_outlined, color: AppColors.warning),
-                        title: Text(
-                          'Es sind noch keine Gruppen vorhanden. Bitte lege zuerst mindestens eine '
-                          'Gruppe an, bevor du die Registrierung aktivierst.',
-                        ),
-                      ),
-                    ),
-                  if (_registrationEnabled) ...[
-                    ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      title: const Text('Registrierungs-Link'),
-                      subtitle: Text(
-                        'https://attendix.de/register/$_registerId',
-                        style: const TextStyle(fontSize: 12),
-                      ),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.copy),
-                        onPressed: () => _copyLink('https://attendix.de/register/', _registerId),
-                      ),
-                    ),
-                    SwitchListTile(
-                      contentPadding: EdgeInsets.zero,
-                      title: const Text('Automatisch genehmigen'),
-                      subtitle: const Text('Neue Registrierungen sofort freischalten'),
-                      value: _autoApproveRegistrations,
-                      onChanged: (v) {
-                        setState(() => _autoApproveRegistrations = v);
-                        _markChanged();
-                      },
-                    ),
-                    const SizedBox(height: AppDimensions.paddingM),
-                    const Text(
-                      'Registrierungsfelder',
-                      style: TextStyle(fontWeight: FontWeight.w600),
-                    ),
-                    const SizedBox(height: AppDimensions.paddingXS),
-                    Text(
-                      'Alle ausgewählten Felder sind Pflichtfelder bei der Registrierung.',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: AppColors.medium,
-                      ),
-                    ),
-                    const SizedBox(height: AppDimensions.paddingS),
-                    Wrap(
-                      spacing: AppDimensions.paddingS,
-                      runSpacing: AppDimensions.paddingXS,
-                      children: _buildRegistrationFieldChips(),
-                    ),
-                  ],
-
-                  const SizedBox(height: AppDimensions.paddingXL),
-
-                  // SETTINGS_EXT: Zusatzfelder, Branding, Personen verknüpfen
-                  _buildSectionHeader('Sonstiges'),
-                  Card(
-                    child: Column(
-                      children: [
+                      // Ionic: link only once saved (tenant.register_id)
+                      if (_registrationEnabled &&
+                          (ref.watch(currentTenantProvider)?.registerId ?? '').isNotEmpty)
                         ListTile(
-                          leading: const Icon(Icons.dynamic_form_outlined),
+                          title: const Text('Link kopieren', style: TextStyle(color: AppColors.primary)),
+                          onTap: () => _copyLink('https://attendix.de/register/', _registerId),
+                        ),
+                      if (_registrationEnabled) ...[
+                        _toggle(
+                          'Auto-Genehmigung',
+                          'Aktivieren, um neue Registrierungen automatisch zu genehmigen. '
+                              'Andernfalls müssen neue Registrierungen manuell genehmigt werden.',
+                          _autoApproveRegistrations,
+                          (v) => _autoApproveRegistrations = v,
+                        ),
+                        _padded(Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text('Registrierungsfelder', style: TextStyle(fontWeight: FontWeight.w600)),
+                            const SizedBox(height: AppDimensions.paddingS),
+                            Wrap(
+                              spacing: AppDimensions.paddingS,
+                              runSpacing: AppDimensions.paddingXS,
+                              children: _buildRegistrationFieldChips(),
+                            ),
+                            const SizedBox(height: AppDimensions.paddingS),
+                            Text(
+                              'Wähle die Felder aus, die bei der Registrierung angezeigt werden sollen. '
+                              'Alle ausgewählten Felder sind Pflichtfelder.',
+                              style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.medium),
+                            ),
+                          ],
+                        )),
+                      ],
+                    ],
+                  ),
+
+                  // ============ WERK-DATENBANK ============
+                  SettingsListSection(
+                    title: 'Werk-Datenbank',
+                    children: [
+                      _toggle(
+                        'Werke öffentlich teilen',
+                        'Aktivieren, um Werke als öffentlichen link zu teilen. Jeder mit dem Link kann die '
+                            'Werke ansehen aber nicht bearbeiten. Der Link wird automatisch generiert und '
+                            'kann nach dem Speichern kopiert werden.',
+                        _songSharingEnabled,
+                        (v) {
+                          _songSharingEnabled = v;
+                          if (v && _songSharingId == null) _songSharingId = const Uuid().v4();
+                        },
+                      ),
+                      if ((ref.watch(currentTenantProvider)?.songSharingId ?? '').isNotEmpty)
+                        ListTile(
+                          title: const Text('Link kopieren', style: TextStyle(color: AppColors.primary)),
+                          onTap: () => _copyLink('https://attendix.de/', _songSharingId),
+                        ),
+                    ],
+                  ),
+
+                  // ============ SONSTIGES ============
+                  SettingsListSection(
+                    title: 'Sonstiges',
+                    children: [
+                      Builder(builder: (context) {
+                        final t = ref.watch(currentTenantProvider);
+                        final total = (t?.additionalFields?.length ?? 0) + (t?.songAdditionalFields?.length ?? 0);
+                        return ListTile(
                           title: const Text('Zusatzfelder'),
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              if ((ref.watch(currentTenantProvider)?.additionalFields ?? const []).isEmpty)
-                                const Text('Keine', style: TextStyle(color: AppColors.medium)),
+                              Text(
+                                total == 0 ? 'Keine' : '$total ${total == 1 ? 'Feld' : 'Felder'}',
+                                style: const TextStyle(color: AppColors.medium),
+                              ),
                               const Icon(Icons.chevron_right),
                             ],
                           ),
                           onTap: () => context.push('/settings/general/extra-fields'),
+                        );
+                      }),
+                      // SETTINGS2: Ionic "Lehrer pflegen" (only for orchestras)
+                      if (ref.watch(currentTenantProvider)?.type == 'orchestra')
+                        _toggle(
+                          'Lehrer pflegen',
+                          'Aktivieren, um die Lehrer der Spieler verwalten zu können.',
+                          _maintainTeachers,
+                          (v) => _maintainTeachers = v,
                         ),
-                        ListTile(
-                          leading: const Icon(Icons.palette_outlined),
-                          title: const Text('Branding'),
-                          trailing: const Icon(Icons.chevron_right),
-                          onTap: () => context.push('/settings/general/branding'),
-                        ),
-                        if (ref.watch(currentOrganisationProvider).valueOrNull != null)
-                          ListTile(
-                            leading: const Icon(Icons.merge_type),
-                            title: const Text('Personen verknüpfen'),
-                            subtitle: const Text('Personen aus verschiedenen Instanzen miteinander verbinden'),
-                            trailing: const Icon(Icons.chevron_right),
-                            onTap: () => context.push('/settings/general/link-persons'),
+                      _toggle(
+                        'Eltern-Funktion',
+                        'Aktivieren, um Eltern die Möglichkeit zu geben, Einsicht in die Anwesenheiten '
+                            'ihrer Kinder zu geben und Abwesenheiten pflegen zu können.',
+                        _parents,
+                        (v) => _parents = v,
+                      ),
+                      _toggle(
+                        'Mitgliederliste für alle',
+                        'Aktivieren, um Mitgliedern (Spieler, Helfer, Stimmführer) eine Übersicht aller Personen anzuzeigen.',
+                        _showMembersList,
+                        (v) => _showMembersList = v,
+                      ),
+                      _toggle(
+                        'Ferien/Feiertage anzeigen',
+                        'Aktivieren, um beim Anlegen der Anwesenheiten die Ferien und Feiertage hervorzuheben. '
+                            '(nur verfügbar für Deutschland)',
+                        _showHolidays,
+                        (v) => _showHolidays = v,
+                      ),
+                      if (_showHolidays)
+                        _padded(DropdownButtonFormField<String>(
+                          value: _selectedRegion,
+                          decoration: const InputDecoration(labelText: 'Bundesland für Ferien/Feiertage'),
+                          items: _holidayRegions
+                              .map((r) => DropdownMenuItem(value: r.$1, child: Text(r.$2)))
+                              .toList(),
+                          onChanged: (v) {
+                            setState(() => _selectedRegion = v ?? '');
+                            _markChanged();
+                          },
+                        )),
+                      // Flutter: Status "Entschuldigt" erlauben
+                      _toggle(
+                        'Entschuldigungen',
+                        'Erlaubt "Entschuldigt" als Status',
+                        _withExcuses,
+                        (v) => _withExcuses = v,
+                      ),
+                    ],
+                  ),
+
+                  // ============ PROBLEMFALL-REGELN ============
+                  SettingsListSection(
+                    title: 'Problemfall-Regeln',
+                    headerAction: IconButton(
+                      icon: const Icon(Icons.add, color: AppColors.primary),
+                      tooltip: 'Neue Regel hinzufügen',
+                      onPressed: _showAddCriticalRuleSheet,
+                    ),
+                    children: [
+                      if (_criticalRules.isEmpty)
+                        const ListTile(
+                          subtitle: Text(
+                            'Es wurden noch keine Problemfall-Regeln definiert. Regeln bestimmen, '
+                            'wann eine Person als Problemfall markiert wird.',
                           ),
-                      ],
-                    ),
+                        ),
+                      for (var index = 0; index < _criticalRules.length; index++)
+                        CriticalRuleCard(
+                          rule: _criticalRules[index],
+                          onEdit: () => _showEditCriticalRuleSheet(index),
+                          onDelete: () => _confirmDeleteCriticalRule(index),
+                        ),
+                    ],
                   ),
-                  // END SETTINGS_EXT
-
-                  const SizedBox(height: AppDimensions.paddingXL),
-
-                  // Critical rules section
-                  _buildSectionHeader('Problemfall-Regeln'),
-                  Text(
-                    'Definiere Regeln, wann Personen als Problemfall markiert werden.',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: AppColors.medium,
-                    ),
-                  ),
-                  const SizedBox(height: AppDimensions.paddingM),
-
-                  // List of critical rules
-                  if (_criticalRules.isNotEmpty) ...[
-                    ...List.generate(_criticalRules.length, (index) {
-                      final rule = _criticalRules[index];
-                      return CriticalRuleCard(
-                        rule: rule,
-                        onEdit: () => _showEditCriticalRuleSheet(index),
-                        onDelete: () => _confirmDeleteCriticalRule(index),
-                      );
-                    }),
-                  ],
-
-                  // Add rule button
-                  OutlinedButton.icon(
-                    onPressed: _showAddCriticalRuleSheet,
-                    icon: const Icon(Icons.add),
-                    label: const Text('Regel hinzufügen'),
-                  ),
-
-                  const SizedBox(height: AppDimensions.paddingXL),
-
-                  // Organisation section
-                  _buildSectionHeader('Organisation'),
-                  _buildOrganisationSection(),
-
-                  const SizedBox(height: AppDimensions.paddingXL),
                 ],
               ),
             ),
@@ -830,245 +748,24 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
     );
   }
 
-  Widget _buildSectionHeader(String title) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: AppDimensions.paddingS),
-      child: Text(
-        title,
-        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-          fontWeight: FontWeight.bold,
-          color: AppColors.primary,
+  Widget _padded(Widget child) => Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppDimensions.paddingM,
+          vertical: AppDimensions.paddingS,
         ),
-      ),
-    );
-  }
-
-  Widget _buildOrganisationSection() {
-    final currentOrgAsync = ref.watch(currentOrganisationProvider);
-
-    return currentOrgAsync.when(
-      loading: () => const Card(
-        child: ListTile(
-          leading: CircularProgressIndicator(),
-          title: Text('Lade Organisation...'),
-        ),
-      ),
-      error: (e, _) => Card(
-        child: ListTile(
-          leading: const Icon(Icons.error, color: AppColors.danger),
-          title: const Text('Fehler beim Laden'),
-          subtitle: Text('$e'),
-        ),
-      ),
-      data: (organisation) => Card(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: Icon(
-                Icons.corporate_fare,
-                color: organisation != null ? AppColors.primary : AppColors.medium,
-              ),
-              title: Text(organisation?.name ?? 'Keine Organisation'),
-              subtitle: Text(
-                organisation != null
-                    ? 'Verknüpft mit Organisation'
-                    : 'Verknüpfe diesen Mandanten mit einer Organisation, um ihn mit anderen Mandanten zu gruppieren.',
-              ),
-              trailing: organisation != null
-                  ? IconButton(
-                      icon: Icon(Icons.link_off, color: AppColors.danger),
-                      onPressed: () => _unlinkOrganisation(organisation),
-                    )
-                  : null,
-            ),
-            Padding(
-              padding: const EdgeInsets.only(
-                left: AppDimensions.paddingM,
-                right: AppDimensions.paddingM,
-                bottom: AppDimensions.paddingM,
-              ),
-              child: SizedBox(
-                width: double.infinity,
-                child: OutlinedButton.icon(
-                  onPressed: () => _showOrganisationDialog(organisation),
-                  icon: Icon(organisation != null ? Icons.swap_horiz : Icons.add_link),
-                  label: Text(organisation != null ? 'Organisation wechseln' : 'Mit Organisation verknüpfen'),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Future<void> _showOrganisationDialog(Organisation? currentOrg) async {
-    final userOrgsAsync = ref.read(userOrganisationsProvider);
-
-    final organisations = await userOrgsAsync.when(
-      data: (orgs) async => orgs,
-      loading: () async => <Organisation>[],
-      error: (_, __) async => <Organisation>[],
-    );
-
-    if (!mounted) return;
-
-    final selectedOrgId = await showDialog<int?>(
-      context: context,
-      builder: (ctx) {
-        int? selected = currentOrg?.id;
-        return StatefulBuilder(
-          builder: (ctx, setDialogState) => AlertDialog(
-            title: const Text('Organisation auswählen'),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (organisations.isEmpty)
-                  const Text('Keine existierenden Organisationen gefunden. Erstelle eine neue.')
-                else ...[
-                  ...organisations.map((org) => RadioListTile<int?>(
-                    value: org.id,
-                    groupValue: selected,
-                    title: Text(org.name),
-                    onChanged: (v) => setDialogState(() => selected = v),
-                  )),
-                  const Divider(),
-                ],
-                ListTile(
-                  leading: const Icon(Icons.add),
-                  title: const Text('Neue Organisation erstellen'),
-                  onTap: () {
-                    Navigator.of(ctx).pop(-1); // Special value for "create new"
-                  },
-                ),
-              ],
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(ctx).pop(null),
-                child: const Text('Abbrechen'),
-              ),
-              if (organisations.isNotEmpty)
-                ElevatedButton(
-                  onPressed: selected != null && selected != currentOrg?.id
-                      ? () => Navigator.of(ctx).pop(selected)
-                      : null,
-                  child: const Text('Verknüpfen'),
-                ),
-            ],
-          ),
-        );
-      },
-    );
-
-    if (!mounted) return;
-
-    if (selectedOrgId == -1) {
-      // Create new organisation
-      await _showCreateOrganisationDialog();
-    } else if (selectedOrgId != null) {
-      // Link to existing organisation
-      final notifier = ref.read(organisationNotifierProvider.notifier);
-      final success = await notifier.linkCurrentTenant(selectedOrgId);
-      if (mounted) {
-        if (success) {
-          ToastHelper.showSuccess(context, 'Organisation verknüpft');
-        } else {
-          ToastHelper.showError(context, 'Fehler beim Verknüpfen');
-        }
-      }
-    }
-  }
-
-  Future<void> _showCreateOrganisationDialog() async {
-    final nameController = TextEditingController();
-
-    try {
-      final result = await showDialog<bool>(
-        context: context,
-        builder: (ctx) => AlertDialog(
-          title: const Text('Neue Organisation'),
-          content: TextField(
-            controller: nameController,
-            decoration: const InputDecoration(
-              labelText: 'Name der Organisation',
-              hintText: 'z.B. Musikverein Musterstadt',
-            ),
-            autofocus: true,
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(ctx).pop(false),
-              child: const Text('Abbrechen'),
-            ),
-            ElevatedButton(
-              onPressed: () => Navigator.of(ctx).pop(true),
-              child: const Text('Erstellen & Verknüpfen'),
-            ),
-          ],
-        ),
+        child: child,
       );
 
-      if (result == true && mounted) {
-        final name = nameController.text.trim();
-        if (name.isEmpty) {
-          ToastHelper.showError(context, 'Name ist erforderlich');
-          return;
-        }
-
-        final notifier = ref.read(organisationNotifierProvider.notifier);
-        final org = await notifier.create(name);
-        if (org != null && mounted) {
-          await notifier.linkCurrentTenant(org.id!);
-          if (mounted) {
-            ToastHelper.showSuccess(
-                context, 'Organisation erstellt und verknüpft');
-          }
-        }
-      }
-    } finally {
-      // FN-001: Dispose controller
-      nameController.dispose();
-    }
-  }
-
-  Future<void> _unlinkOrganisation(Organisation organisation) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Verknüpfung aufheben?'),
-        content: Text(
-          'Möchtest du die Verknüpfung mit "${organisation.name}" aufheben?\n\n'
-          'Wenn keine anderen Mandanten mehr in dieser Organisation sind, '
-          'wird die Organisation automatisch gelöscht.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Abbrechen'),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: AppColors.danger),
-            onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('Aufheben'),
-          ),
-        ],
-      ),
-    );
-
-    if (confirmed == true && mounted) {
-      final notifier = ref.read(organisationNotifierProvider.notifier);
-      final success = await notifier.unlinkCurrentTenant(organisation.id!);
-      if (mounted) {
-        if (success) {
-          ToastHelper.showSuccess(context, 'Verknüpfung aufgehoben');
-        } else {
-          ToastHelper.showError(context, 'Fehler beim Aufheben');
-        }
-      }
-    }
-  }
+  /// Ionic `ion-toggle` with `helperText`.
+  Widget _toggle(String title, String helper, bool value, void Function(bool) apply) => SwitchListTile(
+        title: Text(title),
+        subtitle: Text(helper, style: const TextStyle(fontSize: 12, color: AppColors.medium)),
+        value: value,
+        onChanged: (v) {
+          setState(() => apply(v));
+          _markChanged();
+        },
+      );
 
   // Critical rule methods
   Future<void> _showAddCriticalRuleSheet() async {

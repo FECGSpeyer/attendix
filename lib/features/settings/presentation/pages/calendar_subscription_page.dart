@@ -7,6 +7,7 @@ import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../core/providers/tenant_providers.dart';
+import '../widgets/calendar_subscription_dialog.dart'; // UX_SETTINGS
 
 /// Calendar Subscription Page - allows users to subscribe to attendance calendar
 class CalendarSubscriptionPage extends ConsumerWidget {
@@ -17,8 +18,9 @@ class CalendarSubscriptionPage extends ConsumerWidget {
     final tenant = ref.watch(currentTenantProvider);
 
     // Generate calendar subscription URL
+    // UX_SETTINGS: same edge-function feed as Ionic (ical-tenant)
     final calendarUrl = tenant?.id != null
-        ? 'https://attendix.de/api/calendar/${tenant!.id}.ics'
+        ? calendarSubscriptionLink(tenantId: tenant!.id!)
         : null;
 
     return Scaffold(
