@@ -40,6 +40,9 @@ jobs:
           # comment start and interpolates '$' (the demo password contains '#').
           printf "DEMO_EMAIL='%s'\n" "$DEMO_EMAIL" >> .env
           printf "DEMO_PASSWORD='%s'\n" "$DEMO_PASSWORD" >> .env
+          # The app bundles only .env.app (never the developer's .env, which
+          # may hold server-side keys such as SUPABASE_SERVICE_ROLE_KEY).
+          cp .env .env.app
         env:
           DEMO_EMAIL: ${{ secrets.DEMO_EMAIL || secrets.DEMOMAIL }}
           DEMO_PASSWORD: ${{ secrets.DEMO_PASSWORD || secrets.DEMOPASSWORD }}

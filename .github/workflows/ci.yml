@@ -43,7 +43,7 @@ jobs:
         run: flutter pub get
 
       - name: Setup test environment
-        run: cp .env.example .env
+        run: cp .env.example .env && cp .env.example .env.app
 
       - name: Run tests
         run: flutter test

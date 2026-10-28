@@ -48,7 +48,7 @@ void main() async {
 
   // Load environment variables
   try {
-    await dotenv.load(fileName: '.env');
+    await dotenv.load(fileName: '.env.app');
   } catch (e) {
     if (kDebugMode) {
       print('Warning: Could not load .env file: $e');

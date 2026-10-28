@@ -46,6 +46,7 @@ app.*.map.json
 
 # Environment files (contain secrets)
 .env
+.env.app
 *.env.local
 
 # Claude Code worktrees (für parallele Entwicklung)
