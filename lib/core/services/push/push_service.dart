@@ -107,6 +107,26 @@ class PushService {
   /// of them are deleted on logout, not only the last one.
   final Set<String> _sessionTokens = {};
 
+  /// SOL_FIX19: the last logout cleanup ([removeToken]). Every registration
+  /// awaits it before it touches FCM or device_tokens, so the cleanup's
+  /// token lookup, row delete and FCM `deleteToken` never overlap the next
+  /// session – that one gets a fresh token afterwards.
+  Future<void>? _cleanup;
+
+  /// SOL_FIX19: set when a registration is requested after the last
+  /// cleanup. Without one, a second [removeToken] (signedOut listener after
+  /// the logout button) joins the last cleanup instead of running again.
+  bool _sessionSinceCleanup = false;
+
+  /// SOL_FIX19: waits for the last cleanup (never throws).
+  Future<void> _awaitCleanup() async {
+    final cleanup = _cleanup;
+    if (cleanup == null) return;
+    try {
+      await cleanup;
+    } catch (_) {}
+  }
+
   void _log(String message, [Object? error]) {
     if (kDebugMode) debugPrint('[push] $message${error != null ? ': $error' : ''}');
   }
@@ -208,6 +228,7 @@ class PushService {
   /// run instead of joining the cancelled one.
   Future<void> promptAndEnable() {
     if (!isNativePlatform) return Future.value();
+    _sessionSinceCleanup = true;
     final generation = _generation;
     final running = _promptInFlight;
     if (running != null && _promptGeneration == generation) return running;
@@ -223,6 +244,8 @@ class PushService {
   }
 
   Future<void> _promptAndEnable(int generation) async {
+    // SOL_FIX19: a logout cleanup still running finishes first.
+    await _awaitCleanup();
     await _ready();
     if (!_available || _isStale(generation)) return;
 
@@ -255,10 +278,14 @@ class PushService {
   /// Ionic initPush: permission → FCM token → device_tokens, clear badge.
   Future<void> initPush() {
     if (!isNativePlatform) return Future.value();
+    _sessionSinceCleanup = true;
     return _initPush(_generation);
   }
 
   Future<void> _initPush(int generation) async {
+    // SOL_FIX19: never register while a logout cleanup runs – its FCM
+    // deleteToken would revoke the token this session is about to save.
+    await _awaitCleanup();
     await _ready();
     if (!_available || _isStale(generation)) return;
 
@@ -326,8 +353,29 @@ class PushService {
   /// SOL_FIX18: also deletes the rows of the device token it resolves
   /// itself (registration not finished yet), and always revokes the FCM
   /// token.
-  Future<void> removeToken() async {
-    if (!isNativePlatform) return;
+  ///
+  /// SOL_FIX19: one cleanup per session. A second call without a
+  /// registration in between (signedOut listener after the logout button)
+  /// returns the same run. The user id is captured synchronously at the
+  /// start and only that account's rows are deleted, even when another
+  /// account signs in meanwhile; that account's registration waits for
+  /// this cleanup (see [_awaitCleanup]) and then gets a fresh token.
+  Future<void> removeToken() {
+    if (!isNativePlatform) return Future.value();
+    final last = _cleanup;
+    if (last != null && !_sessionSinceCleanup) return last;
+    _sessionSinceCleanup = false;
+    late final Future<void> run;
+    run = _removeToken().catchError((Object e) {
+      _log('logout cleanup failed', e);
+    });
+    _cleanup = run;
+    return run;
+  }
+
+  Future<void> _removeToken() async {
+    // SOL_FIX19: the account this cleanup belongs to, read before any await.
+    final userId = _currentUserId();
     _generation++;
     _promptInFlight = null;
     _promptGeneration = null;
@@ -353,12 +401,16 @@ class PushService {
     if (resolved != null) toDelete.add(resolved);
     if (inFlight.isNotEmpty) await Future.wait(inFlight);
 
-    // Scoped by token value and user (DeviceTokenRepository.removeToken).
-    for (final token in toDelete) {
-      try {
-        await tokens.removeToken(token);
-      } catch (e) {
-        _log('removeToken failed', e);
+    // Scoped by token value and the captured user
+    // (DeviceTokenRepository.removeToken). Without a signed-in user (signed
+    // out elsewhere) RLS would reject the delete anyway – nothing to do.
+    if (userId != null) {
+      for (final token in toDelete) {
+        try {
+          await tokens.removeToken(token, userId: userId);
+        } catch (e) {
+          _log('removeToken failed', e);
+        }
       }
     }
     // Ionic deletes the FCM token on iOS only; SOL_FIX17: on Android too,
@@ -369,6 +421,15 @@ class PushService {
       await client.deleteToken();
     } catch (e) {
       _log('Failed to delete FCM token', e);
+    }
+  }
+
+  String? _currentUserId() {
+    try {
+      return tokens.currentUserId;
+    } catch (e) {
+      _log('reading the user failed', e);
+      return null;
     }
   }
 

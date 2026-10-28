@@ -69,6 +69,8 @@ final pushBootstrapProvider = Provider<void>((ref) {
         // Restored session on app start: refresh the token registration.
         if (state.session != null) unawaited(service.promptAndEnable());
       case AuthChangeEvent.signedOut:
+        // SOL_FIX19: joins the logout button's cleanup (one run per
+        // session); the next sign-in's registration waits for it.
         unawaited(service.removeToken());
       default:
         break;

@@ -255,6 +255,9 @@ class RolePermissionNotifier extends Notifier<AsyncValue<void>> {
     try {
       final repo = ref.read(rolePermissionRepositoryWithTenantProvider);
       if (!repo.hasTenantId) throw StateError(l10nWithoutContext.coreFlutterNoTenantSelected);
+      // SOL_FIX19: the tenant this save belongs to (the repository is bound
+      // to it), captured before the first await.
+      final tenantId = repo.currentTenantId;
 
       for (final p in permissions) {
         if (p.id != null) await repo.updatePermission(p);
@@ -262,12 +265,14 @@ class RolePermissionNotifier extends Notifier<AsyncValue<void>> {
 
       if (filesShared != null) {
         await repo.updateFilesShared(filesShared);
-        final tenant = ref.read(currentTenantProvider);
-        if (tenant != null) {
-          await ref
-              .read(currentTenantProvider.notifier)
-              .setTenantLocal(tenant.copyWith(filesShared: filesShared));
-        }
+        // SOL_FIX19: saved for [tenantId]; after a switch to another tenant
+        // meanwhile its local state stays untouched.
+        await ref
+            .read(currentTenantProvider.notifier)
+            .updateTenantLocalIfCurrent(
+              tenantId,
+              (current) => current.copyWith(filesShared: filesShared),
+            );
       }
 
       state = const AsyncValue.data(null);

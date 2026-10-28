@@ -683,6 +683,94 @@ void main() {
     });
   });
 
+  // SOL_FIX19: Sol review of afa5b15 – the next session must not start
+  // while the previous teardown still waits for the native uploads; its
+  // global endAll would end the new activities.
+  group('SOL_FIX19', () {
+    test('init waits for the running logout teardown (delayed native close)', () async {
+      final host = FakeHost(attendances: [attendance()]);
+      final s = service(host);
+      await s.onTenantReady(7, hasTenantUser: true, userId: 'user-1');
+      s.stopLoop();
+      calls.clear();
+      host.saved.clear();
+      host.log.clear();
+
+      final gate = Completer<void>();
+      closeGate = gate; // native uploads still running
+      final ending = endLiveActivitiesBeforeSignOut(s, 'user-1');
+      await pumpEventQueue();
+
+      // Next login lands in a tenant while the teardown still waits.
+      host.userId = 'user-2';
+      host.tenantId = 8;
+      final next = s.onTenantReady(8, hasTenantUser: true, userId: 'user-2');
+      await pumpEventQueue();
+      expect(methods(), ['setRegistrationOpen'], reason: 'init held back');
+      expect(host.saved, isEmpty);
+
+      gate.complete();
+      await ending;
+      await next;
+      s.stopLoop();
+      final m = methods();
+      final endAll = m.indexOf('endAll');
+      expect(endAll, greaterThan(0));
+      expect(m.lastIndexOf('endAll'), endAll, reason: 'only the old endAll');
+      expect(m.indexOf('isAvailable'), greaterThan(endAll));
+      expect(m.indexOf('start'), greaterThan(endAll));
+      expect(host.log.first, 'delete');
+      expect(host.log.indexOf('delete'), lessThan(host.log.indexOf('upsert:abc123')),
+          reason: 'old rows deleted before the new session registers');
+      expect(host.removed.single['userId'], 'user-1');
+      expect(host.saved.map((e) => e['userId']).toSet(), {'user-2'});
+      expect(s.sessionUserId, 'user-2');
+      expect(s.isLoopRunning, isFalse);
+      s.dispose();
+    });
+
+    test('a sync during the teardown changes nothing native', () async {
+      final host = FakeHost(attendances: [attendance()]);
+      final s = service(host);
+      await s.onTenantReady(7, hasTenantUser: true, userId: 'user-1');
+      s.stopLoop();
+      final gate = Completer<void>();
+      closeGate = gate;
+      final ending = s.endSession(removeTokensOf: 'user-1');
+      await pumpEventQueue();
+      calls.clear();
+
+      await s.sync();
+      expect(methods(), isEmpty);
+      gate.complete();
+      await ending;
+      s.dispose();
+    });
+
+    test('a logout during the waiting init keeps the next session closed', () async {
+      final host = FakeHost(attendances: [attendance()]);
+      final s = service(host);
+      await s.onTenantReady(7, hasTenantUser: true, userId: 'user-1');
+      s.stopLoop();
+      final gate = Completer<void>();
+      closeGate = gate;
+      final ending = s.endSession(removeTokensOf: 'user-1');
+      await pumpEventQueue();
+      final waiting = s.init();
+      await pumpEventQueue();
+      closeGate = null;
+      final second = s.endSession();
+      gate.complete();
+      await Future.wait([ending, second, waiting]);
+      calls.clear();
+      await pumpEventQueue();
+      expect(methods(), isEmpty);
+      expect(s.isLoopRunning, isFalse);
+      expect(s.sessionUserId, isNull);
+      s.dispose();
+    });
+  });
+
   group('Android', () {
     test('registers the "android" start token instead of configure', () async {
       final host = FakeHost(attendances: [attendance()]);

@@ -125,6 +125,24 @@ class CurrentTenantNotifier extends StateNotifier<Tenant?> {
     // NOTE: Does NOT call updateCurrentTenantId to avoid auth events
   }
 
+  /// SOL_FIX19: applies a setting that was just saved for [tenantId] to the
+  /// local tenant state – only while [tenantId] is still the current
+  /// tenant. A save that finishes after a switch to another tenant must not
+  /// copy its value into that tenant (or switch back). [update] gets the
+  /// CURRENT state, not a copy taken before the save. Returns whether the
+  /// state was updated.
+  Future<bool> updateTenantLocalIfCurrent(
+    int? tenantId,
+    Tenant Function(Tenant current) update,
+  ) async {
+    final current = state;
+    if (tenantId == null || current == null || current.id != tenantId) {
+      return false;
+    }
+    await setTenantLocal(update(current));
+    return true;
+  }
+
   /// Set the current tenant and persist to both storages
   Future<void> setTenant(Tenant? tenant) async {
     await setTenantLocal(tenant);

@@ -1036,7 +1036,11 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
     if (!useIt || !mounted) return;
     try {
       await dutyRepo.setDutyView(true);
-      await ref.read(currentTenantProvider.notifier).setTenantLocal(tenant.copyWith(dutyView: true));
+      // SOL_FIX19: only while the tenant the view was saved for is still the
+      // current one (a switch during the dialog / save keeps the other one).
+      await ref
+          .read(currentTenantProvider.notifier)
+          .updateTenantLocalIfCurrent(tenant.id, (current) => current.copyWith(dutyView: true));
       if (mounted) ToastHelper.showSuccess(context, context.l10n.typeSettingsDutyViewActive);
     } catch (_) {
       if (mounted) ToastHelper.showError(context, context.l10n.typeSettingsViewFailed);
