@@ -125,7 +125,8 @@ void main() {
     test('Werkhistorie opens as an iOS card sheet from Mehr, route kept', () {
       final history = _read('lib/features/history/presentation/pages/history_page.dart');
       expect(history, contains('Future<void> showHistoryModal('));
-      expect(history, contains('useRootNavigator: true'));
+      // IOS_R4: real card modal (presenting page scaled behind)
+      expect(history, contains('showIosCardModal<void>('));
       expect(history, contains("context.push('/history')"));
       final settings = _read('lib/features/settings/presentation/pages/settings_page.dart');
       expect(settings, contains('showHistoryModal(context)'));

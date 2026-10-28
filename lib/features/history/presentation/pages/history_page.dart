@@ -24,8 +24,8 @@ import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 
 /// IOS_FORMS2: Ionic opens the Werkhistorie with
 /// `modalController.create({ component: HistoryPage, presentingElement })`,
-/// i.e. on iOS a card modal sheet over a dark backdrop (top inset 10pt,
-/// rounded top corners, swipe down to close) and not a pushed page. On iOS
+/// i.e. on iOS a card modal over the scaled-down presenting page (IOS_R4:
+/// [showIosCardModal]; swipe down to close) and not a pushed page. On iOS
 /// this presents [HistoryPage] like that on the root navigator; elsewhere
 /// (Ionic md: full-screen modal) the `/history` route is pushed as before.
 /// The `/history` route keeps working for deep links.
@@ -34,23 +34,12 @@ Future<void> showHistoryModal(BuildContext context) async {
     await context.push('/history');
     return;
   }
-  await showModalBottomSheet<void>(
-    context: context,
-    useRootNavigator: true,
-    isScrollControlled: true,
-    useSafeArea: true,
-    barrierColor: Colors.black.withValues(alpha: 0.4),
+  // IOS_R4: real card presentation – the page behind scales down on a black
+  // body with the 40pt strip above the card (Ionic presentingElement).
+  await showIosCardModal<void>(
+    context,
     backgroundColor: Theme.of(context).colorScheme.surface,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
-    ),
-    clipBehavior: Clip.antiAlias,
-    builder: (_) => LayoutBuilder(
-      builder: (context, constraints) => SizedBox(
-        height: constraints.maxHeight - 10,
-        child: const HistoryPage(asModal: true),
-      ),
-    ),
+    builder: (_) => const HistoryPage(asModal: true),
   );
 }
 

@@ -174,9 +174,19 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Orchester'), findsOneWidget);
     expect(find.text('Aktuell'), findsOneWidget);
-    // directly below the capsule
-    expect(tester.getTopLeft(find.text('Orchester')).dy,
-        greaterThan(tester.getBottomLeft(find.byType(IosGlassSurface).first).dy));
+    // IOS_R4: the popover replaces the capsule – same top-left corner, the
+    // capsule fades out; Ionic order (longName): "Chor [Aktuell]" first.
+    final capsule = tester.getRect(find.byType(IosGlassSurface).first);
+    final popover = tester.getRect(find.byType(IosGlassSurface).last);
+    expect(popover.top, capsule.top);
+    expect(popover.left, capsule.left);
+    expect(popover.width, 220);
+    final opacity = tester.widget<AnimatedOpacity>(find.ancestor(
+        of: find.byType(IosGlassSurface).first,
+        matching: find.byType(AnimatedOpacity)));
+    expect(opacity.opacity, 0);
+    expect(tester.getTopLeft(find.text('Chor').last).dy,
+        lessThan(tester.getTopLeft(find.text('Orchester')).dy));
 
     await tester.tap(find.text('Orchester'));
     await tester.pumpAndSettle();

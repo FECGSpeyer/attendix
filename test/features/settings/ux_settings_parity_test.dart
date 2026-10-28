@@ -86,10 +86,11 @@ void main() {
       expect(lang, contains('IonSelectIcon(')); // IOS_THEME2: chevron-expand
     });
 
-    test('logout row has no chevron, delete link below the System card', () {
+    test('logout row: iOS detail chevron only, delete link below the System card', () {
       final logout = source.indexOf('title: l10n.settingsLogout');
       final block = source.substring(logout, source.indexOf('onTap:', logout));
-      expect(block, contains('detail: false'));
+      // IOS_R4: Ionic `ion-item button` without detail="false" → iOS chevron
+      expect(block, contains('detail: ionIsIos(context)'));
       expect(block, contains('background: AppColors.danger'));
       expectInOrder(source, [
         'title: l10n.settingsSystem',

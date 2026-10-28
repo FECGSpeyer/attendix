@@ -198,16 +198,25 @@ final userTenantsProvider = FutureProvider<List<Tenant>>((ref) async {
     ));
   }
 
-  // Sort: favorites first, then alphabetically
+  // Sort like Ionic getTenants(): `.order('longName')`, then favorites
+  // first. IOS_R4: by longName (not the short name) – the order of the
+  // header tenant popover and the Mehr instance list.
   tenants.sort((a, b) {
     final aFav = a.favorite == true ? 0 : 1;
     final bFav = b.favorite == true ? 0 : 1;
     if (aFav != bFav) return aFav.compareTo(bFav);
-    return a.name.compareTo(b.name);
+    return compareTenantLongNames(a, b);
   });
 
   return tenants;
 });
+
+/// Ionic orders the tenants by `longName` in Postgres (case-insensitive
+/// collation); ties fall back to the code-unit order.
+int compareTenantLongNames(Tenant a, Tenant b) {
+  final byName = a.longName.toLowerCase().compareTo(b.longName.toLowerCase());
+  return byName != 0 ? byName : a.longName.compareTo(b.longName);
+}
 
 /// Provider for current user's TenantUser record in the selected tenant
 final currentTenantUserProvider = FutureProvider<TenantUser?>((ref) async {

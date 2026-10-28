@@ -319,6 +319,17 @@ class IonListHeader extends StatelessWidget {
   }
 }
 
+/// `--ion-item-background` of rows in inset lists / item groups: iOS dark
+/// #000 on the grouped #222428 page (IOS_R4), otherwise the theme surface
+/// (white; md dark #1e1e1e).
+Color ionItemBackground(BuildContext context) {
+  final theme = Theme.of(context);
+  if (isIosLook(context) && theme.brightness == Brightness.dark) {
+    return AppColors.iosInsetItemDark;
+  }
+  return theme.colorScheme.surface;
+}
+
 /// Ionic `ion-list [inset]="true"` (with `ion-item-group` when [grouped]):
 /// a rounded surface with 16px margin and inset hairlines between rows.
 class IonInsetList extends StatelessWidget {
@@ -358,7 +369,7 @@ class IonInsetList extends StatelessWidget {
       margin: margin,
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
-        color: color ?? Theme.of(context).colorScheme.surface,
+        color: color ?? ionItemBackground(context),
         borderRadius: BorderRadius.circular(radius),
         border: border,
       ),

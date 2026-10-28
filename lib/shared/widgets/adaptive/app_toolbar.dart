@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 import '../../../l10n/l10n.dart';
@@ -189,6 +191,39 @@ class IonModalHeader extends StatelessWidget implements PreferredSizeWidget {
         centerMiddle: true,
         middleSpacing: 8,
       ),
+    );
+  }
+}
+
+/// IOS_R4: height of a page `ion-toolbar` below the status bar in the
+/// iOS 26/27 theme. The header toolbar gets
+/// `padding-top: max(safe-area-top - 10px, 6px)`, `--min-height: 64px` and
+/// the iOS toolbar padding-bottom of 3px, so its bottom edge is at
+/// `max(safeTop - 10, 6) + 67`: 73pt in a browser without safe area (the
+/// glass capsules centred at ≈38pt) and safe area + 57pt on a notched
+/// iPhone. A Flutter [AppBar] adds [safeTop] itself, hence the difference.
+double ionToolbarHeight(double safeTop) =>
+    math.max(safeTop - 10, 6.0) + 67 - safeTop;
+
+/// IOS_R4: applies [ionToolbarHeight] to every [AppBar] below it (iOS look
+/// only; Material keeps its 56pt toolbar). Placed once around the app's
+/// navigator (MaterialApp.builder). Pages with their own `toolbarHeight`
+/// keep it.
+class IonToolbarMetrics extends StatelessWidget {
+  const IonToolbarMetrics({super.key, required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!useIosLook(context)) return child;
+    final theme = Theme.of(context);
+    final height = ionToolbarHeight(MediaQuery.paddingOf(context).top);
+    return Theme(
+      data: theme.copyWith(
+        appBarTheme: theme.appBarTheme.copyWith(toolbarHeight: height),
+      ),
+      child: child,
     );
   }
 }

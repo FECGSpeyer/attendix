@@ -97,21 +97,19 @@ class TenantSwitcherTitle extends ConsumerWidget {
         : switchTenant(context, ref, t);
 
     if (ios) {
-      // IOS_SHELL: Ionic iOS `ion-popover` (trigger click, --width 220px)
-      // directly below the glass capsule; no Material tooltip.
+      // IOS_SHELL: Ionic iOS `ion-popover` (trigger click, --width 220px).
+      // IOS_R4: ionic-theme-ios26/27 "replace" popover – it opens on top of
+      // the glass capsule (same top-left corner) while the capsule fades out.
       return Semantics(
         button: true,
         label: context.l10n.settingsSwitchTenant,
-        child: GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTap: () async {
-            final picked = await showIosTenantPopover(
-              context,
-              tenants: tenants,
-              currentTenantId: tenant?.id,
-            );
-            if (picked != null && context.mounted) select(picked);
-          },
+        child: _IosPopoverTrigger(
+          onOpen: (triggerContext) => showIosTenantPopover(
+            triggerContext,
+            tenants: tenants,
+            currentTenantId: tenant?.id,
+          ),
+          onSelected: select,
           child: trigger,
         ),
       );
@@ -162,10 +160,54 @@ class TenantSwitcherTitle extends ConsumerWidget {
   }
 }
 
+/// IOS_R4: the capsule that opens the tenant popover; hidden while the
+/// popover (which replaces it, Ionic `ios-theme-replace-element`) is open.
+class _IosPopoverTrigger extends StatefulWidget {
+  const _IosPopoverTrigger({
+    required this.onOpen,
+    required this.onSelected,
+    required this.child,
+  });
+
+  final Future<Tenant?> Function(BuildContext context) onOpen;
+  final ValueChanged<Tenant> onSelected;
+  final Widget child;
+
+  @override
+  State<_IosPopoverTrigger> createState() => _IosPopoverTriggerState();
+}
+
+class _IosPopoverTriggerState extends State<_IosPopoverTrigger> {
+  bool _open = false;
+
+  Future<void> _tap() async {
+    setState(() => _open = true);
+    final picked = await widget.onOpen(context);
+    if (!mounted) return;
+    setState(() => _open = false);
+    if (picked != null) widget.onSelected(picked);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: _open ? null : _tap,
+      child: AnimatedOpacity(
+        opacity: _open ? 0 : 1,
+        duration: const Duration(milliseconds: 200),
+        child: widget.child,
+      ),
+    );
+  }
+}
+
 /// IOS_SHELL: the tenant switcher `ion-popover` of the Ionic headers in iOS
-/// mode (iOS 26 theme): a 220pt wide glass card with 24pt corners right
-/// below [context]'s widget, dimmed backdrop (0.2), one `ion-item` per
-/// instance (long name) and a primary "Aktuell" badge on the current one.
+/// mode (iOS 26 theme): a 220pt wide glass card with 24pt corners placed
+/// over [context]'s widget (IOS_R4: top-left corner = the capsule's, like
+/// the theme's "replace" popover for toolbar buttons), dimmed backdrop
+/// (0.2), one `ion-item` per instance (long name, Ionic order) and a primary
+/// "Aktuell" badge on the current one.
 /// Resolves with the tapped tenant (`dismissOnSelect`) or null.
 Future<Tenant?> showIosTenantPopover(
   BuildContext context, {
@@ -227,7 +269,8 @@ class _IosTenantPopoverRoute extends PopupRoute<Tenant> {
     final maxLeft =
         (size.width - width - 8 - padding.right).clamp(8.0, size.width);
     final left = anchor.left.clamp(8.0 + padding.left, maxLeft).toDouble();
-    final top = anchor.bottom + 8;
+    // IOS_R4: the popover replaces the capsule (popover top = capsule top).
+    final top = anchor.top;
     final curve =
         CurvedAnimation(parent: animation, curve: Curves.easeOutCubic);
     return capturedThemes.wrap(

@@ -9,3 +9,4 @@ export 'app_select.dart'; // IOS_THEME2
 export 'app_spinner.dart';
 export 'app_toolbar.dart';
 export 'ion_icons.dart'; // IOS_THEME2
+export 'ios_card_modal.dart'; // IOS_R4

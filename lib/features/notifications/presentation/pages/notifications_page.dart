@@ -176,8 +176,12 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
     // IOS_FORMS1: Ionic renders this page as a plain (non-inset) ion-list on
     // the white ion-content – no grouped grey background – and Ionic iOS has
     // no hover/focus tint on items.
+    // IOS_R4: ion-content without colour = --ion-background-color (white,
+    // dark #000); the ion-cards are flat (ionic-theme-ios27: no shadow) and
+    // their ion-items carry --ion-item-background (white / #000), so the
+    // blocks read as a plain list on the page with caps subtitles.
     return IonCondense(builder: (context, collapsed) => Scaffold(
-      backgroundColor: ios ? Theme.of(context).colorScheme.surface : null,
+      backgroundColor: ios ? _plainPageBackground(context) : null,
       appBar: AppBar(title: IonCondenseTitle(context.l10n.notifTitle, collapsed: collapsed)),
       body: _noHoverOnIos(context, ListView(
         padding: ios
@@ -197,44 +201,10 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
                   onChanged: (v) => _updateConfig(config.copyWith(enabled: v)),
                 ),
                 if (!isConnected) _UserIdTile(userId: config.id),
-                ListTile(
-                  leading: ios
-                      ? null
-                      : Icon(
-                          Icons.telegram,
-                          color: isConnected ? AppColors.success : const Color(0xFF0088CC),
-                        ),
-                  title: Text(context.l10n.notifTelegram),
-                  subtitle: isConnected
-                      ? Text(
-                          context.l10n.notifLinked,
-                          style: const TextStyle(color: AppColors.success),
-                        )
-                      : null,
-                  trailing: ios
-                      // IOS_FORMS1: ion-button in an ion-item = small
-                      // solid pill (24pt, 13pt label).
-                      ? _SmallPillButton(
-                          label: isConnected
-                              ? context.l10n.notifDisconnect
-                              : context.l10n.notifConnect,
-                          color: isConnected ? AppColors.danger : AppColors.primary,
-                          onPressed: isConnected ? _disconnectTelegram : _connectTelegram,
-                        )
-                      : isConnected
-                      // Ionic: solid ion-button color="danger"
-                      ? ElevatedButton(
-                          onPressed: _disconnectTelegram,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.danger,
-                            foregroundColor: Colors.white,
-                          ),
-                          child: Text(context.l10n.notifDisconnect),
-                        )
-                      : ElevatedButton(
-                          onPressed: _connectTelegram,
-                          child: Text(context.l10n.notifConnect),
-                        ),
+                _TelegramItem(
+                  connected: isConnected,
+                  onConnect: _connectTelegram,
+                  onDisconnect: _disconnectTelegram,
                 ),
                 // PUSH: Ionic `@if (isNative)` – push switch in the native apps
                 if (isNativePushPlatform)
@@ -385,13 +355,23 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
     );
   }
 
-  /// One Ionic `ion-card` holding items. iOS: ios26 card (radius 24,
-  /// shadow, margin-bottom 24) with inset hairlines; md: Material card.
+  /// IOS_R4: `ion-content` without colour (white; dark #000 on iOS).
+  static Color _plainPageBackground(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark
+          ? Colors.black
+          : Colors.white;
+
+  /// One Ionic `ion-card` holding items. iOS (IOS_R4, ionic-theme-ios27):
+  /// flat card (no shadow, margin 16, top card .5rem) whose items have the
+  /// page colour, i.e. a plain block with inset hairlines; md: Material card.
   Widget _group(BuildContext context, List<Widget> children, {bool top = false}) {
     if (ionIsIos(context)) {
-      return IonCardBox(
-        margin: EdgeInsets.only(top: top ? 8 : 0, bottom: 24),
-        child: IonInsetGroup(children: children),
+      return Padding(
+        padding: EdgeInsets.only(top: top ? 8 : 0, bottom: 16),
+        child: IonInsetGroup(
+          color: _plainPageBackground(context),
+          children: children,
+        ),
       );
     }
     return Card(
@@ -470,10 +450,109 @@ class _UserIdTile extends StatelessWidget {
   }
 }
 
+/// Ionic notifications "Telegramverknüpfung" item: `ion-label` (h2 +
+/// success `ion-note` "Verknüpft") that takes the free width and the
+/// connect / disconnect `ion-button` at the end.
+///
+/// IOS_R4: the label expands and the button keeps its intrinsic size – the
+/// old `ListTile.trailing` let the pill grow to the full row width, which
+/// squeezed the title into a one-letter column.
+class _TelegramItem extends StatelessWidget {
+  const _TelegramItem({
+    required this.connected,
+    required this.onConnect,
+    required this.onDisconnect,
+  });
+
+  final bool connected;
+  final VoidCallback onConnect;
+  final VoidCallback onDisconnect;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final ios = ionIsIos(context);
+    final label = Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          l10n.notifTelegram,
+          style: ios
+              ? TextStyle(fontSize: 16, color: IonIos.text(context))
+              : Theme.of(context).textTheme.bodyLarge,
+        ),
+        if (connected)
+          Padding(
+            padding: const EdgeInsets.only(top: 2),
+            child: Text(
+              l10n.notifLinked,
+              style: TextStyle(
+                fontSize: 14,
+                color: AppColors.forBrightness(
+                    AppColors.success, Theme.of(context).brightness),
+              ),
+            ),
+          ),
+      ],
+    );
+
+    if (ios) {
+      // ion-item (min height 44 + label margins), label flexes, small
+      // solid ion-button at the end.
+      return ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: 48),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
+          child: Row(
+            children: [
+              Expanded(child: label),
+              const SizedBox(width: 8),
+              IonSmallPillButton(
+                label: connected ? l10n.notifDisconnect : l10n.notifConnect,
+                color: connected ? AppColors.danger : AppColors.primary,
+                onPressed: connected ? onDisconnect : onConnect,
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+      child: Row(
+        children: [
+          Icon(
+            Icons.telegram,
+            color: connected ? AppColors.success : const Color(0xFF0088CC),
+          ),
+          const SizedBox(width: 16),
+          Expanded(child: label),
+          const SizedBox(width: 8),
+          // Ionic md: solid ion-button (danger when linked)
+          ElevatedButton(
+            onPressed: connected ? onDisconnect : onConnect,
+            style: connected
+                ? ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.danger,
+                    foregroundColor: Colors.white,
+                  )
+                : null,
+            child: Text(connected ? l10n.notifDisconnect : l10n.notifConnect),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 /// IOS_FORMS1: `ion-button` inside an `ion-item` on iOS – Ionic makes it
-/// `size="small"`: solid 24pt capsule with a 13pt white label.
-class _SmallPillButton extends StatelessWidget {
-  const _SmallPillButton({
+/// `size="small"`: solid 24pt capsule with a 13pt white label, as wide as
+/// its label (IOS_R4: never stretched to the row width).
+class IonSmallPillButton extends StatelessWidget {
+  const IonSmallPillButton({
+    super.key,
     required this.label,
     required this.color,
     required this.onPressed,
@@ -491,17 +570,24 @@ class _SmallPillButton extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onPressed,
-        child: Container(
+        child: ConstrainedBox(
           constraints: const BoxConstraints(minHeight: 24),
-          padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 4),
-          alignment: Alignment.center,
-          child: Text(
-            label,
-            style: const TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w500,
-              color: Colors.white,
-              height: 1.2,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 4),
+            child: Center(
+              widthFactor: 1,
+              heightFactor: 1,
+              child: Text(
+                label,
+                maxLines: 1,
+                softWrap: false,
+                style: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.white,
+                  height: 1.2,
+                ),
+              ),
             ),
           ),
         ),

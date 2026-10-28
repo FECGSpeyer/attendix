@@ -19,11 +19,12 @@ import '../layout/ionic_ios.dart'; // IOS_SHEETS
 /// dark mode) – not the grouped grey – so the `ev-list` rows sit directly on
 /// the page ([EventListCard.iosPlain]). Material keeps the theme default.
 /// IOS_THEME2: dark mode = the black page (cards stay #1c1c1d).
+/// IOS_R4: explicit black – the scaffold default is the grouped #222428.
 Color? eventPageBackground(BuildContext context) {
   if (!useIosLook(context)) return null;
   final theme = Theme.of(context);
   return theme.brightness == Brightness.dark
-      ? theme.scaffoldBackgroundColor
+      ? AppColors.iosPlainPageDark
       : theme.colorScheme.surface;
 }
 
