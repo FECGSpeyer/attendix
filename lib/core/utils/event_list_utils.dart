@@ -180,8 +180,9 @@ abstract final class EventListUtils {
     }
   }
 
-  /// Ionic "rosa" color used for reported late arrivals.
-  static const Color rosa = Color(0xFFE91E63);
+  /// Ionic "rosa" color used for reported late arrivals
+  /// (`--ion-color-rosa: #be72c0`, lilac).
+  static const Color rosa = AppColors.rosa;
 
   /// Readable status for the pill; upcoming Termine read as a plan
   /// ("Zugesagt"), past ones as a result.

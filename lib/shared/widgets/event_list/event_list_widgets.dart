@@ -7,6 +7,8 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/event_list_utils.dart';
 import '../../../l10n/l10n.dart';
 import '../adaptive/adaptive.dart'; // IOS_LOOK
+import '../layout/ion_modal_handle.dart'; // IOS_SHEETS
+import '../layout/ionic_ios.dart'; // IOS_SHEETS
 
 /// Card layout building blocks of the Terminlisten (Ionic `ev-*` classes):
 /// date tile, pills, chips, section and month headers, the "Heute" card and
@@ -744,8 +746,73 @@ class EventMoreLink extends StatelessWidget {
 
 /// Legend sheet of the status pills (Ionic signout legend).
 Future<void> showEventLegendSheet(BuildContext context) {
-  // Ionic legend modal: light content, inset list with list header and
-  // `ev-pill` (slot start) + label rows.
+  // Ionic legend modal (breakpoints [0, 0.5, 1], initial 0.5): light
+  // content, inset list with list header and an item group of
+  // `ev-pill` (slot start) + label rows (lines="none").
+  final ios = useIosLook(context);
+  final l10n = context.l10n;
+  final entries = <(String, Color, String)>[
+    (l10n.signoutLegendAccepted, AppColors.success, l10n.signoutLegendAcceptedPresent),
+    (l10n.commonStatusExcused, AppColors.warning, l10n.commonStatusExcused),
+    (l10n.commonStatusAbsent, AppColors.danger, l10n.commonStatusAbsent),
+    (l10n.signoutLegendLate, AppColors.tertiary, l10n.commonStatusLate),
+    (l10n.signoutLegendLateReported, EventListUtils.rosa, l10n.signoutLegendLateReportedExcused),
+    (l10n.commonStatusNeutral, AppColors.medium, l10n.commonStatusNeutral),
+  ];
+
+  if (ios) {
+    // IOS_SHEETS: Ionic iOS sheet – grabber, sheet `100% - 10px` below the
+    // safe area at breakpoint 0.5, list header + rounded item group with
+    // 52pt rows (pill, 16pt gap, 17pt label).
+    final available =
+        MediaQuery.sizeOf(context).height - MediaQuery.paddingOf(context).top;
+    final full = available > 100 ? (available - 10) / available : 1.0;
+    return showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      showDragHandle: false,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      builder: (ctx) => FractionallySizedBox(
+        heightFactor: 0.5 * full,
+        child: IonModalHandleOverlay(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.only(
+              top: 16,
+              bottom: 16 + MediaQuery.paddingOf(ctx).bottom,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                IonListHeader(ctx.l10n.signoutLegend),
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                  clipBehavior: Clip.antiAlias,
+                  decoration: BoxDecoration(
+                    color: Theme.of(ctx).colorScheme.surface,
+                    borderRadius: BorderRadius.circular(IonIos.groupRadius),
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      for (final e in entries)
+                        IonItem(
+                          leading: EventPill(label: e.$1, color: e.$2),
+                          title: Text(e.$3),
+                        ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget row(String pill, Color color, String text) => ConstrainedBox(
         constraints: const BoxConstraints(minHeight: 48),
         child: Padding(
@@ -788,12 +855,7 @@ Future<void> showEventLegendSheet(BuildContext context) {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    row(ctx.l10n.signoutLegendAccepted, AppColors.success, ctx.l10n.signoutLegendAcceptedPresent),
-                    row(ctx.l10n.commonStatusExcused, AppColors.warning, ctx.l10n.commonStatusExcused),
-                    row(ctx.l10n.commonStatusAbsent, AppColors.danger, ctx.l10n.commonStatusAbsent),
-                    row(ctx.l10n.signoutLegendLate, AppColors.tertiary, ctx.l10n.commonStatusLate),
-                    row(ctx.l10n.signoutLegendLateReported, EventListUtils.rosa, ctx.l10n.signoutLegendLateReportedExcused),
-                    row(ctx.l10n.commonStatusNeutral, AppColors.medium, ctx.l10n.commonStatusNeutral),
+                    for (final e in entries) row(e.$1, e.$2, e.$3),
                   ],
                 ),
               ),

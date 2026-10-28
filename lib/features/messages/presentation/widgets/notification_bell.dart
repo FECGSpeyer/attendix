@@ -15,6 +15,7 @@ import '../../../../data/models/tenant/tenant.dart';
 import '../../../../data/models/user_notification/user_notification.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../shared/widgets/layout/ion_modal_handle.dart'; // IOS_SHEETS
 
 /// Notification bell for page app bars (port of Ionic `NotificationBellComponent`).
 ///
@@ -44,19 +45,27 @@ class NotificationBell extends ConsumerWidget {
       return;
     }
 
+    // IOS_SHEETS: Ionic sheet modal (breakpoints [0, 0.75, 1]). On iOS the
+    // sheet is `100% - 10px` high below the safe area and the grabber is drawn
+    // over the header (no extra 48pt drag-handle row), so the sheet top sits
+    // where Ionic's does.
+    final ios = useIosLook(context);
+    final available =
+        MediaQuery.sizeOf(context).height - MediaQuery.paddingOf(context).top;
+    final full = ios && available > 100 ? (available - 10) / available : 1.0;
     final target = await showModalBottomSheet<_BellTarget>(
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
-      showDragHandle: true,
+      showDragHandle: !ios,
       // ion-content color="light" behind the inset list
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       builder:
           (_) => DraggableScrollableSheet(
             expand: false,
-            initialChildSize: 0.75,
-            minChildSize: 0.4,
-            maxChildSize: 1,
+            initialChildSize: 0.75 * full,
+            minChildSize: 0.4 * full,
+            maxChildSize: full,
             builder:
                 (context, scrollController) => _NotificationCenter(
                   initialAllTenants: allTenants,
@@ -254,26 +263,99 @@ class _NotificationCenterState extends ConsumerState<_NotificationCenter> {
     return '';
   }
 
-  List<Widget> _headerButtons(int unread, List<UserNotification> list) => [
+  List<Widget> _headerButtons(int unread, List<UserNotification> list, bool ios) => [
         if (unread > 0)
           IconButton(
-            tooltip: context.l10n.bellMarkAllRead,
-            color: AppColors.primary,
-            icon: const Icon(Icons.done_all),
+            tooltip: ios ? null : context.l10n.bellMarkAllRead,
+            // iOS: plain ion-button in the glass capsule → black icon.
+            color: ios ? null : AppColors.primary,
+            icon: Icon(
+              Icons.done_all,
+              semanticLabel: ios ? context.l10n.bellMarkAllRead : null,
+            ),
             onPressed: _markAll,
           ),
         if (list.isNotEmpty)
           IconButton(
-            tooltip: context.l10n.bellDeleteAll,
-            icon: const Icon(Icons.delete_outline, color: AppColors.danger),
+            tooltip: ios ? null : context.l10n.bellDeleteAll,
+            icon: Icon(
+              Icons.delete_outline,
+              color: AppColors.danger,
+              semanticLabel: ios ? context.l10n.bellDeleteAll : null,
+            ),
             onPressed: _deleteAll,
           ),
       ];
 
+  /// `ion-segment` (current instance / all instances).
+  Widget _segment(bool ios) => IonSegment<bool>(
+        // IOS_SHEETS: segment without color inside an ion-toolbar → neutral
+        // iOS control, only as wide as its labels and centred.
+        neutral: ios,
+        fitContent: ios,
+        items: [
+          IonSegmentItem(value: false, label: Text(context.l10n.bellCurrentInstance)),
+          IonSegmentItem(value: true, label: Text(context.l10n.commonAll)),
+        ],
+        value: _allTenants,
+        onChanged:
+            (v) => setState(() {
+              _allTenants = v;
+              _readOverrides.clear();
+            }),
+      );
+
+  /// IOS_SHEETS: `ion-header` of the Ionic sheet modal on iOS: grabber over
+  /// the title toolbar (centred title, end buttons in one Liquid Glass
+  /// capsule), second toolbar with the centred segment, hairline below.
+  Widget _iosHeader(int unread, List<UserNotification> list) {
+    final theme = Theme.of(context);
+    final buttons = _headerButtons(unread, list, true);
+    return Container(
+      decoration: BoxDecoration(
+        color: theme.bottomSheetTheme.backgroundColor ?? theme.colorScheme.surface,
+        border: Border(bottom: BorderSide(color: theme.dividerColor, width: 0.5)),
+      ),
+      child: IonModalHandleOverlay(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 10, left: 4, right: 4),
+              child: SizedBox(
+                height: 56,
+                child: NavigationToolbar(
+                  centerMiddle: true,
+                  middleSpacing: 8,
+                  middle: Text(
+                    context.l10n.bellTitle,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w600,
+                      color: theme.colorScheme.onSurface,
+                    ),
+                  ),
+                  trailing:
+                      buttons.isEmpty ? null : ToolbarButtonGroup(children: buttons),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 4, 16, 10),
+              child: Center(child: _segment(true)),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final ios = Theme.of(context).platform == TargetPlatform.iOS;
+    final ios = useIosLook(context);
     final listAsync = ref.watch(userNotificationsProvider(_allTenants));
     final unread = ref.watch(unreadNotificationCountProvider).valueOrNull ?? 0;
     final tenants = ref.watch(userTenantsProvider).valueOrNull ?? const <Tenant>[];
@@ -281,55 +363,36 @@ class _NotificationCenterState extends ConsumerState<_NotificationCenter> {
 
     return Column(
       children: [
-        // ion-toolbar: ion-title (centred on iOS) + end buttons
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingS),
-          child: Row(
-            children: [
-              if (ios) const SizedBox(width: 96),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 8),
-                  child: Text(
-                    context.l10n.bellTitle,
-                    textAlign: ios ? TextAlign.center : TextAlign.start,
-                    style: TextStyle(
-                      fontSize: ios ? 17 : 20,
-                      fontWeight: FontWeight.w600,
-                      color: theme.colorScheme.onSurface,
+        if (ios)
+          _iosHeader(unread, list)
+        else ...[
+          // ion-toolbar: ion-title + end buttons (md mode)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingS),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 8),
+                    child: Text(
+                      context.l10n.bellTitle,
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                        color: theme.colorScheme.onSurface,
+                      ),
                     ),
                   ),
                 ),
-              ),
-              if (ios)
-                SizedBox(
-                  width: 96,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: _headerButtons(unread, list),
-                  ),
-                )
-              else
-                ..._headerButtons(unread, list),
-            ],
+                ..._headerButtons(unread, list, false),
+              ],
+            ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(AppDimensions.paddingS),
-          child: AppSegmentedButton<bool>(
-            showSelectedIcon: false,
-            segments: [
-              ButtonSegment(value: false, label: Text(context.l10n.bellCurrentInstance)),
-              ButtonSegment(value: true, label: Text(context.l10n.commonAll)),
-            ],
-            selected: {_allTenants},
-            onSelectionChanged:
-                (s) => setState(() {
-                  _allTenants = s.first;
-                  _readOverrides.clear();
-                }),
+          Padding(
+            padding: const EdgeInsets.all(AppDimensions.paddingS),
+            child: _segment(false),
           ),
-        ),
+        ],
         Expanded(
           child: RefreshIndicator.adaptive(
             onRefresh: () async {
@@ -367,7 +430,11 @@ class _NotificationCenterState extends ConsumerState<_NotificationCenter> {
                         Container(
                           margin: EdgeInsets.symmetric(horizontal: ios ? 20 : 16),
                           decoration: BoxDecoration(
-                            color: theme.cardTheme.color ?? theme.colorScheme.surface,
+                            // IOS_SHEETS: white rows on the grey content.
+                            color:
+                                ios
+                                    ? theme.colorScheme.surface
+                                    : (theme.cardTheme.color ?? theme.colorScheme.surface),
                             borderRadius: BorderRadius.circular(ios ? 28 : 16),
                           ),
                           clipBehavior: Clip.antiAlias,
@@ -395,6 +462,10 @@ class _NotificationCenterState extends ConsumerState<_NotificationCenter> {
     final read = _isRead(n);
     final tenantName = _allTenants ? _tenantName(n, tenants) : '';
     final theme = Theme.of(context);
+    final onSurface = theme.colorScheme.onSurface;
+    // IOS_SHEETS: the body is rendered as HTML in Ionic, so line breaks and
+    // repeated spaces collapse ("Allgemein Treffen am …" on one line).
+    final body = n.body.replaceAll(RegExp(r'\s+'), ' ').trim();
     return Slidable(
       key: ValueKey(n.id),
       startActionPane: ActionPane(
@@ -424,7 +495,9 @@ class _NotificationCenterState extends ConsumerState<_NotificationCenter> {
       child: InkWell(
         onTap: () => _onTap(n),
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 10, 12, 10),
+          // iOS ion-item: 16 start padding, label margin 10 top/bottom, detail
+          // icon 8 after the label and 10 from the end.
+          padding: EdgeInsets.fromLTRB(16, 10, ios ? 10 : 12, 10),
           child: Row(
             children: [
               if (!read) ...[
@@ -436,7 +509,8 @@ class _NotificationCenterState extends ConsumerState<_NotificationCenter> {
                     shape: BoxShape.circle,
                   ),
                 ),
-                const SizedBox(width: 12),
+                // `.unread-dot { margin-inline-end: 4px }`
+                SizedBox(width: ios ? 4 : 12),
               ],
               Expanded(
                 child: Column(
@@ -445,17 +519,20 @@ class _NotificationCenterState extends ConsumerState<_NotificationCenter> {
                     if (tenantName.isNotEmpty)
                       Text(
                         tenantName,
-                        style: const TextStyle(
-                          fontSize: 14,
+                        style: TextStyle(
+                          // ion-note: max(14px, 1rem)
+                          fontSize: ios ? 16 : 14,
                           fontWeight: FontWeight.w600,
                           color: AppColors.medium,
                         ),
                       ),
                     Text(
-                      n.body,
+                      body,
                       style: TextStyle(
                         fontSize: 14,
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                        // iOS `ion-label p`: text-color-step-600 (#999)
+                        height: ios ? 1.5 : null,
+                        color: onSurface.withValues(alpha: ios ? 0.4 : 0.6),
                       ),
                     ),
                     const SizedBox(height: 2),
@@ -463,17 +540,27 @@ class _NotificationCenterState extends ConsumerState<_NotificationCenter> {
                       n.createdAt == null
                           ? ''
                           : DateFormat('${dateFmt()} HH:mm').format(n.createdAt!.toLocal()),
-                      style: const TextStyle(fontSize: 11, color: AppColors.medium),
+                      style: TextStyle(
+                        fontSize: 11,
+                        // iOS ion-note: text-color-step-650 (#a6a6a6)
+                        color: ios ? onSurface.withValues(alpha: 0.35) : AppColors.medium,
+                      ),
                     ),
                   ],
                 ),
               ),
-              if (n.isNavigable)
+              if (n.isNavigable) ...[
+                if (ios) const SizedBox(width: 8),
                 Icon(
                   Icons.chevron_right,
-                  size: 22,
-                  color: AppColors.medium.withValues(alpha: 0.6),
+                  size: ios ? 20 : 22,
+                  // iOS detail icon: opacity .25
+                  color:
+                      ios
+                          ? onSurface.withValues(alpha: 0.25)
+                          : AppColors.medium.withValues(alpha: 0.6),
                 ),
+              ],
             ],
           ),
         ),
