@@ -94,12 +94,29 @@ class SettingsPage extends ConsumerWidget {
 
     void openTeamOrg(String tab) => context.push('/settings/team-organization?tab=$tab');
 
+    final ios = ionIsIos(context); // UX_SETTINGS (WAVE 8)
+    void openTenants() => context.go('/tenants');
+
     return Scaffold(
       appBar: AppBar(
-        // Ionic: tenant switcher (long name + chevron) in the header
-        title: TenantSwitcherTitle(fallbackTitle: l10n.settingsSettings),
+        // Ionic: tenant switcher (long name + chevron) in the header. iOS:
+        // `ion-buttons slot="start"` → left aligned glass button, no title.
+        centerTitle: ios ? false : null,
+        titleSpacing: ios ? 12 : null,
+        title: ios
+            ? IonHeaderPill(child: TenantSwitcherTitle(fallbackTitle: l10n.settingsSettings))
+            : TenantSwitcherTitle(fallbackTitle: l10n.settingsSettings),
         actions: const [NotificationBell()], // MESSAGES
       ),
+      // Ionic: `@if (isIos)` ion-fab (apps-outline) opens the instance list.
+      floatingActionButton: ios
+          ? FloatingActionButton(
+              heroTag: 'settingsTenantsFab',
+              onPressed: openTenants,
+              tooltip: l10n.settingsSwitchTenant,
+              child: const Icon(Icons.apps),
+            )
+          : null,
       body: RefreshIndicator(
         onRefresh: () async {
           ref.invalidate(currentTenantProvider);
@@ -114,7 +131,11 @@ class SettingsPage extends ConsumerWidget {
         },
         child: ListView(
           physics: const AlwaysScrollableScrollPhysics(),
-          padding: const EdgeInsets.all(AppDimensions.paddingM),
+          // iOS: inset lists 16pt from the edges, hero card margin-top 12,
+          // room for the ion-fab at the bottom.
+          padding: ios
+              ? const EdgeInsets.fromLTRB(16, 12, 16, 88)
+              : const EdgeInsets.all(AppDimensions.paddingM),
           children: [
             // PWA Install Hint (only shown on mobile web)
             const _PwaInstallHint(),
@@ -349,9 +370,7 @@ class SettingsPage extends ConsumerWidget {
                   SettingsListTile(
                     icon: Icons.settings_outlined,
                     title: org?.name ?? l10n.settingsOrganisation,
-                    trailing: org == null
-                        ? Text(l10n.settingsNotLinked, style: const TextStyle(color: AppColors.medium))
-                        : null,
+                    trailing: org == null ? IonNote(l10n.settingsNotLinked) : null,
                     onTap: () => context.push('/settings/org-settings'),
                   ),
                 ],
@@ -411,11 +430,29 @@ class SettingsPage extends ConsumerWidget {
             SettingsListSection(
               icon: Icons.settings_outlined,
               title: l10n.settingsSystem,
-              footer: Center(
-                child: TextButton(
-                  onPressed: () => context.push('/settings/delete-account'),
-                  style: TextButton.styleFrom(foregroundColor: AppColors.medium),
-                  child: Text(l10n.settingsDeleteAccount),
+              // Ionic .delete-account-link: transparent, margin-top 24,
+              // 13px, opacity .55, centered + underlined.
+              footer: Padding(
+                padding: const EdgeInsets.only(top: 24),
+                child: Center(
+                  child: InkWell(
+                    onTap: () => context.push('/settings/delete-account'),
+                    child: Opacity(
+                      opacity: 0.55,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        child: Text(
+                          l10n.settingsDeleteAccount,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 13,
+                            decoration: TextDecoration.underline,
+                            color: Theme.of(context).colorScheme.onSurface,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
               ),
               children: [
@@ -424,7 +461,7 @@ class SettingsPage extends ConsumerWidget {
                   title: l10n.settingsSwitchTenant,
                   subtitle: tenant?.longName,
                   detail: false,
-                  onTap: () => context.go('/tenants'),
+                  onTap: openTenants,
                 ),
                 const LanguagePickerTile(), // I18N_INFRA
                 SettingsListTile(
@@ -461,7 +498,7 @@ class SettingsPage extends ConsumerWidget {
                   icon: Icons.auto_awesome_outlined,
                   title: l10n.settingsWhatsNew,
                   detail: false,
-                  trailing: _VersionBadge(version: AppConstants.appVersion),
+                  trailing: const IonBadge(text: AppConstants.appVersion),
                   onTap: () => showVersionHistorySheet(context),
                 ),
                 // NATIVE_MISC: Ionic liveUpdate.updateAvailable() → "Update installieren"
@@ -515,14 +552,11 @@ class _PendingPersonsCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: AppDimensions.paddingM),
-      child: Card(
-        margin: EdgeInsets.zero,
+      child: IonCardBox(
         color: AppColors.warning,
-        clipBehavior: Clip.antiAlias,
-        child: InkWell(
-          onTap: () => context.push('/settings/pending'),
-          child: Padding(
-            padding: const EdgeInsets.all(AppDimensions.paddingM),
+        onTap: () => context.push('/settings/pending'),
+        child: Padding(
+            padding: EdgeInsets.all(ionIsIos(context) ? 20 : AppDimensions.paddingM),
             child: Row(
               children: [
                 const Icon(Icons.person_add, size: 32, color: Colors.black87),
@@ -546,28 +580,6 @@ class _PendingPersonsCard extends StatelessWidget {
               ],
             ),
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class _VersionBadge extends StatelessWidget {
-  const _VersionBadge({required this.version});
-
-  final String version;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-      decoration: BoxDecoration(
-        color: AppColors.primary,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Text(
-        version,
-        style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600),
       ),
     );
   }

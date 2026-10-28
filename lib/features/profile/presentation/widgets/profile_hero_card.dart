@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -49,11 +50,20 @@ class ProfileHeroCard extends ConsumerWidget {
         ),
     ];
 
+    // UX_SETTINGS (WAVE 8): settings.page.scss .hero-card — margin
+    // 12 16 8 (page padding supplies top/sides), radius 16, padding 16,
+    // 52pt avatar, 1.15rem bold name, 0.85rem medium role, medium chevron.
+    final ios = theme.platform == TargetPlatform.iOS;
     return Padding(
-      padding: const EdgeInsets.only(bottom: AppDimensions.paddingM),
+      padding: EdgeInsets.only(bottom: ios ? 8 : AppDimensions.paddingM),
       child: Card(
         margin: EdgeInsets.zero,
         clipBehavior: Clip.antiAlias,
+        elevation: 0,
+        color: ios
+            ? (theme.brightness == Brightness.dark ? AppColors.surfaceDark : Colors.white)
+            : null,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         child: InkWell(
           onTap: () => showMasterDataSheet(context),
           child: Padding(
@@ -68,37 +78,43 @@ class ProfileHeroCard extends ConsumerWidget {
                           hasCustomProfileImage(person.img) ? person.img : null,
                       firstName: person.firstName,
                       lastName: person.lastName,
-                      size: 56,
+                      size: 52,
                     ),
-                    const SizedBox(width: AppDimensions.paddingM),
+                    const SizedBox(width: 14),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             '${person.firstName} ${person.lastName}'.trim(),
-                            style: theme.textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
+                            style: const TextStyle(
+                              fontSize: 18.4,
+                              fontWeight: FontWeight.w700,
                             ),
                           ),
                           if (profileRoleName(role).isNotEmpty)
                             Text(
                               profileRoleName(role),
-                              style: theme.textTheme.bodySmall?.copyWith(
+                              style: const TextStyle(
+                                fontSize: 13.6,
                                 color: AppColors.medium,
                               ),
                             ),
                         ],
                       ),
                     ),
-                    const Icon(Icons.chevron_right, color: AppColors.medium),
+                    Icon(
+                      ios ? CupertinoIcons.chevron_forward : Icons.chevron_right,
+                      size: ios ? 17.6 : null,
+                      color: AppColors.medium,
+                    ),
                   ],
                 ),
                 if (chips.isNotEmpty) ...[
-                  const SizedBox(height: AppDimensions.paddingM),
+                  const SizedBox(height: 12),
                   Wrap(
-                    spacing: AppDimensions.paddingS,
-                    runSpacing: AppDimensions.paddingS,
+                    spacing: 6,
+                    runSpacing: 6,
                     children: chips,
                   ),
                 ],
@@ -120,20 +136,22 @@ class _StatChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      // .stat-chip: radius 8, padding 4/8, 0.8rem, primary 10 % background,
+      // 0.9rem icon in primary-shade, gap 5.
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: AppColors.primary.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(16),
+        color: AppColors.primary.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 14, color: AppColors.primary),
-          const SizedBox(width: 6),
+          Icon(icon, size: 14.4, color: AppColors.primaryDark),
+          const SizedBox(width: 5),
           Flexible(
             child: Text(
               label,
-              style: Theme.of(context).textTheme.bodySmall,
+              style: const TextStyle(fontSize: 12.8),
               overflow: TextOverflow.ellipsis,
             ),
           ),
