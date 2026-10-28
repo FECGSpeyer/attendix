@@ -12,6 +12,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../songs/data/song_print_service.dart';
 import 'song_options_sheet.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/layout/ionic_ios.dart';
 import '../../../../core/utils/error_message.dart';
 
 /// "Aktuelle Werke" sheet (Ionic signout songsModal): one inset list per
@@ -64,37 +65,28 @@ class UpcomingSongsSheet extends ConsumerWidget {
         return Container(
           decoration: BoxDecoration(
             color: theme.scaffoldBackgroundColor,
-            borderRadius: const BorderRadius.vertical(
-              top: Radius.circular(AppDimensions.borderRadiusL),
-            ),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
           ),
           child: Column(
             children: [
               // UX_SELF: Ionic toolbar – close (start), title, print (end)
-              Padding(
-                padding: const EdgeInsets.fromLTRB(4, 8, 4, 0),
-                child: Row(
-                  children: [
-                    IconButton(
-                      tooltip: context.l10n.commonClose,
-                      icon: const Icon(Icons.close),
-                      onPressed: () => Navigator.of(context).pop(),
-                    ),
-                    Expanded(
-                      child: Text(
-                        context.l10n.signoutCurrentSongs,
-                        textAlign: TextAlign.center,
-                        style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    // MISC2: Ionic signout printAllCurrentFiles
-                    IconButton(
-                      tooltip: context.l10n.signoutFlutterPrintAllScores,
-                      icon: const Icon(Icons.print_outlined),
-                      onPressed: () => _printAllCurrentFiles(context, ref),
-                    ),
-                  ],
-                ),
+              IonSheetHeader(
+                title: context.l10n.signoutCurrentSongs,
+                start: [
+                  IconButton(
+                    tooltip: context.l10n.commonClose,
+                    icon: const Icon(Icons.close),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                ],
+                end: [
+                  // MISC2: Ionic signout printAllCurrentFiles
+                  IconButton(
+                    tooltip: context.l10n.signoutFlutterPrintAllScores,
+                    icon: const Icon(Icons.print_outlined),
+                    onPressed: () => _printAllCurrentFiles(context, ref),
+                  ),
+                ],
               ),
               Expanded(
                 child: songsAsync.when(
@@ -172,38 +164,28 @@ class _SongGroupSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final songs = group.songs.where((h) => h.song != null).toList();
+    // Ionic: ion-list inset > ion-list-header (date) + ion-item-group
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(20, 16, 20, 6),
-          child: Text(
-            [
-              DateHelper.getReadableDate(group.date),
-              if (group.typeInfo != null && group.typeInfo!.isNotEmpty) group.typeInfo!,
-            ].join(' · '),
-            style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
-          ),
+        IonListHeader(
+          [
+            DateHelper.getReadableDate(group.date),
+            if (group.typeInfo != null && group.typeInfo!.isNotEmpty) group.typeInfo!,
+          ].join(' · '),
         ),
-        Card(
-          margin: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM),
-          clipBehavior: Clip.antiAlias,
-          child: Column(
-            children: [
-              for (var i = 0; i < songs.length; i++) ...[
-                if (i > 0) const Divider(height: 1, indent: 16),
-                _SongListItem(
-                  song: songs[i].song!,
-                  conductorName: songs[i].conductorName ?? songs[i].otherConductor,
-                  missingNotes:
-                      !hasSongNotesForPlayer(songs[i].song, playerInstrumentId, isChoir: isChoir),
-                  playerInstrumentId: playerInstrumentId,
-                ),
-              ],
-            ],
-          ),
+        IonInsetList(
+          children: [
+            for (var i = 0; i < songs.length; i++)
+              _SongListItem(
+                song: songs[i].song!,
+                conductorName: songs[i].conductorName ?? songs[i].otherConductor,
+                missingNotes:
+                    !hasSongNotesForPlayer(songs[i].song, playerInstrumentId, isChoir: isChoir),
+                playerInstrumentId: playerInstrumentId,
+              ),
+          ],
         ),
       ],
     );
@@ -229,19 +211,40 @@ class _SongListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final fg = missingNotes ? Colors.white : null;
     final number = song.fullNumber;
+    // Ionic ion-label (iOS): h2 17px, h3 14px; button items show the chevron.
+    final ios = isIosLook(context);
+    final hasLink = song.link != null && song.link!.isNotEmpty;
     return ListTile(
       tileColor: missingNotes ? AppColors.danger : null,
       textColor: fg,
       iconColor: fg,
-      title: Text(number.isEmpty ? song.name : '$number. ${song.name}'),
+      minVerticalPadding: ios ? 10 : null,
+      title: Text(
+        number.isEmpty ? song.name : '$number. ${song.name}',
+        style: ios ? const TextStyle(fontSize: 17) : null,
+      ),
       subtitle: conductorName != null && conductorName!.isNotEmpty
-          ? Text(context.l10n.signoutConductor(conductorName!))
+          ? Text(
+              context.l10n.signoutConductor(conductorName!),
+              style: ios
+                  ? TextStyle(fontSize: 14, color: fg ?? Theme.of(context).colorScheme.onSurface)
+                  : null,
+            )
           : null,
-      trailing: song.link != null && song.link!.isNotEmpty
-          ? IconButton(
-              icon: const Icon(Icons.download_outlined),
-              tooltip: context.l10n.signoutOpenScoreLink,
-              onPressed: () => openSongLink(context, song.link!),
+      trailing: hasLink || ios
+          ? Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (hasLink)
+                  IconButton(
+                    icon: Icon(Icons.download_outlined, color: fg ?? AppColors.primary),
+                    tooltip: context.l10n.signoutOpenScoreLink,
+                    onPressed: () => openSongLink(context, song.link!),
+                  ),
+                if (ios)
+                  Icon(Icons.chevron_right,
+                      color: (fg ?? AppColors.medium).withValues(alpha: 0.6)),
+              ],
             )
           : null,
       onTap: () => showSongOptionsSheet(
