@@ -48,6 +48,19 @@ class CrossTenantPersonCandidate {
   }
 }
 
+/// A linked tenant in which a user is a member.
+class LinkedTenantRef {
+  const LinkedTenantRef({
+    required this.id,
+    required this.name,
+    this.shortName = '',
+  });
+
+  final int id;
+  final String name;
+  final String shortName;
+}
+
 /// Cross-tenant person lookups and identity linking (Ionic
 /// services/cross-tenant + player.service setGlobalPersonId / shared field
 /// propagation).
@@ -167,6 +180,157 @@ class CrossTenantPersonRepository extends BaseRepository
       rethrow;
     }
   }
+
+  // -------------------------------------------------------------------
+  // PEOPLE2: other-instance membership + pausing in other instances
+  // (Ionic db.service getTenantsFromUser / getUsersFromTenant /
+  // getPersonIdFromTenant / pausePlayerInOtherTenant)
+  // -------------------------------------------------------------------
+
+  /// Linked tenants (excluding the current one) where [userId] is a member
+  /// with a role other than viewer.
+  Future<List<LinkedTenantRef>> getLinkedTenantsOfUser(
+    String userId, {
+    required List<int> linkedTenantIds,
+  }) async {
+    final others =
+        linkedTenantIds.where((id) => id != currentTenantId).toList();
+    if (others.isEmpty) return [];
+    try {
+      final response = await supabase
+          .from('tenantUsers')
+          .select('tenantId, role, tenant:tenantId(id, shortName, longName)')
+          .eq('userId', userId)
+          .inFilter('tenantId', others)
+          .neq('role', _viewerRole);
+      return (response as List).map((row) {
+        final tenant = row['tenant'] as Map?;
+        final short = tenant?['shortName']?.toString() ?? '';
+        final long = tenant?['longName']?.toString() ?? '';
+        return LinkedTenantRef(
+          id: row['tenantId'] as int,
+          name: long.isNotEmpty ? long : short,
+          shortName: short,
+        );
+      }).toList();
+    } catch (e, stack) {
+      handleError(e, stack, 'getLinkedTenantsOfUser');
+      rethrow;
+    }
+  }
+
+  /// User ids (non-viewer) of a linked tenant (Ionic getUsersFromTenant),
+  /// used for the "Mitglied anderer Instanz" filter.
+  Future<Set<String>> getUserIdsInTenant(
+    int tenantId, {
+    required List<int> linkedTenantIds,
+  }) async {
+    if (!linkedTenantIds.contains(tenantId)) return {};
+    try {
+      final response = await supabase
+          .from('tenantUsers')
+          .select('userId')
+          .eq('tenantId', tenantId)
+          .neq('role', _viewerRole);
+      return (response as List)
+          .map((r) => r['userId']?.toString())
+          .whereType<String>()
+          .toSet();
+    } catch (e, stack) {
+      handleError(e, stack, 'getUserIdsInTenant');
+      rethrow;
+    }
+  }
+
+  /// Player id of [userId] in a linked tenant (active row preferred).
+  Future<int?> getPersonIdFromTenant(
+    String userId,
+    int tenantId, {
+    required List<int> linkedTenantIds,
+  }) async {
+    if (!linkedTenantIds.contains(tenantId)) return null;
+    try {
+      final response = await supabase
+          .from('player')
+          .select('id, left')
+          .eq('appId', userId)
+          .eq('tenantId', tenantId)
+          .eq('pending', false);
+      final rows = response as List;
+      if (rows.isEmpty) return null;
+      final row = rows.firstWhere((r) => r['left'] == null,
+          orElse: () => rows.first);
+      return row['id'] as int?;
+    } catch (e, stack) {
+      handleError(e, stack, 'getPersonIdFromTenant');
+      rethrow;
+    }
+  }
+
+  /// Pause the same person in another linked tenant and remove it from that
+  /// tenant's attendances (upcoming, or all since [pauseFrom]).
+  Future<void> pausePlayerInOtherTenant({
+    required int playerId,
+    required int tenantId,
+    required List<int> linkedTenantIds,
+    required Map<String, dynamic> historyEntry,
+    String? pausedUntil,
+    String? pauseFrom,
+  }) async {
+    if (!linkedTenantIds.contains(tenantId)) {
+      throw RepositoryException(
+        message: 'Instanz ist nicht verknüpft',
+        operation: 'pausePlayerInOtherTenant',
+      );
+    }
+    try {
+      // Append to that row's own history (Ionic copied the source history
+      // over it, which dropped the other tenant's entries).
+      final row = await supabase
+          .from('player')
+          .select('history')
+          .eq('id', playerId)
+          .eq('tenantId', tenantId)
+          .maybeSingle();
+      final existing = row?['history'];
+      final history = <dynamic>[
+        if (existing is List) ...existing,
+        historyEntry,
+      ];
+
+      await supabase
+          .from('player')
+          .update({
+            'paused': true,
+            'paused_until': pausedUntil,
+            'history': history,
+          })
+          .eq('id', playerId)
+          .eq('tenantId', tenantId);
+
+      final today = DateTime.now().toIso8601String().substring(0, 10);
+      final since = (pauseFrom != null && pauseFrom.length >= 10)
+          ? pauseFrom.substring(0, 10)
+          : today;
+      final attendances = await supabase
+          .from('attendance')
+          .select('id')
+          .eq('tenantId', tenantId)
+          .gte('date', since);
+      final ids = (attendances as List).map((a) => a['id']).toList();
+      if (ids.isEmpty) return;
+      await supabase
+          .from('person_attendances')
+          .delete()
+          .eq('person_id', playerId)
+          .inFilter('attendance_id', ids);
+    } catch (e, stack) {
+      handleError(e, stack, 'pausePlayerInOtherTenant');
+      rethrow;
+    }
+  }
+
+  static const _viewerRole = 3; // Role.viewer
 
   /// Propagate shared identity fields (firstName, lastName, birthday, email,
   /// phone) to all rows with the same global_person_id in linked tenants
