@@ -59,7 +59,8 @@ void main() {
       expect(source, contains('title: l10n.settingsCreateAccounts'));
       expect(source, contains('l10n.settingsCreateAccountsMessage('));
       expect(source, contains('confirmText: l10n.settingsContinue'));
-      expect(source, contains('.createAccounts(players, stopOnError: true)'));
+      expect(source,
+          contains('.createAccounts(players, stopOnError: true, expectedTenantId: tenantId)'));
       expect(source, contains('l10n.settingsCreateAccountsFailed('));
       expect(source, contains('l10n.settingsAccountsCreated'));
       final notifier = read('lib/core/providers/user_registration_providers.dart');

@@ -84,16 +84,29 @@ class AccountCreationNotifier extends Notifier<AsyncValue<void>> {
   /// Like Ionic, the person list is processed sequentially.
   /// [stopOnError]: IOS_SETTINGS2 — Ionic settings `createAccounts()` stops
   /// at the first failure (the loop runs inside one try/catch).
+  ///
+  /// SOL_FIX13: [expectedTenantId] = tenant the caller's person list was
+  /// loaded for (captured before its first await). When the repository is
+  /// bound to another tenant (switch between loading the list and starting
+  /// the job) nothing is registered. Persons whose tenantId is not the
+  /// bound tenant are rejected before any side effect; the repository also
+  /// verifies membership in the database before each registration.
   Future<AccountCreationResult> createAccounts(
     List<Person> persons, {
     void Function(int done, int total)? onProgress,
     bool stopOnError = false,
+    int? expectedTenantId,
   }) async {
     // SOL_FIX3: bind repository + tenant once for the whole job.
     final repo = _boundRepo();
     if (!repo.hasTenantId) {
       return AccountCreationResult(
           created: 0, errors: [l10nWithoutContext.coreFlutterNoInstanceSelected]);
+    }
+    final boundTenantId = repo.currentTenantId;
+    if (expectedTenantId != null && expectedTenantId != boundTenantId) {
+      return AccountCreationResult(
+          created: 0, errors: [l10nWithoutContext.coreFlutterRepoPersonsNotInTenant]);
     }
     state = const AsyncValue.loading();
     final mainGroupId = await _mainGroupId(repo);
@@ -102,6 +115,11 @@ class AccountCreationNotifier extends Notifier<AsyncValue<void>> {
     for (var i = 0; i < persons.length; i++) {
       final person = persons[i];
       try {
+        // SOL_FIX13: never register a person of another tenant here.
+        if (person.tenantId != null && person.tenantId != boundTenantId) {
+          throw AccountFlowException(
+              l10nWithoutContext.coreFlutterRepoPersonsNotInTenant);
+        }
         await repo.createPlayerAccount(person, mainGroupId: mainGroupId);
         created++;
       } catch (e) {

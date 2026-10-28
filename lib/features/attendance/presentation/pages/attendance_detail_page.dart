@@ -814,10 +814,13 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     // INTEGRATION: queue while offline like every Ionic updatePersonAttendance
     // SOL_FIX12: a write that could not be queued is reported, never
     // treated as saved.
+    // SOL_FIX13: the session captured here also guards the direct write.
+    final offlineQueue = ref.read(offlineQueueNotifierProvider.notifier);
+    final writeSession = offlineQueue.captureWriteSession();
     try {
-      if (await ref.read(offlineQueueNotifierProvider.notifier).enqueueIfOffline(
+      if (await offlineQueue.enqueueIfOffline(
           personAttendanceId, {'notes': notes ?? ''},
-          attendanceId: widget.attendanceId)) {
+          attendanceId: widget.attendanceId, session: writeSession)) {
         if (mounted) setState(() => _personNotes[personId] = notes);
         return;
       }
@@ -843,7 +846,12 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     _savingPersonIds.add(personId);
 
     try {
-      await repo.updatePersonAttendance(personAttendanceId, {'notes': notes ?? ''});
+      await repo.updatePersonAttendance(
+        personAttendanceId,
+        {'notes': notes ?? ''},
+        isSessionCurrent: writeSession.isCurrent,
+        actingUserId: writeSession.userId,
+      );
 
       if (mounted) {
         ToastHelper.showSuccess(context, notes?.isNotEmpty == true ? context.l10n.attendanceNoteAdded : context.l10n.attendanceFlutterNoteDeleted);
@@ -2211,6 +2219,9 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
   /// "Datum ändern" (Ionic promptAttendanceDateChange / changeAttendanceDate).
   Future<void> _changeDate() async {
     final repo = ref.read(attendanceRepositoryWithTenantProvider);
+    // SOL_FIX13: session of the acting user, captured before the first await.
+    final offlineQueue = ref.read(offlineQueueNotifierProvider.notifier);
+    final writeSession = offlineQueue.captureWriteSession();
     final playerAbsenceRepo = ref.read(playerAbsenceRepositoryWithTenantProvider);
     final attendance = ref.read(attendanceDetailProvider(widget.attendanceId)).valueOrNull;
     if (attendance == null) return;
@@ -2291,13 +2302,19 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
           resetStatuses: reset,
         );
         // LEFTOVERS: like every Ionic updatePersonAttendance, queued while offline
-        final offlineQueue = ref.read(offlineQueueNotifierProvider.notifier);
         for (final u in updates) {
           final payload = {'status': u.status.value, 'notes': u.notes};
-          if (await offlineQueue.enqueueIfOffline(u.id, payload, attendanceId: widget.attendanceId)) {
+          if (await offlineQueue.enqueueIfOffline(u.id, payload,
+              attendanceId: widget.attendanceId, session: writeSession)) {
             continue;
           }
-          await repo.updatePersonAttendance(u.id, payload);
+          // SOL_FIX13: guarded by the session captured when the user acted.
+          await repo.updatePersonAttendance(
+            u.id,
+            payload,
+            isSessionCurrent: writeSession.isCurrent,
+            actingUserId: writeSession.userId,
+          );
         }
         await repo.updateShiftAssignmentsForAttendance(widget.attendanceId);
       }
@@ -2366,6 +2383,9 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
   /// "Anmeldefelder bearbeiten": merges the answers into registration_answers.
   Future<void> _editRegistrationFields(int personId, AttendanceType type) async {
     final repo = ref.read(attendanceRepositoryWithTenantProvider);
+    // SOL_FIX13: session of the acting user, captured before the first await.
+    final offlineQueue = ref.read(offlineQueueNotifierProvider.notifier);
+    final writeSession = offlineQueue.captureWriteSession();
     final personAttendanceId = _personAttendanceIds[personId];
     final fields = type.registrationFields ?? const <RegistrationField>[];
     if (personAttendanceId == null || fields.isEmpty) return;
@@ -2381,11 +2401,17 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     final merged = <String, dynamic>{...?existing, ...answers};
     try {
       // INTEGRATION: queue while offline like every Ionic updatePersonAttendance
-      final queued = await ref.read(offlineQueueNotifierProvider.notifier).enqueueIfOffline(
+      final queued = await offlineQueue.enqueueIfOffline(
           personAttendanceId, {'registration_answers': merged},
-          attendanceId: widget.attendanceId);
+          attendanceId: widget.attendanceId, session: writeSession);
       if (!queued) {
-        await repo.updatePersonAttendance(personAttendanceId, {'registration_answers': merged});
+        // SOL_FIX13: guarded by the session captured before the sheet.
+        await repo.updatePersonAttendance(
+          personAttendanceId,
+          {'registration_answers': merged},
+          isSessionCurrent: writeSession.isCurrent,
+          actingUserId: writeSession.userId,
+        );
       }
       if (mounted) {
         setState(() => _registrationAnswers[personId] = merged);
@@ -2708,10 +2734,13 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
 
     // PROFILE_OFFLINE: queue the change while offline (Ionic OfflineQueueService)
     // SOL_FIX12: a write that could not be queued reverts and is reported.
+    // SOL_FIX13: the session captured here also guards the direct write.
+    final offlineQueue = ref.read(offlineQueueNotifierProvider.notifier);
+    final writeSession = offlineQueue.captureWriteSession();
     try {
-      if (await ref.read(offlineQueueNotifierProvider.notifier).enqueueIfOffline(
+      if (await offlineQueue.enqueueIfOffline(
           personAttendanceId, {'status': status.value},
-          attendanceId: widget.attendanceId)) {
+          attendanceId: widget.attendanceId, session: writeSession)) {
         return;
       }
     } catch (e) {
@@ -2739,6 +2768,8 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       await repo.updatePersonAttendance(
         personAttendanceId,
         {'status': status.value},
+        isSessionCurrent: writeSession.isCurrent,
+        actingUserId: writeSession.userId,
       );
 
       // Invalidate list provider so percentage updates when navigating back
