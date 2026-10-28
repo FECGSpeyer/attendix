@@ -340,7 +340,12 @@ class _SharedPlanPageState extends ConsumerState<SharedPlanPage> {
     final start = PlanUtils.parseTimeToMinutes(_time);
     // REVIEW_FIX3: same stored format as planning_page (Ionic calculateEnd:
     // "YYYY-MM-DDTHH:mm").
-    if (start != null) _end = PlanUtils.computeEndIso(_time, _fields);
+    // SOL_FIX12: an ad-hoc plan's end is based on its own date (a bare
+    // "HH:mm" start must not fall back to today).
+    final endBase = _shared != null && _att == null && !_time.contains('T') && _date.isNotEmpty
+        ? '${_date.length >= 10 ? _date.substring(0, 10) : _date}T${PlanUtils.formatTime(_time)}'
+        : _time;
+    if (start != null) _end = PlanUtils.computeEndIso(endBase, _fields);
     try {
       final att = _att;
       if (att?.id != null) {
@@ -362,7 +367,8 @@ class _SharedPlanPageState extends ConsumerState<SharedPlanPage> {
         await _repo.updateSharedAttendancePlan(att!.id!, key, editKey, update);
         _att = PlanAttendance.fromJson({...att.toJson(), ...update});
       } else if (_shared != null) {
-        await _repo.updateSharedPlan(key, editKey, fields: _fields, title: _title, time: _time);
+        // SOL_FIX12: the recomputed end is persisted together with time + fields.
+        await _repo.updateSharedPlan(key, editKey, fields: _fields, title: _title, time: _time, endTime: _end);
       }
     } catch (_) {
       if (mounted) ToastHelper.showError(context, context.l10n.plansSaveFailed);

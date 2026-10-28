@@ -343,7 +343,8 @@ void main() {
   // ---------------------------------------------------------------------------
   test('#9 shared_plan_page stores plan.end like planning_page (computeEndIso)', () {
     final src = _read('lib/features/planning/presentation/pages/shared_plan_page.dart');
-    expect(src, contains('PlanUtils.computeEndIso(_time, _fields)'));
+    // SOL_FIX12: ad-hoc plans base the end on their own date (endBase).
+    expect(src, contains('PlanUtils.computeEndIso(endBase, _fields)'));
     expect(src, isNot(contains('PlanUtils.computeEnd(')));
   });
 }

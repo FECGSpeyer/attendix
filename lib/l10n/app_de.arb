@@ -2534,6 +2534,10 @@
   "@coreFlutterNotSignedIn": {
     "description": "core.flutter.notSignedIn"
   },
+  "coreFlutterOfflineQueueSaveFailed": "Die Änderung konnte nicht offline gespeichert werden",
+  "@coreFlutterOfflineQueueSaveFailed": {
+    "description": "core.flutter.offlineQueueSaveFailed"
+  },
   "coreFlutterOpenExternally": "Extern öffnen",
   "@coreFlutterOpenExternally": {
     "description": "core.flutter.openExternally"

@@ -300,10 +300,13 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
 
   // ── Editors & saving ───────────────────────────────────────
 
-  QuillController _controllerFor(String id, {bool readOnly = false}) {
+  /// [initialDoc]: content to show instead of `_docs[id]` (read-only
+  /// leftovers are cached under `leftover:<key>` but their notes are stored
+  /// under the original section key — SOL_FIX12, Ionic `[content]="l.doc"`).
+  QuillController _controllerFor(String id, {bool readOnly = false, Map<String, dynamic>? initialDoc}) {
     final existing = _controllers[id];
     if (existing != null) return existing;
-    final parts = tiptapToDelta(_docs[id]);
+    final parts = tiptapToDelta(initialDoc ?? _docs[id]);
     Document document;
     try {
       document = Document.fromJson(parts.ops);
@@ -1460,7 +1463,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                   context.l10n.protocolNotInPlan,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.medium),
                 ),
-                _editor(_controllerFor('leftover:${l.key}', readOnly: true), editable: false),
+                _editor(_controllerFor('leftover:${l.key}', readOnly: true, initialDoc: l.doc), editable: false),
               ],
             ),
           ),
@@ -1783,7 +1786,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
           Text(context.l10n.protocolNotInPlan,
               style: theme.textTheme.bodySmall),
           const SizedBox(height: AppDimensions.paddingS),
-          _editor(_controllerFor('leftover:${l.key}', readOnly: true), editable: false),
+          _editor(_controllerFor('leftover:${l.key}', readOnly: true, initialDoc: l.doc), editable: false),
           _taskList(_tasksFor(l.key, map)),
         ],
       );

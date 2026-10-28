@@ -102,6 +102,18 @@ void main() {
       expect(entries.single.daysOffset, 8);
       expect(entries.single.date.year, 2027);
     });
+
+    test('SOL_FIX12: December birthday stays in the look-back in early January', () {
+      final entries = DashboardUtils.birthdays(
+        [p(1, '2000-12-30'), p(2, '2000-12-10')],
+        now: DateTime(2027, 1, 5),
+      );
+      expect(entries.map((e) => e.person.id), [1]);
+      expect(entries.single.daysOffset, -6);
+      expect(entries.single.date, DateTime(2026, 12, 30));
+      expect(entries.single.age, 26);
+      expect(DashboardUtils.birthdayAgeText(entries.single), 'ist 26 geworden');
+    });
   });
 
   group('Member changes card', () {

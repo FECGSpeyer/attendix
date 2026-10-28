@@ -3449,6 +3449,12 @@ abstract class AppLocalizations {
   /// **'Nicht angemeldet'**
   String get coreFlutterNotSignedIn;
 
+  /// core.flutter.offlineQueueSaveFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Die Änderung konnte nicht offline gespeichert werden'**
+  String get coreFlutterOfflineQueueSaveFailed;
+
   /// core.flutter.openExternally
   ///
   /// In de, this message translates to:

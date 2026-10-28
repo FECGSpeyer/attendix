@@ -1940,6 +1940,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get coreFlutterNotSignedIn => 'Nicht angemeldet';
 
   @override
+  String get coreFlutterOfflineQueueSaveFailed => 'Die Änderung konnte nicht offline gespeichert werden';
+
+  @override
   String get coreFlutterOpenExternally => 'Extern öffnen';
 
   @override

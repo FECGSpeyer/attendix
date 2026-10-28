@@ -1946,6 +1946,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get coreFlutterNotSignedIn => 'Not signed in';
 
   @override
+  String get coreFlutterOfflineQueueSaveFailed => 'The change could not be saved offline';
+
+  @override
   String get coreFlutterOpenExternally => 'Open externally';
 
   @override

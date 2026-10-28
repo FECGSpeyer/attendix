@@ -87,8 +87,26 @@ class QueuedWrite {
       };
 }
 
+/// SOL_FIX12: the offline queue could not be persisted (storage error or
+/// `setString` returned false). The write is NOT queued; callers must show
+/// an error instead of treating the change as saved.
+class OfflineQueuePersistException implements Exception {
+  const OfflineQueuePersistException([this.cause]);
+  final Object? cause;
+
+  /// User-facing text (shown via friendlyErrorMessage); the cause is logged.
+  @override
+  String toString() => l10nWithoutContext.coreFlutterOfflineQueueSaveFailed;
+}
+
 /// Persistent storage + merge logic of the offline queue.
 class OfflineQueueStore {
+  /// [prefs]: storage access (tests inject failing storages).
+  OfflineQueueStore({Future<SharedPreferences> Function()? prefs})
+      : _prefs = prefs ?? SharedPreferences.getInstance;
+
+  final Future<SharedPreferences> Function() _prefs;
+
   static const String queueKey = 'offline_writes_v1';
 
   /// SOL_FIX2: async mutex (lock chain) around every read-modify-write of the
@@ -105,12 +123,17 @@ class OfflineQueueStore {
   }
 
   /// Atomically loads the queue, applies [change] and saves the result.
+  ///
+  /// SOL_FIX12: nothing is written when [change] returns the loaded list
+  /// unchanged (identical). Throws [OfflineQueuePersistException] when the
+  /// result could not be persisted.
   Future<List<QueuedWrite>> update(
     List<QueuedWrite> Function(List<QueuedWrite> current) change,
   ) {
     return synchronized(() async {
-      final next = change(await load());
-      await save(next);
+      final current = await load();
+      final next = change(current);
+      if (!identical(next, current)) await save(next);
       return next;
     });
   }
@@ -130,7 +153,7 @@ class OfflineQueueStore {
 
   Future<List<QueuedWrite>> load() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
+      final prefs = await _prefs();
       final raw = prefs.getString(queueKey);
       if (raw == null || raw.isEmpty) return [];
       final decoded = jsonDecode(raw);
@@ -145,17 +168,38 @@ class OfflineQueueStore {
     }
   }
 
+  /// SOL_FIX12: throws [OfflineQueuePersistException] when the queue could
+  /// not be persisted (never reports a write as queued that is not stored).
   Future<void> save(List<QueuedWrite> queue) async {
+    bool stored;
     try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString(
+      final prefs = await _prefs();
+      stored = await prefs.setString(
         queueKey,
         jsonEncode(queue.map((e) => e.toJson()).toList()),
       );
     } catch (e) {
       debugPrint('[OfflineQueue] save failed: $e');
+      throw OfflineQueuePersistException(e);
+    }
+    if (!stored) {
+      debugPrint('[OfflineQueue] save failed: setString returned false');
+      throw const OfflineQueuePersistException('setString returned false');
     }
   }
+
+  /// SOL_FIX12: whether [queue] holds a pending write of [userId] in
+  /// [tenantId] for the person_attendances row [personAttendanceId].
+  static bool hasPendingFor(
+    List<QueuedWrite> queue,
+    String personAttendanceId, {
+    required String userId,
+    required int tenantId,
+  }) =>
+      queue.any((e) =>
+          e.personAttendanceId == personAttendanceId &&
+          e.userId == userId &&
+          e.tenantId == tenantId);
 
   /// Last-write-wins: merge into an existing entry for the same
   /// personAttendanceId (SOL_FIX4: of the same user and tenant — a write of
@@ -433,6 +477,15 @@ class OfflineQueueNotifier extends Notifier<int> {
   ///
   /// Returns true when the write was queued (caller must not write to the
   /// database), false when online (caller writes directly).
+  ///
+  /// SOL_FIX12: online, a write for a record that still has a pending queued
+  /// write of the same user + tenant goes through the queue as well (merged
+  /// into that entry, last write wins, then replayed): a direct write would
+  /// otherwise be overwritten later by the older queued value. Writes per
+  /// record stay in order (the queue serializes them).
+  ///
+  /// Throws [OfflineQueuePersistException] when the write could not be
+  /// persisted in the queue (it is then NOT queued — show an error).
   Future<bool> enqueueIfOffline(
     String personAttendanceId,
     Map<String, dynamic> payload, {
@@ -454,8 +507,19 @@ class OfflineQueueNotifier extends Notifier<int> {
         ref.read(currentTenantIdProvider) != tenantId) {
       throw const OfflineSessionChangedException();
     }
-    if (online) return false;
     if (tenantId == null || userId == null) return false;
+    if (online) {
+      final routed = await _mergeIntoPending(
+        personAttendanceId,
+        payload,
+        tenantId: tenantId,
+        attendanceId: attendanceId,
+        userId: userId,
+      );
+      if (!routed) return false;
+      await flush();
+      return true;
+    }
     await enqueue(
       personAttendanceId,
       payload,
@@ -466,7 +530,42 @@ class OfflineQueueNotifier extends Notifier<int> {
     return true;
   }
 
+  /// SOL_FIX12: merges the write into a pending entry of the same record
+  /// (same user + tenant) in one atomic queue update. Returns false (and
+  /// writes nothing) when there is no such entry.
+  Future<bool> _mergeIntoPending(
+    String personAttendanceId,
+    Map<String, dynamic> payload, {
+    required int tenantId,
+    required String userId,
+    int? attendanceId,
+  }) async {
+    var merged = false;
+    final entry = QueuedWrite(
+      id: const Uuid().v4(),
+      personAttendanceId: personAttendanceId,
+      payload: payload,
+      tenantId: tenantId,
+      attendanceId: attendanceId,
+      userId: userId,
+      createdAt: DateTime.now().toIso8601String(),
+    );
+    final next = await _store.update((queue) {
+      if (!OfflineQueueStore.hasPendingFor(queue, personAttendanceId,
+          userId: userId, tenantId: tenantId)) {
+        return queue;
+      }
+      merged = true;
+      return OfflineQueueStore.merge(queue, entry);
+    });
+    if (merged) state = ownedBy(next, _currentUserId).length;
+    return merged;
+  }
+
   /// Add a write to the queue (last-write-wins per personAttendanceId).
+  ///
+  /// SOL_FIX12: throws [OfflineQueuePersistException] when it could not be
+  /// persisted.
   Future<void> enqueue(
     String personAttendanceId,
     Map<String, dynamic> payload, {
@@ -549,9 +648,13 @@ class OfflineQueueNotifier extends Notifier<int> {
     final legacy = [for (final e in all) if (e.userId == null) e];
     if (legacy.isNotEmpty) {
       debugPrint('[OfflineQueue] dropping ${legacy.length} unattributed writes');
-      await _store.update(
-        (current) => OfflineQueueStore.removeConfirmed(current, legacy),
-      );
+      try {
+        await _store.update(
+          (current) => OfflineQueueStore.removeConfirmed(current, legacy),
+        );
+      } on OfflineQueuePersistException catch (e) {
+        debugPrint('[OfflineQueue] dropping unattributed writes failed: $e');
+      }
     }
     final queue = ownedBy(all, userId);
     if (queue.isEmpty) {
@@ -595,9 +698,16 @@ class OfflineQueueNotifier extends Notifier<int> {
     // remove only the confirmed entries from the CURRENT queue
     // (never overwrite it with the stale failure set).
     await applyConfirmedWritesToDetailCache(confirmed, guard: cacheGuard);
-    final remaining = await _store.update(
-      (current) => OfflineQueueStore.removeConfirmed(current, confirmed),
-    );
+    List<QueuedWrite> remaining;
+    try {
+      remaining = await _store.update(
+        (current) => OfflineQueueStore.removeConfirmed(current, confirmed),
+      );
+    } on OfflineQueuePersistException catch (e) {
+      // SOL_FIX12: the replayed entries stay queued (replayed again later).
+      debugPrint('[OfflineQueue] removing replayed writes failed: $e');
+      remaining = await OfflineQueueStore.synchronized(_store.load);
+    }
     // SOL_FIX9: count for whoever is signed in now.
     state = ownedBy(remaining, aborted ? userIdFn() : userId).length;
 
