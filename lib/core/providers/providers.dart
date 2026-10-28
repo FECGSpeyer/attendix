@@ -30,3 +30,5 @@ export 'files_providers.dart';
 // END SETTINGS_EXT
 // MESSAGES
 export 'message_providers.dart';
+// DASHBOARD
+export 'dashboard_providers.dart';

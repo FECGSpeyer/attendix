@@ -29,3 +29,6 @@ export 'organisation_settings_repository.dart';
 // MESSAGES
 export 'message_repository.dart';
 export 'user_notification_repository.dart';
+// DASHBOARD
+export 'dashboard_repository.dart';
+export 'administration_repository.dart';

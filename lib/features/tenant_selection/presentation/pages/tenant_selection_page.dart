@@ -10,6 +10,7 @@ import '../../../../core/providers/user_preferences_provider.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/tenant/tenant.dart';
+import '../../../../core/providers/dashboard_providers.dart'; // DASHBOARD
 
 /// Tenant selection page
 class TenantSelectionPage extends ConsumerStatefulWidget {
@@ -83,7 +84,7 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
       final prefsNotifier = ref.read(userPreferencesNotifierProvider.notifier);
 
       // Navigate FIRST
-      context.go(role.defaultRoute);
+      context.go(homeRouteFor(role, savedTenant.id, ref.read(supabaseAuthProvider).currentUser?.userMetadata)); // DASHBOARD
 
       // Auth sync AFTER navigation (fire and forget, notifier captured above)
       prefsNotifier.updateCurrentTenantId(savedTenant.id!);
@@ -133,7 +134,7 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
     final prefsNotifier = ref.read(userPreferencesNotifierProvider.notifier);
 
     // Navigate FIRST - before auth sync can cause rebuilds
-    context.go(role.defaultRoute);
+    context.go(homeRouteFor(role, tenant.id, ref.read(supabaseAuthProvider).currentUser?.userMetadata)); // DASHBOARD
 
     // Auth sync AFTER navigation (fire and forget, notifier captured above)
     prefsNotifier.updateCurrentTenantId(tenant.id!);

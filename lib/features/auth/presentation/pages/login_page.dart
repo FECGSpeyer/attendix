@@ -10,6 +10,7 @@ import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/providers/user_preferences_provider.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../legal/presentation/widgets/legal_content_view.dart';
+import '../../../../core/providers/dashboard_providers.dart'; // DASHBOARD
 
 /// Login page
 class LoginPage extends ConsumerStatefulWidget {
@@ -147,7 +148,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       final prefsNotifier = ref.read(userPreferencesNotifierProvider.notifier);
 
       // Navigate FIRST
-      context.go(role.defaultRoute);
+      context.go(homeRouteFor(role, tenantId, ref.read(supabaseAuthProvider).currentUser?.userMetadata)); // DASHBOARD
 
       // Auth sync AFTER navigation (fire and forget, notifier captured above)
       prefsNotifier.updateCurrentTenantId(tenantId);

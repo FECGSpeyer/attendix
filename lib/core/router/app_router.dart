@@ -70,6 +70,12 @@ import '../../features/settings/presentation/pages/link_persons_page.dart';
 // MESSAGES
 import '../../features/messages/presentation/pages/message_detail_page.dart';
 import '../../features/messages/presentation/pages/message_list_page.dart';
+// DASHBOARD
+import '../providers/dashboard_providers.dart';
+import '../../features/dashboard/presentation/pages/home_dashboard_page.dart';
+import '../../features/dashboard/presentation/pages/dashboard_settings_page.dart';
+import '../../features/dashboard/presentation/pages/administration_page.dart';
+import '../../features/dashboard/presentation/pages/usage_dashboard_page.dart';
 
 /// Listenable that notifies when auth state changes
 /// Used by GoRouter to re-evaluate redirects without recreating the router
@@ -120,6 +126,10 @@ const Map<String, RoleCheck> _protectedRoutes = {
 
   // Attendance management
   '/attendance': _canSeeAttendanceTab,
+
+  // DASHBOARD (Ionic Utils.isUrlAccessAllowed: Admin/Responsible)
+  '/home-dashboard': _isAdminOrResponsible,
+  '/settings/dashboard': _isAdminOrResponsible,
 };
 
 bool _isAdmin(Role role) => role.isAdmin;
@@ -643,7 +653,39 @@ final routerProvider = Provider<GoRouter>((ref) {
                 builder: (context, state) => const LinkPersonsPage(),
               ),
               // END SETTINGS_EXT
+              // DASHBOARD
+              GoRoute(
+                path: 'dashboard',
+                name: 'dashboardSettings',
+                builder: (context, state) => const DashboardSettingsPage(),
+              ),
+              GoRoute(
+                path: 'administration',
+                name: 'administration',
+                // Ionic SuperDeveloperGuard
+                redirect: (context, state) =>
+                    ref.read(isSuperDeveloperProvider) ? null : '/settings',
+                builder: (context, state) => const AdministrationPage(),
+              ),
             ],
+          ),
+
+          // DASHBOARD: home dashboard tab (Ionic /tabs/home-dashboard)
+          GoRoute(
+            path: '/home-dashboard',
+            name: 'homeDashboard',
+            pageBuilder: (context, state) => AppPageTransitions.none(
+              child: const HomeDashboardPage(),
+              state: state,
+            ),
+          ),
+          // DASHBOARD: usage analytics (Ionic /tabs/dashboard, SuperDeveloperGuard)
+          GoRoute(
+            path: '/dashboard',
+            name: 'usageDashboard',
+            redirect: (context, state) =>
+                ref.read(isSuperDeveloperProvider) ? null : '/settings',
+            builder: (context, state) => const UsageDashboardPage(),
           ),
         ],
       ),
