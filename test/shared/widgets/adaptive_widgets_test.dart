@@ -255,8 +255,9 @@ void main() {
     expect(ios.checkboxTheme.shape, isA<CircleBorder>());
     expect(ios.scaffoldBackgroundColor, const Color(0xFFF4F5F8));
     final iosDark = AppTheme.forPlatform(Brightness.dark, TargetPlatform.iOS);
-    // IOS_THEME2: black page, #1c1c1d cards / rows like on the iPhone.
-    expect(iosDark.scaffoldBackgroundColor, const Color(0xFF000000));
+    // IOS_R4: grouped page = ion-content color="light" in dark (#222428);
+    // plain pages set black themselves, cards stay #1c1c1d.
+    expect(iosDark.scaffoldBackgroundColor, const Color(0xFF222428));
     expect(iosDark.colorScheme.surface, const Color(0xFF1C1C1D));
     // md dark = Ionic md dark (#121212 page, #1e1e1e items).
     final mdDark = AppTheme.forPlatform(Brightness.dark, TargetPlatform.android);

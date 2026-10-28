@@ -86,8 +86,11 @@ class IonInsetGroup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final background =
-        color ?? theme.cardTheme.color ?? theme.colorScheme.surface;
+    // IOS_R4: iOS dark item groups are --ion-item-background #000.
+    final background = color ??
+        (ion.isIosLook(context) && theme.brightness == Brightness.dark
+            ? ion.ionItemBackground(context)
+            : (theme.cardTheme.color ?? theme.colorScheme.surface));
     final visible = children;
     return Container(
       margin: margin ??

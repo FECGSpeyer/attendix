@@ -171,6 +171,6 @@ void main() {
 
   test('main.dart wraps the navigator in IonModalTheme', () {
     final src = File('lib/main.dart').readAsStringSync();
-    expect(src, contains('IonModalTheme(child:'));
+    expect(src, matches(RegExp(r'IonModalTheme\(\s*(//[^\n]*\s*)?child:')));
   });
 }

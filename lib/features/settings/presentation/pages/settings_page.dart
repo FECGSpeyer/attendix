@@ -541,11 +541,13 @@ class SettingsPage extends ConsumerWidget {
                     title: l10n.adminTitle,
                     onTap: () => context.push('/settings/administration'),
                   ),
-                // Ionic: red `ion-item color="danger"` row, no detail chevron.
+                // Ionic: red `ion-item color="danger" button` row. IOS_R4: no
+                // detail="false" → iOS shows the faint detail chevron
+                // (--detail-icon-color: initial = white, opacity .25).
                 SettingsListTile(
                   icon: Icons.logout,
                   title: l10n.settingsLogout,
-                  detail: false,
+                  detail: ionIsIos(context),
                   background: AppColors.danger,
                   onTap: () async {
                     // Ionic logs out directly (no confirmation)

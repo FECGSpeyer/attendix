@@ -81,6 +81,12 @@ class _SelfServiceOverviewPageState
     return CondenseHeader(
       builder: (context, condensed) => Scaffold(
       appBar: AppBar(
+        // IOS_R4: Ionic collapse="condense" – no hairline under the segment
+        // toolbar (and the page colour behind it) until the large title has
+        // scrolled away.
+        backgroundColor: condenseBarColor(context, condensed,
+            pageBackground: eventPageBackground(context)),
+        shape: condenseBarShape(context, condensed),
         title: CondenseTitle(
           condensed: condensed,
           child: Text(context.l10n.selfServiceAllEvents),

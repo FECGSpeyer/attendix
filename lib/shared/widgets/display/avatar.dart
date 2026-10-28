@@ -40,6 +40,11 @@ class Avatar extends StatelessWidget {
   }
 
   Widget _buildInitials(BuildContext context) {
+    // IOS_R4: Ionic shows `assets/icon/avatar-placeholder.svg` for people
+    // without a picture (hero card, Stammdaten) – no teal initials disc.
+    if (Theme.of(context).platform == TargetPlatform.iOS) {
+      return IonAvatarPlaceholder(size: size);
+    }
     final initials = _getInitials();
     final theme = Theme.of(context);
 

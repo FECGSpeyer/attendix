@@ -188,10 +188,10 @@ class _FeedbackSheetState extends ConsumerState<_FeedbackSheet>
                   style: const TextStyle(color: AppColors.medium),
                 ),
               ),
-              // ion-segment without colour: neutral iOS segmented control
-              Padding(
-                padding: const EdgeInsets.only(bottom: 16),
-                child: IonSegment<int>(
+              // ion-segment without colour: neutral iOS segmented control,
+              // inside its own (rounded) ion-item-group.
+              _iosGroup([
+                IonSegment<int>(
                   neutral: true,
                   items: [
                     IonSegmentItem(
@@ -207,7 +207,7 @@ class _FeedbackSheetState extends ConsumerState<_FeedbackSheet>
                     _tabController.index = i;
                   },
                 ),
-              ),
+              ]),
               ...(index == 0 ? _questionFormIos() : _feedbackFormIos()),
             ],
           ),
@@ -311,15 +311,20 @@ class _FeedbackSheetState extends ConsumerState<_FeedbackSheet>
   // UX_SETTINGS (WAVE 8): Ionic feedback modal content on iOS — inset
   // item groups with stacked labels, rating item with end stars, toggle
   // item and a primary "Absenden" item.
-  Widget _iosGroup(List<Widget> children) {
+  // IOS_R4: only the direct `ion-item-group`s of the inset list (Telegram,
+  // segment) get the structured-list corners (28pt); the groups inside
+  // `ion-segment-view` (form, "Absenden") are not direct children and stay
+  // square blocks of the same width. Groups: --ion-item-background (white /
+  // dark #000, settings.page.scss), margin-bottom 16 (global.scss).
+  Widget _iosGroup(List<Widget> children, {bool square = false}) {
     final dark = Theme.of(context).brightness == Brightness.dark;
-    final line = dark ? const Color(0xFF3D3D40) : const Color(0xFFC8C7CC);
+    final line = dark ? const Color(0xFF404040) : const Color(0xFFC8C7CC);
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(square ? 0 : 28),
         child: Material(
-          color: dark ? const Color(0xFF1C1C1E) : Colors.white,
+          color: dark ? Colors.black : Colors.white,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -399,8 +404,8 @@ class _FeedbackSheetState extends ConsumerState<_FeedbackSheet>
             helper: context.l10n.settingsContactOnly,
             keyboardType: TextInputType.phone,
           ),
-        ]),
-        _iosGroup([_iosSubmit(_sendQuestion)]),
+        ], square: true),
+        _iosGroup([_iosSubmit(_sendQuestion)], square: true),
     ];
   }
 
@@ -446,8 +451,8 @@ class _FeedbackSheetState extends ConsumerState<_FeedbackSheet>
               helper: context.l10n.settingsContactOnly,
               keyboardType: TextInputType.phone,
             ),
-        ]),
-        _iosGroup([_iosSubmit(_sendFeedback)]),
+        ], square: true),
+        _iosGroup([_iosSubmit(_sendFeedback)], square: true),
     ];
   }
 
