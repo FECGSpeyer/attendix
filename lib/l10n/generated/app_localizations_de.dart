@@ -1244,6 +1244,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get bellTitle => 'Benachrichtigungen';
 
   @override
+  String get brandingFlutterReplaceLogo => 'Logo ersetzen';
+
+  @override
+  String get brandingFlutterUploadLogo => 'Logo hochladen';
+
+  @override
   String get brandingIntro => 'Logo und Text erscheinen dezent auf exportierten Plänen und Listen (PDF/Bild). Das Logo darf maximal 2 MB groß sein. Das Branding gilt für alle Instanzen der Organisation.';
 
   @override
@@ -2846,6 +2852,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get generalSettingsFlutterOrHint => 'Person ist kritisch, wenn EINE der Regeln zutrifft';
+
+  @override
+  String get generalSettingsFlutterOrShort => 'ODER';
 
   @override
   String get generalSettingsFlutterRuleEnabled => 'Regel aktiviert';
@@ -6747,6 +6756,49 @@ class AppLocalizationsDe extends AppLocalizations {
   String get settingsFlutterApplicantTitle => 'Mitgliedschaft wird geprüft';
 
   @override
+  String get settingsFlutterArchiveHint => 'Hier erscheinen archivierte Mitglieder';
+
+  @override
+  String get settingsFlutterBatchAllHaveAccount => 'Alle Spieler mit E-Mail haben bereits einen Account.';
+
+  @override
+  String settingsFlutterBatchCreateButton(Object count) {
+    return 'Accounts für $count Spieler erstellen';
+  }
+
+  @override
+  String get settingsFlutterBatchEligible => 'Account erstellbar (mit E-Mail)';
+
+  @override
+  String settingsFlutterBatchEligibleList(Object count) {
+    return 'Spieler ohne Account ($count)';
+  }
+
+  @override
+  String settingsFlutterBatchFailed(Object count) {
+    return '$count fehlgeschlagen';
+  }
+
+  @override
+  String get settingsFlutterBatchNoEmail => 'Ohne E-Mail (manuell nötig)';
+
+  @override
+  String settingsFlutterBatchProcessed(Object processed, Object total) {
+    return '$processed / $total verarbeitet';
+  }
+
+  @override
+  String settingsFlutterBatchSucceeded(Object count) {
+    return '$count erfolgreich';
+  }
+
+  @override
+  String get settingsFlutterBatchTitle => 'Accounts erstellen';
+
+  @override
+  String get settingsFlutterBatchWithAccount => 'Mit Account';
+
+  @override
   String get settingsFlutterCalendarIntro => 'Kopiere den folgenden Link in deine Kalender-App, um die Termine zu abonnieren:';
 
   @override
@@ -6756,12 +6808,22 @@ class AppLocalizationsDe extends AppLocalizations {
   String get settingsFlutterCopyLinkFailed => 'Link konnte nicht kopiert werden';
 
   @override
+  String settingsFlutterCreateFailed(Object error) {
+    return 'Fehler beim Erstellen: $error';
+  }
+
+  @override
   String settingsFlutterErrorDetail(Object error) {
     return 'Fehler: $error';
   }
 
   @override
   String get settingsFlutterInvalidEmail => 'Bitte gib eine gültige E-Mail-Adresse ein.';
+
+  @override
+  String settingsFlutterLoadFailed(Object error) {
+    return 'Fehler beim Laden: $error';
+  }
 
   @override
   String get settingsFlutterPwaAndroidStep1 => 'Tippe auf das Menü (⋮)';
@@ -6783,6 +6845,16 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get settingsFlutterPwaTitle => 'App installieren';
+
+  @override
+  String settingsFlutterReactivateMessage(Object name) {
+    return 'Möchtest du $name wieder aktivieren?';
+  }
+
+  @override
+  String settingsFlutterReactivated(Object name) {
+    return '$name wurde reaktiviert';
+  }
 
   @override
   String get settingsFlutterUsers => 'Benutzer';
@@ -9531,6 +9603,35 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get typeSettingsFilter => 'Filter';
+
+  @override
+  String get typeSettingsFlutterCreateType => 'Typ erstellen';
+
+  @override
+  String typeSettingsFlutterCreatedNamed(Object name) {
+    return 'Anwesenheitstyp \"$name\" erstellt';
+  }
+
+  @override
+  String get typeSettingsFlutterHidden => 'Ausgeblendet';
+
+  @override
+  String get typeSettingsFlutterNamePh => 'z.B. Probe, Konzert, Generalprobe';
+
+  @override
+  String get typeSettingsFlutterNewType => 'Neuer Anwesenheitstyp';
+
+  @override
+  String get typeSettingsFlutterNoTypes => 'Keine Anwesenheitstypen vorhanden';
+
+  @override
+  String get typeSettingsFlutterReorder => 'Reihenfolge ändern';
+
+  @override
+  String get typeSettingsFlutterSaveOrderFailed => 'Fehler beim Speichern. Bitte erneut versuchen.';
+
+  @override
+  String get typeSettingsFlutterWithProgramme => 'Mit Programm';
 
   @override
   String get typeSettingsFreeTextPh => 'Freitext eingeben...';

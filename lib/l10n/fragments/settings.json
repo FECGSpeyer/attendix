@@ -19,7 +19,24 @@
         "copyLinkFailed": "Link konnte nicht kopiert werden",
         "invalidEmail": "Bitte gib eine gültige E-Mail-Adresse ein.",
         "adminAddedNotNotified": "Der Admin wurde hinzugefügt, konnte aber nicht benachrichtigt werden.",
-        "errorDetail": "Fehler: {error}"
+        "errorDetail": "Fehler: {error}",
+        "batch": {
+          "title": "Accounts erstellen",
+          "withAccount": "Mit Account",
+          "eligible": "Account erstellbar (mit E-Mail)",
+          "noEmail": "Ohne E-Mail (manuell nötig)",
+          "processed": "{processed} / {total} verarbeitet",
+          "succeeded": "{count} erfolgreich",
+          "failed": "{count} fehlgeschlagen",
+          "eligibleList": "Spieler ohne Account ({count})",
+          "createButton": "Accounts für {count} Spieler erstellen",
+          "allHaveAccount": "Alle Spieler mit E-Mail haben bereits einen Account."
+        },
+        "archiveHint": "Hier erscheinen archivierte Mitglieder",
+        "reactivateMessage": "Möchtest du {name} wieder aktivieren?",
+        "reactivated": "{name} wurde reaktiviert",
+        "loadFailed": "Fehler beim Laden: {error}",
+        "createFailed": "Fehler beim Erstellen: {error}"
       }
     },
     "generalSettings": {
@@ -32,7 +49,27 @@
         "orHint": "Person ist kritisch, wenn EINE der Regeln zutrifft",
         "andHint": "Person ist kritisch, wenn ALLE Regeln zutreffen",
         "ruleEnabled": "Regel aktiviert",
-        "ruleEnabledHelper": "Deaktivierte Regeln werden nicht ausgewertet"
+        "ruleEnabledHelper": "Deaktivierte Regeln werden nicht ausgewertet",
+        "orShort": "ODER"
+      }
+    },
+    "branding": {
+      "flutter": {
+        "replaceLogo": "Logo ersetzen",
+        "uploadLogo": "Logo hochladen"
+      }
+    },
+    "typeSettings": {
+      "flutter": {
+        "reorder": "Reihenfolge ändern",
+        "noTypes": "Keine Anwesenheitstypen vorhanden",
+        "createType": "Typ erstellen",
+        "saveOrderFailed": "Fehler beim Speichern. Bitte erneut versuchen.",
+        "newType": "Neuer Anwesenheitstyp",
+        "namePh": "z.B. Probe, Konzert, Generalprobe",
+        "createdNamed": "Anwesenheitstyp \"{name}\" erstellt",
+        "withProgramme": "Mit Programm",
+        "hidden": "Ausgeblendet"
       }
     }
   },
@@ -56,7 +93,24 @@
         "copyLinkFailed": "Link could not be copied",
         "invalidEmail": "Please enter a valid email address.",
         "adminAddedNotNotified": "The admin was added but could not be notified.",
-        "errorDetail": "Error: {error}"
+        "errorDetail": "Error: {error}",
+        "batch": {
+          "title": "Create accounts",
+          "withAccount": "With account",
+          "eligible": "Account can be created (with email)",
+          "noEmail": "Without email (manual)",
+          "processed": "{processed} / {total} processed",
+          "succeeded": "{count} succeeded",
+          "failed": "{count} failed",
+          "eligibleList": "Players without account ({count})",
+          "createButton": "Create accounts for {count} players",
+          "allHaveAccount": "All players with email already have an account."
+        },
+        "archiveHint": "Archived members appear here",
+        "reactivateMessage": "Do you want to reactivate {name}?",
+        "reactivated": "{name} has been reactivated",
+        "loadFailed": "Error while loading: {error}",
+        "createFailed": "Error while creating: {error}"
       }
     },
     "generalSettings": {
@@ -69,7 +123,27 @@
         "orHint": "Person is critical if ANY of the rules applies",
         "andHint": "Person is critical if ALL rules apply",
         "ruleEnabled": "Rule enabled",
-        "ruleEnabledHelper": "Disabled rules are not evaluated"
+        "ruleEnabledHelper": "Disabled rules are not evaluated",
+        "orShort": "OR"
+      }
+    },
+    "branding": {
+      "flutter": {
+        "replaceLogo": "Replace logo",
+        "uploadLogo": "Upload logo"
+      }
+    },
+    "typeSettings": {
+      "flutter": {
+        "reorder": "Change order",
+        "noTypes": "No attendance types available",
+        "createType": "Create type",
+        "saveOrderFailed": "Error while saving. Please try again.",
+        "newType": "New attendance type",
+        "namePh": "e.g. rehearsal, concert, dress rehearsal",
+        "createdNamed": "Attendance type \"{name}\" created",
+        "withProgramme": "With programme",
+        "hidden": "Hidden"
       }
     }
   }

@@ -2165,6 +2165,18 @@ abstract class AppLocalizations {
   /// **'Benachrichtigungen'**
   String get bellTitle;
 
+  /// branding.flutter.replaceLogo
+  ///
+  /// In de, this message translates to:
+  /// **'Logo ersetzen'**
+  String get brandingFlutterReplaceLogo;
+
+  /// branding.flutter.uploadLogo
+  ///
+  /// In de, this message translates to:
+  /// **'Logo hochladen'**
+  String get brandingFlutterUploadLogo;
+
   /// branding.intro
   ///
   /// In de, this message translates to:
@@ -4996,6 +5008,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Person ist kritisch, wenn EINE der Regeln zutrifft'**
   String get generalSettingsFlutterOrHint;
+
+  /// generalSettings.flutter.orShort
+  ///
+  /// In de, this message translates to:
+  /// **'ODER'**
+  String get generalSettingsFlutterOrShort;
 
   /// generalSettings.flutter.ruleEnabled
   ///
@@ -11915,6 +11933,72 @@ abstract class AppLocalizations {
   /// **'Mitgliedschaft wird geprüft'**
   String get settingsFlutterApplicantTitle;
 
+  /// settings.flutter.archiveHint
+  ///
+  /// In de, this message translates to:
+  /// **'Hier erscheinen archivierte Mitglieder'**
+  String get settingsFlutterArchiveHint;
+
+  /// settings.flutter.batch.allHaveAccount
+  ///
+  /// In de, this message translates to:
+  /// **'Alle Spieler mit E-Mail haben bereits einen Account.'**
+  String get settingsFlutterBatchAllHaveAccount;
+
+  /// settings.flutter.batch.createButton
+  ///
+  /// In de, this message translates to:
+  /// **'Accounts für {count} Spieler erstellen'**
+  String settingsFlutterBatchCreateButton(Object count);
+
+  /// settings.flutter.batch.eligible
+  ///
+  /// In de, this message translates to:
+  /// **'Account erstellbar (mit E-Mail)'**
+  String get settingsFlutterBatchEligible;
+
+  /// settings.flutter.batch.eligibleList
+  ///
+  /// In de, this message translates to:
+  /// **'Spieler ohne Account ({count})'**
+  String settingsFlutterBatchEligibleList(Object count);
+
+  /// settings.flutter.batch.failed
+  ///
+  /// In de, this message translates to:
+  /// **'{count} fehlgeschlagen'**
+  String settingsFlutterBatchFailed(Object count);
+
+  /// settings.flutter.batch.noEmail
+  ///
+  /// In de, this message translates to:
+  /// **'Ohne E-Mail (manuell nötig)'**
+  String get settingsFlutterBatchNoEmail;
+
+  /// settings.flutter.batch.processed
+  ///
+  /// In de, this message translates to:
+  /// **'{processed} / {total} verarbeitet'**
+  String settingsFlutterBatchProcessed(Object processed, Object total);
+
+  /// settings.flutter.batch.succeeded
+  ///
+  /// In de, this message translates to:
+  /// **'{count} erfolgreich'**
+  String settingsFlutterBatchSucceeded(Object count);
+
+  /// settings.flutter.batch.title
+  ///
+  /// In de, this message translates to:
+  /// **'Accounts erstellen'**
+  String get settingsFlutterBatchTitle;
+
+  /// settings.flutter.batch.withAccount
+  ///
+  /// In de, this message translates to:
+  /// **'Mit Account'**
+  String get settingsFlutterBatchWithAccount;
+
   /// settings.flutter.calendarIntro
   ///
   /// In de, this message translates to:
@@ -11933,6 +12017,12 @@ abstract class AppLocalizations {
   /// **'Link konnte nicht kopiert werden'**
   String get settingsFlutterCopyLinkFailed;
 
+  /// settings.flutter.createFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Erstellen: {error}'**
+  String settingsFlutterCreateFailed(Object error);
+
   /// settings.flutter.errorDetail
   ///
   /// In de, this message translates to:
@@ -11944,6 +12034,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Bitte gib eine gültige E-Mail-Adresse ein.'**
   String get settingsFlutterInvalidEmail;
+
+  /// settings.flutter.loadFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Laden: {error}'**
+  String settingsFlutterLoadFailed(Object error);
 
   /// settings.flutter.pwa.androidStep1
   ///
@@ -11986,6 +12082,18 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'App installieren'**
   String get settingsFlutterPwaTitle;
+
+  /// settings.flutter.reactivateMessage
+  ///
+  /// In de, this message translates to:
+  /// **'Möchtest du {name} wieder aktivieren?'**
+  String settingsFlutterReactivateMessage(Object name);
+
+  /// settings.flutter.reactivated
+  ///
+  /// In de, this message translates to:
+  /// **'{name} wurde reaktiviert'**
+  String settingsFlutterReactivated(Object name);
 
   /// settings.flutter.users
   ///
@@ -17062,6 +17170,60 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Filter'**
   String get typeSettingsFilter;
+
+  /// typeSettings.flutter.createType
+  ///
+  /// In de, this message translates to:
+  /// **'Typ erstellen'**
+  String get typeSettingsFlutterCreateType;
+
+  /// typeSettings.flutter.createdNamed
+  ///
+  /// In de, this message translates to:
+  /// **'Anwesenheitstyp \"{name}\" erstellt'**
+  String typeSettingsFlutterCreatedNamed(Object name);
+
+  /// typeSettings.flutter.hidden
+  ///
+  /// In de, this message translates to:
+  /// **'Ausgeblendet'**
+  String get typeSettingsFlutterHidden;
+
+  /// typeSettings.flutter.namePh
+  ///
+  /// In de, this message translates to:
+  /// **'z.B. Probe, Konzert, Generalprobe'**
+  String get typeSettingsFlutterNamePh;
+
+  /// typeSettings.flutter.newType
+  ///
+  /// In de, this message translates to:
+  /// **'Neuer Anwesenheitstyp'**
+  String get typeSettingsFlutterNewType;
+
+  /// typeSettings.flutter.noTypes
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Anwesenheitstypen vorhanden'**
+  String get typeSettingsFlutterNoTypes;
+
+  /// typeSettings.flutter.reorder
+  ///
+  /// In de, this message translates to:
+  /// **'Reihenfolge ändern'**
+  String get typeSettingsFlutterReorder;
+
+  /// typeSettings.flutter.saveOrderFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Speichern. Bitte erneut versuchen.'**
+  String get typeSettingsFlutterSaveOrderFailed;
+
+  /// typeSettings.flutter.withProgramme
+  ///
+  /// In de, this message translates to:
+  /// **'Mit Programm'**
+  String get typeSettingsFlutterWithProgramme;
 
   /// typeSettings.freeTextPh
   ///

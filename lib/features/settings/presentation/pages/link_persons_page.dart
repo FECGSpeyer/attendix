@@ -12,6 +12,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../data/repositories/organisation_repository.dart';
+import '../../../../l10n/l10n.dart';
 
 class PersonLinkMatch {
   PersonLinkMatch(this.match);
@@ -34,6 +35,22 @@ PersonLike _toPersonLike(Person p) => PersonLike(
       globalPersonId: p.globalPersonId,
       birthday: p.birthday,
     );
+
+/// Localized label of a [MatchReason] (Ionic `linkPersons.reason.*`).
+String _reasonLabel(AppLocalizations l10n, String reason) => switch (reason) {
+      MatchReason.swapped => l10n.linkPersonsReasonSwapped,
+      MatchReason.nearlyIdentical => l10n.linkPersonsReasonNearlyIdentical,
+      MatchReason.sameLastName => l10n.linkPersonsReasonSameLastName,
+      MatchReason.sameFirstName => l10n.linkPersonsReasonSameFirstName,
+      MatchReason.lastNamePrefix => l10n.linkPersonsReasonLastNamePrefix,
+      MatchReason.firstNamePrefix => l10n.linkPersonsReasonFirstNamePrefix,
+      MatchReason.similarName => l10n.linkPersonsReasonSimilarName,
+      MatchReason.linked => l10n.linkPersonsReasonLinked,
+      MatchReason.sameEmail => l10n.linkPersonsReasonSameEmail,
+      MatchReason.sameBirthday => l10n.linkPersonsReasonSameBirthday,
+      MatchReason.similarBirthday => l10n.linkPersonsReasonSimilarBirthday,
+      _ => reason,
+    };
 
 String linkGroupKey(int a, int b) {
   final ids = [a, b]..sort();
@@ -107,7 +124,7 @@ class _LinkPersonsPageState extends ConsumerState<LinkPersonsPage> {
       final persons = await orgRepo.getAllPersonsFromOrganisation(_tenants);
       _groups = buildPersonLinkGroups(persons, _ignoredKeys);
     } catch (e) {
-      if (mounted) ToastHelper.showError(context, 'Fehler beim Laden: $e');
+      if (mounted) ToastHelper.showError(context, context.l10n.settingsFlutterLoadFailed(e));
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -119,13 +136,13 @@ class _LinkPersonsPageState extends ConsumerState<LinkPersonsPage> {
   String _formatBirthday(String? birthday) {
     if (birthday == null || birthday.isEmpty) return '–';
     final d = DateTime.tryParse(birthday);
-    return d == null ? '–' : DateFormat('dd.MM.yyyy').format(d);
+    return d == null ? '–' : DateFormat(dateFmt()).format(d);
   }
 
   Future<void> _link(PersonLinkGroup group) async {
     final selected = group.matches.where((m) => m.selected).map((m) => m.match.candidate).toList();
     if (selected.isEmpty) {
-      ToastHelper.showWarning(context, 'Bitte mindestens eine Übereinstimmung auswählen');
+      ToastHelper.showWarning(context, context.l10n.linkPersonsSelectOne);
       return;
     }
     final all = [group.representative, ...selected];
@@ -139,9 +156,9 @@ class _LinkPersonsPageState extends ConsumerState<LinkPersonsPage> {
         _linkedCount += ids.length;
         _groups.remove(group);
       });
-      ToastHelper.showSuccess(context, '${ids.length} Personen verknüpft');
+      ToastHelper.showSuccess(context, context.l10n.linkPersonsLinked(ids.length));
     } catch (_) {
-      if (mounted) ToastHelper.showError(context, 'Fehler beim Verknüpfen');
+      if (mounted) ToastHelper.showError(context, context.l10n.linkPersonsFailed);
     }
   }
 
@@ -157,7 +174,7 @@ class _LinkPersonsPageState extends ConsumerState<LinkPersonsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Personen verknüpfen')),
+      appBar: AppBar(title: Text(context.l10n.linkPersonsTitle)),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : _groups.isEmpty
@@ -169,9 +186,9 @@ class _LinkPersonsPageState extends ConsumerState<LinkPersonsPage> {
                       children: [
                         const Icon(Icons.check_circle_outline, color: AppColors.success, size: 48),
                         const SizedBox(height: AppDimensions.paddingS),
-                        const Text('Keine weiteren Vorschläge.'),
+                        Text(context.l10n.linkPersonsNoMore),
                         if (_linkedCount > 0)
-                          Text('$_linkedCount Personen wurden verknüpft.',
+                          Text(context.l10n.linkPersonsLinkedCount(_linkedCount),
                               style: const TextStyle(fontWeight: FontWeight.bold)),
                       ],
                     ),
@@ -180,12 +197,11 @@ class _LinkPersonsPageState extends ConsumerState<LinkPersonsPage> {
               : ListView(
                   padding: const EdgeInsets.all(AppDimensions.paddingM),
                   children: [
-                    const Padding(
-                      padding: EdgeInsets.only(bottom: AppDimensions.paddingM),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: AppDimensions.paddingM),
                       child: Text(
-                        'Mögliche Übereinstimmungen aus verschiedenen Instanzen. Verknüpfte Personen '
-                        'synchronisieren Name, Geburtstag, E-Mail und Telefon automatisch.',
-                        style: TextStyle(color: AppColors.medium),
+                        context.l10n.linkPersonsIntro,
+                        style: const TextStyle(color: AppColors.medium),
                       ),
                     ),
                     for (final group in [..._groups]) _buildGroupCard(group),
@@ -223,7 +239,7 @@ class _LinkPersonsPageState extends ConsumerState<LinkPersonsPage> {
                     Text('${_tenantName(m.match.candidate.tenantId)} · ${_formatBirthday(m.match.candidate.birthday)}'),
                     const SizedBox(height: 2),
                     Chip(
-                      label: Text(m.match.reason, style: const TextStyle(fontSize: 11)),
+                      label: Text(_reasonLabel(context.l10n, m.match.reason), style: const TextStyle(fontSize: 11)),
                       visualDensity: VisualDensity.compact,
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
@@ -233,9 +249,9 @@ class _LinkPersonsPageState extends ConsumerState<LinkPersonsPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                OutlinedButton(onPressed: () => _ignore(group), child: const Text('Ignorieren')),
+                OutlinedButton(onPressed: () => _ignore(group), child: Text(context.l10n.linkPersonsIgnore)),
                 const SizedBox(width: AppDimensions.paddingS),
-                ElevatedButton(onPressed: () => _link(group), child: const Text('Verknüpfen')),
+                ElevatedButton(onPressed: () => _link(group), child: Text(context.l10n.linkPersonsLink)),
               ],
             ),
           ],

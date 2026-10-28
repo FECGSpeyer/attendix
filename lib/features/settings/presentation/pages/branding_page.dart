@@ -8,6 +8,7 @@ import '../../../../core/providers/files_providers.dart';
 import '../../../../core/providers/organisation_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Maximale Logo-Größe (2 MB, wie Ionic)
 const int kMaxLogoBytes = 2 * 1024 * 1024;
@@ -37,13 +38,13 @@ class _BrandingPageState extends ConsumerState<BrandingPage> {
     final file = result?.files.firstOrNull;
     if (file == null || file.bytes == null || !mounted) return;
     if (file.size > kMaxLogoBytes) {
-      ToastHelper.showError(context, 'Das Logo darf maximal 2MB groß sein.');
+      ToastHelper.showError(context, context.l10n.brandingLogoTooBig);
       return;
     }
     final ext = (file.extension ?? '').toLowerCase();
     const imageExt = ['png', 'jpg', 'jpeg', 'gif', 'webp', 'svg', 'bmp', 'heic', 'heif'];
     if (!imageExt.contains(ext)) {
-      ToastHelper.showError(context, 'Bitte wähle eine Bilddatei aus.');
+      ToastHelper.showError(context, context.l10n.brandingSelectImage);
       return;
     }
 
@@ -55,7 +56,7 @@ class _BrandingPageState extends ConsumerState<BrandingPage> {
           );
       if (!mounted) return;
       setState(() => _logoUrl = url);
-      ToastHelper.showSuccess(context, 'Logo hochgeladen. Speichern nicht vergessen.');
+      ToastHelper.showSuccess(context, context.l10n.brandingLogoUploaded);
     } catch (e) {
       if (mounted) ToastHelper.showError(context, '$e');
     } finally {
@@ -69,7 +70,7 @@ class _BrandingPageState extends ConsumerState<BrandingPage> {
       await ref.read(organisationSettingsRepositoryWithTenantProvider).removeLogo();
       if (!mounted) return;
       setState(() => _logoUrl = '');
-      ToastHelper.showSuccess(context, 'Logo entfernt. Speichern nicht vergessen.');
+      ToastHelper.showSuccess(context, context.l10n.brandingLogoRemoved);
     } catch (e) {
       if (mounted) ToastHelper.showError(context, '$e');
     } finally {
@@ -87,9 +88,9 @@ class _BrandingPageState extends ConsumerState<BrandingPage> {
       ref.invalidate(brandingOrganisationProvider);
       ref.invalidate(brandingSourceProvider); // MISC2: refresh export branding
       ref.invalidate(currentOrganisationProvider);
-      if (mounted) ToastHelper.showSuccess(context, 'Branding gespeichert.');
+      if (mounted) ToastHelper.showSuccess(context, context.l10n.brandingSaved);
     } catch (e) {
-      if (mounted) ToastHelper.showError(context, 'Fehler beim Speichern des Brandings');
+      if (mounted) ToastHelper.showError(context, context.l10n.svcSaveBrandingFailed);
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -102,7 +103,7 @@ class _BrandingPageState extends ConsumerState<BrandingPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Branding'),
+        title: Text(context.l10n.generalSettingsBranding),
         actions: [
           if (hasOrg)
             IconButton(
@@ -113,16 +114,16 @@ class _BrandingPageState extends ConsumerState<BrandingPage> {
       ),
       body: orgAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('Fehler beim Laden: $e')),
+        error: (e, _) => Center(child: Text(context.l10n.settingsFlutterLoadFailed(e))),
         data: (org) {
           if (org == null) {
-            return const Padding(
-              padding: EdgeInsets.all(AppDimensions.paddingM),
+            return Padding(
+              padding: const EdgeInsets.all(AppDimensions.paddingM),
               child: Card(
                 child: ListTile(
-                  leading: Icon(Icons.info_outline, color: AppColors.medium),
+                  leading: const Icon(Icons.info_outline, color: AppColors.medium),
                   title: Text(
-                    'Branding wird auf Organisationsebene verwaltet. Diese Instanz ist keiner Organisation zugeordnet.',
+                    context.l10n.brandingOrgOnly,
                   ),
                 ),
               ),
@@ -138,17 +139,16 @@ class _BrandingPageState extends ConsumerState<BrandingPage> {
               ListView(
                 padding: const EdgeInsets.all(AppDimensions.paddingM),
                 children: [
-                  const Card(
+                  Card(
                     child: Padding(
-                      padding: EdgeInsets.all(AppDimensions.paddingM),
+                      padding: const EdgeInsets.all(AppDimensions.paddingM),
                       child: Text(
-                        'Logo und Text erscheinen dezent auf exportierten Plänen und Listen (PDF/Bild). '
-                        'Das Logo darf maximal 2 MB groß sein. Das Branding gilt für alle Instanzen der Organisation.',
+                        context.l10n.brandingIntro,
                       ),
                     ),
                   ),
                   const SizedBox(height: AppDimensions.paddingM),
-                  Text('Logo',
+                  Text(context.l10n.brandingLogo,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.bold,
                             color: AppColors.primary,
@@ -170,7 +170,7 @@ class _BrandingPageState extends ConsumerState<BrandingPage> {
                         ListTile(
                           leading: const Icon(Icons.image_outlined, color: AppColors.primary),
                           title: Text(
-                            _logoUrl.isNotEmpty ? 'Logo ersetzen' : 'Logo hochladen',
+                            _logoUrl.isNotEmpty ? context.l10n.brandingFlutterReplaceLogo : context.l10n.brandingFlutterUploadLogo,
                             style: const TextStyle(color: AppColors.primary),
                           ),
                           onTap: _busy ? null : _selectLogo,
@@ -178,7 +178,7 @@ class _BrandingPageState extends ConsumerState<BrandingPage> {
                         if (_logoUrl.isNotEmpty)
                           ListTile(
                             leading: const Icon(Icons.delete_outline, color: AppColors.danger),
-                            title: const Text('Logo entfernen', style: TextStyle(color: AppColors.danger)),
+                            title: Text(context.l10n.brandingRemoveLogo, style: const TextStyle(color: AppColors.danger)),
                             onTap: _busy ? null : _removeLogo,
                           ),
                       ],
@@ -189,15 +189,15 @@ class _BrandingPageState extends ConsumerState<BrandingPage> {
                     controller: _textController,
                     maxLength: 60,
                     textCapitalization: TextCapitalization.sentences,
-                    decoration: const InputDecoration(
-                      labelText: 'Branding-Text',
-                      hintText: 'z.B. Verbandsname',
+                    decoration: InputDecoration(
+                      labelText: context.l10n.brandingText,
+                      hintText: context.l10n.brandingTextPh,
                     ),
                   ),
                   const SizedBox(height: AppDimensions.paddingM),
                   ElevatedButton(
                     onPressed: _busy ? null : _save,
-                    child: const Text('Speichern'),
+                    child: Text(context.l10n.commonSave),
                   ),
                 ],
               ),

@@ -4,6 +4,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../shared/widgets/common/swipe_actions.dart';
 import '../../../../l10n/l10n.dart';
+import 'strong_html_text.dart';
 
 /// SETTINGS2: Ionic type.page "Erinnerungen" (reminders modal content).
 ///
@@ -88,12 +89,12 @@ class _TypeRemindersEditorState extends State<TypeRemindersEditor> {
                     style: Theme.of(context).textTheme.titleSmall),
                 const SizedBox(height: 8),
                 _info(Icons.schedule,
-                    _stripHtml(context.l10n.typeSettingsHowEvery5), small),
+                    context.l10n.typeSettingsHowEvery5, small),
                 _info(Icons.calculate_outlined,
-                    _stripHtml(context.l10n.typeSettingsHowRemaining),
+                    context.l10n.typeSettingsHowRemaining,
                     small),
                 _info(Icons.notifications_outlined,
-                    _stripHtml(context.l10n.typeSettingsHowMax), small),
+                    context.l10n.typeSettingsHowMax, small),
               ],
             ),
           ),
@@ -184,8 +185,6 @@ class _TypeRemindersEditorState extends State<TypeRemindersEditor> {
     );
   }
 
-  /// Ionic renders the `*Html` keys via innerHTML; here the tags are dropped.
-  static String _stripHtml(String html) => html.replaceAll(RegExp(r'<[^>]+>'), '');
 
   Widget _info(IconData icon, String text, TextStyle? style) => Padding(
         padding: const EdgeInsets.only(bottom: 6),
@@ -194,7 +193,7 @@ class _TypeRemindersEditorState extends State<TypeRemindersEditor> {
           children: [
             Icon(icon, size: 18, color: AppColors.primary),
             const SizedBox(width: 8),
-            Expanded(child: Text(text, style: style)),
+            Expanded(child: StrongHtmlText(text, style: style)),
           ],
         ),
       );

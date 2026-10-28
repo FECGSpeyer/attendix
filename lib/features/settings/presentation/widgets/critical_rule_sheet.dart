@@ -321,7 +321,7 @@ class _CriticalRuleSheetState extends State<CriticalRuleSheet> {
                   segments: [
                     ButtonSegment(
                       value: CriticalRuleOperator.or,
-                      label: Text(context.l10n.settingsOr),
+                      label: Text(context.l10n.generalSettingsFlutterOrShort),
                     ),
                     ButtonSegment(
                       value: CriticalRuleOperator.and,

@@ -1609,6 +1609,14 @@
   "@bellTitle": {
     "description": "bell.title"
   },
+  "brandingFlutterReplaceLogo": "Logo ersetzen",
+  "@brandingFlutterReplaceLogo": {
+    "description": "branding.flutter.replaceLogo"
+  },
+  "brandingFlutterUploadLogo": "Logo hochladen",
+  "@brandingFlutterUploadLogo": {
+    "description": "branding.flutter.uploadLogo"
+  },
   "brandingIntro": "Logo und Text erscheinen dezent auf exportierten Plänen und Listen (PDF/Bild). Das Logo darf maximal 2 MB groß sein. Das Branding gilt für alle Instanzen der Organisation.",
   "@brandingIntro": {
     "description": "branding.intro"
@@ -3724,6 +3732,10 @@
   "generalSettingsFlutterOrHint": "Person ist kritisch, wenn EINE der Regeln zutrifft",
   "@generalSettingsFlutterOrHint": {
     "description": "generalSettings.flutter.orHint"
+  },
+  "generalSettingsFlutterOrShort": "ODER",
+  "@generalSettingsFlutterOrShort": {
+    "description": "generalSettings.flutter.orShort"
   },
   "generalSettingsFlutterRuleEnabled": "Regel aktiviert",
   "@generalSettingsFlutterRuleEnabled": {
@@ -8851,6 +8863,66 @@
   "@settingsFlutterApplicantTitle": {
     "description": "settings.flutter.applicantTitle"
   },
+  "settingsFlutterArchiveHint": "Hier erscheinen archivierte Mitglieder",
+  "@settingsFlutterArchiveHint": {
+    "description": "settings.flutter.archiveHint"
+  },
+  "settingsFlutterBatchAllHaveAccount": "Alle Spieler mit E-Mail haben bereits einen Account.",
+  "@settingsFlutterBatchAllHaveAccount": {
+    "description": "settings.flutter.batch.allHaveAccount"
+  },
+  "settingsFlutterBatchCreateButton": "Accounts für {count} Spieler erstellen",
+  "@settingsFlutterBatchCreateButton": {
+    "description": "settings.flutter.batch.createButton",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "settingsFlutterBatchEligible": "Account erstellbar (mit E-Mail)",
+  "@settingsFlutterBatchEligible": {
+    "description": "settings.flutter.batch.eligible"
+  },
+  "settingsFlutterBatchEligibleList": "Spieler ohne Account ({count})",
+  "@settingsFlutterBatchEligibleList": {
+    "description": "settings.flutter.batch.eligibleList",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "settingsFlutterBatchFailed": "{count} fehlgeschlagen",
+  "@settingsFlutterBatchFailed": {
+    "description": "settings.flutter.batch.failed",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "settingsFlutterBatchNoEmail": "Ohne E-Mail (manuell nötig)",
+  "@settingsFlutterBatchNoEmail": {
+    "description": "settings.flutter.batch.noEmail"
+  },
+  "settingsFlutterBatchProcessed": "{processed} / {total} verarbeitet",
+  "@settingsFlutterBatchProcessed": {
+    "description": "settings.flutter.batch.processed",
+    "placeholders": {
+      "processed": {},
+      "total": {}
+    }
+  },
+  "settingsFlutterBatchSucceeded": "{count} erfolgreich",
+  "@settingsFlutterBatchSucceeded": {
+    "description": "settings.flutter.batch.succeeded",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "settingsFlutterBatchTitle": "Accounts erstellen",
+  "@settingsFlutterBatchTitle": {
+    "description": "settings.flutter.batch.title"
+  },
+  "settingsFlutterBatchWithAccount": "Mit Account",
+  "@settingsFlutterBatchWithAccount": {
+    "description": "settings.flutter.batch.withAccount"
+  },
   "settingsFlutterCalendarIntro": "Kopiere den folgenden Link in deine Kalender-App, um die Termine zu abonnieren:",
   "@settingsFlutterCalendarIntro": {
     "description": "settings.flutter.calendarIntro"
@@ -8863,6 +8935,13 @@
   "@settingsFlutterCopyLinkFailed": {
     "description": "settings.flutter.copyLinkFailed"
   },
+  "settingsFlutterCreateFailed": "Fehler beim Erstellen: {error}",
+  "@settingsFlutterCreateFailed": {
+    "description": "settings.flutter.createFailed",
+    "placeholders": {
+      "error": {}
+    }
+  },
   "settingsFlutterErrorDetail": "Fehler: {error}",
   "@settingsFlutterErrorDetail": {
     "description": "settings.flutter.errorDetail",
@@ -8873,6 +8952,13 @@
   "settingsFlutterInvalidEmail": "Bitte gib eine gültige E-Mail-Adresse ein.",
   "@settingsFlutterInvalidEmail": {
     "description": "settings.flutter.invalidEmail"
+  },
+  "settingsFlutterLoadFailed": "Fehler beim Laden: {error}",
+  "@settingsFlutterLoadFailed": {
+    "description": "settings.flutter.loadFailed",
+    "placeholders": {
+      "error": {}
+    }
   },
   "settingsFlutterPwaAndroidStep1": "Tippe auf das Menü (⋮)",
   "@settingsFlutterPwaAndroidStep1": {
@@ -8901,6 +8987,20 @@
   "settingsFlutterPwaTitle": "App installieren",
   "@settingsFlutterPwaTitle": {
     "description": "settings.flutter.pwa.title"
+  },
+  "settingsFlutterReactivateMessage": "Möchtest du {name} wieder aktivieren?",
+  "@settingsFlutterReactivateMessage": {
+    "description": "settings.flutter.reactivateMessage",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "settingsFlutterReactivated": "{name} wurde reaktiviert",
+  "@settingsFlutterReactivated": {
+    "description": "settings.flutter.reactivated",
+    "placeholders": {
+      "name": {}
+    }
   },
   "settingsFlutterUsers": "Benutzer",
   "@settingsFlutterUsers": {
@@ -12549,6 +12649,45 @@
   "typeSettingsFilter": "Filter",
   "@typeSettingsFilter": {
     "description": "typeSettings.filter"
+  },
+  "typeSettingsFlutterCreateType": "Typ erstellen",
+  "@typeSettingsFlutterCreateType": {
+    "description": "typeSettings.flutter.createType"
+  },
+  "typeSettingsFlutterCreatedNamed": "Anwesenheitstyp \"{name}\" erstellt",
+  "@typeSettingsFlutterCreatedNamed": {
+    "description": "typeSettings.flutter.createdNamed",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "typeSettingsFlutterHidden": "Ausgeblendet",
+  "@typeSettingsFlutterHidden": {
+    "description": "typeSettings.flutter.hidden"
+  },
+  "typeSettingsFlutterNamePh": "z.B. Probe, Konzert, Generalprobe",
+  "@typeSettingsFlutterNamePh": {
+    "description": "typeSettings.flutter.namePh"
+  },
+  "typeSettingsFlutterNewType": "Neuer Anwesenheitstyp",
+  "@typeSettingsFlutterNewType": {
+    "description": "typeSettings.flutter.newType"
+  },
+  "typeSettingsFlutterNoTypes": "Keine Anwesenheitstypen vorhanden",
+  "@typeSettingsFlutterNoTypes": {
+    "description": "typeSettings.flutter.noTypes"
+  },
+  "typeSettingsFlutterReorder": "Reihenfolge ändern",
+  "@typeSettingsFlutterReorder": {
+    "description": "typeSettings.flutter.reorder"
+  },
+  "typeSettingsFlutterSaveOrderFailed": "Fehler beim Speichern. Bitte erneut versuchen.",
+  "@typeSettingsFlutterSaveOrderFailed": {
+    "description": "typeSettings.flutter.saveOrderFailed"
+  },
+  "typeSettingsFlutterWithProgramme": "Mit Programm",
+  "@typeSettingsFlutterWithProgramme": {
+    "description": "typeSettings.flutter.withProgramme"
   },
   "typeSettingsFreeTextPh": "Freitext eingeben...",
   "@typeSettingsFreeTextPh": {

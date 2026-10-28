@@ -90,7 +90,7 @@ class CriticalRuleCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(4),
       ),
       child: Text(
-        isAnd ? context.l10n.generalSettingsFlutterAndShort : context.l10n.settingsOr,
+        isAnd ? context.l10n.generalSettingsFlutterAndShort : context.l10n.generalSettingsFlutterOrShort,
         style: TextStyle(
           fontSize: 10,
           fontWeight: FontWeight.bold,
