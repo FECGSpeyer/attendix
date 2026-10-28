@@ -74,7 +74,20 @@ mixin _$Attendance {
   Map<String, dynamic>? get players => throw _privateConstructorUsedError;
   @JsonKey(name: 'share_plan')
   @_FlexibleBoolConverter()
-  bool get sharePlan => throw _privateConstructorUsedError;
+  bool get sharePlan => throw _privateConstructorUsedError; // ATTENDANCE_SIGNOUT: place, files folder, description & attachment
+  @_FlexibleStringConverter()
+  String? get place => throw _privateConstructorUsedError;
+  @JsonKey(name: 'files_folder')
+  @_FlexibleStringConverter()
+  String? get filesFolder => throw _privateConstructorUsedError;
+  @_FlexibleStringConverter()
+  String? get description => throw _privateConstructorUsedError;
+  @JsonKey(name: 'attachment_url')
+  @_FlexibleStringConverter()
+  String? get attachmentUrl => throw _privateConstructorUsedError;
+  @JsonKey(name: 'attachment_name')
+  @_FlexibleStringConverter()
+  String? get attachmentName => throw _privateConstructorUsedError;
 
   /// Serializes this Attendance to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -122,6 +135,17 @@ abstract class $AttendanceCopyWith<$Res> {
     @_FlexibleIntListConverter() List<int>? conductors,
     Map<String, dynamic>? players,
     @JsonKey(name: 'share_plan') @_FlexibleBoolConverter() bool sharePlan,
+    @_FlexibleStringConverter() String? place,
+    @JsonKey(name: 'files_folder')
+    @_FlexibleStringConverter()
+    String? filesFolder,
+    @_FlexibleStringConverter() String? description,
+    @JsonKey(name: 'attachment_url')
+    @_FlexibleStringConverter()
+    String? attachmentUrl,
+    @JsonKey(name: 'attachment_name')
+    @_FlexibleStringConverter()
+    String? attachmentName,
   });
 }
 
@@ -166,6 +190,11 @@ class _$AttendanceCopyWithImpl<$Res, $Val extends Attendance>
     Object? conductors = freezed,
     Object? players = freezed,
     Object? sharePlan = null,
+    Object? place = freezed,
+    Object? filesFolder = freezed,
+    Object? description = freezed,
+    Object? attachmentUrl = freezed,
+    Object? attachmentName = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -299,6 +328,31 @@ class _$AttendanceCopyWithImpl<$Res, $Val extends Attendance>
                     ? _value.sharePlan
                     : sharePlan // ignore: cast_nullable_to_non_nullable
                         as bool,
+            place:
+                freezed == place
+                    ? _value.place
+                    : place // ignore: cast_nullable_to_non_nullable
+                        as String?,
+            filesFolder:
+                freezed == filesFolder
+                    ? _value.filesFolder
+                    : filesFolder // ignore: cast_nullable_to_non_nullable
+                        as String?,
+            description:
+                freezed == description
+                    ? _value.description
+                    : description // ignore: cast_nullable_to_non_nullable
+                        as String?,
+            attachmentUrl:
+                freezed == attachmentUrl
+                    ? _value.attachmentUrl
+                    : attachmentUrl // ignore: cast_nullable_to_non_nullable
+                        as String?,
+            attachmentName:
+                freezed == attachmentName
+                    ? _value.attachmentName
+                    : attachmentName // ignore: cast_nullable_to_non_nullable
+                        as String?,
           )
           as $Val,
     );
@@ -343,6 +397,17 @@ abstract class _$$AttendanceImplCopyWith<$Res>
     @_FlexibleIntListConverter() List<int>? conductors,
     Map<String, dynamic>? players,
     @JsonKey(name: 'share_plan') @_FlexibleBoolConverter() bool sharePlan,
+    @_FlexibleStringConverter() String? place,
+    @JsonKey(name: 'files_folder')
+    @_FlexibleStringConverter()
+    String? filesFolder,
+    @_FlexibleStringConverter() String? description,
+    @JsonKey(name: 'attachment_url')
+    @_FlexibleStringConverter()
+    String? attachmentUrl,
+    @JsonKey(name: 'attachment_name')
+    @_FlexibleStringConverter()
+    String? attachmentName,
   });
 }
 
@@ -386,6 +451,11 @@ class __$$AttendanceImplCopyWithImpl<$Res>
     Object? conductors = freezed,
     Object? players = freezed,
     Object? sharePlan = null,
+    Object? place = freezed,
+    Object? filesFolder = freezed,
+    Object? description = freezed,
+    Object? attachmentUrl = freezed,
+    Object? attachmentName = freezed,
   }) {
     return _then(
       _$AttendanceImpl(
@@ -519,6 +589,31 @@ class __$$AttendanceImplCopyWithImpl<$Res>
                 ? _value.sharePlan
                 : sharePlan // ignore: cast_nullable_to_non_nullable
                     as bool,
+        place:
+            freezed == place
+                ? _value.place
+                : place // ignore: cast_nullable_to_non_nullable
+                    as String?,
+        filesFolder:
+            freezed == filesFolder
+                ? _value.filesFolder
+                : filesFolder // ignore: cast_nullable_to_non_nullable
+                    as String?,
+        description:
+            freezed == description
+                ? _value.description
+                : description // ignore: cast_nullable_to_non_nullable
+                    as String?,
+        attachmentUrl:
+            freezed == attachmentUrl
+                ? _value.attachmentUrl
+                : attachmentUrl // ignore: cast_nullable_to_non_nullable
+                    as String?,
+        attachmentName:
+            freezed == attachmentName
+                ? _value.attachmentName
+                : attachmentName // ignore: cast_nullable_to_non_nullable
+                    as String?,
       ),
     );
   }
@@ -558,6 +653,15 @@ class _$AttendanceImpl implements _Attendance {
     @JsonKey(name: 'share_plan')
     @_FlexibleBoolConverter()
     this.sharePlan = false,
+    @_FlexibleStringConverter() this.place,
+    @JsonKey(name: 'files_folder') @_FlexibleStringConverter() this.filesFolder,
+    @_FlexibleStringConverter() this.description,
+    @JsonKey(name: 'attachment_url')
+    @_FlexibleStringConverter()
+    this.attachmentUrl,
+    @JsonKey(name: 'attachment_name')
+    @_FlexibleStringConverter()
+    this.attachmentName,
   }) : _excused = excused,
        _plan = plan,
        _lateExcused = lateExcused,
@@ -724,10 +828,29 @@ class _$AttendanceImpl implements _Attendance {
   @JsonKey(name: 'share_plan')
   @_FlexibleBoolConverter()
   final bool sharePlan;
+  // ATTENDANCE_SIGNOUT: place, files folder, description & attachment
+  @override
+  @_FlexibleStringConverter()
+  final String? place;
+  @override
+  @JsonKey(name: 'files_folder')
+  @_FlexibleStringConverter()
+  final String? filesFolder;
+  @override
+  @_FlexibleStringConverter()
+  final String? description;
+  @override
+  @JsonKey(name: 'attachment_url')
+  @_FlexibleStringConverter()
+  final String? attachmentUrl;
+  @override
+  @JsonKey(name: 'attachment_name')
+  @_FlexibleStringConverter()
+  final String? attachmentName;
 
   @override
   String toString() {
-    return 'Attendance(id: $id, tenantId: $tenantId, createdAt: $createdAt, createdBy: $createdBy, date: $date, type: $type, typeId: $typeId, saveInHistory: $saveInHistory, percentage: $percentage, excused: $excused, typeInfo: $typeInfo, notes: $notes, img: $img, plan: $plan, lateExcused: $lateExcused, songs: $songs, criticalPlayers: $criticalPlayers, playerNotes: $playerNotes, startTime: $startTime, endTime: $endTime, deadline: $deadline, durationDays: $durationDays, checklist: $checklist, conductors: $conductors, players: $players, sharePlan: $sharePlan)';
+    return 'Attendance(id: $id, tenantId: $tenantId, createdAt: $createdAt, createdBy: $createdBy, date: $date, type: $type, typeId: $typeId, saveInHistory: $saveInHistory, percentage: $percentage, excused: $excused, typeInfo: $typeInfo, notes: $notes, img: $img, plan: $plan, lateExcused: $lateExcused, songs: $songs, criticalPlayers: $criticalPlayers, playerNotes: $playerNotes, startTime: $startTime, endTime: $endTime, deadline: $deadline, durationDays: $durationDays, checklist: $checklist, conductors: $conductors, players: $players, sharePlan: $sharePlan, place: $place, filesFolder: $filesFolder, description: $description, attachmentUrl: $attachmentUrl, attachmentName: $attachmentName)';
   }
 
   @override
@@ -785,7 +908,16 @@ class _$AttendanceImpl implements _Attendance {
             ) &&
             const DeepCollectionEquality().equals(other._players, _players) &&
             (identical(other.sharePlan, sharePlan) ||
-                other.sharePlan == sharePlan));
+                other.sharePlan == sharePlan) &&
+            (identical(other.place, place) || other.place == place) &&
+            (identical(other.filesFolder, filesFolder) ||
+                other.filesFolder == filesFolder) &&
+            (identical(other.description, description) ||
+                other.description == description) &&
+            (identical(other.attachmentUrl, attachmentUrl) ||
+                other.attachmentUrl == attachmentUrl) &&
+            (identical(other.attachmentName, attachmentName) ||
+                other.attachmentName == attachmentName));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -818,6 +950,11 @@ class _$AttendanceImpl implements _Attendance {
     const DeepCollectionEquality().hash(_conductors),
     const DeepCollectionEquality().hash(_players),
     sharePlan,
+    place,
+    filesFolder,
+    description,
+    attachmentUrl,
+    attachmentName,
   ]);
 
   /// Create a copy of Attendance
@@ -872,6 +1009,17 @@ abstract class _Attendance implements Attendance {
     @_FlexibleIntListConverter() final List<int>? conductors,
     final Map<String, dynamic>? players,
     @JsonKey(name: 'share_plan') @_FlexibleBoolConverter() final bool sharePlan,
+    @_FlexibleStringConverter() final String? place,
+    @JsonKey(name: 'files_folder')
+    @_FlexibleStringConverter()
+    final String? filesFolder,
+    @_FlexibleStringConverter() final String? description,
+    @JsonKey(name: 'attachment_url')
+    @_FlexibleStringConverter()
+    final String? attachmentUrl,
+    @JsonKey(name: 'attachment_name')
+    @_FlexibleStringConverter()
+    final String? attachmentName,
   }) = _$AttendanceImpl;
 
   factory _Attendance.fromJson(Map<String, dynamic> json) =
@@ -955,7 +1103,25 @@ abstract class _Attendance implements Attendance {
   @override
   @JsonKey(name: 'share_plan')
   @_FlexibleBoolConverter()
-  bool get sharePlan;
+  bool get sharePlan; // ATTENDANCE_SIGNOUT: place, files folder, description & attachment
+  @override
+  @_FlexibleStringConverter()
+  String? get place;
+  @override
+  @JsonKey(name: 'files_folder')
+  @_FlexibleStringConverter()
+  String? get filesFolder;
+  @override
+  @_FlexibleStringConverter()
+  String? get description;
+  @override
+  @JsonKey(name: 'attachment_url')
+  @_FlexibleStringConverter()
+  String? get attachmentUrl;
+  @override
+  @JsonKey(name: 'attachment_name')
+  @_FlexibleStringConverter()
+  String? get attachmentName;
 
   /// Create a copy of Attendance
   /// with the given fields replaced by the non-null parameter values.
@@ -1015,7 +1181,10 @@ mixin _$PersonAttendance {
   @_FlexibleStringConverter()
   String? get left => throw _privateConstructorUsedError;
   @_FlexibleBoolConverter()
-  bool get paused => throw _privateConstructorUsedError;
+  bool get paused => throw _privateConstructorUsedError; // ATTENDANCE_SIGNOUT: answers to the attendance type's registration fields
+  @JsonKey(name: 'registration_answers')
+  Map<String, dynamic>? get registrationAnswers =>
+      throw _privateConstructorUsedError;
 
   /// Serializes this PersonAttendance to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -1055,6 +1224,8 @@ abstract class $PersonAttendanceCopyWith<$Res> {
     @_FlexibleBoolConverter() bool highlight,
     @_FlexibleStringConverter() String? left,
     @_FlexibleBoolConverter() bool paused,
+    @JsonKey(name: 'registration_answers')
+    Map<String, dynamic>? registrationAnswers,
   });
 }
 
@@ -1093,6 +1264,7 @@ class _$PersonAttendanceCopyWithImpl<$Res, $Val extends PersonAttendance>
     Object? highlight = null,
     Object? left = freezed,
     Object? paused = null,
+    Object? registrationAnswers = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -1196,6 +1368,11 @@ class _$PersonAttendanceCopyWithImpl<$Res, $Val extends PersonAttendance>
                     ? _value.paused
                     : paused // ignore: cast_nullable_to_non_nullable
                         as bool,
+            registrationAnswers:
+                freezed == registrationAnswers
+                    ? _value.registrationAnswers
+                    : registrationAnswers // ignore: cast_nullable_to_non_nullable
+                        as Map<String, dynamic>?,
           )
           as $Val,
     );
@@ -1232,6 +1409,8 @@ abstract class _$$PersonAttendanceImplCopyWith<$Res>
     @_FlexibleBoolConverter() bool highlight,
     @_FlexibleStringConverter() String? left,
     @_FlexibleBoolConverter() bool paused,
+    @JsonKey(name: 'registration_answers')
+    Map<String, dynamic>? registrationAnswers,
   });
 }
 
@@ -1269,6 +1448,7 @@ class __$$PersonAttendanceImplCopyWithImpl<$Res>
     Object? highlight = null,
     Object? left = freezed,
     Object? paused = null,
+    Object? registrationAnswers = freezed,
   }) {
     return _then(
       _$PersonAttendanceImpl(
@@ -1372,6 +1552,11 @@ class __$$PersonAttendanceImplCopyWithImpl<$Res>
                 ? _value.paused
                 : paused // ignore: cast_nullable_to_non_nullable
                     as bool,
+        registrationAnswers:
+            freezed == registrationAnswers
+                ? _value._registrationAnswers
+                : registrationAnswers // ignore: cast_nullable_to_non_nullable
+                    as Map<String, dynamic>?,
       ),
     );
   }
@@ -1402,7 +1587,9 @@ class _$PersonAttendanceImpl implements _PersonAttendance {
     @_FlexibleBoolConverter() this.highlight = false,
     @_FlexibleStringConverter() this.left,
     @_FlexibleBoolConverter() this.paused = false,
-  });
+    @JsonKey(name: 'registration_answers')
+    final Map<String, dynamic>? registrationAnswers,
+  }) : _registrationAnswers = registrationAnswers;
 
   factory _$PersonAttendanceImpl.fromJson(Map<String, dynamic> json) =>
       _$$PersonAttendanceImplFromJson(json);
@@ -1475,10 +1662,23 @@ class _$PersonAttendanceImpl implements _PersonAttendance {
   @JsonKey()
   @_FlexibleBoolConverter()
   final bool paused;
+  // ATTENDANCE_SIGNOUT: answers to the attendance type's registration fields
+  final Map<String, dynamic>? _registrationAnswers;
+  // ATTENDANCE_SIGNOUT: answers to the attendance type's registration fields
+  @override
+  @JsonKey(name: 'registration_answers')
+  Map<String, dynamic>? get registrationAnswers {
+    final value = _registrationAnswers;
+    if (value == null) return null;
+    if (_registrationAnswers is EqualUnmodifiableMapView)
+      return _registrationAnswers;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(value);
+  }
 
   @override
   String toString() {
-    return 'PersonAttendance(id: $id, attendanceId: $attendanceId, personId: $personId, status: $status, notes: $notes, firstName: $firstName, lastName: $lastName, img: $img, instrument: $instrument, groupName: $groupName, joined: $joined, date: $date, text: $text, title: $title, changedBy: $changedBy, changedAt: $changedAt, typeId: $typeId, highlight: $highlight, left: $left, paused: $paused)';
+    return 'PersonAttendance(id: $id, attendanceId: $attendanceId, personId: $personId, status: $status, notes: $notes, firstName: $firstName, lastName: $lastName, img: $img, instrument: $instrument, groupName: $groupName, joined: $joined, date: $date, text: $text, title: $title, changedBy: $changedBy, changedAt: $changedAt, typeId: $typeId, highlight: $highlight, left: $left, paused: $paused, registrationAnswers: $registrationAnswers)';
   }
 
   @override
@@ -1514,7 +1714,11 @@ class _$PersonAttendanceImpl implements _PersonAttendance {
             (identical(other.highlight, highlight) ||
                 other.highlight == highlight) &&
             (identical(other.left, left) || other.left == left) &&
-            (identical(other.paused, paused) || other.paused == paused));
+            (identical(other.paused, paused) || other.paused == paused) &&
+            const DeepCollectionEquality().equals(
+              other._registrationAnswers,
+              _registrationAnswers,
+            ));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -1541,6 +1745,7 @@ class _$PersonAttendanceImpl implements _PersonAttendance {
     highlight,
     left,
     paused,
+    const DeepCollectionEquality().hash(_registrationAnswers),
   ]);
 
   /// Create a copy of PersonAttendance
@@ -1588,6 +1793,8 @@ abstract class _PersonAttendance implements PersonAttendance {
     @_FlexibleBoolConverter() final bool highlight,
     @_FlexibleStringConverter() final String? left,
     @_FlexibleBoolConverter() final bool paused,
+    @JsonKey(name: 'registration_answers')
+    final Map<String, dynamic>? registrationAnswers,
   }) = _$PersonAttendanceImpl;
 
   factory _PersonAttendance.fromJson(Map<String, dynamic> json) =
@@ -1657,7 +1864,10 @@ abstract class _PersonAttendance implements PersonAttendance {
   String? get left;
   @override
   @_FlexibleBoolConverter()
-  bool get paused;
+  bool get paused; // ATTENDANCE_SIGNOUT: answers to the attendance type's registration fields
+  @override
+  @JsonKey(name: 'registration_answers')
+  Map<String, dynamic>? get registrationAnswers;
 
   /// Create a copy of PersonAttendance
   /// with the given fields replaced by the non-null parameter values.
@@ -1997,7 +2207,13 @@ mixin _$AttendanceType {
       throw _privateConstructorUsedError; // Field from Ionic that was missing
   @JsonKey(name: 'planning_title')
   @_FlexibleStringConverter()
-  String? get planningTitle => throw _privateConstructorUsedError;
+  String? get planningTitle => throw _privateConstructorUsedError; // ATTENDANCE_SIGNOUT: place/navigation and registration fields per type
+  @JsonKey(name: 'place_enabled')
+  @_FlexibleBoolConverter()
+  bool get placeEnabled => throw _privateConstructorUsedError;
+  @JsonKey(name: 'registration_fields')
+  List<RegistrationField>? get registrationFields =>
+      throw _privateConstructorUsedError;
 
   /// Serializes this AttendanceType to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -2050,6 +2266,9 @@ abstract class $AttendanceTypeCopyWith<$Res> {
     @JsonKey(name: 'planning_title')
     @_FlexibleStringConverter()
     String? planningTitle,
+    @JsonKey(name: 'place_enabled') @_FlexibleBoolConverter() bool placeEnabled,
+    @JsonKey(name: 'registration_fields')
+    List<RegistrationField>? registrationFields,
   });
 }
 
@@ -2092,6 +2311,8 @@ class _$AttendanceTypeCopyWithImpl<$Res, $Val extends AttendanceType>
     Object? additionalFieldsFilter = freezed,
     Object? checklist = freezed,
     Object? planningTitle = freezed,
+    Object? placeEnabled = null,
+    Object? registrationFields = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -2215,6 +2436,16 @@ class _$AttendanceTypeCopyWithImpl<$Res, $Val extends AttendanceType>
                     ? _value.planningTitle
                     : planningTitle // ignore: cast_nullable_to_non_nullable
                         as String?,
+            placeEnabled:
+                null == placeEnabled
+                    ? _value.placeEnabled
+                    : placeEnabled // ignore: cast_nullable_to_non_nullable
+                        as bool,
+            registrationFields:
+                freezed == registrationFields
+                    ? _value.registrationFields
+                    : registrationFields // ignore: cast_nullable_to_non_nullable
+                        as List<RegistrationField>?,
           )
           as $Val,
     );
@@ -2264,6 +2495,9 @@ abstract class _$$AttendanceTypeImplCopyWith<$Res>
     @JsonKey(name: 'planning_title')
     @_FlexibleStringConverter()
     String? planningTitle,
+    @JsonKey(name: 'place_enabled') @_FlexibleBoolConverter() bool placeEnabled,
+    @JsonKey(name: 'registration_fields')
+    List<RegistrationField>? registrationFields,
   });
 }
 
@@ -2305,6 +2539,8 @@ class __$$AttendanceTypeImplCopyWithImpl<$Res>
     Object? additionalFieldsFilter = freezed,
     Object? checklist = freezed,
     Object? planningTitle = freezed,
+    Object? placeEnabled = null,
+    Object? registrationFields = freezed,
   }) {
     return _then(
       _$AttendanceTypeImpl(
@@ -2428,6 +2664,16 @@ class __$$AttendanceTypeImplCopyWithImpl<$Res>
                 ? _value.planningTitle
                 : planningTitle // ignore: cast_nullable_to_non_nullable
                     as String?,
+        placeEnabled:
+            null == placeEnabled
+                ? _value.placeEnabled
+                : placeEnabled // ignore: cast_nullable_to_non_nullable
+                    as bool,
+        registrationFields:
+            freezed == registrationFields
+                ? _value._registrationFields
+                : registrationFields // ignore: cast_nullable_to_non_nullable
+                    as List<RegistrationField>?,
       ),
     );
   }
@@ -2472,12 +2718,18 @@ class _$AttendanceTypeImpl implements _AttendanceType {
     @JsonKey(name: 'planning_title')
     @_FlexibleStringConverter()
     this.planningTitle,
+    @JsonKey(name: 'place_enabled')
+    @_FlexibleBoolConverter()
+    this.placeEnabled = false,
+    @JsonKey(name: 'registration_fields')
+    final List<RegistrationField>? registrationFields,
   }) : _availableStatuses = availableStatuses,
        _defaultPlan = defaultPlan,
        _relevantGroups = relevantGroups,
        _reminders = reminders,
        _additionalFieldsFilter = additionalFieldsFilter,
-       _checklist = checklist;
+       _checklist = checklist,
+       _registrationFields = registrationFields;
 
   factory _$AttendanceTypeImpl.fromJson(Map<String, dynamic> json) =>
       _$$AttendanceTypeImplFromJson(json);
@@ -2616,10 +2868,26 @@ class _$AttendanceTypeImpl implements _AttendanceType {
   @JsonKey(name: 'planning_title')
   @_FlexibleStringConverter()
   final String? planningTitle;
+  // ATTENDANCE_SIGNOUT: place/navigation and registration fields per type
+  @override
+  @JsonKey(name: 'place_enabled')
+  @_FlexibleBoolConverter()
+  final bool placeEnabled;
+  final List<RegistrationField>? _registrationFields;
+  @override
+  @JsonKey(name: 'registration_fields')
+  List<RegistrationField>? get registrationFields {
+    final value = _registrationFields;
+    if (value == null) return null;
+    if (_registrationFields is EqualUnmodifiableListView)
+      return _registrationFields;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
 
   @override
   String toString() {
-    return 'AttendanceType(id: $id, createdAt: $createdAt, name: $name, defaultStatus: $defaultStatus, availableStatuses: $availableStatuses, defaultPlan: $defaultPlan, tenantId: $tenantId, relevantGroups: $relevantGroups, startTime: $startTime, endTime: $endTime, manageSongs: $manageSongs, index: $index, visible: $visible, color: $color, highlight: $highlight, hideName: $hideName, includeInAverage: $includeInAverage, allDay: $allDay, durationDays: $durationDays, notification: $notification, reminders: $reminders, additionalFieldsFilter: $additionalFieldsFilter, checklist: $checklist, planningTitle: $planningTitle)';
+    return 'AttendanceType(id: $id, createdAt: $createdAt, name: $name, defaultStatus: $defaultStatus, availableStatuses: $availableStatuses, defaultPlan: $defaultPlan, tenantId: $tenantId, relevantGroups: $relevantGroups, startTime: $startTime, endTime: $endTime, manageSongs: $manageSongs, index: $index, visible: $visible, color: $color, highlight: $highlight, hideName: $hideName, includeInAverage: $includeInAverage, allDay: $allDay, durationDays: $durationDays, notification: $notification, reminders: $reminders, additionalFieldsFilter: $additionalFieldsFilter, checklist: $checklist, planningTitle: $planningTitle, placeEnabled: $placeEnabled, registrationFields: $registrationFields)';
   }
 
   @override
@@ -2679,7 +2947,13 @@ class _$AttendanceTypeImpl implements _AttendanceType {
               _checklist,
             ) &&
             (identical(other.planningTitle, planningTitle) ||
-                other.planningTitle == planningTitle));
+                other.planningTitle == planningTitle) &&
+            (identical(other.placeEnabled, placeEnabled) ||
+                other.placeEnabled == placeEnabled) &&
+            const DeepCollectionEquality().equals(
+              other._registrationFields,
+              _registrationFields,
+            ));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -2710,6 +2984,8 @@ class _$AttendanceTypeImpl implements _AttendanceType {
     const DeepCollectionEquality().hash(_additionalFieldsFilter),
     const DeepCollectionEquality().hash(_checklist),
     planningTitle,
+    placeEnabled,
+    const DeepCollectionEquality().hash(_registrationFields),
   ]);
 
   /// Create a copy of AttendanceType
@@ -2772,6 +3048,11 @@ abstract class _AttendanceType implements AttendanceType {
     @JsonKey(name: 'planning_title')
     @_FlexibleStringConverter()
     final String? planningTitle,
+    @JsonKey(name: 'place_enabled')
+    @_FlexibleBoolConverter()
+    final bool placeEnabled,
+    @JsonKey(name: 'registration_fields')
+    final List<RegistrationField>? registrationFields,
   }) = _$AttendanceTypeImpl;
 
   factory _AttendanceType.fromJson(Map<String, dynamic> json) =
@@ -2856,12 +3137,258 @@ abstract class _AttendanceType implements AttendanceType {
   @override
   @JsonKey(name: 'planning_title')
   @_FlexibleStringConverter()
-  String? get planningTitle;
+  String? get planningTitle; // ATTENDANCE_SIGNOUT: place/navigation and registration fields per type
+  @override
+  @JsonKey(name: 'place_enabled')
+  @_FlexibleBoolConverter()
+  bool get placeEnabled;
+  @override
+  @JsonKey(name: 'registration_fields')
+  List<RegistrationField>? get registrationFields;
 
   /// Create a copy of AttendanceType
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$AttendanceTypeImplCopyWith<_$AttendanceTypeImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+RegistrationField _$RegistrationFieldFromJson(Map<String, dynamic> json) {
+  return _RegistrationField.fromJson(json);
+}
+
+/// @nodoc
+mixin _$RegistrationField {
+  String get id => throw _privateConstructorUsedError;
+  String get label => throw _privateConstructorUsedError;
+  String get type => throw _privateConstructorUsedError;
+  List<String>? get options => throw _privateConstructorUsedError;
+
+  /// Serializes this RegistrationField to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of RegistrationField
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $RegistrationFieldCopyWith<RegistrationField> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $RegistrationFieldCopyWith<$Res> {
+  factory $RegistrationFieldCopyWith(
+    RegistrationField value,
+    $Res Function(RegistrationField) then,
+  ) = _$RegistrationFieldCopyWithImpl<$Res, RegistrationField>;
+  @useResult
+  $Res call({String id, String label, String type, List<String>? options});
+}
+
+/// @nodoc
+class _$RegistrationFieldCopyWithImpl<$Res, $Val extends RegistrationField>
+    implements $RegistrationFieldCopyWith<$Res> {
+  _$RegistrationFieldCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of RegistrationField
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? label = null,
+    Object? type = null,
+    Object? options = freezed,
+  }) {
+    return _then(
+      _value.copyWith(
+            id:
+                null == id
+                    ? _value.id
+                    : id // ignore: cast_nullable_to_non_nullable
+                        as String,
+            label:
+                null == label
+                    ? _value.label
+                    : label // ignore: cast_nullable_to_non_nullable
+                        as String,
+            type:
+                null == type
+                    ? _value.type
+                    : type // ignore: cast_nullable_to_non_nullable
+                        as String,
+            options:
+                freezed == options
+                    ? _value.options
+                    : options // ignore: cast_nullable_to_non_nullable
+                        as List<String>?,
+          )
+          as $Val,
+    );
+  }
+}
+
+/// @nodoc
+abstract class _$$RegistrationFieldImplCopyWith<$Res>
+    implements $RegistrationFieldCopyWith<$Res> {
+  factory _$$RegistrationFieldImplCopyWith(
+    _$RegistrationFieldImpl value,
+    $Res Function(_$RegistrationFieldImpl) then,
+  ) = __$$RegistrationFieldImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String id, String label, String type, List<String>? options});
+}
+
+/// @nodoc
+class __$$RegistrationFieldImplCopyWithImpl<$Res>
+    extends _$RegistrationFieldCopyWithImpl<$Res, _$RegistrationFieldImpl>
+    implements _$$RegistrationFieldImplCopyWith<$Res> {
+  __$$RegistrationFieldImplCopyWithImpl(
+    _$RegistrationFieldImpl _value,
+    $Res Function(_$RegistrationFieldImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of RegistrationField
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? label = null,
+    Object? type = null,
+    Object? options = freezed,
+  }) {
+    return _then(
+      _$RegistrationFieldImpl(
+        id:
+            null == id
+                ? _value.id
+                : id // ignore: cast_nullable_to_non_nullable
+                    as String,
+        label:
+            null == label
+                ? _value.label
+                : label // ignore: cast_nullable_to_non_nullable
+                    as String,
+        type:
+            null == type
+                ? _value.type
+                : type // ignore: cast_nullable_to_non_nullable
+                    as String,
+        options:
+            freezed == options
+                ? _value._options
+                : options // ignore: cast_nullable_to_non_nullable
+                    as List<String>?,
+      ),
+    );
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$RegistrationFieldImpl implements _RegistrationField {
+  const _$RegistrationFieldImpl({
+    required this.id,
+    this.label = '',
+    this.type = RegistrationFieldType.text,
+    final List<String>? options,
+  }) : _options = options;
+
+  factory _$RegistrationFieldImpl.fromJson(Map<String, dynamic> json) =>
+      _$$RegistrationFieldImplFromJson(json);
+
+  @override
+  final String id;
+  @override
+  @JsonKey()
+  final String label;
+  @override
+  @JsonKey()
+  final String type;
+  final List<String>? _options;
+  @override
+  List<String>? get options {
+    final value = _options;
+    if (value == null) return null;
+    if (_options is EqualUnmodifiableListView) return _options;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  @override
+  String toString() {
+    return 'RegistrationField(id: $id, label: $label, type: $type, options: $options)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$RegistrationFieldImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.label, label) || other.label == label) &&
+            (identical(other.type, type) || other.type == type) &&
+            const DeepCollectionEquality().equals(other._options, _options));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(
+    runtimeType,
+    id,
+    label,
+    type,
+    const DeepCollectionEquality().hash(_options),
+  );
+
+  /// Create a copy of RegistrationField
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$RegistrationFieldImplCopyWith<_$RegistrationFieldImpl> get copyWith =>
+      __$$RegistrationFieldImplCopyWithImpl<_$RegistrationFieldImpl>(
+        this,
+        _$identity,
+      );
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$RegistrationFieldImplToJson(this);
+  }
+}
+
+abstract class _RegistrationField implements RegistrationField {
+  const factory _RegistrationField({
+    required final String id,
+    final String label,
+    final String type,
+    final List<String>? options,
+  }) = _$RegistrationFieldImpl;
+
+  factory _RegistrationField.fromJson(Map<String, dynamic> json) =
+      _$RegistrationFieldImpl.fromJson;
+
+  @override
+  String get id;
+  @override
+  String get label;
+  @override
+  String get type;
+  @override
+  List<String>? get options;
+
+  /// Create a copy of RegistrationField
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$RegistrationFieldImplCopyWith<_$RegistrationFieldImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

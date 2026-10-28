@@ -26,6 +26,9 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/attendance/attendance.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../data/models/song/song.dart';
+import '../../../../shared/widgets/event_list/event_list_widgets.dart';
+import '../../../../shared/widgets/event_list/excuse_reason_sheet.dart';
+import '../../../self_service/presentation/widgets/self_service_event_actions.dart';
 import '../widgets/attendance_detail/attendance_detail_widgets.dart';
 import '../widgets/attendance_legend_sheet.dart';
 import '../widgets/attendance_status_overview_sheet.dart';
@@ -56,6 +59,8 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
   final Map<int, String?> _changedAt = {}; // Map personId -> changedAt timestamp
   final Set<int> _savingPersonIds = {}; // Track in-flight saves to prevent realtime overwrites
   bool _isDisposed = false; // Track disposal state for realtime callbacks
+  final Map<int, Map<String, dynamic>?> _registrationAnswers = {}; // personId -> registration_answers
+  bool? _lastOnline; // last known connectivity, toast only on a real change
 
   // Realtime channel - typed for proper cleanup
   RealtimeChannel? _personAttChannel;
@@ -123,6 +128,36 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     // Load songs and conductors from providers to resolve names
     final songs = await ref.read(songsProvider.future);
     final conductors = await ref.read(activeConductorsProvider.future);
+    final allConductors = await ref.read(conductorsProvider.future);
+
+    // Prefer the history rows: they keep the conductor per song including
+    // "Anderer Dirigent" (otherConductor).
+    try {
+      final repo = ref.read(attendanceRepositoryWithTenantProvider);
+      if (repo.hasTenantId) {
+        final rows = await repo.getHistoryForAttendance(widget.attendanceId);
+        if (rows.isNotEmpty) {
+          final fromHistory = rows.map((row) {
+            final songId = row['song_id'] as int;
+            final personId = row['person_id'] as int?;
+            final other = row['otherConductor'] as String?;
+            final song = songs.where((s) => s.id == songId).firstOrNull;
+            final conductor = allConductors.where((c) => c.id == personId).firstOrNull;
+            return SongHistoryEntry(
+              songId: songId,
+              songName: song?.displayName ?? 'Unbekanntes Werk',
+              conductorId: personId,
+              conductorName: conductor?.fullName,
+              otherConductor: other?.isNotEmpty == true ? other : null,
+            );
+          }).toList();
+          if (mounted) setState(() => _songEntries = fromHistory);
+          return;
+        }
+      }
+    } catch (_) {
+      // fall back to the songs/conductors arrays below
+    }
 
     // Create entries with resolved names
     final entries = <SongHistoryEntry>[];
@@ -183,12 +218,13 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
               if (pa.personId != null) {
                 // IDs und Metadaten IMMER aktualisieren
                 _personAttendanceIds[pa.personId!] = pa.id;
-                _personNotes[pa.personId!] = pa.notes;
                 _changedBy[pa.personId!] = pa.changedBy;
                 _changedAt[pa.personId!] = pa.changedAt;
-                // Status nur setzen wenn nicht gerade lokal geändert
+                _registrationAnswers[pa.personId!] = pa.registrationAnswers;
+                // Status/Notiz nur setzen wenn nicht gerade lokal geändert
                 if (!_savingPersonIds.contains(pa.personId!)) {
                   _localStatuses[pa.personId!] = pa.status;
+                  _personNotes[pa.personId!] = pa.notes;
                 }
               }
             }
@@ -297,6 +333,28 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    // Tenant switched while this Termin is open -> close it (it belongs to
+    // the previous tenant).
+    ref.listen<int?>(currentTenantIdProvider, (previous, next) {
+      if (previous != null && next != previous && mounted) {
+        GoRouter.of(context).go('/attendance');
+      }
+    });
+    // Toast only on a real online/offline transition (not on every
+    // connectivity event, e.g. Wi-Fi <-> mobile).
+    ref.listen<AsyncValue<bool>>(connectivityProvider, (previous, next) {
+      final online = next.valueOrNull;
+      if (online == null) return;
+      final before = _lastOnline ?? previous?.valueOrNull;
+      _lastOnline = online;
+      if (before == null || before == online || !mounted) return;
+      if (online) {
+        ToastHelper.showSuccess(context, 'Verbindung wiederhergestellt');
+      } else {
+        ToastHelper.showError(context, 'Keine Internetverbindung vorhanden');
+      }
+    });
+
     final attendanceAsync = ref.watch(attendanceDetailProvider(widget.attendanceId));
     final personsAsync = ref.watch(filteredPersonsForAttendanceProvider(widget.attendanceId));
     ref.watch(filteredPersonAttendancesForAttendanceProvider(widget.attendanceId));
@@ -475,6 +533,16 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                           onDeadlineSelect: _selectDeadline,
                           onExportExcel: _exportAttendanceToExcel,
                           hasNeutralStatuses: _localStatuses.isEmpty || _localStatuses.values.any((s) => s.isNeutral),
+                          onDateSelect: _changeDate,
+                          onPlaceChanged: _updatePlace,
+                          onOpenNavigation: attendance.place?.isNotEmpty == true
+                              ? () => openEventNavigation(context, attendance.place!)
+                              : null,
+                          onChooseFilesFolder: _chooseFilesFolder,
+                          onRemoveFilesFolder: _removeFilesFolder,
+                          onOpenFilesFolder: attendance.filesFolder?.isNotEmpty == true
+                              ? () => openFilesFolderRoute(context, attendance.filesFolder!)
+                              : null,
                         ),
 
                         if (hasChecklist)
@@ -493,6 +561,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                             entries: _songEntries,
                             onAdd: _openSongsSelection,
                             onRemove: _removeSongEntry,
+                            onTap: _onSongEntryTap,
                           ),
 
                         PlanAccordion(
@@ -537,6 +606,10 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                       onNoteChanged: _updatePersonNote,
                       onShowModifierInfo: _showModifierInfo,
                       onRemoveFromAttendance: _removePersonFromAttendance,
+                      registrationSummaries: _registrationSummaries(attendanceType),
+                      onEditRegistrationFields: (attendanceType?.registrationFields?.isNotEmpty ?? false)
+                          ? (personId) => _editRegistrationFields(personId, attendanceType!)
+                          : null,
                     ),
                   ),
                 ],
@@ -576,21 +649,26 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       return;
     }
 
+    // Show the note immediately; the provider listener is guarded via
+    // _savingPersonIds so a stale refetch cannot overwrite it.
+    final previousNote = _personNotes[personId];
+    if (mounted) setState(() => _personNotes[personId] = notes);
+    _savingPersonIds.add(personId);
+
     try {
       final repo = ref.read(attendanceRepositoryWithTenantProvider);
-      await repo.updatePersonAttendance(personAttendanceId, {'notes': notes});
-
-      setState(() {
-        _personNotes[personId] = notes;
-      });
+      await repo.updatePersonAttendance(personAttendanceId, {'notes': notes ?? ''});
 
       if (mounted) {
-        ToastHelper.showSuccess(context, notes?.isNotEmpty == true ? 'Notiz gespeichert' : 'Notiz gelöscht');
+        ToastHelper.showSuccess(context, notes?.isNotEmpty == true ? 'Notiz hinzugefügt' : 'Notiz gelöscht');
       }
     } catch (e) {
       if (mounted) {
+        setState(() => _personNotes[personId] = previousNote);
         ToastHelper.showError(context, 'Fehler: $e');
       }
+    } finally {
+      _savingPersonIds.remove(personId);
     }
   }
 
@@ -1256,12 +1334,248 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
           'attendance_id': widget.attendanceId,
           'date': date,
           'tenantId': tenant.id,
+          'person_id': entry.otherConductor?.isNotEmpty == true ? null : entry.conductorId,
           'conductorName': entry.conductorName,
           'otherConductor': entry.otherConductor,
         };
       }).toList();
 
       await supabase.from('history').insert(entries);
+    }
+  }
+
+  // ATTENDANCE_SIGNOUT: conductor change, date change, place, files folder,
+  // registration fields (Ionic attendance.page.ts parity)
+
+  /// Tap on a song entry: "Dirigent ändern" / "Zum Werk" (Ionic onHistoryEntryClick).
+  Future<void> _onSongEntryTap(int index) async {
+    if (index < 0 || index >= _songEntries.length) return;
+    final entry = _songEntries[index];
+    final action = await showModalBottomSheet<String>(
+      context: context,
+      showDragHandle: true,
+      builder: (ctx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            ListTile(
+              title: Text(entry.songName, style: const TextStyle(fontWeight: FontWeight.w600)),
+              subtitle: Text(entry.displayConductor),
+            ),
+            const Divider(height: 1),
+            ListTile(
+              leading: const Icon(Icons.person_outline),
+              title: const Text('Dirigent ändern'),
+              onTap: () => Navigator.pop(ctx, 'conductor'),
+            ),
+            ListTile(
+              leading: const Icon(Icons.music_note_outlined),
+              title: const Text('Zum Werk'),
+              onTap: () => Navigator.pop(ctx, 'song'),
+            ),
+            ListTile(
+              title: const Text('Abbrechen'),
+              onTap: () => Navigator.pop(ctx),
+            ),
+          ],
+        ),
+      ),
+    );
+    if (!mounted || action == null) return;
+    if (action == 'song') {
+      GoRouter.of(context).push('/songs/${entry.songId}');
+      return;
+    }
+    await _changeConductor(index);
+  }
+
+  Future<void> _changeConductor(int index) async {
+    final entry = _songEntries[index];
+    final conductors = await ref.read(activeConductorsProvider.future);
+    if (!mounted) return;
+    final choice = await showConductorChangeDialog(
+      context,
+      conductors: conductors,
+      currentConductorId: entry.conductorId,
+      currentOtherConductor: entry.otherConductor,
+    );
+    if (choice == null || !mounted || index >= _songEntries.length) return;
+    setState(() {
+      _songEntries[index] = choice.person != null
+          ? entry.copyWith(
+              conductorId: choice.person!.id,
+              conductorName: choice.person!.fullName,
+              otherConductor: null,
+            )
+          : entry.copyWith(
+              conductorId: null,
+              conductorName: null,
+              otherConductor: choice.otherConductor,
+            );
+    });
+    await _saveSongEntries();
+  }
+
+  /// "Datum ändern" (Ionic promptAttendanceDateChange / changeAttendanceDate).
+  Future<void> _changeDate() async {
+    final attendance = ref.read(attendanceDetailProvider(widget.attendanceId)).valueOrNull;
+    if (attendance == null) return;
+    final current = DateTime.tryParse(attendance.date)?.toLocal() ?? DateTime.now();
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: current,
+      firstDate: DateTime(current.year - 5),
+      lastDate: DateTime(current.year + 5),
+      helpText: 'Auf welchen Tag soll der Termin verschoben werden?',
+    );
+    if (picked == null || !mounted) return;
+    if (DateUtils.isSameDay(picked, current)) return;
+
+    final type = ref.read(attendanceTypeForAttendanceProvider(widget.attendanceId)).valueOrNull;
+    var reset = false;
+    if (type != null && _localStatuses.values.any((s) => s != type.defaultStatus)) {
+      final choice = await showDialog<String>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text('Status zurücksetzen?'),
+          content: Text(
+            'Nicht alle stehen auf „${type.defaultStatus.label}“. Sollen mit der '
+            'Verschiebung alle auf den Standardstatus zurückgesetzt werden?',
+          ),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Abbrechen')),
+            TextButton(onPressed: () => Navigator.pop(ctx, 'keep'), child: const Text('Behalten')),
+            FilledButton(onPressed: () => Navigator.pop(ctx, 'reset'), child: const Text('Zurücksetzen')),
+          ],
+        ),
+      );
+      if (choice == null || !mounted) return;
+      reset = choice == 'reset';
+    }
+
+    try {
+      final repo = ref.read(attendanceRepositoryWithTenantProvider);
+      if (!repo.hasTenantId) return;
+      final normalized = DateTime(picked.year, picked.month, picked.day, 12);
+      final days = DateUtils.dateOnly(normalized).difference(DateUtils.dateOnly(current)).inDays;
+      final normalizedIso = normalized.toUtc().toIso8601String();
+
+      // Deadline and checklist due dates move along with the Termin.
+      String? shift(String? value) {
+        if (value == null || value.isEmpty) return value;
+        final d = DateTime.tryParse(value);
+        return d == null ? value : d.add(Duration(days: days)).toIso8601String();
+      }
+
+      final checklist = attendance.checklist
+          ?.map((item) => item.copyWith(dueDate: shift(item.dueDate)).toJson())
+          .toList();
+      await repo.updateAttendance(widget.attendanceId, {
+        'date': normalizedIso,
+        if (attendance.deadline != null) 'deadline': shift(attendance.deadline),
+        if (checklist != null) 'checklist': checklist,
+      });
+      await repo.updateHistoryDatesForAttendance(widget.attendanceId, normalizedIso);
+      if (reset && type != null) {
+        await repo.resetPersonAttendancesForAttendance(widget.attendanceId, type.defaultStatus);
+        if (mounted) {
+          setState(() {
+            for (final id in _localStatuses.keys.toList()) {
+              _localStatuses[id] = type.defaultStatus;
+              _personNotes[id] = null;
+            }
+          });
+        }
+      }
+      // Hook: absences on the new day and shift re-evaluation belong to the
+      // absences / duty-roster packages.
+
+      if (mounted) setState(() => _checklistLoaded = false);
+      ref.invalidate(attendanceDetailProvider(widget.attendanceId));
+      ref.invalidate(personAttendancesForAttendanceProvider(widget.attendanceId));
+      if (mounted) {
+        ToastHelper.showSuccess(
+          context,
+          'Termin auf ${DateFormat('EE, dd.MM.yyyy', 'de_DE').format(normalized)} verschoben',
+        );
+      }
+    } catch (e) {
+      if (mounted) ToastHelper.showError(context, 'Datum konnte nicht geändert werden');
+    }
+  }
+
+  Future<void> _updateAttendanceField(Map<String, dynamic> updates) async {
+    try {
+      final repo = ref.read(attendanceRepositoryWithTenantProvider);
+      if (!repo.hasTenantId) return;
+      await repo.updateAttendance(widget.attendanceId, updates);
+      ref.invalidate(attendanceDetailProvider(widget.attendanceId));
+    } catch (e) {
+      if (mounted) ToastHelper.showError(context, 'Fehler: $e');
+    }
+  }
+
+  Future<void> _updatePlace(String value) =>
+      _updateAttendanceField({'place': value.isEmpty ? null : value});
+
+  Future<void> _chooseFilesFolder() async {
+    final tenantId = ref.read(currentTenantIdProvider);
+    if (tenantId == null) return;
+    final attendance = ref.read(attendanceDetailProvider(widget.attendanceId)).valueOrNull;
+    final path = await showFilesFolderPicker(
+      context,
+      tenantId: tenantId,
+      initialPath: attendance?.filesFolder ?? '',
+    );
+    if (path == null || path.isEmpty) return;
+    await _updateAttendanceField({'files_folder': path});
+  }
+
+  Future<void> _removeFilesFolder() => _updateAttendanceField({'files_folder': null});
+
+  Map<int, String> _registrationSummaries(AttendanceType? type) {
+    final fields = type?.registrationFields ?? const <RegistrationField>[];
+    if (fields.isEmpty) return const {};
+    final result = <int, String>{};
+    _registrationAnswers.forEach((personId, answers) {
+      if (answers == null || answers.isEmpty) return;
+      final parts = <String>[];
+      for (final f in fields) {
+        final value = answers[f.id];
+        if (value == null) continue;
+        final text = registrationAnswerText(f, value);
+        parts.add('${f.label}: ${text.isEmpty ? '–' : text}');
+      }
+      if (parts.isNotEmpty) result[personId] = parts.join(' · ');
+    });
+    return result;
+  }
+
+  /// "Anmeldefelder bearbeiten": merges the answers into registration_answers.
+  Future<void> _editRegistrationFields(int personId, AttendanceType type) async {
+    final personAttendanceId = _personAttendanceIds[personId];
+    final fields = type.registrationFields ?? const <RegistrationField>[];
+    if (personAttendanceId == null || fields.isEmpty) return;
+    final existing = _registrationAnswers[personId];
+    final answers = await showRegistrationFieldsSheet(
+      context,
+      fields: fields,
+      existing: existing,
+      editMode: true,
+      requireText: false,
+    );
+    if (answers == null || !mounted) return;
+    final merged = <String, dynamic>{...?existing, ...answers};
+    try {
+      final repo = ref.read(attendanceRepositoryWithTenantProvider);
+      await repo.updatePersonAttendance(personAttendanceId, {'registration_answers': merged});
+      if (mounted) {
+        setState(() => _registrationAnswers[personId] = merged);
+        ToastHelper.showSuccess(context, 'Anmeldefelder gespeichert');
+      }
+    } catch (e) {
+      if (mounted) ToastHelper.showError(context, 'Fehler: $e');
     }
   }
 

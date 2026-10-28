@@ -12,6 +12,7 @@ import '../../../../core/utils/color_utils.dart';
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/attendance/attendance.dart';
+import '../widgets/registration_fields_editor.dart'; // ATTENDANCE_SIGNOUT
 
 /// Predefined reminder time options
 const _reminderPresets = [
@@ -56,6 +57,8 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
     AttendanceStatus.late,
   };
   bool _manageSongs = false;
+  bool _placeEnabled = false; // ATTENDANCE_SIGNOUT
+  List<RegistrationField> _registrationFields = []; // ATTENDANCE_SIGNOUT
   bool _visible = true;
   bool _highlight = false;
   bool _hideName = false;
@@ -115,6 +118,8 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
         }
 
         _manageSongs = type.manageSongs;
+        _placeEnabled = type.placeEnabled; // ATTENDANCE_SIGNOUT
+        _registrationFields = List<RegistrationField>.from(type.registrationFields ?? []); // ATTENDANCE_SIGNOUT
         _visible = type.visible;
         _highlight = type.highlight;
         _hideName = type.hideName;
@@ -455,7 +460,34 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                     }),
                     contentPadding: EdgeInsets.zero,
                   ),
+                  // ATTENDANCE_SIGNOUT: place / navigation
+                  SwitchListTile(
+                    title: const Text('Ort / Navigation aktivieren'),
+                    subtitle: const Text(
+                      'Wenn aktiviert, kann bei Terminen dieses Typs ein Ort hinterlegt werden. '
+                      'Dieser wird dann als Navigationslink in Google Maps oder Apple Karten angezeigt.',
+                    ),
+                    value: _placeEnabled,
+                    onChanged: (value) => setState(() {
+                      _placeEnabled = value;
+                      _hasChanges = true;
+                    }),
+                    contentPadding: EdgeInsets.zero,
+                  ),
                 ],
+              ),
+            ),
+            const SizedBox(height: AppDimensions.paddingL),
+
+            // ATTENDANCE_SIGNOUT: Anmeldefelder (adjustable at any time)
+            _buildSection(
+              title: 'Anmeldefelder',
+              child: RegistrationFieldsEditor(
+                fields: _registrationFields,
+                onChanged: (fields) => setState(() {
+                  _registrationFields = fields;
+                  _hasChanges = true;
+                }),
               ),
             ),
             const SizedBox(height: AppDimensions.paddingL),
@@ -1185,6 +1217,9 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
         'planning_title': _planningTitle.isNotEmpty ? _planningTitle : null,
         'relevant_groups': _relevantGroups.isNotEmpty ? _relevantGroups : null,
         'additional_fields_filter': _additionalFieldsFilter,
+        // ATTENDANCE_SIGNOUT
+        'place_enabled': _placeEnabled,
+        'registration_fields': _registrationFields.map((f) => f.toJson()).toList(),
       };
 
       await ref.read(attendanceTypeNotifierProvider.notifier).updateType(widget.typeId, updates);

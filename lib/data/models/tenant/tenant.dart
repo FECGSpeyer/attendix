@@ -34,6 +34,11 @@ class Tenant with _$Tenant {
     @Default(false) bool? favorite,
     @JsonKey(name: 'critical_rules') List<CriticalRule>? criticalRules,
     @Default('Europe/Berlin') String timezone,
+    // ATTENDANCE_SIGNOUT: show all Termine on the signout page, excuse reasons
+    @JsonKey(name: 'show_all_attendances') @Default(false) bool showAllAttendances,
+    @JsonKey(name: 'show_all_attendances_info_text') String? showAllAttendancesInfoText,
+    @JsonKey(name: 'absence_reasons') List<String>? absenceReasons,
+    @JsonKey(name: 'late_reasons') List<String>? lateReasons,
   }) = _Tenant;
 
   factory Tenant.fromJson(Map<String, dynamic> json) => _$TenantFromJson(json);

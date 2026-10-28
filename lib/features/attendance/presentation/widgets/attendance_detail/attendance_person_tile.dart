@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../../core/utils/haptic_helper.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
 import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/constants/enums.dart';
+import '../../../../../core/providers/tenant_providers.dart';
 import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/utils/event_list_utils.dart';
 import '../../../../../data/models/person/person.dart';
+import 'attendance_detail_sheets.dart';
 import 'status_chip.dart';
 
 /// Tile displaying a person with their attendance status and actions
@@ -22,6 +26,8 @@ class AttendancePersonTile extends StatelessWidget {
     required this.onShowModifierInfo,
     required this.onRemoveFromAttendance,
     this.clickMode = false,
+    this.registrationSummary,
+    this.onEditRegistrationFields,
   });
 
   final Person person;
@@ -34,6 +40,12 @@ class AttendancePersonTile extends StatelessWidget {
   final VoidCallback onRemoveFromAttendance;
   final bool clickMode;
 
+  /// Summary of the registration answers ("Feld: Wert · ...").
+  final String? registrationSummary;
+
+  /// "Anmeldefelder bearbeiten" – only when the type has registration fields.
+  final VoidCallback? onEditRegistrationFields;
+
   @override
   Widget build(BuildContext context) {
     final hasNotes = notes?.isNotEmpty == true;
@@ -42,8 +54,16 @@ class AttendancePersonTile extends StatelessWidget {
       key: ValueKey(person.id),
       startActionPane: ActionPane(
         motion: const ScrollMotion(),
-        extentRatio: 0.25,
+        extentRatio: onEditRegistrationFields != null ? 0.5 : 0.25,
         children: [
+          if (onEditRegistrationFields != null)
+            SlidableAction(
+              onPressed: (_) => onEditRegistrationFields!(),
+              backgroundColor: AppColors.primary,
+              foregroundColor: Colors.white,
+              icon: Icons.edit_note,
+              label: 'Anmeldefelder',
+            ),
           SlidableAction(
             onPressed: (_) => onRemoveFromAttendance(),
             backgroundColor: AppColors.danger,
@@ -159,6 +179,13 @@ class AttendancePersonTile extends StatelessWidget {
                             ),
                           ],
                         ),
+                      if (registrationSummary?.isNotEmpty == true)
+                        Text(
+                          registrationSummary!,
+                          style: const TextStyle(fontSize: 12, color: AppColors.medium),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                     ],
                   ),
                 ),
@@ -176,46 +203,16 @@ class AttendancePersonTile extends StatelessWidget {
     );
   }
 
-  void _showNoteDialog(BuildContext context) {
-    final controller = TextEditingController(text: notes);
-
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text('Notiz für ${person.fullName}'),
-        content: TextField(
-          controller: controller,
-          maxLines: 4,
-          decoration: const InputDecoration(
-            hintText: 'Notiz eingeben...',
-            border: OutlineInputBorder(),
-          ),
-          autofocus: true,
-        ),
-        actions: [
-          if (notes?.isNotEmpty == true)
-            TextButton(
-              onPressed: () {
-                onNoteChanged(null);
-                Navigator.of(ctx).pop();
-              },
-              child: const Text('Löschen', style: TextStyle(color: AppColors.danger)),
-            ),
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('Abbrechen'),
-          ),
-          FilledButton(
-            onPressed: () {
-              final newNotes = controller.text.trim();
-              onNoteChanged(newNotes.isEmpty ? null : newNotes);
-              Navigator.of(ctx).pop();
-            },
-            child: const Text('Speichern'),
-          ),
-        ],
-      ),
+  /// Note action sheet with the tenant's absence reasons (Ionic `addNote`).
+  Future<void> _showNoteDialog(BuildContext context) async {
+    final tenant = ProviderScope.containerOf(context, listen: false).read(currentTenantProvider);
+    final result = await showPersonNoteSheet(
+      context,
+      currentNote: notes,
+      presetReasons: EventListUtils.absenceReasonsOf(tenant?.absenceReasons),
     );
+    if (result == null) return;
+    onNoteChanged(result.isEmpty ? null : result);
   }
 
   /// Trigger haptic feedback and change status

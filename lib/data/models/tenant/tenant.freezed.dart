@@ -54,7 +54,16 @@ mixin _$Tenant {
   bool? get favorite => throw _privateConstructorUsedError;
   @JsonKey(name: 'critical_rules')
   List<CriticalRule>? get criticalRules => throw _privateConstructorUsedError;
-  String get timezone => throw _privateConstructorUsedError;
+  String get timezone =>
+      throw _privateConstructorUsedError; // ATTENDANCE_SIGNOUT: show all Termine on the signout page, excuse reasons
+  @JsonKey(name: 'show_all_attendances')
+  bool get showAllAttendances => throw _privateConstructorUsedError;
+  @JsonKey(name: 'show_all_attendances_info_text')
+  String? get showAllAttendancesInfoText => throw _privateConstructorUsedError;
+  @JsonKey(name: 'absence_reasons')
+  List<String>? get absenceReasons => throw _privateConstructorUsedError;
+  @JsonKey(name: 'late_reasons')
+  List<String>? get lateReasons => throw _privateConstructorUsedError;
 
   /// Serializes this Tenant to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -97,6 +106,11 @@ abstract class $TenantCopyWith<$Res> {
     bool? favorite,
     @JsonKey(name: 'critical_rules') List<CriticalRule>? criticalRules,
     String timezone,
+    @JsonKey(name: 'show_all_attendances') bool showAllAttendances,
+    @JsonKey(name: 'show_all_attendances_info_text')
+    String? showAllAttendancesInfoText,
+    @JsonKey(name: 'absence_reasons') List<String>? absenceReasons,
+    @JsonKey(name: 'late_reasons') List<String>? lateReasons,
   });
 }
 
@@ -141,6 +155,10 @@ class _$TenantCopyWithImpl<$Res, $Val extends Tenant>
     Object? favorite = freezed,
     Object? criticalRules = freezed,
     Object? timezone = null,
+    Object? showAllAttendances = null,
+    Object? showAllAttendancesInfoText = freezed,
+    Object? absenceReasons = freezed,
+    Object? lateReasons = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -274,6 +292,26 @@ class _$TenantCopyWithImpl<$Res, $Val extends Tenant>
                     ? _value.timezone
                     : timezone // ignore: cast_nullable_to_non_nullable
                         as String,
+            showAllAttendances:
+                null == showAllAttendances
+                    ? _value.showAllAttendances
+                    : showAllAttendances // ignore: cast_nullable_to_non_nullable
+                        as bool,
+            showAllAttendancesInfoText:
+                freezed == showAllAttendancesInfoText
+                    ? _value.showAllAttendancesInfoText
+                    : showAllAttendancesInfoText // ignore: cast_nullable_to_non_nullable
+                        as String?,
+            absenceReasons:
+                freezed == absenceReasons
+                    ? _value.absenceReasons
+                    : absenceReasons // ignore: cast_nullable_to_non_nullable
+                        as List<String>?,
+            lateReasons:
+                freezed == lateReasons
+                    ? _value.lateReasons
+                    : lateReasons // ignore: cast_nullable_to_non_nullable
+                        as List<String>?,
           )
           as $Val,
     );
@@ -315,6 +353,11 @@ abstract class _$$TenantImplCopyWith<$Res> implements $TenantCopyWith<$Res> {
     bool? favorite,
     @JsonKey(name: 'critical_rules') List<CriticalRule>? criticalRules,
     String timezone,
+    @JsonKey(name: 'show_all_attendances') bool showAllAttendances,
+    @JsonKey(name: 'show_all_attendances_info_text')
+    String? showAllAttendancesInfoText,
+    @JsonKey(name: 'absence_reasons') List<String>? absenceReasons,
+    @JsonKey(name: 'late_reasons') List<String>? lateReasons,
   });
 }
 
@@ -358,6 +401,10 @@ class __$$TenantImplCopyWithImpl<$Res>
     Object? favorite = freezed,
     Object? criticalRules = freezed,
     Object? timezone = null,
+    Object? showAllAttendances = null,
+    Object? showAllAttendancesInfoText = freezed,
+    Object? absenceReasons = freezed,
+    Object? lateReasons = freezed,
   }) {
     return _then(
       _$TenantImpl(
@@ -491,6 +538,26 @@ class __$$TenantImplCopyWithImpl<$Res>
                 ? _value.timezone
                 : timezone // ignore: cast_nullable_to_non_nullable
                     as String,
+        showAllAttendances:
+            null == showAllAttendances
+                ? _value.showAllAttendances
+                : showAllAttendances // ignore: cast_nullable_to_non_nullable
+                    as bool,
+        showAllAttendancesInfoText:
+            freezed == showAllAttendancesInfoText
+                ? _value.showAllAttendancesInfoText
+                : showAllAttendancesInfoText // ignore: cast_nullable_to_non_nullable
+                    as String?,
+        absenceReasons:
+            freezed == absenceReasons
+                ? _value._absenceReasons
+                : absenceReasons // ignore: cast_nullable_to_non_nullable
+                    as List<String>?,
+        lateReasons:
+            freezed == lateReasons
+                ? _value._lateReasons
+                : lateReasons // ignore: cast_nullable_to_non_nullable
+                    as List<String>?,
       ),
     );
   }
@@ -529,9 +596,16 @@ class _$TenantImpl implements _Tenant {
     this.favorite = false,
     @JsonKey(name: 'critical_rules') final List<CriticalRule>? criticalRules,
     this.timezone = 'Europe/Berlin',
+    @JsonKey(name: 'show_all_attendances') this.showAllAttendances = false,
+    @JsonKey(name: 'show_all_attendances_info_text')
+    this.showAllAttendancesInfoText,
+    @JsonKey(name: 'absence_reasons') final List<String>? absenceReasons,
+    @JsonKey(name: 'late_reasons') final List<String>? lateReasons,
   }) : _additionalFields = additionalFields,
        _registrationFields = registrationFields,
-       _criticalRules = criticalRules;
+       _criticalRules = criticalRules,
+       _absenceReasons = absenceReasons,
+       _lateReasons = lateReasons;
 
   factory _$TenantImpl.fromJson(Map<String, dynamic> json) =>
       _$$TenantImplFromJson(json);
@@ -630,10 +704,38 @@ class _$TenantImpl implements _Tenant {
   @override
   @JsonKey()
   final String timezone;
+  // ATTENDANCE_SIGNOUT: show all Termine on the signout page, excuse reasons
+  @override
+  @JsonKey(name: 'show_all_attendances')
+  final bool showAllAttendances;
+  @override
+  @JsonKey(name: 'show_all_attendances_info_text')
+  final String? showAllAttendancesInfoText;
+  final List<String>? _absenceReasons;
+  @override
+  @JsonKey(name: 'absence_reasons')
+  List<String>? get absenceReasons {
+    final value = _absenceReasons;
+    if (value == null) return null;
+    if (_absenceReasons is EqualUnmodifiableListView) return _absenceReasons;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  final List<String>? _lateReasons;
+  @override
+  @JsonKey(name: 'late_reasons')
+  List<String>? get lateReasons {
+    final value = _lateReasons;
+    if (value == null) return null;
+    if (_lateReasons is EqualUnmodifiableListView) return _lateReasons;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
 
   @override
   String toString() {
-    return 'Tenant(id: $id, createdAt: $createdAt, shortName: $shortName, longName: $longName, maintainTeachers: $maintainTeachers, showHolidays: $showHolidays, type: $type, withExcuses: $withExcuses, practiceStart: $practiceStart, practiceEnd: $practiceEnd, seasonStart: $seasonStart, parents: $parents, betaProgram: $betaProgram, showMembersList: $showMembersList, region: $region, role: $role, songSharingId: $songSharingId, additionalFields: $additionalFields, perc: $perc, percColor: $percColor, registerId: $registerId, autoApproveRegistrations: $autoApproveRegistrations, registrationFields: $registrationFields, favorite: $favorite, criticalRules: $criticalRules, timezone: $timezone)';
+    return 'Tenant(id: $id, createdAt: $createdAt, shortName: $shortName, longName: $longName, maintainTeachers: $maintainTeachers, showHolidays: $showHolidays, type: $type, withExcuses: $withExcuses, practiceStart: $practiceStart, practiceEnd: $practiceEnd, seasonStart: $seasonStart, parents: $parents, betaProgram: $betaProgram, showMembersList: $showMembersList, region: $region, role: $role, songSharingId: $songSharingId, additionalFields: $additionalFields, perc: $perc, percColor: $percColor, registerId: $registerId, autoApproveRegistrations: $autoApproveRegistrations, registrationFields: $registrationFields, favorite: $favorite, criticalRules: $criticalRules, timezone: $timezone, showAllAttendances: $showAllAttendances, showAllAttendancesInfoText: $showAllAttendancesInfoText, absenceReasons: $absenceReasons, lateReasons: $lateReasons)';
   }
 
   @override
@@ -695,7 +797,23 @@ class _$TenantImpl implements _Tenant {
               _criticalRules,
             ) &&
             (identical(other.timezone, timezone) ||
-                other.timezone == timezone));
+                other.timezone == timezone) &&
+            (identical(other.showAllAttendances, showAllAttendances) ||
+                other.showAllAttendances == showAllAttendances) &&
+            (identical(
+                  other.showAllAttendancesInfoText,
+                  showAllAttendancesInfoText,
+                ) ||
+                other.showAllAttendancesInfoText ==
+                    showAllAttendancesInfoText) &&
+            const DeepCollectionEquality().equals(
+              other._absenceReasons,
+              _absenceReasons,
+            ) &&
+            const DeepCollectionEquality().equals(
+              other._lateReasons,
+              _lateReasons,
+            ));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -728,6 +846,10 @@ class _$TenantImpl implements _Tenant {
     favorite,
     const DeepCollectionEquality().hash(_criticalRules),
     timezone,
+    showAllAttendances,
+    showAllAttendancesInfoText,
+    const DeepCollectionEquality().hash(_absenceReasons),
+    const DeepCollectionEquality().hash(_lateReasons),
   ]);
 
   /// Create a copy of Tenant
@@ -775,6 +897,11 @@ abstract class _Tenant implements Tenant {
     final bool? favorite,
     @JsonKey(name: 'critical_rules') final List<CriticalRule>? criticalRules,
     final String timezone,
+    @JsonKey(name: 'show_all_attendances') final bool showAllAttendances,
+    @JsonKey(name: 'show_all_attendances_info_text')
+    final String? showAllAttendancesInfoText,
+    @JsonKey(name: 'absence_reasons') final List<String>? absenceReasons,
+    @JsonKey(name: 'late_reasons') final List<String>? lateReasons,
   }) = _$TenantImpl;
 
   factory _Tenant.fromJson(Map<String, dynamic> json) = _$TenantImpl.fromJson;
@@ -838,7 +965,19 @@ abstract class _Tenant implements Tenant {
   @JsonKey(name: 'critical_rules')
   List<CriticalRule>? get criticalRules;
   @override
-  String get timezone;
+  String get timezone; // ATTENDANCE_SIGNOUT: show all Termine on the signout page, excuse reasons
+  @override
+  @JsonKey(name: 'show_all_attendances')
+  bool get showAllAttendances;
+  @override
+  @JsonKey(name: 'show_all_attendances_info_text')
+  String? get showAllAttendancesInfoText;
+  @override
+  @JsonKey(name: 'absence_reasons')
+  List<String>? get absenceReasons;
+  @override
+  @JsonKey(name: 'late_reasons')
+  List<String>? get lateReasons;
 
   /// Create a copy of Tenant
   /// with the given fields replaced by the non-null parameter values.

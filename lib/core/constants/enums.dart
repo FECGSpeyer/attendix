@@ -136,7 +136,7 @@ enum Role {
   String get defaultRoute {
     if (isConductor) return '/people';
     if (isParent) return '/parents';
-    return '/overview';
+    return '/signout';
   }
 }
 

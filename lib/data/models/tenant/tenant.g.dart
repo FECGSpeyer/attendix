@@ -46,6 +46,16 @@ _$TenantImpl _$$TenantImplFromJson(Map<String, dynamic> json) => _$TenantImpl(
           ?.map((e) => CriticalRule.fromJson(e as Map<String, dynamic>))
           .toList(),
   timezone: json['timezone'] as String? ?? 'Europe/Berlin',
+  showAllAttendances: json['show_all_attendances'] as bool? ?? false,
+  showAllAttendancesInfoText: json['show_all_attendances_info_text'] as String?,
+  absenceReasons:
+      (json['absence_reasons'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
+  lateReasons:
+      (json['late_reasons'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
 );
 
 Map<String, dynamic> _$$TenantImplToJson(_$TenantImpl instance) =>
@@ -76,6 +86,10 @@ Map<String, dynamic> _$$TenantImplToJson(_$TenantImpl instance) =>
       'favorite': instance.favorite,
       'critical_rules': instance.criticalRules,
       'timezone': instance.timezone,
+      'show_all_attendances': instance.showAllAttendances,
+      'show_all_attendances_info_text': instance.showAllAttendancesInfoText,
+      'absence_reasons': instance.absenceReasons,
+      'late_reasons': instance.lateReasons,
     };
 
 _$ExtraFieldImpl _$$ExtraFieldImplFromJson(Map<String, dynamic> json) =>

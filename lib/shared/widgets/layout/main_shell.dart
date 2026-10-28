@@ -35,7 +35,8 @@ class MainShell extends ConsumerWidget {
   final Widget child;
 
   /// Build navigation destinations based on user role and tenant settings
-  List<_NavDestination> _buildDestinations(Role role, Tenant? tenant) {
+  List<_NavDestination> _buildDestinations(Role role, Tenant? tenant,
+      {bool hasMultipleTenants = false}) {
     final List<_NavDestination> destinations = [];
 
     // Conductors (Admin, Responsible, Viewer): People tab
@@ -59,13 +60,23 @@ class MainShell extends ConsumerWidget {
     }
 
     // Players/Helpers: Self-Service tab
+    // ATTENDANCE_SIGNOUT: "Meine Termine" (current tenant) and the
+    // cross-tenant "Übersicht" when the user is in several tenants.
     if (role.canSeeSelfServiceTab) {
       destinations.add(const _NavDestination(
-        route: '/overview',
+        route: '/signout',
         label: 'Meine Termine',
         icon: Icons.event_available_outlined,
         selectedIcon: Icons.event_available,
       ));
+      if (hasMultipleTenants) {
+        destinations.add(const _NavDestination(
+          route: '/overview',
+          label: 'Übersicht',
+          icon: Icons.calendar_month_outlined,
+          selectedIcon: Icons.calendar_month,
+        ));
+      }
     }
 
     // Members tab (if tenant has showMembersList enabled)
@@ -127,7 +138,10 @@ class MainShell extends ConsumerWidget {
     final tenant = ref.watch(currentTenantProvider);
 
     // Build destinations based on role
-    final destinations = _buildDestinations(role, tenant);
+    final hasMultipleTenants =
+        (ref.watch(userTenantsProvider).valueOrNull?.length ?? 0) > 1;
+    final destinations = _buildDestinations(role, tenant,
+        hasMultipleTenants: hasMultipleTenants);
     final selectedIndex = _getSelectedIndex(context, destinations);
 
     // Safety check: ensure we have at least one destination
