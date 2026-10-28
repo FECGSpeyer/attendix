@@ -12,6 +12,7 @@ import '../../../legal/presentation/widgets/legal_content_view.dart';
 import '../../data/auth_flow_service.dart';
 import '../widgets/otp_widgets.dart';
 import '../../../../l10n/l10n.dart';
+import '../widgets/ion_form_list.dart';
 import '../widgets/ion_input_decoration.dart';
 import '../../../../shared/widgets/dialogs/ion_modal.dart';
 
@@ -293,10 +294,15 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     // Ionic register-modal.component.scss
-    const introStyle =
-        TextStyle(fontSize: 15.2, height: 1.4, color: Color(0xFF86888F));
+    // Screenshot audit (iPhone): intro dark grey 16 pt, hint medium.
+    final introStyle = TextStyle(
+        fontSize: 16,
+        height: 1.4,
+        color: theme.brightness == Brightness.dark
+            ? const Color(0xFFD0D0D0)
+            : const Color(0xFF333333));
     const hintStyle =
-        TextStyle(fontSize: 13.6, height: 1.4, color: AppColors.medium);
+        TextStyle(fontSize: 13.6, height: 1.4, color: Color(0xFF636469));
     const privacyStyle = TextStyle(fontSize: 14.4, height: 1.4);
     const actionGap = SizedBox(height: 4); // .actions gap: 0.25rem
     // Ionic register-modal: modal page on the plain background colour with
@@ -350,6 +356,9 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                       mode: _mode,
                       enabled: !_isLoading,
                       onChanged: _setMode,
+                      // register-modal.component.scss: .1 track, 0.85rem
+                      trackAlpha: 0.1,
+                      fontSize: 13.6,
                     ),
                     const SizedBox(height: AppDimensions.paddingM),
 
@@ -361,12 +370,17 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                       autocorrect: false,
                       readOnly: _mode == AuthMode.otp && _otpSent,
                       autofillHints: const [AutofillHints.email],
+                      style: ionStackedInputStyle,
                       decoration: ionStackedInputDecoration(
                         context.l10n.loginEmail,
                         hint: context.l10n.registerModalEmailPlaceholder,
+                        labelSize: 13,
+                        labelColor: theme.colorScheme.onSurface,
+                        lineColor: theme.dividerTheme.color,
                       ),
                     ),
-                    const SizedBox(height: AppDimensions.paddingM),
+                    // ion-list lines="full": rows follow each other directly
+                    const SizedBox(height: 4),
 
                     if (_mode == AuthMode.password) ...[
                       // Password field
@@ -375,9 +389,13 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                         obscureText: _obscurePassword,
                         textInputAction: TextInputAction.next,
                         autofillHints: const [AutofillHints.newPassword],
+                        style: ionStackedInputStyle,
                         decoration: ionStackedInputDecoration(
                           context.l10n.loginModePassword,
                           hint: context.l10n.registerModalPasswordPlaceholder,
+                          labelSize: 13,
+                          labelColor: theme.colorScheme.onSurface,
+                          lineColor: theme.dividerTheme.color,
                           suffixIcon: IconButton(
                             tooltip: context.l10n.loginShowPassword,
                             color: AppColors.primary,
@@ -394,7 +412,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: AppDimensions.paddingM),
+                      const SizedBox(height: 4),
 
                       // Confirm password field
                       TextFormField(
@@ -404,8 +422,12 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                         onFieldSubmitted: (_) {
                           if (_canSubmit) _onSubmit();
                         },
+                        style: ionStackedInputStyle,
                         decoration: ionStackedInputDecoration(
                           context.l10n.registerModalConfirmPassword,
+                          labelSize: 13,
+                          labelColor: theme.colorScheme.onSurface,
+                          lineColor: theme.dividerTheme.color,
                           hint: context
                               .l10n.registerModalConfirmPasswordPlaceholder,
                         ),
@@ -423,6 +445,10 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                     // LEGAL_HELP: privacy consent checkbox
                     CheckboxListTile(
                       value: _privacyAccepted,
+                      // ion-checkbox: round in iOS mode
+                      checkboxShape: ionIsIos(context)
+                          ? const CircleBorder()
+                          : null,
                       contentPadding: EdgeInsets.zero,
                       controlAffinity: ListTileControlAffinity.leading,
                       onChanged: (v) =>
@@ -488,6 +514,10 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                     actionGap,
                     // Ionic: clear "Abbrechen" button closes the modal.
                     TextButton(
+                      style: TextButton.styleFrom(
+                        textStyle: const TextStyle(fontSize: 17),
+                        minimumSize: const Size.fromHeight(44),
+                      ),
                       onPressed: _isLoading ? null : _close,
                       child: Text(context.l10n.commonCancel),
                     ),

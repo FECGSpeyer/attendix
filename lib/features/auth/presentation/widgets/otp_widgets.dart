@@ -3,44 +3,98 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../../../core/theme/app_colors.dart';
 import '../../data/auth_flow_service.dart';
 import '../../../../l10n/l10n.dart'; // I18N_INFRA
 
 /// AUTH: Login-Modus (Ionic ion-segment "Passwort" / "Code per E-Mail").
 enum AuthMode { password, otp }
 
-/// Segment to switch between password and e-mail code mode.
+/// Segment to switch between password and e-mail code mode
+/// (Ionic `.mode-segment` of login.page.scss / register-modal.component.scss).
+///
+/// MD: primary-tinted track with a tinted pill behind the checked label.
+/// iOS: the page stylesheet hides the native indicator, so only the label
+/// colour (primary vs. primary 60 %) marks the checked button.
 class AuthModeSegment extends StatelessWidget {
   const AuthModeSegment({
     super.key,
     required this.mode,
     required this.onChanged,
     this.enabled = true,
+    this.trackAlpha = 0.08,
+    this.fontSize = 12.8,
   });
 
   final AuthMode mode;
   final ValueChanged<AuthMode> onChanged;
   final bool enabled;
 
+  /// `--background: rgba(primary, .08)` (login) / `.1` (register modal).
+  final double trackAlpha;
+
+  /// 0.8rem (login) / 0.85rem (register modal).
+  final double fontSize;
+
   @override
   Widget build(BuildContext context) {
-    return SegmentedButton<AuthMode>(
-      segments: [
-        ButtonSegment(
-          value: AuthMode.password,
-          label: Text(context.l10n.loginModePassword),
-          icon: const Icon(Icons.lock_outline),
+    final ios = Theme.of(context).platform == TargetPlatform.iOS;
+    Widget button(AuthMode value, String label) {
+      final checked = value == mode;
+      return Expanded(
+        child: Semantics(
+          button: true,
+          selected: checked,
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: enabled && !checked ? () => onChanged(value) : null,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              constraints: const BoxConstraints(minHeight: 34),
+              margin: ios ? const EdgeInsets.symmetric(vertical: 2) : null,
+              alignment: Alignment.center,
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              decoration: BoxDecoration(
+                color: !ios && checked
+                    ? AppColors.primary.withValues(alpha: 0.18)
+                    : Colors.transparent,
+                borderRadius: BorderRadius.circular(ios ? 25 : 9.6),
+              ),
+              child: Text(
+                label,
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: fontSize,
+                  fontWeight: FontWeight.w600,
+                  color: checked
+                      ? AppColors.primary
+                      : AppColors.primary.withValues(alpha: 0.6),
+                ),
+              ),
+            ),
+          ),
         ),
-        ButtonSegment(
-          value: AuthMode.otp,
-          label: Text(context.l10n.loginModeOtp),
-          icon: const Icon(Icons.mark_email_unread_outlined),
+      );
+    }
+
+    return Opacity(
+      opacity: enabled ? 1 : 0.5,
+      child: Container(
+        padding: const EdgeInsets.all(3),
+        decoration: BoxDecoration(
+          color: AppColors.primary.withValues(alpha: trackAlpha),
+          // iOS 26 theme: ion-segment border-radius 15.5px; MD: 0.75rem.
+          borderRadius: BorderRadius.circular(ios ? 15.5 : 12),
         ),
-      ],
-      selected: {mode},
-      showSelectedIcon: false,
-      onSelectionChanged:
-          enabled ? (selection) => onChanged(selection.first) : null,
+        child: Row(
+          children: [
+            button(AuthMode.password, context.l10n.loginModePassword),
+            button(AuthMode.otp, context.l10n.loginModeOtp),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -82,7 +136,10 @@ class ResendCooldown extends ChangeNotifier {
 
 /// 6-digit code field ("Code aus der E-Mail"); calls [onCompleted] when all
 /// digits are entered (Ionic ionComplete).
-class OtpCodeField extends StatelessWidget {
+///
+/// Looks like Ionic `ion-input-otp size="small"`: six round outlined boxes
+/// (44 x 48, narrower on small phones) with the label centred below.
+class OtpCodeField extends StatefulWidget {
   const OtpCodeField({
     super.key,
     required this.controller,
@@ -95,31 +152,138 @@ class OtpCodeField extends StatelessWidget {
   final bool enabled;
 
   @override
+  State<OtpCodeField> createState() => _OtpCodeFieldState();
+}
+
+class _OtpCodeFieldState extends State<OtpCodeField> {
+  final _focusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode.addListener(_rebuild);
+    widget.controller.addListener(_rebuild);
+  }
+
+  @override
+  void didUpdateWidget(covariant OtpCodeField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.controller != widget.controller) {
+      oldWidget.controller.removeListener(_rebuild);
+      widget.controller.addListener(_rebuild);
+    }
+  }
+
+  void _rebuild() {
+    if (mounted) setState(() {});
+  }
+
+  @override
+  void dispose() {
+    widget.controller.removeListener(_rebuild);
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return TextField(
-      controller: controller,
-      enabled: enabled,
-      autofocus: true,
-      keyboardType: TextInputType.number,
-      textAlign: TextAlign.center,
-      maxLength: kOtpLength,
-      autofillHints: const [AutofillHints.oneTimeCode],
-      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-            letterSpacing: 12,
-            fontWeight: FontWeight.w600,
+    final theme = Theme.of(context);
+    final text = widget.controller.text;
+    final width = MediaQuery.sizeOf(context).width;
+    // ion-input-otp: --width clamp(32px, 12vw, 44px), --height clamp(38px, 13vw, 48px)
+    final boxWidth = (width * 0.12).clamp(32.0, 44.0);
+    final boxHeight = (width * 0.13).clamp(38.0, 48.0);
+    final borderIdle = theme.brightness == Brightness.dark
+        ? AppColors.dividerDark
+        : AppColors.dividerLight;
+
+    Widget box(int i) {
+      final active = _focusNode.hasFocus &&
+          (i == text.length || (i == kOtpLength - 1 && text.length == kOtpLength));
+      return Container(
+        width: boxWidth,
+        height: boxHeight,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surface,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: active ? AppColors.primary : borderIdle,
+            width: active ? 2 : 1,
           ),
-      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-      decoration: InputDecoration(
-        labelText: context.l10n.loginOtpLabel,
-        counterText: '',
-        prefixIcon: const Icon(Icons.pin_outlined),
+        ),
+        child: Text(
+          i < text.length ? text[i] : '',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w500,
+            color: theme.colorScheme.onSurface,
+          ),
+        ),
+      );
+    }
+
+    return Opacity(
+      opacity: widget.enabled ? 1 : 0.5,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  for (var i = 0; i < kOtpLength; i++) ...[
+                    if (i > 0) const SizedBox(width: 8),
+                    box(i),
+                  ],
+                ],
+              ),
+              // Invisible input on top: keyboard, paste and SMS/e-mail
+              // one-time-code autofill go through a real text field.
+              Positioned.fill(
+                child: Opacity(
+                  opacity: 0,
+                  child: TextField(
+                    controller: widget.controller,
+                    focusNode: _focusNode,
+                    enabled: widget.enabled,
+                    autofocus: true,
+                    keyboardType: TextInputType.number,
+                    maxLength: kOtpLength,
+                    showCursor: false,
+                    enableInteractiveSelection: false,
+                    autofillHints: const [AutofillHints.oneTimeCode],
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    decoration: const InputDecoration(
+                      counterText: '',
+                      border: InputBorder.none,
+                      enabledBorder: InputBorder.none,
+                      focusedBorder: InputBorder.none,
+                      filled: false,
+                    ),
+                    onChanged: (value) {
+                      if (value.length == kOtpLength) {
+                        widget.onCompleted?.call(value);
+                      }
+                    },
+                    onSubmitted: (value) {
+                      if (value.isNotEmpty) widget.onCompleted?.call(value);
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            context.l10n.loginOtpLabel,
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 12, color: AppColors.medium),
+          ),
+        ],
       ),
-      onChanged: (value) {
-        if (value.length == kOtpLength) onCompleted?.call(value);
-      },
-      onSubmitted: (value) {
-        if (value.isNotEmpty) onCompleted?.call(value);
-      },
     );
   }
 }
