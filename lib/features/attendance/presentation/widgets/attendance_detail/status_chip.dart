@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../../core/constants/enums.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../l10n/l10n.dart';
+import '../../../../../shared/widgets/adaptive/adaptive_platform.dart';
 
 // UX_ATT: Ionic attendance page status badges and click cycle.
 
@@ -98,10 +99,14 @@ class AttendanceStatusBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final badge = ionicStatusBadge(status);
+    // IOS_DETAIL: Ionic iOS ion-badge: padding 3/8, line-height 1, 13 px
+    // bold, radius 10 → a ~28×19 pill, never a circle for a single
+    // letter.
+    final ios = useIosLook(context);
     // UX_ATT: Ionic iOS ion-badge: 3/8 padding, radius 10, 13 px bold,
     // color contrast text (black on warning).
     return Container(
-      constraints: const BoxConstraints(minWidth: 26),
+      constraints: BoxConstraints(minWidth: ios ? 28 : 26),
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
         color: badge.color,
@@ -110,11 +115,17 @@ class AttendanceStatusBadge extends StatelessWidget {
       child: Text(
         badge.text,
         textAlign: TextAlign.center,
+        textHeightBehavior: ios
+            ? const TextHeightBehavior(
+                applyHeightToFirstAscent: false,
+                applyHeightToLastDescent: false,
+              )
+            : null,
         style: TextStyle(
           color: badge.color == AppColors.warning ? Colors.black : Colors.white,
           fontSize: 13,
           fontWeight: FontWeight.bold,
-          height: 1.15,
+          height: ios ? 1.0 : 1.15,
         ),
       ),
     );

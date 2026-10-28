@@ -14,6 +14,7 @@ import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/attendance_detail_providers.dart';
 import '../../../../core/providers/church_providers.dart'; // ATT_DETAIL
 import '../../../../core/providers/group_providers.dart'; // ATT_DETAIL
+import '../../../../core/providers/team_org_providers.dart' show protocolTypeByIdProvider; // IOS_DETAIL
 import '../../../../core/providers/profile_providers.dart'; // ATT_DETAIL
 import '../../../../core/utils/shift_utils.dart'; // ATT_DETAIL
 import '../../../../core/providers/shift_providers.dart'; // LOGIC_ATT
@@ -102,9 +103,6 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
   // Local checklist state - maintained separately to allow editing
   List<ChecklistItem> _localChecklist = [];
   bool _checklistLoaded = false;
-
-  // Plan accordion state - expand after returning from planning with changes
-  bool _planAccordionExpanded = false;
 
   // Click mode: tap cycles status instead of opening picker
   // UX_ATT: Ionic default AttendanceViewMode.CLICK (tap cycles the status)
@@ -458,9 +456,34 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
         final isOnline = ref.watch(connectivityProvider).valueOrNull ?? true;
         final pendingOffline = ref.watch(offlinePendingCountProvider);
 
+        // IOS_DETAIL: iOS header: back and ⋮ each in a 44 pt glass circle
+        final ios = useIosLook(context);
+        final canPop = Navigator.of(context).canPop();
+        // IOS_DETAIL: the shell's floating button / FAB never covers the
+        // last row (Ionic .marginBottom 5rem + tabbar-safe padding).
+        final fabShown = ios && !ref.watch(effectiveRoleProvider).isViewer;
+        final bottomSpace = MediaQuery.paddingOf(context).bottom + (fabShown ? 96.0 : 80.0);
+
         return Scaffold(
           backgroundColor: Theme.of(context).brightness == Brightness.dark ? null : AppColors.light,
           appBar: AppBar(
+            leading: ios && canPop
+                ? Center(
+                    child: Semantics(
+                      button: true,
+                      label: MaterialLocalizations.of(context).backButtonTooltip,
+                      child: GestureDetector(
+                        onTap: () => Navigator.of(context).maybePop(),
+                        child: const IosCircleIcon(
+                          icon: Icons.arrow_back_ios_new,
+                          size: 44,
+                          iconSize: 20,
+                        ),
+                      ),
+                    ),
+                  )
+                : null,
+            leadingWidth: ios && canPop ? 68 : null,
             title: Text(
               titlePersons == null
                   ? dateLabel
@@ -482,18 +505,32 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                     ),
                   ),
                 ),
-              PopupMenuButton<String>(
-                onSelected: _handleMenuAction,
-                // ATT_DETAIL: badge with the number of active status filters
-                icon: Badge(
-                  isLabelVisible: _statusFilter.isNotEmpty,
-                  label: Text('${_statusFilter.length}'),
-                  child: Icon(
-                    Icons.more_vert,
-                    color: _statusFilter.isNotEmpty ? AppColors.primary : null,
+              // IOS_DETAIL: Ionic ion-popover menu (iOS popover / Material
+              // popup menu) behind a glass circle button on iOS.
+              ToolbarButtonGroup(
+                children: [
+                  Builder(
+                    builder: (buttonContext) => IconButton(
+                      tooltip: MaterialLocalizations.of(context).showMenuTooltip,
+                      // ATT_DETAIL: badge with the number of active status filters
+                      icon: Badge(
+                        isLabelVisible: _statusFilter.isNotEmpty,
+                        label: Text('${_statusFilter.length}'),
+                        child: Icon(
+                          Icons.more_vert,
+                          color: _statusFilter.isNotEmpty ? AppColors.primary : null,
+                        ),
+                      ),
+                      onPressed: () async {
+                        final action = await showAppPopoverMenu<String>(
+                          context: buttonContext,
+                          items: _buildAttDetailMenuItems(attendance),
+                        );
+                        if (action != null && mounted) _handleMenuAction(action);
+                      },
+                    ),
                   ),
-                ),
-                itemBuilder: (context) => _buildAttDetailMenuItems(attendance),
+                ],
               ),
             ],
           ),
@@ -529,12 +566,13 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
               final sortField = sortFields.where((f) => f.id == _sort.fieldId).firstOrNull;
               final churches = ref.watch(churchesProvider).valueOrNull ?? const [];
               final statusFiltered = filterPersonsByStatus(groupPersons, _localStatuses, _statusFilter);
+              final groups = ref.watch(groupsProvider).valueOrNull ?? const [];
               final visiblePersons = sortField == null
                   // UX_ATT: Ionic group order (main group, sort_order, name)
                   ? sortPersonsByGroup(
                       statusFiltered,
-                      groups: ref.watch(groupsProvider).valueOrNull ?? const [],
-                      mainGroupId: ref.watch(mainGroupProvider).valueOrNull?.id,
+                      groups: groups,
+                      mainGroupId: mainGroupIdOf(groups) ?? ref.watch(mainGroupProvider).valueOrNull?.id,
                     )
                   : sortPersonsByField(statusFiltered, _sort, sortField, _registrationAnswers, churches);
               final sortLines = sortField == null
@@ -567,6 +605,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                         const SizedBox(height: AppDimensions.paddingXS),
 
                         GeneralInfoAccordion(
+                          key: const ValueKey('att-acc-general'), // IOS_DETAIL
                           attendance: attendance,
                           attendanceType: attendanceType,
                           onTypeInfoChanged: _updateTypeInfo,
@@ -590,7 +629,6 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                           onDeadlineToggle: _toggleDeadline,
                           onDeadlineSelect: _selectDeadline,
                           onExportExcel: _exportAttendanceToExcel,
-                          hasNeutralStatuses: _localStatuses.isEmpty || _localStatuses.values.any((s) => s.isNeutral),
                           onDateSelect: _changeDate,
                           onPlaceChanged: _updatePlace,
                           onOpenNavigation: attendance.place?.isNotEmpty == true
@@ -602,7 +640,10 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                               ? () => openFilesFolderRoute(context, attendance.filesFolder!)
                               : null,
                           // ATT_DETAIL
-                          onEditDescription: canMutateAttendanceDetail(
+                          // IOS_DETAIL: Ionic shows the link to every role that
+                          // edits the Termin (Helfer included); viewers stay
+                          // read-only (MED5).
+                          onEditDescription: canEditAttendanceDescription(
                                   ref.watch(effectiveRoleProvider))
                               ? () => showDescriptionAttachmentSheet(context,
                                   attendance: attendance)
@@ -613,6 +654,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                         // Besetzung, Protokoll, Ablaufplan, Personen
                         if (hasSongs)
                           SongsHistoryAccordion(
+                            key: const ValueKey('att-acc-songs'),
                             entries: _songEntries,
                             onAdd: _openSongsSelection,
                             onRemove: _removeSongEntry,
@@ -621,6 +663,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
 
                         if (hasChecklist)
                           ChecklistAccordion(
+                            key: const ValueKey('att-acc-checklist'),
                             checklist: _localChecklist,
                             onToggle: _toggleChecklistItem,
                             onAdd: _addChecklistItem,
@@ -638,25 +681,19 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                           ),
 
                         // PROTOCOL: Protokoll-Karte + "Aufgaben aus diesem Termin"
-                        AttendanceProtocolSection(attendanceId: widget.attendanceId, typeId: attendance.typeId),
+                        if (ref.watch(protocolTypeByIdProvider(attendance.typeId))?.enableProtocol ?? false)
+                          AttendanceProtocolSection(attendanceId: widget.attendanceId, typeId: attendance.typeId),
 
                         // ORG_PLANS: observers (viewer role) must not see the plan
                         if (!ref.watch(effectiveRoleProvider).isViewer)
                         PlanAccordion(
+                          key: const ValueKey('att-acc-plan'),
                           attendance: attendance,
-                          initiallyExpanded: _planAccordionExpanded,
-                          onCreate: () async {
-                            final hasChanges = await context.push<bool>('/planning?attendanceId=${widget.attendanceId}');
-                            if (hasChanges == true && mounted) {
-                              setState(() => _planAccordionExpanded = true);
-                            }
-                          },
-                          onEdit: () async {
-                            final hasChanges = await context.push<bool>('/planning?attendanceId=${widget.attendanceId}');
-                            if (hasChanges == true && mounted) {
-                              setState(() => _planAccordionExpanded = true);
-                            }
-                          },
+                          // IOS_DETAIL: Ionic never opens an accordion by itself
+                          // (no auto-expand after the planning page); the open
+                          // state lives with the accordion like Ionic's.
+                          onCreate: () => context.push<bool>('/planning?attendanceId=${widget.attendanceId}'),
+                          onEdit: () => context.push<bool>('/planning?attendanceId=${widget.attendanceId}'),
                           onExportPdf: _exportPlanPdf,
                           onSendViaTelegram: _showTelegramFormatOptions,
                           onSharePlanChanged: _toggleSharePlan,
@@ -718,8 +755,9 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                           : null,
                     ),
                   ),
-                  // Ionic .marginBottom (5rem) below the list
-                  const SliverToBoxAdapter(child: SizedBox(height: 80)),
+                  // Ionic .marginBottom (5rem) below the list; IOS_DETAIL:
+                  // plus the FAB and the bottom inset on iOS.
+                  SliverToBoxAdapter(child: SizedBox(height: bottomSpace)),
                 ],
               );
             },
@@ -727,17 +765,11 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
           // UX_ATT: no Flutter-only bottom summary bar (Ionic has none; the
           // counts live in "Statusübersicht"). On iOS Ionic shows a FAB that
           // opens the Ablaufplan editor (isIos && attendance → editPlan()).
-          floatingActionButton: isIosLook(context) && !ref.watch(effectiveRoleProvider).isViewer
+          floatingActionButton: fabShown
               ? IonFabButton(
                   heroTag: 'att-detail-plan-fab',
                   icon: Icons.format_list_bulleted,
-                  onPressed: () async {
-                    final hasChanges =
-                        await context.push<bool>('/planning?attendanceId=${widget.attendanceId}');
-                    if (hasChanges == true && mounted) {
-                      setState(() => _planAccordionExpanded = true);
-                    }
-                  },
+                  onPressed: () => context.push<bool>('/planning?attendanceId=${widget.attendanceId}'),
                 )
               : null,
         );
@@ -966,7 +998,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     return fields.where((f) => f.type == 'bfecg_church').firstOrNull?.id;
   }
 
-  List<PopupMenuEntry<String>> _buildAttDetailMenuItems(Attendance attendance) {
+  List<AppPopoverMenuItem<String>> _buildAttDetailMenuItems(Attendance attendance) {
     final role = ref.read(effectiveRoleProvider);
     // Mutating actions only for admin/responsible (not helpers, not viewers).
     final canMutate = canMutateAttendanceDetail(role);
@@ -980,26 +1012,27 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     final canRestore = (type?.checklist?.isNotEmpty ?? false) && checklistEmpty;
     final activeSort = sortFields.where((f) => f.id == _sort.fieldId).firstOrNull;
 
-    PopupMenuItem<String> item(String value, IconData icon, String title,
-            {String? subtitle, bool highlight = false}) =>
-        PopupMenuItem<String>(
+    // IOS_DETAIL: entries of the adaptive popover menu; Ionic `detail="true"`
+    // (Status-Filter, Ansicht) open a sub menu → chevron on iOS.
+    AppPopoverMenuItem<String> item(String value, IconData icon, String title,
+            {String? subtitle, bool highlight = false, bool submenu = false}) =>
+        AppPopoverMenuItem<String>(
           value: value,
-          child: ListTile(
-            leading: Icon(icon, color: highlight ? AppColors.primary : null),
-            title: Text(title, style: TextStyle(color: highlight ? AppColors.primary : null)),
-            subtitle: subtitle == null ? null : Text(subtitle),
-            contentPadding: EdgeInsets.zero,
-          ),
+          icon: icon,
+          label: title,
+          subtitle: subtitle,
+          color: highlight ? AppColors.primary : null,
+          submenu: submenu,
         );
 
     return [
       item('status_filter', Icons.filter_list, context.l10n.attendanceStatusFilter,
           subtitle: _statusFilter.isEmpty ? null : context.l10n.attendanceFilterActive(_statusFilter.length),
-          highlight: _statusFilter.isNotEmpty),
+          highlight: _statusFilter.isNotEmpty, submenu: true),
       if (sortFields.isNotEmpty)
         item('sort', Icons.swap_vert, context.l10n.attendanceSorting,
             subtitle: activeSort == null ? null : '${activeSort.name} ${_sort.ascending ? '↑' : '↓'}'),
-      item('view', Icons.visibility_outlined, context.l10n.attendanceView),
+      item('view', Icons.visibility_outlined, context.l10n.attendanceView, submenu: true),
       if (canMutate) item('add_person', Icons.person_add_alt_1_outlined, context.l10n.attendanceAddPerson),
       if (canMutate && checklistEmpty)
         item('start_checklist', Icons.check_box_outlined, context.l10n.attendanceStartChecklist),
@@ -2697,6 +2730,11 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
 /// and helpers only set statuses.
 bool canMutateAttendanceDetail(Role role) =>
     role.canEdit && !role.isHelperRole;
+
+/// IOS_DETAIL: "Beschreibung & Anhang bearbeiten" – Ionic shows it on the
+/// attendance page for every role that edits Termine (Helfer included, like
+/// Info-Text / Notizen); viewers and players stay read-only.
+bool canEditAttendanceDescription(Role role) => role.canEdit;
 
 /// LEFTOVERS: whether a realtime person_attendances payload carries a
 /// duty_state that differs from the loaded row (Ionic copies duty_state from

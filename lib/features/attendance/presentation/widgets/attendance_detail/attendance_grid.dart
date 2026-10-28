@@ -2,39 +2,93 @@ import 'package:flutter/material.dart';
 
 import '../../../../../core/constants/enums.dart';
 import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/utils/people_sort.dart';
 import '../../../../../data/models/instrument/instrument.dart';
 import '../../../../../data/models/person/person.dart';
+import '../../../../../shared/widgets/adaptive/adaptive_platform.dart';
 import 'attendance_person_tile.dart';
 import '../../../../../l10n/l10n.dart';
 
-/// Ionic Utils.getModifiedPlayersForList order: main group first, then the
-/// group's sort_order, group name, the person's sort_order and last name.
+/// Ionic `Utils.sortPlayers` (attendance page, via getModifiedPlayers):
+/// 1. the main group's persons first,
+/// 2. the other persons grouped by group (instrument id); the groups ordered
+///    by the group's `sort_order` – a group WITH a sort_order comes before
+///    one without – and otherwise by group name,
+/// 3. inside each group by the person's `sort_order` (same rule), then by
+///    last name (JS `localeCompare`).
+///
+/// IOS_DETAIL: equal keys keep their incoming order (JS sort is stable).
 List<Person> sortPersonsByGroup(
   List<Person> persons, {
   List<Group> groups = const [],
   int? mainGroupId,
 }) {
   final byId = {for (final g in groups) g.id: g};
-  int cmp(Person a, Person b) {
-    final aMain = mainGroupId != null && a.instrument == mainGroupId;
-    final bMain = mainGroupId != null && b.instrument == mainGroupId;
-    if (aMain != bMain) return aMain ? -1 : 1;
-    final ag = byId[a.instrument];
-    final bg = byId[b.instrument];
-    if (ag?.sortOrder != null && bg?.sortOrder != null) {
-      final c = ag!.sortOrder!.compareTo(bg!.sortOrder!);
-      if (c != 0) return c;
-    }
-    final gc = (ag?.name ?? a.groupName ?? '').compareTo(bg?.name ?? b.groupName ?? '');
-    if (gc != 0) return gc;
-    if (a.sortOrder != null && b.sortOrder != null) return a.sortOrder!.compareTo(b.sortOrder!);
-    if (a.sortOrder != null) return -1;
-    if (b.sortOrder != null) return 1;
-    return a.lastName.compareTo(b.lastName);
+
+  int personCmp(Person a, Person b) {
+    final ao = a.sortOrder;
+    final bo = b.sortOrder;
+    if (ao != null && bo != null) return ao.compareTo(bo);
+    if (ao != null) return -1;
+    if (bo != null) return 1;
+    return localeCompareDe(a.lastName, b.lastName);
   }
 
-  return [...persons]..sort(cmp);
+  List<Person> stableSort(List<Person> list, int Function(Person, Person) cmp) {
+    final indexed = [for (var i = 0; i < list.length; i++) (i, list[i])];
+    indexed.sort((x, y) {
+      final c = cmp(x.$2, y.$2);
+      return c != 0 ? c : x.$1.compareTo(y.$1);
+    });
+    return [for (final e in indexed) e.$2];
+  }
+
+  final main = mainGroupId == null
+      ? <Person>[]
+      : persons.where((p) => p.instrument == mainGroupId).toList();
+  final others = mainGroupId == null
+      ? persons
+      : persons.where((p) => p.instrument != mainGroupId).toList();
+
+  // Groups in order of first appearance (JS Map insertion order).
+  final grouped = <int?, List<Person>>{};
+  for (final p in others) {
+    grouped.putIfAbsent(p.instrument, () => []).add(p);
+  }
+  final keys = grouped.keys.toList();
+  final keyIndex = {for (var i = 0; i < keys.length; i++) keys[i]: i};
+  int groupCmp(int? a, int? b) {
+    final ao = byId[a]?.sortOrder;
+    final bo = byId[b]?.sortOrder;
+    if (ao != null && bo != null) return ao.compareTo(bo);
+    if (ao != null) return -1;
+    if (bo != null) return 1;
+    final an = grouped[a]!.first.groupName ?? byId[a]?.name ?? '';
+    final bn = grouped[b]!.first.groupName ?? byId[b]?.name ?? '';
+    return localeCompareDe(an, bn);
+  }
+
+  keys.sort((a, b) {
+    final c = groupCmp(a, b);
+    return c != 0 ? c : keyIndex[a]!.compareTo(keyIndex[b]!);
+  });
+
+  return [
+    ...stableSort(main, personCmp),
+    for (final k in keys) ...stableSort(grouped[k]!, personCmp),
+  ];
 }
+
+/// IOS_DETAIL: Ionic `db.getMainGroup()` = the first group with
+/// `maingroup` in the tenant's group list.
+int? mainGroupIdOf(List<Group> groups) =>
+    groups.where((g) => g.maingroup == true).firstOrNull?.id;
+
+/// IOS_DETAIL: HTML collapses runs of whitespace ("Max  Mustermann" renders
+/// as "Max Mustermann"); Flutter Text keeps them, so collapse them for
+/// displayed names / notes.
+String collapseHtmlWhitespace(String value) =>
+    value.replaceAll(RegExp(r'\s+'), ' ').trim();
 
 /// Person list of the attendance detail page, as a sliver.
 ///
@@ -220,6 +274,7 @@ class _GroupDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ios = useIosLook(context);
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -228,14 +283,19 @@ class _GroupDivider extends StatelessWidget {
             ? null
             : BorderRadius.only(topLeft: topRadius!, topRight: topRadius!),
       ),
-      constraints: const BoxConstraints(minHeight: 30),
-      padding: const EdgeInsets.fromLTRB(16, 6, 16, 6),
+      // IOS_DETAIL: iOS divider row ≈28 pt (Material keeps 30 + 6/6).
+      constraints: BoxConstraints(minHeight: ios ? 28 : 30),
+      padding: ios
+          ? const EdgeInsets.fromLTRB(16, 3, 16, 3)
+          : const EdgeInsets.fromLTRB(16, 6, 16, 6),
+      alignment: AlignmentDirectional.centerStart,
       child: Text(
         label,
-        style: const TextStyle(
+        style: TextStyle(
           color: Colors.white,
           fontWeight: FontWeight.w600,
           fontSize: 17,
+          height: ios ? 1.2 : null,
         ),
       ),
     );
