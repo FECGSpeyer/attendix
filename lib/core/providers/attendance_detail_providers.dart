@@ -12,6 +12,20 @@ import '../services/offline_queue_service.dart'
         offlineQueueStoreProvider,
         offlineQueueUserIdProvider; // LEFTOVERS, SOL_FIX1, SOL_FIX4
 
+/// SOL_FIX7: offline cache keys are bound to the signed-in user + tenant;
+/// null (no user) disables the cache.
+String? _detailCacheKey(Ref ref, int tenantId, int attendanceId, String part) {
+  final userId = ref.read(offlineQueueUserIdProvider)();
+  return userId == null
+      ? null
+      : AttendanceDetailCache.keyFor(userId, tenantId, attendanceId, part);
+}
+
+String? _playersCacheKey(Ref ref, int tenantId) {
+  final userId = ref.read(offlineQueueUserIdProvider)();
+  return userId == null ? null : AttendanceDetailCache.playersKeyFor(userId, tenantId);
+}
+
 /// Provider for attendance detail with tenant-scoped query
 final attendanceDetailProvider = FutureProvider.autoDispose.family<Attendance?, int>((ref, attendanceId) async {
   final supabase = ref.watch(supabaseClientProvider);
@@ -21,7 +35,7 @@ final attendanceDetailProvider = FutureProvider.autoDispose.family<Attendance?, 
 
   // LEFTOVERS: offline read cache (Ionic getAttendanceByIdRobust)
   final response = await const AttendanceDetailCache().fetchWithCache<Map<String, dynamic>>(
-    key: AttendanceDetailCache.keyFor(tenant!.id!, attendanceId, 'attendance'),
+    key: _detailCacheKey(ref, tenant!.id!, attendanceId, 'attendance'), // SOL_FIX7
     isOnline: ref.read(connectivityCheckProvider),
     fetch: () => supabase
         .from('attendance')
@@ -48,7 +62,7 @@ final attendanceTypeForAttendanceProvider = FutureProvider.autoDispose.family<At
 
   // LEFTOVERS: offline read cache (Ionic keeps the types in memory)
   final response = await const AttendanceDetailCache().fetchWithCache<Map<String, dynamic>>(
-    key: AttendanceDetailCache.keyFor(tenant!.id!, attendanceId, 'type'),
+    key: _detailCacheKey(ref, tenant!.id!, attendanceId, 'type'), // SOL_FIX7
     isOnline: ref.read(connectivityCheckProvider),
     fetch: () => supabase
         .from('attendance_types')
@@ -77,7 +91,7 @@ final personAttendancesForAttendanceProvider = FutureProvider.autoDispose.family
   // LEFTOVERS: offline read cache (Ionic getAttendanceByIdRobust persons)
   final tenantId = tenant.id!;
   final loaded = await const AttendanceDetailCache().fetchWithCache<List<dynamic>>(
-        key: AttendanceDetailCache.keyFor(tenantId, attendanceId, 'persons'),
+        key: _detailCacheKey(ref, tenantId, attendanceId, 'persons'), // SOL_FIX7
         isOnline: ref.read(connectivityCheckProvider),
         fetch: () => supabase
             .from('person_attendances')
@@ -130,7 +144,7 @@ final allPersonsForAttendanceProvider = FutureProvider.autoDispose<List<Person>>
 
   // LEFTOVERS: offline read cache for the Termin page
   final response = await const AttendanceDetailCache().fetchWithCache<List<dynamic>>(
-        key: AttendanceDetailCache.playersKeyFor(tenant.id!),
+        key: _playersCacheKey(ref, tenant.id!), // SOL_FIX7
         isOnline: ref.read(connectivityCheckProvider),
         fetch: () => supabase
             .from('player')

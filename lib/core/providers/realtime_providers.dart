@@ -5,7 +5,9 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../config/supabase_config.dart';
 import '../services/attendance_list_cache.dart';
-import '../services/offline_queue_service.dart' show connectivityCheckProvider;
+import '../services/attendance_detail_cache.dart' show isOfflineFallbackError; // SOL_FIX7
+import '../services/offline_queue_service.dart'
+    show connectivityCheckProvider, offlineQueueUserIdProvider;
 import '../utils/attendance_percentage_utils.dart';
 import '../../data/models/attendance/attendance.dart';
 import '../../data/models/person/person.dart';
@@ -146,12 +148,15 @@ final realtimeAttendanceListProvider = FutureProvider.autoDispose<List<Attendanc
 
   final tenantId = tenant!.id!;
   const cache = AttendanceListCache();
+  // SOL_FIX7: the offline copy belongs to the signed-in user + tenant; no
+  // user → no cache.
+  final cacheUserId = ref.read(offlineQueueUserIdProvider)();
 
   // LOGIC_SELF: Ionic att-list getAttendance — offline the cached list is
   // shown (offline_att_list_v1_<tenant>).
   final online = await ref.read(connectivityCheckProvider)();
-  if (!online) {
-    final cached = await cache.load(tenantId);
+  if (!online && cacheUserId != null) {
+    final cached = await cache.load(cacheUserId, tenantId);
     if (cached != null) return cached;
   }
 
@@ -168,8 +173,11 @@ final realtimeAttendanceListProvider = FutureProvider.autoDispose<List<Attendanc
         .order('date', ascending: false)
         .order('id', ascending: false)
         .range(from, to) as List);
-  } catch (_) {
-    final cached = await cache.load(tenantId);
+  } catch (e) {
+    // SOL_FIX7: only network failures fall back to the offline copy;
+    // auth/permission errors (revoked access) are shown.
+    if (cacheUserId == null || !isOfflineFallbackError(e)) rethrow;
+    final cached = await cache.load(cacheUserId, tenantId);
     if (cached != null) return cached;
     rethrow;
   }
@@ -193,7 +201,7 @@ final realtimeAttendanceListProvider = FutureProvider.autoDispose<List<Attendanc
   }).toList();
   ref.read(loadedAttendanceIdsProvider).ids =
       attendances.map((a) => a.id).whereType<int>().toSet();
-  await cache.save(tenantId, attendances);
+  if (cacheUserId != null) await cache.save(cacheUserId, tenantId, attendances);
   return attendances;
 });
 

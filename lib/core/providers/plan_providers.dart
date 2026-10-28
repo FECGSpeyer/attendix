@@ -168,23 +168,38 @@ class PlanSettingsNotifier extends Notifier<AsyncValue<void>> {
 
   /// Saves the block templates of the instance (admins only)
   Future<bool> saveBlockTemplates(List<PlanBlockTemplate> templates) {
+    return _saveBlockTemplatesWith(
+        ref.read(planRepositoryWithTenantProvider), templates);
+  }
+
+  /// SOL_FIX7: writes [templates] through the repository [repo] that was
+  /// bound before the caller's first await, so the read (current templates)
+  /// and the write always hit the same tenant even if the user switches
+  /// tenants in between.
+  Future<bool> _saveBlockTemplatesWith(
+      PlanRepository repo, List<PlanBlockTemplate> templates) {
     return _run(
-      () => ref.read(planRepositoryWithTenantProvider).saveBlockTemplates(templates),
+      () => repo.saveBlockTemplates(templates),
       invalidate: [planBlockTemplatesProvider],
     );
   }
 
   /// Saves (or replaces by name) a block of [fields] as template.
   Future<bool> saveBlockAsTemplate(List<PlanField> fields, String headId) async {
-    final existing = await ref.read(planBlockTemplatesProvider.future);
+    final repo = ref.read(planRepositoryWithTenantProvider);
+    if (!repo.hasTenantId) return false;
+    final existing = await repo.getBlockTemplates();
     final template = PlanUtils.blockTemplateFrom(fields, headId);
     final others = existing.where((t) => t.name != template.name).toList();
-    return saveBlockTemplates([...others, template]);
+    return _saveBlockTemplatesWith(repo, [...others, template]);
   }
 
   Future<bool> deleteBlockTemplate(String id) async {
-    final existing = await ref.read(planBlockTemplatesProvider.future);
-    return saveBlockTemplates(existing.where((t) => t.id != id).toList());
+    final repo = ref.read(planRepositoryWithTenantProvider);
+    if (!repo.hasTenantId) return false;
+    final existing = await repo.getBlockTemplates();
+    return _saveBlockTemplatesWith(
+        repo, existing.where((t) => t.id != id).toList());
   }
 
   Future<bool> setTypeDefaultOrgPlan(String typeId, bool value) {

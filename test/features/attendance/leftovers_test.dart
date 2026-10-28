@@ -10,6 +10,7 @@ import 'package:attendix/core/services/attendance_detail_cache.dart';
 import 'package:attendix/data/models/attendance/attendance.dart';
 import 'package:attendix/features/attendance/presentation/pages/attendance_detail_page.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
@@ -66,12 +67,13 @@ void main() {
   group('AttendanceDetailCache (Ionic offline_att_detail_v1)', () {
     setUp(() => SharedPreferences.setMockInitialValues({}));
     const cache = AttendanceDetailCache();
-    final key = AttendanceDetailCache.keyFor(7, 42, 'attendance');
+    final key = AttendanceDetailCache.keyFor('u1', 7, 42, 'attendance');
 
-    test('keys are tenant scoped', () {
-      expect(key, 'offline_att_detail_v1_7_42_attendance');
-      expect(AttendanceDetailCache.keyFor(8, 42, 'attendance'), isNot(key));
-      expect(AttendanceDetailCache.playersKeyFor(7), 'offline_att_detail_v1_7_players');
+    test('keys are user and tenant scoped (SOL_FIX7)', () {
+      expect(key, 'offline_att_detail_v1_u1_7_42_attendance');
+      expect(AttendanceDetailCache.keyFor('u1', 8, 42, 'attendance'), isNot(key));
+      expect(AttendanceDetailCache.keyFor('u2', 7, 42, 'attendance'), isNot(key));
+      expect(AttendanceDetailCache.playersKeyFor('u1', 7), 'offline_att_detail_v1_u1_7_players');
     });
 
     test('online: fetches and stores the result', () async {
@@ -101,7 +103,7 @@ void main() {
     });
 
     test('offline lists are returned as List', () async {
-      final listKey = AttendanceDetailCache.keyFor(7, 42, 'persons');
+      final listKey = AttendanceDetailCache.keyFor('u1', 7, 42, 'persons');
       await cache.save(listKey, [
         {'id': 'a', 'status': 1}
       ]);
@@ -113,11 +115,12 @@ void main() {
       expect(result, hasLength(1));
     });
 
-    test('failed fetch falls back to cache, rethrows without one', () async {
-      Future<Map<String, dynamic>?> failing() async => throw StateError('down');
+    test('failed fetch (network) falls back to cache, rethrows without one', () async {
+      Future<Map<String, dynamic>?> failing() async =>
+          throw http.ClientException('Failed to fetch');
       await expectLater(
         cache.fetchWithCache<Map<String, dynamic>>(key: key, isOnline: () async => true, fetch: failing),
-        throwsStateError,
+        throwsA(isA<http.ClientException>()),
       );
       await cache.save(key, {'id': 42});
       expect(

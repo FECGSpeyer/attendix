@@ -1713,6 +1713,10 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
           .eq('person_id', pendingId)
           .eq('tenant_id', currentTenantId);
 
+      // SOL_FIX7: abort (keep the pending person) unless every row moved.
+      await _ensureNothingLeftToTransfer(
+          pendingId, 'mergePendingPlayerIntoExisting');
+
       final history = [
         ...target.history.map((e) => e.toJson()),
         {
@@ -2025,19 +2029,18 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
   /// conflict (same attendance) are deleted, the target's row wins.
   /// Callers must verify both ids belong to the current tenant
   /// (person_attendances has no tenant column).
+  ///
+  /// SOL_FIX7: both sides are loaded completely (paged, stable order by id;
+  /// a long-standing member easily has more than PostgREST's 1000 rows) and
+  /// the id lists are written in chunks. Same writes as Ionic
+  /// reassignPersonAttendances otherwise (delete conflicts, re-point rest).
   Future<void> _reassignPersonAttendances(int fromId, int toId) async {
-    final fromRows = await supabase
-        .from('person_attendances')
-        .select('id, attendance_id')
-        .eq('person_id', fromId);
-    if ((fromRows as List).isEmpty) return;
+    final fromRows = await _personAttendanceRows(fromId, 'id, attendance_id');
+    if (fromRows.isEmpty) return;
 
-    final toRows = await supabase
-        .from('person_attendances')
-        .select('attendance_id')
-        .eq('person_id', toId);
+    final toRows = await _personAttendanceRows(toId, 'id, attendance_id');
     final toAttendanceIds =
-        (toRows as List).map((r) => r['attendance_id']?.toString()).toSet();
+        toRows.map((r) => r['attendance_id']?.toString()).toSet();
 
     final conflicting = <dynamic>[];
     final movable = <dynamic>[];
@@ -2049,19 +2052,65 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
       }
     }
 
-    if (conflicting.isNotEmpty) {
+    for (final chunk in _chunks(conflicting)) {
       await supabase
           .from('person_attendances')
           .delete()
-          .inFilter('id', conflicting)
+          .inFilter('id', chunk)
           .eq('person_id', fromId);
     }
-    if (movable.isNotEmpty) {
+    for (final chunk in _chunks(movable)) {
       await supabase
           .from('person_attendances')
           .update({'person_id': toId})
-          .inFilter('id', movable)
+          .inFilter('id', chunk)
           .eq('person_id', fromId);
+    }
+  }
+
+  /// All person_attendances rows of [personId] (paged, ordered by id).
+  Future<List<Map<String, dynamic>>> _personAttendanceRows(
+      int personId, String columns) {
+    return fetchAllPages<Map<String, dynamic>>((from, to) async {
+      final page = await supabase
+          .from('person_attendances')
+          .select(columns)
+          .eq('person_id', personId)
+          .order('id', ascending: true)
+          .range(from, to);
+      return (page as List).cast<Map<String, dynamic>>();
+    });
+  }
+
+  /// SOL_FIX7: id lists for `in.(…)` filters are split so the request URL
+  /// stays short (a member can have thousands of rows).
+  static Iterable<List<dynamic>> _chunks(List<dynamic> ids, [int size = 200]) sync* {
+    for (var i = 0; i < ids.length; i += size) {
+      yield ids.sublist(i, i + size > ids.length ? ids.length : i + size);
+    }
+  }
+
+  /// SOL_FIX7: the source person of a merge may only be deleted when every
+  /// attendance and absence row was transferred; anything left would be
+  /// lost with it (or block the delete). Throws to abort the merge.
+  Future<void> _ensureNothingLeftToTransfer(int fromId, String operation) async {
+    final leftAttendances = await supabase
+        .from('person_attendances')
+        .select('id')
+        .eq('person_id', fromId)
+        .limit(1);
+    // player_absences uses snake_case tenant_id
+    final leftAbsences = await supabase
+        .from('player_absences')
+        .select('id')
+        .eq('person_id', fromId)
+        .eq('tenant_id', currentTenantId)
+        .limit(1);
+    if ((leftAttendances as List).isNotEmpty || (leftAbsences as List).isNotEmpty) {
+      throw RepositoryException(
+        message: l10nWithoutContext.svcTransferPersonAttendancesFailed,
+        operation: operation,
+      );
     }
   }
 }

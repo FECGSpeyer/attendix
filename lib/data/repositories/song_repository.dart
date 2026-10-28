@@ -6,6 +6,8 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../core/services/attendance_detail_cache.dart'
+    show isOfflineFallbackError; // SOL_FIX7
 import '../../core/services/offline_queue_service.dart'
     show connectivityCheckProvider;
 import '../models/song/song.dart';
@@ -80,7 +82,19 @@ class SongRepository extends BaseRepository with TenantAwareRepository {
   // ==========================================================================
 
   /// Ionic song.service `offline_songs_v1_<tenantId>` storage key.
-  static String offlineSongsCacheKey(int tenantId) => 'offline_songs_v1_$tenantId';
+  /// SOL_FIX7: additionally bound to the signed-in user (cleared on sign-out).
+  static String offlineSongsCacheKey(String userId, int tenantId) =>
+      'offline_songs_v1_${userId}_$tenantId';
+
+  /// Cache key of the signed-in user, null (no cache) when signed out.
+  String? _offlineSongsKey(int tenantId) {
+    try {
+      final userId = supabase.auth.currentUser?.id;
+      return userId == null ? null : offlineSongsCacheKey(userId, tenantId);
+    } catch (_) {
+      return null; // no auth client (tests) → no cache
+    }
+  }
 
   /// Get all songs of the (effective) song tenant.
   /// PostgREST caps each response, so songs are loaded in pages.
@@ -92,9 +106,10 @@ class SongRepository extends BaseRepository with TenantAwareRepository {
     // SOL_FIX1: effective tenant captured once; every page query and the
     // cache key use the same id.
     final tenantId = songTenantId;
+    final cacheKey = _offlineSongsKey(tenantId); // SOL_FIX7
     // Shared connectivity check (offline_queue_service), never throws.
     if (!await ref.read(connectivityCheckProvider)()) {
-      return await _readOfflineSongs(tenantId) ?? const [];
+      return await _readOfflineSongs(cacheKey) ?? const [];
     }
     try {
       final songs = <Song>[];
@@ -116,20 +131,23 @@ class SongRepository extends BaseRepository with TenantAwareRepository {
         songs.addAll(page);
         if (page.length < _pageSize) break;
       }
-      unawaited(_writeOfflineSongs(tenantId, rawRows));
+      unawaited(_writeOfflineSongs(cacheKey, rawRows));
       return songs;
     } catch (e, stack) {
-      final cached = await _readOfflineSongs(tenantId);
+      // SOL_FIX7: only network failures fall back to the offline copy.
+      final cached =
+          isOfflineFallbackError(e) ? await _readOfflineSongs(cacheKey) : null;
       if (cached != null) return cached;
       handleError(e, stack, 'getSongs');
       rethrow;
     }
   }
 
-  Future<List<Song>?> _readOfflineSongs(int tenantId) async {
+  Future<List<Song>?> _readOfflineSongs(String? key) async {
+    if (key == null) return null;
     try {
       final prefs = await SharedPreferences.getInstance();
-      final raw = prefs.getString(offlineSongsCacheKey(tenantId));
+      final raw = prefs.getString(key);
       if (raw == null) return null;
       return (jsonDecode(raw) as List)
           .map((e) => Song.fromJson(e as Map<String, dynamic>))
@@ -140,10 +158,11 @@ class SongRepository extends BaseRepository with TenantAwareRepository {
   }
 
   /// Caches the raw `songs` rows (lossless, like Ionic storing the rows).
-  Future<void> _writeOfflineSongs(int tenantId, List<dynamic> rows) async {
+  Future<void> _writeOfflineSongs(String? key, List<dynamic> rows) async {
+    if (key == null) return;
     try {
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setString(offlineSongsCacheKey(tenantId), jsonEncode(rows));
+      await prefs.setString(key, jsonEncode(rows));
     } catch (_) {
       // Cache is best effort (quota, private mode).
     }

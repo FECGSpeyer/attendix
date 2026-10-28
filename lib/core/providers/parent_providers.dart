@@ -43,10 +43,15 @@ class ParentNotifier extends Notifier<AsyncValue<void>> {
   ParentRepository get _repo => ref.read(parentRepositoryWithTenantProvider);
 
   /// Create a new parent
-  Future<ParentModel?> createParent(ParentModel parent) async {
+  Future<ParentModel?> createParent(ParentModel parent) => _createParentWith(_repo, parent);
+
+  /// SOL_FIX7: inserts through a repository bound by the caller before its
+  /// first await (see [invite]), so a tenant switch mid-flow cannot create
+  /// the row in another tenant.
+  Future<ParentModel?> _createParentWith(ParentRepository repo, ParentModel parent) async {
     state = const AsyncValue.loading();
     try {
-      final result = await _repo.createParent(parent);
+      final result = await repo.createParent(parent);
       state = const AsyncValue.data(null);
       ref.invalidate(parentsProvider);
       return result;
@@ -71,13 +76,15 @@ class ParentNotifier extends Notifier<AsyncValue<void>> {
     required String lastName,
   }) async {
     final trimmedEmail = email.trim();
+    // SOL_FIX7: bind both tenant repositories before the first await.
+    final repo = _repo;
     final registration = ref.read(userRegistrationRepositoryWithTenantProvider);
     final appId = await registration.registerUser(
       email: trimmedEmail,
       name: firstName.trim(),
       role: Role.parent,
     );
-    final created = await createParent(ParentModel(
+    final created = await _createParentWith(repo, ParentModel(
       appId: appId,
       email: trimmedEmail,
       firstName: firstName.trim(),

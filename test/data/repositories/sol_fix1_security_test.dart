@@ -112,7 +112,9 @@ void main() {
       expect(body, contains('final tenantId = songTenantId;'));
       expect(body, contains(".eq('tenantId', tenantId)"));
       expect(body, isNot(contains(".eq('tenantId', songTenantId)")));
-      expect(body, contains('_writeOfflineSongs(tenantId'));
+      // SOL_FIX7: the cache key is derived from the captured tenant (+ user).
+      expect(body, contains('final cacheKey = _offlineSongsKey(tenantId);'));
+      expect(body, contains('_writeOfflineSongs(cacheKey'));
     });
 
     test('player flows use their own registration repository instance', () {

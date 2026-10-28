@@ -231,11 +231,15 @@ Future<void> applyConfirmedWritesToDetailCache(
     List<String>? allKeys;
     for (final e in confirmed) {
       final owner = (tenantId: e.tenantId, userId: e.userId);
+      // SOL_FIX7: the detail cache is per user; legacy writes without an
+      // author have no cache to update.
+      final userId = e.userId;
+      if (userId == null) continue;
       if (e.attendanceId != null) {
-        keys[AttendanceDetailCache.keyFor(e.tenantId, e.attendanceId!, 'persons')] = owner;
+        keys[AttendanceDetailCache.keyFor(userId, e.tenantId, e.attendanceId!, 'persons')] = owner;
       } else {
         allKeys ??= (await SharedPreferences.getInstance()).getKeys().toList();
-        final prefix = 'offline_att_detail_v1_${e.tenantId}_';
+        final prefix = AttendanceDetailCache.tenantPrefixFor(userId, e.tenantId);
         for (final k in allKeys) {
           if (k.startsWith(prefix) && k.endsWith('_persons')) keys[k] = owner;
         }
