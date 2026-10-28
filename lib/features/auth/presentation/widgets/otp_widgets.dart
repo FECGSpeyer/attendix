@@ -50,12 +50,15 @@ class AuthModeSegment extends StatelessWidget {
             onTap: enabled && !checked ? () => onChanged(value) : null,
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 200),
-              constraints: const BoxConstraints(minHeight: 34),
+              // min-height 34px; md segment buttons stay 46 high (48 - 2).
+              constraints: BoxConstraints(minHeight: ios ? 34 : 46),
               margin: ios ? const EdgeInsets.symmetric(vertical: 2) : null,
               alignment: Alignment.center,
               padding: const EdgeInsets.symmetric(horizontal: 8),
               decoration: BoxDecoration(
-                color: !ios && checked
+                // --background-checked rgba(primary, .18) in both modes; iOS
+                // only drops the indicator (login/register scss `.ios &`).
+                color: checked
                     ? AppColors.primary.withValues(alpha: 0.18)
                     : Colors.transparent,
                 borderRadius: BorderRadius.circular(ios ? 25 : 9.6),
@@ -66,7 +69,8 @@ class AuthModeSegment extends StatelessWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  fontSize: fontSize,
+                  // rem-based: 1rem = 17px on the iPhone (-apple-system-body)
+                  fontSize: ios ? fontSize * 17 / 16 : fontSize,
                   fontWeight: FontWeight.w600,
                   color: checked
                       ? AppColors.primary

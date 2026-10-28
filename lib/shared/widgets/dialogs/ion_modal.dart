@@ -5,10 +5,14 @@ import '../adaptive/adaptive.dart'; // IOS_LOOK
 /// centred card (600 × 500), below that it covers the whole screen.
 bool isIonModalCard(Size size) => size.width >= 768 && size.height >= 600;
 
+/// Ionic `ion-modal` card height: 500px, 600px from a 768px high screen
+/// (`@media (min-width: 768px) and (min-height: 768px)`).
+double ionModalCardHeight(Size size) => size.height >= 768 ? 600 : 500;
+
 /// Presents [builder] like a default Ionic `ion-modal`
 /// (`modalController.create({ component })`):
 /// - desktop/tablet ([isIonModalCard]): a centred [width] × [height] card over
-///   the dimmed current page,
+///   the dimmed current page ([height] defaults to [ionModalCardHeight]),
 /// - phone: a full-screen dialog route.
 ///
 /// The built widget is usually a [Scaffold] with its own app bar and close
@@ -17,9 +21,10 @@ Future<T?> showIonModal<T>(
   BuildContext context, {
   required WidgetBuilder builder,
   double width = 600,
-  double height = 500,
+  double? height,
 }) {
   final size = MediaQuery.sizeOf(context);
+  final cardHeight = height ?? ionModalCardHeight(size);
   if (isIonModalCard(size)) {
     final ios = useIosLook(context);
     return showAppDialog<T>(
@@ -33,7 +38,8 @@ Future<T?> showIonModal<T>(
         elevation: ios ? null : 24,
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(ios ? 10 : 2)),
-        child: SizedBox(width: width, height: height, child: builder(ctx)),
+        child: SizedBox(
+            width: width, height: cardHeight, child: builder(ctx)),
       ),
     );
   }
