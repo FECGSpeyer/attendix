@@ -88,6 +88,7 @@ class OrganisationSettingsRepository extends BaseRepository with TenantAwareRepo
   /// und gibt die öffentliche URL (mit Cache-Buster) zurück.
   /// Die Tabelle wird NICHT geschrieben – dafür [updateBranding] aufrufen.
   Future<String> uploadLogo(Uint8List bytes, {String? contentType}) async {
+    ensureNotDemo('uploadLogo'); // DEMO_GUARD
     try {
       final orgId = await _requireOrganisationId('uploadLogo');
       final fileName = 'org-$orgId';
@@ -106,6 +107,7 @@ class OrganisationSettingsRepository extends BaseRepository with TenantAwareRepo
 
   /// Entfernt das Logo der Organisation aus dem Bucket.
   Future<void> removeLogo() async {
+    ensureNotDemo('removeLogo'); // DEMO_GUARD
     try {
       final orgId = await _requireOrganisationId('removeLogo');
       await supabase.storage.from(brandingBucket).remove(['org-$orgId']);
@@ -117,6 +119,7 @@ class OrganisationSettingsRepository extends BaseRepository with TenantAwareRepo
 
   /// Speichert Logo-URL und Branding-Text der Organisation.
   Future<Organisation> updateBranding({String? logoUrl, String? brandingText}) async {
+    ensureNotDemo('updateBranding'); // DEMO_GUARD
     try {
       final orgId = await _requireOrganisationId('updateBranding');
       final response = await supabase
@@ -138,6 +141,7 @@ class OrganisationSettingsRepository extends BaseRepository with TenantAwareRepo
   /// Verknüpft Personen über Instanzen der Organisation (global_person_id).
   /// Es werden nur Personen aus Instanzen der eigenen Organisation geändert.
   Future<void> setGlobalPersonId(List<int> playerIds, String globalPersonId) async {
+    ensureNotDemo('setGlobalPersonId'); // DEMO_GUARD
     if (playerIds.isEmpty) return;
     try {
       final orgId = await _requireOrganisationId('setGlobalPersonId');

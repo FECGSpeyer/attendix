@@ -54,3 +54,5 @@ export 'optional_tabs_providers.dart';
 export 'admin_providers.dart'; // SETTINGS2
 // AUTH
 export 'user_registration_providers.dart';
+// DEMO_GUARD
+export 'demo_providers.dart';

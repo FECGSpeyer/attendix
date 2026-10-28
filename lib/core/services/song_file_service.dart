@@ -7,6 +7,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../config/supabase_config.dart';
 import '../providers/song_providers.dart';
 import '../providers/tenant_providers.dart';
+import '../utils/demo_guard.dart'; // DEMO_GUARD
 
 /// Service for managing song file uploads to Supabase Storage
 class SongFileService {
@@ -57,6 +58,7 @@ class SongFileService {
     String? note,
     int? mainGroupId,
   }) async {
+    DemoGuard.checkCurrent('uploadSongFile'); // DEMO_GUARD
     if (_tenantId == null) {
       throw Exception('Kein Tenant ausgewählt');
     }
@@ -168,6 +170,7 @@ class SongFileService {
     String? fileName,
     int? mainGroupId,
   }) async {
+    DemoGuard.checkCurrent('deleteSongFile'); // DEMO_GUARD
     if (_tenantId == null) {
       throw Exception('Kein Tenant ausgewählt');
     }
@@ -212,6 +215,7 @@ class SongFileService {
 
   /// Delete all files from a song
   Future<void> deleteAllFiles({required int songId}) async {
+    DemoGuard.checkCurrent('deleteSongFile'); // DEMO_GUARD
     if (_tenantId == null) {
       throw Exception('Kein Tenant ausgewählt');
     }
@@ -260,6 +264,7 @@ class SongFileService {
     String? note,
     int? mainGroupId,
   }) async {
+    DemoGuard.checkCurrent('updateSongFile'); // DEMO_GUARD
     if (_tenantId == null) {
       throw Exception('Kein Tenant ausgewählt');
     }
@@ -349,6 +354,7 @@ class SongFileService {
     int? instrumentId,
     String? note,
   }) async {
+    DemoGuard.checkCurrent('uploadSongFile'); // DEMO_GUARD
     // Generate unique storage path
     final fileId = _encodeFilename(fileName);
     final storagePath = 'songs/$tenantId/$songId/$fileId';

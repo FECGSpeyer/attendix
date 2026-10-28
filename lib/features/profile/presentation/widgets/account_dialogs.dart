@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../core/config/supabase_config.dart';
 import '../../../../core/utils/toast_helper.dart';
+import '../../../../core/utils/demo_guard.dart';
 
 /// Shows the "Passwort ändern" dialog (Ionic settings changePassword alert).
 Future<void> showChangePasswordDialog(BuildContext context) async {
@@ -63,6 +64,8 @@ class _ChangePasswordDialogState extends ConsumerState<ChangePasswordDialog> {
           context, 'Das Passwort muss mindestens 6 Zeichen lang sein.');
       return;
     }
+
+    if (DemoGuard.blocked()) return; // DEMO_GUARD (Ionic changePassword)
 
     setState(() => _isLoading = true);
     try {

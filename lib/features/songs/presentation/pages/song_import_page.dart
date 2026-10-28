@@ -9,6 +9,7 @@ import '../../../../core/utils/import_mapper.dart';
 import '../../../../core/utils/spreadsheet_reader.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../people/presentation/widgets/import_widgets.dart';
+import '../../../../core/providers/demo_providers.dart'; // DEMO_GUARD
 
 enum _Step { file, mapping, preview }
 
@@ -125,6 +126,11 @@ class _SongImportPageState extends ConsumerState<SongImportPage> {
     final toImport = _importable;
     if (toImport.isEmpty) {
       ToastHelper.showWarning(context, 'Keine importierbaren Werke.');
+      return;
+    }
+    // DEMO_GUARD: Ionic `if (db.isDemo()) showToast(people.demoUnavailable)`.
+    if (ref.read(isDemoProvider)) {
+      ToastHelper.showDemoRestricted(context);
       return;
     }
     final repo = ref.read(importRepositoryWithTenantProvider);

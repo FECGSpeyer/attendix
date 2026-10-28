@@ -74,6 +74,7 @@ class AgendaItemRepository extends BaseRepository with TenantAwareRepository {
 
   /// Creates a topic (leadership).
   Future<AgendaItem> createAgendaItem(AgendaItem item) async {
+    ensureNotDemo('createAgendaItem'); // DEMO_GUARD
     try {
       final data = <String, dynamic>{
         ..._writeFields(item),
@@ -100,6 +101,7 @@ class AgendaItemRepository extends BaseRepository with TenantAwareRepository {
     String? description,
     required int proposedBy,
   }) async {
+    ensureNotDemo('proposeAgendaItem'); // DEMO_GUARD
     try {
       await supabase.from('agenda_items').insert({
         'tenant_id': currentTenantId,
@@ -118,6 +120,7 @@ class AgendaItemRepository extends BaseRepository with TenantAwareRepository {
 
   /// Updates the given columns (snake_case keys) of a topic.
   Future<AgendaItem> updateAgendaItem(String id, Map<String, dynamic> updates) async {
+    ensureNotDemo('updateAgendaItem'); // DEMO_GUARD
     try {
       final data = Map<String, dynamic>.from(updates)
         ..remove('id')
@@ -142,6 +145,7 @@ class AgendaItemRepository extends BaseRepository with TenantAwareRepository {
   }
 
   Future<void> deleteAgendaItem(String id) async {
+    ensureNotDemo('deleteAgendaItem'); // DEMO_GUARD
     try {
       final response = await supabase
           .from('agenda_items')

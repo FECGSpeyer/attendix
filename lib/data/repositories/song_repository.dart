@@ -107,6 +107,7 @@ class SongRepository extends BaseRepository with TenantAwareRepository {
 
   /// Create a new song
   Future<Song> createSong(Song song) async {
+    ensureNotDemo('createSong'); // DEMO_GUARD
     try {
       final data = song.toJson();
       // Remove computed/read-only fields
@@ -133,6 +134,7 @@ class SongRepository extends BaseRepository with TenantAwareRepository {
 
   /// Update an existing song
   Future<Song> updateSong(int id, Map<String, dynamic> updates) async {
+    ensureNotDemo('updateSong'); // DEMO_GUARD
     try {
       // Remove read-only / computed fields
       updates.remove('id');
@@ -160,6 +162,7 @@ class SongRepository extends BaseRepository with TenantAwareRepository {
 
   /// Delete a song including its files in storage (Ionic `removeSong`).
   Future<void> deleteSong(int id) async {
+    ensureNotDemo('deleteSong'); // DEMO_GUARD
     try {
       final existing = await supabase
           .from('songs')
@@ -250,6 +253,7 @@ class SongRepository extends BaseRepository with TenantAwareRepository {
   /// whose songs this tenant uses (null = own songs).
   /// `tenants` has no tenantId column - the row is the current tenant itself.
   Future<void> updateSongSourceTenantId(int? sourceTenantId) async {
+    ensureNotDemo('updateSongSourceTenantId'); // DEMO_GUARD
     try {
       await supabase
           .from('tenants')
@@ -310,6 +314,7 @@ class SongRepository extends BaseRepository with TenantAwareRepository {
     required String name,
     required int index,
   }) async {
+    ensureNotDemo('addSongCategory'); // DEMO_GUARD
     try {
       final response = await supabase
           .from('song_categories')
@@ -330,6 +335,7 @@ class SongRepository extends BaseRepository with TenantAwareRepository {
 
   /// Update a song category
   Future<void> updateSongCategory(String id, Map<String, dynamic> updates) async {
+    ensureNotDemo('updateSongCategory'); // DEMO_GUARD
     try {
       await supabase
           .from('song_categories')
@@ -345,6 +351,7 @@ class SongRepository extends BaseRepository with TenantAwareRepository {
   /// Delete a song category and reorder remaining indices
   /// BL-006: Ensures indices are consecutive after deletion
   Future<void> deleteSongCategory(String id) async {
+    ensureNotDemo('deleteSongCategory'); // DEMO_GUARD
     try {
       final toDelete = await supabase
           .from('song_categories')
@@ -466,6 +473,7 @@ class SongRepository extends BaseRepository with TenantAwareRepository {
     String? conductorName,
     int? attendanceId,
   }) async {
+    ensureNotDemo('addSongHistory'); // DEMO_GUARD
     try {
       final songValidation = await supabase
           .from('songs')

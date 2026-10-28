@@ -129,6 +129,7 @@ class OrgPlanRepository extends BaseRepository {
   }
 
   Future<Organisation> updateOrganisation(int orgId, Map<String, dynamic> updates) async {
+    ensureNotDemo('updateOrganisation'); // DEMO_GUARD
     try {
       final response = await supabase
           .from('tenant_groups')

@@ -46,11 +46,32 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     super.dispose();
   }
 
-  void _startDemo() {
-    _setMode(AuthMode.password);
-    _emailController.text = AppConstants.demoMail;
-    _passwordController.text = AppConstants.demoPassword;
-    _login();  // Fire-and-forget OK — _login has its own try-catch + mounted checks
+  /// Ionic `startDemo()`: log in with the demo credentials directly
+  /// (`db.login(environment.demoMail, environment.demoPassword)`), without
+  /// touching the form. The demo account is write-protected (DEMO_GUARD).
+  Future<void> _startDemo() async {
+    if (_isLoading) return;
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+    try {
+      final user = await ref.read(authFlowServiceProvider).signInWithPassword(
+            AppConstants.demoMail,
+            AppConstants.demoPassword,
+          );
+      if (mounted) await _routeAfterAuth(user);
+    } on LoginFailure catch (failure) {
+      if (mounted) setState(() => _errorMessage = failure.message);
+    } catch (e) {
+      debugPrint('Demo login error: $e');
+      if (mounted) {
+        setState(() => _errorMessage =
+            'Ein unerwarteter Fehler ist aufgetreten. Bitte versuche es erneut.');
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
 
   void _setMode(AuthMode mode) {

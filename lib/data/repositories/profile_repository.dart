@@ -242,6 +242,7 @@ class ProfileRepository extends BaseRepository with TenantAwareRepository {
     String personKey,
     Map<String, dynamic> values,
   ) async {
+    ensureNotDemo('updateSharedFieldValues'); // DEMO_GUARD
     if (values.isEmpty) return;
     try {
       final rows = values.entries
@@ -272,6 +273,7 @@ class ProfileRepository extends BaseRepository with TenantAwareRepository {
     Map<String, dynamic>? additionalFields,
     String? churchId,
   }) async {
+    ensureNotDemo('updateOwnProfile'); // DEMO_GUARD
     try {
       final userId = _userId;
 
@@ -346,6 +348,7 @@ class ProfileRepository extends BaseRepository with TenantAwareRepository {
     required Uint8List bytes,
     String? contentType,
   }) async {
+    ensureNotDemo('uploadOwnImage'); // DEMO_GUARD
     try {
       final userId = _userId;
       final fileName = '$playerId';
@@ -374,6 +377,7 @@ class ProfileRepository extends BaseRepository with TenantAwareRepository {
 
   /// Remove the own Passbild (Ionic ImageService.removeImage with own appId).
   Future<void> removeOwnImage(String imgUrl) async {
+    ensureNotDemo('removeOwnImage'); // DEMO_GUARD
     try {
       final userId = _userId;
       await supabase

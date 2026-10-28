@@ -9,6 +9,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/models/song/song.dart';
 import '../../../../data/models/tenant/tenant.dart';
+import '../../../../core/utils/demo_guard.dart';
 
 /// Sheet for copying a song to another tenant
 class CopyToTenantSheet extends ConsumerStatefulWidget {
@@ -232,6 +233,7 @@ class _CopyToTenantSheetState extends ConsumerState<CopyToTenantSheet> {
   }
 
   Future<void> _copySong() async {
+    if (DemoGuard.blocked()) return; // DEMO_GUARD
     setState(() {
       _isCopying = true;
       _progressMessage = 'Werk wird kopiert...';

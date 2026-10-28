@@ -72,6 +72,7 @@ class ProtocolRepository extends BaseRepository with TenantAwareRepository {
     String? outcome,
     bool clearOutcome = false,
   }) async {
+    ensureNotDemo('saveSection'); // DEMO_GUARD
     try {
       await _ensureAttendanceOfTenant(attendanceId);
       final response = await supabase.rpc('save_protocol_section', params: {
@@ -89,6 +90,7 @@ class ProtocolRepository extends BaseRepository with TenantAwareRepository {
   }
 
   Future<Protocol?> publish(int attendanceId) async {
+    ensureNotDemo('publish'); // DEMO_GUARD
     try {
       await _ensureAttendanceOfTenant(attendanceId);
       final response = await supabase.rpc('publish_protocol', params: {
@@ -102,6 +104,7 @@ class ProtocolRepository extends BaseRepository with TenantAwareRepository {
   }
 
   Future<void> deleteProtocol(String id) async {
+    ensureNotDemo('deleteProtocol'); // DEMO_GUARD
     try {
       await supabase
           .from('protocols')
@@ -117,6 +120,7 @@ class ProtocolRepository extends BaseRepository with TenantAwareRepository {
   /// Uploads a protocol PDF to the public `attendances` bucket so the
   /// notification can attach it. Returns (url, path).
   Future<({String url, String path})> uploadPdf(int attendanceId, Uint8List bytes) async {
+    ensureNotDemo('uploadPdf'); // DEMO_GUARD
     try {
       final path = 'protocols/${attendanceId}_${DateTime.now().millisecondsSinceEpoch}.pdf';
       await supabase.storage.from('attendances').uploadBinary(
@@ -133,6 +137,7 @@ class ProtocolRepository extends BaseRepository with TenantAwareRepository {
   }
 
   Future<void> removePdf(String path) async {
+    ensureNotDemo('removePdf'); // DEMO_GUARD
     try {
       await supabase.storage.from('attendances').remove([path]);
     } catch (e) {
@@ -201,6 +206,7 @@ class ProtocolRepository extends BaseRepository with TenantAwareRepository {
 
   /// Saves the plan (Ablaufplan) of an attendance and returns the stored plan.
   Future<Map<String, dynamic>?> updateAttendancePlan(int attendanceId, Map<String, dynamic> plan) async {
+    ensureNotDemo('updateAttendancePlan'); // DEMO_GUARD
     try {
       final response = await supabase
           .from('attendance')
@@ -239,6 +245,7 @@ class ProtocolRepository extends BaseRepository with TenantAwareRepository {
 
   /// Creates a Termin (tenant forced to the current one) and returns its id.
   Future<int> createAttendance(Map<String, dynamic> row) async {
+    ensureNotDemo('createAttendance'); // DEMO_GUARD
     try {
       final response = await supabase
           .from('attendance')

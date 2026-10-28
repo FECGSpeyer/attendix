@@ -32,6 +32,7 @@ class ChurchRepository extends BaseRepository {
 
   /// Create a new church
   Future<String> createChurch(String name, {String? userId}) async {
+    ensureNotDemo('createChurch'); // DEMO_GUARD
     try {
       final response = await supabase
           .from('churches')
@@ -53,6 +54,7 @@ class ChurchRepository extends BaseRepository {
 
   /// Rename a church (global table, no tenant filter).
   Future<void> renameChurch(String id, String name) async {
+    ensureNotDemo('renameChurch'); // DEMO_GUARD
     try {
       await supabase.from('churches').update({'name': name}).eq('id', id);
     } catch (e, stack) {
@@ -69,6 +71,7 @@ class ChurchRepository extends BaseRepository {
   /// BFECG tenants reference them). Only reachable from the super-developer
   /// administration page; each update is scoped to a single player `id`.
   Future<int> mergeChurches(String targetId, String duplicateId) async {
+    ensureNotDemo('mergeChurches'); // DEMO_GUARD
     try {
       final players = await supabase
           .from('player')

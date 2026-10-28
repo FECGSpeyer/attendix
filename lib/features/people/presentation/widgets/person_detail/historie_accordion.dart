@@ -10,6 +10,7 @@ import '../../../../../core/providers/realtime_providers.dart';
 import '../../../../../core/providers/tenant_providers.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../pages/person_detail_page.dart';
+import '../../../../../core/utils/demo_guard.dart';
 
 /// Toggle to show all history entries (including before season start).
 final showAllHistoryProvider = StateProvider.autoDispose<bool>((ref) => false);
@@ -348,6 +349,7 @@ class HistorieAccordion extends ConsumerWidget {
     );
 
     if (confirmed != true || !context.mounted) return;
+    if (DemoGuard.blocked()) return; // DEMO_GUARD
 
     try {
       final supabase = ref.read(supabaseClientProvider);

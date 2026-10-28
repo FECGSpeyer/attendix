@@ -103,6 +103,7 @@ class UserRegistrationRepository extends BaseRepository
     int? tenantId,
     bool selfRegister = false,
   }) async {
+    ensureNotDemo('registerUser'); // DEMO_GUARD
     final normalizedEmail = email.toLowerCase().trim();
     final targetTenantId = tenantId ?? currentTenantId;
 
@@ -364,6 +365,7 @@ class UserRegistrationRepository extends BaseRepository
 
   /// Ionic `createAccount(player)`: account for a person + link `appId`.
   Future<String> createPlayerAccount(Person person, {int? mainGroupId}) async {
+    ensureNotDemo('createPlayerAccount'); // DEMO_GUARD
     final email = person.email?.trim() ?? '';
     if (email.isEmpty) {
       throw const AccountFlowException('Keine E-Mail-Adresse vorhanden');

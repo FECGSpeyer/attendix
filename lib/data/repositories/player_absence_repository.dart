@@ -62,6 +62,7 @@ class PlayerAbsenceRepository extends BaseRepository with TenantAwareRepository 
     required String untilDate,
     required String reason,
   }) async {
+    ensureNotDemo('addAbsence'); // DEMO_GUARD
     try {
       final data = <String, dynamic>{
         'person_id': personId,
@@ -86,6 +87,7 @@ class PlayerAbsenceRepository extends BaseRepository with TenantAwareRepository 
 
   /// Delete an absence (id AND tenant_id).
   Future<void> deleteAbsence(String id) async {
+    ensureNotDemo('deleteAbsence'); // DEMO_GUARD
     try {
       await supabase
           .from('player_absences')

@@ -34,6 +34,9 @@ jobs:
         run: |
           echo "SUPABASE_URL=${{ secrets.SUPABASE_URL }}" >> .env
           echo "SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}" >> .env
+          # DEMO_GUARD: optional demo account ("Demo starten", write-protected)
+          echo "DEMO_EMAIL=${{ secrets.DEMO_EMAIL }}" >> .env
+          echo "DEMO_PASSWORD=${{ secrets.DEMO_PASSWORD }}" >> .env
 
       - name: Run tests
         run: flutter test

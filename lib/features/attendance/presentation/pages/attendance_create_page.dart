@@ -22,6 +22,7 @@ import '../../../../data/models/duty/person_unavailability.dart';
 import '../../../../data/models/attendance/attendance.dart';
 import '../widgets/multi_date_calendar.dart';
 import '../widgets/songs_selection_sheet.dart';
+import '../../../../core/utils/demo_guard.dart';
 
 /// UX_ATT: opens "Termin hinzufügen" as a sheet over the list (Ionic att-list
 /// addAttModal, breakpoints [0, 0.8, 1], initial 0.8). Returns true when
@@ -603,6 +604,8 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
         return;
       }
     }
+
+    if (DemoGuard.blocked()) return; // DEMO_GUARD
 
     setState(() => _isLoading = true);
 

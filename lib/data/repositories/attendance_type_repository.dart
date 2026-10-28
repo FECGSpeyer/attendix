@@ -44,6 +44,7 @@ class AttendanceTypeRepository extends BaseRepository with TenantAwareRepository
 
   /// Create a new attendance type
   Future<AttendanceType?> createType(AttendanceType type) async {
+    ensureNotDemo('createType'); // DEMO_GUARD
     try {
       // Get max index first
       final maxIndexResponse = await supabase
@@ -96,6 +97,7 @@ class AttendanceTypeRepository extends BaseRepository with TenantAwareRepository
 
   /// Update an attendance type
   Future<AttendanceType?> updateType(String id, Map<String, dynamic> updates) async {
+    ensureNotDemo('updateType'); // DEMO_GUARD
     try {
       final response = await supabase
           .from('attendance_types')
@@ -148,6 +150,7 @@ class AttendanceTypeRepository extends BaseRepository with TenantAwareRepository
   /// Delete an attendance type
   /// BL-009: Checks for references before deletion
   Future<bool> deleteType(String id) async {
+    ensureNotDemo('deleteType'); // DEMO_GUARD
     try {
       // BL-009: Check for attendances using this type
       final usageCount = await getAttendanceCountForType(id);
@@ -174,6 +177,7 @@ class AttendanceTypeRepository extends BaseRepository with TenantAwareRepository
 
   /// Reorder attendance types
   Future<bool> reorderTypes(List<String> orderedIds) async {
+    ensureNotDemo('reorderTypes'); // DEMO_GUARD
     try {
       // Update each type's index based on its position in the list
       for (int i = 0; i < orderedIds.length; i++) {

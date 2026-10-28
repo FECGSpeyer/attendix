@@ -24,6 +24,7 @@ class TenantCreateRepository extends BaseRepository {
     required String type,
     required String mainGroupName,
   }) async {
+    ensureNotDemo('createTenant'); // DEMO_GUARD
     try {
       final user = supabase.auth.currentUser;
       if (user == null) {
