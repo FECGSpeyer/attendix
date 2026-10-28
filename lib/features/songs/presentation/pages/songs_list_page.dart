@@ -255,14 +255,7 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
                     contentPadding: EdgeInsets.zero,
                   ),
                 ),
-              const PopupMenuItem(
-                value: 'pdf',
-                child: ListTile(
-                  leading: Icon(Icons.description_outlined),
-                  title: Text('Werkverzeichnis als PDF'),
-                  contentPadding: EdgeInsets.zero,
-                ),
-              ),
+              // UX_SETTINGS: Ionic order (import before PDF)
               if (isAdmin)
                 const PopupMenuItem(
                   value: 'import',
@@ -272,6 +265,14 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
                     contentPadding: EdgeInsets.zero,
                   ),
                 ),
+              const PopupMenuItem(
+                value: 'pdf',
+                child: ListTile(
+                  leading: Icon(Icons.description_outlined),
+                  title: Text('Werkverzeichnis als PDF'),
+                  contentPadding: EdgeInsets.zero,
+                ),
+              ),
             ],
           ),
         ],
