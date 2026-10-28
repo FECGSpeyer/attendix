@@ -227,10 +227,13 @@ class PlayerNotifier extends Notifier<AsyncValue<void>> {
   Future<void> _notifyApproval(Person player) async {
     final registration = ref.read(userRegistrationRepositoryWithTenantProvider);
     if (!registration.hasTenantId) return;
+    // DB_REVIEW_REST: like Ionic person.page approvePlayer a failed role
+    // update fails the approval (otherwise the account silently stays
+    // Bewerber); only the mail stays non-blocking.
+    if (player.appId != null && player.appId!.isNotEmpty) {
+      await registration.updateTenantUserRole(player.appId!, Role.player);
+    }
     try {
-      if (player.appId != null && player.appId!.isNotEmpty) {
-        await registration.updateTenantUserRole(player.appId!, Role.player);
-      }
       if (player.email != null && player.email!.isNotEmpty) {
         await registration.informUserAboutApproval(
             player.email!, player.firstName, Role.player);

@@ -60,7 +60,10 @@ class DeviceTokenRepository extends BaseRepository implements DeviceTokenStore {
         'token': token,
         'platform': platform,
         'updated_at': DateTime.now().toUtc().toIso8601String(),
-      });
+        // DB_REVIEW_REST (M8): UNIQUE(user_id, token)
+        // (Ionic MIGRATION_push_notifications.sql) – without onConflict the
+        // second save fails with 23505.
+      }, onConflict: 'user_id,token');
     } catch (e, stack) {
       handleError(e, stack, 'saveToken');
       rethrow;

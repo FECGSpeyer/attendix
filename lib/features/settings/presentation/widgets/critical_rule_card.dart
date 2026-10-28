@@ -44,22 +44,8 @@ class CriticalRuleCard extends StatelessWidget {
             Row(
               children: [
                 _buildOperatorChip(context),
-                const SizedBox(width: 8),
-                if (!rule.enabled)
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 6,
-                      vertical: 2,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.medium.withValues(alpha: 0.2),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: Text(
-                      context.l10n.generalSettingsFlutterDisabled,
-                      style: const TextStyle(fontSize: 10),
-                    ),
-                  ),
+                // DB_REVIEW_REST (M3): no 'disabled' badge, Ionic has no
+                // enabled flag (all rules are evaluated server-side).
               ],
             ),
           ],

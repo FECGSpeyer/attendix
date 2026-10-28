@@ -41,19 +41,32 @@ class CrossTenantService {
   /// Returns null if the user is not a member of this tenant
   Future<int?> getPersonIdForTenant(int tenantId, String userId) async {
     try {
+      // DB_REVIEW_REST (M6): Ionic loads all rows (an archived and a new
+      // active row can share the appId) and picks client-side; a single-row
+      // read threw PGRST116 and dropped the whole tenant.
       final response = await _supabase
           .from('player')
-          .select('id')
+          .select('id, pending, left')
           .eq('tenantId', tenantId)
-          .eq('appId', userId)
-          .eq('pending', false)
-          .maybeSingle();
+          .eq('appId', userId);
 
-      return response?['id'] as int?;
+      return pickPersonIdForTenant(
+          (response as List).cast<Map<String, dynamic>>());
     } catch (e) {
       debugPrint('Error getting person ID for tenant $tenantId: $e');
       return null;
     }
+  }
+
+  /// Ionic getPersonIdForTenant row choice: first active (not pending, not
+  /// archived) row, otherwise the first row.
+  @visibleForTesting
+  static int? pickPersonIdForTenant(List<Map<String, dynamic>> rows) {
+    if (rows.isEmpty) return null;
+    final active = rows.where((p) =>
+        p['pending'] != true && (p['left'] == null || p['left'] == ''));
+    final row = active.isNotEmpty ? active.first : rows.first;
+    return (row['id'] as num?)?.toInt();
   }
 
   /// Get person attendances for a specific tenant

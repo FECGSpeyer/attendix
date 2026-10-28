@@ -984,6 +984,34 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
     }
   }
 
+  // DB_REVIEW_REST (H4): Termin-Foto like Ionic image.service
+  // updateAttendanceImage: bucket `attendances`, key `<attendanceId>`, upsert.
+  static String attendanceImagePath(int attendanceId) => '$attendanceId';
+
+  /// Uploads the Termin photo and stores its public URL in `attendance.img`.
+  Future<String> uploadAttendanceImage(int attendanceId, Uint8List bytes) async {
+    ensureNotDemo('uploadAttendanceImage'); // DEMO_GUARD
+    try {
+      await _assertAttendanceInTenant(attendanceId, 'uploadAttendanceImage');
+      final path = attendanceImagePath(attendanceId);
+      await supabase.storage.from('attendances').uploadBinary(
+            path,
+            bytes,
+            fileOptions: const FileOptions(upsert: true),
+          );
+      final url = supabase.storage.from('attendances').getPublicUrl(path);
+      await supabase
+          .from('attendance')
+          .update({'img': url})
+          .eq('id', attendanceId)
+          .eq('tenantId', currentTenantId);
+      return url;
+    } catch (e, stack) {
+      handleError(e, stack, 'uploadAttendanceImage');
+      rethrow;
+    }
+  }
+
   /// Removes the attachment file and clears url + name on the attendance row.
   Future<void> removeAttachment(int attendanceId, String? fileName) async {
     ensureNotDemo('removeAttachment'); // DEMO_GUARD

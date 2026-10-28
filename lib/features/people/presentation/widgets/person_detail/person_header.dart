@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
@@ -16,6 +17,7 @@ import '../../pages/person_detail_page.dart';
 import '../../../../../core/utils/demo_guard.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../../core/utils/error_message.dart';
+import '../../../../../core/utils/profile_image_path.dart'; // DB_REVIEW_REST
 
 /// Header widget displaying person avatar, group, and attendance stats.
 class PersonHeader extends ConsumerWidget {
@@ -229,16 +231,11 @@ class PersonHeader extends ConsumerWidget {
 
       if (personId == null || tenant == null) return;
 
-      final storagePath = '${tenant.id}/$personId.jpg';
+      // DB_REVIEW_REST (M4): Ionic ImageService.updateImage – key `<id>`,
+      // upsert, plain public URL in player.img (no tenant folder).
+      final storagePath = profileImageStoragePath(personId);
+      final legacyPath = profileImagePathFromUrl(person.img);
 
-      // Delete old file if it exists (ignore errors)
-      try {
-        await supabase.storage
-            .from(SupabaseBuckets.profiles)
-            .remove([storagePath]);
-      } catch (_) {}
-
-      // Upload new file
       await supabase.storage.from(SupabaseBuckets.profiles).uploadBinary(
             storagePath,
             bytes,
@@ -248,18 +245,28 @@ class PersonHeader extends ConsumerWidget {
             ),
           );
 
+      // Drop a legacy `<tenantId>/<id>.jpg` object so it does not stay orphaned.
+      if (legacyPath != null && legacyPath != storagePath) {
+        try {
+          await supabase.storage
+              .from(SupabaseBuckets.profiles)
+              .remove([legacyPath]);
+        } catch (_) {}
+      }
+
       final publicUrl = supabase.storage
           .from(SupabaseBuckets.profiles)
           .getPublicUrl(storagePath);
 
-      // Add cache-busting query param
-      final urlWithCacheBust =
-          '$publicUrl?t=${DateTime.now().millisecondsSinceEpoch}';
+      // Same URL after a replace: drop the cached image so it reloads.
+      try {
+        await CachedNetworkImage.evictFromCache(publicUrl);
+      } catch (_) {}
 
       // Update player record
       await supabase
           .from('player')
-          .update({'img': urlWithCacheBust})
+          .update({'img': publicUrl})
           .eq('id', personId)
           .eq('tenantId', tenant.id!);
 
@@ -306,20 +313,23 @@ class PersonHeader extends ConsumerWidget {
 
       if (personId == null || tenant == null) return;
 
-      // Delete from storage
-      final storagePath = '${tenant.id}/$personId.jpg';
-      try {
-        await supabase.storage
-            .from(SupabaseBuckets.profiles)
-            .remove([storagePath]);
-      } catch (_) {}
-
-      // Clear img field on player record
+      // DB_REVIEW_REST (M4): Ionic removeImage – clear img with '' (Ionic
+      // code calls img.split and breaks on null), then delete the object
+      // whose key is taken from the stored URL.
       await supabase
           .from('player')
-          .update({'img': null})
+          .update({'img': ''})
           .eq('id', personId)
           .eq('tenantId', tenant.id!);
+
+      final storagePath = profileImagePathFromUrl(person.img);
+      if (storagePath != null) {
+        try {
+          await supabase.storage
+              .from(SupabaseBuckets.profiles)
+              .remove([storagePath]);
+        } catch (_) {}
+      }
 
       ref.invalidate(personProvider(personId));
       ref.invalidate(realtimePlayersProvider);

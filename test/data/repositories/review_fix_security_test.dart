@@ -40,13 +40,15 @@ void main() {
     });
   });
 
-  group('HIGH2 person detail sync uses the previous group', () {
-    test('oldInstrument is the stored instrument', () {
+  // DB_REVIEW_REST (M2) supersedes HIGH2: Ionic person.page only syncs
+  // extra-field filters, a group change must not touch future attendances.
+  group('M2 person detail sync ignores group changes (Ionic parity)', () {
+    test('oldInstrument equals the new group', () {
       final source =
           read('lib/features/people/presentation/pages/person_detail_page.dart');
       final call = body(source, 'syncPlayerWithUpcomingAttendances(', 400);
-      expect(call, contains('oldInstrument: person.instrument'));
-      expect(call, isNot(contains('oldInstrument: _selectedGroupId')));
+      expect(call, contains('oldInstrument: _selectedGroupId'));
+      expect(call, isNot(contains('oldInstrument: person.instrument')));
     });
   });
 
@@ -54,9 +56,11 @@ void main() {
     late String source;
     setUpAll(() => source = read('lib/data/repositories/admin_repository.dart'));
 
-    test('e-mail lookup is exact (no ilike wildcards)', () {
-      expect(source, isNot(contains('.ilike(')));
-      expect(source, contains(".eq('email', email)"));
+    // DB_REVIEW_REST (M7): case-insensitive like Ionic, wildcards escaped.
+    test('e-mail lookup is case-insensitive without wildcards', () {
+      expect(source, contains(".ilike('email', StringUtils.exactIlikePattern(email))"));
+      expect(source, isNot(contains(".eq('email', email)")));
+      expect(source, isNot(contains("'%\$")));
     });
 
     test('inform mail failure does not throw after the admin insert', () {

@@ -1,4 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="push_channel_name">Notifications</string>
+    <string name="live_plan_channel_name">Running schedule</string>
+    <string name="live_plan_channel_description">Shows the current item of a running schedule</string>
+    <string name="live_plan_next">Next: %1$s · %2$s</string>
+    <string name="live_plan_next_end">Next: End · %1$s</string>
+    <string name="live_plan_starts_at">Schedule starts at %1$s</string>
+    <string name="live_plan_first">First: %1$s</string>
+    <string name="live_plan_ended">Schedule finished</string>
+    <string name="live_plan_position">Item %1$d of %2$d</string>
+    <string name="live_plan_until">Until %1$s</string>
 </resources>

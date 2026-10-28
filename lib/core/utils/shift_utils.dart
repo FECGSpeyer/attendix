@@ -287,6 +287,65 @@ class ShiftUtils {
     return updates;
   }
 
+  /// DB_REVIEW_REST (M5): pure part of Ionic
+  /// `ShiftService.updateShiftAttendancesInTenant` (shift plan copied to
+  /// another tenant with assignments). For every upcoming row of an assigned
+  /// person: when the copied [shift] makes them Entschuldigt and the row still
+  /// has the type default status, set Entschuldigt + "Schichtbedingt".
+  ///
+  /// [attendances]: `{id, date, type_id, start_time, end_time}` rows,
+  /// [types]: `attendance_types` rows (`id, all_day, start_time, end_time,
+  /// default_status`), [personAttendances]: `{id, person_id, attendance_id,
+  /// status}` rows, [shiftDataByPersonId]: target person id → source
+  /// `shift_name` / `shift_start`.
+  static List<ShiftAssignmentUpdate> copiedShiftAttendanceUpdates({
+    required ShiftPlan shift,
+    required List<Map<String, dynamic>> attendances,
+    required List<Map<String, dynamic>> types,
+    required List<Map<String, dynamic>> personAttendances,
+    required Map<int, ({String? shiftName, String? shiftStart})>
+        shiftDataByPersonId,
+  }) {
+    final updates = <ShiftAssignmentUpdate>[];
+    for (final pa in personAttendances) {
+      final att = attendances
+          .where((a) => a['id']?.toString() == pa['attendance_id']?.toString())
+          .firstOrNull;
+      if (att == null) continue;
+      final type = types
+          .where((t) => t['id']?.toString() == att['type_id']?.toString())
+          .firstOrNull;
+      if (type == null || type['all_day'] == true) continue;
+      final personId = (pa['person_id'] as num?)?.toInt();
+      final data = personId == null ? null : shiftDataByPersonId[personId];
+      if (data == null) continue;
+      final date = localDay(att['date']?.toString());
+      final start = (att['start_time'] ?? type['start_time'])?.toString();
+      final end = (att['end_time'] ?? type['end_time'])?.toString();
+      if (date == null || start == null || end == null) continue;
+      final defaultValue = (type['default_status'] as num?)?.toInt() ?? 0;
+      final defaultStatus = AttendanceStatus.fromValue(defaultValue);
+      final result = statusByShiftOrDefault(
+        shift: shift,
+        attendanceDate: date,
+        attendanceStart: start,
+        attendanceEnd: end,
+        defaultStatus: defaultStatus,
+        shiftStart: data.shiftStart,
+        shiftName: data.shiftName,
+      );
+      final current = (pa['status'] as num?)?.toInt();
+      if (result.status == AttendanceStatus.excused && current == defaultValue) {
+        updates.add(ShiftAssignmentUpdate(
+          id: pa['id'].toString(),
+          status: result.status,
+          notes: result.note,
+        ));
+      }
+    }
+    return updates;
+  }
+
   /// Parse time string (HH:mm) to DateTime on a specific date
   static DateTime? parseTimeOnDate(String time, DateTime date) => _at(date, time);
 

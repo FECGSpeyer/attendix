@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/constants/enums.dart';
+import '../../core/utils/string_utils.dart';
 import 'base_repository.dart';
 import '../../l10n/l10n.dart';
 
@@ -72,7 +73,9 @@ class AdminRepository extends BaseRepository with TenantAwareRepository {
           .from('tenantUsers')
           .select('userId, role')
           .eq('tenantId', currentTenantId)
-          .eq('email', email)
+          // DB_REVIEW_REST (M7): case-insensitive (Ionic `ilike`), no wildcards.
+          .ilike('email', StringUtils.exactIlikePattern(email))
+          .limit(1) // case variants may exist from older exact-match inserts
           .maybeSingle();
       if (existing != null) {
         if (existing['role'] == Role.admin.value) {

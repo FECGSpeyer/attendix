@@ -541,7 +541,7 @@ class _TodayChildren extends StatelessWidget {
                 style: TextStyle(color: EventListUtils.statusColor(c.status), fontSize: 13)),
           ),
           title: Text(c.childFirstName),
-          subtitle: (c.notes?.isNotEmpty ?? false) ? Text('Notiz: ${c.notes}') : null,
+          subtitle: (c.notes?.isNotEmpty ?? false) ? Text(context.l10n.signoutNoteChip(c.notes!)) : null,
           trailing: EventPill.status(c.status),
         ),
     ]);

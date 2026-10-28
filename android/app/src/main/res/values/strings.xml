@@ -2,4 +2,14 @@
 <resources>
     <!-- PUSH: name of the "default" notification channel (Android settings) -->
     <string name="push_channel_name">Benachrichtigungen</string>
+    <!-- DB_REVIEW_REST (F2): Ablaufplan notification (Ionic LivePlanNotifications.java) -->
+    <string name="live_plan_channel_name">Laufender Ablaufplan</string>
+    <string name="live_plan_channel_description">Zeigt den aktuellen Punkt eines laufenden Ablaufplans</string>
+    <string name="live_plan_next">Danach: %1$s · %2$s</string>
+    <string name="live_plan_next_end">Danach: Ende · %1$s</string>
+    <string name="live_plan_starts_at">Ablauf beginnt um %1$s</string>
+    <string name="live_plan_first">Als Erstes: %1$s</string>
+    <string name="live_plan_ended">Ablaufplan beendet</string>
+    <string name="live_plan_position">Punkt %1$d von %2$d</string>
+    <string name="live_plan_until">Bis %1$s</string>
 </resources>

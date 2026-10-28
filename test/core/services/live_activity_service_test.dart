@@ -105,17 +105,18 @@ void main() {
 
   tearDown(() => messenger.setMockMethodCallHandler(channel, null));
 
-  LiveActivityService service(FakeHost host, {int? now, bool platform = true}) => LiveActivityService(
+  LiveActivityService service(FakeHost host, {int? now, bool platform = true, bool android = false}) => LiveActivityService(
         host: host,
         channel: channel,
         platformSupported: platform,
+        isAndroid: android,
         now: () => now ?? planStart + 20 * min,
         listenToLifecycle: false,
       );
 
   List<String> methods() => calls.map((c) => c.method).toList();
 
-  test('no-op without the native platform (web / Android)', () async {
+  test('no-op without the native platform (web)', () async {
     final s = service(FakeHost(attendances: [attendance()]), platform: false);
     await s.attach();
     await s.init();
@@ -259,5 +260,28 @@ void main() {
     await s.onTenantReady(7, hasTenantUser: true);
     s.dispose();
     expect(host.opened, [8]);
+  });
+  // DB_REVIEW_REST (F2): Android live plan notification (Ionic LiveActivityPlugin.java)
+  group('Android', () {
+    test('registers the "android" start token instead of configure', () async {
+      final host = FakeHost(attendances: [attendance()]);
+      final s = service(host, android: true);
+      await s.init();
+      s.stopLoop();
+      expect(methods(), isNot(contains('configure')));
+      expect(host.saved.first,
+          {'userId': 'user-1', 'kind': 'start', 'token': 'android', 'attendanceId': 0, 'planKey': ''});
+      expect(methods(), contains('start'));
+    });
+
+    test('gets the raw state (no iOS "Beginnt in" rewrite)', () async {
+      final s = service(FakeHost(attendances: [attendance()]), now: planStart - 5 * min, android: true);
+      await s.init();
+      s.stopLoop();
+      final start = calls.firstWhere((c) => c.method == 'start');
+      final state = (start.arguments as Map)['state'] as Map;
+      expect(state['phase'], 'before');
+      expect(state['title'], 'Einspielen');
+    });
   });
 }

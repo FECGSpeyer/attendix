@@ -65,11 +65,24 @@
 
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.ready.then(registration => {
-        // Check for updates on page load
-        registration.update();
-
-        // Check for updates periodically (every 30 seconds)
-        setInterval(() => registration.update(), 30000);
+        // DB_REVIEW_REST (F6): like Ionic app.component checkForUpdates –
+        // an update check is a CDN request, so don't poll every 30 s. Check
+        // on start, when the tab becomes visible again (at most every
+        // 5 minutes) and hourly while visible. Hidden tabs never check.
+        var UPDATE_CHECK_INTERVAL_MS = 60 * 60 * 1000;
+        var UPDATE_CHECK_MIN_GAP_MS = 5 * 60 * 1000;
+        var lastUpdateCheck = 0;
+        var checkForUpdate = function () {
+          if (document.visibilityState !== 'visible') return;
+          if (Date.now() - lastUpdateCheck < UPDATE_CHECK_MIN_GAP_MS) return;
+          lastUpdateCheck = Date.now();
+          registration.update().catch(function (err) {
+            console.warn('[SW] update check failed', err);
+          });
+        };
+        document.addEventListener('visibilitychange', checkForUpdate);
+        setInterval(checkForUpdate, UPDATE_CHECK_INTERVAL_MS);
+        checkForUpdate();
 
         // Listen for new service worker waiting
         registration.addEventListener('updatefound', () => {

@@ -113,6 +113,19 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
   void initState() {
     super.initState();
     _loadViewOptions();
+    // DB_REVIEW_REST (F3): Ionic list.page – admins/responsibles lift
+    // expired pauses (paused_until reached) when opening the list (no cron).
+    WidgetsBinding.instance.addPostFrameCallback((_) => _checkAndUnpause());
+  }
+
+  Future<void> _checkAndUnpause() async {
+    if (!mounted) return;
+    final role = ref.read(currentRoleProvider);
+    if (!(role.isAdmin || role.isResponsible)) return;
+    final repo = ref.read(playerRepositoryWithTenantProvider);
+    if (!repo.hasTenantId) return;
+    await repo.checkAndUnpausePlayers();
+    if (mounted) ref.invalidate(realtimePlayersProvider);
   }
 
   @override

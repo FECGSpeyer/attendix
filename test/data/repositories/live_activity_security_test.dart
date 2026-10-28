@@ -57,8 +57,11 @@ void main() {
       expect(service, isNot(contains('ref.read(liveActivityRepositoryProvider)')));
     });
 
-    test('is a no-op outside the native iOS app', () {
-      expect(service, contains('!kIsWeb && defaultTargetPlatform == TargetPlatform.iOS'));
+    // DB_REVIEW_REST (F2): native iOS and Android (live plan notification).
+    test('is a no-op outside the native iOS / Android app', () {
+      expect(service, contains('return !kIsWeb &&'));
+      expect(service, contains('defaultTargetPlatform == TargetPlatform.iOS'));
+      expect(service, contains('defaultTargetPlatform == TargetPlatform.android'));
     });
 
     test('channel name matches the Swift plugin', () {

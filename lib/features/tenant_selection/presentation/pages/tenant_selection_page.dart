@@ -16,6 +16,8 @@ import '../../../../core/utils/demo_guard.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/providers/dashboard_providers.dart'; // DASHBOARD
 import '../../../../core/providers/push_providers.dart'; // PUSH
+import '../../../../core/providers/legal_providers.dart'; // DB_REVIEW_REST
+import '../../../../data/repositories/base_repository.dart'; // DB_REVIEW_REST
 
 /// Tenant selection page
 class TenantSelectionPage extends ConsumerStatefulWidget {
@@ -281,6 +283,45 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
     }
   }
 
+  /// DB_REVIEW_REST (F4): Ionic register.page confirmDeleteAccount.
+  Future<void> _confirmDeleteAccount() async {
+    final l10n = context.l10n;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(l10n.registerDeleteHeader),
+        content: Text(l10n.registerDeleteMessage),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: Text(l10n.commonCancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            style: TextButton.styleFrom(foregroundColor: AppColors.danger),
+            child: Text(l10n.registerDeleteConfirm),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+
+    ToastHelper.showInfo(context, l10n.registerDeleteRunning);
+    try {
+      await ref.read(accountNotifierProvider.notifier).deleteAccount();
+      if (!mounted) return;
+      ToastHelper.showSuccess(context, l10n.registerDeleteDone);
+      context.go('/login');
+    } catch (e) {
+      if (!mounted) return;
+      final message = e is RepositoryException ? e.message : e.toString();
+      ToastHelper.showError(
+        context,
+        l10n.registerDeleteFailed(message.isEmpty ? l10n.commonUnknown : message),
+      );
+    }
+  }
+
   Future<void> _logout() async {
     final supabase = ref.read(supabaseClientProvider);
     await ref.read(currentTenantProvider.notifier).clearTenant();
@@ -309,7 +350,7 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
         leading: IconButton(
           tooltip: context.l10n.tenantSelectFlutterNewTenant,
           icon: const Icon(Icons.add),
-          onPressed: () => context.push('/register'),
+          onPressed: () => context.push('/tenants/new'),
         ),
         title: Text(count == null
             ? context.l10n.orgTenants
@@ -393,9 +434,22 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
                     ),
                     const SizedBox(height: AppDimensions.paddingXL),
                     OutlinedButton.icon(
-                      onPressed: () => context.push('/register'),
+                      onPressed: () => context.push('/tenants/new'),
                       icon: const Icon(Icons.add),
                       label: Text(context.l10n.registerTitle),
+                    ),
+                    // DB_REVIEW_REST (F4): Ionic register.page menu – a user
+                    // without any instance (new or rejected) can still
+                    // delete the account (App Store requirement).
+                    const SizedBox(height: AppDimensions.paddingM),
+                    TextButton.icon(
+                      key: const ValueKey('tenant-empty-delete-account'),
+                      onPressed: _confirmDeleteAccount,
+                      style: TextButton.styleFrom(
+                        foregroundColor: AppColors.danger,
+                      ),
+                      icon: const Icon(Icons.delete_outline),
+                      label: Text(context.l10n.registerDeleteAccount),
                     ),
                   ],
                 ),
