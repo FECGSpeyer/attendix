@@ -47,20 +47,30 @@ class AbsenceInput {
 Future<AbsenceInput?> showAbsenceInputSheet(
   BuildContext context, {
   bool showLongAbsenceHint = false,
+  bool forOther = false,
 }) {
   return showModalBottomSheet<AbsenceInput>(
     context: context,
     isScrollControlled: true,
     useSafeArea: true,
     builder: (context) =>
-        _AbsenceInputSheet(showLongAbsenceHint: showLongAbsenceHint),
+        _AbsenceInputSheet(
+          showLongAbsenceHint: showLongAbsenceHint,
+          forOther: forOther,
+        ),
   );
 }
 
 class _AbsenceInputSheet extends StatefulWidget {
-  const _AbsenceInputSheet({required this.showLongAbsenceHint});
+  const _AbsenceInputSheet({
+    required this.showLongAbsenceHint,
+    this.forOther = false,
+  });
 
   final bool showLongAbsenceHint;
+
+  /// Admin enters the absence for another person (Ionic person.longAbsenceHint)
+  final bool forOther;
 
   @override
   State<_AbsenceInputSheet> createState() => _AbsenceInputSheetState();
@@ -175,12 +185,17 @@ class _AbsenceInputSheetState extends State<_AbsenceInputSheet> {
               onTap: _pickRange,
             ),
             if (widget.showLongAbsenceHint)
-              const Padding(
-                padding: EdgeInsets.all(AppDimensions.paddingM),
+              Padding(
+                padding: const EdgeInsets.all(AppDimensions.paddingM),
                 child: Text(
-                  'Für längere Abwesenheiten empfiehlt sich die Pausieren-Funktion, '
-                  'damit du nicht in neuen Terminen erscheinst.',
-                  style: TextStyle(color: AppColors.warning),
+                  widget.forOther
+                      ? 'Für längere Abwesenheiten empfiehlt sich die '
+                          'Pausieren-Funktion, damit die Person nicht in neuen '
+                          'Terminen erscheint.'
+                      : 'Für längere Abwesenheiten empfiehlt sich die '
+                          'Pausieren-Funktion, damit du nicht in neuen Terminen '
+                          'erscheinst.',
+                  style: const TextStyle(color: AppColors.warning),
                 ),
               ),
             Padding(
@@ -205,10 +220,12 @@ Future<bool> addPlannedAbsenceFlow(
   WidgetRef ref, {
   required int personId,
   bool showLongAbsenceHint = false,
+  bool forOther = false,
 }) async {
   final input = await showAbsenceInputSheet(
     context,
     showLongAbsenceHint: showLongAbsenceHint,
+    forOther: forOther,
   );
   if (input == null || !context.mounted) return false;
 
@@ -351,6 +368,8 @@ class _PlannedAbsencesAccordionState
                 context,
                 ref,
                 personId: widget.personId,
+                showLongAbsenceHint: true,
+                forOther: true,
               ),
             ),
           ],

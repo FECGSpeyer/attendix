@@ -142,7 +142,8 @@ class _BulkEditPageState extends ConsumerState<BulkEditPage> {
     final repo = ref.read(playerRepositoryWithTenantProvider);
     final changed = _changedCount;
     try {
-      final toSync = <Person>[];
+      // (old person, updated person) pairs for the attendance sync
+      final toSync = <(Person, Person)>[];
       await Future.wait(_players
           .where((p) => _original[p.id] != _edited[p.id])
           .map((p) async {
@@ -150,7 +151,7 @@ class _BulkEditPageState extends ConsumerState<BulkEditPage> {
         if (!field.isExtra) {
           await repo.updatePlayerFields(p.id!, {field.key: value});
           if (field.key == 'instrument') {
-            toSync.add(p.copyWith(instrument: value as int?));
+            toSync.add((p, p.copyWith(instrument: value as int?)));
           }
         } else {
           final merged = <String, dynamic>{
@@ -158,14 +159,20 @@ class _BulkEditPageState extends ConsumerState<BulkEditPage> {
             field.extraField!.id: value,
           };
           await repo.updatePlayerFields(p.id!, {'additional_fields': merged});
+          toSync.add((p, p.copyWith(additionalFields: merged)));
         }
       }));
 
-      // A group change can make the person relevant for further upcoming
+      // PEOPLE2: Ionic bulk-edit → syncPlayerWithUpcomingAttendances: a group
+      // or filter field change adds/removes the person in upcoming
       // attendances. Best effort: the edit itself already succeeded.
-      for (final p in toSync) {
+      for (final (old, updated) in toSync) {
         try {
-          await repo.addToUpcomingAttendances(p);
+          await repo.syncPlayerWithUpcomingAttendances(
+            updated,
+            oldInstrument: old.instrument,
+            oldAdditionalFields: old.additionalFields,
+          );
         } catch (_) {}
       }
 

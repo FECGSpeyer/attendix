@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/constants/enums.dart';
 import '../models/person/person.dart';
 import '../models/instrument/instrument.dart';
+import '../../core/utils/person_matcher.dart';
 import '../../core/utils/text_utils.dart';
 import 'base_repository.dart';
 
@@ -421,8 +422,18 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
     }
   }
 
-  /// Pause a player
-  Future<void> pausePlayer(Person player, String? pausedUntil, String reason) async {
+  /// Pause a player.
+  ///
+  /// [pauseFrom] (YYYY-MM-DD, optional, Ionic "Pausiert ab"): when set, the
+  /// player is removed from every attendance on/after that date — including
+  /// past ones — instead of only from upcoming attendances.
+  /// Returns the updated history (reused for pausing in other tenants).
+  Future<List<Map<String, dynamic>>> pausePlayer(
+    Person player,
+    String? pausedUntil,
+    String reason, {
+    String? pauseFrom,
+  }) async {
     if (player.id == null) {
       throw RepositoryException(
         message: 'Player ID is required for pause',
@@ -451,8 +462,9 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
           .eq('id', player.id!)
           .eq('tenantId', currentTenantId);
 
-      // Remove from upcoming attendances
-      await removeFromUpcomingAttendances(player.id!);
+      // Remove from upcoming attendances (or from all since pauseFrom)
+      await removeFromUpcomingAttendances(player.id!, from: pauseFrom);
+      return history;
     } catch (e, stack) {
       handleError(e, stack, 'pausePlayer');
       rethrow;
@@ -497,17 +509,24 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
     }
   }
 
-  /// Remove player from all upcoming (future) attendances
-  Future<void> removeFromUpcomingAttendances(int playerId) async {
+  /// Remove player from all upcoming (future) attendances.
+  ///
+  /// With [from] (YYYY-MM-DD) the player is removed from every attendance
+  /// on/after that date, including past ones (Ionic
+  /// removePlayerFromUpcomingAttendances with `from`).
+  Future<void> removeFromUpcomingAttendances(int playerId, {String? from}) async {
     try {
       final today = DateTime.now().toIso8601String().substring(0, 10);
+      final since = (from != null && from.length >= 10)
+          ? from.substring(0, 10)
+          : today;
 
-      // Get upcoming attendance IDs for this tenant
+      // Get attendance IDs (since the given date) for this tenant
       final upcomingAttendances = await supabase
           .from('attendance')
           .select('id')
           .eq('tenantId', currentTenantId)
-          .gte('date', today);
+          .gte('date', since);
 
       final attendanceIds = (upcomingAttendances as List)
           .map((a) => a['id']) // Can be int or String (UUID)
@@ -1183,4 +1202,438 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
 
     return results;
   }
+
+  // ---------------------------------------------------------------------
+  // PEOPLE2: reorder, duplicate detection and merge (Ionic person/list page)
+  // ---------------------------------------------------------------------
+
+  /// Persist the manual order of players inside their group
+  /// (Ionic list.page savePlayerOrder). [orders] maps player id → sort_order.
+  Future<void> savePlayerOrder(Map<int, int> orders) async {
+    try {
+      for (final entry in orders.entries) {
+        await supabase
+            .from('player')
+            .update({'sort_order': entry.value})
+            .eq('id', entry.key)
+            .eq('tenantId', currentTenantId);
+      }
+    } catch (e, stack) {
+      handleError(e, stack, 'savePlayerOrder');
+      rethrow;
+    }
+  }
+
+  /// Same-tenant, account-less, confirmed players with a similar name —
+  /// candidates for merging a pending registration into
+  /// (Ionic player.service getPossibleDuplicatesInTenant).
+  Future<List<RankedMatch<Person>>> getPossibleDuplicatesInTenant(
+    String firstName,
+    String lastName, {
+    required int excludeId,
+  }) async {
+    String clean(String v) {
+      final c = v.replaceAll(RegExp(r'[,*%():\\]+'), '').trim();
+      return c.length > 50 ? c.substring(0, 50) : c;
+    }
+
+    final safeFirst = clean(firstName);
+    final safeLast = clean(lastName);
+    if (safeFirst.isEmpty && safeLast.isEmpty) return [];
+    final orParts = <String>[
+      if (safeFirst.isNotEmpty) 'firstName.ilike.$safeFirst%',
+      if (safeLast.isNotEmpty) 'lastName.ilike.$safeLast%',
+    ];
+
+    try {
+      final response = await supabase
+          .from('player')
+          .select('*')
+          .eq('tenantId', currentTenantId)
+          .eq('pending', false)
+          .isFilter('appId', null)
+          .neq('id', excludeId)
+          .or(orParts.join(','))
+          .limit(500);
+
+      final candidates = (response as List)
+          .map((e) => Person.fromJson(e as Map<String, dynamic>))
+          .toList();
+      return rankCandidates<Person>(
+        PersonLike(firstName: firstName, lastName: lastName),
+        candidates,
+        (p) => PersonLike(
+          firstName: p.firstName,
+          lastName: p.lastName,
+          email: p.email,
+          appId: p.appId,
+          globalPersonId: p.globalPersonId,
+          birthday: p.birthday,
+        ),
+        threshold: 0.65,
+      );
+    } catch (e, stack) {
+      handleError(e, stack, 'getPossibleDuplicatesInTenant');
+      rethrow;
+    }
+  }
+
+  /// Merge a pending self-registration into an existing account-less person
+  /// (Ionic db.service mergePendingPlayerIntoExisting): attendance and
+  /// absence history move onto [target] (target wins on conflicts), the
+  /// applicant's account is adopted and the pending row is deleted.
+  Future<void> mergePendingPlayerIntoExisting(
+    Person pending,
+    Person target, {
+    required String approverEmail,
+  }) async {
+    final pendingId = pending.id;
+    final targetId = target.id;
+    if (pendingId == null || targetId == null) {
+      throw RepositoryException(
+        message: 'Player IDs are required for merge',
+        operation: 'mergePendingPlayerIntoExisting',
+      );
+    }
+
+    try {
+      // Both rows must belong to the current tenant (person_attendances has
+      // no tenant column, so verify ownership before re-pointing rows).
+      final owned = await supabase
+          .from('player')
+          .select('id')
+          .inFilter('id', [pendingId, targetId])
+          .eq('tenantId', currentTenantId);
+      if ((owned as List).length != 2) {
+        throw RepositoryException(
+          message: 'Personen gehören nicht zur aktuellen Instanz',
+          operation: 'mergePendingPlayerIntoExisting',
+        );
+      }
+
+      await _reassignPersonAttendances(pendingId, targetId);
+
+      // player_absences uses snake_case tenant_id
+      await supabase
+          .from('player_absences')
+          .update({'person_id': targetId})
+          .eq('person_id', pendingId)
+          .eq('tenant_id', currentTenantId);
+
+      final history = [
+        ...target.history.map((e) => e.toJson()),
+        {
+          'date': DateTime.now().toIso8601String(),
+          'text': 'Zusammengeführt mit Registrierung von '
+              '${pending.firstName} ${pending.lastName} '
+              '(genehmigt von $approverEmail)',
+          'type': PlayerHistoryType.approved.value,
+        },
+      ];
+
+      await supabase
+          .from('player')
+          .update({
+            'appId': pending.appId,
+            'email': target.email ?? pending.email,
+            'self_register': true,
+            'history': history,
+            'pending': false,
+          })
+          .eq('id', targetId)
+          .eq('tenantId', currentTenantId);
+
+      if (pending.appId != null) {
+        await supabase
+            .from('tenantUsers')
+            .update({'role': Role.player.value})
+            .eq('userId', pending.appId!)
+            .eq('tenantId', currentTenantId);
+      }
+
+      // Best-effort: notification + attendance backfill must not block cleanup
+      final email = target.email ?? pending.email;
+      if (email != null && email.isNotEmpty) {
+        try {
+          await supabase.functions.invoke('attendix-user', body: {
+            'action': 'approve',
+            'email': email,
+            'name': target.firstName,
+            'role': 'Mitglied',
+            'roleId': Role.player.value,
+            'tenantId': currentTenantId,
+          });
+        } catch (_) {}
+      }
+      try {
+        await addToUpcomingAttendances(target);
+      } catch (_) {}
+
+      await supabase
+          .from('player')
+          .delete()
+          .eq('id', pendingId)
+          .eq('tenantId', currentTenantId);
+    } catch (e, stack) {
+      handleError(e, stack, 'mergePendingPlayerIntoExisting');
+      rethrow;
+    }
+  }
+
+  /// Attendance types of the current tenant with parsed filter data.
+  Future<List<_TypeFilter>> _loadTypeFilters() async {
+    final types = await supabase
+        .from('attendance_types')
+        .select('id, relevant_groups, default_status, additional_fields_filter')
+        .eq('tenant_id', currentTenantId);
+    return (types as List).map((t) {
+      final raw = t['default_status'];
+      final status = raw is int
+          ? raw
+          : AttendanceStatus.values
+              .firstWhere((s) => s.name == raw,
+                  orElse: () => AttendanceStatus.neutral)
+              .value;
+      final groups = t['relevant_groups'];
+      final filter = t['additional_fields_filter'];
+      return _TypeFilter(
+        id: t['id'],
+        relevantGroups: groups is List ? groups.whereType<int>().toList() : const [],
+        defaultStatus: status,
+        filterKey: filter is Map ? filter['key']?.toString() : null,
+        filterOption: filter is Map ? filter['option'] : null,
+      );
+    }).toList();
+  }
+
+  /// Default values of the tenant's extra fields (for filter matching).
+  Future<Map<String, dynamic>> _loadExtraFieldDefaults() async {
+    final row = await supabase
+        .from('tenants')
+        .select('additional_fields')
+        .eq('id', currentTenantId)
+        .maybeSingle();
+    final fields = row?['additional_fields'];
+    return {
+      if (fields is List)
+        for (final f in fields.whereType<Map>())
+          f['id'].toString(): f['defaultValue'],
+    };
+  }
+
+  bool _matchesType(
+    Person player,
+    _TypeFilter type,
+    Map<String, dynamic> defaults, {
+    bool checkPaused = true,
+  }) {
+    if (checkPaused && player.paused) return false;
+    if (type.relevantGroups.isNotEmpty &&
+        !type.relevantGroups.contains(player.instrument)) {
+      return false;
+    }
+    final key = type.filterKey;
+    if (key != null && type.filterOption != null && defaults.containsKey(key)) {
+      final value = player.additionalFields?[key] ?? defaults[key];
+      if (value != type.filterOption) return false;
+    }
+    return true;
+  }
+
+  /// Ionic db.addPlayerToAttendancesByDate: add the person to every
+  /// attendance after their join date (or today when unknown) that matches
+  /// the type's group / extra field filters.
+  Future<void> addPlayerToAttendancesByDate(Person player) async {
+    final playerId = player.id;
+    if (playerId == null) return;
+    try {
+      final joined = player.joined != null && player.joined!.length >= 10
+          ? player.joined!.substring(0, 10)
+          : DateTime.now().toIso8601String().substring(0, 10);
+      final attendances = await supabase
+          .from('attendance')
+          .select('id, type_id')
+          .eq('tenantId', currentTenantId)
+          .gt('date', joined);
+      if ((attendances as List).isEmpty) return;
+
+      final types = await _loadTypeFilters();
+      final defaults = await _loadExtraFieldDefaults();
+      final existing = await _existingAttendanceIds(playerId);
+
+      final rows = <Map<String, dynamic>>[];
+      for (final att in attendances) {
+        if (existing.contains(att['id']?.toString())) continue;
+        final type = types.where((t) => t.id == att['type_id']).firstOrNull;
+        if (type == null) continue;
+        if (!_matchesType(player, type, defaults, checkPaused: false)) continue;
+        rows.add({
+          'attendance_id': att['id'],
+          'person_id': playerId,
+          'notes': '',
+          'status': type.defaultStatus,
+        });
+      }
+      if (rows.isNotEmpty) {
+        await supabase.from('person_attendances').insert(rows);
+      }
+    } catch (e, stack) {
+      handleError(e, stack, 'addPlayerToAttendancesByDate');
+      rethrow;
+    }
+  }
+
+  /// Ionic db.syncPlayerWithUpcomingAttendances: after a group or
+  /// filter-relevant extra field change, add the person to upcoming
+  /// attendances they now match and remove them from ones they no longer
+  /// match. Only attendance types with a filter are touched.
+  Future<void> syncPlayerWithUpcomingAttendances(
+    Person player, {
+    int? oldInstrument,
+    Map<String, dynamic>? oldAdditionalFields,
+  }) async {
+    final playerId = player.id;
+    if (playerId == null) return;
+    try {
+      final types = (await _loadTypeFilters())
+          .where((t) =>
+              t.relevantGroups.isNotEmpty ||
+              (t.filterKey != null && t.filterOption != null))
+          .toList();
+      if (types.isEmpty) return;
+
+      final defaults = await _loadExtraFieldDefaults();
+      final groupChanged = oldInstrument != player.instrument;
+      final changedFields = <String>{};
+      for (final t in types) {
+        final key = t.filterKey;
+        if (key == null || !defaults.containsKey(key)) continue;
+        final oldValue = oldAdditionalFields?[key] ?? defaults[key];
+        final newValue = player.additionalFields?[key] ?? defaults[key];
+        if (oldValue != newValue) changedFields.add(key);
+      }
+      if (!groupChanged && changedFields.isEmpty) return;
+
+      final today = DateTime.now().toIso8601String().substring(0, 10);
+      final upcoming = await supabase
+          .from('attendance')
+          .select('id, type_id')
+          .eq('tenantId', currentTenantId)
+          .gte('date', today);
+      if ((upcoming as List).isEmpty) return;
+
+      final existing = await _existingAttendanceIds(playerId);
+      final toAdd = <Map<String, dynamic>>[];
+      final toRemove = <dynamic>[];
+      for (final att in upcoming) {
+        final type = types.where((t) => t.id == att['type_id']).firstOrNull;
+        if (type == null) continue;
+        final affectsGroup = groupChanged && type.relevantGroups.isNotEmpty;
+        final affectsField =
+            type.filterKey != null && changedFields.contains(type.filterKey);
+        if (!affectsGroup && !affectsField) continue;
+
+        final should = _matchesType(player, type, defaults);
+        final isIn = existing.contains(att['id']?.toString());
+        if (should && !isIn) {
+          toAdd.add({
+            'attendance_id': att['id'],
+            'person_id': playerId,
+            'notes': '',
+            'status': type.defaultStatus,
+          });
+        } else if (!should && isIn) {
+          toRemove.add(att['id']);
+        }
+      }
+      if (toAdd.isNotEmpty) {
+        await supabase.from('person_attendances').insert(toAdd);
+      }
+      if (toRemove.isNotEmpty) {
+        await supabase
+            .from('person_attendances')
+            .delete()
+            .eq('person_id', playerId)
+            .inFilter('attendance_id', toRemove);
+      }
+    } catch (e, stack) {
+      handleError(e, stack, 'syncPlayerWithUpcomingAttendances');
+      rethrow;
+    }
+  }
+
+  /// Attendance ids (as strings) the player already has rows for, restricted
+  /// to the current tenant via the attendance join.
+  Future<Set<String>> _existingAttendanceIds(int playerId) async {
+    final rows = await supabase
+        .from('person_attendances')
+        .select('attendance_id, attendance:attendance_id!inner(tenantId)')
+        .eq('person_id', playerId)
+        .eq('attendance.tenantId', currentTenantId);
+    return (rows as List)
+        .map((r) => r['attendance_id']?.toString())
+        .whereType<String>()
+        .toSet();
+  }
+
+  /// Move person_attendances from [fromId] to [toId]; rows that would
+  /// conflict (same attendance) are deleted, the target's row wins.
+  /// Callers must verify both ids belong to the current tenant
+  /// (person_attendances has no tenant column).
+  Future<void> _reassignPersonAttendances(int fromId, int toId) async {
+    final fromRows = await supabase
+        .from('person_attendances')
+        .select('id, attendance_id')
+        .eq('person_id', fromId);
+    if ((fromRows as List).isEmpty) return;
+
+    final toRows = await supabase
+        .from('person_attendances')
+        .select('attendance_id')
+        .eq('person_id', toId);
+    final toAttendanceIds =
+        (toRows as List).map((r) => r['attendance_id']?.toString()).toSet();
+
+    final conflicting = <dynamic>[];
+    final movable = <dynamic>[];
+    for (final r in fromRows) {
+      if (toAttendanceIds.contains(r['attendance_id']?.toString())) {
+        conflicting.add(r['id']);
+      } else {
+        movable.add(r['id']);
+      }
+    }
+
+    if (conflicting.isNotEmpty) {
+      await supabase
+          .from('person_attendances')
+          .delete()
+          .inFilter('id', conflicting)
+          .eq('person_id', fromId);
+    }
+    if (movable.isNotEmpty) {
+      await supabase
+          .from('person_attendances')
+          .update({'person_id': toId})
+          .inFilter('id', movable)
+          .eq('person_id', fromId);
+    }
+  }
+}
+
+/// Filter data of an attendance type (relevant groups + extra field filter).
+class _TypeFilter {
+  const _TypeFilter({
+    required this.id,
+    required this.relevantGroups,
+    required this.defaultStatus,
+    this.filterKey,
+    this.filterOption,
+  });
+
+  final dynamic id;
+  final List<int> relevantGroups;
+  final int defaultStatus;
+  final String? filterKey;
+  final dynamic filterOption;
 }

@@ -9,6 +9,7 @@ import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/duty_providers.dart';
 import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/player_providers.dart';
+import '../../../../core/providers/profile_providers.dart';
 import '../../../../core/providers/realtime_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -23,6 +24,9 @@ import '../../../../data/repositories/cross_tenant_person_repository.dart';
 import '../widgets/person_match_suggestions.dart';
 import 'package:uuid/uuid.dart';
 import '../widgets/handover_sheet.dart';
+import '../widgets/pause_person_sheet.dart';
+import '../widgets/duplicate_candidates_card.dart';
+import '../../people_list_utils.dart';
 import '../widgets/person_detail/person_detail.dart';
 import '../../../../core/services/tracking/tracking_event.dart';
 import '../../../../core/services/tracking/tracking_service.dart';
@@ -364,11 +368,70 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
   Role? _userRole;
   bool _isLoadingRole = false;
 
+  // PEOPLE2: organisation person fields (tenant_group_person_fields)
+  Set<String> _orgFieldIds = {};
+  int? _orgId;
+
   @override
   void initState() {
     super.initState();
     _initDraft();
     _loadUserRole();
+    _loadSharedFieldValues();
+  }
+
+  /// Ionic getOrganisationPersonKey
+  String? get _personKey {
+    final g = widget.person.globalPersonId;
+    if (g != null && g.isNotEmpty) return 'global:$g';
+    final a = widget.person.appId;
+    if (a != null && a.isNotEmpty) return 'app:$a';
+    return null;
+  }
+
+  /// Ionic getSharedPersonFieldValues: organisation field values are shared
+  /// across the tenants of an organisation.
+  Future<void> _loadSharedFieldValues() async {
+    try {
+      final fields = await ref.read(personExtraFieldsProvider.future);
+      _orgFieldIds = fields
+          .where((f) => f.isOrganisationField)
+          .map((f) => f.id)
+          .toSet();
+      if (_orgFieldIds.isEmpty) return;
+      final repo = ref.read(profileRepositoryWithTenantProvider);
+      _orgId = await repo.getOrganisationId();
+      final key = _personKey;
+      if (_orgId == null || key == null) return;
+      final shared = await repo.getSharedFieldValues(_orgId!, key);
+      if (!mounted || shared.isEmpty) return;
+      setState(() {
+        for (final e in shared.entries) {
+          if (_orgFieldIds.contains(e.key) &&
+              !_changedFields.contains('additionalFields.${e.key}')) {
+            _additionalFieldValues[e.key] = e.value;
+          }
+        }
+      });
+    } catch (_) {
+      // Optional — tenant values are shown instead
+    }
+  }
+
+  /// Ionic continueUpdatingPlayer: organisation field values go to
+  /// tenant_group_person_fields, the rest stays in additional_fields.
+  Future<Map<String, dynamic>> _splitAndSaveSharedFields() async {
+    final local = Map<String, dynamic>.from(_additionalFieldValues);
+    final key = _personKey;
+    if (_orgFieldIds.isEmpty || _orgId == null || key == null) return local;
+    final shared = <String, dynamic>{
+      for (final id in _orgFieldIds)
+        if (local.containsKey(id)) id: local.remove(id),
+    };
+    await ref
+        .read(profileRepositoryWithTenantProvider)
+        .updateSharedFieldValues(_orgId!, key, shared);
+    return local;
   }
 
   void _initDraft() {
@@ -482,6 +545,8 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
         _draft = _draft.copyWith(testResult: value as String?);
       } else if (field == 'email') {
         _draft = _draft.copyWith(email: value as String?);
+      } else if (field == 'otherOrchestras') {
+        _draft = _draft.copyWith(otherOrchestras: value as List<String>?);
       } else if (field.startsWith('additionalFields.')) {
         final fieldId = field.substring('additionalFields.'.length);
         _additionalFieldValues[fieldId] = value;
@@ -619,6 +684,8 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
         throw Exception('Person-ID oder Tenant-ID fehlt');
       }
 
+      final localAdditional = await _splitAndSaveSharedFields();
+
       await repo.updatePlayerFields(personId, {
         'firstName': _draft.firstName,
         'lastName': _draft.lastName,
@@ -638,7 +705,8 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
         'parent_id': _selectedParentId,
         'correctBirthday': true,
         'history': updatedHistory,
-        'additional_fields': _additionalFieldValues.isNotEmpty ? _additionalFieldValues : null,
+        'additional_fields': localAdditional.isNotEmpty ? localAdditional : null,
+        'otherOrchestras': _draft.otherOrchestras,
         'range': _draft.range?.isEmpty ?? true ? null : _draft.range,
         'instruments': _draft.instruments?.isEmpty ?? true ? null : _draft.instruments,
         'examinee': _draft.examinee,
@@ -654,6 +722,18 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
         assignVoiceLeaderRole: assignVoiceLeaderRole,
       );
       await _propagateSharedIdentityFields();
+
+      // Ionic syncPlayerWithUpcomingAttendancesByAdditionalFields
+      try {
+        await repo.syncPlayerWithUpcomingAttendances(
+          person.copyWith(
+            instrument: _selectedGroupId,
+            additionalFields: _additionalFieldValues,
+          ),
+          oldInstrument: _selectedGroupId,
+          oldAdditionalFields: person.additionalFields,
+        );
+      } catch (_) {}
 
       ref.invalidate(personProvider(widget.personId));
       ref.invalidate(realtimePlayersProvider);
@@ -990,166 +1070,21 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
   }
 
   Future<void> _showPauseDialog() async {
-    final reasonController = TextEditingController();
-    DateTime? pauseUntil;
-
-    try {
-      final result = await showModalBottomSheet<Map<String, dynamic>>(
-        context: context,
-        isScrollControlled: true,
-        useSafeArea: true,
-        builder: (context) => StatefulBuilder(
-          builder: (context, setDialogState) => Padding(
-            padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).viewInsets.bottom,
-              left: AppDimensions.paddingL,
-              right: AppDimensions.paddingL,
-              top: AppDimensions.paddingL,
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Row(
-                  children: [
-                    const Icon(Icons.pause_circle, color: AppColors.warning, size: 28),
-                    const SizedBox(width: AppDimensions.paddingS),
-                    Expanded(
-                      child: Text(
-                        '${widget.person.firstName} pausieren',
-                        style: Theme.of(context).textTheme.titleLarge,
-                      ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.close),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: AppDimensions.paddingL),
-                TextField(
-                  controller: reasonController,
-                  decoration: const InputDecoration(
-                    labelText: 'Grund *',
-                    hintText: 'Warum wird pausiert?',
-                    border: OutlineInputBorder(),
-                  ),
-                  maxLines: 2,
-                  autofocus: true,
-                ),
-                const SizedBox(height: AppDimensions.paddingM),
-                ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  leading: const Icon(Icons.calendar_today, color: AppColors.primary),
-                  title: const Text('Pausiert bis (optional)'),
-                  subtitle: Text(
-                    pauseUntil != null
-                        ? DateFormat('dd.MM.yyyy').format(pauseUntil!)
-                        : 'Kein Enddatum',
-                    style: TextStyle(
-                      color: pauseUntil != null ? AppColors.primary : AppColors.medium,
-                    ),
-                  ),
-                  trailing: pauseUntil != null
-                      ? IconButton(
-                          icon: const Icon(Icons.clear, color: AppColors.medium),
-                          onPressed: () => setDialogState(() => pauseUntil = null),
-                        )
-                      : null,
-                  onTap: () async {
-                    final date = await showDatePicker(
-                      context: context,
-                      initialDate: DateTime.now().add(const Duration(days: 30)),
-                      firstDate: DateTime.now(),
-                      lastDate: DateTime.now().add(const Duration(days: 365)),
-                    );
-                    if (date != null) {
-                      setDialogState(() => pauseUntil = date);
-                    }
-                  },
-                ),
-                const SizedBox(height: AppDimensions.paddingL),
-                FilledButton.icon(
-                  onPressed: () {
-                    if (reasonController.text.isEmpty) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Bitte Grund angeben')),
-                      );
-                      return;
-                    }
-                    Navigator.pop(context, {
-                      'reason': reasonController.text,
-                      'until': pauseUntil?.toIso8601String(),
-                    });
-                  },
-                  icon: const Icon(Icons.pause),
-                  label: const Text('Pausieren'),
-                  style: FilledButton.styleFrom(
-                    backgroundColor: AppColors.warning,
-                    padding: const EdgeInsets.symmetric(vertical: AppDimensions.paddingM),
-                  ),
-                ),
-                const SizedBox(height: AppDimensions.paddingL),
-              ],
-            ),
-          ),
-        ),
-      );
-
-      if (result != null && mounted) {
-        await _pausePerson(result['reason'], result['until']);
-      }
-    } finally {
-      reasonController.dispose();
-    }
-  }
-
-  Future<void> _pausePerson(String reason, String? until) async {
     final currentRole = ref.read(currentRoleProvider);
     if (!currentRole.canEdit) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Keine Berechtigung zum Pausieren'),
-            backgroundColor: AppColors.danger,
-          ),
-        );
-      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Keine Berechtigung zum Pausieren'),
+          backgroundColor: AppColors.danger,
+        ),
+      );
       return;
     }
-
-    final repository = ref.read(playerRepositoryWithTenantProvider);
-    final person = widget.person;
-
-    String reasonText = reason;
-    if (until != null) {
-      final parsedDate = DateTime.tryParse(until);
-      final dateStr = parsedDate != null
-          ? DateFormat('dd.MM.yyyy').format(parsedDate)
-          : until;
-      reasonText = '$reason (bis $dateStr)';
-    }
-
-    try {
-      await repository.pausePlayer(person, until, reasonText);
-
+    // PEOPLE2: Ionic confirmPause incl. "Pausiert ab" and other instances
+    final paused = await pausePersonFlow(context, ref, widget.person);
+    if (paused) {
       ref.invalidate(personProvider(widget.personId));
       ref.invalidate(realtimePlayersProvider);
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Person wurde pausiert'),
-            backgroundColor: AppColors.success,
-          ),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Fehler: $e'), backgroundColor: AppColors.danger),
-        );
-      }
     }
   }
 
@@ -1171,7 +1106,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     final person = widget.person;
 
     try {
-      await repository.unpausePlayer(person);
+      await repository.unpausePlayer(person, historyText: 'Person wieder aktiv');
 
       ref.invalidate(personProvider(widget.personId));
       ref.invalidate(realtimePlayersProvider);
@@ -1507,7 +1442,8 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
           mainAxisSize: MainAxisSize.min,
           children: [
             if (widget.person.appId == null &&
-                ref.read(currentRoleProvider).isConductor)
+                (ref.read(currentRoleProvider).isAdmin ||
+                    ref.read(currentRoleProvider).isResponsible))
               ListTile(
                 leading: const Icon(Icons.person_pin, color: AppColors.primary),
                 title: const Text('Meinen Benutzer zuweisen'),
@@ -1832,9 +1768,10 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
 
     try {
       final authService = ref.read(authServiceProvider);
+      final mainGroupId = (await ref.read(mainGroupProvider.future))?.id;
       await authService.createAccountForPerson(
         person: person,
-        role: Role.player,
+        role: accountRoleForGroup(person.instrument, mainGroupId),
         tenantId: tenant!.id!,
       );
 
@@ -1905,6 +1842,17 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
             // Status badges
             PersonStatusBadges(person: person),
 
+            // PEOPLE2: duplicate candidates + merge for pending registrations
+            if (widget.person.pending && canEdit)
+              DuplicateCandidatesCard(
+                person: widget.person,
+                onMerged: () {
+                  ref.invalidate(realtimePlayersProvider);
+                  ref.invalidate(pendingPlayersProvider);
+                  if (mounted) context.pop();
+                },
+              ),
+
             // Late Warning Card
             LateWarningCard(
               person: person,
@@ -1940,6 +1888,8 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
               isLeader: _isLeader,
               hasTeacher: _hasTeacher,
               additionalFieldValues: _additionalFieldValues,
+              isMainGroup: _isMainGroupSelected,
+              otherOrchestras: _draft.otherOrchestras,
             ),
 
             // Account Accordion

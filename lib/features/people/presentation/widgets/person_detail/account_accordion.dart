@@ -10,6 +10,17 @@ import '../../../../../data/models/person/person.dart';
 import '../../../../../shared/widgets/editable/editable_info_row.dart';
 import '../../../../../shared/widgets/sheets/field_editor_sheet.dart';
 
+/// Ionic person.accountHelp
+const accountHelpText =
+    'Sobald die E-Mail Adresse eingeben wurde, kann ein Account erstellt '
+    'werden. Der Benutzer wird per E-Mail über die Erstellung benachrichtigt. '
+    'Das Passwort wird automatisch generiert und an die E-Mail Adresse gesendet.';
+
+/// Ionic person.existingUserHint
+const existingUserHintText =
+    'Falls schon ein Benutzer für die E-Mail Adresse existiert, wird dieser '
+    'automatisch der Instanz zugewiesen.';
+
 /// Accordion section displaying account information.
 class AccountAccordion extends ConsumerWidget {
   const AccountAccordion({
@@ -174,6 +185,17 @@ class AccountAccordion extends ConsumerWidget {
             ),
         ],
 
+        // PEOPLE2: Ionic account help (person.accountHelp / existingUserHint)
+        if (canEdit)
+          Align(
+            alignment: Alignment.centerLeft,
+            child: TextButton.icon(
+              onPressed: () => _showHelp(context),
+              icon: const Icon(Icons.help_outline, size: 18),
+              label: const Text('Hilfe'),
+            ),
+          ),
+
         if (person.appId == null && person.email == null)
           Container(
             padding: const EdgeInsets.all(AppDimensions.paddingM),
@@ -261,6 +283,32 @@ class AccountAccordion extends ConsumerWidget {
               : null,
         ),
       ],
+    );
+  }
+
+  void _showHelp(BuildContext context) {
+    showDialog<void>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Hilfe'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (person.appId == null) ...[
+              const Text(accountHelpText),
+              const SizedBox(height: AppDimensions.paddingM),
+            ],
+            const Text(existingUserHintText),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Schließen'),
+          ),
+        ],
+      ),
     );
   }
 

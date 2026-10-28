@@ -4,7 +4,9 @@ import 'package:intl/intl.dart';
 
 import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/providers/group_providers.dart';
+import '../../../../../core/providers/church_providers.dart';
 import '../../../../../core/providers/parent_providers.dart';
+import '../../../../../core/providers/profile_providers.dart';
 import '../../../../../core/providers/shift_providers.dart';
 import '../../../../../core/providers/teacher_providers.dart';
 import '../../../../../core/providers/tenant_providers.dart';
@@ -17,6 +19,28 @@ import '../../../../../data/models/tenant/tenant.dart';
 import '../../../../../shared/widgets/editable/editable_info_row.dart';
 import '../../../../../shared/widgets/sheets/field_editor_sheet.dart';
 import '../../../../../shared/widgets/sheets/selection_sheet.dart';
+import '../church_picker_sheet.dart';
+
+/// Ionic VoS "Andere Orchester" options
+const otherOrchestraOptions = ['SoS', 'GoS', 'BoS'];
+
+/// Person extra fields: organisation fields first, then tenant fields not
+/// overridden by the organisation (Ionic getPersonExtraFields).
+List<ExtraField> personExtraFields(WidgetRef ref, Tenant? tenant) {
+  final all = ref.watch(personExtraFieldsProvider).valueOrNull;
+  if (all == null) return tenant?.additionalFields ?? const [];
+  return all
+      .map((f) => ExtraField(
+            id: f.id,
+            name: f.name,
+            type: f.type,
+            defaultValue: f.defaultValue,
+            options: f.options,
+            visibleToPlayers: f.visibleToPlayers,
+            editableByPlayers: f.editableByPlayers,
+          ))
+      .toList();
+}
 
 /// Callback type for person field changes.
 typedef PersonFieldChanged = void Function(String field, dynamic value);
@@ -39,6 +63,8 @@ class AllgemeinAccordion extends ConsumerWidget {
     this.isLeader,
     this.hasTeacher,
     this.additionalFieldValues,
+    this.isMainGroup = false,
+    this.otherOrchestras,
   });
 
   final Person person;
@@ -58,11 +84,20 @@ class AllgemeinAccordion extends ConsumerWidget {
   final bool? hasTeacher;
   final Map<String, dynamic>? additionalFieldValues;
 
+  /// Selected group is the main group (Ionic isMainGroup)
+  final bool isMainGroup;
+
+  /// Draft "Andere Orchester" (VoS)
+  final List<String>? otherOrchestras;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final tenant = ref.watch(currentTenantProvider);
-    final extraFields = tenant?.additionalFields ?? [];
+    final extraFields = personExtraFields(ref, tenant);
     final additionalFields = additionalFieldValues ?? person.additionalFields ?? {};
+    final isGeneral = tenant?.type == 'general';
+    final isChoir = tenant?.type == 'choir';
+    final isVoS = tenant?.shortName == 'VoS';
 
     return Card(
       margin: const EdgeInsets.symmetric(
@@ -115,8 +150,11 @@ class AllgemeinAccordion extends ConsumerWidget {
                       highlightColor: AppColors.warning,
                     ),
 
-                  // Plays Since
-                  if (person.playsSince != null || canEdit)
+                  // Plays Since (Ionic: !general && !choir && !mainGroup)
+                  if ((person.playsSince != null || canEdit) &&
+                      !isGeneral &&
+                      !isChoir &&
+                      !isMainGroup)
                     _buildDateField(
                       context,
                       icon: Icons.music_note,
@@ -135,17 +173,19 @@ class AllgemeinAccordion extends ConsumerWidget {
                       fieldKey: 'joined',
                     ),
 
-                  // Is Leader toggle
-                  _buildIsLeaderField(context),
+                  // Is Leader toggle (Ionic: !general && !mainGroup)
+                  if (!isGeneral && !isMainGroup) _buildIsLeaderField(context),
 
-                  // Has Teacher toggle
-                  _buildHasTeacherField(context, ref),
+                  // Has Teacher toggle (Ionic: maintainTeachers && !mainGroup)
+                  if ((tenant?.maintainTeachers ?? false) && !isMainGroup)
+                    _buildHasTeacherField(context, ref),
 
                   // Shift Plan
                   _buildShiftPlanField(context, ref),
 
-                  // Parent
-                  _buildParentField(context, ref),
+                  // Parent (Ionic: parents enabled && !mainGroup)
+                  if ((tenant?.parents ?? false) && !isMainGroup)
+                    _buildParentField(context, ref),
 
                   // Other Exercise
                   if (person.otherExercise != null || canEdit)
@@ -158,6 +198,13 @@ class AllgemeinAccordion extends ConsumerWidget {
                   // Choir-specific: Instrumente
                   if (tenant != null && tenant.type == 'choir')
                     _buildInstrumentsField(context),
+
+                  // VoS: Andere Orchester
+                  if (isVoS && !isMainGroup &&
+                      (canEdit ||
+                          (otherOrchestras ?? person.otherOrchestras ?? [])
+                              .isNotEmpty))
+                    _buildOtherOrchestrasField(context),
 
                   // Non-general: Prüfling (examinee)
                   if (tenant != null && tenant.type != 'general')
@@ -614,6 +661,58 @@ class AllgemeinAccordion extends ConsumerWidget {
     );
   }
 
+  Widget _buildOtherOrchestrasField(BuildContext context) {
+    final selected = otherOrchestras ?? person.otherOrchestras ?? const [];
+    return EditableInfoRow(
+      icon: Icons.groups_2_outlined,
+      label: 'Andere Orchester',
+      value: selected.isEmpty ? 'Keine' : selected.join(', '),
+      editable: canEdit,
+      onEdit: () async {
+        final current = Set<String>.from(selected);
+        final result = await showDialog<List<String>>(
+          context: context,
+          builder: (ctx) => StatefulBuilder(
+            builder: (ctx, setState) => AlertDialog(
+              title: const Text('Andere Orchester'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  for (final o in otherOrchestraOptions)
+                    CheckboxListTile(
+                      title: Text(o),
+                      value: current.contains(o),
+                      onChanged: (v) => setState(() {
+                        if (v == true) {
+                          current.add(o);
+                        } else {
+                          current.remove(o);
+                        }
+                      }),
+                    ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx),
+                  child: const Text('Abbrechen'),
+                ),
+                FilledButton(
+                  onPressed: () => Navigator.pop(
+                    ctx,
+                    otherOrchestraOptions.where(current.contains).toList(),
+                  ),
+                  child: const Text('Übernehmen'),
+                ),
+              ],
+            ),
+          ),
+        );
+        if (result != null) onFieldChanged('otherOrchestras', result);
+      },
+    );
+  }
+
   Widget _buildExtraField(
     BuildContext context,
     ExtraField field,
@@ -622,6 +721,31 @@ class AllgemeinAccordion extends ConsumerWidget {
     final value = additionalFields[field.id];
     final displayValue = _formatExtraFieldValue(field, value);
     final icon = _getExtraFieldIcon(field.type);
+
+    if (field.type == 'bfecg_church') {
+      return Consumer(
+        builder: (context, ref, _) {
+          final churches = ref.watch(churchesProvider).valueOrNull ?? const [];
+          return EditableInfoRow(
+            icon: Icons.church_outlined,
+            label: field.name,
+            value: churchLabel(value, churches),
+            editable: canEdit,
+            onEdit: () async {
+              final selected = await showChurchPickerSheet(
+                context,
+                title: field.name,
+                churches: churches,
+                selectedId: value?.toString(),
+              );
+              if (selected != null) {
+                onFieldChanged('additionalFields.${field.id}', selected);
+              }
+            },
+          );
+        },
+      );
+    }
 
     if (field.type == 'boolean') {
       return EditableToggleRow(
