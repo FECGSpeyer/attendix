@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/constants/enums.dart';
+import '../../../core/providers/dashboard_providers.dart';
 import '../../../core/providers/debug_providers.dart';
 import '../../../core/providers/tenant_providers.dart';
 import '../../../data/models/tenant/tenant.dart';
@@ -35,8 +36,22 @@ class MainShell extends ConsumerWidget {
   final Widget child;
 
   /// Build navigation destinations based on user role and tenant settings
-  List<_NavDestination> _buildDestinations(Role role, Tenant? tenant) {
+  List<_NavDestination> _buildDestinations(
+    Role role,
+    Tenant? tenant, {
+    bool showDashboardTab = false,
+  }) {
     final List<_NavDestination> destinations = [];
+
+    // DASHBOARD: first tab for Admin/Responsible when enabled (Ionic tabs.page.html)
+    if (showDashboardTab) {
+      destinations.add(const _NavDestination(
+        route: '/home-dashboard',
+        label: 'Dashboard',
+        icon: Icons.grid_view_outlined,
+        selectedIcon: Icons.grid_view,
+      ));
+    }
 
     // Conductors (Admin, Responsible, Viewer): People tab
     if (role.canSeePeopleTab) {
@@ -127,7 +142,11 @@ class MainShell extends ConsumerWidget {
     final tenant = ref.watch(currentTenantProvider);
 
     // Build destinations based on role
-    final destinations = _buildDestinations(role, tenant);
+    final destinations = _buildDestinations(
+      role,
+      tenant,
+      showDashboardTab: ref.watch(showDashboardTabProvider), // DASHBOARD
+    );
     final selectedIndex = _getSelectedIndex(context, destinations);
 
     // Safety check: ensure we have at least one destination

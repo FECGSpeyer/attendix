@@ -16,3 +16,6 @@ export 'viewer_repository.dart';
 export 'parent_repository.dart';
 export 'church_repository.dart';
 export 'usage_events_repository.dart';
+// DASHBOARD
+export 'dashboard_repository.dart';
+export 'administration_repository.dart';

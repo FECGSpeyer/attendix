@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/config/supabase_config.dart';
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/providers/dashboard_providers.dart';
 import '../../../../core/providers/debug_providers.dart';
 import '../../../../core/providers/player_providers.dart';
 import '../../../../core/providers/pwa_providers.dart';
@@ -272,6 +273,31 @@ class SettingsPage extends ConsumerWidget {
                   subtitle: 'Direkt per Telegram kontaktieren',
                   onTap: () => _openTelegramSupport(context),
                 ),
+              ],
+            ),
+            const SizedBox(height: AppDimensions.paddingM),
+          ],
+
+          // DASHBOARD: Dashboard konfigurieren (Admin/Responsible) +
+          // Administration (super developer only)
+          if (role.isAdmin ||
+              role.isResponsible ||
+              ref.watch(isSuperDeveloperProvider)) ...[
+            _SettingsSection(
+              title: 'Dashboard',
+              children: [
+                if (role.isAdmin || role.isResponsible)
+                  _SettingsTile(
+                    leading: const _SettingsIcon(icon: Icons.grid_view),
+                    title: 'Dashboard konfigurieren',
+                    onTap: () => context.push('/settings/dashboard'),
+                  ),
+                if (ref.watch(isSuperDeveloperProvider))
+                  _SettingsTile(
+                    leading: const _SettingsIcon(icon: Icons.construction),
+                    title: 'Administration',
+                    onTap: () => context.push('/settings/administration'),
+                  ),
               ],
             ),
             const SizedBox(height: AppDimensions.paddingM),
