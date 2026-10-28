@@ -6239,11 +6239,89 @@ abstract class AppLocalizations {
   /// **'E-Mail oder Passwort ist falsch. Falls du kein Passwort gesetzt hast, kannst du dich stattdessen mit einem Code per E-Mail anmelden.'**
   String get loginFailedMessage;
 
+  /// login.flutter.accessDenied
+  ///
+  /// In de, this message translates to:
+  /// **'Der Zugriff wurde verweigert.'**
+  String get loginFlutterAccessDenied;
+
+  /// login.flutter.backToLogin
+  ///
+  /// In de, this message translates to:
+  /// **'Zurück zum Login'**
+  String get loginFlutterBackToLogin;
+
+  /// login.flutter.checkSpam
+  ///
+  /// In de, this message translates to:
+  /// **'Bitte prüfe auch deinen Spam-Ordner.'**
+  String get loginFlutterCheckSpam;
+
+  /// login.flutter.confirmEmail
+  ///
+  /// In de, this message translates to:
+  /// **'E-Mail bestätigen'**
+  String get loginFlutterConfirmEmail;
+
+  /// login.flutter.confirmEmailSent
+  ///
+  /// In de, this message translates to:
+  /// **'Wir haben dir eine E-Mail an {email} gesendet. Bitte klicke auf den Link darin, um deinen Account zu aktivieren.'**
+  String loginFlutterConfirmEmailSent(Object email);
+
   /// login.flutter.enterPassword
   ///
   /// In de, this message translates to:
   /// **'Bitte Passwort eingeben'**
   String get loginFlutterEnterPassword;
+
+  /// login.flutter.haveAccount
+  ///
+  /// In de, this message translates to:
+  /// **'Bereits ein Konto?'**
+  String get loginFlutterHaveAccount;
+
+  /// login.flutter.linkFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Der Link konnte nicht verarbeitet werden.'**
+  String get loginFlutterLinkFailed;
+
+  /// login.flutter.newPassword
+  ///
+  /// In de, this message translates to:
+  /// **'Neues Passwort'**
+  String get loginFlutterNewPassword;
+
+  /// login.flutter.otherEmail
+  ///
+  /// In de, this message translates to:
+  /// **'Andere E-Mail verwenden'**
+  String get loginFlutterOtherEmail;
+
+  /// login.flutter.resetIntro
+  ///
+  /// In de, this message translates to:
+  /// **'Gib deine E-Mail-Adresse ein und wir senden dir einen Link zum Zurücksetzen.'**
+  String get loginFlutterResetIntro;
+
+  /// login.flutter.resetLinkSent
+  ///
+  /// In de, this message translates to:
+  /// **'Wir haben einen Link zum Zurücksetzen deines Passworts an {email} gesendet.'**
+  String loginFlutterResetLinkSent(Object email);
+
+  /// login.flutter.sendLink
+  ///
+  /// In de, this message translates to:
+  /// **'Link senden'**
+  String get loginFlutterSendLink;
+
+  /// login.flutter.toLogin
+  ///
+  /// In de, this message translates to:
+  /// **'Zum Login'**
+  String get loginFlutterToLogin;
 
   /// login.flutter.unexpectedError
   ///
@@ -10888,6 +10966,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Bitte füllen Sie alle Felder aus.'**
   String get registerFillAllToast;
+
+  /// register.flutter.mainGroupInfo
+  ///
+  /// In de, this message translates to:
+  /// **'Was ist die Hauptgruppe?'**
+  String get registerFlutterMainGroupInfo;
 
   /// register.fullName
   ///
@@ -16337,6 +16421,90 @@ abstract class AppLocalizations {
   /// **'Vorname'**
   String get tenantRegisterFirstName;
 
+  /// tenantRegister.flutter.createChurchFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Erstellen der Gemeinde.'**
+  String get tenantRegisterFlutterCreateChurchFailed;
+
+  /// tenantRegister.flutter.groupRequired
+  ///
+  /// In de, this message translates to:
+  /// **'Gruppe ist erforderlich'**
+  String get tenantRegisterFlutterGroupRequired;
+
+  /// tenantRegister.flutter.invalidLink
+  ///
+  /// In de, this message translates to:
+  /// **'Ungültiger Registrierungslink.'**
+  String get tenantRegisterFlutterInvalidLink;
+
+  /// tenantRegister.flutter.loadChurchesFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Laden der Gemeinden'**
+  String get tenantRegisterFlutterLoadChurchesFailed;
+
+  /// tenantRegister.flutter.loadError
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Laden: {error}'**
+  String tenantRegisterFlutterLoadError(Object error);
+
+  /// tenantRegister.flutter.loadGroupsFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Laden der Gruppen'**
+  String get tenantRegisterFlutterLoadGroupsFailed;
+
+  /// tenantRegister.flutter.maxSize
+  ///
+  /// In de, this message translates to:
+  /// **'Max. 15 MB'**
+  String get tenantRegisterFlutterMaxSize;
+
+  /// tenantRegister.flutter.minFiveChars
+  ///
+  /// In de, this message translates to:
+  /// **'Mindestens 5 Zeichen'**
+  String get tenantRegisterFlutterMinFiveChars;
+
+  /// tenantRegister.flutter.registerFailedRetry
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Registrieren. Bitte versuche es erneut.'**
+  String get tenantRegisterFlutterRegisterFailedRetry;
+
+  /// tenantRegister.flutter.registrationAt
+  ///
+  /// In de, this message translates to:
+  /// **'Registrierung bei'**
+  String get tenantRegisterFlutterRegistrationAt;
+
+  /// tenantRegister.flutter.signInExisting
+  ///
+  /// In de, this message translates to:
+  /// **'Melde dich mit deinem bestehenden Account an.'**
+  String get tenantRegisterFlutterSignInExisting;
+
+  /// tenantRegister.flutter.termsAccept
+  ///
+  /// In de, this message translates to:
+  /// **' akzeptieren'**
+  String get tenantRegisterFlutterTermsAccept;
+
+  /// tenantRegister.flutter.termsLink
+  ///
+  /// In de, this message translates to:
+  /// **'Nutzungsbedingungen und Datenschutzerklärung'**
+  String get tenantRegisterFlutterTermsLink;
+
+  /// tenantRegister.flutter.toLogin
+  ///
+  /// In de, this message translates to:
+  /// **'Zur Anmeldung'**
+  String get tenantRegisterFlutterToLogin;
+
   /// tenantRegister.haveAccount
   ///
   /// In de, this message translates to:
@@ -16510,6 +16678,120 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Registrierung'**
   String get tenantRegisterTitle;
+
+  /// tenantSelect.flutter.createdAt
+  ///
+  /// In de, this message translates to:
+  /// **'Erstellt am'**
+  String get tenantSelectFlutterCreatedAt;
+
+  /// tenantSelect.flutter.dangerZone
+  ///
+  /// In de, this message translates to:
+  /// **'Gefahrenzone'**
+  String get tenantSelectFlutterDangerZone;
+
+  /// tenantSelect.flutter.deleteAllData
+  ///
+  /// In de, this message translates to:
+  /// **'Alle Daten dieser Instanz werden unwiderruflich gelöscht.'**
+  String get tenantSelectFlutterDeleteAllData;
+
+  /// tenantSelect.flutter.deleteTenant
+  ///
+  /// In de, this message translates to:
+  /// **'Instanz löschen'**
+  String get tenantSelectFlutterDeleteTenant;
+
+  /// tenantSelect.flutter.deleteTenantHint
+  ///
+  /// In de, this message translates to:
+  /// **'Diese Gruppe unwiderruflich löschen'**
+  String get tenantSelectFlutterDeleteTenantHint;
+
+  /// tenantSelect.flutter.deleted
+  ///
+  /// In de, this message translates to:
+  /// **'Instanz gelöscht'**
+  String get tenantSelectFlutterDeleted;
+
+  /// tenantSelect.flutter.detailsLoadFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Laden der Instanz-Details'**
+  String get tenantSelectFlutterDetailsLoadFailed;
+
+  /// tenantSelect.flutter.detailsTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Instanz-Details'**
+  String get tenantSelectFlutterDetailsTitle;
+
+  /// tenantSelect.flutter.emptyText
+  ///
+  /// In de, this message translates to:
+  /// **'Du bist noch keiner Instanz zugeordnet. Bitte wende dich an einen Administrator oder lege eine neue Instanz an.'**
+  String get tenantSelectFlutterEmptyText;
+
+  /// tenantSelect.flutter.emptyTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Instanzen'**
+  String get tenantSelectFlutterEmptyTitle;
+
+  /// tenantSelect.flutter.enterNameToConfirm
+  ///
+  /// In de, this message translates to:
+  /// **'Bitte gib den Namen der Instanz ein, um das Löschen zu bestätigen:'**
+  String get tenantSelectFlutterEnterNameToConfirm;
+
+  /// tenantSelect.flutter.info
+  ///
+  /// In de, this message translates to:
+  /// **'Informationen'**
+  String get tenantSelectFlutterInfo;
+
+  /// tenantSelect.flutter.loadFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Laden'**
+  String get tenantSelectFlutterLoadFailed;
+
+  /// tenantSelect.flutter.newTenant
+  ///
+  /// In de, this message translates to:
+  /// **'Neue Instanz'**
+  String get tenantSelectFlutterNewTenant;
+
+  /// tenantSelect.flutter.noRole
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Rolle'**
+  String get tenantSelectFlutterNoRole;
+
+  /// tenantSelect.flutter.notFound
+  ///
+  /// In de, this message translates to:
+  /// **'Instanz nicht gefunden'**
+  String get tenantSelectFlutterNotFound;
+
+  /// tenantSelect.flutter.region
+  ///
+  /// In de, this message translates to:
+  /// **'Region'**
+  String get tenantSelectFlutterRegion;
+
+  /// tenantSelect.flutter.tenantSelection
+  ///
+  /// In de, this message translates to:
+  /// **'Instanzauswahl'**
+  String get tenantSelectFlutterTenantSelection;
+
+  /// tenantSelect.flutter.yourRole
+  ///
+  /// In de, this message translates to:
+  /// **'Deine Rolle'**
+  String get tenantSelectFlutterYourRole;
 
   /// terms.acceptAfter
   ///

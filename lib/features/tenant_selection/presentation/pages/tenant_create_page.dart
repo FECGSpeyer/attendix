@@ -7,6 +7,7 @@ import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/repositories/tenant_create_repository.dart';
+import '../../../../l10n/l10n.dart';
 
 /// AUTH: Ionic "Neue Instanz anlegen" (register.page) – 3 steps:
 /// 1. Art der Gruppe, 2. Name + Kürzel, 3. Hauptgruppe, then summary.
@@ -37,37 +38,41 @@ class TenantTypeTexts {
   final String mainGroupPlaceholder;
   final IconData icon;
 
-  static const Map<String, TenantTypeTexts> byType = {
-    'general': TenantTypeTexts(
-      option: 'Allgemeine Gruppe',
-      label: 'Allgemeine Gruppe',
-      help: 'Ideal für Vereine, Teams oder sonstige Gruppen.',
-      namePlaceholder: 'z.B. Sportverein Musterstadt',
-      shortPlaceholder: 'z.B. SVM',
-      mainGroupPlaceholder: 'z.B. Vorstand',
-      icon: Icons.groups_outlined,
-    ),
-    'choir': TenantTypeTexts(
-      option: 'Chor / Gesangsgruppe',
-      label: 'Chor',
-      help: 'Optimiert für Chöre mit Stimmgruppen (Sopran, Alt, Tenor, Bass).',
-      namePlaceholder: 'z.B. Gospelchor Harmonie',
-      shortPlaceholder: 'z.B. GCH',
-      mainGroupPlaceholder: 'z.B. Chorleitung',
-      icon: Icons.mic_none,
-    ),
-    'orchestra': TenantTypeTexts(
-      option: 'Orchester / Musikgruppe',
-      label: 'Orchester',
-      help: 'Optimiert für Orchester/Musikgruppen mit Instrumentengruppen.',
-      namePlaceholder: 'z.B. Stadtorchester Musterstadt',
-      shortPlaceholder: 'z.B. SOM',
-      mainGroupPlaceholder: 'z.B. Dirigenten',
-      icon: Icons.music_note_outlined,
-    ),
-  };
+  /// Ionic register.type*/help*/placeholder.* texts per tenant type.
+  static Map<String, TenantTypeTexts> byType(AppLocalizations l10n) => {
+        'general': TenantTypeTexts(
+          option: l10n.registerTypeGeneral,
+          label: l10n.registerTypeGeneral,
+          help: l10n.registerHelpGeneral,
+          namePlaceholder: l10n.registerPlaceholderGeneralName,
+          shortPlaceholder: l10n.registerPlaceholderGeneralShort,
+          mainGroupPlaceholder: l10n.registerPlaceholderGeneralMain,
+          icon: Icons.groups_outlined,
+        ),
+        'choir': TenantTypeTexts(
+          option: l10n.registerTypeChoirOption,
+          label: l10n.registerTypeChoir,
+          help: l10n.registerHelpChoir,
+          namePlaceholder: l10n.registerPlaceholderChoirName,
+          shortPlaceholder: l10n.registerPlaceholderChoirShort,
+          mainGroupPlaceholder: l10n.registerPlaceholderChoirMain,
+          icon: Icons.mic_none,
+        ),
+        'orchestra': TenantTypeTexts(
+          option: l10n.registerTypeOrchestraOption,
+          label: l10n.registerTypeOrchestra,
+          help: l10n.registerHelpOrchestra,
+          namePlaceholder: l10n.registerPlaceholderOrchestraName,
+          shortPlaceholder: l10n.registerPlaceholderOrchestraShort,
+          mainGroupPlaceholder: l10n.registerPlaceholderOrchestraMain,
+          icon: Icons.music_note_outlined,
+        ),
+      };
 
-  static TenantTypeTexts of(String type) => byType[type] ?? byType['general']!;
+  static TenantTypeTexts of(String type, AppLocalizations l10n) {
+    final all = byType(l10n);
+    return all[type] ?? all['general']!;
+  }
 }
 
 class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
@@ -106,12 +111,13 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
 
   @override
   Widget build(BuildContext context) {
-    final texts = TenantTypeTexts.of(_selectedType);
+    final l10n = context.l10n;
+    final texts = TenantTypeTexts.of(_selectedType, l10n);
     final theme = Theme.of(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Neue Instanz anlegen'),
+        title: Text(l10n.registerTitle),
         leading: IconButton(
           icon: const Icon(Icons.close),
           onPressed: _isLoading
@@ -134,25 +140,14 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
                       const Icon(Icons.rocket_launch_outlined,
                           color: AppColors.primary),
                       const SizedBox(width: AppDimensions.paddingS),
-                      Text('Willkommen!',
+                      Text(l10n.registerWelcome,
                           style: theme.textTheme.titleMedium
                               ?.copyWith(fontWeight: FontWeight.bold)),
                     ],
                   ),
                   const SizedBox(height: AppDimensions.paddingS),
-                  Text.rich(
-                    TextSpan(children: [
-                      const TextSpan(text: 'Eine '),
-                      const TextSpan(
-                        text: 'Instanz',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      const TextSpan(
-                        text:
-                            ' ist dein eigener Bereich für dein Orchester, deinen Chor oder deine Gruppe. Hier verwaltest du Mitglieder, Termine und Anwesenheiten.',
-                      ),
-                    ]),
-                  ),
+                  // Ionic register.introHtml (inline <strong>).
+                  Text.rich(TextSpan(children: _inlineHtml(l10n.registerIntroHtml))),
                 ],
               ),
             ),
@@ -167,14 +162,12 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Du möchtest einer bestehenden Instanz beitreten?',
+                    l10n.registerJoinHeading,
                     style: theme.textTheme.bodyMedium
                         ?.copyWith(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 4),
-                  const Text(
-                    'Bitte deinen Verantwortlichen, dich per E-Mail einzuladen. Eine neue Instanz ist nur nötig, wenn du selbst Administrator sein möchtest.',
-                  ),
+                  Text(l10n.registerJoinText),
                 ],
               ),
             ),
@@ -182,7 +175,7 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
           const SizedBox(height: AppDimensions.paddingM),
 
           // Step 1
-          _StepHeader(badge: '1', title: 'Art der Gruppe wählen'),
+          _StepHeader(badge: '1', title: l10n.registerStep1),
           Card(
             child: Padding(
               padding: const EdgeInsets.all(AppDimensions.paddingM),
@@ -192,12 +185,12 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
                   DropdownButtonFormField<String>(
                     value: _selectedType,
                     isExpanded: true,
-                    decoration: const InputDecoration(
-                      labelText: 'Gruppentyp',
-                      helperText: 'Was beschreibt deine Gruppe am besten?',
+                    decoration: InputDecoration(
+                      labelText: l10n.registerGroupType,
+                      helperText: l10n.registerGroupTypeQuestion,
                     ),
                     items: [
-                      for (final entry in TenantTypeTexts.byType.entries)
+                      for (final entry in TenantTypeTexts.byType(l10n).entries)
                         DropdownMenuItem(
                           value: entry.key,
                           child: Row(
@@ -231,7 +224,7 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
           const SizedBox(height: AppDimensions.paddingM),
 
           // Step 2
-          _StepHeader(badge: '2', title: 'Name deiner Instanz'),
+          _StepHeader(badge: '2', title: l10n.registerStep2),
           Card(
             child: Padding(
               padding: const EdgeInsets.all(AppDimensions.paddingM),
@@ -242,9 +235,9 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
                     maxLength: 50,
                     textCapitalization: TextCapitalization.words,
                     decoration: InputDecoration(
-                      labelText: 'Vollständiger Name',
+                      labelText: l10n.registerFullName,
                       hintText: texts.namePlaceholder,
-                      helperText: 'Der Name wird in der App angezeigt',
+                      helperText: l10n.registerFullNameHelper,
                     ),
                   ),
                   const SizedBox(height: AppDimensions.paddingS),
@@ -252,9 +245,9 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
                     controller: _shortNameController,
                     textCapitalization: TextCapitalization.sentences,
                     decoration: InputDecoration(
-                      labelText: 'Instanz-Kürzel',
+                      labelText: l10n.registerShortName,
                       hintText: texts.shortPlaceholder,
-                      helperText: 'Wird für kompakte Darstellungen verwendet',
+                      helperText: l10n.registerShortNameHelper,
                     ),
                   ),
                 ],
@@ -266,9 +259,9 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
           // Step 3
           _StepHeader(
             badge: '3',
-            title: 'Hauptgruppe festlegen',
+            title: l10n.registerStep3,
             trailing: IconButton(
-              tooltip: 'Was ist die Hauptgruppe?',
+              tooltip: l10n.registerFlutterMainGroupInfo,
               icon: const Icon(Icons.help_outline),
               onPressed: _showMainGroupInfo,
             ),
@@ -280,9 +273,9 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
                 controller: _mainGroupNameController,
                 textCapitalization: TextCapitalization.sentences,
                 decoration: InputDecoration(
-                  labelText: 'Name der Hauptgruppe',
+                  labelText: l10n.registerMainGroupName,
                   hintText: texts.mainGroupPlaceholder,
-                  helperText: 'z.B. Leitung, Dirigenten, Vorstand',
+                  helperText: l10n.registerMainGroupHelper,
                 ),
               ),
             ),
@@ -290,7 +283,7 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
           const SizedBox(height: AppDimensions.paddingM),
 
           // Summary
-          _StepHeader(badge: '✓', title: 'Zusammenfassung'),
+          _StepHeader(badge: '✓', title: l10n.registerSummary),
           Card(
             child: Padding(
               padding: const EdgeInsets.all(AppDimensions.paddingM),
@@ -306,9 +299,9 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
                           TextSpan(text: ' ($_shortName)'),
                         ])),
                         const SizedBox(height: 4),
-                        Text('Typ: ${texts.label}'),
+                        Text(l10n.registerSummaryType(texts.label)),
                         const SizedBox(height: 4),
-                        Text('Hauptgruppe: $_mainGroupName'),
+                        Text(l10n.registerSummaryMainGroup(_mainGroupName)),
                       ],
                     )
                   : Column(
@@ -319,17 +312,16 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
                             Icon(Icons.error_outline,
                                 color: AppColors.medium, size: 18),
                             const SizedBox(width: AppDimensions.paddingS),
-                            const Expanded(
-                              child: Text(
-                                  'Bitte fülle alle Felder aus, um fortzufahren.'),
+                            Expanded(
+                              child: Text(l10n.registerFillAll),
                             ),
                           ],
                         ),
                         const SizedBox(height: 4),
                         for (final missing in [
-                          if (_longName.isEmpty) 'Name der Instanz fehlt',
-                          if (_shortName.isEmpty) 'Instanz-Kürzel fehlt',
-                          if (_mainGroupName.isEmpty) 'Name der Hauptgruppe fehlt',
+                          if (_longName.isEmpty) l10n.registerMissingName,
+                          if (_shortName.isEmpty) l10n.registerMissingShortName,
+                          if (_mainGroupName.isEmpty) l10n.registerMissingMainGroup,
                         ])
                           Padding(
                             padding: const EdgeInsets.only(left: 26, top: 2),
@@ -352,8 +344,8 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
                   )
                 : const Icon(Icons.add_circle_outline),
             label: Text(_isLoading
-                ? 'Instanz wird erstellt...'
-                : 'Instanz jetzt erstellen'),
+                ? l10n.registerCreating
+                : l10n.registerCreate),
           ),
           const SizedBox(height: AppDimensions.paddingXL),
         ],
@@ -366,32 +358,14 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
     return showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Was ist die Hauptgruppe?'),
-        content: const Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Die Hauptgruppe ist eine besondere Gruppe für Personen mit Leitungsfunktion (z.B. Dirigenten, Chorleiter, Vorstand).',
-            ),
-            SizedBox(height: 12),
-            Text('Besonderheiten:',
-                style: TextStyle(fontWeight: FontWeight.bold)),
-            SizedBox(height: 4),
-            Text('• Kann nicht gelöscht werden'),
-            Text('• Mitglieder erhalten automatisch erweiterte Rechte'),
-            Text('• Ideal für Personen, die die Instanz verwalten'),
-            SizedBox(height: 12),
-            Text(
-              'Du kannst später weitere Gruppen (z.B. Sopran, Geigen) hinzufügen.',
-              style: TextStyle(fontStyle: FontStyle.italic),
-            ),
-          ],
+        // Ionic register.mainGroupInfoHtml (rendered as HTML popover).
+        content: SingleChildScrollView(
+          child: _HtmlBlocks(html: ctx.l10n.registerMainGroupInfoHtml),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('OK'),
+            child: Text(ctx.l10n.commonOk),
           ),
         ],
       ),
@@ -400,7 +374,7 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
 
   Future<void> _createTenant() async {
     if (!_isComplete) {
-      ToastHelper.showError(context, 'Bitte füllen Sie alle Felder aus.');
+      ToastHelper.showError(context, context.l10n.registerFillAllToast);
       return;
     }
 
@@ -428,13 +402,78 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
       }
     } catch (e) {
       if (mounted) {
-        ToastHelper.showError(context, 'Fehler beim Erstellen der Instanz: $e');
+        ToastHelper.showError(context, context.l10n.registerCreateFailed(e));
       }
     } finally {
       if (mounted) {
         setState(() => _isLoading = false);
       }
     }
+  }
+}
+
+/// Inline HTML (<strong>, <b>, <em>, <i>) of an Ionic *Html key → spans.
+List<InlineSpan> _inlineHtml(String html, {TextStyle? base}) {
+  final spans = <InlineSpan>[];
+  var bold = false;
+  var italic = false;
+  final re = RegExp(r'<(/?)(strong|b|em|i)>|<[^>]+>|[^<]+');
+  for (final m in re.allMatches(html)) {
+    final tag = m.group(2);
+    if (tag != null) {
+      final open = m.group(1)!.isEmpty;
+      if (tag == 'strong' || tag == 'b') bold = open;
+      if (tag == 'em' || tag == 'i') italic = open;
+      continue;
+    }
+    final text = m.group(0)!;
+    if (text.startsWith('<')) continue;
+    spans.add(TextSpan(
+      text: text,
+      style: (base ?? const TextStyle()).copyWith(
+        fontWeight: bold ? FontWeight.bold : null,
+        fontStyle: italic ? FontStyle.italic : null,
+      ),
+    ));
+  }
+  return spans;
+}
+
+/// Minimal block HTML (<h3>, <p>, <li>) of an Ionic *Html key → widgets.
+class _HtmlBlocks extends StatelessWidget {
+  const _HtmlBlocks({required this.html});
+
+  final String html;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final blocks = RegExp(r'<(h3|p|li)>(.*?)</\1>', dotAll: true)
+        .allMatches(html)
+        .toList();
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        for (final b in blocks)
+          Padding(
+            padding: EdgeInsets.only(
+              bottom: b.group(1) == 'li' ? 2 : 10,
+              left: b.group(1) == 'li' ? 4 : 0,
+            ),
+            child: Text.rich(TextSpan(
+              children: [
+                if (b.group(1) == 'li') const TextSpan(text: '• '),
+                ..._inlineHtml(b.group(2)!),
+              ],
+              style: b.group(1) == 'h3'
+                  ? theme.textTheme.titleMedium
+                      ?.copyWith(fontWeight: FontWeight.bold)
+                  : null,
+            )),
+          ),
+      ],
+    );
   }
 }
 

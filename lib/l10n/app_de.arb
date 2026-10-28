@@ -4631,9 +4631,67 @@
   "@loginFailedMessage": {
     "description": "login.failed.message"
   },
+  "loginFlutterAccessDenied": "Der Zugriff wurde verweigert.",
+  "@loginFlutterAccessDenied": {
+    "description": "login.flutter.accessDenied"
+  },
+  "loginFlutterBackToLogin": "Zurück zum Login",
+  "@loginFlutterBackToLogin": {
+    "description": "login.flutter.backToLogin"
+  },
+  "loginFlutterCheckSpam": "Bitte prüfe auch deinen Spam-Ordner.",
+  "@loginFlutterCheckSpam": {
+    "description": "login.flutter.checkSpam"
+  },
+  "loginFlutterConfirmEmail": "E-Mail bestätigen",
+  "@loginFlutterConfirmEmail": {
+    "description": "login.flutter.confirmEmail"
+  },
+  "loginFlutterConfirmEmailSent": "Wir haben dir eine E-Mail an {email} gesendet. Bitte klicke auf den Link darin, um deinen Account zu aktivieren.",
+  "@loginFlutterConfirmEmailSent": {
+    "description": "login.flutter.confirmEmailSent",
+    "placeholders": {
+      "email": {}
+    }
+  },
   "loginFlutterEnterPassword": "Bitte Passwort eingeben",
   "@loginFlutterEnterPassword": {
     "description": "login.flutter.enterPassword"
+  },
+  "loginFlutterHaveAccount": "Bereits ein Konto?",
+  "@loginFlutterHaveAccount": {
+    "description": "login.flutter.haveAccount"
+  },
+  "loginFlutterLinkFailed": "Der Link konnte nicht verarbeitet werden.",
+  "@loginFlutterLinkFailed": {
+    "description": "login.flutter.linkFailed"
+  },
+  "loginFlutterNewPassword": "Neues Passwort",
+  "@loginFlutterNewPassword": {
+    "description": "login.flutter.newPassword"
+  },
+  "loginFlutterOtherEmail": "Andere E-Mail verwenden",
+  "@loginFlutterOtherEmail": {
+    "description": "login.flutter.otherEmail"
+  },
+  "loginFlutterResetIntro": "Gib deine E-Mail-Adresse ein und wir senden dir einen Link zum Zurücksetzen.",
+  "@loginFlutterResetIntro": {
+    "description": "login.flutter.resetIntro"
+  },
+  "loginFlutterResetLinkSent": "Wir haben einen Link zum Zurücksetzen deines Passworts an {email} gesendet.",
+  "@loginFlutterResetLinkSent": {
+    "description": "login.flutter.resetLinkSent",
+    "placeholders": {
+      "email": {}
+    }
+  },
+  "loginFlutterSendLink": "Link senden",
+  "@loginFlutterSendLink": {
+    "description": "login.flutter.sendLink"
+  },
+  "loginFlutterToLogin": "Zum Login",
+  "@loginFlutterToLogin": {
+    "description": "login.flutter.toLogin"
   },
   "loginFlutterUnexpectedError": "Ein unerwarteter Fehler ist aufgetreten. Bitte versuche es erneut.",
   "@loginFlutterUnexpectedError": {
@@ -8131,6 +8189,10 @@
   "registerFillAllToast": "Bitte füllen Sie alle Felder aus.",
   "@registerFillAllToast": {
     "description": "register.fillAllToast"
+  },
+  "registerFlutterMainGroupInfo": "Was ist die Hauptgruppe?",
+  "@registerFlutterMainGroupInfo": {
+    "description": "register.flutter.mainGroupInfo"
   },
   "registerFullName": "Vollständiger Name",
   "@registerFullName": {
@@ -12052,6 +12114,65 @@
   "@tenantRegisterFirstName": {
     "description": "tenantRegister.firstName"
   },
+  "tenantRegisterFlutterCreateChurchFailed": "Fehler beim Erstellen der Gemeinde.",
+  "@tenantRegisterFlutterCreateChurchFailed": {
+    "description": "tenantRegister.flutter.createChurchFailed"
+  },
+  "tenantRegisterFlutterGroupRequired": "Gruppe ist erforderlich",
+  "@tenantRegisterFlutterGroupRequired": {
+    "description": "tenantRegister.flutter.groupRequired"
+  },
+  "tenantRegisterFlutterInvalidLink": "Ungültiger Registrierungslink.",
+  "@tenantRegisterFlutterInvalidLink": {
+    "description": "tenantRegister.flutter.invalidLink"
+  },
+  "tenantRegisterFlutterLoadChurchesFailed": "Fehler beim Laden der Gemeinden",
+  "@tenantRegisterFlutterLoadChurchesFailed": {
+    "description": "tenantRegister.flutter.loadChurchesFailed"
+  },
+  "tenantRegisterFlutterLoadError": "Fehler beim Laden: {error}",
+  "@tenantRegisterFlutterLoadError": {
+    "description": "tenantRegister.flutter.loadError",
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "tenantRegisterFlutterLoadGroupsFailed": "Fehler beim Laden der Gruppen",
+  "@tenantRegisterFlutterLoadGroupsFailed": {
+    "description": "tenantRegister.flutter.loadGroupsFailed"
+  },
+  "tenantRegisterFlutterMaxSize": "Max. 15 MB",
+  "@tenantRegisterFlutterMaxSize": {
+    "description": "tenantRegister.flutter.maxSize"
+  },
+  "tenantRegisterFlutterMinFiveChars": "Mindestens 5 Zeichen",
+  "@tenantRegisterFlutterMinFiveChars": {
+    "description": "tenantRegister.flutter.minFiveChars"
+  },
+  "tenantRegisterFlutterRegisterFailedRetry": "Fehler beim Registrieren. Bitte versuche es erneut.",
+  "@tenantRegisterFlutterRegisterFailedRetry": {
+    "description": "tenantRegister.flutter.registerFailedRetry"
+  },
+  "tenantRegisterFlutterRegistrationAt": "Registrierung bei",
+  "@tenantRegisterFlutterRegistrationAt": {
+    "description": "tenantRegister.flutter.registrationAt"
+  },
+  "tenantRegisterFlutterSignInExisting": "Melde dich mit deinem bestehenden Account an.",
+  "@tenantRegisterFlutterSignInExisting": {
+    "description": "tenantRegister.flutter.signInExisting"
+  },
+  "tenantRegisterFlutterTermsAccept": " akzeptieren",
+  "@tenantRegisterFlutterTermsAccept": {
+    "description": "tenantRegister.flutter.termsAccept"
+  },
+  "tenantRegisterFlutterTermsLink": "Nutzungsbedingungen und Datenschutzerklärung",
+  "@tenantRegisterFlutterTermsLink": {
+    "description": "tenantRegister.flutter.termsLink"
+  },
+  "tenantRegisterFlutterToLogin": "Zur Anmeldung",
+  "@tenantRegisterFlutterToLogin": {
+    "description": "tenantRegister.flutter.toLogin"
+  },
   "tenantRegisterHaveAccount": "Account bereits vorhanden? Hier klicken",
   "@tenantRegisterHaveAccount": {
     "description": "tenantRegister.haveAccount"
@@ -12170,6 +12291,82 @@
   "tenantRegisterTitle": "Registrierung",
   "@tenantRegisterTitle": {
     "description": "tenantRegister.title"
+  },
+  "tenantSelectFlutterCreatedAt": "Erstellt am",
+  "@tenantSelectFlutterCreatedAt": {
+    "description": "tenantSelect.flutter.createdAt"
+  },
+  "tenantSelectFlutterDangerZone": "Gefahrenzone",
+  "@tenantSelectFlutterDangerZone": {
+    "description": "tenantSelect.flutter.dangerZone"
+  },
+  "tenantSelectFlutterDeleteAllData": "Alle Daten dieser Instanz werden unwiderruflich gelöscht.",
+  "@tenantSelectFlutterDeleteAllData": {
+    "description": "tenantSelect.flutter.deleteAllData"
+  },
+  "tenantSelectFlutterDeleteTenant": "Instanz löschen",
+  "@tenantSelectFlutterDeleteTenant": {
+    "description": "tenantSelect.flutter.deleteTenant"
+  },
+  "tenantSelectFlutterDeleteTenantHint": "Diese Gruppe unwiderruflich löschen",
+  "@tenantSelectFlutterDeleteTenantHint": {
+    "description": "tenantSelect.flutter.deleteTenantHint"
+  },
+  "tenantSelectFlutterDeleted": "Instanz gelöscht",
+  "@tenantSelectFlutterDeleted": {
+    "description": "tenantSelect.flutter.deleted"
+  },
+  "tenantSelectFlutterDetailsLoadFailed": "Fehler beim Laden der Instanz-Details",
+  "@tenantSelectFlutterDetailsLoadFailed": {
+    "description": "tenantSelect.flutter.detailsLoadFailed"
+  },
+  "tenantSelectFlutterDetailsTitle": "Instanz-Details",
+  "@tenantSelectFlutterDetailsTitle": {
+    "description": "tenantSelect.flutter.detailsTitle"
+  },
+  "tenantSelectFlutterEmptyText": "Du bist noch keiner Instanz zugeordnet. Bitte wende dich an einen Administrator oder lege eine neue Instanz an.",
+  "@tenantSelectFlutterEmptyText": {
+    "description": "tenantSelect.flutter.emptyText"
+  },
+  "tenantSelectFlutterEmptyTitle": "Keine Instanzen",
+  "@tenantSelectFlutterEmptyTitle": {
+    "description": "tenantSelect.flutter.emptyTitle"
+  },
+  "tenantSelectFlutterEnterNameToConfirm": "Bitte gib den Namen der Instanz ein, um das Löschen zu bestätigen:",
+  "@tenantSelectFlutterEnterNameToConfirm": {
+    "description": "tenantSelect.flutter.enterNameToConfirm"
+  },
+  "tenantSelectFlutterInfo": "Informationen",
+  "@tenantSelectFlutterInfo": {
+    "description": "tenantSelect.flutter.info"
+  },
+  "tenantSelectFlutterLoadFailed": "Fehler beim Laden",
+  "@tenantSelectFlutterLoadFailed": {
+    "description": "tenantSelect.flutter.loadFailed"
+  },
+  "tenantSelectFlutterNewTenant": "Neue Instanz",
+  "@tenantSelectFlutterNewTenant": {
+    "description": "tenantSelect.flutter.newTenant"
+  },
+  "tenantSelectFlutterNoRole": "Keine Rolle",
+  "@tenantSelectFlutterNoRole": {
+    "description": "tenantSelect.flutter.noRole"
+  },
+  "tenantSelectFlutterNotFound": "Instanz nicht gefunden",
+  "@tenantSelectFlutterNotFound": {
+    "description": "tenantSelect.flutter.notFound"
+  },
+  "tenantSelectFlutterRegion": "Region",
+  "@tenantSelectFlutterRegion": {
+    "description": "tenantSelect.flutter.region"
+  },
+  "tenantSelectFlutterTenantSelection": "Instanzauswahl",
+  "@tenantSelectFlutterTenantSelection": {
+    "description": "tenantSelect.flutter.tenantSelection"
+  },
+  "tenantSelectFlutterYourRole": "Deine Rolle",
+  "@tenantSelectFlutterYourRole": {
+    "description": "tenantSelect.flutter.yourRole"
   },
   "termsAcceptAfter": "gelesen.",
   "@termsAcceptAfter": {

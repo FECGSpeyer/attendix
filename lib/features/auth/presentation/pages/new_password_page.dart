@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../data/auth_flow_service.dart';
+import '../../../../l10n/l10n.dart';
 
 /// AUTH: "Neues Passwort eingeben" after a password-recovery link
 /// (Ionic app.component.ts presentPasswordRecoveryAlert).
@@ -33,7 +34,7 @@ class _NewPasswordPageState extends ConsumerState<NewPasswordPage> {
     final password = _controller.text;
     if (password.length < 6) {
       ToastHelper.showError(
-          context, 'Bitte gib ein Passwort mit mindestens 6 Zeichen ein');
+          context, context.l10n.appPasswordMin);
       return;
     }
     setState(() => _isLoading = true);
@@ -53,7 +54,7 @@ class _NewPasswordPageState extends ConsumerState<NewPasswordPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Neues Passwort eingeben'),
+        title: Text(context.l10n.appNewPassword),
         automaticallyImplyLeading: false,
       ),
       body: SafeArea(
@@ -75,11 +76,11 @@ class _NewPasswordPageState extends ConsumerState<NewPasswordPage> {
                     autofillHints: const [AutofillHints.newPassword],
                     onSubmitted: (_) => _submit(),
                     decoration: InputDecoration(
-                      labelText: 'Neues Passwort',
-                      hintText: 'Min. 6 Zeichen eingeben...',
+                      labelText: context.l10n.loginFlutterNewPassword,
+                      hintText: context.l10n.appMinSixPlaceholder,
                       prefixIcon: const Icon(Icons.lock_outlined),
                       suffixIcon: IconButton(
-                        tooltip: 'Passwort anzeigen',
+                        tooltip: context.l10n.loginShowPassword,
                         icon: Icon(_obscure
                             ? Icons.visibility_outlined
                             : Icons.visibility_off_outlined),
@@ -96,12 +97,12 @@ class _NewPasswordPageState extends ConsumerState<NewPasswordPage> {
                             width: 20,
                             child: CircularProgressIndicator(strokeWidth: 2),
                           )
-                        : const Text('Passwort ändern'),
+                        : Text(context.l10n.appChangePassword),
                   ),
                   const SizedBox(height: AppDimensions.paddingS),
                   TextButton(
                     onPressed: _isLoading ? null : () => context.go('/tenants'),
-                    child: const Text('Abbrechen'),
+                    child: Text(context.l10n.commonCancel),
                   ),
                 ],
               ),

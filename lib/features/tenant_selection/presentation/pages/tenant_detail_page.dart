@@ -10,6 +10,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/string_utils.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/tenant/tenant.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Page showing tenant details and danger zone (delete)
 class TenantDetailPage extends ConsumerWidget {
@@ -26,15 +27,15 @@ class TenantDetailPage extends ConsumerWidget {
         body: Center(child: CircularProgressIndicator()),
       ),
       error: (error, _) => Scaffold(
-        appBar: AppBar(title: const Text('Instanz-Details')),
-        body: const Center(child: Text('Fehler beim Laden der Instanz-Details')),
+        appBar: AppBar(title: Text(context.l10n.tenantSelectFlutterDetailsTitle)),
+        body: Center(child: Text(context.l10n.tenantSelectFlutterDetailsLoadFailed)),
       ),
       data: (tenants) {
         final tenant = tenants.where((t) => t.id == tenantId).firstOrNull;
         if (tenant == null) {
           return Scaffold(
-            appBar: AppBar(title: const Text('Instanz-Details')),
-            body: const Center(child: Text('Instanz nicht gefunden')),
+            appBar: AppBar(title: Text(context.l10n.tenantSelectFlutterDetailsTitle)),
+            body: Center(child: Text(context.l10n.tenantSelectFlutterNotFound)),
           );
         }
 
@@ -42,7 +43,7 @@ class TenantDetailPage extends ConsumerWidget {
 
         return Scaffold(
           appBar: AppBar(
-            title: const Text('Instanz-Details'),
+            title: Text(context.l10n.tenantSelectFlutterDetailsTitle),
           ),
           body: ListView(
             padding: const EdgeInsets.all(AppDimensions.paddingM),
@@ -73,9 +74,9 @@ class _TenantHeader extends StatelessWidget {
     final initials = StringUtils.getTenantInitials(tenant.shortName, tenant.longName);
 
     final typeLabel = switch (tenant.type) {
-      'choir' => 'Chor',
-      'orchestra' => 'Orchester',
-      _ => 'Gruppe',
+      'choir' => context.l10n.registerTypeChoir,
+      'orchestra' => context.l10n.registerTypeOrchestra,
+      _ => context.l10n.commonGroupLabelGroup,
     };
 
     return Column(
@@ -135,18 +136,18 @@ class _TenantInfoSection extends ConsumerWidget {
   final int tenantId;
   final Role role;
 
-  String _roleName(Role role) {
+  String _roleName(Role role, AppLocalizations l10n) {
     return switch (role) {
-      Role.admin => 'Administrator',
-      Role.responsible => 'Verantwortlicher',
-      Role.helper => 'Helfer',
-      Role.viewer => 'Beobachter',
-      Role.player => 'Mitglied',
-      Role.voiceLeader => 'Stimmführer',
-      Role.voiceLeaderHelper => 'Stimmführer-Helfer',
-      Role.parent => 'Elternteil',
-      Role.applicant => 'Bewerber',
-      Role.none => 'Keine Rolle',
+      Role.admin => l10n.rolesAdministrator,
+      Role.responsible => l10n.rolesResponsible,
+      Role.helper => l10n.rolesHelper,
+      Role.viewer => l10n.rolesViewer,
+      Role.player => l10n.rolesMember,
+      Role.voiceLeader => l10n.rolesVoiceLeader,
+      Role.voiceLeaderHelper => l10n.rolesVoiceLeaderHelper,
+      Role.parent => l10n.rolesParent,
+      Role.applicant => l10n.rolesApplicant,
+      Role.none => l10n.tenantSelectFlutterNoRole,
     };
   }
 
@@ -167,7 +168,7 @@ class _TenantInfoSection extends ConsumerWidget {
                 vertical: AppDimensions.paddingXS,
               ),
               child: Text(
-                'Informationen',
+                context.l10n.tenantSelectFlutterInfo,
                 style: Theme.of(context).textTheme.titleSmall?.copyWith(
                       color: AppColors.medium,
                       fontWeight: FontWeight.w600,
@@ -176,7 +177,7 @@ class _TenantInfoSection extends ConsumerWidget {
             ),
             _InfoRow(
               icon: Icons.people,
-              label: 'Mitglieder',
+              label: context.l10n.tabsMembers,
               value: memberCountAsync.when(
                 data: (count) => '$count',
                 loading: () => '...',
@@ -186,19 +187,19 @@ class _TenantInfoSection extends ConsumerWidget {
             if (tenant.createdAt != null)
               _InfoRow(
                 icon: Icons.calendar_today,
-                label: 'Erstellt am',
-                value: DateFormat('dd.MM.yyyy').format(tenant.createdAt!),
+                label: context.l10n.tenantSelectFlutterCreatedAt,
+                value: DateFormat(dateFmt()).format(tenant.createdAt!),
               ),
             if (tenant.region != null && tenant.region!.isNotEmpty)
               _InfoRow(
                 icon: Icons.location_on,
-                label: 'Region',
+                label: context.l10n.tenantSelectFlutterRegion,
                 value: tenant.region!,
               ),
             _InfoRow(
               icon: Icons.badge,
-              label: 'Deine Rolle',
-              value: _roleName(role),
+              label: context.l10n.tenantSelectFlutterYourRole,
+              value: _roleName(role, context.l10n),
             ),
           ],
         ),
@@ -250,7 +251,7 @@ class _DangerZone extends ConsumerWidget {
             vertical: AppDimensions.paddingXS,
           ),
           child: Text(
-            'Gefahrenzone',
+            context.l10n.tenantSelectFlutterDangerZone,
             style: Theme.of(context).textTheme.titleSmall?.copyWith(
                   color: AppColors.danger,
                   fontWeight: FontWeight.w600,
@@ -266,14 +267,14 @@ class _DangerZone extends ConsumerWidget {
           child: ListTile(
             leading: Icon(Icons.delete_forever, color: AppColors.danger),
             title: Text(
-              'Instanz löschen',
+              context.l10n.tenantSelectFlutterDeleteTenant,
               style: TextStyle(
                 color: AppColors.danger,
                 fontWeight: FontWeight.w500,
               ),
             ),
             subtitle: Text(
-              'Diese Gruppe unwiderruflich löschen',
+              context.l10n.tenantSelectFlutterDeleteTenantHint,
               style: TextStyle(fontSize: 13, color: AppColors.medium),
             ),
             trailing: const Icon(Icons.chevron_right, color: AppColors.medium),
@@ -302,20 +303,17 @@ Future<void> _showDeleteTenantDialog(
           builder: (context, setDialogState) {
             final matches = controller.text.trim() == tenantName;
             return AlertDialog(
-              title: const Text('Instanz löschen'),
+              title: Text(context.l10n.tenantSelectFlutterDeleteTenant),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Diese Aktion kann nicht rückgängig gemacht werden! '
-                    'Alle Daten dieser Instanz werden unwiderruflich gelöscht.',
+                    '${context.l10n.peopleCannotUndoExcl} ${context.l10n.tenantSelectFlutterDeleteAllData}',
                     style: TextStyle(color: AppColors.danger),
                   ),
                   const SizedBox(height: 16),
-                  const Text(
-                    'Bitte gib den Namen der Instanz ein, um das Löschen zu bestätigen:',
-                  ),
+                  Text(context.l10n.tenantSelectFlutterEnterNameToConfirm),
                   const SizedBox(height: 8),
                   Text(
                     tenantName,
@@ -324,8 +322,8 @@ Future<void> _showDeleteTenantDialog(
                   const SizedBox(height: 12),
                   TextField(
                     controller: controller,
-                    decoration: const InputDecoration(
-                      hintText: 'Name eingeben...',
+                    decoration: InputDecoration(
+                      hintText: context.l10n.orgNamePh,
                     ),
                     autofocus: true,
                     onChanged: (_) => setDialogState(() {}),
@@ -335,7 +333,7 @@ Future<void> _showDeleteTenantDialog(
               actions: [
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(false),
-                  child: const Text('Abbrechen'),
+                  child: Text(context.l10n.commonCancel),
                 ),
                 ElevatedButton(
                   onPressed: matches ? () => Navigator.of(context).pop(true) : null,
@@ -343,7 +341,7 @@ Future<void> _showDeleteTenantDialog(
                     backgroundColor: AppColors.danger,
                     foregroundColor: Colors.white,
                   ),
-                  child: const Text('Endgültig löschen'),
+                  child: Text(context.l10n.registerDeleteConfirm),
                 ),
               ],
             );
@@ -360,12 +358,12 @@ Future<void> _showDeleteTenantDialog(
       if (id == null) return;
       await deleteTenant(ref, id);
       if (context.mounted) {
-        ToastHelper.showSuccess(context, 'Instanz gelöscht');
+        ToastHelper.showSuccess(context, context.l10n.tenantSelectFlutterDeleted);
         context.go('/tenants');
       }
     } catch (e) {
       if (context.mounted) {
-        ToastHelper.showError(context, 'Fehler beim Löschen');
+        ToastHelper.showError(context, context.l10n.svcDeleteFailed);
       }
     }
   } finally {

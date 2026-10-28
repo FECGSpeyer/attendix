@@ -3537,7 +3537,50 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loginFailedMessage => 'Email or password is incorrect. If you have not set a password, you can sign in with a code by email instead.';
 
   @override
+  String get loginFlutterAccessDenied => 'Access was denied.';
+
+  @override
+  String get loginFlutterBackToLogin => 'Back to login';
+
+  @override
+  String get loginFlutterCheckSpam => 'Please also check your spam folder.';
+
+  @override
+  String get loginFlutterConfirmEmail => 'Confirm email';
+
+  @override
+  String loginFlutterConfirmEmailSent(Object email) {
+    return 'We sent an email to $email. Please click the link in it to activate your account.';
+  }
+
+  @override
   String get loginFlutterEnterPassword => 'Please enter your password';
+
+  @override
+  String get loginFlutterHaveAccount => 'Already have an account?';
+
+  @override
+  String get loginFlutterLinkFailed => 'The link could not be processed.';
+
+  @override
+  String get loginFlutterNewPassword => 'New password';
+
+  @override
+  String get loginFlutterOtherEmail => 'Use a different email';
+
+  @override
+  String get loginFlutterResetIntro => 'Enter your email address and we will send you a reset link.';
+
+  @override
+  String loginFlutterResetLinkSent(Object email) {
+    return 'We sent a link to reset your password to $email.';
+  }
+
+  @override
+  String get loginFlutterSendLink => 'Send link';
+
+  @override
+  String get loginFlutterToLogin => 'Go to login';
 
   @override
   String get loginFlutterUnexpectedError => 'An unexpected error occurred. Please try again.';
@@ -6210,6 +6253,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get registerFillAllToast => 'Please fill in all fields.';
+
+  @override
+  String get registerFlutterMainGroupInfo => 'What is the main group?';
 
   @override
   String get registerFullName => 'Full name';
@@ -9168,6 +9214,50 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tenantRegisterFirstName => 'First name';
 
   @override
+  String get tenantRegisterFlutterCreateChurchFailed => 'Error creating the church.';
+
+  @override
+  String get tenantRegisterFlutterGroupRequired => 'Group is required';
+
+  @override
+  String get tenantRegisterFlutterInvalidLink => 'Invalid registration link.';
+
+  @override
+  String get tenantRegisterFlutterLoadChurchesFailed => 'Error loading churches';
+
+  @override
+  String tenantRegisterFlutterLoadError(Object error) {
+    return 'Error while loading: $error';
+  }
+
+  @override
+  String get tenantRegisterFlutterLoadGroupsFailed => 'Error loading groups';
+
+  @override
+  String get tenantRegisterFlutterMaxSize => 'Max. 15 MB';
+
+  @override
+  String get tenantRegisterFlutterMinFiveChars => 'At least 5 characters';
+
+  @override
+  String get tenantRegisterFlutterRegisterFailedRetry => 'Registration failed. Please try again.';
+
+  @override
+  String get tenantRegisterFlutterRegistrationAt => 'Registration at';
+
+  @override
+  String get tenantRegisterFlutterSignInExisting => 'Sign in with your existing account.';
+
+  @override
+  String get tenantRegisterFlutterTermsAccept => ' accept';
+
+  @override
+  String get tenantRegisterFlutterTermsLink => 'Terms of use and privacy policy';
+
+  @override
+  String get tenantRegisterFlutterToLogin => 'Go to sign in';
+
+  @override
   String get tenantRegisterHaveAccount => 'Already have an account? Click here';
 
   @override
@@ -9255,6 +9345,63 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tenantRegisterTitle => 'Registration';
+
+  @override
+  String get tenantSelectFlutterCreatedAt => 'Created on';
+
+  @override
+  String get tenantSelectFlutterDangerZone => 'Danger zone';
+
+  @override
+  String get tenantSelectFlutterDeleteAllData => 'All data of this instance will be permanently deleted.';
+
+  @override
+  String get tenantSelectFlutterDeleteTenant => 'Delete instance';
+
+  @override
+  String get tenantSelectFlutterDeleteTenantHint => 'Permanently delete this group';
+
+  @override
+  String get tenantSelectFlutterDeleted => 'Instance deleted';
+
+  @override
+  String get tenantSelectFlutterDetailsLoadFailed => 'Error loading the instance details';
+
+  @override
+  String get tenantSelectFlutterDetailsTitle => 'Instance details';
+
+  @override
+  String get tenantSelectFlutterEmptyText => 'You are not assigned to any instance yet. Please contact an administrator or create a new instance.';
+
+  @override
+  String get tenantSelectFlutterEmptyTitle => 'No instances';
+
+  @override
+  String get tenantSelectFlutterEnterNameToConfirm => 'Please enter the name of the instance to confirm the deletion:';
+
+  @override
+  String get tenantSelectFlutterInfo => 'Information';
+
+  @override
+  String get tenantSelectFlutterLoadFailed => 'Error while loading';
+
+  @override
+  String get tenantSelectFlutterNewTenant => 'New instance';
+
+  @override
+  String get tenantSelectFlutterNoRole => 'No role';
+
+  @override
+  String get tenantSelectFlutterNotFound => 'Instance not found';
+
+  @override
+  String get tenantSelectFlutterRegion => 'Region';
+
+  @override
+  String get tenantSelectFlutterTenantSelection => 'Instance selection';
+
+  @override
+  String get tenantSelectFlutterYourRole => 'Your role';
 
   @override
   String get termsAcceptAfter => '.';

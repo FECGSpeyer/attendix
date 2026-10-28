@@ -11,6 +11,7 @@ import '../../../../data/repositories/account_repository.dart';
 import '../../../../data/repositories/player_repository.dart';
 import '../../../../data/repositories/user_registration_repository.dart';
 import '../../../auth/data/auth_flow_service.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Provider for loading a tenant by its register ID
 final tenantByRegisterIdProvider = FutureProvider.family<Tenant?, String>((ref, registerId) async {
@@ -121,12 +122,12 @@ class RegistrationService {
           );
         } catch (_) {
           return RegistrationResult.error(
-              'Fehler beim Erstellen des Accounts: Fehler beim Registrieren');
+              '${l10nWithoutContext.dbCreateAccountFailed}: ${l10nWithoutContext.dbRegisterFailed}');
         }
         final user = signUp.user;
         if (user == null) {
           return RegistrationResult.error(
-              'Fehler beim Erstellen des Accounts: Fehler beim Registrieren');
+              '${l10nWithoutContext.dbCreateAccountFailed}: ${l10nWithoutContext.dbRegisterFailed}');
         }
         if (user.identities?.isEmpty ?? true) {
           // E-mail already registered → try to sign in with the password.
@@ -138,7 +139,7 @@ class RegistrationService {
             if (login.user == null) throw const AuthException('no user');
           } catch (_) {
             return RegistrationResult.error(
-              'Fehler beim Erstellen des Accounts: Deine E-Mail-Adresse existiert bereits. Bitte melde dich an.',
+              '${l10nWithoutContext.dbCreateAccountFailed}: ${l10nWithoutContext.dbEmailExists}',
             );
           }
           // Existing account: go through registerUser so an existing
@@ -201,7 +202,7 @@ class RegistrationService {
       if (existing != null) {
         if (existing['left'] == null) {
           return RegistrationResult.error(
-              'Der Benutzer ist bereits in diesem Mandanten');
+              l10nWithoutContext.dbUserAlreadyInTenant);
         }
         playerId = existing['id'] as int;
         await supabase
@@ -272,7 +273,7 @@ class RegistrationService {
     } catch (e) {
       debugPrint('Registration failed: $e');
       return RegistrationResult.error(
-          'Fehler beim Registrieren. Bitte versuche es erneut.');
+          l10nWithoutContext.tenantRegisterFlutterRegisterFailedRetry);
     }
   }
 }
@@ -364,12 +365,12 @@ class RegistrationResult {
   }) {
     if (autoApproved) {
       return isNewAccount
-          ? 'Dein Konto wurde erstellt. Um dich anmelden zu können, bestätige bitte deine E-Mail. Falls keine E-Mail ankommt, überprüfe bitte deinen Spam-Ordner. Im Anschluss kannst du dich anmelden.'
-          : 'Deine Registrierung war erfolgreich! Du bist nun teil der Instanz.';
+          ? l10nWithoutContext.tenantRegisterSuccessNewConfirm
+          : l10nWithoutContext.tenantRegisterSuccessJoined;
     }
     return isNewAccount
-        ? 'Dein Konto wurde erstellt und wartet auf die Genehmigung durch einen Administrator. Bitte bestätige deine E-Mail, um dich anmelden zu können. Falls keine E-Mail ankommt, überprüfe bitte deinen Spam-Ordner.'
-        : 'Deine Registrierung war erfolgreich! Bitte warte auf die Genehmigung durch einen Administrator.';
+        ? l10nWithoutContext.tenantRegisterSuccessNewPending
+        : l10nWithoutContext.tenantRegisterSuccessPending;
   }
 
   factory RegistrationResult.error(String message) {

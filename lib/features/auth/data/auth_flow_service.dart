@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../core/config/supabase_config.dart';
 import '../../../data/repositories/account_repository.dart';
+import '../../../l10n/l10n.dart';
 
 /// AUTH: E-Mail/Passwort- und Code-Login-Flows (Ionic `db.service.ts`
 /// login / sendEmailOtp / verifyEmailOtp / resendConfirmationEmail /
@@ -75,43 +76,43 @@ LoginFailure mapLoginError(AuthException e) {
   switch (code) {
     case 'invalid_login_credentials':
     case 'invalid_credentials':
-      return const LoginFailure(
+      return LoginFailure(
         LoginFailureKind.invalidCredentials,
-        'E-Mail oder Passwort falsch. Falls du kein Passwort gesetzt hast, nutze den Anmelde-Code per E-Mail.',
+        l10nWithoutContext.dbWrongCredentials,
       );
     case 'user_disabled':
     case 'user_banned':
-      return const LoginFailure(
+      return LoginFailure(
         LoginFailureKind.other,
-        'Dein Konto wurde deaktiviert. Bitte wende dich an den Administrator deiner Instanz.',
+        l10nWithoutContext.dbAccountDisabled,
       );
     case 'too_many_requests':
     case 'over_request_rate_limit':
-      return const LoginFailure(
+      return LoginFailure(
         LoginFailureKind.other,
-        'Zu viele Anmeldeversuche. Bitte versuche es später erneut.',
+        l10nWithoutContext.dbTooManyLogins,
       );
     case 'invalid_email':
     case 'email_address_invalid':
-      return const LoginFailure(
-          LoginFailureKind.other, 'Ungültige E-Mail Adresse');
+      return LoginFailure(
+          LoginFailureKind.other, l10nWithoutContext.dbInvalidEmail);
     case 'invalid_password':
-      return const LoginFailure(LoginFailureKind.other, 'Ungültiges Passwort');
+      return LoginFailure(LoginFailureKind.other, l10nWithoutContext.dbInvalidPassword);
     case 'user_not_found':
-      return const LoginFailure(
+      return LoginFailure(
         LoginFailureKind.userNotFound,
-        'Kein Konto mit dieser E-Mail-Adresse gefunden. Bitte registriere dich zuerst.',
+        l10nWithoutContext.dbNoAccount,
       );
     case 'email_not_confirmed':
       return const LoginFailure(LoginFailureKind.emailNotConfirmed, null);
     case 'password_strength_insufficient':
     case 'weak_password':
-      return const LoginFailure(
+      return LoginFailure(
         LoginFailureKind.other,
-        'Das Passwort erfüllt nicht die Sicherheitsanforderungen.',
+        l10nWithoutContext.dbWeakPasswordRequirements,
       );
     default:
-      return const LoginFailure(LoginFailureKind.other, 'Fehler beim Anmelden');
+      return LoginFailure(LoginFailureKind.other, l10nWithoutContext.dbLoginFailed);
   }
 }
 
@@ -147,30 +148,30 @@ class OtpResult {
 
 /// Ionic `db.sendEmailOtp` error switch.
 OtpResult mapSendOtpError(AuthException e, {required bool allowCreate}) {
-  const noAccount = OtpResult.failed(
-    'Kein Konto mit dieser E-Mail-Adresse gefunden. Bitte registriere dich zuerst.',
+  final noAccount = OtpResult.failed(
+    l10nWithoutContext.dbNoAccount,
     noAccount: true,
   );
   final code = e.code ?? _codeFromMessage(e.message);
   switch (code) {
     case 'over_email_send_rate_limit':
     case 'too_many_requests':
-      return const OtpResult.failed(
-          'Zu viele Anfragen. Bitte warte einen Moment und versuche es erneut.');
+      return OtpResult.failed(
+          l10nWithoutContext.dbTooManyRequests);
     case 'invalid_email':
     case 'email_address_invalid':
-      return const OtpResult.failed('Ungültige E-Mail Adresse');
+      return OtpResult.failed(l10nWithoutContext.dbInvalidEmail);
     case 'signup_disabled':
     case 'otp_disabled':
       if (!allowCreate) return noAccount;
-      return const OtpResult.failed(
-          'Anmeldung per Code ist derzeit nicht möglich.');
+      return OtpResult.failed(
+          l10nWithoutContext.dbOtpUnavailable);
     case 'user_not_found':
       return noAccount;
     default:
       if (!allowCreate) return noAccount;
-      return const OtpResult.failed(
-          'Der Code konnte nicht gesendet werden. Bitte versuche es erneut.');
+      return OtpResult.failed(
+          l10nWithoutContext.dbCodeSendFailed);
   }
 }
 
@@ -179,12 +180,12 @@ String mapVerifyOtpError(AuthException e) {
   final code = e.code ?? _codeFromMessage(e.message);
   switch (code) {
     case 'otp_expired':
-      return 'Der Code ist abgelaufen. Bitte fordere einen neuen an.';
+      return l10nWithoutContext.dbCodeExpired;
     case 'too_many_requests':
     case 'over_request_rate_limit':
-      return 'Zu viele Versuche. Bitte versuche es später erneut.';
+      return l10nWithoutContext.dbTooManyAttempts;
     default:
-      return 'Der Code ist ungültig. Bitte überprüfe deine Eingabe.';
+      return l10nWithoutContext.dbCodeInvalid;
   }
 }
 
@@ -192,18 +193,18 @@ String mapVerifyOtpError(AuthException e) {
 String mapUpdatePasswordError(AuthException? e) {
   switch (e?.code) {
     case 'same_password':
-      return 'Das neue Passwort darf nicht mit dem alten übereinstimmen.';
+      return l10nWithoutContext.dbPasswordSameAsOld;
     case 'weak_password':
     case 'password_strength_insufficient':
-      return 'Das Passwort ist zu schwach. Bitte wähle ein sichereres Passwort.';
+      return l10nWithoutContext.dbPasswordTooWeak;
     case 'over_request_rate_limit':
     case 'too_many_requests':
-      return 'Zu viele Versuche. Bitte warte einen Moment und versuche es erneut.';
+      return l10nWithoutContext.dbTooManyAttemptsWait;
     case 'session_not_found':
     case 'session_expired':
-      return 'Deine Sitzung ist abgelaufen. Bitte fordere den Link zum Zurücksetzen erneut an.';
+      return l10nWithoutContext.dbSessionExpired;
     default:
-      return 'Passwort konnte nicht geändert werden. Bitte versuche es erneut.';
+      return l10nWithoutContext.dbPasswordChangeFailed;
   }
 }
 
@@ -329,8 +330,8 @@ class AuthFlowService {
       );
       final user = res.user;
       if (user == null) {
-        throw const LoginFailure(
-            LoginFailureKind.other, 'Bitte gib die richtigen Daten an!');
+        throw LoginFailure(
+            LoginFailureKind.other, l10nWithoutContext.dbEnterCorrectData);
       }
       return user;
     } on AuthException catch (e) {
@@ -355,12 +356,12 @@ class AuthFlowService {
               }
             : null,
       );
-      return const OtpResult.ok('Wir haben dir einen Code per E-Mail gesendet.');
+      return OtpResult.ok(l10nWithoutContext.dbCodeSent);
     } on AuthException catch (e) {
       return mapSendOtpError(e, allowCreate: allowCreate);
     } catch (_) {
-      return const OtpResult.failed(
-          'Der Code konnte nicht gesendet werden. Bitte versuche es erneut.');
+      return OtpResult.failed(
+          l10nWithoutContext.dbCodeSendFailed);
     }
   }
 
@@ -384,8 +385,8 @@ class AuthFlowService {
         return OtpResult.failed(mapVerifyOtpError(e2));
       }
     } catch (_) {
-      return const OtpResult.failed(
-          'Der Code ist ungültig. Bitte überprüfe deine Eingabe.');
+      return OtpResult.failed(
+          l10nWithoutContext.dbCodeInvalid);
     }
   }
 
@@ -410,9 +411,9 @@ class AuthFlowService {
         email: email.trim(),
         emailRedirectTo: '${authRedirectBase()}/login',
       );
-      return (true, 'Bestätigungs-E-Mail wurde erneut gesendet');
+      return (true, l10nWithoutContext.authConfirmationResent);
     } catch (_) {
-      return (false, 'Fehler beim Senden der Bestätigungs-E-Mail');
+      return (false, l10nWithoutContext.authResendConfirmationFailed);
     }
   }
 
@@ -423,9 +424,9 @@ class AuthFlowService {
         email.trim(),
         redirectTo: '${authRedirectBase()}/resetPassword',
       );
-      return (true, 'E-Mail zum Zurücksetzen des Passworts wurde gesendet');
+      return (true, l10nWithoutContext.authResetSent);
     } catch (_) {
-      return (false, 'Fehler beim Zurücksetzen des Passworts');
+      return (false, l10nWithoutContext.authResetFailed);
     }
   }
 
@@ -434,7 +435,7 @@ class AuthFlowService {
     try {
       final res = await _auth.updateUser(UserAttributes(password: password));
       if (res.user != null) {
-        return (true, 'Passwort wurde erfolgreich aktualisiert');
+        return (true, l10nWithoutContext.dbPasswordUpdated);
       }
       return (false, mapUpdatePasswordError(null));
     } on AuthException catch (e) {
