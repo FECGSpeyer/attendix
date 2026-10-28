@@ -12,10 +12,14 @@ import '../../../data/models/tenant/tenant.dart';
 /// `tenant-switcher-list` popover). Shows the current tenant's long name; if
 /// the user belongs to more than one tenant, tapping opens a menu to switch.
 class TenantSwitcherTitle extends ConsumerWidget {
-  const TenantSwitcherTitle({super.key, this.fallbackTitle});
+  const TenantSwitcherTitle({super.key, this.fallbackTitle, this.singleTenantTitle});
 
   /// Shown when no tenant is selected yet.
   final String? fallbackTitle;
+
+  /// SETTINGS2: title shown instead of the tenant name when the user has only
+  /// one tenant (Ionic att-list shows "Termine" then).
+  final String? singleTenantTitle;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -26,7 +30,7 @@ class TenantSwitcherTitle extends ConsumerWidget {
         : (tenant?.shortName ?? fallbackTitle ?? '');
 
     if (tenants.length <= 1) {
-      return Text(title, overflow: TextOverflow.ellipsis);
+      return Text(singleTenantTitle ?? title, overflow: TextOverflow.ellipsis);
     }
 
     return PopupMenuButton<Tenant>(

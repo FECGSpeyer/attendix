@@ -148,7 +148,7 @@ const Map<String, RoleCheck> _protectedRoutes = {
   // SEC-017: Analytics and export routes require conductor role
   '/statistics': _isConductor,
   '/planning': _canEditPlans, // ORG_PLANS: observers must not see the plan
-  '/history': _isConductor,
+  '/history': _canSeeSongHistory, // SETTINGS2: Ionic admin/responsible/helper
   '/export': _isConductor,
 
   // Attendance management
@@ -164,6 +164,8 @@ const Map<String, RoleCheck> _protectedRoutes = {
 bool _isAdmin(Role role) => role.isAdmin;
 bool _isAdminOrResponsible(Role role) => role.isAdmin || role.isResponsible;
 bool _isConductor(Role role) => role.isConductor;
+// SETTINGS2: Werke-Historie (Ionic settings: isAdmin || isHelper)
+bool _canSeeSongHistory(Role role) => role.isConductor || role.isHelperRole;
 bool _canSeePeopleTab(Role role) => role.canSeePeopleTab;
 bool _canSeeAttendanceTab(Role role) => role.canSeeAttendanceTab;
 // ORG_PLANS: Ablaufplan editing (Role.isConductor includes observers/viewers)

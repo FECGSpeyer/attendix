@@ -15,7 +15,6 @@ import '../../../../core/utils/color_utils.dart';
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/event_list_utils.dart';
 import '../../../../data/models/attendance/attendance.dart';
-import '../../../../core/providers/tenant_providers.dart';
 import '../../../../shared/widgets/loading/loading.dart';
 import '../../../../shared/widgets/common/empty_state.dart';
 import '../../../messages/presentation/widgets/notification_bell.dart'; // MESSAGES
@@ -24,6 +23,7 @@ import '../../../../core/providers/duty_providers.dart';
 import '../../../duty/presentation/pages/duty_distribute_page.dart';
 import '../../../duty/presentation/widgets/duty_actions.dart';
 import '../../../duty/presentation/widgets/my_duty_requests_section.dart';
+import '../../../../shared/widgets/tenant/tenant_switcher_title.dart'; // SETTINGS2
 
 
 /// Attendance list page
@@ -69,27 +69,16 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
   @override
   Widget build(BuildContext context) {
     final ref = this.ref;
-    final tenant = ref.watch(currentTenantProvider);
     final attendanceAsync = ref.watch(realtimeAttendanceListProvider);
     // Use effectiveRoleProvider to support debug role override
     final role = ref.watch(effectiveRoleProvider);
 
     return Scaffold(
       appBar: AppBar(
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('Anwesenheit'),
-            if (tenant != null)
-              Text(
-                tenant.shortName,
-                // FN-014: Add overflow handling for long tenant names
-                overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: AppColors.medium,
-                ),
-              ),
-          ],
+        // SETTINGS2: Ionic att-list header tenant switcher
+        title: const TenantSwitcherTitle(
+          fallbackTitle: 'Termine',
+          singleTenantTitle: 'Termine',
         ),
         actions: [
           // DUTY: "Dienste verteilen" for leaders when the tenant uses the Dienstplan

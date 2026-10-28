@@ -50,3 +50,4 @@ export 'cross_tenant_person_providers.dart';
 
 // SETTINGS2
 export 'optional_tabs_providers.dart';
+export 'admin_providers.dart'; // SETTINGS2
