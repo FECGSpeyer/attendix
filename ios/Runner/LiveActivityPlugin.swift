@@ -13,7 +13,7 @@ import ActivityKit
 /// (MethodChannel `de.attendix/live_activity`).
 ///
 /// Dart → native: isAvailable, start, update, end, endAll, list, getTokens,
-/// configure, takePendingUrl.
+/// configure, setRegistrationOpen, takePendingUrl.
 /// Native → Dart: pushToStartToken, activityToken, openUrl.
 public class LiveActivityPlugin: NSObject, FlutterPlugin {
     static let channelName = "de.attendix/live_activity"
@@ -77,6 +77,7 @@ public class LiveActivityPlugin: NSObject, FlutterPlugin {
             pendingUrl = nil
             result(url)
         case "configure": configure(args, result)
+        case "setRegistrationOpen": setRegistrationOpen(args, result)
         case "isAvailable": isAvailable(result)
         case "start": start(args, result)
         case "update": update(args, result)
@@ -104,6 +105,18 @@ public class LiveActivityPlugin: NSObject, FlutterPlugin {
         }
         LiveActivityTokenReporter.shared.configure(url: url, key: key)
         reply(result, nil)
+    }
+
+    /// SOL_FIX18: Dart's endSession (logout) closes the reporter's own token
+    /// uploads and gets its reply only after the uploads already running have
+    /// finished, so it can delete the token rows afterwards; init re-opens.
+    private func setRegistrationOpen(_ args: [String: Any], _ result: @escaping FlutterResult) {
+        let open = args["open"] as? Bool ?? true
+        DispatchQueue.main.async {
+            LiveActivityTokenReporter.shared.setUploadsOpen(open) {
+                result(nil)
+            }
+        }
     }
 
     private func isAvailable(_ result: @escaping FlutterResult) {
@@ -251,6 +264,7 @@ final class LiveActivityTokenReporter {
     private static let urlKey = "liveActivity.apiUrl"
     private static let apiKeyKey = "liveActivity.apiKey"
     private static let startTokenKey = "liveActivity.pushToStartToken"
+    private static let uploadsClosedKey = "liveActivity.uploadsClosed"
 
     /// Last known tokens, so Dart can read them after it attached its handler.
     private(set) var pushToStartToken: String?
@@ -259,9 +273,27 @@ final class LiveActivityTokenReporter {
     var onActivityToken: (([String: Any]) -> Void)?
     private var observing = false
     private var observedActivities = Set<String>()
+    /// SOL_FIX18: false after a logout until the next session's init (kept
+    /// across launches, so a background wake after the logout uploads nothing).
+    private var uploadsOpen: Bool
+    /// SOL_FIX18: uploads that are still running.
+    private let uploads = DispatchGroup()
 
     private init() {
         pushToStartToken = UserDefaults.standard.string(forKey: Self.startTokenKey)
+        uploadsOpen = !UserDefaults.standard.bool(forKey: Self.uploadsClosedKey)
+    }
+
+    /// SOL_FIX18: called on main. Closing stops new uploads at once and calls
+    /// `completion` (on main) when the running ones have finished.
+    func setUploadsOpen(_ open: Bool, completion: @escaping () -> Void) {
+        uploadsOpen = open
+        UserDefaults.standard.set(!open, forKey: Self.uploadsClosedKey)
+        if open {
+            completion()
+        } else {
+            uploads.notify(queue: .main, execute: completion)
+        }
     }
 
     func configure(url: String, key: String) {
@@ -327,7 +359,8 @@ final class LiveActivityTokenReporter {
 
     /// The server finds the user by this device's push-to-start token.
     private func upload(_ payload: [String: Any]) {
-        guard let base = UserDefaults.standard.string(forKey: Self.urlKey),
+        guard uploadsOpen,
+              let base = UserDefaults.standard.string(forKey: Self.urlKey),
               let key = UserDefaults.standard.string(forKey: Self.apiKeyKey),
               let startToken = pushToStartToken,
               let url = URL(string: "\(base)/functions/v1/live-activity-token") else { return }
@@ -348,7 +381,10 @@ final class LiveActivityTokenReporter {
             task = .invalid
         }
         task = UIApplication.shared.beginBackgroundTask(expirationHandler: finish)
+        let group = uploads
+        group.enter()
         URLSession.shared.dataTask(with: request) { _, _, _ in
+            group.leave()
             DispatchQueue.main.async(execute: finish)
         }.resume()
     }

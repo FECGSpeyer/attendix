@@ -91,6 +91,10 @@ void main() {
   late bool available;
   late String? pendingUrl;
 
+  /// SOL_FIX18: when set, the native close (`setRegistrationOpen` false)
+  /// answers only after it completes (uploads still running on iOS).
+  Completer<void>? closeGate;
+
   // 2026-10-21 19:00 Europe/Berlin = 17:00 UTC
   final planStart = DateTime.utc(2026, 10, 21, 17).millisecondsSinceEpoch;
   const min = 60000;
@@ -115,9 +119,16 @@ void main() {
     running = [];
     available = true;
     pendingUrl = null;
+    closeGate = null;
     messenger.setMockMethodCallHandler(channel, (call) async {
       calls.add(call);
       switch (call.method) {
+        case 'setRegistrationOpen':
+          final gate = closeGate;
+          if ((call.arguments as Map)['open'] == false && gate != null) {
+            await gate.future;
+          }
+          return null;
         case 'isAvailable':
           return {'available': available, 'pushToStart': true};
         case 'list':
@@ -139,13 +150,21 @@ void main() {
 
   tearDown(() => messenger.setMockMethodCallHandler(channel, null));
 
-  LiveActivityService service(FakeHost host, {int? now, bool platform = true, bool android = false}) => LiveActivityService(
+  LiveActivityService service(
+    FakeHost host, {
+    int? now,
+    bool platform = true,
+    bool android = false,
+    Duration nativeCloseTimeout = const Duration(seconds: 10),
+  }) =>
+      LiveActivityService(
         host: host,
         channel: channel,
         platformSupported: platform,
         isAndroid: android,
         now: () => now ?? planStart + 20 * min,
         listenToLifecycle: false,
+        nativeCloseTimeout: nativeCloseTimeout,
       );
 
   List<String> methods() => calls.map((c) => c.method).toList();
@@ -174,7 +193,8 @@ void main() {
     await s.sync();
     s.dispose();
 
-    expect(methods().take(3), ['isAvailable', 'configure', 'getTokens']);
+    expect(methods().take(4), ['isAvailable', 'setRegistrationOpen', 'configure', 'getTokens']);
+    expect(calls[1].arguments, {'open': true});
     final configure = calls.firstWhere((c) => c.method == 'configure');
     expect(configure.arguments, {'url': 'https://example.supabase.co', 'key': 'anon'});
     expect(host.saved, [
@@ -370,7 +390,7 @@ void main() {
 
       host.userId = 'user-2';
       await s.onTenantReady(7, hasTenantUser: true, userId: 'user-2');
-      expect(methods().first, 'endAll');
+      expect(methods().take(2), ['setRegistrationOpen', 'endAll']);
       expect(host.saved, isNotEmpty);
       expect(host.saved.map((e) => e['userId']).toSet(), {'user-2'});
       expect(s.sessionUserId, 'user-2');
@@ -558,6 +578,111 @@ void main() {
     });
   });
 
+  // SOL_FIX18: Sol review of 1c9b642.
+  group('SOL_FIX18', () {
+    test('logout closes the native uploads and waits for them before deleting', () async {
+      final host = FakeHost(attendances: [attendance()]);
+      final s = service(host);
+      await s.onTenantReady(7, hasTenantUser: true, userId: 'user-1');
+      s.stopLoop();
+      calls.clear();
+
+      final gate = Completer<void>();
+      closeGate = gate; // an iOS upload is still running
+      final ending = endLiveActivitiesBeforeSignOut(s, 'user-1');
+      await pumpEventQueue();
+      expect(methods(), ['setRegistrationOpen']);
+      expect(calls.single.arguments, {'open': false});
+      expect(host.removed, isEmpty, reason: 'rows are deleted after the native uploads');
+
+      gate.complete();
+      await ending;
+      expect(methods(), ['setRegistrationOpen', 'endAll', 'getTokens']);
+      expect(host.removed.single['tokens'], ['abc123', 'def456']);
+      s.dispose();
+    });
+
+    test('the next session re-opens the native uploads', () async {
+      final host = FakeHost(attendances: [attendance()]);
+      final s = service(host);
+      await s.onTenantReady(7, hasTenantUser: true, userId: 'user-1');
+      s.stopLoop();
+      await endLiveActivitiesBeforeSignOut(s, 'user-1');
+      calls.clear();
+
+      await s.onTenantReady(7, hasTenantUser: true, userId: 'user-1');
+      s.stopLoop();
+      final opens = calls.where((c) => c.method == 'setRegistrationOpen').toList();
+      expect(opens.single.arguments, {'open': true});
+      expect(methods().indexOf('setRegistrationOpen'), lessThan(methods().indexOf('configure')));
+      s.dispose();
+    });
+
+    test('a native close that never answers does not block the logout', () async {
+      final host = FakeHost(attendances: [attendance()]);
+      final s = service(host, nativeCloseTimeout: const Duration(milliseconds: 20));
+      await s.onTenantReady(7, hasTenantUser: true, userId: 'user-1');
+      s.stopLoop();
+      closeGate = Completer<void>(); // never completes
+      await endLiveActivitiesBeforeSignOut(s, 'user-1');
+      expect(host.removed, hasLength(1));
+      s.dispose();
+    });
+
+    test('a build without the native call still logs out', () async {
+      final host = FakeHost(attendances: [attendance()]);
+      final s = service(host);
+      await s.onTenantReady(7, hasTenantUser: true, userId: 'user-1');
+      s.stopLoop();
+      messenger.setMockMethodCallHandler(channel, (call) async {
+        calls.add(call);
+        if (call.method == 'setRegistrationOpen') {
+          throw MissingPluginException();
+        }
+        if (call.method == 'getTokens') return {'pushToStartToken': 'abc123'};
+        return null;
+      });
+      await endLiveActivitiesBeforeSignOut(s, 'user-1');
+      expect(host.removed, hasLength(1));
+      s.dispose();
+    });
+
+    test('setEnabled(false) while init loads the setting: the late true is ignored', () async {
+      final host = FakeHost(attendances: [attendance()]); // DB still says enabled
+      final gate = Completer<void>();
+      host.enabledGate = gate;
+      final s = service(host);
+      final initializing = s.init();
+      await pumpEventQueue();
+
+      await s.setEnabled(false); // user switches it off meanwhile
+      gate.complete();
+      await initializing;
+      s.stopLoop();
+      expect(s.isEnabled, isFalse);
+      expect(methods(), isNot(contains('start')));
+
+      await s.sync();
+      expect(methods(), isNot(contains('start')));
+    });
+
+    test('setEnabled(true) while init loads a stale false: activities start', () async {
+      final host = FakeHost(attendances: [attendance()])..enabled = false;
+      final gate = Completer<void>();
+      host.enabledGate = gate;
+      final s = service(host);
+      final initializing = s.init();
+      await pumpEventQueue();
+
+      await s.setEnabled(true);
+      gate.complete();
+      await initializing;
+      s.stopLoop();
+      expect(s.isEnabled, isTrue);
+      expect(methods(), contains('start'));
+    });
+  });
+
   group('Android', () {
     test('registers the "android" start token instead of configure', () async {
       final host = FakeHost(attendances: [attendance()]);
@@ -565,6 +690,8 @@ void main() {
       await s.init();
       s.stopLoop();
       expect(methods(), isNot(contains('configure')));
+      // SOL_FIX18: no native uploads on Android.
+      expect(methods(), isNot(contains('setRegistrationOpen')));
       expect(host.saved.first,
           {'userId': 'user-1', 'kind': 'start', 'token': 'android', 'attendanceId': 0, 'planKey': ''});
       expect(methods(), contains('start'));

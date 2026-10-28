@@ -23,6 +23,17 @@
           "NOT /svg/*",
           "*"
         ]
+      },
+      {
+        "appID": "MXM3YWAKPL.de.attendix.attendix",
+        "paths": [
+          "/register/*",
+          "/tabs/*",
+          "/login",
+          "NOT /assets/*",
+          "NOT /svg/*",
+          "*"
+        ]
       }
     ]
   }

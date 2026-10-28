@@ -101,6 +101,7 @@ class LiveActivityService {
     bool? isAndroid,
     int Function()? now,
     bool listenToLifecycle = true,
+    this.nativeCloseTimeout = const Duration(seconds: 10),
   })  : _host = host,
         _channel = channel ?? const MethodChannel(channelName),
         _platformSupported = platformSupported ?? isSupportedPlatform,
@@ -109,6 +110,11 @@ class LiveActivityService {
         _listenToLifecycle = listenToLifecycle;
 
   static const String channelName = 'de.attendix/live_activity';
+
+  /// SOL_FIX18: how long [endSession] waits for the native side to stop its
+  /// own token uploads (in-flight URLSession requests) – the logout must not
+  /// hang on a slow network.
+  final Duration nativeCloseTimeout;
 
   /// How often the open app re-checks running plans (the widget counts down on its own).
   static const Duration syncInterval = Duration(seconds: 20);
@@ -259,6 +265,10 @@ class LiveActivityService {
     _loadedTenantId = null;
     _started = false;
     _enabled = true;
+    // SOL_FIX18: the iOS side uploads activity tokens on its own (straight
+    // to the live-activity-token Edge Function, not via Dart). Close that
+    // too and wait for its running uploads – before the rows are deleted.
+    await _setNativeRegistrationOpen(false);
     if (_platformSupported) {
       try {
         await _channel.invokeMethod<void>('endAll');
@@ -297,9 +307,26 @@ class LiveActivityService {
     }
   }
 
+  /// SOL_FIX18: opens / closes the native (iOS) token uploads. Closing
+  /// completes once the uploads already running have finished. Android has
+  /// no native uploads; a build without the call just logs.
+  Future<void> _setNativeRegistrationOpen(bool open) async {
+    if (!_platformSupported || _isAndroid) return;
+    try {
+      await _channel
+          .invokeMethod<void>('setRegistrationOpen', {'open': open})
+          .timeout(nativeCloseTimeout);
+    } catch (e) {
+      _log('setRegistrationOpen($open)', e);
+    }
+  }
+
   Future<void> init() async {
     if (!_platformSupported) return;
     final generation = _generation;
+    // SOL_FIX18: bound to the enable toggle as well – a setEnabled() that
+    // runs while this init loads the setting wins over the loaded value.
+    final epoch = _enableEpoch;
     bool supported;
     try {
       final result = await _channel.invokeMapMethod<String, dynamic>('isAvailable');
@@ -315,9 +342,10 @@ class LiveActivityService {
     }
 
     await LiveTimezone.ensureInitialized();
+    if (_isStale(generation)) return;
     final enabled = await _loadEnabled();
     if (_isStale(generation)) return;
-    _enabled = enabled;
+    if (epoch == _enableEpoch) _enabled = enabled;
     if (!_started) {
       _started = true;
       _registrationOpen = true;
@@ -510,6 +538,9 @@ class LiveActivityService {
       // ActivityKit token on Android) – Ionic registerTokenListeners.
       await _saveToken('start', 'android', generation: generation);
     } else {
+      // SOL_FIX18: re-open the native uploads [endSession] closed.
+      if (_isStale(generation)) return;
+      await _setNativeRegistrationOpen(true);
       // Lets the native side register update tokens itself while the app only runs in the background.
       try {
         if (_isStale(generation)) return;

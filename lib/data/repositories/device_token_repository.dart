@@ -83,10 +83,20 @@ class DeviceTokenRepository extends BaseRepository implements DeviceTokenStore {
   }
 
   /// Ionic removeToken: deletes this device's token (on logout).
+  ///
+  /// SOL_FIX18: scoped by the token value AND the signed-in user, so the
+  /// logout only ever removes the own account's row of this device. Without
+  /// a user (already signed out) RLS would reject it anyway – nothing to do.
   @override
   Future<void> removeToken(String token) async {
+    final userId = _userId;
+    if (userId == null) return;
     try {
-      await supabase.from('device_tokens').delete().eq('token', token);
+      await supabase
+          .from('device_tokens')
+          .delete()
+          .eq('token', token)
+          .eq('user_id', userId);
     } catch (e, stack) {
       handleError(e, stack, 'removeToken');
       rethrow;
