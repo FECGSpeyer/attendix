@@ -94,7 +94,6 @@ Widget ionIosListTileTheme(BuildContext context, {required Widget child}) {
     horizontalTitleGap: IonIos.itemIconGap,
     minLeadingWidth: IonIos.itemIconSize,
     iconColor: IonIos.text(context),
-    textColor: IonIos.text(context),
     titleTextStyle: base.copyWith(
       fontSize: 16,
       height: 1.25,
@@ -662,11 +661,15 @@ class IonStackedField extends StatelessWidget {
     this.helper,
     this.hint,
     required this.builder,
+    this.flush = false,
   });
 
   final String? label;
   final String? helper;
   final String? hint;
+
+  /// iOS: no horizontal item padding (the parent already insets).
+  final bool flush;
 
   /// Builds the field with the platform decoration.
   final Widget Function(InputDecoration decoration) builder;
@@ -678,8 +681,8 @@ class IonStackedField extends StatelessWidget {
   Widget build(BuildContext context) {
     if (!ionIsIos(context)) {
       return Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppDimensions.paddingM,
+        padding: EdgeInsets.symmetric(
+          horizontal: flush ? 0 : AppDimensions.paddingM,
           vertical: AppDimensions.paddingS,
         ),
         child: builder(InputDecoration(
@@ -693,12 +696,14 @@ class IonStackedField extends StatelessWidget {
     final base = (Theme.of(context).textTheme.bodyLarge ?? const TextStyle())
         .copyWith(letterSpacing: 0);
     return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        IonIos.itemPaddingStart,
-        10,
-        IonIos.itemPaddingEnd,
-        8,
-      ),
+      padding: flush
+          ? const EdgeInsets.symmetric(vertical: 8)
+          : const EdgeInsets.fromLTRB(
+              IonIos.itemPaddingStart,
+              10,
+              IonIos.itemPaddingEnd,
+              8,
+            ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -752,7 +757,11 @@ class IonStackedValue extends StatelessWidget {
     this.helper,
     this.onTap,
     this.trailing,
+    this.flush = false,
   });
+
+  /// iOS: no horizontal item padding (the parent already insets).
+  final bool flush;
 
   final String label;
   final String value;
@@ -764,6 +773,7 @@ class IonStackedValue extends StatelessWidget {
   Widget build(BuildContext context) {
     if (!ionIsIos(context)) {
       return ListTile(
+        contentPadding: flush ? EdgeInsets.zero : null,
         title: Text(label),
         subtitle: Text(helper == null ? value : '$value\n$helper'),
         isThreeLine: helper != null,
@@ -776,12 +786,14 @@ class IonStackedValue extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(
-          IonIos.itemPaddingStart,
-          10,
-          IonIos.itemPaddingEnd,
-          10,
-        ),
+        padding: flush
+            ? const EdgeInsets.symmetric(vertical: 10)
+            : const EdgeInsets.fromLTRB(
+                IonIos.itemPaddingStart,
+                10,
+                IonIos.itemPaddingEnd,
+                10,
+              ),
         child: Row(
           children: [
             Expanded(

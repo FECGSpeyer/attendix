@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/constants/app_constants.dart';
 import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/attendance_type_providers.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/utils/color_utils.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/attendance/attendance.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
+import '../widgets/ion_condense.dart'; // UX_SETTINGS (WAVE 8)
+import '../widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
 
 /// Attendance Types List Page
 ///
@@ -29,10 +29,19 @@ class _AttendanceTypesPageState extends ConsumerState<AttendanceTypesPage> {
   @override
   Widget build(BuildContext context) {
     final typesAsync = ref.watch(attendanceTypesProvider);
+    final title = context.l10n.typeSettingsTypes;
+    final ios = ionIsIos(context);
 
-    return Scaffold(
+    // UX_SETTINGS (WAVE 8): types.page.html — arrow-back, condense title,
+    // repeat/checkmark header button, hint card, inset list of type names,
+    // add FAB.
+    return IonCondense(builder: (context, collapsed) => Scaffold(
       appBar: AppBar(
-        title: Text(context.l10n.typeSettingsTypes),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => context.pop(),
+        ),
+        title: IonCondenseTitle(title, collapsed: collapsed),
         actions: [
           if (_isReordering)
             IconButton(
@@ -59,78 +68,50 @@ class _AttendanceTypesPageState extends ConsumerState<AttendanceTypesPage> {
         error: (error, stack) => Center(child: Text(context.l10n.settingsFlutterErrorDetail(friendlyErrorMessage(error)))),
         data: (types) {
           final displayTypes = _isReordering ? _localTypes : types;
-
-          if (displayTypes.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.category_outlined, size: 64, color: AppColors.medium),
-                  const SizedBox(height: 16),
-                  Text(context.l10n.typeSettingsFlutterNoTypes),
-                  const SizedBox(height: 16),
-                  ElevatedButton.icon(
-                    onPressed: () => _showCreateDialog(context),
-                    icon: const Icon(Icons.add),
-                    label: Text(context.l10n.typeSettingsFlutterCreateType),
-                  ),
-                ],
-              ),
-            );
-          }
-
-          return Column(
+          return ListView(
+            padding: EdgeInsets.fromLTRB(16, ios ? 0 : 16, 16, 96),
             children: [
-              Container(
-                margin: const EdgeInsets.all(AppDimensions.paddingM),
-                padding: const EdgeInsets.all(AppDimensions.paddingM),
-                decoration: BoxDecoration(
-                  color: AppColors.primary.withValues(alpha: 0.08),
-                  borderRadius: BorderRadius.circular(AppDimensions.borderRadiusS),
-                ),
-                child: Row(
-                  children: [
-                    const Icon(Icons.info_outline, color: AppColors.primary, size: 20),
-                    const SizedBox(width: AppDimensions.paddingS),
-                    Expanded(
-                      child: Text(
-                        context.l10n.typeSettingsTypesIntro,
-                        style: const TextStyle(fontSize: 13, color: AppColors.dark),
+              IonLargeTitle(title, padding: const EdgeInsets.only(bottom: 4)),
+              SizedBox(height: ios ? 24 : 0),
+              SettingsHintCard(icon: Icons.list, text: context.l10n.typeSettingsTypesIntro),
+              SettingsListSection(
+                title: context.l10n.typeSettingsAttendanceTypes,
+                icons: false,
+                children: [
+                  if (_isReordering)
+                    ReorderableListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      buildDefaultDragHandles: false,
+                      itemCount: displayTypes.length,
+                      onReorder: (oldIndex, newIndex) {
+                        setState(() {
+                          if (newIndex > oldIndex) newIndex--;
+                          final item = _localTypes.removeAt(oldIndex);
+                          _localTypes.insert(newIndex, item);
+                        });
+                      },
+                      itemBuilder: (context, index) => SettingsListTile(
+                        key: ValueKey(displayTypes[index].id),
+                        title: displayTypes[index].name,
+                        detail: false,
+                        // ion-reorder slot="end"
+                        trailing: ReorderableDragStartListener(
+                          index: index,
+                          child: Icon(
+                            Icons.drag_handle,
+                            color: ios ? IonIos.note(context) : AppColors.medium,
+                          ),
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: _isReordering
-              ? ReorderableListView.builder(
-                  itemCount: displayTypes.length,
-                  onReorder: (oldIndex, newIndex) {
-                    setState(() {
-                      if (newIndex > oldIndex) newIndex--;
-                      final item = _localTypes.removeAt(oldIndex);
-                      _localTypes.insert(newIndex, item);
-                    });
-                  },
-                  itemBuilder: (context, index) {
-                    return _AttendanceTypeTile(
-                      key: ValueKey(displayTypes[index].id),
-                      type: displayTypes[index],
-                      onTap: null,
-                      trailing: const Icon(Icons.drag_handle),
-                    );
-                  },
-                )
-              : ListView.builder(
-                  itemCount: displayTypes.length,
-                  itemBuilder: (context, index) {
-                    return _AttendanceTypeTile(
-                      type: displayTypes[index],
-                      onTap: () => _openTypeDetail(displayTypes[index]),
-                      trailing: const Icon(Icons.chevron_right),
-                    );
-                  },
-                ),
+                    )
+                  else
+                    for (final type in displayTypes)
+                      SettingsListTile(
+                        title: type.name,
+                        onTap: () => _openTypeDetail(type),
+                      ),
+                ],
               ),
             ],
           );
@@ -151,7 +132,7 @@ class _AttendanceTypesPageState extends ConsumerState<AttendanceTypesPage> {
               backgroundColor: AppColors.medium,
               child: const Icon(Icons.close),
             ),
-    );
+    ));
   }
 
   Future<void> _saveOrder() async {
@@ -281,62 +262,4 @@ AttendanceType buildNewAttendanceType(String name) {
     reminders: const [],
     defaultPlan: const {'time': '', 'end': '', 'fields': <dynamic>[]},
   );
-}
-
-class _AttendanceTypeTile extends StatelessWidget {
-  final AttendanceType type;
-  final VoidCallback? onTap;
-  final Widget trailing;
-
-  const _AttendanceTypeTile({
-    super.key,
-    required this.type,
-    required this.onTap,
-    required this.trailing,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final color = ColorUtils.getColorForPicker(type.color);
-
-    return ListTile(
-      leading: Container(
-        width: 40,
-        height: 40,
-        decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.2),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Icon(
-          Icons.event,
-          color: color,
-        ),
-      ),
-      title: Text(type.name),
-      subtitle: Text(
-        _getSubtitle(context.l10n),
-        style: TextStyle(color: AppColors.medium, fontSize: 12),
-      ),
-      trailing: trailing,
-      onTap: onTap,
-    );
-  }
-
-  String _getSubtitle(AppLocalizations l10n) {
-    final parts = <String>[];
-
-    if (type.startTime != null && type.endTime != null) {
-      parts.add('${type.startTime} - ${type.endTime}');
-    }
-
-    if (type.manageSongs) {
-      parts.add(l10n.typeSettingsFlutterWithProgramme);
-    }
-
-    if (!type.visible) {
-      parts.add(l10n.typeSettingsFlutterHidden);
-    }
-
-    return parts.isEmpty ? l10n.agendaDefault : parts.join(' • ');
-  }
 }
