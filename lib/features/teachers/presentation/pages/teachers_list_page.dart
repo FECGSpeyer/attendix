@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/group_providers.dart';
+import '../../../../core/providers/player_providers.dart';
 import '../../../../core/providers/teacher_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -11,7 +12,9 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/repositories/teacher_repository.dart';
 
-/// Teacher List Page — with instrument names, student counts, role checks
+/// Teacher list (Ionic teachers.page): "Lehrer", rows with name, instrument
+/// names and a "n Spieler" badge; FAB opens the "Lehrer hinzufügen" sheet,
+/// tapping a row opens "Lehrer bearbeiten".
 class TeachersListPage extends ConsumerWidget {
   const TeachersListPage({super.key});
 
@@ -19,12 +22,11 @@ class TeachersListPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final teachersAsync = ref.watch(enrichedTeachersProvider);
     final currentRole = ref.watch(currentRoleProvider);
-    final isConductor = currentRole.isConductor;
+    // Ionic teachers.page isAdmin = Admin or Responsible
+    final isAdmin = currentRole.isAdmin || currentRole.isResponsible;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Lehrer / Dirigenten'),
-      ),
+      appBar: AppBar(title: const Text('Lehrer')),
       body: teachersAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stack) => Center(
@@ -37,12 +39,6 @@ class TeachersListPage extends ConsumerWidget {
                 'Lehrer konnten nicht geladen werden',
                 style: Theme.of(context).textTheme.titleMedium,
               ),
-              const SizedBox(height: AppDimensions.paddingXS),
-              Text(
-                '$error',
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.medium),
-                textAlign: TextAlign.center,
-              ),
               const SizedBox(height: AppDimensions.paddingM),
               ElevatedButton(
                 onPressed: () => ref.invalidate(enrichedTeachersProvider),
@@ -52,27 +48,6 @@ class TeachersListPage extends ConsumerWidget {
           ),
         ),
         data: (teachers) {
-          if (teachers.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.school_outlined, size: 64, color: AppColors.medium),
-                  const SizedBox(height: AppDimensions.paddingM),
-                  const Text('Keine Lehrer vorhanden'),
-                  if (isConductor) ...[
-                    const SizedBox(height: AppDimensions.paddingM),
-                    ElevatedButton.icon(
-                      onPressed: () => _showCreateDialog(context, ref),
-                      icon: const Icon(Icons.add),
-                      label: const Text('Lehrer hinzufügen'),
-                    ),
-                  ],
-                ],
-              ),
-            );
-          }
-
           return RefreshIndicator(
             onRefresh: () async {
               ref.invalidate(teachersProvider);
@@ -81,15 +56,15 @@ class TeachersListPage extends ConsumerWidget {
               await ref.read(enrichedTeachersProvider.future);
             },
             child: ListView.builder(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.only(bottom: 88),
               itemCount: teachers.length,
               itemBuilder: (context, index) {
                 final teacher = teachers[index];
                 return _TeacherTile(
                   teacher: teacher,
-                  onTap: isConductor
-                      ? () => _showEditDialog(context, ref, teacher)
-                      : null,
-                  onDelete: isConductor
+                  onTap: () => _openTeacherPage(context, ref, teacher),
+                  onDelete: isAdmin
                       ? () => _deleteTeacher(context, ref, teacher)
                       : null,
                 );
@@ -98,71 +73,69 @@ class TeachersListPage extends ConsumerWidget {
           );
         },
       ),
-      floatingActionButton: isConductor
+      floatingActionButton: isAdmin
           ? FloatingActionButton(
-              onPressed: () => _showCreateDialog(context, ref),
+              onPressed: () => _showAddSheet(context, ref),
               child: const Icon(Icons.add),
             )
           : null,
     );
   }
 
-  Future<void> _showCreateDialog(BuildContext context, WidgetRef ref) async {
+  /// Ionic "Lehrer hinzufügen" sheet (breakpoint 0.7).
+  Future<void> _showAddSheet(BuildContext context, WidgetRef ref) async {
     final groups = ref.read(groupsProvider).valueOrNull ?? [];
-    final result = await showDialog<Teacher>(
+    final result = await showModalBottomSheet<Teacher>(
       context: context,
-      builder: (context) => _TeacherEditDialog(availableInstruments: groups),
+      isScrollControlled: true,
+      showDragHandle: true,
+      builder: (ctx) => Padding(
+        padding: EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
+        child: _TeacherForm(availableInstruments: groups),
+      ),
     );
-
-    if (result != null) {
-      try {
-        await ref.read(teacherNotifierProvider.notifier).createTeacher(result);
-
-        if (context.mounted) {
-          ToastHelper.showSuccess(context, 'Lehrer "${result.name}" erstellt');
-        }
-      } catch (e) {
-        if (context.mounted) {
-          ToastHelper.showError(context, 'Fehler: $e');
-        }
-      }
+    if (result == null) return;
+    try {
+      await ref.read(teacherNotifierProvider.notifier).createTeacher(result);
+    } catch (e) {
+      if (context.mounted) ToastHelper.showError(context, 'Fehler: $e');
     }
   }
 
-  Future<void> _showEditDialog(
+  /// Ionic TeacherPage modal ("Lehrer bearbeiten").
+  Future<void> _openTeacherPage(
     BuildContext context,
     WidgetRef ref,
     Teacher teacher,
   ) async {
     final groups = ref.read(groupsProvider).valueOrNull ?? [];
-    final result = await showDialog<Teacher>(
-      context: context,
-      builder: (context) => _TeacherEditDialog(
-        teacher: teacher,
-        availableInstruments: groups,
+    final result = await Navigator.of(context).push<Teacher>(
+      MaterialPageRoute(
+        fullscreenDialog: true,
+        builder: (_) => _TeacherEditPage(
+          teacher: teacher,
+          availableInstruments: groups,
+        ),
       ),
     );
 
     if (result != null && teacher.id != null) {
       try {
         await ref.read(teacherNotifierProvider.notifier).updateTeacher(
-              teacher.id!,
-              {
-                'name': result.name,
-                'number': result.number,
-                'notes': result.notes,
-                'private': result.isPrivate,
-                'instruments': result.instruments,
-              },
-            );
-
+          teacher.id!,
+          {
+            'name': result.name,
+            'number': result.number,
+            'notes': result.notes,
+            'private': result.isPrivate,
+            'instruments': result.instruments,
+          },
+        );
         if (context.mounted) {
-          ToastHelper.showSuccess(context, 'Änderungen gespeichert');
+          ToastHelper.showSuccess(context, 'Lehrer erfolgreich geupdated!');
         }
       } catch (e) {
-        if (context.mounted) {
-          ToastHelper.showError(context, 'Fehler: $e');
-        }
+        if (context.mounted) ToastHelper.showError(context, 'Fehler: $e');
       }
     }
   }
@@ -179,21 +152,13 @@ class TeachersListPage extends ConsumerWidget {
       confirmText: 'Löschen',
       cancelText: 'Abbrechen',
     );
-
-    if (!confirmed) return;
-
-    if (teacher.id == null) return;
+    if (!confirmed || teacher.id == null) return;
 
     try {
       await ref.read(teacherNotifierProvider.notifier).deleteTeacher(teacher.id!);
-
-      if (context.mounted) {
-        ToastHelper.showSuccess(context, 'Lehrer gelöscht');
-      }
+      if (context.mounted) ToastHelper.showSuccess(context, 'Lehrer gelöscht');
     } catch (e) {
-      if (context.mounted) {
-        ToastHelper.showError(context, 'Fehler: $e');
-      }
+      if (context.mounted) ToastHelper.showError(context, 'Fehler: $e');
     }
   }
 }
@@ -201,6 +166,8 @@ class TeachersListPage extends ConsumerWidget {
 class _TeacherTile extends StatelessWidget {
   final Teacher teacher;
   final VoidCallback? onTap;
+
+  /// Flutter extra (Ionic has no delete): swipe left to delete.
   final VoidCallback? onDelete;
 
   const _TeacherTile({
@@ -211,11 +178,11 @@ class _TeacherTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final count = teacher.playerCount ?? 0;
     return Dismissible(
       key: ValueKey(teacher.id),
-      direction: onDelete != null
-          ? DismissDirection.endToStart
-          : DismissDirection.none,
+      direction:
+          onDelete != null ? DismissDirection.endToStart : DismissDirection.none,
       confirmDismiss: (_) async {
         onDelete?.call();
         return false;
@@ -226,114 +193,82 @@ class _TeacherTile extends StatelessWidget {
         color: AppColors.danger,
         child: const Icon(Icons.delete, color: Colors.white),
       ),
-      child: ListTile(
-        leading: CircleAvatar(
-          backgroundColor: AppColors.primary.withValues(alpha: 0.2),
-          child: const Icon(Icons.person, color: AppColors.primary),
-        ),
-        title: Text(teacher.name),
-        subtitle: _buildSubtitle(),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (teacher.playerCount != null && teacher.playerCount! > 0)
-              _StudentCountBadge(count: teacher.playerCount!),
-            if (teacher.isPrivate)
-              const Icon(Icons.lock_outline, size: 16, color: AppColors.medium),
-            if (onTap != null)
-              const Icon(Icons.chevron_right, color: AppColors.medium),
-          ],
-        ),
+      child: InkWell(
         onTap: onTap,
-      ),
-    );
-  }
-
-  Widget? _buildSubtitle() {
-    final parts = <String>[];
-
-    // Instrument names first
-    if (teacher.insNames != null && teacher.insNames!.isNotEmpty) {
-      parts.add(teacher.insNames!);
-    }
-
-    // Phone number
-    if (teacher.number.isNotEmpty) {
-      parts.add('Tel: ${teacher.number}');
-    }
-
-    if (parts.isEmpty && teacher.notes.isNotEmpty) {
-      return Text(
-        teacher.notes,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-      );
-    }
-
-    if (parts.isEmpty) return null;
-
-    return Text(
-      parts.join(' · '),
-      maxLines: 1,
-      overflow: TextOverflow.ellipsis,
-    );
-  }
-}
-
-/// Student count badge
-class _StudentCountBadge extends StatelessWidget {
-  const _StudentCountBadge({required this.count});
-
-  final int count;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      margin: const EdgeInsets.only(right: 4),
-      decoration: BoxDecoration(
-        color: AppColors.primary.withValues(alpha: 0.15),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Icon(Icons.school, size: 14, color: AppColors.primary),
-          const SizedBox(width: 4),
-          Text(
-            '$count',
-            style: const TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              color: AppColors.primary,
+        child: Container(
+          decoration: BoxDecoration(
+            border: Border(
+              bottom:
+                  BorderSide(color: Theme.of(context).dividerColor, width: 0.5),
             ),
           ),
-        ],
+          padding: const EdgeInsets.symmetric(
+              horizontal: AppDimensions.paddingM, vertical: 10),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(teacher.name,
+                        style: const TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.w500)),
+                    if (teacher.insNames?.isNotEmpty ?? false)
+                      Text(teacher.insNames!,
+                          style: const TextStyle(fontSize: 14)),
+                  ],
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: count > 0 ? AppColors.primary : AppColors.danger,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text(
+                  '$count Spieler',
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
 }
 
-class _TeacherEditDialog extends StatefulWidget {
+/// Form fields shared by "Lehrer hinzufügen" and "Lehrer bearbeiten"
+/// (Ionic order: Name, Instrumente, Privatlehrer, Kontakt, Notizen).
+class _TeacherForm extends StatefulWidget {
+  const _TeacherForm({
+    this.teacher,
+    required this.availableInstruments,
+    this.players = const [],
+  });
+
   final Teacher? teacher;
   final List<Group> availableInstruments;
 
-  const _TeacherEditDialog({
-    this.teacher,
-    required this.availableInstruments,
-  });
+  /// Names of the players of this teacher (edit only)
+  final List<String> players;
 
   @override
-  State<_TeacherEditDialog> createState() => _TeacherEditDialogState();
+  State<_TeacherForm> createState() => _TeacherFormState();
 }
 
-class _TeacherEditDialogState extends State<_TeacherEditDialog> {
-  final _formKey = GlobalKey<FormState>();
+class _TeacherFormState extends State<_TeacherForm> {
   late final TextEditingController _nameController;
   late final TextEditingController _numberController;
   late final TextEditingController _notesController;
   late bool _private;
   late Set<int> _selectedInstruments;
+
+  bool get _isNew => widget.teacher == null;
 
   @override
   void initState() {
@@ -354,151 +289,174 @@ class _TeacherEditDialogState extends State<_TeacherEditDialog> {
     super.dispose();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final isNew = widget.teacher == null;
-    final instruments = widget.availableInstruments
-        .where((g) => g.maingroup != true)
-        .toList();
-
-    return AlertDialog(
-      title: Text(isNew ? 'Neuer Lehrer' : 'Lehrer bearbeiten'),
-      content: SizedBox(
-        width: double.maxFinite,
-        child: SingleChildScrollView(
-          child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
+  Future<void> _pickInstruments() async {
+    final selected = Set<int>.from(_selectedInstruments);
+    final result = await showDialog<Set<int>>(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setDialogState) => AlertDialog(
+          title: const Text('Instrumente'),
+          content: SizedBox(
+            width: double.maxFinite,
+            child: ListView(
+              shrinkWrap: true,
               children: [
-                TextFormField(
-                  controller: _nameController,
-                  decoration: const InputDecoration(
-                    labelText: 'Name *',
-                    hintText: 'z.B. Max Mustermann',
-                  ),
-                  textCapitalization: TextCapitalization.words,
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'Bitte einen Namen eingeben';
-                    }
-                    // Ionic teachers.page: name must have at least 3 chars
-                    if (value.trim().length < 3) {
-                      return 'Name muss mindestens 3 Zeichen haben';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: AppDimensions.paddingM),
-                TextFormField(
-                  controller: _numberController,
-                  decoration: const InputDecoration(
-                    labelText: 'Telefon',
-                    hintText: 'z.B. +49 123 456789',
-                  ),
-                  keyboardType: TextInputType.phone,
-                  validator: (value) {
-                    if (value != null && value.trim().isNotEmpty) {
-                      final cleaned = value.trim().replaceAll(RegExp(r'[\s\-\(\)]'), '');
-                      if (!RegExp(r'^\+?[0-9]{4,15}$').hasMatch(cleaned)) {
-                        return 'Bitte eine gültige Telefonnummer eingeben';
-                      }
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: AppDimensions.paddingM),
-
-                // Instruments multi-select
-                if (instruments.isNotEmpty) ...[
-                  Text(
-                    'Instrumente *',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: AppColors.medium,
-                        ),
-                  ),
-                  const SizedBox(height: AppDimensions.paddingXS),
-                  Wrap(
-                    spacing: AppDimensions.paddingXS,
-                    runSpacing: AppDimensions.paddingXS,
-                    children: instruments.map((instrument) {
-                      final isSelected =
-                          _selectedInstruments.contains(instrument.id);
-                      return FilterChip(
-                        label: Text(instrument.displayName),
-                        selected: isSelected,
-                        onSelected: (selected) {
-                          setState(() {
-                            if (selected && instrument.id != null) {
-                              _selectedInstruments.add(instrument.id!);
-                            } else if (instrument.id != null) {
-                              _selectedInstruments.remove(instrument.id!);
-                            }
-                          });
-                        },
-                      );
-                    }).toList(),
-                  ),
-                  const SizedBox(height: AppDimensions.paddingM),
-                ],
-
-                TextFormField(
-                  controller: _notesController,
-                  decoration: const InputDecoration(
-                    labelText: 'Notizen',
-                    hintText: 'Zusätzliche Informationen...',
-                  ),
-                  textCapitalization: TextCapitalization.sentences,
-                  maxLines: 3,
-                ),
-                const SizedBox(height: AppDimensions.paddingM),
-                SwitchListTile(
-                  title: const Text('Privat'),
-                  subtitle: const Text('Nur für Admins sichtbar'),
-                  value: _private,
-                  onChanged: (value) => setState(() => _private = value),
-                  contentPadding: EdgeInsets.zero,
-                ),
+                for (final g in widget.availableInstruments)
+                  if (g.id != null)
+                    CheckboxListTile(
+                      title: Text(g.name),
+                      value: selected.contains(g.id),
+                      onChanged: (v) => setDialogState(() {
+                        if (v == true) {
+                          selected.add(g.id!);
+                        } else {
+                          selected.remove(g.id!);
+                        }
+                      }),
+                    ),
               ],
             ),
           ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('Abbrechen'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, selected),
+              child: const Text('OK'),
+            ),
+          ],
         ),
       ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text('Abbrechen'),
-        ),
-        ElevatedButton(
-          onPressed: _submit,
-          child: Text(isNew ? 'Erstellen' : 'Speichern'),
-        ),
-      ],
     );
+    if (result != null) setState(() => _selectedInstruments = result);
   }
 
   void _submit() {
-    if (!_formKey.currentState!.validate()) return;
-    // Ionic teachers.page: at least one instrument is required
-    if (_selectedInstruments.isEmpty) {
-      ToastHelper.showError(
-        context,
-        'Bitte fülle alle Felder aus, um fortzufahren.',
-      );
+    // Ionic teachers.page addTeacher: name (≥ 3 chars) and instruments required
+    if (_nameController.text.trim().length < 3 || _selectedInstruments.isEmpty) {
+      ToastHelper.showError(context, 'Bitte fülle alle Felder aus...');
       return;
     }
-
-    final result = Teacher(
-      id: widget.teacher?.id,
-      name: _nameController.text.trim(),
-      number: _numberController.text.trim(),
-      notes: _notesController.text.trim(),
-      isPrivate: _private,
-      instruments: _selectedInstruments.toList(),
-      tenantId: widget.teacher?.tenantId,
+    Navigator.pop(
+      context,
+      Teacher(
+        id: widget.teacher?.id,
+        name: _nameController.text.trim(),
+        number: _numberController.text.trim(),
+        notes: _notesController.text.trim(),
+        isPrivate: _private,
+        instruments: _selectedInstruments.toList(),
+        tenantId: widget.teacher?.tenantId,
+      ),
     );
+  }
 
-    Navigator.pop(context, result);
+  @override
+  Widget build(BuildContext context) {
+    final names = widget.availableInstruments
+        .where((g) => _selectedInstruments.contains(g.id))
+        .map((g) => g.name)
+        .join(', ');
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(AppDimensions.paddingM),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (_isNew) ...[
+            Text('Lehrer hinzufügen',
+                style: Theme.of(context).textTheme.titleLarge),
+            const SizedBox(height: AppDimensions.paddingM),
+          ],
+          TextField(
+            controller: _nameController,
+            textCapitalization: TextCapitalization.words,
+            decoration: const InputDecoration(labelText: 'Name'),
+          ),
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            title: const Text('Instrumente'),
+            subtitle: names.isEmpty ? null : Text(names),
+            trailing: const Icon(Icons.arrow_drop_down),
+            onTap: _pickInstruments,
+          ),
+          SwitchListTile(
+            contentPadding: EdgeInsets.zero,
+            title: const Text('Privatlehrer'),
+            value: _private,
+            onChanged: (v) => setState(() => _private = v),
+          ),
+          TextField(
+            controller: _numberController,
+            textCapitalization: TextCapitalization.sentences,
+            decoration: const InputDecoration(labelText: 'Kontakt'),
+          ),
+          const SizedBox(height: AppDimensions.paddingM),
+          TextField(
+            controller: _notesController,
+            textCapitalization: TextCapitalization.sentences,
+            decoration: const InputDecoration(labelText: 'Notizen'),
+            minLines: 1,
+            maxLines: 5,
+          ),
+          if (widget.players.isNotEmpty) ...[
+            const SizedBox(height: AppDimensions.paddingM),
+            ExpansionTile(
+              title: const Text('Spieler'),
+              initiallyExpanded: true,
+              tilePadding: EdgeInsets.zero,
+              children: [
+                for (final p in widget.players)
+                  ListTile(contentPadding: EdgeInsets.zero, title: Text(p)),
+              ],
+            ),
+          ],
+          const SizedBox(height: AppDimensions.paddingL),
+          FilledButton(
+            onPressed: _submit,
+            child: Text(_isNew ? 'Hinzufügen' : 'Lehrer updaten'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Ionic TeacherPage: full-screen "Lehrer bearbeiten" with a close button.
+class _TeacherEditPage extends ConsumerWidget {
+  const _TeacherEditPage({
+    required this.teacher,
+    required this.availableInstruments,
+  });
+
+  final Teacher teacher;
+  final List<Group> availableInstruments;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final players = (ref.watch(playersProvider).valueOrNull ?? const [])
+        .where((p) => teacher.id != null && p.teacher == teacher.id)
+        .map((p) => '${p.firstName} ${p.lastName}')
+        .toList();
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Lehrer bearbeiten'),
+        automaticallyImplyLeading: false,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.close),
+            tooltip: 'Schließen',
+            onPressed: () => Navigator.pop(context),
+          ),
+        ],
+      ),
+      body: _TeacherForm(
+        teacher: teacher,
+        availableInstruments: availableInstruments,
+        players: players,
+      ),
+    );
   }
 }

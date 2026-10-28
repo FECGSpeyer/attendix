@@ -8,7 +8,6 @@ import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/services/ai_service.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/instrument_sort.dart';
-import '../../../../core/utils/tenant_label_utils.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/instrument/instrument.dart';
 import '../widgets/instrument_categories_sheet.dart';
@@ -49,9 +48,7 @@ class _InstrumentsListPageState extends ConsumerState<InstrumentsListPage> {
     final ok =
         await ref.read(groupNotifierProvider.notifier).saveGroupOrder(orders);
     if (!mounted) return;
-    if (ok) {
-      ToastHelper.showSuccess(context, 'Reihenfolge gespeichert');
-    } else {
+    if (!ok) {
       ToastHelper.showError(context, 'Fehler beim Speichern der Reihenfolge');
     }
   }
@@ -71,39 +68,37 @@ class _InstrumentsListPageState extends ConsumerState<InstrumentsListPage> {
     final categoriesAsync = ref.watch(groupCategoriesProvider);
     final playerCountsAsync = ref.watch(playerCountsForGroupsProvider);
     final currentRole = ref.watch(currentRoleProvider);
-    final isConductor = currentRole.isConductor;
+    // Ionic instrument-list isAdmin = Admin or Responsible
+    final isAdmin = currentRole.isAdmin || currentRole.isResponsible;
     final tenant = ref.watch(currentTenantProvider);
-    final label = groupLabelPlural(tenant?.type);
+    final count = groupsAsync.valueOrNull?.length ?? 0;
 
     return Scaffold(
+      // Ionic header: back, "Gruppen (n)", reorder toggle + categories
       appBar: AppBar(
-        title: groupsAsync.when(
-          data: (groups) => Text('$label (${groups.length})'),
-          loading: () => Text(label),
-          error: (_, __) => Text(label),
-        ),
+        title: Text('Gruppen ($count)'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => context.go('/settings'),
         ),
         actions: [
-          if (isConductor)
+          if (isAdmin) ...[
             IconButton(
               icon: Icon(_isReordering ? Icons.check : Icons.swap_vert),
               tooltip: _isReordering
                   ? 'Reihenfolge speichern'
-                  : 'Reihenfolge ändern',
+                  : 'Reihenfolge anpassen',
               onPressed: groupsAsync.hasValue
                   ? () => _toggleReorder(groupsAsync.value!,
                       categoriesAsync.valueOrNull ?? const [])
                   : null,
             ),
-          if (isConductor && !_isReordering)
             IconButton(
-              icon: const Icon(Icons.category),
+              icon: const Icon(Icons.sell_outlined),
               onPressed: () => showInstrumentCategoriesSheet(context),
-              tooltip: 'Kategorien verwalten',
+              tooltip: 'Kategorien',
             ),
+          ],
         ],
       ),
       body: groupsAsync.when(
@@ -124,24 +119,6 @@ class _InstrumentsListPageState extends ConsumerState<InstrumentsListPage> {
           ),
         ),
         data: (groups) {
-          if (groups.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.piano_outlined, size: 80, color: AppColors.medium),
-                  const SizedBox(height: AppDimensions.paddingL),
-                  Text('Keine $label', style: Theme.of(context).textTheme.titleLarge),
-                  const SizedBox(height: AppDimensions.paddingS),
-                  Text(
-                    'Füge ${groupLabel(tenant?.type)} hinzu',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppColors.medium),
-                  ),
-                ],
-              ),
-            );
-          }
-
           final categories = categoriesAsync.valueOrNull ?? [];
           final playerCounts = playerCountsAsync.valueOrNull ?? {};
           final sections = _isReordering && _reorderSections != null
@@ -158,17 +135,21 @@ class _InstrumentsListPageState extends ConsumerState<InstrumentsListPage> {
             child: _GroupedInstrumentsList(
               sections: sections,
               playerCounts: playerCounts,
-              isConductor: isConductor,
+              tenantType: tenant?.type,
               isReordering: _isReordering,
               onReorder: _onReorder,
-              onEdit: (group) => _showEditDialog(context, ref, group, categories, isConductor, tenantType: tenant?.type),
+              onEdit: isAdmin
+                  ? (group) => _openInstrumentPage(context, ref, group,
+                      categories, tenantType: tenant?.type)
+                  : null,
             ),
           );
         },
       ),
-      floatingActionButton: isConductor && !_isReordering
+      floatingActionButton: isAdmin
           ? FloatingActionButton(
-              onPressed: () => _showEditDialog(context, ref, null, categoriesAsync.valueOrNull ?? [], isConductor, tenantType: tenant?.type),
+              onPressed: () => _showAddGroupSheet(
+                  context, ref, categoriesAsync.valueOrNull ?? const []),
               child: const Icon(Icons.add),
             )
           : null,
@@ -176,12 +157,13 @@ class _InstrumentsListPageState extends ConsumerState<InstrumentsListPage> {
   }
 }
 
-/// Grouped list of instruments by category (sorted by sort_order)
+/// Grouped list of instruments by category (Ionic: primary sticky dividers
+/// "Kategorie (n)", items with sort-order badge and "n Personen" badge).
 class _GroupedInstrumentsList extends StatelessWidget {
   const _GroupedInstrumentsList({
     required this.sections,
     required this.playerCounts,
-    required this.isConductor,
+    required this.tenantType,
     required this.isReordering,
     required this.onReorder,
     required this.onEdit,
@@ -189,29 +171,38 @@ class _GroupedInstrumentsList extends StatelessWidget {
 
   final List<InstrumentCategorySection> sections;
   final Map<int, int> playerCounts;
-  final bool isConductor;
+  final String? tenantType;
   final bool isReordering;
   final void Function(InstrumentCategorySection, int, int) onReorder;
-  final void Function(Group) onEdit;
+  final void Function(Group)? onEdit;
 
   @override
   Widget build(BuildContext context) {
     return ListView(
-      padding: const EdgeInsets.all(AppDimensions.paddingM),
+      padding: const EdgeInsets.only(bottom: 88),
+      physics: const AlwaysScrollableScrollPhysics(),
       children: [
         if (isReordering)
-          Card(
-            color: AppColors.primary.withAlpha(26),
-            child: const ListTile(
-              leading: Icon(Icons.info_outline, color: AppColors.primary),
-              title: Text(
-                'Ziehe die Gruppen in die gewünschte Reihenfolge (z.B. Partitur-Reihenfolge)',
-              ),
+          Container(
+            color: AppColors.primary,
+            padding: const EdgeInsets.symmetric(
+                horizontal: AppDimensions.paddingM, vertical: 10),
+            child: const Row(
+              children: [
+                Icon(Icons.info, color: Colors.white),
+                SizedBox(width: AppDimensions.paddingM),
+                Expanded(
+                  child: Text(
+                    'Ziehe die Gruppen, um die Reihenfolge anzupassen. '
+                    'Klicke auf das Häkchen, um zu speichern.',
+                    style: TextStyle(color: Colors.white, fontSize: 13),
+                  ),
+                ),
+              ],
             ),
           ),
         for (final section in sections) ...[
           _SectionHeader(title: section.name, count: section.groups.length),
-          const SizedBox(height: AppDimensions.paddingS),
           if (isReordering)
             ReorderableListView(
               key: ValueKey('section-${section.categoryId}'),
@@ -221,32 +212,30 @@ class _GroupedInstrumentsList extends StatelessWidget {
               onReorder: (o, n) => onReorder(section, o, n),
               children: [
                 for (var i = 0; i < section.groups.length; i++)
-                  ReorderableDragStartListener(
+                  _GroupListItem(
                     key: ValueKey(section.groups[i].id ?? i),
-                    index: i,
-                    child: _GroupListItem(
-                      group: section.groups[i],
-                      playerCount: playerCounts[section.groups[i].id] ?? 0,
-                      onTap: null,
-                      showDragHandle: true,
-                    ),
+                    group: section.groups[i],
+                    tenantType: tenantType,
+                    playerCount: playerCounts[section.groups[i].id] ?? 0,
+                    onTap: null,
+                    dragIndex: i,
                   ),
               ],
             )
           else
             ...section.groups.map((group) => _GroupListItem(
                   group: group,
+                  tenantType: tenantType,
                   playerCount: playerCounts[group.id] ?? 0,
-                  onTap: isConductor ? () => onEdit(group) : null,
+                  onTap: onEdit == null ? null : () => onEdit!(group),
                 )),
-          const SizedBox(height: AppDimensions.paddingL),
         ],
       ],
     );
   }
 }
 
-/// Section header with title and count badge
+/// Ionic ion-item-divider color="primary"
 class _SectionHeader extends StatelessWidget {
   const _SectionHeader({required this.title, required this.count});
 
@@ -255,202 +244,267 @@ class _SectionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Text(
-          title,
-          style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                color: AppColors.medium,
-                fontWeight: FontWeight.w600,
-              ),
+    return Container(
+      width: double.infinity,
+      color: AppColors.primary,
+      padding: const EdgeInsets.symmetric(
+          horizontal: AppDimensions.paddingM, vertical: 6),
+      child: Text(
+        '$title ($count)',
+        style: const TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.w600,
+          fontSize: 14,
         ),
-        const SizedBox(width: AppDimensions.paddingS),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-          decoration: BoxDecoration(
-            color: AppColors.medium.withValues(alpha: 0.15),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Text(
-            '$count',
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: AppColors.medium,
-                  fontWeight: FontWeight.w600,
-                ),
-          ),
-        ),
-      ],
+      ),
     );
   }
 }
 
-/// Individual instrument list item with player count badge
+/// Instrument row (Ionic instrument-list ion-item)
 class _GroupListItem extends StatelessWidget {
   const _GroupListItem({
+    super.key,
     required this.group,
+    required this.tenantType,
     required this.playerCount,
     required this.onTap,
-    this.showDragHandle = false,
+    this.dragIndex,
   });
 
   final Group group;
+  final String? tenantType;
   final int playerCount;
   final VoidCallback? onTap;
-  final bool showDragHandle;
+
+  /// Set in reorder mode: shows the drag handle at the start.
+  final int? dragIndex;
+
+  bool get _isChoirOrGeneral =>
+      tenantType == 'choir' || tenantType == 'general';
 
   @override
   Widget build(BuildContext context) {
-    final color = group.color != null
-        ? Color(int.tryParse(group.color!.replaceFirst('#', '0xFF')) ?? 0xFF6366F1)
-        : AppColors.primary;
+    final String title;
+    if (group.maingroup == true) {
+      title = '${group.name} (Hauptgruppe)';
+    } else if (!_isChoirOrGeneral) {
+      title = '${group.name} (${group.tuning ?? 'C'})';
+    } else {
+      title = group.name;
+    }
+    final clefText =
+        (group.clefs ?? const <String>[]).map(_clefLabel).join(', ');
 
-    return Card(
-      margin: const EdgeInsets.only(bottom: AppDimensions.paddingS),
-      child: ListTile(
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
         onTap: onTap,
-        leading: Container(
-          width: 40,
-          height: 40,
+        child: Container(
           decoration: BoxDecoration(
-            color: color.withValues(alpha: 0.2),
-            borderRadius: BorderRadius.circular(AppDimensions.borderRadiusS),
-          ),
-          child: Icon(
-            group.maingroup == true ? Icons.folder : Icons.music_note,
-            color: color,
-          ),
-        ),
-        title: Text(
-          group.maingroup == true ? '${group.name} (Hauptgruppe)' : group.name,
-          style: const TextStyle(fontWeight: FontWeight.w500),
-        ),
-        subtitle: _buildSubtitle(),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _PlayerCountBadge(count: playerCount),
-            if (showDragHandle)
-              const Icon(Icons.drag_handle, color: AppColors.medium),
-            if (onTap != null)
-              const Icon(Icons.chevron_right, color: AppColors.medium),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget? _buildSubtitle() {
-    final parts = <String>[];
-    if (group.sortOrder != null) {
-      parts.add('#${group.sortOrder}');
-    }
-    if (group.shortName != null && group.shortName != group.name) {
-      parts.add(group.shortName!);
-    }
-    if (group.tuning != null && group.tuning != 'C') {
-      parts.add('in ${group.tuning}');
-    }
-    if (group.clefs != null && group.clefs!.isNotEmpty) {
-      parts.add(group.clefs!.map(_clefLabel).join(', '));
-    }
-    if (parts.isEmpty) return null;
-    return Text(parts.join(' · '));
-  }
-}
-
-/// Player count badge — red when 0
-class _PlayerCountBadge extends StatelessWidget {
-  const _PlayerCountBadge({required this.count});
-
-  final int count;
-
-  @override
-  Widget build(BuildContext context) {
-    final color = count == 0 ? AppColors.danger : AppColors.medium;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      margin: const EdgeInsets.only(right: 4),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.15),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.person, size: 14, color: color),
-          const SizedBox(width: 4),
-          Text(
-            '$count',
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              color: color,
+            border: Border(
+              bottom:
+                  BorderSide(color: Theme.of(context).dividerColor, width: 0.5),
             ),
           ),
-        ],
+          padding: const EdgeInsets.symmetric(
+              horizontal: AppDimensions.paddingM, vertical: 10),
+          child: Row(
+            children: [
+              if (dragIndex != null) ...[
+                ReorderableDragStartListener(
+                  index: dragIndex!,
+                  child: const Icon(Icons.reorder, color: AppColors.medium),
+                ),
+                const SizedBox(width: AppDimensions.paddingM),
+              ],
+              if (group.sortOrder != null) ...[
+                _Badge(text: '${group.sortOrder}', color: AppColors.medium),
+                const SizedBox(width: AppDimensions.paddingM),
+              ],
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(title,
+                        style: const TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.w500)),
+                    if (group.maingroup != true &&
+                        !_isChoirOrGeneral &&
+                        clefText.isNotEmpty)
+                      Text(clefText, style: const TextStyle(fontSize: 14)),
+                  ],
+                ),
+              ),
+              _Badge(
+                text: playerCount == 1 ? '1 Person' : '$playerCount Personen',
+                color: playerCount == 0 ? AppColors.danger : AppColors.primary,
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
 }
 
-/// Show dialog to edit/create an instrument
-Future<void> _showEditDialog(
+/// Ionic ion-badge
+class _Badge extends StatelessWidget {
+  const _Badge({required this.text, required this.color});
+
+  final String text;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Text(
+        text,
+        style: const TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+          color: Colors.white,
+        ),
+      ),
+    );
+  }
+}
+
+/// Ionic "Gruppe hinzufügen" sheet (FAB): Gruppe + Kategorie → Hinzufügen.
+Future<void> _showAddGroupSheet(
   BuildContext context,
   WidgetRef ref,
-  Group? group,
   List<GroupCategory> categories,
-  bool isConductor, {
+) async {
+  final controller = TextEditingController();
+  int? categoryId;
+  try {
+    final added = await showModalBottomSheet<bool>(
+      context: context,
+      isScrollControlled: true,
+      showDragHandle: true,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setSheetState) => Padding(
+          padding: EdgeInsets.only(
+            left: AppDimensions.paddingM,
+            right: AppDimensions.paddingM,
+            bottom:
+                MediaQuery.of(ctx).viewInsets.bottom + AppDimensions.paddingM,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text('Gruppe hinzufügen',
+                  style: Theme.of(ctx).textTheme.titleLarge),
+              const SizedBox(height: AppDimensions.paddingM),
+              TextField(
+                controller: controller,
+                autofocus: true,
+                textCapitalization: TextCapitalization.sentences,
+                decoration: const InputDecoration(
+                  labelText: 'Gruppe',
+                  hintText: 'z.B. Mädchen, Posaune, Alt 1, etc.',
+                ),
+              ),
+              if (categories.isNotEmpty) ...[
+                const SizedBox(height: AppDimensions.paddingM),
+                DropdownButtonFormField<int?>(
+                  value: categoryId,
+                  decoration: const InputDecoration(labelText: 'Kategorie'),
+                  items: [
+                    const DropdownMenuItem<int?>(
+                        value: null, child: Text('Keine')),
+                    for (final c in categories)
+                      DropdownMenuItem<int?>(value: c.id, child: Text(c.name)),
+                  ],
+                  onChanged: (v) => setSheetState(() => categoryId = v),
+                ),
+              ],
+              const SizedBox(height: AppDimensions.paddingL),
+              FilledButton(
+                onPressed: () async {
+                  final name = controller.text.trim();
+                  if (name.isEmpty) {
+                    ToastHelper.showError(ctx, 'Bitte gib einem Namen an');
+                    return;
+                  }
+                  final created = await ref
+                      .read(groupNotifierProvider.notifier)
+                      .createGroup({
+                    'name': name,
+                    'maingroup': false,
+                    if (categoryId != null) 'category': categoryId,
+                  });
+                  if (ctx.mounted) Navigator.pop(ctx, created != null);
+                },
+                child: const Text('Hinzufügen'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    if (added == true) ref.invalidate(playerCountsForGroupsProvider);
+    if (added == false && context.mounted) {
+      ToastHelper.showError(context, 'Fehler beim Hinzufügen');
+    }
+  } finally {
+    controller.dispose();
+  }
+}
+
+/// Opens the instrument page (Ionic InstrumentPage modal) for [group].
+Future<void> _openInstrumentPage(
+  BuildContext context,
+  WidgetRef ref,
+  Group group,
+  List<GroupCategory> categories, {
   String? tenantType,
 }) async {
-  if (!isConductor) return;
-
-  final result = await showDialog<Map<String, dynamic>>(
-    context: context,
-    builder: (context) => _InstrumentEditDialog(
-      group: group,
-      categories: categories,
-      tenantType: tenantType,
+  final result = await Navigator.of(context).push<Map<String, dynamic>>(
+    MaterialPageRoute(
+      fullscreenDialog: true,
+      builder: (_) => _InstrumentEditDialog(
+        group: group,
+        categories: categories,
+        tenantType: tenantType,
+      ),
     ),
   );
+  if (result == null || !context.mounted) return;
 
-  if (result != null && context.mounted) {
-    try {
-      final notifier = ref.read(groupNotifierProvider.notifier);
-
-      if (result['_delete'] == true) {
-        try {
-          await notifier.deleteGroup(group!.id!);
-          if (context.mounted) {
-            ToastHelper.showSuccess(context, '${groupLabel(tenantType)} gelöscht');
-          }
-        } catch (e) {
-          if (context.mounted) {
-            final message = e.toString().contains('Spieler sind noch zugewiesen')
-                ? e.toString().replaceAll('Exception: ', '')
-                : '${groupLabel(tenantType)} kann nicht gelöscht werden. Bitte weise zuerst alle Spieler einem anderen ${groupLabel(tenantType)} zu.';
-            ToastHelper.showError(context, message);
-          }
-          return;
-        }
-      } else if (group != null) {
-        await notifier.updateGroup(group.id!, result);
-        if (context.mounted) {
-          ToastHelper.showSuccess(context, '${groupLabel(tenantType)} aktualisiert');
-        }
-      } else {
-        await notifier.createGroup(result);
-        if (context.mounted) {
-          ToastHelper.showSuccess(context, '${groupLabel(tenantType)} erstellt');
-        }
-      }
-      // Refresh player counts after changes
-      ref.invalidate(playerCountsForGroupsProvider);
-    } catch (e) {
-      if (context.mounted) {
-        ToastHelper.showError(context, 'Fehler: $e');
-      }
+  const cannotDelete =
+      'Du kannst das Instrument nicht löschen, da es Spieler gibt (gab), die darauf spielen';
+  final notifier = ref.read(groupNotifierProvider.notifier);
+  if (result['_delete'] == true) {
+    final count =
+        ref.read(playerCountsForGroupsProvider).valueOrNull?[group.id] ?? 0;
+    if (count > 0) {
+      ToastHelper.showError(context, cannotDelete);
+      return;
+    }
+    await notifier.deleteGroup(group.id!);
+    if (!context.mounted) return;
+    if (ref.read(groupNotifierProvider).hasError) {
+      ToastHelper.showError(context, cannotDelete);
+    }
+  } else {
+    final updated = await notifier.updateGroup(group.id!, result);
+    if (!context.mounted) return;
+    if (updated != null) {
+      ToastHelper.showSuccess(
+          context, '${result['name']} wurde erfolgreich aktualisiert');
+    } else {
+      ToastHelper.showError(context, 'Fehler beim Speichern');
     }
   }
+  ref.invalidate(playerCountsForGroupsProvider);
 }
 
 /// Tuning options for instruments
@@ -541,183 +595,162 @@ class _InstrumentEditDialogState extends ConsumerState<_InstrumentEditDialog> {
     super.dispose();
   }
 
+  bool get _isChoir => widget.tenantType == 'choir';
+  bool get _isGeneral => widget.tenantType == 'general';
+  bool get _isMain => widget.group?.maingroup == true;
+
+  /// Ionic InstrumentPage: Name, Kategorie, Stimmung, Tonumfang,
+  /// Notenschlüssel, Synonyme, Notizen → "Aktualisieren" / "Entfernen".
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      title: Text(isEditing ? '${groupLabel(widget.tenantType)} bearbeiten' : '${groupLabel(widget.tenantType)} erstellen'),
-      content: Form(
-        key: _formKey,
-        child: SizedBox(
-          width: double.maxFinite,
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Name
-                TextFormField(
-                  controller: _nameController,
-                  decoration: const InputDecoration(
-                    labelText: 'Name *',
-                    hintText: 'z.B. Violine',
-                  ),
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'Name ist erforderlich';
-                    }
-                    return null;
-                  },
-                  autofocus: !isEditing,
-                ),
-                const SizedBox(height: AppDimensions.paddingM),
-
-                // Short name
-                TextFormField(
-                  controller: _shortNameController,
-                  decoration: const InputDecoration(
-                    labelText: 'Kurzname',
-                    hintText: 'z.B. Vl.',
-                  ),
-                ),
-                const SizedBox(height: AppDimensions.paddingM),
-
-                // Category dropdown
-                if (widget.categories.isNotEmpty) ...[
-                  DropdownButtonFormField<int?>(
-                    value: _selectedCategoryId,
-                    decoration: const InputDecoration(
-                      labelText: 'Kategorie',
-                    ),
-                    items: [
-                      const DropdownMenuItem<int?>(
-                        value: null,
-                        child: Text('Keine Kategorie'),
-                      ),
-                      ...widget.categories.map((cat) => DropdownMenuItem<int?>(
-                            value: cat.id,
-                            child: Text(cat.name),
-                          )),
-                    ],
-                    onChanged: (value) {
-                      setState(() => _selectedCategoryId = value);
-                    },
-                  ),
-                  const SizedBox(height: AppDimensions.paddingM),
-                ],
-
-                // Tuning dropdown
-                DropdownButtonFormField<String>(
-                  value: _selectedTuning,
-                  decoration: const InputDecoration(
-                    labelText: 'Stimmung',
-                  ),
-                  items: _tuningOptions.map((t) => DropdownMenuItem(
-                        value: t,
-                        child: Text(t),
-                      )).toList(),
-                  onChanged: (value) {
-                    if (value != null) {
-                      setState(() => _selectedTuning = value);
-                    }
-                  },
-                ),
-                const SizedBox(height: AppDimensions.paddingM),
-
-                // Clefs multi-select (chips)
-                Text(
-                  'Notenschlüssel',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: AppColors.medium,
-                      ),
-                ),
-                const SizedBox(height: AppDimensions.paddingXS),
-                Wrap(
-                  spacing: AppDimensions.paddingS,
-                  children: _clefOptions.map((clef) {
-                    final isSelected = _selectedClefs.contains(clef);
-                    return FilterChip(
-                      label: Text('${_clefLabel(clef)} ($clef)'),
-                      selected: isSelected,
-                      onSelected: (selected) {
-                        setState(() {
-                          if (selected) {
-                            _selectedClefs.add(clef);
-                          } else if (_selectedClefs.length > 1) {
-                            _selectedClefs.remove(clef);
-                          }
-                        });
-                      },
-                    );
-                  }).toList(),
-                ),
-                const SizedBox(height: AppDimensions.paddingM),
-
-                // Range (Tonumfang)
-                TextFormField(
-                  controller: _rangeController,
-                  decoration: const InputDecoration(
-                    labelText: 'Tonumfang',
-                    hintText: 'z.B. g - e3',
-                  ),
-                ),
-                const SizedBox(height: AppDimensions.paddingM),
-
-                // Synonyms
-                TextFormField(
-                  controller: _synonymsController,
-                  decoration: InputDecoration(
-                    labelText: 'Synonyme',
-                    hintText: 'z.B. Geige, Fidel',
-                    helperText:
-                        'Definiere Synonyme um beim Hinzufügen von Dateien zu Werken die Instrumente automatisch zuordnen zu können. Synonyme durch Komma trennen.',
-                    helperMaxLines: 4,
-                    suffixIcon: _generatingSynonyms
-                        ? const Padding(
-                            padding: EdgeInsets.all(12),
-                            child: SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            ),
-                          )
-                        : IconButton(
-                            tooltip: 'Synonyme generieren',
-                            icon: const Icon(Icons.auto_awesome_outlined),
-                            onPressed: _generateSynonyms,
-                          ),
-                  ),
-                ),
-                const SizedBox(height: AppDimensions.paddingM),
-
-                // Notes
-                TextFormField(
-                  controller: _notesController,
-                  decoration: const InputDecoration(
-                    labelText: 'Notizen',
-                  ),
-                  maxLines: 3,
-                ),
-              ],
-            ),
+    final showMusicFields = !_isChoir && !_isGeneral && !_isMain;
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.group?.name ?? 'Gruppe hinzufügen'),
+        automaticallyImplyLeading: false,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.close),
+            tooltip: 'Schließen',
+            onPressed: () => Navigator.of(context).pop(),
           ),
+        ],
+      ),
+      body: Form(
+        key: _formKey,
+        child: ListView(
+          padding: const EdgeInsets.all(AppDimensions.paddingM),
+          children: [
+            TextFormField(
+              controller: _nameController,
+              textCapitalization: TextCapitalization.sentences,
+              decoration: const InputDecoration(labelText: 'Name'),
+              validator: (value) {
+                if (value == null || value.trim().isEmpty) {
+                  return 'Bitte gib einen Namen an!';
+                }
+                return null;
+              },
+              autofocus: !isEditing,
+            ),
+            const SizedBox(height: AppDimensions.paddingM),
+            DropdownButtonFormField<int?>(
+              value: _selectedCategoryId,
+              decoration: const InputDecoration(labelText: 'Kategorie'),
+              items: [
+                const DropdownMenuItem<int?>(value: null, child: Text('Keine')),
+                ...widget.categories.map((cat) => DropdownMenuItem<int?>(
+                      value: cat.id,
+                      child: Text(cat.name),
+                    )),
+              ],
+              onChanged: (value) => setState(() => _selectedCategoryId = value),
+            ),
+            const SizedBox(height: AppDimensions.paddingM),
+            if (showMusicFields) ...[
+              DropdownButtonFormField<String>(
+                value: _tuningOptions.contains(_selectedTuning)
+                    ? _selectedTuning
+                    : 'C',
+                decoration: const InputDecoration(labelText: 'Stimmung'),
+                items: _tuningOptions
+                    .map((t) => DropdownMenuItem(value: t, child: Text(t)))
+                    .toList(),
+                onChanged: (value) {
+                  if (value != null) setState(() => _selectedTuning = value);
+                },
+              ),
+              const SizedBox(height: AppDimensions.paddingM),
+              TextFormField(
+                controller: _rangeController,
+                decoration: const InputDecoration(labelText: 'Tonumfang'),
+              ),
+              const SizedBox(height: AppDimensions.paddingM),
+              Text(
+                'Notenschlüssel',
+                style: Theme.of(context)
+                    .textTheme
+                    .bodySmall
+                    ?.copyWith(color: AppColors.medium),
+              ),
+              const SizedBox(height: AppDimensions.paddingXS),
+              Wrap(
+                spacing: AppDimensions.paddingS,
+                children: _clefOptions.map((clef) {
+                  final isSelected = _selectedClefs.contains(clef);
+                  return FilterChip(
+                    label: Text('${_clefLabel(clef)} ($clef)'),
+                    selected: isSelected,
+                    onSelected: (selected) {
+                      setState(() {
+                        if (selected) {
+                          _selectedClefs.add(clef);
+                        } else if (_selectedClefs.length > 1) {
+                          _selectedClefs.remove(clef);
+                        }
+                      });
+                    },
+                  );
+                }).toList(),
+              ),
+              const SizedBox(height: AppDimensions.paddingM),
+            ],
+            if (!_isGeneral && !_isMain) ...[
+              TextFormField(
+                controller: _synonymsController,
+                textCapitalization: TextCapitalization.sentences,
+                decoration: InputDecoration(
+                  labelText: 'Synonyme',
+                  helperText:
+                      'Definiere Synonyme um beim Hinzufügen von Dateien zu Werken die Instrumente automatisch zuordnen zu können. Synonyme durch Komma trennen.',
+                  helperMaxLines: 4,
+                  suffixIcon: _generatingSynonyms
+                      ? const Padding(
+                          padding: EdgeInsets.all(12),
+                          child: SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          ),
+                        )
+                      : IconButton(
+                          tooltip: 'Synonyme generieren',
+                          icon: const Icon(Icons.auto_awesome_outlined),
+                          onPressed: _generateSynonyms,
+                        ),
+                ),
+              ),
+              const SizedBox(height: AppDimensions.paddingM),
+            ],
+            TextFormField(
+              controller: _notesController,
+              textCapitalization: TextCapitalization.sentences,
+              decoration: const InputDecoration(labelText: 'Notizen'),
+              minLines: 1,
+              maxLines: 5,
+            ),
+            const SizedBox(height: AppDimensions.paddingM),
+            // Flutter extra (not in Ionic): short name used in exports
+            TextFormField(
+              controller: _shortNameController,
+              decoration: const InputDecoration(labelText: 'Kurzname'),
+            ),
+            const SizedBox(height: AppDimensions.paddingL),
+            FilledButton(
+              onPressed: _save,
+              child: Text(isEditing ? 'Aktualisieren' : 'Hinzufügen'),
+            ),
+            if (isEditing && !_isMain) ...[
+              const SizedBox(height: AppDimensions.paddingS),
+              FilledButton(
+                onPressed: () => _confirmDelete(context),
+                style: FilledButton.styleFrom(backgroundColor: AppColors.danger),
+                child: const Text('Entfernen'),
+              ),
+            ],
+          ],
         ),
       ),
-      actions: [
-        if (isEditing)
-          TextButton(
-            onPressed: () => _confirmDelete(context),
-            style: TextButton.styleFrom(foregroundColor: AppColors.danger),
-            child: const Text('Löschen'),
-          ),
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Abbrechen'),
-        ),
-        ElevatedButton(
-          onPressed: _save,
-          child: Text(isEditing ? 'Speichern' : 'Erstellen'),
-        ),
-      ],
     );
   }
 
@@ -752,21 +785,21 @@ class _InstrumentEditDialogState extends ConsumerState<_InstrumentEditDialog> {
     }
   }
 
+  /// Ionic: alert "Bestätigen" / "Gruppe wirklich löschen?" → Abbrechen / Ja.
   void _confirmDelete(BuildContext context) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text('${groupLabel(widget.tenantType)} löschen?'),
-        content: Text('Möchtest du "${widget.group!.name}" wirklich löschen?'),
+        title: const Text('Bestätigen'),
+        content: const Text('Gruppe wirklich löschen?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
             child: const Text('Abbrechen'),
           ),
-          ElevatedButton(
+          TextButton(
             onPressed: () => Navigator.of(ctx).pop(true),
-            style: ElevatedButton.styleFrom(backgroundColor: AppColors.danger),
-            child: const Text('Löschen'),
+            child: const Text('Ja'),
           ),
         ],
       ),

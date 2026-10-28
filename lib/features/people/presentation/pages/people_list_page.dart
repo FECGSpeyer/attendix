@@ -25,7 +25,7 @@ import '../../../../shared/widgets/tenant/tenant_switcher_title.dart';
 import '../../people_list_utils.dart';
 import '../../../../shared/widgets/loading/loading.dart';
 import '../../../../shared/widgets/common/empty_state.dart';
-import '../../../../shared/widgets/animations/animated_list_item.dart';
+import '../../../../shared/widgets/sheets/church_overview_sheet.dart';
 import '../widgets/handover_sheet.dart';
 import '../widgets/pause_person_sheet.dart';
 import '../../../messages/presentation/widgets/notification_bell.dart'; // MESSAGES
@@ -174,6 +174,8 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
     if (tenant == null) return;
     final prefs = await SharedPreferences.getInstance();
     final saved = prefs.getStringList('viewOpts_${tenant.id}');
+    final savedSort = prefs.getString('sortOpt_${tenant.id}');
+    if (savedSort != null && mounted) setState(() => _sortOption = savedSort);
     if (saved != null && mounted) {
       final opts = saved.toSet();
       // Attendance used to be always visible: keep it for old saved options
@@ -189,6 +191,17 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setStringList('viewOpts_${tenant.id}',
         [..._viewOptions, _viewOptionsVersionMarker]);
+  }
+
+  Future<void> _saveSortOption() async {
+    final tenant = ref.read(currentTenantProvider);
+    if (tenant == null) return;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('sortOpt_${tenant.id}', _sortOption);
+    } catch (_) {
+      // Preferences are a convenience only
+    }
   }
 
   Future<void> _showViewOptionsDialog() async {
@@ -440,6 +453,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
     final peopleAsync = ref.watch(realtimePlayersProvider);
     final percentages = ref.watch(playerAttendancePercentagesProvider).valueOrNull ?? {};
     final extraFields = tenant?.additionalFields ?? const <ExtraField>[];
+    final mainGroupId = ref.watch(mainGroupProvider).valueOrNull?.id;
     final churchNames = <String, String>{
       if (_churchField(tenant) != null)
         for (final c in ref.watch(churchesProvider).valueOrNull ?? const [])
@@ -477,6 +491,10 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
       );
     }
 
+    final role = ref.watch(currentRoleProvider);
+    // Ionic list.page isAdmin = Admin or Responsible
+    final isAdmin = role.isAdmin || role.isResponsible;
+
     return Scaffold(
       appBar: AppBar(
         title: _isSelectionMode
@@ -490,12 +508,12 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
             : null,
         actions: _isSelectionMode
             ? [
-                // Select all button
                 IconButton(
                   icon: const Icon(Icons.select_all),
                   tooltip: 'Alle auswählen',
                   onPressed: () {
-                    final people = ref.read(realtimePlayersProvider).valueOrNull ?? [];
+                    final people =
+                        ref.read(realtimePlayersProvider).valueOrNull ?? [];
                     final filtered = _filterPeople(people);
                     setState(() {
                       _selectedPlayerIds.clear();
@@ -505,232 +523,77 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
                     });
                   },
                 ),
-                // Clear selection button
                 IconButton(
                   icon: const Icon(Icons.deselect),
                   tooltip: 'Auswahl aufheben',
-                  onPressed: () {
-                    setState(() => _selectedPlayerIds.clear());
-                  },
+                  onPressed: () => setState(() => _selectedPlayerIds.clear()),
                 ),
               ]
-            : [
-                const NotificationBell(), // MESSAGES
-                // Selection mode toggle
-                IconButton(
-                  icon: const Icon(Icons.checklist),
-                  tooltip: 'Auswahl-Modus',
-                  onPressed: _enterSelectionMode,
-                ),
-                // Filter button
-                PopupMenuButton<String>(
-                  icon: Icon(
-                    Icons.filter_list,
-                    color: _filterOption != 'all' ? AppColors.primary : null,
-                  ),
-                  tooltip: 'Filter',
-                  onSelected: (value) async {
-                    if (value.startsWith('extra:')) {
-                      await _selectExtraFieldFilter(value);
-                      return;
-                    }
-                    if (value == 'otherInstance') {
-                      await _selectOtherInstanceFilter();
-                      return;
-                    }
-                    if (value == 'churchOverview') {
-                      _showChurchOverview();
-                      return;
-                    }
-                    if (value == 'reorder') {
-                      _toggleReorderMode();
-                      return;
-                    }
-                    setState(() {
-                      _filterOption = value;
-                      _extraFilterValue = null;
-                    });
-                  },
-                  itemBuilder: (context) => [
-                    const PopupMenuItem(value: 'all', child: Text('Alle')),
-                    const PopupMenuItem(value: 'active', child: Text('Aktiv')),
-                    const PopupMenuItem(value: 'paused', child: Text('Pausiert')),
-                    const PopupMenuItem(value: 'critical', child: Text('Kritisch')),
-                    const PopupMenuItem(value: 'leaders', child: Text('Leiter')),
-                    const PopupMenuDivider(),
-                    const PopupMenuItem(value: 'noAccount', child: Text('Ohne Account')),
-                    const PopupMenuItem(value: 'noTeacher', child: Text('Ohne Lehrer')),
-                    if (tenant != null && tenant.type != 'general')
-                      const PopupMenuItem(value: 'examinees', child: Text('Prüflinge')),
-                    if (tenant != null && tenant.type != 'general')
-                      const PopupMenuItem(value: 'noTest', child: Text('Ohne Test')),
-                    if (_isVoS(tenant))
-                      const PopupMenuItem(value: 'new', child: Text('Neue Spieler')),
-                    if ((ref.watch(allLinkedTenantsProvider).valueOrNull ?? const [])
-                        .isNotEmpty)
-                      const PopupMenuItem(
-                        value: 'otherInstance',
-                        child: Text('Mitglied anderer Instanz'),
-                      ),
-                    if (_filterableExtraFields(tenant).isNotEmpty)
-                      const PopupMenuDivider(),
-                    ..._filterableExtraFields(tenant).map((f) => PopupMenuItem(
-                          value: 'extra:${f.id}',
-                          child: Text(f.name),
-                        )),
-                    if (_churchField(tenant) != null) ...[
-                      const PopupMenuDivider(),
-                      const PopupMenuItem(
-                        value: 'churchOverview',
-                        child: ListTile(
-                          leading: Icon(Icons.business_outlined),
-                          title: Text('Gemeinde-Übersicht'),
-                          contentPadding: EdgeInsets.zero,
-                        ),
-                      ),
-                    ],
-                    if (_sortOption == 'group' &&
-                        (ref.watch(currentRoleProvider).isAdmin ||
-                            ref.watch(currentRoleProvider).isResponsible)) ...[
-                      const PopupMenuDivider(),
-                      const PopupMenuItem(
-                        value: 'reorder',
-                        child: ListTile(
-                          leading: Icon(Icons.swap_vert),
-                          title: Text('Reihenfolge anpassen'),
-                          contentPadding: EdgeInsets.zero,
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-                // Sort button
-                PopupMenuButton<String>(
-                  icon: const Icon(Icons.sort),
-                  tooltip: 'Sortierung',
-                  onSelected: (value) {
-                    setState(() {
-                      _sortOption = value;
-                    });
-                  },
-                  itemBuilder: (context) => [
-                    _buildSortMenuItem('group', 'Nach Gruppe'),
-                    _buildSortMenuItem('lastName', 'Nach Nachname'),
-                    _buildSortMenuItem('firstName', 'Nach Vorname'),
-                    const PopupMenuDivider(),
-                    _buildSortMenuItem('birthdayAsc', 'Geburtstag (älteste)'),
-                    _buildSortMenuItem('birthdayDesc', 'Geburtstag (jüngste)'),
-                    _buildSortMenuItem('nextBirthday', 'Nächster Geburtstag'),
-                    const PopupMenuDivider(),
-                    _buildSortMenuItem('joinedAsc', 'Beitritt (älteste)'),
-                    _buildSortMenuItem('joinedDesc', 'Beitritt (neueste)'),
-                    if (tenant != null && tenant.type != 'general')
-                      _buildSortMenuItem('testResult', 'Testergebnis'),
-                    const PopupMenuDivider(),
-                    _buildSortMenuItem('attAsc', 'Anwesenheit (aufsteigend)'),
-                    _buildSortMenuItem('attDesc', 'Anwesenheit (absteigend)'),
-                  ],
-                ),
-                IconButton(
-                  icon: const Icon(Icons.settings_outlined),
-                  tooltip: 'Ansicht',
-                  onPressed: _showViewOptionsDialog,
-                ),
-                // PEOPLE_IMPORT: bulk edit + import (Ionic: isAdmin = Admin/Responsible)
-                if (ref.watch(currentRoleProvider).isAdmin ||
-                    ref.watch(currentRoleProvider).isResponsible)
-                  PopupMenuButton<String>(
-                    icon: const Icon(Icons.more_vert),
-                    tooltip: 'Mehr',
-                    onSelected: (value) {
-                      if (value == 'bulkEdit') _openBulkEdit();
-                      if (value == 'import') _openImport();
-                    },
-                    itemBuilder: (context) => const [
-                      PopupMenuItem(
-                        value: 'bulkEdit',
-                        child: ListTile(
-                          leading: Icon(Icons.edit),
-                          title: Text('Bulk-Bearbeitung'),
-                          contentPadding: EdgeInsets.zero,
-                        ),
-                      ),
-                      PopupMenuItem(
-                        value: 'import',
-                        child: ListTile(
-                          leading: Icon(Icons.cloud_upload_outlined),
-                          title: Text('Personen importieren'),
-                          contentPadding: EdgeInsets.zero,
-                        ),
-                      ),
-                    ],
-                  ),
-              ],
+            // Ionic: only the notification bell in the header; filter, sort,
+            // view and admin actions live in the options popover next to the
+            // search bar.
+            : const [NotificationBell()], // MESSAGES
       ),
       body: Column(
         children: [
-          // Search bar
+          // Search bar + options button (Ionic div.flex: ion-searchbar +
+          // "options" icon that opens the filter popover)
           Padding(
-            padding: const EdgeInsets.all(AppDimensions.paddingM),
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                hintText: 'Suchen...',
-                prefixIcon: const Icon(Icons.search),
-                suffixIcon: _searchQuery.isNotEmpty
-                    ? IconButton(
-                        icon: const Icon(Icons.clear),
-                        onPressed: () {
-                          _searchController.clear();
-                          setState(() {
-                            _searchQuery = '';
-                          });
-                        },
-                      )
-                    : null,
-              ),
-              onChanged: (value) {
-                setState(() {
-                  _searchQuery = value;
-                });
-              },
+            padding: const EdgeInsets.fromLTRB(
+              AppDimensions.paddingM,
+              AppDimensions.paddingS,
+              AppDimensions.paddingXS,
+              AppDimensions.paddingS,
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _searchController,
+                    decoration: InputDecoration(
+                      hintText: 'Person suchen...',
+                      prefixIcon: const Icon(Icons.search),
+                      isDense: true,
+                      suffixIcon: _searchQuery.isNotEmpty
+                          ? IconButton(
+                              icon: const Icon(Icons.clear),
+                              onPressed: () {
+                                _searchController.clear();
+                                setState(() => _searchQuery = '');
+                              },
+                            )
+                          : null,
+                    ),
+                    onChanged: (value) => setState(() => _searchQuery = value),
+                  ),
+                ),
+                IconButton(
+                  key: const Key('people_options_button'),
+                  icon: Icon(
+                    Icons.tune,
+                    color: _filterOption != 'all' ? AppColors.primary : null,
+                  ),
+                  tooltip: 'Optionen',
+                  onPressed: () => _showOptionsSheet(isAdmin: isAdmin),
+                ),
+              ],
             ),
           ),
 
-          // Active filter chip
-          if (_filterOption != 'all')
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM),
-              child: Row(
-                children: [
-                  Chip(
-                    label: Text(_getFilterLabel(_filterOption)),
-                    deleteIcon: const Icon(Icons.close, size: 18),
-                    onDeleted: () {
-                      setState(() {
-                        _filterOption = 'all';
-                        _extraFilterValue = null;
-                      });
-                    },
-                  ),
-                ],
-              ),
-            ),
-
           // Birthday banner (Ionic people/list birthday-banner)
-          if (!_isSelectionMode)
+          if (!_isSelectionMode && peopleAsync.hasValue)
             _BirthdayBanner(
               people: todaysBirthdays(peopleAsync.valueOrNull ?? const []),
               onTap: (p) => context.push('/people/${p.id}'),
             ),
 
-          // People list
           Expanded(
             child: peopleAsync.when(
               loading: () => const ListSkeleton(
                 itemCount: 10,
                 showAvatar: true,
                 showSubtitle: true,
+                showDividers: true,
               ),
               error: (error, stack) => EmptyStateWidget(
                 icon: Icons.error_outline,
@@ -745,7 +608,6 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
 
                 if (people.isEmpty) {
                   // Ionic: "Bisher wurden noch keine Personen angelegt"
-                  final role = ref.watch(currentRoleProvider);
                   return Center(
                     child: Padding(
                       padding: const EdgeInsets.all(AppDimensions.paddingL),
@@ -764,7 +626,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
                             onPressed: () => context.push('/people/new'),
                             child: const Text('Person hinzufügen'),
                           ),
-                          if (role.isAdmin || role.isResponsible) ...[
+                          if (isAdmin) ...[
                             const SizedBox(height: AppDimensions.paddingS),
                             OutlinedButton(
                               onPressed: _openImport,
@@ -791,141 +653,59 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
 
                 if (_isReordering) return _buildReorderList(people);
 
-                // Group by group if sorted by group
-                if (_sortOption == 'group') {
-                  // Keys keep the order of sortedPeople (sort_order aware)
-                  final grouped = _groupByGroup(sortedPeople);
-                  final groups = grouped.keys.toList();
-                  
-                  return RefreshIndicator(
-                    onRefresh: () async {
-                      // FN-007: invalidate for manual refresh (realtime handles automatic updates)
-                      ref.invalidate(realtimePlayersProvider);
-                    },
-                    child: ListView.builder(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppDimensions.paddingM,
-                      ),
-                      itemCount: groups.length,
-                      itemBuilder: (context, groupIndex) {
-                        final groupName = groups[groupIndex];
-                        final groupPeople = grouped[groupName]!;
-                        
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Group header
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                top: AppDimensions.paddingM,
-                                bottom: AppDimensions.paddingS,
-                              ),
-                              child: Row(
-                                children: [
-                                  Text(
-                                    groupName,
-                                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      color: AppColors.primary,
-                                    ),
-                                  ),
-                                  const SizedBox(width: AppDimensions.paddingS),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 8,
-                                      vertical: 2,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: AppColors.primaryLight.withValues(alpha: 0.2),
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    child: Text(
-                                      '${groupPeople.length}',
-                                      style: const TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold,
-                                        color: AppColors.primary,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            // Group members
-                            ...groupPeople.asMap().entries.map((entry) {
-                              final index = entry.key;
-                              final person = entry.value;
-                              final isSelected = person.id != null &&
-                                  _selectedPlayerIds.contains(person.id);
-                              return AnimatedListItem(
-                                index: index,
-                                child: _PersonListItem(
-                                  person: person,
-                                  isSelectionMode: _isSelectionMode,
-                                  isSelected: isSelected,
-                                  viewOptions: _viewOptions,
-                                  extraFields: extraFields,
-                                  churchNames: churchNames,
-                                  onTap: _isSelectionMode && person.id != null
-                                      ? () => _togglePlayerSelection(person.id!)
-                                      : () => context.push('/people/${person.id}'),
-                                  onPause: () => _showPauseDialog(person),
-                                  onUnpause: () => _unpausePerson(person),
-                                  onArchive: () => _showArchiveDialog(person),
-                                  onDelete: ref.watch(currentRoleProvider).isConductor
-                                      ? () => _showDeleteDialog(person)
-                                      : null,
-                                  attendancePercentage: person.id != null
-                                      ? percentages[person.id]
-                                      : null,
-                                ),
-                              );
-                            }),
-                          ],
-                        );
-                      },
-                    ),
+                Widget tile(Person person) {
+                  final isSelected = person.id != null &&
+                      _selectedPlayerIds.contains(person.id);
+                  return _PersonListItem(
+                    person: person,
+                    isSelectionMode: _isSelectionMode,
+                    isSelected: isSelected,
+                    viewOptions: _viewOptions,
+                    extraFields: extraFields,
+                    churchNames: churchNames,
+                    isMainGroup: mainGroupId != null &&
+                        person.instrument == mainGroupId,
+                    otherInstanceName: _filterOption == 'otherInstance'
+                        ? _otherInstanceName
+                        : null,
+                    onTap: _isSelectionMode && person.id != null
+                        ? () => _togglePlayerSelection(person.id!)
+                        : () => context.push('/people/${person.id}'),
+                    onPause: isAdmin ? () => _showPauseDialog(person) : null,
+                    onUnpause: isAdmin ? () => _unpausePerson(person) : null,
+                    onRemove: isAdmin ? () => _remove(person) : null,
+                    attendancePercentage:
+                        person.id != null ? percentages[person.id] : null,
                   );
                 }
 
+                // Ionic: ion-list-header "Personen (n)", then (sorted by
+                // group) a primary ion-item-divider per group.
+                final children = <Widget>[
+                  _ListHeader(text: 'Personen (${sortedPeople.length})'),
+                ];
+                if (_sortOption == 'group') {
+                  final grouped = _groupByGroup(sortedPeople);
+                  for (final entry in grouped.entries) {
+                    children.add(_GroupDivider(
+                        text: '${entry.key} (${entry.value.length})'));
+                    for (final p in entry.value) {
+                      children.add(tile(p));
+                    }
+                  }
+                } else {
+                  children.addAll(sortedPeople.map(tile));
+                }
+                children.add(const SizedBox(height: 88));
+
                 return RefreshIndicator(
                   onRefresh: () async {
-                    // FN-002: Use same provider as display (realtimePlayersProvider)
+                    // FN-007: manual refresh (realtime handles live updates)
                     ref.invalidate(realtimePlayersProvider);
                   },
-                  child: ListView.builder(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppDimensions.paddingM,
-                    ),
-                    itemCount: sortedPeople.length,
-                    itemBuilder: (context, index) {
-                      final person = sortedPeople[index];
-                      final isSelected = person.id != null &&
-                          _selectedPlayerIds.contains(person.id);
-                      return AnimatedListItem(
-                        index: index,
-                        child: _PersonListItem(
-                          person: person,
-                          isSelectionMode: _isSelectionMode,
-                          isSelected: isSelected,
-                          viewOptions: _viewOptions,
-                          extraFields: extraFields,
-                          churchNames: churchNames,
-                          onTap: _isSelectionMode && person.id != null
-                              ? () => _togglePlayerSelection(person.id!)
-                              : () => context.push('/people/${person.id}'),
-                          onPause: () => _showPauseDialog(person),
-                          onUnpause: () => _unpausePerson(person),
-                          onArchive: () => _showArchiveDialog(person),
-                          onDelete: ref.watch(currentRoleProvider).isConductor
-                              ? () => _showDeleteDialog(person)
-                              : null,
-                          attendancePercentage: person.id != null
-                              ? percentages[person.id]
-                              : null,
-                        ),
-                      );
-                    },
+                  child: ListView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    children: children,
                   ),
                 );
               },
@@ -942,11 +722,181 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
                   backgroundColor: AppColors.warning,
                 )
               : null
-          : FloatingActionButton(
-              onPressed: () => context.push('/people/new'),
-              child: const Icon(Icons.add),
-            ),
+          // Ionic: FAB "add" only for admins
+          : isAdmin
+              ? FloatingActionButton(
+                  onPressed: () => context.push('/people/new'),
+                  child: const Icon(Icons.add),
+                )
+              : null,
     );
+  }
+
+  // ---------------------------------------------------------------------
+  // UX_PEOPLE: options popover (Ionic filterPopover)
+  // ---------------------------------------------------------------------
+
+  /// Filter options in Ionic order (list.page.html filter select).
+  Map<String, String> _filterOptionLabels(Tenant? tenant) {
+    final isVoS = _isVoS(tenant);
+    final isGeneral = tenant?.type == 'general';
+    final hasLinked =
+        (ref.read(allLinkedTenantsProvider).valueOrNull ?? const []).isNotEmpty;
+    return {
+      'all': 'Alle Anzeigen',
+      'active': 'Aktive Personen',
+      'critical': 'Problemfälle',
+      if (!isGeneral) 'leaders': 'Stimmführer',
+      'noAccount': 'Ohne Account',
+      if (isVoS) 'examinees': 'Prüflinge',
+      if (isVoS) 'new': 'Neue Spieler',
+      if (isVoS) 'noTeacher': 'Ohne Lehrer',
+      if (isVoS) 'noTest': 'Testergebnis fehlt',
+      if (hasLinked || _filterOption == 'otherInstance')
+        'otherInstance': 'Mitglied anderer Instanz',
+      for (final f in _filterableExtraFields(tenant)) 'extra:${f.id}': f.name,
+    };
+  }
+
+  /// Sort options in Ionic order (list.page.html sort select).
+  Map<String, String> _sortOptionLabels(Tenant? tenant) => {
+        'group': 'Gruppe',
+        'firstName': 'Vorname',
+        'lastName': 'Nachname',
+        'attAsc': 'Anwesenheit ↑',
+        'attDesc': 'Anwesenheit ↓',
+        'birthdayAsc': 'Geburtsdatum ↑',
+        'birthdayDesc': 'Geburtsdatum ↓',
+        'joinedAsc': 'Beitrittsdatum ↑',
+        'joinedDesc': 'Beitrittsdatum ↓',
+        'nextBirthday': 'Nächster Geburtstag',
+        if (_isVoS(tenant)) 'testResult': 'Testergebnis',
+      };
+
+  Future<void> _onFilterSelected(String value) async {
+    if (value.startsWith('extra:')) {
+      await _selectExtraFieldFilter(value);
+      return;
+    }
+    if (value == 'otherInstance') {
+      await _selectOtherInstanceFilter();
+      return;
+    }
+    setState(() {
+      _filterOption = value;
+      _extraFilterValue = null;
+    });
+  }
+
+  void _onSortSelected(String value) {
+    setState(() => _sortOption = value);
+    _saveSortOption();
+  }
+
+  /// Ionic filter popover: Filter (funnel), Sortierung (filter), Ansicht
+  /// (eye), Gemeinde-Übersicht, Bulk-Bearbeitung, Personen importieren,
+  /// Reihenfolge anpassen.
+  Future<void> _showOptionsSheet({required bool isAdmin}) async {
+    final tenant = ref.read(currentTenantProvider);
+    final filterLabels = _filterOptionLabels(tenant);
+    final sortLabels = _sortOptionLabels(tenant);
+    final viewLabels = _viewOptionLabels(tenant);
+    final action = await showModalBottomSheet<String>(
+      context: context,
+      showDragHandle: true,
+      isScrollControlled: true,
+      builder: (ctx) => SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _OptionDropdownTile(
+                icon: Icons.filter_alt,
+                label: 'Filter',
+                value: filterLabels.containsKey(_filterOption)
+                    ? _filterOption
+                    : 'all',
+                options: filterLabels,
+                onChanged: (v) => Navigator.pop(ctx, 'filter:$v'),
+              ),
+              _OptionDropdownTile(
+                icon: Icons.filter_list,
+                label: 'Sortierung',
+                value: sortLabels.containsKey(_sortOption) ? _sortOption : 'group',
+                options: sortLabels,
+                onChanged: (v) => Navigator.pop(ctx, 'sort:$v'),
+              ),
+              ListTile(
+                leading: const Icon(Icons.visibility, size: 20),
+                title: const Text('Ansicht'),
+                subtitle: Text(
+                  viewLabels.entries
+                      .where((e) => _viewOptions.contains(e.key))
+                      .map((e) => e.value)
+                      .join(', '),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                trailing: const Icon(Icons.arrow_drop_down),
+                onTap: () => Navigator.pop(ctx, 'view'),
+              ),
+              if (_churchField(tenant) != null)
+                ListTile(
+                  leading: const Icon(Icons.business_outlined, size: 20),
+                  title: const Text('Gemeinde-Übersicht'),
+                  onTap: () => Navigator.pop(ctx, 'churchOverview'),
+                ),
+              if (isAdmin) ...[
+                ListTile(
+                  leading: const Icon(Icons.edit, size: 20),
+                  title: const Text('Bulk-Bearbeitung'),
+                  onTap: () => Navigator.pop(ctx, 'bulkEdit'),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.cloud_upload_outlined, size: 20),
+                  title: const Text('Personen importieren'),
+                  onTap: () => Navigator.pop(ctx, 'import'),
+                ),
+                if (_sortOption == 'group')
+                  ListTile(
+                    leading: const Icon(Icons.swap_vert, size: 20),
+                    title: const Text('Reihenfolge anpassen'),
+                    onTap: () => Navigator.pop(ctx, 'reorder'),
+                  ),
+                // Flutter extra: multi-select handover (Ionic only has the
+                // handover page in the settings)
+                ListTile(
+                  leading: const Icon(Icons.checklist, size: 20),
+                  title: const Text('Personen übertragen'),
+                  onTap: () => Navigator.pop(ctx, 'select'),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+    if (action == null || !mounted) return;
+    if (action.startsWith('filter:')) {
+      await _onFilterSelected(action.substring(7));
+    } else if (action.startsWith('sort:')) {
+      _onSortSelected(action.substring(5));
+    } else {
+      switch (action) {
+        case 'view':
+          await _showViewOptionsDialog();
+        case 'churchOverview':
+          await _showChurchOverview();
+        case 'bulkEdit':
+          await _openBulkEdit();
+        case 'import':
+          await _openImport();
+        case 'reorder':
+          await _toggleReorderMode();
+        case 'select':
+          _enterSelectionMode();
+      }
+    }
   }
 
   List<ExtraField> _filterableExtraFields(Tenant? tenant) =>
@@ -1083,12 +1033,23 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
     }
   }
 
-  /// "Gemeinde-Übersicht" (Ionic showChurchOverview).
-  void _showChurchOverview() {
-    // TODO(PEOPLE2): open the ChurchOverview widget built by ATT_DETAIL once
-    // it is merged, passing the church ids of the filtered people:
-    //   _filterPeople(people).map((p) => p.additionalFields?[field.id])
-    ToastHelper.showInfo(context, 'Gemeinde-Übersicht ist noch nicht verfügbar');
+  /// "Gemeinde-Übersicht" (Ionic showChurchOverview): church counts of the
+  /// currently filtered people.
+  Future<void> _showChurchOverview() async {
+    final field = _churchField(ref.read(currentTenantProvider));
+    if (field == null) return;
+    final people = ref.read(realtimePlayersProvider).valueOrNull ?? const [];
+    final churchIds = _filterPeople(people)
+        .map((p) => churchIdOf(p.additionalFields, field.id))
+        .toList();
+    final churches = await ref.read(churchesProvider.future);
+    if (!mounted) return;
+    await showChurchOverviewSheet(
+      context,
+      churchIds: churchIds,
+      churches: churches,
+      subtitle: 'Personen',
+    );
   }
 
   /// Ionic toggleReorderMode: enter reorder mode, or save the new order.
@@ -1198,50 +1159,6 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
     });
   }
 
-  String _getFilterLabel(String filter) {
-    if (filter.startsWith('extra:')) {
-      final field = _filterableExtraFields(ref.read(currentTenantProvider))
-          .where((f) => f.id == filter.substring(6))
-          .firstOrNull;
-      final v = _extraFilterValue;
-      final display = v == 'true'
-          ? 'Ja'
-          : v == 'false'
-              ? 'Nein'
-              : v;
-      return '${field?.name ?? 'Feld'}: ${display ?? ''}';
-    }
-    return switch (filter) {
-      'critical' => 'Kritisch',
-      'paused' => 'Pausiert',
-      'leaders' => 'Leiter',
-      'active' => 'Aktiv',
-      'noAccount' => 'Ohne Account',
-      'examinees' => 'Prüflinge',
-      'noTeacher' => 'Ohne Lehrer',
-      'noTest' => 'Ohne Test',
-      'new' => 'Neue Spieler',
-      'otherInstance' => 'Mitglied anderer Instanz: ${_otherInstanceName ?? ''}',
-      _ => 'Alle',
-    };
-  }
-
-  PopupMenuItem<String> _buildSortMenuItem(String value, String label) {
-    return PopupMenuItem(
-      value: value,
-      child: Row(
-        children: [
-          if (_sortOption == value)
-            const Icon(Icons.check, size: 18, color: AppColors.primary)
-          else
-            const SizedBox(width: 18),
-          const SizedBox(width: 8),
-          Text(label),
-        ],
-      ),
-    );
-  }
-
   void _enterSelectionMode() {
     setState(() {
       _isSelectionMode = true;
@@ -1321,34 +1238,75 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
     await pausePersonFlow(context, ref, person);
   }
 
-  /// Unpause a person
+  /// Ionic unpausePlayer: alert "Person wieder aktivieren?" → Aktivieren.
   Future<void> _unpausePerson(Person person) async {
-    final repository = ref.read(playerRepositoryWithTenantProvider);
-    // Cache ScaffoldMessenger before async gap to avoid disposed context issues
-    final messenger = ScaffoldMessenger.of(context);
-
-    try {
-      await repository.unpausePlayer(person);
-      // Realtime handles the refresh automatically
-
-      if (mounted) {
-        messenger.showSnackBar(
-          SnackBar(
-            content: Text('${person.firstName} wurde reaktiviert'),
-            backgroundColor: AppColors.success,
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Person wieder aktivieren?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Abbrechen'),
           ),
-        );
-      }
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Aktivieren'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+
+    final repository = ref.read(playerRepositoryWithTenantProvider);
+    try {
+      await repository.unpausePlayer(person, historyText: 'Person wieder aktiv');
+      // Realtime handles the refresh automatically
     } catch (e) {
-      if (mounted) {
-        messenger.showSnackBar(
-          SnackBar(content: Text('Fehler: $e'), backgroundColor: AppColors.danger),
-        );
-      }
+      if (mounted) ToastHelper.showError(context, 'Fehler: $e');
     }
   }
 
-  /// Show archive dialog with date picker and note
+  /// Ionic remove(): action sheet "Archivieren" / "Entfernen" / "Abbrechen".
+  Future<void> _remove(Person person) async {
+    final userId = ref.read(supabaseClientProvider).auth.currentUser?.id;
+    if (person.appId != null && person.appId == userId) {
+      ToastHelper.showError(context, 'Du kannst dich nicht selbst entfernen!');
+      return;
+    }
+    final choice = await showModalBottomSheet<String>(
+      context: context,
+      builder: (ctx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              title: const Text('Archivieren', textAlign: TextAlign.center),
+              onTap: () => Navigator.pop(ctx, 'archive'),
+            ),
+            ListTile(
+              title: const Text('Entfernen', textAlign: TextAlign.center),
+              onTap: () => Navigator.pop(ctx, 'remove'),
+            ),
+            const Divider(height: 1),
+            ListTile(
+              title: const Text(
+                'Abbrechen',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
+              onTap: () => Navigator.pop(ctx),
+            ),
+          ],
+        ),
+      ),
+    );
+    if (!mounted) return;
+    if (choice == 'archive') await _showArchiveDialog(person);
+    if (choice == 'remove') await _removePlayer(person);
+  }
+
+  /// Ionic archive modal: "{name} Archivieren" with Austrittsdatum + Notiz.
   Future<void> _showArchiveDialog(Person person) async {
     final noteController = TextEditingController();
     DateTime archiveDate = DateTime.now();
@@ -1356,16 +1314,13 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
     try {
       final result = await showDialog<Map<String, dynamic>>(
         context: context,
+        barrierDismissible: false,
         builder: (context) => StatefulBuilder(
           builder: (context, setDialogState) => AlertDialog(
-            title: Text('${person.firstName} archivieren?'),
+            title: Text('${person.firstName} ${person.lastName} Archivieren'),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text(
-                  'Die Person wird als "ausgetreten" markiert und erscheint nicht mehr in der aktiven Liste.',
-                ),
-                const SizedBox(height: AppDimensions.paddingM),
                 ListTile(
                   contentPadding: EdgeInsets.zero,
                   title: const Text('Austrittsdatum'),
@@ -1376,21 +1331,19 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
                       context: context,
                       initialDate: archiveDate,
                       firstDate: DateTime(2000),
-                      lastDate: DateTime.now(),
+                      lastDate: DateTime(2100),
                     );
                     if (date != null) {
                       setDialogState(() => archiveDate = date);
                     }
                   },
                 ),
-                const SizedBox(height: AppDimensions.paddingS),
                 TextField(
                   controller: noteController,
-                  decoration: const InputDecoration(
-                    labelText: 'Grund (optional)',
-                    hintText: 'Warum verlässt die Person?',
-                  ),
-                  maxLines: 2,
+                  textCapitalization: TextCapitalization.sentences,
+                  decoration: const InputDecoration(labelText: 'Notiz'),
+                  maxLines: 3,
+                  minLines: 1,
                 ),
               ],
             ),
@@ -1399,15 +1352,15 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
                 onPressed: () => Navigator.pop(context),
                 child: const Text('Abbrechen'),
               ),
-              FilledButton(
-                style: FilledButton.styleFrom(backgroundColor: AppColors.danger),
+              FilledButton.icon(
+                icon: const Icon(Icons.archive_outlined),
                 onPressed: () {
                   Navigator.pop(context, {
                     'date': archiveDate.toIso8601String(),
                     'note': noteController.text,
                   });
                 },
-                child: const Text('Archivieren'),
+                label: const Text('Archivieren'),
               ),
             ],
           ),
@@ -1416,8 +1369,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
 
       if (result != null && mounted) {
         await _archivePerson(person,
-            date: result['date'] as String,
-            note: result['note'] as String);
+            date: result['date'] as String, note: result['note'] as String);
       }
     } finally {
       noteController.dispose();
@@ -1427,7 +1379,6 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
   /// Archive a person
   Future<void> _archivePerson(Person person, {String? date, String? note}) async {
     final repository = ref.read(playerRepositoryWithTenantProvider);
-
     try {
       await repository.archivePlayer(
         person,
@@ -1435,58 +1386,117 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
         note?.isEmpty == true ? null : note,
       );
       // Realtime handles the refresh automatically
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('${person.firstName} wurde archiviert'),
-            backgroundColor: AppColors.success,
-          ),
-        );
-      }
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Fehler: $e'), backgroundColor: AppColors.danger),
-        );
-      }
+      if (mounted) ToastHelper.showError(context, 'Fehler: $e');
     }
   }
 
-  Future<void> _showDeleteDialog(Person person) async {
+  /// Ionic removePlayer: alert "Person wirklich entfernen?".
+  Future<void> _removePlayer(Person person) async {
     final confirmed = await DialogHelper.showConfirmation(
       context,
-      title: '${person.firstName} endgültig entfernen?',
-      message: 'Diese Aktion kann nicht rückgängig gemacht werden. '
-          'Alle Daten von ${person.fullName} werden unwiderruflich gelöscht.',
-      confirmText: 'Endgültig entfernen',
+      title: 'Person wirklich entfernen?',
+      message: 'Diese Aktion kann nicht rückgängig gemacht werden!',
+      confirmText: 'Entfernen',
       isDestructive: true,
     );
 
     if (confirmed == true && mounted && person.id != null) {
       try {
-        final notifier = ref.read(playerNotifierProvider.notifier);
-        await notifier.deletePlayer(person.id!);
-
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('${person.firstName} wurde entfernt'),
-              backgroundColor: AppColors.success,
-            ),
-          );
-        }
+        await ref.read(playerNotifierProvider.notifier).deletePlayer(person.id!);
+        if (mounted) ToastHelper.showSuccess(context, 'Person wurde entfernt.');
       } catch (e) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Fehler: $e'), backgroundColor: AppColors.danger),
-          );
-        }
+        if (mounted) ToastHelper.showError(context, 'Fehler: $e');
       }
     }
   }
 }
 
+/// Ionic ion-list-header ("Personen (n)").
+class _ListHeader extends StatelessWidget {
+  const _ListHeader({required this.text});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(
+          AppDimensions.paddingM, AppDimensions.paddingS, AppDimensions.paddingM, 4),
+      child: Text(
+        text,
+        style: Theme.of(context)
+            .textTheme
+            .titleMedium
+            ?.copyWith(fontWeight: FontWeight.bold),
+      ),
+    );
+  }
+}
+
+/// Ionic ion-item-divider color="primary" (group header).
+class _GroupDivider extends StatelessWidget {
+  const _GroupDivider({required this.text});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      color: AppColors.primary,
+      padding: const EdgeInsets.symmetric(
+          horizontal: AppDimensions.paddingM, vertical: 6),
+      child: Text(
+        text,
+        style: const TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.w600,
+          fontSize: 14,
+        ),
+      ),
+    );
+  }
+}
+
+/// One option row of the options popover (icon + dropdown, Ionic ion-select
+/// interface="popover").
+class _OptionDropdownTile extends StatelessWidget {
+  const _OptionDropdownTile({
+    required this.icon,
+    required this.label,
+    required this.value,
+    required this.options,
+    required this.onChanged,
+  });
+
+  final IconData icon;
+  final String label;
+  final String value;
+  final Map<String, String> options;
+  final ValueChanged<String> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      leading: Icon(icon, size: 20),
+      title: Text(label),
+      trailing: DropdownButton<String>(
+        value: value,
+        underline: const SizedBox.shrink(),
+        items: [
+          for (final e in options.entries)
+            DropdownMenuItem(value: e.key, child: Text(e.value)),
+        ],
+        onChanged: (v) {
+          if (v != null) onChanged(v);
+        },
+      ),
+    );
+  }
+}
+
+/// Person row (Ionic ion-item-sliding in people/list).
 class _PersonListItem extends StatelessWidget {
   const _PersonListItem({
     required this.person,
@@ -1495,12 +1505,13 @@ class _PersonListItem extends StatelessWidget {
     this.isSelected = false,
     this.onPause,
     this.onUnpause,
-    this.onArchive,
-    this.onDelete,
+    this.onRemove,
     this.attendancePercentage,
     this.viewOptions = const {'group', 'paused', 'critical', 'leader'},
     this.extraFields = const [],
     this.churchNames = const {},
+    this.isMainGroup = false,
+    this.otherInstanceName,
   });
 
   final Person person;
@@ -1509,49 +1520,27 @@ class _PersonListItem extends StatelessWidget {
   final bool isSelected;
   final VoidCallback? onPause;
   final VoidCallback? onUnpause;
-  final VoidCallback? onArchive;
-  final VoidCallback? onDelete;
+  final VoidCallback? onRemove;
   final int? attendancePercentage;
   final Set<String> viewOptions;
   final List<ExtraField> extraFields;
   final Map<String, String> churchNames;
+  final bool isMainGroup;
+  final String? otherInstanceName;
 
   String _extraValueText(ExtraField field, dynamic value) {
     if (field.type == 'bfecg_church') {
-      return churchNames[value?.toString()] ?? value.toString();
+      return churchNames[value?.toString()] ?? 'Unbekannt';
     }
     return value.toString();
   }
 
   bool _hasExtraValue(dynamic v) => v != null && v != false && v != '';
 
-  /// Extra fields shown underneath the name (displayMode 'underneath')
-  List<String> get _extraLines => [
-        for (final f in extraFields)
-          if (viewOptions.contains('extra:${f.id}') &&
-              f.displayMode == 'underneath' &&
-              _hasExtraValue(person.additionalFields?[f.id]))
-            f.type == 'boolean'
-                ? f.name
-                : '${f.name}: ${_extraValueText(f, person.additionalFields?[f.id])}',
-      ];
-
-  /// Extra fields shown as badges
-  List<String> get _extraBadges => [
-        for (final f in extraFields)
-          if (viewOptions.contains('extra:${f.id}') &&
-              f.displayMode != 'underneath' &&
-              _hasExtraValue(person.additionalFields?[f.id]))
-            switch (f.type) {
-              'boolean' => f.name,
-              'number' => '${f.name} ${person.additionalFields?[f.id]}',
-              _ => _extraValueText(f, person.additionalFields?[f.id]),
-            },
-      ];
-
-  String? _buildSubtitle() {
+  /// Ionic getSubText: Gruppe | Geburtsdatum | Testergebnis | Instrumente |
+  /// Sonstige Dienste, joined with " | ".
+  String get _subText {
     final parts = <String>[];
-
     if (viewOptions.contains('group') && person.groupName != null) {
       parts.add(person.groupName!);
     }
@@ -1575,402 +1564,225 @@ class _PersonListItem extends StatelessWidget {
         (person.otherExercise?.isNotEmpty ?? false)) {
       parts.add(person.otherExercise!);
     }
-    parts.addAll(_extraLines);
-    if (viewOptions.contains('notes') && person.notes != null && person.notes!.isNotEmpty) {
-      parts.add(person.notes!);
-    }
-    if (viewOptions.contains('teacher') && person.teacherName != null) {
-      parts.add('Lehrer: ${person.teacherName}');
-    }
-
-    return parts.isNotEmpty ? parts.join(' | ') : null;
+    return parts.join(' | ');
   }
 
-  bool get _showPhoto => viewOptions.contains('photo');
-  bool get _showLeaderBadge => viewOptions.contains('leader') && person.isLeader;
-  bool get _showPausedBadge => viewOptions.contains('paused') && person.paused;
-  bool get _showCriticalBadge => viewOptions.contains('critical') && person.critical;
-  bool get _showNotesBadge => person.notes != null && person.notes!.isNotEmpty;
-  bool get _showNewBadge =>
-      viewOptions.contains('new') && isNewPerson(person) && !person.isLeader;
-  bool get _showExamineeBadge =>
-      viewOptions.contains('examinee') && person.examinee;
-  bool get _showAttendance => viewOptions.contains('attendance');
+  /// Additional label lines (h3 / p in Ionic) below the name.
+  List<Widget> _lines(BuildContext context) {
+    const h3 = TextStyle(fontSize: 14);
+    final p = TextStyle(fontSize: 13, color: Theme.of(context).hintColor);
+    final sub = _subText;
+    return [
+      if (sub.isNotEmpty) Text(sub, style: h3),
+      if (!isMainGroup && viewOptions.contains('teacher'))
+        Text(
+          person.teacherName != null
+              ? 'Lehrer: ${person.teacherName}'
+              : 'Kein Lehrer',
+          style: h3,
+        ),
+      if (otherInstanceName != null) Text(otherInstanceName!, style: h3),
+      if (viewOptions.contains('notes') && (person.notes?.isNotEmpty ?? false))
+        Text(person.notes!, style: p),
+      for (final f in extraFields)
+        if (viewOptions.contains('extra:${f.id}') &&
+            f.displayMode == 'underneath' &&
+            _hasExtraValue(person.additionalFields?[f.id]))
+          Text(
+            f.type == 'boolean'
+                ? f.name
+                : '${f.name}: ${_extraValueText(f, person.additionalFields?[f.id])}',
+            style: h3,
+          ),
+    ];
+  }
+
+  /// Badges on the right (slot="end"), same order and colors as Ionic.
+  List<Widget> get _badges {
+    final showPaused = viewOptions.contains('paused');
+    final notHiddenByPause = !showPaused || !person.paused;
+    return [
+      if (notHiddenByPause && viewOptions.contains('leader') && person.isLeader)
+        const _IonBadge(text: 'Stimmführer', color: AppColors.secondary),
+      if (notHiddenByPause &&
+          viewOptions.contains('new') &&
+          isNewPerson(person) &&
+          !person.isLeader)
+        const _IonBadge(text: 'Neu', color: AppColors.danger),
+      if (notHiddenByPause && viewOptions.contains('critical') && person.isCritical)
+        const _IonBadge(text: 'Problemfall', color: AppColors.danger),
+      if (showPaused && person.paused)
+        const _IonBadge(
+            text: 'Pausiert', color: AppColors.warning, textColor: Colors.black),
+      if (viewOptions.contains('examinee') && person.examinee)
+        const _IonBadge(text: 'Prüfling', color: AppColors.dark),
+      for (final f in extraFields)
+        if (viewOptions.contains('extra:${f.id}') &&
+            f.displayMode != 'underneath' &&
+            _hasExtraValue(person.additionalFields?[f.id]))
+          _IonBadge(
+            text: switch (f.type) {
+              'boolean' => f.name,
+              'number' => '${f.name} ${person.additionalFields?[f.id]}',
+              _ => _extraValueText(f, person.additionalFields?[f.id]),
+            },
+            color: f.type == 'boolean' ? AppColors.success : AppColors.dark,
+          ),
+      if (viewOptions.contains('attendance') && attendancePercentage != null)
+        _IonBadge(
+          text: '$attendancePercentage%',
+          color: attendancePercentage! >= 75
+              ? AppColors.success
+              : attendancePercentage! >= 50
+                  ? AppColors.warning
+                  : AppColors.danger,
+          textColor: attendancePercentage! >= 75 || attendancePercentage! < 50
+              ? Colors.white
+              : Colors.black,
+        ),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    // RT-004: Safe cast for cardShape - check type before casting
-    final cardShape = theme.cardTheme.shape is RoundedRectangleBorder
-        ? theme.cardTheme.shape as RoundedRectangleBorder
-        : RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppDimensions.borderRadiusL),
-          );
-    final cardBorderRadius =
-        cardShape.borderRadius.resolve(Directionality.of(context));
-
-    // In selection mode, don't use Slidable
-    if (isSelectionMode) {
-      return Padding(
-        padding: const EdgeInsets.only(bottom: AppDimensions.paddingS),
-        child: Card(
-          margin: EdgeInsets.zero,
-          color: isSelected
-              ? AppColors.primary.withValues(alpha: 0.1)
-              : null,
-          child: ListTile(
-            onTap: onTap,
-            leading: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Checkbox(
-                  value: isSelected,
-                  onChanged: (_) => onTap(),
-                ),
-                CircleAvatar(
-                  backgroundColor: person.critical
-                      ? AppColors.danger.withValues(alpha: 0.2)
-                      : person.paused
-                          ? AppColors.warning.withValues(alpha: 0.2)
-                          : AppColors.primaryLight.withValues(alpha: 0.2),
-                  // RT-002: Use null-safe pattern for imageUrl
-                  backgroundImage: (person.imageUrl?.contains('.svg') == false)
-                      ? NetworkImage(person.imageUrl!)
-                      : null,
-                  child: (person.imageUrl == null ||
-                          person.imageUrl!.contains('.svg'))
-                      ? Text(
-                          person.initials,
-                          style: TextStyle(
-                            color: person.critical
-                                ? AppColors.danger
-                                : person.paused
-                                    ? AppColors.warning
-                                    : AppColors.primary,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        )
-                      : null,
-                ),
-              ],
-            ),
-            title: Text(
-              person.fullName,
-              style: const TextStyle(fontWeight: FontWeight.w500),
-            ),
-            subtitle: _buildSubtitle() != null
-                ? Text(
-                    _buildSubtitle()!,
-                    style: const TextStyle(
-                      color: AppColors.medium,
-                      fontSize: 13,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  )
-                : null,
+    final showPhoto = viewOptions.contains('photo');
+    final badges = _badges;
+    final tile = InkWell(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: isSelected ? AppColors.primary.withValues(alpha: 0.1) : null,
+          border: Border(
+            bottom: BorderSide(color: Theme.of(context).dividerColor, width: 0.5),
           ),
         ),
-      );
-    }
-
-    return Padding(
-      padding: const EdgeInsets.only(bottom: AppDimensions.paddingS),
-      child: Slidable(
-        key: ValueKey(person.id),
-        // Swipe left for pause/unpause
-        endActionPane: ActionPane(
-          motion: const BehindMotion(),
-          extentRatio: 0.25,
+        padding: const EdgeInsets.symmetric(
+            horizontal: AppDimensions.paddingM, vertical: 10),
+        child: Row(
           children: [
-            CustomSlidableAction(
-              onPressed: (slideContext) {
-                // Close the slidable first
-                Slidable.of(slideContext)?.close();
-                if (!person.paused && onPause != null) {
-                  onPause!();
-                } else if (person.paused && onUnpause != null) {
-                  onUnpause!();
-                }
-              },
-              backgroundColor: Colors.transparent,
-              padding: EdgeInsets.zero,
-              child: Container(
-                margin: const EdgeInsets.only(left: AppDimensions.paddingS),
-                decoration: BoxDecoration(
-                  color: person.paused ? AppColors.success : AppColors.warning,
-                  borderRadius: cardBorderRadius,
-                ),
-                child: Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        person.paused ? Icons.play_arrow : Icons.pause,
-                        color: Colors.white,
-                        size: 28,
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        person.paused ? 'Aktiv' : 'Pause',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ],
+            if (isSelectionMode)
+              Checkbox(value: isSelected, onChanged: (_) => onTap()),
+            if (showPhoto) ...[
+              _Avatar(person: person),
+              const SizedBox(width: AppDimensions.paddingM),
+            ],
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '${person.firstName} ${person.lastName}',
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                   ),
-                ),
+                  ..._lines(context),
+                ],
               ),
             ),
+            if (badges.isNotEmpty)
+              Flexible(
+                child: Wrap(
+                  alignment: WrapAlignment.end,
+                  spacing: 4,
+                  runSpacing: 4,
+                  children: badges,
+                ),
+              ),
           ],
         ),
-        // Swipe right for archive + delete
-        startActionPane: (onArchive != null || onDelete != null)
-            ? ActionPane(
-                motion: const BehindMotion(),
-                extentRatio: onArchive != null && onDelete != null ? 0.5 : 0.25,
-                children: [
-                  if (onArchive != null)
-                    CustomSlidableAction(
-                      onPressed: (slideContext) {
-                        Slidable.of(slideContext)?.close();
-                        onArchive!();
-                      },
-                      backgroundColor: Colors.transparent,
-                      padding: EdgeInsets.zero,
-                      child: Container(
-                        margin:
-                            const EdgeInsets.only(right: AppDimensions.paddingS),
-                        decoration: BoxDecoration(
-                          color: AppColors.danger,
-                          borderRadius: cardBorderRadius,
-                        ),
-                        child: const Center(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                Icons.archive,
-                                color: Colors.white,
-                                size: 28,
-                              ),
-                              SizedBox(height: 4),
-                              Text(
-                                'Archiv',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  if (onDelete != null)
-                    CustomSlidableAction(
-                      onPressed: (slideContext) {
-                        Slidable.of(slideContext)?.close();
-                        onDelete!();
-                      },
-                      backgroundColor: Colors.transparent,
-                      padding: EdgeInsets.zero,
-                      child: Container(
-                        margin:
-                            const EdgeInsets.only(right: AppDimensions.paddingS),
-                        decoration: BoxDecoration(
-                          color: AppColors.dark,
-                          borderRadius: cardBorderRadius,
-                        ),
-                        child: const Center(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                Icons.delete_forever,
-                                color: Colors.white,
-                                size: 28,
-                              ),
-                              SizedBox(height: 4),
-                              Text(
-                                'Löschen',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                ],
-              )
-            : null,
-        child: Card(
-          margin: EdgeInsets.zero,
-          child: ListTile(
-            onTap: onTap,
-            leading: CircleAvatar(
-              backgroundColor: person.critical
-                  ? AppColors.danger.withValues(alpha: 0.2)
-                  : person.paused
-                      ? AppColors.warning.withValues(alpha: 0.2)
-                      : AppColors.primaryLight.withValues(alpha: 0.2),
-              // RT-002: Use null-safe pattern for imageUrl
-              backgroundImage: (_showPhoto && person.imageUrl?.contains('.svg') == false)
-                  ? NetworkImage(person.imageUrl!)
-                  : null,
-              child: (!_showPhoto || person.imageUrl == null || person.imageUrl!.contains('.svg'))
-                  ? Text(
-                      person.initials,
-                      style: TextStyle(
-                        color: person.critical
-                            ? AppColors.danger
-                            : person.paused
-                                ? AppColors.warning
-                                : AppColors.primary,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    )
-                  : null,
-            ),
-            title: Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    person.fullName,
-                    style: const TextStyle(fontWeight: FontWeight.w500),
-                  ),
-                ),
-                if (_showLeaderBadge)
-                  const Padding(
-                    padding: EdgeInsets.only(left: 4),
-                    child: Icon(
-                      Icons.star,
-                      size: 18,
-                      color: AppColors.primary,
-                    ),
-                  ),
-                if (_showPausedBadge)
-                  const Padding(
-                    padding: EdgeInsets.only(left: 4),
-                    child: Icon(
-                      Icons.pause_circle_outline,
-                      size: 18,
-                      color: AppColors.warning,
-                    ),
-                  ),
-                if (_showCriticalBadge)
-                  const Padding(
-                    padding: EdgeInsets.only(left: 4),
-                    child: Icon(
-                      Icons.warning_amber,
-                      size: 18,
-                      color: AppColors.danger,
-                    ),
-                  ),
-                if (_showNotesBadge)
-                  const Padding(
-                    padding: EdgeInsets.only(left: 4),
-                    child: Icon(
-                      Icons.sticky_note_2_outlined,
-                      size: 16,
-                      color: AppColors.medium,
-                    ),
-                  ),
-                if (_showNewBadge)
-                  const _TextBadge(text: 'Neu', color: AppColors.danger),
-                if (_showExamineeBadge)
-                  const _TextBadge(text: 'Prüfling', color: AppColors.dark),
-                for (final b in _extraBadges)
-                  Flexible(child: _TextBadge(text: b, color: AppColors.dark)),
-              ],
-            ),
-            subtitle: _buildSubtitle() != null
-                ? Text(
-                    _buildSubtitle()!,
-                    style: const TextStyle(
-                      color: AppColors.medium,
-                      fontSize: 13,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  )
-                : null,
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (_showAttendance && attendancePercentage != null)
-                  _AttendanceBadge(percentage: attendancePercentage!),
-                const Icon(
-                  Icons.chevron_right,
-                  color: AppColors.medium,
-                ),
-              ],
-            ),
-          ),
-        ),
       ),
+    );
+
+    if (isSelectionMode || (onRemove == null && onPause == null)) return tile;
+
+    // Ionic ion-item-options (side end): trash (danger), pause (warning,
+    // expandable) or play (success); a full swipe pauses/reactivates.
+    final pauseAction = person.paused ? onUnpause : onPause;
+    return Slidable(
+      key: ValueKey('person_${person.id}'),
+      endActionPane: ActionPane(
+        motion: const DrawerMotion(),
+        extentRatio: 0.4,
+        dismissible: pauseAction == null
+            ? null
+            : DismissiblePane(
+                closeOnCancel: true,
+                confirmDismiss: () async {
+                  pauseAction();
+                  return false;
+                },
+                onDismissed: () {},
+              ),
+        children: [
+          if (onRemove != null)
+            SlidableAction(
+              onPressed: (_) => onRemove!(),
+              backgroundColor: AppColors.danger,
+              foregroundColor: Colors.white,
+              icon: Icons.delete,
+            ),
+          if (pauseAction != null)
+            SlidableAction(
+              onPressed: (_) => pauseAction(),
+              backgroundColor:
+                  person.paused ? AppColors.success : AppColors.warning,
+              foregroundColor: person.paused ? Colors.white : Colors.black,
+              icon: person.paused ? Icons.play_arrow : Icons.pause,
+            ),
+        ],
+      ),
+      child: tile,
     );
   }
 }
 
-class _TextBadge extends StatelessWidget {
-  const _TextBadge({required this.text, required this.color});
+class _Avatar extends StatelessWidget {
+  const _Avatar({required this.person});
+
+  final Person person;
+
+  @override
+  Widget build(BuildContext context) {
+    final url = person.imageUrl;
+    final hasImage = url != null && url.isNotEmpty && !url.contains('.svg');
+    return CircleAvatar(
+      radius: 20,
+      backgroundColor: AppColors.primaryLight.withValues(alpha: 0.2),
+      backgroundImage: hasImage ? NetworkImage(url) : null,
+      child: hasImage
+          ? null
+          : const Icon(Icons.person, color: AppColors.medium),
+    );
+  }
+}
+
+/// Ionic ion-badge: filled, rounded, small bold text.
+class _IonBadge extends StatelessWidget {
+  const _IonBadge({
+    required this.text,
+    required this.color,
+    this.textColor = Colors.white,
+  });
 
   final String text;
   final Color color;
+  final Color textColor;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(left: 4),
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.15),
+        color: color,
         borderRadius: BorderRadius.circular(10),
       ),
       child: Text(
         text,
-        style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: color),
-        overflow: TextOverflow.ellipsis,
-      ),
-    );
-  }
-}
-
-class _AttendanceBadge extends StatelessWidget {
-  const _AttendanceBadge({required this.percentage});
-
-  final int percentage;
-
-  @override
-  Widget build(BuildContext context) {
-    final color = percentage >= 80
-        ? AppColors.success
-        : percentage >= 50
-            ? AppColors.warning
-            : AppColors.danger;
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-      margin: const EdgeInsets.only(right: 4),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.15),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Text(
-        '$percentage%',
         style: TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.w600,
-          color: color,
+          color: textColor,
         ),
+        overflow: TextOverflow.ellipsis,
       ),
     );
   }

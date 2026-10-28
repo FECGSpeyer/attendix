@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/config/supabase_config.dart';
+import '../../../../core/utils/toast_helper.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/duty_providers.dart';
@@ -1434,79 +1435,59 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     );
   }
 
+  /// Ionic person.page openMoreMenu (action sheet, same option order):
+  /// Meinen Benutzer zuweisen, Wieder aktivieren / Pausieren, In andere
+  /// Instanz übertragen / kopieren, Archivieren, Entfernen, Abbrechen.
   void _showMoreActions() {
+    final role = ref.read(currentRoleProvider);
+    final isAdmin = role.isAdmin || role.isResponsible;
+    final userId = ref.read(supabaseClientProvider).auth.currentUser?.id;
+    final isSelf = widget.person.appId != null && widget.person.appId == userId;
+
+    Widget option(String text, VoidCallback onTap, {bool destructive = false}) {
+      return ListTile(
+        title: Text(
+          text,
+          textAlign: TextAlign.center,
+          style: destructive ? const TextStyle(color: AppColors.danger) : null,
+        ),
+        onTap: () {
+          Navigator.pop(context);
+          onTap();
+        },
+      );
+    }
+
     showModalBottomSheet(
       context: context,
       builder: (context) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (widget.person.appId == null &&
-                (ref.read(currentRoleProvider).isAdmin ||
-                    ref.read(currentRoleProvider).isResponsible))
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (widget.person.appId == null && isAdmin)
+                option('Meinen Benutzer zuweisen', _assignMyAccount),
+              if (widget.person.paused)
+                option('Wieder aktivieren', _unpausePerson)
+              else
+                option('Pausieren', _showPauseDialog),
+              option('In andere Instanz übertragen', _showTransferSheet),
+              option('In andere Instanz kopieren',
+                  () => _showTransferSheet(copy: true)),
+              option('Archivieren', _showArchiveDialog, destructive: true),
+              if (!isSelf && isAdmin)
+                option('Entfernen', _showDeleteDialog, destructive: true),
+              const Divider(height: 1),
               ListTile(
-                leading: const Icon(Icons.person_pin, color: AppColors.primary),
-                title: const Text('Meinen Benutzer zuweisen'),
-                onTap: () {
-                  Navigator.pop(context);
-                  _assignMyAccount();
-                },
-              ),
-            if (widget.person.paused)
-              ListTile(
-                leading: const Icon(Icons.play_arrow, color: AppColors.success),
-                title: const Text('Wieder aktivieren'),
-                onTap: () { Navigator.pop(context); _unpausePerson(); },
-              )
-            else
-              ListTile(
-                leading: const Icon(Icons.pause_circle, color: AppColors.warning),
-                title: const Text('Pausieren'),
-                onTap: () { Navigator.pop(context); _showPauseDialog(); },
-              ),
-            ListTile(
-              leading: const Icon(Icons.archive, color: AppColors.danger),
-              title: const Text('Archivieren'),
-              onTap: () { Navigator.pop(context); _showArchiveDialog(); },
-            ),
-            const Divider(),
-            ListTile(
-              leading: const Icon(Icons.swap_horiz, color: AppColors.primary),
-              title: const Text('In andere Instanz übertragen'),
-              onTap: () {
-                Navigator.pop(context);
-                _showTransferSheet();
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.copy, color: AppColors.primary),
-              title: const Text('In andere Instanz kopieren'),
-              onTap: () {
-                Navigator.pop(context);
-                _showTransferSheet(copy: true);
-              },
-            ),
-            if (ref.read(currentRoleProvider).isConductor) ...[
-              const Divider(),
-              ListTile(
-                leading: const Icon(Icons.delete_forever, color: AppColors.danger),
                 title: const Text(
-                  'Endgültig entfernen',
-                  style: TextStyle(color: AppColors.danger),
+                  'Abbrechen',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontWeight: FontWeight.w600),
                 ),
-                onTap: () {
-                  Navigator.pop(context);
-                  _showDeleteDialog();
-                },
+                onTap: () => Navigator.pop(context),
               ),
             ],
-            const Divider(),
-            ListTile(
-              leading: const Icon(Icons.close),
-              title: const Text('Abbrechen'),
-              onTap: () => Navigator.pop(context),
-            ),
-          ],
+          ),
         ),
       ),
     );
@@ -1525,72 +1506,39 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     }
   }
 
+  /// Ionic: alert "Person entfernen" → Abbrechen / Ja.
   Future<void> _showDeleteDialog() async {
-    final personName = widget.person.fullName;
-    final controller = TextEditingController();
-    try {
-      final confirmed = await showDialog<bool>(
-        context: context,
-        builder: (context) => StatefulBuilder(
-          builder: (context, setDialogState) {
-            final matches = controller.text.trim() == personName;
-            return AlertDialog(
-              title: const Text('Person endgültig entfernen?'),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Diese Aktion kann nicht rückgängig gemacht werden. '
-                    'Alle Daten von $personName werden unwiderruflich gelöscht.',
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Zur Bestätigung "$personName" eingeben:',
-                    style: const TextStyle(fontWeight: FontWeight.w600),
-                  ),
-                  const SizedBox(height: 8),
-                  TextField(
-                    controller: controller,
-                    onChanged: (_) => setDialogState(() {}),
-                    decoration: InputDecoration(
-                      hintText: personName,
-                      border: const OutlineInputBorder(),
-                    ),
-                  ),
-                ],
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context, false),
-                  child: const Text('Abbrechen'),
-                ),
-                FilledButton(
-                  onPressed: matches ? () => Navigator.pop(context, true) : null,
-                  style: FilledButton.styleFrom(backgroundColor: AppColors.danger),
-                  child: const Text('Endgültig entfernen'),
-                ),
-              ],
-            );
-          },
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Person entfernen'),
+        content: const Text(
+          'Möchtest du die Person wirklich entfernen? Alle zugehörigen Daten '
+          '(Abwesenheiten, Notizen, etc.) gehen dabei verloren!',
         ),
-      );
-      if (confirmed != true || !mounted) return;
-
-      final notifier = ref.read(playerNotifierProvider.notifier);
-      await notifier.deletePlayer(widget.personId);
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Person wurde endgültig entfernt'),
-            backgroundColor: AppColors.success,
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Abbrechen'),
           ),
-        );
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: TextButton.styleFrom(foregroundColor: AppColors.danger),
+            child: const Text('Ja'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+
+    try {
+      await ref.read(playerNotifierProvider.notifier).deletePlayer(widget.personId);
+      if (mounted) {
+        ToastHelper.showSuccess(context, 'Die Person wurde erfolgreich entfernt');
         context.pop();
       }
-    } finally {
-      controller.dispose();
+    } catch (e) {
+      if (mounted) ToastHelper.showError(context, 'Fehler: $e');
     }
   }
 
@@ -1820,17 +1768,16 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
         }
       },
       child: Scaffold(
+        // Ionic person.page header: "Person bearbeiten" / "Person genehmigen",
+        // red toolbar for Problemfälle; actions live in the FAB.
         appBar: AppBar(
-          title: Text(person.fullName),
+          title: canEdit
+              ? Text(widget.person.pending
+                  ? 'Person genehmigen'
+                  : 'Person bearbeiten')
+              : null,
           backgroundColor: person.isCritical ? AppColors.danger : null,
-          actions: [
-            if (canEdit)
-              IconButton(
-                icon: const Icon(Icons.more_vert),
-                tooltip: 'Mehr',
-                onPressed: _showMoreActions,
-              ),
-          ],
+          foregroundColor: person.isCritical ? Colors.white : null,
         ),
         body: ListView(
           padding: const EdgeInsets.only(bottom: 100),
@@ -1852,13 +1799,6 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
                 },
               ),
 
-            // Late Warning Card
-            LateWarningCard(
-              person: person,
-              statsAsync: statsAsync,
-              onResetLateCount: _resetLateCount,
-            ),
-
             // Problem Person Accordion
             ProblemfallAccordion(
               person: person,
@@ -1869,6 +1809,13 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
               problemNotes: _problemNotes,
               onProblemNotesChanged: (v) => _problemNotes = v,
               onResolveProblem: _resolveProblem,
+            ),
+
+            // Late Warning Card
+            LateWarningCard(
+              person: person,
+              statsAsync: statsAsync,
+              onResetLateCount: _resetLateCount,
             ),
 
             // Allgemein Accordion with inline editing
@@ -1909,6 +1856,10 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
               onSearchOtherInstance: _searchPersonInOtherInstance,
             ),
 
+            // Ionic order: Andere Instanzen after Allgemein. Other Tenants Accordion (only if person has an account)
+            if (widget.person.appId != null)
+              AndereInstanzenAccordion(appId: widget.person.appId!),
+
             // Historie Accordion
             HistorieAccordion(
               isExpanded: _showHistorie,
@@ -1941,31 +1892,42 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
                 ),
               ),
 
-            // Other Tenants Accordion (only if person has an account)
-            if (widget.person.appId != null)
-              AndereInstanzenAccordion(appId: widget.person.appId!),
           ],
         ),
+        // Ionic FAB: save (changes) / approve sheet (pending) / key (create
+        // account when e-mail but no account) / "..." more menu.
         floatingActionButton: _hasChanges
-            ? FloatingActionButton.extended(
+            ? FloatingActionButton(
                 onPressed: _isSaving ? null : _saveChanges,
-                icon: _isSaving
+                tooltip: 'Speichern',
+                child: _isSaving
                     ? const SizedBox(
                         width: 20,
                         height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                        child: CircularProgressIndicator(
+                            strokeWidth: 2, color: Colors.white),
                       )
-                    : const Icon(Icons.save),
-                label: Text(_isSaving ? 'Speichern...' : 'Speichern'),
-                backgroundColor: AppColors.primary,
+                    : const Icon(Icons.save_outlined),
               )
-            : widget.person.pending && canEdit
-                ? FloatingActionButton(
-                    onPressed: _showPendingActions,
-                    backgroundColor: AppColors.warning,
-                    child: const Icon(Icons.more_horiz),
-                  )
-                : null,
+            : !canEdit
+                ? null
+                : widget.person.pending
+                    ? FloatingActionButton(
+                        onPressed: _showPendingActions,
+                        child: const Icon(Icons.more_horiz),
+                      )
+                    : person.appId == null &&
+                            (person.email?.isNotEmpty ?? false)
+                        ? FloatingActionButton(
+                            onPressed: () => _createAccount(person),
+                            tooltip: 'Account erstellen',
+                            child: const Icon(Icons.key_outlined),
+                          )
+                        : FloatingActionButton(
+                            onPressed: _showMoreActions,
+                            tooltip: 'Mehr',
+                            child: const Icon(Icons.more_horiz),
+                          ),
       ),
     );
   }
