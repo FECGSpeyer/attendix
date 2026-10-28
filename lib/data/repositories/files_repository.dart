@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -165,13 +166,46 @@ class FilesRepository extends BaseRepository with TenantAwareRepository {
   // Storage-Operationen
   // ---------------------------------------------------------------------------
 
-  Future<List<FileObject>> _listRaw(String prefix) async {
-    return _storage.list(
-      path: prefix,
-      searchOptions: const SearchOptions(
-        limit: 1000,
-        sortBy: SortBy(column: 'name', order: 'asc'),
-      ),
+  /// Page size of a storage listing (Ionic `listRaw`: limit 1000).
+  static const int storageListPageSize = 1000;
+
+  /// SOL_FIX16: every entry of one folder level, page by page (offset /
+  /// limit, sorted by name like Ionic) until a page is shorter than
+  /// [pageSize]. Ionic stops after the first 1000 entries, so recursive
+  /// delete / move / rename of a large folder handled only part of it and
+  /// still reported success. A failing page throws – callers list
+  /// everything before they change anything, so a failed listing never
+  /// leaves a half-done operation behind that looks complete.
+  @visibleForTesting
+  static Future<List<FileObject>> listAllPages(
+    Future<List<FileObject>> Function(SearchOptions options) listPage, {
+    int pageSize = storageListPageSize,
+  }) async {
+    assert(pageSize > 0);
+    final all = <FileObject>[];
+    String? previousFirst;
+    for (var offset = 0;; offset += pageSize) {
+      final page = await listPage(SearchOptions(
+        limit: pageSize,
+        offset: offset,
+        sortBy: const SortBy(column: 'name', order: 'asc'),
+      ));
+      // A server that ignores the offset would return the same page
+      // forever: fail instead of looping or listing duplicates.
+      if (offset > 0 && page.isNotEmpty && page.first.name == previousFirst) {
+        throw StateError('Storage listing ignores the offset');
+      }
+      previousFirst = page.isEmpty ? null : page.first.name;
+      all.addAll(page);
+      if (page.length < pageSize) break;
+    }
+    return all;
+  }
+
+  Future<List<FileObject>> _listRaw(String prefix) {
+    _assertOwnPrefix(prefix);
+    return listAllPages(
+      (options) => _storage.list(path: prefix, searchOptions: options),
     );
   }
 

@@ -141,6 +141,11 @@ bool isRelevantAttendanceDelete(
 /// Attendance list with client-side calculated percentages.
 /// Watches the realtime subscription to auto-refresh on DB changes.
 final realtimeAttendanceListProvider = FutureProvider.autoDispose<List<Attendance>>((ref) async {
+  // SOL_FIX16: the list belongs to the signed-in account. Watched directly
+  // (before the first await): the subscription below is a Provider<void>,
+  // whose rebuild yields an unchanged `null` and never notifies this list,
+  // and the offline path returns before attendanceTypesProvider is watched.
+  final authUserId = ref.watch(currentAuthUserIdProvider);
   // Watch the realtime subscription so it stays alive while this provider is active.
   ref.watch(_attendanceRealtimeSubscriptionProvider);
   // Watch the refetch counter so manual invalidation triggers a refetch.
@@ -164,11 +169,22 @@ final realtimeAttendanceListProvider = FutureProvider.autoDispose<List<Attendanc
           currentUserId: ref.read(offlineQueueUserIdProvider),
         );
 
+  // SOL_FIX16: a cached list is only returned while the session it was
+  // loaded for is still current (same account as watched above, no
+  // sign-out / account switch during the load).
+  Future<List<Attendance>?> loadCached() async {
+    if (cacheUserId == null || cacheGuard == null) return null;
+    if (authUserId != null && authUserId != cacheUserId) return null;
+    final cached = await cache.load(cacheUserId, tenantId);
+    if (cached == null || !cacheGuard.isCurrent) return null;
+    return cached;
+  }
+
   // LOGIC_SELF: Ionic att-list getAttendance — offline the cached list is
   // shown (offline_att_list_v1_<tenant>).
   final online = await ref.read(connectivityCheckProvider)();
-  if (!online && cacheUserId != null) {
-    final cached = await cache.load(cacheUserId, tenantId);
+  if (!online) {
+    final cached = await loadCached();
     if (cached != null) return cached;
   }
 
@@ -200,7 +216,7 @@ final realtimeAttendanceListProvider = FutureProvider.autoDispose<List<Attendanc
     // SOL_FIX7: only network failures fall back to the offline copy;
     // auth/permission errors (revoked access) are shown.
     if (cacheUserId == null || !isOfflineFallbackError(e)) rethrow;
-    final cached = await cache.load(cacheUserId, tenantId);
+    final cached = await loadCached();
     if (cached != null) return cached;
     rethrow;
   }

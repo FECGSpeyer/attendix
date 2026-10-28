@@ -82,6 +82,102 @@ int _stringEnd(String s, int start, String quote) {
   return -1;
 }
 
+/// Index of the first `await` token in [s] (outside comments and string
+/// literals), or -1.
+int _firstAwait(String s) {
+  var i = 0;
+  while (i < s.length) {
+    final c = s[i];
+    if (c == '/' && i + 1 < s.length && s[i + 1] == '/') {
+      i = s.indexOf('\n', i);
+      if (i == -1) return -1;
+      continue;
+    }
+    if (c == "'" || c == '"') {
+      final triple = s.startsWith(c * 3, i);
+      final end = triple ? s.indexOf(c * 3, i + 3) : _stringEnd(s, i, c);
+      if (end == -1) return -1;
+      i = end + (triple ? 3 : 1);
+      continue;
+    }
+    if (s.startsWith('await', i) &&
+        (i == 0 || !RegExp(r'\w').hasMatch(s[i - 1])) &&
+        (i + 5 >= s.length || !RegExp(r'\w').hasMatch(s[i + 5]))) {
+      return i;
+    }
+    i++;
+  }
+  return -1;
+}
+
+/// [s] without `//` comments (string literals are kept), so a provider
+/// name mentioned in a comment is no dependency.
+String _stripComments(String s) {
+  final out = StringBuffer();
+  var i = 0;
+  while (i < s.length) {
+    final c = s[i];
+    if (c == '/' && i + 1 < s.length && s[i + 1] == '/') {
+      final nl = s.indexOf('\n', i);
+      if (nl == -1) break;
+      i = nl;
+      continue;
+    }
+    if (c == "'" || c == '"') {
+      final triple = s.startsWith(c * 3, i);
+      final end = triple ? s.indexOf(c * 3, i + 3) : _stringEnd(s, i, c);
+      var stop = end == -1 ? s.length : end + (triple ? 3 : 1);
+      if (stop > s.length) stop = s.length;
+      out.write(s.substring(i, stop));
+      i = stop;
+      continue;
+    }
+    out.write(c);
+    i++;
+  }
+  return out.toString();
+}
+
+/// SOL_FIX16: the part of a provider body that always runs. An async body
+/// can return before a later `ref.watch` (e.g. an offline cache path), so
+/// only dependencies up to the end of the statement with the first `await`
+/// count as its account link.
+String _guaranteedPart(String body) {
+  final first = _firstAwait(body);
+  if (first == -1) return body;
+  final end = _statementEnd(body, first);
+  return body.substring(0, end >= body.length ? body.length : end + 1);
+}
+
+/// SOL_FIX16: a `Provider<void>` yields an unchanged `null` when it
+/// rebuilds for a new account, so it never notifies its dependents: it is
+/// no account link for them, even when it watches the account id itself.
+bool _isVoidProvider(String source) => RegExp(
+        r'^final \w+\s*=\s*Provider(?:\.autoDispose)?(?:\.family)?<void\b')
+    .hasMatch(source);
+
+/// Providers that reach one of [roots] through [deps]; void providers are
+/// no link.
+Set<String> _accountScoped(
+  Map<String, Set<String>> deps,
+  Set<String> roots,
+  Set<String> voidProviders,
+) {
+  final scoped = <String>{...roots};
+  var changed = true;
+  while (changed) {
+    changed = false;
+    for (final e in deps.entries) {
+      if (!scoped.contains(e.key) &&
+          e.value.any((n) => scoped.contains(n) && !voidProviders.contains(n))) {
+        scoped.add(e.key);
+        changed = true;
+      }
+    }
+  }
+  return scoped;
+}
+
 /// End of the top-level statement starting at [start] (its `;`).
 int _statementEnd(String s, int start) {
   var i = start;
@@ -159,13 +255,19 @@ void main() {
   final expandedSource = {
     for (final d in providers.values) d.name: expanded(d),
   };
+
   final deps = {
-    for (final e in expandedSource.entries)
-      e.key: providerRef
-          .allMatches(e.value)
+    for (final d in providers.values)
+      d.name: providerRef
+          .allMatches(_stripComments(
+              expanded(_Decl(d.name, d.file, _guaranteedPart(d.source)))))
           .map((m) => m.group(1)!)
-          .where((n) => n != e.key && providers.containsKey(n))
+          .where((n) => n != d.name && providers.containsKey(n))
           .toSet(),
+  };
+  final voidProviders = {
+    for (final d in providers.values)
+      if (_isVoidProvider(d.source)) d.name,
   };
 
   const roots = {
@@ -174,17 +276,7 @@ void main() {
     'authStateProvider',
     'currentSessionProvider',
   };
-  final scoped = <String>{...roots};
-  var changed = true;
-  while (changed) {
-    changed = false;
-    for (final e in deps.entries) {
-      if (!scoped.contains(e.key) && e.value.any(scoped.contains)) {
-        scoped.add(e.key);
-        changed = true;
-      }
-    }
-  }
+  final scoped = _accountScoped(deps, roots, voidProviders);
 
   /// Markers of account-dependent reads.
   final accountRead = RegExp(
@@ -218,9 +310,56 @@ void main() {
       'teamTasksProvider',
       'playersProvider',
       'mySharedPlansProvider',
+      'realtimeAttendanceListProvider',
     ]) {
       expect(scoped, contains(n), reason: n);
     }
+  });
+
+  // SOL_FIX16: the offline attendance list kept A's data on an A→B switch
+  // although the check passed – its account link went through a
+  // Provider<void> and through a watch only reached after an await.
+  group('account link heuristics', () {
+    test('a Provider<void> intermediary is no account link', () {
+      expect(_isVoidProvider('final _subProvider = Provider.autoDispose<void>((ref) {'), isTrue);
+      expect(_isVoidProvider('final xProvider = Provider<String?>((ref) {'), isFalse);
+      final graph = {
+        'listProvider': {'_subProvider'},
+        '_subProvider': {'currentAuthUserIdProvider'},
+        'otherProvider': {'roleProvider'},
+        'roleProvider': {'currentAuthUserIdProvider'},
+      };
+      final result =
+          _accountScoped(graph, {'currentAuthUserIdProvider'}, {'_subProvider'});
+      expect(result, isNot(contains('listProvider')));
+      expect(result, containsAll(['_subProvider', 'otherProvider']));
+    });
+
+    test('watches after the first await (early cache return) do not count', () {
+      const body = '''final listProvider = FutureProvider<List<int>>((ref) async {
+  // typesProvider is watched below
+  final online = await ref.read(onlineProvider)();
+  if (!online) return cached;
+  final types = await ref.watch(typesProvider.future);
+  return types;
+});''';
+      final part = _stripComments(_guaranteedPart(body));
+      expect(part, contains('onlineProvider'));
+      expect(part, isNot(contains('typesProvider')));
+      // The awaited expression itself is still evaluated synchronously.
+      const first = '''final xProvider = FutureProvider<int>((ref) async {
+  final a = await ref.watch(aProvider.future);
+  return a + ref.watch(bProvider);
+});''';
+      expect(_guaranteedPart(first), contains('aProvider'));
+      expect(_guaranteedPart(first), isNot(contains('bProvider')));
+    });
+
+    test('the attendance list watches the account id directly', () {
+      expect(deps['realtimeAttendanceListProvider'],
+          contains('currentAuthUserIdProvider'));
+      expect(voidProviders, contains('_attendanceRealtimeSubscriptionProvider'));
+    });
   });
 
   test('every provider reading account data depends on the account id', () {

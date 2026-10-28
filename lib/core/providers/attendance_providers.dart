@@ -244,6 +244,9 @@ final averageAttendancePercentProvider = Provider<double?>((ref) {
 /// Uses paginated fetching to avoid the Supabase default 1000-row limit.
 final playerAttendancePercentagesProvider =
     FutureProvider<Map<int, int>>((ref) async {
+  // SOL_FIX16: RLS-filtered rows of the signed-in account; watched before
+  // the first await (attendanceTypesProvider is only reached afterwards).
+  ref.watch(currentAuthUserIdProvider);
   ref.watch(attendanceRefetchCounter);
 
   final supabase = ref.watch(supabaseClientProvider);
