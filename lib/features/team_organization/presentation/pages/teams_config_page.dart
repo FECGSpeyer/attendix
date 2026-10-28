@@ -29,23 +29,36 @@ class _TeamsConfigPageState extends ConsumerState<TeamsConfigPage> {
 
   TeamsService get _teams => ref.read(teamsServiceProvider);
 
-  void _registerSaveHandler(List<Tenant> tenants) {
+  /// Runs on every build: keeps the tenant list read by the save handler
+  /// current (the provider may first deliver an empty/error list and the
+  /// real tenants later) and auto-selects a single instance. Only the Teams
+  /// handler registration itself happens once.
+  void _syncTenants(List<Tenant> tenants) {
     _tenants = tenants;
-    if (_saveHandlerRegistered) return;
-    _saveHandlerRegistered = true;
-    if (tenants.length == 1) _selectedTenantId = tenants.first.id;
-    // Enable the Teams "Save" button only once a tenant is chosen, and
-    // define what gets persisted when the installer clicks it.
-    _teams.sdk.registerConfigSaveHandler(() {
-      final id = _selectedTenantId;
-      if (id == null) return null;
-      final tenant = _tenants.where((t) => t.id == id).firstOrNull;
-      return TeamsService.tabConfigFor(
-        tenantId: id,
-        shortName: tenant?.shortName,
-      );
-    }, TeamsConfigPage.saveFailed);
-    _updateValidity();
+    final selected = _selectedTenantId;
+    int? next = selected;
+    if (selected != null && !tenants.any((t) => t.id == selected)) next = null;
+    if (next == null && tenants.length == 1) next = tenants.first.id;
+    final selectionChanged = next != selected;
+    _selectedTenantId = next;
+
+    if (!_saveHandlerRegistered) {
+      _saveHandlerRegistered = true;
+      // Enable the Teams "Save" button only once a tenant is chosen, and
+      // define what gets persisted when the installer clicks it.
+      _teams.sdk.registerConfigSaveHandler(() {
+        final id = _selectedTenantId;
+        if (id == null) return null;
+        final tenant = _tenants.where((t) => t.id == id).firstOrNull;
+        return TeamsService.tabConfigFor(
+          tenantId: id,
+          shortName: tenant?.shortName,
+        );
+      }, TeamsConfigPage.saveFailed);
+      _updateValidity();
+    } else if (selectionChanged) {
+      _updateValidity();
+    }
   }
 
   void _updateValidity() {
@@ -82,10 +95,8 @@ class _TeamsConfigPageState extends ConsumerState<TeamsConfigPage> {
   }
 
   Widget _buildContent(BuildContext context, List<Tenant> tenants) {
-    if (!_saveHandlerRegistered) {
-      // Registering touches state read by the save handler only.
-      _registerSaveHandler(tenants);
-    }
+    // Touches only fields read by the save handler / this build; no setState.
+    _syncTenants(tenants);
     final theme = Theme.of(context);
     return SafeArea(
       child: ListView(

@@ -277,6 +277,11 @@ final routerProvider = Provider<GoRouter>((ref) {
 
       // If logged in and on auth route, redirect to tenant selection
       if (isLoggedIn && isAuthRoute) {
+        // REVIEW_FIX2: keep a stashed link through the terms gate – it is
+        // consumed once /terms is passed (Ionic keeps the URL through login).
+        if (!ref.read(accountRepositoryProvider).hasAcceptedTerms) {
+          return '/terms';
+        }
         // SONGS: resume a shared file link opened while signed out
         return PendingFileLink.consume() ?? '/tenants';
       }
@@ -288,7 +293,9 @@ final routerProvider = Provider<GoRouter>((ref) {
             ref.read(accountRepositoryProvider).hasAcceptedTerms;
         final isTermsRoute = state.matchedLocation == '/terms';
         if (!termsAccepted && !isTermsRoute) return '/terms';
-        if (termsAccepted && isTermsRoute) return '/tenants';
+        if (termsAccepted && isTermsRoute) {
+          return PendingFileLink.consume() ?? '/tenants'; // REVIEW_FIX2
+        }
         if (isTermsRoute) return null;
       } else if (state.matchedLocation == '/terms') {
         return '/login';

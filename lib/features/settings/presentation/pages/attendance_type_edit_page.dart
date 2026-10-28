@@ -6,6 +6,7 @@ import '../../../../core/config/supabase_config.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/attendance_type_providers.dart';
+import '../../../../core/providers/duty_providers.dart';
 import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -932,10 +933,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
     );
     if (!useIt || !mounted) return;
     try {
-      await ref.read(supabaseClientProvider)
-          .from('tenants')
-          .update({'duty_view': true})
-          .eq('id', tenant.id!);
+      await ref.read(dutyRepositoryWithTenantProvider).setDutyView(true);
       await ref.read(currentTenantProvider.notifier).setTenantLocal(tenant.copyWith(dutyView: true));
       if (mounted) ToastHelper.showSuccess(context, context.l10n.typeSettingsDutyViewActive);
     } catch (_) {

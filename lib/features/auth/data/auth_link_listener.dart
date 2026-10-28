@@ -39,7 +39,8 @@ void initAuthLinkHandling(WidgetRef ref, GoRouter router) {
 
 Future<void> _processLink(WidgetRef ref, GoRouter router, AuthLink link) async {
   final outcome = await ref.read(authFlowServiceProvider).handleAuthLink(link);
-  clearAuthParamsFromBrowserUrl();
+  // REVIEW_FIX2: only touch the URL when the link was actually handled.
+  if (outcome != AuthLinkOutcome.none) clearAuthParamsFromBrowserUrl();
   switch (outcome) {
     case AuthLinkOutcome.none:
       return;

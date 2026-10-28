@@ -41,4 +41,35 @@ void main() {
     final config = sdk.saveBuilder!();
     expect(config, TeamsService.tabConfigFor(tenantId: 3, shortName: 'BO'));
   });
+
+  testWidgets('tenants arriving after an empty first load are used and '
+      'auto-selected (handler registered once)', (tester) async {
+    final sdk = FakeTeamsSdk();
+    final svc = TeamsService(sdk: sdk);
+    final tenants = StateProvider<List<Tenant>>((ref) => const []);
+    final container = ProviderContainer(overrides: [
+      teamsServiceProvider.overrideWithValue(svc),
+      isInTeamsProvider.overrideWithValue(true),
+      userTenantsProvider.overrideWith((ref) async => ref.watch(tenants)),
+    ]);
+    addTearDown(container.dispose);
+    await tester.pumpWidget(UncontrolledProviderScope(
+      container: container,
+      child: const MaterialApp(home: TeamsConfigPage()),
+    ));
+    await tester.pumpAndSettle();
+    expect(sdk.saveBuilder!(), isNull);
+    final builder = sdk.saveBuilder;
+
+    container.read(tenants.notifier).state = const [
+      Tenant(id: 5, shortName: 'CH', longName: 'Chor'),
+    ];
+    await tester.pumpAndSettle();
+
+    expect(find.text('Chor'), findsOneWidget);
+    expect(identical(sdk.saveBuilder, builder), isTrue);
+    expect(sdk.validity.last, isTrue);
+    expect(sdk.saveBuilder!(),
+        TeamsService.tabConfigFor(tenantId: 5, shortName: 'CH'));
+  });
 }

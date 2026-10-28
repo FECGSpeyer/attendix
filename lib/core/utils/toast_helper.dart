@@ -64,11 +64,17 @@ class ToastHelper {
   }
 
   /// Shows a persistent update available snackbar (does not auto-dismiss)
+  ///
+  /// REVIEW_FIX2: called from the root widget, whose context sits above
+  /// MaterialApp (no ScaffoldMessenger / localizations there), so it takes
+  /// the root messenger and uses the context-free l10n.
   static void showUpdateAvailable(
-    BuildContext context, {
+    ScaffoldMessengerState? messenger, {
     required VoidCallback onUpdate,
   }) {
-    ScaffoldMessenger.of(context).showSnackBar(
+    if (messenger == null) return;
+    final l10n = l10nWithoutContext;
+    messenger.showSnackBar(
       SnackBar(
         content: Row(
           children: [
@@ -76,7 +82,7 @@ class ToastHelper {
             const SizedBox(width: 12),
             Expanded(
               child: Text(
-                context.l10n.coreFlutterNewVersionAvailable,
+                l10n.coreFlutterNewVersionAvailable,
                 style: const TextStyle(color: Colors.white),
               ),
             ),
@@ -86,7 +92,7 @@ class ToastHelper {
         behavior: SnackBarBehavior.floating,
         duration: const Duration(days: 365), // Persistent - won't auto-dismiss
         action: SnackBarAction(
-          label: context.l10n.coreFlutterUpdate,
+          label: l10n.coreFlutterUpdate,
           textColor: Colors.white,
           onPressed: onUpdate,
         ),

@@ -10,6 +10,7 @@ import '../../data/models/tenant/tenant.dart';
 import '../../data/repositories/repositories.dart';
 import '../config/supabase_config.dart';
 import 'group_providers.dart';
+import 'locale_provider.dart';
 import 'tenant_providers.dart';
 import '../../l10n/l10n.dart';
 
@@ -180,6 +181,8 @@ final currentSongsProvider =
 /// Names of the other instances sharing the current song library.
 final songSyncedTenantNamesProvider =
     FutureProvider.autoDispose<List<String>>((ref) async {
+  // REVIEW_FIX2: the fallback label follows the active language.
+  ref.watch(localeProvider);
   final repo = await _readySongRepository(ref);
   if (!repo.hasTenantId) return [];
   try {
@@ -634,7 +637,13 @@ bool isScoreFile(SongFile file) =>
 
 /// Groups (sorted by name) with at least one file, plus a virtual
 /// "Dirigenten" group first if any score exists (Ionic `buildGroupsWithFiles`).
-List<Group> buildGroupsWithFiles(List<Song> songs, List<Group> groups) {
+/// [conductorsLabel]: pass the widget's `context.l10n.songsConductors` so the
+/// label follows a language switch (REVIEW_FIX2).
+List<Group> buildGroupsWithFiles(
+  List<Song> songs,
+  List<Group> groups, {
+  String? conductorsLabel,
+}) {
   final ids = <int>{};
   var hasScores = false;
   for (final song in songs) {
@@ -652,7 +661,7 @@ List<Group> buildGroupsWithFiles(List<Song> songs, List<Group> groups) {
       .toList()
     ..sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
   if (hasScores) {
-    result.insert(0, Group(id: songConductorGroupId, name: l10nWithoutContext.songsConductors));
+    result.insert(0, Group(id: songConductorGroupId, name: conductorsLabel ?? l10nWithoutContext.songsConductors));
   }
   return result;
 }

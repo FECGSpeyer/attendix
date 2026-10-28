@@ -180,6 +180,23 @@ void main() {
       expect(await svc.ssoSignIn(), TeamsSsoResult.needsLink);
     });
 
+    test('server error (non-2xx) → failed, not needsLink', () async {
+      final svc = service(FakeTeamsSdk(),
+          response: TeamsService.toErrorResponse(500, {'error': 'boom'}));
+      await svc.init();
+      expect(await svc.ssoSignIn(), TeamsSsoResult.failed);
+    });
+
+    test('409 on link surfaces the server message', () async {
+      final svc = service(FakeTeamsSdk(),
+          response: TeamsService.toErrorResponse(
+              409, {'error': 'Bereits verknüpft'}));
+      await svc.init();
+      final result = await svc.ssoLink(() async {});
+      expect(result.ok, isFalse);
+      expect(result.error, 'Bereits verknüpft');
+    });
+
     test('verifyOtp failure → failed', () async {
       final svc = service(FakeTeamsSdk(),
           consumeOk: false,
