@@ -676,6 +676,14 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       return;
     }
 
+    // INTEGRATION: queue while offline like every Ionic updatePersonAttendance
+    if (await ref.read(offlineQueueNotifierProvider.notifier).enqueueIfOffline(
+        personAttendanceId, {'notes': notes ?? ''},
+        attendanceId: widget.attendanceId)) {
+      if (mounted) setState(() => _personNotes[personId] = notes);
+      return;
+    }
+
     final isValid = await _validatePersonAttendanceTenant(personAttendanceId);
     if (!isValid) {
       if (mounted) {
@@ -1605,8 +1613,14 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     if (answers == null || !mounted) return;
     final merged = <String, dynamic>{...?existing, ...answers};
     try {
-      final repo = ref.read(attendanceRepositoryWithTenantProvider);
-      await repo.updatePersonAttendance(personAttendanceId, {'registration_answers': merged});
+      // INTEGRATION: queue while offline like every Ionic updatePersonAttendance
+      final queued = await ref.read(offlineQueueNotifierProvider.notifier).enqueueIfOffline(
+          personAttendanceId, {'registration_answers': merged},
+          attendanceId: widget.attendanceId);
+      if (!queued) {
+        final repo = ref.read(attendanceRepositoryWithTenantProvider);
+        await repo.updatePersonAttendance(personAttendanceId, {'registration_answers': merged});
+      }
       if (mounted) {
         setState(() => _registrationAnswers[personId] = merged);
         ToastHelper.showSuccess(context, 'Anmeldefelder gespeichert');
