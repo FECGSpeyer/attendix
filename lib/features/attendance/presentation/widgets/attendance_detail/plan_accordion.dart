@@ -1,11 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../../core/constants/app_constants.dart';
+import '../../../../../core/providers/plan_providers.dart';
+import '../../../../../core/providers/team_org_providers.dart'; // PROTOCOL
+import '../../../../../core/services/plan_export_service.dart';
 import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/utils/plan_utils.dart';
 import '../../../../../data/models/attendance/attendance.dart';
+import '../../../../../data/models/plan/plan.dart';
+import '../../../../planning/presentation/pages/plan_viewer_page.dart';
+import '../../../../planning/presentation/widgets/plan_export_actions.dart';
+import '../../../../planning/presentation/widgets/plan_field_dialogs.dart';
+import '../../../../planning/presentation/widgets/plan_view_list.dart';
+import '../../../../team_organization/presentation/widgets/attendance_protocol_section.dart'; // PROTOCOL
+import '../../../../../l10n/l10n.dart';
 
-/// Accordion widget for displaying attendance plan/schedule
-class PlanAccordion extends StatefulWidget {
+/// Accordion widget for displaying attendance plan/schedule.
+///
+/// ORG_PLANS: renders the Ionic plan format (`time`/`end`, Programmblöcke,
+/// Notizen, several plans per Termin) and exports via [PlanExportService]
+/// (PDF, 2x A5, Bild, Telegram). [onExportPdf] / [onSendViaTelegram] are kept
+/// for API compatibility and are no longer used.
+class PlanAccordion extends ConsumerStatefulWidget {
   const PlanAccordion({
     super.key,
     required this.attendance,
@@ -26,12 +43,13 @@ class PlanAccordion extends StatefulWidget {
   final bool initiallyExpanded;
 
   @override
-  State<PlanAccordion> createState() => _PlanAccordionState();
+  ConsumerState<PlanAccordion> createState() => _PlanAccordionState();
 }
 
-class _PlanAccordionState extends State<PlanAccordion> {
+class _PlanAccordionState extends ConsumerState<PlanAccordion> {
   final ExpansionTileController _controller = ExpansionTileController();
   bool _wasInitiallyExpanded = false;
+  int _planIndex = -1;
 
   @override
   void didUpdateWidget(PlanAccordion oldWidget) {
@@ -47,19 +65,103 @@ class _PlanAccordionState extends State<PlanAccordion> {
     _wasInitiallyExpanded = widget.initiallyExpanded;
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final plan = widget.attendance.plan;
-    final hasPlan = plan != null && plan.isNotEmpty;
+  /// Plan columns of the Termin; falls back to `attendance.plan` while loading.
+  PlanAttendance _planAttendance() {
+    final id = widget.attendance.id;
+    final loaded = id == null ? null : ref.watch(planAttendanceByIdProvider(id)).valueOrNull;
+    if (loaded != null) {
+      // The detail page holds the freshest `plan` (realtime); keep extra plans from the plan query.
+      Plan? plan = loaded.plan;
+      final raw = widget.attendance.plan;
+      if (raw != null && raw.isNotEmpty) {
+        try {
+          plan = Plan.fromJson(raw);
+        } catch (_) {}
+      }
+      return loaded.copyWith(plan: plan);
+    }
+    Plan? plan;
+    final raw = widget.attendance.plan;
+    if (raw != null && raw.isNotEmpty) {
+      try {
+        plan = Plan.fromJson(raw);
+      } catch (_) {}
+    }
+    return PlanAttendance(
+      id: id,
+      date: widget.attendance.date,
+      durationDays: widget.attendance.durationDays,
+      plan: plan,
+      typeInfo: widget.attendance.typeInfo,
+      sharePlan: widget.attendance.sharePlan,
+    );
+  }
 
-    // Parse plan fields
-    List<Map<String, dynamic>> fields = [];
-    if (hasPlan && plan['fields'] != null) {
-      fields = (plan['fields'] as List).cast<Map<String, dynamic>>();
+  String _title(PlanAttendance att, Plan plan) {
+    final t = plan.title?.trim();
+    if (t != null && t.isNotEmpty) return t;
+    return (att.typeInfo?.isNotEmpty ?? false) ? att.typeInfo! : context.l10n.plansRunSheet;
+  }
+
+  Future<void> _export(PlanAttendance att, List<Plan> plans, int index) async {
+    PlanExportPage page(int i) {
+      final p = plans[i];
+      final label = plans.length > 1 ? ' · ${PlanUtils.planLabel(att, i, plans)}' : '';
+      return PlanExportPage(
+        title: _title(att, p),
+        subtitle: '${PlanUtils.longDate(PlanUtils.planDate(att, i, plans) ?? DateTime.tryParse(att.date))}$label',
+        time: p.time,
+        end: p.end,
+        fields: p.fields,
+      );
     }
 
-    final startTime = plan?['startTime'] as String? ?? widget.attendance.startTime ?? '17:00';
-    final endTime = plan?['endTime'] as String?;
+    final d = DateTime.tryParse(att.date);
+    final date = d == null ? '' : '_${d.day.toString().padLeft(2, '0')}_${d.month.toString().padLeft(2, '0')}_${d.year}';
+    await showPlanExportSheet(
+      context,
+      ref,
+      pages: () => [page(index)],
+      fileName: '${_title(att, plans[index])}$date',
+      extraActions: [
+        if (plans.length > 1)
+          PlanSheetAction('all', context.l10n.planningExportPdfAll, icon: Icons.picture_as_pdf),
+      ],
+      onExtraAction: (_) => runPlanExport(
+        context,
+        ref,
+        PlanExportAction.pdf,
+        pages: [for (var i = 0; i < plans.length; i++) page(i)],
+        fileName: '${_title(att, plans[index])}$date',
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final att = _planAttendance();
+    final plans = PlanUtils.allPlans(att);
+    if (_planIndex < 0 || _planIndex >= plans.length) {
+      _planIndex = plans.isEmpty ? 0 : PlanUtils.todayPlanIndex(att).clamp(0, plans.length - 1);
+    }
+    final plan = plans.isEmpty ? null : plans[_planIndex];
+    final hasPlan = plan != null && plan.fields.isNotEmpty;
+    final date = plan == null ? null : PlanUtils.planDate(att, _planIndex, plans) ?? DateTime.tryParse(att.date);
+    // PROTOCOL: Tagesordnung of protocol types ("Themen aufnehmen", TOP → Thema)
+    final protocolType = ref.watch(protocolTypeByIdProvider(widget.attendance.typeId));
+    final hasProtocol = protocolType?.enableProtocol ?? false;
+    final canAddTopics = hasProtocol && ref.watch(isTeamLeaderProvider) && _planIndex == 0 && widget.attendance.id != null;
+    // UX_ATT: Ionic rows below the plan: Themen aufnehmen, Ablaufplan
+    // bearbeiten / erstellen, Teilen (export sheet). "Mit Mitgliedern teilen"
+    // lives in the planning page like in Ionic.
+    const primaryStyle = TextStyle(color: AppColors.primary);
+    final addTopicsRow = ListTile(
+      dense: true,
+      leading: const Icon(Icons.add_circle_outline, color: AppColors.primary),
+      title: Text(context.l10n.attendanceAddTopics, style: primaryStyle),
+      onTap: () => openAgendaPickerForAttendance(context, ref,
+          attendanceId: widget.attendance.id!, type: protocolType),
+    );
 
     return Card(
       margin: const EdgeInsets.symmetric(
@@ -69,165 +171,58 @@ class _PlanAccordionState extends State<PlanAccordion> {
       child: ExpansionTile(
         controller: _controller,
         initiallyExpanded: widget.initiallyExpanded,
-        leading: const Icon(Icons.schedule, color: AppColors.primary),
-        title: Row(
-          children: [
-            const Text('Ablaufplan'),
-            const SizedBox(width: 8),
-            if (hasPlan && startTime.isNotEmpty)
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                decoration: BoxDecoration(
-                  color: AppColors.info.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  endTime != null ? '$startTime - $endTime' : startTime,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.info,
-                  ),
-                ),
-              ),
-            const Spacer(),
-            if (widget.attendance.sharePlan)
-              Tooltip(
-                message: 'Plan wird mit Mitgliedern geteilt',
-                child: Icon(
-                  Icons.share,
-                  size: 16,
-                  color: AppColors.success,
-                ),
-              ),
-          ],
-        ),
+        shape: const Border(),
+        collapsedShape: const Border(),
+        title: Text(hasProtocol ? context.l10n.attendanceRunSheetAgenda : context.l10n.plansRunSheet),
         children: [
-          if (!hasPlan || fields.isEmpty)
-            Padding(
-              padding: const EdgeInsets.all(AppDimensions.paddingL),
-              child: Column(
-                children: [
-                  Icon(
-                    Icons.schedule_outlined,
-                    size: 48,
-                    color: AppColors.medium.withValues(alpha: 0.5),
-                  ),
-                  const SizedBox(height: AppDimensions.paddingM),
-                  const Text(
-                    'Kein Ablaufplan vorhanden',
-                    style: TextStyle(color: AppColors.medium),
-                  ),
-                  const SizedBox(height: AppDimensions.paddingM),
-                  FilledButton.icon(
-                    onPressed: widget.onCreate ?? widget.onEdit,
-                    icon: const Icon(Icons.add),
-                    label: const Text('Ablaufplan erstellen'),
-                  ),
-                ],
-              ),
-            )
-          else
-            ...fields.asMap().entries.map((entry) {
-              final index = entry.key;
-              final field = entry.value;
-              final name = field['name'] as String? ?? 'Unbekannt';
-              final time = field['time'] as String? ?? '0';
-              final conductor = field['conductor'] as String?;
-
-              // Calculate start time for this field
-              String calculatedTime = _calculateFieldTime(startTime, fields, index);
-
-              return ListTile(
-                leading: Container(
-                  width: 60,
-                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: AppColors.medium.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: Text(
-                    calculatedTime,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-                title: Text(name),
-                subtitle: conductor != null ? Text(conductor) : null,
-                trailing: Text(
-                  '$time Min.',
-                  style: const TextStyle(color: AppColors.medium),
-                ),
-                dense: true,
-              );
-            }),
-          const Divider(height: 1),
-          Padding(
-            padding: const EdgeInsets.all(AppDimensions.paddingS),
-            child: Wrap(
-              alignment: WrapAlignment.spaceEvenly,
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                TextButton.icon(
-                  onPressed: () => widget.onSharePlanChanged(!widget.attendance.sharePlan),
-                  icon: Icon(
-                    widget.attendance.sharePlan ? Icons.share : Icons.share_outlined,
-                    size: 18,
-                    color: widget.attendance.sharePlan ? AppColors.success : null,
-                  ),
-                  label: Text(
-                    widget.attendance.sharePlan ? 'Geteilt' : 'Teilen',
-                    style: widget.attendance.sharePlan
-                        ? TextStyle(color: AppColors.success)
-                        : null,
-                  ),
-                ),
-                TextButton.icon(
-                  onPressed: widget.onEdit,
-                  icon: const Icon(Icons.edit, size: 18),
-                  label: const Text('Bearbeiten'),
-                ),
-                TextButton.icon(
-                  onPressed: widget.onExportPdf,
-                  icon: const Icon(Icons.picture_as_pdf, size: 18),
-                  label: const Text('PDF'),
-                ),
-                if (widget.onSendViaTelegram != null)
-                  TextButton.icon(
-                    onPressed: widget.onSendViaTelegram,
-                    icon: const Icon(Icons.telegram, size: 18),
-                    label: const Text('Telegram'),
-                  ),
-              ],
+          if (!hasPlan) ...[
+            if (canAddTopics) addTopicsRow,
+            ListTile(
+              dense: true,
+              title: Text(context.l10n.attendanceCreateRunSheet, style: primaryStyle),
+              onTap: widget.onCreate ?? widget.onEdit,
             ),
-          ),
+          ] else ...[
+            if (plans.length > 1)
+              PlanChips(
+                labels: [for (var i = 0; i < plans.length; i++) PlanUtils.planLabel(att, i, plans)],
+                selected: _planIndex,
+                onSelected: (i) => setState(() => _planIndex = i),
+              ),
+            PlanViewList(
+              plan: plan,
+              date: date,
+              showStartEnd: true,
+              onFieldTap: hasProtocol && plan.fields.any((f) => f.agendaItemId != null)
+                  ? (i) => openPlanFieldTopic(context, ref, plan.fields[i].agendaItemId)
+                  : null,
+            ),
+            if (canAddTopics) addTopicsRow,
+            ListTile(
+              dense: true,
+              title: Text(context.l10n.attendanceEditRunSheet, style: primaryStyle),
+              onTap: widget.onEdit,
+            ),
+            ListTile(
+              dense: true,
+              leading: const Icon(Icons.ios_share, color: AppColors.primary),
+              title: Text(context.l10n.attendanceShare, style: primaryStyle),
+              onTap: () => _export(att, plans, _planIndex),
+            ),
+            // Flutter-only extra: read-only / live plan viewer
+            ListTile(
+              dense: true,
+              leading: const Icon(Icons.play_circle_outline, color: AppColors.primary),
+              title: Text(context.l10n.signoutShowRunSheet, style: primaryStyle),
+              onTap: () => showPlanViewer(
+                context,
+                attendance: att,
+                title: _title(att, plan),
+              ),
+            ),
+          ],
         ],
       ),
     );
-  }
-
-  /// Calculate the start time for a field at given index
-  String _calculateFieldTime(String startTime, List<Map<String, dynamic>> fields, int index) {
-    final parts = startTime.split(':');
-    if (parts.length != 2) return startTime;
-
-    int hours = int.tryParse(parts[0]) ?? 17;
-    int minutes = int.tryParse(parts[1]) ?? 0;
-
-    // Add up all previous field times
-    for (var i = 0; i < index; i++) {
-      final fieldTime = int.tryParse(fields[i]['time']?.toString() ?? '0') ?? 0;
-      minutes += fieldTime;
-    }
-
-    // Convert overflow minutes to hours
-    hours += minutes ~/ 60;
-    minutes = minutes % 60;
-
-    return '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}';
   }
 }

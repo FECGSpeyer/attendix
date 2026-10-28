@@ -9,6 +9,7 @@ import '../../../../../core/theme/app_colors.dart';
 import '../../../../../data/models/person/person.dart';
 import '../../../../../shared/widgets/editable/editable_info_row.dart';
 import '../../../../../shared/widgets/sheets/field_editor_sheet.dart';
+import '../../../../../l10n/l10n.dart';
 
 /// Accordion section displaying account information.
 class AccountAccordion extends ConsumerWidget {
@@ -24,6 +25,10 @@ class AccountAccordion extends ConsumerWidget {
     required this.onCreateAccount,
     required this.canEdit,
     this.onFieldChanged,
+    this.draftEmail,
+    this.isLeader = false,
+    this.isMainGroup = false,
+    this.onSearchOtherInstance,
   });
 
   final Person person;
@@ -36,6 +41,18 @@ class AccountAccordion extends ConsumerWidget {
   final VoidCallback onCreateAccount;
   final bool canEdit;
   final void Function(String field, dynamic value)? onFieldChanged;
+
+  /// Unsaved email value (shown instead of the stored one)
+  final String? draftEmail;
+
+  /// Draft "Stimmführer" flag — enables voice leader roles (Ionic)
+  final bool isLeader;
+
+  /// Person is in the main group → role is managed automatically (Ionic)
+  final bool isMainGroup;
+
+  /// Ionic searchPerson(): link to the same person in a linked tenant
+  final VoidCallback? onSearchOtherInstance;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -52,9 +69,9 @@ class AccountAccordion extends ConsumerWidget {
       child: Column(
         children: [
           ListTile(
-            title: const Text(
-              'Account',
-              style: TextStyle(fontWeight: FontWeight.w600),
+            title: Text(
+              context.l10n.personAccount,
+              style: const TextStyle(fontWeight: FontWeight.w600),
             ),
             trailing: Icon(isExpanded ? Icons.expand_less : Icons.expand_more),
             onTap: onToggle,
@@ -83,21 +100,33 @@ class AccountAccordion extends ConsumerWidget {
         // Email
         EditableInfoRow(
           icon: Icons.email,
-          label: 'E-Mail',
-          value: person.email ?? 'Nicht angegeben',
+          label: context.l10n.peopleEmail,
+          value: (draftEmail ?? person.email) ?? context.l10n.personFlutterNotSpecified,
           editable: canEdit && person.appId == null,
           onTap: person.email != null
               ? () => _launchEmail(person.email!)
               : null,
           onEdit: () => _editEmail(context),
         ),
+        if (canEdit &&
+            person.appId == null &&
+            onSearchOtherInstance != null &&
+            ((draftEmail ?? person.email)?.trim().isNotEmpty ?? false))
+          Align(
+            alignment: Alignment.centerLeft,
+            child: TextButton.icon(
+              onPressed: onSearchOtherInstance,
+              icon: const Icon(Icons.search, size: 18),
+              label: Text(context.l10n.personFlutterSearchOtherInstance),
+            ),
+          ),
 
         // Account linked status
         if (person.appId != null) ...[
-          const InfoRow(
+          InfoRow(
             icon: Icons.badge,
-            label: 'Account',
-            value: 'Verknüpft',
+            label: context.l10n.personAccount,
+            value: context.l10n.personFlutterLinked,
           ),
           const SizedBox(height: AppDimensions.paddingM),
 
@@ -110,7 +139,7 @@ class AccountAccordion extends ConsumerWidget {
             OutlinedButton.icon(
               onPressed: onUnlinkAccount,
               icon: const Icon(Icons.link_off, color: AppColors.danger),
-              label: const Text('Account-Verknüpfung aufheben'),
+              label: Text(context.l10n.personFlutterUnlinkAccount),
               style: OutlinedButton.styleFrom(foregroundColor: AppColors.danger),
             ),
         ],
@@ -122,7 +151,7 @@ class AccountAccordion extends ConsumerWidget {
             FilledButton.icon(
               onPressed: onCreateAccount,
               icon: const Icon(Icons.person_add),
-              label: const Text('Account erstellen'),
+              label: Text(context.l10n.personFlutterCreateAccount),
             ),
           if (!canEdit)
             Container(
@@ -131,20 +160,31 @@ class AccountAccordion extends ConsumerWidget {
                 color: AppColors.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(AppDimensions.borderRadiusS),
               ),
-              child: const Row(
+              child: Row(
                 children: [
-                  Icon(Icons.info_outline, color: AppColors.primary, size: 20),
-                  SizedBox(width: AppDimensions.paddingS),
+                  const Icon(Icons.info_outline, color: AppColors.primary, size: 20),
+                  const SizedBox(width: AppDimensions.paddingS),
                   Expanded(
                     child: Text(
-                      'Kein Account verknüpft. Ein Dirigent kann einen Account erstellen.',
-                      style: TextStyle(fontSize: 13, color: AppColors.dark),
+                      context.l10n.personFlutterNoAccountLinked,
+                      style: const TextStyle(fontSize: 13, color: AppColors.dark),
                     ),
                   ),
                 ],
               ),
             ),
         ],
+
+        // PEOPLE2: Ionic account help (person.accountHelp / existingUserHint)
+        if (canEdit)
+          Align(
+            alignment: Alignment.centerLeft,
+            child: TextButton.icon(
+              onPressed: () => _showHelp(context),
+              icon: const Icon(Icons.help_outline, size: 18),
+              label: Text(context.l10n.personHelp),
+            ),
+          ),
 
         if (person.appId == null && person.email == null)
           Container(
@@ -153,14 +193,14 @@ class AccountAccordion extends ConsumerWidget {
               color: AppColors.warning.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(AppDimensions.borderRadiusS),
             ),
-            child: const Row(
+            child: Row(
               children: [
-                Icon(Icons.info_outline, color: AppColors.warning),
-                SizedBox(width: AppDimensions.paddingS),
+                const Icon(Icons.info_outline, color: AppColors.warning),
+                const SizedBox(width: AppDimensions.paddingS),
                 Expanded(
                   child: Text(
-                    'Um einen Account zu erstellen, muss eine E-Mail-Adresse hinterlegt werden.',
-                    style: TextStyle(fontSize: 13),
+                    context.l10n.personFlutterEmailRequiredForAccount,
+                    style: const TextStyle(fontSize: 13),
                   ),
                 ),
               ],
@@ -175,26 +215,32 @@ class AccountAccordion extends ConsumerWidget {
       return const SizedBox.shrink();
     }
 
-    final availableRoles = [
-      Role.player,
-      Role.helper,
-      Role.viewer,
-      Role.responsible,
-      Role.admin,
-    ];
-
     if (isLoadingRole) {
       return const Center(child: CircularProgressIndicator());
     }
 
     final currentRole = userRole ?? Role.player;
 
+    // Ionic person.page: Mitglied, Verantwortlicher, Helfer and — for
+    // Stimmführer — the voice leader roles. A role outside this list
+    // (e.g. Admin) stays visible but is not selectable from here.
+    final availableRoles = <Role>[
+      Role.player,
+      Role.responsible,
+      Role.helper,
+      if (isLeader) Role.voiceLeaderHelper,
+      if (isLeader) Role.voiceLeader,
+    ];
+    if (!availableRoles.contains(currentRole)) {
+      availableRoles.add(currentRole);
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Rolle',
-          style: TextStyle(fontSize: 12, color: AppColors.medium),
+        Text(
+          context.l10n.personRole,
+          style: const TextStyle(fontSize: 12, color: AppColors.medium),
         ),
         const SizedBox(height: AppDimensions.paddingXS),
         DropdownButtonFormField<Role>(
@@ -213,12 +259,12 @@ class AccountAccordion extends ConsumerWidget {
                 children: [
                   Icon(_getRoleIcon(role), size: 20, color: AppColors.primary),
                   const SizedBox(width: AppDimensions.paddingS),
-                  Text(_getRoleLabel(role)),
+                  Text(_getRoleLabel(context.l10n, role)),
                 ],
               ),
             );
           }).toList(),
-          onChanged: canEdit
+          onChanged: canEdit && !isMainGroup
               ? (newRole) {
                   if (newRole != null && newRole != currentRole) {
                     onRoleChanged(newRole);
@@ -227,6 +273,32 @@ class AccountAccordion extends ConsumerWidget {
               : null,
         ),
       ],
+    );
+  }
+
+  void _showHelp(BuildContext context) {
+    showDialog<void>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(context.l10n.personHelp),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (person.appId == null) ...[
+              Text(context.l10n.personAccountHelp),
+              const SizedBox(height: AppDimensions.paddingM),
+            ],
+            Text(context.l10n.personExistingUserHint),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text(context.l10n.commonClose),
+          ),
+        ],
+      ),
     );
   }
 
@@ -244,12 +316,12 @@ class AccountAccordion extends ConsumerWidget {
   Future<void> _editEmail(BuildContext context) async {
     final result = await FieldEditorSheet.show(
       context,
-      title: 'E-Mail',
+      title: context.l10n.peopleEmail,
       initialValue: person.email ?? '',
       keyboardType: TextInputType.emailAddress,
       validator: (value) {
         if (value != null && value.trim().isNotEmpty && !value.contains('@')) {
-          return 'Bitte gültige E-Mail eingeben';
+          return context.l10n.personInvalidEmail;
         }
         return null;
       },
@@ -259,18 +331,18 @@ class AccountAccordion extends ConsumerWidget {
     }
   }
 
-  String _getRoleLabel(Role role) {
+  String _getRoleLabel(AppLocalizations l10n, Role role) {
     return switch (role) {
-      Role.admin => 'Dirigent (Admin)',
-      Role.responsible => 'Verantwortlicher',
-      Role.helper => 'Helfer',
-      Role.viewer => 'Beobachter',
-      Role.player => 'Mitglied',
-      Role.voiceLeader => 'Stimmführer',
-      Role.voiceLeaderHelper => 'Stimmführer-Helfer',
-      Role.parent => 'Eltern',
-      Role.applicant => 'Bewerber',
-      Role.none => 'Keine Rolle',
+      Role.admin => l10n.personFlutterRoleAdmin,
+      Role.responsible => l10n.commonRolesResponsible,
+      Role.helper => l10n.commonRolesHelper,
+      Role.viewer => l10n.commonRolesViewer,
+      Role.player => l10n.commonRolesMember,
+      Role.voiceLeader => l10n.rolesVoiceLeader,
+      Role.voiceLeaderHelper => l10n.commonRolesVoiceLeaderHelper,
+      Role.parent => l10n.rolesParents,
+      Role.applicant => l10n.rolesApplicant,
+      Role.none => l10n.personFlutterRoleNone,
     };
   }
 

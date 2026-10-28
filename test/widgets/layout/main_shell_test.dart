@@ -67,7 +67,7 @@ class MockCurrentTenantNotifier extends CurrentTenantNotifier {
 void main() {
   widgetTestGroup('MainShell', () {
     group('navigation destinations for different roles', () {
-      widgetTest('admin sees Personen, Anwesenheit, Einstellungen tabs', (tester) async {
+      widgetTest('admin sees Personen, Termine, Mehr tabs', (tester) async {
         final router = _createTestRouter(
           initialLocation: '/people',
         );
@@ -84,15 +84,15 @@ void main() {
 
         await tester.pumpAndSettle();
 
-        // Admin (conductor-like role) should see: Personen, Anwesenheit, Einstellungen
+        // Admin (conductor-like role) should see: Personen, Termine, Mehr
         expect(find.text('Personen'), findsOneWidget);
-        expect(find.text('Anwesenheit'), findsOneWidget);
-        expect(find.text('Einstellungen'), findsOneWidget);
+        expect(find.text('Termine'), findsOneWidget);
+        expect(find.text('Mehr'), findsOneWidget);
         // But not: Meine Termine (self-service)
         expect(find.text('Meine Termine'), findsNothing);
       });
 
-      widgetTest('player sees Meine Termine, Einstellungen tabs', (tester) async {
+      widgetTest('player sees Meine Termine, Mehr tabs', (tester) async {
         final router = _createTestRouter(
           initialLocation: '/overview',
         );
@@ -109,15 +109,15 @@ void main() {
 
         await tester.pumpAndSettle();
 
-        // Player should see: Meine Termine, Einstellungen
+        // Player should see: Meine Termine, Mehr
         expect(find.text('Meine Termine'), findsOneWidget);
-        expect(find.text('Einstellungen'), findsOneWidget);
+        expect(find.text('Mehr'), findsOneWidget);
         // But not: Personen, Anwesenheit (admin-only)
         expect(find.text('Personen'), findsNothing);
-        expect(find.text('Anwesenheit'), findsNothing);
+        expect(find.text('Termine'), findsNothing);
       });
 
-      widgetTest('helper sees Meine Termine, Anwesenheit, Einstellungen tabs', (tester) async {
+      widgetTest('helper sees Meine Termine, Termine, Mehr tabs', (tester) async {
         final router = _createTestRouter(
           initialLocation: '/overview',
         );
@@ -134,10 +134,10 @@ void main() {
 
         await tester.pumpAndSettle();
 
-        // Helper should see: Meine Termine, Anwesenheit, Einstellungen
+        // Helper should see: Meine Termine, Termine, Mehr
         expect(find.text('Meine Termine'), findsOneWidget);
-        expect(find.text('Anwesenheit'), findsOneWidget);
-        expect(find.text('Einstellungen'), findsOneWidget);
+        expect(find.text('Termine'), findsOneWidget);
+        expect(find.text('Mehr'), findsOneWidget);
         // But not: Personen (admin-only)
         expect(find.text('Personen'), findsNothing);
       });
@@ -161,7 +161,7 @@ void main() {
 
         // Parent should see: Termine (parents portal), Einstellungen
         expect(find.text('Termine'), findsOneWidget);
-        expect(find.text('Einstellungen'), findsOneWidget);
+        expect(find.text('Mehr'), findsOneWidget);
       });
     });
 
@@ -255,9 +255,34 @@ void main() {
         await tester.pumpAndSettle();
 
         // Check for icons
-        expect(find.byIcon(Icons.people), findsOneWidget); // selected people
-        expect(find.byIcon(Icons.fact_check_outlined), findsOneWidget); // attendance
-        expect(find.byIcon(Icons.settings_outlined), findsOneWidget); // settings
+        // Ionic tabs.page.html: people-outline, checkbox-outline,
+        // ellipsis-horizontal ("Mehr")
+        expect(find.byIcon(Icons.people_outline), findsOneWidget);
+        expect(find.byIcon(Icons.check_box_outlined), findsOneWidget);
+        expect(find.byIcon(Icons.more_horiz), findsOneWidget);
+      });
+
+      widgetTest('admin tab order matches Ionic (Personen, Termine, Mehr)',
+          (tester) async {
+        final router = _createTestRouter(initialLocation: '/people');
+
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [
+              effectiveRoleProvider.overrideWithValue(Role.admin),
+              currentTenantProvider.overrideWith((ref) => MockCurrentTenantNotifier(ref, null)),
+            ],
+            child: MaterialApp.router(routerConfig: router),
+          ),
+        );
+
+        await tester.pumpAndSettle();
+
+        final labels = tester
+            .widgetList<NavigationDestination>(find.byType(NavigationDestination))
+            .map((d) => d.label)
+            .toList();
+        expect(labels, ['Personen', 'Termine', 'Mehr']);
       });
     });
   });

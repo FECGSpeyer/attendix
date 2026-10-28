@@ -1,20 +1,21 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../constants/enums.dart';
 import '../../data/models/person/person.dart';
 import '../../data/repositories/repositories.dart';
 import 'tenant_providers.dart';
 import 'group_providers.dart';
+import '../services/tracking/tracking_event.dart';
+import '../services/tracking/tracking_service.dart';
+import 'user_registration_providers.dart'; // AUTH
 
 /// Initialized player repository with tenant context
+/// SOL_FIX1: per-tenant immutable instance, so a tenant switch never
+/// changes the tenant of an operation that is already running.
 final playerRepositoryWithTenantProvider = Provider<PlayerRepository>((ref) {
-  final repo = ref.watch(playerRepositoryProvider);
   final tenant = ref.watch(currentTenantIdProvider);
-  
-  if (tenant != null) {
-    repo.setTenantId(tenant);
-  }
-  
-  return repo;
+  return ref.watch(playerRepositoryForTenantProvider(tenant));
 });
 
 /// Provider for active players list
@@ -95,12 +96,15 @@ class PlayerNotifier extends Notifier<AsyncValue<void>> {
     state = const AsyncValue.loading();
     try {
       final result = await _repo.createPlayer(player);
+      ref.read(trackingServiceProvider).track(TrackingEvent.playerAdded, properties: {'instrumentId': player.instrument});
       state = const AsyncValue.data(null);
       ref.invalidate(playersProvider);
       return result;
     } catch (e, stack) {
+      // LOGIC_PEOPLE: surface errors to the caller (Ionic shows a toast);
+      // swallowing them made pages show success toasts on failure.
       state = AsyncValue.error(e, stack);
-      return null;
+      rethrow;
     }
   }
 
@@ -108,13 +112,16 @@ class PlayerNotifier extends Notifier<AsyncValue<void>> {
     state = const AsyncValue.loading();
     try {
       final result = await _repo.updatePlayer(player);
+      ref.read(trackingServiceProvider).track(TrackingEvent.playerUpdated);
       state = const AsyncValue.data(null);
       ref.invalidate(playersProvider);
       ref.invalidate(playerByIdProvider(player.id!));
       return result;
     } catch (e, stack) {
+      // LOGIC_PEOPLE: surface errors to the caller (Ionic shows a toast);
+      // swallowing them made pages show success toasts on failure.
       state = AsyncValue.error(e, stack);
-      return null;
+      rethrow;
     }
   }
 
@@ -126,7 +133,8 @@ class PlayerNotifier extends Notifier<AsyncValue<void>> {
       ref.invalidate(playersProvider);
       ref.invalidate(archivedPlayersProvider);
     } catch (e, stack) {
-      state = AsyncValue.error(e, stack);
+      state = AsyncValue.error(e, stack); // LOGIC_PEOPLE: rethrow
+      rethrow;
     }
   }
 
@@ -138,7 +146,8 @@ class PlayerNotifier extends Notifier<AsyncValue<void>> {
       ref.invalidate(playersProvider);
       ref.invalidate(archivedPlayersProvider);
     } catch (e, stack) {
-      state = AsyncValue.error(e, stack);
+      state = AsyncValue.error(e, stack); // LOGIC_PEOPLE: rethrow
+      rethrow;
     }
   }
 
@@ -150,7 +159,8 @@ class PlayerNotifier extends Notifier<AsyncValue<void>> {
       ref.invalidate(playersProvider);
       ref.invalidate(playerByIdProvider(player.id!));
     } catch (e, stack) {
-      state = AsyncValue.error(e, stack);
+      state = AsyncValue.error(e, stack); // LOGIC_PEOPLE: rethrow
+      rethrow;
     }
   }
 
@@ -162,43 +172,93 @@ class PlayerNotifier extends Notifier<AsyncValue<void>> {
       ref.invalidate(playersProvider);
       ref.invalidate(playerByIdProvider(player.id!));
     } catch (e, stack) {
-      state = AsyncValue.error(e, stack);
+      state = AsyncValue.error(e, stack); // LOGIC_PEOPLE: rethrow
+      rethrow;
     }
   }
 
-  Future<void> deletePlayer(int playerId) async {
+  /// Ionic db.removePlayer: deletes the person and (when [appId] is set)
+  /// removes the account's access to this instance.
+  Future<void> deletePlayer(int playerId, {String? appId}) async {
     state = const AsyncValue.loading();
     try {
-      await _repo.deletePlayer(playerId);
+      await _repo.deletePlayer(playerId, appId: appId);
+      ref.read(trackingServiceProvider).track(TrackingEvent.playerRemoved);
       state = const AsyncValue.data(null);
       ref.invalidate(playersProvider);
     } catch (e, stack) {
-      state = AsyncValue.error(e, stack);
+      state = AsyncValue.error(e, stack); // LOGIC_PEOPLE: rethrow
+      rethrow;
     }
   }
 
   Future<void> approvePlayer(Person player) async {
+    // SOL_FIX4: read both tenant-bound repositories once before the first
+    // await, so a tenant switch A→B mid-flow cannot approve in A but change
+    // the account role in B.
+    final repo = _repo;
+    final registration = ref.read(userRegistrationRepositoryWithTenantProvider);
     state = const AsyncValue.loading();
     try {
-      await _repo.approvePlayer(player);
+      await repo.approvePlayer(player);
+      await _notifyApproval(registration, player); // AUTH
       state = const AsyncValue.data(null);
       ref.invalidate(pendingPlayersProvider);
       ref.invalidate(playersProvider);
     } catch (e, stack) {
-      state = AsyncValue.error(e, stack);
+      state = AsyncValue.error(e, stack); // LOGIC_PEOPLE: rethrow
+      rethrow;
     }
   }
 
   Future<void> declinePlayer(Person player, String reason) async {
+    // SOL_FIX4: both repositories bound before the first await.
+    final repo = _repo;
+    final registration = ref.read(userRegistrationRepositoryWithTenantProvider);
     state = const AsyncValue.loading();
     try {
-      await _repo.declinePlayer(player, reason);
+      await repo.declinePlayer(player, reason);
+      await _notifyReject(registration, player); // AUTH
       state = const AsyncValue.data(null);
       ref.invalidate(pendingPlayersProvider);
       ref.invalidate(playersProvider);
       ref.invalidate(archivedPlayersProvider);
     } catch (e, stack) {
-      state = AsyncValue.error(e, stack);
+      state = AsyncValue.error(e, stack); // LOGIC_PEOPLE: rethrow
+      rethrow;
+    }
+  }
+
+  // AUTH: Ionic approvePlayer/declinePlayer – applicant becomes PLAYER and
+  // gets the approve/reject mail via the attendix-user Edge Function.
+  // Mail failures are non-blocking (the person is already updated).
+  Future<void> _notifyApproval(
+      UserRegistrationRepository registration, Person player) async {
+    if (!registration.hasTenantId) return;
+    // DB_REVIEW_REST: like Ionic person.page approvePlayer a failed role
+    // update fails the approval (otherwise the account silently stays
+    // Bewerber); only the mail stays non-blocking.
+    if (player.appId != null && player.appId!.isNotEmpty) {
+      await registration.updateTenantUserRole(player.appId!, Role.player);
+    }
+    try {
+      if (player.email != null && player.email!.isNotEmpty) {
+        await registration.informUserAboutApproval(
+            player.email!, player.firstName, Role.player);
+      }
+    } catch (e) {
+      debugPrint('approvePlayer: notify failed (non-blocking): $e');
+    }
+  }
+
+  Future<void> _notifyReject(
+      UserRegistrationRepository registration, Person player) async {
+    if (!registration.hasTenantId) return;
+    if (player.email == null || player.email!.isEmpty) return;
+    try {
+      await registration.informUserAboutReject(player.email!, player.firstName);
+    } catch (e) {
+      debugPrint('declinePlayer: notify failed (non-blocking): $e');
     }
   }
 
@@ -211,8 +271,10 @@ class PlayerNotifier extends Notifier<AsyncValue<void>> {
       ref.invalidate(playerByIdProvider(player.id!));
       return result;
     } catch (e, stack) {
+      // LOGIC_PEOPLE: surface errors to the caller (Ionic shows a toast);
+      // swallowing them made pages show success toasts on failure.
       state = AsyncValue.error(e, stack);
-      return null;
+      rethrow;
     }
   }
 
@@ -226,8 +288,10 @@ class PlayerNotifier extends Notifier<AsyncValue<void>> {
       ref.invalidate(playerByIdProvider(player.id!));
       return result;
     } catch (e, stack) {
+      // LOGIC_PEOPLE: surface errors to the caller (Ionic shows a toast);
+      // swallowing them made pages show success toasts on failure.
       state = AsyncValue.error(e, stack);
-      return null;
+      rethrow;
     }
   }
 
@@ -240,8 +304,10 @@ class PlayerNotifier extends Notifier<AsyncValue<void>> {
       ref.invalidate(playerByIdProvider(player.id!));
       return result;
     } catch (e, stack) {
+      // LOGIC_PEOPLE: surface errors to the caller (Ionic shows a toast);
+      // swallowing them made pages show success toasts on failure.
       state = AsyncValue.error(e, stack);
-      return null;
+      rethrow;
     }
   }
 
@@ -254,8 +320,10 @@ class PlayerNotifier extends Notifier<AsyncValue<void>> {
       ref.invalidate(playerByIdProvider(player.id!));
       return result;
     } catch (e, stack) {
+      // LOGIC_PEOPLE: surface errors to the caller (Ionic shows a toast);
+      // swallowing them made pages show success toasts on failure.
       state = AsyncValue.error(e, stack);
-      return null;
+      rethrow;
     }
   }
 }

@@ -9,6 +9,18 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/models/song/song.dart';
 import '../../../../data/models/tenant/tenant.dart';
+import '../../../../core/utils/demo_guard.dart';
+import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
+
+/// `instrument_ids` of a copied song (Ionic copySongToTenant): the mapped
+/// target instrument ids of the copied files, without null and the reserved
+/// ids 1 and 2, de-duplicated in first-seen order.
+List<int> copiedSongInstrumentIds(Iterable<int?> mappedIds) => mappedIds
+    .whereType<int>()
+    .where((id) => id != 1 && id != 2)
+    .toSet()
+    .toList();
 
 /// Sheet for copying a song to another tenant
 class CopyToTenantSheet extends ConsumerStatefulWidget {
@@ -58,7 +70,7 @@ class _CopyToTenantSheetState extends ConsumerState<CopyToTenantSheet> {
           children: [
             // Header
             AppBar(
-              title: const Text('Werk kopieren'),
+              title: Text(context.l10n.songsCopySong),
               leading: IconButton(
                 icon: const Icon(Icons.close),
                 onPressed: () => Navigator.pop(context),
@@ -79,8 +91,8 @@ class _CopyToTenantSheetState extends ConsumerState<CopyToTenantSheet> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            'Ziel-Instanz',
+                          Text(
+                            context.l10n.shiftsFlutterTargetTenant,
                             style: TextStyle(
                               fontWeight: FontWeight.w600,
                               color: AppColors.medium,
@@ -125,7 +137,7 @@ class _CopyToTenantSheetState extends ConsumerState<CopyToTenantSheet> {
                               const Icon(Icons.info_outline, color: AppColors.info),
                               const SizedBox(width: 8),
                               Text(
-                                'Hinweis',
+                                context.l10n.shiftsFlutterNote,
                                 style: TextStyle(
                                   fontWeight: FontWeight.w600,
                                   color: AppColors.info,
@@ -135,10 +147,7 @@ class _CopyToTenantSheetState extends ConsumerState<CopyToTenantSheet> {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            'Das Werk "${widget.song.name}" wird in die ausgewählte Instanz kopiert. '
-                            'Alle Dateien werden ebenfalls kopiert. '
-                            'Die Kategorie wird nicht übernommen. '
-                            'Instrumentenzuordnungen werden automatisch anhand des Namens gemappt.',
+                            context.l10n.songsCopyInfo(widget.song.name),
                             style: const TextStyle(color: AppColors.medium),
                           ),
                         ],
@@ -156,7 +165,7 @@ class _CopyToTenantSheetState extends ConsumerState<CopyToTenantSheet> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              '${widget.song.files!.length} Dateien werden kopiert:',
+                              context.l10n.songsFlutterFilesWillBeCopied(widget.song.files!.length),
                               style: const TextStyle(
                                 fontWeight: FontWeight.w600,
                                 color: AppColors.medium,
@@ -183,7 +192,7 @@ class _CopyToTenantSheetState extends ConsumerState<CopyToTenantSheet> {
                               Padding(
                                 padding: const EdgeInsets.only(top: 4),
                                 child: Text(
-                                  '... und ${widget.song.files!.length - 5} weitere',
+                                  '...${context.l10n.filesAndMore(widget.song.files!.length - 5)}',
                                   style: const TextStyle(color: AppColors.medium),
                                 ),
                               ),
@@ -217,7 +226,7 @@ class _CopyToTenantSheetState extends ConsumerState<CopyToTenantSheet> {
                             child: CircularProgressIndicator(strokeWidth: 2),
                           )
                         : const Icon(Icons.copy),
-                    label: Text(_isCopying ? 'Wird kopiert...' : 'Kopieren'),
+                    label: Text(_isCopying ? context.l10n.shiftsFlutterCopyingShort : context.l10n.songsCopy),
                     style: ElevatedButton.styleFrom(
                       minimumSize: const Size(double.infinity, 48),
                     ),
@@ -232,9 +241,11 @@ class _CopyToTenantSheetState extends ConsumerState<CopyToTenantSheet> {
   }
 
   Future<void> _copySong() async {
+    if (DemoGuard.blocked()) return; // DEMO_GUARD
+    final l10n = context.l10n;
     setState(() {
       _isCopying = true;
-      _progressMessage = 'Werk wird kopiert...';
+      _progressMessage = l10n.songsCopying;
     });
 
     try {
@@ -243,10 +254,10 @@ class _CopyToTenantSheetState extends ConsumerState<CopyToTenantSheet> {
       final sourceGroups = sourceGroupsAsync.valueOrNull ?? [];
 
       // Get target groups
-      setState(() => _progressMessage = 'Lade Ziel-Instrumente...');
+      setState(() => _progressMessage = l10n.songsFlutterLoadingTargetGroups);
       final supabase = ref.read(supabaseClientProvider);
       final targetGroupsResponse = await supabase
-          .from('groups')
+          .from('instruments')
           .select('*')
           .eq('tenantId', _targetTenantId);
 
@@ -270,7 +281,7 @@ class _CopyToTenantSheetState extends ConsumerState<CopyToTenantSheet> {
       }
 
       // Create song in target tenant
-      setState(() => _progressMessage = 'Erstelle Werk in Ziel-Instanz...');
+      setState(() => _progressMessage = l10n.songsFlutterCreatingInTarget);
 
       final newSongData = {
         'tenantId': _targetTenantId,
@@ -280,9 +291,11 @@ class _CopyToTenantSheetState extends ConsumerState<CopyToTenantSheet> {
         'withChoir': widget.song.withChoir,
         'withSolo': widget.song.withSolo,
         'link': widget.song.link,
-        'conductor': widget.song.conductor,
         'difficulty': widget.song.difficulty,
-        // Don't copy category, instrument_ids (will be set from files)
+        // Like Ionic: categories are not copied, instrument_ids are set from files
+        'instrument_ids': <int>[],
+        'category': null,
+        // PARITY_B (D15): Ionic db.copySongToTenant does not send category_ids
       };
 
       final insertResponse = await supabase
@@ -299,20 +312,26 @@ class _CopyToTenantSheetState extends ConsumerState<CopyToTenantSheet> {
       if (files != null && files.isNotEmpty) {
         final songFileService = ref.read(songFileServiceProvider);
         final fileCount = files.length;
+        final mappedInstrumentIds = <int?>[];
 
         for (var i = 0; i < fileCount; i++) {
           final file = files[i];
           setState(() => _progressMessage =
-              'Kopiere Datei ${i + 1} von $fileCount...');
+              l10n.songsCopyingFile(i + 1, fileCount));
 
-          // Download file bytes
+          // Download file bytes. Ionic copySongToTenant: a failed download
+          // aborts the copy (→ toast songs.copyFailed) instead of silently
+          // creating a song with missing files.
           final bytes = await songFileService.downloadFileBytes(file.url);
-          if (bytes == null) continue;
+          if (bytes == null) {
+            throw l10n.songsFlutterFileDownloadFailed(file.fileName);
+          }
 
           // Map instrument ID
           final mappedInstrumentId = file.instrumentId != null
               ? instrumentMapping[file.instrumentId]
               : null;
+          mappedInstrumentIds.add(mappedInstrumentId);
 
           // Upload to new song
           await songFileService.uploadFileBytes(
@@ -326,28 +345,22 @@ class _CopyToTenantSheetState extends ConsumerState<CopyToTenantSheet> {
           );
         }
 
-        // Update instrument_ids on the new song based on uploaded files
-        final newInstrumentIds = widget.song.files!
-            .where((f) => f.instrumentId != null && f.instrumentId! > 2)
-            .map((f) => instrumentMapping[f.instrumentId])
-            .where((id) => id != null)
-            .toSet()
-            .toList();
-
-        if (newInstrumentIds.isNotEmpty) {
-          await supabase
-              .from('songs')
-              .update({'instrument_ids': newInstrumentIds}).eq('id', newSongId);
-        }
+        // Update instrument_ids on the new song from the mapped target ids
+        // of the copied files (Ionic: filter null, 1 and 2; Set order).
+        await supabase
+            .from('songs')
+            .update({'instrument_ids': copiedSongInstrumentIds(mappedInstrumentIds)})
+            .eq('id', newSongId)
+            .eq('tenantId', _targetTenantId);
       }
 
       if (mounted) {
-        ToastHelper.showSuccess(context, 'Werk erfolgreich kopiert');
+        ToastHelper.showSuccess(context, l10n.songsCopied);
         Navigator.pop(context);
       }
     } catch (e) {
       if (mounted) {
-        ToastHelper.showError(context, 'Fehler beim Kopieren: $e');
+        ToastHelper.showError(context, l10n.songsCopyFailed(friendlyErrorMessage(e)));
       }
     } finally {
       if (mounted) {

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:attendix/core/services/audio_player/audio_player_service.dart';
+import '../../../l10n/l10n.dart';
 
 /// Mini audio player bar. Hidden when no file is loaded.
 ///
@@ -25,6 +26,7 @@ class _AudioPlayerWidgetState extends ConsumerState<AudioPlayerWidget> {
     if (!state.hasFile) return const SizedBox.shrink();
 
     final svc = ref.read(audioPlayerServiceProvider.notifier);
+    final queue = ref.watch(audioQueueInfoProvider); // INTEGRATION
     final maxMs =
         state.duration.inMilliseconds.toDouble().clamp(1.0, double.infinity);
     final value = _dragValueMs ?? state.currentTime.inMilliseconds.toDouble();
@@ -37,6 +39,13 @@ class _AudioPlayerWidgetState extends ConsumerState<AudioPlayerWidget> {
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         child: Row(
           children: [
+            // INTEGRATION: queue controls (Ionic audio player: previous/next)
+            if (queue.hasQueue)
+              IconButton(
+                icon: const Icon(Icons.skip_previous),
+                tooltip: context.l10n.commonBack,
+                onPressed: svc.previous,
+              ),
             IconButton(
               icon: Icon(
                 state.isPlaying
@@ -46,6 +55,12 @@ class _AudioPlayerWidgetState extends ConsumerState<AudioPlayerWidget> {
               ),
               onPressed: svc.togglePlayPause,
             ),
+            if (queue.hasQueue)
+              IconButton(
+                icon: const Icon(Icons.skip_next),
+                tooltip: context.l10n.commonNext,
+                onPressed: queue.hasNext ? svc.next : null,
+              ),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -65,7 +80,7 @@ class _AudioPlayerWidgetState extends ConsumerState<AudioPlayerWidget> {
                       ),
                       IconButton(
                         icon: const Icon(Icons.close),
-                        tooltip: 'Schließen',
+                        tooltip: context.l10n.commonClose,
                         onPressed: svc.stop,
                       ),
                     ],

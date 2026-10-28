@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/constants/enums.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Shows a modal bottom sheet with status overview (counts per status)
 void showStatusOverviewSheet(
@@ -68,7 +69,7 @@ class StatusOverviewSheet extends StatelessWidget {
                     const Icon(Icons.pie_chart, color: AppColors.primary),
                     const SizedBox(width: 8),
                     Text(
-                      'Status-Übersicht',
+                      context.l10n.attendanceStatusOverview,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
@@ -81,7 +82,7 @@ class StatusOverviewSheet extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
-                        'Gesamt: $total',
+                        context.l10n.attendanceTotalPeople(total),
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           fontWeight: FontWeight.w600,
                           color: AppColors.primary,

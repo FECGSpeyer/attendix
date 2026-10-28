@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:freezed_annotation/freezed_annotation.dart';
+import '../../l10n/l10n.dart';
 
 part 'holiday_service.freezed.dart';
 part 'holiday_service.g.dart';
@@ -111,7 +112,7 @@ class HolidayService {
         final names = item['name'] as List<dynamic>;
         // BL-012: Use firstOrNull for clearer null-safety
         final nameEntry = names.cast<Map<String, dynamic>?>().firstOrNull;
-        final name = nameEntry?['text'] as String? ?? 'Feiertag';
+        final name = nameEntry?['text'] as String? ?? l10nWithoutContext.coreFlutterHoliday;
 
         return Holiday(
           id: item['id']?.toString() ?? '${startDate.toIso8601String()}_$name',
@@ -157,7 +158,7 @@ class HolidayService {
         final names = item['name'] as List<dynamic>;
         // BL-012: Use firstOrNull for clearer null-safety
         final nameEntry = names.cast<Map<String, dynamic>?>().firstOrNull;
-        final name = nameEntry?['text'] as String? ?? 'Schulferien';
+        final name = nameEntry?['text'] as String? ?? l10nWithoutContext.coreFlutterSchoolHolidays;
 
         return Holiday(
           id: item['id']?.toString() ?? '${startDate.toIso8601String()}_$name',

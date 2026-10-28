@@ -3,16 +3,23 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/repositories/teacher_repository.dart';
 import 'group_providers.dart';
 import 'tenant_providers.dart';
+import '../services/tracking/tracking_event.dart';
+import '../services/tracking/tracking_service.dart';
 
 /// Initialized teacher repository with tenant context
 final teacherRepositoryWithTenantProvider = Provider<TeacherRepository>((ref) {
-  final repo = ref.watch(teacherRepositoryProvider);
   final tenant = ref.watch(currentTenantIdProvider);
+  return ref.watch(teacherRepositoryForTenantProvider(tenant));
+});
 
-  if (tenant != null) {
-    repo.setTenantId(tenant);
-  }
-
+/// TENANT_BIND: one immutable [TeacherRepository] per tenant (`bindTenantId`),
+/// so a tenant switch never changes the tenant of a running flow and
+/// cross-tenant work uses its own bound instance. `null` (no tenant)
+/// yields an unbound instance with `hasTenantId == false`.
+final teacherRepositoryForTenantProvider =
+    Provider.family<TeacherRepository, int?>((ref, tenantId) {
+  final repo = TeacherRepository(ref);
+  if (tenantId != null) repo.bindTenantId(tenantId);
   return repo;
 });
 
@@ -76,6 +83,7 @@ class TeacherNotifier extends Notifier<AsyncValue<void>> {
     state = const AsyncValue.loading();
     try {
       final result = await _repo.createTeacher(teacher);
+      ref.read(trackingServiceProvider).track(TrackingEvent.teacherAdded);
       state = const AsyncValue.data(null);
       ref.invalidate(teachersProvider);
       return result;
@@ -89,6 +97,7 @@ class TeacherNotifier extends Notifier<AsyncValue<void>> {
     state = const AsyncValue.loading();
     try {
       final result = await _repo.updateTeacher(id, updates);
+      ref.read(trackingServiceProvider).track(TrackingEvent.teacherUpdated);
       state = const AsyncValue.data(null);
       ref.invalidate(teachersProvider);
       ref.invalidate(teacherByIdProvider(id));

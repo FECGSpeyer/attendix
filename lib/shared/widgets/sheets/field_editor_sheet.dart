@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../l10n/l10n.dart';
 
 /// A reusable BottomSheet for editing text/multiline fields.
 /// Shows a text field with title, optional hint, and save/cancel buttons.
@@ -16,8 +17,9 @@ class FieldEditorSheet extends StatefulWidget {
     this.validator,
     this.icon,
     this.iconColor,
-    this.confirmText = 'Speichern',
-    this.cancelText = 'Abbrechen',
+    this.confirmText,
+    this.cancelText,
+    this.textCapitalization,
   });
 
   final String title;
@@ -28,8 +30,12 @@ class FieldEditorSheet extends StatefulWidget {
   final String? Function(String?)? validator;
   final IconData? icon;
   final Color? iconColor;
-  final String confirmText;
-  final String cancelText;
+  final String? confirmText;
+  final String? cancelText;
+
+  /// Keyboard capitalization. Defaults to sentence case for free text
+  /// (Ionic `autocapitalize="sentences"`) and none for email/phone/number.
+  final TextCapitalization? textCapitalization;
 
   /// Shows the field editor sheet and returns the new value, or null if cancelled.
   static Future<String?> show(
@@ -42,8 +48,9 @@ class FieldEditorSheet extends StatefulWidget {
     String? Function(String?)? validator,
     IconData? icon,
     Color? iconColor,
-    String confirmText = 'Speichern',
-    String cancelText = 'Abbrechen',
+    String? confirmText,
+    String? cancelText,
+    TextCapitalization? textCapitalization,
   }) async {
     return showModalBottomSheet<String>(
       context: context,
@@ -60,6 +67,7 @@ class FieldEditorSheet extends StatefulWidget {
         iconColor: iconColor,
         confirmText: confirmText,
         cancelText: cancelText,
+        textCapitalization: textCapitalization,
       ),
     );
   }
@@ -146,6 +154,12 @@ class _FieldEditorSheetState extends State<FieldEditorSheet> {
               ),
               maxLines: widget.maxLines,
               keyboardType: widget.keyboardType,
+              textCapitalization: widget.textCapitalization ??
+                  (widget.keyboardType == null ||
+                          widget.keyboardType == TextInputType.text ||
+                          widget.keyboardType == TextInputType.multiline
+                      ? TextCapitalization.sentences
+                      : TextCapitalization.none),
               autofocus: true,
               onChanged: (_) {
                 if (_errorText != null) {
@@ -162,12 +176,12 @@ class _FieldEditorSheetState extends State<FieldEditorSheet> {
               children: [
                 TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: Text(widget.cancelText),
+                  child: Text(widget.cancelText ?? context.l10n.commonCancel),
                 ),
                 const SizedBox(width: AppDimensions.paddingS),
                 FilledButton(
                   onPressed: _submit,
-                  child: Text(widget.confirmText),
+                  child: Text(widget.confirmText ?? context.l10n.commonSave),
                 ),
               ],
             ),
