@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -12,7 +13,7 @@ import '../../../legal/presentation/widgets/legal_content_view.dart';
 import '../../data/auth_flow_service.dart';
 import '../widgets/otp_widgets.dart';
 import '../../../../l10n/l10n.dart';
-import '../widgets/ion_form_list.dart';
+import '../widgets/ion_buttons.dart';
 import '../widgets/ion_input_decoration.dart';
 import '../../../../shared/widgets/dialogs/ion_modal.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
@@ -106,8 +107,12 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
   /// Ionic `Utils.showToast(..., 'danger')` instead of an inline error box.
   void _showError(String message) => ToastHelper.showError(context, message);
 
+  late final TapGestureRecognizer _privacyTap = TapGestureRecognizer()
+    ..onTap = () => showLegalModal(context);
+
   @override
   void dispose() {
+    _privacyTap.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
@@ -294,237 +299,262 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    // Ionic register-modal.component.scss
-    // Screenshot audit (iPhone): intro dark grey 16 pt, hint medium.
+    final ios = useIosLook(context);
+    // register-modal.component.scss in rem (1rem = 17px on the iPhone).
+    final rem = ios ? 17.0 : 16.0;
     final introStyle = TextStyle(
-        fontSize: 16,
+        fontSize: 0.95 * rem,
         height: 1.4,
         color: theme.brightness == Brightness.dark
             ? const Color(0xFFD0D0D0)
-            : const Color(0xFF333333));
-    const hintStyle =
-        TextStyle(fontSize: 13.6, height: 1.4, color: Color(0xFF636469));
-    const privacyStyle = TextStyle(fontSize: 14.4, height: 1.4);
-    const actionGap = SizedBox(height: 4); // .actions gap: 0.25rem
+            // md: --ion-color-medium-shade as rendered (#57585c); iOS: the
+            // darker grey of the iPhone screenshot audit.
+            : (ios ? const Color(0xFF333333) : const Color(0xFF57585C)));
+    final hintStyle = TextStyle(
+        fontSize: 0.85 * rem, height: 1.4, color: const Color(0xFF636469));
+    final privacyStyle = TextStyle(fontSize: 0.9 * rem, height: 1.4);
+    final itemLine = theme.dividerTheme.color ?? theme.dividerColor;
+    // ion-list md: 8px padding above/below the items.
+    final listPad = ios ? 0.0 : 8.0;
+    final fieldMetrics = IonStackedItemMetrics.modern(ios: ios);
+    Widget field({
+      required String label,
+      required String placeholder,
+      required Widget Function(InputDecoration, TextStyle) builder,
+      Widget? trailing,
+    }) =>
+        IonStackedItem(
+          label: label,
+          placeholder: placeholder,
+          metrics: fieldMetrics,
+          indent: 16,
+          lineColor: itemLine,
+          focusHighlight: !ios,
+          trailing: trailing,
+          trailingSize: ios ? 29.75 : 40,
+          builder: builder,
+        );
+
     // Ionic register-modal: modal page on the plain background colour with
     // a close button on the right (no back arrow). Content starts at the top
-    // (ion-content + ion-padding), no vertical centring.
+    // (ion-content + ion-padding), no vertical centring, full width.
     return Scaffold(
       backgroundColor: theme.cardTheme.color ?? theme.colorScheme.surface,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: Text(context.l10n.registerModalTitle),
+        // IOS_LOOK: ion-buttons end → ✕ in a Liquid Glass circle on iOS.
         actions: [
-          IconButton(
-            icon: const Icon(Icons.close),
-            tooltip: context.l10n.commonClose,
-            onPressed: _isLoading ? null : _close,
-          ),
+          ToolbarButtonGroup(children: [
+            IconButton(
+              icon: const Icon(Icons.close),
+              tooltip: context.l10n.commonClose,
+              onPressed: _isLoading ? null : _close,
+            ),
+          ]),
         ],
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(AppDimensions.paddingM),
-          child: Align(
-            alignment: Alignment.topCenter,
-            child: ConstrainedBox(
-              constraints:
-                  const BoxConstraints(maxWidth: AppDimensions.maxFormWidth),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    // AUTH: intro (Ionic registerModal.welcome/intro/hint)
-                    Text(
-                      context.l10n.registerModalWelcome,
-                      style: const TextStyle(
-                          fontSize: 20, fontWeight: FontWeight.w500),
-                    ),
-                    const SizedBox(height: AppDimensions.paddingS),
-                    Text(context.l10n.registerModalIntro, style: introStyle),
-                    const SizedBox(height: AppDimensions.paddingS),
-                    Text(
-                      _mode == AuthMode.otp
-                          ? context.l10n.registerModalHintOtp
-                          : context.l10n.registerModalHintPassword,
-                      style: hintStyle,
-                    ),
-                    const SizedBox(height: AppDimensions.paddingM),
+          padding: const EdgeInsets.all(16), // ion-padding
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // AUTH: intro (Ionic registerModal.welcome/intro/hint)
+                Text(
+                  context.l10n.registerModalWelcome,
+                  style: TextStyle(
+                      fontSize: 1.25 * rem,
+                      height: 1.2,
+                      fontWeight: FontWeight.w500),
+                ),
+                SizedBox(height: 0.5 * rem),
+                Text(context.l10n.registerModalIntro, style: introStyle),
+                SizedBox(height: 0.5 * rem),
+                Text(
+                  _mode == AuthMode.otp
+                      ? context.l10n.registerModalHintOtp
+                      : context.l10n.registerModalHintPassword,
+                  style: hintStyle,
+                ),
+                // .hint margin-bottom .5rem + .intro margin-bottom 1rem
+                // (collapsed to the larger one)
+                SizedBox(height: rem),
 
-                    AuthModeSegment(
-                      mode: _mode,
-                      enabled: !_isLoading,
-                      onChanged: _setMode,
-                      // register-modal.component.scss: .1 track, 0.85rem
-                      trackAlpha: 0.1,
-                      fontSize: 13.6,
-                    ),
-                    const SizedBox(height: AppDimensions.paddingM),
+                AuthModeSegment(
+                  mode: _mode,
+                  enabled: !_isLoading,
+                  onChanged: _setMode,
+                  // register-modal.component.scss: .1 track, 0.85rem
+                  trackAlpha: 0.1,
+                  fontSize: 13.6,
+                ),
+                SizedBox(height: rem + listPad),
 
-                    // Email field
-                    TextFormField(
-                      controller: _emailController,
-                      keyboardType: TextInputType.emailAddress,
+                // ion-list lines="full": items directly below each other
+                field(
+                  label: context.l10n.loginEmail,
+                  placeholder: context.l10n.registerModalEmailPlaceholder,
+                  builder: (decoration, style) => TextFormField(
+                    controller: _emailController,
+                    style: style,
+                    decoration: decoration,
+                    keyboardType: TextInputType.emailAddress,
+                    textInputAction: TextInputAction.next,
+                    autocorrect: false,
+                    readOnly: _mode == AuthMode.otp && _otpSent,
+                    autofillHints: const [AutofillHints.email],
+                  ),
+                ),
+
+                if (_mode == AuthMode.password) ...[
+                  field(
+                    label: context.l10n.loginModePassword,
+                    placeholder: context.l10n.registerModalPasswordPlaceholder,
+                    trailing: IconButton(
+                      tooltip: context.l10n.loginShowPassword,
+                      color: AppColors.primary,
+                      padding: EdgeInsets.zero,
+                      iconSize: ios ? 22 : 20,
+                      icon: Icon(
+                        _obscurePassword
+                            ? Icons.visibility_outlined
+                            : Icons.visibility_off_outlined,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _obscurePassword = !_obscurePassword;
+                        });
+                      },
+                    ),
+                    builder: (decoration, style) => TextFormField(
+                      controller: _passwordController,
+                      style: style,
+                      decoration: decoration,
+                      obscureText: _obscurePassword,
                       textInputAction: TextInputAction.next,
-                      autocorrect: false,
-                      readOnly: _mode == AuthMode.otp && _otpSent,
-                      autofillHints: const [AutofillHints.email],
-                      style: ionStackedInputStyle,
-                      decoration: ionStackedInputDecoration(
-                        context.l10n.loginEmail,
-                        hint: context.l10n.registerModalEmailPlaceholder,
-                        labelSize: 13,
-                        labelColor: theme.colorScheme.onSurface,
-                        lineColor: theme.dividerTheme.color,
-                      ),
+                      autofillHints: const [AutofillHints.newPassword],
                     ),
-                    // ion-list lines="full": rows follow each other directly
-                    const SizedBox(height: 4),
+                  ),
+                  field(
+                    label: context.l10n.registerModalConfirmPassword,
+                    placeholder:
+                        context.l10n.registerModalConfirmPasswordPlaceholder,
+                    builder: (decoration, style) => TextFormField(
+                      controller: _confirmPasswordController,
+                      style: style,
+                      decoration: decoration,
+                      obscureText: _obscurePassword,
+                      textInputAction: TextInputAction.done,
+                      onFieldSubmitted: (_) {
+                        if (_canSubmit) _onSubmit();
+                      },
+                    ),
+                  ),
+                ] else if (_otpSent) ...[
+                  const SizedBox(height: AppDimensions.paddingM),
+                  OtpCodeField(
+                    controller: _otpController,
+                    enabled: !_isLoading,
+                    onCompleted: (_) => _verifyCode(),
+                  ),
+                ],
+                // ion-list padding-bottom (md) + margin-bottom 1rem
+                SizedBox(height: listPad + rem),
 
-                    if (_mode == AuthMode.password) ...[
-                      // Password field
-                      TextFormField(
-                        controller: _passwordController,
-                        obscureText: _obscurePassword,
-                        textInputAction: TextInputAction.next,
-                        autofillHints: const [AutofillHints.newPassword],
-                        style: ionStackedInputStyle,
-                        decoration: ionStackedInputDecoration(
-                          context.l10n.loginModePassword,
-                          hint: context.l10n.registerModalPasswordPlaceholder,
-                          labelSize: 13,
-                          labelColor: theme.colorScheme.onSurface,
-                          lineColor: theme.dividerTheme.color,
-                          suffixIcon: IconButton(
-                            tooltip: context.l10n.loginShowPassword,
-                            color: AppColors.primary,
-                            icon: Icon(
-                              _obscurePassword
-                                  ? Icons.visibility_outlined
-                                  : Icons.visibility_off_outlined,
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                _obscurePassword = !_obscurePassword;
-                              });
-                            },
-                          ),
+                // LEGAL_HELP: privacy consent (ion-item lines="none" with a
+                // start-slot ion-checkbox and a wrapping label)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: Row(
+                    children: [
+                      SizedBox(
+                        width: ios ? 23.4 : 18,
+                        height: ios ? 23.4 : 18,
+                        child: Checkbox(
+                          value: _privacyAccepted,
+                          // ion-checkbox: round in iOS mode
+                          shape: ios ? const CircleBorder() : null,
+                          materialTapTargetSize:
+                              MaterialTapTargetSize.shrinkWrap,
+                          visualDensity: VisualDensity.compact,
+                          semanticLabel: context.l10n.registerModalAcceptPrivacy,
+                          onChanged: (v) =>
+                              setState(() => _privacyAccepted = v ?? false),
                         ),
                       ),
-                      const SizedBox(height: 4),
-
-                      // Confirm password field
-                      TextFormField(
-                        controller: _confirmPasswordController,
-                        obscureText: _obscurePassword,
-                        textInputAction: TextInputAction.done,
-                        onFieldSubmitted: (_) {
-                          if (_canSubmit) _onSubmit();
-                        },
-                        style: ionStackedInputStyle,
-                        decoration: ionStackedInputDecoration(
-                          context.l10n.registerModalConfirmPassword,
-                          labelSize: 13,
-                          labelColor: theme.colorScheme.onSurface,
-                          lineColor: theme.dividerTheme.color,
-                          hint: context
-                              .l10n.registerModalConfirmPasswordPlaceholder,
-                        ),
-                      ),
-                      const SizedBox(height: AppDimensions.paddingM),
-                    ] else if (_otpSent) ...[
-                      OtpCodeField(
-                        controller: _otpController,
-                        enabled: !_isLoading,
-                        onCompleted: (_) => _verifyCode(),
-                      ),
-                      const SizedBox(height: AppDimensions.paddingM),
-                    ],
-
-                    // LEGAL_HELP: privacy consent checkbox
-                    CheckboxListTile(
-                      value: _privacyAccepted,
-                      // ion-checkbox: round in iOS mode
-                      checkboxShape: ionIsIos(context)
-                          ? const CircleBorder()
-                          : null,
-                      contentPadding: EdgeInsets.zero,
-                      controlAffinity: ListTileControlAffinity.leading,
-                      onChanged: (v) =>
-                          setState(() => _privacyAccepted = v ?? false),
-                      title: Text.rich(
-                        TextSpan(
-                          style: privacyStyle,
-                          children: [
+                      SizedBox(width: ios ? 12.75 : 12), // margin-right .75rem
+                      Expanded(
+                        child: GestureDetector(
+                          behavior: HitTestBehavior.opaque,
+                          onTap: () => setState(
+                              () => _privacyAccepted = !_privacyAccepted),
+                          child: Text.rich(
                             TextSpan(
-                                text:
-                                    '${context.l10n.registerModalPrivacyBefore} '),
-                            WidgetSpan(
-                              alignment: PlaceholderAlignment.baseline,
-                              baseline: TextBaseline.alphabetic,
-                              child: InkWell(
-                                onTap: () => showLegalModal(context),
-                                child: Text(
-                                  context.l10n.registerModalPrivacyLink,
-                                  style: privacyStyle.copyWith(
+                              style: privacyStyle.copyWith(
+                                  color: theme.colorScheme.onSurface),
+                              children: [
+                                TextSpan(
+                                    text:
+                                        '${context.l10n.registerModalPrivacyBefore} '),
+                                TextSpan(
+                                  text: context.l10n.registerModalPrivacyLink,
+                                  recognizer: _privacyTap,
+                                  style: const TextStyle(
                                     color: AppColors.primary,
                                     decoration: TextDecoration.underline,
                                     decorationColor: AppColors.primary,
                                   ),
                                 ),
-                              ),
+                                TextSpan(
+                                    text:
+                                        context.l10n.registerModalPrivacyAfter),
+                              ],
                             ),
-                            TextSpan(
-                                text: context.l10n.registerModalPrivacyAfter),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: AppDimensions.paddingM),
-
-                    ElevatedButton(
-                      onPressed: _canSubmit ? _onSubmit : null,
-                      child: _isLoading
-                          ? const SizedBox(
-                              height: 20,
-                              width: 20,
-                              child: AppSpinner(
-                                strokeWidth: 2,
-                                valueColor:
-                                    AlwaysStoppedAnimation<Color>(Colors.white),
-                              ),
-                            )
-                          : Text(_mode == AuthMode.password
-                              ? context.l10n.registerModalTitle
-                              : _otpSent
-                                  ? context.l10n.registerModalConfirm
-                                  : context.l10n.loginSendCode),
-                    ),
-                    if (_mode == AuthMode.otp && _otpSent) ...[
-                      actionGap,
-                      Center(
-                        child: ResendCodeButton(
-                          cooldown: _cooldown,
-                          enabled: !_isLoading,
-                          onResend: _requestCode,
+                          ),
                         ),
                       ),
                     ],
-                    actionGap,
-                    // Ionic: clear "Abbrechen" button closes the modal.
-                    TextButton(
-                      style: TextButton.styleFrom(
-                        textStyle: const TextStyle(fontSize: 17),
-                        minimumSize: const Size.fromHeight(44),
-                      ),
-                      onPressed: _isLoading ? null : _close,
-                      child: Text(context.l10n.commonCancel),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
+                // .privacy-item margin-bottom 1rem (= .actions margin-top)
+                // + ion-button margin-top 4
+                SizedBox(height: rem + 4),
+
+                // Ionic .actions: block buttons, gap .25rem + button margins
+                IonBlockButton(
+                  label: _mode == AuthMode.password
+                      ? (_isLoading
+                          ? context.l10n.registerModalSubmitting
+                          : context.l10n.registerModalTitle)
+                      : _otpSent
+                          ? context.l10n.registerModalConfirm
+                          : context.l10n.loginSendCode,
+                  loading: _isLoading,
+                  primaryWhenDisabled: false,
+                  onPressed: _canSubmit ? _onSubmit : null,
+                ),
+                if (_mode == AuthMode.otp && _otpSent) ...[
+                  const SizedBox(height: 12),
+                  Center(
+                    child: ResendCodeButton(
+                      cooldown: _cooldown,
+                      enabled: !_isLoading,
+                      onResend: _requestCode,
+                    ),
+                  ),
+                ],
+                const SizedBox(height: 12),
+                // Ionic: clear "Abbrechen" button closes the modal.
+                IonBlockButton(
+                  label: context.l10n.commonCancel,
+                  solid: false,
+                  onPressed: _isLoading ? null : _close,
+                ),
+              ],
             ),
           ),
         ),

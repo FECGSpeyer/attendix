@@ -171,14 +171,11 @@ class _VersionSection extends StatelessWidget {
         IonListHeader(header),
         IonInsetGroup(
           children: [
-            // ion-label without ion-text-wrap: one line, ellipsis
+            // AUTH_R5: the Ionic app (screenshot audit) shows every change
+            // in full, wrapped over several lines – no truncation.
             for (final change in version.changes)
               IonItem(
-                title: Text(
-                  change,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
+                title: Text(change, softWrap: true),
               ),
           ],
         ),

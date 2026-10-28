@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -20,7 +21,9 @@ import '../../../../core/providers/dashboard_providers.dart'; // DASHBOARD
 import '../../../../core/services/teams/teams_service.dart'; // TEAMS
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../widgets/ion_buttons.dart';
 import '../widgets/ion_input_decoration.dart'; // I18N_INFRA
+import '../widgets/reset_password_dialog.dart';
 
 /// Login page
 class LoginPage extends ConsumerStatefulWidget {
@@ -104,14 +107,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   /// e-mail prefilled, buttons Abbrechen / Zurücksetzen → db.resetPassword
   /// (success/danger toast).
   Future<void> _forgotPassword() async {
-    final email = await DialogHelper.showTextInput(
+    final email = await showResetPasswordDialog(
       context,
-      title: context.l10n.loginResetHeader,
-      initialValue: _emailController.text.trim(),
-      hint: context.l10n.loginEmailPlaceholder,
-      confirmText: context.l10n.loginResetConfirm,
-      cancelText: context.l10n.commonCancel,
-      keyboardType: TextInputType.emailAddress,
+      email: _emailController.text.trim(),
     );
     if (email == null || !mounted) return;
     final (ok, message) =
@@ -122,8 +120,15 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         : ToastHelper.showError(context, message);
   }
 
+  late final TapGestureRecognizer _demoTap = TapGestureRecognizer()
+    ..onTap = _startDemo;
+  late final TapGestureRecognizer _legalTap = TapGestureRecognizer()
+    ..onTap = () => showLegalModal(context);
+
   @override
   void dispose() {
+    _demoTap.dispose();
+    _legalTap.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     _otpController.dispose();
@@ -461,37 +466,17 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     return Role.fromValue(response['role'] as int? ?? 99);
   }
 
-  Widget _primaryButton(String label, VoidCallback onPressed) {
-    return ElevatedButton(
-      onPressed: _isLoading || !_canSubmit ? null : onPressed,
-      child: _isLoading
-          ? const SizedBox(
-              height: 20,
-              width: 20,
-              child: AppSpinner(
-                strokeWidth: 2,
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-              ),
-            )
-          : Text(label),
-    );
-  }
-
-  /// Ionic `ion-button size="small" fill="clear"` (13 px label).
-  static final ButtonStyle _smallClearButton = TextButton.styleFrom(
-    textStyle: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
-    padding: const EdgeInsets.symmetric(horizontal: 8),
-    minimumSize: const Size(0, 32),
-  );
-
-  /// Ionic login.page.scss: ion-item with stacked label and a primary-tinted
-  /// bottom line instead of a filled/outlined field.
-  InputDecoration _ionInputDecoration(String label, {Widget? suffixIcon}) =>
-      ionStackedInputDecoration(
-        label,
-        suffixIcon: suffixIcon,
-        labelColor: Theme.of(context).colorScheme.onSurface,
+  /// Ionic `ion-button color="primary" expand="block"` (disabled = teal at
+  /// opacity .5).
+  Widget _primaryButton(String label, VoidCallback onPressed) =>
+      IonBlockButton(
+        label: label,
+        loading: _isLoading,
+        onPressed: _isLoading || !_canSubmit ? null : onPressed,
       );
+
+  Widget _smallClearButton(String label, VoidCallback? onPressed) =>
+      IonSmallClearButton(label: label, onPressed: onPressed);
 
   /// Height of the password-mode form; the code mode keeps the card at this
   /// height like Ionic (the card does not shrink when switching modes).
@@ -511,10 +496,19 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final ios = useIosLook(context);
     final cardColor = Theme.of(context).cardTheme.color ??
         Theme.of(context).colorScheme.surface;
-    // Ionic .version: white ion-label (15 pt), wraps onto two lines.
-    const footerStyle = TextStyle(fontSize: 15, color: Colors.white);
+    // Ionic .version: white ion-label at the root font size (iOS 17pt via
+    // -apple-system-body, md 16px), 20 high lines, flowing text that wraps
+    // between words ("… | Impressum &" / "Datenschutz").
+    final footerStyle = TextStyle(
+      fontSize: ios ? 17 : 16,
+      height: 20 / (ios ? 17 : 16),
+      color: Colors.white,
+    );
+    // Ionic login.page.scss `.around` in rem: on the iPhone 1rem = 17px.
+    final rem = ios ? 17.0 : 16.0;
     _measurePasswordForm();
 
     // Ionic login: background photo, centered card (60 % / 95 % under
@@ -533,90 +527,99 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           // Ionic .around: absolutely centred in the full screen
           // (top/left 50 % + translate(-50 %, -50 %)), not below a safe area.
           LayoutBuilder(
-              builder: (context, constraints) {
-                final width = constraints.maxWidth;
-                final cardWidth =
-                    (width < 700 ? width * 0.95 : width * 0.6).clamp(0.0, 500.0);
-                return Center(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(vertical: 64),
-                    child: SizedBox(
-                      width: cardWidth,
-                      child: Stack(
-                        clipBehavior: Clip.none,
-                        alignment: Alignment.topCenter,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.fromLTRB(24, 28, 24, 45),
+            builder: (context, constraints) {
+              final width = constraints.maxWidth;
+              final cardWidth =
+                  (width < 700 ? width * 0.95 : width * 0.6).clamp(0.0, 500.0);
+              // Avatar: margin-top -5rem inside the 1.75rem card padding.
+              final avatarTop = 1.75 * rem - 5 * rem;
+              return Center(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(vertical: 64),
+                  child: SizedBox(
+                    width: cardWidth,
+                    child: Stack(
+                      clipBehavior: Clip.none,
+                      alignment: Alignment.topCenter,
+                      children: [
+                        Container(
+                          // padding 1.75rem 1.5rem 1.5rem + ion-col 5px; the
+                          // bottom also holds the last row's col/margins.
+                          padding: EdgeInsets.fromLTRB(
+                            1.5 * rem + 5,
+                            1.75 * rem,
+                            1.5 * rem + 5,
+                            ios ? 43.2 : 33.1,
+                          ),
+                          decoration: BoxDecoration(
+                            color: cardColor,
+                            borderRadius: BorderRadius.circular(1.25 * rem),
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Color(0x73000000),
+                                blurRadius: 60,
+                                spreadRadius: -15,
+                                offset: Offset(0, 20),
+                              ),
+                            ],
+                          ),
+                          child: Padding(
+                            // avatar 115 + margin-bottom 2rem + ion-col 5
+                            padding: EdgeInsets.only(
+                                top: avatarTop + 115 + 2 * rem + 5 - 1.75 * rem),
+                            child: ConstrainedBox(
+                              constraints: BoxConstraints(
+                                minHeight: _mode == AuthMode.password
+                                    ? 0
+                                    : (_passwordFormHeight ?? 0),
+                              ),
+                              child: KeyedSubtree(
+                                key: _formBoxKey,
+                                child: _buildForm(context),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          top: avatarTop,
+                          child: Container(
+                            width: 115,
+                            height: 115,
                             decoration: BoxDecoration(
+                              shape: BoxShape.circle,
                               color: cardColor,
-                              borderRadius: BorderRadius.circular(20),
                               boxShadow: const [
                                 BoxShadow(
-                                  color: Color(0x73000000),
-                                  blurRadius: 60,
-                                  spreadRadius: -15,
-                                  offset: Offset(0, 20),
+                                  color: Color(0x8F000000),
+                                  blurRadius: 38,
+                                  spreadRadius: -12,
+                                  offset: Offset(0, 16),
                                 ),
                               ],
                             ),
-                            child: Padding(
-                              // logo bottom (70 px below the card edge) +
-                              // ~70 px to the segment, as on the iPhone.
-                              padding: const EdgeInsets.only(top: 112),
-                              child: ConstrainedBox(
-                                constraints: BoxConstraints(
-                                  minHeight: _mode == AuthMode.password
-                                      ? 0
-                                      : (_passwordFormHeight ?? 0),
-                                ),
-                                child: KeyedSubtree(
-                                  key: _formBoxKey,
-                                  child: _buildForm(context),
-                                ),
+                            clipBehavior: Clip.antiAlias,
+                            child: Image.asset(
+                              'assets/images/logo.png',
+                              fit: BoxFit.cover,
+                              errorBuilder: (_, __, ___) => const Icon(
+                                Icons.people_outline,
+                                size: 64,
+                                color: AppColors.primary,
                               ),
                             ),
                           ),
-                          Positioned(
-                            top: -44.5,
-                            child: Container(
-                              width: 115,
-                              height: 115,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: cardColor,
-                                boxShadow: const [
-                                  BoxShadow(
-                                    color: Color(0x8F000000),
-                                    blurRadius: 38,
-                                    spreadRadius: -12,
-                                    offset: Offset(0, 16),
-                                  ),
-                                ],
-                              ),
-                              clipBehavior: Clip.antiAlias,
-                              child: Image.asset(
-                                'assets/images/logo.png',
-                                fit: BoxFit.cover,
-                                errorBuilder: (_, __, ___) => const Icon(
-                                  Icons.people_outline,
-                                  size: 64,
-                                  color: AppColors.primary,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
-                );
-              },
+                ),
+              );
+            },
           ),
           Positioned(
             left: 0,
             right: 0,
-            bottom: 16,
+            bottom: rem, // .version { bottom: 1rem }
             child: SafeArea(
               top: false,
               child: Column(
@@ -637,25 +640,32 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         label: Text(context.l10n.loginInstallUpdate),
                       ),
                     ),
-                  Wrap(
-                alignment: WrapAlignment.center,
-                children: [
-                  Text(context.l10n.loginVersion(AppConstants.appVersion),
-                      style: footerStyle),
-                  // Ionic always shows "Demo starten" (environment.demoMail).
-                  const Text(' | ', style: footerStyle),
-                  GestureDetector(
-                    onTap: _startDemo,
-                    child: Text(context.l10n.loginStartDemo, style: footerStyle),
+                  // Ionic always shows "Demo starten" (environment.demoMail);
+                  // LEGAL_HELP: Impressum & Datenschutz modal.
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: Text.rich(
+                      TextSpan(
+                        style: footerStyle,
+                        children: [
+                          TextSpan(
+                              text: context.l10n
+                                  .loginVersion(AppConstants.appVersion)),
+                          const TextSpan(text: ' | '),
+                          TextSpan(
+                            text: context.l10n.loginStartDemo,
+                            recognizer: _demoTap,
+                          ),
+                          const TextSpan(text: ' | '),
+                          TextSpan(
+                            text: context.l10n.loginLegal,
+                            recognizer: _legalTap,
+                          ),
+                        ],
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
                   ),
-                  // LEGAL_HELP: Impressum & Datenschutz modal
-                  const Text(' | ', style: footerStyle),
-                  GestureDetector(
-                    onTap: () => showLegalModal(context),
-                    child: Text(context.l10n.loginLegal, style: footerStyle),
-                  ),
-                ],
-              ),
                 ],
               ),
             ),
@@ -666,6 +676,12 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   }
 
   Widget _buildForm(BuildContext context) {
+    final ios = useIosLook(context);
+    // ion-row / ion-col gaps measured on the Ionic card (px).
+    const segmentToItem = 9.0; // .mode-col padding-bottom 4 + ion-col 5
+    final itemGap = ios ? 17.0 : 16.0; // .mailItem margin-bottom: 1rem
+    const itemsToLinks = 14.0; // ion-col 5 + ion-col 5 + button margin 4
+    const linksToButton = 18.0;
     return Form(
       key: _formKey,
       child: Column(
@@ -679,109 +695,112 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               style: const TextStyle(color: AppColors.medium),
             )
           else
-          // AUTH: mode segment (Passwort / Code per E-Mail)
-          AuthModeSegment(
-            mode: _mode,
-            enabled: !_isLoading,
-            onChanged: _setMode,
-          ),
-          const SizedBox(height: AppDimensions.paddingL),
+            // AUTH: mode segment (Passwort / Code per E-Mail)
+            AuthModeSegment(
+              mode: _mode,
+              enabled: !_isLoading,
+              onChanged: _setMode,
+            ),
+          const SizedBox(height: segmentToItem),
 
-          // Email field
-          TextFormField(
-            controller: _emailController,
-            style: ionStackedInputStyle,
-            keyboardType: TextInputType.emailAddress,
-            textInputAction: _mode == AuthMode.password
-                ? TextInputAction.next
-                : TextInputAction.go,
-            autocorrect: false,
-            readOnly: _mode == AuthMode.otp && _otpSent,
-            autofillHints: const [AutofillHints.email],
-            onFieldSubmitted: _mode == AuthMode.otp && !_otpSent
-                ? (_) => _requestCode()
-                : null,
-            decoration: _ionInputDecoration(context.l10n.loginEmail),
-            validator: (value) {
-              if (value == null || value.trim().isEmpty) {
-                return context.l10n.loginToastEnterEmail;
-              }
-              if (!isValidEmail(value)) {
-                return context.l10n.loginToastInvalidEmail;
-              }
-              return null;
-            },
-          ),
-          const SizedBox(height: AppDimensions.paddingM),
-
-          if (_mode == AuthMode.password) ...[
-            // Password field
-            TextFormField(
-              controller: _passwordController,
-              style: ionStackedInputStyle,
-              obscureText: _obscurePassword,
-              textInputAction: TextInputAction.done,
-              autofillHints: const [AutofillHints.password],
-              onFieldSubmitted: (_) => _onSubmit(),
-              decoration: _ionInputDecoration(
-                context.l10n.loginPassword,
-                suffixIcon: IconButton(
-                  tooltip: context.l10n.loginShowPassword,
-                  color: AppColors.primary,
-                  icon: Icon(
-                    _obscurePassword
-                        ? Icons.visibility_outlined
-                        : Icons.visibility_off_outlined,
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      _obscurePassword = !_obscurePassword;
-                    });
-                  },
-                ),
-              ),
+          // E-mail: legacy stacked ion-label + ion-input
+          IonStackedItem(
+            label: context.l10n.loginEmail,
+            metrics: IonStackedItemMetrics.legacy(ios: ios),
+            builder: (decoration, style) => TextFormField(
+              controller: _emailController,
+              style: style,
+              decoration: decoration,
+              keyboardType: TextInputType.emailAddress,
+              textInputAction: _mode == AuthMode.password
+                  ? TextInputAction.next
+                  : TextInputAction.go,
+              autocorrect: false,
+              readOnly: _mode == AuthMode.otp && _otpSent,
+              autofillHints: const [AutofillHints.email],
+              onFieldSubmitted: _mode == AuthMode.otp && !_otpSent
+                  ? (_) => _requestCode()
+                  : null,
               validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return context.l10n.loginFlutterEnterPassword;
+                if (value == null || value.trim().isEmpty) {
+                  return context.l10n.loginToastEnterEmail;
+                }
+                if (!isValidEmail(value)) {
+                  return context.l10n.loginToastInvalidEmail;
                 }
                 return null;
               },
             ),
-            const SizedBox(height: AppDimensions.paddingS),
+          ),
+
+          if (_mode == AuthMode.password) ...[
+            SizedBox(height: itemGap),
+            // Password: ion-input label labelPlacement="stacked" with the
+            // eye button in its end slot.
+            IonStackedItem(
+              label: context.l10n.loginPassword,
+              metrics: IonStackedItemMetrics.modern(ios: ios),
+              trailingSize: ios ? 29.75 : 40,
+              trailing: IconButton(
+                tooltip: context.l10n.loginShowPassword,
+                color: AppColors.primary,
+                padding: EdgeInsets.zero,
+                iconSize: ios ? 22 : 20,
+                icon: Icon(
+                  _obscurePassword
+                      ? Icons.visibility_outlined
+                      : Icons.visibility_off_outlined,
+                ),
+                onPressed: () {
+                  setState(() {
+                    _obscurePassword = !_obscurePassword;
+                  });
+                },
+              ),
+              builder: (decoration, style) => TextFormField(
+                controller: _passwordController,
+                style: style,
+                decoration: decoration,
+                obscureText: _obscurePassword,
+                textInputAction: TextInputAction.done,
+                autofillHints: const [AutofillHints.password],
+                onFieldSubmitted: (_) => _onSubmit(),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return context.l10n.loginFlutterEnterPassword;
+                  }
+                  return null;
+                },
+              ),
+            ),
+            const SizedBox(height: itemsToLinks),
 
             // Register + forgot password (Ionic: small clear buttons, left)
             Wrap(
+              spacing: 4.5, // inline whitespace between the two ion-buttons
               children: [
-                TextButton(
-                  style: _smallClearButton,
-                  onPressed: _openRegister,
-                  child: Text(context.l10n.loginRegister),
-                ),
-                TextButton(
-                  style: _smallClearButton,
-                  onPressed: _forgotPassword,
-                  child: Text(context.l10n.loginForgotPassword),
-                ),
+                _smallClearButton(context.l10n.loginRegister, _openRegister),
+                _smallClearButton(
+                    context.l10n.loginForgotPassword, _forgotPassword),
               ],
             ),
-            const SizedBox(height: AppDimensions.paddingS),
+            const SizedBox(height: linksToButton),
             _primaryButton(
                 _teamsLinkMode
                     ? context.l10n.loginLinkAndSignIn // TEAMS
                     : context.l10n.loginSignIn,
                 _login),
           ] else if (!_otpSent) ...[
+            const SizedBox(height: itemsToLinks),
             Align(
               alignment: Alignment.centerLeft,
-              child: TextButton(
-                style: _smallClearButton,
-                onPressed: _openRegister,
-                child: Text(context.l10n.loginRegister),
-              ),
+              child:
+                  _smallClearButton(context.l10n.loginRegister, _openRegister),
             ),
-            const SizedBox(height: AppDimensions.paddingS),
+            const SizedBox(height: linksToButton),
             _primaryButton(context.l10n.loginSendCode, _requestCode),
           ] else ...[
+            const SizedBox(height: AppDimensions.paddingM),
             OtpCodeField(
               controller: _otpController,
               enabled: !_isLoading,

@@ -40,13 +40,13 @@ void main() {
       await tester.pumpWidget(app(const LoginPage()));
       await tester.pumpAndSettle();
 
-      expect(button(tester, 'Anmelden').onPressed, isNull);
+      expect(button(tester, 'ANMELDEN').onPressed, isNull);
       await tester.enterText(find.byType(TextFormField).at(0), 'a@b.de');
       await tester.pump();
-      expect(button(tester, 'Anmelden').onPressed, isNull);
+      expect(button(tester, 'ANMELDEN').onPressed, isNull);
       await tester.enterText(find.byType(TextFormField).at(1), 'secret');
       await tester.pump();
-      expect(button(tester, 'Anmelden').onPressed, isNotNull);
+      expect(button(tester, 'ANMELDEN').onPressed, isNotNull);
     });
 
     testWidgets('"Code senden" is disabled until the e-mail is filled',
@@ -57,10 +57,10 @@ void main() {
       await tester.tap(find.text('Code per E-Mail'));
       await tester.pumpAndSettle();
 
-      expect(button(tester, 'Code senden').onPressed, isNull);
+      expect(button(tester, 'CODE SENDEN').onPressed, isNull);
       await tester.enterText(find.byType(TextFormField).first, 'a@b.de');
       await tester.pump();
-      expect(button(tester, 'Code senden').onPressed, isNotNull);
+      expect(button(tester, 'CODE SENDEN').onPressed, isNotNull);
     });
 
     testWidgets('"Passwort vergessen?" opens the reset alert with the e-mail',
@@ -69,18 +69,24 @@ void main() {
       await tester.pumpWidget(app(const LoginPage()));
       await tester.pumpAndSettle();
       await tester.enterText(find.byType(TextFormField).first, 'a@b.de');
-      await tester.tap(find.text('Passwort vergessen?'));
+      await tester.tap(find.text('PASSWORT VERGESSEN?'));
       await tester.pumpAndSettle();
 
+      // md alert: underlined input, uppercase text buttons, no filled button
       expect(find.byType(AlertDialog), findsOneWidget);
       expect(find.text('Passwort zurücksetzen'), findsOneWidget);
-      expect(find.text('Abbrechen'), findsOneWidget);
-      expect(find.text('Zurücksetzen'), findsOneWidget);
+      expect(find.text('ABBRECHEN'), findsOneWidget);
+      expect(find.text('ZURÜCKSETZEN'), findsOneWidget);
+      expect(
+          find.descendant(
+              of: find.byType(AlertDialog),
+              matching: find.byType(ElevatedButton)),
+          findsNothing);
       final field = tester.widget<TextField>(find.descendant(
           of: find.byType(AlertDialog), matching: find.byType(TextField)));
       expect(field.controller!.text, 'a@b.de');
 
-      await tester.tap(find.text('Abbrechen'));
+      await tester.tap(find.text('ABBRECHEN'));
       await tester.pumpAndSettle();
       expect(find.byType(AlertDialog), findsNothing);
     });
@@ -115,15 +121,15 @@ void main() {
       await tester.pumpAndSettle();
 
       final fields = find.byType(TextFormField);
-      expect(button(tester, 'Registrieren').onPressed, isNull);
+      expect(button(tester, 'REGISTRIEREN').onPressed, isNull);
       await tester.enterText(fields.at(0), 'a@b.de');
       await tester.enterText(fields.at(1), 'secret1');
       await tester.enterText(fields.at(2), 'secret1');
       await tester.pump();
-      expect(button(tester, 'Registrieren').onPressed, isNull);
+      expect(button(tester, 'REGISTRIEREN').onPressed, isNull);
       await tester.tap(find.byType(Checkbox));
       await tester.pump();
-      expect(button(tester, 'Registrieren').onPressed, isNotNull);
+      expect(button(tester, 'REGISTRIEREN').onPressed, isNotNull);
     });
 
     testWidgets('content is top-aligned on phones (no vertical centring)',
@@ -158,9 +164,17 @@ void main() {
       await tester.pumpAndSettle();
     }
 
-    testWidgets('desktop: centred 600x500 card', (tester) async {
+    testWidgets('desktop: centred 600x600 card from 768px height',
+        (tester) async {
       await open(tester, const Size(1440, 900));
       expect(find.byType(Dialog), findsOneWidget);
+      final size = tester.getSize(find.descendant(
+          of: find.byType(Dialog), matching: find.byType(Scaffold)));
+      expect(size, const Size(600, 600));
+    });
+
+    testWidgets('desktop: 600x500 card below 768px height', (tester) async {
+      await open(tester, const Size(1280, 720));
       final size = tester.getSize(find.descendant(
           of: find.byType(Dialog), matching: find.byType(Scaffold)));
       expect(size, const Size(600, 500));
