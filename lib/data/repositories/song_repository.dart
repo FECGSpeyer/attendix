@@ -7,7 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../core/services/attendance_detail_cache.dart'
-    show isOfflineFallbackError; // SOL_FIX7
+    show isAuthOrPermissionError, isOfflineFallbackError, purgeOfflineReadCachesFor; // SOL_FIX7, SOL_FIX8
 import '../../core/services/offline_queue_service.dart'
     show connectivityCheckProvider;
 import '../models/song/song.dart';
@@ -134,6 +134,11 @@ class SongRepository extends BaseRepository with TenantAwareRepository {
       unawaited(_writeOfflineSongs(cacheKey, rawRows));
       return songs;
     } catch (e, stack) {
+      // SOL_FIX8: access revoked -> delete the user's offline copies of this
+      // (song) tenant before the error is reported.
+      if (cacheKey != null && isAuthOrPermissionError(e)) {
+        await _purgeOfflineSongs(cacheKey, tenantId);
+      }
       // SOL_FIX7: only network failures fall back to the offline copy.
       final cached =
           isOfflineFallbackError(e) ? await _readOfflineSongs(cacheKey) : null;
@@ -154,6 +159,19 @@ class SongRepository extends BaseRepository with TenantAwareRepository {
           .toList();
     } catch (_) {
       return null;
+    }
+  }
+
+  /// SOL_FIX8: removes the songs copy [key] and every other offline read
+  /// cache entry of the signed-in user in [tenantId].
+  Future<void> _purgeOfflineSongs(String key, int tenantId) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(key);
+      final userId = supabase.auth.currentUser?.id;
+      if (userId != null) await purgeOfflineReadCachesFor(userId, tenantId);
+    } catch (_) {
+      // Best effort.
     }
   }
 

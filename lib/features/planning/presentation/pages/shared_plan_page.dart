@@ -52,6 +52,18 @@ class _SharedPlanPageState extends ConsumerState<SharedPlanPage> {
   RealtimeChannel? _channel;
   Timer? _liveCheck;
 
+  /// SOL_FIX8: readers of a read-only link (no edit key) get no realtime
+  /// channel — `postgres_changes` payloads carry the full row including the
+  /// edit keys. Instead the page re-fetches the whitelisted public columns
+  /// every [refreshInterval] (like org_plan_public_page) and applies the
+  /// same fields Ionic's realtime handlers update (Termin: plan +
+  /// extra_plans; ad-hoc: title, time, end, fields). Paused while the app
+  /// is in the background.
+  static const Duration refreshInterval = Duration(seconds: 15);
+  Timer? _refreshTimer;
+  bool _refreshing = false;
+  AppLifecycleListener? _lifecycle;
+
   PublicPlanRepository get _repo => ref.read(publicPlanRepositoryProvider);
 
   @override
@@ -67,6 +79,8 @@ class _SharedPlanPageState extends ConsumerState<SharedPlanPage> {
   @override
   void dispose() {
     _liveCheck?.cancel();
+    _stopRefresh();
+    _lifecycle?.dispose();
     final channel = _channel;
     if (channel != null) _repo.unwatch(channel);
     super.dispose();
@@ -94,6 +108,64 @@ class _SharedPlanPageState extends ConsumerState<SharedPlanPage> {
     setState(() {
       _loading = false;
       _live = !_notFound && _isLiveNow();
+    });
+    if (!_notFound && !_editMode) {
+      _startRefresh();
+      _lifecycle = AppLifecycleListener(
+        onHide: _stopRefresh,
+        onShow: () {
+          if (!mounted || _notFound) return;
+          _refresh();
+          _startRefresh();
+        },
+      );
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Read-only refresh (SOL_FIX8)
+  // ---------------------------------------------------------------------------
+
+  void _startRefresh() {
+    _refreshTimer?.cancel();
+    _refreshTimer = Timer.periodic(refreshInterval, (_) => _refresh());
+  }
+
+  void _stopRefresh() {
+    _refreshTimer?.cancel();
+    _refreshTimer = null;
+  }
+
+  Future<void> _refresh() async {
+    final key = widget.shareKey;
+    if (_refreshing || !mounted || _editMode || key == null) return;
+    _refreshing = true;
+    try {
+      final id = widget.attendanceId;
+      if (id != null) {
+        final fresh = await _repo.getSharedAttendancePlan(id, key);
+        if (!mounted) return;
+        if (fresh == null || fresh.plan == null) return _onLinkGone();
+        _onAttendanceUpdate(fresh.toJson());
+      } else {
+        final fresh = await _repo.getSharedPlan(key);
+        if (!mounted) return;
+        if (fresh == null) return _onLinkGone();
+        _onSharedUpdate(fresh.toJson());
+      }
+    } catch (_) {
+      // Network hiccup: keep showing the last state, retry on the next tick.
+    } finally {
+      _refreshing = false;
+    }
+  }
+
+  /// The plan was deleted or the share link revoked: stop showing it.
+  void _onLinkGone() {
+    _stopRefresh();
+    setState(() {
+      _notFound = true;
+      _live = false;
     });
   }
 

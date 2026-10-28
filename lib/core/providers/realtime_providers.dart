@@ -5,7 +5,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../config/supabase_config.dart';
 import '../services/attendance_list_cache.dart';
-import '../services/attendance_detail_cache.dart' show isOfflineFallbackError; // SOL_FIX7
+import '../services/attendance_detail_cache.dart'
+    show isAuthOrPermissionError, isOfflineFallbackError, purgeOfflineReadCachesFor; // SOL_FIX7, SOL_FIX8
 import '../services/offline_queue_service.dart'
     show connectivityCheckProvider, offlineQueueUserIdProvider;
 import '../utils/attendance_percentage_utils.dart';
@@ -176,6 +177,10 @@ final realtimeAttendanceListProvider = FutureProvider.autoDispose<List<Attendanc
   } catch (e) {
     // SOL_FIX7: only network failures fall back to the offline copy;
     // auth/permission errors (revoked access) are shown.
+    // SOL_FIX8: and the user's offline copies of this tenant are deleted.
+    if (cacheUserId != null && isAuthOrPermissionError(e)) {
+      await purgeOfflineReadCachesFor(cacheUserId, tenantId);
+    }
     if (cacheUserId == null || !isOfflineFallbackError(e)) rethrow;
     final cached = await cache.load(cacheUserId, tenantId);
     if (cached != null) return cached;
