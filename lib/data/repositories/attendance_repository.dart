@@ -1,4 +1,7 @@
+import 'dart:typed_data';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' show FileOptions;
 
 import '../../core/constants/enums.dart';
 import '../../core/utils/duty_utils.dart';
@@ -838,6 +841,108 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
       rethrow;
     }
   }
+
+  // ATT_DETAIL: ad-hoc reminder, description attachment
+
+  /// Throws when [attendanceId] does not belong to the current tenant.
+  Future<void> _assertAttendanceInTenant(int attendanceId, String operation) async {
+    final check = await supabase
+        .from('attendance')
+        .select('id')
+        .eq('id', attendanceId)
+        .eq('tenantId', currentTenantId)
+        .maybeSingle();
+    if (check == null) {
+      throw RepositoryException(
+        message: 'Attendance not found or belongs to different tenant',
+        operation: operation,
+      );
+    }
+  }
+
+  /// Sends an ad-hoc reminder (push + e-mail) through the
+  /// `send-ad-hoc-reminder` Edge Function (Ionic sendAdHocReminder).
+  /// [playerAppId] targets one person, [playerAppIds] a subset
+  /// ("nur Personen ohne Rückmeldung"); both null = everyone in the Termin.
+  Future<void> sendAdHocReminder({
+    required int attendanceId,
+    String? title,
+    String? message,
+    String? playerAppId,
+    List<String>? playerAppIds,
+  }) async {
+    try {
+      await _assertAttendanceInTenant(attendanceId, 'sendAdHocReminder');
+      await supabase.functions.invoke('send-ad-hoc-reminder', body: {
+        'attendanceId': attendanceId,
+        'tenantId': currentTenantId,
+        if (title != null && title.isNotEmpty) 'title': title,
+        if (message != null && message.isNotEmpty) 'message': message,
+        if (playerAppId != null && playerAppId.isNotEmpty) 'playerAppId': playerAppId,
+        if (playerAppIds != null) 'playerAppIds': playerAppIds,
+      });
+    } catch (e, stack) {
+      handleError(e, stack, 'sendAdHocReminder');
+      rethrow;
+    }
+  }
+
+  /// Storage path of the description attachment (Ionic onAttachmentSelect).
+  static String attachmentPath(int attendanceId, String fileName) {
+    final safeName = fileName.replaceAll(RegExp(r'[^a-zA-Z0-9._-]'), '_');
+    return '$attendanceId/attachment/$safeName';
+  }
+
+  /// Uploads the single attachment of a Termin to the public `attendances`
+  /// bucket and stores url + name on the attendance row.
+  Future<({String url, String name})> uploadAttachment(
+    int attendanceId,
+    Uint8List bytes,
+    String fileName,
+  ) async {
+    try {
+      await _assertAttendanceInTenant(attendanceId, 'uploadAttachment');
+      final path = attachmentPath(attendanceId, fileName);
+      await supabase.storage
+          .from('attendances')
+          .uploadBinary(path, bytes, fileOptions: const FileOptions(upsert: true));
+      final url = supabase.storage.from('attendances').getPublicUrl(path);
+      await supabase
+          .from('attendance')
+          .update({'attachment_url': url, 'attachment_name': fileName})
+          .eq('id', attendanceId)
+          .eq('tenantId', currentTenantId);
+      return (url: url, name: fileName);
+    } catch (e, stack) {
+      handleError(e, stack, 'uploadAttachment');
+      rethrow;
+    }
+  }
+
+  /// Removes the attachment file and clears url + name on the attendance row.
+  Future<void> removeAttachment(int attendanceId, String? fileName) async {
+    try {
+      await _assertAttendanceInTenant(attendanceId, 'removeAttachment');
+      if (fileName != null && fileName.isNotEmpty) {
+        try {
+          await supabase.storage
+              .from('attendances')
+              .remove([attachmentPath(attendanceId, fileName)]);
+        } catch (_) {
+          // File may already be gone – still clear the reference.
+        }
+      }
+      await supabase
+          .from('attendance')
+          .update({'attachment_url': null, 'attachment_name': null})
+          .eq('id', attendanceId)
+          .eq('tenantId', currentTenantId);
+    } catch (e, stack) {
+      handleError(e, stack, 'removeAttachment');
+      rethrow;
+    }
+  }
+  // END ATT_DETAIL
 
   AttendanceStatus _parseStatus(dynamic status) {
     if (status == null) return AttendanceStatus.neutral;

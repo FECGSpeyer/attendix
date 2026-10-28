@@ -27,6 +27,7 @@ class GeneralInfoAccordion extends StatefulWidget {
     this.onChooseFilesFolder,
     this.onRemoveFilesFolder,
     this.onOpenFilesFolder,
+    this.onEditDescription,
   });
 
   final Attendance attendance;
@@ -51,6 +52,9 @@ class GeneralInfoAccordion extends StatefulWidget {
   final VoidCallback? onChooseFilesFolder;
   final VoidCallback? onRemoveFilesFolder;
   final VoidCallback? onOpenFilesFolder;
+
+  /// ATT_DETAIL: "Beschreibung & Anhang bearbeiten"
+  final VoidCallback? onEditDescription;
 
   @override
   State<GeneralInfoAccordion> createState() => _GeneralInfoAccordionState();
@@ -330,6 +334,17 @@ class _GeneralInfoAccordionState extends State<GeneralInfoAccordion> {
           ],
 
           const Divider(),
+
+          // ATT_DETAIL: description & attachment editor
+          if (widget.onEditDescription != null)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingS),
+              child: TextButton.icon(
+                onPressed: widget.onEditDescription,
+                icon: const Icon(Icons.description_outlined),
+                label: const Text('Beschreibung & Anhang bearbeiten'),
+              ),
+            ),
 
           // Export button
           Padding(

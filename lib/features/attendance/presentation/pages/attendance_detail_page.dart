@@ -12,6 +12,16 @@ import '../../../../core/config/supabase_config.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/attendance_detail_providers.dart';
+import '../../../../core/providers/church_providers.dart'; // ATT_DETAIL
+import '../../../../core/providers/group_providers.dart'; // ATT_DETAIL
+import '../../../../core/providers/profile_providers.dart'; // ATT_DETAIL
+import '../../../../core/utils/shift_utils.dart'; // ATT_DETAIL
+import '../../../../shared/widgets/sheets/church_overview_sheet.dart'; // ATT_DETAIL
+import '../widgets/attendance_detail/ad_hoc_reminder_sheet.dart'; // ATT_DETAIL
+import '../widgets/attendance_detail/add_persons_sheet.dart'; // ATT_DETAIL
+import '../widgets/attendance_detail/attendance_view_options.dart'; // ATT_DETAIL
+import '../widgets/attendance_detail/description_attachment_sheet.dart'; // ATT_DETAIL
+import 'package:shared_preferences/shared_preferences.dart'; // ATT_DETAIL
 import '../../../../core/providers/attendance_providers.dart';
 import '../../../../core/providers/conductor_providers.dart';
 import '../../../../core/providers/debug_providers.dart'; // ORG_PLANS
@@ -27,6 +37,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/attendance/attendance.dart';
+import '../../../../data/models/church/church.dart'; // ATT_DETAIL
 import '../../../../data/models/person/person.dart';
 import '../../../../data/models/song/song.dart';
 import '../../../../shared/widgets/event_list/event_list_widgets.dart';
@@ -86,6 +97,14 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
   List<SongHistoryEntry> _songEntries = [];
   bool _isSavingSongs = false;
 
+  // ATT_DETAIL: view options (Ionic statusFilter / extraFieldSort / showAvatars / showRegFields)
+  Set<AttendanceStatus> _statusFilter = {};
+  AttendanceSort _sort = const AttendanceSort();
+  bool _showAvatars = false;
+  bool _showRegFields = true;
+  bool _deletedHandled = false;
+  bool _isSendingReminder = false;
+
   @override
   void initState() {
     super.initState();
@@ -98,6 +117,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       _setupProviderListener();
       _loadChecklistFromAttendance();
       _loadSongEntries();
+      _loadViewPrefs(); // ATT_DETAIL
     });
   }
 
@@ -257,6 +277,13 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
           ),
           callback: _onPersonAttendanceChange,
         )
+        // ATT_DETAIL: Termin deleted by another user
+        .onPostgresChanges(
+          event: PostgresChangeEvent.delete,
+          schema: 'public',
+          table: 'attendance',
+          callback: _onAttendanceDeleted,
+        )
         .subscribe();
   }
 
@@ -372,20 +399,29 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
         appBar: AppBar(title: const Text('Anwesenheit')),
         body: const Center(child: CircularProgressIndicator()),
       ),
+      // ATT_DETAIL: Ionic "loadFailedReopen" / "Neu laden"
       error: (error, stack) => Scaffold(
         appBar: AppBar(title: const Text('Anwesenheit')),
         body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.error_outline, size: 64, color: AppColors.danger),
-              const SizedBox(height: AppDimensions.paddingM),
-              Text('Fehler: $error'),
-              ElevatedButton(
-                onPressed: () => ref.refresh(attendanceDetailProvider(widget.attendanceId)),
-                child: const Text('Erneut versuchen'),
-              ),
-            ],
+          child: Padding(
+            padding: const EdgeInsets.all(AppDimensions.paddingL),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.error_outline, size: 64, color: AppColors.danger),
+                const SizedBox(height: AppDimensions.paddingM),
+                const Text(
+                  'Anwesenheit konnte nicht geladen werden — bitte erneut öffnen.',
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: AppDimensions.paddingM),
+                OutlinedButton.icon(
+                  onPressed: () => ref.invalidate(attendanceDetailProvider(widget.attendanceId)),
+                  icon: const Icon(Icons.refresh),
+                  label: const Text('Neu laden'),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -427,7 +463,17 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
               ),
               PopupMenuButton<String>(
                 onSelected: _handleMenuAction,
+                // ATT_DETAIL: badge with the number of active status filters
+                icon: Badge(
+                  isLabelVisible: _statusFilter.isNotEmpty,
+                  label: Text('${_statusFilter.length}'),
+                  child: Icon(
+                    Icons.more_vert,
+                    color: _statusFilter.isNotEmpty ? AppColors.primary : null,
+                  ),
+                ),
                 itemBuilder: (context) => [
+                  ..._buildAttDetailMenuItems(attendance),
                   const PopupMenuItem(
                     value: 'stats',
                     child: ListTile(
@@ -467,7 +513,8 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
           ),
           body: personsAsync.when(
             loading: () => const Center(child: CircularProgressIndicator()),
-            error: (error, stack) => Center(child: Text('Fehler: $error')),
+            // ATT_DETAIL: "Neu laden" banner
+            error: (error, stack) => ListView(children: [_buildLoadFailedBanner()]),
             data: (persons) {
               if (!_checklistLoaded && attendance.checklist != null) {
                 WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -485,9 +532,26 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
               final canViewChecklist = ref.watch(canViewAttendanceChecklistProvider);
               final canViewNotes = ref.watch(canViewAttendanceNotesProvider);
               final helperGroupId = ref.watch(helperGroupFilterProvider).valueOrNull;
-              final visiblePersons = helperGroupId == null
-                  ? persons
-                  : persons.where((p) => p.instrument == helperGroupId).toList();
+              final groupPersons = helperGroupId == null
+                  ? _personsInAttendance(persons)
+                  : _personsInAttendance(persons).where((p) => p.instrument == helperGroupId).toList();
+              // ATT_DETAIL: status filter + extra field sort
+              final sortFields = _sortableFields(attendanceType);
+              final sortField = sortFields.where((f) => f.id == _sort.fieldId).firstOrNull;
+              final churches = ref.watch(churchesProvider).valueOrNull ?? const [];
+              final statusFiltered = filterPersonsByStatus(groupPersons, _localStatuses, _statusFilter);
+              final visiblePersons = sortField == null
+                  ? statusFiltered
+                  : sortPersonsByField(statusFiltered, _sort, sortField, _registrationAnswers, churches);
+              final sortLines = sortField == null
+                  ? null
+                  : {
+                      for (final p in visiblePersons)
+                        if (p.id != null)
+                          p.id!: '${sortDisplayValueOf(p, _sort, sortField, _registrationAnswers, churches)}'
+                              ' · ${p.groupName ?? 'Keine Gruppe'}',
+                    };
+              final isHelper = ref.watch(effectiveRoleProvider).isHelperRole;
               final visibleNotes = canViewNotes
                   ? _personNotes
                   : {
@@ -565,6 +629,9 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                           onOpenFilesFolder: attendance.filesFolder?.isNotEmpty == true
                               ? () => openFilesFolderRoute(context, attendance.filesFolder!)
                               : null,
+                          // ATT_DETAIL
+                          onEditDescription: () =>
+                              showDescriptionAttachmentSheet(context, attendance: attendance),
                         ),
 
                         if (hasChecklist)
@@ -620,6 +687,10 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                     ),
                   ),
 
+                  // ATT_DETAIL: no persons could be loaded
+                  if (persons.isEmpty && helperGroupId == null)
+                    SliverToBoxAdapter(child: _buildLoadFailedBanner()),
+
                   SliverToBoxAdapter(
                     child: AttendanceGrid(
                       persons: visiblePersons,
@@ -641,7 +712,20 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                       },
                       onShowModifierInfo: _showModifierInfo,
                       onRemoveFromAttendance: _removePersonFromAttendance,
-                      registrationSummaries: _registrationSummaries(attendanceType),
+                      registrationSummaries:
+                          _showRegFields ? _registrationSummaries(attendanceType) : const {},
+                      // ATT_DETAIL
+                      showAvatars: _showAvatars,
+                      extraLines: sortLines,
+                      showModifierInfo: !isHelper,
+                      onSendReminder: (personId) {
+                        final appId = visiblePersons.where((p) => p.id == personId).firstOrNull?.appId;
+                        if (appId == null || appId.isEmpty) {
+                          ToastHelper.showWarning(context, 'Die Person hat keinen Account');
+                          return;
+                        }
+                        _sendAdHocReminder(playerAppId: appId);
+                      },
                       onEditRegistrationFields: (attendanceType?.registrationFields?.isNotEmpty ?? false)
                           ? (personId) => _editRegistrationFields(personId, attendanceType!)
                           : null,
@@ -652,7 +736,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
             },
           ),
           bottomNavigationBar: AttendanceStatusBar(
-            persons: personsAsync.valueOrNull ?? [],
+            persons: _personsInAttendance(personsAsync.valueOrNull ?? []),
             localStatuses: _localStatuses,
             availableStatuses: availableStatuses,
           ),
@@ -712,31 +796,25 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     final changedBy = _changedBy[personId];
     final changedAt = _changedAt[personId];
 
-    String message;
+    // ATT_DETAIL: Ionic getModifierInfo (toast when unchanged, alert otherwise)
     if (changedBy == null) {
-      message = 'Der Status wurde bisher nicht verändert.';
-    } else {
-      final persons = ref.read(allPersonsForAttendanceProvider).valueOrNull ?? [];
-      final modifier = persons.firstWhere(
-        (p) => p.appId == changedBy,
-        orElse: () => Person(firstName: 'Unbekannt', lastName: ''),
-      );
-
-      final modifierName = modifier.fullName.isNotEmpty ? modifier.fullName : 'Unbekannt';
-      message = 'Zuletzt geändert von $modifierName';
-
-      if (changedAt != null) {
-        final date = DateTime.tryParse(changedAt);
-        if (date != null) {
-          message += '\nam ${DateFormat('dd.MM.yyyy').format(date)} um ${DateFormat('HH:mm').format(date)} Uhr';
-        }
-      }
+      ToastHelper.showWarning(context, 'Der Status wurde bisher nicht verändert');
+      return;
+    }
+    final persons = ref.read(allPersonsForAttendanceProvider).valueOrNull ?? [];
+    final modifier = persons.where((p) => p.appId == changedBy).firstOrNull;
+    final modifierName = modifier != null && modifier.fullName.isNotEmpty
+        ? modifier.fullName
+        : "'Unbekannt'";
+    var message = 'Zuletzt geändert von $modifierName';
+    final date = changedAt == null ? null : DateTime.tryParse(changedAt)?.toLocal();
+    if (date != null) {
+      message += ' am ${DateFormat('dd.MM.yyyy').format(date)} um ${DateFormat('HH:mm').format(date)} Uhr';
     }
 
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Info'),
         content: Text(message),
         actions: [
           TextButton(
@@ -762,8 +840,514 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       case 'export_excel':
         _exportAttendanceToExcel();
         break;
+      // ATT_DETAIL
+      case 'status_filter':
+        _openStatusFilter();
+        break;
+      case 'sort':
+        _openSortPicker();
+        break;
+      case 'view':
+        _openViewOptions();
+        break;
+      case 'add_person':
+        _openAddPersons();
+        break;
+      case 'start_checklist':
+        _addChecklistItem();
+        break;
+      case 'reset_checklist':
+        _restoreChecklist(confirm: false);
+        break;
+      case 'church':
+        _showChurchOverview();
+        break;
+      case 'reminder':
+        _sendAdHocReminder();
+        break;
     }
   }
+
+  // ============== ATT_DETAIL ==============
+
+  static const _prefShowAvatars = 'attendanceShowAvatars';
+  static const _prefShowRegFields = 'attendanceShowRegFields';
+  String get _prefSortField => 'attSortField${widget.attendanceId}';
+  String get _prefSortLevel => 'attSortLevel${widget.attendanceId}';
+  String get _prefSortDir => 'attSortDir${widget.attendanceId}';
+
+  Future<void> _loadViewPrefs() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final field = prefs.getString(_prefSortField);
+      final level = prefs.getString(_prefSortLevel);
+      if (!mounted) return;
+      setState(() {
+        _showAvatars = prefs.getBool(_prefShowAvatars) ?? false;
+        _showRegFields = prefs.getBool(_prefShowRegFields) ?? true;
+        if (field != null && field.isNotEmpty) {
+          _sort = AttendanceSort(
+            fieldId: field,
+            level: level == 'registration' ? SortFieldLevel.registration : SortFieldLevel.person,
+            ascending: prefs.getString(_prefSortDir) != 'desc',
+          );
+        }
+      });
+    } catch (_) {
+      // Preferences unavailable (e.g. private mode) – keep defaults.
+    }
+  }
+
+  Future<void> _savePref(Future<void> Function(SharedPreferences prefs) write) async {
+    try {
+      await write(await SharedPreferences.getInstance());
+    } catch (_) {}
+  }
+
+  /// Persons that are part of this Termin (have a person_attendances row).
+  /// Before the rows are loaded all candidates are shown.
+  List<Person> _personsInAttendance(List<Person> persons) {
+    final rows = ref.read(filteredPersonAttendancesForAttendanceProvider(widget.attendanceId)).valueOrNull;
+    if (rows == null || rows.isEmpty) return persons;
+    final ids = _personAttendanceIds.keys.toSet();
+    return persons.where((p) => ids.contains(p.id)).toList();
+  }
+
+  List<SortableField> _sortableFields(AttendanceType? type) {
+    final personFields = ref.watch(personExtraFieldsProvider).valueOrNull ?? const [];
+    return sortableFields(personFields, type?.registrationFields ?? const []);
+  }
+
+  /// Id of the `bfecg_church` extra field, if the tenant has one.
+  String? _churchFieldId() {
+    final fields = ref.read(personExtraFieldsProvider).valueOrNull ?? const [];
+    return fields.where((f) => f.type == 'bfecg_church').firstOrNull?.id;
+  }
+
+  List<PopupMenuEntry<String>> _buildAttDetailMenuItems(Attendance attendance) {
+    final role = ref.read(effectiveRoleProvider);
+    final isHelper = role.isHelperRole;
+    final type = ref.read(attendanceTypeForAttendanceProvider(widget.attendanceId)).valueOrNull;
+    final sortFields = sortableFields(
+      ref.read(personExtraFieldsProvider).valueOrNull ?? const [],
+      type?.registrationFields ?? const [],
+    );
+    final hasChurch = _churchFieldId() != null;
+    final checklistEmpty = _localChecklist.isEmpty;
+    final canRestore = (type?.checklist?.isNotEmpty ?? false) && checklistEmpty;
+    final activeSort = sortFields.where((f) => f.id == _sort.fieldId).firstOrNull;
+
+    PopupMenuItem<String> item(String value, IconData icon, String title,
+            {String? subtitle, bool highlight = false}) =>
+        PopupMenuItem<String>(
+          value: value,
+          child: ListTile(
+            leading: Icon(icon, color: highlight ? AppColors.primary : null),
+            title: Text(title, style: TextStyle(color: highlight ? AppColors.primary : null)),
+            subtitle: subtitle == null ? null : Text(subtitle),
+            contentPadding: EdgeInsets.zero,
+          ),
+        );
+
+    return [
+      item('status_filter', Icons.filter_list, 'Status-Filter',
+          subtitle: _statusFilter.isEmpty ? null : '${_statusFilter.length} aktiv',
+          highlight: _statusFilter.isNotEmpty),
+      if (sortFields.isNotEmpty)
+        item('sort', Icons.swap_vert, 'Sortierung',
+            subtitle: activeSort == null ? null : '${activeSort.name} ${_sort.ascending ? '↑' : '↓'}'),
+      item('view', Icons.visibility_outlined, 'Ansicht'),
+      if (!isHelper) item('add_person', Icons.person_add_alt_1_outlined, 'Person hinzufügen'),
+      if (!isHelper && checklistEmpty)
+        item('start_checklist', Icons.check_box_outlined, 'Checkliste starten'),
+      if (!isHelper && canRestore)
+        item('reset_checklist', Icons.refresh, 'Checkliste zurücksetzen'),
+      if (hasChurch) item('church', Icons.business_outlined, 'Gemeinde-Übersicht'),
+      if (!isHelper) item('reminder', Icons.notifications_outlined, 'Erinnerung versenden'),
+      const PopupMenuDivider(),
+    ];
+  }
+
+  /// Status filter sheet (Ionic toggleStatusFilter / clearStatusFilter).
+  Future<void> _openStatusFilter() async {
+    final type = ref.read(attendanceTypeForAttendanceProvider(widget.attendanceId)).valueOrNull;
+    final available = (type?.availableStatuses?.isNotEmpty ?? false)
+        ? type!.availableStatuses!
+        : AttendanceStatus.values;
+    final options = <(AttendanceStatus, String)>[
+      if (available.contains(AttendanceStatus.neutral)) (AttendanceStatus.neutral, 'Neutral'),
+      if (available.contains(AttendanceStatus.present)) (AttendanceStatus.present, 'Anwesend'),
+      if (available.contains(AttendanceStatus.excused)) (AttendanceStatus.excused, 'Entschuldigt'),
+      if (available.contains(AttendanceStatus.late)) (AttendanceStatus.late, 'Verspätet'),
+      if (available.contains(AttendanceStatus.late))
+        (AttendanceStatus.lateExcused, 'Verspätet entschuldigt'),
+      if (available.contains(AttendanceStatus.absent)) (AttendanceStatus.absent, 'Abwesend'),
+    ];
+    await showModalBottomSheet<void>(
+      context: context,
+      showDragHandle: true,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setSheetState) {
+          void toggle(AttendanceStatus s) {
+            setState(() {
+              final next = {..._statusFilter};
+              if (!next.remove(s)) next.add(s);
+              _statusFilter = next;
+            });
+            setSheetState(() {});
+          }
+
+          return SafeArea(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const ListTile(
+                  title: Text('Status-Filter', style: TextStyle(fontWeight: FontWeight.bold)),
+                ),
+                for (final (status, label) in options)
+                  CheckboxListTile(
+                    value: _statusFilter.contains(status),
+                    onChanged: (_) => toggle(status),
+                    controlAffinity: ListTileControlAffinity.leading,
+                    title: Text(label),
+                  ),
+                if (_statusFilter.isNotEmpty)
+                  ListTile(
+                    leading: const Icon(Icons.highlight_off, color: AppColors.danger),
+                    title: const Text('Filter löschen', style: TextStyle(color: AppColors.danger)),
+                    onTap: () {
+                      setState(() => _statusFilter = {});
+                      setSheetState(() {});
+                    },
+                  ),
+                const SizedBox(height: AppDimensions.paddingS),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  /// "Sortierung": Standard (Gruppe) or an extra / registration field ↑↓.
+  Future<void> _openSortPicker() async {
+    final type = ref.read(attendanceTypeForAttendanceProvider(widget.attendanceId)).valueOrNull;
+    final fields = sortableFields(
+      ref.read(personExtraFieldsProvider).valueOrNull ?? const [],
+      type?.registrationFields ?? const [],
+    );
+    final current =
+        _sort.isDefault ? '__default__' : '${_sort.fieldId}__${_sort.ascending ? 'asc' : 'desc'}';
+    String selected = current;
+    final result = await showDialog<String>(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setDialogState) {
+          Widget radio(String value, String label) => RadioListTile<String>(
+                value: value,
+                groupValue: selected,
+                title: Text(label),
+                dense: true,
+                onChanged: (v) => setDialogState(() => selected = v!),
+              );
+          return AlertDialog(
+            title: const Text('Sortierung'),
+            contentPadding: const EdgeInsets.symmetric(vertical: 12),
+            content: SizedBox(
+              width: double.maxFinite,
+              child: ListView(
+                shrinkWrap: true,
+                children: [
+                  radio('__default__', 'Standard (Gruppe)'),
+                  for (final f in fields) ...[
+                    radio('${f.id}__asc', '${f.name} ↑'),
+                    radio('${f.id}__desc', '${f.name} ↓'),
+                  ],
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Abbrechen')),
+              TextButton(onPressed: () => Navigator.pop(ctx, selected), child: const Text('OK')),
+            ],
+          );
+        },
+      ),
+    );
+    if (result == null || !mounted) return;
+    if (result == '__default__') {
+      setState(() => _sort = const AttendanceSort());
+      await _savePref((p) async {
+        await p.setString(_prefSortField, '');
+        await p.setString(_prefSortLevel, '');
+        await p.setString(_prefSortDir, '');
+      });
+      return;
+    }
+    final idx = result.lastIndexOf('__');
+    final fieldId = result.substring(0, idx);
+    final asc = result.substring(idx + 2) != 'desc';
+    final field = fields.where((f) => f.id == fieldId).firstOrNull;
+    final level = field?.level ?? SortFieldLevel.person;
+    setState(() => _sort = AttendanceSort(fieldId: fieldId, level: level, ascending: asc));
+    await _savePref((p) async {
+      await p.setString(_prefSortField, fieldId);
+      await p.setString(
+          _prefSortLevel, level == SortFieldLevel.registration ? 'registration' : 'person');
+      await p.setString(_prefSortDir, asc ? 'asc' : 'desc');
+    });
+  }
+
+  /// "Ansicht": Bilder anzeigen / Anmeldefelder anzeigen / Explizite Statusauswahl.
+  Future<void> _openViewOptions() async {
+    final type = ref.read(attendanceTypeForAttendanceProvider(widget.attendanceId)).valueOrNull;
+    final hasRegFields = type?.registrationFields?.isNotEmpty ?? false;
+    await showModalBottomSheet<void>(
+      context: context,
+      showDragHandle: true,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setSheetState) => SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const ListTile(title: Text('Ansicht', style: TextStyle(fontWeight: FontWeight.bold))),
+              CheckboxListTile(
+                value: _showAvatars,
+                controlAffinity: ListTileControlAffinity.leading,
+                title: const Text('Bilder anzeigen'),
+                onChanged: (v) {
+                  setState(() => _showAvatars = v ?? false);
+                  setSheetState(() {});
+                  _savePref((p) => p.setBool(_prefShowAvatars, _showAvatars));
+                },
+              ),
+              if (hasRegFields)
+                CheckboxListTile(
+                  value: _showRegFields,
+                  controlAffinity: ListTileControlAffinity.leading,
+                  title: const Text('Anmeldefelder anzeigen'),
+                  onChanged: (v) {
+                    setState(() => _showRegFields = v ?? true);
+                    setSheetState(() {});
+                    _savePref((p) => p.setBool(_prefShowRegFields, _showRegFields));
+                  },
+                ),
+              CheckboxListTile(
+                value: !_clickMode,
+                controlAffinity: ListTileControlAffinity.leading,
+                title: const Text('Explizite Statusauswahl'),
+                subtitle: const Text('Status über Dropdown statt Antippen wählen'),
+                onChanged: (v) {
+                  setState(() => _clickMode = !(v ?? true));
+                  setSheetState(() {});
+                },
+              ),
+              const SizedBox(height: AppDimensions.paddingS),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// "Person hinzufügen" (Ionic openAddPersonModal / addPersonsToAttendance).
+  Future<void> _openAddPersons() async {
+    final AddPersonCandidates candidates;
+    try {
+      final allPersons = await ref.read(allPersonsForAttendanceProvider.future);
+      final type = await ref.read(attendanceTypeForAttendanceProvider(widget.attendanceId).future);
+      final groups = await ref.read(groupsProvider.future);
+      final extraFields = ref.read(personExtraFieldsProvider).valueOrNull ?? const [];
+      candidates = computeAddPersonCandidates(
+        allPersons: allPersons,
+        currentPersonIds: _personAttendanceIds.keys.toSet(),
+        type: type,
+        groups: groups,
+        extraFieldDefaults: {for (final f in extraFields) f.id: f.defaultValue},
+      );
+    } catch (_) {
+      if (mounted) ToastHelper.showError(context, 'Fehler beim Laden der Personen');
+      return;
+    }
+    if (!mounted) return;
+    final selected = await showAddPersonsSheet(
+      context,
+      candidates: candidates,
+      groupNameOf: (p) => p.groupName ?? 'Keine Gruppe',
+    );
+    if (selected == null || selected.isEmpty || !mounted) return;
+
+    try {
+      final attendance = ref.read(attendanceDetailProvider(widget.attendanceId)).valueOrNull;
+      final type = ref.read(attendanceTypeForAttendanceProvider(widget.attendanceId)).valueOrNull;
+      final defaultStatus = type?.defaultStatus ?? AttendanceStatus.neutral;
+      final date = DateTime.tryParse(attendance?.date ?? '') ?? DateTime.now();
+      final all = [...candidates.matching, ...candidates.others];
+      final records = <PersonAttendance>[];
+      for (final personId in selected) {
+        final person = all.where((p) => p.id == personId).firstOrNull;
+        if (person == null) continue;
+        var status = defaultStatus;
+        var notes = '';
+        if (person.shiftId != null && type?.allDay != true) {
+          final result = ShiftUtils.getStatusByShift(
+            shiftId: person.shiftId,
+            attendanceDate: date,
+            attendanceStart: type?.startTime ?? '19:00',
+            attendanceEnd: type?.endTime ?? '21:00',
+            defaultStatus: defaultStatus,
+            shiftStart: person.shiftStart,
+            shiftName: person.shiftName,
+          );
+          status = result.status;
+          notes = result.note;
+        }
+        records.add(PersonAttendance(
+          attendanceId: widget.attendanceId,
+          personId: personId,
+          status: status,
+          notes: notes,
+        ));
+      }
+      final repo = ref.read(attendanceRepositoryWithTenantProvider);
+      await repo.createPersonAttendances(records);
+      ref.invalidate(personAttendancesForAttendanceProvider(widget.attendanceId));
+      if (!mounted) return;
+      ToastHelper.showSuccess(
+        context,
+        records.length == 1 ? '1 Person hinzugefügt' : '${records.length} Personen hinzugefügt',
+      );
+    } catch (_) {
+      if (mounted) ToastHelper.showError(context, 'Fehler beim Hinzufügen der Personen');
+    }
+  }
+
+  /// "Gemeinde-Übersicht" of the present persons.
+  Future<void> _showChurchOverview() async {
+    final fieldId = _churchFieldId();
+    if (fieldId == null) return;
+    const present = {AttendanceStatus.present, AttendanceStatus.late, AttendanceStatus.lateExcused};
+    final persons = _personsInAttendance(
+        ref.read(filteredPersonsForAttendanceProvider(widget.attendanceId)).valueOrNull ?? const []);
+    final churchIds = persons
+        .where((p) => present.contains(_localStatuses[p.id]))
+        .map((p) => churchIdOf(p.additionalFields, fieldId))
+        .toList();
+    List<Church> churches;
+    try {
+      churches = await ref.read(churchesProvider.future);
+    } catch (_) {
+      churches = const [];
+    }
+    if (!mounted) return;
+    await showChurchOverviewSheet(
+      context,
+      churchIds: churchIds,
+      churches: churches,
+      subtitle: 'Anwesende',
+    );
+  }
+
+  /// "Erinnerung versenden" for the Termin or one person
+  /// (`send-ad-hoc-reminder` Edge Function, push + e-mail).
+  Future<void> _sendAdHocReminder({String? playerAppId}) async {
+    final attendance = ref.read(attendanceDetailProvider(widget.attendanceId)).valueOrNull;
+    if (attendance == null) return;
+    final type = ref.read(attendanceTypeForAttendanceProvider(widget.attendanceId)).valueOrNull;
+    final tenant = ref.read(currentTenantProvider);
+    final defaults = adHocReminderDefaults(
+      typeName: type?.name,
+      date: attendance.date,
+      startTime: attendance.startTime,
+      typeInfo: attendance.typeInfo,
+      tenantLongName: tenant?.longName,
+    );
+    final persons = _personsInAttendance(
+        ref.read(filteredPersonsForAttendanceProvider(widget.attendanceId)).valueOrNull ?? const []);
+    final neutralAppIds = persons
+        .where((p) =>
+            (_localStatuses[p.id] ?? AttendanceStatus.neutral) == AttendanceStatus.neutral &&
+            (p.appId?.isNotEmpty ?? false))
+        .map((p) => p.appId!)
+        .toList();
+
+    final result = await showAdHocReminderSheet(
+      context,
+      defaultTitle: defaults.title,
+      defaultMessage: defaults.message,
+      attendanceLink:
+          tenant?.id == null ? null : adHocReminderLink(widget.attendanceId, tenant!.id!),
+      hasNeutralPersons: neutralAppIds.isNotEmpty,
+    );
+    if (result == null || !mounted || _isSendingReminder) return;
+    _isSendingReminder = true;
+    try {
+      final repo = ref.read(attendanceRepositoryWithTenantProvider);
+      await repo.sendAdHocReminder(
+        attendanceId: widget.attendanceId,
+        title: result.title,
+        message: result.message,
+        playerAppId: playerAppId,
+        playerAppIds: (result.neutralOnly && playerAppId == null) ? neutralAppIds : null,
+      );
+      if (mounted) ToastHelper.showSuccess(context, 'Erinnerung versendet');
+    } catch (_) {
+      if (mounted) ToastHelper.showError(context, 'Fehler beim Versenden');
+    } finally {
+      _isSendingReminder = false;
+    }
+  }
+
+  /// Leaves the page when the Termin is deleted by someone else
+  /// (Ionic onAttRealtimeChanges "deletedByOther").
+  void _onAttendanceDeleted(PostgresChangePayload payload) {
+    final oldId = payload.oldRecord['id'];
+    if (oldId == null || oldId.toString() != widget.attendanceId.toString()) return;
+    if (_isDisposed || !mounted || _deletedHandled) return;
+    _deletedHandled = true;
+    ToastHelper.showError(context, 'Die Anwesenheit wurde soeben von einem anderen Nutzer gelöscht');
+    ref.read(attendanceRefetchCounter.notifier).state++;
+    if (context.canPop()) {
+      context.pop();
+    } else {
+      context.go('/attendance');
+    }
+  }
+
+  /// "Neu laden" banner when the persons of the Termin could not be loaded.
+  Widget _buildLoadFailedBanner() {
+    return Card(
+      margin: const EdgeInsets.all(AppDimensions.paddingM),
+      child: Padding(
+        padding: const EdgeInsets.all(AppDimensions.paddingM),
+        child: Row(
+          children: [
+            const Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Anwesenheitsliste konnte nicht geladen werden',
+                      style: TextStyle(fontWeight: FontWeight.w600)),
+                  SizedBox(height: 4),
+                  Text('Bitte versuche es erneut.', style: TextStyle(color: AppColors.medium)),
+                ],
+              ),
+            ),
+            OutlinedButton.icon(
+              onPressed: () {
+                ref.invalidate(allPersonsForAttendanceProvider);
+                ref.invalidate(personAttendancesForAttendanceProvider(widget.attendanceId));
+                ref.invalidate(attendanceDetailProvider(widget.attendanceId));
+              },
+              icon: const Icon(Icons.refresh),
+              label: const Text('Neu laden'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+  // ============== END ATT_DETAIL ==============
 
   // ============== CHECKLIST METHODS ==============
 
@@ -786,19 +1370,83 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     await _saveChecklist();
   }
 
-  Future<void> _addChecklistItem() async {
-    final result = await DialogHelper.showTextInput(
-      context,
-      title: 'To-Do hinzufügen',
-      hint: 'Beschreibung eingeben...',
-      confirmText: 'Hinzufügen',
-    );
+  /// ATT_DETAIL: start of the Termin (start time or 19:00) for checklist due dates.
+  DateTime? _checklistEventStart(Attendance attendance) {
+    final date = DateTime.tryParse(attendance.date);
+    if (date == null) return null;
+    var hour = 19, minute = 0;
+    final start = attendance.startTime;
+    if (start != null && start.length >= 5) {
+      hour = int.tryParse(start.substring(0, 2)) ?? 19;
+      minute = int.tryParse(start.substring(3, 5)) ?? 0;
+    }
+    return DateTime(date.year, date.month, date.day, hour, minute);
+  }
 
-    if (result != null && result.trim().isNotEmpty && mounted) {
+  /// ATT_DETAIL: "To-Do hinzufügen" dialog with text + optional deadline hours.
+  Future<({String text, int? hours})?> _showTodoDialog() async {
+    final textController = TextEditingController();
+    final hoursController = TextEditingController();
+    final result = await showDialog<({String text, int? hours})>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('To-Do hinzufügen'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: textController,
+              autofocus: true,
+              textCapitalization: TextCapitalization.sentences,
+              decoration: const InputDecoration(hintText: 'To-Do Text...'),
+            ),
+            const SizedBox(height: 8),
+            TextField(
+              controller: hoursController,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(hintText: 'Deadline in Stunden (optional)'),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Abbrechen')),
+          TextButton(
+            onPressed: () {
+              if (textController.text.trim().isEmpty) {
+                ToastHelper.showWarning(ctx, 'Bitte einen Text eingeben');
+                return;
+              }
+              Navigator.pop(ctx, (
+                text: textController.text.trim(),
+                hours: int.tryParse(hoursController.text.trim()),
+              ));
+            },
+            child: const Text('Hinzufügen'),
+          ),
+        ],
+      ),
+    );
+    textController.dispose();
+    hoursController.dispose();
+    return result;
+  }
+
+  Future<void> _addChecklistItem() async {
+    final input = await _showTodoDialog();
+
+    if (input != null && mounted) {
+      String? dueDate;
+      if (input.hours != null) {
+        final attendance = ref.read(attendanceDetailProvider(widget.attendanceId)).valueOrNull;
+        final eventStart = attendance == null ? null : _checklistEventStart(attendance);
+        dueDate = eventStart?.subtract(Duration(hours: input.hours!)).toUtc().toIso8601String();
+      }
       final newItem = ChecklistItem(
         id: const Uuid().v4(),
-        text: result.trim(),
+        text: input.text,
+        deadlineHours: input.hours,
         completed: false,
+        dueDate: dueDate,
       );
 
       setState(() {
@@ -833,31 +1481,30 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     }
   }
 
-  Future<void> _restoreChecklist() async {
+  Future<void> _restoreChecklist({bool confirm = true}) async {
     final attendanceType = ref.read(attendanceTypeForAttendanceProvider(widget.attendanceId)).valueOrNull;
     if (attendanceType?.checklist == null || attendanceType!.checklist!.isEmpty) {
-      ToastHelper.showInfo(context, 'Keine Standard-Checkliste für diesen Typ verfügbar');
+      ToastHelper.showWarning(context, 'Keine Standard-Checkliste vorhanden');
       return;
     }
 
-    final confirmed = await DialogHelper.showConfirmation(
-      context,
-      title: 'Checkliste wiederherstellen?',
-      message: 'Die aktuelle Checkliste wird durch die Standard-Checkliste ersetzt.',
-      confirmText: 'Wiederherstellen',
-    );
+    // ATT_DETAIL: "Checkliste zurücksetzen" from the menu restores without asking (Ionic)
+    final confirmed = !confirm ||
+        await DialogHelper.showConfirmation(
+          context,
+          title: 'Checkliste wiederherstellen?',
+          message: 'Die aktuelle Checkliste wird durch die Standard-Checkliste ersetzt.',
+          confirmText: 'Wiederherstellen',
+        );
 
     if (confirmed == true && mounted) {
       final restoredList = attendanceType.checklist!.map((item) {
         String? dueDate;
         if (item.deadlineHours != null) {
           final attendance = ref.read(attendanceDetailProvider(widget.attendanceId)).valueOrNull;
-          if (attendance != null) {
-            final attendanceDate = DateTime.tryParse(attendance.date);
-            if (attendanceDate != null) {
-              final deadline = attendanceDate.subtract(Duration(hours: item.deadlineHours!));
-              dueDate = deadline.toIso8601String();
-            }
+          final eventStart = attendance == null ? null : _checklistEventStart(attendance);
+          if (eventStart != null) {
+            dueDate = eventStart.subtract(Duration(hours: item.deadlineHours!)).toUtc().toIso8601String();
           }
         }
 
