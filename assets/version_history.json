@@ -1,6 +1,17 @@
 {
   "versions": [
     {
+      "version": "0.8.0",
+      "date": "28.10.2026",
+      "changes": [
+        "🐛 Alle Lese- und Schreibzugriffe auf die Datenbank an die bisherige App angeglichen",
+        "🐛 Dienste werden beim Entschuldigen und Zurücksetzen wie gewohnt mitaktualisiert",
+        "🐛 Personendaten werden nicht mehr in andere Gruppen kopiert",
+        "✨ Organisationsfelder in Personenliste, Export und Mehrfachbearbeitung",
+        "🔒 Zusätzliche Absicherung beim Wechsel zwischen Gruppen"
+      ]
+    },
+    {
       "version": "0.7.0",
       "date": "28.10.2026",
       "changes": [
