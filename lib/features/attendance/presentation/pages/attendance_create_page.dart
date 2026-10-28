@@ -61,6 +61,9 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
   // Notes
   String? _notes;
 
+  // ATT_DETAIL: place for navigation (types with place_enabled)
+  String? _place;
+
   // Songs selection (if type.manageSongs)
   List<SongHistoryEntry> _songEntries = [];
 
@@ -255,6 +258,28 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
             ),
 
             const SizedBox(height: AppDimensions.paddingM),
+
+            // ATT_DETAIL: "Ort (für Navigation)" for types with place_enabled
+            if (_selectedType?.placeEnabled == true) ...[
+              _SectionCard(
+                title: 'Ort (für Navigation)',
+                child: Padding(
+                  padding: const EdgeInsets.all(AppDimensions.paddingM),
+                  child: TextField(
+                    textCapitalization: TextCapitalization.sentences,
+                    minLines: 2,
+                    maxLines: 4,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      hintText: 'z. B. Gemeindehaus, Musterstr. 1, 12345 Berlin',
+                    ),
+                    onChanged: (value) =>
+                        setState(() => _place = value.trim().isEmpty ? null : value.trim()),
+                  ),
+                ),
+              ),
+              const SizedBox(height: AppDimensions.paddingM),
+            ],
 
             // DUTY: persons needed per weekday (Dienst-Modus)
             if (_selectedType?.dutyMode == true && _selectedDates.isNotEmpty) ...[
@@ -859,6 +884,8 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
       'end_time': resolvedEndTime,
       'notes': _notes,
       'duration_days': type.allDay == true ? _durationDays : null,
+      // ATT_DETAIL: place only for types with place_enabled
+      'place': type.placeEnabled ? _place : null,
       'checklist': checklist,
       'created_by': supabase.auth.currentUser?.id,
       'save_in_history': true,
