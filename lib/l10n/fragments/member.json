@@ -12,7 +12,6 @@
         "confirmEmail": "E-Mail bestätigen",
         "confirmEmailSent": "Wir haben dir eine E-Mail an {email} gesendet. Bitte klicke auf den Link darin, um deinen Account zu aktivieren.",
         "toLogin": "Zum Login",
-        "haveAccount": "Bereits ein Konto?",
         "accessDenied": "Der Zugriff wurde verweigert.",
         "linkFailed": "Der Link konnte nicht verarbeitet werden."
       }
@@ -148,7 +147,6 @@
         "confirmEmail": "Confirm email",
         "confirmEmailSent": "We sent an email to {email}. Please click the link in it to activate your account.",
         "toLogin": "Go to login",
-        "haveAccount": "Already have an account?",
         "accessDenied": "Access was denied.",
         "linkFailed": "The link could not be processed."
       }

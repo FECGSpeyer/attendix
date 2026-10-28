@@ -4,6 +4,8 @@ import '../../data/models/attendance/attendance.dart';
 import '../../data/models/person/person.dart';
 import '../config/supabase_config.dart';
 import 'tenant_providers.dart';
+import '../services/attendance_detail_cache.dart'; // LEFTOVERS
+import '../services/offline_queue_service.dart' show connectivityCheckProvider; // LEFTOVERS
 
 /// Provider for attendance detail with tenant-scoped query
 final attendanceDetailProvider = FutureProvider.autoDispose.family<Attendance?, int>((ref, attendanceId) async {
@@ -12,12 +14,17 @@ final attendanceDetailProvider = FutureProvider.autoDispose.family<Attendance?, 
 
   if (tenant?.id == null) return null;
 
-  final response = await supabase
-      .from('attendance')
-      .select('*')
-      .eq('id', attendanceId)
-      .eq('tenantId', tenant!.id!)
-      .maybeSingle();
+  // LEFTOVERS: offline read cache (Ionic getAttendanceByIdRobust)
+  final response = await const AttendanceDetailCache().fetchWithCache<Map<String, dynamic>>(
+    key: AttendanceDetailCache.keyFor(tenant!.id!, attendanceId, 'attendance'),
+    isOnline: ref.read(connectivityCheckProvider),
+    fetch: () => supabase
+        .from('attendance')
+        .select('*')
+        .eq('id', attendanceId)
+        .eq('tenantId', tenant.id!)
+        .maybeSingle(),
+  );
 
   if (response == null) return null;
   return Attendance.fromJson(response);
@@ -34,12 +41,17 @@ final attendanceTypeForAttendanceProvider = FutureProvider.autoDispose.family<At
 
   if (tenant?.id == null) return null;
 
-  final response = await supabase
-      .from('attendance_types')
-      .select('*')
-      .eq('id', attendance!.typeId!)
-      .eq('tenant_id', tenant!.id!)
-      .maybeSingle();
+  // LEFTOVERS: offline read cache (Ionic keeps the types in memory)
+  final response = await const AttendanceDetailCache().fetchWithCache<Map<String, dynamic>>(
+    key: AttendanceDetailCache.keyFor(tenant!.id!, attendanceId, 'type'),
+    isOnline: ref.read(connectivityCheckProvider),
+    fetch: () => supabase
+        .from('attendance_types')
+        .select('*')
+        .eq('id', attendance!.typeId!)
+        .eq('tenant_id', tenant.id!)
+        .maybeSingle(),
+  );
 
   if (response == null) return null;
   return AttendanceType.fromJson(response);
@@ -57,13 +69,19 @@ final personAttendancesForAttendanceProvider = FutureProvider.autoDispose.family
 
   // Get all persons with their attendance status for this attendance
   // SEC-017: Use inner join with attendance to filter by tenant
-  final response = await supabase
-      .from('person_attendances')
-      .select('*, player:person_id(firstName, lastName, img, instrument, left, paused), attendance:attendance_id!inner(tenantId)')
-      .eq('attendance_id', attendanceId)
-      .eq('attendance.tenantId', tenant.id!);
+  // LEFTOVERS: offline read cache (Ionic getAttendanceByIdRobust persons)
+  final response = await const AttendanceDetailCache().fetchWithCache<List<dynamic>>(
+        key: AttendanceDetailCache.keyFor(tenant.id!, attendanceId, 'persons'),
+        isOnline: ref.read(connectivityCheckProvider),
+        fetch: () => supabase
+            .from('person_attendances')
+            .select('*, player:person_id(firstName, lastName, img, instrument, left, paused), attendance:attendance_id!inner(tenantId)')
+            .eq('attendance_id', attendanceId)
+            .eq('attendance.tenantId', tenant.id!),
+      ) ??
+      const [];
 
-  return (response as List).map((e) {
+  return response.map((e) {
     // Extract player data from nested structure - handle potential type mismatch
     final playerData = e['player'];
     final playerMap = playerData is Map<String, dynamic> ? playerData : null;
@@ -95,13 +113,19 @@ final allPersonsForAttendanceProvider = FutureProvider.autoDispose<List<Person>>
 
   if (tenant == null) return [];
 
-  final response = await supabase
-      .from('player')
-      .select('*, instrument:instrument(id, name)')
-      .eq('tenantId', tenant.id!)
-      .order('lastName', ascending: true);
+  // LEFTOVERS: offline read cache for the Termin page
+  final response = await const AttendanceDetailCache().fetchWithCache<List<dynamic>>(
+        key: AttendanceDetailCache.playersKeyFor(tenant.id!),
+        isOnline: ref.read(connectivityCheckProvider),
+        fetch: () => supabase
+            .from('player')
+            .select('*, instrument:instrument(id, name)')
+            .eq('tenantId', tenant.id!)
+            .order('lastName', ascending: true),
+      ) ??
+      const [];
 
-  return (response as List).map((e) {
+  return response.map((e) {
     final instrumentData = e['instrument'] as Map<String, dynamic>?;
     return Person.fromJson(e as Map<String, dynamic>).copyWith(
       groupName: instrumentData?['name'] as String?,
