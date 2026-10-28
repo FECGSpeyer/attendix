@@ -1,3 +1,5 @@
+import '../../l10n/l10n.dart';
+
 /// Utility functions for tenant-type-dependent labels.
 ///
 /// Tenant types: 'choir', 'orchestra', or default ('general'/empty).
@@ -6,9 +8,9 @@
 /// choir → Stimme, orchestra → Instrument, default → Gruppe
 String groupLabel(String? tenantType) {
   return switch (tenantType) {
-    'choir' => 'Stimme',
-    'orchestra' => 'Instrument',
-    _ => 'Gruppe',
+    'choir' => l10nWithoutContext.commonGroupLabelVoice,
+    'orchestra' => l10nWithoutContext.commonGroupLabelInstrument,
+    _ => l10nWithoutContext.commonGroupLabelGroup,
   };
 }
 
@@ -16,8 +18,8 @@ String groupLabel(String? tenantType) {
 /// choir → Stimmen, orchestra → Instrumente, default → Gruppen
 String groupLabelPlural(String? tenantType) {
   return switch (tenantType) {
-    'choir' => 'Stimmen',
-    'orchestra' => 'Instrumente',
-    _ => 'Gruppen',
+    'choir' => l10nWithoutContext.coreFlutterVoices,
+    'orchestra' => l10nWithoutContext.peopleInstruments,
+    _ => l10nWithoutContext.settingsGroups,
   };
 }

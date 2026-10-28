@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/tenant/tenant.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Card widget for displaying a critical rule
 class CriticalRuleCard extends StatelessWidget {
@@ -42,23 +43,9 @@ class CriticalRuleCard extends StatelessWidget {
             const SizedBox(height: 4),
             Row(
               children: [
-                _buildOperatorChip(),
-                const SizedBox(width: 8),
-                if (!rule.enabled)
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 6,
-                      vertical: 2,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.medium.withValues(alpha: 0.2),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: const Text(
-                      'Deaktiviert',
-                      style: TextStyle(fontSize: 10),
-                    ),
-                  ),
+                _buildOperatorChip(context),
+                // DB_REVIEW_REST (M3): no 'disabled' badge, Ionic has no
+                // enabled flag (all rules are evaluated server-side).
               ],
             ),
           ],
@@ -80,7 +67,7 @@ class CriticalRuleCard extends StatelessWidget {
     );
   }
 
-  Widget _buildOperatorChip() {
+  Widget _buildOperatorChip(BuildContext context) {
     final isAnd = rule.operator == CriticalRuleOperator.and;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
@@ -89,7 +76,7 @@ class CriticalRuleCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(4),
       ),
       child: Text(
-        isAnd ? 'UND' : 'ODER',
+        isAnd ? context.l10n.generalSettingsFlutterAndShort : context.l10n.generalSettingsFlutterOrShort,
         style: TextStyle(
           fontSize: 10,
           fontWeight: FontWeight.bold,

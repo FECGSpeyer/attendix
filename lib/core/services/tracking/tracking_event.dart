@@ -12,7 +12,6 @@ enum TrackingEvent {
   parentSignOut('parent_signout'),
   pushReceived('push_received'),
   pushOpened('push_opened'),
-  meetingCreated('meeting_created'),
   songShared('song_shared'),
   reportExported('report_exported'),
   handoverCreated('handover_created'),

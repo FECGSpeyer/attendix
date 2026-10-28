@@ -1,12 +1,29 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/constants/enums.dart';
+import '../../core/utils/event_list_utils.dart';
+import '../models/attendance/attendance.dart';
+import '../../core/utils/duty_utils.dart';
 import 'base_repository.dart';
+import '../../l10n/l10n.dart';
 
-/// Provider for SignInOutRepository
+/// Provider for SignInOutRepository (without tenant – use the WithTenant variant).
 final signInOutRepositoryProvider = Provider<SignInOutRepository>((ref) {
   return SignInOutRepository(ref);
 });
+
+/// Columns of `attendance` needed by the Terminlisten (signout, overview, parents).
+const String kSignoutAttendanceColumns =
+    'id, date, type, typeInfo, songs, type_id, start_time, end_time, deadline, '
+    'duration_days, plan, share_plan, description, attachment_url, '
+    'attachment_name, files_folder, place, tenantId';
+
+/// Columns of `attendance_types` joined into the Terminlisten.
+const String kSignoutAttendanceTypeColumns =
+    'id, name, highlight, include_in_average, color, hide_name, all_day, '
+    'duration_days, start_time, end_time, available_statuses, '
+    'default_status, registration_fields, duty_mode';
 
 /// Repository for self-service sign in/out operations
 class SignInOutRepository extends BaseRepository with TenantAwareRepository {
@@ -40,81 +57,149 @@ class SignInOutRepository extends BaseRepository with TenantAwareRepository {
     return _distinctColors[colorIndex];
   }
 
-  /// Sign in to an attendance
+  /// SEC: person_attendances has no tenantId column. Ownership is checked via
+  /// the joined attendance (current tenant) or – for the cross-tenant
+  /// overview – via the linked person's appId (= current user).
+  Future<List<String>> _validatePersonAttendanceIds(
+    List<String> ids,
+    String operation, {
+    bool ownAcrossTenants = false,
+  }) async {
+    if (ids.isEmpty) return [];
+    if (ownAcrossTenants) {
+      final userId = supabase.auth.currentUser?.id;
+      if (userId == null) return [];
+      final rows = await supabase
+          .from('person_attendances')
+          .select('id, person:person_id(appId)')
+          .inFilter('id', ids);
+      return (rows as List)
+          .where((r) => r['person']?['appId'] == userId)
+          .map((r) => r['id'].toString())
+          .toList();
+    }
+
+    final rows = await supabase
+        .from('person_attendances')
+        .select('id, attendance:attendance_id(tenantId)')
+        .inFilter('id', ids);
+    return (rows as List)
+        .where((r) => r['attendance']?['tenantId'] == currentTenantId)
+        .map((r) => r['id'].toString())
+        .toList();
+  }
+
+  Future<void> _updatePersonAttendances(
+    List<String> ids,
+    Map<String, dynamic> fields,
+  ) async {
+    await supabase.from('person_attendances').update({
+      ...fields,
+      'changed_at': DateTime.now().toUtc().toIso8601String(),
+      'changed_by': supabase.auth.currentUser?.id,
+    }).inFilter('id', ids);
+  }
+
+  /// Telegram/Push notification for the conductors (Ionic notifyPerTelegram).
+  /// Errors are swallowed: the sign in/out itself already succeeded.
+  Future<void> _notify({
+    required String attId,
+    required String type,
+    String? reason,
+    bool isParents = false,
+    String notes = '',
+    bool isSelf = false,
+  }) async {
+    try {
+      await supabase.functions.invoke('quick-processor', body: {
+        'attId': attId,
+        'type': type,
+        'reason': reason,
+        'isParents': isParents,
+        'notes': notes,
+        'isSelf': isSelf,
+      });
+    } catch (e) {
+      if (kDebugMode) debugPrint('[SignInOutRepository] notify failed: $e');
+    }
+  }
+
+  /// DUTY: duty fields to write along with a status change (Ionic
+  /// syncDutyWithStatus). The id must already be validated for the tenant.
+  Future<Map<String, dynamic>> _dutyUpdateForStatus(
+    String personAttendanceId,
+    AttendanceStatus newStatus,
+  ) async {
+    final row = await supabase
+        .from('person_attendances')
+        .select('duty_state, attendance:attendance_id(attType:type_id(duty_mode))')
+        .eq('id', personAttendanceId)
+        .maybeSingle();
+    if (row == null || row['attendance']?['attType']?['duty_mode'] != true) {
+      return const {};
+    }
+    return dutySyncFieldsForStatus(
+      isDutyTermin: true,
+      currentDutyState: row['duty_state'] as String?,
+      newStatus: newStatus,
+      userId: supabase.auth.currentUser?.id,
+    );
+  }
+
+  /// Sign in to an attendance (status → Anwesend, like Ionic `signin`).
+  ///
+  /// [type] only selects the notification text (previous status).
   Future<void> signIn(
     String personAttendanceId,
     SignInType type, {
     String notes = '',
+    bool ownAcrossTenants = false,
   }) async {
     try {
-      // SEC-009: Validate that personAttendance belongs to current tenant
-      final validation = await supabase
-          .from('person_attendances')
-          .select('id, attendance:attendance_id(tenantId)')
-          .eq('id', personAttendanceId)
-          .maybeSingle();
-
-      if (validation == null) {
-        throw RepositoryException(
-          message: 'PersonAttendance not found',
-          operation: 'signIn',
-        );
-      }
-
-      final attendanceTenantId = validation['attendance']?['tenantId'];
-      if (attendanceTenantId != currentTenantId) {
+      final valid = await _validatePersonAttendanceIds(
+        [personAttendanceId],
+        'signIn',
+        ownAcrossTenants: ownAcrossTenants,
+      );
+      if (valid.isEmpty) {
         throw RepositoryException(
           message: 'Access denied: PersonAttendance belongs to different tenant',
           operation: 'signIn',
         );
       }
 
-      AttendanceStatus newStatus;
+      // DUTY: keep assignment and status in sync (Ionic syncDutyWithStatus)
+      final dutyUpdate =
+          await _dutyUpdateForStatus(personAttendanceId, AttendanceStatus.present);
 
-      switch (type) {
-        case SignInType.normal:
-          newStatus = AttendanceStatus.present;
-          break;
-        case SignInType.neutral:
-          newStatus = AttendanceStatus.neutral;
-          break;
-        case SignInType.late:
-          newStatus = AttendanceStatus.late;
-          break;
-      }
-
-      await supabase.from('person_attendances').update({
-        'status': newStatus.value,
+      await _updatePersonAttendances(valid, {
+        'status': AttendanceStatus.present.value,
         'notes': notes,
-        'changed_at': DateTime.now().toIso8601String(),
-        'changed_by': supabase.auth.currentUser?.id,
-      }).eq('id', personAttendanceId);
+        ...dutyUpdate,
+      });
+
+      await _notify(attId: personAttendanceId, type: type.telegramType, notes: notes);
     } catch (e, stack) {
       handleError(e, stack, 'signIn');
       rethrow;
     }
   }
 
-  /// Sign out from attendances
+  /// Sign out from attendances (Entschuldigt / Verspätung gemeldet).
   Future<void> signOut(
     List<String> personAttendanceIds,
     String reason, {
     bool isLateComing = false,
+    bool isParents = false,
+    bool isSelf = false,
+    bool ownAcrossTenants = false,
   }) async {
     try {
-      // SEC-010: Validate all personAttendances belong to current tenant
-      final validation = await supabase
-          .from('person_attendances')
-          .select('id, attendance:attendance_id(tenantId)')
-          .inFilter('id', personAttendanceIds);
-
-      final validIds = <String>[];
-      for (final record in validation as List) {
-        final attendanceTenantId = record['attendance']?['tenantId'];
-        if (attendanceTenantId == currentTenantId) {
-          validIds.add(record['id'].toString());
-        }
-      }
+      final validIds = await _validatePersonAttendanceIds(
+        personAttendanceIds,
+        'signOut',
+        ownAcrossTenants: ownAcrossTenants,
+      );
 
       if (validIds.isEmpty) {
         throw RepositoryException(
@@ -126,12 +211,18 @@ class SignInOutRepository extends BaseRepository with TenantAwareRepository {
       final status =
           isLateComing ? AttendanceStatus.lateExcused : AttendanceStatus.excused;
 
-      await supabase.from('person_attendances').update({
+      await _updatePersonAttendances(validIds, {
         'status': status.value,
         'notes': reason,
-        'changed_at': DateTime.now().toIso8601String(),
-        'changed_by': supabase.auth.currentUser?.id,
-      }).inFilter('id', validIds);
+      });
+
+      await _notify(
+        attId: validIds.first,
+        type: isLateComing ? 'lateSignout' : 'signout',
+        reason: reason,
+        isParents: isParents,
+        isSelf: isSelf,
+      );
     } catch (e, stack) {
       handleError(e, stack, 'signOut');
       rethrow;
@@ -141,40 +232,225 @@ class SignInOutRepository extends BaseRepository with TenantAwareRepository {
   /// Update attendance note
   Future<void> updateAttendanceNote(
     String personAttendanceId,
-    String note,
-  ) async {
+    String note, {
+    bool ownAcrossTenants = false,
+  }) async {
     try {
-      // SEC-011: Validate that personAttendance belongs to current tenant
-      final validation = await supabase
-          .from('person_attendances')
-          .select('id, attendance:attendance_id(tenantId)')
-          .eq('id', personAttendanceId)
-          .maybeSingle();
-
-      if (validation == null) {
-        throw RepositoryException(
-          message: 'PersonAttendance not found',
-          operation: 'updateAttendanceNote',
-        );
-      }
-
-      final attendanceTenantId = validation['attendance']?['tenantId'];
-      if (attendanceTenantId != currentTenantId) {
+      final valid = await _validatePersonAttendanceIds(
+        [personAttendanceId],
+        'updateAttendanceNote',
+        ownAcrossTenants: ownAcrossTenants,
+      );
+      if (valid.isEmpty) {
         throw RepositoryException(
           message: 'Access denied: PersonAttendance belongs to different tenant',
           operation: 'updateAttendanceNote',
         );
       }
 
-      await supabase.from('person_attendances').update({
-        'notes': note,
-        'changed_at': DateTime.now().toIso8601String(),
-        'changed_by': supabase.auth.currentUser?.id,
-      }).eq('id', personAttendanceId);
+      await _updatePersonAttendances(valid, {'notes': note});
+      await _notify(attId: personAttendanceId, type: 'noteUpdate', reason: note);
     } catch (e, stack) {
       handleError(e, stack, 'updateAttendanceNote');
       rethrow;
     }
+  }
+
+  /// Saves the answers to the attendance type's registration fields.
+  Future<void> updateRegistrationAnswers(
+    String personAttendanceId,
+    Map<String, dynamic> answers,
+  ) async {
+    try {
+      final valid = await _validatePersonAttendanceIds(
+        [personAttendanceId],
+        'updateRegistrationAnswers',
+      );
+      if (valid.isEmpty) {
+        throw RepositoryException(
+          message: 'Access denied: PersonAttendance belongs to different tenant',
+          operation: 'updateRegistrationAnswers',
+        );
+      }
+      await _updatePersonAttendances(valid, {'registration_answers': answers});
+    } catch (e, stack) {
+      handleError(e, stack, 'updateRegistrationAnswers');
+      rethrow;
+    }
+  }
+
+  /// Whether the Dateiablage is shared with all members of the current
+  /// tenant (`tenants.files_shared`). Returns false when the column is
+  /// missing (files module not migrated yet).
+  Future<bool> getTenantFilesShared() async {
+    try {
+      final row = await supabase
+          .from('tenants')
+          .select('files_shared')
+          .eq('id', currentTenantId)
+          .maybeSingle();
+      return row?['files_shared'] == true;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  AttendanceType? _parseType(dynamic json) {
+    if (json is! Map<String, dynamic>) return null;
+    try {
+      return AttendanceType.fromJson({'name': '', ...json});
+    } catch (_) {
+      return null;
+    }
+  }
+
+  /// Own Termine of a person in the current tenant ("Meine Termine").
+  ///
+  /// With [all] = false only Termine since [since] are loaded (season start).
+  Future<List<CrossTenantPersonAttendance>> getPersonAttendances(
+    int personId, {
+    String? since,
+    String tenantName = '',
+  }) async {
+    try {
+      // SEC: person_attendances has no tenantId column – the inner join on
+      // attendance is filtered by tenantId so only Termine of this tenant
+      // are returned.
+      var query = supabase
+          .from('person_attendances')
+          .select(
+              '*, attendance:attendance_id!inner($kSignoutAttendanceColumns, '
+              'attType:type_id($kSignoutAttendanceTypeColumns))')
+          .eq('person_id', personId)
+          .eq('attendance.tenantId', currentTenantId);
+      if (since != null) {
+        query = query.gt('attendance.date', since);
+      }
+      final response = await query;
+
+      return (response as List)
+          .where((json) => json['attendance'] != null)
+          .map((json) => _fromRows(
+                json['attendance'] as Map<String, dynamic>,
+                json as Map<String, dynamic>,
+                tenantId: currentTenantId,
+                tenantName: tenantName,
+              ))
+          .toList();
+    } catch (e, stack) {
+      handleError(e, stack, 'getPersonAttendances');
+      rethrow;
+    }
+  }
+
+  /// All running/upcoming Termine of the tenant plus the own status
+  /// (tenant setting "Alle Termine für Mitglieder sichtbar").
+  Future<List<CrossTenantPersonAttendance>> getAllUpcomingAttendancesForSignout(
+    int playerId, {
+    String tenantName = '',
+  }) async {
+    try {
+      // Look back a bit so multi-day Termine that started earlier and are
+      // still running stay included.
+      final since = DateTime.now()
+          .subtract(const Duration(days: 31))
+          .toUtc()
+          .toIso8601String();
+      final atts = await supabase
+          .from('attendance')
+          .select('$kSignoutAttendanceColumns, '
+              'attType:type_id($kSignoutAttendanceTypeColumns)')
+          .eq('tenantId', currentTenantId)
+          .gt('date', since)
+          .order('date', ascending: true);
+
+      final running = (atts as List)
+          .cast<Map<String, dynamic>>()
+          .where((a) => !EventListUtils.hasEnded(
+                a['date']?.toString(),
+                _toInt(a['duration_days']),
+              ))
+          .toList();
+      if (running.isEmpty) return [];
+
+      // SEC: filtered by own person_id and attendance ids of this tenant.
+      final pas = await supabase
+          .from('person_attendances')
+          .select('id, attendance_id, status, notes, registration_answers, duty_state')
+          .eq('person_id', playerId)
+          .inFilter('attendance_id', running.map((a) => a['id']).toList());
+      final paMap = <int, Map<String, dynamic>>{
+        for (final pa in (pas as List).cast<Map<String, dynamic>>())
+          _toInt(pa['attendance_id']) ?? -1: pa,
+      };
+
+      return running.map((att) {
+        final pa = paMap[_toInt(att['id'])];
+        return _fromRows(
+          att,
+          pa ?? {'person_id': playerId},
+          tenantId: currentTenantId,
+          tenantName: tenantName,
+          isMember: pa != null,
+        );
+      }).toList();
+    } catch (e, stack) {
+      handleError(e, stack, 'getAllUpcomingAttendancesForSignout');
+      rethrow;
+    }
+  }
+
+  CrossTenantPersonAttendance _fromRows(
+    Map<String, dynamic> att,
+    Map<String, dynamic> pa, {
+    required int tenantId,
+    required String tenantName,
+    String tenantColor = '#3880FF',
+    bool isMember = true,
+  }) {
+    final type = _parseType(att['attType']);
+    return CrossTenantPersonAttendance(
+      id: pa['id']?.toString(),
+      personId: _toInt(pa['person_id']),
+      attendanceId: _toInt(att['id']),
+      status: isMember ? _parseStatus(pa['status']) : AttendanceStatus.neutral,
+      notes: pa['notes'] as String?,
+      date: att['date'] as String?,
+      typeInfo: att['typeInfo'] as String?,
+      startTime: att['start_time'] as String?,
+      endTime: att['end_time'] as String?,
+      deadline: att['deadline'] as String?,
+      tenantId: tenantId,
+      tenantName: tenantName,
+      tenantColor: tenantColor,
+      plan: att['plan'] as Map<String, dynamic>?,
+      sharePlan: att['share_plan'] == true,
+      typeId: att['type_id']?.toString(),
+      includeInAverage: type?.includeInAverage ?? true,
+      durationDays: _toInt(att['duration_days']),
+      place: att['place'] as String?,
+      filesFolder: att['files_folder'] as String?,
+      description: att['description'] as String?,
+      attachmentUrl: att['attachment_url'] as String?,
+      attachmentName: att['attachment_name'] as String?,
+      songs: (att['songs'] is List)
+          ? (att['songs'] as List).map((e) => _toInt(e) ?? 0).toList()
+          : const [],
+      attendanceType: type,
+      isMember: isMember,
+      dutyState: pa['duty_state'] as String?,
+      registrationAnswers: pa['registration_answers'] is Map
+          ? Map<String, dynamic>.from(pa['registration_answers'] as Map)
+          : null,
+      legacyType: att['type'] as String?,
+    );
+  }
+
+  static int? _toInt(dynamic v) {
+    if (v == null) return null;
+    if (v is int) return v;
+    if (v is num) return v.toInt();
+    return int.tryParse(v.toString());
   }
 
   /// Get all person attendances for the current user across all tenants
@@ -183,16 +459,17 @@ class SignInOutRepository extends BaseRepository with TenantAwareRepository {
       final userId = supabase.auth.currentUser?.id;
       if (userId == null) return [];
 
-      // Get all person records for this user (linked via appId)
+      // SEC: cross-tenant by design – restricted to persons linked to the
+      // current user (appId) instead of a tenantId filter.
       final personRecords = await supabase
           .from('player')
           .select('id, tenantId')
           .eq('appId', userId);
 
-      if (personRecords.isEmpty) return [];
+      if ((personRecords as List).isEmpty) return [];
 
-      final personIds = (personRecords as List).map((p) => p['id']).toList();
-      final tenantIds = (personRecords as List)
+      final personIds = personRecords.map((p) => p['id']).toList();
+      final tenantIds = personRecords
           .map((p) => p['tenantId'])
           .toSet()
           .toList();
@@ -200,15 +477,10 @@ class SignInOutRepository extends BaseRepository with TenantAwareRepository {
       // Get all person attendances with attendance details
       final response = await supabase
           .from('person_attendances')
-          .select('''
-            *,
-            attendance:attendance_id(
-              id, date, type, typeInfo, start_time, end_time, deadline, tenantId,
-              type_id, plan, share_plan
-            )
-          ''')
-          .inFilter('person_id', personIds)
-          .order('attendance(date)', ascending: false);
+          .select(
+              '*, attendance:attendance_id($kSignoutAttendanceColumns, '
+              'attType:type_id($kSignoutAttendanceTypeColumns))')
+          .inFilter('person_id', personIds);
 
       // Get tenant info (no color column - we generate colors programmatically)
       final tenants = await supabase
@@ -216,7 +488,6 @@ class SignInOutRepository extends BaseRepository with TenantAwareRepository {
           .select('id, shortName')
           .inFilter('id', tenantIds);
 
-      // Build tenant map with programmatically generated colors
       final tenantIdsList = tenantIds.toList();
       final tenantMap = {
         for (final t in tenants as List)
@@ -226,41 +497,25 @@ class SignInOutRepository extends BaseRepository with TenantAwareRepository {
           }
       };
 
-      // Get attendance types to resolve includeInAverage
-      final attendanceTypes = await supabase
-          .from('attendance_types')
-          .select('id, include_in_average')
-          .inFilter('tenantId', tenantIds);
-
-      final includeInAverageMap = {
-        for (final at in attendanceTypes as List)
-          at['id'].toString(): at['include_in_average'] as bool? ?? true,
-      };
-
-      // Map to CrossTenantPersonAttendance
-      return (response as List).map((json) {
-        final attendance = json['attendance'] as Map<String, dynamic>?;
-        final tenantId = attendance?['tenantId'] as int? ?? 0;
+      return (response as List)
+          .where((json) => json['attendance'] != null)
+          // SEC: drop rows whose attendance belongs to a tenant the person
+          // is not part of (defensive, like Ionic cross-tenant leak fix).
+          .where((json) => tenantIds.contains(json['attendance']['tenantId']))
+          // DUTY: duties only show up for persons who were assigned
+          .where((json) =>
+              json['duty_state'] != null ||
+              json['attendance']['attType']?['duty_mode'] != true)
+          .map((json) {
+        final attendance = json['attendance'] as Map<String, dynamic>;
+        final tenantId = _toInt(attendance['tenantId']) ?? 0;
         final tenantInfo = tenantMap[tenantId];
-
-        return CrossTenantPersonAttendance(
-          id: json['id']?.toString(),
-          personId: json['person_id'] as int?,
-          attendanceId: json['attendance_id'] as int?,
-          status: _parseStatus(json['status']),
-          notes: json['notes'] as String?,
-          date: attendance?['date'] as String?,
-          typeInfo: attendance?['typeInfo'] as String?,
-          startTime: attendance?['start_time'] as String?,
-          endTime: attendance?['end_time'] as String?,
-          deadline: attendance?['deadline'] as String?,
+        return _fromRows(
+          attendance,
+          json as Map<String, dynamic>,
           tenantId: tenantId,
-          tenantName: tenantInfo?['name'] ?? 'Unbekannt',
+          tenantName: tenantInfo?['name'] ?? l10nWithoutContext.commonUnknown,
           tenantColor: tenantInfo?['color'] ?? '#000000',
-          plan: attendance?['plan'] as Map<String, dynamic>?,
-          sharePlan: attendance?['share_plan'] == true,
-          typeId: attendance?['type_id']?.toString(),
-          includeInAverage: includeInAverageMap[attendance?['type_id']?.toString()] ?? true,
         );
       }).toList();
     } catch (e, stack) {
@@ -292,14 +547,26 @@ class SignInOutRepository extends BaseRepository with TenantAwareRepository {
   }
 }
 
-/// Type of sign-in
+/// Previous status of a sign-in – selects the notification text.
 enum SignInType {
-  normal,
-  neutral,
-  late,
+  normal('signin'),
+  neutral('neutralSignin'),
+  late('lateSignIn');
+
+  const SignInType(this.telegramType);
+
+  final String telegramType;
+
+  /// Sign-in type derived from the current status (Ionic signin()).
+  static SignInType fromStatus(AttendanceStatus status) {
+    if (status == AttendanceStatus.lateExcused) return SignInType.late;
+    if (status == AttendanceStatus.neutral) return SignInType.neutral;
+    return SignInType.normal;
+  }
 }
 
-/// Cross-tenant person attendance data
+/// Person attendance with its Termin (used by Meine Termine, Übersicht and
+/// the plan viewer). In the cross-tenant overview it carries the tenant.
 class CrossTenantPersonAttendance {
   final String? id;
   final int? personId;
@@ -318,6 +585,29 @@ class CrossTenantPersonAttendance {
   final bool sharePlan;
   final String? typeId;
   final bool includeInAverage;
+  final int? durationDays;
+  final String? place;
+  final String? filesFolder;
+  final String? description;
+  final String? attachmentUrl;
+  final String? attachmentName;
+  final List<int> songs;
+  final AttendanceType? attendanceType;
+
+  /// false when the person is not part of the Termin (show_all_attendances).
+  final bool isMember;
+  final Map<String, dynamic>? registrationAnswers;
+  final String? legacyType;
+
+  /// DUTY: 'requested' | 'confirmed' | 'self' or null
+  final String? dutyState;
+
+  /// DUTY: Termin of a type in Dienst-Modus
+  bool get isDutyType => attendanceType?.dutyMode ?? false;
+
+  /// DUTY: own assignment that still waits for confirmation
+  bool get isDutyRequested =>
+      isDutyType && dutyState == DutyState.requested && !isCancelledStatus(status);
 
   CrossTenantPersonAttendance({
     this.id,
@@ -337,35 +627,76 @@ class CrossTenantPersonAttendance {
     this.sharePlan = false,
     this.typeId,
     this.includeInAverage = true,
+    this.durationDays,
+    this.place,
+    this.filesFolder,
+    this.description,
+    this.attachmentUrl,
+    this.attachmentName,
+    this.songs = const [],
+    this.attendanceType,
+    this.isMember = true,
+    this.registrationAnswers,
+    this.legacyType,
+    this.dutyState,
   });
 
-  /// Check if this attendance is in the past
-  bool get isPast {
-    if (date == null) return false;
-    final attendanceDate = DateTime.tryParse(date!);
-    if (attendanceDate == null) return false;
-    final today = DateTime.now();
-    final todayStart = DateTime(today.year, today.month, today.day);
-    return attendanceDate.isBefore(todayStart);
+  CrossTenantPersonAttendance copyWith({
+    AttendanceStatus? status,
+    String? notes,
+    Map<String, dynamic>? registrationAnswers,
+  }) {
+    return CrossTenantPersonAttendance(
+      id: id,
+      personId: personId,
+      attendanceId: attendanceId,
+      status: status ?? this.status,
+      notes: notes ?? this.notes,
+      date: date,
+      typeInfo: typeInfo,
+      startTime: startTime,
+      endTime: endTime,
+      deadline: deadline,
+      tenantId: tenantId,
+      tenantName: tenantName,
+      tenantColor: tenantColor,
+      plan: plan,
+      sharePlan: sharePlan,
+      typeId: typeId,
+      includeInAverage: includeInAverage,
+      durationDays: durationDays,
+      place: place,
+      filesFolder: filesFolder,
+      description: description,
+      attachmentUrl: attachmentUrl,
+      attachmentName: attachmentName,
+      songs: songs,
+      attendanceType: attendanceType,
+      isMember: isMember,
+      registrationAnswers: registrationAnswers ?? this.registrationAnswers,
+      legacyType: legacyType,
+      dutyState: dutyState,
+    );
   }
 
-  /// Check if this attendance is today or in the future
-  bool get isUpcoming {
-    if (date == null) return false;
-    final attendanceDate = DateTime.tryParse(date!);
-    if (attendanceDate == null) return false;
-    final today = DateTime.now();
-    final todayStart = DateTime(today.year, today.month, today.day);
-    return !attendanceDate.isBefore(todayStart);
-  }
+  /// Duration including the type's default for all-day types.
+  int? get effectiveDurationDays => durationDays ??
+      ((attendanceType?.allDay ?? false) ? attendanceType?.durationDays : null);
+
+  /// Past only once the last day of a multi-day Termin is over.
+  bool get isPast => EventListUtils.hasEnded(date, effectiveDurationDays);
+
+  /// Today, running or in the future.
+  bool get isUpcoming => date != null && !isPast;
+
+  /// Starts today or still running today ("Heute").
+  bool get isRunning => EventListUtils.isRunning(date, effectiveDurationDays);
 
   /// Check if the deadline has passed
-  bool get isDeadlinePassed {
-    if (deadline == null) return false;
-    final deadlineDate = DateTime.tryParse(deadline!);
-    if (deadlineDate == null) return false;
-    return DateTime.now().isAfter(deadlineDate);
-  }
+  bool get isDeadlinePassed => !EventListUtils.isSigninOpen(deadline);
+
+  /// Status letter (Ionic att.text)
+  String get text => isMember ? EventListUtils.attText(status) : '';
 
   /// Check if the person was present (attended)
   bool get attended {
@@ -373,6 +704,13 @@ class CrossTenantPersonAttendance {
         status == AttendanceStatus.late ||
         status == AttendanceStatus.lateExcused;
   }
+
+  bool get isExcusedStatus =>
+      status == AttendanceStatus.excused ||
+      status == AttendanceStatus.lateExcused;
+
+  /// Highlighted type (Vortrag etc.)
+  bool get highlight => attendanceType?.highlight ?? legacyType == 'vortrag';
 
   /// Check if plan is available for viewing
   bool get hasPlan {
@@ -382,27 +720,49 @@ class CrossTenantPersonAttendance {
   }
 
   /// Get deadline as DateTime
-  DateTime? get deadlineDateTime {
-    if (deadline == null) return null;
-    return DateTime.tryParse(deadline!);
-  }
+  DateTime? get deadlineDateTime => EventListUtils.deadlineLocal(deadline);
 
   /// Get readable deadline text
   String? get deadlineText {
-    final deadlineDate = deadlineDateTime;
-    if (deadlineDate == null) return null;
+    if (deadline == null) return null;
+    return EventListUtils.deadlineText(deadline);
+  }
 
-    final now = DateTime.now();
-    if (now.isAfter(deadlineDate)) {
-      return 'Anmeldefrist abgelaufen';
-    }
+  /// Readable date ("Di., 20.10.2026", range for multi-day all-day types)
+  String get readableDate => EventListUtils.readableDate(
+        date,
+        allDay: attendanceType?.allDay ?? false,
+        durationDays: attendanceType?.durationDays,
+      );
 
-    final day = deadlineDate.day.toString().padLeft(2, '0');
-    final month = deadlineDate.month.toString().padLeft(2, '0');
-    final year = deadlineDate.year;
-    final hour = deadlineDate.hour.toString().padLeft(2, '0');
-    final minute = deadlineDate.minute.toString().padLeft(2, '0');
-    return 'Anmelden bis $day.$month.$year $hour:$minute Uhr';
+  /// Title like Ionic `getTypeTitle`: typeInfo, else type name unless hidden.
+  String get title {
+    if (typeInfo != null && typeInfo!.isNotEmpty) return typeInfo!;
+    final type = attendanceType;
+    if (type == null || type.hideName) return '';
+    return type.name;
+  }
+
+  /// Title shown in the lists; falls back to the readable date.
+  String get eventTitle => title.isNotEmpty ? title : readableDate;
+
+  /// Registration fields of the attendance type.
+  List<RegistrationField> get registrationFields =>
+      attendanceType?.registrationFields ?? const [];
+
+  /// Time line; multi-day Termine (and the current card) also show the date
+  /// unless it is the title.
+  String eventMeta({bool withDate = false, bool withPlace = true}) {
+    final type = attendanceType;
+    final showDate = withDate ||
+        EventListUtils.isMultiDay(durationDays) ||
+        ((type?.allDay ?? false) && (type?.durationDays ?? 1) > 1);
+    final readable = readableDate;
+    return EventListUtils.meta([
+      showDate && readable != eventTitle ? readable : '',
+      EventListUtils.timeRange(startTime ?? type?.startTime, endTime ?? type?.endTime),
+      withPlace ? place : '',
+    ]);
   }
 
   /// Display title - returns typeInfo if not empty, otherwise 'Termin'
@@ -410,6 +770,6 @@ class CrossTenantPersonAttendance {
     if (typeInfo != null && typeInfo!.isNotEmpty) {
       return typeInfo!;
     }
-    return 'Termin';
+    return title.isNotEmpty ? title : l10nWithoutContext.attendanceEventFallback;
   }
 }

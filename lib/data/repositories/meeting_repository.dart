@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/meeting/meeting.dart';
 import 'base_repository.dart';
+import '../../l10n/l10n.dart';
 
 /// Provider for MeetingRepository
 final meetingRepositoryProvider = Provider<MeetingRepository>((ref) {
@@ -61,7 +62,7 @@ class MeetingRepository extends BaseRepository with TenantAwareRepository {
           .maybeSingle();
 
       if (existing != null) {
-        throw Exception('Eine Besprechung an diesem Datum existiert bereits');
+        throw Exception(l10nWithoutContext.coreFlutterRepoMeetingExistsOnDate);
       }
 
       final data = {
@@ -103,7 +104,7 @@ class MeetingRepository extends BaseRepository with TenantAwareRepository {
             .maybeSingle();
 
         if (existing != null) {
-          throw Exception('Eine Besprechung an diesem Datum existiert bereits');
+          throw Exception(l10nWithoutContext.coreFlutterRepoMeetingExistsOnDate);
         }
       }
 

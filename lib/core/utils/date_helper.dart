@@ -1,3 +1,7 @@
+import 'package:intl/intl.dart';
+
+import '../../l10n/l10n.dart';
+
 /// Helper class for date formatting and manipulation
 ///
 /// Based on Ionic Utils.ts getReadableDate method
@@ -14,6 +18,19 @@ class DateHelper {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final compareDate = DateTime(date.year, date.month, date.day);
+
+    // I18N_INFRA: other languages use intl (German output stays unchanged)
+    if (currentLanguage() != 'de') {
+      final l10n = l10nWithoutContext;
+      if (compareDate == today) return l10n.teamOrgTodayCap;
+      if (compareDate == today.add(const Duration(days: 1))) {
+        return l10n.teamOrgTomorrow;
+      }
+      if (compareDate == today.subtract(const Duration(days: 1))) {
+        return l10n.homeDashboardYesterday;
+      }
+      return DateFormat('EEE, d MMM', currentIntlLocale()).format(date);
+    }
 
     // Check for special cases
     if (compareDate == today) {
@@ -34,6 +51,9 @@ class DateHelper {
 
   /// Formats a date with full month name: "19. Februar 2024"
   static String getFullDate(DateTime date) {
+    if (currentLanguage() != 'de') {
+      return DateFormat('d MMMM y', currentIntlLocale()).format(date);
+    }
     final day = date.day;
     final month = _getFullMonthName(date.month);
     final year = date.year;
@@ -43,6 +63,7 @@ class DateHelper {
 
   /// Formats a date with short format: "19.02.2024"
   static String getShortDate(DateTime date) {
+    if (currentLanguage() != 'de') return DateFormat(dateFmt()).format(date);
     final day = date.day.toString().padLeft(2, '0');
     final month = date.month.toString().padLeft(2, '0');
     final year = date.year;
@@ -133,4 +154,12 @@ class DateHelper {
 
     return compareDate == today;
   }
+
+  /// "2026-03-07" (local calendar day, no time / timezone).
+  static String isoDay(DateTime d) =>
+      '${d.year.toString().padLeft(4, '0')}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
+
+  /// "19:00" from a DB time like "19:00:00" (shorter values unchanged).
+  static String hhmm(String time) =>
+      time.length >= 5 ? time.substring(0, 5) : time;
 }

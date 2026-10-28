@@ -7,6 +7,8 @@ import '../../../../core/providers/shift_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/shift/shift_plan.dart';
+import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
 
 /// Shifts List Page
 ///
@@ -25,7 +27,7 @@ class _ShiftsListPageState extends ConsumerState<ShiftsListPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Schichtpläne'),
+        title: Text(context.l10n.shiftsPlans),
       ),
       body: Column(
         children: [
@@ -36,7 +38,7 @@ class _ShiftsListPageState extends ConsumerState<ShiftsListPage> {
           Expanded(
             child: shiftsAsync.when(
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (error, stack) => Center(child: Text('Fehler: $error')),
+              error: (error, stack) => Center(child: Text(context.l10n.shiftsFlutterErrorWith(friendlyErrorMessage(error)))),
               data: (shifts) {
                 if (shifts.isEmpty) {
                   return Center(
@@ -46,12 +48,12 @@ class _ShiftsListPageState extends ConsumerState<ShiftsListPage> {
                         const Icon(Icons.schedule_outlined,
                             size: 64, color: AppColors.medium),
                         const SizedBox(height: 16),
-                        const Text('Keine Schichtpläne vorhanden'),
+                        Text(context.l10n.shiftsNone),
                         const SizedBox(height: 16),
                         ElevatedButton.icon(
                           onPressed: () => _showCreateDialog(context),
                           icon: const Icon(Icons.add),
-                          label: const Text('Schichtplan erstellen'),
+                          label: Text(context.l10n.shiftsCreate),
                         ),
                       ],
                     ),
@@ -98,15 +100,14 @@ class _ShiftsListPageState extends ConsumerState<ShiftsListPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Automatische Entschuldigungen',
+                      context.l10n.shiftsFlutterInfoTitle,
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(
                             fontWeight: FontWeight.w600,
                           ),
                     ),
                     const SizedBox(height: AppDimensions.paddingXS),
                     Text(
-                      'Schichtpläne ermöglichen automatische Entschuldigungen basierend auf Arbeitsschichten. '
-                      'Weise einem Mitglied einen Schichtplan zu, um Konflikte mit Terminen automatisch zu erkennen.',
+                      context.l10n.shiftsFlutterInfoText,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             color: AppColors.medium,
                           ),
@@ -135,24 +136,24 @@ class _ShiftsListPageState extends ConsumerState<ShiftsListPage> {
       final result = await showDialog<Map<String, String>?>(
         context: context,
         builder: (context) => AlertDialog(
-          title: const Text('Neuer Schichtplan'),
+          title: Text(context.l10n.shiftsCreate),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
                 controller: nameController,
-                decoration: const InputDecoration(
-                  labelText: 'Name',
-                  hintText: 'z.B. 3-Schicht-System',
+                decoration: InputDecoration(
+                  labelText: context.l10n.typeSettingsName,
+                  hintText: context.l10n.shiftsFlutterNameHint,
                 ),
                 autofocus: true,
               ),
               const SizedBox(height: AppDimensions.paddingM),
               TextField(
                 controller: descriptionController,
-                decoration: const InputDecoration(
-                  labelText: 'Beschreibung (optional)',
-                  hintText: 'z.B. Früh, Spät, Nacht',
+                decoration: InputDecoration(
+                  labelText: context.l10n.tasksDescriptionOptional,
+                  hintText: context.l10n.shiftsFlutterDescriptionHint,
                 ),
                 maxLines: 2,
               ),
@@ -161,7 +162,7 @@ class _ShiftsListPageState extends ConsumerState<ShiftsListPage> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Abbrechen'),
+              child: Text(context.l10n.commonCancel),
             ),
             ElevatedButton(
               onPressed: () {
@@ -169,7 +170,7 @@ class _ShiftsListPageState extends ConsumerState<ShiftsListPage> {
                 final name = nameController.text.trim();
                 if (name.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Name ist erforderlich')),
+                    SnackBar(content: Text(context.l10n.shiftsEnterName)),
                   );
                   return;
                 }
@@ -178,7 +179,7 @@ class _ShiftsListPageState extends ConsumerState<ShiftsListPage> {
                   'description': descriptionController.text,
                 });
               },
-              child: const Text('Erstellen'),
+              child: Text(context.l10n.filesCreate),
             ),
           ],
         ),
@@ -208,7 +209,7 @@ class _ShiftsListPageState extends ConsumerState<ShiftsListPage> {
 
     if (mounted) {
       if (result != null) {
-        ToastHelper.showSuccess(context, 'Schichtplan "$name" erstellt');
+        ToastHelper.showSuccess(context, context.l10n.shiftsFlutterCreated(name));
         // Navigate to detail page
         if (result.id != null) {
           context.push('/settings/shifts/${result.id}');
@@ -216,7 +217,7 @@ class _ShiftsListPageState extends ConsumerState<ShiftsListPage> {
       } else {
         final error = ref.read(shiftNotifierProvider);
         if (error.hasError) {
-          ToastHelper.showError(context, 'Fehler beim Erstellen: ${error.error}');
+          ToastHelper.showError(context, context.l10n.shiftsFlutterCreateFailed(friendlyErrorMessage(error.error)));
         }
       }
     }
@@ -250,7 +251,7 @@ class _ShiftPlanTile extends StatelessWidget {
       ),
       title: Text(shift.name),
       subtitle: Text(
-        _getSubtitle(),
+        _getSubtitle(context.l10n),
         style: TextStyle(color: AppColors.medium, fontSize: 12),
       ),
       trailing: const Icon(Icons.chevron_right, color: AppColors.medium),
@@ -258,7 +259,7 @@ class _ShiftPlanTile extends StatelessWidget {
     );
   }
 
-  String _getSubtitle() {
+  String _getSubtitle(AppLocalizations l10n) {
     final parts = <String>[];
 
     if (shift.description.isNotEmpty) {
@@ -267,14 +268,14 @@ class _ShiftPlanTile extends StatelessWidget {
 
     final cycleDays = shift.cycleLengthDays;
     if (cycleDays > 1) {
-      parts.add('$cycleDays-Tage-Zyklus');
+      parts.add(l10n.shiftsFlutterCycleDays(cycleDays));
     }
 
     if (shift.definition.isNotEmpty) {
       final segments = shift.definition.length;
-      parts.add('$segments Segment${segments != 1 ? 'e' : ''}');
+      parts.add(l10n.shiftsFlutterSegments(segments));
     }
 
-    return parts.isEmpty ? 'Keine Definition' : parts.join(' • ');
+    return parts.isEmpty ? l10n.shiftsFlutterNoDefinition : parts.join(' • ');
   }
 }

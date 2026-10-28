@@ -2,18 +2,23 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/models/attendance/attendance.dart';
 import '../../data/repositories/attendance_type_repository.dart';
-import 'attendance_providers.dart';
+import '../utils/demo_guard.dart';
 import 'tenant_providers.dart';
 
 /// Initialized attendance type repository with tenant context
 final attendanceTypeRepositoryWithTenantProvider = Provider<AttendanceTypeRepository>((ref) {
-  final repo = ref.watch(attendanceTypeRepositoryProvider);
   final tenant = ref.watch(currentTenantIdProvider);
+  return ref.watch(attendanceTypeRepositoryForTenantProvider(tenant));
+});
 
-  if (tenant != null) {
-    repo.setTenantId(tenant);
-  }
-
+/// TENANT_BIND: one immutable [AttendanceTypeRepository] per tenant (`bindTenantId`),
+/// so a tenant switch never changes the tenant of a running flow and
+/// cross-tenant work uses its own bound instance. `null` (no tenant)
+/// yields an unbound instance with `hasTenantId == false`.
+final attendanceTypeRepositoryForTenantProvider =
+    Provider.family<AttendanceTypeRepository, int?>((ref, tenantId) {
+  final repo = AttendanceTypeRepository(ref);
+  if (tenantId != null) repo.bindTenantId(tenantId);
   return repo;
 });
 
@@ -51,7 +56,9 @@ class AttendanceTypeNotifier extends Notifier<AsyncValue<void>> {
 
   AttendanceTypeRepository get _repo => ref.read(attendanceTypeRepositoryWithTenantProvider);
 
-  Future<AttendanceType?> createType(AttendanceType type) async {
+  /// LOGIC_SETTINGS: rethrows on failure so the caller shows
+  /// `typeSettings.createFailed` (Ionic createType) instead of a success toast.
+  Future<AttendanceType> createType(AttendanceType type) async {
     state = const AsyncValue.loading();
     try {
       final result = await _repo.createType(type);
@@ -60,36 +67,33 @@ class AttendanceTypeNotifier extends Notifier<AsyncValue<void>> {
       return result;
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
-      return null;
+      rethrow;
     }
   }
 
+  /// Saves the type. Returns null when the save itself failed (caller shows
+  /// `typeSettings.updateFailed`); rethrows [DemoModeException] so the demo
+  /// block is not reported as a generic failure.
   Future<AttendanceType?> updateType(String id, Map<String, dynamic> updates) async {
     state = const AsyncValue.loading();
+    final AttendanceType? result;
     try {
-      final result = await _repo.updateType(id, updates);
+      result = await _repo.updateType(id, updates);
       state = const AsyncValue.data(null);
       ref.invalidate(attendanceTypesProvider);
       ref.invalidate(attendanceTypeByIdProvider(id));
-
-      // If start_time or end_time changed, update future attendance records
-      final hasTimeChange = updates.containsKey('start_time') || updates.containsKey('end_time');
-      if (hasTimeChange) {
-        final attendanceRepo = ref.read(attendanceRepositoryWithTenantProvider);
-        await attendanceRepo.updateFutureAttendanceTimes(
-          id,
-          startTime: updates['start_time'] as String?,
-          endTime: updates['end_time'] as String?,
-        );
-        ref.invalidate(attendancesProvider);
-        ref.invalidate(upcomingAttendancesProvider);
-      }
-
-      return result;
+    } on DemoModeException catch (e, stack) {
+      state = AsyncValue.error(e, stack);
+      rethrow;
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
       return null;
     }
+    // DB_FIX: Ionic updateAttendanceType only updates the attendance_types
+    // row. It never rewrites start_time/end_time of existing Termine (the
+    // removed follow-up overwrote the times of ALL future Termine of the
+    // type on every save, because the edit page always sends both times).
+    return result;
   }
 
   Future<bool> deleteType(String id) async {

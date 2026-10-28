@@ -27,10 +27,17 @@ void main() {
       test('createType sets tenant_id in insert data', () {
         final section = _extractMethodBody(repoSource, 'createType');
         expect(section, isNotNull, reason: 'createType should exist');
+        // LOGIC_SETTINGS: insert payload is built by buildInsertData
         expect(
           section,
-          contains("'tenant_id': currentTenantId"),
-          reason: 'createType must set tenant_id in insert data',
+          contains('buildInsertData(type, currentTenantId)'),
+          reason: 'createType must build insert data with currentTenantId',
+        );
+        final builderStart = repoSource.indexOf('buildInsertData(\n');
+        expect(builderStart, isNonNegative);
+        expect(
+          repoSource.substring(builderStart),
+          contains("'tenant_id': tenantId"),
         );
       });
 

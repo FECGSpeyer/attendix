@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/attendance/attendance.dart';
 import 'base_repository.dart';
+import '../../l10n/l10n.dart';
 
 /// Repository for AttendanceType CRUD operations
 class AttendanceTypeRepository extends BaseRepository with TenantAwareRepository {
@@ -42,44 +43,52 @@ class AttendanceTypeRepository extends BaseRepository with TenantAwareRepository
     }
   }
 
-  /// Create a new attendance type
-  Future<AttendanceType?> createType(AttendanceType type) async {
+  /// LOGIC_SETTINGS: Insert payload for a new attendance type, matching
+  /// Ionic `addAttendanceType` (type.page.ts isNew defaults):
+  /// - `default_status` / `available_statuses` are NUMERIC (DB columns are
+  ///   `number` / `number[]`), never the enum names.
+  /// - `relevant_groups` is always a list (`[]`), never null.
+  /// - `default_plan` is always `{time, end, fields: []}`, never null.
+  /// - `reminders` defaults to `[]`, `index` to the given index (Ionic: 999).
+  static Map<String, dynamic> buildInsertData(
+    AttendanceType type,
+    int tenantId,
+  ) {
+    return {
+      'name': type.name,
+      'planning_title': type.planningTitle ?? '',
+      'tenant_id': tenantId,
+      'default_status': type.defaultStatus.value,
+      'available_statuses':
+          (type.availableStatuses ?? const []).map((s) => s.value).toList(),
+      'default_plan': type.defaultPlan ??
+          <String, dynamic>{'time': '', 'end': '', 'fields': <dynamic>[]},
+      'relevant_groups': type.relevantGroups ?? <int>[],
+      'start_time': type.startTime,
+      'end_time': type.endTime,
+      'manage_songs': type.manageSongs,
+      'visible': type.visible,
+      'color': type.color,
+      'highlight': type.highlight,
+      'hide_name': type.hideName,
+      'include_in_average': type.includeInAverage,
+      'all_day': type.allDay,
+      'duration_days': type.durationDays,
+      'notification': type.notification,
+      'reminders': type.reminders ?? <int>[],
+      'additional_fields_filter': type.additionalFieldsFilter,
+      'checklist': type.checklist?.map((c) => c.toJson()).toList(),
+      'index': type.index ?? 999,
+    };
+  }
+
+  /// Create a new attendance type.
+  /// LOGIC_SETTINGS: errors are rethrown (Ionic throws after `svc.addTypeFailed`)
+  /// so callers never report success for a failed insert.
+  Future<AttendanceType> createType(AttendanceType type) async {
+    ensureNotDemo('createType'); // DEMO_GUARD
     try {
-      // Get max index first
-      final maxIndexResponse = await supabase
-          .from('attendance_types')
-          .select('index')
-          .eq('tenant_id', currentTenantId)
-          .order('index', ascending: false)
-          .limit(1);
-
-      final maxIndex = (maxIndexResponse as List).isNotEmpty
-          ? (maxIndexResponse[0]['index'] as int? ?? 0)
-          : 0;
-
-      final data = {
-        'name': type.name,
-        'tenant_id': currentTenantId,
-        'default_status': type.defaultStatus.name,
-        'available_statuses': type.availableStatuses?.map((s) => s.name).toList(),
-        'default_plan': type.defaultPlan,
-        'relevant_groups': type.relevantGroups,
-        'start_time': type.startTime,
-        'end_time': type.endTime,
-        'manage_songs': type.manageSongs,
-        'visible': type.visible,
-        'color': type.color,
-        'highlight': type.highlight,
-        'hide_name': type.hideName,
-        'include_in_average': type.includeInAverage,
-        'all_day': type.allDay,
-        'duration_days': type.durationDays,
-        'notification': type.notification,
-        'reminders': type.reminders,
-        'additional_fields_filter': type.additionalFieldsFilter,
-        'checklist': type.checklist?.map((c) => c.toJson()).toList(),
-        'index': maxIndex + 1,
-      };
+      final data = buildInsertData(type, currentTenantId);
 
       final response = await supabase
           .from('attendance_types')
@@ -90,12 +99,13 @@ class AttendanceTypeRepository extends BaseRepository with TenantAwareRepository
       return AttendanceType.fromJson(response);
     } catch (e, stack) {
       handleError(e, stack, 'createType');
-      return null;
+      rethrow;
     }
   }
 
   /// Update an attendance type
   Future<AttendanceType?> updateType(String id, Map<String, dynamic> updates) async {
+    ensureNotDemo('updateType'); // DEMO_GUARD
     try {
       final response = await supabase
           .from('attendance_types')
@@ -109,6 +119,23 @@ class AttendanceTypeRepository extends BaseRepository with TenantAwareRepository
     } catch (e, stack) {
       handleError(e, stack, 'updateType');
       return null;
+    }
+  }
+
+  /// SETTINGS2: `planning_prefix_instance_name` ("Instanz-Name vor Werken").
+  /// Not part of the shared AttendanceType model, so read it directly.
+  Future<bool> getPlanningPrefixInstanceName(String typeId) async {
+    try {
+      final response = await supabase
+          .from('attendance_types')
+          .select('planning_prefix_instance_name')
+          .eq('id', typeId)
+          .eq('tenant_id', currentTenantId)
+          .maybeSingle();
+      return response?['planning_prefix_instance_name'] == true;
+    } catch (e, stack) {
+      handleError(e, stack, 'getPlanningPrefixInstanceName');
+      return false;
     }
   }
 
@@ -131,12 +158,13 @@ class AttendanceTypeRepository extends BaseRepository with TenantAwareRepository
   /// Delete an attendance type
   /// BL-009: Checks for references before deletion
   Future<bool> deleteType(String id) async {
+    ensureNotDemo('deleteType'); // DEMO_GUARD
     try {
       // BL-009: Check for attendances using this type
       final usageCount = await getAttendanceCountForType(id);
       if (usageCount > 0) {
         throw RepositoryException(
-          message: 'Typ kann nicht gelöscht werden: Wird von $usageCount Anwesenheit(en) verwendet',
+          message: l10nWithoutContext.coreFlutterRepoTypeInUse(usageCount),
           operation: 'deleteType',
           code: 'FK_VIOLATION',
         );
@@ -157,6 +185,7 @@ class AttendanceTypeRepository extends BaseRepository with TenantAwareRepository
 
   /// Reorder attendance types
   Future<bool> reorderTypes(List<String> orderedIds) async {
+    ensureNotDemo('reorderTypes'); // DEMO_GUARD
     try {
       // Update each type's index based on its position in the list
       for (int i = 0; i < orderedIds.length; i++) {

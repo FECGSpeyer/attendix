@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
@@ -13,6 +14,10 @@ import '../../../../../core/utils/toast_helper.dart';
 import '../../../../../data/models/person/person.dart';
 import '../../../../../shared/widgets/sheets/image_viewer_sheet.dart';
 import '../../pages/person_detail_page.dart';
+import '../../../../../core/utils/demo_guard.dart';
+import '../../../../../l10n/l10n.dart';
+import '../../../../../core/utils/error_message.dart';
+import '../../../../../core/utils/profile_image_path.dart'; // DB_REVIEW_REST
 
 /// Header widget displaying person avatar, group, and attendance stats.
 class PersonHeader extends ConsumerWidget {
@@ -100,8 +105,8 @@ class PersonHeader extends ConsumerWidget {
                 _StatItem(
                   value: '${stats['percentage']}%',
                   label: stats['lateCount'] > 0
-                      ? 'Anwesenheit (${stats['lateCount']}x zu spät)'
-                      : 'Anwesenheit',
+                      ? context.l10n.personFlutterAttendanceLate(stats['lateCount'] as int)
+                      : context.l10n.peopleAttendance,
                   color: stats['percentage'] >= 75
                       ? AppColors.success
                       : stats['percentage'] >= 50
@@ -118,7 +123,7 @@ class PersonHeader extends ConsumerWidget {
                 ),
                 _StatItem(
                   value: '${stats['attended']}/${stats['total']}',
-                  label: 'Termine',
+                  label: context.l10n.tabsEvents,
                   color: Colors.white,
                 ),
               ],
@@ -154,7 +159,7 @@ class PersonHeader extends ConsumerWidget {
           children: [
             ListTile(
               leading: const Icon(Icons.photo_camera),
-              title: const Text('Passbild ersetzen'),
+              title: Text(context.l10n.settingsReplacePhoto),
               onTap: () {
                 Navigator.pop(sheetContext);
                 _replacePhoto(outerContext, ref);
@@ -163,7 +168,7 @@ class PersonHeader extends ConsumerWidget {
             if (_hasImage)
               ListTile(
                 leading: const Icon(Icons.delete, color: AppColors.danger),
-                title: const Text('Passbild entfernen'),
+                title: Text(context.l10n.personRemovePhoto),
                 onTap: () {
                   Navigator.pop(sheetContext);
                   _removePhoto(outerContext, ref);
@@ -172,7 +177,7 @@ class PersonHeader extends ConsumerWidget {
             if (_hasImage)
               ListTile(
                 leading: const Icon(Icons.visibility),
-                title: const Text('Passbild ansehen'),
+                title: Text(context.l10n.settingsViewPhoto),
                 onTap: () {
                   Navigator.pop(sheetContext);
                   showImageViewerSheet(
@@ -185,7 +190,7 @@ class PersonHeader extends ConsumerWidget {
             const Divider(),
             ListTile(
               leading: const Icon(Icons.close),
-              title: const Text('Abbrechen'),
+              title: Text(context.l10n.commonCancel),
               onTap: () => Navigator.pop(sheetContext),
             ),
           ],
@@ -207,34 +212,30 @@ class PersonHeader extends ConsumerWidget {
       if (image == null) return;
 
       if (!context.mounted) return;
-      ToastHelper.showInfo(context, 'Lade Passbild hoch...');
+      ToastHelper.showInfo(context, context.l10n.personFlutterUploadingPhoto);
 
       final bytes = await image.readAsBytes();
 
       // Check file size (max 2MB)
       if (bytes.length > 2 * 1024 * 1024) {
         if (context.mounted) {
-          ToastHelper.showError(context, 'Bild ist zu groß (max 2MB)');
+          ToastHelper.showError(context, context.l10n.personPhotoTooLarge);
         }
         return;
       }
 
+      if (DemoGuard.blocked()) return; // DEMO_GUARD
       final supabase = ref.read(supabaseClientProvider);
       final tenant = ref.read(currentTenantProvider);
       final personId = person.id;
 
       if (personId == null || tenant == null) return;
 
-      final storagePath = '${tenant.id}/$personId.jpg';
+      // DB_REVIEW_REST (M4): Ionic ImageService.updateImage – key `<id>`,
+      // upsert, plain public URL in player.img (no tenant folder).
+      final storagePath = profileImageStoragePath(personId);
+      final legacyPath = profileImagePathFromUrl(person.img);
 
-      // Delete old file if it exists (ignore errors)
-      try {
-        await supabase.storage
-            .from(SupabaseBuckets.profiles)
-            .remove([storagePath]);
-      } catch (_) {}
-
-      // Upload new file
       await supabase.storage.from(SupabaseBuckets.profiles).uploadBinary(
             storagePath,
             bytes,
@@ -244,18 +245,28 @@ class PersonHeader extends ConsumerWidget {
             ),
           );
 
+      // Drop a legacy `<tenantId>/<id>.jpg` object so it does not stay orphaned.
+      if (legacyPath != null && legacyPath != storagePath) {
+        try {
+          await supabase.storage
+              .from(SupabaseBuckets.profiles)
+              .remove([legacyPath]);
+        } catch (_) {}
+      }
+
       final publicUrl = supabase.storage
           .from(SupabaseBuckets.profiles)
           .getPublicUrl(storagePath);
 
-      // Add cache-busting query param
-      final urlWithCacheBust =
-          '$publicUrl?t=${DateTime.now().millisecondsSinceEpoch}';
+      // Same URL after a replace: drop the cached image so it reloads.
+      try {
+        await CachedNetworkImage.evictFromCache(publicUrl);
+      } catch (_) {}
 
       // Update player record
       await supabase
           .from('player')
-          .update({'img': urlWithCacheBust})
+          .update({'img': publicUrl})
           .eq('id', personId)
           .eq('tenantId', tenant.id!);
 
@@ -263,11 +274,11 @@ class PersonHeader extends ConsumerWidget {
       ref.invalidate(realtimePlayersProvider);
 
       if (context.mounted) {
-        ToastHelper.showSuccess(context, 'Passbild aktualisiert');
+        ToastHelper.showSuccess(context, context.l10n.settingsPhotoChanged);
       }
     } catch (e) {
       if (context.mounted) {
-        ToastHelper.showError(context, 'Fehler beim Hochladen: $e');
+        ToastHelper.showError(context, context.l10n.personFlutterUploadFailedWith(friendlyErrorMessage(e)));
       }
     }
   }
@@ -276,18 +287,17 @@ class PersonHeader extends ConsumerWidget {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Passbild entfernen?'),
-        content:
-            const Text('Das Passbild wird unwiderruflich gelöscht.'),
+        title: Text(context.l10n.personRemovePhoto),
+        content: Text(context.l10n.personRemovePhotoMessage),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Abbrechen'),
+            child: Text(context.l10n.commonCancel),
           ),
           FilledButton(
             style: FilledButton.styleFrom(backgroundColor: AppColors.danger),
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Entfernen'),
+            child: Text(context.l10n.commonRemove),
           ),
         ],
       ),
@@ -296,36 +306,40 @@ class PersonHeader extends ConsumerWidget {
     if (confirmed != true || !context.mounted) return;
 
     try {
+      if (DemoGuard.blocked()) return; // DEMO_GUARD
       final supabase = ref.read(supabaseClientProvider);
       final tenant = ref.read(currentTenantProvider);
       final personId = person.id;
 
       if (personId == null || tenant == null) return;
 
-      // Delete from storage
-      final storagePath = '${tenant.id}/$personId.jpg';
-      try {
-        await supabase.storage
-            .from(SupabaseBuckets.profiles)
-            .remove([storagePath]);
-      } catch (_) {}
-
-      // Clear img field on player record
+      // DB_REVIEW_REST (M4): Ionic removeImage – clear img with '' (Ionic
+      // code calls img.split and breaks on null), then delete the object
+      // whose key is taken from the stored URL.
       await supabase
           .from('player')
-          .update({'img': null})
+          .update({'img': ''})
           .eq('id', personId)
           .eq('tenantId', tenant.id!);
+
+      final storagePath = profileImagePathFromUrl(person.img);
+      if (storagePath != null) {
+        try {
+          await supabase.storage
+              .from(SupabaseBuckets.profiles)
+              .remove([storagePath]);
+        } catch (_) {}
+      }
 
       ref.invalidate(personProvider(personId));
       ref.invalidate(realtimePlayersProvider);
 
       if (context.mounted) {
-        ToastHelper.showSuccess(context, 'Passbild entfernt');
+        ToastHelper.showSuccess(context, context.l10n.personPhotoRemoved);
       }
     } catch (e) {
       if (context.mounted) {
-        ToastHelper.showError(context, 'Fehler: $e');
+        ToastHelper.showError(context, context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e)));
       }
     }
   }

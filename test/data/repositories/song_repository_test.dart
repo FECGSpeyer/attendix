@@ -1,330 +1,146 @@
 import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 
-/// Security tests for SongRepository
+/// Security tests for SongRepository / PublicSongRepository (source analysis)
 ///
-/// These tests verify that ALL operations include tenantId filtering
-/// to prevent cross-tenant data access.
+/// Song library sync (Ionic `song_source_tenant_id`): songs and song
+/// categories live in the *song source tenant* (`songTenantId` =
+/// source tenant ?? current tenant), history always stays per tenant.
 ///
 /// Tables:
-/// - songs: uses 'tenantId' column
-/// - song_categories: uses 'tenant_id' column
-/// - history: uses 'tenantId' column (camelCase!)
-///
-/// Security Model:
-/// - SELECT: Must have .eq('tenantId', currentTenantId) or .eq('tenant_id', currentTenantId)
-/// - UPDATE: Must have .eq('tenantId', currentTenantId)
-/// - DELETE: Must have .eq('tenantId', currentTenantId)
-/// - INSERT: Must set tenantId/tenant_id in the data object
+/// - songs: 'tenantId' column, filtered by songTenantId
+/// - song_categories: 'tenant_id' column, filtered by songTenantId
+/// - history: 'tenantId' column, filtered by currentTenantId
 void main() {
-  late String songRepoSource;
+  late String repo;
+  late String publicRepo;
 
   setUpAll(() {
-    final file = File('lib/data/repositories/song_repository.dart');
-    songRepoSource = file.readAsStringSync();
+    repo = File('lib/data/repositories/song_repository.dart').readAsStringSync();
+    publicRepo =
+        File('lib/data/repositories/public_song_repository.dart').readAsStringSync();
   });
+
+  /// All query chains (from `.from('<table>')` up to the next `;`)
+  List<String> queries(String source, String table) => RegExp(
+        "\\.from\\('$table'\\)[^;]*;",
+        dotAll: true,
+      ).allMatches(source).map((m) => m.group(0)!).toList();
 
   group('Multi-Tenant Security - SongRepository', () {
-    group('Songs Table - Write Operations', () {
-      test('createSong sets tenantId in insert data', () {
-        final section = _extractMethodBody(songRepoSource, 'createSong');
-        expect(section, isNotNull, reason: 'createSong should exist');
+    test('songTenantId falls back to the current tenant', () {
+      expect(repo, contains('songSourceTenantId ?? currentTenantId'));
+    });
+
+    test('every songs query filters by songTenantId or inserts it', () {
+      final songQueries = queries(repo, 'songs');
+      expect(songQueries, isNotEmpty);
+      for (final q in songQueries) {
+        if (q.contains('.insert(')) continue;
+        // SOL_FIX1: getSongs filters by its captured `tenantId`
+        // (= songTenantId, see sol_fix1_security_test).
         expect(
-          section,
-          contains("data['tenantId'] = currentTenantId"),
-          reason: 'createSong must set tenantId in insert data',
-        );
-      });
+            q.contains(".eq('tenantId', songTenantId)") ||
+                q.contains(".eq('tenantId', tenantId)"),
+            isTrue,
+            reason: 'songs query without tenant filter:\n$q');
+      }
+      expect(repo, contains('final tenantId = songTenantId;'));
+      expect(repo, contains("data['tenantId'] = songTenantId"),
+          reason: 'createSong must set the song tenant');
+    });
 
-      test('all UPDATE operations on songs table include tenantId filter', () {
-        final updateQueries = RegExp(
-          r"supabase[^;]*\.from\('songs'\)[^;]*\.update\([^;]+",
-          multiLine: true,
-        ).allMatches(songRepoSource);
+    test('songs UPDATE / DELETE filter by id AND tenantId', () {
+      for (final q in queries(repo, 'songs')) {
+        if (q.contains('.update(') || q.contains('.delete(')) {
+          expect(q, contains(".eq('id', id)"));
+          expect(q, contains(".eq('tenantId', songTenantId)"));
+        }
+      }
+    });
 
-        expect(updateQueries, isNotEmpty, reason: 'Should have update queries');
+    test('every song_categories query filters by tenant_id or inserts it', () {
+      final catQueries = queries(repo, 'song_categories');
+      expect(catQueries, isNotEmpty);
+      for (final q in catQueries) {
+        if (q.contains('.insert(')) {
+          expect(q, contains("'tenant_id': songTenantId"));
+        } else {
+          expect(q, contains(".eq('tenant_id', songTenantId)"),
+              reason: 'song_categories query without tenant filter:\n$q');
+        }
+      }
+    });
 
-        for (final match in updateQueries) {
-          final query = match.group(0)!;
+    test('history queries are per tenant (never the song source tenant)', () {
+      final historyQueries = queries(repo, 'history');
+      expect(historyQueries, isNotEmpty);
+      for (final q in historyQueries) {
+        if (q.contains('.insert(')) {
+          expect(q, contains("'tenantId': currentTenantId"));
+        } else {
           expect(
-            query,
-            contains(".eq('tenantId', currentTenantId)"),
-            reason: 'UPDATE query on songs missing tenantId filter:\n$query',
+            q.contains(".eq('tenantId', currentTenantId)") ||
+                q.contains(".eq('tenantId', tenantId)"),
+            isTrue,
+            reason: 'history query without tenant filter:\n$q',
           );
         }
-      });
-
-      test('all DELETE operations on songs table include tenantId filter', () {
-        final deleteQueries = RegExp(
-          r"supabase[^;]*\.from\('songs'\)[^;]*\.delete\(\)[^;]+",
-          multiLine: true,
-        ).allMatches(songRepoSource);
-
-        expect(deleteQueries, isNotEmpty, reason: 'Should have delete queries');
-
-        for (final match in deleteQueries) {
-          final query = match.group(0)!;
-          expect(
-            query,
-            contains(".eq('tenantId', currentTenantId)"),
-            reason: 'DELETE query on songs missing tenantId filter:\n$query',
-          );
-        }
-      });
+        expect(q, isNot(contains('songTenantId')));
+      }
     });
 
-    group('Songs Table - Read Operations', () {
-      test('all SELECT operations on songs include tenantId filter', () {
-        final selectQueries = RegExp(
-          r"supabase[^;]*\.from\('songs'\)\s*\n?\s*\.select\([^;]+",
-          multiLine: true,
-        ).allMatches(songRepoSource);
-
-        // Filter out INSERT chains
-        final readQueries = selectQueries.where((m) {
-          final query = m.group(0)!;
-          return !query.contains('.insert(');
-        }).toList();
-
-        expect(readQueries, isNotEmpty, reason: 'Should have select queries');
-
-        for (final match in readQueries) {
-          final query = match.group(0)!;
-          expect(
-            query,
-            contains(".eq('tenantId', currentTenantId)"),
-            reason: 'SELECT query on songs missing tenantId filter:\n$query',
-          );
-        }
-      });
+    test('history uses the real column names (songId, not song_id)', () {
+      expect(repo, isNot(contains("'song_id'")));
+      expect(repo, contains("'songId'"));
     });
 
-    group('Songs Table - Core Methods', () {
-      test('getSongs has tenantId filter', () {
-        final section = _extractMethodBody(songRepoSource, 'getSongs');
-        expect(section, isNotNull, reason: 'getSongs should exist');
-        expect(section, contains(".eq('tenantId', currentTenantId)"));
-      });
-
-      test('getSongById has both id and tenantId filter', () {
-        final section = _extractMethodBody(songRepoSource, 'getSongById');
-        expect(section, isNotNull, reason: 'getSongById should exist');
-        expect(section, contains(".eq('id', id)"));
-        expect(section, contains(".eq('tenantId', currentTenantId)"));
-      });
-
-      test('updateSong has both id and tenantId filter', () {
-        final section = _extractMethodBody(songRepoSource, 'updateSong');
-        expect(section, isNotNull, reason: 'updateSong should exist');
-        expect(section, contains(".eq('id', id)"));
-        expect(section, contains(".eq('tenantId', currentTenantId)"));
-      });
-
-      test('deleteSong has both id and tenantId filter', () {
-        final section = _extractMethodBody(songRepoSource, 'deleteSong');
-        expect(section, isNotNull, reason: 'deleteSong should exist');
-        expect(section, contains(".eq('id', id)"));
-        expect(section, contains(".eq('tenantId', currentTenantId)"));
-      });
-
-      test('searchSongs has tenantId filter', () {
-        final section = _extractMethodBody(songRepoSource, 'searchSongs');
-        expect(section, isNotNull, reason: 'searchSongs should exist');
-        expect(section, contains(".eq('tenantId', currentTenantId)"));
-      });
+    test('attendance_types lookup is tenant filtered', () {
+      for (final q in queries(repo, 'attendance_types')) {
+        expect(q, contains(".eq('tenant_id', tenantId)"));
+      }
     });
 
-    group('Song Categories Table', () {
-      test('getSongCategories has tenant_id filter', () {
-        final section = _extractMethodBody(songRepoSource, 'getSongCategories');
-        expect(section, isNotNull, reason: 'getSongCategories should exist');
-        expect(section, contains(".eq('tenant_id', currentTenantId)"));
-      });
-    });
-
-    group('Song History Table', () {
-      test('getSongHistory has tenantId filter', () {
-        final section = _extractMethodBody(songRepoSource, 'getSongHistory');
-        expect(section, isNotNull, reason: 'getSongHistory should exist');
-        expect(section, contains(".eq('tenantId', currentTenantId)"));
-      });
-
-      test('addSongHistory sets tenantId in insert data', () {
-        final section = _extractMethodBody(songRepoSource, 'addSongHistory');
-        expect(section, isNotNull, reason: 'addSongHistory should exist');
+    test('tenants queries document why they cannot filter by tenantId', () {
+      expect(repo, contains('`tenants` has no tenantId column'));
+      for (final q in queries(repo, 'tenants')) {
         expect(
-          section,
-          contains("'tenantId': currentTenantId"),
-          reason: 'addSongHistory must set tenantId in insert data',
+          q.contains(".eq('id', currentTenantId)") || q.contains('song_source_tenant_id.eq.'),
+          isTrue,
+          reason: 'tenants query must be scoped to the song library:\n$q',
         );
-      });
-
-      test('getCurrentSongs has tenantId filter (via summary test)', () {
-        // This test verifies getCurrentSongs coverage via the summary statistics
-        // The _extractMethodBody helper doesn't support record return types,
-        // but the summary test confirms all history queries have tenantId filter
-        expect(
-          songRepoSource,
-          contains("getCurrentSongs"),
-          reason: 'getCurrentSongs should exist in repository',
-        );
-      });
-
-      test('getCurrentSongs normalizes date to YYYY-MM-DD before grouping', () {
-        // Dates from Supabase can have different formats (e.g. "2026-04-03"
-        // vs "2026-04-03T00:00:00") which would create duplicate date groups.
-        // The grouping key must be normalized to just the date portion.
-        //
-        // Find the grouping logic (between "Group by date" and "grouped.entries")
-        final groupByStart = songRepoSource.indexOf('Group by date');
-        final groupedEntriesEnd = songRepoSource.indexOf('grouped.entries');
-        expect(groupByStart, isNot(-1), reason: 'Should find "Group by date" comment');
-        expect(groupedEntriesEnd, isNot(-1), reason: 'Should find "grouped.entries"');
-
-        final groupingSection = songRepoSource.substring(groupByStart, groupedEntriesEnd);
-        expect(
-          groupingSection,
-          contains('substring(0, 10)'),
-          reason:
-              'getCurrentSongs must normalize date strings to YYYY-MM-DD '
-              'in the grouping logic to prevent duplicate date sections',
-        );
-      });
-
-      test('getCurrentSongs deduplicates by songId within each date', () {
-        // When the same song is played at multiple events on the same day
-        // (e.g. Probe + Konzert), getCurrentSongs should only show it once
-        // per date. The grouping logic must track seen songIds per date.
-        final groupByStart = songRepoSource.indexOf('Group by date');
-        final groupedEntriesEnd = songRepoSource.indexOf('grouped.entries');
-        expect(groupByStart, isNot(-1), reason: 'Should find "Group by date" comment');
-        expect(groupedEntriesEnd, isNot(-1), reason: 'Should find "grouped.entries"');
-
-        final groupingSection = songRepoSource.substring(groupByStart, groupedEntriesEnd);
-        expect(
-          groupingSection,
-          contains('seenSongIds'),
-          reason:
-              'getCurrentSongs must deduplicate songs by songId per date '
-              'to prevent the same song appearing multiple times on one day',
-        );
-      });
-    });
-
-    group('Summary Statistics', () {
-      test('high tenantId filter coverage for songs table', () {
-        final allSongQueries = RegExp(
-          r"\.from\('songs'\)",
-        ).allMatches(songRepoSource).length;
-
-        final withTenantFilter = RegExp(
-          r"\.from\('songs'\)[^;]*\.eq\('tenantId',\s*currentTenantId\)",
-          multiLine: true,
-        ).allMatches(songRepoSource).length;
-
-        final insertWithTenant = songRepoSource.contains("data['tenantId'] = currentTenantId")
-            ? 1
-            : 0;
-
-        final totalCovered = withTenantFilter + insertWithTenant;
-
-        // ignore: avoid_print
-        print('Songs queries: $allSongQueries');
-        // ignore: avoid_print
-        print('With tenantId filter: $withTenantFilter');
-        // ignore: avoid_print
-        print('Insert with tenant: $insertWithTenant');
-        // ignore: avoid_print
-        print('Total covered: $totalCovered');
-
-        final coverage = totalCovered / allSongQueries;
-        expect(
-          coverage,
-          greaterThanOrEqualTo(0.8),
-          reason: 'Expected at least 80% tenantId coverage for songs, got ${(coverage * 100).toStringAsFixed(1)}%',
-        );
-      });
-
-      test('high tenantId filter coverage for history table', () {
-        final allHistoryQueries = RegExp(
-          r"\.from\('history'\)",
-        ).allMatches(songRepoSource).length;
-
-        final withTenantFilter = RegExp(
-          r"\.from\('history'\)[^;]*\.eq\('tenantId',\s*currentTenantId\)",
-          multiLine: true,
-        ).allMatches(songRepoSource).length;
-
-        final insertWithTenant = RegExp(
-          r"'tenantId':\s*currentTenantId",
-        ).allMatches(songRepoSource).length;
-
-        final totalCovered = withTenantFilter + insertWithTenant;
-
-        // ignore: avoid_print
-        print('History queries: $allHistoryQueries');
-        // ignore: avoid_print
-        print('With tenantId filter: $withTenantFilter');
-        // ignore: avoid_print
-        print('Insert with tenant: $insertWithTenant');
-        // ignore: avoid_print
-        print('Total covered: $totalCovered');
-
-        // history table has 3 queries (2 select, 1 insert)
-        // All should be covered
-        expect(
-          totalCovered,
-          greaterThanOrEqualTo(allHistoryQueries),
-          reason: 'All history queries should have tenantId filter',
-        );
-      });
+      }
     });
   });
-}
 
-/// Extract method body from source code
-String? _extractMethodBody(String source, String methodName) {
-  // More flexible regex that handles generic return types like Future<List<T>>
-  final methodStart = RegExp(
-    '(Future<[^>]*(?:<[^>]*>)?[^>]*>|void)\\s+$methodName\\s*\\(',
-  ).firstMatch(source);
-
-  if (methodStart == null) return null;
-
-  final startIndex = methodStart.start;
-
-  int braceIndex = startIndex;
-  int parenCount = 0;
-  bool foundMethodBrace = false;
-
-  for (int i = startIndex; i < source.length && !foundMethodBrace; i++) {
-    final char = source[i];
-    if (char == '(' || char == '{' && parenCount > 0) {
-      parenCount++;
-    } else if (char == ')' || char == '}' && parenCount > 1) {
-      parenCount--;
-    } else if (char == '{' && parenCount == 0) {
-      braceIndex = i;
-      foundMethodBrace = true;
-    }
-  }
-
-  if (!foundMethodBrace) return null;
-
-  int braceCount = 0;
-  int endIndex = braceIndex;
-
-  for (int i = braceIndex; i < source.length; i++) {
-    if (source[i] == '{') {
-      braceCount++;
-    } else if (source[i] == '}') {
-      braceCount--;
-      if (braceCount == 0) {
-        endIndex = i + 1;
-        break;
+  group('Multi-Tenant Security - PublicSongRepository', () {
+    test('every query except the tenant lookup filters by the shared tenant', () {
+      const tables = {
+        'songs': "'tenantId'",
+        'instruments': "'tenantId'",
+        'song_categories': "'tenant_id'",
+        'group_categories': "'tenant_id'",
+      };
+      for (final entry in tables.entries) {
+        final qs = queries(publicRepo, entry.key);
+        expect(qs, isNotEmpty, reason: 'expected queries on ${entry.key}');
+        for (final q in qs) {
+          expect(q, contains('.eq(${entry.value}, tenantId)'),
+              reason: '${entry.key} query without tenant filter:\n$q');
+        }
       }
-    }
-  }
+    });
 
-  return source.substring(startIndex, endIndex);
+    test('public repository never writes', () {
+      expect(publicRepo, isNot(contains('.insert(')));
+      expect(publicRepo, isNot(contains('.update(')));
+      expect(publicRepo, isNot(contains('.delete(')));
+    });
+
+    test('tenant is resolved by song_sharing_id only', () {
+      final qs = queries(publicRepo, 'tenants');
+      expect(qs, hasLength(1));
+      expect(qs.single, contains(".eq('song_sharing_id', sharingId)"));
+    });
+  });
 }

@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:uuid/uuid.dart';
 
 import '../../../../core/constants/app_constants.dart';
+import '../../../../data/repositories/user_registration_repository.dart'
+    show AccountFlowException;
 import '../../../../core/providers/viewer_providers.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../widgets/settings_list.dart'; // UX_SETTINGS
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/viewer/viewer.dart';
+import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
 
 /// Viewers Page - manage external observers
 class ViewersPage extends ConsumerWidget {
@@ -19,9 +23,9 @@ class ViewersPage extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Beobachter'),
+        title: Text(context.l10n.settingsViewers),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const BackButtonIcon(),
           onPressed: () => context.pop(),
         ),
       ),
@@ -37,55 +41,35 @@ class ViewersPage extends ConsumerWidget {
             children: [
               const Icon(Icons.error_outline, size: 64, color: AppColors.danger),
               const SizedBox(height: AppDimensions.paddingM),
-              Text('Fehler: $e'),
+              Text(context.l10n.settingsFlutterErrorDetail(friendlyErrorMessage(e))),
               const SizedBox(height: AppDimensions.paddingM),
               ElevatedButton(
                 onPressed: () => ref.invalidate(viewersProvider),
-                child: const Text('Erneut versuchen'),
+                child: Text(context.l10n.messagesRetry),
               ),
             ],
           ),
         ),
+        // UX_SETTINGS: Ionic modal layout — hint card on top, then the list
         data: (viewers) {
-          if (viewers.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.visibility_outlined, size: 80, color: AppColors.medium),
-                  const SizedBox(height: AppDimensions.paddingL),
-                  Text(
-                    'Keine Beobachter',
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                  const SizedBox(height: AppDimensions.paddingS),
-                  Text(
-                    'Beobachter können Anwesenheitsdaten einsehen,\naber nicht bearbeiten.',
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppColors.medium),
-                  ),
-                  const SizedBox(height: AppDimensions.paddingL),
-                  ElevatedButton.icon(
-                    onPressed: () => _showAddViewerDialog(context, ref),
-                    icon: const Icon(Icons.add),
-                    label: const Text('Beobachter hinzufügen'),
-                  ),
-                ],
-              ),
-            );
-          }
-
           return RefreshIndicator(
-            // FN-011: await provider.future to show spinner until data loads
             onRefresh: () async {
               ref.invalidate(viewersProvider);
               await ref.read(viewersProvider.future);
             },
             child: ListView.builder(
-              padding: const EdgeInsets.all(AppDimensions.paddingM),
-              itemCount: viewers.length,
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.fromLTRB(
+                AppDimensions.paddingM, AppDimensions.paddingM, AppDimensions.paddingM, 88),
+              itemCount: viewers.length + 1,
               itemBuilder: (context, index) {
-                final viewer = viewers[index];
+                if (index == 0) {
+                  return SettingsHintCard(
+                    icon: Icons.visibility_outlined,
+                    text: context.l10n.settingsViewersHint,
+                  );
+                }
+                final viewer = viewers[index - 1];
                 return _ViewerItem(
                   viewer: viewer,
                   onDelete: () => _deleteViewer(context, ref, viewer),
@@ -107,7 +91,7 @@ class ViewersPage extends ConsumerWidget {
     final result = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Beobachter hinzufügen'),
+        title: Text(context.l10n.settingsAddViewer),
         content: Form(
           key: formKey,
           child: Column(
@@ -115,17 +99,17 @@ class ViewersPage extends ConsumerWidget {
             children: [
               TextFormField(
                 controller: emailController,
-                decoration: const InputDecoration(
-                  labelText: 'E-Mail',
-                  prefixIcon: Icon(Icons.email),
+                decoration: InputDecoration(
+                  labelText: context.l10n.settingsEmailAddress,
+                  prefixIcon: const Icon(Icons.email),
                 ),
                 keyboardType: TextInputType.emailAddress,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'E-Mail ist erforderlich';
+                    return context.l10n.settingsFlutterEmailRequired;
                   }
                   if (!value.contains('@')) {
-                    return 'Ungültige E-Mail-Adresse';
+                    return context.l10n.registerModalInvalidEmail;
                   }
                   return null;
                 },
@@ -133,13 +117,13 @@ class ViewersPage extends ConsumerWidget {
               const SizedBox(height: AppDimensions.paddingM),
               TextFormField(
                 controller: firstNameController,
-                decoration: const InputDecoration(
-                  labelText: 'Vorname',
-                  prefixIcon: Icon(Icons.person),
+                decoration: InputDecoration(
+                  labelText: context.l10n.peopleFirstName,
+                  prefixIcon: const Icon(Icons.person),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Vorname ist erforderlich';
+                    return context.l10n.settingsFlutterFirstNameRequired;
                   }
                   return null;
                 },
@@ -147,13 +131,13 @@ class ViewersPage extends ConsumerWidget {
               const SizedBox(height: AppDimensions.paddingM),
               TextFormField(
                 controller: lastNameController,
-                decoration: const InputDecoration(
-                  labelText: 'Nachname',
-                  prefixIcon: Icon(Icons.person_outline),
+                decoration: InputDecoration(
+                  labelText: context.l10n.peopleLastName,
+                  prefixIcon: const Icon(Icons.person_outline),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Nachname ist erforderlich';
+                    return context.l10n.settingsFlutterLastNameRequired;
                   }
                   return null;
                 },
@@ -164,7 +148,7 @@ class ViewersPage extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Abbrechen'),
+            child: Text(context.l10n.commonCancel),
           ),
           ElevatedButton(
             onPressed: () {
@@ -172,7 +156,7 @@ class ViewersPage extends ConsumerWidget {
                 Navigator.of(ctx).pop(true);
               }
             },
-            child: const Text('Hinzufügen'),
+            child: Text(context.l10n.settingsInvite),
           ),
         ],
       ),
@@ -180,22 +164,20 @@ class ViewersPage extends ConsumerWidget {
 
     if (result == true && context.mounted) {
       try {
-        final notifier = ref.read(viewerNotifierProvider.notifier);
-        final viewer = Viewer(
-          appId: const Uuid().v4(),
-          email: emailController.text.trim(),
-          firstName: firstNameController.text.trim(),
-          lastName: lastNameController.text.trim(),
-        );
-
-        await notifier.createViewer(viewer);
-
+        // REVIEW_FIX3: shared invite flow (Ionic db.createViewer).
+        await ref.read(viewerNotifierProvider.notifier).invite(
+              email: emailController.text,
+              firstName: firstNameController.text,
+              lastName: lastNameController.text,
+            );
         if (context.mounted) {
-          ToastHelper.showSuccess(context, 'Beobachter hinzugefügt');
+          ToastHelper.showSuccess(context, context.l10n.settingsUserCreated);
         }
+      } on AccountFlowException catch (e) {
+        if (context.mounted) ToastHelper.showError(context, e.message);
       } catch (e) {
         if (context.mounted) {
-          ToastHelper.showError(context, 'Fehler: $e');
+          ToastHelper.showError(context, context.l10n.settingsFlutterErrorDetail(friendlyErrorMessage(e)));
         }
       }
     }
@@ -205,17 +187,17 @@ class ViewersPage extends ConsumerWidget {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Beobachter entfernen?'),
-        content: Text('Möchtest du ${viewer.fullName} als Beobachter entfernen?'),
+        title: Text(context.l10n.settingsRemoveViewer),
+        content: Text(context.l10n.settingsRemoveMessage(viewer.firstName)),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Abbrechen'),
+            child: Text(context.l10n.commonCancel),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: AppColors.danger),
             onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('Entfernen'),
+            child: Text(context.l10n.commonYes),
           ),
         ],
       ),
@@ -224,14 +206,14 @@ class ViewersPage extends ConsumerWidget {
     if (confirmed == true && context.mounted) {
       try {
         final notifier = ref.read(viewerNotifierProvider.notifier);
-        await notifier.deleteViewer(viewer.id!);
+        await notifier.deleteViewer(viewer.id!, appId: viewer.appId);
 
         if (context.mounted) {
-          ToastHelper.showSuccess(context, 'Beobachter entfernt');
+          ToastHelper.showSuccess(context, context.l10n.settingsFlutterViewerRemoved);
         }
       } catch (e) {
         if (context.mounted) {
-          ToastHelper.showError(context, 'Fehler: $e');
+          ToastHelper.showError(context, context.l10n.settingsFlutterErrorDetail(friendlyErrorMessage(e)));
         }
       }
     }

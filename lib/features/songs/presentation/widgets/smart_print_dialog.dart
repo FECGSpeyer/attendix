@@ -5,6 +5,8 @@ import '../../../../core/constants/app_constants.dart';
 import '../../../../core/services/smart_print_service.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
+import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
 
 /// Dialog for smart printing with instrument-based copy selection
 class SmartPrintDialog extends ConsumerStatefulWidget {
@@ -51,7 +53,7 @@ class _SmartPrintDialogState extends ConsumerState<SmartPrintDialog> {
     } catch (e) {
       if (mounted) {
         setState(() {
-          _error = e.toString();
+          _error = friendlyErrorMessage(e);
           _isLoading = false;
         });
       }
@@ -99,12 +101,12 @@ class _SmartPrintDialogState extends ConsumerState<SmartPrintDialog> {
 
       if (mounted) {
         Navigator.of(context).pop();
-        ToastHelper.showSuccess(context, 'Druckauftrag gesendet');
+        ToastHelper.showSuccess(context, context.l10n.songsFlutterPrintJobSent);
       }
     } catch (e) {
       if (mounted) {
         setState(() => _isPrinting = false);
-        ToastHelper.showError(context, 'Fehler beim Drucken: $e');
+        ToastHelper.showError(context, context.l10n.songsFlutterPrintFailed(friendlyErrorMessage(e)));
       }
     }
   }
@@ -118,7 +120,7 @@ class _SmartPrintDialogState extends ConsumerState<SmartPrintDialog> {
           const SizedBox(width: AppDimensions.paddingS),
           Expanded(
             child: Text(
-              'Drucken',
+              context.l10n.songsPrint,
               style: Theme.of(context).textTheme.titleLarge,
             ),
           ),
@@ -131,7 +133,7 @@ class _SmartPrintDialogState extends ConsumerState<SmartPrintDialog> {
       actions: [
         TextButton(
           onPressed: _isPrinting ? null : () => Navigator.of(context).pop(),
-          child: const Text('Abbrechen'),
+          child: Text(context.l10n.commonCancel),
         ),
         ElevatedButton.icon(
           onPressed: _isPrinting || _totalCopies == 0 ? null : _print,
@@ -142,7 +144,7 @@ class _SmartPrintDialogState extends ConsumerState<SmartPrintDialog> {
                   child: CircularProgressIndicator(strokeWidth: 2),
                 )
               : const Icon(Icons.print),
-          label: Text(_isPrinting ? 'Wird gedruckt...' : 'Drucken ($_totalCopies)'),
+          label: Text(_isPrinting ? context.l10n.songsFlutterPrinting : '${context.l10n.songsPrint} ($_totalCopies)'),
         ),
       ],
     );
@@ -164,21 +166,21 @@ class _SmartPrintDialogState extends ConsumerState<SmartPrintDialog> {
           children: [
             const Icon(Icons.error_outline, size: 48, color: AppColors.danger),
             const SizedBox(height: AppDimensions.paddingM),
-            Text('Fehler: $_error'),
+            Text(context.l10n.songsFlutterErrorWith('$_error')),
           ],
         ),
       );
     }
 
     if (_copyInfos == null || _copyInfos!.isEmpty) {
-      return const Padding(
-        padding: EdgeInsets.all(AppDimensions.paddingL),
+      return Padding(
+        padding: const EdgeInsets.all(AppDimensions.paddingL),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.people_outline, size: 48, color: AppColors.medium),
-            SizedBox(height: AppDimensions.paddingM),
-            Text('Keine Spieler gefunden'),
+            const Icon(Icons.people_outline, size: 48, color: AppColors.medium),
+            const SizedBox(height: AppDimensions.paddingM),
+            Text(context.l10n.songsFlutterNoPlayers),
           ],
         ),
       );
@@ -200,9 +202,9 @@ class _SmartPrintDialogState extends ConsumerState<SmartPrintDialog> {
         const SizedBox(height: AppDimensions.paddingS),
         const Divider(),
         const SizedBox(height: AppDimensions.paddingS),
-        const Text(
-          'Kopien pro Instrument:',
-          style: TextStyle(fontWeight: FontWeight.w600),
+        Text(
+          context.l10n.songsFlutterCopiesPerInstrument,
+          style: const TextStyle(fontWeight: FontWeight.w600),
         ),
         const SizedBox(height: AppDimensions.paddingXS),
         Wrap(
@@ -211,7 +213,7 @@ class _SmartPrintDialogState extends ConsumerState<SmartPrintDialog> {
             ActionChip(label: const Text('1:1'), onPressed: () => _applyPreset(1, 1)),
             ActionChip(label: const Text('1:2'), onPressed: () => _applyPreset(1, 2)),
             ActionChip(label: const Text('1:3'), onPressed: () => _applyPreset(1, 3)),
-            ActionChip(label: const Text('Je 1'), onPressed: () {
+            ActionChip(label: Text(context.l10n.songsFlutterOneEach), onPressed: () {
               if (_copyInfos == null) return;
               setState(() {
                 for (int i = 0; i < _copyInfos!.length; i++) {
@@ -244,12 +246,12 @@ class _SmartPrintDialogState extends ConsumerState<SmartPrintDialog> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                'Gesamt:',
-                style: TextStyle(fontWeight: FontWeight.bold),
+              Text(
+                '${context.l10n.churchOverviewTotal}:',
+                style: const TextStyle(fontWeight: FontWeight.bold),
               ),
               Text(
-                '$_totalCopies Kopien',
+                context.l10n.songsFlutterCopiesCount(_totalCopies),
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
@@ -293,7 +295,7 @@ class _CopyCountRow extends StatelessWidget {
                   style: const TextStyle(fontWeight: FontWeight.w500),
                 ),
                 Text(
-                  '$playerCount Spieler',
+                  context.l10n.teachersPlayerCount(playerCount),
                   style: const TextStyle(
                     fontSize: 12,
                     color: AppColors.medium,

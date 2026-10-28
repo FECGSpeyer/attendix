@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import '../../../core/constants/enums.dart';
+import '../../../l10n/l10n.dart';
 
 part 'person.freezed.dart';
 part 'person.g.dart';
@@ -94,6 +95,8 @@ class Person with _$Person {
     @_FlexibleStringConverter() String? left,
     @_FlexibleStringConverter() String? email,
     @_FlexibleStringConverter() String? appId,
+    /// Links the same real person across tenants (uuid, Ionic add_global_person_id.sql)
+    @JsonKey(name: 'global_person_id', includeIfNull: false) @_FlexibleStringConverter() String? globalPersonId,
     @_FlexibleStringConverter() String? notes,
     @_FlexibleStringConverter() String? img,
     @_FlexibleStringConverter() String? telegramId,
@@ -126,6 +129,8 @@ class Person with _$Person {
     @_FlexibleStringConverter() String? range,
     @_FlexibleStringConverter() String? instruments,
     @JsonKey(name: 'parent_id') @_FlexibleIntConverter() int? parentId,
+    /// Manual order within the group (Ionic add_player_sort_order.sql)
+    @JsonKey(name: 'sort_order', includeIfNull: false) @_FlexibleIntConverter() int? sortOrder,
     @_FlexibleIntConverter() int? legacyId,
     @_FlexibleIntConverter() int? legacyConductorId,
     
@@ -200,37 +205,38 @@ extension PlayerHistoryEntryExtension on PlayerHistoryEntry {
   String get typeLabel {
     switch (typeEnum) {
       case PlayerHistoryType.paused:
-        return 'Pausiert';
+        return l10nWithoutContext.commonHistoryPaused;
       case PlayerHistoryType.unexcused:
-        return 'Unentschuldigt';
+        return l10nWithoutContext.commonHistoryUnexcused;
       case PlayerHistoryType.criticalPerson:
-        return 'Kritisch markiert';
+        return l10nWithoutContext.coreFlutterHistoryCritical;
       case PlayerHistoryType.attendance:
-        return 'Anwesenheit';
+        return l10nWithoutContext.peopleAttendance;
       case PlayerHistoryType.notes:
-        return 'Notiz';
+        return l10nWithoutContext.peopleNote;
       case PlayerHistoryType.unpaused:
-        return 'Pause beendet';
+        return l10nWithoutContext.coreFlutterHistoryUnpaused;
       case PlayerHistoryType.instrumentChange:
-        return 'Instrumentenwechsel';
+        return l10nWithoutContext.coreFlutterHistoryInstrumentChange;
       case PlayerHistoryType.archived:
-        return 'Archiviert';
+        return l10nWithoutContext.commonHistoryArchived;
       case PlayerHistoryType.returned:
-        return 'Zurückgekehrt';
+        return l10nWithoutContext.coreFlutterHistoryReturned;
       case PlayerHistoryType.transferredFrom:
-        return 'Übertragen von';
+        return l10nWithoutContext.coreFlutterHistoryTransferredFrom;
       case PlayerHistoryType.transferredTo:
-        return 'Übertragen an';
+        return l10nWithoutContext.coreFlutterHistoryTransferredTo;
       case PlayerHistoryType.copiedFrom:
-        return 'Kopiert von';
+        return l10nWithoutContext.coreFlutterHistoryCopiedFrom;
       case PlayerHistoryType.copiedTo:
-        return 'Kopiert an';
+        return l10nWithoutContext.coreFlutterHistoryCopiedTo;
       case PlayerHistoryType.approved:
-        return 'Genehmigt';
+        return l10nWithoutContext.coreFlutterHistoryApproved;
       case PlayerHistoryType.declined:
-        return 'Abgelehnt';
+        return l10nWithoutContext.coreFlutterHistoryDeclined;
       case PlayerHistoryType.other:
-        return 'Sonstiges';
+        return l10nWithoutContext.commonOther;
     }
   }
+
 }

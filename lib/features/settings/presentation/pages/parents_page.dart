@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:uuid/uuid.dart';
 
 import '../../../../core/constants/app_constants.dart';
+import '../../../../data/repositories/user_registration_repository.dart'
+    show AccountFlowException;
 import '../../../../core/providers/parent_providers.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../widgets/settings_list.dart'; // UX_SETTINGS
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/parent/parent_model.dart';
+import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
 
 /// Parents Page - manage parents of players
 class ParentsPage extends ConsumerWidget {
@@ -19,9 +23,9 @@ class ParentsPage extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Elternteile'),
+        title: Text(context.l10n.settingsParents),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const BackButtonIcon(),
           onPressed: () => context.pop(),
         ),
       ),
@@ -37,55 +41,35 @@ class ParentsPage extends ConsumerWidget {
             children: [
               const Icon(Icons.error_outline, size: 64, color: AppColors.danger),
               const SizedBox(height: AppDimensions.paddingM),
-              Text('Fehler: $e'),
+              Text(context.l10n.settingsFlutterErrorDetail(friendlyErrorMessage(e))),
               const SizedBox(height: AppDimensions.paddingM),
               ElevatedButton(
                 onPressed: () => ref.invalidate(parentsProvider),
-                child: const Text('Erneut versuchen'),
+                child: Text(context.l10n.messagesRetry),
               ),
             ],
           ),
         ),
+        // UX_SETTINGS: Ionic modal layout — hint card on top, then the list
         data: (parents) {
-          if (parents.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.family_restroom_outlined, size: 80, color: AppColors.medium),
-                  const SizedBox(height: AppDimensions.paddingL),
-                  Text(
-                    'Keine Elternteile',
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                  const SizedBox(height: AppDimensions.paddingS),
-                  Text(
-                    'Elternteile können die Anwesenheit\nihrer Kinder einsehen.',
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppColors.medium),
-                  ),
-                  const SizedBox(height: AppDimensions.paddingL),
-                  ElevatedButton.icon(
-                    onPressed: () => _showAddParentDialog(context, ref),
-                    icon: const Icon(Icons.add),
-                    label: const Text('Elternteil hinzufügen'),
-                  ),
-                ],
-              ),
-            );
-          }
-
           return RefreshIndicator(
-            // FN-012: await provider.future to show spinner until data loads
             onRefresh: () async {
               ref.invalidate(parentsProvider);
               await ref.read(parentsProvider.future);
             },
             child: ListView.builder(
-              padding: const EdgeInsets.all(AppDimensions.paddingM),
-              itemCount: parents.length,
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.fromLTRB(
+                AppDimensions.paddingM, AppDimensions.paddingM, AppDimensions.paddingM, 88),
+              itemCount: parents.length + 1,
               itemBuilder: (context, index) {
-                final parent = parents[index];
+                if (index == 0) {
+                  return SettingsHintCard(
+                    icon: Icons.favorite_border,
+                    text: context.l10n.settingsParentsHint,
+                  );
+                }
+                final parent = parents[index - 1];
                 return _ParentItem(
                   parent: parent,
                   onDelete: () => _deleteParent(context, ref, parent),
@@ -107,7 +91,7 @@ class ParentsPage extends ConsumerWidget {
     final result = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Elternteil hinzufügen'),
+        title: Text(context.l10n.settingsAddParent),
         content: Form(
           key: formKey,
           child: Column(
@@ -115,17 +99,17 @@ class ParentsPage extends ConsumerWidget {
             children: [
               TextFormField(
                 controller: emailController,
-                decoration: const InputDecoration(
-                  labelText: 'E-Mail',
-                  prefixIcon: Icon(Icons.email),
+                decoration: InputDecoration(
+                  labelText: context.l10n.settingsEmailAddress,
+                  prefixIcon: const Icon(Icons.email),
                 ),
                 keyboardType: TextInputType.emailAddress,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'E-Mail ist erforderlich';
+                    return context.l10n.settingsFlutterEmailRequired;
                   }
                   if (!value.contains('@')) {
-                    return 'Ungültige E-Mail-Adresse';
+                    return context.l10n.registerModalInvalidEmail;
                   }
                   return null;
                 },
@@ -133,13 +117,13 @@ class ParentsPage extends ConsumerWidget {
               const SizedBox(height: AppDimensions.paddingM),
               TextFormField(
                 controller: firstNameController,
-                decoration: const InputDecoration(
-                  labelText: 'Vorname',
-                  prefixIcon: Icon(Icons.person),
+                decoration: InputDecoration(
+                  labelText: context.l10n.peopleFirstName,
+                  prefixIcon: const Icon(Icons.person),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Vorname ist erforderlich';
+                    return context.l10n.settingsFlutterFirstNameRequired;
                   }
                   return null;
                 },
@@ -147,13 +131,13 @@ class ParentsPage extends ConsumerWidget {
               const SizedBox(height: AppDimensions.paddingM),
               TextFormField(
                 controller: lastNameController,
-                decoration: const InputDecoration(
-                  labelText: 'Nachname',
-                  prefixIcon: Icon(Icons.person_outline),
+                decoration: InputDecoration(
+                  labelText: context.l10n.peopleLastName,
+                  prefixIcon: const Icon(Icons.person_outline),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Nachname ist erforderlich';
+                    return context.l10n.settingsFlutterLastNameRequired;
                   }
                   return null;
                 },
@@ -164,7 +148,7 @@ class ParentsPage extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Abbrechen'),
+            child: Text(context.l10n.commonCancel),
           ),
           ElevatedButton(
             onPressed: () {
@@ -172,7 +156,7 @@ class ParentsPage extends ConsumerWidget {
                 Navigator.of(ctx).pop(true);
               }
             },
-            child: const Text('Hinzufügen'),
+            child: Text(context.l10n.settingsInvite),
           ),
         ],
       ),
@@ -180,22 +164,20 @@ class ParentsPage extends ConsumerWidget {
 
     if (result == true && context.mounted) {
       try {
-        final notifier = ref.read(parentNotifierProvider.notifier);
-        final parent = ParentModel(
-          appId: const Uuid().v4(),
-          email: emailController.text.trim(),
-          firstName: firstNameController.text.trim(),
-          lastName: lastNameController.text.trim(),
-        );
-
-        await notifier.createParent(parent);
-
+        // REVIEW_FIX3: shared invite flow (Ionic db.createParent).
+        await ref.read(parentNotifierProvider.notifier).invite(
+              email: emailController.text,
+              firstName: firstNameController.text,
+              lastName: lastNameController.text,
+            );
         if (context.mounted) {
-          ToastHelper.showSuccess(context, 'Elternteil hinzugefügt');
+          ToastHelper.showSuccess(context, context.l10n.settingsUserCreated);
         }
+      } on AccountFlowException catch (e) {
+        if (context.mounted) ToastHelper.showError(context, e.message);
       } catch (e) {
         if (context.mounted) {
-          ToastHelper.showError(context, 'Fehler: $e');
+          ToastHelper.showError(context, context.l10n.settingsFlutterErrorDetail(friendlyErrorMessage(e)));
         }
       }
     }
@@ -205,17 +187,17 @@ class ParentsPage extends ConsumerWidget {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Elternteil entfernen?'),
-        content: Text('Möchtest du ${parent.fullName} als Elternteil entfernen?'),
+        title: Text(context.l10n.settingsRemoveParent),
+        content: Text(context.l10n.settingsRemoveMessage(parent.firstName)),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Abbrechen'),
+            child: Text(context.l10n.commonCancel),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: AppColors.danger),
             onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('Entfernen'),
+            child: Text(context.l10n.commonYes),
           ),
         ],
       ),
@@ -224,14 +206,14 @@ class ParentsPage extends ConsumerWidget {
     if (confirmed == true && context.mounted) {
       try {
         final notifier = ref.read(parentNotifierProvider.notifier);
-        await notifier.deleteParent(parent.id!);
+        await notifier.deleteParent(parent.id!, appId: parent.appId);
 
         if (context.mounted) {
-          ToastHelper.showSuccess(context, 'Elternteil entfernt');
+          ToastHelper.showSuccess(context, context.l10n.settingsFlutterParentRemoved);
         }
       } catch (e) {
         if (context.mounted) {
-          ToastHelper.showError(context, 'Fehler: $e');
+          ToastHelper.showError(context, context.l10n.settingsFlutterErrorDetail(friendlyErrorMessage(e)));
         }
       }
     }
