@@ -18,6 +18,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../people/presentation/widgets/planned_absences.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/layout/ionic_ios.dart';
 import '../../../../core/utils/error_message.dart';
 
 /// Self-service planned absences and self pause (Ionic signout page).
@@ -156,21 +157,13 @@ class _SelfServicePlannedAbsencesState extends ConsumerState<SelfServicePlannedA
         ref.watch(playerAbsencesByPersonIdProvider(player!.id!)).valueOrNull ?? const [];
     if (absences.isEmpty) return const SizedBox.shrink();
 
-    return Card(
-      margin: const EdgeInsets.symmetric(
-        horizontal: AppDimensions.paddingM,
-        vertical: AppDimensions.paddingS,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 14, 16, 4),
-            child: Text(
-              context.l10n.signoutPlannedAbsences,
-              style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
-            ),
-          ),
+    // UX_SONGS_SELF: Ionic ion-list inset with ion-list-header + items
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        IonListHeader(context.l10n.signoutPlannedAbsences),
+        IonInsetList(
+          children: [
           for (final absence in absences)
             PlannedAbsenceTile(
               absence: absence,
@@ -184,8 +177,9 @@ class _SelfServicePlannedAbsencesState extends ConsumerState<SelfServicePlannedA
                 if (ok) _refreshAfterAbsenceChange(ref);
               },
             ),
-        ],
-      ),
+          ],
+        ),
+      ],
     );
   }
 }
@@ -303,10 +297,9 @@ class _SelfServiceAbsenceSheetState extends State<SelfServiceAbsenceSheet> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            AppBar(
-              title: Text(context.l10n.signoutReportAbsence),
-              automaticallyImplyLeading: false,
-              actions: [
+            IonSheetHeader(
+              title: context.l10n.signoutReportAbsence,
+              end: [
                 IconButton(
                   icon: const Icon(Icons.close),
                   tooltip: context.l10n.commonClose,
@@ -402,10 +395,9 @@ class _SelfPauseSheetState extends State<_SelfPauseSheet> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            AppBar(
-              title: Text(context.l10n.signoutPause),
-              automaticallyImplyLeading: false,
-              actions: [
+            IonSheetHeader(
+              title: context.l10n.signoutPause,
+              end: [
                 IconButton(
                   icon: const Icon(Icons.close),
                   tooltip: context.l10n.commonClose,
@@ -457,7 +449,11 @@ class _SelfPauseSheetState extends State<_SelfPauseSheet> {
             Padding(
               padding: const EdgeInsets.all(AppDimensions.paddingM),
               child: FilledButton(
-                style: FilledButton.styleFrom(backgroundColor: AppColors.warning),
+                // Ionic color="warning": black contrast text
+                style: FilledButton.styleFrom(
+                  backgroundColor: AppColors.warning,
+                  foregroundColor: Colors.black,
+                ),
                 onPressed: _confirm,
                 child: Text(context.l10n.signoutConfirmPause),
               ),

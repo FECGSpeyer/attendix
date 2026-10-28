@@ -15,6 +15,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/song/song.dart';
 import '../../../../data/models/song/song_additional_field.dart';
 import '../../../../data/models/song/song_filter.dart';
+import '../../../../shared/widgets/layout/ionic_ios.dart';
 import '../../../../shared/widgets/loading/skeleton_list_tile.dart';
 import '../../data/song_print_service.dart';
 import '../utils/song_utils.dart';
@@ -212,11 +213,16 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
     final sharingId = data.songSharingId;
     final hasSongSharing = sharingId != null && sharingId.isNotEmpty;
 
-    return Scaffold(
+    final title = data.isPublic
+        ? data.publicTenant!.longName
+        : context.l10n.songsSongsCount(data.songs.length);
+    // UX_SONGS_SELF: Ionic `ion-header collapse="condense"` (large title on iOS)
+    return CondenseHeader(
+      builder: (context, condensed) => Scaffold(
       appBar: AppBar(
-        title: Text(data.isPublic
-            ? data.publicTenant!.longName
-            : context.l10n.songsSongsCount(data.songs.length)),
+        title: CondenseTitle(condensed: condensed, child: Text(title)),
+        backgroundColor: condenseBarColor(context, condensed),
+        shape: condenseBarShape(context, condensed),
         automaticallyImplyLeading: !data.isPublic,
         actions: [
           PopupMenuButton<String>(
@@ -306,6 +312,7 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
         onRefresh: _refresh,
         child: CustomScrollView(
           slivers: [
+            SliverToBoxAdapter(child: IonLargeTitle(title)),
             if (data.categories.isNotEmpty)
               SliverToBoxAdapter(
                 child: _CategorySegment(
@@ -314,39 +321,33 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
                   onSelected: filterNotifier.setCategory,
                 ),
               ),
+            // Ionic `.flex`: searchbar + filter button (options icon)
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(
-                  AppDimensions.paddingM,
-                  AppDimensions.paddingS,
-                  AppDimensions.paddingS,
-                  AppDimensions.paddingS,
-                ),
+                padding: isIosLook(context)
+                    ? const EdgeInsets.fromLTRB(16, 8, 8, 8)
+                    : const EdgeInsets.fromLTRB(
+                        AppDimensions.paddingM,
+                        AppDimensions.paddingS,
+                        AppDimensions.paddingS,
+                        AppDimensions.paddingS,
+                      ),
                 child: Row(
                   children: [
                     Expanded(
-                      child: TextField(
+                      child: IonSearchbar(
                         controller: _searchController,
-                        decoration: InputDecoration(
-                          hintText: context.l10n.attListSearchSong,
-                          prefixIcon: const Icon(Icons.search),
-                          isDense: true,
-                          suffixIcon: _searchController.text.isNotEmpty
-                              ? IconButton(
-                                  icon: const Icon(Icons.clear),
-                                  onPressed: () {
-                                    _searchController.clear();
-                                    _searchDebounce?.cancel();
-                                    setState(() => _search = '');
-                                  },
-                                )
-                              : null,
-                        ),
+                        hintText: context.l10n.attListSearchSong,
                         onChanged: _onSearchChanged,
+                        onClear: () {
+                          _searchDebounce?.cancel();
+                          setState(() => _search = '');
+                        },
                       ),
                     ),
                     IconButton(
                       tooltip: context.l10n.songsFlutterFilterAndView,
+                      color: AppColors.primary,
                       icon: Badge(
                         isLabelVisible: filter.hasActiveFilters,
                         smallSize: 8,
@@ -379,22 +380,9 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
                 ),
               ),
             ),
+            // Ionic `ion-list-header`: "N Werke"
             SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(
-                  AppDimensions.paddingM,
-                  AppDimensions.paddingM,
-                  AppDimensions.paddingM,
-                  AppDimensions.paddingXS,
-                ),
-                child: Text(
-                  context.l10n.songsSongsCount(filtered.length),
-                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                        color: AppColors.medium,
-                        fontWeight: FontWeight.w600,
-                      ),
-                ),
-              ),
+              child: IonListHeader(context.l10n.songsSongsCount(filtered.length)),
             ),
             if (filtered.isEmpty)
               SliverToBoxAdapter(
@@ -426,12 +414,13 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
                 padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM),
                 sliver: DecoratedSliver(
                   decoration: BoxDecoration(
-                    color: Theme.of(context).cardColor,
-                    borderRadius: BorderRadius.circular(AppDimensions.borderRadiusL),
+                    color: Theme.of(context).colorScheme.surface,
+                    borderRadius: BorderRadius.circular(IonInsetList.radiusOf(context)),
                   ),
                   sliver: SliverList.separated(
                     itemCount: filtered.length,
-                    separatorBuilder: (_, __) => const Divider(height: 1, indent: 16),
+                    separatorBuilder: (_, __) =>
+                        const Divider(height: 0.5, thickness: 0.5, indent: 16),
                     itemBuilder: (context, index) {
                       final song = filtered[index];
                       return _SongListItem(
@@ -448,6 +437,7 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
             const SliverToBoxAdapter(child: SizedBox(height: 88)),
           ],
         ),
+      ),
       ),
     );
   }
@@ -550,25 +540,24 @@ class _QuickLinks extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (!showCurrent && !showGroups) return const SizedBox.shrink();
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM),
-      child: Column(
-        children: [
-          if (showCurrent)
-            ListTile(
-              title: Text(context.l10n.songsShowCurrent,
-                  style: const TextStyle(color: AppColors.primary)),
-              onTap: onCurrent,
-            ),
-          if (showCurrent && showGroups) const Divider(height: 1),
-          if (showGroups)
-            ListTile(
-              title: Text(context.l10n.songsGroupDirectory,
-                  style: const TextStyle(color: AppColors.primary)),
-              onTap: onGroups,
-            ),
-        ],
-      ),
+    // Ionic: `ion-item-group` with button items (primary label, iOS chevron)
+    return IonInsetList(
+      children: [
+        if (showCurrent)
+          IonItem(
+            title: Text(context.l10n.songsShowCurrent),
+            titleColor: AppColors.primary,
+            detail: true,
+            onTap: onCurrent,
+          ),
+        if (showGroups)
+          IonItem(
+            title: Text(context.l10n.songsGroupDirectory),
+            titleColor: AppColors.primary,
+            detail: true,
+            onTap: onGroups,
+          ),
+      ],
     );
   }
 }
@@ -589,7 +578,11 @@ class _SongListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final subtitleStyle = Theme.of(context).textTheme.bodySmall;
+    // Ionic ion-label (iOS): h2 17px normal, h3 14px in text color.
+    final ios = isIosLook(context);
+    final subtitleStyle = ios
+        ? TextStyle(fontSize: 14, color: Theme.of(context).colorScheme.onSurface)
+        : Theme.of(context).textTheme.bodySmall;
     final lines = <Widget>[];
     final orchestra = data.isOrchestra;
 
@@ -672,9 +665,12 @@ class _SongListItem extends StatelessWidget {
 
     return ListTile(
       onTap: onTap,
+      minVerticalPadding: ios ? 12 : null,
       title: Text(
         '${song.prefix ?? ''}${song.number ?? ''} ${song.name}',
-        style: const TextStyle(fontWeight: FontWeight.w500),
+        style: ios
+            ? const TextStyle(fontSize: 17, fontWeight: FontWeight.w400)
+            : const TextStyle(fontWeight: FontWeight.w500),
       ),
       subtitle: lines.isEmpty
           ? null

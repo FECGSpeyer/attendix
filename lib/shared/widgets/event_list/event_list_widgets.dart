@@ -21,6 +21,7 @@ class EventDateTile extends StatelessWidget {
     required this.date,
     this.highlight = false,
     this.past = false,
+    this.today = false,
     this.size = 46,
     this.background,
     this.foreground,
@@ -29,6 +30,9 @@ class EventDateTile extends StatelessWidget {
   final String? date;
   final bool highlight;
   final bool past;
+
+  /// `.ev-today .ev-tile`: 54 × 58, radius 14, solid primary.
+  final bool today;
 
   /// Tile width; the height is `size + 4` (Ionic 46x50, today card 54x58).
   final double size;
@@ -41,17 +45,18 @@ class EventDateTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final Color bg;
     final Color fg;
-    if (highlight) {
+    if (highlight || today) {
       bg = AppColors.primary;
       fg = Colors.white;
     } else {
       bg = AppColors.primary.withValues(alpha: 0.13);
       fg = AppColors.primaryDark;
     }
-    final large = size > 50;
+    final width = today ? 54.0 : size;
+    final large = width > 50;
     final tile = Container(
-      width: size,
-      height: size + 4,
+      width: width,
+      height: width + 4,
       decoration: BoxDecoration(
         color: background ?? bg,
         borderRadius: BorderRadius.circular(large ? 14 : 12),
@@ -142,26 +147,31 @@ class EventChip extends StatelessWidget {
   final VoidCallback? onTap;
   final bool danger;
 
+  /// Ionic `.ev-chip`: primary tint (danger tint for the deadline),
+  /// radius 6, 12px medium weight.
   @override
   Widget build(BuildContext context) {
-    final color = danger ? AppColors.danger : (onTap != null ? AppColors.primary : AppColors.medium);
+    final bg = danger
+        ? AppColors.danger.withValues(alpha: 0.15)
+        : AppColors.primary.withValues(alpha: 0.13);
+    final fg = danger ? AppColors.dangerDark : AppColors.primaryDark;
     final chip = Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(8),
+        color: bg,
+        borderRadius: BorderRadius.circular(6),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           if (icon != null) ...[
-            Icon(icon, size: 14, color: color),
-            const SizedBox(width: 4),
+            Icon(icon, size: 13, color: fg),
+            const SizedBox(width: 3),
           ],
           Flexible(
             child: Text(
               label,
-              style: TextStyle(fontSize: 12, color: color),
+              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: fg),
               overflow: TextOverflow.ellipsis,
               maxLines: 2,
             ),
@@ -171,7 +181,7 @@ class EventChip extends StatelessWidget {
     );
     if (onTap == null) return chip;
     return InkWell(
-      borderRadius: BorderRadius.circular(8),
+      borderRadius: BorderRadius.circular(6),
       onTap: onTap,
       child: chip,
     );
@@ -250,9 +260,12 @@ class EventMonthHeader extends StatelessWidget {
 /// No line is drawn next to [EventSummaryRow] / [EventMoreLink] (plain divs
 /// in Ionic, and the last item of an inset list has no line).
 class EventListCard extends StatelessWidget {
-  const EventListCard({super.key, required this.children});
+  const EventListCard({super.key, required this.children, this.dividers = true});
 
   final List<Widget> children;
+
+  /// false for Ionic `ion-item lines="none"` (parents upcoming cards).
+  final bool dividers;
 
   static bool _isPlain(Widget w) => w is EventSummaryRow || w is EventMoreLink;
 
@@ -260,7 +273,7 @@ class EventListCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final rows = <Widget>[];
     for (var i = 0; i < children.length; i++) {
-      if (i > 0 && !_isPlain(children[i]) && !_isPlain(children[i - 1])) {
+      if (i > 0 && dividers && !_isPlain(children[i]) && !_isPlain(children[i - 1])) {
         rows.add(const Divider(height: 0.5, thickness: 0.5, indent: 74));
       }
       rows.add(children[i]);
@@ -382,7 +395,6 @@ class EventChips extends StatelessWidget {
     );
   }
 }
-
 /// Full-width "Heute" / "Nächster Termin" card with direct actions.
 class EventTodayCard extends StatelessWidget {
   const EventTodayCard({
@@ -399,6 +411,9 @@ class EventTodayCard extends StatelessWidget {
     this.onMore,
     this.dimmed = false,
     this.extraHeader = const [],
+    this.bordered = false,
+    this.rows = const [],
+    this.footer = const [],
   });
 
   final String? date;
@@ -414,13 +429,33 @@ class EventTodayCard extends StatelessWidget {
   final bool dimmed;
   final List<Widget> extraHeader;
 
+  /// Ionic `.ev-today` (signout / overview / parents): 2px primary border.
+  final bool bordered;
+
+  /// Ionic `.ev-today__rows`: rows separated by hairlines below the head
+  /// (parents: one row per child).
+  final List<Widget> rows;
+
+  /// Widgets at the end of the card (parents: "Alle Kinder an-/abmelden").
+  final List<Widget> footer;
+
   @override
   Widget build(BuildContext context) {
+    final hairline = BorderSide(
+      color: Theme.of(context).dividerColor,
+      width: 0.5,
+    );
     return Opacity(
       opacity: dimmed ? 0.7 : 1,
       child: Card(
-        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        // Ionic `.ev-today`: margin 8 16 0, padding 16, radius 18.
+        margin: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(18),
+          side: bordered
+              ? const BorderSide(color: AppColors.primary, width: 2)
+              : BorderSide.none,
+        ),
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -429,13 +464,7 @@ class EventTodayCard extends StatelessWidget {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // UX_ATT: `.ev-today .ev-tile`: 54x58, solid primary
-                  EventDateTile(
-                    date: date,
-                    size: 54,
-                    background: AppColors.primary,
-                    foreground: Colors.white,
-                  ),
+                  EventDateTile(date: date, today: true),
                   const SizedBox(width: 14),
                   Expanded(
                     child: Column(
@@ -443,15 +472,19 @@ class EventTodayCard extends StatelessWidget {
                       children: [
                         Text(
                           title,
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleMedium
-                              ?.copyWith(fontWeight: FontWeight.bold),
+                          style: const TextStyle(
+                            fontSize: 18.4,
+                            height: 1.25,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                         if (meta != null && meta!.isNotEmpty)
                           Padding(
                             padding: const EdgeInsets.only(top: 2),
-                            child: Text(meta!, style: const TextStyle(color: AppColors.medium)),
+                            child: Text(
+                              meta!,
+                              style: const TextStyle(color: AppColors.medium, fontSize: 14),
+                            ),
                           ),
                         ...extraHeader,
                         if (status != null)
@@ -467,9 +500,17 @@ class EventTodayCard extends StatelessWidget {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Icon(Icons.location_on_outlined, size: 18, color: AppColors.medium),
+                      const Padding(
+                        padding: EdgeInsets.only(top: 2),
+                        child: Icon(Icons.location_on_outlined, size: 16, color: AppColors.medium),
+                      ),
                       const SizedBox(width: 6),
-                      Expanded(child: Text(place!)),
+                      Expanded(
+                        child: Text(
+                          place!,
+                          style: const TextStyle(color: AppColors.medium, fontSize: 14),
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -482,9 +523,26 @@ class EventTodayCard extends StatelessWidget {
                   ),
                 ),
               EventChips(chips: chips),
+              if (rows.isNotEmpty)
+                Container(
+                  margin: const EdgeInsets.only(top: 12),
+                  decoration: BoxDecoration(border: Border(top: hairline)),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      for (var i = 0; i < rows.length; i++)
+                        Container(
+                          decoration: i == rows.length - 1
+                              ? null
+                              : BoxDecoration(border: Border(bottom: hairline)),
+                          child: rows[i],
+                        ),
+                    ],
+                  ),
+                ),
               if (actions.isNotEmpty)
                 Padding(
-                  padding: const EdgeInsets.only(top: 12),
+                  padding: const EdgeInsets.only(top: 14),
                   child: Row(
                     children: [
                       for (var i = 0; i < actions.length; i++) ...[
@@ -495,10 +553,17 @@ class EventTodayCard extends StatelessWidget {
                   ),
                 ),
               if (onMore != null)
-                Align(
-                  alignment: Alignment.center,
-                  child: TextButton(onPressed: onMore, child: Text(moreLabel ?? context.l10n.signoutMoreOptions)),
+                // Ionic `.ev-today .ev-more-link`: padding 10 0 0, semibold.
+                TextButton(
+                  onPressed: onMore,
+                  style: TextButton.styleFrom(
+                    padding: const EdgeInsets.only(top: 10, bottom: 0),
+                    minimumSize: const Size.fromHeight(34),
+                    textStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+                  ),
+                  child: Text(moreLabel ?? context.l10n.signoutMoreOptions),
                 ),
+              ...footer,
             ],
           ),
         ),
@@ -524,9 +589,17 @@ class EventActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Ionic `.ev-today__actions ion-button`: radius 12, min height 44,
+    // padding 4, no uppercase; outline in primary.
     final style = ButtonStyle(
       padding: const WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: 4, vertical: 10)),
-      visualDensity: VisualDensity.compact,
+      minimumSize: const WidgetStatePropertyAll(Size(0, 44)),
+      shape: WidgetStatePropertyAll(
+        RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ),
+      textStyle: const WidgetStatePropertyAll(
+        TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+      ),
     );
     final text = FittedBox(fit: BoxFit.scaleDown, child: Text(label, maxLines: 1));
     if (active) {
@@ -558,53 +631,59 @@ class EventSummary extends StatelessWidget {
   final int lateCount;
   final List<AttendanceStatus> dots;
 
+  /// Ionic `.ev-summary` (+ `.ev-dots`): "87 % Anwesenheit" in the text
+  /// color, late count on the right, 14px rounded squares per Termin.
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          child: Row(
             crossAxisAlignment: CrossAxisAlignment.baseline,
             textBaseline: TextBaseline.alphabetic,
             children: [
               Text(
                 '$percentage%',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: EventListUtils.percentageColor(percentage),
-                ),
+                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w700),
               ),
               const SizedBox(width: 6),
-              Text(context.l10n.signoutAttendance, style: const TextStyle(color: AppColors.medium)),
+              Text(
+                context.l10n.signoutAttendance,
+                style: const TextStyle(color: AppColors.medium, fontSize: 14),
+              ),
               if (lateCount > 0) ...[
                 const Spacer(),
-                Text(context.l10n.signoutLateCount(lateCount), style: const TextStyle(color: AppColors.medium)),
+                Text(
+                  context.l10n.signoutLateCount(lateCount),
+                  style: const TextStyle(color: AppColors.medium, fontSize: 14),
+                ),
               ],
             ],
           ),
-          if (dots.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.only(top: 8),
-              child: Wrap(
-                spacing: 4,
-                children: [
-                  for (final s in dots)
-                    Container(
-                      width: 10,
-                      height: 10,
-                      decoration: BoxDecoration(
-                        color: EventListUtils.statusColor(s),
-                        shape: BoxShape.circle,
-                      ),
+        ),
+        if (dots.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 14),
+            child: Wrap(
+              spacing: 4,
+              runSpacing: 4,
+              children: [
+                for (final s in dots)
+                  Container(
+                    width: 14,
+                    height: 14,
+                    decoration: BoxDecoration(
+                      color: EventListUtils.statusColor(s),
+                      borderRadius: BorderRadius.circular(4),
                     ),
-                ],
-              ),
+                  ),
+              ],
             ),
-        ],
-      ),
+          ),
+      ],
     );
   }
 }
@@ -640,28 +719,61 @@ class EventMoreLink extends StatelessWidget {
 
 /// Legend sheet of the status pills (Ionic signout legend).
 Future<void> showEventLegendSheet(BuildContext context) {
-  Widget row(String pill, Color color, String text) => ListTile(
-        dense: true,
-        leading: SizedBox(width: 150, child: Align(alignment: Alignment.centerLeft, child: EventPill(label: pill, color: color))),
-        title: Text(text),
+  // Ionic legend modal: light content, inset list with list header and
+  // `ev-pill` (slot start) + label rows.
+  Widget row(String pill, Color color, String text) => ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: 48),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+          child: Row(
+            children: [
+              EventPill(label: pill, color: color),
+              const SizedBox(width: 16),
+              Expanded(child: Text(text, style: const TextStyle(fontSize: 16))),
+            ],
+          ),
+        ),
       );
   return showModalBottomSheet(
     context: context,
-    showDragHandle: true,
-    builder: (ctx) => SafeArea(
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(title: Text(ctx.l10n.signoutLegend, style: const TextStyle(fontWeight: FontWeight.bold))),
-            row(ctx.l10n.signoutLegendAccepted, AppColors.success, ctx.l10n.signoutLegendAcceptedPresent),
-            row(ctx.l10n.commonStatusExcused, AppColors.warning, ctx.l10n.commonStatusExcused),
-            row(ctx.l10n.commonStatusAbsent, AppColors.danger, ctx.l10n.commonStatusAbsent),
-            row(ctx.l10n.signoutLegendLate, AppColors.tertiary, ctx.l10n.commonStatusLate),
-            row(ctx.l10n.signoutLegendLateReported, EventListUtils.rosa, ctx.l10n.signoutLegendLateReportedExcused),
-            row(ctx.l10n.commonStatusNeutral, AppColors.medium, ctx.l10n.commonStatusNeutral),
-            const SizedBox(height: 12),
-          ],
+    isScrollControlled: true,
+    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+    builder: (ctx) => FractionallySizedBox(
+      heightFactor: 0.5,
+      child: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 16, 20, 4),
+                child: Text(
+                  ctx.l10n.signoutLegend,
+                  style: const TextStyle(
+                    fontSize: 14.4,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFF9D9FA6),
+                  ),
+                ),
+              ),
+              Card(
+                margin: const EdgeInsets.symmetric(horizontal: 16),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    row(ctx.l10n.signoutLegendAccepted, AppColors.success, ctx.l10n.signoutLegendAcceptedPresent),
+                    row(ctx.l10n.commonStatusExcused, AppColors.warning, ctx.l10n.commonStatusExcused),
+                    row(ctx.l10n.commonStatusAbsent, AppColors.danger, ctx.l10n.commonStatusAbsent),
+                    row(ctx.l10n.signoutLegendLate, AppColors.tertiary, ctx.l10n.commonStatusLate),
+                    row(ctx.l10n.signoutLegendLateReported, EventListUtils.rosa, ctx.l10n.signoutLegendLateReportedExcused),
+                    row(ctx.l10n.commonStatusNeutral, AppColors.medium, ctx.l10n.commonStatusNeutral),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     ),
