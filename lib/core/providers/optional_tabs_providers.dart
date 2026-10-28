@@ -39,6 +39,8 @@ OptionalTabs optionalTabsFromMetadata(Map<String, dynamic>? metadata, int tenant
 class OptionalTabsNotifier extends Notifier<OptionalTabs> {
   @override
   OptionalTabs build() {
+    // SOL_FIX15: user_metadata of the signed-in account – rebuild per account.
+    ref.watch(currentAuthUserIdProvider);
     final tenantId = ref.watch(currentTenantIdProvider);
     if (tenantId == null) return const OptionalTabs();
     final metadata = ref.read(supabaseAuthProvider).currentUser?.userMetadata;

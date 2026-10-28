@@ -1,5 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../config/supabase_config.dart'
+    show AccountScopeKey, currentAuthUserIdProvider;
+
 import '../../data/models/person/person.dart';
 import '../../data/models/team_org/team_org.dart';
 import '../../data/repositories/agenda_item_repository.dart';
@@ -22,10 +25,21 @@ final agendaItemRepositoryWithTenantProvider = Provider<AgendaItemRepository>((r
 /// so a tenant switch never changes the tenant of a running flow and
 /// cross-tenant work uses its own bound instance. `null` (no tenant)
 /// yields an unbound instance with `hasTenantId == false`.
+///
+/// SOL_FIX15: the instance also follows the signed-in account, so every
+/// provider built on it reloads on an account switch (RLS results and
+/// role-dependent data never outlive the account that loaded them).
 final agendaItemRepositoryForTenantProvider =
     Provider.family<AgendaItemRepository, int?>((ref, tenantId) {
+  final userId = ref.watch(currentAuthUserIdProvider);
+  return ref.watch(
+      _agendaItemRepositoryForAccountProvider((tenantId: tenantId, userId: userId)));
+});
+
+final _agendaItemRepositoryForAccountProvider =
+    Provider.family<AgendaItemRepository, AccountScopeKey>((ref, key) {
   final repo = AgendaItemRepository(ref);
-  if (tenantId != null) repo.bindTenantId(tenantId);
+  if (key.tenantId != null) repo.bindTenantId(key.tenantId!);
   return repo;
 });
 
@@ -38,10 +52,21 @@ final taskRepositoryWithTenantProvider = Provider<TaskRepository>((ref) {
 /// so a tenant switch never changes the tenant of a running flow and
 /// cross-tenant work uses its own bound instance. `null` (no tenant)
 /// yields an unbound instance with `hasTenantId == false`.
+///
+/// SOL_FIX15: the instance also follows the signed-in account, so every
+/// provider built on it reloads on an account switch (RLS results and
+/// role-dependent data never outlive the account that loaded them).
 final taskRepositoryForTenantProvider =
     Provider.family<TaskRepository, int?>((ref, tenantId) {
+  final userId = ref.watch(currentAuthUserIdProvider);
+  return ref.watch(
+      _taskRepositoryForAccountProvider((tenantId: tenantId, userId: userId)));
+});
+
+final _taskRepositoryForAccountProvider =
+    Provider.family<TaskRepository, AccountScopeKey>((ref, key) {
   final repo = TaskRepository(ref);
-  if (tenantId != null) repo.bindTenantId(tenantId);
+  if (key.tenantId != null) repo.bindTenantId(key.tenantId!);
   return repo;
 });
 
@@ -54,10 +79,21 @@ final protocolRepositoryWithTenantProvider = Provider<ProtocolRepository>((ref) 
 /// so a tenant switch never changes the tenant of a running flow and
 /// cross-tenant work uses its own bound instance. `null` (no tenant)
 /// yields an unbound instance with `hasTenantId == false`.
+///
+/// SOL_FIX15: the instance also follows the signed-in account, so every
+/// provider built on it reloads on an account switch (RLS results and
+/// role-dependent data never outlive the account that loaded them).
 final protocolRepositoryForTenantProvider =
     Provider.family<ProtocolRepository, int?>((ref, tenantId) {
+  final userId = ref.watch(currentAuthUserIdProvider);
+  return ref.watch(
+      _protocolRepositoryForAccountProvider((tenantId: tenantId, userId: userId)));
+});
+
+final _protocolRepositoryForAccountProvider =
+    Provider.family<ProtocolRepository, AccountScopeKey>((ref, key) {
   final repo = ProtocolRepository(ref);
-  if (tenantId != null) repo.bindTenantId(tenantId);
+  if (key.tenantId != null) repo.bindTenantId(key.tenantId!);
   return repo;
 });
 
@@ -65,6 +101,9 @@ final protocolRepositoryForTenantProvider =
 
 /// Attendance types with their protocol settings.
 final protocolTypesProvider = FutureProvider<List<ProtocolType>>((ref) async {
+  // SOL_FIX15: RLS/role-dependent (leaders see all topics, decision notes
+  // and protocol results) – never keep them across an account switch.
+  ref.watch(currentAuthUserIdProvider);
   final repo = ref.watch(protocolRepositoryWithTenantProvider);
   if (!repo.hasTenantId) return [];
   return repo.getProtocolTypes();
@@ -110,6 +149,9 @@ final inTeamCircleProvider = Provider<bool>((ref) {
 
 /// Tasks of the signed-in person.
 final myTasksProvider = FutureProvider<List<TeamTask>>((ref) async {
+  // SOL_FIX15: RLS/role-dependent (leaders see all topics, decision notes
+  // and protocol results) – never keep them across an account switch.
+  ref.watch(currentAuthUserIdProvider);
   final repo = ref.watch(taskRepositoryWithTenantProvider);
   if (!repo.hasTenantId) return [];
   final person = await ref.watch(teamPersonProvider.future);
@@ -119,6 +161,9 @@ final myTasksProvider = FutureProvider<List<TeamTask>>((ref) async {
 
 /// Tasks shown in the "Aufgaben" tab: all for leadership, own for members.
 final teamTasksProvider = FutureProvider<List<TeamTask>>((ref) async {
+  // SOL_FIX15: RLS/role-dependent (leaders see all topics, decision notes
+  // and protocol results) – never keep them across an account switch.
+  ref.watch(currentAuthUserIdProvider);
   final repo = ref.watch(taskRepositoryWithTenantProvider);
   if (!repo.hasTenantId) return [];
   if (ref.watch(isTeamLeaderProvider)) return repo.getTasks();
@@ -126,18 +171,27 @@ final teamTasksProvider = FutureProvider<List<TeamTask>>((ref) async {
 });
 
 final taskByIdProvider = FutureProvider.family<TeamTask?, String>((ref, id) async {
+  // SOL_FIX15: RLS/role-dependent (leaders see all topics, decision notes
+  // and protocol results) – never keep them across an account switch.
+  ref.watch(currentAuthUserIdProvider);
   final repo = ref.watch(taskRepositoryWithTenantProvider);
   if (!repo.hasTenantId) return null;
   return repo.getTaskById(id);
 });
 
 final tasksForAgendaItemProvider = FutureProvider.family<List<TeamTask>, String>((ref, id) async {
+  // SOL_FIX15: RLS/role-dependent (leaders see all topics, decision notes
+  // and protocol results) – never keep them across an account switch.
+  ref.watch(currentAuthUserIdProvider);
   final repo = ref.watch(taskRepositoryWithTenantProvider);
   if (!repo.hasTenantId) return [];
   return repo.getTasksForAgendaItem(id);
 });
 
 final tasksForAttendanceProvider = FutureProvider.family<List<TeamTask>, int>((ref, id) async {
+  // SOL_FIX15: RLS/role-dependent (leaders see all topics, decision notes
+  // and protocol results) – never keep them across an account switch.
+  ref.watch(currentAuthUserIdProvider);
   final repo = ref.watch(taskRepositoryWithTenantProvider);
   if (!repo.hasTenantId) return [];
   return repo.getTasksForAttendance(id);
@@ -147,12 +201,18 @@ final tasksForAttendanceProvider = FutureProvider.family<List<TeamTask>, int>((r
 
 /// Leadership: all topics. Members: their own suggestions (RLS).
 final agendaItemsProvider = FutureProvider<List<AgendaItem>>((ref) async {
+  // SOL_FIX15: RLS/role-dependent (leaders see all topics, decision notes
+  // and protocol results) – never keep them across an account switch.
+  ref.watch(currentAuthUserIdProvider);
   final repo = ref.watch(agendaItemRepositoryWithTenantProvider);
   if (!repo.hasTenantId) return [];
   return repo.getAgendaItems();
 });
 
 final agendaItemByIdProvider = FutureProvider.family<AgendaItem?, String>((ref, id) async {
+  // SOL_FIX15: RLS/role-dependent (leaders see all topics, decision notes
+  // and protocol results) – never keep them across an account switch.
+  ref.watch(currentAuthUserIdProvider);
   final repo = ref.watch(agendaItemRepositoryWithTenantProvider);
   if (!repo.hasTenantId) return null;
   return repo.getAgendaItemById(id);
@@ -160,6 +220,9 @@ final agendaItemByIdProvider = FutureProvider.family<AgendaItem?, String>((ref, 
 
 final agendaItemHistoryProvider =
     FutureProvider.family<List<AgendaItemHistoryEntry>, String>((ref, id) async {
+  // SOL_FIX15: RLS/role-dependent (leaders see all topics, decision notes
+  // and protocol results) – never keep them across an account switch.
+  ref.watch(currentAuthUserIdProvider);
   final repo = ref.watch(agendaItemRepositoryWithTenantProvider);
   if (!repo.hasTenantId) return [];
   final list = await repo.getHistory(id);
@@ -171,12 +234,18 @@ final agendaItemHistoryProvider =
 
 /// Protocol of one Termin (null when none was started yet).
 final protocolForAttendanceProvider = FutureProvider.family<Protocol?, int>((ref, attendanceId) async {
+  // SOL_FIX15: RLS/role-dependent (leaders see all topics, decision notes
+  // and protocol results) – never keep them across an account switch.
+  ref.watch(currentAuthUserIdProvider);
   final repo = ref.watch(protocolRepositoryWithTenantProvider);
   if (!repo.hasTenantId) return null;
   return repo.getProtocolForAttendance(attendanceId);
 });
 
 final protocolsProvider = FutureProvider<List<Protocol>>((ref) async {
+  // SOL_FIX15: RLS/role-dependent (leaders see all topics, decision notes
+  // and protocol results) – never keep them across an account switch.
+  ref.watch(currentAuthUserIdProvider);
   final repo = ref.watch(protocolRepositoryWithTenantProvider);
   if (!repo.hasTenantId) return [];
   return repo.getProtocols();
@@ -184,6 +253,9 @@ final protocolsProvider = FutureProvider<List<Protocol>>((ref) async {
 
 /// Upcoming Termine of protocol-enabled types, soonest first.
 final upcomingProtocolAttendancesProvider = FutureProvider<List<ProtocolAttendance>>((ref) async {
+  // SOL_FIX15: RLS/role-dependent (leaders see all topics, decision notes
+  // and protocol results) – never keep them across an account switch.
+  ref.watch(currentAuthUserIdProvider);
   final repo = ref.watch(protocolRepositoryWithTenantProvider);
   if (!repo.hasTenantId) return [];
   final types = await ref.watch(protocolTypesProvider.future);

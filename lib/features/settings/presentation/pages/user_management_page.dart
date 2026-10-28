@@ -50,6 +50,7 @@ class TenantUser {
 
 /// Provider for tenant users
 final tenantUsersProvider = FutureProvider<List<TenantUser>>((ref) async {
+  ref.watch(currentAuthUserIdProvider); // SOL_FIX15: reload per account
   final supabase = ref.watch(supabaseClientProvider);
   final tenantId = ref.watch(currentTenantIdProvider);
 

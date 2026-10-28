@@ -233,6 +233,7 @@ final realtimeAttendanceListProvider = FutureProvider.autoDispose<List<Attendanc
 /// Bumps the refetch counter when attendance or person_attendances rows change,
 /// triggering a refetch of the list with fresh percentages.
 final _attendanceRealtimeSubscriptionProvider = Provider.autoDispose<void>((ref) {
+  ref.watch(currentAuthUserIdProvider); // SOL_FIX15: reload per account
   final supabase = ref.watch(supabaseClientProvider);
   final tenant = ref.watch(currentTenantProvider);
   if (tenant?.id == null) return;

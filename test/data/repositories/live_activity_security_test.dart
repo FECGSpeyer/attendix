@@ -40,13 +40,21 @@ void main() {
     });
 
     test('tokens are upserted like Ionic (user_id, kind, attendance_id, plan_key)', () {
-      final q = queries(repo, 'live_activity_tokens').single;
+      final q = queries(repo, 'live_activity_tokens')
+          .singleWhere((q) => q.contains('.upsert('));
       expect(q, contains("'user_id': userId"));
       expect(q, contains("onConflict: 'user_id,kind,attendance_id,plan_key'"));
     });
 
     test('every method uses handleError', () {
-      expect('handleError('.allMatches(repo).length, 3);
+      expect('handleError('.allMatches(repo).length, 4);
+    });
+
+    test('logout deletes only this device\'s tokens of the user (SOL_FIX15)', () {
+      final q = queries(repo, 'live_activity_tokens')
+          .singleWhere((q) => q.contains('.delete()'));
+      expect(q, contains(".eq('user_id', userId)"));
+      expect(q, contains(".inFilter('token', tokens)"));
     });
   });
 

@@ -1,5 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../config/supabase_config.dart'
+    show AccountScopeKey, currentAuthUserIdProvider;
+
 import '../../data/repositories/cross_tenant_person_repository.dart';
 import 'organisation_providers.dart';
 import 'tenant_providers.dart';
@@ -15,10 +18,21 @@ final crossTenantPersonRepositoryWithTenantProvider =
 });
 
 /// SOL_FIX3: one immutable [CrossTenantPersonRepository] per tenant.
+///
+/// SOL_FIX15: the instance also follows the signed-in account, so every
+/// provider built on it reloads on an account switch (RLS results and
+/// role-dependent data never outlive the account that loaded them).
 final crossTenantPersonRepositoryForTenantProvider =
     Provider.family<CrossTenantPersonRepository, int?>((ref, tenantId) {
+  final userId = ref.watch(currentAuthUserIdProvider);
+  return ref.watch(
+      _crossTenantPersonRepositoryForAccountProvider((tenantId: tenantId, userId: userId)));
+});
+
+final _crossTenantPersonRepositoryForAccountProvider =
+    Provider.family<CrossTenantPersonRepository, AccountScopeKey>((ref, key) {
   final repo = CrossTenantPersonRepository(ref);
-  if (tenantId != null) repo.bindTenantId(tenantId);
+  if (key.tenantId != null) repo.bindTenantId(key.tenantId!);
   return repo;
 });
 

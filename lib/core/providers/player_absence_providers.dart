@@ -1,5 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../config/supabase_config.dart'
+    show AccountScopeKey, currentAuthUserIdProvider;
+
 import '../../data/models/player_absence/player_absence.dart';
 import '../../data/repositories/player_absence_repository.dart';
 import '../constants/enums.dart';
@@ -16,10 +19,21 @@ final playerAbsenceRepositoryWithTenantProvider = Provider<PlayerAbsenceReposito
 /// so a tenant switch never changes the tenant of a running flow and
 /// cross-tenant work uses its own bound instance. `null` (no tenant)
 /// yields an unbound instance with `hasTenantId == false`.
+///
+/// SOL_FIX15: the instance also follows the signed-in account, so every
+/// provider built on it reloads on an account switch (RLS results and
+/// role-dependent data never outlive the account that loaded them).
 final playerAbsenceRepositoryForTenantProvider =
     Provider.family<PlayerAbsenceRepository, int?>((ref, tenantId) {
+  final userId = ref.watch(currentAuthUserIdProvider);
+  return ref.watch(
+      _playerAbsenceRepositoryForAccountProvider((tenantId: tenantId, userId: userId)));
+});
+
+final _playerAbsenceRepositoryForAccountProvider =
+    Provider.family<PlayerAbsenceRepository, AccountScopeKey>((ref, key) {
   final repo = PlayerAbsenceRepository(ref);
-  if (tenantId != null) repo.bindTenantId(tenantId);
+  if (key.tenantId != null) repo.bindTenantId(key.tenantId!);
   return repo;
 });
 

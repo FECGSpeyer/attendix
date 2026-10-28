@@ -466,6 +466,27 @@ class OfflineWriteSession {
     required bool Function() isCurrent,
   }) : _isCurrent = isCurrent;
 
+  /// SOL_FIX15: session of a direct (non-queued) write flow, e.g. the own
+  /// master data: signed-in user, auth session and tenant, captured
+  /// synchronously before the flow's first await. [isCurrent] is false
+  /// once any of them changed – or when nobody was signed in.
+  factory OfflineWriteSession.capture(Ref ref) {
+    final userIdFn = ref.read(offlineQueueUserIdProvider);
+    final sessionIdFn = ref.read(offlineQueueSessionIdProvider);
+    final tenantId = ref.read(currentTenantIdProvider);
+    final userId = userIdFn();
+    final sessionId = sessionIdFn();
+    return OfflineWriteSession._(
+      userId: userId,
+      tenantId: tenantId,
+      isCurrent: () =>
+          userId != null &&
+          userIdFn() == userId &&
+          sessionIdFn() == sessionId &&
+          ref.read(currentTenantIdProvider) == tenantId,
+    );
+  }
+
   /// Signed-in user at capture time (null = signed out).
   final String? userId;
 

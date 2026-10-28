@@ -14,6 +14,7 @@ import '../../core/services/attendance_detail_cache.dart'
         purgeOfflineReadCachesFor; // SOL_FIX7, SOL_FIX8, SOL_FIX9
 import '../../core/services/offline_queue_service.dart'
     show connectivityCheckProvider;
+import '../../core/config/supabase_config.dart' show currentAuthUserIdProvider;
 import '../models/song/song.dart';
 import '../models/song/song_additional_field.dart';
 import 'base_repository.dart';
@@ -28,8 +29,21 @@ final songRepositoryProvider = Provider<SongRepository>((ref) {
 /// tenant). A running multi-step operation (paged getSongs + offline cache
 /// write) keeps its tenant even when the user switches tenants, so data of
 /// tenant B is never cached under tenant A's key.
+///
+/// SOL_FIX15: the instance also follows the signed-in account, so every
+/// provider built on it reloads on an account switch.
 final songRepositoryForTenantProvider = Provider.family<SongRepository,
     ({int? tenantId, int? songSourceTenantId})>((ref, key) {
+  final userId = ref.watch(currentAuthUserIdProvider);
+  return ref.watch(_songRepositoryForAccountProvider((
+    tenantId: key.tenantId,
+    songSourceTenantId: key.songSourceTenantId,
+    userId: userId,
+  )));
+});
+
+final _songRepositoryForAccountProvider = Provider.family<SongRepository,
+    ({int? tenantId, int? songSourceTenantId, String? userId})>((ref, key) {
   final repo = SongRepository(ref);
   if (key.tenantId != null) repo.bindTenantId(key.tenantId!);
   repo.setSongSourceTenantId(key.songSourceTenantId);

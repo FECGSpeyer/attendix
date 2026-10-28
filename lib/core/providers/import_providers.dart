@@ -1,5 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../config/supabase_config.dart'
+    show AccountScopeKey, currentAuthUserIdProvider;
+
 import '../../data/models/tenant/tenant.dart';
 import '../../data/repositories/import_repository.dart';
 import 'tenant_providers.dart';
@@ -14,10 +17,21 @@ final importRepositoryWithTenantProvider = Provider<ImportRepository>((ref) {
 });
 
 /// SOL_FIX3: one immutable [ImportRepository] per tenant.
+///
+/// SOL_FIX15: the instance also follows the signed-in account, so every
+/// provider built on it reloads on an account switch (RLS results and
+/// role-dependent data never outlive the account that loaded them).
 final importRepositoryForTenantProvider =
     Provider.family<ImportRepository, int?>((ref, tenantId) {
+  final userId = ref.watch(currentAuthUserIdProvider);
+  return ref.watch(
+      _importRepositoryForAccountProvider((tenantId: tenantId, userId: userId)));
+});
+
+final _importRepositoryForAccountProvider =
+    Provider.family<ImportRepository, AccountScopeKey>((ref, key) {
   final repo = ImportRepository(ref);
-  if (tenantId != null) repo.bindTenantId(tenantId);
+  if (key.tenantId != null) repo.bindTenantId(key.tenantId!);
   return repo;
 });
 

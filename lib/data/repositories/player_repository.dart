@@ -10,6 +10,8 @@ import '../../core/utils/person_matcher.dart';
 import '../../core/utils/text_utils.dart';
 import '../../core/utils/db_helpers.dart';
 import '../../core/utils/paged_query.dart'; // SOL_FIX4
+import '../../core/config/supabase_config.dart'
+    show AccountScopeKey, currentAuthUserIdProvider;
 import 'base_repository.dart';
 import 'user_registration_repository.dart';
 import '../../l10n/l10n.dart';
@@ -22,10 +24,21 @@ final playerRepositoryProvider = Provider<PlayerRepository>((ref) {
 /// SOL_FIX1: one immutable repository instance per tenant. A running
 /// multi-step operation keeps its instance (and tenant) even when the user
 /// switches tenants, instead of a shared instance changing tenant mid-flow.
+///
+/// SOL_FIX15: the instance also follows the signed-in account, so every
+/// provider built on it reloads on an account switch (RLS results and
+/// role-dependent data never outlive the account that loaded them).
 final playerRepositoryForTenantProvider =
     Provider.family<PlayerRepository, int?>((ref, tenantId) {
+  final userId = ref.watch(currentAuthUserIdProvider);
+  return ref.watch(
+      _playerRepositoryForAccountProvider((tenantId: tenantId, userId: userId)));
+});
+
+final _playerRepositoryForAccountProvider =
+    Provider.family<PlayerRepository, AccountScopeKey>((ref, key) {
   final repo = PlayerRepository(ref);
-  if (tenantId != null) repo.bindTenantId(tenantId);
+  if (key.tenantId != null) repo.bindTenantId(key.tenantId!);
   return repo;
 });
 

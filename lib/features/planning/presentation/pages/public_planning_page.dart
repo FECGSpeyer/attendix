@@ -7,6 +7,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' show GoTrueClient;
 
 import '../../../../core/config/supabase_config.dart';
 import '../../../../core/constants/app_constants.dart';
@@ -21,7 +22,9 @@ import '../../../../core/utils/plan_utils.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/plan/plan.dart';
 import '../../../../data/models/song/song.dart';
+import '../../../../data/repositories/plan_repository.dart';
 import '../../../../data/repositories/public_plan_repository.dart';
+import '../../data/shared_plan_save_chain.dart';
 import '../widgets/plan_export_actions.dart';
 import '../widgets/plan_field_dialogs.dart';
 import '../widgets/plan_fields_editor.dart';
@@ -142,7 +145,23 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
   String? _draftUserId;
   String get _storageKey => PublicPlanDraftStorage.keyFor(_draftUserId);
 
-  String? get _currentUserId => ref.read(supabaseClientProvider).auth.currentUser?.id;
+  /// SOL_FIX15: auth client and provider container captured in initState,
+  /// so a save flushed from [dispose] never touches `ref`.
+  GoTrueClient? _auth;
+  late final ProviderContainer _container;
+
+  String? get _currentUserId => _auth?.currentUser?.id;
+
+  /// SOL_FIX15: serialised, account-bound DB saves per plan.
+  late final _saveChain = SharedPlanSaveChain(currentUserId: () => _currentUserId);
+
+  /// SOL_FIX15: id / edit key of a plan that was never saved successfully.
+  /// They become [_planId] / [_editKey] only after the first successful save.
+  String? _unsavedPlanId;
+  String? _unsavedEditKey;
+
+  /// Tenant repository captured when the debounced save was scheduled.
+  PlanRepository? _dbRepo;
 
   final _titleController = TextEditingController(text: l10nWithoutContext.plansRunSheet);
   String? _templateId;
@@ -157,11 +176,17 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
   bool _resolvedSongs = false;
   Timer? _dbTimer;
 
-  bool get _loggedIn => ref.read(supabaseClientProvider).auth.currentSession != null;
+  bool get _loggedIn => _auth?.currentSession != null;
 
   @override
   void initState() {
     super.initState();
+    _container = ProviderScope.containerOf(context, listen: false);
+    try {
+      _auth = ref.read(supabaseClientProvider).auth;
+    } catch (_) {
+      _auth = null; // Supabase not initialised (tests): local only.
+    }
     if (_loggedIn && !widget.inApp) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) context.go('/settings/planung');
@@ -173,6 +198,9 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
 
   @override
   void dispose() {
+    // SOL_FIX15: leaving the page within the debounce window still saves
+    // the last changes (through the per-plan chain, bound to the account).
+    if (_dbTimer?.isActive ?? false) unawaited(_persistToDb(repo: _dbRepo));
     _dbTimer?.cancel();
     _titleController.dispose();
     super.dispose();
@@ -251,8 +279,9 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
     _fields = PlanUtils.normalizeGroups(_fields);
     _persistLocal();
     if (_loggedIn) {
+      _dbRepo = ref.read(planRepositoryWithTenantProvider);
       _dbTimer?.cancel();
-      _dbTimer = Timer(const Duration(milliseconds: 500), _persistToDb);
+      _dbTimer = Timer(const Duration(milliseconds: 500), _autosave);
     }
   }
 
@@ -267,18 +296,54 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
         brandingId: _brandingId != 'none' ? _brandingId : null,
       );
 
-  Future<void> _persistToDb() async {
-    if (!_loggedIn) return;
-    if (_planId == null) {
-      _planId = PlanUtils.randomKey();
-      _editKey = PlanUtils.randomKey();
-      _persistLocal();
+  /// Debounced autosave; a failed save shows an error toast.
+  Future<void> _autosave() async {
+    final account = _draftUserId;
+    final ok = await _persistToDb();
+    if (!ok && mounted && account != null && _currentUserId == account) {
+      ToastHelper.showError(context, context.l10n.plansSavePlanFailed);
     }
-    try {
-      await ref.read(planRepositoryWithTenantProvider).upsertMySharedPlan(_currentShared(_planId!, _editKey!));
-      ref.invalidate(mySharedPlansProvider);
-      if (_isOrgPlan) ref.invalidate(orgPlansProvider);
-    } catch (_) {}
+  }
+
+  /// SOL_FIX15: saves the current state through the per-plan save chain,
+  /// bound to the account that opened the page, and reports explicitly
+  /// whether it reached the database. A new plan gets its id / edit key
+  /// (and keeps them in the local draft) only after a successful save.
+  Future<bool> _persistToDb({PlanRepository? repo}) async {
+    _dbTimer?.cancel();
+    final account = _draftUserId;
+    if (!_loggedIn || account == null || _currentUserId != account) return false;
+    final PlanRepository planRepo = repo ?? ref.read(planRepositoryWithTenantProvider);
+    final isNew = _planId == null;
+    final id = _planId ?? (_unsavedPlanId ??= PlanUtils.randomKey());
+    final editKey = _editKey ?? (_unsavedEditKey ??= PlanUtils.randomKey());
+    // Snapshot now: a later edit is saved by its own (later) chain entry.
+    final snapshot = _currentShared(id, editKey);
+    final isOrgPlan = _isOrgPlan;
+    final ok = await _saveChain.save(
+      id,
+      accountId: account,
+      write: () => planRepo.upsertMySharedPlan(snapshot, expectedUserId: account),
+    );
+    if (!ok) return false;
+    if (isNew && _planId == null && _unsavedPlanId == id) {
+      _planId = id;
+      _editKey = editKey;
+      _unsavedPlanId = null;
+      _unsavedEditKey = null;
+      await _persistLocal();
+    }
+    _container.invalidate(mySharedPlansProvider);
+    if (isOrgPlan) _container.invalidate(orgPlansProvider);
+    return true;
+  }
+
+  /// SOL_FIX15: saves pending (debounced) changes of the current plan
+  /// before another plan replaces it on the page.
+  void _flushPendingSave() {
+    if (_dbTimer?.isActive ?? false) unawaited(_persistToDb(repo: _dbRepo));
+    _unsavedPlanId = null;
+    _unsavedEditKey = null;
   }
 
   // ---------------------------------------------------------------------------
@@ -545,6 +610,7 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
       );
       if (!ok) return;
     }
+    _flushPendingSave(); // SOL_FIX15
     setState(() {
       _planId = null;
       _editKey = null;
@@ -560,6 +626,7 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
   }
 
   void _loadPlan(SharedPlan plan) {
+    _flushPendingSave(); // SOL_FIX15
     setState(() {
       _planId = plan.id;
       _editKey = plan.editKey;
@@ -600,8 +667,8 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
       return;
     }
     if (!_validate()) return;
-    await _persistToDb();
-    if (_planId == null) {
+    // SOL_FIX15: only a successfully saved plan can be added.
+    if (!await _persistToDb() || _planId == null) {
       if (mounted) ToastHelper.showError(context, context.l10n.plansSavePlanFailed);
       return;
     }
@@ -669,8 +736,8 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
     String id;
     String editKey;
     if (_loggedIn) {
-      if (_planId == null) await _persistToDb();
-      if (_planId == null) {
+      // SOL_FIX15: share only a plan whose current state was saved.
+      if (!await _persistToDb() || _planId == null) {
         if (mounted) ToastHelper.showError(context, context.l10n.plansLinkFailed);
         return;
       }
