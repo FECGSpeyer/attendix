@@ -15,6 +15,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../messages/presentation/widgets/notification_bell.dart'; // MESSAGES
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../shared/widgets/adaptive/ion_toolbar_segment.dart'; // IOS_ATT_PAGES
 
 /// "Übersicht" – all Termine of the user across all tenants
 /// (Ionic `selfService/overview`) in the card layout.
@@ -91,24 +92,22 @@ class _SelfServiceOverviewPageState
           ),
           const NotificationBell(), // MESSAGES
         ],
+        // IOS_ATT_PAGES: second ion-toolbar with the segment – iOS: neutral
+        // segmented control centred in the toolbar; Material: full width.
         bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(52),
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
-            child: SizedBox(
-              width: double.infinity,
-              child: IonSegment<String>(
-                items: [
-                  IonSegmentItem(value: 'chronological', label: Text(context.l10n.selfServiceChronological)),
-                  IonSegmentItem(value: 'byTenant', label: Text(context.l10n.selfServiceByInstance)),
-                ],
-                value: _groupingMode,
-                onChanged: (value) => setState(() => _groupingMode = value),
-              ),
-            ),
+          preferredSize: Size.fromHeight(IonToolbarSegment.toolbarHeight(context)),
+          child: IonToolbarSegment<String>(
+            items: [
+              IonSegmentItem(value: 'chronological', label: Text(context.l10n.selfServiceChronological)),
+              IonSegmentItem(value: 'byTenant', label: Text(context.l10n.selfServiceByInstance)),
+            ],
+            value: _groupingMode,
+            onChanged: (value) => setState(() => _groupingMode = value),
           ),
         ),
       ),
+      // IOS_ATT_PAGES: Ionic iOS page is white, rows sit directly on it
+      backgroundColor: eventPageBackground(context),
       body: attendancesAsync.when(
         // Ionic: ion-card with spinner and text at the top
         loading: () => ListView(
@@ -151,12 +150,18 @@ class _SelfServiceOverviewPageState
               children: [
                 IonLargeTitle(context.l10n.selfServiceAllEvents),
                 // Ionic `.ev-summary.overview-summary`: card, margin 8 16 0
+                // (iOS: card background = white page → plain)
                 if (past.isNotEmpty)
-                  Card(
-                    margin: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                    child: EventSummary(percentage: stats.percentage, lateCount: stats.lateCount),
-                  ),
+                  useIosLook(context)
+                      ? Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                          child: EventSummary(percentage: stats.percentage, lateCount: stats.lateCount),
+                        )
+                      : Card(
+                          margin: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                          child: EventSummary(percentage: stats.percentage, lateCount: stats.lateCount),
+                        ),
                 if (_groupingMode == 'chronological')
                   ..._buildChronological(current, upcoming, past, actions)
                 else
@@ -197,7 +202,8 @@ class _SelfServiceOverviewPageState
   }
 
   Widget _row(CrossTenantPersonAttendance att, SelfServiceEventActions actions, {required bool showTenant}) {
-    final past = att.isPast;
+    // Ionic attHasPassed = attendanceHasEnded(att)
+    final past = overviewHasEnded(att);
     final meta = att.eventMeta(withDate: past, withPlace: false);
     return EventRow(
       date: att.date,
@@ -252,7 +258,7 @@ class _SelfServiceOverviewPageState
       EventSectionHeader(title: context.l10n.signoutUpcoming, count: upcoming.length),
       for (final group in groups) ...[
         EventMonthHeader(label: group.label),
-        EventListCard(children: [
+        EventListCard(iosPlain: true, children: [
           for (final att in group.items) _row(att, actions, showTenant: true),
         ]),
       ],
@@ -265,7 +271,7 @@ class _SelfServiceOverviewPageState
         ),
       if (past.isNotEmpty) ...[
         EventSectionHeader(title: context.l10n.signoutPast, count: past.length),
-        EventListCard(children: [
+        EventListCard(iosPlain: true, children: [
           for (final att in pastPreview) _row(att, actions, showTenant: true),
           if (past.length > EventListUtils.pastPreviewCount)
             EventMoreLink(
@@ -283,11 +289,9 @@ class _SelfServiceOverviewPageState
     List<CrossTenantPersonAttendance> attendances,
     SelfServiceEventActions actions,
   ) {
-    final grouped = <int, List<CrossTenantPersonAttendance>>{};
-    for (final att in attendances) {
-      grouped.putIfAbsent(att.tenantId, () => []).add(att);
-    }
-    if (grouped.isEmpty) {
+    // Ionic groupByTenant
+    final groups = groupOverviewByTenant(attendances);
+    if (groups.isEmpty) {
       return [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
@@ -296,16 +300,9 @@ class _SelfServiceOverviewPageState
         ),
       ];
     }
-    int byDate(CrossTenantPersonAttendance a, CrossTenantPersonAttendance b) =>
-        (EventListUtils.parse(a.date) ?? DateTime(1970))
-            .compareTo(EventListUtils.parse(b.date) ?? DateTime(1970));
 
     final widgets = <Widget>[];
-    for (final list in grouped.values) {
-      // Upcoming first (ascending), then past (descending)
-      final up = list.where((a) => !a.isPast).toList()..sort(byDate);
-      final down = list.where((a) => a.isPast).toList()..sort((a, b) => byDate(b, a));
-      final sorted = [...up, ...down];
+    for (final sorted in groups) {
       final first = sorted.first;
       widgets.add(EventSectionHeader(
         title: first.tenantName,
@@ -319,7 +316,7 @@ class _SelfServiceOverviewPageState
           ),
         ),
       ));
-      widgets.add(EventListCard(children: [
+      widgets.add(EventListCard(iosPlain: true, children: [
         for (final att in sorted) _row(att, actions, showTenant: false),
       ]));
     }

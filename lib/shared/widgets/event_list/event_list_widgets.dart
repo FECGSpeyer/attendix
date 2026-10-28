@@ -12,6 +12,13 @@ import '../adaptive/adaptive.dart'; // IOS_LOOK
 /// date tile, pills, chips, section and month headers, the "Heute" card and
 /// inset list cards.
 
+/// IOS_ATT_PAGES: page background of the Termin pages (Meine Termine,
+/// Übersicht, Termine). Ionic iOS renders their `ion-content` white (black in
+/// dark mode) – not the grouped grey – so the `ev-list` rows sit directly on
+/// the page ([EventListCard.iosPlain]). Material keeps the theme default.
+Color? eventPageBackground(BuildContext context) =>
+    useIosLook(context) ? Theme.of(context).colorScheme.surface : null;
+
 /// Date tile with weekday and day ("DI" / "20") – Ionic `.ev-tile`:
 /// 46x50, radius 12, primary 13 % background with primary-shade text;
 /// highlighted types are solid primary, past Termine are faded (0.7).
@@ -260,12 +267,24 @@ class EventMonthHeader extends StatelessWidget {
 /// No line is drawn next to [EventSummaryRow] / [EventMoreLink] (plain divs
 /// in Ionic, and the last item of an inset list has no line).
 class EventListCard extends StatelessWidget {
-  const EventListCard({super.key, required this.children, this.dividers = true});
+  const EventListCard({
+    super.key,
+    required this.children,
+    this.dividers = true,
+    this.iosPlain = false,
+  });
 
   final List<Widget> children;
 
   /// false for Ionic `ion-item lines="none"` (parents upcoming cards).
   final bool dividers;
+
+  /// IOS_ATT_PAGES: on the white Termin pages (Meine Termine, Übersicht,
+  /// Termine) Ionic iOS renders `ion-list inset ev-list` without a card:
+  /// transparent list (ionic-theme-ios26 structured list), 20 px side
+  /// margin, white items on the white page, inset lines starting at the
+  /// label. Only with the iOS look; Material keeps the card.
+  final bool iosPlain;
 
   static bool _isPlain(Widget w) => w is EventSummaryRow || w is EventMoreLink;
 
@@ -277,6 +296,12 @@ class EventListCard extends StatelessWidget {
         rows.add(const Divider(height: 0.5, thickness: 0.5, indent: 74));
       }
       rows.add(children[i]);
+    }
+    if (iosPlain && useIosLook(context)) {
+      return Padding(
+        padding: const EdgeInsets.fromLTRB(20, 6, 20, 0),
+        child: Column(mainAxisSize: MainAxisSize.min, children: rows),
+      );
     }
     return Card(
       margin: const EdgeInsets.fromLTRB(16, 6, 16, 0),

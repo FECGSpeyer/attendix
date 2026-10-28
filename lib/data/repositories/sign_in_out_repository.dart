@@ -335,6 +335,8 @@ class SignInOutRepository extends BaseRepository with TenantAwareRepository {
                 json as Map<String, dynamic>,
                 tenantId: currentTenantId,
                 tenantName: tenantName,
+                // Ionic getPersonAttendances: attType without hide_name
+                honorHideName: false,
               ))
           .toList();
     } catch (e, stack) {
@@ -392,6 +394,8 @@ class SignInOutRepository extends BaseRepository with TenantAwareRepository {
           tenantId: currentTenantId,
           tenantName: tenantName,
           isMember: pa != null,
+          // Ionic getAllUpcomingAttendancesForSignout: attType without hide_name
+          honorHideName: false,
         );
       }).toList();
     } catch (e, stack) {
@@ -407,6 +411,7 @@ class SignInOutRepository extends BaseRepository with TenantAwareRepository {
     required String tenantName,
     String tenantColor = '#3880FF',
     bool isMember = true,
+    bool honorHideName = true,
   }) {
     final type = _parseType(att['attType']);
     return CrossTenantPersonAttendance(
@@ -443,6 +448,7 @@ class SignInOutRepository extends BaseRepository with TenantAwareRepository {
           ? Map<String, dynamic>.from(pa['registration_answers'] as Map)
           : null,
       legacyType: att['type'] as String?,
+      honorHideName: honorHideName,
     );
   }
 
@@ -453,75 +459,134 @@ class SignInOutRepository extends BaseRepository with TenantAwareRepository {
     return int.tryParse(v.toString());
   }
 
-  /// Get all person attendances for the current user across all tenants
+  /// Own Termine of the current user in all tenants he belongs to
+  /// ("Übersicht", Ionic `loadAllPersonAttendancesAcrossTenants`).
+  ///
+  /// IOS_ATT_PAGES: same scope as Ionic –
+  /// * tenants = the user's `tenantUsers` memberships (not every `player`
+  ///   row linked to the account),
+  /// * one person per tenant (`getPersonIdForTenant` uses `.single()`:
+  ///   no or several linked persons → the tenant is skipped),
+  /// * only Termine after the tenant's `seasonStart` (default 2023-01-01),
+  /// * tenant label `longName || shortName`, colour by membership order,
+  /// * sorted by date ascending.
   Future<List<CrossTenantPersonAttendance>> getAllPersonAttendancesAcrossTenants() async {
     try {
       final userId = supabase.auth.currentUser?.id;
       if (userId == null) return [];
 
-      // SEC: cross-tenant by design – restricted to persons linked to the
-      // current user (appId) instead of a tenantId filter.
-      final personRecords = await supabase
-          .from('player')
-          .select('id, tenantId')
-          .eq('appId', userId);
+      // SEC: cross-tenant by design – only the user's own memberships.
+      final memberships = await supabase
+          .from('tenantUsers')
+          .select('tenantId')
+          .eq('userId', userId);
+      final tenantIds = <int>[];
+      for (final m in memberships as List) {
+        final id = _toInt(m['tenantId']);
+        if (id != null && !tenantIds.contains(id)) tenantIds.add(id);
+      }
+      if (tenantIds.isEmpty) return [];
 
-      if ((personRecords as List).isEmpty) return [];
-
-      final personIds = personRecords.map((p) => p['id']).toList();
-      final tenantIds = personRecords
-          .map((p) => p['tenantId'])
-          .toSet()
-          .toList();
-
-      // Get all person attendances with attendance details
-      final response = await supabase
-          .from('person_attendances')
-          .select(
-              '*, attendance:attendance_id($kSignoutAttendanceColumns, '
-              'attType:type_id($kSignoutAttendanceTypeColumns))')
-          .inFilter('person_id', personIds);
-
-      // Get tenant info (no color column - we generate colors programmatically)
       final tenants = await supabase
           .from('tenants')
-          .select('id, shortName')
+          .select('id, shortName, longName, seasonStart')
           .inFilter('id', tenantIds);
-
-      final tenantIdsList = tenantIds.toList();
-      final tenantMap = {
-        for (final t in tenants as List)
-          t['id'] as int: {
-            'name': t['shortName'] as String,
-            'color': _getTenantColor(t['id'] as int, tenantIdsList),
-          }
+      final tenantRows = <int, Map<String, dynamic>>{
+        for (final t in (tenants as List).cast<Map<String, dynamic>>())
+          if (_toInt(t['id']) != null) _toInt(t['id'])!: t,
       };
 
-      return (response as List)
-          .where((json) => json['attendance'] != null)
-          // SEC: drop rows whose attendance belongs to a tenant the person
-          // is not part of (defensive, like Ionic cross-tenant leak fix).
-          .where((json) => tenantIds.contains(json['attendance']['tenantId']))
-          // DUTY: duties only show up for persons who were assigned
-          .where((json) =>
-              json['duty_state'] != null ||
-              json['attendance']['attType']?['duty_mode'] != true)
-          .map((json) {
-        final attendance = json['attendance'] as Map<String, dynamic>;
-        final tenantId = _toInt(attendance['tenantId']) ?? 0;
-        final tenantInfo = tenantMap[tenantId];
-        return _fromRows(
-          attendance,
-          json as Map<String, dynamic>,
-          tenantId: tenantId,
-          tenantName: tenantInfo?['name'] ?? l10nWithoutContext.commonUnknown,
-          tenantColor: tenantInfo?['color'] ?? '#000000',
-        );
-      }).toList();
+      final perTenant = await Future.wait([
+        for (final tenantId in tenantIds)
+          _ownAttendancesOfTenant(
+            userId: userId,
+            tenantId: tenantId,
+            tenant: tenantRows[tenantId],
+            tenantColor: _getTenantColor(tenantId, tenantIds),
+          ),
+      ]);
+
+      return sortCrossTenantByDate(perTenant.expand((l) => l).toList());
     } catch (e, stack) {
       handleError(e, stack, 'getAllPersonAttendancesAcrossTenants');
       rethrow;
     }
+  }
+
+  /// Ionic `getPersonIdForTenant` + `getPersonAttendancesForTenant`.
+  Future<List<CrossTenantPersonAttendance>> _ownAttendancesOfTenant({
+    required String userId,
+    required int tenantId,
+    required Map<String, dynamic>? tenant,
+    required String tenantColor,
+  }) async {
+    // SEC: the person of the user in this tenant (tenantId + appId).
+    final persons = await supabase
+        .from('player')
+        .select('id')
+        .eq('tenantId', tenantId)
+        .eq('appId', userId);
+    // Ionic `.single()`: no or several linked persons → no Termine.
+    if ((persons as List).length != 1) return const [];
+    final personId = _toInt(persons.first['id']);
+    if (personId == null) return const [];
+
+    // SEC: person_attendances has no tenantId – the inner join on attendance
+    // is filtered by the membership's tenantId.
+    final rows = await supabase
+        .from('person_attendances')
+        .select(
+            '*, attendance:attendance_id!inner($kSignoutAttendanceColumns, '
+            'attType:type_id($kSignoutAttendanceTypeColumns))')
+        .eq('person_id', personId)
+        .eq('attendance.tenantId', tenantId)
+        .gt('attendance.date', overviewSeasonStart(tenant?['seasonStart']));
+
+    final tenantName = tenantDisplayName(
+      tenant?['longName'] as String?,
+      tenant?['shortName'] as String?,
+    );
+    return (rows as List)
+        .where((json) => json['attendance'] != null)
+        .where((json) => _toInt(json['attendance']['tenantId']) == tenantId)
+        // DUTY: duties only show up for persons who were assigned
+        .where((json) =>
+            json['duty_state'] != null ||
+            json['attendance']['attType']?['duty_mode'] != true)
+        .map((json) => _fromRows(
+              json['attendance'] as Map<String, dynamic>,
+              json as Map<String, dynamic>,
+              tenantId: tenantId,
+              tenantName: tenantName,
+              tenantColor: tenantColor,
+            ))
+        .toList();
+  }
+
+  /// Ionic `tenant?.longName || tenant?.shortName || 'Unbekannt'`.
+  @visibleForTesting
+  static String tenantDisplayName(String? longName, String? shortName) {
+    if (longName != null && longName.isNotEmpty) return longName;
+    if (shortName != null && shortName.isNotEmpty) return shortName;
+    return l10nWithoutContext.commonUnknown;
+  }
+
+  /// Ionic `tenantData?.seasonStart || dayjs('2023-01-01').toISOString()`.
+  @visibleForTesting
+  static String overviewSeasonStart(dynamic seasonStart) {
+    final value = seasonStart?.toString();
+    if (value != null && value.isNotEmpty) return value;
+    return DateTime(2023).toUtc().toIso8601String();
+  }
+
+  /// Ionic: flattened list sorted by date ascending.
+  @visibleForTesting
+  static List<CrossTenantPersonAttendance> sortCrossTenantByDate(
+    List<CrossTenantPersonAttendance> list,
+  ) {
+    DateTime d(CrossTenantPersonAttendance a) =>
+        EventListUtils.parse(a.date) ?? DateTime(1970);
+    return [...list]..sort((a, b) => d(a).compareTo(d(b)));
   }
 
   AttendanceStatus _parseStatus(dynamic status) {
@@ -602,6 +667,13 @@ class CrossTenantPersonAttendance {
   /// DUTY: 'requested' | 'confirmed' | 'self' or null
   final String? dutyState;
 
+  /// IOS_ATT_PAGES: whether the title honours the type's `hide_name`.
+  /// Ionic "Meine Termine" joins `attType:type_id(id, highlight,
+  /// include_in_average, name, color, registration_fields, duty_mode)` –
+  /// without `hide_name` – so its rows always show the type name ("Übung").
+  /// The Übersicht loads the full types and honours it.
+  final bool honorHideName;
+
   /// DUTY: Termin of a type in Dienst-Modus
   bool get isDutyType => attendanceType?.dutyMode ?? false;
 
@@ -639,6 +711,7 @@ class CrossTenantPersonAttendance {
     this.registrationAnswers,
     this.legacyType,
     this.dutyState,
+    this.honorHideName = true,
   });
 
   CrossTenantPersonAttendance copyWith({
@@ -676,6 +749,7 @@ class CrossTenantPersonAttendance {
       registrationAnswers: registrationAnswers ?? this.registrationAnswers,
       legacyType: legacyType,
       dutyState: dutyState,
+      honorHideName: honorHideName,
     );
   }
 
@@ -739,7 +813,7 @@ class CrossTenantPersonAttendance {
   String get title {
     if (typeInfo != null && typeInfo!.isNotEmpty) return typeInfo!;
     final type = attendanceType;
-    if (type == null || type.hideName) return '';
+    if (type == null || (honorHideName && type.hideName)) return '';
     return type.name;
   }
 
