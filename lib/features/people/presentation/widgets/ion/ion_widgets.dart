@@ -547,7 +547,9 @@ Widget ionCondenseHeader(
       style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
     ),
     alwaysShowMiddle: false,
-    leading: leading,
+    leading: leading == null
+        ? null
+        : Material(type: MaterialType.transparency, child: leading),
     automaticallyImplyLeading: leading == null,
     trailing: trailing == null
         ? null
@@ -886,6 +888,140 @@ class IonToggleRow extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// Ionic page with `ion-header` + `ion-content fullscreen` and an iOS
+/// `collapse="condense"` large title: on iOS the toolbar is a
+/// [CupertinoSliverNavigationBar], elsewhere a Material [AppBar]. The
+/// refresher is the platform one ([CupertinoSliverRefreshControl] /
+/// [RefreshIndicator]).
+class IonPage extends StatelessWidget {
+  const IonPage({
+    super.key,
+    required this.title,
+    required this.slivers,
+    this.actions = const [],
+    this.onRefresh,
+    this.floatingActionButton,
+    this.condense = true,
+    this.leading,
+  });
+
+  final String title;
+  final List<Widget> slivers;
+
+  /// `ion-buttons slot="start"` (e.g. a back button with a fixed target).
+  final Widget? leading;
+
+  /// `ion-buttons slot="end"`.
+  final List<Widget> actions;
+  final Future<void> Function()? onRefresh;
+  final Widget? floatingActionButton;
+
+  /// False for pages without `collapse="condense"` (plain toolbar).
+  final bool condense;
+
+  @override
+  Widget build(BuildContext context) {
+    final ios = ionIsIos(context) && condense;
+    Widget body = CustomScrollView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      slivers: [
+        if (ios)
+          ionCondenseHeader(
+            context,
+            title: title,
+            leading: leading,
+            trailing: actions.isEmpty
+                ? null
+                : Row(mainAxisSize: MainAxisSize.min, children: actions),
+          ),
+        if (ios && onRefresh != null)
+          CupertinoSliverRefreshControl(onRefresh: onRefresh),
+        ...slivers,
+        const SliverToBoxAdapter(child: SizedBox(height: 96)),
+      ],
+    );
+    if (!ios && onRefresh != null) {
+      body = RefreshIndicator(onRefresh: onRefresh!, child: body);
+    }
+    return Scaffold(
+      backgroundColor: ionContentBackground(context),
+      appBar: ios
+          ? null
+          : AppBar(title: Text(title), leading: leading, actions: actions),
+      body: body,
+      floatingActionButton: floatingActionButton,
+    );
+  }
+}
+
+/// Wraps a form so that its Material text fields look like Ionic iOS
+/// `ion-item` + `ion-label position="stacked"` + `ion-input`: no box, small
+/// label above the value, inset hairline below. Elsewhere [child] keeps the
+/// app's Material input theme (Ionic md mode).
+class IonFormTheme extends StatelessWidget {
+  const IonFormTheme({super.key, required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!ionIsIos(context)) return child;
+    final theme = Theme.of(context);
+    final onSurface = theme.colorScheme.onSurface;
+    final line = BorderSide(color: ionLineColor(context), width: 0.55);
+    return Theme(
+      data: theme.copyWith(
+        inputDecorationTheme: InputDecorationTheme(
+          filled: false,
+          isDense: true,
+          floatingLabelBehavior: FloatingLabelBehavior.always,
+          contentPadding: const EdgeInsets.fromLTRB(0, 8, 16, 10),
+          labelStyle: TextStyle(fontSize: 17, color: onSurface),
+          floatingLabelStyle: TextStyle(fontSize: 17, color: onSurface),
+          hintStyle: TextStyle(fontSize: 17, color: onSurface.withValues(alpha: 0.4)),
+          border: UnderlineInputBorder(borderSide: line),
+          enabledBorder: UnderlineInputBorder(borderSide: line),
+          disabledBorder: UnderlineInputBorder(borderSide: line),
+          focusedBorder: UnderlineInputBorder(borderSide: line),
+          errorBorder: const UnderlineInputBorder(
+            borderSide: BorderSide(color: AppColors.danger, width: 0.55),
+          ),
+          focusedErrorBorder: const UnderlineInputBorder(
+            borderSide: BorderSide(color: AppColors.danger, width: 0.55),
+          ),
+        ),
+      ),
+      child: child,
+    );
+  }
+}
+
+/// `ion-list [inset]="true"`: rounded block with 16px margins (iOS radius
+/// 10, md radius 2) on the item background.
+class IonInsetList extends StatelessWidget {
+  const IonInsetList({super.key, required this.children});
+
+  final List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.all(16),
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        color: _isDark(context)
+            ? (ionIsIos(context) ? const Color(0xFF1C1C1D) : const Color(0xFF1E1E1E))
+            : Colors.white,
+        borderRadius: BorderRadius.circular(ionIsIos(context) ? 10 : 2),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: children,
       ),
     );
   }

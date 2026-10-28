@@ -32,6 +32,7 @@ import '../widgets/person_detail/allgemein_accordion.dart'
 import '../../../../core/services/tracking/tracking_event.dart';
 import '../../../../core/services/tracking/tracking_service.dart';
 import '../../../../l10n/l10n.dart';
+import '../widgets/ion/ion_widgets.dart'; // UX_PEOPLE
 import '../../../../core/utils/error_message.dart';
 
 /// Page for creating a new person
@@ -247,41 +248,52 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
       _extraFieldsInitialized = true;
     }
 
+    final ios = ionIsIos(context);
+    final gap = SizedBox(height: ios ? 0 : AppDimensions.paddingM);
+
     return Scaffold(
-      // Ionic person.page (create): title "Person hinzufügen", save via the
-      // person-add FAB.
+      // Ionic person.page (create): title "Person hinzufügen", close button
+      // at the end, save via the person-add FAB. UX_PEOPLE: modalBackground.
+      backgroundColor: ionContentBackground(context),
       appBar: AppBar(
         title: Text(context.l10n.attendanceAddPerson),
-        leading: IconButton(
-          icon: const Icon(Icons.close),
-          onPressed: () => context.pop(),
-        ),
+        automaticallyImplyLeading: false,
+        actions: [
+          IconButton(
+            tooltip: context.l10n.commonClose,
+            icon: const Icon(Icons.close),
+            onPressed: () => context.pop(),
+          ),
+        ],
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: IonFabButton(
         key: const Key('person_create_save'),
         tooltip: context.l10n.commonSave,
         onPressed: _isLoading ? null : _save,
-        child: _isLoading
-            ? const SizedBox(
-                width: 20,
-                height: 20,
-                child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-              )
-            : const Icon(Icons.person_add_alt_1_outlined),
+        icon: Icons.person_add_alt_1_outlined,
       ),
       body: Form(
         key: _formKey,
-        child: ListView(
-          padding: const EdgeInsets.fromLTRB(AppDimensions.paddingM,
-              AppDimensions.paddingM, AppDimensions.paddingM, 96),
+        child: IonFormTheme(
+          child: ListView(
+          padding: ios
+              ? const EdgeInsets.fromLTRB(16, 0, 0, 96)
+              : const EdgeInsets.fromLTRB(AppDimensions.paddingM,
+                  AppDimensions.paddingM, AppDimensions.paddingM, 96),
           children: [
+            // Ionic .profile-header: placeholder avatar + typed name
+            _CreateProfileHeader(
+              firstName: _firstNameController,
+              lastName: _lastNameController,
+            ),
+
             // First Name
             TextFormField(
               controller: _firstNameController,
               decoration: InputDecoration(
                 labelText: '${context.l10n.peopleFirstName} *',
                 hintText: 'Max',
-                prefixIcon: const Icon(Icons.person),
+                prefixIcon: ionIsIos(context) ? null : const Icon(Icons.person),
               ),
               textCapitalization: TextCapitalization.words,
               validator: (value) {
@@ -292,7 +304,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
               },
               autofocus: true,
             ),
-            const SizedBox(height: AppDimensions.paddingM),
+            gap,
 
             // Last Name
             TextFormField(
@@ -300,7 +312,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
               decoration: InputDecoration(
                 labelText: '${context.l10n.peopleLastName} *',
                 hintText: 'Mustermann',
-                prefixIcon: const Icon(Icons.person),
+                prefixIcon: ionIsIos(context) ? null : const Icon(Icons.person),
               ),
               textCapitalization: TextCapitalization.words,
               validator: (value) {
@@ -310,7 +322,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
                 return null;
               },
             ),
-            const SizedBox(height: AppDimensions.paddingM),
+            gap,
 
             // Cross-tenant name suggestions
             if (_nameSuggestions.isNotEmpty) ...[
@@ -319,7 +331,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
                 onSelected: _applyMatchedPerson,
                 onDismiss: _dismissNameSuggestions,
               ),
-              const SizedBox(height: AppDimensions.paddingM),
+              gap,
             ],
 
             // Instrument Dropdown
@@ -332,7 +344,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
                 value: _selectedInstrument,
                 decoration: InputDecoration(
                   labelText: label,
-                  prefixIcon: const Icon(Icons.music_note),
+                  prefixIcon: ionIsIos(context) ? null : const Icon(Icons.music_note),
                 ),
                 items: [
                   DropdownMenuItem<int>(
@@ -348,12 +360,12 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
               );
               },
             ),
-            const SizedBox(height: AppDimensions.paddingM),
+            gap,
 
             // Birthday
             ListTile(
               contentPadding: EdgeInsets.zero,
-              leading: const Icon(Icons.cake),
+              leading: ionIsIos(context) ? null : const Icon(Icons.cake),
               title: Text(context.l10n.peopleBirthday),
               subtitle: Text(
                 _birthday != null
@@ -371,7 +383,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
                   : null,
               onTap: _pickBirthday,
             ),
-            const Divider(),
+            if (!ios) const Divider(),
 
             // Email
             TextFormField(
@@ -382,7 +394,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
               decoration: InputDecoration(
                 labelText: context.l10n.peopleFlutterOptional(context.l10n.peopleEmail),
                 hintText: 'max@example.com',
-                prefixIcon: const Icon(Icons.email),
+                prefixIcon: ionIsIos(context) ? null : const Icon(Icons.email),
               ),
               keyboardType: TextInputType.emailAddress,
               validator: (value) {
@@ -395,7 +407,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
                 return null;
               },
             ),
-            const SizedBox(height: AppDimensions.paddingM),
+            gap,
 
             // Phone
             TextFormField(
@@ -403,11 +415,11 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
               decoration: InputDecoration(
                 labelText: context.l10n.peopleFlutterOptional(context.l10n.peoplePhone),
                 hintText: '+49 123 456789',
-                prefixIcon: const Icon(Icons.phone),
+                prefixIcon: ionIsIos(context) ? null : const Icon(Icons.phone),
               ),
               keyboardType: TextInputType.phone,
             ),
-            const SizedBox(height: AppDimensions.paddingM),
+            gap,
 
             // Notes
             TextFormField(
@@ -415,7 +427,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
               decoration: InputDecoration(
                 labelText: context.l10n.peopleFlutterOptional(context.l10n.peopleNotes),
                 hintText: context.l10n.peopleFlutterNotesHint,
-                prefixIcon: const Icon(Icons.note),
+                prefixIcon: ionIsIos(context) ? null : const Icon(Icons.note),
                 alignLabelWithHint: true,
               ),
               textCapitalization: TextCapitalization.sentences,
@@ -444,6 +456,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
 
             const SizedBox(height: AppDimensions.paddingL),
           ],
+        ),
         ),
       ),
     );
@@ -574,7 +587,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
   }) {
     return ListTile(
       contentPadding: EdgeInsets.zero,
-      leading: Icon(icon),
+      leading: ionIsIos(context) ? null : Icon(icon),
       title: Text(label),
       subtitle: Text(
         value != null ? DateFormat(dateFmt()).format(value) : context.l10n.personFlutterNotSpecified,
@@ -614,7 +627,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
         : const [];
     final shifts = ref.watch(shiftsProvider).valueOrNull ?? const [];
     final shift = shifts.where((s) => s.id == _shiftId).firstOrNull;
-    const gap = SizedBox(height: AppDimensions.paddingM);
+    final gap = SizedBox(height: ionIsIos(context) ? 0 : AppDimensions.paddingM);
 
     return [
       gap,
@@ -623,7 +636,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
           controller: _rangeController,
           decoration: InputDecoration(
             labelText: context.l10n.personVocalRange,
-            prefixIcon: const Icon(Icons.music_note_outlined),
+            prefixIcon: ionIsIos(context) ? null : const Icon(Icons.music_note_outlined),
           ),
         ),
         gap,
@@ -648,7 +661,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
           value: _parentId,
           decoration: InputDecoration(
             labelText: context.l10n.personParents,
-            prefixIcon: const Icon(Icons.family_restroom),
+            prefixIcon: ionIsIos(context) ? null : const Icon(Icons.family_restroom),
           ),
           items: [
             DropdownMenuItem<int?>(
@@ -673,7 +686,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
             value: teachers.any((t) => t.id == _teacherId) ? _teacherId : null,
             decoration: InputDecoration(
               labelText: context.l10n.peopleTeacher,
-              prefixIcon: const Icon(Icons.school),
+              prefixIcon: ionIsIos(context) ? null : const Icon(Icons.school),
             ),
             items: [
               DropdownMenuItem<int?>(value: null, child: Text(context.l10n.peopleNoTeacher)),
@@ -695,7 +708,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
           controller: _instrumentsController,
           decoration: InputDecoration(
             labelText: context.l10n.peopleInstruments,
-            prefixIcon: const Icon(Icons.piano_outlined),
+            prefixIcon: ionIsIos(context) ? null : const Icon(Icons.piano_outlined),
           ),
         ),
         gap,
@@ -733,7 +746,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
           controller: _testResultController,
           decoration: InputDecoration(
             labelText: context.l10n.peopleTestResult,
-            prefixIcon: const Icon(Icons.assignment_outlined),
+            prefixIcon: ionIsIos(context) ? null : const Icon(Icons.assignment_outlined),
           ),
         ),
         gap,
@@ -743,7 +756,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
           value: _shiftId,
           decoration: InputDecoration(
             labelText: context.l10n.personShiftPlan,
-            prefixIcon: const Icon(Icons.schedule),
+            prefixIcon: ionIsIos(context) ? null : const Icon(Icons.schedule),
           ),
           items: [
             DropdownMenuItem<String?>(
@@ -772,7 +785,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
             value: _shiftName,
             decoration: InputDecoration(
               labelText: context.l10n.personShift,
-              prefixIcon: const Icon(Icons.access_time),
+              prefixIcon: ionIsIos(context) ? null : const Icon(Icons.access_time),
             ),
             items: [
               for (final name in shift.shifts.map((x) => x.name).toSet())
@@ -794,7 +807,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
         controller: _otherExerciseController,
         decoration: InputDecoration(
           labelText: context.l10n.peopleOtherDuties,
-          prefixIcon: const Icon(Icons.work_outline),
+          prefixIcon: ionIsIos(context) ? null : const Icon(Icons.work_outline),
         ),
         textCapitalization: TextCapitalization.sentences,
       ),
@@ -905,5 +918,60 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
         setState(() => _isLoading = false);
       }
     }
+  }
+}
+
+/// UX_PEOPLE: Ionic person.page `.profile-header` while creating: 120px
+/// placeholder avatar with ring and shadow, the typed name below (h1).
+class _CreateProfileHeader extends StatelessWidget {
+  const _CreateProfileHeader({required this.firstName, required this.lastName});
+
+  final TextEditingController firstName;
+  final TextEditingController lastName;
+
+  @override
+  Widget build(BuildContext context) {
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(0, 24, 16, 12),
+      child: Column(
+        children: [
+          Container(
+            width: 120,
+            height: 120,
+            clipBehavior: Clip.antiAlias,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: dark ? const Color(0xFF222428) : AppColors.light,
+              border: Border.all(color: dark ? Colors.black : Colors.white, width: 3),
+              boxShadow: const [
+                BoxShadow(color: Color(0x2E000000), offset: Offset(0, 4), blurRadius: 16),
+              ],
+            ),
+            alignment: Alignment.bottomCenter,
+            child: Icon(
+              Icons.person,
+              size: 104,
+              color: dark ? const Color(0xFF555555) : const Color(0xFFC5C5C5),
+            ),
+          ),
+          ListenableBuilder(
+            listenable: Listenable.merge([firstName, lastName]),
+            builder: (context, _) {
+              final name = '${firstName.text} ${lastName.text}'.trim();
+              if (name.isEmpty) return const SizedBox.shrink();
+              return Padding(
+                padding: const EdgeInsets.only(top: 14),
+                child: Text(
+                  name,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontSize: 21.6, fontWeight: FontWeight.w600, height: 1.2),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
   }
 }

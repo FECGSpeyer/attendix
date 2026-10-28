@@ -17,6 +17,7 @@ import '../../../../data/models/person/person.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../data/repositories/shared_person_fields.dart';
 import '../../../../l10n/l10n.dart';
+import '../widgets/ion/ion_widgets.dart'; // UX_PEOPLE
 import '../../../../core/providers/demo_providers.dart'; // DEMO_GUARD
 
 /// A field that can be bulk edited.
@@ -251,7 +252,10 @@ class _BulkEditPageState extends ConsumerState<BulkEditPage> {
     String groupName(int? id) =>
         groups.where((g) => g.id == id).map((g) => g.name).firstOrNull ?? '';
 
+    // UX_PEOPLE: Ionic bulk-edit — ion-content color="light" with inset
+    // lists (field select, "Für alle setzen", people list), save button.
     return Scaffold(
+      backgroundColor: ionLightColor(context),
       appBar: AppBar(
         title: Text(context.l10n.peopleBulkEdit),
         automaticallyImplyLeading: false,
@@ -262,15 +266,23 @@ class _BulkEditPageState extends ConsumerState<BulkEditPage> {
           ),
         ],
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(AppDimensions.paddingM),
+      body: IonFormTheme(
+        child: ListView(
+        padding: const EdgeInsets.only(bottom: AppDimensions.paddingL),
         children: [
-          DropdownButtonFormField<String>(
+          IonInsetList(
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 4, 0, 4),
+                child: DropdownButtonFormField<String>(
             // ignore: deprecated_member_use
             value: field?.key,
             isExpanded: true,
             decoration: InputDecoration(
               labelText: context.l10n.peopleChooseField,
+              border: InputBorder.none,
+              enabledBorder: InputBorder.none,
+              focusedBorder: InputBorder.none,
             ),
             hint: Text(context.l10n.peopleChooseFieldPlaceholder),
             items: [
@@ -303,7 +315,9 @@ class _BulkEditPageState extends ConsumerState<BulkEditPage> {
             ],
             onChanged: (key) => _onFieldSelected(key, groups),
           ),
-          const SizedBox(height: AppDimensions.paddingM),
+              ),
+            ],
+          ),
           if (field == null)
             Padding(
               padding: const EdgeInsets.only(top: AppDimensions.paddingXL),
@@ -324,111 +338,105 @@ class _BulkEditPageState extends ConsumerState<BulkEditPage> {
               ),
             )
           else ...[
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(AppDimensions.paddingM),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Text(
-                      context.l10n.peopleSetForAll,
-                      style: Theme.of(context).textTheme.titleSmall,
-                    ),
-                    const SizedBox(height: AppDimensions.paddingS),
-                    _ValueEditor(
-                      key: ValueKey('bulk-${field.key}'),
-                      field: field,
-                      value: _bulkValue,
-                      groups: groups,
-                      churches: churches,
-                      onChanged: (v) => setState(() => _bulkValue = v),
-                    ),
-                    const SizedBox(height: AppDimensions.paddingS),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: OutlinedButton.icon(
-                        onPressed: _applyToAll,
-                        icon: const Icon(Icons.done_all),
-                        label: Text(context.l10n.peopleSetForAll),
+            // "Für alle setzen"
+            IonInsetList(
+              children: [
+                IonListHeader(text: context.l10n.peopleSetForAll),
+                IonItem(
+                  lines: false,
+                  end: [
+                    OutlinedButton.icon(
+                      onPressed: _applyToAll,
+                      icon: const Icon(Icons.done_all, size: 18),
+                      label: Text(context.l10n.peopleSetForAll),
+                      style: OutlinedButton.styleFrom(
+                        visualDensity: VisualDensity.compact,
+                        shape: ionIsIos(context) ? const StadiumBorder() : null,
                       ),
                     ),
                   ],
+                  child: _ValueEditor(
+                    key: ValueKey('bulk-${field.key}'),
+                    field: field,
+                    value: _bulkValue,
+                    groups: groups,
+                    churches: churches,
+                    onChanged: (v) => setState(() => _bulkValue = v),
+                  ),
                 ),
-              ),
+              ],
             ),
-            const SizedBox(height: AppDimensions.paddingS),
-            Text(
-              context.l10n.peoplePeopleCount(_players.length),
-              style: Theme.of(context).textTheme.titleSmall,
-            ),
-            const SizedBox(height: AppDimensions.paddingS),
-            Card(
-              child: Column(
-                children: [
-                  for (final p in _players)
-                    Container(
-                      color:
-                          _original[p.id] != _edited[p.id]
-                              ? AppColors.primary.withAlpha(20)
-                              : null,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppDimensions.paddingM,
-                        vertical: AppDimensions.paddingS,
-                      ),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  '${p.firstName} ${p.lastName}',
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                Text(
-                                  p.groupName ?? groupName(p.instrument),
-                                  style: const TextStyle(
-                                    color: AppColors.medium,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(width: AppDimensions.paddingS),
-                          Expanded(
-                            child: _ValueEditor(
-                              key: ValueKey('${field.key}-${p.id}-$_version'),
-                              field: field,
-                              value: _edited[p.id],
-                              groups: groups,
-                              churches: churches,
-                              dense: true,
-                              onChanged:
-                                  (v) => setState(() => _edited[p.id!] = v),
+            // People list with the editable field
+            IonInsetList(
+              children: [
+                IonListHeader(text: context.l10n.peoplePeopleCount(_players.length)),
+                for (var i = 0; i < _players.length; i++)
+                  Builder(builder: (context) {
+                    final p = _players[i];
+                    final changed = _original[p.id] != _edited[p.id];
+                    return Container(
+                      decoration: changed
+                          ? BoxDecoration(
+                              color: AppColors.primary.withValues(alpha: 0.06),
+                              border: const Border(
+                                left: BorderSide(color: AppColors.primary, width: 3),
+                              ),
+                            )
+                          : null,
+                      child: IonItem(
+                        lines: i < _players.length - 1,
+                        end: [
+                          ConstrainedBox(
+                            constraints: const BoxConstraints(minWidth: 140, maxWidth: 200),
+                            child: SizedBox(
+                              width: 170,
+                              child: _ValueEditor(
+                                key: ValueKey('${field.key}-${p.id}-$_version'),
+                                field: field,
+                                value: _edited[p.id],
+                                groups: groups,
+                                churches: churches,
+                                dense: true,
+                                onChanged: (v) => setState(() => _edited[p.id!] = v),
+                              ),
                             ),
                           ),
                         ],
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('${p.firstName} ${p.lastName}', style: IonText.h3(context)),
+                            Text(p.groupName ?? groupName(p.instrument), style: IonText.p(context)),
+                          ],
+                        ),
                       ),
-                    ),
-                ],
-              ),
+                    );
+                  }),
+              ],
             ),
-            const SizedBox(height: AppDimensions.paddingM),
-            FilledButton(
-              onPressed: _changedCount == 0 || _isSaving ? null : _save,
-              child: Text(
-                _isSaving
-                    ? context.l10n.peopleSaving
-                    : _changedCount > 0
-                    ? context.l10n.peopleSaveChanges(_changedCount)
-                    : context.l10n.peopleNoChanges,
+            // Save button (ion-padding, expand="block")
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: FilledButton(
+                style: FilledButton.styleFrom(
+                  minimumSize: const Size.fromHeight(46),
+                  shape: ionIsIos(context)
+                      ? RoundedRectangleBorder(borderRadius: BorderRadius.circular(24))
+                      : null,
+                ),
+                onPressed: _changedCount == 0 || _isSaving ? null : _save,
+                child: Text(
+                  _isSaving
+                      ? context.l10n.peopleSaving
+                      : _changedCount > 0
+                      ? context.l10n.peopleSaveChanges(_changedCount)
+                      : context.l10n.peopleNoChanges,
+                ),
               ),
             ),
           ],
         ],
+      ),
       ),
     );
   }

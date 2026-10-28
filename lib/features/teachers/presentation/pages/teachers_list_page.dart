@@ -13,6 +13,7 @@ import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/repositories/teacher_repository.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
+import '../../../people/presentation/widgets/ion/ion_widgets.dart'; // UX_PEOPLE
 
 /// Teacher list (Ionic teachers.page): "Lehrer", rows with name, instrument
 /// names and a "n Spieler" badge; FAB opens the "Lehrer hinzufügen" sheet,
@@ -27,39 +28,43 @@ class TeachersListPage extends ConsumerWidget {
     // Ionic teachers.page isAdmin = Admin or Responsible
     final isAdmin = currentRole.isAdmin || currentRole.isResponsible;
 
-    return Scaffold(
-      appBar: AppBar(title: Text(context.l10n.teachersTitle)),
-      body: teachersAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.error_outline, size: 64, color: AppColors.danger),
-              const SizedBox(height: AppDimensions.paddingM),
-              Text(
-                context.l10n.teachersFlutterLoadFailed,
-                style: Theme.of(context).textTheme.titleMedium,
+    Future<void> refresh() async {
+      ref.invalidate(teachersProvider);
+      ref.invalidate(studentCountsProvider);
+      ref.invalidate(enrichedTeachersProvider);
+      await ref.read(enrichedTeachersProvider.future);
+    }
+
+    // UX_PEOPLE: Ionic teachers.page — condensed large title on iOS,
+    // plain ion-list with ion-items, glass FAB.
+    return IonPage(
+      title: context.l10n.teachersTitle,
+      onRefresh: refresh,
+      slivers: [
+        ...teachersAsync.when(
+          loading: () => [
+            const SliverFillRemaining(
+              hasScrollBody: false,
+              child: Center(child: CircularProgressIndicator()),
+            ),
+          ],
+          error: (error, stack) => [
+            SliverFillRemaining(
+              hasScrollBody: false,
+              child: IonNoData(
+                icon: Icons.error_outline,
+                label: context.l10n.teachersFlutterLoadFailed,
+                actions: [
+                  (
+                    context.l10n.messagesRetry,
+                    () => ref.invalidate(enrichedTeachersProvider),
+                  ),
+                ],
               ),
-              const SizedBox(height: AppDimensions.paddingM),
-              ElevatedButton(
-                onPressed: () => ref.invalidate(enrichedTeachersProvider),
-                child: Text(context.l10n.messagesRetry),
-              ),
-            ],
-          ),
-        ),
-        data: (teachers) {
-          return RefreshIndicator(
-            onRefresh: () async {
-              ref.invalidate(teachersProvider);
-              ref.invalidate(studentCountsProvider);
-              ref.invalidate(enrichedTeachersProvider);
-              await ref.read(enrichedTeachersProvider.future);
-            },
-            child: ListView.builder(
-              physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.only(bottom: 88),
+            ),
+          ],
+          data: (teachers) => [
+            SliverList.builder(
               itemCount: teachers.length,
               itemBuilder: (context, index) {
                 final teacher = teachers[index];
@@ -72,14 +77,11 @@ class TeachersListPage extends ConsumerWidget {
                 );
               },
             ),
-          );
-        },
-      ),
+          ],
+        ),
+      ],
       floatingActionButton: isAdmin
-          ? FloatingActionButton(
-              onPressed: () => _showAddSheet(context, ref),
-              child: const Icon(Icons.add),
-            )
+          ? IonFabButton(onPressed: () => _showAddSheet(context, ref))
           : null,
     );
   }
@@ -195,49 +197,24 @@ class _TeacherTile extends StatelessWidget {
         color: AppColors.danger,
         child: const Icon(Icons.delete, color: Colors.white),
       ),
-      child: InkWell(
+      child: IonItem(
         onTap: onTap,
-        child: Container(
-          decoration: BoxDecoration(
-            border: Border(
-              bottom:
-                  BorderSide(color: Theme.of(context).dividerColor, width: 0.5),
-            ),
+        end: [
+          IonBadge(
+            text: context.l10n.teachersPlayerCount(count),
+            color: count > 0 ? AppColors.primary : AppColors.danger,
           ),
-          padding: const EdgeInsets.symmetric(
-              horizontal: AppDimensions.paddingM, vertical: 10),
-          child: Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(teacher.name,
-                        style: const TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w500)),
-                    if (teacher.insNames?.isNotEmpty ?? false)
-                      Text(teacher.insNames!,
-                          style: const TextStyle(fontSize: 14)),
-                  ],
-                ),
+        ],
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(teacher.name, style: IonText.h2(context)),
+            if (teacher.insNames?.isNotEmpty ?? false)
+              Padding(
+                padding: const EdgeInsets.only(top: 2),
+                child: Text(teacher.insNames!, style: IonText.h3(context)),
               ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(
-                  color: count > 0 ? AppColors.primary : AppColors.danger,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Text(
-                  context.l10n.teachersPlayerCount(count),
-                  style: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ],
-          ),
+          ],
         ),
       ),
     );

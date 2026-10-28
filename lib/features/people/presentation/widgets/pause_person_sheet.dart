@@ -11,6 +11,7 @@ import '../../../../data/models/person/person.dart';
 import '../../../../data/repositories/cross_tenant_person_repository.dart';
 import '../../../../core/utils/date_helper.dart';
 import '../../../../l10n/l10n.dart';
+import 'ion/ion_widgets.dart'; // UX_PEOPLE
 import '../../../../core/utils/error_message.dart';
 
 final _fmt = DateFormat('dd.MM.yyyy');
@@ -77,23 +78,24 @@ class _PauseSheetState extends State<_PauseSheet> {
     return Padding(
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom,
-        left: AppDimensions.paddingL,
-        right: AppDimensions.paddingL,
-        top: AppDimensions.paddingL,
+        left: AppDimensions.paddingM,
+        right: AppDimensions.paddingM,
+        top: AppDimensions.paddingS,
       ),
       child: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            // UX_PEOPLE: Ionic modal toolbar — centered title, close at end
             Row(
               children: [
-                const Icon(Icons.pause_circle, color: AppColors.warning, size: 28),
-                const SizedBox(width: AppDimensions.paddingS),
+                const SizedBox(width: 48),
                 Expanded(
                   child: Text(
                     context.l10n.peoplePauseTitle('${p.firstName} ${p.lastName}'),
-                    style: Theme.of(context).textTheme.titleLarge,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
                   ),
                 ),
                 IconButton(
@@ -102,37 +104,28 @@ class _PauseSheetState extends State<_PauseSheet> {
                 ),
               ],
             ),
-            const SizedBox(height: AppDimensions.paddingL),
-            TextField(
-              controller: _reasonController,
-              decoration: InputDecoration(
-                labelText: context.l10n.peopleReasonRequired,
-                hintText: context.l10n.personPauseReasonPlaceholder,
-                border: const OutlineInputBorder(),
+            const SizedBox(height: AppDimensions.paddingM),
+            // ion-item + stacked label + textarea
+            IonFormTheme(
+              child: TextField(
+                controller: _reasonController,
+                decoration: InputDecoration(
+                  labelText: context.l10n.peopleReasonRequired,
+                  hintText: context.l10n.personPauseReasonPlaceholder,
+                  border: ionIsIos(context) ? null : const OutlineInputBorder(),
+                ),
+                textCapitalization: TextCapitalization.sentences,
+                minLines: 1,
+                maxLines: 5,
+                autofocus: true,
+                onChanged: (_) => setState(() {}),
               ),
-              textCapitalization: TextCapitalization.sentences,
-              minLines: 2,
-              maxLines: 5,
-              autofocus: true,
-              onChanged: (_) => setState(() {}),
             ),
             const SizedBox(height: AppDimensions.paddingM),
-            ListTile(
-              contentPadding: EdgeInsets.zero,
-              leading: const Icon(Icons.event, color: AppColors.primary),
-              title: Text(context.l10n.peoplePausedFrom),
-              subtitle: Text(
-                _from != null ? DateFormat(dateFmt()).format(_from!) : context.l10n.peopleFromToday,
-                style: TextStyle(
-                  color: _from != null ? AppColors.primary : AppColors.medium,
-                ),
-              ),
-              trailing: _from != null
-                  ? IconButton(
-                      icon: const Icon(Icons.clear, color: AppColors.medium),
-                      onPressed: () => setState(() => _from = null),
-                    )
-                  : null,
+            _DateHeaderItem(
+              title: context.l10n.peoplePausedFrom,
+              value: _from != null ? DateFormat(dateFmt()).format(_from!) : context.l10n.peopleFromToday,
+              onClear: _from != null ? () => setState(() => _from = null) : null,
               onTap: () async {
                 final date = await showDatePicker(
                   context: context,
@@ -143,22 +136,10 @@ class _PauseSheetState extends State<_PauseSheet> {
                 if (date != null) setState(() => _from = date);
               },
             ),
-            ListTile(
-              contentPadding: EdgeInsets.zero,
-              leading: const Icon(Icons.event_available, color: AppColors.primary),
-              title: Text(context.l10n.signoutPausedUntil),
-              subtitle: Text(
-                _until != null ? DateFormat(dateFmt()).format(_until!) : context.l10n.peopleNoEndDate,
-                style: TextStyle(
-                  color: _until != null ? AppColors.primary : AppColors.medium,
-                ),
-              ),
-              trailing: _until != null
-                  ? IconButton(
-                      icon: const Icon(Icons.clear, color: AppColors.medium),
-                      onPressed: () => setState(() => _until = null),
-                    )
-                  : null,
+            _DateHeaderItem(
+              title: context.l10n.signoutPausedUntil,
+              value: _until != null ? DateFormat(dateFmt()).format(_until!) : context.l10n.peopleNoEndDate,
+              onClear: _until != null ? () => setState(() => _until = null) : null,
               onTap: () async {
                 final date = await showDatePicker(
                   context: context,
@@ -173,7 +154,7 @@ class _PauseSheetState extends State<_PauseSheet> {
               padding: const EdgeInsets.symmetric(vertical: AppDimensions.paddingS),
               child: Text(
                 context.l10n.personPauseHintAuto,
-                style: const TextStyle(color: AppColors.medium, fontSize: 13),
+                style: IonText.note(context).copyWith(color: AppColors.medium),
               ),
             ),
             const SizedBox(height: AppDimensions.paddingS),
@@ -350,4 +331,43 @@ Future<List<LinkedTenantRef>?> _askPauseInOtherTenants(
       ),
     ),
   );
+}
+
+/// UX_PEOPLE: Ionic `ion-item slot="header" color="light"` with h3 title,
+/// p value and a close-circle clear button (pause modal date rows).
+class _DateHeaderItem extends StatelessWidget {
+  const _DateHeaderItem({
+    required this.title,
+    required this.value,
+    required this.onTap,
+    this.onClear,
+  });
+
+  final String title;
+  final String value;
+  final VoidCallback onTap;
+  final VoidCallback? onClear;
+
+  @override
+  Widget build(BuildContext context) {
+    return IonItem(
+      background: ionLightColor(context),
+      onTap: onTap,
+      end: [
+        if (onClear != null)
+          IconButton(
+            icon: const Icon(Icons.highlight_off, color: AppColors.medium),
+            onPressed: onClear,
+          ),
+      ],
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(title, style: IonText.h3(context)),
+          const SizedBox(height: 2),
+          Text(value, style: IonText.p(context)),
+        ],
+      ),
+    );
+  }
 }
