@@ -112,6 +112,47 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
     }
   }
 
+  /// DB_FIX: `attendance` columns an insert may set. Attendance.toJson also
+  /// holds client-only keys (percentage, lateExcused — no `attendance`
+  /// columns → PGRST204), id and created_at.
+  static const Set<String> insertColumns = {
+    'created_by',
+    'date',
+    'type',
+    'type_id',
+    'save_in_history',
+    'excused',
+    'typeInfo',
+    'notes',
+    'img',
+    'plan',
+    'songs',
+    'criticalPlayers',
+    'playerNotes',
+    'start_time',
+    'end_time',
+    'deadline',
+    'duration_days',
+    'checklist',
+    'conductors',
+    'players',
+    'share_plan',
+    'place',
+    'files_folder',
+    'description',
+    'attachment_url',
+    'attachment_name',
+    'duty_required',
+  };
+
+  /// DB_FIX: insert payload of [createAttendance] (without tenantId): only
+  /// [insertColumns]; null values are not sent so DB defaults apply (Ionic
+  /// inserts only the keys it set).
+  static Map<String, dynamic> buildInsertData(Attendance attendance) => {
+        for (final e in attendance.toJson().entries)
+          if (insertColumns.contains(e.key) && e.value != null) e.key: e.value,
+      };
+
   /// Create a new attendance
   /// BL-002: Checks for duplicate attendances on the same date
   Future<Attendance> createAttendance(Attendance attendance) async {
@@ -133,10 +174,8 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
         );
       }
 
-      final data = attendance.toJson();
+      final data = buildInsertData(attendance);
       data['tenantId'] = currentTenantId;
-      // Remove computed fields
-      data.remove('persons');
 
       final response = await supabase
           .from('attendance')
@@ -651,34 +690,6 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
           .inFilter('id', validIds);
     } catch (e, stack) {
       handleError(e, stack, 'batchUpdatePersonAttendances');
-      rethrow;
-    }
-  }
-
-  /// Update start_time/end_time on all future attendances of a given type
-  Future<void> updateFutureAttendanceTimes(
-    String typeId, {
-    String? startTime,
-    String? endTime,
-  }) async {
-    try {
-      final today = DateTime.now();
-      final startOfDay = DateTime(today.year, today.month, today.day);
-
-      final updates = <String, dynamic>{};
-      if (startTime != null) updates['start_time'] = startTime;
-      if (endTime != null) updates['end_time'] = endTime;
-
-      if (updates.isEmpty) return;
-
-      await supabase
-          .from('attendance')
-          .update(updates)
-          .eq('tenantId', currentTenantId)
-          .eq('type_id', typeId)
-          .gte('date', startOfDay.toIso8601String());
-    } catch (e, stack) {
-      handleError(e, stack, 'updateFutureAttendanceTimes');
       rethrow;
     }
   }

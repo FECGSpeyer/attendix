@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/utils/db_helpers.dart';
 import '../models/instrument/instrument.dart';
 import 'base_repository.dart';
 import '../../l10n/l10n.dart';
@@ -92,8 +93,9 @@ class GroupRepository extends BaseRepository with TenantAwareRepository {
   Future<Group> createGroup(Map<String, dynamic> data) async {
     ensureNotDemo('createGroup'); // DEMO_GUARD
     try {
-      // Create a sanitized copy — don't mutate caller's map
-      final sanitized = Map<String, dynamic>.from(data);
+      // Create a sanitized copy — don't mutate caller's map.
+      // DB_FIX: only `instruments` columns (Ionic pickGroupFields).
+      final sanitized = pickGroupFields(data);
       sanitized['tenantId'] = currentTenantId;
       sanitized.putIfAbsent('tuning', () => 'C');
       sanitized.putIfAbsent('clefs', () => ['g']);
@@ -136,7 +138,8 @@ class GroupRepository extends BaseRepository with TenantAwareRepository {
       // RT-008: Use maybeSingle() to avoid StateError
       final response = await supabase
           .from('instruments')
-          .update(updates)
+          // DB_FIX: Ionic updateGroup → update(pickGroupFields(group))
+          .update(pickGroupFields(updates))
           .eq('id', id)
           .eq('tenantId', currentTenantId)
           .select()

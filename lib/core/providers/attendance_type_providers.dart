@@ -1,10 +1,8 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/models/attendance/attendance.dart';
 import '../../data/repositories/attendance_type_repository.dart';
 import '../utils/demo_guard.dart';
-import 'attendance_providers.dart';
 import 'tenant_providers.dart';
 
 /// Initialized attendance type repository with tenant context
@@ -70,9 +68,7 @@ class AttendanceTypeNotifier extends Notifier<AsyncValue<void>> {
 
   /// Saves the type. Returns null when the save itself failed (caller shows
   /// `typeSettings.updateFailed`); rethrows [DemoModeException] so the demo
-  /// block is not reported as a generic failure. A failing follow-up update
-  /// of future attendance times does not turn a successful save into a
-  /// failure (Ionic updateAttendanceType has no such follow-up).
+  /// block is not reported as a generic failure.
   Future<AttendanceType?> updateType(String id, Map<String, dynamic> updates) async {
     state = const AsyncValue.loading();
     final AttendanceType? result;
@@ -88,27 +84,10 @@ class AttendanceTypeNotifier extends Notifier<AsyncValue<void>> {
       state = AsyncValue.error(e, stack);
       return null;
     }
-    // LOGIC_SETTINGS: failed save -> no follow-up updates, caller shows error
-    if (result == null) return null;
-
-    // If start_time or end_time changed, update future attendance records
-    final hasTimeChange = updates.containsKey('start_time') || updates.containsKey('end_time');
-    if (hasTimeChange) {
-      try {
-        final attendanceRepo = ref.read(attendanceRepositoryWithTenantProvider);
-        await attendanceRepo.updateFutureAttendanceTimes(
-          id,
-          startTime: updates['start_time'] as String?,
-          endTime: updates['end_time'] as String?,
-        );
-        ref.invalidate(attendancesProvider);
-        ref.invalidate(upcomingAttendancesProvider);
-      } catch (e) {
-        // The type itself was saved; keep reporting success.
-        debugPrint('updateFutureAttendanceTimes failed: $e');
-      }
-    }
-
+    // DB_FIX: Ionic updateAttendanceType only updates the attendance_types
+    // row. It never rewrites start_time/end_time of existing Termine (the
+    // removed follow-up overwrote the times of ALL future Termine of the
+    // type on every save, because the edit page always sends both times).
     return result;
   }
 

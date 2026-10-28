@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/config/supabase_config.dart';
 import '../../../../core/constants/table_names.dart';
 import '../../../../core/constants/enums.dart';
+import '../../../../core/utils/db_helpers.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../data/repositories/account_repository.dart';
@@ -213,7 +214,8 @@ class RegistrationService {
       } else {
         final playerResponse = await supabase
             .from('player')
-            .insert(playerData)
+            // DB_FIX: Ionic addPlayer sets the id client-side (Utils.getId)
+            .insert({...playerData, 'id': generateIonicId()})
             .select('id')
             .single();
         playerId = playerResponse['id'] as int;

@@ -35,8 +35,8 @@ mixin _$Tenant {
   String? get seasonStart => throw _privateConstructorUsedError;
   bool? get parents => throw _privateConstructorUsedError;
   bool get betaProgram => throw _privateConstructorUsedError;
-  @JsonKey(name: 'show_members_list')
-  bool get showMembersList => throw _privateConstructorUsedError;
+  bool get showMembersList =>
+      throw _privateConstructorUsedError; // DB_FIX: column "showMembersList"
   String? get region => throw _privateConstructorUsedError;
   int? get role => throw _privateConstructorUsedError;
   @JsonKey(name: 'song_sharing_id')
@@ -108,7 +108,7 @@ abstract class $TenantCopyWith<$Res> {
     String? seasonStart,
     bool? parents,
     bool betaProgram,
-    @JsonKey(name: 'show_members_list') bool showMembersList,
+    bool showMembersList,
     String? region,
     int? role,
     @JsonKey(name: 'song_sharing_id') String? songSharingId,
@@ -398,7 +398,7 @@ abstract class _$$TenantImplCopyWith<$Res> implements $TenantCopyWith<$Res> {
     String? seasonStart,
     bool? parents,
     bool betaProgram,
-    @JsonKey(name: 'show_members_list') bool showMembersList,
+    bool showMembersList,
     String? region,
     int? role,
     @JsonKey(name: 'song_sharing_id') String? songSharingId,
@@ -681,7 +681,7 @@ class _$TenantImpl implements _Tenant {
     this.seasonStart,
     this.parents = false,
     this.betaProgram = false,
-    @JsonKey(name: 'show_members_list') this.showMembersList = false,
+    this.showMembersList = false,
     this.region,
     this.role,
     @JsonKey(name: 'song_sharing_id') this.songSharingId,
@@ -754,8 +754,9 @@ class _$TenantImpl implements _Tenant {
   @JsonKey()
   final bool betaProgram;
   @override
-  @JsonKey(name: 'show_members_list')
+  @JsonKey()
   final bool showMembersList;
+  // DB_FIX: column "showMembersList"
   @override
   final String? region;
   @override
@@ -1045,7 +1046,7 @@ abstract class _Tenant implements Tenant {
     final String? seasonStart,
     final bool? parents,
     final bool betaProgram,
-    @JsonKey(name: 'show_members_list') final bool showMembersList,
+    final bool showMembersList,
     final String? region,
     final int? role,
     @JsonKey(name: 'song_sharing_id') final String? songSharingId,
@@ -1105,8 +1106,7 @@ abstract class _Tenant implements Tenant {
   @override
   bool get betaProgram;
   @override
-  @JsonKey(name: 'show_members_list')
-  bool get showMembersList;
+  bool get showMembersList; // DB_FIX: column "showMembersList"
   @override
   String? get region;
   @override

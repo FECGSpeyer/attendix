@@ -22,7 +22,7 @@ class Tenant with _$Tenant {
     String? seasonStart,
     @Default(false) bool? parents,
     @Default(false) bool betaProgram,
-    @JsonKey(name: 'show_members_list') @Default(false) bool showMembersList,
+    @Default(false) bool showMembersList, // DB_FIX: column "showMembersList"
     String? region,
     int? role,
     @JsonKey(name: 'song_sharing_id') String? songSharingId,
