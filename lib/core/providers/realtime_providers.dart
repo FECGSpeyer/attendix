@@ -8,9 +8,8 @@ import '../services/attendance_list_cache.dart';
 import '../services/attendance_detail_cache.dart'
     show
         OfflineReadCacheGuard,
-        isAuthOrPermissionError,
         isOfflineFallbackError,
-        purgeOfflineReadCachesFor; // SOL_FIX7, SOL_FIX8, SOL_FIX9
+        purgeOfflineCachesOnAuthError; // SOL_FIX7, SOL_FIX8, SOL_FIX9, SOL_FIX10
 import '../services/offline_queue_service.dart'
     show connectivityCheckProvider, offlineQueueUserIdProvider;
 import '../utils/attendance_percentage_utils.dart';
@@ -176,30 +175,36 @@ final realtimeAttendanceListProvider = FutureProvider.autoDispose<List<Attendanc
   // LOGIC_SELF: Ionic db.getAttendance — everything since the season start
   // (getCurrentAttDate), no row limit.
   final List<dynamic> response;
+  final List<AttendanceType> types;
   try {
-    // SOL_FIX1: paged (PostgREST max-rows 1000), stable order date+id.
-    response = await fetchAllPages<dynamic>((from, to) async => await supabase
-        .from('attendance')
-        .select('*, person_attendances(status, notes, duty_state)')
-        .eq('tenantId', tenantId)
-        .gt('date', attendanceListStartDate(tenant.seasonStart))
-        .order('date', ascending: false)
-        .order('id', ascending: false)
-        .range(from, to) as List);
+    // SOL_FIX10: the whole load (attendances AND attendance types) runs
+    // inside the auth-error cleanup.
+    (response, types) = await purgeOfflineCachesOnAuthError(
+      cacheUserId,
+      tenantId,
+      () async {
+        // SOL_FIX1: paged (PostgREST max-rows 1000), stable order date+id.
+        final rows = await fetchAllPages<dynamic>((from, to) async => await supabase
+            .from('attendance')
+            .select('*, person_attendances(status, notes, duty_state)')
+            .eq('tenantId', tenantId)
+            .gt('date', attendanceListStartDate(tenant.seasonStart))
+            .order('date', ascending: false)
+            .order('id', ascending: false)
+            .range(from, to) as List);
+        final loadedTypes = await ref.watch(attendanceTypesProvider.future);
+        return (rows, loadedTypes);
+      },
+    );
   } catch (e) {
     // SOL_FIX7: only network failures fall back to the offline copy;
     // auth/permission errors (revoked access) are shown.
-    // SOL_FIX8: and the user's offline copies of this tenant are deleted.
-    if (cacheUserId != null && isAuthOrPermissionError(e)) {
-      await purgeOfflineReadCachesFor(cacheUserId, tenantId);
-    }
     if (cacheUserId == null || !isOfflineFallbackError(e)) rethrow;
     final cached = await cache.load(cacheUserId, tenantId);
     if (cached != null) return cached;
     rethrow;
   }
 
-  final types = await ref.watch(attendanceTypesProvider.future);
   final typesById = {for (final t in types) t.id: t};
 
   final attendances = response.map((e) {
