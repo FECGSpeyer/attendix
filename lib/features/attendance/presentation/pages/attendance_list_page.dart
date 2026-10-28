@@ -28,6 +28,7 @@ import '../../../duty/presentation/widgets/my_duty_requests_section.dart';
 import '../../../../shared/widgets/tenant/tenant_switcher_title.dart'; // SETTINGS2
 import '../widgets/ios_condense_header.dart'; // UX_ATT
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 
 /// Attendance list page
@@ -64,9 +65,9 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
   // "Abbrechen" / "Fortfahren".
   Future<void> _confirmDelete(BuildContext context, Attendance attendance) async {
     HapticHelper.medium();
-    final confirmed = await showDialog<bool>(
+    final confirmed = await showAppDialog<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
+      builder: (ctx) => AppAlertDialog(
         title: Text(context.l10n.attListRemoveConfirm),
         actions: [
           TextButton(
@@ -433,7 +434,7 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
           final currentDuty = current == null ? null : dutyTermine[current.id];
           final averageRounded = averagePercent?.round() ?? 0;
 
-          return RefreshIndicator(
+          return RefreshIndicator.adaptive(
             onRefresh: () async {
               // FN-008: invalidate to trigger fresh fetch from realtime provider
               ref.invalidate(realtimeAttendanceListProvider);

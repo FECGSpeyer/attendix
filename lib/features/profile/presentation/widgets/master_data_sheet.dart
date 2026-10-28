@@ -4,7 +4,6 @@ import 'package:image_picker/image_picker.dart';
 
 import '../../../../core/providers/church_providers.dart';
 import '../../../../core/providers/profile_providers.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/church/church.dart';
@@ -16,6 +15,7 @@ import 'church_picker.dart';
 import 'profile_helpers.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Opens the "Meine Stammdaten" sheet (Ionic settings master data modal).
 Future<void> showMasterDataSheet(BuildContext context) {
@@ -90,7 +90,7 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
 
   Future<void> _pickBirthday() async {
     final current = DateTime.tryParse(_birthday ?? '');
-    final picked = await showDatePicker(
+    final picked = await showAppDatePicker(
       context: context,
       initialDate: current ?? DateTime(2000, 1, 1),
       firstDate: DateTime(1900),
@@ -107,41 +107,29 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
 
   Future<void> _changeImg() async {
     final hasImg = hasCustomProfileImage(_img);
-    final action = await showModalBottomSheet<String>(
-      context: context,
-      builder: (sheetContext) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: const Icon(Icons.photo_library_outlined),
-              title: Text(sheetContext.l10n.settingsReplacePhoto),
-              onTap: () => Navigator.pop(sheetContext, 'replace'),
-            ),
-            if (hasImg) ...[
-              ListTile(
-                leading: const Icon(Icons.visibility_outlined),
-                title: Text(sheetContext.l10n.settingsViewPhoto),
-                onTap: () => Navigator.pop(sheetContext, 'view'),
-              ),
-              ListTile(
-                leading: const Icon(Icons.delete_outline, color: AppColors.danger),
-                title: Text(
-                  sheetContext.l10n.settingsRemovePhoto,
-                  style: const TextStyle(color: AppColors.danger),
-                ),
-                onTap: () => Navigator.pop(sheetContext, 'remove'),
-              ),
-            ],
-            const Divider(height: 1),
-            ListTile(
-              leading: const Icon(Icons.close),
-              title: Text(sheetContext.l10n.commonCancel),
-              onTap: () => Navigator.pop(sheetContext),
-            ),
-          ],
+    // IOS_LOOK: Ionic action sheet (adaptive).
+    final action = await showAppActionSheet<String>(
+      context,
+      actions: [
+        AppActionSheetAction(
+          value: 'replace',
+          label: context.l10n.settingsReplacePhoto,
+          icon: Icons.photo_library_outlined,
         ),
-      ),
+        if (hasImg) ...[
+          AppActionSheetAction(
+            value: 'view',
+            label: context.l10n.settingsViewPhoto,
+            icon: Icons.visibility_outlined,
+          ),
+          AppActionSheetAction(
+            value: 'remove',
+            label: context.l10n.settingsRemovePhoto,
+            icon: Icons.delete_outline,
+            destructive: true,
+          ),
+        ],
+      ],
     );
     if (!mounted || action == null) return;
 
@@ -287,7 +275,7 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
               ? Center(child: Text(context.l10n.signoutFlutterError(friendlyErrorMessage(profileAsync.error))))
               : profileAsync.hasValue && profile == null
                   ? Center(child: Text(context.l10n.settingsFlutterNoProfile))
-                  : const Center(child: CircularProgressIndicator()))
+                  : const Center(child: AppSpinner()))
           : ListView(
               padding: const EdgeInsets.symmetric(vertical: 16),
               children: [
@@ -378,7 +366,7 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
       case 'boolean':
         return IonItem(
           label: field.name,
-          end: Switch(
+          end: Switch.adaptive(
             value: _additional[field.id] == true,
             onChanged: (v) => setState(() => _additional[field.id] = v),
           ),

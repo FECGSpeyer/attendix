@@ -16,6 +16,7 @@ import '../../../../core/utils/demo_guard.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../auth/presentation/widgets/ion_form_list.dart';
 import 'tenant_create_page.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 import '../../../../core/providers/dashboard_providers.dart'; // DASHBOARD
 import '../../../../core/providers/push_providers.dart'; // PUSH
 
@@ -176,7 +177,7 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
                   padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                   child: Card(
                     margin: EdgeInsets.zero,
-                    child: SwitchListTile(
+                    child: SwitchListTile.adaptive(
                       title: Text(context.l10n.settingsEnableTenantSelect),
                       subtitle: Text(context.l10n.settingsTenantSelectHelper),
                       value: prefs.wantInstanceSelection,
@@ -221,12 +222,12 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
     final controller = TextEditingController();
     String? error;
     try {
-      final confirmed = await showDialog<bool>(
+      final confirmed = await showAppDialog<bool>(
         context: context,
         builder:
             (dialogContext) => StatefulBuilder(
               builder:
-                  (dialogContext, setDialogState) => AlertDialog(
+                  (dialogContext, setDialogState) => AppAlertDialog(
                     title: Text(dialogContext.l10n.settingsDeleteTenant),
                     content: Column(
                       mainAxisSize: MainAxisSize.min,
@@ -295,7 +296,7 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
   Widget build(BuildContext context) {
     // Show loading while auto-navigating
     if (_isAutoNavigating) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return const Scaffold(body: Center(child: AppSpinner()));
     }
 
     final tenantsAsync = ref.watch(userTenantsProvider);
@@ -343,7 +344,7 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
         ],
       ),
       body: tenantsAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => const Center(child: AppSpinner()),
         error:
             (error, stack) => Center(
               child: Column(
@@ -376,7 +377,7 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
         data: (tenants) {
           if (tenants.isEmpty) return const SizedBox.shrink();
 
-          return RefreshIndicator(
+          return RefreshIndicator.adaptive(
             onRefresh: () async => ref.refresh(userTenantsProvider.future),
             child: ListView(
               padding: const EdgeInsets.symmetric(vertical: 16),

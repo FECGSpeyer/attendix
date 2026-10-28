@@ -24,6 +24,7 @@ import '../../../legal/presentation/widgets/legal_content_view.dart';
 import '../../data/providers/registration_providers.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/common/error_state_view.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Public tenant registration page
 class TenantRegistrationPage extends ConsumerStatefulWidget {
@@ -127,7 +128,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
       body: tenantAsync.when(
         // A retry shows the spinner again instead of the stale error.
         skipLoadingOnRefresh: false,
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => const Center(child: AppSpinner()),
         error: (error, stack) => _buildErrorState(error: error),
         data: (tenant) {
           if (tenant == null) {
@@ -336,7 +337,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
               groupsAsync.when(
                 loading: () => const Padding(
                   padding: EdgeInsets.all(16),
-                  child: Center(child: CircularProgressIndicator()),
+                  child: Center(child: AppSpinner()),
                 ),
                 error: (_, __) => IonItem(
                   label: context.l10n.tenantRegisterFlutterLoadGroupsFailed,
@@ -422,7 +423,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
           if (_isLoading)
             const Padding(
               padding: EdgeInsets.only(top: 16),
-              child: Center(child: CircularProgressIndicator()),
+              child: Center(child: AppSpinner()),
             ),
         ],
       ),
@@ -430,7 +431,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
   }
 
   Future<void> _pickBirthday() async {
-    final date = await showDatePicker(
+    final date = await showAppDatePicker(
       context: context,
       initialDate: _formData.birthDate ?? DateTime(DateTime.now().year - 18),
       firstDate: DateTime(1900),
@@ -500,7 +501,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
           widgets.add(
             IonItem(
               title: Text(field.name),
-              end: Switch(
+              end: Switch.adaptive(
                 value: value,
                 onChanged: (newValue) => setState(
                     () => _formData.additionalFields[field.id] = newValue),
@@ -548,7 +549,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
                     ? DateFormat(dateFmt()).format(currentDate)
                     : context.l10n.tenantRegisterPleaseChoose,
                 onTap: () async {
-                  final date = await showDatePicker(
+                  final date = await showAppDatePicker(
                     context: context,
                     initialDate: currentDate ?? DateTime.now(),
                     firstDate: DateTime(1900),
@@ -704,11 +705,11 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
     var loginError = '';
 
     try {
-      final result = await showDialog<bool>(
+      final result = await showAppDialog<bool>(
         context: context,
         builder: (context) => StatefulBuilder(
           builder: (context, setDialogState) {
-            return AlertDialog(
+            return AppAlertDialog(
               title: Text(context.l10n.loginSignIn),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -1147,9 +1148,9 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
       return;
     }
 
-    await showDialog(
+    await showAppDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (context) => AppAlertDialog(
         title: Text(context.l10n.tenantRegisterSuccessHeader),
         content: Text(result.successMessage),
         actions: [
