@@ -1,6 +1,21 @@
 {
   "versions": [
     {
+      "version": "0.5.0",
+      "date": "28.10.2026",
+      "changes": [
+        "🌍 App auf Englisch verfügbar (Einstellungen → System → Sprache)",
+        "✨ Microsoft-Teams-Tab mit automatischer Anmeldung",
+        "✨ Demo-Modus mit Schreibschutz wie in der bisherigen App",
+        "✨ Alte Links (E-Mails, Lesezeichen) öffnen die richtige Seite und Instanz",
+        "✨ Audio-Steuerung auf dem Sperrbildschirm, Noten per Drag & Drop hochladen",
+        "🎨 Werke, Export, Mitglieder, Vorlagen und Termintypen wie gewohnt bedienbar",
+        "🔒 Beobachter können Termine nicht mehr verändern",
+        "🐛 Erneute Registrierung überschreibt keine bestehenden Mitglieder mehr",
+        "🐛 Gruppenwechsel aktualisiert kommende Termine"
+      ]
+    },
+    {
       "version": "0.4.0",
       "date": "28.10.2026",
       "changes": [
