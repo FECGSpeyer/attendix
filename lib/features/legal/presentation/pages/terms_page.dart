@@ -8,6 +8,7 @@ import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/repositories/account_repository.dart';
+import '../../../public_links/presentation/pages/open_file_page.dart';
 import '../widgets/legal_content_view.dart';
 import '../../../../l10n/l10n.dart';
 
@@ -50,7 +51,8 @@ class _TermsPageState extends ConsumerState<TermsPage> {
     setState(() => _saving = true);
     try {
       await ref.read(accountNotifierProvider.notifier).acceptTerms();
-      if (mounted) context.go('/tenants');
+      // REVIEW_FIX2: resume a link stashed before login (kept through /terms).
+      if (mounted) context.go(PendingFileLink.consume() ?? '/tenants');
     } on SessionExpiredException {
       if (!mounted) return;
       context.go('/login');

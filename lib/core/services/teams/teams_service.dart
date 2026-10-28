@@ -256,9 +256,21 @@ class TeamsService {
       return TeamsSsoResponse.fromJson(res.data);
     } on FunctionException catch (e) {
       // 409 (already linked elsewhere) / 401 (bad token) carry a message.
-      final details = TeamsSsoResponse.fromJson(e.details);
-      return TeamsSsoResponse(linked: false, error: details.error);
+      // REVIEW_FIX2: "not linked yet" is a 200 `{linked: false}` from the
+      // function; any non-2xx is an error, so `linked` stays null → sign-in
+      // reports `failed` (no link prompt), linking surfaces the message.
+      return toErrorResponse(e.status, e.details);
     }
+  }
+
+  /// Maps a non-2xx `teams-sso` response (status + JSON body) to a response
+  /// that never means "needs link".
+  @visibleForTesting
+  static TeamsSsoResponse toErrorResponse(int status, Object? details) {
+    final parsed = TeamsSsoResponse.fromJson(details);
+    // status is unused for the mapping itself (any non-2xx is an error);
+    // a missing message makes callers show their own fallback text.
+    return TeamsSsoResponse(error: parsed.error);
   }
 
   static Future<bool> _defaultConsumeTokenHash(String tokenHash) async {
@@ -287,10 +299,19 @@ class TeamsService {
 final teamsServiceProvider =
     Provider<TeamsService>((ref) => TeamsService.instance);
 
-/// TEAMS: true when the app runs inside a Microsoft Teams tab.
-final isInTeamsProvider = Provider<bool>(
-  (ref) => ref.watch(teamsServiceProvider).isInTeams(),
+/// TEAMS: completes once Teams detection finished. `main()` starts
+/// [TeamsService.init] without awaiting it (REVIEW_FIX2: no blank start
+/// screen while a non-Teams frame times out), so dependants watch this.
+final teamsInitProvider = FutureProvider<void>(
+  (ref) => ref.watch(teamsServiceProvider).init(),
 );
+
+/// TEAMS: true when the app runs inside a Microsoft Teams tab. False until
+/// detection finished, then rebuilt with the real value.
+final isInTeamsProvider = Provider<bool>((ref) {
+  ref.watch(teamsInitProvider);
+  return ref.watch(teamsServiceProvider).isInTeams();
+});
 
 /// TEAMS: theme forced by the Teams client (null = follow system).
 final teamsThemeModeProvider = Provider<ThemeMode?>((ref) {

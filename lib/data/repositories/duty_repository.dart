@@ -74,6 +74,7 @@ class DutyRepository extends BaseRepository with TenantAwareRepository {
   /// Leadership assigns persons; they get a push and have to confirm.
   Future<void> assign(List<String> personAttendanceIds, int attendanceId) async {
     if (personAttendanceIds.isEmpty) return;
+    ensureNotDemo('assignDuty'); // DEMO_GUARD
     try {
       final validIds = await _validIdsForTenant(personAttendanceIds);
       if (validIds.isEmpty) {
@@ -201,6 +202,8 @@ class DutyRepository extends BaseRepository with TenantAwareRepository {
     int attendanceId, {
     List<String>? personAttendanceIds,
   }) async {
+    // DEMO_GUARD: never notify from the demo account (silent, notify never throws).
+    if (isDemo) return;
     try {
       await supabase.functions.invoke('duty-notify', body: {
         'type': type.name,
@@ -210,6 +213,21 @@ class DutyRepository extends BaseRepository with TenantAwareRepository {
       });
     } catch (e) {
       if (kDebugMode) debugPrint('[DutyRepository] duty-notify error: $e');
+    }
+  }
+
+  /// Ionic type-settings: switch "Meine Termine" to the Dienstplan view.
+  /// The `tenants` table has no tenantId column; the row id IS the tenant id.
+  Future<void> setDutyView(bool enabled) async {
+    ensureNotDemo('setDutyView'); // DEMO_GUARD
+    try {
+      await supabase
+          .from('tenants')
+          .update({'duty_view': enabled})
+          .eq('id', currentTenantId);
+    } catch (e, stack) {
+      handleError(e, stack, 'setDutyView');
+      rethrow;
     }
   }
 

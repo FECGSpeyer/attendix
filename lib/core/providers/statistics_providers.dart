@@ -11,6 +11,7 @@ import '../../data/models/person/person.dart';
 import '../../data/repositories/attendance_repository.dart';
 import '../../data/repositories/player_repository.dart';
 import 'attendance_type_providers.dart';
+import 'locale_provider.dart';
 import 'tenant_providers.dart';
 import '../../l10n/l10n.dart';
 
@@ -303,6 +304,7 @@ class GroupChartData {
 }
 
 final groupChartDataProvider = Provider<List<GroupChartData>>((ref) {
+  ref.watch(localeProvider); // REVIEW_FIX2: "Ohne Gruppe" label follows the language
   final personAttendancesAsync = ref.watch(allPersonAttendancesForStatsProvider);
   final playersAsync = ref.watch(activePlayersForStatsProvider);
 
@@ -524,6 +526,7 @@ final ageDistributionProvider = Provider<List<AgeDistributionData>>((ref) {
 
 /// Average age per instrument
 final avgAgePerInstrumentProvider = Provider<List<GroupChartData>>((ref) {
+  ref.watch(localeProvider); // REVIEW_FIX2: "Ohne Gruppe" label follows the language
   final playersAsync = ref.watch(activePlayersForStatsProvider);
   final players = playersAsync.valueOrNull ?? [];
 

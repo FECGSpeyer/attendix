@@ -44,6 +44,12 @@ jobs:
       - name: Build web
         run: flutter build web --release --base-href /
 
+      - name: Verify Cloudflare _headers (Teams frame-ancestors)
+        # flutter build web copies web/* into build/web; fail loudly if not.
+        run: |
+          test -f build/web/_headers || cp web/_headers build/web/_headers
+          grep -q "frame-ancestors" build/web/_headers
+
       - name: Deploy to Cloudflare Pages
         # cloudflare/pages-action is no longer resolvable; wrangler-action is its successor
         uses: cloudflare/wrangler-action@v3

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -43,8 +45,10 @@ void main() async {
   // LINKS_STARTUP: path links (/tabs/..., /open-attendance?..) → #/... so the
   // hash-based router sees them (after Supabase read auth params from the URL)
   if (kIsWeb) promoteLegacyPathToHash();
-  // TEAMS: detect a Microsoft Teams tab (no-op outside an iframe / on native)
-  await TeamsService.instance.init();
+  // TEAMS: detect a Microsoft Teams tab (no-op outside an iframe / on native).
+  // Not awaited (REVIEW_FIX2): a non-Teams iframe would otherwise keep the
+  // app blank until the SDK timeouts; SSO/theme react once it completes.
+  unawaited(TeamsService.instance.init());
 
   runApp(
     ProviderScope(
@@ -78,15 +82,17 @@ class _AttendixAppState extends ConsumerState<AttendixApp> {
     // AUTH: password-recovery / signup-confirmation links (Ionic handleAuthUrl)
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) initAuthLinkHandling(ref, ref.read(routerProvider));
-      // TEAMS: silent Microsoft SSO inside a Teams tab
-      if (mounted && ref.read(teamsServiceProvider).isInTeams()) {
+      // TEAMS: silent Microsoft SSO inside a Teams tab, once detection is done
+      final teams = ref.read(teamsServiceProvider);
+      unawaited(teams.init().then((_) {
+        if (!mounted || !teams.isInTeams()) return;
         trySsoSignIn(
-          teams: ref.read(teamsServiceProvider),
+          teams: teams,
           hasSession:
               ref.read(supabaseClientProvider).auth.currentSession != null,
           go: (location) => ref.read(routerProvider).go(location),
         );
-      }
+      }));
     });
   }
 
@@ -130,7 +136,7 @@ class _AttendixAppState extends ConsumerState<AttendixApp> {
 
   void _showUpdateSnackbar() {
     ToastHelper.showUpdateAvailable(
-      context,
+      rootScaffoldMessengerKey.currentState,
       onUpdate: () {
         ref.read(appUpdateServiceProvider).applyUpdate();
       },

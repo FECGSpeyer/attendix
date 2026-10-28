@@ -193,7 +193,8 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
       search: _search,
       additionalFields: data.additionalFields,
     );
-    final groupsWithFiles = buildGroupsWithFiles(data.songs, data.groups);
+    final groupsWithFiles = buildGroupsWithFiles(data.songs, data.groups,
+        conductorsLabel: context.l10n.songsConductors);
     final sharingId = data.songSharingId;
     final hasSongSharing = sharingId != null && sharingId.isNotEmpty;
 

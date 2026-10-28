@@ -183,6 +183,7 @@ class MessageRepository extends BaseRepository with TenantAwareRepository {
     required bool push,
     required bool email,
   }) async {
+    ensureNotDemo('sendMessage'); // DEMO_GUARD
     try {
       final response = await supabase.functions.invoke(
         'send-message',
