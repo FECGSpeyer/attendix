@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
-import '../../../../core/config/supabase_config.dart';
 import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/attendance_providers.dart';
 import '../../../../core/providers/attendance_type_providers.dart';
@@ -66,7 +65,6 @@ DateTime _noon(DateTime d) => DateTime(d.year, d.month, d.day, 12);
 Map<String, dynamic> newAttendanceRow(
   AttendanceType type,
   DateTime day, {
-  String? createdBy,
   bool isOrgPlan = false,
 }) {
   final date = _noon(day);
@@ -100,7 +98,7 @@ Map<String, dynamic> newAttendanceRow(
     'duration_days': type.allDay ? (type.durationDays ?? 1) : 1,
     'is_org_plan': isOrgPlan,
     if (checklist != null) 'checklist': checklist,
-    if (createdBy != null) 'created_by': createdBy,
+    // PARITY_A (D9): Ionic createAttendanceForType writes no created_by.
   };
 }
 
@@ -256,7 +254,6 @@ Future<int?> promptCreateProtocolAttendance(BuildContext context, WidgetRef ref)
     final id = await repo.createAttendance(newAttendanceRow(
       type,
       day,
-      createdBy: ref.read(supabaseClientProvider).auth.currentUser?.id,
       isOrgPlan: isOrgPlan,
     ));
     await repo.createPersonAttendances(

@@ -355,7 +355,9 @@ class DutyRepository extends BaseRepository with TenantAwareRepository {
         'type_ids': rule.typeIds,
         'reason': rule.reason,
         'valid_until': (rule.validUntil?.isNotEmpty ?? false) ? rule.validUntil : null,
-        'created_by': rule.createdBy ?? _userId,
+        // PARITY_A (D10): Ionic unavailability-modal save() always passes
+        // created_by: db.user?.id (also when editing).
+        'created_by': _userId,
       };
       final Map<String, dynamic> row;
       if (rule.id != null) {

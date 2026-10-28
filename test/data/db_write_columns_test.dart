@@ -274,8 +274,18 @@ void main() {
       expectColumns(
           'attendance',
           newAttendanceRow(const AttendanceType(id: 't', name: 'P'), DateTime(2024),
-                  createdBy: 'u', isOrgPlan: true)
+                  isOrgPlan: true)
               .keys);
+    });
+
+    test('attendance inserts write no created_by like Ionic (PARITY_A D9)', () {
+      final row = newAttendanceRow(
+          const AttendanceType(id: 't', name: 'P'), DateTime(2024));
+      expect(row.containsKey('created_by'), isFalse);
+      final src = File(
+              'lib/features/attendance/presentation/pages/attendance_create_page.dart')
+          .readAsStringSync();
+      expect(src, isNot(contains("'created_by':")));
     });
 
     test('viewers / parents insert', () {

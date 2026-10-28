@@ -970,7 +970,7 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
         );
         history.add({
           'date': DateTime.now().toUtc().toIso8601String(),
-          'text': 'Automatisch reaktiviert (Pausenzeit abgelaufen)',
+          'text': 'Automatisch reaktiviert (Pausendatum erreicht)',
           'type': PlayerHistoryType.unpaused.value,
         });
 
@@ -1887,8 +1887,6 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
       final defaults = await _loadExtraFieldDefaults(tenantId: targetTenantId);
       final existing =
           await _existingAttendanceIds(playerId, tenantId: targetTenantId);
-      final shift =
-          await _loadShiftPlan(player.shiftId, tenantId: targetTenantId);
 
       final rows = <Map<String, dynamic>>[];
       for (final att in attendances) {
@@ -1896,13 +1894,13 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
         final type = types.where((t) => t.id == att['type_id']).firstOrNull;
         if (type == null) continue;
         if (!_matchesType(player, type, defaults, checkPaused: false)) continue;
-        // SOL_FIX1: shift-based status like addToUpcomingAttendances.
-        final initial = _initialStatus(player, type, att, shift);
+        // PARITY_A (D4): Ionic db.addPlayerToAttendancesByDate inserts the
+        // type's default_status with empty notes (no shift plan here).
         rows.add({
           'attendance_id': att['id'],
           'person_id': playerId,
-          'notes': initial.notes,
-          'status': initial.status,
+          'notes': '',
+          'status': type.defaultStatus,
         });
       }
       if (rows.isNotEmpty) {

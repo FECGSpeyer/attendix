@@ -802,7 +802,7 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
       // ATT_DETAIL: place only for types with place_enabled
       'place': type.placeEnabled ? _place : null,
       'checklist': checklist,
-      'created_by': supabase.auth.currentUser?.id,
+      // PARITY_A (D9): Ionic createAttendanceForType writes no created_by.
       'save_in_history': true,
       'is_org_plan': isOrgPlan,
       // DUTY: only stored when it differs from the type default
@@ -822,7 +822,11 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
 
     // 3. Create song history entries if songs were selected
     if (_songEntries.isNotEmpty) {
-      await _createSongHistoryEntries(attendanceId, dateString);
+      // PARITY_A (D12): Ionic att-list addAttendance writes the picked
+      // ion-datetime value (presentation="date" → 'YYYY-MM-DD'), not the
+      // noon-normalized attendance date.
+      await _createSongHistoryEntries(
+          attendanceId, DateFormat('yyyy-MM-dd').format(date));
     }
 
     return attendanceId;

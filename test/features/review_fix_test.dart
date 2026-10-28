@@ -14,7 +14,7 @@ import 'package:supabase_flutter/supabase_flutter.dart' show OtpType;
 /// REVIEW_FIX: unit tests for the review fixes.
 void main() {
   group('reactivationPlayerData (HIGH1)', () {
-    test('keeps history, joined and playsSince of the former member', () {
+    test('writes the complete new registration data like Ionic (PARITY_A D3)', () {
       final data = reactivationPlayerData({
         'firstName': 'Max',
         'history': <dynamic>[],
@@ -22,9 +22,9 @@ void main() {
         'playsSince': '2026-01-01',
         'pending': true,
       });
-      expect(data.containsKey('history'), isFalse);
-      expect(data.containsKey('joined'), isFalse);
-      expect(data.containsKey('playsSince'), isFalse);
+      expect(data['history'], isEmpty);
+      expect(data['joined'], '2026-01-01');
+      expect(data['playsSince'], '2026-01-01');
       expect(data['left'], isNull);
       expect(data.containsKey('left'), isTrue);
       expect(data['firstName'], 'Max');

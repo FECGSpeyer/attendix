@@ -189,23 +189,21 @@ class RegistrationService {
         todayIso: todayIso,
       );
 
-      // Ionic addPlayer: reactivate a former (left) row instead of
-      // inserting a duplicate. Active rows are never overwritten.
+      // Ionic addPlayer (db.service.ts): if the user already has a player
+      // row in this tenant (e.g. previously left), overwrite it with the new
+      // registration data and `left: null` instead of inserting a duplicate.
+      // PARITY_A (D3): like Ionic, this applies to any existing row (active
+      // ones too); registerUser already rejects users still in the tenant.
       final existing = await supabase
           .from('player')
-          .select('id, left')
+          .select('id')
           .eq('appId', userId)
           .eq('tenantId', tenantId)
-          .order('id', ascending: false)
           .limit(1)
           .maybeSingle();
 
       final int playerId;
       if (existing != null) {
-        if (existing['left'] == null) {
-          return RegistrationResult.error(
-              l10nWithoutContext.dbUserAlreadyInTenant);
-        }
         playerId = existing['id'] as int;
         await supabase
             .from('player')
@@ -252,7 +250,7 @@ class RegistrationService {
       // Ionic addPlayer: addPlayerToAttendancesByDate(data) with the
       // inserted / reactivated row when not pending. Re-read the stored row
       // so the type filters see the registrant's real `additional_fields`
-      // (and `joined`, which a reactivation keeps).
+      // (and `joined`).
       if (!pending) {
         try {
           final storedRow = await supabase
@@ -291,14 +289,12 @@ class RegistrationService {
 Person registrationBackfillPerson(Map<String, dynamic> storedRow) =>
     Person.fromJson(storedRow);
 
-/// Fields written when a former (left) member registers again: keeps the
-/// existing `history`, `joined` and `playsSince` (Ionic reactivation).
+/// Fields written when a user with an existing player row registers again
+/// (Ionic addPlayer reactivation): the complete new registration data
+/// (incl. `history: []`, `joined`, `playsSince`) plus `left: null`.
 Map<String, dynamic> reactivationPlayerData(Map<String, dynamic> playerData) {
   return {
-    ...Map<String, dynamic>.of(playerData)
-      ..remove('history')
-      ..remove('joined')
-      ..remove('playsSince'),
+    ...Map<String, dynamic>.of(playerData)..remove('id'),
     'left': null,
   };
 }
