@@ -10,6 +10,7 @@ import '../../../../core/providers/organisation_providers.dart';
 import '../../../../core/providers/parent_providers.dart';
 import '../../../../core/providers/player_providers.dart';
 import '../../../../core/providers/pwa_providers.dart';
+import '../../../../core/providers/realtime_providers.dart'; // MEDIA_REALTIME
 import '../../../../core/providers/role_permission_providers.dart'; // SETTINGS_EXT
 import '../../../../core/providers/team_org_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
@@ -61,7 +62,9 @@ class SettingsPage extends ConsumerWidget {
     final userEmail = ref.watch(supabaseClientProvider).auth.currentUser?.email;
     final isDemo = AppConstants.demoMail.isNotEmpty && userEmail == AppConstants.demoMail;
 
-    final pendingCount = isAdmin ? (ref.watch(pendingPlayersProvider).valueOrNull?.length ?? 0) : 0;
+    // MEDIA_REALTIME: live pending card (Ionic `pending-player-changes` channel)
+    final pendingCount =
+        isAdmin ? (ref.watch(realtimePendingPlayersProvider).valueOrNull?.length ?? 0) : 0;
     final playersWithoutAccount = isAdmin
         ? (ref.watch(playersProvider).valueOrNull ?? const [])
             .where((p) =>
@@ -96,6 +99,7 @@ class SettingsPage extends ConsumerWidget {
           ref.invalidate(currentTenantProvider);
           ref.invalidate(userTenantsProvider);
           ref.invalidate(pendingPlayersProvider);
+          ref.invalidate(realtimePendingPlayersProvider); // MEDIA_REALTIME
           ref.invalidate(playersProvider);
           ref.invalidate(viewersProvider);
           ref.invalidate(parentsProvider);

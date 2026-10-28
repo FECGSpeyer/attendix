@@ -8,6 +8,7 @@ import '../../../../core/providers/history_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/dialog_helper.dart';
+import '../../../../core/utils/haptic_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/history/history_entry.dart';
 import '../../../../data/models/song/song.dart';
@@ -480,6 +481,7 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
 
   Future<void> _deleteEntry(HistoryEntry entry) async {
     if (entry.id == null) return;
+    HapticHelper.medium(); // MEDIA_REALTIME: Ionic Haptics.impact Medium
 
     final confirmed = await DialogHelper.showConfirmation(
       context,

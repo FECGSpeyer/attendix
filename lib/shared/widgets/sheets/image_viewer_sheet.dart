@@ -267,11 +267,8 @@ class _ImageViewerSheetState extends State<ImageViewerSheet>
                     padding: const EdgeInsets.all(8),
                     child: Row(
                       children: [
-                        IconButton(
-                          tooltip: 'Schließen',
-                          icon: const Icon(Icons.close, color: Colors.white),
-                          onPressed: () => Navigator.of(context).maybePop(),
-                        ),
+                        // Ionic top bar: title left, close button right.
+                        const SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             widget.fileName,
@@ -282,6 +279,11 @@ class _ImageViewerSheetState extends State<ImageViewerSheet>
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
+                        ),
+                        IconButton(
+                          tooltip: 'Schließen',
+                          icon: const Icon(Icons.close, color: Colors.white),
+                          onPressed: () => Navigator.of(context).maybePop(),
                         ),
                       ],
                     ),
@@ -309,13 +311,24 @@ class _ImageViewerSheetState extends State<ImageViewerSheet>
                         icon: const Icon(Icons.remove, color: Colors.white),
                         onPressed: _scale > _minScale + 0.01 ? () => _zoomBy(1 / 1.5) : null,
                       ),
-                      InkWell(
-                        onTap: _reset,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-                          child: Text(
-                            '$percent%',
-                            style: const TextStyle(color: Colors.white, fontSize: 14),
+                      // MEDIA_REALTIME: Ionic zoom-value button
+                      // (aria-label imageViewer.zoomReset).
+                      Tooltip(
+                        message: 'Zoom zurücksetzen',
+                        child: Semantics(
+                          button: true,
+                          label: 'Zoom zurücksetzen',
+                          child: InkWell(
+                            key: const ValueKey('image-viewer-zoom-reset'),
+                            onTap: _reset,
+                            borderRadius: BorderRadius.circular(16),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+                              child: Text(
+                                '$percent\u00A0%',
+                                style: const TextStyle(color: Colors.white, fontSize: 14),
+                              ),
+                            ),
                           ),
                         ),
                       ),
