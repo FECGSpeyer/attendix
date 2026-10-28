@@ -16,3 +16,7 @@ export 'viewer_repository.dart';
 export 'parent_repository.dart';
 export 'church_repository.dart';
 export 'usage_events_repository.dart';
+
+// LEGAL_HELP
+export 'legal_repository.dart';
+export 'account_repository.dart';

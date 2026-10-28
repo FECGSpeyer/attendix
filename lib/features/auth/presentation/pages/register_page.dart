@@ -6,6 +6,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/config/supabase_config.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../data/repositories/account_repository.dart';
+import '../../../legal/presentation/widgets/legal_content_view.dart';
 
 /// Register page
 class RegisterPage extends ConsumerStatefulWidget {
@@ -27,6 +29,8 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
   bool _obscureConfirmPassword = true;
   String? _errorMessage;
   bool _registrationSuccess = false;
+  // LEGAL_HELP: privacy consent (Ionic register modal)
+  bool _privacyAccepted = false;
 
   @override
   void initState() {
@@ -46,6 +50,13 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
 
   Future<void> _register() async {
     if (!_formKey.currentState!.validate()) return;
+    if (!_privacyAccepted) {
+      setState(() {
+        _errorMessage =
+            'Bitte stimme der Datenschutzerklärung zu';
+      });
+      return;
+    }
 
     setState(() {
       _isLoading = true;
@@ -57,6 +68,11 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
       await supabase.auth.signUp(
         email: _emailController.text.trim(),
         password: _passwordController.text,
+        // Stamp terms acceptance (checkbox accepted), like Ionic.
+        data: {
+          AccountRepository.termsAcceptedAtKey:
+              DateTime.now().toUtc().toIso8601String(),
+        },
       );
 
       if (!mounted) return;
@@ -272,11 +288,39 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                         return null;
                       },
                     ),
-                    const SizedBox(height: AppDimensions.paddingL),
+                    const SizedBox(height: AppDimensions.paddingM),
+
+                    // LEGAL_HELP: privacy consent checkbox
+                    CheckboxListTile(
+                      value: _privacyAccepted,
+                      contentPadding: EdgeInsets.zero,
+                      controlAffinity: ListTileControlAffinity.leading,
+                      onChanged: (v) =>
+                          setState(() => _privacyAccepted = v ?? false),
+                      title: Wrap(
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: [
+                          const Text(
+                              'Ich akzeptiere die Nutzungsbedingungen und habe die '),
+                          InkWell(
+                            onTap: () => showLegalModal(context),
+                            child: const Text(
+                              'Datenschutzerklärung',
+                              style: TextStyle(
+                                color: AppColors.primary,
+                                decoration: TextDecoration.underline,
+                              ),
+                            ),
+                          ),
+                          const Text(' gelesen.'),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: AppDimensions.paddingM),
 
                     // Register button
                     ElevatedButton(
-                      onPressed: _isLoading ? null : _register,
+                      onPressed: _isLoading || !_privacyAccepted ? null : _register,
                       child: _isLoading
                           ? const SizedBox(
                               height: 20,

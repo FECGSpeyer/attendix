@@ -287,6 +287,13 @@ class SettingsPage extends ConsumerWidget {
                 subtitle: 'Persönliche Daten bearbeiten',
                 onTap: () => context.push('/settings/profile'),
               ),
+              // LEGAL_HELP: help center (Ionic settings → Hilfe)
+              _SettingsTile(
+                leading: const _SettingsIcon(icon: Icons.help_outline),
+                title: 'Hilfe',
+                subtitle: 'Anleitungen und Glossar',
+                onTap: () => context.push('/settings/help'),
+              ),
               _SettingsTile(
                 leading: _SettingsIcon(
                   icon: Icons.logout,
@@ -329,6 +336,14 @@ class SettingsPage extends ConsumerWidget {
                 },
               ),
             ],
+          ),
+          // LEGAL_HELP: DSGVO account deletion (Ionic settings → Konto löschen)
+          Center(
+            child: TextButton(
+              onPressed: () => context.push('/settings/delete-account'),
+              style: TextButton.styleFrom(foregroundColor: AppColors.medium),
+              child: const Text('Konto löschen'),
+            ),
           ),
           const SizedBox(height: AppDimensions.paddingL),
 
