@@ -1,18 +1,30 @@
-import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/config/supabase_config.dart';
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/providers/notification_settings_providers.dart';
+import '../../../../core/providers/push_providers.dart'; // PUSH
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/services/telegram_service.dart';
+import '../../../../core/services/live_activity_service.dart'; // LIVE_ACTIVITY
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/tenant/tenant.dart';
+import '../../../../core/services/tracking/tracking_event.dart';
+import '../../../../core/services/tracking/tracking_service.dart';
+import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
 
-/// Notifications Page - Telegram connection and notification settings
+/// Notifications settings page (Ionic notifications.page).
+///
+/// Telegram connection, master switch, push switch (native apps only, like
+/// Ionic `isNative`), Live Activity switch (iOS app only), notification
+/// categories and the per-tenant toggles.
 class NotificationsPage extends ConsumerStatefulWidget {
   const NotificationsPage({super.key});
 
@@ -23,521 +35,395 @@ class NotificationsPage extends ConsumerStatefulWidget {
 class _NotificationsPageState extends ConsumerState<NotificationsPage> {
   NotificationConfig? _config;
   bool _isLoading = true;
+  RealtimeChannel? _channel;
+  late final SupabaseClient _supabase;
 
   @override
   void initState() {
     super.initState();
+    _supabase = ref.read(supabaseClientProvider);
     _loadConfig();
+  }
+
+  @override
+  void dispose() {
+    final channel = _channel;
+    if (channel != null) _supabase.removeChannel(channel);
+    super.dispose();
   }
 
   Future<void> _loadConfig() async {
     setState(() => _isLoading = true);
-
     try {
       final supabase = ref.read(supabaseClientProvider);
       final user = supabase.auth.currentUser;
-
       if (user != null) {
-        final telegramService = ref.read(telegramServiceProvider);
-        final config = await telegramService.getNotificationConfig(user.id);
-        if (mounted) {
-          setState(() => _config = config);
-        }
+        final config =
+            await ref.read(telegramServiceProvider).getNotificationConfig(user.id);
+        if (mounted) setState(() => _config = config);
+        _subscribe(user.id);
       }
     } catch (e) {
-      if (mounted) {
-        ToastHelper.showError(context, 'Fehler beim Laden: $e');
-      }
+      if (mounted) ToastHelper.showError(context, context.l10n.notifFlutterLoadFailed(friendlyErrorMessage(e)));
     } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  /// Live updates, e.g. when the Telegram bot links the chat id.
+  void _subscribe(String userId) {
+    if (_channel != null) return;
+    _channel = _supabase
+        .channel('noti-changes-$userId')
+        .onPostgresChanges(
+          event: PostgresChangeEvent.all,
+          schema: 'public',
+          table: 'notifications',
+          // notifications has no tenantId: one row per user (id = auth uid)
+          filter: PostgresChangeFilter(
+            type: PostgresChangeFilterType.eq,
+            column: 'id',
+            value: userId,
+          ),
+          callback: (payload) {
+            final row = payload.newRecord;
+            if (row.isNotEmpty && row['id'] == userId && mounted) {
+              setState(() => _config = NotificationConfig.fromJson(row));
+            }
+          },
+        )
+        .subscribe();
+  }
+
+  Future<void> _updateConfig(NotificationConfig newConfig) async {
+    final previous = _config;
+    setState(() => _config = newConfig);
+    try {
+      await ref.read(telegramServiceProvider).updateNotificationConfig(newConfig);
+      ref.read(trackingServiceProvider).track(TrackingEvent.notificationSettingsChanged, properties: {'enabled': newConfig.enabled, 'pushEnabled': newConfig.pushEnabled});
+    } catch (_) {
       if (mounted) {
-        setState(() => _isLoading = false);
+        setState(() => _config = previous);
+        ToastHelper.showError(
+            context, context.l10n.notifFlutterUpdateFailed);
       }
     }
   }
 
+  // LIVE_ACTIVITY: Ionic toggleLiveActivity (save setting, then end/sync activities)
+  Future<void> _toggleLiveActivity(NotificationConfig config, bool enabled) async {
+    await _updateConfig(config.copyWith(liveActivity: enabled));
+    await ref.read(liveActivityServiceProvider).setEnabled(enabled);
+  }
+
+  /// PUSH: Ionic togglePush – sets `push_enabled` and registers the device.
+  Future<void> _togglePush(NotificationConfig current, bool enabled) async {
+    setState(() => _config = current.copyWith(pushEnabled: enabled));
+    await ref.read(pushServiceProvider).togglePush(enabled);
+  }
+
+  Future<void> _connectTelegram() async {
+    final userId = ref.read(supabaseClientProvider).auth.currentUser?.id;
+    if (userId == null) return;
+    final uri = Uri.parse(ref.read(telegramServiceProvider).getBotLink(userId));
+    try {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } catch (_) {
+      if (mounted) ToastHelper.showError(context, context.l10n.notifFlutterTelegramOpenFailed);
+    }
+  }
+
+  Future<void> _disconnectTelegram() async {
+    final current = _config;
+    if (current == null) return;
+    final confirmed = await DialogHelper.showConfirmation(
+      context,
+      title: context.l10n.notifDisconnectConfirm,
+      message: context.l10n.notifDisconnectHint,
+      confirmText: context.l10n.commonYes,
+      cancelText: context.l10n.commonCancel,
+    );
+    if (!confirmed) return;
+    await _updateConfig(current.copyWith(telegramChatId: ''));
+  }
+
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) {
+    final config = _config;
+    if (_isLoading || config == null) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Benachrichtigungen')),
-        body: const Center(child: CircularProgressIndicator()),
+        appBar: AppBar(title: Text(context.l10n.notifTitle)),
+        body: Center(
+          child: _isLoading
+              ? const CircularProgressIndicator()
+              : Text(context.l10n.notifFlutterConfigNotFound),
+        ),
       );
     }
 
-    if (_config == null) {
-      return Scaffold(
-        appBar: AppBar(title: const Text('Benachrichtigungen')),
-        body: const Center(child: Text('Konfiguration nicht gefunden')),
-      );
-    }
-
-    final isConnected = _config!.isConnected;
-    final tenantsAsync = ref.watch(userTenantsProvider);
+    final isConnected = config.isConnected;
+    final tenants = ref.watch(userTenantsProvider).valueOrNull ?? const <Tenant>[];
+    final hasDutyTypes = ref.watch(tenantHasDutyTypesProvider).valueOrNull ?? false;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Benachrichtigungen'),
-      ),
+      appBar: AppBar(title: Text(context.l10n.notifTitle)),
       body: ListView(
         padding: const EdgeInsets.all(AppDimensions.paddingM),
         children: [
-          // Telegram connection card
-          _buildTelegramCard(isConnected),
-
-          const SizedBox(height: 24),
-
-          // Master switch
           Card(
-            child: SwitchListTile(
-              title: const Text('Benachrichtigungen aktiviert'),
-              subtitle: const Text('Alle Telegram-Benachrichtigungen ein-/ausschalten'),
-              value: _config!.enabled,
-              onChanged: isConnected ? (v) => _updateConfig(_config!.copyWith(enabled: v)) : null,
+            margin: EdgeInsets.zero,
+            child: Column(
+              children: [
+                SwitchListTile(
+                  title: Text(context.l10n.notifEnable),
+                  value: config.enabled,
+                  onChanged: (v) => _updateConfig(config.copyWith(enabled: v)),
+                ),
+                if (!isConnected) ...[
+                  const Divider(height: 1),
+                  _UserIdTile(userId: config.id),
+                ],
+                const Divider(height: 1),
+                ListTile(
+                  leading: Icon(
+                    Icons.telegram,
+                    color: isConnected ? AppColors.success : const Color(0xFF0088CC),
+                  ),
+                  title: Text(context.l10n.notifTelegram),
+                  subtitle: isConnected
+                      ? Text(
+                          context.l10n.notifLinked,
+                          style: const TextStyle(color: AppColors.success),
+                        )
+                      : null,
+                  trailing: isConnected
+                      ? TextButton(
+                          onPressed: _disconnectTelegram,
+                          style: TextButton.styleFrom(
+                              foregroundColor: AppColors.danger),
+                          child: Text(context.l10n.notifDisconnect),
+                        )
+                      : ElevatedButton(
+                          onPressed: _connectTelegram,
+                          child: Text(context.l10n.notifConnect),
+                        ),
+                ),
+                // PUSH: Ionic `@if (isNative)` – push switch in the native apps
+                if (isNativePushPlatform) ...[
+                  const Divider(height: 1),
+                  SwitchListTile(
+                    title: Text(context.l10n.notifPush),
+                    value: config.pushEnabled,
+                    onChanged: (v) => _togglePush(config, v),
+                  ),
+                ],
+                // LIVE_ACTIVITY: only app builds with the native Live Activity side (iOS)
+                if (ref.read(liveActivityServiceProvider).hasNativePlugin) ...[
+                  const Divider(height: 1),
+                  SwitchListTile(
+                    title: Text(context.l10n.notifLiveActivity),
+                    subtitle: Text(LiveActivityService.isSupportedPlatform
+                        ? context.l10n.notifLiveActivityHelperIos
+                        : context.l10n.notifLiveActivityHelper),
+                    value: config.liveActivity != false,
+                    onChanged: (v) => _toggleLiveActivity(config, v),
+                  ),
+                ],
+                // LIVE_ACTIVITY end
+                if (config.pushEnabled && isConnected) ...[
+                  const Divider(height: 1),
+                  SwitchListTile(
+                    title: Text(context.l10n.notifBothChannels),
+                    subtitle: Text(context.l10n.notifBothChannelsHelper),
+                    value: config.pushAndTelegram,
+                    onChanged: (v) =>
+                        _updateConfig(config.copyWith(pushAndTelegram: v)),
+                  ),
+                  if (!config.pushAndTelegram)
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                      child: Text(
+                        context.l10n.notifPushPreferred,
+                        style: const TextStyle(fontSize: 12, color: AppColors.medium),
+                      ),
+                    ),
+                ],
+              ],
             ),
           ),
-
-          const SizedBox(height: 16),
-
-          // Per-instance toggles (B7-021)
-          if (_config!.enabled && isConnected)
-            _buildInstanceToggles(tenantsAsync),
-
-          if (_config!.enabled && isConnected) const SizedBox(height: 16),
-
-          // Notification categories
-          if (_config!.enabled && isConnected) ...[
-            Text(
-              'Benachrichtigungstypen',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-            ),
-            const SizedBox(height: 8),
-
+          if (config.enabled) ...[
+            _SectionTitle(context.l10n.notifTitle),
             Card(
+              margin: EdgeInsets.zero,
               child: Column(
                 children: [
-                  _NotificationToggle(
-                    title: 'Geburtstage',
-                    subtitle: 'Benachrichtigung bei Geburtstagen',
-                    icon: Icons.cake,
-                    value: _config!.birthdays,
-                    onChanged: (v) => _updateConfig(_config!.copyWith(birthdays: v)),
+                  _toggle(
+                    context.l10n.notifAppUpdates,
+                    context.l10n.notifAppUpdatesHelper,
+                    config.updates,
+                    (v) => config.copyWith(updates: v),
                   ),
-                  const Divider(height: 1),
-                  _NotificationToggle(
-                    title: 'Anmeldungen',
-                    subtitle: 'Wenn sich jemand anmeldet',
-                    icon: Icons.login,
-                    value: _config!.signins,
-                    onChanged: (v) => _updateConfig(_config!.copyWith(signins: v)),
+                  _toggle(
+                    context.l10n.notifBirthdays,
+                    context.l10n.notifBirthdaysHelper,
+                    config.birthdays,
+                    (v) => config.copyWith(birthdays: v),
                   ),
-                  const Divider(height: 1),
-                  _NotificationToggle(
-                    title: 'Abmeldungen',
-                    subtitle: 'Wenn sich jemand abmeldet',
-                    icon: Icons.logout,
-                    value: _config!.signouts,
-                    onChanged: (v) => _updateConfig(_config!.copyWith(signouts: v)),
+                  _toggle(
+                    context.l10n.notifAnnouncements,
+                    context.l10n.notifAnnouncementsHelper,
+                    config.messages,
+                    (v) => config.copyWith(messages: v),
                   ),
-                  const Divider(height: 1),
-                  _NotificationToggle(
-                    title: 'Registrierungen',
-                    subtitle: 'Neue Benutzer-Registrierungen',
-                    icon: Icons.person_add,
-                    value: _config!.registrations,
-                    onChanged: (v) => _updateConfig(_config!.copyWith(registrations: v)),
+                  _toggle(
+                    context.l10n.notifEventReminders,
+                    null,
+                    config.reminders,
+                    (v) => config.copyWith(reminders: v),
                   ),
-                  const Divider(height: 1),
-                  _NotificationToggle(
-                    title: 'Kritische Regelverletzungen',
-                    subtitle: 'Bei wichtigen Verstößen',
-                    icon: Icons.warning,
-                    value: _config!.criticals,
-                    onChanged: (v) => _updateConfig(_config!.copyWith(criticals: v)),
+                  if (hasDutyTypes)
+                    _toggle(
+                      context.l10n.notifDuties,
+                      context.l10n.notifDutiesHelper,
+                      config.duties != false,
+                      (v) => config.copyWith(duties: v),
+                    ),
+                  _toggle(
+                    context.l10n.notifChecklist,
+                    context.l10n.notifChecklistHelper,
+                    config.checklist,
+                    (v) => config.copyWith(checklist: v),
                   ),
-                  const Divider(height: 1),
-                  _NotificationToggle(
-                    title: 'Erinnerungen',
-                    subtitle: 'Termin-Erinnerungen',
-                    icon: Icons.notifications,
-                    value: _config!.reminders,
-                    onChanged: (v) => _updateConfig(_config!.copyWith(reminders: v)),
+                  _toggle(
+                    context.l10n.notifTasks,
+                    context.l10n.notifTasksHelper,
+                    config.tasks,
+                    (v) => config.copyWith(tasks: v),
                   ),
-                  const Divider(height: 1),
-                  _NotificationToggle(
-                    title: 'Checklisten',
-                    subtitle: 'Checklisten-Updates',
-                    icon: Icons.checklist,
-                    value: _config!.checklist,
-                    onChanged: (v) => _updateConfig(_config!.copyWith(checklist: v)),
+                  _toggle(
+                    context.l10n.notifSignIns,
+                    context.l10n.notifResponsibleOnly,
+                    config.signins,
+                    (v) => config.copyWith(signins: v),
                   ),
-                  const Divider(height: 1),
-                  _NotificationToggle(
-                    title: 'Updates',
-                    subtitle: 'App- und System-Updates',
-                    icon: Icons.system_update,
-                    value: _config!.updates,
-                    onChanged: (v) => _updateConfig(_config!.copyWith(updates: v)),
+                  _toggle(
+                    context.l10n.notifSignOuts,
+                    context.l10n.notifResponsibleOnly,
+                    config.signouts,
+                    (v) => config.copyWith(signouts: v),
+                  ),
+                  _toggle(
+                    context.l10n.notifNewProblemCases,
+                    context.l10n.notifResponsibleOnly,
+                    config.criticals,
+                    (v) => config.copyWith(criticals: v),
+                  ),
+                  _toggle(
+                    context.l10n.notifNewRegistrations,
+                    context.l10n.notifResponsibleOnly,
+                    config.registrations,
+                    (v) => config.copyWith(registrations: v),
+                    last: true,
                   ),
                 ],
               ),
             ),
+            if (tenants.isNotEmpty) ...[
+              _SectionTitle(context.l10n.notifTenantSettings),
+              Card(
+                margin: EdgeInsets.zero,
+                child: Column(
+                  children: [
+                    for (final tenant in tenants)
+                      if (tenant.id != null)
+                        SwitchListTile(
+                          title: Text(tenant.longName.isNotEmpty
+                              ? tenant.longName
+                              : tenant.shortName),
+                          value: config.isTenantEnabled(tenant.id!),
+                          onChanged: (_) =>
+                              _updateConfig(config.toggleTenant(tenant.id!)),
+                        ),
+                  ],
+                ),
+              ),
+            ],
           ],
+          const SizedBox(height: AppDimensions.paddingL),
         ],
       ),
     );
   }
 
-  Widget _buildTelegramCard(bool isConnected) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(AppDimensions.paddingM),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: isConnected
-                        ? AppColors.success.withValues(alpha: 0.1)
-                        : AppColors.medium.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Icon(
-                    Icons.telegram,
-                    size: 32,
-                    color: isConnected ? AppColors.success : AppColors.medium,
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Telegram',
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        isConnected ? 'Verbunden' : 'Nicht verbunden',
-                        style: TextStyle(
-                          color: isConnected ? AppColors.success : AppColors.medium,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            if (!isConnected) ...[
-              const Text(
-                'Verbinde dein Telegram-Konto, um Benachrichtigungen zu erhalten.',
-                style: TextStyle(color: AppColors.medium),
-              ),
-              const SizedBox(height: 12),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton.icon(
-                  onPressed: _connectTelegram,
-                  icon: const Icon(Icons.link),
-                  label: const Text('Mit Telegram verbinden'),
-                ),
-              ),
-            ] else ...[
-              const Text(
-                'Dein Telegram-Konto ist verbunden. Du erhältst Benachrichtigungen über den Attendix Bot.',
-                style: TextStyle(color: AppColors.medium),
-              ),
-              const SizedBox(height: 8),
-              _buildUserIdRow(),
-              const SizedBox(height: 12),
-              SizedBox(
-                width: double.infinity,
-                child: OutlinedButton.icon(
-                  onPressed: _disconnectTelegram,
-                  icon: const Icon(Icons.link_off, color: AppColors.danger),
-                  label: const Text(
-                    'Verbindung trennen',
-                    style: TextStyle(color: AppColors.danger),
-                  ),
-                ),
-              ),
-            ],
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildUserIdRow() {
-    final userId = ref.read(supabaseClientProvider).auth.currentUser?.id ?? '';
-    return Row(
+  Widget _toggle(
+    String title,
+    String? helper,
+    bool value,
+    NotificationConfig Function(bool) update, {
+    bool last = false,
+  }) {
+    return Column(
       children: [
-        Expanded(
-          child: Text(
-            'Benutzer-ID: $userId',
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: AppColors.medium,
-                  fontFamily: 'monospace',
-                ),
-            overflow: TextOverflow.ellipsis,
-          ),
+        SwitchListTile(
+          title: Text(title),
+          subtitle: helper != null
+              ? Text(helper, style: const TextStyle(fontSize: 12))
+              : null,
+          value: value,
+          onChanged: (v) => _updateConfig(update(v)),
         ),
-        IconButton(
-          icon: const Icon(Icons.copy, size: 16),
-          tooltip: 'ID kopieren',
-          onPressed: () {
-            Clipboard.setData(ClipboardData(text: userId));
-            ToastHelper.showSuccess(context, 'Benutzer-ID kopiert');
-          },
-          visualDensity: VisualDensity.compact,
-        ),
+        if (!last) const Divider(height: 1),
       ],
     );
   }
-
-  /// Build per-instance notification toggles (B7-021)
-  Widget _buildInstanceToggles(AsyncValue<List<Tenant>> tenantsAsync) {
-    return tenantsAsync.when(
-      loading: () => const SizedBox.shrink(),
-      error: (_, __) => const SizedBox.shrink(),
-      data: (tenants) {
-        if (tenants.length <= 1) return const SizedBox.shrink();
-
-        final enabledTenants = _config!.enabledTenants;
-        // If enabledTenants is null, all are enabled (default behavior)
-        final allEnabled = enabledTenants == null;
-
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Gruppen',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              'Wähle, für welche Gruppen du Benachrichtigungen erhalten möchtest.',
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: AppColors.medium,
-                  ),
-            ),
-            const SizedBox(height: 8),
-            Card(
-              child: Column(
-                children: tenants.asMap().entries.map((entry) {
-                  final index = entry.key;
-                  final tenant = entry.value;
-                  final tenantId = tenant.id;
-                  final isEnabled = allEnabled || (tenantId != null && enabledTenants.contains(tenantId));
-
-                  return Column(
-                    children: [
-                      if (index > 0) const Divider(height: 1),
-                      SwitchListTile(
-                        title: Text(
-                          tenant.shortName.isNotEmpty ? tenant.shortName : tenant.longName,
-                        ),
-                        subtitle: tenant.longName != tenant.shortName
-                            ? Text(
-                                tenant.longName,
-                                style: const TextStyle(fontSize: 12),
-                              )
-                            : null,
-                        secondary: Icon(
-                          Icons.group,
-                          color: isEnabled ? AppColors.primary : AppColors.medium,
-                        ),
-                        value: isEnabled,
-                        onChanged: (v) => _toggleTenantNotification(tenantId, v, tenants),
-                      ),
-                    ],
-                  );
-                }).toList(),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void _toggleTenantNotification(int? tenantId, bool enabled, List<Tenant> tenants) {
-    if (tenantId == null) return;
-
-    final currentEnabled = _config!.enabledTenants;
-    List<int> newEnabledTenants;
-
-    if (currentEnabled == null) {
-      // Currently all enabled — create list with all except the toggled one
-      if (enabled) return; // Already all enabled
-      newEnabledTenants = tenants
-          .map((t) => t.id)
-          .whereType<int>()
-          .where((id) => id != tenantId)
-          .toList();
-    } else {
-      newEnabledTenants = List.of(currentEnabled);
-      if (enabled) {
-        if (!newEnabledTenants.contains(tenantId)) {
-          newEnabledTenants.add(tenantId);
-        }
-        // If all tenants are now enabled, set to null (default = all)
-        final allTenantIds = tenants.map((t) => t.id).whereType<int>().toSet();
-        if (allTenantIds.every(newEnabledTenants.contains)) {
-          _updateConfig(_config!.copyWith(clearEnabledTenants: true));
-          return;
-        }
-      } else {
-        newEnabledTenants.remove(tenantId);
-      }
-    }
-
-    _updateConfig(_config!.copyWith(enabledTenants: newEnabledTenants));
-  }
-
-  Future<void> _connectTelegram() async {
-    final supabase = ref.read(supabaseClientProvider);
-    final user = supabase.auth.currentUser;
-
-    if (user == null) {
-      ToastHelper.showError(context, 'Nicht eingeloggt');
-      return;
-    }
-
-    final telegramService = ref.read(telegramServiceProvider);
-    final botLink = telegramService.getBotLink(user.id);
-
-    final uri = Uri.parse(botLink);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-
-      // Show info dialog
-      if (mounted) {
-        await showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Telegram verbinden'),
-            content: const Text(
-              'Klicke im Telegram-Chat auf "Start", um die Verbindung abzuschließen. '
-              'Die Seite wird automatisch aktualisiert, sobald die Verbindung hergestellt ist.',
-            ),
-            actions: [
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  _loadConfig(); // Refresh
-                },
-                child: const Text('OK'),
-              ),
-            ],
-          ),
-        );
-      }
-    } else {
-      if (mounted) {
-        ToastHelper.showError(context, 'Konnte Telegram nicht öffnen');
-      }
-    }
-  }
-
-  Future<void> _disconnectTelegram() async {
-    // RT-006: Capture config at start for thread safety
-    final currentConfig = _config;
-    if (currentConfig == null) return;
-
-    final confirmed = await DialogHelper.showConfirmation(
-      context,
-      title: 'Verbindung trennen',
-      message: 'Möchtest du die Telegram-Verbindung wirklich trennen? '
-          'Die Verbindung kann jederzeit wiederhergestellt werden.',
-      confirmText: 'Trennen',
-      cancelText: 'Abbrechen',
-    );
-
-    if (!confirmed) return;
-
-    try {
-      final telegramService = ref.read(telegramServiceProvider);
-      await telegramService.disconnectTelegram(currentConfig.id);
-
-      if (mounted) {
-        setState(() {
-          _config = currentConfig.copyWith(telegramChatId: '');
-        });
-      }
-
-      if (mounted) {
-        ToastHelper.showSuccess(context, 'Verbindung getrennt');
-      }
-    } catch (e) {
-      if (mounted) {
-        ToastHelper.showError(context, 'Fehler: $e');
-      }
-    }
-  }
-
-  Future<void> _updateConfig(NotificationConfig newConfig) async {
-    final previousConfig = _config;
-    setState(() => _config = newConfig);
-
-    try {
-      final telegramService = ref.read(telegramServiceProvider);
-      await telegramService.updateNotificationConfig(newConfig);
-      if (mounted) {
-        ScaffoldMessenger.of(context).clearSnackBars();
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Gespeichert'),
-            duration: Duration(milliseconds: 800),
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() => _config = previousConfig);
-        ToastHelper.showError(context, 'Fehler beim Speichern: $e');
-      }
-    }
-  }
 }
 
-class _NotificationToggle extends StatelessWidget {
-  final String title;
-  final String subtitle;
-  final IconData icon;
-  final bool value;
-  final ValueChanged<bool> onChanged;
+class _UserIdTile extends StatelessWidget {
+  const _UserIdTile({required this.userId});
 
-  const _NotificationToggle({
-    required this.title,
-    required this.subtitle,
-    required this.icon,
-    required this.value,
-    required this.onChanged,
-  });
+  final String userId;
 
   @override
   Widget build(BuildContext context) {
-    return SwitchListTile(
-      secondary: Icon(icon, color: AppColors.primary),
-      title: Text(title),
-      subtitle: Text(
-        subtitle,
-        style: const TextStyle(fontSize: 12),
+    return ListTile(
+      title: Text(context.l10n.notifUserId, style: const TextStyle(fontSize: 12)),
+      subtitle: SelectableText(
+        userId,
+        style: const TextStyle(fontFamily: 'monospace'),
       ),
-      value: value,
-      onChanged: onChanged,
+      trailing: IconButton(
+        icon: const Icon(Icons.copy, size: 18),
+        tooltip: context.l10n.songsCopy,
+        onPressed: () {
+          Clipboard.setData(ClipboardData(text: userId));
+          ToastHelper.showSuccess(context, context.l10n.notifFlutterUserIdCopied);
+        },
+      ),
+    );
+  }
+}
+
+class _SectionTitle extends StatelessWidget {
+  const _SectionTitle(this.title);
+
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(
+        AppDimensions.paddingS,
+        AppDimensions.paddingL,
+        AppDimensions.paddingS,
+        AppDimensions.paddingXS,
+      ),
+      child: Text(
+        title,
+        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+              color: AppColors.medium,
+              fontWeight: FontWeight.w600,
+            ),
+      ),
     );
   }
 }

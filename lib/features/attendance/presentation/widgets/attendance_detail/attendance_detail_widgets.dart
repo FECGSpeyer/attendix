@@ -1,6 +1,7 @@
 /// Barrel file for attendance detail widgets
 library;
 
+export 'attendance_detail_sheets.dart';
 export 'attendance_grid.dart';
 export 'attendance_person_tile.dart';
 export 'attendance_status_bar.dart';

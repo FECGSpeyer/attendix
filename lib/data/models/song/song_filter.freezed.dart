@@ -21,11 +21,28 @@ SongFilter _$SongFilterFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$SongFilter {
+  /// "Chor & Orchester" toggle (Ionic `inclChoir`)
   bool get withChoir => throw _privateConstructorUsedError;
+
+  /// "Solo" toggle (Ionic `inclSolo`)
   bool get withSolo => throw _privateConstructorUsedError;
+
+  /// Groups filter (Ionic `instrumentsToFilter`)
   List<int> get instrumentIds => throw _privateConstructorUsedError;
+
+  /// Difficulty filter - not persisted (Ionic never restores it)
+  @JsonKey(includeToJson: false, includeFromJson: false)
   int? get difficulty => throw _privateConstructorUsedError;
+
+  /// Category segment (Ionic `selectedCategory`, a category id)
   String? get category => throw _privateConstructorUsedError;
+
+  /// Multi category filter (Ionic `selectedCategories`)
+  List<String> get categoryIds => throw _privateConstructorUsedError;
+
+  /// Additional field filters (Ionic `filterOpts`): field id -> value
+  /// ('' = all, 'true'/'false' for booleans)
+  Map<String, String> get fieldFilters => throw _privateConstructorUsedError;
   SongSortOption get sortOption => throw _privateConstructorUsedError;
 
   /// Serializes this SongFilter to a JSON map.
@@ -49,8 +66,10 @@ abstract class $SongFilterCopyWith<$Res> {
     bool withChoir,
     bool withSolo,
     List<int> instrumentIds,
-    int? difficulty,
+    @JsonKey(includeToJson: false, includeFromJson: false) int? difficulty,
     String? category,
+    List<String> categoryIds,
+    Map<String, String> fieldFilters,
     SongSortOption sortOption,
   });
 }
@@ -75,6 +94,8 @@ class _$SongFilterCopyWithImpl<$Res, $Val extends SongFilter>
     Object? instrumentIds = null,
     Object? difficulty = freezed,
     Object? category = freezed,
+    Object? categoryIds = null,
+    Object? fieldFilters = null,
     Object? sortOption = null,
   }) {
     return _then(
@@ -104,6 +125,16 @@ class _$SongFilterCopyWithImpl<$Res, $Val extends SongFilter>
                     ? _value.category
                     : category // ignore: cast_nullable_to_non_nullable
                         as String?,
+            categoryIds:
+                null == categoryIds
+                    ? _value.categoryIds
+                    : categoryIds // ignore: cast_nullable_to_non_nullable
+                        as List<String>,
+            fieldFilters:
+                null == fieldFilters
+                    ? _value.fieldFilters
+                    : fieldFilters // ignore: cast_nullable_to_non_nullable
+                        as Map<String, String>,
             sortOption:
                 null == sortOption
                     ? _value.sortOption
@@ -128,8 +159,10 @@ abstract class _$$SongFilterImplCopyWith<$Res>
     bool withChoir,
     bool withSolo,
     List<int> instrumentIds,
-    int? difficulty,
+    @JsonKey(includeToJson: false, includeFromJson: false) int? difficulty,
     String? category,
+    List<String> categoryIds,
+    Map<String, String> fieldFilters,
     SongSortOption sortOption,
   });
 }
@@ -153,6 +186,8 @@ class __$$SongFilterImplCopyWithImpl<$Res>
     Object? instrumentIds = null,
     Object? difficulty = freezed,
     Object? category = freezed,
+    Object? categoryIds = null,
+    Object? fieldFilters = null,
     Object? sortOption = null,
   }) {
     return _then(
@@ -182,6 +217,16 @@ class __$$SongFilterImplCopyWithImpl<$Res>
                 ? _value.category
                 : category // ignore: cast_nullable_to_non_nullable
                     as String?,
+        categoryIds:
+            null == categoryIds
+                ? _value._categoryIds
+                : categoryIds // ignore: cast_nullable_to_non_nullable
+                    as List<String>,
+        fieldFilters:
+            null == fieldFilters
+                ? _value._fieldFilters
+                : fieldFilters // ignore: cast_nullable_to_non_nullable
+                    as Map<String, String>,
         sortOption:
             null == sortOption
                 ? _value.sortOption
@@ -199,22 +244,33 @@ class _$SongFilterImpl extends _SongFilter {
     this.withChoir = false,
     this.withSolo = false,
     final List<int> instrumentIds = const [],
-    this.difficulty,
+    @JsonKey(includeToJson: false, includeFromJson: false) this.difficulty,
     this.category,
+    final List<String> categoryIds = const [],
+    final Map<String, String> fieldFilters = const {},
     this.sortOption = SongSortOption.numberAsc,
   }) : _instrumentIds = instrumentIds,
+       _categoryIds = categoryIds,
+       _fieldFilters = fieldFilters,
        super._();
 
   factory _$SongFilterImpl.fromJson(Map<String, dynamic> json) =>
       _$$SongFilterImplFromJson(json);
 
+  /// "Chor & Orchester" toggle (Ionic `inclChoir`)
   @override
   @JsonKey()
   final bool withChoir;
+
+  /// "Solo" toggle (Ionic `inclSolo`)
   @override
   @JsonKey()
   final bool withSolo;
+
+  /// Groups filter (Ionic `instrumentsToFilter`)
   final List<int> _instrumentIds;
+
+  /// Groups filter (Ionic `instrumentsToFilter`)
   @override
   @JsonKey()
   List<int> get instrumentIds {
@@ -223,17 +279,48 @@ class _$SongFilterImpl extends _SongFilter {
     return EqualUnmodifiableListView(_instrumentIds);
   }
 
+  /// Difficulty filter - not persisted (Ionic never restores it)
   @override
+  @JsonKey(includeToJson: false, includeFromJson: false)
   final int? difficulty;
+
+  /// Category segment (Ionic `selectedCategory`, a category id)
   @override
   final String? category;
+
+  /// Multi category filter (Ionic `selectedCategories`)
+  final List<String> _categoryIds;
+
+  /// Multi category filter (Ionic `selectedCategories`)
+  @override
+  @JsonKey()
+  List<String> get categoryIds {
+    if (_categoryIds is EqualUnmodifiableListView) return _categoryIds;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_categoryIds);
+  }
+
+  /// Additional field filters (Ionic `filterOpts`): field id -> value
+  /// ('' = all, 'true'/'false' for booleans)
+  final Map<String, String> _fieldFilters;
+
+  /// Additional field filters (Ionic `filterOpts`): field id -> value
+  /// ('' = all, 'true'/'false' for booleans)
+  @override
+  @JsonKey()
+  Map<String, String> get fieldFilters {
+    if (_fieldFilters is EqualUnmodifiableMapView) return _fieldFilters;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(_fieldFilters);
+  }
+
   @override
   @JsonKey()
   final SongSortOption sortOption;
 
   @override
   String toString() {
-    return 'SongFilter(withChoir: $withChoir, withSolo: $withSolo, instrumentIds: $instrumentIds, difficulty: $difficulty, category: $category, sortOption: $sortOption)';
+    return 'SongFilter(withChoir: $withChoir, withSolo: $withSolo, instrumentIds: $instrumentIds, difficulty: $difficulty, category: $category, categoryIds: $categoryIds, fieldFilters: $fieldFilters, sortOption: $sortOption)';
   }
 
   @override
@@ -253,6 +340,14 @@ class _$SongFilterImpl extends _SongFilter {
                 other.difficulty == difficulty) &&
             (identical(other.category, category) ||
                 other.category == category) &&
+            const DeepCollectionEquality().equals(
+              other._categoryIds,
+              _categoryIds,
+            ) &&
+            const DeepCollectionEquality().equals(
+              other._fieldFilters,
+              _fieldFilters,
+            ) &&
             (identical(other.sortOption, sortOption) ||
                 other.sortOption == sortOption));
   }
@@ -266,6 +361,8 @@ class _$SongFilterImpl extends _SongFilter {
     const DeepCollectionEquality().hash(_instrumentIds),
     difficulty,
     category,
+    const DeepCollectionEquality().hash(_categoryIds),
+    const DeepCollectionEquality().hash(_fieldFilters),
     sortOption,
   );
 
@@ -288,8 +385,11 @@ abstract class _SongFilter extends SongFilter {
     final bool withChoir,
     final bool withSolo,
     final List<int> instrumentIds,
+    @JsonKey(includeToJson: false, includeFromJson: false)
     final int? difficulty,
     final String? category,
+    final List<String> categoryIds,
+    final Map<String, String> fieldFilters,
     final SongSortOption sortOption,
   }) = _$SongFilterImpl;
   const _SongFilter._() : super._();
@@ -297,16 +397,35 @@ abstract class _SongFilter extends SongFilter {
   factory _SongFilter.fromJson(Map<String, dynamic> json) =
       _$SongFilterImpl.fromJson;
 
+  /// "Chor & Orchester" toggle (Ionic `inclChoir`)
   @override
   bool get withChoir;
+
+  /// "Solo" toggle (Ionic `inclSolo`)
   @override
   bool get withSolo;
+
+  /// Groups filter (Ionic `instrumentsToFilter`)
   @override
   List<int> get instrumentIds;
+
+  /// Difficulty filter - not persisted (Ionic never restores it)
   @override
+  @JsonKey(includeToJson: false, includeFromJson: false)
   int? get difficulty;
+
+  /// Category segment (Ionic `selectedCategory`, a category id)
   @override
   String? get category;
+
+  /// Multi category filter (Ionic `selectedCategories`)
+  @override
+  List<String> get categoryIds;
+
+  /// Additional field filters (Ionic `filterOpts`): field id -> value
+  /// ('' = all, 'true'/'false' for booleans)
+  @override
+  Map<String, String> get fieldFilters;
   @override
   SongSortOption get sortOption;
 
@@ -324,11 +443,7 @@ SongViewOptions _$SongViewOptionsFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$SongViewOptions {
-  bool get showChoirBadge => throw _privateConstructorUsedError;
-  bool get showSoloBadge => throw _privateConstructorUsedError;
-  bool get showMissingInstruments => throw _privateConstructorUsedError;
-  bool get showLink => throw _privateConstructorUsedError;
-  bool get showLastSung => throw _privateConstructorUsedError;
+  List<String> get opts => throw _privateConstructorUsedError;
 
   /// Serializes this SongViewOptions to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -347,13 +462,7 @@ abstract class $SongViewOptionsCopyWith<$Res> {
     $Res Function(SongViewOptions) then,
   ) = _$SongViewOptionsCopyWithImpl<$Res, SongViewOptions>;
   @useResult
-  $Res call({
-    bool showChoirBadge,
-    bool showSoloBadge,
-    bool showMissingInstruments,
-    bool showLink,
-    bool showLastSung,
-  });
+  $Res call({List<String> opts});
 }
 
 /// @nodoc
@@ -370,40 +479,14 @@ class _$SongViewOptionsCopyWithImpl<$Res, $Val extends SongViewOptions>
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({
-    Object? showChoirBadge = null,
-    Object? showSoloBadge = null,
-    Object? showMissingInstruments = null,
-    Object? showLink = null,
-    Object? showLastSung = null,
-  }) {
+  $Res call({Object? opts = null}) {
     return _then(
       _value.copyWith(
-            showChoirBadge:
-                null == showChoirBadge
-                    ? _value.showChoirBadge
-                    : showChoirBadge // ignore: cast_nullable_to_non_nullable
-                        as bool,
-            showSoloBadge:
-                null == showSoloBadge
-                    ? _value.showSoloBadge
-                    : showSoloBadge // ignore: cast_nullable_to_non_nullable
-                        as bool,
-            showMissingInstruments:
-                null == showMissingInstruments
-                    ? _value.showMissingInstruments
-                    : showMissingInstruments // ignore: cast_nullable_to_non_nullable
-                        as bool,
-            showLink:
-                null == showLink
-                    ? _value.showLink
-                    : showLink // ignore: cast_nullable_to_non_nullable
-                        as bool,
-            showLastSung:
-                null == showLastSung
-                    ? _value.showLastSung
-                    : showLastSung // ignore: cast_nullable_to_non_nullable
-                        as bool,
+            opts:
+                null == opts
+                    ? _value.opts
+                    : opts // ignore: cast_nullable_to_non_nullable
+                        as List<String>,
           )
           as $Val,
     );
@@ -419,13 +502,7 @@ abstract class _$$SongViewOptionsImplCopyWith<$Res>
   ) = __$$SongViewOptionsImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({
-    bool showChoirBadge,
-    bool showSoloBadge,
-    bool showMissingInstruments,
-    bool showLink,
-    bool showLastSung,
-  });
+  $Res call({List<String> opts});
 }
 
 /// @nodoc
@@ -441,40 +518,14 @@ class __$$SongViewOptionsImplCopyWithImpl<$Res>
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({
-    Object? showChoirBadge = null,
-    Object? showSoloBadge = null,
-    Object? showMissingInstruments = null,
-    Object? showLink = null,
-    Object? showLastSung = null,
-  }) {
+  $Res call({Object? opts = null}) {
     return _then(
       _$SongViewOptionsImpl(
-        showChoirBadge:
-            null == showChoirBadge
-                ? _value.showChoirBadge
-                : showChoirBadge // ignore: cast_nullable_to_non_nullable
-                    as bool,
-        showSoloBadge:
-            null == showSoloBadge
-                ? _value.showSoloBadge
-                : showSoloBadge // ignore: cast_nullable_to_non_nullable
-                    as bool,
-        showMissingInstruments:
-            null == showMissingInstruments
-                ? _value.showMissingInstruments
-                : showMissingInstruments // ignore: cast_nullable_to_non_nullable
-                    as bool,
-        showLink:
-            null == showLink
-                ? _value.showLink
-                : showLink // ignore: cast_nullable_to_non_nullable
-                    as bool,
-        showLastSung:
-            null == showLastSung
-                ? _value.showLastSung
-                : showLastSung // ignore: cast_nullable_to_non_nullable
-                    as bool,
+        opts:
+            null == opts
+                ? _value._opts
+                : opts // ignore: cast_nullable_to_non_nullable
+                    as List<String>,
       ),
     );
   }
@@ -482,37 +533,26 @@ class __$$SongViewOptionsImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$SongViewOptionsImpl implements _SongViewOptions {
-  const _$SongViewOptionsImpl({
-    this.showChoirBadge = true,
-    this.showSoloBadge = true,
-    this.showMissingInstruments = true,
-    this.showLink = true,
-    this.showLastSung = true,
-  });
+class _$SongViewOptionsImpl extends _SongViewOptions {
+  const _$SongViewOptionsImpl({final List<String> opts = defaultSongViewOpts})
+    : _opts = opts,
+      super._();
 
   factory _$SongViewOptionsImpl.fromJson(Map<String, dynamic> json) =>
       _$$SongViewOptionsImplFromJson(json);
 
+  final List<String> _opts;
   @override
   @JsonKey()
-  final bool showChoirBadge;
-  @override
-  @JsonKey()
-  final bool showSoloBadge;
-  @override
-  @JsonKey()
-  final bool showMissingInstruments;
-  @override
-  @JsonKey()
-  final bool showLink;
-  @override
-  @JsonKey()
-  final bool showLastSung;
+  List<String> get opts {
+    if (_opts is EqualUnmodifiableListView) return _opts;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_opts);
+  }
 
   @override
   String toString() {
-    return 'SongViewOptions(showChoirBadge: $showChoirBadge, showSoloBadge: $showSoloBadge, showMissingInstruments: $showMissingInstruments, showLink: $showLink, showLastSung: $showLastSung)';
+    return 'SongViewOptions(opts: $opts)';
   }
 
   @override
@@ -520,28 +560,13 @@ class _$SongViewOptionsImpl implements _SongViewOptions {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$SongViewOptionsImpl &&
-            (identical(other.showChoirBadge, showChoirBadge) ||
-                other.showChoirBadge == showChoirBadge) &&
-            (identical(other.showSoloBadge, showSoloBadge) ||
-                other.showSoloBadge == showSoloBadge) &&
-            (identical(other.showMissingInstruments, showMissingInstruments) ||
-                other.showMissingInstruments == showMissingInstruments) &&
-            (identical(other.showLink, showLink) ||
-                other.showLink == showLink) &&
-            (identical(other.showLastSung, showLastSung) ||
-                other.showLastSung == showLastSung));
+            const DeepCollectionEquality().equals(other._opts, _opts));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
-    runtimeType,
-    showChoirBadge,
-    showSoloBadge,
-    showMissingInstruments,
-    showLink,
-    showLastSung,
-  );
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(_opts));
 
   /// Create a copy of SongViewOptions
   /// with the given fields replaced by the non-null parameter values.
@@ -560,28 +585,16 @@ class _$SongViewOptionsImpl implements _SongViewOptions {
   }
 }
 
-abstract class _SongViewOptions implements SongViewOptions {
-  const factory _SongViewOptions({
-    final bool showChoirBadge,
-    final bool showSoloBadge,
-    final bool showMissingInstruments,
-    final bool showLink,
-    final bool showLastSung,
-  }) = _$SongViewOptionsImpl;
+abstract class _SongViewOptions extends SongViewOptions {
+  const factory _SongViewOptions({final List<String> opts}) =
+      _$SongViewOptionsImpl;
+  const _SongViewOptions._() : super._();
 
   factory _SongViewOptions.fromJson(Map<String, dynamic> json) =
       _$SongViewOptionsImpl.fromJson;
 
   @override
-  bool get showChoirBadge;
-  @override
-  bool get showSoloBadge;
-  @override
-  bool get showMissingInstruments;
-  @override
-  bool get showLink;
-  @override
-  bool get showLastSung;
+  List<String> get opts;
 
   /// Create a copy of SongViewOptions
   /// with the given fields replaced by the non-null parameter values.

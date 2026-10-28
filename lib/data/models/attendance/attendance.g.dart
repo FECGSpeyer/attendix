@@ -51,6 +51,16 @@ _$AttendanceImpl _$$AttendanceImplFromJson(
       json['share_plan'] == null
           ? false
           : const _FlexibleBoolConverter().fromJson(json['share_plan']),
+  place: const _FlexibleStringConverter().fromJson(json['place']),
+  filesFolder: const _FlexibleStringConverter().fromJson(json['files_folder']),
+  description: const _FlexibleStringConverter().fromJson(json['description']),
+  attachmentUrl: const _FlexibleStringConverter().fromJson(
+    json['attachment_url'],
+  ),
+  attachmentName: const _FlexibleStringConverter().fromJson(
+    json['attachment_name'],
+  ),
+  dutyRequired: const _FlexibleIntConverter().fromJson(json['duty_required']),
 );
 
 Map<String, dynamic> _$$AttendanceImplToJson(
@@ -88,6 +98,16 @@ Map<String, dynamic> _$$AttendanceImplToJson(
   'conductors': const _FlexibleIntListConverter().toJson(instance.conductors),
   'players': instance.players,
   'share_plan': const _FlexibleBoolConverter().toJson(instance.sharePlan),
+  'place': const _FlexibleStringConverter().toJson(instance.place),
+  'files_folder': const _FlexibleStringConverter().toJson(instance.filesFolder),
+  'description': const _FlexibleStringConverter().toJson(instance.description),
+  'attachment_url': const _FlexibleStringConverter().toJson(
+    instance.attachmentUrl,
+  ),
+  'attachment_name': const _FlexibleStringConverter().toJson(
+    instance.attachmentName,
+  ),
+  'duty_required': const _FlexibleIntConverter().toJson(instance.dutyRequired),
 };
 
 _$PersonAttendanceImpl _$$PersonAttendanceImplFromJson(
@@ -122,6 +142,14 @@ _$PersonAttendanceImpl _$$PersonAttendanceImplFromJson(
       json['paused'] == null
           ? false
           : const _FlexibleBoolConverter().fromJson(json['paused']),
+  registrationAnswers: json['registration_answers'] as Map<String, dynamic>?,
+  dutyState: const _FlexibleStringConverter().fromJson(json['duty_state']),
+  dutyAssignedBy: const _FlexibleStringConverter().fromJson(
+    json['duty_assigned_by'],
+  ),
+  dutyAssignedAt: const _FlexibleStringConverter().fromJson(
+    json['duty_assigned_at'],
+  ),
 );
 
 Map<String, dynamic> _$$PersonAttendanceImplToJson(
@@ -147,6 +175,14 @@ Map<String, dynamic> _$$PersonAttendanceImplToJson(
   'highlight': const _FlexibleBoolConverter().toJson(instance.highlight),
   'left': const _FlexibleStringConverter().toJson(instance.left),
   'paused': const _FlexibleBoolConverter().toJson(instance.paused),
+  'registration_answers': instance.registrationAnswers,
+  'duty_state': const _FlexibleStringConverter().toJson(instance.dutyState),
+  'duty_assigned_by': const _FlexibleStringConverter().toJson(
+    instance.dutyAssignedBy,
+  ),
+  'duty_assigned_at': const _FlexibleStringConverter().toJson(
+    instance.dutyAssignedAt,
+  ),
 };
 
 _$ChecklistItemImpl _$$ChecklistItemImplFromJson(Map<String, dynamic> json) =>
@@ -243,6 +279,27 @@ _$AttendanceTypeImpl _$$AttendanceTypeImplFromJson(
   planningTitle: const _FlexibleStringConverter().fromJson(
     json['planning_title'],
   ),
+  placeEnabled:
+      json['place_enabled'] == null
+          ? false
+          : const _FlexibleBoolConverter().fromJson(json['place_enabled']),
+  registrationFields:
+      (json['registration_fields'] as List<dynamic>?)
+          ?.map((e) => RegistrationField.fromJson(e as Map<String, dynamic>))
+          .toList(),
+  dutyMode:
+      json['duty_mode'] == null
+          ? false
+          : const _FlexibleBoolConverter().fromJson(json['duty_mode']),
+  dutyRequired: const _FlexibleIntConverter().fromJson(json['duty_required']),
+  dutySelfSignup: json['duty_self_signup'] as bool? ?? true,
+  dutyConfirmReminderDays: const _FlexibleIntConverter().fromJson(
+    json['duty_confirm_reminder_days'],
+  ),
+  dutyNotifyUnderstaffed: json['duty_notify_understaffed'] as bool? ?? true,
+  dutyUrgentHours: const _FlexibleIntConverter().fromJson(
+    json['duty_urgent_hours'],
+  ),
 );
 
 Map<String, dynamic> _$$AttendanceTypeImplToJson(
@@ -280,4 +337,35 @@ Map<String, dynamic> _$$AttendanceTypeImplToJson(
   'planning_title': const _FlexibleStringConverter().toJson(
     instance.planningTitle,
   ),
+  'place_enabled': const _FlexibleBoolConverter().toJson(instance.placeEnabled),
+  'registration_fields': instance.registrationFields,
+  'duty_mode': const _FlexibleBoolConverter().toJson(instance.dutyMode),
+  'duty_required': const _FlexibleIntConverter().toJson(instance.dutyRequired),
+  'duty_self_signup': instance.dutySelfSignup,
+  'duty_confirm_reminder_days': const _FlexibleIntConverter().toJson(
+    instance.dutyConfirmReminderDays,
+  ),
+  'duty_notify_understaffed': instance.dutyNotifyUnderstaffed,
+  'duty_urgent_hours': const _FlexibleIntConverter().toJson(
+    instance.dutyUrgentHours,
+  ),
+};
+
+_$RegistrationFieldImpl _$$RegistrationFieldImplFromJson(
+  Map<String, dynamic> json,
+) => _$RegistrationFieldImpl(
+  id: json['id'] as String,
+  label: json['label'] as String? ?? '',
+  type: json['type'] as String? ?? RegistrationFieldType.text,
+  options:
+      (json['options'] as List<dynamic>?)?.map((e) => e as String).toList(),
+);
+
+Map<String, dynamic> _$$RegistrationFieldImplToJson(
+  _$RegistrationFieldImpl instance,
+) => <String, dynamic>{
+  'id': instance.id,
+  'label': instance.label,
+  'type': instance.type,
+  'options': instance.options,
 };

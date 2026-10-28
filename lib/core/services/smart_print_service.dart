@@ -5,6 +5,7 @@ import 'package:printing/printing.dart';
 import '../providers/group_providers.dart';
 import '../providers/player_providers.dart';
 import '../../data/models/instrument/instrument.dart';
+import '../../l10n/l10n.dart';
 
 /// Model for print copy information per instrument
 class PrintCopyInfo {
@@ -47,7 +48,7 @@ class SmartPrintService {
       // Single instrument mode
       final group = groups.firstWhere(
         (g) => g.id == instrumentId,
-        orElse: () => Group(id: instrumentId, name: 'Unbekannt'),
+        orElse: () => Group(id: instrumentId, name: l10nWithoutContext.commonUnknown),
       );
       final count = playerCounts[instrumentId] ?? 1;
       result.add(PrintCopyInfo(
@@ -88,7 +89,7 @@ class SmartPrintService {
     // Download PDF
     final response = await http.get(Uri.parse(url));
     if (response.statusCode != 200) {
-      throw Exception('PDF konnte nicht geladen werden (HTTP ${response.statusCode})');
+      throw Exception(l10nWithoutContext.coreFlutterPdfLoadFailed(response.statusCode));
     }
 
     final pdfData = response.bodyBytes;
@@ -97,14 +98,14 @@ class SmartPrintService {
     final totalCopies = copyInfos.fold<int>(0, (sum, info) => sum + info.copies);
 
     if (totalCopies == 0) {
-      throw Exception('Keine Kopien zum Drucken ausgewählt');
+      throw Exception(l10nWithoutContext.coreFlutterNoCopiesSelected);
     }
 
     // Print using the printing package
     // Note: The printing package handles the print dialog natively
     await Printing.layoutPdf(
       onLayout: (_) async => pdfData,
-      name: fileName ?? 'Notenblatt',
+      name: fileName ?? l10nWithoutContext.coreFlutterSheetMusic,
     );
   }
 
@@ -115,13 +116,13 @@ class SmartPrintService {
     String? fileName,
   }) async {
     if (copies <= 0) {
-      throw Exception('Ungültige Kopienanzahl');
+      throw Exception(l10nWithoutContext.coreFlutterInvalidCopyCount);
     }
 
     // Download PDF
     final response = await http.get(Uri.parse(url));
     if (response.statusCode != 200) {
-      throw Exception('PDF konnte nicht geladen werden (HTTP ${response.statusCode})');
+      throw Exception(l10nWithoutContext.coreFlutterPdfLoadFailed(response.statusCode));
     }
 
     final pdfData = response.bodyBytes;
@@ -129,7 +130,7 @@ class SmartPrintService {
     // Print using the printing package
     await Printing.layoutPdf(
       onLayout: (_) async => pdfData,
-      name: fileName ?? 'Notenblatt',
+      name: fileName ?? l10nWithoutContext.coreFlutterSheetMusic,
     );
   }
 }

@@ -45,18 +45,7 @@ void main() {
         expect(find.text('kommt erst um 19:30'), findsOneWidget);
       });
 
-      widgetTest('shows sticky note icon when notes are present', (tester) async {
-        await tester.pumpApp(
-          buildTile(
-            status: AttendanceStatus.excused,
-            notes: 'Arzttermin',
-          ),
-        );
-
-        expect(find.byIcon(Icons.sticky_note_2), findsOneWidget);
-      });
-
-      widgetTest('does not show note text when notes are null', (tester) async {
+      widgetTest('shows no note line when notes are null', (tester) async {
         await tester.pumpApp(
           buildTile(
             status: AttendanceStatus.present,
@@ -64,11 +53,11 @@ void main() {
           ),
         );
 
-        // No sticky note icon should be shown
-        expect(find.byIcon(Icons.sticky_note_2), findsNothing);
+        final column = tester.widget<Column>(find.byType(Column).first);
+        expect(column.children.whereType<Text>().length, 1);
       });
 
-      widgetTest('does not show note text when notes are empty', (tester) async {
+      widgetTest('shows no note line when notes are empty', (tester) async {
         await tester.pumpApp(
           buildTile(
             status: AttendanceStatus.present,
@@ -76,21 +65,37 @@ void main() {
           ),
         );
 
-        expect(find.byIcon(Icons.sticky_note_2), findsNothing);
+        final column = tester.widget<Column>(find.byType(Column).first);
+        expect(column.children.whereType<Text>().length, 1);
+      });
+    });
+
+    // UX_ATT: Ionic status badge + tap cycles the status
+    group('status badge (Ionic)', () {
+      widgetTest('shows the Ionic status letter', (tester) async {
+        await tester.pumpApp(buildTile(status: AttendanceStatus.excused));
+        expect(find.text('E'), findsOneWidget);
       });
 
-      widgetTest('note text is styled as italic', (tester) async {
+      widgetTest('tap cycles present -> excused', (tester) async {
+        AttendanceStatus? changed;
         await tester.pumpApp(
-          buildTile(
-            status: AttendanceStatus.late,
-            notes: 'Stau auf der A1',
+          Scaffold(
+            body: AttendancePersonTile(
+              person: person,
+              status: AttendanceStatus.present,
+              notes: null,
+              availableStatuses: AttendanceStatus.values,
+              onStatusChanged: (s) => changed = s,
+              onNoteChanged: (_) {},
+              onShowModifierInfo: () {},
+              onRemoveFromAttendance: () {},
+            ),
           ),
         );
-
-        final noteText = tester.widget<Text>(
-          find.text('Stau auf der A1'),
-        );
-        expect(noteText.style?.fontStyle, FontStyle.italic);
+        await tester.tap(find.text('Max Mustermann'));
+        await tester.pump();
+        expect(changed, AttendanceStatus.excused);
       });
     });
 

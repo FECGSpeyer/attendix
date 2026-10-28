@@ -2,6 +2,16 @@
 class StringUtils {
   StringUtils._(); // Private constructor - utility class
 
+  /// DB_REVIEW_REST (M7): pattern for a case-insensitive but otherwise exact
+  /// PostgREST `ilike` match (e-mail lookups like Ionic getAppIdByEmail).
+  /// `%`, `_` and `\` are escaped so they match literally (an e-mail like
+  /// `a_b@x.de` must not match `acb@x.de`); the value is trimmed.
+  static String exactIlikePattern(String value) => value
+      .trim()
+      .replaceAll(r'\', r'\\')
+      .replaceAll('%', r'\%')
+      .replaceAll('_', r'\_');
+
   /// Safely extracts initials from a string.
   ///
   /// Returns up to [length] characters from the beginning of [text].

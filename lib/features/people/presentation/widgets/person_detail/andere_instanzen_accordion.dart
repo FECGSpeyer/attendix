@@ -6,6 +6,7 @@ import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/constants/enums.dart';
 import '../../../../../core/providers/tenant_providers.dart';
 import '../../../../../core/theme/app_colors.dart';
+import '../../../../../l10n/l10n.dart';
 
 /// Provider for other tenants where this person has an account.
 /// Note: Cross-tenant queries are intentional here (same pattern as handover
@@ -41,7 +42,7 @@ final otherTenantsProvider =
     final tenantId = tenant['id'] as int;
     final tenantName = tenant['longName']?.toString() ??
         tenant['shortName']?.toString() ??
-        'Unbekannt';
+        l10nWithoutContext.commonUnknown;
     final role = tu['role'] as int? ?? 99;
 
     // Find the player record in that tenant
@@ -91,22 +92,22 @@ final otherTenantsProvider =
     String roleText;
     switch (role) {
       case 1:
-        roleText = 'Admin';
+        roleText = l10nWithoutContext.commonRolesAdmin;
         break;
       case 2:
-        roleText = 'Spieler';
+        roleText = l10nWithoutContext.commonRolesMember;
         break;
       case 3:
-        roleText = 'Betrachter';
+        roleText = l10nWithoutContext.commonRolesViewer;
         break;
       case 4:
-        roleText = 'Helfer';
+        roleText = l10nWithoutContext.commonRolesHelper;
         break;
       case 5:
-        roleText = 'Verantwortlich';
+        roleText = l10nWithoutContext.commonRolesResponsible;
         break;
       default:
-        roleText = 'Mitglied';
+        roleText = l10nWithoutContext.commonRolesMember;
     }
 
     results.add({
@@ -167,7 +168,7 @@ class _AndereInstanzenCardState extends State<_AndereInstanzenCard> {
         children: [
           ListTile(
             title: Text(
-              'Andere Instanzen (${widget.tenants.length})',
+              context.l10n.personFlutterOtherInstancesCount(widget.tenants.length),
               style: const TextStyle(fontWeight: FontWeight.w600),
             ),
             trailing:

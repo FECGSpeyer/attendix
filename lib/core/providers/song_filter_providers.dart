@@ -4,40 +4,38 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../data/models/song/song.dart';
+import '../../data/models/song/song_additional_field.dart';
 import '../../data/models/song/song_filter.dart';
-import '../providers/realtime_providers.dart';
-import 'song_providers.dart';
-import 'tenant_providers.dart';
 
 /// Key pattern for persisting filter per tenant
 String _getSongFilterPrefsKey(int tenantId) => 'songFilter_$tenantId';
 
-/// Search query state for songs
-final songSearchQueryProvider = StateProvider<String>((ref) => '');
+/// Key pattern for persisting view options per tenant
+String _getSongViewOptionsPrefsKey(int tenantId) => 'songViewOpts_$tenantId';
 
-/// Song filter state with persistence
+/// Search query for the songs list (already debounced by the page)
+final songSearchQueryProvider = StateProvider.autoDispose<String>((ref) => '');
+
+/// Song filter state per tenant (logged-in or shared tenant) with persistence
 final songFilterProvider =
-    StateNotifierProvider<SongFilterNotifier, SongFilter>((ref) {
-  final tenantId = ref.watch(currentTenantIdProvider);
-  return SongFilterNotifier(tenantId);
-});
+    StateNotifierProvider.family<SongFilterNotifier, SongFilter, int>(
+  (ref, tenantId) => SongFilterNotifier(tenantId),
+);
 
 /// Notifier for song filter state with SharedPreferences persistence
 class SongFilterNotifier extends StateNotifier<SongFilter> {
-  SongFilterNotifier(this.tenantId) : super(const SongFilter()) {
-    if (tenantId != null) {
-      _loadFromPrefs();
-    }
+  SongFilterNotifier(this.tenantId, {bool loadPersisted = true})
+      : super(const SongFilter()) {
+    if (loadPersisted) _loadFromPrefs();
   }
 
-  final int? tenantId;
+  final int tenantId;
 
   Future<void> _loadFromPrefs() async {
-    if (tenantId == null) return;
     try {
       final prefs = await SharedPreferences.getInstance();
-      final json = prefs.getString(_getSongFilterPrefsKey(tenantId!));
-      if (json != null) {
+      final json = prefs.getString(_getSongFilterPrefsKey(tenantId));
+      if (json != null && mounted) {
         state = SongFilter.fromJson(jsonDecode(json) as Map<String, dynamic>);
       }
     } catch (_) {
@@ -46,187 +44,91 @@ class SongFilterNotifier extends StateNotifier<SongFilter> {
   }
 
   Future<void> _saveToPrefs() async {
-    if (tenantId == null) return;
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(
-          _getSongFilterPrefsKey(tenantId!), jsonEncode(state.toJson()));
+          _getSongFilterPrefsKey(tenantId), jsonEncode(state.toJson()));
     } catch (_) {
       // Ignore save errors
     }
   }
 
-  void setWithChoir(bool value) {
-    state = state.copyWith(withChoir: value);
+  void _set(SongFilter value) {
+    state = value;
     _saveToPrefs();
   }
 
-  void setWithSolo(bool value) {
-    state = state.copyWith(withSolo: value);
-    _saveToPrefs();
-  }
+  void setWithChoir(bool value) => _set(state.copyWith(withChoir: value));
 
-  void setInstrumentIds(List<int> value) {
-    state = state.copyWith(instrumentIds: value);
-    _saveToPrefs();
-  }
+  void setWithSolo(bool value) => _set(state.copyWith(withSolo: value));
 
-  void toggleInstrumentId(int id) {
-    final current = List<int>.from(state.instrumentIds);
-    if (current.contains(id)) {
-      current.remove(id);
+  void setInstrumentIds(List<int> value) =>
+      _set(state.copyWith(instrumentIds: value));
+
+  void setDifficulty(int? value) => _set(state.copyWith(difficulty: value));
+
+  /// Category segment (null/'' = Alle)
+  void setCategory(String? value) =>
+      _set(state.copyWith(category: (value?.isEmpty ?? true) ? null : value));
+
+  void setCategoryIds(List<String> value) =>
+      _set(state.copyWith(categoryIds: value));
+
+  void setFieldFilter(String fieldId, String value) {
+    final next = Map<String, String>.from(state.fieldFilters);
+    if (value.isEmpty) {
+      next.remove(fieldId);
     } else {
-      current.add(id);
+      next[fieldId] = value;
     }
-    state = state.copyWith(instrumentIds: current);
-    _saveToPrefs();
+    _set(state.copyWith(fieldFilters: next));
   }
 
-  void setDifficulty(int? value) {
-    state = state.copyWith(difficulty: value);
-    _saveToPrefs();
+  void setSortOption(SongSortOption value) =>
+      _set(state.copyWith(sortOption: value));
+
+  /// Drop stored category selections that no longer exist (Ionic getSongs),
+  /// otherwise songs stay hidden without a way to reset the filter.
+  void pruneCategories(Set<String> existingIds) {
+    final category =
+        state.category != null && !existingIds.contains(state.category)
+            ? null
+            : state.category;
+    final ids = state.categoryIds.where(existingIds.contains).toList();
+    if (category != state.category || ids.length != state.categoryIds.length) {
+      _set(state.copyWith(category: category, categoryIds: ids));
+    }
   }
 
-  void setCategory(String? value) {
-    state = state.copyWith(category: value);
-    _saveToPrefs();
-  }
-
-  void setSortOption(SongSortOption value) {
-    state = state.copyWith(sortOption: value);
-    _saveToPrefs();
-  }
-
-  void reset() {
-    state = const SongFilter();
-    _saveToPrefs();
-  }
-
-  void clearCategory() {
-    state = state.copyWith(category: null);
-    _saveToPrefs();
-  }
-
-  void clearDifficulty() {
-    state = state.copyWith(difficulty: null);
-    _saveToPrefs();
-  }
-
-  void clearInstruments() {
-    state = state.copyWith(instrumentIds: []);
-    _saveToPrefs();
-  }
+  void reset() => _set(SongFilter(
+        category: state.category,
+        sortOption: state.sortOption,
+      ));
 }
 
-/// Filtered and sorted songs provider
-/// Sources from realtimeSongsProvider for live updates, falls back to songsProvider
-final filteredSongsProvider = Provider<List<Song>>((ref) {
-  // Prefer realtime data if available, fallback to FutureProvider
-  final realtimeSongs = ref.watch(realtimeSongsProvider);
-  final songs = realtimeSongs.valueOrNull ?? ref.watch(songsProvider).valueOrNull ?? [];
-  final filter = ref.watch(songFilterProvider);
-  final searchQuery = ref.watch(songSearchQueryProvider);
-
-  // Apply filters
-  var filtered = songs.where((song) {
-    // Filter by choir
-    if (filter.withChoir && !song.withChoir) return false;
-
-    // Filter by solo
-    if (filter.withSolo && !song.withSolo) return false;
-
-    // Filter by difficulty
-    if (filter.difficulty != null && song.difficulty != filter.difficulty) {
-      return false;
-    }
-
-    // Filter by category
-    if (filter.category != null &&
-        filter.category!.isNotEmpty &&
-        song.category != filter.category) {
-      return false;
-    }
-
-    // Filter by instruments
-    if (filter.instrumentIds.isNotEmpty) {
-      final songInstruments = song.instrumentIds ?? [];
-      if (!filter.instrumentIds.any((id) => songInstruments.contains(id))) {
-        return false;
-      }
-    }
-
-    // Search query
-    if (searchQuery.isNotEmpty) {
-      final query = searchQuery.toLowerCase();
-      final nameMatch = song.name.toLowerCase().contains(query);
-      final numberMatch = song.fullNumber.toLowerCase().contains(query);
-      final conductorMatch =
-          song.conductor?.toLowerCase().contains(query) ?? false;
-      if (!nameMatch && !numberMatch && !conductorMatch) {
-        return false;
-      }
-    }
-
-    return true;
-  }).toList();
-
-  // Apply sorting
-  switch (filter.sortOption) {
-    case SongSortOption.numberAsc:
-      filtered.sort((a, b) => (a.number ?? 0).compareTo(b.number ?? 0));
-    case SongSortOption.numberDesc:
-      filtered.sort((a, b) => (b.number ?? 0).compareTo(a.number ?? 0));
-    case SongSortOption.nameAsc:
-      filtered
-          .sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
-    case SongSortOption.nameDesc:
-      filtered
-          .sort((a, b) => b.name.toLowerCase().compareTo(a.name.toLowerCase()));
-    case SongSortOption.lastSungAsc:
-      filtered.sort((a, b) => _compareDates(a.lastSung, b.lastSung));
-    case SongSortOption.lastSungDesc:
-      filtered.sort((a, b) => _compareDates(b.lastSung, a.lastSung));
-  }
-
-  return filtered;
-});
-
-/// Helper for date comparison (null values go to end)
-int _compareDates(String? a, String? b) {
-  if (a == null && b == null) return 0;
-  if (a == null) return 1;
-  if (b == null) return -1;
-  return a.compareTo(b);
-}
-
-/// Key pattern for persisting view options per tenant
-String _getSongViewOptionsPrefsKey(int tenantId) => 'songViewOpts_$tenantId';
-
-/// Song view options state with persistence
+/// Song view options per tenant with persistence
 final songViewOptionsProvider =
-    StateNotifierProvider<SongViewOptionsNotifier, SongViewOptions>((ref) {
-  final tenantId = ref.watch(currentTenantIdProvider);
-  return SongViewOptionsNotifier(tenantId);
-});
+    StateNotifierProvider.family<SongViewOptionsNotifier, SongViewOptions, int>(
+  (ref, tenantId) => SongViewOptionsNotifier(tenantId),
+);
 
 /// Notifier for song view options with SharedPreferences persistence
 class SongViewOptionsNotifier extends StateNotifier<SongViewOptions> {
   SongViewOptionsNotifier(this.tenantId) : super(const SongViewOptions()) {
-    if (tenantId != null) {
-      _loadFromPrefs();
-    }
+    _loadFromPrefs();
   }
 
-  final int? tenantId;
+  final int tenantId;
 
   Future<void> _loadFromPrefs() async {
-    if (tenantId == null) return;
     try {
       final prefs = await SharedPreferences.getInstance();
-      final json = prefs.getString(_getSongViewOptionsPrefsKey(tenantId!));
-      if (json != null) {
-        state = SongViewOptions.fromJson(
-            jsonDecode(json) as Map<String, dynamic>);
+      final json = prefs.getString(_getSongViewOptionsPrefsKey(tenantId));
+      if (json != null && mounted) {
+        final decoded = jsonDecode(json);
+        if (decoded is Map<String, dynamic> && decoded['opts'] is List) {
+          state = SongViewOptions.fromJson(decoded);
+        }
       }
     } catch (_) {
       // If loading fails, use default options
@@ -234,43 +136,129 @@ class SongViewOptionsNotifier extends StateNotifier<SongViewOptions> {
   }
 
   Future<void> _saveToPrefs() async {
-    if (tenantId == null) return;
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(
-          _getSongViewOptionsPrefsKey(tenantId!), jsonEncode(state.toJson()));
+          _getSongViewOptionsPrefsKey(tenantId), jsonEncode(state.toJson()));
     } catch (_) {
       // Ignore save errors
     }
   }
 
-  void setShowChoirBadge(bool value) {
-    state = state.copyWith(showChoirBadge: value);
+  void setOpts(List<String> opts) {
+    state = SongViewOptions(opts: opts);
     _saveToPrefs();
   }
 
-  void setShowSoloBadge(bool value) {
-    state = state.copyWith(showSoloBadge: value);
-    _saveToPrefs();
+  void toggle(String id) {
+    final next = List<String>.from(state.opts);
+    if (!next.remove(id)) next.add(id);
+    setOpts(next);
+  }
+}
+
+// ============================================================================
+// Pure filter / sort logic (Ionic songs.page filter(), searchSongs(), sort)
+// ============================================================================
+
+/// Apply category, groups, choir/solo, difficulty, additional field filters,
+/// search and sorting.
+List<Song> applySongFilter(
+  List<Song> songs,
+  SongFilter filter, {
+  String search = '',
+  List<SongAdditionalField> additionalFields = const [],
+}) {
+  bool choirSolo(Song song) {
+    if (filter.withChoir && filter.withSolo) {
+      return song.withChoir && song.withSolo;
+    }
+    if (filter.withChoir) return song.withChoir;
+    if (filter.withSolo) return song.withSolo;
+    return true;
   }
 
-  void setShowMissingInstruments(bool value) {
-    state = state.copyWith(showMissingInstruments: value);
-    _saveToPrefs();
+  final query = search.trim().toLowerCase();
+
+  final filtered = songs.where((song) {
+    final cats = song.categoryIds ?? const <String>[];
+    if (filter.category != null && !cats.contains(filter.category)) {
+      return false;
+    }
+    if (filter.categoryIds.isNotEmpty &&
+        !filter.categoryIds.any(cats.contains)) {
+      return false;
+    }
+    if (filter.instrumentIds.isNotEmpty) {
+      final ids = song.instrumentIds ?? const <int>[];
+      if (!ids.any(filter.instrumentIds.contains)) return false;
+    }
+    if (!choirSolo(song)) return false;
+    if (filter.difficulty != null && song.difficulty != filter.difficulty) {
+      return false;
+    }
+    for (final field in additionalFields) {
+      final filterVal = filter.fieldFilters[field.id];
+      if (filterVal == null || filterVal.isEmpty) continue;
+      final songVal = song.additionalFields?[field.id];
+      final normalized = filterVal == 'true'
+          ? true
+          : filterVal == 'false'
+              ? false
+              : filterVal;
+      if (songVal != normalized) return false;
+    }
+    if (query.isNotEmpty) {
+      final nameMatch = song.name.toLowerCase().contains(query);
+      final conductorMatch =
+          song.conductor?.toLowerCase().contains(query) ?? false;
+      final numberMatch = song.fullNumber.toLowerCase().contains(query);
+      if (!nameMatch && !conductorMatch && !numberMatch) return false;
+    }
+    return true;
+  }).toList();
+
+  return sortSongs(filtered, filter.sortOption);
+}
+
+/// Sort songs (ties are broken by id to keep the order stable)
+List<Song> sortSongs(List<Song> songs, SongSortOption option) {
+  int byId(Song a, Song b) => (a.id ?? 0).compareTo(b.id ?? 0);
+  int byNumber(Song a, Song b) {
+    final c = (a.number ?? 0).compareTo(b.number ?? 0);
+    return c != 0 ? c : byId(a, b);
   }
 
-  void setShowLink(bool value) {
-    state = state.copyWith(showLink: value);
-    _saveToPrefs();
+  int byName(Song a, Song b) {
+    final c = a.name.toLowerCase().compareTo(b.name.toLowerCase());
+    return c != 0 ? c : byId(a, b);
   }
 
-  void setShowLastSung(bool value) {
-    state = state.copyWith(showLastSung: value);
-    _saveToPrefs();
+  int byLastSung(Song a, Song b, {required bool desc}) {
+    final da = DateTime.tryParse(a.lastSung ?? '');
+    final db = DateTime.tryParse(b.lastSung ?? '');
+    // Songs never sung always at the end
+    if (da == null && db == null) return byNumber(a, b);
+    if (da == null) return 1;
+    if (db == null) return -1;
+    final c = desc ? db.compareTo(da) : da.compareTo(db);
+    return c != 0 ? c : byNumber(a, b);
   }
 
-  void reset() {
-    state = const SongViewOptions();
-    _saveToPrefs();
+  final result = [...songs];
+  switch (option) {
+    case SongSortOption.numberAsc:
+      result.sort(byNumber);
+    case SongSortOption.numberDesc:
+      result.sort((a, b) => byNumber(b, a));
+    case SongSortOption.nameAsc:
+      result.sort(byName);
+    case SongSortOption.nameDesc:
+      result.sort((a, b) => byName(b, a));
+    case SongSortOption.lastSungAsc:
+      result.sort((a, b) => byLastSung(a, b, desc: false));
+    case SongSortOption.lastSungDesc:
+      result.sort((a, b) => byLastSung(a, b, desc: true));
   }
+  return result;
 }

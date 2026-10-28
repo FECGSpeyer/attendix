@@ -7,6 +7,7 @@ import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/person/person.dart';
 import '../../data/providers/voice_leader_providers.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Voice Leader page - shows members of the same voice group
 class VoiceLeaderPage extends ConsumerWidget {
@@ -19,7 +20,7 @@ class VoiceLeaderPage extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Meine Stimme'),
+        title: Text(context.l10n.voiceLeaderMyVoice),
       ),
       body: RefreshIndicator(
         onRefresh: () async {
@@ -36,7 +37,7 @@ class VoiceLeaderPage extends ConsumerWidget {
                 const Icon(Icons.error_outline, size: 64, color: AppColors.danger),
                 const SizedBox(height: AppDimensions.paddingM),
                 Text(
-                  'Fehler beim Laden',
+                  context.l10n.voiceLeaderLoadFailed,
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
                 const SizedBox(height: AppDimensions.paddingS),
@@ -48,7 +49,7 @@ class VoiceLeaderPage extends ConsumerWidget {
                 const SizedBox(height: AppDimensions.paddingL),
                 ElevatedButton(
                   onPressed: () => ref.invalidate(voiceGroupMembersProvider),
-                  child: const Text('Erneut versuchen'),
+                  child: Text(context.l10n.messagesRetry),
                 ),
               ],
             ),
@@ -66,12 +67,12 @@ class VoiceLeaderPage extends ConsumerWidget {
                     ),
                     const SizedBox(height: AppDimensions.paddingM),
                     Text(
-                      'Keine Mitglieder',
+                      context.l10n.voiceLeaderNoMembers,
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
                     const SizedBox(height: AppDimensions.paddingS),
                     Text(
-                      'Du bist noch keiner Stimmgruppe zugeordnet.',
+                      context.l10n.voiceLeaderFlutterNoGroup,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             color: AppColors.medium,
                           ),
@@ -81,7 +82,7 @@ class VoiceLeaderPage extends ConsumerWidget {
               );
             }
 
-            final groupName = groupNameAsync.valueOrNull ?? 'Stimmgruppe';
+            final groupName = groupNameAsync.valueOrNull ?? context.l10n.voiceLeaderFlutterVoiceGroup;
 
             return ListView(
               padding: const EdgeInsets.all(AppDimensions.paddingM),
@@ -153,7 +154,7 @@ class _GroupHeader extends StatelessWidget {
                     ),
               ),
               Text(
-                '$memberCount Mitglieder',
+                context.l10n.voiceLeaderFlutterMemberCount(memberCount),
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: AppColors.medium,
                     ),
@@ -232,9 +233,9 @@ class _MemberTile extends StatelessWidget {
                           color: AppColors.primary,
                           borderRadius: BorderRadius.circular(4),
                         ),
-                        child: const Text(
-                          'Sf',
-                          style: TextStyle(
+                        child: Text(
+                          context.l10n.voiceLeaderSfShort,
+                          style: const TextStyle(
                             color: Colors.white,
                             fontSize: 10,
                             fontWeight: FontWeight.bold,
@@ -311,7 +312,7 @@ class _MemberTile extends StatelessWidget {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          'Keine Kontaktdaten',
+                          context.l10n.voiceLeaderNoContact,
                           style: Theme.of(context).textTheme.bodySmall?.copyWith(
                                 color: AppColors.medium,
                               ),
@@ -338,7 +339,7 @@ class _MemberTile extends StatelessWidget {
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Text(
-                            '+${absences.length - 5} weitere',
+                            context.l10n.voiceLeaderFlutterMoreCount(absences.length - 5),
                             style: const TextStyle(
                               fontSize: 11,
                               color: AppColors.medium,
@@ -379,7 +380,7 @@ class _AbsenceChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dateFormat = DateFormat('dd.MM.');
+    final dateFormat = DateFormat(dateFmt(DateFmtKind.dayMonth));
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),

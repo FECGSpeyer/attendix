@@ -5,6 +5,8 @@ import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/utils/color_utils.dart';
 import '../../../../../data/models/attendance/attendance.dart';
+import '../../../../../core/utils/date_helper.dart';
+import '../../../../../l10n/l10n.dart';
 
 /// Accordion widget for displaying and editing general attendance info
 /// Uses StatefulWidget to properly manage TextEditingController lifecycle
@@ -21,6 +23,13 @@ class GeneralInfoAccordion extends StatefulWidget {
     required this.onDeadlineSelect,
     required this.onExportExcel,
     this.hasNeutralStatuses = true,
+    this.onDateSelect,
+    this.onPlaceChanged,
+    this.onOpenNavigation,
+    this.onChooseFilesFolder,
+    this.onRemoveFilesFolder,
+    this.onOpenFilesFolder,
+    this.onEditDescription,
   });
 
   final Attendance attendance;
@@ -34,6 +43,21 @@ class GeneralInfoAccordion extends StatefulWidget {
   final VoidCallback onExportExcel;
   final bool hasNeutralStatuses;
 
+  /// "Datum" – move the Termin to another day.
+  final VoidCallback? onDateSelect;
+
+  /// "Ort" – only shown when the type has `place_enabled`.
+  final void Function(String)? onPlaceChanged;
+  final VoidCallback? onOpenNavigation;
+
+  /// "Ordner in der Dateiablage".
+  final VoidCallback? onChooseFilesFolder;
+  final VoidCallback? onRemoveFilesFolder;
+  final VoidCallback? onOpenFilesFolder;
+
+  /// ATT_DETAIL: "Beschreibung & Anhang bearbeiten"
+  final VoidCallback? onEditDescription;
+
   @override
   State<GeneralInfoAccordion> createState() => _GeneralInfoAccordionState();
 }
@@ -41,12 +65,37 @@ class GeneralInfoAccordion extends StatefulWidget {
 class _GeneralInfoAccordionState extends State<GeneralInfoAccordion> {
   late TextEditingController _typeInfoController;
   late TextEditingController _notesController;
+  late TextEditingController _placeController;
+  final FocusNode _placeFocus = FocusNode();
+  // UX_ATT: Info-Text and Notizen save on blur like Ionic (ionBlur)
+  final FocusNode _typeInfoFocus = FocusNode();
+  final FocusNode _notesFocus = FocusNode();
 
   @override
   void initState() {
     super.initState();
     _typeInfoController = TextEditingController(text: widget.attendance.typeInfo ?? '');
     _notesController = TextEditingController(text: widget.attendance.notes ?? '');
+    _placeController = TextEditingController(text: widget.attendance.place ?? '');
+    // Save the place when the field loses focus (Ionic: ionBlur).
+    _placeFocus.addListener(() {
+      if (!_placeFocus.hasFocus &&
+          _placeController.text.trim() != (widget.attendance.place ?? '')) {
+        widget.onPlaceChanged?.call(_placeController.text.trim());
+      }
+    });
+    _typeInfoFocus.addListener(() {
+      if (!_typeInfoFocus.hasFocus &&
+          _typeInfoController.text != (widget.attendance.typeInfo ?? '')) {
+        widget.onTypeInfoChanged(_typeInfoController.text);
+      }
+    });
+    _notesFocus.addListener(() {
+      if (!_notesFocus.hasFocus &&
+          _notesController.text != (widget.attendance.notes ?? '')) {
+        widget.onNotesChanged(_notesController.text);
+      }
+    });
   }
 
   @override
@@ -59,13 +108,26 @@ class _GeneralInfoAccordionState extends State<GeneralInfoAccordion> {
     if (oldWidget.attendance.notes != widget.attendance.notes) {
       _notesController.text = widget.attendance.notes ?? '';
     }
+    if (oldWidget.attendance.place != widget.attendance.place && !_placeFocus.hasFocus) {
+      _placeController.text = widget.attendance.place ?? '';
+    }
   }
 
   @override
   void dispose() {
     _typeInfoController.dispose();
     _notesController.dispose();
+    _placeController.dispose();
+    _placeFocus.dispose();
+    _typeInfoFocus.dispose();
+    _notesFocus.dispose();
     super.dispose();
+  }
+
+  String _formatDate(String value) {
+    final date = DateTime.tryParse(value);
+    if (date == null) return value;
+    return DateFormat(dateFmt()).format(date.toLocal());
   }
 
   @override
@@ -77,150 +139,227 @@ class _GeneralInfoAccordionState extends State<GeneralInfoAccordion> {
     if (hasDeadline && widget.attendance.deadline != null) {
       final deadline = DateTime.tryParse(widget.attendance.deadline!);
       if (deadline != null) {
-        formattedDeadline = DateFormat('dd.MM.yyyy HH:mm').format(deadline);
+        formattedDeadline = DateFormat('${dateFmt()} HH:mm').format(deadline);
       }
     }
+
+    // UX_ATT: element order and wording of the Ionic "Allgemein" accordion:
+    // Typ, Datum, Info-Text, Notizen, Anmeldefrist setzen, Fristdatum,
+    // Beginn, Ende / Dauer, Ordner, Ort (+ Navigation öffnen),
+    // Beschreibung & Anhang bearbeiten, Anwesenheit als Excel exportieren.
+    const primaryStyle = TextStyle(color: AppColors.primary);
+    const valueStyle = TextStyle(color: AppColors.primary, fontWeight: FontWeight.w500);
+    const fieldPadding = EdgeInsets.symmetric(horizontal: AppDimensions.paddingM, vertical: 4);
 
     return Card(
       margin: const EdgeInsets.symmetric(
         horizontal: AppDimensions.paddingM,
         vertical: AppDimensions.paddingXS,
       ),
+      clipBehavior: Clip.antiAlias,
       child: ExpansionTile(
-        leading: const Icon(Icons.info_outline, color: AppColors.primary),
-        title: const Text('Allgemein'),
+        title: Text(context.l10n.attendanceGeneral),
+        shape: const Border(),
+        collapsedShape: const Border(),
         children: [
-          // Type badge (read-only)
+          // Typ (badge)
           if (widget.attendanceType != null)
             ListTile(
-              leading: const Icon(Icons.category),
-              title: const Text('Typ'),
+              title: Text(context.l10n.attListType),
               trailing: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
-                  color: ColorUtils.parseNamedColor(widget.attendanceType!.color)
-                      .withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(16),
+                  color: ColorUtils.parseNamedColor(widget.attendanceType!.color),
+                  borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
                   widget.attendanceType!.name,
-                  style: const TextStyle(fontWeight: FontWeight.w500),
+                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 13),
                 ),
               ),
               dense: true,
             ),
 
-          // TypeInfo TextField
-          Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppDimensions.paddingM,
-              vertical: AppDimensions.paddingS,
+          // Datum (tap to change)
+          if (widget.onDateSelect != null)
+            ListTile(
+              title: Text(context.l10n.attendanceDate),
+              trailing: Text(_formatDate(widget.attendance.date), style: valueStyle),
+              onTap: widget.onDateSelect,
+              dense: true,
             ),
+
+          // Info-Text
+          Padding(
+            padding: fieldPadding,
             child: TextField(
-              decoration: const InputDecoration(
-                labelText: 'Bezeichnung',
-                hintText: 'z.B. Generalprobe, Konzert...',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.label_outline),
+              decoration: InputDecoration(
+                labelText: context.l10n.attendanceInfoText,
+                floatingLabelBehavior: FloatingLabelBehavior.always,
+                border: InputBorder.none,
               ),
+              textCapitalization: TextCapitalization.sentences,
               controller: _typeInfoController,
-              onSubmitted: widget.onTypeInfoChanged,
+              focusNode: _typeInfoFocus,
+              onSubmitted: (_) => _typeInfoFocus.unfocus(),
+              onTapOutside: (_) => _typeInfoFocus.unfocus(),
             ),
           ),
 
-          // Notes TextField
+          // Notizen
           Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppDimensions.paddingM,
-              vertical: AppDimensions.paddingS,
-            ),
+            padding: fieldPadding,
             child: TextField(
-              decoration: const InputDecoration(
-                labelText: 'Notizen',
-                hintText: 'Allgemeine Notizen...',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.note_outlined),
+              decoration: InputDecoration(
+                labelText: context.l10n.attendanceNotes,
+                floatingLabelBehavior: FloatingLabelBehavior.always,
+                border: InputBorder.none,
               ),
+              textCapitalization: TextCapitalization.sentences,
               controller: _notesController,
-              maxLines: 2,
-              onSubmitted: widget.onNotesChanged,
+              minLines: 1,
+              maxLines: 6,
+              focusNode: _notesFocus,
+              onTapOutside: (_) => _notesFocus.unfocus(),
             ),
           ),
 
-          // Time pickers (if not all-day)
-          if (!isAllDay) ...[
-            ListTile(
-              leading: const Icon(Icons.access_time),
-              title: const Text('Beginn'),
-              trailing: Text(
-                widget.attendance.startTime ?? 'Nicht gesetzt',
-                style: const TextStyle(fontWeight: FontWeight.w500),
-              ),
-              onTap: widget.onStartTimeSelect,
-              dense: true,
-            ),
-            ListTile(
-              leading: const Icon(Icons.access_time_filled),
-              title: const Text('Ende'),
-              trailing: Text(
-                widget.attendance.endTime ?? 'Nicht gesetzt',
-                style: const TextStyle(fontWeight: FontWeight.w500),
-              ),
-              onTap: widget.onEndTimeSelect,
-              dense: true,
-            ),
-          ],
-
-          // Duration (if all-day)
-          if (isAllDay)
-            ListTile(
-              leading: const Icon(Icons.calendar_today),
-              title: const Text('Dauer'),
-              trailing: Text(
-                '${widget.attendance.durationDays ?? 1} Tag(e)',
-                style: const TextStyle(fontWeight: FontWeight.w500),
-              ),
-              dense: true,
-            ),
-
-          const Divider(),
-
-          // Deadline toggle (only show when there are neutral statuses or deadline is already set)
+          // Anmeldefrist setzen + Fristdatum
           if (widget.hasNeutralStatuses || hasDeadline) ...[
             SwitchListTile(
-              secondary: const Icon(Icons.event_busy),
-              title: const Text('Anmeldefrist'),
-              subtitle: hasDeadline && formattedDeadline != null
-                  ? Text(formattedDeadline)
-                  : const Text('Nicht gesetzt'),
+              title: Text(context.l10n.attendanceSetDeadline),
+              subtitle: Text(
+                context.l10n.attendanceDeadlineHelper,
+                style: const TextStyle(fontSize: 12),
+              ),
               value: hasDeadline,
               onChanged: widget.onDeadlineToggle,
             ),
-
-            // Deadline picker (if enabled)
             if (hasDeadline)
               ListTile(
-                leading: const Icon(Icons.edit_calendar),
-                title: const Text('Frist ändern'),
-                trailing: const Icon(Icons.chevron_right),
+                title: Text(context.l10n.attendanceDeadlineDate),
+                trailing: Text(formattedDeadline ?? '', style: valueStyle),
                 onTap: widget.onDeadlineSelect,
                 dense: true,
               ),
           ],
 
-          const Divider(),
-
-          // Export button
-          Padding(
-            padding: const EdgeInsets.all(AppDimensions.paddingS),
-            child: TextButton.icon(
-              onPressed: widget.onExportExcel,
-              icon: const Icon(Icons.table_chart),
-              label: const Text('Als Excel exportieren'),
+          // Beginn / Ende (or Dauer for all-day types)
+          if (!isAllDay) ...[
+            ListTile(
+              title: Text(context.l10n.attendanceStart),
+              trailing: Text(_formatTime(widget.attendance.startTime), style: valueStyle),
+              onTap: widget.onStartTimeSelect,
+              dense: true,
             ),
+            ListTile(
+              title: Text(context.l10n.attendanceEnd),
+              trailing: Text(_formatTime(widget.attendance.endTime), style: valueStyle),
+              onTap: widget.onEndTimeSelect,
+              dense: true,
+            ),
+          ],
+          if (isAllDay)
+            ListTile(
+              title: Text(context.l10n.attListDurationDays),
+              trailing: Text('${widget.attendance.durationDays ?? 1}'),
+              dense: true,
+            ),
+
+          // Ordner in der Dateiablage
+          if (widget.onChooseFilesFolder != null) ...[
+            ListTile(
+              leading: const Icon(Icons.folder_outlined, color: AppColors.primary),
+              title: Text(context.l10n.attendanceFilesFolder),
+              subtitle: Text(context.l10n.attendanceFilesFolderHint),
+              trailing: widget.attendance.filesFolder?.isNotEmpty == true
+                  ? null
+                  : TextButton(
+                      onPressed: widget.onChooseFilesFolder,
+                      child: Text(context.l10n.attendanceChoose),
+                    ),
+              dense: true,
+            ),
+            if (widget.attendance.filesFolder?.isNotEmpty == true)
+              Padding(
+                padding: const EdgeInsets.only(left: AppDimensions.paddingM),
+                child: Row(
+                  children: [
+                    Flexible(
+                      child: ActionChip(
+                        avatar: const Icon(Icons.folder_open_outlined, size: 18),
+                        label: Text(widget.attendance.filesFolder!, overflow: TextOverflow.ellipsis),
+                        onPressed: widget.onOpenFilesFolder,
+                      ),
+                    ),
+                    const Spacer(),
+                    IconButton(
+                      icon: const Icon(Icons.edit_outlined),
+                      color: AppColors.primary,
+                      tooltip: context.l10n.attendanceChangeFolder,
+                      onPressed: widget.onChooseFilesFolder,
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.highlight_off),
+                      color: AppColors.danger,
+                      tooltip: context.l10n.attendanceRemoveFolder,
+                      onPressed: widget.onRemoveFilesFolder,
+                    ),
+                  ],
+                ),
+              ),
+          ],
+
+          // Ort + "Navigation öffnen" – only for types with place_enabled
+          if (widget.attendanceType?.placeEnabled == true && widget.onPlaceChanged != null) ...[
+            Padding(
+              padding: fieldPadding,
+              child: TextField(
+                controller: _placeController,
+                focusNode: _placeFocus,
+                minLines: 2,
+                maxLines: 4,
+                textCapitalization: TextCapitalization.sentences,
+                decoration: InputDecoration(
+                  labelText: context.l10n.attendancePlace,
+                  hintText: context.l10n.attendanceAddressPlaceholder,
+                  floatingLabelBehavior: FloatingLabelBehavior.always,
+                  border: InputBorder.none,
+                ),
+                textInputAction: TextInputAction.done,
+                onSubmitted: (v) => widget.onPlaceChanged!(v.trim()),
+              ),
+            ),
+            if ((widget.attendance.place?.isNotEmpty ?? false) && widget.onOpenNavigation != null)
+              ListTile(
+                title: Text(context.l10n.signoutOpenNavigation, style: primaryStyle),
+                onTap: widget.onOpenNavigation,
+                dense: true,
+              ),
+          ],
+
+          // Beschreibung & Anhang bearbeiten
+          if (widget.onEditDescription != null)
+            ListTile(
+              title: Text(context.l10n.attendanceEditDescription, style: primaryStyle),
+              onTap: widget.onEditDescription,
+              dense: true,
+            ),
+
+          // Anwesenheit als Excel exportieren
+          ListTile(
+            title: Text(context.l10n.attendanceExportExcel, style: primaryStyle),
+            onTap: widget.onExportExcel,
+            dense: true,
           ),
         ],
       ),
     );
+  }
+
+  /// "19:00" from "19:00:00"; Ionic shows the datetime button value.
+  String _formatTime(String? value) {
+    if (value == null || value.isEmpty) return '--:--';
+    return DateHelper.hhmm(value);
   }
 }

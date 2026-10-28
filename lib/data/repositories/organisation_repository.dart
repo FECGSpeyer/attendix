@@ -17,6 +17,7 @@ class OrganisationRepository extends BaseRepository {
 
   /// Create a new organisation
   Future<Organisation> create(String name) async {
+    ensureNotDemo('create'); // DEMO_GUARD
     try {
       final response = await supabase
           .from('tenant_groups')
@@ -34,6 +35,7 @@ class OrganisationRepository extends BaseRepository {
   /// Link a tenant to an organisation
   /// SEC-004: Added authorization check - user must be admin of the tenant
   Future<void> linkTenantToOrganisation(int tenantId, int organisationId) async {
+    ensureNotDemo('linkTenantToOrganisation'); // DEMO_GUARD
     try {
       // Validate user has admin permission for this tenant
       final userId = supabase.auth.currentUser?.id;
@@ -87,6 +89,7 @@ class OrganisationRepository extends BaseRepository {
   /// If no tenants remain in the organisation, the organisation is deleted
   /// SEC-004: Added authorization check - user must be admin of the tenant
   Future<void> unlinkTenantFromOrganisation(int tenantId, int organisationId) async {
+    ensureNotDemo('unlinkTenantFromOrganisation'); // DEMO_GUARD
     try {
       // Validate user has admin permission for this tenant
       final userId = supabase.auth.currentUser?.id;
@@ -143,6 +146,7 @@ class OrganisationRepository extends BaseRepository {
           .from('tenant_group_tenants')
           .select('tenant_group, tenant_group_data:tenant_group(*)')
           .eq('tenant_id', tenantId)
+          .limit(1) // DB_REVIEW_REST: no PGRST116 on duplicate links
           .maybeSingle();
 
       if (response == null || response['tenant_group_data'] == null) {
