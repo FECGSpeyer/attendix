@@ -31,6 +31,7 @@ import '../widgets/pause_person_sheet.dart';
 import '../../../messages/presentation/widgets/notification_bell.dart'; // MESSAGES
 import 'bulk_edit_page.dart';
 import 'person_import_page.dart';
+import '../../../../l10n/l10n.dart';
 
 /// People list page
 class PeopleListPage extends ConsumerStatefulWidget {
@@ -85,20 +86,20 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
     final isChoir = tenant?.type == 'choir';
     final isGeneral = tenant?.type == 'general';
     return {
-      'group': 'Gruppe',
-      'attendance': 'Anwesenheit',
-      'birthday': 'Geburtsdatum',
-      if (isChoir) 'instruments': 'Instrumente',
-      if (isVoS) 'test': 'Testergebnis',
-      'exercises': 'Sonstige Dienste',
-      if (!isGeneral) 'leader': 'Stimmführer',
-      'critical': 'Problemfälle',
-      if (isVoS) 'new': 'Neu',
-      'paused': 'Pausiert',
-      'notes': 'Notizen',
-      'photo': 'Passbild',
-      if (tenant?.maintainTeachers ?? false) 'teacher': 'Lehrer',
-      if (isVoS) 'examinee': 'Prüfling',
+      'group': context.l10n.peopleGroup,
+      'attendance': context.l10n.peopleAttendance,
+      'birthday': context.l10n.peopleBirthday,
+      if (isChoir) 'instruments': context.l10n.peopleInstruments,
+      if (isVoS) 'test': context.l10n.peopleTestResult,
+      'exercises': context.l10n.peopleOtherDuties,
+      if (!isGeneral) 'leader': context.l10n.peopleVoiceLeader,
+      'critical': context.l10n.peopleProblemCases,
+      if (isVoS) 'new': context.l10n.peopleNew,
+      'paused': context.l10n.peoplePaused,
+      'notes': context.l10n.peopleNotes,
+      'photo': context.l10n.peoplePassportPhoto,
+      if (tenant?.maintainTeachers ?? false) 'teacher': context.l10n.peopleTeacher,
+      if (isVoS) 'examinee': context.l10n.peopleCandidate,
       for (final f in tenant?.additionalFields ?? const <ExtraField>[])
         if (const ['boolean', 'text', 'select', 'bfecg_church', 'number']
             .contains(f.type))
@@ -159,7 +160,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
-          title: const Text('Ansicht konfigurieren'),
+          title: Text(context.l10n.attendanceView),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -190,15 +191,15 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
                   selected.addAll(_defaultViewOptions);
                 });
               },
-              child: const Text('Standard'),
+              child: Text(context.l10n.peopleFlutterDefaultView),
             ),
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Abbrechen'),
+              child: Text(context.l10n.commonCancel),
             ),
             FilledButton(
               onPressed: () => Navigator.pop(context, selected),
-              child: const Text('Übernehmen'),
+              child: Text(context.l10n.commonApply),
             ),
           ],
         ),
@@ -373,7 +374,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
   Map<String, List<Person>> _groupByGroup(List<Person> people) {
     final grouped = <String, List<Person>>{};
     for (final person in people) {
-      final group = person.groupName ?? 'Keine Gruppe';
+      final group = person.groupName ?? context.l10n.attendanceNoGroup;
       grouped.putIfAbsent(group, () => []);
       grouped[group]!.add(person);
     }
@@ -413,10 +414,10 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
       return Scaffold(
         appBar: AppBar(
           backgroundColor: AppColors.warning,
-          title: const Text('Reihenfolge anpassen'),
+          title: Text(context.l10n.peopleReorder),
           leading: IconButton(
             icon: const Icon(Icons.close),
-            tooltip: 'Abbrechen',
+            tooltip: context.l10n.commonCancel,
             onPressed: () => setState(() {
               _isReordering = false;
               _reorderIds.clear();
@@ -431,7 +432,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
                   : const Icon(Icons.check),
-              tooltip: 'Reihenfolge speichern',
+              tooltip: context.l10n.peopleFlutterSaveOrder,
               onPressed: _isSavingOrder ? null : _toggleReorderMode,
             ),
           ],
@@ -447,8 +448,8 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
     return Scaffold(
       appBar: AppBar(
         title: _isSelectionMode
-            ? Text('${_selectedPlayerIds.length} ausgewählt')
-            : const TenantSwitcherTitle(fallbackTitle: 'Personen'),
+            ? Text(context.l10n.peopleFlutterSelectedCount(_selectedPlayerIds.length))
+            : TenantSwitcherTitle(fallbackTitle: context.l10n.commonPeople),
         leading: _isSelectionMode
             ? IconButton(
                 icon: const Icon(Icons.close),
@@ -459,7 +460,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
             ? [
                 IconButton(
                   icon: const Icon(Icons.select_all),
-                  tooltip: 'Alle auswählen',
+                  tooltip: context.l10n.handoverSelectAll,
                   onPressed: () {
                     final people =
                         ref.read(realtimePlayersProvider).valueOrNull ?? [];
@@ -474,7 +475,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
                 ),
                 IconButton(
                   icon: const Icon(Icons.deselect),
-                  tooltip: 'Auswahl aufheben',
+                  tooltip: context.l10n.peopleFlutterDeselectAll,
                   onPressed: () => setState(() => _selectedPlayerIds.clear()),
                 ),
               ]
@@ -500,7 +501,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
                   child: TextField(
                     controller: _searchController,
                     decoration: InputDecoration(
-                      hintText: 'Person suchen...',
+                      hintText: context.l10n.peopleSearchPerson,
                       prefixIcon: const Icon(Icons.search),
                       isDense: true,
                       suffixIcon: _searchQuery.isNotEmpty
@@ -522,7 +523,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
                     Icons.tune,
                     color: _filterOption != 'all' ? AppColors.primary : null,
                   ),
-                  tooltip: 'Optionen',
+                  tooltip: context.l10n.typeSettingsOptions,
                   onPressed: () => _showOptionsSheet(isAdmin: isAdmin),
                 ),
               ],
@@ -546,9 +547,9 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
               ),
               error: (error, stack) => EmptyStateWidget(
                 icon: Icons.error_outline,
-                title: 'Fehler beim Laden',
-                subtitle: 'Die Personenliste konnte nicht geladen werden.',
-                actionLabel: 'Erneut versuchen',
+                title: context.l10n.peopleFlutterLoadFailed,
+                subtitle: context.l10n.peopleFlutterListLoadFailed,
+                actionLabel: context.l10n.messagesRetry,
                 onAction: () => ref.invalidate(realtimePlayersProvider),
               ),
               data: (people) {
@@ -566,20 +567,20 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
                           const Icon(Icons.people_outline,
                               size: 48, color: AppColors.medium),
                           const SizedBox(height: AppDimensions.paddingM),
-                          const Text(
-                            'Bisher wurden noch keine Personen angelegt',
+                          Text(
+                            context.l10n.peopleNoPeopleYet,
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: AppDimensions.paddingM),
                           OutlinedButton(
                             onPressed: () => context.push('/people/new'),
-                            child: const Text('Person hinzufügen'),
+                            child: Text(context.l10n.attendanceAddPerson),
                           ),
                           if (isAdmin) ...[
                             const SizedBox(height: AppDimensions.paddingS),
                             OutlinedButton(
                               onPressed: _openImport,
-                              child: const Text('Personen importieren'),
+                              child: Text(context.l10n.peopleImportPeople),
                             ),
                           ],
                         ],
@@ -592,9 +593,9 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
                   // Ionic: noPeopleFound / filtersNoMatch / resetFilter
                   return EmptyStateWidget(
                     icon: Icons.filter_alt_outlined,
-                    title: 'Keine Personen gefunden',
-                    subtitle: 'Die aktiven Filter ergeben keine Treffer.',
-                    actionLabel: 'Filter zurücksetzen',
+                    title: context.l10n.peopleNoPeopleFound,
+                    subtitle: context.l10n.peopleFiltersNoMatch,
+                    actionLabel: context.l10n.peopleResetFilter,
                     onAction: _clearFilters,
                     animateIcon: false,
                   );
@@ -631,7 +632,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
                 // Ionic: ion-list-header "Personen (n)", then (sorted by
                 // group) a primary ion-item-divider per group.
                 final children = <Widget>[
-                  _ListHeader(text: 'Personen (${sortedPeople.length})'),
+                  _ListHeader(text: context.l10n.peoplePeopleCount(sortedPeople.length)),
                 ];
                 if (_sortOption == 'group') {
                   final grouped = _groupByGroup(sortedPeople);
@@ -667,7 +668,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
               ? FloatingActionButton.extended(
                   onPressed: _showHandoverSheet,
                   icon: const Icon(Icons.swap_horiz),
-                  label: Text('${_selectedPlayerIds.length} übertragen'),
+                  label: Text(context.l10n.peopleFlutterTransferCount(_selectedPlayerIds.length)),
                   backgroundColor: AppColors.warning,
                 )
               : null
@@ -692,34 +693,34 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
     final hasLinked =
         (ref.read(allLinkedTenantsProvider).valueOrNull ?? const []).isNotEmpty;
     return {
-      'all': 'Alle Anzeigen',
-      'active': 'Aktive Personen',
-      'critical': 'Problemfälle',
-      if (!isGeneral) 'leaders': 'Stimmführer',
-      'noAccount': 'Ohne Account',
-      if (isVoS) 'examinees': 'Prüflinge',
-      if (isVoS) 'new': 'Neue Spieler',
-      if (isVoS) 'noTeacher': 'Ohne Lehrer',
-      if (isVoS) 'noTest': 'Testergebnis fehlt',
+      'all': context.l10n.peopleShowAll,
+      'active': context.l10n.peopleActivePeople,
+      'critical': context.l10n.peopleProblemCases,
+      if (!isGeneral) 'leaders': context.l10n.peopleVoiceLeader,
+      'noAccount': context.l10n.peopleWithoutAccount,
+      if (isVoS) 'examinees': context.l10n.peopleCandidates,
+      if (isVoS) 'new': context.l10n.peopleNewPlayers,
+      if (isVoS) 'noTeacher': context.l10n.peopleWithoutTeacher,
+      if (isVoS) 'noTest': context.l10n.peopleTestResultMissing,
       if (hasLinked || _filterOption == 'otherInstance')
-        'otherInstance': 'Mitglied anderer Instanz',
+        'otherInstance': context.l10n.peopleOtherInstanceMember,
       for (final f in _filterableExtraFields(tenant)) 'extra:${f.id}': f.name,
     };
   }
 
   /// Sort options in Ionic order (list.page.html sort select).
   Map<String, String> _sortOptionLabels(Tenant? tenant) => {
-        'group': 'Gruppe',
-        'firstName': 'Vorname',
-        'lastName': 'Nachname',
-        'attAsc': 'Anwesenheit ↑',
-        'attDesc': 'Anwesenheit ↓',
-        'birthdayAsc': 'Geburtsdatum ↑',
-        'birthdayDesc': 'Geburtsdatum ↓',
-        'joinedAsc': 'Beitrittsdatum ↑',
-        'joinedDesc': 'Beitrittsdatum ↓',
-        'nextBirthday': 'Nächster Geburtstag',
-        if (_isVoS(tenant)) 'testResult': 'Testergebnis',
+        'group': context.l10n.peopleGroup,
+        'firstName': context.l10n.peopleFirstName,
+        'lastName': context.l10n.peopleLastName,
+        'attAsc': context.l10n.peopleAttendanceAsc,
+        'attDesc': context.l10n.peopleAttendanceDesc,
+        'birthdayAsc': context.l10n.peopleBirthdayAsc,
+        'birthdayDesc': context.l10n.peopleBirthdayDesc,
+        'joinedAsc': context.l10n.peopleJoinAsc,
+        'joinedDesc': context.l10n.peopleJoinDesc,
+        'nextBirthday': context.l10n.peopleNextBirthday,
+        if (_isVoS(tenant)) 'testResult': context.l10n.peopleTestResult,
       };
 
   Future<void> _onFilterSelected(String value) async {
@@ -761,7 +762,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
             children: [
               _OptionDropdownTile(
                 icon: Icons.filter_alt,
-                label: 'Filter',
+                label: context.l10n.teamOrgFilter,
                 value: filterLabels.containsKey(_filterOption)
                     ? _filterOption
                     : 'all',
@@ -770,14 +771,14 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
               ),
               _OptionDropdownTile(
                 icon: Icons.filter_list,
-                label: 'Sortierung',
+                label: context.l10n.attendanceSorting,
                 value: sortLabels.containsKey(_sortOption) ? _sortOption : 'group',
                 options: sortLabels,
                 onChanged: (v) => Navigator.pop(ctx, 'sort:$v'),
               ),
               ListTile(
                 leading: const Icon(Icons.visibility, size: 20),
-                title: const Text('Ansicht'),
+                title: Text(context.l10n.attendanceView),
                 subtitle: Text(
                   viewLabels.entries
                       .where((e) => _viewOptions.contains(e.key))
@@ -792,31 +793,31 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
               if (_churchField(tenant) != null)
                 ListTile(
                   leading: const Icon(Icons.business_outlined, size: 20),
-                  title: const Text('Gemeinde-Übersicht'),
+                  title: Text(context.l10n.attendanceChurchOverview),
                   onTap: () => Navigator.pop(ctx, 'churchOverview'),
                 ),
               if (isAdmin) ...[
                 ListTile(
                   leading: const Icon(Icons.edit, size: 20),
-                  title: const Text('Bulk-Bearbeitung'),
+                  title: Text(context.l10n.peopleBulkEdit),
                   onTap: () => Navigator.pop(ctx, 'bulkEdit'),
                 ),
                 ListTile(
                   leading: const Icon(Icons.cloud_upload_outlined, size: 20),
-                  title: const Text('Personen importieren'),
+                  title: Text(context.l10n.peopleImportPeople),
                   onTap: () => Navigator.pop(ctx, 'import'),
                 ),
                 if (_sortOption == 'group')
                   ListTile(
                     leading: const Icon(Icons.swap_vert, size: 20),
-                    title: const Text('Reihenfolge anpassen'),
+                    title: Text(context.l10n.peopleReorder),
                     onTap: () => Navigator.pop(ctx, 'reorder'),
                   ),
                 // Flutter extra: multi-select handover (Ionic only has the
                 // handover page in the settings)
                 ListTile(
                   leading: const Icon(Icons.checklist, size: 20),
-                  title: const Text('Personen übertragen'),
+                  title: Text(context.l10n.peopleFlutterTransferPeople),
                   onTap: () => Navigator.pop(ctx, 'select'),
                 ),
               ],
@@ -875,15 +876,15 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
             controller: controller,
             autofocus: true,
             keyboardType: TextInputType.number,
-            decoration: const InputDecoration(hintText: 'Wert eingeben'),
+            decoration: InputDecoration(hintText: context.l10n.peopleEnterValue),
           ),
           actions: [
             TextButton(
                 onPressed: () => Navigator.pop(ctx),
-                child: const Text('Abbrechen')),
+                child: Text(context.l10n.commonCancel)),
             FilledButton(
                 onPressed: () => Navigator.pop(ctx, controller.text.trim()),
-                child: const Text('Filtern')),
+                child: Text(context.l10n.peopleFilter)),
           ],
         ),
       );
@@ -891,7 +892,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
     } else {
       final List<MapEntry<String, String>> choices;
       if (field.type == 'boolean') {
-        choices = const [MapEntry('true', 'Ja'), MapEntry('false', 'Nein')];
+        choices = [MapEntry('true', context.l10n.commonYes), MapEntry('false', context.l10n.commonNo)];
       } else if (field.type == 'bfecg_church') {
         final churches = await ref.read(churchesProvider.future);
         choices = churches
@@ -953,7 +954,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
     final chosen = await showDialog<Tenant>(
       context: context,
       builder: (ctx) => SimpleDialog(
-        title: const Text('Instanz wählen'),
+        title: Text(context.l10n.peopleChooseInstance),
         children: [
           for (final t in linked)
             SimpleDialogOption(
@@ -978,7 +979,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
             chosen.longName.isNotEmpty ? chosen.longName : chosen.shortName;
       });
     } catch (e) {
-      if (mounted) ToastHelper.showError(context, 'Fehler: $e');
+      if (mounted) ToastHelper.showError(context, context.l10n.peopleFlutterErrorWith(e));
     }
   }
 
@@ -997,7 +998,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
       context,
       churchIds: churchIds,
       churches: churches,
-      subtitle: 'Personen',
+      subtitle: context.l10n.commonPeople,
     );
   }
 
@@ -1027,10 +1028,10 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
     try {
       await ref.read(playerRepositoryWithTenantProvider).savePlayerOrder(orders);
       ref.invalidate(realtimePlayersProvider);
-      if (mounted) ToastHelper.showSuccess(context, 'Reihenfolge gespeichert');
+      if (mounted) ToastHelper.showSuccess(context, context.l10n.peopleOrderSaved);
     } catch (_) {
       if (mounted) {
-        ToastHelper.showError(context, 'Fehler beim Speichern der Reihenfolge');
+        ToastHelper.showError(context, context.l10n.peopleOrderSaveFailed);
       }
     } finally {
       if (mounted) {
@@ -1191,15 +1192,15 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Person wieder aktivieren?'),
+        title: Text(context.l10n.peopleReactivateConfirm),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Abbrechen'),
+            child: Text(context.l10n.commonCancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Aktivieren'),
+            child: Text(context.l10n.peopleActivate),
           ),
         ],
       ),
@@ -1208,10 +1209,10 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
 
     final repository = ref.read(playerRepositoryWithTenantProvider);
     try {
-      await repository.unpausePlayer(person, historyText: 'Person wieder aktiv');
+      await repository.unpausePlayer(person, historyText: context.l10n.peopleActiveAgain);
       // Realtime handles the refresh automatically
     } catch (e) {
-      if (mounted) ToastHelper.showError(context, 'Fehler: $e');
+      if (mounted) ToastHelper.showError(context, context.l10n.peopleFlutterErrorWith(e));
     }
   }
 
@@ -1219,7 +1220,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
   Future<void> _remove(Person person) async {
     final userId = ref.read(supabaseClientProvider).auth.currentUser?.id;
     if (person.appId != null && person.appId == userId) {
-      ToastHelper.showError(context, 'Du kannst dich nicht selbst entfernen!');
+      ToastHelper.showError(context, context.l10n.peopleCannotRemoveSelf);
       return;
     }
     final choice = await showModalBottomSheet<String>(
@@ -1229,17 +1230,17 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
-              title: const Text('Archivieren', textAlign: TextAlign.center),
+              title: Text(context.l10n.peopleArchive, textAlign: TextAlign.center),
               onTap: () => Navigator.pop(ctx, 'archive'),
             ),
             ListTile(
-              title: const Text('Entfernen', textAlign: TextAlign.center),
+              title: Text(context.l10n.commonRemove, textAlign: TextAlign.center),
               onTap: () => Navigator.pop(ctx, 'remove'),
             ),
             const Divider(height: 1),
             ListTile(
-              title: const Text(
-                'Abbrechen',
+              title: Text(
+                context.l10n.commonCancel,
                 textAlign: TextAlign.center,
                 style: TextStyle(fontWeight: FontWeight.w600),
               ),
@@ -1265,14 +1266,14 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
         barrierDismissible: false,
         builder: (context) => StatefulBuilder(
           builder: (context, setDialogState) => AlertDialog(
-            title: Text('${person.firstName} ${person.lastName} Archivieren'),
+            title: Text(context.l10n.peopleArchiveTitle('${person.firstName} ${person.lastName}')),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 ListTile(
                   contentPadding: EdgeInsets.zero,
-                  title: const Text('Austrittsdatum'),
-                  subtitle: Text(DateFormat('dd.MM.yyyy').format(archiveDate)),
+                  title: Text(context.l10n.peopleLeaveDate),
+                  subtitle: Text(DateFormat(dateFmt()).format(archiveDate)),
                   trailing: const Icon(Icons.calendar_today),
                   onTap: () async {
                     final date = await showDatePicker(
@@ -1289,7 +1290,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
                 TextField(
                   controller: noteController,
                   textCapitalization: TextCapitalization.sentences,
-                  decoration: const InputDecoration(labelText: 'Notiz'),
+                  decoration: InputDecoration(labelText: context.l10n.peopleNote),
                   maxLines: 3,
                   minLines: 1,
                 ),
@@ -1298,7 +1299,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text('Abbrechen'),
+                child: Text(context.l10n.commonCancel),
               ),
               FilledButton.icon(
                 icon: const Icon(Icons.archive_outlined),
@@ -1308,7 +1309,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
                     'note': noteController.text,
                   });
                 },
-                label: const Text('Archivieren'),
+                label: Text(context.l10n.peopleArchive),
               ),
             ],
           ),
@@ -1335,7 +1336,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
       );
       // Realtime handles the refresh automatically
     } catch (e) {
-      if (mounted) ToastHelper.showError(context, 'Fehler: $e');
+      if (mounted) ToastHelper.showError(context, context.l10n.peopleFlutterErrorWith(e));
     }
   }
 
@@ -1344,18 +1345,18 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
     HapticHelper.medium(); // MEDIA_REALTIME: Ionic Haptics.impact Medium
     final confirmed = await DialogHelper.showConfirmation(
       context,
-      title: 'Person wirklich entfernen?',
-      message: 'Diese Aktion kann nicht rückgängig gemacht werden!',
-      confirmText: 'Entfernen',
+      title: context.l10n.peopleRemoveConfirm,
+      message: context.l10n.peopleCannotUndoExcl,
+      confirmText: context.l10n.commonRemove,
       isDestructive: true,
     );
 
     if (confirmed == true && mounted && person.id != null) {
       try {
         await ref.read(playerNotifierProvider.notifier).deletePlayer(person.id!);
-        if (mounted) ToastHelper.showSuccess(context, 'Person wurde entfernt.');
+        if (mounted) ToastHelper.showSuccess(context, context.l10n.peopleRemoved);
       } catch (e) {
-        if (mounted) ToastHelper.showError(context, 'Fehler: $e');
+        if (mounted) ToastHelper.showError(context, context.l10n.peopleFlutterErrorWith(e));
       }
     }
   }
@@ -1479,7 +1480,7 @@ class _PersonListItem extends StatelessWidget {
 
   String _extraValueText(ExtraField field, dynamic value) {
     if (field.type == 'bfecg_church') {
-      return churchNames[value?.toString()] ?? 'Unbekannt';
+      return churchNames[value?.toString()] ?? l10nWithoutContext.commonUnknown;
     }
     return value.toString();
   }
@@ -1488,7 +1489,7 @@ class _PersonListItem extends StatelessWidget {
 
   /// Ionic getSubText: Gruppe | Geburtsdatum | Testergebnis | Instrumente |
   /// Sonstige Dienste, joined with " | ".
-  String get _subText {
+  String _subText(BuildContext context) {
     final parts = <String>[];
     if (viewOptions.contains('group') && person.groupName != null) {
       parts.add(person.groupName!);
@@ -1497,13 +1498,13 @@ class _PersonListItem extends StatelessWidget {
       final date = DateTime.tryParse(person.birthday!);
       if (date != null) {
         parts.add(
-            '${DateFormat('dd.MM.yyyy').format(date)} (${ageInYears(person.birthday!)} J.)');
+            context.l10n.peopleAgeShort(DateFormat(dateFmt()).format(date), ageInYears(person.birthday!)));
       }
     }
     if (viewOptions.contains('test')) {
       parts.add((person.testResult?.isNotEmpty ?? false)
           ? person.testResult!
-          : 'Kein Ergebnis');
+          : context.l10n.peopleNoResult);
     }
     if (viewOptions.contains('instruments') &&
         (person.instruments?.isNotEmpty ?? false)) {
@@ -1520,14 +1521,14 @@ class _PersonListItem extends StatelessWidget {
   List<Widget> _lines(BuildContext context) {
     const h3 = TextStyle(fontSize: 14);
     final p = TextStyle(fontSize: 13, color: Theme.of(context).hintColor);
-    final sub = _subText;
+    final sub = _subText(context);
     return [
       if (sub.isNotEmpty) Text(sub, style: h3),
       if (!isMainGroup && viewOptions.contains('teacher'))
         Text(
           person.teacherName != null
-              ? 'Lehrer: ${person.teacherName}'
-              : 'Kein Lehrer',
+              ? context.l10n.peopleTeacherName(person.teacherName!)
+              : context.l10n.peopleNoTeacher,
           style: h3,
         ),
       if (otherInstanceName != null) Text(otherInstanceName!, style: h3),
@@ -1547,24 +1548,24 @@ class _PersonListItem extends StatelessWidget {
   }
 
   /// Badges on the right (slot="end"), same order and colors as Ionic.
-  List<Widget> get _badges {
+  List<Widget> _badges(BuildContext context) {
     final showPaused = viewOptions.contains('paused');
     final notHiddenByPause = !showPaused || !person.paused;
     return [
       if (notHiddenByPause && viewOptions.contains('leader') && person.isLeader)
-        const _IonBadge(text: 'Stimmführer', color: AppColors.secondary),
+        _IonBadge(text: context.l10n.peopleVoiceLeader, color: AppColors.secondary),
       if (notHiddenByPause &&
           viewOptions.contains('new') &&
           isNewPerson(person) &&
           !person.isLeader)
-        const _IonBadge(text: 'Neu', color: AppColors.danger),
+        _IonBadge(text: context.l10n.peopleNew, color: AppColors.danger),
       if (notHiddenByPause && viewOptions.contains('critical') && person.isCritical)
-        const _IonBadge(text: 'Problemfall', color: AppColors.danger),
+        _IonBadge(text: context.l10n.peopleProblemCase, color: AppColors.danger),
       if (showPaused && person.paused)
-        const _IonBadge(
-            text: 'Pausiert', color: AppColors.warning, textColor: Colors.black),
+        _IonBadge(
+            text: context.l10n.peoplePaused, color: AppColors.warning, textColor: Colors.black),
       if (viewOptions.contains('examinee') && person.examinee)
-        const _IonBadge(text: 'Prüfling', color: AppColors.dark),
+        _IonBadge(text: context.l10n.peopleCandidate, color: AppColors.dark),
       for (final f in extraFields)
         if (viewOptions.contains('extra:${f.id}') &&
             f.displayMode != 'underneath' &&
@@ -1595,7 +1596,7 @@ class _PersonListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final showPhoto = viewOptions.contains('photo');
-    final badges = _badges;
+    final badges = _badges(context);
     final tile = InkWell(
       onTap: onTap,
       child: Container(
@@ -1770,8 +1771,8 @@ class _BirthdayBanner extends StatelessWidget {
               const SizedBox(width: 8),
               Text(
                 people.length == 1
-                    ? 'Geburtstag heute'
-                    : '${people.length} Geburtstage heute',
+                    ? context.l10n.peopleBirthdayToday
+                    : context.l10n.peopleBirthdaysToday(people.length),
                 style: theme.textTheme.titleSmall
                     ?.copyWith(fontWeight: FontWeight.bold),
               ),
@@ -1788,7 +1789,7 @@ class _BirthdayBanner extends StatelessWidget {
                     ? CircleAvatar(backgroundImage: NetworkImage(p.img!))
                     : const Text('🎂'),
                 label: Text(
-                    '${p.firstName} ${p.lastName} · ${age == 1 ? '1 Jahr' : '$age Jahre'}'),
+                    '${p.firstName} ${p.lastName} · ${context.l10n.peopleAgeYears(age)}'),
                 onPressed: () => onTap(p),
               );
             }).toList(),

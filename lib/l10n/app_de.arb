@@ -5821,6 +5821,14 @@
   "@peopleFlutterCreateAnyway": {
     "description": "people.flutter.createAnyway"
   },
+  "peopleFlutterDefaultView": "Standard",
+  "@peopleFlutterDefaultView": {
+    "description": "people.flutter.defaultView"
+  },
+  "peopleFlutterDeselectAll": "Auswahl aufheben",
+  "@peopleFlutterDeselectAll": {
+    "description": "people.flutter.deselectAll"
+  },
   "peopleFlutterDuplicateMessage": "Eine Person mit dem Namen \"{name}\" existiert bereits ({count}x). Trotzdem erstellen?",
   "@peopleFlutterDuplicateMessage": {
     "description": "people.flutter.duplicateMessage",
@@ -5989,6 +5997,14 @@
   "@peopleFlutterLastNameRequired": {
     "description": "people.flutter.lastNameRequired"
   },
+  "peopleFlutterListLoadFailed": "Die Personenliste konnte nicht geladen werden.",
+  "@peopleFlutterListLoadFailed": {
+    "description": "people.flutter.listLoadFailed"
+  },
+  "peopleFlutterLoadFailed": "Fehler beim Laden",
+  "@peopleFlutterLoadFailed": {
+    "description": "people.flutter.loadFailed"
+  },
   "peopleFlutterNotesHint": "Zusätzliche Informationen...",
   "@peopleFlutterNotesHint": {
     "description": "people.flutter.notesHint"
@@ -6014,6 +6030,24 @@
   "peopleFlutterSaveOrder": "Reihenfolge speichern",
   "@peopleFlutterSaveOrder": {
     "description": "people.flutter.saveOrder"
+  },
+  "peopleFlutterSelectedCount": "{count} ausgewählt",
+  "@peopleFlutterSelectedCount": {
+    "description": "people.flutter.selectedCount",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "peopleFlutterTransferCount": "{count} übertragen",
+  "@peopleFlutterTransferCount": {
+    "description": "people.flutter.transferCount",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "peopleFlutterTransferPeople": "Personen übertragen",
+  "@peopleFlutterTransferPeople": {
+    "description": "people.flutter.transferPeople"
   },
   "peopleFromToday": "Ab heute",
   "@peopleFromToday": {
@@ -6639,9 +6673,36 @@
   "@personFlutterAbsenceSaveFailed": {
     "description": "person.flutter.absenceSaveFailed"
   },
+  "personFlutterAccountCreatedMail": "Account erstellt. Passwort-E-Mail wurde gesendet.",
+  "@personFlutterAccountCreatedMail": {
+    "description": "person.flutter.accountCreatedMail"
+  },
   "personFlutterAllEntries": "Alle Einträge",
   "@personFlutterAllEntries": {
     "description": "person.flutter.allEntries"
+  },
+  "personFlutterApprove": "Genehmigen",
+  "@personFlutterApprove": {
+    "description": "person.flutter.approve"
+  },
+  "personFlutterApproveMessage": "{name} als Mitglied freischalten?",
+  "@personFlutterApproveMessage": {
+    "description": "person.flutter.approveMessage",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "personFlutterApproveQuestion": "Person genehmigen?",
+  "@personFlutterApproveQuestion": {
+    "description": "person.flutter.approveQuestion"
+  },
+  "personFlutterApproved": "Person wurde genehmigt",
+  "@personFlutterApproved": {
+    "description": "person.flutter.approved"
+  },
+  "personFlutterArchiveReasonHint": "Warum verlässt die Person?",
+  "@personFlutterArchiveReasonHint": {
+    "description": "person.flutter.archiveReasonHint"
   },
   "personFlutterAttendanceLate": "Anwesenheit ({count}x zu spät)",
   "@personFlutterAttendanceLate": {
@@ -6665,9 +6726,44 @@
   "@personFlutterCreateAccount": {
     "description": "person.flutter.createAccount"
   },
+  "personFlutterCreateAccountFailed": "{name} - Fehler beim Erstellen des Accounts: {error}",
+  "@personFlutterCreateAccountFailed": {
+    "description": "person.flutter.createAccountFailed",
+    "placeholders": {
+      "name": {},
+      "error": {}
+    }
+  },
+  "personFlutterCreateAccountMessage": "Für {name} wird ein Account mit der E-Mail {email} erstellt. Die Person erhält eine E-Mail zum Setzen des Passworts.",
+  "@personFlutterCreateAccountMessage": {
+    "description": "person.flutter.createAccountMessage",
+    "placeholders": {
+      "name": {},
+      "email": {}
+    }
+  },
+  "personFlutterCreateAccountQuestion": "Account erstellen?",
+  "@personFlutterCreateAccountQuestion": {
+    "description": "person.flutter.createAccountQuestion"
+  },
   "personFlutterCritical": "Kritisch",
   "@personFlutterCritical": {
     "description": "person.flutter.critical"
+  },
+  "personFlutterDeclineMessage": "{name} wird abgelehnt und archiviert.",
+  "@personFlutterDeclineMessage": {
+    "description": "person.flutter.declineMessage",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "personFlutterDeclineReasonHint": "Warum wird die Person abgelehnt?",
+  "@personFlutterDeclineReasonHint": {
+    "description": "person.flutter.declineReasonHint"
+  },
+  "personFlutterDeclined": "Person wurde abgelehnt",
+  "@personFlutterDeclined": {
+    "description": "person.flutter.declined"
   },
   "personFlutterEmailRequiredForAccount": "Um einen Account zu erstellen, muss eine E-Mail-Adresse hinterlegt werden.",
   "@personFlutterEmailRequiredForAccount": {
@@ -6712,9 +6808,17 @@
   "@personFlutterMatchFound": {
     "description": "person.flutter.matchFound"
   },
+  "personFlutterMore": "Mehr",
+  "@personFlutterMore": {
+    "description": "person.flutter.more"
+  },
   "personFlutterNoAccountLinked": "Kein Account verknüpft. Ein Dirigent kann einen Account erstellen.",
   "@personFlutterNoAccountLinked": {
     "description": "person.flutter.noAccountLinked"
+  },
+  "personFlutterNoEmail": "Keine E-Mail-Adresse vorhanden",
+  "@personFlutterNoEmail": {
+    "description": "person.flutter.noEmail"
   },
   "personFlutterNoHistory": "Keine Historie vorhanden",
   "@personFlutterNoHistory": {
@@ -6727,6 +6831,34 @@
   "personFlutterNoNotes": "Keine Notizen",
   "@personFlutterNoNotes": {
     "description": "person.flutter.noNotes"
+  },
+  "personFlutterNoPermissionArchive": "Keine Berechtigung zum Archivieren",
+  "@personFlutterNoPermissionArchive": {
+    "description": "person.flutter.noPermissionArchive"
+  },
+  "personFlutterNoPermissionCreateAccount": "Keine Berechtigung zum Erstellen von Accounts",
+  "@personFlutterNoPermissionCreateAccount": {
+    "description": "person.flutter.noPermissionCreateAccount"
+  },
+  "personFlutterNoPermissionEdit": "Keine Berechtigung zum Bearbeiten",
+  "@personFlutterNoPermissionEdit": {
+    "description": "person.flutter.noPermissionEdit"
+  },
+  "personFlutterNoPermissionPause": "Keine Berechtigung zum Pausieren",
+  "@personFlutterNoPermissionPause": {
+    "description": "person.flutter.noPermissionPause"
+  },
+  "personFlutterNoPermissionReactivate": "Keine Berechtigung zum Reaktivieren",
+  "@personFlutterNoPermissionReactivate": {
+    "description": "person.flutter.noPermissionReactivate"
+  },
+  "personFlutterNoPermissionRoles": "Keine Berechtigung zum Ändern von Rollen",
+  "@personFlutterNoPermissionRoles": {
+    "description": "person.flutter.noPermissionRoles"
+  },
+  "personFlutterNoPermissionUnlink": "Keine Berechtigung zum Aufheben von Account-Verknüpfungen",
+  "@personFlutterNoPermissionUnlink": {
+    "description": "person.flutter.noPermissionUnlink"
   },
   "personFlutterNoShiftPlan": "Kein Schichtplan",
   "@personFlutterNoShiftPlan": {
@@ -6749,6 +6881,10 @@
   "personFlutterNotAssigned": "Nicht zugewiesen",
   "@personFlutterNotAssigned": {
     "description": "person.flutter.notAssigned"
+  },
+  "personFlutterNotFound": "Person nicht gefunden",
+  "@personFlutterNotFound": {
+    "description": "person.flutter.notFound"
   },
   "personFlutterNotSelected": "Nicht ausgewählt",
   "@personFlutterNotSelected": {
@@ -6784,6 +6920,10 @@
   "@personFlutterPending": {
     "description": "person.flutter.pending"
   },
+  "personFlutterProblemSolved": "Problemfall gelöst",
+  "@personFlutterProblemSolved": {
+    "description": "person.flutter.problemSolved"
+  },
   "personFlutterRangeHint": "z.B. C3 - C5",
   "@personFlutterRangeHint": {
     "description": "person.flutter.rangeHint"
@@ -6803,6 +6943,17 @@
   "personFlutterRoleNone": "Keine Rolle",
   "@personFlutterRoleNone": {
     "description": "person.flutter.roleNone"
+  },
+  "personFlutterRoleUpdateFailed": "Rolle konnte nicht angepasst werden: {error}",
+  "@personFlutterRoleUpdateFailed": {
+    "description": "person.flutter.roleUpdateFailed",
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "personFlutterSaveOnly": "Nur speichern",
+  "@personFlutterSaveOnly": {
+    "description": "person.flutter.saveOnly"
   },
   "personFlutterSearchOtherInstance": "In anderer Instanz suchen",
   "@personFlutterSearchOtherInstance": {
@@ -6824,9 +6975,28 @@
   "@personFlutterTestResultHint": {
     "description": "person.flutter.testResultHint"
   },
+  "personFlutterUnlink": "Verknüpfung aufheben",
+  "@personFlutterUnlink": {
+    "description": "person.flutter.unlink"
+  },
   "personFlutterUnlinkAccount": "Account-Verknüpfung aufheben",
   "@personFlutterUnlinkAccount": {
     "description": "person.flutter.unlinkAccount"
+  },
+  "personFlutterUnlinkMessage": "Die Account-Verknüpfung für {name} wird aufgehoben. Die Person kann sich dann nicht mehr in der App anmelden.",
+  "@personFlutterUnlinkMessage": {
+    "description": "person.flutter.unlinkMessage",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "personFlutterUnlinkQuestion": "Account-Verknüpfung aufheben?",
+  "@personFlutterUnlinkQuestion": {
+    "description": "person.flutter.unlinkQuestion"
+  },
+  "personFlutterUnlinked": "Account-Verknüpfung aufgehoben",
+  "@personFlutterUnlinked": {
+    "description": "person.flutter.unlinked"
   },
   "personFlutterUploadFailedWith": "Fehler beim Hochladen: {error}",
   "@personFlutterUploadFailedWith": {

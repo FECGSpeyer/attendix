@@ -4456,6 +4456,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get peopleFlutterCreateAnyway => 'Create anyway';
 
   @override
+  String get peopleFlutterDefaultView => 'Default';
+
+  @override
+  String get peopleFlutterDeselectAll => 'Clear selection';
+
+  @override
   String peopleFlutterDuplicateMessage(Object name, Object count) {
     return 'A person named \"$name\" already exists (${count}x). Create anyway?';
   }
@@ -4572,6 +4578,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get peopleFlutterLastNameRequired => 'Last name is required';
 
   @override
+  String get peopleFlutterListLoadFailed => 'The list of people could not be loaded.';
+
+  @override
+  String get peopleFlutterLoadFailed => 'Loading failed';
+
+  @override
   String get peopleFlutterNotesHint => 'Additional information...';
 
   @override
@@ -4589,6 +4601,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get peopleFlutterSaveOrder => 'Save order';
+
+  @override
+  String peopleFlutterSelectedCount(Object count) {
+    return '$count selected';
+  }
+
+  @override
+  String peopleFlutterTransferCount(Object count) {
+    return 'Transfer $count';
+  }
+
+  @override
+  String get peopleFlutterTransferPeople => 'Transfer people';
 
   @override
   String get peopleFromToday => 'From today';
@@ -5065,7 +5090,27 @@ class AppLocalizationsEn extends AppLocalizations {
   String get personFlutterAbsenceSaveFailed => 'Absence could not be saved';
 
   @override
+  String get personFlutterAccountCreatedMail => 'Account created. Password email sent.';
+
+  @override
   String get personFlutterAllEntries => 'All entries';
+
+  @override
+  String get personFlutterApprove => 'Approve';
+
+  @override
+  String personFlutterApproveMessage(Object name) {
+    return 'Approve $name as a member?';
+  }
+
+  @override
+  String get personFlutterApproveQuestion => 'Approve person?';
+
+  @override
+  String get personFlutterApproved => 'Person approved';
+
+  @override
+  String get personFlutterArchiveReasonHint => 'Why is the person leaving?';
 
   @override
   String personFlutterAttendanceLate(Object count) {
@@ -5084,7 +5129,31 @@ class AppLocalizationsEn extends AppLocalizations {
   String get personFlutterCreateAccount => 'Create account';
 
   @override
+  String personFlutterCreateAccountFailed(Object name, Object error) {
+    return '$name - error creating the account: $error';
+  }
+
+  @override
+  String personFlutterCreateAccountMessage(Object name, Object email) {
+    return 'An account with the email $email will be created for $name. The person receives an email to set the password.';
+  }
+
+  @override
+  String get personFlutterCreateAccountQuestion => 'Create account?';
+
+  @override
   String get personFlutterCritical => 'Critical';
+
+  @override
+  String personFlutterDeclineMessage(Object name) {
+    return '$name will be declined and archived.';
+  }
+
+  @override
+  String get personFlutterDeclineReasonHint => 'Why is the person declined?';
+
+  @override
+  String get personFlutterDeclined => 'Person declined';
 
   @override
   String get personFlutterEmailRequiredForAccount => 'An email address is required to create an account.';
@@ -5117,7 +5186,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get personFlutterMatchFound => 'Person found in another instance?';
 
   @override
+  String get personFlutterMore => 'More';
+
+  @override
   String get personFlutterNoAccountLinked => 'No account linked. A conductor can create an account.';
+
+  @override
+  String get personFlutterNoEmail => 'No email address';
 
   @override
   String get personFlutterNoHistory => 'No history';
@@ -5127,6 +5202,27 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get personFlutterNoNotes => 'No notes';
+
+  @override
+  String get personFlutterNoPermissionArchive => 'No permission to archive';
+
+  @override
+  String get personFlutterNoPermissionCreateAccount => 'No permission to create accounts';
+
+  @override
+  String get personFlutterNoPermissionEdit => 'No permission to edit';
+
+  @override
+  String get personFlutterNoPermissionPause => 'No permission to pause';
+
+  @override
+  String get personFlutterNoPermissionReactivate => 'No permission to reactivate';
+
+  @override
+  String get personFlutterNoPermissionRoles => 'No permission to change roles';
+
+  @override
+  String get personFlutterNoPermissionUnlink => 'No permission to unlink accounts';
 
   @override
   String get personFlutterNoShiftPlan => 'No shift plan';
@@ -5143,6 +5239,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get personFlutterNotAssigned => 'Not assigned';
+
+  @override
+  String get personFlutterNotFound => 'Person not found';
 
   @override
   String get personFlutterNotSelected => 'Not selected';
@@ -5170,6 +5269,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get personFlutterPending => 'Pending';
 
   @override
+  String get personFlutterProblemSolved => 'Problem case resolved';
+
+  @override
   String get personFlutterRangeHint => 'e.g. C3 - C5';
 
   @override
@@ -5183,6 +5285,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get personFlutterRoleNone => 'No role';
+
+  @override
+  String personFlutterRoleUpdateFailed(Object error) {
+    return 'Role could not be updated: $error';
+  }
+
+  @override
+  String get personFlutterSaveOnly => 'Save only';
 
   @override
   String get personFlutterSearchOtherInstance => 'Search in other instance';
@@ -5200,7 +5310,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get personFlutterTestResultHint => 'Enter result...';
 
   @override
+  String get personFlutterUnlink => 'Unlink';
+
+  @override
   String get personFlutterUnlinkAccount => 'Unlink account';
+
+  @override
+  String personFlutterUnlinkMessage(Object name) {
+    return 'The account link for $name will be removed. The person can then no longer sign in to the app.';
+  }
+
+  @override
+  String get personFlutterUnlinkQuestion => 'Unlink account?';
+
+  @override
+  String get personFlutterUnlinked => 'Account unlinked';
 
   @override
   String personFlutterUploadFailedWith(Object error) {

@@ -54,7 +54,14 @@
         "possibleDuplicate": "Mögliches Duplikat",
         "duplicateMessage": "Eine Person mit dem Namen \"{name}\" existiert bereits ({count}x). Trotzdem erstellen?",
         "createAnyway": "Trotzdem erstellen",
-        "bulkUpdated": "{count} Person(en) aktualisiert"
+        "bulkUpdated": "{count} Person(en) aktualisiert",
+        "defaultView": "Standard",
+        "selectedCount": "{count} ausgewählt",
+        "deselectAll": "Auswahl aufheben",
+        "loadFailed": "Fehler beim Laden",
+        "listLoadFailed": "Die Personenliste konnte nicht geladen werden.",
+        "transferCount": "{count} übertragen",
+        "transferPeople": "Personen übertragen"
       }
     },
     "teachers": {
@@ -121,7 +128,36 @@
         "pending": "Ausstehend",
         "talkedToHint": "Bestätigen, dass das Problem besprochen wurde",
         "remarksHint": "Was wurde besprochen?",
-        "noneLabelMasc": "Kein {label}"
+        "noneLabelMasc": "Kein {label}",
+        "notFound": "Person nicht gefunden",
+        "noPermissionEdit": "Keine Berechtigung zum Bearbeiten",
+        "saveOnly": "Nur speichern",
+        "roleUpdateFailed": "Rolle konnte nicht angepasst werden: {error}",
+        "noPermissionPause": "Keine Berechtigung zum Pausieren",
+        "noPermissionReactivate": "Keine Berechtigung zum Reaktivieren",
+        "archiveReasonHint": "Warum verlässt die Person?",
+        "noPermissionArchive": "Keine Berechtigung zum Archivieren",
+        "problemSolved": "Problemfall gelöst",
+        "approveQuestion": "Person genehmigen?",
+        "approveMessage": "{name} als Mitglied freischalten?",
+        "approve": "Genehmigen",
+        "approved": "Person wurde genehmigt",
+        "declineMessage": "{name} wird abgelehnt und archiviert.",
+        "declineReasonHint": "Warum wird die Person abgelehnt?",
+        "declined": "Person wurde abgelehnt",
+        "noPermissionRoles": "Keine Berechtigung zum Ändern von Rollen",
+        "unlinkQuestion": "Account-Verknüpfung aufheben?",
+        "unlinkMessage": "Die Account-Verknüpfung für {name} wird aufgehoben. Die Person kann sich dann nicht mehr in der App anmelden.",
+        "unlink": "Verknüpfung aufheben",
+        "noPermissionUnlink": "Keine Berechtigung zum Aufheben von Account-Verknüpfungen",
+        "unlinked": "Account-Verknüpfung aufgehoben",
+        "noPermissionCreateAccount": "Keine Berechtigung zum Erstellen von Accounts",
+        "noEmail": "Keine E-Mail-Adresse vorhanden",
+        "createAccountQuestion": "Account erstellen?",
+        "createAccountMessage": "Für {name} wird ein Account mit der E-Mail {email} erstellt. Die Person erhält eine E-Mail zum Setzen des Passworts.",
+        "accountCreatedMail": "Account erstellt. Passwort-E-Mail wurde gesendet.",
+        "createAccountFailed": "{name} - Fehler beim Erstellen des Accounts: {error}",
+        "more": "Mehr"
       }
     }
   },
@@ -180,7 +216,14 @@
         "possibleDuplicate": "Possible duplicate",
         "duplicateMessage": "A person named \"{name}\" already exists ({count}x). Create anyway?",
         "createAnyway": "Create anyway",
-        "bulkUpdated": "{count} person(s) updated"
+        "bulkUpdated": "{count} person(s) updated",
+        "defaultView": "Default",
+        "selectedCount": "{count} selected",
+        "deselectAll": "Clear selection",
+        "loadFailed": "Loading failed",
+        "listLoadFailed": "The list of people could not be loaded.",
+        "transferCount": "Transfer {count}",
+        "transferPeople": "Transfer people"
       }
     },
     "teachers": {
@@ -247,7 +290,36 @@
         "pending": "Pending",
         "talkedToHint": "Confirm that the problem was discussed",
         "remarksHint": "What was discussed?",
-        "noneLabelMasc": "No {label}"
+        "noneLabelMasc": "No {label}",
+        "notFound": "Person not found",
+        "noPermissionEdit": "No permission to edit",
+        "saveOnly": "Save only",
+        "roleUpdateFailed": "Role could not be updated: {error}",
+        "noPermissionPause": "No permission to pause",
+        "noPermissionReactivate": "No permission to reactivate",
+        "archiveReasonHint": "Why is the person leaving?",
+        "noPermissionArchive": "No permission to archive",
+        "problemSolved": "Problem case resolved",
+        "approveQuestion": "Approve person?",
+        "approveMessage": "Approve {name} as a member?",
+        "approve": "Approve",
+        "approved": "Person approved",
+        "declineMessage": "{name} will be declined and archived.",
+        "declineReasonHint": "Why is the person declined?",
+        "declined": "Person declined",
+        "noPermissionRoles": "No permission to change roles",
+        "unlinkQuestion": "Unlink account?",
+        "unlinkMessage": "The account link for {name} will be removed. The person can then no longer sign in to the app.",
+        "unlink": "Unlink",
+        "noPermissionUnlink": "No permission to unlink accounts",
+        "unlinked": "Account unlinked",
+        "noPermissionCreateAccount": "No permission to create accounts",
+        "noEmail": "No email address",
+        "createAccountQuestion": "Create account?",
+        "createAccountMessage": "An account with the email {email} will be created for {name}. The person receives an email to set the password.",
+        "accountCreatedMail": "Account created. Password email sent.",
+        "createAccountFailed": "{name} - error creating the account: {error}",
+        "more": "More"
       }
     }
   }

@@ -43,7 +43,7 @@ void main() {
     test('titles', () {
       expect(historyEntryTitle(1, date), 'Pausiert am 04.03.2026 09:30');
       expect(historyEntryTitle(5, date), 'Notiz geändert am 04.03.2026 09:30');
-      expect(historyEntryTitle(6, date), 'Wieder aktiv seit 04.03.2026 09:30');
+      expect(historyEntryTitle(6, date), 'Wieder aktiv seid 04.03.2026 09:30'); // Ionic person.activeSince (sic)
       expect(historyEntryTitle(8, date), 'Archiviert am 04.03.2026');
       expect(historyEntryTitle(9, date), 'Reaktiviert am 04.03.2026');
       expect(historyEntryTitle(10, date), 'Übertragen am 04.03.2026');

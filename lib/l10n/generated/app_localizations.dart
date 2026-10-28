@@ -7829,6 +7829,18 @@ abstract class AppLocalizations {
   /// **'Trotzdem erstellen'**
   String get peopleFlutterCreateAnyway;
 
+  /// people.flutter.defaultView
+  ///
+  /// In de, this message translates to:
+  /// **'Standard'**
+  String get peopleFlutterDefaultView;
+
+  /// people.flutter.deselectAll
+  ///
+  /// In de, this message translates to:
+  /// **'Auswahl aufheben'**
+  String get peopleFlutterDeselectAll;
+
   /// people.flutter.duplicateMessage
   ///
   /// In de, this message translates to:
@@ -8021,6 +8033,18 @@ abstract class AppLocalizations {
   /// **'Nachname ist erforderlich'**
   String get peopleFlutterLastNameRequired;
 
+  /// people.flutter.listLoadFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Die Personenliste konnte nicht geladen werden.'**
+  String get peopleFlutterListLoadFailed;
+
+  /// people.flutter.loadFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Laden'**
+  String get peopleFlutterLoadFailed;
+
   /// people.flutter.notesHint
   ///
   /// In de, this message translates to:
@@ -8050,6 +8074,24 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Reihenfolge speichern'**
   String get peopleFlutterSaveOrder;
+
+  /// people.flutter.selectedCount
+  ///
+  /// In de, this message translates to:
+  /// **'{count} ausgewählt'**
+  String peopleFlutterSelectedCount(Object count);
+
+  /// people.flutter.transferCount
+  ///
+  /// In de, this message translates to:
+  /// **'{count} übertragen'**
+  String peopleFlutterTransferCount(Object count);
+
+  /// people.flutter.transferPeople
+  ///
+  /// In de, this message translates to:
+  /// **'Personen übertragen'**
+  String get peopleFlutterTransferPeople;
 
   /// people.fromToday
   ///
@@ -8879,11 +8921,47 @@ abstract class AppLocalizations {
   /// **'Abwesenheit konnte nicht gespeichert werden'**
   String get personFlutterAbsenceSaveFailed;
 
+  /// person.flutter.accountCreatedMail
+  ///
+  /// In de, this message translates to:
+  /// **'Account erstellt. Passwort-E-Mail wurde gesendet.'**
+  String get personFlutterAccountCreatedMail;
+
   /// person.flutter.allEntries
   ///
   /// In de, this message translates to:
   /// **'Alle Einträge'**
   String get personFlutterAllEntries;
+
+  /// person.flutter.approve
+  ///
+  /// In de, this message translates to:
+  /// **'Genehmigen'**
+  String get personFlutterApprove;
+
+  /// person.flutter.approveMessage
+  ///
+  /// In de, this message translates to:
+  /// **'{name} als Mitglied freischalten?'**
+  String personFlutterApproveMessage(Object name);
+
+  /// person.flutter.approveQuestion
+  ///
+  /// In de, this message translates to:
+  /// **'Person genehmigen?'**
+  String get personFlutterApproveQuestion;
+
+  /// person.flutter.approved
+  ///
+  /// In de, this message translates to:
+  /// **'Person wurde genehmigt'**
+  String get personFlutterApproved;
+
+  /// person.flutter.archiveReasonHint
+  ///
+  /// In de, this message translates to:
+  /// **'Warum verlässt die Person?'**
+  String get personFlutterArchiveReasonHint;
 
   /// person.flutter.attendanceLate
   ///
@@ -8909,11 +8987,47 @@ abstract class AppLocalizations {
   /// **'Account erstellen'**
   String get personFlutterCreateAccount;
 
+  /// person.flutter.createAccountFailed
+  ///
+  /// In de, this message translates to:
+  /// **'{name} - Fehler beim Erstellen des Accounts: {error}'**
+  String personFlutterCreateAccountFailed(Object name, Object error);
+
+  /// person.flutter.createAccountMessage
+  ///
+  /// In de, this message translates to:
+  /// **'Für {name} wird ein Account mit der E-Mail {email} erstellt. Die Person erhält eine E-Mail zum Setzen des Passworts.'**
+  String personFlutterCreateAccountMessage(Object name, Object email);
+
+  /// person.flutter.createAccountQuestion
+  ///
+  /// In de, this message translates to:
+  /// **'Account erstellen?'**
+  String get personFlutterCreateAccountQuestion;
+
   /// person.flutter.critical
   ///
   /// In de, this message translates to:
   /// **'Kritisch'**
   String get personFlutterCritical;
+
+  /// person.flutter.declineMessage
+  ///
+  /// In de, this message translates to:
+  /// **'{name} wird abgelehnt und archiviert.'**
+  String personFlutterDeclineMessage(Object name);
+
+  /// person.flutter.declineReasonHint
+  ///
+  /// In de, this message translates to:
+  /// **'Warum wird die Person abgelehnt?'**
+  String get personFlutterDeclineReasonHint;
+
+  /// person.flutter.declined
+  ///
+  /// In de, this message translates to:
+  /// **'Person wurde abgelehnt'**
+  String get personFlutterDeclined;
 
   /// person.flutter.emailRequiredForAccount
   ///
@@ -8963,11 +9077,23 @@ abstract class AppLocalizations {
   /// **'Person in anderer Instanz gefunden?'**
   String get personFlutterMatchFound;
 
+  /// person.flutter.more
+  ///
+  /// In de, this message translates to:
+  /// **'Mehr'**
+  String get personFlutterMore;
+
   /// person.flutter.noAccountLinked
   ///
   /// In de, this message translates to:
   /// **'Kein Account verknüpft. Ein Dirigent kann einen Account erstellen.'**
   String get personFlutterNoAccountLinked;
+
+  /// person.flutter.noEmail
+  ///
+  /// In de, this message translates to:
+  /// **'Keine E-Mail-Adresse vorhanden'**
+  String get personFlutterNoEmail;
 
   /// person.flutter.noHistory
   ///
@@ -8986,6 +9112,48 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Keine Notizen'**
   String get personFlutterNoNotes;
+
+  /// person.flutter.noPermissionArchive
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Berechtigung zum Archivieren'**
+  String get personFlutterNoPermissionArchive;
+
+  /// person.flutter.noPermissionCreateAccount
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Berechtigung zum Erstellen von Accounts'**
+  String get personFlutterNoPermissionCreateAccount;
+
+  /// person.flutter.noPermissionEdit
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Berechtigung zum Bearbeiten'**
+  String get personFlutterNoPermissionEdit;
+
+  /// person.flutter.noPermissionPause
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Berechtigung zum Pausieren'**
+  String get personFlutterNoPermissionPause;
+
+  /// person.flutter.noPermissionReactivate
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Berechtigung zum Reaktivieren'**
+  String get personFlutterNoPermissionReactivate;
+
+  /// person.flutter.noPermissionRoles
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Berechtigung zum Ändern von Rollen'**
+  String get personFlutterNoPermissionRoles;
+
+  /// person.flutter.noPermissionUnlink
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Berechtigung zum Aufheben von Account-Verknüpfungen'**
+  String get personFlutterNoPermissionUnlink;
 
   /// person.flutter.noShiftPlan
   ///
@@ -9010,6 +9178,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Nicht zugewiesen'**
   String get personFlutterNotAssigned;
+
+  /// person.flutter.notFound
+  ///
+  /// In de, this message translates to:
+  /// **'Person nicht gefunden'**
+  String get personFlutterNotFound;
 
   /// person.flutter.notSelected
   ///
@@ -9053,6 +9227,12 @@ abstract class AppLocalizations {
   /// **'Ausstehend'**
   String get personFlutterPending;
 
+  /// person.flutter.problemSolved
+  ///
+  /// In de, this message translates to:
+  /// **'Problemfall gelöst'**
+  String get personFlutterProblemSolved;
+
   /// person.flutter.rangeHint
   ///
   /// In de, this message translates to:
@@ -9082,6 +9262,18 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Keine Rolle'**
   String get personFlutterRoleNone;
+
+  /// person.flutter.roleUpdateFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Rolle konnte nicht angepasst werden: {error}'**
+  String personFlutterRoleUpdateFailed(Object error);
+
+  /// person.flutter.saveOnly
+  ///
+  /// In de, this message translates to:
+  /// **'Nur speichern'**
+  String get personFlutterSaveOnly;
 
   /// person.flutter.searchOtherInstance
   ///
@@ -9113,11 +9305,35 @@ abstract class AppLocalizations {
   /// **'Ergebnis eingeben...'**
   String get personFlutterTestResultHint;
 
+  /// person.flutter.unlink
+  ///
+  /// In de, this message translates to:
+  /// **'Verknüpfung aufheben'**
+  String get personFlutterUnlink;
+
   /// person.flutter.unlinkAccount
   ///
   /// In de, this message translates to:
   /// **'Account-Verknüpfung aufheben'**
   String get personFlutterUnlinkAccount;
+
+  /// person.flutter.unlinkMessage
+  ///
+  /// In de, this message translates to:
+  /// **'Die Account-Verknüpfung für {name} wird aufgehoben. Die Person kann sich dann nicht mehr in der App anmelden.'**
+  String personFlutterUnlinkMessage(Object name);
+
+  /// person.flutter.unlinkQuestion
+  ///
+  /// In de, this message translates to:
+  /// **'Account-Verknüpfung aufheben?'**
+  String get personFlutterUnlinkQuestion;
+
+  /// person.flutter.unlinked
+  ///
+  /// In de, this message translates to:
+  /// **'Account-Verknüpfung aufgehoben'**
+  String get personFlutterUnlinked;
 
   /// person.flutter.uploadFailedWith
   ///
