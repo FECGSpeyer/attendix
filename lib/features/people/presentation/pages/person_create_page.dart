@@ -27,12 +27,11 @@ import '../../../../core/providers/shift_providers.dart';
 import '../../../../core/providers/teacher_providers.dart';
 import '../../../../data/models/shift/shift_plan.dart';
 import '../widgets/church_picker_sheet.dart';
-import '../widgets/person_detail/account_accordion.dart'
-    show accountHelpText, existingUserHintText;
 import '../widgets/person_detail/allgemein_accordion.dart'
     show otherOrchestraOptions, personExtraFields;
 import '../../../../core/services/tracking/tracking_event.dart';
 import '../../../../core/services/tracking/tracking_service.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Page for creating a new person
 class PersonCreatePage extends ConsumerStatefulWidget {
@@ -178,7 +177,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
       _dismissedFor = _nameKey;
     });
     _nameDebounce?.cancel();
-    ToastHelper.showSuccess(context, 'Die Daten wurden erfolgreich übernommen');
+    ToastHelper.showSuccess(context, context.l10n.personDataTaken);
   }
 
   /// Returns the default value for a field type (like Utils.getFieldTypeDefaultValue in Ionic)
@@ -250,7 +249,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
       // Ionic person.page (create): title "Person hinzufügen", save via the
       // person-add FAB.
       appBar: AppBar(
-        title: const Text('Person hinzufügen'),
+        title: Text(context.l10n.attendanceAddPerson),
         leading: IconButton(
           icon: const Icon(Icons.close),
           onPressed: () => context.pop(),
@@ -258,7 +257,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
       ),
       floatingActionButton: FloatingActionButton(
         key: const Key('person_create_save'),
-        tooltip: 'Speichern',
+        tooltip: context.l10n.commonSave,
         onPressed: _isLoading ? null : _save,
         child: _isLoading
             ? const SizedBox(
@@ -277,15 +276,15 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
             // First Name
             TextFormField(
               controller: _firstNameController,
-              decoration: const InputDecoration(
-                labelText: 'Vorname *',
+              decoration: InputDecoration(
+                labelText: '${context.l10n.peopleFirstName} *',
                 hintText: 'Max',
-                prefixIcon: Icon(Icons.person),
+                prefixIcon: const Icon(Icons.person),
               ),
               textCapitalization: TextCapitalization.words,
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {
-                  return 'Vorname ist erforderlich';
+                  return context.l10n.peopleFlutterFirstNameRequired;
                 }
                 return null;
               },
@@ -296,15 +295,15 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
             // Last Name
             TextFormField(
               controller: _lastNameController,
-              decoration: const InputDecoration(
-                labelText: 'Nachname *',
+              decoration: InputDecoration(
+                labelText: '${context.l10n.peopleLastName} *',
                 hintText: 'Mustermann',
-                prefixIcon: Icon(Icons.person),
+                prefixIcon: const Icon(Icons.person),
               ),
               textCapitalization: TextCapitalization.words,
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {
-                  return 'Nachname ist erforderlich';
+                  return context.l10n.peopleFlutterLastNameRequired;
                 }
                 return null;
               },
@@ -324,7 +323,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
             // Instrument Dropdown
             instrumentsAsync.when(
               loading: () => const LinearProgressIndicator(),
-              error: (e, _) => Text('Fehler: $e'),
+              error: (e, _) => Text(context.l10n.peopleFlutterErrorWith(e)),
               data: (instruments) {
                 final label = groupLabel(tenant?.type);
                 return DropdownButtonFormField<int>(
@@ -336,7 +335,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
                 items: [
                   DropdownMenuItem<int>(
                     value: null,
-                    child: Text('Kein $label'),
+                    child: Text(context.l10n.personFlutterNoneLabelMasc(label)),
                   ),
                   ...instruments.map((i) => DropdownMenuItem<int>(
                     value: i.id,
@@ -353,11 +352,11 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
             ListTile(
               contentPadding: EdgeInsets.zero,
               leading: const Icon(Icons.cake),
-              title: const Text('Geburtstag'),
+              title: Text(context.l10n.peopleBirthday),
               subtitle: Text(
                 _birthday != null
-                    ? '${_birthday!.day.toString().padLeft(2, '0')}.${_birthday!.month.toString().padLeft(2, '0')}.${_birthday!.year}'
-                    : 'Nicht angegeben',
+                    ? DateFormat(dateFmt()).format(_birthday!)
+                    : context.l10n.personFlutterNotSpecified,
                 style: TextStyle(
                   color: _birthday != null ? null : AppColors.medium,
                 ),
@@ -378,17 +377,17 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
               focusNode: _emailFocus,
               textCapitalization: TextCapitalization.none,
               autocorrect: false,
-              decoration: const InputDecoration(
-                labelText: 'E-Mail (optional)',
+              decoration: InputDecoration(
+                labelText: context.l10n.peopleFlutterOptional(context.l10n.peopleEmail),
                 hintText: 'max@example.com',
-                prefixIcon: Icon(Icons.email),
+                prefixIcon: const Icon(Icons.email),
               ),
               keyboardType: TextInputType.emailAddress,
               validator: (value) {
                 if (value != null && value.isNotEmpty) {
                   final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
                   if (!emailRegex.hasMatch(value)) {
-                    return 'Ungültige E-Mail-Adresse';
+                    return context.l10n.registerModalInvalidEmail;
                   }
                 }
                 return null;
@@ -399,10 +398,10 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
             // Phone
             TextFormField(
               controller: _phoneController,
-              decoration: const InputDecoration(
-                labelText: 'Telefon (optional)',
+              decoration: InputDecoration(
+                labelText: context.l10n.peopleFlutterOptional(context.l10n.peoplePhone),
                 hintText: '+49 123 456789',
-                prefixIcon: Icon(Icons.phone),
+                prefixIcon: const Icon(Icons.phone),
               ),
               keyboardType: TextInputType.phone,
             ),
@@ -411,10 +410,10 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
             // Notes
             TextFormField(
               controller: _notesController,
-              decoration: const InputDecoration(
-                labelText: 'Notizen (optional)',
-                hintText: 'Zusätzliche Informationen...',
-                prefixIcon: Icon(Icons.note),
+              decoration: InputDecoration(
+                labelText: context.l10n.peopleFlutterOptional(context.l10n.peopleNotes),
+                hintText: context.l10n.peopleFlutterNotesHint,
+                prefixIcon: const Icon(Icons.note),
                 alignLabelWithHint: true,
               ),
               textCapitalization: TextCapitalization.sentences,
@@ -424,10 +423,10 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
             ..._buildIonicFields(tenant),
 
             // Account help (Ionic person.accountHelp / existingUserHint)
-            const Padding(
+            Padding(
               padding: EdgeInsets.only(top: AppDimensions.paddingM),
               child: Text(
-                '$accountHelpText\n$existingUserHintText',
+                '${context.l10n.personAccountHelp}\n${context.l10n.personExistingUserHint}',
                 style: TextStyle(fontSize: 12, color: AppColors.medium),
               ),
             ),
@@ -435,7 +434,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
             // Extra Fields Section - as ExpansionTile like Ionic Accordion
             if (extraFields.isNotEmpty)
               ExpansionTile(
-                title: const Text('Zusatzfelder'),
+                title: Text(context.l10n.peopleExtraFields),
                 initiallyExpanded: true,
                 tilePadding: EdgeInsets.zero,
                 children: extraFields.map((field) => _buildExtraFieldInput(field)).toList(),
@@ -501,8 +500,8 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
           title: Text(field.name),
           subtitle: Text(
             currentDate != null
-                ? DateFormat('dd.MM.yyyy').format(currentDate)
-                : 'Nicht angegeben',
+                ? DateFormat(dateFmt()).format(currentDate)
+                : context.l10n.personFlutterNotSpecified,
           ),
           trailing: const Icon(Icons.calendar_today),
           onTap: () async {
@@ -569,17 +568,16 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
     final create = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('E-Mail Adresse hinzugefügt'),
-        content: const Text(
-            'Möchtest du gleich ein Konto für die Person anlegen?'),
+        title: Text(context.l10n.personEmailAdded),
+        content: Text(context.l10n.personCreateAccountNow),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Nein'),
+            child: Text(context.l10n.commonNo),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Ja'),
+            child: Text(context.l10n.commonYes),
           ),
         ],
       ),
@@ -591,10 +589,10 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
       // AUTH: server-side account creation (attendix-user Edge Function)
       await ref.read(accountCreationNotifierProvider.notifier).createAccount(created);
       if (mounted) {
-        ToastHelper.showSuccess(context, 'Account erstellt');
+        ToastHelper.showSuccess(context, context.l10n.personAccountCreated);
       }
     } catch (e) {
-      if (mounted) ToastHelper.showError(context, 'Fehler: $e');
+      if (mounted) ToastHelper.showError(context, context.l10n.peopleFlutterErrorWith(e));
     }
   }
 
@@ -611,7 +609,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
       leading: Icon(icon),
       title: Text(label),
       subtitle: Text(
-        value != null ? DateFormat('dd.MM.yyyy').format(value) : 'Nicht angegeben',
+        value != null ? DateFormat(dateFmt()).format(value) : context.l10n.personFlutterNotSpecified,
         style: TextStyle(color: value != null ? null : AppColors.medium),
       ),
       trailing: clearable && value != null
@@ -655,9 +653,9 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
       if (isChoir) ...[
         TextFormField(
           controller: _rangeController,
-          decoration: const InputDecoration(
-            labelText: 'Stimmumfang',
-            prefixIcon: Icon(Icons.music_note_outlined),
+          decoration: InputDecoration(
+            labelText: context.l10n.personVocalRange,
+            prefixIcon: const Icon(Icons.music_note_outlined),
           ),
         ),
         gap,
@@ -665,14 +663,14 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
       if (!isGeneral && !isChoir && !isMain)
         _dateTile(
           icon: Icons.music_note,
-          label: 'Spielt auf dem Instrument seit',
+          label: context.l10n.personPlaysSince,
           value: _playsSince,
           lastDate: DateTime.now(),
           onChanged: (d) => setState(() => _playsSince = d),
         ),
       _dateTile(
         icon: Icons.login,
-        label: 'Beigetreten am',
+        label: context.l10n.personJoinedOn,
         value: _joined,
         clearable: false,
         onChanged: (d) => setState(() => _joined = d ?? _joined),
@@ -680,13 +678,13 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
       if ((tenant?.parents ?? false) && !isMain)
         DropdownButtonFormField<int?>(
           value: _parentId,
-          decoration: const InputDecoration(
-            labelText: 'Eltern',
-            prefixIcon: Icon(Icons.family_restroom),
+          decoration: InputDecoration(
+            labelText: context.l10n.personParents,
+            prefixIcon: const Icon(Icons.family_restroom),
           ),
           items: [
-            const DropdownMenuItem<int?>(
-                value: null, child: Text('Nicht festgelegt')),
+            DropdownMenuItem<int?>(
+                value: null, child: Text(context.l10n.personNotSet)),
             for (final p in parents)
               DropdownMenuItem<int?>(value: p.id, child: Text(p.fullName)),
           ],
@@ -695,7 +693,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
       if ((tenant?.maintainTeachers ?? false) && !isMain) ...[
         SwitchListTile(
           contentPadding: EdgeInsets.zero,
-          title: const Text('Spielt beim Lehrer'),
+          title: Text(context.l10n.personPlaysWithTeacher),
           value: _hasTeacher,
           onChanged: (v) => setState(() {
             _hasTeacher = v;
@@ -705,12 +703,12 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
         if (_hasTeacher)
           DropdownButtonFormField<int?>(
             value: teachers.any((t) => t.id == _teacherId) ? _teacherId : null,
-            decoration: const InputDecoration(
-              labelText: 'Lehrer',
-              prefixIcon: Icon(Icons.school),
+            decoration: InputDecoration(
+              labelText: context.l10n.peopleTeacher,
+              prefixIcon: const Icon(Icons.school),
             ),
             items: [
-              const DropdownMenuItem<int?>(value: null, child: Text('Kein Lehrer')),
+              DropdownMenuItem<int?>(value: null, child: Text(context.l10n.peopleNoTeacher)),
               for (final t in teachers)
                 DropdownMenuItem<int?>(value: t.id, child: Text(t.name)),
             ],
@@ -720,24 +718,24 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
       if (!isGeneral && !isMain)
         SwitchListTile(
           contentPadding: EdgeInsets.zero,
-          title: const Text('Stimmführer'),
+          title: Text(context.l10n.peopleVoiceLeader),
           value: _isLeader,
           onChanged: (v) => setState(() => _isLeader = v),
         ),
       if (!isMain && isChoir) ...[
         TextFormField(
           controller: _instrumentsController,
-          decoration: const InputDecoration(
-            labelText: 'Instrumente',
-            prefixIcon: Icon(Icons.piano_outlined),
+          decoration: InputDecoration(
+            labelText: context.l10n.peopleInstruments,
+            prefixIcon: const Icon(Icons.piano_outlined),
           ),
         ),
         gap,
       ],
       if (!isMain && isVoS) ...[
-        const Padding(
-          padding: EdgeInsets.only(top: AppDimensions.paddingS),
-          child: Text('Andere Orchester'),
+        Padding(
+          padding: const EdgeInsets.only(top: AppDimensions.paddingS),
+          child: Text(context.l10n.personOtherOrchestras),
         ),
         Wrap(
           spacing: 8,
@@ -759,15 +757,15 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
         ),
         SwitchListTile(
           contentPadding: EdgeInsets.zero,
-          title: const Text('Prüfling'),
+          title: Text(context.l10n.peopleCandidate),
           value: _examinee,
           onChanged: (v) => setState(() => _examinee = v),
         ),
         TextFormField(
           controller: _testResultController,
-          decoration: const InputDecoration(
-            labelText: 'Testergebnis',
-            prefixIcon: Icon(Icons.assignment_outlined),
+          decoration: InputDecoration(
+            labelText: context.l10n.peopleTestResult,
+            prefixIcon: const Icon(Icons.assignment_outlined),
           ),
         ),
         gap,
@@ -775,13 +773,13 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
       if (shifts.isNotEmpty) ...[
         DropdownButtonFormField<String?>(
           value: _shiftId,
-          decoration: const InputDecoration(
-            labelText: 'Schichtplan',
-            prefixIcon: Icon(Icons.schedule),
+          decoration: InputDecoration(
+            labelText: context.l10n.personShiftPlan,
+            prefixIcon: const Icon(Icons.schedule),
           ),
           items: [
-            const DropdownMenuItem<String?>(
-                value: null, child: Text('Keine Schicht zugewiesen')),
+            DropdownMenuItem<String?>(
+                value: null, child: Text(context.l10n.personNoShift)),
             for (final sp in shifts)
               DropdownMenuItem<String?>(value: sp.id, child: Text(sp.name)),
           ],
@@ -804,9 +802,9 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
         if (shift != null && shift.hasNamedShifts)
           DropdownButtonFormField<String?>(
             value: _shiftName,
-            decoration: const InputDecoration(
-              labelText: 'Schicht',
-              prefixIcon: Icon(Icons.access_time),
+            decoration: InputDecoration(
+              labelText: context.l10n.personShift,
+              prefixIcon: const Icon(Icons.access_time),
             ),
             items: [
               for (final name in shift.shifts.map((x) => x.name).toSet())
@@ -817,7 +815,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
         if (shift != null && !shift.hasNamedShifts)
           _dateTile(
             icon: Icons.calendar_today,
-            label: 'Anfangsdatum',
+            label: context.l10n.personStartDate,
             value: _shiftStart,
             clearable: false,
             onChanged: (d) => setState(() => _shiftStart = d ?? _shiftStart),
@@ -826,9 +824,9 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
       ],
       TextFormField(
         controller: _otherExerciseController,
-        decoration: const InputDecoration(
-          labelText: 'Sonstige Dienste',
-          prefixIcon: Icon(Icons.work_outline),
+        decoration: InputDecoration(
+          labelText: context.l10n.peopleOtherDuties,
+          prefixIcon: const Icon(Icons.work_outline),
         ),
         textCapitalization: TextCapitalization.sentences,
       ),
@@ -863,11 +861,11 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
       if (existingPlayers.isNotEmpty && mounted) {
         final confirmed = await DialogHelper.showConfirmation(
           context,
-          title: 'Mögliches Duplikat',
-          message: 'Eine Person mit dem Namen "$firstName $lastName" existiert bereits '
-              '(${existingPlayers.length}x). Trotzdem erstellen?',
-          confirmText: 'Trotzdem erstellen',
-          cancelText: 'Abbrechen',
+          title: context.l10n.peopleFlutterPossibleDuplicate,
+          message: context.l10n.peopleFlutterDuplicateMessage(
+              '$firstName $lastName', existingPlayers.length),
+          confirmText: context.l10n.peopleFlutterCreateAnyway,
+          cancelText: context.l10n.commonCancel,
         );
         if (!confirmed) {
           setState(() => _isLoading = false);
@@ -924,12 +922,12 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
       ref.invalidate(playersProvider);
 
       if (mounted) {
-        ToastHelper.showSuccess(context, 'Person erstellt');
+        ToastHelper.showSuccess(context, context.l10n.personAdded);
         context.pop();
       }
     } catch (e) {
       if (mounted) {
-        ToastHelper.showError(context, 'Fehler: $e');
+        ToastHelper.showError(context, context.l10n.peopleFlutterErrorWith(e));
       }
     } finally {
       if (mounted) {

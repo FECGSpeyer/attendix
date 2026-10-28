@@ -4448,9 +4448,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get peopleFlutterAttention => 'Attention';
 
   @override
+  String peopleFlutterBulkUpdated(Object count) {
+    return '$count person(s) updated';
+  }
+
+  @override
+  String get peopleFlutterCreateAnyway => 'Create anyway';
+
+  @override
+  String peopleFlutterDuplicateMessage(Object name, Object count) {
+    return 'A person named \"$name\" already exists (${count}x). Create anyway?';
+  }
+
+  @override
   String peopleFlutterErrorWith(Object error) {
     return 'Error: $error';
   }
+
+  @override
+  String get peopleFlutterFirstNameRequired => 'First name is required';
 
   @override
   String get peopleFlutterGroupsLoadFailed => 'Could not load the groups';
@@ -4553,9 +4569,23 @@ class AppLocalizationsEn extends AppLocalizations {
   String get peopleFlutterHint => 'Note';
 
   @override
+  String get peopleFlutterLastNameRequired => 'Last name is required';
+
+  @override
+  String get peopleFlutterNotesHint => 'Additional information...';
+
+  @override
+  String peopleFlutterOptional(Object label) {
+    return '$label (optional)';
+  }
+
+  @override
   String peopleFlutterPausedToast(Object name) {
     return '$name was paused';
   }
+
+  @override
+  String get peopleFlutterPossibleDuplicate => 'Possible duplicate';
 
   @override
   String get peopleFlutterSaveOrder => 'Save order';
@@ -5035,10 +5065,150 @@ class AppLocalizationsEn extends AppLocalizations {
   String get personFlutterAbsenceSaveFailed => 'Absence could not be saved';
 
   @override
+  String get personFlutterAllEntries => 'All entries';
+
+  @override
+  String personFlutterAttendanceLate(Object count) {
+    return 'Attendance (${count}x late)';
+  }
+
+  @override
+  String personFlutterChooseLabel(Object label) {
+    return 'Choose $label';
+  }
+
+  @override
   String get personFlutterChooseRange => 'Choose period';
 
   @override
+  String get personFlutterCreateAccount => 'Create account';
+
+  @override
+  String get personFlutterCritical => 'Critical';
+
+  @override
+  String get personFlutterEmailRequiredForAccount => 'An email address is required to create an account.';
+
+  @override
+  String get personFlutterFrequentLate => 'Frequent late arrivals';
+
+  @override
+  String personFlutterFromSeasonStart(Object date) {
+    return 'Since season start ($date)';
+  }
+
+  @override
+  String get personFlutterInstrumentsHint => 'e.g. piano, guitar';
+
+  @override
+  String personFlutterLateCount(Object count, Object threshold) {
+    return '$count× late (threshold: $threshold)';
+  }
+
+  @override
+  String personFlutterLateUnexcusedCount(Object count, Object threshold) {
+    return '$count× late without excuse (threshold: $threshold)';
+  }
+
+  @override
+  String get personFlutterLinked => 'Linked';
+
+  @override
   String get personFlutterMatchFound => 'Person found in another instance?';
+
+  @override
+  String get personFlutterNoAccountLinked => 'No account linked. A conductor can create an account.';
+
+  @override
+  String get personFlutterNoHistory => 'No history';
+
+  @override
+  String get personFlutterNoNote => 'No note';
+
+  @override
+  String get personFlutterNoNotes => 'No notes';
+
+  @override
+  String get personFlutterNoShiftPlan => 'No shift plan';
+
+  @override
+  String personFlutterNoneLabel(Object label) {
+    return 'No $label';
+  }
+
+  @override
+  String personFlutterNoneLabelMasc(Object label) {
+    return 'No $label';
+  }
+
+  @override
+  String get personFlutterNotAssigned => 'Not assigned';
+
+  @override
+  String get personFlutterNotSelected => 'Not selected';
+
+  @override
+  String get personFlutterNotSpecified => 'Not specified';
+
+  @override
+  String get personFlutterNotesHint => 'Notes about the person...';
+
+  @override
+  String get personFlutterOtherDutiesHint => 'Other duties...';
+
+  @override
+  String personFlutterOtherInstancesCount(Object count) {
+    return 'Other instances ($count)';
+  }
+
+  @override
+  String personFlutterPausedUntil(Object date) {
+    return 'Paused until $date';
+  }
+
+  @override
+  String get personFlutterPending => 'Pending';
+
+  @override
+  String get personFlutterRangeHint => 'e.g. C3 - C5';
+
+  @override
+  String get personFlutterRemarksHint => 'What was discussed?';
+
+  @override
+  String get personFlutterRequired => 'Required';
+
+  @override
+  String get personFlutterRoleAdmin => 'Conductor (admin)';
+
+  @override
+  String get personFlutterRoleNone => 'No role';
+
+  @override
+  String get personFlutterSearchOtherInstance => 'Search in other instance';
+
+  @override
+  String get personFlutterSeasonOnly => 'Season only';
+
+  @override
+  String get personFlutterShowAll => 'Show all';
+
+  @override
+  String get personFlutterTalkedToHint => 'Confirm that the problem was discussed';
+
+  @override
+  String get personFlutterTestResultHint => 'Enter result...';
+
+  @override
+  String get personFlutterUnlinkAccount => 'Unlink account';
+
+  @override
+  String personFlutterUploadFailedWith(Object error) {
+    return 'Upload failed: $error';
+  }
+
+  @override
+  String get personFlutterUploadingPhoto => 'Uploading photo...';
 
   @override
   String get personFromRequired => 'From *';

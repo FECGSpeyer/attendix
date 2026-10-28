@@ -7817,11 +7817,35 @@ abstract class AppLocalizations {
   /// **'Achtung'**
   String get peopleFlutterAttention;
 
+  /// people.flutter.bulkUpdated
+  ///
+  /// In de, this message translates to:
+  /// **'{count} Person(en) aktualisiert'**
+  String peopleFlutterBulkUpdated(Object count);
+
+  /// people.flutter.createAnyway
+  ///
+  /// In de, this message translates to:
+  /// **'Trotzdem erstellen'**
+  String get peopleFlutterCreateAnyway;
+
+  /// people.flutter.duplicateMessage
+  ///
+  /// In de, this message translates to:
+  /// **'Eine Person mit dem Namen \"{name}\" existiert bereits ({count}x). Trotzdem erstellen?'**
+  String peopleFlutterDuplicateMessage(Object name, Object count);
+
   /// people.flutter.errorWith
   ///
   /// In de, this message translates to:
   /// **'Fehler: {error}'**
   String peopleFlutterErrorWith(Object error);
+
+  /// people.flutter.firstNameRequired
+  ///
+  /// In de, this message translates to:
+  /// **'Vorname ist erforderlich'**
+  String get peopleFlutterFirstNameRequired;
 
   /// people.flutter.groupsLoadFailed
   ///
@@ -7991,11 +8015,35 @@ abstract class AppLocalizations {
   /// **'Hinweis'**
   String get peopleFlutterHint;
 
+  /// people.flutter.lastNameRequired
+  ///
+  /// In de, this message translates to:
+  /// **'Nachname ist erforderlich'**
+  String get peopleFlutterLastNameRequired;
+
+  /// people.flutter.notesHint
+  ///
+  /// In de, this message translates to:
+  /// **'Zusätzliche Informationen...'**
+  String get peopleFlutterNotesHint;
+
+  /// people.flutter.optional
+  ///
+  /// In de, this message translates to:
+  /// **'{label} (optional)'**
+  String peopleFlutterOptional(Object label);
+
   /// people.flutter.pausedToast
   ///
   /// In de, this message translates to:
   /// **'{name} wurde pausiert'**
   String peopleFlutterPausedToast(Object name);
+
+  /// people.flutter.possibleDuplicate
+  ///
+  /// In de, this message translates to:
+  /// **'Mögliches Duplikat'**
+  String get peopleFlutterPossibleDuplicate;
 
   /// people.flutter.saveOrder
   ///
@@ -8831,17 +8879,257 @@ abstract class AppLocalizations {
   /// **'Abwesenheit konnte nicht gespeichert werden'**
   String get personFlutterAbsenceSaveFailed;
 
+  /// person.flutter.allEntries
+  ///
+  /// In de, this message translates to:
+  /// **'Alle Einträge'**
+  String get personFlutterAllEntries;
+
+  /// person.flutter.attendanceLate
+  ///
+  /// In de, this message translates to:
+  /// **'Anwesenheit ({count}x zu spät)'**
+  String personFlutterAttendanceLate(Object count);
+
+  /// person.flutter.chooseLabel
+  ///
+  /// In de, this message translates to:
+  /// **'{label} auswählen'**
+  String personFlutterChooseLabel(Object label);
+
   /// person.flutter.chooseRange
   ///
   /// In de, this message translates to:
   /// **'Zeitraum wählen'**
   String get personFlutterChooseRange;
 
+  /// person.flutter.createAccount
+  ///
+  /// In de, this message translates to:
+  /// **'Account erstellen'**
+  String get personFlutterCreateAccount;
+
+  /// person.flutter.critical
+  ///
+  /// In de, this message translates to:
+  /// **'Kritisch'**
+  String get personFlutterCritical;
+
+  /// person.flutter.emailRequiredForAccount
+  ///
+  /// In de, this message translates to:
+  /// **'Um einen Account zu erstellen, muss eine E-Mail-Adresse hinterlegt werden.'**
+  String get personFlutterEmailRequiredForAccount;
+
+  /// person.flutter.frequentLate
+  ///
+  /// In de, this message translates to:
+  /// **'Häufige Verspätungen'**
+  String get personFlutterFrequentLate;
+
+  /// person.flutter.fromSeasonStart
+  ///
+  /// In de, this message translates to:
+  /// **'Ab Saisonstart ({date})'**
+  String personFlutterFromSeasonStart(Object date);
+
+  /// person.flutter.instrumentsHint
+  ///
+  /// In de, this message translates to:
+  /// **'z.B. Klavier, Gitarre'**
+  String get personFlutterInstrumentsHint;
+
+  /// person.flutter.lateCount
+  ///
+  /// In de, this message translates to:
+  /// **'{count}× zu spät (Schwelle: {threshold})'**
+  String personFlutterLateCount(Object count, Object threshold);
+
+  /// person.flutter.lateUnexcusedCount
+  ///
+  /// In de, this message translates to:
+  /// **'{count}× unentschuldigt zu spät (Schwelle: {threshold})'**
+  String personFlutterLateUnexcusedCount(Object count, Object threshold);
+
+  /// person.flutter.linked
+  ///
+  /// In de, this message translates to:
+  /// **'Verknüpft'**
+  String get personFlutterLinked;
+
   /// person.flutter.matchFound
   ///
   /// In de, this message translates to:
   /// **'Person in anderer Instanz gefunden?'**
   String get personFlutterMatchFound;
+
+  /// person.flutter.noAccountLinked
+  ///
+  /// In de, this message translates to:
+  /// **'Kein Account verknüpft. Ein Dirigent kann einen Account erstellen.'**
+  String get personFlutterNoAccountLinked;
+
+  /// person.flutter.noHistory
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Historie vorhanden'**
+  String get personFlutterNoHistory;
+
+  /// person.flutter.noNote
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Notiz'**
+  String get personFlutterNoNote;
+
+  /// person.flutter.noNotes
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Notizen'**
+  String get personFlutterNoNotes;
+
+  /// person.flutter.noShiftPlan
+  ///
+  /// In de, this message translates to:
+  /// **'Kein Schichtplan'**
+  String get personFlutterNoShiftPlan;
+
+  /// person.flutter.noneLabel
+  ///
+  /// In de, this message translates to:
+  /// **'Keine {label}'**
+  String personFlutterNoneLabel(Object label);
+
+  /// person.flutter.noneLabelMasc
+  ///
+  /// In de, this message translates to:
+  /// **'Kein {label}'**
+  String personFlutterNoneLabelMasc(Object label);
+
+  /// person.flutter.notAssigned
+  ///
+  /// In de, this message translates to:
+  /// **'Nicht zugewiesen'**
+  String get personFlutterNotAssigned;
+
+  /// person.flutter.notSelected
+  ///
+  /// In de, this message translates to:
+  /// **'Nicht ausgewählt'**
+  String get personFlutterNotSelected;
+
+  /// person.flutter.notSpecified
+  ///
+  /// In de, this message translates to:
+  /// **'Nicht angegeben'**
+  String get personFlutterNotSpecified;
+
+  /// person.flutter.notesHint
+  ///
+  /// In de, this message translates to:
+  /// **'Notizen zur Person...'**
+  String get personFlutterNotesHint;
+
+  /// person.flutter.otherDutiesHint
+  ///
+  /// In de, this message translates to:
+  /// **'Weitere Aufgaben...'**
+  String get personFlutterOtherDutiesHint;
+
+  /// person.flutter.otherInstancesCount
+  ///
+  /// In de, this message translates to:
+  /// **'Andere Instanzen ({count})'**
+  String personFlutterOtherInstancesCount(Object count);
+
+  /// person.flutter.pausedUntil
+  ///
+  /// In de, this message translates to:
+  /// **'Pausiert bis {date}'**
+  String personFlutterPausedUntil(Object date);
+
+  /// person.flutter.pending
+  ///
+  /// In de, this message translates to:
+  /// **'Ausstehend'**
+  String get personFlutterPending;
+
+  /// person.flutter.rangeHint
+  ///
+  /// In de, this message translates to:
+  /// **'z.B. C3 - C5'**
+  String get personFlutterRangeHint;
+
+  /// person.flutter.remarksHint
+  ///
+  /// In de, this message translates to:
+  /// **'Was wurde besprochen?'**
+  String get personFlutterRemarksHint;
+
+  /// person.flutter.required
+  ///
+  /// In de, this message translates to:
+  /// **'Pflichtfeld'**
+  String get personFlutterRequired;
+
+  /// person.flutter.roleAdmin
+  ///
+  /// In de, this message translates to:
+  /// **'Dirigent (Admin)'**
+  String get personFlutterRoleAdmin;
+
+  /// person.flutter.roleNone
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Rolle'**
+  String get personFlutterRoleNone;
+
+  /// person.flutter.searchOtherInstance
+  ///
+  /// In de, this message translates to:
+  /// **'In anderer Instanz suchen'**
+  String get personFlutterSearchOtherInstance;
+
+  /// person.flutter.seasonOnly
+  ///
+  /// In de, this message translates to:
+  /// **'Nur Saison'**
+  String get personFlutterSeasonOnly;
+
+  /// person.flutter.showAll
+  ///
+  /// In de, this message translates to:
+  /// **'Alle anzeigen'**
+  String get personFlutterShowAll;
+
+  /// person.flutter.talkedToHint
+  ///
+  /// In de, this message translates to:
+  /// **'Bestätigen, dass das Problem besprochen wurde'**
+  String get personFlutterTalkedToHint;
+
+  /// person.flutter.testResultHint
+  ///
+  /// In de, this message translates to:
+  /// **'Ergebnis eingeben...'**
+  String get personFlutterTestResultHint;
+
+  /// person.flutter.unlinkAccount
+  ///
+  /// In de, this message translates to:
+  /// **'Account-Verknüpfung aufheben'**
+  String get personFlutterUnlinkAccount;
+
+  /// person.flutter.uploadFailedWith
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Hochladen: {error}'**
+  String personFlutterUploadFailedWith(Object error);
+
+  /// person.flutter.uploadingPhoto
+  ///
+  /// In de, this message translates to:
+  /// **'Lade Passbild hoch...'**
+  String get personFlutterUploadingPhoto;
 
   /// person.fromRequired
   ///

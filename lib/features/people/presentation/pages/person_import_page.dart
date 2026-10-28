@@ -15,6 +15,7 @@ import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../core/providers/user_registration_providers.dart'; // AUTH
 import '../widgets/import_widgets.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../../core/providers/demo_providers.dart'; // DEMO_GUARD
 
 enum _Step { file, mapping, preview }
@@ -56,16 +57,16 @@ class _PersonImportPageState extends ConsumerState<PersonImportPage> {
   }
 
   List<ImportTargetOption> _buildOptions() => [
-        (key: null, label: 'Ignorieren'),
-        (key: 'Vorname', label: 'Vorname'),
-        (key: 'Nachname', label: 'Nachname'),
-        (key: kFullNameKey, label: 'Name (Vor- und Nachname)'),
-        (key: 'Geburtsdatum', label: 'Geburtsdatum'),
-        (key: 'Gruppe', label: 'Gruppe'),
-        (key: 'E-Mail', label: 'E-Mail'),
-        (key: 'Telefon', label: 'Telefon'),
-        (key: 'Eingetreten', label: 'Eingetreten'),
-        (key: 'Notizen', label: 'Notizen'),
+        (key: null, label: context.l10n.peopleIgnore),
+        (key: 'Vorname', label: context.l10n.peopleFirstName),
+        (key: 'Nachname', label: context.l10n.peopleLastName),
+        (key: kFullNameKey, label: context.l10n.peopleFullName),
+        (key: 'Geburtsdatum', label: context.l10n.peopleBirthday),
+        (key: 'Gruppe', label: context.l10n.peopleGroup),
+        (key: 'E-Mail', label: context.l10n.peopleEmail),
+        (key: 'Telefon', label: context.l10n.peoplePhone),
+        (key: 'Eingetreten', label: context.l10n.peopleJoined),
+        (key: 'Notizen', label: context.l10n.peopleNotes),
         for (final f in _ctx.additionalFields)
           (key: '$kExtraPrefix${f.id}', label: f.name),
       ];
@@ -78,7 +79,7 @@ class _PersonImportPageState extends ConsumerState<PersonImportPage> {
     try {
       final data = readSpreadsheet(picked.bytes, picked.name);
       if (data.rows.isEmpty) {
-        if (mounted) ToastHelper.showWarning(context, 'Die Datei enthält keine Daten.');
+        if (mounted) ToastHelper.showWarning(context, context.l10n.peopleFileEmpty);
         return;
       }
       final ctx = await _buildContext();
@@ -94,7 +95,7 @@ class _PersonImportPageState extends ConsumerState<PersonImportPage> {
     } on SpreadsheetReadException catch (e) {
       if (mounted) ToastHelper.showError(context, e.message);
     } catch (_) {
-      if (mounted) ToastHelper.showError(context, 'Die Datei konnte nicht gelesen werden.');
+      if (mounted) ToastHelper.showError(context, context.l10n.peopleFileUnreadable);
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -120,13 +121,13 @@ class _PersonImportPageState extends ConsumerState<PersonImportPage> {
     try {
       await saveGeneratedFile(bytes, 'Personen_Import_Vorlage.xlsx');
     } catch (e) {
-      if (mounted) ToastHelper.showError(context, 'Fehler: $e');
+      if (mounted) ToastHelper.showError(context, context.l10n.peopleFlutterErrorWith(e));
     }
   }
 
   Future<void> _proceedToPreview() async {
     if (!mappingHasName(_mapping)) {
-      ToastHelper.showWarning(context, 'Bitte Spalten für Vor- und Nachnamen zuordnen.');
+      ToastHelper.showWarning(context, context.l10n.peopleMapNames);
       return;
     }
     setState(() => _busy = true);
@@ -139,7 +140,7 @@ class _PersonImportPageState extends ConsumerState<PersonImportPage> {
         _step = _Step.preview;
       });
     } catch (_) {
-      if (mounted) ToastHelper.showError(context, 'Fehler bei der Vorschau.');
+      if (mounted) ToastHelper.showError(context, context.l10n.peoplePreviewFailed);
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -151,7 +152,7 @@ class _PersonImportPageState extends ConsumerState<PersonImportPage> {
   Future<void> _startImport() async {
     final toImport = _importable;
     if (toImport.isEmpty) {
-      ToastHelper.showWarning(context, 'Keine importierbaren Personen.');
+      ToastHelper.showWarning(context, context.l10n.peopleNothingToImport);
       return;
     }
     // DEMO_GUARD: Ionic `if (db.isDemo()) showToast(people.demoUnavailable)`.
@@ -169,7 +170,7 @@ class _PersonImportPageState extends ConsumerState<PersonImportPage> {
 
     setState(() {
       _busy = true;
-      _progress = '0 / ${toImport.length} importiert...';
+      _progress = context.l10n.peopleImportProgress(0, toImport.length);
     });
 
     var imported = 0;
@@ -197,7 +198,7 @@ class _PersonImportPageState extends ConsumerState<PersonImportPage> {
         failed.add('${row.firstName} ${row.lastName}: $e');
       }
       if (mounted) {
-        setState(() => _progress = '${i + 1} / ${toImport.length} importiert...');
+        setState(() => _progress = context.l10n.peopleImportProgress(i + 1, toImport.length));
       }
     }
 
@@ -205,14 +206,14 @@ class _PersonImportPageState extends ConsumerState<PersonImportPage> {
     setState(() => _busy = false);
 
     final parts = [
-      imported == 1 ? '1 Person importiert.' : '$imported Personen importiert.',
-      if (failed.isNotEmpty) '${failed.length} fehlgeschlagen.',
+      context.l10n.peopleImportedCount(imported),
+      if (failed.isNotEmpty) context.l10n.peopleFailedCount(failed.length),
     ];
     if (failed.isEmpty) {
       ToastHelper.showSuccess(context, parts.join(' '));
     } else {
       ToastHelper.showWarning(context, parts.join(' '));
-      await showImportFailures(context, title: 'Nicht importierte Personen', lines: failed);
+      await showImportFailures(context, title: context.l10n.peopleNotImported, lines: failed);
     }
 
     if (imported > 0) {
@@ -227,7 +228,7 @@ class _PersonImportPageState extends ConsumerState<PersonImportPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Personen importieren'),
+        title: Text(context.l10n.peopleImportPeople),
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
@@ -240,23 +241,19 @@ class _PersonImportPageState extends ConsumerState<PersonImportPage> {
         children: [
           switch (_step) {
             _Step.file => ImportFileStep(
-                intro: 'Importiere Personen aus einer Excel- (.xlsx) oder CSV-Datei. '
-                    'Die erste Zeile muss Spaltenüberschriften enthalten. Am einfachsten '
-                    'ist es, die Vorlage herunterzuladen und auszufüllen.',
+                intro: context.l10n.peopleImportIntro,
                 onPickFile: _pickFile,
                 onDownloadTemplate: _downloadTemplate,
               ),
             _Step.mapping => ImportMappingStep(
                 fileName: _fileName,
                 rowCount: _rawRows.length,
-                intro: 'Ordne die Spalten deiner Datei den Personenfeldern zu. Vorname '
-                    'und Nachname (oder eine kombinierte Namensspalte) sind erforderlich.',
+                intro: context.l10n.peopleMappingIntro,
                 headers: _headers,
                 mapping: _mapping,
                 options: _options,
                 onChanged: (header, key) => setState(() => _mapping[header] = key),
-                missingHint: 'Bitte ordne Spalten für Vor- und Nachnamen zu '
-                    '(oder eine kombinierte Namensspalte).',
+                missingHint: context.l10n.peopleMappingMissing,
                 canProceed: mappingHasName(_mapping),
               ),
             _Step.preview => _buildPreview(groups),
@@ -290,12 +287,12 @@ class _PersonImportPageState extends ConsumerState<PersonImportPage> {
         _Step.file => null,
         _Step.mapping => ImportBottomBar(
             onBack: () => setState(() => _step = _Step.file),
-            primaryLabel: 'Weiter',
+            primaryLabel: context.l10n.commonNext,
             onPrimary: mappingHasName(_mapping) && !_busy ? _proceedToPreview : null,
           ),
         _Step.preview => ImportBottomBar(
             onBack: () => setState(() => _step = _Step.mapping),
-            primaryLabel: '${_importable.length} importieren',
+            primaryLabel: context.l10n.peopleImportCount(_importable.length),
             onPrimary: _busy || _importable.isEmpty ? null : _startImport,
           ),
       },
@@ -327,9 +324,7 @@ class _PersonImportPageState extends ConsumerState<PersonImportPage> {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: AppDimensions.paddingS),
             child: Text(
-              '${unresolved == 1 ? '1 Person konnte' : '$unresolved Personen konnten'} '
-              'keiner Gruppe zugeordnet werden. Bitte prüfe und passe die Gruppe unten '
-              'an – vorerst ist die Hauptgruppe hinterlegt.',
+              context.l10n.peopleUnresolvedGroups(unresolved),
               style: const TextStyle(color: AppColors.warning),
             ),
           ),
@@ -337,17 +332,16 @@ class _PersonImportPageState extends ConsumerState<PersonImportPage> {
           child: Column(
             children: [
               SwitchListTile(
-                title: const Text('Konten erstellen'),
+                title: Text(context.l10n.peopleCreateAccounts),
                 value: _createAccounts,
                 onChanged: (v) => setState(() => _createAccounts = v),
               ),
               if (_createAccounts)
-                const ListTile(
+                ListTile(
                   dense: true,
                   title: Text(
-                    'Für Personen mit E-Mail-Adresse werden Benutzerkonten erstellt '
-                    'und Einladungs-E-Mails versendet.',
-                    style: TextStyle(color: AppColors.warning),
+                    context.l10n.peopleCreateAccountsHint,
+                    style: const TextStyle(color: AppColors.warning),
                   ),
                 ),
             ],
@@ -372,7 +366,7 @@ class _PersonImportPageState extends ConsumerState<PersonImportPage> {
                                 ? row.instrument
                                 : null,
                             isExpanded: true,
-                            hint: const Text('Gruppe'),
+                            hint: Text(context.l10n.peopleGroup),
                             style: row.groupResolved
                                 ? null
                                 : Theme.of(context)

@@ -12,6 +12,7 @@ import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/utils/toast_helper.dart';
 import '../../pages/person_detail_page.dart';
 import '../../../../../core/utils/demo_guard.dart';
+import '../../../../../l10n/l10n.dart';
 
 /// Toggle to show all history entries (including before season start).
 final showAllHistoryProvider = StateProvider.autoDispose<bool>((ref) => false);
@@ -45,9 +46,9 @@ class HistorieAccordion extends ConsumerWidget {
       child: Column(
         children: [
           ListTile(
-            title: const Text(
-              'Historie',
-              style: TextStyle(fontWeight: FontWeight.w600),
+            title: Text(
+              context.l10n.personHistory,
+              style: const TextStyle(fontWeight: FontWeight.w600),
             ),
             trailing: Icon(isExpanded ? Icons.expand_less : Icons.expand_more),
             onTap: onToggle,
@@ -76,17 +77,17 @@ class HistorieAccordion extends ConsumerWidget {
               child: CircularProgressIndicator(),
             ),
           ),
-      error: (error, _) => Center(child: Text('Fehler: $error')),
+      error: (error, _) => Center(child: Text(context.l10n.peopleFlutterErrorWith(error))),
       data: (history) {
         if (history.isEmpty) {
-          return const Padding(
-            padding: EdgeInsets.all(AppDimensions.paddingL),
+          return Padding(
+            padding: const EdgeInsets.all(AppDimensions.paddingL),
             child: Center(
               child: Column(
                 children: [
-                  Icon(Icons.history, size: 48, color: AppColors.medium),
-                  SizedBox(height: AppDimensions.paddingS),
-                  Text('Keine Historie vorhanden'),
+                  const Icon(Icons.history, size: 48, color: AppColors.medium),
+                  const SizedBox(height: AppDimensions.paddingS),
+                  Text(context.l10n.personFlutterNoHistory),
                 ],
               ),
             ),
@@ -112,7 +113,7 @@ class HistorieAccordion extends ConsumerWidget {
         return Column(
           children: [
             // Stats summary row
-            _buildStatsRow(),
+            _buildStatsRow(context),
 
             // Season filter toggle
             if (seasonStart != null)
@@ -122,8 +123,8 @@ class HistorieAccordion extends ConsumerWidget {
                   children: [
                     Text(
                       showAll
-                          ? 'Alle Einträge'
-                          : 'Ab Saisonstart (${DateFormat('dd.MM.yyyy').format(seasonStart)})',
+                          ? context.l10n.personFlutterAllEntries
+                          : context.l10n.personFlutterFromSeasonStart(DateFormat(dateFmt()).format(seasonStart)),
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.grey.shade600,
@@ -136,7 +137,7 @@ class HistorieAccordion extends ConsumerWidget {
                               ref.read(showAllHistoryProvider.notifier).state =
                                   !showAll,
                       child: Text(
-                        showAll ? 'Nur Saison' : 'Alle anzeigen',
+                        showAll ? context.l10n.personFlutterSeasonOnly : context.l10n.personFlutterShowAll,
                         style: TextStyle(
                           fontSize: 12,
                           color: Theme.of(context).colorScheme.primary,
@@ -158,14 +159,13 @@ class HistorieAccordion extends ConsumerWidget {
     );
   }
 
-  Widget _buildStatsRow() {
+  Widget _buildStatsRow(BuildContext context) {
     return statsAsync.when(
       loading: () => const SizedBox.shrink(),
       error: (_, __) => const SizedBox.shrink(),
       data: (stats) {
         final percentage = stats['percentage'] as int;
         final lateCount = stats['lateCount'] as int;
-        final lateText = lateCount > 0 ? ' (${lateCount}x zu spät)' : '';
         final badgeColor =
             percentage >= 75
                 ? AppColors.success
@@ -182,7 +182,9 @@ class HistorieAccordion extends ConsumerWidget {
             children: [
               Expanded(
                 child: Text(
-                  'Durchschnitt$lateText',
+                  lateCount > 0
+                      ? context.l10n.personAverageLate(lateCount)
+                      : context.l10n.personAverage,
                   style: const TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w500,
@@ -258,7 +260,7 @@ class HistorieAccordion extends ConsumerWidget {
       }
     }
 
-    final dateStr = date != null ? DateFormat('dd.MM.yyyy').format(date) : '';
+    final dateStr = date != null ? DateFormat(dateFmt()).format(date) : '';
     final titleStr =
         fullTitle ??
         (displayTitle.isNotEmpty ? '$dateStr | $displayTitle' : dateStr);
@@ -363,15 +365,15 @@ class HistorieAccordion extends ConsumerWidget {
       builder:
           (context) => AlertDialog(
             // Ionic removeHis alert: header only, buttons Abbrechen / Ja.
-            title: const Text('Eintrag unwiderruflich entfernen?'),
+            title: Text(context.l10n.personRemoveEntry),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context, false),
-                child: const Text('Abbrechen'),
+                child: Text(context.l10n.commonCancel),
               ),
               TextButton(
                 onPressed: () => Navigator.pop(context, true),
-                child: const Text('Ja'),
+                child: Text(context.l10n.commonYes),
               ),
             ],
           ),
@@ -415,11 +417,11 @@ class HistorieAccordion extends ConsumerWidget {
       ref.invalidate(realtimePlayersProvider);
 
       if (context.mounted) {
-        ToastHelper.showSuccess(context, 'Eintrag wurde erfolgreich entfernt.');
+        ToastHelper.showSuccess(context, context.l10n.personEntryRemoved);
       }
     } catch (e) {
       if (context.mounted) {
-        ToastHelper.showError(context, 'Fehler beim Löschen des Eintrags.');
+        ToastHelper.showError(context, context.l10n.personEntryRemoveFailed);
       }
     }
   }
@@ -430,23 +432,23 @@ class HistorieAccordion extends ConsumerWidget {
       context: context,
       builder:
           (ctx) => AlertDialog(
-            title: const Text('Notiz geändert'),
+            title: Text(context.l10n.personNoteChanged),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  DateFormat('dd.MM.yyyy').format(date),
+                  DateFormat(dateFmt()).format(date),
                   style: Theme.of(ctx).textTheme.titleSmall,
                 ),
                 const SizedBox(height: AppDimensions.paddingS),
-                Text('Alte Notiz: $note'),
+                Text(context.l10n.personOldNote(note)),
               ],
             ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(ctx),
-                child: const Text('OK'),
+                child: Text(context.l10n.commonOk),
               ),
             ],
           ),
@@ -456,17 +458,18 @@ class HistorieAccordion extends ConsumerWidget {
 
 /// Title of a player history entry (Ionic person.page.html history section).
 String historyEntryTitle(int? type, DateTime date) {
-  final d = DateFormat('dd.MM.yyyy').format(date);
-  final dt = DateFormat('dd.MM.yyyy HH:mm').format(date);
+  final l10n = l10nWithoutContext;
+  final d = DateFormat(dateFmt()).format(date);
+  final dt = DateFormat('${dateFmt()} HH:mm').format(date);
   return switch (type) {
-    2 || 3 => 'Mit Person gesprochen ($dt)',
-    5 => 'Notiz geändert am $dt',
-    1 => 'Pausiert am $dt',
-    6 => 'Wieder aktiv seit $dt',
-    8 => 'Archiviert am $d',
-    9 => 'Reaktiviert am $d',
-    10 || 11 => 'Übertragen am $d',
-    12 || 13 => 'Kopiert am $d',
+    2 || 3 => l10n.personTalkedToAt(dt),
+    5 => l10n.personNoteChangedAt(dt),
+    1 => l10n.personPausedAt(dt),
+    6 => l10n.personActiveSince(dt),
+    8 => l10n.personArchivedAt(d),
+    9 => l10n.personReactivatedAt(d),
+    10 || 11 => l10n.personTransferredAt(d),
+    12 || 13 => l10n.personCopiedAt(d),
     _ => d,
   };
 }
@@ -479,7 +482,8 @@ String historyEntryBody(int? type, String text) {
     case 9:
       return '';
     case 5:
-      return 'Alte Notiz: ${text.isNotEmpty ? text : 'Keine Notiz'}';
+      return l10nWithoutContext.personOldNote(
+          text.isNotEmpty ? text : l10nWithoutContext.personFlutterNoNote);
     case 8:
     case 10:
     case 11:
@@ -487,13 +491,14 @@ String historyEntryBody(int? type, String text) {
     case 13:
       return text;
   }
+  final l10n = l10nWithoutContext;
   final typeText = switch (type) {
-    1 => 'Pausiert',
-    2 => 'Unentschuldigt',
+    1 => l10n.commonHistoryPaused,
+    2 => l10n.commonHistoryUnexcused,
     3 => '',
-    7 => 'Wechsel',
-    _ => 'Sonstiges',
+    7 => l10n.commonHistoryGroupChange,
+    _ => l10n.commonOther,
   };
-  final body = text.isNotEmpty ? text : 'Keine Anmerkung';
+  final body = text.isNotEmpty ? text : l10n.personNoComment;
   return typeText.isEmpty ? body : '$typeText: $body';
 }

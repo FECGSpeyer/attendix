@@ -14,6 +14,7 @@ import '../../../../../data/models/person/person.dart';
 import '../../../../../shared/widgets/sheets/image_viewer_sheet.dart';
 import '../../pages/person_detail_page.dart';
 import '../../../../../core/utils/demo_guard.dart';
+import '../../../../../l10n/l10n.dart';
 
 /// Header widget displaying person avatar, group, and attendance stats.
 class PersonHeader extends ConsumerWidget {
@@ -101,8 +102,8 @@ class PersonHeader extends ConsumerWidget {
                 _StatItem(
                   value: '${stats['percentage']}%',
                   label: stats['lateCount'] > 0
-                      ? 'Anwesenheit (${stats['lateCount']}x zu spät)'
-                      : 'Anwesenheit',
+                      ? context.l10n.personFlutterAttendanceLate(stats['lateCount'] as int)
+                      : context.l10n.peopleAttendance,
                   color: stats['percentage'] >= 75
                       ? AppColors.success
                       : stats['percentage'] >= 50
@@ -119,7 +120,7 @@ class PersonHeader extends ConsumerWidget {
                 ),
                 _StatItem(
                   value: '${stats['attended']}/${stats['total']}',
-                  label: 'Termine',
+                  label: context.l10n.tabsEvents,
                   color: Colors.white,
                 ),
               ],
@@ -155,7 +156,7 @@ class PersonHeader extends ConsumerWidget {
           children: [
             ListTile(
               leading: const Icon(Icons.photo_camera),
-              title: const Text('Passbild ersetzen'),
+              title: Text(context.l10n.settingsReplacePhoto),
               onTap: () {
                 Navigator.pop(sheetContext);
                 _replacePhoto(outerContext, ref);
@@ -164,7 +165,7 @@ class PersonHeader extends ConsumerWidget {
             if (_hasImage)
               ListTile(
                 leading: const Icon(Icons.delete, color: AppColors.danger),
-                title: const Text('Passbild entfernen'),
+                title: Text(context.l10n.personRemovePhoto),
                 onTap: () {
                   Navigator.pop(sheetContext);
                   _removePhoto(outerContext, ref);
@@ -173,7 +174,7 @@ class PersonHeader extends ConsumerWidget {
             if (_hasImage)
               ListTile(
                 leading: const Icon(Icons.visibility),
-                title: const Text('Passbild ansehen'),
+                title: Text(context.l10n.settingsViewPhoto),
                 onTap: () {
                   Navigator.pop(sheetContext);
                   showImageViewerSheet(
@@ -186,7 +187,7 @@ class PersonHeader extends ConsumerWidget {
             const Divider(),
             ListTile(
               leading: const Icon(Icons.close),
-              title: const Text('Abbrechen'),
+              title: Text(context.l10n.commonCancel),
               onTap: () => Navigator.pop(sheetContext),
             ),
           ],
@@ -208,14 +209,14 @@ class PersonHeader extends ConsumerWidget {
       if (image == null) return;
 
       if (!context.mounted) return;
-      ToastHelper.showInfo(context, 'Lade Passbild hoch...');
+      ToastHelper.showInfo(context, context.l10n.personFlutterUploadingPhoto);
 
       final bytes = await image.readAsBytes();
 
       // Check file size (max 2MB)
       if (bytes.length > 2 * 1024 * 1024) {
         if (context.mounted) {
-          ToastHelper.showError(context, 'Bild ist zu groß (max 2MB)');
+          ToastHelper.showError(context, context.l10n.personPhotoTooLarge);
         }
         return;
       }
@@ -265,11 +266,11 @@ class PersonHeader extends ConsumerWidget {
       ref.invalidate(realtimePlayersProvider);
 
       if (context.mounted) {
-        ToastHelper.showSuccess(context, 'Passbild aktualisiert');
+        ToastHelper.showSuccess(context, context.l10n.settingsPhotoChanged);
       }
     } catch (e) {
       if (context.mounted) {
-        ToastHelper.showError(context, 'Fehler beim Hochladen: $e');
+        ToastHelper.showError(context, context.l10n.personFlutterUploadFailedWith(e));
       }
     }
   }
@@ -278,18 +279,17 @@ class PersonHeader extends ConsumerWidget {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Passbild entfernen?'),
-        content:
-            const Text('Das Passbild wird unwiderruflich gelöscht.'),
+        title: Text(context.l10n.personRemovePhoto),
+        content: Text(context.l10n.personRemovePhotoMessage),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Abbrechen'),
+            child: Text(context.l10n.commonCancel),
           ),
           FilledButton(
             style: FilledButton.styleFrom(backgroundColor: AppColors.danger),
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Entfernen'),
+            child: Text(context.l10n.commonRemove),
           ),
         ],
       ),
@@ -324,11 +324,11 @@ class PersonHeader extends ConsumerWidget {
       ref.invalidate(realtimePlayersProvider);
 
       if (context.mounted) {
-        ToastHelper.showSuccess(context, 'Passbild entfernt');
+        ToastHelper.showSuccess(context, context.l10n.personPhotoRemoved);
       }
     } catch (e) {
       if (context.mounted) {
-        ToastHelper.showError(context, 'Fehler: $e');
+        ToastHelper.showError(context, context.l10n.peopleFlutterErrorWith(e));
       }
     }
   }

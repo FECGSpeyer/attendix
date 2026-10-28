@@ -5810,12 +5810,35 @@
   "@peopleFlutterAttention": {
     "description": "people.flutter.attention"
   },
+  "peopleFlutterBulkUpdated": "{count} Person(en) aktualisiert",
+  "@peopleFlutterBulkUpdated": {
+    "description": "people.flutter.bulkUpdated",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "peopleFlutterCreateAnyway": "Trotzdem erstellen",
+  "@peopleFlutterCreateAnyway": {
+    "description": "people.flutter.createAnyway"
+  },
+  "peopleFlutterDuplicateMessage": "Eine Person mit dem Namen \"{name}\" existiert bereits ({count}x). Trotzdem erstellen?",
+  "@peopleFlutterDuplicateMessage": {
+    "description": "people.flutter.duplicateMessage",
+    "placeholders": {
+      "name": {},
+      "count": {}
+    }
+  },
   "peopleFlutterErrorWith": "Fehler: {error}",
   "@peopleFlutterErrorWith": {
     "description": "people.flutter.errorWith",
     "placeholders": {
       "error": {}
     }
+  },
+  "peopleFlutterFirstNameRequired": "Vorname ist erforderlich",
+  "@peopleFlutterFirstNameRequired": {
+    "description": "people.flutter.firstNameRequired"
   },
   "peopleFlutterGroupsLoadFailed": "Fehler beim Laden der Gruppen",
   "@peopleFlutterGroupsLoadFailed": {
@@ -5962,12 +5985,31 @@
   "@peopleFlutterHint": {
     "description": "people.flutter.hint"
   },
+  "peopleFlutterLastNameRequired": "Nachname ist erforderlich",
+  "@peopleFlutterLastNameRequired": {
+    "description": "people.flutter.lastNameRequired"
+  },
+  "peopleFlutterNotesHint": "Zusätzliche Informationen...",
+  "@peopleFlutterNotesHint": {
+    "description": "people.flutter.notesHint"
+  },
+  "peopleFlutterOptional": "{label} (optional)",
+  "@peopleFlutterOptional": {
+    "description": "people.flutter.optional",
+    "placeholders": {
+      "label": {}
+    }
+  },
   "peopleFlutterPausedToast": "{name} wurde pausiert",
   "@peopleFlutterPausedToast": {
     "description": "people.flutter.pausedToast",
     "placeholders": {
       "name": {}
     }
+  },
+  "peopleFlutterPossibleDuplicate": "Mögliches Duplikat",
+  "@peopleFlutterPossibleDuplicate": {
+    "description": "people.flutter.possibleDuplicate"
   },
   "peopleFlutterSaveOrder": "Reihenfolge speichern",
   "@peopleFlutterSaveOrder": {
@@ -6597,13 +6639,205 @@
   "@personFlutterAbsenceSaveFailed": {
     "description": "person.flutter.absenceSaveFailed"
   },
+  "personFlutterAllEntries": "Alle Einträge",
+  "@personFlutterAllEntries": {
+    "description": "person.flutter.allEntries"
+  },
+  "personFlutterAttendanceLate": "Anwesenheit ({count}x zu spät)",
+  "@personFlutterAttendanceLate": {
+    "description": "person.flutter.attendanceLate",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "personFlutterChooseLabel": "{label} auswählen",
+  "@personFlutterChooseLabel": {
+    "description": "person.flutter.chooseLabel",
+    "placeholders": {
+      "label": {}
+    }
+  },
   "personFlutterChooseRange": "Zeitraum wählen",
   "@personFlutterChooseRange": {
     "description": "person.flutter.chooseRange"
   },
+  "personFlutterCreateAccount": "Account erstellen",
+  "@personFlutterCreateAccount": {
+    "description": "person.flutter.createAccount"
+  },
+  "personFlutterCritical": "Kritisch",
+  "@personFlutterCritical": {
+    "description": "person.flutter.critical"
+  },
+  "personFlutterEmailRequiredForAccount": "Um einen Account zu erstellen, muss eine E-Mail-Adresse hinterlegt werden.",
+  "@personFlutterEmailRequiredForAccount": {
+    "description": "person.flutter.emailRequiredForAccount"
+  },
+  "personFlutterFrequentLate": "Häufige Verspätungen",
+  "@personFlutterFrequentLate": {
+    "description": "person.flutter.frequentLate"
+  },
+  "personFlutterFromSeasonStart": "Ab Saisonstart ({date})",
+  "@personFlutterFromSeasonStart": {
+    "description": "person.flutter.fromSeasonStart",
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "personFlutterInstrumentsHint": "z.B. Klavier, Gitarre",
+  "@personFlutterInstrumentsHint": {
+    "description": "person.flutter.instrumentsHint"
+  },
+  "personFlutterLateCount": "{count}× zu spät (Schwelle: {threshold})",
+  "@personFlutterLateCount": {
+    "description": "person.flutter.lateCount",
+    "placeholders": {
+      "count": {},
+      "threshold": {}
+    }
+  },
+  "personFlutterLateUnexcusedCount": "{count}× unentschuldigt zu spät (Schwelle: {threshold})",
+  "@personFlutterLateUnexcusedCount": {
+    "description": "person.flutter.lateUnexcusedCount",
+    "placeholders": {
+      "count": {},
+      "threshold": {}
+    }
+  },
+  "personFlutterLinked": "Verknüpft",
+  "@personFlutterLinked": {
+    "description": "person.flutter.linked"
+  },
   "personFlutterMatchFound": "Person in anderer Instanz gefunden?",
   "@personFlutterMatchFound": {
     "description": "person.flutter.matchFound"
+  },
+  "personFlutterNoAccountLinked": "Kein Account verknüpft. Ein Dirigent kann einen Account erstellen.",
+  "@personFlutterNoAccountLinked": {
+    "description": "person.flutter.noAccountLinked"
+  },
+  "personFlutterNoHistory": "Keine Historie vorhanden",
+  "@personFlutterNoHistory": {
+    "description": "person.flutter.noHistory"
+  },
+  "personFlutterNoNote": "Keine Notiz",
+  "@personFlutterNoNote": {
+    "description": "person.flutter.noNote"
+  },
+  "personFlutterNoNotes": "Keine Notizen",
+  "@personFlutterNoNotes": {
+    "description": "person.flutter.noNotes"
+  },
+  "personFlutterNoShiftPlan": "Kein Schichtplan",
+  "@personFlutterNoShiftPlan": {
+    "description": "person.flutter.noShiftPlan"
+  },
+  "personFlutterNoneLabel": "Keine {label}",
+  "@personFlutterNoneLabel": {
+    "description": "person.flutter.noneLabel",
+    "placeholders": {
+      "label": {}
+    }
+  },
+  "personFlutterNoneLabelMasc": "Kein {label}",
+  "@personFlutterNoneLabelMasc": {
+    "description": "person.flutter.noneLabelMasc",
+    "placeholders": {
+      "label": {}
+    }
+  },
+  "personFlutterNotAssigned": "Nicht zugewiesen",
+  "@personFlutterNotAssigned": {
+    "description": "person.flutter.notAssigned"
+  },
+  "personFlutterNotSelected": "Nicht ausgewählt",
+  "@personFlutterNotSelected": {
+    "description": "person.flutter.notSelected"
+  },
+  "personFlutterNotSpecified": "Nicht angegeben",
+  "@personFlutterNotSpecified": {
+    "description": "person.flutter.notSpecified"
+  },
+  "personFlutterNotesHint": "Notizen zur Person...",
+  "@personFlutterNotesHint": {
+    "description": "person.flutter.notesHint"
+  },
+  "personFlutterOtherDutiesHint": "Weitere Aufgaben...",
+  "@personFlutterOtherDutiesHint": {
+    "description": "person.flutter.otherDutiesHint"
+  },
+  "personFlutterOtherInstancesCount": "Andere Instanzen ({count})",
+  "@personFlutterOtherInstancesCount": {
+    "description": "person.flutter.otherInstancesCount",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "personFlutterPausedUntil": "Pausiert bis {date}",
+  "@personFlutterPausedUntil": {
+    "description": "person.flutter.pausedUntil",
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "personFlutterPending": "Ausstehend",
+  "@personFlutterPending": {
+    "description": "person.flutter.pending"
+  },
+  "personFlutterRangeHint": "z.B. C3 - C5",
+  "@personFlutterRangeHint": {
+    "description": "person.flutter.rangeHint"
+  },
+  "personFlutterRemarksHint": "Was wurde besprochen?",
+  "@personFlutterRemarksHint": {
+    "description": "person.flutter.remarksHint"
+  },
+  "personFlutterRequired": "Pflichtfeld",
+  "@personFlutterRequired": {
+    "description": "person.flutter.required"
+  },
+  "personFlutterRoleAdmin": "Dirigent (Admin)",
+  "@personFlutterRoleAdmin": {
+    "description": "person.flutter.roleAdmin"
+  },
+  "personFlutterRoleNone": "Keine Rolle",
+  "@personFlutterRoleNone": {
+    "description": "person.flutter.roleNone"
+  },
+  "personFlutterSearchOtherInstance": "In anderer Instanz suchen",
+  "@personFlutterSearchOtherInstance": {
+    "description": "person.flutter.searchOtherInstance"
+  },
+  "personFlutterSeasonOnly": "Nur Saison",
+  "@personFlutterSeasonOnly": {
+    "description": "person.flutter.seasonOnly"
+  },
+  "personFlutterShowAll": "Alle anzeigen",
+  "@personFlutterShowAll": {
+    "description": "person.flutter.showAll"
+  },
+  "personFlutterTalkedToHint": "Bestätigen, dass das Problem besprochen wurde",
+  "@personFlutterTalkedToHint": {
+    "description": "person.flutter.talkedToHint"
+  },
+  "personFlutterTestResultHint": "Ergebnis eingeben...",
+  "@personFlutterTestResultHint": {
+    "description": "person.flutter.testResultHint"
+  },
+  "personFlutterUnlinkAccount": "Account-Verknüpfung aufheben",
+  "@personFlutterUnlinkAccount": {
+    "description": "person.flutter.unlinkAccount"
+  },
+  "personFlutterUploadFailedWith": "Fehler beim Hochladen: {error}",
+  "@personFlutterUploadFailedWith": {
+    "description": "person.flutter.uploadFailedWith",
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "personFlutterUploadingPhoto": "Lade Passbild hoch...",
+  "@personFlutterUploadingPhoto": {
+    "description": "person.flutter.uploadingPhoto"
   },
   "personFromRequired": "Von *",
   "@personFromRequired": {

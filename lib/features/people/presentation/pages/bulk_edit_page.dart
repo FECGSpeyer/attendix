@@ -14,9 +14,20 @@ import '../../../../data/models/church/church.dart';
 import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../data/models/tenant/tenant.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../../core/providers/demo_providers.dart'; // DEMO_GUARD
 
 /// A field that can be bulk edited.
+/// Display label of a field option: standard fields are localized here so a
+/// language change updates them (custom fields keep their own name).
+String _fieldLabel(BuildContext context, _FieldOption f) => switch (f.key) {
+      'instrument' => context.l10n.peopleGroup,
+      'isLeader' => context.l10n.peopleVoiceLeader,
+      'notes' => context.l10n.peopleNotes,
+      'phone' => context.l10n.peoplePhone,
+      _ => f.label,
+    };
+
 class _FieldOption {
   const _FieldOption({
     required this.key,
@@ -65,10 +76,11 @@ class _BulkEditPageState extends ConsumerState<BulkEditPage> {
     super.initState();
     final tenant = ref.read(currentTenantProvider);
     _fieldOptions = [
-      const _FieldOption(key: 'instrument', label: 'Gruppe'),
-      const _FieldOption(key: 'isLeader', label: 'Stimmführer'),
-      const _FieldOption(key: 'notes', label: 'Notizen'),
-      const _FieldOption(key: 'phone', label: 'Telefon'),
+      // Labels of the standard fields are resolved in build (_fieldLabel).
+      const _FieldOption(key: 'instrument', label: ''),
+      const _FieldOption(key: 'isLeader', label: ''),
+      const _FieldOption(key: 'notes', label: ''),
+      const _FieldOption(key: 'phone', label: ''),
       for (final f in tenant?.additionalFields ?? const <ExtraField>[])
         _FieldOption(key: 'extra_${f.id}', label: f.name, extraField: f),
     ];
@@ -184,10 +196,10 @@ class _BulkEditPageState extends ConsumerState<BulkEditPage> {
 
       ref.invalidate(playersProvider);
       if (!mounted) return;
-      ToastHelper.showSuccess(context, '$changed Person(en) aktualisiert');
+      ToastHelper.showSuccess(context, context.l10n.peopleFlutterBulkUpdated(changed));
       Navigator.of(context).pop(true);
     } catch (_) {
-      if (mounted) ToastHelper.showError(context, 'Fehler beim Speichern');
+      if (mounted) ToastHelper.showError(context, context.l10n.peopleSaveFailed);
     } finally {
       if (mounted) setState(() => _isSaving = false);
     }
@@ -205,7 +217,7 @@ class _BulkEditPageState extends ConsumerState<BulkEditPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Bulk-Bearbeitung'),
+        title: Text(context.l10n.peopleBulkEdit),
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
@@ -221,21 +233,21 @@ class _BulkEditPageState extends ConsumerState<BulkEditPage> {
             // ignore: deprecated_member_use
             value: field?.key,
             isExpanded: true,
-            decoration: const InputDecoration(labelText: 'Feld auswählen'),
-            hint: const Text('Feld wählen...'),
+            decoration: InputDecoration(labelText: context.l10n.peopleChooseField),
+            hint: Text(context.l10n.peopleChooseFieldPlaceholder),
             items: [
-              const DropdownMenuItem<String>(
+              DropdownMenuItem<String>(
                 enabled: false,
-                child: Text('Standard-Felder',
-                    style: TextStyle(color: AppColors.medium, fontSize: 12)),
+                child: Text(context.l10n.peopleStandardFields,
+                    style: const TextStyle(color: AppColors.medium, fontSize: 12)),
               ),
               for (final f in _fieldOptions.where((f) => !f.isExtra))
-                DropdownMenuItem(value: f.key, child: Text(f.label)),
+                DropdownMenuItem(value: f.key, child: Text(_fieldLabel(context, f))),
               if (hasExtra) ...[
-                const DropdownMenuItem<String>(
+                DropdownMenuItem<String>(
                   enabled: false,
-                  child: Text('Zusatzfelder',
-                      style: TextStyle(color: AppColors.medium, fontSize: 12)),
+                  child: Text(context.l10n.peopleExtraFields,
+                      style: const TextStyle(color: AppColors.medium, fontSize: 12)),
                 ),
                 for (final f in _fieldOptions.where((f) => f.isExtra))
                   DropdownMenuItem(value: f.key, child: Text(f.label)),
@@ -245,16 +257,16 @@ class _BulkEditPageState extends ConsumerState<BulkEditPage> {
           ),
           const SizedBox(height: AppDimensions.paddingM),
           if (field == null)
-            const Padding(
-              padding: EdgeInsets.only(top: AppDimensions.paddingXL),
+            Padding(
+              padding: const EdgeInsets.only(top: AppDimensions.paddingXL),
               child: Column(
                 children: [
-                  Icon(Icons.edit_note, size: 48, color: AppColors.medium),
-                  SizedBox(height: AppDimensions.paddingS),
+                  const Icon(Icons.edit_note, size: 48, color: AppColors.medium),
+                  const SizedBox(height: AppDimensions.paddingS),
                   Text(
-                    'Wähle ein Feld aus, um die Werte für alle Personen zu bearbeiten.',
+                    context.l10n.peopleBulkEditHint,
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: AppColors.medium),
+                    style: const TextStyle(color: AppColors.medium),
                   ),
                 ],
               ),
@@ -266,7 +278,7 @@ class _BulkEditPageState extends ConsumerState<BulkEditPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Text('Für alle setzen',
+                    Text(context.l10n.peopleSetForAll,
                         style: Theme.of(context).textTheme.titleSmall),
                     const SizedBox(height: AppDimensions.paddingS),
                     _ValueEditor(
@@ -283,7 +295,7 @@ class _BulkEditPageState extends ConsumerState<BulkEditPage> {
                       child: OutlinedButton.icon(
                         onPressed: _applyToAll,
                         icon: const Icon(Icons.done_all),
-                        label: const Text('Für alle setzen'),
+                        label: Text(context.l10n.peopleSetForAll),
                       ),
                     ),
                   ],
@@ -291,7 +303,7 @@ class _BulkEditPageState extends ConsumerState<BulkEditPage> {
               ),
             ),
             const SizedBox(height: AppDimensions.paddingS),
-            Text('Personen (${_players.length})',
+            Text(context.l10n.peoplePeopleCount(_players.length),
                 style: Theme.of(context).textTheme.titleSmall),
             const SizedBox(height: AppDimensions.paddingS),
             Card(
@@ -342,12 +354,10 @@ class _BulkEditPageState extends ConsumerState<BulkEditPage> {
             FilledButton(
               onPressed: _changedCount == 0 || _isSaving ? null : _save,
               child: Text(_isSaving
-                  ? 'Speichern...'
+                  ? context.l10n.peopleSaving
                   : _changedCount > 0
-                      ? (_changedCount == 1
-                          ? '1 Änderung speichern'
-                          : '$_changedCount Änderungen speichern')
-                      : 'Keine Änderungen'),
+                      ? context.l10n.peopleSaveChanges(_changedCount)
+                      : context.l10n.peopleNoChanges),
             ),
           ],
         ],
@@ -411,7 +421,7 @@ class _ValueEditor extends StatelessWidget {
         case 'instrument':
           return _dropdown<int?>(
             [for (final g in groups) DropdownMenuItem(value: g.id, child: Text(g.name))],
-            dense ? 'Gruppe...' : 'Gruppe wählen...',
+            dense ? context.l10n.peopleGroupPlaceholder : context.l10n.peopleChooseGroupPlaceholder,
           );
         case 'isLeader':
           return Align(
@@ -419,9 +429,9 @@ class _ValueEditor extends StatelessWidget {
             child: Switch(value: value == true, onChanged: onChanged),
           );
         case 'notes':
-          return _text(hint: 'Notiz...');
+          return _text(hint: context.l10n.peopleNotePlaceholder);
         case 'phone':
-          return _text(keyboard: TextInputType.phone, hint: 'Telefon...');
+          return _text(keyboard: TextInputType.phone, hint: context.l10n.peoplePhonePlaceholder);
       }
     }
 
@@ -459,13 +469,13 @@ class _ValueEditor extends StatelessWidget {
               initialDate: current ?? DateTime.now(),
               firstDate: DateTime(1900),
               lastDate: DateTime(2100),
-              locale: const Locale('de', 'DE'),
+              locale: Locale(currentLanguage()),
             );
             if (picked != null) onChanged(DateFormat('yyyy-MM-dd').format(picked));
           },
           child: Text(current != null
-              ? DateFormat('dd.MM.yyyy').format(current)
-              : 'Datum wählen'),
+              ? DateFormat(dateFmt()).format(current)
+              : context.l10n.personNoDateChosen),
         );
       default:
         return _text(hint: field.label);
