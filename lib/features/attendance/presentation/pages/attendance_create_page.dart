@@ -5,7 +5,6 @@ import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../../core/config/supabase_config.dart';
-import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/attendance_providers.dart';
 import '../../../../core/providers/attendance_type_providers.dart';
 import '../../../../core/providers/holiday_providers.dart';
@@ -17,11 +16,41 @@ import '../../../../core/utils/color_utils.dart';
 import '../../../../core/utils/shift_utils.dart';
 import '../../../../core/providers/duty_providers.dart';
 import '../../../../core/utils/duty_utils.dart';
+import '../../../../core/utils/toast_helper.dart';
 import '../../../../core/constants/enums.dart';
 import '../../../../data/models/duty/person_unavailability.dart';
 import '../../../../data/models/attendance/attendance.dart';
 import '../widgets/multi_date_calendar.dart';
 import '../widgets/songs_selection_sheet.dart';
+
+/// UX_ATT: opens "Termin hinzufügen" as a sheet over the list (Ionic att-list
+/// addAttModal, breakpoints [0, 0.8, 1], initial 0.8). Returns true when
+/// Termine were created.
+Future<bool> showAttendanceCreateSheet(BuildContext context) async {
+  final result = await showModalBottomSheet<bool>(
+    context: context,
+    isScrollControlled: true,
+    useSafeArea: true,
+    showDragHandle: false,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+    ),
+    clipBehavior: Clip.antiAlias,
+    builder: (context) => DraggableScrollableSheet(
+      initialChildSize: 0.8,
+      minChildSize: 0.4,
+      maxChildSize: 1,
+      expand: false,
+      snap: true,
+      snapSizes: const [0.8],
+      builder: (context, scrollController) => AttendanceCreatePage(
+        asSheet: true,
+        scrollController: scrollController,
+      ),
+    ),
+  );
+  return result ?? false;
+}
 
 /// Page for creating a new attendance with all Ionic-like features:
 /// - Multi-date selection
@@ -32,8 +61,22 @@ import '../widgets/songs_selection_sheet.dart';
 /// - Checklist from type
 /// - Relevant groups filtering
 /// - Shift-based auto-status
+///
+/// UX_ATT: layout mirrors the Ionic addAttModal (inset grouped list:
+/// Datum, Typ, Dauer, Info-Text, Benötigte Personen, Ort, Werke, primary
+/// "Termin(e) hinzufügen" row). Uhrzeit and Notizen are Flutter-only extras
+/// and sit at the end of the first group.
 class AttendanceCreatePage extends ConsumerStatefulWidget {
-  const AttendanceCreatePage({super.key});
+  const AttendanceCreatePage({
+    super.key,
+    this.asSheet = false,
+    this.scrollController,
+  });
+
+  /// Shown via [showAttendanceCreateSheet]: pops with `true` after creating
+  /// and stays on the list (Ionic), instead of opening the new Termin.
+  final bool asSheet;
+  final ScrollController? scrollController;
 
   @override
   ConsumerState<AttendanceCreatePage> createState() =>
@@ -41,8 +84,13 @@ class AttendanceCreatePage extends ConsumerStatefulWidget {
 }
 
 class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
-  // Multi-date selection (starts empty - user must actively select dates)
-  List<DateTime> _selectedDates = [];
+  // Multi-date selection (Ionic: today is pre-selected)
+  List<DateTime> _selectedDates = [_today()];
+
+  static DateTime _today() {
+    final now = DateTime.now();
+    return DateTime(now.year, now.month, now.day, 12);
+  }
 
   // Type selection
   AttendanceType? _selectedType;
@@ -79,10 +127,6 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
   void initState() {
     super.initState();
     _durationController = TextEditingController(text: '$_durationDays');
-    // Automatically open calendar with today's date pre-selected
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _pickDatesWithInitialSelection();
-    });
   }
 
   @override
@@ -91,456 +135,275 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
     super.dispose();
   }
 
-  /// Opens calendar dialog with today's date pre-selected
-  Future<void> _pickDatesWithInitialSelection() async {
-    final today = DateTime.now();
-    final normalizedToday = DateTime(today.year, today.month, today.day, 12);
-
-    final result = await MultiDateCalendarDialog.show(
-      context,
-      initialDates: [normalizedToday], // Today pre-selected in calendar
-    );
-
-    if (result != null && mounted) {
-      setState(() => _selectedDates = result);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final typesAsync = ref.watch(visibleAttendanceTypesProvider);
     final isAllDay = _selectedType?.allDay == true;
     final showSongs = _selectedType?.manageSongs == true;
+    final types = typesAsync.valueOrNull ?? const <AttendanceType>[];
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Anwesenheit hinzufügen'),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(AppDimensions.paddingM),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Date picker (multi-select)
-            _SectionCard(
-              title: 'Datum *',
-              trailing: IconButton(
-                icon: const Icon(Icons.info_outline, size: 20),
-                onPressed: _showHolidayInfo,
-                tooltip: 'Feiertage anzeigen',
-              ),
-              child: ListTile(
-                leading:
-                    const Icon(Icons.calendar_today, color: AppColors.primary),
-                title: Text(_getDateDisplayText()),
-                subtitle: _selectedDates.isEmpty
-                    ? const Text('Tippe hier um Datum auszuwählen',
-                        style: TextStyle(color: AppColors.medium))
-                    : null,
-                trailing: const Icon(Icons.edit),
-                onTap: _pickDates,
+    // Auto-select first visible type (Ionic type_id = first visible type)
+    if (_selectedType == null && types.isNotEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && _selectedType == null) _onTypeChanged(types.first);
+      });
+    }
+
+    final canSubmit = !_isLoading && _selectedDates.isNotEmpty;
+    final submitLabel =
+        _selectedDates.length > 1 ? 'Termine hinzufügen' : 'Termin hinzufügen';
+
+    final body = ListView(
+      controller: widget.scrollController,
+      padding: const EdgeInsets.only(bottom: 32),
+      children: [
+        _InsetGroup(children: [
+          // Datum (Mehrfachauswahl möglich) + info button
+          ListTile(
+            title: const Text(
+              'Datum (Mehrfachauswahl möglich)',
+              style: TextStyle(fontSize: 12, color: AppColors.medium),
+            ),
+            subtitle: Padding(
+              padding: const EdgeInsets.only(top: 4),
+              child: Text(
+                _getDateDisplayText(),
+                style: Theme.of(context).textTheme.bodyLarge,
               ),
             ),
-
-            const SizedBox(height: AppDimensions.paddingM),
-
-            // Attendance type
-            _SectionCard(
-              title: 'Typ *',
-              child: typesAsync.when(
-                loading: () => const Padding(
-                  padding: EdgeInsets.all(AppDimensions.paddingM),
-                  child: Center(child: CircularProgressIndicator()),
+            trailing: IconButton(
+              icon: const Icon(Icons.info_outline),
+              color: AppColors.primary,
+              tooltip: 'Veranstaltungstypen',
+              onPressed: _showHolidayInfo,
+            ),
+            onTap: _onDateClick,
+          ),
+          // Typ (ion-select)
+          ListTile(
+            title: const Text('Typ'),
+            trailing: typesAsync.when(
+              loading: () => const SizedBox(
+                width: 16,
+                height: 16,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              ),
+              error: (e, _) => const Icon(Icons.error_outline, color: AppColors.danger),
+              data: (types) => DropdownButtonHideUnderline(
+                child: DropdownButton<AttendanceType>(
+                  value: types.contains(_selectedType) ? _selectedType : null,
+                  hint: const Text('Keine Veranstaltungstypen konfiguriert'),
+                  alignment: AlignmentDirectional.centerEnd,
+                  items: [
+                    for (final type in types)
+                      DropdownMenuItem(value: type, child: Text(type.name)),
+                  ],
+                  onChanged: (value) {
+                    if (value != null) _onTypeChanged(value);
+                  },
                 ),
-                error: (error, _) => Padding(
-                  padding: const EdgeInsets.all(AppDimensions.paddingM),
-                  child: Text('Fehler: $error'),
+              ),
+            ),
+          ),
+          if (isAllDay)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+              child: TextField(
+                keyboardType: TextInputType.number,
+                controller: _durationController,
+                decoration: const InputDecoration(
+                  labelText: 'Dauer (in Tagen)',
+                  border: InputBorder.none,
                 ),
-                data: (types) {
-                  if (types.isEmpty) {
-                    return const Padding(
-                      padding: EdgeInsets.all(AppDimensions.paddingM),
-                      child: Text('Keine Veranstaltungstypen konfiguriert'),
-                    );
+                onChanged: (value) {
+                  final parsed = int.tryParse(value);
+                  if (parsed != null && parsed > 0) {
+                    setState(() => _durationDays = parsed);
                   }
-                  // Auto-select first type if none selected
-                  if (_selectedType == null && types.isNotEmpty) {
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      if (mounted && _selectedType == null) {
-                        _onTypeChanged(types.first);
-                      }
-                    });
-                  }
-                  return Column(
-                    children: types
-                        .map((type) => RadioListTile<AttendanceType>(
-                              value: type,
-                              groupValue: _selectedType,
-                              onChanged: (value) {
-                                if (value != null) _onTypeChanged(value);
-                              },
-                              title: Text(type.name),
-                              subtitle: type.startTime != null && type.allDay != true
-                                  ? Text(
-                                      '${type.startTime} - ${type.endTime ?? '?'}')
-                                  : type.allDay == true
-                                      ? const Text('Ganztägig')
-                                      : null,
-                              secondary: type.color != null
-                                  ? Container(
-                                      width: 24,
-                                      height: 24,
-                                      decoration: BoxDecoration(
-                                        color: ColorUtils.parseNamedColor(type.color),
-                                        shape: BoxShape.circle,
-                                      ),
-                                    )
-                                  : const Icon(Icons.event),
-                            ))
-                        .toList(),
-                  );
                 },
               ),
             ),
-
-            const SizedBox(height: AppDimensions.paddingM),
-
-            // All-day duration (only shown for all-day events)
-            if (isAllDay) ...[
-              _SectionCard(
-                title: 'Dauer (in Tagen)',
-                child: Padding(
-                  padding: const EdgeInsets.all(AppDimensions.paddingM),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          keyboardType: TextInputType.number,
-                          decoration: const InputDecoration(
-                            border: OutlineInputBorder(),
-                            hintText: '1',
-                          ),
-                          controller: _durationController,
-                          onChanged: (value) {
-                            final parsed = int.tryParse(value);
-                            if (parsed != null && parsed > 0) {
-                              setState(() => _durationDays = parsed);
-                            }
-                          },
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Text(
-                        _durationDays == 1 ? 'Tag' : 'Tage',
-                        style: Theme.of(context).textTheme.bodyLarge,
-                      ),
-                    ],
-                  ),
-                ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+            child: TextField(
+              textCapitalization: TextCapitalization.sentences,
+              maxLines: null,
+              decoration: const InputDecoration(
+                labelText: 'Info-Text (optional)',
+                helperText: 'Dieser Text wird anstelle des Typs angezeigt.',
+                border: InputBorder.none,
               ),
-              const SizedBox(height: AppDimensions.paddingM),
-            ],
-
-            // TypeInfo (custom display text)
-            _SectionCard(
-              title: 'Info-Text (optional)',
-              child: Padding(
-                padding: const EdgeInsets.all(AppDimensions.paddingM),
-                child: TextField(
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: 'z.B. "Weihnachtskonzert 2026"',
-                    helperText: 'Dieser Text wird anstelle des Typs angezeigt.',
-                  ),
-                  onChanged: (value) =>
-                      setState(() => _typeInfo = value.isEmpty ? null : value),
-                ),
-              ),
+              onChanged: (value) =>
+                  setState(() => _typeInfo = value.isEmpty ? null : value),
             ),
-
-            const SizedBox(height: AppDimensions.paddingM),
-
-            // ATT_DETAIL: "Ort (für Navigation)" for types with place_enabled
-            if (_selectedType?.placeEnabled == true) ...[
-              _SectionCard(
-                title: 'Ort (für Navigation)',
-                child: Padding(
-                  padding: const EdgeInsets.all(AppDimensions.paddingM),
-                  child: TextField(
-                    textCapitalization: TextCapitalization.sentences,
-                    minLines: 2,
-                    maxLines: 4,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      hintText: 'z. B. Gemeindehaus, Musterstr. 1, 12345 Berlin',
-                    ),
-                    onChanged: (value) =>
-                        setState(() => _place = value.trim().isEmpty ? null : value.trim()),
-                  ),
-                ),
-              ),
-              const SizedBox(height: AppDimensions.paddingM),
-            ],
-
-            // DUTY: persons needed per weekday (Dienst-Modus)
-            if (_selectedType?.dutyMode == true && _selectedDates.isNotEmpty) ...[
-              _SectionCard(
-                title: 'Benötigte Personen',
-                child: Column(
+          ),
+          // DUTY: persons needed per weekday (Dienst-Modus)
+          if (_selectedType?.dutyMode == true)
+            for (final wd in _dutyWeekdays())
+              ListTile(
+                title: Text('Benötigte Personen · ${weekdayLongNames[wd.weekday - 1]}'),
+                subtitle: Text('${wd.count} ${wd.count == 1 ? 'Termin' : 'Termine'}'),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    for (final wd in _dutyWeekdays())
-                      ListTile(
-                        title: Text('Benötigte Personen · ${weekdayLongNames[wd.weekday - 1]}'),
-                        subtitle: Text('${wd.count} ${wd.count == 1 ? 'Termin' : 'Termine'}'),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            IconButton(
-                              icon: const Icon(Icons.remove),
-                              tooltip: 'Weniger',
-                              onPressed: wd.required <= 1
-                                  ? null
-                                  : () => setState(() => _dutyRequiredByWeekday[wd.weekday] = wd.required - 1),
-                            ),
-                            Text('${wd.required}'),
-                            IconButton(
-                              icon: const Icon(Icons.add),
-                              tooltip: 'Mehr',
-                              onPressed: () => setState(() => _dutyRequiredByWeekday[wd.weekday] = wd.required + 1),
-                            ),
-                          ],
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: AppDimensions.paddingM),
-            ],
-
-            // Time range (only for non-all-day events)
-            if (!isAllDay) ...[
-              _SectionCard(
-                title: 'Uhrzeit',
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: ListTile(
-                        leading: const Icon(Icons.access_time,
-                            color: AppColors.primary),
-                        title: Text(_getDisplayStartTime()),
-                        subtitle: const Text('Von'),
-                        onTap: () => _pickTime(isStart: true),
-                      ),
+                    IconButton(
+                      icon: const Icon(Icons.remove),
+                      tooltip: 'Weniger',
+                      onPressed: wd.required <= 1
+                          ? null
+                          : () => setState(
+                              () => _dutyRequiredByWeekday[wd.weekday] = wd.required - 1),
                     ),
-                    const Icon(Icons.arrow_forward, color: AppColors.medium),
-                    Expanded(
-                      child: ListTile(
-                        leading: const Icon(Icons.access_time_filled,
-                            color: AppColors.primary),
-                        title: Text(_getDisplayEndTime()),
-                        subtitle: const Text('Bis'),
-                        onTap: () => _pickTime(isStart: false),
-                      ),
+                    Text('${wd.required}'),
+                    IconButton(
+                      icon: const Icon(Icons.add),
+                      tooltip: 'Mehr',
+                      onPressed: () => setState(
+                          () => _dutyRequiredByWeekday[wd.weekday] = wd.required + 1),
                     ),
                   ],
                 ),
               ),
-              const SizedBox(height: AppDimensions.paddingM),
-            ],
-
-            // Songs selection (only if type.manageSongs)
-            if (showSongs) ...[
-              _SectionCard(
-                title: 'Werke',
-                trailing: IconButton(
-                  icon: const Icon(Icons.add),
-                  onPressed: _addSongs,
-                  tooltip: 'Werk hinzufügen',
+          // ATT_DETAIL: "Ort (für Navigation)" for types with place_enabled
+          if (_selectedType?.placeEnabled == true)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+              child: TextField(
+                textCapitalization: TextCapitalization.sentences,
+                minLines: 2,
+                maxLines: 4,
+                decoration: const InputDecoration(
+                  labelText: 'Ort (für Navigation)',
+                  hintText: 'z. B. Gemeindehaus, Musterstr. 1, 12345 Berlin',
+                  border: InputBorder.none,
                 ),
-                child: _songEntries.isEmpty
-                    ? const Padding(
-                        padding: EdgeInsets.all(AppDimensions.paddingM),
-                        child: Text(
-                          'Keine Werke ausgewählt',
-                          style: TextStyle(color: AppColors.medium),
-                        ),
-                      )
-                    : SelectedSongsList(
-                        entries: _songEntries,
-                        onEntriesChanged: (entries) {
-                          setState(() => _songEntries = entries);
-                        },
-                      ),
+                onChanged: (value) =>
+                    setState(() => _place = value.trim().isEmpty ? null : value.trim()),
               ),
-              const SizedBox(height: AppDimensions.paddingM),
-            ],
-
-            // Notes
-            _SectionCard(
-              title: 'Notizen (optional)',
-              child: Padding(
-                padding: const EdgeInsets.all(AppDimensions.paddingM),
-                child: TextField(
-                  maxLines: 3,
-                  decoration: const InputDecoration(
-                    hintText: 'Besondere Hinweise...',
-                    border: OutlineInputBorder(),
+            ),
+          // Flutter-only: time range (Ionic takes the type's default times)
+          if (!isAllDay)
+            ListTile(
+              title: const Text('Uhrzeit'),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextButton(
+                    onPressed: () => _pickTime(isStart: true),
+                    child: Text(_getDisplayStartTime()),
                   ),
-                  onChanged: (value) => _notes = value,
-                ),
+                  const Text('–'),
+                  TextButton(
+                    onPressed: () => _pickTime(isStart: false),
+                    child: Text(_getDisplayEndTime()),
+                  ),
+                ],
               ),
             ),
-
-            const SizedBox(height: AppDimensions.paddingXL),
-
-            // Summary (only shown when date and type are selected)
-            _buildSummary(),
-
-            // Create button at bottom
-            SizedBox(
-              width: double.infinity,
-              child: FilledButton.icon(
-                onPressed: _isLoading || _selectedDates.isEmpty
-                    ? null
-                    : _createAttendances,
-                icon: _isLoading
-                    ? const SizedBox(
-                        width: 16,
-                        height: 16,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Colors.white,
-                        ),
-                      )
-                    : const Icon(Icons.add),
-                label: Text(_selectedDates.length == 1
-                    ? 'Termin hinzufügen'
-                    : '${_selectedDates.length} Termine hinzufügen'),
+          // Flutter-only: notes
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+            child: TextField(
+              maxLines: null,
+              textCapitalization: TextCapitalization.sentences,
+              decoration: const InputDecoration(
+                labelText: 'Notizen (optional)',
+                border: InputBorder.none,
               ),
+              onChanged: (value) => _notes = value,
             ),
-          ],
-        ),
-      ),
-    );
-  }
+          ),
+        ]),
 
-  /// Build summary section showing what will be created
-  Widget _buildSummary() {
-    if (_selectedDates.isEmpty || _selectedType == null) {
-      return const SizedBox.shrink();
-    }
-
-    // Determine what will be displayed as the title in the attendance list
-    final displayTitle = _typeInfo?.isNotEmpty == true ? _typeInfo! : _selectedType!.name;
-    final typeColor = ColorUtils.parseNamedColor(_selectedType!.color);
-
-    return Column(
-      children: [
-        _SectionCard(
-          title: 'Vorschau (so wird es angezeigt)',
-          child: Column(
+        // Werke (only if type.manageSongs)
+        if (showSongs) ...[
+          _InsetListHeader(
+            title: 'Werke',
+            trailing: IconButton(
+              icon: const Icon(Icons.add),
+              color: AppColors.primary,
+              tooltip: 'Werk(e) hinzufügen',
+              onPressed: _addSongs,
+            ),
+          ),
+          _InsetGroup(
+            margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
             children: [
-              // Preview card - mimics how it will look in the attendance list
-              Container(
-                margin: const EdgeInsets.all(AppDimensions.paddingM),
-                padding: const EdgeInsets.all(AppDimensions.paddingM),
-                decoration: BoxDecoration(
-                  color: typeColor.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: typeColor.withValues(alpha: 0.3)),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Date
-                    Row(
-                      children: [
-                        Icon(Icons.calendar_today, size: 16, color: typeColor),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            _getDateDisplayText(),
-                            style: TextStyle(
-                              color: AppColors.dark,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    // Title (typeInfo or type name)
-                    Text(
-                      displayTitle,
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: typeColor,
-                      ),
-                    ),
-                    // Show original type if typeInfo is set
-                    if (_typeInfo?.isNotEmpty == true)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 2),
-                        child: Text(
-                          'Typ: ${_selectedType!.name}',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: AppColors.medium,
-                          ),
-                        ),
-                      ),
-                    const SizedBox(height: 4),
-                    // Time or all-day
-                    Text(
-                      _selectedType!.allDay != true
-                          ? '${_getDisplayStartTime()} - ${_getDisplayEndTime()}'
-                          : 'Ganztägig${_durationDays > 1 ? ' ($_durationDays Tage)' : ''}',
-                      style: TextStyle(
-                        color: AppColors.medium,
-                      ),
-                    ),
-                    // Songs
-                    if (_songEntries.isNotEmpty) ...[
-                      const SizedBox(height: 8),
-                      Row(
-                        children: [
-                          const Icon(Icons.music_note, size: 14, color: AppColors.tertiary),
-                          const SizedBox(width: 4),
-                          Text(
-                            '${_songEntries.length} Werk${_songEntries.length == 1 ? '' : 'e'}',
-                            style: const TextStyle(fontSize: 12, color: AppColors.tertiary),
-                          ),
-                        ],
-                      ),
-                    ],
-                    // Notes preview
-                    if (_notes?.isNotEmpty == true) ...[
-                      const SizedBox(height: 8),
-                      Row(
-                        children: [
-                          const Icon(Icons.notes, size: 14, color: AppColors.medium),
-                          const SizedBox(width: 4),
-                          Expanded(
-                            child: Text(
-                              _notes!,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(fontSize: 12, color: AppColors.medium),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ],
-                ),
+              SelectedSongsList(
+                entries: _songEntries,
+                onEntriesChanged: (entries) => setState(() => _songEntries = entries),
               ),
             ],
           ),
+        ],
+
+        // Primary "Termin(e) hinzufügen" row (Ionic ion-item color="primary")
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Material(
+            color: canSubmit ? AppColors.primary : AppColors.primary.withValues(alpha: 0.4),
+            borderRadius: BorderRadius.circular(10),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(10),
+              onTap: canSubmit ? _createAttendances : null,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        submitLabel,
+                        style: const TextStyle(color: Colors.white, fontSize: 16),
+                      ),
+                    ),
+                    if (_isLoading)
+                      const SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          ),
         ),
-        const SizedBox(height: AppDimensions.paddingM),
       ],
     );
+
+    return Scaffold(
+      backgroundColor: Theme.of(context).brightness == Brightness.dark
+          ? null
+          : AppColors.light,
+      appBar: AppBar(
+        title: const Text('Termin hinzufügen'),
+        automaticallyImplyLeading: !widget.asSheet,
+        backgroundColor: Theme.of(context).brightness == Brightness.dark
+            ? null
+            : AppColors.light,
+        actions: [
+          if (widget.asSheet)
+            IconButton(
+              icon: const Icon(Icons.close),
+              tooltip: 'Schließen',
+              onPressed: () => Navigator.of(context).pop(false),
+            ),
+        ],
+      ),
+      body: body,
+    );
+  }
+
+  /// Ionic onDateClick: tapping the field while only today is selected
+  /// deselects today first, then the date picker opens.
+  Future<void> _onDateClick() async {
+    final today = _today();
+    if (_selectedDates.length == 1 &&
+        DateUtils.isSameDay(_selectedDates.first, today)) {
+      setState(() => _selectedDates = []);
+      ToastHelper.showInfo(context, 'Das aktuelle Datum wurde deselektiert');
+    }
+    await _pickDates();
   }
 
   void _onTypeChanged(AttendanceType type) {
@@ -587,12 +450,12 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
     return 'Endzeit';
   }
 
+  // UX_ATT: Ionic dateString ("dd.MM.yyyy" / attList.eventsSelected / noDate)
   String _getDateDisplayText() {
     if (_selectedDates.isEmpty) {
       return 'Kein Datum ausgewählt';
     } else if (_selectedDates.length == 1) {
-      return DateFormat('EEEE, d. MMMM yyyy', 'de_DE')
-          .format(_selectedDates.first);
+      return DateFormat('dd.MM.yyyy', 'de_DE').format(_selectedDates.first);
     } else {
       return '${_selectedDates.length} Termine ausgewählt';
     }
@@ -638,8 +501,17 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
     }
   }
 
+  // UX_ATT: Ionic info modal (breakpoint 0.5): Veranstaltungstypen legend,
+  // then Ferien and Feiertage.
   void _showHolidayInfo() {
     final holidaysAsync = ref.read(holidaysProvider);
+    final types = ref.read(attendanceTypesProvider).valueOrNull ?? const <AttendanceType>[];
+    Widget dot(Color color) => Icon(Icons.circle, size: 18, color: color);
+    Widget header(String text) => Padding(
+          padding: const EdgeInsets.fromLTRB(4, 16, 4, 4),
+          child: Text(text, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+        );
+    final fmt = DateFormat('dd.MM.yyyy', 'de_DE');
 
     showModalBottomSheet(
       context: context,
@@ -656,95 +528,52 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
           loading: () =>
               const Center(child: CircularProgressIndicator()),
           error: (e, _) => Center(child: Text('Fehler: $e')),
-          data: (holidays) => ListView(
-            controller: scrollController,
-            padding: const EdgeInsets.all(16),
-            children: [
-              // Header
-              Row(
-                children: [
-                  const Expanded(
-                    child: Text(
-                      'Feiertage & Ferien',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
+          data: (holidays) {
+            final hasHolidays =
+                holidays.publicHolidays.isNotEmpty || holidays.schoolHolidays.isNotEmpty;
+            return ListView(
+              controller: scrollController,
+              padding: const EdgeInsets.all(16),
+              children: [
+                header('Veranstaltungstypen'),
+                _InsetGroup(
+                  margin: EdgeInsets.zero,
+                  children: [
+                    for (final type in types)
+                      ListTile(
+                        dense: true,
+                        leading: dot(ColorUtils.parseNamedColor(type.color)),
+                        title: Text(type.name),
                       ),
-                    ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: () => Navigator.of(context).pop(),
-                  ),
-                ],
-              ),
-              const Divider(),
-
-              // Public holidays
-              if (holidays.publicHolidays.isNotEmpty) ...[
-                const Text(
-                  'Feiertage',
-                  style: TextStyle(fontWeight: FontWeight.w600),
+                    if (hasHolidays) ...[
+                      ListTile(
+                        dense: true,
+                        leading: dot(AppColors.danger),
+                        title: const Text('Feiertage des ausgewählten Bundeslandes'),
+                      ),
+                      ListTile(
+                        dense: true,
+                        leading: dot(AppColors.medium),
+                        title: const Text('Ferien des ausgewählten Bundeslandes'),
+                      ),
+                    ],
+                  ],
                 ),
-                const SizedBox(height: 8),
-                ...holidays.publicHolidays
-                    .where((h) => !h.isPast)
-                    .take(10)
-                    .map((h) => ListTile(
-                          leading: Container(
-                            width: 12,
-                            height: 12,
-                            decoration: const BoxDecoration(
-                              color: AppColors.danger,
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                          title: Text(h.name),
-                          subtitle: Text(DateFormat('dd.MM.yyyy', 'de_DE')
-                              .format(h.startDate)),
-                          dense: true,
-                        )),
-                const SizedBox(height: 16),
+                header('Ferien'),
+                for (final h in holidays.schoolHolidays.where((h) => !h.isPast))
+                  ListTile(
+                    dense: true,
+                    title: Text('${fmt.format(h.startDate)} - ${fmt.format(h.endDate)}: ${h.name}'),
+                  ),
+                header('Feiertage'),
+                for (final h in holidays.publicHolidays.where((h) => !h.isPast))
+                  ListTile(
+                    dense: true,
+                    title: Text('${fmt.format(h.startDate)}: ${h.name}'),
+                  ),
               ],
-
-              // School holidays
-              if (holidays.schoolHolidays.isNotEmpty) ...[
-                const Text(
-                  'Schulferien',
-                  style: TextStyle(fontWeight: FontWeight.w600),
-                ),
-                const SizedBox(height: 8),
-                ...holidays.schoolHolidays
-                    .where((h) => !h.isPast)
-                    .take(10)
-                    .map((h) => ListTile(
-                          leading: Container(
-                            width: 12,
-                            height: 12,
-                            decoration: const BoxDecoration(
-                              color: AppColors.medium,
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                          title: Text(h.name),
-                          subtitle: Text(
-                              '${DateFormat('dd.MM.yyyy', 'de_DE').format(h.startDate)} - ${DateFormat('dd.MM.yyyy', 'de_DE').format(h.endDate)}'),
-                          dense: true,
-                        )),
-              ],
-
-              if (holidays.publicHolidays.isEmpty &&
-                  holidays.schoolHolidays.isEmpty)
-                const Padding(
-                  padding: EdgeInsets.all(32),
-                  child: Text(
-                    'Keine Feiertage konfiguriert.\n\nAktiviere "Feiertage anzeigen" in den Tenant-Einstellungen und wähle eine Region aus.',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: AppColors.medium),
-                  ),
-                ),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );
@@ -759,9 +588,7 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
     }
 
     if (_selectedDates.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Bitte wähle mindestens ein Datum aus')),
-      );
+      ToastHelper.showWarning(context, 'Bitte wähle mindestens ein Datum aus');
       return;
     }
 
@@ -801,16 +628,17 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
       ref.invalidate(attendancesProvider);
       ref.invalidate(upcomingAttendancesProvider);
 
+      // UX_ATT: Ionic toasts attList.eventAdded / eventsAdded
       final message = _selectedDates.length == 1
-          ? 'Anwesenheit hinzugefügt'
-          : '${_selectedDates.length} Anwesenheiten hinzugefügt';
+          ? 'Termin hinzugefügt'
+          : 'Termine hinzugefügt';
+      ToastHelper.showSuccess(context, message);
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(message)),
-      );
-
-      // Navigate to the last created attendance
-      if (lastCreatedId != null) {
+      // UX_ATT: as sheet (Ionic) dismiss and stay on the list
+      if (widget.asSheet) {
+        Navigator.of(context).pop(true);
+      } else if (lastCreatedId != null) {
+        // Navigate to the last created attendance
         context.go('/attendance/$lastCreatedId');
       } else {
         context.pop();
@@ -1107,46 +935,56 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
   }
 }
 
-class _SectionCard extends StatelessWidget {
-  const _SectionCard({
-    required this.title,
-    required this.child,
-    this.trailing,
+/// UX_ATT: Ionic `ion-list inset` group – rounded card with dividers.
+class _InsetGroup extends StatelessWidget {
+  const _InsetGroup({
+    required this.children,
+    this.margin = const EdgeInsets.all(16),
   });
 
+  final List<Widget> children;
+  final EdgeInsetsGeometry margin;
+
+  @override
+  Widget build(BuildContext context) {
+    final rows = <Widget>[];
+    for (var i = 0; i < children.length; i++) {
+      if (i > 0) rows.add(const Divider(height: 1, indent: 16));
+      rows.add(children[i]);
+    }
+    return Card(
+      margin: margin,
+      elevation: 0,
+      clipBehavior: Clip.antiAlias,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      child: Column(mainAxisSize: MainAxisSize.min, children: rows),
+    );
+  }
+}
+
+/// UX_ATT: Ionic `ion-list-header` with an optional trailing button.
+class _InsetListHeader extends StatelessWidget {
+  const _InsetListHeader({required this.title, this.trailing});
+
   final String title;
-  final Widget child;
   final Widget? trailing;
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 4, 8, 4),
+      child: Row(
         children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(
-              AppDimensions.paddingM,
-              AppDimensions.paddingS,
-              AppDimensions.paddingS,
-              0,
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    title,
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          color: AppColors.medium,
-                          fontWeight: FontWeight.w600,
-                        ),
-                  ),
-                ),
-                if (trailing != null) trailing!,
-              ],
+          Expanded(
+            child: Text(
+              title,
+              style: Theme.of(context)
+                  .textTheme
+                  .titleMedium
+                  ?.copyWith(fontWeight: FontWeight.bold),
             ),
           ),
-          child,
+          if (trailing != null) trailing!,
         ],
       ),
     );

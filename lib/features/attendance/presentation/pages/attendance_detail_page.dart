@@ -92,7 +92,8 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
   bool _planAccordionExpanded = false;
 
   // Click mode: tap cycles status instead of opening picker
-  bool _clickMode = false;
+  // UX_ATT: Ionic default AttendanceViewMode.CLICK (tap cycles the status)
+  bool _clickMode = true;
 
   // Local songs/history entries
   List<SongHistoryEntry> _songEntries = [];
@@ -434,34 +435,38 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
           );
         }
 
+        // UX_ATT: Ionic title "dd.MM.yyyy | anwesend/gesamt" of the shown persons
+        final titlePersons = personsAsync.valueOrNull == null
+            ? null
+            : _titlePersons(personsAsync.valueOrNull!);
+        final dateLabel = attendance.formattedDate;
+        final isOnline = ref.watch(connectivityProvider).valueOrNull ?? true;
+        final pendingOffline = ref.watch(offlinePendingCountProvider);
+
         return Scaffold(
+          backgroundColor: Theme.of(context).brightness == Brightness.dark ? null : AppColors.light,
           appBar: AppBar(
-            title: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(attendance.displayTitle),
-                Text(
-                  attendance.formattedDate,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: AppColors.medium,
-                  ),
-                ),
-              ],
+            title: Text(
+              titlePersons == null
+                  ? dateLabel
+                  : '$dateLabel | ${_attendedCount(titlePersons)}/${titlePersons.length}',
             ),
             actions: [
-              IconButton(
-                icon: Icon(
-                  _clickMode ? Icons.touch_app : Icons.touch_app_outlined,
-                  color: _clickMode ? AppColors.primary : null,
+              // UX_ATT: Ionic offline chip in the header
+              if (!isOnline)
+                Padding(
+                  padding: const EdgeInsets.only(right: 4),
+                  child: Chip(
+                    visualDensity: VisualDensity.compact,
+                    backgroundColor: AppColors.warning,
+                    side: BorderSide.none,
+                    avatar: const Icon(Icons.cloud_off, size: 16, color: Colors.black),
+                    label: Text(
+                      pendingOffline > 0 ? '$pendingOffline ausstehend' : 'Offline',
+                      style: const TextStyle(fontSize: 12, color: Colors.black),
+                    ),
+                  ),
                 ),
-                tooltip: _clickMode ? 'Klick-Modus aktiv' : 'Klick-Modus',
-                onPressed: () => setState(() => _clickMode = !_clickMode),
-              ),
-              IconButton(
-                icon: const Icon(Icons.help_outline),
-                tooltip: 'Legende',
-                onPressed: () => showAttendanceLegendSheet(context),
-              ),
               PopupMenuButton<String>(
                 onSelected: _handleMenuAction,
                 // ATT_DETAIL: badge with the number of active status filters
@@ -473,42 +478,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                     color: _statusFilter.isNotEmpty ? AppColors.primary : null,
                   ),
                 ),
-                itemBuilder: (context) => [
-                  ..._buildAttDetailMenuItems(attendance),
-                  const PopupMenuItem(
-                    value: 'stats',
-                    child: ListTile(
-                      leading: Icon(Icons.bar_chart),
-                      title: Text('Statistik'),
-                      contentPadding: EdgeInsets.zero,
-                    ),
-                  ),
-                  const PopupMenuItem(
-                    value: 'notes',
-                    child: ListTile(
-                      leading: Icon(Icons.note_add),
-                      title: Text('Notizen'),
-                      contentPadding: EdgeInsets.zero,
-                    ),
-                  ),
-                  const PopupMenuItem(
-                    value: 'photo',
-                    child: ListTile(
-                      leading: Icon(Icons.camera_alt),
-                      title: Text('Foto'),
-                      contentPadding: EdgeInsets.zero,
-                    ),
-                  ),
-                  const PopupMenuDivider(),
-                  const PopupMenuItem(
-                    value: 'export_excel',
-                    child: ListTile(
-                      leading: Icon(Icons.table_chart),
-                      title: Text('Excel exportieren'),
-                      contentPadding: EdgeInsets.zero,
-                    ),
-                  ),
-                ],
+                itemBuilder: (context) => _buildAttDetailMenuItems(attendance),
               ),
             ],
           ),
@@ -542,7 +512,12 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
               final churches = ref.watch(churchesProvider).valueOrNull ?? const [];
               final statusFiltered = filterPersonsByStatus(groupPersons, _localStatuses, _statusFilter);
               final visiblePersons = sortField == null
-                  ? statusFiltered
+                  // UX_ATT: Ionic group order (main group, sort_order, name)
+                  ? sortPersonsByGroup(
+                      statusFiltered,
+                      groups: ref.watch(groupsProvider).valueOrNull ?? const [],
+                      mainGroupId: ref.watch(mainGroupProvider).valueOrNull?.id,
+                    )
                   : sortPersonsByField(statusFiltered, _sort, sortField, _registrationAnswers, churches);
               final sortLines = sortField == null
                   ? null
@@ -565,31 +540,6 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
 
               return CustomScrollView(
                 slivers: [
-                  // Offline banner
-                  SliverToBoxAdapter(
-                    child: Consumer(
-                      builder: (context, ref, _) {
-                        final isOnline = ref.watch(connectivityProvider).valueOrNull ?? true;
-                        if (isOnline) return const SizedBox.shrink();
-                        // PROFILE_OFFLINE: show pending offline writes
-                        final pending = ref.watch(offlinePendingCountProvider);
-                        return MaterialBanner(
-                          content: Text(pending > 0
-                              ? 'Offline – $pending ausstehend. Änderungen werden gespeichert, sobald du wieder online bist.'
-                              : 'Offline – Änderungen werden gespeichert, sobald du wieder online bist.'),
-                          leading: const Icon(Icons.wifi_off, color: AppColors.warning),
-                          backgroundColor: AppColors.warning.withAlpha(30),
-                          actions: [
-                            TextButton(
-                              onPressed: () {},
-                              child: const Text('OK'),
-                            ),
-                          ],
-                        );
-                      },
-                    ),
-                  ),
-
                   SliverToBoxAdapter(
                     child: Column(
                       children: [
@@ -635,6 +585,16 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                               showDescriptionAttachmentSheet(context, attendance: attendance),
                         ),
 
+                        // UX_ATT: Ionic order Allgemein, Werke, Checkliste,
+                        // Besetzung, Protokoll, Ablaufplan, Personen
+                        if (hasSongs)
+                          SongsHistoryAccordion(
+                            entries: _songEntries,
+                            onAdd: _openSongsSelection,
+                            onRemove: _removeSongEntry,
+                            onTap: _onSongEntryTap,
+                          ),
+
                         if (hasChecklist)
                           ChecklistAccordion(
                             checklist: _localChecklist,
@@ -646,12 +606,11 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                             formatDeadlineRelative: _formatDeadlineRelative,
                           ),
 
-                        if (hasSongs)
-                          SongsHistoryAccordion(
-                            entries: _songEntries,
-                            onAdd: _openSongsSelection,
-                            onRemove: _removeSongEntry,
-                            onTap: _onSongEntryTap,
+                        // DUTY: Dienstplan "Besetzung"
+                        if (attendanceType != null && attendanceType.dutyMode && attendance.id != null)
+                          DutyStaffingSection(
+                            attendance: attendance,
+                            attendanceType: attendanceType,
                           ),
 
                         // PROTOCOL: Protokoll-Karte + "Aufgaben aus diesem Termin"
@@ -679,13 +638,6 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                           onSharePlanChanged: _toggleSharePlan,
                         ),
 
-                        // DUTY: Dienstplan "Besetzung"
-                        if (attendanceType != null && attendanceType.dutyMode && attendance.id != null)
-                          DutyStaffingSection(
-                            attendance: attendance,
-                            attendanceType: attendanceType,
-                          ),
-
                         const SizedBox(height: AppDimensions.paddingS),
                       ],
                     ),
@@ -695,8 +647,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                   if (persons.isEmpty && helperGroupId == null)
                     SliverToBoxAdapter(child: _buildLoadFailedBanner()),
 
-                  SliverToBoxAdapter(
-                    child: AttendanceGrid(
+                  AttendanceGrid(
                       persons: visiblePersons,
                       localStatuses: _localStatuses,
                       personNotes: visibleNotes,
@@ -733,8 +684,8 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                       onEditRegistrationFields: (attendanceType?.registrationFields?.isNotEmpty ?? false)
                           ? (personId) => _editRegistrationFields(personId, attendanceType!)
                           : null,
-                    ),
                   ),
+                  const SliverToBoxAdapter(child: SizedBox(height: AppDimensions.paddingL)),
                 ],
               );
             },
@@ -843,8 +794,8 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       case 'stats':
         _showStatsDialog();
         break;
-      case 'notes':
-        _showNotesDialog();
+      case 'legend':
+        showAttendanceLegendSheet(context);
         break;
       case 'photo':
         _takePhoto();
@@ -884,6 +835,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
 
   static const _prefShowAvatars = 'attendanceShowAvatars';
   static const _prefShowRegFields = 'attendanceShowRegFields';
+  static const _prefViewMode = 'attendanceViewMode'; // UX_ATT: 'click' | 'select'
   String get _prefSortField => 'attSortField${widget.attendanceId}';
   String get _prefSortLevel => 'attSortLevel${widget.attendanceId}';
   String get _prefSortDir => 'attSortDir${widget.attendanceId}';
@@ -897,6 +849,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       setState(() {
         _showAvatars = prefs.getBool(_prefShowAvatars) ?? false;
         _showRegFields = prefs.getBool(_prefShowRegFields) ?? true;
+        _clickMode = prefs.getString(_prefViewMode) != 'select';
         if (field != null && field.isNotEmpty) {
           _sort = AttendanceSort(
             fieldId: field,
@@ -924,6 +877,23 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     final ids = _personAttendanceIds.keys.toSet();
     return persons.where((p) => ids.contains(p.id)).toList();
   }
+
+  // UX_ATT: persons counted in the Ionic header title (helper group +
+  // status filter applied, like Ionic `filteredPlayers`).
+  List<Person> _titlePersons(List<Person> persons) {
+    final helperGroupId = ref.watch(helperGroupFilterProvider).valueOrNull;
+    final inAttendance = _personsInAttendance(persons);
+    final group = helperGroupId == null
+        ? inAttendance
+        : inAttendance.where((p) => p.instrument == helperGroupId).toList();
+    return filterPersonsByStatus(group, _localStatuses, _statusFilter);
+  }
+
+  /// Ionic getAttendedPlayers: Anwesend + Verspätet.
+  int _attendedCount(List<Person> persons) => persons.where((p) {
+        final s = _localStatuses[p.id];
+        return s == AttendanceStatus.present || s == AttendanceStatus.late;
+      }).length;
 
   List<SortableField> _sortableFields(AttendanceType? type) {
     final personFields = ref.watch(personExtraFieldsProvider).valueOrNull ?? const [];
@@ -974,9 +944,14 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
         item('start_checklist', Icons.check_box_outlined, 'Checkliste starten'),
       if (!isHelper && canRestore)
         item('reset_checklist', Icons.refresh, 'Checkliste zurücksetzen'),
+      // UX_ATT: Ionic order continues with Status-Übersicht, Gemeinde-Übersicht,
+      // Legende, Erinnerung versenden
+      item('stats', Icons.bar_chart, 'Status-Übersicht'),
       if (hasChurch) item('church', Icons.business_outlined, 'Gemeinde-Übersicht'),
+      item('legend', Icons.info_outline, 'Legende'),
       if (!isHelper) item('reminder', Icons.notifications_outlined, 'Erinnerung versenden'),
-      const PopupMenuDivider(),
+      // Flutter-only extra (Ionic has the photo upload commented out)
+      if (!isHelper) item('photo', Icons.camera_alt_outlined, 'Foto'),
     ];
   }
 
@@ -1152,6 +1127,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                 onChanged: (v) {
                   setState(() => _clickMode = !(v ?? true));
                   setSheetState(() {});
+                  _savePref((p) => p.setString(_prefViewMode, _clickMode ? 'click' : 'select'));
                 },
               ),
               const SizedBox(height: AppDimensions.paddingS),
@@ -2427,10 +2403,16 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       return;
     }
 
+    final name = (ref.read(filteredPersonsForAttendanceProvider(widget.attendanceId)).valueOrNull ?? const [])
+            .where((p) => p.id == personId)
+            .firstOrNull
+            ?.fullName ??
+        '';
     final confirmed = await DialogHelper.showConfirmation(
       context,
-      title: 'Person entfernen?',
-      message: 'Möchtest du diese Person aus der Anwesenheitsliste entfernen?',
+      title: 'Person entfernen',
+      message: 'Möchtest du $name wirklich aus dieser Anwesenheit entfernen? '
+          'Diese Aktion kann nicht rückgängig gemacht werden.',
       confirmText: 'Entfernen',
       isDestructive: true,
     );
@@ -2452,10 +2434,10 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       ref.invalidate(personAttendancesForAttendanceProvider(widget.attendanceId));
       ref.invalidate(filteredPersonsForAttendanceProvider(widget.attendanceId));
 
-      ToastHelper.showSuccess(context, 'Person entfernt');
+      ToastHelper.showSuccess(context, 'Person aus Anwesenheit entfernt');
     } catch (e) {
       if (mounted) {
-        ToastHelper.showError(context, 'Fehler: $e');
+        ToastHelper.showError(context, 'Fehler beim Entfernen der Person');
       }
     }
   }
@@ -2478,40 +2460,6 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       statusCounts: statusCounts,
       total: total,
     );
-  }
-
-  Future<void> _showNotesDialog() async {
-    final attendance = ref.read(attendanceDetailProvider(widget.attendanceId)).valueOrNull;
-    final currentNotes = attendance?.notes ?? '';
-
-    final result = await DialogHelper.showTextInput(
-      context,
-      title: 'Notizen',
-      initialValue: currentNotes,
-      hint: 'Notizen zur Anwesenheit...',
-      maxLines: 5,
-      confirmText: 'Speichern',
-    );
-
-    if (result != null && mounted) {
-      try {
-        final repo = ref.read(attendanceRepositoryWithTenantProvider);
-        if (!repo.hasTenantId) return;
-        await repo.updateAttendance(
-          widget.attendanceId,
-          {'notes': result},
-        );
-
-        ref.invalidate(attendanceDetailProvider(widget.attendanceId));
-        if (mounted) {
-          ToastHelper.showSuccess(context, 'Notizen gespeichert');
-        }
-      } catch (e) {
-        if (mounted) {
-          ToastHelper.showError(context, 'Fehler: $e');
-        }
-      }
-    }
   }
 
   Future<void> _takePhoto() async {

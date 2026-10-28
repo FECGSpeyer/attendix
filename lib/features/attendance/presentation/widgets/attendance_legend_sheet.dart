@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/constants/enums.dart';
 import '../../../../core/theme/app_colors.dart';
+import 'attendance_detail/status_chip.dart';
 
 /// Shows a modal bottom sheet explaining attendance status types
 ///
@@ -27,13 +28,14 @@ class AttendanceLegendSheet extends StatelessWidget {
 
   final Set<AttendanceStatus>? availableStatuses;
 
+  // UX_ATT: Ionic legend modal (badge + common.status label, Ionic order)
   static const _allItems = [
-    (AttendanceStatus.present, 'Person war bei dem Termin anwesend.'),
-    (AttendanceStatus.excused, 'Person hat sich im Voraus abgemeldet.'),
-    (AttendanceStatus.late, 'Person kam zu spät zum Termin.'),
-    (AttendanceStatus.lateExcused, 'Person kam zu spät, hatte aber vorher Bescheid gegeben.'),
-    (AttendanceStatus.absent, 'Person war nicht anwesend und hat sich nicht abgemeldet.'),
-    (AttendanceStatus.neutral, 'Status wurde noch nicht eingetragen.'),
+    (AttendanceStatus.present, 'Anwesend'),
+    (AttendanceStatus.excused, 'Entschuldigt'),
+    (AttendanceStatus.absent, 'Abwesend'),
+    (AttendanceStatus.late, 'Verspätet anwesend'),
+    (AttendanceStatus.lateExcused, 'Verspätet entschuldigt'),
+    (AttendanceStatus.neutral, 'Neutral'),
   ];
 
   List<Widget> _buildLegendItems() {
@@ -41,7 +43,7 @@ class AttendanceLegendSheet extends StatelessWidget {
         ? _allItems.where((item) => availableStatuses!.contains(item.$1))
         : _allItems;
     return items
-        .map((item) => _LegendItem(status: item.$1, description: item.$2))
+        .map((item) => _LegendItem(status: item.$1, label: item.$2))
         .toList();
   }
 
@@ -110,11 +112,11 @@ class AttendanceLegendSheet extends StatelessWidget {
 
 class _LegendItem extends StatelessWidget {
   final AttendanceStatus status;
-  final String description;
+  final String label;
 
   const _LegendItem({
     required this.status,
-    required this.description,
+    required this.label,
   });
 
   @override
@@ -122,41 +124,10 @@ class _LegendItem extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: AppDimensions.paddingM),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: status.color.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Icon(
-              status.icon,
-              color: status.color,
-              size: 22,
-            ),
-          ),
+          SizedBox(width: 40, child: Center(child: AttendanceStatusBadge(status: status))),
           const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  status.label,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  description,
-                  style: TextStyle(
-                    color: AppColors.medium,
-                    fontSize: 13,
-                  ),
-                ),
-              ],
-            ),
-          ),
+          Expanded(child: Text(label)),
         ],
       ),
     );

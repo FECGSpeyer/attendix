@@ -145,20 +145,21 @@ class _PlanAccordionState extends ConsumerState<PlanAccordion> {
     }
     final plan = plans.isEmpty ? null : plans[_planIndex];
     final hasPlan = plan != null && plan.fields.isNotEmpty;
-    final startTime = PlanUtils.formatTime(plan?.time ?? widget.attendance.startTime);
-    final endTime = plan == null
-        ? ''
-        : (plan.end.isNotEmpty ? PlanUtils.formatTime(plan.end) : PlanUtils.computeEnd(startTime, plan.fields));
     final date = plan == null ? null : PlanUtils.planDate(att, _planIndex, plans) ?? DateTime.tryParse(att.date);
     // PROTOCOL: Tagesordnung of protocol types ("Themen aufnehmen", TOP → Thema)
     final protocolType = ref.watch(protocolTypeByIdProvider(widget.attendance.typeId));
     final hasProtocol = protocolType?.enableProtocol ?? false;
     final canAddTopics = hasProtocol && ref.watch(isTeamLeaderProvider) && _planIndex == 0 && widget.attendance.id != null;
-    final addTopicsButton = TextButton.icon(
-      onPressed: () => openAgendaPickerForAttendance(context, ref,
+    // UX_ATT: Ionic rows below the plan: Themen aufnehmen, Ablaufplan
+    // bearbeiten / erstellen, Teilen (export sheet). "Mit Mitgliedern teilen"
+    // lives in the planning page like in Ionic.
+    const primaryStyle = TextStyle(color: AppColors.primary);
+    final addTopicsRow = ListTile(
+      dense: true,
+      leading: const Icon(Icons.add_circle_outline, color: AppColors.primary),
+      title: const Text('Themen aufnehmen', style: primaryStyle),
+      onTap: () => openAgendaPickerForAttendance(context, ref,
           attendanceId: widget.attendance.id!, type: protocolType),
-      icon: const Icon(Icons.add_circle_outline, size: 18),
-      label: const Text('Themen aufnehmen'),
     );
 
     return Card(
@@ -169,69 +170,18 @@ class _PlanAccordionState extends ConsumerState<PlanAccordion> {
       child: ExpansionTile(
         controller: _controller,
         initiallyExpanded: widget.initiallyExpanded,
-        leading: const Icon(Icons.schedule, color: AppColors.primary),
-        title: Row(
-          children: [
-            Text(hasProtocol ? 'Ablaufplan & Tagesordnung' : 'Ablaufplan'),
-            const SizedBox(width: 8),
-            if (hasPlan && startTime.isNotEmpty)
-              Flexible(
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: AppColors.info.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    endTime.isNotEmpty ? '$startTime - $endTime' : startTime,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.info,
-                    ),
-                  ),
-                ),
-              ),
-            const Spacer(),
-            if (widget.attendance.sharePlan)
-              const Tooltip(
-                message: 'Plan wird mit Mitgliedern geteilt',
-                child: Icon(
-                  Icons.share,
-                  size: 16,
-                  color: AppColors.success,
-                ),
-              ),
-          ],
-        ),
+        shape: const Border(),
+        collapsedShape: const Border(),
+        title: Text(hasProtocol ? 'Ablaufplan & Tagesordnung' : 'Ablaufplan'),
         children: [
-          if (!hasPlan)
-            Padding(
-              padding: const EdgeInsets.all(AppDimensions.paddingL),
-              child: Column(
-                children: [
-                  Icon(
-                    Icons.schedule_outlined,
-                    size: 48,
-                    color: AppColors.medium.withValues(alpha: 0.5),
-                  ),
-                  const SizedBox(height: AppDimensions.paddingM),
-                  const Text(
-                    'Kein Ablaufplan vorhanden',
-                    style: TextStyle(color: AppColors.medium),
-                  ),
-                  if (canAddTopics) addTopicsButton,
-                  const SizedBox(height: AppDimensions.paddingM),
-                  FilledButton.icon(
-                    onPressed: widget.onCreate ?? widget.onEdit,
-                    icon: const Icon(Icons.add),
-                    label: const Text('Ablaufplan erstellen'),
-                  ),
-                ],
-              ),
-            )
-          else ...[
+          if (!hasPlan) ...[
+            if (canAddTopics) addTopicsRow,
+            ListTile(
+              dense: true,
+              title: const Text('Ablaufplan erstellen', style: primaryStyle),
+              onTap: widget.onCreate ?? widget.onEdit,
+            ),
+          ] else ...[
             if (plans.length > 1)
               PlanChips(
                 labels: [for (var i = 0; i < plans.length; i++) PlanUtils.planLabel(att, i, plans)],
@@ -241,59 +191,35 @@ class _PlanAccordionState extends ConsumerState<PlanAccordion> {
             PlanViewList(
               plan: plan,
               date: date,
-              showStartEnd: false,
+              showStartEnd: true,
               onFieldTap: hasProtocol && plan.fields.any((f) => f.agendaItemId != null)
                   ? (i) => openPlanFieldTopic(context, ref, plan.fields[i].agendaItemId)
                   : null,
             ),
-          ],
-          const Divider(height: 1),
-          Padding(
-            padding: const EdgeInsets.all(AppDimensions.paddingS),
-            child: Wrap(
-              alignment: WrapAlignment.spaceEvenly,
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                TextButton.icon(
-                  onPressed: () => widget.onSharePlanChanged(!widget.attendance.sharePlan),
-                  icon: Icon(
-                    widget.attendance.sharePlan ? Icons.share : Icons.share_outlined,
-                    size: 18,
-                    color: widget.attendance.sharePlan ? AppColors.success : null,
-                  ),
-                  label: Text(
-                    widget.attendance.sharePlan ? 'Geteilt' : 'Teilen',
-                    style: widget.attendance.sharePlan
-                        ? const TextStyle(color: AppColors.success)
-                        : null,
-                  ),
-                ),
-                TextButton.icon(
-                  onPressed: widget.onEdit,
-                  icon: const Icon(Icons.edit, size: 18),
-                  label: const Text('Bearbeiten'),
-                ),
-                if (hasPlan && canAddTopics) addTopicsButton,
-                if (hasPlan) ...[
-                  TextButton.icon(
-                    onPressed: () => showPlanViewer(
-                      context,
-                      attendance: att,
-                      title: _title(att, plan),
-                    ),
-                    icon: const Icon(Icons.play_circle_outline, size: 18),
-                    label: const Text('Ansehen'),
-                  ),
-                  TextButton.icon(
-                    onPressed: () => _export(att, plans, _planIndex),
-                    icon: const Icon(Icons.ios_share, size: 18),
-                    label: const Text('Exportieren'),
-                  ),
-                ],
-              ],
+            if (canAddTopics) addTopicsRow,
+            ListTile(
+              dense: true,
+              title: const Text('Ablaufplan bearbeiten', style: primaryStyle),
+              onTap: widget.onEdit,
             ),
-          ),
+            ListTile(
+              dense: true,
+              leading: const Icon(Icons.ios_share, color: AppColors.primary),
+              title: const Text('Teilen', style: primaryStyle),
+              onTap: () => _export(att, plans, _planIndex),
+            ),
+            // Flutter-only extra: read-only / live plan viewer
+            ListTile(
+              dense: true,
+              leading: const Icon(Icons.play_circle_outline, color: AppColors.primary),
+              title: const Text('Ablaufplan anzeigen', style: primaryStyle),
+              onTap: () => showPlanViewer(
+                context,
+                attendance: att,
+                title: _title(att, plan),
+              ),
+            ),
+          ],
         ],
       ),
     );
