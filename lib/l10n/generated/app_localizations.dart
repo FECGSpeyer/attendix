@@ -1469,11 +1469,119 @@ abstract class AppLocalizations {
   /// **'{count} aktiv'**
   String attendanceFilterActive(Object count);
 
+  /// attendance.flutter.a4Standard
+  ///
+  /// In de, this message translates to:
+  /// **'A4 (Standard)'**
+  String get attendanceFlutterA4Standard;
+
+  /// attendance.flutter.a5OnA4
+  ///
+  /// In de, this message translates to:
+  /// **'2x A5 auf A4'**
+  String get attendanceFlutterA5OnA4;
+
   /// attendance.flutter.addAttachment
   ///
   /// In de, this message translates to:
   /// **'Anhang hinzufügen'**
   String get attendanceFlutterAddAttachment;
+
+  /// attendance.flutter.addPhoto
+  ///
+  /// In de, this message translates to:
+  /// **'Foto hinzufügen'**
+  String get attendanceFlutterAddPhoto;
+
+  /// attendance.flutter.asImage
+  ///
+  /// In de, this message translates to:
+  /// **'Als Bild'**
+  String get attendanceFlutterAsImage;
+
+  /// attendance.flutter.attendancesCount
+  ///
+  /// In de, this message translates to:
+  /// **'{count} Anwesenheiten'**
+  String attendanceFlutterAttendancesCount(Object count);
+
+  /// attendance.flutter.calendar
+  ///
+  /// In de, this message translates to:
+  /// **'Kalender'**
+  String get attendanceFlutterCalendar;
+
+  /// attendance.flutter.camera
+  ///
+  /// In de, this message translates to:
+  /// **'Kamera'**
+  String get attendanceFlutterCamera;
+
+  /// attendance.flutter.chooseDeadline
+  ///
+  /// In de, this message translates to:
+  /// **'Anmeldefrist wählen'**
+  String get attendanceFlutterChooseDeadline;
+
+  /// attendance.flutter.chooseType
+  ///
+  /// In de, this message translates to:
+  /// **'Bitte wähle einen Veranstaltungstyp'**
+  String get attendanceFlutterChooseType;
+
+  /// attendance.flutter.creatingExcel
+  ///
+  /// In de, this message translates to:
+  /// **'Erstelle Excel-Export...'**
+  String get attendanceFlutterCreatingExcel;
+
+  /// attendance.flutter.dataUnavailable
+  ///
+  /// In de, this message translates to:
+  /// **'Daten nicht verfügbar'**
+  String get attendanceFlutterDataUnavailable;
+
+  /// attendance.flutter.deadlineDisabled
+  ///
+  /// In de, this message translates to:
+  /// **'Anmeldefrist deaktiviert'**
+  String get attendanceFlutterDeadlineDisabled;
+
+  /// attendance.flutter.deadlineEnabled
+  ///
+  /// In de, this message translates to:
+  /// **'Anmeldefrist aktiviert'**
+  String get attendanceFlutterDeadlineEnabled;
+
+  /// attendance.flutter.deadlineUpdated
+  ///
+  /// In de, this message translates to:
+  /// **'Anmeldefrist aktualisiert'**
+  String get attendanceFlutterDeadlineUpdated;
+
+  /// attendance.flutter.deleteTodoTitle
+  ///
+  /// In de, this message translates to:
+  /// **'To-Do löschen?'**
+  String get attendanceFlutterDeleteTodoTitle;
+
+  /// attendance.flutter.endAfterStart
+  ///
+  /// In de, this message translates to:
+  /// **'Ende muss nach Beginn liegen'**
+  String get attendanceFlutterEndAfterStart;
+
+  /// attendance.flutter.endTime
+  ///
+  /// In de, this message translates to:
+  /// **'Endzeit'**
+  String get attendanceFlutterEndTime;
+
+  /// attendance.flutter.endTimeUpdated
+  ///
+  /// In de, this message translates to:
+  /// **'Endzeit aktualisiert'**
+  String get attendanceFlutterEndTimeUpdated;
 
   /// attendance.flutter.errorWith
   ///
@@ -1481,11 +1589,29 @@ abstract class AppLocalizations {
   /// **'Fehler: {error}'**
   String attendanceFlutterErrorWith(Object error);
 
+  /// attendance.flutter.eventsCount
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {{count} Termin} other {{count} Termine}}'**
+  String attendanceFlutterEventsCount(num count);
+
   /// attendance.flutter.excusedShort
   ///
   /// In de, this message translates to:
   /// **'Entsch.'**
   String get attendanceFlutterExcusedShort;
+
+  /// attendance.flutter.exportFormat
+  ///
+  /// In de, this message translates to:
+  /// **'Export-Format'**
+  String get attendanceFlutterExportFormat;
+
+  /// attendance.flutter.gallery
+  ///
+  /// In de, this message translates to:
+  /// **'Galerie'**
+  String get attendanceFlutterGallery;
 
   /// attendance.flutter.holiday
   ///
@@ -1493,11 +1619,95 @@ abstract class AppLocalizations {
   /// **'Feiertag'**
   String get attendanceFlutterHoliday;
 
+  /// attendance.flutter.listLoadFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Die Anwesenheitsliste konnte nicht geladen werden.'**
+  String get attendanceFlutterListLoadFailed;
+
+  /// attendance.flutter.loadError
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Laden'**
+  String get attendanceFlutterLoadError;
+
+  /// attendance.flutter.noAccount
+  ///
+  /// In de, this message translates to:
+  /// **'Die Person hat keinen Account'**
+  String get attendanceFlutterNoAccount;
+
+  /// attendance.flutter.noEntry
+  ///
+  /// In de, this message translates to:
+  /// **'Kein Anwesenheitseintrag gefunden'**
+  String get attendanceFlutterNoEntry;
+
+  /// attendance.flutter.noEventTypes
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Veranstaltungstypen konfiguriert'**
+  String get attendanceFlutterNoEventTypes;
+
+  /// attendance.flutter.noItemsToExport
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Programmpunkte zum Exportieren'**
+  String get attendanceFlutterNoItemsToExport;
+
+  /// attendance.flutter.noItemsToSend
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Programmpunkte zum Senden'**
+  String get attendanceFlutterNoItemsToSend;
+
+  /// attendance.flutter.noPermission
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Berechtigung'**
+  String get attendanceFlutterNoPermission;
+
+  /// attendance.flutter.noPlanToExport
+  ///
+  /// In de, this message translates to:
+  /// **'Kein Ablaufplan zum Exportieren'**
+  String get attendanceFlutterNoPlanToExport;
+
+  /// attendance.flutter.noPlanToSend
+  ///
+  /// In de, this message translates to:
+  /// **'Kein Ablaufplan zum Senden'**
+  String get attendanceFlutterNoPlanToSend;
+
   /// attendance.flutter.noTodos
   ///
   /// In de, this message translates to:
   /// **'Keine To-Dos vorhanden'**
   String get attendanceFlutterNoTodos;
+
+  /// attendance.flutter.notFound
+  ///
+  /// In de, this message translates to:
+  /// **'Anwesenheit nicht gefunden'**
+  String get attendanceFlutterNotFound;
+
+  /// attendance.flutter.noteDeleted
+  ///
+  /// In de, this message translates to:
+  /// **'Notiz gelöscht'**
+  String get attendanceFlutterNoteDeleted;
+
+  /// attendance.flutter.notesOptional
+  ///
+  /// In de, this message translates to:
+  /// **'Notizen (optional)'**
+  String get attendanceFlutterNotesOptional;
+
+  /// attendance.flutter.onePlanPerPage
+  ///
+  /// In de, this message translates to:
+  /// **'Ein Plan pro Seite'**
+  String get attendanceFlutterOnePlanPerPage;
 
   /// attendance.flutter.open
   ///
@@ -1505,11 +1715,71 @@ abstract class AppLocalizations {
   /// **'Offen'**
   String get attendanceFlutterOpen;
 
+  /// attendance.flutter.photo
+  ///
+  /// In de, this message translates to:
+  /// **'Foto'**
+  String get attendanceFlutterPhoto;
+
+  /// attendance.flutter.photoUploaded
+  ///
+  /// In de, this message translates to:
+  /// **'Foto hochgeladen'**
+  String get attendanceFlutterPhotoUploaded;
+
+  /// attendance.flutter.planNotShared
+  ///
+  /// In de, this message translates to:
+  /// **'Plan wird nicht mehr geteilt'**
+  String get attendanceFlutterPlanNotShared;
+
+  /// attendance.flutter.planSentTelegram
+  ///
+  /// In de, this message translates to:
+  /// **'Plan per Telegram gesendet'**
+  String get attendanceFlutterPlanSentTelegram;
+
+  /// attendance.flutter.planShared
+  ///
+  /// In de, this message translates to:
+  /// **'Plan wird jetzt mit Mitgliedern geteilt'**
+  String get attendanceFlutterPlanShared;
+
+  /// attendance.flutter.quickPreview
+  ///
+  /// In de, this message translates to:
+  /// **'Für schnelle Vorschau'**
+  String get attendanceFlutterQuickPreview;
+
+  /// attendance.flutter.recordAttendance
+  ///
+  /// In de, this message translates to:
+  /// **'Anwesenheit erfassen'**
+  String get attendanceFlutterRecordAttendance;
+
+  /// attendance.flutter.regFieldsSaved
+  ///
+  /// In de, this message translates to:
+  /// **'Anmeldefelder gespeichert'**
+  String get attendanceFlutterRegFieldsSaved;
+
   /// attendance.flutter.removeAttachment
   ///
   /// In de, this message translates to:
   /// **'Anhang entfernen'**
   String get attendanceFlutterRemoveAttachment;
+
+  /// attendance.flutter.restoreChecklistMessage
+  ///
+  /// In de, this message translates to:
+  /// **'Die aktuelle Checkliste wird durch die Standard-Checkliste ersetzt.'**
+  String get attendanceFlutterRestoreChecklistMessage;
+
+  /// attendance.flutter.restoreChecklistTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Checkliste wiederherstellen?'**
+  String get attendanceFlutterRestoreChecklistTitle;
 
   /// attendance.flutter.saveFailedWith
   ///
@@ -1528,6 +1798,84 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Datum auswählen'**
   String get attendanceFlutterSelectDate;
+
+  /// attendance.flutter.sendFailedWith
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Senden: {error}'**
+  String attendanceFlutterSendFailedWith(Object error);
+
+  /// attendance.flutter.showAllCount
+  ///
+  /// In de, this message translates to:
+  /// **'Alle {count} anzeigen'**
+  String attendanceFlutterShowAllCount(Object count);
+
+  /// attendance.flutter.showLess
+  ///
+  /// In de, this message translates to:
+  /// **'Weniger anzeigen'**
+  String get attendanceFlutterShowLess;
+
+  /// attendance.flutter.songRemoved
+  ///
+  /// In de, this message translates to:
+  /// **'Werk entfernt'**
+  String get attendanceFlutterSongRemoved;
+
+  /// attendance.flutter.standardFormat
+  ///
+  /// In de, this message translates to:
+  /// **'Standard-Format'**
+  String get attendanceFlutterStandardFormat;
+
+  /// attendance.flutter.startTimeUpdated
+  ///
+  /// In de, this message translates to:
+  /// **'Startzeit aktualisiert'**
+  String get attendanceFlutterStartTimeUpdated;
+
+  /// attendance.flutter.telegramNotConnected
+  ///
+  /// In de, this message translates to:
+  /// **'Telegram nicht verbunden. Bitte zuerst in den Einstellungen verbinden.'**
+  String get attendanceFlutterTelegramNotConnected;
+
+  /// attendance.flutter.todoAdded
+  ///
+  /// In de, this message translates to:
+  /// **'To-Do hinzugefügt'**
+  String get attendanceFlutterTodoAdded;
+
+  /// attendance.flutter.todoDeleted
+  ///
+  /// In de, this message translates to:
+  /// **'To-Do gelöscht'**
+  String get attendanceFlutterTodoDeleted;
+
+  /// attendance.flutter.twoIdenticalPlans
+  ///
+  /// In de, this message translates to:
+  /// **'Zwei identische Pläne (Querformat)'**
+  String get attendanceFlutterTwoIdenticalPlans;
+
+  /// attendance.flutter.twoPlansOnePage
+  ///
+  /// In de, this message translates to:
+  /// **'Zwei Pläne auf einer Seite'**
+  String get attendanceFlutterTwoPlansOnePage;
+
+  /// attendance.flutter.uploadFailedWith
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Hochladen: {error}'**
+  String attendanceFlutterUploadFailedWith(Object error);
+
+  /// attendance.flutter.uploadingPhoto
+  ///
+  /// In de, this message translates to:
+  /// **'Lade Foto hoch...'**
+  String get attendanceFlutterUploadingPhoto;
 
   /// attendance.general
   ///

@@ -824,7 +824,63 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get attendanceFlutterA4Standard => 'A4 (default)';
+
+  @override
+  String get attendanceFlutterA5OnA4 => '2x A5 on A4';
+
+  @override
   String get attendanceFlutterAddAttachment => 'Add attachment';
+
+  @override
+  String get attendanceFlutterAddPhoto => 'Add photo';
+
+  @override
+  String get attendanceFlutterAsImage => 'As image';
+
+  @override
+  String attendanceFlutterAttendancesCount(Object count) {
+    return '$count events';
+  }
+
+  @override
+  String get attendanceFlutterCalendar => 'Calendar';
+
+  @override
+  String get attendanceFlutterCamera => 'Camera';
+
+  @override
+  String get attendanceFlutterChooseDeadline => 'Choose registration deadline';
+
+  @override
+  String get attendanceFlutterChooseType => 'Please choose an event type';
+
+  @override
+  String get attendanceFlutterCreatingExcel => 'Creating Excel export...';
+
+  @override
+  String get attendanceFlutterDataUnavailable => 'Data not available';
+
+  @override
+  String get attendanceFlutterDeadlineDisabled => 'Registration deadline disabled';
+
+  @override
+  String get attendanceFlutterDeadlineEnabled => 'Registration deadline enabled';
+
+  @override
+  String get attendanceFlutterDeadlineUpdated => 'Registration deadline updated';
+
+  @override
+  String get attendanceFlutterDeleteTodoTitle => 'Delete to-do?';
+
+  @override
+  String get attendanceFlutterEndAfterStart => 'End must be after start';
+
+  @override
+  String get attendanceFlutterEndTime => 'End time';
+
+  @override
+  String get attendanceFlutterEndTimeUpdated => 'End time updated';
 
   @override
   String attendanceFlutterErrorWith(Object error) {
@@ -832,19 +888,108 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String attendanceFlutterEventsCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count events',
+      one: '$count event',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get attendanceFlutterExcusedShort => 'Exc.';
+
+  @override
+  String get attendanceFlutterExportFormat => 'Export format';
+
+  @override
+  String get attendanceFlutterGallery => 'Gallery';
 
   @override
   String get attendanceFlutterHoliday => 'Public holiday';
 
   @override
+  String get attendanceFlutterListLoadFailed => 'The attendance list could not be loaded.';
+
+  @override
+  String get attendanceFlutterLoadError => 'Error while loading';
+
+  @override
+  String get attendanceFlutterNoAccount => 'This person has no account';
+
+  @override
+  String get attendanceFlutterNoEntry => 'No attendance entry found';
+
+  @override
+  String get attendanceFlutterNoEventTypes => 'No event types configured';
+
+  @override
+  String get attendanceFlutterNoItemsToExport => 'No programme items to export';
+
+  @override
+  String get attendanceFlutterNoItemsToSend => 'No programme items to send';
+
+  @override
+  String get attendanceFlutterNoPermission => 'No permission';
+
+  @override
+  String get attendanceFlutterNoPlanToExport => 'No run sheet to export';
+
+  @override
+  String get attendanceFlutterNoPlanToSend => 'No run sheet to send';
+
+  @override
   String get attendanceFlutterNoTodos => 'No to-dos yet';
+
+  @override
+  String get attendanceFlutterNotFound => 'Attendance not found';
+
+  @override
+  String get attendanceFlutterNoteDeleted => 'Note deleted';
+
+  @override
+  String get attendanceFlutterNotesOptional => 'Notes (optional)';
+
+  @override
+  String get attendanceFlutterOnePlanPerPage => 'One plan per page';
 
   @override
   String get attendanceFlutterOpen => 'Open';
 
   @override
+  String get attendanceFlutterPhoto => 'Photo';
+
+  @override
+  String get attendanceFlutterPhotoUploaded => 'Photo uploaded';
+
+  @override
+  String get attendanceFlutterPlanNotShared => 'The plan is no longer shared';
+
+  @override
+  String get attendanceFlutterPlanSentTelegram => 'Plan sent via Telegram';
+
+  @override
+  String get attendanceFlutterPlanShared => 'The plan is now shared with members';
+
+  @override
+  String get attendanceFlutterQuickPreview => 'For a quick preview';
+
+  @override
+  String get attendanceFlutterRecordAttendance => 'Record attendance';
+
+  @override
+  String get attendanceFlutterRegFieldsSaved => 'Registration fields saved';
+
+  @override
   String get attendanceFlutterRemoveAttachment => 'Remove attachment';
+
+  @override
+  String get attendanceFlutterRestoreChecklistMessage => 'The current checklist will be replaced by the default checklist.';
+
+  @override
+  String get attendanceFlutterRestoreChecklistTitle => 'Restore checklist?';
 
   @override
   String attendanceFlutterSaveFailedWith(Object error) {
@@ -856,6 +1001,51 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get attendanceFlutterSelectDate => 'Select date';
+
+  @override
+  String attendanceFlutterSendFailedWith(Object error) {
+    return 'Sending failed: $error';
+  }
+
+  @override
+  String attendanceFlutterShowAllCount(Object count) {
+    return 'Show all $count';
+  }
+
+  @override
+  String get attendanceFlutterShowLess => 'Show less';
+
+  @override
+  String get attendanceFlutterSongRemoved => 'Piece removed';
+
+  @override
+  String get attendanceFlutterStandardFormat => 'Default format';
+
+  @override
+  String get attendanceFlutterStartTimeUpdated => 'Start time updated';
+
+  @override
+  String get attendanceFlutterTelegramNotConnected => 'Telegram is not connected. Please connect it in the settings first.';
+
+  @override
+  String get attendanceFlutterTodoAdded => 'To-do added';
+
+  @override
+  String get attendanceFlutterTodoDeleted => 'To-do deleted';
+
+  @override
+  String get attendanceFlutterTwoIdenticalPlans => 'Two identical plans (landscape)';
+
+  @override
+  String get attendanceFlutterTwoPlansOnePage => 'Two plans on one page';
+
+  @override
+  String attendanceFlutterUploadFailedWith(Object error) {
+    return 'Upload failed: $error';
+  }
+
+  @override
+  String get attendanceFlutterUploadingPhoto => 'Uploading photo...';
 
   @override
   String get attendanceGeneral => 'General';

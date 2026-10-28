@@ -1075,9 +1075,84 @@
       "count": {}
     }
   },
+  "attendanceFlutterA4Standard": "A4 (Standard)",
+  "@attendanceFlutterA4Standard": {
+    "description": "attendance.flutter.a4Standard"
+  },
+  "attendanceFlutterA5OnA4": "2x A5 auf A4",
+  "@attendanceFlutterA5OnA4": {
+    "description": "attendance.flutter.a5OnA4"
+  },
   "attendanceFlutterAddAttachment": "Anhang hinzufügen",
   "@attendanceFlutterAddAttachment": {
     "description": "attendance.flutter.addAttachment"
+  },
+  "attendanceFlutterAddPhoto": "Foto hinzufügen",
+  "@attendanceFlutterAddPhoto": {
+    "description": "attendance.flutter.addPhoto"
+  },
+  "attendanceFlutterAsImage": "Als Bild",
+  "@attendanceFlutterAsImage": {
+    "description": "attendance.flutter.asImage"
+  },
+  "attendanceFlutterAttendancesCount": "{count} Anwesenheiten",
+  "@attendanceFlutterAttendancesCount": {
+    "description": "attendance.flutter.attendancesCount",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "attendanceFlutterCalendar": "Kalender",
+  "@attendanceFlutterCalendar": {
+    "description": "attendance.flutter.calendar"
+  },
+  "attendanceFlutterCamera": "Kamera",
+  "@attendanceFlutterCamera": {
+    "description": "attendance.flutter.camera"
+  },
+  "attendanceFlutterChooseDeadline": "Anmeldefrist wählen",
+  "@attendanceFlutterChooseDeadline": {
+    "description": "attendance.flutter.chooseDeadline"
+  },
+  "attendanceFlutterChooseType": "Bitte wähle einen Veranstaltungstyp",
+  "@attendanceFlutterChooseType": {
+    "description": "attendance.flutter.chooseType"
+  },
+  "attendanceFlutterCreatingExcel": "Erstelle Excel-Export...",
+  "@attendanceFlutterCreatingExcel": {
+    "description": "attendance.flutter.creatingExcel"
+  },
+  "attendanceFlutterDataUnavailable": "Daten nicht verfügbar",
+  "@attendanceFlutterDataUnavailable": {
+    "description": "attendance.flutter.dataUnavailable"
+  },
+  "attendanceFlutterDeadlineDisabled": "Anmeldefrist deaktiviert",
+  "@attendanceFlutterDeadlineDisabled": {
+    "description": "attendance.flutter.deadlineDisabled"
+  },
+  "attendanceFlutterDeadlineEnabled": "Anmeldefrist aktiviert",
+  "@attendanceFlutterDeadlineEnabled": {
+    "description": "attendance.flutter.deadlineEnabled"
+  },
+  "attendanceFlutterDeadlineUpdated": "Anmeldefrist aktualisiert",
+  "@attendanceFlutterDeadlineUpdated": {
+    "description": "attendance.flutter.deadlineUpdated"
+  },
+  "attendanceFlutterDeleteTodoTitle": "To-Do löschen?",
+  "@attendanceFlutterDeleteTodoTitle": {
+    "description": "attendance.flutter.deleteTodoTitle"
+  },
+  "attendanceFlutterEndAfterStart": "Ende muss nach Beginn liegen",
+  "@attendanceFlutterEndAfterStart": {
+    "description": "attendance.flutter.endAfterStart"
+  },
+  "attendanceFlutterEndTime": "Endzeit",
+  "@attendanceFlutterEndTime": {
+    "description": "attendance.flutter.endTime"
+  },
+  "attendanceFlutterEndTimeUpdated": "Endzeit aktualisiert",
+  "@attendanceFlutterEndTimeUpdated": {
+    "description": "attendance.flutter.endTimeUpdated"
   },
   "attendanceFlutterErrorWith": "Fehler: {error}",
   "@attendanceFlutterErrorWith": {
@@ -1086,25 +1161,138 @@
       "error": {}
     }
   },
+  "attendanceFlutterEventsCount": "{count, plural, one {{count} Termin} other {{count} Termine}}",
+  "@attendanceFlutterEventsCount": {
+    "description": "attendance.flutter.eventsCount",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
   "attendanceFlutterExcusedShort": "Entsch.",
   "@attendanceFlutterExcusedShort": {
     "description": "attendance.flutter.excusedShort"
+  },
+  "attendanceFlutterExportFormat": "Export-Format",
+  "@attendanceFlutterExportFormat": {
+    "description": "attendance.flutter.exportFormat"
+  },
+  "attendanceFlutterGallery": "Galerie",
+  "@attendanceFlutterGallery": {
+    "description": "attendance.flutter.gallery"
   },
   "attendanceFlutterHoliday": "Feiertag",
   "@attendanceFlutterHoliday": {
     "description": "attendance.flutter.holiday"
   },
+  "attendanceFlutterListLoadFailed": "Die Anwesenheitsliste konnte nicht geladen werden.",
+  "@attendanceFlutterListLoadFailed": {
+    "description": "attendance.flutter.listLoadFailed"
+  },
+  "attendanceFlutterLoadError": "Fehler beim Laden",
+  "@attendanceFlutterLoadError": {
+    "description": "attendance.flutter.loadError"
+  },
+  "attendanceFlutterNoAccount": "Die Person hat keinen Account",
+  "@attendanceFlutterNoAccount": {
+    "description": "attendance.flutter.noAccount"
+  },
+  "attendanceFlutterNoEntry": "Kein Anwesenheitseintrag gefunden",
+  "@attendanceFlutterNoEntry": {
+    "description": "attendance.flutter.noEntry"
+  },
+  "attendanceFlutterNoEventTypes": "Keine Veranstaltungstypen konfiguriert",
+  "@attendanceFlutterNoEventTypes": {
+    "description": "attendance.flutter.noEventTypes"
+  },
+  "attendanceFlutterNoItemsToExport": "Keine Programmpunkte zum Exportieren",
+  "@attendanceFlutterNoItemsToExport": {
+    "description": "attendance.flutter.noItemsToExport"
+  },
+  "attendanceFlutterNoItemsToSend": "Keine Programmpunkte zum Senden",
+  "@attendanceFlutterNoItemsToSend": {
+    "description": "attendance.flutter.noItemsToSend"
+  },
+  "attendanceFlutterNoPermission": "Keine Berechtigung",
+  "@attendanceFlutterNoPermission": {
+    "description": "attendance.flutter.noPermission"
+  },
+  "attendanceFlutterNoPlanToExport": "Kein Ablaufplan zum Exportieren",
+  "@attendanceFlutterNoPlanToExport": {
+    "description": "attendance.flutter.noPlanToExport"
+  },
+  "attendanceFlutterNoPlanToSend": "Kein Ablaufplan zum Senden",
+  "@attendanceFlutterNoPlanToSend": {
+    "description": "attendance.flutter.noPlanToSend"
+  },
   "attendanceFlutterNoTodos": "Keine To-Dos vorhanden",
   "@attendanceFlutterNoTodos": {
     "description": "attendance.flutter.noTodos"
+  },
+  "attendanceFlutterNotFound": "Anwesenheit nicht gefunden",
+  "@attendanceFlutterNotFound": {
+    "description": "attendance.flutter.notFound"
+  },
+  "attendanceFlutterNoteDeleted": "Notiz gelöscht",
+  "@attendanceFlutterNoteDeleted": {
+    "description": "attendance.flutter.noteDeleted"
+  },
+  "attendanceFlutterNotesOptional": "Notizen (optional)",
+  "@attendanceFlutterNotesOptional": {
+    "description": "attendance.flutter.notesOptional"
+  },
+  "attendanceFlutterOnePlanPerPage": "Ein Plan pro Seite",
+  "@attendanceFlutterOnePlanPerPage": {
+    "description": "attendance.flutter.onePlanPerPage"
   },
   "attendanceFlutterOpen": "Offen",
   "@attendanceFlutterOpen": {
     "description": "attendance.flutter.open"
   },
+  "attendanceFlutterPhoto": "Foto",
+  "@attendanceFlutterPhoto": {
+    "description": "attendance.flutter.photo"
+  },
+  "attendanceFlutterPhotoUploaded": "Foto hochgeladen",
+  "@attendanceFlutterPhotoUploaded": {
+    "description": "attendance.flutter.photoUploaded"
+  },
+  "attendanceFlutterPlanNotShared": "Plan wird nicht mehr geteilt",
+  "@attendanceFlutterPlanNotShared": {
+    "description": "attendance.flutter.planNotShared"
+  },
+  "attendanceFlutterPlanSentTelegram": "Plan per Telegram gesendet",
+  "@attendanceFlutterPlanSentTelegram": {
+    "description": "attendance.flutter.planSentTelegram"
+  },
+  "attendanceFlutterPlanShared": "Plan wird jetzt mit Mitgliedern geteilt",
+  "@attendanceFlutterPlanShared": {
+    "description": "attendance.flutter.planShared"
+  },
+  "attendanceFlutterQuickPreview": "Für schnelle Vorschau",
+  "@attendanceFlutterQuickPreview": {
+    "description": "attendance.flutter.quickPreview"
+  },
+  "attendanceFlutterRecordAttendance": "Anwesenheit erfassen",
+  "@attendanceFlutterRecordAttendance": {
+    "description": "attendance.flutter.recordAttendance"
+  },
+  "attendanceFlutterRegFieldsSaved": "Anmeldefelder gespeichert",
+  "@attendanceFlutterRegFieldsSaved": {
+    "description": "attendance.flutter.regFieldsSaved"
+  },
   "attendanceFlutterRemoveAttachment": "Anhang entfernen",
   "@attendanceFlutterRemoveAttachment": {
     "description": "attendance.flutter.removeAttachment"
+  },
+  "attendanceFlutterRestoreChecklistMessage": "Die aktuelle Checkliste wird durch die Standard-Checkliste ersetzt.",
+  "@attendanceFlutterRestoreChecklistMessage": {
+    "description": "attendance.flutter.restoreChecklistMessage"
+  },
+  "attendanceFlutterRestoreChecklistTitle": "Checkliste wiederherstellen?",
+  "@attendanceFlutterRestoreChecklistTitle": {
+    "description": "attendance.flutter.restoreChecklistTitle"
   },
   "attendanceFlutterSaveFailedWith": "Fehler beim Speichern: {error}",
   "@attendanceFlutterSaveFailedWith": {
@@ -1120,6 +1308,67 @@
   "attendanceFlutterSelectDate": "Datum auswählen",
   "@attendanceFlutterSelectDate": {
     "description": "attendance.flutter.selectDate"
+  },
+  "attendanceFlutterSendFailedWith": "Fehler beim Senden: {error}",
+  "@attendanceFlutterSendFailedWith": {
+    "description": "attendance.flutter.sendFailedWith",
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "attendanceFlutterShowAllCount": "Alle {count} anzeigen",
+  "@attendanceFlutterShowAllCount": {
+    "description": "attendance.flutter.showAllCount",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "attendanceFlutterShowLess": "Weniger anzeigen",
+  "@attendanceFlutterShowLess": {
+    "description": "attendance.flutter.showLess"
+  },
+  "attendanceFlutterSongRemoved": "Werk entfernt",
+  "@attendanceFlutterSongRemoved": {
+    "description": "attendance.flutter.songRemoved"
+  },
+  "attendanceFlutterStandardFormat": "Standard-Format",
+  "@attendanceFlutterStandardFormat": {
+    "description": "attendance.flutter.standardFormat"
+  },
+  "attendanceFlutterStartTimeUpdated": "Startzeit aktualisiert",
+  "@attendanceFlutterStartTimeUpdated": {
+    "description": "attendance.flutter.startTimeUpdated"
+  },
+  "attendanceFlutterTelegramNotConnected": "Telegram nicht verbunden. Bitte zuerst in den Einstellungen verbinden.",
+  "@attendanceFlutterTelegramNotConnected": {
+    "description": "attendance.flutter.telegramNotConnected"
+  },
+  "attendanceFlutterTodoAdded": "To-Do hinzugefügt",
+  "@attendanceFlutterTodoAdded": {
+    "description": "attendance.flutter.todoAdded"
+  },
+  "attendanceFlutterTodoDeleted": "To-Do gelöscht",
+  "@attendanceFlutterTodoDeleted": {
+    "description": "attendance.flutter.todoDeleted"
+  },
+  "attendanceFlutterTwoIdenticalPlans": "Zwei identische Pläne (Querformat)",
+  "@attendanceFlutterTwoIdenticalPlans": {
+    "description": "attendance.flutter.twoIdenticalPlans"
+  },
+  "attendanceFlutterTwoPlansOnePage": "Zwei Pläne auf einer Seite",
+  "@attendanceFlutterTwoPlansOnePage": {
+    "description": "attendance.flutter.twoPlansOnePage"
+  },
+  "attendanceFlutterUploadFailedWith": "Fehler beim Hochladen: {error}",
+  "@attendanceFlutterUploadFailedWith": {
+    "description": "attendance.flutter.uploadFailedWith",
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "attendanceFlutterUploadingPhoto": "Lade Foto hoch...",
+  "@attendanceFlutterUploadingPhoto": {
+    "description": "attendance.flutter.uploadingPhoto"
   },
   "attendanceGeneral": "Allgemein",
   "@attendanceGeneral": {

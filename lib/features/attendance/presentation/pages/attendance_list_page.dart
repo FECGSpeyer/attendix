@@ -27,6 +27,7 @@ import '../../../duty/presentation/pages/duty_distribute_page.dart';
 import '../../../duty/presentation/widgets/duty_actions.dart';
 import '../../../duty/presentation/widgets/my_duty_requests_section.dart';
 import '../../../../shared/widgets/tenant/tenant_switcher_title.dart'; // SETTINGS2
+import '../../../../l10n/l10n.dart';
 
 
 /// Attendance list page
@@ -55,15 +56,15 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Möchtest du den Termin wirklich entfernen?'),
+        title: Text(context.l10n.attListRemoveConfirm),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Abbrechen'),
+            child: Text(context.l10n.commonCancel),
           ),
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('Fortfahren'),
+            child: Text(context.l10n.attListContinue),
           ),
         ],
       ),
@@ -107,7 +108,7 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
           ? plan.title!.trim()
           : (att.typeInfo?.isNotEmpty ?? false)
               ? att.typeInfo!
-              : 'Ablaufplan',
+              : context.l10n.signoutRunSheet,
       defaultLive: EventListUtils.isRunning(att.date, att.durationDays),
     );
   }
@@ -117,7 +118,7 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
     final filter = ref.watch(attendanceListTypeFilterProvider);
     final active = filter != null;
     return PopupMenuButton<String>(
-      tooltip: 'Filter',
+      tooltip: context.l10n.teamOrgFilter,
       icon: Icon(Icons.tune, color: active ? AppColors.primary : null),
       onSelected: (value) => ref.read(attendanceListTypeFilterProvider.notifier).state =
           value == '__all__' ? null : value,
@@ -130,7 +131,7 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
-                  'Alle anzeigen',
+                  context.l10n.attListShowAll,
                   style: TextStyle(color: !active ? AppColors.primary : null),
                 ),
               ),
@@ -169,7 +170,7 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
     final List<Widget> children;
     if (duty != null) {
       children = [
-        Text('${dutyBadge(duty).text} besetzt', style: strong),
+        Text(context.l10n.attListDutyFilled(dutyBadge(duty).text), style: strong),
         Text(dutyNames(duty), style: style),
       ];
     } else {
@@ -177,9 +178,9 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
       if (counts == null) return const SizedBox.shrink();
       children = [
         Text('${(att.percentage ?? 0).round()} %', style: strong),
-        Text('${counts.present} anwesend', style: style),
-        if (counts.excused > 0) Text('${counts.excused} entschuldigt', style: style),
-        if (counts.absent > 0) Text('${counts.absent} abwesend', style: style),
+        Text(context.l10n.attListCountPresent(counts.present), style: style),
+        if (counts.excused > 0) Text(context.l10n.attListCountExcused(counts.excused), style: style),
+        if (counts.absent > 0) Text(context.l10n.attListCountAbsent(counts.absent), style: style),
       ];
     }
     return Padding(
@@ -205,9 +206,9 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
     return Scaffold(
       appBar: AppBar(
         // SETTINGS2: Ionic att-list header tenant switcher
-        title: const TenantSwitcherTitle(
-          fallbackTitle: 'Termine',
-          singleTenantTitle: 'Termine',
+        title: TenantSwitcherTitle(
+          fallbackTitle: context.l10n.attListEvents,
+          singleTenantTitle: context.l10n.attListEvents,
         ),
         // UX_ATT: Ionic order: Filter, Dienste verteilen, Glocke
         // (Kalender is Flutter-only and sits before the bell).
@@ -218,7 +219,7 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
           if (role.isConductor && ref.watch(hasDutyTypesProvider))
             IconButton(
               icon: const Icon(Icons.shuffle),
-              tooltip: 'Dienste verteilen',
+              tooltip: context.l10n.attListDistributeDuties,
               onPressed: () async {
                 final saved = await openDutyDistributePage(context);
                 if (saved && mounted) ref.invalidate(realtimeAttendanceListProvider);
@@ -226,7 +227,7 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
             ),
           IconButton(
             icon: const Icon(Icons.calendar_today),
-            tooltip: 'Kalender',
+            tooltip: context.l10n.attendanceFlutterCalendar,
             onPressed: () => _showCalendarView(context, ref),
           ),
           const NotificationBell(), // MESSAGES
@@ -242,9 +243,9 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
         ),
         error: (error, stack) => EmptyStateWidget(
           icon: Icons.error_outline,
-          title: 'Fehler beim Laden',
-          subtitle: 'Die Anwesenheitsliste konnte nicht geladen werden.',
-          actionLabel: 'Erneut versuchen',
+          title: context.l10n.attendanceFlutterLoadError,
+          subtitle: context.l10n.attendanceFlutterListLoadFailed,
+          actionLabel: context.l10n.messagesRetry,
           onAction: () => ref.invalidate(realtimeAttendanceListProvider),
         ),
         data: (attendances) {
@@ -254,8 +255,8 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
             final canCreate = ref.watch(canCreateAttendanceProvider);
             return EmptyStateWidget(
               icon: Icons.check_box_outlined,
-              title: 'Bisher wurden noch keine Termine angelegt',
-              actionLabel: canCreate ? 'Termin hinzufügen' : null,
+              title: context.l10n.attListNoEventsYet,
+              actionLabel: canCreate ? context.l10n.attListAddEvent : null,
               onAction: canCreate ? _openCreate : null,
             );
           }
@@ -326,7 +327,7 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
             if (counts == null) return null;
             final total = counts.total;
             final present = ((att.percentage ?? 0) / 100 * total).round();
-            return '$present von $total anwesend';
+            return context.l10n.attListPresentOf(present, total);
           }
 
           EventPill percentPill(Attendance att) {
@@ -377,8 +378,8 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
                 if (current != null) ...[
                   EventMonthHeader(
                     label: EventListUtils.isRunning(current.date, current.durationDays)
-                        ? 'Heute'
-                        : 'Nächster Termin',
+                        ? context.l10n.teamOrgTodayCap
+                        : context.l10n.teamOrgNextEvent,
                   ),
                   slidable(
                     current,
@@ -397,14 +398,14 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
                         FilledButton.icon(
                           onPressed: () => _navigateToDetail(current.id!),
                           icon: const Icon(Icons.check_box_outlined, size: 18),
-                          label: Text(_hasPlan(current) ? 'Anwesenheit' : 'Anwesenheit erfassen'),
+                          label: Text(_hasPlan(current) ? context.l10n.signoutAttendance : context.l10n.attendanceFlutterRecordAttendance),
                         ),
                         // ATT_DETAIL: Ablaufplan
                         if (_hasPlan(current))
                           OutlinedButton.icon(
                             onPressed: () => _openPlanViewer(current),
                             icon: const Icon(Icons.description_outlined, size: 18),
-                            label: const Text('Ablaufplan'),
+                            label: Text(context.l10n.signoutRunSheet),
                           ),
                       ],
                     ),
@@ -412,7 +413,7 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
                 ],
 
                 if (categorized.upcoming.isNotEmpty) ...[
-                  EventSectionHeader(title: 'Anstehend', count: categorized.upcoming.length),
+                  EventSectionHeader(title: context.l10n.signoutUpcoming, count: categorized.upcoming.length),
                   for (final group in upcomingGroups) ...[
                     EventMonthHeader(label: group.label),
                     EventListCard(children: [
@@ -429,7 +430,7 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
                               // ATT_DETAIL: "Ablaufplan anzeigen"
                               if (_hasPlan(att))
                                 IconButton(
-                                  tooltip: 'Ablaufplan anzeigen',
+                                  tooltip: context.l10n.signoutShowRunSheet,
                                   visualDensity: VisualDensity.compact,
                                   icon: const Icon(Icons.description_outlined, color: AppColors.primary),
                                   onPressed: () => _openPlanViewer(att),
@@ -443,7 +444,7 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
                 ],
 
                 if (past.isNotEmpty) ...[
-                  EventSectionHeader(title: 'Vergangen', count: past.length),
+                  EventSectionHeader(title: context.l10n.signoutPast, count: past.length),
                   if (averagePercent != null)
                     EventSummary(percentage: averagePercent.round()),
                   EventListCard(children: [
@@ -464,7 +465,7 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
                       ),
                     if (past.length > EventListUtils.pastPreviewCount)
                       EventMoreLink(
-                        label: _showAllPast ? 'Weniger anzeigen' : 'Alle ${past.length} anzeigen',
+                        label: _showAllPast ? context.l10n.attendanceFlutterShowLess : context.l10n.attendanceFlutterShowAllCount(past.length),
                         onTap: () => setState(() => _showAllPast = !_showAllPast),
                       ),
                   ]),
@@ -480,7 +481,7 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
       floatingActionButton: ref.watch(canCreateAttendanceProvider)
           ? FloatingActionButton(
               onPressed: _openCreate,
-              tooltip: 'Termin hinzufügen',
+              tooltip: context.l10n.attListAddEvent,
               child: const Icon(Icons.add),
             )
           : null,
@@ -525,7 +526,7 @@ void _showAttendanceSelectionDialog(BuildContext context, List<Attendance> atten
   showDialog(
     context: context,
     builder: (ctx) => AlertDialog(
-      title: Text('${attendances.length} Anwesenheiten'),
+      title: Text(context.l10n.attendanceFlutterAttendancesCount(attendances.length)),
       content: SizedBox(
         width: double.maxFinite,
         child: ListView.builder(
@@ -549,7 +550,7 @@ void _showAttendanceSelectionDialog(BuildContext context, List<Attendance> atten
       actions: [
         TextButton(
           onPressed: () => Navigator.of(ctx).pop(),
-          child: const Text('Abbrechen'),
+          child: Text(context.l10n.commonCancel),
         ),
       ],
     ),
@@ -626,7 +627,7 @@ class _CalendarViewSheetState extends ConsumerState<_CalendarViewSheet> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Kalender',
+                    context.l10n.attendanceFlutterCalendar,
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                   IconButton(
@@ -646,7 +647,7 @@ class _CalendarViewSheetState extends ConsumerState<_CalendarViewSheet> {
                   lastDay: DateTime.now().add(const Duration(days: 365)),
                   focusedDay: _focusedDay,
                   calendarFormat: _calendarFormat,
-                  locale: 'de_DE',
+                  locale: currentIntlLocale(),
                   startingDayOfWeek: StartingDayOfWeek.monday,
                   selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
                   eventLoader: _getAttendancesForDay,
