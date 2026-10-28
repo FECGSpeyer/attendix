@@ -449,7 +449,8 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
                 padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM),
                 sliver: DecoratedSliver(
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surface,
+                    // IOS_PAGES3: --ion-item-background (iOS dark #000)
+                    color: ionItemBackground(context),
                     borderRadius: BorderRadius.circular(IonInsetList.radiusOf(context)),
                   ),
                   sliver: SliverList.separated(

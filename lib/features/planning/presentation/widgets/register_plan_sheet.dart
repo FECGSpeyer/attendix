@@ -163,8 +163,11 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
         toolbarHeight: ionModalToolbarHeight(context), // PARITY_R5
         automaticallyImplyLeading: false,
         title: Text(l10n.planningSectionalPlan),
+        // IOS_PAGES3: iOS → ✕ in a Liquid Glass circle
         actions: [
-          IconButton(icon: const Icon(Icons.close), onPressed: () => Navigator.pop(context)),
+          ToolbarButtonGroup(children: [
+            IconButton(icon: const Icon(Icons.close), onPressed: () => Navigator.pop(context)),
+          ]),
         ],
       ),
       body: _loading

@@ -124,6 +124,8 @@ Future<void> showCalendarSubscriptionDialog(BuildContext context, WidgetRef ref)
           ),
           TextButton(
             onPressed: () async {
+              // IOS_PAGES3: Ionic handler returns nothing → the alert closes.
+              Navigator.of(ctx).pop();
               try {
                 await launchUrl(
                   Uri.parse(isIos

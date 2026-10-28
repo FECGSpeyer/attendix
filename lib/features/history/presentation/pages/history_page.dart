@@ -185,8 +185,14 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
                           ? ListView.separated(
                             padding: EdgeInsets.only(bottom: scrollEndPadding(context, base: 16, fabRoom: 72)),
                             itemCount: filtered.length,
+                            // IOS_PAGES3: ion-item inner lines start
+                            // at the label (inset 16).
                             separatorBuilder:
-                                (_, __) => const Divider(height: 1),
+                                (_, __) => const Divider(
+                                  height: 0.5,
+                                  thickness: 0.5,
+                                  indent: 16,
+                                ),
                             itemBuilder:
                                 (context, index) => _HistoryEntryTile(
                                   entry: filtered[index],
@@ -581,6 +587,16 @@ class _HistoryGroup extends StatefulWidget {
 class _HistoryGroupState extends State<_HistoryGroup> {
   bool _expanded = false;
 
+  /// IOS_PAGES3: the accordion's ion-items with their inset bottom lines
+  /// (none after the last one).
+  List<Widget> _entryRows() => [
+        for (var i = 0; i < widget.entries.length; i++) ...[
+          if (i > 0)
+            const Divider(height: 0.5, thickness: 0.5, indent: 16),
+          _HistoryEntryTile(entry: widget.entries[i], onDelete: widget.onDelete),
+        ],
+      ];
+
   @override
   Widget build(BuildContext context) {
     // UX_ATT: accordion header is an `ion-item color="light"` (grey row)
@@ -593,10 +609,7 @@ class _HistoryGroupState extends State<_HistoryGroup> {
         shape: Border(bottom: BorderSide(color: Theme.of(context).dividerColor, width: 0.5)),
         collapsedShape: Border(bottom: BorderSide(color: Theme.of(context).dividerColor, width: 0.5)),
         title: Text(widget.date, style: const TextStyle(fontSize: 17)),
-        children: [
-          for (final entry in widget.entries)
-            _HistoryEntryTile(entry: entry, onDelete: widget.onDelete),
-        ],
+        children: _entryRows(),
       );
     }
     // IOS_FORMS2: Ionic iOS accordion – the header stays light grey when
@@ -624,10 +637,15 @@ class _HistoryGroupState extends State<_HistoryGroup> {
                       style: TextStyle(fontSize: 17, color: onSurface),
                     ),
                   ),
+                  // IOS_PAGES3: ion-accordion toggle = ionicon chevron-down
                   AnimatedRotation(
                     turns: _expanded ? 0.5 : 0,
                     duration: const Duration(milliseconds: 200),
-                    child: Icon(Icons.keyboard_arrow_down, size: 22, color: onSurface),
+                    child: IonChevronDownIcon(
+                      size: 20,
+                      color: onSurface,
+                      strokeWidth: 64,
+                    ),
                   ),
                 ],
               ),
@@ -643,10 +661,7 @@ class _HistoryGroupState extends State<_HistoryGroup> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      for (final entry in widget.entries)
-                        _HistoryEntryTile(entry: entry, onDelete: widget.onDelete),
-                    ],
+                    children: _entryRows(),
                   ),
                 )
               : const SizedBox(width: double.infinity),

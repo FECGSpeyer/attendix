@@ -12,6 +12,7 @@ import '../../../../core/providers/statistics_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/date_helper.dart';
+import '../../../../core/utils/dialog_helper.dart'; // IOS_PAGES3
 import '../../../../core/utils/person_matcher.dart';
 import '../../../../data/models/attendance/attendance.dart';
 import '../../../../data/models/organisation/organisation.dart';
@@ -20,6 +21,7 @@ import '../../../../data/models/tenant/tenant.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../shared/widgets/layout/ionic_ios.dart' show IonIos, IonSheetHeader, ionItemBackground; // IOS_PAGES3
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 import '../../../../shared/widgets/dialogs/ion_modal.dart' show showIonModal; // PARITY_R5
 
@@ -92,14 +94,17 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> {
         title: Text(context.l10n.statsTitle),
         automaticallyImplyLeading: false,
         backgroundColor: dark ? null : AppColors.light,
+        // IOS_PAGES3: iOS → ✕ in a Liquid Glass circle (ion-buttons end)
         actions: [
-          IconButton(
-            icon: const Icon(Icons.close),
-            tooltip: context.l10n.commonClose,
-            onPressed: () => widget.asModal
-                ? Navigator.of(context).pop()
-                : (context.canPop() ? context.pop() : context.go('/settings')),
-          ),
+          ToolbarButtonGroup(children: [
+            IconButton(
+              icon: const Icon(Icons.close),
+              tooltip: context.l10n.commonClose,
+              onPressed: () => widget.asModal
+                  ? Navigator.of(context).pop()
+                  : (context.canPop() ? context.pop() : context.go('/settings')),
+            ),
+          ]),
         ],
       ),
       // UX_SETTINGS: sections in Ionic order (stats.page.html); the period
@@ -110,7 +115,22 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> {
           ref.invalidate(activePlayersForStatsProvider);
           await ref.read(filteredAttendancesForStatsProvider.future);
         },
-        child: SingleChildScrollView(
+        // IOS_PAGES3: every section is an Ionic `ion-list inset` >
+        // `ion-item-group` (stats.page.scss: white / black groups): iOS
+        // radius 28, md (md-ion-list-inset) radius 16, no shadow.
+        child: Theme(
+          data: Theme.of(context).copyWith(
+            cardTheme: Theme.of(context).cardTheme.copyWith(
+                  color: ionItemBackground(context),
+                  elevation: 0,
+                  clipBehavior: Clip.antiAlias,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(
+                        useIosLook(context) ? IonIos.groupRadius : 16),
+                  ),
+                ),
+          ),
+          child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
           padding: EdgeInsets.fromLTRB(AppDimensions.paddingM, AppDimensions.paddingM, AppDimensions.paddingM, scrollEndPadding(context, base: AppDimensions.paddingM)),
           child: Column(
@@ -204,22 +224,42 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> {
             ],
           ),
         ),
+        ),
       ),
     );
   }
 
-  // UX_ATT: Ionic iOS `ion-list-header` (plain text): 22 px bold
-  Widget _buildSectionTitle(String title) {
+  Widget _buildSectionTitle(String title) => _StatsSectionTitle(title);
+
+}
+
+/// Ionic `ion-list-header` with plain text (no ion-label): iOS 22pt,
+/// md 14pt; stats.page.scss sets font-weight 600 (IOS_PAGES3).
+class _StatsSectionTitle extends StatelessWidget {
+  const _StatsSectionTitle(this.title);
+
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    final ios = useIosLook(context);
     return Padding(
       padding: const EdgeInsets.only(left: 4),
       child: Text(
         title,
-        style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
+        style: TextStyle(fontSize: ios ? 22 : 14, fontWeight: FontWeight.w600),
       ),
     );
   }
-
 }
+
+/// IOS_PAGES3: rows of an Ionic item group separated by inset hairlines.
+List<Widget> _withInsetDividers(List<Widget> rows) => [
+      for (var i = 0; i < rows.length; i++) ...[
+        if (i > 0) const Divider(height: 0.5, thickness: 0.5, indent: 16),
+        rows[i],
+      ],
+    ];
 
 /// Ionic "📅 Zeitraum": items "Von" / "Bis" with a date button each.
 class _PeriodSection extends StatelessWidget {
@@ -262,7 +302,7 @@ class _PeriodSection extends StatelessWidget {
       child: Column(
         children: [
           item(context.l10n.dutyFrom, dateRange.start, true),
-          const Divider(height: 1),
+          const Divider(height: 0.5, thickness: 0.5, indent: 16),
           item(context.l10n.dutyTo, dateRange.end, false),
         ],
       ),
@@ -401,7 +441,6 @@ class _MembersOverview extends ConsumerWidget {
     final paused = current.where((p) => p.paused).length;
 
     Widget row(String label, int count, Color color, {bool bold = false}) => ListTile(
-          dense: true,
           title: Text(label, style: bold ? const TextStyle(fontWeight: FontWeight.bold) : null),
           trailing: _IonBadge('$count', color: color),
         );
@@ -409,12 +448,12 @@ class _MembersOverview extends ConsumerWidget {
     return Card(
       margin: EdgeInsets.zero,
       child: Column(
-        children: [
+        children: _withInsetDividers([
           row(context.l10n.statsActiveMembers, active, AppColors.success),
           row(context.l10n.statsPausing, paused, AppColors.warning),
           row(context.l10n.statsLeft, left.length, AppColors.medium),
           row(context.l10n.churchOverviewTotal, current.length + left.length, AppColors.primary, bold: true),
-        ],
+        ]),
       ),
     );
   }
@@ -1136,8 +1175,8 @@ class _OrganisationStatsSection extends ConsumerStatefulWidget {
 
 class _OrganisationStatsSectionState
     extends ConsumerState<_OrganisationStatsSection> {
+  /// Ionic `selectedInstances`: empty = all instances.
   Set<int> _selectedTenantIds = {};
-  bool _filterInitialized = false;
 
   @override
   Widget build(BuildContext context) {
@@ -1153,6 +1192,47 @@ class _OrganisationStatsSectionState
     );
   }
 
+  /// Ionic `ion-select multiple interface="modal"` "Instanzen filtern".
+  Future<void> _pickTenants(List<Tenant> tenants) async {
+    final selection = {..._selectedTenantIds};
+    final result = await showAppDialog<Set<int>>(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setLocal) => AppAlertDialog(
+          title: Text(ctx.l10n.statsFilterTenants),
+          content: SizedBox(
+            width: double.maxFinite,
+            child: ListView(
+              shrinkWrap: true,
+              children: [
+                for (final t in tenants)
+                  if (t.id != null)
+                    CheckboxListTile(
+                      title: Text(t.longName),
+                      value: selection.contains(t.id),
+                      onChanged: (v) => setLocal(() {
+                        v == true ? selection.add(t.id!) : selection.remove(t.id);
+                      }),
+                    ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: Text(ctx.l10n.commonCancel),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.pop(ctx, selection),
+              child: Text(ctx.l10n.commonOk),
+            ),
+          ],
+        ),
+      ),
+    );
+    if (result != null && mounted) setState(() => _selectedTenantIds = result);
+  }
+
   Widget _buildOrgSection(Organisation organisation) {
     final tenantsAsync =
         ref.watch(organisationTenantsProvider(organisation.id!));
@@ -1161,97 +1241,73 @@ class _OrganisationStatsSectionState
       loading: () => const Center(child: AppSpinner()),
       error: (_, __) => const SizedBox.shrink(),
       data: (tenants) {
-        // Initialize filter with all tenants selected
-        if (!_filterInitialized && tenants.isNotEmpty) {
-          _selectedTenantIds =
-              tenants.map((t) => t.id!).whereType<int>().toSet();
-          _filterInitialized = true;
-        }
-
-        final filteredTenants = tenants
-            .where((t) => t.id != null && _selectedTenantIds.contains(t.id))
+        final l10n = context.l10n;
+        // IOS_PAGES3: load all persons once (stable family key = the
+        // provider's tenant list) and filter locally like Ionic
+        // `filterInstances()`.
+        final personsAsync = ref.watch(organisationPersonsProvider(tenants));
+        final selected = _selectedTenantIds;
+        final persons = (personsAsync.valueOrNull ?? const <Person>[])
+            .where((p) => selected.isEmpty || selected.contains(p.tenantId))
             .toList();
-
-        final personsAsync =
-            ref.watch(organisationPersonsProvider(filteredTenants));
+        final uniquePersons = _deduplicatePersons(persons, tenants);
+        final selectedNames = [
+          for (final t in tenants)
+            if (selected.contains(t.id)) t.longName,
+        ].join(', ');
 
         return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // UX_ATT: Ionic list header "🏢 {name}"
-            Padding(
-              padding: const EdgeInsets.only(left: 4),
-              child: Text(
-              '🏢 ${organisation.name}',
-              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
-              ),
-            ),
+            _StatsSectionTitle('🏢 ${organisation.name}'),
             const SizedBox(height: AppDimensions.paddingS),
-
-            // Tenant filter chips
-            Wrap(
-              spacing: AppDimensions.paddingS,
-              runSpacing: AppDimensions.paddingXS,
-              children: tenants.map((t) {
-                final isSelected = _selectedTenantIds.contains(t.id);
-                return FilterChip(
-                  label: Text(t.shortName),
-                  selected: isSelected,
-                  onSelected: (selected) {
-                    setState(() {
-                      if (selected) {
-                        _selectedTenantIds.add(t.id!);
-                      } else if (_selectedTenantIds.length > 1) {
-                        _selectedTenantIds.remove(t.id);
-                      }
-                    });
-                  },
-                );
-              }).toList(),
-            ),
-            const SizedBox(height: AppDimensions.paddingS),
-            Text(
-              _selectedTenantIds.length == tenants.length
-                  ? context.l10n.statsAllCount(tenants.length)
-                  : context.l10n.statsFlutterSelectedOf(_selectedTenantIds.length, tenants.length),
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: AppColors.medium,
-                  ),
-            ),
-            const SizedBox(height: AppDimensions.paddingM),
-
-            // Persons count + modal
-            personsAsync.when(
-              loading: () => const Center(child: AppSpinner()),
-              error: (e, _) => Text(context.l10n.attendanceFlutterErrorWith(friendlyErrorMessage(e))),
-              data: (persons) {
-                final uniquePersons =
-                    _deduplicatePersons(persons, filteredTenants);
-
-                return Card(
-                  child: ListTile(
-                    leading: const Icon(Icons.people, color: AppColors.primary),
-                    title: Text(context.l10n.statsPersonsAllTenants),
-                    trailing: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: AppColors.primary,
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Text(
-                        '${uniquePersons.length}',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+            Card(
+              margin: EdgeInsets.zero,
+              child: Column(
+                children: _withInsetDividers([
+                  ListTile(
+                    title: Text(l10n.statsFilterTenants),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (selectedNames.isNotEmpty)
+                          ConstrainedBox(
+                            constraints: BoxConstraints(
+                              maxWidth: MediaQuery.sizeOf(context).width * 0.4,
+                            ),
+                            child: Text(
+                              selectedNames,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        const SizedBox(width: 4),
+                        const IonSelectIcon(),
+                      ],
                     ),
-                    onTap: () =>
-                        _showPersonsModal(uniquePersons, filteredTenants),
+                    onTap: () => _pickTenants(tenants),
                   ),
-                );
-              },
+                  ListTile(
+                    title: Text(l10n.statsTenants),
+                    trailing: _IonBadge(selected.isEmpty
+                        ? l10n.statsAllCount(tenants.length)
+                        : '${selected.length}'),
+                    onTap: () => DialogHelper.showAlert(
+                      context,
+                      title: l10n.statsOrgTenants,
+                      message: tenants.map((t) => t.longName).join(', '),
+                    ),
+                  ),
+                  ListTile(
+                    title: Text(l10n.statsPersonsAllTenants),
+                    trailing: personsAsync.isLoading && !personsAsync.hasValue
+                        ? const SizedBox(width: 18, height: 18, child: AppSpinner(strokeWidth: 2))
+                        : _IonBadge('${uniquePersons.length}'),
+                    onTap: () => _showPersonsModal(uniquePersons),
+                  ),
+                ]),
+              ),
             ),
           ],
         );
@@ -1267,8 +1323,9 @@ class _OrganisationStatsSectionState
     final byKey = <String, _UniqueOrgPerson>{};
 
     for (final person in allPersons) {
+      // Ionic persons modal: one `<p>` per instance with its long name.
       final tenantName =
-          tenantMap[person.tenantId]?.shortName ?? context.l10n.commonUnknown;
+          tenantMap[person.tenantId]?.longName ?? context.l10n.commonUnknown;
       final key = personIdentityKey(
         globalPersonId: person.globalPersonId,
         appId: person.appId,
@@ -1297,78 +1354,52 @@ class _OrganisationStatsSectionState
     return all;
   }
 
-  void _showPersonsModal(
-      List<_UniqueOrgPerson> persons, List<Tenant> tenants) {
+  /// Ionic persons modal (sheet, breakpoint 1): toolbar "Personen (n)",
+  /// inset list with the name, one line per instance and a badge with the
+  /// number of instances.
+  void _showPersonsModal(List<_UniqueOrgPerson> persons) {
     showModalBottomSheet(
       context: context,
       useRootNavigator: true, // IOS_SHELL2: above the tab bar
       isScrollControlled: true,
-      builder: (context) => DraggableScrollableSheet(
-        initialChildSize: 0.7,
-        minChildSize: 0.4,
-        maxChildSize: 0.95,
-        expand: false,
-        builder: (context, scrollController) => SafeArea(
-          child: Column(
-            children: [
-              ListTile(
-                title: Text(
-                  context.l10n.statsPersonsCount(persons.length),
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-                subtitle: Text(
-                    context.l10n.statsFlutterTenantsCount(tenants.length)),
-                trailing: IconButton(
-                  icon: const Icon(Icons.close),
-                  onPressed: () => Navigator.pop(context),
-                ),
-              ),
-              const Divider(),
-              Expanded(
-                child: ListView.builder(
-                  controller: scrollController,
-                  itemCount: persons.length,
-                  itemBuilder: (context, index) {
-                    final p = persons[index];
-                    return ListTile(
-                      leading: CircleAvatar(
-                        backgroundColor:
-                            AppColors.primary.withValues(alpha: 0.1),
-                        child: Text(
-                          p.person.initials,
-                          style: const TextStyle(
-                            color: AppColors.primary,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 12,
-                          ),
+      useSafeArea: true,
+      builder: (context) => FractionallySizedBox(
+        heightFactor: 1,
+        child: Column(
+          children: [
+            IonSheetHeader(title: context.l10n.statsPersonsCount(persons.length)),
+            Expanded(
+              child: ColoredBox(
+                color: Theme.of(context).scaffoldBackgroundColor,
+                child: ListView(
+                  padding: const EdgeInsets.all(AppDimensions.paddingM),
+                  children: [
+                    if (persons.isNotEmpty)
+                      Card(
+                        margin: EdgeInsets.zero,
+                        color: ionItemBackground(context),
+                        elevation: 0,
+                        clipBehavior: Clip.antiAlias,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                              useIosLook(context) ? IonIos.listRadius : 16),
+                        ),
+                        child: Column(
+                          children: _withInsetDividers([
+                            for (final p in persons)
+                              ListTile(
+                                title: Text(p.person.fullName),
+                                subtitle: Text(p.tenantNames.join('\n')),
+                                trailing: _IonBadge('${p.tenantNames.length}'),
+                              ),
+                          ]),
                         ),
                       ),
-                      title: Text(p.person.fullName),
-                      subtitle: Text(p.tenantNames.join(', ')),
-                      trailing: p.tenantNames.length > 1
-                          ? Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 2),
-                              decoration: BoxDecoration(
-                                color: AppColors.primary.withValues(alpha: 0.1),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Text(
-                                '${p.tenantNames.length}',
-                                style: const TextStyle(
-                                  color: AppColors.primary,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            )
-                          : null,
-                    );
-                  },
+                  ],
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

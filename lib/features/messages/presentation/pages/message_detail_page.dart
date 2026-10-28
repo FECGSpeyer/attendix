@@ -123,13 +123,16 @@ class _MessageDetailPageState extends ConsumerState<MessageDetailPage> {
       appBar: AppBar(
         leading: BackButton(onPressed: _back),
         title: Text(l10n.messagesMessage),
+        // IOS_PAGES3: iOS → ion-buttons end in a Liquid Glass circle
         actions: [
           if (isManager && message != null)
-            IconButton(
-              tooltip: l10n.messagesDeleteMessage,
-              icon: const Icon(Icons.delete_outline, color: AppColors.danger),
-              onPressed: _delete,
-            ),
+            ToolbarButtonGroup(children: [
+              IconButton(
+                tooltip: l10n.messagesDeleteMessage,
+                icon: const Icon(Icons.delete_outline, color: AppColors.danger),
+                onPressed: _delete,
+              ),
+            ]),
         ],
       ),
       body: messageAsync.when(
@@ -270,19 +273,17 @@ class _MessageDetailPageState extends ConsumerState<MessageDetailPage> {
       ),
       hint(l10n.messagesOpenedEstimate),
       const SizedBox(height: AppDimensions.paddingS),
-      SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: AppSegmentedButton<_Filter>(
-          showSelectedIcon: false,
-          segments: [
-            ButtonSegment(value: _Filter.all, label: Text(l10n.messagesAllCount(stats.total))),
-            ButtonSegment(value: _Filter.read, label: Text(l10n.messagesReadCount(stats.readAny))),
-            ButtonSegment(value: _Filter.open, label: Text(l10n.messagesOpenCount(stats.open))),
-            ButtonSegment(value: _Filter.problems, label: Text(l10n.messagesProblemsCount(stats.problems))),
-          ],
-          selected: {_filter},
-          onSelectionChanged: (s) => setState(() => _filter = s.first),
-        ),
+      // IOS_PAGES3: Ionic `ion-segment.filter` – full-width segment
+      // (iOS segmented control / md tabs), not a scrolling button bar.
+      IonSegment<_Filter>(
+        items: [
+          IonSegmentItem(value: _Filter.all, label: Text(l10n.messagesAllCount(stats.total))),
+          IonSegmentItem(value: _Filter.read, label: Text(l10n.messagesReadCount(stats.readAny))),
+          IonSegmentItem(value: _Filter.open, label: Text(l10n.messagesOpenCount(stats.open))),
+          IonSegmentItem(value: _Filter.problems, label: Text(l10n.messagesProblemsCount(stats.problems))),
+        ],
+        value: _filter,
+        onChanged: (v) => setState(() => _filter = v),
       ),
       const SizedBox(height: AppDimensions.paddingM),
       if (recipientsAsync.isLoading && rows.isEmpty)

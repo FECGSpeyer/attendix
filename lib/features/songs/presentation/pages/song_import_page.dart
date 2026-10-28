@@ -192,11 +192,14 @@ class _SongImportPageState extends ConsumerState<SongImportPage> {
       appBar: AppBar(
         title: Text(context.l10n.songsImportSongs),
         automaticallyImplyLeading: false,
+        // IOS_PAGES3: iOS → ✕ in a Liquid Glass circle (ion-buttons end)
         actions: [
-          IconButton(
-            icon: const Icon(Icons.close),
-            onPressed: _busy ? null : () => Navigator.of(context).pop(),
-          ),
+          ToolbarButtonGroup(children: [
+            IconButton(
+              icon: const Icon(Icons.close),
+              onPressed: _busy ? null : () => Navigator.of(context).pop(),
+            ),
+          ]),
         ],
       ),
       body: Stack(

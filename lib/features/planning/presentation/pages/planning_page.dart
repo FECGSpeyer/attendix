@@ -1044,13 +1044,16 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
         appBar: AppBar(
           automaticallyImplyLeading: false,
           title: Text(context.l10n.attendanceCreateRunSheet),
+          // IOS_PAGES3: iOS → the end ion-buttons share one glass capsule
           actions: [
-            IconButton(tooltip: context.l10n.planningShareLink, icon: const Icon(Icons.link), onPressed: _shareLink),
-            IconButton(
-              tooltip: context.l10n.commonClose,
-              icon: const Icon(Icons.close),
-              onPressed: () => Navigator.of(context).maybePop(),
-            ),
+            ToolbarButtonGroup(children: [
+              IconButton(tooltip: context.l10n.planningShareLink, icon: const Icon(Icons.link), onPressed: _shareLink),
+              IconButton(
+                tooltip: context.l10n.commonClose,
+                icon: const Icon(Icons.close),
+                onPressed: () => Navigator.of(context).maybePop(),
+              ),
+            ]),
           ],
         ),
         floatingActionButton: TabBarFab.wrap(FloatingActionButton(

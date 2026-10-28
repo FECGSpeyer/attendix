@@ -813,10 +813,13 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
     return IonCondenseScaffold(
       automaticallyImplyLeading: widget.inApp,
       title: context.l10n.plansPlanning,
+      // IOS_PAGES3: iOS → the end ion-buttons share one glass capsule
       actions: [
-        if (loggedIn)
-          IconButton(tooltip: context.l10n.plansMyPlans, icon: const Icon(Icons.list), onPressed: _openMyPlans),
-        IconButton(tooltip: context.l10n.plansShareExport, icon: const Icon(Icons.ios_share), onPressed: _shareCurrentPlan),
+        ToolbarButtonGroup(children: [
+          if (loggedIn)
+            IconButton(tooltip: context.l10n.plansMyPlans, icon: const Icon(Icons.list), onPressed: _openMyPlans),
+          IconButton(tooltip: context.l10n.plansShareExport, icon: const Icon(Icons.ios_share), onPressed: _shareCurrentPlan),
+        ]),
       ],
       bodyBuilder: (context, largeTitle) => !_ready
           ? const Center(child: AppSpinner())

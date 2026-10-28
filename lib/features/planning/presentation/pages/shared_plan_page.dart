@@ -484,7 +484,9 @@ class _SharedPlanPageState extends ConsumerState<SharedPlanPage> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: Text(date != null ? PlanUtils.longDate(date) : _title),
+        // IOS_PAGES3: iOS → the end ion-buttons share one glass capsule
         actions: [
+          ToolbarButtonGroup(children: [
           if (liveNow)
             IconButton(
               tooltip: context.l10n.planningFlutterLive,
@@ -495,6 +497,7 @@ class _SharedPlanPageState extends ConsumerState<SharedPlanPage> {
             ),
           if (!_loading && !_notFound)
             IconButton(tooltip: context.l10n.planningExport, icon: const Icon(Icons.ios_share), onPressed: _export),
+          ]),
         ],
       ),
       body: _buildBody(date),
