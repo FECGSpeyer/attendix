@@ -12,9 +12,10 @@ import '../../../../core/providers/realtime_providers.dart';
 import '../../../../core/providers/role_permission_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/color_utils.dart';
-import '../../../../core/utils/dialog_helper.dart';
+import '../../../../core/utils/haptic_helper.dart';
 import '../../../../core/utils/event_list_utils.dart';
 import '../../../../data/models/attendance/attendance.dart';
+import 'attendance_create_page.dart'; // UX_ATT
 import '../../../../data/models/plan/plan.dart'; // ATT_DETAIL
 import '../../../planning/presentation/pages/plan_viewer_page.dart'; // ATT_DETAIL
 import '../../../../shared/widgets/loading/loading.dart';
@@ -47,16 +48,27 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
     }
   }
 
+  // UX_ATT: Ionic att-list remove(): alert with header only,
+  // "Abbrechen" / "Fortfahren".
   Future<void> _confirmDelete(BuildContext context, Attendance attendance) async {
-    final dateFormatted = _formatDateForDialog(attendance.date);
-    final confirmed = await DialogHelper.showConfirmation(
-      context,
-      title: 'Anwesenheit löschen?',
-      message: 'Möchtest du "${attendance.displayTitle}" am $dateFormatted wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.',
-      confirmText: 'Löschen',
-      isDestructive: true,
+    HapticHelper.medium();
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Möchtest du den Termin wirklich entfernen?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('Abbrechen'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: const Text('Fortfahren'),
+          ),
+        ],
+      ),
     );
-    if (confirmed && context.mounted) {
+    if ((confirmed ?? false) && context.mounted) {
       await ref.read(attendanceNotifierProvider.notifier).deleteAttendance(attendance.id!);
       ref.invalidate(realtimeAttendanceListProvider);
     }
@@ -149,32 +161,38 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
     );
   }
 
-  /// "{n} anwesend · {n} entschuldigt · {n} abwesend" line of the today card.
-  Widget _buildTodayStats(Attendance att) {
-    final counts = ref.watch(attendanceStatusCountsProvider(att.id!)).valueOrNull;
-    if (counts == null) return const SizedBox.shrink();
+  /// "{n} anwesend · {n} entschuldigt · {n} abwesend" line of the today card;
+  /// duty Termine show "{text} besetzt" plus the names (Ionic ev-today__stats).
+  Widget _buildTodayStats(Attendance att, DutyTermin? duty) {
     final style = Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.medium);
+    final strong = style?.copyWith(fontWeight: FontWeight.bold, color: AppColors.dark);
+    final List<Widget> children;
+    if (duty != null) {
+      children = [
+        Text('${dutyBadge(duty).text} besetzt', style: strong),
+        Text(dutyNames(duty), style: style),
+      ];
+    } else {
+      final counts = ref.watch(attendanceStatusCountsProvider(att.id!)).valueOrNull;
+      if (counts == null) return const SizedBox.shrink();
+      children = [
+        Text('${(att.percentage ?? 0).round()} %', style: strong),
+        Text('${counts.present} anwesend', style: style),
+        if (counts.excused > 0) Text('${counts.excused} entschuldigt', style: style),
+        if (counts.absent > 0) Text('${counts.absent} abwesend', style: style),
+      ];
+    }
     return Padding(
       padding: const EdgeInsets.only(top: 6),
-      child: Wrap(
-        spacing: 12,
-        runSpacing: 4,
-        children: [
-          Text('${(att.percentage ?? 0).round()} %',
-              style: style?.copyWith(fontWeight: FontWeight.bold, color: AppColors.dark)),
-          Text('${counts.present} anwesend', style: style),
-          if (counts.excused > 0) Text('${counts.excused} entschuldigt', style: style),
-          if (counts.absent > 0) Text('${counts.absent} abwesend', style: style),
-        ],
-      ),
+      child: Wrap(spacing: 12, runSpacing: 4, children: children),
     );
   }
   // END ATT_DETAIL
 
-  String _formatDateForDialog(String dateString) {
-    final date = DateTime.tryParse(dateString);
-    if (date == null) return dateString;
-    return '${date.day}.${date.month}.${date.year}';
+  // UX_ATT: create flow opens as sheet over the list (Ionic addAttModal).
+  Future<void> _openCreate() async {
+    final created = await showAttendanceCreateSheet(context);
+    if (created && mounted) ref.invalidate(realtimeAttendanceListProvider);
   }
 
   @override
@@ -191,7 +209,11 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
           fallbackTitle: 'Termine',
           singleTenantTitle: 'Termine',
         ),
+        // UX_ATT: Ionic order: Filter, Dienste verteilen, Glocke
+        // (Kalender is Flutter-only and sits before the bell).
         actions: [
+          // ATT_DETAIL: Termintyp filter
+          _buildTypeFilterButton(ref.watch(attendanceTypesProvider).valueOrNull ?? const []),
           // DUTY: "Dienste verteilen" for leaders when the tenant uses the Dienstplan
           if (role.isConductor && ref.watch(hasDutyTypesProvider))
             IconButton(
@@ -202,8 +224,6 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
                 if (saved && mounted) ref.invalidate(realtimeAttendanceListProvider);
               },
             ),
-          // ATT_DETAIL: Termintyp filter
-          _buildTypeFilterButton(ref.watch(attendanceTypesProvider).valueOrNull ?? const []),
           IconButton(
             icon: const Icon(Icons.calendar_today),
             tooltip: 'Kalender',
@@ -230,12 +250,13 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
         data: (attendances) {
           // ATT_DETAIL: an active type filter without matches still shows the list
           if (attendances.isEmpty && ref.watch(attendanceListTypeFilterProvider) == null) {
+            // UX_ATT: Ionic noDataContainer
+            final canCreate = ref.watch(canCreateAttendanceProvider);
             return EmptyStateWidget(
-              icon: Icons.fact_check_outlined,
-              title: 'Keine Anwesenheiten',
-              subtitle: 'Erstelle die erste Anwesenheitsliste',
-              actionLabel: 'Neue Anwesenheit',
-              onAction: () => context.push('/attendance/new'),
+              icon: Icons.check_box_outlined,
+              title: 'Bisher wurden noch keine Termine angelegt',
+              actionLabel: canCreate ? 'Termin hinzufügen' : null,
+              onAction: canCreate ? _openCreate : null,
             );
           }
 
@@ -261,20 +282,48 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
               : past.take(EventListUtils.pastPreviewCount).toList();
           final typesById = {for (final t in attendanceTypes) t.id: t};
 
-          String meta(Attendance att, {bool withDate = false}) {
+          // UX_ATT: Ionic getReadableDate / getEventTitle / getEventMeta
+          String readableDate(Attendance att) {
             final type = typesById[att.typeId];
+            return EventListUtils.readableDate(
+              att.date,
+              allDay: type?.allDay ?? false,
+              durationDays: att.durationDays ?? type?.durationDays,
+            );
+          }
+
+          String title(Attendance att) {
+            if (att.typeInfo?.isNotEmpty ?? false) return att.typeInfo!;
+            final type = typesById[att.typeId];
+            if (type != null && !type.hideName) return type.name;
+            return readableDate(att);
+          }
+
+          String meta(Attendance att, {bool withDate = false, bool withPlace = true}) {
+            final type = typesById[att.typeId];
+            final multiDay = (att.durationDays ?? 1) > 1 ||
+                ((type?.allDay ?? false) && (type?.durationDays ?? 1) > 1);
+            final date = readableDate(att);
             return EventListUtils.meta([
-              if (withDate)
-                EventListUtils.readableDate(
-                  att.date,
-                  allDay: type?.allDay ?? false,
-                  durationDays: att.durationDays,
+              if ((withDate || multiDay) && date != title(att)) date,
+              if (!(type?.allDay ?? false))
+                EventListUtils.timeRange(
+                  att.startTime ?? type?.startTime,
+                  att.endTime ?? type?.endTime,
                 ),
-              if (!(type?.allDay ?? false)) EventListUtils.timeRange(att.startTime, att.endTime),
-              att.place,
+              if (withPlace) att.place,
               // DUTY: names of the assigned persons
               if (dutyTermine[att.id] != null) dutyNames(dutyTermine[att.id]!),
             ]);
+          }
+
+          // UX_ATT: "{present} von {total} anwesend" of past rows
+          final listCounts =
+              ref.watch(attendanceListStatusCountsProvider).valueOrNull ?? const {};
+          String countText(Attendance att) {
+            final total = listCounts[att.id]?.total ?? 0;
+            final present = ((att.percentage ?? 0) / 100 * total).round();
+            return '$present von $total anwesend';
           }
 
           EventPill percentPill(Attendance att) {
@@ -288,8 +337,11 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
             return EventPill(label: '$perc%', color: EventListUtils.percentageColor(perc));
           }
 
-          Widget slidable(Attendance att, Widget child) {
-            if (!role.canAddAttendance) return child;
+          // UX_ATT: Ionic: delete on the current card for Dirigent + Helfer,
+          // on list rows only for the Dirigent; icon-only trash option.
+          Widget slidable(Attendance att, Widget child, {bool helperToo = false}) {
+            final allowed = helperToo ? role.canAddAttendance : role.isConductor;
+            if (!allowed) return child;
             return Slidable(
               key: ValueKey('att-${att.id}'),
               endActionPane: ActionPane(
@@ -300,8 +352,7 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
                     onPressed: (_) => _confirmDelete(context, att),
                     backgroundColor: AppColors.danger,
                     foregroundColor: Colors.white,
-                    icon: Icons.delete,
-                    label: 'Löschen',
+                    icon: Icons.delete_outline,
                   ),
                 ],
               ),
@@ -328,20 +379,21 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
                   ),
                   slidable(
                     current,
+                    helperToo: true,
                     EventTodayCard(
                       date: current.date,
-                      title: current.displayTitle,
-                      meta: meta(current, withDate: true),
-                      status: percentPill(current),
-                      // ATT_DETAIL: status counters (not for duty Termine)
+                      title: title(current),
+                      meta: meta(current, withDate: true, withPlace: false),
+                      place: current.place,
+                      // ATT_DETAIL: status counters / duty Besetzung
                       extraHeader: [
-                        if (dutyTermine[current.id] == null && current.id != null)
-                          _buildTodayStats(current),
+                        if (current.id != null)
+                          _buildTodayStats(current, dutyTermine[current.id]),
                       ],
                       actions: [
                         FilledButton.icon(
                           onPressed: () => _navigateToDetail(current.id!),
-                          icon: const Icon(Icons.fact_check_outlined, size: 18),
+                          icon: const Icon(Icons.check_box_outlined, size: 18),
                           label: Text(_hasPlan(current) ? 'Anwesenheit' : 'Anwesenheit erfassen'),
                         ),
                         // ATT_DETAIL: Ablaufplan
@@ -366,7 +418,7 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
                           att,
                           EventRow(
                             date: att.date,
-                            title: att.displayTitle,
+                            title: title(att),
                             subtitle: meta(att),
                             highlight: highlightedTypeIds.contains(att.typeId),
                             onTap: () => _navigateToDetail(att.id!),
@@ -397,8 +449,8 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
                         att,
                         EventRow(
                           date: att.date,
-                          title: att.displayTitle,
-                          subtitle: meta(att, withDate: true),
+                          title: title(att),
+                          subtitle: '${readableDate(att)} · ${countText(att)}',
                           past: true,
                           highlight: highlightedTypeIds.contains(att.typeId),
                           onTap: () => _navigateToDetail(att.id!),
@@ -419,11 +471,12 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
       ),
       // FAB only for roles that can add attendances (not VIEWER).
       // SETTINGS_EXT: Helfer abhängig von Rollenberechtigung attendance_create
+      // UX_ATT: round "+" FAB bottom right that opens the create sheet (Ionic ion-fab)
       floatingActionButton: ref.watch(canCreateAttendanceProvider)
-          ? FloatingActionButton.extended(
-              onPressed: () => context.push('/attendance/new'),
-              icon: const Icon(Icons.add),
-              label: const Text('Neue Anwesenheit'),
+          ? FloatingActionButton(
+              onPressed: _openCreate,
+              tooltip: 'Termin hinzufügen',
+              child: const Icon(Icons.add),
             )
           : null,
     );

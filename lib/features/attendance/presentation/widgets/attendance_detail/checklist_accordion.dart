@@ -41,7 +41,8 @@ class ChecklistAccordion extends StatelessWidget {
         vertical: AppDimensions.paddingXS,
       ),
       child: ExpansionTile(
-        leading: const Icon(Icons.checklist, color: AppColors.primary),
+        shape: const Border(),
+        collapsedShape: const Border(),
         title: Row(
           children: [
             const Text('Checkliste'),
@@ -100,8 +101,7 @@ class ChecklistAccordion extends StatelessWidget {
                       onPressed: (_) => onRemove(index),
                       backgroundColor: AppColors.danger,
                       foregroundColor: Colors.white,
-                      icon: Icons.delete,
-                      label: 'Löschen',
+                      icon: Icons.delete_outline,
                     ),
                   ],
                 ),
@@ -138,24 +138,19 @@ class ChecklistAccordion extends StatelessWidget {
                 ),
               );
             }),
-          const Divider(height: 1),
-          Padding(
-            padding: const EdgeInsets.all(AppDimensions.paddingS),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                TextButton.icon(
-                  onPressed: onAdd,
-                  icon: const Icon(Icons.add, size: 18),
-                  label: const Text('To-Do hinzufügen'),
-                ),
-                TextButton.icon(
-                  onPressed: onRestore,
-                  icon: const Icon(Icons.restore, size: 18),
-                  label: const Text('Wiederherstellen'),
-                ),
-              ],
-            ),
+          // UX_ATT: Ionic "To-Do hinzufügen" row (primary, add-circle icon)
+          ListTile(
+            dense: true,
+            leading: const Icon(Icons.add_circle_outline, color: AppColors.primary),
+            title: const Text('To-Do hinzufügen', style: TextStyle(color: AppColors.primary)),
+            onTap: onAdd,
+          ),
+          // Flutter-only shortcut (Ionic: menu "Checkliste zurücksetzen")
+          ListTile(
+            dense: true,
+            leading: const Icon(Icons.restore, color: AppColors.medium),
+            title: const Text('Checkliste zurücksetzen', style: TextStyle(color: AppColors.medium)),
+            onTap: onRestore,
           ),
         ],
       ),

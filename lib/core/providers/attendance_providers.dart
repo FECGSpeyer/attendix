@@ -76,11 +76,17 @@ final attendanceStatusCountsProvider =
 /// Counts like Ionic getStatusCounts: Verspätet counts as present,
 /// Verspätet entschuldigt as excused.
 class AttendanceStatusCounts {
-  const AttendanceStatusCounts({this.present = 0, this.excused = 0, this.absent = 0});
+  const AttendanceStatusCounts({
+    this.present = 0,
+    this.excused = 0,
+    this.absent = 0,
+    this.total = 0,
+  });
 
   factory AttendanceStatusCounts.fromStatuses(Iterable<AttendanceStatus> statuses) {
-    var present = 0, excused = 0, absent = 0;
+    var present = 0, excused = 0, absent = 0, total = 0;
     for (final s in statuses) {
+      total++;
       switch (s) {
         case AttendanceStatus.present:
         case AttendanceStatus.late:
@@ -94,13 +100,43 @@ class AttendanceStatusCounts {
           break;
       }
     }
-    return AttendanceStatusCounts(present: present, excused: excused, absent: absent);
+    return AttendanceStatusCounts(
+      present: present,
+      excused: excused,
+      absent: absent,
+      total: total,
+    );
   }
 
   final int present;
   final int excused;
   final int absent;
+
+  /// All persons of the Termin (Ionic `att.persons.length`).
+  final int total;
 }
+
+// UX_ATT: status counts of all Termine shown in the list, loaded with one
+// query (Ionic att-list getCountText "{present} von {total} anwesend").
+final attendanceListStatusCountsProvider =
+    FutureProvider.autoDispose<Map<int, AttendanceStatusCounts>>((ref) async {
+  final attendances = ref.watch(realtimeAttendanceListProvider).valueOrNull ?? const [];
+  final ids = attendances.map((a) => a.id).whereType<int>().toList();
+  if (ids.isEmpty) return const {};
+  final repo = ref.watch(attendanceRepositoryWithTenantProvider);
+  if (!repo.hasTenantId) return const {};
+  final rows = await repo.getPersonAttendancesForAttendances(ids);
+  final byAttendance = <int, List<AttendanceStatus>>{};
+  for (final r in rows) {
+    final id = r.attendanceId;
+    if (id == null) continue;
+    byAttendance.putIfAbsent(id, () => []).add(r.status);
+  }
+  return {
+    for (final e in byAttendance.entries)
+      e.key: AttendanceStatusCounts.fromStatuses(e.value),
+  };
+});
 // END ATT_DETAIL
 
 /// Data class for categorized attendances (memoized)

@@ -81,7 +81,7 @@ class StatusOverviewSheet extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
-                        'Gesamt: $total',
+                        total == 1 ? 'Gesamt: 1 Person' : 'Gesamt: $total Personen',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           fontWeight: FontWeight.w600,
                           color: AppColors.primary,
