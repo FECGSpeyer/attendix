@@ -6,6 +6,7 @@ import '../../../../core/providers/song_providers.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/song/song.dart';
 import '../utils/song_utils.dart';
+import '../../../../l10n/l10n.dart';
 
 /// "Werk hinzufügen" (Ionic addSongsModal). Returns the id of the new song.
 class AddSongSheet extends ConsumerStatefulWidget {
@@ -63,11 +64,11 @@ class _AddSongSheetState extends ConsumerState<AddSongSheet> {
     final key = '$prefix$number';
 
     if (widget.data.songs.any((s) => '${s.prefix ?? ''}${s.number}' == key)) {
-      ToastHelper.showError(context, 'Die Liednummer ist bereits vergeben');
+      ToastHelper.showError(context, context.l10n.songsNumberTaken);
       return;
     }
     if (link.isNotEmpty && !SongUtils.isValidHttpUrl(link)) {
-      ToastHelper.showError(context, 'Der angegebene Link ist nicht valide');
+      ToastHelper.showError(context, context.l10n.songsInvalidLink);
       return;
     }
 
@@ -84,7 +85,7 @@ class _AddSongSheetState extends ConsumerState<AddSongSheet> {
     if (!mounted) return;
     setState(() => _saving = false);
     if (created == null) {
-      ToastHelper.showError(context, 'Werk konnte nicht erstellt werden');
+      ToastHelper.showError(context, context.l10n.songsFlutterCreateFailed);
       return;
     }
     if (widget.onCreated != null && created.id != null) {
@@ -101,7 +102,7 @@ class _AddSongSheetState extends ConsumerState<AddSongSheet> {
       context: context,
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setLocal) => AlertDialog(
-          title: const Text('Besetzung'),
+          title: Text(context.l10n.songsInstrumentation),
           content: SizedBox(
             width: double.maxFinite,
             child: ListView(
@@ -121,11 +122,11 @@ class _AddSongSheetState extends ConsumerState<AddSongSheet> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx),
-              child: const Text('Abbrechen'),
+              child: Text(context.l10n.commonCancel),
             ),
             ElevatedButton(
               onPressed: () => Navigator.pop(ctx, selection),
-              child: const Text('OK'),
+              child: Text(context.l10n.commonOk),
             ),
           ],
         ),
@@ -154,7 +155,7 @@ class _AddSongSheetState extends ConsumerState<AddSongSheet> {
               children: [
                 Expanded(
                   child: Text(
-                    'Werk hinzufügen',
+                    context.l10n.songsAddSong,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
@@ -169,10 +170,9 @@ class _AddSongSheetState extends ConsumerState<AddSongSheet> {
             TextField(
               controller: _prefix,
               textCapitalization: TextCapitalization.sentences,
-              decoration: const InputDecoration(
-                labelText: 'Präfix (optional)',
-                helperText:
-                    'Bspw. um Weihnachtslieder kennzeichnen zu können (z.B. W für Weihnachten -> W1)',
+              decoration: InputDecoration(
+                labelText: context.l10n.songsPrefixOptional,
+                helperText: context.l10n.songsPrefixHelper,
                 helperMaxLines: 2,
               ),
             ),
@@ -180,13 +180,13 @@ class _AddSongSheetState extends ConsumerState<AddSongSheet> {
             TextField(
               controller: _number,
               keyboardType: TextInputType.number,
-              decoration: const InputDecoration(labelText: 'Nummer'),
+              decoration: InputDecoration(labelText: context.l10n.songsNumber),
             ),
             const SizedBox(height: AppDimensions.paddingS),
             TextField(
               controller: _name,
               textCapitalization: TextCapitalization.sentences,
-              decoration: const InputDecoration(labelText: 'Name'),
+              decoration: InputDecoration(labelText: context.l10n.songsName),
             ),
             const SizedBox(height: AppDimensions.paddingS),
             TextField(
@@ -194,24 +194,24 @@ class _AddSongSheetState extends ConsumerState<AddSongSheet> {
               minLines: 1,
               maxLines: 4,
               keyboardType: TextInputType.url,
-              decoration: const InputDecoration(labelText: 'Link'),
+              decoration: InputDecoration(labelText: context.l10n.songsLink),
             ),
             SwitchListTile(
               contentPadding: EdgeInsets.zero,
-              title: const Text('Chor & Orchester'),
+              title: Text(context.l10n.songsChoirOrchestra),
               value: _withChoir,
               onChanged: (v) => setState(() => _withChoir = v),
             ),
             SwitchListTile(
               contentPadding: EdgeInsets.zero,
-              title: const Text('Mit Solo-Gesang'),
+              title: Text(context.l10n.songsWithSoloSinging),
               value: _withSolo,
               onChanged: (v) => setState(() => _withSolo = v),
             ),
             if (widget.data.isOrchestra)
               ListTile(
                 contentPadding: EdgeInsets.zero,
-                title: const Text('Besetzung'),
+                title: Text(context.l10n.songsInstrumentation),
                 subtitle: Text(
                   selectedNames.isEmpty ? '-' : selectedNames,
                   maxLines: 2,
@@ -229,7 +229,7 @@ class _AddSongSheetState extends ConsumerState<AddSongSheet> {
                       height: 18,
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
-                  : const Text('Hinzufügen'),
+                  : Text(context.l10n.attendanceAdd),
             ),
           ],
         ),

@@ -71,6 +71,35 @@
         "nothingToDistribute": "Nichts zu verteilen",
         "plannedNew": "(+{count} neu)"
       }
+    },
+    "songs": {
+      "flutter": {
+        "errorWith": "Fehler: {error}",
+        "openFileFailed": "Konnte Datei nicht öffnen",
+        "fullscreen": "Vollbild",
+        "pdfLoading": "PDF wird geladen...",
+        "pdfLoadFailed": "PDF konnte nicht geladen werden",
+        "firstPage": "Erste Seite",
+        "previousPage": "Vorherige Seite",
+        "nextPage": "Nächste Seite",
+        "lastPage": "Letzte Seite",
+        "printJobSent": "Druckauftrag gesendet",
+        "printFailed": "Fehler beim Drucken: {error}",
+        "printing": "Wird gedruckt...",
+        "noPlayers": "Keine Spieler gefunden",
+        "copiesPerInstrument": "Kopien pro Instrument:",
+        "oneEach": "Je 1",
+        "copiesCount": "{count} Kopien",
+        "filesSkipped": "{count} Datei(en) konnten nicht eingebunden werden.",
+        "createFailed": "Werk konnte nicht erstellt werden",
+        "uploadFailedWith": "Fehler beim Hochladen: {error}",
+        "reorderCategoriesHint": "Ziehe Kategorien um sie neu zu sortieren",
+        "listAnd": "{rest} und {last}",
+        "filterAndView": "Filter & Ansicht",
+        "filesWillBeCopied": "{count} Dateien werden kopiert:",
+        "loadingTargetGroups": "Lade Ziel-Instrumente...",
+        "creatingInTarget": "Erstelle Werk in Ziel-Instanz..."
+      }
     }
   },
   "en": {
@@ -144,6 +173,35 @@
         "saveAssignments": "Save {count} assignments",
         "nothingToDistribute": "Nothing to distribute",
         "plannedNew": "(+{count} new)"
+      }
+    },
+    "songs": {
+      "flutter": {
+        "errorWith": "Error: {error}",
+        "openFileFailed": "Could not open file",
+        "fullscreen": "Full screen",
+        "pdfLoading": "Loading PDF...",
+        "pdfLoadFailed": "PDF could not be loaded",
+        "firstPage": "First page",
+        "previousPage": "Previous page",
+        "nextPage": "Next page",
+        "lastPage": "Last page",
+        "printJobSent": "Print job sent",
+        "printFailed": "Error while printing: {error}",
+        "printing": "Printing...",
+        "noPlayers": "No players found",
+        "copiesPerInstrument": "Copies per instrument:",
+        "oneEach": "1 each",
+        "copiesCount": "{count} copies",
+        "filesSkipped": "{count} file(s) could not be included.",
+        "createFailed": "Song could not be created",
+        "uploadFailedWith": "Error while uploading: {error}",
+        "reorderCategoriesHint": "Drag categories to reorder them",
+        "listAnd": "{rest} and {last}",
+        "filterAndView": "Filter & view",
+        "filesWillBeCopied": "{count} files will be copied:",
+        "loadingTargetGroups": "Loading target groups...",
+        "creatingInTarget": "Creating song in target instance..."
       }
     }
   }

@@ -10570,6 +10570,128 @@
   "@songsFiles": {
     "description": "songs.files"
   },
+  "songsFlutterCopiesCount": "{count} Kopien",
+  "@songsFlutterCopiesCount": {
+    "description": "songs.flutter.copiesCount",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "songsFlutterCopiesPerInstrument": "Kopien pro Instrument:",
+  "@songsFlutterCopiesPerInstrument": {
+    "description": "songs.flutter.copiesPerInstrument"
+  },
+  "songsFlutterCreateFailed": "Werk konnte nicht erstellt werden",
+  "@songsFlutterCreateFailed": {
+    "description": "songs.flutter.createFailed"
+  },
+  "songsFlutterCreatingInTarget": "Erstelle Werk in Ziel-Instanz...",
+  "@songsFlutterCreatingInTarget": {
+    "description": "songs.flutter.creatingInTarget"
+  },
+  "songsFlutterErrorWith": "Fehler: {error}",
+  "@songsFlutterErrorWith": {
+    "description": "songs.flutter.errorWith",
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "songsFlutterFilesSkipped": "{count} Datei(en) konnten nicht eingebunden werden.",
+  "@songsFlutterFilesSkipped": {
+    "description": "songs.flutter.filesSkipped",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "songsFlutterFilesWillBeCopied": "{count} Dateien werden kopiert:",
+  "@songsFlutterFilesWillBeCopied": {
+    "description": "songs.flutter.filesWillBeCopied",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "songsFlutterFilterAndView": "Filter & Ansicht",
+  "@songsFlutterFilterAndView": {
+    "description": "songs.flutter.filterAndView"
+  },
+  "songsFlutterFirstPage": "Erste Seite",
+  "@songsFlutterFirstPage": {
+    "description": "songs.flutter.firstPage"
+  },
+  "songsFlutterFullscreen": "Vollbild",
+  "@songsFlutterFullscreen": {
+    "description": "songs.flutter.fullscreen"
+  },
+  "songsFlutterLastPage": "Letzte Seite",
+  "@songsFlutterLastPage": {
+    "description": "songs.flutter.lastPage"
+  },
+  "songsFlutterListAnd": "{rest} und {last}",
+  "@songsFlutterListAnd": {
+    "description": "songs.flutter.listAnd",
+    "placeholders": {
+      "rest": {},
+      "last": {}
+    }
+  },
+  "songsFlutterLoadingTargetGroups": "Lade Ziel-Instrumente...",
+  "@songsFlutterLoadingTargetGroups": {
+    "description": "songs.flutter.loadingTargetGroups"
+  },
+  "songsFlutterNextPage": "Nächste Seite",
+  "@songsFlutterNextPage": {
+    "description": "songs.flutter.nextPage"
+  },
+  "songsFlutterNoPlayers": "Keine Spieler gefunden",
+  "@songsFlutterNoPlayers": {
+    "description": "songs.flutter.noPlayers"
+  },
+  "songsFlutterOneEach": "Je 1",
+  "@songsFlutterOneEach": {
+    "description": "songs.flutter.oneEach"
+  },
+  "songsFlutterOpenFileFailed": "Konnte Datei nicht öffnen",
+  "@songsFlutterOpenFileFailed": {
+    "description": "songs.flutter.openFileFailed"
+  },
+  "songsFlutterPdfLoadFailed": "PDF konnte nicht geladen werden",
+  "@songsFlutterPdfLoadFailed": {
+    "description": "songs.flutter.pdfLoadFailed"
+  },
+  "songsFlutterPdfLoading": "PDF wird geladen...",
+  "@songsFlutterPdfLoading": {
+    "description": "songs.flutter.pdfLoading"
+  },
+  "songsFlutterPreviousPage": "Vorherige Seite",
+  "@songsFlutterPreviousPage": {
+    "description": "songs.flutter.previousPage"
+  },
+  "songsFlutterPrintFailed": "Fehler beim Drucken: {error}",
+  "@songsFlutterPrintFailed": {
+    "description": "songs.flutter.printFailed",
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "songsFlutterPrintJobSent": "Druckauftrag gesendet",
+  "@songsFlutterPrintJobSent": {
+    "description": "songs.flutter.printJobSent"
+  },
+  "songsFlutterPrinting": "Wird gedruckt...",
+  "@songsFlutterPrinting": {
+    "description": "songs.flutter.printing"
+  },
+  "songsFlutterReorderCategoriesHint": "Ziehe Kategorien um sie neu zu sortieren",
+  "@songsFlutterReorderCategoriesHint": {
+    "description": "songs.flutter.reorderCategoriesHint"
+  },
+  "songsFlutterUploadFailedWith": "Fehler beim Hochladen: {error}",
+  "@songsFlutterUploadFailedWith": {
+    "description": "songs.flutter.uploadFailedWith",
+    "placeholders": {
+      "error": {}
+    }
+  },
   "songsFreeText": "Freitext",
   "@songsFreeText": {
     "description": "songs.freeText"

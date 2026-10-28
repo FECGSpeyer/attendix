@@ -11,6 +11,7 @@ import '../../../core/services/pdf_branding.dart';
 import '../../../data/models/song/song.dart';
 import '../../../data/models/song/song_additional_field.dart';
 import '../presentation/utils/song_utils.dart';
+import '../../../l10n/l10n.dart';
 
 /// One file to print (optionally several copies)
 class SongPrintEntry {
@@ -129,16 +130,17 @@ class SongPrintService {
     required List<SongAdditionalField> additionalFields,
     PdfBranding? branding,
   }) async {
-    final date = DateFormat('dd.MM.yyyy').format(DateTime.now());
+    final l10n = l10nWithoutContext;
+    final date = DateFormat(dateFmt()).format(DateTime.now());
     final extraFields =
         additionalFields.where((f) => viewOpts.contains(f.id)).toList();
 
-    final head = <String>['Nr.', 'Name'];
+    final head = <String>[l10n.songsNumberShort, l10n.songsName];
     final withLastSung = viewOpts.contains('lastSung') && showLastSung;
-    if (withLastSung) head.add(isOrchestra ? 'Zuletzt gespielt' : 'Zuletzt gesungen');
-    if (viewOpts.contains('difficulty')) head.add('Schwierigkeit');
-    if (viewOpts.contains('withChoir')) head.add('Chor/Orch.');
-    if (viewOpts.contains('withSolo')) head.add('Solo');
+    if (withLastSung) head.add(isOrchestra ? l10n.songsLastPlayed : l10n.songsLastSung);
+    if (viewOpts.contains('difficulty')) head.add(l10n.songsDifficultyShort);
+    if (viewOpts.contains('withChoir')) head.add(l10n.songsChoirOrchShort);
+    if (viewOpts.contains('withSolo')) head.add(l10n.songsSolo);
     for (final f in extraFields) {
       head.add(f.name);
     }
@@ -149,11 +151,11 @@ class SongPrintService {
       if (viewOpts.contains('difficulty')) {
         row.add(song.difficulty == null ? '' : SongUtils.difficultyLabel(song.difficulty));
       }
-      if (viewOpts.contains('withChoir')) row.add(song.withChoir ? 'Ja' : '');
-      if (viewOpts.contains('withSolo')) row.add(song.withSolo ? 'Ja' : '');
+      if (viewOpts.contains('withChoir')) row.add(song.withChoir ? l10n.commonYes : '');
+      if (viewOpts.contains('withSolo')) row.add(song.withSolo ? l10n.commonYes : '');
       for (final f in extraFields) {
         final v = song.additionalFields?[f.id];
-        row.add(v == true ? 'Ja' : v == false ? 'Nein' : (v ?? '').toString());
+        row.add(v == true ? l10n.commonYes : v == false ? l10n.commonNo : (v ?? '').toString());
       }
       return row;
     }).toList();
@@ -165,8 +167,8 @@ class SongPrintService {
       // MISC2: letterhead with tenant/org branding (Ionic addBrandingHeader)
       header: (_) => buildPdfBrandingHeader(
         branding: branding,
-        title: '$tenantShortName Werkverzeichnis',
-        subtitle: 'Stand: $date',
+        title: l10n.songsCatalogTitle(tenantShortName),
+        subtitle: l10n.planningAsOf(date),
       ),
       build: (_) => [
         pw.TableHelper.fromTextArray(

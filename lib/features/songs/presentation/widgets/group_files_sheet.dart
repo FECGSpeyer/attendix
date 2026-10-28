@@ -9,6 +9,7 @@ import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/models/song/song.dart';
 import '../../data/song_print_service.dart';
 import 'song_file_opener.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Gruppenverzeichnis (Ionic groupDirectoryModal): pick a group, see all of
 /// its files across songs, open or print them as one folder.
@@ -38,7 +39,7 @@ class _GroupFilesSheetState extends ConsumerState<GroupFilesSheet> {
         return (a.song.number ?? 0).compareTo(b.song.number ?? 0);
       });
     if (files.isEmpty) {
-      ToastHelper.showWarning(context, 'Keine Noten für diese Gruppe vorhanden.');
+      ToastHelper.showWarning(context, context.l10n.songsNoScoresGroup);
       return;
     }
     final date = DateTime.now().toIso8601String().substring(0, 10);
@@ -48,10 +49,9 @@ class _GroupFilesSheetState extends ConsumerState<GroupFilesSheet> {
         );
     if (!mounted || result == null) return;
     if (result.pageCount == 0) {
-      ToastHelper.showWarning(context, 'Keine druckbaren Noten gefunden.');
+      ToastHelper.showWarning(context, context.l10n.svcNoPrintableScores);
     } else if (result.skipped > 0) {
-      ToastHelper.showWarning(
-          context, '${result.skipped} Datei(en) konnten nicht eingebunden werden.');
+      ToastHelper.showWarning(context, context.l10n.songsFlutterFilesSkipped(result.skipped));
     }
   }
 
@@ -82,7 +82,7 @@ class _GroupFilesSheetState extends ConsumerState<GroupFilesSheet> {
                     const SizedBox(width: AppDimensions.paddingS),
                   Expanded(
                     child: Text(
-                      selected?.name ?? 'Gruppe wählen',
+                      selected?.name ?? context.l10n.songsChooseGroup,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
@@ -90,7 +90,7 @@ class _GroupFilesSheetState extends ConsumerState<GroupFilesSheet> {
                   ),
                   if (selected != null && files.isNotEmpty)
                     IconButton(
-                      tooltip: 'Drucken',
+                      tooltip: context.l10n.songsPrint,
                       icon: const Icon(Icons.print_outlined),
                       onPressed: _printFolder,
                     ),
@@ -101,12 +101,12 @@ class _GroupFilesSheetState extends ConsumerState<GroupFilesSheet> {
                 ],
               ),
             ),
-            const Padding(
-              padding: EdgeInsets.all(AppDimensions.paddingS),
+            Padding(
+              padding: const EdgeInsets.all(AppDimensions.paddingS),
               child: Text(
-                'Es werden nur Gruppen angezeigt, für die Dateien vorhanden sind.',
+                context.l10n.songsOnlyGroupsWithFiles,
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 13, color: AppColors.medium),
+                style: const TextStyle(fontSize: 13, color: AppColors.medium),
               ),
             ),
             const Divider(height: 1),

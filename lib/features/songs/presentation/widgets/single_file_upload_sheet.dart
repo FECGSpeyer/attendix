@@ -10,6 +10,7 @@ import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/models/song/song.dart';
 import '../utils/song_utils.dart';
 import 'file_upload_sheet.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Result of [SingleFileUploadSheet].
 enum SingleFileUploadResult {
@@ -109,16 +110,16 @@ class _SingleFileUploadSheetState extends ConsumerState<SingleFileUploadSheet> {
     } catch (e) {
       if (!mounted) return;
       setState(() => _uploading = false);
-      ToastHelper.showError(context, 'Fehler beim Hochladen: $e');
+      ToastHelper.showError(context, context.l10n.songsFlutterUploadFailedWith(e));
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final options = <(int?, String)>[
-      (null, 'Sonstige (Freitext)'),
-      (1, 'Aufnahme'),
-      (2, 'Liedtext'),
+      (null, context.l10n.songsOtherFreeText),
+      (1, context.l10n.songsRecording),
+      (2, context.l10n.songsLyrics),
       for (final g in widget.groups)
         if (g.id != null) (g.id, g.name),
     ];
@@ -136,10 +137,10 @@ class _SingleFileUploadSheetState extends ConsumerState<SingleFileUploadSheet> {
                 padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
                 child: Row(
                   children: [
-                    const Expanded(
+                    Expanded(
                       child: Text(
-                        'Datei hochladen',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                        context.l10n.songsUploadFile,
+                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                       ),
                     ),
                     IconButton(
@@ -176,18 +177,18 @@ class _SingleFileUploadSheetState extends ConsumerState<SingleFileUploadSheet> {
                                 }),
                       ),
                     if (_instrumentId == null) ...[
-                      const Padding(
-                        padding: EdgeInsets.fromLTRB(16, 12, 16, 0),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
                         child: Text(
-                          'Freitext',
-                          style: TextStyle(fontWeight: FontWeight.w600, color: AppColors.medium),
+                          context.l10n.songsFreeText,
+                          style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.medium),
                         ),
                       ),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: TextField(
                           controller: _note,
-                          decoration: const InputDecoration(hintText: 'Kategorie eingeben...'),
+                          decoration: InputDecoration(hintText: context.l10n.songsEnterCategory),
                           onChanged: (_) => setState(_refreshConflicts),
                         ),
                       ),
@@ -199,8 +200,8 @@ class _SingleFileUploadSheetState extends ConsumerState<SingleFileUploadSheet> {
                         child: ListTile(
                           leading: const Icon(Icons.warning_amber_rounded),
                           title: Text(_conflicts.length == 1
-                              ? 'Ersetzt: ${_conflicts.first.fileName}'
-                              : 'Welche Dateien sollen ersetzt werden?'),
+                              ? context.l10n.songsReplaces(_conflicts.first.fileName)
+                              : context.l10n.songsWhichReplace),
                         ),
                       ),
                     if (_conflicts.length > 1)
@@ -233,7 +234,7 @@ class _SingleFileUploadSheetState extends ConsumerState<SingleFileUploadSheet> {
                     children: [
                       TextButton(
                         onPressed: _uploading ? null : () => Navigator.pop(context),
-                        child: const Text('Abbrechen'),
+                        child: Text(context.l10n.commonCancel),
                       ),
                       const Spacer(),
                       if (_conflicts.isNotEmpty) ...[
@@ -242,17 +243,17 @@ class _SingleFileUploadSheetState extends ConsumerState<SingleFileUploadSheet> {
                               ? null
                               : () => Navigator.pop(
                                   context, SingleFileUploadResult.openUploadSheet),
-                          child: const Text('Hinzufügen'),
+                          child: Text(context.l10n.attendanceAdd),
                         ),
                         TextButton(
                           style: TextButton.styleFrom(foregroundColor: AppColors.danger),
                           onPressed: _uploading ? null : () => _upload(replace: true),
-                          child: const Text('Ersetzen'),
+                          child: Text(context.l10n.personReplace),
                         ),
                       ] else
                         TextButton(
                           onPressed: _uploading ? null : () => _upload(replace: false),
-                          child: const Text('Hochladen'),
+                          child: Text(context.l10n.songsUpload),
                         ),
                     ],
                   ),

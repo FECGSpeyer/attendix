@@ -11,6 +11,7 @@ import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/models/song/song.dart';
 import '../utils/song_utils.dart';
 import 'file_drop/file_drop_target.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Ionic `detectSpecialFileType`: category from the file name / extension
 /// when no group matched. Returns null if nothing special was detected.
@@ -159,10 +160,7 @@ class _FileUploadSheetState extends ConsumerState<FileUploadSheet> {
     setState(() {
       for (final file in files) {
         if (file.size > _maxSizeBytes) {
-          ToastHelper.showError(
-            context,
-            'Die Datei ${file.name} überschreitet die maximale Größe von 20MB.',
-          );
+          ToastHelper.showError(context, context.l10n.songsFileTooLarge(file.name));
           continue;
         }
         final cat = detectFileCategory(
@@ -193,18 +191,16 @@ class _FileUploadSheetState extends ConsumerState<FileUploadSheet> {
       final proceed = await showDialog<bool>(
         context: context,
         builder: (ctx) => AlertDialog(
-          title: const Text('Warnung: Liedtext-Format'),
-          content: Text(invalidLyrics == 1
-              ? '1 Datei wurde als "Liedtext" kategorisiert, ist aber keine PDF-Datei. Die Spieler und Sänger können diese Dateien daher nicht in ihrer Übersicht bei den aktuellen Werken sehen.'
-              : '$invalidLyrics Dateien wurden als "Liedtext" kategorisiert, sind aber keine PDF-Dateien. Die Spieler und Sänger können diese Dateien daher nicht in ihrer Übersicht bei den aktuellen Werken sehen.'),
+          title: Text(context.l10n.songsLyricsWarning),
+          content: Text(context.l10n.songsLyricsWarningMessage(invalidLyrics)),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx, false),
-              child: const Text('Abbrechen'),
+              child: Text(context.l10n.commonCancel),
             ),
             TextButton(
               onPressed: () => Navigator.pop(ctx, true),
-              child: const Text('Trotzdem hochladen'),
+              child: Text(context.l10n.songsUploadAnyway),
             ),
           ],
         ),
@@ -267,15 +263,13 @@ class _FileUploadSheetState extends ConsumerState<FileUploadSheet> {
       });
       ToastHelper.showError(
         context,
-        '${failed.length} von ${infos.length} Datei(en) konnten nicht hochgeladen werden.',
+        context.l10n.songsUploadPartialFail(failed.length, infos.length),
       );
       return;
     }
     ToastHelper.showSuccess(
       context,
-      infos.length == 1
-          ? '1 Datei erfolgreich hochgeladen.'
-          : '${infos.length} Dateien erfolgreich hochgeladen.',
+      context.l10n.songsUploadDone(infos.length),
     );
     Navigator.pop(context, true);
   }
@@ -299,10 +293,10 @@ class _FileUploadSheetState extends ConsumerState<FileUploadSheet> {
                 padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
                 child: Row(
                   children: [
-                    const Expanded(
+                    Expanded(
                       child: Text(
-                        'Dateien hochladen',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                        context.l10n.songsUploadFiles,
+                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                       ),
                     ),
                     IconButton(
@@ -324,19 +318,20 @@ class _FileUploadSheetState extends ConsumerState<FileUploadSheet> {
                     // Ionic accordion "Wichtige Infos" (warning colour, collapsed)
                     Material(
                       color: AppColors.warning.withAlpha(45),
-                      child: const ExpansionTile(
-                        leading: Icon(Icons.info_outline),
-                        title: Text('Wichtige Infos'),
-                        shape: Border(),
-                        collapsedShape: Border(),
-                        childrenPadding: EdgeInsets.fromLTRB(16, 0, 16, 16),
+                      child: ExpansionTile(
+                        leading: const Icon(Icons.info_outline),
+                        title: Text(context.l10n.songsImportantInfo),
+                        shape: const Border(),
+                        collapsedShape: const Border(),
+                        childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                         expandedAlignment: Alignment.centerLeft,
                         children: [
                           Text(
-                            '- Die Besetzung wird nach dem Hochladen automatisch anhand der ausgewählten Instrumente aktualisiert.\n'
-                            '- Füge den Instrumenten Synonyme hinzu (Gruppeneinstellungen), um die automatische Zuordnung der Dateien zu verbessern.\n'
-                            '- Beim Hochladen mehrerer Dateien kann es je nach Dateigröße und Internetverbindung einige Zeit dauern, bis alle Dateien vollständig hochgeladen sind. Bitte schließen Sie das Fenster nicht, bis der Upload abgeschlossen ist.',
-                            style: TextStyle(fontSize: 14),
+                            // Ionic renders this key as HTML (<br>, link).
+                            context.l10n.songsUploadInfo
+                                .replaceAll('<br>', '\n')
+                                .replaceAll(RegExp(r'<[^>]+>'), ''),
+                            style: const TextStyle(fontSize: 14),
                           ),
                         ],
                       ),
@@ -351,7 +346,7 @@ class _FileUploadSheetState extends ConsumerState<FileUploadSheet> {
                                   children: [
                                     Expanded(
                                       child: Text(
-                                        '$_doneCount von ${_files.length} Dateien hochgeladen',
+                                        context.l10n.songsUploadProgress(_doneCount, _files.length),
                                         style: const TextStyle(
                                             fontSize: 14, fontWeight: FontWeight.w500),
                                       ),
@@ -372,9 +367,9 @@ class _FileUploadSheetState extends ConsumerState<FileUploadSheet> {
                                   ),
                                 ),
                                 const SizedBox(height: 8),
-                                const Text(
-                                  'Bitte das Fenster nicht schließen, bis der Upload abgeschlossen ist.',
-                                  style: TextStyle(fontSize: 12, color: AppColors.medium),
+                                Text(
+                                  context.l10n.songsDontClose,
+                                  style: const TextStyle(fontSize: 12, color: AppColors.medium),
                                 ),
                               ],
                             )
@@ -416,12 +411,12 @@ class _FileUploadSheetState extends ConsumerState<FileUploadSheet> {
                           children: [
                             FilledButton(
                               onPressed: () => _upload(replace: true),
-                              child: const Text('Ersetzen & Hinzufügen'),
+                              child: Text(context.l10n.songsReplaceAndAdd),
                             ),
                             const SizedBox(height: 8),
                             OutlinedButton(
                               onPressed: () => _upload(replace: false),
-                              child: const Text('Ohne Ersetzen hinzufügen'),
+                              child: Text(context.l10n.songsAddWithoutReplace),
                             ),
                           ],
                         ),
@@ -505,7 +500,7 @@ class _FileItemState extends State<_FileItem> {
         const icon = Icon(Icons.warning_amber_rounded, color: AppColors.warning, size: 20);
         return conflicts.length == 1
             ? Tooltip(
-                message: 'Ersetzt: ${conflicts.first.fileName}',
+                message: context.l10n.songsReplaces(conflicts.first.fileName),
                 triggerMode: TooltipTriggerMode.tap,
                 child: icon,
               )
@@ -517,9 +512,9 @@ class _FileItemState extends State<_FileItem> {
   Widget build(BuildContext context) {
     final file = widget.file;
     final items = <DropdownMenuItem<int?>>[
-      const DropdownMenuItem(value: null, child: Text('Sonstige (Freitext)')),
-      const DropdownMenuItem(value: 1, child: Text('Aufnahme')),
-      const DropdownMenuItem(value: 2, child: Text('Liedtext')),
+      DropdownMenuItem(value: null, child: Text(context.l10n.songsOtherFreeText)),
+      DropdownMenuItem(value: 1, child: Text(context.l10n.songsRecording)),
+      DropdownMenuItem(value: 2, child: Text(context.l10n.songsLyrics)),
       for (final g in widget.groups)
         if (g.id != null) DropdownMenuItem(value: g.id, child: Text(g.name)),
     ];
@@ -564,7 +559,7 @@ class _FileItemState extends State<_FileItem> {
                       value: file.instrumentId,
                       items: items,
                       isExpanded: true,
-                      hint: const Text('Instrument'),
+                      hint: Text(context.l10n.songsInstrument),
                       onChanged: widget.enabled
                           ? (id) => widget.onCategoryChanged(
                               id, id == null ? _note.text.trim() : null)
@@ -582,9 +577,9 @@ class _FileItemState extends State<_FileItem> {
             child: TextField(
               controller: _note,
               enabled: widget.enabled,
-              decoration: const InputDecoration(
-                labelText: 'Freitext',
-                hintText: 'Kategorie eingeben...',
+              decoration: InputDecoration(
+                labelText: context.l10n.songsFreeText,
+                hintText: context.l10n.songsEnterCategory,
                 isDense: true,
               ),
               onChanged: (v) => widget.onCategoryChanged(null, v.trim()),

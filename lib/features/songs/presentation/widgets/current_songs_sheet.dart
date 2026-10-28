@@ -7,6 +7,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/instrument/instrument.dart';
 import '../../data/song_print_service.dart';
+import '../../../../l10n/l10n.dart';
 
 /// "Aktuelle Werke" sheet (Ionic currentSongsModal)
 class CurrentSongsSheet extends ConsumerWidget {
@@ -40,8 +41,7 @@ class CurrentSongsSheet extends ConsumerWidget {
       }
     }
     if (entries.isEmpty) {
-      ToastHelper.showWarning(
-          context, 'Keine Noten für diese Gruppe in den aktuellen Werken gefunden.');
+      ToastHelper.showWarning(context, context.l10n.songsNoScoresCurrent);
       return;
     }
 
@@ -51,10 +51,9 @@ class CurrentSongsSheet extends ConsumerWidget {
         .printEntries(entries, 'Noten_${group.name}_$date.pdf');
     if (!context.mounted || result == null) return;
     if (result.pageCount == 0) {
-      ToastHelper.showWarning(context, 'Keine druckbaren Noten gefunden.');
+      ToastHelper.showWarning(context, context.l10n.svcNoPrintableScores);
     } else if (result.skipped > 0) {
-      ToastHelper.showWarning(
-          context, '${result.skipped} Datei(en) konnten nicht eingebunden werden.');
+      ToastHelper.showWarning(context, context.l10n.songsFlutterFilesSkipped(result.skipped));
     }
   }
 
@@ -75,7 +74,7 @@ class CurrentSongsSheet extends ConsumerWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      'Aktuelle Werke',
+                      context.l10n.songsCurrent,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
@@ -83,7 +82,7 @@ class CurrentSongsSheet extends ConsumerWidget {
                   ),
                   if (canPrint)
                     IconButton(
-                      tooltip: 'Noten drucken',
+                      tooltip: context.l10n.songsPrintScores,
                       icon: const Icon(Icons.print_outlined),
                       onPressed: () => _printNotesForGroup(context, ref),
                     ),
@@ -152,7 +151,7 @@ class _GroupChoiceDialogState extends State<_GroupChoiceDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Gruppe wählen'),
+      title: Text(context.l10n.songsChooseGroup),
       content: SizedBox(
         width: double.maxFinite,
         child: ListView(
@@ -171,17 +170,17 @@ class _GroupChoiceDialogState extends State<_GroupChoiceDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Abbrechen'),
+          child: Text(context.l10n.commonCancel),
         ),
         ElevatedButton(
           onPressed: () {
             if (_selected == null) {
-              ToastHelper.showWarning(context, 'Bitte eine Gruppe auswählen.');
+              ToastHelper.showWarning(context, context.l10n.songsChooseGroupPlease);
               return;
             }
             Navigator.of(context).pop(_selected);
           },
-          child: const Text('Noten drucken'),
+          child: Text(context.l10n.songsPrintScores),
         ),
       ],
     );

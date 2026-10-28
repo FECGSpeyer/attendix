@@ -8057,6 +8057,95 @@ class AppLocalizationsDe extends AppLocalizations {
   String get songsFiles => 'Dateien';
 
   @override
+  String songsFlutterCopiesCount(Object count) {
+    return '$count Kopien';
+  }
+
+  @override
+  String get songsFlutterCopiesPerInstrument => 'Kopien pro Instrument:';
+
+  @override
+  String get songsFlutterCreateFailed => 'Werk konnte nicht erstellt werden';
+
+  @override
+  String get songsFlutterCreatingInTarget => 'Erstelle Werk in Ziel-Instanz...';
+
+  @override
+  String songsFlutterErrorWith(Object error) {
+    return 'Fehler: $error';
+  }
+
+  @override
+  String songsFlutterFilesSkipped(Object count) {
+    return '$count Datei(en) konnten nicht eingebunden werden.';
+  }
+
+  @override
+  String songsFlutterFilesWillBeCopied(Object count) {
+    return '$count Dateien werden kopiert:';
+  }
+
+  @override
+  String get songsFlutterFilterAndView => 'Filter & Ansicht';
+
+  @override
+  String get songsFlutterFirstPage => 'Erste Seite';
+
+  @override
+  String get songsFlutterFullscreen => 'Vollbild';
+
+  @override
+  String get songsFlutterLastPage => 'Letzte Seite';
+
+  @override
+  String songsFlutterListAnd(Object rest, Object last) {
+    return '$rest und $last';
+  }
+
+  @override
+  String get songsFlutterLoadingTargetGroups => 'Lade Ziel-Instrumente...';
+
+  @override
+  String get songsFlutterNextPage => 'Nächste Seite';
+
+  @override
+  String get songsFlutterNoPlayers => 'Keine Spieler gefunden';
+
+  @override
+  String get songsFlutterOneEach => 'Je 1';
+
+  @override
+  String get songsFlutterOpenFileFailed => 'Konnte Datei nicht öffnen';
+
+  @override
+  String get songsFlutterPdfLoadFailed => 'PDF konnte nicht geladen werden';
+
+  @override
+  String get songsFlutterPdfLoading => 'PDF wird geladen...';
+
+  @override
+  String get songsFlutterPreviousPage => 'Vorherige Seite';
+
+  @override
+  String songsFlutterPrintFailed(Object error) {
+    return 'Fehler beim Drucken: $error';
+  }
+
+  @override
+  String get songsFlutterPrintJobSent => 'Druckauftrag gesendet';
+
+  @override
+  String get songsFlutterPrinting => 'Wird gedruckt...';
+
+  @override
+  String get songsFlutterReorderCategoriesHint => 'Ziehe Kategorien um sie neu zu sortieren';
+
+  @override
+  String songsFlutterUploadFailedWith(Object error) {
+    return 'Fehler beim Hochladen: $error';
+  }
+
+  @override
   String get songsFreeText => 'Freitext';
 
   @override

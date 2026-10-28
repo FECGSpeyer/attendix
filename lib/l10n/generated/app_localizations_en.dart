@@ -8063,6 +8063,95 @@ class AppLocalizationsEn extends AppLocalizations {
   String get songsFiles => 'Files';
 
   @override
+  String songsFlutterCopiesCount(Object count) {
+    return '$count copies';
+  }
+
+  @override
+  String get songsFlutterCopiesPerInstrument => 'Copies per instrument:';
+
+  @override
+  String get songsFlutterCreateFailed => 'Song could not be created';
+
+  @override
+  String get songsFlutterCreatingInTarget => 'Creating song in target instance...';
+
+  @override
+  String songsFlutterErrorWith(Object error) {
+    return 'Error: $error';
+  }
+
+  @override
+  String songsFlutterFilesSkipped(Object count) {
+    return '$count file(s) could not be included.';
+  }
+
+  @override
+  String songsFlutterFilesWillBeCopied(Object count) {
+    return '$count files will be copied:';
+  }
+
+  @override
+  String get songsFlutterFilterAndView => 'Filter & view';
+
+  @override
+  String get songsFlutterFirstPage => 'First page';
+
+  @override
+  String get songsFlutterFullscreen => 'Full screen';
+
+  @override
+  String get songsFlutterLastPage => 'Last page';
+
+  @override
+  String songsFlutterListAnd(Object rest, Object last) {
+    return '$rest and $last';
+  }
+
+  @override
+  String get songsFlutterLoadingTargetGroups => 'Loading target groups...';
+
+  @override
+  String get songsFlutterNextPage => 'Next page';
+
+  @override
+  String get songsFlutterNoPlayers => 'No players found';
+
+  @override
+  String get songsFlutterOneEach => '1 each';
+
+  @override
+  String get songsFlutterOpenFileFailed => 'Could not open file';
+
+  @override
+  String get songsFlutterPdfLoadFailed => 'PDF could not be loaded';
+
+  @override
+  String get songsFlutterPdfLoading => 'Loading PDF...';
+
+  @override
+  String get songsFlutterPreviousPage => 'Previous page';
+
+  @override
+  String songsFlutterPrintFailed(Object error) {
+    return 'Error while printing: $error';
+  }
+
+  @override
+  String get songsFlutterPrintJobSent => 'Print job sent';
+
+  @override
+  String get songsFlutterPrinting => 'Printing...';
+
+  @override
+  String get songsFlutterReorderCategoriesHint => 'Drag categories to reorder them';
+
+  @override
+  String songsFlutterUploadFailedWith(Object error) {
+    return 'Error while uploading: $error';
+  }
+
+  @override
   String get songsFreeText => 'Free text';
 
   @override

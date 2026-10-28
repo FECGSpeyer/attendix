@@ -14195,6 +14195,156 @@ abstract class AppLocalizations {
   /// **'Dateien'**
   String get songsFiles;
 
+  /// songs.flutter.copiesCount
+  ///
+  /// In de, this message translates to:
+  /// **'{count} Kopien'**
+  String songsFlutterCopiesCount(Object count);
+
+  /// songs.flutter.copiesPerInstrument
+  ///
+  /// In de, this message translates to:
+  /// **'Kopien pro Instrument:'**
+  String get songsFlutterCopiesPerInstrument;
+
+  /// songs.flutter.createFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Werk konnte nicht erstellt werden'**
+  String get songsFlutterCreateFailed;
+
+  /// songs.flutter.creatingInTarget
+  ///
+  /// In de, this message translates to:
+  /// **'Erstelle Werk in Ziel-Instanz...'**
+  String get songsFlutterCreatingInTarget;
+
+  /// songs.flutter.errorWith
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler: {error}'**
+  String songsFlutterErrorWith(Object error);
+
+  /// songs.flutter.filesSkipped
+  ///
+  /// In de, this message translates to:
+  /// **'{count} Datei(en) konnten nicht eingebunden werden.'**
+  String songsFlutterFilesSkipped(Object count);
+
+  /// songs.flutter.filesWillBeCopied
+  ///
+  /// In de, this message translates to:
+  /// **'{count} Dateien werden kopiert:'**
+  String songsFlutterFilesWillBeCopied(Object count);
+
+  /// songs.flutter.filterAndView
+  ///
+  /// In de, this message translates to:
+  /// **'Filter & Ansicht'**
+  String get songsFlutterFilterAndView;
+
+  /// songs.flutter.firstPage
+  ///
+  /// In de, this message translates to:
+  /// **'Erste Seite'**
+  String get songsFlutterFirstPage;
+
+  /// songs.flutter.fullscreen
+  ///
+  /// In de, this message translates to:
+  /// **'Vollbild'**
+  String get songsFlutterFullscreen;
+
+  /// songs.flutter.lastPage
+  ///
+  /// In de, this message translates to:
+  /// **'Letzte Seite'**
+  String get songsFlutterLastPage;
+
+  /// songs.flutter.listAnd
+  ///
+  /// In de, this message translates to:
+  /// **'{rest} und {last}'**
+  String songsFlutterListAnd(Object rest, Object last);
+
+  /// songs.flutter.loadingTargetGroups
+  ///
+  /// In de, this message translates to:
+  /// **'Lade Ziel-Instrumente...'**
+  String get songsFlutterLoadingTargetGroups;
+
+  /// songs.flutter.nextPage
+  ///
+  /// In de, this message translates to:
+  /// **'Nächste Seite'**
+  String get songsFlutterNextPage;
+
+  /// songs.flutter.noPlayers
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Spieler gefunden'**
+  String get songsFlutterNoPlayers;
+
+  /// songs.flutter.oneEach
+  ///
+  /// In de, this message translates to:
+  /// **'Je 1'**
+  String get songsFlutterOneEach;
+
+  /// songs.flutter.openFileFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Konnte Datei nicht öffnen'**
+  String get songsFlutterOpenFileFailed;
+
+  /// songs.flutter.pdfLoadFailed
+  ///
+  /// In de, this message translates to:
+  /// **'PDF konnte nicht geladen werden'**
+  String get songsFlutterPdfLoadFailed;
+
+  /// songs.flutter.pdfLoading
+  ///
+  /// In de, this message translates to:
+  /// **'PDF wird geladen...'**
+  String get songsFlutterPdfLoading;
+
+  /// songs.flutter.previousPage
+  ///
+  /// In de, this message translates to:
+  /// **'Vorherige Seite'**
+  String get songsFlutterPreviousPage;
+
+  /// songs.flutter.printFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Drucken: {error}'**
+  String songsFlutterPrintFailed(Object error);
+
+  /// songs.flutter.printJobSent
+  ///
+  /// In de, this message translates to:
+  /// **'Druckauftrag gesendet'**
+  String get songsFlutterPrintJobSent;
+
+  /// songs.flutter.printing
+  ///
+  /// In de, this message translates to:
+  /// **'Wird gedruckt...'**
+  String get songsFlutterPrinting;
+
+  /// songs.flutter.reorderCategoriesHint
+  ///
+  /// In de, this message translates to:
+  /// **'Ziehe Kategorien um sie neu zu sortieren'**
+  String get songsFlutterReorderCategoriesHint;
+
+  /// songs.flutter.uploadFailedWith
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Hochladen: {error}'**
+  String songsFlutterUploadFailedWith(Object error);
+
   /// songs.freeText
   ///
   /// In de, this message translates to:

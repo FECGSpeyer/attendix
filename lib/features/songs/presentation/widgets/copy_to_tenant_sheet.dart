@@ -10,6 +10,7 @@ import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/models/song/song.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../core/utils/demo_guard.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Sheet for copying a song to another tenant
 class CopyToTenantSheet extends ConsumerStatefulWidget {
@@ -59,7 +60,7 @@ class _CopyToTenantSheetState extends ConsumerState<CopyToTenantSheet> {
           children: [
             // Header
             AppBar(
-              title: const Text('Werk kopieren'),
+              title: Text(context.l10n.songsCopySong),
               leading: IconButton(
                 icon: const Icon(Icons.close),
                 onPressed: () => Navigator.pop(context),
@@ -80,8 +81,8 @@ class _CopyToTenantSheetState extends ConsumerState<CopyToTenantSheet> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            'Ziel-Instanz',
+                          Text(
+                            context.l10n.shiftsFlutterTargetTenant,
                             style: TextStyle(
                               fontWeight: FontWeight.w600,
                               color: AppColors.medium,
@@ -126,7 +127,7 @@ class _CopyToTenantSheetState extends ConsumerState<CopyToTenantSheet> {
                               const Icon(Icons.info_outline, color: AppColors.info),
                               const SizedBox(width: 8),
                               Text(
-                                'Hinweis',
+                                context.l10n.shiftsFlutterNote,
                                 style: TextStyle(
                                   fontWeight: FontWeight.w600,
                                   color: AppColors.info,
@@ -136,10 +137,7 @@ class _CopyToTenantSheetState extends ConsumerState<CopyToTenantSheet> {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            'Das Werk "${widget.song.name}" wird in die ausgewählte Instanz kopiert. '
-                            'Alle Dateien werden ebenfalls kopiert. '
-                            'Die Kategorie wird nicht übernommen. '
-                            'Instrumentenzuordnungen werden automatisch anhand des Namens gemappt.',
+                            context.l10n.songsCopyInfo(widget.song.name),
                             style: const TextStyle(color: AppColors.medium),
                           ),
                         ],
@@ -157,7 +155,7 @@ class _CopyToTenantSheetState extends ConsumerState<CopyToTenantSheet> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              '${widget.song.files!.length} Dateien werden kopiert:',
+                              context.l10n.songsFlutterFilesWillBeCopied(widget.song.files!.length),
                               style: const TextStyle(
                                 fontWeight: FontWeight.w600,
                                 color: AppColors.medium,
@@ -184,7 +182,7 @@ class _CopyToTenantSheetState extends ConsumerState<CopyToTenantSheet> {
                               Padding(
                                 padding: const EdgeInsets.only(top: 4),
                                 child: Text(
-                                  '... und ${widget.song.files!.length - 5} weitere',
+                                  '...${context.l10n.filesAndMore(widget.song.files!.length - 5)}',
                                   style: const TextStyle(color: AppColors.medium),
                                 ),
                               ),
@@ -218,7 +216,7 @@ class _CopyToTenantSheetState extends ConsumerState<CopyToTenantSheet> {
                             child: CircularProgressIndicator(strokeWidth: 2),
                           )
                         : const Icon(Icons.copy),
-                    label: Text(_isCopying ? 'Wird kopiert...' : 'Kopieren'),
+                    label: Text(_isCopying ? context.l10n.shiftsFlutterCopyingShort : context.l10n.songsCopy),
                     style: ElevatedButton.styleFrom(
                       minimumSize: const Size(double.infinity, 48),
                     ),
@@ -234,9 +232,10 @@ class _CopyToTenantSheetState extends ConsumerState<CopyToTenantSheet> {
 
   Future<void> _copySong() async {
     if (DemoGuard.blocked()) return; // DEMO_GUARD
+    final l10n = context.l10n;
     setState(() {
       _isCopying = true;
-      _progressMessage = 'Werk wird kopiert...';
+      _progressMessage = l10n.songsCopying;
     });
 
     try {
@@ -245,7 +244,7 @@ class _CopyToTenantSheetState extends ConsumerState<CopyToTenantSheet> {
       final sourceGroups = sourceGroupsAsync.valueOrNull ?? [];
 
       // Get target groups
-      setState(() => _progressMessage = 'Lade Ziel-Instrumente...');
+      setState(() => _progressMessage = l10n.songsFlutterLoadingTargetGroups);
       final supabase = ref.read(supabaseClientProvider);
       final targetGroupsResponse = await supabase
           .from('instruments')
@@ -272,7 +271,7 @@ class _CopyToTenantSheetState extends ConsumerState<CopyToTenantSheet> {
       }
 
       // Create song in target tenant
-      setState(() => _progressMessage = 'Erstelle Werk in Ziel-Instanz...');
+      setState(() => _progressMessage = l10n.songsFlutterCreatingInTarget);
 
       final newSongData = {
         'tenantId': _targetTenantId,
@@ -307,7 +306,7 @@ class _CopyToTenantSheetState extends ConsumerState<CopyToTenantSheet> {
         for (var i = 0; i < fileCount; i++) {
           final file = files[i];
           setState(() => _progressMessage =
-              'Kopiere Datei ${i + 1} von $fileCount...');
+              l10n.songsCopyingFile(i + 1, fileCount));
 
           // Download file bytes
           final bytes = await songFileService.downloadFileBytes(file.url);
@@ -348,12 +347,12 @@ class _CopyToTenantSheetState extends ConsumerState<CopyToTenantSheet> {
       }
 
       if (mounted) {
-        ToastHelper.showSuccess(context, 'Werk erfolgreich kopiert');
+        ToastHelper.showSuccess(context, l10n.songsCopied);
         Navigator.pop(context);
       }
     } catch (e) {
       if (mounted) {
-        ToastHelper.showError(context, 'Fehler beim Kopieren: $e');
+        ToastHelper.showError(context, l10n.songsCopyFailed(e));
       }
     } finally {
       if (mounted) {

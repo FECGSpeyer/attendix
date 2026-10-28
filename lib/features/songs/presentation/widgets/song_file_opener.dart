@@ -6,6 +6,7 @@ import '../../../../data/models/song/song.dart';
 import '../../../../shared/widgets/sheets/image_viewer_sheet.dart';
 import '../utils/song_utils.dart';
 import 'pdf_viewer_sheet.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Open a song file: PDFs and images in the in-app viewers, everything else
 /// externally (Ionic `Utils.openFileNative`).
@@ -27,9 +28,9 @@ Future<void> openSongFileExternally(BuildContext context, SongFile file) async {
   try {
     final ok = await launchUrl(uri, mode: LaunchMode.externalApplication);
     if (!ok && context.mounted) {
-      ToastHelper.showError(context, 'Konnte Datei nicht öffnen');
+      ToastHelper.showError(context, context.l10n.songsFlutterOpenFileFailed);
     }
   } catch (_) {
-    if (context.mounted) ToastHelper.showError(context, 'Konnte Datei nicht öffnen');
+    if (context.mounted) ToastHelper.showError(context, context.l10n.songsFlutterOpenFileFailed);
   }
 }
