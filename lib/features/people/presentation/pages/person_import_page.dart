@@ -363,7 +363,7 @@ class _PersonImportPageState extends ConsumerState<PersonImportPage> {
                       children: [
                         if (row.email != null) Text(row.email!),
                         if (row.errors.isEmpty)
-                          DropdownButton<int>(
+                          AppDropdownButton<int>(
                             value: groups.any((g) => g.id == row.instrument)
                                 ? row.instrument
                                 : null,

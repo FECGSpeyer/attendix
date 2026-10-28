@@ -56,16 +56,19 @@ class TenantSwitcherTitle extends ConsumerWidget {
     final textColor = Theme.of(context).colorScheme.onSurface;
     // Ionic toolbar button: "<longName> ⌄" (chevron-down-outline at the end).
     // iOS 26 theme: the ion-buttons group is a 44 pt glass capsule.
+    // IOS_THEME2: md = Ionic md toolbar ion-button – UPPERCASE 14pt
+    // medium in the toolbar colour ("CHOR ⌄").
     final label = Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         Flexible(
           child: Text(
-            title,
+            ios ? title : title.toUpperCase(),
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
-              fontSize: 17,
+              fontSize: ios ? 17 : 14,
               fontWeight: FontWeight.w500,
+              letterSpacing: ios ? null : 0.84,
               color: textColor,
             ),
           ),

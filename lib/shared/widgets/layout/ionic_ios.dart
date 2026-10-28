@@ -121,9 +121,17 @@ class CondenseTitle extends StatelessWidget {
 
 /// App bar background for a condense header: transparent (page background)
 /// while the large title is visible, otherwise the theme default.
-Color? condenseBarColor(BuildContext context, bool condensed) {
+///
+/// IOS_THEME2: pass [pageBackground] when the page does not use the
+/// scaffold default (e.g. the white Termin pages, `eventPageBackground`) so
+/// the toolbar matches the page instead of showing the grouped grey.
+Color? condenseBarColor(
+  BuildContext context,
+  bool condensed, {
+  Color? pageBackground,
+}) {
   if (condensed || !isIosLook(context)) return null;
-  return Theme.of(context).scaffoldBackgroundColor;
+  return pageBackground ?? Theme.of(context).scaffoldBackgroundColor;
 }
 
 /// App bar shape for a condense header: no hairline while the large title is

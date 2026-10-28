@@ -92,7 +92,7 @@ class ImportMappingStep extends StatelessWidget {
         for (final header in headers)
           Padding(
             padding: const EdgeInsets.only(bottom: AppDimensions.paddingS),
-            child: DropdownButtonFormField<String?>(
+            child: AppDropdownFormField<String?>(
               // ignore: deprecated_member_use
               value: mapping[header],
               isExpanded: true,

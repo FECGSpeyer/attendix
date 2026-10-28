@@ -15,6 +15,7 @@ import '../../../../core/utils/event_list_utils.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../data/models/tenant/tenant.dart';
+import '../../../../shared/widgets/display/avatar.dart'; // IOS_THEME2
 import '../../../../shared/widgets/event_list/event_list_widgets.dart';
 import '../../../../shared/widgets/layout/ionic_ios.dart';
 import '../../data/providers/upcoming_songs_provider.dart';
@@ -139,50 +140,10 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
     // UX_SONGS_SELF: Ionic shows the tenant switcher as a start button
     // (long name + chevron-down) and otherwise the short name as title.
     Widget? title;
-    Widget? switcher;
-    final ios = useIosLook(context);
-    if (tenants.length > 1 && ios) {
+    if (tenants.length > 1) {
       // IOS_SHELL: same glass capsule + popover as Termine / Mehr.
+      // IOS_THEME2: md too – Ionic md toolbar button "CHOR ⌄" (not teal).
       title = TenantSwitcherTitle(onSelected: _switchTenant);
-    } else if (tenants.length > 1) {
-      switcher = PopupMenuButton<Tenant>(
-        tooltip: context.l10n.settingsSwitchTenant,
-        onSelected: _switchTenant,
-        itemBuilder: (_) => [
-          for (final t in tenants)
-            PopupMenuItem(
-              value: t,
-              child: Row(
-                children: [
-                  Expanded(child: Text(t.longName.isNotEmpty ? t.longName : t.shortName)),
-                  if (t.id == tenant?.id)
-                    EventPill(label: context.l10n.signoutCurrent, color: AppColors.primary),
-                ],
-              ),
-            ),
-        ],
-        child: Padding(
-          padding: const EdgeInsets.only(left: 12),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Flexible(
-                child: Text(
-                  tenant?.longName.isNotEmpty == true ? tenant!.longName : (tenant?.shortName ?? ''),
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    color: AppColors.primary,
-                    fontSize: 17,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 4),
-              const Icon(Icons.keyboard_arrow_down, color: AppColors.primary, size: 20),
-            ],
-          ),
-        ),
-      );
     } else {
       title = CondenseTitle(
         condensed: condensed,
@@ -204,7 +165,8 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
           onPressed: () => selfServiceUnpause(context, ref, player),
         ),
       IconButton(
-        icon: const Icon(Icons.info_outline),
+        // IOS_THEME2: ionicon information-outline (plain "i")
+        icon: const IonInformationIcon(),
         tooltip: context.l10n.signoutLegend,
         onPressed: () => showEventLegendSheet(context),
       ),
@@ -213,13 +175,11 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
     return AppBar(
       title: title,
       // IOS_SHELL: tenant capsule left like ion-buttons slot="start"
-      centerTitle: tenants.length > 1 && ios ? false : null,
+      centerTitle: tenants.length > 1 ? false : null,
       automaticallyImplyLeading: false,
-      leading: switcher == null
-          ? null
-          : Align(alignment: Alignment.centerLeft, child: switcher),
-      leadingWidth: switcher == null ? null : MediaQuery.sizeOf(context).width * 0.55,
-      backgroundColor: condenseBarColor(context, condensed),
+      // IOS_THEME2: toolbar matches the white (dark: black) Termin page
+      backgroundColor: condenseBarColor(context, condensed,
+          pageBackground: eventPageBackground(context)),
       shape: condenseBarShape(context, condensed),
       // IOS_SHELL: iOS → one glass capsule (ion-buttons slot="end")
       actions: [ToolbarButtonGroup(children: buttons)],
@@ -377,15 +337,15 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
       padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
       child: Row(
         children: [
-          CircleAvatar(
-            radius: 24,
-            backgroundImage: player.img != null && player.img!.isNotEmpty
-                ? NetworkImage(player.img!)
-                : null,
-            child: player.img == null || player.img!.isEmpty
-                ? Text(player.initials)
-                : null,
-          ),
+          // IOS_THEME2: Ionic shows assets/icon/avatar-placeholder.svg
+          // (grey person) when there is no picture – not a teal disc.
+          if (player.img == null || player.img!.isEmpty)
+            const IonAvatarPlaceholder(size: 48)
+          else
+            CircleAvatar(
+              radius: 24,
+              backgroundImage: NetworkImage(player.img!),
+            ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(

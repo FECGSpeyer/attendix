@@ -33,21 +33,27 @@ class AppTheme {
 
   static ThemeData _build(Brightness brightness, {required bool ios}) {
     final isDark = brightness == Brightness.dark;
+    // IOS_THEME2: iOS dark = black page with #1c1c1d rows / cards (as on
+    // the iPhone); md dark = Ionic md #121212 page, #1e1e1e items / cards.
     final background = ios
         ? (isDark ? AppColors.iosPageDark : AppColors.iosPageLight)
-        : (isDark ? AppColors.backgroundDark : AppColors.backgroundLight);
+        : (isDark ? AppColors.mdPageDark : AppColors.backgroundLight);
     final surface = ios && isDark
         ? AppColors.iosItemDark
-        : (isDark ? AppColors.surfaceDark : AppColors.surfaceLight);
-    final cardColor = isDark ? AppColors.surfaceDark : AppColors.surfaceLight;
+        : (isDark ? AppColors.mdItemDark : AppColors.surfaceLight);
+    final cardColor = ios
+        ? (isDark ? AppColors.iosItemDark : AppColors.surfaceLight)
+        : (isDark ? AppColors.mdItemDark : AppColors.surfaceLight);
+    // IOS_THEME2: Ionic md toolbar = page/background colour (white, dark
+    // #1f1f1f) with the md header shadow instead of a grey bar + hairline.
     final bar = ios
         ? (isDark ? AppColors.iosToolbarDark : AppColors.iosToolbarLight)
-        : (isDark ? AppColors.barDark : AppColors.barLight);
+        : (isDark ? AppColors.mdToolbarDark : Colors.white);
     final barBorder = ios
         ? (isDark
             ? AppColors.iosToolbarBorderDark
             : AppColors.iosToolbarBorderLight)
-        : (isDark ? AppColors.dividerDark : AppColors.dividerLight);
+        : (isDark ? AppColors.mdBorderDark : AppColors.dividerLight);
     final textPrimary = ios && !isDark
         ? AppColors.iosTextLight
         : (isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight);
@@ -56,7 +62,7 @@ class AppTheme {
         : (isDark ? AppColors.dividerDark : AppColors.dividerLight);
     final inputFill =
         isDark ? AppColors.inputFillDark : AppColors.inputFillLight;
-    final medium = ios && isDark ? AppColors.iosMediumDark : AppColors.medium;
+    final medium = isDark ? AppColors.mediumOnDark : AppColors.medium;
     final note = isDark ? AppColors.iosNoteDark : AppColors.iosNoteLight;
     // Ionic global `ion-button[disabled] { opacity: .5 }` on primary buttons;
     // iOS 26 theme: neutral grey (#ccc) with a white label.
@@ -64,8 +70,16 @@ class AppTheme {
         ? AppColors.iosDisabledButton
         : AppColors.primary.withValues(alpha: 0.5);
     // Toolbar / header button colour: iOS 26 theme renders clear toolbar
-    // buttons in the text colour, md keeps primary.
-    final barIcon = ios ? textPrimary : AppColors.primary;
+    // buttons in the text colour; IOS_THEME2: Ionic md toolbar buttons are
+    // black / grey too (toolbar colour), not primary.
+    final barIcon = ios
+        ? textPrimary
+        : (isDark ? Colors.white : const Color(0xFF424242));
+    // IOS_THEME2: Ionic iOS has no ripple, no hover / focus highlight on
+    // items (ios26: --background-hover/focused-opacity 0); a touch shows
+    // the activated grey (`--background-activated` text colour at .12).
+    final pressHighlight = (isDark ? Colors.white : Colors.black)
+        .withValues(alpha: 0.12);
 
     final base =
         isDark
@@ -74,15 +88,16 @@ class AppTheme {
               onPrimary: Colors.white,
               primaryContainer: AppColors.primaryDark,
               onPrimaryContainer: Colors.white,
-              secondary: AppColors.secondary,
               onSecondary: Colors.white,
               secondaryContainer: AppColors.secondaryDark,
               onSecondaryContainer: AppColors.secondaryLight,
-              tertiary: AppColors.tertiary,
+              // IOS_THEME2: Ionic dark palette (attendix-dark-theme-body)
+              secondary: AppColors.secondaryOnDark,
+              tertiary: AppColors.tertiaryOnDark,
               onTertiary: Colors.white,
-              error: AppColors.danger,
+              error: AppColors.dangerOnDark,
               onError: Colors.white,
-              outline: AppColors.medium,
+              outline: AppColors.mediumOnDark,
             )
             : const ColorScheme.light(
               primary: AppColors.primary,
@@ -136,14 +151,27 @@ class AppTheme {
       scaffoldBackgroundColor: background,
       canvasColor: surface,
       dividerColor: divider,
+      // IOS_THEME2: iOS list rows / buttons: no ripple and no lingering
+      // hover / focus highlight after a tap (e.g. returning from a pushed
+      // page); md keeps the Material ink.
+      splashFactory: ios ? NoSplash.splashFactory : null,
+      highlightColor: ios ? pressHighlight : null,
+      hoverColor: ios ? Colors.transparent : null,
+      focusColor: ios ? Colors.transparent : null,
+      // IOS_THEME2: ion-toggle is primary (teal) on iOS too – the default
+      // iOS switch adaptation would drop the theme and use system green.
+      adaptations: const <Adaptation<Object>>[_IonToggleAdaptation()],
       // ion-header (iOS): light toolbar, hairline border, centered 17pt title.
       // IOS_SHELL: Ionic headers are `translucent` (iOS 26 theme:
       // `--background: transparent`), i.e. they show the page background
       // (white / black) instead of a grey bar – keep only the hairline.
+      // IOS_THEME2: md (desktop / Android) = Ionic md toolbar: white
+      // (dark #1f1f1f) with the md header shadow, left-aligned 20pt title.
       appBarTheme: AppBarTheme(
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        centerTitle: true,
+        elevation: ios ? 0 : 4,
+        scrolledUnderElevation: ios ? 0 : 4,
+        shadowColor: ios ? null : Colors.black.withValues(alpha: 0.5),
+        centerTitle: ios,
         backgroundColor: ios ? Colors.transparent : bar,
         surfaceTintColor: Colors.transparent,
         foregroundColor: textPrimary,
@@ -151,19 +179,22 @@ class AppTheme {
         actionsIconTheme: IconThemeData(color: barIcon),
         systemOverlayStyle:
             isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
-        shape: Border(bottom: BorderSide(color: barBorder, width: 0.5)),
+        shape: ios
+            ? Border(bottom: BorderSide(color: barBorder, width: 0.5))
+            : null,
         titleTextStyle: TextStyle(
           color: textPrimary,
-          fontSize: 17,
-          fontWeight: FontWeight.w600,
+          fontSize: ios ? 17 : 20,
+          fontWeight: ios ? FontWeight.w600 : FontWeight.w500,
         ),
       ),
       // ion-back-button: iOS 26 Liquid Glass circle with a black chevron
       // (Ionic pages use `text=""`); modal close: grey circle with ✕.
       actionIconTheme: ActionIconThemeData(
+        // IOS_THEME2: md back button = arrow-back-sharp (←).
         backButtonIconBuilder: (context) => ios
             ? const IosCircleIcon(icon: Icons.arrow_back_ios_new, iconSize: 20)
-            : const Icon(Icons.arrow_back_ios_new, size: 20),
+            : const Icon(Icons.arrow_back),
         closeButtonIconBuilder: ios
             ? (context) => const IosCircleIcon(icon: Icons.close, filled: true)
             : null,
@@ -172,7 +203,7 @@ class AppTheme {
       cardTheme: CardThemeData(
         elevation: 0,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        color: ios && isDark ? AppColors.iosItemDark : cardColor,
+        color: cardColor,
         surfaceTintColor: Colors.transparent,
       ),
       // ion-item (iOS): 17pt label, 14pt grey paragraph.
@@ -331,6 +362,19 @@ class AppTheme {
           ),
         ),
       ),
+      // IOS_THEME2: TabBars standing in for an md `ion-segment`: primary
+      // label + 2pt underline, 60 % text colour otherwise, no divider.
+      tabBarTheme: TabBarThemeData(
+        labelColor: AppColors.primary,
+        unselectedLabelColor: textPrimary.withValues(alpha: 0.6),
+        indicatorColor: AppColors.primary,
+        indicatorSize: TabBarIndicatorSize.tab,
+        dividerColor: Colors.transparent,
+        labelStyle: const TextStyle(
+            fontSize: 14, fontWeight: FontWeight.w500, letterSpacing: 0.84),
+        unselectedLabelStyle: const TextStyle(
+            fontSize: 14, fontWeight: FontWeight.w500, letterSpacing: 0.84),
+      ),
       // ion-toggle (iOS): primary track when on, white thumb; off track
       // rgba(text, .23) in the iOS 26 theme.
       switchTheme: SwitchThemeData(
@@ -342,8 +386,9 @@ class AppTheme {
           if (states.contains(WidgetState.disabled)) return null;
           if (states.contains(WidgetState.selected)) return AppColors.primary;
           if (ios) {
+            // ionic-theme-ios26: rgba(text, .23)
             return (isDark ? Colors.white : Colors.black)
-                .withValues(alpha: isDark ? 0.28 : 0.23);
+                .withValues(alpha: 0.23);
           }
           return isDark ? const Color(0xFF39393D) : const Color(0xFFE9E9EA);
         }),
@@ -424,11 +469,18 @@ class AppTheme {
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(ios ? 28 : 16)),
       ),
+      // IOS_THEME2: ion-popover – iOS 26 radius 24, md radius 4; opens
+      // below its trigger (no row under the pointer gets highlighted).
       popupMenuTheme: PopupMenuThemeData(
         color: ios && isDark ? AppColors.iosModalDark : cardColor,
         surfaceTintColor: Colors.transparent,
+        position: PopupMenuPosition.under,
         shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(ios ? 20 : 12)),
+            borderRadius: BorderRadius.circular(ios ? 24 : 4)),
+        labelTextStyle: ios
+            ? WidgetStatePropertyAll(
+                TextStyle(fontSize: 16, color: textPrimary))
+            : null,
       ),
       // ion-modal sheet (iOS 26 theme: --border-radius 30px on sheets).
       bottomSheetTheme: BottomSheetThemeData(
@@ -451,4 +503,16 @@ class AppTheme {
       ),
     );
   }
+}
+
+/// IOS_THEME2: Ionic `ion-toggle` keeps the app colours on iOS (primary
+/// track, white handle). Flutter's default adaptation replaces the theme's
+/// [SwitchThemeData] with an empty one on iOS/macOS, which renders
+/// `Switch.adaptive` / `SwitchListTile.adaptive` in system green.
+class _IonToggleAdaptation extends Adaptation<SwitchThemeData> {
+  const _IonToggleAdaptation();
+
+  @override
+  SwitchThemeData adapt(ThemeData theme, SwitchThemeData defaultValue) =>
+      defaultValue;
 }

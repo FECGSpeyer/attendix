@@ -72,8 +72,11 @@ class AppColors {
   // items #000, cards #1c1c1d, toolbar step-50 #0d0d0d, border step-150,
   // modals step-100 #1a1a1a.
   static const Color iosPageLight = Color(0xFFF4F5F8);
-  static const Color iosPageDark = Color(0xFF222428);
-  static const Color iosItemDark = Color(0xFF000000);
+  // IOS_THEME2: as rendered on an iPhone in dark mode the pages are pure
+  // black and cards / inset groups / rows dark grey (--ion-card-background
+  // #1c1c1d) – not the inverted #222428 page with black rows.
+  static const Color iosPageDark = Color(0xFF000000);
+  static const Color iosItemDark = Color(0xFF1C1C1D);
   static const Color iosToolbarLight = Color(0xFFF7F7F7);
   static const Color iosToolbarDark = Color(0xFF0D0D0D);
   static const Color iosToolbarBorderLight = Color(0x33000000);
@@ -87,6 +90,46 @@ class AppColors {
   static const Color iosMediumDark = Color(0xFF989AA2);
   // ion-button[disabled] in the iOS 26 theme: step-200 grey, white label.
   static const Color iosDisabledButton = Color(0xFFCCCCCC);
+
+  // IOS_THEME2: Ionic md dark (variables.scss attendix-dark-theme-md-body):
+  // page #121212, items / cards #1e1e1e, toolbar + tab bar #1f1f1f,
+  // border #222222.
+  static const Color mdPageDark = Color(0xFF121212);
+  static const Color mdItemDark = Color(0xFF1E1E1E);
+  static const Color mdToolbarDark = Color(0xFF1F1F1F);
+  static const Color mdBorderDark = Color(0xFF222222);
+
+  // IOS_THEME2: Ionic dark palette (variables.scss attendix-dark-theme-body,
+  // both modes): brighter colours on dark backgrounds.
+  static const Color successOnDark = Color(0xFF25B15D);
+  static const Color warningOnDark = Color(0xFFFFD534);
+  static const Color dangerOnDark = Color(0xFFFF4961);
+  static const Color tertiaryOnDark = Color(0xFF6A64FF);
+  static const Color secondaryOnDark = Color(0xFF50C8FF);
+  static const Color mediumOnDark = Color(0xFF989AA2);
+  static const Color darkOnDark = Color(0xFFF4F5F8);
+  static const Color lightOnDark = Color(0xFF222428);
+
+  /// The Ionic dark-mode variant of a palette colour (identity for other
+  /// colours and in light mode). Use for status / theme colours drawn on
+  /// the page so they brighten like Ionic in dark mode.
+  static Color forBrightness(Color color, Brightness brightness) {
+    if (brightness != Brightness.dark) return color;
+    final v = color.toARGB32();
+    if (v == success.toARGB32()) return successOnDark;
+    if (v == warning.toARGB32()) return warningOnDark;
+    if (v == danger.toARGB32()) return dangerOnDark;
+    if (v == tertiary.toARGB32()) return tertiaryOnDark;
+    if (v == secondary.toARGB32()) return secondaryOnDark;
+    if (v == medium.toARGB32()) return mediumOnDark;
+    if (v == dark.toARGB32()) return darkOnDark;
+    if (v == light.toARGB32()) return lightOnDark;
+    return color;
+  }
+
+  /// [forBrightness] with the brightness of [context]'s theme.
+  static Color adaptive(BuildContext context, Color color) =>
+      forBrightness(color, Theme.of(context).brightness);
 
   // Text colors
   static const Color textPrimaryLight = Color(0xFF222428);

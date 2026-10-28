@@ -83,7 +83,7 @@ void main() {
       expect(source, contains('icon: Icons.sms_outlined'));
       final lang = read('lib/features/settings/presentation/widgets/language_picker_tile.dart');
       expect(lang, contains('icon: Icons.translate'));
-      expect(lang, contains('CupertinoIcons.chevron_up_chevron_down'));
+      expect(lang, contains('IonSelectIcon(')); // IOS_THEME2: chevron-expand
     });
 
     test('logout row has no chevron, delete link below the System card', () {

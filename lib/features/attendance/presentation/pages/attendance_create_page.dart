@@ -35,7 +35,8 @@ import '../widgets/songs_selection_sheet.dart';
 import '../../../../core/utils/demo_guard.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../shared/widgets/adaptive/adaptive.dart'
+    hide IonInformationIcon; // IOS_LOOK
 import '../../../../shared/widgets/layout/ionic_ios.dart'; // IOS_FORMS2
 import '../widgets/ion_glyph_icons.dart'; // IOS_FORMS2
 

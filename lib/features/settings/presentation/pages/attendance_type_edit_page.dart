@@ -294,7 +294,8 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                   IonStackedField(
                     flush: true,
                     label: context.l10n.typeSettingsDefaultStatus,
-                    builder: (decoration) => DropdownButtonFormField<AttendanceStatus>(
+                    builder: (decoration) => AppDropdownFormField<AttendanceStatus>(
+                      iosInterface: AppSelectInterface.alert, // IOS_THEME2
                       decoration: decoration,
                       value: _availableStatuses.contains(_defaultStatus)
                           ? _defaultStatus
@@ -956,7 +957,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
             ListTile(
               contentPadding: EdgeInsets.zero,
               title: Text(context.l10n.typeSettingsRemindUnconfirmed),
-              trailing: DropdownButton<int?>(
+              trailing: AppDropdownButton<int?>(
                 value: _dutyConfirmReminderDays,
                 underline: const SizedBox.shrink(),
                 items: [
@@ -982,7 +983,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
               contentPadding: EdgeInsets.zero,
               title: Text(context.l10n.typeSettingsUrgentIfOpen),
               subtitle: Text(context.l10n.typeSettingsUrgentHelper),
-              trailing: DropdownButton<int?>(
+              trailing: AppDropdownButton<int?>(
                 value: _dutyUrgentHours,
                 underline: const SizedBox.shrink(),
                 items: [
@@ -1100,7 +1101,8 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
             style: TextStyle(fontSize: 12, color: AppColors.medium),
           ),
           const SizedBox(height: 8),
-          DropdownButtonFormField<String?>(
+          AppDropdownFormField<String?>(
+            iosInterface: AppSelectInterface.alert, // IOS_THEME2
             value: selectedFieldId,
             decoration: InputDecoration(
               labelText: context.l10n.typeSettingsFlutterExtraField,
@@ -1131,7 +1133,8 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
           ),
           if (selectedFieldId != null && options.isNotEmpty) ...[
             const SizedBox(height: 8),
-            DropdownButtonFormField<String>(
+            AppDropdownFormField<String>(
+              iosInterface: AppSelectInterface.alert, // IOS_THEME2
               value: options.contains(selectedOption) ? selectedOption : options.firstOrNull,
               decoration: InputDecoration(
                 labelText: context.l10n.typeSettingsValue,

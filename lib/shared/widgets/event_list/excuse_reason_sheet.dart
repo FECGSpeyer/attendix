@@ -320,7 +320,8 @@ class _RegistrationFieldsSheetState extends State<_RegistrationFieldsSheet> {
       case RegistrationFieldType.select:
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: DropdownButtonFormField<String>(
+          child: AppDropdownFormField<String>(
+            iosInterface: AppSelectInterface.alert, // IOS_THEME2
             value: (field.options ?? []).contains(_answers[field.id]) ? _answers[field.id] as String : null,
             decoration: InputDecoration(labelText: field.label, border: const OutlineInputBorder()),
             items: [

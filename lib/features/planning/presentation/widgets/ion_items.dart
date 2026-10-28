@@ -541,7 +541,7 @@ class IonSelect<T> extends StatelessWidget {
           const SizedBox(width: 16),
           Expanded(
             child: DropdownButtonHideUnderline(
-              child: DropdownButton<T>(
+              child: AppDropdownButton<T>(
                 value: value,
                 isExpanded: true,
                 alignment: AlignmentDirectional.centerEnd,

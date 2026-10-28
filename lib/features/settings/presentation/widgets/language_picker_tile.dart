@@ -1,10 +1,10 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/providers/locale_provider.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/adaptive/app_select.dart'; // IOS_THEME2
 import 'settings_list.dart';
 
 /// I18N_INFRA – Ionic settings "System" item:
@@ -20,6 +20,70 @@ class LanguagePickerTile extends ConsumerWidget {
     final l10n = context.l10n;
     final current = ref.watch(localeProvider).languageCode;
     final ios = ionIsIos(context);
+
+    // IOS_THEME2: on iOS the ion-select popover opens under the value
+    // (right) with a checkmark on the current language.
+    BuildContext? valueContext;
+    // UX_SETTINGS (WAVE 8): same item look as the other System entries;
+    // label + green ion-badge "NEU", the selected value at the end.
+    SettingsListTile tile({VoidCallback? onTap}) => SettingsListTile(
+          // Ionic language-outline (文A).
+          icon: Icons.translate,
+          title: l10n.settingsLanguageTitle,
+          detail: false,
+          onTap: onTap,
+          titleWidget: Row(
+            children: [
+              Flexible(child: Text(l10n.settingsLanguageTitle)),
+              const SizedBox(width: 6),
+              IonBadge(text: l10n.settingsNew, color: AppColors.success),
+            ],
+          ),
+          trailing: Builder(builder: (c) {
+            valueContext = c;
+            return Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  languageNames[current] ?? current,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: ios ? IonIos.text(context) : AppColors.medium,
+                  ),
+                ),
+                const SizedBox(width: 4),
+                // ion-select ios: `chevron-expand` toggle icon.
+                ios
+                    ? const IonSelectIcon(key: Key('languagePickerChevron'))
+                    : const Icon(Icons.arrow_drop_down,
+                        color: AppColors.medium),
+              ],
+            );
+          }),
+        );
+
+    if (ios) {
+      return KeyedSubtree(
+        key: const Key('languagePicker'),
+        child: tile(
+          onTap: () async {
+            final picked = await showAppSelect<String>(
+              context: valueContext ?? context,
+              value: current,
+              options: [
+                for (final lang in enabledLanguages)
+                  AppSelectOption<String>(
+                    value: lang,
+                    label: languageNames[lang] ?? lang,
+                  ),
+              ],
+            );
+            if (picked == null || picked.value == current) return;
+            ref.read(localeProvider.notifier).setLanguage(picked.value);
+          },
+        ),
+      );
+    }
 
     return PopupMenuButton<String>(
       key: const Key('languagePicker'),
@@ -37,46 +101,7 @@ class LanguagePickerTile extends ConsumerWidget {
             child: Text(languageNames[lang] ?? lang),
           ),
       ],
-      // UX_SETTINGS (WAVE 8): same item look as the other System entries;
-      // label + green ion-badge "NEU", the selected value at the end.
-      child: SettingsListTile(
-        // Ionic language-outline (文A).
-        icon: Icons.translate,
-        title: l10n.settingsLanguageTitle,
-        detail: false,
-        titleWidget: Row(
-          children: [
-            Flexible(child: Text(l10n.settingsLanguageTitle)),
-            const SizedBox(width: 6),
-            IonBadge(text: l10n.settingsNew, color: AppColors.success),
-          ],
-        ),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              languageNames[current] ?? current,
-              style: TextStyle(
-                fontSize: 16,
-                color: ios ? IonIos.text(context) : AppColors.medium,
-              ),
-            ),
-            const SizedBox(width: 4),
-            // ion-select ios: `chevron-expand` toggle icon, 1.125rem,
-            // --ion-color-step-650.
-            ios
-                ? Icon(
-                    CupertinoIcons.chevron_up_chevron_down,
-                    key: const Key('languagePickerChevron'),
-                    size: 18,
-                    color: Theme.of(context).brightness == Brightness.dark
-                        ? const Color(0xFFA6A6A6)
-                        : const Color(0xFF595959),
-                  )
-                : const Icon(Icons.arrow_drop_down, color: AppColors.medium),
-          ],
-        ),
-      ),
+      child: tile(),
     );
   }
 }

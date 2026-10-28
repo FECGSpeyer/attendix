@@ -241,7 +241,8 @@ class AccountAccordion extends ConsumerWidget {
           style: const TextStyle(fontSize: 12, color: AppColors.medium),
         ),
         const SizedBox(height: AppDimensions.paddingXS),
-        DropdownButtonFormField<Role>(
+        AppDropdownFormField<Role>(
+          iosInterface: AppSelectInterface.alert, // IOS_THEME2
           value: currentRole,
           decoration: const InputDecoration(
             border: OutlineInputBorder(),

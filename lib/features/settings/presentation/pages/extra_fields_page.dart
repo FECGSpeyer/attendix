@@ -334,7 +334,8 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
                         trailing: Text(extraFieldTypeName(type)),
                       )
                     else
-                      DropdownButtonFormField<String>(
+                      AppDropdownFormField<String>(
+                        iosInterface: AppSelectInterface.alert, // IOS_THEME2
                         value: type,
                         decoration: InputDecoration(labelText: context.l10n.typeSettingsType),
                         items: [
@@ -356,7 +357,8 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
                       textCapitalization: TextCapitalization.sentences,
                       decoration: InputDecoration(labelText: context.l10n.typeSettingsName),
                     ),
-                    DropdownButtonFormField<String>(
+                    AppDropdownFormField<String>(
+                      iosInterface: AppSelectInterface.alert, // IOS_THEME2
                       value: displayMode,
                       decoration: InputDecoration(labelText: context.l10n.extraFieldsDisplay),
                       items: [
