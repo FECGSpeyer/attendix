@@ -26,7 +26,7 @@ class HistoryEntry {
 
   factory HistoryEntry.fromJson(Map<String, dynamic> json) => HistoryEntry(
         id: json['id'] as int?,
-        songId: (json['songId'] ?? json['song_id']) as int,
+        songId: json['songId'] as int,
         songName: json['name'] as String?,
         songNumber: json['number']?.toString(),
         personId: json['person_id'] as int?,

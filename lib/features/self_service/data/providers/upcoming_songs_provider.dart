@@ -69,10 +69,14 @@ final upcomingSongsProvider =
   // Get history entries for these attendances with song data
   final historyResponse = await supabase
       .from('history')
+      // Ionic History columns: songId (camelCase), person_id, otherConductor.
+      // conductorName/count are computed client-side, not DB columns.
       .select('''
-        id, song_id, attendance_id, date, conductorName, otherConductor, count,
-        song:song_id(id, name, number, prefix, link, instrument_ids, files, difficulty)
+        id, songId, attendance_id, date, person_id, otherConductor,
+        song:songId(id, name, number, prefix, link, instrument_ids, files, difficulty),
+        person:person_id(firstName, lastName)
       ''')
+      .inFilter('tenantId', tenantIds)
       .inFilter('attendance_id', filteredAttendanceIds);
 
   // Group history entries by attendance
@@ -82,14 +86,18 @@ final upcomingSongsProvider =
     if (attendanceId == null) continue;
 
     final songData = h['song'] as Map<String, dynamic>?;
+    final person = h['person'] as Map<String, dynamic>?;
+    final otherConductor = h['otherConductor'] as String?;
     final history = SongHistory(
       id: h['id'] as int?,
-      songId: h['song_id'] as int?,
+      songId: h['songId'] as int?,
       attendanceId: attendanceId,
+      personId: h['person_id'] as int?,
       date: h['date'] as String?,
-      conductorName: h['conductorName'] as String?,
-      otherConductor: h['otherConductor'] as String?,
-      count: h['count'] as int?,
+      conductorName: person != null
+          ? '${person['firstName'] ?? ''} ${person['lastName'] ?? ''}'.trim()
+          : otherConductor,
+      otherConductor: otherConductor,
       song: songData != null ? Song.fromJson(songData) : null,
     );
 

@@ -7,6 +7,7 @@ import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/self_service_providers.dart';
 import '../../../../core/providers/role_permission_providers.dart';
 import '../../../../core/providers/signout_providers.dart';
+import '../../../../core/providers/team_org_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/providers/user_preferences_provider.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -23,6 +24,7 @@ import '../widgets/self_service_absences.dart';
 import '../../../../core/providers/duty_providers.dart';
 import '../../../duty/presentation/widgets/self_service_duty_section.dart';
 import '../../../messages/presentation/widgets/notification_bell.dart'; // MESSAGES
+import '../../../team_organization/presentation/widgets/my_tasks_card.dart'; // INTEGRATION
 
 /// "Meine Termine" – self-service sign in/out of the current tenant
 /// (Ionic `selfService/signout`).
@@ -30,20 +32,8 @@ import '../../../messages/presentation/widgets/notification_bell.dart'; // MESSA
 /// Card layout: greeting, "Heute"/"Nächster Termin" card with the buttons
 /// Zusagen / Verspätung / Absagen in one row and directly tappable chips,
 /// upcoming Termine grouped by month and past Termine with summary.
-///
-/// Hook points for other packages: [SignoutPage.extraTilesBuilder] (e.g.
-/// Abwesenheit melden, Offene Dienste) and [SignoutPage.extraSectionsBuilder]
-/// (geplante Abwesenheiten, Dienstplan).
 class SignoutPage extends ConsumerStatefulWidget {
   const SignoutPage({super.key});
-
-  /// Additional greeting tiles (player absences, duty roster, ...).
-  static List<Widget> Function(BuildContext context, WidgetRef ref, Person player)?
-      extraTilesBuilder;
-
-  /// Additional sections shown above the Termine.
-  static List<Widget> Function(BuildContext context, WidgetRef ref, Person player)?
-      extraSectionsBuilder;
 
   @override
   ConsumerState<SignoutPage> createState() => _SignoutPageState();
@@ -75,10 +65,28 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
     );
   }
 
+  /// INTEGRATION: opens the Termin of an /open-attendance deep link once the
+  /// data is loaded (Ionic consumePendingAttendanceId).
+  void _openPendingAttendance(SignoutData data, SelfServiceEventActions actions) {
+    final pendingId = ref.read(pendingAttendanceIdProvider);
+    if (pendingId == null) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || ref.read(pendingAttendanceIdProvider) != pendingId) return;
+      ref.read(pendingAttendanceIdProvider.notifier).state = null;
+      final att = [
+        if (data.current != null) data.current!,
+        ...data.upcoming,
+        ...data.past,
+      ].where((a) => a.attendanceId == pendingId).firstOrNull;
+      if (att != null) actions.presentActions(context, att);
+    });
+  }
+
   Future<void> _refresh() async {
     ref.invalidate(signoutDataProvider);
     ref.invalidate(currentSelfServicePlayerProvider);
     ref.invalidate(upcomingSongsProvider);
+    ref.invalidate(myTasksProvider); // INTEGRATION
     await ref.read(signoutDataProvider.future);
   }
 
@@ -195,6 +203,8 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
 
     final player = playerAsync.valueOrNull;
     final actions = _actions(tenant, player);
+    final loaded = dataAsync.valueOrNull;
+    if (loaded != null) _openPendingAttendance(loaded, actions);
 
     return Scaffold(
       appBar: _buildAppBar(tenant, tenants),
@@ -218,10 +228,10 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
             children: [
               if (player != null) _buildGreeting(player, data),
               if (player != null) ..._buildTiles(player),
+              // INTEGRATION: "Meine Aufgaben" (Teamorganisation, Ionic app-my-tasks)
+              if (player != null) const MyTasksCard(),
               // PEOPLE_IMPORT: planned absences + self pause
               if (player != null) const SelfServiceAbsenceSection(),
-              if (player != null && SignoutPage.extraSectionsBuilder != null)
-                ...SignoutPage.extraSectionsBuilder!(context, ref, player),
               if (player == null)
                 const Padding(
                   padding: EdgeInsets.all(32),
@@ -325,7 +335,6 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
 
   List<Widget> _buildTiles(Person player) {
     final songs = ref.watch(upcomingSongsProvider).valueOrNull ?? const [];
-    final extra = SignoutPage.extraTilesBuilder?.call(context, ref, player) ?? const <Widget>[];
     final tiles = <Widget>[
       if (songs.isNotEmpty)
         _GreetTile(
@@ -334,7 +343,6 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
           subtitle: songs.length == 1 ? 'Nächster Termin' : '${songs.length} Termine',
           onTap: () => showUpcomingSongsSheet(context),
         ),
-      ...extra,
     ];
     if (tiles.isEmpty) return const [];
     return [

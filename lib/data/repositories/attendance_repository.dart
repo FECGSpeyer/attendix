@@ -776,7 +776,7 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
     try {
       final response = await supabase
           .from('history')
-          .select('id, song_id, person_id, otherConductor, date')
+          .select('id, songId, person_id, otherConductor, date')
           .eq('attendance_id', attendanceId)
           .eq('tenantId', currentTenantId)
           .order('id', ascending: true);

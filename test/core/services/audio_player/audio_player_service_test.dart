@@ -291,4 +291,74 @@ void main() {
       expect(state.isPlaying, isFalse);
     });
   });
+
+  // INTEGRATION: playback queue (Ionic playQueue / next / previous / onEnded)
+  group('AudioPlayerService queue', () {
+    late List<_FakeAudioPlayer> fakes;
+
+    ProviderContainer makeContainer() {
+      fakes = [];
+      return ProviderContainer(
+        overrides: [
+          audioPlayerFactoryProvider.overrideWithValue(() {
+            final f = _FakeAudioPlayer();
+            fakes.add(f);
+            return f;
+          }),
+        ],
+      );
+    }
+
+    List<AudioQueueItem> items(int n) => [
+          for (var i = 0; i < n; i++)
+            AudioQueueItem(
+              fileName: 't$i.mp3',
+              title: 'Track $i',
+              resolveUrl: () async => 'https://example.com/t$i.mp3',
+            ),
+        ];
+
+    test('playQueue starts at startIndex and exposes queue info', () async {
+      final c = makeContainer();
+      addTearDown(c.dispose);
+      await c.read(audioPlayerServiceProvider.notifier).playQueue(items(3), 1);
+
+      expect(c.read(audioPlayerServiceProvider).currentSongName, 'Track 1');
+      final info = c.read(audioQueueInfoProvider);
+      expect(info.length, 3);
+      expect(info.index, 1);
+      expect(info.hasNext, isTrue);
+      expect(info.hasPrevious, isTrue);
+    });
+
+    test('next and previous move through the queue', () async {
+      final c = makeContainer();
+      addTearDown(c.dispose);
+      final svc = c.read(audioPlayerServiceProvider.notifier);
+      await svc.playQueue(items(3));
+      await svc.next();
+      expect(c.read(audioPlayerServiceProvider).currentSongName, 'Track 1');
+      await svc.previous();
+      expect(c.read(audioPlayerServiceProvider).currentSongName, 'Track 0');
+    });
+
+    test('playFromUrl clears the queue', () async {
+      final c = makeContainer();
+      addTearDown(c.dispose);
+      final svc = c.read(audioPlayerServiceProvider.notifier);
+      await svc.playQueue(items(3));
+      await svc.playFromUrl('https://example.com/x.mp3', 'x.mp3', 'X');
+      expect(c.read(audioQueueInfoProvider).hasQueue, isFalse);
+    });
+
+    test('stop clears the queue', () async {
+      final c = makeContainer();
+      addTearDown(c.dispose);
+      final svc = c.read(audioPlayerServiceProvider.notifier);
+      await svc.playQueue(items(2));
+      await svc.stop();
+      expect(c.read(audioQueueInfoProvider).length, 0);
+      expect(c.read(audioPlayerServiceProvider).hasFile, isFalse);
+    });
+  });
 }
