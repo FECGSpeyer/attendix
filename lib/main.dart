@@ -9,6 +9,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'core/config/supabase_config.dart';
 import 'core/router/app_router.dart';
 import 'core/services/app_update_service.dart';
+import 'core/services/offline_queue_service.dart'; // PROFILE_OFFLINE
 import 'core/theme/app_theme.dart';
 import 'core/utils/toast_helper.dart';
 
@@ -53,6 +54,9 @@ class _AttendixAppState extends ConsumerState<AttendixApp> {
     if (kIsWeb) {
       ref.read(appUpdateServiceProvider).startListening();
     }
+    // PROFILE_OFFLINE: replay queued offline attendance writes
+    Future.microtask(
+        () => ref.read(offlineQueueNotifierProvider.notifier).init());
   }
 
   @override
@@ -78,6 +82,7 @@ class _AttendixAppState extends ConsumerState<AttendixApp> {
       darkTheme: AppTheme.dark,
       themeMode: ThemeMode.system,
       routerConfig: router,
+      scaffoldMessengerKey: rootScaffoldMessengerKey, // PROFILE_OFFLINE
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
