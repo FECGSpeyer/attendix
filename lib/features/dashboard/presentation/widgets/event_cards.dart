@@ -13,6 +13,8 @@ import '../../../../core/utils/dashboard_utils.dart';
 import '../../../../data/models/attendance/attendance.dart';
 import '../../../../data/models/dashboard/dashboard_event.dart';
 import '../../../../data/models/dashboard/dashboard_models.dart';
+import '../../../../data/models/plan/plan.dart';
+import '../../../planning/presentation/pages/plan_viewer_page.dart';
 import 'dashboard_card.dart';
 
 String _timeRange(Attendance a) {
@@ -381,6 +383,26 @@ class _CurrentPlanCardState extends ConsumerState<CurrentPlanCard> {
     );
   }
 
+  /// INTEGRATION: opens the plan viewer like Ionic (PlanViewerComponent
+  /// modal), falling back to the Termin when the plan cannot be parsed.
+  void _openPlan(BuildContext context, CurrentPlanData data, String typeName) {
+    final att = data.event.attendance;
+    PlanAttendance? planAtt;
+    try {
+      planAtt = PlanAttendance.fromJson({
+        ...att.toJson(),
+        'extra_plans': data.event.extraPlans,
+      });
+    } catch (_) {
+      planAtt = null;
+    }
+    if (planAtt != null) {
+      showPlanViewer(context, attendance: planAtt, title: typeName);
+    } else if (att.id != null) {
+      context.push('/attendance/${att.id}');
+    }
+  }
+
   Widget _buildPlan(BuildContext context, CurrentPlanData data, bool isToday, DateTime now) {
     final att = data.event.attendance;
     final plan = data.plan;
@@ -450,7 +472,7 @@ class _CurrentPlanCardState extends ConsumerState<CurrentPlanCard> {
       title: 'Aktueller Ablaufplan',
       subtitle: typeName,
       strip: DashStrips.plan,
-      onTap: att.id != null ? () => context.push('/attendance/${att.id}') : null,
+      onTap: () => _openPlan(context, data, typeName),
       trailing: isLive
           ? Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),

@@ -25,6 +25,11 @@ final tenantFilesSharedProvider = FutureProvider<bool>((ref) async {
 
 // canAccessFilesProvider lives in role_permission_providers.dart
 
+/// INTEGRATION: Termin of an /open-attendance deep link (or push) that the
+/// landing page ("Meine Termine") opens in its action sheet once loaded
+/// (Ionic PushService.pendingAttendanceId). Read-and-clear.
+final pendingAttendanceIdProvider = StateProvider<int?>((ref) => null);
+
 /// Data of the "Meine Termine" page.
 class SignoutData {
   const SignoutData({

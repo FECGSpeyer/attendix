@@ -6,8 +6,10 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/message_providers.dart';
+import '../../../../core/providers/signout_providers.dart'; // INTEGRATION
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/utils/ionic_route_mapper.dart'; // INTEGRATION
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../data/models/user_notification/user_notification.dart';
@@ -87,7 +89,7 @@ class NotificationBell extends ConsumerWidget {
     if (route != null) {
       // Ionic routes are prefixed with /tabs; only navigate when the route
       // exists in this app.
-      final path = route.startsWith('/tabs') ? route.substring(5) : route;
+      final path = mapIonicRoute(route); // INTEGRATION
       try {
         if (router.configuration.findMatch(Uri.parse(path)).isNotEmpty) {
           router.push(path);
@@ -109,7 +111,10 @@ class NotificationBell extends ConsumerWidget {
     } else if (role != null && role.isParent) {
       router.go('/parents');
     } else {
-      router.go('/overview');
+      // INTEGRATION: Ionic navigateToAttendance – "Meine Termine" opens the
+      // Termin's action sheet via the pending attendance id.
+      ref.read(pendingAttendanceIdProvider.notifier).state = attendanceId;
+      router.go('/signout');
     }
   }
 
