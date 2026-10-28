@@ -193,7 +193,7 @@ Widget iosAlertActionFrom(BuildContext context, Widget action) {
     return IosAlertButton(
       onPressed: action.onPressed,
       destructive: destructive,
-      bold: false,
+      // PARITY_R3: ionic-theme-ios27 (iPhone Safari 26): weight 600.
       child: action.child ?? const SizedBox.shrink(),
     );
   }
@@ -346,7 +346,7 @@ class IosAlertCard extends StatelessWidget {
       body = DefaultTextStyle.merge(style: messageStyle, child: body);
       body = Padding(
         padding:
-            contentPadding ?? const EdgeInsets.fromLTRB(30, 0, 30, 21),
+            contentPadding ?? const EdgeInsets.fromLTRB(30, 0, 30, 20),
         child: body,
       );
       body = scrollable
@@ -401,7 +401,7 @@ class IosAlertCard extends StatelessWidget {
                 child: Material(
                   type: MaterialType.transparency,
                   child: IosGlassSurface(
-                    borderRadius: const BorderRadius.all(Radius.circular(34)),
+                    borderRadius: const BorderRadius.all(Radius.circular(36)),
                     opacity: b == Brightness.dark ? 0.86 : 0.9,
                     blur: 20,
                     child: Column(
@@ -485,7 +485,7 @@ class IosAlertButton extends StatelessWidget {
   final double minHeight;
   final Widget? icon;
 
-  /// Ionic iOS 26 `.alert-button { padding: 12px }`.
+  /// Ionic iOS 26/27 theme `.alert-button { padding: 12px }`.
   static const double _hPadding = 12;
 
   TextStyle _labelStyle(Color? color) => TextStyle(

@@ -179,13 +179,11 @@ extension on _ChangePasswordDialogState {
       // Two buttons → side by side (IosAlertCard lays them out).
       actions: [
         IosAlertButton(
-          bold: false,
           onPressed:
               _isLoading ? null : () => Navigator.of(context).pop(false),
           child: Text(l10n.commonCancel),
         ),
         IosAlertButton(
-          bold: false,
           onPressed: _isLoading ? null : _submit,
           child: _isLoading
               ? const SizedBox(

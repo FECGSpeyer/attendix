@@ -466,12 +466,10 @@ class _IosSelectAlertState<T> extends State<_IosSelectAlert<T>> {
       ),
       actions: [
         IosAlertButton(
-          bold: false,
           onPressed: () => Navigator.of(context).pop(),
           child: Text(context.l10n.commonCancel),
         ),
         IosAlertButton(
-          bold: false,
           onPressed: () => Navigator.of(context).pop(_selected),
           child: Text(context.l10n.commonOk),
         ),
