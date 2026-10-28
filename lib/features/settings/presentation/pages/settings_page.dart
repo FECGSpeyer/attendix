@@ -52,6 +52,7 @@ import '../widgets/language_picker_tile.dart';
 import '../../../../core/providers/push_providers.dart'; // PUSH
 import '../../../../shared/widgets/adaptive/app_toolbar.dart'; // IOS_SHELL
 import '../../../../shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL
+import '../../../history/presentation/pages/history_page.dart' show showHistoryModal; // IOS_FORMS2
 
 /// "Mehr" tab — UX_SETTINGS: same sections, order and role visibility as the
 /// Ionic settings page (src/app/settings/settings/settings.page.html):
@@ -291,7 +292,8 @@ class SettingsPage extends ConsumerWidget {
                       icon: Icons.schedule,
                       title: l10n.historyTitle,
                       detail: false,
-                      onTap: () => context.push('/history'),
+                      // IOS_FORMS2: Ionic modal (iOS card sheet)
+                      onTap: () => showHistoryModal(context),
                     ),
                   if (canAccessFiles)
                     SettingsListTile(

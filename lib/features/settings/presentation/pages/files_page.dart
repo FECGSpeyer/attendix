@@ -837,12 +837,26 @@ class _FilesPageState extends ConsumerState<FilesPage> {
       appBar: AppBar(
         title: Text(context.l10n.filesTitle),
         // UX_SETTINGS (WAVE 8): files.page.html — arrow-back button.
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.canPop() ? context.pop() : context.go('/settings'),
-        ),
+        // IOS_FORMS2: iOS → start/end ion-buttons in Liquid Glass circles
+        leading: ionIsIos(context)
+            ? Center(
+                child: Semantics(
+                  button: true,
+                  label: MaterialLocalizations.of(context).backButtonTooltip,
+                  child: GestureDetector(
+                    onTap: () => context.canPop() ? context.pop() : context.go('/settings'),
+                    child: const IosCircleIcon(icon: Icons.arrow_back, size: 44),
+                  ),
+                ),
+              )
+            : IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () => context.canPop() ? context.pop() : context.go('/settings'),
+              ),
+        leadingWidth: ionIsIos(context) ? 68 : null,
         actions: [
           if (canAccess)
+            ToolbarButtonGroup(children: [
             PopupMenuButton<String>(
               icon: const Icon(Icons.more_vert),
               onSelected: _onMenuSelected,
@@ -892,6 +906,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
                 ),
               ],
             ),
+            ]),
         ],
       ),
       // Ionic has no FAB (upload lives in the toolbar menu); Flutter keeps
@@ -1170,6 +1185,29 @@ class _EmptyCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ios = ionIsIos(context);
+    if (ios) {
+      // IOS_FORMS2: Ionic iOS ion-card here renders flat (no shadow) with
+      // the message in the text colour at 17pt.
+      return Container(
+        margin: const EdgeInsets.all(AppDimensions.paddingM),
+        padding: const EdgeInsets.all(AppDimensions.paddingL),
+        decoration: BoxDecoration(
+          color: IonIos.itemBackground(context),
+          borderRadius: BorderRadius.circular(IonIos.groupRadius),
+        ),
+        child: Column(
+          children: [
+            Icon(icon, size: 48, color: IonIos.text(context).withValues(alpha: 0.6)),
+            const SizedBox(height: AppDimensions.paddingS),
+            Text(
+              text,
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 17, color: IonIos.text(context)),
+            ),
+          ],
+        ),
+      );
+    }
     return IonCardBox(
       margin: const EdgeInsets.all(AppDimensions.paddingM),
       child: Padding(

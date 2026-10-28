@@ -21,9 +21,45 @@ import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 import '../../../attendance/presentation/widgets/ios_condense_header.dart'; // UX_ATT
 
+/// IOS_FORMS2: Ionic opens the Werkhistorie with
+/// `modalController.create({ component: HistoryPage, presentingElement })`,
+/// i.e. on iOS a card modal sheet over a dark backdrop (top inset 10pt,
+/// rounded top corners, swipe down to close) and not a pushed page. On iOS
+/// this presents [HistoryPage] like that on the root navigator; elsewhere
+/// (Ionic md: full-screen modal) the `/history` route is pushed as before.
+/// The `/history` route keeps working for deep links.
+Future<void> showHistoryModal(BuildContext context) async {
+  if (!isIosLook(context)) {
+    await context.push('/history');
+    return;
+  }
+  await showModalBottomSheet<void>(
+    context: context,
+    useRootNavigator: true,
+    isScrollControlled: true,
+    useSafeArea: true,
+    barrierColor: Colors.black.withValues(alpha: 0.4),
+    backgroundColor: Theme.of(context).colorScheme.surface,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
+    ),
+    clipBehavior: Clip.antiAlias,
+    builder: (_) => LayoutBuilder(
+      builder: (context, constraints) => SizedBox(
+        height: constraints.maxHeight - 10,
+        child: const HistoryPage(asModal: true),
+      ),
+    ),
+  );
+}
+
 /// History Page - Song performance history
 class HistoryPage extends ConsumerStatefulWidget {
-  const HistoryPage({super.key});
+  const HistoryPage({super.key, this.asModal = false});
+
+  /// Shown via [showHistoryModal] (iOS card sheet): the close button pops
+  /// the sheet instead of the route.
+  final bool asModal;
 
   @override
   ConsumerState<HistoryPage> createState() => _HistoryPageState();
@@ -44,17 +80,32 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
     final historyAsync = ref.watch(performanceHistoryProvider);
 
     return Scaffold(
+      // IOS_FORMS2: Ionic `ion-content` without colour → white page, so the
+      // light-grey accordion headers stand out (iOS page grey otherwise).
+      backgroundColor:
+          isIosLook(context) ? Theme.of(context).colorScheme.surface : null,
       // UX_ATT: Ionic opens the Historie as a modal: title + close (X) at the
       // end, no back button.
       appBar: AppBar(
         title: Text(context.l10n.historyTitle),
         automaticallyImplyLeading: false,
+        // IOS_FORMS2: iOS → ✕ in a Liquid Glass circle (ion-buttons end)
         actions: [
-          IconButton(
-            icon: const Icon(Icons.close),
-            tooltip: context.l10n.commonClose,
-            onPressed: () => context.canPop() ? context.pop() : context.go('/settings'),
-          ),
+          ToolbarButtonGroup(children: [
+            IconButton(
+              icon: const Icon(Icons.close),
+              tooltip: context.l10n.commonClose,
+              onPressed: () {
+                if (widget.asModal) {
+                  Navigator.of(context).pop();
+                } else if (context.canPop()) {
+                  context.pop();
+                } else {
+                  context.go('/settings');
+                }
+              },
+            ),
+          ]),
         ],
       ),
       body: Column(
@@ -519,7 +570,7 @@ class _GroupedHistory {
 }
 
 /// History group (Ionic `ion-accordion` with the date as header)
-class _HistoryGroup extends StatelessWidget {
+class _HistoryGroup extends StatefulWidget {
   final String date;
   final List<HistoryEntry> entries;
   final Function(HistoryEntry) onDelete;
@@ -532,19 +583,82 @@ class _HistoryGroup extends StatelessWidget {
   });
 
   @override
+  State<_HistoryGroup> createState() => _HistoryGroupState();
+}
+
+class _HistoryGroupState extends State<_HistoryGroup> {
+  bool _expanded = false;
+
+  @override
   Widget build(BuildContext context) {
     // UX_ATT: accordion header is an `ion-item color="light"` (grey row)
     final dark = Theme.of(context).brightness == Brightness.dark;
     final headerColor = dark ? const Color(0xFF222428) : AppColors.light;
-    return ExpansionTile(
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      collapsedBackgroundColor: headerColor,
-      shape: Border(bottom: BorderSide(color: Theme.of(context).dividerColor, width: 0.5)),
-      collapsedShape: Border(bottom: BorderSide(color: Theme.of(context).dividerColor, width: 0.5)),
-      title: Text(date, style: const TextStyle(fontSize: 17)),
+    if (!isIosLook(context)) {
+      return ExpansionTile(
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        collapsedBackgroundColor: headerColor,
+        shape: Border(bottom: BorderSide(color: Theme.of(context).dividerColor, width: 0.5)),
+        collapsedShape: Border(bottom: BorderSide(color: Theme.of(context).dividerColor, width: 0.5)),
+        title: Text(widget.date, style: const TextStyle(fontSize: 17)),
+        children: [
+          for (final entry in widget.entries)
+            _HistoryEntryTile(entry: entry, onDelete: widget.onDelete),
+        ],
+      );
+    }
+    // IOS_FORMS2: Ionic iOS accordion – the header stays light grey when
+    // open, the toggle chevron is drawn in the item's text colour (black)
+    // and turns upside down when expanded.
+    final onSurface = Theme.of(context).colorScheme.onSurface;
+    final hairline = BorderSide(color: Theme.of(context).dividerColor, width: 0.5);
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        for (final entry in entries)
-          _HistoryEntryTile(entry: entry, onDelete: onDelete),
+        Material(
+          color: headerColor,
+          child: InkWell(
+            onTap: () => setState(() => _expanded = !_expanded),
+            child: Container(
+              constraints: const BoxConstraints(minHeight: 44),
+              padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
+              decoration: BoxDecoration(border: Border(bottom: hairline)),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      widget.date,
+                      style: TextStyle(fontSize: 17, color: onSurface),
+                    ),
+                  ),
+                  AnimatedRotation(
+                    turns: _expanded ? 0.5 : 0,
+                    duration: const Duration(milliseconds: 200),
+                    child: Icon(Icons.keyboard_arrow_down, size: 22, color: onSurface),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        AnimatedSize(
+          duration: const Duration(milliseconds: 200),
+          alignment: Alignment.topCenter,
+          child: _expanded
+              ? Material(
+                  color: Theme.of(context).colorScheme.surface,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      for (final entry in widget.entries)
+                        _HistoryEntryTile(entry: entry, onDelete: widget.onDelete),
+                    ],
+                  ),
+                )
+              : const SizedBox(width: double.infinity),
+        ),
       ],
     );
   }
