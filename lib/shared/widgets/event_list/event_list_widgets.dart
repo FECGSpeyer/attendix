@@ -15,16 +15,17 @@ import '../layout/ionic_ios.dart'; // IOS_SHEETS
 /// inset list cards.
 
 /// IOS_ATT_PAGES: page background of the Termin pages (Meine Termine,
-/// Übersicht, Termine). Ionic iOS renders their `ion-content` white (black in
-/// dark mode) – not the grouped grey – so the `ev-list` rows sit directly on
-/// the page ([EventListCard.iosPlain]). Material keeps the theme default.
-/// IOS_THEME2: dark mode = the black page (cards stay #1c1c1d).
+/// Übersicht, Termine). Ionic renders their `ion-content` white – not the
+/// grouped grey – so the `ev-list` rows sit directly on the page
+/// ([EventListCard.plain]). IOS_THEME2: iOS dark mode = the black page
+/// (cards stay #1c1c1d). PARITY_R3: Ionic md is white as well (dark: the
+/// theme's #121212 page, i.e. the scaffold default).
 Color? eventPageBackground(BuildContext context) {
-  if (!useIosLook(context)) return null;
   final theme = Theme.of(context);
-  return theme.brightness == Brightness.dark
-      ? theme.scaffoldBackgroundColor
-      : theme.colorScheme.surface;
+  if (theme.brightness == Brightness.dark) {
+    return useIosLook(context) ? theme.scaffoldBackgroundColor : null;
+  }
+  return theme.colorScheme.surface;
 }
 
 /// Date tile with weekday and day ("DI" / "20") – Ionic `.ev-tile`:
@@ -284,7 +285,7 @@ class EventListCard extends StatelessWidget {
     super.key,
     required this.children,
     this.dividers = true,
-    this.iosPlain = false,
+    this.plain = false,
   });
 
   final List<Widget> children;
@@ -293,11 +294,13 @@ class EventListCard extends StatelessWidget {
   final bool dividers;
 
   /// IOS_ATT_PAGES: on the white Termin pages (Meine Termine, Übersicht,
-  /// Termine) Ionic iOS renders `ion-list inset ev-list` without a card:
-  /// transparent list (ionic-theme-ios26 structured list), 20 px side
-  /// margin, white items on the white page, inset lines starting at the
-  /// label. Only with the iOS look; Material keeps the card.
-  final bool iosPlain;
+  /// Termine) Ionic renders `ion-list inset ev-list` without a card:
+  /// transparent list (ionic-theme-ios26 structured list), white items on
+  /// the white page, inset lines starting at the label. iOS: 20 px side
+  /// margin. PARITY_R3 md: `.list-md.list-inset` – 16 px side margin, 2 px
+  /// radius, items in the item colour (white; #1e1e1e on the #121212 dark
+  /// page).
+  final bool plain;
 
   static bool _isPlain(Widget w) => w is EventSummaryRow || w is EventMoreLink;
 
@@ -310,10 +313,21 @@ class EventListCard extends StatelessWidget {
       }
       rows.add(children[i]);
     }
-    if (iosPlain && useIosLook(context)) {
+    if (plain && useIosLook(context)) {
       return Padding(
         padding: const EdgeInsets.fromLTRB(20, 6, 20, 0),
         child: Column(mainAxisSize: MainAxisSize.min, children: rows),
+      );
+    }
+    if (plain) {
+      return Padding(
+        padding: const EdgeInsets.fromLTRB(16, 6, 16, 0),
+        child: Material(
+          color: Theme.of(context).colorScheme.surface,
+          borderRadius: BorderRadius.circular(2),
+          clipBehavior: Clip.antiAlias,
+          child: Column(mainAxisSize: MainAxisSize.min, children: rows),
+        ),
       );
     }
     return Card(
