@@ -16,7 +16,8 @@ import '../../data/auth_flow_service.dart';
 import '../widgets/otp_widgets.dart';
 import '../../../../core/providers/dashboard_providers.dart'; // DASHBOARD
 import '../../../../core/services/teams/teams_service.dart'; // TEAMS
-import '../../../../l10n/l10n.dart'; // I18N_INFRA
+import '../../../../l10n/l10n.dart';
+import '../widgets/ion_input_decoration.dart'; // I18N_INFRA
 
 /// Login page
 class LoginPage extends ConsumerStatefulWidget {
@@ -410,24 +411,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
   /// Ionic login.page.scss: ion-item with stacked label and a primary-tinted
   /// bottom line instead of a filled/outlined field.
-  InputDecoration _ionInputDecoration(String label, {Widget? suffixIcon}) {
-    final line = UnderlineInputBorder(
-      borderSide: BorderSide(color: AppColors.primary.withValues(alpha: 0.3)),
-    );
-    return InputDecoration(
-      labelText: label,
-      hintText: label,
-      floatingLabelBehavior: FloatingLabelBehavior.always,
-      filled: false,
-      contentPadding: const EdgeInsets.symmetric(vertical: 8),
-      border: line,
-      enabledBorder: line,
-      focusedBorder: const UnderlineInputBorder(
-        borderSide: BorderSide(color: AppColors.primary, width: 2),
-      ),
-      suffixIcon: suffixIcon,
-    );
-  }
+  InputDecoration _ionInputDecoration(String label, {Widget? suffixIcon}) =>
+      ionStackedInputDecoration(label, suffixIcon: suffixIcon);
 
   @override
   Widget build(BuildContext context) {

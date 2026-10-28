@@ -26,6 +26,8 @@ import '../widgets/song_filter_sheet.dart';
 import 'song_import_page.dart';
 import '../../../../core/providers/branding_providers.dart'; // MISC2
 import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
+import '../../../../shared/widgets/common/error_state_view.dart';
 
 /// Songs list (Ionic `songs.page`).
 ///
@@ -125,7 +127,7 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
             additionalFields: data.additionalFields,
           );
     } catch (e) {
-      if (mounted) ToastHelper.showError(context, context.l10n.songsFlutterPdfCreateFailed(e));
+      if (mounted) ToastHelper.showError(context, context.l10n.songsFlutterPdfCreateFailed(friendlyErrorMessage(e)));
     }
   }
 
@@ -140,21 +142,7 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
     if (dataAsync.hasError && data == null) {
       return Scaffold(
         appBar: AppBar(title: Text(context.l10n.settingsSongs)),
-        body: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(Icons.error_outline, size: 64, color: AppColors.danger),
-              const SizedBox(height: AppDimensions.paddingM),
-              Text(context.l10n.songsFlutterErrorWith('${dataAsync.error}')),
-              const SizedBox(height: AppDimensions.paddingM),
-              ElevatedButton(
-                onPressed: _refresh,
-                child: Text(context.l10n.messagesRetry),
-              ),
-            ],
-          ),
-        ),
+        body: ErrorStateView(error: dataAsync.error, onRetry: _refresh),
       );
     }
 
@@ -162,7 +150,10 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
       // Invalid public sharing link (or no tenant selected)
       return Scaffold(
         appBar: AppBar(title: Text(context.l10n.settingsSongs)),
-        body: Center(child: Text(context.l10n.songsInvalidShareLink)),
+        body: ErrorStateView(
+          icon: Icons.link_off,
+          message: context.l10n.songsInvalidShareLink,
+        ),
       );
     }
 

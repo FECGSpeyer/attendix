@@ -7,6 +7,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../data/auth_flow_service.dart';
 import '../../../../l10n/l10n.dart';
+import '../widgets/ion_input_decoration.dart';
 
 /// Forgot password page
 class ForgotPasswordPage extends ConsumerStatefulWidget {
@@ -63,10 +64,13 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
+      // Same plain background as the login card / register modal.
+      backgroundColor: theme.cardTheme.color ?? theme.colorScheme.surface,
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const BackButtonIcon(),
           onPressed: () => context.go('/login'),
         ),
         title: Text(context.l10n.loginResetHeader),
@@ -183,9 +187,9 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
             textInputAction: TextInputAction.done,
             autocorrect: false,
             autofocus: true,
-            decoration: InputDecoration(
-              labelText: context.l10n.loginEmail,
-              prefixIcon: Icon(Icons.email_outlined),
+            decoration: ionStackedInputDecoration(
+              context.l10n.loginEmail,
+              hint: context.l10n.loginEmailPlaceholder,
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {

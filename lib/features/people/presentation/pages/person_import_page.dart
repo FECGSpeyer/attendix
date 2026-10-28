@@ -17,6 +17,7 @@ import '../../../../core/providers/user_registration_providers.dart'; // AUTH
 import '../widgets/import_widgets.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/providers/demo_providers.dart'; // DEMO_GUARD
+import '../../../../core/utils/error_message.dart';
 
 enum _Step { file, mapping, preview }
 
@@ -121,7 +122,7 @@ class _PersonImportPageState extends ConsumerState<PersonImportPage> {
     try {
       await saveGeneratedFile(bytes, 'Personen_Import_Vorlage.xlsx');
     } catch (e) {
-      if (mounted) ToastHelper.showError(context, context.l10n.peopleFlutterErrorWith(e));
+      if (mounted) ToastHelper.showError(context, context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e)));
     }
   }
 

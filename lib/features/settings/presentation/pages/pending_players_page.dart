@@ -9,6 +9,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
 
 /// Pending Players Page - shows self-registered members awaiting approval
 /// BL-006: Converted to StatefulWidget to track processing state
@@ -31,7 +32,7 @@ class _PendingPlayersPageState extends ConsumerState<PendingPlayersPage> {
       appBar: AppBar(
         title: Text(context.l10n.settingsPendingPersons),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const BackButtonIcon(),
           onPressed: () => context.pop(),
         ),
       ),
@@ -43,7 +44,7 @@ class _PendingPlayersPageState extends ConsumerState<PendingPlayersPage> {
             children: [
               const Icon(Icons.error_outline, size: 64, color: AppColors.danger),
               const SizedBox(height: AppDimensions.paddingM),
-              Text(context.l10n.settingsFlutterErrorDetail(e)),
+              Text(context.l10n.settingsFlutterErrorDetail(friendlyErrorMessage(e))),
               const SizedBox(height: AppDimensions.paddingM),
               ElevatedButton(
                 onPressed: () => ref.invalidate(realtimePendingPlayersProvider),
@@ -141,7 +142,7 @@ class _PendingPlayersPageState extends ConsumerState<PendingPlayersPage> {
       }
     } catch (e) {
       if (mounted) {
-        ToastHelper.showError(context, context.l10n.settingsFlutterErrorDetail(e));
+        ToastHelper.showError(context, context.l10n.settingsFlutterErrorDetail(friendlyErrorMessage(e)));
       }
     } finally {
       if (mounted) {
@@ -179,7 +180,7 @@ class _PendingPlayersPageState extends ConsumerState<PendingPlayersPage> {
       }
     } catch (e) {
       if (mounted) {
-        ToastHelper.showError(context, context.l10n.settingsFlutterErrorDetail(e));
+        ToastHelper.showError(context, context.l10n.settingsFlutterErrorDetail(friendlyErrorMessage(e)));
       }
     } finally {
       if (mounted) {

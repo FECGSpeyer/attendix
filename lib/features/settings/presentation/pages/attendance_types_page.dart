@@ -10,6 +10,7 @@ import '../../../../core/utils/color_utils.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/attendance/attendance.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
 
 /// Attendance Types List Page
 ///
@@ -55,7 +56,7 @@ class _AttendanceTypesPageState extends ConsumerState<AttendanceTypesPage> {
       ),
       body: typesAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => Center(child: Text(context.l10n.settingsFlutterErrorDetail(error))),
+        error: (error, stack) => Center(child: Text(context.l10n.settingsFlutterErrorDetail(friendlyErrorMessage(error)))),
         data: (types) {
           final displayTypes = _isReordering ? _localTypes : types;
 

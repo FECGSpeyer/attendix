@@ -7,6 +7,7 @@ import '../../../core/constants/app_constants.dart';
 import '../../../core/models/version_history.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../l10n/l10n.dart';
+import '../../../core/utils/error_message.dart';
 
 /// Bottom sheet showing version history (What's New)
 class VersionHistorySheet extends StatefulWidget {
@@ -41,7 +42,7 @@ class _VersionHistorySheetState extends State<VersionHistorySheet> {
     } catch (e) {
       if (mounted) {
         setState(() {
-          _error = e.toString();
+          _error = friendlyErrorMessage(e);
           _isLoading = false;
         });
       }

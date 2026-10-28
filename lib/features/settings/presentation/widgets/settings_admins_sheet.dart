@@ -8,9 +8,9 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/repositories/admin_repository.dart';
-import '../../../../data/repositories/base_repository.dart';
 import '../../../auth/data/auth_flow_service.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
 
 /// SETTINGS2: Ionic settings "Administratoren" modal (super admins only):
 /// list with "Erstellt am", tap to remove, + to add an admin by e-mail.
@@ -27,7 +27,7 @@ Future<void> showAdminsSheet(BuildContext context) {
 }
 
 String _errorText(Object e) =>
-    e is RepositoryException ? e.message : (e is AdminException ? e.message : '$e');
+    e is AdminException ? e.message : friendlyErrorMessage(e);
 
 class _AdminsSheet extends ConsumerWidget {
   const _AdminsSheet();

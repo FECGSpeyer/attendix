@@ -22,6 +22,7 @@ import '../../export_fields.dart';
 import '../../../../core/services/tracking/tracking_event.dart';
 import '../../../../core/services/tracking/tracking_service.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
 
 /// Export Page
 ///
@@ -454,7 +455,7 @@ class _ExportPageState extends ConsumerState<ExportPage> {
       }
     } catch (e) {
       if (mounted) {
-        ToastHelper.showError(context, context.l10n.exportFlutterFailedWith(e));
+        ToastHelper.showError(context, context.l10n.exportFlutterFailedWith(friendlyErrorMessage(e)));
       }
     } finally {
       if (mounted) {

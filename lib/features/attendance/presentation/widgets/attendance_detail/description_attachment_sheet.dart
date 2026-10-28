@@ -11,6 +11,7 @@ import '../../../../../core/utils/quill_utils.dart';
 import '../../../../../core/utils/toast_helper.dart';
 import '../../../../../data/models/attendance/attendance.dart';
 import '../../../../../l10n/l10n.dart';
+import '../../../../../core/utils/error_message.dart';
 
 /// "Beschreibung & Anhang" editor of a Termin (Ionic descriptionModal):
 /// rich text description (stored as HTML like the Ionic quill editor) and
@@ -98,7 +99,7 @@ class _DescriptionAttachmentEditorState extends ConsumerState<DescriptionAttachm
       await repo.updateAttendance(_id, {'description': html});
       _container.invalidate(attendanceDetailProvider(_id));
     } catch (e) {
-      if (mounted) ToastHelper.showError(context, context.l10n.attendanceFlutterSaveFailedWith(e));
+      if (mounted) ToastHelper.showError(context, context.l10n.attendanceFlutterSaveFailedWith(friendlyErrorMessage(e)));
     }
   }
 
@@ -137,7 +138,7 @@ class _DescriptionAttachmentEditorState extends ConsumerState<DescriptionAttachm
       });
       ref.invalidate(attendanceDetailProvider(_id));
     } catch (e) {
-      if (mounted) ToastHelper.showError(context, context.l10n.attendanceFlutterErrorWith(e));
+      if (mounted) ToastHelper.showError(context, context.l10n.attendanceFlutterErrorWith(friendlyErrorMessage(e)));
     } finally {
       if (mounted) setState(() => _busy = false);
     }

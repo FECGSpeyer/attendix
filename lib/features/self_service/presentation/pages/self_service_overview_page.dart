@@ -12,6 +12,7 @@ import '../widgets/plan_viewer_sheet.dart';
 import '../widgets/self_service_event_actions.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../messages/presentation/widgets/notification_bell.dart'; // MESSAGES
+import '../../../../core/utils/error_message.dart';
 
 /// "Übersicht" – all Termine of the user across all tenants
 /// (Ionic `selfService/overview`) in the card layout.
@@ -119,7 +120,7 @@ class _SelfServiceOverviewPageState
             children: [
               const Icon(Icons.error_outline, size: 48, color: AppColors.danger),
               const SizedBox(height: 8),
-              Text(context.l10n.signoutFlutterError(error), textAlign: TextAlign.center),
+              Text(context.l10n.signoutFlutterError(friendlyErrorMessage(error)), textAlign: TextAlign.center),
               TextButton(onPressed: _refresh, child: Text(context.l10n.messagesRetry)),
             ],
           ),

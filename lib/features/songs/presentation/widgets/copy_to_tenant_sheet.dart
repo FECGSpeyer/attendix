@@ -11,6 +11,7 @@ import '../../../../data/models/song/song.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../core/utils/demo_guard.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
 
 /// Sheet for copying a song to another tenant
 /// `instrument_ids` of a copied song (Ionic copySongToTenant): the mapped
@@ -359,7 +360,7 @@ class _CopyToTenantSheetState extends ConsumerState<CopyToTenantSheet> {
       }
     } catch (e) {
       if (mounted) {
-        ToastHelper.showError(context, l10n.songsCopyFailed(e));
+        ToastHelper.showError(context, l10n.songsCopyFailed(friendlyErrorMessage(e)));
       }
     } finally {
       if (mounted) {

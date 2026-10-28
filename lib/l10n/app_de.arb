@@ -2475,6 +2475,14 @@
   "@coreFlutterNewVersionAvailable": {
     "description": "core.flutter.newVersionAvailable"
   },
+  "coreFlutterNoBranding": "Kein Branding",
+  "@coreFlutterNoBranding": {
+    "description": "core.flutter.noBranding"
+  },
+  "coreFlutterNoConnection": "Keine Internetverbindung vorhanden",
+  "@coreFlutterNoConnection": {
+    "description": "core.flutter.noConnection"
+  },
   "coreFlutterNoCopiesSelected": "Keine Kopien zum Drucken ausgewählt",
   "@coreFlutterNoCopiesSelected": {
     "description": "core.flutter.noCopiesSelected"
@@ -2521,6 +2529,10 @@
   "coreFlutterNotSignedIn": "Nicht angemeldet",
   "@coreFlutterNotSignedIn": {
     "description": "core.flutter.notSignedIn"
+  },
+  "coreFlutterOpenExternally": "Extern öffnen",
+  "@coreFlutterOpenExternally": {
+    "description": "core.flutter.openExternally"
   },
   "coreFlutterPausedLower": "pausiert",
   "@coreFlutterPausedLower": {

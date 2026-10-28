@@ -13,6 +13,7 @@ import '../../../../../core/utils/toast_helper.dart';
 import '../../pages/person_detail_page.dart';
 import '../../../../../core/utils/demo_guard.dart';
 import '../../../../../l10n/l10n.dart';
+import '../../../../../core/utils/error_message.dart';
 
 /// Toggle to show all history entries (including before season start).
 final showAllHistoryProvider = StateProvider.autoDispose<bool>((ref) => false);
@@ -77,7 +78,7 @@ class HistorieAccordion extends ConsumerWidget {
               child: CircularProgressIndicator(),
             ),
           ),
-      error: (error, _) => Center(child: Text(context.l10n.peopleFlutterErrorWith(error))),
+      error: (error, _) => Center(child: Text(context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(error)))),
       data: (history) {
         if (history.isEmpty) {
           return Padding(

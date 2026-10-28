@@ -142,7 +142,10 @@
         "holiday": "Feiertag",
         "schoolHolidays": "Schulferien",
         "sheetMusic": "Notenblatt",
-        "songFiles": "Song-Dateien"
+        "songFiles": "Song-Dateien",
+        "noConnection": "Keine Internetverbindung vorhanden",
+        "noBranding": "Kein Branding",
+        "openExternally": "Extern öffnen"
       }
     }
   },
@@ -289,7 +292,10 @@
         "holiday": "Public holiday",
         "schoolHolidays": "School holidays",
         "sheetMusic": "Sheet music",
-        "songFiles": "Song files"
+        "songFiles": "Song files",
+        "noConnection": "No internet connection",
+        "noBranding": "No branding",
+        "openExternally": "Open externally"
       }
     }
   }

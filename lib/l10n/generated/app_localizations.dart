@@ -3365,6 +3365,18 @@ abstract class AppLocalizations {
   /// **'Neue Version verfügbar'**
   String get coreFlutterNewVersionAvailable;
 
+  /// core.flutter.noBranding
+  ///
+  /// In de, this message translates to:
+  /// **'Kein Branding'**
+  String get coreFlutterNoBranding;
+
+  /// core.flutter.noConnection
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Internetverbindung vorhanden'**
+  String get coreFlutterNoConnection;
+
   /// core.flutter.noCopiesSelected
   ///
   /// In de, this message translates to:
@@ -3430,6 +3442,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Nicht angemeldet'**
   String get coreFlutterNotSignedIn;
+
+  /// core.flutter.openExternally
+  ///
+  /// In de, this message translates to:
+  /// **'Extern öffnen'**
+  String get coreFlutterOpenExternally;
 
   /// core.flutter.pausedLower
   ///

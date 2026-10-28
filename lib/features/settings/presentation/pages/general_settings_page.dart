@@ -22,6 +22,7 @@ import '../../../../core/utils/demo_guard.dart';
 import '../../../../core/utils/page_reload.dart'; // LOGIC_SETTINGS
 import '../widgets/settings_list.dart'; // UX_SETTINGS
 import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
 
 /// German holiday regions
 const _holidayRegions = [
@@ -156,7 +157,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
 
     } catch (e) {
       if (mounted) {
-        ToastHelper.showError(context, context.l10n.settingsFlutterLoadFailed(e));
+        ToastHelper.showError(context, context.l10n.settingsFlutterLoadFailed(friendlyErrorMessage(e)));
       }
     } finally {
       if (mounted) {
@@ -413,7 +414,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
       appBar: AppBar(
         title: Text(context.l10n.settingsSettings),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const BackButtonIcon(),
           onPressed: () {
             if (_hasChanges) {
               _showUnsavedChangesDialog();

@@ -32,6 +32,7 @@ import '../widgets/person_detail/allgemein_accordion.dart'
 import '../../../../core/services/tracking/tracking_event.dart';
 import '../../../../core/services/tracking/tracking_service.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
 
 /// Page for creating a new person
 class PersonCreatePage extends ConsumerStatefulWidget {
@@ -323,7 +324,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
             // Instrument Dropdown
             instrumentsAsync.when(
               loading: () => const LinearProgressIndicator(),
-              error: (e, _) => Text(context.l10n.peopleFlutterErrorWith(e)),
+              error: (e, _) => Text(context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e))),
               data: (instruments) {
                 final label = groupLabel(tenant?.type);
                 return DropdownButtonFormField<int>(
@@ -896,7 +897,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
     } catch (e) {
       if (mounted) {
         // Ionic: person.addFailed
-        ToastHelper.showError(context, context.l10n.personAddFailed(e));
+        ToastHelper.showError(context, context.l10n.personAddFailed(friendlyErrorMessage(e)));
       }
     } finally {
       if (mounted) {

@@ -8,6 +8,7 @@ import '../../../../core/utils/instrument_sort.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/instrument/instrument.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
 
 /// Bottom sheet for managing instrument categories (CRUD)
 class InstrumentCategoriesSheet extends ConsumerStatefulWidget {
@@ -146,7 +147,7 @@ class _InstrumentCategoriesSheetState
                         const Icon(Icons.error_outline,
                             size: 48, color: AppColors.danger),
                         const SizedBox(height: AppDimensions.paddingM),
-                        Text(context.l10n.peopleFlutterErrorWith(error)),
+                        Text(context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(error))),
                         const SizedBox(height: AppDimensions.paddingM),
                         ElevatedButton(
                           onPressed: () =>

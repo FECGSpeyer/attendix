@@ -35,14 +35,24 @@
   <link rel="manifest" href="manifest.json">
 </head>
 <body>
-  <script src='https://cdn.jsdelivr.net/npm/pdfjs-dist@4.6.82/build/pdf.min.mjs' type='module'></script>
+  <!-- pdf.js for the in-app PDF viewer (pdfx). Loaded from a CDN, so it can
+       be blocked (offline, ad blocker, firewall). Everything below is guarded:
+       without pdf.js the app still starts and the PDF viewer shows a friendly
+       error with an "open externally" fallback instead of crashing. -->
+  <script src='https://cdn.jsdelivr.net/npm/pdfjs-dist@4.6.82/build/pdf.min.mjs' type='module'
+    onerror="console.warn('pdf.js could not be loaded; in-app PDF viewing is disabled.')"></script>
   <script type='module'>
-  var { pdfjsLib } = globalThis;
-  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.6.82/build/pdf.worker.mjs';
-
-  var pdfRenderOptions = {
+  globalThis.pdfRenderOptions = {
     cMapUrl: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.6.82/cmaps/',
     cMapPacked: true,
+  };
+  try {
+    var pdfjsLib = globalThis.pdfjsLib;
+    if (pdfjsLib && pdfjsLib.GlobalWorkerOptions) {
+      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.6.82/build/pdf.worker.mjs';
+    }
+  } catch (e) {
+    console.warn('pdf.js setup failed', e);
   }
   </script>
   <!-- Service Worker Update Detection -->

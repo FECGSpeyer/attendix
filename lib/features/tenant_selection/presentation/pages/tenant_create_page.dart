@@ -10,6 +10,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/repositories/tenant_create_repository.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
 
 /// AUTH: Ionic "Neue Instanz anlegen" (register.page) – 3 steps:
 /// 1. Art der Gruppe, 2. Name + Kürzel, 3. Hauptgruppe, then summary.
@@ -412,7 +413,7 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
       }
     } catch (e) {
       if (mounted) {
-        ToastHelper.showError(context, context.l10n.registerCreateFailed(e));
+        ToastHelper.showError(context, context.l10n.registerCreateFailed(friendlyErrorMessage(e)));
       }
     } finally {
       if (mounted) {

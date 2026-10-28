@@ -12,6 +12,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/instrument/instrument.dart';
 import '../widgets/instrument_categories_sheet.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
 
 /// Instruments list page — grouped by category with player counts.
 /// Supports drag & drop reordering (sort_order) like Ionic instrument-list.
@@ -79,7 +80,7 @@ class _InstrumentsListPageState extends ConsumerState<InstrumentsListPage> {
       appBar: AppBar(
         title: Text(context.l10n.instrumentsGroupsCount(count)),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const BackButtonIcon(),
           onPressed: () => context.go('/settings'),
         ),
         actions: [
@@ -110,7 +111,7 @@ class _InstrumentsListPageState extends ConsumerState<InstrumentsListPage> {
             children: [
               const Icon(Icons.error_outline, size: 64, color: AppColors.danger),
               const SizedBox(height: AppDimensions.paddingM),
-              Text(context.l10n.peopleFlutterErrorWith(error)),
+              Text(context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(error))),
               const SizedBox(height: AppDimensions.paddingM),
               ElevatedButton(
                 onPressed: () => ref.invalidate(groupsProvider),

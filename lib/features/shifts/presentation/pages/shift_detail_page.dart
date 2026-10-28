@@ -14,6 +14,7 @@ import '../../../../data/models/shift/shift_plan.dart';
 import '../widgets/copy_shift_to_tenant_sheet.dart';
 import '../widgets/shift_preview_sheet.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
 
 /// Shift Detail Page
 ///
@@ -97,7 +98,7 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
       ),
       body: shiftAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => Center(child: Text(context.l10n.shiftsFlutterErrorWith(error))),
+        error: (error, stack) => Center(child: Text(context.l10n.shiftsFlutterErrorWith(friendlyErrorMessage(error)))),
         data: (shift) {
           if (shift == null) {
             return Center(child: Text(context.l10n.shiftsFlutterNotFound));
@@ -595,7 +596,7 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
       } else {
         final error = ref.read(shiftNotifierProvider);
         if (error.hasError) {
-          ToastHelper.showError(context, context.l10n.shiftsFlutterErrorWith('${error.error}'));
+          ToastHelper.showError(context, context.l10n.shiftsFlutterErrorWith(friendlyErrorMessage(error.error)));
         }
       }
     }

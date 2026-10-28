@@ -20,6 +20,7 @@ import '../widgets/registration_fields_editor.dart'; // ATTENDANCE_SIGNOUT
 import '../widgets/type_reminders_editor.dart'; // SETTINGS2
 import '../../../organisation/presentation/widgets/type_default_org_plan_toggle.dart'; // ORG_PLANS
 import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
 
 
 /// Attendance Type Edit Page
@@ -205,7 +206,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
         appBar: AppBar(
           title: Text(_originalType!.name),
           leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const BackButtonIcon(),
           onPressed: _onBackPressed,
         ),
         actions: [
@@ -955,7 +956,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
           const SizedBox(height: 8),
           groupsAsync.when(
             loading: () => const LinearProgressIndicator(),
-            error: (e, _) => Text(context.l10n.settingsFlutterErrorDetail(e)),
+            error: (e, _) => Text(context.l10n.settingsFlutterErrorDetail(friendlyErrorMessage(e))),
             data: (groups) => Wrap(
               spacing: 8,
               runSpacing: 8,

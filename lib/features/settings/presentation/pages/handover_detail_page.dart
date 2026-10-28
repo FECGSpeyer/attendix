@@ -15,6 +15,7 @@ import '../../../../data/models/person/person.dart';
 import '../../../../data/repositories/player_repository.dart';
 import 'handover_page.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
 
 /// Ionic handover-detail auto mapping: same name, or one name contains the
 /// other (e.g. "Trompete" vs. "Bb Trompete", "Flöte" vs. "Querflöte").
@@ -75,7 +76,7 @@ class _HandoverDetailPageState extends ConsumerState<HandoverDetailPage> {
     } catch (e) {
       if (!mounted) return;
       setState(() => _loading = false);
-      ToastHelper.showError(context, context.l10n.settingsFlutterErrorDetail(e));
+      ToastHelper.showError(context, context.l10n.settingsFlutterErrorDetail(friendlyErrorMessage(e)));
     }
   }
 
@@ -165,7 +166,7 @@ class _HandoverDetailPageState extends ConsumerState<HandoverDetailPage> {
       if (mounted) context.go('/settings');
     } catch (e) {
       if (mounted) {
-        ToastHelper.showError(context, context.l10n.handoverFailedWith(e));
+        ToastHelper.showError(context, context.l10n.handoverFailedWith(friendlyErrorMessage(e)));
       }
     } finally {
       if (mounted) setState(() => _transferring = false);

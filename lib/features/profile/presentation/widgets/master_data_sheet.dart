@@ -14,6 +14,7 @@ import '../../../../shared/widgets/display/avatar.dart';
 import '../../../../shared/widgets/sheets/image_viewer_sheet.dart';
 import 'profile_helpers.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
 
 /// Opens the "Meine Stammdaten" sheet (Ionic settings master data modal).
 Future<void> showMasterDataSheet(BuildContext context) {
@@ -284,7 +285,7 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
       ),
       body: !_initialized
           ? (profileAsync.hasError
-              ? Center(child: Text(context.l10n.signoutFlutterError(profileAsync.error!)))
+              ? Center(child: Text(context.l10n.signoutFlutterError(friendlyErrorMessage(profileAsync.error))))
               : profileAsync.hasValue && profile == null
                   ? Center(child: Text(context.l10n.settingsFlutterNoProfile))
                   : const Center(child: CircularProgressIndicator()))

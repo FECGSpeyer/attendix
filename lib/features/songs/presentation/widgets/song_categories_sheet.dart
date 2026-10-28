@@ -7,6 +7,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/song/song.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
 
 /// Bottom sheet for managing song categories (CRUD)
 class SongCategoriesSheet extends ConsumerStatefulWidget {
@@ -93,7 +94,7 @@ class _SongCategoriesSheetState extends ConsumerState<SongCategoriesSheet> {
                         const Icon(Icons.error_outline,
                             size: 48, color: AppColors.danger),
                         const SizedBox(height: AppDimensions.paddingM),
-                        Text(context.l10n.songsFlutterErrorWith(error)),
+                        Text(context.l10n.songsFlutterErrorWith(friendlyErrorMessage(error))),
                         const SizedBox(height: AppDimensions.paddingM),
                         ElevatedButton(
                           onPressed: () =>

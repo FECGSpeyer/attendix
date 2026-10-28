@@ -16,6 +16,7 @@ import '../../../../data/models/song/song.dart';
 import '../../history_utils.dart';
 import '../../../../core/utils/demo_guard.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
 
 /// History Page - Song performance history
 class HistoryPage extends ConsumerStatefulWidget {
@@ -81,7 +82,7 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
                           color: AppColors.danger,
                         ),
                         const SizedBox(height: 16),
-                        Text(context.l10n.attendanceFlutterErrorWith(e)),
+                        Text(context.l10n.attendanceFlutterErrorWith(friendlyErrorMessage(e))),
                         const SizedBox(height: 16),
                         ElevatedButton(
                           onPressed:
@@ -478,7 +479,7 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
       }
     } catch (e) {
       if (mounted) {
-        ToastHelper.showError(context, context.l10n.attendanceFlutterErrorWith(e));
+        ToastHelper.showError(context, context.l10n.attendanceFlutterErrorWith(friendlyErrorMessage(e)));
       }
     }
   }
@@ -521,7 +522,7 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
       }
     } catch (e) {
       if (mounted) {
-        ToastHelper.showError(context, context.l10n.attendanceFlutterErrorWith(e));
+        ToastHelper.showError(context, context.l10n.attendanceFlutterErrorWith(friendlyErrorMessage(e)));
       }
     }
   }

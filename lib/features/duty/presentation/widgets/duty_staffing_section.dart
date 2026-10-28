@@ -16,6 +16,7 @@ import '../../../../data/models/duty/person_unavailability.dart';
 import 'duty_actions.dart';
 import 'duty_assign_sheet.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
 
 /// "Besetzung" block on the attendance detail page for Termine of duty types.
 class DutyStaffingSection extends ConsumerStatefulWidget {
@@ -282,7 +283,7 @@ class _DutyStaffingSectionState extends ConsumerState<DutyStaffingSection> {
         await _assign(selected);
       }
     } catch (e) {
-      if (mounted) ToastHelper.showError(context, l10n.dutyFlutterErrorWith(e));
+      if (mounted) ToastHelper.showError(context, l10n.dutyFlutterErrorWith(friendlyErrorMessage(e)));
     } finally {
       if (mounted && _busy) setState(() => _busy = false);
     }

@@ -11,6 +11,7 @@ import '../widgets/settings_list.dart'; // UX_SETTINGS
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/parent/parent_model.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
 
 /// Parents Page - manage parents of players
 class ParentsPage extends ConsumerWidget {
@@ -24,7 +25,7 @@ class ParentsPage extends ConsumerWidget {
       appBar: AppBar(
         title: Text(context.l10n.settingsParents),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const BackButtonIcon(),
           onPressed: () => context.pop(),
         ),
       ),
@@ -40,7 +41,7 @@ class ParentsPage extends ConsumerWidget {
             children: [
               const Icon(Icons.error_outline, size: 64, color: AppColors.danger),
               const SizedBox(height: AppDimensions.paddingM),
-              Text(context.l10n.settingsFlutterErrorDetail(e)),
+              Text(context.l10n.settingsFlutterErrorDetail(friendlyErrorMessage(e))),
               const SizedBox(height: AppDimensions.paddingM),
               ElevatedButton(
                 onPressed: () => ref.invalidate(parentsProvider),
@@ -196,7 +197,7 @@ class ParentsPage extends ConsumerWidget {
         }
       } catch (e) {
         if (context.mounted) {
-          ToastHelper.showError(context, context.l10n.settingsFlutterErrorDetail(e));
+          ToastHelper.showError(context, context.l10n.settingsFlutterErrorDetail(friendlyErrorMessage(e)));
         }
       }
     }
@@ -232,7 +233,7 @@ class ParentsPage extends ConsumerWidget {
         }
       } catch (e) {
         if (context.mounted) {
-          ToastHelper.showError(context, context.l10n.settingsFlutterErrorDetail(e));
+          ToastHelper.showError(context, context.l10n.settingsFlutterErrorDetail(friendlyErrorMessage(e)));
         }
       }
     }

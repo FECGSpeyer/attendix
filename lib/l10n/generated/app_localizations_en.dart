@@ -1902,6 +1902,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get coreFlutterNewVersionAvailable => 'New version available';
 
   @override
+  String get coreFlutterNoBranding => 'No branding';
+
+  @override
+  String get coreFlutterNoConnection => 'No internet connection';
+
+  @override
   String get coreFlutterNoCopiesSelected => 'No copies selected for printing';
 
   @override
@@ -1935,6 +1941,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get coreFlutterNotSignedIn => 'Not signed in';
+
+  @override
+  String get coreFlutterOpenExternally => 'Open externally';
 
   @override
   String get coreFlutterPausedLower => 'paused';

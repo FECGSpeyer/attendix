@@ -39,6 +39,8 @@ import '../widgets/song_file_opener.dart';
 import '../../../../core/services/tracking/tracking_event.dart';
 import '../../../../core/services/tracking/tracking_service.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
+import '../../../../shared/widgets/common/error_state_view.dart';
 
 /// Song detail page (Ionic `songs/song`): inline editing for admins and
 /// responsibles, read-only view for everybody else and for the public share
@@ -205,15 +207,19 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
     if (data == null) {
       return Scaffold(
         appBar: AppBar(title: Text(context.l10n.songsFlutterSong)),
-        body: Center(
-          child: dataAsync.isLoading
-              ? const CircularProgressIndicator()
-              : Text(dataAsync.hasError
-                  ? context.l10n.songsFlutterErrorWith('${dataAsync.error}')
-                  : widget.songSharingId != null
-                      ? context.l10n.songsInvalidShareLink
-                      : context.l10n.songsFlutterNotFound),
-        ),
+        body: dataAsync.isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : dataAsync.hasError
+                ? ErrorStateView(
+                    error: dataAsync.error,
+                    onRetry: () => ref.invalidate(songDetailDataProvider(_params)),
+                  )
+                : ErrorStateView(
+                    icon: Icons.link_off,
+                    message: widget.songSharingId != null
+                        ? context.l10n.songsInvalidShareLink
+                        : context.l10n.songsFlutterNotFound,
+                  ),
       );
     }
 
@@ -727,7 +733,7 @@ class _FilesSectionState extends ConsumerState<_FilesSection> {
     try {
       await action();
     } catch (e) {
-      if (mounted) ToastHelper.showError(context, context.l10n.songsFlutterErrorWith(e));
+      if (mounted) ToastHelper.showError(context, context.l10n.songsFlutterErrorWith(friendlyErrorMessage(e)));
     } finally {
       if (mounted) setState(() => _busy = false);
     }

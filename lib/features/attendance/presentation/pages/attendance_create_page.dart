@@ -33,6 +33,7 @@ import '../widgets/multi_date_calendar.dart';
 import '../widgets/songs_selection_sheet.dart';
 import '../../../../core/utils/demo_guard.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
 
 /// UX_ATT: opens "Termin hinzufügen" as a sheet over the list (Ionic att-list
 /// addAttModal, breakpoints [0, 0.8, 1], initial 0.8). Returns true when
@@ -552,7 +553,7 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
         builder: (context, scrollController) => holidaysAsync.when(
           loading: () =>
               const Center(child: CircularProgressIndicator()),
-          error: (e, _) => Center(child: Text(context.l10n.attendanceFlutterErrorWith(e))),
+          error: (e, _) => Center(child: Text(context.l10n.attendanceFlutterErrorWith(friendlyErrorMessage(e)))),
           data: (holidays) {
             final hasHolidays =
                 holidays.publicHolidays.isNotEmpty || holidays.schoolHolidays.isNotEmpty;
@@ -706,7 +707,7 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(context.l10n.attendanceFlutterErrorWith(e))),
+        SnackBar(content: Text(context.l10n.attendanceFlutterErrorWith(friendlyErrorMessage(e)))),
       );
     } finally {
       widget.savingNotifier?.value = false;

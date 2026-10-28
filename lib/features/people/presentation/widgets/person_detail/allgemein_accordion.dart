@@ -21,6 +21,7 @@ import '../../../../../shared/widgets/sheets/field_editor_sheet.dart';
 import '../../../../../shared/widgets/sheets/selection_sheet.dart';
 import '../church_picker_sheet.dart';
 import '../../../../../l10n/l10n.dart';
+import '../../../../../core/utils/error_message.dart';
 
 /// Ionic VoS "Andere Orchester" options
 const otherOrchestraOptions = ['SoS', 'GoS', 'BoS'];
@@ -304,7 +305,7 @@ class AllgemeinAccordion extends ConsumerWidget {
 
     return groupsAsync.when(
       loading: () => const LinearProgressIndicator(),
-      error: (e, _) => Text(context.l10n.peopleFlutterErrorWith(e)),
+      error: (e, _) => Text(context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e))),
       data: (groups) {
         final groupName = currentGroupId != null
             ? groups[currentGroupId] ?? context.l10n.commonUnknown
@@ -439,7 +440,7 @@ class AllgemeinAccordion extends ConsumerWidget {
         padding: EdgeInsets.all(AppDimensions.paddingM),
         child: LinearProgressIndicator(),
       ),
-      error: (e, _) => Text(context.l10n.peopleFlutterErrorWith(e)),
+      error: (e, _) => Text(context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e))),
       data: (teachers) {
         final teacher = teachers.where((t) => t.id == teacherId).firstOrNull;
         final teacherName = teacher?.name ?? context.l10n.personFlutterNotSelected;
@@ -484,7 +485,7 @@ class AllgemeinAccordion extends ConsumerWidget {
 
     return shiftsAsync.when(
       loading: () => const LinearProgressIndicator(),
-      error: (e, _) => Text(context.l10n.peopleFlutterErrorWith(e)),
+      error: (e, _) => Text(context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e))),
       data: (shifts) {
         final shift = shifts.where((s) => s.id == currentShiftId).firstOrNull;
         final shiftName = shift?.name ?? context.l10n.personFlutterNoShiftPlan;
@@ -608,7 +609,7 @@ class AllgemeinAccordion extends ConsumerWidget {
 
     return parentsAsync.when(
       loading: () => const LinearProgressIndicator(),
-      error: (e, _) => Text(context.l10n.peopleFlutterErrorWith(e)),
+      error: (e, _) => Text(context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e))),
       data: (parents) {
         final parent = parents.where((p) => p.id == currentParentId).firstOrNull;
         final parentName = parent?.fullName ?? context.l10n.personFlutterNotAssigned;

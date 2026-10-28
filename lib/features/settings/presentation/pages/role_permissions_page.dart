@@ -11,6 +11,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/role_permission/tenant_role_permission.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
 
 /// Konfigurierbare Rollen (Reihenfolge wie Ionic)
 List<(Role, String)> _configurableRoles(AppLocalizations l10n) => [
@@ -144,7 +145,7 @@ class _RolePermissionsPageState extends ConsumerState<RolePermissionsPage> {
         ),
         body: permissionsAsync.when(
           loading: () => const Center(child: CircularProgressIndicator()),
-          error: (e, _) => Center(child: Text(context.l10n.rolePermFlutterLoadFailed(e), textAlign: TextAlign.center)),
+          error: (e, _) => Center(child: Text(context.l10n.rolePermFlutterLoadFailed(friendlyErrorMessage(e)), textAlign: TextAlign.center)),
           data: (permissions) {
             _initFrom(permissions);
             return ListView(

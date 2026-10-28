@@ -20,6 +20,7 @@ import '../../../../l10n/l10n.dart';
 import '../widgets/parents_header_widgets.dart'; // PROFILE_OFFLINE
 import '../../../../core/providers/song_providers.dart'; // PROFILE_OFFLINE
 import '../../../messages/presentation/widgets/notification_bell.dart'; // MESSAGES
+import '../../../../core/utils/error_message.dart';
 
 /// Parents Portal Page (Ionic `selfService/parents`) in the card layout:
 /// children with percentage, "Heute" card with one row per child, upcoming
@@ -505,7 +506,7 @@ class _ErrorView extends StatelessWidget {
         children: [
           const Icon(Icons.error_outline, size: 48, color: AppColors.danger),
           const SizedBox(height: 8),
-          Text(context.l10n.signoutFlutterError(error), textAlign: TextAlign.center),
+          Text(context.l10n.signoutFlutterError(friendlyErrorMessage(error)), textAlign: TextAlign.center),
           TextButton(onPressed: onRetry, child: Text(context.l10n.messagesRetry)),
         ],
       ),

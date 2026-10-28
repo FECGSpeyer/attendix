@@ -14,6 +14,7 @@ import '../../../../data/repositories/user_registration_repository.dart'; // AUT
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
 
 /// TenantUser model
 class TenantUser {
@@ -344,7 +345,7 @@ class _AdminsTab extends ConsumerWidget {
 
     return usersAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, _) => Center(child: Text(context.l10n.settingsFlutterErrorDetail(error))),
+      error: (error, _) => Center(child: Text(context.l10n.settingsFlutterErrorDetail(friendlyErrorMessage(error)))),
       data: (users) {
         final admins = users.where((u) => u.roleEnum == Role.admin).toList();
 
@@ -391,7 +392,7 @@ class _ViewersTab extends ConsumerWidget {
 
     return usersAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, _) => Center(child: Text(context.l10n.settingsFlutterErrorDetail(error))),
+      error: (error, _) => Center(child: Text(context.l10n.settingsFlutterErrorDetail(friendlyErrorMessage(error)))),
       data: (users) {
         final viewers = users.where((u) => u.roleEnum == Role.viewer).toList();
 
@@ -439,7 +440,7 @@ class _ParentsTab extends ConsumerWidget {
 
     return usersAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, _) => Center(child: Text(context.l10n.settingsFlutterErrorDetail(error))),
+      error: (error, _) => Center(child: Text(context.l10n.settingsFlutterErrorDetail(friendlyErrorMessage(error)))),
       data: (users) {
         final parents = users.where((u) => u.roleEnum == Role.parent).toList();
 
@@ -489,7 +490,7 @@ class _AllUsersTab extends ConsumerWidget {
 
     return usersAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, _) => Center(child: Text(context.l10n.settingsFlutterErrorDetail(error))),
+      error: (error, _) => Center(child: Text(context.l10n.settingsFlutterErrorDetail(friendlyErrorMessage(error)))),
       data: (users) {
         if (users.isEmpty) {
           return Center(

@@ -16,6 +16,7 @@ import '../../../../data/models/tenant/tenant.dart';
 import '../../../../core/services/tracking/tracking_event.dart';
 import '../../../../core/services/tracking/tracking_service.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
 
 /// Notifications settings page (Ionic notifications.page).
 ///
@@ -61,7 +62,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
         _subscribe(user.id);
       }
     } catch (e) {
-      if (mounted) ToastHelper.showError(context, context.l10n.notifFlutterLoadFailed(e));
+      if (mounted) ToastHelper.showError(context, context.l10n.notifFlutterLoadFailed(friendlyErrorMessage(e)));
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }

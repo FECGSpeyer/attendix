@@ -16,6 +16,7 @@ import '../../../../data/models/song/song.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../data/providers/parents_providers.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
 
 /// App bar title of the parents page (Ionic: tenant switcher when the user
 /// has more than one tenant, otherwise the tenant's long name).
@@ -84,7 +85,7 @@ class ParentsTenantTitle extends ConsumerWidget {
       prefsNotifier.updateCurrentTenantId(tenant.id!);
     } catch (e) {
       if (context.mounted) {
-        ToastHelper.showError(context, context.l10n.selfServiceFlutterSwitchFailed(e));
+        ToastHelper.showError(context, context.l10n.selfServiceFlutterSwitchFailed(friendlyErrorMessage(e)));
       }
     }
   }

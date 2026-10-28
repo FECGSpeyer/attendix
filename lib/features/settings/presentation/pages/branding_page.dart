@@ -9,6 +9,7 @@ import '../../../../core/providers/organisation_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
 
 /// Maximale Logo-Größe (2 MB, wie Ionic)
 const int kMaxLogoBytes = 2 * 1024 * 1024;
@@ -58,7 +59,7 @@ class _BrandingPageState extends ConsumerState<BrandingPage> {
       setState(() => _logoUrl = url);
       ToastHelper.showSuccess(context, context.l10n.brandingLogoUploaded);
     } catch (e) {
-      if (mounted) ToastHelper.showError(context, '$e');
+      if (mounted) ToastHelper.showError(context, friendlyErrorMessage(e));
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -72,7 +73,7 @@ class _BrandingPageState extends ConsumerState<BrandingPage> {
       setState(() => _logoUrl = '');
       ToastHelper.showSuccess(context, context.l10n.brandingLogoRemoved);
     } catch (e) {
-      if (mounted) ToastHelper.showError(context, '$e');
+      if (mounted) ToastHelper.showError(context, friendlyErrorMessage(e));
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -114,7 +115,7 @@ class _BrandingPageState extends ConsumerState<BrandingPage> {
       ),
       body: orgAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text(context.l10n.settingsFlutterLoadFailed(e))),
+        error: (e, _) => Center(child: Text(context.l10n.settingsFlutterLoadFailed(friendlyErrorMessage(e)))),
         data: (org) {
           if (org == null) {
             return Padding(

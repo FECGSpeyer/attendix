@@ -25,6 +25,7 @@ import '../../../../core/services/tracking/tracking_event.dart';
 import '../../../../core/services/tracking/tracking_service.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/file_mime.dart';
+import '../../../../core/utils/error_message.dart';
 
 enum FilesSortBy { name, updatedAt, size }
 
@@ -215,9 +216,9 @@ class _FilesPageState extends ConsumerState<FilesPage> {
           return (original as dynamic).message as String;
         } catch (_) {}
       }
-      return e.message;
+      return friendlyErrorMessage(e);
     }
-    return '$e';
+    return friendlyErrorMessage(e);
   }
 
   List<String> get _pathSegments => _currentPath.split('/').where((s) => s.isNotEmpty).toList();
@@ -846,7 +847,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
       appBar: AppBar(
         title: Text(context.l10n.filesTitle),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const BackButtonIcon(),
           onPressed: () => context.canPop() ? context.pop() : context.go('/settings'),
         ),
         actions: [

@@ -12,6 +12,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/repositories/teacher_repository.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
 
 /// Teacher list (Ionic teachers.page): "Lehrer", rows with name, instrument
 /// names and a "n Spieler" badge; FAB opens the "Lehrer hinzufügen" sheet,
@@ -99,7 +100,7 @@ class TeachersListPage extends ConsumerWidget {
     try {
       await ref.read(teacherNotifierProvider.notifier).createTeacher(result);
     } catch (e) {
-      if (context.mounted) ToastHelper.showError(context, context.l10n.peopleFlutterErrorWith(e));
+      if (context.mounted) ToastHelper.showError(context, context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e)));
     }
   }
 
@@ -136,7 +137,7 @@ class TeachersListPage extends ConsumerWidget {
           ToastHelper.showSuccess(context, context.l10n.teachersUpdated);
         }
       } catch (e) {
-        if (context.mounted) ToastHelper.showError(context, context.l10n.peopleFlutterErrorWith(e));
+        if (context.mounted) ToastHelper.showError(context, context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e)));
       }
     }
   }
@@ -159,7 +160,7 @@ class TeachersListPage extends ConsumerWidget {
       await ref.read(teacherNotifierProvider.notifier).deleteTeacher(teacher.id!);
       if (context.mounted) ToastHelper.showSuccess(context, context.l10n.teachersFlutterDeleted);
     } catch (e) {
-      if (context.mounted) ToastHelper.showError(context, context.l10n.peopleFlutterErrorWith(e));
+      if (context.mounted) ToastHelper.showError(context, context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e)));
     }
   }
 }

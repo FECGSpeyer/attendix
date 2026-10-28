@@ -17,7 +17,7 @@ class LegalPage extends StatelessWidget {
       appBar: AppBar(
         title: Text(context.l10n.legalTitle),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const BackButtonIcon(),
           onPressed: () =>
               context.canPop() ? context.pop() : context.go('/login'),
         ),

@@ -17,6 +17,7 @@ import '../../../../data/models/organisation/organisation.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
 
 /// Statistics Page with Charts
 ///
@@ -89,7 +90,7 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> {
                     child: Center(child: CircularProgressIndicator()),
                   ),
                 ],
-                error: (error, stack) => [Center(child: Text(context.l10n.attendanceFlutterErrorWith(error)))],
+                error: (error, stack) => [Center(child: Text(context.l10n.attendanceFlutterErrorWith(friendlyErrorMessage(error))))],
                 data: (attendances) {
                   if (attendances.isEmpty) {
                     return [
@@ -1275,7 +1276,7 @@ class _OrganisationStatsSectionState
             // Persons count + modal
             personsAsync.when(
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (e, _) => Text(context.l10n.attendanceFlutterErrorWith(e)),
+              error: (e, _) => Text(context.l10n.attendanceFlutterErrorWith(friendlyErrorMessage(e))),
               data: (persons) {
                 final uniquePersons =
                     _deduplicatePersons(persons, filteredTenants);

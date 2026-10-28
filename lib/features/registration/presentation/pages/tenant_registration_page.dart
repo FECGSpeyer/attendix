@@ -22,6 +22,8 @@ import '../../../auth/presentation/widgets/otp_widgets.dart';
 import '../../../legal/presentation/widgets/legal_content_view.dart';
 import '../../data/providers/registration_providers.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
+import '../../../../shared/widgets/common/error_state_view.dart';
 
 /// Public tenant registration page
 class TenantRegistrationPage extends ConsumerStatefulWidget {
@@ -103,7 +105,10 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
       ),
       body: tenantAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => _buildErrorState(context.l10n.tenantRegisterFlutterLoadError(error)),
+        error: (error, stack) => _buildErrorState(
+          context.l10n.tenantRegisterFlutterLoadError(friendlyErrorMessage(error, context.l10n)),
+          error: error,
+        ),
         data: (tenant) {
           if (tenant == null) {
             return _buildErrorState(context.l10n.tenantRegisterFlutterInvalidLink);
@@ -114,32 +119,15 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
     );
   }
 
-  Widget _buildErrorState(String message) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(AppDimensions.paddingL),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(
-              Icons.error_outline,
-              size: 64,
-              color: AppColors.danger,
-            ),
-            const SizedBox(height: AppDimensions.paddingM),
-            Text(
-              message,
-              style: Theme.of(context).textTheme.titleMedium,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: AppDimensions.paddingL),
-            ElevatedButton(
-              onPressed: () => context.go('/login'),
-              child: Text(context.l10n.tenantRegisterFlutterToLogin),
-            ),
-          ],
-        ),
-      ),
+  Widget _buildErrorState(String message, {Object? error}) {
+    return ErrorStateView(
+      error: error,
+      message: message,
+      onRetry: error == null
+          ? null
+          : () => ref.invalidate(tenantByRegisterIdProvider(widget.registerId)),
+      secondaryLabel: context.l10n.tenantRegisterFlutterToLogin,
+      onSecondary: () => context.go('/login'),
     );
   }
 

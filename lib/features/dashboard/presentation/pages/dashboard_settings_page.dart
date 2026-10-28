@@ -6,6 +6,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/dashboard/dashboard_models.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
 
 /// Card labels (Ionic `CARD_LABELS`).
 Map<String, String> dashboardCardLabels(AppLocalizations l10n) => {
@@ -35,7 +36,7 @@ class _DashboardSettingsPageState extends ConsumerState<DashboardSettingsPage> {
     try {
       await action();
     } catch (e) {
-      if (mounted) ToastHelper.showError(context, context.l10n.dashSettingsFlutterSaveFailed(e));
+      if (mounted) ToastHelper.showError(context, context.l10n.dashSettingsFlutterSaveFailed(friendlyErrorMessage(e)));
     }
   }
 

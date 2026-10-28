@@ -6,6 +6,7 @@ import '../../../../../core/config/supabase_config.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../data/models/person/person.dart';
 import '../../../../../l10n/l10n.dart';
+import '../../../../../core/utils/error_message.dart';
 
 /// Result of [showPersonNoteSheet]: `null` = cancelled, `''` = delete note,
 /// anything else = the new note.
@@ -275,7 +276,7 @@ class _FilesFolderPickerState extends State<_FilesFolderPicker> {
       }
       setState(() {
         _loading = false;
-        _error = context.l10n.folderPickerLoadFailed(e);
+        _error = context.l10n.folderPickerLoadFailed(friendlyErrorMessage(e));
       });
     }
   }

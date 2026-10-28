@@ -12,6 +12,7 @@ import '../../../legal/presentation/widgets/legal_content_view.dart';
 import '../../data/auth_flow_service.dart';
 import '../widgets/otp_widgets.dart';
 import '../../../../l10n/l10n.dart';
+import '../widgets/ion_input_decoration.dart';
 
 /// Register page (Ionic login/register-modal).
 class RegisterPage extends ConsumerStatefulWidget {
@@ -68,6 +69,8 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
     });
     _cooldown.reset();
   }
+
+  void _close() => context.canPop() ? context.pop() : context.go('/login');
 
   void _onSubmit() {
     if (_mode == AuthMode.otp) {
@@ -272,15 +275,20 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
     }
 
     final theme = Theme.of(context);
+    // Ionic register-modal: modal page on the plain background colour with
+    // a close button on the right (no back arrow).
     return Scaffold(
+      backgroundColor: theme.cardTheme.color ?? theme.colorScheme.surface,
       appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: _isLoading
-              ? null
-              : () => context.canPop() ? context.pop() : context.go('/login'),
-        ),
+        automaticallyImplyLeading: false,
         title: Text(context.l10n.registerModalTitle),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.close),
+            tooltip: context.l10n.commonClose,
+            onPressed: _isLoading ? null : _close,
+          ),
+        ],
       ),
       body: SafeArea(
         child: Center(
@@ -353,10 +361,9 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                       autocorrect: false,
                       readOnly: _mode == AuthMode.otp && _otpSent,
                       autofillHints: const [AutofillHints.email],
-                      decoration: InputDecoration(
-                        labelText: context.l10n.loginEmail,
-                        hintText: context.l10n.registerModalEmailPlaceholder,
-                        prefixIcon: Icon(Icons.email_outlined),
+                      decoration: ionStackedInputDecoration(
+                        context.l10n.loginEmail,
+                        hint: context.l10n.registerModalEmailPlaceholder,
                       ),
                     ),
                     const SizedBox(height: AppDimensions.paddingM),
@@ -368,12 +375,12 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                         obscureText: _obscurePassword,
                         textInputAction: TextInputAction.next,
                         autofillHints: const [AutofillHints.newPassword],
-                        decoration: InputDecoration(
-                          labelText: context.l10n.loginPassword,
-                          hintText: context.l10n.registerModalPasswordPlaceholder,
-                          prefixIcon: const Icon(Icons.lock_outlined),
+                        decoration: ionStackedInputDecoration(
+                          context.l10n.loginModePassword,
+                          hint: context.l10n.registerModalPasswordPlaceholder,
                           suffixIcon: IconButton(
                             tooltip: context.l10n.loginShowPassword,
+                            color: AppColors.primary,
                             icon: Icon(
                               _obscurePassword
                                   ? Icons.visibility_outlined
@@ -395,10 +402,9 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                         obscureText: _obscurePassword,
                         textInputAction: TextInputAction.done,
                         onFieldSubmitted: (_) => _onSubmit(),
-                        decoration: InputDecoration(
-                          labelText: context.l10n.registerModalConfirmPassword,
-                          hintText: context.l10n.registerModalConfirmPasswordPlaceholder,
-                          prefixIcon: Icon(Icons.lock_outlined),
+                        decoration: ionStackedInputDecoration(
+                          context.l10n.registerModalConfirmPassword,
+                          hint: context.l10n.registerModalConfirmPasswordPlaceholder,
                         ),
                       ),
                       const SizedBox(height: AppDimensions.paddingM),
@@ -465,16 +471,10 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                       ),
                     const SizedBox(height: AppDimensions.paddingL),
 
-                    // Login link
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(context.l10n.loginFlutterHaveAccount),
-                        TextButton(
-                          onPressed: () => context.go('/login'),
-                          child: Text(context.l10n.loginSignIn),
-                        ),
-                      ],
+                    // Ionic: clear "Abbrechen" button closes the modal.
+                    TextButton(
+                      onPressed: _isLoading ? null : _close,
+                      child: Text(context.l10n.commonCancel),
                     ),
                   ],
                 ),

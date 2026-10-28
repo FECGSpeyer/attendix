@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../core/config/supabase_config.dart';
 import '../../core/constants/enums.dart';
 import '../../l10n/l10n.dart';
+import '../../core/utils/error_message.dart';
 
 /// Provider for AuthService
 final authServiceProvider = Provider<AuthService>((ref) {
@@ -33,7 +34,7 @@ class AuthService {
           .eq('userId', userId)
           .eq('tenantId', tenantId);
     } catch (e) {
-      throw AuthException(l10nWithoutContext.coreFlutterRepoChangeRoleFailed('$e'));
+      throw AuthException(l10nWithoutContext.coreFlutterRepoChangeRoleFailed(friendlyErrorMessage(e)));
     }
   }
 
@@ -79,7 +80,7 @@ class AuthService {
           .eq('userId', userId)
           .eq('tenantId', tenantId);
     } catch (e) {
-      throw AuthException(l10nWithoutContext.coreFlutterRepoUnlinkAccountFailed('$e'));
+      throw AuthException(l10nWithoutContext.coreFlutterRepoUnlinkAccountFailed(friendlyErrorMessage(e)));
     }
   }
 }

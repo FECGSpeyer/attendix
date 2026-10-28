@@ -6,6 +6,7 @@ import '../../../../core/services/smart_print_service.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
 
 /// Dialog for smart printing with instrument-based copy selection
 class SmartPrintDialog extends ConsumerStatefulWidget {
@@ -52,7 +53,7 @@ class _SmartPrintDialogState extends ConsumerState<SmartPrintDialog> {
     } catch (e) {
       if (mounted) {
         setState(() {
-          _error = e.toString();
+          _error = friendlyErrorMessage(e);
           _isLoading = false;
         });
       }
@@ -105,7 +106,7 @@ class _SmartPrintDialogState extends ConsumerState<SmartPrintDialog> {
     } catch (e) {
       if (mounted) {
         setState(() => _isPrinting = false);
-        ToastHelper.showError(context, context.l10n.songsFlutterPrintFailed(e));
+        ToastHelper.showError(context, context.l10n.songsFlutterPrintFailed(friendlyErrorMessage(e)));
       }
     }
   }

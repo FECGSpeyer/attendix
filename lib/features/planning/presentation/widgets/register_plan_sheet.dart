@@ -7,6 +7,7 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../../core/utils/error_message.dart';
 import '../../../../core/providers/branding_providers.dart';
 import '../../../../core/providers/conductor_providers.dart';
 import '../../../../core/providers/group_providers.dart';
@@ -351,7 +352,7 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
         );
       }
     } catch (e) {
-      if (mounted) ToastHelper.showError(context, l10n.planningFlutterExportFailed(e));
+      if (mounted) ToastHelper.showError(context, l10n.planningFlutterExportFailed(friendlyErrorMessage(e)));
       return;
     } finally {
       if (mounted) setState(() => _busy = false);

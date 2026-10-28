@@ -11,6 +11,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../people/presentation/widgets/import_widgets.dart';
 import '../../../../core/providers/demo_providers.dart'; // DEMO_GUARD
 import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
 
 enum _Step { file, mapping, preview }
 
@@ -95,7 +96,7 @@ class _SongImportPageState extends ConsumerState<SongImportPage> {
     try {
       await saveGeneratedFile(bytes, 'Werke_Import_Vorlage.xlsx');
     } catch (e) {
-      if (mounted) ToastHelper.showError(context, context.l10n.songsFlutterErrorWith(e));
+      if (mounted) ToastHelper.showError(context, context.l10n.songsFlutterErrorWith(friendlyErrorMessage(e)));
     }
   }
 

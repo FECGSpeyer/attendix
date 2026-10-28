@@ -13,6 +13,7 @@ import '../../../../data/models/person/person.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../data/repositories/organisation_repository.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
 
 class PersonLinkMatch {
   PersonLinkMatch(this.match);
@@ -112,7 +113,7 @@ class _LinkPersonsPageState extends ConsumerState<LinkPersonsPage> {
       final persons = await orgRepo.getAllPersonsFromOrganisation(_tenants);
       _groups = buildPersonLinkGroups(persons, _ignoredKeys);
     } catch (e) {
-      if (mounted) ToastHelper.showError(context, context.l10n.settingsFlutterLoadFailed(e));
+      if (mounted) ToastHelper.showError(context, context.l10n.settingsFlutterLoadFailed(friendlyErrorMessage(e)));
     } finally {
       if (mounted) setState(() => _loading = false);
     }

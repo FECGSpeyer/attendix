@@ -10,6 +10,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/attendance/attendance.dart';
 import '../../../../data/models/duty/person_unavailability.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
 
 /// Opens "Dienste verteilen". Returns true when assignments were saved.
 Future<bool> openDutyDistributePage(BuildContext context) async {
@@ -131,7 +132,7 @@ class _DutyDistributePageState extends ConsumerState<DutyDistributePage> {
       _run();
       setState(() => _preview = true);
     } catch (e) {
-      if (mounted) ToastHelper.showError(context, l10n.dutyFlutterErrorWith(e));
+      if (mounted) ToastHelper.showError(context, l10n.dutyFlutterErrorWith(friendlyErrorMessage(e)));
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -280,7 +281,7 @@ class _DutyDistributePageState extends ConsumerState<DutyDistributePage> {
       appBar: AppBar(
         leading: _preview
             ? IconButton(
-                icon: const Icon(Icons.arrow_back),
+                icon: const BackButtonIcon(),
                 tooltip: context.l10n.commonBack,
                 onPressed: () => setState(() => _preview = false),
               )

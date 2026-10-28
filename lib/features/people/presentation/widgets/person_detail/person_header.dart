@@ -15,6 +15,7 @@ import '../../../../../shared/widgets/sheets/image_viewer_sheet.dart';
 import '../../pages/person_detail_page.dart';
 import '../../../../../core/utils/demo_guard.dart';
 import '../../../../../l10n/l10n.dart';
+import '../../../../../core/utils/error_message.dart';
 
 /// Header widget displaying person avatar, group, and attendance stats.
 class PersonHeader extends ConsumerWidget {
@@ -270,7 +271,7 @@ class PersonHeader extends ConsumerWidget {
       }
     } catch (e) {
       if (context.mounted) {
-        ToastHelper.showError(context, context.l10n.personFlutterUploadFailedWith(e));
+        ToastHelper.showError(context, context.l10n.personFlutterUploadFailedWith(friendlyErrorMessage(e)));
       }
     }
   }
@@ -328,7 +329,7 @@ class PersonHeader extends ConsumerWidget {
       }
     } catch (e) {
       if (context.mounted) {
-        ToastHelper.showError(context, context.l10n.peopleFlutterErrorWith(e));
+        ToastHelper.showError(context, context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e)));
       }
     }
   }

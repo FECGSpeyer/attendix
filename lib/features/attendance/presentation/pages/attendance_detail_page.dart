@@ -56,6 +56,7 @@ import '../widgets/songs_selection_sheet.dart';
 import '../../../../core/utils/demo_guard.dart';
 import '../../../team_organization/presentation/widgets/attendance_protocol_section.dart'; // PROTOCOL
 import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
 
 /// Attendance detail/taking page
 class AttendanceDetailPage extends ConsumerStatefulWidget {
@@ -539,7 +540,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                               ref.invalidate(attendanceDetailProvider(widget.attendanceId));
                             } catch (e) {
                               if (mounted) {
-                                ToastHelper.showError(context, context.l10n.attendanceFlutterErrorWith(e));
+                                ToastHelper.showError(context, context.l10n.attendanceFlutterErrorWith(friendlyErrorMessage(e)));
                               }
                             }
                           },
@@ -729,7 +730,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     } catch (e) {
       if (mounted) {
         setState(() => _personNotes[personId] = previousNote);
-        ToastHelper.showError(context, context.l10n.attendanceFlutterErrorWith(e));
+        ToastHelper.showError(context, context.l10n.attendanceFlutterErrorWith(friendlyErrorMessage(e)));
       }
     } finally {
       _savingPersonIds.remove(personId);
@@ -1551,7 +1552,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       ref.invalidate(attendanceDetailProvider(widget.attendanceId));
     } catch (e) {
       if (mounted) {
-        ToastHelper.showError(context, context.l10n.attendanceFlutterSaveFailedWith(e));
+        ToastHelper.showError(context, context.l10n.attendanceFlutterSaveFailedWith(friendlyErrorMessage(e)));
       }
     }
   }
@@ -1633,7 +1634,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       }
     } catch (e) {
       if (mounted) {
-        ToastHelper.showError(context, context.l10n.attendanceFlutterErrorWith(e));
+        ToastHelper.showError(context, context.l10n.attendanceFlutterErrorWith(friendlyErrorMessage(e)));
       }
     }
   }
@@ -1690,7 +1691,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       }
     } catch (e) {
       if (mounted) {
-        ToastHelper.showError(context, context.l10n.attendanceFlutterErrorWith(e));
+        ToastHelper.showError(context, context.l10n.attendanceFlutterErrorWith(friendlyErrorMessage(e)));
       }
     }
   }
@@ -1779,7 +1780,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       }
     } catch (e) {
       if (mounted) {
-        ToastHelper.showError(context, context.l10n.exportFlutterFailedWith(e));
+        ToastHelper.showError(context, context.l10n.exportFlutterFailedWith(friendlyErrorMessage(e)));
       }
     }
   }
@@ -1892,7 +1893,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       }
     } catch (e) {
       if (mounted) {
-        ToastHelper.showError(context, context.l10n.attendanceFlutterSendFailedWith(e));
+        ToastHelper.showError(context, context.l10n.attendanceFlutterSendFailedWith(friendlyErrorMessage(e)));
       }
     }
   }
@@ -1919,7 +1920,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       }
     } catch (e) {
       if (mounted) {
-        ToastHelper.showError(context, context.l10n.attendanceFlutterErrorWith(e));
+        ToastHelper.showError(context, context.l10n.attendanceFlutterErrorWith(friendlyErrorMessage(e)));
       }
     }
   }
@@ -1972,7 +1973,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       ref.invalidate(songHistoryProvider(null));
     } catch (e) {
       if (mounted) {
-        ToastHelper.showError(context, context.l10n.attendanceFlutterSaveFailedWith(e));
+        ToastHelper.showError(context, context.l10n.attendanceFlutterSaveFailedWith(friendlyErrorMessage(e)));
       }
     } finally {
       _isSavingSongs = false;
@@ -2211,7 +2212,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       await repo.updateAttendance(widget.attendanceId, updates);
       ref.invalidate(attendanceDetailProvider(widget.attendanceId));
     } catch (e) {
-      if (mounted) ToastHelper.showError(context, context.l10n.attendanceFlutterErrorWith(e));
+      if (mounted) ToastHelper.showError(context, context.l10n.attendanceFlutterErrorWith(friendlyErrorMessage(e)));
     }
   }
 
@@ -2280,7 +2281,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
         ToastHelper.showSuccess(context, context.l10n.attendanceFlutterRegFieldsSaved);
       }
     } catch (e) {
-      if (mounted) ToastHelper.showError(context, context.l10n.attendanceFlutterErrorWith(e));
+      if (mounted) ToastHelper.showError(context, context.l10n.attendanceFlutterErrorWith(friendlyErrorMessage(e)));
     }
   }
 
@@ -2298,7 +2299,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       ref.invalidate(attendanceDetailProvider(widget.attendanceId));
     } catch (e) {
       if (mounted) {
-        ToastHelper.showError(context, context.l10n.attendanceFlutterErrorWith(e));
+        ToastHelper.showError(context, context.l10n.attendanceFlutterErrorWith(friendlyErrorMessage(e)));
       }
     }
   }
@@ -2347,7 +2348,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       ToastHelper.showSuccess(context, context.l10n.attendanceFlutterStartTimeUpdated);
     } catch (e) {
       if (mounted) {
-        ToastHelper.showError(context, context.l10n.attendanceFlutterErrorWith(e));
+        ToastHelper.showError(context, context.l10n.attendanceFlutterErrorWith(friendlyErrorMessage(e)));
       }
     }
   }
@@ -2396,7 +2397,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       ToastHelper.showSuccess(context, context.l10n.attendanceFlutterEndTimeUpdated);
     } catch (e) {
       if (mounted) {
-        ToastHelper.showError(context, context.l10n.attendanceFlutterErrorWith(e));
+        ToastHelper.showError(context, context.l10n.attendanceFlutterErrorWith(friendlyErrorMessage(e)));
       }
     }
   }
@@ -2424,7 +2425,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       );
     } catch (e) {
       if (mounted) {
-        ToastHelper.showError(context, context.l10n.exportFlutterFailedWith(e));
+        ToastHelper.showError(context, context.l10n.exportFlutterFailedWith(friendlyErrorMessage(e)));
       }
     }
   }
@@ -2591,7 +2592,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       }
     } catch (e) {
       if (mounted) {
-        ToastHelper.showError(context, context.l10n.attendanceFlutterUploadFailedWith(e));
+        ToastHelper.showError(context, context.l10n.attendanceFlutterUploadFailedWith(friendlyErrorMessage(e)));
       }
     }
   }
@@ -2651,7 +2652,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
             _localStatuses[personId] = previousStatus;
           });
         }
-        ToastHelper.showError(context, context.l10n.attendanceFlutterSaveFailedWith(e));
+        ToastHelper.showError(context, context.l10n.attendanceFlutterSaveFailedWith(friendlyErrorMessage(e)));
       }
     } finally {
       _savingPersonIds.remove(personId);

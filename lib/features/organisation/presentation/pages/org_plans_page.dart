@@ -16,6 +16,7 @@ import '../../../planning/presentation/pages/plan_viewer_page.dart';
 import '../../../planning/presentation/widgets/plan_export_actions.dart';
 import '../../../planning/presentation/widgets/plan_field_dialogs.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
 
 /// Short date "Mo, 03.11.2026" (Ionic dayjs `dd, ${dateFmt()}`).
 String orgPlanDate(String date) {
@@ -231,7 +232,7 @@ class _OrgPlansPageState extends ConsumerState<OrgPlansPage> {
                 loading: () => [
                   const Padding(padding: EdgeInsets.all(24), child: Center(child: CircularProgressIndicator())),
                 ],
-                error: (e, _) => [ListTile(title: Text(context.l10n.planningFlutterErrorWith(e)))],
+                error: (e, _) => [ListTile(title: Text(context.l10n.planningFlutterErrorWith(friendlyErrorMessage(e))))],
                 data: (entries) {
                   final split = splitOrgPlanEntries(entries);
                   return [

@@ -8,6 +8,7 @@ import '../../../../core/utils/dashboard_utils.dart';
 import '../../../../data/models/person/person.dart';
 import 'dashboard_card.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
 
 /// Opens the person detail page (Ionic opens PersonPage as modal).
 Future<void> _openPerson(BuildContext context, WidgetRef ref, Person? person) async {
@@ -32,7 +33,7 @@ class BirthdaysCard extends ConsumerWidget {
       strip: DashStrips.birthday,
       child: async.when(
         loading: () => const DashLoading(),
-        error: (e, _) => DashEmptyRow(icon: Icons.error_outline, text: context.l10n.homeDashboardFlutterLoadFailed(e)),
+        error: (e, _) => DashEmptyRow(icon: Icons.error_outline, text: context.l10n.homeDashboardFlutterLoadFailed(friendlyErrorMessage(e))),
         data: (entries) {
           if (entries.isEmpty) {
             return DashEmptyRow(
@@ -96,7 +97,7 @@ class MemberChangesCard extends ConsumerWidget {
       strip: DashStrips.members,
       child: async.when(
         loading: () => const DashLoading(),
-        error: (e, _) => DashEmptyRow(icon: Icons.error_outline, text: context.l10n.homeDashboardFlutterLoadFailed(e)),
+        error: (e, _) => DashEmptyRow(icon: Icons.error_outline, text: context.l10n.homeDashboardFlutterLoadFailed(friendlyErrorMessage(e))),
         data: (changes) {
           if (changes.isEmpty) {
             return DashEmptyRow(
@@ -145,7 +146,7 @@ class AbsencesCard extends ConsumerWidget {
       strip: DashStrips.absences,
       child: async.when(
         loading: () => const DashLoading(),
-        error: (e, _) => DashEmptyRow(icon: Icons.error_outline, text: context.l10n.homeDashboardFlutterLoadFailed(e)),
+        error: (e, _) => DashEmptyRow(icon: Icons.error_outline, text: context.l10n.homeDashboardFlutterLoadFailed(friendlyErrorMessage(e))),
         data: (entries) {
           if (entries.isEmpty) {
             return DashEmptyRow(
@@ -198,7 +199,7 @@ class CriticalPersonsCard extends ConsumerWidget {
       strip: DashStrips.critical,
       child: async.when(
         loading: () => const DashLoading(),
-        error: (e, _) => DashEmptyRow(icon: Icons.error_outline, text: context.l10n.homeDashboardFlutterLoadFailed(e)),
+        error: (e, _) => DashEmptyRow(icon: Icons.error_outline, text: context.l10n.homeDashboardFlutterLoadFailed(friendlyErrorMessage(e))),
         data: (persons) {
           if (persons.isEmpty) {
             return DashEmptyRow(

@@ -18,6 +18,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../people/presentation/widgets/planned_absences.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
 
 /// Self-service planned absences and self pause (Ionic signout page).
 ///
@@ -97,7 +98,7 @@ Future<void> selfServicePause(BuildContext context, WidgetRef ref, Person player
     }
     _refreshAfterAbsenceChange(ref);
   } catch (e) {
-    if (context.mounted) ToastHelper.showError(context, context.l10n.signoutFlutterError(e));
+    if (context.mounted) ToastHelper.showError(context, context.l10n.signoutFlutterError(friendlyErrorMessage(e)));
   }
 }
 
@@ -115,7 +116,7 @@ Future<void> selfServiceUnpause(BuildContext context, WidgetRef ref, Person play
     await repo.unpausePlayer(player, historyText: 'Selbst reaktiviert');
     _refreshAfterAbsenceChange(ref);
   } catch (e) {
-    if (context.mounted) ToastHelper.showError(context, context.l10n.signoutFlutterError(e));
+    if (context.mounted) ToastHelper.showError(context, context.l10n.signoutFlutterError(friendlyErrorMessage(e)));
   }
 }
 

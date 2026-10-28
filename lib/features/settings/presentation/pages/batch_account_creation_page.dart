@@ -9,6 +9,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../core/providers/user_registration_providers.dart'; // AUTH
 import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
 
 /// Page for batch creating accounts for players without accounts
 class BatchAccountCreationPage extends ConsumerStatefulWidget {
@@ -38,7 +39,7 @@ class _BatchAccountCreationPageState
       ),
       body: playersAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text(context.l10n.settingsFlutterErrorDetail(e))),
+        error: (e, _) => Center(child: Text(context.l10n.settingsFlutterErrorDetail(friendlyErrorMessage(e)))),
         data: (players) {
           // Ionic getPlayersWithoutAccount: not pending, not left, e-mail, no appId
           final eligible = players

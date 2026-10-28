@@ -34,6 +34,7 @@ import '../../../../core/services/tracking/tracking_event.dart';
 import '../../../../core/services/tracking/tracking_service.dart';
 import '../../../../core/utils/demo_guard.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
 
 /// Provider for single person with group name
 final personProvider =
@@ -306,7 +307,7 @@ class PersonDetailPage extends ConsumerWidget {
             children: [
               const Icon(Icons.error_outline, size: 64, color: AppColors.danger),
               const SizedBox(height: AppDimensions.paddingM),
-              Text(context.l10n.peopleFlutterErrorWith(error)),
+              Text(context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(error))),
               const SizedBox(height: AppDimensions.paddingM),
               ElevatedButton(
                 onPressed: () => ref.refresh(personProvider(personId)),
@@ -802,7 +803,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(context.l10n.personUpdateFailedWith(e)),
+            content: Text(context.l10n.personUpdateFailedWith(friendlyErrorMessage(e))),
             backgroundColor: AppColors.danger,
           ),
         );
@@ -902,7 +903,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(context.l10n.personFlutterRoleUpdateFailed(e)),
+            content: Text(context.l10n.personFlutterRoleUpdateFailed(friendlyErrorMessage(e))),
             backgroundColor: AppColors.warning,
           ),
         );
@@ -1062,7 +1063,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(context.l10n.peopleFlutterErrorWith(e)), backgroundColor: AppColors.danger),
+          SnackBar(content: Text(context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e))), backgroundColor: AppColors.danger),
         );
       }
     }
@@ -1095,7 +1096,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(context.l10n.peopleFlutterErrorWith(e)), backgroundColor: AppColors.danger),
+          SnackBar(content: Text(context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e))), backgroundColor: AppColors.danger),
         );
       }
     }
@@ -1151,7 +1152,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(context.l10n.peopleFlutterErrorWith(e)), backgroundColor: AppColors.danger),
+          SnackBar(content: Text(context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e))), backgroundColor: AppColors.danger),
         );
       }
     }
@@ -1252,7 +1253,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(context.l10n.peopleFlutterErrorWith(e)), backgroundColor: AppColors.danger),
+          SnackBar(content: Text(context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e))), backgroundColor: AppColors.danger),
         );
       }
     }
@@ -1279,7 +1280,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(context.l10n.peopleFlutterErrorWith(e)), backgroundColor: AppColors.danger),
+          SnackBar(content: Text(context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e))), backgroundColor: AppColors.danger),
         );
       }
     }
@@ -1311,7 +1312,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(context.l10n.peopleFlutterErrorWith(e)), backgroundColor: AppColors.danger),
+          SnackBar(content: Text(context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e))), backgroundColor: AppColors.danger),
         );
       }
     }
@@ -1357,7 +1358,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(context.l10n.peopleFlutterErrorWith(e)), backgroundColor: AppColors.danger),
+          SnackBar(content: Text(context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e))), backgroundColor: AppColors.danger),
         );
       }
     }
@@ -1429,7 +1430,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(context.l10n.peopleFlutterErrorWith(e)), backgroundColor: AppColors.danger),
+          SnackBar(content: Text(context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e))), backgroundColor: AppColors.danger),
         );
       }
     } finally {
@@ -1585,7 +1586,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
         context.pop();
       }
     } catch (e) {
-      if (mounted) ToastHelper.showError(context, context.l10n.peopleFlutterErrorWith(e));
+      if (mounted) ToastHelper.showError(context, context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e)));
     }
   }
 
@@ -1629,7 +1630,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(context.l10n.peopleFlutterErrorWith(e)), backgroundColor: AppColors.danger),
+          SnackBar(content: Text(context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e))), backgroundColor: AppColors.danger),
         );
       }
     }
@@ -1693,7 +1694,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(context.l10n.peopleFlutterErrorWith(e)), backgroundColor: AppColors.danger),
+          SnackBar(content: Text(context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e))), backgroundColor: AppColors.danger),
         );
       }
     }

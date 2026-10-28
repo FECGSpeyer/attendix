@@ -28,6 +28,7 @@ import '../../../duty/presentation/widgets/self_service_duty_section.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../messages/presentation/widgets/notification_bell.dart'; // MESSAGES
 import '../../../team_organization/presentation/widgets/my_tasks_card.dart'; // INTEGRATION
+import '../../../../core/utils/error_message.dart';
 
 /// "Meine Termine" – self-service sign in/out of the current tenant
 /// (Ionic `selfService/signout`).
@@ -238,7 +239,7 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
             children: [
               const Icon(Icons.error_outline, size: 48, color: AppColors.danger),
               const SizedBox(height: 8),
-              Text(context.l10n.signoutFlutterError(e), textAlign: TextAlign.center),
+              Text(context.l10n.signoutFlutterError(friendlyErrorMessage(e)), textAlign: TextAlign.center),
               TextButton(onPressed: _refresh, child: Text(context.l10n.messagesRetry)),
             ],
           ),

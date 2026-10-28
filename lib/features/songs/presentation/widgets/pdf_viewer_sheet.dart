@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:pdfx/pdfx.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
 
 /// Bottom sheet for viewing PDF files in-app
 class PdfViewerSheet extends StatefulWidget {
@@ -61,7 +63,7 @@ class _PdfViewerSheetState extends State<PdfViewerSheet> {
     } catch (e) {
       if (mounted) {
         setState(() {
-          _error = e.toString();
+          _error = friendlyErrorMessage(e);
           _isLoading = false;
         });
       }
@@ -215,6 +217,17 @@ class _PdfViewerSheetState extends State<PdfViewerSheet> {
                 icon: const Icon(Icons.refresh),
                 label: Text(context.l10n.messagesRetry),
               ),
+              // Fallback when the in-app viewer is unavailable (e.g. pdf.js
+              // blocked on web): open the file in the browser / system viewer.
+              const SizedBox(height: AppDimensions.paddingS),
+              TextButton.icon(
+                onPressed: () => launchUrl(
+                  Uri.parse(widget.url),
+                  mode: LaunchMode.externalApplication,
+                ),
+                icon: const Icon(Icons.open_in_new),
+                label: Text(context.l10n.coreFlutterOpenExternally),
+              ),
             ],
           ),
         ),
@@ -235,7 +248,7 @@ class _PdfViewerSheetState extends State<PdfViewerSheet> {
           child: CircularProgressIndicator(),
         ),
         errorBuilder: (_, error) => Center(
-          child: Text(context.l10n.songsFlutterErrorWith(error)),
+          child: Text(context.l10n.songsFlutterErrorWith(friendlyErrorMessage(error))),
         ),
       ),
     );

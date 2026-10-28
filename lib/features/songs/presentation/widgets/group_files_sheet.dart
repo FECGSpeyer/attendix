@@ -75,7 +75,7 @@ class _GroupFilesSheetState extends ConsumerState<GroupFilesSheet> {
                 children: [
                   if (selected != null)
                     IconButton(
-                      icon: const Icon(Icons.arrow_back),
+                      icon: const BackButtonIcon(),
                       onPressed: () => setState(() => _selectedGroup = null),
                     )
                   else

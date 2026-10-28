@@ -27,6 +27,8 @@ import '../widgets/plan_fields_editor.dart';
 import '../widgets/plan_song_helper.dart';
 import 'planning_page.dart' show planSongsProvider;
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/layout/centered_content.dart';
+import '../../../../core/utils/error_message.dart';
 
 /// Predefined template of the public planning page (Ionic `PUBLIC_PLANNING_TEMPLATES`).
 class PublicPlanningTemplate {
@@ -708,7 +710,7 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
       body: !_ready
           ? const Center(child: CircularProgressIndicator())
           : ListView(
-              padding: const EdgeInsets.only(bottom: 32),
+              padding: centeredListPadding(context, bottom: 32),
               children: [
                 Card(
                   margin: const EdgeInsets.all(AppDimensions.paddingM),
@@ -758,7 +760,10 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
                             isExpanded: true,
                             decoration: InputDecoration(labelText: context.l10n.plansBranding),
                             items: [
-                              for (final b in publicBrandings) DropdownMenuItem(value: b.id, child: Text(b.name)),
+                              for (final b in publicBrandings)
+                                DropdownMenuItem(
+                                    value: b.id,
+                                    child: Text(b.id == 'none' ? context.l10n.coreFlutterNoBranding : b.name)),
                             ],
                             onChanged: (v) {
                               setState(() => _brandingId = v ?? 'none');
@@ -861,7 +866,7 @@ class _MyPlansSheet extends ConsumerWidget {
             Expanded(
               child: plansAsync.when(
                 loading: () => const Center(child: CircularProgressIndicator()),
-                error: (e, _) => Center(child: Text(context.l10n.planningFlutterErrorWith(e))),
+                error: (e, _) => Center(child: Text(context.l10n.planningFlutterErrorWith(friendlyErrorMessage(e)))),
                 data: (plans) {
                   if (plans.isEmpty) {
                     return Center(

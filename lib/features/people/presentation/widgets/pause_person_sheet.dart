@@ -11,6 +11,7 @@ import '../../../../data/models/person/person.dart';
 import '../../../../data/repositories/cross_tenant_person_repository.dart';
 import '../../../../core/utils/date_helper.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
 
 final _fmt = DateFormat('dd.MM.yyyy');
 
@@ -225,7 +226,7 @@ Future<bool> pausePersonFlow(
     await repo.pausePlayer(person, until, text, pauseFrom: from);
   } catch (e) {
     messenger.showSnackBar(
-      SnackBar(content: Text(l10nWithoutContext.peopleFlutterErrorWith(e)), backgroundColor: AppColors.danger),
+      SnackBar(content: Text(l10nWithoutContext.peopleFlutterErrorWith(friendlyErrorMessage(e))), backgroundColor: AppColors.danger),
     );
     return false;
   }

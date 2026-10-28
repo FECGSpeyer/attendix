@@ -8,6 +8,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/shift/shift_plan.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
 
 /// Shifts List Page
 ///
@@ -37,7 +38,7 @@ class _ShiftsListPageState extends ConsumerState<ShiftsListPage> {
           Expanded(
             child: shiftsAsync.when(
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (error, stack) => Center(child: Text(context.l10n.shiftsFlutterErrorWith(error))),
+              error: (error, stack) => Center(child: Text(context.l10n.shiftsFlutterErrorWith(friendlyErrorMessage(error)))),
               data: (shifts) {
                 if (shifts.isEmpty) {
                   return Center(
@@ -216,7 +217,7 @@ class _ShiftsListPageState extends ConsumerState<ShiftsListPage> {
       } else {
         final error = ref.read(shiftNotifierProvider);
         if (error.hasError) {
-          ToastHelper.showError(context, context.l10n.shiftsFlutterCreateFailed('${error.error}'));
+          ToastHelper.showError(context, context.l10n.shiftsFlutterCreateFailed(friendlyErrorMessage(error.error)));
         }
       }
     }

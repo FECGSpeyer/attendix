@@ -11,6 +11,7 @@ import '../../../../data/models/song/song.dart';
 import '../utils/song_utils.dart';
 import 'file_upload_sheet.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
 
 /// Result of [SingleFileUploadSheet].
 enum SingleFileUploadResult {
@@ -110,7 +111,7 @@ class _SingleFileUploadSheetState extends ConsumerState<SingleFileUploadSheet> {
     } catch (e) {
       if (!mounted) return;
       setState(() => _uploading = false);
-      ToastHelper.showError(context, context.l10n.songsFlutterUploadFailedWith(e));
+      ToastHelper.showError(context, context.l10n.songsFlutterUploadFailedWith(friendlyErrorMessage(e)));
     }
   }
 

@@ -10,6 +10,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
 
 /// Provider for left (archived) players using repository
 final leftPlayersProvider = FutureProvider<List<Person>>((ref) async {
@@ -30,7 +31,7 @@ class LeftPlayersPage extends ConsumerWidget {
       appBar: AppBar(
         title: Text(context.l10n.settingsArchive),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const BackButtonIcon(),
           onPressed: () => context.pop(),
         ),
       ),
@@ -42,7 +43,7 @@ class LeftPlayersPage extends ConsumerWidget {
             children: [
               const Icon(Icons.error_outline, size: 64, color: AppColors.danger),
               const SizedBox(height: AppDimensions.paddingM),
-              Text(context.l10n.settingsFlutterErrorDetail(e)),
+              Text(context.l10n.settingsFlutterErrorDetail(friendlyErrorMessage(e))),
               const SizedBox(height: AppDimensions.paddingM),
               ElevatedButton(
                 onPressed: () => ref.invalidate(leftPlayersProvider),
@@ -130,7 +131,7 @@ class LeftPlayersPage extends ConsumerWidget {
         }
       } catch (e) {
         if (context.mounted) {
-          ToastHelper.showError(context, context.l10n.settingsFlutterErrorDetail(e));
+          ToastHelper.showError(context, context.l10n.settingsFlutterErrorDetail(friendlyErrorMessage(e)));
         }
       }
     }

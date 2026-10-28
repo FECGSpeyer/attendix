@@ -30,6 +30,7 @@ import '../widgets/register_plan_sheet.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../songs/presentation/utils/song_utils.dart';
 import '../../../../core/providers/branding_providers.dart'; // MISC2
+import '../../../../core/utils/error_message.dart';
 
 /// Provider for songs list (for adding to plan)
 final planSongsProvider = FutureProvider<List<Song>>((ref) async {
@@ -259,7 +260,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       final saved = await ref.read(planRepositoryWithTenantProvider).updateAttendancePlanFields(att!.id!, update);
       _replaceAtt(saved);
     } catch (e) {
-      if (mounted) ToastHelper.showError(context, context.l10n.planningFlutterSaveFailedWith(e));
+      if (mounted) ToastHelper.showError(context, context.l10n.planningFlutterSaveFailedWith(friendlyErrorMessage(e)));
     }
   }
 
@@ -390,7 +391,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       setState(() => _planIndex = plans.length - 1);
       _loadPlan(_att!, newPlan);
     } catch (e) {
-      if (mounted) ToastHelper.showError(context, context.l10n.planningFlutterSaveFailedWith(e));
+      if (mounted) ToastHelper.showError(context, context.l10n.planningFlutterSaveFailedWith(friendlyErrorMessage(e)));
     }
   }
 
@@ -473,7 +474,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
           if (list.isNotEmpty) _loadPlan(_att!, list[newIndex]);
       }
     } catch (e) {
-      if (mounted) ToastHelper.showError(context, context.l10n.planningFlutterSaveFailedWith(e));
+      if (mounted) ToastHelper.showError(context, context.l10n.planningFlutterSaveFailedWith(friendlyErrorMessage(e)));
     }
   }
 
@@ -870,7 +871,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       final url = planPublicUrl(edit ? '$base&edit=$editKey' : base);
       if (mounted) await sharePlanLink(context, url, title: _effectiveTitle);
     } catch (e) {
-      if (mounted) ToastHelper.showError(context, context.l10n.planningFlutterShareFailedWith(e));
+      if (mounted) ToastHelper.showError(context, context.l10n.planningFlutterShareFailedWith(friendlyErrorMessage(e)));
     }
   }
 
@@ -1034,7 +1035,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
         ),
         body: attendancesAsync.when(
           loading: () => const Center(child: CircularProgressIndicator()),
-          error: (e, _) => Center(child: Text(context.l10n.planningFlutterErrorWith(e))),
+          error: (e, _) => Center(child: Text(context.l10n.planningFlutterErrorWith(friendlyErrorMessage(e)))),
           data: (_) => ListView(
             padding: const EdgeInsets.only(bottom: 96),
             children: [
@@ -1184,7 +1185,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
                 Expanded(
                   child: TextButton.icon(
                     onPressed: () => _navigate(-1),
-                    icon: const Icon(Icons.arrow_back),
+                    icon: const BackButtonIcon(),
                     label: Text(context.l10n.planningPrevious),
                   ),
                 ),

@@ -33,6 +33,7 @@ import '../../../messages/presentation/widgets/notification_bell.dart'; // MESSA
 import 'bulk_edit_page.dart';
 import 'person_import_page.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
 
 /// People list page
 class PeopleListPage extends ConsumerStatefulWidget {
@@ -976,7 +977,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
             chosen.longName.isNotEmpty ? chosen.longName : chosen.shortName;
       });
     } catch (e) {
-      if (mounted) ToastHelper.showError(context, context.l10n.peopleFlutterErrorWith(e));
+      if (mounted) ToastHelper.showError(context, context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e)));
     }
   }
 
@@ -1209,7 +1210,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
       await repository.unpausePlayer(person, historyText: context.l10n.peopleActiveAgain);
       // Realtime handles the refresh automatically
     } catch (e) {
-      if (mounted) ToastHelper.showError(context, context.l10n.peopleFlutterErrorWith(e));
+      if (mounted) ToastHelper.showError(context, context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e)));
     }
   }
 
@@ -1333,7 +1334,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
       );
       // Realtime handles the refresh automatically
     } catch (e) {
-      if (mounted) ToastHelper.showError(context, context.l10n.peopleFlutterErrorWith(e));
+      if (mounted) ToastHelper.showError(context, context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e)));
     }
   }
 
@@ -1353,7 +1354,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
         await ref.read(playerNotifierProvider.notifier).deletePlayer(person.id!, appId: person.appId);
         if (mounted) ToastHelper.showSuccess(context, context.l10n.peopleRemoved);
       } catch (e) {
-        if (mounted) ToastHelper.showError(context, context.l10n.peopleFlutterErrorWith(e));
+        if (mounted) ToastHelper.showError(context, context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e)));
       }
     }
   }

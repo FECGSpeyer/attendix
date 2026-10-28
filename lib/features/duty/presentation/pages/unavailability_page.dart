@@ -13,6 +13,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/attendance/attendance.dart';
 import '../../../../data/models/duty/person_unavailability.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
 
 /// Opens "Regelmäßig verhindert" for a person (as a full screen dialog).
 Future<void> openUnavailabilityPage(
@@ -197,7 +198,7 @@ class _UnavailabilityPageState extends ConsumerState<UnavailabilityPage> {
         appBar: AppBar(
           leading: editing != null
               ? IconButton(
-                  icon: const Icon(Icons.arrow_back),
+                  icon: const BackButtonIcon(),
                   tooltip: context.l10n.commonBack,
                   onPressed: () => setState(() => _editing = null),
                 )
@@ -225,7 +226,7 @@ class _UnavailabilityPageState extends ConsumerState<UnavailabilityPage> {
     final types = ref.watch(attendanceTypesProvider).valueOrNull ?? const <AttendanceType>[];
     return rulesAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (e, _) => Center(child: Text(context.l10n.dutyFlutterErrorWith(e))),
+      error: (e, _) => Center(child: Text(context.l10n.dutyFlutterErrorWith(friendlyErrorMessage(e)))),
       data: (rules) => ListView(
         padding: const EdgeInsets.all(AppDimensions.paddingM),
         children: [

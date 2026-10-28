@@ -6,6 +6,7 @@ import '../../../../core/config/supabase_config.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../core/utils/demo_guard.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
 
 /// Shows the "Passwort ändern" dialog (Ionic settings changePassword alert).
 Future<void> showChangePasswordDialog(BuildContext context) async {
@@ -175,7 +176,7 @@ class _ChangeEmailDialogState extends ConsumerState<ChangeEmailDialog> {
       if (mounted) Navigator.of(context).pop(true);
     } catch (e) {
       if (mounted) {
-        ToastHelper.showError(context, context.l10n.settingsFlutterChangeEmailFailed(e));
+        ToastHelper.showError(context, context.l10n.settingsFlutterChangeEmailFailed(friendlyErrorMessage(e)));
       }
     } finally {
       if (mounted) setState(() => _isLoading = false);

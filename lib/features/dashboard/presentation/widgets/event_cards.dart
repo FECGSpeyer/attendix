@@ -17,6 +17,7 @@ import '../../../../data/models/plan/plan.dart';
 import '../../../planning/presentation/pages/plan_viewer_page.dart';
 import 'dashboard_card.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
 
 String _timeRange(Attendance a) {
   if (a.startTime == null || a.startTime!.isEmpty) return '';
@@ -56,7 +57,7 @@ class NextEventCard extends ConsumerWidget {
       strip: DashStrips.event,
       child: async.when(
         loading: () => const DashLoading(),
-        error: (e, _) => DashEmptyRow(icon: Icons.error_outline, text: context.l10n.homeDashboardFlutterLoadFailed(e)),
+        error: (e, _) => DashEmptyRow(icon: Icons.error_outline, text: context.l10n.homeDashboardFlutterLoadFailed(friendlyErrorMessage(e))),
         data: (s) {
           final next = s.nextEvent;
           final last = s.lastEvent;
@@ -289,7 +290,7 @@ class CurrentSongsCard extends ConsumerWidget {
       strip: DashStrips.songs,
       child: async.when(
         loading: () => const DashLoading(),
-        error: (e, _) => DashEmptyRow(icon: Icons.error_outline, text: context.l10n.homeDashboardFlutterLoadFailed(e)),
+        error: (e, _) => DashEmptyRow(icon: Icons.error_outline, text: context.l10n.homeDashboardFlutterLoadFailed(friendlyErrorMessage(e))),
         data: (entries) {
           if (entries.isEmpty) {
             return DashEmptyRow(

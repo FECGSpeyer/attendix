@@ -11,6 +11,7 @@ import '../../../../core/services/telegram_service.dart';
 import '../../../../core/utils/toast_helper.dart';
 import 'plan_field_dialogs.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
 
 /// Export formats of an Ablaufplan.
 enum PlanExportAction { pdf, pdf2x, image, telegram, telegram2x, telegramImage }
@@ -115,7 +116,7 @@ Future<void> runPlanExport(
         if (context.mounted) ToastHelper.showSuccess(context, context.l10n.planningSendingTelegram);
     }
   } catch (e) {
-    if (context.mounted) ToastHelper.showError(context, context.l10n.planningFlutterExportFailed(e));
+    if (context.mounted) ToastHelper.showError(context, context.l10n.planningFlutterExportFailed(friendlyErrorMessage(e)));
   }
 }
 

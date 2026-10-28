@@ -15,6 +15,7 @@ import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
 
 /// Sheet for transferring players to another tenant (handover)
 class HandoverSheet extends ConsumerStatefulWidget {
@@ -120,7 +121,7 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
             Expanded(
               child: tenantsAsync.when(
                 loading: () => const Center(child: CircularProgressIndicator()),
-                error: (e, _) => Center(child: Text(context.l10n.peopleFlutterErrorWith(e))),
+                error: (e, _) => Center(child: Text(context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e)))),
                 data: (tenants) {
                   // Filter out current tenant
                   final availableTenants = tenants
@@ -804,7 +805,7 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
       }
     } catch (e) {
       if (mounted) {
-        ToastHelper.showError(context, context.l10n.peopleFlutterErrorWith(e));
+        ToastHelper.showError(context, context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e)));
       }
     } finally {
       if (mounted) {
