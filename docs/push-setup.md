@@ -76,13 +76,19 @@ The repo already contains:
   `AppRelease.entitlements`). It is referenced via `CODE_SIGN_ENTITLEMENTS`
   for Debug, Release and Profile.
 - `Info.plist` → `UIBackgroundModes` → `remote-notification` (as in Ionic).
-- iOS deployment target 13.0, which Firebase iOS SDK 11 requires (Podfile and
-  project).
+- iOS deployment target 15.0 (Podfile, a post_install override for all pods,
+  and the project). Firebase iOS SDK 11 needs 13.0, and current Xcode only
+  accepts 15.0 or higher.
 
 In Xcode, open *Runner → Signing & Capabilities* and check that **Push
 Notifications** is listed. With automatic signing Xcode enables it on the App
-ID. A free personal team cannot sign push. To build with one, temporarily
-remove the `aps-environment` key.
+ID. A free personal team cannot sign push ("Personal development teams …
+do not support the Push Notifications capability"). To build with one, remove
+the three `CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;` lines from
+`ios/Runner.xcodeproj/project.pbxproj` locally (don't commit that).
+
+If `pod install` fails with `Encoding::CompatibilityError`, set a UTF-8 locale
+first: `export LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8`.
 
 Then run `cd ios && pod install`, or just `flutter build ios`.
 
