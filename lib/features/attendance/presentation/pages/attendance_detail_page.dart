@@ -14,6 +14,7 @@ import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/attendance_detail_providers.dart';
 import '../../../../core/providers/attendance_providers.dart';
 import '../../../../core/providers/conductor_providers.dart';
+import '../../../../core/providers/debug_providers.dart'; // ORG_PLANS
 import '../../../../core/providers/connectivity_provider.dart';
 import '../../../../core/providers/realtime_providers.dart';
 import '../../../../core/providers/role_permission_providers.dart';
@@ -585,6 +586,8 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                             onTap: _onSongEntryTap,
                           ),
 
+                        // ORG_PLANS: observers (viewer role) must not see the plan
+                        if (!ref.watch(effectiveRoleProvider).isViewer)
                         PlanAccordion(
                           attendance: attendance,
                           initiallyExpanded: _planAccordionExpanded,

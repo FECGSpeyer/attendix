@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import '../plan/plan.dart';
 import '../tenant/tenant.dart';
 
 part 'organisation.freezed.dart';
@@ -9,13 +10,18 @@ part 'organisation.g.dart';
 /// Tabelle: tenant_groups
 @freezed
 class Organisation with _$Organisation {
+  @JsonSerializable(explicitToJson: true)
   const factory Organisation({
     int? id,
     @JsonKey(name: 'created_at') DateTime? createdAt,
     required String name,
-    // SETTINGS_EXT: Branding (Logo + Text) auf Organisationsebene
+    // ORG_PLANS: Ablaufpläne / Org-Einstellungen (tenant_groups columns)
+    @JsonKey(name: 'public_plan_key') String? publicPlanKey,
     @JsonKey(name: 'logo_url') String? logoUrl,
     @JsonKey(name: 'branding_text') String? brandingText,
+    @JsonKey(name: 'additional_fields') List<OrgExtraField>? additionalFields,
+    @JsonKey(name: 'planning_templates') List<Plan>? planningTemplates,
+    @JsonKey(name: 'default_fields') List<PlanField>? defaultFields,
   }) = _Organisation;
 
   factory Organisation.fromJson(Map<String, dynamic> json) =>

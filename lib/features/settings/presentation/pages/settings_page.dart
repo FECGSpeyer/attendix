@@ -21,6 +21,7 @@ import '../../../profile/presentation/widgets/account_dialogs.dart';
 import '../../../profile/presentation/widgets/profile_hero_card.dart';
 import '../../../../shared/widgets/sheets/version_history_sheet.dart';
 import '../../../messages/presentation/widgets/notification_bell.dart'; // MESSAGES
+import '../../../organisation/presentation/widgets/org_plans_settings_section.dart'; // ORG_PLANS
 
 /// Settings page with role-based menu filtering
 class SettingsPage extends ConsumerWidget {
@@ -279,6 +280,8 @@ class SettingsPage extends ConsumerWidget {
             const SizedBox(height: AppDimensions.paddingM),
           ],
           // END SETTINGS_EXT
+          // ORG_PLANS: Planung (Ablaufpläne) & Organisation
+          const OrgPlansSettingsSection(),
 
           // Calendar subscription - for all authenticated users
           _SettingsSection(

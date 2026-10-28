@@ -14,6 +14,7 @@ import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/attendance/attendance.dart';
 import '../widgets/registration_fields_editor.dart'; // ATTENDANCE_SIGNOUT
+import '../../../organisation/presentation/widgets/type_default_org_plan_toggle.dart'; // ORG_PLANS
 
 /// Predefined reminder time options
 const _reminderPresets = [
@@ -622,6 +623,8 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
               ),
               const SizedBox(height: AppDimensions.paddingL),
             ],
+            // ORG_PLANS: Termine of this type start as org plan
+            TypeDefaultOrgPlanToggle(typeId: widget.typeId),
 
             // Terminerinnerungen
             _buildSection(

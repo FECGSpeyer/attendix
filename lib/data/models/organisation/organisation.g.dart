@@ -14,8 +14,21 @@ _$OrganisationImpl _$$OrganisationImplFromJson(Map<String, dynamic> json) =>
               ? null
               : DateTime.parse(json['created_at'] as String),
       name: json['name'] as String,
+      publicPlanKey: json['public_plan_key'] as String?,
       logoUrl: json['logo_url'] as String?,
       brandingText: json['branding_text'] as String?,
+      additionalFields:
+          (json['additional_fields'] as List<dynamic>?)
+              ?.map((e) => OrgExtraField.fromJson(e as Map<String, dynamic>))
+              .toList(),
+      planningTemplates:
+          (json['planning_templates'] as List<dynamic>?)
+              ?.map((e) => Plan.fromJson(e as Map<String, dynamic>))
+              .toList(),
+      defaultFields:
+          (json['default_fields'] as List<dynamic>?)
+              ?.map((e) => PlanField.fromJson(e as Map<String, dynamic>))
+              .toList(),
     );
 
 Map<String, dynamic> _$$OrganisationImplToJson(_$OrganisationImpl instance) =>
@@ -23,8 +36,14 @@ Map<String, dynamic> _$$OrganisationImplToJson(_$OrganisationImpl instance) =>
       'id': instance.id,
       'created_at': instance.createdAt?.toIso8601String(),
       'name': instance.name,
+      'public_plan_key': instance.publicPlanKey,
       'logo_url': instance.logoUrl,
       'branding_text': instance.brandingText,
+      'additional_fields':
+          instance.additionalFields?.map((e) => e.toJson()).toList(),
+      'planning_templates':
+          instance.planningTemplates?.map((e) => e.toJson()).toList(),
+      'default_fields': instance.defaultFields?.map((e) => e.toJson()).toList(),
     };
 
 _$TenantGroupTenantImpl _$$TenantGroupTenantImplFromJson(

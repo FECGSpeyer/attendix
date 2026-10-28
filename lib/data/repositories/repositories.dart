@@ -46,3 +46,7 @@ export 'profile_repository.dart';
 export 'notification_settings_repository.dart';
 // DUTY
 export 'duty_repository.dart';
+// ORG_PLANS
+export 'plan_repository.dart';
+export 'org_plan_repository.dart';
+export 'public_plan_repository.dart';
