@@ -113,8 +113,11 @@ void main() {
 
   test('song list has an offline cache (Ionic offline_songs_v1_<tid>)', () {
     final src = _read('lib/data/repositories/song_repository.dart');
-    expect(src, contains("'offline_songs_v1_\$tenantId'"));
-    expect(src, contains('_readOfflineSongs(tenantId)'));
+    // SOL_FIX7: additionally bound to the signed-in user.
+    expect(src, contains("'offline_songs_v1_\${userId}_\$tenantId'"));
+    expect(src, contains('_offlineSongsKey(tenantId)'));
+    expect(src, contains('_readOfflineSongs(cacheKey)'));
+    expect(src, contains('isOfflineFallbackError(e)'));
   });
 
   group('team-org quick create', () {

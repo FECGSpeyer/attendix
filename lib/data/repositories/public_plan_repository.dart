@@ -248,6 +248,13 @@ class PublicPlanRepository extends BaseRepository {
   ///
   /// No tenant context: the channel is filtered by the attendance row id,
   /// which the caller only knows together with its share key.
+  ///
+  /// SOL_FIX7: a `postgres_changes` payload is the FULL row (incl.
+  /// `share_key` / `share_edit_key`) — [stripSecrets] only hides them from the
+  /// UI, they are still on the WebSocket. Only call this after the viewer's
+  /// edit key was verified (it then only carries keys the viewer already
+  /// has). Read-only public pages poll the whitelisted selects instead; see
+  /// docs/security-public-plans.md.
   RealtimeChannel watchSharedAttendancePlan(int id, void Function(Map<String, dynamic> row) onUpdate) {
     return supabase
         .channel('shared-att-$id')
@@ -262,6 +269,9 @@ class PublicPlanRepository extends BaseRepository {
   }
 
   /// Live updates of an ad-hoc plan (edit link); filtered by its key (row id).
+  ///
+  /// SOL_FIX7: the payload contains `edit_key` — only for viewers whose edit
+  /// key was verified (see [watchSharedAttendancePlan]).
   RealtimeChannel watchSharedPlan(String key, void Function(Map<String, dynamic> row) onUpdate) {
     return supabase
         .channel('shared-plan-$key')

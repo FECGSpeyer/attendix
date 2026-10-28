@@ -43,10 +43,15 @@ class ViewerNotifier extends Notifier<AsyncValue<void>> {
   ViewerRepository get _repo => ref.read(viewerRepositoryWithTenantProvider);
 
   /// Create a new viewer
-  Future<Viewer?> createViewer(Viewer viewer) async {
+  Future<Viewer?> createViewer(Viewer viewer) => _createViewerWith(_repo, viewer);
+
+  /// SOL_FIX7: inserts through a repository bound by the caller before its
+  /// first await (see [invite]), so a tenant switch mid-flow cannot create
+  /// the row in another tenant.
+  Future<Viewer?> _createViewerWith(ViewerRepository repo, Viewer viewer) async {
     state = const AsyncValue.loading();
     try {
-      final result = await _repo.createViewer(viewer);
+      final result = await repo.createViewer(viewer);
       state = const AsyncValue.data(null);
       ref.invalidate(viewersProvider);
       return result;
@@ -71,6 +76,8 @@ class ViewerNotifier extends Notifier<AsyncValue<void>> {
     required String lastName,
   }) async {
     final trimmedEmail = email.trim();
+    // SOL_FIX7: bind both tenant repositories before the first await.
+    final repo = _repo;
     final appId = await ref
         .read(userRegistrationRepositoryWithTenantProvider)
         .registerUser(
@@ -78,7 +85,7 @@ class ViewerNotifier extends Notifier<AsyncValue<void>> {
           name: firstName.trim(),
           role: Role.viewer,
         );
-    final created = await createViewer(Viewer(
+    final created = await _createViewerWith(repo, Viewer(
       appId: appId,
       email: trimmedEmail,
       firstName: firstName.trim(),

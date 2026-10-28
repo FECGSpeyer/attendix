@@ -17,14 +17,75 @@ final _getter = RegExp(
     r'get\s+(\w+)\s*=>\s*_?ref\.read\(\s*\w+Repository(?:WithTenant|ForTenant)Provider');
 final _asyncBody = RegExp(r'\)\s*async\s*\{');
 
+// SOL_FIX7: method declarations (`Future<bool> name(...) {` / `=> ...;`).
+final _methodDecl = RegExp(
+    r'^[ \t]*(?:static\s+)?(?:[\w<>?,\[\] ]+?\s+)?(\w+)\s*\((?:[^()]|\([^()]*\))*\)\s*(?:async\s*)?(\{|=>)',
+    multiLine: true);
+const _notMethods = {'if', 'for', 'while', 'switch', 'catch', 'return', 'build'};
+
+/// Extracts the body after [start] (just past `{`) up to the matching `}`.
+String _braceBody(String source, int start) {
+  var depth = 1;
+  var i = start;
+  while (depth > 0 && i < source.length) {
+    final c = source[i];
+    if (c == '{') depth++;
+    if (c == '}') depth--;
+    i++;
+  }
+  return source.substring(start, i);
+}
+
+RegExp _use(String name) => RegExp('(?<![\\w.])${RegExp.escape(name)}\\b(?!\\s*=>)');
+
+/// SOL_FIX7: names of helper methods that (transitively) read a tenant
+/// repository from its provider. Calling one of them after an await is the
+/// same bug as reading the provider directly (e.g. `saveBlockTemplates(..)`
+/// called after `await ref.read(templatesProvider.future)`).
+Set<String> findTenantHelpers(String source, Set<String> getters) {
+  final bodies = <String, String>{};
+  for (final m in _methodDecl.allMatches(source)) {
+    final name = m.group(1)!;
+    if (_notMethods.contains(name) || getters.contains(name)) continue;
+    final end = source.indexOf(';', m.end);
+    final body = m.group(2) == '{'
+        ? _braceBody(source, m.end)
+        : source.substring(m.end, end < 0 ? source.length : end + 1);
+    final code = body.replaceAll(RegExp(r'//[^\n]*'), '');
+    bodies[name] = '${bodies[name] ?? ''}$code';
+  }
+  final helpers = <String>{};
+  var changed = true;
+  while (changed) {
+    changed = false;
+    final uses = [
+      _readRepo,
+      for (final g in getters) _use(g),
+      for (final h in helpers) RegExp('(?<![\\w.])${RegExp.escape(h)}\\s*\\('),
+    ];
+    for (final e in bodies.entries) {
+      if (helpers.contains(e.key)) continue;
+      if (uses.any((p) => p.hasMatch(e.value))) {
+        helpers.add(e.key);
+        changed = true;
+      }
+    }
+  }
+  return helpers;
+}
+
 /// Returns `file:line: code` for each repository read after an await.
-List<String> findReadsAfterAwait(String path, String source) {
+List<String> findReadsAfterAwait(String path, String source,
+    {bool helpers = true}) {
   final violations = <String>[];
   final getters = _getter.allMatches(source).map((m) => m.group(1)!).toSet();
+  final helperNames =
+      helpers ? findTenantHelpers(source, getters) : const <String>{};
   final patterns = [
     _readRepo,
-    for (final g in getters)
-      RegExp('(?<![\\w.])${RegExp.escape(g)}\\b(?!\\s*=>)'),
+    for (final g in getters) _use(g),
+    // A call of a helper method that reads the tenant repository itself.
+    for (final h in helperNames) RegExp('(?<![\\w.])${RegExp.escape(h)}\\s*\\('),
   ];
   final lines = source.split('\n');
 
@@ -105,22 +166,62 @@ class X {
       expect(findReadsAfterAwait('good.dart', good), isEmpty);
     });
 
-    test('no notifier in lib/core/providers reads a tenant repository after an await', () {
-      final files = Directory('lib/core/providers')
-          .listSync(recursive: true)
-          .whereType<File>()
-          .where((f) => f.path.endsWith('.dart'));
-      final violations = <String>[
-        for (final f in files)
-          ...findReadsAfterAwait(f.path, f.readAsStringSync()),
-      ];
-      expect(violations, isEmpty,
-          reason: 'Hoist the repository read before the first await:\n'
-              '${violations.join('\n')}');
+    // SOL_FIX7: the read hidden in a helper method called after an await.
+    test('scanner flags a tenant helper method called after an await', () {
+      const bad = '''
+class X {
+  Future<bool> save(List<T> items) {
+    return _run(() => ref.read(fooRepositoryWithTenantProvider).save(items));
+  }
+  Future<bool> saveOne(T item) async {
+    final existing = await ref.read(itemsProvider.future);
+    return save([...existing, item]);
+  }
+}
+''';
+      expect(findReadsAfterAwait('bad.dart', bad), hasLength(1));
     });
+
+    test('scanner accepts a bound repository passed to a helper', () {
+      const good = '''
+class X {
+  Future<bool> save(List<T> items) =>
+      _saveWith(ref.read(fooRepositoryWithTenantProvider), items);
+  Future<bool> _saveWith(FooRepository repo, List<T> items) {
+    return _run(() => repo.save(items));
+  }
+  Future<bool> saveOne(T item) async {
+    final repo = ref.read(fooRepositoryWithTenantProvider);
+    final existing = await repo.getAll();
+    return _saveWith(repo, [...existing, item]);
+  }
+}
+''';
+      expect(findReadsAfterAwait('good.dart', good), isEmpty);
+    });
+
+    // SOL_FIX7: notifiers and services are also checked for tenant helper
+    // methods (and `_repo` getters) called after an await.
+    for (final dir in ['lib/core/providers', 'lib/core/services']) {
+      test('no notifier/service in $dir reads a tenant repository after an await', () {
+        final files = Directory(dir)
+            .listSync(recursive: true)
+            .whereType<File>()
+            .where((f) => f.path.endsWith('.dart'));
+        final violations = <String>[
+          for (final f in files)
+            ...findReadsAfterAwait(f.path, f.readAsStringSync()),
+        ];
+        expect(violations, isEmpty,
+            reason: 'Hoist the repository read before the first await:\n'
+                '${violations.join('\n')}');
+      });
+    }
 
     // UI_TENANT_HOIST: UI handlers (often after a confirmation dialog) must
     // capture their tenant-bound repositories before the first await, too.
+    // (Direct reads and getters only; page-local helper methods are not
+    // traced here.)
     for (final dir in ['lib/features', 'lib/shared']) {
       test('no UI code in $dir reads a tenant repository after an await', () {
         final files = Directory(dir)
@@ -129,7 +230,8 @@ class X {
             .where((f) => f.path.endsWith('.dart'));
         final violations = <String>[
           for (final f in files)
-            ...findReadsAfterAwait(f.path, f.readAsStringSync()),
+            ...findReadsAfterAwait(f.path, f.readAsStringSync(),
+                helpers: false),
         ];
         expect(violations, isEmpty,
             reason: 'Hoist the repository read before the first await:\n'

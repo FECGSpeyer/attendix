@@ -186,9 +186,9 @@ void main() {
     });
 
     test('flush applies replayed writes to the offline detail cache', () async {
-      final key5 = AttendanceDetailCache.keyFor(42, 5, 'persons');
-      final key6 = AttendanceDetailCache.keyFor(42, 6, 'persons');
-      final otherTenant = AttendanceDetailCache.keyFor(7, 5, 'persons');
+      final key5 = AttendanceDetailCache.keyFor('u1', 42, 5, 'persons');
+      final key6 = AttendanceDetailCache.keyFor('u1', 42, 6, 'persons');
+      final otherTenant = AttendanceDetailCache.keyFor('u1', 7, 5, 'persons');
       const cache = AttendanceDetailCache();
       await cache.save(key5, [
         {'id': 'pa1', 'status': 0},
@@ -217,7 +217,7 @@ void main() {
     });
 
     test('failed replays do not touch the detail cache', () async {
-      final key = AttendanceDetailCache.keyFor(42, 5, 'persons');
+      final key = AttendanceDetailCache.keyFor('u1', 42, 5, 'persons');
       const cache = AttendanceDetailCache();
       await cache.save(key, [
         {'id': 'pa1', 'status': 0},

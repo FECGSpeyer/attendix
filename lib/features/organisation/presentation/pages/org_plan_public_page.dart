@@ -1,13 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../core/config/supabase_config.dart';
 import '../../../../core/providers/plan_providers.dart';
 import '../../../../core/services/plan_export_service.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/plan_utils.dart';
-import '../../../../data/models/plan/plan.dart';
 import '../../../../data/repositories/public_plan_repository.dart';
 import '../../../planning/presentation/widgets/plan_export_actions.dart';
 import '../../../planning/presentation/widgets/plan_field_dialogs.dart';
@@ -33,7 +33,17 @@ class _OrgPlanPublicPageState extends ConsumerState<OrgPlanPublicPage> {
   List<OrgPlanEntry> _upcoming = [];
   List<OrgPlanEntry> _past = [];
   final Set<String> _live = {};
-  final List<RealtimeChannel> _channels = [];
+
+  /// SOL_FIX7: Ionic subscribes to `postgres_changes` of `attendance` /
+  /// `shared_plans` here. Those realtime payloads carry the FULL row incl.
+  /// `share_key`, `share_edit_key` and `edit_key`, so every anonymous viewer
+  /// of the org page would receive the edit keys over the WebSocket. Instead
+  /// the page polls the whitelisted public select ([PublicPlanRepository
+  /// .getPublicOrgPlans]) and, like Ionic's realtime handler, only updates
+  /// the upcoming entries already shown.
+  static const Duration refreshInterval = Duration(seconds: 15);
+  Timer? _refreshTimer;
+  bool _refreshing = false;
 
   PublicPlanRepository get _repo => ref.read(publicPlanRepositoryProvider);
 
@@ -50,10 +60,8 @@ class _OrgPlanPublicPageState extends ConsumerState<OrgPlanPublicPage> {
   }
 
   void _unsubscribe() {
-    for (final c in _channels) {
-      _repo.unwatch(c);
-    }
-    _channels.clear();
+    _refreshTimer?.cancel();
+    _refreshTimer = null;
   }
 
   Future<void> _init() async {
@@ -106,36 +114,32 @@ class _OrgPlanPublicPageState extends ConsumerState<OrgPlanPublicPage> {
         ..clear()
         ..addAll(split.upcoming.where(_isLiveNow).map((e) => e.key));
     });
-    for (final e in split.upcoming) {
-      _subscribe(e);
+    if (split.upcoming.isNotEmpty) {
+      _refreshTimer = Timer.periodic(refreshInterval, (_) => _refreshUpcoming());
     }
   }
 
-  void _subscribe(OrgPlanEntry entry) {
-    if (entry.attendance?.id != null) {
-      final att = entry.attendance!;
-      _channels.add(_repo.watchSharedAttendancePlan(att.id!, (row) {
-        if (row['plan'] == null) return;
-        try {
-          final plan = Plan.fromJson(Map<String, dynamic>.from(row['plan'] as Map));
-          _replace(entry.key, OrgPlanEntry.attendance(att.copyWith(plan: plan)));
-        } catch (_) {}
-      }));
-    } else if (entry.sharedPlan != null) {
-      final sp = entry.sharedPlan!;
-      _channels.add(_repo.watchSharedPlan(sp.id, (row) {
-        try {
-          _replace(entry.key, OrgPlanEntry.adHoc(SharedPlan.fromJson({...sp.toJson(), ...row})));
-        } catch (_) {}
-      }));
+  /// SOL_FIX7: replaces the realtime subscriptions (see [refreshInterval]).
+  Future<void> _refreshUpcoming() async {
+    final orgId = _orgId;
+    if (orgId == null || _refreshing || !mounted) return;
+    _refreshing = true;
+    try {
+      final result = await _repo.getPublicOrgPlans(orgId);
+      if (!mounted) return;
+      final fresh = <String, OrgPlanEntry>{
+        for (final a in result.attendances.where((a) => a.plan != null))
+          OrgPlanEntry.attendance(a).key: OrgPlanEntry.attendance(a),
+        for (final p in result.adHoc) OrgPlanEntry.adHoc(p).key: OrgPlanEntry.adHoc(p),
+      };
+      setState(() {
+        _upcoming = mergeOrgPlanUpdates(_upcoming, fresh);
+      });
+    } catch (_) {
+      // Network hiccup: keep showing the last state, retry on the next tick.
+    } finally {
+      _refreshing = false;
     }
-  }
-
-  void _replace(String key, OrgPlanEntry updated) {
-    if (!mounted) return;
-    setState(() {
-      _upcoming = [for (final e in _upcoming) e.key == key ? updated : e];
-    });
   }
 
   bool _isLiveNow(OrgPlanEntry e) {
@@ -304,3 +308,9 @@ class _OrgPlanPublicPageState extends ConsumerState<OrgPlanPublicPage> {
     );
   }
 }
+
+/// SOL_FIX7: like Ionic's realtime handler, only entries already shown are
+/// updated (plan/time/fields); new or removed plans appear on reload.
+List<OrgPlanEntry> mergeOrgPlanUpdates(
+        List<OrgPlanEntry> shown, Map<String, OrgPlanEntry> fresh) =>
+    [for (final e in shown) fresh[e.key] ?? e];

@@ -14,6 +14,8 @@ import 'core/router/app_router.dart';
 import 'core/router/legacy_url.dart'; // LINKS_STARTUP
 import 'core/services/app_update_service.dart';
 import 'core/services/offline_queue_service.dart'; // PROFILE_OFFLINE
+import 'core/services/attendance_detail_cache.dart'
+    show clearOfflineReadCaches, shouldClearOfflineReadCaches; // SOL_FIX7
 import 'core/services/live_activity_service.dart'; // LIVE_ACTIVITY
 import 'core/theme/app_theme.dart';
 import 'core/utils/toast_helper.dart';
@@ -106,6 +108,12 @@ class _AttendixAppState extends ConsumerState<AttendixApp> {
     // replay only that user's writes on login / logout / account switch).
     ref.listen(currentUserProvider, (previous, next) {
       if (previous?.valueOrNull?.id != next.valueOrNull?.id) {
+        // SOL_FIX7: sign-out / account switch removes the offline read
+        // caches (attendance detail/list, songs) of the previous account.
+        if (shouldClearOfflineReadCaches(
+            previous?.valueOrNull?.id, next.valueOrNull?.id)) {
+          unawaited(clearOfflineReadCaches());
+        }
         unawaited(
             ref.read(offlineQueueNotifierProvider.notifier).onUserChanged());
       }
