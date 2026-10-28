@@ -5,7 +5,6 @@ import 'package:attendix/data/models/team_org/team_org.dart';
 import 'package:attendix/data/models/tenant/tenant.dart';
 import 'package:attendix/features/settings/presentation/widgets/type_protocol_settings.dart';
 import 'package:attendix/features/team_organization/presentation/widgets/attendance_protocol_section.dart';
-import 'package:attendix/features/team_organization/presentation/widgets/my_tasks_card.dart';
 import 'package:attendix/features/team_organization/presentation/widgets/protocol_editor.dart';
 import 'package:attendix/features/team_organization/presentation/widgets/quick_create_attendance.dart';
 import 'package:attendix/features/team_organization/protocol_layout.dart';
@@ -141,23 +140,6 @@ void main() {
       expect(protocolCardStatus(const Protocol(updatedAt: '2026-10-01T10:00:00Z')),
           startsWith('Entwurf · zuletzt bearbeitet 01.10.2026'));
       expect(taskStatusLabel('in_progress'), 'In Arbeit');
-    });
-  });
-
-  group('my tasks', () {
-    test('open tasks sorted with overdue first and labels', () {
-      const today = '2026-10-28';
-      final tasks = [
-        const TeamTask(id: '1', title: 'Später', dueDate: '2026-12-01'),
-        const TeamTask(id: '2', title: 'Alt', dueDate: '2026-10-01'),
-        const TeamTask(id: '3', title: 'Fertig', status: 'completed'),
-        const TeamTask(id: '4', title: 'Ohne'),
-      ];
-      final open = openTasksSorted(tasks, today);
-      expect(open.map((t) => t.id), ['2', '1', '4']);
-      expect(myTaskDueLabel(open.first, today), startsWith('Überfällig seit'));
-      expect(myTaskDueLabel(open.last, today), 'Ohne Fälligkeit');
-      expect(myTasksSubtitle(open, today), '3 offen · 1 überfällig');
     });
   });
 

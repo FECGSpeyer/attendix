@@ -143,7 +143,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
         final rows = await repo.getHistoryForAttendance(widget.attendanceId);
         if (rows.isNotEmpty) {
           final fromHistory = rows.map((row) {
-            final songId = row['song_id'] as int;
+            final songId = row['songId'] as int;
             final personId = row['person_id'] as int?;
             final other = row['otherConductor'] as String?;
             final song = songs.where((s) => s.id == songId).firstOrNull;
@@ -677,6 +677,14 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     final personAttendanceId = _personAttendanceIds[personId];
     if (personAttendanceId == null) {
       ToastHelper.showError(context, 'Kein Anwesenheitseintrag gefunden');
+      return;
+    }
+
+    // INTEGRATION: queue while offline like every Ionic updatePersonAttendance
+    if (await ref.read(offlineQueueNotifierProvider.notifier).enqueueIfOffline(
+        personAttendanceId, {'notes': notes ?? ''},
+        attendanceId: widget.attendanceId)) {
+      if (mounted) setState(() => _personNotes[personId] = notes);
       return;
     }
 
@@ -1369,13 +1377,15 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     if (_songEntries.isNotEmpty) {
       final entries = _songEntries.map((entry) {
         return {
-          'song_id': entry.songId,
+          // Ionic History columns: songId (camelCase), person_id,
+          // otherConductor, visible. conductorName is not a column.
+          'songId': entry.songId,
           'attendance_id': widget.attendanceId,
           'date': date,
           'tenantId': tenant.id,
           'person_id': entry.otherConductor?.isNotEmpty == true ? null : entry.conductorId,
-          'conductorName': entry.conductorName,
           'otherConductor': entry.otherConductor,
+          'visible': true,
         };
       }).toList();
 
@@ -1607,8 +1617,14 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     if (answers == null || !mounted) return;
     final merged = <String, dynamic>{...?existing, ...answers};
     try {
-      final repo = ref.read(attendanceRepositoryWithTenantProvider);
-      await repo.updatePersonAttendance(personAttendanceId, {'registration_answers': merged});
+      // INTEGRATION: queue while offline like every Ionic updatePersonAttendance
+      final queued = await ref.read(offlineQueueNotifierProvider.notifier).enqueueIfOffline(
+          personAttendanceId, {'registration_answers': merged},
+          attendanceId: widget.attendanceId);
+      if (!queued) {
+        final repo = ref.read(attendanceRepositoryWithTenantProvider);
+        await repo.updatePersonAttendance(personAttendanceId, {'registration_answers': merged});
+      }
       if (mounted) {
         setState(() => _registrationAnswers[personId] = merged);
         ToastHelper.showSuccess(context, 'Anmeldefelder gespeichert');

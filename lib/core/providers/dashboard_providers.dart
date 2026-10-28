@@ -156,9 +156,10 @@ final dashboardSettingsNotifierProvider =
   DashboardSettingsNotifier.new,
 );
 
-/// Teamorganisation (Ionic `db.teamOrgEnabled()`): the "Meine Aufgaben" card
-/// exists once at least one Termintyp has "Protokoll & Tagesordnung".
-final dashboardTeamOrgEnabledProvider = Provider<bool>((ref) => ref.watch(teamOrgEnabledProvider));
+/// Teamorganisation enabled (Ionic `db.teamOrgEnabled()`): controls the
+/// "Meine Aufgaben" card.
+final dashboardTeamOrgEnabledProvider =
+    Provider<bool>((ref) => ref.watch(teamOrgEnabledProvider));
 
 /// Whether the dashboard tab is shown (Ionic `showDashboardTab`).
 final showDashboardTabProvider = Provider<bool>((ref) {

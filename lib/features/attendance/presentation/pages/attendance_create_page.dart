@@ -9,6 +9,7 @@ import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/attendance_providers.dart';
 import '../../../../core/providers/attendance_type_providers.dart';
 import '../../../../core/providers/holiday_providers.dart';
+import '../../../../core/providers/plan_providers.dart';
 import '../../../../core/providers/song_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -848,6 +849,17 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
         ? _formatTime(_endTime!)
         : (type.endTime ?? tenant?.practiceEnd);
 
+    // INTEGRATION: new Termine of a type marked as default org plan are
+    // org plans (Ionic attendance-create: is_org_plan = type.is_default_org_plan).
+    var isOrgPlan = false;
+    try {
+      final planTypes = await ref.read(planAttendanceTypesProvider.future);
+      isOrgPlan =
+          planTypes.where((t) => t.id == type.id).firstOrNull?.isDefaultOrgPlan ?? false;
+    } catch (_) {
+      isOrgPlan = false;
+    }
+
     // 1. Create the attendance record
     final response = await supabase.from('attendance').insert({
       'tenantId': tenant!.id,
@@ -862,6 +874,7 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
       'checklist': checklist,
       'created_by': supabase.auth.currentUser?.id,
       'save_in_history': true,
+      'is_org_plan': isOrgPlan,
       // DUTY: only stored when it differs from the type default
       if (type.dutyMode && _dutyRequiredFor(normalizedDate) != type.dutyRequired)
         'duty_required': _dutyRequiredFor(normalizedDate),
@@ -1029,12 +1042,16 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
 
     final entries = _songEntries.map((entry) {
       return {
-        'song_id': entry.songId,
+        // Ionic History columns: songId (camelCase), person_id,
+        // otherConductor, visible. conductorName is not a column.
+        'songId': entry.songId,
         'attendance_id': attendanceId,
         'date': dateString,
         'tenantId': tenant!.id,
-        'conductorName': entry.conductorName,
+        'person_id':
+            entry.otherConductor?.isNotEmpty == true ? null : entry.conductorId,
         'otherConductor': entry.otherConductor,
+        'visible': true,
       };
     }).toList();
 

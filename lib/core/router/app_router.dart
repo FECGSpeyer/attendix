@@ -124,7 +124,8 @@ const Map<String, RoleCheck> _protectedRoutes = {
   '/settings/general': _isAdminOrResponsible,
   '/settings/types': _isAdminOrResponsible,
   '/settings/instruments': _isAdminOrResponsible,
-  '/settings/meetings': _isAdminOrResponsible,
+  // INTEGRATION: '/settings/meetings' only redirects to the team organization
+  // (Ionic), which gates access itself; no role check here.
   '/settings/shifts': _isAdminOrResponsible,
   '/settings/pending': _isAdminOrResponsible,
   '/settings/batch-accounts': _isAdmin,
@@ -211,6 +212,9 @@ final routerProvider = Provider<GoRouter>((ref) {
       // LEGAL_HELP: Impressum & Datenschutz is public (Ionic /legal)
       final isLegalRoute = state.matchedLocation == '/legal';
       if (isLegalRoute) return null;
+      // INTEGRATION: Teams tab config is a top-level public route in Ionic
+      // (outside the tabs/login guard); the Flutter page is a static hint.
+      if (state.matchedLocation == '/teams-config') return null;
       // SONGS: public routes (song share links, /app, /open-file) need no
       // login; /open-file handles auth itself and stashes the link.
       if (_isPublicSongsRoute(state)) return null;
@@ -218,6 +222,13 @@ final routerProvider = Provider<GoRouter>((ref) {
       final isPublicPlanRoute = _publicPlanRoutes.contains(state.matchedLocation);
       if (isPublicPlanRoute) {
         return isLoggedIn && state.matchedLocation == '/planung' ? '/settings/planung' : null;
+      }
+
+      // INTEGRATION: remember an /open-attendance deep link opened while
+      // signed out and resume it after login (Ionic pendingAttendanceId).
+      if (!isLoggedIn && state.matchedLocation == '/open-attendance') {
+        PendingFileLink.set(state.uri.toString());
+        return '/login';
       }
 
       // If not logged in and not on auth route or tenant registration, redirect to login

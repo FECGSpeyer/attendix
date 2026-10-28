@@ -13,6 +13,7 @@ import '../../../../core/providers/files_providers.dart';
 import '../../../../core/providers/role_permission_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/services/audio_player/audio_player_service.dart';
+import '../../../../core/services/telegram_service.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
@@ -335,12 +336,46 @@ class _FilesPageState extends ConsumerState<FilesPage> {
     await showImageViewerSheet(context, url: url, fileName: entry.name);
   }
 
+  /// INTEGRATION: plays all audio files of the folder as a queue, starting at
+  /// the tapped one (Ionic playAudioEntry / AudioPlayerService.playQueue).
   Future<void> _playAudio(StorageEntry entry) async {
+    final audioEntries = _filteredEntries.where(FilesSearch.isAudio).toList();
+    final list = audioEntries.isEmpty ? [entry] : audioEntries;
+    final startIndex = list.indexWhere((e) => e.path == entry.path).clamp(0, list.length - 1);
+    final queue = [
+      for (final e in list)
+        AudioQueueItem(
+          fileName: e.name,
+          title: e.name,
+          resolveUrl: () => _repo.getSignedFileUrl(e.path, expiresInSeconds: 3600),
+        ),
+    ];
     try {
-      final url = await _repo.getSignedFileUrl(entry.path, expiresInSeconds: 3600);
-      await ref.read(audioPlayerServiceProvider.notifier).playFromUrl(url, entry.name, entry.name);
+      await ref.read(audioPlayerServiceProvider.notifier).playQueue(queue, startIndex);
     } catch (e) {
       if (mounted) ToastHelper.showError(context, 'Fehler beim Abspielen: ${_errorText(e)}');
+    }
+  }
+
+  String? get _telegramChatId =>
+      ref.read(currentTenantUserProvider).valueOrNull?.telegramChatId;
+
+  /// INTEGRATION: sends the file to the user's Telegram chat
+  /// (Ionic sendEntryPerTelegram, Edge Function `send-document`).
+  Future<void> _sendEntryPerTelegram(StorageEntry entry) async {
+    if (entry.isFolder) return;
+    final chatId = _telegramChatId;
+    if (chatId == null || chatId.isEmpty) {
+      ToastHelper.showWarning(context, 'Bitte verbinde zuerst Telegram in den Benachrichtigungen.');
+      return;
+    }
+    ToastHelper.showInfo(context, 'Datei wird per Telegram gesendet...');
+    try {
+      final url = await _repo.getSignedFileUrl(entry.path, expiresInSeconds: 600);
+      await ref.read(telegramServiceProvider).sendDocumentPerTelegram(url: url, chatId: chatId);
+      if (mounted) ToastHelper.showSuccess(context, 'Nachricht wurde erfolgreich gesendet!');
+    } catch (e) {
+      if (mounted) ToastHelper.showError(context, 'Telegram-Versand fehlgeschlagen: ${_errorText(e)}');
     }
   }
 
@@ -709,6 +744,16 @@ class _FilesPageState extends ConsumerState<FilesPage> {
                 _shareEntry(entry);
               },
             ),
+            // INTEGRATION: Ionic files "Per Telegram senden"
+            if (!entry.isFolder && (_telegramChatId?.isNotEmpty ?? false))
+              ListTile(
+                leading: const Icon(Icons.send_outlined),
+                title: const Text('Per Telegram senden'),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  _sendEntryPerTelegram(entry);
+                },
+              ),
             if (canEdit) ...[
               ListTile(
                 leading: const Icon(Icons.edit_outlined),

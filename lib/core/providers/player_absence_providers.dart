@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/models/player_absence/player_absence.dart';
 import '../../data/repositories/player_absence_repository.dart';
 import '../constants/enums.dart';
+import 'role_permission_providers.dart';
 import 'tenant_providers.dart';
 
 /// PlayerAbsenceRepository with tenant context
@@ -29,28 +30,15 @@ final playerAbsencesProvider = FutureProvider<List<PlayerAbsence>>((ref) async {
   return repo.getAbsencesForTenant();
 });
 
-/// `tenant_role_permissions` absence flags for a role (by role value)
-final roleAbsencePermissionsByRoleProvider =
-    FutureProvider.family<RoleAbsencePermissions, int>((ref, role) async {
-  final repo = ref.watch(playerAbsenceRepositoryWithTenantProvider);
-  if (!repo.hasTenantId) return const RoleAbsencePermissions();
-  try {
-    return await repo.getRoleAbsencePermissions(role);
-  } catch (_) {
-    // Table may be missing on older backends -> treat as not permitted.
-    return const RoleAbsencePermissions();
-  }
-});
+// INTEGRATION: the role flags come from role_permission_providers
+// (tenant_role_permissions, Ionic db.getPermissionForRole) – one source.
 
 /// Ionic person page: `canManagePlannedAbsences = isAdmin || perm.player_planned_absence`
-/// (isAdmin = Admin or Responsible).
+/// (isAdmin = Admin or Responsible; perm of the user's real role).
 final canManagePlannedAbsencesProvider = Provider<bool>((ref) {
   final role = ref.watch(currentRoleProvider);
   if (role == Role.admin || role == Role.responsible) return true;
-  return ref
-          .watch(roleAbsencePermissionsByRoleProvider(role.value))
-          .valueOrNull
-          ?.playerPlannedAbsence ??
+  return ref.watch(rolePermissionByRoleProvider(role))?.playerPlannedAbsence ??
       false;
 });
 
@@ -58,13 +46,9 @@ final canManagePlannedAbsencesProvider = Provider<bool>((ref) {
 /// (Ionic signout page: permission of the user's own role)
 final canSelfReportAbsenceProvider = Provider<bool>((ref) {
   final role = ref.watch(currentRoleProvider);
-  return ref
-          .watch(roleAbsencePermissionsByRoleProvider(role.value))
-          .valueOrNull
-          ?.playerPlannedAbsence ??
+  return ref.watch(rolePermissionByRoleProvider(role))?.playerPlannedAbsence ??
       false;
 });
-
 
 /// Mutations for planned absences
 class PlayerAbsenceNotifier extends Notifier<AsyncValue<void>> {
