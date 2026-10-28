@@ -5,6 +5,7 @@ import '../../../../core/constants/enums.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/event_list_utils.dart';
 import '../../../../core/utils/toast_helper.dart';
+import '../../../../data/models/attendance/attendance.dart';
 import '../../../../data/repositories/sign_in_out_repository.dart';
 import '../../../../shared/widgets/event_list/event_list_widgets.dart';
 import '../../../../shared/widgets/event_list/excuse_reason_sheet.dart';
@@ -205,17 +206,34 @@ class SelfServiceEventActions {
     String note = '',
     bool editMode = false,
   }) async {
-    final fields = supportsRegistrationFields ? att.registrationFields : const [];
+    final fields = supportsRegistrationFields ? att.registrationFields : const <RegistrationField>[];
     if (fields.isEmpty) {
       if (!editMode) await _signIn(context, att, note);
       return;
     }
-    final answers = await showRegistrationFieldsSheet(
-      context,
-      fields: att.registrationFields,
-      existing: att.registrationAnswers,
-      editMode: editMode,
-    );
+    // UX_SELF: one field -> alert, 2+ fields -> sheet (Ionic handleSigninWithFields)
+    final Map<String, dynamic>? answers;
+    if (fields.length == 1) {
+      answers = await showSingleRegistrationFieldDialog(
+        context,
+        field: fields.first,
+        existing: att.registrationAnswers?[fields.first.id],
+        editMode: editMode,
+      );
+      if (answers == null || !context.mounted) return;
+      final missing = missingRegistrationField(fields, answers);
+      if (missing != null) {
+        ToastHelper.showWarning(context, 'Bitte "$missing" ausfüllen');
+        return;
+      }
+    } else {
+      answers = await showRegistrationFieldsSheet(
+        context,
+        fields: att.registrationFields,
+        existing: att.registrationAnswers,
+        editMode: editMode,
+      );
+    }
     if (answers == null || !context.mounted) return;
     final saved = await saveRegistrationAnswers?.call(att, answers) ?? false;
     if (!context.mounted) return;
@@ -437,4 +455,136 @@ class SelfServiceAction {
   const SelfServiceAction(this.type);
 
   final SelfServiceActionType type;
+}
+
+/// Alert for a single registration field (Ionic showSingleFieldAlert):
+/// text input, Ja/Nein radios, option radios or checkboxes. In sign-in mode
+/// the only button is "Anmelden"; in edit mode "Abbrechen" / "Speichern".
+Future<Map<String, dynamic>?> showSingleRegistrationFieldDialog(
+  BuildContext context, {
+  required RegistrationField field,
+  dynamic existing,
+  bool editMode = false,
+}) {
+  return showDialog<Map<String, dynamic>>(
+    context: context,
+    barrierDismissible: editMode,
+    builder: (ctx) => _SingleFieldDialog(field: field, existing: existing, editMode: editMode),
+  );
+}
+
+class _SingleFieldDialog extends StatefulWidget {
+  const _SingleFieldDialog({required this.field, required this.existing, required this.editMode});
+
+  final RegistrationField field;
+  final dynamic existing;
+  final bool editMode;
+
+  @override
+  State<_SingleFieldDialog> createState() => _SingleFieldDialogState();
+}
+
+class _SingleFieldDialogState extends State<_SingleFieldDialog> {
+  late dynamic _value;
+  late final TextEditingController _text;
+
+  @override
+  void initState() {
+    super.initState();
+    final field = widget.field;
+    final existing = widget.existing;
+    if (field.type == RegistrationFieldType.multiSelect) {
+      _value = existing is List ? existing.map((e) => e.toString()).toList() : <String>[];
+    } else {
+      _value = existing ?? (field.type == RegistrationFieldType.boolean ? false : '');
+    }
+    _text = TextEditingController(
+      text: field.type == RegistrationFieldType.text ? '${_value ?? ''}' : '',
+    );
+  }
+
+  @override
+  void dispose() {
+    _text.dispose();
+    super.dispose();
+  }
+
+  Widget _content() {
+    final field = widget.field;
+    switch (field.type) {
+      case RegistrationFieldType.boolean:
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            for (final opt in const [true, false])
+              RadioListTile<bool>(
+                contentPadding: EdgeInsets.zero,
+                value: opt,
+                groupValue: _value is bool ? _value as bool : null,
+                title: Text(opt ? 'Ja' : 'Nein'),
+                onChanged: (v) => setState(() => _value = v),
+              ),
+          ],
+        );
+      case RegistrationFieldType.select:
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            for (final opt in field.options ?? const <String>[])
+              RadioListTile<String>(
+                contentPadding: EdgeInsets.zero,
+                value: opt,
+                groupValue: _value is String ? _value as String : null,
+                title: Text(opt),
+                onChanged: (v) => setState(() => _value = v),
+              ),
+          ],
+        );
+      case RegistrationFieldType.multiSelect:
+        final selected = _value as List<String>;
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            for (final opt in field.options ?? const <String>[])
+              CheckboxListTile(
+                contentPadding: EdgeInsets.zero,
+                controlAffinity: ListTileControlAffinity.leading,
+                value: selected.contains(opt),
+                title: Text(opt),
+                onChanged: (v) => setState(() {
+                  if (v == true) {
+                    selected.add(opt);
+                  } else {
+                    selected.remove(opt);
+                  }
+                }),
+              ),
+          ],
+        );
+      default:
+        return TextField(
+          controller: _text,
+          autofocus: true,
+          textCapitalization: TextCapitalization.sentences,
+          decoration: const InputDecoration(hintText: '...'),
+          onChanged: (v) => _value = v,
+        );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text(widget.field.label),
+      content: SingleChildScrollView(child: _content()),
+      actions: [
+        if (widget.editMode)
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Abbrechen')),
+        TextButton(
+          onPressed: () => Navigator.pop(context, <String, dynamic>{widget.field.id: _value}),
+          child: Text(widget.editMode ? 'Speichern' : 'Anmelden'),
+        ),
+      ],
+    );
+  }
 }

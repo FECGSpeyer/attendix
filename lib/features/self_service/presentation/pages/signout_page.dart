@@ -22,6 +22,8 @@ import '../widgets/self_service_event_actions.dart';
 import '../widgets/upcoming_songs_sheet.dart';
 import '../widgets/self_service_absences.dart';
 import '../../../../core/providers/duty_providers.dart';
+import '../../../../core/providers/player_absence_providers.dart';
+import '../../../duty/presentation/widgets/duty_actions.dart';
 import '../../../duty/presentation/widgets/self_service_duty_section.dart';
 import '../../../messages/presentation/widgets/notification_bell.dart'; // MESSAGES
 import '../../../team_organization/presentation/widgets/my_tasks_card.dart'; // INTEGRATION
@@ -50,7 +52,14 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
       absenceReasons: EventListUtils.absenceReasonsOf(tenant?.absenceReasons),
       lateReasons: EventListUtils.lateReasonsOf(tenant?.lateReasons),
       showAllAttendances: tenant?.showAllAttendances ?? false,
-      signIn: (att, note) => notifier.signIn(att, notes: note),
+      signIn: (att, note) async {
+        // UX_SELF: "Zusagen" on a duty I was assigned to confirms it (Ionic signin).
+        if (att.isDutyRequested && att.attendanceId != null) {
+          await confirmDutyAction(context, ref, att.id!, att.attendanceId!);
+          return true;
+        }
+        return notifier.signIn(att, notes: note);
+      },
       signOut: (att, reason, isLate) =>
           notifier.signOut([att.id!], reason, isLate: isLate),
       updateNote: (att, note) => notifier.updateNote(att.id!, note),
@@ -115,7 +124,8 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
     }
   }
 
-  PreferredSizeWidget _buildAppBar(Tenant? tenant, List<Tenant> tenants) {
+  PreferredSizeWidget _buildAppBar(Tenant? tenant, List<Tenant> tenants, {Person? player}) {
+    final canSelfPause = ref.watch(canSelfPauseProvider);
     final Widget title;
     if (tenants.length > 1) {
       title = PopupMenuButton<Tenant>(
@@ -153,6 +163,19 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
     return AppBar(
       title: title,
       actions: [
+        // UX_SELF: pause / unpause sit in the header like in Ionic
+        if (canSelfPause && player != null && !player.paused)
+          IconButton(
+            icon: const Icon(Icons.pause_circle_outline),
+            tooltip: 'Pausieren',
+            onPressed: () => selfServicePause(context, ref, player),
+          ),
+        if (canSelfPause && player != null && player.paused)
+          IconButton(
+            icon: const Icon(Icons.play_circle_outline),
+            tooltip: 'Pausierung beenden',
+            onPressed: () => selfServiceUnpause(context, ref, player),
+          ),
         IconButton(
           icon: const Icon(Icons.info_outline),
           tooltip: 'Legende',
@@ -207,7 +230,7 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
     if (loaded != null) _openPendingAttendance(loaded, actions);
 
     return Scaffold(
-      appBar: _buildAppBar(tenant, tenants),
+      appBar: _buildAppBar(tenant, tenants, player: player),
       body: dataAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(
@@ -226,12 +249,18 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
           child: ListView(
             padding: const EdgeInsets.only(bottom: 32),
             children: [
-              if (player != null) _buildGreeting(player, data),
-              if (player != null) ..._buildTiles(player),
+              // UX_SELF: element order of the Ionic signout page
+              if (player != null) _buildGreeting(player, data, useDutyView: useDutyView),
+              if (player != null && useDutyView)
+                const SelfServiceDutySection(part: SelfServiceDutyPart.stats),
+              if (player != null && !useDutyView) ..._buildTiles(player),
+              // DUTY: "Bitte bestätigen"
+              if (player != null)
+                const SelfServiceDutySection(part: SelfServiceDutyPart.requests),
               // INTEGRATION: "Meine Aufgaben" (Teamorganisation, Ionic app-my-tasks)
               if (player != null) const MyTasksCard(),
-              // PEOPLE_IMPORT: planned absences + self pause
-              if (player != null) const SelfServiceAbsenceSection(),
+              // PEOPLE_IMPORT: "Geplante Abwesenheiten"
+              if (player != null) const SelfServicePlannedAbsences(),
               if (player == null)
                 const Padding(
                   padding: EdgeInsets.all(32),
@@ -242,12 +271,19 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
                 ),
               // DUTY: Dienstplan ("Bitte bestätigen", "Meine Dienste", "Offene Dienste");
               // in the Dienstplan view the other Termine are collapsed.
-              SelfServiceDutySection(
-                showOtherTermine: _showOtherTermine,
-                otherTermineCount: data.upcoming.length + (data.current != null ? 1 : 0),
-                onToggleOtherTermine: () =>
-                    setState(() => _showOtherTermine = !_showOtherTermine),
-              ),
+              if (player != null)
+                SelfServiceDutySection(
+                  part: SelfServiceDutyPart.dutyView,
+                  showOtherTermine: _showOtherTermine,
+                  otherTermineCount: data.upcoming.length + (data.current != null ? 1 : 0),
+                  otherTermineNames: _otherTermineNames(data),
+                  onToggleOtherTermine: () =>
+                      setState(() => _showOtherTermine = !_showOtherTermine),
+                  onReportAbsence: ref.watch(canSelfReportAbsenceProvider)
+                      ? () => selfServiceReportAbsence(context, ref, player,
+                          canSelfPause: ref.read(canSelfPauseProvider))
+                      : null,
+                ),
               if (!useDutyView || _showOtherTermine) ...[
                 ..._buildCurrent(data, actions, tenant),
                 ..._buildUpcoming(data, actions),
@@ -272,7 +308,16 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
     );
   }
 
-  Widget _buildGreeting(Person player, SignoutData data) {
+  /// Names of the other Termine for the collapsed "Weitere Termine" row.
+  String _otherTermineNames(SignoutData data) {
+    final names = <String>{
+      for (final att in [if (data.current != null) data.current!, ...data.upcoming])
+        att.eventTitle,
+    };
+    return names.take(3).join(', ');
+  }
+
+  Widget _buildGreeting(Person player, SignoutData data, {bool useDutyView = false}) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
       child: Row(
@@ -312,7 +357,9 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
                           Text('Pausiert', style: TextStyle(color: AppColors.warningDark)),
                         ],
                       ),
-                    if (data.percentage > 0)
+                    if (useDutyView)
+                      const Text('Dein Dienstplan', style: TextStyle(color: AppColors.medium))
+                    else if (data.percentage > 0)
                       Text(
                         '${data.percentage}% Anwesenheit',
                         style: TextStyle(
@@ -333,8 +380,12 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
     );
   }
 
+  /// Greet tiles: Aktuelle Werke / Abwesenheit melden / Offene Dienste.
   List<Widget> _buildTiles(Person player) {
     final songs = ref.watch(upcomingSongsProvider).valueOrNull ?? const [];
+    final canPlannedAbsence = ref.watch(canSelfReportAbsenceProvider);
+    final duty = ref.watch(myDutyOverviewProvider).valueOrNull;
+    final inDutyCircle = duty?.inDutyCircle ?? false;
     final tiles = <Widget>[
       if (songs.isNotEmpty)
         _GreetTile(
@@ -343,16 +394,38 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
           subtitle: songs.length == 1 ? 'Nächster Termin' : '${songs.length} Termine',
           onTap: () => showUpcomingSongsSheet(context),
         ),
+      if (canPlannedAbsence)
+        _GreetTile(
+          icon: Icons.calendar_today_outlined,
+          title: 'Abwesenheit',
+          subtitle: 'melden',
+          onTap: () => selfServiceReportAbsence(context, ref, player,
+              canSelfPause: ref.read(canSelfPauseProvider)),
+        ),
+      if (inDutyCircle)
+        _GreetTile(
+          icon: Icons.headset_mic_outlined,
+          title: 'Offene Dienste',
+          subtitle: openDutiesTileSubtitle(duty!.openDuties.length),
+          onTap: () => showOpenDutiesSheet(context),
+        ),
     ];
     if (tiles.isEmpty) return const [];
+    // Ionic: 2-column grid
     return [
       Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-        child: Row(
+        padding: const EdgeInsets.fromLTRB(16, 6, 16, 4),
+        child: Column(
           children: [
-            for (var i = 0; i < tiles.length; i++) ...[
-              if (i > 0) const SizedBox(width: 8),
-              Expanded(child: tiles[i]),
+            for (var i = 0; i < tiles.length; i += 2) ...[
+              if (i > 0) const SizedBox(height: 10),
+              Row(
+                children: [
+                  Expanded(child: tiles[i]),
+                  const SizedBox(width: 10),
+                  Expanded(child: i + 1 < tiles.length ? tiles[i + 1] : const SizedBox.shrink()),
+                ],
+              ),
             ],
           ],
         ),
@@ -498,18 +571,28 @@ class _GreetTile extends StatelessWidget {
           padding: const EdgeInsets.all(12),
           child: Row(
             children: [
-              CircleAvatar(
-                radius: 18,
-                backgroundColor: AppColors.primary.withValues(alpha: 0.12),
-                child: Icon(icon, color: AppColors.primary, size: 20),
+              Container(
+                width: 34,
+                height: 34,
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withValues(alpha: 0.13),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(icon, color: AppColors.primary, size: 18),
               ),
               const SizedBox(width: 10),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
-                    Text(subtitle, style: const TextStyle(color: AppColors.medium, fontSize: 12)),
+                    Text(title,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+                    Text(subtitle,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(color: AppColors.medium, fontSize: 12)),
                   ],
                 ),
               ),
