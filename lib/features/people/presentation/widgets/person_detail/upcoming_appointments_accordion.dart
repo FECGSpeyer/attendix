@@ -14,6 +14,8 @@ final upcomingAttendancesProvider =
         (ref, personId) async {
   final supabase = ref.watch(supabaseClientProvider);
   final tenant = ref.watch(currentTenantProvider);
+  // SOL_FIX15: reload on an account switch.
+  ref.watch(currentAuthUserIdProvider);
 
   if (tenant == null) return [];
 
