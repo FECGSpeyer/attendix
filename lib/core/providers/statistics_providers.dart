@@ -12,6 +12,7 @@ import '../../data/repositories/attendance_repository.dart';
 import '../../data/repositories/player_repository.dart';
 import 'attendance_type_providers.dart';
 import 'tenant_providers.dart';
+import '../../l10n/l10n.dart';
 
 /// Date range for statistics filtering
 class StatisticsDateRange {
@@ -314,7 +315,7 @@ final groupChartDataProvider = Provider<List<GroupChartData>>((ref) {
   final playerGroupMap = <int, String>{};
   for (final player in players) {
     if (player.id != null) {
-      playerGroupMap[player.id!] = player.groupName ?? 'Ohne Gruppe';
+      playerGroupMap[player.id!] = player.groupName ?? l10nWithoutContext.peopleNoGroupAssigned;
     }
   }
 
@@ -324,7 +325,7 @@ final groupChartDataProvider = Provider<List<GroupChartData>>((ref) {
   for (final pa in personAttendances) {
     if (pa.personId == null) continue;
 
-    final groupName = playerGroupMap[pa.personId] ?? 'Ohne Gruppe';
+    final groupName = playerGroupMap[pa.personId] ?? l10nWithoutContext.peopleNoGroupAssigned;
     final current = groupStats[groupName] ?? (present: 0, total: 0);
 
     final isPresent = pa.status.countsAsPresent;
@@ -542,7 +543,7 @@ final avgAgePerInstrumentProvider = Provider<List<GroupChartData>>((ref) {
                 ? 1
                 : 0);
 
-        final groupName = player.groupName ?? 'Ohne Gruppe';
+        final groupName = player.groupName ?? l10nWithoutContext.peopleNoGroupAssigned;
         groupAges.putIfAbsent(groupName, () => []).add(age);
       }
     }

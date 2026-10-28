@@ -11,6 +11,7 @@ import '../../data/repositories/attendance_repository.dart';
 import '../providers/attendance_providers.dart';
 import '../providers/connectivity_provider.dart';
 import '../providers/tenant_providers.dart';
+import '../../l10n/l10n.dart';
 
 /// Root messenger so services can show toasts without a BuildContext.
 final GlobalKey<ScaffoldMessengerState> rootScaffoldMessengerKey =
@@ -284,8 +285,8 @@ class OfflineQueueNotifier extends Notifier<int> {
       if (failed.isEmpty) {
         try {
           rootScaffoldMessengerKey.currentState?.showSnackBar(
-            const SnackBar(
-              content: Text('Offline-Änderungen gespeichert'),
+            SnackBar(
+              content: Text(l10nWithoutContext.svcOfflineSaved),
               backgroundColor: Colors.green,
               behavior: SnackBarBehavior.floating,
             ),

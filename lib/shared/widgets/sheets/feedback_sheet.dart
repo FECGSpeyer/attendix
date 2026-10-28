@@ -6,6 +6,7 @@ import '../../../core/constants/app_constants.dart';
 import '../../../core/providers/feedback_providers.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/toast_helper.dart';
+import '../../../l10n/l10n.dart';
 
 /// Shows the feedback bottom sheet
 void showFeedbackSheet(BuildContext context) {
@@ -52,7 +53,7 @@ class _FeedbackSheetState extends ConsumerState<_FeedbackSheet>
 
   Future<void> _sendQuestion() async {
     if (_questionController.text.trim().isEmpty) {
-      ToastHelper.showWarning(context, 'Bitte gib eine Frage ein');
+      ToastHelper.showWarning(context, context.l10n.coreFlutterFeedbackQuestionRequired);
       return;
     }
 
@@ -70,16 +71,16 @@ class _FeedbackSheetState extends ConsumerState<_FeedbackSheet>
     setState(() => _isLoading = false);
 
     if (success) {
-      ToastHelper.showSuccess(context, 'Frage wurde gesendet');
+      ToastHelper.showSuccess(context, context.l10n.settingsQuestionSent);
       Navigator.of(context).pop();
     } else {
-      ToastHelper.showError(context, 'Fehler beim Senden der Frage');
+      ToastHelper.showError(context, context.l10n.svcSendQuestionFailed);
     }
   }
 
   Future<void> _sendFeedback() async {
     if (_rating == 0) {
-      ToastHelper.showWarning(context, 'Bitte gib eine Bewertung ab');
+      ToastHelper.showWarning(context, context.l10n.settingsRatingRequired);
       return;
     }
 
@@ -99,10 +100,10 @@ class _FeedbackSheetState extends ConsumerState<_FeedbackSheet>
     setState(() => _isLoading = false);
 
     if (success) {
-      ToastHelper.showSuccess(context, 'Feedback wurde gesendet');
+      ToastHelper.showSuccess(context, context.l10n.settingsFeedbackSent);
       Navigator.of(context).pop();
     } else {
-      ToastHelper.showError(context, 'Fehler beim Senden des Feedbacks');
+      ToastHelper.showError(context, context.l10n.svcSendFeedbackFailed);
     }
   }
 
@@ -144,7 +145,7 @@ class _FeedbackSheetState extends ConsumerState<_FeedbackSheet>
               Padding(
                 padding: const EdgeInsets.all(AppDimensions.paddingM),
                 child: Text(
-                  'Hilfe & Feedback',
+                  context.l10n.settingsHelpFeedback,
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
@@ -157,8 +158,8 @@ class _FeedbackSheetState extends ConsumerState<_FeedbackSheet>
                   margin: EdgeInsets.zero,
                   child: ListTile(
                     leading: const Icon(Icons.send_outlined, color: AppColors.primary),
-                    title: const Text('Per Telegram kontaktieren',
-                        style: TextStyle(color: AppColors.primary)),
+                    title: Text(context.l10n.settingsContactTelegram,
+                        style: const TextStyle(color: AppColors.primary)),
                     onTap: () {
                       try {
                         launchUrl(Uri.parse('https://t.me/Eckstaedt'),
@@ -168,17 +169,18 @@ class _FeedbackSheetState extends ConsumerState<_FeedbackSheet>
                   ),
                 ),
               ),
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: AppDimensions.paddingS),
-                child: Text('oder', style: TextStyle(color: AppColors.medium)),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: AppDimensions.paddingS),
+                child: Text(context.l10n.settingsOr,
+                    style: const TextStyle(color: AppColors.medium)),
               ),
               // Tab bar
               TabBar(
                 controller: _tabController,
                 onTap: (_) => _resetForm(),
-                tabs: const [
-                  Tab(text: 'Hilfe/Frage'),
-                  Tab(text: 'Feedback'),
+                tabs: [
+                  Tab(text: context.l10n.settingsHelpQuestion),
+                  Tab(text: context.l10n.settingsFeedback),
                 ],
               ),
               // Tab content
@@ -206,17 +208,17 @@ class _FeedbackSheetState extends ConsumerState<_FeedbackSheet>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Hast du eine Frage oder brauchst Hilfe?',
+            context.l10n.coreFlutterFeedbackQuestionIntro,
             style: Theme.of(context).textTheme.bodyLarge,
           ),
           const SizedBox(height: AppDimensions.paddingM),
           TextField(
             controller: _questionController,
             maxLines: 5,
-            decoration: const InputDecoration(
-              labelText: 'Deine Frage',
-              hintText: 'Beschreibe dein Anliegen...',
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              labelText: context.l10n.settingsYourQuestion,
+              hintText: context.l10n.settingsYourQuestionPh,
+              border: const OutlineInputBorder(),
               alignLabelWithHint: true,
             ),
           ),
@@ -224,11 +226,12 @@ class _FeedbackSheetState extends ConsumerState<_FeedbackSheet>
           TextField(
             controller: _phoneController,
             keyboardType: TextInputType.phone,
-            decoration: const InputDecoration(
-              labelText: 'Deine Handynummer (optional)',
-              helperText: 'Dient nur zur Kontaktaufnahme bei Rückfragen',
-              border: OutlineInputBorder(),
-              prefixIcon: Icon(Icons.phone),
+            decoration: InputDecoration(
+              labelText: context.l10n.settingsYourMobileOptional,
+              helperText: context.l10n.settingsContactOnly,
+              hintText: context.l10n.settingsPhonePh,
+              border: const OutlineInputBorder(),
+              prefixIcon: const Icon(Icons.phone),
             ),
           ),
           const SizedBox(height: AppDimensions.paddingL),
@@ -246,7 +249,7 @@ class _FeedbackSheetState extends ConsumerState<_FeedbackSheet>
                       ),
                     )
                   : const Icon(Icons.send),
-              label: const Text('Absenden'),
+              label: Text(context.l10n.settingsSubmit),
             ),
           ),
         ],
@@ -262,7 +265,7 @@ class _FeedbackSheetState extends ConsumerState<_FeedbackSheet>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Wie gefällt dir die App?',
+            context.l10n.coreFlutterFeedbackRatingIntro,
             style: Theme.of(context).textTheme.bodyLarge,
           ),
           const SizedBox(height: AppDimensions.paddingM),
@@ -287,20 +290,20 @@ class _FeedbackSheetState extends ConsumerState<_FeedbackSheet>
           TextField(
             controller: _feedbackController,
             maxLines: 4,
-            decoration: const InputDecoration(
-              labelText: 'Feedback (optional)',
-              hintText: 'Was können wir verbessern?',
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              labelText: context.l10n.settingsYourFeedback,
+              hintText: context.l10n.settingsFeedbackPh,
+              border: const OutlineInputBorder(),
               alignLabelWithHint: true,
             ),
           ),
           const SizedBox(height: AppDimensions.paddingM),
           // Anonymous toggle
           SwitchListTile(
-            title: const Text('Anonym'),
-            subtitle: const Text(
-              'Deine Daten werden nicht mitgesendet',
-              style: TextStyle(fontSize: 12),
+            title: Text(context.l10n.settingsAnonymous),
+            subtitle: Text(
+              context.l10n.coreFlutterFeedbackAnonymousHint,
+              style: const TextStyle(fontSize: 12),
             ),
             value: _anonymous,
             onChanged: (value) => setState(() => _anonymous = value),
@@ -311,11 +314,12 @@ class _FeedbackSheetState extends ConsumerState<_FeedbackSheet>
             TextField(
               controller: _phoneController,
               keyboardType: TextInputType.phone,
-              decoration: const InputDecoration(
-                labelText: 'Deine Handynummer (optional)',
-                helperText: 'Dient nur zur Kontaktaufnahme bei Rückfragen',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.phone),
+              decoration: InputDecoration(
+                labelText: context.l10n.settingsYourMobileOptional,
+                helperText: context.l10n.settingsContactOnly,
+                hintText: context.l10n.settingsPhonePh,
+                border: const OutlineInputBorder(),
+                prefixIcon: const Icon(Icons.phone),
               ),
             ),
           ],
@@ -334,7 +338,7 @@ class _FeedbackSheetState extends ConsumerState<_FeedbackSheet>
                       ),
                     )
                   : const Icon(Icons.send),
-              label: const Text('Absenden'),
+              label: Text(context.l10n.settingsSubmit),
             ),
           ),
         ],

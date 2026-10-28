@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:intl/intl.dart';
 
 import '../../data/models/plan/plan.dart';
+import '../../l10n/l10n.dart';
 
 /// Helpers for Ablaufpläne, ported from Ionic `utilities/plan-days.ts` and
 /// `utilities/plan-groups.ts`.
@@ -306,10 +307,17 @@ class PlanUtils {
 
   static String dayLabel(PlanAttendance att, int day) {
     final d = _date(att.date);
-    if (d == null) return 'Tag ${day + 1}';
+    if (d == null) return l10nWithoutContext.coreFlutterPlanDayN(day + 1);
     final date = d.add(Duration(days: day));
-    const weekdays = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
-    return '${weekdays[date.weekday - 1]} ${DateFormat('dd.MM.').format(date)}';
+    final String weekday;
+    if (currentLanguage() == 'de') {
+      const weekdays = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
+      weekday = weekdays[date.weekday - 1];
+    } else {
+      final name = DateFormat('EEE', currentIntlLocale()).format(date);
+      weekday = name.length > 2 ? name.substring(0, 2) : name;
+    }
+    return '$weekday ${DateFormat(dateFmt(DateFmtKind.dayMonth)).format(date)}';
   }
 
   /// Chip label: custom label, else the day ("Sa 18.10."), else "Plan n".
@@ -439,17 +447,23 @@ class PlanUtils {
     if (start == null) return '';
     final remaining = start.difference(now ?? DateTime.now()).inSeconds;
     if (remaining <= 0) return '';
-    if (remaining < 60) return 'beginnt gleich';
+    final l10n = l10nWithoutContext;
+    if (remaining < 60) return l10n.coreFlutterPlanStartsSoon;
     final minutes = (remaining / 60).ceil();
     final h = minutes ~/ 60;
     final m = minutes % 60;
-    if (h == 0) return 'beginnt in $m Min.';
-    return m > 0 ? 'beginnt in $h Std. $m Min.' : 'beginnt in $h Std.';
+    if (h == 0) return l10n.coreFlutterPlanStartsInMin(m);
+    return m > 0
+        ? l10n.coreFlutterPlanStartsInHoursMin(h, m)
+        : l10n.coreFlutterPlanStartsInHours(h);
   }
 
   /// "Samstag, 18.10.2025"
   static String longDate(DateTime? date) {
     if (date == null) return '';
+    if (currentLanguage() != 'de') {
+      return DateFormat('EEEE, ${dateFmt()}', currentIntlLocale()).format(date);
+    }
     const days = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'];
     return '${days[date.weekday - 1]}, ${DateFormat('dd.MM.yyyy').format(date)}';
   }

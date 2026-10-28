@@ -7,6 +7,7 @@ import '../../core/utils/person_matcher.dart';
 import '../../core/utils/text_utils.dart';
 import 'base_repository.dart';
 import 'user_registration_repository.dart';
+import '../../l10n/l10n.dart';
 
 /// Provider for PlayerRepository
 final playerRepositoryProvider = Provider<PlayerRepository>((ref) {
@@ -1325,7 +1326,7 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
           .eq('tenantId', currentTenantId);
       if ((owned as List).length != 2) {
         throw RepositoryException(
-          message: 'Personen gehören nicht zur aktuellen Instanz',
+          message: l10nWithoutContext.coreFlutterRepoPersonsNotInTenant,
           operation: 'mergePendingPlayerIntoExisting',
         );
       }

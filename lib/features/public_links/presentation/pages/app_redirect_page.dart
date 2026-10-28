@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../../../l10n/l10n.dart';
 
 const appStoreUrl = 'https://apps.apple.com/app/attendix/id6771119302';
 const playStoreUrl = 'https://play.google.com/store/apps/details?id=io.stephanus.attendix';
@@ -77,8 +78,8 @@ class _AppRedirectPageState extends State<AppRedirectPage> {
                         style: Theme.of(context).textTheme.headlineMedium,
                       ),
                       const SizedBox(height: 8),
-                      const Text(
-                        'Lade die App im Store deines Geräts:',
+                      Text(
+                        context.l10n.appRedirectLoadApp,
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 24),

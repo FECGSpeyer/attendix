@@ -7,6 +7,7 @@ import '../../core/constants/enums.dart';
 import '../../core/utils/duty_utils.dart';
 import '../models/attendance/attendance.dart';
 import 'base_repository.dart';
+import '../../l10n/l10n.dart';
 
 /// Provider for AttendanceRepository
 final attendanceRepositoryProvider = Provider<AttendanceRepository>((ref) {
@@ -115,7 +116,7 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
 
       if (existing != null) {
         throw DuplicateAttendanceException(
-          message: 'Ein Termin an diesem Datum existiert bereits',
+          message: l10nWithoutContext.coreFlutterRepoEventExistsOnDate,
           existingId: existing['id'] as int,
           date: attendance.date,
         );

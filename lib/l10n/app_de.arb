@@ -1940,6 +1940,517 @@
   "@commonYes": {
     "description": "common.yes"
   },
+  "coreFlutterErrorWith": "Fehler: {error}",
+  "@coreFlutterErrorWith": {
+    "description": "core.flutter.errorWith",
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "coreFlutterExportAttendanceHeader": "{name} Anwesenheit Stand: {date}",
+  "@coreFlutterExportAttendanceHeader": {
+    "description": "core.flutter.export.attendanceHeader",
+    "placeholders": {
+      "name": {},
+      "date": {}
+    }
+  },
+  "coreFlutterExportEndAt": "Ende: {time} Uhr",
+  "@coreFlutterExportEndAt": {
+    "description": "core.flutter.export.endAt",
+    "placeholders": {
+      "time": {}
+    }
+  },
+  "coreFlutterExportOpen": "Offen",
+  "@coreFlutterExportOpen": {
+    "description": "core.flutter.export.open"
+  },
+  "coreFlutterExportPdfRenderFailed": "PDF konnte nicht gerendert werden",
+  "@coreFlutterExportPdfRenderFailed": {
+    "description": "core.flutter.export.pdfRenderFailed"
+  },
+  "coreFlutterExportPlayerListHeader": "{name} Spielerliste Stand: {date}",
+  "@coreFlutterExportPlayerListHeader": {
+    "description": "core.flutter.export.playerListHeader",
+    "placeholders": {
+      "name": {},
+      "date": {}
+    }
+  },
+  "coreFlutterExportPlayerListSheet": "Spielerliste",
+  "@coreFlutterExportPlayerListSheet": {
+    "description": "core.flutter.export.playerListSheet"
+  },
+  "coreFlutterExportRate": "Quote",
+  "@coreFlutterExportRate": {
+    "description": "core.flutter.export.rate"
+  },
+  "coreFlutterExportRehearsalProgramme": "Probenprogramm",
+  "@coreFlutterExportRehearsalProgramme": {
+    "description": "core.flutter.export.rehearsalProgramme"
+  },
+  "coreFlutterFeedbackAnonymousHint": "Deine Daten werden nicht mitgesendet",
+  "@coreFlutterFeedbackAnonymousHint": {
+    "description": "core.flutter.feedback.anonymousHint"
+  },
+  "coreFlutterFeedbackQuestionIntro": "Hast du eine Frage oder brauchst Hilfe?",
+  "@coreFlutterFeedbackQuestionIntro": {
+    "description": "core.flutter.feedback.questionIntro"
+  },
+  "coreFlutterFeedbackQuestionRequired": "Bitte gib eine Frage ein",
+  "@coreFlutterFeedbackQuestionRequired": {
+    "description": "core.flutter.feedback.questionRequired"
+  },
+  "coreFlutterFeedbackRatingIntro": "Wie gefällt dir die App?",
+  "@coreFlutterFeedbackRatingIntro": {
+    "description": "core.flutter.feedback.ratingIntro"
+  },
+  "coreFlutterFileBytesUnavailable": "Datei-Bytes nicht verfügbar",
+  "@coreFlutterFileBytesUnavailable": {
+    "description": "core.flutter.fileBytesUnavailable"
+  },
+  "coreFlutterFilePathUnavailable": "Dateipfad nicht verfügbar",
+  "@coreFlutterFilePathUnavailable": {
+    "description": "core.flutter.filePathUnavailable"
+  },
+  "coreFlutterHistoryApproved": "Genehmigt",
+  "@coreFlutterHistoryApproved": {
+    "description": "core.flutter.history.approved"
+  },
+  "coreFlutterHistoryCopiedFrom": "Kopiert von",
+  "@coreFlutterHistoryCopiedFrom": {
+    "description": "core.flutter.history.copiedFrom"
+  },
+  "coreFlutterHistoryCopiedTo": "Kopiert an",
+  "@coreFlutterHistoryCopiedTo": {
+    "description": "core.flutter.history.copiedTo"
+  },
+  "coreFlutterHistoryCritical": "Kritisch markiert",
+  "@coreFlutterHistoryCritical": {
+    "description": "core.flutter.history.critical"
+  },
+  "coreFlutterHistoryDeclined": "Abgelehnt",
+  "@coreFlutterHistoryDeclined": {
+    "description": "core.flutter.history.declined"
+  },
+  "coreFlutterHistoryInstrumentChange": "Instrumentenwechsel",
+  "@coreFlutterHistoryInstrumentChange": {
+    "description": "core.flutter.history.instrumentChange"
+  },
+  "coreFlutterHistoryReturned": "Zurückgekehrt",
+  "@coreFlutterHistoryReturned": {
+    "description": "core.flutter.history.returned"
+  },
+  "coreFlutterHistoryTransferredFrom": "Übertragen von",
+  "@coreFlutterHistoryTransferredFrom": {
+    "description": "core.flutter.history.transferredFrom"
+  },
+  "coreFlutterHistoryTransferredTo": "Übertragen an",
+  "@coreFlutterHistoryTransferredTo": {
+    "description": "core.flutter.history.transferredTo"
+  },
+  "coreFlutterHistoryUnpaused": "Pause beendet",
+  "@coreFlutterHistoryUnpaused": {
+    "description": "core.flutter.history.unpaused"
+  },
+  "coreFlutterImportBirthdayUnreadable": "Geburtsdatum \"{value}\" konnte nicht gelesen werden",
+  "@coreFlutterImportBirthdayUnreadable": {
+    "description": "core.flutter.import.birthdayUnreadable",
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "coreFlutterImportCategoryNotFound": "Kategorie \"{name}\" nicht gefunden",
+  "@coreFlutterImportCategoryNotFound": {
+    "description": "core.flutter.import.categoryNotFound",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "coreFlutterImportDifficultyInvalid": "Schwierigkeit \"{value}\" muss 1, 2 oder 3 sein",
+  "@coreFlutterImportDifficultyInvalid": {
+    "description": "core.flutter.import.difficultyInvalid",
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "coreFlutterImportDuplicateEmailInFile": "Doppelte E-Mail in der Datei",
+  "@coreFlutterImportDuplicateEmailInFile": {
+    "description": "core.flutter.import.duplicateEmailInFile"
+  },
+  "coreFlutterImportDuplicateNumberInFile": "Doppelte Nummer in der Datei",
+  "@coreFlutterImportDuplicateNumberInFile": {
+    "description": "core.flutter.import.duplicateNumberInFile"
+  },
+  "coreFlutterImportEmailExists": "E-Mail existiert bereits in dieser Instanz",
+  "@coreFlutterImportEmailExists": {
+    "description": "core.flutter.import.emailExists"
+  },
+  "coreFlutterImportEmailInvalid": "E-Mail \"{email}\" sieht ungültig aus",
+  "@coreFlutterImportEmailInvalid": {
+    "description": "core.flutter.import.emailInvalid",
+    "placeholders": {
+      "email": {}
+    }
+  },
+  "coreFlutterImportJoinedUnreadable": "Eintrittsdatum \"{value}\" konnte nicht gelesen werden",
+  "@coreFlutterImportJoinedUnreadable": {
+    "description": "core.flutter.import.joinedUnreadable",
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "coreFlutterImportLinkInvalid": "Link \"{link}\" sieht ungültig aus",
+  "@coreFlutterImportLinkInvalid": {
+    "description": "core.flutter.import.linkInvalid",
+    "placeholders": {
+      "link": {}
+    }
+  },
+  "coreFlutterImportNameRequired": "Vor- und Nachname sind erforderlich",
+  "@coreFlutterImportNameRequired": {
+    "description": "core.flutter.import.nameRequired"
+  },
+  "coreFlutterImportNumberRequired": "Nummer ist erforderlich und muss eine Zahl sein",
+  "@coreFlutterImportNumberRequired": {
+    "description": "core.flutter.import.numberRequired"
+  },
+  "coreFlutterImportSongNameRequired": "Name ist erforderlich",
+  "@coreFlutterImportSongNameRequired": {
+    "description": "core.flutter.import.songNameRequired"
+  },
+  "coreFlutterImportSongNumberExists": "Liednummer existiert bereits in dieser Instanz",
+  "@coreFlutterImportSongNumberExists": {
+    "description": "core.flutter.import.songNumberExists"
+  },
+  "coreFlutterInvalidCopyCount": "Ungültige Kopienanzahl",
+  "@coreFlutterInvalidCopyCount": {
+    "description": "core.flutter.invalidCopyCount"
+  },
+  "coreFlutterNewVersionAvailable": "Neue Version verfügbar",
+  "@coreFlutterNewVersionAvailable": {
+    "description": "core.flutter.newVersionAvailable"
+  },
+  "coreFlutterNoCopiesSelected": "Keine Kopien zum Drucken ausgewählt",
+  "@coreFlutterNoCopiesSelected": {
+    "description": "core.flutter.noCopiesSelected"
+  },
+  "coreFlutterNoEmailAddress": "Keine E-Mail-Adresse vorhanden",
+  "@coreFlutterNoEmailAddress": {
+    "description": "core.flutter.noEmailAddress"
+  },
+  "coreFlutterNoFilesDownloaded": "Keine Dateien konnten heruntergeladen werden",
+  "@coreFlutterNoFilesDownloaded": {
+    "description": "core.flutter.noFilesDownloaded"
+  },
+  "coreFlutterNoFilesToDownload": "Keine Dateien zum Herunterladen",
+  "@coreFlutterNoFilesToDownload": {
+    "description": "core.flutter.noFilesToDownload"
+  },
+  "coreFlutterNoInstanceSelected": "Keine Instanz ausgewählt",
+  "@coreFlutterNoInstanceSelected": {
+    "description": "core.flutter.noInstanceSelected"
+  },
+  "coreFlutterNoResponse": "Keine Antwort erhalten",
+  "@coreFlutterNoResponse": {
+    "description": "core.flutter.noResponse"
+  },
+  "coreFlutterNoResultsFor": "Keine Ergebnisse für \"{query}\"",
+  "@coreFlutterNoResultsFor": {
+    "description": "core.flutter.noResultsFor",
+    "placeholders": {
+      "query": {}
+    }
+  },
+  "coreFlutterNoTenantSelected": "Kein Tenant ausgewählt",
+  "@coreFlutterNoTenantSelected": {
+    "description": "core.flutter.noTenantSelected"
+  },
+  "coreFlutterNoVersionHistory": "Keine Versionshistorie verfügbar",
+  "@coreFlutterNoVersionHistory": {
+    "description": "core.flutter.noVersionHistory"
+  },
+  "coreFlutterNotLoggedIn": "Nicht eingeloggt",
+  "@coreFlutterNotLoggedIn": {
+    "description": "core.flutter.notLoggedIn"
+  },
+  "coreFlutterPausedLower": "pausiert",
+  "@coreFlutterPausedLower": {
+    "description": "core.flutter.pausedLower"
+  },
+  "coreFlutterPausedUntil": "bis {date}",
+  "@coreFlutterPausedUntil": {
+    "description": "core.flutter.pausedUntil",
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "coreFlutterPdfLoadFailed": "PDF konnte nicht geladen werden (HTTP {status})",
+  "@coreFlutterPdfLoadFailed": {
+    "description": "core.flutter.pdfLoadFailed",
+    "placeholders": {
+      "status": {}
+    }
+  },
+  "coreFlutterPersonHasNoId": "Person hat keine ID",
+  "@coreFlutterPersonHasNoId": {
+    "description": "core.flutter.personHasNoId"
+  },
+  "coreFlutterPlanDayN": "Tag {day}",
+  "@coreFlutterPlanDayN": {
+    "description": "core.flutter.plan.dayN",
+    "placeholders": {
+      "day": {}
+    }
+  },
+  "coreFlutterPlanStartsInHours": "beginnt in {hours} Std.",
+  "@coreFlutterPlanStartsInHours": {
+    "description": "core.flutter.plan.startsInHours",
+    "placeholders": {
+      "hours": {}
+    }
+  },
+  "coreFlutterPlanStartsInHoursMin": "beginnt in {hours} Std. {min} Min.",
+  "@coreFlutterPlanStartsInHoursMin": {
+    "description": "core.flutter.plan.startsInHoursMin",
+    "placeholders": {
+      "hours": {},
+      "min": {}
+    }
+  },
+  "coreFlutterPlanStartsInMin": "beginnt in {min} Min.",
+  "@coreFlutterPlanStartsInMin": {
+    "description": "core.flutter.plan.startsInMin",
+    "placeholders": {
+      "min": {}
+    }
+  },
+  "coreFlutterPlanStartsSoon": "beginnt gleich",
+  "@coreFlutterPlanStartsSoon": {
+    "description": "core.flutter.plan.startsSoon"
+  },
+  "coreFlutterRegisterPlanAlto": "Alt",
+  "@coreFlutterRegisterPlanAlto": {
+    "description": "core.flutter.registerPlan.alto"
+  },
+  "coreFlutterRegisterPlanBass": "Bass",
+  "@coreFlutterRegisterPlanBass": {
+    "description": "core.flutter.registerPlan.bass"
+  },
+  "coreFlutterRegisterPlanGroupN": "Gruppe {n}",
+  "@coreFlutterRegisterPlanGroupN": {
+    "description": "core.flutter.registerPlan.groupN",
+    "placeholders": {
+      "n": {}
+    }
+  },
+  "coreFlutterRegisterPlanOther": "Sonstige",
+  "@coreFlutterRegisterPlanOther": {
+    "description": "core.flutter.registerPlan.other"
+  },
+  "coreFlutterRegisterPlanPerUnit": "{min} Min. pro Einheit",
+  "@coreFlutterRegisterPlanPerUnit": {
+    "description": "core.flutter.registerPlan.perUnit",
+    "placeholders": {
+      "min": {}
+    }
+  },
+  "coreFlutterRegisterPlanSoprano": "Sopran",
+  "@coreFlutterRegisterPlanSoprano": {
+    "description": "core.flutter.registerPlan.soprano"
+  },
+  "coreFlutterRegisterPlanStrings": "Streicher",
+  "@coreFlutterRegisterPlanStrings": {
+    "description": "core.flutter.registerPlan.strings"
+  },
+  "coreFlutterRegisterPlanTenor": "Tenor",
+  "@coreFlutterRegisterPlanTenor": {
+    "description": "core.flutter.registerPlan.tenor"
+  },
+  "coreFlutterRegisterPlanTime": "Zeit",
+  "@coreFlutterRegisterPlanTime": {
+    "description": "core.flutter.registerPlan.time"
+  },
+  "coreFlutterRegisterPlanTitle": "Registerprobenplan",
+  "@coreFlutterRegisterPlanTitle": {
+    "description": "core.flutter.registerPlan.title"
+  },
+  "coreFlutterRegisterPlanTotalDuration": "Gesamtdauer: {min} Min.",
+  "@coreFlutterRegisterPlanTotalDuration": {
+    "description": "core.flutter.registerPlan.totalDuration",
+    "placeholders": {
+      "min": {}
+    }
+  },
+  "coreFlutterRegisterPlanWoodwinds": "Holzbläser",
+  "@coreFlutterRegisterPlanWoodwinds": {
+    "description": "core.flutter.registerPlan.woodwinds"
+  },
+  "coreFlutterRegistration": "Anmeldung",
+  "@coreFlutterRegistration": {
+    "description": "core.flutter.registration"
+  },
+  "coreFlutterRepoAccountCreateFailed": "Der Account konnte nicht erstellt werden.",
+  "@coreFlutterRepoAccountCreateFailed": {
+    "description": "core.flutter.repo.accountCreateFailed"
+  },
+  "coreFlutterRepoAlreadyAdmin": "Diese Person ist bereits Admin.",
+  "@coreFlutterRepoAlreadyAdmin": {
+    "description": "core.flutter.repo.alreadyAdmin"
+  },
+  "coreFlutterRepoCategoryCreateFailed": "Kategorie konnte nicht erstellt werden",
+  "@coreFlutterRepoCategoryCreateFailed": {
+    "description": "core.flutter.repo.categoryCreateFailed"
+  },
+  "coreFlutterRepoCategoryNotFound": "Gruppenkategorie mit ID {id} nicht gefunden",
+  "@coreFlutterRepoCategoryNotFound": {
+    "description": "core.flutter.repo.categoryNotFound",
+    "placeholders": {
+      "id": {}
+    }
+  },
+  "coreFlutterRepoChangeRoleFailed": "Fehler beim Ändern der Rolle: {error}",
+  "@coreFlutterRepoChangeRoleFailed": {
+    "description": "core.flutter.repo.changeRoleFailed",
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "coreFlutterRepoEventExistsOnDate": "Ein Termin an diesem Datum existiert bereits",
+  "@coreFlutterRepoEventExistsOnDate": {
+    "description": "core.flutter.repo.eventExistsOnDate"
+  },
+  "coreFlutterRepoEventNotInTenant": "Termin gehört nicht zur aktuellen Instanz",
+  "@coreFlutterRepoEventNotInTenant": {
+    "description": "core.flutter.repo.eventNotInTenant"
+  },
+  "coreFlutterRepoForeignTenantDenied": "Zugriff auf fremde Instanz verweigert",
+  "@coreFlutterRepoForeignTenantDenied": {
+    "description": "core.flutter.repo.foreignTenantDenied"
+  },
+  "coreFlutterRepoGroupCreateFailed": "Gruppe konnte nicht erstellt werden",
+  "@coreFlutterRepoGroupCreateFailed": {
+    "description": "core.flutter.repo.groupCreateFailed"
+  },
+  "coreFlutterRepoGroupHasPlayers": "Gruppe kann nicht gelöscht werden: {count} Spieler sind noch zugewiesen",
+  "@coreFlutterRepoGroupHasPlayers": {
+    "description": "core.flutter.repo.groupHasPlayers",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "coreFlutterRepoGroupNotFound": "Gruppe mit ID {id} nicht gefunden",
+  "@coreFlutterRepoGroupNotFound": {
+    "description": "core.flutter.repo.groupNotFound",
+    "placeholders": {
+      "id": {}
+    }
+  },
+  "coreFlutterRepoMeetingExistsOnDate": "Eine Besprechung an diesem Datum existiert bereits",
+  "@coreFlutterRepoMeetingExistsOnDate": {
+    "description": "core.flutter.repo.meetingExistsOnDate"
+  },
+  "coreFlutterRepoNoPermissionInTenant": "Keine Berechtigung in dieser Instanz",
+  "@coreFlutterRepoNoPermissionInTenant": {
+    "description": "core.flutter.repo.noPermissionInTenant"
+  },
+  "coreFlutterRepoNoValidPersons": "Keine gültigen Personen",
+  "@coreFlutterRepoNoValidPersons": {
+    "description": "core.flutter.repo.noValidPersons"
+  },
+  "coreFlutterRepoPersonsNotInTenant": "Personen gehören nicht zur aktuellen Instanz",
+  "@coreFlutterRepoPersonsNotInTenant": {
+    "description": "core.flutter.repo.personsNotInTenant"
+  },
+  "coreFlutterRepoRootNotDeletable": "Root kann nicht gelöscht werden.",
+  "@coreFlutterRepoRootNotDeletable": {
+    "description": "core.flutter.repo.rootNotDeletable"
+  },
+  "coreFlutterRepoSongNotFoundOrDenied": "Song nicht gefunden oder Zugriff verweigert",
+  "@coreFlutterRepoSongNotFoundOrDenied": {
+    "description": "core.flutter.repo.songNotFoundOrDenied"
+  },
+  "coreFlutterRepoTenantNotLinked": "Instanz ist nicht verknüpft",
+  "@coreFlutterRepoTenantNotLinked": {
+    "description": "core.flutter.repo.tenantNotLinked"
+  },
+  "coreFlutterRepoTypeInUse": "Typ kann nicht gelöscht werden: Wird von {count} Anwesenheit(en) verwendet",
+  "@coreFlutterRepoTypeInUse": {
+    "description": "core.flutter.repo.typeInUse",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "coreFlutterRepoUnlinkAccountFailed": "Fehler beim Entfernen der Account-Verknüpfung: {error}",
+  "@coreFlutterRepoUnlinkAccountFailed": {
+    "description": "core.flutter.repo.unlinkAccountFailed",
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "coreFlutterRouterGoHome": "Zur Startseite",
+  "@coreFlutterRouterGoHome": {
+    "description": "core.flutter.router.goHome"
+  },
+  "coreFlutterRouterInvalidAttendanceId": "Ungültige Anwesenheits-ID",
+  "@coreFlutterRouterInvalidAttendanceId": {
+    "description": "core.flutter.router.invalidAttendanceId"
+  },
+  "coreFlutterRouterInvalidPersonId": "Ungültige Person-ID",
+  "@coreFlutterRouterInvalidPersonId": {
+    "description": "core.flutter.router.invalidPersonId"
+  },
+  "coreFlutterRouterInvalidTenantId": "Ungültige Instanz-ID",
+  "@coreFlutterRouterInvalidTenantId": {
+    "description": "core.flutter.router.invalidTenantId"
+  },
+  "coreFlutterRouterPageNotFound": "Seite nicht gefunden: {path}",
+  "@coreFlutterRouterPageNotFound": {
+    "description": "core.flutter.router.pageNotFound",
+    "placeholders": {
+      "path": {}
+    }
+  },
+  "coreFlutterRuleOverall": "insgesamt",
+  "@coreFlutterRuleOverall": {
+    "description": "core.flutter.rule.overall"
+  },
+  "coreFlutterRuleSinceSeasonStart": "seit Saisonstart",
+  "@coreFlutterRuleSinceSeasonStart": {
+    "description": "core.flutter.rule.sinceSeasonStart"
+  },
+  "coreFlutterRuleStatusN": "Status {n}",
+  "@coreFlutterRuleStatusN": {
+    "description": "core.flutter.rule.statusN",
+    "placeholders": {
+      "n": {}
+    }
+  },
+  "coreFlutterSearchHint": "Suchen...",
+  "@coreFlutterSearchHint": {
+    "description": "core.flutter.searchHint"
+  },
+  "coreFlutterSongNotFound": "Song wurde nicht gefunden oder bereits gelöscht",
+  "@coreFlutterSongNotFound": {
+    "description": "core.flutter.songNotFound"
+  },
+  "coreFlutterUpdate": "Aktualisieren",
+  "@coreFlutterUpdate": {
+    "description": "core.flutter.update"
+  },
+  "coreFlutterVoices": "Stimmen",
+  "@coreFlutterVoices": {
+    "description": "core.flutter.voices"
+  },
+  "coreFlutterXlsUnsupported": "Das alte Excel-Format (.xls) wird nicht unterstützt. Bitte als .xlsx oder .csv speichern.",
+  "@coreFlutterXlsUnsupported": {
+    "description": "core.flutter.xlsUnsupported"
+  },
+  "coreFlutterZipFailed": "ZIP konnte nicht erstellt werden",
+  "@coreFlutterZipFailed": {
+    "description": "core.flutter.zipFailed"
+  },
   "dashSettingsCards": "Karten",
   "@dashSettingsCards": {
     "description": "dashSettings.cards"

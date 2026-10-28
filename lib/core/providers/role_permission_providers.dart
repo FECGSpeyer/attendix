@@ -6,6 +6,7 @@ import '../constants/enums.dart';
 import 'debug_providers.dart';
 import 'self_service_providers.dart';
 import 'tenant_providers.dart';
+import '../../l10n/l10n.dart';
 
 /// Repository mit Tenant-Kontext
 final rolePermissionRepositoryWithTenantProvider = Provider<RolePermissionRepository>((ref) {
@@ -135,7 +136,7 @@ class RolePermissionNotifier extends Notifier<AsyncValue<void>> {
     state = const AsyncValue.loading();
     try {
       final repo = ref.read(rolePermissionRepositoryWithTenantProvider);
-      if (!repo.hasTenantId) throw StateError('Kein Tenant ausgewählt');
+      if (!repo.hasTenantId) throw StateError(l10nWithoutContext.coreFlutterNoTenantSelected);
 
       for (final p in permissions) {
         if (p.id != null) await repo.updatePermission(p);

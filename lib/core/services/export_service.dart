@@ -10,6 +10,7 @@ import 'package:printing/printing.dart';
 import '../constants/enums.dart';
 import '../../data/models/attendance/attendance.dart';
 import '../../data/models/person/person.dart';
+import '../../l10n/l10n.dart';
 
 /// Export Service for generating PDF and Excel files
 ///
@@ -24,7 +25,8 @@ class ExportService {
     String Function(Person player, String field)? valueOf,
   }) async {
     final fieldValue = valueOf ?? _getPlayerFieldValue;
-    final date = DateFormat('dd.MM.yyyy').format(DateTime.now());
+    final l10n = l10nWithoutContext;
+    final date = DateFormat(dateFmt()).format(DateTime.now());
     final pdf = pw.Document();
 
     // Prepare data rows
@@ -46,7 +48,7 @@ class ExportService {
         header: (context) => pw.Container(
           margin: const pw.EdgeInsets.only(bottom: 20),
           child: pw.Text(
-            '$tenantName Spielerliste Stand: $date',
+            l10n.coreFlutterExportPlayerListHeader(tenantName, date),
             style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold),
           ),
         ),
@@ -72,7 +74,7 @@ class ExportService {
         footer: (context) => pw.Container(
           alignment: pw.Alignment.centerRight,
           child: pw.Text(
-            'Seite ${context.pageNumber} von ${context.pagesCount}',
+            l10n.protocolPage(context.pageNumber, context.pagesCount),
             style: const pw.TextStyle(fontSize: 8),
           ),
         ),
@@ -81,7 +83,7 @@ class ExportService {
 
     await Printing.layoutPdf(
       onLayout: (format) async => pdf.save(),
-      name: '${tenantName}_Spielerliste_$date.pdf',
+      name: '${tenantName}_${l10n.coreFlutterExportPlayerListSheet}_$date.pdf',
     );
   }
 
@@ -94,7 +96,7 @@ class ExportService {
   }) async {
     final fieldValue = valueOf ?? _getPlayerFieldValue;
     final excel = Excel.createExcel();
-    final sheet = excel['Spielerliste'];
+    final sheet = excel[l10nWithoutContext.coreFlutterExportPlayerListSheet];
 
     // Header row
     sheet.appendRow([
@@ -136,7 +138,8 @@ class ExportService {
     String Function(Person player, String field)? valueOf,
   }) async {
     final fieldValue = valueOf ?? _getPlayerFieldValue;
-    final date = DateFormat('dd.MM.yyyy').format(DateTime.now());
+    final l10n = l10nWithoutContext;
+    final date = DateFormat(dateFmt()).format(DateTime.now());
     final pdf = pw.Document();
 
     // Limit to last 8 attendances for PDF
@@ -147,7 +150,9 @@ class ExportService {
     // Prepare attendance dates
     final attDates = limitedAttendances.map((a) {
       final d = DateTime.tryParse(a.date);
-      return d != null ? DateFormat('dd.MM').format(d) : '';
+      return d != null
+          ? DateFormat(currentLanguage() == 'de' ? 'dd.MM' : dateFmt(DateFmtKind.dayMonth)).format(d)
+          : '';
     }).toList();
 
     // Build data rows
@@ -183,7 +188,7 @@ class ExportService {
         header: (context) => pw.Container(
           margin: const pw.EdgeInsets.only(bottom: 10),
           child: pw.Text(
-            '$tenantName Anwesenheit Stand: $date',
+            l10n.coreFlutterExportAttendanceHeader(tenantName, date),
             style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold),
           ),
         ),
@@ -212,7 +217,7 @@ class ExportService {
         footer: (context) => pw.Container(
           alignment: pw.Alignment.centerRight,
           child: pw.Text(
-            'Seite ${context.pageNumber} von ${context.pagesCount}',
+            l10n.protocolPage(context.pageNumber, context.pagesCount),
             style: const pw.TextStyle(fontSize: 8),
           ),
         ),
@@ -221,7 +226,7 @@ class ExportService {
 
     await Printing.layoutPdf(
       onLayout: (format) async => pdf.save(),
-      name: '${tenantName}_Anwesenheit_$date.pdf',
+      name: '${tenantName}_${l10n.exportAttendance}_$date.pdf',
     );
   }
 
@@ -236,12 +241,12 @@ class ExportService {
   }) async {
     final fieldValue = valueOf ?? _getPlayerFieldValue;
     final excel = Excel.createExcel();
-    final sheet = excel['Anwesenheit'];
+    final sheet = excel[l10nWithoutContext.exportAttendance];
 
     // Attendance dates
     final attDates = attendances.map((a) {
       final d = DateTime.tryParse(a.date);
-      return d != null ? DateFormat('dd.MM.yy').format(d) : '';
+      return d != null ? DateFormat(dateFmt(DateFmtKind.short)).format(d) : '';
     }).toList();
 
     // Header row
@@ -285,7 +290,7 @@ class ExportService {
       case 'Geburtsdatum':
         if (player.birthday != null) {
           final d = DateTime.tryParse(player.birthday!);
-          return d != null ? DateFormat('dd.MM.yyyy').format(d) : '';
+          return d != null ? DateFormat(dateFmt()).format(d) : '';
         }
         return '';
       case 'Gruppe':
@@ -359,7 +364,7 @@ class ExportService {
 
     await Printing.layoutPdf(
       onLayout: (format) async => pdf.save(),
-      name: '${tenantName}_Probenprogramm_$date.pdf',
+      name: '${tenantName}_${l10nWithoutContext.coreFlutterExportRehearsalProgramme}_$date.pdf',
     );
   }
 
@@ -371,6 +376,7 @@ class ExportService {
     required String? endTime,
     required List<Map<String, dynamic>> fields,
   }) {
+    final l10n = l10nWithoutContext;
     final pdf = pw.Document();
 
     // Calculate times for each field and build rows
@@ -383,10 +389,10 @@ class ExportService {
     tableRows.add(pw.TableRow(
       decoration: const pw.BoxDecoration(color: PdfColor.fromInt(0xFF005238)),
       children: [
-        _buildHeaderCell('Zeit', width: 60),
-        _buildHeaderCell('Programm', flex: 3),
-        _buildHeaderCell('Dirigent', flex: 2),
-        _buildHeaderCell('Dauer', width: 50),
+        _buildHeaderCell(l10n.exportTime, width: 60),
+        _buildHeaderCell(l10n.exportProgrammeItem, flex: 3),
+        _buildHeaderCell(l10n.exportPerformer, flex: 2),
+        _buildHeaderCell(l10n.exportDuration, width: 50),
       ],
     ));
 
@@ -443,7 +449,7 @@ class ExportService {
     tableRows.add(pw.TableRow(
       children: [
         _buildDataCell(finalTime, width: 60),
-        _buildDataCell('Ende', flex: 3),
+        _buildDataCell(l10n.attendanceEnd, flex: 3),
         _buildDataCell('', flex: 2),
         _buildDataCell('', width: 50),
       ],
@@ -463,7 +469,7 @@ class ExportService {
             ),
             pw.SizedBox(height: 4),
             pw.Text(
-              'Probenprogramm $date',
+              '${l10n.coreFlutterExportRehearsalProgramme} $date',
               style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold),
             ),
             pw.SizedBox(height: 20),
@@ -543,28 +549,29 @@ class ExportService {
     required Map<int, AttendanceStatus> statuses,
     required String tenantName,
   }) async {
+    final l10n = l10nWithoutContext;
     final excel = Excel.createExcel();
-    final sheet = excel['Anwesenheit'];
+    final sheet = excel[l10n.exportAttendance];
 
     // Format attendance date
     final dateObj = DateTime.tryParse(attendance.date);
     final dateStr = dateObj != null
-        ? DateFormat('dd.MM.yyyy').format(dateObj)
+        ? DateFormat(dateFmt()).format(dateObj)
         : attendance.date;
 
     // Title row
     sheet.appendRow([
-      TextCellValue('$tenantName - Anwesenheit $dateStr'),
+      TextCellValue('$tenantName - ${l10n.exportAttendance} $dateStr'),
     ]);
     sheet.appendRow([]); // Empty row
 
     // Header row
     sheet.appendRow([
       TextCellValue('#'),
-      TextCellValue('Vorname'),
-      TextCellValue('Nachname'),
-      TextCellValue('Gruppe'),
-      TextCellValue('Status'),
+      TextCellValue(l10n.exportFirstName),
+      TextCellValue(l10n.exportLastName),
+      TextCellValue(l10n.exportGroup),
+      TextCellValue(l10n.exportStatus),
     ]);
 
     // Style header
@@ -600,17 +607,17 @@ class ExportService {
     final total = persons.length;
     final percentage = total > 0 ? (present / total * 100).round() : 0;
 
-    sheet.appendRow([TextCellValue('Zusammenfassung')]);
-    sheet.appendRow([TextCellValue('Gesamt'), TextCellValue(total.toString())]);
-    sheet.appendRow([TextCellValue('Anwesend'), TextCellValue(present.toString())]);
-    sheet.appendRow([TextCellValue('Entschuldigt'), TextCellValue(excused.toString())]);
-    sheet.appendRow([TextCellValue('Abwesend'), TextCellValue(absent.toString())]);
-    sheet.appendRow([TextCellValue('Offen'), TextCellValue(neutral.toString())]);
-    sheet.appendRow([TextCellValue('Quote'), TextCellValue('$percentage%')]);
+    sheet.appendRow([TextCellValue(l10n.protocolSummary)]);
+    sheet.appendRow([TextCellValue(l10n.churchOverviewTotal), TextCellValue(total.toString())]);
+    sheet.appendRow([TextCellValue(l10n.commonStatusPresent), TextCellValue(present.toString())]);
+    sheet.appendRow([TextCellValue(l10n.commonStatusExcused), TextCellValue(excused.toString())]);
+    sheet.appendRow([TextCellValue(l10n.commonStatusAbsent), TextCellValue(absent.toString())]);
+    sheet.appendRow([TextCellValue(l10n.coreFlutterExportOpen), TextCellValue(neutral.toString())]);
+    sheet.appendRow([TextCellValue(l10n.coreFlutterExportRate), TextCellValue('$percentage%')]);
 
     // Save and share
     final bytes = Uint8List.fromList(excel.encode()!);
-    final fileName = '${tenantName}_Anwesenheit_$dateStr.xlsx';
+    final fileName = '${tenantName}_${l10n.exportAttendance}_$dateStr.xlsx';
 
     await Printing.sharePdf(
       bytes: bytes,
@@ -638,7 +645,7 @@ class ExportService {
 
     await Printing.layoutPdf(
       onLayout: (format) async => pdf.save(),
-      name: '${tenantName}_Probenprogramm_2xA5_$date.pdf',
+      name: '${tenantName}_${l10nWithoutContext.coreFlutterExportRehearsalProgramme}_2xA5_$date.pdf',
     );
   }
 
@@ -650,6 +657,7 @@ class ExportService {
     required String? endTime,
     required List<Map<String, dynamic>> fields,
   }) {
+    final l10n = l10nWithoutContext;
     final pdf = pw.Document();
 
     // Build single plan widget with note support
@@ -660,9 +668,9 @@ class ExportService {
       tableRows.add(pw.TableRow(
         decoration: const pw.BoxDecoration(color: PdfColor.fromInt(0xFF005238)),
         children: [
-          _buildSmallHeaderCell('Zeit', width: 35),
-          _buildSmallHeaderCell('Programm', flex: 3),
-          _buildSmallHeaderCell('Dirigent', flex: 2),
+          _buildSmallHeaderCell(l10n.exportTime, width: 35),
+          _buildSmallHeaderCell(l10n.exportProgrammeItem, flex: 3),
+          _buildSmallHeaderCell(l10n.exportPerformer, flex: 2),
           _buildSmallHeaderCell('', width: 25),
         ],
       ));
@@ -723,7 +731,7 @@ class ExportService {
       tableRows.add(pw.TableRow(
         children: [
           _buildSmallDataCell(finalTime, width: 35),
-          _buildSmallDataCell('Ende', flex: 3),
+          _buildSmallDataCell(l10n.attendanceEnd, flex: 3),
           _buildSmallDataCell('', flex: 2),
           _buildSmallDataCell('', width: 25),
         ],
@@ -739,7 +747,7 @@ class ExportService {
           ),
           pw.SizedBox(height: 2),
           pw.Text(
-            'Probenprogramm $date',
+            '${l10n.coreFlutterExportRehearsalProgramme} $date',
             style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold),
           ),
           pw.SizedBox(height: 10),

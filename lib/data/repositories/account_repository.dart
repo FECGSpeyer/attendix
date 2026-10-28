@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'base_repository.dart';
+import '../../l10n/l10n.dart';
 
 /// Account-level (user-scoped, cross-tenant) operations of the signed-in user.
 ///
@@ -28,7 +29,7 @@ class AccountRepository extends BaseRepository {
       final response = await supabase.functions.invoke(deleteAccountFunction);
       if (response.status >= 400) {
         throw RepositoryException(
-          message: 'Fehler beim Löschen des Kontos',
+          message: l10nWithoutContext.dbDeleteAccountFailed,
           operation: 'deleteAccount',
           code: '${response.status}',
         );

@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../models/team_org/team_org.dart';
 import 'base_repository.dart';
+import '../../l10n/l10n.dart';
 
 /// Provider for ProtocolRepository
 final protocolRepositoryProvider = Provider<ProtocolRepository>((ref) {
@@ -296,8 +297,8 @@ class ProtocolRepository extends BaseRepository with TenantAwareRepository {
         .eq('tenantId', currentTenantId)
         .maybeSingle();
     if (row == null) {
-      throw const RepositoryException(
-        message: 'Termin gehört nicht zur aktuellen Instanz',
+      throw RepositoryException(
+        message: l10nWithoutContext.coreFlutterRepoEventNotInTenant,
         operation: 'ensureAttendanceOfTenant',
       );
     }

@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/config/supabase_config.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/utils/toast_helper.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Shared Dateiablage link that was opened while signed out. The router
 /// resumes it after login (Ionic `FilesService.setPendingLink`).
@@ -56,7 +57,7 @@ class _OpenFilePageState extends ConsumerState<OpenFilePage> {
       await _resolveLink();
     } catch (_) {
       if (!mounted) return;
-      ToastHelper.showError(context, 'Der Link konnte nicht geöffnet werden.');
+      ToastHelper.showError(context, context.l10n.openFileLinkFailed);
       context.go('/login');
     }
   }
@@ -86,7 +87,7 @@ class _OpenFilePageState extends ConsumerState<OpenFilePage> {
       final target = tenants.where((t) => t.id == tenantId).firstOrNull;
       if (!mounted) return;
       if (target == null) {
-        ToastHelper.showError(context, 'Du hast keinen Zugriff auf diese Instanz.');
+        ToastHelper.showError(context, context.l10n.openFileNoTenantAccess);
         context.go('/tenants');
         return;
       }

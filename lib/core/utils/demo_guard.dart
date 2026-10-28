@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../l10n/l10n.dart';
 import '../constants/app_constants.dart';
 import '../services/offline_queue_service.dart' show rootScaffoldMessengerKey;
 
 /// DEMO_GUARD: Ionic `db.demoRestricted` / `people.demoUnavailable`.
-const String kDemoRestrictedMessage =
-    'Diese Funktion ist im Demo-Modus nicht verfügbar.';
+String get kDemoRestrictedMessage => l10nWithoutContext.dbDemoRestricted;
 
 /// Thrown when the demo account tries a blocked mutation
 /// (Ionic `checkDemoRestriction()` → `Error('Demo mode restriction')`).
@@ -95,22 +95,22 @@ class DemoGuard {
     final messenger = rootScaffoldMessengerKey.currentState;
     if (messenger == null) return;
     messenger.showSnackBar(
-      const SnackBar(
+      SnackBar(
         content: Row(
           children: [
-            Icon(Icons.warning, color: Colors.white),
-            SizedBox(width: 12),
+            const Icon(Icons.warning, color: Colors.white),
+            const SizedBox(width: 12),
             Expanded(
               child: Text(
                 kDemoRestrictedMessage,
-                style: TextStyle(color: Colors.white),
+                style: const TextStyle(color: Colors.white),
               ),
             ),
           ],
         ),
         backgroundColor: Colors.orange,
         behavior: SnackBarBehavior.floating,
-        duration: Duration(seconds: 3),
+        duration: const Duration(seconds: 3),
       ),
     );
   }

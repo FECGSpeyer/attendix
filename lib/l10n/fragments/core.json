@@ -1,0 +1,262 @@
+{
+  "de": {
+    "core": {
+      "flutter": {
+        "newVersionAvailable": "Neue Version verfügbar",
+        "update": "Aktualisieren",
+        "pausedUntil": "bis {date}",
+        "pausedLower": "pausiert",
+        "xlsUnsupported": "Das alte Excel-Format (.xls) wird nicht unterstützt. Bitte als .xlsx oder .csv speichern.",
+        "import": {
+          "nameRequired": "Vor- und Nachname sind erforderlich",
+          "birthdayUnreadable": "Geburtsdatum \"{value}\" konnte nicht gelesen werden",
+          "joinedUnreadable": "Eintrittsdatum \"{value}\" konnte nicht gelesen werden",
+          "emailInvalid": "E-Mail \"{email}\" sieht ungültig aus",
+          "duplicateEmailInFile": "Doppelte E-Mail in der Datei",
+          "emailExists": "E-Mail existiert bereits in dieser Instanz",
+          "numberRequired": "Nummer ist erforderlich und muss eine Zahl sein",
+          "songNameRequired": "Name ist erforderlich",
+          "linkInvalid": "Link \"{link}\" sieht ungültig aus",
+          "difficultyInvalid": "Schwierigkeit \"{value}\" muss 1, 2 oder 3 sein",
+          "categoryNotFound": "Kategorie \"{name}\" nicht gefunden",
+          "duplicateNumberInFile": "Doppelte Nummer in der Datei",
+          "songNumberExists": "Liednummer existiert bereits in dieser Instanz"
+        },
+        "plan": {
+          "dayN": "Tag {day}",
+          "startsSoon": "beginnt gleich",
+          "startsInMin": "beginnt in {min} Min.",
+          "startsInHours": "beginnt in {hours} Std.",
+          "startsInHoursMin": "beginnt in {hours} Std. {min} Min."
+        },
+        "feedback": {
+          "questionRequired": "Bitte gib eine Frage ein",
+          "questionIntro": "Hast du eine Frage oder brauchst Hilfe?",
+          "ratingIntro": "Wie gefällt dir die App?",
+          "anonymousHint": "Deine Daten werden nicht mitgesendet"
+        },
+        "searchHint": "Suchen...",
+        "noResultsFor": "Keine Ergebnisse für \"{query}\"",
+        "errorWith": "Fehler: {error}",
+        "noVersionHistory": "Keine Versionshistorie verfügbar",
+        "registration": "Anmeldung",
+        "router": {
+          "invalidTenantId": "Ungültige Instanz-ID",
+          "invalidPersonId": "Ungültige Person-ID",
+          "invalidAttendanceId": "Ungültige Anwesenheits-ID",
+          "pageNotFound": "Seite nicht gefunden: {path}",
+          "goHome": "Zur Startseite"
+        },
+        "export": {
+          "playerListHeader": "{name} Spielerliste Stand: {date}",
+          "attendanceHeader": "{name} Anwesenheit Stand: {date}",
+          "playerListSheet": "Spielerliste",
+          "rehearsalProgramme": "Probenprogramm",
+          "open": "Offen",
+          "rate": "Quote",
+          "endAt": "Ende: {time} Uhr",
+          "pdfRenderFailed": "PDF konnte nicht gerendert werden"
+        },
+        "registerPlan": {
+          "strings": "Streicher",
+          "woodwinds": "Holzbläser",
+          "other": "Sonstige",
+          "groupN": "Gruppe {n}",
+          "time": "Zeit",
+          "soprano": "Sopran",
+          "alto": "Alt",
+          "tenor": "Tenor",
+          "bass": "Bass",
+          "title": "Registerprobenplan",
+          "totalDuration": "Gesamtdauer: {min} Min.",
+          "perUnit": "{min} Min. pro Einheit"
+        },
+        "noTenantSelected": "Kein Tenant ausgewählt",
+        "fileBytesUnavailable": "Datei-Bytes nicht verfügbar",
+        "filePathUnavailable": "Dateipfad nicht verfügbar",
+        "songNotFound": "Song wurde nicht gefunden oder bereits gelöscht",
+        "noFilesToDownload": "Keine Dateien zum Herunterladen",
+        "noFilesDownloaded": "Keine Dateien konnten heruntergeladen werden",
+        "zipFailed": "ZIP konnte nicht erstellt werden",
+        "noResponse": "Keine Antwort erhalten",
+        "pdfLoadFailed": "PDF konnte nicht geladen werden (HTTP {status})",
+        "noCopiesSelected": "Keine Kopien zum Drucken ausgewählt",
+        "invalidCopyCount": "Ungültige Kopienanzahl",
+        "notLoggedIn": "Nicht eingeloggt",
+        "noInstanceSelected": "Keine Instanz ausgewählt",
+        "voices": "Stimmen",
+        "rule": {
+          "statusN": "Status {n}",
+          "sinceSeasonStart": "seit Saisonstart",
+          "overall": "insgesamt"
+        },
+        "noEmailAddress": "Keine E-Mail-Adresse vorhanden",
+        "personHasNoId": "Person hat keine ID",
+        "repo": {
+          "changeRoleFailed": "Fehler beim Ändern der Rolle: {error}",
+          "unlinkAccountFailed": "Fehler beim Entfernen der Account-Verknüpfung: {error}",
+          "alreadyAdmin": "Diese Person ist bereits Admin.",
+          "accountCreateFailed": "Der Account konnte nicht erstellt werden.",
+          "eventExistsOnDate": "Ein Termin an diesem Datum existiert bereits",
+          "typeInUse": "Typ kann nicht gelöscht werden: Wird von {count} Anwesenheit(en) verwendet",
+          "tenantNotLinked": "Instanz ist nicht verknüpft",
+          "noPermissionInTenant": "Keine Berechtigung in dieser Instanz",
+          "noValidPersons": "Keine gültigen Personen",
+          "foreignTenantDenied": "Zugriff auf fremde Instanz verweigert",
+          "rootNotDeletable": "Root kann nicht gelöscht werden.",
+          "groupCreateFailed": "Gruppe konnte nicht erstellt werden",
+          "groupNotFound": "Gruppe mit ID {id} nicht gefunden",
+          "groupHasPlayers": "Gruppe kann nicht gelöscht werden: {count} Spieler sind noch zugewiesen",
+          "categoryCreateFailed": "Kategorie konnte nicht erstellt werden",
+          "categoryNotFound": "Gruppenkategorie mit ID {id} nicht gefunden",
+          "meetingExistsOnDate": "Eine Besprechung an diesem Datum existiert bereits",
+          "personsNotInTenant": "Personen gehören nicht zur aktuellen Instanz",
+          "eventNotInTenant": "Termin gehört nicht zur aktuellen Instanz",
+          "songNotFoundOrDenied": "Song nicht gefunden oder Zugriff verweigert"
+        },
+        "history": {
+          "critical": "Kritisch markiert",
+          "unpaused": "Pause beendet",
+          "instrumentChange": "Instrumentenwechsel",
+          "returned": "Zurückgekehrt",
+          "transferredFrom": "Übertragen von",
+          "transferredTo": "Übertragen an",
+          "copiedFrom": "Kopiert von",
+          "copiedTo": "Kopiert an",
+          "approved": "Genehmigt",
+          "declined": "Abgelehnt"
+        }
+      }
+    }
+  },
+  "en": {
+    "core": {
+      "flutter": {
+        "newVersionAvailable": "New version available",
+        "update": "Update",
+        "pausedUntil": "until {date}",
+        "pausedLower": "paused",
+        "xlsUnsupported": "The old Excel format (.xls) is not supported. Please save as .xlsx or .csv.",
+        "import": {
+          "nameRequired": "First and last name are required",
+          "birthdayUnreadable": "Birth date \"{value}\" could not be read",
+          "joinedUnreadable": "Join date \"{value}\" could not be read",
+          "emailInvalid": "Email \"{email}\" looks invalid",
+          "duplicateEmailInFile": "Duplicate email in the file",
+          "emailExists": "Email already exists in this instance",
+          "numberRequired": "Number is required and must be a number",
+          "songNameRequired": "Name is required",
+          "linkInvalid": "Link \"{link}\" looks invalid",
+          "difficultyInvalid": "Difficulty \"{value}\" must be 1, 2 or 3",
+          "categoryNotFound": "Category \"{name}\" not found",
+          "duplicateNumberInFile": "Duplicate number in the file",
+          "songNumberExists": "Song number already exists in this instance"
+        },
+        "plan": {
+          "dayN": "Day {day}",
+          "startsSoon": "starts soon",
+          "startsInMin": "starts in {min} min",
+          "startsInHours": "starts in {hours} h",
+          "startsInHoursMin": "starts in {hours} h {min} min"
+        },
+        "feedback": {
+          "questionRequired": "Please enter a question",
+          "questionIntro": "Do you have a question or need help?",
+          "ratingIntro": "How do you like the app?",
+          "anonymousHint": "Your data will not be sent"
+        },
+        "searchHint": "Search...",
+        "noResultsFor": "No results for \"{query}\"",
+        "errorWith": "Error: {error}",
+        "noVersionHistory": "No version history available",
+        "registration": "Registration",
+        "router": {
+          "invalidTenantId": "Invalid instance ID",
+          "invalidPersonId": "Invalid person ID",
+          "invalidAttendanceId": "Invalid attendance ID",
+          "pageNotFound": "Page not found: {path}",
+          "goHome": "Go home"
+        },
+        "export": {
+          "playerListHeader": "{name} member list as of {date}",
+          "attendanceHeader": "{name} attendance as of {date}",
+          "playerListSheet": "Member list",
+          "rehearsalProgramme": "Rehearsal programme",
+          "open": "Open",
+          "rate": "Rate",
+          "endAt": "End: {time}",
+          "pdfRenderFailed": "PDF could not be rendered"
+        },
+        "registerPlan": {
+          "strings": "Strings",
+          "woodwinds": "Woodwinds",
+          "other": "Other",
+          "groupN": "Group {n}",
+          "time": "Time",
+          "soprano": "Soprano",
+          "alto": "Alto",
+          "tenor": "Tenor",
+          "bass": "Bass",
+          "title": "Sectional rehearsal plan",
+          "totalDuration": "Total duration: {min} min",
+          "perUnit": "{min} min per unit"
+        },
+        "noTenantSelected": "No tenant selected",
+        "fileBytesUnavailable": "File bytes not available",
+        "filePathUnavailable": "File path not available",
+        "songNotFound": "Song not found or already deleted",
+        "noFilesToDownload": "No files to download",
+        "noFilesDownloaded": "No files could be downloaded",
+        "zipFailed": "ZIP could not be created",
+        "noResponse": "No response received",
+        "pdfLoadFailed": "PDF could not be loaded (HTTP {status})",
+        "noCopiesSelected": "No copies selected for printing",
+        "invalidCopyCount": "Invalid number of copies",
+        "notLoggedIn": "Not logged in",
+        "noInstanceSelected": "No instance selected",
+        "voices": "Voices",
+        "rule": {
+          "statusN": "Status {n}",
+          "sinceSeasonStart": "since season start",
+          "overall": "overall"
+        },
+        "noEmailAddress": "No email address available",
+        "personHasNoId": "Person has no ID",
+        "repo": {
+          "changeRoleFailed": "Error changing the role: {error}",
+          "unlinkAccountFailed": "Error removing the account link: {error}",
+          "alreadyAdmin": "This person is already an admin.",
+          "accountCreateFailed": "The account could not be created.",
+          "eventExistsOnDate": "An event already exists on this date",
+          "typeInUse": "Type cannot be deleted: used by {count} attendance(s)",
+          "tenantNotLinked": "Instance is not linked",
+          "noPermissionInTenant": "No permission in this instance",
+          "noValidPersons": "No valid persons",
+          "foreignTenantDenied": "Access to another instance denied",
+          "rootNotDeletable": "Root cannot be deleted.",
+          "groupCreateFailed": "Group could not be created",
+          "groupNotFound": "Group with ID {id} not found",
+          "groupHasPlayers": "Group cannot be deleted: {count} members are still assigned",
+          "categoryCreateFailed": "Category could not be created",
+          "categoryNotFound": "Group category with ID {id} not found",
+          "meetingExistsOnDate": "A meeting already exists on this date",
+          "personsNotInTenant": "Persons do not belong to the current instance",
+          "eventNotInTenant": "Event does not belong to the current instance",
+          "songNotFoundOrDenied": "Song not found or access denied"
+        },
+        "history": {
+          "critical": "Marked critical",
+          "unpaused": "Pause ended",
+          "instrumentChange": "Instrument change",
+          "returned": "Returned",
+          "transferredFrom": "Transferred from",
+          "transferredTo": "Transferred to",
+          "copiedFrom": "Copied from",
+          "copiedTo": "Copied to",
+          "approved": "Approved",
+          "declined": "Declined"
+        }
+      }
+    }
+  }
+}

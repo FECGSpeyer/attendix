@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import '../../../l10n/l10n.dart';
 
 part 'song_filter.freezed.dart';
 part 'song_filter.g.dart';
@@ -16,16 +17,17 @@ enum SongSortOption {
 extension SongSortOptionX on SongSortOption {
   /// Label; [orchestra] switches "gesungen" to "gespielt" like Ionic.
   String labelFor({bool orchestra = false}) {
-    final last = orchestra ? 'Zuletzt gespielt' : 'Zuletzt gesungen';
+    final l10n = l10nWithoutContext;
+    final last = orchestra ? l10n.songsLastPlayed : l10n.songsLastSung;
     switch (this) {
       case SongSortOption.numberAsc:
-        return 'Nummer ↑';
+        return l10n.songsNumberAsc;
       case SongSortOption.numberDesc:
-        return 'Nummer ↓';
+        return l10n.songsNumberDesc;
       case SongSortOption.nameAsc:
-        return 'Name ↑';
+        return l10n.songsNameAsc;
       case SongSortOption.nameDesc:
-        return 'Name ↓';
+        return l10n.songsNameDesc;
       case SongSortOption.lastSungAsc:
         return '$last ↑';
       case SongSortOption.lastSungDesc:

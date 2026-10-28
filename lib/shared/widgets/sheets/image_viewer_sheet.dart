@@ -4,6 +4,7 @@ import 'dart:math' as math;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../../../l10n/l10n.dart';
 
 /// Fullscreen image viewer (Ionic image viewer):
 /// - pinch / mouse wheel zoom (1x - 5x), pan when zoomed
@@ -225,16 +226,16 @@ class _ImageViewerSheetState extends State<ImageViewerSheet>
                             placeholder: (context, url) => const Center(
                               child: CircularProgressIndicator(color: Colors.white),
                             ),
-                            errorWidget: (context, url, error) => const Center(
+                            errorWidget: (context, url, error) => Center(
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Icon(Icons.broken_image_outlined,
+                                  const Icon(Icons.broken_image_outlined,
                                       size: 64, color: Colors.white70),
-                                  SizedBox(height: 12),
+                                  const SizedBox(height: 12),
                                   Text(
-                                    'Bild konnte nicht geladen werden',
-                                    style: TextStyle(color: Colors.white),
+                                    context.l10n.imageViewerLoadFailed,
+                                    style: const TextStyle(color: Colors.white),
                                   ),
                                 ],
                               ),
@@ -281,7 +282,7 @@ class _ImageViewerSheetState extends State<ImageViewerSheet>
                           ),
                         ),
                         IconButton(
-                          tooltip: 'Schließen',
+                          tooltip: context.l10n.commonClose,
                           icon: const Icon(Icons.close, color: Colors.white),
                           onPressed: () => Navigator.of(context).maybePop(),
                         ),
@@ -307,17 +308,17 @@ class _ImageViewerSheetState extends State<ImageViewerSheet>
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       IconButton(
-                        tooltip: 'Verkleinern',
+                        tooltip: context.l10n.imageViewerZoomOut,
                         icon: const Icon(Icons.remove, color: Colors.white),
                         onPressed: _scale > _minScale + 0.01 ? () => _zoomBy(1 / 1.5) : null,
                       ),
                       // MEDIA_REALTIME: Ionic zoom-value button
                       // (aria-label imageViewer.zoomReset).
                       Tooltip(
-                        message: 'Zoom zurücksetzen',
+                        message: context.l10n.imageViewerZoomReset,
                         child: Semantics(
                           button: true,
-                          label: 'Zoom zurücksetzen',
+                          label: context.l10n.imageViewerZoomReset,
                           child: InkWell(
                             key: const ValueKey('image-viewer-zoom-reset'),
                             onTap: _reset,
@@ -333,7 +334,7 @@ class _ImageViewerSheetState extends State<ImageViewerSheet>
                         ),
                       ),
                       IconButton(
-                        tooltip: 'Vergrößern',
+                        tooltip: context.l10n.imageViewerZoomIn,
                         icon: const Icon(Icons.add, color: Colors.white),
                         onPressed: _scale < _maxScale - 0.01 ? () => _zoomBy(1.5) : null,
                       ),
@@ -351,17 +352,17 @@ class _ImageViewerSheetState extends State<ImageViewerSheet>
                 child: AnimatedOpacity(
                   opacity: _showHint && !_isZoomed ? 1 : 0,
                   duration: const Duration(milliseconds: 400),
-                  child: const Center(
+                  child: Center(
                     child: DecoratedBox(
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         color: Color(0x99000000),
                         borderRadius: BorderRadius.all(Radius.circular(16)),
                       ),
                       child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                         child: Text(
-                          'Doppeltippen oder mit zwei Fingern zoomen',
-                          style: TextStyle(color: Colors.white, fontSize: 12),
+                          context.l10n.imageViewerHint,
+                          style: const TextStyle(color: Colors.white, fontSize: 12),
                         ),
                       ),
                     ),

@@ -8,6 +8,7 @@ import 'package:printing/printing.dart';
 import '../../data/models/plan/plan.dart';
 import '../utils/plan_utils.dart';
 import 'pdf_branding.dart';
+import '../../l10n/l10n.dart';
 
 /// One plan page of an export.
 class PlanExportPage {
@@ -83,7 +84,7 @@ class PlanExportService {
     await for (final page in Printing.raster(pdf, pages: const [0], dpi: 150)) {
       return page.toPng();
     }
-    throw StateError('PDF konnte nicht gerendert werden');
+    throw StateError(l10nWithoutContext.coreFlutterExportPdfRenderFailed);
   }
 
   /// Opens the system print / save dialog with the PDF.
@@ -161,16 +162,17 @@ class PlanExportService {
       );
     }
 
+    final l10n = l10nWithoutContext;
     final rows = <pw.TableRow>[
       pw.TableRow(
         decoration: const pw.BoxDecoration(
           border: pw.Border(bottom: pw.BorderSide(color: PdfColors.grey600, width: 0.8)),
         ),
         children: [
-          cell('Uhrzeit', bold: true),
-          cell('Programmpunkt', bold: true),
-          if (hasConductors) cell('Ausführung', bold: true),
-          cell('Dauer', bold: true),
+          cell(l10n.exportTime, bold: true),
+          cell(l10n.exportProgrammeItem, bold: true),
+          if (hasConductors) cell(l10n.exportPerformer, bold: true),
+          cell(l10n.exportDuration, bold: true),
         ],
       ),
     ];
@@ -197,10 +199,11 @@ class PlanExportService {
       rows.add(pw.TableRow(
         decoration: stripe ? const pw.BoxDecoration(color: PdfColor.fromInt(0xFFF5F5F5)) : null,
         children: [
-          cell('${PlanUtils.formatMinutes(current)} Uhr', color: child ? PdfColors.grey700 : null),
+          cell(l10n.attendanceTimeOClock(PlanUtils.formatMinutes(current)),
+              color: child ? PdfColors.grey700 : null),
           nameCell(f, f.name, bold: head, indent: child ? 6 : 0),
           if (hasConductors) cell(f.conductor ?? ''),
-          cell('$minutes min', bold: head),
+          cell(l10n.attendanceMinutesShort(minutes), bold: head),
         ],
       ));
       current += PlanUtils.fieldMinutes(f);
@@ -223,7 +226,7 @@ class PlanExportService {
           children: rows,
         ),
         pw.SizedBox(height: 6),
-        pw.Text('Ende: $endText Uhr', style: pw.TextStyle(fontSize: fontSize, fontWeight: pw.FontWeight.bold)),
+        pw.Text(l10n.coreFlutterExportEndAt(endText), style: pw.TextStyle(fontSize: fontSize, fontWeight: pw.FontWeight.bold)),
       ],
     );
   }

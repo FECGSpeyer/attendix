@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../l10n/l10n.dart';
 import 'haptic_helper.dart';
 
 /// Helper class for showing dialogs
@@ -11,10 +12,11 @@ class DialogHelper {
     BuildContext context, {
     required String title,
     required String message,
-    String confirmText = 'Bestätigen',
-    String cancelText = 'Abbrechen',
+    String? confirmText,
+    String? cancelText,
     bool isDestructive = false,
   }) async {
+    final l10n = context.l10n;
     final result = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -23,7 +25,7 @@ class DialogHelper {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: Text(cancelText),
+            child: Text(cancelText ?? l10n.commonCancel),
           ),
           ElevatedButton(
             onPressed: () {
@@ -36,7 +38,7 @@ class DialogHelper {
                     foregroundColor: Theme.of(context).colorScheme.onError,
                   )
                 : null,
-            child: Text(confirmText),
+            child: Text(confirmText ?? l10n.commonConfirm),
           ),
         ],
       ),
@@ -49,7 +51,7 @@ class DialogHelper {
     BuildContext context, {
     required String title,
     required String message,
-    String okText = 'OK',
+    String? okText,
   }) async {
     await showDialog(
       context: context,
@@ -59,7 +61,7 @@ class DialogHelper {
         actions: [
           ElevatedButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text(okText),
+            child: Text(okText ?? context.l10n.commonOk),
           ),
         ],
       ),
@@ -77,8 +79,8 @@ class DialogHelper {
     String? initialValue,
     String? hint,
     int maxLines = 1,
-    String confirmText = 'OK',
-    String cancelText = 'Abbrechen',
+    String? confirmText,
+    String? cancelText,
     TextInputType? keyboardType,
   }) {
     return showDialog<String>(
@@ -88,8 +90,8 @@ class DialogHelper {
         initialValue: initialValue,
         hint: hint,
         maxLines: maxLines,
-        confirmText: confirmText,
-        cancelText: cancelText,
+        confirmText: confirmText ?? context.l10n.commonOk,
+        cancelText: cancelText ?? context.l10n.commonCancel,
         keyboardType: keyboardType,
       ),
     );

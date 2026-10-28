@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../theme/app_colors.dart';
+import '../../l10n/l10n.dart';
 
 /// Player history type enumeration
 enum PlayerHistoryType {
@@ -201,14 +202,15 @@ enum AttendanceStatus {
     AttendanceStatus.neutral => Icons.help_outline,
   };
 
-  /// Localized label for this status
+  /// Localized label for this status (follows the active UI language).
   String get label => switch (this) {
-    AttendanceStatus.present => 'Anwesend',
-    AttendanceStatus.absent => 'Abwesend',
-    AttendanceStatus.excused => 'Entschuldigt',
-    AttendanceStatus.late => 'Verspätet',
-    AttendanceStatus.lateExcused => 'Verspätet (entsch.)',
-    AttendanceStatus.neutral => 'Nicht erfasst',
+    AttendanceStatus.present => l10nWithoutContext.commonStatusPresent,
+    AttendanceStatus.absent => l10nWithoutContext.commonStatusAbsent,
+    AttendanceStatus.excused => l10nWithoutContext.commonStatusExcused,
+    AttendanceStatus.late => l10nWithoutContext.commonStatusLateShort,
+    AttendanceStatus.lateExcused =>
+      l10nWithoutContext.attendanceLateExcusedParen,
+    AttendanceStatus.neutral => l10nWithoutContext.commonStatusNeutral,
   };
 }
 

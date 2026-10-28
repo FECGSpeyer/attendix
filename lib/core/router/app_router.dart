@@ -103,6 +103,7 @@ import '../../features/planning/presentation/pages/shared_plan_page.dart';
 import '../../features/deep_links/presentation/pages/open_link_page.dart';
 import '../../shared/widgets/dialogs/native_app_ad.dart';
 import 'legacy_routes.dart';
+import '../../l10n/l10n.dart';
 
 /// Listenable that notifies when auth state changes
 /// Used by GoRouter to re-evaluate redirects without recreating the router
@@ -457,8 +458,8 @@ final routerProvider = Provider<GoRouter>((ref) {
             builder: (context, state) {
               final id = int.tryParse(state.pathParameters['id'] ?? '');
               if (id == null) {
-                return const Scaffold(
-                  body: Center(child: Text('Ungültige Instanz-ID')),
+                return Scaffold(
+                  body: Center(child: Text(context.l10n.coreFlutterRouterInvalidTenantId)),
                 );
               }
               return TenantDetailPage(tenantId: id);
@@ -491,8 +492,8 @@ final routerProvider = Provider<GoRouter>((ref) {
                 builder: (context, state) {
                   final id = int.tryParse(state.pathParameters['id'] ?? '');
                   if (id == null) {
-                    return const Scaffold(
-                      body: Center(child: Text('Ungültige Person-ID')),
+                    return Scaffold(
+                      body: Center(child: Text(context.l10n.coreFlutterRouterInvalidPersonId)),
                     );
                   }
                   return PersonDetailPage(personId: id);
@@ -521,8 +522,8 @@ final routerProvider = Provider<GoRouter>((ref) {
                 builder: (context, state) {
                   final id = int.tryParse(state.pathParameters['id'] ?? '');
                   if (id == null) {
-                    return const Scaffold(
-                      body: Center(child: Text('Ungültige Anwesenheits-ID')),
+                    return Scaffold(
+                      body: Center(child: Text(context.l10n.coreFlutterRouterInvalidAttendanceId)),
                     );
                   }
                   return AttendanceDetailPage(attendanceId: id);
@@ -993,18 +994,18 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
     ],
     errorBuilder: (context, state) => Scaffold(
-      appBar: AppBar(title: const Text('Error')),
+      appBar: AppBar(title: Text(context.l10n.commonError)),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Icon(Icons.error_outline, size: 64, color: Colors.red),
             const SizedBox(height: 16),
-            Text('Page not found: ${state.matchedLocation}'),
+            Text(context.l10n.coreFlutterRouterPageNotFound(state.matchedLocation)),
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () => context.go('/people'),
-              child: const Text('Go Home'),
+              child: Text(context.l10n.coreFlutterRouterGoHome),
             ),
           ],
         ),

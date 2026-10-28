@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/constants/enums.dart';
 import '../models/person/person.dart';
 import 'base_repository.dart';
+import '../../l10n/l10n.dart';
 
 /// Provider for [UserRegistrationRepository].
 final userRegistrationRepositoryProvider =
@@ -43,16 +44,16 @@ class UserRegistrationRepository extends BaseRepository
 
   /// Ionic `Utils.getRoleText` (label sent to the Edge Function).
   static String roleText(Role role) => switch (role) {
-        Role.admin => 'Admin',
-        Role.player => 'Mitglied',
-        Role.viewer => 'Beobachter',
-        Role.helper => 'Helfer',
-        Role.responsible => 'Verantwortlicher',
-        Role.parent => 'Elternteil',
-        Role.voiceLeader => 'Stimmführer',
-        Role.voiceLeaderHelper => 'Stimmführer & Helfer',
-        Role.none => 'Mitglied',
-        Role.applicant => 'Unbekannt',
+        Role.admin => l10nWithoutContext.commonRolesAdmin,
+        Role.player => l10nWithoutContext.commonRolesMember,
+        Role.viewer => l10nWithoutContext.commonRolesViewer,
+        Role.helper => l10nWithoutContext.commonRolesHelper,
+        Role.responsible => l10nWithoutContext.commonRolesResponsible,
+        Role.parent => l10nWithoutContext.commonRolesParent,
+        Role.voiceLeader => l10nWithoutContext.commonRolesVoiceLeader,
+        Role.voiceLeaderHelper => l10nWithoutContext.commonRolesVoiceLeaderHelper,
+        Role.none => l10nWithoutContext.commonRolesMember,
+        Role.applicant => l10nWithoutContext.commonUnknown,
       };
 
   /// Builds the Edge Function body (pure, testable).
@@ -118,8 +119,7 @@ class UserRegistrationRepository extends BaseRepository
             await updateTenantUserRole(userId, Role.admin,
                 tenantId: targetTenantId);
           } catch (_) {
-            throw const AccountFlowException(
-                'Fehler beim Aktualisieren der Benutzerrolle');
+            throw AccountFlowException(l10nWithoutContext.dbUpdateRoleFailed);
           }
         }
         return userId;
@@ -162,15 +162,15 @@ class UserRegistrationRepository extends BaseRepository
         tenantId: targetTenantId,
       ));
     } catch (_) {
-      throw const AccountFlowException('Fehler beim Erstellen des Accounts');
+      throw AccountFlowException(l10nWithoutContext.dbCreateAccountFailed);
     }
     final user = data['user'];
     final userId = user is Map ? user['id'] as String? : null;
     if (userId == null) {
       throw AccountFlowException(
         data['error'] is String
-            ? 'Fehler beim Erstellen des Accounts: ${data['error']}'
-            : 'Fehler beim Erstellen des Accounts',
+            ? l10nWithoutContext.dbCreateAccountFailedWith(data['error'] as String)
+            : l10nWithoutContext.dbCreateAccountFailed,
       );
     }
     await addUserToTenant(userId, role, normalizedEmail,
@@ -189,10 +189,10 @@ class UserRegistrationRepository extends BaseRepository
         tenantId: tenantId,
       ));
     } catch (_) {
-      throw const AccountFlowException('Fehler beim Informieren des Benutzers');
+      throw AccountFlowException(l10nWithoutContext.dbNotifyUserFailed);
     }
     if (data['mailSent'] != true) {
-      throw const AccountFlowException('Fehler beim Informieren des Benutzers');
+      throw AccountFlowException(l10nWithoutContext.dbNotifyUserFailed);
     }
   }
 
@@ -208,10 +208,10 @@ class UserRegistrationRepository extends BaseRepository
         tenantId: currentTenantId,
       ));
     } catch (_) {
-      throw const AccountFlowException('Fehler beim Informieren des Benutzers');
+      throw AccountFlowException(l10nWithoutContext.dbNotifyUserFailed);
     }
     if (data['mailSent'] != true) {
-      throw const AccountFlowException('Fehler beim Informieren des Benutzers');
+      throw AccountFlowException(l10nWithoutContext.dbNotifyUserFailed);
     }
   }
 
@@ -226,10 +226,10 @@ class UserRegistrationRepository extends BaseRepository
         tenantId: currentTenantId,
       ));
     } catch (_) {
-      throw const AccountFlowException('Fehler beim Informieren des Benutzers');
+      throw AccountFlowException(l10nWithoutContext.dbNotifyUserFailed);
     }
     if (data['mailSent'] != true) {
-      throw const AccountFlowException('Fehler beim Informieren des Benutzers');
+      throw AccountFlowException(l10nWithoutContext.dbNotifyUserFailed);
     }
   }
 
@@ -245,8 +245,7 @@ class UserRegistrationRepository extends BaseRepository
       });
     } catch (e, stack) {
       if (kDebugMode) debugPrint('addUserToTenant failed: $e\n$stack');
-      throw const AccountFlowException(
-          'Fehler beim Hinzufügen des Benutzers zum Mandanten');
+      throw AccountFlowException(l10nWithoutContext.svcAddUserToTenantFailed);
     }
   }
 
@@ -294,7 +293,7 @@ class UserRegistrationRepository extends BaseRepository
           .select('userId, tenantId, role')
           .eq('email', email.toLowerCase().trim());
     } catch (_) {
-      throw const AccountFlowException('Fehler beim Laden des Benutzers');
+      throw AccountFlowException(l10nWithoutContext.dbLoadUserFailed);
     }
 
     final found = rows.cast<Map<String, dynamic>>().where(
@@ -322,8 +321,7 @@ class UserRegistrationRepository extends BaseRepository
         _ => null,
       };
       if (table == null) {
-        throw const AccountFlowException(
-            'Der Benutzer ist bereits in diesem Mandanten');
+        throw AccountFlowException(l10nWithoutContext.dbUserAlreadyInTenant);
       }
 
       final List linked;
@@ -334,19 +332,21 @@ class UserRegistrationRepository extends BaseRepository
             .eq('tenantId', tenantId)
             .eq('appId', userId);
       } catch (_) {
-        throw const AccountFlowException('Fehler beim Laden des Benutzers');
+        throw AccountFlowException(l10nWithoutContext.dbLoadUserFailed);
       }
 
       if (linked.isNotEmpty) {
         final p = linked.first as Map<String, dynamic>;
         final label = switch (foundRole) {
-          Role.parent => 'Elternteil',
-          Role.viewer => 'Beobachter',
+          Role.parent => l10nWithoutContext.commonRolesParent,
+          Role.viewer => l10nWithoutContext.commonRolesViewer,
           _ => roleText(foundRole),
         };
-        final where = foundRole == Role.parent ? 'dieser Instanz' : 'diesem Mandanten';
+        final name = '${p['firstName']} ${p['lastName']}';
         throw AccountFlowException(
-          'Der Benutzer ist bereits in $where: ${p['firstName']} ${p['lastName']} ($label)',
+          foundRole == Role.parent
+              ? l10nWithoutContext.dbUserAlreadyInInstanceAs(name, label)
+              : l10nWithoutContext.dbUserAlreadyInTenantAs(name, label),
         );
       }
 
@@ -368,10 +368,10 @@ class UserRegistrationRepository extends BaseRepository
     ensureNotDemo('createPlayerAccount'); // DEMO_GUARD
     final email = person.email?.trim() ?? '';
     if (email.isEmpty) {
-      throw const AccountFlowException('Keine E-Mail-Adresse vorhanden');
+      throw AccountFlowException(l10nWithoutContext.coreFlutterNoEmailAddress);
     }
     if (person.id == null) {
-      throw const AccountFlowException('Person hat keine ID');
+      throw AccountFlowException(l10nWithoutContext.coreFlutterPersonHasNoId);
     }
     final role = accountRoleFor(
         instrumentId: person.instrument, mainGroupId: mainGroupId);
@@ -389,7 +389,7 @@ class UserRegistrationRepository extends BaseRepository
           .eq('id', person.id!)
           .eq('tenantId', currentTenantId);
     } catch (_) {
-      throw const AccountFlowException('Fehler beim updaten des Benutzers');
+      throw AccountFlowException(l10nWithoutContext.dbUpdateUserFailed2);
     }
     return appId;
   }

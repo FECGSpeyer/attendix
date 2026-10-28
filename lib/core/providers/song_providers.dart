@@ -11,6 +11,7 @@ import '../../data/repositories/repositories.dart';
 import '../config/supabase_config.dart';
 import 'group_providers.dart';
 import 'tenant_providers.dart';
+import '../../l10n/l10n.dart';
 
 // ============================================================================
 // Tenant song settings (Werk-Synchronisierung, additional fields)
@@ -184,7 +185,7 @@ final songSyncedTenantNamesProvider =
   try {
     return await repo.getSyncedTenantNames();
   } catch (_) {
-    return repo.isSyncedLibrary ? ['der Quellinstanz'] : [];
+    return repo.isSyncedLibrary ? [l10nWithoutContext.songsSourceInstance] : [];
   }
 });
 

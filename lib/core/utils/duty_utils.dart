@@ -1,7 +1,10 @@
 import 'dart:math';
 
+import 'package:intl/intl.dart';
+
 import '../../data/models/attendance/attendance.dart';
 import '../../data/models/duty/person_unavailability.dart';
+import '../../l10n/l10n.dart';
 import '../constants/enums.dart';
 
 /// Dienstplan helpers (Termintypen im Dienst-Modus), ported from Ionic
@@ -76,11 +79,11 @@ DutyFill dutyFill(List<PersonAttendance>? persons, int required) {
 String dutyStateLabel(String? state) {
   switch (state) {
     case DutyState.requested:
-      return 'angefragt';
+      return l10nWithoutContext.attendanceRequested;
     case DutyState.confirmed:
-      return 'bestätigt';
+      return l10nWithoutContext.attendanceConfirmed;
     case DutyState.self:
-      return 'selbst eingetragen';
+      return l10nWithoutContext.attendanceSelfSignedUp;
     default:
       return '';
   }
@@ -109,13 +112,37 @@ int isoWeekday(String date) {
   return d.toLocal().weekday;
 }
 
-const weekdayShortNames = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
-const weekdayLongNames = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'];
+const _weekdayShortNamesDe = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
+const _weekdayLongNamesDe = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'];
 
-const monthNames = [
+const _monthNamesDe = [
   'Januar', 'Februar', 'März', 'April', 'Mai', 'Juni',
   'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember',
 ];
+
+// I18N: German keeps the fixed names; other languages use intl.
+// 2024-01-01 is a Monday.
+List<String> _intlWeekdays(String pattern) => [
+      for (var i = 0; i < 7; i++)
+        DateFormat(pattern, currentIntlLocale()).format(DateTime(2024, 1, 1 + i)),
+    ];
+
+/// Short weekday names, Monday first ("Mo", "Di", …).
+List<String> get weekdayShortNames => currentLanguage() == 'de'
+    ? _weekdayShortNamesDe
+    : _intlWeekdays('EEE').map((n) => n.length > 2 ? n.substring(0, 2) : n).toList();
+
+/// Long weekday names, Monday first.
+List<String> get weekdayLongNames =>
+    currentLanguage() == 'de' ? _weekdayLongNamesDe : _intlWeekdays('EEEE');
+
+/// Month names, January first.
+List<String> get monthNames => currentLanguage() == 'de'
+    ? _monthNamesDe
+    : [
+        for (var m = 1; m <= 12; m++)
+          DateFormat('MMMM', currentIntlLocale()).format(DateTime(2024, m)),
+      ];
 
 String weekdaysText(List<int> weekdays) {
   final sorted = [...weekdays]..sort();

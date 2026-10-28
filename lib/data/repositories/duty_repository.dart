@@ -6,6 +6,7 @@ import '../../core/utils/duty_utils.dart';
 import '../models/attendance/attendance.dart';
 import '../models/duty/person_unavailability.dart';
 import 'base_repository.dart';
+import '../../l10n/l10n.dart';
 
 /// Provider for DutyRepository
 final dutyRepositoryProvider = Provider<DutyRepository>((ref) {
@@ -76,7 +77,7 @@ class DutyRepository extends BaseRepository with TenantAwareRepository {
     try {
       final validIds = await _validIdsForTenant(personAttendanceIds);
       if (validIds.isEmpty) {
-        throw RepositoryException(message: 'Keine gültigen Personen', operation: 'assign');
+        throw RepositoryException(message: l10nWithoutContext.coreFlutterRepoNoValidPersons, operation: 'assign');
       }
       // person_attendances has no tenantId: ids validated above via attendance.tenantId
       await supabase.from('person_attendances').update({

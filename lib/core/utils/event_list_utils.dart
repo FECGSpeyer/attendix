@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../../l10n/l10n.dart';
 import '../constants/enums.dart';
 import '../theme/app_colors.dart';
 import 'date_helper.dart';
@@ -31,8 +32,8 @@ abstract final class EventListUtils {
   ];
 
   /// Default info text for Termine the person is not part of (show_all_attendances).
-  static const String defaultShowAllInfoText =
-      'Du bist bei diesem Termin nicht dabei.';
+  static String get defaultShowAllInfoText =>
+      l10nWithoutContext.defaultsShowAllInfoText;
 
   /// Absence reasons of the tenant or the defaults.
   static List<String> absenceReasonsOf(List<String>? tenantReasons) =>
@@ -86,6 +87,10 @@ abstract final class EventListUtils {
   static String weekday(String? date) {
     final d = parse(date);
     if (d == null) return '';
+    if (currentLanguage() != 'de') {
+      final name = DateFormat('EEE', currentIntlLocale()).format(d);
+      return name.length > 2 ? name.substring(0, 2) : name;
+    }
     const names = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
     return names[d.weekday - 1];
   }
@@ -99,7 +104,7 @@ abstract final class EventListUtils {
 
   /// "Oktober 2026" month header.
   static String monthLabel(DateTime date) =>
-      DateFormat('MMMM yyyy', 'de_DE').format(date);
+      DateFormat('MMMM yyyy', currentIntlLocale()).format(date);
 
   /// "19:00–21:00", "19:00" or '' when no time is set.
   static String timeRange(String? start, String? end) {
@@ -119,7 +124,7 @@ abstract final class EventListUtils {
   static String readableDate(String? date, {bool allDay = false, int? durationDays}) {
     final d = parse(date);
     if (d == null) return date ?? '';
-    final fmt = DateFormat('EEE, dd.MM.yyyy', 'de_DE');
+    final fmt = DateFormat('EEE, ${dateFmt()}', currentIntlLocale());
     if (allDay && (durationDays ?? 1) > 1) {
       final end = d.add(Duration(days: (durationDays ?? 1) - 1));
       return '${fmt.format(d)} - ${fmt.format(end)}';
@@ -181,19 +186,22 @@ abstract final class EventListUtils {
   /// Readable status for the pill; upcoming Termine read as a plan
   /// ("Zugesagt"), past ones as a result.
   static String statusLabel(AttendanceStatus status, {bool past = false}) {
+    final l10n = l10nWithoutContext;
     switch (status) {
       case AttendanceStatus.present:
-        return past ? 'Anwesend' : 'Zugesagt';
+        return past ? l10n.commonStatusPresent : l10n.commonStatusAccepted;
       case AttendanceStatus.absent:
-        return 'Abwesend';
+        return l10n.commonStatusAbsent;
       case AttendanceStatus.late:
-        return 'Verspätet';
+        return l10n.commonStatusLateShort;
       case AttendanceStatus.lateExcused:
-        return past ? 'Verspätet entsch.' : 'Verspätung gemeldet';
+        return past
+            ? l10n.commonStatusLateExcusedShort
+            : l10n.commonStatusLateReported;
       case AttendanceStatus.neutral:
-        return 'Neutral';
+        return l10n.commonStatusNeutral;
       case AttendanceStatus.excused:
-        return 'Entschuldigt';
+        return l10n.commonStatusExcused;
     }
   }
 
@@ -239,8 +247,9 @@ abstract final class EventListUtils {
   static String deadlineText(String? deadline, {DateTime? now}) {
     final local = deadlineLocal(deadline);
     if (local == null) return '';
-    if ((now ?? DateTime.now()).isAfter(local)) return 'Anmeldefrist abgelaufen';
-    return 'Anmeldefrist: ${DateFormat('dd.MM.yyyy HH:mm').format(local)} Uhr';
+    final l10n = l10nWithoutContext;
+    if ((now ?? DateTime.now()).isAfter(local)) return l10n.signoutDeadlinePassed;
+    return l10n.signoutDeadline(DateFormat('${dateFmt()} HH:mm').format(local));
   }
 
   /// Google Maps search URL for a place (Ionic Utils.getNavigationUrl).

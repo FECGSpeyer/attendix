@@ -2,6 +2,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../l10n/l10n.dart';
 import 'file_drop_listener_stub.dart'
     if (dart.library.js_interop) 'file_drop_listener_web.dart' as impl;
 
@@ -17,7 +18,7 @@ class FileDropZone extends StatefulWidget {
     super.key,
     required this.onTap,
     required this.onFilesDropped,
-    this.label = 'Dateien hierher ziehen oder tippen zum Auswählen',
+    this.label,
     this.enabled = true,
   });
 
@@ -25,7 +26,7 @@ class FileDropZone extends StatefulWidget {
   final ValueChanged<List<PlatformFile>> onFilesDropped;
 
   /// Ionic `songs.dropHere`.
-  final String label;
+  final String? label;
   final bool enabled;
 
   @override
@@ -93,7 +94,7 @@ class _FileDropZoneState extends State<FileDropZone> {
               Icon(Icons.cloud_upload_outlined, size: 40, color: color),
               const SizedBox(height: 8),
               Text(
-                widget.label,
+                widget.label ?? context.l10n.songsDropHere,
                 textAlign: TextAlign.center,
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: theme.colorScheme.onSurfaceVariant,

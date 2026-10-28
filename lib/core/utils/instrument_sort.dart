@@ -1,4 +1,5 @@
 import '../../data/models/instrument/instrument.dart';
+import '../../l10n/l10n.dart';
 
 /// Instruments grouped under one category (or none) for display & reordering.
 /// Mirrors Ionic instrument-list.page.ts groupInstrumentsByCategory().
@@ -53,8 +54,9 @@ List<GroupCategory> sortCategoriesBySortOrder(Iterable<GroupCategory> cats) {
 List<InstrumentCategorySection> groupInstrumentsByCategory(
   List<Group> groups,
   List<GroupCategory> categories, {
-  String noCategoryLabel = 'Ohne Kategorie',
+  String? noCategoryLabel,
 }) {
+  final fallbackName = noCategoryLabel ?? l10nWithoutContext.instrumentsNoCategory;
   final byCategory = <int?, List<Group>>{};
   for (final g in groups) {
     byCategory.putIfAbsent(g.categoryId, () => []).add(g);
@@ -65,7 +67,7 @@ List<InstrumentCategorySection> groupInstrumentsByCategory(
     final cat = e.key == null ? null : categoryMap[e.key];
     return InstrumentCategorySection(
       categoryId: e.key,
-      name: cat?.name ?? noCategoryLabel,
+      name: cat?.name ?? fallbackName,
       sortOrder: cat?.sortOrder,
       groups: sortGroupsBySortOrder(e.value),
     );

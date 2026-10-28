@@ -3,6 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../core/config/supabase_config.dart';
 import '../../core/constants/enums.dart';
+import '../../l10n/l10n.dart';
 
 /// Provider for AuthService
 final authServiceProvider = Provider<AuthService>((ref) {
@@ -32,7 +33,7 @@ class AuthService {
           .eq('userId', userId)
           .eq('tenantId', tenantId);
     } catch (e) {
-      throw AuthException('Fehler beim Ändern der Rolle: $e');
+      throw AuthException(l10nWithoutContext.coreFlutterRepoChangeRoleFailed('$e'));
     }
   }
 
@@ -78,7 +79,7 @@ class AuthService {
           .eq('userId', userId)
           .eq('tenantId', tenantId);
     } catch (e) {
-      throw AuthException('Fehler beim Entfernen der Account-Verknüpfung: $e');
+      throw AuthException(l10nWithoutContext.coreFlutterRepoUnlinkAccountFailed('$e'));
     }
   }
 }

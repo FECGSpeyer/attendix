@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../l10n/l10n.dart';
 import '../theme/app_colors.dart';
 import 'demo_guard.dart';
 
@@ -69,14 +70,14 @@ class ToastHelper {
   }) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: const Row(
+        content: Row(
           children: [
-            Icon(Icons.system_update, color: Colors.white),
-            SizedBox(width: 12),
+            const Icon(Icons.system_update, color: Colors.white),
+            const SizedBox(width: 12),
             Expanded(
               child: Text(
-                'Neue Version verfügbar',
-                style: TextStyle(color: Colors.white),
+                context.l10n.coreFlutterNewVersionAvailable,
+                style: const TextStyle(color: Colors.white),
               ),
             ),
           ],
@@ -85,7 +86,7 @@ class ToastHelper {
         behavior: SnackBarBehavior.floating,
         duration: const Duration(days: 365), // Persistent - won't auto-dismiss
         action: SnackBarAction(
-          label: 'Aktualisieren',
+          label: context.l10n.coreFlutterUpdate,
           textColor: Colors.white,
           onPressed: onUpdate,
         ),
@@ -120,7 +121,7 @@ class ToastHelper {
         behavior: SnackBarBehavior.floating,
         duration: duration,
         action: SnackBarAction(
-          label: 'OK',
+          label: context.l10n.commonOk,
           textColor: Colors.white,
           onPressed: () {
             ScaffoldMessenger.of(context).hideCurrentSnackBar();

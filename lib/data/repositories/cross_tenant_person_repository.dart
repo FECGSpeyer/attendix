@@ -5,6 +5,7 @@ import '../../core/utils/person_matcher.dart';
 import '../../core/utils/text_utils.dart';
 import '../models/person/person.dart';
 import 'base_repository.dart';
+import '../../l10n/l10n.dart';
 
 /// Provider for CrossTenantPersonRepository
 final crossTenantPersonRepositoryProvider =
@@ -281,7 +282,7 @@ class CrossTenantPersonRepository extends BaseRepository
   }) async {
     if (!linkedTenantIds.contains(tenantId)) {
       throw RepositoryException(
-        message: 'Instanz ist nicht verknüpft',
+        message: l10nWithoutContext.coreFlutterRepoTenantNotLinked,
         operation: 'pausePlayerInOtherTenant',
       );
     }
@@ -290,7 +291,7 @@ class CrossTenantPersonRepository extends BaseRepository
         linkedTenantIds: linkedTenantIds);
     if (!manageable.contains(tenantId)) {
       throw RepositoryException(
-        message: 'Keine Berechtigung in dieser Instanz',
+        message: l10nWithoutContext.coreFlutterRepoNoPermissionInTenant,
         operation: 'pausePlayerInOtherTenant',
       );
     }

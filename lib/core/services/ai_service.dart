@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../config/supabase_config.dart';
+import '../../l10n/l10n.dart';
 
 /// AI helpers backed by Supabase Edge Functions.
 ///
@@ -20,7 +21,7 @@ class AiService {
       body: {'group': group},
     );
     final data = response.data;
-    if (data == null) throw Exception('Keine Antwort erhalten');
+    if (data == null) throw Exception(l10nWithoutContext.coreFlutterNoResponse);
     return normalizeSynonyms(data is String ? data : data.toString());
   }
 

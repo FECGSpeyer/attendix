@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/song/song.dart';
 import '../models/song/song_additional_field.dart';
 import 'base_repository.dart';
+import '../../l10n/l10n.dart';
 
 /// Provider for SongRepository
 final songRepositoryProvider = Provider<SongRepository>((ref) {
@@ -484,7 +485,7 @@ class SongRepository extends BaseRepository with TenantAwareRepository {
 
       if (songValidation == null) {
         throw RepositoryException(
-          message: 'Song nicht gefunden oder Zugriff verweigert',
+          message: l10nWithoutContext.coreFlutterRepoSongNotFoundOrDenied,
           operation: 'addSongHistory',
         );
       }

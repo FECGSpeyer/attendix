@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../models/storage/storage_entry.dart';
 import 'base_repository.dart';
+import '../../l10n/l10n.dart';
 
 /// Provider for FilesRepository (ohne Tenant – nutze filesRepositoryWithTenantProvider)
 final filesRepositoryProvider = Provider<FilesRepository>((ref) {
@@ -200,7 +201,7 @@ class FilesRepository extends BaseRepository with TenantAwareRepository {
     final tenantRoot = '$currentTenantId';
     if (key != tenantRoot && !key.startsWith('$tenantRoot/')) {
       throw RepositoryException(
-        message: 'Zugriff auf fremde Instanz verweigert',
+        message: l10nWithoutContext.coreFlutterRepoForeignTenantDenied,
         operation: 'assertOwnPrefix',
       );
     }
@@ -265,7 +266,7 @@ class FilesRepository extends BaseRepository with TenantAwareRepository {
     try {
       final sanitized = sanitizeSegment(folderName);
       if (sanitized.isEmpty) {
-        throw const RepositoryException(message: 'Ungültiger Ordnername.', operation: 'createFolder');
+        throw RepositoryException(message: l10nWithoutContext.svcInvalidFolderName, operation: 'createFolder');
       }
       final key = '${tenantPrefix(toRelativePath(_safeRelativePath(currentRelativePath), sanitized))}/.keep';
       await _storage.uploadBinary(
@@ -342,7 +343,7 @@ class FilesRepository extends BaseRepository with TenantAwareRepository {
   Future<void> deleteEntry(String relativePath, {required bool isFolder}) async {
     try {
       if (_safeRelativePath(relativePath).isEmpty) {
-        throw const RepositoryException(message: 'Root kann nicht gelöscht werden.', operation: 'deleteEntry');
+        throw RepositoryException(message: l10nWithoutContext.coreFlutterRepoRootNotDeletable, operation: 'deleteEntry');
       }
       if (isFolder) {
         final keys = await _collectFileKeysRecursive(tenantPrefix(relativePath));
@@ -362,7 +363,7 @@ class FilesRepository extends BaseRepository with TenantAwareRepository {
       final parent = parentPath(relativePath);
       final sanitized = isFolder ? sanitizeSegment(newName) : sanitizeFileName(newName);
       if (sanitized.isEmpty) {
-        throw const RepositoryException(message: 'Ungültiger Name.', operation: 'renameEntry');
+        throw RepositoryException(message: l10nWithoutContext.svcInvalidName, operation: 'renameEntry');
       }
       final target = toRelativePath(parent, sanitized);
       if (normalizeRelativePath(target) == normalizeRelativePath(relativePath)) return;
@@ -389,8 +390,8 @@ class FilesRepository extends BaseRepository with TenantAwareRepository {
       if (isFolder) {
         final sourceNormalized = normalizeRelativePath(relativePath);
         if (normalizedTarget == sourceNormalized || normalizedTarget.startsWith('$sourceNormalized/')) {
-          throw const RepositoryException(
-            message: 'Ein Ordner kann nicht in sich selbst verschoben werden.',
+          throw RepositoryException(
+            message: l10nWithoutContext.svcFolderIntoItself,
             operation: 'moveEntry',
           );
         }
