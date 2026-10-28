@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../models/person/person.dart';
 import 'base_repository.dart';
+import 'shared_person_fields.dart';
 import '../../l10n/l10n.dart';
 
 /// Provider for ProfileRepository
@@ -97,7 +98,8 @@ class OwnProfile {
 
 /// Repository for the user's own profile data (Ionic ProfileService +
 /// ImageService + settings page master data).
-class ProfileRepository extends BaseRepository with TenantAwareRepository {
+class ProfileRepository extends BaseRepository
+    with TenantAwareRepository, SharedPersonFieldsRepository {
   ProfileRepository(super.ref);
 
   String get _userId {
@@ -152,6 +154,15 @@ class ProfileRepository extends BaseRepository with TenantAwareRepository {
       handleError(e, stack, 'getOwnProfile');
       rethrow;
     }
+  }
+
+  /// PARITY_B (I2): Ionic db.hydrateSharedPersonFieldValues — merges the
+  /// shared organisation field values into `additional_fields`.
+  Future<List<Person>> hydrateSharedPersonFieldValues(
+    List<Person> players,
+  ) async {
+    return hydrateSharedPersonFieldValuesFor(
+        await getOrganisationId(), players);
   }
 
   /// Organisation (tenant_group) id of the current tenant.
@@ -358,9 +369,11 @@ class ProfileRepository extends BaseRepository with TenantAwareRepository {
             bytes,
             fileOptions: FileOptions(upsert: true, contentType: contentType),
           );
-      final publicUrl = supabase.storage.from('profiles').getPublicUrl(fileName);
-      // Cache-bust so the new image is shown immediately
-      final url = '$publicUrl?v=${DateTime.now().millisecondsSinceEpoch}';
+      // PARITY_B (D7): store the bare public URL like Ionic updateImage —
+      // Ionic removeImage derives the storage key from the URL, so a
+      // cache-busting query would break deleting from Ionic. Busting happens
+      // client-side only (ProfileNotifier.updateImage).
+      final url = supabase.storage.from('profiles').getPublicUrl(fileName);
 
       await supabase
           .from('player')

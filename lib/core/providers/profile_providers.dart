@@ -1,9 +1,14 @@
 import 'dart:typed_data';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../data/models/tenant/tenant.dart';
 import '../../data/repositories/profile_repository.dart';
+import '../../data/repositories/shared_person_fields.dart';
+import 'organisation_providers.dart';
 import 'player_providers.dart';
+import 'realtime_providers.dart';
 import 'tenant_providers.dart';
 
 /// Profile repository with tenant context
@@ -36,6 +41,50 @@ final personExtraFieldsProvider =
   final repo = ref.watch(profileRepositoryWithTenantProvider);
   if (!repo.hasTenantId) return [];
   return repo.getPersonExtraFields();
+});
+
+// PARITY_B (I2) --------------------------------------------------------------
+
+/// Ionic getPersonExtraFields as [ExtraField]s: organisation fields first,
+/// then the tenant fields not overridden by the organisation.
+final personListExtraFieldsProvider = Provider<List<ExtraField>>((ref) {
+  final tenantFields =
+      ref.watch(currentTenantProvider)?.additionalFields ?? const <ExtraField>[];
+  final orgFields = [
+    for (final f in ref.watch(currentOrganisationProvider).valueOrNull
+            ?.additionalFields ??
+        const [])
+      ExtraField(
+        id: f.id,
+        name: f.name,
+        type: f.type,
+        defaultValue: f.defaultValue,
+        options: f.options,
+        visibleToPlayers: f.visibleToPlayers,
+        editableByPlayers: f.editableByPlayers,
+        displayMode: f.displayMode,
+      ),
+  ];
+  if (orgFields.isEmpty) return tenantFields;
+  final orgIds = orgFields.map((f) => f.id).toSet();
+  return [
+    ...orgFields,
+    ...tenantFields.where((f) => !orgIds.contains(f.id)),
+  ];
+});
+
+/// Shared organisation field values of all people in the list, keyed by
+/// person key (Ionic list.page getPlayers → hydrateSharedPersonFieldValues).
+final sharedPersonFieldValuesProvider =
+    FutureProvider.autoDispose<Map<String, Map<String, dynamic>>>((ref) async {
+  final repo = ref.watch(profileRepositoryWithTenantProvider);
+  if (!repo.hasTenantId) return const {};
+  final people = await ref.watch(realtimePlayersProvider.future);
+  final orgId = await repo.getOrganisationId();
+  if (orgId == null) return const {};
+  final keys =
+      people.map(organisationPersonKeyOf).whereType<String>().toSet().toList();
+  return repo.getSharedFieldValuesForPeople(orgId, keys);
 });
 
 /// Extra fields visible to players (Ionic getVisibleExtraFields)
@@ -132,8 +181,14 @@ class ProfileNotifier extends Notifier<AsyncValue<void>> {
         contentType: contentType,
       );
       state = const AsyncValue.data(null);
+      // PARITY_B (D7): the DB keeps the bare URL (same as before the upload),
+      // so drop the cached old image and return a cache-busted URL for the
+      // immediate preview only.
+      try {
+        await CachedNetworkImage.evictFromCache(url);
+      } catch (_) {}
       _invalidate();
-      return url;
+      return '$url?v=${DateTime.now().millisecondsSinceEpoch}';
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
       return null;

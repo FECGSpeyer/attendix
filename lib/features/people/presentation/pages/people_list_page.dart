@@ -13,6 +13,8 @@ import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/player_providers.dart';
 import '../../../../core/providers/realtime_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
+import '../../../../core/providers/profile_providers.dart';
+import '../../../../data/repositories/shared_person_fields.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
@@ -102,7 +104,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
       'photo': context.l10n.peoplePassportPhoto,
       if (tenant?.maintainTeachers ?? false) 'teacher': context.l10n.peopleTeacher,
       if (isVoS) 'examinee': context.l10n.peopleCandidate,
-      for (final f in tenant?.additionalFields ?? const <ExtraField>[])
+      for (final f in ref.read(personListExtraFieldsProvider))
         if (const ['boolean', 'text', 'select', 'bfecg_church', 'number']
             .contains(f.type))
           'extra:${f.id}': f.name,
@@ -270,8 +272,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
         break;
     }
 
-    final extraFields =
-        ref.read(currentTenantProvider)?.additionalFields ?? const <ExtraField>[];
+    final extraFields = ref.read(personListExtraFieldsProvider);
 
     // Extra field filter (Ionic: select / boolean / number / bfecg_church)
     if (_filterOption.startsWith('extra:') && _extraFilterValue != null) {
@@ -413,7 +414,10 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
     // Use realtime provider for live updates
     final peopleAsync = ref.watch(realtimePlayersProvider);
     final percentages = ref.watch(playerAttendancePercentagesProvider).valueOrNull ?? {};
-    final extraFields = tenant?.additionalFields ?? const <ExtraField>[];
+    // PARITY_B (I2): Ionic getPersonExtraFields + hydrated shared values
+    final extraFields = ref.watch(personListExtraFieldsProvider);
+    final sharedFieldValues =
+        ref.watch(sharedPersonFieldValuesProvider).valueOrNull ?? const {};
     final mainGroupId = ref.watch(mainGroupProvider).valueOrNull?.id;
     final churchNames = <String, String>{
       if (_churchField(tenant) != null)
@@ -563,7 +567,9 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
                 actionLabel: context.l10n.messagesRetry,
                 onAction: () => ref.invalidate(realtimePlayersProvider),
               ),
-              data: (people) {
+              data: (rawPeople) {
+                final people =
+                    mergeSharedPersonFieldValues(rawPeople, sharedFieldValues);
                 final filteredPeople = _filterPeople(people);
                 final sortedPeople = _sortPeople(filteredPeople);
 
@@ -861,7 +867,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
   }
 
   List<ExtraField> _filterableExtraFields(Tenant? tenant) =>
-      (tenant?.additionalFields ?? const <ExtraField>[])
+      ref.read(personListExtraFieldsProvider)
           .where((f) => const ['boolean', 'select', 'number', 'bfecg_church']
               .contains(f.type))
           .toList();
@@ -949,7 +955,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
   bool _isVoS(Tenant? tenant) => tenant?.shortName == 'VoS';
 
   ExtraField? _churchField(Tenant? tenant) =>
-      (tenant?.additionalFields ?? const <ExtraField>[])
+      ref.read(personListExtraFieldsProvider)
           .where((f) => f.type == 'bfecg_church')
           .firstOrNull;
 
@@ -999,7 +1005,9 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
   Future<void> _showChurchOverview() async {
     final field = _churchField(ref.read(currentTenantProvider));
     if (field == null) return;
-    final people = ref.read(realtimePlayersProvider).valueOrNull ?? const [];
+    final people = mergeSharedPersonFieldValues(
+        ref.read(realtimePlayersProvider).valueOrNull ?? const [],
+        ref.read(sharedPersonFieldValuesProvider).valueOrNull ?? const {});
     final churchIds = _filterPeople(people)
         .map((p) => churchIdOf(p.additionalFields, field.id))
         .toList();
@@ -1146,7 +1154,10 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
 
   // PEOPLE_IMPORT: open bulk edit with the currently filtered persons
   Future<void> _openBulkEdit() async {
-    final people = ref.read(realtimePlayersProvider).valueOrNull ?? [];
+    // PARITY_B (I3): bulk edit works on hydrated values (Ionic list players)
+    final people = mergeSharedPersonFieldValues(
+        ref.read(realtimePlayersProvider).valueOrNull ?? [],
+        ref.read(sharedPersonFieldValuesProvider).valueOrNull ?? const {});
     final players = _sortPeople(_filterPeople(people));
     final updated = await Navigator.of(context).push<bool>(
       MaterialPageRoute(

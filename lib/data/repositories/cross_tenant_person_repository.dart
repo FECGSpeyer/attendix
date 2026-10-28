@@ -5,6 +5,7 @@ import '../../core/utils/person_matcher.dart';
 import '../../core/utils/text_utils.dart';
 import '../models/person/person.dart';
 import 'base_repository.dart';
+import 'shared_person_fields.dart';
 import '../../l10n/l10n.dart';
 
 /// Provider for CrossTenantPersonRepository
@@ -73,7 +74,7 @@ class LinkedTenantRef {
 /// OrganisationRepository.getLinkedTenants, which verifies membership) plus
 /// the current tenant itself. RLS enforces access on the server.
 class CrossTenantPersonRepository extends BaseRepository
-    with TenantAwareRepository {
+    with TenantAwareRepository, SharedPersonFieldsRepository {
   CrossTenantPersonRepository(super.ref);
 
   static const _select =
@@ -178,6 +179,18 @@ class CrossTenantPersonRepository extends BaseRepository
           .update({'global_person_id': globalPersonId})
           .inFilter('id', playerIds)
           .inFilter('tenantId', [currentTenantId, ...linkedTenantIds]);
+      // PARITY_B (I1): Ionic db.service setGlobalPersonId also writes the
+      // organisation field defaults (organisation of the current tenant).
+      final orgRow = await supabase
+          .from('tenant_group_tenants')
+          .select('tenant_group')
+          .eq('tenant_id', currentTenantId)
+          .limit(1)
+          .maybeSingle();
+      final orgId = orgRow?['tenant_group'] as int?;
+      if (orgId != null) {
+        await writeOrganisationFieldDefaults(orgId, globalPersonId);
+      }
     } catch (e, stack) {
       handleError(e, stack, 'setGlobalPersonId');
       rethrow;

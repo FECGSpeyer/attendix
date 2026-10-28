@@ -31,8 +31,10 @@ void main() {
 
   group('Multi-Tenant Security - ProfileRepository', () {
     test('uses TenantAwareRepository', () {
-      expect(profileSource,
-          contains('extends BaseRepository with TenantAwareRepository'));
+      expect(
+          profileSource,
+          matches(RegExp(
+              r'extends BaseRepository\s+with TenantAwareRepository')));
     });
 
     test('all UPDATE operations on player filter tenantId and appId', () {

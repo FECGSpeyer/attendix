@@ -68,7 +68,6 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
   DateTime? _seasonStart;
   String _selectedRegion = '';
   bool _maintainTeachers = false;
-  bool _withExcuses = true;
   bool _parents = false;
   bool _showMembersList = false;
   bool _showHolidays = false;
@@ -128,7 +127,6 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
       _seasonStart = tenant.seasonStart != null ? DateTime.tryParse(tenant.seasonStart!) : null;
       _selectedRegion = tenant.region ?? '';
       _maintainTeachers = tenant.maintainTeachers;
-      _withExcuses = tenant.withExcuses;
       _parents = tenant.parents ?? false;
       _showMembersList = tenant.showMembersList;
       _showHolidays = tenant.showHolidays;
@@ -221,7 +219,6 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
         'region': _selectedRegion.isNotEmpty ? _selectedRegion : null,
         'showHolidays': _showHolidays,
         'maintainTeachers': _maintainTeachers,
-        'withExcuses': _withExcuses,
         'parents': _parents,
         'showMembersList': _showMembersList, // DB_FIX: column is camelCase
         'shift_excused_as_present': _shiftExcusedAsPresent, // SETTINGS2
@@ -256,7 +253,6 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
           if (r.periodType != null) 'period_type': r.periodType!.name == 'allTime' ? 'all' : r.periodType!.name,
           if (r.periodDays != null) 'period_days': r.periodDays,
           'operator': r.operator == CriticalRuleOperator.and ? 'AND' : 'OR',
-          'enabled': r.enabled,
         }).toList(),
       }).eq('id', tenantId);
 
@@ -726,13 +722,6 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
                             _markChanged();
                           },
                         )),
-                      // Flutter: Status "Entschuldigt" erlauben
-                      _toggle(
-                        context.l10n.generalSettingsFlutterExcuses,
-                        context.l10n.generalSettingsFlutterExcusesHelper,
-                        _withExcuses,
-                        (v) => _withExcuses = v,
-                      ),
                     ],
                   ),
 

@@ -6,14 +6,16 @@ import '../../../../core/constants/app_constants.dart';
 import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/church_providers.dart';
 import '../../../../core/providers/group_providers.dart';
+import '../../../../core/providers/organisation_providers.dart';
 import '../../../../core/providers/player_providers.dart';
-import '../../../../core/providers/tenant_providers.dart';
+import '../../../../core/providers/profile_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/church/church.dart';
 import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../data/models/tenant/tenant.dart';
+import '../../../../data/repositories/shared_person_fields.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/providers/demo_providers.dart'; // DEMO_GUARD
 
@@ -21,19 +23,15 @@ import '../../../../core/providers/demo_providers.dart'; // DEMO_GUARD
 /// Display label of a field option: standard fields are localized here so a
 /// language change updates them (custom fields keep their own name).
 String _fieldLabel(BuildContext context, _FieldOption f) => switch (f.key) {
-      'instrument' => context.l10n.peopleGroup,
-      'isLeader' => context.l10n.peopleVoiceLeader,
-      'notes' => context.l10n.peopleNotes,
-      'phone' => context.l10n.peoplePhone,
-      _ => f.label,
-    };
+  'instrument' => context.l10n.peopleGroup,
+  'isLeader' => context.l10n.peopleVoiceLeader,
+  'notes' => context.l10n.peopleNotes,
+  'phone' => context.l10n.peoplePhone,
+  _ => f.label,
+};
 
 class _FieldOption {
-  const _FieldOption({
-    required this.key,
-    required this.label,
-    this.extraField,
-  });
+  const _FieldOption({required this.key, required this.label, this.extraField});
 
   /// 'instrument', 'isLeader', 'notes', 'phone' or `extra_<id>`
   final String key;
@@ -59,6 +57,8 @@ class BulkEditPage extends ConsumerStatefulWidget {
 
 class _BulkEditPageState extends ConsumerState<BulkEditPage> {
   late final List<_FieldOption> _fieldOptions;
+  Set<String> _orgFieldIds = const {};
+  int? _organisationId;
   _FieldOption? _selected;
   final Map<int, dynamic> _original = {};
   final Map<int, dynamic> _edited = {};
@@ -74,14 +74,26 @@ class _BulkEditPageState extends ConsumerState<BulkEditPage> {
   @override
   void initState() {
     super.initState();
-    final tenant = ref.read(currentTenantProvider);
+    // PARITY_B (I3): Ionic bulk-edit uses db.getPersonExtraFields()
+    // (organisation fields + tenant fields).
+    final extraFields = ref.read(personListExtraFieldsProvider);
+    _orgFieldIds = {
+      for (final f
+          in ref
+                  .read(currentOrganisationProvider)
+                  .valueOrNull
+                  ?.additionalFields ??
+              const [])
+        f.id,
+    };
+    _organisationId = ref.read(currentOrganisationProvider).valueOrNull?.id;
     _fieldOptions = [
       // Labels of the standard fields are resolved in build (_fieldLabel).
       const _FieldOption(key: 'instrument', label: ''),
       const _FieldOption(key: 'isLeader', label: ''),
       const _FieldOption(key: 'notes', label: ''),
       const _FieldOption(key: 'phone', label: ''),
-      for (final f in tenant?.additionalFields ?? const <ExtraField>[])
+      for (final f in extraFields)
         _FieldOption(key: 'extra_${f.id}', label: f.name, extraField: f),
     ];
   }
@@ -108,10 +120,11 @@ class _BulkEditPageState extends ConsumerState<BulkEditPage> {
     final def = field.extraField!.defaultValue;
     return switch (field.fieldType) {
       FieldType.boolean => def is bool ? def : false,
-      FieldType.select => def ??
-          ((field.extraField!.options?.isNotEmpty ?? false)
-              ? field.extraField!.options!.first
-              : null),
+      FieldType.select =>
+        def ??
+            ((field.extraField!.options?.isNotEmpty ?? false)
+                ? field.extraField!.options!.first
+                : null),
       FieldType.number => def,
       _ => def ?? '',
     };
@@ -158,28 +171,46 @@ class _BulkEditPageState extends ConsumerState<BulkEditPage> {
 
     setState(() => _isSaving = true);
     final repo = ref.read(playerRepositoryWithTenantProvider);
+    final profileRepo = ref.read(profileRepositoryWithTenantProvider);
     final changed = _changedCount;
     try {
       // (old person, updated person) pairs for the attendance sync
       final toSync = <(Person, Person)>[];
-      await Future.wait(_players
-          .where((p) => _original[p.id] != _edited[p.id])
-          .map((p) async {
-        final value = _edited[p.id];
-        if (!field.isExtra) {
-          await repo.updatePlayerFields(p.id!, {field.key: value});
-          if (field.key == 'instrument') {
-            toSync.add((p, p.copyWith(instrument: value as int?)));
+      await Future.wait(
+        _players.where((p) => _original[p.id] != _edited[p.id]).map((p) async {
+          final value = _edited[p.id];
+          if (!field.isExtra) {
+            await repo.updatePlayerFields(p.id!, {field.key: value});
+            if (field.key == 'instrument') {
+              toSync.add((p, p.copyWith(instrument: value as int?)));
+            }
+          } else {
+            final merged = <String, dynamic>{
+              ...?p.additionalFields,
+              field.extraField!.id: value,
+            };
+            // PARITY_B (I3): organisation fields go to tenant_group_person_fields
+            // (Ionic updateSharedPersonFieldValues), the rest to the player row.
+            final personKey = organisationPersonKeyOf(p);
+            final isSharedField =
+                personKey != null &&
+                _organisationId != null &&
+                _orgFieldIds.contains(field.extraField!.id);
+            if (isSharedField) {
+              await profileRepo.updateSharedFieldValues(
+                _organisationId!,
+                personKey,
+                {field.extraField!.id: value},
+              );
+            } else {
+              await repo.updatePlayerFields(p.id!, {
+                'additional_fields': merged,
+              });
+            }
+            toSync.add((p, p.copyWith(additionalFields: merged)));
           }
-        } else {
-          final merged = <String, dynamic>{
-            ...?p.additionalFields,
-            field.extraField!.id: value,
-          };
-          await repo.updatePlayerFields(p.id!, {'additional_fields': merged});
-          toSync.add((p, p.copyWith(additionalFields: merged)));
-        }
-      }));
+        }),
+      );
 
       // PEOPLE2: Ionic bulk-edit → syncPlayerWithUpcomingAttendances: a group
       // or filter field change adds/removes the person in upcoming
@@ -196,10 +227,14 @@ class _BulkEditPageState extends ConsumerState<BulkEditPage> {
 
       ref.invalidate(playersProvider);
       if (!mounted) return;
-      ToastHelper.showSuccess(context, context.l10n.peopleFlutterBulkUpdated(changed));
+      ToastHelper.showSuccess(
+        context,
+        context.l10n.peopleFlutterBulkUpdated(changed),
+      );
       Navigator.of(context).pop(true);
     } catch (_) {
-      if (mounted) ToastHelper.showError(context, context.l10n.peopleSaveFailed);
+      if (mounted)
+        ToastHelper.showError(context, context.l10n.peopleSaveFailed);
     } finally {
       if (mounted) setState(() => _isSaving = false);
     }
@@ -208,7 +243,8 @@ class _BulkEditPageState extends ConsumerState<BulkEditPage> {
   @override
   Widget build(BuildContext context) {
     final groups = ref.watch(groupsProvider).valueOrNull ?? const <Group>[];
-    final churches = ref.watch(churchesProvider).valueOrNull ?? const <Church>[];
+    final churches =
+        ref.watch(churchesProvider).valueOrNull ?? const <Church>[];
     final field = _selected;
     final hasExtra = _fieldOptions.any((f) => f.isExtra);
 
@@ -233,21 +269,33 @@ class _BulkEditPageState extends ConsumerState<BulkEditPage> {
             // ignore: deprecated_member_use
             value: field?.key,
             isExpanded: true,
-            decoration: InputDecoration(labelText: context.l10n.peopleChooseField),
+            decoration: InputDecoration(
+              labelText: context.l10n.peopleChooseField,
+            ),
             hint: Text(context.l10n.peopleChooseFieldPlaceholder),
             items: [
               DropdownMenuItem<String>(
                 enabled: false,
-                child: Text(context.l10n.peopleStandardFields,
-                    style: const TextStyle(color: AppColors.medium, fontSize: 12)),
+                child: Text(
+                  context.l10n.peopleStandardFields,
+                  style: const TextStyle(color: AppColors.medium, fontSize: 12),
+                ),
               ),
               for (final f in _fieldOptions.where((f) => !f.isExtra))
-                DropdownMenuItem(value: f.key, child: Text(_fieldLabel(context, f))),
+                DropdownMenuItem(
+                  value: f.key,
+                  child: Text(_fieldLabel(context, f)),
+                ),
               if (hasExtra) ...[
                 DropdownMenuItem<String>(
                   enabled: false,
-                  child: Text(context.l10n.peopleExtraFields,
-                      style: const TextStyle(color: AppColors.medium, fontSize: 12)),
+                  child: Text(
+                    context.l10n.peopleExtraFields,
+                    style: const TextStyle(
+                      color: AppColors.medium,
+                      fontSize: 12,
+                    ),
+                  ),
                 ),
                 for (final f in _fieldOptions.where((f) => f.isExtra))
                   DropdownMenuItem(value: f.key, child: Text(f.label)),
@@ -261,7 +309,11 @@ class _BulkEditPageState extends ConsumerState<BulkEditPage> {
               padding: const EdgeInsets.only(top: AppDimensions.paddingXL),
               child: Column(
                 children: [
-                  const Icon(Icons.edit_note, size: 48, color: AppColors.medium),
+                  const Icon(
+                    Icons.edit_note,
+                    size: 48,
+                    color: AppColors.medium,
+                  ),
                   const SizedBox(height: AppDimensions.paddingS),
                   Text(
                     context.l10n.peopleBulkEditHint,
@@ -278,8 +330,10 @@ class _BulkEditPageState extends ConsumerState<BulkEditPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Text(context.l10n.peopleSetForAll,
-                        style: Theme.of(context).textTheme.titleSmall),
+                    Text(
+                      context.l10n.peopleSetForAll,
+                      style: Theme.of(context).textTheme.titleSmall,
+                    ),
                     const SizedBox(height: AppDimensions.paddingS),
                     _ValueEditor(
                       key: ValueKey('bulk-${field.key}'),
@@ -303,17 +357,20 @@ class _BulkEditPageState extends ConsumerState<BulkEditPage> {
               ),
             ),
             const SizedBox(height: AppDimensions.paddingS),
-            Text(context.l10n.peoplePeopleCount(_players.length),
-                style: Theme.of(context).textTheme.titleSmall),
+            Text(
+              context.l10n.peoplePeopleCount(_players.length),
+              style: Theme.of(context).textTheme.titleSmall,
+            ),
             const SizedBox(height: AppDimensions.paddingS),
             Card(
               child: Column(
                 children: [
                   for (final p in _players)
                     Container(
-                      color: _original[p.id] != _edited[p.id]
-                          ? AppColors.primary.withAlpha(20)
-                          : null,
+                      color:
+                          _original[p.id] != _edited[p.id]
+                              ? AppColors.primary.withAlpha(20)
+                              : null,
                       padding: const EdgeInsets.symmetric(
                         horizontal: AppDimensions.paddingM,
                         vertical: AppDimensions.paddingS,
@@ -324,11 +381,19 @@ class _BulkEditPageState extends ConsumerState<BulkEditPage> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text('${p.firstName} ${p.lastName}',
-                                    style: const TextStyle(fontWeight: FontWeight.w600)),
-                                Text(p.groupName ?? groupName(p.instrument),
-                                    style: const TextStyle(
-                                        color: AppColors.medium, fontSize: 12)),
+                                Text(
+                                  '${p.firstName} ${p.lastName}',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                Text(
+                                  p.groupName ?? groupName(p.instrument),
+                                  style: const TextStyle(
+                                    color: AppColors.medium,
+                                    fontSize: 12,
+                                  ),
+                                ),
                               ],
                             ),
                           ),
@@ -341,7 +406,8 @@ class _BulkEditPageState extends ConsumerState<BulkEditPage> {
                               groups: groups,
                               churches: churches,
                               dense: true,
-                              onChanged: (v) => setState(() => _edited[p.id!] = v),
+                              onChanged:
+                                  (v) => setState(() => _edited[p.id!] = v),
                             ),
                           ),
                         ],
@@ -353,11 +419,13 @@ class _BulkEditPageState extends ConsumerState<BulkEditPage> {
             const SizedBox(height: AppDimensions.paddingM),
             FilledButton(
               onPressed: _changedCount == 0 || _isSaving ? null : _save,
-              child: Text(_isSaving
-                  ? context.l10n.peopleSaving
-                  : _changedCount > 0
-                      ? context.l10n.peopleSaveChanges(_changedCount)
-                      : context.l10n.peopleNoChanges),
+              child: Text(
+                _isSaving
+                    ? context.l10n.peopleSaving
+                    : _changedCount > 0
+                    ? context.l10n.peopleSaveChanges(_changedCount)
+                    : context.l10n.peopleNoChanges,
+              ),
             ),
           ],
         ],
@@ -393,7 +461,9 @@ class _ValueEditor extends StatelessWidget {
       decoration: InputDecoration(hintText: hint, isDense: dense),
       onChanged: (v) {
         if (number) {
-          onChanged(v.trim().isEmpty ? null : num.tryParse(v.replaceAll(',', '.')));
+          onChanged(
+            v.trim().isEmpty ? null : num.tryParse(v.replaceAll(',', '.')),
+          );
         } else {
           onChanged(v);
         }
@@ -420,8 +490,13 @@ class _ValueEditor extends StatelessWidget {
       switch (field.key) {
         case 'instrument':
           return _dropdown<int?>(
-            [for (final g in groups) DropdownMenuItem(value: g.id, child: Text(g.name))],
-            dense ? context.l10n.peopleGroupPlaceholder : context.l10n.peopleChooseGroupPlaceholder,
+            [
+              for (final g in groups)
+                DropdownMenuItem(value: g.id, child: Text(g.name)),
+            ],
+            dense
+                ? context.l10n.peopleGroupPlaceholder
+                : context.l10n.peopleChooseGroupPlaceholder,
           );
         case 'isLeader':
           return Align(
@@ -431,7 +506,10 @@ class _ValueEditor extends StatelessWidget {
         case 'notes':
           return _text(hint: context.l10n.peopleNotePlaceholder);
         case 'phone':
-          return _text(keyboard: TextInputType.phone, hint: context.l10n.peoplePhonePlaceholder);
+          return _text(
+            keyboard: TextInputType.phone,
+            hint: context.l10n.peoplePhonePlaceholder,
+          );
       }
     }
 
@@ -439,27 +517,25 @@ class _ValueEditor extends StatelessWidget {
     switch (field.fieldType) {
       case FieldType.number:
         return _text(
-            keyboard: const TextInputType.numberWithOptions(decimal: true),
-            hint: field.label,
-            number: true);
+          keyboard: const TextInputType.numberWithOptions(decimal: true),
+          hint: field.label,
+          number: true,
+        );
       case FieldType.boolean:
         return Align(
           alignment: Alignment.centerRight,
           child: Switch(value: value == true, onChanged: onChanged),
         );
       case FieldType.select:
-        return _dropdown<String>(
-          [for (final o in options) DropdownMenuItem(value: o, child: Text(o))],
-          field.label,
-        );
+        return _dropdown<String>([
+          for (final o in options) DropdownMenuItem(value: o, child: Text(o)),
+        ], field.label);
       case FieldType.bfecgChurch:
-        return _dropdown<String>(
-          [
-            for (final c in churches)
-              if (c.id != null) DropdownMenuItem(value: c.id!, child: Text(c.name)),
-          ],
-          field.label,
-        );
+        return _dropdown<String>([
+          for (final c in churches)
+            if (c.id != null)
+              DropdownMenuItem(value: c.id!, child: Text(c.name)),
+        ], field.label);
       case FieldType.date:
         final current = DateTime.tryParse(value?.toString() ?? '');
         return OutlinedButton(
@@ -471,11 +547,14 @@ class _ValueEditor extends StatelessWidget {
               lastDate: DateTime(2100),
               locale: Locale(currentLanguage()),
             );
-            if (picked != null) onChanged(DateFormat('yyyy-MM-dd').format(picked));
+            if (picked != null)
+              onChanged(DateFormat('yyyy-MM-dd').format(picked));
           },
-          child: Text(current != null
-              ? DateFormat(dateFmt()).format(current)
-              : context.l10n.personNoDateChosen),
+          child: Text(
+            current != null
+                ? DateFormat(dateFmt()).format(current)
+                : context.l10n.personNoDateChosen,
+          ),
         );
       default:
         return _text(hint: field.label);
