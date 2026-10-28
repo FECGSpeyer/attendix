@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:attendix/core/constants/enums.dart';
 import 'package:attendix/core/providers/self_service_providers.dart';
+import 'package:attendix/core/services/cross_tenant_service.dart';
 import 'package:attendix/core/theme/app_theme.dart';
 import 'package:attendix/data/models/attendance/attendance.dart';
 import 'package:attendix/shared/widgets/adaptive/adaptive.dart';
@@ -170,10 +171,31 @@ void main() {
       expect(body, contains(".eq('userId', userId)"));
     });
 
-    test('one person per tenant (tenantId + appId), several → skipped', () {
+    test('one person per tenant (tenantId + appId), several → the active one',
+        () {
       expect(body, contains(".eq('tenantId', tenantId)"));
       expect(body, contains(".eq('appId', userId)"));
-      expect(body, contains('.length != 1'));
+      // SOL_FIX14: archived + active rows must not empty the tenant's list.
+      expect(body, isNot(contains('.length != 1')));
+      expect(body, contains(".select('id, pending, left')"));
+      expect(body, contains('CrossTenantService.pickPersonIdForTenant('));
+    });
+
+    test('SOL_FIX14: the active row wins over archived / pending rows', () {
+      expect(
+        CrossTenantService.pickPersonIdForTenant([
+          {'id': 1, 'pending': false, 'left': '2025-01-01T00:00:00'},
+          {'id': 2, 'pending': true, 'left': null},
+          {'id': 3, 'pending': false, 'left': null},
+        ]),
+        3,
+      );
+      expect(
+        CrossTenantService.pickPersonIdForTenant([
+          {'id': 9, 'pending': false, 'left': null},
+        ]),
+        9,
+      );
     });
 
     test('person_attendances are restricted to the tenant and the season', () {

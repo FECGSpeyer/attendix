@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/models/tenant/tenant.dart';
+import '../config/supabase_config.dart';
 import '../../data/repositories/profile_repository.dart';
 import '../../data/repositories/shared_person_fields.dart';
 import 'organisation_providers.dart';
@@ -30,6 +31,8 @@ final profileRepositoryForTenantProvider =
 
 /// Own player profile in the current tenant ("Meine Stammdaten")
 final ownProfileProvider = FutureProvider<OwnProfile?>((ref) async {
+  // SOL_FIX14: per-user data – reload when the account changes.
+  if (ref.watch(currentAuthUserIdProvider) == null) return null;
   final repo = ref.watch(profileRepositoryWithTenantProvider);
   if (!repo.hasTenantId) return null;
   return repo.getOwnProfile();

@@ -44,6 +44,8 @@ class UserPreferences {
 
 /// Provider for reading user preferences from current user's metadata
 final userPreferencesProvider = Provider<UserPreferences>((ref) {
+  // SOL_FIX14: per-user data – reload when the account changes.
+  ref.watch(currentAuthUserIdProvider);
   final auth = ref.watch(supabaseAuthProvider);
   final user = auth.currentUser;
   return UserPreferences.fromUserMetadata(user?.userMetadata);

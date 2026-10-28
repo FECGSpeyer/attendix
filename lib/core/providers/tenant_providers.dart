@@ -157,7 +157,8 @@ class CurrentTenantNotifier extends StateNotifier<Tenant?> {
 /// Provider for user's tenants list (sorted: favorites first)
 final userTenantsProvider = FutureProvider<List<Tenant>>((ref) async {
   final supabase = ref.watch(supabaseClientProvider);
-  final userId = supabase.auth.currentUser?.id;
+  // SOL_FIX14: per-user data – reload when the account changes.
+  final userId = ref.watch(currentAuthUserIdProvider);
 
   if (userId == null) return [];
 
@@ -213,7 +214,8 @@ final userTenantsProvider = FutureProvider<List<Tenant>>((ref) async {
 final currentTenantUserProvider = FutureProvider<TenantUser?>((ref) async {
   final supabase = ref.watch(supabaseClientProvider);
   final tenant = ref.watch(currentTenantProvider);
-  final userId = supabase.auth.currentUser?.id;
+  // SOL_FIX14: per-user data – reload when the account changes.
+  final userId = ref.watch(currentAuthUserIdProvider);
 
   if (tenant == null || userId == null) return null;
 
@@ -234,6 +236,11 @@ final currentRoleProvider = Provider<Role>((ref) {
   final tenantUserAsync = ref.watch(currentTenantUserProvider);
   final tenantUser = tenantUserAsync.valueOrNull;
   if (tenantUser == null) return Role.none;
+  // SOL_FIX14: while reloading after an account switch the previous
+  // account's row is still the AsyncValue's value – never use its role.
+  if (tenantUser.userId != ref.watch(currentAuthUserIdProvider)) {
+    return Role.none;
+  }
   return tenantUser.roleEnum;
 });
 

@@ -68,6 +68,8 @@ final messageRecipientsProvider = FutureProvider.autoDispose.family<List<Message
 
 /// Messages the current user received in the current tenant ("Frühere Mitteilungen").
 final receivedMessagesProvider = FutureProvider.autoDispose<List<Message>>((ref) async {
+  // SOL_FIX14: per-user data – reload when the account changes.
+  ref.watch(currentAuthUserIdProvider);
   final repo = ref.watch(messageRepositoryWithTenantProvider);
   if (!repo.hasTenantId) return [];
   return repo.getReceivedMessages(limit: 6);
@@ -164,6 +166,8 @@ final userNotificationsProvider = FutureProvider.autoDispose.family<List<UserNot
   ref,
   allTenants,
 ) async {
+  // SOL_FIX14: per-user data – reload when the account changes.
+  ref.watch(currentAuthUserIdProvider);
   final repo = ref.watch(userNotificationRepositoryWithTenantProvider);
   if (!repo.hasTenantId) return [];
   if (allTenants) {
@@ -175,6 +179,8 @@ final userNotificationsProvider = FutureProvider.autoDispose.family<List<UserNot
 
 /// Unread count of the current tenant (bell badge).
 final unreadNotificationCountProvider = FutureProvider.autoDispose<int>((ref) async {
+  // SOL_FIX14: per-user data – reload when the account changes.
+  ref.watch(currentAuthUserIdProvider);
   final repo = ref.watch(userNotificationRepositoryWithTenantProvider);
   if (!repo.hasTenantId) return 0;
   try {
@@ -189,7 +195,8 @@ final unreadNotificationCountProvider = FutureProvider.autoDispose<int>((ref) as
 final userNotificationsRealtimeProvider = Provider.autoDispose<void>((ref) {
   final supabase = ref.watch(supabaseClientProvider);
   final tenantId = ref.watch(currentTenantIdProvider);
-  final userId = supabase.auth.currentUser?.id;
+  // SOL_FIX14: per-user data – reload when the account changes.
+  final userId = ref.watch(currentAuthUserIdProvider);
   if (userId == null || tenantId == null) return;
 
   final channel =

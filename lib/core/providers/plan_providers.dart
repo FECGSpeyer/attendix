@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/models/organisation/organisation.dart';
+import '../config/supabase_config.dart';
 import '../../data/models/plan/plan.dart';
 import '../../data/repositories/org_plan_repository.dart';
 import '../../data/repositories/plan_repository.dart';
@@ -59,9 +60,14 @@ final planBlockTemplatesProvider = FutureProvider<List<PlanBlockTemplate>>((ref)
 });
 
 /// Ad-hoc plans created by the current user ("Meine Pläne")
+/// SOL_FIX14: keyed on the signed-in account (not only the tenant), so an
+/// account switch never shows the previous account's plans and edit keys.
 final mySharedPlansProvider = FutureProvider<List<SharedPlan>>((ref) async {
+  final userId = ref.watch(currentAuthUserIdProvider);
   final repo = ref.watch(planRepositoryWithTenantProvider);
-  return repo.getMySharedPlans();
+  if (userId == null) return const [];
+  final plans = await repo.getMySharedPlans();
+  return plans.where((p) => p.creatorUserId == userId).toList();
 });
 
 /// One entry of the Org-Pläne list: a Termin flagged as org plan or an ad-hoc plan.
