@@ -1,6 +1,17 @@
 {
   "versions": [
     {
+      "version": "0.9.0",
+      "date": "28.10.2026",
+      "changes": [
+        "🎨 iPhone-Look wie in der bisherigen App: Dialoge, Auswahlmenüs, Schalter, Datumswähler und Tableiste",
+        "🎨 Termine, Personen, Einstellungen, Songs, Planung und Anmeldung im gewohnten Aussehen",
+        "🐛 App startet auf neuen iPhones nicht mehr mit weißem Bildschirm",
+        "🐛 Sprache auf dem iPhone wird korrekt erkannt",
+        "🔒 Weitere Absicherungen beim Wechsel zwischen Gruppen und Konten"
+      ]
+    },
+    {
       "version": "0.8.0",
       "date": "28.10.2026",
       "changes": [
