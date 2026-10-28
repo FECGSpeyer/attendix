@@ -209,6 +209,7 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
     return Scaffold(
       appBar: AppBar(
         // SETTINGS2: Ionic att-list header tenant switcher
+        centerTitle: TenantSwitcherTitle.centerTitle(ref), // UX_AUTH
         title: TenantSwitcherTitle(
           fallbackTitle: context.l10n.attListEvents,
           singleTenantTitle: context.l10n.attListEvents,
