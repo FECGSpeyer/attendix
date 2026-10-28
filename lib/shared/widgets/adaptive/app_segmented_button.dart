@@ -112,6 +112,7 @@ class IonSegment<T> extends StatelessWidget {
     this.scrollable = false,
     this.neutral = true,
     this.fitContent = false,
+    this.forceMd = false,
   });
 
   final List<IonSegmentItem<T>> items;
@@ -130,6 +131,10 @@ class IonSegment<T> extends StatelessWidget {
   /// is centred by the caller instead of filling the row.
   final bool fitContent;
 
+  /// PARITY_R3: `<ion-segment mode="md">` – the md tab style on every
+  /// platform (Ionic songs categories, export, members Einteilung).
+  final bool forceMd;
+
   /// iOS height (ionic-theme-ios26 `min-height: 31px`).
   static const double height = 31;
 
@@ -138,7 +143,7 @@ class IonSegment<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (!useIosLook(context)) return _buildMd(context);
+    if (forceMd || !useIosLook(context)) return _buildMd(context);
     final theme = Theme.of(context);
     final dark = theme.brightness == Brightness.dark;
     final labelColor = theme.colorScheme.onSurface;

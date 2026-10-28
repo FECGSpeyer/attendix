@@ -470,7 +470,7 @@ class _ExportPageState extends ConsumerState<ExportPage> {
   }
 }
 
-/// Ionic `ion-segment mode="md"` spanning the full width.
+/// Ionic `ion-segment mode="md"` spanning the full width (md on iOS too).
 class _ExportSegment extends StatelessWidget {
   const _ExportSegment({
     required this.value,
@@ -484,34 +484,12 @@ class _ExportSegment extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        for (final o in options)
-          Expanded(
-            child: InkWell(
-              onTap: () => onChanged(o.$1),
-              child: Container(
-                height: 48,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(
-                      color: value == o.$1 ? AppColors.primary : Colors.transparent,
-                      width: 2,
-                    ),
-                  ),
-                ),
-                child: Text(
-                  o.$2.toUpperCase(),
-                  style: TextStyle(
-                    color: value == o.$1 ? AppColors.primary : AppColors.medium,
-                    fontWeight: FontWeight.w500,
-                    letterSpacing: 0.6,
-                  ),
-                ),
-              ),
-            ),
-          ),
+    return IonSegment<String>(
+      forceMd: true,
+      value: value,
+      onChanged: onChanged,
+      items: [
+        for (final o in options) IonSegmentItem<String>(value: o.$1, label: Text(o.$2)),
       ],
     );
   }
