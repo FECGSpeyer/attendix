@@ -11567,6 +11567,42 @@ abstract class AppLocalizations {
   /// **'Anmeldefrist: {date}'**
   String selfServiceDeadline(Object date);
 
+  /// selfService.flutter.child
+  ///
+  /// In de, this message translates to:
+  /// **'Kind'**
+  String get selfServiceFlutterChild;
+
+  /// selfService.flutter.noKids
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Kinder gefunden'**
+  String get selfServiceFlutterNoKids;
+
+  /// selfService.flutter.noKidsHint
+  ///
+  /// In de, this message translates to:
+  /// **'Es wurden keine Kinder mit Ihrem\nEltern-Account verknüpft.'**
+  String get selfServiceFlutterNoKidsHint;
+
+  /// selfService.flutter.noValidEntries
+  ///
+  /// In de, this message translates to:
+  /// **'Keine gültigen Einträge gefunden'**
+  String get selfServiceFlutterNoValidEntries;
+
+  /// selfService.flutter.signInUntil
+  ///
+  /// In de, this message translates to:
+  /// **'Anmelden bis {date} Uhr'**
+  String selfServiceFlutterSignInUntil(Object date);
+
+  /// selfService.flutter.switchFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Wechseln: {error}'**
+  String selfServiceFlutterSwitchFailed(Object error);
+
   /// selfService.loadingEvents
   ///
   /// In de, this message translates to:
@@ -11945,6 +11981,42 @@ abstract class AppLocalizations {
   /// **'E-Mail ändern'**
   String get settingsFlutterChangeEmail;
 
+  /// settings.flutter.changeEmailFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Ändern der E-Mail-Adresse: {error}'**
+  String settingsFlutterChangeEmailFailed(Object error);
+
+  /// settings.flutter.confirmEmailChange
+  ///
+  /// In de, this message translates to:
+  /// **'Bitte bestätige die Änderung über den Link in der E-Mail an deine neue Adresse.'**
+  String get settingsFlutterConfirmEmailChange;
+
+  /// settings.flutter.currentEmail
+  ///
+  /// In de, this message translates to:
+  /// **'Aktuell: {email}'**
+  String settingsFlutterCurrentEmail(Object email);
+
+  /// settings.flutter.invalidEmail
+  ///
+  /// In de, this message translates to:
+  /// **'Bitte gib eine gültige E-Mail-Adresse ein.'**
+  String get settingsFlutterInvalidEmail;
+
+  /// settings.flutter.newEmailPh
+  ///
+  /// In de, this message translates to:
+  /// **'Neue E-Mail-Adresse...'**
+  String get settingsFlutterNewEmailPh;
+
+  /// settings.flutter.noProfile
+  ///
+  /// In de, this message translates to:
+  /// **'Kein Profil gefunden'**
+  String get settingsFlutterNoProfile;
+
   /// settings.flutter.pwa.androidStep1
   ///
   /// In de, this message translates to:
@@ -11986,6 +12058,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'App installieren'**
   String get settingsFlutterPwaTitle;
+
+  /// settings.flutter.sameEmail
+  ///
+  /// In de, this message translates to:
+  /// **'Das ist bereits deine E-Mail-Adresse.'**
+  String get settingsFlutterSameEmail;
 
   /// settings.flutter.users
   ///

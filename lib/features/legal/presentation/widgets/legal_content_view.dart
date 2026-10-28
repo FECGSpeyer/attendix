@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/providers/legal_providers.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/utils/quill_utils.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Renders the legal HTML (Impressum & Datenschutz) loaded from
 /// `legal_content`. Port of Ionic `LegalContentComponent`.
@@ -22,9 +23,9 @@ class LegalContentView extends ConsumerWidget {
         padding: EdgeInsets.all(AppDimensions.paddingL),
         child: Center(child: CircularProgressIndicator()),
       ),
-      error: (_, __) => const Padding(
-        padding: EdgeInsets.all(AppDimensions.paddingM),
-        child: Text('Inhalt konnte nicht geladen werden.'),
+      error: (_, __) => Padding(
+        padding: const EdgeInsets.all(AppDimensions.paddingM),
+        child: Text(context.l10n.legalLoadFailed),
       ),
       data: (html) => _LegalHtml(html: html),
     );
@@ -90,12 +91,12 @@ Future<void> showLegalModal(BuildContext context) {
       fullscreenDialog: true,
       builder: (context) => Scaffold(
         appBar: AppBar(
-          title: const Text('Impressum & Datenschutz'),
+          title: Text(context.l10n.legalTitle),
           automaticallyImplyLeading: false,
           actions: [
             IconButton(
               icon: const Icon(Icons.close),
-              tooltip: 'Schließen',
+              tooltip: context.l10n.commonClose,
               onPressed: () => Navigator.of(context).pop(),
             ),
           ],

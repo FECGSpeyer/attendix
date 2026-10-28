@@ -6561,6 +6561,28 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get selfServiceFlutterChild => 'Child';
+
+  @override
+  String get selfServiceFlutterNoKids => 'No children found';
+
+  @override
+  String get selfServiceFlutterNoKidsHint => 'No children are linked to your\nparent account.';
+
+  @override
+  String get selfServiceFlutterNoValidEntries => 'No valid entries found';
+
+  @override
+  String selfServiceFlutterSignInUntil(Object date) {
+    return 'Sign in until $date';
+  }
+
+  @override
+  String selfServiceFlutterSwitchFailed(Object error) {
+    return 'Error while switching: $error';
+  }
+
+  @override
   String get selfServiceLoadingEvents => 'Loading events...';
 
   @override
@@ -6772,6 +6794,28 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsFlutterChangeEmail => 'Change email';
 
   @override
+  String settingsFlutterChangeEmailFailed(Object error) {
+    return 'Error changing the email address: $error';
+  }
+
+  @override
+  String get settingsFlutterConfirmEmailChange => 'Please confirm the change via the link in the email sent to your new address.';
+
+  @override
+  String settingsFlutterCurrentEmail(Object email) {
+    return 'Current: $email';
+  }
+
+  @override
+  String get settingsFlutterInvalidEmail => 'Please enter a valid email address.';
+
+  @override
+  String get settingsFlutterNewEmailPh => 'New email address...';
+
+  @override
+  String get settingsFlutterNoProfile => 'No profile found';
+
+  @override
   String get settingsFlutterPwaAndroidStep1 => 'Tap the menu (⋮)';
 
   @override
@@ -6791,6 +6835,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsFlutterPwaTitle => 'Install app';
+
+  @override
+  String get settingsFlutterSameEmail => 'That is already your email address.';
 
   @override
   String get settingsFlutterUsers => 'Users';

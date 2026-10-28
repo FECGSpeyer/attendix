@@ -3,19 +3,21 @@ import 'package:intl/intl.dart';
 import '../../../../core/constants/enums.dart';
 import '../../../../data/models/church/church.dart';
 import '../../../../data/repositories/profile_repository.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Role label as shown in the Ionic settings profile card (getRoleName).
 String profileRoleName(Role role) {
+  final l10n = l10nWithoutContext;
   return switch (role) {
-    Role.admin => 'Administrator',
-    Role.responsible => 'Verantwortlicher',
-    Role.helper => 'Helfer',
-    Role.voiceLeader => 'Stimmführer',
-    Role.voiceLeaderHelper => 'Stimmführer-Helfer',
-    Role.player => 'Mitglied',
-    Role.viewer => 'Beobachter',
-    Role.parent => 'Elternteil',
-    Role.applicant => 'Bewerber',
+    Role.admin => l10n.rolesAdministrator,
+    Role.responsible => l10n.rolesResponsible,
+    Role.helper => l10n.rolesHelper,
+    Role.voiceLeader => l10n.rolesVoiceLeader,
+    Role.voiceLeaderHelper => l10n.rolesVoiceLeaderHelper,
+    Role.player => l10n.rolesMember,
+    Role.viewer => l10n.rolesViewer,
+    Role.parent => l10n.rolesParent,
+    Role.applicant => l10n.rolesApplicant,
     Role.none => '',
   };
 }
@@ -29,7 +31,7 @@ String formatProfileDate(String? value) {
   if (value == null || value.isEmpty) return '';
   final parsed = DateTime.tryParse(value);
   if (parsed == null) return value;
-  return DateFormat('dd.MM.yyyy').format(parsed);
+  return DateFormat(dateFmt()).format(parsed);
 }
 
 /// Display value of an extra field (Ionic getExtraFieldDisplayValue).
@@ -41,7 +43,9 @@ String extraFieldDisplayValue(
   var value = values[field.id];
   if (field.type == 'boolean') {
     final boolValue = value ?? field.defaultValue;
-    return boolValue == true ? 'Ja' : 'Nein';
+    return boolValue == true
+        ? l10nWithoutContext.commonYes
+        : l10nWithoutContext.commonNo;
   }
   if (value == null || value == '') value = field.defaultValue;
   if (value == null || value == '') return '—';

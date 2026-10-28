@@ -84,6 +84,27 @@
         "noCurrentSongs": "Keine aktuellen Werke",
         "absenceSaveFailed": "Abwesenheit konnte nicht gespeichert werden"
       }
+    },
+    "selfService": {
+      "flutter": {
+        "noKids": "Keine Kinder gefunden",
+        "noKidsHint": "Es wurden keine Kinder mit Ihrem\nEltern-Account verknüpft.",
+        "noValidEntries": "Keine gültigen Einträge gefunden",
+        "switchFailed": "Fehler beim Wechseln: {error}",
+        "signInUntil": "Anmelden bis {date} Uhr",
+        "child": "Kind"
+      }
+    },
+    "settings": {
+      "flutter": {
+        "confirmEmailChange": "Bitte bestätige die Änderung über den Link in der E-Mail an deine neue Adresse.",
+        "invalidEmail": "Bitte gib eine gültige E-Mail-Adresse ein.",
+        "sameEmail": "Das ist bereits deine E-Mail-Adresse.",
+        "changeEmailFailed": "Fehler beim Ändern der E-Mail-Adresse: {error}",
+        "currentEmail": "Aktuell: {email}",
+        "newEmailPh": "Neue E-Mail-Adresse...",
+        "noProfile": "Kein Profil gefunden"
+      }
     }
   },
   "en": {
@@ -170,6 +191,27 @@
         "printAllScores": "Print all scores",
         "noCurrentSongs": "No current pieces",
         "absenceSaveFailed": "Absence could not be saved"
+      }
+    },
+    "selfService": {
+      "flutter": {
+        "noKids": "No children found",
+        "noKidsHint": "No children are linked to your\nparent account.",
+        "noValidEntries": "No valid entries found",
+        "switchFailed": "Error while switching: {error}",
+        "signInUntil": "Sign in until {date}",
+        "child": "Child"
+      }
+    },
+    "settings": {
+      "flutter": {
+        "confirmEmailChange": "Please confirm the change via the link in the email sent to your new address.",
+        "invalidEmail": "Please enter a valid email address.",
+        "sameEmail": "That is already your email address.",
+        "changeEmailFailed": "Error changing the email address: {error}",
+        "currentEmail": "Current: {email}",
+        "newEmailPh": "New email address...",
+        "noProfile": "No profile found"
       }
     }
   }

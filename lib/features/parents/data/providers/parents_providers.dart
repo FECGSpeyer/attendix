@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/attendance_providers.dart';
@@ -8,6 +9,7 @@ import '../../../../data/models/person/person.dart';
 import '../../../../data/repositories/sign_in_out_repository.dart';
 import '../../../../core/providers/signout_providers.dart';
 import '../../../../core/utils/event_list_utils.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Statistics for a child
 class ChildStats {
@@ -106,22 +108,18 @@ class ChildPersonAttendance {
 
     final now = DateTime.now();
     if (now.isAfter(deadlineDate)) {
-      return 'Anmeldefrist abgelaufen';
+      return l10nWithoutContext.signoutDeadlinePassed;
     }
 
-    final day = deadlineDate.day.toString().padLeft(2, '0');
-    final month = deadlineDate.month.toString().padLeft(2, '0');
-    final year = deadlineDate.year;
-    final hour = deadlineDate.hour.toString().padLeft(2, '0');
-    final minute = deadlineDate.minute.toString().padLeft(2, '0');
-    return 'Anmelden bis $day.$month.$year $hour:$minute Uhr';
+    return l10nWithoutContext.selfServiceFlutterSignInUntil(
+        DateFormat('${dateFmt()} HH:mm').format(deadlineDate));
   }
 
   String get displayTitle {
     if (typeInfo != null && typeInfo!.isNotEmpty) {
       return typeInfo!;
     }
-    return 'Termin';
+    return l10nWithoutContext.attendanceEventFallback;
   }
 }
 
@@ -192,15 +190,11 @@ class ParentAttendanceGroup {
 
     final now = DateTime.now();
     if (now.isAfter(deadlineDate)) {
-      return 'Anmeldefrist abgelaufen';
+      return l10nWithoutContext.signoutDeadlinePassed;
     }
 
-    final day = deadlineDate.day.toString().padLeft(2, '0');
-    final month = deadlineDate.month.toString().padLeft(2, '0');
-    final year = deadlineDate.year;
-    final hour = deadlineDate.hour.toString().padLeft(2, '0');
-    final minute = deadlineDate.minute.toString().padLeft(2, '0');
-    return 'Anmelden bis $day.$month.$year $hour:$minute Uhr';
+    return l10nWithoutContext.selfServiceFlutterSignInUntil(
+        DateFormat('${dateFmt()} HH:mm').format(deadlineDate));
   }
 
   bool get allChildrenResponded =>
@@ -210,7 +204,7 @@ class ParentAttendanceGroup {
     if (typeInfo != null && typeInfo!.isNotEmpty) {
       return typeInfo!;
     }
-    return 'Termin';
+    return l10nWithoutContext.attendanceEventFallback;
   }
 }
 
@@ -270,8 +264,8 @@ final childrenAttendancesProvider =
       sharePlan: attendance?['share_plan'] == true,
       typeId: attendance?['type_id']?.toString(),
       childId: personId ?? 0,
-      childName: childNameMap[personId] ?? 'Kind',
-      childFirstName: childFirstNameMap[personId] ?? 'Kind',
+      childName: childNameMap[personId] ?? l10nWithoutContext.selfServiceFlutterChild,
+      childFirstName: childFirstNameMap[personId] ?? l10nWithoutContext.selfServiceFlutterChild,
       durationDays: (attendance?['duration_days'] as num?)?.toInt(),
       place: attendance?['place'] as String?,
       description: attendance?['description'] as String?,

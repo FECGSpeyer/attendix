@@ -13,6 +13,7 @@ import '../../../../data/repositories/profile_repository.dart';
 import '../../../../shared/widgets/display/avatar.dart';
 import '../../../../shared/widgets/sheets/image_viewer_sheet.dart';
 import 'profile_helpers.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Opens the "Meine Stammdaten" sheet (Ionic settings master data modal).
 Future<void> showMasterDataSheet(BuildContext context) {
@@ -92,7 +93,7 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
       initialDate: current ?? DateTime(2000, 1, 1),
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
-      locale: const Locale('de', 'DE'),
+      locale: Locale(currentLanguage()),
     );
     if (picked != null) {
       setState(() {
@@ -112,20 +113,20 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
           children: [
             ListTile(
               leading: const Icon(Icons.photo_library_outlined),
-              title: const Text('Passbild ersetzen'),
+              title: Text(sheetContext.l10n.settingsReplacePhoto),
               onTap: () => Navigator.pop(sheetContext, 'replace'),
             ),
             if (hasImg) ...[
               ListTile(
                 leading: const Icon(Icons.visibility_outlined),
-                title: const Text('Passbild ansehen'),
+                title: Text(sheetContext.l10n.settingsViewPhoto),
                 onTap: () => Navigator.pop(sheetContext, 'view'),
               ),
               ListTile(
                 leading: const Icon(Icons.delete_outline, color: AppColors.danger),
-                title: const Text(
-                  'Passbild entfernen',
-                  style: TextStyle(color: AppColors.danger),
+                title: Text(
+                  sheetContext.l10n.settingsRemovePhoto,
+                  style: const TextStyle(color: AppColors.danger),
                 ),
                 onTap: () => Navigator.pop(sheetContext, 'remove'),
               ),
@@ -133,7 +134,7 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
             const Divider(height: 1),
             ListTile(
               leading: const Icon(Icons.close),
-              title: const Text('Abbrechen'),
+              title: Text(sheetContext.l10n.commonCancel),
               onTap: () => Navigator.pop(sheetContext),
             ),
           ],
@@ -171,7 +172,7 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
       final bytes = await image.readAsBytes();
       if (!mounted) return;
       if (bytes.length > 2 * 1024 * 1024) {
-        ToastHelper.showError(context, 'Das Bild darf maximal 2MB groß sein.');
+        ToastHelper.showError(context, context.l10n.settingsImageTooBig);
         return;
       }
       final url = await ref.read(profileNotifierProvider.notifier).updateImage(
@@ -182,18 +183,18 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
       if (!mounted) return;
       if (url != null) {
         setState(() => _img = url);
-        ToastHelper.showSuccess(context, 'Das Passbild wurde erfolgreich geändert.');
+        ToastHelper.showSuccess(context, context.l10n.settingsPhotoChanged);
       } else {
         ToastHelper.showError(
           context,
-          'Fehler beim ändern des Passbildes, versuche es später erneut',
+          context.l10n.settingsPhotoChangeFailed,
         );
       }
     } catch (_) {
       if (mounted) {
         ToastHelper.showError(
           context,
-          'Fehler beim ändern des Passbildes, versuche es später erneut',
+          context.l10n.settingsPhotoChangeFailed,
         );
       }
     }
@@ -204,9 +205,9 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
     if (img == null) return;
     final confirmed = await DialogHelper.showConfirmation(
       context,
-      title: 'Passbild entfernen',
-      message: 'Möchtest du dein Passbild wirklich entfernen?',
-      confirmText: 'Entfernen',
+      title: context.l10n.settingsRemovePhoto,
+      message: context.l10n.settingsRemovePhotoConfirm,
+      confirmText: context.l10n.commonRemove,
       isDestructive: true,
     );
     if (!confirmed || !mounted) return;
@@ -214,11 +215,11 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
     if (!mounted) return;
     if (ok) {
       setState(() => _img = '');
-      ToastHelper.showSuccess(context, 'Das Passbild wurde erfolgreich entfernt');
+      ToastHelper.showSuccess(context, context.l10n.settingsPhotoRemoved);
     } else {
       ToastHelper.showError(
         context,
-        'Fehler beim Entfernen des Passbildes, versuche es später erneut',
+        context.l10n.settingsPhotoRemoveFailed,
       );
     }
   }
@@ -251,10 +252,10 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
     setState(() => _saving = false);
     if (ok) {
       ToastHelper.showSuccess(
-          context, 'Die Profildaten wurden erfolgreich aktualisiert.');
+          context, context.l10n.settingsProfileUpdated);
       Navigator.of(context).pop();
     } else {
-      ToastHelper.showError(context, 'Fehler beim Aktualisieren des Profils');
+      ToastHelper.showError(context, context.l10n.dbUpdateProfileFailed);
     }
   }
 
@@ -272,7 +273,7 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Meine Stammdaten'),
+        title: Text(context.l10n.settingsMyData),
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
@@ -283,9 +284,9 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
       ),
       body: !_initialized
           ? (profileAsync.hasError
-              ? Center(child: Text('Fehler: ${profileAsync.error}'))
+              ? Center(child: Text(context.l10n.signoutFlutterError(profileAsync.error!)))
               : profileAsync.hasValue && profile == null
-                  ? const Center(child: Text('Kein Profil gefunden'))
+                  ? Center(child: Text(context.l10n.settingsFlutterNoProfile))
                   : const Center(child: CircularProgressIndicator()))
           : ListView(
               padding: const EdgeInsets.all(AppDimensions.paddingM),
@@ -295,7 +296,7 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
                   child: Column(
                     children: [
                       ListTile(
-                        title: const Text('Passbild'),
+                        title: Text(context.l10n.settingsPassPhoto),
                         trailing: Avatar(
                           imageUrl: hasCustomProfileImage(_img) ? _img : null,
                           firstName: _firstName.text,
@@ -313,32 +314,32 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
                               controller: _firstName,
                               textCapitalization: TextCapitalization.words,
                               decoration:
-                                  const InputDecoration(labelText: 'Vorname'),
+                                  InputDecoration(labelText: context.l10n.peopleFirstName),
                             ),
                             const SizedBox(height: AppDimensions.paddingM),
                             TextField(
                               controller: _lastName,
                               textCapitalization: TextCapitalization.words,
                               decoration:
-                                  const InputDecoration(labelText: 'Nachname'),
+                                  InputDecoration(labelText: context.l10n.peopleLastName),
                             ),
                             const SizedBox(height: AppDimensions.paddingM),
                             TextField(
                               controller: _phone,
                               keyboardType: TextInputType.phone,
-                              decoration: const InputDecoration(
-                                  labelText: 'Handynummer'),
+                              decoration: InputDecoration(
+                                  labelText: context.l10n.settingsMobile),
                             ),
                           ],
                         ),
                       ),
                       ListTile(
-                        title: const Text('Geburtsdatum'),
+                        title: Text(context.l10n.peopleBirthday),
                         trailing: TextButton(
                           onPressed: _pickBirthday,
                           child: Text(
                             (_birthday ?? '').isEmpty
-                                ? 'Auswählen'
+                                ? context.l10n.orgChoose
                                 : formatProfileDate(_birthday),
                           ),
                         ),
@@ -354,7 +355,7 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
                       vertical: AppDimensions.paddingXS,
                     ),
                     child: Text(
-                      'Zusatzfelder',
+                      context.l10n.settingsExtraFields,
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(
                             color: AppColors.medium,
                             fontWeight: FontWeight.w600,
@@ -382,7 +383,7 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
                             height: 20,
                             child: CircularProgressIndicator(strokeWidth: 2),
                           )
-                        : const Text('Speichern'),
+                        : Text(context.l10n.commonSave),
                   ),
                 ),
                 const SizedBox(height: AppDimensions.paddingL),
@@ -412,7 +413,7 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
           title: Text(field.name),
           trailing: DropdownButton<String>(
             value: field.options.contains(current) ? current : null,
-            hint: const Text('Bitte auswählen'),
+            hint: Text(context.l10n.settingsPleaseSelect),
             items: field.options
                 .map((o) => DropdownMenuItem(value: o, child: Text(o)))
                 .toList(),
@@ -448,10 +449,10 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
 
   String _churchLabel(ProfileExtraField field, List<Church> churches) {
     final value = _additional[field.id];
-    if (value == null) return 'Bitte auswählen';
-    if (value == '') return 'Nicht gelistet';
+    if (value == null) return context.l10n.settingsPleaseSelect;
+    if (value == '') return context.l10n.settingsNotListed;
     return churches.where((c) => c.id == value).firstOrNull?.name ??
-        'Bitte auswählen';
+        context.l10n.settingsPleaseSelect;
   }
 
   Future<void> _selectChurch(
@@ -512,7 +513,7 @@ class _ChurchPickerState extends State<_ChurchPicker> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Schließen'),
+            child: Text(context.l10n.commonClose),
           ),
         ],
       ),
@@ -521,8 +522,8 @@ class _ChurchPickerState extends State<_ChurchPicker> {
           Padding(
             padding: const EdgeInsets.all(AppDimensions.paddingM),
             child: TextField(
-              decoration: const InputDecoration(
-                hintText: 'Gemeinde suchen',
+              decoration: InputDecoration(
+                hintText: context.l10n.settingsSearchChurch,
                 prefixIcon: Icon(Icons.search),
               ),
               onChanged: (v) => setState(() => _search = v),
@@ -532,7 +533,7 @@ class _ChurchPickerState extends State<_ChurchPicker> {
             child: ListView(
               children: [
                 ListTile(
-                  title: const Text('Nicht gelistet'),
+                  title: Text(context.l10n.settingsNotListed),
                   trailing: widget.selectedId == ''
                       ? const Icon(Icons.check, color: AppColors.primary)
                       : null,
@@ -547,10 +548,10 @@ class _ChurchPickerState extends State<_ChurchPicker> {
                     onTap: () => Navigator.of(context).pop(church.id),
                   ),
                 if (filtered.isEmpty)
-                  const ListTile(
+                  ListTile(
                     title: Text(
-                      'Keine Gemeinde gefunden.',
-                      style: TextStyle(color: AppColors.medium),
+                      context.l10n.settingsNoChurch,
+                      style: const TextStyle(color: AppColors.medium),
                     ),
                   ),
               ],

@@ -8599,6 +8599,36 @@
       "date": {}
     }
   },
+  "selfServiceFlutterChild": "Kind",
+  "@selfServiceFlutterChild": {
+    "description": "selfService.flutter.child"
+  },
+  "selfServiceFlutterNoKids": "Keine Kinder gefunden",
+  "@selfServiceFlutterNoKids": {
+    "description": "selfService.flutter.noKids"
+  },
+  "selfServiceFlutterNoKidsHint": "Es wurden keine Kinder mit Ihrem\nEltern-Account verknüpft.",
+  "@selfServiceFlutterNoKidsHint": {
+    "description": "selfService.flutter.noKidsHint"
+  },
+  "selfServiceFlutterNoValidEntries": "Keine gültigen Einträge gefunden",
+  "@selfServiceFlutterNoValidEntries": {
+    "description": "selfService.flutter.noValidEntries"
+  },
+  "selfServiceFlutterSignInUntil": "Anmelden bis {date} Uhr",
+  "@selfServiceFlutterSignInUntil": {
+    "description": "selfService.flutter.signInUntil",
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "selfServiceFlutterSwitchFailed": "Fehler beim Wechseln: {error}",
+  "@selfServiceFlutterSwitchFailed": {
+    "description": "selfService.flutter.switchFailed",
+    "placeholders": {
+      "error": {}
+    }
+  },
   "selfServiceLoadingEvents": "Termine werden geladen...",
   "@selfServiceLoadingEvents": {
     "description": "selfService.loadingEvents"
@@ -8877,6 +8907,36 @@
   "@settingsFlutterChangeEmail": {
     "description": "settings.flutter.changeEmail"
   },
+  "settingsFlutterChangeEmailFailed": "Fehler beim Ändern der E-Mail-Adresse: {error}",
+  "@settingsFlutterChangeEmailFailed": {
+    "description": "settings.flutter.changeEmailFailed",
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "settingsFlutterConfirmEmailChange": "Bitte bestätige die Änderung über den Link in der E-Mail an deine neue Adresse.",
+  "@settingsFlutterConfirmEmailChange": {
+    "description": "settings.flutter.confirmEmailChange"
+  },
+  "settingsFlutterCurrentEmail": "Aktuell: {email}",
+  "@settingsFlutterCurrentEmail": {
+    "description": "settings.flutter.currentEmail",
+    "placeholders": {
+      "email": {}
+    }
+  },
+  "settingsFlutterInvalidEmail": "Bitte gib eine gültige E-Mail-Adresse ein.",
+  "@settingsFlutterInvalidEmail": {
+    "description": "settings.flutter.invalidEmail"
+  },
+  "settingsFlutterNewEmailPh": "Neue E-Mail-Adresse...",
+  "@settingsFlutterNewEmailPh": {
+    "description": "settings.flutter.newEmailPh"
+  },
+  "settingsFlutterNoProfile": "Kein Profil gefunden",
+  "@settingsFlutterNoProfile": {
+    "description": "settings.flutter.noProfile"
+  },
   "settingsFlutterPwaAndroidStep1": "Tippe auf das Menü (⋮)",
   "@settingsFlutterPwaAndroidStep1": {
     "description": "settings.flutter.pwa.androidStep1"
@@ -8904,6 +8964,10 @@
   "settingsFlutterPwaTitle": "App installieren",
   "@settingsFlutterPwaTitle": {
     "description": "settings.flutter.pwa.title"
+  },
+  "settingsFlutterSameEmail": "Das ist bereits deine E-Mail-Adresse.",
+  "@settingsFlutterSameEmail": {
+    "description": "settings.flutter.sameEmail"
   },
   "settingsFlutterUsers": "Benutzer",
   "@settingsFlutterUsers": {
