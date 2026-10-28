@@ -6468,6 +6468,11 @@ class AppLocalizationsDe extends AppLocalizations {
   String get rolePermFilesHelper => 'Admins, Verantwortliche und Helfer sehen die Dateiablage immer. Wenn aktiviert, können auch alle anderen Mitglieder außer Bewerber sie lesen. Hochladen bleibt Admins und Verantwortlichen vorbehalten.';
 
   @override
+  String rolePermFlutterLoadFailed(Object error) {
+    return 'Fehler beim Laden der Rollenberechtigungen\n$error';
+  }
+
+  @override
   String get rolePermNotesHelper => 'Wenn aktiviert, können Personen mit dieser Rolle die Notizen der Mitglieder in der Anwesenheitsansicht sehen.';
 
   @override
@@ -6747,6 +6752,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get settingsFiles => 'Dateien';
 
   @override
+  String get settingsFlutterAddFailed => 'Fehler beim Hinzufügen';
+
+  @override
   String get settingsFlutterAdminAddedNotNotified => 'Der Admin wurde hinzugefügt, konnte aber nicht benachrichtigt werden.';
 
   @override
@@ -6813,17 +6821,65 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get settingsFlutterEmailRequired => 'E-Mail ist erforderlich';
+
+  @override
   String settingsFlutterErrorDetail(Object error) {
     return 'Fehler: $error';
   }
 
   @override
+  String get settingsFlutterFirstNameRequired => 'Vorname ist erforderlich';
+
+  @override
   String get settingsFlutterInvalidEmail => 'Bitte gib eine gültige E-Mail-Adresse ein.';
+
+  @override
+  String get settingsFlutterLastNameRequired => 'Nachname ist erforderlich';
 
   @override
   String settingsFlutterLoadFailed(Object error) {
     return 'Fehler beim Laden: $error';
   }
+
+  @override
+  String get settingsFlutterParentRemoved => 'Elternteil entfernt';
+
+  @override
+  String get settingsFlutterPendingApprove => 'Genehmigen';
+
+  @override
+  String settingsFlutterPendingApproveMessage(Object name) {
+    return 'Möchtest du $name als Mitglied freischalten?';
+  }
+
+  @override
+  String get settingsFlutterPendingApproveTitle => 'Registrierung genehmigen?';
+
+  @override
+  String settingsFlutterPendingApproved(Object name) {
+    return '$name wurde freigeschaltet';
+  }
+
+  @override
+  String settingsFlutterPendingDeclineMessage(Object name) {
+    return 'Möchtest du die Registrierung von $name ablehnen? Der Eintrag wird gelöscht.';
+  }
+
+  @override
+  String get settingsFlutterPendingDeclineTitle => 'Registrierung ablehnen?';
+
+  @override
+  String get settingsFlutterPendingDeclined => 'Registrierung abgelehnt';
+
+  @override
+  String get settingsFlutterPendingEmpty => 'Keine ausstehenden Registrierungen';
+
+  @override
+  String get settingsFlutterPendingEmptyHint => 'Neue Registrierungen erscheinen hier automatisch';
+
+  @override
+  String get settingsFlutterPendingInvalidId => 'Ungültige Spieler-ID';
 
   @override
   String get settingsFlutterPwaAndroidStep1 => 'Tippe auf das Menü (⋮)';
@@ -6858,6 +6914,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get settingsFlutterUsers => 'Benutzer';
+
+  @override
+  String get settingsFlutterViewerRemoved => 'Beobachter entfernt';
 
   @override
   String get settingsGenerate => 'Generieren';

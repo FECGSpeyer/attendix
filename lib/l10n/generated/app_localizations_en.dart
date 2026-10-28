@@ -6474,6 +6474,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rolePermFilesHelper => 'Admins, responsibles and helpers always see the file storage. If enabled, all other members except applicants can read it too. Uploading stays reserved for admins and responsibles.';
 
   @override
+  String rolePermFlutterLoadFailed(Object error) {
+    return 'Error loading role permissions\n$error';
+  }
+
+  @override
   String get rolePermNotesHelper => 'If enabled, people with this role can see the members\' notes in the attendance view.';
 
   @override
@@ -6753,6 +6758,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsFiles => 'Files';
 
   @override
+  String get settingsFlutterAddFailed => 'Error while adding';
+
+  @override
   String get settingsFlutterAdminAddedNotNotified => 'The admin was added but could not be notified.';
 
   @override
@@ -6819,17 +6827,65 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get settingsFlutterEmailRequired => 'Email is required';
+
+  @override
   String settingsFlutterErrorDetail(Object error) {
     return 'Error: $error';
   }
 
   @override
+  String get settingsFlutterFirstNameRequired => 'First name is required';
+
+  @override
   String get settingsFlutterInvalidEmail => 'Please enter a valid email address.';
+
+  @override
+  String get settingsFlutterLastNameRequired => 'Last name is required';
 
   @override
   String settingsFlutterLoadFailed(Object error) {
     return 'Error while loading: $error';
   }
+
+  @override
+  String get settingsFlutterParentRemoved => 'Parent removed';
+
+  @override
+  String get settingsFlutterPendingApprove => 'Approve';
+
+  @override
+  String settingsFlutterPendingApproveMessage(Object name) {
+    return 'Do you want to approve $name as a member?';
+  }
+
+  @override
+  String get settingsFlutterPendingApproveTitle => 'Approve registration?';
+
+  @override
+  String settingsFlutterPendingApproved(Object name) {
+    return '$name has been approved';
+  }
+
+  @override
+  String settingsFlutterPendingDeclineMessage(Object name) {
+    return 'Do you want to decline the registration of $name? The entry will be deleted.';
+  }
+
+  @override
+  String get settingsFlutterPendingDeclineTitle => 'Decline registration?';
+
+  @override
+  String get settingsFlutterPendingDeclined => 'Registration declined';
+
+  @override
+  String get settingsFlutterPendingEmpty => 'No pending registrations';
+
+  @override
+  String get settingsFlutterPendingEmptyHint => 'New registrations appear here automatically';
+
+  @override
+  String get settingsFlutterPendingInvalidId => 'Invalid player ID';
 
   @override
   String get settingsFlutterPwaAndroidStep1 => 'Tap the menu (⋮)';
@@ -6864,6 +6920,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsFlutterUsers => 'Users';
+
+  @override
+  String get settingsFlutterViewerRemoved => 'Observer removed';
 
   @override
   String get settingsGenerate => 'Generate';

@@ -11405,6 +11405,12 @@ abstract class AppLocalizations {
   /// **'Admins, Verantwortliche und Helfer sehen die Dateiablage immer. Wenn aktiviert, können auch alle anderen Mitglieder außer Bewerber sie lesen. Hochladen bleibt Admins und Verantwortlichen vorbehalten.'**
   String get rolePermFilesHelper;
 
+  /// rolePerm.flutter.loadFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Laden der Rollenberechtigungen\n{error}'**
+  String rolePermFlutterLoadFailed(Object error);
+
   /// rolePerm.notesHelper
   ///
   /// In de, this message translates to:
@@ -11915,6 +11921,12 @@ abstract class AppLocalizations {
   /// **'Dateien'**
   String get settingsFiles;
 
+  /// settings.flutter.addFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Hinzufügen'**
+  String get settingsFlutterAddFailed;
+
   /// settings.flutter.adminAddedNotNotified
   ///
   /// In de, this message translates to:
@@ -12023,11 +12035,23 @@ abstract class AppLocalizations {
   /// **'Fehler beim Erstellen: {error}'**
   String settingsFlutterCreateFailed(Object error);
 
+  /// settings.flutter.emailRequired
+  ///
+  /// In de, this message translates to:
+  /// **'E-Mail ist erforderlich'**
+  String get settingsFlutterEmailRequired;
+
   /// settings.flutter.errorDetail
   ///
   /// In de, this message translates to:
   /// **'Fehler: {error}'**
   String settingsFlutterErrorDetail(Object error);
+
+  /// settings.flutter.firstNameRequired
+  ///
+  /// In de, this message translates to:
+  /// **'Vorname ist erforderlich'**
+  String get settingsFlutterFirstNameRequired;
 
   /// settings.flutter.invalidEmail
   ///
@@ -12035,11 +12059,83 @@ abstract class AppLocalizations {
   /// **'Bitte gib eine gültige E-Mail-Adresse ein.'**
   String get settingsFlutterInvalidEmail;
 
+  /// settings.flutter.lastNameRequired
+  ///
+  /// In de, this message translates to:
+  /// **'Nachname ist erforderlich'**
+  String get settingsFlutterLastNameRequired;
+
   /// settings.flutter.loadFailed
   ///
   /// In de, this message translates to:
   /// **'Fehler beim Laden: {error}'**
   String settingsFlutterLoadFailed(Object error);
+
+  /// settings.flutter.parentRemoved
+  ///
+  /// In de, this message translates to:
+  /// **'Elternteil entfernt'**
+  String get settingsFlutterParentRemoved;
+
+  /// settings.flutter.pending.approve
+  ///
+  /// In de, this message translates to:
+  /// **'Genehmigen'**
+  String get settingsFlutterPendingApprove;
+
+  /// settings.flutter.pending.approveMessage
+  ///
+  /// In de, this message translates to:
+  /// **'Möchtest du {name} als Mitglied freischalten?'**
+  String settingsFlutterPendingApproveMessage(Object name);
+
+  /// settings.flutter.pending.approveTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Registrierung genehmigen?'**
+  String get settingsFlutterPendingApproveTitle;
+
+  /// settings.flutter.pending.approved
+  ///
+  /// In de, this message translates to:
+  /// **'{name} wurde freigeschaltet'**
+  String settingsFlutterPendingApproved(Object name);
+
+  /// settings.flutter.pending.declineMessage
+  ///
+  /// In de, this message translates to:
+  /// **'Möchtest du die Registrierung von {name} ablehnen? Der Eintrag wird gelöscht.'**
+  String settingsFlutterPendingDeclineMessage(Object name);
+
+  /// settings.flutter.pending.declineTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Registrierung ablehnen?'**
+  String get settingsFlutterPendingDeclineTitle;
+
+  /// settings.flutter.pending.declined
+  ///
+  /// In de, this message translates to:
+  /// **'Registrierung abgelehnt'**
+  String get settingsFlutterPendingDeclined;
+
+  /// settings.flutter.pending.empty
+  ///
+  /// In de, this message translates to:
+  /// **'Keine ausstehenden Registrierungen'**
+  String get settingsFlutterPendingEmpty;
+
+  /// settings.flutter.pending.emptyHint
+  ///
+  /// In de, this message translates to:
+  /// **'Neue Registrierungen erscheinen hier automatisch'**
+  String get settingsFlutterPendingEmptyHint;
+
+  /// settings.flutter.pending.invalidId
+  ///
+  /// In de, this message translates to:
+  /// **'Ungültige Spieler-ID'**
+  String get settingsFlutterPendingInvalidId;
 
   /// settings.flutter.pwa.androidStep1
   ///
@@ -12100,6 +12196,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Benutzer'**
   String get settingsFlutterUsers;
+
+  /// settings.flutter.viewerRemoved
+  ///
+  /// In de, this message translates to:
+  /// **'Beobachter entfernt'**
+  String get settingsFlutterViewerRemoved;
 
   /// settings.generate
   ///

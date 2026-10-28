@@ -8482,6 +8482,13 @@
   "@rolePermFilesHelper": {
     "description": "rolePerm.filesHelper"
   },
+  "rolePermFlutterLoadFailed": "Fehler beim Laden der Rollenberechtigungen\n{error}",
+  "@rolePermFlutterLoadFailed": {
+    "description": "rolePerm.flutter.loadFailed",
+    "placeholders": {
+      "error": {}
+    }
+  },
   "rolePermNotesHelper": "Wenn aktiviert, können Personen mit dieser Rolle die Notizen der Mitglieder in der Anwesenheitsansicht sehen.",
   "@rolePermNotesHelper": {
     "description": "rolePerm.notesHelper"
@@ -8851,6 +8858,10 @@
   "@settingsFiles": {
     "description": "settings.files"
   },
+  "settingsFlutterAddFailed": "Fehler beim Hinzufügen",
+  "@settingsFlutterAddFailed": {
+    "description": "settings.flutter.addFailed"
+  },
   "settingsFlutterAdminAddedNotNotified": "Der Admin wurde hinzugefügt, konnte aber nicht benachrichtigt werden.",
   "@settingsFlutterAdminAddedNotNotified": {
     "description": "settings.flutter.adminAddedNotNotified"
@@ -8942,6 +8953,10 @@
       "error": {}
     }
   },
+  "settingsFlutterEmailRequired": "E-Mail ist erforderlich",
+  "@settingsFlutterEmailRequired": {
+    "description": "settings.flutter.emailRequired"
+  },
   "settingsFlutterErrorDetail": "Fehler: {error}",
   "@settingsFlutterErrorDetail": {
     "description": "settings.flutter.errorDetail",
@@ -8949,9 +8964,17 @@
       "error": {}
     }
   },
+  "settingsFlutterFirstNameRequired": "Vorname ist erforderlich",
+  "@settingsFlutterFirstNameRequired": {
+    "description": "settings.flutter.firstNameRequired"
+  },
   "settingsFlutterInvalidEmail": "Bitte gib eine gültige E-Mail-Adresse ein.",
   "@settingsFlutterInvalidEmail": {
     "description": "settings.flutter.invalidEmail"
+  },
+  "settingsFlutterLastNameRequired": "Nachname ist erforderlich",
+  "@settingsFlutterLastNameRequired": {
+    "description": "settings.flutter.lastNameRequired"
   },
   "settingsFlutterLoadFailed": "Fehler beim Laden: {error}",
   "@settingsFlutterLoadFailed": {
@@ -8959,6 +8982,59 @@
     "placeholders": {
       "error": {}
     }
+  },
+  "settingsFlutterParentRemoved": "Elternteil entfernt",
+  "@settingsFlutterParentRemoved": {
+    "description": "settings.flutter.parentRemoved"
+  },
+  "settingsFlutterPendingApprove": "Genehmigen",
+  "@settingsFlutterPendingApprove": {
+    "description": "settings.flutter.pending.approve"
+  },
+  "settingsFlutterPendingApproveMessage": "Möchtest du {name} als Mitglied freischalten?",
+  "@settingsFlutterPendingApproveMessage": {
+    "description": "settings.flutter.pending.approveMessage",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "settingsFlutterPendingApproveTitle": "Registrierung genehmigen?",
+  "@settingsFlutterPendingApproveTitle": {
+    "description": "settings.flutter.pending.approveTitle"
+  },
+  "settingsFlutterPendingApproved": "{name} wurde freigeschaltet",
+  "@settingsFlutterPendingApproved": {
+    "description": "settings.flutter.pending.approved",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "settingsFlutterPendingDeclineMessage": "Möchtest du die Registrierung von {name} ablehnen? Der Eintrag wird gelöscht.",
+  "@settingsFlutterPendingDeclineMessage": {
+    "description": "settings.flutter.pending.declineMessage",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "settingsFlutterPendingDeclineTitle": "Registrierung ablehnen?",
+  "@settingsFlutterPendingDeclineTitle": {
+    "description": "settings.flutter.pending.declineTitle"
+  },
+  "settingsFlutterPendingDeclined": "Registrierung abgelehnt",
+  "@settingsFlutterPendingDeclined": {
+    "description": "settings.flutter.pending.declined"
+  },
+  "settingsFlutterPendingEmpty": "Keine ausstehenden Registrierungen",
+  "@settingsFlutterPendingEmpty": {
+    "description": "settings.flutter.pending.empty"
+  },
+  "settingsFlutterPendingEmptyHint": "Neue Registrierungen erscheinen hier automatisch",
+  "@settingsFlutterPendingEmptyHint": {
+    "description": "settings.flutter.pending.emptyHint"
+  },
+  "settingsFlutterPendingInvalidId": "Ungültige Spieler-ID",
+  "@settingsFlutterPendingInvalidId": {
+    "description": "settings.flutter.pending.invalidId"
   },
   "settingsFlutterPwaAndroidStep1": "Tippe auf das Menü (⋮)",
   "@settingsFlutterPwaAndroidStep1": {
@@ -9005,6 +9081,10 @@
   "settingsFlutterUsers": "Benutzer",
   "@settingsFlutterUsers": {
     "description": "settings.flutter.users"
+  },
+  "settingsFlutterViewerRemoved": "Beobachter entfernt",
+  "@settingsFlutterViewerRemoved": {
+    "description": "settings.flutter.viewerRemoved"
   },
   "settingsGenerate": "Generieren",
   "@settingsGenerate": {

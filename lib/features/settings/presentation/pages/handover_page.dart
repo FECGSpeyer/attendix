@@ -12,6 +12,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../data/models/tenant/tenant.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Data handed from the handover page to the detail page
 /// (Ionic: DataService.setHandoverData).
@@ -46,7 +47,7 @@ class _HandoverPageState extends ConsumerState<HandoverPage> {
   int? _groupId;
   bool _noTenantsToastShown = false;
 
-  final _dateFormat = DateFormat('dd.MM.yyyy');
+  DateFormat get _dateFormat => DateFormat(dateFmt());
 
   List<Person> _filtered(List<Person> all, int? mainGroupId) {
     var list = _includeMainGroup
@@ -81,7 +82,7 @@ class _HandoverPageState extends ConsumerState<HandoverPage> {
       initialDate: _date.isAfter(now) ? now : _date,
       firstDate: DateTime(1900),
       lastDate: now,
-      locale: const Locale('de', 'DE'),
+      locale: Locale(currentLanguage()),
     );
     if (picked != null) setState(() => _date = picked);
   }
@@ -104,8 +105,7 @@ class _HandoverPageState extends ConsumerState<HandoverPage> {
         if (mounted) {
           ToastHelper.showError(
             context,
-            'Es sind keine weiteren Instanzen vorhanden. Bitte füge weitere '
-            'Instanzen dieser Organisation hinzu.',
+            context.l10n.handoverNoOtherTenants,
           );
         }
       });
@@ -118,7 +118,7 @@ class _HandoverPageState extends ConsumerState<HandoverPage> {
         filtered.where((p) => p.id != null && _selected.contains(p.id)).toList();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Personenübergabe')),
+      appBar: AppBar(title: Text(context.l10n.handoverTitle)),
       floatingActionButton: FloatingActionButton(
         onPressed: _targetTenantId == null || selectedPersons.isEmpty
             ? null
@@ -149,38 +149,34 @@ class _HandoverPageState extends ConsumerState<HandoverPage> {
           100,
         ),
         children: [
-          const Card(
+          Card(
             child: Padding(
-              padding: EdgeInsets.all(AppDimensions.paddingM),
+              padding: const EdgeInsets.all(AppDimensions.paddingM),
               child: Column(
                 children: [
-                  Icon(Icons.directions_walk, size: 48, color: AppColors.primary),
-                  SizedBox(height: AppDimensions.paddingS),
+                  const Icon(Icons.directions_walk, size: 48, color: AppColors.primary),
+                  const SizedBox(height: AppDimensions.paddingS),
                   Text(
-                    'Hiermit kannst du Personen innerhalb einer Organisation weitergeben '
-                    'oder in einer andere Instanz kopieren. Falls die Person ein Account '
-                    'hat, wird diese informiert.',
+                    context.l10n.handoverIntro,
                   ),
                 ],
               ),
             ),
           ),
           const SizedBox(height: AppDimensions.paddingM),
-          Text('Einstellungen', style: Theme.of(context).textTheme.titleSmall),
+          Text(context.l10n.handoverSettings, style: Theme.of(context).textTheme.titleSmall),
           Card(
             child: Column(
               children: [
                 SwitchListTile(
-                  title: const Text('Personen in Instanz behalten'),
-                  subtitle: const Text(
-                      'Die Person wird in der aktuellen Instanz nicht archiviert sondern bleibt aktiv'),
+                  title: Text(context.l10n.handoverKeepInTenant),
+                  subtitle: Text(context.l10n.handoverKeepHelper),
                   value: _stayInInstance,
                   onChanged: (v) => setState(() => _stayInInstance = v),
                 ),
                 SwitchListTile(
-                  title: const Text('Hauptgruppe beachten'),
-                  subtitle: const Text(
-                      'Personen die in der Hauptgruppe sind, werden auch angezeigt'),
+                  title: Text(context.l10n.handoverRespectMainGroup),
+                  subtitle: Text(context.l10n.handoverMainGroupHelper),
                   value: _includeMainGroup,
                   onChanged: (v) => setState(() => _includeMainGroup = v),
                 ),
@@ -193,7 +189,7 @@ class _HandoverPageState extends ConsumerState<HandoverPage> {
                     // ignore: deprecated_member_use
                     value: _targetTenantId,
                     isExpanded: true,
-                    decoration: const InputDecoration(labelText: 'Ziel-Instanz'),
+                    decoration: InputDecoration(labelText: context.l10n.handoverTargetTenant),
                     items: [
                       for (final t in tenants)
                         if (t.id != null)
@@ -206,20 +202,20 @@ class _HandoverPageState extends ConsumerState<HandoverPage> {
                   onSelected: (f) => setState(() => _filters.add(f)),
                   itemBuilder: (context) => [
                     if (!_filters.contains('younger') && !_filters.contains('older')) ...[
-                      const PopupMenuItem(value: 'younger', child: Text('Jünger als...')),
-                      const PopupMenuItem(value: 'older', child: Text('Älter als...')),
+                      PopupMenuItem(value: 'younger', child: Text(context.l10n.handoverYoungerThanDots)),
+                      PopupMenuItem(value: 'older', child: Text(context.l10n.handoverOlderThanDots)),
                     ],
                     if (!_filters.contains('group'))
-                      const PopupMenuItem(value: 'group', child: Text('Ist in der Gruppe...')),
+                      PopupMenuItem(value: 'group', child: Text(context.l10n.handoverInGroupDots)),
                   ],
-                  child: const ListTile(
-                    leading: Icon(Icons.filter_list),
-                    title: Text('Filter hinzufügen'),
+                  child: ListTile(
+                    leading: const Icon(Icons.filter_list),
+                    title: Text(context.l10n.handoverAddFilter),
                   ),
                 ),
                 if (_filters.contains('younger') || _filters.contains('older'))
                   ListTile(
-                    title: Text(_filters.contains('younger') ? 'Jünger als' : 'Älter als'),
+                    title: Text(_filters.contains('younger') ? context.l10n.handoverYoungerThan : context.l10n.handoverOlderThan),
                     subtitle: Text(_dateFormat.format(_date)),
                     onTap: _pickDate,
                     trailing: IconButton(
@@ -239,7 +235,7 @@ class _HandoverPageState extends ConsumerState<HandoverPage> {
                             // ignore: deprecated_member_use
                             value: _groupId,
                             isExpanded: true,
-                            decoration: const InputDecoration(labelText: 'Gruppe'),
+                            decoration: InputDecoration(labelText: context.l10n.peopleGroup),
                             items: [
                               for (final g in groups)
                                 if (g.id != null)
@@ -262,18 +258,18 @@ class _HandoverPageState extends ConsumerState<HandoverPage> {
           if (playersAsync.isLoading)
             const Center(child: CircularProgressIndicator())
           else if (filtered.isEmpty)
-            const Card(
+            Card(
               child: Padding(
-                padding: EdgeInsets.all(AppDimensions.paddingM),
-                child: Text('Keine Personen ausgewählt',
-                    style: TextStyle(color: AppColors.danger)),
+                padding: const EdgeInsets.all(AppDimensions.paddingM),
+                child: Text(context.l10n.handoverNoneSelected,
+                    style: const TextStyle(color: AppColors.danger)),
               ),
             )
           else ...[
             Row(
               children: [
                 Expanded(
-                  child: Text('Personenliste',
+                  child: Text(context.l10n.handoverPersonList,
                       style: Theme.of(context).textTheme.titleSmall),
                 ),
                 TextButton(
@@ -282,7 +278,7 @@ class _HandoverPageState extends ConsumerState<HandoverPage> {
                       ..clear()
                       ..addAll(filtered.where((p) => p.id != null).map((p) => p.id!));
                   }),
-                  child: const Text('Alle auswählen'),
+                  child: Text(context.l10n.handoverSelectAll),
                 ),
               ],
             ),

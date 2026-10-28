@@ -10,16 +10,17 @@ import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/role_permission/tenant_role_permission.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Konfigurierbare Rollen (Reihenfolge wie Ionic)
-const _configurableRoles = <(Role, String)>[
-  (Role.helper, 'Helfer'),
-  (Role.voiceLeaderHelper, 'Stimmführer-Helfer'),
-  (Role.voiceLeader, 'Stimmführer'),
-  (Role.player, 'Mitglied'),
-  (Role.viewer, 'Beobachter'),
-  (Role.parent, 'Eltern'),
-];
+List<(Role, String)> _configurableRoles(AppLocalizations l10n) => [
+      (Role.helper, l10n.rolesHelper),
+      (Role.voiceLeaderHelper, l10n.rolesVoiceLeaderHelper),
+      (Role.voiceLeader, l10n.rolesVoiceLeader),
+      (Role.player, l10n.rolesMember),
+      (Role.viewer, l10n.rolesViewer),
+      (Role.parent, l10n.rolesParents),
+    ];
 
 bool _showHelperToggles(Role role) => role == Role.helper || role == Role.voiceLeaderHelper;
 bool _showSelfPauseToggle(Role role) => role == Role.player;
@@ -54,7 +55,7 @@ class _RolePermissionsPageState extends ConsumerState<RolePermissionsPage> {
   void _initFrom(List<TenantRolePermission> permissions) {
     if (_initialized) return;
     _initialized = true;
-    for (final (role, _) in _configurableRoles) {
+    for (final (role, _) in _configurableRoles(context.l10n)) {
       final p = permissions.where((p) => p.role == role.value).firstOrNull;
       if (p != null) _permissions[role] = p;
     }
@@ -79,9 +80,9 @@ class _RolePermissionsPageState extends ConsumerState<RolePermissionsPage> {
         _original = Map.of(_permissions);
         _originalFilesShared = _filesShared;
       });
-      ToastHelper.showSuccess(context, 'Rollenberechtigungen gespeichert');
+      ToastHelper.showSuccess(context, context.l10n.rolePermSaved);
     } else {
-      ToastHelper.showError(context, 'Fehler beim Speichern der Rollenberechtigungen');
+      ToastHelper.showError(context, context.l10n.rolePermSaveFailed);
     }
     return ok;
   }
@@ -90,16 +91,16 @@ class _RolePermissionsPageState extends ConsumerState<RolePermissionsPage> {
     final result = await showDialog<String>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Ungespeicherte Änderungen'),
-        content: const Text(
-            'Du hast ungespeicherte Änderungen. Möchtest du sie speichern bevor du die Seite verlässt?'),
+        title: Text(context.l10n.rolePermUnsaved),
+        content: Text(
+            context.l10n.rolePermUnsavedMessage),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Abbrechen')),
+          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(context.l10n.commonCancel)),
           TextButton(
             onPressed: () => Navigator.pop(ctx, 'discard'),
-            child: const Text('Verwerfen', style: TextStyle(color: AppColors.danger)),
+            child: Text(context.l10n.rolePermDiscard, style: const TextStyle(color: AppColors.danger)),
           ),
-          ElevatedButton(onPressed: () => Navigator.pop(ctx, 'save'), child: const Text('Speichern')),
+          ElevatedButton(onPressed: () => Navigator.pop(ctx, 'save'), child: Text(context.l10n.commonSave)),
         ],
       ),
     );
@@ -134,7 +135,7 @@ class _RolePermissionsPageState extends ConsumerState<RolePermissionsPage> {
         if (!didPop) _confirmLeave();
       },
       child: Scaffold(
-        appBar: AppBar(title: const Text('Rollen & Berechtigungen')),
+        appBar: AppBar(title: Text(context.l10n.rolePermTitle)),
         floatingActionButton: FloatingActionButton(
           onPressed: saving ? null : _save,
           child: saving
@@ -143,28 +144,26 @@ class _RolePermissionsPageState extends ConsumerState<RolePermissionsPage> {
         ),
         body: permissionsAsync.when(
           loading: () => const Center(child: CircularProgressIndicator()),
-          error: (e, _) => Center(child: Text('Fehler beim Laden der Rollenberechtigungen\n$e', textAlign: TextAlign.center)),
+          error: (e, _) => Center(child: Text(context.l10n.rolePermFlutterLoadFailed(e), textAlign: TextAlign.center)),
           data: (permissions) {
             _initFrom(permissions);
             return ListView(
               padding: const EdgeInsets.fromLTRB(
                   AppDimensions.paddingM, AppDimensions.paddingM, AppDimensions.paddingM, 96),
               children: [
-                _sectionHeader('Dateiablage'),
+                _sectionHeader(context.l10n.rolePermFiles),
                 Card(
                   child: SwitchListTile(
-                    title: const Text('Dateiablage für alle Mitglieder'),
-                    subtitle: const Text(
-                      'Admins, Verantwortliche und Helfer sehen die Dateiablage immer. Wenn aktiviert, '
-                      'können auch alle anderen Mitglieder außer Bewerber sie lesen. Hochladen bleibt '
-                      'Admins und Verantwortlichen vorbehalten.',
+                    title: Text(context.l10n.rolePermFilesForAll),
+                    subtitle: Text(
+                      context.l10n.rolePermFilesHelper,
                     ),
                     value: _filesShared,
                     onChanged: isAdmin ? (v) => setState(() => _filesShared = v) : null,
                   ),
                 ),
                 const SizedBox(height: AppDimensions.paddingM),
-                for (final (role, label) in _configurableRoles)
+                for (final (role, label) in _configurableRoles(context.l10n))
                   if (_permissions[role] != null && _hasAnyToggle(role)) _buildRoleCard(role, label),
               ],
             );
@@ -193,45 +192,45 @@ class _RolePermissionsPageState extends ConsumerState<RolePermissionsPage> {
         children: [
           if (_showHelperToggles(role)) ...[
             SwitchListTile(
-              title: const Text('Alle Gruppen pflegen'),
-              subtitle: const Text(
-                  'Wenn deaktiviert, können Personen mit dieser Rolle nur Anwesenheiten der ihnen zugeordneten Gruppe pflegen.'),
+              title: Text(context.l10n.rolePermAllGroups),
+              subtitle: Text(
+                  context.l10n.rolePermAllGroupsHelper),
               value: p.attendanceAllGroups,
               onChanged: (v) => _update(role, (p) => p.copyWith(attendanceAllGroups: v)),
             ),
             SwitchListTile(
-              title: const Text('Anwesenheiten erstellen'),
-              subtitle: const Text('Wenn deaktiviert, können Personen mit dieser Rolle keine neuen Anwesenheiten anlegen.'),
+              title: Text(context.l10n.rolePermCreateAttendance),
+              subtitle: Text(context.l10n.rolePermCreateHelper),
               value: p.attendanceCreate,
               onChanged: (v) => _update(role, (p) => p.copyWith(attendanceCreate: v)),
             ),
             SwitchListTile(
-              title: const Text('Spielernotizen sehen'),
-              subtitle: const Text(
-                  'Wenn aktiviert, können Personen mit dieser Rolle die Notizen der Mitglieder in der Anwesenheitsansicht sehen.'),
+              title: Text(context.l10n.rolePermSeeNotes),
+              subtitle: Text(
+                  context.l10n.rolePermNotesHelper),
               value: p.playerNotesView,
               onChanged: (v) => _update(role, (p) => p.copyWith(playerNotesView: v)),
             ),
             SwitchListTile(
-              title: const Text('Checkliste sehen'),
-              subtitle: const Text(
-                  'Wenn aktiviert, können Personen mit dieser Rolle die Checkliste in der Anwesenheitsansicht sehen.'),
+              title: Text(context.l10n.rolePermSeeChecklist),
+              subtitle: Text(
+                  context.l10n.rolePermChecklistHelper),
               value: p.checklistView,
               onChanged: (v) => _update(role, (p) => p.copyWith(checklistView: v)),
             ),
           ],
           if (_showSelfPauseToggle(role))
             SwitchListTile(
-              title: const Text('Eigene Pausierung erlauben'),
-              subtitle: const Text('Wenn aktiviert, können Spieler sich selbst pausieren und reaktivieren.'),
+              title: Text(context.l10n.rolePermAllowPause),
+              subtitle: Text(context.l10n.rolePermPauseHelper),
               value: p.playerSelfPause,
               onChanged: (v) => _update(role, (p) => p.copyWith(playerSelfPause: v)),
             ),
           if (_showPlannedAbsenceToggle(role))
             SwitchListTile(
-              title: const Text('Geplante Abwesenheiten eintragen'),
-              subtitle: const Text(
-                  'Wenn aktiviert, können Personen mit dieser Rolle geplante Abwesenheiten für sich selbst eintragen.'),
+              title: Text(context.l10n.rolePermEnterAbsences),
+              subtitle: Text(
+                  context.l10n.rolePermAbsencesHelper),
               value: p.playerPlannedAbsence,
               onChanged: (v) => _update(role, (p) => p.copyWith(playerPlannedAbsence: v)),
             ),

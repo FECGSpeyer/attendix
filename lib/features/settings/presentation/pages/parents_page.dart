@@ -10,6 +10,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../widgets/settings_list.dart'; // UX_SETTINGS
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/parent/parent_model.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Parents Page - manage parents of players
 class ParentsPage extends ConsumerWidget {
@@ -21,7 +22,7 @@ class ParentsPage extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Eltern'),
+        title: Text(context.l10n.settingsParents),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => context.pop(),
@@ -39,11 +40,11 @@ class ParentsPage extends ConsumerWidget {
             children: [
               const Icon(Icons.error_outline, size: 64, color: AppColors.danger),
               const SizedBox(height: AppDimensions.paddingM),
-              Text('Fehler: $e'),
+              Text(context.l10n.settingsFlutterErrorDetail(e)),
               const SizedBox(height: AppDimensions.paddingM),
               ElevatedButton(
                 onPressed: () => ref.invalidate(parentsProvider),
-                child: const Text('Erneut versuchen'),
+                child: Text(context.l10n.messagesRetry),
               ),
             ],
           ),
@@ -62,9 +63,9 @@ class ParentsPage extends ConsumerWidget {
               itemCount: parents.length + 1,
               itemBuilder: (context, index) {
                 if (index == 0) {
-                  return const SettingsHintCard(
+                  return SettingsHintCard(
                     icon: Icons.favorite_border,
-                    text: 'Eltern können die Anwesenheiten ihrer Kinder einsehen und Abwesenheiten pflegen.',
+                    text: context.l10n.settingsParentsHint,
                   );
                 }
                 final parent = parents[index - 1];
@@ -89,7 +90,7 @@ class ParentsPage extends ConsumerWidget {
     final result = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Elternteil hinzufügen'),
+        title: Text(context.l10n.settingsAddParent),
         content: Form(
           key: formKey,
           child: Column(
@@ -97,17 +98,17 @@ class ParentsPage extends ConsumerWidget {
             children: [
               TextFormField(
                 controller: emailController,
-                decoration: const InputDecoration(
-                  labelText: 'E-Mail',
-                  prefixIcon: Icon(Icons.email),
+                decoration: InputDecoration(
+                  labelText: context.l10n.settingsEmailAddress,
+                  prefixIcon: const Icon(Icons.email),
                 ),
                 keyboardType: TextInputType.emailAddress,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'E-Mail ist erforderlich';
+                    return context.l10n.settingsFlutterEmailRequired;
                   }
                   if (!value.contains('@')) {
-                    return 'Ungültige E-Mail-Adresse';
+                    return context.l10n.registerModalInvalidEmail;
                   }
                   return null;
                 },
@@ -115,13 +116,13 @@ class ParentsPage extends ConsumerWidget {
               const SizedBox(height: AppDimensions.paddingM),
               TextFormField(
                 controller: firstNameController,
-                decoration: const InputDecoration(
-                  labelText: 'Vorname',
-                  prefixIcon: Icon(Icons.person),
+                decoration: InputDecoration(
+                  labelText: context.l10n.peopleFirstName,
+                  prefixIcon: const Icon(Icons.person),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Vorname ist erforderlich';
+                    return context.l10n.settingsFlutterFirstNameRequired;
                   }
                   return null;
                 },
@@ -129,13 +130,13 @@ class ParentsPage extends ConsumerWidget {
               const SizedBox(height: AppDimensions.paddingM),
               TextFormField(
                 controller: lastNameController,
-                decoration: const InputDecoration(
-                  labelText: 'Nachname',
-                  prefixIcon: Icon(Icons.person_outline),
+                decoration: InputDecoration(
+                  labelText: context.l10n.peopleLastName,
+                  prefixIcon: const Icon(Icons.person_outline),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Nachname ist erforderlich';
+                    return context.l10n.settingsFlutterLastNameRequired;
                   }
                   return null;
                 },
@@ -146,7 +147,7 @@ class ParentsPage extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Abbrechen'),
+            child: Text(context.l10n.commonCancel),
           ),
           ElevatedButton(
             onPressed: () {
@@ -154,7 +155,7 @@ class ParentsPage extends ConsumerWidget {
                 Navigator.of(ctx).pop(true);
               }
             },
-            child: const Text('Einladen'),
+            child: Text(context.l10n.settingsInvite),
           ),
         ],
       ),
@@ -188,14 +189,14 @@ class ParentsPage extends ConsumerWidget {
 
         if (context.mounted) {
           if (created == null) {
-            ToastHelper.showError(context, 'Fehler beim Hinzufügen');
+            ToastHelper.showError(context, context.l10n.settingsFlutterAddFailed);
           } else {
-            ToastHelper.showSuccess(context, 'Elternteil hinzugefügt');
+            ToastHelper.showSuccess(context, context.l10n.settingsUserCreated);
           }
         }
       } catch (e) {
         if (context.mounted) {
-          ToastHelper.showError(context, 'Fehler: $e');
+          ToastHelper.showError(context, context.l10n.settingsFlutterErrorDetail(e));
         }
       }
     }
@@ -205,17 +206,17 @@ class ParentsPage extends ConsumerWidget {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Elternteil entfernen?'),
-        content: Text('Möchtest du ${parent.firstName} wirklich entfernen?'),
+        title: Text(context.l10n.settingsRemoveParent),
+        content: Text(context.l10n.settingsRemoveMessage(parent.firstName)),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Abbrechen'),
+            child: Text(context.l10n.commonCancel),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: AppColors.danger),
             onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('Ja'),
+            child: Text(context.l10n.commonYes),
           ),
         ],
       ),
@@ -227,11 +228,11 @@ class ParentsPage extends ConsumerWidget {
         await notifier.deleteParent(parent.id!);
 
         if (context.mounted) {
-          ToastHelper.showSuccess(context, 'Elternteil entfernt');
+          ToastHelper.showSuccess(context, context.l10n.settingsFlutterParentRemoved);
         }
       } catch (e) {
         if (context.mounted) {
-          ToastHelper.showError(context, 'Fehler: $e');
+          ToastHelper.showError(context, context.l10n.settingsFlutterErrorDetail(e));
         }
       }
     }

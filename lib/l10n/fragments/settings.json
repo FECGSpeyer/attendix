@@ -36,7 +36,25 @@
         "reactivateMessage": "Möchtest du {name} wieder aktivieren?",
         "reactivated": "{name} wurde reaktiviert",
         "loadFailed": "Fehler beim Laden: {error}",
-        "createFailed": "Fehler beim Erstellen: {error}"
+        "createFailed": "Fehler beim Erstellen: {error}",
+        "emailRequired": "E-Mail ist erforderlich",
+        "firstNameRequired": "Vorname ist erforderlich",
+        "lastNameRequired": "Nachname ist erforderlich",
+        "addFailed": "Fehler beim Hinzufügen",
+        "parentRemoved": "Elternteil entfernt",
+        "viewerRemoved": "Beobachter entfernt",
+        "pending": {
+          "empty": "Keine ausstehenden Registrierungen",
+          "emptyHint": "Neue Registrierungen erscheinen hier automatisch",
+          "invalidId": "Ungültige Spieler-ID",
+          "approveTitle": "Registrierung genehmigen?",
+          "approveMessage": "Möchtest du {name} als Mitglied freischalten?",
+          "approve": "Genehmigen",
+          "approved": "{name} wurde freigeschaltet",
+          "declineTitle": "Registrierung ablehnen?",
+          "declineMessage": "Möchtest du die Registrierung von {name} ablehnen? Der Eintrag wird gelöscht.",
+          "declined": "Registrierung abgelehnt"
+        }
       }
     },
     "generalSettings": {
@@ -70,6 +88,11 @@
         "createdNamed": "Anwesenheitstyp \"{name}\" erstellt",
         "withProgramme": "Mit Programm",
         "hidden": "Ausgeblendet"
+      }
+    },
+    "rolePerm": {
+      "flutter": {
+        "loadFailed": "Fehler beim Laden der Rollenberechtigungen\n{error}"
       }
     }
   },
@@ -110,7 +133,25 @@
         "reactivateMessage": "Do you want to reactivate {name}?",
         "reactivated": "{name} has been reactivated",
         "loadFailed": "Error while loading: {error}",
-        "createFailed": "Error while creating: {error}"
+        "createFailed": "Error while creating: {error}",
+        "emailRequired": "Email is required",
+        "firstNameRequired": "First name is required",
+        "lastNameRequired": "Last name is required",
+        "addFailed": "Error while adding",
+        "parentRemoved": "Parent removed",
+        "viewerRemoved": "Observer removed",
+        "pending": {
+          "empty": "No pending registrations",
+          "emptyHint": "New registrations appear here automatically",
+          "invalidId": "Invalid player ID",
+          "approveTitle": "Approve registration?",
+          "approveMessage": "Do you want to approve {name} as a member?",
+          "approve": "Approve",
+          "approved": "{name} has been approved",
+          "declineTitle": "Decline registration?",
+          "declineMessage": "Do you want to decline the registration of {name}? The entry will be deleted.",
+          "declined": "Registration declined"
+        }
       }
     },
     "generalSettings": {
@@ -144,6 +185,11 @@
         "createdNamed": "Attendance type \"{name}\" created",
         "withProgramme": "With programme",
         "hidden": "Hidden"
+      }
+    },
+    "rolePerm": {
+      "flutter": {
+        "loadFailed": "Error loading role permissions\n{error}"
       }
     }
   }
