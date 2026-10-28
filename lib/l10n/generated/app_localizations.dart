@@ -3071,6 +3071,720 @@ abstract class AppLocalizations {
   /// **'Ja'**
   String get commonYes;
 
+  /// core.flutter.accessDenied
+  ///
+  /// In de, this message translates to:
+  /// **'Zugriff verweigert'**
+  String get coreFlutterAccessDenied;
+
+  /// core.flutter.difficulty.easy
+  ///
+  /// In de, this message translates to:
+  /// **'Leicht'**
+  String get coreFlutterDifficultyEasy;
+
+  /// core.flutter.difficulty.hard
+  ///
+  /// In de, this message translates to:
+  /// **'Schwer'**
+  String get coreFlutterDifficultyHard;
+
+  /// core.flutter.difficulty.medium
+  ///
+  /// In de, this message translates to:
+  /// **'Mittel'**
+  String get coreFlutterDifficultyMedium;
+
+  /// core.flutter.difficulty.veryHard
+  ///
+  /// In de, this message translates to:
+  /// **'Sehr schwer'**
+  String get coreFlutterDifficultyVeryHard;
+
+  /// core.flutter.errorWith
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler: {error}'**
+  String coreFlutterErrorWith(Object error);
+
+  /// core.flutter.export.attendanceHeader
+  ///
+  /// In de, this message translates to:
+  /// **'{name} Anwesenheit Stand: {date}'**
+  String coreFlutterExportAttendanceHeader(Object name, Object date);
+
+  /// core.flutter.export.endAt
+  ///
+  /// In de, this message translates to:
+  /// **'Ende: {time} Uhr'**
+  String coreFlutterExportEndAt(Object time);
+
+  /// core.flutter.export.open
+  ///
+  /// In de, this message translates to:
+  /// **'Offen'**
+  String get coreFlutterExportOpen;
+
+  /// core.flutter.export.pdfRenderFailed
+  ///
+  /// In de, this message translates to:
+  /// **'PDF konnte nicht gerendert werden'**
+  String get coreFlutterExportPdfRenderFailed;
+
+  /// core.flutter.export.playerListHeader
+  ///
+  /// In de, this message translates to:
+  /// **'{name} Spielerliste Stand: {date}'**
+  String coreFlutterExportPlayerListHeader(Object name, Object date);
+
+  /// core.flutter.export.playerListSheet
+  ///
+  /// In de, this message translates to:
+  /// **'Spielerliste'**
+  String get coreFlutterExportPlayerListSheet;
+
+  /// core.flutter.export.rate
+  ///
+  /// In de, this message translates to:
+  /// **'Quote'**
+  String get coreFlutterExportRate;
+
+  /// core.flutter.export.rehearsalProgramme
+  ///
+  /// In de, this message translates to:
+  /// **'Probenprogramm'**
+  String get coreFlutterExportRehearsalProgramme;
+
+  /// core.flutter.feedback.anonymousHint
+  ///
+  /// In de, this message translates to:
+  /// **'Deine Daten werden nicht mitgesendet'**
+  String get coreFlutterFeedbackAnonymousHint;
+
+  /// core.flutter.feedback.questionIntro
+  ///
+  /// In de, this message translates to:
+  /// **'Hast du eine Frage oder brauchst Hilfe?'**
+  String get coreFlutterFeedbackQuestionIntro;
+
+  /// core.flutter.feedback.questionRequired
+  ///
+  /// In de, this message translates to:
+  /// **'Bitte gib eine Frage ein'**
+  String get coreFlutterFeedbackQuestionRequired;
+
+  /// core.flutter.feedback.ratingIntro
+  ///
+  /// In de, this message translates to:
+  /// **'Wie gefällt dir die App?'**
+  String get coreFlutterFeedbackRatingIntro;
+
+  /// core.flutter.fileBytesUnavailable
+  ///
+  /// In de, this message translates to:
+  /// **'Datei-Bytes nicht verfügbar'**
+  String get coreFlutterFileBytesUnavailable;
+
+  /// core.flutter.filePathUnavailable
+  ///
+  /// In de, this message translates to:
+  /// **'Dateipfad nicht verfügbar'**
+  String get coreFlutterFilePathUnavailable;
+
+  /// core.flutter.history.approved
+  ///
+  /// In de, this message translates to:
+  /// **'Genehmigt'**
+  String get coreFlutterHistoryApproved;
+
+  /// core.flutter.history.copiedFrom
+  ///
+  /// In de, this message translates to:
+  /// **'Kopiert von'**
+  String get coreFlutterHistoryCopiedFrom;
+
+  /// core.flutter.history.copiedTo
+  ///
+  /// In de, this message translates to:
+  /// **'Kopiert an'**
+  String get coreFlutterHistoryCopiedTo;
+
+  /// core.flutter.history.critical
+  ///
+  /// In de, this message translates to:
+  /// **'Kritisch markiert'**
+  String get coreFlutterHistoryCritical;
+
+  /// core.flutter.history.declined
+  ///
+  /// In de, this message translates to:
+  /// **'Abgelehnt'**
+  String get coreFlutterHistoryDeclined;
+
+  /// core.flutter.history.instrumentChange
+  ///
+  /// In de, this message translates to:
+  /// **'Instrumentenwechsel'**
+  String get coreFlutterHistoryInstrumentChange;
+
+  /// core.flutter.history.returned
+  ///
+  /// In de, this message translates to:
+  /// **'Zurückgekehrt'**
+  String get coreFlutterHistoryReturned;
+
+  /// core.flutter.history.transferredFrom
+  ///
+  /// In de, this message translates to:
+  /// **'Übertragen von'**
+  String get coreFlutterHistoryTransferredFrom;
+
+  /// core.flutter.history.transferredTo
+  ///
+  /// In de, this message translates to:
+  /// **'Übertragen an'**
+  String get coreFlutterHistoryTransferredTo;
+
+  /// core.flutter.history.unpaused
+  ///
+  /// In de, this message translates to:
+  /// **'Pause beendet'**
+  String get coreFlutterHistoryUnpaused;
+
+  /// core.flutter.holiday
+  ///
+  /// In de, this message translates to:
+  /// **'Feiertag'**
+  String get coreFlutterHoliday;
+
+  /// core.flutter.import.birthdayUnreadable
+  ///
+  /// In de, this message translates to:
+  /// **'Geburtsdatum \"{value}\" konnte nicht gelesen werden'**
+  String coreFlutterImportBirthdayUnreadable(Object value);
+
+  /// core.flutter.import.categoryNotFound
+  ///
+  /// In de, this message translates to:
+  /// **'Kategorie \"{name}\" nicht gefunden'**
+  String coreFlutterImportCategoryNotFound(Object name);
+
+  /// core.flutter.import.difficultyInvalid
+  ///
+  /// In de, this message translates to:
+  /// **'Schwierigkeit \"{value}\" muss 1, 2 oder 3 sein'**
+  String coreFlutterImportDifficultyInvalid(Object value);
+
+  /// core.flutter.import.duplicateEmailInFile
+  ///
+  /// In de, this message translates to:
+  /// **'Doppelte E-Mail in der Datei'**
+  String get coreFlutterImportDuplicateEmailInFile;
+
+  /// core.flutter.import.duplicateNumberInFile
+  ///
+  /// In de, this message translates to:
+  /// **'Doppelte Nummer in der Datei'**
+  String get coreFlutterImportDuplicateNumberInFile;
+
+  /// core.flutter.import.emailExists
+  ///
+  /// In de, this message translates to:
+  /// **'E-Mail existiert bereits in dieser Instanz'**
+  String get coreFlutterImportEmailExists;
+
+  /// core.flutter.import.emailInvalid
+  ///
+  /// In de, this message translates to:
+  /// **'E-Mail \"{email}\" sieht ungültig aus'**
+  String coreFlutterImportEmailInvalid(Object email);
+
+  /// core.flutter.import.joinedUnreadable
+  ///
+  /// In de, this message translates to:
+  /// **'Eintrittsdatum \"{value}\" konnte nicht gelesen werden'**
+  String coreFlutterImportJoinedUnreadable(Object value);
+
+  /// core.flutter.import.linkInvalid
+  ///
+  /// In de, this message translates to:
+  /// **'Link \"{link}\" sieht ungültig aus'**
+  String coreFlutterImportLinkInvalid(Object link);
+
+  /// core.flutter.import.nameRequired
+  ///
+  /// In de, this message translates to:
+  /// **'Vor- und Nachname sind erforderlich'**
+  String get coreFlutterImportNameRequired;
+
+  /// core.flutter.import.numberRequired
+  ///
+  /// In de, this message translates to:
+  /// **'Nummer ist erforderlich und muss eine Zahl sein'**
+  String get coreFlutterImportNumberRequired;
+
+  /// core.flutter.import.songNameRequired
+  ///
+  /// In de, this message translates to:
+  /// **'Name ist erforderlich'**
+  String get coreFlutterImportSongNameRequired;
+
+  /// core.flutter.import.songNumberExists
+  ///
+  /// In de, this message translates to:
+  /// **'Liednummer existiert bereits in dieser Instanz'**
+  String get coreFlutterImportSongNumberExists;
+
+  /// core.flutter.invalidCopyCount
+  ///
+  /// In de, this message translates to:
+  /// **'Ungültige Kopienanzahl'**
+  String get coreFlutterInvalidCopyCount;
+
+  /// core.flutter.newVersionAvailable
+  ///
+  /// In de, this message translates to:
+  /// **'Neue Version verfügbar'**
+  String get coreFlutterNewVersionAvailable;
+
+  /// core.flutter.noCopiesSelected
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Kopien zum Drucken ausgewählt'**
+  String get coreFlutterNoCopiesSelected;
+
+  /// core.flutter.noEmailAddress
+  ///
+  /// In de, this message translates to:
+  /// **'Keine E-Mail-Adresse vorhanden'**
+  String get coreFlutterNoEmailAddress;
+
+  /// core.flutter.noFilesDownloaded
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Dateien konnten heruntergeladen werden'**
+  String get coreFlutterNoFilesDownloaded;
+
+  /// core.flutter.noFilesToDownload
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Dateien zum Herunterladen'**
+  String get coreFlutterNoFilesToDownload;
+
+  /// core.flutter.noInstanceSelected
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Instanz ausgewählt'**
+  String get coreFlutterNoInstanceSelected;
+
+  /// core.flutter.noResponse
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Antwort erhalten'**
+  String get coreFlutterNoResponse;
+
+  /// core.flutter.noResultsFor
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Ergebnisse für \"{query}\"'**
+  String coreFlutterNoResultsFor(Object query);
+
+  /// core.flutter.noTenantSelected
+  ///
+  /// In de, this message translates to:
+  /// **'Kein Tenant ausgewählt'**
+  String get coreFlutterNoTenantSelected;
+
+  /// core.flutter.noVersionHistory
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Versionshistorie verfügbar'**
+  String get coreFlutterNoVersionHistory;
+
+  /// core.flutter.notLoggedIn
+  ///
+  /// In de, this message translates to:
+  /// **'Nicht eingeloggt'**
+  String get coreFlutterNotLoggedIn;
+
+  /// core.flutter.notSignedIn
+  ///
+  /// In de, this message translates to:
+  /// **'Nicht angemeldet'**
+  String get coreFlutterNotSignedIn;
+
+  /// core.flutter.pausedLower
+  ///
+  /// In de, this message translates to:
+  /// **'pausiert'**
+  String get coreFlutterPausedLower;
+
+  /// core.flutter.pausedUntil
+  ///
+  /// In de, this message translates to:
+  /// **'bis {date}'**
+  String coreFlutterPausedUntil(Object date);
+
+  /// core.flutter.pdfLoadFailed
+  ///
+  /// In de, this message translates to:
+  /// **'PDF konnte nicht geladen werden (HTTP {status})'**
+  String coreFlutterPdfLoadFailed(Object status);
+
+  /// core.flutter.personHasNoId
+  ///
+  /// In de, this message translates to:
+  /// **'Person hat keine ID'**
+  String get coreFlutterPersonHasNoId;
+
+  /// core.flutter.plan.dayN
+  ///
+  /// In de, this message translates to:
+  /// **'Tag {day}'**
+  String coreFlutterPlanDayN(Object day);
+
+  /// core.flutter.plan.startsInHours
+  ///
+  /// In de, this message translates to:
+  /// **'beginnt in {hours} Std.'**
+  String coreFlutterPlanStartsInHours(Object hours);
+
+  /// core.flutter.plan.startsInHoursMin
+  ///
+  /// In de, this message translates to:
+  /// **'beginnt in {hours} Std. {min} Min.'**
+  String coreFlutterPlanStartsInHoursMin(Object hours, Object min);
+
+  /// core.flutter.plan.startsInMin
+  ///
+  /// In de, this message translates to:
+  /// **'beginnt in {min} Min.'**
+  String coreFlutterPlanStartsInMin(Object min);
+
+  /// core.flutter.plan.startsSoon
+  ///
+  /// In de, this message translates to:
+  /// **'beginnt gleich'**
+  String get coreFlutterPlanStartsSoon;
+
+  /// core.flutter.registerPlan.alto
+  ///
+  /// In de, this message translates to:
+  /// **'Alt'**
+  String get coreFlutterRegisterPlanAlto;
+
+  /// core.flutter.registerPlan.bass
+  ///
+  /// In de, this message translates to:
+  /// **'Bass'**
+  String get coreFlutterRegisterPlanBass;
+
+  /// core.flutter.registerPlan.groupN
+  ///
+  /// In de, this message translates to:
+  /// **'Gruppe {n}'**
+  String coreFlutterRegisterPlanGroupN(Object n);
+
+  /// core.flutter.registerPlan.other
+  ///
+  /// In de, this message translates to:
+  /// **'Sonstige'**
+  String get coreFlutterRegisterPlanOther;
+
+  /// core.flutter.registerPlan.perUnit
+  ///
+  /// In de, this message translates to:
+  /// **'{min} Min. pro Einheit'**
+  String coreFlutterRegisterPlanPerUnit(Object min);
+
+  /// core.flutter.registerPlan.soprano
+  ///
+  /// In de, this message translates to:
+  /// **'Sopran'**
+  String get coreFlutterRegisterPlanSoprano;
+
+  /// core.flutter.registerPlan.strings
+  ///
+  /// In de, this message translates to:
+  /// **'Streicher'**
+  String get coreFlutterRegisterPlanStrings;
+
+  /// core.flutter.registerPlan.tenor
+  ///
+  /// In de, this message translates to:
+  /// **'Tenor'**
+  String get coreFlutterRegisterPlanTenor;
+
+  /// core.flutter.registerPlan.time
+  ///
+  /// In de, this message translates to:
+  /// **'Zeit'**
+  String get coreFlutterRegisterPlanTime;
+
+  /// core.flutter.registerPlan.title
+  ///
+  /// In de, this message translates to:
+  /// **'Registerprobenplan'**
+  String get coreFlutterRegisterPlanTitle;
+
+  /// core.flutter.registerPlan.totalDuration
+  ///
+  /// In de, this message translates to:
+  /// **'Gesamtdauer: {min} Min.'**
+  String coreFlutterRegisterPlanTotalDuration(Object min);
+
+  /// core.flutter.registerPlan.woodwinds
+  ///
+  /// In de, this message translates to:
+  /// **'Holzbläser'**
+  String get coreFlutterRegisterPlanWoodwinds;
+
+  /// core.flutter.registration
+  ///
+  /// In de, this message translates to:
+  /// **'Anmeldung'**
+  String get coreFlutterRegistration;
+
+  /// core.flutter.repo.accountCreateFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Der Account konnte nicht erstellt werden.'**
+  String get coreFlutterRepoAccountCreateFailed;
+
+  /// core.flutter.repo.alreadyAdmin
+  ///
+  /// In de, this message translates to:
+  /// **'Diese Person ist bereits Admin.'**
+  String get coreFlutterRepoAlreadyAdmin;
+
+  /// core.flutter.repo.categoryCreateFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Kategorie konnte nicht erstellt werden'**
+  String get coreFlutterRepoCategoryCreateFailed;
+
+  /// core.flutter.repo.categoryNotFound
+  ///
+  /// In de, this message translates to:
+  /// **'Gruppenkategorie mit ID {id} nicht gefunden'**
+  String coreFlutterRepoCategoryNotFound(Object id);
+
+  /// core.flutter.repo.changeRoleFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Ändern der Rolle: {error}'**
+  String coreFlutterRepoChangeRoleFailed(Object error);
+
+  /// core.flutter.repo.eventExistsOnDate
+  ///
+  /// In de, this message translates to:
+  /// **'Ein Termin an diesem Datum existiert bereits'**
+  String get coreFlutterRepoEventExistsOnDate;
+
+  /// core.flutter.repo.eventNotInTenant
+  ///
+  /// In de, this message translates to:
+  /// **'Termin gehört nicht zur aktuellen Instanz'**
+  String get coreFlutterRepoEventNotInTenant;
+
+  /// core.flutter.repo.foreignTenantDenied
+  ///
+  /// In de, this message translates to:
+  /// **'Zugriff auf fremde Instanz verweigert'**
+  String get coreFlutterRepoForeignTenantDenied;
+
+  /// core.flutter.repo.groupCreateFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Gruppe konnte nicht erstellt werden'**
+  String get coreFlutterRepoGroupCreateFailed;
+
+  /// core.flutter.repo.groupHasPlayers
+  ///
+  /// In de, this message translates to:
+  /// **'Gruppe kann nicht gelöscht werden: {count} Spieler sind noch zugewiesen'**
+  String coreFlutterRepoGroupHasPlayers(Object count);
+
+  /// core.flutter.repo.groupNotFound
+  ///
+  /// In de, this message translates to:
+  /// **'Gruppe mit ID {id} nicht gefunden'**
+  String coreFlutterRepoGroupNotFound(Object id);
+
+  /// core.flutter.repo.meetingExistsOnDate
+  ///
+  /// In de, this message translates to:
+  /// **'Eine Besprechung an diesem Datum existiert bereits'**
+  String get coreFlutterRepoMeetingExistsOnDate;
+
+  /// core.flutter.repo.noPermissionInTenant
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Berechtigung in dieser Instanz'**
+  String get coreFlutterRepoNoPermissionInTenant;
+
+  /// core.flutter.repo.noValidPersons
+  ///
+  /// In de, this message translates to:
+  /// **'Keine gültigen Personen'**
+  String get coreFlutterRepoNoValidPersons;
+
+  /// core.flutter.repo.personsNotInTenant
+  ///
+  /// In de, this message translates to:
+  /// **'Personen gehören nicht zur aktuellen Instanz'**
+  String get coreFlutterRepoPersonsNotInTenant;
+
+  /// core.flutter.repo.rootNotDeletable
+  ///
+  /// In de, this message translates to:
+  /// **'Root kann nicht gelöscht werden.'**
+  String get coreFlutterRepoRootNotDeletable;
+
+  /// core.flutter.repo.songNotFoundOrDenied
+  ///
+  /// In de, this message translates to:
+  /// **'Song nicht gefunden oder Zugriff verweigert'**
+  String get coreFlutterRepoSongNotFoundOrDenied;
+
+  /// core.flutter.repo.tenantNotLinked
+  ///
+  /// In de, this message translates to:
+  /// **'Instanz ist nicht verknüpft'**
+  String get coreFlutterRepoTenantNotLinked;
+
+  /// core.flutter.repo.typeInUse
+  ///
+  /// In de, this message translates to:
+  /// **'Typ kann nicht gelöscht werden: Wird von {count} Anwesenheit(en) verwendet'**
+  String coreFlutterRepoTypeInUse(Object count);
+
+  /// core.flutter.repo.unlinkAccountFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Entfernen der Account-Verknüpfung: {error}'**
+  String coreFlutterRepoUnlinkAccountFailed(Object error);
+
+  /// core.flutter.rolePermissionWithoutId
+  ///
+  /// In de, this message translates to:
+  /// **'Rollenberechtigung ohne ID'**
+  String get coreFlutterRolePermissionWithoutId;
+
+  /// core.flutter.router.goHome
+  ///
+  /// In de, this message translates to:
+  /// **'Zur Startseite'**
+  String get coreFlutterRouterGoHome;
+
+  /// core.flutter.router.invalidAttendanceId
+  ///
+  /// In de, this message translates to:
+  /// **'Ungültige Anwesenheits-ID'**
+  String get coreFlutterRouterInvalidAttendanceId;
+
+  /// core.flutter.router.invalidPersonId
+  ///
+  /// In de, this message translates to:
+  /// **'Ungültige Person-ID'**
+  String get coreFlutterRouterInvalidPersonId;
+
+  /// core.flutter.router.invalidTenantId
+  ///
+  /// In de, this message translates to:
+  /// **'Ungültige Instanz-ID'**
+  String get coreFlutterRouterInvalidTenantId;
+
+  /// core.flutter.router.pageNotFound
+  ///
+  /// In de, this message translates to:
+  /// **'Seite nicht gefunden: {path}'**
+  String coreFlutterRouterPageNotFound(Object path);
+
+  /// core.flutter.rule.overall
+  ///
+  /// In de, this message translates to:
+  /// **'insgesamt'**
+  String get coreFlutterRuleOverall;
+
+  /// core.flutter.rule.sinceSeasonStart
+  ///
+  /// In de, this message translates to:
+  /// **'seit Saisonstart'**
+  String get coreFlutterRuleSinceSeasonStart;
+
+  /// core.flutter.rule.statusN
+  ///
+  /// In de, this message translates to:
+  /// **'Status {n}'**
+  String coreFlutterRuleStatusN(Object n);
+
+  /// core.flutter.schoolHolidays
+  ///
+  /// In de, this message translates to:
+  /// **'Schulferien'**
+  String get coreFlutterSchoolHolidays;
+
+  /// core.flutter.searchHint
+  ///
+  /// In de, this message translates to:
+  /// **'Suchen...'**
+  String get coreFlutterSearchHint;
+
+  /// core.flutter.sheetMusic
+  ///
+  /// In de, this message translates to:
+  /// **'Notenblatt'**
+  String get coreFlutterSheetMusic;
+
+  /// core.flutter.shift.freeRange
+  ///
+  /// In de, this message translates to:
+  /// **'Frei ({start} - {end})'**
+  String coreFlutterShiftFreeRange(Object start, Object end);
+
+  /// core.flutter.shift.workRange
+  ///
+  /// In de, this message translates to:
+  /// **'Arbeit ({start} - {end}, {hours}h)'**
+  String coreFlutterShiftWorkRange(Object start, Object end, Object hours);
+
+  /// core.flutter.songFiles
+  ///
+  /// In de, this message translates to:
+  /// **'Song-Dateien'**
+  String get coreFlutterSongFiles;
+
+  /// core.flutter.songNotFound
+  ///
+  /// In de, this message translates to:
+  /// **'Song wurde nicht gefunden oder bereits gelöscht'**
+  String get coreFlutterSongNotFound;
+
+  /// core.flutter.update
+  ///
+  /// In de, this message translates to:
+  /// **'Aktualisieren'**
+  String get coreFlutterUpdate;
+
+  /// core.flutter.voices
+  ///
+  /// In de, this message translates to:
+  /// **'Stimmen'**
+  String get coreFlutterVoices;
+
+  /// core.flutter.xlsUnsupported
+  ///
+  /// In de, this message translates to:
+  /// **'Das alte Excel-Format (.xls) wird nicht unterstützt. Bitte als .xlsx oder .csv speichern.'**
+  String get coreFlutterXlsUnsupported;
+
+  /// core.flutter.zipFailed
+  ///
+  /// In de, this message translates to:
+  /// **'ZIP konnte nicht erstellt werden'**
+  String get coreFlutterZipFailed;
+
   /// dashSettings.cards
   ///
   /// In de, this message translates to:

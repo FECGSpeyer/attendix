@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../features/public_links/presentation/pages/app_redirect_page.dart'
     show appStoreUrl, playStoreUrl;
 import 'native_app_ad_storage.dart';
+import '../../../l10n/l10n.dart';
 
 /// LINKS_STARTUP: set on a fresh sign-in (Ionic `listenToAuthChanges`
 /// SIGNED_IN → `showNativeAppAd`); consumed once the app shell is visible.
@@ -32,15 +33,12 @@ Future<void> showNativeAppAdDialog(
   return showDialog<void>(
     context: context,
     builder: (dialogContext) => AlertDialog(
-      title: const Text('Attendix als App verfügbar!'),
-      content: Text(
-        'Attendix gibt es jetzt als native App mit Push-Benachrichtigungen '
-        'und schnellerem Zugriff. Jetzt im ${store.name} herunterladen!',
-      ),
+      title: Text(dialogContext.l10n.appNativeAdHeader),
+      content: Text(dialogContext.l10n.appNativeAdMessage(store.name)),
       actions: [
         TextButton(
           onPressed: () => Navigator.of(dialogContext).pop(),
-          child: const Text('Später'),
+          child: Text(dialogContext.l10n.svcLater),
         ),
         TextButton(
           onPressed: () {
@@ -50,7 +48,7 @@ Future<void> showNativeAppAdDialog(
                   mode: LaunchMode.externalApplication);
             } catch (_) {}
           },
-          child: Text('Zum ${store.name}'),
+          child: Text(dialogContext.l10n.appNativeAdGoTo(store.name)),
         ),
       ],
     ),

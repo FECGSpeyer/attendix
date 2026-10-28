@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/constants/enums.dart';
 import 'base_repository.dart';
+import '../../l10n/l10n.dart';
 
 /// Provider for AdminRepository (SETTINGS2)
 final adminRepositoryProvider = Provider<AdminRepository>((ref) {
@@ -75,7 +76,7 @@ class AdminRepository extends BaseRepository with TenantAwareRepository {
           .maybeSingle();
       if (existing != null) {
         if (existing['role'] == Role.admin.value) {
-          throw const AdminException('Diese Person ist bereits Admin.');
+          throw AdminException(l10nWithoutContext.coreFlutterRepoAlreadyAdmin);
         }
         await supabase
             .from('tenantUsers')
@@ -106,7 +107,7 @@ class AdminRepository extends BaseRepository with TenantAwareRepository {
       final String? userId =
           data is Map ? ((data['user'] as Map?)?['id'] as String?) : null;
       if (userId == null) {
-        throw const AdminException('Der Account konnte nicht erstellt werden.');
+        throw AdminException(l10nWithoutContext.coreFlutterRepoAccountCreateFailed);
       }
       await _addAdminToTenant(userId, email);
       return true;

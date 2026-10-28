@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../data/models/church/church.dart';
+import '../../../l10n/l10n.dart';
 
 /// One church with its number of persons.
 class ChurchCount {
@@ -45,7 +46,7 @@ ChurchOverviewData computeChurchOverview(
   }
   final counts = countMap.entries
       .map((e) => ChurchCount(
-            name: churches.where((c) => c.id == e.key).firstOrNull?.name ?? 'Unbekannte Gemeinde',
+            name: churches.where((c) => c.id == e.key).firstOrNull?.name ?? l10nWithoutContext.churchOverviewUnknownChurch,
             count: e.value,
           ))
       .toList()
@@ -70,7 +71,7 @@ Future<void> showChurchOverviewSheet(
   BuildContext context, {
   required Iterable<String?> churchIds,
   required List<Church> churches,
-  String subtitle = 'Personen',
+  String? subtitle,
 }) {
   final data = computeChurchOverview(churchIds, churches);
   return showModalBottomSheet<void>(
@@ -84,7 +85,7 @@ Future<void> showChurchOverviewSheet(
       maxChildSize: 0.95,
       builder: (ctx, scrollController) => ChurchOverviewView(
         data: data,
-        subtitle: subtitle,
+        subtitle: subtitle ?? context.l10n.commonPeople,
         scrollController: scrollController,
       ),
     ),
@@ -107,6 +108,7 @@ class ChurchOverviewView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = context.l10n;
     Widget header(String text) => Padding(
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
           child: Text(text, style: theme.textTheme.titleSmall?.copyWith(color: AppColors.medium)),
@@ -124,9 +126,9 @@ class ChurchOverviewView extends StatelessWidget {
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Text('Gemeinde-Übersicht', style: theme.textTheme.titleLarge),
+          child: Text(l10n.churchOverviewTitle, style: theme.textTheme.titleLarge),
         ),
-        header('Gesamt'),
+        header(l10n.churchOverviewTotal),
         ListTile(
           leading: const Icon(Icons.people_outline),
           title: Text(subtitle),
@@ -134,26 +136,27 @@ class ChurchOverviewView extends StatelessWidget {
         ),
         ListTile(
           leading: const Icon(Icons.business_outlined),
-          title: const Text('Gemeinden'),
+          title: Text(l10n.churchOverviewChurches),
           trailing: badge(data.churchCounts.length),
         ),
         if (data.churchCounts.isNotEmpty) ...[
-          header('Gemeinden'),
+          header(l10n.churchOverviewChurches),
           for (final c in data.churchCounts)
             ListTile(title: Text(c.name), trailing: badge(c.count)),
         ],
         if (data.withoutChurch > 0) ...[
-          header('Ohne Zuordnung'),
+          header(l10n.churchOverviewUnassigned),
           ListTile(
-            title: const Text('Ohne Gemeinde'),
+            title: Text(l10n.churchOverviewNoChurch),
             trailing: badge(data.withoutChurch, color: AppColors.medium),
           ),
         ],
         if (data.total == 0)
-          const Padding(
-            padding: EdgeInsets.all(16),
+          Padding(
+            padding: const EdgeInsets.all(16),
             child: Center(
-              child: Text('Keine Personen vorhanden', style: TextStyle(color: AppColors.medium)),
+              child: Text(l10n.churchOverviewNoPeople,
+                  style: const TextStyle(color: AppColors.medium)),
             ),
           ),
       ],

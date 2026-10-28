@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
+import '../../l10n/l10n.dart';
 
 /// Tenant / organisation branding drawn on exported PDFs and images.
 ///
@@ -104,7 +105,8 @@ pw.Widget buildPdfBrandingHeader({
   final logoHeight = (compact ? 7 : 10) * mm;
   final brandFontSize = compact ? 9.0 : 12.0;
   final stampFontSize = compact ? 6.0 : 8.0;
-  final stamp = 'Erstellt am: ${DateFormat('dd.MM.yyyy HH:mm').format(createdAt ?? DateTime.now())}';
+  final stamp = l10nWithoutContext.commonCreatedAt(
+      DateFormat('${dateFmt()} HH:mm').format(createdAt ?? DateTime.now()));
 
   final logo = branding != null && branding.hasLogo
       ? pw.Image(

@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../models/organisation/organisation.dart';
 import 'base_repository.dart';
+import '../../l10n/l10n.dart';
 
 /// Provider (ohne Tenant – nutze organisationSettingsRepositoryWithTenantProvider)
 final organisationSettingsRepositoryProvider = Provider<OrganisationSettingsRepository>((ref) {
@@ -68,7 +69,7 @@ class OrganisationSettingsRepository extends BaseRepository with TenantAwareRepo
     final id = org?.id;
     if (id == null) {
       throw RepositoryException(
-        message: 'Diese Instanz ist keiner Organisation zugeordnet.',
+        message: l10nWithoutContext.plansNoOrg,
         operation: operation,
       );
     }
@@ -147,8 +148,8 @@ class OrganisationSettingsRepository extends BaseRepository with TenantAwareRepo
       final orgId = await _requireOrganisationId('setGlobalPersonId');
       final tenantIds = await _organisationTenantIds(orgId);
       if (!tenantIds.contains(currentTenantId)) {
-        throw const RepositoryException(
-          message: 'Zugriff verweigert',
+        throw RepositoryException(
+          message: l10nWithoutContext.coreFlutterAccessDenied,
           operation: 'setGlobalPersonId',
         );
       }

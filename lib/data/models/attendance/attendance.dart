@@ -1,5 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:intl/intl.dart';
 import '../../../core/constants/enums.dart';
+import '../../../l10n/l10n.dart';
 
 part 'attendance.freezed.dart';
 part 'attendance.g.dart';
@@ -291,13 +293,13 @@ abstract final class RegistrationFieldType {
   static String label(String type) {
     switch (type) {
       case text:
-        return 'Text';
+        return l10nWithoutContext.typeSettingsText;
       case boolean:
-        return 'Ja / Nein';
+        return l10nWithoutContext.typeSettingsYesNo;
       case select:
-        return 'Einzelauswahl';
+        return l10nWithoutContext.typeSettingsSingle;
       case multiSelect:
-        return 'Mehrfachauswahl';
+        return l10nWithoutContext.typeSettingsMulti;
       default:
         return type;
     }
@@ -324,13 +326,17 @@ extension AttendanceExtension on Attendance {
   String get formattedDate {
     final dateObj = DateTime.tryParse(date);
     if (dateObj == null) return date;
-    return '${dateObj.day.toString().padLeft(2, '0')}.${dateObj.month.toString().padLeft(2, '0')}.${dateObj.year}';
+    return DateFormat(dateFmt()).format(dateObj);
   }
 
   /// Weekday name
   String get weekdayName {
     final dateObj = DateTime.tryParse(date);
     if (dateObj == null) return '';
+    if (currentLanguage() != 'de') {
+      final name = DateFormat('EEE', currentIntlLocale()).format(dateObj);
+      return name.length > 2 ? name.substring(0, 2) : name;
+    }
     const weekdays = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
     return weekdays[dateObj.weekday - 1];
   }
@@ -349,9 +355,9 @@ extension AttendanceExtension on Attendance {
   String _formatTypeForDisplay(String type) {
     switch (type.toLowerCase()) {
       case 'uebung':
-        return 'Probe';
+        return l10nWithoutContext.defaultsTypesRehearsal;
       case 'vortrag':
-        return 'Vortrag';
+        return l10nWithoutContext.defaultsTypesPerformance;
       default:
         // Capitalize first letter for unknown types
         return type.isNotEmpty
@@ -379,7 +385,7 @@ extension AttendanceExtension on Attendance {
     }
 
     // 3. Otherwise show "Datum | Typ-Name"
-    final typeName = attendanceType?.name ?? (type != null ? _formatTypeForDisplay(type!) : 'Anwesenheit');
+    final typeName = attendanceType?.name ?? (type != null ? _formatTypeForDisplay(type!) : l10nWithoutContext.peopleAttendance);
     return '$weekdayName, $formattedDate | $typeName';
   }
 
@@ -389,7 +395,7 @@ extension AttendanceExtension on Attendance {
     if (typeInfo != null && typeInfo!.isNotEmpty) {
       return typeInfo!;
     }
-    return type != null ? _formatTypeForDisplay(type!) : 'Anwesenheit';
+    return type != null ? _formatTypeForDisplay(type!) : l10nWithoutContext.peopleAttendance;
   }
 }
 
@@ -406,17 +412,17 @@ extension PersonAttendanceExtension on PersonAttendance {
   String get statusLabel {
     switch (status) {
       case AttendanceStatus.present:
-        return 'Anwesend';
+        return l10nWithoutContext.commonStatusPresent;
       case AttendanceStatus.absent:
-        return 'Abwesend';
+        return l10nWithoutContext.commonStatusAbsent;
       case AttendanceStatus.excused:
-        return 'Entschuldigt';
+        return l10nWithoutContext.commonStatusExcused;
       case AttendanceStatus.late:
-        return 'Verspätet';
+        return l10nWithoutContext.commonStatusLateShort;
       case AttendanceStatus.lateExcused:
-        return 'Verspätet (entsch.)';
+        return l10nWithoutContext.attendanceLateExcusedParen;
       case AttendanceStatus.neutral:
-        return 'Unbekannt';
+        return l10nWithoutContext.commonUnknown;
     }
   }
 

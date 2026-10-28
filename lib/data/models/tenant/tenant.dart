@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import '../../../core/constants/enums.dart';
+import '../../../l10n/l10n.dart';
 
 part 'tenant.freezed.dart';
 part 'tenant.g.dart';
@@ -140,19 +141,20 @@ extension CriticalRuleExtension on CriticalRule {
         ? '${thresholdValue}x'
         : '$thresholdValue%';
 
+    final l10n = l10nWithoutContext;
     final statusLabels = statuses.map((s) {
       return switch (s) {
-        4 => 'Abwesend',
-        3 => 'Verspätet',
-        5 => 'Verspätet (entsch.)',
-        _ => 'Status $s',
+        4 => l10n.commonStatusAbsent,
+        3 => l10n.commonStatusLateShort,
+        5 => l10n.attendanceLateExcusedParen,
+        _ => l10n.coreFlutterRuleStatusN(s),
       };
     }).join(' / ');
 
     final period = switch (periodType) {
-      CriticalRulePeriodType.days => 'in ${periodDays ?? 30} Tagen',
-      CriticalRulePeriodType.season => 'seit Saisonstart',
-      _ => 'insgesamt',
+      CriticalRulePeriodType.days => l10n.homeDashboardInDays(periodDays ?? 30),
+      CriticalRulePeriodType.season => l10n.coreFlutterRuleSinceSeasonStart,
+      _ => l10n.coreFlutterRuleOverall,
     };
 
     return '$threshold $statusLabels $period';

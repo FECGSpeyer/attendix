@@ -1,6 +1,9 @@
+import 'package:intl/intl.dart';
+
 import '../../data/models/dashboard/dashboard_event.dart';
 import '../../data/models/dashboard/dashboard_models.dart';
 import '../../data/models/person/person.dart';
+import '../../l10n/l10n.dart';
 
 /// Pure helpers for the home dashboard
 /// (Ionic `home-dashboard/components/shared/dashboard-date.ts`,
@@ -39,37 +42,44 @@ abstract class DashboardUtils {
   static String tileDay(DateTime d) => '${d.day}';
 
   /// Short German month without dot, e.g. "Okt".
-  static String tileMonth(DateTime d) => _monthsShort[d.month - 1];
+  static String tileMonth(DateTime d) => currentLanguage() == 'de'
+      ? _monthsShort[d.month - 1]
+      : DateFormat('MMM', currentIntlLocale()).format(d).replaceAll('.', '');
 
   /// German weekday, e.g. "Samstag".
-  static String weekday(DateTime d) => _weekdays[d.weekday - 1];
+  static String weekday(DateTime d) => currentLanguage() == 'de'
+      ? _weekdays[d.weekday - 1]
+      : DateFormat('EEEE', currentIntlLocale()).format(d);
 
   /// "Heute", "Morgen", "Gestern", "vor 3 Tagen", "in 5 Tagen".
   static String relativeDays(DateTime date, {DateTime? now}) {
     final diff = dayDiff(now ?? DateTime.now(), date);
-    if (diff == 0) return 'Heute';
-    if (diff == -1) return 'Gestern';
-    if (diff == 1) return 'Morgen';
-    return diff < 0 ? 'vor ${diff.abs()} Tagen' : 'in $diff Tagen';
+    final l10n = l10nWithoutContext;
+    if (diff == 0) return l10n.teamOrgTodayCap;
+    if (diff == -1) return l10n.homeDashboardYesterday;
+    if (diff == 1) return l10n.teamOrgTomorrow;
+    return diff < 0
+        ? l10n.homeDashboardDaysAgo(diff.abs())
+        : l10n.homeDashboardInDays(diff);
   }
 
   static String _two(int v) => v.toString().padLeft(2, '0');
 
   /// "03.10." (current year) or "03.10.25".
   static String shortDate(DateTime d, {DateTime? now}) {
-    final base = '${_two(d.day)}.${_two(d.month)}.';
-    return d.year == (now ?? DateTime.now()).year
-        ? base
-        : '$base${_two(d.year % 100)}';
+    final sameYear = d.year == (now ?? DateTime.now()).year;
+    return DateFormat(
+      dateFmt(sameYear ? DateFmtKind.dayMonth : DateFmtKind.short),
+    ).format(d);
   }
 
   /// "Samstag, 18.10.2025"
   static String longDate(DateTime d) =>
-      '${weekday(d)}, ${_two(d.day)}.${_two(d.month)}.${d.year}';
+      '${weekday(d)}, ${DateFormat(dateFmt()).format(d)}';
 
   /// "Samstag, 18.10."
   static String weekdayDayMonth(DateTime d) =>
-      '${weekday(d)}, ${_two(d.day)}.${_two(d.month)}.';
+      '${weekday(d)}, ${DateFormat(dateFmt(DateFmtKind.dayMonth)).format(d)}';
 
   static String hhmm(DateTime d) => '${_two(d.hour)}:${_two(d.minute)}';
 
@@ -136,9 +146,10 @@ abstract class DashboardUtils {
   }
 
   static String birthdayAgeText(BirthdayEntry e) {
-    if (e.daysOffset == 0) return 'wird heute ${e.age}';
-    if (e.daysOffset > 0) return 'wird ${e.age}';
-    return 'ist ${e.age} geworden';
+    final l10n = l10nWithoutContext;
+    if (e.daysOffset == 0) return l10n.homeDashboardTurnsToday(e.age);
+    if (e.daysOffset > 0) return l10n.homeDashboardTurns(e.age);
+    return l10n.homeDashboardTurned(e.age);
   }
 
   // ---------------------------------------------------------------------------
@@ -223,7 +234,10 @@ abstract class DashboardUtils {
     final until = parse(e.untilDate);
     String range;
     if (e.isPause) {
-      range = until != null ? 'bis ${shortDate(until, now: now)}' : 'pausiert';
+      final l10n = l10nWithoutContext;
+      range = until != null
+          ? l10n.coreFlutterPausedUntil(shortDate(until, now: now))
+          : l10n.coreFlutterPausedLower;
     } else if (until != null && e.untilDate != e.fromDate && from != null) {
       range = '${shortDate(from, now: now)} – ${shortDate(until, now: now)}';
     } else {
@@ -243,14 +257,15 @@ abstract class DashboardUtils {
     }
     final type = int.tryParse(p.criticalReason ?? '');
     if (type == null) return '';
+    final l10n = l10nWithoutContext;
     return switch (type) {
-      1 => 'Pausiert',
-      2 => 'Unentschuldigt',
-      7 => 'Wechsel',
-      8 => 'Archiviert',
-      9 => 'Reaktiviert',
+      1 => l10n.commonHistoryPaused,
+      2 => l10n.commonHistoryUnexcused,
+      7 => l10n.commonHistoryGroupChange,
+      8 => l10n.commonHistoryArchived,
+      9 => l10n.commonHistoryReturned,
       3 || 10 || 11 || 12 || 13 => '',
-      _ => 'Sonstiges',
+      _ => l10n.commonOther,
     };
   }
 

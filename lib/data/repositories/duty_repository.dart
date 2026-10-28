@@ -6,6 +6,7 @@ import '../../core/utils/duty_utils.dart';
 import '../models/attendance/attendance.dart';
 import '../models/duty/person_unavailability.dart';
 import 'base_repository.dart';
+import '../../l10n/l10n.dart';
 
 /// Provider for DutyRepository
 final dutyRepositoryProvider = Provider<DutyRepository>((ref) {
@@ -39,7 +40,7 @@ class DutyTermin {
   String get title {
     final info = attendance.typeInfo;
     if (info != null && info.isNotEmpty) return info;
-    return type.name.isNotEmpty ? type.name : 'Dienst';
+    return type.name.isNotEmpty ? type.name : l10nWithoutContext.dutyDuty;
   }
 }
 
@@ -76,7 +77,7 @@ class DutyRepository extends BaseRepository with TenantAwareRepository {
     try {
       final validIds = await _validIdsForTenant(personAttendanceIds);
       if (validIds.isEmpty) {
-        throw RepositoryException(message: 'Keine gültigen Personen', operation: 'assign');
+        throw RepositoryException(message: l10nWithoutContext.coreFlutterRepoNoValidPersons, operation: 'assign');
       }
       // person_attendances has no tenantId: ids validated above via attendance.tenantId
       await supabase.from('person_attendances').update({
@@ -102,7 +103,7 @@ class DutyRepository extends BaseRepository with TenantAwareRepository {
     try {
       final validIds = await _validIdsForTenant([personAttendanceId]);
       if (validIds.isEmpty) {
-        throw RepositoryException(message: 'Zugriff verweigert', operation: 'unassign');
+        throw RepositoryException(message: l10nWithoutContext.coreFlutterAccessDenied, operation: 'unassign');
       }
       // person_attendances has no tenantId: id validated above via attendance.tenantId
       await supabase.from('person_attendances').update({
@@ -125,7 +126,7 @@ class DutyRepository extends BaseRepository with TenantAwareRepository {
     try {
       final validIds = await _validIdsForTenant([personAttendanceId]);
       if (validIds.isEmpty) {
-        throw RepositoryException(message: 'Zugriff verweigert', operation: 'confirm');
+        throw RepositoryException(message: l10nWithoutContext.coreFlutterAccessDenied, operation: 'confirm');
       }
       // person_attendances has no tenantId: id validated above via attendance.tenantId
       await supabase.from('person_attendances').update({
@@ -147,7 +148,7 @@ class DutyRepository extends BaseRepository with TenantAwareRepository {
     try {
       final validIds = await _validIdsForTenant([personAttendanceId]);
       if (validIds.isEmpty) {
-        throw RepositoryException(message: 'Zugriff verweigert', operation: 'decline');
+        throw RepositoryException(message: l10nWithoutContext.coreFlutterAccessDenied, operation: 'decline');
       }
       // person_attendances has no tenantId: id validated above via attendance.tenantId
       await supabase.from('person_attendances').update({

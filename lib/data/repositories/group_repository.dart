@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/instrument/instrument.dart';
 import 'base_repository.dart';
+import '../../l10n/l10n.dart';
 
 /// Provider for GroupRepository
 final groupRepositoryProvider = Provider<GroupRepository>((ref) {
@@ -110,7 +111,7 @@ class GroupRepository extends BaseRepository with TenantAwareRepository {
 
       if (response == null) {
         throw RepositoryException(
-          message: 'Gruppe konnte nicht erstellt werden',
+          message: l10nWithoutContext.coreFlutterRepoGroupCreateFailed,
           operation: 'createGroup',
         );
       }
@@ -143,7 +144,7 @@ class GroupRepository extends BaseRepository with TenantAwareRepository {
 
       if (response == null) {
         throw RepositoryException(
-          message: 'Gruppe mit ID $id nicht gefunden',
+          message: l10nWithoutContext.coreFlutterRepoGroupNotFound(id),
           operation: 'updateGroup',
         );
       }
@@ -152,7 +153,7 @@ class GroupRepository extends BaseRepository with TenantAwareRepository {
       // Handle unique constraint violation (only one maingroup)
       if (e.toString().contains('23505')) {
         throw RepositoryException(
-          message: 'Es kann nur eine Hauptgruppe existieren',
+          message: l10nWithoutContext.svcOnlyOneMainGroup,
           operation: 'updateGroup',
           code: '23505',
         );
@@ -210,7 +211,7 @@ class GroupRepository extends BaseRepository with TenantAwareRepository {
       final playerCount = await getPlayerCountInGroup(id);
       if (playerCount > 0) {
         throw RepositoryException(
-          message: 'Gruppe kann nicht gelöscht werden: $playerCount Spieler sind noch zugewiesen',
+          message: l10nWithoutContext.coreFlutterRepoGroupHasPlayers(playerCount),
           operation: 'deleteGroup',
           code: 'FK_VIOLATION',
         );
@@ -266,7 +267,7 @@ class GroupRepository extends BaseRepository with TenantAwareRepository {
 
       if (response == null) {
         throw RepositoryException(
-          message: 'Kategorie konnte nicht erstellt werden',
+          message: l10nWithoutContext.coreFlutterRepoCategoryCreateFailed,
           operation: 'createGroupCategory',
         );
       }
@@ -296,7 +297,7 @@ class GroupRepository extends BaseRepository with TenantAwareRepository {
 
       if (response == null) {
         throw RepositoryException(
-          message: 'Gruppenkategorie mit ID $id nicht gefunden',
+          message: l10nWithoutContext.coreFlutterRepoCategoryNotFound(id),
           operation: 'updateGroupCategory',
         );
       }

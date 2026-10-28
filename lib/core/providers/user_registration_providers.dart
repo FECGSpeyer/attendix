@@ -5,6 +5,7 @@ import '../../data/repositories/user_registration_repository.dart';
 import 'group_providers.dart';
 import 'player_providers.dart';
 import 'tenant_providers.dart';
+import '../../l10n/l10n.dart';
 
 /// AUTH: [UserRegistrationRepository] with tenant context.
 final userRegistrationRepositoryWithTenantProvider =
@@ -47,7 +48,7 @@ class AccountCreationNotifier extends Notifier<AsyncValue<void>> {
   /// [AccountFlowException] with a German message on failure.
   Future<String> createAccount(Person person) async {
     if (!_repo.hasTenantId) {
-      throw const AccountFlowException('Keine Instanz ausgewählt');
+      throw AccountFlowException(l10nWithoutContext.coreFlutterNoInstanceSelected);
     }
     state = const AsyncValue.loading();
     try {
@@ -71,8 +72,8 @@ class AccountCreationNotifier extends Notifier<AsyncValue<void>> {
     void Function(int done, int total)? onProgress,
   }) async {
     if (!_repo.hasTenantId) {
-      return const AccountCreationResult(
-          created: 0, errors: ['Keine Instanz ausgewählt']);
+      return AccountCreationResult(
+          created: 0, errors: [l10nWithoutContext.coreFlutterNoInstanceSelected]);
     }
     state = const AsyncValue.loading();
     final mainGroupId = await _mainGroupId();

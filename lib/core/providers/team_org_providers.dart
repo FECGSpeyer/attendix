@@ -9,6 +9,7 @@ import '../../features/team_organization/team_org_utils.dart';
 import 'debug_providers.dart';
 import 'self_service_providers.dart';
 import 'tenant_providers.dart';
+import '../../l10n/l10n.dart';
 
 // ── Repositories with tenant ────────────────────────────────
 
@@ -273,7 +274,7 @@ class AgendaItemNotifier extends Notifier<AsyncValue<void>> {
     state = const AsyncValue.loading();
     try {
       final person = await ref.read(teamPersonProvider.future);
-      if (person?.id == null) throw Exception('Keine Person gefunden');
+      if (person?.id == null) throw Exception(l10nWithoutContext.dbNoPersonFound);
       await _repo.proposeAgendaItem(title: title, description: description, proposedBy: person!.id!);
       state = const AsyncValue.data(null);
       ref.invalidate(agendaItemsProvider);

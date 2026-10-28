@@ -1,6 +1,7 @@
 import 'package:intl/intl.dart';
 
 import '../../data/models/tenant/tenant.dart';
+import '../../l10n/l10n.dart';
 
 /// Extra field (tenant.additional_fields) types — Ionic `FieldType`.
 abstract final class ExtraFieldType {
@@ -69,11 +70,11 @@ String formatExtraFieldValue(
   switch (field.type) {
     case ExtraFieldType.boolean:
       final b = value == true || value == 'true';
-      return b ? 'Ja' : 'Nein';
+      return b ? l10nWithoutContext.commonYes : l10nWithoutContext.commonNo;
     case ExtraFieldType.date:
       final d = DateTime.tryParse(value.toString());
       if (d == null) return value.toString();
-      return DateFormat('dd.MM.yyyy').format(d.toLocal());
+      return DateFormat(dateFmt()).format(d.toLocal());
     case ExtraFieldType.bfecgChurch:
       return churchNames[value.toString()] ?? value.toString();
     default:

@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import '../../data/models/person/person.dart';
+import '../../l10n/l10n.dart';
 
 /// Register rehearsal plan entry
 class RegisterPlanEntry {
@@ -35,13 +36,30 @@ class RegisterPlan {
 /// Service for generating register rehearsal plans
 class RegisterPlanService {
   /// Group names for choir
-  static const choirGroups = ['Sopran', 'Alt', 'Tenor', 'Bass'];
+  static List<String> get choirGroups {
+    final l10n = l10nWithoutContext;
+    return [
+      l10n.coreFlutterRegisterPlanSoprano,
+      l10n.coreFlutterRegisterPlanAlto,
+      l10n.coreFlutterRegisterPlanTenor,
+      l10n.coreFlutterRegisterPlanBass,
+    ];
+  }
 
   /// Group names for orchestra
-  static const orchestraGroups = ['Streicher', 'Holzbläser', 'Sonstige'];
+  static List<String> get orchestraGroups {
+    final l10n = l10nWithoutContext;
+    return [
+      l10n.coreFlutterRegisterPlanStrings,
+      l10n.coreFlutterRegisterPlanWoodwinds,
+      l10n.coreFlutterRegisterPlanOther,
+    ];
+  }
 
   /// General group names
-  static const generalGroups = ['Gruppe 1', 'Gruppe 2', 'Gruppe 3'];
+  static List<String> get generalGroups => [
+        for (var i = 1; i <= 3; i++) l10nWithoutContext.coreFlutterRegisterPlanGroupN(i),
+      ];
 
   /// Fisher-Yates shuffle for random order
   List<T> _shuffle<T>(List<T> items) {
@@ -134,14 +152,16 @@ class RegisterPlanService {
     final buffer = StringBuffer();
 
     // Header
-    buffer.writeln('Registerprobenplan');
-    buffer.writeln('==================');
-    buffer.writeln('Gesamtdauer: ${plan.totalMinutes} Min.');
-    buffer.writeln('${plan.minutesPerUnit} Min. pro Einheit');
+    final l10n = l10nWithoutContext;
+    final title = l10n.coreFlutterRegisterPlanTitle;
+    buffer.writeln(title);
+    buffer.writeln('=' * title.length);
+    buffer.writeln(l10n.coreFlutterRegisterPlanTotalDuration(plan.totalMinutes));
+    buffer.writeln(l10n.coreFlutterRegisterPlanPerUnit(plan.minutesPerUnit));
     buffer.writeln();
 
     // Table header
-    buffer.write('Zeit'.padRight(8));
+    buffer.write(l10nWithoutContext.coreFlutterRegisterPlanTime.padRight(8));
     for (final group in plan.groups) {
       buffer.write(group.padRight(15));
     }

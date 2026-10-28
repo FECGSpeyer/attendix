@@ -8,6 +8,7 @@ import '../config/supabase_config.dart';
 import '../providers/song_providers.dart';
 import '../providers/tenant_providers.dart';
 import '../utils/demo_guard.dart'; // DEMO_GUARD
+import '../../l10n/l10n.dart';
 
 /// Service for managing song file uploads to Supabase Storage
 class SongFileService {
@@ -60,7 +61,7 @@ class SongFileService {
   }) async {
     DemoGuard.checkCurrent('uploadSongFile'); // DEMO_GUARD
     if (_tenantId == null) {
-      throw Exception('Kein Tenant ausgewählt');
+      throw Exception(l10nWithoutContext.coreFlutterNoTenantSelected);
     }
 
     // Generate unique storage path
@@ -71,12 +72,12 @@ class SongFileService {
     Uint8List fileBytes;
     if (kIsWeb) {
       if (file.bytes == null) {
-        throw Exception('Datei-Bytes nicht verfügbar');
+        throw Exception(l10nWithoutContext.coreFlutterFileBytesUnavailable);
       }
       fileBytes = file.bytes!;
     } else {
       if (file.path == null) {
-        throw Exception('Dateipfad nicht verfügbar');
+        throw Exception(l10nWithoutContext.coreFlutterFilePathUnavailable);
       }
       fileBytes = await File(file.path!).readAsBytes();
     }
@@ -107,7 +108,7 @@ class SongFileService {
       try {
         await _supabase.storage.from(_bucketName).remove([storagePath]);
       } catch (_) {}
-      throw Exception('Song wurde nicht gefunden oder bereits gelöscht');
+      throw Exception(l10nWithoutContext.coreFlutterSongNotFound);
     }
 
     // Build new files array
@@ -172,7 +173,7 @@ class SongFileService {
   }) async {
     DemoGuard.checkCurrent('deleteSongFile'); // DEMO_GUARD
     if (_tenantId == null) {
-      throw Exception('Kein Tenant ausgewählt');
+      throw Exception(l10nWithoutContext.coreFlutterNoTenantSelected);
     }
 
     // Delete from storage
@@ -217,7 +218,7 @@ class SongFileService {
   Future<void> deleteAllFiles({required int songId}) async {
     DemoGuard.checkCurrent('deleteSongFile'); // DEMO_GUARD
     if (_tenantId == null) {
-      throw Exception('Kein Tenant ausgewählt');
+      throw Exception(l10nWithoutContext.coreFlutterNoTenantSelected);
     }
 
     // RT-009: Use maybeSingle() - song may have been deleted
@@ -266,7 +267,7 @@ class SongFileService {
   }) async {
     DemoGuard.checkCurrent('updateSongFile'); // DEMO_GUARD
     if (_tenantId == null) {
-      throw Exception('Kein Tenant ausgewählt');
+      throw Exception(l10nWithoutContext.coreFlutterNoTenantSelected);
     }
 
     // RT-009: Use maybeSingle() - song may have been deleted
@@ -278,7 +279,7 @@ class SongFileService {
         .maybeSingle();
 
     if (songResponse == null) {
-      throw Exception('Song wurde nicht gefunden oder bereits gelöscht');
+      throw Exception(l10nWithoutContext.coreFlutterSongNotFound);
     }
 
     final existingFiles = List<Map<String, dynamic>>.from(
@@ -385,7 +386,7 @@ class SongFileService {
       try {
         await _supabase.storage.from(_bucketName).remove([storagePath]);
       } catch (_) {}
-      throw Exception('Song wurde nicht gefunden oder bereits gelöscht');
+      throw Exception(l10nWithoutContext.coreFlutterSongNotFound);
     }
 
     // Build new files array

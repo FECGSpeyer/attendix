@@ -7,6 +7,7 @@ import '../../../core/providers/tenant_providers.dart';
 import '../../../core/providers/user_preferences_provider.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../data/models/tenant/tenant.dart';
+import '../../../l10n/l10n.dart';
 
 /// AppBar title with a quick tenant switcher (Ionic people/list
 /// `tenant-switcher-list` popover). Shows the current tenant's long name; if
@@ -34,7 +35,7 @@ class TenantSwitcherTitle extends ConsumerWidget {
     }
 
     return PopupMenuButton<Tenant>(
-      tooltip: 'Instanz wechseln',
+      tooltip: context.l10n.settingsSwitchTenant,
       position: PopupMenuPosition.under,
       onSelected: (t) => switchTenant(context, ref, t),
       itemBuilder: (context) => tenants
@@ -57,9 +58,9 @@ class TenantSwitcherTitle extends ConsumerWidget {
                           color: AppColors.primary,
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        child: const Text(
-                          'Aktuell',
-                          style: TextStyle(color: Colors.white, fontSize: 11),
+                        child: Text(
+                          context.l10n.settingsCurrent,
+                          style: const TextStyle(color: Colors.white, fontSize: 11),
                         ),
                       ),
                   ],

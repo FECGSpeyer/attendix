@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:attendix/core/utils/demo_guard.dart';
 
 /// DEMO_GUARD: Demo-mode write protection (Ionic db.service
 /// `checkDemoRestriction()` in 82 mutation methods).
@@ -102,8 +103,10 @@ void main() {
     test('Ionic toast text', () {
       final guard =
           File('lib/core/utils/demo_guard.dart').readAsStringSync();
-      expect(guard,
-          contains("'Diese Funktion ist im Demo-Modus nicht verfügbar.'"));
+      // I18N: text comes from the Ionic key db.demoRestricted.
+      expect(guard, contains('l10nWithoutContext.dbDemoRestricted'));
+      expect(kDemoRestrictedMessage,
+          'Diese Funktion ist im Demo-Modus nicht verfügbar.');
     });
   });
 

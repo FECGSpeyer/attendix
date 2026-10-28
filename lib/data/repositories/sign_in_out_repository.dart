@@ -6,6 +6,7 @@ import '../../core/utils/event_list_utils.dart';
 import '../models/attendance/attendance.dart';
 import '../../core/utils/duty_utils.dart';
 import 'base_repository.dart';
+import '../../l10n/l10n.dart';
 
 /// Provider for SignInOutRepository (without tenant – use the WithTenant variant).
 final signInOutRepositoryProvider = Provider<SignInOutRepository>((ref) {
@@ -518,7 +519,7 @@ class SignInOutRepository extends BaseRepository with TenantAwareRepository {
           attendance,
           json as Map<String, dynamic>,
           tenantId: tenantId,
-          tenantName: tenantInfo?['name'] ?? 'Unbekannt',
+          tenantName: tenantInfo?['name'] ?? l10nWithoutContext.commonUnknown,
           tenantColor: tenantInfo?['color'] ?? '#000000',
         );
       }).toList();
@@ -774,6 +775,6 @@ class CrossTenantPersonAttendance {
     if (typeInfo != null && typeInfo!.isNotEmpty) {
       return typeInfo!;
     }
-    return title.isNotEmpty ? title : 'Termin';
+    return title.isNotEmpty ? title : l10nWithoutContext.attendanceEventFallback;
   }
 }

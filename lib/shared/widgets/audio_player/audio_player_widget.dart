@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:attendix/core/services/audio_player/audio_player_service.dart';
+import '../../../l10n/l10n.dart';
 
 /// Mini audio player bar. Hidden when no file is loaded.
 ///
@@ -42,7 +43,7 @@ class _AudioPlayerWidgetState extends ConsumerState<AudioPlayerWidget> {
             if (queue.hasQueue)
               IconButton(
                 icon: const Icon(Icons.skip_previous),
-                tooltip: 'Zurück',
+                tooltip: context.l10n.commonBack,
                 onPressed: svc.previous,
               ),
             IconButton(
@@ -57,7 +58,7 @@ class _AudioPlayerWidgetState extends ConsumerState<AudioPlayerWidget> {
             if (queue.hasQueue)
               IconButton(
                 icon: const Icon(Icons.skip_next),
-                tooltip: 'Weiter',
+                tooltip: context.l10n.commonNext,
                 onPressed: queue.hasNext ? svc.next : null,
               ),
             Expanded(
@@ -79,7 +80,7 @@ class _AudioPlayerWidgetState extends ConsumerState<AudioPlayerWidget> {
                       ),
                       IconButton(
                         icon: const Icon(Icons.close),
-                        tooltip: 'Schließen',
+                        tooltip: context.l10n.commonClose,
                         onPressed: svc.stop,
                       ),
                     ],

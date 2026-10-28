@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/team_org/team_org.dart';
 import 'base_repository.dart';
+import '../../l10n/l10n.dart';
 
 /// Provider for AgendaItemRepository
 final agendaItemRepositoryProvider = Provider<AgendaItemRepository>((ref) {
@@ -155,8 +156,8 @@ class AgendaItemRepository extends BaseRepository with TenantAwareRepository {
           .select('id');
 
       if ((response as List).isEmpty) {
-        throw const RepositoryException(
-          message: 'Keine Berechtigung zum Löschen',
+        throw RepositoryException(
+          message: l10nWithoutContext.svcNoDeletePermission,
           operation: 'deleteAgendaItem',
         );
       }

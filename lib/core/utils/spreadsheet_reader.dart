@@ -10,6 +10,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:excel/excel.dart';
+import '../../l10n/l10n.dart';
 
 /// Parsed first sheet of a spreadsheet: header names and one map per row.
 class SpreadsheetData {
@@ -41,8 +42,7 @@ SpreadsheetData readSpreadsheet(Uint8List bytes, String fileName) {
   } else {
     if (RegExp(r'\.xls$', caseSensitive: false).hasMatch(fileName)) {
       throw SpreadsheetReadException(
-        'Das alte Excel-Format (.xls) wird nicht unterstützt. '
-        'Bitte als .xlsx oder .csv speichern.',
+        l10nWithoutContext.coreFlutterXlsUnsupported,
       );
     }
     table = _readXlsx(bytes);
@@ -157,7 +157,7 @@ List<List<dynamic>> _readXlsx(Uint8List bytes) {
   try {
     excel = Excel.decodeBytes(bytes);
   } catch (e) {
-    throw SpreadsheetReadException('Die Datei konnte nicht gelesen werden.');
+    throw SpreadsheetReadException(l10nWithoutContext.peopleFileUnreadable);
   }
   if (excel.tables.isEmpty) return [];
   final sheetName = excel.getDefaultSheet() ?? excel.tables.keys.first;

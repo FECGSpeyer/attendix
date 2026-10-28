@@ -7,6 +7,7 @@ import '../../data/repositories/plan_repository.dart';
 import '../utils/plan_utils.dart';
 import 'organisation_providers.dart';
 import 'tenant_providers.dart';
+import '../../l10n/l10n.dart';
 
 // ORG_PLANS: providers for Ablaufpläne, Org-Pläne and planning templates.
 
@@ -87,7 +88,8 @@ class OrgPlanEntry {
     return (t != null && t.isNotEmpty) ? t : 'Plan';
   }
 
-  String get tenantLabel => attendance != null ? (attendance!.tenantName ?? '') : 'Org-Plan';
+  String get tenantLabel =>
+      attendance != null ? (attendance!.tenantName ?? '') : l10nWithoutContext.plansOrgPlan;
 
   int get fieldCount => plan.fields.length;
 

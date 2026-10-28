@@ -1735,6 +1735,423 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonYes => 'Yes';
 
   @override
+  String get coreFlutterAccessDenied => 'Access denied';
+
+  @override
+  String get coreFlutterDifficultyEasy => 'Easy';
+
+  @override
+  String get coreFlutterDifficultyHard => 'Hard';
+
+  @override
+  String get coreFlutterDifficultyMedium => 'Medium';
+
+  @override
+  String get coreFlutterDifficultyVeryHard => 'Very hard';
+
+  @override
+  String coreFlutterErrorWith(Object error) {
+    return 'Error: $error';
+  }
+
+  @override
+  String coreFlutterExportAttendanceHeader(Object name, Object date) {
+    return '$name attendance as of $date';
+  }
+
+  @override
+  String coreFlutterExportEndAt(Object time) {
+    return 'End: $time';
+  }
+
+  @override
+  String get coreFlutterExportOpen => 'Open';
+
+  @override
+  String get coreFlutterExportPdfRenderFailed => 'PDF could not be rendered';
+
+  @override
+  String coreFlutterExportPlayerListHeader(Object name, Object date) {
+    return '$name member list as of $date';
+  }
+
+  @override
+  String get coreFlutterExportPlayerListSheet => 'Member list';
+
+  @override
+  String get coreFlutterExportRate => 'Rate';
+
+  @override
+  String get coreFlutterExportRehearsalProgramme => 'Rehearsal programme';
+
+  @override
+  String get coreFlutterFeedbackAnonymousHint => 'Your data will not be sent';
+
+  @override
+  String get coreFlutterFeedbackQuestionIntro => 'Do you have a question or need help?';
+
+  @override
+  String get coreFlutterFeedbackQuestionRequired => 'Please enter a question';
+
+  @override
+  String get coreFlutterFeedbackRatingIntro => 'How do you like the app?';
+
+  @override
+  String get coreFlutterFileBytesUnavailable => 'File bytes not available';
+
+  @override
+  String get coreFlutterFilePathUnavailable => 'File path not available';
+
+  @override
+  String get coreFlutterHistoryApproved => 'Approved';
+
+  @override
+  String get coreFlutterHistoryCopiedFrom => 'Copied from';
+
+  @override
+  String get coreFlutterHistoryCopiedTo => 'Copied to';
+
+  @override
+  String get coreFlutterHistoryCritical => 'Marked critical';
+
+  @override
+  String get coreFlutterHistoryDeclined => 'Declined';
+
+  @override
+  String get coreFlutterHistoryInstrumentChange => 'Instrument change';
+
+  @override
+  String get coreFlutterHistoryReturned => 'Returned';
+
+  @override
+  String get coreFlutterHistoryTransferredFrom => 'Transferred from';
+
+  @override
+  String get coreFlutterHistoryTransferredTo => 'Transferred to';
+
+  @override
+  String get coreFlutterHistoryUnpaused => 'Pause ended';
+
+  @override
+  String get coreFlutterHoliday => 'Public holiday';
+
+  @override
+  String coreFlutterImportBirthdayUnreadable(Object value) {
+    return 'Birth date \"$value\" could not be read';
+  }
+
+  @override
+  String coreFlutterImportCategoryNotFound(Object name) {
+    return 'Category \"$name\" not found';
+  }
+
+  @override
+  String coreFlutterImportDifficultyInvalid(Object value) {
+    return 'Difficulty \"$value\" must be 1, 2 or 3';
+  }
+
+  @override
+  String get coreFlutterImportDuplicateEmailInFile => 'Duplicate email in the file';
+
+  @override
+  String get coreFlutterImportDuplicateNumberInFile => 'Duplicate number in the file';
+
+  @override
+  String get coreFlutterImportEmailExists => 'Email already exists in this instance';
+
+  @override
+  String coreFlutterImportEmailInvalid(Object email) {
+    return 'Email \"$email\" looks invalid';
+  }
+
+  @override
+  String coreFlutterImportJoinedUnreadable(Object value) {
+    return 'Join date \"$value\" could not be read';
+  }
+
+  @override
+  String coreFlutterImportLinkInvalid(Object link) {
+    return 'Link \"$link\" looks invalid';
+  }
+
+  @override
+  String get coreFlutterImportNameRequired => 'First and last name are required';
+
+  @override
+  String get coreFlutterImportNumberRequired => 'Number is required and must be a number';
+
+  @override
+  String get coreFlutterImportSongNameRequired => 'Name is required';
+
+  @override
+  String get coreFlutterImportSongNumberExists => 'Song number already exists in this instance';
+
+  @override
+  String get coreFlutterInvalidCopyCount => 'Invalid number of copies';
+
+  @override
+  String get coreFlutterNewVersionAvailable => 'New version available';
+
+  @override
+  String get coreFlutterNoCopiesSelected => 'No copies selected for printing';
+
+  @override
+  String get coreFlutterNoEmailAddress => 'No email address available';
+
+  @override
+  String get coreFlutterNoFilesDownloaded => 'No files could be downloaded';
+
+  @override
+  String get coreFlutterNoFilesToDownload => 'No files to download';
+
+  @override
+  String get coreFlutterNoInstanceSelected => 'No instance selected';
+
+  @override
+  String get coreFlutterNoResponse => 'No response received';
+
+  @override
+  String coreFlutterNoResultsFor(Object query) {
+    return 'No results for \"$query\"';
+  }
+
+  @override
+  String get coreFlutterNoTenantSelected => 'No tenant selected';
+
+  @override
+  String get coreFlutterNoVersionHistory => 'No version history available';
+
+  @override
+  String get coreFlutterNotLoggedIn => 'Not logged in';
+
+  @override
+  String get coreFlutterNotSignedIn => 'Not signed in';
+
+  @override
+  String get coreFlutterPausedLower => 'paused';
+
+  @override
+  String coreFlutterPausedUntil(Object date) {
+    return 'until $date';
+  }
+
+  @override
+  String coreFlutterPdfLoadFailed(Object status) {
+    return 'PDF could not be loaded (HTTP $status)';
+  }
+
+  @override
+  String get coreFlutterPersonHasNoId => 'Person has no ID';
+
+  @override
+  String coreFlutterPlanDayN(Object day) {
+    return 'Day $day';
+  }
+
+  @override
+  String coreFlutterPlanStartsInHours(Object hours) {
+    return 'starts in $hours h';
+  }
+
+  @override
+  String coreFlutterPlanStartsInHoursMin(Object hours, Object min) {
+    return 'starts in $hours h $min min';
+  }
+
+  @override
+  String coreFlutterPlanStartsInMin(Object min) {
+    return 'starts in $min min';
+  }
+
+  @override
+  String get coreFlutterPlanStartsSoon => 'starts soon';
+
+  @override
+  String get coreFlutterRegisterPlanAlto => 'Alto';
+
+  @override
+  String get coreFlutterRegisterPlanBass => 'Bass';
+
+  @override
+  String coreFlutterRegisterPlanGroupN(Object n) {
+    return 'Group $n';
+  }
+
+  @override
+  String get coreFlutterRegisterPlanOther => 'Other';
+
+  @override
+  String coreFlutterRegisterPlanPerUnit(Object min) {
+    return '$min min per unit';
+  }
+
+  @override
+  String get coreFlutterRegisterPlanSoprano => 'Soprano';
+
+  @override
+  String get coreFlutterRegisterPlanStrings => 'Strings';
+
+  @override
+  String get coreFlutterRegisterPlanTenor => 'Tenor';
+
+  @override
+  String get coreFlutterRegisterPlanTime => 'Time';
+
+  @override
+  String get coreFlutterRegisterPlanTitle => 'Sectional rehearsal plan';
+
+  @override
+  String coreFlutterRegisterPlanTotalDuration(Object min) {
+    return 'Total duration: $min min';
+  }
+
+  @override
+  String get coreFlutterRegisterPlanWoodwinds => 'Woodwinds';
+
+  @override
+  String get coreFlutterRegistration => 'Registration';
+
+  @override
+  String get coreFlutterRepoAccountCreateFailed => 'The account could not be created.';
+
+  @override
+  String get coreFlutterRepoAlreadyAdmin => 'This person is already an admin.';
+
+  @override
+  String get coreFlutterRepoCategoryCreateFailed => 'Category could not be created';
+
+  @override
+  String coreFlutterRepoCategoryNotFound(Object id) {
+    return 'Group category with ID $id not found';
+  }
+
+  @override
+  String coreFlutterRepoChangeRoleFailed(Object error) {
+    return 'Error changing the role: $error';
+  }
+
+  @override
+  String get coreFlutterRepoEventExistsOnDate => 'An event already exists on this date';
+
+  @override
+  String get coreFlutterRepoEventNotInTenant => 'Event does not belong to the current instance';
+
+  @override
+  String get coreFlutterRepoForeignTenantDenied => 'Access to another instance denied';
+
+  @override
+  String get coreFlutterRepoGroupCreateFailed => 'Group could not be created';
+
+  @override
+  String coreFlutterRepoGroupHasPlayers(Object count) {
+    return 'Group cannot be deleted: $count members are still assigned';
+  }
+
+  @override
+  String coreFlutterRepoGroupNotFound(Object id) {
+    return 'Group with ID $id not found';
+  }
+
+  @override
+  String get coreFlutterRepoMeetingExistsOnDate => 'A meeting already exists on this date';
+
+  @override
+  String get coreFlutterRepoNoPermissionInTenant => 'No permission in this instance';
+
+  @override
+  String get coreFlutterRepoNoValidPersons => 'No valid persons';
+
+  @override
+  String get coreFlutterRepoPersonsNotInTenant => 'Persons do not belong to the current instance';
+
+  @override
+  String get coreFlutterRepoRootNotDeletable => 'Root cannot be deleted.';
+
+  @override
+  String get coreFlutterRepoSongNotFoundOrDenied => 'Song not found or access denied';
+
+  @override
+  String get coreFlutterRepoTenantNotLinked => 'Instance is not linked';
+
+  @override
+  String coreFlutterRepoTypeInUse(Object count) {
+    return 'Type cannot be deleted: used by $count attendance(s)';
+  }
+
+  @override
+  String coreFlutterRepoUnlinkAccountFailed(Object error) {
+    return 'Error removing the account link: $error';
+  }
+
+  @override
+  String get coreFlutterRolePermissionWithoutId => 'Role permission without ID';
+
+  @override
+  String get coreFlutterRouterGoHome => 'Go home';
+
+  @override
+  String get coreFlutterRouterInvalidAttendanceId => 'Invalid attendance ID';
+
+  @override
+  String get coreFlutterRouterInvalidPersonId => 'Invalid person ID';
+
+  @override
+  String get coreFlutterRouterInvalidTenantId => 'Invalid instance ID';
+
+  @override
+  String coreFlutterRouterPageNotFound(Object path) {
+    return 'Page not found: $path';
+  }
+
+  @override
+  String get coreFlutterRuleOverall => 'overall';
+
+  @override
+  String get coreFlutterRuleSinceSeasonStart => 'since season start';
+
+  @override
+  String coreFlutterRuleStatusN(Object n) {
+    return 'Status $n';
+  }
+
+  @override
+  String get coreFlutterSchoolHolidays => 'School holidays';
+
+  @override
+  String get coreFlutterSearchHint => 'Search...';
+
+  @override
+  String get coreFlutterSheetMusic => 'Sheet music';
+
+  @override
+  String coreFlutterShiftFreeRange(Object start, Object end) {
+    return 'Off ($start - $end)';
+  }
+
+  @override
+  String coreFlutterShiftWorkRange(Object start, Object end, Object hours) {
+    return 'Work ($start - $end, ${hours}h)';
+  }
+
+  @override
+  String get coreFlutterSongFiles => 'Song files';
+
+  @override
+  String get coreFlutterSongNotFound => 'Song not found or already deleted';
+
+  @override
+  String get coreFlutterUpdate => 'Update';
+
+  @override
+  String get coreFlutterVoices => 'Voices';
+
+  @override
+  String get coreFlutterXlsUnsupported => 'The old Excel format (.xls) is not supported. Please save as .xlsx or .csv.';
+
+  @override
+  String get coreFlutterZipFailed => 'ZIP could not be created';
+
+  @override
   String get dashSettingsCards => 'Cards';
 
   @override

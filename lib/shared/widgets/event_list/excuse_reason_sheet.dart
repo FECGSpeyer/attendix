@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/quill_utils.dart';
 import '../../../data/models/attendance/attendance.dart';
+import '../../../l10n/l10n.dart';
 
+// Internal sentinel for the free-text option (never stored).
 const String _customReason = 'Sonstiger Grund';
 
 /// Reason sheet for Absagen / Verspätung (Ionic ExcuseReasonPicker).
@@ -88,19 +90,19 @@ class _ExcuseReasonSheetState extends State<_ExcuseReasonSheet> {
                 children: [
                   IconButton(
                     icon: const Icon(Icons.close),
-                    tooltip: 'Abbrechen',
+                    tooltip: context.l10n.commonCancel,
                     onPressed: () => Navigator.of(context).pop(),
                   ),
                   Expanded(
                     child: Text(
-                      widget.isLate ? 'Verspätung' : 'Abmeldung',
+                      widget.isLate ? context.l10n.excuseLate : context.l10n.excuseSignOut,
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
                   ),
                   IconButton(
                     icon: const Icon(Icons.check),
-                    tooltip: 'Bestätigen',
+                    tooltip: context.l10n.commonConfirm,
                     color: AppColors.primary,
                     onPressed: _confirmable ? _confirm : null,
                   ),
@@ -111,7 +113,7 @@ class _ExcuseReasonSheetState extends State<_ExcuseReasonSheet> {
                   value: reason,
                   groupValue: _selection,
                   onChanged: (v) => setState(() => _selection = v ?? _selection),
-                  title: Text(reason == _customReason ? 'Sonstiger Grund (Text)' : reason),
+                  title: Text(reason == _customReason ? context.l10n.excuseCustomOption : reason),
                 ),
               if (_selection == _customReason)
                 Padding(
@@ -123,10 +125,10 @@ class _ExcuseReasonSheetState extends State<_ExcuseReasonSheet> {
                     maxLines: 5,
                     textCapitalization: TextCapitalization.sentences,
                     onChanged: (_) => setState(() {}),
-                    decoration: const InputDecoration(
-                      labelText: 'Grund',
-                      hintText: 'Mindestens 5 Zeichen eingeben...',
-                      border: OutlineInputBorder(),
+                    decoration: InputDecoration(
+                      labelText: context.l10n.excuseReason,
+                      hintText: context.l10n.excuseMinChars,
+                      border: const OutlineInputBorder(),
                     ),
                   ),
                 ),
@@ -134,7 +136,7 @@ class _ExcuseReasonSheetState extends State<_ExcuseReasonSheet> {
                 padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                 child: FilledButton(
                   onPressed: _confirmable ? _confirm : null,
-                  child: const Text('Bestätigen'),
+                  child: Text(context.l10n.commonConfirm),
                 ),
               ),
             ],
@@ -176,7 +178,9 @@ String? missingRegistrationField(
 String registrationAnswerText(RegistrationField field, dynamic answer) {
   if (answer == null) return '';
   if (field.type == RegistrationFieldType.boolean) {
-    return answer == true ? 'Ja' : 'Nein';
+    return answer == true
+        ? l10nWithoutContext.commonYes
+        : l10nWithoutContext.commonNo;
   }
   if (answer is List) return answer.join(', ');
   return answer.toString();
@@ -254,7 +258,7 @@ class _RegistrationFieldsSheetState extends State<_RegistrationFieldsSheet> {
     if (widget.requireText) {
       final missing = missingRegistrationField(widget.fields, _answers);
       if (missing != null) {
-        setState(() => _error = 'Bitte "$missing" ausfüllen');
+        setState(() => _error = context.l10n.signoutFillField(missing));
         return;
       }
     }
@@ -340,13 +344,15 @@ class _RegistrationFieldsSheetState extends State<_RegistrationFieldsSheet> {
                   children: [
                     Expanded(
                       child: Text(
-                        widget.editMode ? 'Anmeldefelder' : 'Anmeldung',
+                        widget.editMode
+                            ? context.l10n.attendanceRegFields
+                            : context.l10n.coreFlutterRegistration,
                         style: Theme.of(context).textTheme.titleLarge,
                       ),
                     ),
                     TextButton(
                       onPressed: () => Navigator.of(context).pop(),
-                      child: const Text('Abbrechen'),
+                      child: Text(context.l10n.commonCancel),
                     ),
                   ],
                 ),
@@ -362,7 +368,9 @@ class _RegistrationFieldsSheetState extends State<_RegistrationFieldsSheet> {
                 child: FilledButton.icon(
                   onPressed: _submit,
                   icon: const Icon(Icons.check_circle_outline),
-                  label: Text(widget.editMode ? 'Speichern' : 'Anmelden'),
+                  label: Text(widget.editMode
+                      ? context.l10n.commonSave
+                      : context.l10n.signoutSignIn),
                 ),
               ),
             ],
@@ -387,7 +395,7 @@ Future<void> showEventDescriptionSheet(BuildContext context, String description)
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Beschreibung', style: Theme.of(ctx).textTheme.titleLarge),
+              Text(ctx.l10n.signoutDescription, style: Theme.of(ctx).textTheme.titleLarge),
               const SizedBox(height: 12),
               SelectableText(QuillUtils.stripHtml(description)),
             ],
@@ -416,10 +424,10 @@ Future<String?> showEventNoteDialog(
         maxLines: 4,
         minLines: 2,
         textCapitalization: TextCapitalization.sentences,
-        decoration: const InputDecoration(hintText: 'Gib hier deine Notiz ein'),
+        decoration: InputDecoration(hintText: ctx.l10n.signoutEnterNote),
       ),
       actions: [
-        TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Abbrechen')),
+        TextButton(onPressed: () => Navigator.pop(ctx), child: Text(ctx.l10n.commonCancel)),
         FilledButton(
           onPressed: () => Navigator.pop(ctx, controller.text),
           child: Text(confirmText),

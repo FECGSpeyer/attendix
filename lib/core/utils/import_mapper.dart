@@ -10,6 +10,7 @@ import '../../data/models/instrument/instrument.dart';
 import '../../data/models/song/song.dart';
 import '../../data/models/tenant/tenant.dart';
 import '../constants/app_constants.dart';
+import '../../l10n/l10n.dart';
 import '../constants/enums.dart';
 
 /// Canonical German headers, matching the export vocabulary.
@@ -271,7 +272,7 @@ MappedPersonRow mapPersonRow(
     lastName = _str(get('Nachname'));
   }
   if (firstName.isEmpty || lastName.isEmpty) {
-    errors.add('Vor- und Nachname sind erforderlich');
+    errors.add(l10nWithoutContext.coreFlutterImportNameRequired);
   }
 
   // --- Dates --- (null, never '' for nullable timestamptz columns)
@@ -280,7 +281,7 @@ MappedPersonRow mapPersonRow(
   if (_str(rawBirthday).isNotEmpty) {
     birthday = parseGermanDate(rawBirthday);
     if (birthday == null) {
-      warnings.add('Geburtsdatum "${_str(rawBirthday)}" konnte nicht gelesen werden');
+      warnings.add(l10nWithoutContext.coreFlutterImportBirthdayUnreadable(_str(rawBirthday)));
     }
   }
 
@@ -292,7 +293,7 @@ MappedPersonRow mapPersonRow(
     if (parsed != null) {
       joined = parsed;
     } else {
-      warnings.add('Eintrittsdatum "${_str(rawJoined)}" konnte nicht gelesen werden');
+      warnings.add(l10nWithoutContext.coreFlutterImportJoinedUnreadable(_str(rawJoined)));
     }
   }
 
@@ -307,7 +308,7 @@ MappedPersonRow mapPersonRow(
   // --- Email ---
   final email = _str(get('E-Mail')).toLowerCase();
   if (email.isNotEmpty && !_emailRe.hasMatch(email)) {
-    warnings.add('E-Mail "$email" sieht ungültig aus');
+    warnings.add(l10nWithoutContext.coreFlutterImportEmailInvalid(email));
   }
 
   final phone = _str(get('Telefon'));
@@ -374,7 +375,7 @@ List<MappedPersonRow> mapPersonRows(
     final email = mapped.email;
     if (email != null && email.isNotEmpty) {
       if (seen.contains(email)) {
-        mapped.warnings.add('Doppelte E-Mail in der Datei');
+        mapped.warnings.add(l10nWithoutContext.coreFlutterImportDuplicateEmailInFile);
         mapped.isDuplicate = true;
       } else {
         seen.add(email);
@@ -390,7 +391,7 @@ List<MappedPersonRow> detectPersonDuplicates(
   List<MappedPersonRow> mapped,
   Set<String> existingEmails,
 ) {
-  const msg = 'E-Mail existiert bereits in dieser Instanz';
+  final msg = l10nWithoutContext.coreFlutterImportEmailExists;
   for (final row in mapped) {
     final email = row.email;
     if (email != null && existingEmails.contains(email)) {
@@ -520,7 +521,7 @@ MappedSongRow mapSongRow(
   final numberStr = _str(get('Nummer'));
   final num? parsedNumber = numberStr.isEmpty ? null : num.tryParse(numberStr);
   if (parsedNumber == null) {
-    errors.add('Nummer ist erforderlich und muss eine Zahl sein');
+    errors.add(l10nWithoutContext.coreFlutterImportNumberRequired);
   }
   // Column `number` is an integer.
   final int? number = parsedNumber?.toInt();
@@ -529,7 +530,7 @@ MappedSongRow mapSongRow(
   final String? prefix = prefixStr.isEmpty ? null : prefixStr;
 
   final name = _str(get('Name'));
-  if (name.isEmpty) errors.add('Name ist erforderlich');
+  if (name.isEmpty) errors.add(l10nWithoutContext.coreFlutterImportSongNameRequired);
 
   bool parseBool(Object? raw) => _truthy.contains(_str(raw).toLowerCase());
   final withChoir = parseBool(get('Chor & Orchester'));
@@ -538,7 +539,7 @@ MappedSongRow mapSongRow(
   final linkStr = _str(get('Link'));
   final String? link = linkStr.isEmpty ? null : linkStr;
   if (link != null && !_httpUrlRe.hasMatch(link)) {
-    warnings.add('Link "$link" sieht ungültig aus');
+    warnings.add(l10nWithoutContext.coreFlutterImportLinkInvalid(link));
   }
 
   final rawDiff = _str(get('Schwierigkeit'));
@@ -548,7 +549,7 @@ MappedSongRow mapSongRow(
     if (d != null && [1, 2, 3].contains(d)) {
       difficulty = d;
     } else {
-      warnings.add('Schwierigkeit "$rawDiff" muss 1, 2 oder 3 sein');
+      warnings.add(l10nWithoutContext.coreFlutterImportDifficultyInvalid(rawDiff));
     }
   }
 
@@ -568,7 +569,7 @@ MappedSongRow mapSongRow(
       if (match?.id != null) {
         categoryIds.add(match!.id!);
       } else {
-        warnings.add('Kategorie "$t" nicht gefunden');
+        warnings.add(l10nWithoutContext.coreFlutterImportCategoryNotFound(t));
       }
     }
   }
@@ -617,7 +618,7 @@ List<MappedSongRow> mapSongRows(
     final mapped = mapSongRow(row, mapping, ctx, i);
     if (mapped.compositeKey.isNotEmpty && mapped.errors.isEmpty) {
       if (seen.contains(mapped.compositeKey)) {
-        mapped.warnings.add('Doppelte Nummer in der Datei');
+        mapped.warnings.add(l10nWithoutContext.coreFlutterImportDuplicateNumberInFile);
         mapped.isDuplicate = true;
       } else {
         seen.add(mapped.compositeKey);
@@ -632,7 +633,7 @@ List<MappedSongRow> detectSongDuplicates(
   List<MappedSongRow> mapped,
   Set<String> existingKeys,
 ) {
-  const msg = 'Liednummer existiert bereits in dieser Instanz';
+  final msg = l10nWithoutContext.coreFlutterImportSongNumberExists;
   for (final row in mapped) {
     if (row.compositeKey.isNotEmpty && existingKeys.contains(row.compositeKey)) {
       row.isDuplicate = true;

@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/models/version_history.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../l10n/l10n.dart';
 
 /// Bottom sheet showing version history (What's New)
 class VersionHistorySheet extends StatefulWidget {
@@ -83,7 +84,7 @@ class _VersionHistorySheetState extends State<VersionHistorySheet> {
                     const SizedBox(width: AppDimensions.paddingS),
                     Expanded(
                       child: Text(
-                        'Was ist neu?',
+                        context.l10n.settingsWhatsNew,
                         style: Theme.of(context).textTheme.titleMedium?.copyWith(
                               fontWeight: FontWeight.bold,
                             ),
@@ -120,7 +121,7 @@ class _VersionHistorySheetState extends State<VersionHistorySheet> {
           children: [
             const Icon(Icons.error_outline, size: 48, color: AppColors.danger),
             const SizedBox(height: AppDimensions.paddingM),
-            Text('Fehler: $_error'),
+            Text(context.l10n.coreFlutterErrorWith('$_error')),
           ],
         ),
       );
@@ -129,13 +130,13 @@ class _VersionHistorySheetState extends State<VersionHistorySheet> {
     final versions = _versionHistory?.versions ?? [];
 
     if (versions.isEmpty) {
-      return const Center(
+      return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.history, size: 48, color: AppColors.medium),
-            SizedBox(height: AppDimensions.paddingM),
-            Text('Keine Versionshistorie verfügbar'),
+            const Icon(Icons.history, size: 48, color: AppColors.medium),
+            const SizedBox(height: AppDimensions.paddingM),
+            Text(context.l10n.coreFlutterNoVersionHistory),
           ],
         ),
       );
@@ -191,8 +192,8 @@ class _VersionSection extends StatelessWidget {
               Expanded(
                 child: Text(
                   version.date != null
-                      ? 'Version ${version.version} (${version.date})'
-                      : 'Version ${version.version}',
+                      ? '${context.l10n.loginVersion(version.version)} (${version.date})'
+                      : context.l10n.loginVersion(version.version),
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 14,
@@ -207,9 +208,9 @@ class _VersionSection extends StatelessWidget {
                     color: AppColors.primary,
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: const Text(
-                    'Aktuell',
-                    style: TextStyle(
+                  child: Text(
+                    context.l10n.settingsCurrent,
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 10,
                       fontWeight: FontWeight.bold,

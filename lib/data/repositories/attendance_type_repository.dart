@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/attendance/attendance.dart';
 import 'base_repository.dart';
+import '../../l10n/l10n.dart';
 
 /// Repository for AttendanceType CRUD operations
 class AttendanceTypeRepository extends BaseRepository with TenantAwareRepository {
@@ -156,7 +157,7 @@ class AttendanceTypeRepository extends BaseRepository with TenantAwareRepository
       final usageCount = await getAttendanceCountForType(id);
       if (usageCount > 0) {
         throw RepositoryException(
-          message: 'Typ kann nicht gelöscht werden: Wird von $usageCount Anwesenheit(en) verwendet',
+          message: l10nWithoutContext.coreFlutterRepoTypeInUse(usageCount),
           operation: 'deleteType',
           code: 'FK_VIOLATION',
         );

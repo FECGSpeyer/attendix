@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/role_permission/tenant_role_permission.dart';
 import 'base_repository.dart';
+import '../../l10n/l10n.dart';
 
 /// Provider for RolePermissionRepository (ohne Tenant – nutze rolePermissionRepositoryWithTenantProvider)
 final rolePermissionRepositoryProvider = Provider<RolePermissionRepository>((ref) {
@@ -38,8 +39,8 @@ class RolePermissionRepository extends BaseRepository with TenantAwareRepository
   Future<TenantRolePermission> updatePermission(TenantRolePermission permission) async {
     final id = permission.id;
     if (id == null) {
-      throw const RepositoryException(
-        message: 'Rollenberechtigung ohne ID',
+      throw RepositoryException(
+        message: l10nWithoutContext.coreFlutterRolePermissionWithoutId,
         operation: 'updatePermission',
       );
     }

@@ -11,6 +11,7 @@
 library;
 
 import 'dart:math' as math;
+import '../../l10n/l10n.dart';
 
 /// Minimal identity data used for matching.
 class PersonLike {
@@ -50,17 +51,17 @@ class RankedMatch<T> {
 
 /// German reason labels (Ionic i18n `linkPersons.reason.*`).
 abstract final class MatchReason {
-  static const swapped = 'Vor-/Nachname vertauscht';
-  static const nearlyIdentical = 'Name fast identisch';
-  static const sameLastName = 'Nachname identisch';
-  static const sameFirstName = 'Vorname identisch';
-  static const lastNamePrefix = 'Nachname-Präfix';
-  static const firstNamePrefix = 'Vorname-Präfix';
-  static const similarName = 'Ähnlicher Name';
-  static const linked = 'Verknüpfte Person';
-  static const sameEmail = 'E-Mail identisch';
-  static const sameBirthday = 'Gleicher Geburtstag';
-  static const similarBirthday = 'Ähnlicher Geburtstag';
+  static String get swapped => l10nWithoutContext.linkPersonsReasonSwapped;
+  static String get nearlyIdentical => l10nWithoutContext.linkPersonsReasonNearlyIdentical;
+  static String get sameLastName => l10nWithoutContext.linkPersonsReasonSameLastName;
+  static String get sameFirstName => l10nWithoutContext.linkPersonsReasonSameFirstName;
+  static String get lastNamePrefix => l10nWithoutContext.linkPersonsReasonLastNamePrefix;
+  static String get firstNamePrefix => l10nWithoutContext.linkPersonsReasonFirstNamePrefix;
+  static String get similarName => l10nWithoutContext.linkPersonsReasonSimilarName;
+  static String get linked => l10nWithoutContext.linkPersonsReasonLinked;
+  static String get sameEmail => l10nWithoutContext.linkPersonsReasonSameEmail;
+  static String get sameBirthday => l10nWithoutContext.linkPersonsReasonSameBirthday;
+  static String get similarBirthday => l10nWithoutContext.linkPersonsReasonSimilarBirthday;
 }
 
 const _diacritics = {

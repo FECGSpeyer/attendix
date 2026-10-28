@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../models/person/person.dart';
 import 'base_repository.dart';
+import '../../l10n/l10n.dart';
 
 /// Provider for ProfileRepository
 final profileRepositoryProvider = Provider<ProfileRepository>((ref) {
@@ -103,7 +104,7 @@ class ProfileRepository extends BaseRepository with TenantAwareRepository {
     final id = supabase.auth.currentUser?.id;
     if (id == null) {
       throw RepositoryException(
-        message: 'Nicht angemeldet',
+        message: l10nWithoutContext.coreFlutterNotSignedIn,
         operation: 'profile',
       );
     }

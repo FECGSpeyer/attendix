@@ -24,7 +24,7 @@ void main() {
 
   test('groups by category in category sort order', () {
     final sections = groupInstrumentsByCategory(groups, categories);
-    expect(sections.map((s) => s.name), ['Blech', 'Holz', 'Ohne Kategorie']);
+    expect(sections.map((s) => s.name), ['Blech', 'Holz', 'Keine Kategorie']);
     // inside category: sort_order first, then name
     expect(sections[1].groups.map((g) => g.name), ['Oboe', 'Flöte']);
     expect(sections[0].groups.map((g) => g.name), ['Horn', 'Trompete']);

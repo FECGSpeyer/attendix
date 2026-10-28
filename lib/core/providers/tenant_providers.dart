@@ -7,6 +7,7 @@ import '../../data/models/tenant/tenant.dart';
 import '../constants/enums.dart';
 import 'user_preferences_provider.dart';
 import '../utils/demo_guard.dart';
+import '../../l10n/l10n.dart';
 
 const _tenantIdKey = 'current_tenant_id';
 
@@ -267,7 +268,7 @@ Future<void> deleteTenant(WidgetRef ref, int tenantId) async {
   DemoGuard.checkCurrent('deleteInstance'); // DEMO_GUARD
   final supabase = ref.read(supabaseClientProvider);
   final userId = supabase.auth.currentUser?.id;
-  if (userId == null) throw Exception('Nicht eingeloggt');
+  if (userId == null) throw Exception(l10nWithoutContext.coreFlutterNotLoggedIn);
 
   // Verify user is admin of this tenant before deleting
   final tenantUser = await supabase
@@ -278,7 +279,7 @@ Future<void> deleteTenant(WidgetRef ref, int tenantId) async {
       .maybeSingle();
 
   if (tenantUser == null || tenantUser['role'] != Role.admin.value) {
-    throw Exception('Keine Berechtigung zum Löschen');
+    throw Exception(l10nWithoutContext.svcNoDeletePermission);
   }
 
   // Delete the tenant — Supabase cascading handles related records

@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../core/constants/enums.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/event_list_utils.dart';
+import '../../../l10n/l10n.dart';
 
 /// Card layout building blocks of the Terminlisten (Ionic `ev-*` classes):
 /// date tile, pills, chips, section and month headers, the "Heute" card and
@@ -449,7 +450,7 @@ class EventTodayCard extends StatelessWidget {
               if (onMore != null)
                 Align(
                   alignment: Alignment.center,
-                  child: TextButton(onPressed: onMore, child: Text(moreLabel ?? 'Weitere Optionen')),
+                  child: TextButton(onPressed: onMore, child: Text(moreLabel ?? context.l10n.signoutMoreOptions)),
                 ),
             ],
           ),
@@ -530,10 +531,10 @@ class EventSummary extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 6),
-              const Text('Anwesenheit', style: TextStyle(color: AppColors.medium)),
+              Text(context.l10n.signoutAttendance, style: const TextStyle(color: AppColors.medium)),
               if (lateCount > 0) ...[
                 const Spacer(),
-                Text('$lateCount× zu spät', style: const TextStyle(color: AppColors.medium)),
+                Text(context.l10n.signoutLateCount(lateCount), style: const TextStyle(color: AppColors.medium)),
               ],
             ],
           ),
@@ -589,13 +590,13 @@ Future<void> showEventLegendSheet(BuildContext context) {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const ListTile(title: Text('Legende', style: TextStyle(fontWeight: FontWeight.bold))),
-            row('Zugesagt', AppColors.success, 'Zugesagt / Anwesend'),
-            row('Entschuldigt', AppColors.warning, 'Entschuldigt'),
-            row('Abwesend', AppColors.danger, 'Abwesend'),
-            row('Verspätet', AppColors.tertiary, 'Verspätet anwesend'),
-            row('Verspätung gemeldet', EventListUtils.rosa, 'Verspätung gemeldet (entschuldigt)'),
-            row('Neutral', AppColors.medium, 'Neutral'),
+            ListTile(title: Text(ctx.l10n.signoutLegend, style: const TextStyle(fontWeight: FontWeight.bold))),
+            row(ctx.l10n.signoutLegendAccepted, AppColors.success, ctx.l10n.signoutLegendAcceptedPresent),
+            row(ctx.l10n.commonStatusExcused, AppColors.warning, ctx.l10n.commonStatusExcused),
+            row(ctx.l10n.commonStatusAbsent, AppColors.danger, ctx.l10n.commonStatusAbsent),
+            row(ctx.l10n.signoutLegendLate, AppColors.tertiary, ctx.l10n.commonStatusLate),
+            row(ctx.l10n.signoutLegendLateReported, EventListUtils.rosa, ctx.l10n.signoutLegendLateReportedExcused),
+            row(ctx.l10n.commonStatusNeutral, AppColors.medium, ctx.l10n.commonStatusNeutral),
             const SizedBox(height: 12),
           ],
         ),
@@ -626,9 +627,9 @@ Future<void> openEventNavigation(BuildContext context, String place) async {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          ListTile(title: const Text('Apple Karten'), onTap: () => Navigator.pop(ctx, true)),
+          ListTile(title: Text(ctx.l10n.commonAppleMaps), onTap: () => Navigator.pop(ctx, true)),
           ListTile(title: const Text('Google Maps'), onTap: () => Navigator.pop(ctx, false)),
-          ListTile(title: const Text('Abbrechen'), onTap: () => Navigator.pop(ctx)),
+          ListTile(title: Text(ctx.l10n.commonCancel), onTap: () => Navigator.pop(ctx)),
         ],
       ),
     ),
