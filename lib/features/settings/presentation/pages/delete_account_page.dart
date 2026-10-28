@@ -10,6 +10,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/repositories/base_repository.dart';
 import '../../../../l10n/l10n.dart';
+import '../widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
 import '../widgets/strong_html_text.dart';
 
 /// Characters for the verification code — avoids visually ambiguous chars
@@ -99,39 +100,45 @@ class _DeleteAccountPageState extends ConsumerState<DeleteAccountPage> {
     final isDeleting = ref.watch(accountNotifierProvider).isLoading;
     const white = TextStyle(color: Colors.white);
 
+    final ios = ionIsIos(context);
+    // UX_SETTINGS (WAVE 8): delete-account.page.html — arrow-back, danger
+    // tint warning box (radius 12), centred code chip, stacked input item.
     return Scaffold(
-      appBar: AppBar(title: Text(context.l10n.deleteAccountTitle)),
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.of(context).maybePop(),
+        ),
+        title: Text(context.l10n.deleteAccountTitle),
+      ),
       body: ListView(
         padding: const EdgeInsets.all(AppDimensions.paddingM),
         children: [
           Container(
             padding: const EdgeInsets.all(AppDimensions.paddingM),
             decoration: BoxDecoration(
-              color: AppColors.danger,
-              borderRadius: BorderRadius.circular(AppDimensions.borderRadiusM),
+              // --ion-color-danger-tint
+              color: Color.lerp(AppColors.danger, Colors.white, 0.1),
+              borderRadius: BorderRadius.circular(12),
             ),
             child: DefaultTextStyle.merge(
               style: white,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Center(
-                    child: Icon(Icons.warning_amber_rounded,
-                        color: Colors.white, size: 48),
-                  ),
-                  const SizedBox(height: AppDimensions.paddingS),
-                  Center(
-                    child: Text(
-                      context.l10n.deleteAccountWarning,
-                      style: theme.textTheme.titleLarge?.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
+                  const Icon(Icons.warning_amber_rounded,
+                      color: Colors.white, size: 32),
+                  const SizedBox(height: 8),
+                  Text(
+                    context.l10n.deleteAccountWarning,
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
-                  const SizedBox(height: AppDimensions.paddingS),
+                  const SizedBox(height: 12),
                   StrongHtmlText(context.l10n.deleteAccountIntro),
-                  const SizedBox(height: AppDimensions.paddingS),
+                  const SizedBox(height: 8),
                   for (final item in [
                     context.l10n.deleteAccountProfile,
                     context.l10n.deleteAccountAttendance,
@@ -139,54 +146,59 @@ class _DeleteAccountPageState extends ConsumerState<DeleteAccountPage> {
                     context.l10n.deleteAccountAccess,
                   ])
                     Padding(
-                      padding: const EdgeInsets.only(left: 8, bottom: 2),
+                      padding: const EdgeInsets.only(left: 8, top: 4, bottom: 4),
                       child: Text('•  $item'),
                     ),
-                  const SizedBox(height: AppDimensions.paddingS),
+                  const SizedBox(height: 8),
                   StrongHtmlText(context.l10n.deleteAccountCannotUndo),
                 ],
               ),
             ),
           ),
-          const SizedBox(height: AppDimensions.paddingL),
+          const SizedBox(height: 48),
           Text(
             context.l10n.deleteAccountEnterCode,
             textAlign: TextAlign.center,
+            style: const TextStyle(color: AppColors.medium),
           ),
-          const SizedBox(height: AppDimensions.paddingS),
+          const SizedBox(height: 12),
           Center(
             child: Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppDimensions.paddingL,
-                vertical: AppDimensions.paddingS,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
               decoration: BoxDecoration(
-                border: Border.all(color: AppColors.danger, width: 2),
-                borderRadius:
-                    BorderRadius.circular(AppDimensions.borderRadiusS),
+                color: theme.brightness == Brightness.dark
+                    ? const Color(0xFF222428)
+                    : const Color(0xFFF4F5F8),
+                borderRadius: BorderRadius.circular(10),
               ),
               child: SelectableText(
                 _verificationCode,
-                style: theme.textTheme.headlineSmall?.copyWith(
-                  fontFamily: 'monospace',
-                  fontWeight: FontWeight.bold,
+                style: TextStyle(
+                  fontFamily: 'Courier New',
+                  fontFamilyFallback: const ['Courier', 'monospace'],
+                  fontSize: 28,
+                  fontWeight: FontWeight.w700,
                   letterSpacing: 6,
+                  color: theme.colorScheme.onSurface,
                 ),
               ),
             ),
           ),
-          const SizedBox(height: AppDimensions.paddingM),
-          TextField(
-            controller: _confirmController,
-            autocorrect: false,
-            enableSuggestions: false,
-            textCapitalization: TextCapitalization.characters,
-            decoration: InputDecoration(
-              labelText: context.l10n.deleteAccountCode,
-              hintText: context.l10n.deleteAccountCodePlaceholder,
+          const SizedBox(height: 8),
+          IonStackedField(
+            label: context.l10n.deleteAccountCode,
+            hint: context.l10n.deleteAccountCodePlaceholder,
+            builder: (decoration) => TextField(
+              controller: _confirmController,
+              autocorrect: false,
+              enableSuggestions: false,
+              textCapitalization: TextCapitalization.characters,
+              decoration: decoration,
+              onChanged: (_) => setState(() {}),
             ),
-            onChanged: (_) => setState(() {}),
           ),
+          if (ios)
+            Divider(height: 0.5, thickness: 0.5, color: IonIos.line(context)),
           const SizedBox(height: AppDimensions.paddingM),
           ElevatedButton.icon(
             style: ElevatedButton.styleFrom(
