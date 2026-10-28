@@ -96,7 +96,9 @@ void main() {
     test('round trip keeps text, marks, lists and task refs', () {
       final parts = tiptapToDelta(doc);
       expect(parts.refs, hasLength(1));
-      final back = deltaToTiptap(parts.ops, parts.refs);
+      // The reference is a Quill block embed at its position.
+      expect(parts.ops.where((o) => o['insert'] is Map), hasLength(1));
+      final back = deltaToTiptap(parts.ops);
       expect(docToPlainText(back), contains('Hallo Welt'));
       expect(docToPlainText(back), contains('Punkt'));
       expect(taskRefIds(back), ['t1']);
