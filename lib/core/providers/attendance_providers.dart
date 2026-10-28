@@ -10,15 +10,11 @@ import 'realtime_providers.dart';
 import 'tenant_providers.dart';
 
 /// Initialized attendance repository with tenant context
+/// SOL_FIX1: per-tenant immutable instance, so a tenant switch never
+/// changes the tenant of an operation that is already running.
 final attendanceRepositoryWithTenantProvider = Provider<AttendanceRepository>((ref) {
-  final repo = ref.watch(attendanceRepositoryProvider);
   final tenant = ref.watch(currentTenantIdProvider);
-  
-  if (tenant != null) {
-    repo.setTenantId(tenant);
-  }
-  
-  return repo;
+  return ref.watch(attendanceRepositoryForTenantProvider(tenant));
 });
 
 /// Provider for attendance list
@@ -268,7 +264,10 @@ final playerAttendancePercentagesProvider =
       query = query.gte('attendance.date', seasonStart);
     }
 
-    final batch = await query.range(offset, offset + batchSize - 1);
+    // SOL_FIX1: stable order, otherwise pages can overlap / skip rows.
+    final batch = await query
+        .order('id', ascending: true)
+        .range(offset, offset + batchSize - 1);
 
     final rows = batch as List;
     allAttendances.addAll(rows);

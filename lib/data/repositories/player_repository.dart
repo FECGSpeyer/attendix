@@ -17,6 +17,16 @@ final playerRepositoryProvider = Provider<PlayerRepository>((ref) {
   return PlayerRepository(ref);
 });
 
+/// SOL_FIX1: one immutable repository instance per tenant. A running
+/// multi-step operation keeps its instance (and tenant) even when the user
+/// switches tenants, instead of a shared instance changing tenant mid-flow.
+final playerRepositoryForTenantProvider =
+    Provider.family<PlayerRepository, int?>((ref, tenantId) {
+  final repo = PlayerRepository(ref);
+  if (tenantId != null) repo.bindTenantId(tenantId);
+  return repo;
+});
+
 /// Ionic DEFAULT_IMAGE (placeholder avatar).
 const String kDefaultPersonImage =
     'https://ionicframework.com/docs/img/demos/avatar.svg';
@@ -436,12 +446,13 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
     try {
       // LOGIC_PEOPLE: Ionic db.archivePlayer — revoke the account's access
       // (tenantUsers, guarded for admins / other linked persons) and clear
-      // appId only when the person has an account AND an e-mail.
+      // appId.
+      // SOL_FIX1: tied solely to appId (Ionic additionally requires an
+      // e-mail, which left the account link + access of persons without
+      // e-mail in place after archiving).
       var clearAppId = false;
       final appId = player.appId;
-      if (appId != null &&
-          appId.isNotEmpty &&
-          (player.email ?? '').isNotEmpty) {
+      if (appId != null && appId.isNotEmpty) {
         await removeUserFromTenant(appId, personId: player.id);
         clearAppId = true;
       }
@@ -582,10 +593,11 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
   }
 
   /// Registration repository bound to the current tenant.
+  ///
+  /// SOL_FIX1: own instance bound to this repository's tenant instead of
+  /// mutating the shared registration repository.
   UserRegistrationRepository _registration() {
-    final repo = ref.read(userRegistrationRepositoryProvider);
-    repo.setTenantId(currentTenantId);
-    return repo;
+    return UserRegistrationRepository(ref)..bindTenantId(currentTenantId);
   }
 
   /// Main group (Hauptgruppe) of [tenantId] (default: current tenant).
@@ -781,28 +793,12 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
         if (type == null) continue;
         if (!_matchesType(player, type, defaults, checkPaused: false)) continue;
 
-        var status = type.defaultStatus;
-        var notes = '';
-        if (shift != null && !type.allDay) {
-          final result = peopleStatusByShift(
-            shift: shift,
-            attDate: att['date']?.toString() ?? '',
-            attendanceStart:
-                att['start_time']?.toString() ?? type.startTime ?? '',
-            attendanceEnd: att['end_time']?.toString() ?? type.endTime ?? '',
-            defaultStatus: AttendanceStatus.fromValue(status),
-            shiftStart: player.shiftStart,
-            shiftName: player.shiftName,
-          );
-          status = result.status.value;
-          notes = result.note;
-        }
-
+        final initial = _initialStatus(player, type, att, shift);
         rows.add({
           'attendance_id': att['id'],
           'person_id': playerId,
-          'notes': notes,
-          'status': status,
+          'notes': initial.notes,
+          'status': initial.status,
         });
       }
       if (rows.isNotEmpty) {
@@ -814,16 +810,46 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
     }
   }
 
-  /// Shift plan of the current tenant by id (null when unset / missing).
-  Future<ShiftPlan?> _loadShiftPlan(String? shiftId) async {
+  /// Shift plan of [tenantId] (default: current tenant) by id (null when
+  /// unset / missing / belonging to another tenant).
+  Future<ShiftPlan?> _loadShiftPlan(String? shiftId, {int? tenantId}) async {
     if (shiftId == null || shiftId.isEmpty) return null;
     final row = await supabase
         .from('shifts')
         .select('*')
         .eq('id', shiftId)
-        .eq('tenant_id', currentTenantId)
+        .eq('tenant_id', tenantId ?? currentTenantId)
         .maybeSingle();
     return row == null ? null : ShiftPlan.fromJson(row);
+  }
+
+  /// Initial person_attendances status/notes for [player] in [att]: the
+  /// type's default status, or — for non all-day types and a person with a
+  /// shift plan — the shift-based status (Utils.getStatusByShift, e.g.
+  /// "Entschuldigt" + 'Schichtbedingt').
+  ///
+  /// SOL_FIX1: shared by addToUpcomingAttendances and
+  /// addPlayerToAttendancesByDate (approve / addPlayer / handover backfill),
+  /// so every backfill path applies the shift plan.
+  ({int status, String notes}) _initialStatus(
+    Person player,
+    _TypeFilter type,
+    Map att,
+    ShiftPlan? shift,
+  ) {
+    if (shift == null || type.allDay) {
+      return (status: type.defaultStatus, notes: '');
+    }
+    final result = peopleStatusByShift(
+      shift: shift,
+      attDate: att['date']?.toString() ?? '',
+      attendanceStart: att['start_time']?.toString() ?? type.startTime ?? '',
+      attendanceEnd: att['end_time']?.toString() ?? type.endTime ?? '',
+      defaultStatus: AttendanceStatus.fromValue(type.defaultStatus),
+      shiftStart: player.shiftStart,
+      shiftName: player.shiftName,
+    );
+    return (status: result.status.value, notes: result.note);
   }
 
   /// LOGIC_PEOPLE: Ionic db.updateShiftAssignmentsForPerson — after a shift
@@ -1833,7 +1859,7 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
           : DateTime.now().toIso8601String().substring(0, 10);
       final attendances = await supabase
           .from('attendance')
-          .select('id, type_id')
+          .select('id, type_id, date, start_time, end_time')
           .eq('tenantId', targetTenantId)
           .gt('date', joined);
       if ((attendances as List).isEmpty) return;
@@ -1842,6 +1868,8 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
       final defaults = await _loadExtraFieldDefaults(tenantId: targetTenantId);
       final existing =
           await _existingAttendanceIds(playerId, tenantId: targetTenantId);
+      final shift =
+          await _loadShiftPlan(player.shiftId, tenantId: targetTenantId);
 
       final rows = <Map<String, dynamic>>[];
       for (final att in attendances) {
@@ -1849,11 +1877,13 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
         final type = types.where((t) => t.id == att['type_id']).firstOrNull;
         if (type == null) continue;
         if (!_matchesType(player, type, defaults, checkPaused: false)) continue;
+        // SOL_FIX1: shift-based status like addToUpcomingAttendances.
+        final initial = _initialStatus(player, type, att, shift);
         rows.add({
           'attendance_id': att['id'],
           'person_id': playerId,
-          'notes': '',
-          'status': type.defaultStatus,
+          'notes': initial.notes,
+          'status': initial.status,
         });
       }
       if (rows.isNotEmpty) {

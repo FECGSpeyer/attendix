@@ -58,7 +58,8 @@ void main() {
       test('attendanceRepositoryWithTenantProvider sets tenant', () {
         expect(
           attendanceProvidersSource,
-          contains('repo.setTenantId(tenant)'),
+          // SOL_FIX1: per-tenant immutable instance
+          contains('attendanceRepositoryForTenantProvider(tenant)'),
           reason: 'attendanceRepositoryWithTenantProvider must set tenantId',
         );
       });

@@ -11,15 +11,11 @@ import '../services/tracking/tracking_service.dart';
 import 'user_registration_providers.dart'; // AUTH
 
 /// Initialized player repository with tenant context
+/// SOL_FIX1: per-tenant immutable instance, so a tenant switch never
+/// changes the tenant of an operation that is already running.
 final playerRepositoryWithTenantProvider = Provider<PlayerRepository>((ref) {
-  final repo = ref.watch(playerRepositoryProvider);
   final tenant = ref.watch(currentTenantIdProvider);
-  
-  if (tenant != null) {
-    repo.setTenantId(tenant);
-  }
-  
-  return repo;
+  return ref.watch(playerRepositoryForTenantProvider(tenant));
 });
 
 /// Provider for active players list

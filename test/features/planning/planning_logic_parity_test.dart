@@ -159,7 +159,9 @@ void main() {
     test('attendances since season start, no limit (Ionic getCurrentAttDate)', () {
       final src = File('lib/data/repositories/plan_repository.dart').readAsStringSync();
       final fn = RegExp(r'getPlanAttendances\([^)]*\) async \{[\s\S]+?\n  \}').firstMatch(src)!.group(0)!;
-      expect(fn, contains(".eq('tenantId', currentTenantId)"));
+      // SOL_FIX1: tenant captured once for all pages.
+      expect(fn, contains('final tenantId = currentTenantId;'));
+      expect(fn, contains(".eq('tenantId', tenantId)"));
       expect(fn, contains(".gt('date', since)"));
       expect(fn, isNot(contains('.limit(')));
       expect(attendanceListStartDate('2025-09-01'), '2025-09-01');

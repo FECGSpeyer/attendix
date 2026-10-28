@@ -18,6 +18,18 @@ final songRepositoryProvider = Provider<SongRepository>((ref) {
   return SongRepository(ref);
 });
 
+/// SOL_FIX1: one immutable repository instance per (tenant, song source
+/// tenant). A running multi-step operation (paged getSongs + offline cache
+/// write) keeps its tenant even when the user switches tenants, so data of
+/// tenant B is never cached under tenant A's key.
+final songRepositoryForTenantProvider = Provider.family<SongRepository,
+    ({int? tenantId, int? songSourceTenantId})>((ref, key) {
+  final repo = SongRepository(ref);
+  if (key.tenantId != null) repo.bindTenantId(key.tenantId!);
+  repo.setSongSourceTenantId(key.songSourceTenantId);
+  return repo;
+});
+
 /// Group of current (upcoming) songs: `date` is the display key
 /// (`DD.MM.YYYY` or `DD.MM.YYYY | <Typ>`), like Ionic `getCurrentSongs`.
 typedef CurrentSongsGroup = ({String date, List<SongHistory> history});
@@ -77,6 +89,8 @@ class SongRepository extends BaseRepository with TenantAwareRepository {
   /// read from the local cache; online, the loaded list is cached. A failed
   /// load also falls back to the cache when one exists.
   Future<List<Song>> getSongs() async {
+    // SOL_FIX1: effective tenant captured once; every page query and the
+    // cache key use the same id.
     final tenantId = songTenantId;
     // Shared connectivity check (offline_queue_service), never throws.
     if (!await ref.read(connectivityCheckProvider)()) {
@@ -89,7 +103,7 @@ class SongRepository extends BaseRepository with TenantAwareRepository {
         final response = await supabase
             .from('songs')
             .select('*')
-            .eq('tenantId', songTenantId)
+            .eq('tenantId', tenantId)
             .order('number', ascending: true)
             .order('id', ascending: true)
             .range(from, from + _pageSize - 1);

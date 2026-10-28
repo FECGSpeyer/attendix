@@ -121,6 +121,37 @@ class OfflineQueueStore {
     }
     return result;
   }
+
+  /// SOL_FIX1: overlays pending (not yet replayed) writes of [tenantId] on
+  /// person_attendances rows (e.g. from the offline detail cache), so a
+  /// change made offline does not revert to the cached status/notes when
+  /// the Termin is reopened. Matches by tenant + record id; entries of other
+  /// tenants are ignored. Rows are copied, never mutated.
+  static List<dynamic> overlayPending(
+    List<dynamic> rows,
+    List<QueuedWrite> queue, {
+    required int tenantId,
+  }) {
+    final pending = <String, Map<String, dynamic>>{};
+    for (final e in queue) {
+      if (e.tenantId != tenantId) continue;
+      pending[e.personAttendanceId] = {
+        ...?pending[e.personAttendanceId],
+        ...e.payload,
+      };
+    }
+    if (pending.isEmpty) return rows;
+    return [
+      for (final row in rows)
+        if (row is Map && pending.containsKey(row['id']?.toString()))
+          <String, dynamic>{
+            ...Map<String, dynamic>.from(row),
+            ...pending[row['id'].toString()]!,
+          }
+        else
+          row,
+    ];
+  }
 }
 
 final offlineQueueStoreProvider =

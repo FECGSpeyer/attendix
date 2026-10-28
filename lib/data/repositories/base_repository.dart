@@ -85,10 +85,29 @@ abstract class BaseRepository {
 /// Mixin for repositories that need tenant context
 mixin TenantAwareRepository on BaseRepository {
   int? _tenantId;
+  bool _tenantLocked = false;
 
   /// Set the current tenant ID
+  ///
+  /// SOL_FIX1: a repository instance bound to one tenant via
+  /// [bindTenantId] never changes its tenant again, so a running
+  /// multi-step operation cannot switch tenants between two queries
+  /// (tenant switch A→B mid-flow).
   void setTenantId(int tenantId) {
+    if (_tenantLocked && _tenantId != tenantId) {
+      throw StateError(
+        '$runtimeType is bound to tenant $_tenantId and cannot switch to '
+        '$tenantId; use a per-tenant instance instead.',
+      );
+    }
     _tenantId = tenantId;
+  }
+
+  /// SOL_FIX1: binds this instance permanently to [tenantId] (per-tenant
+  /// repository instances, see `*RepositoryForTenantProvider`).
+  void bindTenantId(int tenantId) {
+    setTenantId(tenantId);
+    _tenantLocked = true;
   }
 
   /// Get tenant ID or throw if not set

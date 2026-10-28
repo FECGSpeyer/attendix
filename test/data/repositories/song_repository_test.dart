@@ -37,9 +37,15 @@ void main() {
       expect(songQueries, isNotEmpty);
       for (final q in songQueries) {
         if (q.contains('.insert(')) continue;
-        expect(q, contains(".eq('tenantId', songTenantId)"),
+        // SOL_FIX1: getSongs filters by its captured `tenantId`
+        // (= songTenantId, see sol_fix1_security_test).
+        expect(
+            q.contains(".eq('tenantId', songTenantId)") ||
+                q.contains(".eq('tenantId', tenantId)"),
+            isTrue,
             reason: 'songs query without tenant filter:\n$q');
       }
+      expect(repo, contains('final tenantId = songTenantId;'));
       expect(repo, contains("data['tenantId'] = songTenantId"),
           reason: 'createSong must set the song tenant');
     });

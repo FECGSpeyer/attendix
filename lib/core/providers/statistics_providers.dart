@@ -13,6 +13,7 @@ import '../../data/repositories/player_repository.dart';
 import 'attendance_type_providers.dart';
 import 'group_providers.dart'; // LOGIC_SETTINGS
 import 'tenant_providers.dart';
+import '../utils/paged_query.dart'; // SOL_FIX1
 
 /// Date range for statistics filtering
 class StatisticsDateRange {
@@ -64,13 +65,13 @@ final statisticsDateRangeProvider =
 /// Provider for filtered attendances within date range
 final filteredAttendancesForStatsProvider =
     FutureProvider<List<Attendance>>((ref) async {
-  final repo = ref.watch(attendanceRepositoryProvider);
   final tenantId = ref.watch(currentTenantIdProvider);
   final dateRange = ref.watch(statisticsDateRangeProvider);
 
   if (tenantId == null) return [];
 
-  repo.setTenantId(tenantId);
+  // SOL_FIX1: per-tenant instance instead of mutating the shared one.
+  final repo = ref.watch(attendanceRepositoryForTenantProvider(tenantId));
 
   // Get all attendances in range
   final attendances = await repo.getAttendances(
@@ -112,14 +113,18 @@ final allPersonAttendancesForStatsProvider =
 
   try {
     // SEC-003: Defense-in-Depth - add tenant filter via inner join
-    final response = await supabase
-        .from('person_attendances')
-        .select(
-            '*, person:person_id(id, firstName, lastName, birthday, instrument, left, paused), attendance:attendance_id!inner(tenantId)')
-        .inFilter('attendance_id', attendanceIds)
-        .eq('attendance.tenantId', tenantId);
+    // SOL_FIX1: paged (PostgREST max-rows 1000), stable order by id.
+    final response = await fetchAllPages<dynamic>((from, to) async =>
+        await supabase
+            .from('person_attendances')
+            .select(
+                '*, person:person_id(id, firstName, lastName, birthday, instrument, left, paused), attendance:attendance_id!inner(tenantId)')
+            .inFilter('attendance_id', attendanceIds)
+            .eq('attendance.tenantId', tenantId)
+            .order('id', ascending: true)
+            .range(from, to) as List);
 
-    return (response as List).map((e) {
+    return response.map((e) {
       final personData = e['person'] as Map<String, dynamic>?;
       return PersonAttendance(
         id: e['id']?.toString(),
@@ -149,12 +154,12 @@ final allPersonAttendancesForStatsProvider =
 
 /// Provider for active players
 final activePlayersForStatsProvider = FutureProvider<List<Person>>((ref) async {
-  final repo = ref.watch(playerRepositoryProvider);
   final tenantId = ref.watch(currentTenantIdProvider);
 
   if (tenantId == null) return [];
 
-  repo.setTenantId(tenantId);
+  // SOL_FIX1: per-tenant instance instead of mutating the shared one.
+  final repo = ref.watch(playerRepositoryForTenantProvider(tenantId));
   final players = await repo.getPlayers();
 
   // Filter to active players only (left is null or empty = still active, not paused)
