@@ -16,6 +16,7 @@ import '../../../../core/providers/attendance_providers.dart';
 import '../../../../core/providers/conductor_providers.dart';
 import '../../../../core/providers/connectivity_provider.dart';
 import '../../../../core/providers/realtime_providers.dart';
+import '../../../../core/providers/role_permission_providers.dart';
 import '../../../../core/providers/song_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/services/export_service.dart';
@@ -419,7 +420,21 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
               }
 
               final attendanceType = attendanceTypeAsync.valueOrNull;
-              final hasChecklist = _localChecklist.isNotEmpty || (attendanceType?.checklist?.isNotEmpty ?? false);
+              // SETTINGS_EXT: Rollenberechtigungen für Helfer (Checkliste, Notizen, Gruppe)
+              final canViewChecklist = ref.watch(canViewAttendanceChecklistProvider);
+              final canViewNotes = ref.watch(canViewAttendanceNotesProvider);
+              final helperGroupId = ref.watch(helperGroupFilterProvider).valueOrNull;
+              final visiblePersons = helperGroupId == null
+                  ? persons
+                  : persons.where((p) => p.instrument == helperGroupId).toList();
+              final visibleNotes = canViewNotes
+                  ? _personNotes
+                  : {
+                      for (final e in _personNotes.entries)
+                        e.key: (e.value?.isNotEmpty ?? false) ? 'Notiz hinzugefügt' : e.value,
+                    };
+              final hasChecklist = canViewChecklist &&
+                  (_localChecklist.isNotEmpty || (attendanceType?.checklist?.isNotEmpty ?? false));
               final hasSongs = attendanceType?.manageSongs ?? false;
 
               return CustomScrollView(
@@ -522,9 +537,9 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
 
                   SliverToBoxAdapter(
                     child: AttendanceGrid(
-                      persons: persons,
+                      persons: visiblePersons,
                       localStatuses: _localStatuses,
-                      personNotes: _personNotes,
+                      personNotes: visibleNotes,
                       availableStatuses: availableStatuses,
                       clickMode: _clickMode,
                       onStatusChanged: (personId, status) {
@@ -534,7 +549,11 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                         });
                         _savePersonStatus(personId, status, previousStatus: previousStatus);
                       },
-                      onNoteChanged: _updatePersonNote,
+                      // Maskierte Notiz nicht als neuen Wert zurückschreiben
+                      onNoteChanged: (personId, notes) {
+                        if (!canViewNotes && notes == 'Notiz hinzugefügt') return;
+                        _updatePersonNote(personId, notes);
+                      },
                       onShowModifierInfo: _showModifierInfo,
                       onRemoveFromAttendance: _removePersonFromAttendance,
                     ),

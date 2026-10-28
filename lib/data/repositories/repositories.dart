@@ -20,3 +20,9 @@ export 'usage_events_repository.dart';
 // LEGAL_HELP
 export 'legal_repository.dart';
 export 'account_repository.dart';
+// SETTINGS_EXT
+export 'files_repository.dart';
+export 'role_permission_repository.dart';
+export 'extra_fields_repository.dart';
+export 'organisation_settings_repository.dart';
+// END SETTINGS_EXT

@@ -24,3 +24,7 @@ export 'history_providers.dart';
 
 // LEGAL_HELP
 export 'legal_providers.dart';
+// SETTINGS_EXT
+export 'role_permission_providers.dart';
+export 'files_providers.dart';
+// END SETTINGS_EXT

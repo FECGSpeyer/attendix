@@ -54,7 +54,19 @@ mixin _$Tenant {
   bool? get favorite => throw _privateConstructorUsedError;
   @JsonKey(name: 'critical_rules')
   List<CriticalRule>? get criticalRules => throw _privateConstructorUsedError;
-  String get timezone => throw _privateConstructorUsedError;
+  String get timezone =>
+      throw _privateConstructorUsedError; // SETTINGS_EXT: Zusatzfelder für Werke + Dateiablage (files bucket)
+  @JsonKey(name: 'song_additional_fields')
+  List<ExtraField>? get songAdditionalFields =>
+      throw _privateConstructorUsedError;
+  @JsonKey(name: 'files_enabled')
+  bool get filesEnabled => throw _privateConstructorUsedError;
+  @JsonKey(name: 'files_shared')
+  bool get filesShared => throw _privateConstructorUsedError;
+
+  /// Speicherlimit der Dateiablage in Bytes, null = unbegrenzt.
+  @JsonKey(name: 'files_max_bytes')
+  int? get filesMaxBytes => throw _privateConstructorUsedError;
 
   /// Serializes this Tenant to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -97,6 +109,11 @@ abstract class $TenantCopyWith<$Res> {
     bool? favorite,
     @JsonKey(name: 'critical_rules') List<CriticalRule>? criticalRules,
     String timezone,
+    @JsonKey(name: 'song_additional_fields')
+    List<ExtraField>? songAdditionalFields,
+    @JsonKey(name: 'files_enabled') bool filesEnabled,
+    @JsonKey(name: 'files_shared') bool filesShared,
+    @JsonKey(name: 'files_max_bytes') int? filesMaxBytes,
   });
 }
 
@@ -141,6 +158,10 @@ class _$TenantCopyWithImpl<$Res, $Val extends Tenant>
     Object? favorite = freezed,
     Object? criticalRules = freezed,
     Object? timezone = null,
+    Object? songAdditionalFields = freezed,
+    Object? filesEnabled = null,
+    Object? filesShared = null,
+    Object? filesMaxBytes = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -274,6 +295,26 @@ class _$TenantCopyWithImpl<$Res, $Val extends Tenant>
                     ? _value.timezone
                     : timezone // ignore: cast_nullable_to_non_nullable
                         as String,
+            songAdditionalFields:
+                freezed == songAdditionalFields
+                    ? _value.songAdditionalFields
+                    : songAdditionalFields // ignore: cast_nullable_to_non_nullable
+                        as List<ExtraField>?,
+            filesEnabled:
+                null == filesEnabled
+                    ? _value.filesEnabled
+                    : filesEnabled // ignore: cast_nullable_to_non_nullable
+                        as bool,
+            filesShared:
+                null == filesShared
+                    ? _value.filesShared
+                    : filesShared // ignore: cast_nullable_to_non_nullable
+                        as bool,
+            filesMaxBytes:
+                freezed == filesMaxBytes
+                    ? _value.filesMaxBytes
+                    : filesMaxBytes // ignore: cast_nullable_to_non_nullable
+                        as int?,
           )
           as $Val,
     );
@@ -315,6 +356,11 @@ abstract class _$$TenantImplCopyWith<$Res> implements $TenantCopyWith<$Res> {
     bool? favorite,
     @JsonKey(name: 'critical_rules') List<CriticalRule>? criticalRules,
     String timezone,
+    @JsonKey(name: 'song_additional_fields')
+    List<ExtraField>? songAdditionalFields,
+    @JsonKey(name: 'files_enabled') bool filesEnabled,
+    @JsonKey(name: 'files_shared') bool filesShared,
+    @JsonKey(name: 'files_max_bytes') int? filesMaxBytes,
   });
 }
 
@@ -358,6 +404,10 @@ class __$$TenantImplCopyWithImpl<$Res>
     Object? favorite = freezed,
     Object? criticalRules = freezed,
     Object? timezone = null,
+    Object? songAdditionalFields = freezed,
+    Object? filesEnabled = null,
+    Object? filesShared = null,
+    Object? filesMaxBytes = freezed,
   }) {
     return _then(
       _$TenantImpl(
@@ -491,6 +541,26 @@ class __$$TenantImplCopyWithImpl<$Res>
                 ? _value.timezone
                 : timezone // ignore: cast_nullable_to_non_nullable
                     as String,
+        songAdditionalFields:
+            freezed == songAdditionalFields
+                ? _value._songAdditionalFields
+                : songAdditionalFields // ignore: cast_nullable_to_non_nullable
+                    as List<ExtraField>?,
+        filesEnabled:
+            null == filesEnabled
+                ? _value.filesEnabled
+                : filesEnabled // ignore: cast_nullable_to_non_nullable
+                    as bool,
+        filesShared:
+            null == filesShared
+                ? _value.filesShared
+                : filesShared // ignore: cast_nullable_to_non_nullable
+                    as bool,
+        filesMaxBytes:
+            freezed == filesMaxBytes
+                ? _value.filesMaxBytes
+                : filesMaxBytes // ignore: cast_nullable_to_non_nullable
+                    as int?,
       ),
     );
   }
@@ -529,9 +599,15 @@ class _$TenantImpl implements _Tenant {
     this.favorite = false,
     @JsonKey(name: 'critical_rules') final List<CriticalRule>? criticalRules,
     this.timezone = 'Europe/Berlin',
+    @JsonKey(name: 'song_additional_fields')
+    final List<ExtraField>? songAdditionalFields,
+    @JsonKey(name: 'files_enabled') this.filesEnabled = false,
+    @JsonKey(name: 'files_shared') this.filesShared = false,
+    @JsonKey(name: 'files_max_bytes') this.filesMaxBytes,
   }) : _additionalFields = additionalFields,
        _registrationFields = registrationFields,
-       _criticalRules = criticalRules;
+       _criticalRules = criticalRules,
+       _songAdditionalFields = songAdditionalFields;
 
   factory _$TenantImpl.fromJson(Map<String, dynamic> json) =>
       _$$TenantImplFromJson(json);
@@ -630,10 +706,35 @@ class _$TenantImpl implements _Tenant {
   @override
   @JsonKey()
   final String timezone;
+  // SETTINGS_EXT: Zusatzfelder für Werke + Dateiablage (files bucket)
+  final List<ExtraField>? _songAdditionalFields;
+  // SETTINGS_EXT: Zusatzfelder für Werke + Dateiablage (files bucket)
+  @override
+  @JsonKey(name: 'song_additional_fields')
+  List<ExtraField>? get songAdditionalFields {
+    final value = _songAdditionalFields;
+    if (value == null) return null;
+    if (_songAdditionalFields is EqualUnmodifiableListView)
+      return _songAdditionalFields;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  @override
+  @JsonKey(name: 'files_enabled')
+  final bool filesEnabled;
+  @override
+  @JsonKey(name: 'files_shared')
+  final bool filesShared;
+
+  /// Speicherlimit der Dateiablage in Bytes, null = unbegrenzt.
+  @override
+  @JsonKey(name: 'files_max_bytes')
+  final int? filesMaxBytes;
 
   @override
   String toString() {
-    return 'Tenant(id: $id, createdAt: $createdAt, shortName: $shortName, longName: $longName, maintainTeachers: $maintainTeachers, showHolidays: $showHolidays, type: $type, withExcuses: $withExcuses, practiceStart: $practiceStart, practiceEnd: $practiceEnd, seasonStart: $seasonStart, parents: $parents, betaProgram: $betaProgram, showMembersList: $showMembersList, region: $region, role: $role, songSharingId: $songSharingId, additionalFields: $additionalFields, perc: $perc, percColor: $percColor, registerId: $registerId, autoApproveRegistrations: $autoApproveRegistrations, registrationFields: $registrationFields, favorite: $favorite, criticalRules: $criticalRules, timezone: $timezone)';
+    return 'Tenant(id: $id, createdAt: $createdAt, shortName: $shortName, longName: $longName, maintainTeachers: $maintainTeachers, showHolidays: $showHolidays, type: $type, withExcuses: $withExcuses, practiceStart: $practiceStart, practiceEnd: $practiceEnd, seasonStart: $seasonStart, parents: $parents, betaProgram: $betaProgram, showMembersList: $showMembersList, region: $region, role: $role, songSharingId: $songSharingId, additionalFields: $additionalFields, perc: $perc, percColor: $percColor, registerId: $registerId, autoApproveRegistrations: $autoApproveRegistrations, registrationFields: $registrationFields, favorite: $favorite, criticalRules: $criticalRules, timezone: $timezone, songAdditionalFields: $songAdditionalFields, filesEnabled: $filesEnabled, filesShared: $filesShared, filesMaxBytes: $filesMaxBytes)';
   }
 
   @override
@@ -695,7 +796,17 @@ class _$TenantImpl implements _Tenant {
               _criticalRules,
             ) &&
             (identical(other.timezone, timezone) ||
-                other.timezone == timezone));
+                other.timezone == timezone) &&
+            const DeepCollectionEquality().equals(
+              other._songAdditionalFields,
+              _songAdditionalFields,
+            ) &&
+            (identical(other.filesEnabled, filesEnabled) ||
+                other.filesEnabled == filesEnabled) &&
+            (identical(other.filesShared, filesShared) ||
+                other.filesShared == filesShared) &&
+            (identical(other.filesMaxBytes, filesMaxBytes) ||
+                other.filesMaxBytes == filesMaxBytes));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -728,6 +839,10 @@ class _$TenantImpl implements _Tenant {
     favorite,
     const DeepCollectionEquality().hash(_criticalRules),
     timezone,
+    const DeepCollectionEquality().hash(_songAdditionalFields),
+    filesEnabled,
+    filesShared,
+    filesMaxBytes,
   ]);
 
   /// Create a copy of Tenant
@@ -775,6 +890,11 @@ abstract class _Tenant implements Tenant {
     final bool? favorite,
     @JsonKey(name: 'critical_rules') final List<CriticalRule>? criticalRules,
     final String timezone,
+    @JsonKey(name: 'song_additional_fields')
+    final List<ExtraField>? songAdditionalFields,
+    @JsonKey(name: 'files_enabled') final bool filesEnabled,
+    @JsonKey(name: 'files_shared') final bool filesShared,
+    @JsonKey(name: 'files_max_bytes') final int? filesMaxBytes,
   }) = _$TenantImpl;
 
   factory _Tenant.fromJson(Map<String, dynamic> json) = _$TenantImpl.fromJson;
@@ -838,7 +958,21 @@ abstract class _Tenant implements Tenant {
   @JsonKey(name: 'critical_rules')
   List<CriticalRule>? get criticalRules;
   @override
-  String get timezone;
+  String get timezone; // SETTINGS_EXT: Zusatzfelder für Werke + Dateiablage (files bucket)
+  @override
+  @JsonKey(name: 'song_additional_fields')
+  List<ExtraField>? get songAdditionalFields;
+  @override
+  @JsonKey(name: 'files_enabled')
+  bool get filesEnabled;
+  @override
+  @JsonKey(name: 'files_shared')
+  bool get filesShared;
+
+  /// Speicherlimit der Dateiablage in Bytes, null = unbegrenzt.
+  @override
+  @JsonKey(name: 'files_max_bytes')
+  int? get filesMaxBytes;
 
   /// Create a copy of Tenant
   /// with the given fields replaced by the non-null parameter values.
@@ -858,7 +992,13 @@ mixin _$ExtraField {
   String get name => throw _privateConstructorUsedError;
   String get type => throw _privateConstructorUsedError;
   dynamic get defaultValue => throw _privateConstructorUsedError;
-  List<String>? get options => throw _privateConstructorUsedError;
+  List<String>? get options =>
+      throw _privateConstructorUsedError; // SETTINGS_EXT: Sichtbarkeit/Bearbeitbarkeit für Mitglieder + Anzeige
+  bool? get visibleToPlayers => throw _privateConstructorUsedError;
+  bool? get editableByPlayers => throw _privateConstructorUsedError;
+
+  /// 'chip' | 'underneath'
+  String? get displayMode => throw _privateConstructorUsedError;
 
   /// Serializes this ExtraField to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -883,6 +1023,9 @@ abstract class $ExtraFieldCopyWith<$Res> {
     String type,
     dynamic defaultValue,
     List<String>? options,
+    bool? visibleToPlayers,
+    bool? editableByPlayers,
+    String? displayMode,
   });
 }
 
@@ -906,6 +1049,9 @@ class _$ExtraFieldCopyWithImpl<$Res, $Val extends ExtraField>
     Object? type = null,
     Object? defaultValue = freezed,
     Object? options = freezed,
+    Object? visibleToPlayers = freezed,
+    Object? editableByPlayers = freezed,
+    Object? displayMode = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -934,6 +1080,21 @@ class _$ExtraFieldCopyWithImpl<$Res, $Val extends ExtraField>
                     ? _value.options
                     : options // ignore: cast_nullable_to_non_nullable
                         as List<String>?,
+            visibleToPlayers:
+                freezed == visibleToPlayers
+                    ? _value.visibleToPlayers
+                    : visibleToPlayers // ignore: cast_nullable_to_non_nullable
+                        as bool?,
+            editableByPlayers:
+                freezed == editableByPlayers
+                    ? _value.editableByPlayers
+                    : editableByPlayers // ignore: cast_nullable_to_non_nullable
+                        as bool?,
+            displayMode:
+                freezed == displayMode
+                    ? _value.displayMode
+                    : displayMode // ignore: cast_nullable_to_non_nullable
+                        as String?,
           )
           as $Val,
     );
@@ -955,6 +1116,9 @@ abstract class _$$ExtraFieldImplCopyWith<$Res>
     String type,
     dynamic defaultValue,
     List<String>? options,
+    bool? visibleToPlayers,
+    bool? editableByPlayers,
+    String? displayMode,
   });
 }
 
@@ -977,6 +1141,9 @@ class __$$ExtraFieldImplCopyWithImpl<$Res>
     Object? type = null,
     Object? defaultValue = freezed,
     Object? options = freezed,
+    Object? visibleToPlayers = freezed,
+    Object? editableByPlayers = freezed,
+    Object? displayMode = freezed,
   }) {
     return _then(
       _$ExtraFieldImpl(
@@ -1005,6 +1172,21 @@ class __$$ExtraFieldImplCopyWithImpl<$Res>
                 ? _value._options
                 : options // ignore: cast_nullable_to_non_nullable
                     as List<String>?,
+        visibleToPlayers:
+            freezed == visibleToPlayers
+                ? _value.visibleToPlayers
+                : visibleToPlayers // ignore: cast_nullable_to_non_nullable
+                    as bool?,
+        editableByPlayers:
+            freezed == editableByPlayers
+                ? _value.editableByPlayers
+                : editableByPlayers // ignore: cast_nullable_to_non_nullable
+                    as bool?,
+        displayMode:
+            freezed == displayMode
+                ? _value.displayMode
+                : displayMode // ignore: cast_nullable_to_non_nullable
+                    as String?,
       ),
     );
   }
@@ -1019,6 +1201,9 @@ class _$ExtraFieldImpl implements _ExtraField {
     required this.type,
     this.defaultValue,
     final List<String>? options,
+    this.visibleToPlayers,
+    this.editableByPlayers,
+    this.displayMode,
   }) : _options = options;
 
   factory _$ExtraFieldImpl.fromJson(Map<String, dynamic> json) =>
@@ -1042,9 +1227,19 @@ class _$ExtraFieldImpl implements _ExtraField {
     return EqualUnmodifiableListView(value);
   }
 
+  // SETTINGS_EXT: Sichtbarkeit/Bearbeitbarkeit für Mitglieder + Anzeige
+  @override
+  final bool? visibleToPlayers;
+  @override
+  final bool? editableByPlayers;
+
+  /// 'chip' | 'underneath'
+  @override
+  final String? displayMode;
+
   @override
   String toString() {
-    return 'ExtraField(id: $id, name: $name, type: $type, defaultValue: $defaultValue, options: $options)';
+    return 'ExtraField(id: $id, name: $name, type: $type, defaultValue: $defaultValue, options: $options, visibleToPlayers: $visibleToPlayers, editableByPlayers: $editableByPlayers, displayMode: $displayMode)';
   }
 
   @override
@@ -1059,7 +1254,13 @@ class _$ExtraFieldImpl implements _ExtraField {
               other.defaultValue,
               defaultValue,
             ) &&
-            const DeepCollectionEquality().equals(other._options, _options));
+            const DeepCollectionEquality().equals(other._options, _options) &&
+            (identical(other.visibleToPlayers, visibleToPlayers) ||
+                other.visibleToPlayers == visibleToPlayers) &&
+            (identical(other.editableByPlayers, editableByPlayers) ||
+                other.editableByPlayers == editableByPlayers) &&
+            (identical(other.displayMode, displayMode) ||
+                other.displayMode == displayMode));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -1071,6 +1272,9 @@ class _$ExtraFieldImpl implements _ExtraField {
     type,
     const DeepCollectionEquality().hash(defaultValue),
     const DeepCollectionEquality().hash(_options),
+    visibleToPlayers,
+    editableByPlayers,
+    displayMode,
   );
 
   /// Create a copy of ExtraField
@@ -1094,6 +1298,9 @@ abstract class _ExtraField implements ExtraField {
     required final String type,
     final dynamic defaultValue,
     final List<String>? options,
+    final bool? visibleToPlayers,
+    final bool? editableByPlayers,
+    final String? displayMode,
   }) = _$ExtraFieldImpl;
 
   factory _ExtraField.fromJson(Map<String, dynamic> json) =
@@ -1108,7 +1315,15 @@ abstract class _ExtraField implements ExtraField {
   @override
   dynamic get defaultValue;
   @override
-  List<String>? get options;
+  List<String>? get options; // SETTINGS_EXT: Sichtbarkeit/Bearbeitbarkeit für Mitglieder + Anzeige
+  @override
+  bool? get visibleToPlayers;
+  @override
+  bool? get editableByPlayers;
+
+  /// 'chip' | 'underneath'
+  @override
+  String? get displayMode;
 
   /// Create a copy of ExtraField
   /// with the given fields replaced by the non-null parameter values.

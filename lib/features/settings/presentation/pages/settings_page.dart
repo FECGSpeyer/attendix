@@ -8,6 +8,7 @@ import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/debug_providers.dart';
 import '../../../../core/providers/player_providers.dart';
 import '../../../../core/providers/pwa_providers.dart';
+import '../../../../core/providers/role_permission_providers.dart'; // SETTINGS_EXT
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/services/pwa_service.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -226,6 +227,31 @@ class SettingsPage extends ConsumerWidget {
             ),
             const SizedBox(height: AppDimensions.paddingM),
           ],
+
+          // SETTINGS_EXT: Dateiablage + Rollen & Berechtigungen
+          if (ref.watch(canAccessFilesProvider) || role.isAdmin || role.isResponsible) ...[
+            _SettingsSection(
+              title: 'Dateien & Berechtigungen',
+              children: [
+                if (ref.watch(canAccessFilesProvider))
+                  _SettingsTile(
+                    leading: const _SettingsIcon(icon: Icons.folder_outlined),
+                    title: 'Dateiablage',
+                    subtitle: 'Dateien und Ordner der Gruppe',
+                    onTap: () => context.push('/settings/files'),
+                  ),
+                if (role.isAdmin || role.isResponsible)
+                  _SettingsTile(
+                    leading: const _SettingsIcon(icon: Icons.key_outlined),
+                    title: 'Rollen & Berechtigungen',
+                    subtitle: 'Berechtigungen je Rolle konfigurieren',
+                    onTap: () => context.push('/settings/role-permissions'),
+                  ),
+              ],
+            ),
+            const SizedBox(height: AppDimensions.paddingM),
+          ],
+          // END SETTINGS_EXT
 
           // Calendar subscription - for all authenticated users
           _SettingsSection(

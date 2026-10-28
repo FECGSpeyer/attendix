@@ -46,6 +46,13 @@ _$TenantImpl _$$TenantImplFromJson(Map<String, dynamic> json) => _$TenantImpl(
           ?.map((e) => CriticalRule.fromJson(e as Map<String, dynamic>))
           .toList(),
   timezone: json['timezone'] as String? ?? 'Europe/Berlin',
+  songAdditionalFields:
+      (json['song_additional_fields'] as List<dynamic>?)
+          ?.map((e) => ExtraField.fromJson(e as Map<String, dynamic>))
+          .toList(),
+  filesEnabled: json['files_enabled'] as bool? ?? false,
+  filesShared: json['files_shared'] as bool? ?? false,
+  filesMaxBytes: (json['files_max_bytes'] as num?)?.toInt(),
 );
 
 Map<String, dynamic> _$$TenantImplToJson(_$TenantImpl instance) =>
@@ -76,6 +83,10 @@ Map<String, dynamic> _$$TenantImplToJson(_$TenantImpl instance) =>
       'favorite': instance.favorite,
       'critical_rules': instance.criticalRules,
       'timezone': instance.timezone,
+      'song_additional_fields': instance.songAdditionalFields,
+      'files_enabled': instance.filesEnabled,
+      'files_shared': instance.filesShared,
+      'files_max_bytes': instance.filesMaxBytes,
     };
 
 _$ExtraFieldImpl _$$ExtraFieldImplFromJson(Map<String, dynamic> json) =>
@@ -86,6 +97,9 @@ _$ExtraFieldImpl _$$ExtraFieldImplFromJson(Map<String, dynamic> json) =>
       defaultValue: json['defaultValue'],
       options:
           (json['options'] as List<dynamic>?)?.map((e) => e as String).toList(),
+      visibleToPlayers: json['visibleToPlayers'] as bool?,
+      editableByPlayers: json['editableByPlayers'] as bool?,
+      displayMode: json['displayMode'] as String?,
     );
 
 Map<String, dynamic> _$$ExtraFieldImplToJson(_$ExtraFieldImpl instance) =>
@@ -95,6 +109,9 @@ Map<String, dynamic> _$$ExtraFieldImplToJson(_$ExtraFieldImpl instance) =>
       'type': instance.type,
       'defaultValue': instance.defaultValue,
       'options': instance.options,
+      'visibleToPlayers': instance.visibleToPlayers,
+      'editableByPlayers': instance.editableByPlayers,
+      'displayMode': instance.displayMode,
     };
 
 _$CriticalRuleImpl _$$CriticalRuleImplFromJson(Map<String, dynamic> json) =>

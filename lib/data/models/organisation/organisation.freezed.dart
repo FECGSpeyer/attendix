@@ -24,7 +24,12 @@ mixin _$Organisation {
   int? get id => throw _privateConstructorUsedError;
   @JsonKey(name: 'created_at')
   DateTime? get createdAt => throw _privateConstructorUsedError;
-  String get name => throw _privateConstructorUsedError;
+  String get name =>
+      throw _privateConstructorUsedError; // SETTINGS_EXT: Branding (Logo + Text) auf Organisationsebene
+  @JsonKey(name: 'logo_url')
+  String? get logoUrl => throw _privateConstructorUsedError;
+  @JsonKey(name: 'branding_text')
+  String? get brandingText => throw _privateConstructorUsedError;
 
   /// Serializes this Organisation to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -47,6 +52,8 @@ abstract class $OrganisationCopyWith<$Res> {
     int? id,
     @JsonKey(name: 'created_at') DateTime? createdAt,
     String name,
+    @JsonKey(name: 'logo_url') String? logoUrl,
+    @JsonKey(name: 'branding_text') String? brandingText,
   });
 }
 
@@ -68,6 +75,8 @@ class _$OrganisationCopyWithImpl<$Res, $Val extends Organisation>
     Object? id = freezed,
     Object? createdAt = freezed,
     Object? name = null,
+    Object? logoUrl = freezed,
+    Object? brandingText = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -86,6 +95,16 @@ class _$OrganisationCopyWithImpl<$Res, $Val extends Organisation>
                     ? _value.name
                     : name // ignore: cast_nullable_to_non_nullable
                         as String,
+            logoUrl:
+                freezed == logoUrl
+                    ? _value.logoUrl
+                    : logoUrl // ignore: cast_nullable_to_non_nullable
+                        as String?,
+            brandingText:
+                freezed == brandingText
+                    ? _value.brandingText
+                    : brandingText // ignore: cast_nullable_to_non_nullable
+                        as String?,
           )
           as $Val,
     );
@@ -105,6 +124,8 @@ abstract class _$$OrganisationImplCopyWith<$Res>
     int? id,
     @JsonKey(name: 'created_at') DateTime? createdAt,
     String name,
+    @JsonKey(name: 'logo_url') String? logoUrl,
+    @JsonKey(name: 'branding_text') String? brandingText,
   });
 }
 
@@ -125,6 +146,8 @@ class __$$OrganisationImplCopyWithImpl<$Res>
     Object? id = freezed,
     Object? createdAt = freezed,
     Object? name = null,
+    Object? logoUrl = freezed,
+    Object? brandingText = freezed,
   }) {
     return _then(
       _$OrganisationImpl(
@@ -143,6 +166,16 @@ class __$$OrganisationImplCopyWithImpl<$Res>
                 ? _value.name
                 : name // ignore: cast_nullable_to_non_nullable
                     as String,
+        logoUrl:
+            freezed == logoUrl
+                ? _value.logoUrl
+                : logoUrl // ignore: cast_nullable_to_non_nullable
+                    as String?,
+        brandingText:
+            freezed == brandingText
+                ? _value.brandingText
+                : brandingText // ignore: cast_nullable_to_non_nullable
+                    as String?,
       ),
     );
   }
@@ -155,6 +188,8 @@ class _$OrganisationImpl implements _Organisation {
     this.id,
     @JsonKey(name: 'created_at') this.createdAt,
     required this.name,
+    @JsonKey(name: 'logo_url') this.logoUrl,
+    @JsonKey(name: 'branding_text') this.brandingText,
   });
 
   factory _$OrganisationImpl.fromJson(Map<String, dynamic> json) =>
@@ -167,10 +202,17 @@ class _$OrganisationImpl implements _Organisation {
   final DateTime? createdAt;
   @override
   final String name;
+  // SETTINGS_EXT: Branding (Logo + Text) auf Organisationsebene
+  @override
+  @JsonKey(name: 'logo_url')
+  final String? logoUrl;
+  @override
+  @JsonKey(name: 'branding_text')
+  final String? brandingText;
 
   @override
   String toString() {
-    return 'Organisation(id: $id, createdAt: $createdAt, name: $name)';
+    return 'Organisation(id: $id, createdAt: $createdAt, name: $name, logoUrl: $logoUrl, brandingText: $brandingText)';
   }
 
   @override
@@ -181,12 +223,16 @@ class _$OrganisationImpl implements _Organisation {
             (identical(other.id, id) || other.id == id) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
-            (identical(other.name, name) || other.name == name));
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.logoUrl, logoUrl) || other.logoUrl == logoUrl) &&
+            (identical(other.brandingText, brandingText) ||
+                other.brandingText == brandingText));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, createdAt, name);
+  int get hashCode =>
+      Object.hash(runtimeType, id, createdAt, name, logoUrl, brandingText);
 
   /// Create a copy of Organisation
   /// with the given fields replaced by the non-null parameter values.
@@ -207,6 +253,8 @@ abstract class _Organisation implements Organisation {
     final int? id,
     @JsonKey(name: 'created_at') final DateTime? createdAt,
     required final String name,
+    @JsonKey(name: 'logo_url') final String? logoUrl,
+    @JsonKey(name: 'branding_text') final String? brandingText,
   }) = _$OrganisationImpl;
 
   factory _Organisation.fromJson(Map<String, dynamic> json) =
@@ -218,7 +266,13 @@ abstract class _Organisation implements Organisation {
   @JsonKey(name: 'created_at')
   DateTime? get createdAt;
   @override
-  String get name;
+  String get name; // SETTINGS_EXT: Branding (Logo + Text) auf Organisationsebene
+  @override
+  @JsonKey(name: 'logo_url')
+  String? get logoUrl;
+  @override
+  @JsonKey(name: 'branding_text')
+  String? get brandingText;
 
   /// Create a copy of Organisation
   /// with the given fields replaced by the non-null parameter values.

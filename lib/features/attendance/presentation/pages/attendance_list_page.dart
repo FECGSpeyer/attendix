@@ -9,6 +9,7 @@ import '../../../../core/providers/attendance_providers.dart';
 import '../../../../core/providers/attendance_type_providers.dart';
 import '../../../../core/providers/debug_providers.dart';
 import '../../../../core/providers/realtime_providers.dart';
+import '../../../../core/providers/role_permission_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/color_utils.dart';
 import '../../../../core/utils/dialog_helper.dart';
@@ -239,8 +240,9 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
           );
         },
       ),
-      // FAB only for roles that can add attendances (not VIEWER)
-      floatingActionButton: role.canAddAttendance
+      // FAB only for roles that can add attendances (not VIEWER).
+      // SETTINGS_EXT: Helfer abhängig von Rollenberechtigung attendance_create
+      floatingActionButton: ref.watch(canCreateAttendanceProvider)
           ? FloatingActionButton.extended(
               onPressed: () => context.push('/attendance/new'),
               icon: const Icon(Icons.add),
