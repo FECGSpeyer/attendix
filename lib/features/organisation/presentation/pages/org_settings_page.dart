@@ -17,6 +17,7 @@ import '../../../settings/presentation/widgets/ion_condense.dart'; // UX_SETTING
 import '../../../settings/presentation/widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
 import '../widgets/org_link_dialogs.dart'; // UX_SETTINGS
 import '../../../../core/utils/error_message.dart';
+import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset; // IOS_R6
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 
@@ -69,7 +70,10 @@ class OrgSettingsPage extends ConsumerWidget {
     // UX_SETTINGS (WAVE 8): org-settings.page.html — condense title, inset
     // lists with list headers and start icons on the light page.
     return IonCondense(builder: (context, collapsed) => Scaffold(
-      appBar: AppBar(title: IonCondenseTitle(context.l10n.orgTitle, collapsed: collapsed)),
+      // IOS_R6: Ionic `ion-content fullscreen` under the translucent header
+      extendBodyBehindAppBar: ionIsIos(context),
+      // IOS_R6: `ion-header translucent` (blur once condensed)
+      appBar: IonTranslucentAppBar(condensed: collapsed, child: AppBar(title: IonCondenseTitle(context.l10n.orgTitle, collapsed: collapsed))),
       body: orgAsync.when(
         loading: () => const Center(child: AppSpinner()),
         error: (e, _) => Center(child: Text(context.l10n.planningFlutterErrorWith(friendlyErrorMessage(e)))),
@@ -77,6 +81,7 @@ class OrgSettingsPage extends ConsumerWidget {
           if (org == null) {
             return ListView(
               children: [
+                const IonContentTopInset(), // IOS_R6
                 IonLargeTitle(context.l10n.orgTitle),
                 if (ionIsIos(context)) const SizedBox(height: 16),
                 _Section(children: [
@@ -100,6 +105,7 @@ class OrgSettingsPage extends ConsumerWidget {
           return ListView(
             padding: EdgeInsets.only(bottom: scrollEndPadding(context, base: 24)),
             children: [
+              const IonContentTopInset(), // IOS_R6
               IonLargeTitle(context.l10n.orgTitle),
               if (ionIsIos(context)) const SizedBox(height: 16),
               _Section(title: context.l10n.orgTitle, children: [

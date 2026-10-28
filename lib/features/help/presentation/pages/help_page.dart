@@ -6,6 +6,7 @@ import '../../../../core/constants/app_constants.dart';
 import '../../data/help_content_service.dart';
 import '../../data/help_models.dart';
 import '../../../../l10n/l10n.dart';
+import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset; // IOS_R6
 import '../../../settings/presentation/widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 
@@ -43,7 +44,10 @@ class _HelpPageState extends ConsumerState<HelpPage> {
     // UX_SETTINGS (WAVE 8): help.page.html — arrow-back, searchbar toolbar,
     // inset lists ("Nachschlagen" + topic accordions) on the light page.
     return Scaffold(
-      appBar: AppBar(
+      // IOS_R6: Ionic `ion-content fullscreen` under the
+      // `ion-header translucent` (no large title: always blurred)
+      extendBodyBehindAppBar: ios,
+      appBar: IonTranslucentAppBar(child: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.of(context).maybePop(),
@@ -57,7 +61,7 @@ class _HelpPageState extends ConsumerState<HelpPage> {
             onChanged: (v) => setState(() => _searchTerm = v),
           ),
         ),
-      ),
+      )),
       body: _noHoverOnIos(
         results != null
             ? _buildSearchResults(results, term)
@@ -84,6 +88,7 @@ class _HelpPageState extends ConsumerState<HelpPage> {
     return ListView(
       padding: EdgeInsets.fromLTRB(AppDimensions.paddingM, AppDimensions.paddingM, AppDimensions.paddingM, scrollEndPadding(context, base: AppDimensions.paddingM)),
       children: [
+        const IonContentTopInset(), // IOS_R6
         SettingsListSection(
           children: [
             if (results.isEmpty)
@@ -115,6 +120,7 @@ class _HelpPageState extends ConsumerState<HelpPage> {
     return ListView(
       padding: EdgeInsets.fromLTRB(AppDimensions.paddingM, AppDimensions.paddingM, AppDimensions.paddingM, scrollEndPadding(context, base: AppDimensions.paddingM)),
       children: [
+        const IonContentTopInset(), // IOS_R6
         SettingsListSection(
           title: context.l10n.helpLookup,
           children: [

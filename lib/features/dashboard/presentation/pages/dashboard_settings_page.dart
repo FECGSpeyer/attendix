@@ -8,6 +8,7 @@ import '../../../../data/models/dashboard/dashboard_models.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../settings/presentation/widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
 import '../../../../core/utils/error_message.dart';
+import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset; // IOS_R6
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 
 /// Card labels (Ionic `CARD_LABELS`).
@@ -50,7 +51,10 @@ class _DashboardSettingsPageState extends ConsumerState<DashboardSettingsPage> {
     final shown = configurableDashboardCards(settings.cards, teamOrgEnabled: teamOrg);
 
     return Scaffold(
-      appBar: AppBar(
+      // IOS_R6: Ionic `ion-content fullscreen` under the
+      // `ion-header translucent` (no large title: always blurred)
+      extendBodyBehindAppBar: ionIsIos(context),
+      appBar: IonTranslucentAppBar(child: AppBar(
         title: Text(context.l10n.tabsDashboard),
         actions: [
           IconButton(
@@ -61,10 +65,11 @@ class _DashboardSettingsPageState extends ConsumerState<DashboardSettingsPage> {
             onPressed: () => setState(() => _isReordering = !_isReordering),
           ),
         ],
-      ),
+      )),
       body: ListView(
         padding: EdgeInsets.fromLTRB(0, 8, 0, scrollEndPadding(context, base: 8)),
         children: [
+          const IonContentTopInset(), // IOS_R6
           _Header(context.l10n.dashSettingsTab),
           // UX_SETTINGS (WAVE 8): dashboard-settings.page.html — inset lists.
           _Box(

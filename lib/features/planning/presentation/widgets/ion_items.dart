@@ -5,7 +5,8 @@ import 'package:flutter/services.dart';
 import '../../../../core/theme/app_colors.dart';
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
-import '../../../../shared/widgets/layout/ionic_ios.dart' show IonSearchIcon; // PARITY_R5
+import '../../../../shared/widgets/layout/ionic_ios.dart'
+    show IonSearchIcon, IonTranslucentAppBar, IonContentTopInset; // PARITY_R5, IOS_R6
 
 // UX_PLANNING (wave 8): page-structure building blocks that mirror the Ionic
 // components as rendered in iOS mode (the app on an iPhone). They are used by
@@ -645,7 +646,13 @@ class _IonCondenseScaffoldState extends State<IonCondenseScaffold> {
     return Scaffold(
       backgroundColor: widget.backgroundColor,
       floatingActionButton: TabBarFab.wrap(widget.floatingActionButton), // IOS_SHELL2
-      appBar: AppBar(
+      // IOS_R6: Ionic `ion-content fullscreen` under the translucent header
+      extendBodyBehindAppBar: ios,
+      // IOS_R6: `ion-header translucent` (blur once condensed)
+      appBar: IonTranslucentAppBar(
+        condensed: _condensed,
+        background: widget.backgroundColor,
+        child: AppBar(
         leading: widget.leading,
         automaticallyImplyLeading: widget.automaticallyImplyLeading,
         title: ios
@@ -657,22 +664,31 @@ class _IonCondenseScaffoldState extends State<IonCondenseScaffold> {
             : Text(widget.title),
         actions: widget.actions,
       ),
+      ),
       body: ios
           ? NotificationListener<ScrollNotification>(
               onNotification: _onScroll,
               child: widget.bodyBuilder(
                 context,
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
-                  child: Text(
-                    widget.title,
-                    style: TextStyle(
-                      fontSize: 34,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 0.37,
-                      color: Theme.of(context).colorScheme.onSurface,
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // IOS_R6: room for the translucent toolbar
+                    const IonContentTopInset(),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
+                      child: Text(
+                        widget.title,
+                        style: TextStyle(
+                          fontSize: 34,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 0.37,
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                      ),
                     ),
-                  ),
+                  ],
                 ),
               ),
             )

@@ -122,7 +122,13 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
     return CondenseHeader(
       enabled: !multiTenant,
       builder: (context, condensed) => Scaffold(
-      appBar: AppBar(
+      // IOS_R6: Ionic `ion-content [fullscreen]` under the translucent header
+      extendBodyBehindAppBar: isIosLook(context),
+      // IOS_R6: `ion-header [translucent]` (blur once condensed; always with
+      // the tenant switcher, which has no large title)
+      appBar: IonTranslucentAppBar(
+        condensed: condensed,
+        child: AppBar(
         title: multiTenant
             ? null
             : CondenseTitle(condensed: condensed, child: const ParentsTenantTitle()),
@@ -131,8 +137,6 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
             ? const Align(alignment: Alignment.centerLeft, child: ParentsTenantTitle())
             : null,
         leadingWidth: multiTenant ? MediaQuery.sizeOf(context).width * 0.55 : null,
-        backgroundColor: condenseBarColor(context, condensed),
-        shape: condenseBarShape(context, condensed),
         // IOS_SHELL: iOS → one glass capsule (ion-buttons slot="end")
         actions: [
           ToolbarButtonGroup(children: [
@@ -145,6 +149,7 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
             const NotificationBell(), // MESSAGES
           ]),
         ],
+      ),
       ),
       body: childrenAsync.when(
         loading: () => const Center(child: AppSpinner()),
@@ -191,7 +196,7 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
                   ? past
                   : past.take(EventListUtils.pastPreviewCount).toList();
               final groups = EventListUtils.groupByMonth(upcoming, (g) => g.date);
-              return RefreshIndicator.adaptive(
+              return IonRefresher( // IOS_R6
                 onRefresh: () async {
                   ref.invalidate(currentSongsProvider); // PROFILE_OFFLINE
                   ref.invalidate(parentChildrenProvider);
@@ -201,6 +206,7 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
                 child: ListView(
                   padding: EdgeInsets.only(bottom: scrollEndPadding(context, base: 32)),
                   children: [
+                    const IonContentTopInset(), // IOS_R6
                     IonLargeTitle(tenant?.longName ?? '', enabled: !multiTenant),
                     ParentsWelcomeCard(kids: children), // PROFILE_OFFLINE
                     // Ionic `.ev-today`: kids as rows inside the card and the

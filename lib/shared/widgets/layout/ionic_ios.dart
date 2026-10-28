@@ -1,6 +1,7 @@
 import 'dart:ui' as ui;
 
 import 'package:flutter/cupertino.dart' show CupertinoIcons;
+import 'package:flutter/foundation.dart' show ValueListenable;
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
@@ -125,10 +126,15 @@ class _CondenseHeaderState extends State<CondenseHeader> {
 /// transparent app bar background. Renders nothing outside iOS or while
 /// the large title is visible.
 class IonTranslucentBarBackground extends StatelessWidget {
-  const IonTranslucentBarBackground({super.key, required this.visible});
+  const IonTranslucentBarBackground(
+      {super.key, required this.visible, this.color});
 
   /// true once the large title is condensed.
   final bool visible;
+
+  /// IOS_R6: the page (`ion-content`) colour the 20 % tint is made of;
+  /// default white (dark: black) like the Termin pages.
+  final Color? color;
 
   /// ios27 `backdrop-filter: blur(8px)`.
   static const double blurSigma = 8;
@@ -146,7 +152,7 @@ class IonTranslucentBarBackground extends StatelessWidget {
         filter: ui.ImageFilter.blur(sigmaX: blurSigma, sigmaY: blurSigma),
         child: DecoratedBox(
           decoration: BoxDecoration(
-            color: (dark ? Colors.black : Colors.white)
+            color: (color ?? (dark ? Colors.black : Colors.white))
                 .withValues(alpha: tintOpacity),
             border: Border(
               bottom: BorderSide(
@@ -167,6 +173,119 @@ class IonTranslucentBarBackground extends StatelessWidget {
 /// [bodyContext] must be below the Scaffold (e.g. a [Builder] in `body`).
 double ionTranslucentTopPadding(BuildContext bodyContext, bool extended) =>
     extended ? MediaQuery.paddingOf(bodyContext).top : 0;
+
+/// IOS_R6: the shared Ionic iOS `ion-header translucent` toolbar for every
+/// page with `ion-content fullscreen` (songs, settings, parents, …).
+///
+/// Wrap the page's [AppBar] (which must not set its own `backgroundColor`
+/// or `shape` on iOS) and set `Scaffold.extendBodyBehindAppBar` to
+/// [isIosLook]; put [IonContentTopInset] / [SliverIonContentTopInset] first
+/// in the scroll view and use [IonRefresher] for `ion-refresher`.
+///
+/// iOS: transparent toolbar without hairline while the large title is
+/// visible; once [condensed] (pages without `collapse="condense"`: always)
+/// the [background] colour at 20 % over an 8pt backdrop blur with a
+/// hairline ([IonTranslucentBarBackground]). Light and dark follow the
+/// page colour. Elsewhere (Ionic md) [child] is returned unchanged.
+class IonTranslucentAppBar extends StatelessWidget
+    implements PreferredSizeWidget {
+  const IonTranslucentAppBar({
+    super.key,
+    required this.child,
+    this.condensed = true,
+    this.condensedListenable,
+    this.background,
+  });
+
+  final PreferredSizeWidget child;
+
+  /// true once the large title has scrolled away (always true for pages
+  /// without a large title).
+  final bool condensed;
+
+  /// Alternative to [condensed] for pages that track the large title with
+  /// a [ValueListenable] (rebuilds only the bar background).
+  final ValueListenable<bool>? condensedListenable;
+
+  /// `ion-content` colour; default the scaffold background (Ionic
+  /// `color="light"` pages).
+  final Color? background;
+
+  @override
+  Size get preferredSize => child.preferredSize;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!isIosLook(context)) return child;
+    final theme = Theme.of(context);
+    final tint = background ?? theme.scaffoldBackgroundColor;
+    return Stack(
+      children: [
+        Positioned.fill(
+          child: condensedListenable == null
+              ? IonTranslucentBarBackground(visible: condensed, color: tint)
+              : ValueListenableBuilder<bool>(
+                  valueListenable: condensedListenable!,
+                  builder: (context, value, _) =>
+                      IonTranslucentBarBackground(visible: value, color: tint),
+                ),
+        ),
+        Theme(
+          data: theme.copyWith(
+            appBarTheme: theme.appBarTheme.copyWith(
+              backgroundColor: Colors.transparent,
+              surfaceTintColor: Colors.transparent,
+              elevation: 0,
+              scrolledUnderElevation: 0,
+              // the hairline comes with the blurred background
+              shape: const Border(),
+            ),
+          ),
+          child: child,
+        ),
+      ],
+    );
+  }
+}
+
+/// IOS_R6: room for the translucent toolbar at the top of a scroll view in
+/// the body of a Scaffold with `extendBodyBehindAppBar` (status bar +
+/// toolbar). 0 when the body does not extend behind the app bar (md) or the
+/// scroll view already consumed the inset (ListView without padding).
+class IonContentTopInset extends StatelessWidget {
+  const IonContentTopInset({super.key});
+
+  @override
+  Widget build(BuildContext context) =>
+      SizedBox(height: MediaQuery.paddingOf(context).top);
+}
+
+/// IOS_R6: [IonContentTopInset] as the first sliver of a [CustomScrollView].
+class SliverIonContentTopInset extends StatelessWidget {
+  const SliverIonContentTopInset({super.key});
+
+  @override
+  Widget build(BuildContext context) =>
+      const SliverToBoxAdapter(child: IonContentTopInset());
+}
+
+/// IOS_R6: Ionic `ion-refresher slot="fixed"`: the platform refresher
+/// ([RefreshIndicator.adaptive] – the iOS activity indicator on iOS) that
+/// appears below a translucent toolbar the content scrolls under. Must sit
+/// in the Scaffold body.
+class IonRefresher extends StatelessWidget {
+  const IonRefresher({super.key, required this.onRefresh, required this.child});
+
+  final RefreshCallback onRefresh;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => RefreshIndicator.adaptive(
+        onRefresh: onRefresh,
+        edgeOffset: MediaQuery.paddingOf(context).top,
+        child: child,
+      );
+}
 
 /// PARITY_R5: search icon of an iOS `ion-searchbar` (ionic-theme-ios27):
 /// the outline magnifier (ionicons search-outline) 1.375rem wide – ≈22pt

@@ -14,6 +14,7 @@ import '../../../../l10n/l10n.dart';
 import '../widgets/ion_condense.dart'; // UX_SETTINGS (WAVE 8)
 import '../widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
 import '../../../../core/utils/error_message.dart';
+import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset; // IOS_R6
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Konfigurierbare Rollen (Reihenfolge wie Ionic)
@@ -142,13 +143,16 @@ class _RolePermissionsPageState extends ConsumerState<RolePermissionsPage> {
       // condense title, files toggle in an inset list, one accordion per
       // role (header item on the page background, toggles in an inset list).
       child: IonCondense(builder: (context, collapsed) => Scaffold(
-        appBar: AppBar(
+        // IOS_R6: Ionic `ion-content fullscreen` under the translucent header
+        extendBodyBehindAppBar: ionIsIos(context),
+        // IOS_R6: `ion-header translucent` (blur once condensed)
+        appBar: IonTranslucentAppBar(condensed: collapsed, child: AppBar(
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () => Navigator.of(context).maybePop(),
           ),
           title: IonCondenseTitle(context.l10n.rolePermTitle, collapsed: collapsed),
-        ),
+        )),
         floatingActionButton: FloatingActionButton(
           onPressed: saving ? null : _save,
           child: saving
@@ -165,6 +169,7 @@ class _RolePermissionsPageState extends ConsumerState<RolePermissionsPage> {
               padding: EdgeInsets.fromLTRB(
                   ionListMargin(context), ios ? 0 : AppDimensions.paddingM, ionListMargin(context), 96),
               children: [
+                const IonContentTopInset(), // IOS_R6
                 IonLargeTitle(context.l10n.rolePermTitle, padding: const EdgeInsets.only(bottom: 4)),
                 if (ios) const SizedBox(height: 16),
                 if (ios)

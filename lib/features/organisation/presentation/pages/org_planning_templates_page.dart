@@ -12,6 +12,7 @@ import '../../../../data/models/plan/plan.dart';
 import '../../../planning/presentation/widgets/plan_field_dialogs.dart';
 import '../../../planning/presentation/widgets/plan_fields_editor.dart';
 import '../../../../l10n/l10n.dart';
+import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset; // IOS_R6
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 import '../../../settings/presentation/widgets/ion_condense.dart'; // UX_SETTINGS (WAVE 8)
 import '../../../settings/presentation/widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
@@ -323,12 +324,16 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
     }
 
     return IonCondense(builder: (context, collapsed) => Scaffold(
-      appBar: AppBar(title: IonCondenseTitle(context.l10n.orgTemplatesTitle, collapsed: collapsed)),
+      // IOS_R6: Ionic `ion-content fullscreen` under the translucent header
+      extendBodyBehindAppBar: ionIsIos(context),
+      // IOS_R6: `ion-header translucent` (blur once condensed)
+      appBar: IonTranslucentAppBar(condensed: collapsed, child: AppBar(title: IonCondenseTitle(context.l10n.orgTemplatesTitle, collapsed: collapsed))),
       body: _templates == null
           ? const Center(child: AppSpinner())
           : ListView(
               padding: EdgeInsets.only(bottom: scrollEndPadding(context, base: 32)),
               children: [
+                const IonContentTopInset(), // IOS_R6
                 IonLargeTitle(context.l10n.orgTemplatesTitle),
                 _header(context.l10n.orgTemplatesDefaultFields, _addDefaultField),
                 _box(_defaultFields.isEmpty

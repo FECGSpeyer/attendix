@@ -11,6 +11,7 @@ import '../../../../data/repositories/account_repository.dart';
 import '../../../public_links/presentation/pages/open_file_page.dart';
 import '../widgets/legal_content_view.dart';
 import '../../../../l10n/l10n.dart';
+import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset; // IOS_R6
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 import '../../../settings/presentation/widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
 
@@ -94,11 +95,16 @@ class _TermsPageState extends ConsumerState<TermsPage> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: AppBar(
+      // IOS_R6: Ionic `ion-content fullscreen` under the
+      // `ion-header translucent` (no large title: always blurred)
+      extendBodyBehindAppBar: ionIsIos(context),
+      appBar: IonTranslucentAppBar(child: AppBar(
         title: Text(context.l10n.termsTitle),
         automaticallyImplyLeading: false,
-      ),
+      )),
+      // IOS_R6: content scrolls under the translucent toolbar
       body: SafeArea(
+        top: false,
         child: Center(
           child: ConstrainedBox(
             constraints:
@@ -106,6 +112,7 @@ class _TermsPageState extends ConsumerState<TermsPage> {
             child: ListView(
               padding: const EdgeInsets.all(AppDimensions.paddingM),
               children: [
+                const IonContentTopInset(), // IOS_R6
                 // UX_SETTINGS (WAVE 8): terms.page.html — centred hero
                 // (shield icon 3.5rem, h2 1.4rem bold, medium p), inset info
                 // list with primary icons, inset accept list, block button.

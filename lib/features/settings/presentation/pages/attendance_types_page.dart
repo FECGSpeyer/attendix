@@ -9,6 +9,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/attendance/attendance.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
+import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset; // IOS_R6
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 import '../widgets/ion_condense.dart'; // UX_SETTINGS (WAVE 8)
 import '../widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
@@ -37,7 +38,10 @@ class _AttendanceTypesPageState extends ConsumerState<AttendanceTypesPage> {
     // repeat/checkmark header button, hint card, inset list of type names,
     // add FAB.
     return IonCondense(builder: (context, collapsed) => Scaffold(
-      appBar: AppBar(
+      // IOS_R6: Ionic `ion-content fullscreen` under the translucent header
+      extendBodyBehindAppBar: ionIsIos(context),
+      // IOS_R6: `ion-header translucent` (blur once condensed)
+      appBar: IonTranslucentAppBar(condensed: collapsed, child: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => context.pop(),
@@ -63,7 +67,7 @@ class _AttendanceTypesPageState extends ConsumerState<AttendanceTypesPage> {
               },
             ),
         ],
-      ),
+      )),
       body: typesAsync.when(
         loading: () => const Center(child: AppSpinner()),
         error: (error, stack) => Center(child: Text(context.l10n.settingsFlutterErrorDetail(friendlyErrorMessage(error)))),
@@ -72,6 +76,7 @@ class _AttendanceTypesPageState extends ConsumerState<AttendanceTypesPage> {
           return ListView(
             padding: EdgeInsets.fromLTRB(ionListMargin(context), ios ? 0 : 16, ionListMargin(context), 96),
             children: [
+              const IonContentTopInset(), // IOS_R6
               IonLargeTitle(title, padding: const EdgeInsets.only(bottom: 4)),
               SizedBox(height: ios ? 24 : 0),
               SettingsHintCard(icon: Icons.list, text: context.l10n.typeSettingsTypesIntro),

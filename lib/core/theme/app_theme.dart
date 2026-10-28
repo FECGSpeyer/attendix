@@ -161,6 +161,18 @@ class AppTheme {
       // IOS_THEME2: ion-toggle is primary (teal) on iOS too – the default
       // iOS switch adaptation would drop the theme and use system green.
       adaptations: const <Adaptation<Object>>[_IonToggleAdaptation()],
+      // IOS_R6: Ionic iOS pushes pages with the iOS slide and edge
+      // swipe-back (ion-router-outlet `swipeGesture`): every MaterialPage /
+      // MaterialPageRoute uses the Cupertino transition on iOS (incl. the
+      // iPhone Safari PWA). Pinned explicitly so a theme change cannot drop
+      // the gesture; md keeps the Flutter defaults.
+      pageTransitionsTheme: const PageTransitionsTheme(
+        builders: <TargetPlatform, PageTransitionsBuilder>{
+          TargetPlatform.android: ZoomPageTransitionsBuilder(),
+          TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+          TargetPlatform.macOS: CupertinoPageTransitionsBuilder(),
+        },
+      ),
       // ion-header (iOS): light toolbar, hairline border, centered 17pt title.
       // IOS_SHELL: Ionic headers are `translucent` (iOS 26 theme:
       // `--background: transparent`), i.e. they show the page background
