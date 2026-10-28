@@ -219,11 +219,17 @@ class PlanRepository extends BaseRepository with TenantAwareRepository {
   }
 
   /// Creates or updates an ad-hoc plan owned by the current user.
-  Future<void> upsertMySharedPlan(SharedPlan plan) async {
+  ///
+  /// SOL_FIX15: with [expectedUserId] (the account that edited the plan)
+  /// nothing is written unless that account is still signed in.
+  Future<void> upsertMySharedPlan(SharedPlan plan, {String? expectedUserId}) async {
     try {
       final userId = supabase.auth.currentUser?.id;
       if (userId == null) {
         throw const RepositoryException(message: 'User not authenticated', operation: 'upsertMySharedPlan');
+      }
+      if (expectedUserId != null && userId != expectedUserId) {
+        throw const RepositoryException(message: 'Account changed', operation: 'upsertMySharedPlan');
       }
       final data = plan.copyWith(creatorUserId: userId).toJson()
         ..remove('created_at')

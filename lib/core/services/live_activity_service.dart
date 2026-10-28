@@ -75,6 +75,10 @@ abstract class LiveActivityHost {
     String planKey = '',
   });
 
+  /// SOL_FIX15: deletes this device's token rows ([tokens]) of [userId]
+  /// (logout). Must run while [userId] is still signed in (RLS owner only).
+  Future<void> removeTokens({required String userId, required List<String> tokens});
+
   /// Opens the plan viewer of a Termin in live mode.
   Future<void> openPlan(int attendanceId);
 }
@@ -152,6 +156,14 @@ class LiveActivityService {
   /// Last state pushed per plan, to skip no-op updates.
   final Map<String, String> _lastKeys = {};
 
+  /// SOL_FIX15: account the tokens were registered for, and the tokens this
+  /// device saved for it (removed again on logout).
+  String? _sessionUserId;
+  final Set<String> _savedTokens = {};
+
+  /// Account whose tokens are registered on this device (null = none).
+  String? get sessionUserId => _sessionUserId;
+
   /// True when this build has the native side (Ionic `hasNativePlugin`);
   /// controls the toggle in the notification settings.
   bool get hasNativePlugin => _platformSupported;
@@ -175,10 +187,79 @@ class LiveActivityService {
   }
 
   /// Ionic effect: (re)initialise when tenant and tenant user are loaded and the tenant changed.
-  Future<void> onTenantReady(int? tenantId, {required bool hasTenantUser}) async {
-    if (tenantId == null || !hasTenantUser || tenantId == _loadedTenantId) return;
+  ///
+  /// SOL_FIX15: without a tenant (logout, tenant cleared) the running
+  /// activities end and the service is reset, so the next tenant – of this
+  /// or another account – initialises again. An account change ([userId]
+  /// differs from the account the tokens were registered for) resets too.
+  Future<void> onTenantReady(
+    int? tenantId, {
+    required bool hasTenantUser,
+    String? userId,
+  }) async {
+    if (tenantId == null) {
+      if (_loadedTenantId != null || _started) await endSession();
+      return;
+    }
+    if (_sessionUserId != null && userId != null && userId != _sessionUserId) {
+      await endSession();
+    }
+    if (!hasTenantUser || tenantId == _loadedTenantId) return;
     _loadedTenantId = tenantId;
     await init();
+  }
+
+  /// SOL_FIX15: logout / account switch. Ends every Live Activity (running
+  /// Ablaufpläne must not stay on the lock screen), and resets the session
+  /// state so tokens are registered again for the next account.
+  ///
+  /// With [removeTokensOf] (call BEFORE `auth.signOut()`, RLS needs the
+  /// session) this device's token rows of that account are deleted as
+  /// well, so the server stops pushing that account's plans to it.
+  Future<void> endSession({String? removeTokensOf}) async {
+    stopLoop();
+    _lifecycle?.dispose();
+    _lifecycle = null;
+    _lastKeys.clear();
+    _pendingUri = null;
+    if (_platformSupported) {
+      try {
+        await _channel.invokeMethod<void>('endAll');
+      } catch (e) {
+        _log('endAll', e);
+      }
+    }
+    final owner = removeTokensOf;
+    if (owner != null && (_sessionUserId == null || _sessionUserId == owner)) {
+      final tokens = {..._savedTokens, ...await _deviceTokens()}.toList();
+      if (tokens.isNotEmpty) {
+        try {
+          await _host.removeTokens(userId: owner, tokens: tokens);
+        } catch (e) {
+          _log('Live Activity tokens not removed', e);
+        }
+      }
+    }
+    _savedTokens.clear();
+    _sessionUserId = null;
+    _loadedTenantId = null;
+    _started = false;
+    _enabled = true;
+  }
+
+  /// Tokens the native side currently holds (start + activity tokens).
+  Future<Set<String>> _deviceTokens() async {
+    if (!_platformSupported) return {};
+    try {
+      final tokens = await _channel.invokeMapMethod<String, dynamic>('getTokens');
+      return {
+        if (tokens?['pushToStartToken'] case final String t when t.isNotEmpty) t,
+        for (final raw in (tokens?['activityTokens'] as List?) ?? const [])
+          if (raw is Map && raw['token'] is String) raw['token'] as String,
+      };
+    } catch (_) {
+      return {};
+    }
   }
 
   Future<void> init() async {
@@ -250,7 +331,18 @@ class LiveActivityService {
 
   /// Starts, updates and ends Live Activities to match the plans running right now.
   Future<void> sync() async {
-    if (!_supported || _host.tenantId == null || _syncing) return;
+    if (!_supported || _syncing) return;
+    if (_host.tenantId == null) {
+      // SOL_FIX15: no tenant (logged out / cleared) → nothing may stay
+      // on the lock screen.
+      if (_lastKeys.isNotEmpty) {
+        _lastKeys.clear();
+        try {
+          await _channel.invokeMethod<void>('endAll');
+        } catch (_) {}
+      }
+      return;
+    }
     _syncing = true;
     try {
       final running = _enabled ? await runningPlans() : null;
@@ -377,6 +469,9 @@ class LiveActivityService {
   Future<void> _saveToken(String kind, String token, [LiveActivityTarget? target]) async {
     final userId = _host.userId;
     if (userId == null || token.isEmpty) return;
+    // SOL_FIX15: tokens belong to the account of this session only.
+    if (_sessionUserId != null && _sessionUserId != userId) return;
+    _sessionUserId = userId;
     try {
       await _host.saveToken(
         userId: userId,
@@ -385,6 +480,7 @@ class LiveActivityService {
         attendanceId: target?.attendanceId ?? 0,
         planKey: target?.planKey ?? '',
       );
+      if (kind != 'start' || token != 'android') _savedTokens.add(token);
     } catch (e) {
       _log('Live Activity token not saved', e);
     }
@@ -519,6 +615,13 @@ class RiverpodLiveActivityHost implements LiveActivityHost {
   }
 
   @override
+  Future<void> removeTokens({required String userId, required List<String> tokens}) {
+    return _ref
+        .read(liveActivityRepositoryWithTenantProvider)
+        .removeTokens(userId: userId, tokens: tokens);
+  }
+
+  @override
   Future<void> openPlan(int attendanceId) async {
     final repo = _ref.read(planRepositoryWithTenantProvider);
     if (!repo.hasTenantId) return;
@@ -547,6 +650,30 @@ final liveActivityBootstrapProvider = Provider<void>((ref) {
     unawaited(service.onTenantReady(
       ref.read(currentTenantIdProvider),
       hasTenantUser: next.valueOrNull != null,
+      userId: ref.read(currentAuthUserIdProvider),
     ));
   }, fireImmediately: true);
+  // SOL_FIX15: logout / account switch – end the activities and reset, so
+  // the next account registers its own tokens (the previous account's
+  // rows are removed before sign-out, see endLiveActivitiesBeforeSignOut).
+  ref.listen<String?>(currentAuthUserIdProvider, (previous, next) {
+    if (previous != null && previous != next) {
+      unawaited(service.endSession());
+    }
+  });
+  // Tenant cleared without a tenant-user change.
+  ref.listen<int?>(currentTenantIdProvider, (previous, next) {
+    if (next == null && previous != null) {
+      unawaited(service.onTenantReady(null, hasTenantUser: false));
+    }
+  });
 });
+
+/// SOL_FIX15: ends the Live Activities and deletes this device's Live
+/// Activity tokens of the signed-in account. Call before `auth.signOut()`
+/// (RLS needs the session); never blocks the logout.
+Future<void> endLiveActivitiesBeforeSignOut(LiveActivityService service, String? userId) async {
+  try {
+    await service.endSession(removeTokensOf: userId);
+  } catch (_) {}
+}

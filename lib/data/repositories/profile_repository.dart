@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../core/services/cross_tenant_service.dart' show CrossTenantService;
 import '../models/person/person.dart';
 import 'attendance_repository.dart' show OfflineSessionChangedException;
 import 'base_repository.dart';
@@ -97,6 +98,18 @@ class OwnProfile {
   }
 }
 
+/// SOL_FIX15: the own `player` row of a tenant among all rows with the
+/// user's appId – the first active one (not pending, not archived), else
+/// the first (CrossTenantService.pickPersonIdForTenant).
+Map<String, dynamic>? pickOwnProfileRow(List<Map<String, dynamic>> rows) {
+  final id = CrossTenantService.pickPersonIdForTenant(rows);
+  if (id == null) return null;
+  for (final row in rows) {
+    if ((row['id'] as num?)?.toInt() == id) return row;
+  }
+  return null;
+}
+
 /// Repository for the user's own profile data (Ionic ProfileService +
 /// ImageService + settings page master data).
 class ProfileRepository extends BaseRepository
@@ -130,13 +143,16 @@ class ProfileRepository extends BaseRepository
   Future<OwnProfile?> getOwnProfile() async {
     try {
       final userId = _userId;
-      final response = await supabase
+      final rows = await supabase
           .from('player')
           .select('*')
           .eq('tenantId', currentTenantId)
-          .eq('appId', userId)
-          .maybeSingle();
+          .eq('appId', userId);
 
+      // SOL_FIX15: an archived and an active row may share the appId
+      // (a single-row read failed with PGRST116) → prefer the active one.
+      final response = pickOwnProfileRow(
+          (rows as List).cast<Map<String, dynamic>>());
       if (response == null) return null;
 
       final person = Person.fromJson(response);

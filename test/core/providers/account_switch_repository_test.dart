@@ -5,12 +5,79 @@
 import 'package:attendix/core/config/supabase_config.dart';
 import 'package:attendix/core/providers/team_org_providers.dart';
 import 'package:attendix/core/providers/tenant_providers.dart';
+import 'package:attendix/data/models/team_org/team_org.dart';
 import 'package:attendix/data/repositories/agenda_item_repository.dart';
+import 'package:attendix/data/repositories/protocol_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+/// RLS stand-in: leaders see every topic, members only their own.
+class _FakeAgendaRepo extends AgendaItemRepository {
+  _FakeAgendaRepo(super.ref, this.user);
+  final String? Function() user;
+  @override
+  Future<List<AgendaItem>> getAgendaItems() async => [
+        AgendaItem(id: 'own-${user()}', title: 'own'),
+        if (user() == 'leader-a')
+          const AgendaItem(id: 'secret', title: 'Beschluss', decisionNote: 'x'),
+      ];
+}
+
+class _FakeProtocolRepo extends ProtocolRepository {
+  _FakeProtocolRepo(super.ref, this.user);
+  final String? Function() user;
+  @override
+  Future<List<Protocol>> getProtocols() async =>
+      user() == 'leader-a' ? [const Protocol(id: 'p1')] : const [];
+  @override
+  Future<Protocol?> getProtocolForAttendance(int attendanceId) async =>
+      user() == 'leader-a' ? const Protocol(id: 'p1') : null;
+}
+
 void main() {
+  group('team organisation (leader A → member B, same tenant)', () {
+    test('topics, decision notes and protocol results are reloaded', () async {
+      final user = StateProvider<String?>((ref) => 'leader-a');
+      final container = ProviderContainer(overrides: [
+        currentAuthUserIdProvider.overrideWith((ref) => ref.watch(user)),
+        currentTenantIdProvider.overrideWithValue(7),
+        // Overridden repositories do NOT follow the account – the data
+        // providers themselves must.
+        agendaItemRepositoryWithTenantProvider.overrideWith((ref) =>
+            _FakeAgendaRepo(ref, () => ref.read(user))..bindTenantId(7)),
+        protocolRepositoryWithTenantProvider.overrideWith((ref) =>
+            _FakeProtocolRepo(ref, () => ref.read(user))..bindTenantId(7)),
+      ]);
+      addTearDown(container.dispose);
+      for (final p in [
+        agendaItemsProvider,
+        protocolsProvider,
+        protocolForAttendanceProvider(5),
+      ]) {
+        container.listen(p, (_, __) {});
+      }
+
+      expect((await container.read(agendaItemsProvider.future)).map((e) => e.id),
+          ['own-leader-a', 'secret']);
+      expect(await container.read(protocolsProvider.future), hasLength(1));
+      expect(await container.read(protocolForAttendanceProvider(5).future),
+          isNotNull);
+
+      container.read(user.notifier).state = 'member-b';
+      // No stale leader data while reloading.
+      expect(container.read(agendaItemsProvider).isLoading, isTrue);
+      expect(container.read(protocolsProvider).isLoading, isTrue);
+
+      final topics = await container.read(agendaItemsProvider.future);
+      expect(topics.map((e) => e.id), ['own-member-b']);
+      expect(topics.where((t) => t.decisionNote != null), isEmpty);
+      expect(await container.read(protocolsProvider.future), isEmpty);
+      expect(
+          await container.read(protocolForAttendanceProvider(5).future), isNull);
+    });
+  });
+
   late StateProvider<String?> userId;
   late ProviderContainer container;
   late SupabaseClient client;

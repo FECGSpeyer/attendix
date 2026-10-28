@@ -65,8 +65,17 @@ void main() {
     test('every ForTenant family binds its tenant immutably', () {
       for (final name in withTenant.keys) {
         final family = name.replaceFirst('WithTenant', 'ForTenant');
-        final body = _definition(allSource, family);
+        var body = _definition(allSource, family);
         expect(body, contains('Provider.family<'), reason: family);
+        // SOL_FIX15: the family delegates to a per (tenant, account)
+        // instance, which binds the tenant.
+        final account = '_${family.replaceFirst('ForTenant', 'ForAccount')}';
+        if (body.contains('$account(')) {
+          expect(body, contains('ref.watch(currentAuthUserIdProvider)'),
+              reason: family);
+          body = _definition(allSource, account);
+          expect(body, contains('Provider.family<'), reason: account);
+        }
         expect(body, contains('.bindTenantId('), reason: family);
         expect(body, isNot(contains('setTenantId(')), reason: family);
       }

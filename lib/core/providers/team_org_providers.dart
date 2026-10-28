@@ -101,6 +101,9 @@ final _protocolRepositoryForAccountProvider =
 
 /// Attendance types with their protocol settings.
 final protocolTypesProvider = FutureProvider<List<ProtocolType>>((ref) async {
+  // SOL_FIX15: RLS/role-dependent (leaders see all topics, decision notes
+  // and protocol results) – never keep them across an account switch.
+  ref.watch(currentAuthUserIdProvider);
   final repo = ref.watch(protocolRepositoryWithTenantProvider);
   if (!repo.hasTenantId) return [];
   return repo.getProtocolTypes();
@@ -146,6 +149,9 @@ final inTeamCircleProvider = Provider<bool>((ref) {
 
 /// Tasks of the signed-in person.
 final myTasksProvider = FutureProvider<List<TeamTask>>((ref) async {
+  // SOL_FIX15: RLS/role-dependent (leaders see all topics, decision notes
+  // and protocol results) – never keep them across an account switch.
+  ref.watch(currentAuthUserIdProvider);
   final repo = ref.watch(taskRepositoryWithTenantProvider);
   if (!repo.hasTenantId) return [];
   final person = await ref.watch(teamPersonProvider.future);
@@ -155,6 +161,9 @@ final myTasksProvider = FutureProvider<List<TeamTask>>((ref) async {
 
 /// Tasks shown in the "Aufgaben" tab: all for leadership, own for members.
 final teamTasksProvider = FutureProvider<List<TeamTask>>((ref) async {
+  // SOL_FIX15: RLS/role-dependent (leaders see all topics, decision notes
+  // and protocol results) – never keep them across an account switch.
+  ref.watch(currentAuthUserIdProvider);
   final repo = ref.watch(taskRepositoryWithTenantProvider);
   if (!repo.hasTenantId) return [];
   if (ref.watch(isTeamLeaderProvider)) return repo.getTasks();
@@ -162,18 +171,27 @@ final teamTasksProvider = FutureProvider<List<TeamTask>>((ref) async {
 });
 
 final taskByIdProvider = FutureProvider.family<TeamTask?, String>((ref, id) async {
+  // SOL_FIX15: RLS/role-dependent (leaders see all topics, decision notes
+  // and protocol results) – never keep them across an account switch.
+  ref.watch(currentAuthUserIdProvider);
   final repo = ref.watch(taskRepositoryWithTenantProvider);
   if (!repo.hasTenantId) return null;
   return repo.getTaskById(id);
 });
 
 final tasksForAgendaItemProvider = FutureProvider.family<List<TeamTask>, String>((ref, id) async {
+  // SOL_FIX15: RLS/role-dependent (leaders see all topics, decision notes
+  // and protocol results) – never keep them across an account switch.
+  ref.watch(currentAuthUserIdProvider);
   final repo = ref.watch(taskRepositoryWithTenantProvider);
   if (!repo.hasTenantId) return [];
   return repo.getTasksForAgendaItem(id);
 });
 
 final tasksForAttendanceProvider = FutureProvider.family<List<TeamTask>, int>((ref, id) async {
+  // SOL_FIX15: RLS/role-dependent (leaders see all topics, decision notes
+  // and protocol results) – never keep them across an account switch.
+  ref.watch(currentAuthUserIdProvider);
   final repo = ref.watch(taskRepositoryWithTenantProvider);
   if (!repo.hasTenantId) return [];
   return repo.getTasksForAttendance(id);
@@ -183,12 +201,18 @@ final tasksForAttendanceProvider = FutureProvider.family<List<TeamTask>, int>((r
 
 /// Leadership: all topics. Members: their own suggestions (RLS).
 final agendaItemsProvider = FutureProvider<List<AgendaItem>>((ref) async {
+  // SOL_FIX15: RLS/role-dependent (leaders see all topics, decision notes
+  // and protocol results) – never keep them across an account switch.
+  ref.watch(currentAuthUserIdProvider);
   final repo = ref.watch(agendaItemRepositoryWithTenantProvider);
   if (!repo.hasTenantId) return [];
   return repo.getAgendaItems();
 });
 
 final agendaItemByIdProvider = FutureProvider.family<AgendaItem?, String>((ref, id) async {
+  // SOL_FIX15: RLS/role-dependent (leaders see all topics, decision notes
+  // and protocol results) – never keep them across an account switch.
+  ref.watch(currentAuthUserIdProvider);
   final repo = ref.watch(agendaItemRepositoryWithTenantProvider);
   if (!repo.hasTenantId) return null;
   return repo.getAgendaItemById(id);
@@ -196,6 +220,9 @@ final agendaItemByIdProvider = FutureProvider.family<AgendaItem?, String>((ref, 
 
 final agendaItemHistoryProvider =
     FutureProvider.family<List<AgendaItemHistoryEntry>, String>((ref, id) async {
+  // SOL_FIX15: RLS/role-dependent (leaders see all topics, decision notes
+  // and protocol results) – never keep them across an account switch.
+  ref.watch(currentAuthUserIdProvider);
   final repo = ref.watch(agendaItemRepositoryWithTenantProvider);
   if (!repo.hasTenantId) return [];
   final list = await repo.getHistory(id);
@@ -207,12 +234,18 @@ final agendaItemHistoryProvider =
 
 /// Protocol of one Termin (null when none was started yet).
 final protocolForAttendanceProvider = FutureProvider.family<Protocol?, int>((ref, attendanceId) async {
+  // SOL_FIX15: RLS/role-dependent (leaders see all topics, decision notes
+  // and protocol results) – never keep them across an account switch.
+  ref.watch(currentAuthUserIdProvider);
   final repo = ref.watch(protocolRepositoryWithTenantProvider);
   if (!repo.hasTenantId) return null;
   return repo.getProtocolForAttendance(attendanceId);
 });
 
 final protocolsProvider = FutureProvider<List<Protocol>>((ref) async {
+  // SOL_FIX15: RLS/role-dependent (leaders see all topics, decision notes
+  // and protocol results) – never keep them across an account switch.
+  ref.watch(currentAuthUserIdProvider);
   final repo = ref.watch(protocolRepositoryWithTenantProvider);
   if (!repo.hasTenantId) return [];
   return repo.getProtocols();
@@ -220,6 +253,9 @@ final protocolsProvider = FutureProvider<List<Protocol>>((ref) async {
 
 /// Upcoming Termine of protocol-enabled types, soonest first.
 final upcomingProtocolAttendancesProvider = FutureProvider<List<ProtocolAttendance>>((ref) async {
+  // SOL_FIX15: RLS/role-dependent (leaders see all topics, decision notes
+  // and protocol results) – never keep them across an account switch.
+  ref.watch(currentAuthUserIdProvider);
   final repo = ref.watch(protocolRepositoryWithTenantProvider);
   if (!repo.hasTenantId) return [];
   final types = await ref.watch(protocolTypesProvider.future);

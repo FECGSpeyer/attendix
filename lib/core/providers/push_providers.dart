@@ -15,6 +15,8 @@ import '../../l10n/l10n.dart';
 import '../config/supabase_config.dart';
 import '../constants/enums.dart';
 import '../router/app_router.dart';
+import '../services/live_activity_service.dart'
+    show endLiveActivitiesBeforeSignOut, liveActivityServiceProvider;
 import '../services/push/firebase_push_messaging_client.dart';
 import '../services/push/push_messaging_client.dart';
 import '../services/push/push_navigation.dart';
@@ -85,6 +87,14 @@ Future<void> removePushTokenBeforeSignOut(WidgetRef ref) async {
   } catch (_) {
     // Never block the logout.
   }
+  // SOL_FIX15: also end the Live Activities and remove this device's Live
+  // Activity tokens of the account (same session requirement).
+  try {
+    await endLiveActivitiesBeforeSignOut(
+      ref.read(liveActivityServiceProvider),
+      ref.read(currentAuthUserIdProvider),
+    );
+  } catch (_) {}
 }
 
 /// Ionic localStorage `push_prompt_shown`.

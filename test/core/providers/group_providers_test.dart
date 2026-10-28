@@ -64,7 +64,7 @@ void main() {
           reason: 'groupRepositoryWithTenantProvider must use a bound '
               'per-tenant instance',
         );
-        expect(groupProvidersSource, contains('repo.bindTenantId(tenantId)'));
+        expect(groupProvidersSource, contains('repo.bindTenantId(key.tenantId!)'));
       });
 
       test('groupRepositoryWithTenantProvider watches currentTenantIdProvider',

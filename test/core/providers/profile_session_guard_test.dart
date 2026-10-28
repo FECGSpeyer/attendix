@@ -212,6 +212,44 @@ void main() {
     });
   });
 
+  group('pickOwnProfileRow (archived + active row with the same appId)', () {
+    test('prefers the active row', () {
+      final row = pickOwnProfileRow([
+        {'id': 1, 'appId': 'a', 'left': '2024-01-01'},
+        {'id': 2, 'appId': 'a', 'left': null, 'pending': false},
+      ]);
+      expect(row?['id'], 2);
+    });
+
+    test('skips pending rows, falls back to the first row', () {
+      expect(
+          pickOwnProfileRow([
+            {'id': 3, 'pending': true},
+            {'id': 4, 'left': ''},
+          ])?['id'],
+          4);
+      expect(
+          pickOwnProfileRow([
+            {'id': 5, 'left': '2024-01-01'},
+            {'id': 6, 'left': '2023-01-01'},
+          ])?['id'],
+          5);
+      expect(pickOwnProfileRow(const []), isNull);
+    });
+
+    test('getOwnProfile loads all rows instead of maybeSingle()', () {
+      final src = File('lib/data/repositories/profile_repository.dart')
+          .readAsStringSync();
+      final start = src.indexOf('Future<OwnProfile?> getOwnProfile()');
+      final body = src.substring(start, src.indexOf('handleError', start));
+      expect(body, isNot(contains('.maybeSingle()')));
+      expect(body, isNot(contains('.single(')));
+      expect(body, contains('pickOwnProfileRow('));
+      expect(body, contains(".eq('tenantId', currentTenantId)"));
+      expect(body, contains(".eq('appId', userId)"));
+    });
+  });
+
   group('ProfileRepository source analysis', () {
     final src =
         File('lib/data/repositories/profile_repository.dart').readAsStringSync();

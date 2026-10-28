@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:attendix/core/constants/enums.dart';
 import 'package:attendix/core/services/live_activity_service.dart';
 import 'package:attendix/core/utils/live_plan.dart';
@@ -21,7 +23,8 @@ class FakeHost implements LiveActivityHost {
   @override
   String get timezone => 'Europe/Berlin';
   @override
-  String? get userId => 'user-1';
+  String? userId = 'user-1';
+  final removed = <Map<String, Object?>>[];
   @override
   String get apiUrl => 'https://example.supabase.co';
   @override
@@ -41,6 +44,11 @@ class FakeHost implements LiveActivityHost {
     String planKey = '',
   }) async {
     saved.add({'userId': userId, 'kind': kind, 'token': token, 'attendanceId': attendanceId, 'planKey': planKey});
+  }
+
+  @override
+  Future<void> removeTokens({required String userId, required List<String> tokens}) async {
+    removed.add({'userId': userId, 'tokens': [...tokens]..sort()});
   }
 
   @override
@@ -261,6 +269,99 @@ void main() {
     s.dispose();
     expect(host.opened, [8]);
   });
+  // SOL_FIX15: logout / account switch.
+  group('logout and account switch', () {
+    test('logout ends the activities and removes this device\'s tokens', () async {
+      final host = FakeHost(attendances: [attendance()]);
+      final s = service(host);
+      await s.onTenantReady(7, hasTenantUser: true, userId: 'user-1');
+      expect(s.isLoopRunning, isTrue);
+      expect(s.sessionUserId, 'user-1');
+      calls.clear();
+
+      await endLiveActivitiesBeforeSignOut(s, 'user-1');
+      expect(methods(), contains('endAll'));
+      expect(s.isLoopRunning, isFalse);
+      expect(host.removed, [
+        {'userId': 'user-1', 'tokens': ['abc123', 'def456']},
+      ]);
+      expect(s.sessionUserId, isNull);
+      s.dispose();
+    });
+
+    test('a missing tenant (logout) is not ignored', () async {
+      final host = FakeHost(attendances: [attendance()]);
+      final s = service(host);
+      await s.onTenantReady(7, hasTenantUser: true, userId: 'user-1');
+      calls.clear();
+      host.tenantId = null;
+      await s.onTenantReady(null, hasTenantUser: false);
+      expect(methods(), contains('endAll'));
+      expect(s.isLoopRunning, isFalse);
+
+      // Same tenant again (e.g. next login) initialises again.
+      host.tenantId = 7;
+      calls.clear();
+      await s.onTenantReady(7, hasTenantUser: true, userId: 'user-1');
+      expect(methods(), contains('isAvailable'));
+      expect(methods(), contains('start'));
+      s.dispose();
+    });
+
+    test('sync without a tenant ends the shown activities', () async {
+      final host = FakeHost(attendances: [attendance()]);
+      final s = service(host);
+      await s.init();
+      s.stopLoop();
+      calls.clear();
+      host.tenantId = null;
+      await s.sync();
+      expect(methods(), ['endAll']);
+      calls.clear();
+      await s.sync(); // nothing shown any more
+      expect(methods(), isEmpty);
+    });
+
+    test('account switch in the same tenant re-registers for the new account', () async {
+      final host = FakeHost(attendances: [attendance()]);
+      final s = service(host);
+      await s.onTenantReady(7, hasTenantUser: true, userId: 'user-1');
+      expect(host.saved.map((e) => e['userId']).toSet(), {'user-1'});
+      calls.clear();
+      host.saved.clear();
+
+      host.userId = 'user-2';
+      await s.onTenantReady(7, hasTenantUser: true, userId: 'user-2');
+      expect(methods().first, 'endAll');
+      expect(host.saved, isNotEmpty);
+      expect(host.saved.map((e) => e['userId']).toSet(), {'user-2'});
+      expect(s.sessionUserId, 'user-2');
+      // B never deletes A's rows (RLS) – A's are removed before sign-out.
+      expect(host.removed, isEmpty);
+      s.dispose();
+    });
+
+    test('tokens of another account are never removed', () async {
+      final host = FakeHost(attendances: [attendance()]);
+      final s = service(host);
+      await s.onTenantReady(7, hasTenantUser: true, userId: 'user-1');
+      await s.endSession(removeTokensOf: 'user-2');
+      expect(host.removed, isEmpty);
+      s.dispose();
+    });
+
+    test('logout is wired before sign-out', () {
+      final push = File('lib/core/providers/push_providers.dart').readAsStringSync();
+      final fn = push.substring(push.indexOf('Future<void> removePushTokenBeforeSignOut('));
+      expect(fn.substring(0, fn.indexOf('\n}\n')), contains('endLiveActivitiesBeforeSignOut('));
+      final repo = File('lib/data/repositories/live_activity_repository.dart').readAsStringSync();
+      final rm = repo.substring(repo.indexOf('Future<void> removeTokens('));
+      expect(rm, contains(".from('live_activity_tokens')"));
+      expect(rm, contains(".eq('user_id', userId)"));
+      expect(rm, contains(".inFilter('token', tokens)"));
+    });
+  });
+
   // DB_REVIEW_REST (F2): Android live plan notification (Ionic LiveActivityPlugin.java)
   group('Android', () {
     test('registers the "android" start token instead of configure', () async {

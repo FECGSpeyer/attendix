@@ -92,4 +92,25 @@ class LiveActivityRepository extends BaseRepository with TenantAwareRepository {
       rethrow;
     }
   }
+
+  /// SOL_FIX15: deletes this device's token rows of [userId] on logout.
+  /// live_activity_tokens has no tenant column (rows belong to the user,
+  /// RLS `user_id = auth.uid()`): scoped by user_id and the device's tokens,
+  /// so the user's other devices keep theirs.
+  Future<void> removeTokens({
+    required String userId,
+    required List<String> tokens,
+  }) async {
+    if (tokens.isEmpty) return;
+    try {
+      await supabase
+          .from('live_activity_tokens')
+          .delete()
+          .eq('user_id', userId)
+          .inFilter('token', tokens);
+    } catch (e, stack) {
+      handleError(e, stack, 'removeTokens');
+      rethrow;
+    }
+  }
 }
