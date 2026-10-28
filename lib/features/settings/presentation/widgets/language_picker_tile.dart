@@ -40,7 +40,8 @@ class LanguagePickerTile extends ConsumerWidget {
       // UX_SETTINGS (WAVE 8): same item look as the other System entries;
       // label + green ion-badge "NEU", the selected value at the end.
       child: SettingsListTile(
-        icon: Icons.language,
+        // Ionic language-outline (文A).
+        icon: Icons.translate,
         title: l10n.settingsLanguageTitle,
         detail: false,
         titleWidget: Row(
@@ -61,11 +62,16 @@ class LanguagePickerTile extends ConsumerWidget {
               ),
             ),
             const SizedBox(width: 4),
+            // ion-select ios: `chevron-expand` toggle icon, 1.125rem,
+            // --ion-color-step-650.
             ios
                 ? Icon(
                     CupertinoIcons.chevron_up_chevron_down,
-                    size: 16,
-                    color: IonIos.text(context).withValues(alpha: 0.33),
+                    key: const Key('languagePickerChevron'),
+                    size: 18,
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? const Color(0xFFA6A6A6)
+                        : const Color(0xFF595959),
                   )
                 : const Icon(Icons.arrow_drop_down, color: AppColors.medium),
           ],

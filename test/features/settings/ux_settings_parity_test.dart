@@ -1,6 +1,9 @@
 import 'dart:io';
 
 import 'package:attendix/features/settings/presentation/widgets/calendar_subscription_dialog.dart';
+import 'package:attendix/features/settings/presentation/widgets/settings_list.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -65,6 +68,78 @@ void main() {
 
     test('Kalender abonnieren opens the Ionic alert instead of a page', () {
       expect(source, contains('showCalendarSubscriptionDialog(context, ref)'));
+    });
+
+    // IOS_MEHR (wave 8)
+    test('System block has no "E-Mail ändern" row (Ionic has none)', () {
+      expect(source, isNot(contains('settingsFlutterChangeEmail')));
+      expect(source, isNot(contains('showChangeEmailDialog')));
+    });
+
+    test('ionicons: library-outline, apps-outline, musical-notes, chatbubble-ellipses', () {
+      expect(source, contains('iconWidget: const IonLibraryOutlineIcon()'));
+      expect(source, contains('icon: CupertinoIcons.circle_grid_3x3'));
+      expect(source, contains('icon: CupertinoIcons.music_note_2'));
+      expect(source, contains('icon: Icons.sms_outlined'));
+      final lang = read('lib/features/settings/presentation/widgets/language_picker_tile.dart');
+      expect(lang, contains('icon: Icons.translate'));
+      expect(lang, contains('CupertinoIcons.chevron_up_chevron_down'));
+    });
+
+    test('logout row has no chevron, delete link below the System card', () {
+      final logout = source.indexOf('title: l10n.settingsLogout');
+      final block = source.substring(logout, source.indexOf('onTap:', logout));
+      expect(block, contains('detail: false'));
+      expect(block, contains('background: AppColors.danger'));
+      expectInOrder(source, [
+        'title: l10n.settingsSystem',
+        "context.push('/settings/delete-account')",
+        'decoration: TextDecoration.underline',
+      ]);
+    });
+  });
+
+  group('Ionic iOS inset list (IOS_MEHR)', () {
+    Widget app(Widget child) => MaterialApp(
+          theme: ThemeData(platform: TargetPlatform.iOS),
+          home: Scaffold(body: child),
+        );
+
+    testWidgets('separators are inset on both sides', (tester) async {
+      await tester.pumpWidget(app(const IonInsetGroup(
+        dividerIndent: IonIos.iconDividerIndent,
+        children: [ListTile(title: Text('a')), ListTile(title: Text('b'))],
+      )));
+      final divider = tester.widget<Divider>(find.byType(Divider));
+      expect(divider.indent, IonIos.iconDividerIndent);
+      expect(divider.endIndent, IonIos.itemPaddingEnd);
+    });
+
+    testWidgets('detail=false rows show no chevron; iconWidget is used', (tester) async {
+      await tester.pumpWidget(app(IonInsetGroup(children: [
+        SettingsListTile(
+          icon: Icons.logout,
+          title: 'Ausloggen',
+          detail: false,
+          background: Colors.red,
+          onTap: () {},
+        ),
+        SettingsListTile(
+          iconWidget: const IonLibraryOutlineIcon(),
+          title: 'Werke',
+          onTap: () {},
+        ),
+      ])));
+      expect(find.byType(IonDetailChevron), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.widgetWithText(ListTile, 'Ausloggen'),
+          matching: find.byIcon(CupertinoIcons.chevron_forward),
+        ),
+        findsNothing,
+      );
+      expect(find.byType(IonLibraryOutlineIcon), findsOneWidget);
+      expect(tester.getSize(find.byType(IonLibraryOutlineIcon)), const Size.square(IonIos.itemIconSize));
     });
   });
 
