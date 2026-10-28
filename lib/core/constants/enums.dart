@@ -185,7 +185,7 @@ enum AttendanceStatus {
   Color get color => switch (this) {
     AttendanceStatus.present => AppColors.success,
     AttendanceStatus.absent => AppColors.danger,
-    AttendanceStatus.excused => AppColors.info,
+    AttendanceStatus.excused => AppColors.statusExcused,
     AttendanceStatus.late => AppColors.statusLate,
     AttendanceStatus.lateExcused => AppColors.statusLateExcused,
     AttendanceStatus.neutral => AppColors.medium,
