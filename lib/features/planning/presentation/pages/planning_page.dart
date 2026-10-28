@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/attendance_detail_providers.dart';
@@ -26,6 +27,7 @@ import '../widgets/plan_fields_editor.dart';
 import '../widgets/plan_song_helper.dart';
 import '../widgets/plan_view_list.dart';
 import '../widgets/register_plan_sheet.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../songs/presentation/utils/song_utils.dart';
 import '../../../../core/providers/branding_providers.dart'; // MISC2
 
@@ -119,7 +121,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     if (pt.isNotEmpty) return pt;
     if (info.isNotEmpty) return info;
     if ((type?.name ?? '').isNotEmpty) return type!.name;
-    return 'Probenplan';
+    return context.l10n.defaultsTypesRehearsalPlan;
   }
 
   /// Ionic `resolveOrgPlan`: stored flag once a plan exists, otherwise the type default.
@@ -149,7 +151,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       setState(() {
         _time = formatted.isEmpty ? '17:50' : formatted;
         _titleController.text = _defaultTitle(att);
-        _fields = [const PlanField(id: 'Wort', name: 'Wort', time: '10')];
+        _fields = [PlanField(id: 'Wort', name: context.l10n.planningDefaultWord.trim(), time: '10')];
       });
       _applyTypeDefaultPlan(att, save: false);
     }
@@ -218,7 +220,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
 
   bool _validate({bool showToast = false}) {
     if (_time.isEmpty || _fields.isEmpty) {
-      if (showToast) ToastHelper.showWarning(context, 'Bitte wähle mindestens ein Feld aus.');
+      if (showToast) ToastHelper.showWarning(context, context.l10n.planningChooseFieldMin);
       return false;
     }
     return true;
@@ -248,7 +250,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       final saved = await ref.read(planRepositoryWithTenantProvider).updateAttendancePlanFields(att!.id!, update);
       _replaceAtt(saved);
     } catch (e) {
-      if (mounted) ToastHelper.showError(context, 'Fehler beim Speichern: $e');
+      if (mounted) ToastHelper.showError(context, context.l10n.planningFlutterSaveFailedWith(e));
     }
   }
 
@@ -301,11 +303,11 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     // List is sorted newest first: "Nächste" goes to a smaller index.
     final target = i - direction;
     if (target < 0) {
-      ToastHelper.showWarning(context, 'Dies ist die aktuell erste Veranstaltung');
+      ToastHelper.showWarning(context, context.l10n.planningFirstEvent);
       return;
     }
     if (target >= _attendances.length) {
-      ToastHelper.showWarning(context, 'Dies ist die aktuell letzte Veranstaltung');
+      ToastHelper.showWarning(context, context.l10n.planningLastEvent);
       return;
     }
     await _selectAttendance(_attendances[target].id);
@@ -315,7 +317,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     final d = DateTime.tryParse(a.date);
     final date = d == null
         ? a.date
-        : '${d.day.toString().padLeft(2, '0')}.${d.month.toString().padLeft(2, '0')}.${d.year}';
+        : DateFormat(dateFmt()).format(d);
     final type = _typeOf(a);
     final title = (a.typeInfo?.isNotEmpty ?? false) ? a.typeInfo! : (type?.name ?? '');
     return '$date $title';
@@ -335,11 +337,11 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
 
   Future<void> _addPlan() async {
     if (_att == null) {
-      ToastHelper.showWarning(context, 'Bitte wähle zuerst einen Termin aus.');
+      ToastHelper.showWarning(context, context.l10n.planningChooseEventFirst);
       return;
     }
     if (!_validate()) {
-      ToastHelper.showWarning(context, 'Lege zuerst einen Ablauf für diesen Plan an.');
+      ToastHelper.showWarning(context, context.l10n.planningCreateRunSheetFirst);
       return;
     }
     await _save();
@@ -347,12 +349,12 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     final choice = await showDialog<String>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Weiteren Ablaufplan anlegen'),
-        content: const Text('Soll der neue Plan den aktuellen Ablauf übernehmen oder leer starten?'),
+        title: Text(ctx.l10n.planningAddAnotherPlan),
+        content: Text(ctx.l10n.planningAddAnotherPlanMessage),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Abbrechen')),
-          TextButton(onPressed: () => Navigator.pop(ctx, 'empty'), child: const Text('Leer')),
-          FilledButton(onPressed: () => Navigator.pop(ctx, 'copy'), child: const Text('Kopie')),
+          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(ctx.l10n.commonCancel)),
+          TextButton(onPressed: () => Navigator.pop(ctx, 'empty'), child: Text(ctx.l10n.planningEmpty)),
+          FilledButton(onPressed: () => Navigator.pop(ctx, 'copy'), child: Text(ctx.l10n.planningCopy)),
         ],
       ),
     );
@@ -378,7 +380,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       setState(() => _planIndex = plans.length - 1);
       _loadPlan(_att!, newPlan);
     } catch (e) {
-      if (mounted) ToastHelper.showError(context, 'Fehler beim Speichern: $e');
+      if (mounted) ToastHelper.showError(context, context.l10n.planningFlutterSaveFailedWith(e));
     }
   }
 
@@ -389,16 +391,16 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     final index = _planIndex;
     final action = await showPlanActionSheet<String>(
       context,
-      title: 'Plan „${PlanUtils.planLabel(att, index, plans)}“',
-      subtitle: '${index + 1} von ${plans.length}',
+      title: context.l10n.planningPlanHeader(PlanUtils.planLabel(att, index, plans)),
+      subtitle: context.l10n.planningFlutterPlanPosition(index + 1, plans.length),
       actions: [
-        const PlanSheetAction('rename', 'Umbenennen', icon: Icons.edit_outlined),
+        PlanSheetAction('rename', context.l10n.planningRename, icon: Icons.edit_outlined),
         if (PlanUtils.dayOptions(att).isNotEmpty)
-          const PlanSheetAction('day', 'Anderem Tag zuordnen', icon: Icons.event),
-        if (index > 0) const PlanSheetAction('left', 'Nach links verschieben', icon: Icons.chevron_left),
+          PlanSheetAction('day', context.l10n.planningAssignOtherDay, icon: Icons.event),
+        if (index > 0) PlanSheetAction('left', context.l10n.planningMoveLeft, icon: Icons.chevron_left),
         if (index < plans.length - 1)
-          const PlanSheetAction('right', 'Nach rechts verschieben', icon: Icons.chevron_right),
-        const PlanSheetAction('delete', 'Plan löschen', icon: Icons.delete_outline, destructive: true),
+          PlanSheetAction('right', context.l10n.planningMoveRight, icon: Icons.chevron_right),
+        PlanSheetAction('delete', context.l10n.planningDeletePlan, icon: Icons.delete_outline, destructive: true),
       ],
     );
     if (action == null || !mounted) return;
@@ -412,8 +414,8 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
           final auto = PlanUtils.planLabel(current, index, [for (final p in list) p.copyWith(label: null)]);
           final label = await showPlanTextPrompt(
             context,
-            title: 'Plan umbenennen',
-            message: 'Leer lassen für den automatischen Namen.',
+            title: context.l10n.planningRenamePlan,
+            message: context.l10n.planningRenameHint,
             initialValue: list[index].label,
             hint: auto,
             allowEmpty: true,
@@ -425,7 +427,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
           final options = PlanUtils.dayOptions(current);
           final day = await showPlanActionSheet<int>(
             context,
-            title: 'Tag zuordnen',
+            title: context.l10n.planningAssignDay,
             actions: [
               for (final o in options)
                 PlanSheetAction(o.day, o.label, icon: list[index].day == o.day ? Icons.check : null),
@@ -448,9 +450,9 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
         case 'delete':
           final ok = await showPlanConfirm(
             context,
-            title: 'Plan löschen?',
-            message: 'Der Plan „${PlanUtils.planLabel(current, index, list)}“ wird gelöscht.',
-            confirmText: 'Löschen',
+            title: context.l10n.planningDeletePlanConfirm,
+            message: context.l10n.planningDeletePlanMessage(PlanUtils.planLabel(current, index, list)),
+            confirmText: context.l10n.commonDelete,
             destructive: true,
           );
           if (!ok) return;
@@ -461,7 +463,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
           if (list.isNotEmpty) _loadPlan(_att!, list[newIndex]);
       }
     } catch (e) {
-      if (mounted) ToastHelper.showError(context, 'Fehler beim Speichern: $e');
+      if (mounted) ToastHelper.showError(context, context.l10n.planningFlutterSaveFailedWith(e));
     }
   }
 
@@ -471,7 +473,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
 
   Future<void> _addField() async {
     final r = await showPlanFieldDialog(context,
-        title: 'Feld hinzufügen', nameHint: 'Freitext eingeben...', initialMinutes: 20);
+        title: context.l10n.planningAddField, nameHint: context.l10n.planningEnterFreeText, initialMinutes: 20);
     if (r == null) return;
     setState(() => _fields = [
           ..._fields,
@@ -482,10 +484,10 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
 
   Future<void> _addNote() async {
     final r = await showPlanFieldDialog(context,
-        title: 'Notizfeld hinzufügen',
-        nameLabel: 'Notiz',
-        nameHint: 'Notiz eingeben...',
-        emptyNameMessage: 'Bitte eine Notiz eingeben.',
+        title: context.l10n.planningAddNoteField,
+        nameLabel: context.l10n.planningNote,
+        nameHint: context.l10n.planningEnterNote,
+        emptyNameMessage: context.l10n.plansEnterNotePlease,
         withConductor: false,
         withInfo: false,
         withMinutes: false);
@@ -497,14 +499,14 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   Future<void> _addGroup() async {
     final r = await showPlanFieldDialog(
       context,
-      title: 'Programmblock hinzufügen',
-      message: 'Die Dauer ergibt sich aus den Unterpunkten.',
-      nameLabel: 'Name',
-      nameHint: 'Name, z. B. Programm Jugendchor',
-      conductorLabel: 'Ausführung',
-      conductorHint: 'Ausführung (optional)',
-      confirmText: 'Anlegen',
-      emptyNameMessage: 'Bitte einen Namen eingeben.',
+      title: context.l10n.planningAddBlock,
+      message: context.l10n.planningBlockDurationHint,
+      nameLabel: context.l10n.planningName,
+      nameHint: context.l10n.planningBlockNamePlaceholder,
+      conductorLabel: context.l10n.planningPerformance,
+      conductorHint: context.l10n.planningPerformanceOptional,
+      confirmText: context.l10n.commonCreate,
+      emptyNameMessage: context.l10n.planningEnterNamePlease,
       withMinutes: false,
     );
     if (r == null || !mounted) return;
@@ -513,10 +515,10 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     _changed();
     final sub = await showPlanFieldDialog(
       context,
-      title: 'Unterpunkt hinzufügen',
+      title: context.l10n.planningAddSubItem,
       subtitle: head.name,
-      nameHint: 'Programmpunkt, z. B. Gruppenlied',
-      infoHint: 'Info-Text (optional), z. B. Liedtitel',
+      nameHint: context.l10n.planningSubItemPlaceholder,
+      infoHint: context.l10n.planningSubItemInfoPlaceholder,
       initialMinutes: 5,
     );
     if (sub == null) return;
@@ -564,9 +566,9 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   Future<void> _deleteBlockTemplate(PlanBlockTemplate tpl) async {
     final ok = await showPlanConfirm(
       context,
-      title: 'Vorlage löschen?',
-      message: 'Die Vorlage „${tpl.name}“ wird gelöscht. Bestehende Pläne bleiben unverändert.',
-      confirmText: 'Löschen',
+      title: context.l10n.planningDeleteTemplateConfirm,
+      message: context.l10n.planningDeleteTemplateMessage(tpl.name),
+      confirmText: context.l10n.commonDelete,
       destructive: true,
     );
     if (ok) await ref.read(planSettingsNotifierProvider.notifier).deleteBlockTemplate(tpl.id);
@@ -576,9 +578,9 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     final ok = await ref.read(planSettingsNotifierProvider.notifier).saveBlockAsTemplate(_fields, head.id);
     if (!mounted) return;
     if (ok) {
-      ToastHelper.showSuccess(context, '„${head.name}“ als Vorlage gespeichert');
+      ToastHelper.showSuccess(context, context.l10n.planningTemplateSaved(head.name));
     } else {
-      ToastHelper.showError(context, 'Die Vorlage konnte nicht gespeichert werden.');
+      ToastHelper.showError(context, context.l10n.planningTemplateSaveFailed);
     }
   }
 
@@ -641,49 +643,49 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
             children: [
               ListTile(
                   leading: const Icon(Icons.add),
-                  title: const Text('Feld hinzufügen'),
+                  title: Text(ctx.l10n.planningAddField),
                   onTap: () => Navigator.pop(ctx, 'field')),
               ListTile(
                   leading: const Icon(Icons.view_agenda_outlined),
-                  title: const Text('Programmblock hinzufügen'),
+                  title: Text(ctx.l10n.planningAddBlock),
                   onTap: () => Navigator.pop(ctx, 'group')),
               ListTile(
                   leading: const Icon(Icons.sticky_note_2_outlined),
-                  title: const Text('Notizfeld hinzufügen'),
+                  title: Text(ctx.l10n.planningAddNoteField),
                   onTap: () => Navigator.pop(ctx, 'note')),
               if (!isGeneral) ...[
                 ListTile(
                     leading: const Icon(Icons.library_music_outlined),
-                    title: const Text('Aktuelle Werke hinzufügen'),
+                    title: Text(ctx.l10n.planningAddCurrentSongs),
                     onTap: () => Navigator.pop(ctx, 'current')),
                 if (_songs.isNotEmpty)
                   ListTile(
                       leading: const Icon(Icons.music_note_outlined),
-                      title: const Text('Werk hinzufügen'),
+                      title: Text(ctx.l10n.planningAddSong),
                       onTap: () => Navigator.pop(ctx, 'song')),
               ],
               // PROTOCOL
               if (canAddTopics)
                 ListTile(
                     leading: const Icon(Icons.playlist_add_circle_outlined, color: AppColors.primary),
-                    title: const Text('Themen aufnehmen'),
+                    title: Text(ctx.l10n.attendanceAddTopics),
                     onTap: () => Navigator.pop(ctx, 'topics')),
               if (canInsertAgenda)
                 ListTile(
                     leading: const Icon(Icons.commit, color: AppColors.medium),
-                    title: const Text('Tagesordnung einfügen'),
+                    title: Text(ctx.l10n.planningInsertAgenda),
                     onTap: () => Navigator.pop(ctx, 'agenda')),
               if (blockTemplates.isNotEmpty) ...[
                 const Divider(),
-                const _MenuHeader('Programmblöcke'),
+                _MenuHeader(ctx.l10n.planningBlocks),
                 for (final tpl in blockTemplates)
                   ListTile(
                     title: Text(tpl.name),
-                    subtitle: Text('${PlanUtils.templateMinutes(tpl)} min'),
+                    subtitle: Text(ctx.l10n.planningMinShort(PlanUtils.templateMinutes(tpl))),
                     onTap: () => Navigator.pop(ctx, 'block:${tpl.id}'),
                     trailing: role.isAdmin
                         ? IconButton(
-                            tooltip: 'Vorlage löschen',
+                            tooltip: ctx.l10n.planningDeleteTemplate,
                             icon: const Icon(Icons.delete_outline),
                             onPressed: () => Navigator.pop(ctx, 'delblock:${tpl.id}'),
                           )
@@ -692,17 +694,17 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
               ],
               if (orgTemplates.isNotEmpty) ...[
                 const Divider(),
-                const _MenuHeader('Vorlagen'),
+                _MenuHeader(ctx.l10n.planningTemplates),
                 for (var i = 0; i < orgTemplates.length; i++)
                   ListTile(title: Text(orgTemplates[i].title ?? ''), onTap: () => Navigator.pop(ctx, 'tpl:$i')),
               ],
               if (orgFields.isNotEmpty) ...[
                 const Divider(),
-                const _MenuHeader('Felder'),
+                _MenuHeader(ctx.l10n.planningFields),
                 for (var i = 0; i < orgFields.length; i++)
                   ListTile(
                     title: Text(orgFields[i].name),
-                    subtitle: Text('${orgFields[i].time} min'),
+                    subtitle: Text(ctx.l10n.planningMinShort(orgFields[i].time)),
                     onTap: () => Navigator.pop(ctx, 'orgfield:$i'),
                   ),
               ],
@@ -710,7 +712,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
                 const Divider(),
                 ListTile(
                   leading: const Icon(Icons.copy_outlined, color: AppColors.medium),
-                  title: const Text('Weiteren Ablaufplan anlegen', style: TextStyle(color: AppColors.medium)),
+                  title: Text(ctx.l10n.planningAddAnotherPlan, style: const TextStyle(color: AppColors.medium)),
                   onTap: () => Navigator.pop(ctx, 'plan'),
                 ),
               ],
@@ -761,12 +763,12 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   // PROTOCOL: Ionic `addAgendaItemsPlaceholder` (the marker takes no time).
   void _addAgendaPlaceholder() {
     if (_fields.any(PlanUtils.isAgendaPlaceholder)) {
-      ToastHelper.showWarning(context, 'Ein Tagesordnungs-Platzhalter ist bereits vorhanden');
+      ToastHelper.showWarning(context, context.l10n.planningAgendaExists);
       return;
     }
     setState(() => _fields = [
           ..._fields,
-          const PlanField(id: PlanUtils.agendaPlaceholderId, name: 'Tagesordnung', time: '0'),
+          PlanField(id: PlanUtils.agendaPlaceholderId, name: context.l10n.planningAgenda, time: '0'),
         ]);
     _changed();
   }
@@ -812,19 +814,20 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   Future<void> _shareLink() async {
     final att = _att;
     if (att?.id == null) {
-      ToastHelper.showWarning(context, 'Bitte wähle zuerst einen Termin aus.');
+      ToastHelper.showWarning(context, context.l10n.planningChooseEventFirst);
       return;
     }
     await _save();
     if (!mounted) return;
     final action = await showPlanActionSheet<String>(
       context,
-      title: 'Link teilen',
+      title: context.l10n.planningShareLink,
       actions: [
-        const PlanSheetAction('read', 'Nur-Lesen-Link', icon: Icons.link),
-        const PlanSheetAction('edit', 'Bearbeitungs-Link', icon: Icons.edit_note),
+        PlanSheetAction('read', context.l10n.planningReadOnlyLink, icon: Icons.link),
+        PlanSheetAction('edit', context.l10n.planningEditLink, icon: Icons.edit_note),
         if (att!.shareKey != null)
-          const PlanSheetAction('revoke', 'Freigabe aufheben', icon: Icons.link_off, destructive: true),
+          PlanSheetAction('revoke', context.l10n.planningFlutterUnshareAction,
+              icon: Icons.link_off, destructive: true),
       ],
     );
     if (action == null || !mounted) return;
@@ -832,14 +835,14 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       if (action == 'revoke') {
         final ok = await showPlanConfirm(
           context,
-          title: 'Freigabe aufheben?',
-          message: 'Der öffentliche Link wird ungültig. Fortfahren?',
-          confirmText: 'Aufheben',
+          title: context.l10n.planningUnshareConfirm,
+          message: context.l10n.planningUnshareMessage,
+          confirmText: context.l10n.planningUnshare,
           destructive: true,
         );
         if (!ok) return;
         await _updateFlags({'share_key': null, 'share_edit_key': null});
-        if (mounted) ToastHelper.showSuccess(context, 'Freigabe aufgehoben');
+        if (mounted) ToastHelper.showSuccess(context, context.l10n.planningUnshared);
         return;
       }
       final edit = action == 'edit';
@@ -857,7 +860,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       final url = planPublicUrl(edit ? '$base&edit=$editKey' : base);
       if (mounted) await sharePlanLink(context, url, title: _effectiveTitle);
     } catch (e) {
-      if (mounted) ToastHelper.showError(context, 'Fehler beim Teilen: $e');
+      if (mounted) ToastHelper.showError(context, context.l10n.planningFlutterShareFailedWith(e));
     }
   }
 
@@ -898,7 +901,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     await showPlanExportSheet(
       context,
       ref,
-      title: 'Aktionen',
+      title: context.l10n.personActions,
       fileName: fileName,
       includeBranding: ref.read(includeBrandingProvider), // MISC2
       pages: () => [
@@ -913,8 +916,9 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       ],
       extraActions: [
         if (plans.length > 1)
-          const PlanSheetAction('all', 'PDF exportieren (alle Pläne)', icon: Icons.picture_as_pdf),
-        if (showSectional) const PlanSheetAction('sectional', 'Registerprobenplan erstellen', icon: Icons.groups),
+          PlanSheetAction('all', context.l10n.planningExportPdfAll, icon: Icons.picture_as_pdf),
+        if (showSectional)
+          PlanSheetAction('sectional', context.l10n.planningCreateSectionalPlan, icon: Icons.groups),
       ],
       onExtraAction: (a) async {
         if (a == 'sectional') {
@@ -938,9 +942,9 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   Future<void> _resetPlan() async {
     final ok = await showPlanConfirm(
       context,
-      title: 'Plan zurücksetzen',
-      message: 'Möchtest du den Plan für diese Veranstaltung wirklich zurücksetzen? Alle Änderungen gehen verloren.',
-      confirmText: 'Zurücksetzen',
+      title: context.l10n.planningResetPlan,
+      message: context.l10n.planningResetPlanMessage,
+      confirmText: context.l10n.dateDialogReset,
     );
     if (ok && _att != null) _applyTypeDefaultPlan(_att!);
   }
@@ -1000,24 +1004,24 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
         // Ionic: modal toolbar [Link teilen, Schließen]; actions in the FAB (…).
         appBar: AppBar(
           automaticallyImplyLeading: false,
-          title: const Text('Ablaufplan erstellen'),
+          title: Text(context.l10n.attendanceCreateRunSheet),
           actions: [
-            IconButton(tooltip: 'Link teilen', icon: const Icon(Icons.link), onPressed: _shareLink),
+            IconButton(tooltip: context.l10n.planningShareLink, icon: const Icon(Icons.link), onPressed: _shareLink),
             IconButton(
-              tooltip: 'Schließen',
+              tooltip: context.l10n.commonClose,
               icon: const Icon(Icons.close),
               onPressed: () => Navigator.of(context).maybePop(),
             ),
           ],
         ),
         floatingActionButton: FloatingActionButton(
-          tooltip: 'Aktionen',
+          tooltip: context.l10n.personActions,
           onPressed: _showOptions,
           child: const Icon(Icons.more_horiz),
         ),
         body: attendancesAsync.when(
           loading: () => const Center(child: CircularProgressIndicator()),
-          error: (e, _) => Center(child: Text('Fehler: $e')),
+          error: (e, _) => Center(child: Text(context.l10n.planningFlutterErrorWith(e))),
           data: (_) => ListView(
             padding: const EdgeInsets.only(bottom: 96),
             children: [
@@ -1029,7 +1033,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     ListTile(
-                      title: const Text('Ablauf', style: TextStyle(fontWeight: FontWeight.bold)),
+                      title: Text(context.l10n.planningRunSheet, style: const TextStyle(fontWeight: FontWeight.bold)),
                       trailing: IconButton(icon: const Icon(Icons.add), onPressed: _showAddMenu),
                     ),
                     if (labels.isNotEmpty)
@@ -1038,14 +1042,14 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
                         selected: _planIndex,
                         onSelected: _selectPlan,
                         trailing: IconButton(
-                          tooltip: 'Plan-Optionen',
+                          tooltip: context.l10n.planningPlanOptions,
                           icon: const Icon(Icons.more_horiz),
                           onPressed: _showPlanOptions,
                         ),
                       ),
                     ListTile(
-                      title: const Text('Start'),
-                      trailing: TextButton(onPressed: _pickTime, child: Text('$_time Uhr')),
+                      title: Text(context.l10n.attendanceStartLabel),
+                      trailing: TextButton(onPressed: _pickTime, child: Text(context.l10n.attendanceTimeOClock(_time))),
                     ),
                     const Divider(height: 1),
                     PlanFieldsEditor(
@@ -1062,8 +1066,8 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
                     ),
                     if (_fields.isNotEmpty)
                       ListTile(
-                        title: const Text('Ende'),
-                        trailing: Text('$_end Uhr', style: const TextStyle(fontWeight: FontWeight.bold)),
+                        title: Text(context.l10n.attendanceEnd),
+                        trailing: Text(context.l10n.attendanceTimeOClock(_end), style: const TextStyle(fontWeight: FontWeight.bold)),
                       ),
                   ],
                 ),
@@ -1085,9 +1089,9 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             ListTile(
-              title: const Text('Zugehörige Anwesenheit', style: TextStyle(fontWeight: FontWeight.bold)),
+              title: Text(context.l10n.planningRelatedAttendance, style: const TextStyle(fontWeight: FontWeight.bold)),
               trailing: IconButton(
-                  tooltip: 'Plan zurücksetzen', icon: const Icon(Icons.refresh), onPressed: _resetPlan),
+                  tooltip: context.l10n.planningResetPlan, icon: const Icon(Icons.refresh), onPressed: _resetPlan),
             ),
             if (_attendances.isNotEmpty)
               Padding(
@@ -1096,7 +1100,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
                   key: ValueKey(_attId),
                   isExpanded: true,
                   value: _attId,
-                  decoration: const InputDecoration(labelText: 'Aktuelle'),
+                  decoration: InputDecoration(labelText: context.l10n.planningCurrent),
                   items: [
                     for (final a in _attendances)
                       if (a.id != null)
@@ -1106,15 +1110,15 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
                 ),
               )
             else
-              const ListTile(title: Text('Keine Termine vorhanden')),
+              ListTile(title: Text(context.l10n.planningFlutterNoEvents)),
             if (att != null && (att.notes ?? '').isNotEmpty)
               ListTile(
-                title: const Text('Anwesenheitsnotizen', style: TextStyle(fontSize: 12, color: AppColors.medium)),
+                title: Text(context.l10n.planningAttendanceNotes, style: const TextStyle(fontSize: 12, color: AppColors.medium)),
                 subtitle: Text(att.notes!),
               ),
             if (att != null) ...[
               SwitchListTile(
-                title: const Text('Plan mit Mitgliedern teilen'),
+                title: Text(context.l10n.planningShareWithMembers),
                 value: _sharePlan,
                 onChanged: (v) async {
                   setState(() => _sharePlan = v);
@@ -1127,7 +1131,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
               ),
               if (org != null)
                 SwitchListTile(
-                  title: const Text('Organisationsplan'),
+                  title: Text(context.l10n.planningOrgPlan),
                   value: _isOrgPlan,
                   onChanged: (v) async {
                     setState(() => _isOrgPlan = v);
@@ -1147,9 +1151,9 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
                   child: TextField(
                     controller: _titleController,
                     textCapitalization: TextCapitalization.sentences,
-                    decoration: const InputDecoration(
-                      labelText: 'Ablaufplan Überschrift',
-                      hintText: 'Standardtitel verwenden',
+                    decoration: InputDecoration(
+                      labelText: context.l10n.planningHeadingLabel,
+                      hintText: context.l10n.planningDefaultTitle,
                     ),
                   ),
                 ),
@@ -1158,7 +1162,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
             // MISC2: "Branding einbeziehen" (only when logo/text configured)
             if (ref.watch(hasBrandingProvider))
               SwitchListTile(
-                title: const Text('Branding einbeziehen'),
+                title: Text(context.l10n.planningIncludeBranding),
                 value: ref.watch(includeBrandingProvider),
                 onChanged: (v) => ref.read(includeBrandingProvider.notifier).state = v,
               ),
@@ -1168,14 +1172,14 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
                   child: TextButton.icon(
                     onPressed: () => _navigate(-1),
                     icon: const Icon(Icons.arrow_back),
-                    label: const Text('Vorige'),
+                    label: Text(context.l10n.planningPrevious),
                   ),
                 ),
                 Expanded(
                   child: TextButton.icon(
                     onPressed: () => _navigate(1),
                     icon: const Icon(Icons.arrow_forward),
-                    label: const Text('Nächste'),
+                    label: Text(context.l10n.planningNext),
                   ),
                 ),
               ],

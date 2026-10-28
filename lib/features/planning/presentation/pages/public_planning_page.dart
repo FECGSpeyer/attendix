@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:intl/intl.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -25,6 +26,7 @@ import '../widgets/plan_field_dialogs.dart';
 import '../widgets/plan_fields_editor.dart';
 import '../widgets/plan_song_helper.dart';
 import 'planning_page.dart' show planSongsProvider;
+import '../../../../l10n/l10n.dart';
 
 /// Predefined template of the public planning page (Ionic `PUBLIC_PLANNING_TEMPLATES`).
 class PublicPlanningTemplate {
@@ -130,7 +132,7 @@ class PublicPlanningPage extends ConsumerStatefulWidget {
 class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
   static const _storageKey = 'attendix-public-plan';
 
-  final _titleController = TextEditingController(text: 'Ablaufplan');
+  final _titleController = TextEditingController(text: l10nWithoutContext.plansRunSheet);
   String? _templateId;
   String _brandingId = 'none';
   DateTime _date = DateTime.now();
@@ -169,7 +171,7 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
 
   String get _end => PlanUtils.computeEnd(_time, _fields);
 
-  String get _title => _titleController.text.trim().isEmpty ? 'Ablaufplan' : _titleController.text.trim();
+  String get _title => _titleController.text.trim().isEmpty ? l10nWithoutContext.plansRunSheet : _titleController.text.trim();
 
   // ---------------------------------------------------------------------------
   // Persistence
@@ -183,7 +185,7 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
       if (raw != null) {
         final s = jsonDecode(raw) as Map<String, dynamic>;
         if (s['selectedFields'] is List) {
-          _titleController.text = s['planTitle'] as String? ?? 'Ablaufplan';
+          _titleController.text = s['planTitle'] as String? ?? l10nWithoutContext.plansRunSheet;
           _date = DateTime.tryParse(s['date'] as String? ?? '') ?? _date;
           final t = PlanUtils.formatTime(s['time'] as String?);
           if (t.isNotEmpty) _time = t;
@@ -309,9 +311,9 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
     if (_fields.isEmpty) return true;
     return showPlanConfirm(
       context,
-      title: 'Vorlage anwenden',
-      message: 'Aktuellen Ablauf durch die Vorlage ersetzen?',
-      confirmText: 'Ersetzen',
+      title: context.l10n.plansApplyTemplate,
+      message: context.l10n.plansReplaceWithTemplate,
+      confirmText: context.l10n.personReplace,
     );
   }
 
@@ -346,14 +348,14 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
   Future<void> _resetToTemplate() async {
     final tpl = publicPlanningTemplates.where((t) => t.id == _templateId).firstOrNull;
     if (tpl == null) {
-      ToastHelper.showWarning(context, 'Keine Vorlage ausgewählt.');
+      ToastHelper.showWarning(context, context.l10n.plansNoTemplate);
       return;
     }
     final ok = await showPlanConfirm(
       context,
-      title: 'Vorlage wiederherstellen',
-      message: 'Alle Änderungen verwerfen und die Standardwerte der Vorlage „${tpl.name}“ wiederherstellen?',
-      confirmText: 'Wiederherstellen',
+      title: context.l10n.plansRestoreTemplate,
+      message: context.l10n.plansRestoreTemplateMessage(tpl.name),
+      confirmText: context.l10n.plansRestore,
     );
     if (ok) _applyTemplate(tpl);
   }
@@ -373,17 +375,18 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
     final action = await showPlanActionSheet<String>(
       context,
       actions: [
-        const PlanSheetAction('field', 'Feld hinzufügen', icon: Icons.add),
-        const PlanSheetAction('group', 'Programmblock hinzufügen', icon: Icons.view_agenda_outlined),
-        const PlanSheetAction('note', 'Notizfeld hinzufügen', icon: Icons.sticky_note_2_outlined),
+        PlanSheetAction('field', context.l10n.planningAddField, icon: Icons.add),
+        PlanSheetAction('group', context.l10n.planningAddBlock, icon: Icons.view_agenda_outlined),
+        PlanSheetAction('note', context.l10n.planningAddNoteField, icon: Icons.sticky_note_2_outlined),
         if (loggedIn && !isGeneral) ...[
-          const PlanSheetAction('current', 'Aktuelle Werke hinzufügen', icon: Icons.library_music_outlined),
-          if (_songs.isNotEmpty) const PlanSheetAction('song', 'Werk hinzufügen', icon: Icons.music_note_outlined),
+          PlanSheetAction('current', context.l10n.planningAddCurrentSongs, icon: Icons.library_music_outlined),
+          if (_songs.isNotEmpty) PlanSheetAction('song', context.l10n.planningAddSong, icon: Icons.music_note_outlined),
         ],
         for (var i = 0; i < orgFields.length; i++)
-          PlanSheetAction('orgfield:$i', 'Feld: ${orgFields[i].name} (${orgFields[i].time} min)'),
+          PlanSheetAction('orgfield:$i', context.l10n.planningFlutterFieldEntry(orgFields[i].name, orgFields[i].time)),
         for (final tpl in blockTemplates)
-          PlanSheetAction('block:${tpl.id}', 'Programmblock: ${tpl.name} (${PlanUtils.templateMinutes(tpl)} min)'),
+          PlanSheetAction(
+              'block:${tpl.id}', context.l10n.planningFlutterBlockEntry(tpl.name, PlanUtils.templateMinutes(tpl))),
       ],
     );
     if (action == null || !mounted) return;
@@ -403,7 +406,9 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
     switch (action) {
       case 'field':
         final r = await showPlanFieldDialog(context,
-            title: 'Feld hinzufügen', conductorHint: 'Ausführender (optional)', withMinutes: false);
+            title: context.l10n.planningAddField,
+            conductorHint: context.l10n.plansPerformerOptional,
+            withMinutes: false);
         if (r == null) return;
         setState(() => _fields = [
               ..._fields,
@@ -411,10 +416,10 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
             ]);
       case 'note':
         final r = await showPlanFieldDialog(context,
-            title: 'Notizfeld hinzufügen',
-            nameLabel: 'Notiz',
-            nameHint: 'Notiz eingeben...',
-            emptyNameMessage: 'Bitte eine Notiz eingeben.',
+            title: context.l10n.planningAddNoteField,
+            nameLabel: context.l10n.planningNote,
+            nameHint: context.l10n.planningEnterNote,
+            emptyNameMessage: context.l10n.plansEnterNotePlease,
             withConductor: false,
             withInfo: false,
             withMinutes: false);
@@ -442,14 +447,14 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
   Future<void> _addGroup() async {
     final r = await showPlanFieldDialog(
       context,
-      title: 'Programmblock hinzufügen',
-      message: 'Die Dauer ergibt sich aus den Unterpunkten.',
-      nameLabel: 'Name',
-      nameHint: 'Name, z. B. Programm Jugendchor',
-      conductorLabel: 'Ausführung',
-      conductorHint: 'Ausführung (optional)',
-      confirmText: 'Anlegen',
-      emptyNameMessage: 'Bitte einen Namen eingeben.',
+      title: context.l10n.planningAddBlock,
+      message: context.l10n.planningBlockDurationHint,
+      nameLabel: context.l10n.planningName,
+      nameHint: context.l10n.planningBlockNamePlaceholder,
+      conductorLabel: context.l10n.planningPerformance,
+      conductorHint: context.l10n.planningPerformanceOptional,
+      confirmText: context.l10n.commonCreate,
+      emptyNameMessage: context.l10n.planningEnterNamePlease,
       withMinutes: false,
     );
     if (r == null || !mounted) return;
@@ -458,10 +463,10 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
     _changed();
     final sub = await showPlanFieldDialog(
       context,
-      title: 'Unterpunkt hinzufügen',
+      title: context.l10n.planningAddSubItem,
       subtitle: head.name,
-      nameHint: 'Programmpunkt, z. B. Gruppenlied',
-      infoHint: 'Info-Text (optional), z. B. Liedtitel',
+      nameHint: context.l10n.planningSubItemPlaceholder,
+      infoHint: context.l10n.planningSubItemInfoPlaceholder,
       initialMinutes: 5,
     );
     if (sub == null) return;
@@ -487,16 +492,16 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
     if (_fields.isNotEmpty) {
       final ok = await showPlanConfirm(
         context,
-        title: 'Neuer Plan',
-        message: 'Aktuellen Plan verwerfen und einen neuen erstellen?',
-        confirmText: 'Neuer Plan',
+        title: context.l10n.plansNewPlan,
+        message: context.l10n.plansDiscardNew,
+        confirmText: context.l10n.plansNewPlan,
       );
       if (!ok) return;
     }
     setState(() {
       _planId = null;
       _editKey = null;
-      _titleController.text = 'Ablaufplan';
+      _titleController.text = l10nWithoutContext.plansRunSheet;
       _date = DateTime.now();
       _time = '10:00';
       _fields = [];
@@ -511,7 +516,7 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
     setState(() {
       _planId = plan.id;
       _editKey = plan.editKey;
-      _titleController.text = (plan.planTitle?.isNotEmpty ?? false) ? plan.planTitle! : 'Ablaufplan';
+      _titleController.text = (plan.planTitle?.isNotEmpty ?? false) ? plan.planTitle! : l10nWithoutContext.plansRunSheet;
       _date = DateTime.tryParse(plan.date ?? '') ?? DateTime.now();
       final t = PlanUtils.formatTime(plan.time);
       _time = t.isEmpty ? '10:00' : t;
@@ -541,25 +546,25 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
         await repo.setMySharedPlanOrg(_planId!, null);
         setState(() => _isOrgPlan = false);
         ref.invalidate(orgPlansProvider);
-        if (mounted) ToastHelper.showSuccess(context, 'Plan aus Organisation entfernt');
+        if (mounted) ToastHelper.showSuccess(context, context.l10n.plansRemovedFromOrg);
       } catch (_) {
-        if (mounted) ToastHelper.showError(context, 'Fehler beim Entfernen aus der Organisation');
+        if (mounted) ToastHelper.showError(context, context.l10n.plansRemoveOrgFailed);
       }
       return;
     }
     if (!_validate()) return;
     await _persistToDb();
     if (_planId == null) {
-      if (mounted) ToastHelper.showError(context, 'Fehler beim Speichern des Plans');
+      if (mounted) ToastHelper.showError(context, context.l10n.plansSavePlanFailed);
       return;
     }
     try {
       await repo.setMySharedPlanOrg(_planId!, org!.id);
       setState(() => _isOrgPlan = true);
       ref.invalidate(orgPlansProvider);
-      if (mounted) ToastHelper.showSuccess(context, 'Plan zur Organisation "${org.name}" hinzugefügt');
+      if (mounted) ToastHelper.showSuccess(context, context.l10n.plansAddedToOrg(org.name));
     } catch (_) {
-      if (mounted) ToastHelper.showError(context, 'Fehler beim Hinzufügen zur Organisation');
+      if (mounted) ToastHelper.showError(context, context.l10n.plansAddOrgFailed);
     }
   }
 
@@ -569,11 +574,11 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
 
   bool _validate() {
     if (_time.isEmpty || _fields.isEmpty) {
-      ToastHelper.showWarning(context, 'Bitte mindestens ein Feld hinzufügen.');
+      ToastHelper.showWarning(context, context.l10n.plansAddFieldMin);
       return false;
     }
     if (!_fields.every((f) => PlanUtils.isNote(f) || PlanUtils.isGroupHead(f) || f.time.trim().isNotEmpty)) {
-      ToastHelper.showWarning(context, 'Bitte alle Dauern ausfüllen.');
+      ToastHelper.showWarning(context, context.l10n.plansFillDurations);
       return false;
     }
     return true;
@@ -602,12 +607,12 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
     await showPlanExportSheet(
       context,
       ref,
-      title: 'Teilen & Exportieren',
+      title: context.l10n.plansShareExport,
       pages: _pages,
       fileName: _fileName,
-      extraActions: const [
-        PlanSheetAction('read', 'Nur-Lesen-Link', icon: Icons.link),
-        PlanSheetAction('edit', 'Bearbeitungs-Link', icon: Icons.edit_note),
+      extraActions: [
+        PlanSheetAction('read', context.l10n.planningReadOnlyLink, icon: Icons.link),
+        PlanSheetAction('edit', context.l10n.planningEditLink, icon: Icons.edit_note),
       ],
       onExtraAction: (a) => _doShare(a == 'edit'),
     );
@@ -619,7 +624,7 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
     if (_loggedIn) {
       if (_planId == null) await _persistToDb();
       if (_planId == null) {
-        if (mounted) ToastHelper.showError(context, 'Fehler beim Erstellen des Links');
+        if (mounted) ToastHelper.showError(context, context.l10n.plansLinkFailed);
         return;
       }
       id = _planId!;
@@ -631,7 +636,7 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
       try {
         await ref.read(publicPlanRepositoryProvider).insertAnonymousSharedPlan(_currentShared(id, editKey));
       } catch (_) {
-        if (mounted) ToastHelper.showError(context, 'Fehler beim Erstellen des Links');
+        if (mounted) ToastHelper.showError(context, context.l10n.plansLinkFailed);
         return;
       }
     }
@@ -650,7 +655,7 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
       initialDate: _date,
       firstDate: DateTime(2000),
       lastDate: DateTime(2100),
-      locale: const Locale('de', 'DE'),
+      locale: Locale(currentLanguage()),
     );
     if (picked == null) return;
     setState(() => _date = picked);
@@ -693,11 +698,11 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: widget.inApp,
-        title: const Text('Ablaufplanung'),
+        title: Text(context.l10n.plansPlanning),
         actions: [
           if (loggedIn)
-            IconButton(tooltip: 'Meine Pläne', icon: const Icon(Icons.list), onPressed: _openMyPlans),
-          IconButton(tooltip: 'Teilen & Exportieren', icon: const Icon(Icons.ios_share), onPressed: _shareCurrentPlan),
+            IconButton(tooltip: context.l10n.plansMyPlans, icon: const Icon(Icons.list), onPressed: _openMyPlans),
+          IconButton(tooltip: context.l10n.plansShareExport, icon: const Icon(Icons.ios_share), onPressed: _shareCurrentPlan),
         ],
       ),
       body: !_ready
@@ -721,7 +726,7 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
                             child: TextField(
                               controller: _titleController,
                               textCapitalization: TextCapitalization.sentences,
-                              decoration: const InputDecoration(labelText: 'Titel', hintText: 'Ablaufplan'),
+                              decoration: InputDecoration(labelText: context.l10n.plansTitle, hintText: context.l10n.plansRunSheet),
                             ),
                           ),
                         ),
@@ -731,15 +736,15 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
                             key: ValueKey('tpl-$_templateId'),
                             value: _templateId,
                             isExpanded: true,
-                            decoration: const InputDecoration(labelText: 'Vorlage'),
+                            decoration: InputDecoration(labelText: context.l10n.plansTemplate),
                             items: [
                               for (final t in publicPlanningTemplates)
                                 DropdownMenuItem(value: t.id, child: Text(t.name)),
                               if (loggedIn && orgTemplates.isNotEmpty) ...[
-                                const DropdownMenuItem(
-                                    value: '', enabled: false, child: Text('── Org-Vorlagen ──')),
+                                DropdownMenuItem(
+                                    value: '', enabled: false, child: Text(context.l10n.plansOrgTemplates)),
                                 for (var i = 0; i < orgTemplates.length; i++)
-                                  DropdownMenuItem(value: 'org:$i', child: Text('${orgTemplates[i].title ?? ''} (Org)')),
+                                  DropdownMenuItem(value: 'org:$i', child: Text(context.l10n.plansOrgSuffix(orgTemplates[i].title ?? ''))),
                               ],
                             ],
                             onChanged: _onTemplateChange,
@@ -751,7 +756,7 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
                             key: ValueKey('brand-$_brandingId'),
                             value: _brandingId,
                             isExpanded: true,
-                            decoration: const InputDecoration(labelText: 'Branding'),
+                            decoration: InputDecoration(labelText: context.l10n.plansBranding),
                             items: [
                               for (final b in publicBrandings) DropdownMenuItem(value: b.id, child: Text(b.name)),
                             ],
@@ -762,16 +767,15 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
                           ),
                         ),
                         ListTile(
-                          title: const Text('Datum'),
+                          title: Text(context.l10n.plansDate),
                           trailing: TextButton(
                             onPressed: _pickDate,
-                            child: Text(
-                                '${_date.day.toString().padLeft(2, '0')}.${_date.month.toString().padLeft(2, '0')}.${_date.year}'),
+                            child: Text(DateFormat(dateFmt()).format(_date)),
                           ),
                         ),
                         ListTile(
                           leading: const Icon(Icons.refresh, color: AppColors.primary),
-                          title: const Text('Vorlage wiederherstellen', style: TextStyle(color: AppColors.primary)),
+                          title: Text(context.l10n.plansRestoreTemplate, style: const TextStyle(color: AppColors.primary)),
                           onTap: _resetToTemplate,
                         ),
                         if (org != null)
@@ -779,7 +783,7 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
                             leading: Icon(_isOrgPlan ? Icons.check_circle : Icons.business_outlined,
                                 color: _isOrgPlan ? AppColors.success : AppColors.primary),
                             title: Text(
-                              _isOrgPlan ? 'In Organisation "${org.name}"' : 'Zur Organisation hinzufügen',
+                              _isOrgPlan ? context.l10n.plansFlutterInOrg(org.name) : context.l10n.plansFlutterAddToOrg,
                               style: TextStyle(color: _isOrgPlan ? AppColors.success : AppColors.primary),
                             ),
                             onTap: _toggleOrg,
@@ -787,7 +791,7 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
                         if (loggedIn)
                           ListTile(
                             leading: const Icon(Icons.add_circle_outline, color: AppColors.medium),
-                            title: const Text('Neuer Plan', style: TextStyle(color: AppColors.medium)),
+                            title: Text(context.l10n.plansNewPlan, style: const TextStyle(color: AppColors.medium)),
                             onTap: _newPlan,
                           ),
                       ],
@@ -800,12 +804,12 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       ListTile(
-                        title: const Text('Ablauf', style: TextStyle(fontWeight: FontWeight.bold)),
+                        title: Text(context.l10n.planningRunSheet, style: const TextStyle(fontWeight: FontWeight.bold)),
                         trailing: IconButton(icon: const Icon(Icons.add), onPressed: _showAddMenu),
                       ),
                       ListTile(
-                        title: const Text('Start'),
-                        trailing: TextButton(onPressed: _pickTime, child: Text('$_time Uhr')),
+                        title: Text(context.l10n.attendanceStartLabel),
+                        trailing: TextButton(onPressed: _pickTime, child: Text(context.l10n.attendanceTimeOClock(_time))),
                       ),
                       const Divider(height: 1),
                       PlanFieldsEditor(
@@ -818,8 +822,8 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
                       ),
                       if (_fields.isNotEmpty)
                         ListTile(
-                          title: const Text('Ende'),
-                          trailing: Text('$_end Uhr', style: const TextStyle(fontWeight: FontWeight.bold)),
+                          title: Text(context.l10n.attendanceEnd),
+                          trailing: Text(context.l10n.attendanceTimeOClock(_end), style: const TextStyle(fontWeight: FontWeight.bold)),
                         ),
                     ],
                   ),
@@ -829,7 +833,7 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
                   child: FilledButton.icon(
                     onPressed: _showExportOptions,
                     icon: const Icon(Icons.ios_share),
-                    label: const Text('Exportieren'),
+                    label: Text(context.l10n.planningExport),
                   ),
                 ),
               ],
@@ -851,17 +855,17 @@ class _MyPlansSheet extends ConsumerWidget {
         child: Column(
           children: [
             ListTile(
-              title: const Text('Meine Pläne', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-              trailing: TextButton(onPressed: () => Navigator.pop(context), child: const Text('Schließen')),
+              title: Text(context.l10n.plansMyPlans, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+              trailing: TextButton(onPressed: () => Navigator.pop(context), child: Text(context.l10n.commonClose)),
             ),
             Expanded(
               child: plansAsync.when(
                 loading: () => const Center(child: CircularProgressIndicator()),
-                error: (e, _) => Center(child: Text('Fehler: $e')),
+                error: (e, _) => Center(child: Text(context.l10n.planningFlutterErrorWith(e))),
                 data: (plans) {
                   if (plans.isEmpty) {
-                    return const Center(
-                      child: Text('Keine Pläne vorhanden.', style: TextStyle(color: AppColors.medium)),
+                    return Center(
+                      child: Text(context.l10n.plansNoPlans, style: const TextStyle(color: AppColors.medium)),
                     );
                   }
                   // Ionic: inset list, ion-item-sliding with a danger option
@@ -903,9 +907,9 @@ class _MyPlanTile extends ConsumerWidget {
   Future<void> _delete(BuildContext context, WidgetRef ref, String title) async {
     final ok = await showPlanConfirm(
       context,
-      title: 'Plan löschen',
-      message: '"$title" endgültig löschen?',
-      confirmText: 'Löschen',
+      title: context.l10n.planningDeletePlan,
+      message: context.l10n.plansDeletePlanForever(title),
+      confirmText: context.l10n.commonDelete,
       destructive: true,
     );
     if (!ok) return;
@@ -913,7 +917,7 @@ class _MyPlanTile extends ConsumerWidget {
       await ref.read(planRepositoryWithTenantProvider).deleteMySharedPlan(plan.id);
       ref.invalidate(mySharedPlansProvider);
     } catch (_) {
-      if (context.mounted) ToastHelper.showError(context, 'Fehler beim Löschen');
+      if (context.mounted) ToastHelper.showError(context, context.l10n.plansDeleteFailed);
     }
   }
 
@@ -922,9 +926,9 @@ class _MyPlanTile extends ConsumerWidget {
     final d = DateTime.tryParse(plan.date ?? '');
     final date = d == null
         ? ''
-        : '${d.day.toString().padLeft(2, '0')}.${d.month.toString().padLeft(2, '0')}.${d.year}';
+        : DateFormat(dateFmt()).format(d);
     final count = plan.fields.length;
-    final title = (plan.planTitle?.isNotEmpty ?? false) ? plan.planTitle! : 'Ablaufplan';
+    final title = (plan.planTitle?.isNotEmpty ?? false) ? plan.planTitle! : context.l10n.plansRunSheet;
     return Slidable(
       key: ValueKey(plan.id),
       endActionPane: ActionPane(
@@ -941,7 +945,7 @@ class _MyPlanTile extends ConsumerWidget {
       ),
       child: ListTile(
         title: Text(title),
-        subtitle: Text('$date${count > 0 ? ' · $count Felder' : ''}'),
+        subtitle: Text('$date${count > 0 ? ' · ${context.l10n.plansFlutterFieldsCount(count)}' : ''}'),
         trailing: const Icon(Icons.chevron_right, color: AppColors.medium),
         onTap: () => Navigator.pop(context, plan),
       ),

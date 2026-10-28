@@ -7127,6 +7127,12 @@ abstract class AppLocalizations {
   /// **'Änderungen übernehmen'**
   String get orgFieldsApplyChanges;
 
+  /// orgFields.flutter.firstOptionDefault
+  ///
+  /// In de, this message translates to:
+  /// **'Erste Option ist der Standardwert'**
+  String get orgFieldsFlutterFirstOptionDefault;
+
   /// orgFields.intro
   ///
   /// In de, this message translates to:
@@ -7168,6 +7174,24 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Personen-Zusatzfelder'**
   String get orgFieldsTitle;
+
+  /// org.flutter.fieldCount
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {{count} Feld} other {{count} Felder}}'**
+  String orgFlutterFieldCount(num count);
+
+  /// org.flutter.noFields
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Felder'**
+  String get orgFlutterNoFields;
+
+  /// org.flutter.unlinkFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Trennen'**
+  String get orgFlutterUnlinkFailed;
 
   /// org.handover
   ///
@@ -9485,6 +9509,210 @@ abstract class AppLocalizations {
   /// **'Dies ist die aktuell erste Veranstaltung'**
   String get planningFirstEvent;
 
+  /// planning.flutter.asPdf
+  ///
+  /// In de, this message translates to:
+  /// **'Als PDF'**
+  String get planningFlutterAsPdf;
+
+  /// planning.flutter.asPdfHint
+  ///
+  /// In de, this message translates to:
+  /// **'Druckbar, A4 Querformat'**
+  String get planningFlutterAsPdfHint;
+
+  /// planning.flutter.asText
+  ///
+  /// In de, this message translates to:
+  /// **'Als Text'**
+  String get planningFlutterAsText;
+
+  /// planning.flutter.asTextHint
+  ///
+  /// In de, this message translates to:
+  /// **'Zum Kopieren'**
+  String get planningFlutterAsTextHint;
+
+  /// planning.flutter.blockEntry
+  ///
+  /// In de, this message translates to:
+  /// **'Programmblock: {name} ({min} min)'**
+  String planningFlutterBlockEntry(Object name, Object min);
+
+  /// planning.flutter.chooseFormat
+  ///
+  /// In de, this message translates to:
+  /// **'Format wählen'**
+  String get planningFlutterChooseFormat;
+
+  /// planning.flutter.errorWith
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler: {error}'**
+  String planningFlutterErrorWith(Object error);
+
+  /// planning.flutter.exportFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Export: {error}'**
+  String planningFlutterExportFailed(Object error);
+
+  /// planning.flutter.fieldEntry
+  ///
+  /// In de, this message translates to:
+  /// **'Feld: {name} ({min} min)'**
+  String planningFlutterFieldEntry(Object name, Object min);
+
+  /// planning.flutter.generateFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler bei der Generierung: {error}'**
+  String planningFlutterGenerateFailed(Object error);
+
+  /// planning.flutter.generatePlan
+  ///
+  /// In de, this message translates to:
+  /// **'Plan generieren'**
+  String get planningFlutterGeneratePlan;
+
+  /// planning.flutter.live
+  ///
+  /// In de, this message translates to:
+  /// **'Live'**
+  String get planningFlutterLive;
+
+  /// planning.flutter.liveMode
+  ///
+  /// In de, this message translates to:
+  /// **'Live-Modus'**
+  String get planningFlutterLiveMode;
+
+  /// planning.flutter.liveModeEnd
+  ///
+  /// In de, this message translates to:
+  /// **'Live-Modus beenden'**
+  String get planningFlutterLiveModeEnd;
+
+  /// planning.flutter.minAbbr
+  ///
+  /// In de, this message translates to:
+  /// **'{min} Min.'**
+  String planningFlutterMinAbbr(Object min);
+
+  /// planning.flutter.minPerUnit
+  ///
+  /// In de, this message translates to:
+  /// **'{min} Min./Einheit'**
+  String planningFlutterMinPerUnit(Object min);
+
+  /// planning.flutter.noEvents
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Termine vorhanden'**
+  String get planningFlutterNoEvents;
+
+  /// planning.flutter.noItems
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Programmpunkte'**
+  String get planningFlutterNoItems;
+
+  /// planning.flutter.pdf2xA5
+  ///
+  /// In de, this message translates to:
+  /// **'PDF (2x A5)'**
+  String get planningFlutterPdf2xA5;
+
+  /// planning.flutter.pdfA4
+  ///
+  /// In de, this message translates to:
+  /// **'PDF (A4)'**
+  String get planningFlutterPdfA4;
+
+  /// planning.flutter.perUnit
+  ///
+  /// In de, this message translates to:
+  /// **'Pro Einheit'**
+  String get planningFlutterPerUnit;
+
+  /// planning.flutter.planPosition
+  ///
+  /// In de, this message translates to:
+  /// **'{index} von {total}'**
+  String planningFlutterPlanPosition(Object index, Object total);
+
+  /// planning.flutter.regenerate
+  ///
+  /// In de, this message translates to:
+  /// **'Neu generieren'**
+  String get planningFlutterRegenerate;
+
+  /// planning.flutter.saveFailedWith
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Speichern: {error}'**
+  String planningFlutterSaveFailedWith(Object error);
+
+  /// planning.flutter.sectionalGroups
+  ///
+  /// In de, this message translates to:
+  /// **'Gruppen 1-3'**
+  String get planningFlutterSectionalGroups;
+
+  /// planning.flutter.selectConductors
+  ///
+  /// In de, this message translates to:
+  /// **'Dirigenten/Stimmführer auswählen'**
+  String get planningFlutterSelectConductors;
+
+  /// planning.flutter.selectOnePerson
+  ///
+  /// In de, this message translates to:
+  /// **'Bitte mindestens eine Person auswählen'**
+  String get planningFlutterSelectOnePerson;
+
+  /// planning.flutter.selectedCount
+  ///
+  /// In de, this message translates to:
+  /// **'{count} ausgewählt'**
+  String planningFlutterSelectedCount(Object count);
+
+  /// planning.flutter.shareFailedWith
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Teilen: {error}'**
+  String planningFlutterShareFailedWith(Object error);
+
+  /// planning.flutter.telegramNotConfigured
+  ///
+  /// In de, this message translates to:
+  /// **'Telegram nicht konfiguriert'**
+  String get planningFlutterTelegramNotConfigured;
+
+  /// planning.flutter.telegramPdf2x
+  ///
+  /// In de, this message translates to:
+  /// **'Per Telegram senden (PDF 2x A5)'**
+  String get planningFlutterTelegramPdf2x;
+
+  /// planning.flutter.time
+  ///
+  /// In de, this message translates to:
+  /// **'Zeit'**
+  String get planningFlutterTime;
+
+  /// planning.flutter.totalDuration
+  ///
+  /// In de, this message translates to:
+  /// **'Gesamtdauer'**
+  String get planningFlutterTotalDuration;
+
+  /// planning.flutter.unshareAction
+  ///
+  /// In de, this message translates to:
+  /// **'Freigabe aufheben'**
+  String get planningFlutterUnshareAction;
+
   /// planning.groupName
   ///
   /// In de, this message translates to:
@@ -9982,6 +10210,42 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Bitte alle Dauern ausfüllen.'**
   String get plansFillDurations;
+
+  /// plans.flutter.addToOrg
+  ///
+  /// In de, this message translates to:
+  /// **'Zur Organisation hinzufügen'**
+  String get plansFlutterAddToOrg;
+
+  /// plans.flutter.fieldsCount
+  ///
+  /// In de, this message translates to:
+  /// **'{count} Felder'**
+  String plansFlutterFieldsCount(Object count);
+
+  /// plans.flutter.hideTab
+  ///
+  /// In de, this message translates to:
+  /// **'Tab ausblenden'**
+  String get plansFlutterHideTab;
+
+  /// plans.flutter.inOrg
+  ///
+  /// In de, this message translates to:
+  /// **'In Organisation \"{name}\"'**
+  String plansFlutterInOrg(Object name);
+
+  /// plans.flutter.orgPlansTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Organisationspläne'**
+  String get plansFlutterOrgPlansTitle;
+
+  /// plans.flutter.showAsTab
+  ///
+  /// In de, this message translates to:
+  /// **'Als Tab anzeigen'**
+  String get plansFlutterShowAsTab;
 
   /// plans.imageA4
   ///

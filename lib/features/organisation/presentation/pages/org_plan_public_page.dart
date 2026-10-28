@@ -12,6 +12,7 @@ import '../../../../data/repositories/public_plan_repository.dart';
 import '../../../planning/presentation/widgets/plan_export_actions.dart';
 import '../../../planning/presentation/widgets/plan_field_dialogs.dart';
 import '../../../planning/presentation/widgets/plan_view_list.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Public list of all org plans via `/org-plan?key=<public_plan_key>`
 /// (Ionic `OrgPlanPublicPage`). No login required.
@@ -148,21 +149,21 @@ class _OrgPlanPublicPageState extends ConsumerState<OrgPlanPublicPage> {
     final base = '${SupabaseConfig.supabaseUrl}/functions/v1/ical-org-plans?key=${widget.publicKey}';
     final link = await showPlanActionSheet<String>(
       context,
-      title: 'Kalender abonnieren',
+      title: context.l10n.plansSubscribeCalendar,
       actions: [
-        PlanSheetAction(base, 'Einfach (1 Termin je Plan)', icon: Icons.event),
-        PlanSheetAction('$base&detailed=true', 'Detailliert (je Programmpunkt)', icon: Icons.event_note),
+        PlanSheetAction(base, context.l10n.plansSimpleCalendar, icon: Icons.event),
+        PlanSheetAction('$base&detailed=true', context.l10n.plansDetailedCalendar, icon: Icons.event_note),
       ],
     );
     if (link == null || !mounted) return;
     await showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Kalender abonnieren'),
-        content: SelectableText('Kopiere den folgenden Link in deine Kalender-App:\n\n$link'),
+        title: Text(ctx.l10n.plansSubscribeCalendar),
+        content: SelectableText(ctx.l10n.plansCalendarLinkMessage(link)),
         actions: [
-          TextButton(onPressed: () => copyPlanLink(ctx, link), child: const Text('Link kopieren')),
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Schließen')),
+          TextButton(onPressed: () => copyPlanLink(ctx, link), child: Text(ctx.l10n.plansCopyLink)),
+          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(ctx.l10n.commonClose)),
         ],
       ),
     );
@@ -209,7 +210,7 @@ class _OrgPlanPublicPageState extends ConsumerState<OrgPlanPublicPage> {
         ),
         trailing: liveNow
             ? IconButton(
-                tooltip: 'Live',
+                tooltip: context.l10n.planningFlutterLive,
                 icon: Icon(live ? Icons.radio_button_checked : Icons.radio_button_unchecked,
                     color: live ? AppColors.danger : AppColors.primary),
                 onPressed: () => setState(() => live ? _live.remove(e.key) : _live.add(e.key)),
@@ -219,7 +220,7 @@ class _OrgPlanPublicPageState extends ConsumerState<OrgPlanPublicPage> {
           const Divider(height: 1),
           ListTile(
             leading: const Icon(Icons.ios_share, color: AppColors.primary),
-            title: const Text('Exportieren', style: TextStyle(color: AppColors.primary)),
+            title: Text(context.l10n.planningExport, style: const TextStyle(color: AppColors.primary)),
             onTap: () => _export(e),
           ),
           const Divider(height: 1),
@@ -236,10 +237,10 @@ class _OrgPlanPublicPageState extends ConsumerState<OrgPlanPublicPage> {
       builder: (ctx) => Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
-          title: const Text('Vergangene Pläne'),
+          title: Text(ctx.l10n.plansPastPlans),
           actions: [
             IconButton(
-              tooltip: 'Schließen',
+              tooltip: ctx.l10n.commonClose,
               icon: const Icon(Icons.close),
               onPressed: () => Navigator.of(ctx).pop(),
             ),
@@ -258,16 +259,16 @@ class _OrgPlanPublicPageState extends ConsumerState<OrgPlanPublicPage> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: Text(_orgName.isNotEmpty ? _orgName : 'Organisationspläne'),
+        title: Text(_orgName.isNotEmpty ? _orgName : context.l10n.plansFlutterOrgPlansTitle),
         actions: [
           IconButton(
-            tooltip: 'Kalender abonnieren',
+            tooltip: context.l10n.plansSubscribeCalendar,
             icon: const Icon(Icons.calendar_month_outlined),
             onPressed: _subscribeCalendar,
           ),
           if (_past.isNotEmpty)
             IconButton(
-              tooltip: 'Vergangene Pläne',
+              tooltip: context.l10n.plansPastPlans,
               icon: const Icon(Icons.schedule),
               onPressed: _showHistory,
             ),
@@ -276,12 +277,12 @@ class _OrgPlanPublicPageState extends ConsumerState<OrgPlanPublicPage> {
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : _notFound
-              ? const Padding(
-                  padding: EdgeInsets.all(16),
+              ? Padding(
+                  padding: const EdgeInsets.all(16),
                   child: Card(
                     child: Padding(
-                      padding: EdgeInsets.all(16),
-                      child: Text('Link ungültig oder abgelaufen.'),
+                      padding: const EdgeInsets.all(16),
+                      child: Text(context.l10n.plansLinkInvalid),
                     ),
                   ),
                 )
@@ -291,9 +292,9 @@ class _OrgPlanPublicPageState extends ConsumerState<OrgPlanPublicPage> {
                     padding: const EdgeInsets.only(bottom: 24),
                     children: [
                       if (_upcoming.isEmpty)
-                        const ListTile(
-                          leading: Icon(Icons.event_outlined, color: AppColors.medium),
-                          title: Text('Keine bevorstehenden Org-Pläne vorhanden.'),
+                        ListTile(
+                          leading: const Icon(Icons.event_outlined, color: AppColors.medium),
+                          title: Text(context.l10n.plansNoUpcomingPlans),
                         ),
                       for (var i = 0; i < _upcoming.length; i++)
                         _planCard(_upcoming[i], initiallyExpanded: i == 0),

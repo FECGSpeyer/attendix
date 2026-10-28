@@ -11,6 +11,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/plan/plan.dart';
 import '../../../planning/presentation/widgets/plan_field_dialogs.dart';
 import '../../../planning/presentation/widgets/plan_fields_editor.dart';
+import '../../../../l10n/l10n.dart';
 
 /// "Planvorlagen & Felder" of the organisation (Ionic `OrgPlanningTemplatesPage`).
 ///
@@ -31,14 +32,14 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
 
   Future<void> _saveDefaultFields() async {
     final ok = await _notifier.updateDefaultFields(_defaultFields);
-    if (!ok && mounted) ToastHelper.showError(context, 'Fehler beim Speichern');
+    if (!ok && mounted) ToastHelper.showError(context, context.l10n.plansSaveFailed);
   }
 
   Future<void> _saveTemplates() async {
     final ok = await _notifier.updatePlanningTemplates([
       for (final t in _templates!) t.copyWith(end: _computeEnd(t)),
     ]);
-    if (!ok && mounted) ToastHelper.showError(context, 'Fehler beim Speichern');
+    if (!ok && mounted) ToastHelper.showError(context, context.l10n.plansSaveFailed);
   }
 
   String _computeEnd(Plan tpl) {
@@ -52,8 +53,9 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
     if (total == 0) return '';
     final h = total ~/ 60;
     final m = total % 60;
-    if (h == 0) return '$m min';
-    return m > 0 ? '$h h $m min' : '$h h';
+    final l10n = context.l10n;
+    if (h == 0) return l10n.planningMinShort(m);
+    return m > 0 ? l10n.orgTemplatesDuration(h, m) : l10n.orgTemplatesDurationH(h);
   }
 
   // ---------------------------------------------------------------------------
@@ -63,11 +65,11 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
   Future<void> _addDefaultField() async {
     final r = await showPlanFieldDialog(
       context,
-      title: 'Feld hinzufügen',
-      nameLabel: 'Feldname',
-      nameHint: 'Feldname...',
-      conductorHint: 'Ausführender (optional)...',
-      emptyNameMessage: 'Bitte einen Feldnamen eingeben.',
+      title: context.l10n.typeSettingsAddField,
+      nameLabel: context.l10n.orgTemplatesFieldName,
+      nameHint: context.l10n.orgTemplatesFieldNamePh,
+      conductorHint: context.l10n.orgTemplatesPerformerOptPh,
+      emptyNameMessage: context.l10n.orgTemplatesEnterFieldName,
       initialMinutes: 20,
     );
     if (r == null) return;
@@ -82,12 +84,12 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
     final field = _defaultFields[index];
     final r = await showPlanFieldDialog(
       context,
-      title: 'Feld bearbeiten',
-      nameLabel: 'Feldname',
-      nameHint: 'Feldname...',
-      conductorHint: 'Ausführender (optional)...',
-      emptyNameMessage: 'Bitte einen Feldnamen eingeben.',
-      confirmText: 'Speichern',
+      title: context.l10n.typeSettingsEditField,
+      nameLabel: context.l10n.orgTemplatesFieldName,
+      nameHint: context.l10n.orgTemplatesFieldNamePh,
+      conductorHint: context.l10n.orgTemplatesPerformerOptPh,
+      emptyNameMessage: context.l10n.orgTemplatesEnterFieldName,
+      confirmText: context.l10n.commonSave,
       initialName: field.name,
       initialConductor: field.conductor,
       initialMinutes: PlanUtils.minutesOf(field),
@@ -114,13 +116,13 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
   Future<void> _addTemplate() async {
     final title = await showPlanTextPrompt(
       context,
-      title: 'Vorlage hinzufügen',
-      hint: 'Name der Vorlage...',
-      confirmText: 'Hinzufügen',
+      title: context.l10n.orgTemplatesAddTemplate,
+      hint: context.l10n.orgTemplatesTemplateNamePh,
+      confirmText: context.l10n.attendanceAdd,
     );
     if (title == null) return;
     if (title.trim().isEmpty) {
-      if (mounted) ToastHelper.showWarning(context, 'Bitte einen Namen eingeben.');
+      if (mounted) ToastHelper.showWarning(context, context.l10n.orgTemplatesEnterName);
       return;
     }
     setState(() {
@@ -135,9 +137,9 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
     final action = await showPlanActionSheet<String>(
       context,
       title: tpl.title,
-      actions: const [
-        PlanSheetAction('rename', 'Vorlage umbenennen', icon: Icons.edit_outlined),
-        PlanSheetAction('delete', 'Löschen', icon: Icons.delete_outline, destructive: true),
+      actions: [
+        PlanSheetAction('rename', context.l10n.orgTemplatesRenameTemplate, icon: Icons.edit_outlined),
+        PlanSheetAction('delete', context.l10n.commonDelete, icon: Icons.delete_outline, destructive: true),
       ],
     );
     if (action == null || !mounted) return;
@@ -152,10 +154,10 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
     final tpl = _templates![index];
     final title = await showPlanTextPrompt(
       context,
-      title: 'Vorlage umbenennen',
+      title: context.l10n.orgTemplatesRenameTemplate,
       initialValue: tpl.title,
-      hint: 'Name der Vorlage...',
-      confirmText: 'Speichern',
+      hint: context.l10n.orgTemplatesTemplateNamePh,
+      confirmText: context.l10n.commonSave,
     );
     if (title == null || title.trim().isEmpty) return;
     _updateTemplate(index, tpl.copyWith(title: title.trim()));
@@ -188,11 +190,11 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
     final action = await showPlanActionSheet<String>(
       context,
       actions: [
-        const PlanSheetAction('field', 'Feld hinzufügen', icon: Icons.add),
-        const PlanSheetAction('note', 'Notizfeld hinzufügen', icon: Icons.sticky_note_2_outlined),
-        if (!isGeneral) const PlanSheetAction('song', 'Werk-Platzhalter', icon: Icons.music_note_outlined),
+        PlanSheetAction('field', context.l10n.typeSettingsAddField, icon: Icons.add),
+        PlanSheetAction('note', context.l10n.typeSettingsAddNoteField, icon: Icons.sticky_note_2_outlined),
+        if (!isGeneral) PlanSheetAction('song', context.l10n.orgTemplatesSongPlaceholder, icon: Icons.music_note_outlined),
         for (var i = 0; i < _defaultFields.length; i++)
-          PlanSheetAction('default:$i', '${_defaultFields[i].name} (${_defaultFields[i].time} min)'),
+          PlanSheetAction('default:$i', '${_defaultFields[i].name} (${context.l10n.planningMinShort(_defaultFields[i].time)})'),
       ],
     );
     if (action == null || !mounted) return;
@@ -202,9 +204,9 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
     } else if (action == 'field') {
       final r = await showPlanFieldDialog(
         context,
-        title: 'Feld hinzufügen',
-        nameHint: 'Freitext eingeben...',
-        conductorHint: 'Ausführenden eingeben...',
+        title: context.l10n.typeSettingsAddField,
+        nameHint: context.l10n.typeSettingsFreeTextPh,
+        conductorHint: context.l10n.typeSettingsPerformerPh,
         initialMinutes: 20,
         requireName: false,
       );
@@ -219,9 +221,9 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
     } else if (action == 'note') {
       final r = await showPlanFieldDialog(
         context,
-        title: 'Notizfeld hinzufügen',
-        nameLabel: 'Notiz',
-        nameHint: 'Notiz eingeben...',
+        title: context.l10n.typeSettingsAddNoteField,
+        nameLabel: context.l10n.typeSettingsNote,
+        nameHint: context.l10n.typeSettingsNotePh,
         withConductor: false,
         withInfo: false,
         withMinutes: false,
@@ -231,7 +233,7 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
       field = PlanField(id: 'noteFld ${r.name}', name: r.name, conductor: '', time: '0');
     } else if (action == 'song') {
       final n = tpl.fields.where((f) => f.id.startsWith(PlanUtils.songPlaceholderPrefix)).length + 1;
-      field = PlanField(id: '${PlanUtils.songPlaceholderPrefix}$n', name: 'Werk Platzhalter $n', time: '20');
+      field = PlanField(id: '${PlanUtils.songPlaceholderPrefix}$n', name: context.l10n.typeSettingsSongPlaceholderN(n), time: '20');
     }
     if (field == null) return;
     _updateTemplate(index, tpl.copyWith(fields: [...tpl.fields, field]));
@@ -243,7 +245,7 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
     final m = PlanUtils.parseTimeToMinutes(tpl.time) ?? 600;
     final picked = await showTimePicker(
       context: context,
-      helpText: 'Startzeit',
+      helpText: context.l10n.shiftsStartTime,
       initialTime: TimeOfDay(hour: m ~/ 60, minute: m % 60),
       builder: (ctx, child) => MediaQuery(
         data: MediaQuery.of(ctx).copyWith(alwaysUse24HourFormat: true),
@@ -287,18 +289,19 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
     }
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Planvorlagen & Felder')),
+      appBar: AppBar(title: Text(context.l10n.orgTemplatesTitle)),
       body: _templates == null
           ? const Center(child: CircularProgressIndicator())
           : ListView(
               padding: const EdgeInsets.only(bottom: 32),
               children: [
-                _header('Standardfelder', _addDefaultField),
+                _header(context.l10n.orgTemplatesDefaultFields, _addDefaultField),
                 Card(
                   margin: const EdgeInsets.symmetric(horizontal: 12),
                   child: _defaultFields.isEmpty
-                      ? const ListTile(
-                          title: Text('Noch keine Standardfelder definiert', style: TextStyle(color: AppColors.medium)))
+                      ? ListTile(
+                          title: Text(context.l10n.orgTemplatesNoDefaultFields,
+                              style: const TextStyle(color: AppColors.medium)))
                       : ReorderableListView(
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
@@ -340,7 +343,7 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
                                   trailing: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      Text('${_defaultFields[i].time} min'),
+                                      Text(context.l10n.planningMinShort(_defaultFields[i].time)),
                                       const SizedBox(width: 8),
                                       ReorderableDragStartListener(index: i, child: const Icon(Icons.drag_handle)),
                                     ],
@@ -350,21 +353,22 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
                           ],
                         ),
                 ),
-                _hint('Standardfelder erscheinen im Planungs-Menü als schnell hinzufügbare Felder für alle Instanzen der Organisation.'),
-                _header('Vorlagen', _addTemplate),
+                _hint(context.l10n.orgTemplatesDefaultFieldsHint),
+                _header(context.l10n.orgTemplatesTemplates, _addTemplate),
                 Card(
                   margin: const EdgeInsets.symmetric(horizontal: 12),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       if (_templates!.isEmpty)
-                        const ListTile(
-                            title: Text('Noch keine Vorlagen definiert', style: TextStyle(color: AppColors.medium))),
+                        ListTile(
+                            title: Text(context.l10n.orgTemplatesNoTemplates,
+                                style: const TextStyle(color: AppColors.medium))),
                       for (var i = 0; i < _templates!.length; i++) ..._templateTiles(i),
                     ],
                   ),
                 ),
-                _hint('Vorlagen können beim Planen mit einem Tippen auf das Programm angewendet werden und ersetzen dabei den aktuellen Ablauf.'),
+                _hint(context.l10n.orgTemplatesTemplatesHint),
               ],
             ),
     );
@@ -401,7 +405,7 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
         ),
         child: ListTile(
           title: Text(tpl.title ?? ''),
-          subtitle: Text('$count ${count == 1 ? 'Feld' : 'Felder'}${duration.isNotEmpty ? ' · $duration' : ''}'),
+          subtitle: Text('${context.l10n.orgFlutterFieldCount(count)}${duration.isNotEmpty ? ' · $duration' : ''}'),
           onTap: () => setState(() => _selected = expanded ? null : i),
           // Desktop/mouse fallback for the swipe options.
           onLongPress: () => _templateOptions(i),
@@ -410,14 +414,14 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
       ),
       if (expanded) ...[
         ListTile(
-          title: const Text('Startzeit'),
+          title: Text(context.l10n.shiftsStartTime),
           trailing: TextButton(onPressed: () => _pickStart(i), child: Text(start.isEmpty ? '--:--' : start)),
         ),
         PlanFieldsEditor(
           fields: tpl.fields,
           startTime: start,
           showTimes: start.isNotEmpty,
-          emptyText: 'Keine Felder',
+          emptyText: context.l10n.orgFlutterNoFields,
           onChanged: (f) {
             _updateTemplate(i, tpl.copyWith(fields: PlanUtils.normalizeGroups(f)));
             _saveTemplates();
@@ -425,13 +429,13 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
         ),
         ListTile(
           leading: const Icon(Icons.add, color: AppColors.primary),
-          title: const Text('Feld hinzufügen', style: TextStyle(color: AppColors.primary)),
+          title: Text(context.l10n.typeSettingsAddField, style: const TextStyle(color: AppColors.primary)),
           onTap: () => _addToTemplate(i),
         ),
         if (end.isNotEmpty)
           ListTile(
             leading: const Icon(Icons.schedule, color: AppColors.medium),
-            title: Text('Ende ca. $end', style: const TextStyle(color: AppColors.medium)),
+            title: Text(context.l10n.orgTemplatesEndApprox(end), style: const TextStyle(color: AppColors.medium)),
           ),
         const Divider(height: 1),
       ],

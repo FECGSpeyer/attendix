@@ -5293,6 +5293,10 @@
   "@orgFieldsApplyChanges": {
     "description": "orgFields.applyChanges"
   },
+  "orgFieldsFlutterFirstOptionDefault": "Erste Option ist der Standardwert",
+  "@orgFieldsFlutterFirstOptionDefault": {
+    "description": "orgFields.flutter.firstOptionDefault"
+  },
   "orgFieldsIntro": "Diese Felder und ihre Werte gelten für dieselbe Person gemeinsam in allen Instanzen der Organisation.",
   "@orgFieldsIntro": {
     "description": "orgFields.intro"
@@ -5323,6 +5327,23 @@
   "orgFieldsTitle": "Personen-Zusatzfelder",
   "@orgFieldsTitle": {
     "description": "orgFields.title"
+  },
+  "orgFlutterFieldCount": "{count, plural, one {{count} Feld} other {{count} Felder}}",
+  "@orgFlutterFieldCount": {
+    "description": "org.flutter.fieldCount",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "orgFlutterNoFields": "Keine Felder",
+  "@orgFlutterNoFields": {
+    "description": "org.flutter.noFields"
+  },
+  "orgFlutterUnlinkFailed": "Fehler beim Trennen",
+  "@orgFlutterUnlinkFailed": {
+    "description": "org.flutter.unlinkFailed"
   },
   "orgHandover": "Übergabe",
   "@orgHandover": {
@@ -7058,6 +7079,178 @@
   "@planningFirstEvent": {
     "description": "planning.firstEvent"
   },
+  "planningFlutterAsPdf": "Als PDF",
+  "@planningFlutterAsPdf": {
+    "description": "planning.flutter.asPdf"
+  },
+  "planningFlutterAsPdfHint": "Druckbar, A4 Querformat",
+  "@planningFlutterAsPdfHint": {
+    "description": "planning.flutter.asPdfHint"
+  },
+  "planningFlutterAsText": "Als Text",
+  "@planningFlutterAsText": {
+    "description": "planning.flutter.asText"
+  },
+  "planningFlutterAsTextHint": "Zum Kopieren",
+  "@planningFlutterAsTextHint": {
+    "description": "planning.flutter.asTextHint"
+  },
+  "planningFlutterBlockEntry": "Programmblock: {name} ({min} min)",
+  "@planningFlutterBlockEntry": {
+    "description": "planning.flutter.blockEntry",
+    "placeholders": {
+      "name": {},
+      "min": {}
+    }
+  },
+  "planningFlutterChooseFormat": "Format wählen",
+  "@planningFlutterChooseFormat": {
+    "description": "planning.flutter.chooseFormat"
+  },
+  "planningFlutterErrorWith": "Fehler: {error}",
+  "@planningFlutterErrorWith": {
+    "description": "planning.flutter.errorWith",
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "planningFlutterExportFailed": "Fehler beim Export: {error}",
+  "@planningFlutterExportFailed": {
+    "description": "planning.flutter.exportFailed",
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "planningFlutterFieldEntry": "Feld: {name} ({min} min)",
+  "@planningFlutterFieldEntry": {
+    "description": "planning.flutter.fieldEntry",
+    "placeholders": {
+      "name": {},
+      "min": {}
+    }
+  },
+  "planningFlutterGenerateFailed": "Fehler bei der Generierung: {error}",
+  "@planningFlutterGenerateFailed": {
+    "description": "planning.flutter.generateFailed",
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "planningFlutterGeneratePlan": "Plan generieren",
+  "@planningFlutterGeneratePlan": {
+    "description": "planning.flutter.generatePlan"
+  },
+  "planningFlutterLive": "Live",
+  "@planningFlutterLive": {
+    "description": "planning.flutter.live"
+  },
+  "planningFlutterLiveMode": "Live-Modus",
+  "@planningFlutterLiveMode": {
+    "description": "planning.flutter.liveMode"
+  },
+  "planningFlutterLiveModeEnd": "Live-Modus beenden",
+  "@planningFlutterLiveModeEnd": {
+    "description": "planning.flutter.liveModeEnd"
+  },
+  "planningFlutterMinAbbr": "{min} Min.",
+  "@planningFlutterMinAbbr": {
+    "description": "planning.flutter.minAbbr",
+    "placeholders": {
+      "min": {}
+    }
+  },
+  "planningFlutterMinPerUnit": "{min} Min./Einheit",
+  "@planningFlutterMinPerUnit": {
+    "description": "planning.flutter.minPerUnit",
+    "placeholders": {
+      "min": {}
+    }
+  },
+  "planningFlutterNoEvents": "Keine Termine vorhanden",
+  "@planningFlutterNoEvents": {
+    "description": "planning.flutter.noEvents"
+  },
+  "planningFlutterNoItems": "Keine Programmpunkte",
+  "@planningFlutterNoItems": {
+    "description": "planning.flutter.noItems"
+  },
+  "planningFlutterPdf2xA5": "PDF (2x A5)",
+  "@planningFlutterPdf2xA5": {
+    "description": "planning.flutter.pdf2xA5"
+  },
+  "planningFlutterPdfA4": "PDF (A4)",
+  "@planningFlutterPdfA4": {
+    "description": "planning.flutter.pdfA4"
+  },
+  "planningFlutterPerUnit": "Pro Einheit",
+  "@planningFlutterPerUnit": {
+    "description": "planning.flutter.perUnit"
+  },
+  "planningFlutterPlanPosition": "{index} von {total}",
+  "@planningFlutterPlanPosition": {
+    "description": "planning.flutter.planPosition",
+    "placeholders": {
+      "index": {},
+      "total": {}
+    }
+  },
+  "planningFlutterRegenerate": "Neu generieren",
+  "@planningFlutterRegenerate": {
+    "description": "planning.flutter.regenerate"
+  },
+  "planningFlutterSaveFailedWith": "Fehler beim Speichern: {error}",
+  "@planningFlutterSaveFailedWith": {
+    "description": "planning.flutter.saveFailedWith",
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "planningFlutterSectionalGroups": "Gruppen 1-3",
+  "@planningFlutterSectionalGroups": {
+    "description": "planning.flutter.sectionalGroups"
+  },
+  "planningFlutterSelectConductors": "Dirigenten/Stimmführer auswählen",
+  "@planningFlutterSelectConductors": {
+    "description": "planning.flutter.selectConductors"
+  },
+  "planningFlutterSelectOnePerson": "Bitte mindestens eine Person auswählen",
+  "@planningFlutterSelectOnePerson": {
+    "description": "planning.flutter.selectOnePerson"
+  },
+  "planningFlutterSelectedCount": "{count} ausgewählt",
+  "@planningFlutterSelectedCount": {
+    "description": "planning.flutter.selectedCount",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "planningFlutterShareFailedWith": "Fehler beim Teilen: {error}",
+  "@planningFlutterShareFailedWith": {
+    "description": "planning.flutter.shareFailedWith",
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "planningFlutterTelegramNotConfigured": "Telegram nicht konfiguriert",
+  "@planningFlutterTelegramNotConfigured": {
+    "description": "planning.flutter.telegramNotConfigured"
+  },
+  "planningFlutterTelegramPdf2x": "Per Telegram senden (PDF 2x A5)",
+  "@planningFlutterTelegramPdf2x": {
+    "description": "planning.flutter.telegramPdf2x"
+  },
+  "planningFlutterTime": "Zeit",
+  "@planningFlutterTime": {
+    "description": "planning.flutter.time"
+  },
+  "planningFlutterTotalDuration": "Gesamtdauer",
+  "@planningFlutterTotalDuration": {
+    "description": "planning.flutter.totalDuration"
+  },
+  "planningFlutterUnshareAction": "Freigabe aufheben",
+  "@planningFlutterUnshareAction": {
+    "description": "planning.flutter.unshareAction"
+  },
   "planningGroupName": "Gruppenname",
   "@planningGroupName": {
     "description": "planning.groupName"
@@ -7413,6 +7606,36 @@
   "plansFillDurations": "Bitte alle Dauern ausfüllen.",
   "@plansFillDurations": {
     "description": "plans.fillDurations"
+  },
+  "plansFlutterAddToOrg": "Zur Organisation hinzufügen",
+  "@plansFlutterAddToOrg": {
+    "description": "plans.flutter.addToOrg"
+  },
+  "plansFlutterFieldsCount": "{count} Felder",
+  "@plansFlutterFieldsCount": {
+    "description": "plans.flutter.fieldsCount",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "plansFlutterHideTab": "Tab ausblenden",
+  "@plansFlutterHideTab": {
+    "description": "plans.flutter.hideTab"
+  },
+  "plansFlutterInOrg": "In Organisation \"{name}\"",
+  "@plansFlutterInOrg": {
+    "description": "plans.flutter.inOrg",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "plansFlutterOrgPlansTitle": "Organisationspläne",
+  "@plansFlutterOrgPlansTitle": {
+    "description": "plans.flutter.orgPlansTitle"
+  },
+  "plansFlutterShowAsTab": "Als Tab anzeigen",
+  "@plansFlutterShowAsTab": {
+    "description": "plans.flutter.showAsTab"
   },
   "plansImageA4": "Bild (A4)",
   "@plansImageA4": {

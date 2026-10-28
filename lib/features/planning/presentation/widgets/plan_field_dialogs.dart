@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Values entered in a plan field dialog.
 class PlanFieldInput {
@@ -19,13 +20,13 @@ Future<PlanFieldInput?> showPlanFieldDialog(
   required String title,
   String? subtitle,
   String? message,
-  String nameLabel = 'Programmpunkt',
-  String nameHint = 'Programmpunkt eingeben...',
-  String conductorLabel = 'Ausführender',
-  String conductorHint = 'Ausführenden eingeben...',
-  String infoHint = 'Info-Text (optional)',
-  String confirmText = 'Hinzufügen',
-  String emptyNameMessage = 'Bitte einen Programmpunkt eingeben.',
+  String? nameLabel,
+  String? nameHint,
+  String? conductorLabel,
+  String? conductorHint,
+  String? infoHint,
+  String? confirmText,
+  String? emptyNameMessage,
   String? initialName,
   String? initialConductor,
   String? initialInfo,
@@ -88,13 +89,13 @@ class _PlanFieldDialog extends StatefulWidget {
   final String title;
   final String? subtitle;
   final String? message;
-  final String nameLabel;
-  final String nameHint;
-  final String conductorLabel;
-  final String conductorHint;
-  final String infoHint;
-  final String confirmText;
-  final String emptyNameMessage;
+  final String? nameLabel;
+  final String? nameHint;
+  final String? conductorLabel;
+  final String? conductorHint;
+  final String? infoHint;
+  final String? confirmText;
+  final String? emptyNameMessage;
   final String? initialName;
   final String? initialConductor;
   final String? initialInfo;
@@ -129,7 +130,7 @@ class _PlanFieldDialogState extends State<_PlanFieldDialog> {
   void _submit() {
     final name = _name.text.trim();
     if (widget.requireName && name.isEmpty) {
-      setState(() => _error = widget.emptyNameMessage);
+      setState(() => _error = widget.emptyNameMessage ?? context.l10n.planningEnterItemPlease);
       return;
     }
     final info = _info.text.trim();
@@ -143,6 +144,7 @@ class _PlanFieldDialogState extends State<_PlanFieldDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return AlertDialog(
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -167,14 +169,20 @@ class _PlanFieldDialogState extends State<_PlanFieldDialog> {
               minLines: 1,
               maxLines: 3,
               textCapitalization: TextCapitalization.sentences,
-              decoration: InputDecoration(labelText: widget.nameLabel, hintText: widget.nameHint),
+              decoration: InputDecoration(
+                labelText: widget.nameLabel ?? l10n.planningItem,
+                hintText: widget.nameHint ?? l10n.planningEnterItem,
+              ),
             ),
             if (widget.withConductor) ...[
               const SizedBox(height: 8),
               TextField(
                 controller: _conductor,
                 textCapitalization: TextCapitalization.words,
-                decoration: InputDecoration(labelText: widget.conductorLabel, hintText: widget.conductorHint),
+                decoration: InputDecoration(
+                  labelText: widget.conductorLabel ?? l10n.planningPerformer,
+                  hintText: widget.conductorHint ?? l10n.planningEnterPerformer,
+                ),
               ),
             ],
             if (widget.withInfo) ...[
@@ -184,7 +192,7 @@ class _PlanFieldDialogState extends State<_PlanFieldDialog> {
                 minLines: 1,
                 maxLines: 3,
                 textCapitalization: TextCapitalization.sentences,
-                decoration: InputDecoration(labelText: 'Info', hintText: widget.infoHint),
+                decoration: InputDecoration(labelText: l10n.planningInfo, hintText: widget.infoHint ?? l10n.planningInfoOptional),
               ),
             ],
             if (widget.withMinutes) ...[
@@ -192,7 +200,7 @@ class _PlanFieldDialogState extends State<_PlanFieldDialog> {
               TextField(
                 controller: _minutes,
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(labelText: 'Minuten', suffixText: 'min'),
+                decoration: InputDecoration(labelText: l10n.planningMinutes, suffixText: l10n.planningMinPlaceholder),
               ),
             ],
             if (_error != null)
@@ -210,13 +218,13 @@ class _PlanFieldDialogState extends State<_PlanFieldDialog> {
               Navigator.of(context).pop();
               widget.onDelete!();
             },
-            child: Text('Löschen', style: TextStyle(color: Theme.of(context).colorScheme.error)),
+            child: Text(l10n.commonDelete, style: TextStyle(color: Theme.of(context).colorScheme.error)),
           ),
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Abbrechen'),
+          child: Text(l10n.commonCancel),
         ),
-        FilledButton(onPressed: _submit, child: Text(widget.confirmText)),
+        FilledButton(onPressed: _submit, child: Text(widget.confirmText ?? l10n.attendanceAdd)),
       ],
     );
   }
@@ -229,7 +237,7 @@ Future<String?> showPlanTextPrompt(
   String? message,
   String? initialValue,
   String? hint,
-  String confirmText = 'Speichern',
+  String? confirmText,
   bool allowEmpty = false,
 }) {
   final controller = TextEditingController(text: initialValue ?? '');
@@ -251,14 +259,14 @@ Future<String?> showPlanTextPrompt(
         ],
       ),
       actions: [
-        TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Abbrechen')),
+        TextButton(onPressed: () => Navigator.pop(ctx), child: Text(ctx.l10n.commonCancel)),
         FilledButton(
           onPressed: () {
             final v = controller.text.trim();
             if (!allowEmpty && v.isEmpty) return;
             Navigator.pop(ctx, v);
           },
-          child: Text(confirmText),
+          child: Text(confirmText ?? ctx.l10n.commonSave),
         ),
       ],
     ),
@@ -270,7 +278,7 @@ Future<bool> showPlanConfirm(
   BuildContext context, {
   required String title,
   required String message,
-  String confirmText = 'OK',
+  String? confirmText,
   bool destructive = false,
 }) async {
   final result = await showDialog<bool>(
@@ -279,11 +287,11 @@ Future<bool> showPlanConfirm(
       title: Text(title),
       content: Text(message),
       actions: [
-        TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Abbrechen')),
+        TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(ctx.l10n.commonCancel)),
         FilledButton(
           style: destructive ? FilledButton.styleFrom(backgroundColor: Theme.of(ctx).colorScheme.error) : null,
           onPressed: () => Navigator.pop(ctx, true),
-          child: Text(confirmText),
+          child: Text(confirmText ?? ctx.l10n.commonOk),
         ),
       ],
     ),
@@ -333,7 +341,7 @@ Future<T?> showPlanActionSheet<T>(
                 onTap: () => Navigator.pop(ctx, a.value),
               ),
             ListTile(
-              title: const Text('Abbrechen', textAlign: TextAlign.center),
+              title: Text(ctx.l10n.commonCancel, textAlign: TextAlign.center),
               onTap: () => Navigator.pop(ctx),
             ),
           ],

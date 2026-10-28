@@ -7,6 +7,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../data/repositories/song_repository.dart';
+import '../../../../l10n/l10n.dart';
 
 /// SETTINGS2: Ionic org-settings "Werk-Synchronisierung" (super admin only).
 ///
@@ -29,20 +30,17 @@ class _OrgSongSyncSectionState extends ConsumerState<OrgSongSyncSection> {
     final result = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Synchronisierung deaktivieren?'),
-        content: const Text(
-          'Die Werke dieser Instanz sind danach leer, bis eigene Werke angelegt werden. '
-          'Historieneinträge auf Werke der Quellinstanz können nicht mehr aufgelöst werden.',
-        ),
+        title: Text(context.l10n.orgDisableSync),
+        content: Text(context.l10n.orgDisableSyncMessage),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Abbrechen'),
+            child: Text(context.l10n.commonCancel),
           ),
           TextButton(
             style: TextButton.styleFrom(foregroundColor: AppColors.danger),
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Deaktivieren'),
+            child: Text(context.l10n.orgDisable),
           ),
         ],
       ),
@@ -64,9 +62,9 @@ class _OrgSongSyncSectionState extends ConsumerState<OrgSongSyncSection> {
       await repo.updateSongSourceTenantId(newSourceId);
       ref.invalidate(songTenantSettingsProvider);
       ref.invalidate(currentTenantProvider);
-      if (mounted) ToastHelper.showSuccess(context, 'Werk-Synchronisierung gespeichert.');
+      if (mounted) ToastHelper.showSuccess(context, context.l10n.orgSyncSaved);
     } catch (_) {
-      if (mounted) ToastHelper.showError(context, 'Fehler beim Speichern');
+      if (mounted) ToastHelper.showError(context, context.l10n.plansSaveFailed);
     } finally {
       if (mounted) setState(() => _saving = false);
     }
@@ -80,25 +78,23 @@ class _OrgSongSyncSectionState extends ConsumerState<OrgSongSyncSection> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
-          padding: EdgeInsets.fromLTRB(16, 16, 16, 4),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
           child: Text(
-            'WERK-SYNCHRONISIERUNG',
-            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.medium),
+            context.l10n.orgSongSync.toUpperCase(),
+            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.medium),
           ),
         ),
         Card(
           margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
           child: Column(
             children: [
-              const ListTile(
-                leading: Icon(Icons.sync),
-                title: Text(
-                  'Werke einer anderen Instanz verwenden. Alle Änderungen werden dort gespeichert.',
-                ),
+              ListTile(
+                leading: const Icon(Icons.sync),
+                title: Text(context.l10n.orgSongSyncIntro),
               ),
               ListTile(
-                title: const Text('Quellinstanz'),
+                title: Text(context.l10n.orgSourceTenant),
                 trailing: _saving || settings.isLoading
                     ? const SizedBox(
                         width: 20,
@@ -112,9 +108,9 @@ class _OrgSongSyncSectionState extends ConsumerState<OrgSongSyncSection> {
                             : null,
                         underline: const SizedBox.shrink(),
                         items: [
-                          const DropdownMenuItem<int?>(
+                          DropdownMenuItem<int?>(
                             value: null,
-                            child: Text('Keine (eigene Werke)'),
+                            child: Text(context.l10n.orgNoneOwnSongs),
                           ),
                           for (final t in widget.linkedTenants)
                             DropdownMenuItem<int?>(value: t.id, child: Text(t.shortName)),
