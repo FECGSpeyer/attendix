@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../models/organisation/organisation.dart';
 import 'base_repository.dart';
+import 'shared_person_fields.dart';
 import '../../l10n/l10n.dart';
 
 /// Provider (ohne Tenant – nutze organisationSettingsRepositoryWithTenantProvider)
@@ -19,7 +20,8 @@ final organisationSettingsRepositoryProvider = Provider<OrganisationSettingsRepo
 /// Multi-Tenant: `tenant_groups` hat keine tenantId. Die Organisation wird
 /// daher IMMER über `tenant_group_tenants.tenant_id = currentTenantId`
 /// aufgelöst – nie aus einer vom Aufrufer übergebenen ID.
-class OrganisationSettingsRepository extends BaseRepository with TenantAwareRepository {
+class OrganisationSettingsRepository extends BaseRepository
+    with TenantAwareRepository, SharedPersonFieldsRepository {
   OrganisationSettingsRepository(super.ref);
 
   static const String brandingBucket = 'branding';
@@ -158,6 +160,9 @@ class OrganisationSettingsRepository extends BaseRepository with TenantAwareRepo
           .update({'global_person_id': globalPersonId})
           .inFilter('id', playerIds)
           .inFilter('tenantId', tenantIds);
+      // PARITY_B (I1): Ionic db.service setGlobalPersonId also writes the
+      // organisation field defaults for the new global person.
+      await writeOrganisationFieldDefaults(orgId, globalPersonId);
     } catch (e, stack) {
       handleError(e, stack, 'setGlobalPersonId');
       rethrow;

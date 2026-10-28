@@ -6,14 +6,16 @@ import '../../../../core/constants/app_constants.dart';
 import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/church_providers.dart';
 import '../../../../core/providers/group_providers.dart';
+import '../../../../core/providers/organisation_providers.dart';
 import '../../../../core/providers/player_providers.dart';
-import '../../../../core/providers/tenant_providers.dart';
+import '../../../../core/providers/profile_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/church/church.dart';
 import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../data/models/tenant/tenant.dart';
+import '../../../../data/repositories/shared_person_fields.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/providers/demo_providers.dart'; // DEMO_GUARD
 
@@ -59,6 +61,8 @@ class BulkEditPage extends ConsumerStatefulWidget {
 
 class _BulkEditPageState extends ConsumerState<BulkEditPage> {
   late final List<_FieldOption> _fieldOptions;
+  Set<String> _orgFieldIds = const {};
+  int? _organisationId;
   _FieldOption? _selected;
   final Map<int, dynamic> _original = {};
   final Map<int, dynamic> _edited = {};
@@ -74,14 +78,23 @@ class _BulkEditPageState extends ConsumerState<BulkEditPage> {
   @override
   void initState() {
     super.initState();
-    final tenant = ref.read(currentTenantProvider);
+    // PARITY_B (I3): Ionic bulk-edit uses db.getPersonExtraFields()
+    // (organisation fields + tenant fields).
+    final extraFields = ref.read(personListExtraFieldsProvider);
+    _orgFieldIds = {
+      for (final f
+          in ref.read(currentOrganisationProvider).valueOrNull?.additionalFields ??
+              const [])
+        f.id,
+    };
+    _organisationId = ref.read(currentOrganisationProvider).valueOrNull?.id;
     _fieldOptions = [
       // Labels of the standard fields are resolved in build (_fieldLabel).
       const _FieldOption(key: 'instrument', label: ''),
       const _FieldOption(key: 'isLeader', label: ''),
       const _FieldOption(key: 'notes', label: ''),
       const _FieldOption(key: 'phone', label: ''),
-      for (final f in tenant?.additionalFields ?? const <ExtraField>[])
+      for (final f in extraFields)
         _FieldOption(key: 'extra_${f.id}', label: f.name, extraField: f),
     ];
   }
@@ -176,7 +189,21 @@ class _BulkEditPageState extends ConsumerState<BulkEditPage> {
             ...?p.additionalFields,
             field.extraField!.id: value,
           };
-          await repo.updatePlayerFields(p.id!, {'additional_fields': merged});
+          // PARITY_B (I3): organisation fields go to tenant_group_person_fields
+          // (Ionic updateSharedPersonFieldValues), the rest to the player row.
+          final personKey = organisationPersonKeyOf(p);
+          final isSharedField = personKey != null &&
+              _organisationId != null &&
+              _orgFieldIds.contains(field.extraField!.id);
+          if (isSharedField) {
+            await ref
+                .read(profileRepositoryWithTenantProvider)
+                .updateSharedFieldValues(
+                    _organisationId!, personKey, {field.extraField!.id: value});
+          } else {
+            await repo
+                .updatePlayerFields(p.id!, {'additional_fields': merged});
+          }
           toSync.add((p, p.copyWith(additionalFields: merged)));
         }
       }));

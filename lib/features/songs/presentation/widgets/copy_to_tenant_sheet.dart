@@ -295,7 +295,7 @@ class _CopyToTenantSheetState extends ConsumerState<CopyToTenantSheet> {
         // Like Ionic: categories are not copied, instrument_ids are set from files
         'instrument_ids': <int>[],
         'category': null,
-        'category_ids': <String>[],
+        // PARITY_B (D15): Ionic db.copySongToTenant does not send category_ids
       };
 
       final insertResponse = await supabase

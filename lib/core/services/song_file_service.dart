@@ -11,6 +11,21 @@ import '../utils/demo_guard.dart'; // DEMO_GUARD
 import '../../l10n/l10n.dart';
 import '../utils/file_mime.dart';
 
+/// PARITY_B (D14): Ionic `filesJson` mapping of a `songs.files[]` entry —
+/// storageName, fileName, fileType, url, instrumentId (null if missing) and
+/// note (omitted when undefined). No `created_at`.
+Map<String, dynamic> songFileJson(dynamic f) {
+  final m = Map<String, dynamic>.from(f as Map);
+  return {
+    'storageName': m['storageName'],
+    'fileName': m['fileName'],
+    'fileType': m['fileType'],
+    'url': m['url'],
+    'instrumentId': m['instrumentId'],
+    if (m['note'] != null) 'note': m['note'],
+  };
+}
+
 /// Service for managing song file uploads to Supabase Storage
 class SongFileService {
   final SupabaseClient _supabase;
@@ -122,11 +137,11 @@ class SongFileService {
       'fileType': songFileMimeType(file.extension ?? '') ?? '',
       'url': url,
       'instrumentId': instrumentId,
-      'note': note,
-      'created_at': DateTime.now().toUtc().toIso8601String(),
+      if (note != null) 'note': note,
     };
 
-    final updatedFiles = [...existingFiles, newFile];
+    // PARITY_B (D14): Ionic rewrites every file entry with exactly these keys
+    final updatedFiles = [...existingFiles, newFile].map(songFileJson).toList();
 
     // Update song with new files array and derived instrument_ids (Ionic)
     await _supabase.from('songs').update({
@@ -400,11 +415,11 @@ class SongFileService {
       'fileType': fileType,
       'url': url,
       'instrumentId': instrumentId,
-      'note': note,
-      'created_at': DateTime.now().toUtc().toIso8601String(),
+      if (note != null) 'note': note,
     };
 
-    final updatedFiles = [...existingFiles, newFile];
+    // PARITY_B (D14): Ionic rewrites every file entry with exactly these keys
+    final updatedFiles = [...existingFiles, newFile].map(songFileJson).toList();
 
     // Update song with new files array
     await _supabase.from('songs').update({

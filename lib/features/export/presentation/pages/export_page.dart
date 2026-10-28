@@ -11,6 +11,7 @@ import '../../../../core/providers/church_providers.dart';
 import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/player_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
+import '../../../../core/providers/profile_providers.dart';
 import '../../../../core/services/export_service.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
@@ -45,8 +46,8 @@ class _ExportPageState extends ConsumerState<ExportPage> {
   bool _sortAscending = true;
   bool _isExporting = false;
 
-  List<ExtraField> get _extraFields =>
-      ref.read(currentTenantProvider)?.additionalFields ?? const [];
+  // PARITY_B (I2): Ionic export uses db.getPersonExtraFields()
+  List<ExtraField> get _extraFields => ref.read(personListExtraFieldsProvider);
 
   void _setContentType(String value) {
     if (value == _contentType) return;
@@ -113,8 +114,7 @@ class _ExportPageState extends ConsumerState<ExportPage> {
 
   @override
   Widget build(BuildContext context) {
-    final tenant = ref.watch(currentTenantProvider);
-    final extraFields = tenant?.additionalFields ?? const <ExtraField>[];
+    final extraFields = ref.watch(personListExtraFieldsProvider);
     final available = availableExportFields(_contentType, extraFields);
     final sortOptions = exportSortOptions(_contentType, extraFields);
     if (!sortOptions.any((o) => o.value == _sortField)) {
@@ -327,7 +327,11 @@ class _ExportPageState extends ConsumerState<ExportPage> {
 
       // Active (not left) players incl. paused — Ionic db.getPlayers()
       ref.invalidate(playersProvider);
-      final rawPlayers = await ref.read(playersProvider.future);
+      // PARITY_B (I2): Ionic export.page hydrateSharedPersonFieldValues
+      final rawPlayers = await ref
+          .read(profileRepositoryWithTenantProvider)
+          .hydrateSharedPersonFieldValues(
+              await ref.read(playersProvider.future));
       final groupsMap = await ref.read(groupsMapProvider.future);
       final players = rawPlayers
           .map((p) => p.copyWith(
