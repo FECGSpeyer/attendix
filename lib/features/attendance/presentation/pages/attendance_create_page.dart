@@ -36,6 +36,8 @@ import '../../../../core/utils/demo_guard.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../shared/widgets/layout/ionic_ios.dart'; // IOS_FORMS2
+import '../widgets/ion_glyph_icons.dart'; // IOS_FORMS2
 
 /// UX_ATT: opens "Termin hinzufügen" as a sheet over the list (Ionic att-list
 /// addAttModal, breakpoints [0, 0.8, 1], initial 0.8). Returns true when
@@ -168,6 +170,7 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
     final isAllDay = _selectedType?.allDay == true;
     final showSongs = _selectedType?.manageSongs == true;
     final types = typesAsync.valueOrNull ?? const <AttendanceType>[];
+    final ios = isIosLook(context); // IOS_FORMS2
 
     // Auto-select first visible type (Ionic type_id = first visible type)
     if (_selectedType == null && types.isNotEmpty) {
@@ -186,6 +189,9 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
       children: [
         _InsetGroup(children: [
           // Datum (Mehrfachauswahl möglich) + info button
+          if (ios)
+            _iosDateRow(context)
+          else
           ListTile(
             title: Text(
               context.l10n.attListDateMulti,
@@ -206,33 +212,80 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
             ),
             onTap: _onDateClick,
           ),
-          // Typ (ion-select)
-          ListTile(
-            title: Text(context.l10n.attListType),
-            trailing: typesAsync.when(
-              loading: () => const SizedBox(
-                width: 16,
-                height: 16,
-                child: AppSpinner(strokeWidth: 2),
-              ),
-              error: (e, _) => const Icon(Icons.error_outline, color: AppColors.danger),
-              data: (types) => DropdownButtonHideUnderline(
-                child: DropdownButton<AttendanceType>(
-                  value: types.contains(_selectedType) ? _selectedType : null,
-                  hint: Text(context.l10n.attendanceFlutterNoEventTypes),
-                  alignment: AlignmentDirectional.centerEnd,
-                  items: [
-                    for (final type in types)
-                      DropdownMenuItem(value: type, child: Text(type.name)),
-                  ],
-                  onChanged: (value) {
-                    if (value != null) _onTypeChanged(value);
-                  },
+          // Typ (ion-select). IOS_FORMS2: label and value share one row; the
+          // value takes the remaining width (a long type name used to squeeze
+          // the "Typ" label into a vertical column).
+          if (ios)
+            _iosTypeRow(context, typesAsync)
+          else
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              children: [
+                Text(context.l10n.attListType,
+                    style: Theme.of(context).textTheme.bodyLarge),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: typesAsync.when(
+                    loading: () => const Align(
+                      alignment: Alignment.centerRight,
+                      child: SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: AppSpinner(strokeWidth: 2),
+                      ),
+                    ),
+                    error: (e, _) => const Align(
+                      alignment: Alignment.centerRight,
+                      child: Icon(Icons.error_outline, color: AppColors.danger),
+                    ),
+                    data: (types) => DropdownButtonHideUnderline(
+                      child: DropdownButton<AttendanceType>(
+                        isExpanded: true,
+                        value: types.contains(_selectedType) ? _selectedType : null,
+                        hint: Align(
+                          alignment: Alignment.centerRight,
+                          child: Text(context.l10n.attendanceFlutterNoEventTypes),
+                        ),
+                        alignment: AlignmentDirectional.centerEnd,
+                        selectedItemBuilder: (context) => [
+                          for (final type in types)
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: Text(
+                                type.name,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                        ],
+                        items: [
+                          for (final type in types)
+                            DropdownMenuItem(value: type, child: Text(type.name)),
+                        ],
+                        onChanged: (value) {
+                          if (value != null) _onTypeChanged(value);
+                        },
+                      ),
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
           ),
-          if (isAllDay)
+          if (isAllDay && ios)
+            _IosStackedField(
+              label: context.l10n.attListDurationDays,
+              controller: _durationController,
+              keyboardType: TextInputType.number,
+              onChanged: (value) {
+                final parsed = int.tryParse(value);
+                if (parsed != null && parsed > 0) {
+                  setState(() => _durationDays = parsed);
+                }
+              },
+            )
+          else if (isAllDay)
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
               child: TextField(
@@ -250,6 +303,16 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
                 },
               ),
             ),
+          // Info-Text: Ionic stacked label + plain ion-textarea + helper text
+          if (ios)
+            _IosStackedField(
+              label: context.l10n.attListInfoText,
+              helperText: context.l10n.attListInfoTextHelper,
+              textCapitalization: TextCapitalization.sentences,
+              onChanged: (value) =>
+                  setState(() => _typeInfo = value.isEmpty ? null : value),
+            )
+          else
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
             child: TextField(
@@ -292,7 +355,16 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
                 ),
               ),
           // ATT_DETAIL: "Ort (für Navigation)" for types with place_enabled
-          if (_selectedType?.placeEnabled == true)
+          if (_selectedType?.placeEnabled == true && ios)
+            _IosStackedField(
+              label: context.l10n.attListPlace,
+              hintText: context.l10n.attListPlacePlaceholder,
+              textCapitalization: TextCapitalization.sentences,
+              minLines: 2,
+              onChanged: (value) =>
+                  setState(() => _place = value.trim().isEmpty ? null : value.trim()),
+            )
+          else if (_selectedType?.placeEnabled == true)
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
               child: TextField(
@@ -314,6 +386,21 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
 
         // Werke (only if type.manageSongs)
         if (showSongs) ...[
+          // IOS_FORMS2: Ionic `ion-list-header` button defaults to fill
+          // "clear" → a small primary "+" next to the header label.
+          if (ios)
+            IonListHeader(
+              context.l10n.attListSongs,
+              trailing: [
+                IconButton(
+                  icon: const Icon(Icons.add, size: 24),
+                  tooltip: context.l10n.attListAddSongs,
+                  visualDensity: VisualDensity.compact,
+                  onPressed: _addSongs,
+                ),
+              ],
+            )
+          else
           _InsetListHeader(
             title: context.l10n.attListSongs,
             // Ionic `<ion-button size="small">` with an add icon
@@ -345,6 +432,46 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
         ],
 
         // Primary "Termin(e) hinzufügen" row (Ionic ion-item color="primary")
+        // IOS_FORMS2: on iOS its own ion-item-group (28px corners on a 53px
+        // row → stadium); a disabled item fades its label to 40 %.
+        if (ios)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Material(
+              color: AppColors.primary,
+              shape: const StadiumBorder(),
+              clipBehavior: Clip.antiAlias,
+              child: InkWell(
+                onTap: canSubmit ? _createAttendances : null,
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(minHeight: 53),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Opacity(
+                            opacity: canSubmit || _isLoading ? 1 : 0.4,
+                            child: Text(
+                              submitLabel,
+                              style: const TextStyle(color: Colors.white, fontSize: 17),
+                            ),
+                          ),
+                        ),
+                        if (_isLoading)
+                          const SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: AppSpinner(strokeWidth: 2, color: Colors.white),
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          )
+        else
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Material(
@@ -399,6 +526,156 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
         body: body,
       ),
     );
+  }
+
+  // IOS_FORMS2: Ionic iOS "Datum" item – stacked label (16, text colour),
+  // the readonly ion-input value below and a clear "information" button.
+  Widget _iosDateRow(BuildContext context) {
+    final onSurface = Theme.of(context).colorScheme.onSurface;
+    return InkWell(
+      onTap: _onDateClick,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: IonIos.itemMinHeight),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 10, 4, 10),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      context.l10n.attListDateMulti,
+                      style: TextStyle(fontSize: 16, color: onSurface),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      _getDateDisplayText(),
+                      style: TextStyle(fontSize: 17, color: onSurface),
+                    ),
+                  ],
+                ),
+              ),
+              IconButton(
+                icon: const IonInformationIcon(size: 22, color: AppColors.primary),
+                tooltip: context.l10n.attListEventTypes,
+                onPressed: _showHolidayInfo,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // IOS_FORMS2: Ionic iOS `ion-select` item – label left, selected value
+  // right-aligned with the chevron-expand (⇅) icon; tapping opens the
+  // default alert interface with radio options.
+  Widget _iosTypeRow(
+    BuildContext context,
+    AsyncValue<List<AttendanceType>> typesAsync,
+  ) {
+    final onSurface = Theme.of(context).colorScheme.onSurface;
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    final types = typesAsync.valueOrNull ?? const <AttendanceType>[];
+    final selected = types.contains(_selectedType) ? _selectedType : null;
+    final Widget value = typesAsync.when(
+      loading: () => const Align(
+        alignment: Alignment.centerRight,
+        child: SizedBox(width: 16, height: 16, child: AppSpinner(strokeWidth: 2)),
+      ),
+      error: (e, _) => const Align(
+        alignment: Alignment.centerRight,
+        child: Icon(Icons.error_outline, color: AppColors.danger),
+      ),
+      data: (_) => Text(
+        selected?.name ?? context.l10n.attendanceFlutterNoEventTypes,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        textAlign: TextAlign.end,
+        style: TextStyle(
+          fontSize: 17,
+          color: selected == null ? onSurface.withValues(alpha: 0.6) : onSurface,
+        ),
+      ),
+    );
+    return InkWell(
+      onTap: types.isEmpty ? null : () => _pickTypeIos(types),
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: IonIos.itemMinHeight),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Row(
+            children: [
+              Text(
+                context.l10n.attListType,
+                style: TextStyle(fontSize: 17, color: onSurface),
+              ),
+              const SizedBox(width: 16),
+              Expanded(child: value),
+              const SizedBox(width: 4),
+              IonChevronExpandIcon(
+                size: 18,
+                color: dark ? const Color(0xFFA6A6A6) : const Color(0xFF595959),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _pickTypeIos(List<AttendanceType> types) async {
+    var picked = types.contains(_selectedType) ? _selectedType : null;
+    final result = await showAppDialog<AttendanceType>(
+      context: context,
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (context, setDialogState) => AppAlertDialog(
+          title: Text(context.l10n.attListType),
+          scrollable: true,
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              for (final type in types)
+                InkWell(
+                  onTap: () => setDialogState(() => picked = type),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            type.name,
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: type == picked ? AppColors.primary : null,
+                            ),
+                          ),
+                        ),
+                        if (type == picked)
+                          const Icon(Icons.check, size: 20, color: AppColors.primary),
+                      ],
+                    ),
+                  ),
+                ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: Text(context.l10n.commonCancel),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(picked),
+              child: Text(context.l10n.commonOk),
+            ),
+          ],
+        ),
+      ),
+    );
+    if (result != null && mounted) _onTypeChanged(result);
   }
 
   /// Ionic onDateClick: tapping the field while only today is selected
@@ -973,6 +1250,10 @@ class _InsetGroup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // IOS_FORMS2: iOS inset group (ion-list inset > ion-item-group)
+    if (isIosLook(context)) {
+      return IonInsetList(margin: margin, children: children);
+    }
     final rows = <Widget>[];
     for (var i = 0; i < children.length; i++) {
       if (i > 0) rows.add(const Divider(height: 1, indent: 16));
@@ -984,6 +1265,77 @@ class _InsetGroup extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       child: Column(mainAxisSize: MainAxisSize.min, children: rows),
+    );
+  }
+}
+
+/// IOS_FORMS2: Ionic iOS `ion-item` with `ion-label position="stacked"` and a
+/// plain `ion-input` / `ion-textarea` (no outline): label in the text colour,
+/// the borderless field below and the grey helper text under it.
+class _IosStackedField extends StatelessWidget {
+  const _IosStackedField({
+    required this.label,
+    required this.onChanged,
+    this.controller,
+    this.helperText,
+    this.hintText,
+    this.keyboardType,
+    this.textCapitalization = TextCapitalization.none,
+    this.minLines,
+  });
+
+  final String label;
+  final ValueChanged<String> onChanged;
+  final TextEditingController? controller;
+  final String? helperText;
+  final String? hintText;
+  final TextInputType? keyboardType;
+  final TextCapitalization textCapitalization;
+  final int? minLines;
+
+  @override
+  Widget build(BuildContext context) {
+    final onSurface = Theme.of(context).colorScheme.onSurface;
+    final multiline = keyboardType != TextInputType.number;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(label, style: TextStyle(fontSize: 16, color: onSurface)),
+          const SizedBox(height: 6),
+          TextField(
+            controller: controller,
+            keyboardType: multiline ? TextInputType.multiline : keyboardType,
+            textCapitalization: textCapitalization,
+            minLines: multiline ? minLines : null,
+            maxLines: multiline ? null : 1,
+            style: TextStyle(fontSize: 17, color: onSurface),
+            decoration: InputDecoration(
+              hintText: hintText,
+              hintStyle: TextStyle(
+                fontSize: 17,
+                color: onSurface.withValues(alpha: 0.6),
+              ),
+              isCollapsed: true,
+              filled: false,
+              border: InputBorder.none,
+              enabledBorder: InputBorder.none,
+              focusedBorder: InputBorder.none,
+              contentPadding: const EdgeInsets.symmetric(vertical: 4),
+            ),
+            onChanged: onChanged,
+          ),
+          if (helperText != null) ...[
+            const SizedBox(height: 6),
+            Text(
+              helperText!,
+              style: const TextStyle(fontSize: 12, color: AppColors.medium),
+            ),
+          ],
+        ],
+      ),
     );
   }
 }

@@ -19,6 +19,14 @@ const String kSignoutAttendanceColumns =
     'duration_days, plan, share_plan, description, attachment_url, '
     'attachment_name, files_folder, place, tenantId';
 
+/// IOS_FORMS2: `attendance` columns of the Übersicht – exactly Ionic
+/// `getPersonAttendancesForTenant` (no `place`, `plan`, `share_plan`), so the
+/// Übersicht shows no place / "Route" chip and no Ablaufplan action.
+const String kOverviewAttendanceColumns =
+    'id, date, type, typeInfo, songs, type_id, start_time, end_time, deadline, '
+    'duration_days, description, attachment_url, attachment_name, '
+    'files_folder, tenantId';
+
 /// Columns of `attendance_types` joined into the Terminlisten.
 const String kSignoutAttendanceTypeColumns =
     'id, name, highlight, include_in_average, color, hide_name, all_day, '
@@ -536,7 +544,7 @@ class SignInOutRepository extends BaseRepository with TenantAwareRepository {
     final rows = await supabase
         .from('person_attendances')
         .select(
-            '*, attendance:attendance_id!inner($kSignoutAttendanceColumns, '
+            '*, attendance:attendance_id!inner($kOverviewAttendanceColumns, '
             'attType:type_id($kSignoutAttendanceTypeColumns))')
         .eq('person_id', personId)
         .eq('attendance.tenantId', tenantId)
@@ -549,10 +557,8 @@ class SignInOutRepository extends BaseRepository with TenantAwareRepository {
     return (rows as List)
         .where((json) => json['attendance'] != null)
         .where((json) => _toInt(json['attendance']['tenantId']) == tenantId)
-        // DUTY: duties only show up for persons who were assigned
-        .where((json) =>
-            json['duty_state'] != null ||
-            json['attendance']['attType']?['duty_mode'] != true)
+        // IOS_FORMS2: like Ionic, duty Termine are listed (and count for the
+        // average) even when the person was not assigned.
         .map((json) => _fromRows(
               json['attendance'] as Map<String, dynamic>,
               json as Map<String, dynamic>,

@@ -253,19 +253,23 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
         title: CondenseTitle(condensed: condensed, child: Text(title)),
         backgroundColor: condenseBarColor(context, condensed),
         shape: condenseBarShape(context, condensed),
+        // IOS_FORMS2: iOS → the end ion-buttons share one glass capsule
         actions: [
-          if (sharingId != null && sharingId.isNotEmpty)
-            IconButton(
-              tooltip: context.l10n.songsCopyLink,
-              icon: const Icon(Icons.link),
-              onPressed: () => _copyShareLink(sharingId, song.id!),
-            ),
-          if (!data.readOnly)
-            IconButton(
-              tooltip: context.l10n.songsDeleteSong,
-              icon: const Icon(Icons.delete_outline),
-              onPressed: () => _confirmDelete(data),
-            ),
+          if ((sharingId != null && sharingId.isNotEmpty) || !data.readOnly)
+            ToolbarButtonGroup(children: [
+              if (sharingId != null && sharingId.isNotEmpty)
+                IconButton(
+                  tooltip: context.l10n.songsCopyLink,
+                  icon: const Icon(Icons.link),
+                  onPressed: () => _copyShareLink(sharingId, song.id!),
+                ),
+              if (!data.readOnly)
+                IconButton(
+                  tooltip: context.l10n.songsDeleteSong,
+                  icon: const Icon(Icons.delete_outline),
+                  onPressed: () => _confirmDelete(data),
+                ),
+            ]),
         ],
       ),
       floatingActionButton: aufnahme == null
@@ -964,7 +968,7 @@ class _FilesSectionState extends ConsumerState<_FilesSection> {
         FileDropTarget(
           enabled: !data.readOnly && !_busy,
           onFiles: _onFilesDropped,
-          builder: (context, hovering) => IonInsetList(
+          builder: (context, hovering) => _FilesGroup(
             border: hovering ? Border.all(color: AppColors.primary, width: 2) : null,
             color: hovering
                 ? Color.alphaBlend(
@@ -1217,6 +1221,45 @@ class _FileCategoryDialogState extends State<FileCategoryDialog> {
           child: Text(context.l10n.commonSave),
         ),
       ],
+    );
+  }
+}
+
+/// IOS_FORMS2: the files `ion-item-group` sits inside Ionic's
+/// `.files-drop-area` div, so the iOS theme's rounded group corners do not
+/// apply: on iOS the rows ("Keine Dateien vorhanden." / the files) form a
+/// plain full-width block with square corners. Material keeps the inset card.
+class _FilesGroup extends StatelessWidget {
+  const _FilesGroup({required this.children, this.color, this.border});
+
+  final List<Widget> children;
+  final Color? color;
+  final BoxBorder? border;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!isIosLook(context)) {
+      return IonInsetList(color: color, border: border, children: children);
+    }
+    final rows = <Widget>[];
+    for (var i = 0; i < children.length; i++) {
+      if (i > 0) rows.add(const Divider(height: 0.5, thickness: 0.5, indent: 16));
+      rows.add(children[i]);
+    }
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      decoration: BoxDecoration(
+        color: color ?? Theme.of(context).colorScheme.surface,
+        border: border,
+      ),
+      child: Material(
+        type: MaterialType.transparency,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: rows,
+        ),
+      ),
     );
   }
 }

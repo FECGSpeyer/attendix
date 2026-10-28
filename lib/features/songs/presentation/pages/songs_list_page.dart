@@ -332,8 +332,11 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
             // Ionic `.flex`: searchbar + filter button (options icon)
             SliverToBoxAdapter(
               child: Padding(
+                // IOS_FORMS2: ion-searchbar iOS host = 8px inline / 6px block
+                // padding around the 44pt field; the filter button sits 1rem
+                // from the right edge (songs.page.scss `.ios #filter-trigger-songs`).
                 padding: isIosLook(context)
-                    ? const EdgeInsets.fromLTRB(16, 8, 8, 8)
+                    ? const EdgeInsets.fromLTRB(8, 6, 16, 6)
                     : const EdgeInsets.fromLTRB(
                         AppDimensions.paddingM,
                         AppDimensions.paddingS,
@@ -353,6 +356,24 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
                         },
                       ),
                     ),
+                    // IOS_FORMS2: iOS → black options icon in a glass circle
+                    if (isIosLook(context))
+                      Padding(
+                        padding: const EdgeInsets.only(left: 8),
+                        child: Semantics(
+                          button: true,
+                          label: context.l10n.songsFlutterFilterAndView,
+                          child: GestureDetector(
+                            onTap: () => showSongFilterSheet(context, data),
+                            child: Badge(
+                              isLabelVisible: filter.hasActiveFilters,
+                              smallSize: 8,
+                              child: const IosCircleIcon(icon: Icons.tune, size: 44),
+                            ),
+                          ),
+                        ),
+                      )
+                    else
                     IconButton(
                       tooltip: context.l10n.songsFlutterFilterAndView,
                       color: AppColors.primary,
