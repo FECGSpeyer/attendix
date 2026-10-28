@@ -13,6 +13,9 @@ class Organisation with _$Organisation {
     int? id,
     @JsonKey(name: 'created_at') DateTime? createdAt,
     required String name,
+    // SETTINGS_EXT: Branding (Logo + Text) auf Organisationsebene
+    @JsonKey(name: 'logo_url') String? logoUrl,
+    @JsonKey(name: 'branding_text') String? brandingText,
   }) = _Organisation;
 
   factory Organisation.fromJson(Map<String, dynamic> json) =>

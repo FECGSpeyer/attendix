@@ -108,7 +108,11 @@ mixin _$Person {
   @_FlexibleIntConverter()
   int? get legacyId => throw _privateConstructorUsedError;
   @_FlexibleIntConverter()
-  int? get legacyConductorId => throw _privateConstructorUsedError; // Computed/transient fields (not in DB, used for display)
+  int? get legacyConductorId => throw _privateConstructorUsedError; // SETTINGS_EXT: Verknüpfung über Instanzen hinweg (Personen verknüpfen).
+  // Nicht in toJson, damit generische Updates den Wert nie überschreiben.
+  @JsonKey(name: 'global_person_id', includeToJson: false)
+  @_FlexibleStringConverter()
+  String? get globalPersonId => throw _privateConstructorUsedError; // Computed/transient fields (not in DB, used for display)
   @JsonKey(includeFromJson: false, includeToJson: false)
   @_FlexibleStringConverter()
   String? get groupName => throw _privateConstructorUsedError;
@@ -182,6 +186,9 @@ abstract class $PersonCopyWith<$Res> {
     @JsonKey(name: 'parent_id') @_FlexibleIntConverter() int? parentId,
     @_FlexibleIntConverter() int? legacyId,
     @_FlexibleIntConverter() int? legacyConductorId,
+    @JsonKey(name: 'global_person_id', includeToJson: false)
+    @_FlexibleStringConverter()
+    String? globalPersonId,
     @JsonKey(includeFromJson: false, includeToJson: false)
     @_FlexibleStringConverter()
     String? groupName,
@@ -253,6 +260,7 @@ class _$PersonCopyWithImpl<$Res, $Val extends Person>
     Object? parentId = freezed,
     Object? legacyId = freezed,
     Object? legacyConductorId = freezed,
+    Object? globalPersonId = freezed,
     Object? groupName = freezed,
     Object? teacherName = freezed,
     Object? criticalReasonText = freezed,
@@ -465,6 +473,11 @@ class _$PersonCopyWithImpl<$Res, $Val extends Person>
                     ? _value.legacyConductorId
                     : legacyConductorId // ignore: cast_nullable_to_non_nullable
                         as int?,
+            globalPersonId:
+                freezed == globalPersonId
+                    ? _value.globalPersonId
+                    : globalPersonId // ignore: cast_nullable_to_non_nullable
+                        as String?,
             groupName:
                 freezed == groupName
                     ? _value.groupName
@@ -545,6 +558,9 @@ abstract class _$$PersonImplCopyWith<$Res> implements $PersonCopyWith<$Res> {
     @JsonKey(name: 'parent_id') @_FlexibleIntConverter() int? parentId,
     @_FlexibleIntConverter() int? legacyId,
     @_FlexibleIntConverter() int? legacyConductorId,
+    @JsonKey(name: 'global_person_id', includeToJson: false)
+    @_FlexibleStringConverter()
+    String? globalPersonId,
     @JsonKey(includeFromJson: false, includeToJson: false)
     @_FlexibleStringConverter()
     String? groupName,
@@ -615,6 +631,7 @@ class __$$PersonImplCopyWithImpl<$Res>
     Object? parentId = freezed,
     Object? legacyId = freezed,
     Object? legacyConductorId = freezed,
+    Object? globalPersonId = freezed,
     Object? groupName = freezed,
     Object? teacherName = freezed,
     Object? criticalReasonText = freezed,
@@ -827,6 +844,11 @@ class __$$PersonImplCopyWithImpl<$Res>
                 ? _value.legacyConductorId
                 : legacyConductorId // ignore: cast_nullable_to_non_nullable
                     as int?,
+        globalPersonId:
+            freezed == globalPersonId
+                ? _value.globalPersonId
+                : globalPersonId // ignore: cast_nullable_to_non_nullable
+                    as String?,
         groupName:
             freezed == groupName
                 ? _value.groupName
@@ -900,6 +922,9 @@ class _$PersonImpl implements _Person {
     @JsonKey(name: 'parent_id') @_FlexibleIntConverter() this.parentId,
     @_FlexibleIntConverter() this.legacyId,
     @_FlexibleIntConverter() this.legacyConductorId,
+    @JsonKey(name: 'global_person_id', includeToJson: false)
+    @_FlexibleStringConverter()
+    this.globalPersonId,
     @JsonKey(includeFromJson: false, includeToJson: false)
     @_FlexibleStringConverter()
     this.groupName,
@@ -1080,6 +1105,12 @@ class _$PersonImpl implements _Person {
   @override
   @_FlexibleIntConverter()
   final int? legacyConductorId;
+  // SETTINGS_EXT: Verknüpfung über Instanzen hinweg (Personen verknüpfen).
+  // Nicht in toJson, damit generische Updates den Wert nie überschreiben.
+  @override
+  @JsonKey(name: 'global_person_id', includeToJson: false)
+  @_FlexibleStringConverter()
+  final String? globalPersonId;
   // Computed/transient fields (not in DB, used for display)
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -1100,7 +1131,7 @@ class _$PersonImpl implements _Person {
 
   @override
   String toString() {
-    return 'Person(id: $id, createdAt: $createdAt, firstName: $firstName, lastName: $lastName, birthday: $birthday, joined: $joined, left: $left, email: $email, appId: $appId, notes: $notes, img: $img, telegramId: $telegramId, paused: $paused, pausedUntil: $pausedUntil, tenantId: $tenantId, additionalFields: $additionalFields, phone: $phone, shiftId: $shiftId, shiftStart: $shiftStart, shiftName: $shiftName, pending: $pending, selfRegister: $selfRegister, instrument: $instrument, hasTeacher: $hasTeacher, playsSince: $playsSince, isLeader: $isLeader, teacher: $teacher, isCritical: $isCritical, criticalReason: $criticalReason, lastSolve: $lastSolve, correctBirthday: $correctBirthday, history: $history, otherOrchestras: $otherOrchestras, otherExercise: $otherExercise, testResult: $testResult, examinee: $examinee, range: $range, instruments: $instruments, parentId: $parentId, legacyId: $legacyId, legacyConductorId: $legacyConductorId, groupName: $groupName, teacherName: $teacherName, criticalReasonText: $criticalReasonText, percentage: $percentage)';
+    return 'Person(id: $id, createdAt: $createdAt, firstName: $firstName, lastName: $lastName, birthday: $birthday, joined: $joined, left: $left, email: $email, appId: $appId, notes: $notes, img: $img, telegramId: $telegramId, paused: $paused, pausedUntil: $pausedUntil, tenantId: $tenantId, additionalFields: $additionalFields, phone: $phone, shiftId: $shiftId, shiftStart: $shiftStart, shiftName: $shiftName, pending: $pending, selfRegister: $selfRegister, instrument: $instrument, hasTeacher: $hasTeacher, playsSince: $playsSince, isLeader: $isLeader, teacher: $teacher, isCritical: $isCritical, criticalReason: $criticalReason, lastSolve: $lastSolve, correctBirthday: $correctBirthday, history: $history, otherOrchestras: $otherOrchestras, otherExercise: $otherExercise, testResult: $testResult, examinee: $examinee, range: $range, instruments: $instruments, parentId: $parentId, legacyId: $legacyId, legacyConductorId: $legacyConductorId, globalPersonId: $globalPersonId, groupName: $groupName, teacherName: $teacherName, criticalReasonText: $criticalReasonText, percentage: $percentage)';
   }
 
   @override
@@ -1180,6 +1211,8 @@ class _$PersonImpl implements _Person {
                 other.legacyId == legacyId) &&
             (identical(other.legacyConductorId, legacyConductorId) ||
                 other.legacyConductorId == legacyConductorId) &&
+            (identical(other.globalPersonId, globalPersonId) ||
+                other.globalPersonId == globalPersonId) &&
             (identical(other.groupName, groupName) ||
                 other.groupName == groupName) &&
             (identical(other.teacherName, teacherName) ||
@@ -1235,6 +1268,7 @@ class _$PersonImpl implements _Person {
     parentId,
     legacyId,
     legacyConductorId,
+    globalPersonId,
     groupName,
     teacherName,
     criticalReasonText,
@@ -1309,6 +1343,9 @@ abstract class _Person implements Person {
     @JsonKey(name: 'parent_id') @_FlexibleIntConverter() final int? parentId,
     @_FlexibleIntConverter() final int? legacyId,
     @_FlexibleIntConverter() final int? legacyConductorId,
+    @JsonKey(name: 'global_person_id', includeToJson: false)
+    @_FlexibleStringConverter()
+    final String? globalPersonId,
     @JsonKey(includeFromJson: false, includeToJson: false)
     @_FlexibleStringConverter()
     final String? groupName,
@@ -1452,7 +1489,12 @@ abstract class _Person implements Person {
   int? get legacyId;
   @override
   @_FlexibleIntConverter()
-  int? get legacyConductorId; // Computed/transient fields (not in DB, used for display)
+  int? get legacyConductorId; // SETTINGS_EXT: Verknüpfung über Instanzen hinweg (Personen verknüpfen).
+  // Nicht in toJson, damit generische Updates den Wert nie überschreiben.
+  @override
+  @JsonKey(name: 'global_person_id', includeToJson: false)
+  @_FlexibleStringConverter()
+  String? get globalPersonId; // Computed/transient fields (not in DB, used for display)
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   @_FlexibleStringConverter()

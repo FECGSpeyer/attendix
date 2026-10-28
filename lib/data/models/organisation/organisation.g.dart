@@ -14,6 +14,8 @@ _$OrganisationImpl _$$OrganisationImplFromJson(Map<String, dynamic> json) =>
               ? null
               : DateTime.parse(json['created_at'] as String),
       name: json['name'] as String,
+      logoUrl: json['logo_url'] as String?,
+      brandingText: json['branding_text'] as String?,
     );
 
 Map<String, dynamic> _$$OrganisationImplToJson(_$OrganisationImpl instance) =>
@@ -21,6 +23,8 @@ Map<String, dynamic> _$$OrganisationImplToJson(_$OrganisationImpl instance) =>
       'id': instance.id,
       'created_at': instance.createdAt?.toIso8601String(),
       'name': instance.name,
+      'logo_url': instance.logoUrl,
+      'branding_text': instance.brandingText,
     };
 
 _$TenantGroupTenantImpl _$$TenantGroupTenantImplFromJson(

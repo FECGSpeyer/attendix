@@ -74,10 +74,6 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
   bool _autoApproveRegistrations = false;
   List<String> _selectedRegistrationFields = [];
 
-  // Extra fields
-  List<ExtraField> _extraFields = [];
-  Set<String> _originalExtraFieldIds = {};
-
   // Critical rules
   List<CriticalRule> _criticalRules = [];
 
@@ -134,8 +130,6 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
           _selectedRegistrationFields.add(required);
         }
       }
-      _extraFields = List.from(tenant.additionalFields ?? []);
-      _originalExtraFieldIds = _extraFields.map((f) => f.id).toSet();
       _criticalRules = List.from(tenant.criticalRules ?? []);
 
     } catch (e) {
@@ -185,13 +179,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
         'register_id': _registrationEnabled ? (_registerId ?? const Uuid().v4()) : null,
         'auto_approve_registrations': _autoApproveRegistrations,
         'registration_fields': _registrationEnabled ? _selectedRegistrationFields : null,
-        'additional_fields': _extraFields.map((f) => {
-          'id': f.id,
-          'name': f.name,
-          'type': f.type,
-          'defaultValue': f.defaultValue,
-          if (f.options != null) 'options': f.options,
-        }).toList(),
+        // SETTINGS_EXT: additional_fields werden auf der Seite "Zusatzfelder" gepflegt
         'critical_rules': _criticalRules.map((r) => {
           'id': r.id,
           if (r.name != null) 'name': r.name,
@@ -209,14 +197,6 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
       // Refresh tenant data
       ref.invalidate(currentTenantProvider);
       ref.invalidate(userTenantsProvider);
-
-      // B7-017: Sanitize player additional_fields for removed fields
-      final currentFieldIds = _extraFields.map((f) => f.id).toSet();
-      final removedFieldIds = _originalExtraFieldIds.difference(currentFieldIds);
-      if (removedFieldIds.isNotEmpty) {
-        await _sanitizePlayerFields(removedFieldIds, tenantId);
-        _originalExtraFieldIds = currentFieldIds;
-      }
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -299,7 +279,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
     ];
 
     // Add any extra fields defined for the tenant
-    final extraFieldChips = _extraFields.map((f) =>
+    final extraFieldChips = (ref.watch(currentTenantProvider)?.additionalFields ?? const []).map((f) =>
       (key: f.id, label: f.name, required: false),
     );
 
@@ -612,54 +592,42 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
 
                   const SizedBox(height: AppDimensions.paddingXL),
 
-                  // Extra fields section
-                  _buildSectionHeader('Zusatzfelder für Personen'),
-                  Text(
-                    'Definiere zusätzliche Felder für Personendaten.',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: AppColors.medium,
-                    ),
-                  ),
-                  const SizedBox(height: AppDimensions.paddingM),
-
-                  // List of extra fields
-                  if (_extraFields.isNotEmpty) ...[
-                    ...List.generate(_extraFields.length, (index) {
-                      final field = _extraFields[index];
-                      return Card(
-                        margin: const EdgeInsets.only(bottom: AppDimensions.paddingS),
-                        child: ListTile(
-                          leading: Icon(_getFieldTypeIcon(field.type)),
-                          title: Text(field.name),
-                          subtitle: Text(
-                            field.type == 'select' && field.options != null
-                                ? '${_getFieldTypeLabel(field.type)} (${field.options!.length} Optionen)'
-                                : _getFieldTypeLabel(field.type),
-                          ),
+                  // SETTINGS_EXT: Zusatzfelder, Branding, Personen verknüpfen
+                  _buildSectionHeader('Sonstiges'),
+                  Card(
+                    child: Column(
+                      children: [
+                        ListTile(
+                          leading: const Icon(Icons.dynamic_form_outlined),
+                          title: const Text('Zusatzfelder'),
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              IconButton(
-                                icon: const Icon(Icons.edit),
-                                onPressed: () => _showEditExtraFieldDialog(index),
-                              ),
-                              IconButton(
-                                icon: const Icon(Icons.delete, color: AppColors.danger),
-                                onPressed: () => _confirmDeleteExtraField(index),
-                              ),
+                              if ((ref.watch(currentTenantProvider)?.additionalFields ?? const []).isEmpty)
+                                const Text('Keine', style: TextStyle(color: AppColors.medium)),
+                              const Icon(Icons.chevron_right),
                             ],
                           ),
+                          onTap: () => context.push('/settings/general/extra-fields'),
                         ),
-                      );
-                    }),
-                  ],
-
-                  // Add field button
-                  OutlinedButton.icon(
-                    onPressed: _showAddExtraFieldDialog,
-                    icon: const Icon(Icons.add),
-                    label: const Text('Feld hinzufügen'),
+                        ListTile(
+                          leading: const Icon(Icons.palette_outlined),
+                          title: const Text('Branding'),
+                          trailing: const Icon(Icons.chevron_right),
+                          onTap: () => context.push('/settings/general/branding'),
+                        ),
+                        if (ref.watch(currentOrganisationProvider).valueOrNull != null)
+                          ListTile(
+                            leading: const Icon(Icons.merge_type),
+                            title: const Text('Personen verknüpfen'),
+                            subtitle: const Text('Personen aus verschiedenen Instanzen miteinander verbinden'),
+                            trailing: const Icon(Icons.chevron_right),
+                            onTap: () => context.push('/settings/general/link-persons'),
+                          ),
+                      ],
+                    ),
                   ),
+                  // END SETTINGS_EXT
 
                   const SizedBox(height: AppDimensions.paddingXL),
 
@@ -943,504 +911,6 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
           ToastHelper.showError(context, 'Fehler beim Aufheben');
         }
       }
-    }
-  }
-
-  // Extra field helper methods
-  IconData _getFieldTypeIcon(String type) {
-    switch (type) {
-      case 'text':
-        return Icons.text_fields;
-      case 'textarea':
-        return Icons.notes;
-      case 'number':
-        return Icons.numbers;
-      case 'date':
-        return Icons.calendar_today;
-      case 'boolean':
-        return Icons.toggle_on;
-      case 'select':
-        return Icons.list;
-      default:
-        return Icons.text_fields;
-    }
-  }
-
-  String _getFieldTypeLabel(String type) {
-    switch (type) {
-      case 'text':
-        return 'Text';
-      case 'textarea':
-        return 'Mehrzeiliger Text';
-      case 'number':
-        return 'Zahl';
-      case 'date':
-        return 'Datum';
-      case 'boolean':
-        return 'Ja/Nein';
-      case 'select':
-        return 'Auswahl';
-      default:
-        return type;
-    }
-  }
-
-  String _generateFieldId(String name) {
-    // Generate base ID from name (Issue #10)
-    String baseId = name.trim()
-        .toLowerCase()
-        .replaceAll(RegExp(r'\s+'), '_')
-        .replaceAll(RegExp(r'[^a-z0-9_]'), '');
-
-    // Handle empty base ID
-    if (baseId.isEmpty) baseId = 'field';
-
-    // Add counter if collision exists
-    String finalId = baseId;
-    int counter = 1;
-    while (_extraFields.any((f) => f.id == finalId)) {
-      finalId = '${baseId}_$counter';
-      counter++;
-    }
-    return finalId;
-  }
-
-  Future<void> _showAddExtraFieldDialog() async {
-    String selectedType = 'text';
-    final nameController = TextEditingController();
-    List<String> options = [];
-    final optionController = TextEditingController();
-
-    await showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (ctx) => StatefulBuilder(
-        builder: (ctx, setSheetState) => Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(ctx).viewInsets.bottom,
-            left: AppDimensions.paddingM,
-            right: AppDimensions.paddingM,
-            top: AppDimensions.paddingM,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Neues Zusatzfeld',
-                    style: Theme.of(ctx).textTheme.titleLarge,
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: () => Navigator.of(ctx).pop(),
-                  ),
-                ],
-              ),
-              const SizedBox(height: AppDimensions.paddingM),
-
-              // Type selector
-              DropdownButtonFormField<String>(
-                value: selectedType,
-                decoration: const InputDecoration(
-                  labelText: 'Feldtyp',
-                ),
-                items: const [
-                  DropdownMenuItem(value: 'text', child: Text('Text')),
-                  DropdownMenuItem(value: 'textarea', child: Text('Mehrzeiliger Text')),
-                  DropdownMenuItem(value: 'number', child: Text('Zahl')),
-                  DropdownMenuItem(value: 'date', child: Text('Datum')),
-                  DropdownMenuItem(value: 'boolean', child: Text('Ja/Nein')),
-                  DropdownMenuItem(value: 'select', child: Text('Auswahl')),
-                ],
-                onChanged: (v) {
-                  setSheetState(() {
-                    selectedType = v ?? 'text';
-                    options = [];
-                  });
-                },
-              ),
-              const SizedBox(height: AppDimensions.paddingM),
-
-              // Name input
-              TextField(
-                controller: nameController,
-                decoration: const InputDecoration(
-                  labelText: 'Feldname *',
-                  hintText: 'z.B. Mitgliedsnummer',
-                ),
-                autofocus: true,
-              ),
-              const SizedBox(height: AppDimensions.paddingM),
-
-              // Options for select type
-              if (selectedType == 'select') ...[
-                Text(
-                  'Optionen',
-                  style: Theme.of(ctx).textTheme.titleSmall,
-                ),
-                const SizedBox(height: AppDimensions.paddingS),
-                ...options.asMap().entries.map((entry) => Padding(
-                  padding: const EdgeInsets.only(bottom: AppDimensions.paddingXS),
-                  child: Row(
-                    children: [
-                      Expanded(child: Text(entry.value)),
-                      IconButton(
-                        icon: const Icon(Icons.delete, size: 18),
-                        onPressed: () {
-                          setSheetState(() => options.removeAt(entry.key));
-                        },
-                      ),
-                    ],
-                  ),
-                )),
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        controller: optionController,
-                        decoration: const InputDecoration(
-                          hintText: 'Neue Option',
-                          isDense: true,
-                        ),
-                        onSubmitted: (value) {
-                          if (value.trim().isNotEmpty) {
-                            setSheetState(() {
-                              options.add(value.trim());
-                              optionController.clear();
-                            });
-                          }
-                        },
-                      ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.add),
-                      onPressed: () {
-                        if (optionController.text.trim().isNotEmpty) {
-                          setSheetState(() {
-                            options.add(optionController.text.trim());
-                            optionController.clear();
-                          });
-                        }
-                      },
-                    ),
-                  ],
-                ),
-                const SizedBox(height: AppDimensions.paddingM),
-              ],
-
-              // Save button
-              SizedBox(
-                width: double.infinity,
-                child: FilledButton(
-                  onPressed: () {
-                    final name = nameController.text.trim();
-                    if (name.isEmpty) {
-                      ToastHelper.showError(ctx, 'Bitte gib einen Namen ein');
-                      return;
-                    }
-
-                    final id = _generateFieldId(name);
-                    if (_extraFields.any((f) => f.id == id)) {
-                      ToastHelper.showError(ctx, 'Ein Feld mit dieser ID existiert bereits');
-                      return;
-                    }
-
-                    if (selectedType == 'select' && options.isEmpty) {
-                      ToastHelper.showError(ctx, 'Bitte füge mindestens eine Option hinzu');
-                      return;
-                    }
-
-                    dynamic defaultValue;
-                    switch (selectedType) {
-                      case 'text':
-                      case 'textarea':
-                        defaultValue = '';
-                        break;
-                      case 'number':
-                        defaultValue = 0;
-                        break;
-                      case 'boolean':
-                        defaultValue = false;
-                        break;
-                      case 'date':
-                        defaultValue = DateTime.now().toIso8601String().split('T')[0];
-                        break;
-                      case 'select':
-                        // Safe access with guard (Issue #7)
-                        defaultValue = options.isNotEmpty ? options.first : '';
-                        break;
-                    }
-
-                    setState(() {
-                      _extraFields.add(ExtraField(
-                        id: id,
-                        name: name,
-                        type: selectedType,
-                        defaultValue: defaultValue,
-                        options: selectedType == 'select' ? options : null,
-                      ));
-                      _markChanged();
-                    });
-
-                    Navigator.of(ctx).pop();
-                    if (context.mounted) {
-                      ToastHelper.showSuccess(context, 'Feld hinzugefügt');
-                    }
-                  },
-                  child: const Text('Feld hinzufügen'),
-                ),
-              ),
-              const SizedBox(height: AppDimensions.paddingM),
-            ],
-          ),
-        ),
-      ),
-    ).whenComplete(() {
-      // Dispose controllers to prevent memory leak (Issue #22)
-      nameController.dispose();
-      optionController.dispose();
-    });
-  }
-
-  Future<void> _showEditExtraFieldDialog(int index) async {
-    final field = _extraFields[index];
-    final nameController = TextEditingController(text: field.name);
-    List<String> options = List.from(field.options ?? []);
-    final optionController = TextEditingController();
-
-    await showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (ctx) => StatefulBuilder(
-        builder: (ctx, setSheetState) => Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(ctx).viewInsets.bottom,
-            left: AppDimensions.paddingM,
-            right: AppDimensions.paddingM,
-            top: AppDimensions.paddingM,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Zusatzfeld bearbeiten',
-                    style: Theme.of(ctx).textTheme.titleLarge,
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: () => Navigator.of(ctx).pop(),
-                  ),
-                ],
-              ),
-              const SizedBox(height: AppDimensions.paddingM),
-
-              // Type (read-only)
-              InputDecorator(
-                decoration: const InputDecoration(
-                  labelText: 'Feldtyp',
-                ),
-                child: Row(
-                  children: [
-                    Icon(_getFieldTypeIcon(field.type), size: 20),
-                    const SizedBox(width: AppDimensions.paddingS),
-                    Text(_getFieldTypeLabel(field.type)),
-                  ],
-                ),
-              ),
-              const SizedBox(height: AppDimensions.paddingM),
-
-              // Name input
-              TextField(
-                controller: nameController,
-                decoration: const InputDecoration(
-                  labelText: 'Feldname *',
-                ),
-              ),
-              const SizedBox(height: AppDimensions.paddingM),
-
-              // Options for select type
-              if (field.type == 'select') ...[
-                Text(
-                  'Optionen',
-                  style: Theme.of(ctx).textTheme.titleSmall,
-                ),
-                const SizedBox(height: AppDimensions.paddingS),
-                ...options.asMap().entries.map((entry) => Padding(
-                  padding: const EdgeInsets.only(bottom: AppDimensions.paddingXS),
-                  child: Row(
-                    children: [
-                      Expanded(child: Text(entry.value)),
-                      IconButton(
-                        icon: const Icon(Icons.delete, size: 18),
-                        onPressed: options.length > 1 ? () {
-                          setSheetState(() => options.removeAt(entry.key));
-                        } : null,
-                      ),
-                    ],
-                  ),
-                )),
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        controller: optionController,
-                        decoration: const InputDecoration(
-                          hintText: 'Neue Option',
-                          isDense: true,
-                        ),
-                        onSubmitted: (value) {
-                          if (value.trim().isNotEmpty) {
-                            setSheetState(() {
-                              options.add(value.trim());
-                              optionController.clear();
-                            });
-                          }
-                        },
-                      ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.add),
-                      onPressed: () {
-                        if (optionController.text.trim().isNotEmpty) {
-                          setSheetState(() {
-                            options.add(optionController.text.trim());
-                            optionController.clear();
-                          });
-                        }
-                      },
-                    ),
-                  ],
-                ),
-                const SizedBox(height: AppDimensions.paddingM),
-              ],
-
-              // Save button
-              SizedBox(
-                width: double.infinity,
-                child: FilledButton(
-                  onPressed: () {
-                    final name = nameController.text.trim();
-                    if (name.isEmpty) {
-                      ToastHelper.showError(ctx, 'Bitte gib einen Namen ein');
-                      return;
-                    }
-
-                    if (field.type == 'select' && options.isEmpty) {
-                      ToastHelper.showError(ctx, 'Mindestens eine Option erforderlich');
-                      return;
-                    }
-
-                    setState(() {
-                      _extraFields[index] = ExtraField(
-                        id: field.id, // Keep original ID
-                        name: name,
-                        type: field.type,
-                        // Safe access with guard (Issue #7)
-                        defaultValue: field.type == 'select' && options.isNotEmpty
-                            ? options.first
-                            : field.defaultValue,
-                        options: field.type == 'select' ? options : null,
-                      );
-                      _markChanged();
-                    });
-
-                    Navigator.of(ctx).pop();
-                    if (context.mounted) {
-                      ToastHelper.showSuccess(context, 'Feld aktualisiert');
-                    }
-                  },
-                  child: const Text('Speichern'),
-                ),
-              ),
-              const SizedBox(height: AppDimensions.paddingM),
-            ],
-          ),
-        ),
-      ),
-    ).whenComplete(() {
-      // Dispose controllers to prevent memory leak (Issue #22)
-      nameController.dispose();
-      optionController.dispose();
-    });
-  }
-
-  Future<void> _confirmDeleteExtraField(int index) async {
-    final field = _extraFields[index];
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Zusatzfeld löschen?'),
-        content: Text('Möchtest du das Feld "${field.name}" wirklich löschen? '
-            'Die Werte dieses Feldes werden bei allen Personen entfernt.'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Abbrechen'),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.danger,
-            ),
-            onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('Löschen'),
-          ),
-        ],
-      ),
-    );
-
-    if (confirmed == true) {
-      setState(() {
-        _extraFields.removeAt(index);
-        _markChanged();
-      });
-      if (mounted) {
-        ToastHelper.showSuccess(context, 'Feld gelöscht');
-      }
-    }
-  }
-
-  /// B7-017: Remove stale field keys from all player additional_fields
-  Future<void> _sanitizePlayerFields(Set<String> removedFieldIds, int tenantId) async {
-    try {
-      final supabase = ref.read(supabaseClientProvider);
-      // Fetch all players with non-null additional_fields
-      final response = await supabase
-          .from('player')
-          .select('id, additional_fields')
-          .eq('tenantId', tenantId)
-          .not('additional_fields', 'is', null);
-
-      final players = response as List;
-      for (final player in players) {
-        final fields = player['additional_fields'] as Map<String, dynamic>?;
-        if (fields == null) continue;
-
-        final cleaned = Map<String, dynamic>.from(fields);
-        var changed = false;
-        for (final removedId in removedFieldIds) {
-          if (cleaned.containsKey(removedId)) {
-            cleaned.remove(removedId);
-            changed = true;
-          }
-        }
-
-        if (changed) {
-          await supabase
-              .from('player')
-              .update({'additional_fields': cleaned.isEmpty ? null : cleaned})
-              .eq('id', player['id'])
-              .eq('tenantId', tenantId);
-        }
-      }
-    } catch (e) {
-      debugPrint('Error sanitizing player fields: $e');
     }
   }
 

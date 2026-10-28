@@ -128,6 +128,10 @@ class Person with _$Person {
     @JsonKey(name: 'parent_id') @_FlexibleIntConverter() int? parentId,
     @_FlexibleIntConverter() int? legacyId,
     @_FlexibleIntConverter() int? legacyConductorId,
+    // SETTINGS_EXT: Verknüpfung über Instanzen hinweg (Personen verknüpfen).
+    // Nicht in toJson, damit generische Updates den Wert nie überschreiben.
+    @JsonKey(name: 'global_person_id', includeToJson: false)
+    @_FlexibleStringConverter() String? globalPersonId,
     
     // Computed/transient fields (not in DB, used for display)
     @JsonKey(includeFromJson: false, includeToJson: false)

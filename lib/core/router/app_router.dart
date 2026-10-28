@@ -52,6 +52,13 @@ import '../../features/registration/presentation/pages/tenant_registration_page.
 import '../../features/parents/presentation/pages/parents_portal_page.dart';
 import '../../features/shifts/presentation/pages/shifts_list_page.dart';
 import '../../features/shifts/presentation/pages/shift_detail_page.dart';
+// SETTINGS_EXT
+import '../../features/settings/presentation/pages/files_page.dart';
+import '../../features/settings/presentation/pages/role_permissions_page.dart';
+import '../../features/settings/presentation/pages/extra_fields_page.dart';
+import '../../features/settings/presentation/pages/branding_page.dart';
+import '../../features/settings/presentation/pages/link_persons_page.dart';
+// END SETTINGS_EXT
 
 /// Listenable that notifies when auth state changes
 /// Used by GoRouter to re-evaluate redirects without recreating the router
@@ -84,6 +91,10 @@ const Map<String, RoleCheck> _protectedRoutes = {
   '/settings/pending': _isAdminOrResponsible,
   '/settings/batch-accounts': _isAdmin,
   '/settings/left': _isAdminOrResponsible,
+  // SETTINGS_EXT
+  '/settings/role-permissions': _isAdminOrResponsible,
+  // (/settings/files prüft den Zugriff selbst: abhängig von tenants.files_shared)
+  // END SETTINGS_EXT
 
   // Conductor routes (Admin, Responsible, Viewer)
   '/settings/teachers': _isConductor,
@@ -522,6 +533,36 @@ final routerProvider = Provider<GoRouter>((ref) {
                 name: 'parentsManagement',
                 builder: (context, state) => const ParentsPage(),
               ),
+              // SETTINGS_EXT
+              GoRoute(
+                path: 'files',
+                name: 'files',
+                builder: (context, state) => FilesPage(
+                  initialPath: state.uri.queryParameters['path'],
+                  openFileName: state.uri.queryParameters['open'],
+                ),
+              ),
+              GoRoute(
+                path: 'role-permissions',
+                name: 'rolePermissions',
+                builder: (context, state) => const RolePermissionsPage(),
+              ),
+              GoRoute(
+                path: 'general/extra-fields',
+                name: 'extraFields',
+                builder: (context, state) => const ExtraFieldsPage(),
+              ),
+              GoRoute(
+                path: 'general/branding',
+                name: 'branding',
+                builder: (context, state) => const BrandingPage(),
+              ),
+              GoRoute(
+                path: 'general/link-persons',
+                name: 'linkPersons',
+                builder: (context, state) => const LinkPersonsPage(),
+              ),
+              // END SETTINGS_EXT
             ],
           ),
         ],

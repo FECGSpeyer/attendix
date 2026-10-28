@@ -86,6 +86,9 @@ _$PersonImpl _$$PersonImplFromJson(Map<String, dynamic> json) => _$PersonImpl(
   legacyConductorId: const _FlexibleIntConverter().fromJson(
     json['legacyConductorId'],
   ),
+  globalPersonId: const _FlexibleStringConverter().fromJson(
+    json['global_person_id'],
+  ),
 );
 
 Map<String, dynamic> _$$PersonImplToJson(

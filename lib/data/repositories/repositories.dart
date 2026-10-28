@@ -16,3 +16,9 @@ export 'viewer_repository.dart';
 export 'parent_repository.dart';
 export 'church_repository.dart';
 export 'usage_events_repository.dart';
+// SETTINGS_EXT
+export 'files_repository.dart';
+export 'role_permission_repository.dart';
+export 'extra_fields_repository.dart';
+export 'organisation_settings_repository.dart';
+// END SETTINGS_EXT

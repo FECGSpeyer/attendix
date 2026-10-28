@@ -34,6 +34,12 @@ class Tenant with _$Tenant {
     @Default(false) bool? favorite,
     @JsonKey(name: 'critical_rules') List<CriticalRule>? criticalRules,
     @Default('Europe/Berlin') String timezone,
+    // SETTINGS_EXT: Zusatzfelder für Werke + Dateiablage (files bucket)
+    @JsonKey(name: 'song_additional_fields') List<ExtraField>? songAdditionalFields,
+    @JsonKey(name: 'files_enabled') @Default(false) bool filesEnabled,
+    @JsonKey(name: 'files_shared') @Default(false) bool filesShared,
+    /// Speicherlimit der Dateiablage in Bytes, null = unbegrenzt.
+    @JsonKey(name: 'files_max_bytes') int? filesMaxBytes,
   }) = _Tenant;
 
   factory Tenant.fromJson(Map<String, dynamic> json) => _$TenantFromJson(json);
@@ -60,6 +66,11 @@ class ExtraField with _$ExtraField {
     required String type,
     dynamic defaultValue,
     List<String>? options,
+    // SETTINGS_EXT: Sichtbarkeit/Bearbeitbarkeit für Mitglieder + Anzeige
+    bool? visibleToPlayers,
+    bool? editableByPlayers,
+    /// 'chip' | 'underneath'
+    String? displayMode,
   }) = _ExtraField;
 
   factory ExtraField.fromJson(Map<String, dynamic> json) =>
