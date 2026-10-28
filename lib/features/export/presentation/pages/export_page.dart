@@ -57,7 +57,7 @@ class _ExportPageState extends ConsumerState<ExportPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Export'),
+        title: const Text('Daten exportieren'),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(AppDimensions.paddingM),
@@ -69,7 +69,7 @@ class _ExportPageState extends ConsumerState<ExportPage> {
               title: 'Inhalt',
               child: SegmentedButton<String>(
                 segments: const [
-                  ButtonSegment(value: 'player', label: Text('Personen')),
+                  ButtonSegment(value: 'player', label: Text('Spieler')),
                   ButtonSegment(value: 'attendance', label: Text('Anwesenheit')),
                 ],
                 selected: {_contentType},
@@ -153,7 +153,7 @@ class _ExportPageState extends ConsumerState<ExportPage> {
                           onTap: _addCustomField,
                           borderRadius: BorderRadius.circular(8),
                           child: _outlinedButtonLike(
-                              Icons.edit_note, 'Eigenes Feld'),
+                              Icons.edit_note, 'Extrafeld hinzufügen'),
                         ),
                       ),
                     ],
@@ -202,8 +202,8 @@ class _ExportPageState extends ConsumerState<ExportPage> {
                         isDense: true,
                       ),
                       items: const [
-                        DropdownMenuItem(value: true, child: Text('Aufsteigend')),
-                        DropdownMenuItem(value: false, child: Text('Absteigend')),
+                        DropdownMenuItem(value: true, child: Text('Aufsteigend (A–Z)')),
+                        DropdownMenuItem(value: false, child: Text('Absteigend (Z–A)')),
                       ],
                       onChanged: (v) {
                         if (v != null) setState(() => _sortAscending = v);
@@ -217,7 +217,7 @@ class _ExportPageState extends ConsumerState<ExportPage> {
 
             // Export type selector
             _buildSection(
-              title: 'Format',
+              title: 'Export-Typ',
               child: SegmentedButton<String>(
                 segments: const [
                   ButtonSegment(value: 'pdf', label: Text('PDF')),
