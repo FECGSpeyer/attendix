@@ -10,6 +10,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/team_org/team_org.dart';
 import '../../team_org_utils.dart';
 import 'agenda_picker_sheet.dart';
+import 'quick_create_attendance.dart';
 import 'tasks_tab.dart' show TeamOrgBadge, priorityColor;
 
 /// Tab "Themen": leadership reviews suggestions, plans the next Termin and
@@ -103,9 +104,16 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
       await context.push('/attendance/${current.id}');
       ref.invalidate(upcomingProtocolAttendancesProvider);
     } else if (choice == 'new') {
-      await context.push('/attendance/new');
-      ref.invalidate(upcomingProtocolAttendancesProvider);
+      await _createAttendance();
     }
+  }
+
+  /// "Termin anlegen" (Ionic `createAttendance`): quick-create and select it.
+  Future<void> _createAttendance() async {
+    final id = await promptCreateProtocolAttendance(context, ref);
+    if (id == null || !mounted) return;
+    setState(() => _chosenAttendanceId = id);
+    ref.invalidate(upcomingProtocolAttendancesProvider);
   }
 
   Future<void> _topAction(PlanField top, ProtocolAttendance att, ProtocolType? type) async {
@@ -390,10 +398,7 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
                             ListTile(
                               leading: const Icon(Icons.add_circle_outline, color: AppColors.primary),
                               title: const Text('Termin anlegen', style: TextStyle(color: AppColors.primary)),
-                              onTap: () async {
-                                await context.push('/attendance/new');
-                                ref.invalidate(upcomingProtocolAttendancesProvider);
-                              },
+                              onTap: _createAttendance,
                             ),
                           ],
                         )

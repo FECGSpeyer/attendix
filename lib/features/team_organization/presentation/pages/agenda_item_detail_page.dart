@@ -14,6 +14,7 @@ import '../../../../data/models/team_org/team_org.dart';
 import '../../team_org_utils.dart';
 import '../widgets/task_form_sheet.dart';
 import '../widgets/tasks_tab.dart' show TeamOrgBadge, priorityColor, outcomeColor;
+import '../widgets/quick_create_attendance.dart';
 
 /// How many upcoming Termine "Einplanen" offers.
 const int _planChoices = 6;
@@ -140,7 +141,7 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage> {
       return null;
     }
 
-    final choice = await showModalBottomSheet<Object>(
+    var choice = await showModalBottomSheet<Object>(
       context: context,
       builder: (ctx) => SafeArea(
         child: ListView(
@@ -172,9 +173,15 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage> {
     );
     if (!mounted || choice == null) return;
     if (choice == 'new') {
-      await context.push('/attendance/new');
-      ref.invalidate(upcomingProtocolAttendancesProvider);
-      return;
+      // Ionic `planIntoNewAttendance`: create a Termin ad hoc and plan the topic into it.
+      final id = await promptCreateProtocolAttendance(context, ref);
+      if (id == null || !mounted) return;
+      ProtocolAttendance? created;
+      try {
+        created = await ref.read(protocolRepositoryWithTenantProvider).getAttendance(id);
+      } catch (_) {}
+      if (created == null || !mounted) return;
+      choice = created;
     }
     if (choice is ProtocolAttendance) {
       final type = typeOf(choice);

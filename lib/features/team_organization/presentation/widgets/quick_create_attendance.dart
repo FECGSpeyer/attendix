@@ -1,0 +1,240 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
+import 'package:uuid/uuid.dart';
+
+import '../../../../core/config/supabase_config.dart';
+import '../../../../core/constants/enums.dart';
+import '../../../../core/providers/attendance_providers.dart';
+import '../../../../core/providers/attendance_type_providers.dart';
+import '../../../../core/providers/duty_providers.dart';
+import '../../../../core/providers/player_absence_providers.dart';
+import '../../../../core/providers/team_org_providers.dart';
+import '../../../../core/providers/tenant_providers.dart';
+import '../../../../core/utils/duty_utils.dart';
+import '../../../../core/utils/toast_helper.dart';
+import '../../../../data/models/attendance/attendance.dart';
+import '../../../../data/models/duty/person_unavailability.dart';
+import '../../../../data/models/player_absence/player_absence.dart';
+import '../../../../data/models/team_org/team_org.dart';
+import '../../../../data/models/tenant/tenant.dart';
+
+/// Protocol-enabled, visible types a Termin can be created for ad hoc
+/// (Ionic `protocolAttendanceTypes`), ordered by index.
+List<AttendanceType> protocolAttendanceTypes(List<AttendanceType> types, List<ProtocolType> protocolTypes) {
+  final enabled = protocolTypes.where((t) => t.enableProtocol).map((t) => t.id).toSet();
+  return types.where((t) => t.id != null && enabled.contains(t.id) && t.visible).toList()
+    ..sort((a, b) => (a.index ?? 0).compareTo(b.index ?? 0));
+}
+
+/// Persons of a new Termin: in the type's groups and its extra-field filter
+/// (Ionic `personsForAttendanceType`; paused persons are already excluded).
+List<Map<String, dynamic>> personsForAttendanceType(
+  List<Map<String, dynamic>> persons,
+  AttendanceType type,
+  List<ExtraField> extraFields,
+) {
+  var result = persons.where((p) {
+    final groups = type.relevantGroups;
+    if (groups == null || groups.isEmpty) return true;
+    final instrument = (p['instrument'] as num?)?.toInt();
+    return instrument != null && groups.contains(instrument);
+  }).toList();
+  final filter = type.additionalFieldsFilter;
+  final key = filter?['key']?.toString();
+  final field = key == null ? null : extraFields.where((f) => f.id == key).firstOrNull;
+  if (field != null && filter?['option'] != null) {
+    result = result.where((p) {
+      final fields = p['additional_fields'];
+      final value = (fields is Map ? fields[key] : null) ?? field.defaultValue;
+      return value == filter!['option'];
+    }).toList();
+  }
+  return result;
+}
+
+DateTime _noon(DateTime d) => DateTime(d.year, d.month, d.day, 12);
+
+/// Row of the new Termin (Ionic `createAttendanceForType`): date at 12:00,
+/// times of the type and the checklist with computed due dates.
+Map<String, dynamic> newAttendanceRow(AttendanceType type, DateTime day, {String? createdBy}) {
+  final date = _noon(day);
+  List<Map<String, dynamic>>? checklist;
+  if (type.checklist != null && type.checklist!.isNotEmpty) {
+    final start = type.startTime ?? '';
+    final h = start.length >= 5 ? int.tryParse(start.substring(0, 2)) : null;
+    final m = start.length >= 5 ? int.tryParse(start.substring(3, 5)) : null;
+    final eventAt = DateTime(date.year, date.month, date.day, h ?? 19, m ?? 0);
+    checklist = [
+      for (final item in type.checklist!)
+        {
+          'id': const Uuid().v4(),
+          'text': item.text,
+          'deadlineHours': item.deadlineHours,
+          'completed': false,
+          'dueDate': item.deadlineHours != null
+              ? eventAt.subtract(Duration(hours: item.deadlineHours!)).toUtc().toIso8601String()
+              : null,
+        },
+    ];
+  }
+  return {
+    'date': date.toUtc().toIso8601String(),
+    'type_id': type.id,
+    'notes': '',
+    'save_in_history': true,
+    'typeInfo': '',
+    'start_time': type.startTime,
+    'end_time': type.endTime,
+    'duration_days': type.allDay ? (type.durationDays ?? 1) : 1,
+    if (checklist != null) 'checklist': checklist,
+    if (createdBy != null) 'created_by': createdBy,
+  };
+}
+
+/// Person attendances of the new Termin: default status (Neutral for duty
+/// types), planned absences and "Regelmäßig verhindert" excuse.
+List<Map<String, dynamic>> newPersonAttendanceRows(
+  List<Map<String, dynamic>> persons,
+  AttendanceType type,
+  DateTime day, {
+  List<PlayerAbsence> absences = const [],
+  List<PersonUnavailability> unavailability = const [],
+}) {
+  final date = _noon(day);
+  final dayKey = DateFormat('yyyy-MM-dd').format(date);
+  final canExcuse = type.availableStatuses?.contains(AttendanceStatus.excused) ?? true;
+  final rows = <Map<String, dynamic>>[];
+  for (final p in persons) {
+    final personId = (p['id'] as num).toInt();
+    var status = type.dutyMode ? AttendanceStatus.neutral : type.defaultStatus;
+    var notes = '';
+    final absence = absences.where((a) =>
+        a.personId == personId &&
+        a.fromDate.substring(0, 10).compareTo(dayKey) <= 0 &&
+        a.untilDate.substring(0, 10).compareTo(dayKey) >= 0).firstOrNull;
+    if (absence != null) {
+      status = AttendanceStatus.excused;
+      notes = absence.reason;
+    } else if (canExcuse) {
+      final rule = matchingUnavailability(unavailability, personId, date.toIso8601String(), type.id);
+      if (rule != null) {
+        status = AttendanceStatus.excused;
+        notes = unavailabilityNote(rule);
+      }
+    }
+    rows.add({'person_id': personId, 'status': status.value, 'notes': notes});
+  }
+  return rows;
+}
+
+/// "Neuen Termin anlegen" from the Teamorganisation (Ionic
+/// `promptCreateProtocolAttendance`): asks for the type (only when several
+/// types have "Protokoll & Tagesordnung") and the day, then creates the
+/// Termin with its persons. Returns the new Termin id, or null.
+Future<int?> promptCreateProtocolAttendance(BuildContext context, WidgetRef ref) async {
+  List<AttendanceType> types;
+  try {
+    final all = await ref.read(attendanceTypesProvider.future);
+    final protocol = await ref.read(protocolTypesProvider.future);
+    types = protocolAttendanceTypes(all, protocol);
+  } catch (_) {
+    types = const [];
+  }
+  if (!context.mounted) return null;
+  if (types.isEmpty) {
+    ToastHelper.showWarning(context, 'Kein Termintyp mit Protokoll & Tagesordnung vorhanden');
+    return null;
+  }
+
+  var type = types.first;
+  if (types.length > 1) {
+    String? selected = type.id;
+    final chosen = await showDialog<String>(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setLocal) => AlertDialog(
+          title: const Text('Welcher Termintyp?'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              for (final t in types)
+                RadioListTile<String>(
+                  value: t.id!,
+                  groupValue: selected,
+                  title: Text(t.name),
+                  onChanged: (v) => setLocal(() => selected = v),
+                ),
+            ],
+          ),
+          actions: [
+            TextButton(onPressed: () => Navigator.of(ctx).pop(), child: const Text('Abbrechen')),
+            FilledButton(onPressed: () => Navigator.of(ctx).pop(selected), child: const Text('Weiter')),
+          ],
+        ),
+      ),
+    );
+    if (chosen == null || !context.mounted) return null;
+    type = types.firstWhere((t) => t.id == chosen, orElse: () => types.first);
+  }
+
+  final now = DateTime.now();
+  final today = DateTime(now.year, now.month, now.day);
+  final day = await showDatePicker(
+    context: context,
+    initialDate: today,
+    firstDate: today,
+    lastDate: today.add(const Duration(days: 3650)),
+    helpText: '${type.name} anlegen – An welchem Tag findet der Termin statt?',
+    confirmText: 'Anlegen',
+    cancelText: 'Abbrechen',
+  );
+  if (day == null || !context.mounted) return null;
+  if (day.isBefore(today)) {
+    ToastHelper.showWarning(context, 'Bitte ein Datum ab heute wählen');
+    return null;
+  }
+
+  try {
+    final repo = ref.read(protocolRepositoryWithTenantProvider);
+    final tenant = ref.read(currentTenantProvider);
+    final results = await Future.wait([
+      repo.getPersonsForNewAttendance(),
+      ref
+          .read(playerAbsenceRepositoryWithTenantProvider)
+          .getAbsencesForTenant()
+          .catchError((_) => <PlayerAbsence>[]),
+      ref.read(dutyRepositoryWithTenantProvider).getUnavailabilityForTenant(),
+    ]);
+    final persons = personsForAttendanceType(
+      results[0] as List<Map<String, dynamic>>,
+      type,
+      tenant?.additionalFields ?? const [],
+    );
+    final id = await repo.createAttendance(newAttendanceRow(
+      type,
+      day,
+      createdBy: ref.read(supabaseClientProvider).auth.currentUser?.id,
+    ));
+    await repo.createPersonAttendances(
+      id,
+      newPersonAttendanceRows(
+        persons,
+        type,
+        day,
+        absences: results[1] as List<PlayerAbsence>,
+        unavailability: results[2] as List<PersonUnavailability>,
+      ),
+    );
+    ref.invalidate(attendancesProvider);
+    ref.invalidate(upcomingAttendancesProvider);
+    ref.invalidate(upcomingProtocolAttendancesProvider);
+    if (context.mounted) {
+      ToastHelper.showSuccess(context, 'Termin am ${DateFormat('dd.MM.').format(day)} angelegt');
+    }
+    return id;
+  } catch (_) {
+    if (context.mounted) ToastHelper.showError(context, 'Termin konnte nicht angelegt werden');
+    return null;
+  }
+}
