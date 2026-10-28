@@ -4,6 +4,7 @@ import 'package:uuid/uuid.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/attendance/attendance.dart';
+import '../../../../shared/widgets/common/swipe_actions.dart';
 
 /// Editor for the "Anmeldefelder" of an attendance type
 /// (Ionic `type.page.html` registration_fields section).
@@ -83,17 +84,17 @@ class _RegistrationFieldsEditorState extends State<RegistrationFieldsEditor> {
             ),
           ),
         for (var i = 0; i < widget.fields.length; i++)
-          ListTile(
-            contentPadding: EdgeInsets.zero,
-            title: Text(widget.fields[i].label),
-            subtitle: Text([
-              RegistrationFieldType.label(widget.fields[i].type),
-              if (widget.fields[i].options?.isNotEmpty ?? false) widget.fields[i].options!.join(', '),
-            ].join(' · ')),
-            trailing: IconButton(
-              icon: const Icon(Icons.delete_outline, color: AppColors.danger),
-              tooltip: 'Entfernen',
-              onPressed: () => widget.onChanged([...widget.fields]..removeAt(i)),
+          // Ionic: ion-item-sliding with a trash option.
+          SwipeActions.delete(
+            key: ValueKey('reg-field-${widget.fields[i].id}-$i'),
+            onDelete: () => widget.onChanged([...widget.fields]..removeAt(i)),
+            child: ListTile(
+              contentPadding: EdgeInsets.zero,
+              title: Text(widget.fields[i].label),
+              subtitle: Text([
+                RegistrationFieldType.label(widget.fields[i].type),
+                if (widget.fields[i].options?.isNotEmpty ?? false) widget.fields[i].options!.join(', '),
+              ].join(' · ')),
             ),
           ),
         const SizedBox(height: 8),

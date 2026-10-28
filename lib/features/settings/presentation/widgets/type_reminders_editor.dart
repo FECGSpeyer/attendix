@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
+import '../../../../shared/widgets/common/swipe_actions.dart';
 
 /// SETTINGS2: Ionic type.page "Erinnerungen" (reminders modal content).
 ///
@@ -109,17 +110,16 @@ class _TypeRemindersEditorState extends State<TypeRemindersEditor> {
         if (reminders.isEmpty)
           Text('Noch keine Erinnerungen konfiguriert', style: small)
         else
-          ...reminders.map((h) => ListTile(
-                contentPadding: EdgeInsets.zero,
-                dense: true,
-                leading: const Icon(Icons.alarm),
-                title: Text(TypeRemindersEditor.format(h)),
-                subtitle: Text('$h Stunde(n) vor Terminbeginn'),
-                trailing: IconButton(
-                  icon: const Icon(Icons.delete_outline, color: AppColors.danger),
-                  tooltip: 'Entfernen',
-                  onPressed: () =>
-                      widget.onChanged([...reminders]..remove(h)),
+          // Ionic: ion-item-sliding with a trash option.
+          ...reminders.map((h) => SwipeActions.delete(
+                key: ValueKey('reminder-$h'),
+                onDelete: () => widget.onChanged([...reminders]..remove(h)),
+                child: ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  dense: true,
+                  leading: const Icon(Icons.alarm, color: AppColors.primary),
+                  title: Text(TypeRemindersEditor.format(h)),
+                  subtitle: Text(h == 1 ? '1 Stunde vor Terminbeginn' : '$h Stunden vor Terminbeginn'),
                 ),
               )),
         const SizedBox(height: 8),

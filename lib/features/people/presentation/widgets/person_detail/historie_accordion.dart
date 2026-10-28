@@ -9,6 +9,7 @@ import '../../../../../core/constants/enums.dart';
 import '../../../../../core/providers/realtime_providers.dart';
 import '../../../../../core/providers/tenant_providers.dart';
 import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/utils/toast_helper.dart';
 import '../../pages/person_detail_page.dart';
 
 /// Toggle to show all history entries (including before season start).
@@ -67,12 +68,13 @@ class HistorieAccordion extends ConsumerWidget {
 
   Widget _buildContent(BuildContext context, WidgetRef ref) {
     return historyAsync.when(
-      loading: () => const Center(
-        child: Padding(
-          padding: EdgeInsets.all(AppDimensions.paddingL),
-          child: CircularProgressIndicator(),
-        ),
-      ),
+      loading:
+          () => const Center(
+            child: Padding(
+              padding: EdgeInsets.all(AppDimensions.paddingL),
+              child: CircularProgressIndicator(),
+            ),
+          ),
       error: (error, _) => Center(child: Text('Fehler: $error')),
       data: (history) {
         if (history.isEmpty) {
@@ -92,17 +94,19 @@ class HistorieAccordion extends ConsumerWidget {
 
         final tenant = ref.watch(currentTenantProvider);
         final showAll = ref.watch(showAllHistoryProvider);
-        final seasonStart = tenant?.seasonStart != null
-            ? DateTime.tryParse(tenant!.seasonStart!)
-            : null;
+        final seasonStart =
+            tenant?.seasonStart != null
+                ? DateTime.tryParse(tenant!.seasonStart!)
+                : null;
 
         // Filter to current season unless "show all" is active
-        final filteredHistory = (seasonStart != null && !showAll)
-            ? history.where((item) {
-                final date = DateTime.tryParse(item['date'] ?? '');
-                return date == null || !date.isBefore(seasonStart);
-              }).toList()
-            : history;
+        final filteredHistory =
+            (seasonStart != null && !showAll)
+                ? history.where((item) {
+                  final date = DateTime.tryParse(item['date'] ?? '');
+                  return date == null || !date.isBefore(seasonStart);
+                }).toList()
+                : history;
 
         return Column(
           children: [
@@ -119,11 +123,17 @@ class HistorieAccordion extends ConsumerWidget {
                       showAll
                           ? 'Alle Einträge'
                           : 'Ab Saisonstart (${DateFormat('dd.MM.yyyy').format(seasonStart)})',
-                      style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey.shade600,
+                      ),
                     ),
                     const Spacer(),
                     GestureDetector(
-                      onTap: () => ref.read(showAllHistoryProvider.notifier).state = !showAll,
+                      onTap:
+                          () =>
+                              ref.read(showAllHistoryProvider.notifier).state =
+                                  !showAll,
                       child: Text(
                         showAll ? 'Nur Saison' : 'Alle anzeigen',
                         style: TextStyle(
@@ -138,9 +148,9 @@ class HistorieAccordion extends ConsumerWidget {
               ),
 
             // History items
-            ...filteredHistory.take(20).map(
-                  (item) => _buildHistoryItem(context, ref, item),
-                ),
+            ...filteredHistory
+                .take(20)
+                .map((item) => _buildHistoryItem(context, ref, item)),
           ],
         );
       },
@@ -155,15 +165,15 @@ class HistorieAccordion extends ConsumerWidget {
         final percentage = stats['percentage'] as int;
         final lateCount = stats['lateCount'] as int;
         final lateText = lateCount > 0 ? ' (${lateCount}x zu spät)' : '';
-        final badgeColor = percentage >= 75
-            ? AppColors.success
-            : percentage >= 50
+        final badgeColor =
+            percentage >= 75
+                ? AppColors.success
+                : percentage >= 50
                 ? AppColors.warning
                 : AppColors.danger;
 
         return Container(
-          padding:
-              const EdgeInsets.symmetric(vertical: AppDimensions.paddingM),
+          padding: const EdgeInsets.symmetric(vertical: AppDimensions.paddingM),
           decoration: BoxDecoration(
             border: Border(bottom: BorderSide(color: Colors.grey.shade200)),
           ),
@@ -179,8 +189,10 @@ class HistorieAccordion extends ConsumerWidget {
                 ),
               ),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
                   color: badgeColor,
                   borderRadius: BorderRadius.circular(4),
@@ -202,7 +214,10 @@ class HistorieAccordion extends ConsumerWidget {
   }
 
   Widget _buildHistoryItem(
-      BuildContext context, WidgetRef ref, Map<String, dynamic> item) {
+    BuildContext context,
+    WidgetRef ref,
+    Map<String, dynamic> item,
+  ) {
     final date = DateTime.tryParse(item['date'] ?? '');
     final type = item['type'] as int?;
     final text = item['text']?.toString() ?? '';
@@ -243,65 +258,77 @@ class HistorieAccordion extends ConsumerWidget {
     }
 
     final dateStr = date != null ? DateFormat('dd.MM.yyyy').format(date) : '';
-    final titleStr = fullTitle ??
+    final titleStr =
+        fullTitle ??
         (displayTitle.isNotEmpty ? '$dateStr | $displayTitle' : dateStr);
 
     final isAttendance = type == PlayerHistoryType.attendance.value;
     final isDeletable = canEdit && !isAttendance;
 
-    final content = Container(
-      padding: const EdgeInsets.symmetric(vertical: AppDimensions.paddingM),
-      decoration: BoxDecoration(
-        border: Border(bottom: BorderSide(color: Colors.grey.shade100)),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(titleStr, style: const TextStyle(fontSize: 15)),
-                if (notes != null && notes.isNotEmpty)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 2),
-                    child: Text(
-                      notes,
-                      style:
-                          TextStyle(fontSize: 12, color: Colors.grey.shade600),
+    final content = InkWell(
+      // Ionic onHisItemClicked: note entries open the old note.
+      onTap:
+          type == PlayerHistoryType.notes.value && date != null
+              ? () => _showOldNote(context, date, text)
+              : null,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: AppDimensions.paddingM),
+        decoration: BoxDecoration(
+          border: Border(bottom: BorderSide(color: Colors.grey.shade100)),
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(titleStr, style: const TextStyle(fontSize: 15)),
+                  if (notes != null && notes.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 2),
+                      child: Text(
+                        notes,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey.shade600,
+                        ),
+                      ),
                     ),
-                  ),
-                if (!isAttendance && bodyText.isNotEmpty)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 2),
-                    child: Text(
-                      bodyText,
-                      style:
-                          TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                  if (!isAttendance && bodyText.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 2),
+                      child: Text(
+                        bodyText,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey.shade600,
+                        ),
+                      ),
                     ),
-                  ),
-              ],
-            ),
-          ),
-          if (badgeText != null)
-            Container(
-              width: 32,
-              height: 32,
-              decoration: BoxDecoration(
-                color: badgeColor,
-                borderRadius: BorderRadius.circular(4),
+                ],
               ),
-              child: Center(
-                child: Text(
-                  badgeText,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
+            ),
+            if (badgeText != null)
+              Container(
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration(
+                  color: badgeColor,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Center(
+                  child: Text(
+                    badgeText,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
                   ),
                 ),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
 
@@ -312,12 +339,12 @@ class HistorieAccordion extends ConsumerWidget {
         motion: const DrawerMotion(),
         extentRatio: 0.25,
         children: [
+          // Ionic: icon-only danger option (trash).
           SlidableAction(
             onPressed: (_) => _confirmDelete(context, ref, item),
             backgroundColor: AppColors.danger,
             foregroundColor: Colors.white,
             icon: Icons.delete,
-            label: 'Löschen',
           ),
         ],
       ),
@@ -326,25 +353,27 @@ class HistorieAccordion extends ConsumerWidget {
   }
 
   Future<void> _confirmDelete(
-      BuildContext context, WidgetRef ref, Map<String, dynamic> item) async {
+    BuildContext context,
+    WidgetRef ref,
+    Map<String, dynamic> item,
+  ) async {
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Eintrag löschen'),
-        content:
-            const Text('Eintrag unwiderruflich entfernen?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Abbrechen'),
+      builder:
+          (context) => AlertDialog(
+            // Ionic removeHis alert: header only, buttons Abbrechen / Ja.
+            title: const Text('Eintrag unwiderruflich entfernen?'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text('Abbrechen'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: const Text('Ja'),
+              ),
+            ],
           ),
-          FilledButton(
-            style: FilledButton.styleFrom(backgroundColor: AppColors.danger),
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('Löschen'),
-          ),
-        ],
-      ),
     );
 
     if (confirmed != true || !context.mounted) return;
@@ -361,13 +390,17 @@ class HistorieAccordion extends ConsumerWidget {
       final itemType = item['type'] as int?;
       final itemText = item['text']?.toString() ?? '';
 
-      final updatedHistory = person.history.where((h) {
-        // Match by date, type, and text to find exact entry
-        if (h.date == itemDate && h.type == itemType) {
-          if ((h.text ?? '') == itemText) return false;
-        }
-        return true;
-      }).map((h) => h.toJson()).toList();
+      final updatedHistory =
+          person.history
+              .where((h) {
+                // Match by date, type, and text to find exact entry
+                if (h.date == itemDate && h.type == itemType) {
+                  if ((h.text ?? '') == itemText) return false;
+                }
+                return true;
+              })
+              .map((h) => h.toJson())
+              .toList();
 
       await supabase
           .from('player')
@@ -380,23 +413,42 @@ class HistorieAccordion extends ConsumerWidget {
       ref.invalidate(realtimePlayersProvider);
 
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Eintrag gelöscht'),
-            backgroundColor: AppColors.success,
-          ),
-        );
+        ToastHelper.showSuccess(context, 'Eintrag wurde erfolgreich entfernt.');
       }
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Fehler: $e'),
-            backgroundColor: AppColors.danger,
-          ),
-        );
+        ToastHelper.showError(context, 'Fehler beim Löschen des Eintrags.');
       }
     }
+  }
+
+  /// Ionic onHisItemClicked for NOTES entries.
+  Future<void> _showOldNote(BuildContext context, DateTime date, String note) {
+    return showDialog<void>(
+      context: context,
+      builder:
+          (ctx) => AlertDialog(
+            title: const Text('Notiz geändert'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  DateFormat('dd.MM.yyyy').format(date),
+                  style: Theme.of(ctx).textTheme.titleSmall,
+                ),
+                const SizedBox(height: AppDimensions.paddingS),
+                Text('Alte Notiz: $note'),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+    );
   }
 }
 

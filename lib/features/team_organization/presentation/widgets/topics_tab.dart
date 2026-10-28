@@ -11,7 +11,7 @@ import '../../../../data/models/team_org/team_org.dart';
 import '../../team_org_utils.dart';
 import 'agenda_picker_sheet.dart';
 import 'quick_create_attendance.dart';
-import 'tasks_tab.dart' show TeamOrgBadge, priorityColor;
+import 'tasks_tab.dart' show TeamOrgBadge, TeamOrgListSkeleton, priorityColor;
 
 /// Tab "Themen": leadership reviews suggestions, plans the next Termin and
 /// keeps the Themenspeicher; members suggest topics and see their suggestions.
@@ -337,7 +337,7 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
         child: const Icon(Icons.add),
       ),
       body: itemsAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => const TeamOrgListSkeleton(), // Ionic ion-skeleton-text (3 rows)
         error: (_, __) => const Center(child: Text('Themen konnten nicht geladen werden')),
         data: (items) {
           final postponed = postponedAgendaItemIds(protocols);
