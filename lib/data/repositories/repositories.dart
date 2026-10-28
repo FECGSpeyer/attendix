@@ -16,3 +16,7 @@ export 'viewer_repository.dart';
 export 'parent_repository.dart';
 export 'church_repository.dart';
 export 'usage_events_repository.dart';
+// ORG_PLANS
+export 'plan_repository.dart';
+export 'org_plan_repository.dart';
+export 'public_plan_repository.dart';

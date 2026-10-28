@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../models/plan/plan.dart';
 import 'base_repository.dart';
@@ -180,5 +181,43 @@ class PublicPlanRepository extends BaseRepository {
       handleError(e, stack, 'getPublicOrgPlans');
       rethrow;
     }
+  }
+
+  /// Live updates of a shared Termin plan (edit link).
+  ///
+  /// No tenant context: the channel is filtered by the attendance row id,
+  /// which the caller only knows together with its share key.
+  RealtimeChannel watchSharedAttendancePlan(int id, void Function(Map<String, dynamic> row) onUpdate) {
+    return supabase
+        .channel('shared-att-$id')
+        .onPostgresChanges(
+          event: PostgresChangeEvent.update,
+          schema: 'public',
+          table: 'attendance',
+          filter: PostgresChangeFilter(type: PostgresChangeFilterType.eq, column: 'id', value: id),
+          callback: (payload) => onUpdate(payload.newRecord),
+        )
+        .subscribe();
+  }
+
+  /// Live updates of an ad-hoc plan (edit link); filtered by its key (row id).
+  RealtimeChannel watchSharedPlan(String key, void Function(Map<String, dynamic> row) onUpdate) {
+    return supabase
+        .channel('shared-plan-$key')
+        .onPostgresChanges(
+          event: PostgresChangeEvent.update,
+          schema: 'public',
+          table: 'shared_plans',
+          filter: PostgresChangeFilter(type: PostgresChangeFilterType.eq, column: 'id', value: key),
+          callback: (payload) => onUpdate(payload.newRecord),
+        )
+        .subscribe();
+  }
+
+  /// Stops a channel from [watchSharedAttendancePlan] / [watchSharedPlan].
+  Future<void> unwatch(RealtimeChannel channel) async {
+    try {
+      await supabase.removeChannel(channel);
+    } catch (_) {}
   }
 }

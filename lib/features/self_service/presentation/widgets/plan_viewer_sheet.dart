@@ -4,7 +4,9 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../data/models/plan/plan.dart'; // ORG_PLANS
 import '../../../../data/repositories/sign_in_out_repository.dart';
+import '../../../planning/presentation/pages/plan_viewer_page.dart'; // ORG_PLANS
 
 /// Plan viewer bottom sheet for displaying attendance plans
 ///
@@ -370,21 +372,42 @@ class _PlanFieldRow extends StatelessWidget {
   }
 }
 
-/// Shows the plan viewer as a bottom sheet
+/// Shows the plan viewer of a Termin.
+///
+/// ORG_PLANS: delegates to the shared [showPlanViewer] (Programmblöcke,
+/// Notizen, live mode with countdown, export incl. Telegram). Rows of Werke
+/// without parts for [playerInstrumentId] show "Keine Noten für dein Instrument".
 Future<void> showPlanViewerSheet(
   BuildContext context, {
   required CrossTenantPersonAttendance attendance,
   int? playerInstrumentId,
   List<Map<String, dynamic>> songs = const [],
 }) {
-  return showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    backgroundColor: Colors.transparent,
-    builder: (context) => PlanViewerSheet(
-      attendance: attendance,
-      playerInstrumentId: playerInstrumentId,
-      songs: songs,
+  Plan? plan;
+  try {
+    if (attendance.plan != null) plan = Plan.fromJson(attendance.plan!);
+  } catch (_) {}
+  bool missing(int? songId) {
+    if (songId == null || playerInstrumentId == null || songs.isEmpty) return false;
+    final song = songs.firstWhere((s) => s['id'] == songId, orElse: () => <String, dynamic>{});
+    final ids = song['instrument_ids'] as List?;
+    return ids != null && ids.isNotEmpty && !ids.contains(playerInstrumentId);
+  }
+
+  final date = attendance.date ?? '';
+  final isToday = DateUtils.isSameDay(DateTime.tryParse(date), DateTime.now());
+  return showPlanViewer(
+    context,
+    attendance: PlanAttendance(
+      id: attendance.attendanceId,
+      tenantId: attendance.tenantId,
+      date: date,
+      plan: plan,
+      typeInfo: attendance.typeInfo,
     ),
+    plan: plan,
+    title: (attendance.typeInfo?.isNotEmpty ?? false) ? attendance.typeInfo : 'Ablaufplan',
+    defaultLive: isToday,
+    fieldWarning: (f) => missing(f.songId) ? 'Keine Noten für dein Instrument' : null,
   );
 }

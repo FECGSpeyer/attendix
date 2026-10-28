@@ -52,6 +52,16 @@ import '../../features/registration/presentation/pages/tenant_registration_page.
 import '../../features/parents/presentation/pages/parents_portal_page.dart';
 import '../../features/shifts/presentation/pages/shifts_list_page.dart';
 import '../../features/shifts/presentation/pages/shift_detail_page.dart';
+// ORG_PLANS
+import '../../features/organisation/presentation/pages/org_person_fields_page.dart';
+import '../../features/organisation/presentation/pages/org_plan_public_page.dart';
+import '../../features/organisation/presentation/pages/org_planning_templates_page.dart';
+import '../../features/organisation/presentation/pages/org_plans_page.dart';
+import '../../features/organisation/presentation/pages/org_settings_page.dart';
+import '../../features/planning/presentation/pages/open_attendance_page.dart';
+import '../../features/planning/presentation/pages/public_planning_page.dart';
+import '../../features/planning/presentation/pages/shared_plan_page.dart';
+// ORG_PLANS end
 
 /// Listenable that notifies when auth state changes
 /// Used by GoRouter to re-evaluate redirects without recreating the router
@@ -84,13 +94,17 @@ const Map<String, RoleCheck> _protectedRoutes = {
   '/settings/pending': _isAdminOrResponsible,
   '/settings/batch-accounts': _isAdmin,
   '/settings/left': _isAdminOrResponsible,
+  // ORG_PLANS: Ablaufplanung & Organisation (Ionic: admin/responsible)
+  '/settings/planung': _isAdminOrResponsible,
+  '/settings/org-plans': _isAdminOrResponsible,
+  '/settings/org-settings': _isAdminOrResponsible,
 
   // Conductor routes (Admin, Responsible, Viewer)
   '/settings/teachers': _isConductor,
   '/people': _canSeePeopleTab,
   // SEC-017: Analytics and export routes require conductor role
   '/statistics': _isConductor,
-  '/planning': _isConductor,
+  '/planning': _canEditPlans, // ORG_PLANS: observers must not see the plan
   '/history': _isConductor,
   '/export': _isConductor,
 
@@ -103,6 +117,10 @@ bool _isAdminOrResponsible(Role role) => role.isAdmin || role.isResponsible;
 bool _isConductor(Role role) => role.isConductor;
 bool _canSeePeopleTab(Role role) => role.canSeePeopleTab;
 bool _canSeeAttendanceTab(Role role) => role.canSeeAttendanceTab;
+// ORG_PLANS: Ablaufplan editing (Role.isConductor includes observers/viewers)
+bool _canEditPlans(Role role) => role.isAdmin || role.isResponsible || role.isHelper;
+/// ORG_PLANS: public plan routes reachable without login (share keys)
+const Set<String> _publicPlanRoutes = {'/plan', '/planung', '/org-plan'};
 
 /// Provider for the auth change notifier
 final authChangeNotifierProvider = Provider<AuthChangeNotifier>((ref) {
@@ -133,6 +151,12 @@ final routerProvider = Provider<GoRouter>((ref) {
 
       // Public tenant registration route - allow access without login
       final isTenantRegistration = state.matchedLocation.startsWith('/register/');
+
+      // ORG_PLANS: public plan links work without login; logged-in users use the in-app planner
+      final isPublicPlanRoute = _publicPlanRoutes.contains(state.matchedLocation);
+      if (isPublicPlanRoute) {
+        return isLoggedIn && state.matchedLocation == '/planung' ? '/settings/planung' : null;
+      }
 
       // If not logged in and not on auth route or tenant registration, redirect to login
       if (!isLoggedIn && !isAuthRoute && !isTenantRegistration) {
@@ -213,6 +237,36 @@ final routerProvider = Provider<GoRouter>((ref) {
           return TenantRegistrationPage(registerId: registerId);
         },
       ),
+
+      // ORG_PLANS: public plan routes (share keys, no login) + appointment deep links
+      GoRoute(
+        path: '/plan',
+        name: 'sharedPlan',
+        builder: (context, state) => SharedPlanPage(
+          attendanceId: int.tryParse(state.uri.queryParameters['id'] ?? ''),
+          shareKey: state.uri.queryParameters['key'],
+          editKey: state.uri.queryParameters['edit'],
+        ),
+      ),
+      GoRoute(
+        path: '/planung',
+        name: 'publicPlanning',
+        builder: (context, state) => const PublicPlanningPage(),
+      ),
+      GoRoute(
+        path: '/org-plan',
+        name: 'orgPlanPublic',
+        builder: (context, state) => OrgPlanPublicPage(publicKey: state.uri.queryParameters['key']),
+      ),
+      GoRoute(
+        path: '/open-attendance',
+        name: 'openAttendance',
+        builder: (context, state) => OpenAttendancePage(
+          attendanceId: state.uri.queryParameters['id'],
+          tenantId: state.uri.queryParameters['tenantId'],
+        ),
+      ),
+      // ORG_PLANS end
 
       // Tenant selection
       GoRoute(
@@ -350,7 +404,9 @@ final routerProvider = Provider<GoRouter>((ref) {
               final attendanceId = int.tryParse(
                 state.uri.queryParameters['attendanceId'] ?? '',
               );
-              return PlanningPage(attendanceId: attendanceId);
+              // ORG_PLANS: open a specific plan of a Termin with several plans
+              final planIndex = int.tryParse(state.uri.queryParameters['plan'] ?? '') ?? 0;
+              return PlanningPage(attendanceId: attendanceId, initialPlanIndex: planIndex);
             },
           ),
 
@@ -522,6 +578,42 @@ final routerProvider = Provider<GoRouter>((ref) {
                 name: 'parentsManagement',
                 builder: (context, state) => const ParentsPage(),
               ),
+              // ORG_PLANS: Ablaufplanung, Org-Pläne & Organisation
+              GoRoute(
+                path: 'planung',
+                name: 'adHocPlanning',
+                builder: (context, state) => const PublicPlanningPage(inApp: true),
+              ),
+              GoRoute(
+                path: 'org-plans',
+                name: 'orgPlans',
+                builder: (context, state) => const OrgPlansPage(),
+                routes: [
+                  GoRoute(
+                    path: 'planung',
+                    name: 'orgPlansPlanning',
+                    builder: (context, state) => const PublicPlanningPage(inApp: true, fromOrgPlans: true),
+                  ),
+                ],
+              ),
+              GoRoute(
+                path: 'org-settings',
+                name: 'orgSettings',
+                builder: (context, state) => const OrgSettingsPage(),
+                routes: [
+                  GoRoute(
+                    path: 'planning-templates',
+                    name: 'orgPlanningTemplates',
+                    builder: (context, state) => const OrgPlanningTemplatesPage(),
+                  ),
+                  GoRoute(
+                    path: 'person-fields',
+                    name: 'orgPersonFields',
+                    builder: (context, state) => const OrgPersonFieldsPage(),
+                  ),
+                ],
+              ),
+              // ORG_PLANS end
             ],
           ),
         ],
