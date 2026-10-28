@@ -29,7 +29,7 @@ void main() {
       offlineQueueUserIdProvider.overrideWithValue(() => currentUser),
       offlineQueueSessionIdProvider.overrideWithValue(() => currentSession),
       offlineQueueAuthEventsProvider.overrideWithValue(authEvents.stream),
-      offlineFlushFnProvider.overrideWithValue((entry) async {
+      offlineFlushFnProvider.overrideWithValue((entry, _) async {
         flushed.add(entry);
         await onReplay?.call(entry);
       }),

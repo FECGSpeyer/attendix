@@ -26,6 +26,15 @@ final attendanceRepositoryForTenantProvider =
   return repo;
 });
 
+/// SOL_FIX11: thrown by a guarded (offline queue) write when the auth
+/// session changed before the mutation; nothing was written.
+class OfflineSessionChangedException implements Exception {
+  const OfflineSessionChangedException();
+
+  @override
+  String toString() => 'OfflineSessionChangedException: auth session changed';
+}
+
 /// Repository for attendance operations
 class AttendanceRepository extends BaseRepository with TenantAwareRepository {
   AttendanceRepository(super.ref);
@@ -571,10 +580,20 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
 
   /// Update a single person attendance
   /// SEC-012: Added tenant validation before update
+  ///
+  /// SOL_FIX11: offline queue replays pass [isSessionCurrent] and
+  /// [actingUserId]. The session is checked again AFTER the async
+  /// validation, immediately before the mutation (no await in between); if
+  /// it changed (sign-out / account switch during validation) nothing is
+  /// written and [OfflineSessionChangedException] is thrown so the queue
+  /// keeps the entry. `changed_by` / duty `assigned_by` then use
+  /// [actingUserId] (the author of the queued write), never a re-read user.
   Future<PersonAttendance> updatePersonAttendance(
     String id,
-    Map<String, dynamic> updates,
-  ) async {
+    Map<String, dynamic> updates, {
+    bool Function()? isSessionCurrent,
+    String? actingUserId,
+  }) async {
     try {
       // Validate that personAttendance belongs to current tenant
       // DUTY: also load duty_state + the type's duty_mode for syncDutyWithStatus
@@ -583,6 +602,13 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
           .select('id, duty_state, attendance:attendance_id(tenantId, type_id, attType:type_id(duty_mode))')
           .eq('id', id)
           .maybeSingle();
+
+      // SOL_FIX11: session guard right after the async validation and
+      // before any mutation (no await until the update below).
+      if (isSessionCurrent != null && !isSessionCurrent()) {
+        throw const OfflineSessionChangedException();
+      }
+      final changedBy = actingUserId ?? supabase.auth.currentUser?.id;
 
       if (validation == null) {
         throw RepositoryException(
@@ -603,7 +629,7 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
           isDutyTermin: true,
           currentDutyState: validation['duty_state'] as String?,
           newStatus: newStatus,
-          userId: supabase.auth.currentUser?.id,
+          userId: changedBy,
         ));
       }
 
@@ -627,7 +653,7 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
 
       // Add changed metadata
       updates['changed_at'] = DateTime.now().toUtc().toIso8601String();
-      updates['changed_by'] = supabase.auth.currentUser?.id;
+      updates['changed_by'] = changedBy;
 
       final response = await supabase
           .from('person_attendances')
@@ -645,6 +671,8 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
       }
 
       return PersonAttendance.fromJson(response);
+    } on OfflineSessionChangedException {
+      rethrow; // SOL_FIX11: not an error – the queue keeps the write.
     } catch (e, stack) {
       handleError(e, stack, 'updatePersonAttendance');
       rethrow;
