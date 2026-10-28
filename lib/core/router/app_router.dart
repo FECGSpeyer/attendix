@@ -101,6 +101,10 @@ import '../../features/planning/presentation/pages/open_attendance_page.dart';
 import '../../features/planning/presentation/pages/public_planning_page.dart';
 import '../../features/planning/presentation/pages/shared_plan_page.dart';
 // ORG_PLANS end
+// LINKS_STARTUP
+import '../../features/deep_links/presentation/pages/open_link_page.dart';
+import '../../shared/widgets/dialogs/native_app_ad.dart';
+import 'legacy_routes.dart';
 
 /// Listenable that notifies when auth state changes
 /// Used by GoRouter to re-evaluate redirects without recreating the router
@@ -108,6 +112,8 @@ class AuthChangeNotifier extends ChangeNotifier {
   AuthChangeNotifier(this._ref) {
     _ref.listen(authStateProvider, (_, next) {
       if (next.valueOrNull?.event == AuthChangeEvent.signedIn) _ref.read(trackingServiceProvider).track(TrackingEvent.login); // MISC2
+      // LINKS_STARTUP: Ionic shows the native app ad after SIGNED_IN
+      if (next.valueOrNull?.event == AuthChangeEvent.signedIn) _ref.read(nativeAppAdPendingProvider.notifier).state = true;
       notifyListeners();
     });
   }
@@ -198,6 +204,10 @@ final routerProvider = Provider<GoRouter>((ref) {
   // Use refreshListenable instead of watching authState directly
   // This prevents router recreation on auth changes (like updateUser)
   final authNotifier = ref.watch(authChangeNotifierProvider);
+  // LINKS_STARTUP: true once a session was seen; links opened before that
+  // (cold start / reload while the session restores) are resumed after login,
+  // locations left by a logout are not.
+  var sessionSeen = false;
 
   return GoRouter(
     initialLocation: '/login',
@@ -210,6 +220,12 @@ final routerProvider = Provider<GoRouter>((ref) {
       final isLoggedIn = authState.whenOrNull(
         data: (auth) => auth.session != null,
       ) ?? false;
+
+      // LINKS_STARTUP: legacy Ionic URLs (/tabs/..., /resetPassword) first,
+      // before they can fall through to the public `/:songSharingId` routes.
+      final legacyTarget = legacyRouteRedirect(state.uri);
+      if (legacyTarget != null) return legacyTarget;
+      if (isLoggedIn) sessionSeen = true;
 
       final isAuthRoute = state.matchedLocation == '/login' ||
           state.matchedLocation == '/register' ||
@@ -245,6 +261,16 @@ final routerProvider = Provider<GoRouter>((ref) {
         return isLoggedIn ? null : '/login';
       }
 
+      // LINKS_STARTUP: resume an in-app link opened while signed out
+      // (Ionic keeps the URL through login).
+      if (!isLoggedIn &&
+          !sessionSeen &&
+          (isTenantScopedRoute(state.matchedLocation) ||
+              state.matchedLocation == kOpenLinkRoute)) {
+        PendingFileLink.set(state.uri.toString());
+        return '/login';
+      }
+
       // If not logged in and not on auth route or tenant registration, redirect to login
       if (!isLoggedIn && !isAuthRoute && !isTenantRegistration) {
         return '/login';
@@ -267,6 +293,20 @@ final routerProvider = Provider<GoRouter>((ref) {
         if (isTermsRoute) return null;
       } else if (state.matchedLocation == '/terms') {
         return '/login';
+      }
+
+      // LINKS_STARTUP: in-app links need the right tenant first:
+      // `?tenantId=` switches the instance (Ionic att-list/attendance pages),
+      // a cold start without a selected tenant restores it.
+      if (isLoggedIn && isTenantScopedRoute(state.matchedLocation)) {
+        final linkTenantId = state.uri.queryParameters['tenantId'];
+        final currentTenantId = ref.read(currentTenantIdProvider);
+        if (currentTenantId == null ||
+            (linkTenantId != null &&
+                int.tryParse(linkTenantId) != null &&
+                int.tryParse(linkTenantId) != currentTenantId)) {
+          return openLinkLocation(state.uri, tenantId: linkTenantId);
+        }
       }
 
       // SEC-006: Role-based access control for protected routes
@@ -393,6 +433,14 @@ final routerProvider = Provider<GoRouter>((ref) {
         ),
       ),
       // ORG_PLANS end
+      // LINKS_STARTUP: tenant resolver for in-app links (?tenantId=, cold start)
+      GoRoute(
+        path: kOpenLinkRoute,
+        builder: (context, state) => OpenLinkPage(
+          target: state.uri.queryParameters[kOpenLinkTargetParam],
+          tenantId: state.uri.queryParameters['tenantId'],
+        ),
+      ),
 
       // Tenant selection
       GoRoute(

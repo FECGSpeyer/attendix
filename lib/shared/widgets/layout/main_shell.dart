@@ -11,6 +11,7 @@ import '../../../core/providers/tenant_providers.dart';
 import '../../../data/models/tenant/tenant.dart';
 import '../audio_player/audio_player_widget.dart';
 import '../debug/debug_role_fab.dart';
+import '../dialogs/native_app_ad.dart'; // LINKS_STARTUP
 
 /// Represents a navigation destination with its route
 class _NavDestination {
@@ -202,7 +203,8 @@ class MainShell extends ConsumerWidget {
     return Scaffold(
       body: Column(
         children: [
-          Expanded(child: child),
+          // LINKS_STARTUP: one-time "Attendix als App verfügbar!" (web)
+          Expanded(child: NativeAppAdGate(child: child)),
           const AudioPlayerWidget(),
         ],
       ),

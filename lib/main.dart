@@ -8,6 +8,7 @@ import 'package:intl/date_symbol_data_local.dart';
 
 import 'core/config/supabase_config.dart';
 import 'core/router/app_router.dart';
+import 'core/router/legacy_url.dart'; // LINKS_STARTUP
 import 'core/services/app_update_service.dart';
 import 'core/services/offline_queue_service.dart'; // PROFILE_OFFLINE
 import 'core/theme/app_theme.dart';
@@ -31,6 +32,10 @@ void main() async {
 
   // Initialize Supabase
   await SupabaseConfig.initialize();
+
+  // LINKS_STARTUP: path links (/tabs/..., /open-attendance?..) → #/... so the
+  // hash-based router sees them (after Supabase read auth params from the URL)
+  if (kIsWeb) promoteLegacyPathToHash();
 
   runApp(
     const ProviderScope(

@@ -31,6 +31,10 @@ class CurrentTenantNotifier extends StateNotifier<Tenant?> {
 
   final Ref ref;
 
+  /// LINKS_STARTUP: set once a tenant was chosen explicitly (selection,
+  /// deep link). The async restore below must not override that choice.
+  bool _explicitlySet = false;
+
   /// Initialize tenant from local cache and sync with server
   Future<void> _initializeTenant() async {
     // Step 1: Load from SharedPreferences (fast, instant)
@@ -71,6 +75,7 @@ class CurrentTenantNotifier extends StateNotifier<Tenant?> {
           .eq('userId', userId)
           .maybeSingle();
 
+      if (_explicitlySet) return; // LINKS_STARTUP
       // User no longer has access to this tenant
       if (tenantUserResponse == null) {
         debugPrint('User no longer has access to tenant $tenantId');
@@ -85,6 +90,7 @@ class CurrentTenantNotifier extends StateNotifier<Tenant?> {
           .eq('id', tenantId)
           .maybeSingle();
 
+      if (_explicitlySet) return; // LINKS_STARTUP
       if (response != null) {
         state = Tenant.fromJson(response);
       } else {
@@ -104,6 +110,7 @@ class CurrentTenantNotifier extends StateNotifier<Tenant?> {
   /// Use this for navigation scenarios where auth events would interrupt navigation.
   /// After navigation completes, call updateCurrentTenantId separately.
   Future<void> setTenantLocal(Tenant? tenant) async {
+    _explicitlySet = true; // LINKS_STARTUP
     state = tenant;
 
     final prefs = await SharedPreferences.getInstance();
