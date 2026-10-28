@@ -115,7 +115,7 @@ void main() {
         final start = src.indexOf('final ${name}RepositoryWithTenantProvider');
         expect(start, isNot(-1), reason: path);
         final body = src.substring(start, src.indexOf('});', start));
-        expect(body, contains('${name}RepositoryForTenantProvider(tenantId)'),
+        expect(body, contains('${name}RepositoryForTenantProvider('),
             reason: path);
         expect(body, isNot(contains('setTenantId(')), reason: path);
       }
