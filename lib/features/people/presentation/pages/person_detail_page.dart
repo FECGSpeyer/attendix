@@ -89,7 +89,7 @@ final personAttendanceStatsProvider =
 
   final response = await supabase
       .from('person_attendances')
-      .select('status, attendance:attendance_id!inner(id, date, tenantId)')
+      .select('status, notes, attendance:attendance_id!inner(id, date, tenantId)')
       .eq('person_id', personId)
       .eq('attendance.tenantId', tenantId);
 
@@ -113,7 +113,11 @@ final personAttendanceStatsProvider =
   final attended = pastAttendances.where((a) {
     final status = a['status'];
     if (status is int) {
-      return AttendanceStatus.fromValue(status).countsAsPresent;
+      // SETTINGS2: shift_excused_as_present (Ionic getPersonAttendances)
+      return AttendanceStatus.fromValue(status).countsAsAttended(
+        notes: a['notes'] as String?,
+        shiftExcusedAsPresent: tenant?.shiftExcusedAsPresent ?? false,
+      );
     }
     return false;
   }).length;

@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/config/supabase_config.dart';
 import '../../../../core/providers/organisation_providers.dart';
+import '../../../../core/providers/optional_tabs_providers.dart'; // SETTINGS2
 import '../../../../core/providers/plan_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
@@ -170,6 +171,25 @@ class _OrgPlansPageState extends ConsumerState<OrgPlansPage> {
       appBar: AppBar(
         title: const Text('Org-Pläne'),
         actions: [
+          // SETTINGS2: Ionic toggleOrgTab ("Als Tab anzeigen" / "Tab ausblenden")
+          IconButton(
+            tooltip: ref.watch(optionalTabsNotifierProvider).orgPlans
+                ? 'Tab ausblenden'
+                : 'Als Tab anzeigen',
+            icon: Icon(ref.watch(optionalTabsNotifierProvider).orgPlans
+                ? Icons.bookmark
+                : Icons.bookmark_outline),
+            onPressed: () async {
+              final current = ref.read(optionalTabsNotifierProvider).orgPlans;
+              try {
+                await ref
+                    .read(optionalTabsNotifierProvider.notifier)
+                    .setShowOrgPlansTab(!current);
+              } catch (_) {
+                if (context.mounted) ToastHelper.showError(context, 'Fehler beim Speichern');
+              }
+            },
+          ),
           if (key != null)
             IconButton(
               tooltip: 'Kalender abonnieren',

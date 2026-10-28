@@ -682,26 +682,36 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
 
       final response = await supabase
           .from('person_attendances')
-          .select('status, duty_state')
+          .select('status, duty_state, notes')
           .eq('attendance_id', attendanceId);
+
+      // SETTINGS2: Ionic att-list getPercentage(…, tenant.shift_excused_as_present)
+      final tenantRow = await supabase
+          .from('tenants')
+          .select('shift_excused_as_present')
+          .eq('id', currentTenantId)
+          .maybeSingle();
+      final shiftExcusedAsPresent =
+          tenantRow?['shift_excused_as_present'] == true;
 
       // DUTY: for duty types only assigned persons count (stand-ins are left out)
       final isDutyTermin = attendanceCheck['attType']?['duty_mode'] == true;
-      final statusList = (response as List)
+      final rows = (response as List)
           .where((e) => !isDutyTermin || e['duty_state'] != null)
-          .map((e) => e['status'])
           .toList();
+      final statusList = rows.map((e) => e['status']).toList();
 
       if (statusList.isEmpty) {
         await updateAttendance(attendanceId, {'percentage': null});
         return;
       }
 
-      final presentCount = statusList.where((s) {
-        final status = _parseStatus(s);
-        return status == AttendanceStatus.present ||
-               status == AttendanceStatus.late ||
-               status == AttendanceStatus.lateExcused;
+      final presentCount = rows.where((e) {
+        final status = _parseStatus(e['status']);
+        return status.countsAsAttended(
+          notes: e['notes'] as String?,
+          shiftExcusedAsPresent: shiftExcusedAsPresent,
+        );
       }).length;
 
       final percentage = (presentCount / statusList.length * 100).round();

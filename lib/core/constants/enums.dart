@@ -172,6 +172,15 @@ enum AttendanceStatus {
       this == AttendanceStatus.late ||
       this == AttendanceStatus.lateExcused;
 
+  /// SETTINGS2: Ionic `Utils.getPercentage` — like [countsAsPresent], but with
+  /// the tenant flag `shift_excused_as_present` a shift-/work-excused absence
+  /// ("Schichtbedingt"/"Arbeitsbedingt" in the notes) also counts as attended.
+  bool countsAsAttended({String? notes, bool shiftExcusedAsPresent = false}) =>
+      countsAsPresent ||
+      (shiftExcusedAsPresent &&
+          this == AttendanceStatus.excused &&
+          isWorkExcusedNote(notes));
+
   /// UI color for this status — single source of truth for all attendance colors
   Color get color => switch (this) {
     AttendanceStatus.present => AppColors.success,
@@ -261,3 +270,9 @@ enum FieldType {
     );
   }
 }
+
+/// SETTINGS2: Ionic `Utils.isWorkExcused` — absence note marks a shift- or
+/// work-related excuse.
+bool isWorkExcusedNote(String? notes) =>
+    notes != null &&
+    (notes.contains('Schichtbedingt') || notes.contains('Arbeitsbedingt'));

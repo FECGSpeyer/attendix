@@ -11,6 +11,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/organisation/organisation.dart';
 import '../../../planning/presentation/widgets/plan_field_dialogs.dart';
+import '../widgets/org_song_sync_section.dart'; // SETTINGS2
 
 /// Organisation settings (Ionic `OrgSettingsPage`, route `/settings/org-settings`).
 class OrgSettingsPage extends ConsumerWidget {
@@ -127,6 +128,9 @@ class OrgSettingsPage extends ConsumerWidget {
                     onTap: () => context.push('/settings/org-settings/person-fields'),
                   ),
                 ]),
+              // SETTINGS2: Werk-Synchronisierung (Ionic: super admin + linked tenants)
+              if (isSuperAdmin && others.isNotEmpty)
+                OrgSongSyncSection(linkedTenants: others),
               if (others.isNotEmpty)
                 _Section(title: 'Instanzen', children: [
                   ListTile(

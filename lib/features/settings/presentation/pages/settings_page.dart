@@ -24,6 +24,10 @@ import '../../../messages/presentation/widgets/notification_bell.dart'; // MESSA
 import '../../../organisation/presentation/widgets/org_plans_settings_section.dart'; // ORG_PLANS
 import '../../../../core/services/certificate_service.dart'; // MISC2
 import '../widgets/vorkurs_certificates.dart'; // MISC2
+// SETTINGS2
+import '../../../../core/providers/admin_providers.dart';
+import '../widgets/app_promo_card.dart';
+import '../widgets/settings_admins_sheet.dart';
 
 /// Settings page with role-based menu filtering
 class SettingsPage extends ConsumerWidget {
@@ -52,6 +56,7 @@ class SettingsPage extends ConsumerWidget {
         children: [
           // PWA Install Hint (only shown on mobile web)
           const _PwaInstallHint(),
+          const AppPromoCard(), // SETTINGS2: "📱 Attendix als App"
           // PROFILE_OFFLINE: profile card ("Meine Stammdaten")
           const ProfileHeroCard(),
           // Tenant info section
@@ -218,6 +223,17 @@ class SettingsPage extends ConsumerWidget {
             _SettingsSection(
               title: 'Mitgliederverwaltung',
               children: [
+                // SETTINGS2: Administratoren (Ionic: super admin only)
+                if (role.isAdmin)
+                  _SettingsTile(
+                    leading: const _SettingsIcon(icon: Icons.verified_user_outlined),
+                    title: 'Administratoren',
+                    trailing: Badge(
+                      label: Text('${ref.watch(adminsProvider).valueOrNull?.length ?? 0}'),
+                      backgroundColor: AppColors.medium,
+                    ),
+                    onTap: () => showAdminsSheet(context),
+                  ),
                 _SettingsTile(
                   leading: _SettingsIcon(
                     icon: Icons.hourglass_empty,
@@ -265,6 +281,24 @@ class SettingsPage extends ConsumerWidget {
             const SizedBox(height: AppDimensions.paddingM),
           ],
 
+          // SETTINGS2: Ionic "Werke & Proben" > Historie (Admin/Responsible/Helper)
+          if (tenant?.type != 'general' &&
+              !role.isApplicant &&
+              (role.isAdmin || role.isResponsible || role.isHelperRole)) ...[
+            _SettingsSection(
+              title: 'Werke & Proben',
+              children: [
+                _SettingsTile(
+                  leading: const _SettingsIcon(icon: Icons.history_toggle_off),
+                  title: 'Historie',
+                  subtitle: 'Gespielte Werke',
+                  onTap: () => context.push('/history'),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppDimensions.paddingM),
+          ],
+
           // SETTINGS_EXT: Dateiablage + Rollen & Berechtigungen
           if (ref.watch(canAccessFilesProvider) || role.isAdmin || role.isResponsible) ...[
             _SettingsSection(
@@ -292,19 +326,33 @@ class SettingsPage extends ConsumerWidget {
           // ORG_PLANS: Planung (Ablaufpläne) & Organisation
           const OrgPlansSettingsSection(),
 
-          // Calendar subscription - for all authenticated users
-          _SettingsSection(
-            title: 'Kalender',
-            children: [
-              _SettingsTile(
-                leading: const _SettingsIcon(icon: Icons.calendar_month),
-                title: 'Kalender-Abo',
-                subtitle: 'Termine im eigenen Kalender anzeigen',
-                onTap: () => context.push('/settings/calendar'),
-              ),
-            ],
-          ),
-          const SizedBox(height: AppDimensions.paddingM),
+          // SETTINGS2: Ionic "Auswertung & Daten" (not for applicants)
+          if (!role.isApplicant) ...[
+            _SettingsSection(
+              title: 'Auswertung & Daten',
+              children: [
+                _SettingsTile(
+                  leading: const _SettingsIcon(icon: Icons.calendar_month),
+                  title: 'Kalender-Abo',
+                  subtitle: 'Termine im eigenen Kalender anzeigen',
+                  onTap: () => context.push('/settings/calendar'),
+                ),
+                if (role.isAdmin || role.isResponsible) ...[
+                  _SettingsTile(
+                    leading: const _SettingsIcon(icon: Icons.bar_chart),
+                    title: 'Statistiken',
+                    onTap: () => context.push('/statistics'),
+                  ),
+                  _SettingsTile(
+                    leading: const _SettingsIcon(icon: Icons.download_outlined),
+                    title: 'Exportieren',
+                    onTap: () => context.push('/export'),
+                  ),
+                ],
+              ],
+            ),
+            const SizedBox(height: AppDimensions.paddingM),
+          ],
 
           // App settings section - for users with notification permission
           if (role.canSeeNotifications) ...[

@@ -372,7 +372,13 @@ final childStatsProvider = Provider.family<ChildStats, int>((ref, childId) {
     );
   }
 
-  final attended = childAttendances.where((a) => a.attended).length;
+  // SETTINGS2: Ionic parents.page — shift-excused counts as present (tenant flag)
+  final shiftExcused =
+      ref.watch(currentTenantProvider)?.shiftExcusedAsPresent ?? false;
+  final attended = childAttendances
+      .where((a) => a.status
+          .countsAsAttended(notes: a.notes, shiftExcusedAsPresent: shiftExcused))
+      .length;
   final late =
       childAttendances.where((a) => a.status == AttendanceStatus.late).length;
 

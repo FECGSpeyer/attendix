@@ -14,16 +14,9 @@ import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/attendance/attendance.dart';
 import '../widgets/registration_fields_editor.dart'; // ATTENDANCE_SIGNOUT
+import '../widgets/type_reminders_editor.dart'; // SETTINGS2
 import '../../../organisation/presentation/widgets/type_default_org_plan_toggle.dart'; // ORG_PLANS
 
-/// Predefined reminder time options
-const _reminderPresets = [
-  (hours: 1, label: '1 Stunde'),
-  (hours: 2, label: '2 Stunden'),
-  (hours: 24, label: '1 Tag'),
-  (hours: 48, label: '2 Tage'),
-  (hours: 168, label: '1 Woche'),
-];
 
 /// Attendance Type Edit Page
 ///
@@ -45,7 +38,6 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
   final _nameController = TextEditingController();
   final _durationDaysController = TextEditingController(text: '1');
   final _planningTitleController = TextEditingController();
-  final _customReminderController = TextEditingController();
 
   TimeOfDay? _startTime;
   TimeOfDay? _endTime;
@@ -73,6 +65,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
   List<ChecklistItem> _checklist = [];
   List<Map<String, dynamic>> _planFields = [];
   String _planningTitle = '';
+  bool _planningPrefixInstanceName = false; // SETTINGS2
   List<int> _relevantGroups = [];
   Map<String, dynamic>? _additionalFieldsFilter;
 
@@ -104,6 +97,9 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
       try {
         final repo = ref.read(attendanceTypeRepositoryWithTenantProvider);
         _usageCount = await repo.getAttendanceCountForType(widget.typeId);
+        // SETTINGS2: "Instanz-Name vor Werken"
+        _planningPrefixInstanceName =
+            await repo.getPlanningPrefixInstanceName(widget.typeId);
       } catch (_) {}
 
       setState(() {
@@ -169,7 +165,6 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
     _nameController.dispose();
     _durationDaysController.dispose();
     _planningTitleController.dispose();
-    _customReminderController.dispose();
     super.dispose();
   }
 
@@ -539,6 +534,32 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                         _hasChanges = true;
                       },
                     ),
+                    // SETTINGS2: Ionic "Instanz-Name vor Werken" (not for general tenants)
+                    if (ref.watch(currentTenantProvider)?.type != 'general')
+                      SwitchListTile(
+                        contentPadding: EdgeInsets.zero,
+                        title: const Text('Instanz-Name vor Werken'),
+                        subtitle: const Text(
+                          'Falls aktiviert, wird der Instanz-Name vor jedem Werk im Ablaufplan angezeigt.',
+                        ),
+                        value: _planningPrefixInstanceName,
+                        onChanged: (v) => setState(() {
+                          _planningPrefixInstanceName = v;
+                          _hasChanges = true;
+                        }),
+                      ),
+                    // SETTINGS2: plan start time for all-day types (Ionic type.start_time)
+                    if (_allDay)
+                      ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        title: const Text('Start'),
+                        subtitle: const Text('Startzeit für den Ablaufplan bei ganztägigen Terminen'),
+                        trailing: Text(
+                          _formatTime(_startTime ?? const TimeOfDay(hour: 19, minute: 0)),
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                        onTap: () => _pickTime(isStart: true),
+                      ),
                     const SizedBox(height: 12),
                     // Plan fields list
                     if (_planFields.isNotEmpty)
@@ -626,14 +647,17 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
             // ORG_PLANS: Termine of this type start as org plan
             TypeDefaultOrgPlanToggle(typeId: widget.typeId),
 
-            // Terminerinnerungen
+            // Terminerinnerungen (SETTINGS2: Ionic reminders modal)
             _buildSection(
-              title: 'Erinnerungen',
+              title: 'Terminerinnerungen',
               child: Column(
                 children: [
                   SwitchListTile(
-                    title: const Text('Erinnerungen aktivieren'),
-                    subtitle: const Text('Vor dem Termin erinnern'),
+                    title: const Text('Terminerinnerung'),
+                    subtitle: const Text(
+                      'Wenn diese Option aktiviert ist, Erinnerungen angelegt wurden und die '
+                      'Benachrichtigungen aktiviert sind, erhalten Personen eine Terminerinnerung.',
+                    ),
                     value: _notification,
                     onChanged: (value) => setState(() {
                       _notification = value;
@@ -641,75 +665,14 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                     }),
                     contentPadding: EdgeInsets.zero,
                   ),
-                  if (_notification) ...[
-                    const SizedBox(height: 8),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: _reminderPresets.map((preset) {
-                        final isSelected = _reminders.contains(preset.hours);
-                        return FilterChip(
-                          label: Text(preset.label),
-                          selected: isSelected,
-                          onSelected: (selected) => setState(() {
-                            if (selected) {
-                              _reminders.add(preset.hours);
-                              _reminders.sort();
-                            } else {
-                              _reminders.remove(preset.hours);
-                            }
-                            _hasChanges = true;
-                          }),
-                        );
-                      }).toList(),
+                  if (_notification)
+                    TypeRemindersEditor(
+                      reminders: _reminders,
+                      onChanged: (list) => setState(() {
+                        _reminders = list;
+                        _hasChanges = true;
+                      }),
                     ),
-                    const SizedBox(height: 8),
-                    // Custom reminder
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextField(
-                            controller: _customReminderController,
-                            decoration: const InputDecoration(
-                              labelText: 'Eigene (Stunden)',
-                              hintText: 'z.B. 72',
-                              isDense: true,
-                            ),
-                            keyboardType: TextInputType.number,
-                            onSubmitted: (value) {
-                              final hours = int.tryParse(value);
-                              if (hours != null && hours > 0 && !_reminders.contains(hours)) {
-                                setState(() {
-                                  _reminders.add(hours);
-                                  _reminders.sort();
-                                  _hasChanges = true;
-                                  _customReminderController.clear();
-                                });
-                              }
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                    if (_reminders.isNotEmpty)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8),
-                        child: Wrap(
-                          spacing: 4,
-                          children: _reminders.map((hours) {
-                            return Chip(
-                              label: Text(_formatReminderHours(hours)),
-                              onDeleted: () => setState(() {
-                                _reminders.remove(hours);
-                                _hasChanges = true;
-                              }),
-                              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                              visualDensity: VisualDensity.compact,
-                            );
-                          }).toList(),
-                        ),
-                      ),
-                  ],
                 ],
               ),
             ),
@@ -1366,11 +1329,20 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
 
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
+    // SETTINGS2: Ionic validate() — at least two available statuses
+    if (_availableStatuses.length < 2) {
+      ToastHelper.showError(
+        context,
+        'Bitte mindestens zwei verfügbare Anwesenheitsstatus auswählen.',
+      );
+      return;
+    }
 
     try {
       final updates = {
         'name': _nameController.text.trim(),
-        'start_time': _allDay ? null : _formatTime(_startTime ?? const TimeOfDay(hour: 19, minute: 0)),
+        // SETTINGS2: for all-day types start_time is the plan start (Ionic)
+        'start_time': _formatTime(_startTime ?? const TimeOfDay(hour: 19, minute: 0)),
         'end_time': _allDay ? null : _formatTime(_endTime ?? const TimeOfDay(hour: 20, minute: 30)),
         'default_status': _defaultStatus.value,
         'available_statuses': _availableStatuses.map((s) => s.value).toList(),
@@ -1391,6 +1363,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
             ? {'fields': _planFields}
             : null,
         'planning_title': _planningTitle.isNotEmpty ? _planningTitle : null,
+        'planning_prefix_instance_name': _planningPrefixInstanceName, // SETTINGS2
         'relevant_groups': _relevantGroups.isNotEmpty ? _relevantGroups : null,
         'additional_fields_filter': _additionalFieldsFilter,
         // ATTENDANCE_SIGNOUT

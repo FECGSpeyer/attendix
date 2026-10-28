@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/constants/enums.dart';
 import '../../../core/providers/dashboard_providers.dart';
 import '../../../core/providers/debug_providers.dart';
+import '../../../core/providers/optional_tabs_providers.dart'; // SETTINGS2
 import '../../../core/providers/tenant_providers.dart';
 import '../../../data/models/tenant/tenant.dart';
 import '../audio_player/audio_player_widget.dart';
@@ -37,7 +38,10 @@ class MainShell extends ConsumerWidget {
 
   /// Build navigation destinations based on user role and tenant settings
   List<_NavDestination> _buildDestinations(Role role, Tenant? tenant,
-      {bool hasMultipleTenants = false, bool showDashboardTab = false}) {
+      {bool hasMultipleTenants = false,
+      bool showDashboardTab = false,
+      bool showSongsTab = false,
+      bool showOrgPlansTab = false}) {
     final List<_NavDestination> destinations = [];
 
     // DASHBOARD: first tab for Admin/Responsible when enabled (Ionic tabs.page.html)
@@ -110,6 +114,24 @@ class MainShell extends ConsumerWidget {
       ));
     }
 
+    // SETTINGS2: optional "Werke" / "Org" tabs (Ionic tabs.page.html)
+    if (showSongsTab) {
+      destinations.add(const _NavDestination(
+        route: '/songs-tab',
+        label: 'Werke',
+        icon: Icons.music_note_outlined,
+        selectedIcon: Icons.music_note,
+      ));
+    }
+    if (showOrgPlansTab) {
+      destinations.add(const _NavDestination(
+        route: '/org-plans-tab',
+        label: 'Org',
+        icon: Icons.business_outlined,
+        selectedIcon: Icons.business,
+      ));
+    }
+
     // Everyone: Settings tab
     destinations.add(const _NavDestination(
       route: '/settings',
@@ -153,7 +175,9 @@ class MainShell extends ConsumerWidget {
         (ref.watch(userTenantsProvider).valueOrNull?.length ?? 0) > 1;
     final destinations = _buildDestinations(role, tenant,
         hasMultipleTenants: hasMultipleTenants,
-        showDashboardTab: ref.watch(showDashboardTabProvider)); // DASHBOARD
+        showDashboardTab: ref.watch(showDashboardTabProvider), // DASHBOARD
+        showSongsTab: ref.watch(showSongsTabProvider), // SETTINGS2
+        showOrgPlansTab: ref.watch(showOrgPlansTabProvider)); // SETTINGS2
     final selectedIndex = _getSelectedIndex(context, destinations);
 
     // Safety check: ensure we have at least one destination
