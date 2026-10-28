@@ -8,11 +8,18 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/config/supabase_config.dart';
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/church_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/string_utils.dart';
 import '../../../../core/utils/toast_helper.dart';
+import '../../../../core/providers/tenant_providers.dart';
+import '../../../../core/providers/user_preferences_provider.dart';
+import '../../../../core/utils/dashboard_logic.dart';
 import '../../../../data/models/tenant/tenant.dart';
+import '../../../auth/data/auth_flow_service.dart';
+import '../../../auth/presentation/widgets/otp_widgets.dart';
+import '../../../legal/presentation/widgets/legal_content_view.dart';
 import '../../data/providers/registration_providers.dart';
 
 /// Public tenant registration page
@@ -40,11 +47,38 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
   Uint8List? _profileImageBytes;
   bool _hasCheckedRegistration = false;
 
+  // AUTH: account block (Ionic tenant-register): password or e-mail code,
+  // terms checkbox, prefill from an existing profile.
+  final _emailController = TextEditingController();
+  final _otpController = TextEditingController();
+  final _firstNameController = TextEditingController();
+  final _lastNameController = TextEditingController();
+  final _phoneController = TextEditingController();
+  final _cooldown = ResendCooldown();
+  AuthMode _mode = AuthMode.password;
+  bool _otpSent = false;
+  bool _privacyAccepted = false;
+  bool _noGroupsAvailable = false;
+
   bool get _isLoggedIn => ref.read(supabaseClientProvider).auth.currentUser != null;
+
+  @override
+  void initState() {
+    super.initState();
+    // Ionic default: birth date 18 years ago.
+    final now = DateTime.now();
+    _formData.birthDate = DateTime(now.year - 18, now.month, now.day);
+  }
 
   @override
   void dispose() {
     _birthdayController.dispose();
+    _emailController.dispose();
+    _otpController.dispose();
+    _firstNameController.dispose();
+    _lastNameController.dispose();
+    _phoneController.dispose();
+    _cooldown.dispose();
     super.dispose();
   }
 
@@ -169,81 +203,15 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
               ),
             ),
           ),
+          const SizedBox(height: AppDimensions.paddingS),
+          Text(
+            'Registriere dich über dieses Formular für die oben genannte Instanz.',
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
           const SizedBox(height: AppDimensions.paddingL),
 
-          // Account section (only if not logged in)
-          if (!_isLoggedIn) ...[
-            Text(
-              'Konto erstellen',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
-            ),
-            const SizedBox(height: AppDimensions.paddingM),
-            TextFormField(
-              decoration: const InputDecoration(
-                labelText: 'E-Mail *',
-                prefixIcon: Icon(Icons.email_outlined),
-              ),
-              keyboardType: TextInputType.emailAddress,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'E-Mail ist erforderlich';
-                }
-                if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
-                  return 'Ungültige E-Mail-Adresse';
-                }
-                return null;
-              },
-              onSaved: (value) => _formData.email = value ?? '',
-            ),
-            const SizedBox(height: AppDimensions.paddingM),
-            TextFormField(
-              decoration: InputDecoration(
-                labelText: 'Passwort *',
-                prefixIcon: const Icon(Icons.lock_outlined),
-                suffixIcon: IconButton(
-                  icon: Icon(_obscurePassword ? Icons.visibility : Icons.visibility_off),
-                  onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
-                ),
-              ),
-              obscureText: _obscurePassword,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Passwort ist erforderlich';
-                }
-                if (value.length < 6) {
-                  return 'Mindestens 6 Zeichen';
-                }
-                return null;
-              },
-              onChanged: (value) => _formData.password = value,
-              onSaved: (value) => _formData.password = value ?? '',
-            ),
-            const SizedBox(height: AppDimensions.paddingM),
-            TextFormField(
-              decoration: InputDecoration(
-                labelText: 'Passwort bestätigen *',
-                prefixIcon: const Icon(Icons.lock_outlined),
-                suffixIcon: IconButton(
-                  icon: Icon(_obscureConfirmPassword ? Icons.visibility : Icons.visibility_off),
-                  onPressed: () => setState(() => _obscureConfirmPassword = !_obscureConfirmPassword),
-                ),
-              ),
-              obscureText: _obscureConfirmPassword,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Passwort bestätigen ist erforderlich';
-                }
-                if (value != _formData.password) {
-                  return 'Passwörter stimmen nicht überein';
-                }
-                return null;
-              },
-              onSaved: (value) => _formData.confirmPassword = value ?? '',
-            ),
-            const SizedBox(height: AppDimensions.paddingL),
-          ],
+          // Account section (Ionic: "Account")
+          ..._buildAccountSection(),
 
           // Personal data section
           Text(
@@ -254,31 +222,23 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
           ),
           const SizedBox(height: AppDimensions.paddingM),
           TextFormField(
+            controller: _firstNameController,
+            textCapitalization: TextCapitalization.words,
             decoration: const InputDecoration(
               labelText: 'Vorname *',
               prefixIcon: Icon(Icons.person_outlined),
             ),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Vorname ist erforderlich';
-              }
-              return null;
-            },
-            onSaved: (value) => _formData.firstName = value ?? '',
+            onSaved: (value) => _formData.firstName = value?.trim() ?? '',
           ),
           const SizedBox(height: AppDimensions.paddingM),
           TextFormField(
+            controller: _lastNameController,
+            textCapitalization: TextCapitalization.words,
             decoration: const InputDecoration(
               labelText: 'Nachname *',
               prefixIcon: Icon(Icons.person_outlined),
             ),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Nachname ist erforderlich';
-              }
-              return null;
-            },
-            onSaved: (value) => _formData.lastName = value ?? '',
+            onSaved: (value) => _formData.lastName = value?.trim() ?? '',
           ),
           const SizedBox(height: AppDimensions.paddingM),
 
@@ -287,10 +247,23 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
             loading: () => const Center(child: CircularProgressIndicator()),
             error: (_, __) => const Text('Fehler beim Laden der Gruppen'),
             data: (groups) {
+              _noGroupsAvailable = groups.isEmpty;
               if (groups.isEmpty) {
-                return const Text('Keine Gruppen verfügbar');
+                return Card(
+                  color: AppColors.danger.withValues(alpha: 0.1),
+                  child: const Padding(
+                    padding: EdgeInsets.all(AppDimensions.paddingM),
+                    child: Text(
+                      'Registrierung aktuell nicht möglich: Der Administrator hat noch keine Gruppen angelegt. Bitte versuche es später erneut.',
+                      style: TextStyle(color: AppColors.danger),
+                    ),
+                  ),
+                );
               }
+              // Ionic: first group preselected.
+              _formData.groupId ??= groups.first['id'] as int;
               return DropdownButtonFormField<int>(
+                value: _formData.groupId,
                 decoration: const InputDecoration(
                   labelText: 'Gruppe *',
                   prefixIcon: Icon(Icons.group_outlined),
@@ -328,6 +301,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
           if (registrationFields.contains('phone')) ...[
             const SizedBox(height: AppDimensions.paddingM),
             TextFormField(
+              controller: _phoneController,
               decoration: const InputDecoration(
                 labelText: 'Handynummer',
                 prefixIcon: Icon(Icons.phone_outlined),
@@ -344,7 +318,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
           const SizedBox(height: AppDimensions.paddingM),
           TextFormField(
             decoration: const InputDecoration(
-              labelText: 'Notizen',
+              labelText: 'Bemerkungen (optional)',
               prefixIcon: Icon(Icons.notes_outlined),
               alignLabelWithHint: true,
             ),
@@ -356,24 +330,18 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
 
           // Submit button
           FilledButton(
-            onPressed: _isLoading ? null : () => _submit(tenant),
+            onPressed: _isLoading ||
+                    _noGroupsAvailable ||
+                    (!_isLoggedIn && _mode == AuthMode.otp)
+                ? null
+                : () => _submit(tenant),
             child: _isLoading
                 ? const SizedBox(
                     width: 24,
                     height: 24,
                     child: CircularProgressIndicator(strokeWidth: 2),
                   )
-                : const Text('Registrieren'),
-          ),
-
-          const SizedBox(height: AppDimensions.paddingM),
-
-          // Login link — inline dialog instead of navigating away
-          Center(
-            child: TextButton(
-              onPressed: () => _showLoginDialog(tenant),
-              child: const Text('Account bereits vorhanden? Hier anmelden'),
-            ),
+                : const Text('Registrierung abschließen'),
           ),
 
           const SizedBox(height: AppDimensions.paddingL),
@@ -402,7 +370,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
       onTap: () async {
         final date = await showDatePicker(
           context: context,
-          initialDate: _formData.birthDate ?? DateTime(2000),
+          initialDate: _formData.birthDate ?? DateTime(DateTime.now().year - 18),
           firstDate: DateTime(1900),
           lastDate: DateTime.now(),
         );
@@ -566,12 +534,6 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
 
   Widget _buildProfilePictureField() {
     return FormField<Uint8List>(
-      validator: (_) {
-        if (_profileImageBytes == null) {
-          return 'Bitte wähle ein Passbild aus';
-        }
-        return null;
-      },
       builder: (fieldState) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -606,7 +568,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
                         Text(
                           _profileImageBytes != null
                               ? 'Passbild ändern'
-                              : 'Passbild auswählen *',
+                              : 'Wähle ein Passbild aus (max. 15 MB)',
                           style: const TextStyle(
                             color: AppColors.primary,
                             fontWeight: FontWeight.w500,
@@ -659,7 +621,8 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
       // Check file size (max 15MB)
       if (bytes.length > 15 * 1024 * 1024) {
         if (mounted) {
-          ToastHelper.showError(context, 'Bild ist zu groß (max 15 MB)');
+          ToastHelper.showError(context,
+              'Das ausgewählte Bild ist zu groß. Bitte wähle ein Bild unter 15 MB.');
         }
         return;
       }
@@ -667,7 +630,8 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
       setState(() => _profileImageBytes = bytes);
     } catch (e) {
       if (mounted) {
-        ToastHelper.showError(context, 'Fehler beim Auswählen: $e');
+        ToastHelper.showError(context,
+            'Fehler beim ändern des Passbildes, versuche es später erneut');
       }
     }
   }
@@ -705,12 +669,6 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
                           child: Text(c.name),
                         )),
                   ],
-                  validator: (value) {
-                    if (value == null) {
-                      return 'Bitte wähle eine Gemeinde aus';
-                    }
-                    return null;
-                  },
                   onChanged: (value) {
                     setFieldState(() {
                       _formData.additionalFields[field.id] = value;
@@ -724,17 +682,11 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
                   const SizedBox(height: AppDimensions.paddingM),
                   TextFormField(
                     decoration: const InputDecoration(
-                      labelText: 'Name der Gemeinde *',
+                      labelText: 'Gemeinde nicht gelistet? Bitte Namen eingeben',
+                      hintText: 'Name deiner Gemeinde',
                       prefixIcon: Icon(Icons.edit),
                       helperText: 'Mindestens 5 Zeichen',
                     ),
-                    validator: (value) {
-                      if (isCustom &&
-                          (value == null || value.trim().length < 5)) {
-                        return 'Bitte gib den Namen deiner Gemeinde ein (min. 5 Zeichen)';
-                      }
-                      return null;
-                    },
                     onSaved: (value) {
                       _formData.additionalFields['_custom_church'] =
                           value?.trim();
@@ -765,9 +717,12 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
           .maybeSingle();
 
       if (existing != null && mounted) {
-        ToastHelper.showWarning(context, 'Du bist bereits in dieser Gruppe registriert.');
-        context.go('/tenants');
+        ToastHelper.showWarning(
+            context, 'Sie sind bereits in dieser Instanz registriert.');
+        context.go('/login');
+        return;
       }
+      await _prefillFromProfile(userId);
     } catch (e) {
       debugPrint('Check existing registration failed: $e');
     }
@@ -821,15 +776,19 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
                 ElevatedButton(
                   onPressed: () async {
                     try {
-                      final supabase = ref.read(supabaseClientProvider);
-                      await supabase.auth.signInWithPassword(
-                        email: emailController.text.trim(),
-                        password: passwordController.text,
-                      );
+                      await ref.read(authFlowServiceProvider).signInWithPassword(
+                            emailController.text.trim(),
+                            passwordController.text,
+                          );
                       if (context.mounted) Navigator.pop(context, true);
+                    } on LoginFailure catch (failure) {
+                      setDialogState(() {
+                        loginError = failure.message ??
+                            'Bitte bestätige zuerst deine E-Mail-Adresse.';
+                      });
                     } catch (e) {
                       setDialogState(() {
-                        loginError = 'Anmeldung fehlgeschlagen. Bitte prüfe deine Daten.';
+                        loginError = 'Fehler beim Anmelden';
                       });
                     }
                   },
@@ -851,9 +810,330 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
     }
   }
 
+  // ---------------------------------------------------------------------------
+  // AUTH: account block (Ionic tenant-register "Account")
+  // ---------------------------------------------------------------------------
+
+  List<Widget> _buildAccountSection() {
+    final theme = Theme.of(context);
+    final title = Text(
+      'Account',
+      style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
+    );
+
+    if (_isLoggedIn) {
+      final email = ref.read(supabaseClientProvider).auth.currentUser?.email ?? '';
+      return [
+        title,
+        const SizedBox(height: AppDimensions.paddingS),
+        Card(
+          color: AppColors.success.withValues(alpha: 0.08),
+          child: ListTile(
+            leading: const Icon(Icons.verified_user_outlined,
+                color: AppColors.success),
+            title: Text('Du bist angemeldet als $email.'),
+          ),
+        ),
+        const SizedBox(height: AppDimensions.paddingL),
+      ];
+    }
+
+    return [
+      title,
+      Align(
+        alignment: Alignment.centerLeft,
+        child: TextButton(
+          onPressed: _isLoading ? null : _showLoginDialogForCurrentTenant,
+          child: const Text('Account bereits vorhanden? Hier klicken'),
+        ),
+      ),
+      AuthModeSegment(
+        mode: _mode,
+        enabled: !_isLoading,
+        onChanged: (mode) {
+          setState(() {
+            _mode = mode;
+            _otpSent = false;
+            _otpController.clear();
+          });
+          _cooldown.reset();
+        },
+      ),
+      const SizedBox(height: AppDimensions.paddingM),
+      TextFormField(
+        controller: _emailController,
+        readOnly: _mode == AuthMode.otp && _otpSent,
+        decoration: const InputDecoration(
+          labelText: 'E-Mail Adresse *',
+          prefixIcon: Icon(Icons.email_outlined),
+        ),
+        keyboardType: TextInputType.emailAddress,
+        autofillHints: const [AutofillHints.email],
+        onSaved: (value) => _formData.email = value?.trim() ?? '',
+      ),
+      const SizedBox(height: AppDimensions.paddingM),
+      if (_mode == AuthMode.password) ...[
+        TextFormField(
+          decoration: InputDecoration(
+            labelText: 'Passwort *',
+            prefixIcon: const Icon(Icons.lock_outlined),
+            suffixIcon: IconButton(
+              tooltip: 'Passwort anzeigen',
+              icon: Icon(_obscurePassword ? Icons.visibility : Icons.visibility_off),
+              onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+            ),
+          ),
+          obscureText: _obscurePassword,
+          autofillHints: const [AutofillHints.newPassword],
+          onChanged: (value) => _formData.password = value,
+          onSaved: (value) => _formData.password = value ?? '',
+        ),
+        const SizedBox(height: AppDimensions.paddingM),
+        TextFormField(
+          decoration: InputDecoration(
+            labelText: 'Passwort bestätigen *',
+            prefixIcon: const Icon(Icons.lock_outlined),
+            suffixIcon: IconButton(
+              icon: Icon(_obscureConfirmPassword
+                  ? Icons.visibility
+                  : Icons.visibility_off),
+              onPressed: () => setState(
+                  () => _obscureConfirmPassword = !_obscureConfirmPassword),
+            ),
+          ),
+          obscureText: _obscureConfirmPassword,
+          onSaved: (value) => _formData.confirmPassword = value ?? '',
+        ),
+        const SizedBox(height: AppDimensions.paddingS),
+      ] else if (_otpSent) ...[
+        OtpCodeField(
+          controller: _otpController,
+          enabled: !_isLoading,
+          onCompleted: (_) => _verifyCode(),
+        ),
+        const SizedBox(height: AppDimensions.paddingS),
+      ],
+      _buildTermsCheckbox(),
+      if (_mode == AuthMode.otp) ...[
+        const SizedBox(height: AppDimensions.paddingS),
+        if (!_otpSent)
+          OutlinedButton(
+            onPressed: _isLoading ? null : _requestCode,
+            child: const Text('Code senden'),
+          )
+        else ...[
+          OutlinedButton(
+            onPressed: _isLoading ? null : _verifyCode,
+            child: const Text('Code bestätigen'),
+          ),
+          Center(
+            child: ResendCodeButton(
+              cooldown: _cooldown,
+              enabled: !_isLoading,
+              onResend: _requestCode,
+            ),
+          ),
+        ],
+      ],
+      const SizedBox(height: AppDimensions.paddingL),
+    ];
+  }
+
+  Widget _buildTermsCheckbox() {
+    return CheckboxListTile(
+      value: _privacyAccepted,
+      contentPadding: EdgeInsets.zero,
+      controlAffinity: ListTileControlAffinity.leading,
+      onChanged: (v) => setState(() => _privacyAccepted = v ?? false),
+      title: Wrap(
+        crossAxisAlignment: WrapCrossAlignment.center,
+        children: [
+          InkWell(
+            onTap: () => showLegalModal(context),
+            child: const Text(
+              'Nutzungsbedingungen und Datenschutzerklärung',
+              style: TextStyle(
+                color: AppColors.primary,
+                decoration: TextDecoration.underline,
+              ),
+            ),
+          ),
+          const Text(' akzeptieren'),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _showLoginDialogForCurrentTenant() async {
+    final tenant =
+        ref.read(tenantByRegisterIdProvider(widget.registerId)).valueOrNull;
+    if (tenant != null) await _showLoginDialog(tenant);
+  }
+
+  /// Ionic requestCode(): registration surface → may create the account.
+  Future<void> _requestCode() async {
+    final email = _emailController.text.trim().toLowerCase();
+    if (!isValidEmail(email)) {
+      ToastHelper.showError(context, 'Bitte eine gültige E-Mail Adresse eingeben.');
+      return;
+    }
+    if (!_privacyAccepted) {
+      ToastHelper.showError(context,
+          'Bitte akzeptiere die Nutzungsbedingungen und Datenschutzerklärung.');
+      return;
+    }
+    setState(() => _isLoading = true);
+    final result = await ref
+        .read(authFlowServiceProvider)
+        .sendEmailOtp(email, allowCreate: true);
+    if (!mounted) return;
+    setState(() => _isLoading = false);
+    if (result.success) {
+      setState(() => _otpSent = true);
+      _cooldown.start();
+      ToastHelper.showSuccess(context, result.message);
+    } else {
+      ToastHelper.showError(context, result.message);
+    }
+  }
+
+  /// Ionic verifyCode(): sign in, stamp terms, then stay on the page so the
+  /// user can complete the profile.
+  Future<void> _verifyCode() async {
+    final code = _otpController.text.trim();
+    if (code.isEmpty || _isLoading) return;
+    setState(() => _isLoading = true);
+    final service = ref.read(authFlowServiceProvider);
+    final result = await service.verifyEmailOtp(
+        _emailController.text.trim().toLowerCase(), code);
+    if (!result.success) {
+      if (!mounted) return;
+      setState(() => _isLoading = false);
+      ToastHelper.showError(context, result.message);
+      return;
+    }
+    await service.stampTermsAccepted();
+    if (!mounted) return;
+    setState(() {
+      _isLoading = false;
+      _hasCheckedRegistration = false; // re-run check + prefill
+    });
+  }
+
+  /// Ionic prefillFromProfile(): names/phone (and birth date) from the
+  /// user's first existing person profile.
+  ///
+  /// NOTE (Multi-Tenant): reads only the signed-in user's own rows (appId).
+  Future<void> _prefillFromProfile(String userId) async {
+    try {
+      final row = await ref
+          .read(supabaseClientProvider)
+          .from('player')
+          .select('firstName, lastName, phone, birthday')
+          .eq('appId', userId)
+          .limit(1)
+          .maybeSingle();
+      if (row == null || !mounted) return;
+      final tenant =
+          ref.read(tenantByRegisterIdProvider(widget.registerId)).valueOrNull;
+      setState(() {
+        final first = row['firstName'] as String?;
+        final last = row['lastName'] as String?;
+        final phone = row['phone'] as String?;
+        if (first != null && first.isNotEmpty) _firstNameController.text = first;
+        if (last != null && last.isNotEmpty) _lastNameController.text = last;
+        if (phone != null && phone.isNotEmpty) _phoneController.text = phone;
+        final birthday = DateTime.tryParse(row['birthday']?.toString() ?? '');
+        if (birthday != null &&
+            (tenant?.registrationFields ?? const []).contains('birthDate')) {
+          _formData.birthDate = birthday;
+          _birthdayController.text = DateFormat('dd.MM.yyyy').format(birthday);
+        }
+      });
+    } catch (e) {
+      debugPrint('Prefill from profile failed: $e');
+    }
+  }
+
+  /// Ionic validate(): first error as toast.
+  String? _validate(Tenant tenant) {
+    if (_noGroupsAvailable) {
+      return 'Registrierung nicht möglich: Es sind keine Gruppen verfügbar.';
+    }
+    if (!_isLoggedIn) {
+      if (!_privacyAccepted) {
+        return 'Bitte akzeptiere die Nutzungsbedingungen und Datenschutzerklärung.';
+      }
+      if (!isValidEmail(_formData.email)) {
+        return 'Bitte eine gültige E-Mail Adresse eingeben.';
+      }
+      if (_formData.password.length < 6) {
+        return 'Das Passwort muss mindestens 6 Zeichen lang sein.';
+      }
+      if (_formData.password != _formData.confirmPassword) {
+        return 'Die Passwörter stimmen nicht überein.';
+      }
+    }
+    if (_formData.firstName.isEmpty || _formData.lastName.isEmpty) {
+      return 'Bitte geben Sie Ihren Vor- und Nachnamen an.';
+    }
+    final registrationFields = tenant.registrationFields ?? const [];
+    if (registrationFields.contains('picture') && _profileImageBytes == null) {
+      return 'Bitte wählen Sie ein Passbild aus.';
+    }
+    if (registrationFields.contains('birthDate') && _formData.birthDate == null) {
+      return 'Bitte geben Sie ein gültiges Geburtsdatum an.';
+    }
+    if (registrationFields.contains('phone') &&
+        !isValidPhoneNumber(
+            (_formData.phone ?? '').replaceAll(RegExp(r'\s+'), ''))) {
+      return 'Bitte geben Sie eine gültige Telefonnummer an.';
+    }
+
+    for (final field in tenant.additionalFields ?? const <ExtraField>[]) {
+      if (!registrationFields.contains(field.id)) continue;
+      final value = _formData.additionalFields[field.id];
+      switch (field.type) {
+        case 'text':
+        case 'textarea':
+          if (value is! String || value.trim().isEmpty) {
+            return 'Bitte füllen Sie das Feld "${field.name}" aus.';
+          }
+        case 'number':
+          if (value == null || num.tryParse(value.toString()) == null) {
+            return 'Bitte geben Sie eine gültige Zahl für das Feld "${field.name}" ein.';
+          }
+        case 'date':
+          if (value == null || DateTime.tryParse(value.toString()) == null) {
+            return 'Bitte geben Sie ein gültiges Datum für das Feld "${field.name}" ein.';
+          }
+        case 'boolean':
+          final boolValue = value is bool
+              ? value
+              : (field.defaultValue is bool ? field.defaultValue as bool : false);
+          _formData.additionalFields[field.id] = boolValue;
+          if (!boolValue && field.name.toLowerCase().contains('einverständnis')) {
+            return 'Sie müssen dem Feld "${field.name}" zustimmen, um fortzufahren.';
+          }
+        case 'bfecg_church':
+          if (value is! String) return 'Bitte wählen Sie eine Gemeinde aus.';
+          final custom =
+              _formData.additionalFields['_custom_church']?.toString() ?? '';
+          if (value.isEmpty && custom.trim().length < 5) {
+            return 'Bitte geben Sie den Namen Ihrer Gemeinde ein.';
+          }
+      }
+    }
+    return null;
+  }
+
   Future<void> _submit(Tenant tenant) async {
-    if (!_formKey.currentState!.validate()) return;
     _formKey.currentState!.save();
+    final error = _validate(tenant);
+    if (error != null) {
+      ToastHelper.showError(context, error);
+      return;
+    }
 
     setState(() => _isLoading = true);
 
@@ -878,65 +1158,63 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
     // Attach profile image bytes if selected
     _formData.profileImageBytes = _profileImageBytes;
 
-    final service = ref.read(registrationServiceProvider);
-    final supabase = ref.read(supabaseClientProvider);
-    final userId = supabase.auth.currentUser?.id;
-
-    // If logged in, use current user's email
-    if (_isLoggedIn && _formData.email.isEmpty) {
-      _formData.email = supabase.auth.currentUser?.email ?? '';
-    }
-
-    final result = await service.register(
-      tenant: tenant,
-      formData: _formData,
-      isLoggedIn: _isLoggedIn,
-      existingUserId: userId,
-    );
-
-    setState(() => _isLoading = false);
+    final result = await ref.read(registrationServiceProvider).register(
+          tenant: tenant,
+          formData: _formData,
+          otpMode: _mode == AuthMode.otp,
+        );
 
     if (!mounted) return;
+    setState(() => _isLoading = false);
 
-    if (result.success) {
-      String message;
-      if (result.autoApproved) {
-        message = result.isNewAccount
-            ? 'Bitte bestätige deine E-Mail-Adresse, um die Registrierung abzuschließen.'
-            : 'Du bist nun Mitglied dieser Gruppe.';
-      } else {
-        message = result.isNewAccount
-            ? 'Bitte bestätige deine E-Mail-Adresse und warte auf die Genehmigung durch einen Administrator.'
-            : 'Bitte warte auf die Genehmigung durch einen Administrator.';
-      }
-
-      await showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => AlertDialog(
-          icon: Icon(
-            result.autoApproved ? Icons.check_circle : Icons.hourglass_top,
-            color: AppColors.success,
-            size: 48,
-          ),
-          title: const Text('Registrierung erfolgreich!'),
-          content: Text(message),
-          actions: [
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text(result.isNewAccount ? 'Zum Login' : 'Weiter'),
-            ),
-          ],
-        ),
-      );
-      if (mounted) context.go(_isLoggedIn ? '/tenants' : '/login');
-    } else {
+    if (!result.success) {
+      final message = result.errorMessage ?? 'Unbekannt';
       ToastHelper.showError(
         context,
-        result.errorMessage ?? 'Registrierung fehlgeschlagen.',
+        message.startsWith('Fehler beim Erstellen des Accounts')
+            ? message
+            : 'Fehler bei der Registrierung: $message',
       );
+      return;
+    }
+
+    await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Registrierung erfolgreich'),
+        content: Text(result.successMessage),
+        actions: [
+          FilledButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+    if (!mounted) return;
+
+    if (!result.isNewAccount && _isLoggedIn) {
+      // Existing account added to a new tenant — switch directly into it.
+      await _enterTenant(tenant, result.role);
+    } else {
+      context.go('/login');
+    }
+  }
+
+  /// Ionic routeAfterAuth(undefined, tenantId).
+  Future<void> _enterTenant(Tenant tenant, Role role) async {
+    try {
+      ref.invalidate(userTenantsProvider);
+      await ref.read(currentTenantProvider.notifier).setTenantLocal(tenant);
+      await ref.read(currentTenantUserProvider.future);
+      if (!mounted) return;
+      final prefsNotifier = ref.read(userPreferencesNotifierProvider.notifier);
+      context.go(homeRouteFor(role, tenant.id,
+          ref.read(supabaseAuthProvider).currentUser?.userMetadata));
+      prefsNotifier.updateCurrentTenantId(tenant.id!);
+    } catch (e) {
+      debugPrint('Enter tenant after registration failed: $e');
+      if (mounted) context.go('/tenants');
     }
   }
 }

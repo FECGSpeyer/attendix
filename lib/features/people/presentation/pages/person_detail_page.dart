@@ -12,6 +12,7 @@ import '../../../../core/providers/player_providers.dart';
 import '../../../../core/providers/profile_providers.dart';
 import '../../../../core/providers/realtime_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
+import '../../../../core/providers/user_registration_providers.dart'; // AUTH
 import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../data/models/tenant/tenant.dart';
@@ -26,7 +27,6 @@ import 'package:uuid/uuid.dart';
 import '../widgets/handover_sheet.dart';
 import '../widgets/pause_person_sheet.dart';
 import '../widgets/duplicate_candidates_card.dart';
-import '../../people_list_utils.dart';
 import '../widgets/person_detail/person_detail.dart';
 import '../../../../core/services/tracking/tracking_event.dart';
 import '../../../../core/services/tracking/tracking_service.dart';
@@ -1763,17 +1763,12 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
 
     if (confirmed != true || !mounted) return;
 
-    final tenant = ref.read(currentTenantProvider);
-    if (tenant?.id == null) return;
-
     try {
-      final authService = ref.read(authServiceProvider);
-      final mainGroupId = (await ref.read(mainGroupProvider.future))?.id;
-      await authService.createAccountForPerson(
-        person: person,
-        role: accountRoleForGroup(person.instrument, mainGroupId),
-        tenantId: tenant!.id!,
-      );
+      // AUTH: server-side account creation (attendix-user Edge Function);
+      // role RESPONSIBLE for main-group members, otherwise PLAYER (Ionic).
+      await ref
+          .read(accountCreationNotifierProvider.notifier)
+          .createAccount(person);
 
       ref.invalidate(personProvider(widget.personId));
 
@@ -1788,7 +1783,11 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Fehler: $e'), backgroundColor: AppColors.danger),
+          SnackBar(
+            content: Text(
+                '${person.firstName} ${person.lastName} - Fehler beim Erstellen des Accounts: $e'),
+            backgroundColor: AppColors.danger,
+          ),
         );
       }
     }

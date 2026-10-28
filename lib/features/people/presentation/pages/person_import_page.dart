@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/constants/app_constants.dart';
-import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/import_providers.dart';
 import '../../../../core/providers/player_providers.dart';
@@ -14,7 +13,7 @@ import '../../../../core/utils/spreadsheet_reader.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/models/tenant/tenant.dart';
-import '../../../../data/services/auth_service.dart';
+import '../../../../core/providers/user_registration_providers.dart'; // AUTH
 import '../widgets/import_widgets.dart';
 
 enum _Step { file, mapping, preview }
@@ -157,8 +156,9 @@ class _PersonImportPageState extends ConsumerState<PersonImportPage> {
 
     final importRepo = ref.read(importRepositoryWithTenantProvider);
     final playerRepo = ref.read(playerRepositoryWithTenantProvider);
-    final authService = ref.read(authServiceProvider);
-    final tenantId = ref.read(currentTenantIdProvider);
+    // AUTH: accounts are created server-side (attendix-user Edge Function)
+    final registrationRepo =
+        ref.read(userRegistrationRepositoryWithTenantProvider);
     final mainGroupId = _ctx.mainGroupId;
 
     setState(() {
@@ -180,12 +180,10 @@ class _PersonImportPageState extends ConsumerState<PersonImportPage> {
         // Accounts only when the toggle is on and an email exists.
         if (_createAccounts &&
             (person.email?.isNotEmpty ?? false) &&
-            tenantId != null) {
-          final role = person.instrument == mainGroupId ? Role.responsible : Role.player;
-          await authService.createAccountForPerson(
-            person: person,
-            role: role,
-            tenantId: tenantId,
+            registrationRepo.hasTenantId) {
+          await registrationRepo.createPlayerAccount(
+            person,
+            mainGroupId: mainGroupId,
           );
         }
         imported++;

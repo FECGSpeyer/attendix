@@ -13,6 +13,7 @@ import '../services/tracking/tracking_service.dart'; // MISC2
 import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/auth/presentation/pages/register_page.dart';
 import '../../features/auth/presentation/pages/forgot_password_page.dart';
+import '../../features/auth/presentation/pages/new_password_page.dart'; // AUTH
 import '../../features/tenant_selection/presentation/pages/tenant_selection_page.dart';
 import '../../features/tenant_selection/presentation/pages/tenant_create_page.dart';
 import '../../features/tenant_selection/presentation/pages/tenant_detail_page.dart';
@@ -238,6 +239,11 @@ final routerProvider = Provider<GoRouter>((ref) {
         PendingFileLink.set(state.uri.toString());
         return '/login';
       }
+      // AUTH: "Neues Passwort" after a recovery link – needs the recovery
+      // session, but must not be redirected by the auth/terms gates.
+      if (state.matchedLocation == '/new-password') {
+        return isLoggedIn ? null : '/login';
+      }
 
       // If not logged in and not on auth route or tenant registration, redirect to login
       if (!isLoggedIn && !isAuthRoute && !isTenantRegistration) {
@@ -320,7 +326,15 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/forgot-password',
         name: 'forgotPassword',
-        builder: (context, state) => const ForgotPasswordPage(),
+        builder: (context, state) => ForgotPasswordPage(
+          email: state.uri.queryParameters['email'], // AUTH
+        ),
+      ),
+      // AUTH: set a new password after a recovery link
+      GoRoute(
+        path: '/new-password',
+        name: 'newPassword',
+        builder: (context, state) => const NewPasswordPage(),
       ),
 
       // Public tenant registration (no auth required)

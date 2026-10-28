@@ -5,6 +5,8 @@ import '../../../../core/config/supabase_config.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/tenant_providers.dart';
+import '../../../../core/providers/user_registration_providers.dart'; // AUTH
+import '../../../../data/repositories/user_registration_repository.dart'; // AUTH
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 
@@ -146,62 +148,26 @@ class UserManagementPage extends ConsumerWidget {
   }
 
   Future<void> _addUser(BuildContext context, WidgetRef ref, String email, Role role) async {
-    final supabase = ref.read(supabaseClientProvider);
-    final tenantId = ref.read(currentTenantIdProvider);
-
-    if (tenantId == null) return;
+    final registration = ref.read(userRegistrationRepositoryWithTenantProvider);
+    if (!registration.hasTenantId) return;
 
     try {
-      // Try to find user by email in player table (where users register)
-      // Users must first register through the app before they can be added
-      // Note: We filter by tenantId to only find players in the current tenant
-      final existingPlayer = await supabase
-          .from('player')
-          .select('appId')
-          .eq('email', email.toLowerCase().trim())
-          .eq('tenantId', tenantId)
-          .maybeSingle();
+      // AUTH: Ionic createAdmin → registerUser: links an existing account (and
+      // informs it) or creates a new account server-side via the
+      // attendix-user Edge Function, which sends the "set password" mail.
+      await registration.registerUser(
+        email: email.toLowerCase().trim(),
+        name: '',
+        role: role,
+      );
 
-      if (existingPlayer != null && existingPlayer['appId'] != null) {
-        // User exists and has an appId (is registered)
-        final userId = existingPlayer['appId'] as String;
+      ref.invalidate(tenantUsersProvider);
 
-        // Check if user is already in this tenant
-        final existingTenantUser = await supabase
-            .from('tenantUsers')
-            .select('id')
-            .eq('tenantId', tenantId)
-            .eq('userId', userId)
-            .maybeSingle();
-
-        if (existingTenantUser != null) {
-          if (context.mounted) {
-            ToastHelper.showInfo(context, 'Benutzer ist bereits in diesem Tenant');
-          }
-          return;
-        }
-
-        // Add user to tenant
-        await supabase.from('tenantUsers').insert({
-          'tenantId': tenantId,
-          'userId': userId,
-          'role': role.value,
-        });
-
-        ref.invalidate(tenantUsersProvider);
-
-        if (context.mounted) {
-          ToastHelper.showSuccess(context, 'Benutzer hinzugefügt');
-        }
-      } else {
-        // User doesn't exist or hasn't registered yet
-        if (context.mounted) {
-          ToastHelper.showInfo(
-            context,
-            'Benutzer mit dieser E-Mail nicht gefunden oder noch nicht registriert. Bitte lade ihn ein, sich zu registrieren.',
-          );
-        }
+      if (context.mounted) {
+        ToastHelper.showSuccess(context, 'Benutzer hinzugefügt');
       }
+    } on AccountFlowException catch (e) {
+      if (context.mounted) ToastHelper.showError(context, e.message);
     } catch (e) {
       // SEC-020: Don't expose internal error details to user
       debugPrint('Error adding user: $e');

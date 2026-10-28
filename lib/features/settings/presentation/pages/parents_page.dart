@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:uuid/uuid.dart';
 
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/constants/enums.dart';
+import '../../../../core/providers/user_registration_providers.dart'; // AUTH
 import '../../../../core/providers/parent_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
@@ -181,17 +182,35 @@ class ParentsPage extends ConsumerWidget {
     if (result == true && context.mounted) {
       try {
         final notifier = ref.read(parentNotifierProvider.notifier);
+        // AUTH: Ionic db.createParent: account via registerUser (attendix-user
+        // Edge Function for new e-mails, inform mail for existing accounts).
+        final appId = await ref
+            .read(userRegistrationRepositoryWithTenantProvider)
+            .registerUser(
+              email: emailController.text.trim(),
+              name: firstNameController.text.trim(),
+              role: Role.parent,
+            );
         final parent = ParentModel(
-          appId: const Uuid().v4(),
+          appId: appId,
           email: emailController.text.trim(),
           firstName: firstNameController.text.trim(),
           lastName: lastNameController.text.trim(),
         );
 
-        await notifier.createParent(parent);
+        final created = await notifier.createParent(parent);
+        if (created?.id != null) {
+          await ref
+              .read(userRegistrationRepositoryWithTenantProvider)
+              .linkParentToTenantUser(appId, created!.id!);
+        }
 
         if (context.mounted) {
-          ToastHelper.showSuccess(context, 'Elternteil hinzugefügt');
+          if (created == null) {
+            ToastHelper.showError(context, 'Fehler beim Hinzufügen');
+          } else {
+            ToastHelper.showSuccess(context, 'Elternteil hinzugefügt');
+          }
         }
       } catch (e) {
         if (context.mounted) {

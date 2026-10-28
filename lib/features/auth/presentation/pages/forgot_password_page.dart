@@ -2,14 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/config/supabase_config.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
+import '../../data/auth_flow_service.dart';
 
 /// Forgot password page
 class ForgotPasswordPage extends ConsumerStatefulWidget {
-  const ForgotPasswordPage({super.key});
+  const ForgotPasswordPage({super.key, this.email});
+
+  /// AUTH: prefilled e-mail (Ionic forgotPassword alert uses the login e-mail).
+  final String? email;
 
   @override
   ConsumerState<ForgotPasswordPage> createState() => _ForgotPasswordPageState();
@@ -20,6 +23,12 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
   final _emailController = TextEditingController();
   bool _isLoading = false;
   bool _emailSent = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.email != null) _emailController.text = widget.email!;
+  }
 
   @override
   void dispose() {
@@ -33,17 +42,16 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
     setState(() => _isLoading = true);
 
     try {
-      final supabase = ref.read(supabaseClientProvider);
-      await supabase.auth.resetPasswordForEmail(
-        _emailController.text.trim(),
-      );
+      // AUTH: Ionic auth.resetPassword (redirect to /resetPassword).
+      final (ok, message) = await ref
+          .read(authFlowServiceProvider)
+          .resetPassword(_emailController.text.trim());
 
-      if (mounted) {
+      if (!mounted) return;
+      if (ok) {
         setState(() => _emailSent = true);
-      }
-    } catch (e) {
-      if (mounted) {
-        ToastHelper.showError(context, 'Fehler: $e');
+      } else {
+        ToastHelper.showError(context, message);
       }
     } finally {
       if (mounted) {
@@ -182,8 +190,8 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
               if (value == null || value.isEmpty) {
                 return 'Bitte E-Mail eingeben';
               }
-              if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
-                return 'Bitte gültige E-Mail eingeben';
+              if (!isValidEmail(value)) {
+                return 'Bitte eine gültige E-Mail Adresse eingeben.';
               }
               return null;
             },

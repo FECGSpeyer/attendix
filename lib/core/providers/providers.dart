@@ -52,3 +52,5 @@ export 'branding_providers.dart'; // MISC2
 // SETTINGS2
 export 'optional_tabs_providers.dart';
 export 'admin_providers.dart'; // SETTINGS2
+// AUTH
+export 'user_registration_providers.dart';

@@ -8,7 +8,8 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/repositories/tenant_create_repository.dart';
 
-/// Page for creating a new tenant/group
+/// AUTH: Ionic "Neue Instanz anlegen" (register.page) – 3 steps:
+/// 1. Art der Gruppe, 2. Name + Kürzel, 3. Hauptgruppe, then summary.
 class TenantCreatePage extends ConsumerStatefulWidget {
   const TenantCreatePage({super.key});
 
@@ -16,12 +17,64 @@ class TenantCreatePage extends ConsumerStatefulWidget {
   ConsumerState<TenantCreatePage> createState() => _TenantCreatePageState();
 }
 
+/// Type-specific texts of the wizard (Ionic register.placeholder.* / help*).
+class TenantTypeTexts {
+  const TenantTypeTexts({
+    required this.option,
+    required this.label,
+    required this.help,
+    required this.namePlaceholder,
+    required this.shortPlaceholder,
+    required this.mainGroupPlaceholder,
+    required this.icon,
+  });
+
+  final String option;
+  final String label;
+  final String help;
+  final String namePlaceholder;
+  final String shortPlaceholder;
+  final String mainGroupPlaceholder;
+  final IconData icon;
+
+  static const Map<String, TenantTypeTexts> byType = {
+    'general': TenantTypeTexts(
+      option: 'Allgemeine Gruppe',
+      label: 'Allgemeine Gruppe',
+      help: 'Ideal für Vereine, Teams oder sonstige Gruppen.',
+      namePlaceholder: 'z.B. Sportverein Musterstadt',
+      shortPlaceholder: 'z.B. SVM',
+      mainGroupPlaceholder: 'z.B. Vorstand',
+      icon: Icons.groups_outlined,
+    ),
+    'choir': TenantTypeTexts(
+      option: 'Chor / Gesangsgruppe',
+      label: 'Chor',
+      help: 'Optimiert für Chöre mit Stimmgruppen (Sopran, Alt, Tenor, Bass).',
+      namePlaceholder: 'z.B. Gospelchor Harmonie',
+      shortPlaceholder: 'z.B. GCH',
+      mainGroupPlaceholder: 'z.B. Chorleitung',
+      icon: Icons.mic_none,
+    ),
+    'orchestra': TenantTypeTexts(
+      option: 'Orchester / Musikgruppe',
+      label: 'Orchester',
+      help: 'Optimiert für Orchester/Musikgruppen mit Instrumentengruppen.',
+      namePlaceholder: 'z.B. Stadtorchester Musterstadt',
+      shortPlaceholder: 'z.B. SOM',
+      mainGroupPlaceholder: 'z.B. Dirigenten',
+      icon: Icons.music_note_outlined,
+    ),
+  };
+
+  static TenantTypeTexts of(String type) => byType[type] ?? byType['general']!;
+}
+
 class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
-  final _formKey = GlobalKey<FormState>();
   final _shortNameController = TextEditingController();
   final _longNameController = TextEditingController();
   final _mainGroupNameController = TextEditingController();
-  String _selectedType = 'orchestra';
+  String _selectedType = 'general';
   bool _isLoading = false;
 
   @override
@@ -45,413 +98,323 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
     super.dispose();
   }
 
+  String get _longName => _longNameController.text.trim();
+  String get _shortName => _shortNameController.text.trim();
+  String get _mainGroupName => _mainGroupNameController.text.trim();
+  bool get _isComplete =>
+      _longName.isNotEmpty && _shortName.isNotEmpty && _mainGroupName.isNotEmpty;
+
   @override
   Widget build(BuildContext context) {
+    final texts = TenantTypeTexts.of(_selectedType);
+    final theme = Theme.of(context);
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Neue Gruppe erstellen'),
+        title: const Text('Neue Instanz anlegen'),
         leading: IconButton(
           icon: const Icon(Icons.close),
-          onPressed: () => context.pop(),
+          onPressed: _isLoading
+              ? null
+              : () => context.canPop() ? context.pop() : context.go('/tenants'),
         ),
       ),
-      body: Form(
-        key: _formKey,
-        child: ListView(
-          padding: const EdgeInsets.all(AppDimensions.paddingM),
-          children: [
-            // Welcome card
-            Card(
-              color: AppColors.primary.withValues(alpha: 0.08),
-              child: Padding(
-                padding: const EdgeInsets.all(AppDimensions.paddingM),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Icon(Icons.rocket_launch_outlined, color: AppColors.primary),
-                    const SizedBox(width: AppDimensions.paddingM),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Willkommen!',
-                            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: AppColors.primary,
-                                ),
-                          ),
-                          const SizedBox(height: 4),
-                          const Text(
-                            'Eine Instanz ist dein eigener Bereich für dein Orchester, deinen Chor oder deine Gruppe. Hier verwaltest du Mitglieder, Termine und Anwesenheiten.',
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: AppDimensions.paddingS),
-
-            // Hint card
-            Card(
-              color: AppColors.warning.withValues(alpha: 0.1),
-              child: Padding(
-                padding: const EdgeInsets.all(AppDimensions.paddingM),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Icon(Icons.lightbulb_outline, color: AppColors.warning),
-                    const SizedBox(width: AppDimensions.paddingM),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Du möchtest einer bestehenden Instanz beitreten?',
-                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                          ),
-                          const SizedBox(height: 4),
-                          const Text(
-                            'Bitte deinen Verantwortlichen, dich per E-Mail einzuladen. Eine neue Instanz ist nur nötig, wenn du selbst Administrator sein möchtest.',
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: AppDimensions.paddingM),
-
-            // Info card
-            Card(
-              color: AppColors.info.withValues(alpha: 0.1),
-              child: const Padding(
-                padding: EdgeInsets.all(AppDimensions.paddingM),
-                child: Row(
-                  children: [
-                    Icon(Icons.info_outline, color: AppColors.info),
-                    SizedBox(width: AppDimensions.paddingM),
-                    Expanded(
-                      child: Text(
-                        'Du wirst automatisch als Administrator der neuen Gruppe eingetragen.',
-                        style: TextStyle(color: AppColors.info),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: AppDimensions.paddingL),
-
-            // Short Name
-            TextFormField(
-              controller: _shortNameController,
-              maxLength: 30,
-              decoration: InputDecoration(
-                labelText: 'Kurzname *',
-                hintText: _shortNameHint,
-                helperText: 'Wird in der Navigation angezeigt',
-                prefixIcon: const Icon(Icons.short_text),
-              ),
-              // Ionic register.page: autocapitalize="sentences"
-              textCapitalization: TextCapitalization.sentences,
-              validator: (value) {
-                if (value == null || value.trim().isEmpty) {
-                  return 'Kurzname ist erforderlich';
-                }
-                if (value.trim().length < 2) {
-                  return 'Mindestens 2 Zeichen';
-                }
-                return null;
-              },
-              autofocus: true,
-            ),
-            const SizedBox(height: AppDimensions.paddingM),
-
-            // Long Name
-            TextFormField(
-              controller: _longNameController,
-              maxLength: 100,
-              decoration: InputDecoration(
-                labelText: 'Vollständiger Name (optional)',
-                hintText: _longNameHint,
-                prefixIcon: const Icon(Icons.title),
-              ),
-              textCapitalization: TextCapitalization.words,
-            ),
-            const SizedBox(height: AppDimensions.paddingL),
-
-            // Type selection
-            Text(
-              'Art der Gruppe',
-              style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                color: AppColors.medium,
-              ),
-            ),
-            const SizedBox(height: AppDimensions.paddingS),
-            _buildTypeOption(
-              value: 'orchestra',
-              icon: Icons.music_note,
-              label: 'Orchester',
-              description: 'Für Orchester mit Instrumentengruppen',
-            ),
-            _buildTypeOption(
-              value: 'choir',
-              icon: Icons.mic,
-              label: 'Chor',
-              description: 'Für Chöre mit Stimmgruppen',
-            ),
-            _buildTypeOption(
-              value: 'general',
-              icon: Icons.groups,
-              label: 'Allgemein',
-              description: 'Für andere Gruppen oder Vereine',
-            ),
-
-            const SizedBox(height: AppDimensions.paddingL),
-
-            // Main group name
-            TextFormField(
-              controller: _mainGroupNameController,
-              maxLength: 50,
-              decoration: InputDecoration(
-                labelText: 'Name der ersten $_groupLabel',
-                hintText: _groupHint,
-                helperText: 'Die erste $_groupLabel deiner Organisation',
-                prefixIcon: const Icon(Icons.group),
-              ),
-              textCapitalization: TextCapitalization.sentences,
-            ),
-
-            const SizedBox(height: AppDimensions.paddingXL),
-
-            // Summary section
-            if (_isSummaryComplete) ...[
-              Row(
+      body: ListView(
+        padding: const EdgeInsets.all(AppDimensions.paddingM),
+        children: [
+          // Intro card
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(AppDimensions.paddingM),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Icon(Icons.check_circle, color: AppColors.success, size: 20),
-                  const SizedBox(width: 8),
-                  Text(
-                    'Zusammenfassung',
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                  Row(
+                    children: [
+                      const Icon(Icons.rocket_launch_outlined,
+                          color: AppColors.primary),
+                      const SizedBox(width: AppDimensions.paddingS),
+                      Text('Willkommen!',
+                          style: theme.textTheme.titleMedium
+                              ?.copyWith(fontWeight: FontWeight.bold)),
+                    ],
+                  ),
+                  const SizedBox(height: AppDimensions.paddingS),
+                  Text.rich(
+                    TextSpan(children: [
+                      const TextSpan(text: 'Eine '),
+                      const TextSpan(
+                        text: 'Instanz',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      const TextSpan(
+                        text:
+                            ' ist dein eigener Bereich für dein Orchester, deinen Chor oder deine Gruppe. Hier verwaltest du Mitglieder, Termine und Anwesenheiten.',
+                      ),
+                    ]),
                   ),
                 ],
               ),
-              const SizedBox(height: AppDimensions.paddingS),
-              Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(AppDimensions.paddingM),
-                  child: Column(
-                    children: [
-                      _summaryRow('Name', _longNameController.text.trim().isNotEmpty
-                          ? _longNameController.text.trim()
-                          : _shortNameController.text.trim()),
-                      _summaryRow('Kurzname', _shortNameController.text.trim()),
-                      _summaryRow('Typ', _typeLabel),
-                      if (_mainGroupNameController.text.trim().isNotEmpty)
-                        _summaryRow('Erste $_groupLabel', _mainGroupNameController.text.trim()),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: AppDimensions.paddingL),
-            ] else ...[
-              Card(
-                color: AppColors.warning.withValues(alpha: 0.1),
-                child: const Padding(
-                  padding: EdgeInsets.all(AppDimensions.paddingM),
-                  child: Row(
-                    children: [
-                      Icon(Icons.warning_amber, color: AppColors.warning, size: 20),
-                      SizedBox(width: 8),
-                      Text('Bitte fülle alle Pflichtfelder aus'),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: AppDimensions.paddingL),
-            ],
+            ),
+          ),
 
-            // Submit button
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: (_isLoading || !_isSummaryComplete) ? null : _createTenant,
-                child: _isLoading
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const Text('Gruppe erstellen'),
+          // Join hint
+          Card(
+            color: AppColors.warning.withValues(alpha: 0.1),
+            child: Padding(
+              padding: const EdgeInsets.all(AppDimensions.paddingM),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Du möchtest einer bestehenden Instanz beitreten?',
+                    style: theme.textTheme.bodyMedium
+                        ?.copyWith(fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 4),
+                  const Text(
+                    'Bitte deinen Verantwortlichen, dich per E-Mail einzuladen. Eine neue Instanz ist nur nötig, wenn du selbst Administrator sein möchtest.',
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
+          ),
+          const SizedBox(height: AppDimensions.paddingM),
+
+          // Step 1
+          _StepHeader(badge: '1', title: 'Art der Gruppe wählen'),
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(AppDimensions.paddingM),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  DropdownButtonFormField<String>(
+                    value: _selectedType,
+                    isExpanded: true,
+                    decoration: const InputDecoration(
+                      labelText: 'Gruppentyp',
+                      helperText: 'Was beschreibt deine Gruppe am besten?',
+                    ),
+                    items: [
+                      for (final entry in TenantTypeTexts.byType.entries)
+                        DropdownMenuItem(
+                          value: entry.key,
+                          child: Row(
+                            children: [
+                              Icon(entry.value.icon, size: 20),
+                              const SizedBox(width: AppDimensions.paddingS),
+                              Text(entry.value.option),
+                            ],
+                          ),
+                        ),
+                    ],
+                    onChanged: _isLoading
+                        ? null
+                        : (value) =>
+                            setState(() => _selectedType = value ?? 'general'),
+                  ),
+                  const SizedBox(height: AppDimensions.paddingM),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Icon(Icons.check_circle,
+                          color: AppColors.success, size: 18),
+                      const SizedBox(width: AppDimensions.paddingS),
+                      Expanded(child: Text(texts.help)),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: AppDimensions.paddingM),
+
+          // Step 2
+          _StepHeader(badge: '2', title: 'Name deiner Instanz'),
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(AppDimensions.paddingM),
+              child: Column(
+                children: [
+                  TextField(
+                    controller: _longNameController,
+                    maxLength: 50,
+                    textCapitalization: TextCapitalization.words,
+                    decoration: InputDecoration(
+                      labelText: 'Vollständiger Name',
+                      hintText: texts.namePlaceholder,
+                      helperText: 'Der Name wird in der App angezeigt',
+                    ),
+                  ),
+                  const SizedBox(height: AppDimensions.paddingS),
+                  TextField(
+                    controller: _shortNameController,
+                    textCapitalization: TextCapitalization.sentences,
+                    decoration: InputDecoration(
+                      labelText: 'Instanz-Kürzel',
+                      hintText: texts.shortPlaceholder,
+                      helperText: 'Wird für kompakte Darstellungen verwendet',
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: AppDimensions.paddingM),
+
+          // Step 3
+          _StepHeader(
+            badge: '3',
+            title: 'Hauptgruppe festlegen',
+            trailing: IconButton(
+              tooltip: 'Was ist die Hauptgruppe?',
+              icon: const Icon(Icons.help_outline),
+              onPressed: _showMainGroupInfo,
+            ),
+          ),
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(AppDimensions.paddingM),
+              child: TextField(
+                controller: _mainGroupNameController,
+                textCapitalization: TextCapitalization.sentences,
+                decoration: InputDecoration(
+                  labelText: 'Name der Hauptgruppe',
+                  hintText: texts.mainGroupPlaceholder,
+                  helperText: 'z.B. Leitung, Dirigenten, Vorstand',
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: AppDimensions.paddingM),
+
+          // Summary
+          _StepHeader(badge: '✓', title: 'Zusammenfassung'),
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(AppDimensions.paddingM),
+              child: _isComplete
+                  ? Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text.rich(TextSpan(children: [
+                          TextSpan(
+                            text: _longName,
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          TextSpan(text: ' ($_shortName)'),
+                        ])),
+                        const SizedBox(height: 4),
+                        Text('Typ: ${texts.label}'),
+                        const SizedBox(height: 4),
+                        Text('Hauptgruppe: $_mainGroupName'),
+                      ],
+                    )
+                  : Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(Icons.error_outline,
+                                color: AppColors.medium, size: 18),
+                            const SizedBox(width: AppDimensions.paddingS),
+                            const Expanded(
+                              child: Text(
+                                  'Bitte fülle alle Felder aus, um fortzufahren.'),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        for (final missing in [
+                          if (_longName.isEmpty) 'Name der Instanz fehlt',
+                          if (_shortName.isEmpty) 'Instanz-Kürzel fehlt',
+                          if (_mainGroupName.isEmpty) 'Name der Hauptgruppe fehlt',
+                        ])
+                          Padding(
+                            padding: const EdgeInsets.only(left: 26, top: 2),
+                            child: Text('• $missing',
+                                style: TextStyle(color: AppColors.medium)),
+                          ),
+                      ],
+                    ),
+            ),
+          ),
+          const SizedBox(height: AppDimensions.paddingM),
+
+          FilledButton.icon(
+            onPressed: (_isLoading || !_isComplete) ? null : _createTenant,
+            icon: _isLoading
+                ? const SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : const Icon(Icons.add_circle_outline),
+            label: Text(_isLoading
+                ? 'Instanz wird erstellt...'
+                : 'Instanz jetzt erstellen'),
+          ),
+          const SizedBox(height: AppDimensions.paddingXL),
+        ],
       ),
     );
   }
 
-  String get _groupLabel => switch (_selectedType) {
-    'orchestra' => 'Instrumentengruppe',
-    'choir' => 'Stimmgruppe',
-    _ => 'Gruppe',
-  };
-
-  String get _groupHint => switch (_selectedType) {
-    'orchestra' => 'z.B. Streicher',
-    'choir' => 'z.B. Sopran',
-    _ => 'z.B. Gruppe 1',
-  };
-
-  String get _shortNameHint => switch (_selectedType) {
-    'orchestra' => 'z.B. JON, Philharmonie',
-    'choir' => 'z.B. Chor St. Peter, Kantorei',
-    _ => 'z.B. Jugendgruppe, Verein XY',
-  };
-
-  String get _longNameHint => switch (_selectedType) {
-    'orchestra' => 'z.B. Jugendorchester Nürnberg',
-    'choir' => 'z.B. Kirchenchor St. Peter und Paul',
-    _ => 'z.B. Jugendgruppe Nürnberg e.V.',
-  };
-
-  String get _typeLabel => switch (_selectedType) {
-    'orchestra' => 'Orchester',
-    'choir' => 'Chor',
-    _ => 'Allgemein',
-  };
-
-  bool get _isSummaryComplete => _shortNameController.text.trim().length >= 2;
-
-  Widget _summaryRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 2),
-      child: Row(
-        children: [
-          SizedBox(
-            width: 120,
-            child: Text(
-              label,
-              style: TextStyle(color: AppColors.medium, fontSize: 13),
+  /// Ionic main-group info popover (register.mainGroupInfoHtml).
+  Future<void> _showMainGroupInfo() {
+    return showDialog<void>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Was ist die Hauptgruppe?'),
+        content: const Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Die Hauptgruppe ist eine besondere Gruppe für Personen mit Leitungsfunktion (z.B. Dirigenten, Chorleiter, Vorstand).',
             ),
-          ),
-          Expanded(
-            child: Text(
-              value,
-              style: const TextStyle(fontWeight: FontWeight.w500),
+            SizedBox(height: 12),
+            Text('Besonderheiten:',
+                style: TextStyle(fontWeight: FontWeight.bold)),
+            SizedBox(height: 4),
+            Text('• Kann nicht gelöscht werden'),
+            Text('• Mitglieder erhalten automatisch erweiterte Rechte'),
+            Text('• Ideal für Personen, die die Instanz verwalten'),
+            SizedBox(height: 12),
+            Text(
+              'Du kannst später weitere Gruppen (z.B. Sopran, Geigen) hinzufügen.',
+              style: TextStyle(fontStyle: FontStyle.italic),
             ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('OK'),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildTypeOption({
-    required String value,
-    required IconData icon,
-    required String label,
-    required String description,
-  }) {
-    final isSelected = _selectedType == value;
-    return Card(
-      margin: const EdgeInsets.only(bottom: AppDimensions.paddingS),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppDimensions.borderRadiusM),
-        side: BorderSide(
-          color: isSelected ? AppColors.primary : Colors.transparent,
-          width: 2,
-        ),
-      ),
-      child: InkWell(
-        onTap: () => setState(() => _selectedType = value),
-        borderRadius: BorderRadius.circular(AppDimensions.borderRadiusM),
-        child: Padding(
-          padding: const EdgeInsets.all(AppDimensions.paddingM),
-          child: Row(
-            children: [
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  color: isSelected
-                      ? AppColors.primary.withValues(alpha: 0.2)
-                      : AppColors.medium.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(AppDimensions.borderRadiusS),
-                ),
-                child: Icon(
-                  icon,
-                  color: isSelected ? AppColors.primary : AppColors.medium,
-                ),
-              ),
-              const SizedBox(width: AppDimensions.paddingM),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      label,
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        color: isSelected ? AppColors.primary : null,
-                      ),
-                    ),
-                    Text(
-                      description,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: AppColors.medium,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              if (isSelected)
-                const Icon(Icons.check_circle, color: AppColors.primary),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
   Future<void> _createTenant() async {
-    if (!_formKey.currentState!.validate()) return;
+    if (!_isComplete) {
+      ToastHelper.showError(context, 'Bitte füllen Sie alle Felder aus.');
+      return;
+    }
 
     setState(() => _isLoading = true);
 
     try {
-      final shortName = _shortNameController.text.trim();
-      final longName = _longNameController.text.trim().isNotEmpty
-          ? _longNameController.text.trim()
-          : shortName;
-
-      // Create default instrument/section group
-      final defaultGroupName = switch (_selectedType) {
-        'orchestra' => 'Streicher',
-        'choir' => 'Sopran',
-        _ => 'Gruppe 1',
-      };
-
-      final groupName = _mainGroupNameController.text.trim().isNotEmpty
-          ? _mainGroupNameController.text.trim()
-          : defaultGroupName;
-
       // Ionic createInstance: tenant with register defaults, creator as
       // ADMIN, main group and default attendance types.
       final newTenant =
           await ref.read(tenantCreateRepositoryProvider).createTenant(
-                shortName: shortName,
-                longName: longName,
+                shortName: _shortName,
+                longName: _longName,
                 type: _selectedType,
-                mainGroupName: groupName,
+                mainGroupName: _mainGroupName,
               );
 
       // Refresh the tenants list
@@ -461,17 +424,56 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
       await ref.read(currentTenantProvider.notifier).setTenant(newTenant);
 
       if (mounted) {
-        ToastHelper.showSuccess(context, 'Instanz wurde erfolgreich erstellt!');
         context.go('/people');
       }
     } catch (e) {
       if (mounted) {
-        ToastHelper.showError(context, 'Fehler: $e');
+        ToastHelper.showError(context, 'Fehler beim Erstellen der Instanz: $e');
       }
     } finally {
       if (mounted) {
         setState(() => _isLoading = false);
       }
     }
+  }
+}
+
+class _StepHeader extends StatelessWidget {
+  const _StepHeader({required this.badge, required this.title, this.trailing});
+
+  final String badge;
+  final String title;
+  final Widget? trailing;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(
+          left: AppDimensions.paddingXS, bottom: AppDimensions.paddingXS),
+      child: Row(
+        children: [
+          CircleAvatar(
+            radius: 12,
+            backgroundColor: AppColors.primary,
+            child: Text(
+              badge,
+              style: const TextStyle(
+                  color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
+            ),
+          ),
+          const SizedBox(width: AppDimensions.paddingS),
+          Expanded(
+            child: Text(
+              title,
+              style: Theme.of(context)
+                  .textTheme
+                  .titleSmall
+                  ?.copyWith(fontWeight: FontWeight.w600),
+            ),
+          ),
+          if (trailing != null) trailing!,
+        ],
+      ),
+    );
   }
 }

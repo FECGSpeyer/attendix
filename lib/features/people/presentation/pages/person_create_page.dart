@@ -1,3 +1,4 @@
+import '../../../../core/providers/user_registration_providers.dart'; // AUTH
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -24,8 +25,6 @@ import '../../../../core/providers/parent_providers.dart';
 import '../../../../core/providers/shift_providers.dart';
 import '../../../../core/providers/teacher_providers.dart';
 import '../../../../data/models/shift/shift_plan.dart';
-import '../../../../data/services/auth_service.dart';
-import '../../people_list_utils.dart';
 import '../widgets/church_picker_sheet.dart';
 import '../widgets/person_detail/account_accordion.dart'
     show accountHelpText, existingUserHintText;
@@ -586,12 +585,8 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
     final tenantId = ref.read(currentTenantIdProvider);
     if (tenantId == null) return;
     try {
-      final mainGroupId = (await ref.read(mainGroupProvider.future))?.id;
-      await ref.read(authServiceProvider).createAccountForPerson(
-            person: created,
-            role: accountRoleForGroup(created.instrument, mainGroupId),
-            tenantId: tenantId,
-          );
+      // AUTH: server-side account creation (attendix-user Edge Function)
+      await ref.read(accountCreationNotifierProvider.notifier).createAccount(created);
       if (mounted) {
         ToastHelper.showSuccess(context, 'Account erstellt');
       }

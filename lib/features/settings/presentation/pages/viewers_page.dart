@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:uuid/uuid.dart';
 
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/constants/enums.dart';
+import '../../../../core/providers/user_registration_providers.dart'; // AUTH
 import '../../../../core/providers/viewer_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
@@ -181,17 +182,30 @@ class ViewersPage extends ConsumerWidget {
     if (result == true && context.mounted) {
       try {
         final notifier = ref.read(viewerNotifierProvider.notifier);
+        // AUTH: Ionic db.createViewer: account via registerUser (attendix-user
+        // Edge Function for new e-mails, inform mail for existing accounts).
+        final appId = await ref
+            .read(userRegistrationRepositoryWithTenantProvider)
+            .registerUser(
+              email: emailController.text.trim(),
+              name: firstNameController.text.trim(),
+              role: Role.viewer,
+            );
         final viewer = Viewer(
-          appId: const Uuid().v4(),
+          appId: appId,
           email: emailController.text.trim(),
           firstName: firstNameController.text.trim(),
           lastName: lastNameController.text.trim(),
         );
 
-        await notifier.createViewer(viewer);
+        final created = await notifier.createViewer(viewer);
 
         if (context.mounted) {
-          ToastHelper.showSuccess(context, 'Beobachter hinzugefügt');
+          if (created == null) {
+            ToastHelper.showError(context, 'Fehler beim Hinzufügen');
+          } else {
+            ToastHelper.showSuccess(context, 'Beobachter hinzugefügt');
+          }
         }
       } catch (e) {
         if (context.mounted) {

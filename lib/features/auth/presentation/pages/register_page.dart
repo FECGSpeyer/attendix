@@ -6,10 +6,13 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/config/supabase_config.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/repositories/account_repository.dart';
 import '../../../legal/presentation/widgets/legal_content_view.dart';
+import '../../data/auth_flow_service.dart';
+import '../widgets/otp_widgets.dart';
 
-/// Register page
+/// Register page (Ionic login/register-modal).
 class RegisterPage extends ConsumerStatefulWidget {
   const RegisterPage({super.key, this.email});
 
@@ -24,13 +27,17 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+  final _otpController = TextEditingController();
+  final _cooldown = ResendCooldown();
   bool _isLoading = false;
   bool _obscurePassword = true;
-  bool _obscureConfirmPassword = true;
   String? _errorMessage;
   bool _registrationSuccess = false;
   // LEGAL_HELP: privacy consent (Ionic register modal)
   bool _privacyAccepted = false;
+  // AUTH: passwordless registration with an e-mail code
+  AuthMode _mode = AuthMode.password;
+  bool _otpSent = false;
 
   @override
   void initState() {
@@ -45,16 +52,48 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
+    _otpController.dispose();
+    _cooldown.dispose();
     super.dispose();
   }
 
+  void _setMode(AuthMode mode) {
+    if (_isLoading) return;
+    setState(() {
+      _mode = mode;
+      _otpSent = false;
+      _otpController.clear();
+      _errorMessage = null;
+    });
+    _cooldown.reset();
+  }
+
+  void _onSubmit() {
+    if (_mode == AuthMode.otp) {
+      _otpSent ? _verifyCode() : _requestCode();
+    } else {
+      _register();
+    }
+  }
+
+  /// Ionic register-modal submit(): password registration.
   Future<void> _register() async {
-    if (!_formKey.currentState!.validate()) return;
+    final email = _emailController.text.trim();
+    if (!isValidEmail(email)) {
+      setState(() => _errorMessage = 'Ungültige E-Mail-Adresse');
+      return;
+    }
+    if (_passwordController.text != _confirmPasswordController.text) {
+      setState(() => _errorMessage = 'Passwörter stimmen nicht überein');
+      return;
+    }
+    if (_passwordController.text.length < 6) {
+      setState(
+          () => _errorMessage = 'Passwort muss mindestens 6 Zeichen lang sein');
+      return;
+    }
     if (!_privacyAccepted) {
-      setState(() {
-        _errorMessage =
-            'Bitte stimme der Datenschutzerklärung zu';
-      });
+      setState(() => _errorMessage = 'Bitte stimme der Datenschutzerklärung zu');
       return;
     }
 
@@ -65,9 +104,10 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
 
     try {
       final supabase = ref.read(supabaseClientProvider);
-      await supabase.auth.signUp(
-        email: _emailController.text.trim(),
+      final response = await supabase.auth.signUp(
+        email: email,
         password: _passwordController.text,
+        emailRedirectTo: '${authRedirectBase()}/login',
         // Stamp terms acceptance (checkbox accepted), like Ionic.
         data: {
           AccountRepository.termsAcceptedAtKey:
@@ -75,7 +115,28 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
         },
       );
 
+      // Ionic db.register: no identities → the e-mail already exists; try to
+      // sign in with the given password instead.
+      if (response.user != null &&
+          (response.user!.identities?.isEmpty ?? true)) {
+        try {
+          await supabase.auth.signInWithPassword(
+            email: email,
+            password: _passwordController.text,
+          );
+          return; // Signed in – the router takes over.
+        } catch (_) {
+          if (!mounted) return;
+          setState(() => _errorMessage =
+              'Deine E-Mail-Adresse existiert bereits. Bitte melde dich an.');
+          return;
+        }
+      }
+
       if (!mounted) return;
+      if (response.session != null) return; // auto-confirmed → router
+      ToastHelper.showSuccess(context,
+          'Registrierung erfolgreich, bitte bestätige deine E-Mail-Adresse.');
       setState(() {
         _registrationSuccess = true;
       });
@@ -85,18 +146,16 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
       if (e is AuthException) {
         errorMessage = switch (e.message) {
           'User already registered' =>
-            'Diese E-Mail-Adresse ist bereits registriert.',
+            'Deine E-Mail-Adresse existiert bereits. Bitte melde dich an.',
           _ when e.message.contains('password') =>
-            'Das Passwort erfüllt nicht die Anforderungen.',
+            'Das Passwort erfüllt nicht die Sicherheitsanforderungen.',
           _ when e.message.contains('rate limit') || e.message.contains('Too many') =>
-            'Zu viele Versuche. Bitte warte einen Moment.',
-          _ when e.message.contains('email') =>
-            'Bitte gib eine gültige E-Mail-Adresse ein.',
-          _ => 'Registrierung fehlgeschlagen: ${e.message}',
+            'Zu viele Anfragen. Bitte warte einen Moment und versuche es erneut.',
+          _ when e.message.contains('email') => 'Ungültige E-Mail-Adresse',
+          _ => 'Fehler beim Registrieren',
         };
       } else {
-        errorMessage =
-            'Registrierung fehlgeschlagen. Bitte versuche es erneut.';
+        errorMessage = 'Fehler beim Registrieren';
       }
       setState(() {
         _errorMessage = errorMessage;
@@ -108,6 +167,61 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
         });
       }
     }
+  }
+
+  /// Ionic requestCode(): registration surface → may create the account.
+  Future<void> _requestCode() async {
+    final email = _emailController.text.trim();
+    if (!isValidEmail(email)) {
+      setState(() => _errorMessage = 'Ungültige E-Mail-Adresse');
+      return;
+    }
+    if (!_privacyAccepted) {
+      setState(() => _errorMessage = 'Bitte stimme der Datenschutzerklärung zu');
+      return;
+    }
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+    final result = await ref
+        .read(authFlowServiceProvider)
+        .sendEmailOtp(email, allowCreate: true);
+    if (!mounted) return;
+    setState(() => _isLoading = false);
+    if (result.success) {
+      setState(() => _otpSent = true);
+      _cooldown.start();
+      ToastHelper.showSuccess(context, result.message);
+    } else {
+      setState(() => _errorMessage = result.message);
+    }
+  }
+
+  Future<void> _verifyCode() async {
+    final code = _otpController.text.trim();
+    if (code.isEmpty || _isLoading) return;
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+    final service = ref.read(authFlowServiceProvider);
+    final result =
+        await service.verifyEmailOtp(_emailController.text.trim(), code);
+    if (!result.success) {
+      if (!mounted) return;
+      setState(() {
+        _isLoading = false;
+        _errorMessage = result.message;
+      });
+      return;
+    }
+    // Stamp terms acceptance — the checkbox was accepted before requesting.
+    await service.stampTermsAccepted();
+    if (!mounted) return;
+    setState(() => _isLoading = false);
+    // Signed in: new users without a tenant land on the tenant page.
+    context.go('/tenants');
   }
 
   @override
@@ -139,7 +253,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                     const SizedBox(height: AppDimensions.paddingM),
                     Text(
                       'Wir haben dir eine E-Mail an ${_emailController.text} gesendet. '
-                      'Bitte klicke auf den Link in der E-Mail, um deine Registrierung abzuschließen.',
+                      'Bitte klicke auf den Link darin, um deinen Account zu aktivieren.',
                       style: Theme.of(context).textTheme.bodyMedium,
                       textAlign: TextAlign.center,
                     ),
@@ -157,11 +271,14 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
       );
     }
 
+    final theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.pop(),
+          onPressed: _isLoading
+              ? null
+              : () => context.canPop() ? context.pop() : context.go('/login'),
         ),
         title: const Text('Registrieren'),
       ),
@@ -177,6 +294,33 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
+                    // AUTH: intro (Ionic registerModal.welcome/intro/hint)
+                    Text(
+                      'Willkommen bei Attendix!',
+                      style: theme.textTheme.titleLarge
+                          ?.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: AppDimensions.paddingS),
+                    const Text(
+                      'Lege einen Account an, um deine Anwesenheit zu verwalten oder eine neue Instanz für deine Gruppe, deinen Chor oder dein Orchester zu erstellen.',
+                    ),
+                    const SizedBox(height: AppDimensions.paddingS),
+                    Text(
+                      _mode == AuthMode.otp
+                          ? 'Nach der Registrierung senden wir dir einen 6-stelligen Code per E-Mail. Gib ihn hier ein, um deinen Account zu aktivieren.'
+                          : 'Nach der Registrierung senden wir dir eine Bestätigungs-E-Mail. Bitte klicke auf den Link darin, um deinen Account zu aktivieren.',
+                      style: theme.textTheme.bodySmall
+                          ?.copyWith(color: AppColors.medium),
+                    ),
+                    const SizedBox(height: AppDimensions.paddingL),
+
+                    AuthModeSegment(
+                      mode: _mode,
+                      enabled: !_isLoading,
+                      onChanged: _setMode,
+                    ),
+                    const SizedBox(height: AppDimensions.paddingM),
+
                     // Error message
                     if (_errorMessage != null) ...[
                       Container(
@@ -207,88 +351,65 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                       keyboardType: TextInputType.emailAddress,
                       textInputAction: TextInputAction.next,
                       autocorrect: false,
+                      readOnly: _mode == AuthMode.otp && _otpSent,
+                      autofillHints: const [AutofillHints.email],
                       decoration: const InputDecoration(
                         labelText: 'E-Mail',
+                        hintText: 'deine@email.de',
                         prefixIcon: Icon(Icons.email_outlined),
                       ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Bitte E-Mail eingeben';
-                        }
-                        if (!value.contains('@')) {
-                          return 'Bitte gültige E-Mail eingeben';
-                        }
-                        return null;
-                      },
                     ),
                     const SizedBox(height: AppDimensions.paddingM),
 
-                    // Password field
-                    TextFormField(
-                      controller: _passwordController,
-                      obscureText: _obscurePassword,
-                      textInputAction: TextInputAction.next,
-                      decoration: InputDecoration(
-                        labelText: 'Passwort',
-                        prefixIcon: const Icon(Icons.lock_outlined),
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            _obscurePassword
-                                ? Icons.visibility_outlined
-                                : Icons.visibility_off_outlined,
+                    if (_mode == AuthMode.password) ...[
+                      // Password field
+                      TextFormField(
+                        controller: _passwordController,
+                        obscureText: _obscurePassword,
+                        textInputAction: TextInputAction.next,
+                        autofillHints: const [AutofillHints.newPassword],
+                        decoration: InputDecoration(
+                          labelText: 'Passwort',
+                          hintText: 'Mindestens 6 Zeichen',
+                          prefixIcon: const Icon(Icons.lock_outlined),
+                          suffixIcon: IconButton(
+                            tooltip: 'Passwort anzeigen',
+                            icon: Icon(
+                              _obscurePassword
+                                  ? Icons.visibility_outlined
+                                  : Icons.visibility_off_outlined,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _obscurePassword = !_obscurePassword;
+                              });
+                            },
                           ),
-                          onPressed: () {
-                            setState(() {
-                              _obscurePassword = !_obscurePassword;
-                            });
-                          },
                         ),
                       ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Bitte Passwort eingeben';
-                        }
-                        if (value.length < 8) {
-                          return 'Passwort muss mindestens 8 Zeichen haben';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: AppDimensions.paddingM),
+                      const SizedBox(height: AppDimensions.paddingM),
 
-                    // Confirm password field
-                    TextFormField(
-                      controller: _confirmPasswordController,
-                      obscureText: _obscureConfirmPassword,
-                      textInputAction: TextInputAction.done,
-                      onFieldSubmitted: (_) => _register(),
-                      decoration: InputDecoration(
-                        labelText: 'Passwort bestätigen',
-                        prefixIcon: const Icon(Icons.lock_outlined),
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            _obscureConfirmPassword
-                                ? Icons.visibility_outlined
-                                : Icons.visibility_off_outlined,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              _obscureConfirmPassword = !_obscureConfirmPassword;
-                            });
-                          },
+                      // Confirm password field
+                      TextFormField(
+                        controller: _confirmPasswordController,
+                        obscureText: _obscurePassword,
+                        textInputAction: TextInputAction.done,
+                        onFieldSubmitted: (_) => _onSubmit(),
+                        decoration: const InputDecoration(
+                          labelText: 'Passwort bestätigen',
+                          hintText: 'Passwort erneut eingeben',
+                          prefixIcon: Icon(Icons.lock_outlined),
                         ),
                       ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Bitte Passwort bestätigen';
-                        }
-                        if (value != _passwordController.text) {
-                          return 'Passwörter stimmen nicht überein';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: AppDimensions.paddingM),
+                      const SizedBox(height: AppDimensions.paddingM),
+                    ] else if (_otpSent) ...[
+                      OtpCodeField(
+                        controller: _otpController,
+                        enabled: !_isLoading,
+                        onCompleted: (_) => _verifyCode(),
+                      ),
+                      const SizedBox(height: AppDimensions.paddingM),
+                    ],
 
                     // LEGAL_HELP: privacy consent checkbox
                     CheckboxListTile(
@@ -318,9 +439,8 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                     ),
                     const SizedBox(height: AppDimensions.paddingM),
 
-                    // Register button
                     ElevatedButton(
-                      onPressed: _isLoading || !_privacyAccepted ? null : _register,
+                      onPressed: _isLoading || !_privacyAccepted ? null : _onSubmit,
                       child: _isLoading
                           ? const SizedBox(
                               height: 20,
@@ -330,8 +450,20 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                                 valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                               ),
                             )
-                          : const Text('Registrieren'),
+                          : Text(_mode == AuthMode.password
+                              ? 'Registrieren'
+                              : _otpSent
+                                  ? 'Bestätigen'
+                                  : 'Code senden'),
                     ),
+                    if (_mode == AuthMode.otp && _otpSent)
+                      Center(
+                        child: ResendCodeButton(
+                          cooldown: _cooldown,
+                          enabled: !_isLoading,
+                          onResend: _requestCode,
+                        ),
+                      ),
                     const SizedBox(height: AppDimensions.paddingL),
 
                     // Login link
