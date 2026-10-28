@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -8,6 +10,8 @@ import '../../../../core/providers/role_permission_providers.dart';
 import '../../../../core/providers/player_providers.dart';
 import '../../../../core/providers/self_service_providers.dart';
 import '../../../../core/providers/signout_providers.dart';
+import '../../../../core/providers/tenant_providers.dart';
+import '../../../../core/services/telegram_service.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
@@ -77,6 +81,20 @@ Future<void> selfServicePause(BuildContext context, WidgetRef ref, Person player
   try {
     final repo = ref.read(playerRepositoryWithTenantProvider);
     await repo.pausePlayer(player, untilIso, pauseText);
+    // LOGIC_SELF: Ionic confirmPause → telegramService.notifyPlayerPaused
+    // (best-effort, the pause itself is saved).
+    final tenantId = ref.read(currentTenantIdProvider);
+    if (player.id != null && tenantId != null) {
+      unawaited(ref
+          .read(telegramServiceProvider)
+          .notifyPlayerPaused(
+            playerId: player.id!,
+            tenantId: tenantId,
+            reason: result.reason,
+            pauseUntil: untilIso,
+          )
+          .catchError((_) {}));
+    }
     _refreshAfterAbsenceChange(ref);
   } catch (e) {
     if (context.mounted) ToastHelper.showError(context, context.l10n.signoutFlutterError(e));

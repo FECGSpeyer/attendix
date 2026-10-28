@@ -1331,7 +1331,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
     try {
       await repository.archivePlayer(
         person,
-        date ?? DateTime.now().toIso8601String(),
+        date ?? DateTime.now().toUtc().toIso8601String(),
         note?.isEmpty == true ? null : note,
       );
       // Realtime handles the refresh automatically

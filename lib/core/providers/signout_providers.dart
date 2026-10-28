@@ -1,8 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/repositories/sign_in_out_repository.dart';
 import '../constants/enums.dart';
+import '../utils/duty_utils.dart';
 import '../utils/event_list_utils.dart';
+import 'duty_providers.dart';
 import 'self_service_providers.dart';
 import 'tenant_providers.dart';
 import '../services/tracking/tracking_event.dart';
@@ -65,6 +69,7 @@ SignoutData buildSignoutData({
   required List<CrossTenantPersonAttendance> own,
   List<CrossTenantPersonAttendance>? allUpcoming,
   DateTime? now,
+  bool shiftExcusedAsPresent = false,
 }) {
   int compareDate(CrossTenantPersonAttendance a, CrossTenantPersonAttendance b) {
     final da = EventListUtils.parse(a.date) ?? DateTime(1970);
@@ -81,8 +86,21 @@ SignoutData buildSignoutData({
       .toList()
     ..sort(compareDate);
 
-  final relevant = past.where((a) => a.attendanceType?.includeInAverage ?? a.includeInAverage).toList();
-  final attended = relevant.where((a) => a.attended).length;
+  // LOGIC_SELF: Ionic countsForAverage(type, pa, true) — no type counts,
+  // include_in_average=false does not, duty types only when assigned.
+  final relevant = past
+      .where((a) => a.attendanceType == null
+          ? a.includeInAverage
+          : countsForAverage(a.attendanceType, a.dutyState, fallback: true))
+      .toList();
+  // LOGIC_SELF: Ionic getPersonAttendances `attended` incl.
+  // shift_excused_as_present ("Schichtbedingt"/"Arbeitsbedingt").
+  final attended = relevant
+      .where((a) => a.status.countsAsAttended(
+            notes: a.notes,
+            shiftExcusedAsPresent: shiftExcusedAsPresent,
+          ))
+      .length;
   final perc = relevant.isEmpty ? 0 : (attended / relevant.length * 100).round();
   final lateCount = past.where((a) => a.status == AttendanceStatus.late).length;
 
@@ -121,10 +139,35 @@ final signoutDataProvider = FutureProvider<SignoutData>((ref) async {
       player.id!,
       tenantName: tenantName,
     );
-    return buildSignoutData(own: own, allUpcoming: all);
+    return buildSignoutData(
+      own: own,
+      allUpcoming: all,
+      shiftExcusedAsPresent: tenant?.shiftExcusedAsPresent ?? false,
+    );
   }
-  return buildSignoutData(own: own);
+  return buildSignoutData(
+    own: own,
+    shiftExcusedAsPresent: tenant?.shiftExcusedAsPresent ?? false,
+  );
 });
+
+/// LOGIC_SELF: attendance ids of the selected Termine that are assigned
+/// duties still occupying the duty (Ionic `isDutyPa(att) && occupiesDuty(att)`).
+List<int> cancelledDutyAttendanceIds(
+  List<CrossTenantPersonAttendance> attendances,
+  List<String> selectedIds,
+) {
+  return attendances
+      .where((a) =>
+          a.id != null &&
+          selectedIds.contains(a.id) &&
+          a.isDutyType &&
+          occupiesDutyRaw(a.dutyState, a.status))
+      .map((a) => a.attendanceId)
+      .whereType<int>()
+      .toSet()
+      .toList();
+}
 
 /// Mutations of the "Meine Termine" page.
 class SignoutNotifier extends Notifier<AsyncValue<void>> {
@@ -160,9 +203,33 @@ class SignoutNotifier extends Notifier<AsyncValue<void>> {
   }
 
   /// Absagen / Verspätung with reason.
+  ///
+  /// LOGIC_SELF: like Ionic SignoutPage.onExcuseConfirm, every cancelled
+  /// assigned duty sends `duty-notify {type: 'understaffed'}` afterwards.
   Future<bool> signOut(List<String> ids, String reason, {required bool isLate}) {
-    return _run(() => _repo.signOut(ids, reason, isLateComing: isLate, isSelf: true)
-        .then((_) => ref.read(trackingServiceProvider).track(TrackingEvent.attendanceCheckOut, properties: {'count': ids.length, 'isLate': isLate})));
+    final cancelledDuties = cancelledDutyAttendanceIds(
+      _loadedAttendances(),
+      ids,
+    );
+    return _run(() async {
+      await _repo.signOut(ids, reason, isLateComing: isLate, isSelf: true);
+      final dutyRepo = ref.read(dutyRepositoryWithTenantProvider);
+      for (final attendanceId in cancelledDuties) {
+        // notify never throws; fire-and-forget like Ionic (`void notify`)
+        unawaited(dutyRepo.notify(DutyNotifyType.understaffed, attendanceId));
+      }
+      ref.read(trackingServiceProvider).track(TrackingEvent.attendanceCheckOut, properties: {'count': ids.length, 'isLate': isLate});
+    });
+  }
+
+  List<CrossTenantPersonAttendance> _loadedAttendances() {
+    final data = ref.read(signoutDataProvider).valueOrNull;
+    if (data == null) return const [];
+    return [
+      if (data.current != null) data.current!,
+      ...data.upcoming,
+      ...data.past,
+    ];
   }
 
   /// Notiz anpassen.

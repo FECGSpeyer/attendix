@@ -526,7 +526,7 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
       updates.remove('attendance');
 
       // Add changed metadata
-      updates['changed_at'] = DateTime.now().toIso8601String();
+      updates['changed_at'] = DateTime.now().toUtc().toIso8601String();
       updates['changed_by'] = supabase.auth.currentUser?.id;
 
       final response = await supabase
@@ -606,7 +606,7 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
           .from('person_attendances')
           .update({
             'status': newStatus.value,
-            'changed_at': DateTime.now().toIso8601String(),
+            'changed_at': DateTime.now().toUtc().toIso8601String(),
             'changed_by': supabase.auth.currentUser?.id,
           })
           .inFilter('id', validIds);
@@ -848,7 +848,7 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
           .update({
             'status': status.value,
             'notes': '',
-            'changed_at': DateTime.now().toIso8601String(),
+            'changed_at': DateTime.now().toUtc().toIso8601String(),
             'changed_by': supabase.auth.currentUser?.id,
           })
           .eq('attendance_id', attendanceId);

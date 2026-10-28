@@ -1,6 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:intl/intl.dart';
+
 import '../../core/constants/enums.dart';
+import '../../core/utils/event_list_utils.dart';
 import '../models/player_absence/player_absence.dart';
 import 'base_repository.dart';
 
@@ -100,33 +103,63 @@ class PlayerAbsenceRepository extends BaseRepository with TenantAwareRepository 
     }
   }
 
-  /// Upcoming (today or later) person_attendances of [personId] in the
-  /// current tenant whose attendance date lies within [fromDate]..[untilDate].
+  /// Upcoming person_attendances of [personId] in the current tenant whose
+  /// attendance date lies within [fromDate]..[untilDate].
+  ///
+  /// LOGIC_SELF: like Ionic (confirmAbsence/deleteAbsence work on the loaded
+  /// upcoming list) a Termin counts while it has not ended, so a running
+  /// multi-day Termin that started before today is included.
   Future<List<Map<String, dynamic>>> _upcomingInRange(
     int personId,
     String fromDate,
     String untilDate,
   ) async {
-    final today = DateTime.now().toIso8601String().substring(0, 10);
-    final start = fromDate.compareTo(today) > 0 ? fromDate : today;
-
     final response = await supabase
         .from('person_attendances')
-        .select('id, status, notes, attendance:attendance_id!inner(date, type_id, tenantId)')
+        .select('id, status, notes, attendance:attendance_id!inner(date, duration_days, type_id, tenantId)')
         .eq('person_id', personId)
         .eq('attendance.tenantId', currentTenantId)
-        .gte('attendance.date', start);
+        // One day of slack: the exact local-day check happens below.
+        .gte('attendance.date', _dayBefore(fromDate));
 
     return (response as List)
         .where((row) => row['attendance'] != null)
         .map((e) => e as Map<String, dynamic>)
-        .where((row) {
-      // Compare on the day only (Ionic: isBefore/isAfter with 'day').
-      final date = (row['attendance']['date'] ?? '').toString();
-      if (date.length < 10) return false;
-      final day = date.substring(0, 10);
-      return day.compareTo(start) >= 0 && day.compareTo(untilDate) <= 0;
-    }).toList();
+        .where((row) => isUpcomingInAbsenceRange(
+              (row['attendance']['date'] ?? '').toString(),
+              _intOrNull(row['attendance']['duration_days']),
+              fromDate,
+              untilDate,
+            ))
+        .toList();
+  }
+
+  static String _dayBefore(String date) {
+    final parsed = DateTime.tryParse(date.length >= 10 ? date.substring(0, 10) : date);
+    if (parsed == null) return date;
+    return DateFormat('yyyy-MM-dd').format(parsed.subtract(const Duration(days: 1)));
+  }
+
+  static int? _intOrNull(dynamic raw) =>
+      raw is int ? raw : int.tryParse(raw?.toString() ?? '');
+
+  /// LOGIC_SELF: Ionic filter of confirmAbsence/deleteAbsence — the Termin
+  /// has not ended yet (`attendanceHasEnded`) and its day lies within
+  /// [fromDate]..[untilDate] (`isBefore/isAfter(…, 'day')`).
+  static bool isUpcomingInAbsenceRange(
+    String date,
+    int? durationDays,
+    String fromDate,
+    String untilDate, {
+    DateTime? now,
+  }) {
+    final parsed = EventListUtils.parse(date);
+    if (parsed == null) return false;
+    if (EventListUtils.hasEnded(date, durationDays, now: now)) return false;
+    final day = DateFormat('yyyy-MM-dd').format(parsed);
+    final from = fromDate.length >= 10 ? fromDate.substring(0, 10) : fromDate;
+    final until = untilDate.length >= 10 ? untilDate.substring(0, 10) : untilDate;
+    return day.compareTo(from) >= 0 && day.compareTo(until) <= 0;
   }
 
   static int _statusOf(dynamic raw) {
@@ -155,7 +188,7 @@ class PlayerAbsenceRepository extends BaseRepository with TenantAwareRepository 
             .update({
               'status': AttendanceStatus.excused.value,
               'notes': reason,
-              'changed_at': DateTime.now().toIso8601String(),
+              'changed_at': DateTime.now().toUtc().toIso8601String(),
               'changed_by': supabase.auth.currentUser?.id,
             })
             .eq('id', row['id'])
@@ -205,7 +238,7 @@ class PlayerAbsenceRepository extends BaseRepository with TenantAwareRepository 
             .update({
               'status': status,
               'notes': '',
-              'changed_at': DateTime.now().toIso8601String(),
+              'changed_at': DateTime.now().toUtc().toIso8601String(),
               'changed_by': supabase.auth.currentUser?.id,
             })
             .eq('id', row['id'])

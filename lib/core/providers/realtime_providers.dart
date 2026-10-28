@@ -4,9 +4,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../config/supabase_config.dart';
-import '../constants/enums.dart';
+import '../services/attendance_list_cache.dart';
+import '../services/offline_queue_service.dart' show connectivityCheckProvider;
+import '../utils/attendance_percentage_utils.dart';
 import '../../data/models/attendance/attendance.dart';
 import '../../data/models/person/person.dart';
+import 'attendance_type_providers.dart';
 import 'player_providers.dart';
 import 'tenant_providers.dart';
 import 'group_providers.dart';
@@ -100,28 +103,52 @@ final realtimeAttendanceListProvider = FutureProvider.autoDispose<List<Attendanc
   final tenant = ref.watch(currentTenantProvider);
   if (tenant?.id == null) return [];
 
-  final response = await supabase
-      .from('attendance')
-      .select('*, person_attendances(status)')
-      .eq('tenantId', tenant!.id!)
-      .order('date', ascending: false)
-      .limit(50);
+  final tenantId = tenant!.id!;
+  const cache = AttendanceListCache();
 
-  return (response as List).map((e) {
+  // LOGIC_SELF: Ionic att-list getAttendance — offline the cached list is
+  // shown (offline_att_list_v1_<tenant>).
+  final online = await ref.read(connectivityCheckProvider)();
+  if (!online) {
+    final cached = await cache.load(tenantId);
+    if (cached != null) return cached;
+  }
+
+  // LOGIC_SELF: Ionic db.getAttendance — everything since the season start
+  // (getCurrentAttDate), no row limit.
+  final List<dynamic> response;
+  try {
+    response = await supabase
+        .from('attendance')
+        .select('*, person_attendances(status, notes, duty_state)')
+        .eq('tenantId', tenantId)
+        .gt('date', attendanceListStartDate(tenant.seasonStart))
+        .order('date', ascending: false);
+  } catch (_) {
+    final cached = await cache.load(tenantId);
+    if (cached != null) return cached;
+    rethrow;
+  }
+
+  final types = await ref.watch(attendanceTypesProvider.future);
+  final typesById = {for (final t in types) t.id: t};
+
+  final attendances = response.map((e) {
     final attendance = Attendance.fromJson(e as Map<String, dynamic>);
-    final personAttendances = e['person_attendances'] as List?;
-    if (personAttendances != null && personAttendances.isNotEmpty) {
-      final total = personAttendances.length;
-      final present = personAttendances.where((pa) {
-        final status = AttendanceStatus.fromValue(pa['status'] as int? ?? 0);
-        return status.countsAsPresent;
-      }).length;
-      return attendance.copyWith(
-        percentage: (present / total * 100).roundToDouble(),
-      );
-    }
-    return attendance;
+    final rows = ((e['person_attendances'] as List?) ?? const [])
+        .whereType<Map<String, dynamic>>()
+        .toList();
+    // LOGIC_SELF: Ionic getPercentage(averagePersons(...), shift_excused_as_present)
+    return attendance.copyWith(
+      percentage: attendanceListPercentage(
+        rows,
+        typesById[attendance.typeId],
+        shiftExcusedAsPresent: tenant.shiftExcusedAsPresent,
+      ),
+    );
   }).toList();
+  await cache.save(tenantId, attendances);
+  return attendances;
 });
 
 /// Internal: manages Supabase realtime subscription for the attendance table.

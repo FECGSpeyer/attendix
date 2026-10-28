@@ -219,6 +219,8 @@ final categorizedAttendancesProvider = Provider<CategorizedAttendances>((ref) {
 final averageAttendancePercentProvider = Provider<double?>((ref) {
   final categorized = ref.watch(categorizedAttendancesProvider);
   // BL-005: Include 0% attendances in average calculation (changed > 0 to != null)
+  // LOGIC_SELF: duty Termine with nobody assigned have percentage == null
+  // (attendanceListPercentage) and are left out like in Ionic applyAttendances.
   final pastAttendances = categorized.past
       .where((a) => a.percentage != null)
       .toList();
@@ -245,7 +247,7 @@ final playerAttendancePercentagesProvider =
   final tenant = ref.watch(currentTenantProvider);
   if (tenant == null || tenant.id == null) return {};
 
-  final now = DateTime.now().toIso8601String();
+  final now = DateTime.now().toUtc().toIso8601String();
   final seasonStart = tenant.seasonStart;
 
   // Fetch all records using pagination to avoid the PostgREST 1000-row default limit.
