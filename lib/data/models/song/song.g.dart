@@ -15,8 +15,10 @@ _$SongImpl _$$SongImplFromJson(Map<String, dynamic> json) => _$SongImpl(
   withChoir: json['withChoir'] as bool? ?? false,
   withSolo: json['withSolo'] as bool? ?? false,
   lastSung: json['lastSung'] as String?,
+  nextPlanned: json['nextPlanned'] as String?,
   link: json['link'] as String?,
   conductor: json['conductor'] as String?,
+  composer: json['composer'] as String?,
   legacyId: (json['legacyId'] as num?)?.toInt(),
   instrumentIds:
       (json['instrument_ids'] as List<dynamic>?)
@@ -28,6 +30,11 @@ _$SongImpl _$$SongImplFromJson(Map<String, dynamic> json) => _$SongImpl(
           .toList(),
   difficulty: (json['difficulty'] as num?)?.toInt(),
   category: json['category'] as String?,
+  categoryIds:
+      (json['category_ids'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
+  additionalFields: json['additional_fields'] as Map<String, dynamic>?,
   createdAt:
       json['created_at'] == null
           ? null
@@ -43,14 +50,15 @@ Map<String, dynamic> _$$SongImplToJson(_$SongImpl instance) =>
       'prefix': instance.prefix,
       'withChoir': instance.withChoir,
       'withSolo': instance.withSolo,
-      'lastSung': instance.lastSung,
       'link': instance.link,
-      'conductor': instance.conductor,
+      'composer': instance.composer,
       'legacyId': instance.legacyId,
       'instrument_ids': instance.instrumentIds,
       'files': instance.files,
       'difficulty': instance.difficulty,
       'category': instance.category,
+      'category_ids': instance.categoryIds,
+      'additional_fields': instance.additionalFields,
       'created_at': instance.createdAt?.toIso8601String(),
     };
 
@@ -80,16 +88,20 @@ _$SongHistoryImpl _$$SongHistoryImplFromJson(Map<String, dynamic> json) =>
     _$SongHistoryImpl(
       id: (json['id'] as num?)?.toInt(),
       tenantId: (json['tenantId'] as num?)?.toInt(),
-      songId: (json['song_id'] as num?)?.toInt(),
+      songId: (json['songId'] as num?)?.toInt(),
       attendanceId: (json['attendance_id'] as num?)?.toInt(),
+      personId: (json['person_id'] as num?)?.toInt(),
       date: json['date'] as String?,
       conductorName: json['conductorName'] as String?,
       otherConductor: json['otherConductor'] as String?,
       count: (json['count'] as num?)?.toInt(),
+      visible: json['visible'] as bool?,
       createdAt:
           json['created_at'] == null
               ? null
               : DateTime.parse(json['created_at'] as String),
+      typeTitle: json['typeTitle'] as String?,
+      attendanceDate: json['attendanceDate'] as String?,
       song:
           json['song'] == null
               ? null
@@ -100,14 +112,14 @@ Map<String, dynamic> _$$SongHistoryImplToJson(_$SongHistoryImpl instance) =>
     <String, dynamic>{
       'id': instance.id,
       'tenantId': instance.tenantId,
-      'song_id': instance.songId,
+      'songId': instance.songId,
       'attendance_id': instance.attendanceId,
+      'person_id': instance.personId,
       'date': instance.date,
-      'conductorName': instance.conductorName,
       'otherConductor': instance.otherConductor,
       'count': instance.count,
+      'visible': instance.visible,
       'created_at': instance.createdAt?.toIso8601String(),
-      'song': instance.song,
     };
 
 _$SongCategoryImpl _$$SongCategoryImplFromJson(Map<String, dynamic> json) =>

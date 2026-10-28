@@ -1,12 +1,41 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'dart:async';
 
-import '../../data/models/song/song.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
 import '../../data/models/instrument/instrument.dart';
+import '../../data/models/song/song.dart';
+import '../../data/models/song/song_additional_field.dart';
+import '../../data/models/tenant/tenant.dart';
 import '../../data/repositories/repositories.dart';
+import '../config/supabase_config.dart';
 import 'group_providers.dart';
 import 'tenant_providers.dart';
 
-/// Initialized song repository with tenant context
+// ============================================================================
+// Tenant song settings (Werk-Synchronisierung, additional fields)
+// ============================================================================
+
+/// Song related settings of the current tenant (`song_source_tenant_id`,
+/// `song_additional_fields`, `song_sharing_id`). Falls back to defaults if the
+/// tenant row cannot be read, so songs still load from the own tenant.
+final songTenantSettingsProvider =
+    FutureProvider<SongTenantSettings>((ref) async {
+  final tenantId = ref.watch(currentTenantIdProvider);
+  if (tenantId == null) return const SongTenantSettings();
+
+  // The settings query only uses the current tenant id (never the song
+  // source), so the base repository with tenant context is sufficient here.
+  // songRepositoryWithTenantProvider itself depends on this provider.
+  final repo = ref.watch(songRepositoryProvider)..setTenantId(tenantId);
+  try {
+    return await repo.getSongTenantSettings();
+  } catch (_) {
+    return const SongTenantSettings();
+  }
+});
+
+/// Initialized song repository with tenant context and song source tenant.
 final songRepositoryWithTenantProvider = Provider<SongRepository>((ref) {
   final repo = ref.watch(songRepositoryProvider);
   final tenant = ref.watch(currentTenantIdProvider);
@@ -14,47 +43,416 @@ final songRepositoryWithTenantProvider = Provider<SongRepository>((ref) {
   if (tenant != null) {
     repo.setTenantId(tenant);
   }
+  repo.setSongSourceTenantId(
+    ref.watch(songTenantSettingsProvider).valueOrNull?.songSourceTenantId,
+  );
 
   return repo;
 });
 
-/// Provider for songs list
+/// Resolve the repository only after the song source tenant is known, so
+/// synced tenants never briefly load their own (empty) library.
+Future<SongRepository> _readySongRepository(Ref ref) async {
+  await ref.watch(songTenantSettingsProvider.future);
+  return ref.watch(songRepositoryWithTenantProvider);
+}
+
+// ============================================================================
+// Songs
+// ============================================================================
+
+/// Enrich songs with `lastSung`, `nextPlanned` and `conductor` from the
+/// history (Ionic `SongsPage.getSongs`).
+///
+/// [history] must be sorted by date descending and may contain planned
+/// future entries: "Zuletzt gesungen" only considers entries up to today,
+/// the nearest future entry becomes `nextPlanned`.
+List<Song> enrichSongsWithHistory(
+  List<Song> songs,
+  List<SongHistory> history, {
+  DateTime? now,
+}) {
+  final today = now ?? DateTime.now();
+  final todayDate = DateTime(today.year, today.month, today.day);
+  final bySong = <int, List<SongHistory>>{};
+  for (final h in history) {
+    final id = h.songId;
+    if (id != null) bySong.putIfAbsent(id, () => []).add(h);
+  }
+
+  bool isFuture(SongHistory h) {
+    final d = DateTime.tryParse(h.date ?? '')?.toLocal();
+    if (d == null) return false;
+    return DateTime(d.year, d.month, d.day).isAfter(todayDate);
+  }
+
+  return songs.map((song) {
+    final entries = bySong[song.id] ?? const <SongHistory>[];
+    SongHistory? last;
+    SongHistory? next;
+    for (final h in entries) {
+      if (isFuture(h)) {
+        next = h; // descending order: the last future entry is the nearest
+      } else {
+        last ??= h;
+      }
+    }
+    final conductor = last == null
+        ? null
+        : (last.conductorName?.isNotEmpty == true
+            ? last.conductorName
+            : last.otherConductor);
+    return song.copyWith(
+      lastSung: last?.date,
+      nextPlanned: next?.date,
+      conductor: conductor,
+    );
+  }).toList();
+}
+
+/// Provider for the songs of the (effective) song library, enriched with
+/// last sung / next planned data from the current tenant's history.
 final songsProvider = FutureProvider<List<Song>>((ref) async {
-  final repo = ref.watch(songRepositoryWithTenantProvider);
+  final repo = await _readySongRepository(ref);
 
   if (!repo.hasTenantId) return [];
 
-  return repo.getSongs();
+  final songs = await repo.getSongs();
+  List<SongHistory> history;
+  try {
+    history = await repo.getHistory();
+  } catch (_) {
+    history = const [];
+  }
+  return enrichSongsWithHistory(songs, history);
 });
 
-/// Provider for single song by ID
-final songByIdProvider =
-    FutureProvider.family<Song?, int>((ref, id) async {
-  final repo = ref.watch(songRepositoryWithTenantProvider);
+/// Provider for single song by ID (loaded from the song source tenant).
+final songByIdProvider = FutureProvider.family<Song?, int>((ref, id) async {
+  final repo = await _readySongRepository(ref);
 
   if (!repo.hasTenantId) return null;
 
   return repo.getSongById(id);
 });
 
-/// Provider for song categories
+/// Provider for song categories (of the song source tenant)
 final songCategoriesProvider = FutureProvider<List<SongCategory>>((ref) async {
-  final repo = ref.watch(songRepositoryWithTenantProvider);
+  final repo = await _readySongRepository(ref);
 
   if (!repo.hasTenantId) return [];
 
   return repo.getSongCategories();
 });
 
-/// Provider for song history
+/// Provider for song history. With a song id: Werkhistorie of that song
+/// (visible entries incl. attendance type and conductor).
 final songHistoryProvider =
     FutureProvider.family<List<SongHistory>, int?>((ref, songId) async {
+  final repo = await _readySongRepository(ref);
+
+  if (!repo.hasTenantId) return [];
+
+  if (songId != null) return repo.getHistoryBySongId(songId);
+  return repo.getSongHistory();
+});
+
+/// Provider for current songs (all upcoming events from tomorrow onwards)
+final currentSongsProvider =
+    FutureProvider<List<CurrentSongsGroup>>((ref) async {
   final repo = ref.watch(songRepositoryWithTenantProvider);
 
   if (!repo.hasTenantId) return [];
 
-  return repo.getSongHistory(songId: songId);
+  return repo.getCurrentSongs();
 });
+
+/// Names of the other instances sharing the current song library.
+final songSyncedTenantNamesProvider =
+    FutureProvider.autoDispose<List<String>>((ref) async {
+  final repo = await _readySongRepository(ref);
+  if (!repo.hasTenantId) return [];
+  try {
+    return await repo.getSyncedTenantNames();
+  } catch (_) {
+    return repo.isSyncedLibrary ? ['der Quellinstanz'] : [];
+  }
+});
+
+/// Realtime subscription on the songs table of the effective song tenant.
+/// Watch it from a page to refresh [songsProvider] on changes.
+final songsRealtimeProvider = Provider.autoDispose<void>((ref) {
+  final settings = ref.watch(songTenantSettingsProvider).valueOrNull;
+  final tenantId = ref.watch(currentTenantIdProvider);
+  if (tenantId == null || settings == null) return;
+  final songTenantId = settings.songSourceTenantId ?? tenantId;
+
+  final supabase = ref.watch(supabaseClientProvider);
+  Timer? debounce;
+  final channel = supabase
+      .channel('songs-changes-$songTenantId')
+      .onPostgresChanges(
+        event: PostgresChangeEvent.all,
+        schema: 'public',
+        table: 'songs',
+        filter: PostgresChangeFilter(
+          type: PostgresChangeFilterType.eq,
+          column: 'tenantId',
+          value: songTenantId,
+        ),
+        callback: (_) {
+          debounce?.cancel();
+          debounce = Timer(const Duration(milliseconds: 300), () {
+            ref.invalidate(songsProvider);
+          });
+        },
+      )
+      .subscribe();
+
+  ref.onDispose(() {
+    debounce?.cancel();
+    supabase.removeChannel(channel);
+  });
+});
+
+// ============================================================================
+// Songs list data (authenticated and public share link)
+// ============================================================================
+
+/// Everything the songs list needs - for the logged-in tenant or for a
+/// public song sharing link (Ionic `/:songSharingId`).
+class SongsListData {
+  const SongsListData({
+    required this.tenantId,
+    required this.tenantType,
+    required this.songs,
+    required this.categories,
+    required this.groups,
+    required this.groupCategories,
+    required this.currentSongs,
+    required this.additionalFields,
+    this.publicTenant,
+    this.songSharingId,
+  });
+
+  /// Tenant used for persisted filter settings (current or shared tenant)
+  final int tenantId;
+  final String tenantType;
+  final List<Song> songs;
+  final List<SongCategory> categories;
+
+  /// All groups of the tenant (incl. main group)
+  final List<Group> groups;
+  final List<GroupCategory> groupCategories;
+  final List<CurrentSongsGroup> currentSongs;
+  final List<SongAdditionalField> additionalFields;
+
+  /// Set when the list is shown via a public share link
+  final Tenant? publicTenant;
+  final String? songSharingId;
+
+  bool get isPublic => publicTenant != null;
+  bool get isOrchestra => tenantType == 'orchestra';
+
+  /// Groups shown as instruments (all but the main group)
+  List<Group> get instruments =>
+      groups.where((g) => g.maingroup != true).toList();
+}
+
+/// Ionic: for orchestras, songs without instrument_ids count as fully
+/// instrumented (all group ids).
+List<Song> _applyDefaultInstruments(List<Song> songs, List<Group> groups, bool isOrchestra) {
+  if (!isOrchestra) return songs;
+  final allIds = groups.map((g) => g.id).whereType<int>().toList();
+  return songs
+      .map((s) => (s.instrumentIds?.isNotEmpty ?? false)
+          ? s
+          : s.copyWith(instrumentIds: allIds))
+      .toList();
+}
+
+/// Data for the songs list. `null` sharing id = logged-in tenant.
+/// Returns null if a public sharing id is invalid.
+final songsListDataProvider =
+    FutureProvider.autoDispose.family<SongsListData?, String?>((ref, sharingId) async {
+  if (sharingId != null) {
+    final repo = ref.watch(publicSongRepositoryProvider);
+    final shared = await repo.getTenantBySongSharingId(sharingId);
+    if (shared == null) return null;
+    final tid = shared.id;
+    final results = await Future.wait([
+      repo.getSongs(tid),
+      repo.getSongCategories(tid),
+      repo.getGroups(tid),
+      repo.getGroupCategories(tid).catchError((_) => <GroupCategory>[]),
+      repo.getCurrentSongs(tid).catchError((_) => <CurrentSongsGroup>[]),
+    ]);
+    final groups = results[2] as List<Group>;
+    final isOrchestra = shared.tenant.type == 'orchestra';
+    return SongsListData(
+      tenantId: tid,
+      tenantType: shared.tenant.type,
+      songs: _applyDefaultInstruments(results[0] as List<Song>, groups, isOrchestra),
+      categories: results[1] as List<SongCategory>,
+      groups: groups,
+      groupCategories: results[3] as List<GroupCategory>,
+      currentSongs: results[4] as List<CurrentSongsGroup>,
+      additionalFields: shared.additionalFields,
+      publicTenant: shared.tenant,
+      songSharingId: sharingId,
+    );
+  }
+
+  final tenant = ref.watch(currentTenantProvider);
+  final tenantId = tenant?.id;
+  if (tenantId == null) return null;
+
+  final settings = await ref.watch(songTenantSettingsProvider.future);
+  final songs = await ref.watch(songsProvider.future);
+  final categories = await ref.watch(songCategoriesProvider.future);
+  final groups = await ref.watch(groupsProvider.future);
+  List<GroupCategory> groupCategories;
+  try {
+    groupCategories = await ref.watch(groupCategoriesProvider.future);
+  } catch (_) {
+    groupCategories = const [];
+  }
+  List<CurrentSongsGroup> currentSongs;
+  try {
+    currentSongs = await ref.watch(currentSongsProvider.future);
+  } catch (_) {
+    currentSongs = const [];
+  }
+  final isOrchestra = tenant!.type == 'orchestra';
+
+  return SongsListData(
+    tenantId: tenantId,
+    tenantType: tenant.type,
+    songs: _applyDefaultInstruments(songs, groups, isOrchestra),
+    categories: categories,
+    groups: groups,
+    groupCategories: groupCategories,
+    currentSongs: currentSongs,
+    additionalFields: settings.additionalFields,
+    songSharingId: settings.songSharingId ?? tenant.songSharingId,
+  );
+});
+
+// ============================================================================
+// Song detail data (authenticated and public share link)
+// ============================================================================
+
+/// Parameters for [songDetailDataProvider]
+typedef SongDetailParams = ({int songId, String? sharingId});
+
+/// Everything the song detail page needs.
+class SongDetailData {
+  const SongDetailData({
+    required this.song,
+    required this.tenantType,
+    required this.instruments,
+    required this.categories,
+    required this.additionalFields,
+    required this.history,
+    required this.readOnly,
+    this.publicTenant,
+    this.songSharingId,
+    this.mainGroupId,
+  });
+
+  final Song song;
+  final String tenantType;
+
+  /// Groups without the main group (only loaded for orchestras)
+  final List<Group> instruments;
+  final List<SongCategory> categories;
+  final List<SongAdditionalField> additionalFields;
+
+  /// Werkhistorie (only loaded for admins/responsibles)
+  final List<SongHistory> history;
+  final bool readOnly;
+  final Tenant? publicTenant;
+  final String? songSharingId;
+  final int? mainGroupId;
+
+  bool get isPublic => publicTenant != null;
+  bool get isOrchestra => tenantType == 'orchestra';
+  bool get isChoir => tenantType == 'choir';
+}
+
+final songDetailDataProvider = FutureProvider.autoDispose
+    .family<SongDetailData?, SongDetailParams>((ref, params) async {
+  if (params.sharingId != null) {
+    final repo = ref.watch(publicSongRepositoryProvider);
+    final shared = await repo.getTenantBySongSharingId(params.sharingId!);
+    if (shared == null) return null;
+    final song = await repo.getSong(params.songId, shared.id);
+    if (song == null) return null;
+    final isOrchestra = shared.tenant.type == 'orchestra';
+    final groups = isOrchestra ? await repo.getGroups(shared.id) : const <Group>[];
+    List<SongCategory> categories;
+    try {
+      categories = await repo.getSongCategories(shared.id);
+    } catch (_) {
+      categories = const [];
+    }
+    return SongDetailData(
+      song: song,
+      tenantType: shared.tenant.type,
+      instruments: groups.where((g) => g.maingroup != true).toList(),
+      categories: categories,
+      additionalFields: shared.additionalFields,
+      history: const [],
+      readOnly: true,
+      publicTenant: shared.tenant,
+      songSharingId: params.sharingId,
+    );
+  }
+
+  final tenant = ref.watch(currentTenantProvider);
+  if (tenant?.id == null) return null;
+  final role = ref.watch(currentRoleProvider);
+  final readOnly = !(role.isAdmin || role.isResponsible);
+
+  final settings = await ref.watch(songTenantSettingsProvider.future);
+  final song = await ref.watch(songByIdProvider(params.songId).future);
+  if (song == null) return null;
+
+  final groups = await ref.watch(groupsProvider.future);
+  List<SongCategory> categories;
+  try {
+    categories = await ref.watch(songCategoriesProvider.future);
+  } catch (_) {
+    categories = const [];
+  }
+  List<SongHistory> history = const [];
+  if (!readOnly) {
+    try {
+      history = await ref.watch(songHistoryProvider(params.songId).future);
+    } catch (_) {
+      // Non-critical
+    }
+  }
+
+  final isOrchestra = tenant!.type == 'orchestra';
+  return SongDetailData(
+    song: song,
+    tenantType: tenant.type,
+    instruments: isOrchestra
+        ? groups.where((g) => g.maingroup != true).toList()
+        : const [],
+    categories: categories,
+    additionalFields: settings.additionalFields,
+    history: history,
+    readOnly: readOnly,
+    songSharingId: settings.songSharingId ?? tenant.songSharingId,
+    mainGroupId: groups.where((g) => g.maingroup == true).firstOrNull?.id,
+  );
+});
+
+// ============================================================================
+// Mutations
+// ============================================================================
 
 /// Notifier for song mutations (CRUD operations)
 class SongNotifier extends Notifier<AsyncValue<void>> {
@@ -96,6 +494,7 @@ class SongNotifier extends Notifier<AsyncValue<void>> {
       await _repo.deleteSong(id);
       state = const AsyncValue.data(null);
       ref.invalidate(songsProvider);
+      ref.invalidate(currentSongsProvider);
       return true;
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
@@ -120,6 +519,7 @@ class SongNotifier extends Notifier<AsyncValue<void>> {
       state = const AsyncValue.data(null);
       ref.invalidate(songHistoryProvider(songId));
       ref.invalidate(songHistoryProvider(null));
+      ref.invalidate(songsProvider);
       return result;
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
@@ -211,59 +611,52 @@ final songCategoryNotifierProvider =
   return SongCategoryNotifier();
 });
 
-/// Provider for current songs (all upcoming events from today onwards)
-final currentSongsProvider = FutureProvider<
-    List<({String date, List<SongHistory> history})>>((ref) async {
-  final repo = ref.watch(songRepositoryWithTenantProvider);
+// ============================================================================
+// Group directory helpers (Gruppenverzeichnis)
+// ============================================================================
 
-  if (!repo.hasTenantId) return [];
+/// Virtual group id for the "Dirigenten" entry (all scores / Partituren)
+const int songConductorGroupId = -1;
 
-  return repo.getCurrentSongs();
-});
+/// Ionic `isScoreFile`: file without instrument and note "Partitur".
+bool isScoreFile(SongFile file) =>
+    file.instrumentId == null && file.note == 'Partitur';
 
-/// Provider for groups that have at least one song file
-/// Used for the group files directory feature
-final groupsWithFilesProvider = Provider<List<Group>>((ref) {
-  final songs = ref.watch(songsProvider).valueOrNull ?? [];
-  final groups = ref.watch(groupsProvider).valueOrNull ?? [];
-
-  // Collect all instrument IDs that have files (instrumentId > 2 means it's a specific group)
-  final groupIdsWithFiles = <int>{};
+/// Groups (sorted by name) with at least one file, plus a virtual
+/// "Dirigenten" group first if any score exists (Ionic `buildGroupsWithFiles`).
+List<Group> buildGroupsWithFiles(List<Song> songs, List<Group> groups) {
+  final ids = <int>{};
+  var hasScores = false;
   for (final song in songs) {
-    for (final file in song.files ?? []) {
-      if (file.instrumentId != null && file.instrumentId! > 2) {
-        groupIdsWithFiles.add(file.instrumentId!);
+    for (final file in song.files ?? const <SongFile>[]) {
+      final id = file.instrumentId;
+      if (id != null && id > 2) {
+        ids.add(id);
+      } else if (isScoreFile(file)) {
+        hasScores = true;
       }
     }
   }
-
-  return groups
-      .where((g) => g.id != null && groupIdsWithFiles.contains(g.id))
+  final result = groups
+      .where((g) => g.maingroup != true && g.id != null && ids.contains(g.id))
       .toList()
-    ..sort((a, b) => a.name.compareTo(b.name));
-});
+    ..sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+  if (hasScores) {
+    result.insert(0, const Group(id: songConductorGroupId, name: 'Dirigenten'));
+  }
+  return result;
+}
 
-/// Provider for files filtered by a specific group/instrument
-final filesForGroupProvider =
-    Provider.family<List<({Song song, SongFile file})>, int>((ref, groupId) {
-  final songs = ref.watch(songsProvider).valueOrNull ?? [];
-
+/// Files of a group (or all scores for the virtual conductor group).
+List<({Song song, SongFile file})> filesForGroup(List<Song> songs, int groupId) {
   final result = <({Song song, SongFile file})>[];
   for (final song in songs) {
-    for (final file in song.files ?? []) {
-      if (file.instrumentId == groupId) {
-        result.add((song: song, file: file));
-      }
+    for (final file in song.files ?? const <SongFile>[]) {
+      final matches = groupId == songConductorGroupId
+          ? isScoreFile(file)
+          : file.instrumentId == groupId;
+      if (matches) result.add((song: song, file: file));
     }
   }
-
-  // Sort by song number then name
-  result.sort((a, b) {
-    final numA = a.song.number ?? 9999;
-    final numB = b.song.number ?? 9999;
-    if (numA != numB) return numA.compareTo(numB);
-    return a.song.name.compareTo(b.song.name);
-  });
-
   return result;
-});
+}

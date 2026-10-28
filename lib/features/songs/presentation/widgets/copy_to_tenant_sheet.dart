@@ -246,7 +246,7 @@ class _CopyToTenantSheetState extends ConsumerState<CopyToTenantSheet> {
       setState(() => _progressMessage = 'Lade Ziel-Instrumente...');
       final supabase = ref.read(supabaseClientProvider);
       final targetGroupsResponse = await supabase
-          .from('groups')
+          .from('instruments')
           .select('*')
           .eq('tenantId', _targetTenantId);
 
@@ -280,9 +280,11 @@ class _CopyToTenantSheetState extends ConsumerState<CopyToTenantSheet> {
         'withChoir': widget.song.withChoir,
         'withSolo': widget.song.withSolo,
         'link': widget.song.link,
-        'conductor': widget.song.conductor,
         'difficulty': widget.song.difficulty,
-        // Don't copy category, instrument_ids (will be set from files)
+        // Like Ionic: categories are not copied, instrument_ids are set from files
+        'instrument_ids': <int>[],
+        'category': null,
+        'category_ids': <String>[],
       };
 
       final insertResponse = await supabase
@@ -337,7 +339,9 @@ class _CopyToTenantSheetState extends ConsumerState<CopyToTenantSheet> {
         if (newInstrumentIds.isNotEmpty) {
           await supabase
               .from('songs')
-              .update({'instrument_ids': newInstrumentIds}).eq('id', newSongId);
+              .update({'instrument_ids': newInstrumentIds})
+              .eq('id', newSongId)
+              .eq('tenantId', _targetTenantId);
         }
       }
 
