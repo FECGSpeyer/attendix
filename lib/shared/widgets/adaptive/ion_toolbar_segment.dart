@@ -45,8 +45,10 @@ class IonToolbarSegment<T> extends StatelessWidget {
     final theme = Theme.of(context);
     final dark = theme.brightness == Brightness.dark;
     final text = theme.colorScheme.onSurface;
-    final track = (dark ? Colors.white : Colors.black).withValues(alpha: 0.065);
-    final pill = dark ? const Color(0xFF636366) : Colors.white;
+    // IOS_THEME2: ionic-theme-ios26 track rgba(text, .06) / dark
+    // rgba(118,118,128,.24), indicator background / dark #5a5a5f.
+    final track = dark ? const Color(0x3D767680) : const Color(0x0F000000);
+    final pill = dark ? const Color(0xFF5A5A5F) : Colors.white;
 
     Widget segment(IonSegmentItem<T> item) {
       final checked = item.value == value;

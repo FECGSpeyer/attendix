@@ -170,6 +170,12 @@ void main() {
     expect(ios.checkboxTheme.shape, isA<CircleBorder>());
     expect(ios.scaffoldBackgroundColor, const Color(0xFFF4F5F8));
     final iosDark = AppTheme.forPlatform(Brightness.dark, TargetPlatform.iOS);
-    expect(iosDark.scaffoldBackgroundColor, const Color(0xFF222428));
+    // IOS_THEME2: black page, #1c1c1d cards / rows like on the iPhone.
+    expect(iosDark.scaffoldBackgroundColor, const Color(0xFF000000));
+    expect(iosDark.colorScheme.surface, const Color(0xFF1C1C1D));
+    // md dark = Ionic md dark (#121212 page, #1e1e1e items).
+    final mdDark = AppTheme.forPlatform(Brightness.dark, TargetPlatform.android);
+    expect(mdDark.scaffoldBackgroundColor, const Color(0xFF121212));
+    expect(mdDark.colorScheme.surface, const Color(0xFF1E1E1E));
   });
 }

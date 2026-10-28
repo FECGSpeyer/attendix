@@ -108,7 +108,8 @@ class _CopyShiftToTenantSheetState
                                 ),
                               ),
                               const SizedBox(height: 8),
-                              DropdownButtonFormField<int>(
+                              AppDropdownFormField<int>(
+                                iosInterface: AppSelectInterface.alert, // IOS_THEME2
                                 value: _targetTenantId,
                                 decoration: const InputDecoration(
                                   prefixIcon: Icon(Icons.business),

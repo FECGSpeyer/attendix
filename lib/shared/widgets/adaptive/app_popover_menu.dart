@@ -43,7 +43,7 @@ class AppPopoverMenuItem<T> {
 /// IOS_DETAIL: menu behind a toolbar button (Ionic `ion-popover` with an
 /// `ion-list` of button items).
 ///
-/// - iOS: the Ionic iOS 26 popover – a frosted, rounded (≈22) card right
+/// - iOS: the Ionic iOS 26 popover – a frosted, rounded (24) card right
 ///   below [context]'s widget (the trigger button), 44 pt rows with black
 ///   icons, a chevron on [AppPopoverMenuItem.submenu] entries and no
 ///   pre-selected row.
@@ -66,9 +66,12 @@ Future<T?> showAppPopoverMenu<T>({
   );
 
   if (!useIosLook(context)) {
+    // IOS_THEME2: Ionic md popover opens below its trigger (nothing under
+    // the pointer gets highlighted) and shows a chevron on sub menus.
+    final below = Rect.fromLTWH(anchor.left, anchor.bottom, anchor.width, 0);
     return showMenu<T>(
       context: context,
-      position: RelativeRect.fromRect(anchor, Offset.zero & overlay.size),
+      position: RelativeRect.fromRect(below, Offset.zero & overlay.size),
       items: [
         for (final item in items)
           PopupMenuItem<T>(
@@ -79,6 +82,9 @@ Future<T?> showAppPopoverMenu<T>({
                   : Icon(item.icon, color: _itemColor(item)),
               title: Text(item.label, style: TextStyle(color: _itemColor(item))),
               subtitle: item.subtitle == null ? null : Text(item.subtitle!),
+              trailing: item.submenu
+                  ? const Icon(Icons.chevron_right, color: AppColors.medium)
+                  : null,
               contentPadding: EdgeInsets.zero,
             ),
           ),
@@ -194,7 +200,8 @@ class _IosPopoverCard<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return IosGlassSurface(
-      borderRadius: const BorderRadius.all(Radius.circular(22)),
+      // IOS_THEME2: ionic-theme-ios26 popover radius 24.
+      borderRadius: const BorderRadius.all(Radius.circular(24)),
       opacity: 0.9,
       blur: 20,
       child: Material(

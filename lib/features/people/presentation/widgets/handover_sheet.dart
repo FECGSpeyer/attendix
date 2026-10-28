@@ -454,7 +454,8 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
               ),
             ),
             const SizedBox(height: AppDimensions.paddingS),
-            DropdownButtonFormField<int>(
+            AppDropdownFormField<int>(
+              iosInterface: AppSelectInterface.alert, // IOS_THEME2
               value: _targetTenantId,
               decoration: const InputDecoration(
                 prefixIcon: Icon(Icons.business),
@@ -549,7 +550,8 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
                     const Icon(Icons.arrow_forward, color: AppColors.medium),
                     const SizedBox(width: AppDimensions.paddingS),
                     Expanded(
-                      child: DropdownButtonFormField<int?>(
+                      child: AppDropdownFormField<int?>(
+                        iosInterface: AppSelectInterface.alert, // IOS_THEME2
                         value: _groupMapping[instrumentId],
                         decoration: const InputDecoration(
                           isDense: true,

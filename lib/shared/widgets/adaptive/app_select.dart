@@ -148,7 +148,11 @@ Future<AppSelection<T>?> showAppSelect<T>({
   if (!useIosLook(context)) {
     final picked = await showMenu<AppSelection<T>>(
       context: context,
-      position: RelativeRect.fromRect(anchor, Offset.zero & overlay.size),
+      // Below the trigger like the Ionic md popover.
+      position: RelativeRect.fromRect(
+        Rect.fromLTWH(anchor.left, anchor.bottom, anchor.width, 0),
+        Offset.zero & overlay.size,
+      ),
       items: [
         for (final o in options)
           PopupMenuItem<AppSelection<T>>(

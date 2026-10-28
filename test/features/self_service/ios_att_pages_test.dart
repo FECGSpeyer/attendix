@@ -249,9 +249,12 @@ void main() {
       expect(picked, 'byTenant');
     }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
 
-    testWidgets('Material: full-width SegmentedButton', (tester) async {
+    testWidgets('Material: full-width Ionic md segment', (tester) async {
       await tester.pumpWidget(app(segment((_) {})));
-      expect(find.byType(SegmentedButton<String>), findsOneWidget);
+      // IOS_THEME2: Ionic md segment – uppercase tabs, no Material box.
+      expect(find.byType(SegmentedButton<String>), findsNothing);
+      expect(find.byType(IonSegment<String>), findsOneWidget);
+      expect(find.text('CHRONOLOGISCH'), findsOneWidget);
     }, variant: TargetPlatformVariant.only(TargetPlatform.android));
   });
 }

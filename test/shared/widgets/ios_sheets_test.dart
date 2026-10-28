@@ -169,7 +169,10 @@ void main() {
 
       expect(find.byType(IonModalHandle), findsNothing);
       expect(find.byType(ToolbarButtonGroup), findsNothing);
-      expect(find.byType(SegmentedButton<bool>), findsOneWidget);
+      // IOS_THEME2: Ionic md segment (tab style), not a Material box
+      expect(find.byType(IonSegment<bool>), findsOneWidget);
+      expect(find.byType(SegmentedButton<bool>), findsNothing);
+      expect(find.text('ALLE'), findsOneWidget);
     }, variant: TargetPlatformVariant.only(TargetPlatform.android));
   });
 }

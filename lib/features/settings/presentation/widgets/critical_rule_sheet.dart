@@ -231,7 +231,8 @@ class _CriticalRuleSheetState extends State<CriticalRuleSheet> {
             Row(
               children: [
                 Expanded(
-                  child: DropdownButtonFormField<CriticalRuleThresholdType>(
+                  child: AppDropdownFormField<CriticalRuleThresholdType>(
+                    iosInterface: AppSelectInterface.alert, // IOS_THEME2
                     value: _thresholdType,
                     decoration: InputDecoration(
                       labelText: context.l10n.generalSettingsThresholdType,
@@ -269,7 +270,8 @@ class _CriticalRuleSheetState extends State<CriticalRuleSheet> {
             const SizedBox(height: AppDimensions.paddingM),
 
             // Period type
-            DropdownButtonFormField<CriticalRulePeriodType>(
+            AppDropdownFormField<CriticalRulePeriodType>(
+              iosInterface: AppSelectInterface.alert, // IOS_THEME2
               value: _periodType,
               decoration: InputDecoration(
                 labelText: context.l10n.generalSettingsPeriodType,

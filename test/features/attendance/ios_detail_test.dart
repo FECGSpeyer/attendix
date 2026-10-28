@@ -196,7 +196,8 @@ void main() {
       await tester.tap(find.byIcon(Icons.more_vert));
       await tester.pumpAndSettle();
       expect(find.byType(PopupMenuItem<String>), findsNWidgets(2));
-      expect(find.byIcon(Icons.chevron_right), findsNothing);
+      // IOS_THEME2: Ionic md popover shows the sub menu chevron too.
+      expect(find.byIcon(Icons.chevron_right), findsOneWidget);
       await tester.tap(find.text('Status-Filter'));
       await tester.pumpAndSettle();
       expect(result, 'filter');

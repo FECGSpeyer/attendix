@@ -297,7 +297,7 @@ class _StatusSelect extends StatelessWidget {
   Widget build(BuildContext context) {
     final items = options.contains(status) ? options : [status, ...options];
     return DropdownButtonHideUnderline(
-      child: DropdownButton<AttendanceStatus>(
+      child: AppDropdownButton<AttendanceStatus>(
         value: status,
         isDense: true,
         alignment: AlignmentDirectional.centerEnd,

@@ -342,7 +342,8 @@ class _FieldEditorSheetState extends State<_FieldEditorSheet> {
                   trailing: Text(_typeName(context.l10n, _type)),
                 )
               else
-                DropdownButtonFormField<String>(
+                AppDropdownFormField<String>(
+                  iosInterface: AppSelectInterface.alert, // IOS_THEME2
                   value: _type,
                   decoration: InputDecoration(labelText: context.l10n.typeSettingsType),
                   items: [
@@ -355,7 +356,8 @@ class _FieldEditorSheetState extends State<_FieldEditorSheet> {
                 textCapitalization: TextCapitalization.sentences,
                 decoration: InputDecoration(labelText: context.l10n.typeSettingsName),
               ),
-              DropdownButtonFormField<String>(
+              AppDropdownFormField<String>(
+                iosInterface: AppSelectInterface.alert, // IOS_THEME2
                 value: _displayMode,
                 decoration: InputDecoration(labelText: context.l10n.extraFieldsDisplay),
                 items: [

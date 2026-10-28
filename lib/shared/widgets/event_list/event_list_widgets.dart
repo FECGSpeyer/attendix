@@ -18,8 +18,14 @@ import '../layout/ionic_ios.dart'; // IOS_SHEETS
 /// Übersicht, Termine). Ionic iOS renders their `ion-content` white (black in
 /// dark mode) – not the grouped grey – so the `ev-list` rows sit directly on
 /// the page ([EventListCard.iosPlain]). Material keeps the theme default.
-Color? eventPageBackground(BuildContext context) =>
-    useIosLook(context) ? Theme.of(context).colorScheme.surface : null;
+/// IOS_THEME2: dark mode = the black page (cards stay #1c1c1d).
+Color? eventPageBackground(BuildContext context) {
+  if (!useIosLook(context)) return null;
+  final theme = Theme.of(context);
+  return theme.brightness == Brightness.dark
+      ? theme.scaffoldBackgroundColor
+      : theme.colorScheme.surface;
+}
 
 /// Date tile with weekday and day ("DI" / "20") – Ionic `.ev-tile`:
 /// 46x50, radius 12, primary 13 % background with primary-shade text;
@@ -122,7 +128,8 @@ class EventPill extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.2),
+        // IOS_THEME2: Ionic dark palette (brighter) in dark mode
+        color: AppColors.adaptive(context, color).withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(999),
       ),
       child: Text(
@@ -160,10 +167,14 @@ class EventChip extends StatelessWidget {
   /// radius 6, 12px medium weight.
   @override
   Widget build(BuildContext context) {
+    final dark = Theme.of(context).brightness == Brightness.dark;
     final bg = danger
-        ? AppColors.danger.withValues(alpha: 0.15)
+        ? AppColors.adaptive(context, AppColors.danger).withValues(alpha: 0.15)
         : AppColors.primary.withValues(alpha: 0.13);
-    final fg = danger ? AppColors.dangerDark : AppColors.primaryDark;
+    // IOS_THEME2: Ionic dark danger-shade #e04055 (primary-shade unchanged)
+    final fg = danger
+        ? (dark ? const Color(0xFFE04055) : AppColors.dangerDark)
+        : AppColors.primaryDark;
     final chip = Container(
       padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
       decoration: BoxDecoration(
@@ -703,7 +714,8 @@ class EventSummary extends StatelessWidget {
                     width: 14,
                     height: 14,
                     decoration: BoxDecoration(
-                      color: EventListUtils.statusColor(s),
+                      color: AppColors.adaptive(
+                          context, EventListUtils.statusColor(s)),
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),

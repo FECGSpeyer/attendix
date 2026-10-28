@@ -406,7 +406,8 @@ class _AddGroupSheetState extends ConsumerState<_AddGroupSheet> {
           ),
           if (categories.isNotEmpty) ...[
             const SizedBox(height: AppDimensions.paddingM),
-            DropdownButtonFormField<int?>(
+            AppDropdownFormField<int?>(
+              iosInterface: AppSelectInterface.alert, // IOS_THEME2
               value: _categoryId,
               decoration: InputDecoration(labelText: context.l10n.instrumentsCategory),
               items: [
@@ -603,7 +604,8 @@ class _InstrumentEditDialogState extends ConsumerState<_InstrumentEditDialog> {
               autofocus: !isEditing,
             ),
             const SizedBox(height: AppDimensions.paddingM),
-            DropdownButtonFormField<int?>(
+            AppDropdownFormField<int?>(
+              iosInterface: AppSelectInterface.alert, // IOS_THEME2
               value: _selectedCategoryId,
               decoration: InputDecoration(labelText: context.l10n.instrumentsCategory),
               items: [
@@ -617,7 +619,7 @@ class _InstrumentEditDialogState extends ConsumerState<_InstrumentEditDialog> {
             ),
             const SizedBox(height: AppDimensions.paddingM),
             if (showMusicFields) ...[
-              DropdownButtonFormField<String>(
+              AppDropdownFormField<String>(
                 value: _tuningOptions.contains(_selectedTuning)
                     ? _selectedTuning
                     : 'C',

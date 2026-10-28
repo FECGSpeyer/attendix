@@ -186,7 +186,8 @@ class _HandoverPageState extends ConsumerState<HandoverPage> {
                     horizontal: AppDimensions.paddingM,
                     vertical: AppDimensions.paddingS,
                   ),
-                  child: DropdownButtonFormField<int>(
+                  child: AppDropdownFormField<int>(
+                    iosInterface: AppSelectInterface.alert, // IOS_THEME2
                     // ignore: deprecated_member_use
                     value: _targetTenantId,
                     isExpanded: true,
@@ -232,7 +233,8 @@ class _HandoverPageState extends ConsumerState<HandoverPage> {
                     child: Row(
                       children: [
                         Expanded(
-                          child: DropdownButtonFormField<int>(
+                          child: AppDropdownFormField<int>(
+                            iosInterface: AppSelectInterface.alert, // IOS_THEME2
                             // ignore: deprecated_member_use
                             value: _groupId,
                             isExpanded: true,

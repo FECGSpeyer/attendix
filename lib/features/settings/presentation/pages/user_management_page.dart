@@ -259,7 +259,8 @@ class _AddUserDialogState extends State<_AddUserDialog> {
             autofocus: true,
           ),
           const SizedBox(height: AppDimensions.paddingM),
-          DropdownButtonFormField<Role>(
+          AppDropdownFormField<Role>(
+            iosInterface: AppSelectInterface.alert, // IOS_THEME2
             value: _selectedRole,
             decoration: InputDecoration(labelText: context.l10n.personRole),
             items: [

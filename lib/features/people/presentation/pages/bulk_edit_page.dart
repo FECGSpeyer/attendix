@@ -275,7 +275,7 @@ class _BulkEditPageState extends ConsumerState<BulkEditPage> {
             children: [
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 4, 0, 4),
-                child: DropdownButtonFormField<String>(
+                child: AppDropdownFormField<String>(
             // ignore: deprecated_member_use
             value: field?.key,
             isExpanded: true,
@@ -482,7 +482,7 @@ class _ValueEditor extends StatelessWidget {
 
   Widget _dropdown<T>(List<DropdownMenuItem<T>> items, String hint) {
     final values = items.map((i) => i.value).toSet();
-    return DropdownButtonFormField<T>(
+    return AppDropdownFormField<T>(
       // ignore: deprecated_member_use
       value: values.contains(value) ? value as T : null,
       isExpanded: true,

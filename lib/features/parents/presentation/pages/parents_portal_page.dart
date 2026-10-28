@@ -136,7 +136,8 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
         actions: [
           ToolbarButtonGroup(children: [
             IconButton(
-              icon: const Icon(Icons.info_outline),
+              // IOS_THEME2: ionicon information-outline (plain "i")
+              icon: const IonInformationIcon(),
               tooltip: context.l10n.signoutLegend,
               onPressed: () => showEventLegendSheet(context),
             ),
