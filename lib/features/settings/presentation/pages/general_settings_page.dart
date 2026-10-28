@@ -23,6 +23,7 @@ import '../../../../core/utils/page_reload.dart'; // LOGIC_SETTINGS
 import '../widgets/settings_list.dart'; // UX_SETTINGS
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// German holiday regions
 const _holidayRegions = [
@@ -271,9 +272,9 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
         setState(() => _hasChanges = false);
         // LOGIC_SETTINGS: Ionic success toast + alert with "Neu laden"
         ToastHelper.showSuccess(context, context.l10n.generalSettingsSaved);
-        final reload = await showDialog<bool>(
+        final reload = await showAppDialog<bool>(
           context: context,
-          builder: (dialogContext) => AlertDialog(
+          builder: (dialogContext) => AppAlertDialog(
             title: Text(dialogContext.l10n.generalSettingsSaved),
             content: Text(dialogContext.l10n.generalSettingsSavedReload),
             actions: [
@@ -308,7 +309,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
   }
 
   Future<void> _selectSeasonStart() async {
-    final picked = await showDatePicker(
+    final picked = await showAppDatePicker(
       context: context,
       initialDate: _seasonStart ?? DateTime.now(),
       firstDate: DateTime(2020),
@@ -326,7 +327,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
 
   Future<void> _selectTime(TextEditingController controller) async {
     final initialTime = _parseTime(controller.text) ?? const TimeOfDay(hour: 19, minute: 0);
-    final picked = await showTimePicker(
+    final picked = await showAppTimePicker(
       context: context,
       initialTime: initialTime,
     );
@@ -430,12 +431,12 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
                   ? const SizedBox(
                       width: 22,
                       height: 22,
-                      child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                      child: AppSpinner(strokeWidth: 2, color: Colors.white),
                     )
                   : const Icon(Icons.save_outlined),
             ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(child: AppSpinner())
           : Form(
               key: _formKey,
               child: ListView(
@@ -764,7 +765,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
       );
 
   /// Ionic `ion-toggle` with `helperText`.
-  Widget _toggle(String title, String helper, bool value, void Function(bool) apply) => SwitchListTile(
+  Widget _toggle(String title, String helper, bool value, void Function(bool) apply) => SwitchListTile.adaptive(
         title: Text(title),
         subtitle: Text(helper, style: const TextStyle(fontSize: 12, color: AppColors.medium)),
         value: value,
@@ -831,9 +832,9 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
   Future<void> _confirmDeleteCriticalRule(int index) async {
     final rule = _criticalRules[index];
     final ruleName = rule.displayName;
-    final confirmed = await showDialog<bool>(
+    final confirmed = await showAppDialog<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
+      builder: (ctx) => AppAlertDialog(
         title: Text(context.l10n.generalSettingsDeleteRule),
         content: Text(
           context.l10n.generalSettingsFlutterDeleteRuleNamed(ruleName),
@@ -866,9 +867,9 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
   }
 
   Future<void> _showUnsavedChangesDialog() async {
-    final result = await showDialog<String>(
+    final result = await showAppDialog<String>(
       context: context,
-      builder: (ctx) => AlertDialog(
+      builder: (ctx) => AppAlertDialog(
         title: Text(context.l10n.rolePermUnsaved),
         content: Text(context.l10n.rolePermUnsavedMessage),
         actions: [

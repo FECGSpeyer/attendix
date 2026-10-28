@@ -17,6 +17,7 @@ import '../../../planning/presentation/widgets/plan_export_actions.dart';
 import '../../../planning/presentation/widgets/plan_field_dialogs.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Short date "Mo, 03.11.2026" (Ionic dayjs `dd, ${dateFmt()}`).
 String orgPlanDate(String date) {
@@ -80,9 +81,9 @@ class _OrgPlansPageState extends ConsumerState<OrgPlansPage> {
       ],
     );
     if (link == null || !mounted) return;
-    await showDialog<void>(
+    await showAppDialog<void>(
       context: context,
-      builder: (ctx) => AlertDialog(
+      builder: (ctx) => AppAlertDialog(
         title: Text(ctx.l10n.plansSubscribeCalendar),
         content: SelectableText(ctx.l10n.plansCalendarLinkMessage(link)),
         actions: [
@@ -221,7 +222,7 @@ class _OrgPlansPageState extends ConsumerState<OrgPlansPage> {
         child: ListView(
           children: [
             if (orgAsync.isLoading)
-              const Padding(padding: EdgeInsets.all(24), child: Center(child: CircularProgressIndicator()))
+              const Padding(padding: EdgeInsets.all(24), child: Center(child: AppSpinner()))
             else if (org == null)
               ListTile(
                 leading: const Icon(Icons.info_outline, color: AppColors.medium),
@@ -230,7 +231,7 @@ class _OrgPlansPageState extends ConsumerState<OrgPlansPage> {
             else
               ...plansAsync.when(
                 loading: () => [
-                  const Padding(padding: EdgeInsets.all(24), child: Center(child: CircularProgressIndicator())),
+                  const Padding(padding: EdgeInsets.all(24), child: Center(child: AppSpinner())),
                 ],
                 error: (e, _) => [ListTile(title: Text(context.l10n.planningFlutterErrorWith(friendlyErrorMessage(e))))],
                 data: (entries) {

@@ -66,7 +66,7 @@ class _DashboardSettingsPageState extends ConsumerState<DashboardSettingsPage> {
           _Header(context.l10n.dashSettingsTab),
           Card(
             margin: const EdgeInsets.symmetric(horizontal: 16),
-            child: SwitchListTile(
+            child: SwitchListTile.adaptive(
               title: Text(context.l10n.dashSettingsShowTab),
               value: settings.showTab,
               onChanged: (v) => _guard(() => notifier.setShowTab(v)),
@@ -96,7 +96,7 @@ class _DashboardSettingsPageState extends ConsumerState<DashboardSettingsPage> {
                               )
                             : null,
                         title: Text(dashboardCardLabels(context.l10n)[shown[i].id] ?? shown[i].id),
-                        trailing: Switch(
+                        trailing: Switch.adaptive(
                           value: shown[i].visible,
                           onChanged: _isReordering
                               ? null

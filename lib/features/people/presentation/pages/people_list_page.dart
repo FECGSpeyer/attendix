@@ -36,6 +36,7 @@ import 'bulk_edit_page.dart';
 import 'person_import_page.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// People list page
 class PeopleListPage extends ConsumerStatefulWidget {
@@ -173,10 +174,10 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
 
   Future<void> _showViewOptionsDialog() async {
     final selected = Set<String>.from(_viewOptions);
-    final result = await showDialog<Set<String>>(
+    final result = await showAppDialog<Set<String>>(
       context: context,
       builder: (context) => StatefulBuilder(
-        builder: (context, setDialogState) => AlertDialog(
+        builder: (context, setDialogState) => AppAlertDialog(
           title: Text(context.l10n.attendanceView),
           content: SingleChildScrollView(
             child: Column(
@@ -444,7 +445,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
                   ? const SizedBox(
                       width: 20,
                       height: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2),
+                      child: AppSpinner(strokeWidth: 2),
                     )
                   : const Icon(Icons.check),
               tooltip: context.l10n.peopleFlutterSaveOrder,
@@ -885,9 +886,9 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
     if (field.type == 'number') {
       final controller = TextEditingController(
           text: _filterOption == option ? _extraFilterValue ?? '' : '');
-      value = await showDialog<String>(
+      value = await showAppDialog<String>(
         context: context,
-        builder: (ctx) => AlertDialog(
+        builder: (ctx) => AppAlertDialog(
           title: Text(field.name),
           content: TextField(
             controller: controller,
@@ -922,9 +923,9 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
             .toList();
       }
       if (!mounted) return;
-      value = await showDialog<String>(
+      value = await showAppDialog<String>(
         context: context,
-        builder: (ctx) => SimpleDialog(
+        builder: (ctx) => AppSimpleDialog(
           title: Text(field.name),
           children: choices
               .map((c) => SimpleDialogOption(
@@ -969,9 +970,9 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
       setState(() => _filterOption = 'all');
       return;
     }
-    final chosen = await showDialog<Tenant>(
+    final chosen = await showAppDialog<Tenant>(
       context: context,
-      builder: (ctx) => SimpleDialog(
+      builder: (ctx) => AppSimpleDialog(
         title: Text(context.l10n.peopleChooseInstance),
         children: [
           for (final t in linked)
@@ -1212,9 +1213,9 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
   /// Ionic unpausePlayer: alert "Person wieder aktivieren?" → Aktivieren.
   Future<void> _unpausePerson(Person person) async {
     final repository = ref.read(playerRepositoryWithTenantProvider);
-    final confirmed = await showDialog<bool>(
+    final confirmed = await showAppDialog<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
+      builder: (ctx) => AppAlertDialog(
         title: Text(context.l10n.peopleReactivateConfirm),
         actions: [
           TextButton(
@@ -1245,32 +1246,12 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
       ToastHelper.showError(context, context.l10n.peopleCannotRemoveSelf);
       return;
     }
-    final choice = await showModalBottomSheet<String>(
-      context: context,
-      builder: (ctx) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              title: Text(context.l10n.peopleArchive, textAlign: TextAlign.center),
-              onTap: () => Navigator.pop(ctx, 'archive'),
-            ),
-            ListTile(
-              title: Text(context.l10n.commonRemove, textAlign: TextAlign.center),
-              onTap: () => Navigator.pop(ctx, 'remove'),
-            ),
-            const Divider(height: 1),
-            ListTile(
-              title: Text(
-                context.l10n.commonCancel,
-                textAlign: TextAlign.center,
-                style: TextStyle(fontWeight: FontWeight.w600),
-              ),
-              onTap: () => Navigator.pop(ctx),
-            ),
-          ],
-        ),
-      ),
+    final choice = await showAppActionSheet<String>(
+      context,
+      actions: [
+        AppActionSheetAction(value: 'archive', label: context.l10n.peopleArchive),
+        AppActionSheetAction(value: 'remove', label: context.l10n.commonRemove),
+      ],
     );
     if (!mounted) return;
     if (choice == 'archive') await _showArchiveDialog(person);
@@ -1283,11 +1264,11 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
     DateTime archiveDate = DateTime.now();
 
     try {
-      final result = await showDialog<Map<String, dynamic>>(
+      final result = await showAppDialog<Map<String, dynamic>>(
         context: context,
         barrierDismissible: false,
         builder: (context) => StatefulBuilder(
-          builder: (context, setDialogState) => AlertDialog(
+          builder: (context, setDialogState) => AppAlertDialog(
             title: Text(context.l10n.peopleArchiveTitle('${person.firstName} ${person.lastName}')),
             content: Column(
               mainAxisSize: MainAxisSize.min,
@@ -1298,7 +1279,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
                   subtitle: Text(DateFormat(dateFmt()).format(archiveDate)),
                   trailing: const Icon(Icons.calendar_today),
                   onTap: () async {
-                    final date = await showDatePicker(
+                    final date = await showAppDatePicker(
                       context: context,
                       initialDate: archiveDate,
                       firstDate: DateTime(2000),

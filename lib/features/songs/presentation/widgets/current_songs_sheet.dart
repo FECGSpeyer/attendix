@@ -8,6 +8,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/instrument/instrument.dart';
 import '../../data/song_print_service.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// "Aktuelle Werke" sheet (Ionic currentSongsModal)
 class CurrentSongsSheet extends ConsumerWidget {
@@ -24,7 +25,7 @@ class CurrentSongsSheet extends ConsumerWidget {
 
   Future<void> _printNotesForGroup(BuildContext context, WidgetRef ref) async {
     final groups = data.instruments;
-    final group = await showDialog<Group>(
+    final group = await showAppDialog<Group>(
       context: context,
       builder: (ctx) => _GroupChoiceDialog(groups: groups),
     );
@@ -150,7 +151,7 @@ class _GroupChoiceDialogState extends State<_GroupChoiceDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
+    return AppAlertDialog(
       title: Text(context.l10n.songsChooseGroup),
       content: SizedBox(
         width: double.maxFinite,

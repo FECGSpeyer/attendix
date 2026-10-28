@@ -14,6 +14,7 @@ import '../widgets/plan_field_dialogs.dart';
 import '../widgets/plan_fields_editor.dart';
 import '../widgets/plan_view_list.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Public plan link without login (Ionic `SharedPlanPage`, route `/plan`).
 ///
@@ -257,7 +258,7 @@ class _SharedPlanPageState extends ConsumerState<SharedPlanPage> {
   Future<void> _editStartTime() async {
     if (!_editMode) return;
     final m = PlanUtils.parseTimeToMinutes(_time) ?? 10 * 60;
-    final picked = await showTimePicker(
+    final picked = await showAppTimePicker(
       context: context,
       helpText: context.l10n.plansEditStartTime,
       initialTime: TimeOfDay(hour: m ~/ 60, minute: m % 60),
@@ -366,7 +367,7 @@ class _SharedPlanPageState extends ConsumerState<SharedPlanPage> {
   }
 
   Widget _buildBody(DateTime? date) {
-    if (_loading) return const Center(child: CircularProgressIndicator());
+    if (_loading) return const Center(child: AppSpinner());
     if (_notFound) {
       return Padding(
         padding: const EdgeInsets.all(16),

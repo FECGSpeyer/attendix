@@ -23,6 +23,7 @@ import '../../../../core/services/tracking/tracking_event.dart';
 import '../../../../core/services/tracking/tracking_service.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 import '../../../../core/services/native/native_file_service.dart'; // NATIVE_MISC
 
 /// Export Page
@@ -65,10 +66,10 @@ class _ExportPageState extends ConsumerState<ExportPage> {
   /// fields that stay selected, appends newly selected ones.
   Future<void> _pickFields(List<String> available) async {
     final selection = {..._selectedFields};
-    final result = await showDialog<Set<String>>(
+    final result = await showAppDialog<Set<String>>(
       context: context,
       builder: (ctx) => StatefulBuilder(
-        builder: (ctx, setLocal) => AlertDialog(
+        builder: (ctx, setLocal) => AppAlertDialog(
           title: Text(context.l10n.exportFields),
           content: SizedBox(
             width: double.maxFinite,
@@ -267,7 +268,7 @@ class _ExportPageState extends ConsumerState<ExportPage> {
                   ? const SizedBox(
                       width: 20,
                       height: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2),
+                      child: AppSpinner(strokeWidth: 2),
                     )
                   : Text(context.l10n.exportExport),
             ),
@@ -280,9 +281,9 @@ class _ExportPageState extends ConsumerState<ExportPage> {
   /// Ionic addExtraField(): free text column (values stay empty)
   Future<void> _addCustomField() async {
     final controller = TextEditingController();
-    final name = await showDialog<String>(
+    final name = await showAppDialog<String>(
       context: context,
-      builder: (ctx) => AlertDialog(
+      builder: (ctx) => AppAlertDialog(
         title: Text(context.l10n.exportAddField),
         content: TextField(
           controller: controller,

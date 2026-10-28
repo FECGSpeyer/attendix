@@ -22,6 +22,7 @@ import '../widgets/type_reminders_editor.dart'; // SETTINGS2
 import '../../../organisation/presentation/widgets/type_default_org_plan_toggle.dart'; // ORG_PLANS
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 
 /// Attendance Type Edit Page
@@ -188,7 +189,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
     if (_isLoading) {
       return Scaffold(
         appBar: AppBar(title: Text(context.l10n.typeSettingsFlutterTypeTitle)),
-        body: const Center(child: CircularProgressIndicator()),
+        body: const Center(child: AppSpinner()),
       );
     }
 
@@ -271,7 +272,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  SwitchListTile(
+                  SwitchListTile.adaptive(
                     title: Text(context.l10n.typeSettingsActive),
                     subtitle: Text(
                       context.l10n.typeSettingsActiveHelper,
@@ -332,7 +333,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                             ))
                         .toList(),
                   ),
-                  SwitchListTile(
+                  SwitchListTile.adaptive(
                     title: Text(context.l10n.typeSettingsManageSongs),
                     subtitle: Text(
                       context.l10n.typeSettingsSongsHelper,
@@ -344,7 +345,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                     }),
                     contentPadding: EdgeInsets.zero,
                   ),
-                  SwitchListTile(
+                  SwitchListTile.adaptive(
                     title: Text(context.l10n.typeSettingsAllDay),
                     subtitle: Text(
                       context.l10n.typeSettingsAllDayHelper,
@@ -403,7 +404,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                       onTap: () => _pickTime(isStart: false),
                     ),
                   ],
-                  SwitchListTile(
+                  SwitchListTile.adaptive(
                     title: Text(context.l10n.typeSettingsHideName),
                     subtitle: Text(
                       context.l10n.typeSettingsHideNameHelper,
@@ -415,7 +416,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                     }),
                     contentPadding: EdgeInsets.zero,
                   ),
-                  SwitchListTile(
+                  SwitchListTile.adaptive(
                     title: Text(context.l10n.typeSettingsHighlight),
                     subtitle: Text(
                       context.l10n.typeSettingsHighlightHelper,
@@ -427,7 +428,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                     }),
                     contentPadding: EdgeInsets.zero,
                   ),
-                  SwitchListTile(
+                  SwitchListTile.adaptive(
                     title: Text(context.l10n.typeSettingsCountForAvg),
                     subtitle: Text(
                       context.l10n.typeSettingsCountForAvgHelper,
@@ -453,7 +454,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                     }),
                   ),
                   // ATTENDANCE_SIGNOUT: place / navigation
-                  SwitchListTile(
+                  SwitchListTile.adaptive(
                     title: Text(context.l10n.typeSettingsEnableLocation),
                     subtitle: Text(
                       context.l10n.typeSettingsLocationHelper,
@@ -479,7 +480,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
               title: context.l10n.typeSettingsEventReminders,
               child: Column(
                 children: [
-                  SwitchListTile(
+                  SwitchListTile.adaptive(
                     title: Text(context.l10n.typeSettingsEventReminder),
                     subtitle: Text(
                       context.l10n.typeSettingsEventReminderHelper,
@@ -578,7 +579,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                     ),
                     // SETTINGS2: Ionic "Instanz-Name vor Werken" (not for general tenants)
                     if (ref.watch(currentTenantProvider)?.type != 'general')
-                      SwitchListTile(
+                      SwitchListTile.adaptive(
                         contentPadding: EdgeInsets.zero,
                         title: Text(context.l10n.typeSettingsTenantNameBefore),
                         subtitle: Text(
@@ -811,7 +812,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          SwitchListTile(
+          SwitchListTile.adaptive(
             title: Text(context.l10n.typeSettingsDutyMode),
             subtitle: Text(
               context.l10n.typeSettingsDutyHelper,
@@ -854,7 +855,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                 ],
               ),
             ),
-            SwitchListTile(
+            SwitchListTile.adaptive(
               title: Text(context.l10n.typeSettingsSelfAssign),
               subtitle: Text(context.l10n.typeSettingsSelfAssignHelper),
               value: _dutySelfSignup,
@@ -877,7 +878,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                 onChanged: (v) => mark(() => _dutyConfirmReminderDays = v),
               ),
             ),
-            SwitchListTile(
+            SwitchListTile.adaptive(
               title: Text(context.l10n.typeSettingsNotifyGroup),
               subtitle: Text(
                 context.l10n.typeSettingsNotifyGroupHelper,
@@ -1081,7 +1082,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
   }
 
   Future<void> _pickTime({required bool isStart}) async {
-    final time = await showTimePicker(
+    final time = await showAppTimePicker(
       context: context,
       initialTime: isStart
           ? (_startTime ?? const TimeOfDay(hour: 19, minute: 0))
@@ -1166,9 +1167,9 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
     final id = existing?['id'] as String? ?? 'custom-${DateTime.now().millisecondsSinceEpoch}';
 
     try {
-      return await showDialog<Map<String, dynamic>>(
+      return await showAppDialog<Map<String, dynamic>>(
         context: context,
-        builder: (context) => AlertDialog(
+        builder: (context) => AppAlertDialog(
           title: Text(existing != null ? context.l10n.typeSettingsEditField : context.l10n.typeSettingsFlutterNewField),
           content: Column(
             mainAxisSize: MainAxisSize.min,
@@ -1245,9 +1246,9 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
     );
 
     try {
-      return await showDialog<ChecklistItem>(
+      return await showAppDialog<ChecklistItem>(
         context: context,
-        builder: (context) => AlertDialog(
+        builder: (context) => AppAlertDialog(
           title: Text(existing != null ? context.l10n.typeSettingsEditTodo : context.l10n.typeSettingsNewTodo),
           content: Column(
             mainAxisSize: MainAxisSize.min,
@@ -1308,9 +1309,9 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
 
   Future<void> _onBackPressed() async {
     if (_hasChanges) {
-      final result = await showDialog<String>(
+      final result = await showAppDialog<String>(
         context: context,
-        builder: (context) => AlertDialog(
+        builder: (context) => AppAlertDialog(
           title: Text(context.l10n.rolePermUnsaved),
           content: Text(context.l10n.rolePermUnsavedMessage),
           actions: [

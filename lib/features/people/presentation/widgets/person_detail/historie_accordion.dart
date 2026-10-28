@@ -14,6 +14,7 @@ import '../../pages/person_detail_page.dart';
 import '../../../../../core/utils/demo_guard.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../../core/utils/error_message.dart';
+import '../../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Toggle to show all history entries (including before season start).
 final showAllHistoryProvider = StateProvider.autoDispose<bool>((ref) => false);
@@ -75,7 +76,7 @@ class HistorieAccordion extends ConsumerWidget {
           () => const Center(
             child: Padding(
               padding: EdgeInsets.all(AppDimensions.paddingL),
-              child: CircularProgressIndicator(),
+              child: AppSpinner(),
             ),
           ),
       error: (error, _) => Center(child: Text(context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(error)))),
@@ -361,10 +362,10 @@ class HistorieAccordion extends ConsumerWidget {
     WidgetRef ref,
     Map<String, dynamic> item,
   ) async {
-    final confirmed = await showDialog<bool>(
+    final confirmed = await showAppDialog<bool>(
       context: context,
       builder:
-          (context) => AlertDialog(
+          (context) => AppAlertDialog(
             // Ionic removeHis alert: header only, buttons Abbrechen / Ja.
             title: Text(context.l10n.personRemoveEntry),
             actions: [
@@ -429,10 +430,10 @@ class HistorieAccordion extends ConsumerWidget {
 
   /// Ionic onHisItemClicked for NOTES entries.
   Future<void> _showOldNote(BuildContext context, DateTime date, String note) {
-    return showDialog<void>(
+    return showAppDialog<void>(
       context: context,
       builder:
-          (ctx) => AlertDialog(
+          (ctx) => AppAlertDialog(
             title: Text(context.l10n.personNoteChanged),
             content: Column(
               mainAxisSize: MainAxisSize.min,

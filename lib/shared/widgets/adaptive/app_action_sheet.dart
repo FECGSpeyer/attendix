@@ -48,7 +48,9 @@ class AppActionSheetAction<T> {
 ///
 /// Returns the `value` of the tapped action, or null when cancelled or
 /// dismissed. Set [cancelLabel] to override "Abbrechen", [showCancel] false to
-/// hide it (Ionic sheets without a cancel button).
+/// hide it (Ionic sheets without a cancel button), [cancelDestructive] for
+/// Ionic's `{ text: 'Abbrechen', role: 'destructive' }` (red, last button of
+/// the main group instead of a separate cancel button).
 Future<T?> showAppActionSheet<T>(
   BuildContext context, {
   String? title,
@@ -56,6 +58,7 @@ Future<T?> showAppActionSheet<T>(
   required List<AppActionSheetAction<T>> actions,
   String? cancelLabel,
   bool showCancel = true,
+  bool cancelDestructive = false,
   bool useRootNavigator = true,
 }) {
   if (useIosLook(context)) {
@@ -72,6 +75,7 @@ Future<T?> showAppActionSheet<T>(
         message: message,
         actions: actions,
         cancelLabel: showCancel ? (cancelLabel ?? ctx.l10n.commonCancel) : null,
+        cancelDestructive: cancelDestructive,
       ),
     );
   }
@@ -86,6 +90,7 @@ Future<T?> showAppActionSheet<T>(
       message: message,
       actions: actions,
       cancelLabel: showCancel ? (cancelLabel ?? ctx.l10n.commonCancel) : null,
+      cancelDestructive: cancelDestructive,
     ),
   );
 }
@@ -96,12 +101,14 @@ class _IosActionSheet<T> extends StatelessWidget {
     required this.message,
     required this.actions,
     required this.cancelLabel,
+    this.cancelDestructive = false,
   });
 
   final String? title;
   final String? message;
   final List<AppActionSheetAction<T>> actions;
   final String? cancelLabel;
+  final bool cancelDestructive;
 
   @override
   Widget build(BuildContext context) {
@@ -175,11 +182,21 @@ class _IosActionSheet<T> extends StatelessWidget {
                         if (i > 0) const SizedBox(height: 8),
                         button(actions[i]),
                       ],
+                      if (cancelLabel != null && cancelDestructive) ...[
+                        const SizedBox(height: 8),
+                        IosAlertButton(
+                          minHeight: 52,
+                          bold: false,
+                          destructive: true,
+                          onPressed: () => Navigator.of(context).pop(),
+                          child: Text(cancelLabel!),
+                        ),
+                      ],
                     ],
                   ),
                 ),
               ),
-              if (cancelLabel != null) ...[
+              if (cancelLabel != null && !cancelDestructive) ...[
                 const SizedBox(height: 12),
                 IosAlertButton(
                   minHeight: 52,
@@ -201,12 +218,14 @@ class _MaterialActionSheet<T> extends StatelessWidget {
     required this.message,
     required this.actions,
     required this.cancelLabel,
+    this.cancelDestructive = false,
   });
 
   final String? title;
   final String? message;
   final List<AppActionSheetAction<T>> actions;
   final String? cancelLabel;
+  final bool cancelDestructive;
 
   @override
   Widget build(BuildContext context) {
@@ -258,7 +277,12 @@ class _MaterialActionSheet<T> extends StatelessWidget {
               ),
             if (cancelLabel != null)
               ListTile(
-                title: Text(cancelLabel!),
+                title: Text(
+                  cancelLabel!,
+                  style: cancelDestructive
+                      ? TextStyle(color: theme.colorScheme.error)
+                      : null,
+                ),
                 onTap: () => Navigator.of(context).pop(),
               ),
             const SizedBox(height: 8),

@@ -8,6 +8,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/person/person.dart';
 import '../../data/providers/voice_leader_providers.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Voice Leader page - shows members of the same voice group
 class VoiceLeaderPage extends ConsumerWidget {
@@ -29,7 +30,7 @@ class VoiceLeaderPage extends ConsumerWidget {
           await ref.read(voiceGroupMembersProvider.future);
         },
         child: membersAsync.when(
-          loading: () => const Center(child: CircularProgressIndicator()),
+          loading: () => const Center(child: AppSpinner()),
           error: (error, stack) => Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,

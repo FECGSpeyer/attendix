@@ -12,6 +12,7 @@ import '../../../../../data/models/person/person.dart';
 import 'attendance_detail_sheets.dart';
 import 'status_chip.dart';
 import '../../../../../l10n/l10n.dart';
+import '../../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Person row of the attendance detail page.
 ///
@@ -171,59 +172,31 @@ class AttendancePersonTile extends StatelessWidget {
   /// Person action sheet (Ionic openMoreSheet, same option order).
   Future<void> _showMoreSheet(BuildContext context) async {
     final canLateExcused = clickMode && availableStatuses.contains(AttendanceStatus.late);
-    await showModalBottomSheet<void>(
-      context: context,
-      builder: (ctx) {
-        Widget option(String label, IconData icon, VoidCallback onTap, {bool destructive = false}) {
-          final color = destructive ? AppColors.danger : null;
-          return ListTile(
-            leading: Icon(icon, color: color),
-            title: Text(label, style: TextStyle(color: color)),
-            onTap: () {
-              Navigator.pop(ctx);
-              onTap();
-            },
-          );
-        }
-
-        return SafeArea(
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-                  child: Text(
-                    person.fullName,
-                    style: const TextStyle(color: AppColors.medium, fontSize: 13),
-                  ),
-                ),
-                if (status != AttendanceStatus.neutral)
-                  option(context.l10n.attendanceSetNeutral, Icons.remove_circle_outline,
-                      () => _onStatusChangedWithHaptic(AttendanceStatus.neutral)),
-                if (canLateExcused)
-                  option(context.l10n.commonStatusLateExcused, Icons.schedule,
-                      () => _onStatusChangedWithHaptic(AttendanceStatus.lateExcused)),
-                if (onEditRegistrationFields != null)
-                  option(context.l10n.attendanceEditRegFields, Icons.edit_outlined, onEditRegistrationFields!),
-                if (showModifierInfo) ...[
-                  option(context.l10n.attendanceWhoChanged, Icons.info_outline, onShowModifierInfo),
-                  option(context.l10n.attendanceRemovePerson, Icons.delete_outline, onRemoveFromAttendance,
-                      destructive: true),
-                ],
-                if (onSendReminder != null)
-                  option(context.l10n.attendanceSendReminderShort, Icons.notifications_outlined, onSendReminder!),
-                const Divider(height: 1),
-                ListTile(
-                  title: Text(context.l10n.commonCancel, textAlign: TextAlign.center),
-                  onTap: () => Navigator.pop(ctx),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
+    AppActionSheetAction<VoidCallback> option(String label, IconData icon, VoidCallback onTap,
+            {bool destructive = false}) =>
+        AppActionSheetAction(value: onTap, label: label, icon: icon, destructive: destructive);
+    final action = await showAppActionSheet<VoidCallback>(
+      context,
+      title: person.fullName,
+      actions: [
+        if (status != AttendanceStatus.neutral)
+          option(context.l10n.attendanceSetNeutral, Icons.remove_circle_outline,
+              () => _onStatusChangedWithHaptic(AttendanceStatus.neutral)),
+        if (canLateExcused)
+          option(context.l10n.commonStatusLateExcused, Icons.schedule,
+              () => _onStatusChangedWithHaptic(AttendanceStatus.lateExcused)),
+        if (onEditRegistrationFields != null)
+          option(context.l10n.attendanceEditRegFields, Icons.edit_outlined, onEditRegistrationFields!),
+        if (showModifierInfo) ...[
+          option(context.l10n.attendanceWhoChanged, Icons.info_outline, onShowModifierInfo),
+          option(context.l10n.attendanceRemovePerson, Icons.delete_outline, onRemoveFromAttendance,
+              destructive: true),
+        ],
+        if (onSendReminder != null)
+          option(context.l10n.attendanceSendReminderShort, Icons.notifications_outlined, onSendReminder!),
+      ],
     );
+    action?.call();
   }
 
   /// Trigger haptic feedback and change status

@@ -13,6 +13,7 @@ import '../../team_org_utils.dart';
 import 'agenda_picker_sheet.dart';
 import 'quick_create_attendance.dart';
 import 'tasks_tab.dart' show TeamOrgBadge, TeamOrgListSkeleton, priorityColor;
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Tab "Themen": leadership reviews suggestions, plans the next Termin and
 /// keeps the Themenspeicher; members suggest topics and see their suggestions.
@@ -69,33 +70,28 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
 
   Future<void> _changeAttendance(
       List<ProtocolAttendance> upcoming, ProtocolAttendance? current, List<ProtocolType> types) async {
-    final choice = await showModalBottomSheet<Object>(
-      context: context,
-      builder: (ctx) => SafeArea(
-        child: ListView(
-          shrinkWrap: true,
-          children: [
-            ListTile(title: Text(ctx.l10n.teamOrgPlanForWhich)),
-            for (final att in upcoming.take(8))
-              ListTile(
-                title: Text(_attendanceTitle(att, types)),
-                trailing: att.id == current?.id ? const Icon(Icons.check) : null,
-                onTap: () => Navigator.of(ctx).pop(att.id),
-              ),
-            if (current != null)
-              ListTile(
-                leading: const Icon(Icons.calendar_today_outlined),
-                title: Text(ctx.l10n.teamOrgChangeDate),
-                onTap: () => Navigator.of(ctx).pop('date'),
-              ),
-            ListTile(
-              leading: const Icon(Icons.add_circle_outline),
-              title: Text(ctx.l10n.agendaNewEvent),
-              onTap: () => Navigator.of(ctx).pop('new'),
-            ),
-          ],
+    final choice = await showAppActionSheet<Object>(
+      context,
+      title: context.l10n.teamOrgPlanForWhich,
+      actions: [
+        for (final att in upcoming.take(8))
+          AppActionSheetAction(
+            value: att.id,
+            icon: att.id == current?.id ? Icons.check : null,
+            label: _attendanceTitle(att, types),
+          ),
+        if (current != null)
+          AppActionSheetAction(
+            value: 'date',
+            icon: Icons.calendar_today_outlined,
+            label: context.l10n.teamOrgChangeDate,
+          ),
+        AppActionSheetAction(
+          value: 'new',
+          icon: Icons.add_circle_outline,
+          label: context.l10n.agendaNewEvent,
         ),
-      ),
+      ],
     );
     if (!mounted || choice == null) return;
     if (choice is int) {
@@ -119,21 +115,13 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
 
   Future<void> _topAction(PlanField top, ProtocolAttendance att, ProtocolType? type) async {
     final protocolRepo = ref.read(protocolRepositoryWithTenantProvider);
-    final action = await showModalBottomSheet<String>(
-      context: context,
-      builder: (ctx) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(title: Text(fieldName(top), style: Theme.of(ctx).textTheme.titleSmall)),
-            ListTile(title: Text(ctx.l10n.teamOrgOpenTopic), onTap: () => Navigator.of(ctx).pop('open')),
-            ListTile(
-              title: Text(ctx.l10n.teamOrgRemoveFromEvent, style: const TextStyle(color: AppColors.danger)),
-              onTap: () => Navigator.of(ctx).pop('remove'),
-            ),
-          ],
-        ),
-      ),
+    final action = await showAppActionSheet<String>(
+      context,
+      title: fieldName(top),
+      actions: [
+        AppActionSheetAction(value: 'open', label: context.l10n.teamOrgOpenTopic),
+        AppActionSheetAction(value: 'remove', label: context.l10n.teamOrgRemoveFromEvent, destructive: true),
+      ],
     );
     if (!mounted) return;
     final agendaId = fieldAgendaItemId(top);
@@ -154,10 +142,10 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
   Future<void> _accept(AgendaItem item) async {
     final l10n = context.l10n;
     var priority = item.priority;
-    final ok = await showDialog<bool>(
+    final ok = await showAppDialog<bool>(
       context: context,
       builder: (ctx) => StatefulBuilder(
-        builder: (ctx, setLocal) => AlertDialog(
+        builder: (ctx, setLocal) => AppAlertDialog(
           title: Text(ctx.l10n.teamOrgAcceptSuggestion),
           content: Column(
             mainAxisSize: MainAxisSize.min,
@@ -189,9 +177,9 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
     final l10n = context.l10n;
     final controller = TextEditingController();
     final name = item.proposer.fullName.isNotEmpty ? item.proposer.fullName : l10n.teamOrgThePerson;
-    final ok = await showDialog<bool>(
+    final ok = await showAppDialog<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
+      builder: (ctx) => AppAlertDialog(
         title: Text(ctx.l10n.teamOrgRejectSuggestion),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -474,7 +462,7 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
                     margin: const EdgeInsets.only(top: AppDimensions.paddingM),
                     child: Column(
                       children: [
-                        SwitchListTile(
+                        SwitchListTile.adaptive(
                           value: _showDone,
                           onChanged: (v) => setState(() => _showDone = v),
                           title: Text(l10n.teamOrgShowDone(buckets.done.length)),
@@ -560,7 +548,7 @@ class _MemberTopics extends ConsumerWidget {
           ),
           _sectionHeader(context, l10n.teamOrgMySuggestions),
           itemsAsync.when(
-            loading: () => const Center(child: CircularProgressIndicator()),
+            loading: () => const Center(child: AppSpinner()),
             error: (_, __) => Text(l10n.agendaLoadFailed),
             data: (items) {
               final sorted = [...items]..sort((a, b) => (b.createdAt ?? '').compareTo(a.createdAt ?? ''));

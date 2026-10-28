@@ -7,6 +7,7 @@ import '../../../core/providers/feedback_providers.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/toast_helper.dart';
 import '../../../l10n/l10n.dart';
+import '../adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Shows the feedback bottom sheet
 void showFeedbackSheet(BuildContext context) {
@@ -243,7 +244,7 @@ class _FeedbackSheetState extends ConsumerState<_FeedbackSheet>
                   ? const SizedBox(
                       width: 20,
                       height: 20,
-                      child: CircularProgressIndicator(
+                      child: AppSpinner(
                         strokeWidth: 2,
                         color: Colors.white,
                       ),
@@ -299,7 +300,7 @@ class _FeedbackSheetState extends ConsumerState<_FeedbackSheet>
           ),
           const SizedBox(height: AppDimensions.paddingM),
           // Anonymous toggle
-          SwitchListTile(
+          SwitchListTile.adaptive(
             title: Text(context.l10n.settingsAnonymous),
             subtitle: Text(
               context.l10n.coreFlutterFeedbackAnonymousHint,
@@ -332,7 +333,7 @@ class _FeedbackSheetState extends ConsumerState<_FeedbackSheet>
                   ? const SizedBox(
                       width: 20,
                       height: 20,
-                      child: CircularProgressIndicator(
+                      child: AppSpinner(
                         strokeWidth: 2,
                         color: Colors.white,
                       ),

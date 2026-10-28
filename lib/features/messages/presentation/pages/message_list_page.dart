@@ -13,6 +13,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/common/empty_state.dart';
 import '../message_format.dart';
 import 'message_compose_page.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Mitteilungen overview for admins/responsibles: all sent messages of the tenant.
 /// Port of Ionic `MessageListPage` (route `/settings/messages`).
@@ -56,7 +57,7 @@ class MessageListPage extends ConsumerWidget {
       body: RefreshIndicator(
         onRefresh: () => ref.refresh(messagesProvider.future),
         child: messagesAsync.when(
-          loading: () => const Center(child: CircularProgressIndicator()),
+          loading: () => const Center(child: AppSpinner()),
           error:
               (e, _) => ListView(
                 physics: const AlwaysScrollableScrollPhysics(),

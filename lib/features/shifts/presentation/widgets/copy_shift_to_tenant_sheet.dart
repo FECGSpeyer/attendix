@@ -13,6 +13,7 @@ import '../../../../data/models/tenant/tenant.dart';
 import '../../../../core/utils/demo_guard.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Sheet for copying a shift plan to another tenant
 class CopyShiftToTenantSheet extends ConsumerStatefulWidget {
@@ -73,7 +74,7 @@ class _CopyShiftToTenantSheetState
             // Content
             Expanded(
               child: tenantsAsync.when(
-                loading: () => const Center(child: CircularProgressIndicator()),
+                loading: () => const Center(child: AppSpinner()),
                 error: (e, _) => Center(child: Text(context.l10n.shiftsFlutterErrorWith(friendlyErrorMessage(e)))),
                 data: (tenants) {
                   final otherTenants = tenants
@@ -136,7 +137,7 @@ class _CopyShiftToTenantSheetState
                       // Copy assignments option (if players assigned)
                       if (_playersWithShift > 0) ...[
                         Card(
-                          child: SwitchListTile(
+                          child: SwitchListTile.adaptive(
                             title: Text(context.l10n.shiftsFlutterCopyAssignments),
                             subtitle: Text(
                               context.l10n.shiftsFlutterCopyAssignmentsHint(_playersWithShift),
@@ -252,7 +253,7 @@ class _CopyShiftToTenantSheetState
                                 width: 20,
                                 height: 20,
                                 child:
-                                    CircularProgressIndicator(strokeWidth: 2),
+                                    AppSpinner(strokeWidth: 2),
                               )
                             : const Icon(Icons.copy),
                         label:

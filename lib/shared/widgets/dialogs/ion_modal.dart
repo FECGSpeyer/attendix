@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Ionic `ion-modal` breakpoint: on screens at least 768 × 600 a modal is a
 /// centred card (600 × 500), below that it covers the whole screen.
@@ -20,7 +21,7 @@ Future<T?> showIonModal<T>(
 }) {
   final size = MediaQuery.sizeOf(context);
   if (isIonModalCard(size)) {
-    return showDialog<T>(
+    return showAppDialog<T>(
       context: context,
       useRootNavigator: true,
       builder: (ctx) => Dialog(

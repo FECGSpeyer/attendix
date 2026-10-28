@@ -25,6 +25,7 @@ import '../../protocol_layout.dart';
 import '../widgets/protocol_editor.dart';
 import '../widgets/task_form_sheet.dart';
 import '../widgets/tasks_tab.dart' show TeamOrgBadge, outcomeColor;
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 import '../../../../core/services/native/native_file_service.dart'; // NATIVE_MISC
 
 const _saveDebounce = Duration(milliseconds: 800);
@@ -514,9 +515,9 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
     final defaultDuration = _type?.agendaDefaultDuration ?? 10;
     final titleCtrl = TextEditingController();
     final durationCtrl = TextEditingController(text: '$defaultDuration');
-    final ok = await showDialog<bool>(
+    final ok = await showAppDialog<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
+      builder: (ctx) => AppAlertDialog(
         title: Text(ctx.l10n.protocolSpontaneous),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -853,7 +854,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                           ctx.l10n.protocolNotified,
                           '${ctx.l10n.protocolRecipients(summary.recipientCount)}${summary.taskOwners.isNotEmpty ? ctx.l10n.protocolTaskOwners(summary.taskOwners.length) : ''}',
                         ),
-                        SwitchListTile(
+                        SwitchListTile.adaptive(
                           value: sendPdf,
                           onChanged: (v) => setLocal(() => sendPdf = v),
                           title: Text(ctx.l10n.protocolSendPdf),
@@ -892,10 +893,10 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
       );
 
   Future<void> _publish(List<TopicClosure> closures, bool sendPdf) async {
-    showDialog<void>(
+    showAppDialog<void>(
       context: context,
       barrierDismissible: false,
-      builder: (_) => const Center(child: CircularProgressIndicator()),
+      builder: (_) => const Center(child: AppSpinner()),
     );
     try {
       // SOL_FIX2: abort when a section could not be saved – do not publish
@@ -1000,7 +1001,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                       if (_savingCount > 0)
                         const Padding(
                           padding: EdgeInsets.only(right: 6),
-                          child: SizedBox(width: 12, height: 12, child: CircularProgressIndicator(strokeWidth: 2)),
+                          child: SizedBox(width: 12, height: 12, child: AppSpinner(strokeWidth: 2)),
                         ),
                       Expanded(child: Text(_saveLabel, style: Theme.of(context).textTheme.bodySmall)),
                       OutlinedButton.icon(
@@ -1023,7 +1024,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
               )
             : null,
         body: _loading
-            ? const Center(child: CircularProgressIndicator())
+            ? const Center(child: AppSpinner())
             : _notAvailable
                 ? _centerState(Icons.lock_outline, context.l10n.protocolNotPublished, context.l10n.protocolNotPublishedHint)
                 : _loadFailed || _attendance == null
@@ -1750,7 +1751,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                   if (_savingCount > 0)
                     const Padding(
                       padding: EdgeInsets.only(right: 6),
-                      child: SizedBox(width: 12, height: 12, child: CircularProgressIndicator(strokeWidth: 2)),
+                      child: SizedBox(width: 12, height: 12, child: AppSpinner(strokeWidth: 2)),
                     ),
                   Flexible(child: Text(_saveLabel, style: theme.textTheme.bodySmall, overflow: TextOverflow.ellipsis)),
                 ],

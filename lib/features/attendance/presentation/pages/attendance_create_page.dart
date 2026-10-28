@@ -35,6 +35,7 @@ import '../widgets/songs_selection_sheet.dart';
 import '../../../../core/utils/demo_guard.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// UX_ATT: opens "Termin hinzufügen" as a sheet over the list (Ionic att-list
 /// addAttModal, breakpoints [0, 0.8, 1], initial 0.8). Returns true when
@@ -215,7 +216,7 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
               loading: () => const SizedBox(
                 width: 16,
                 height: 16,
-                child: CircularProgressIndicator(strokeWidth: 2),
+                child: AppSpinner(strokeWidth: 2),
               ),
               error: (e, _) => const Icon(Icons.error_outline, color: AppColors.danger),
               data: (types) => DropdownButtonHideUnderline(
@@ -389,7 +390,7 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
                       const SizedBox(
                         width: 16,
                         height: 16,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                        child: AppSpinner(strokeWidth: 2, color: Colors.white),
                       ),
                   ],
                 ),
@@ -500,7 +501,7 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
   }
 
   Future<void> _pickTime({required bool isStart}) async {
-    final time = await showTimePicker(
+    final time = await showAppTimePicker(
       context: context,
       initialTime: isStart
           ? (_startTime ?? const TimeOfDay(hour: 19, minute: 0))
@@ -553,7 +554,7 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
         expand: false,
         builder: (context, scrollController) => holidaysAsync.when(
           loading: () =>
-              const Center(child: CircularProgressIndicator()),
+              const Center(child: AppSpinner()),
           error: (e, _) => Center(child: Text(context.l10n.attendanceFlutterErrorWith(friendlyErrorMessage(e)))),
           data: (holidays) {
             final hasHolidays =

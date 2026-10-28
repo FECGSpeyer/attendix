@@ -26,6 +26,7 @@ import '../../../../core/services/tracking/tracking_service.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/file_mime.dart';
 import '../../../../core/utils/error_message.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 enum FilesSortBy { name, updatedAt, size }
 
@@ -467,9 +468,9 @@ class _FilesPageState extends ConsumerState<FilesPage> {
   Future<void> _moveEntry(StorageEntry entry) async {
     final repo = _repo; // UI_TENANT_HOIST: bind before the first await
     final controller = TextEditingController();
-    final target = await showDialog<String>(
+    final target = await showAppDialog<String>(
       context: context,
-      builder: (ctx) => AlertDialog(
+      builder: (ctx) => AppAlertDialog(
         title: Text(context.l10n.filesMove),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -521,9 +522,9 @@ class _FilesPageState extends ConsumerState<FilesPage> {
 
   Future<void> _requestMoreStorage() async {
     final controller = TextEditingController();
-    final note = await showDialog<String>(
+    final note = await showAppDialog<String>(
       context: context,
-      builder: (ctx) => AlertDialog(
+      builder: (ctx) => AppAlertDialog(
         title: Text(context.l10n.filesRequestMore),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -572,9 +573,9 @@ class _FilesPageState extends ConsumerState<FilesPage> {
   Future<String?> _askDuplicateHandling(List<String> names) {
     final preview = names.take(5).join(', ');
     final suffix = names.length > 5 ? context.l10n.filesAndMore(names.length - 5) : '';
-    return showDialog<String>(
+    return showAppDialog<String>(
       context: context,
-      builder: (ctx) => AlertDialog(
+      builder: (ctx) => AppAlertDialog(
         title: Text(context.l10n.filesExists),
         content: Text(ctx.l10n.filesExistsMessage('$preview$suffix')),
         actions: [
@@ -608,9 +609,9 @@ class _FilesPageState extends ConsumerState<FilesPage> {
     if (needed <= free) return true;
     if (!mounted) return false;
 
-    final request = await showDialog<bool>(
+    final request = await showAppDialog<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
+      builder: (ctx) => AppAlertDialog(
         title: Text(context.l10n.filesStorageFull),
         content: Text(
           ctx.l10n.filesStorageFullMessage(formatFileSize(needed), formatFileSize(free), formatFileSize(max)),
@@ -651,13 +652,13 @@ class _FilesPageState extends ConsumerState<FilesPage> {
     if (!await _hasEnoughSpace(files, names, duplicates, overwrite) || !mounted) return;
 
     final progress = ValueNotifier<String>(context.l10n.filesUploadProgress(0, files.length, 0));
-    showDialog<void>(
+    showAppDialog<void>(
       context: context,
       barrierDismissible: false,
-      builder: (ctx) => AlertDialog(
+      builder: (ctx) => AppAlertDialog(
         content: Row(
           children: [
-            const CircularProgressIndicator(),
+            const AppSpinner(),
             const SizedBox(width: AppDimensions.paddingM),
             Expanded(
               child: ValueListenableBuilder<String>(
@@ -732,83 +733,61 @@ class _FilesPageState extends ConsumerState<FilesPage> {
     );
   }
 
-  void _showEntryActions(StorageEntry entry) {
+  Future<void> _showEntryActions(StorageEntry entry) async {
     final canEdit = _canEdit;
-    showModalBottomSheet<void>(
-      context: context,
-      builder: (ctx) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: Icon(FilesSearch.isAudio(entry) ? Icons.play_circle_outline : Icons.open_in_new),
-              title: Text(entry.isFolder
-                  ? context.l10n.filesFlutterOpenFolder
-                  : FilesSearch.isAudio(entry)
-                      ? context.l10n.songsPlayRecording
-                      : context.l10n.filesFlutterOpenDownload),
-              onTap: () {
-                Navigator.pop(ctx);
-                _openEntry(entry);
-              },
-            ),
-            if (!entry.isFolder)
-              ListTile(
-                leading: const Icon(Icons.download_outlined),
-                title: Text(context.l10n.filesDownload),
-                onTap: () {
-                  Navigator.pop(ctx);
-                  _downloadEntry(entry);
-                },
-              ),
-            ListTile(
-              leading: const Icon(Icons.link),
-              title: Text(context.l10n.filesShareLink),
-              onTap: () {
-                Navigator.pop(ctx);
-                _shareEntry(entry);
-              },
-            ),
-            // INTEGRATION: Ionic files "Per Telegram senden"
-            if (!entry.isFolder && (_telegramChatId?.isNotEmpty ?? false))
-              ListTile(
-                leading: const Icon(Icons.send_outlined),
-                title: Text(context.l10n.filesSendTelegram),
-                onTap: () {
-                  Navigator.pop(ctx);
-                  _sendEntryPerTelegram(entry);
-                },
-              ),
-            if (canEdit) ...[
-              ListTile(
-                leading: const Icon(Icons.edit_outlined),
-                title: Text(context.l10n.filesRename),
-                onTap: () {
-                  Navigator.pop(ctx);
-                  _renameEntry(entry);
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.swap_horiz),
-                title: Text(context.l10n.filesMove),
-                onTap: () {
-                  Navigator.pop(ctx);
-                  _moveEntry(entry);
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.delete_outline, color: AppColors.danger),
-                title: Text(context.l10n.commonDelete, style: TextStyle(color: AppColors.danger)),
-                onTap: () {
-                  Navigator.pop(ctx);
-                  _deleteEntry(entry);
-                },
-              ),
-            ],
-          ],
+    final isAudio = FilesSearch.isAudio(entry);
+    final action = await showAppActionSheet<VoidCallback>(
+      context,
+      actions: [
+        AppActionSheetAction(
+          value: () => _openEntry(entry),
+          icon: isAudio ? Icons.play_circle_outline : Icons.open_in_new,
+          label: entry.isFolder
+              ? context.l10n.filesFlutterOpenFolder
+              : isAudio
+                  ? context.l10n.songsPlayRecording
+                  : context.l10n.filesFlutterOpenDownload,
         ),
-      ),
+        if (!entry.isFolder)
+          AppActionSheetAction(
+            value: () => _downloadEntry(entry),
+            icon: Icons.download_outlined,
+            label: context.l10n.filesDownload,
+          ),
+        AppActionSheetAction(
+          value: () => _shareEntry(entry),
+          icon: Icons.link,
+          label: context.l10n.filesShareLink,
+        ),
+        // INTEGRATION: Ionic files "Per Telegram senden"
+        if (!entry.isFolder && (_telegramChatId?.isNotEmpty ?? false))
+          AppActionSheetAction(
+            value: () => _sendEntryPerTelegram(entry),
+            icon: Icons.send_outlined,
+            label: context.l10n.filesSendTelegram,
+          ),
+        if (canEdit) ...[
+          AppActionSheetAction(
+            value: () => _renameEntry(entry),
+            icon: Icons.edit_outlined,
+            label: context.l10n.filesRename,
+          ),
+          AppActionSheetAction(
+            value: () => _moveEntry(entry),
+            icon: Icons.swap_horiz,
+            label: context.l10n.filesMove,
+          ),
+          AppActionSheetAction(
+            value: () => _deleteEntry(entry),
+            icon: Icons.delete_outline,
+            label: context.l10n.commonDelete,
+            destructive: true,
+          ),
+        ],
+      ],
     );
+    if (!mounted) return;
+    action?.call();
   }
 
   void _onMenuSelected(String value) {
@@ -920,7 +899,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
             )
           : null,
       body: isRoleLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(child: AppSpinner())
           : !canAccess
               ? Center(
                   child: Padding(
@@ -1030,7 +1009,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
 
   List<Widget> _buildList() {
     if (_isLoading && _entries.isEmpty) {
-      return const [Padding(padding: EdgeInsets.all(32), child: Center(child: CircularProgressIndicator()))];
+      return const [Padding(padding: EdgeInsets.all(32), child: Center(child: AppSpinner()))];
     }
     if (_entries.isEmpty) {
       return [_EmptyCard(icon: Icons.folder_open_outlined, text: context.l10n.filesFolderEmpty)];

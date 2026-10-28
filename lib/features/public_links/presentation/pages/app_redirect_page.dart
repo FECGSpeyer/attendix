@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 const appStoreUrl = 'https://apps.apple.com/app/attendix/id6771119302';
 const playStoreUrl = 'https://play.google.com/store/apps/details?id=io.stephanus.attendix';
@@ -56,7 +57,7 @@ class _AppRedirectPageState extends State<AppRedirectPage> {
     return Scaffold(
       body: Center(
         child: !_showLanding
-            ? const CircularProgressIndicator()
+            ? const AppSpinner()
             : ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 360),
                 child: Padding(

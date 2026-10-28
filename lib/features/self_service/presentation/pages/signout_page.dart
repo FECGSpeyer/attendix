@@ -29,6 +29,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../messages/presentation/widgets/notification_bell.dart'; // MESSAGES
 import '../../../team_organization/presentation/widgets/my_tasks_card.dart'; // INTEGRATION
 import '../../../../core/utils/error_message.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// "Meine Termine" – self-service sign in/out of the current tenant
 /// (Ionic `selfService/signout`).
@@ -235,7 +236,7 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
     return Scaffold(
       appBar: _buildAppBar(tenant, tenants, player: player),
       body: dataAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => const Center(child: AppSpinner()),
         error: (e, _) => Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,

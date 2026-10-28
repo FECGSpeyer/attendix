@@ -10,6 +10,7 @@ import '../../../../data/models/team_org/team_org.dart';
 import '../../../../l10n/l10n.dart';
 import '../../team_org_utils.dart';
 import 'tasks_tab.dart' show TeamOrgBadge;
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 class _ProtocolRow {
   _ProtocolRow({
@@ -88,7 +89,7 @@ class _ProtocolsTabState extends ConsumerState<ProtocolsTab> {
     final l10n = context.l10n;
 
     return protocolsAsync.when(
-      loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () => const Center(child: AppSpinner()),
       error: (_, __) => Center(child: Text(l10n.protocolLoadFailed)),
       data: (protocols) {
         final rows = _rows(protocols, types);

@@ -7,6 +7,7 @@ import '../../../../core/utils/plan_utils.dart';
 import '../../../../data/models/plan/plan.dart';
 import 'plan_field_dialogs.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// A row of the editor: a field, or the "Unterpunkt hinzufügen" row closing an open block.
 class _EditorRow {
@@ -290,9 +291,9 @@ class _PlanFieldsEditorState extends State<PlanFieldsEditor> {
       _emit(_fields.where((f) => f.id != head.id).toList());
       return;
     }
-    final choice = await showDialog<String>(
+    final choice = await showAppDialog<String>(
       context: context,
-      builder: (ctx) => AlertDialog(
+      builder: (ctx) => AppAlertDialog(
         title: Text(ctx.l10n.planningDeleteBlockConfirm),
         content: Text(ctx.l10n.planningBlockHasItems(head.name, count)),
         actions: [

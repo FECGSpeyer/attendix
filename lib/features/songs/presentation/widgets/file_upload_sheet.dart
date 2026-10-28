@@ -12,6 +12,7 @@ import '../../../../data/models/song/song.dart';
 import '../utils/song_utils.dart';
 import 'file_drop/file_drop_target.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Ionic `detectSpecialFileType`: category from the file name / extension
 /// when no group matched. Returns null if nothing special was detected.
@@ -188,9 +189,9 @@ class _FileUploadSheetState extends ConsumerState<FileUploadSheet> {
     final invalidLyrics =
         _files.where((f) => f.instrumentId == 2 && !_isPdf(f.platformFile)).length;
     if (invalidLyrics > 0) {
-      final proceed = await showDialog<bool>(
+      final proceed = await showAppDialog<bool>(
         context: context,
-        builder: (ctx) => AlertDialog(
+        builder: (ctx) => AppAlertDialog(
           title: Text(context.l10n.songsLyricsWarning),
           content: Text(context.l10n.songsLyricsWarningMessage(invalidLyrics)),
           actions: [
@@ -487,7 +488,7 @@ class _FileItemState extends State<_FileItem> {
     switch (widget.file.status) {
       case _UploadStatus.uploading:
         return const SizedBox(
-            width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2));
+            width: 20, height: 20, child: AppSpinner(strokeWidth: 2));
       case _UploadStatus.done:
         return const Icon(Icons.check_circle, color: AppColors.success, size: 20);
       case _UploadStatus.error:

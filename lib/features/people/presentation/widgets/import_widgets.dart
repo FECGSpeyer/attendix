@@ -4,6 +4,7 @@ import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/import_mapper.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// A selectable mapping target. `key == null` means "Ignorieren".
 typedef ImportTargetOption = ({String? key, String label});
@@ -229,9 +230,9 @@ Future<void> showImportFailures(
 }) {
   final shown = lines.take(10).map((l) => '• $l').join('\n');
   final more = lines.length > 10 ? '\n${context.l10n.peopleAndMore(lines.length - 10)}' : '';
-  return showDialog<void>(
+  return showAppDialog<void>(
     context: context,
-    builder: (context) => AlertDialog(
+    builder: (context) => AppAlertDialog(
       title: Text(title),
       content: SingleChildScrollView(child: Text('$shown$more')),
       actions: [

@@ -12,6 +12,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/role_permission/tenant_role_permission.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Konfigurierbare Rollen (Reihenfolge wie Ionic)
 List<(Role, String)> _configurableRoles(AppLocalizations l10n) => [
@@ -89,9 +90,9 @@ class _RolePermissionsPageState extends ConsumerState<RolePermissionsPage> {
   }
 
   Future<void> _confirmLeave() async {
-    final result = await showDialog<String>(
+    final result = await showAppDialog<String>(
       context: context,
-      builder: (ctx) => AlertDialog(
+      builder: (ctx) => AppAlertDialog(
         title: Text(context.l10n.rolePermUnsaved),
         content: Text(
             context.l10n.rolePermUnsavedMessage),
@@ -140,11 +141,11 @@ class _RolePermissionsPageState extends ConsumerState<RolePermissionsPage> {
         floatingActionButton: FloatingActionButton(
           onPressed: saving ? null : _save,
           child: saving
-              ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+              ? const SizedBox(width: 20, height: 20, child: AppSpinner(strokeWidth: 2, color: Colors.white))
               : const Icon(Icons.save_outlined),
         ),
         body: permissionsAsync.when(
-          loading: () => const Center(child: CircularProgressIndicator()),
+          loading: () => const Center(child: AppSpinner()),
           error: (e, _) => Center(child: Text(context.l10n.rolePermFlutterLoadFailed(friendlyErrorMessage(e)), textAlign: TextAlign.center)),
           data: (permissions) {
             _initFrom(permissions);
@@ -154,7 +155,7 @@ class _RolePermissionsPageState extends ConsumerState<RolePermissionsPage> {
               children: [
                 _sectionHeader(context.l10n.rolePermFiles),
                 Card(
-                  child: SwitchListTile(
+                  child: SwitchListTile.adaptive(
                     title: Text(context.l10n.rolePermFilesForAll),
                     subtitle: Text(
                       context.l10n.rolePermFilesHelper,
@@ -192,27 +193,27 @@ class _RolePermissionsPageState extends ConsumerState<RolePermissionsPage> {
         title: Text(label, style: const TextStyle(fontWeight: FontWeight.w500)),
         children: [
           if (_showHelperToggles(role)) ...[
-            SwitchListTile(
+            SwitchListTile.adaptive(
               title: Text(context.l10n.rolePermAllGroups),
               subtitle: Text(
                   context.l10n.rolePermAllGroupsHelper),
               value: p.attendanceAllGroups,
               onChanged: (v) => _update(role, (p) => p.copyWith(attendanceAllGroups: v)),
             ),
-            SwitchListTile(
+            SwitchListTile.adaptive(
               title: Text(context.l10n.rolePermCreateAttendance),
               subtitle: Text(context.l10n.rolePermCreateHelper),
               value: p.attendanceCreate,
               onChanged: (v) => _update(role, (p) => p.copyWith(attendanceCreate: v)),
             ),
-            SwitchListTile(
+            SwitchListTile.adaptive(
               title: Text(context.l10n.rolePermSeeNotes),
               subtitle: Text(
                   context.l10n.rolePermNotesHelper),
               value: p.playerNotesView,
               onChanged: (v) => _update(role, (p) => p.copyWith(playerNotesView: v)),
             ),
-            SwitchListTile(
+            SwitchListTile.adaptive(
               title: Text(context.l10n.rolePermSeeChecklist),
               subtitle: Text(
                   context.l10n.rolePermChecklistHelper),
@@ -221,14 +222,14 @@ class _RolePermissionsPageState extends ConsumerState<RolePermissionsPage> {
             ),
           ],
           if (_showSelfPauseToggle(role))
-            SwitchListTile(
+            SwitchListTile.adaptive(
               title: Text(context.l10n.rolePermAllowPause),
               subtitle: Text(context.l10n.rolePermPauseHelper),
               value: p.playerSelfPause,
               onChanged: (v) => _update(role, (p) => p.copyWith(playerSelfPause: v)),
             ),
           if (_showPlannedAbsenceToggle(role))
-            SwitchListTile(
+            SwitchListTile.adaptive(
               title: Text(context.l10n.rolePermEnterAbsences),
               subtitle: Text(
                   context.l10n.rolePermAbsencesHelper),

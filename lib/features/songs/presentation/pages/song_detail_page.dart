@@ -41,6 +41,7 @@ import '../../../../core/services/tracking/tracking_service.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/common/error_state_view.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Song detail page (Ionic `songs/song`): inline editing for admins and
 /// responsibles, read-only view for everybody else and for the public share
@@ -219,7 +220,7 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
               : null,
         ),
         body: dataAsync.isLoading
-            ? const Center(child: CircularProgressIndicator())
+            ? const Center(child: AppSpinner())
             : dataAsync.hasError
                 ? ErrorStateView(
                     error: dataAsync.error,
@@ -401,7 +402,7 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
                 _update(data);
               },
             ),
-            SwitchListTile(
+            SwitchListTile.adaptive(
               contentPadding: EdgeInsets.zero,
               title: Text(context.l10n.songsChoirOrchestra),
               value: _withChoir,
@@ -410,7 +411,7 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
                 _update(data);
               },
             ),
-            SwitchListTile(
+            SwitchListTile.adaptive(
               contentPadding: EdgeInsets.zero,
               title: Text(context.l10n.songsWithSoloSinging),
               value: _withSolo,
@@ -519,7 +520,7 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
   Widget _buildField(SongDetailData data, SongAdditionalField field) {
     final value = _additional[field.id];
     if (field.isBoolean) {
-      return SwitchListTile(
+      return SwitchListTile.adaptive(
         contentPadding: EdgeInsets.zero,
         title: Text(field.name),
         value: value == true,
@@ -622,10 +623,10 @@ class _MultiSelectTile<T> extends StatelessWidget {
 
   Future<void> _open(BuildContext context) async {
     final selection = [...selected];
-    final result = await showDialog<List<T>>(
+    final result = await showAppDialog<List<T>>(
       context: context,
       builder: (ctx) => StatefulBuilder(
-        builder: (ctx, setLocal) => AlertDialog(
+        builder: (ctx, setLocal) => AppAlertDialog(
           title: Text(title),
           content: SizedBox(
             width: double.maxFinite,
@@ -845,7 +846,7 @@ class _FilesSectionState extends ConsumerState<_FilesSection> {
       return;
     }
 
-    final ratio = await showDialog<int>(
+    final ratio = await showAppDialog<int>(
       context: context,
       builder: (ctx) => _RatioDialog(),
     );
@@ -974,59 +975,17 @@ class _FilesSectionState extends ConsumerState<_FilesSection> {
         ? null
         : ref.read(currentTenantUserProvider).valueOrNull?.telegramChatId;
 
-    final action = await showModalBottomSheet<String>(
-      context: context,
-      useSafeArea: true,
-      builder: (ctx) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              title: Text(context.l10n.songsFileActions, style: const TextStyle(fontWeight: FontWeight.bold)),
-            ),
-            ListTile(
-              leading: Icon(isAudio ? Icons.play_circle_outline : Icons.open_in_new),
-              title: Text(isAudio ? context.l10n.songsPlayRecording : context.l10n.songsOpenFile),
-              onTap: () => Navigator.pop(ctx, 'open'),
-            ),
-            if (!isAudio)
-              ListTile(
-                leading: const Icon(Icons.print_outlined),
-                title: Text(context.l10n.songsPrintFile),
-                onTap: () => Navigator.pop(ctx, 'print'),
-              ),
-            if (!_isIos || isAudio)
-              ListTile(
-                leading: const Icon(Icons.download_outlined),
-                title: Text(isAudio ? context.l10n.songsDownloadRecording : context.l10n.songsDownloadFile),
-                onTap: () => Navigator.pop(ctx, 'download'),
-              ),
-            if (!data.readOnly)
-              ListTile(
-                leading: const Icon(Icons.swap_horiz),
-                title: Text(context.l10n.songsChangeCategory),
-                onTap: () => Navigator.pop(ctx, 'category'),
-              ),
-            if (telegramChatId != null && telegramChatId.isNotEmpty)
-              ListTile(
-                leading: const Icon(Icons.send_outlined),
-                title: Text(context.l10n.songsSendTelegram),
-                onTap: () => Navigator.pop(ctx, 'telegram'),
-              ),
-            if (!data.readOnly)
-              ListTile(
-                leading: const Icon(Icons.delete_outline, color: AppColors.danger),
-                title: Text(context.l10n.songsDeleteFile, style: const TextStyle(color: AppColors.danger)),
-                onTap: () => Navigator.pop(ctx, 'delete'),
-              ),
-            ListTile(
-              leading: const Icon(Icons.close),
-              title: Text(context.l10n.commonCancel),
-              onTap: () => Navigator.pop(ctx),
-            ),
-          ],
-        ),
-      ),
+    final action = await showAppActionSheet<String>(
+      context,
+      title: context.l10n.songsFileActions,
+      actions: [
+        AppActionSheetAction(value: 'open', icon: isAudio ? Icons.play_circle_outline : Icons.open_in_new, label: isAudio ? context.l10n.songsPlayRecording : context.l10n.songsOpenFile),
+        if (!isAudio) AppActionSheetAction(value: 'print', icon: Icons.print_outlined, label: context.l10n.songsPrintFile),
+        if (!_isIos || isAudio) AppActionSheetAction(value: 'download', icon: Icons.download_outlined, label: isAudio ? context.l10n.songsDownloadRecording : context.l10n.songsDownloadFile),
+        if (!data.readOnly) AppActionSheetAction(value: 'category', icon: Icons.swap_horiz, label: context.l10n.songsChangeCategory),
+        if (telegramChatId != null && telegramChatId.isNotEmpty) AppActionSheetAction(value: 'telegram', icon: Icons.send_outlined, label: context.l10n.songsSendTelegram),
+        if (!data.readOnly) AppActionSheetAction(value: 'delete', icon: Icons.delete_outline, label: context.l10n.songsDeleteFile, destructive: true),
+      ],
     );
     if (!mounted || action == null) return;
 
@@ -1087,7 +1046,7 @@ class _FilesSectionState extends ConsumerState<_FilesSection> {
 
   /// Ionic category modal: Sonstige (Freitext) / Aufnahme / Liedtext / groups
   Future<void> _changeCategory(SongFile file) async {
-    final result = await showDialog<({int? instrumentId, String? note})>(
+    final result = await showAppDialog<({int? instrumentId, String? note})>(
       context: context,
       builder: (_) => FileCategoryDialog(
         instruments: data.instruments,
@@ -1129,7 +1088,7 @@ class _RatioDialogState extends State<_RatioDialog> {
       (4, l10n.songsEvery4),
       (0, l10n.songsPerGroup),
     ];
-    return AlertDialog(
+    return AppAlertDialog(
       title: Text(l10n.songsPrintOptions),
       content: Column(
         mainAxisSize: MainAxisSize.min,
@@ -1195,7 +1154,7 @@ class _FileCategoryDialogState extends State<FileCategoryDialog> {
       (2, context.l10n.songsLyrics),
       for (final g in widget.instruments) (g.id, g.name),
     ];
-    return AlertDialog(
+    return AppAlertDialog(
       title: Text(context.l10n.songsChangeCategory),
       content: SizedBox(
         width: double.maxFinite,

@@ -10,6 +10,7 @@ import '../../../../data/repositories/sign_in_out_repository.dart';
 import '../../../../shared/widgets/event_list/event_list_widgets.dart';
 import '../../../../shared/widgets/event_list/excuse_reason_sheet.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Route of the Dateiablage (files module, `/settings/files?path=<folder>`).
 const String kFilesRoute = '/settings/files';
@@ -372,33 +373,19 @@ class SelfServiceEventActions {
       return;
     }
 
-    final selected = await showModalBottomSheet<SelfServiceActionType>(
-      context: context,
-      builder: (ctx) => SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                title: Text(att.eventTitle, style: const TextStyle(fontWeight: FontWeight.bold)),
-                subtitle: Text(att.eventMeta(withDate: true)),
-              ),
-              const Divider(height: 1),
-              for (final action in actions)
-                ListTile(
-                  leading: Icon(action.type.icon),
-                  title: Text(action.type.label(ctx.l10n)),
-                  onTap: () => Navigator.pop(ctx, action.type),
-                ),
-              ListTile(
-                leading: const Icon(Icons.close, color: AppColors.danger),
-                title: Text(ctx.l10n.commonCancel, style: const TextStyle(color: AppColors.danger)),
-                onTap: () => Navigator.pop(ctx),
-              ),
-            ],
+    final selected = await showAppActionSheet<SelfServiceActionType>(
+      context,
+      title: att.eventTitle,
+      message: att.eventMeta(withDate: true),
+      cancelDestructive: true,
+      actions: [
+        for (final action in actions)
+          AppActionSheetAction(
+            value: action.type,
+            icon: action.type.icon,
+            label: action.type.label(context.l10n),
           ),
-        ),
-      ),
+      ],
     );
     if (selected == null || !context.mounted) return;
 
@@ -482,7 +469,7 @@ Future<Map<String, dynamic>?> showSingleRegistrationFieldDialog(
   dynamic existing,
   bool editMode = false,
 }) {
-  return showDialog<Map<String, dynamic>>(
+  return showAppDialog<Map<String, dynamic>>(
     context: context,
     barrierDismissible: editMode,
     builder: (ctx) => _SingleFieldDialog(field: field, existing: existing, editMode: editMode),
@@ -590,7 +577,7 @@ class _SingleFieldDialogState extends State<_SingleFieldDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
+    return AppAlertDialog(
       title: Text(widget.field.label),
       content: SingleChildScrollView(child: _content()),
       actions: [

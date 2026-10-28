@@ -14,6 +14,7 @@ import '../widgets/otp_widgets.dart';
 import '../../../../l10n/l10n.dart';
 import '../widgets/ion_input_decoration.dart';
 import '../../../../shared/widgets/dialogs/ion_modal.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// How the registration ended (Ionic register-modal dismiss data).
 enum RegisterOutcome {
@@ -463,7 +464,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                           ? const SizedBox(
                               height: 20,
                               width: 20,
-                              child: CircularProgressIndicator(
+                              child: AppSpinner(
                                 strokeWidth: 2,
                                 valueColor:
                                     AlwaysStoppedAnimation<Color>(Colors.white),

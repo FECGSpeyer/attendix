@@ -19,6 +19,7 @@ import '../../../../core/services/tracking/tracking_event.dart';
 import '../../../../core/services/tracking/tracking_service.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Notifications settings page (Ionic notifications.page).
 ///
@@ -155,7 +156,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
         appBar: AppBar(title: Text(context.l10n.notifTitle)),
         body: Center(
           child: _isLoading
-              ? const CircularProgressIndicator()
+              ? const AppSpinner()
               : Text(context.l10n.notifFlutterConfigNotFound),
         ),
       );
@@ -174,7 +175,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
             margin: EdgeInsets.zero,
             child: Column(
               children: [
-                SwitchListTile(
+                SwitchListTile.adaptive(
                   title: Text(context.l10n.notifEnable),
                   value: config.enabled,
                   onChanged: (v) => _updateConfig(config.copyWith(enabled: v)),
@@ -211,7 +212,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
                 // PUSH: Ionic `@if (isNative)` – push switch in the native apps
                 if (isNativePushPlatform) ...[
                   const Divider(height: 1),
-                  SwitchListTile(
+                  SwitchListTile.adaptive(
                     title: Text(context.l10n.notifPush),
                     value: config.pushEnabled,
                     onChanged: (v) => _togglePush(config, v),
@@ -220,7 +221,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
                 // LIVE_ACTIVITY: only app builds with the native Live Activity side (iOS)
                 if (ref.read(liveActivityServiceProvider).hasNativePlugin) ...[
                   const Divider(height: 1),
-                  SwitchListTile(
+                  SwitchListTile.adaptive(
                     title: Text(context.l10n.notifLiveActivity),
                     subtitle: Text(LiveActivityService.isSupportedPlatform
                         ? context.l10n.notifLiveActivityHelperIos
@@ -232,7 +233,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
                 // LIVE_ACTIVITY end
                 if (config.pushEnabled && isConnected) ...[
                   const Divider(height: 1),
-                  SwitchListTile(
+                  SwitchListTile.adaptive(
                     title: Text(context.l10n.notifBothChannels),
                     subtitle: Text(context.l10n.notifBothChannelsHelper),
                     value: config.pushAndTelegram,
@@ -336,7 +337,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
                   children: [
                     for (final tenant in tenants)
                       if (tenant.id != null)
-                        SwitchListTile(
+                        SwitchListTile.adaptive(
                           title: Text(tenant.longName.isNotEmpty
                               ? tenant.longName
                               : tenant.shortName),
@@ -364,7 +365,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
   }) {
     return Column(
       children: [
-        SwitchListTile(
+        SwitchListTile.adaptive(
           title: Text(title),
           subtitle: helper != null
               ? Text(helper, style: const TextStyle(fontSize: 12))

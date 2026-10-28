@@ -17,6 +17,7 @@ import '../../history_utils.dart';
 import '../../../../core/utils/demo_guard.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// History Page - Song performance history
 class HistoryPage extends ConsumerStatefulWidget {
@@ -70,7 +71,7 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
           // History list
           Expanded(
             child: historyAsync.when(
-              loading: () => const Center(child: CircularProgressIndicator()),
+              loading: () => const Center(child: AppSpinner()),
               error:
                   (e, _) => Center(
                     child: Column(
@@ -225,7 +226,7 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
     DateTime selectedDate = DateTime.now();
     String songFilter = '';
 
-    final result = await showDialog<bool>(
+    final result = await showAppDialog<bool>(
       context: context,
       builder:
           (context) => StatefulBuilder(
@@ -241,7 +242,7 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
                           )
                           .toList();
 
-              return AlertDialog(
+              return AppAlertDialog(
                 title: Text(
                   selectedSongIds.isEmpty
                       ? context.l10n.historyAddSongs
@@ -327,10 +328,10 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
                             if (v == -1) {
                               final controller = TextEditingController();
                               try {
-                                final result = await showDialog<String>(
+                                final result = await showAppDialog<String>(
                                   context: context,
                                   builder:
-                                      (context) => AlertDialog(
+                                      (context) => AppAlertDialog(
                                         title: Text(context.l10n.attListEnterConductor),
                                         content: TextField(
                                           controller: controller,
@@ -388,7 +389,7 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
                           ),
                           trailing: const Icon(Icons.calendar_today),
                           onTap: () async {
-                            final date = await showDatePicker(
+                            final date = await showAppDatePicker(
                               context: context,
                               initialDate: selectedDate,
                               firstDate: DateTime(2000),

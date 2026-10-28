@@ -16,6 +16,7 @@ import '../../team_org_utils.dart';
 import '../widgets/task_form_sheet.dart';
 import '../widgets/tasks_tab.dart' show TeamOrgBadge, priorityColor, outcomeColor;
 import '../widgets/quick_create_attendance.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// How many upcoming Termine "Einplanen" offers.
 const int _planChoices = 6;
@@ -142,35 +143,25 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage> {
       return null;
     }
 
-    var choice = await showModalBottomSheet<Object>(
-      context: context,
-      builder: (ctx) => SafeArea(
-        child: ListView(
-          shrinkWrap: true,
-          children: [
-            ListTile(
-              title: Text(upcoming.isNotEmpty
-                  ? ctx.l10n.agendaWhichEvent
-                  : ctx.l10n.agendaNoProtocolEvent),
-            ),
-            for (final att in upcoming)
-              Builder(builder: (_) {
-                final already = att.fields.any((f) => fieldId(f) == fid);
-                return ListTile(
-                  enabled: !already,
-                  title: Text(
-                      '${formatShortWeekdayDate(att.date)} · ${attendanceTitle(att.typeInfo, typeOf(att))}${already ? ctx.l10n.agendaAlreadyPlanned : ''}'),
-                  onTap: () => Navigator.of(ctx).pop(att),
-                );
-              }),
-            ListTile(
-              leading: const Icon(Icons.add_circle_outline),
-              title: Text(ctx.l10n.agendaNewEvent),
-              onTap: () => Navigator.of(ctx).pop('new'),
-            ),
-          ],
+    var choice = await showAppActionSheet<Object>(
+      context,
+      title: upcoming.isNotEmpty
+          ? context.l10n.agendaWhichEvent
+          : context.l10n.agendaNoProtocolEvent,
+      actions: [
+        for (final att in upcoming)
+          AppActionSheetAction(
+            value: att,
+            enabled: !att.fields.any((f) => fieldId(f) == fid),
+            label:
+                '${formatShortWeekdayDate(att.date)} · ${attendanceTitle(att.typeInfo, typeOf(att))}${att.fields.any((f) => fieldId(f) == fid) ? context.l10n.agendaAlreadyPlanned : ''}',
+          ),
+        AppActionSheetAction(
+          value: 'new',
+          icon: Icons.add_circle_outline,
+          label: context.l10n.agendaNewEvent,
         ),
-      ),
+      ],
     );
     if (!mounted || choice == null) return;
     if (choice == 'new') {
@@ -233,7 +224,7 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage> {
             )
           : null,
       body: itemAsync.isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(child: AppSpinner())
           : (!_isNew && item == null)
               ? Center(child: Text(l10n.agendaFlutterNotFound))
               : ListView(

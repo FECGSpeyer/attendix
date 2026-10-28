@@ -6,6 +6,7 @@ import '../../../../core/constants/app_constants.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../data/auth_flow_service.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// AUTH: "Neues Passwort eingeben" after a password-recovery link
 /// (Ionic app.component.ts presentPasswordRecoveryAlert).
@@ -95,7 +96,7 @@ class _NewPasswordPageState extends ConsumerState<NewPasswordPage> {
                         ? const SizedBox(
                             height: 20,
                             width: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2),
+                            child: AppSpinner(strokeWidth: 2),
                           )
                         : Text(context.l10n.appChangePassword),
                   ),

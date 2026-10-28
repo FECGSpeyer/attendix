@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../l10n/l10n.dart';
 import 'haptic_helper.dart';
+import '../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Helper class for showing dialogs
 class DialogHelper {
@@ -17,9 +18,9 @@ class DialogHelper {
     bool isDestructive = false,
   }) async {
     final l10n = context.l10n;
-    final result = await showDialog<bool>(
+    final result = await showAppDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (context) => AppAlertDialog(
         title: Text(title),
         content: Text(message),
         actions: [
@@ -53,9 +54,9 @@ class DialogHelper {
     required String message,
     String? okText,
   }) async {
-    await showDialog(
+    await showAppDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (context) => AppAlertDialog(
         title: Text(title),
         content: Text(message),
         actions: [
@@ -83,7 +84,7 @@ class DialogHelper {
     String? cancelText,
     TextInputType? keyboardType,
   }) {
-    return showDialog<String>(
+    return showAppDialog<String>(
       context: context,
       builder: (context) => _TextInputDialog(
         title: title,
@@ -133,7 +134,7 @@ class _TextInputDialogState extends State<_TextInputDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
+    return AppAlertDialog(
       title: Text(widget.title),
       content: TextField(
         controller: _controller,

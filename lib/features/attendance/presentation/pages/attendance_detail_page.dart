@@ -58,6 +58,7 @@ import '../../../../core/utils/demo_guard.dart';
 import '../../../team_organization/presentation/widgets/attendance_protocol_section.dart'; // PROTOCOL
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Attendance detail/taking page
 class AttendanceDetailPage extends ConsumerStatefulWidget {
@@ -403,7 +404,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     return attendanceAsync.when(
       loading: () => Scaffold(
         appBar: AppBar(title: Text(context.l10n.signoutAttendance)),
-        body: const Center(child: CircularProgressIndicator()),
+        body: const Center(child: AppSpinner()),
       ),
       // ATT_DETAIL: Ionic "loadFailedReopen" / "Neu laden"
       error: (error, stack) => Scaffold(
@@ -487,7 +488,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
             ],
           ),
           body: personsAsync.when(
-            loading: () => const Center(child: CircularProgressIndicator()),
+            loading: () => const Center(child: AppSpinner()),
             // ATT_DETAIL: "Neu laden" banner
             error: (error, stack) => ListView(children: [_buildLoadFailedBanner()]),
             data: (persons) {
@@ -792,9 +793,9 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
         : context.l10n.attendanceLastChangedByAt(
             modifierName, DateFormat(dateFmt()).format(date), DateFormat('HH:mm').format(date));
 
-    showDialog(
+    showAppDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
+      builder: (ctx) => AppAlertDialog(
         content: Text(message),
         actions: [
           TextButton(
@@ -1057,7 +1058,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     final current =
         _sort.isDefault ? '__default__' : '${_sort.fieldId}__${_sort.ascending ? 'asc' : 'desc'}';
     String selected = current;
-    final result = await showDialog<String>(
+    final result = await showAppDialog<String>(
       context: context,
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setDialogState) {
@@ -1068,7 +1069,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                 dense: true,
                 onChanged: (v) => setDialogState(() => selected = v!),
               );
-          return AlertDialog(
+          return AppAlertDialog(
             title: Text(context.l10n.attendanceSorting),
             contentPadding: const EdgeInsets.symmetric(vertical: 12),
             content: SizedBox(
@@ -1433,9 +1434,9 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
   Future<({String text, int? hours})?> _showTodoDialog() async {
     final textController = TextEditingController();
     final hoursController = TextEditingController();
-    final result = await showDialog<({String text, int? hours})>(
+    final result = await showAppDialog<({String text, int? hours})>(
       context: context,
-      builder: (ctx) => AlertDialog(
+      builder: (ctx) => AppAlertDialog(
         title: Text(context.l10n.attendanceAddTodo),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -1686,7 +1687,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     final now = DateTime.now();
     final initialDate = currentDeadline ?? attendanceDate?.subtract(const Duration(days: 1)) ?? now;
 
-    final selectedDate = await showDatePicker(
+    final selectedDate = await showAppDatePicker(
       context: context,
       initialDate: initialDate,
       firstDate: now,
@@ -1696,7 +1697,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
 
     if (selectedDate == null || !mounted) return;
 
-    final selectedTime = await showTimePicker(
+    final selectedTime = await showAppTimePicker(
       context: context,
       initialTime: TimeOfDay.fromDateTime(initialDate),
     );
@@ -1748,9 +1749,9 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     }
 
     // Show format selection dialog
-    final format = await showDialog<String>(
+    final format = await showAppDialog<String>(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (context) => AppAlertDialog(
         title: Text(context.l10n.attendanceFlutterExportFormat),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -1820,34 +1821,28 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
   }
 
   Future<void> _showTelegramFormatOptions() async {
-    final result = await showModalBottomSheet<String>(
-      context: context,
-      builder: (ctx) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: const Icon(Icons.picture_as_pdf),
-              title: const Text('PDF (A4)'),
-              subtitle: Text(context.l10n.attendanceFlutterStandardFormat),
-              onTap: () => Navigator.pop(ctx, 'pdf'),
-            ),
-            ListTile(
-              leading: const Icon(Icons.content_cut),
-              title: const Text('PDF (2x A5)'),
-              subtitle: Text(context.l10n.attendanceFlutterTwoPlansOnePage),
-              onTap: () => Navigator.pop(ctx, '2xa5'),
-            ),
-            ListTile(
-              leading: const Icon(Icons.image),
-              title: Text(context.l10n.attendanceFlutterAsImage),
-              subtitle: Text(context.l10n.attendanceFlutterQuickPreview),
-              onTap: () => Navigator.pop(ctx, 'image'),
-            ),
-            const SizedBox(height: 8),
-          ],
+    final result = await showAppActionSheet<String>(
+      context,
+      actions: [
+        AppActionSheetAction(
+          value: 'pdf',
+          icon: Icons.picture_as_pdf,
+          label: 'PDF (A4)',
+          subtitle: context.l10n.attendanceFlutterStandardFormat,
         ),
-      ),
+        AppActionSheetAction(
+          value: '2xa5',
+          icon: Icons.content_cut,
+          label: 'PDF (2x A5)',
+          subtitle: context.l10n.attendanceFlutterTwoPlansOnePage,
+        ),
+        AppActionSheetAction(
+          value: 'image',
+          icon: Icons.image,
+          label: context.l10n.attendanceFlutterAsImage,
+          subtitle: context.l10n.attendanceFlutterQuickPreview,
+        ),
+      ],
     );
     if (result != null && mounted) await _sendPlanViaTelegram(format: result);
   }
@@ -2072,36 +2067,22 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
   Future<void> _onSongEntryTap(int index) async {
     if (index < 0 || index >= _songEntries.length) return;
     final entry = _songEntries[index];
-    final action = await showModalBottomSheet<String>(
-      context: context,
-      showDragHandle: true,
-      builder: (ctx) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            ListTile(
-              title: Text(entry.songName, style: const TextStyle(fontWeight: FontWeight.w600)),
-              subtitle: Text(entry.displayConductor),
-            ),
-            const Divider(height: 1),
-            ListTile(
-              leading: const Icon(Icons.person_outline),
-              title: Text(context.l10n.attendanceChangeConductor),
-              onTap: () => Navigator.pop(ctx, 'conductor'),
-            ),
-            ListTile(
-              leading: const Icon(Icons.music_note_outlined),
-              title: Text(context.l10n.attendanceToSong),
-              onTap: () => Navigator.pop(ctx, 'song'),
-            ),
-            ListTile(
-              title: Text(context.l10n.commonCancel),
-              onTap: () => Navigator.pop(ctx),
-            ),
-          ],
+    final action = await showAppActionSheet<String>(
+      context,
+      title: entry.songName,
+      message: entry.displayConductor,
+      actions: [
+        AppActionSheetAction(
+          value: 'conductor',
+          icon: Icons.person_outline,
+          label: context.l10n.attendanceChangeConductor,
         ),
-      ),
+        AppActionSheetAction(
+          value: 'song',
+          icon: Icons.music_note_outlined,
+          label: context.l10n.attendanceToSong,
+        ),
+      ],
     );
     if (!mounted || action == null) return;
     if (action == 'song') {
@@ -2145,7 +2126,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     final attendance = ref.read(attendanceDetailProvider(widget.attendanceId)).valueOrNull;
     if (attendance == null) return;
     final current = DateTime.tryParse(attendance.date)?.toLocal() ?? DateTime.now();
-    final picked = await showDatePicker(
+    final picked = await showAppDatePicker(
       context: context,
       initialDate: current,
       firstDate: DateTime(current.year - 5),
@@ -2158,9 +2139,9 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     final type = ref.read(attendanceTypeForAttendanceProvider(widget.attendanceId)).valueOrNull;
     var reset = false;
     if (type != null && _localStatuses.values.any((s) => s != type.defaultStatus)) {
-      final choice = await showDialog<String>(
+      final choice = await showAppDialog<String>(
         context: context,
-        builder: (ctx) => AlertDialog(
+        builder: (ctx) => AppAlertDialog(
           title: Text(context.l10n.dateDialogResetStatus),
           content: Text(
             context.l10n.dateDialogResetStatusMessage(ionicStatusLabel(type.defaultStatus)),
@@ -2361,7 +2342,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       currentTime = const TimeOfDay(hour: 17, minute: 0);
     }
 
-    final selectedTime = await showTimePicker(
+    final selectedTime = await showAppTimePicker(
       context: context,
       initialTime: currentTime,
     );
@@ -2410,7 +2391,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       currentTime = const TimeOfDay(hour: 20, minute: 0);
     }
 
-    final selectedTime = await showTimePicker(
+    final selectedTime = await showAppTimePicker(
       context: context,
       initialTime: currentTime,
     );
@@ -2550,9 +2531,9 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
 
   Future<void> _takePhoto() async {
     final repo = ref.read(attendanceRepositoryWithTenantProvider);
-    final source = await showDialog<ImageSource>(
+    final source = await showAppDialog<ImageSource>(
       context: context,
-      builder: (ctx) => AlertDialog(
+      builder: (ctx) => AppAlertDialog(
         title: Text(context.l10n.attendanceFlutterAddPhoto),
         content: Column(
           mainAxisSize: MainAxisSize.min,

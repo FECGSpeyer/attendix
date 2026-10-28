@@ -6,6 +6,7 @@ import '../../../core/constants/enums.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/event_list_utils.dart';
 import '../../../l10n/l10n.dart';
+import '../adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Card layout building blocks of the Terminlisten (Ionic `ev-*` classes):
 /// date tile, pills, chips, section and month headers, the "Heute" card and
@@ -621,18 +622,12 @@ Future<void> openEventNavigation(BuildContext context, String place) async {
     await open(EventListUtils.navigationUrl(place));
     return;
   }
-  final apple = await showModalBottomSheet<bool>(
-    context: context,
-    builder: (ctx) => SafeArea(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          ListTile(title: Text(ctx.l10n.commonAppleMaps), onTap: () => Navigator.pop(ctx, true)),
-          ListTile(title: const Text('Google Maps'), onTap: () => Navigator.pop(ctx, false)),
-          ListTile(title: Text(ctx.l10n.commonCancel), onTap: () => Navigator.pop(ctx)),
-        ],
-      ),
-    ),
+  final apple = await showAppActionSheet<bool>(
+    context,
+    actions: [
+      AppActionSheetAction(value: true, label: context.l10n.commonAppleMaps),
+      const AppActionSheetAction(value: false, label: 'Google Maps'),
+    ],
   );
   if (apple == null) return;
   await open(EventListUtils.navigationUrl(place, apple: apple));

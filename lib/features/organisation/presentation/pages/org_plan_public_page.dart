@@ -13,6 +13,7 @@ import '../../../planning/presentation/widgets/plan_export_actions.dart';
 import '../../../planning/presentation/widgets/plan_field_dialogs.dart';
 import '../../../planning/presentation/widgets/plan_view_list.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Public list of all org plans via `/org-plan?key=<public_plan_key>`
 /// (Ionic `OrgPlanPublicPage`). No login required.
@@ -156,9 +157,9 @@ class _OrgPlanPublicPageState extends ConsumerState<OrgPlanPublicPage> {
       ],
     );
     if (link == null || !mounted) return;
-    await showDialog<void>(
+    await showAppDialog<void>(
       context: context,
-      builder: (ctx) => AlertDialog(
+      builder: (ctx) => AppAlertDialog(
         title: Text(ctx.l10n.plansSubscribeCalendar),
         content: SelectableText(ctx.l10n.plansCalendarLinkMessage(link)),
         actions: [
@@ -275,7 +276,7 @@ class _OrgPlanPublicPageState extends ConsumerState<OrgPlanPublicPage> {
         ],
       ),
       body: _loading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(child: AppSpinner())
           : _notFound
               ? Padding(
                   padding: const EdgeInsets.all(16),

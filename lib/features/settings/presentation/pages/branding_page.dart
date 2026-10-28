@@ -10,6 +10,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Maximale Logo-Größe (2 MB, wie Ionic)
 const int kMaxLogoBytes = 2 * 1024 * 1024;
@@ -115,7 +116,7 @@ class _BrandingPageState extends ConsumerState<BrandingPage> {
         ],
       ),
       body: orgAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => const Center(child: AppSpinner()),
         error: (e, _) => Center(child: Text(context.l10n.settingsFlutterLoadFailed(friendlyErrorMessage(e)))),
         data: (org) {
           if (org == null) {

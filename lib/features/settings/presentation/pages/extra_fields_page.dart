@@ -12,6 +12,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../data/repositories/extra_fields_repository.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 enum ExtraFieldTarget { person, song }
 
@@ -363,7 +364,7 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
                       onChanged: (v) => setSheet(() => displayMode = v ?? 'chip'),
                     ),
                     if (isPerson) ...[
-                      SwitchListTile(
+                      SwitchListTile.adaptive(
                         contentPadding: EdgeInsets.zero,
                         title: Text(context.l10n.extraFieldsVisible),
                         subtitle: Text(context.l10n.extraFieldsVisibleHelper),
@@ -371,7 +372,7 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
                         onChanged: (v) => setSheet(() => visible = v),
                       ),
                       if (visible)
-                        SwitchListTile(
+                        SwitchListTile.adaptive(
                           contentPadding: EdgeInsets.zero,
                           title: Text(context.l10n.extraFieldsEditable),
                           subtitle: Text(context.l10n.extraFieldsEditableHelper),
@@ -416,7 +417,7 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
                     if (type != 'select' && type != 'bfecg_church') ...[
                       const SizedBox(height: AppDimensions.paddingS),
                       if (type == 'boolean')
-                        SwitchListTile(
+                        SwitchListTile.adaptive(
                           contentPadding: EdgeInsets.zero,
                           title: Text(context.l10n.extraFieldsDefaultValue),
                           value: boolDefault,
@@ -499,7 +500,7 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
           actions: [
             IconButton(
               icon: _saving
-                  ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
+                  ? const SizedBox(width: 20, height: 20, child: AppSpinner(strokeWidth: 2))
                   : const Icon(Icons.check),
               onPressed: _saving ? null : _save,
             ),

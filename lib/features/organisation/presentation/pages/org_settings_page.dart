@@ -15,6 +15,7 @@ import '../widgets/org_song_sync_section.dart'; // SETTINGS2
 import '../../../../l10n/l10n.dart';
 import '../widgets/org_link_dialogs.dart'; // UX_SETTINGS
 import '../../../../core/utils/error_message.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Organisation settings (Ionic `OrgSettingsPage`, route `/settings/org-settings`).
 class OrgSettingsPage extends ConsumerWidget {
@@ -65,7 +66,7 @@ class OrgSettingsPage extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.orgTitle)),
       body: orgAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => const Center(child: AppSpinner()),
         error: (e, _) => Center(child: Text(context.l10n.planningFlutterErrorWith(friendlyErrorMessage(e)))),
         data: (org) {
           if (org == null) {

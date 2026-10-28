@@ -226,7 +226,7 @@ class _GeneralInfoAccordionState extends State<GeneralInfoAccordion> {
 
           // Anmeldefrist setzen + Fristdatum
           if (widget.hasNeutralStatuses || hasDeadline) ...[
-            SwitchListTile(
+            SwitchListTile.adaptive(
               title: Text(context.l10n.attendanceSetDeadline),
               subtitle: Text(
                 context.l10n.attendanceDeadlineHelper,

@@ -28,6 +28,7 @@ import '../../../duty/presentation/widgets/duty_actions.dart';
 import '../../../duty/presentation/widgets/my_duty_requests_section.dart';
 import '../../../../shared/widgets/tenant/tenant_switcher_title.dart'; // SETTINGS2
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 
 /// Attendance list page
@@ -56,9 +57,9 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
   // "Abbrechen" / "Fortfahren".
   Future<void> _confirmDelete(BuildContext context, Attendance attendance) async {
     HapticHelper.medium();
-    final confirmed = await showDialog<bool>(
+    final confirmed = await showAppDialog<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
+      builder: (ctx) => AppAlertDialog(
         title: Text(context.l10n.attListRemoveConfirm),
         actions: [
           TextButton(
@@ -528,9 +529,9 @@ void _showCalendarView(BuildContext context, WidgetRef ref) {
 
 /// Show dialog to select an attendance when multiple exist on the same date
 void _showAttendanceSelectionDialog(BuildContext context, List<Attendance> attendances) {
-  showDialog(
+  showAppDialog(
     context: context,
-    builder: (ctx) => AlertDialog(
+    builder: (ctx) => AppAlertDialog(
       title: Text(context.l10n.attendanceFlutterAttendancesCount(attendances.length)),
       content: SizedBox(
         width: double.maxFinite,

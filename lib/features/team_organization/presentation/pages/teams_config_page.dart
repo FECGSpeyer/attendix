@@ -7,6 +7,7 @@ import '../../../../core/services/teams/teams_service.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// TEAMS: configuration page of the Attendix channel tab (Ionic
 /// `teams-config`). Teams loads it in a dialog when someone adds Attendix to
@@ -87,7 +88,7 @@ class _TeamsConfigPageState extends ConsumerState<TeamsConfigPage> {
     return Scaffold(
       body: tenantsAsync.when(
         loading: () =>
-            const _Centered(child: CircularProgressIndicator()),
+            const _Centered(child: AppSpinner()),
         error: (_, __) => _buildContent(context, const []),
         data: (tenants) => _buildContent(context, tenants),
       ),

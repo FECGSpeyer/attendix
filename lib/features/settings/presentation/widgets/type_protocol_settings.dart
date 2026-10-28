@@ -110,7 +110,7 @@ class _TypeProtocolSettingsTilesState extends State<TypeProtocolSettingsTiles> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        SwitchListTile(
+        SwitchListTile.adaptive(
           title: Text(context.l10n.typeSettingsProtocolAgenda),
           subtitle: Text(context.l10n.typeSettingsProtocolHelper),
           value: s.enableProtocol,
@@ -145,7 +145,7 @@ class _TypeProtocolSettingsTilesState extends State<TypeProtocolSettingsTiles> {
               ),
             ],
           ),
-          SwitchListTile(
+          SwitchListTile.adaptive(
             title: Text(context.l10n.typeSettingsSuggestPostponed),
             subtitle: Text(context.l10n.typeSettingsPostponedHelper),
             value: s.suggestPostponed,

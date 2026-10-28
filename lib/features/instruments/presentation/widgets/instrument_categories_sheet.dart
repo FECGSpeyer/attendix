@@ -9,6 +9,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/instrument/instrument.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Bottom sheet for managing instrument categories (CRUD)
 class InstrumentCategoriesSheet extends ConsumerStatefulWidget {
@@ -139,7 +140,7 @@ class _InstrumentCategoriesSheetState
               Expanded(
                 child: categoriesAsync.when(
                   loading: () =>
-                      const Center(child: CircularProgressIndicator()),
+                      const Center(child: AppSpinner()),
                   error: (error, _) => Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -259,9 +260,9 @@ class _InstrumentCategoriesSheetState
   Future<void> _showAddCategoryDialog(BuildContext context) async {
     final controller = TextEditingController();
 
-    final result = await showDialog<String>(
+    final result = await showAppDialog<String>(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (context) => AppAlertDialog(
         title: Text(context.l10n.instrumentsNewCategory),
         content: TextField(
           controller: controller,
@@ -298,9 +299,9 @@ class _InstrumentCategoriesSheetState
       BuildContext context, GroupCategory category) async {
     final controller = TextEditingController(text: category.name);
 
-    final result = await showDialog<String>(
+    final result = await showAppDialog<String>(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (context) => AppAlertDialog(
         title: Text(context.l10n.instrumentsEditCategory),
         content: TextField(
           controller: controller,
@@ -337,9 +338,9 @@ class _InstrumentCategoriesSheetState
 
   Future<void> _showDeleteConfirmation(
       BuildContext context, GroupCategory category) async {
-    final confirmed = await showDialog<bool>(
+    final confirmed = await showAppDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (context) => AppAlertDialog(
         title: Text(context.l10n.commonConfirm),
         content: Text(context.l10n.instrumentsDeleteCategory),
         actions: [

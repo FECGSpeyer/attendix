@@ -9,6 +9,7 @@ import '../../../../data/models/person/person.dart';
 import '../../../../data/models/team_org/team_org.dart';
 import '../../../../l10n/l10n.dart';
 import '../../team_org_utils.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Opens "Neue Aufgabe" / "Aufgabe bearbeiten" as a sheet (leadership only).
 /// Resolves with the created/updated task, or null when closed without saving.
@@ -122,7 +123,7 @@ class _TaskFormSheetState extends ConsumerState<TaskFormSheet> {
   Future<void> _pickDate() async {
     final now = DateTime.now();
     final initial = DateTime.tryParse(_dueDate ?? '') ?? now;
-    final picked = await showDatePicker(
+    final picked = await showAppDatePicker(
       context: context,
       initialDate: initial,
       firstDate: DateTime(now.year - 2),
@@ -271,7 +272,7 @@ class _TaskFormSheetState extends ConsumerState<TaskFormSheet> {
                   onChanged: (v) => setState(() => _priority = v ?? 'medium'),
                 ),
                 if (_showNotifyToggle)
-                  SwitchListTile(
+                  SwitchListTile.adaptive(
                     contentPadding: EdgeInsets.zero,
                     value: _notify,
                     onChanged: (v) => setState(() => _notify = v),

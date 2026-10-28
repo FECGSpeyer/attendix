@@ -14,6 +14,7 @@ import '../../../../core/utils/tiptap_converter.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/message/message.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Opens the full-screen compose dialog. Returns the new message id when sent.
 Future<String?> openMessageCompose(BuildContext context) {
@@ -167,10 +168,10 @@ class _MessageComposePageState extends ConsumerState<MessageComposePage> {
     ].join(', ');
     final title = _titleController.text.trim();
 
-    final confirmed = await showDialog<bool>(
+    final confirmed = await showAppDialog<bool>(
       context: context,
       builder:
-          (ctx) => AlertDialog(
+          (ctx) => AppAlertDialog(
             title: Text(l10n.messagesSendConfirm),
             content: Text(
               l10n.messagesSendConfirmMessage(title, counts.recipients, channels),
@@ -393,7 +394,7 @@ class _MessageComposePageState extends ConsumerState<MessageComposePage> {
                 margin: EdgeInsets.zero,
                 child: Column(
                   children: [
-                    SwitchListTile(
+                    SwitchListTile.adaptive(
                       value: _push,
                       title: Text(l10n.messagesPushTelegram),
                       subtitle:
@@ -405,7 +406,7 @@ class _MessageComposePageState extends ConsumerState<MessageComposePage> {
                         _loadCounts();
                       },
                     ),
-                    SwitchListTile(
+                    SwitchListTile.adaptive(
                       value: _email,
                       title: Text(l10n.messagesEmail),
                       subtitle:
@@ -445,7 +446,7 @@ class _MessageComposePageState extends ConsumerState<MessageComposePage> {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const CircularProgressIndicator(),
+                      const AppSpinner(),
                       const SizedBox(width: AppDimensions.paddingM),
                       Text(l10n.messagesSendingNow),
                     ],
@@ -481,7 +482,7 @@ class _MessageComposePageState extends ConsumerState<MessageComposePage> {
         child: SizedBox(
           width: 24,
           height: 24,
-          child: CircularProgressIndicator(strokeWidth: 2),
+          child: AppSpinner(strokeWidth: 2),
         ),
       );
     }

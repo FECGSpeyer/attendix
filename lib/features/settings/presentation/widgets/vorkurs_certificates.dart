@@ -9,6 +9,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 import '../../../../core/services/native/native_file_service.dart'; // NATIVE_MISC
 
 /// Persons that receive a certificate: active (not left/paused/pending)
@@ -29,7 +30,7 @@ List<Person> filterCertificatePersons(List<Person> persons, Set<int> groupIds) {
 Future<void> generateVorkursCertificates(BuildContext context, WidgetRef ref) async {
   final groups = await ref.read(groupsProvider.future);
   if (!context.mounted) return;
-  final selected = await showDialog<Set<int>>(
+  final selected = await showAppDialog<Set<int>>(
     context: context,
     builder: (_) => _GroupSelectDialog(groups: groups),
   );
@@ -73,7 +74,7 @@ class _GroupSelectDialogState extends State<_GroupSelectDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
+    return AppAlertDialog(
       title: Text(context.l10n.settingsSelectGroups),
       content: SizedBox(
         width: double.maxFinite,

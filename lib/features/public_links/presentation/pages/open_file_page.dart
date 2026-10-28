@@ -6,6 +6,7 @@ import '../../../../core/config/supabase_config.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Shared Dateiablage link that was opened while signed out. The router
 /// resumes it after login (Ionic `FilesService.setPendingLink`).
@@ -115,7 +116,7 @@ class _OpenFilePageState extends ConsumerState<OpenFilePage> {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      body: Center(child: CircularProgressIndicator()),
+      body: Center(child: AppSpinner()),
     );
   }
 }

@@ -12,6 +12,7 @@ import '../../../../../core/utils/toast_helper.dart';
 import '../../../../../data/models/attendance/attendance.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../../core/utils/error_message.dart';
+import '../../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// "Beschreibung & Anhang" editor of a Termin (Ionic descriptionModal):
 /// rich text description (stored as HTML like the Ionic quill editor) and
@@ -220,7 +221,7 @@ class _DescriptionAttachmentEditorState extends ConsumerState<DescriptionAttachm
           children: [
             Expanded(child: Text(context.l10n.selfServiceAttachment, style: const TextStyle(fontWeight: FontWeight.w500))),
             if (_busy)
-              const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(strokeWidth: 2))
+              const SizedBox(width: 24, height: 24, child: AppSpinner(strokeWidth: 2))
             else if (_attachmentUrl == null)
               IconButton(
                 tooltip: context.l10n.attendanceFlutterAddAttachment,

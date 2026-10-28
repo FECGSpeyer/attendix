@@ -17,6 +17,7 @@ import '../../../../data/models/message/message.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../l10n/l10n.dart';
 import '../message_format.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 enum _Filter { all, read, open, problems }
 
@@ -130,7 +131,7 @@ class _MessageDetailPageState extends ConsumerState<MessageDetailPage> {
         ],
       ),
       body: messageAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => const Center(child: AppSpinner()),
         error: (e, _) => Center(child: Text(l10n.messagesLoadFailed)),
         data: (message) {
           if (message == null) {
@@ -152,7 +153,7 @@ class _MessageDetailPageState extends ConsumerState<MessageDetailPage> {
             );
           }
           if (_switchTenantIfNeeded(message)) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: AppSpinner());
           }
           _markReadOnce();
           final showContent = _showContent ?? !isManager;
@@ -255,7 +256,7 @@ class _MessageDetailPageState extends ConsumerState<MessageDetailPage> {
       const SizedBox(height: AppDimensions.paddingS),
       SingleChildScrollView(
         scrollDirection: Axis.horizontal,
-        child: SegmentedButton<_Filter>(
+        child: AppSegmentedButton<_Filter>(
           showSelectedIcon: false,
           segments: [
             ButtonSegment(value: _Filter.all, label: Text(l10n.messagesAllCount(stats.total))),
@@ -269,7 +270,7 @@ class _MessageDetailPageState extends ConsumerState<MessageDetailPage> {
       ),
       const SizedBox(height: AppDimensions.paddingM),
       if (recipientsAsync.isLoading && rows.isEmpty)
-        const Center(child: CircularProgressIndicator())
+        const Center(child: AppSpinner())
       else if (filtered.isEmpty)
         hint(l10n.messagesNoPeopleView)
       else

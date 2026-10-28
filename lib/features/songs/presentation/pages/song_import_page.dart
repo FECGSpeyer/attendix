@@ -12,6 +12,7 @@ import '../../../people/presentation/widgets/import_widgets.dart';
 import '../../../../core/providers/demo_providers.dart'; // DEMO_GUARD
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 enum _Step { file, mapping, preview }
 
@@ -229,7 +230,7 @@ class _SongImportPageState extends ConsumerState<SongImportPage> {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const CircularProgressIndicator(),
+                          const AppSpinner(),
                           if (_progress.isNotEmpty) ...[
                             const SizedBox(height: AppDimensions.paddingM),
                             Text(_progress),

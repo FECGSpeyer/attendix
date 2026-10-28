@@ -11,6 +11,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/repositories/base_repository.dart';
 import '../../../../l10n/l10n.dart';
 import '../widgets/strong_html_text.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Characters for the verification code — avoids visually ambiguous chars
 /// (0/O, 1/I/L), identical to Ionic.
@@ -58,9 +59,9 @@ class _DeleteAccountPageState extends ConsumerState<DeleteAccountPage> {
   Future<void> _deleteAccount() async {
     if (!_canDelete) return;
 
-    final confirmed = await showDialog<bool>(
+    final confirmed = await showAppDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (context) => AppAlertDialog(
         title: Text(context.l10n.deleteAccountConfirm),
         content: Text(context.l10n.deleteAccountConfirmMessage),
         actions: [
@@ -200,7 +201,7 @@ class _DeleteAccountPageState extends ConsumerState<DeleteAccountPage> {
                 ? const SizedBox(
                     width: 18,
                     height: 18,
-                    child: CircularProgressIndicator(
+                    child: AppSpinner(
                         strokeWidth: 2, color: Colors.white),
                   )
                 : const Icon(Icons.delete_outline),

@@ -6,12 +6,12 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/services/audio_player/audio_player_service.dart';
 import '../../../../core/services/native/native_file_service.dart'; // NATIVE_MISC
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/song/song.dart';
 import '../../../songs/data/song_print_service.dart';
 import 'upcoming_songs_sheet.dart' show hasSongNotesForPlayer;
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Opens the external notes link of a song (Ionic openSongLink).
 Future<void> openSongLink(BuildContext context, String link) async {
@@ -36,38 +36,15 @@ Future<_SheetAction?> _showActionSheet(
   String? header,
   required List<_SheetAction> actions,
 }) {
-  return showModalBottomSheet<_SheetAction>(
-    context: context,
-    builder: (ctx) => SafeArea(
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            if (header != null) ...[
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-                child: Text(
-                  header,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(color: AppColors.medium, fontWeight: FontWeight.w600),
-                ),
-              ),
-              const Divider(height: 1),
-            ],
-            for (final action in actions)
-              ListTile(
-                title: Text(action.label),
-                onTap: () => Navigator.pop(ctx, action),
-              ),
-            ListTile(
-              title: Text(ctx.l10n.commonCancel, style: const TextStyle(color: AppColors.danger)),
-              onTap: () => Navigator.pop(ctx),
-            ),
-          ],
-        ),
-      ),
-    ),
+  // IOS_LOOK: adaptive ion-action-sheet
+  return showAppActionSheet<_SheetAction>(
+    context,
+    title: header,
+    cancelDestructive: true,
+    actions: [
+      for (final action in actions)
+        AppActionSheetAction(value: action, label: action.label),
+    ],
   );
 }
 

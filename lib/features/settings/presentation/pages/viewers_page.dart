@@ -12,6 +12,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/viewer/viewer.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Viewers Page - manage external observers
 class ViewersPage extends ConsumerWidget {
@@ -34,7 +35,7 @@ class ViewersPage extends ConsumerWidget {
         child: const Icon(Icons.add),
       ),
       body: viewersAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => const Center(child: AppSpinner()),
         error: (e, _) => Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -88,9 +89,9 @@ class ViewersPage extends ConsumerWidget {
     final lastNameController = TextEditingController();
     final formKey = GlobalKey<FormState>();
 
-    final result = await showDialog<bool>(
+    final result = await showAppDialog<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
+      builder: (ctx) => AppAlertDialog(
         title: Text(context.l10n.settingsAddViewer),
         content: Form(
           key: formKey,
@@ -184,9 +185,9 @@ class ViewersPage extends ConsumerWidget {
   }
 
   Future<void> _deleteViewer(BuildContext context, WidgetRef ref, Viewer viewer) async {
-    final confirmed = await showDialog<bool>(
+    final confirmed = await showAppDialog<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
+      builder: (ctx) => AppAlertDialog(
         title: Text(context.l10n.settingsRemoveViewer),
         content: Text(context.l10n.settingsRemoveMessage(viewer.firstName)),
         actions: [

@@ -8,6 +8,7 @@ import '../../../../core/utils/quill_utils.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/common/error_state_view.dart';
 import '../../../../shared/widgets/dialogs/ion_modal.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Renders the legal HTML (Impressum & Datenschutz) loaded from
 /// `legal_content`. Port of Ionic `LegalContentComponent`.
@@ -30,7 +31,7 @@ class LegalContentView extends ConsumerWidget {
     final contentAsync = ref.watch(legalContentProvider);
     return contentAsync.when(
       skipLoadingOnRefresh: false,
-      loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () => const Center(child: AppSpinner()),
       error: (error, _) => ErrorStateView(
         error: error,
         title: context.l10n.legalLoadFailed,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Editable list of absence / late reasons (Ionic general settings
 /// "Abwesenheits- & Verspätungsgründe").
@@ -21,9 +22,9 @@ class ReasonsListEditor extends StatelessWidget {
 
   Future<void> _add(BuildContext context) async {
     final controller = TextEditingController();
-    final value = await showDialog<String>(
+    final value = await showAppDialog<String>(
       context: context,
-      builder: (ctx) => AlertDialog(
+      builder: (ctx) => AppAlertDialog(
         title: Text(ctx.l10n.generalSettingsAddReason),
         content: TextField(
           controller: controller,

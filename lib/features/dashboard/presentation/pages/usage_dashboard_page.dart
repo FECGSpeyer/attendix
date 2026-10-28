@@ -8,6 +8,7 @@ import '../../../../core/providers/dashboard_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/dashboard/dashboard_models.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 const _palette = [
   Color(0xFF2DD36F), Color(0xFF3880FF), Color(0xFFFFC409), Color(0xFFEB445A),
@@ -57,7 +58,7 @@ class UsageDashboardPage extends ConsumerWidget {
           preferredSize: const Size.fromHeight(52),
           child: Padding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-            child: SegmentedButton<int>(
+            child: AppSegmentedButton<int>(
               segments: [
                 ButtonSegment(value: 7, label: Text(context.l10n.usageDays7)),
                 ButtonSegment(value: 30, label: Text(context.l10n.usageDays30)),
@@ -71,7 +72,7 @@ class UsageDashboardPage extends ConsumerWidget {
         ),
       ),
       body: async.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => const Center(child: AppSpinner()),
         error: (e, _) => _empty(context),
         data: (data) {
           if (data.kpis.totalEvents <= 0) return _empty(context);

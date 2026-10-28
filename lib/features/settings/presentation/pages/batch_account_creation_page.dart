@@ -10,6 +10,7 @@ import '../../../../data/models/person/person.dart';
 import '../../../../core/providers/user_registration_providers.dart'; // AUTH
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Page for batch creating accounts for players without accounts
 class BatchAccountCreationPage extends ConsumerStatefulWidget {
@@ -38,7 +39,7 @@ class _BatchAccountCreationPageState
         title: Text(context.l10n.settingsFlutterBatchTitle),
       ),
       body: playersAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => const Center(child: AppSpinner()),
         error: (e, _) => Center(child: Text(context.l10n.settingsFlutterErrorDetail(friendlyErrorMessage(e)))),
         data: (players) {
           // Ionic getPlayersWithoutAccount: not pending, not left, e-mail, no appId

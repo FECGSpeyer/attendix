@@ -18,6 +18,7 @@ import '../../../../data/models/person/person.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Statistics Page with Charts
 ///
@@ -87,7 +88,7 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> {
                 loading: () => const [
                   Padding(
                     padding: EdgeInsets.all(AppDimensions.paddingXL),
-                    child: Center(child: CircularProgressIndicator()),
+                    child: Center(child: AppSpinner()),
                   ),
                 ],
                 error: (error, stack) => [Center(child: Text(context.l10n.attendanceFlutterErrorWith(friendlyErrorMessage(error))))],
@@ -195,7 +196,7 @@ class _PeriodSection extends StatelessWidget {
     final lower = DateTime(2000).isAfter(dateRange.start)
         ? dateRange.start
         : DateTime(2000);
-    final picked = await showDatePicker(
+    final picked = await showAppDatePicker(
       context: context,
       initialDate: initial,
       firstDate: start ? lower : dateRange.start,
@@ -1212,7 +1213,7 @@ class _OrganisationStatsSectionState
         ref.watch(organisationTenantsProvider(organisation.id!));
 
     return tenantsAsync.when(
-      loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () => const Center(child: AppSpinner()),
       error: (_, __) => const SizedBox.shrink(),
       data: (tenants) {
         // Initialize filter with all tenants selected
@@ -1275,7 +1276,7 @@ class _OrganisationStatsSectionState
 
             // Persons count + modal
             personsAsync.when(
-              loading: () => const Center(child: CircularProgressIndicator()),
+              loading: () => const Center(child: AppSpinner()),
               error: (e, _) => Text(context.l10n.attendanceFlutterErrorWith(friendlyErrorMessage(e))),
               data: (persons) {
                 final uniquePersons =

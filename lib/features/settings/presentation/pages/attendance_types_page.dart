@@ -11,6 +11,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/attendance/attendance.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Attendance Types List Page
 ///
@@ -55,7 +56,7 @@ class _AttendanceTypesPageState extends ConsumerState<AttendanceTypesPage> {
         ],
       ),
       body: typesAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => const Center(child: AppSpinner()),
         error: (error, stack) => Center(child: Text(context.l10n.settingsFlutterErrorDetail(friendlyErrorMessage(error)))),
         data: (types) {
           final displayTypes = _isReordering ? _localTypes : types;
@@ -193,9 +194,9 @@ class _AttendanceTypesPageState extends ConsumerState<AttendanceTypesPage> {
   Future<void> _showCreateDialog(BuildContext context) async {
     final nameController = TextEditingController();
 
-    final result = await showDialog<String>(
+    final result = await showAppDialog<String>(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (context) => AppAlertDialog(
         title: Text(context.l10n.typeSettingsFlutterNewType),
         content: TextField(
           controller: nameController,

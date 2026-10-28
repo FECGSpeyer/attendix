@@ -16,6 +16,7 @@ import '../../../../data/repositories/player_repository.dart';
 import 'handover_page.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Ionic handover-detail auto mapping: same name, or one name contains the
 /// other (e.g. "Trompete" vs. "Bb Trompete", "Flöte" vs. "Querflöte").
@@ -86,9 +87,9 @@ class _HandoverDetailPageState extends ConsumerState<HandoverDetailPage> {
 
   Future<void> _changeGroup(Person person) async {
     final current = _groupMapping[person.id];
-    final picked = await showDialog<int>(
+    final picked = await showAppDialog<int>(
       context: context,
-      builder: (context) => SimpleDialog(
+      builder: (context) => AppSimpleDialog(
         title: Text(context.l10n.handoverSelectGroup),
         children: [
           for (final g in _targetGroups)
@@ -186,13 +187,13 @@ class _HandoverDetailPageState extends ConsumerState<HandoverDetailPage> {
                   ? const SizedBox(
                       width: 20,
                       height: 20,
-                      child: CircularProgressIndicator(
+                      child: AppSpinner(
                           strokeWidth: 2, color: Colors.white),
                     )
                   : const Icon(Icons.directions_walk),
             ),
       body: data == null || _loading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(child: AppSpinner())
           : ListView(
               padding: const EdgeInsets.fromLTRB(
                 AppDimensions.paddingM,

@@ -96,14 +96,14 @@ class SongFilterSheet extends ConsumerWidget {
               onChanged: notifier.setDifficulty,
             ),
             const SizedBox(height: AppDimensions.paddingS),
-            SwitchListTile(
+            SwitchListTile.adaptive(
               contentPadding: EdgeInsets.zero,
               secondary: const Icon(Icons.people),
               title: Text(l10n.songsChoirOrchestra),
               value: filter.withChoir,
               onChanged: notifier.setWithChoir,
             ),
-            SwitchListTile(
+            SwitchListTile.adaptive(
               contentPadding: EdgeInsets.zero,
               secondary: const Icon(Icons.person),
               title: Text(l10n.songsSolo),

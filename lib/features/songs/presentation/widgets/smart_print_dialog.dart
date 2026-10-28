@@ -7,6 +7,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Dialog for smart printing with instrument-based copy selection
 class SmartPrintDialog extends ConsumerStatefulWidget {
@@ -113,7 +114,7 @@ class _SmartPrintDialogState extends ConsumerState<SmartPrintDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
+    return AppAlertDialog(
       title: Row(
         children: [
           const Icon(Icons.print, color: AppColors.primary),
@@ -141,7 +142,7 @@ class _SmartPrintDialogState extends ConsumerState<SmartPrintDialog> {
               ? const SizedBox(
                   width: 16,
                   height: 16,
-                  child: CircularProgressIndicator(strokeWidth: 2),
+                  child: AppSpinner(strokeWidth: 2),
                 )
               : const Icon(Icons.print),
           label: Text(_isPrinting ? context.l10n.songsFlutterPrinting : '${context.l10n.songsPrint} ($_totalCopies)'),
@@ -154,7 +155,7 @@ class _SmartPrintDialogState extends ConsumerState<SmartPrintDialog> {
     if (_isLoading) {
       return const Padding(
         padding: EdgeInsets.all(AppDimensions.paddingL),
-        child: Center(child: CircularProgressIndicator()),
+        child: Center(child: AppSpinner()),
       );
     }
 
@@ -346,7 +347,7 @@ Future<void> showSmartPrintDialog(
   required String fileName,
   int? instrumentId,
 }) {
-  return showDialog(
+  return showAppDialog(
     context: context,
     builder: (context) => SmartPrintDialog(
       url: url,

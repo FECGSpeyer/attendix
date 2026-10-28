@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Values entered in a plan field dialog.
 class PlanFieldInput {
@@ -37,7 +38,7 @@ Future<PlanFieldInput?> showPlanFieldDialog(
   bool requireName = true,
   VoidCallback? onDelete,
 }) {
-  return showDialog<PlanFieldInput>(
+  return showAppDialog<PlanFieldInput>(
     context: context,
     builder: (ctx) => _PlanFieldDialog(
       title: title,
@@ -145,7 +146,7 @@ class _PlanFieldDialogState extends State<_PlanFieldDialog> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    return AlertDialog(
+    return AppAlertDialog(
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -241,9 +242,9 @@ Future<String?> showPlanTextPrompt(
   bool allowEmpty = false,
 }) {
   final controller = TextEditingController(text: initialValue ?? '');
-  return showDialog<String>(
+  return showAppDialog<String>(
     context: context,
-    builder: (ctx) => AlertDialog(
+    builder: (ctx) => AppAlertDialog(
       title: Text(title),
       content: Column(
         mainAxisSize: MainAxisSize.min,
@@ -281,9 +282,9 @@ Future<bool> showPlanConfirm(
   String? confirmText,
   bool destructive = false,
 }) async {
-  final result = await showDialog<bool>(
+  final result = await showAppDialog<bool>(
     context: context,
-    builder: (ctx) => AlertDialog(
+    builder: (ctx) => AppAlertDialog(
       title: Text(title),
       content: Text(message),
       actions: [
@@ -315,38 +316,19 @@ Future<T?> showPlanActionSheet<T>(
   String? subtitle,
   required List<PlanSheetAction<T>> actions,
 }) {
-  return showModalBottomSheet<T>(
-    context: context,
-    isScrollControlled: true,
-    builder: (ctx) => SafeArea(
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            if (title != null)
-              ListTile(
-                title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-                subtitle: subtitle != null ? Text(subtitle) : null,
-              ),
-            for (final a in actions)
-              ListTile(
-                leading: a.icon != null
-                    ? Icon(a.icon, color: a.destructive ? Theme.of(ctx).colorScheme.error : null)
-                    : null,
-                title: Text(
-                  a.label,
-                  style: a.destructive ? TextStyle(color: Theme.of(ctx).colorScheme.error) : null,
-                ),
-                onTap: () => Navigator.pop(ctx, a.value),
-              ),
-            ListTile(
-              title: Text(ctx.l10n.commonCancel, textAlign: TextAlign.center),
-              onTap: () => Navigator.pop(ctx),
-            ),
-          ],
+  // IOS_LOOK: adaptive ion-action-sheet
+  return showAppActionSheet<T>(
+    context,
+    title: title,
+    message: title != null ? subtitle : null,
+    actions: [
+      for (final a in actions)
+        AppActionSheetAction(
+          value: a.value,
+          icon: a.icon,
+          label: a.label,
+          destructive: a.destructive,
         ),
-      ),
-    ),
+    ],
   );
 }
