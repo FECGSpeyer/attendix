@@ -13,6 +13,8 @@ import '../../../../data/models/organisation/organisation.dart';
 import '../../../planning/presentation/widgets/plan_field_dialogs.dart';
 import '../widgets/org_song_sync_section.dart'; // SETTINGS2
 import '../../../../l10n/l10n.dart';
+import '../../../settings/presentation/widgets/ion_condense.dart'; // UX_SETTINGS (WAVE 8)
+import '../../../settings/presentation/widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
 import '../widgets/org_link_dialogs.dart'; // UX_SETTINGS
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
@@ -63,8 +65,10 @@ class OrgSettingsPage extends ConsumerWidget {
     final linked = ref.watch(linkedTenantsProvider).valueOrNull ?? const [];
     final others = linked.where((t) => t.id != tenant?.id).toList();
 
-    return Scaffold(
-      appBar: AppBar(title: Text(context.l10n.orgTitle)),
+    // UX_SETTINGS (WAVE 8): org-settings.page.html — condense title, inset
+    // lists with list headers and start icons on the light page.
+    return IonCondense(builder: (context, collapsed) => Scaffold(
+      appBar: AppBar(title: IonCondenseTitle(context.l10n.orgTitle, collapsed: collapsed)),
       body: orgAsync.when(
         loading: () => const Center(child: AppSpinner()),
         error: (e, _) => Center(child: Text(context.l10n.planningFlutterErrorWith(friendlyErrorMessage(e)))),
@@ -72,6 +76,8 @@ class OrgSettingsPage extends ConsumerWidget {
           if (org == null) {
             return ListView(
               children: [
+                IonLargeTitle(context.l10n.orgTitle),
+                if (ionIsIos(context)) const SizedBox(height: 16),
                 _Section(children: [
                   ListTile(
                     title: Text(context.l10n.orgNoneLinked),
@@ -93,12 +99,14 @@ class OrgSettingsPage extends ConsumerWidget {
           return ListView(
             padding: const EdgeInsets.only(bottom: 24),
             children: [
+              IonLargeTitle(context.l10n.orgTitle),
+              if (ionIsIos(context)) const SizedBox(height: 16),
               _Section(title: context.l10n.orgTitle, children: [
                 ListTile(
                   leading: const Icon(Icons.business_outlined),
                   title: Text(org.name),
                   subtitle: isSuperAdmin ? Text(context.l10n.orgTapRename) : null,
-                  trailing: isSuperAdmin ? const Icon(Icons.chevron_right) : null,
+                  trailing: isSuperAdmin ? const _Chevron() : null,
                   onTap: isSuperAdmin ? () => _rename(context, ref, org) : null,
                 ),
                 if (isSuperAdmin)
@@ -113,19 +121,19 @@ class OrgSettingsPage extends ConsumerWidget {
                 ListTile(
                   leading: const Icon(Icons.palette_outlined),
                   title: Text(context.l10n.generalSettingsBranding),
-                  trailing: const Icon(Icons.chevron_right),
+                  trailing: const _Chevron(),
                   onTap: () => context.push('/settings/general/branding'),
                 ),
                 ListTile(
                   leading: const Icon(Icons.description_outlined),
                   title: Text(context.l10n.orgTemplatesTitle),
-                  trailing: const Icon(Icons.chevron_right),
+                  trailing: const _Chevron(),
                   onTap: () => context.push('/settings/org-settings/planning-templates'),
                 ),
                 ListTile(
                   leading: const Icon(Icons.calendar_month_outlined),
                   title: Text(context.l10n.orgOrgPlans),
-                  trailing: const Icon(Icons.chevron_right),
+                  trailing: const _Chevron(),
                   onTap: () => context.push('/settings/org-plans'),
                 ),
               ]),
@@ -136,14 +144,14 @@ class OrgSettingsPage extends ConsumerWidget {
                     leading: const Icon(Icons.merge_type),
                     title: Text(context.l10n.linkPersonsTitle),
                     subtitle: Text(context.l10n.orgLinkPersonsHint),
-                    trailing: const Icon(Icons.chevron_right),
+                    trailing: const _Chevron(),
                     onTap: () => context.push('/settings/general/link-persons'),
                   ),
                   ListTile(
                     leading: const Icon(Icons.list_alt),
                     title: Text(context.l10n.orgPersonFields),
                     subtitle: Text(context.l10n.orgPersonFieldsHint),
-                    trailing: const Icon(Icons.chevron_right),
+                    trailing: const _Chevron(),
                     onTap: () => context.push('/settings/org-settings/person-fields'),
                   ),
                 ]),
@@ -153,7 +161,7 @@ class OrgSettingsPage extends ConsumerWidget {
                   ListTile(
                     leading: const Icon(Icons.swap_horiz),
                     title: Text(context.l10n.handoverTitle),
-                    trailing: const Icon(Icons.chevron_right),
+                    trailing: const _Chevron(),
                     onTap: () => context.push('/settings/handover'),
                   ),
                 ]),
@@ -178,8 +186,17 @@ class OrgSettingsPage extends ConsumerWidget {
           );
         },
       ),
-    );
+    ));
   }
+}
+
+/// Ionic detail chevron (iOS) / Material chevron.
+class _Chevron extends StatelessWidget {
+  const _Chevron();
+
+  @override
+  Widget build(BuildContext context) =>
+      ionIsIos(context) ? const IonDetailChevron() : const Icon(Icons.chevron_right);
 }
 
 class _Section extends StatelessWidget {
@@ -189,6 +206,12 @@ class _Section extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (ionIsIos(context)) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: SettingsListSection(title: title, children: children),
+      );
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

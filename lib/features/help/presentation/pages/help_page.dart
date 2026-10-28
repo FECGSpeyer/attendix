@@ -3,10 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_constants.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../data/help_content_service.dart';
 import '../../data/help_models.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../settings/presentation/widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
 
 /// Help center overview: search, glossary entry and topic accordions.
 ///
@@ -37,37 +37,23 @@ class _HelpPageState extends ConsumerState<HelpPage> {
     final service = ref.watch(helpContentServiceProvider);
     final term = _searchTerm.trim();
     final results = term.isEmpty ? null : service.search(term);
+    final ios = ionIsIos(context);
 
+    // UX_SETTINGS (WAVE 8): help.page.html — arrow-back, searchbar toolbar,
+    // inset lists ("Nachschlagen" + topic accordions) on the light page.
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.of(context).maybePop(),
+        ),
         title: Text(context.l10n.helpTitle),
         bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(64),
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(
-              AppDimensions.paddingM,
-              0,
-              AppDimensions.paddingM,
-              AppDimensions.paddingS,
-            ),
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                hintText: context.l10n.helpSearchPlaceholder,
-                prefixIcon: const Icon(Icons.search),
-                isDense: true,
-                suffixIcon: _searchTerm.isEmpty
-                    ? null
-                    : IconButton(
-                        icon: const Icon(Icons.clear),
-                        onPressed: () {
-                          _searchController.clear();
-                          setState(() => _searchTerm = '');
-                        },
-                      ),
-              ),
-              onChanged: (v) => setState(() => _searchTerm = v),
-            ),
+          preferredSize: Size.fromHeight(ios ? 60 : 64),
+          child: IonSearchbar(
+            controller: _searchController,
+            hint: context.l10n.helpSearchPlaceholder,
+            onChanged: (v) => setState(() => _searchTerm = v),
           ),
         ),
       ),
@@ -81,30 +67,25 @@ class _HelpPageState extends ConsumerState<HelpPage> {
     return ListView(
       padding: const EdgeInsets.all(AppDimensions.paddingM),
       children: [
-        Card(
-          margin: EdgeInsets.zero,
-          child: Column(
-            children: [
-              if (results.isEmpty)
-                ListTile(title: Text(context.l10n.helpNoHits(term))),
-              for (final article in results.articles)
-                ListTile(
-                  leading: const Icon(Icons.description_outlined),
-                  title: Text(article.title),
-                  subtitle: Text(context.l10n.helpArticles),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () => _openArticle(article.id),
-                ),
-              for (final g in results.glossaryTerms)
-                ListTile(
-                  leading: const Icon(Icons.menu_book_outlined),
-                  title: Text(g.term),
-                  subtitle: Text(context.l10n.helpGlossary),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: _openGlossary,
-                ),
-            ],
-          ),
+        SettingsListSection(
+          children: [
+            if (results.isEmpty)
+              ListTile(title: Text(context.l10n.helpNoHits(term))),
+            for (final article in results.articles)
+              SettingsListTile(
+                icon: Icons.description_outlined,
+                title: article.title,
+                subtitle: context.l10n.helpArticles,
+                onTap: () => _openArticle(article.id),
+              ),
+            for (final g in results.glossaryTerms)
+              SettingsListTile(
+                icon: Icons.menu_book_outlined,
+                title: g.term,
+                subtitle: context.l10n.helpGlossary,
+                onTap: _openGlossary,
+              ),
+          ],
         ),
       ],
     );
@@ -112,65 +93,60 @@ class _HelpPageState extends ConsumerState<HelpPage> {
 
   Widget _buildOverview(HelpContentService service) {
     final categories = service.getCategories();
-    final headerStyle = Theme.of(context).textTheme.titleSmall?.copyWith(
-          color: AppColors.medium,
-          fontWeight: FontWeight.w600,
-        );
+    final ios = ionIsIos(context);
 
     return ListView(
       padding: const EdgeInsets.all(AppDimensions.paddingM),
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppDimensions.paddingS,
-            vertical: AppDimensions.paddingXS,
-          ),
-          child: Text(context.l10n.helpLookup, style: headerStyle),
+        SettingsListSection(
+          title: context.l10n.helpLookup,
+          children: [
+            SettingsListTile(
+              icon: Icons.menu_book_outlined,
+              title: context.l10n.helpGlossary,
+              onTap: _openGlossary,
+            ),
+          ],
         ),
-        Card(
-          margin: EdgeInsets.zero,
-          child: ListTile(
-            leading: const Icon(Icons.menu_book_outlined),
-            title: Text(context.l10n.helpGlossary),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: _openGlossary,
-          ),
-        ),
-        const SizedBox(height: AppDimensions.paddingM),
-        Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppDimensions.paddingS,
-            vertical: AppDimensions.paddingXS,
-          ),
-          child: Text(context.l10n.helpTopics, style: headerStyle),
-        ),
-        Card(
-          margin: EdgeInsets.zero,
-          clipBehavior: Clip.antiAlias,
-          child: Column(
-            children: [
-              for (final category in categories)
-                ExpansionTile(
-                  leading: Icon(helpCategoryIcon(category.icon)),
-                  title: Text(category.label),
-                  shape: const Border(),
-                  collapsedShape: const Border(),
-                  children: [
-                    for (final article
-                        in service.getArticlesByCategory(category.id))
-                      ListTile(
-                        contentPadding: const EdgeInsets.only(
-                          left: 72,
-                          right: AppDimensions.paddingM,
-                        ),
-                        title: Text(article.title),
-                        trailing: const Icon(Icons.chevron_right),
-                        onTap: () => _openArticle(article.id),
-                      ),
-                  ],
-                ),
-            ],
-          ),
+        // ion-accordion-group: header item with start icon, the articles as
+        // plain detail items below it.
+        SettingsListSection(
+          title: context.l10n.helpTopics,
+          children: [
+            for (final category in categories)
+              ExpansionTile(
+                leading: Icon(helpCategoryIcon(category.icon)),
+                title: Text(category.label),
+                shape: const Border(),
+                collapsedShape: const Border(),
+                tilePadding: ios
+                    ? const EdgeInsets.only(
+                        left: IonIos.itemPaddingStart,
+                        right: IonIos.itemPaddingEnd,
+                      )
+                    : null,
+                iconColor: ios ? IonIos.text(context).withValues(alpha: 0.5) : null,
+                collapsedIconColor:
+                    ios ? IonIos.text(context).withValues(alpha: 0.5) : null,
+                children: [
+                  for (final article
+                      in service.getArticlesByCategory(category.id))
+                    ListTile(
+                      contentPadding: ios
+                          ? null
+                          : const EdgeInsets.only(
+                              left: 72,
+                              right: AppDimensions.paddingM,
+                            ),
+                      title: Text(article.title),
+                      trailing: ios
+                          ? const IonDetailChevron()
+                          : const Icon(Icons.chevron_right),
+                      onTap: () => _openArticle(article.id),
+                    ),
+                ],
+              ),
+          ],
         ),
       ],
     );

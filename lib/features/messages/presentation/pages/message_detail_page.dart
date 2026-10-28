@@ -16,6 +16,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/message/message.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../settings/presentation/widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
 import '../message_format.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
@@ -184,17 +185,31 @@ class _MessageDetailPageState extends ConsumerState<MessageDetailPage> {
       if (message.senderName != null && message.senderName!.isNotEmpty) message.senderName!,
       showContent ? context.l10n.messagesFlutterHideMessage : context.l10n.messagesFlutterShowMessage,
     ].join(' · ');
+    // UX_SETTINGS (WAVE 8): Ionic inset list item (h2.title 600, p meta,
+    // chevron-up/down in medium at the end).
+    final tile = ListTile(
+      title: Text(
+        message.title,
+        style: ionIsIos(context)
+            ? const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)
+            : theme.textTheme.titleMedium,
+      ),
+      subtitle: Text(meta),
+      trailing: Icon(
+        showContent ? Icons.expand_less : Icons.expand_more,
+        color: AppColors.medium,
+      ),
+      onTap: () => setState(() => _showContent = !showContent),
+    );
+    if (ionIsIos(context)) {
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 16),
+        child: IonInsetGroup(children: [tile]),
+      );
+    }
     return Card(
       margin: const EdgeInsets.only(bottom: AppDimensions.paddingM),
-      child: ListTile(
-        title: Text(message.title, style: theme.textTheme.titleMedium),
-        subtitle: Text(meta),
-        trailing: Icon(
-          showContent ? Icons.expand_less : Icons.expand_more,
-          color: AppColors.medium,
-        ),
-        onTap: () => setState(() => _showContent = !showContent),
-      ),
+      child: tile,
     );
   }
 
@@ -213,44 +228,44 @@ class _MessageDetailPageState extends ConsumerState<MessageDetailPage> {
       _Filter.all => rows,
     };
 
+    // Ionic .hint: 0.78rem, line-height 1.4, medium, margin 8/20.
     Widget hint(String text) => Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppDimensions.paddingS,
-        vertical: AppDimensions.paddingS,
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+      child: Text(
+        text,
+        style: const TextStyle(fontSize: 12.5, height: 1.4, color: AppColors.medium),
       ),
-      child: Text(text, style: theme.textTheme.bodySmall?.copyWith(color: AppColors.medium)),
     );
 
     return [
       if (message.isSending) hint(l10n.messagesStillSending),
-      Padding(
-        padding: const EdgeInsets.fromLTRB(
-          AppDimensions.paddingS,
-          AppDimensions.paddingM,
-          AppDimensions.paddingS,
-          AppDimensions.paddingS,
+      if (ionIsIos(context))
+        IonListHeader(title: l10n.messagesOverview)
+      else
+        Padding(
+          padding: const EdgeInsets.fromLTRB(
+            AppDimensions.paddingS,
+            AppDimensions.paddingM,
+            AppDimensions.paddingS,
+            AppDimensions.paddingS,
+          ),
+          child: Text(
+            l10n.messagesOverview,
+            style: theme.textTheme.titleSmall?.copyWith(color: AppColors.medium),
+          ),
         ),
-        child: Text(
-          l10n.messagesOverview,
-          style: theme.textTheme.titleSmall?.copyWith(color: AppColors.medium),
+      // Ionic .tiles: 2-column grid, gap 8, left-aligned value + label.
+      _TileRow(
+        left: _Tile(value: '${stats.read} / ${stats.total}', label: l10n.messagesReadInApp),
+        right: _Tile(
+          value: '${stats.pushDelivered} / ${stats.pushTotal}',
+          label: l10n.messagesPushDelivered,
         ),
       ),
-      GridView.count(
-        crossAxisCount: 2,
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        mainAxisSpacing: AppDimensions.paddingS,
-        crossAxisSpacing: AppDimensions.paddingS,
-        childAspectRatio: 2.2,
-        children: [
-          _Tile(value: '${stats.read} / ${stats.total}', label: l10n.messagesReadInApp),
-          _Tile(
-            value: '${stats.pushDelivered} / ${stats.pushTotal}',
-            label: l10n.messagesPushDelivered,
-          ),
-          _Tile(value: '${stats.emailDelivered} / ${stats.emailTotal}', label: l10n.messagesEmailDelivered),
-          _Tile(value: '≈ ${stats.emailOpened}', label: l10n.messagesEmailOpenedApprox),
-        ],
+      const SizedBox(height: 8),
+      _TileRow(
+        left: _Tile(value: '${stats.emailDelivered} / ${stats.emailTotal}', label: l10n.messagesEmailDelivered),
+        right: _Tile(value: '≈ ${stats.emailOpened}', label: l10n.messagesEmailOpenedApprox),
       ),
       hint(l10n.messagesOpenedEstimate),
       const SizedBox(height: AppDimensions.paddingS),
@@ -274,24 +289,43 @@ class _MessageDetailPageState extends ConsumerState<MessageDetailPage> {
       else if (filtered.isEmpty)
         hint(l10n.messagesNoPeopleView)
       else
-        Card(
-          margin: EdgeInsets.zero,
-          child: Column(
-            children: [
-              for (var i = 0; i < filtered.length; i++) ...[
-                if (i > 0) const Divider(height: 1),
-                _RecipientRow(
-                  recipient: filtered[i],
-                  groupName: filtered[i].groupId != null ? groups[filtered[i].groupId] : null,
-                ),
-              ],
-            ],
-          ),
+        SettingsListSection(
+          icons: false,
+          children: [
+            for (final r in filtered)
+              _RecipientRow(
+                recipient: r,
+                groupName: r.groupId != null ? groups[r.groupId] : null,
+              ),
+          ],
         ),
     ];
   }
 }
 
+class _TileRow extends StatelessWidget {
+  const _TileRow({required this.left, required this.right});
+
+  final Widget left;
+  final Widget right;
+
+  @override
+  Widget build(BuildContext context) {
+    return IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(child: left),
+          const SizedBox(width: 8),
+          Expanded(child: right),
+        ],
+      ),
+    );
+  }
+}
+
+/// Ionic `.tile`: item-background box, radius 10, padding 10/12, value
+/// 1.35rem tabular, 0.75rem medium label.
 class _Tile extends StatelessWidget {
   const _Tile({required this.value, required this.label});
 
@@ -300,24 +334,39 @@ class _Tile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Card(
-      margin: EdgeInsets.zero,
-      child: Padding(
-        padding: const EdgeInsets.all(AppDimensions.paddingS),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(value, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
-            Text(
-              label,
-              textAlign: TextAlign.center,
-              maxLines: 2,
-              style: theme.textTheme.bodySmall?.copyWith(color: AppColors.medium),
+    final ios = ionIsIos(context);
+    final content = Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            value,
+            style: const TextStyle(
+              fontSize: 21.6,
+              height: 1.15,
+              fontWeight: FontWeight.w700,
+              fontFeatures: [FontFeature.tabularFigures()],
             ),
-          ],
-        ),
+          ),
+          Text(
+            label,
+            maxLines: 2,
+            style: const TextStyle(fontSize: 12, color: AppColors.medium),
+          ),
+        ],
       ),
+    );
+    if (!ios) {
+      return Card(margin: EdgeInsets.zero, child: content);
+    }
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: IonIos.itemBackground(context),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: content,
     );
   }
 }
@@ -347,7 +396,9 @@ class _RecipientRow extends StatelessWidget {
     final theme = Theme.of(context);
     final chips = recipientChips(recipient);
     return Padding(
-      padding: const EdgeInsets.all(AppDimensions.paddingM),
+      padding: ionIsIos(context)
+          ? const EdgeInsets.fromLTRB(16, 10, 18, 10)
+          : const EdgeInsets.all(AppDimensions.paddingM),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -372,15 +423,16 @@ class _RecipientRow extends StatelessWidget {
             runSpacing: 4,
             children: [
               for (final c in chips)
+                // Ionic .chip: radius 4, padding 1/7, 0.72rem
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 1),
                   decoration: BoxDecoration(
                     color: _bg(c.tone),
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(4),
                   ),
                   child: Text(
                     c.text,
-                    style: theme.textTheme.labelSmall?.copyWith(color: _fg(c.tone)),
+                    style: TextStyle(fontSize: 11.5, color: _fg(c.tone)),
                   ),
                 ),
             ],
@@ -449,21 +501,29 @@ class _MessageCardState extends State<_MessageCard> {
     final theme = Theme.of(context);
     final m = widget.message;
     final sender = (m.senderName != null && m.senderName!.isNotEmpty) ? m.senderName! : context.l10n.commonUnknown;
-    return Card(
-      margin: const EdgeInsets.only(bottom: AppDimensions.paddingM),
-      child: Padding(
+    final ios = ionIsIos(context);
+    // UX_SETTINGS (WAVE 8): Ionic .message-card — item background, radius
+    // 10, padding 16; h1 1.3rem/700, .from 0.8rem medium (margin 14).
+    final body = Padding(
         padding: const EdgeInsets.all(AppDimensions.paddingM),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (widget.showTitle) ...[
-              Text(m.title, style: theme.textTheme.headlineSmall),
+              Text(
+                m.title,
+                style: ios
+                    ? const TextStyle(fontSize: 20.8, fontWeight: FontWeight.w700)
+                    : theme.textTheme.headlineSmall,
+              ),
               const SizedBox(height: 4),
               Text(
                 context.l10n.messagesFrom(sender, MessageFormat.dateTime(m.createdAt)),
-                style: theme.textTheme.bodySmall?.copyWith(color: AppColors.medium),
+                style: ios
+                    ? const TextStyle(fontSize: 12.8, color: AppColors.medium)
+                    : theme.textTheme.bodySmall?.copyWith(color: AppColors.medium),
               ),
-              const SizedBox(height: AppDimensions.paddingM),
+              SizedBox(height: ios ? 14 : AppDimensions.paddingM),
             ],
             QuillEditor.basic(
               controller: _controller,
@@ -475,7 +535,20 @@ class _MessageCardState extends State<_MessageCard> {
             ),
           ],
         ),
+      );
+    if (!ios) {
+      return Card(
+        margin: const EdgeInsets.only(bottom: AppDimensions.paddingM),
+        child: body,
+      );
+    }
+    return Container(
+      margin: const EdgeInsets.only(bottom: AppDimensions.paddingM),
+      decoration: BoxDecoration(
+        color: IonIos.itemBackground(context),
+        borderRadius: BorderRadius.circular(10),
       ),
+      child: body,
     );
   }
 }
@@ -494,38 +567,17 @@ class _EarlierMessages extends ConsumerWidget {
             .take(5)
             .toList();
     if (earlier.isEmpty) return const SizedBox.shrink();
-    final theme = Theme.of(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    // UX_SETTINGS (WAVE 8): list header + inset list of detail items.
+    return SettingsListSection(
+      title: context.l10n.messagesEarlier,
+      icons: false,
       children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(
-            AppDimensions.paddingS,
-            AppDimensions.paddingM,
-            AppDimensions.paddingS,
-            AppDimensions.paddingS,
+        for (final m in earlier)
+          SettingsListTile(
+            title: m.title,
+            subtitle: MessageFormat.date(m.createdAt),
+            onTap: () => context.push('/messages/${m.id}'),
           ),
-          child: Text(
-            context.l10n.messagesEarlier,
-            style: theme.textTheme.titleSmall?.copyWith(color: AppColors.medium),
-          ),
-        ),
-        Card(
-          margin: EdgeInsets.zero,
-          child: Column(
-            children: [
-              for (var i = 0; i < earlier.length; i++) ...[
-                if (i > 0) const Divider(height: 1),
-                ListTile(
-                  title: Text(earlier[i].title),
-                  subtitle: Text(MessageFormat.date(earlier[i].createdAt)),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () => context.push('/messages/${earlier[i].id}'),
-                ),
-              ],
-            ],
-          ),
-        ),
       ],
     );
   }

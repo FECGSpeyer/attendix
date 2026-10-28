@@ -157,6 +157,11 @@ class _FeedbackSheetState extends ConsumerState<_FeedbackSheet>
                 padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM),
                 child: Card(
                   margin: EdgeInsets.zero,
+                  elevation: _ios ? 0 : null,
+                  shape: _ios
+                      ? RoundedRectangleBorder(borderRadius: BorderRadius.circular(24))
+                      : null,
+                  clipBehavior: Clip.antiAlias,
                   child: ListTile(
                     leading: const Icon(Icons.send_outlined, color: AppColors.primary),
                     title: Text(context.l10n.settingsContactTelegram,
@@ -175,15 +180,34 @@ class _FeedbackSheetState extends ConsumerState<_FeedbackSheet>
                 child: Text(context.l10n.settingsOr,
                     style: const TextStyle(color: AppColors.medium)),
               ),
-              // Tab bar
-              TabBar(
-                controller: _tabController,
-                onTap: (_) => _resetForm(),
-                tabs: [
-                  Tab(text: context.l10n.settingsHelpQuestion),
-                  Tab(text: context.l10n.settingsFeedback),
-                ],
-              ),
+              // Tab bar: Ionic `ion-segment` (iOS: shared adaptive segment)
+              if (_ios)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM),
+                  child: AnimatedBuilder(
+                    animation: _tabController,
+                    builder: (context, _) => IonSegment<int>(
+                      items: [
+                        IonSegmentItem(value: 0, label: Text(context.l10n.settingsHelpQuestion)),
+                        IonSegmentItem(value: 1, label: Text(context.l10n.settingsFeedback)),
+                      ],
+                      value: _tabController.index,
+                      onChanged: (i) {
+                        _resetForm();
+                        _tabController.animateTo(i);
+                      },
+                    ),
+                  ),
+                )
+              else
+                TabBar(
+                  controller: _tabController,
+                  onTap: (_) => _resetForm(),
+                  tabs: [
+                    Tab(text: context.l10n.settingsHelpQuestion),
+                    Tab(text: context.l10n.settingsFeedback),
+                  ],
+                ),
               // Tab content
               Expanded(
                 child: TabBarView(
@@ -201,7 +225,161 @@ class _FeedbackSheetState extends ConsumerState<_FeedbackSheet>
     );
   }
 
+  bool get _ios => Theme.of(context).platform == TargetPlatform.iOS;
+
+  // UX_SETTINGS (WAVE 8): Ionic feedback modal content on iOS — inset
+  // item groups with stacked labels, rating item with end stars, toggle
+  // item and a primary "Absenden" item.
+  Widget _iosGroup(List<Widget> children) {
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    final line = dark ? const Color(0xFF3D3D40) : const Color(0xFFC8C7CC);
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
+        child: Material(
+          color: dark ? const Color(0xFF1C1C1E) : Colors.white,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              for (var i = 0; i < children.length; i++) ...[
+                if (i > 0) Divider(height: 0.5, thickness: 0.5, indent: 16, color: line),
+                children[i],
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _iosStacked({
+    required String label,
+    required TextEditingController controller,
+    String? hint,
+    String? helper,
+    int? lines,
+    TextInputType? keyboardType,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 10, 18, 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(label, style: const TextStyle(fontSize: 14)),
+          TextField(
+            controller: controller,
+            minLines: lines,
+            maxLines: lines ?? 1,
+            keyboardType: keyboardType,
+            textCapitalization: TextCapitalization.sentences,
+            style: const TextStyle(fontSize: 16),
+            decoration: InputDecoration(
+              hintText: hint,
+              border: InputBorder.none,
+              enabledBorder: InputBorder.none,
+              focusedBorder: InputBorder.none,
+              filled: false,
+              isDense: true,
+              contentPadding: const EdgeInsets.only(top: 8, bottom: 4),
+            ),
+          ),
+          if (helper != null)
+            Text(helper, style: const TextStyle(fontSize: 12, color: Color(0xFF737373))),
+        ],
+      ),
+    );
+  }
+
+  Widget _iosSubmit(VoidCallback onTap) => ListTile(
+        title: Text(
+          context.l10n.settingsSubmit,
+          style: const TextStyle(color: AppColors.primary),
+        ),
+        trailing: _isLoading
+            ? const SizedBox(width: 20, height: 20, child: AppSpinner(strokeWidth: 2))
+            : null,
+        onTap: _isLoading ? null : onTap,
+      );
+
+  Widget _buildQuestionTabIos(ScrollController scrollController) {
+    return ListView(
+      controller: scrollController,
+      padding: const EdgeInsets.all(16),
+      children: [
+        _iosGroup([
+          _iosStacked(
+            label: context.l10n.settingsYourQuestion,
+            controller: _questionController,
+            hint: context.l10n.settingsYourQuestionPh,
+            lines: 6,
+          ),
+          _iosStacked(
+            label: context.l10n.settingsYourMobileOptional,
+            controller: _phoneController,
+            hint: context.l10n.settingsPhonePh,
+            helper: context.l10n.settingsContactOnly,
+            keyboardType: TextInputType.phone,
+          ),
+        ]),
+        _iosGroup([_iosSubmit(_sendQuestion)]),
+      ],
+    );
+  }
+
+  Widget _buildFeedbackTabIos(ScrollController scrollController) {
+    return ListView(
+      controller: scrollController,
+      padding: const EdgeInsets.all(16),
+      children: [
+        _iosGroup([
+          ListTile(
+            title: Text(context.l10n.settingsYourRating),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                for (var star = 1; star <= 5; star++)
+                  GestureDetector(
+                    onTap: () => setState(() => _rating = star),
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 6),
+                      child: Icon(
+                        Icons.star,
+                        size: 22,
+                        color: star <= _rating ? AppColors.warning : AppColors.medium,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          _iosStacked(
+            label: context.l10n.settingsYourFeedback,
+            controller: _feedbackController,
+            hint: context.l10n.settingsFeedbackPh,
+            lines: 6,
+          ),
+          SwitchListTile.adaptive(
+            title: Text(context.l10n.settingsAnonymous),
+            value: _anonymous,
+            onChanged: (value) => setState(() => _anonymous = value),
+          ),
+          if (!_anonymous)
+            _iosStacked(
+              label: context.l10n.settingsYourMobileOptional,
+              controller: _phoneController,
+              hint: context.l10n.settingsPhonePh,
+              helper: context.l10n.settingsContactOnly,
+              keyboardType: TextInputType.phone,
+            ),
+        ]),
+        _iosGroup([_iosSubmit(_sendFeedback)]),
+      ],
+    );
+  }
+
   Widget _buildQuestionTab(ScrollController scrollController) {
+    if (_ios) return _buildQuestionTabIos(scrollController);
     return SingleChildScrollView(
       controller: scrollController,
       padding: const EdgeInsets.all(AppDimensions.paddingM),
@@ -259,6 +437,7 @@ class _FeedbackSheetState extends ConsumerState<_FeedbackSheet>
   }
 
   Widget _buildFeedbackTab(ScrollController scrollController) {
+    if (_ios) return _buildFeedbackTabIos(scrollController);
     return SingleChildScrollView(
       controller: scrollController,
       padding: const EdgeInsets.all(AppDimensions.paddingM),

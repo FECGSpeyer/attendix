@@ -5,6 +5,7 @@ import '../../../../core/constants/app_constants.dart';
 import '../../data/help_content_service.dart';
 import '../widgets/help_markdown.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../settings/presentation/widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
 
 /// Alphabetical glossary with search.
 ///
@@ -17,7 +18,14 @@ class HelpGlossaryPage extends ConsumerStatefulWidget {
 }
 
 class _HelpGlossaryPageState extends ConsumerState<HelpGlossaryPage> {
+  final _searchController = TextEditingController();
   String _searchTerm = '';
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,57 +34,59 @@ class _HelpGlossaryPageState extends ConsumerState<HelpGlossaryPage> {
     final terms = term.isEmpty
         ? service.getAllGlossaryTerms()
         : service.search(term).glossaryTerms;
+    final ios = ionIsIos(context);
 
+    // UX_SETTINGS (WAVE 8): help-glossary.page.html — arrow-back,
+    // searchbar toolbar, one inset list of accordions.
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.of(context).maybePop(),
+        ),
         title: Text(context.l10n.helpGlossary),
         bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(64),
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(
-              AppDimensions.paddingM,
-              0,
-              AppDimensions.paddingM,
-              AppDimensions.paddingS,
-            ),
-            child: TextField(
-              decoration: InputDecoration(
-                hintText: context.l10n.helpSearchTerm,
-                prefixIcon: Icon(Icons.search),
-                isDense: true,
-              ),
-              onChanged: (v) => setState(() => _searchTerm = v),
-            ),
+          preferredSize: Size.fromHeight(ios ? 60 : 64),
+          child: IonSearchbar(
+            controller: _searchController,
+            hint: context.l10n.helpSearchTerm,
+            onChanged: (v) => setState(() => _searchTerm = v),
           ),
         ),
       ),
       body: ListView(
         padding: const EdgeInsets.all(AppDimensions.paddingM),
         children: [
-          Card(
-            margin: EdgeInsets.zero,
-            clipBehavior: Clip.antiAlias,
-            child: Column(
-              children: [
-                if (terms.isEmpty)
-                  ListTile(title: Text(context.l10n.helpNoTerms)),
-                for (final g in terms)
-                  ExpansionTile(
-                    key: PageStorageKey('glossary-${g.id}'),
-                    title: Text(g.term),
-                    shape: const Border(),
-                    collapsedShape: const Border(),
-                    childrenPadding: const EdgeInsets.fromLTRB(
-                      AppDimensions.paddingM,
-                      0,
-                      AppDimensions.paddingM,
-                      AppDimensions.paddingM,
-                    ),
-                    expandedAlignment: Alignment.centerLeft,
-                    children: [HelpMarkdown(data: g.definition)],
+          SettingsListSection(
+            icons: false,
+            children: [
+              if (terms.isEmpty)
+                ListTile(title: Text(context.l10n.helpNoTerms)),
+              for (final g in terms)
+                ExpansionTile(
+                  key: PageStorageKey('glossary-${g.id}'),
+                  title: Text(g.term),
+                  shape: const Border(),
+                  collapsedShape: const Border(),
+                  tilePadding: ios
+                      ? const EdgeInsets.only(
+                          left: IonIos.itemPaddingStart,
+                          right: IonIos.itemPaddingEnd,
+                        )
+                      : null,
+                  iconColor: ios ? IonIos.text(context).withValues(alpha: 0.5) : null,
+                  collapsedIconColor:
+                      ios ? IonIos.text(context).withValues(alpha: 0.5) : null,
+                  childrenPadding: const EdgeInsets.fromLTRB(
+                    AppDimensions.paddingM,
+                    0,
+                    AppDimensions.paddingM,
+                    AppDimensions.paddingM,
                   ),
-              ],
-            ),
+                  expandedAlignment: Alignment.centerLeft,
+                  children: [HelpMarkdown(data: g.definition)],
+                ),
+            ],
           ),
         ],
       ),

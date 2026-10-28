@@ -11,6 +11,8 @@ import '../../../../data/models/plan/plan.dart';
 import '../../../planning/presentation/widgets/plan_field_dialogs.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../settings/presentation/widgets/ion_condense.dart'; // UX_SETTINGS (WAVE 8)
+import '../../../settings/presentation/widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
 
 Map<String, String> _fieldTypes(AppLocalizations l10n) => <String, String>{
       'text': l10n.typeSettingsText,
@@ -120,9 +122,43 @@ class _OrgPersonFieldsPageState extends ConsumerState<OrgPersonFieldsPage> {
       _originalIds = _fields!.map((f) => f.id).toSet();
     }
 
-    return Scaffold(
+    final ios = ionIsIos(context);
+    final Widget fieldList = _fields == null
+        ? const SizedBox.shrink()
+        : _fields!.isEmpty
+            ? ListTile(title: Text(context.l10n.orgFieldsNone))
+            : ReorderableListView(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                buildDefaultDragHandles: false,
+                onReorder: (from, to) {
+                  if (!isSuperAdmin) return;
+                  setState(() {
+                    final list = [..._fields!];
+                    final item = list.removeAt(from);
+                    list.insert(to > from ? to - 1 : to, item);
+                    _fields = list;
+                  });
+                },
+                children: [
+                  for (var i = 0; i < _fields!.length; i++) _fieldTile(i, isSuperAdmin),
+                ],
+              );
+    final addButton = IconButton(
+      tooltip: context.l10n.extraFieldsAddNew,
+      icon: Icon(Icons.add, color: ios ? AppColors.primary : null),
+      onPressed: isSuperAdmin && org?.id != null ? () => _add(org!.id!) : null,
+    );
+
+    // UX_SETTINGS (WAVE 8): org-person-fields.page.html — arrow-back,
+    // condense title, intro item + "Für Personen" inset list with header "+".
+    return IonCondense(builder: (context, collapsed) => Scaffold(
       appBar: AppBar(
-        title: Text(context.l10n.orgPersonFields),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.of(context).maybePop(),
+        ),
+        title: IonCondenseTitle(context.l10n.orgPersonFields, collapsed: collapsed),
         actions: [
           IconButton(
             tooltip: context.l10n.commonSave,
@@ -133,7 +169,34 @@ class _OrgPersonFieldsPageState extends ConsumerState<OrgPersonFieldsPage> {
       ),
       body: _fields == null
           ? const Center(child: AppSpinner())
-          : ListView(
+          : ios
+              ? ListView(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+                  children: [
+                    IonLargeTitle(context.l10n.orgPersonFields, padding: const EdgeInsets.only(bottom: 4)),
+                    const SizedBox(height: 16),
+                    SettingsListSection(
+                      children: [
+                        SettingsListTile(
+                          icon: Icons.info_outline,
+                          iconColor: AppColors.medium,
+                          title: context.l10n.orgFieldsIntro,
+                          titleWidget: Text(
+                            context.l10n.orgFieldsIntro,
+                            style: TextStyle(fontSize: 14, color: IonIos.labelP(context)),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SettingsListSection(
+                      title: context.l10n.extraFieldsForPersons,
+                      icons: false,
+                      headerAction: addButton,
+                      children: [fieldList],
+                    ),
+                  ],
+                )
+              : ListView(
               padding: const EdgeInsets.only(bottom: 24),
               children: [
                 ListTile(
@@ -151,39 +214,17 @@ class _OrgPersonFieldsPageState extends ConsumerState<OrgPersonFieldsPage> {
                         child: Text(context.l10n.extraFieldsForPersons.toUpperCase(),
                             style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.medium)),
                       ),
-                      IconButton(
-                        tooltip: context.l10n.extraFieldsAddNew,
-                        icon: const Icon(Icons.add),
-                        onPressed: isSuperAdmin && org?.id != null ? () => _add(org!.id!) : null,
-                      ),
+                      addButton,
                     ],
                   ),
                 ),
                 Card(
                   margin: const EdgeInsets.symmetric(horizontal: 12),
-                  child: _fields!.isEmpty
-                      ? ListTile(title: Text(context.l10n.orgFieldsNone))
-                      : ReorderableListView(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          buildDefaultDragHandles: false,
-                          onReorder: (from, to) {
-                            if (!isSuperAdmin) return;
-                            setState(() {
-                              final list = [..._fields!];
-                              final item = list.removeAt(from);
-                              list.insert(to > from ? to - 1 : to, item);
-                              _fields = list;
-                            });
-                          },
-                          children: [
-                            for (var i = 0; i < _fields!.length; i++) _fieldTile(i, isSuperAdmin),
-                          ],
-                        ),
+                  child: fieldList,
                 ),
               ],
             ),
-    );
+    ));
   }
 
   Widget _fieldTile(int i, bool isSuperAdmin) {

@@ -60,7 +60,7 @@ void main() {
         "title: l10n.settingsWhatsNew",
         "title: l10n.settingsLogout",
       ]);
-      expect(source, contains('Text(l10n.settingsDeleteAccount)'));
+      expect(source, contains('l10n.settingsDeleteAccount,'));
     });
 
     test('Kalender abonnieren opens the Ionic alert instead of a page', () {

@@ -21,7 +21,14 @@ class HelpArticlePage extends ConsumerWidget {
     final article = service.getArticle(articleId);
 
     return Scaffold(
-      appBar: AppBar(title: Text(article?.title ?? context.l10n.helpTitle)),
+      // UX_SETTINGS (WAVE 8): help-article.page.html — arrow-back button.
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.of(context).maybePop(),
+        ),
+        title: Text(article?.title ?? context.l10n.helpTitle),
+      ),
       body: article == null
           ? Padding(
               padding: const EdgeInsets.all(AppDimensions.paddingM),

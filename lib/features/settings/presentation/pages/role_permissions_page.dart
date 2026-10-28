@@ -11,6 +11,8 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/role_permission/tenant_role_permission.dart';
 import '../../../../l10n/l10n.dart';
+import '../widgets/ion_condense.dart'; // UX_SETTINGS (WAVE 8)
+import '../widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
@@ -136,8 +138,17 @@ class _RolePermissionsPageState extends ConsumerState<RolePermissionsPage> {
       onPopInvokedWithResult: (didPop, _) {
         if (!didPop) _confirmLeave();
       },
-      child: Scaffold(
-        appBar: AppBar(title: Text(context.l10n.rolePermTitle)),
+      // UX_SETTINGS (WAVE 8): role-permissions.page.html — arrow-back,
+      // condense title, files toggle in an inset list, one accordion per
+      // role (header item on the page background, toggles in an inset list).
+      child: IonCondense(builder: (context, collapsed) => Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () => Navigator.of(context).maybePop(),
+          ),
+          title: IonCondenseTitle(context.l10n.rolePermTitle, collapsed: collapsed),
+        ),
         floatingActionButton: FloatingActionButton(
           onPressed: saving ? null : _save,
           child: saving
@@ -149,29 +160,45 @@ class _RolePermissionsPageState extends ConsumerState<RolePermissionsPage> {
           error: (e, _) => Center(child: Text(context.l10n.rolePermFlutterLoadFailed(friendlyErrorMessage(e)), textAlign: TextAlign.center)),
           data: (permissions) {
             _initFrom(permissions);
+            final ios = ionIsIos(context);
             return ListView(
-              padding: const EdgeInsets.fromLTRB(
-                  AppDimensions.paddingM, AppDimensions.paddingM, AppDimensions.paddingM, 96),
+              padding: EdgeInsets.fromLTRB(
+                  AppDimensions.paddingM, ios ? 0 : AppDimensions.paddingM, AppDimensions.paddingM, 96),
               children: [
-                _sectionHeader(context.l10n.rolePermFiles),
-                Card(
-                  child: SwitchListTile.adaptive(
-                    title: Text(context.l10n.rolePermFilesForAll),
-                    subtitle: Text(
-                      context.l10n.rolePermFilesHelper,
+                IonLargeTitle(context.l10n.rolePermTitle, padding: const EdgeInsets.only(bottom: 4)),
+                if (ios) const SizedBox(height: 16),
+                if (ios)
+                  SettingsListSection(
+                    title: context.l10n.rolePermFiles,
+                    icons: false,
+                    children: [
+                      IonToggleItem(
+                        title: context.l10n.rolePermFilesForAll,
+                        helper: context.l10n.rolePermFilesHelper,
+                        value: _filesShared,
+                        onChanged: isAdmin ? (v) => setState(() => _filesShared = v) : null,
+                      ),
+                    ],
+                  )
+                else ...[
+                  _sectionHeader(context.l10n.rolePermFiles),
+                  Card(
+                    child: IonToggleItem(
+                      title: context.l10n.rolePermFilesForAll,
+                      helper: context.l10n.rolePermFilesHelper,
+                      value: _filesShared,
+                      onChanged: isAdmin ? (v) => setState(() => _filesShared = v) : null,
                     ),
-                    value: _filesShared,
-                    onChanged: isAdmin ? (v) => setState(() => _filesShared = v) : null,
                   ),
-                ),
-                const SizedBox(height: AppDimensions.paddingM),
+                  const SizedBox(height: AppDimensions.paddingM),
+                ],
                 for (final (role, label) in _configurableRoles(context.l10n))
                   if (_permissions[role] != null && _hasAnyToggle(role)) _buildRoleCard(role, label),
               ],
             );
           },
         ),
-      ),
+      )),
     );
   }
 
@@ -188,55 +215,66 @@ class _RolePermissionsPageState extends ConsumerState<RolePermissionsPage> {
 
   Widget _buildRoleCard(Role role, String label) {
     final p = _permissions[role]!;
-    return Card(
-      child: ExpansionTile(
-        title: Text(label, style: const TextStyle(fontWeight: FontWeight.w500)),
-        children: [
+    final toggles = <Widget>[
           if (_showHelperToggles(role)) ...[
-            SwitchListTile.adaptive(
-              title: Text(context.l10n.rolePermAllGroups),
-              subtitle: Text(
-                  context.l10n.rolePermAllGroupsHelper),
+            IonToggleItem(
+              title: context.l10n.rolePermAllGroups,
+              helper: context.l10n.rolePermAllGroupsHelper,
               value: p.attendanceAllGroups,
               onChanged: (v) => _update(role, (p) => p.copyWith(attendanceAllGroups: v)),
             ),
-            SwitchListTile.adaptive(
-              title: Text(context.l10n.rolePermCreateAttendance),
-              subtitle: Text(context.l10n.rolePermCreateHelper),
+            IonToggleItem(
+              title: context.l10n.rolePermCreateAttendance,
+              helper: context.l10n.rolePermCreateHelper,
               value: p.attendanceCreate,
               onChanged: (v) => _update(role, (p) => p.copyWith(attendanceCreate: v)),
             ),
-            SwitchListTile.adaptive(
-              title: Text(context.l10n.rolePermSeeNotes),
-              subtitle: Text(
-                  context.l10n.rolePermNotesHelper),
+            IonToggleItem(
+              title: context.l10n.rolePermSeeNotes,
+              helper: context.l10n.rolePermNotesHelper,
               value: p.playerNotesView,
               onChanged: (v) => _update(role, (p) => p.copyWith(playerNotesView: v)),
             ),
-            SwitchListTile.adaptive(
-              title: Text(context.l10n.rolePermSeeChecklist),
-              subtitle: Text(
-                  context.l10n.rolePermChecklistHelper),
+            IonToggleItem(
+              title: context.l10n.rolePermSeeChecklist,
+              helper: context.l10n.rolePermChecklistHelper,
               value: p.checklistView,
               onChanged: (v) => _update(role, (p) => p.copyWith(checklistView: v)),
             ),
           ],
           if (_showSelfPauseToggle(role))
-            SwitchListTile.adaptive(
-              title: Text(context.l10n.rolePermAllowPause),
-              subtitle: Text(context.l10n.rolePermPauseHelper),
+            IonToggleItem(
+              title: context.l10n.rolePermAllowPause,
+              helper: context.l10n.rolePermPauseHelper,
               value: p.playerSelfPause,
               onChanged: (v) => _update(role, (p) => p.copyWith(playerSelfPause: v)),
             ),
           if (_showPlannedAbsenceToggle(role))
-            SwitchListTile.adaptive(
-              title: Text(context.l10n.rolePermEnterAbsences),
-              subtitle: Text(
-                  context.l10n.rolePermAbsencesHelper),
+            IonToggleItem(
+              title: context.l10n.rolePermEnterAbsences,
+              helper: context.l10n.rolePermAbsencesHelper,
               value: p.playerPlannedAbsence,
               onChanged: (v) => _update(role, (p) => p.copyWith(playerPlannedAbsence: v)),
             ),
-        ],
+    ];
+    if (ionIsIos(context)) {
+      // ion-accordion: header ion-item color="light" (page background),
+      // content = inset list with the toggles.
+      return ExpansionTile(
+        tilePadding: const EdgeInsets.only(right: 2),
+        shape: const Border(),
+        collapsedShape: const Border(),
+        iconColor: IonIos.text(context).withValues(alpha: 0.4),
+        collapsedIconColor: IonIos.text(context).withValues(alpha: 0.4),
+        title: Text(label, style: TextStyle(fontSize: 16, color: IonIos.text(context))),
+        childrenPadding: const EdgeInsets.only(top: 8, bottom: 16),
+        children: [IonInsetGroup(children: toggles)],
+      );
+    }
+    return Card(
+      child: ExpansionTile(
+        title: Text(label, style: const TextStyle(fontWeight: FontWeight.w500)),
+        children: toggles,
       ),
     );
   }

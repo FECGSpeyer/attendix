@@ -13,6 +13,8 @@ import '../../../../data/models/tenant/tenant.dart';
 import '../../../../data/repositories/extra_fields_repository.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../widgets/ion_condense.dart'; // UX_SETTINGS (WAVE 8)
+import '../widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
 
 enum ExtraFieldTarget { person, song }
 
@@ -494,9 +496,15 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
       onPopInvokedWithResult: (didPop, _) {
         if (!didPop) _confirmLeave();
       },
-      child: Scaffold(
+      // UX_SETTINGS (WAVE 8): extra-fields.page.html — arrow-back, condense
+      // title, checkmark save, inset groups with header "+" buttons.
+      child: IonCondense(builder: (context, collapsed) => Scaffold(
         appBar: AppBar(
-          title: Text(context.l10n.extraFieldsTitle),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () => Navigator.of(context).maybePop(),
+          ),
+          title: IonCondenseTitle(context.l10n.extraFieldsTitle, collapsed: collapsed),
           actions: [
             IconButton(
               icon: _saving
@@ -507,47 +515,28 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
           ],
         ),
         body: ListView(
-          padding: const EdgeInsets.all(AppDimensions.paddingM),
+          padding: EdgeInsets.fromLTRB(16, ionIsIos(context) ? 0 : 16, 16, 16),
           children: [
+            IonLargeTitle(context.l10n.extraFieldsTitle, padding: const EdgeInsets.only(bottom: 4)),
+            if (ionIsIos(context)) const SizedBox(height: 16),
             _buildSection(ExtraFieldTarget.person, context.l10n.extraFieldsForPersons),
-            const SizedBox(height: AppDimensions.paddingL),
+            if (!ionIsIos(context)) const SizedBox(height: AppDimensions.paddingL),
             _buildSection(ExtraFieldTarget.song, context.l10n.extraFieldsForSongs),
-            const SizedBox(height: AppDimensions.paddingL),
+            if (!ionIsIos(context)) const SizedBox(height: AppDimensions.paddingL),
+            // Ionic: ion-padding + expand="block" button
             ElevatedButton(
               onPressed: _saving ? null : _save,
               child: Text(context.l10n.commonSave),
             ),
           ],
         ),
-      ),
+      )),
     );
   }
 
   Widget _buildSection(ExtraFieldTarget target, String title) {
     final fields = _fields(target);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Row(
-          children: [
-            Expanded(
-              child: Text(
-                title,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.primary,
-                    ),
-              ),
-            ),
-            IconButton(
-              icon: const Icon(Icons.add),
-              tooltip: context.l10n.extraFieldsAddNew,
-              onPressed: () => _addField(target),
-            ),
-          ],
-        ),
-        Card(
-          child: fields.isEmpty
+    final list = fields.isEmpty
               ? ListTile(title: Text(context.l10n.extraFieldsNoneYet))
               : ReorderableListView.builder(
                   shrinkWrap: true,
@@ -593,8 +582,41 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
                       ),
                     );
                   },
-                ),
+                );
+    if (ionIsIos(context)) {
+      return SettingsListSection(
+        title: title,
+        icons: false,
+        headerAction: IconButton(
+          icon: const Icon(Icons.add, color: AppColors.primary),
+          tooltip: context.l10n.extraFieldsAddNew,
+          onPressed: () => _addField(target),
         ),
+        children: [list],
+      );
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                title,
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.primary,
+                    ),
+              ),
+            ),
+            IconButton(
+              icon: const Icon(Icons.add),
+              tooltip: context.l10n.extraFieldsAddNew,
+              onPressed: () => _addField(target),
+            ),
+          ],
+        ),
+        Card(child: list),
       ],
     );
   }

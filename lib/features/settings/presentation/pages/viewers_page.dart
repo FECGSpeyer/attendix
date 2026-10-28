@@ -26,7 +26,7 @@ class ViewersPage extends ConsumerWidget {
       appBar: AppBar(
         title: Text(context.l10n.settingsViewers),
         leading: IconButton(
-          icon: const BackButtonIcon(),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () => context.pop(),
         ),
       ),
@@ -58,24 +58,28 @@ class ViewersPage extends ConsumerWidget {
               ref.invalidate(viewersProvider);
               await ref.read(viewersProvider.future);
             },
-            child: ListView.builder(
+            // UX_SETTINGS (WAVE 8): hint card, then one inset list with
+            // h2 name / h3 e-mail; tapping an item asks to remove it.
+            child: ListView(
               physics: const AlwaysScrollableScrollPhysics(),
               padding: const EdgeInsets.fromLTRB(
                 AppDimensions.paddingM, AppDimensions.paddingM, AppDimensions.paddingM, 88),
-              itemCount: viewers.length + 1,
-              itemBuilder: (context, index) {
-                if (index == 0) {
-                  return SettingsHintCard(
-                    icon: Icons.visibility_outlined,
-                    text: context.l10n.settingsViewersHint,
-                  );
-                }
-                final viewer = viewers[index - 1];
-                return _ViewerItem(
-                  viewer: viewer,
-                  onDelete: () => _deleteViewer(context, ref, viewer),
-                );
-              },
+              children: [
+                SettingsHintCard(
+                  icon: Icons.visibility_outlined,
+                  text: context.l10n.settingsViewersHint,
+                ),
+                SettingsListSection(
+                  icons: false,
+                  children: [
+                    for (final item in viewers)
+                      _ViewerItem(
+                        viewer: item,
+                        onDelete: () => _deleteViewer(context, ref, item),
+                      ),
+                  ],
+                ),
+              ],
             ),
           );
         },
@@ -232,29 +236,14 @@ class _ViewerItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: AppDimensions.paddingS),
-      child: ListTile(
-        leading: CircleAvatar(
-          backgroundColor: AppColors.primary.withValues(alpha: 0.1),
-          child: Text(
-            viewer.initials,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: AppColors.primary,
-            ),
-          ),
-        ),
-        title: Text(
-          viewer.fullName,
-          style: const TextStyle(fontWeight: FontWeight.w600),
-        ),
-        subtitle: Text(viewer.email),
-        trailing: IconButton(
-          icon: Icon(Icons.delete_outline, color: AppColors.danger),
-          onPressed: onDelete,
-        ),
+    final ios = ionIsIos(context);
+    return ListTile(
+      title: Text(viewer.fullName),
+      subtitle: Text(
+        viewer.email,
+        style: ios ? TextStyle(fontSize: 14, color: IonIos.text(context)) : null,
       ),
+      onTap: onDelete,
     );
   }
 }

@@ -19,6 +19,7 @@ import '../../../../core/providers/team_org_providers.dart'; // PROTOCOL
 import '../widgets/type_protocol_settings.dart'; // PROTOCOL
 import '../widgets/registration_fields_editor.dart'; // ATTENDANCE_SIGNOUT
 import '../widgets/type_reminders_editor.dart'; // SETTINGS2
+import '../widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
 import '../../../organisation/presentation/widgets/type_default_org_plan_toggle.dart'; // ORG_PLANS
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
@@ -206,19 +207,25 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
         if (!didPop) _onBackPressed();
       },
       child: Scaffold(
+        // UX_SETTINGS (WAVE 8): type.page.html — no title, arrow-back,
+        // red trash at the end, save via FAB (save-outline).
         appBar: AppBar(
-          title: Text(_originalType!.name),
           leading: IconButton(
-          icon: const BackButtonIcon(),
+          icon: const Icon(Icons.arrow_back),
           onPressed: _onBackPressed,
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.delete_outline),
+            icon: const Icon(Icons.delete_outline, color: AppColors.danger),
             tooltip: context.l10n.commonDelete,
             onPressed: _deleteType,
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _hasChanges ? _save : null,
+        tooltip: context.l10n.commonSave,
+        child: const Icon(Icons.save_outlined),
       ),
       body: Form(
         key: _formKey,
@@ -248,20 +255,8 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
               ),
               const SizedBox(height: AppDimensions.paddingM),
             ],
-            // Name
-            TextFormField(
-              controller: _nameController,
-              decoration: InputDecoration(
-                labelText: '${context.l10n.typeSettingsName} *',
-                hintText: context.l10n.typeSettingsFlutterNamePhShort,
-              ),
-              validator: (value) {
-                if (value == null || value.trim().isEmpty) {
-                  return context.l10n.typeSettingsEnterName;
-                }
-                return null;
-              },
-            ),
+            // Name (Ionic: first inset group, stacked label)
+            _nameField(),
             const SizedBox(height: AppDimensions.paddingL),
 
             // UX_SETTINGS: Ionic "Optionen" (type.page.html order): Aktiv, verfügbare
@@ -284,54 +279,42 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                     }),
                     contentPadding: EdgeInsets.zero,
                   ),
-                  Padding(
-                    padding: EdgeInsets.only(top: 8),
-                    child: Text(context.l10n.typeSettingsAvailableStatus, style: TextStyle(fontWeight: FontWeight.w600)),
+                  // UX_SETTINGS (WAVE 8): Ionic stacked ion-select (multiple)
+                  // → value row opening a checkbox list; default status as
+                  // stacked select.
+                  IonStackedValue(
+                    label: context.l10n.typeSettingsAvailableStatus,
+                    value: AttendanceStatus.values
+                        .where(_availableStatuses.contains)
+                        .map(_getStatusName)
+                        .join(', '),
+                    onTap: _pickAvailableStatuses,
+                    flush: true,
                   ),
-                  ...AttendanceStatus.values.map((status) {
-                    return CheckboxListTile(
-                      title: Text(_getStatusName(status)),
-                      value: _availableStatuses.contains(status),
+                  IonStackedField(
+                    flush: true,
+                    label: context.l10n.typeSettingsDefaultStatus,
+                    builder: (decoration) => DropdownButtonFormField<AttendanceStatus>(
+                      decoration: decoration,
+                      value: _availableStatuses.contains(_defaultStatus)
+                          ? _defaultStatus
+                          : _availableStatuses.firstOrNull ?? AttendanceStatus.present,
                       onChanged: (value) {
-                        setState(() {
-                          if (value == true) {
-                            _availableStatuses.add(status);
-                          } else {
-                            // Don't allow removing last status
-                            if (_availableStatuses.length > 1) {
-                              _availableStatuses.remove(status);
-                              // Reset default if removed (Issue #21 - safe .first)
-                              if (_defaultStatus == status) {
-                                _defaultStatus = _availableStatuses.firstOrNull ?? AttendanceStatus.present;
-                              }
-                            }
-                          }
-                          _hasChanges = true;
-                        });
+                        if (value != null) {
+                          setState(() {
+                            _defaultStatus = value;
+                            _hasChanges = true;
+                          });
+                        }
                       },
-                      contentPadding: EdgeInsets.zero,
-                      dense: true,
-                    );
-                  }),
-                  DropdownButtonFormField<AttendanceStatus>(
-                    decoration: InputDecoration(labelText: context.l10n.typeSettingsDefaultStatus),
-                    value: _availableStatuses.contains(_defaultStatus)
-                        ? _defaultStatus
-                        : _availableStatuses.firstOrNull ?? AttendanceStatus.present,
-                    onChanged: (value) {
-                      if (value != null) {
-                        setState(() {
-                          _defaultStatus = value;
-                          _hasChanges = true;
-                        });
-                      }
-                    },
-                    items: _availableStatuses
-                        .map((status) => DropdownMenuItem(
-                              value: status,
-                              child: Text(_getStatusName(status)),
-                            ))
-                        .toList(),
+                      items: AttendanceStatus.values
+                          .where(_availableStatuses.contains)
+                          .map((status) => DropdownMenuItem(
+                                value: status,
+                                child: Text(_getStatusName(status)),
+                              ))
+                          .toList(),
+                    ),
                   ),
                   SwitchListTile.adaptive(
                     title: Text(context.l10n.typeSettingsManageSongs),
@@ -506,47 +489,16 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
             const SizedBox(height: AppDimensions.paddingL),
 
             // Color Picker
+            // UX_SETTINGS (WAVE 8): Ionic item (h2 Farbe, h3 hint, ellipse in
+            // the colour at the end) opening a colour grid popover.
             _buildSection(
               title: context.l10n.typeSettingsAppearance,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(context.l10n.typeSettingsColor, style: TextStyle(fontWeight: FontWeight.w600)),
-                  const SizedBox(height: 8),
-                  Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: ColorUtils.availableColors.map((colorName) {
-                  final color = ColorUtils.getColorForPicker(colorName);
-                  final isSelected = _color == colorName;
-                  return GestureDetector(
-                    onTap: () => setState(() {
-                      _color = colorName;
-                      _hasChanges = true;
-                    }),
-                    child: Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: color,
-                        borderRadius: BorderRadius.circular(8),
-                        border: isSelected
-                            ? Border.all(color: Colors.black, width: 3)
-                            : null,
-                      ),
-                      child: isSelected
-                          ? const Icon(Icons.check, color: Colors.white, size: 20)
-                          : null,
-                    ),
-                  );
-                }).toList(),
-              ),
-                  const SizedBox(height: 8),
-                  Text(
-                    context.l10n.typeSettingsColorHint,
-                    style: TextStyle(fontSize: 12, color: AppColors.medium),
-                  ),
-                ],
+              child: ListTile(
+                contentPadding: EdgeInsets.zero,
+                title: Text(context.l10n.typeSettingsColor),
+                subtitle: Text(context.l10n.typeSettingsColorHint),
+                trailing: Icon(Icons.circle, color: ColorUtils.getColorForPicker(_color)),
+                onTap: _pickColor,
               ),
             ),
             const SizedBox(height: AppDimensions.paddingL),
@@ -566,16 +518,18 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                 child: Column(
                   children: [
                     // Planning title
-                    TextFormField(
-                      controller: _planningTitleController,
-                      decoration: InputDecoration(
-                        labelText: context.l10n.typeSettingsPlanHeading,
-                        hintText: context.l10n.typeSettingsFlutterPlanHeadingPh,
+                    IonStackedField(
+                      flush: true,
+                      label: context.l10n.typeSettingsPlanHeading,
+                      hint: context.l10n.typeSettingsFlutterPlanHeadingPh,
+                      builder: (decoration) => TextFormField(
+                        controller: _planningTitleController,
+                        decoration: decoration,
+                        onChanged: (value) {
+                          _planningTitle = value;
+                          _hasChanges = true;
+                        },
                       ),
-                      onChanged: (value) {
-                        _planningTitle = value;
-                        _hasChanges = true;
-                      },
                     ),
                     // SETTINGS2: Ionic "Instanz-Name vor Werken" (not for general tenants)
                     if (ref.watch(currentTenantProvider)?.type != 'general')
@@ -762,27 +716,164 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
               ),
             ),
             const SizedBox(height: AppDimensions.paddingL),
-            const SizedBox(height: AppDimensions.paddingXL),
+            const SizedBox(height: 64),
           ],
-        ),
-      ),
-      bottomNavigationBar: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(AppDimensions.paddingM),
-          child: ElevatedButton(
-            onPressed: _hasChanges ? _save : null,
-            child: Padding(
-              padding: EdgeInsets.all(AppDimensions.paddingM),
-              child: Text(context.l10n.commonSave),
-            ),
-          ),
         ),
       ),
     ),
     );
   }
 
+  /// Ionic colour popover: a grid of ellipses, the selected one on a grey
+  /// rounded background.
+  Future<void> _pickColor() async {
+    final picked = await showAppDialog<String>(
+      context: context,
+      builder: (ctx) => AppAlertDialog(
+        contentPadding: const EdgeInsets.all(12),
+        content: Wrap(
+          spacing: 4,
+          runSpacing: 4,
+          children: [
+            for (final colorName in ColorUtils.availableColors)
+              InkWell(
+                borderRadius: BorderRadius.circular(16),
+                onTap: () => Navigator.pop(ctx, colorName),
+                child: Container(
+                  width: 72,
+                  height: 48,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: _color == colorName ? AppColors.medium : null,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Icon(
+                    Icons.circle,
+                    size: 24,
+                    color: ColorUtils.getColorForPicker(colorName),
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+    if (picked == null || !mounted) return;
+    setState(() {
+      _color = picked;
+      _hasChanges = true;
+    });
+  }
+
+  /// Ionic `ion-select multiple` for the available statuses (Anwesend
+  /// cannot be deselected, like Ionic's disabled option).
+  Future<void> _pickAvailableStatuses() async {
+    final selected = {..._availableStatuses};
+    final result = await showAppDialog<Set<AttendanceStatus>>(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setLocal) => AppAlertDialog(
+          title: Text(context.l10n.typeSettingsAvailableStatus),
+          contentPadding: const EdgeInsets.symmetric(vertical: 8),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                for (final status in AttendanceStatus.values)
+                  CheckboxListTile(
+                    title: Text(_getStatusName(status)),
+                    value: selected.contains(status),
+                    onChanged: status == AttendanceStatus.present
+                        ? null
+                        : (v) => setLocal(() {
+                              if (v == true) {
+                                selected.add(status);
+                              } else if (selected.length > 1) {
+                                selected.remove(status);
+                              }
+                            }),
+                  ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: Text(context.l10n.commonCancel),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, selected),
+              child: Text(context.l10n.commonOk),
+            ),
+          ],
+        ),
+      ),
+    );
+    if (result == null || !mounted) return;
+    setState(() {
+      _availableStatuses
+        ..clear()
+        ..addAll(AttendanceStatus.values.where(result.contains));
+      // Ionic onAvailableStatusesChanged: fall back to Anwesend.
+      if (!_availableStatuses.contains(_defaultStatus)) {
+        _defaultStatus = AttendanceStatus.present;
+      }
+      _hasChanges = true;
+    });
+  }
+
+  Widget _nameField() {
+    String? validate(String? value) {
+      if (value == null || value.trim().isEmpty) {
+        return context.l10n.typeSettingsEnterName;
+      }
+      return null;
+    }
+
+    if (!ionIsIos(context)) {
+      return TextFormField(
+        controller: _nameController,
+        decoration: InputDecoration(
+          labelText: '${context.l10n.typeSettingsName} *',
+          hintText: context.l10n.typeSettingsFlutterNamePhShort,
+        ),
+        validator: validate,
+      );
+    }
+    return IonInsetGroup(children: [
+      IonStackedField(
+        label: context.l10n.typeSettingsName,
+        builder: (decoration) => TextFormField(
+          controller: _nameController,
+          textCapitalization: TextCapitalization.sentences,
+          decoration: decoration,
+          validator: validate,
+        ),
+      ),
+    ]);
+  }
+
   Widget _buildSection({required String title, required Widget child}) {
+    // UX_SETTINGS (WAVE 8): iOS → ion-list-header + inset item group.
+    if (ionIsIos(context)) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          IonListHeader(title: title),
+          IonInsetGroup(children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                IonIos.itemPaddingStart,
+                4,
+                IonIos.itemPaddingEnd,
+                4,
+              ),
+              child: child,
+            ),
+          ]),
+        ],
+      );
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

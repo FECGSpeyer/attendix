@@ -11,6 +11,8 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/church/church.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../settings/presentation/widgets/ion_condense.dart'; // UX_SETTINGS (WAVE 8)
+import '../../../settings/presentation/widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
 
 const int _gb = 1024 * 1024 * 1024;
 
@@ -211,184 +213,182 @@ class _AdministrationPageState extends ConsumerState<AdministrationPage> {
     final churches = churchesAsync.valueOrNull ?? const <Church>[];
     final duplicates = findChurchDuplicates(churches);
 
-    return Scaffold(
-      appBar: AppBar(title: Text(context.l10n.adminTitle)),
+    final ios = ionIsIos(context);
+    void mergeAll() {
+      final pairs = [
+        for (final g in duplicates)
+          for (final d in g.duplicates) (g.target.id!, d.id!),
+      ];
+      _merge(
+        pairs,
+        title: context.l10n.adminMergeAllDuplicates,
+        message: context.l10n.adminMergeAllMessage(pairs.length, duplicates.length),
+        confirm: context.l10n.adminMergeAll,
+      );
+    }
+
+    // UX_SETTINGS (WAVE 8): administration.page.html — condense title,
+    // inset lists (Auswertung / Speicher / Gemeinden) on the light page.
+    return IonCondense(builder: (context, collapsed) => Scaffold(
+      appBar: AppBar(title: IonCondenseTitle(context.l10n.adminTitle, collapsed: collapsed)),
       body: ListView(
-        padding: const EdgeInsets.symmetric(vertical: 8),
+        padding: EdgeInsets.fromLTRB(16, ios ? 0 : 8, 16, 24),
         children: [
-          _Header(context.l10n.adminEvaluation),
-          Card(
-            margin: const EdgeInsets.symmetric(horizontal: 16),
-            child: ListTile(
-              leading: const Icon(Icons.analytics_outlined),
-              title: Text(context.l10n.usageTitle),
-              trailing: const Icon(Icons.chevron_right, color: AppColors.medium),
-              onTap: () => context.push('/dashboard'),
-            ),
+          IonLargeTitle(context.l10n.adminTitle, padding: const EdgeInsets.only(bottom: 4)),
+          if (ios) const SizedBox(height: 16),
+          SettingsListSection(
+            title: context.l10n.adminEvaluation,
+            children: [
+              SettingsListTile(
+                icon: Icons.analytics_outlined,
+                title: context.l10n.usageTitle,
+                onTap: () => context.push('/dashboard'),
+              ),
+            ],
           ),
-          const SizedBox(height: 16),
-          _Header(context.l10n.adminStorageFor(tenant?.longName ?? '')),
-          Card(
-            margin: const EdgeInsets.symmetric(horizontal: 16),
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: TextField(
-                    controller: _limitController,
-                    focusNode: _limitFocus,
-                    enabled: !saving,
-                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                    decoration: InputDecoration(
-                      labelText: context.l10n.adminMaxStorage,
-                      hintText: context.l10n.adminUnlimited,
-                      helperText: context.l10n.adminLimitHelper,
-                      helperMaxLines: 2,
-                    ),
-                    onSubmitted: (_) => _saveFilesLimit(),
+          SettingsListSection(
+            title: context.l10n.adminStorageFor(tenant?.longName ?? ''),
+            icons: false,
+            children: [
+              IonStackedField(
+                label: context.l10n.adminMaxStorage,
+                hint: context.l10n.adminUnlimited,
+                helper: context.l10n.adminLimitHelper,
+                builder: (decoration) => TextField(
+                  controller: _limitController,
+                  focusNode: _limitFocus,
+                  enabled: !saving,
+                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  decoration: decoration.copyWith(helperMaxLines: 2),
+                  onSubmitted: (_) => _saveFilesLimit(),
+                ),
+              ),
+              if (storage.valueOrNull?.usedBytes != null)
+                ListTile(
+                  title: Text(context.l10n.adminCurrentlyUsed),
+                  trailing: IonNote(
+                    context.l10n.adminGb(_fmtGb(_toGb(storage.value!.usedBytes)!)),
                   ),
                 ),
-                if (storage.valueOrNull?.usedBytes != null)
-                  ListTile(
-                    title: Text(context.l10n.adminCurrentlyUsed),
-                    trailing: Text(
-                      context.l10n.adminGb(_fmtGb(_toGb(storage.value!.usedBytes)!)),
-                      style: const TextStyle(color: AppColors.medium),
-                    ),
-                  ),
-              ],
-            ),
+            ],
           ),
-          const SizedBox(height: 16),
-          _Header(context.l10n.adminChurchesCount(churches.length)),
-          Card(
-            margin: const EdgeInsets.symmetric(horizontal: 16),
-            clipBehavior: Clip.antiAlias,
-            child: churchesAsync.isLoading && churches.isEmpty
-                ? const Padding(
-                    padding: EdgeInsets.all(20),
-                    child: Center(child: AppSpinner()),
-                  )
-                : Column(
-                    children: [
-                      if (duplicates.isNotEmpty) ...[
-                        Container(
-                          color: AppColors.warning.withAlpha((0.25 * 255).round()),
-                          child: ListTile(
-                            leading: const Icon(Icons.warning_amber_outlined),
-                            title: Text(context.l10n.adminDuplicateGroups(duplicates.length)),
-                            subtitle: Text(context.l10n.adminDuplicatesHint),
-                          ),
-                        ),
-                        for (final g in duplicates)
-                          ListTile(
-                            title: Text(g.target.name),
-                            subtitle: Text(context.l10n.adminTimesPresent(g.duplicates.length + 1)),
-                            trailing: Wrap(
-                              spacing: 4,
-                              children: [
-                                for (final dup in g.duplicates)
-                                  OutlinedButton.icon(
-                                    icon: const Icon(Icons.merge_type, size: 16),
-                                    label: Text(context.l10n.adminMerge),
-                                    onPressed: saving
-                                        ? null
-                                        : () => _merge(
-                                              [(g.target.id!, dup.id!)],
-                                              title: context.l10n.adminMergeChurches,
-                                              message: context.l10n
-                                                  .adminMergeMessage(dup.name, g.target.name),
-                                              confirm: context.l10n.adminMerge,
-                                            ),
-                                  ),
-                              ],
-                            ),
-                          ),
-                        ListTile(
-                          leading: const Icon(Icons.merge_type, color: AppColors.warningDark),
+          SettingsListSection(
+            title: context.l10n.adminChurchesCount(churches.length),
+            icon: Icons.home_outlined,
+            children: churchesAsync.isLoading && churches.isEmpty
+                ? const [
+                    Padding(
+                      padding: EdgeInsets.all(20),
+                      child: Center(child: AppSpinner()),
+                    ),
+                  ]
+                : [
+                    if (duplicates.isNotEmpty) ...[
+                      // ion-item color="warning"
+                      Material(
+                        color: ios
+                            ? AppColors.warning
+                            : AppColors.warning.withAlpha((0.25 * 255).round()),
+                        child: ListTile(
+                          leading: const Icon(Icons.warning_amber_outlined, color: Colors.black),
                           title: Text(
-                            context.l10n.adminMergeAllDuplicates,
-                            style: const TextStyle(color: AppColors.warningDark),
+                            context.l10n.adminDuplicateGroups(duplicates.length),
+                            style: const TextStyle(color: Colors.black, fontWeight: FontWeight.w600),
                           ),
-                          onTap: saving
-                              ? null
-                              : () {
-                                  final pairs = [
-                                    for (final g in duplicates)
-                                      for (final d in g.duplicates) (g.target.id!, d.id!),
-                                  ];
-                                  _merge(
-                                    pairs,
-                                    title: context.l10n.adminMergeAllDuplicates,
-                                    message: context.l10n
-                                        .adminMergeAllMessage(pairs.length, duplicates.length),
-                                    confirm: context.l10n.adminMergeAll,
-                                  );
-                                },
+                          subtitle: Text(
+                            context.l10n.adminDuplicatesHint,
+                            style: const TextStyle(color: Colors.black87),
+                          ),
                         ),
-                        const Divider(height: 1),
-                      ],
-                      ListTile(
-                        title: Text(context.l10n.adminShowAllChurches),
-                        trailing: Icon(
-                          _showAllChurches ? Icons.expand_less : Icons.expand_more,
-                        ),
-                        onTap: () => setState(() => _showAllChurches = !_showAllChurches),
                       ),
-                      if (_showAllChurches)
-                        for (final c in churches)
-                          ListTile(
-                            leading: const Icon(Icons.home_outlined, color: AppColors.medium),
-                            title: Text(c.name),
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                IconButton(
-                                  tooltip: context.l10n.adminRenameChurch,
-                                  icon: const Icon(Icons.edit_outlined, color: AppColors.medium),
-                                  onPressed: saving ? null : () => _rename(c),
+                      for (final g in duplicates)
+                        ListTile(
+                          title: Text(g.target.name),
+                          subtitle: Text(context.l10n.adminTimesPresent(g.duplicates.length + 1)),
+                          trailing: Wrap(
+                            spacing: 4,
+                            children: [
+                              for (final dup in g.duplicates)
+                                OutlinedButton.icon(
+                                  style: OutlinedButton.styleFrom(
+                                    foregroundColor: AppColors.warningDark,
+                                    side: const BorderSide(color: AppColors.warning),
+                                  ),
+                                  icon: const Icon(Icons.merge_type, size: 16),
+                                  label: Text(context.l10n.adminMerge),
+                                  onPressed: saving
+                                      ? null
+                                      : () => _merge(
+                                            [(g.target.id!, dup.id!)],
+                                            title: context.l10n.adminMergeChurches,
+                                            message: context.l10n
+                                                .adminMergeMessage(dup.name, g.target.name),
+                                            confirm: context.l10n.adminMerge,
+                                          ),
                                 ),
-                                IconButton(
-                                  tooltip: context.l10n.adminMerge,
-                                  icon: const Icon(Icons.merge_type, color: AppColors.medium),
-                                  onPressed: saving ? null : () => _mergeManual(c, churches),
-                                ),
-                              ],
-                            ),
+                            ],
                           ),
-                      const Divider(height: 1),
-                      ListTile(
-                        leading: const Icon(Icons.add, color: AppColors.primary),
-                        title: Text(
-                          context.l10n.adminAddChurch,
-                          style: const TextStyle(color: AppColors.primary),
                         ),
-                        onTap: _addChurch,
+                      SettingsListTile(
+                        icon: Icons.merge_type,
+                        color: AppColors.warningDark,
+                        detail: false,
+                        title: context.l10n.adminMergeAllDuplicates,
+                        onTap: saving ? null : mergeAll,
                       ),
                     ],
-                  ),
+                    // ion-accordion: header item color="light"
+                    Material(
+                      color: ios ? Theme.of(context).scaffoldBackgroundColor : Colors.transparent,
+                      child: Column(
+                        children: [
+                          ListTile(
+                            title: Text(context.l10n.adminShowAllChurches),
+                            trailing: Icon(
+                              _showAllChurches ? Icons.expand_less : Icons.expand_more,
+                              color: ios ? IonIos.text(context).withValues(alpha: 0.5) : null,
+                            ),
+                            onTap: () => setState(() => _showAllChurches = !_showAllChurches),
+                          ),
+                          if (_showAllChurches)
+                            for (final c in churches)
+                              Material(
+                                color: ios ? IonIos.itemBackground(context) : Colors.transparent,
+                                child: ListTile(
+                                  leading: const Icon(Icons.home_outlined, color: AppColors.medium),
+                                  title: Text(c.name),
+                                  trailing: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      IconButton(
+                                        tooltip: context.l10n.adminRenameChurch,
+                                        icon: const Icon(Icons.edit_outlined, color: AppColors.medium),
+                                        onPressed: saving ? null : () => _rename(c),
+                                      ),
+                                      IconButton(
+                                        tooltip: context.l10n.adminMerge,
+                                        icon: const Icon(Icons.merge_type, color: AppColors.medium),
+                                        onPressed: saving ? null : () => _mergeManual(c, churches),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                        ],
+                      ),
+                    ),
+                    SettingsListTile(
+                      icon: Icons.add,
+                      color: AppColors.primary,
+                      detail: false,
+                      title: context.l10n.adminAddChurch,
+                      onTap: _addChurch,
+                    ),
+                  ],
           ),
-          const SizedBox(height: 24),
         ],
       ),
-    );
+    ));
   }
 }
 
-class _Header extends StatelessWidget {
-  const _Header(this.text);
-
-  final String text;
-
-  @override
-  Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.fromLTRB(24, 8, 24, 6),
-        child: Text(
-          text,
-          style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                color: AppColors.medium,
-                fontWeight: FontWeight.w600,
-              ),
-        ),
-      );
-}

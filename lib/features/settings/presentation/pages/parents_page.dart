@@ -26,7 +26,7 @@ class ParentsPage extends ConsumerWidget {
       appBar: AppBar(
         title: Text(context.l10n.settingsParents),
         leading: IconButton(
-          icon: const BackButtonIcon(),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () => context.pop(),
         ),
       ),
@@ -58,24 +58,28 @@ class ParentsPage extends ConsumerWidget {
               ref.invalidate(parentsProvider);
               await ref.read(parentsProvider.future);
             },
-            child: ListView.builder(
+            // UX_SETTINGS (WAVE 8): hint card, then one inset list with
+            // h2 name / h3 e-mail; tapping an item asks to remove it.
+            child: ListView(
               physics: const AlwaysScrollableScrollPhysics(),
               padding: const EdgeInsets.fromLTRB(
                 AppDimensions.paddingM, AppDimensions.paddingM, AppDimensions.paddingM, 88),
-              itemCount: parents.length + 1,
-              itemBuilder: (context, index) {
-                if (index == 0) {
-                  return SettingsHintCard(
-                    icon: Icons.favorite_border,
-                    text: context.l10n.settingsParentsHint,
-                  );
-                }
-                final parent = parents[index - 1];
-                return _ParentItem(
-                  parent: parent,
-                  onDelete: () => _deleteParent(context, ref, parent),
-                );
-              },
+              children: [
+                SettingsHintCard(
+                  icon: Icons.favorite_border,
+                  text: context.l10n.settingsParentsHint,
+                ),
+                SettingsListSection(
+                  icons: false,
+                  children: [
+                    for (final item in parents)
+                      _ParentItem(
+                        parent: item,
+                        onDelete: () => _deleteParent(context, ref, item),
+                      ),
+                  ],
+                ),
+              ],
             ),
           );
         },
@@ -232,29 +236,14 @@ class _ParentItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: AppDimensions.paddingS),
-      child: ListTile(
-        leading: CircleAvatar(
-          backgroundColor: AppColors.success.withValues(alpha: 0.1),
-          child: Text(
-            parent.initials,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: AppColors.success,
-            ),
-          ),
-        ),
-        title: Text(
-          parent.fullName,
-          style: const TextStyle(fontWeight: FontWeight.w600),
-        ),
-        subtitle: Text(parent.email),
-        trailing: IconButton(
-          icon: Icon(Icons.delete_outline, color: AppColors.danger),
-          onPressed: onDelete,
-        ),
+    final ios = ionIsIos(context);
+    return ListTile(
+      title: Text(parent.fullName),
+      subtitle: Text(
+        parent.email,
+        style: ios ? TextStyle(fontSize: 14, color: IonIos.text(context)) : null,
       ),
+      onTap: onDelete,
     );
   }
 }
