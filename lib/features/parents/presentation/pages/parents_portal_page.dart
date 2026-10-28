@@ -513,7 +513,8 @@ class _TodayChildRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = EventListUtils.statusColor(child.status);
+    // PARITY_R3: Ionic dark palette in dark mode (like EventPill).
+    final color = AppColors.adaptive(context, EventListUtils.statusColor(child.status));
     return InkWell(
       onTap: onTap,
       child: Padding(
@@ -545,7 +546,9 @@ class _TodayChildRow extends StatelessWidget {
                   if (child.notes?.isNotEmpty ?? false)
                     Text(
                       context.l10n.signoutNoteChip(child.notes!),
-                      style: const TextStyle(fontSize: 14, color: AppColors.medium),
+                      style: TextStyle(
+                          fontSize: 14,
+                          color: AppColors.adaptive(context, AppColors.medium)),
                     ),
                 ],
               ),
@@ -576,7 +579,8 @@ class _KidChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Ionic `.ev-kid`: status tint pill (min 36px) with a surface avatar.
-    final color = EventListUtils.statusColor(status);
+    // PARITY_R3: Ionic dark palette in dark mode (like EventPill).
+    final color = AppColors.adaptive(context, EventListUtils.statusColor(status));
     final onSurface = Theme.of(context).colorScheme.onSurface;
     return InkWell(
       borderRadius: BorderRadius.circular(999),
