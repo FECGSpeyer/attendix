@@ -10,13 +10,11 @@ import '../../../../core/providers/debug_providers.dart';
 import '../../../../core/providers/organisation_providers.dart';
 import '../../../../core/providers/parent_providers.dart';
 import '../../../../core/providers/player_providers.dart';
-import '../../../../core/providers/pwa_providers.dart';
 import '../../../../core/providers/realtime_providers.dart'; // MEDIA_REALTIME
 import '../../../../core/providers/role_permission_providers.dart'; // SETTINGS_EXT
 import '../../../../core/providers/team_org_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/providers/viewer_providers.dart';
-import '../../../../core/services/pwa_service.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../shared/widgets/sheets/feedback_sheet.dart';
 import '../../../../shared/widgets/tenant/tenant_switcher_title.dart';
@@ -35,7 +33,18 @@ import '../widgets/settings_admins_sheet.dart';
 // UX_SETTINGS
 import '../widgets/calendar_subscription_dialog.dart';
 import '../widgets/settings_list.dart';
-import 'left_players_page.dart' show leftPlayersProvider;
+import 'left_players_page.dart' show leftPlayersProvider, showArchiveSheet;
+// IOS_SETTINGS2: Ionic inline ion-modal sheets + "Fehlende Accounts erstellen"
+import 'pending_players_page.dart' show showPendingPersonsSheet;
+import 'parents_page.dart' show showParentsSheet;
+import 'viewers_page.dart' show showViewersSheet;
+import '../../../tenant_selection/presentation/pages/tenant_selection_page.dart'
+    show showTenantsSheet;
+import '../../../../core/providers/user_registration_providers.dart';
+import '../../../../core/utils/dialog_helper.dart';
+import '../../../../core/utils/toast_helper.dart';
+import '../../../../data/models/person/person.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../core/providers/demo_providers.dart'; // DEMO_GUARD
 // I18N_INFRA
 import '../../../../l10n/l10n.dart';
@@ -72,15 +81,16 @@ class SettingsPage extends ConsumerWidget {
     // MEDIA_REALTIME: live pending card (Ionic `pending-player-changes` channel)
     final pendingCount =
         isAdmin ? (ref.watch(realtimePendingPlayersProvider).valueOrNull?.length ?? 0) : 0;
+    // Ionic getPlayersWithoutAccount: not pending, not left, e-mail, no appId
     final playersWithoutAccount = isAdmin
-        ? (ref.watch(playersProvider).valueOrNull ?? const [])
+        ? (ref.watch(playersProvider).valueOrNull ?? const <Person>[])
             .where((p) =>
                 (p.appId == null || p.appId!.isEmpty) &&
                 !p.pending &&
                 p.left == null &&
                 (p.email ?? '').trim().isNotEmpty)
-            .length
-        : 0;
+            .toList()
+        : const <Person>[];
 
     // Planung (inkl. Teamorganisation)
     final showPlanning = isAdmin && !isApplicant;
@@ -96,7 +106,8 @@ class SettingsPage extends ConsumerWidget {
     void openTeamOrg(String tab) => context.push('/settings/team-organization?tab=$tab');
 
     final ios = ionIsIos(context); // UX_SETTINGS (WAVE 8)
-    void openTenants() => context.go('/tenants');
+    // IOS_SETTINGS2: Ionic `isInstancesModalOpen = true` (sheet, not a page).
+    void openTenants() => showTenantsSheet(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -134,14 +145,14 @@ class SettingsPage extends ConsumerWidget {
         },
         child: ListView(
           physics: const AlwaysScrollableScrollPhysics(),
-          // iOS: inset lists 16pt from the edges, hero card margin-top 12,
-          // room for the ion-fab at the bottom.
+          // iOS: inset lists 20pt from the edges (ios26 insetGrouped,
+          // IOS_SETTINGS2), hero card margin-top 12, room for the ion-fab.
           padding: ios
-              ? const EdgeInsets.fromLTRB(16, 12, 16, 88)
+              ? const EdgeInsets.fromLTRB(IonIos.insetMargin, 12, IonIos.insetMargin, 88)
               : const EdgeInsets.all(AppDimensions.paddingM),
           children: [
-            // PWA Install Hint (only shown on mobile web)
-            const _PwaInstallHint(),
+            // IOS_SETTINGS2: no Flutter-only PWA install hint here — Ionic
+            // only shows its "Attendix als App" promo card.
             const AppPromoCard(), // SETTINGS2: "📱 Attendix als App"
 
             // Ionic: pending persons alert card (warning)
@@ -234,30 +245,25 @@ class SettingsPage extends ConsumerWidget {
                       title: l10n.settingsParents,
                       detail: false,
                       trailing: SettingsCountBadge(ref.watch(parentsProvider).valueOrNull?.length ?? 0),
-                      onTap: () => context.push('/settings/parents'),
+                      onTap: () => showParentsSheet(context),
                     ),
                   SettingsListTile(
                     icon: Icons.visibility_outlined,
                     title: l10n.settingsViewers,
                     detail: false,
                     trailing: SettingsCountBadge(ref.watch(viewersProvider).valueOrNull?.length ?? 0),
-                    onTap: () => context.push('/settings/viewers'),
+                    onTap: () => showViewersSheet(context),
                   ),
-                  // Flutter: Benutzerverwaltung (Rollen der Accounts) — in
-                  // Ionic über die Person; hier im selben Block.
-                  SettingsListTile(
-                    icon: Icons.manage_accounts_outlined,
-                    title: l10n.settingsFlutterUsers,
-                    onTap: () => context.push('/settings/users'),
-                  ),
-                  if (playersWithoutAccount > 0)
+                  // IOS_SETTINGS2: no Flutter-only "Benutzerverwaltung" row —
+                  // Ionic manages account roles on the person page.
+                  if (playersWithoutAccount.isNotEmpty)
                     SettingsListTile(
                       icon: Icons.person_add_alt_outlined,
                       iconColor: AppColors.warning,
                       title: l10n.settingsCreateMissing,
                       detail: false,
-                      trailing: SettingsCountBadge(playersWithoutAccount, color: AppColors.warning),
-                      onTap: () => context.push('/settings/batch-accounts'),
+                      trailing: SettingsCountBadge(playersWithoutAccount.length, color: AppColors.warning),
+                      onTap: () => createMissingAccounts(context, ref, playersWithoutAccount),
                     ),
                 ],
               ),
@@ -420,15 +426,15 @@ class SettingsPage extends ConsumerWidget {
                         title: l10n.settingsArchive,
                         detail: false,
                         trailing: left > 0 ? SettingsCountBadge(left) : null,
-                        onTap: () => context.push('/settings/left'),
+                        onTap: () => showArchiveSheet(context),
                       );
                     }),
                   ],
                 ],
               ),
 
-            // Applicant status hint (Flutter)
-            if (isApplicant) const _ApplicantHint(),
+            // IOS_SETTINGS2: no Flutter-only applicant hint card (Ionic has
+            // none on the settings page).
 
             // ============ SYSTEM ============
             SettingsListSection(
@@ -558,7 +564,7 @@ class _PendingPersonsCard extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: AppDimensions.paddingM),
       child: IonCardBox(
         color: AppColors.warning,
-        onTap: () => context.push('/settings/pending'),
+        onTap: () => showPendingPersonsSheet(context),
         child: Padding(
             padding: EdgeInsets.all(ionIsIos(context) ? 20 : AppDimensions.paddingM),
             child: Row(
@@ -589,153 +595,50 @@ class _PendingPersonsCard extends StatelessWidget {
   }
 }
 
-class _ApplicantHint extends StatelessWidget {
-  const _ApplicantHint();
+/// IOS_SETTINGS2: Ionic `showAlertForAccountsCreation()` + `createAccounts()`:
+/// confirm alert listing all names ("Accounts erstellen" / "Fortfahren"),
+/// loading overlay, then one account after another (attendix-user Edge
+/// Function via [AccountCreationNotifier]); the first failure stops the run
+/// with "Fehler beim Erstellen der Accounts", otherwise "Accounts erstellt".
+Future<void> createMissingAccounts(
+  BuildContext context,
+  WidgetRef ref,
+  List<Person> players,
+) async {
+  final l10n = context.l10n;
+  final confirmed = await DialogHelper.showConfirmation(
+    context,
+    title: l10n.settingsCreateAccounts,
+    message: l10n.settingsCreateAccountsMessage(
+        players.map((p) => '${p.firstName} ${p.lastName}').join(', ')),
+    confirmText: l10n.settingsContinue,
+    cancelText: l10n.commonCancel,
+  );
+  if (!confirmed || !context.mounted) return;
 
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: AppDimensions.paddingM),
-      child: Card(
-        margin: EdgeInsets.zero,
-        color: AppColors.warning.withValues(alpha: 0.1),
-        child: Padding(
-          padding: const EdgeInsets.all(AppDimensions.paddingM),
-          child: Row(
-            children: [
-              const Icon(Icons.hourglass_empty, color: AppColors.warning),
-              const SizedBox(width: AppDimensions.paddingM),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      context.l10n.settingsFlutterApplicantTitle,
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
-                    ),
-                    const SizedBox(height: AppDimensions.paddingXS),
-                    Text(
-                      context.l10n.settingsFlutterApplicantText,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.medium),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+  // Ionic Utils.getLoadingElement(): blocking spinner until done.
+  final navigator = Navigator.of(context, rootNavigator: true);
+  showAppDialog<void>(
+    context: context,
+    barrierDismissible: false,
+    builder: (_) => const PopScope(
+      canPop: false,
+      child: Center(child: AppSpinner()),
+    ),
+  );
+  final AccountCreationResult result;
+  try {
+    result = await ref
+        .read(accountCreationNotifierProvider.notifier)
+        .createAccounts(players, stopOnError: true);
+  } finally {
+    navigator.pop();
   }
-}
-
-/// PWA install hint card for mobile web users
-class _PwaInstallHint extends ConsumerWidget {
-  const _PwaInstallHint();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final showHint = ref.watch(showPwaInstallHintProvider);
-    final platform = ref.watch(pwaPlatformProvider);
-
-    return showHint.when(
-      data: (show) {
-        if (!show) return const SizedBox.shrink();
-
-        return Padding(
-          padding: const EdgeInsets.only(bottom: AppDimensions.paddingM),
-          child: Card(
-            color: AppColors.info.withValues(alpha: 0.1),
-            child: Padding(
-              padding: const EdgeInsets.all(AppDimensions.paddingM),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(Icons.install_mobile, color: AppColors.info),
-                      const SizedBox(width: AppDimensions.paddingS),
-                      Expanded(
-                        child: Text(
-                          context.l10n.settingsFlutterPwaTitle,
-                          style:
-                              Theme.of(context).textTheme.titleSmall?.copyWith(
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                        ),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.close, size: 20),
-                        onPressed: () {
-                          ref
-                              .read(pwaHintNotifierProvider.notifier)
-                              .dismissHint();
-                        },
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: AppDimensions.paddingS),
-                  Text(
-                    context.l10n.settingsFlutterPwaText,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: AppColors.medium,
-                        ),
-                  ),
-                  const SizedBox(height: AppDimensions.paddingM),
-                  if (platform == PwaPlatform.ios) ...[
-                    _buildInstructionStep(context, '1', context.l10n.settingsFlutterPwaIosStep1),
-                    _buildInstructionStep(context, '2', context.l10n.settingsFlutterPwaIosStep2),
-                    _buildInstructionStep(context, '3', context.l10n.settingsFlutterPwaIosStep3),
-                  ] else if (platform == PwaPlatform.android) ...[
-                    _buildInstructionStep(context, '1', context.l10n.settingsFlutterPwaAndroidStep1),
-                    _buildInstructionStep(context, '2', context.l10n.settingsFlutterPwaAndroidStep2),
-                  ],
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-      loading: () => const SizedBox.shrink(),
-      error: (_, __) => const SizedBox.shrink(),
-    );
-  }
-
-  Widget _buildInstructionStep(BuildContext context, String number, String text) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: AppDimensions.paddingXS),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 20,
-            height: 20,
-            decoration: BoxDecoration(
-              color: AppColors.info,
-              shape: BoxShape.circle,
-            ),
-            child: Center(
-              child: Text(
-                number,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(width: AppDimensions.paddingS),
-          Expanded(
-            child: Text(
-              text,
-              style: Theme.of(context).textTheme.bodySmall,
-            ),
-          ),
-        ],
-      ),
-    );
+  if (!context.mounted) return;
+  if (result.hasErrors) {
+    ToastHelper.showError(
+        context, l10n.settingsCreateAccountsFailed(result.errors.first));
+  } else {
+    ToastHelper.showSuccess(context, l10n.settingsAccountsCreated);
   }
 }

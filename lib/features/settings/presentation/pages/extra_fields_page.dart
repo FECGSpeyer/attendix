@@ -515,7 +515,7 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
           ],
         ),
         body: ListView(
-          padding: EdgeInsets.fromLTRB(16, ionIsIos(context) ? 0 : 16, 16, 16),
+          padding: EdgeInsets.fromLTRB(ionListMargin(context), ionIsIos(context) ? 0 : 16, ionListMargin(context), 16),
           children: [
             IonLargeTitle(context.l10n.extraFieldsTitle, padding: const EdgeInsets.only(bottom: 4)),
             if (ionIsIos(context)) const SizedBox(height: 16),

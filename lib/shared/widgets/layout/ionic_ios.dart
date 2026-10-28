@@ -19,14 +19,27 @@ bool isIosLook(BuildContext context) => useIosLook(context);
 class IonIos {
   IonIos._();
 
+  // IOS_SETTINGS2: @rdlabo/ionic-theme-ios26 9.4 ion-list.scss — "Native
+  // iOS 26.5 insetGrouped: 20pt outside, 28pt corners, 53pt rows". Shared by
+  // the settings lane (settings_list.dart) and the auth lane (ion_form_list).
+
+  /// `ion-list inset` horizontal margin (20pt from the screen edge).
+  static const double insetMargin = 20;
+
   /// `ion-list inset > ion-item-group` corner radius.
-  static const double groupRadius = 24;
+  static const double groupRadius = 28;
 
   /// `ion-list inset` without item group (plain inset list, Ionic core).
   static const double listRadius = 10;
 
   /// `ion-item` min height inside inset lists.
-  static const double itemMinHeight = 52;
+  static const double itemMinHeight = 53;
+
+  /// `ion-item::part(native)` padding-inline-end inside inset groups.
+  static const double itemPaddingEnd = 16;
+
+  /// `ion-item` font size inside inset groups (`max(17px, 1rem)`).
+  static const double itemFontSize = 17;
 
   /// `--ion-color-medium-tint`
   static const Color mediumTint = Color(0xFF9D9FA6);

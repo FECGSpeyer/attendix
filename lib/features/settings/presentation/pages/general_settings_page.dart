@@ -443,9 +443,9 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
               key: _formKey,
               child: ListView(
                 padding: EdgeInsets.fromLTRB(
-                  AppDimensions.paddingM,
+                  ionListMargin(context),
                   ionIsIos(context) ? 0 : AppDimensions.paddingM,
-                  AppDimensions.paddingM,
+                  ionListMargin(context),
                   96,
                 ),
                 children: [

@@ -163,7 +163,7 @@ class _RolePermissionsPageState extends ConsumerState<RolePermissionsPage> {
             final ios = ionIsIos(context);
             return ListView(
               padding: EdgeInsets.fromLTRB(
-                  AppDimensions.paddingM, ios ? 0 : AppDimensions.paddingM, AppDimensions.paddingM, 96),
+                  ionListMargin(context), ios ? 0 : AppDimensions.paddingM, ionListMargin(context), 96),
               children: [
                 IonLargeTitle(context.l10n.rolePermTitle, padding: const EdgeInsets.only(bottom: 4)),
                 if (ios) const SizedBox(height: 16),

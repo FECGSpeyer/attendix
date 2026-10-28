@@ -70,7 +70,7 @@ class _AttendanceTypesPageState extends ConsumerState<AttendanceTypesPage> {
         data: (types) {
           final displayTypes = _isReordering ? _localTypes : types;
           return ListView(
-            padding: EdgeInsets.fromLTRB(16, ios ? 0 : 16, 16, 96),
+            padding: EdgeInsets.fromLTRB(ionListMargin(context), ios ? 0 : 16, ionListMargin(context), 96),
             children: [
               IonLargeTitle(title, padding: const EdgeInsets.only(bottom: 4)),
               SizedBox(height: ios ? 24 : 0),

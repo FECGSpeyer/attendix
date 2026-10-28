@@ -12,6 +12,8 @@ import '../../../../data/models/person/person.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../widgets/settings_list.dart';
+import '../widgets/settings_sheet.dart'; // IOS_SETTINGS2
 
 /// Provider for left (archived) players using repository
 final leftPlayersProvider = FutureProvider<List<Person>>((ref) async {
@@ -20,22 +22,37 @@ final leftPlayersProvider = FutureProvider<List<Person>>((ref) async {
   return repository.getArchivedPlayers();
 });
 
+/// IOS_SETTINGS2: Ionic settings `trigger="archive-button"` sheet
+/// (`[breakpoints]="[0, 0.5, 1]"`, initial 0.5, toolbar with the title).
+Future<void> showArchiveSheet(BuildContext context) => showSettingsSheet<void>(
+      context,
+      initialBreakpoint: 0.5,
+      builder: (_) => const LeftPlayersPage(sheet: true),
+    );
+
 /// Left Players Page - shows archived/former members
 class LeftPlayersPage extends ConsumerWidget {
-  const LeftPlayersPage({super.key});
+  const LeftPlayersPage({super.key, this.sheet = false});
+
+  /// Presented as the Ionic sheet (no back button) instead of a route.
+  final bool sheet;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final playersAsync = ref.watch(leftPlayersProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(context.l10n.settingsArchive),
-        leading: IconButton(
-          icon: const BackButtonIcon(),
-          onPressed: () => context.pop(),
-        ),
-      ),
+      // Ionic archive modal: plain `ion-content` (not "light").
+      backgroundColor: sheet ? IonIos.itemBackground(context) : null,
+      appBar: sheet
+          ? settingsSheetBar(context, title: context.l10n.settingsArchive)
+          : AppBar(
+              title: Text(context.l10n.settingsArchive),
+              leading: IconButton(
+                icon: const BackButtonIcon(),
+                onPressed: () => context.pop(),
+              ),
+            ),
       body: playersAsync.when(
         loading: () => const Center(child: AppSpinner()),
         error: (e, _) => Center(
@@ -54,24 +71,20 @@ class LeftPlayersPage extends ConsumerWidget {
           ),
         ),
         data: (players) {
+          // Ionic: one item with the centred grey "Keine archivierten
+          // Personen" text when the archive is empty.
           if (players.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.history_outlined, size: 80, color: AppColors.medium),
-                  const SizedBox(height: AppDimensions.paddingL),
-                  Text(
+            return ListView(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(AppDimensions.paddingM),
+                  child: Text(
                     context.l10n.settingsNoArchived,
-                    style: Theme.of(context).textTheme.titleLarge,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(color: AppColors.medium),
                   ),
-                  const SizedBox(height: AppDimensions.paddingS),
-                  Text(
-                    context.l10n.settingsFlutterArchiveHint,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppColors.medium),
-                  ),
-                ],
-              ),
+                ),
+              ],
             );
           }
 
@@ -81,9 +94,16 @@ class LeftPlayersPage extends ConsumerWidget {
               ref.invalidate(leftPlayersProvider);
               await ref.read(leftPlayersProvider.future);
             },
-            child: ListView.builder(
-              padding: const EdgeInsets.all(AppDimensions.paddingM),
+            // Ionic: plain `ion-list` (full width rows, no cards).
+            child: ListView.separated(
+              physics: const AlwaysScrollableScrollPhysics(),
               itemCount: players.length,
+              separatorBuilder: (context, _) => Divider(
+                height: 0.5,
+                thickness: 0.5,
+                indent: IonIos.itemPaddingStart,
+                color: ionIsIos(context) ? IonIos.line(context) : null,
+              ),
               itemBuilder: (context, index) {
                 final player = players[index];
                 return _LeftPlayerItem(
@@ -152,44 +172,20 @@ class _LeftPlayerItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: AppDimensions.paddingS),
-      child: ListTile(
-        onTap: onViewDetails,
-        leading: CircleAvatar(
-          backgroundColor: AppColors.medium.withValues(alpha: 0.2),
-          child: Text(
-            player.initials,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              color: AppColors.medium,
-            ),
-          ),
-        ),
-        title: Text(
-          player.fullName,
-          style: const TextStyle(fontWeight: FontWeight.w500),
-        ),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (player.groupName != null)
-              Text(
-                player.groupName!,
-                style: const TextStyle(fontSize: 12, color: AppColors.medium),
-              ),
-            if (player.left != null)
-              Text(
-                context.l10n.settingsLeftOn(_formatDate(player.left!)),
-                style: TextStyle(fontSize: 12, color: AppColors.warning),
-              ),
-          ],
-        ),
-        trailing: IconButton(
-          icon: const Icon(Icons.restore, color: AppColors.success),
-          tooltip: context.l10n.signoutReactivate,
-          onPressed: onReactivate,
-        ),
+    // IOS_SETTINGS2: Ionic `ion-item button`: h2 "Vorname Nachname (Gruppe)",
+    // h3 "Ausgetreten am …". Flutter keeps the restore button at the end
+    // because its person page has no "reaktivieren" for archived persons.
+    final group = player.groupName;
+    return ListTile(
+      onTap: onViewDetails,
+      title: Text(group == null ? player.fullName : '${player.fullName} ($group)'),
+      subtitle: player.left == null
+          ? null
+          : Text(context.l10n.settingsLeftOn(_formatDate(player.left!))),
+      trailing: IconButton(
+        icon: const Icon(Icons.restore, color: AppColors.success),
+        tooltip: context.l10n.signoutReactivate,
+        onPressed: onReactivate,
       ),
     );
   }

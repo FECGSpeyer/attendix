@@ -82,9 +82,12 @@ class AccountCreationNotifier extends Notifier<AsyncValue<void>> {
 
   /// Creates accounts one after another; [onProgress] is called after each.
   /// Like Ionic, the person list is processed sequentially.
+  /// [stopOnError]: IOS_SETTINGS2 — Ionic settings `createAccounts()` stops
+  /// at the first failure (the loop runs inside one try/catch).
   Future<AccountCreationResult> createAccounts(
     List<Person> persons, {
     void Function(int done, int total)? onProgress,
+    bool stopOnError = false,
   }) async {
     // SOL_FIX3: bind repository + tenant once for the whole job.
     final repo = _boundRepo();
@@ -103,6 +106,7 @@ class AccountCreationNotifier extends Notifier<AsyncValue<void>> {
         created++;
       } catch (e) {
         errors.add('${person.firstName} ${person.lastName}: $e');
+        if (stopOnError) break;
       }
       onProgress?.call(i + 1, persons.length);
     }
