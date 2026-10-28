@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/constants/enums.dart';
 import '../models/person/person.dart';
+import '../../core/utils/text_utils.dart';
 import 'base_repository.dart';
 
 /// Provider for PlayerRepository
@@ -981,15 +982,17 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
   /// Uses email or appId for duplicate detection
   Future<bool> playerExistsInTenant(Person player, int targetTenantId) async {
     try {
-      // Check by email if available
-      if (player.email != null && player.email!.isNotEmpty) {
+      // Check by email if available — case-insensitive & trimmed like Ionic
+      // (`.ilike('email', normalized)`); empty emails never match (B10-007/008)
+      final email = normalizeEmailForMatch(player.email);
+      if (email != null) {
         final byEmail = await supabase
             .from('player')
             .select('id')
             .eq('tenantId', targetTenantId)
-            .eq('email', player.email!)
-            .maybeSingle();
-        if (byEmail != null) return true;
+            .ilike('email', escapeLikePattern(email))
+            .limit(1);
+        if ((byEmail as List).isNotEmpty) return true;
       }
 
       // Check by appId if available
@@ -999,8 +1002,8 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
             .select('id')
             .eq('tenantId', targetTenantId)
             .eq('appId', player.appId!)
-            .maybeSingle();
-        if (byAppId != null) return true;
+            .limit(1);
+        if ((byAppId as List).isNotEmpty) return true;
       }
 
       return false;

@@ -16,3 +16,6 @@ export 'viewer_repository.dart';
 export 'parent_repository.dart';
 export 'church_repository.dart';
 export 'usage_events_repository.dart';
+// STATS_PEOPLE_FIXES
+export 'cross_tenant_person_repository.dart';
+export 'tenant_create_repository.dart'; // STATS_PEOPLE_FIXES

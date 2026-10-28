@@ -38,6 +38,8 @@ mixin _$Person {
   String? get email => throw _privateConstructorUsedError;
   @_FlexibleStringConverter()
   String? get appId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'global_person_id', includeIfNull: false)
+  String? get globalPersonId => throw _privateConstructorUsedError;
   @_FlexibleStringConverter()
   String? get notes => throw _privateConstructorUsedError;
   @_FlexibleStringConverter()
@@ -105,6 +107,8 @@ mixin _$Person {
   @JsonKey(name: 'parent_id')
   @_FlexibleIntConverter()
   int? get parentId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'sort_order', includeIfNull: false)
+  int? get sortOrder => throw _privateConstructorUsedError;
   @_FlexibleIntConverter()
   int? get legacyId => throw _privateConstructorUsedError;
   @_FlexibleIntConverter()
@@ -146,6 +150,7 @@ abstract class $PersonCopyWith<$Res> {
     @_FlexibleStringConverter() String? left,
     @_FlexibleStringConverter() String? email,
     @_FlexibleStringConverter() String? appId,
+    @JsonKey(name: 'global_person_id', includeIfNull: false) @_FlexibleStringConverter() String? globalPersonId,
     @_FlexibleStringConverter() String? notes,
     @_FlexibleStringConverter() String? img,
     @_FlexibleStringConverter() String? telegramId,
@@ -180,6 +185,7 @@ abstract class $PersonCopyWith<$Res> {
     @_FlexibleStringConverter() String? range,
     @_FlexibleStringConverter() String? instruments,
     @JsonKey(name: 'parent_id') @_FlexibleIntConverter() int? parentId,
+    @JsonKey(name: 'sort_order', includeIfNull: false) @_FlexibleIntConverter() int? sortOrder,
     @_FlexibleIntConverter() int? legacyId,
     @_FlexibleIntConverter() int? legacyConductorId,
     @JsonKey(includeFromJson: false, includeToJson: false)
@@ -221,6 +227,7 @@ class _$PersonCopyWithImpl<$Res, $Val extends Person>
     Object? left = freezed,
     Object? email = freezed,
     Object? appId = freezed,
+    Object? globalPersonId = freezed,
     Object? notes = freezed,
     Object? img = freezed,
     Object? telegramId = freezed,
@@ -251,6 +258,7 @@ class _$PersonCopyWithImpl<$Res, $Val extends Person>
     Object? range = freezed,
     Object? instruments = freezed,
     Object? parentId = freezed,
+    Object? sortOrder = freezed,
     Object? legacyId = freezed,
     Object? legacyConductorId = freezed,
     Object? groupName = freezed,
@@ -304,6 +312,11 @@ class _$PersonCopyWithImpl<$Res, $Val extends Person>
                 freezed == appId
                     ? _value.appId
                     : appId // ignore: cast_nullable_to_non_nullable
+                        as String?,
+            globalPersonId:
+                freezed == globalPersonId
+                    ? _value.globalPersonId
+                    : globalPersonId // ignore: cast_nullable_to_non_nullable
                         as String?,
             notes:
                 freezed == notes
@@ -455,6 +468,11 @@ class _$PersonCopyWithImpl<$Res, $Val extends Person>
                     ? _value.parentId
                     : parentId // ignore: cast_nullable_to_non_nullable
                         as int?,
+            sortOrder:
+                freezed == sortOrder
+                    ? _value.sortOrder
+                    : sortOrder // ignore: cast_nullable_to_non_nullable
+                        as int?,
             legacyId:
                 freezed == legacyId
                     ? _value.legacyId
@@ -509,6 +527,7 @@ abstract class _$$PersonImplCopyWith<$Res> implements $PersonCopyWith<$Res> {
     @_FlexibleStringConverter() String? left,
     @_FlexibleStringConverter() String? email,
     @_FlexibleStringConverter() String? appId,
+    @JsonKey(name: 'global_person_id', includeIfNull: false) @_FlexibleStringConverter() String? globalPersonId,
     @_FlexibleStringConverter() String? notes,
     @_FlexibleStringConverter() String? img,
     @_FlexibleStringConverter() String? telegramId,
@@ -543,6 +562,7 @@ abstract class _$$PersonImplCopyWith<$Res> implements $PersonCopyWith<$Res> {
     @_FlexibleStringConverter() String? range,
     @_FlexibleStringConverter() String? instruments,
     @JsonKey(name: 'parent_id') @_FlexibleIntConverter() int? parentId,
+    @JsonKey(name: 'sort_order', includeIfNull: false) @_FlexibleIntConverter() int? sortOrder,
     @_FlexibleIntConverter() int? legacyId,
     @_FlexibleIntConverter() int? legacyConductorId,
     @JsonKey(includeFromJson: false, includeToJson: false)
@@ -583,6 +603,7 @@ class __$$PersonImplCopyWithImpl<$Res>
     Object? left = freezed,
     Object? email = freezed,
     Object? appId = freezed,
+    Object? globalPersonId = freezed,
     Object? notes = freezed,
     Object? img = freezed,
     Object? telegramId = freezed,
@@ -613,6 +634,7 @@ class __$$PersonImplCopyWithImpl<$Res>
     Object? range = freezed,
     Object? instruments = freezed,
     Object? parentId = freezed,
+    Object? sortOrder = freezed,
     Object? legacyId = freezed,
     Object? legacyConductorId = freezed,
     Object? groupName = freezed,
@@ -666,6 +688,11 @@ class __$$PersonImplCopyWithImpl<$Res>
             freezed == appId
                 ? _value.appId
                 : appId // ignore: cast_nullable_to_non_nullable
+                    as String?,
+        globalPersonId:
+            freezed == globalPersonId
+                ? _value.globalPersonId
+                : globalPersonId // ignore: cast_nullable_to_non_nullable
                     as String?,
         notes:
             freezed == notes
@@ -817,6 +844,11 @@ class __$$PersonImplCopyWithImpl<$Res>
                 ? _value.parentId
                 : parentId // ignore: cast_nullable_to_non_nullable
                     as int?,
+        sortOrder:
+            freezed == sortOrder
+                ? _value.sortOrder
+                : sortOrder // ignore: cast_nullable_to_non_nullable
+                    as int?,
         legacyId:
             freezed == legacyId
                 ? _value.legacyId
@@ -865,6 +897,7 @@ class _$PersonImpl implements _Person {
     @_FlexibleStringConverter() this.left,
     @_FlexibleStringConverter() this.email,
     @_FlexibleStringConverter() this.appId,
+    @JsonKey(name: 'global_person_id', includeIfNull: false) @_FlexibleStringConverter() this.globalPersonId,
     @_FlexibleStringConverter() this.notes,
     @_FlexibleStringConverter() this.img,
     @_FlexibleStringConverter() this.telegramId,
@@ -898,6 +931,7 @@ class _$PersonImpl implements _Person {
     @_FlexibleStringConverter() this.range,
     @_FlexibleStringConverter() this.instruments,
     @JsonKey(name: 'parent_id') @_FlexibleIntConverter() this.parentId,
+    @JsonKey(name: 'sort_order', includeIfNull: false) @_FlexibleIntConverter() this.sortOrder,
     @_FlexibleIntConverter() this.legacyId,
     @_FlexibleIntConverter() this.legacyConductorId,
     @JsonKey(includeFromJson: false, includeToJson: false)
@@ -947,6 +981,9 @@ class _$PersonImpl implements _Person {
   @override
   @_FlexibleStringConverter()
   final String? appId;
+  @override
+  @JsonKey(name: 'global_person_id', includeIfNull: false)
+  final String? globalPersonId;
   @override
   @_FlexibleStringConverter()
   final String? notes;
@@ -1075,6 +1112,9 @@ class _$PersonImpl implements _Person {
   @_FlexibleIntConverter()
   final int? parentId;
   @override
+  @JsonKey(name: 'sort_order', includeIfNull: false)
+  final int? sortOrder;
+  @override
   @_FlexibleIntConverter()
   final int? legacyId;
   @override
@@ -1100,7 +1140,7 @@ class _$PersonImpl implements _Person {
 
   @override
   String toString() {
-    return 'Person(id: $id, createdAt: $createdAt, firstName: $firstName, lastName: $lastName, birthday: $birthday, joined: $joined, left: $left, email: $email, appId: $appId, notes: $notes, img: $img, telegramId: $telegramId, paused: $paused, pausedUntil: $pausedUntil, tenantId: $tenantId, additionalFields: $additionalFields, phone: $phone, shiftId: $shiftId, shiftStart: $shiftStart, shiftName: $shiftName, pending: $pending, selfRegister: $selfRegister, instrument: $instrument, hasTeacher: $hasTeacher, playsSince: $playsSince, isLeader: $isLeader, teacher: $teacher, isCritical: $isCritical, criticalReason: $criticalReason, lastSolve: $lastSolve, correctBirthday: $correctBirthday, history: $history, otherOrchestras: $otherOrchestras, otherExercise: $otherExercise, testResult: $testResult, examinee: $examinee, range: $range, instruments: $instruments, parentId: $parentId, legacyId: $legacyId, legacyConductorId: $legacyConductorId, groupName: $groupName, teacherName: $teacherName, criticalReasonText: $criticalReasonText, percentage: $percentage)';
+    return 'Person(id: $id, createdAt: $createdAt, firstName: $firstName, lastName: $lastName, birthday: $birthday, joined: $joined, left: $left, email: $email, appId: $appId, globalPersonId: $globalPersonId, notes: $notes, img: $img, telegramId: $telegramId, paused: $paused, pausedUntil: $pausedUntil, tenantId: $tenantId, additionalFields: $additionalFields, phone: $phone, shiftId: $shiftId, shiftStart: $shiftStart, shiftName: $shiftName, pending: $pending, selfRegister: $selfRegister, instrument: $instrument, hasTeacher: $hasTeacher, playsSince: $playsSince, isLeader: $isLeader, teacher: $teacher, isCritical: $isCritical, criticalReason: $criticalReason, lastSolve: $lastSolve, correctBirthday: $correctBirthday, history: $history, otherOrchestras: $otherOrchestras, otherExercise: $otherExercise, testResult: $testResult, examinee: $examinee, range: $range, instruments: $instruments, parentId: $parentId, sortOrder: $sortOrder, legacyId: $legacyId, legacyConductorId: $legacyConductorId, groupName: $groupName, teacherName: $teacherName, criticalReasonText: $criticalReasonText, percentage: $percentage)';
   }
 
   @override
@@ -1121,6 +1161,7 @@ class _$PersonImpl implements _Person {
             (identical(other.left, left) || other.left == left) &&
             (identical(other.email, email) || other.email == email) &&
             (identical(other.appId, appId) || other.appId == appId) &&
+            (identical(other.globalPersonId, globalPersonId) || other.globalPersonId == globalPersonId) &&
             (identical(other.notes, notes) || other.notes == notes) &&
             (identical(other.img, img) || other.img == img) &&
             (identical(other.telegramId, telegramId) ||
@@ -1176,6 +1217,7 @@ class _$PersonImpl implements _Person {
                 other.instruments == instruments) &&
             (identical(other.parentId, parentId) ||
                 other.parentId == parentId) &&
+            (identical(other.sortOrder, sortOrder) || other.sortOrder == sortOrder) &&
             (identical(other.legacyId, legacyId) ||
                 other.legacyId == legacyId) &&
             (identical(other.legacyConductorId, legacyConductorId) ||
@@ -1203,6 +1245,7 @@ class _$PersonImpl implements _Person {
     left,
     email,
     appId,
+    globalPersonId,
     notes,
     img,
     telegramId,
@@ -1233,6 +1276,7 @@ class _$PersonImpl implements _Person {
     range,
     instruments,
     parentId,
+    sortOrder,
     legacyId,
     legacyConductorId,
     groupName,
@@ -1266,6 +1310,7 @@ abstract class _Person implements Person {
     @_FlexibleStringConverter() final String? left,
     @_FlexibleStringConverter() final String? email,
     @_FlexibleStringConverter() final String? appId,
+    @JsonKey(name: 'global_person_id', includeIfNull: false) @_FlexibleStringConverter() final String? globalPersonId,
     @_FlexibleStringConverter() final String? notes,
     @_FlexibleStringConverter() final String? img,
     @_FlexibleStringConverter() final String? telegramId,
@@ -1307,6 +1352,7 @@ abstract class _Person implements Person {
     @_FlexibleStringConverter() final String? range,
     @_FlexibleStringConverter() final String? instruments,
     @JsonKey(name: 'parent_id') @_FlexibleIntConverter() final int? parentId,
+    @JsonKey(name: 'sort_order', includeIfNull: false) @_FlexibleIntConverter() final int? sortOrder,
     @_FlexibleIntConverter() final int? legacyId,
     @_FlexibleIntConverter() final int? legacyConductorId,
     @JsonKey(includeFromJson: false, includeToJson: false)
@@ -1351,6 +1397,9 @@ abstract class _Person implements Person {
   @override
   @_FlexibleStringConverter()
   String? get appId;
+  @override
+  @JsonKey(name: 'global_person_id', includeIfNull: false)
+  String? get globalPersonId;
   @override
   @_FlexibleStringConverter()
   String? get notes;
@@ -1447,6 +1496,9 @@ abstract class _Person implements Person {
   @JsonKey(name: 'parent_id')
   @_FlexibleIntConverter()
   int? get parentId;
+  @override
+  @JsonKey(name: 'sort_order', includeIfNull: false)
+  int? get sortOrder;
   @override
   @_FlexibleIntConverter()
   int? get legacyId;

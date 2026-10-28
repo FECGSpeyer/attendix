@@ -39,6 +39,8 @@ mixin _$Instrument {
   String? get range => throw _privateConstructorUsedError;
   String? get synonyms => throw _privateConstructorUsedError;
   String? get tuning => throw _privateConstructorUsedError;
+  @JsonKey(name: 'sort_order')
+  int? get sortOrder => throw _privateConstructorUsedError;
 
   /// Serializes this Instrument to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -75,6 +77,7 @@ abstract class $InstrumentCopyWith<$Res> {
     String? range,
     String? synonyms,
     String? tuning,
+    @JsonKey(name: 'sort_order') int? sortOrder,
   });
 }
 
@@ -110,6 +113,7 @@ class _$InstrumentCopyWithImpl<$Res, $Val extends Instrument>
     Object? range = freezed,
     Object? synonyms = freezed,
     Object? tuning = freezed,
+    Object? sortOrder = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -198,6 +202,11 @@ class _$InstrumentCopyWithImpl<$Res, $Val extends Instrument>
                     ? _value.tuning
                     : tuning // ignore: cast_nullable_to_non_nullable
                         as String?,
+            sortOrder:
+                freezed == sortOrder
+                    ? _value.sortOrder
+                    : sortOrder // ignore: cast_nullable_to_non_nullable
+                        as int?,
           )
           as $Val,
     );
@@ -231,6 +240,7 @@ abstract class _$$InstrumentImplCopyWith<$Res>
     String? range,
     String? synonyms,
     String? tuning,
+    @JsonKey(name: 'sort_order') int? sortOrder,
   });
 }
 
@@ -265,6 +275,7 @@ class __$$InstrumentImplCopyWithImpl<$Res>
     Object? range = freezed,
     Object? synonyms = freezed,
     Object? tuning = freezed,
+    Object? sortOrder = freezed,
   }) {
     return _then(
       _$InstrumentImpl(
@@ -353,6 +364,11 @@ class __$$InstrumentImplCopyWithImpl<$Res>
                 ? _value.tuning
                 : tuning // ignore: cast_nullable_to_non_nullable
                     as String?,
+        sortOrder:
+            freezed == sortOrder
+                ? _value.sortOrder
+                : sortOrder // ignore: cast_nullable_to_non_nullable
+                    as int?,
       ),
     );
   }
@@ -379,6 +395,7 @@ class _$InstrumentImpl implements _Instrument {
     this.range,
     this.synonyms,
     this.tuning,
+    @JsonKey(name: 'sort_order') this.sortOrder,
   }) : _clefs = clefs;
 
   factory _$InstrumentImpl.fromJson(Map<String, dynamic> json) =>
@@ -430,10 +447,13 @@ class _$InstrumentImpl implements _Instrument {
   final String? synonyms;
   @override
   final String? tuning;
+  @override
+  @JsonKey(name: 'sort_order')
+  final int? sortOrder;
 
   @override
   String toString() {
-    return 'Instrument(id: $id, tenantId: $tenantId, name: $name, shortName: $shortName, color: $color, isSection: $isSection, sectionIndex: $sectionIndex, parentId: $parentId, legacyId: $legacyId, createdAt: $createdAt, category: $category, clefs: $clefs, maingroup: $maingroup, notes: $notes, range: $range, synonyms: $synonyms, tuning: $tuning)';
+    return 'Instrument(id: $id, tenantId: $tenantId, name: $name, shortName: $shortName, color: $color, isSection: $isSection, sectionIndex: $sectionIndex, parentId: $parentId, legacyId: $legacyId, createdAt: $createdAt, category: $category, clefs: $clefs, maingroup: $maingroup, notes: $notes, range: $range, synonyms: $synonyms, tuning: $tuning, sortOrder: $sortOrder)';
   }
 
   @override
@@ -467,7 +487,8 @@ class _$InstrumentImpl implements _Instrument {
             (identical(other.range, range) || other.range == range) &&
             (identical(other.synonyms, synonyms) ||
                 other.synonyms == synonyms) &&
-            (identical(other.tuning, tuning) || other.tuning == tuning));
+            (identical(other.tuning, tuning) || other.tuning == tuning) &&
+            (identical(other.sortOrder, sortOrder) || other.sortOrder == sortOrder));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -491,6 +512,7 @@ class _$InstrumentImpl implements _Instrument {
     range,
     synonyms,
     tuning,
+    sortOrder,
   );
 
   /// Create a copy of Instrument
@@ -526,6 +548,7 @@ abstract class _Instrument implements Instrument {
     final String? range,
     final String? synonyms,
     final String? tuning,
+    @JsonKey(name: 'sort_order') final int? sortOrder,
   }) = _$InstrumentImpl;
 
   factory _Instrument.fromJson(Map<String, dynamic> json) =
@@ -566,6 +589,9 @@ abstract class _Instrument implements Instrument {
   String? get synonyms;
   @override
   String? get tuning;
+  @override
+  @JsonKey(name: 'sort_order')
+  int? get sortOrder;
 
   /// Create a copy of Instrument
   /// with the given fields replaced by the non-null parameter values.
@@ -597,6 +623,8 @@ mixin _$Group {
   String? get range => throw _privateConstructorUsedError;
   List<String>? get clefs => throw _privateConstructorUsedError;
   String? get notes => throw _privateConstructorUsedError;
+  @JsonKey(name: 'sort_order')
+  int? get sortOrder => throw _privateConstructorUsedError;
   @JsonKey(includeToJson: false)
   GroupCategory? get categoryData => throw _privateConstructorUsedError;
 
@@ -629,6 +657,7 @@ abstract class $GroupCopyWith<$Res> {
     String? range,
     List<String>? clefs,
     String? notes,
+    @JsonKey(name: 'sort_order') int? sortOrder,
     @JsonKey(includeToJson: false) GroupCategory? categoryData,
   });
 
@@ -664,6 +693,7 @@ class _$GroupCopyWithImpl<$Res, $Val extends Group>
     Object? range = freezed,
     Object? clefs = freezed,
     Object? notes = freezed,
+    Object? sortOrder = freezed,
     Object? categoryData = freezed,
   }) {
     return _then(
@@ -738,6 +768,11 @@ class _$GroupCopyWithImpl<$Res, $Val extends Group>
                     ? _value.notes
                     : notes // ignore: cast_nullable_to_non_nullable
                         as String?,
+            sortOrder:
+                freezed == sortOrder
+                    ? _value.sortOrder
+                    : sortOrder // ignore: cast_nullable_to_non_nullable
+                        as int?,
             categoryData:
                 freezed == categoryData
                     ? _value.categoryData
@@ -786,6 +821,7 @@ abstract class _$$GroupImplCopyWith<$Res> implements $GroupCopyWith<$Res> {
     String? range,
     List<String>? clefs,
     String? notes,
+    @JsonKey(name: 'sort_order') int? sortOrder,
     @JsonKey(includeToJson: false) GroupCategory? categoryData,
   });
 
@@ -821,6 +857,7 @@ class __$$GroupImplCopyWithImpl<$Res>
     Object? range = freezed,
     Object? clefs = freezed,
     Object? notes = freezed,
+    Object? sortOrder = freezed,
     Object? categoryData = freezed,
   }) {
     return _then(
@@ -895,6 +932,11 @@ class __$$GroupImplCopyWithImpl<$Res>
                 ? _value.notes
                 : notes // ignore: cast_nullable_to_non_nullable
                     as String?,
+        sortOrder:
+            freezed == sortOrder
+                ? _value.sortOrder
+                : sortOrder // ignore: cast_nullable_to_non_nullable
+                    as int?,
         categoryData:
             freezed == categoryData
                 ? _value.categoryData
@@ -923,6 +965,7 @@ class _$GroupImpl implements _Group {
     this.range,
     final List<String>? clefs,
     this.notes,
+    @JsonKey(name: 'sort_order') this.sortOrder,
     @JsonKey(includeToJson: false) this.categoryData,
   }) : _clefs = clefs;
 
@@ -969,12 +1012,15 @@ class _$GroupImpl implements _Group {
   @override
   final String? notes;
   @override
+  @JsonKey(name: 'sort_order')
+  final int? sortOrder;
+  @override
   @JsonKey(includeToJson: false)
   final GroupCategory? categoryData;
 
   @override
   String toString() {
-    return 'Group(id: $id, tenantId: $tenantId, name: $name, shortName: $shortName, color: $color, index: $index, categoryId: $categoryId, createdAt: $createdAt, maingroup: $maingroup, synonyms: $synonyms, tuning: $tuning, range: $range, clefs: $clefs, notes: $notes, categoryData: $categoryData)';
+    return 'Group(id: $id, tenantId: $tenantId, name: $name, shortName: $shortName, color: $color, index: $index, categoryId: $categoryId, createdAt: $createdAt, maingroup: $maingroup, synonyms: $synonyms, tuning: $tuning, range: $range, clefs: $clefs, notes: $notes, sortOrder: $sortOrder, categoryData: $categoryData)';
   }
 
   @override
@@ -1002,6 +1048,7 @@ class _$GroupImpl implements _Group {
             (identical(other.range, range) || other.range == range) &&
             const DeepCollectionEquality().equals(other._clefs, _clefs) &&
             (identical(other.notes, notes) || other.notes == notes) &&
+            (identical(other.sortOrder, sortOrder) || other.sortOrder == sortOrder) &&
             (identical(other.categoryData, categoryData) ||
                 other.categoryData == categoryData));
   }
@@ -1024,6 +1071,7 @@ class _$GroupImpl implements _Group {
     range,
     const DeepCollectionEquality().hash(_clefs),
     notes,
+    sortOrder,
     categoryData,
   );
 
@@ -1057,6 +1105,7 @@ abstract class _Group implements Group {
     final String? range,
     final List<String>? clefs,
     final String? notes,
+    @JsonKey(name: 'sort_order') final int? sortOrder,
     @JsonKey(includeToJson: false) final GroupCategory? categoryData,
   }) = _$GroupImpl;
 
@@ -1093,6 +1142,9 @@ abstract class _Group implements Group {
   @override
   String? get notes;
   @override
+  @JsonKey(name: 'sort_order')
+  int? get sortOrder;
+  @override
   @JsonKey(includeToJson: false)
   GroupCategory? get categoryData;
 
@@ -1115,6 +1167,8 @@ mixin _$GroupCategory {
   String get name => throw _privateConstructorUsedError;
   @JsonKey(name: 'created_at')
   DateTime? get createdAt => throw _privateConstructorUsedError;
+  @JsonKey(name: 'sort_order')
+  int? get sortOrder => throw _privateConstructorUsedError;
 
   /// Serializes this GroupCategory to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -1138,6 +1192,7 @@ abstract class $GroupCategoryCopyWith<$Res> {
     int? tenantId,
     String name,
     @JsonKey(name: 'created_at') DateTime? createdAt,
+    @JsonKey(name: 'sort_order') int? sortOrder,
   });
 }
 
@@ -1160,6 +1215,7 @@ class _$GroupCategoryCopyWithImpl<$Res, $Val extends GroupCategory>
     Object? tenantId = freezed,
     Object? name = null,
     Object? createdAt = freezed,
+    Object? sortOrder = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -1183,6 +1239,11 @@ class _$GroupCategoryCopyWithImpl<$Res, $Val extends GroupCategory>
                     ? _value.createdAt
                     : createdAt // ignore: cast_nullable_to_non_nullable
                         as DateTime?,
+            sortOrder:
+                freezed == sortOrder
+                    ? _value.sortOrder
+                    : sortOrder // ignore: cast_nullable_to_non_nullable
+                        as int?,
           )
           as $Val,
     );
@@ -1203,6 +1264,7 @@ abstract class _$$GroupCategoryImplCopyWith<$Res>
     int? tenantId,
     String name,
     @JsonKey(name: 'created_at') DateTime? createdAt,
+    @JsonKey(name: 'sort_order') int? sortOrder,
   });
 }
 
@@ -1224,6 +1286,7 @@ class __$$GroupCategoryImplCopyWithImpl<$Res>
     Object? tenantId = freezed,
     Object? name = null,
     Object? createdAt = freezed,
+    Object? sortOrder = freezed,
   }) {
     return _then(
       _$GroupCategoryImpl(
@@ -1247,6 +1310,11 @@ class __$$GroupCategoryImplCopyWithImpl<$Res>
                 ? _value.createdAt
                 : createdAt // ignore: cast_nullable_to_non_nullable
                     as DateTime?,
+        sortOrder:
+            freezed == sortOrder
+                ? _value.sortOrder
+                : sortOrder // ignore: cast_nullable_to_non_nullable
+                    as int?,
       ),
     );
   }
@@ -1260,6 +1328,7 @@ class _$GroupCategoryImpl implements _GroupCategory {
     this.tenantId,
     required this.name,
     @JsonKey(name: 'created_at') this.createdAt,
+    @JsonKey(name: 'sort_order') this.sortOrder,
   });
 
   factory _$GroupCategoryImpl.fromJson(Map<String, dynamic> json) =>
@@ -1274,10 +1343,13 @@ class _$GroupCategoryImpl implements _GroupCategory {
   @override
   @JsonKey(name: 'created_at')
   final DateTime? createdAt;
+  @override
+  @JsonKey(name: 'sort_order')
+  final int? sortOrder;
 
   @override
   String toString() {
-    return 'GroupCategory(id: $id, tenantId: $tenantId, name: $name, createdAt: $createdAt)';
+    return 'GroupCategory(id: $id, tenantId: $tenantId, name: $name, createdAt: $createdAt, sortOrder: $sortOrder)';
   }
 
   @override
@@ -1290,12 +1362,13 @@ class _$GroupCategoryImpl implements _GroupCategory {
                 other.tenantId == tenantId) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.createdAt, createdAt) ||
-                other.createdAt == createdAt));
+                other.createdAt == createdAt) &&
+            (identical(other.sortOrder, sortOrder) || other.sortOrder == sortOrder));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, tenantId, name, createdAt);
+  int get hashCode => Object.hash(runtimeType, id, tenantId, name, createdAt, sortOrder);
 
   /// Create a copy of GroupCategory
   /// with the given fields replaced by the non-null parameter values.
@@ -1317,6 +1390,7 @@ abstract class _GroupCategory implements GroupCategory {
     final int? tenantId,
     required final String name,
     @JsonKey(name: 'created_at') final DateTime? createdAt,
+    @JsonKey(name: 'sort_order') final int? sortOrder,
   }) = _$GroupCategoryImpl;
 
   factory _GroupCategory.fromJson(Map<String, dynamic> json) =
@@ -1331,6 +1405,9 @@ abstract class _GroupCategory implements GroupCategory {
   @override
   @JsonKey(name: 'created_at')
   DateTime? get createdAt;
+  @override
+  @JsonKey(name: 'sort_order')
+  int? get sortOrder;
 
   /// Create a copy of GroupCategory
   /// with the given fields replaced by the non-null parameter values.

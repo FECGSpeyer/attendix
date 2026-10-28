@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/group_providers.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/utils/instrument_sort.dart';
+import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/instrument/instrument.dart';
 
 /// Bottom sheet for managing instrument categories (CRUD)
@@ -17,6 +19,47 @@ class InstrumentCategoriesSheet extends ConsumerStatefulWidget {
 
 class _InstrumentCategoriesSheetState
     extends ConsumerState<InstrumentCategoriesSheet> {
+  bool _isReordering = false;
+  List<GroupCategory>? _working;
+
+  Future<void> _toggleReorder(List<GroupCategory> categories) async {
+    if (!_isReordering) {
+      setState(() {
+        _isReordering = true;
+        _working = [...categories];
+      });
+      return;
+    }
+    final ordered = _working ?? categories;
+    setState(() {
+      _isReordering = false;
+      _working = null;
+    });
+
+    // New category sort_order (1-based) + resulting global instrument order
+    final categoryOrders = <int, int>{};
+    final updatedCats = <GroupCategory>[];
+    for (var i = 0; i < ordered.length; i++) {
+      final c = ordered[i];
+      if (c.id != null) categoryOrders[c.id!] = i + 1;
+      updatedCats.add(c.copyWith(sortOrder: i + 1));
+    }
+    final groups = ref.read(groupsProvider).valueOrNull ?? const [];
+    final groupOrders = computeGlobalSortOrder(
+      groupInstrumentsByCategory(groups, updatedCats),
+    );
+
+    final ok = await ref
+        .read(groupNotifierProvider.notifier)
+        .saveCategoryOrder(categoryOrders, groupSortOrders: groupOrders);
+    if (!mounted) return;
+    if (ok) {
+      ToastHelper.showSuccess(context, 'Reihenfolge gespeichert');
+    } else {
+      ToastHelper.showError(context, 'Fehler beim Speichern der Reihenfolge');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final categoriesAsync = ref.watch(groupCategoriesProvider);
@@ -64,10 +107,21 @@ class _InstrumentCategoriesSheetState
                       ),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.add),
-                      onPressed: () => _showAddCategoryDialog(context),
-                      tooltip: 'Neue Kategorie',
+                      icon: Icon(
+                          _isReordering ? Icons.check : Icons.swap_vert),
+                      tooltip: _isReordering
+                          ? 'Reihenfolge speichern'
+                          : 'Reihenfolge ändern',
+                      onPressed: categoriesAsync.hasValue
+                          ? () => _toggleReorder(categoriesAsync.value!)
+                          : null,
                     ),
+                    if (!_isReordering)
+                      IconButton(
+                        icon: const Icon(Icons.add),
+                        onPressed: () => _showAddCategoryDialog(context),
+                        tooltip: 'Neue Kategorie',
+                      ),
                     IconButton(
                       icon: const Icon(Icons.close),
                       onPressed: () => Navigator.of(context).pop(),
@@ -124,6 +178,54 @@ class _InstrumentCategoriesSheetState
                             ),
                           ],
                         ),
+                      );
+                    }
+
+                    if (_isReordering) {
+                      final working = _working ?? categories;
+                      return Column(
+                        children: [
+                          const ListTile(
+                            leading: Icon(Icons.info_outline,
+                                color: AppColors.primary),
+                            title: Text(
+                                'Ziehe die Kategorien in die gewünschte Reihenfolge'),
+                          ),
+                          Expanded(
+                            child: ReorderableListView.builder(
+                              scrollController: scrollController,
+                              padding:
+                                  const EdgeInsets.all(AppDimensions.paddingM),
+                              itemCount: working.length,
+                              onReorder: (oldIndex, newIndex) {
+                                setState(() {
+                                  final list = [...working];
+                                  if (newIndex > oldIndex) newIndex -= 1;
+                                  final item = list.removeAt(oldIndex);
+                                  list.insert(newIndex, item);
+                                  _working = list;
+                                });
+                              },
+                              itemBuilder: (context, index) {
+                                final category = working[index];
+                                return Card(
+                                  key: ValueKey(category.id ?? index),
+                                  margin: const EdgeInsets.only(
+                                      bottom: AppDimensions.paddingS),
+                                  child: ListTile(
+                                    leading: CircleAvatar(
+                                      radius: 14,
+                                      child: Text('${index + 1}',
+                                          style:
+                                              const TextStyle(fontSize: 12)),
+                                    ),
+                                    title: Text(category.name),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ],
                       );
                     }
 

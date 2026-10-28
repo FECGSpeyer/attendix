@@ -21,7 +21,9 @@ class ExportService {
     required List<Person> players,
     required List<String> fields,
     required String tenantName,
+    String Function(Person player, String field)? valueOf,
   }) async {
+    final fieldValue = valueOf ?? _getPlayerFieldValue;
     final date = DateFormat('dd.MM.yyyy').format(DateTime.now());
     final pdf = pw.Document();
 
@@ -32,7 +34,7 @@ class ExportService {
     for (final player in players) {
       data.add([
         row.toString(),
-        ...fields.map((f) => _getPlayerFieldValue(player, f)),
+        ...fields.map((f) => fieldValue(player, f)),
       ]);
       row++;
     }
@@ -88,7 +90,9 @@ class ExportService {
     required List<Person> players,
     required List<String> fields,
     required String tenantName,
+    String Function(Person player, String field)? valueOf,
   }) async {
+    final fieldValue = valueOf ?? _getPlayerFieldValue;
     final excel = Excel.createExcel();
     final sheet = excel['Spielerliste'];
 
@@ -103,7 +107,7 @@ class ExportService {
     for (final player in players) {
       sheet.appendRow([
         TextCellValue(row.toString()),
-        ...fields.map((f) => TextCellValue(_getPlayerFieldValue(player, f))),
+        ...fields.map((f) => TextCellValue(fieldValue(player, f))),
       ]);
       row++;
     }
@@ -129,7 +133,9 @@ class ExportService {
     required List<PersonAttendance> personAttendances,
     required List<String> fields,
     required String tenantName,
+    String Function(Person player, String field)? valueOf,
   }) async {
+    final fieldValue = valueOf ?? _getPlayerFieldValue;
     final date = DateFormat('dd.MM.yyyy').format(DateTime.now());
     final pdf = pw.Document();
 
@@ -161,14 +167,14 @@ class ExportService {
 
       data.add([
         row.toString(),
-        ...fields.map((f) => _getPlayerFieldValue(player, f)),
-        ...attInfo.reversed,
+        ...fields.map((f) => fieldValue(player, f)),
+        ...attInfo,
       ]);
       row++;
     }
 
     // Headers
-    final headers = ['#', ...fields, ...attDates.reversed];
+    final headers = ['#', ...fields, ...attDates];
 
     pdf.addPage(
       pw.MultiPage(
@@ -226,7 +232,9 @@ class ExportService {
     required List<PersonAttendance> personAttendances,
     required List<String> fields,
     required String tenantName,
+    String Function(Person player, String field)? valueOf,
   }) async {
+    final fieldValue = valueOf ?? _getPlayerFieldValue;
     final excel = Excel.createExcel();
     final sheet = excel['Anwesenheit'];
 
@@ -240,7 +248,7 @@ class ExportService {
     sheet.appendRow([
       TextCellValue('#'),
       ...fields.map((f) => TextCellValue(f)),
-      ...attDates.reversed.map((d) => TextCellValue(d)),
+      ...attDates.map((d) => TextCellValue(d)),
     ]);
 
     // Data rows
@@ -258,8 +266,8 @@ class ExportService {
 
       sheet.appendRow([
         TextCellValue(row.toString()),
-        ...fields.map((f) => TextCellValue(_getPlayerFieldValue(player, f))),
-        ...attInfo.reversed.map((s) => TextCellValue(s)),
+        ...fields.map((f) => TextCellValue(fieldValue(player, f))),
+        ...attInfo.map((s) => TextCellValue(s)),
       ]);
       row++;
     }
@@ -283,6 +291,7 @@ class ExportService {
       case 'Gruppe':
         return player.groupName ?? '';
       case 'Email':
+      case 'E-Mail':
         return player.email ?? '';
       case 'Telefon':
         return player.phone ?? '';
@@ -296,7 +305,7 @@ class ExportService {
   /// Get status code for display
   /// BL-011: Accept nullable status - null means "not recorded"
   String _getStatusCode(AttendanceStatus? status) {
-    if (status == null) return '-';
+    if (status == null) return ''; // Ionic: not part of this attendance
     switch (status) {
       case AttendanceStatus.present:
         return 'X';

@@ -681,6 +681,43 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
   }
 
   // Helper to parse attendance with optional person attendances
+  // STATS_PEOPLE_FIXES
+  /// Load person_attendances for the given attendance ids (export).
+  ///
+  /// Multi-tenant safety: `person_attendances` has no `tenantId` column, so
+  /// the inner join filters by `attendance.tenantId = currentTenantId`.
+  /// Paginated to bypass the PostgREST 1000-row default limit.
+  Future<List<PersonAttendance>> getPersonAttendancesForAttendances(
+    List<int> attendanceIds,
+  ) async {
+    if (attendanceIds.isEmpty) return [];
+    try {
+      const batchSize = 1000;
+      final result = <PersonAttendance>[];
+      var offset = 0;
+      while (true) {
+        final response = await supabase
+            .from('person_attendances')
+            .select('id, attendance_id, person_id, status, notes, '
+                'attendance:attendance_id!inner(tenantId)')
+            .inFilter('attendance_id', attendanceIds)
+            .eq('attendance.tenantId', currentTenantId)
+            .range(offset, offset + batchSize - 1);
+        final rows = response as List;
+        for (final e in rows) {
+          final row = Map<String, dynamic>.from(e as Map)..remove('attendance');
+          result.add(PersonAttendance.fromJson(row));
+        }
+        if (rows.length < batchSize) break;
+        offset += batchSize;
+      }
+      return result;
+    } catch (e, stack) {
+      handleError(e, stack, 'getPersonAttendancesForAttendances');
+      rethrow;
+    }
+  }
+
   Attendance _parseAttendance(Map<String, dynamic> data, bool withPersons) {
     // RT-020: Removed unused persons parsing - the Attendance model
     // doesn't have a persons field yet. When needed, add the field to

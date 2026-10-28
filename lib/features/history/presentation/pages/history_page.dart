@@ -11,6 +11,7 @@ import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/history/history_entry.dart';
 import '../../../../data/models/song/song.dart';
+import '../../history_utils.dart';
 
 /// History Page - Song performance history
 class HistoryPage extends ConsumerStatefulWidget {
@@ -132,8 +133,11 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
                     itemBuilder: (context, index) {
                       final group = grouped[index];
                       return _HistoryGroup(
+                        key: ValueKey('${group.date}_${_searchQuery.isNotEmpty}'),
                         date: group.date,
                         entries: group.entries,
+                        // Ionic: collapsed accordion, flat list while searching
+                        initiallyExpanded: _searchQuery.isNotEmpty,
                         onDelete: (entry) => _deleteEntry(entry),
                       );
                     },
@@ -400,10 +404,11 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
       await supabase.from('history').insert(
         songIds.map((songId) => {
           'tenantId': tenant!.id!,
-          'song_id': songId,
+          'songId': songId, // DB column (Ionic History.songId)
           'person_id': conductorId,
           'otherConductor': otherConductor,
           'date': dateStr,
+          'visible': true,
         }).toList(),
       );
 
@@ -478,28 +483,44 @@ class _HistoryGroup extends StatelessWidget {
   final List<HistoryEntry> entries;
   final Function(HistoryEntry) onDelete;
 
+  final bool initiallyExpanded;
+
   const _HistoryGroup({
+    super.key,
     required this.date,
     required this.entries,
     required this.onDelete,
+    this.initiallyExpanded = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 12),
-          child: Text(
-            date,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: AppColors.primary,
-              fontSize: 14,
-            ),
-          ),
+    return ExpansionTile(
+      initiallyExpanded: initiallyExpanded,
+      tilePadding: const EdgeInsets.symmetric(horizontal: 4),
+      childrenPadding: EdgeInsets.zero,
+      shape: const Border(),
+      collapsedShape: const Border(),
+      title: Text(
+        date,
+        style: const TextStyle(
+          fontWeight: FontWeight.bold,
+          color: AppColors.primary,
+          fontSize: 14,
         ),
+      ),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            '${entries.length}',
+            style: const TextStyle(color: AppColors.medium, fontSize: 12),
+          ),
+          const SizedBox(width: 4),
+          const Icon(Icons.expand_more),
+        ],
+      ),
+      children: [
         ...entries.map((entry) => Dismissible(
               key: ValueKey(entry.id ?? '${entry.songId}_${entry.date}'),
               direction: DismissDirection.endToStart,
@@ -536,7 +557,8 @@ class _HistoryGroup extends StatelessWidget {
                     style: const TextStyle(fontWeight: FontWeight.w500),
                   ),
                   subtitle: Text(entry.displayConductor),
-                  trailing: entry.count > 1
+                  // Ionic: number of rehearsals before the performance
+                  trailing: entry.count != 0
                       ? Container(
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
@@ -544,7 +566,7 @@ class _HistoryGroup extends StatelessWidget {
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
-                            '${entry.count}x',
+                            rehearsalsLabel(entry.count),
                             style: const TextStyle(
                               color: AppColors.primary,
                               fontWeight: FontWeight.bold,

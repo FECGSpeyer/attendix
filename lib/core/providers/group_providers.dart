@@ -144,6 +144,41 @@ class GroupNotifier extends Notifier<AsyncValue<void>> {
     }
   }
 
+  /// Save instrument order (id -> sort_order)
+  Future<bool> saveGroupOrder(Map<int, int> sortOrders) async {
+    state = const AsyncValue.loading();
+    try {
+      await _repo.updateGroupSortOrders(sortOrders);
+      state = const AsyncValue.data(null);
+      ref.invalidate(groupsProvider);
+      return true;
+    } catch (e, stack) {
+      state = AsyncValue.error(e, stack);
+      return false;
+    }
+  }
+
+  /// Save category order and the resulting global instrument order
+  Future<bool> saveCategoryOrder(
+    Map<int, int> categorySortOrders, {
+    Map<int, int> groupSortOrders = const {},
+  }) async {
+    state = const AsyncValue.loading();
+    try {
+      await _repo.updateGroupCategorySortOrders(categorySortOrders);
+      if (groupSortOrders.isNotEmpty) {
+        await _repo.updateGroupSortOrders(groupSortOrders);
+      }
+      state = const AsyncValue.data(null);
+      ref.invalidate(groupCategoriesProvider);
+      ref.invalidate(groupsProvider);
+      return true;
+    } catch (e, stack) {
+      state = AsyncValue.error(e, stack);
+      return false;
+    }
+  }
+
   Future<void> deleteGroupCategory(int id) async {
     state = const AsyncValue.loading();
     try {

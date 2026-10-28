@@ -10,6 +10,7 @@ import '../../../../core/providers/statistics_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/date_helper.dart';
+import '../../../../core/utils/person_matcher.dart';
 import '../../../../data/models/attendance/attendance.dart';
 import '../../../../data/models/organisation/organisation.dart';
 import '../../../../data/models/person/person.dart';
@@ -1341,44 +1342,35 @@ class _OrganisationStatsSectionState
     );
   }
 
-  /// De-duplicate persons across tenants
-  /// Matches by appId (if exists) or by firstName+lastName+birthday
+  /// De-duplicate persons across tenants (Ionic getOrganizationStats):
+  /// key is global_person_id -> appId -> normalized name + birthday.
   List<_UniqueOrgPerson> _deduplicatePersons(
       List<Person> allPersons, List<Tenant> tenants) {
     final tenantMap = {for (final t in tenants) t.id: t};
-    final byAppId = <String, _UniqueOrgPerson>{};
-    final byNameBday = <String, _UniqueOrgPerson>{};
+    final byKey = <String, _UniqueOrgPerson>{};
 
     for (final person in allPersons) {
       final tenantName =
           tenantMap[person.tenantId]?.shortName ?? 'Unbekannt';
-
-      if (person.appId != null && person.appId!.isNotEmpty) {
-        final existing = byAppId[person.appId!];
-        if (existing != null) {
-          existing.tenantNames.add(tenantName);
-        } else {
-          byAppId[person.appId!] = _UniqueOrgPerson(
-            person: person,
-            tenantNames: {tenantName},
-          );
-        }
+      final key = personIdentityKey(
+        globalPersonId: person.globalPersonId,
+        appId: person.appId,
+        firstName: person.firstName,
+        lastName: person.lastName,
+        birthday: person.birthday,
+      );
+      final existing = byKey[key];
+      if (existing != null) {
+        existing.tenantNames.add(tenantName);
       } else {
-        final key =
-            '${person.firstName.toLowerCase()}|${person.lastName.toLowerCase()}|${person.birthday ?? ''}';
-        final existing = byNameBday[key];
-        if (existing != null) {
-          existing.tenantNames.add(tenantName);
-        } else {
-          byNameBday[key] = _UniqueOrgPerson(
-            person: person,
-            tenantNames: {tenantName},
-          );
-        }
+        byKey[key] = _UniqueOrgPerson(
+          person: person,
+          tenantNames: {tenantName},
+        );
       }
     }
 
-    final all = [...byAppId.values, ...byNameBday.values];
+    final all = byKey.values.toList();
     // Sort: most tenants first, then by name
     all.sort((a, b) {
       final cmp = b.tenantNames.length.compareTo(a.tenantNames.length);

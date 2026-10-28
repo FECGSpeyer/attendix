@@ -86,6 +86,10 @@ _$PersonImpl _$$PersonImplFromJson(Map<String, dynamic> json) => _$PersonImpl(
   legacyConductorId: const _FlexibleIntConverter().fromJson(
     json['legacyConductorId'],
   ),
+  globalPersonId: const _FlexibleStringConverter().fromJson(
+    json['global_person_id'],
+  ),
+  sortOrder: const _FlexibleIntConverter().fromJson(json['sort_order']),
 );
 
 Map<String, dynamic> _$$PersonImplToJson(
@@ -142,6 +146,11 @@ Map<String, dynamic> _$$PersonImplToJson(
   'legacyConductorId': const _FlexibleIntConverter().toJson(
     instance.legacyConductorId,
   ),
+  if (const _FlexibleStringConverter().toJson(instance.globalPersonId)
+      case final value?)
+    'global_person_id': value,
+  if (const _FlexibleIntConverter().toJson(instance.sortOrder) case final value?)
+    'sort_order': value,
 };
 
 _$PlayerHistoryEntryImpl _$$PlayerHistoryEntryImplFromJson(

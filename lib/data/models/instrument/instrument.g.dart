@@ -29,6 +29,7 @@ _$InstrumentImpl _$$InstrumentImplFromJson(Map<String, dynamic> json) =>
       range: json['range'] as String?,
       synonyms: json['synonyms'] as String?,
       tuning: json['tuning'] as String?,
+      sortOrder: (json['sort_order'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$$InstrumentImplToJson(_$InstrumentImpl instance) =>
@@ -50,6 +51,7 @@ Map<String, dynamic> _$$InstrumentImplToJson(_$InstrumentImpl instance) =>
       'range': instance.range,
       'synonyms': instance.synonyms,
       'tuning': instance.tuning,
+      'sort_order': instance.sortOrder,
     };
 
 _$GroupImpl _$$GroupImplFromJson(Map<String, dynamic> json) => _$GroupImpl(
@@ -76,6 +78,7 @@ _$GroupImpl _$$GroupImplFromJson(Map<String, dynamic> json) => _$GroupImpl(
           : GroupCategory.fromJson(
             json['categoryData'] as Map<String, dynamic>,
           ),
+  sortOrder: (json['sort_order'] as num?)?.toInt(),
 );
 
 Map<String, dynamic> _$$GroupImplToJson(_$GroupImpl instance) =>
@@ -94,6 +97,7 @@ Map<String, dynamic> _$$GroupImplToJson(_$GroupImpl instance) =>
       'range': instance.range,
       'clefs': instance.clefs,
       'notes': instance.notes,
+  'sort_order': instance.sortOrder,
     };
 
 _$GroupCategoryImpl _$$GroupCategoryImplFromJson(Map<String, dynamic> json) =>
@@ -105,6 +109,7 @@ _$GroupCategoryImpl _$$GroupCategoryImplFromJson(Map<String, dynamic> json) =>
           json['created_at'] == null
               ? null
               : DateTime.parse(json['created_at'] as String),
+      sortOrder: (json['sort_order'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$$GroupCategoryImplToJson(_$GroupCategoryImpl instance) =>
@@ -113,4 +118,5 @@ Map<String, dynamic> _$$GroupCategoryImplToJson(_$GroupCategoryImpl instance) =>
       'tenantId': instance.tenantId,
       'name': instance.name,
       'created_at': instance.createdAt?.toIso8601String(),
+      'sort_order': instance.sortOrder,
     };

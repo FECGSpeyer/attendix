@@ -204,6 +204,7 @@ class AllgemeinAccordion extends ConsumerWidget {
               title: 'Vorname',
               initialValue: person.firstName,
               fieldKey: 'firstName',
+              textCapitalization: TextCapitalization.words,
               validator: (v) => v?.isEmpty ?? true ? 'Pflichtfeld' : null,
             ),
           ),
@@ -219,6 +220,7 @@ class AllgemeinAccordion extends ConsumerWidget {
               title: 'Nachname',
               initialValue: person.lastName,
               fieldKey: 'lastName',
+              textCapitalization: TextCapitalization.words,
               validator: (v) => v?.isEmpty ?? true ? 'Pflichtfeld' : null,
             ),
           ),
@@ -782,6 +784,7 @@ class AllgemeinAccordion extends ConsumerWidget {
     TextInputType? keyboardType,
     String? Function(String?)? validator,
     IconData? icon,
+    TextCapitalization? textCapitalization,
   }) async {
     final result = await FieldEditorSheet.show(
       context,
@@ -792,6 +795,7 @@ class AllgemeinAccordion extends ConsumerWidget {
       keyboardType: keyboardType,
       validator: validator,
       icon: icon,
+      textCapitalization: textCapitalization,
     );
     if (result != null) {
       onFieldChanged(fieldKey, result.isEmpty ? null : result);

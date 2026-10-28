@@ -21,3 +21,5 @@ export 'attendance_detail_providers.dart';
 export 'pwa_providers.dart';
 export 'teacher_providers.dart';
 export 'history_providers.dart';
+// STATS_PEOPLE_FIXES
+export 'cross_tenant_person_providers.dart';

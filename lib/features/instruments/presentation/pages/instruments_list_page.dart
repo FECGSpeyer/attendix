@@ -6,17 +6,66 @@ import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/utils/instrument_sort.dart';
 import '../../../../core/utils/tenant_label_utils.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/instrument/instrument.dart';
 import '../widgets/instrument_categories_sheet.dart';
 
-/// Instruments list page — grouped by category with player counts
-class InstrumentsListPage extends ConsumerWidget {
+/// Instruments list page — grouped by category with player counts.
+/// Supports drag & drop reordering (sort_order) like Ionic instrument-list.
+class InstrumentsListPage extends ConsumerStatefulWidget {
   const InstrumentsListPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<InstrumentsListPage> createState() =>
+      _InstrumentsListPageState();
+}
+
+class _InstrumentsListPageState extends ConsumerState<InstrumentsListPage> {
+  bool _isReordering = false;
+
+  /// Local working copy while reordering
+  List<InstrumentCategorySection>? _reorderSections;
+
+  Future<void> _toggleReorder(
+      List<Group> groups, List<GroupCategory> categories) async {
+    if (!_isReordering) {
+      setState(() {
+        _isReordering = true;
+        _reorderSections = groupInstrumentsByCategory(groups, categories);
+      });
+      return;
+    }
+
+    // Leaving reorder mode → save global order
+    final sections = _reorderSections ?? const <InstrumentCategorySection>[];
+    final orders = computeGlobalSortOrder(sections);
+    setState(() {
+      _isReordering = false;
+      _reorderSections = null;
+    });
+    final ok =
+        await ref.read(groupNotifierProvider.notifier).saveGroupOrder(orders);
+    if (!mounted) return;
+    if (ok) {
+      ToastHelper.showSuccess(context, 'Reihenfolge gespeichert');
+    } else {
+      ToastHelper.showError(context, 'Fehler beim Speichern der Reihenfolge');
+    }
+  }
+
+  void _onReorder(
+      InstrumentCategorySection section, int oldIndex, int newIndex) {
+    setState(() {
+      if (newIndex > oldIndex) newIndex -= 1;
+      final item = section.groups.removeAt(oldIndex);
+      section.groups.insert(newIndex, item);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final groupsAsync = ref.watch(groupsProvider);
     final categoriesAsync = ref.watch(groupCategoriesProvider);
     final playerCountsAsync = ref.watch(playerCountsForGroupsProvider);
@@ -38,6 +87,17 @@ class InstrumentsListPage extends ConsumerWidget {
         ),
         actions: [
           if (isConductor)
+            IconButton(
+              icon: Icon(_isReordering ? Icons.check : Icons.swap_vert),
+              tooltip: _isReordering
+                  ? 'Reihenfolge speichern'
+                  : 'Reihenfolge ändern',
+              onPressed: groupsAsync.hasValue
+                  ? () => _toggleReorder(groupsAsync.value!,
+                      categoriesAsync.valueOrNull ?? const [])
+                  : null,
+            ),
+          if (isConductor && !_isReordering)
             IconButton(
               icon: const Icon(Icons.category),
               onPressed: () => showInstrumentCategoriesSheet(context),
@@ -83,6 +143,9 @@ class InstrumentsListPage extends ConsumerWidget {
 
           final categories = categoriesAsync.valueOrNull ?? [];
           final playerCounts = playerCountsAsync.valueOrNull ?? {};
+          final sections = _isReordering && _reorderSections != null
+              ? _reorderSections!
+              : groupInstrumentsByCategory(groups, categories);
 
           return RefreshIndicator(
             onRefresh: () async {
@@ -92,16 +155,17 @@ class InstrumentsListPage extends ConsumerWidget {
               await ref.read(groupsProvider.future);
             },
             child: _GroupedInstrumentsList(
-              groups: groups,
-              categories: categories,
+              sections: sections,
               playerCounts: playerCounts,
               isConductor: isConductor,
+              isReordering: _isReordering,
+              onReorder: _onReorder,
               onEdit: (group) => _showEditDialog(context, ref, group, categories, isConductor, tenantType: tenant?.type),
             ),
           );
         },
       ),
-      floatingActionButton: isConductor
+      floatingActionButton: isConductor && !_isReordering
           ? FloatingActionButton(
               onPressed: () => _showEditDialog(context, ref, null, categoriesAsync.valueOrNull ?? [], isConductor, tenantType: tenant?.type),
               child: const Icon(Icons.add),
@@ -111,95 +175,71 @@ class InstrumentsListPage extends ConsumerWidget {
   }
 }
 
-/// Grouped list of instruments by category
+/// Grouped list of instruments by category (sorted by sort_order)
 class _GroupedInstrumentsList extends StatelessWidget {
   const _GroupedInstrumentsList({
-    required this.groups,
-    required this.categories,
+    required this.sections,
     required this.playerCounts,
     required this.isConductor,
+    required this.isReordering,
+    required this.onReorder,
     required this.onEdit,
   });
 
-  final List<Group> groups;
-  final List<GroupCategory> categories;
+  final List<InstrumentCategorySection> sections;
   final Map<int, int> playerCounts;
   final bool isConductor;
+  final bool isReordering;
+  final void Function(InstrumentCategorySection, int, int) onReorder;
   final void Function(Group) onEdit;
 
   @override
   Widget build(BuildContext context) {
-    // Separate maingroups
-    final mainGroups = groups.where((g) => g.maingroup == true).toList();
-    final regularGroups = groups.where((g) => g.maingroup != true).toList();
-
-    // Group regular instruments by category
-    final grouped = <int?, List<Group>>{};
-    for (final group in regularGroups) {
-      grouped.putIfAbsent(group.categoryId, () => []).add(group);
-    }
-
-    // Build category order: known categories first (by index), then uncategorized
-    final orderedCategoryIds = categories.map((c) => c.id).toList();
-    final categoryMap = {for (final c in categories) c.id: c};
-
     return ListView(
       padding: const EdgeInsets.all(AppDimensions.paddingM),
       children: [
-        // Main groups section
-        if (mainGroups.isNotEmpty) ...[
-          _SectionHeader(title: 'Hauptgruppen', count: mainGroups.length),
+        if (isReordering)
+          Card(
+            color: AppColors.primary.withAlpha(26),
+            child: const ListTile(
+              leading: Icon(Icons.info_outline, color: AppColors.primary),
+              title: Text(
+                'Ziehe die Gruppen in die gewünschte Reihenfolge (z.B. Partitur-Reihenfolge)',
+              ),
+            ),
+          ),
+        for (final section in sections) ...[
+          _SectionHeader(title: section.name, count: section.groups.length),
           const SizedBox(height: AppDimensions.paddingS),
-          ...mainGroups.map((group) => _GroupListItem(
-                group: group,
-                playerCount: playerCounts[group.id] ?? 0,
-                onTap: isConductor ? () => onEdit(group) : null,
-              )),
+          if (isReordering)
+            ReorderableListView(
+              key: ValueKey('section-${section.categoryId}'),
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              buildDefaultDragHandles: false,
+              onReorder: (o, n) => onReorder(section, o, n),
+              children: [
+                for (var i = 0; i < section.groups.length; i++)
+                  ReorderableDragStartListener(
+                    key: ValueKey(section.groups[i].id ?? i),
+                    index: i,
+                    child: _GroupListItem(
+                      group: section.groups[i],
+                      playerCount: playerCounts[section.groups[i].id] ?? 0,
+                      onTap: null,
+                      showDragHandle: true,
+                    ),
+                  ),
+              ],
+            )
+          else
+            ...section.groups.map((group) => _GroupListItem(
+                  group: group,
+                  playerCount: playerCounts[group.id] ?? 0,
+                  onTap: isConductor ? () => onEdit(group) : null,
+                )),
           const SizedBox(height: AppDimensions.paddingL),
         ],
-        // Categorized instruments
-        for (final catId in orderedCategoryIds)
-          if (grouped.containsKey(catId)) ...[
-            _SectionHeader(
-              title: categoryMap[catId]?.name ?? 'Unbekannt',
-              count: grouped[catId]!.length,
-            ),
-            const SizedBox(height: AppDimensions.paddingS),
-            ...grouped[catId]!.map((group) => _GroupListItem(
-                  group: group,
-                  playerCount: playerCounts[group.id] ?? 0,
-                  onTap: isConductor ? () => onEdit(group) : null,
-                )),
-            const SizedBox(height: AppDimensions.paddingL),
-          ],
-        // Uncategorized instruments
-        if (grouped.containsKey(null)) ...[
-          _SectionHeader(
-            title: categories.isEmpty ? 'Instrumente' : 'Ohne Kategorie',
-            count: grouped[null]!.length,
-          ),
-          const SizedBox(height: AppDimensions.paddingS),
-          ...grouped[null]!.map((group) => _GroupListItem(
-                group: group,
-                playerCount: playerCounts[group.id] ?? 0,
-                onTap: isConductor ? () => onEdit(group) : null,
-              )),
-        ],
-        // Instruments in categories that aren't in the ordered list
-        for (final catId in grouped.keys)
-          if (catId != null && !orderedCategoryIds.contains(catId)) ...[
-            _SectionHeader(
-              title: categoryMap[catId]?.name ?? 'Kategorie $catId',
-              count: grouped[catId]!.length,
-            ),
-            const SizedBox(height: AppDimensions.paddingS),
-            ...grouped[catId]!.map((group) => _GroupListItem(
-                  group: group,
-                  playerCount: playerCounts[group.id] ?? 0,
-                  onTap: isConductor ? () => onEdit(group) : null,
-                )),
-            const SizedBox(height: AppDimensions.paddingL),
-          ],
       ],
     );
   }
@@ -249,11 +289,13 @@ class _GroupListItem extends StatelessWidget {
     required this.group,
     required this.playerCount,
     required this.onTap,
+    this.showDragHandle = false,
   });
 
   final Group group;
   final int playerCount;
   final VoidCallback? onTap;
+  final bool showDragHandle;
 
   @override
   Widget build(BuildContext context) {
@@ -278,7 +320,7 @@ class _GroupListItem extends StatelessWidget {
           ),
         ),
         title: Text(
-          group.name,
+          group.maingroup == true ? '${group.name} (Hauptgruppe)' : group.name,
           style: const TextStyle(fontWeight: FontWeight.w500),
         ),
         subtitle: _buildSubtitle(),
@@ -286,6 +328,8 @@ class _GroupListItem extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             _PlayerCountBadge(count: playerCount),
+            if (showDragHandle)
+              const Icon(Icons.drag_handle, color: AppColors.medium),
             if (onTap != null)
               const Icon(Icons.chevron_right, color: AppColors.medium),
           ],
@@ -296,6 +340,9 @@ class _GroupListItem extends StatelessWidget {
 
   Widget? _buildSubtitle() {
     final parts = <String>[];
+    if (group.sortOrder != null) {
+      parts.add('#${group.sortOrder}');
+    }
     if (group.shortName != null && group.shortName != group.name) {
       parts.add(group.shortName!);
     }
