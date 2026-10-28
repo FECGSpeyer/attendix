@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/providers/plan_providers.dart';
 import '../../../../../core/providers/team_org_providers.dart'; // PROTOCOL
 import '../../../../../core/services/plan_export_service.dart';
@@ -14,6 +13,7 @@ import '../../../../planning/presentation/widgets/plan_field_dialogs.dart';
 import '../../../../planning/presentation/widgets/plan_view_list.dart';
 import '../../../../team_organization/presentation/widgets/attendance_protocol_section.dart'; // PROTOCOL
 import '../../../../../l10n/l10n.dart';
+import 'attendance_accordion.dart';
 
 /// Accordion widget for displaying attendance plan/schedule.
 ///
@@ -162,16 +162,11 @@ class _PlanAccordionState extends ConsumerState<PlanAccordion> {
           attendanceId: widget.attendance.id!, type: protocolType),
     );
 
-    return Card(
-      margin: const EdgeInsets.symmetric(
-        horizontal: AppDimensions.paddingM,
-        vertical: AppDimensions.paddingXS,
-      ),
-      child: ExpansionTile(
+    // IOS_DETAIL: shared accordion (iOS header look, Ionic state reset)
+    return AttendanceAccordion(
         controller: _controller,
         initiallyExpanded: widget.initiallyExpanded,
-        shape: const Border(),
-        collapsedShape: const Border(),
+        clipBehavior: Clip.none,
         title: Text(hasProtocol ? context.l10n.attendanceRunSheetAgenda : context.l10n.plansRunSheet),
         children: [
           if (!hasPlan) ...[
@@ -212,7 +207,6 @@ class _PlanAccordionState extends ConsumerState<PlanAccordion> {
             // viewer opens from the Termine list).
           ],
         ],
-      ),
     );
   }
 }

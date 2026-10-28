@@ -142,11 +142,13 @@ void main() {
     });
 
     test('mutating menu actions and description are gated', () {
-      final menu = body(source, 'List<PopupMenuEntry<String>> _buildAttDetailMenuItems(', 3000);
+      final menu = body(source, 'List<AppPopoverMenuItem<String>> _buildAttDetailMenuItems(', 3000);
       expect(menu, contains("if (canMutate) item('add_person'"));
       expect(menu, contains("if (canMutate) item('reminder'"));
       expect(menu, contains("if (canMutate) item('photo'"));
-      expect(source, contains('onEditDescription: canMutateAttendanceDetail('));
+      // IOS_DETAIL: Ionic shows the description link to Helfer too; viewers
+      // stay read-only.
+      expect(source, contains('onEditDescription: canEditAttendanceDescription('));
     });
   });
 

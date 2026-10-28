@@ -10,6 +10,7 @@ import '../../../../../core/utils/haptic_helper.dart';
 import '../../../../../core/utils/toast_helper.dart';
 import '../../../../../data/models/person/person.dart';
 import 'attendance_detail_sheets.dart';
+import 'attendance_grid.dart' show collapseHtmlWhitespace;
 import 'status_chip.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
@@ -106,12 +107,13 @@ class AttendancePersonTile extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(person.fullName, style: const TextStyle(fontSize: 17)),
+                  // IOS_DETAIL: whitespace collapsed like HTML
+                  Text(collapseHtmlWhitespace(person.fullName), style: const TextStyle(fontSize: 17)),
                   if (hasNotes)
                     Padding(
                       padding: const EdgeInsets.only(top: 2),
                       child: Text(
-                        notes!,
+                        collapseHtmlWhitespace(notes!),
                         style: const TextStyle(fontSize: 15),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
@@ -217,7 +219,7 @@ class AttendancePersonTile extends StatelessWidget {
         AppActionSheetAction(value: onTap, label: label, icon: icon, destructive: destructive);
     final action = await showAppActionSheet<VoidCallback>(
       context,
-      title: person.fullName,
+      title: collapseHtmlWhitespace(person.fullName),
       actions: [
         if (status != AttendanceStatus.neutral)
           option(

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../l10n/l10n.dart';
 import '../songs_selection_sheet.dart';
+import 'attendance_accordion.dart';
 
 /// Accordion widget for displaying songs/works in attendance
 class SongsHistoryAccordion extends StatelessWidget {
@@ -26,15 +26,8 @@ class SongsHistoryAccordion extends StatelessWidget {
   // close button to remove, "Werk(e) hinzufügen" row at the end.
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.symmetric(
-        horizontal: AppDimensions.paddingM,
-        vertical: AppDimensions.paddingXS,
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: ExpansionTile(
-        shape: const Border(),
-        collapsedShape: const Border(),
+    // IOS_DETAIL: shared accordion (iOS header look, Ionic state reset)
+    return AttendanceAccordion(
         title: Text(context.l10n.attendanceSongsCount(entries.length)),
         children: [
           for (var index = 0; index < entries.length; index++)
@@ -58,7 +51,6 @@ class SongsHistoryAccordion extends StatelessWidget {
             onTap: onAdd,
           ),
         ],
-      ),
     );
   }
 }

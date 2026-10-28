@@ -5,6 +5,7 @@ import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../data/models/attendance/attendance.dart';
 import '../../../../../l10n/l10n.dart';
+import 'attendance_accordion.dart';
 
 /// Deadline status for checklist items
 enum DeadlineStatus { normal, warning, overdue }
@@ -36,14 +37,9 @@ class ChecklistAccordion extends StatelessWidget {
     final totalCount = checklist.length;
     final progress = totalCount > 0 ? completedCount / totalCount : 0.0;
 
-    return Card(
-      margin: const EdgeInsets.symmetric(
-        horizontal: AppDimensions.paddingM,
-        vertical: AppDimensions.paddingXS,
-      ),
-      child: ExpansionTile(
-        shape: const Border(),
-        collapsedShape: const Border(),
+    // IOS_DETAIL: shared accordion (iOS header look, Ionic state reset)
+    return AttendanceAccordion(
+        clipBehavior: Clip.none,
         // UX_ATT: Ionic header: label + solid `ion-badge slot="end"`
         // (success when everything is done, else primary).
         title: Row(
@@ -148,7 +144,6 @@ class ChecklistAccordion extends StatelessWidget {
           ),
           // UX_ATT: "Checkliste zurücksetzen" lives in the header menu (Ionic)
         ],
-      ),
     );
   }
 }
