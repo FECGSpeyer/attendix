@@ -11,6 +11,7 @@ import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../data/models/team_org/team_org.dart';
+import '../../../../l10n/l10n.dart';
 import '../../team_org_utils.dart';
 import '../widgets/task_form_sheet.dart';
 import '../widgets/tasks_tab.dart' show TeamOrgBadge, priorityColor, outcomeColor;
@@ -66,7 +67,7 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage> {
   Future<void> _save() async {
     final title = _title.text.trim();
     if (title.isEmpty) {
-      ToastHelper.showWarning(context, 'Bitte einen Titel eingeben');
+      ToastHelper.showWarning(context, context.l10n.agendaEnterTitle);
       return;
     }
     if (_saving) return;
@@ -98,9 +99,9 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage> {
           'default_duration': duration > 0 ? duration : null,
         });
       }
-      if (mounted) ToastHelper.showSuccess(context, 'Gespeichert');
+      if (mounted) ToastHelper.showSuccess(context, context.l10n.dutySaved);
     } catch (_) {
-      if (mounted) ToastHelper.showError(context, 'Thema konnte nicht gespeichert werden');
+      if (mounted) ToastHelper.showError(context, context.l10n.agendaSaveFailed);
     } finally {
       if (mounted) setState(() => _saving = false);
     }
@@ -109,20 +110,19 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage> {
   Future<void> _delete() async {
     final ok = await DialogHelper.showConfirmation(
       context,
-      title: 'Thema wirklich löschen?',
-      message:
-          'Es verschwindet aus dem Themenspeicher. Bereits geplante Ablaufpläne und Protokolle bleiben unverändert. Soll es nur aus einem Termin raus, entferne es dort über „Themen aufnehmen“ oder in der Teamorganisation.',
-      confirmText: 'Löschen',
+      title: context.l10n.agendaDeleteConfirm,
+      message: context.l10n.agendaDeleteMessage,
+      confirmText: context.l10n.commonDelete,
       isDestructive: true,
     );
     if (!ok || !mounted) return;
     try {
       await ref.read(agendaItemNotifierProvider.notifier).delete(_itemId);
       if (!mounted) return;
-      ToastHelper.showSuccess(context, 'Gelöscht');
+      ToastHelper.showSuccess(context, context.l10n.agendaDeleted);
       context.go('/settings/team-organization?tab=topics');
     } catch (_) {
-      if (mounted) ToastHelper.showError(context, 'Löschen fehlgeschlagen');
+      if (mounted) ToastHelper.showError(context, context.l10n.agendaDeleteFailed);
     }
   }
 
@@ -149,8 +149,8 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage> {
           children: [
             ListTile(
               title: Text(upcoming.isNotEmpty
-                  ? 'In welchen Termin einplanen?'
-                  : 'Noch kein Termin mit Tagesordnung geplant'),
+                  ? ctx.l10n.agendaWhichEvent
+                  : ctx.l10n.agendaNoProtocolEvent),
             ),
             for (final att in upcoming)
               Builder(builder: (_) {
@@ -158,13 +158,13 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage> {
                 return ListTile(
                   enabled: !already,
                   title: Text(
-                      '${formatShortWeekdayDate(att.date)} · ${attendanceTitle(att.typeInfo, typeOf(att))}${already ? ' (bereits eingeplant)' : ''}'),
+                      '${formatShortWeekdayDate(att.date)} · ${attendanceTitle(att.typeInfo, typeOf(att))}${already ? ctx.l10n.agendaAlreadyPlanned : ''}'),
                   onTap: () => Navigator.of(ctx).pop(att),
                 );
               }),
             ListTile(
               leading: const Icon(Icons.add_circle_outline),
-              title: const Text('Neuen Termin anlegen'),
+              title: Text(ctx.l10n.agendaNewEvent),
               onTap: () => Navigator.of(ctx).pop('new'),
             ),
           ],
@@ -192,10 +192,13 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage> {
         ref.invalidate(agendaItemHistoryProvider(_itemId));
         final d = DateTime.tryParse(choice.date)?.toLocal();
         if (mounted) {
-          ToastHelper.showSuccess(context, 'Eingeplant für ${d != null ? DateFormat('dd.MM.').format(d) : ''}');
+          ToastHelper.showSuccess(
+            context,
+            context.l10n.agendaPlannedFor(d != null ? DateFormat(dateFmt(DateFmtKind.dayMonth)).format(d) : ''),
+          );
         }
       } catch (_) {
-        if (mounted) ToastHelper.showError(context, 'Thema konnte nicht eingeplant werden');
+        if (mounted) ToastHelper.showError(context, context.l10n.agendaPlanFailed);
       }
     }
   }
@@ -207,14 +210,15 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage> {
         _isNew ? const AsyncValue.data(null) : ref.watch(agendaItemByIdProvider(_itemId));
     final item = itemAsync.valueOrNull;
     if (item != null && isLeader) _fill(item);
+    final l10n = context.l10n;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(_isNew ? 'Neues Thema' : 'Thema'),
+        title: Text(_isNew ? l10n.agendaNewTopic : l10n.agendaTopic),
         actions: [
           if (!_isNew && item != null && isLeader)
             IconButton(
-              tooltip: 'Thema löschen',
+              tooltip: l10n.agendaDeleteTopic,
               icon: const Icon(Icons.delete_outline, color: AppColors.danger),
               onPressed: _delete,
             ),
@@ -222,7 +226,7 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage> {
       ),
       floatingActionButton: isLeader && (item != null || _isNew)
           ? FloatingActionButton(
-              tooltip: 'Speichern',
+              tooltip: l10n.commonSave,
               onPressed: _saving ? null : _save,
               child: const Icon(Icons.save_outlined),
             )
@@ -230,7 +234,7 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage> {
       body: itemAsync.isLoading
           ? const Center(child: CircularProgressIndicator())
           : (!_isNew && item == null)
-              ? const Center(child: Text('Thema nicht gefunden'))
+              ? Center(child: Text(l10n.agendaFlutterNotFound))
               : ListView(
                   padding: const EdgeInsets.fromLTRB(
                       AppDimensions.paddingM, AppDimensions.paddingM, AppDimensions.paddingM, 96),
@@ -240,7 +244,7 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage> {
                       Card(
                         child: ListTile(
                           leading: const Icon(Icons.lightbulb_outline, color: AppColors.medium),
-                          title: Text('Vorschlag von ${item.proposer.fullName}'),
+                          title: Text(l10n.agendaProposedBy(item.proposer.fullName)),
                           subtitle: item.decisionNote?.isNotEmpty == true ? Text(item.decisionNote!) : null,
                         ),
                       ),
@@ -250,7 +254,7 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage> {
                         child: FilledButton.icon(
                           onPressed: () => _planInto(item!),
                           icon: const Icon(Icons.calendar_today_outlined),
-                          label: const Text('Einplanen'),
+                          label: Text(l10n.agendaPlanIn),
                         ),
                       ),
                     if (!_isNew && item != null) ...[
@@ -268,6 +272,7 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage> {
         .toList()
       ..sort((a, b) => a.fullName.toLowerCase().compareTo(b.fullName.toLowerCase()));
     final responsibleValid = _responsibleId == null || persons.any((p) => p.id == _responsibleId);
+    final l10n = context.l10n;
     return [
       Card(
         child: Padding(
@@ -277,7 +282,7 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage> {
               TextField(
                 controller: _title,
                 textCapitalization: TextCapitalization.sentences,
-                decoration: const InputDecoration(labelText: 'Titel', hintText: 'Worum geht es?'),
+                decoration: InputDecoration(labelText: l10n.plansTitle, hintText: l10n.agendaTitlePlaceholder),
               ),
               const SizedBox(height: AppDimensions.paddingS),
               TextField(
@@ -285,9 +290,9 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage> {
                 minLines: 3,
                 maxLines: 10,
                 textCapitalization: TextCapitalization.sentences,
-                decoration: const InputDecoration(
-                  labelText: 'Beschreibung',
-                  hintText: 'Hintergrund, Ziel, offene Fragen …',
+                decoration: InputDecoration(
+                  labelText: l10n.agendaDescription,
+                  hintText: l10n.agendaDescriptionPlaceholder,
                 ),
               ),
             ],
@@ -301,7 +306,7 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage> {
             children: [
               DropdownButtonFormField<String>(
                 value: _status,
-                decoration: const InputDecoration(labelText: 'Status'),
+                decoration: InputDecoration(labelText: l10n.agendaStatus),
                 items: const ['open', 'completed', 'dropped']
                     .map((s) => DropdownMenuItem(value: s, child: Text(topicStatusLabels[s]!)))
                     .toList(),
@@ -309,7 +314,7 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage> {
               ),
               DropdownButtonFormField<String>(
                 value: _priority,
-                decoration: const InputDecoration(labelText: 'Priorität'),
+                decoration: InputDecoration(labelText: l10n.agendaPriority),
                 items: const ['high', 'medium', 'low']
                     .map((p) => DropdownMenuItem(value: p, child: Text(priorityLabels[p]!)))
                     .toList(),
@@ -318,9 +323,9 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage> {
               DropdownButtonFormField<int?>(
                 value: responsibleValid ? _responsibleId : null,
                 isExpanded: true,
-                decoration: const InputDecoration(labelText: 'Verantwortlich'),
+                decoration: InputDecoration(labelText: l10n.agendaResponsible),
                 items: [
-                  const DropdownMenuItem<int?>(value: null, child: Text('Niemand')),
+                  DropdownMenuItem<int?>(value: null, child: Text(l10n.agendaNobody)),
                   for (final p in persons) DropdownMenuItem<int?>(value: p.id, child: Text(p.fullName)),
                 ],
                 onChanged: (v) => setState(() => _responsibleId = v),
@@ -328,7 +333,7 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage> {
               TextField(
                 controller: _duration,
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(labelText: 'Dauer pro Sitzung (Min.)', hintText: 'Standard'),
+                decoration: InputDecoration(labelText: l10n.agendaDurationPerSession, hintText: l10n.agendaDefault),
               ),
             ],
           ),
@@ -359,7 +364,7 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage> {
                 ]),
                 if (item.responsiblePerson.fullName.isNotEmpty) ...[
                   const SizedBox(height: AppDimensions.paddingS),
-                  Text('Verantwortlich: ${item.responsiblePerson.fullName}'),
+                  Text('${context.l10n.agendaResponsible}: ${item.responsiblePerson.fullName}'),
                 ],
                 if (item.description?.isNotEmpty == true) ...[
                   const SizedBox(height: AppDimensions.paddingS),
@@ -383,11 +388,12 @@ class _HistorySection extends ConsumerWidget {
     final today = DateTime.now();
     final startOfToday = DateTime(today.year, today.month, today.day);
 
+    final l10n = context.l10n;
     ({String label, Color color}) status(AgendaItemHistoryEntry e) {
       if (e.outcome != null) return (label: outcomeLabels[e.outcome] ?? e.outcome!, color: outcomeColor(e.outcome));
       final d = DateTime.tryParse(e.date ?? '')?.toLocal();
-      if (d != null && !d.isBefore(startOfToday)) return (label: 'Geplant', color: AppColors.primary);
-      return (label: 'Ohne Ergebnis', color: AppColors.medium);
+      if (d != null && !d.isBefore(startOfToday)) return (label: l10n.agendaPlanned, color: AppColors.primary);
+      return (label: l10n.agendaNoOutcome, color: AppColors.medium);
     }
 
     return Column(
@@ -395,7 +401,7 @@ class _HistorySection extends ConsumerWidget {
       children: [
         Padding(
           padding: const EdgeInsets.only(top: AppDimensions.paddingM, bottom: 4),
-          child: Text('Verlauf', style: Theme.of(context).textTheme.titleSmall),
+          child: Text(l10n.agendaHistory, style: Theme.of(context).textTheme.titleSmall),
         ),
         Card(
           margin: EdgeInsets.zero,
@@ -411,14 +417,14 @@ class _HistorySection extends ConsumerWidget {
                   final s = status(e);
                   return ListTile(
                     title: Text(
-                        '${attendanceTitle(e.typeInfo, type)} · ${d != null ? DateFormat('dd.MM.yyyy').format(d) : ''}'),
+                        '${attendanceTitle(e.typeInfo, type)} · ${d != null ? DateFormat(dateFmt()).format(d) : ''}'),
                     trailing: TeamOrgBadge(label: s.label, color: s.color),
                     onTap: e.attendanceId == null ? null : () => context.push('/settings/protocol/${e.attendanceId}'),
                   );
                 }),
               if (history.isEmpty)
-                const ListTile(
-                  title: Text('Noch in keinem Termin besprochen.', style: TextStyle(color: AppColors.medium)),
+                ListTile(
+                  title: Text(l10n.agendaNotDiscussed, style: const TextStyle(color: AppColors.medium)),
                 ),
             ],
           ),
@@ -433,21 +439,22 @@ class _TasksSection extends ConsumerWidget {
   final AgendaItem item;
   final bool isLeader;
 
-  String _subtitle(TeamTask t) {
-    final who = t.responsiblePerson.fullName.isNotEmpty ? t.responsiblePerson.fullName : 'Niemand zugewiesen';
-    final fmt = DateFormat('dd.MM.');
+  String _subtitle(AppLocalizations l10n, TeamTask t) {
+    final who = t.responsiblePerson.fullName.isNotEmpty ? t.responsiblePerson.fullName : l10n.attendanceNobodyAssigned;
+    final fmt = DateFormat(dateFmt(DateFmtKind.dayMonth));
     if (t.status == 'completed') {
       final d = DateTime.tryParse(t.completedAt ?? '')?.toLocal();
-      return d != null ? '$who · erledigt ${fmt.format(d)}' : '$who · erledigt';
+      return d != null ? l10n.agendaDoneOn(who, fmt.format(d)) : l10n.agendaDone(who);
     }
     final due = DateTime.tryParse(t.dueDate ?? '');
-    return due != null ? '$who · fällig ${fmt.format(due)}' : who;
+    return due != null ? l10n.agendaDueOn(who, fmt.format(due)) : who;
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final tasks = ref.watch(tasksForAgendaItemProvider(item.id!)).valueOrNull ?? const <TeamTask>[];
     final done = tasks.where((t) => t.status == 'completed').length;
+    final l10n = context.l10n;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -455,8 +462,8 @@ class _TasksSection extends ConsumerWidget {
           padding: const EdgeInsets.only(top: AppDimensions.paddingM, bottom: 4),
           child: Row(
             children: [
-              Expanded(child: Text('Aufgaben', style: Theme.of(context).textTheme.titleSmall)),
-              if (tasks.isNotEmpty) Text('$done von ${tasks.length} erledigt'),
+              Expanded(child: Text(l10n.agendaTasks, style: Theme.of(context).textTheme.titleSmall)),
+              if (tasks.isNotEmpty) Text(l10n.agendaTasksDone(done, tasks.length)),
             ],
           ),
         ),
@@ -474,14 +481,14 @@ class _TasksSection extends ConsumerWidget {
                     t.title,
                     style: t.status == 'completed' ? const TextStyle(decoration: TextDecoration.lineThrough) : null,
                   ),
-                  subtitle: Text(_subtitle(t)),
+                  subtitle: Text(_subtitle(l10n, t)),
                   onTap: () => context.push('/settings/tasks/${t.id}'),
                 ),
-              if (tasks.isEmpty) const ListTile(title: Text('Keine Aufgaben', style: TextStyle(color: AppColors.medium))),
+              if (tasks.isEmpty) ListTile(title: Text(l10n.agendaNoTasks, style: const TextStyle(color: AppColors.medium))),
               if (isLeader)
                 ListTile(
                   leading: const Icon(Icons.add_circle_outline, color: AppColors.primary),
-                  title: const Text('Aufgabe hinzufügen', style: TextStyle(color: AppColors.primary)),
+                  title: Text(l10n.agendaAddTask, style: const TextStyle(color: AppColors.primary)),
                   onTap: () => showTaskFormSheet(
                     context,
                     agendaItemId: item.id,

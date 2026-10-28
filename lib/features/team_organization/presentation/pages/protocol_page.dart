@@ -16,6 +16,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/team_org/team_org.dart';
 import '../../../../data/repositories/protocol_repository.dart';
+import '../../../../l10n/l10n.dart';
 import '../../protocol_pdf.dart';
 import '../../team_org_utils.dart';
 import '../../tiptap_delta.dart';
@@ -29,7 +30,6 @@ const _avatarColors = [
   Color(0xFF3B7D84), Color(0xFF7B5EA7), Color(0xFFC0703A), Color(0xFF2F7D4F),
   Color(0xFFA6475F), Color(0xFF4A6FA5), Color(0xFF8A7A2F),
 ];
-const _weekdays = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
 
 /// One protocol section = one field of the Ablaufplan.
 class _Section {
@@ -256,10 +256,10 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
       } catch (_) {}
     }
     _leftovers = entries.map((e) {
-      String title = 'Früherer Programmpunkt';
+      String title = l10nWithoutContext.protocolEarlierItem;
       if (e.key.startsWith(legacy)) {
         final id = e.key.substring(legacy.length);
-        title = 'Tagesordnungspunkt';
+        title = l10nWithoutContext.protocolAgendaItem;
         for (final i in items) {
           if (i.id == id) title = i.title;
         }
@@ -339,7 +339,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
       _pending.add(id);
       if (mounted && DateTime.now().difference(_lastErrorToast).inSeconds > 10) {
         _lastErrorToast = DateTime.now();
-        ToastHelper.showError(context, 'Notizen konnten nicht gespeichert werden. Prüfe deine Verbindung.');
+        ToastHelper.showError(context, context.l10n.protocolNotesSaveFailed);
       }
     } finally {
       if (mounted) setState(() => _savingCount--);
@@ -386,7 +386,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
           _outcomes[id] = previous;
         }
       });
-      if (mounted) ToastHelper.showError(context, 'Ergebnis konnte nicht gespeichert werden');
+      if (mounted) ToastHelper.showError(context, context.l10n.protocolOutcomeSaveFailed);
     } finally {
       if (mounted) setState(() => _savingCount--);
     }
@@ -440,7 +440,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
     try {
       protocolId = await _ensureProtocol();
     } catch (_) {
-      if (mounted) ToastHelper.showError(context, 'Protokoll konnte nicht angelegt werden');
+      if (mounted) ToastHelper.showError(context, context.l10n.protocolCreateFailed);
       return;
     }
     if (!mounted) return;
@@ -449,7 +449,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
       attendanceId: widget.attendanceId,
       protocolId: protocolId,
       agendaItemId: section?.agendaItemId,
-      contextLabel: section?.title ?? 'Allgemeine Notizen',
+      contextLabel: section?.title ?? context.l10n.protocolGeneralNotes,
     );
     if (task?.id == null || !mounted) return;
     // Put a task reference into the section's notes (at the cursor) so it maps to the section.
@@ -475,22 +475,23 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Spontaner Punkt'),
+        title: Text(ctx.l10n.protocolSpontaneous),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text('Wird als neues Thema angelegt und im Ablaufplan ergänzt.'),
-            TextField(controller: titleCtrl, decoration: const InputDecoration(labelText: 'Titel'), autofocus: true),
+            Text(ctx.l10n.protocolSpontaneousHint),
+            TextField(
+                controller: titleCtrl, decoration: InputDecoration(labelText: ctx.l10n.tasksTitle), autofocus: true),
             TextField(
               controller: durationCtrl,
               keyboardType: TextInputType.number,
-              decoration: const InputDecoration(labelText: 'Dauer in Minuten'),
+              decoration: InputDecoration(labelText: ctx.l10n.protocolDurationMinutes),
             ),
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: const Text('Abbrechen')),
-          FilledButton(onPressed: () => Navigator.of(ctx).pop(true), child: const Text('Hinzufügen')),
+          TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: Text(ctx.l10n.commonCancel)),
+          FilledButton(onPressed: () => Navigator.of(ctx).pop(true), child: Text(ctx.l10n.protocolAdd)),
         ],
       ),
     );
@@ -500,7 +501,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
     durationCtrl.dispose();
     if (ok != true) return;
     if (title.isEmpty) {
-      if (mounted) ToastHelper.showWarning(context, 'Bitte einen Titel eingeben');
+      if (mounted) ToastHelper.showWarning(context, context.l10n.agendaEnterTitle);
       return;
     }
     try {
@@ -529,24 +530,24 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
       });
       ref.invalidate(upcomingProtocolAttendancesProvider);
     } catch (_) {
-      if (mounted) ToastHelper.showError(context, 'Punkt konnte nicht hinzugefügt werden');
+      if (mounted) ToastHelper.showError(context, context.l10n.protocolPointFailed);
     }
   }
 
   // ── Display helpers ────────────────────────────────────────
 
-  String get _title => attendanceTitle(_attendance?.typeInfo, _type) == 'Termin'
-      ? 'Protokoll'
+  String get _title => attendanceTitle(_attendance?.typeInfo, _type) == l10nWithoutContext.attendanceEventFallback
+      ? l10nWithoutContext.protocolTitle
       : attendanceTitle(_attendance?.typeInfo, _type);
 
   String get _dateLabel {
     final d = DateTime.tryParse(_attendance?.date ?? '')?.toLocal();
-    return d == null ? '' : '${_weekdays[d.weekday - 1]}, ${DateFormat('dd.MM.yyyy').format(d)}';
+    return d == null ? '' : '${weekdayShort(d)}, ${DateFormat(dateFmt()).format(d)}';
   }
 
   String get _shortDate {
     final d = DateTime.tryParse(_attendance?.date ?? '')?.toLocal();
-    return d == null ? '' : DateFormat('dd.MM.').format(d);
+    return d == null ? '' : DateFormat(dateFmt(DateFmtKind.dayMonth)).format(d);
   }
 
   String get _timeRange {
@@ -560,21 +561,23 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
   bool get _isPublished => _protocol?.status == 'published';
 
   String get _statusLine {
-    if (!_isPublished) return 'Entwurf';
-    final fmt = DateFormat('dd.MM.yyyy');
+    final l10n = l10nWithoutContext;
+    if (!_isPublished) return l10n.teamOrgDraft;
+    final fmt = DateFormat(dateFmt());
     final pub = DateTime.tryParse(_protocol?.publishedAt ?? '')?.toLocal();
-    var line = 'Freigegeben am ${pub != null ? fmt.format(pub) : ''}';
+    var line = l10n.teamOrgPublishedOn(pub != null ? fmt.format(pub) : '');
     if (isEditedAfterPublish(_protocol)) {
       final upd = DateTime.tryParse(_protocol!.updatedAt!)?.toLocal();
-      line = '$line · geändert am ${upd != null ? fmt.format(upd) : ''}';
+      line = l10n.teamOrgEditedOn(line, upd != null ? fmt.format(upd) : '');
     }
     return line;
   }
 
   String get _saveLabel {
-    if (_savingCount > 0) return 'Speichert …';
-    if (_lastSavedAt != null) return 'Automatisch gespeichert · ${DateFormat('HH:mm').format(_lastSavedAt!)}';
-    return _isPublished ? 'Änderungen werden automatisch gespeichert' : 'Wird automatisch gespeichert';
+    final l10n = l10nWithoutContext;
+    if (_savingCount > 0) return l10n.protocolSaving;
+    if (_lastSavedAt != null) return l10n.protocolAutoSavedAt(DateFormat('HH:mm').format(_lastSavedAt!));
+    return _isPublished ? l10n.protocolChangesAutoSaved : l10n.protocolAutoSaved;
   }
 
   bool _hasNotes(String id) {
@@ -584,13 +587,16 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
   }
 
   String _sectionMeta(_Section s) =>
-      [s.start, if (s.duration > 0) '${s.duration} min', s.conductor].whereType<String>().where((x) => x.isNotEmpty).join(' · ');
+      [s.start, if (s.duration > 0) l10nWithoutContext.planningMinShort(s.duration), s.conductor]
+          .whereType<String>()
+          .where((x) => x.isNotEmpty)
+          .join(' · ');
 
   String _taskLine(TeamTask t) {
     final parts = <String>[];
     if (t.responsiblePerson.fullName.isNotEmpty) parts.add(t.responsiblePerson.fullName);
     final due = DateTime.tryParse(t.dueDate ?? '');
-    if (due != null) parts.add('fällig ${DateFormat('dd.MM.').format(due)}');
+    if (due != null) parts.add(context.l10n.protocolDueShort(DateFormat(dateFmt(DateFmtKind.dayMonth)).format(due)));
     return parts.join(' · ');
   }
 
@@ -607,13 +613,14 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
 
   ProtocolPdfData _buildPdfData() {
     final map = _taskSectionMap;
-    final dueFmt = DateFormat('dd.MM.yyyy');
+    final l10n = l10nWithoutContext;
+    final dueFmt = DateFormat(dateFmt());
     String taskText(TeamTask t) {
       final parts = [t.title];
       if (t.responsiblePerson.fullName.isNotEmpty) parts.add(t.responsiblePerson.fullName);
       final due = DateTime.tryParse(t.dueDate ?? '');
-      if (due != null) parts.add('fällig ${dueFmt.format(due)}');
-      if (t.status == 'completed') parts.add('erledigt');
+      if (due != null) parts.add(l10n.protocolDueShort(dueFmt.format(due)));
+      if (t.status == 'completed') parts.add(l10n.protocolFlutterDoneLower);
       return parts.join(' · ');
     }
 
@@ -628,7 +635,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
           tasks: _tasksFor(s.id, map).map(taskText).toList(),
         ),
       for (final l in _leftovers)
-        ProtocolPdfSection(title: 'Weitere Notizen · ${l.title}', doc: l.doc, tasks: _tasksFor(l.key, map).map(taskText).toList()),
+        ProtocolPdfSection(title: l10n.protocolMoreNotesTitle(l.title), doc: l.doc, tasks: _tasksFor(l.key, map).map(taskText).toList()),
     ];
     final leftoverKeys = _leftovers.map((l) => l.key).toSet();
     final other = _tasks.where((t) {
@@ -636,8 +643,8 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
       return id == null || (!_sections.any((s) => s.id == id) && !leftoverKeys.contains(id));
     }).toList();
     return ProtocolPdfData(
-      title: 'Protokoll · $_title',
-      subtitle: [_dateLabel, if (_timeRange.isNotEmpty) '$_timeRange Uhr'].join(' · '),
+      title: l10n.protocolPdfTitle(_title),
+      subtitle: [_dateLabel, if (_timeRange.isNotEmpty) l10n.attendanceTimeOClock(_timeRange)].join(' · '),
       status: _statusLine,
       present: att.present.map((a) => a.name).toList(),
       excused: att.excused.map((a) => a.name).toList(),
@@ -652,12 +659,13 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
       await _flushAll();
       final bytes = await createProtocolPdf(_buildPdfData());
       final d = DateTime.tryParse(_attendance?.date ?? '')?.toLocal();
-      final name = 'Protokoll $_title ${d != null ? DateFormat('yyyy-MM-dd').format(d) : ''}'
+      final name = l10nWithoutContext
+          .protocolFileName(_title, d != null ? DateFormat('yyyy-MM-dd').format(d) : '')
           .trim()
           .replaceAll(RegExp(r'[\\/:*?"<>|]+'), '-');
       await Printing.sharePdf(bytes: bytes, filename: '$name.pdf');
     } catch (_) {
-      if (mounted) ToastHelper.showError(context, 'PDF konnte nicht erstellt werden');
+      if (mounted) ToastHelper.showError(context, context.l10n.protocolPdfFailed);
     }
   }
 
@@ -728,47 +736,47 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
             children: [
               AppBar(
                 automaticallyImplyLeading: false,
-                leading: TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: const Text('Abbrechen')),
+                leading: TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: Text(ctx.l10n.commonCancel)),
                 leadingWidth: 100,
-                title: const Text('Protokoll freigeben'),
+                title: Text(ctx.l10n.protocolPublish),
               ),
               Expanded(
                 child: ListView(
                   padding: const EdgeInsets.all(AppDimensions.paddingM),
                   children: [
-                    Text('Zusammenfassung', style: Theme.of(ctx).textTheme.titleSmall),
+                    Text(ctx.l10n.protocolSummary, style: Theme.of(ctx).textTheme.titleSmall),
                     Card(
                       child: Column(children: [
                         if (summary.decided.isNotEmpty)
                           _summaryTile(Icons.check_circle, AppColors.success,
-                              '${summary.decided.length} ${summary.decided.length == 1 ? 'Thema' : 'Themen'} beschlossen',
+                              ctx.l10n.protocolDecidedCount(summary.decided.length),
                               summary.decided.join(', ')),
                         if (summary.discussed.isNotEmpty)
                           _summaryTile(Icons.forum_outlined, AppColors.primary,
-                              '${summary.discussed.length} ${summary.discussed.length == 1 ? 'Thema' : 'Themen'} besprochen',
+                              ctx.l10n.protocolDiscussedCount(summary.discussed.length),
                               summary.discussed.join(', ')),
                         if (summary.postponed.isNotEmpty)
                           _summaryTile(
                               Icons.schedule,
                               AppColors.warning,
-                              '${summary.postponed.length} ${summary.postponed.length == 1 ? 'Thema' : 'Themen'} vertagt',
-                              '${summary.postponed.join(', ')}${_type?.suggestPostponed == true ? ' · wird beim nächsten Termin vorgeschlagen' : ''}'),
+                              ctx.l10n.protocolPostponedCount(summary.postponed.length),
+                              '${summary.postponed.join(', ')}${_type?.suggestPostponed == true ? ctx.l10n.protocolSuggestNext : ''}'),
                         _summaryTile(
                             Icons.check_box_outlined,
                             AppColors.medium,
-                            '${summary.taskCount} ${summary.taskCount == 1 ? 'Aufgabe' : 'Aufgaben'}',
-                            summary.taskOwners.isNotEmpty ? 'für ${joinNames(summary.taskOwners)}' : null),
+                            ctx.l10n.protocolTaskCount(summary.taskCount),
+                            summary.taskOwners.isNotEmpty ? ctx.l10n.protocolForNames(joinNames(summary.taskOwners)) : null),
                         if (summary.withoutOutcome.isNotEmpty)
                           _summaryTile(Icons.help_outline, AppColors.medium,
-                              'Ohne Ergebnis: ${summary.withoutOutcome.length}', summary.withoutOutcome.join(', ')),
+                              ctx.l10n.protocolWithoutOutcome(summary.withoutOutcome.length), summary.withoutOutcome.join(', ')),
                         if (summary.withoutNotes.isNotEmpty)
                           _summaryTile(Icons.error_outline, AppColors.warning,
-                              'Noch ohne Notizen: ${summary.withoutNotes.length}', summary.withoutNotes.join(', ')),
+                              ctx.l10n.protocolWithoutNotes(summary.withoutNotes.length), summary.withoutNotes.join(', ')),
                       ]),
                     ),
                     if (closures.isNotEmpty) ...[
                       const SizedBox(height: AppDimensions.paddingS),
-                      Text('Themen als erledigt markieren', style: Theme.of(ctx).textTheme.titleSmall),
+                      Text(ctx.l10n.protocolCloseTopics, style: Theme.of(ctx).textTheme.titleSmall),
                       Card(
                         child: Column(children: [
                           for (final c in closures)
@@ -782,44 +790,43 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                       ),
                     ],
                     const SizedBox(height: AppDimensions.paddingS),
-                    Text('Sichtbarkeit', style: Theme.of(ctx).textTheme.titleSmall),
+                    Text(ctx.l10n.protocolVisibility, style: Theme.of(ctx).textTheme.titleSmall),
                     Card(
                       child: Column(children: [
                         _summaryTile(
                           Icons.visibility_outlined,
                           AppColors.medium,
-                          'Lesen dürfen',
+                          ctx.l10n.protocolMayRead,
                           (_type?.relevantGroups?.isNotEmpty ?? false)
-                              ? 'die Gruppen aus dem Termintyp „${_type?.name ?? ''}“'
-                              : 'alle Mitglieder (Termintyp „${_type?.name ?? ''}“ hat keine Gruppen)',
+                              ? ctx.l10n.protocolReadGroups(_type?.name ?? '')
+                              : ctx.l10n.protocolReadAll(_type?.name ?? ''),
                         ),
                         _summaryTile(
                           Icons.notifications_outlined,
                           AppColors.medium,
-                          'Benachrichtigt werden',
-                          '${summary.recipientCount} Anwesende${summary.taskOwners.isNotEmpty ? ' · ${summary.taskOwners.length} ${summary.taskOwners.length == 1 ? 'Person' : 'Personen'} mit Aufgaben' : ''}',
+                          ctx.l10n.protocolNotified,
+                          '${ctx.l10n.protocolRecipients(summary.recipientCount)}${summary.taskOwners.isNotEmpty ? ctx.l10n.protocolTaskOwners(summary.taskOwners.length) : ''}',
                         ),
                         SwitchListTile(
                           value: sendPdf,
                           onChanged: (v) => setLocal(() => sendPdf = v),
-                          title: const Text('Protokoll als PDF mitschicken'),
-                          subtitle: const Text('Per Telegram als Dokument'),
+                          title: Text(ctx.l10n.protocolSendPdf),
+                          subtitle: Text(ctx.l10n.protocolViaTelegram),
                         ),
                       ]),
                     ),
-                    const Padding(
-                      padding: EdgeInsets.all(AppDimensions.paddingS),
-                      child: Text(
-                          'Die Leitung kann das Protokoll auch nach der Freigabe noch bearbeiten. Änderungen werden mit Datum angezeigt.'),
+                    Padding(
+                      padding: const EdgeInsets.all(AppDimensions.paddingS),
+                      child: Text(ctx.l10n.protocolEditAfterPublish),
                     ),
                     FilledButton.icon(
                       onPressed: () => Navigator.of(ctx).pop(true),
                       icon: const Icon(Icons.send),
-                      label: Text(_isPublished ? 'Erneut freigeben & benachrichtigen' : 'Freigeben & benachrichtigen'),
+                      label: Text(_isPublished ? ctx.l10n.protocolFlutterRepublishNotify : ctx.l10n.protocolFlutterPublishNotify),
                     ),
                     TextButton(
                       onPressed: () => Navigator.of(ctx).pop(false),
-                      child: Text(_isPublished ? 'Abbrechen' : 'Als Entwurf lassen'),
+                      child: Text(_isPublished ? ctx.l10n.commonCancel : ctx.l10n.protocolFlutterKeepDraft),
                     ),
                   ],
                 ),
@@ -859,7 +866,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
         }
       }
       if (closeFailed && mounted) {
-        ToastHelper.showWarning(context, 'Nicht alle Themen konnten als erledigt markiert werden');
+        ToastHelper.showWarning(context, context.l10n.protocolCloseFailed);
       }
 
       String? pdfUrl;
@@ -872,7 +879,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
           pdfPath = upload.path;
         } catch (_) {
           if (mounted) {
-            ToastHelper.showWarning(context, 'PDF konnte nicht erstellt werden, die Benachrichtigung geht ohne PDF raus');
+            ToastHelper.showWarning(context, context.l10n.protocolPdfFailedNotify);
           }
         }
       }
@@ -887,9 +894,9 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
         unawaited(Future.delayed(const Duration(seconds: 60), () => _repo.removePdf(path)));
       }
       ref.invalidate(protocolsProvider);
-      if (mounted) ToastHelper.showSuccess(context, 'Protokoll freigegeben');
+      if (mounted) ToastHelper.showSuccess(context, context.l10n.protocolPublished);
     } catch (_) {
-      if (mounted) ToastHelper.showError(context, 'Protokoll konnte nicht freigegeben werden');
+      if (mounted) ToastHelper.showError(context, context.l10n.protocolPublishFailed);
     } finally {
       if (mounted) {
         Navigator.of(context, rootNavigator: true).pop();
@@ -920,17 +927,17 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
           title: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('Protokoll'),
+              Text(context.l10n.protocolTitle),
               if (_attendance != null && !_notAvailable)
                 Text(
-                  '$_title · $_shortDate · ${_isPublished ? 'Freigegeben' : 'Entwurf'}',
+                  '$_title · $_shortDate · ${_isPublished ? context.l10n.teamOrgPublished : context.l10n.teamOrgDraft}',
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
             ],
           ),
           actions: [
             if (_attendance != null && !_notAvailable && !_loadFailed)
-              IconButton(tooltip: 'Als PDF teilen', icon: const Icon(Icons.ios_share), onPressed: _sharePdf),
+              IconButton(tooltip: context.l10n.protocolSharePdf, icon: const Icon(Icons.ios_share), onPressed: _sharePdf),
           ],
         ),
         bottomNavigationBar: showFooter
@@ -952,12 +959,12 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                           smallSize: 8,
                           child: const Icon(Icons.description_outlined),
                         ),
-                        label: const Text('Notizen'),
+                        label: Text(context.l10n.protocolNotes),
                       ),
                       const SizedBox(width: AppDimensions.paddingS),
                       FilledButton(
                         onPressed: _openPublish,
-                        child: Text(_isPublished ? 'Erneut freigeben' : 'Freigeben'),
+                        child: Text(_isPublished ? context.l10n.protocolRepublish : context.l10n.protocolPublishShort),
                       ),
                     ],
                   ),
@@ -967,8 +974,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
         body: _loading
             ? const Center(child: CircularProgressIndicator())
             : _notAvailable
-                ? _centerState(Icons.lock_outline, 'Dieses Protokoll ist noch nicht freigegeben.',
-                    'Sobald die Leitung es freigibt, kannst du es hier lesen.')
+                ? _centerState(Icons.lock_outline, context.l10n.protocolNotPublished, context.l10n.protocolNotPublishedHint)
                 : _loadFailed || _attendance == null
                     ? Center(
                         child: Column(
@@ -976,8 +982,8 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                           children: [
                             const Icon(Icons.cloud_off, size: 56, color: AppColors.medium),
                             const SizedBox(height: AppDimensions.paddingM),
-                            const Text('Protokoll konnte nicht geladen werden.'),
-                            OutlinedButton(onPressed: _load, child: const Text('Erneut versuchen')),
+                            Text(context.l10n.protocolLoadFailed),
+                            OutlinedButton(onPressed: _load, child: Text(context.l10n.protocolRetry)),
                           ],
                         ),
                       )
@@ -1032,8 +1038,9 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
             ],
           ),
         ),
-        title: Text('${att.present.length} anwesend'),
-        subtitle: Text('${att.excused.isNotEmpty ? '${att.excused.length} entschuldigt · ' : ''}aus der Anwesenheit'),
+        title: Text(context.l10n.protocolPresentCount(att.present.length)),
+        subtitle: Text(
+            '${att.excused.isNotEmpty ? context.l10n.protocolExcusedCount(att.excused.length) : ''}${context.l10n.protocolFromAttendance}'),
         trailing: const Icon(Icons.chevron_right),
       ),
     );
@@ -1058,13 +1065,13 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
           children: [
             AppBar(
               automaticallyImplyLeading: false,
-              title: const Text('Teilnehmende'),
-              actions: [TextButton(onPressed: () => Navigator.of(ctx).pop(), child: const Text('Fertig'))],
+              title: Text(ctx.l10n.protocolParticipants),
+              actions: [TextButton(onPressed: () => Navigator.of(ctx).pop(), child: Text(ctx.l10n.personDone))],
             ),
             Expanded(
               child: ListView(
                 children: [
-                  ListTile(title: Text('Anwesend (${att.present.length})', style: Theme.of(ctx).textTheme.titleSmall)),
+                  ListTile(title: Text(ctx.l10n.protocolPresentList(att.present.length), style: Theme.of(ctx).textTheme.titleSmall)),
                   for (final a in att.present)
                     ListTile(
                       leading: CircleAvatar(
@@ -1074,11 +1081,11 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                       title: Text(a.name),
                     ),
                   if (att.present.isEmpty)
-                    const ListTile(
-                        title: Text('Niemand als anwesend eingetragen', style: TextStyle(color: AppColors.medium))),
+                    ListTile(
+                        title: Text(ctx.l10n.protocolNobodyPresent, style: const TextStyle(color: AppColors.medium))),
                   if (att.excused.isNotEmpty) ...[
                     ListTile(
-                        title: Text('Entschuldigt (${att.excused.length})', style: Theme.of(ctx).textTheme.titleSmall)),
+                        title: Text(ctx.l10n.protocolExcusedList(att.excused.length), style: Theme.of(ctx).textTheme.titleSmall)),
                     for (final a in att.excused)
                       ListTile(
                         leading: CircleAvatar(child: Text(_initials(a))),
@@ -1088,14 +1095,14 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                   ],
                   if (att.others.isNotEmpty) ...[
                     ListTile(
-                        title: Text('Nicht da / offen (${att.others.length})',
+                        title: Text(ctx.l10n.protocolOthersList(att.others.length),
                             style: Theme.of(ctx).textTheme.titleSmall)),
                     for (final a in att.others)
                       ListTile(title: Text(a.name, style: const TextStyle(color: AppColors.medium))),
                   ],
-                  const Padding(
-                    padding: EdgeInsets.all(AppDimensions.paddingM),
-                    child: Text('Die Liste kommt aus der Anwesenheit des Termins.'),
+                  Padding(
+                    padding: const EdgeInsets.all(AppDimensions.paddingM),
+                    child: Text(ctx.l10n.protocolListFromAttendance),
                   ),
                 ],
               ),
@@ -1118,14 +1125,14 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
           children: [
             AppBar(
               automaticallyImplyLeading: false,
-              title: const Text('Allgemeine Notizen'),
-              actions: [TextButton(onPressed: () => Navigator.of(ctx).pop(), child: const Text('Fertig'))],
+              title: Text(ctx.l10n.protocolGeneralNotes),
+              actions: [TextButton(onPressed: () => Navigator.of(ctx).pop(), child: Text(ctx.l10n.personDone))],
             ),
             Expanded(
               child: ListView(
                 padding: const EdgeInsets.all(AppDimensions.paddingM),
                 children: [
-                  const Text('Gilt für die ganze Sitzung, unabhängig vom Punkt.'),
+                  Text(ctx.l10n.protocolWholeMeeting),
                   const SizedBox(height: AppDimensions.paddingS),
                   _editor(controller),
                   StatefulBuilder(
@@ -1139,7 +1146,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                         await _createTask(protocolGeneralSectionId);
                       },
                       icon: const Icon(Icons.add_circle_outline),
-                      label: const Text('Aufgabe'),
+                      label: Text(ctx.l10n.tasksTask),
                     ),
                   ),
                 ],
@@ -1240,12 +1247,13 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
             color: AppColors.danger.withValues(alpha: 0.08),
             child: ListTile(
               leading: const Icon(Icons.circle, color: AppColors.danger, size: 12),
-              title: Text(
-                  'Läuft: ${liveSec.topNumber != null ? 'TOP ${liveSec.topNumber}' : liveSec.name} · noch ${_live!.remainingMinutes} min'),
+              title: Text(context.l10n.protocolRunning(
+                  liveSec.topNumber != null ? context.l10n.protocolTop(liveSec.topNumber!) : liveSec.name,
+                  _live!.remainingMinutes)),
               trailing: hasNext
                   ? TextButton(
                       onPressed: () => setState(() => _activeId = _sections[activeIndex + 1].id),
-                      child: const Text('Nächster Punkt'),
+                      child: Text(context.l10n.protocolNextPoint),
                     )
                   : null,
             ),
@@ -1260,20 +1268,20 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
             ]),
           ),
         if (_sections.isEmpty)
-          const Card(
+          Card(
             child: Padding(
-              padding: EdgeInsets.all(AppDimensions.paddingM),
-              child: Text('Der Ablaufplan ist noch leer. Füge einen Punkt hinzu oder schreib in die Notizen.'),
+              padding: const EdgeInsets.all(AppDimensions.paddingM),
+              child: Text(context.l10n.protocolPlanEmpty),
             ),
           ),
         for (final s in _sections) _sectionCard(s, map),
         TextButton.icon(
           onPressed: _addSpontaneousTopic,
           icon: const Icon(Icons.add),
-          label: const Text('Punkt'),
+          label: Text(context.l10n.protocolPoint),
         ),
         if (unassigned.isNotEmpty) ...[
-          Text('Weitere Aufgaben dieser Sitzung', style: Theme.of(context).textTheme.titleSmall),
+          Text(context.l10n.protocolMoreTasks, style: Theme.of(context).textTheme.titleSmall),
           Card(child: _taskList(unassigned)),
         ],
         ..._leftoverWidgets(),
@@ -1307,7 +1315,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                 ? Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('TOP ${s.topNumber}${s.start != null ? ' · ${s.start}' : ''}',
+                      Text('${context.l10n.protocolTop(s.topNumber!)}${s.start != null ? ' · ${s.start}' : ''}',
                           style: theme.textTheme.labelSmall),
                       Text(s.name),
                     ],
@@ -1322,7 +1330,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                 if (!active && outcome != null)
                   TeamOrgBadge(label: outcomeLabels[outcome] ?? outcome, color: outcomeColor(outcome)),
                 if (s.duration > 0)
-                  Padding(padding: const EdgeInsets.only(left: 6), child: Text('${s.duration} min')),
+                  Padding(padding: const EdgeInsets.only(left: 6), child: Text(context.l10n.planningMinShort(s.duration))),
                 Icon(active ? Icons.expand_less : Icons.expand_more),
               ],
             ),
@@ -1343,7 +1351,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                     child: TextButton.icon(
                       onPressed: () => _createTask(s.id),
                       icon: const Icon(Icons.add_circle_outline),
-                      label: const Text('Aufgabe'),
+                      label: Text(context.l10n.tasksTask),
                     ),
                   ),
                 ],
@@ -1352,7 +1360,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
           else if (tasks.isNotEmpty)
             Padding(
               padding: const EdgeInsets.fromLTRB(AppDimensions.paddingM, 0, AppDimensions.paddingM, AppDimensions.paddingS),
-              child: Text('${tasks.length} ${tasks.length == 1 ? 'Aufgabe' : 'Aufgaben'}',
+              child: Text(context.l10n.protocolTaskCount(tasks.length),
                   style: theme.textTheme.bodySmall),
             ),
         ],
@@ -1373,8 +1381,8 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
     if (_leftovers.isEmpty) return const [];
     return [
       const SizedBox(height: AppDimensions.paddingM),
-      Text('Weitere Notizen', style: Theme.of(context).textTheme.titleSmall),
-      const Text('Notizen zu Punkten, die nicht mehr im Ablaufplan stehen.'),
+      Text(context.l10n.protocolMoreNotes, style: Theme.of(context).textTheme.titleSmall),
+      Text(context.l10n.protocolMoreNotesHint),
       for (final l in _leftovers)
         Card(
           child: Padding(
@@ -1384,7 +1392,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
               children: [
                 Text(l.title, style: Theme.of(context).textTheme.titleSmall),
                 Text(
-                  'Dieser Punkt steht nicht mehr im Ablaufplan. Die Notizen bleiben erhalten.',
+                  context.l10n.protocolNotInPlan,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.medium),
                 ),
                 _editor(_controllerFor('leftover:${l.key}', readOnly: true), editable: false),
@@ -1442,7 +1450,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
     final active = _resizing == side;
     final current = side == 'left' ? _widths.left : _widths.right;
     return Tooltip(
-      message: 'Ziehen, um die Breite anzupassen (Doppelklick setzt zurück)',
+      message: context.l10n.protocolDragResize,
       waitDuration: const Duration(milliseconds: 800),
       child: Focus(
         onKeyEvent: (node, event) {
@@ -1505,7 +1513,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
   String _dotLabel(String id) {
     final o = _outcomes[id];
     if (o != null) return outcomeLabels[o] ?? o;
-    return _hasNotes(id) ? 'Notiert' : 'Offen';
+    return _hasNotes(id) ? context.l10n.protocolNoted : context.l10n.protocolOpen;
   }
 
   Widget _sideLabel(String text) => Padding(
@@ -1521,14 +1529,15 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
     }
     if (_live == null || liveSec == null) return const SizedBox.shrink();
     final hasNext = nextSectionId(_sectionIds, _activeId) != null;
-    final label = liveSec.topNumber != null ? 'TOP ${liveSec.topNumber}' : liveSec.name;
+    final l10n = context.l10n;
+    final label = liveSec.topNumber != null ? l10n.protocolTop(liveSec.topNumber!) : liveSec.name;
     return Card(
       color: AppColors.danger.withValues(alpha: 0.08),
       child: ListTile(
         dense: true,
         leading: const Icon(Icons.circle, color: AppColors.danger, size: 12),
-        title: Text('Läuft: $label · noch ${_live!.remainingMinutes} min'),
-        trailing: hasNext ? TextButton(onPressed: _nextSection, child: const Text('Nächster Punkt')) : null,
+        title: Text(l10n.protocolRunning(label, _live!.remainingMinutes)),
+        trailing: hasNext ? TextButton(onPressed: _nextSection, child: Text(l10n.protocolNextPoint)) : null,
       ),
     );
   }
@@ -1554,7 +1563,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
             style: theme.textTheme.bodySmall?.copyWith(color: _isPublished ? AppColors.success : AppColors.medium)),
         const SizedBox(height: AppDimensions.paddingS),
         _liveBar(),
-        _sideLabel('Ablaufplan'),
+        _sideLabel(context.l10n.protocolRunSheet),
         Card(
           margin: EdgeInsets.zero,
           child: Column(
@@ -1571,7 +1580,9 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                   minLeadingWidth: 40,
                   title: Text(s.title, maxLines: 2, overflow: TextOverflow.ellipsis),
                   subtitle: (s.conductor != null || s.duration > 0)
-                      ? Text([s.conductor, if (s.duration > 0) '${s.duration} min'].whereType<String>().join(' · '))
+                      ? Text([s.conductor, if (s.duration > 0) context.l10n.planningMinShort(s.duration)]
+                          .whereType<String>()
+                          .join(' · '))
                       : null,
                   trailing: Tooltip(
                     message: _dotLabel(s.id),
@@ -1594,25 +1605,25 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                   leading: const SizedBox(width: 40, child: Icon(Icons.archive_outlined, size: 18)),
                   minLeadingWidth: 40,
                   title: Text(l.title),
-                  subtitle: const Text('Weitere Notizen'),
+                  subtitle: Text(context.l10n.protocolMoreNotes),
                   onTap: () => _activate(l.key),
                 ),
               ListTile(
                 dense: true,
                 leading: const SizedBox(width: 40, child: Icon(Icons.add, size: 18, color: AppColors.primary)),
                 minLeadingWidth: 40,
-                title: const Text('Punkt', style: TextStyle(color: AppColors.primary)),
+                title: Text(context.l10n.protocolPoint, style: const TextStyle(color: AppColors.primary)),
                 onTap: _addSpontaneousTopic,
               ),
             ],
           ),
         ),
-        _sideLabel('Anwesend'),
+        _sideLabel(context.l10n.protocolPresent),
         _attendeeRow(),
         const SizedBox(height: AppDimensions.paddingM),
         FilledButton(
           onPressed: _openPublish,
-          child: Text(_isPublished ? 'Erneut freigeben' : 'Protokoll freigeben'),
+          child: Text(_isPublished ? context.l10n.protocolRepublish : context.l10n.protocolPublish),
         ),
       ],
     );
@@ -1621,9 +1632,9 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
     if (active != null) {
       final s = active;
       final kicker = [
-        if (s.topNumber != null) 'TOP ${s.topNumber}',
+        if (s.topNumber != null) context.l10n.protocolTop(s.topNumber!),
         if (s.start != null) s.start!,
-        if (s.duration > 0) '${s.duration} min',
+        if (s.duration > 0) context.l10n.planningMinShort(s.duration),
       ].join(' · ');
       main = Padding(
         padding: const EdgeInsets.all(AppDimensions.paddingM),
@@ -1638,7 +1649,8 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
               crossAxisAlignment: WrapCrossAlignment.center,
               children: [
                 if (s.isTop) _outcomeSelector(s.id),
-                if (s.conductor != null) Text('Verantwortlich: ${s.conductor}', style: theme.textTheme.bodySmall),
+                if (s.conductor != null)
+                  Text(context.l10n.protocolResponsible(s.conductor!), style: theme.textTheme.bodySmall),
               ],
             ),
             const SizedBox(height: AppDimensions.paddingS),
@@ -1670,7 +1682,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                   OutlinedButton.icon(
                     onPressed: () => _createTask(s.id),
                     icon: const Icon(Icons.add_circle_outline),
-                    label: const Text('Aufgabe'),
+                    label: Text(context.l10n.tasksTask),
                   ),
                   const SizedBox(width: AppDimensions.paddingM),
                   Container(
@@ -1679,10 +1691,10 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                       border: Border.all(color: theme.dividerColor),
                       borderRadius: BorderRadius.circular(4),
                     ),
-                    child: Text('⌘/Strg ↓', style: theme.textTheme.labelSmall),
+                    child: Text(context.l10n.protocolShortcutNext, style: theme.textTheme.labelSmall),
                   ),
                   const SizedBox(width: 6),
-                  Text('Nächster Punkt', style: theme.textTheme.bodySmall),
+                  Text(context.l10n.protocolNextPoint, style: theme.textTheme.bodySmall),
                   const Spacer(),
                   if (_savingCount > 0)
                     const Padding(
@@ -1701,9 +1713,9 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
       main = ListView(
         padding: const EdgeInsets.all(AppDimensions.paddingM),
         children: [
-          Text('Weitere Notizen', style: theme.textTheme.labelMedium?.copyWith(color: AppColors.medium)),
+          Text(context.l10n.protocolMoreNotes, style: theme.textTheme.labelMedium?.copyWith(color: AppColors.medium)),
           Text(l.title, style: theme.textTheme.headlineSmall),
-          Text('Dieser Punkt steht nicht mehr im Ablaufplan. Die Notizen bleiben erhalten.',
+          Text(context.l10n.protocolNotInPlan,
               style: theme.textTheme.bodySmall),
           const SizedBox(height: AppDimensions.paddingS),
           _editor(_controllerFor('leftover:${l.key}', readOnly: true), editable: false),
@@ -1717,10 +1729,10 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
           children: [
             const Icon(Icons.list, size: 56, color: AppColors.medium),
             const SizedBox(height: AppDimensions.paddingS),
-            Text(_sections.isNotEmpty ? 'Wähle links einen Punkt aus.' : 'Der Ablaufplan ist noch leer.',
+            Text(_sections.isNotEmpty ? context.l10n.protocolFlutterChooseLeft : context.l10n.protocolFlutterPlanEmptyShort,
                 style: theme.textTheme.titleMedium),
             const SizedBox(height: AppDimensions.paddingS),
-            OutlinedButton(onPressed: _addSpontaneousTopic, child: const Text('Punkt hinzufügen')),
+            OutlinedButton(onPressed: _addSpontaneousTopic, child: Text(context.l10n.protocolAddPoint)),
           ],
         ),
       );
@@ -1731,15 +1743,15 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
       children: [
         Row(
           children: [
-            Expanded(child: Text('Allgemeine Notizen', style: theme.textTheme.titleMedium)),
+            Expanded(child: Text(context.l10n.protocolGeneralNotes, style: theme.textTheme.titleMedium)),
             IconButton(
-              tooltip: 'Aufgabe zu den allgemeinen Notizen',
+              tooltip: context.l10n.protocolGeneralTask,
               icon: const Icon(Icons.add_circle_outline, color: AppColors.primary),
               onPressed: () => _createTask(protocolGeneralSectionId),
             ),
           ],
         ),
-        Text('Immer sichtbar, unabhängig vom Punkt', style: theme.textTheme.bodySmall),
+        Text(context.l10n.protocolAlwaysVisible, style: theme.textTheme.bodySmall),
         const SizedBox(height: AppDimensions.paddingS),
         ProtocolEditor(
           key: const ValueKey('wide-editor-general'),
@@ -1753,9 +1765,9 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
           onOpenTask: (id) => context.push('/settings/tasks/$id'),
           onOpenTopic: (id) => context.push('/settings/agenda-items/$id'),
         ),
-        _sideLabel('Aufgaben dieser Sitzung · ${_tasks.length}'),
+        _sideLabel(context.l10n.protocolSessionTasks(_tasks.length)),
         if (_tasks.isEmpty)
-          Text('Noch keine Aufgaben. Lege sie direkt bei einem Punkt an.', style: theme.textTheme.bodySmall)
+          Text(context.l10n.protocolNoTasksYet, style: theme.textTheme.bodySmall)
         else
           Card(
             margin: EdgeInsets.zero,
@@ -1817,9 +1829,9 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
   String? _sectionLabelOfTask(TeamTask t, Map<String, String> map) {
     final id = map[t.id];
     if (id == null) return null;
-    if (id == protocolGeneralSectionId) return 'Allgemein';
+    if (id == protocolGeneralSectionId) return context.l10n.protocolGeneral;
     for (final s in _sections) {
-      if (s.id == id) return s.topNumber != null ? 'TOP ${s.topNumber}' : s.name;
+      if (s.id == id) return s.topNumber != null ? context.l10n.protocolTop(s.topNumber!) : s.name;
     }
     return null;
   }
@@ -1833,7 +1845,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
       padding: const EdgeInsets.all(AppDimensions.paddingM),
       children: [
         Text(_title, style: theme.textTheme.headlineSmall),
-        Text([_dateLabel, if (_timeRange.isNotEmpty) '$_timeRange Uhr'].join(' · ')),
+        Text([_dateLabel, if (_timeRange.isNotEmpty) context.l10n.attendanceTimeOClock(_timeRange)].join(' · ')),
         if (_isPublished)
           Padding(
             padding: const EdgeInsets.symmetric(vertical: AppDimensions.paddingS),
@@ -1850,13 +1862,13 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Anwesend (${att.present.length})', style: theme.textTheme.titleSmall),
+                  Text(context.l10n.protocolPresentList(att.present.length), style: theme.textTheme.titleSmall),
                   Wrap(spacing: 6, runSpacing: 4, children: [
                     for (final a in att.present) Chip(label: Text(a.name)),
                   ]),
                   if (att.excused.isNotEmpty) ...[
                     const SizedBox(height: AppDimensions.paddingS),
-                    Text('Entschuldigt (${att.excused.length})', style: theme.textTheme.titleSmall),
+                    Text(context.l10n.protocolExcusedList(att.excused.length), style: theme.textTheme.titleSmall),
                     Wrap(spacing: 6, runSpacing: 4, children: [
                       for (final a in att.excused)
                         Chip(label: Text(a.name, style: const TextStyle(color: AppColors.medium))),
@@ -1874,7 +1886,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (s.topNumber != null) Text('TOP ${s.topNumber}', style: theme.textTheme.labelSmall),
+                    if (s.topNumber != null) Text(context.l10n.protocolTop(s.topNumber!), style: theme.textTheme.labelSmall),
                     Row(children: [
                       Expanded(child: Text(s.name, style: theme.textTheme.titleMedium)),
                       if (_outcomes[s.id] != null)
@@ -1884,7 +1896,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                     if (_hasNotes(s.id))
                       _editor(_controllerFor(s.id, readOnly: true), editable: false)
                     else if (_tasksFor(s.id, map).isEmpty)
-                      const Text('Keine Notizen', style: TextStyle(color: AppColors.medium)),
+                      Text(context.l10n.protocolNoNotes, style: const TextStyle(color: AppColors.medium)),
                     _taskList(_tasksFor(s.id, map)),
                   ],
                 ),
@@ -1898,7 +1910,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Allgemeine Notizen', style: theme.textTheme.titleMedium),
+                  Text(context.l10n.protocolGeneralNotes, style: theme.textTheme.titleMedium),
                   if (_hasNotes(protocolGeneralSectionId))
                     _editor(_controllerFor(protocolGeneralSectionId, readOnly: true), editable: false),
                   _taskList(unassigned),
@@ -1910,7 +1922,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
         OutlinedButton.icon(
           onPressed: _sharePdf,
           icon: const Icon(Icons.ios_share),
-          label: const Text('Als PDF teilen'),
+          label: Text(context.l10n.protocolSharePdf),
         ),
       ],
     );

@@ -18,6 +18,7 @@ import '../../../../data/models/duty/person_unavailability.dart';
 import '../../../../data/models/player_absence/player_absence.dart';
 import '../../../../data/models/team_org/team_org.dart';
 import '../../../../data/models/tenant/tenant.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Protocol-enabled, visible types a Termin can be created for ad hoc
 /// (Ionic `protocolAttendanceTypes`), ordered by index.
@@ -143,7 +144,7 @@ Future<int?> promptCreateProtocolAttendance(BuildContext context, WidgetRef ref)
   }
   if (!context.mounted) return null;
   if (types.isEmpty) {
-    ToastHelper.showWarning(context, 'Kein Termintyp mit Protokoll & Tagesordnung vorhanden');
+    ToastHelper.showWarning(context, context.l10n.dateDialogNoProtocolType);
     return null;
   }
 
@@ -154,7 +155,7 @@ Future<int?> promptCreateProtocolAttendance(BuildContext context, WidgetRef ref)
       context: context,
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setLocal) => AlertDialog(
-          title: const Text('Welcher Termintyp?'),
+          title: Text(ctx.l10n.dateDialogWhichType),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -168,8 +169,8 @@ Future<int?> promptCreateProtocolAttendance(BuildContext context, WidgetRef ref)
             ],
           ),
           actions: [
-            TextButton(onPressed: () => Navigator.of(ctx).pop(), child: const Text('Abbrechen')),
-            FilledButton(onPressed: () => Navigator.of(ctx).pop(selected), child: const Text('Weiter')),
+            TextButton(onPressed: () => Navigator.of(ctx).pop(), child: Text(ctx.l10n.commonCancel)),
+            FilledButton(onPressed: () => Navigator.of(ctx).pop(selected), child: Text(ctx.l10n.commonNext)),
           ],
         ),
       ),
@@ -185,13 +186,13 @@ Future<int?> promptCreateProtocolAttendance(BuildContext context, WidgetRef ref)
     initialDate: today,
     firstDate: today,
     lastDate: today.add(const Duration(days: 3650)),
-    helpText: '${type.name} anlegen – An welchem Tag findet der Termin statt?',
-    confirmText: 'Anlegen',
-    cancelText: 'Abbrechen',
+    helpText: '${context.l10n.teamOrgFlutterCreateType(type.name)} – ${context.l10n.dateDialogWhichDay}',
+    confirmText: context.l10n.commonCreate,
+    cancelText: context.l10n.commonCancel,
   );
   if (day == null || !context.mounted) return null;
   if (day.isBefore(today)) {
-    ToastHelper.showWarning(context, 'Bitte ein Datum ab heute wählen');
+    ToastHelper.showWarning(context, context.l10n.dateDialogFromToday);
     return null;
   }
 
@@ -230,11 +231,14 @@ Future<int?> promptCreateProtocolAttendance(BuildContext context, WidgetRef ref)
     ref.invalidate(upcomingAttendancesProvider);
     ref.invalidate(upcomingProtocolAttendancesProvider);
     if (context.mounted) {
-      ToastHelper.showSuccess(context, 'Termin am ${DateFormat('dd.MM.').format(day)} angelegt');
+      ToastHelper.showSuccess(
+        context,
+        context.l10n.dateDialogCreated(DateFormat(dateFmt(DateFmtKind.dayMonth)).format(day)),
+      );
     }
     return id;
   } catch (_) {
-    if (context.mounted) ToastHelper.showError(context, 'Termin konnte nicht angelegt werden');
+    if (context.mounted) ToastHelper.showError(context, context.l10n.dateDialogCreateFailed);
     return null;
   }
 }

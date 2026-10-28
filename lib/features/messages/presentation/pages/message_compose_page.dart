@@ -13,7 +13,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/tiptap_converter.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/message/message.dart';
-import '../message_format.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Opens the full-screen compose dialog. Returns the new message id when sent.
 Future<String?> openMessageCompose(BuildContext context) {
@@ -160,9 +160,10 @@ class _MessageComposePageState extends ConsumerState<MessageComposePage> {
   Future<void> _confirmSend() async {
     final counts = _counts;
     if (!_canSend || counts == null) return;
+    final l10n = context.l10n;
     final channels = [
-      if (_push) '${counts.push} per Push/Telegram',
-      if (_email) '${counts.email} per E-Mail',
+      if (_push) l10n.messagesViaPush(counts.push),
+      if (_email) l10n.messagesViaEmail(counts.email),
     ].join(', ');
     final title = _titleController.text.trim();
 
@@ -170,19 +171,18 @@ class _MessageComposePageState extends ConsumerState<MessageComposePage> {
       context: context,
       builder:
           (ctx) => AlertDialog(
-            title: const Text('Mitteilung senden?'),
+            title: Text(l10n.messagesSendConfirm),
             content: Text(
-              '„$title“ geht an ${MessageFormat.persons(counts.recipients)} ($channels). '
-              'Das kann nicht rückgängig gemacht werden.',
+              l10n.messagesSendConfirmMessage(title, counts.recipients, channels),
             ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(ctx).pop(false),
-                child: const Text('Abbrechen'),
+                child: Text(l10n.commonCancel),
               ),
               ElevatedButton(
                 onPressed: () => Navigator.of(ctx).pop(true),
-                child: const Text('Senden'),
+                child: Text(l10n.messagesSend),
               ),
             ],
           ),
@@ -205,15 +205,12 @@ class _MessageComposePageState extends ConsumerState<MessageComposePage> {
     if (!mounted) return;
     setState(() => _sending = false);
     if (id == null) {
-      ToastHelper.showError(
-        context,
-        'Fehler beim Versenden, bitte versuche es erneut.',
-      );
+      ToastHelper.showError(context, context.l10n.messagesSendFailed);
       return;
     }
     await _clearDraft();
     if (!mounted) return;
-    ToastHelper.showSuccess(context, 'Mitteilung wird versendet');
+    ToastHelper.showSuccess(context, context.l10n.messagesIsSending);
     Navigator.of(context).pop(id);
   }
 
@@ -221,6 +218,7 @@ class _MessageComposePageState extends ConsumerState<MessageComposePage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final groups = ref.watch(groupsProvider).valueOrNull ?? [];
+    final l10n = context.l10n;
 
     Widget header(String text) => Padding(
       padding: const EdgeInsets.fromLTRB(
@@ -239,10 +237,10 @@ class _MessageComposePageState extends ConsumerState<MessageComposePage> {
       appBar: AppBar(
         leading: TextButton(
           onPressed: _sending ? null : () => Navigator.of(context).pop(),
-          child: const Text('Abbrechen'),
+          child: Text(l10n.commonCancel),
         ),
         leadingWidth: 100,
-        title: const Text('Neue Mitteilung'),
+        title: Text(l10n.messagesNewMessage),
       ),
       body: Stack(
         children: [
@@ -259,9 +257,9 @@ class _MessageComposePageState extends ConsumerState<MessageComposePage> {
                     controller: _titleController,
                     maxLength: 200,
                     textCapitalization: TextCapitalization.sentences,
-                    decoration: const InputDecoration(
-                      labelText: 'Titel',
-                      hintText: 'z. B. Probe am Samstag fällt aus',
+                    decoration: InputDecoration(
+                      labelText: l10n.messagesTitle,
+                      hintText: l10n.messagesTitlePlaceholder,
                       border: InputBorder.none,
                       counterText: '',
                     ),
@@ -317,9 +315,9 @@ class _MessageComposePageState extends ConsumerState<MessageComposePage> {
                         padding: const EdgeInsets.all(AppDimensions.paddingM),
                         child: QuillEditor.basic(
                           controller: _quill,
-                          config: const QuillEditorConfig(
+                          config: QuillEditorConfig(
                             scrollable: false,
-                            placeholder: 'Nachricht …',
+                            placeholder: l10n.editorMessagePlaceholder,
                           ),
                         ),
                       ),
@@ -327,7 +325,7 @@ class _MessageComposePageState extends ConsumerState<MessageComposePage> {
                   ],
                 ),
               ),
-              header('Empfänger'),
+              header(l10n.messagesRecipients),
               Card(
                 margin: EdgeInsets.zero,
                 child: Builder(
@@ -344,14 +342,14 @@ class _MessageComposePageState extends ConsumerState<MessageComposePage> {
                           value: _Audience.all,
                           groupValue: _audience,
                           onChanged: onAudience,
-                          title: const Text('Alle aktiven Mitglieder'),
-                          subtitle: const Text('inkl. Hauptgruppe'),
+                          title: Text(l10n.messagesAllActive),
+                          subtitle: Text(l10n.messagesInclMainGroup),
                         ),
                         RadioListTile<_Audience>(
                           value: _Audience.groups,
                           groupValue: _audience,
                           onChanged: onAudience,
-                          title: const Text('Nur bestimmte Gruppen'),
+                          title: Text(l10n.messagesOnlyGroups),
                         ),
                         if (_audience == _Audience.groups)
                           Padding(
@@ -390,21 +388,17 @@ class _MessageComposePageState extends ConsumerState<MessageComposePage> {
                   },
                 ),
               ),
-              header('Versand über'),
+              header(l10n.messagesSendVia),
               Card(
                 margin: EdgeInsets.zero,
                 child: Column(
                   children: [
                     SwitchListTile(
                       value: _push,
-                      title: const Text('Push / Telegram'),
+                      title: Text(l10n.messagesPushTelegram),
                       subtitle:
                           _counts != null && _push
-                              ? Text(
-                                _counts!.push == 1
-                                    ? '1 Person hat Mitteilungen aktiviert'
-                                    : '${_counts!.push} Personen haben Mitteilungen aktiviert',
-                              )
+                              ? Text(l10n.messagesPushCount(_counts!.push))
                               : null,
                       onChanged: (v) {
                         setState(() => _push = v);
@@ -413,14 +407,10 @@ class _MessageComposePageState extends ConsumerState<MessageComposePage> {
                     ),
                     SwitchListTile(
                       value: _email,
-                      title: const Text('E-Mail'),
+                      title: Text(l10n.messagesEmail),
                       subtitle:
                           _counts != null && _email
-                              ? Text(
-                                _counts!.email == 1
-                                    ? '1 Person hat eine E-Mail-Adresse'
-                                    : '${_counts!.email} Personen haben eine E-Mail-Adresse',
-                              )
+                              ? Text(l10n.messagesEmailCount(_counts!.email))
                               : null,
                       onChanged: (v) {
                         setState(() => _email = v);
@@ -437,7 +427,7 @@ class _MessageComposePageState extends ConsumerState<MessageComposePage> {
               FilledButton.icon(
                 onPressed: _canSend ? _confirmSend : null,
                 icon: const Icon(Icons.send_outlined),
-                label: const Text('Senden'),
+                label: Text(l10n.messagesSend),
                 style: FilledButton.styleFrom(
                   minimumSize: const Size.fromHeight(48),
                 ),
@@ -449,15 +439,15 @@ class _MessageComposePageState extends ConsumerState<MessageComposePage> {
             Container(
               color: Colors.black26,
               alignment: Alignment.center,
-              child: const Card(
+              child: Card(
                 child: Padding(
-                  padding: EdgeInsets.all(AppDimensions.paddingL),
+                  padding: const EdgeInsets.all(AppDimensions.paddingL),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      CircularProgressIndicator(),
-                      SizedBox(width: AppDimensions.paddingM),
-                      Text('Wird versendet …'),
+                      const CircularProgressIndicator(),
+                      const SizedBox(width: AppDimensions.paddingM),
+                      Text(l10n.messagesSendingNow),
                     ],
                   ),
                 ),
@@ -469,17 +459,18 @@ class _MessageComposePageState extends ConsumerState<MessageComposePage> {
   }
 
   Widget _buildSummary(ThemeData theme) {
+    final l10n = context.l10n;
     if (_countsError) {
       return Wrap(
         crossAxisAlignment: WrapCrossAlignment.center,
         children: [
           Text(
-            'Die Empfänger konnten nicht geladen werden. ',
+            '${l10n.messagesCountsFailed} ',
             style: TextStyle(color: theme.colorScheme.error),
           ),
           TextButton(
             onPressed: _loadCounts,
-            child: const Text('Erneut versuchen'),
+            child: Text(l10n.messagesRetry),
           ),
         ],
       );
@@ -498,26 +489,32 @@ class _MessageComposePageState extends ConsumerState<MessageComposePage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text.rich(
-          TextSpan(
-            children: [
-              TextSpan(
-                text: MessageFormat.persons(counts.recipients),
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-              const TextSpan(text: ' erhalten diese Mitteilung.'),
-            ],
-          ),
+          TextSpan(children: _strongSpans(l10n.messagesRecipientsSummary(counts.recipients))),
         ),
         if (counts.unreachable > 0) ...[
           const SizedBox(height: 4),
           Text(
-            counts.unreachable == 1
-                ? '1 Person ist über keinen Kanal erreichbar und sieht die Mitteilung nur, wenn sie die App öffnen.'
-                : '${counts.unreachable} Personen sind über keinen Kanal erreichbar und sehen die Mitteilung nur, wenn sie die App öffnen.',
+            l10n.messagesUnreachableSummary(counts.unreachable),
             style: theme.textTheme.bodySmall?.copyWith(color: AppColors.medium),
           ),
         ],
       ],
     );
   }
+}
+
+/// Renders `<strong>…</strong>` of an Ionic `*Html`-style message as bold spans.
+List<TextSpan> _strongSpans(String html) {
+  final spans = <TextSpan>[];
+  final re = RegExp(r'<strong>(.*?)</strong>');
+  var last = 0;
+  for (final m in re.allMatches(html)) {
+    if (m.start > last) spans.add(TextSpan(text: html.substring(last, m.start)));
+    spans.add(
+      TextSpan(text: m.group(1), style: const TextStyle(fontWeight: FontWeight.bold)),
+    );
+    last = m.end;
+  }
+  if (last < html.length) spans.add(TextSpan(text: html.substring(last)));
+  return spans;
 }

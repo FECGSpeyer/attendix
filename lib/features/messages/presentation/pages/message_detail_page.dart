@@ -13,6 +13,7 @@ import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/quill_utils.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/message/message.dart';
+import '../../../../l10n/l10n.dart';
 import '../message_format.dart';
 
 enum _Filter { all, read, open, problems }
@@ -57,11 +58,9 @@ class _MessageDetailPageState extends ConsumerState<MessageDetailPage> {
   Future<void> _delete() async {
     final confirmed = await DialogHelper.showConfirmation(
       context,
-      title: 'Mitteilung löschen?',
-      message:
-          'Die Mitteilung verschwindet auch bei allen Empfängern aus der App. '
-          'Bereits versendete E-Mails bleiben bestehen.',
-      confirmText: 'Löschen',
+      title: context.l10n.messagesDeleteConfirm,
+      message: context.l10n.messagesDeleteHint,
+      confirmText: context.l10n.commonDelete,
       isDestructive: true,
     );
     if (!confirmed || !mounted) return;
@@ -70,7 +69,7 @@ class _MessageDetailPageState extends ConsumerState<MessageDetailPage> {
     if (ok) {
       context.go('/settings/messages');
     } else {
-      ToastHelper.showError(context, 'Fehler beim Löschen');
+      ToastHelper.showError(context, context.l10n.messagesDeleteFailed);
     }
   }
 
@@ -85,15 +84,16 @@ class _MessageDetailPageState extends ConsumerState<MessageDetailPage> {
     final messageAsync = ref.watch(messageByIdProvider(widget.messageId));
     final isManager = _isManager;
     final message = messageAsync.valueOrNull;
+    final l10n = context.l10n;
 
     return Scaffold(
       appBar: AppBar(
         leading: BackButton(onPressed: _back),
-        title: const Text('Mitteilung'),
+        title: Text(l10n.messagesMessage),
         actions: [
           if (isManager && message != null)
             IconButton(
-              tooltip: 'Mitteilung löschen',
+              tooltip: l10n.messagesDeleteMessage,
               icon: const Icon(Icons.delete_outline, color: AppColors.danger),
               onPressed: _delete,
             ),
@@ -101,19 +101,19 @@ class _MessageDetailPageState extends ConsumerState<MessageDetailPage> {
       ),
       body: messageAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => const Center(child: Text('Mitteilung konnte nicht geladen werden')),
+        error: (e, _) => Center(child: Text(l10n.messagesLoadFailed)),
         data: (message) {
           if (message == null) {
-            return const Center(
+            return Center(
               child: Padding(
-                padding: EdgeInsets.all(AppDimensions.paddingL),
+                padding: const EdgeInsets.all(AppDimensions.paddingL),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.campaign_outlined, size: 48, color: AppColors.medium),
-                    SizedBox(height: AppDimensions.paddingM),
+                    const Icon(Icons.campaign_outlined, size: 48, color: AppColors.medium),
+                    const SizedBox(height: AppDimensions.paddingM),
                     Text(
-                      'Diese Mitteilung gibt es nicht mehr oder du hast keinen Zugriff darauf.',
+                      l10n.messagesNotAvailable,
                       textAlign: TextAlign.center,
                     ),
                   ],
@@ -148,7 +148,7 @@ class _MessageDetailPageState extends ConsumerState<MessageDetailPage> {
     final meta = [
       MessageFormat.dateTime(message.createdAt),
       if (message.senderName != null && message.senderName!.isNotEmpty) message.senderName!,
-      showContent ? 'Nachricht ausblenden' : 'Nachricht anzeigen',
+      showContent ? context.l10n.messagesFlutterHideMessage : context.l10n.messagesFlutterShowMessage,
     ].join(' · ');
     return Card(
       margin: const EdgeInsets.only(bottom: AppDimensions.paddingM),
@@ -166,6 +166,7 @@ class _MessageDetailPageState extends ConsumerState<MessageDetailPage> {
 
   List<Widget> _managerOverview(Message message) {
     final theme = Theme.of(context);
+    final l10n = context.l10n;
     final recipientsAsync = ref.watch(messageRecipientsProvider(message.id));
     final groups = ref.watch(groupsMapProvider).valueOrNull ?? const <int, String>{};
     final rows = recipientsAsync.valueOrNull ?? const <MessageRecipient>[];
@@ -187,7 +188,7 @@ class _MessageDetailPageState extends ConsumerState<MessageDetailPage> {
     );
 
     return [
-      if (message.isSending) hint('Der Versand läuft noch. Ziehe nach unten, um zu aktualisieren.'),
+      if (message.isSending) hint(l10n.messagesStillSending),
       Padding(
         padding: const EdgeInsets.fromLTRB(
           AppDimensions.paddingS,
@@ -196,7 +197,7 @@ class _MessageDetailPageState extends ConsumerState<MessageDetailPage> {
           AppDimensions.paddingS,
         ),
         child: Text(
-          'Übersicht',
+          l10n.messagesOverview,
           style: theme.textTheme.titleSmall?.copyWith(color: AppColors.medium),
         ),
       ),
@@ -208,29 +209,26 @@ class _MessageDetailPageState extends ConsumerState<MessageDetailPage> {
         crossAxisSpacing: AppDimensions.paddingS,
         childAspectRatio: 2.2,
         children: [
-          _Tile(value: '${stats.read} / ${stats.total}', label: 'in der App gelesen'),
+          _Tile(value: '${stats.read} / ${stats.total}', label: l10n.messagesReadInApp),
           _Tile(
             value: '${stats.pushDelivered} / ${stats.pushTotal}',
-            label: 'Push/Telegram zugestellt',
+            label: l10n.messagesPushDelivered,
           ),
-          _Tile(value: '${stats.emailDelivered} / ${stats.emailTotal}', label: 'E-Mail zugestellt'),
-          _Tile(value: '≈ ${stats.emailOpened}', label: 'E-Mail geöffnet (ungefähr)'),
+          _Tile(value: '${stats.emailDelivered} / ${stats.emailTotal}', label: l10n.messagesEmailDelivered),
+          _Tile(value: '≈ ${stats.emailOpened}', label: l10n.messagesEmailOpenedApprox),
         ],
       ),
-      hint(
-        '„Geöffnet“ bei E-Mails ist ein Schätzwert: manche Mail-Apps laden Bilder '
-        'vorab, andere blockieren sie.',
-      ),
+      hint(l10n.messagesOpenedEstimate),
       const SizedBox(height: AppDimensions.paddingS),
       SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: SegmentedButton<_Filter>(
           showSelectedIcon: false,
           segments: [
-            ButtonSegment(value: _Filter.all, label: Text('Alle ${stats.total}')),
-            ButtonSegment(value: _Filter.read, label: Text('Gelesen ${stats.readAny}')),
-            ButtonSegment(value: _Filter.open, label: Text('Offen ${stats.open}')),
-            ButtonSegment(value: _Filter.problems, label: Text('Probleme ${stats.problems}')),
+            ButtonSegment(value: _Filter.all, label: Text(l10n.messagesAllCount(stats.total))),
+            ButtonSegment(value: _Filter.read, label: Text(l10n.messagesReadCount(stats.readAny))),
+            ButtonSegment(value: _Filter.open, label: Text(l10n.messagesOpenCount(stats.open))),
+            ButtonSegment(value: _Filter.problems, label: Text(l10n.messagesProblemsCount(stats.problems))),
           ],
           selected: {_filter},
           onSelectionChanged: (s) => setState(() => _filter = s.first),
@@ -240,7 +238,7 @@ class _MessageDetailPageState extends ConsumerState<MessageDetailPage> {
       if (recipientsAsync.isLoading && rows.isEmpty)
         const Center(child: CircularProgressIndicator())
       else if (filtered.isEmpty)
-        hint('Keine Personen in dieser Ansicht.')
+        hint(l10n.messagesNoPeopleView)
       else
         Card(
           margin: EdgeInsets.zero,
@@ -323,7 +321,7 @@ class _RecipientRow extends StatelessWidget {
             TextSpan(
               children: [
                 TextSpan(
-                  text: recipient.name.isNotEmpty ? recipient.name : 'Unbekannt',
+                  text: recipient.name.isNotEmpty ? recipient.name : context.l10n.commonUnknown,
                   style: theme.textTheme.titleSmall,
                 ),
                 if (groupName != null && groupName!.isNotEmpty)
@@ -416,7 +414,7 @@ class _MessageCardState extends State<_MessageCard> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final m = widget.message;
-    final sender = (m.senderName != null && m.senderName!.isNotEmpty) ? m.senderName! : 'Unbekannt';
+    final sender = (m.senderName != null && m.senderName!.isNotEmpty) ? m.senderName! : context.l10n.commonUnknown;
     return Card(
       margin: const EdgeInsets.only(bottom: AppDimensions.paddingM),
       child: Padding(
@@ -428,7 +426,7 @@ class _MessageCardState extends State<_MessageCard> {
               Text(m.title, style: theme.textTheme.headlineSmall),
               const SizedBox(height: 4),
               Text(
-                'Von $sender · ${MessageFormat.dateTime(m.createdAt)}',
+                context.l10n.messagesFrom(sender, MessageFormat.dateTime(m.createdAt)),
                 style: theme.textTheme.bodySmall?.copyWith(color: AppColors.medium),
               ),
               const SizedBox(height: AppDimensions.paddingM),
@@ -474,7 +472,7 @@ class _EarlierMessages extends ConsumerWidget {
             AppDimensions.paddingS,
           ),
           child: Text(
-            'Frühere Mitteilungen',
+            context.l10n.messagesEarlier,
             style: theme.textTheme.titleSmall?.copyWith(color: AppColors.medium),
           ),
         ),

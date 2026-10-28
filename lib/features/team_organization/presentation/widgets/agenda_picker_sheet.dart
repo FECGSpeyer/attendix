@@ -7,6 +7,7 @@ import '../../../../core/providers/team_org_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/team_org/team_org.dart';
+import '../../../../l10n/l10n.dart';
 import '../../team_org_utils.dart';
 
 /// "Themen aufnehmen": picks open topics (and creates new ones inline) and
@@ -106,7 +107,7 @@ class _AgendaPickerSheetState extends ConsumerState<AgendaPickerSheet> {
         _otherRows = usePostponed ? rows.where((r) => r.postponedOn == null).toList() : rows;
       });
     } catch (_) {
-      if (mounted) ToastHelper.showError(context, 'Themen konnten nicht geladen werden');
+      if (mounted) ToastHelper.showError(context, context.l10n.agendaLoadFailed);
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -133,15 +134,17 @@ class _AgendaPickerSheetState extends ConsumerState<AgendaPickerSheet> {
     final added = _newSelections.length;
     final removed = _removals.length;
     final minutes = _newSelections.fold<int>(0, (s, r) => s + r.duration);
+    final l10n = context.l10n;
     final parts = <String>[];
-    if (added > 0) parts.add('$added ${added == 1 ? 'Thema' : 'Themen'} aufnehmen · $minutes min');
-    if (removed > 0) parts.add('$removed ${removed == 1 ? 'Thema' : 'Themen'} entfernen');
-    return parts.isEmpty ? 'Themen auswählen' : parts.join(' · ');
+    if (added > 0) parts.add(l10n.agendaAddTopics(added, minutes));
+    if (removed > 0) parts.add(l10n.agendaRemoveTopics(removed));
+    return parts.isEmpty ? l10n.agendaChooseTopics : parts.join(' · ');
   }
 
   String get _insertHint {
     final after = insertAfterName(widget.attendance.fields);
-    final where = after != null ? 'Wird nach „$after“ eingefügt' : 'Wird am Anfang eingefügt';
+    final l10n = context.l10n;
+    final where = after != null ? l10n.agendaInsertAfter(after) : l10n.agendaInsertAtStart;
     if (!_hasChanges) return where;
     final plan = planWithTopics(
       widget.attendance,
@@ -150,7 +153,7 @@ class _AgendaPickerSheetState extends ConsumerState<AgendaPickerSheet> {
       removeIds: _removals.map((r) => r.item.id!).toList(),
     );
     final end = DateTime.tryParse(plan['end']?.toString() ?? '');
-    return end != null ? '$where · Ende neu ${DateFormat('HH:mm').format(end)}' : where;
+    return end != null ? l10n.agendaNewEnd(where, DateFormat('HH:mm').format(end)) : where;
   }
 
   Future<void> _createFromSearch() async {
@@ -169,7 +172,7 @@ class _AgendaPickerSheetState extends ConsumerState<AgendaPickerSheet> {
         _searchController.clear();
       });
     } catch (_) {
-      if (mounted) ToastHelper.showError(context, 'Thema konnte nicht angelegt werden');
+      if (mounted) ToastHelper.showError(context, context.l10n.agendaCreateFailed);
     }
   }
 
@@ -190,30 +193,34 @@ class _AgendaPickerSheetState extends ConsumerState<AgendaPickerSheet> {
       if (!mounted) return;
       final added = selections.length;
       final removed = removeIds.length;
+      final l10n = context.l10n;
       final text = removed == 0
-          ? (added == 1 ? 'Thema aufgenommen' : '$added Themen aufgenommen')
+          ? (added == 1 ? l10n.agendaTopicAdded : l10n.agendaTopicsAdded(added))
           : added == 0
-              ? (removed == 1 ? 'Thema aus dem Ablaufplan entfernt' : '$removed Themen aus dem Ablaufplan entfernt')
-              : 'Tagesordnung aktualisiert';
+              ? (removed == 1 ? l10n.agendaTopicRemoved : l10n.agendaTopicsRemoved(removed))
+              : l10n.agendaAgendaUpdated;
       ToastHelper.showSuccess(context, text);
       Navigator.of(context).pop(plan);
     } catch (_) {
-      if (mounted) ToastHelper.showError(context, 'Ablaufplan konnte nicht gespeichert werden');
+      if (mounted) ToastHelper.showError(context, context.l10n.agendaPlanSaveFailed);
     } finally {
       if (mounted) setState(() => _saving = false);
     }
   }
 
   Widget _rowTile(_Row row) {
+    final l10n = context.l10n;
     final parts = <String>[
       if (row.item.responsiblePerson.fullName.isNotEmpty) row.item.responsiblePerson.fullName,
       priorityLabels[row.item.priority] ?? '',
-      if (row.inPlan) row.selected ? 'bereits im Ablaufplan' : 'wird aus dem Ablaufplan entfernt',
+      if (row.inPlan) row.selected ? l10n.agendaAlreadyInPlan : l10n.agendaRemovedFromPlan,
     ].where((s) => s.isNotEmpty).toList();
     String? postponedLabel;
     if (row.postponedOn != null) {
       final d = DateTime.tryParse(row.postponedOn!)?.toLocal();
-      postponedLabel = d != null ? 'Vertagt ${DateFormat('dd.MM.').format(d)}' : 'Vertagt';
+      postponedLabel = d != null
+          ? l10n.agendaPostponedOn(DateFormat(dateFmt(DateFmtKind.dayMonth)).format(d))
+          : l10n.agendaPostponed;
     }
     return ListTile(
       onTap: () => setState(() => row.selected = !row.selected),
@@ -228,19 +235,19 @@ class _AgendaPickerSheetState extends ConsumerState<AgendaPickerSheet> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 IconButton(
-                  tooltip: 'Kürzer',
+                  tooltip: l10n.agendaShorter,
                   icon: const Icon(Icons.remove),
                   onPressed: () => setState(() => row.duration = (row.duration - 5).clamp(5, 999)),
                 ),
-                Text('${row.duration} min'),
+                Text(l10n.planningMinShort(row.duration)),
                 IconButton(
-                  tooltip: 'Länger',
+                  tooltip: l10n.agendaLonger,
                   icon: const Icon(Icons.add),
                   onPressed: () => setState(() => row.duration += 5),
                 ),
               ],
             )
-          : Text('${row.duration} min'),
+          : Text(l10n.planningMinShort(row.duration)),
     );
   }
 
@@ -248,6 +255,7 @@ class _AgendaPickerSheetState extends ConsumerState<AgendaPickerSheet> {
   Widget build(BuildContext context) {
     final visiblePostponed = _postponedRows.where(_matches).toList();
     final visibleOthers = _otherRows.where(_matches).toList();
+    final l10n = context.l10n;
     return SizedBox(
       height: MediaQuery.of(context).size.height * 0.9,
       child: Column(
@@ -256,18 +264,18 @@ class _AgendaPickerSheetState extends ConsumerState<AgendaPickerSheet> {
             automaticallyImplyLeading: false,
             leading: IconButton(
               icon: const Icon(Icons.close),
-              tooltip: 'Schließen',
+              tooltip: l10n.commonClose,
               onPressed: () => Navigator.of(context).pop(),
             ),
-            title: const Text('Themen aufnehmen'),
+            title: Text(l10n.attendanceAddTopics),
           ),
           Padding(
             padding: const EdgeInsets.all(AppDimensions.paddingS),
             child: TextField(
               controller: _searchController,
-              decoration: const InputDecoration(
-                prefixIcon: Icon(Icons.search),
-                hintText: 'Thema suchen oder neu anlegen',
+              decoration: InputDecoration(
+                prefixIcon: const Icon(Icons.search),
+                hintText: l10n.agendaSearchOrCreate,
               ),
               onChanged: (v) => setState(() => _search = v),
             ),
@@ -280,22 +288,22 @@ class _AgendaPickerSheetState extends ConsumerState<AgendaPickerSheet> {
                       if (_canCreateFromSearch)
                         ListTile(
                           leading: const Icon(Icons.add_circle_outline, color: AppColors.primary),
-                          title: Text('„${_search.trim()}“ als neues Thema anlegen',
+                          title: Text(l10n.agendaCreateAsNew(_search.trim()),
                               style: const TextStyle(color: AppColors.primary)),
                           onTap: _createFromSearch,
                         ),
                       if (visiblePostponed.isNotEmpty) ...[
-                        const _Header('Vertagt aus letzter Sitzung'),
+                        _Header(l10n.agendaPostponedFromLast),
                         ...visiblePostponed.map(_rowTile),
                       ],
-                      const _Header('Themenspeicher'),
+                      _Header(l10n.agendaTopicStore),
                       ...visibleOthers.map(_rowTile),
                       if (visibleOthers.isEmpty)
                         ListTile(
                           title: Text(
                             _search.trim().isNotEmpty
-                                ? 'Kein passendes Thema gefunden.'
-                                : 'Keine offenen Themen. Lege oben ein neues an.',
+                                ? l10n.agendaFlutterNoMatch
+                                : l10n.agendaFlutterNoOpenTopics,
                             style: const TextStyle(color: AppColors.medium),
                           ),
                         ),

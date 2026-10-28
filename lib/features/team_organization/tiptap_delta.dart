@@ -12,6 +12,8 @@ library;
 
 import 'dart:convert';
 
+import '../../l10n/l10n.dart';
+
 typedef Json = Map<String, dynamic>;
 
 class TiptapDocParts {
@@ -350,8 +352,8 @@ String _inlineText(Json node) {
   final type = node['type'];
   if (type == 'text') return (node['text'] ?? '').toString();
   if (type == 'hardBreak') return '\n';
-  if (type == 'taskRef') return 'Aufgabe: ${_map(node['attrs'])['title'] ?? ''}';
-  if (type == 'agendaItemRef') return 'Thema: ${_map(node['attrs'])['title'] ?? ''}';
+  if (type == 'taskRef') return l10nWithoutContext.protocolTaskRef(_map(node['attrs'])['title'] ?? '');
+  if (type == 'agendaItemRef') return l10nWithoutContext.protocolTopicRef(_map(node['attrs'])['title'] ?? '');
   return _children(node).map(_inlineText).join();
 }
 

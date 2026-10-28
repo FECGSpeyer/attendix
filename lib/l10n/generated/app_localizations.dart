@@ -431,6 +431,24 @@ abstract class AppLocalizations {
   /// **'Bitte einen Titel eingeben'**
   String get agendaEnterTitle;
 
+  /// agenda.flutter.noMatch
+  ///
+  /// In de, this message translates to:
+  /// **'Kein passendes Thema gefunden.'**
+  String get agendaFlutterNoMatch;
+
+  /// agenda.flutter.noOpenTopics
+  ///
+  /// In de, this message translates to:
+  /// **'Keine offenen Themen. Lege oben ein neues an.'**
+  String get agendaFlutterNoOpenTopics;
+
+  /// agenda.flutter.notFound
+  ///
+  /// In de, this message translates to:
+  /// **'Thema nicht gefunden'**
+  String get agendaFlutterNotFound;
+
   /// agenda.high
   ///
   /// In de, this message translates to:
@@ -6527,6 +6545,24 @@ abstract class AppLocalizations {
   /// **'E-Mail gesendet'**
   String get messagesEmailSent;
 
+  /// messages.flutter.hideMessage
+  ///
+  /// In de, this message translates to:
+  /// **'Nachricht ausblenden'**
+  String get messagesFlutterHideMessage;
+
+  /// messages.flutter.problems
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {{count} Problem} other {{count} Probleme}}'**
+  String messagesFlutterProblems(num count);
+
+  /// messages.flutter.showMessage
+  ///
+  /// In de, this message translates to:
+  /// **'Nachricht anzeigen'**
+  String get messagesFlutterShowMessage;
+
   /// messages.from
   ///
   /// In de, this message translates to:
@@ -10360,6 +10396,42 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Protokoll {title} {date}'**
   String protocolFileName(Object title, Object date);
+
+  /// protocol.flutter.chooseLeft
+  ///
+  /// In de, this message translates to:
+  /// **'Wähle links einen Punkt aus.'**
+  String get protocolFlutterChooseLeft;
+
+  /// protocol.flutter.doneLower
+  ///
+  /// In de, this message translates to:
+  /// **'erledigt'**
+  String get protocolFlutterDoneLower;
+
+  /// protocol.flutter.keepDraft
+  ///
+  /// In de, this message translates to:
+  /// **'Als Entwurf lassen'**
+  String get protocolFlutterKeepDraft;
+
+  /// protocol.flutter.planEmptyShort
+  ///
+  /// In de, this message translates to:
+  /// **'Der Ablaufplan ist noch leer.'**
+  String get protocolFlutterPlanEmptyShort;
+
+  /// protocol.flutter.publishNotify
+  ///
+  /// In de, this message translates to:
+  /// **'Freigeben & benachrichtigen'**
+  String get protocolFlutterPublishNotify;
+
+  /// protocol.flutter.republishNotify
+  ///
+  /// In de, this message translates to:
+  /// **'Erneut freigeben & benachrichtigen'**
+  String get protocolFlutterRepublishNotify;
 
   /// protocol.forNames
   ///
@@ -15383,6 +15455,42 @@ abstract class AppLocalizations {
   /// **'{type} vom {date}'**
   String tasksEventFrom(Object type, Object date);
 
+  /// tasks.flutter.allTasks
+  ///
+  /// In de, this message translates to:
+  /// **'Alle Aufgaben'**
+  String get tasksFlutterAllTasks;
+
+  /// tasks.flutter.editTask
+  ///
+  /// In de, this message translates to:
+  /// **'Aufgabe bearbeiten'**
+  String get tasksFlutterEditTask;
+
+  /// tasks.flutter.newTask
+  ///
+  /// In de, this message translates to:
+  /// **'Neue Aufgabe'**
+  String get tasksFlutterNewTask;
+
+  /// tasks.flutter.noDate
+  ///
+  /// In de, this message translates to:
+  /// **'Kein Datum'**
+  String get tasksFlutterNoDate;
+
+  /// tasks.flutter.reopen
+  ///
+  /// In de, this message translates to:
+  /// **'Wieder öffnen'**
+  String get tasksFlutterReopen;
+
+  /// tasks.flutter.showAllCount
+  ///
+  /// In de, this message translates to:
+  /// **'Alle anzeigen ({count})'**
+  String tasksFlutterShowAllCount(Object count);
+
   /// tasks.inProgress
   ///
   /// In de, this message translates to:
@@ -15778,6 +15886,30 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Filter'**
   String get teamOrgFilter;
+
+  /// teamOrg.flutter.and
+  ///
+  /// In de, this message translates to:
+  /// **'und'**
+  String get teamOrgFlutterAnd;
+
+  /// teamOrg.flutter.createType
+  ///
+  /// In de, this message translates to:
+  /// **'{name} anlegen'**
+  String teamOrgFlutterCreateType(Object name);
+
+  /// teamOrg.flutter.member
+  ///
+  /// In de, this message translates to:
+  /// **'Mitglied'**
+  String get teamOrgFlutterMember;
+
+  /// teamOrg.flutter.newSuggestions
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {{count} neuer Vorschlag} other {{count} neue Vorschläge}}'**
+  String teamOrgFlutterNewSuggestions(num count);
 
   /// teamOrg.group.none
   ///

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/providers/team_org_providers.dart';
+import '../../../../l10n/l10n.dart';
 import '../widgets/protocols_tab.dart';
 import '../widgets/tasks_tab.dart';
 import '../widgets/topics_tab.dart';
@@ -44,13 +45,13 @@ class _TeamOrganizationPageState extends ConsumerState<TeamOrganizationPage>
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Teamorganisation'),
+        title: Text(context.l10n.teamOrgTitle),
         bottom: TabBar(
           controller: _controller,
-          tabs: const [
-            Tab(text: 'Aufgaben'),
-            Tab(text: 'Themen'),
-            Tab(text: 'Protokolle'),
+          tabs: [
+            Tab(text: context.l10n.teamOrgTabTasks),
+            Tab(text: context.l10n.teamOrgTabTopics),
+            Tab(text: context.l10n.teamOrgTabProtocols),
           ],
         ),
       ),

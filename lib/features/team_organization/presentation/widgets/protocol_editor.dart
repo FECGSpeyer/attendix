@@ -7,23 +7,18 @@ import 'package:flutter_quill/flutter_quill.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/team_org/team_org.dart';
+import '../../../../l10n/l10n.dart';
+import '../../team_org_utils.dart' show priorityLabels, taskStatusLabels, topicStatusLabels;
 import '../../tiptap_delta.dart';
 
 /// "📋 Titel · Offen" / "✅ Titel · Erledigt" (Ionic `taskRefText`); [status]
 /// is the live status when known.
 String taskRefText(String title, String? status) {
-  final label = switch (status) {
-    'open' => 'Offen',
-    'in_progress' => 'In Arbeit',
-    'completed' => 'Erledigt',
-    _ => status ?? '',
-  };
+  final label = status == null ? '' : (taskStatusLabels[status] ?? status);
   if (label.isEmpty) return '📋 $title';
   return '${status == 'completed' ? '✅' : '📋'} $title · $label';
 }
 
-const _priorityLabels = {'low': 'Niedrig', 'medium': 'Mittel', 'high': 'Hoch'};
-const _topicStatusLabels = {'open': 'Offen', 'completed': 'Erledigt', 'dropped': 'Verworfen'};
 
 /// "📋 Titel · Offen · Mittel" (Ionic AgendaItemNode).
 String agendaRefText(Map<String, dynamic> attrs) {
@@ -31,8 +26,8 @@ String agendaRefText(Map<String, dynamic> attrs) {
   final priority = attrs['priority']?.toString();
   return [
     '📋 ${attrs['title'] ?? ''}',
-    if (status != null) _topicStatusLabels[status] ?? status,
-    if (priority != null) _priorityLabels[priority] ?? priority,
+    if (status != null) topicStatusLabels[status] ?? status,
+    if (priority != null) priorityLabels[priority] ?? priority,
   ].join(' · ');
 }
 
@@ -264,17 +259,19 @@ class _ProtocolEditorState extends State<ProtocolEditor> {
 
   List<SlashCommand> get _commands {
     final c = widget.controller;
+    final l10n = context.l10n;
     return [
-      SlashCommand('Überschrift 1', 'Große Überschrift', Icons.title, () async => c.formatSelection(Attribute.h1)),
-      SlashCommand('Überschrift 2', 'Mittlere Überschrift', Icons.text_fields, () async => c.formatSelection(Attribute.h2)),
-      SlashCommand('Aufzählung', 'Ungeordnete Liste', Icons.format_list_bulleted, () async => c.formatSelection(Attribute.ul)),
-      SlashCommand('Nummerierte Liste', 'Geordnete Liste', Icons.format_list_numbered,
+      SlashCommand(l10n.editorH1, l10n.editorH1Desc, Icons.title, () async => c.formatSelection(Attribute.h1)),
+      SlashCommand(l10n.editorH2, l10n.editorH2Desc, Icons.text_fields, () async => c.formatSelection(Attribute.h2)),
+      SlashCommand(l10n.editorBulletList, l10n.editorBulletDesc, Icons.format_list_bulleted,
+          () async => c.formatSelection(Attribute.ul)),
+      SlashCommand(l10n.editorOrderedList, l10n.editorOrderedDesc, Icons.format_list_numbered,
           () async => c.formatSelection(Attribute.ol)),
       if (widget.onCreateTask != null)
-        SlashCommand('/aufgabe – Neue Aufgabe', 'Aufgabe erstellen und verknüpfen', Icons.add_task, widget.onCreateTask!),
+        SlashCommand(l10n.editorNewTask, l10n.editorNewTaskDesc, Icons.add_task, widget.onCreateTask!),
       for (final item in widget.agendaItems)
         if (item.id != null)
-          SlashCommand('/tagesordnung – ${item.title}', 'Tagesordnungspunkt einfügen', Icons.list_alt, () async {
+          SlashCommand('/tagesordnung – ${item.title}', l10n.editorAgendaDesc, Icons.list_alt, () async {
             insertRefEmbed(c, agendaItemRefEmbedType, {
               'id': item.id,
               'title': item.title,
@@ -325,7 +322,7 @@ class _ProtocolEditorState extends State<ProtocolEditor> {
         config: QuillEditorConfig(
           scrollable: widget.expands,
           expands: widget.expands,
-          placeholder: 'Tippe hier, um Notizen zu schreiben … ( / für Befehle)',
+          placeholder: context.l10n.editorNotesPlaceholder,
           padding: const EdgeInsets.all(AppDimensions.paddingS),
           embedBuilders: builders,
           customShortcuts: {

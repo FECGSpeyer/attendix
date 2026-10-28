@@ -13,6 +13,7 @@ import '../../../../core/utils/ionic_route_mapper.dart'; // INTEGRATION
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../data/models/user_notification/user_notification.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Notification bell for page app bars (port of Ionic `NotificationBellComponent`).
 ///
@@ -38,7 +39,7 @@ class NotificationBell extends ConsumerWidget {
     ref.invalidate(unreadNotificationCountProvider);
     if (!context.mounted) return;
     if (list.isEmpty) {
-      ToastHelper.showInfo(context, 'Keine Benachrichtigungen vorhanden.');
+      ToastHelper.showInfo(context, context.l10n.bellNoneAvailable);
       return;
     }
 
@@ -124,7 +125,7 @@ class NotificationBell extends ConsumerWidget {
     final unread = ref.watch(unreadNotificationCountProvider).valueOrNull ?? 0;
 
     return IconButton(
-      tooltip: 'Benachrichtigungen',
+      tooltip: context.l10n.bellTitle,
       onPressed: () => _open(context, ref),
       icon: Badge(
         isLabelVisible: unread > 0,
@@ -165,16 +166,16 @@ class _NotificationCenterState extends ConsumerState<_NotificationCenter> {
     try {
       await action();
     } catch (_) {
-      if (mounted) ToastHelper.showError(context, 'Fehler beim Speichern');
+      if (mounted) ToastHelper.showError(context, context.l10n.svcSaveFailed);
     }
   }
 
   Future<void> _markAll() async {
     if (_allTenants) {
       final ok = await _confirm(
-        title: 'Alle als gelesen markieren?',
-        message: 'Alle Benachrichtigungen aus allen Instanzen werden als gelesen markiert.',
-        confirmText: 'Markieren',
+        title: context.l10n.bellMarkAllHeader,
+        message: context.l10n.bellMarkAllMessage,
+        confirmText: context.l10n.bellMark,
       );
       if (!ok) return;
     }
@@ -184,13 +185,10 @@ class _NotificationCenterState extends ConsumerState<_NotificationCenter> {
 
   Future<void> _deleteAll() async {
     final ok = await _confirm(
-      title: 'Alle Benachrichtigungen löschen?',
+      title: context.l10n.bellDeleteAllHeader,
       message:
-          _allTenants
-              ? 'Alle Benachrichtigungen aus allen Instanzen werden gelöscht. '
-                  'Diese Aktion kann nicht rückgängig gemacht werden.'
-              : 'Diese Aktion kann nicht rückgängig gemacht werden.',
-      confirmText: 'Löschen',
+          _allTenants ? context.l10n.bellDeleteAllMessage : context.l10n.commonCannotUndo,
+      confirmText: context.l10n.commonDelete,
       destructive: true,
     );
     if (!ok) return;
@@ -212,7 +210,7 @@ class _NotificationCenterState extends ConsumerState<_NotificationCenter> {
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(ctx).pop(false),
-                child: const Text('Abbrechen'),
+                child: Text(ctx.l10n.commonCancel),
               ),
               TextButton(
                 onPressed: () => Navigator.of(ctx).pop(true),
@@ -264,16 +262,16 @@ class _NotificationCenterState extends ConsumerState<_NotificationCenter> {
           padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM),
           child: Row(
             children: [
-              Expanded(child: Text('Benachrichtigungen', style: theme.textTheme.titleLarge)),
+              Expanded(child: Text(context.l10n.bellTitle, style: theme.textTheme.titleLarge)),
               if (unread > 0)
                 IconButton(
-                  tooltip: 'Alle gelesen',
+                  tooltip: context.l10n.bellMarkAllRead,
                   icon: const Icon(Icons.done_all),
                   onPressed: _markAll,
                 ),
               if (list.isNotEmpty)
                 IconButton(
-                  tooltip: 'Alle löschen',
+                  tooltip: context.l10n.bellDeleteAll,
                   icon: const Icon(Icons.delete_outline, color: AppColors.danger),
                   onPressed: _deleteAll,
                 ),
@@ -284,9 +282,9 @@ class _NotificationCenterState extends ConsumerState<_NotificationCenter> {
           padding: const EdgeInsets.all(AppDimensions.paddingS),
           child: SegmentedButton<bool>(
             showSelectedIcon: false,
-            segments: const [
-              ButtonSegment(value: false, label: Text('Aktuelle Instanz')),
-              ButtonSegment(value: true, label: Text('Alle')),
+            segments: [
+              ButtonSegment(value: false, label: Text(context.l10n.bellCurrentInstance)),
+              ButtonSegment(value: true, label: Text(context.l10n.commonAll)),
             ],
             selected: {_allTenants},
             onSelectionChanged:
@@ -317,11 +315,11 @@ class _NotificationCenterState extends ConsumerState<_NotificationCenter> {
                     ? ListView(
                       controller: widget.scrollController,
                       physics: const AlwaysScrollableScrollPhysics(),
-                      children: const [
-                        SizedBox(height: 80),
-                        Icon(Icons.notifications_off_outlined, size: 48, color: AppColors.medium),
-                        SizedBox(height: AppDimensions.paddingS),
-                        Center(child: Text('Keine Benachrichtigungen')),
+                      children: [
+                        const SizedBox(height: 80),
+                        const Icon(Icons.notifications_off_outlined, size: 48, color: AppColors.medium),
+                        const SizedBox(height: AppDimensions.paddingS),
+                        Center(child: Text(context.l10n.bellNone)),
                       ],
                     )
                     : ListView.separated(
@@ -393,7 +391,7 @@ class _NotificationCenterState extends ConsumerState<_NotificationCenter> {
                             subtitle: Text(
                               n.createdAt == null
                                   ? ''
-                                  : DateFormat('dd.MM.yyyy HH:mm').format(n.createdAt!.toLocal()),
+                                  : DateFormat('${dateFmt()} HH:mm').format(n.createdAt!.toLocal()),
                               style: theme.textTheme.bodySmall?.copyWith(color: AppColors.medium),
                             ),
                             trailing: n.isNavigable ? const Icon(Icons.chevron_right) : null,
