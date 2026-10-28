@@ -7,9 +7,7 @@ import '../config/supabase_config.dart';
 import '../constants/enums.dart';
 import '../../data/models/attendance/attendance.dart';
 import '../../data/models/person/person.dart';
-import '../../data/models/song/song.dart';
 import 'player_providers.dart';
-import 'song_providers.dart';
 import 'tenant_providers.dart';
 import 'group_providers.dart';
 
@@ -165,64 +163,6 @@ final _attendanceRealtimeSubscriptionProvider = Provider.autoDispose<void>((ref)
   ref.onDispose(() => channel.unsubscribe());
 });
 
-/// Provider for realtime song changes subscription
-///
-/// Subscribes to the songs table and invalidates the list
-/// when changes occur
-final realtimeSongsProvider = StreamProvider.autoDispose<List<Song>>((ref) async* {
-  final supabase = ref.watch(supabaseClientProvider);
-  final tenantId = ref.watch(currentTenantIdProvider);
-  final songRepo = ref.watch(songRepositoryWithTenantProvider);
-
-  if (tenantId == null) {
-    yield [];
-    return;
-  }
-
-  // Initial data
-  final initialData = await songRepo.getSongs();
-  yield initialData;
-
-  // Create a stream controller
-  final controller = StreamController<List<Song>>();
-
-  // Setup realtime channel
-  final channel = supabase
-      .channel('song_changes_$tenantId')
-      .onPostgresChanges(
-        event: PostgresChangeEvent.all,
-        schema: 'public',
-        table: 'songs',
-        filter: PostgresChangeFilter(
-          type: PostgresChangeFilterType.eq,
-          column: 'tenantId',
-          value: tenantId,
-        ),
-        callback: (payload) async {
-          try {
-            final freshData = await songRepo.getSongs();
-            if (!controller.isClosed) {
-              controller.add(freshData);
-            }
-          } catch (e) {
-            if (!controller.isClosed) {
-              controller.addError(e);
-            }
-          }
-        },
-      )
-      .subscribe();
-
-  ref.onDispose(() {
-    channel.unsubscribe();
-    controller.close();
-  });
-
-  await for (final data in controller.stream) {
-    yield data;
-  }
-});
-
 /// Provider for realtime pending player changes subscription
 ///
 /// Subscribes to the player table filtered by pending=true and invalidates
@@ -257,6 +197,11 @@ final realtimePendingPlayersProvider = StreamProvider.autoDispose<List<Person>>(
           value: tenantId,
         ),
         callback: (payload) async {
+          // MEDIA_REALTIME: like Ionic settings.page.ts — refetch for new
+          // pending registrations and for any update/delete (old.id set).
+          final isPendingInsert = payload.newRecord['pending'] == true;
+          final hasOld = payload.oldRecord['id'] != null;
+          if (!isPendingInsert && !hasOld) return;
           try {
             final freshData = await playerRepo.getPendingPlayers();
             if (!controller.isClosed) {
@@ -279,79 +224,4 @@ final realtimePendingPlayersProvider = StreamProvider.autoDispose<List<Person>>(
   await for (final data in controller.stream) {
     yield data;
   }
-});
-
-/// Manager class for handling multiple realtime subscriptions
-///
-/// Use this to manually manage subscriptions if needed
-class RealtimeManager {
-  final SupabaseClient _supabase;
-  final Map<String, RealtimeChannel> _channels = {};
-
-  RealtimeManager(this._supabase);
-
-  /// Subscribe to a table with a callback
-  RealtimeChannel subscribe({
-    required String channelName,
-    required String table,
-    PostgresChangeFilter? filter,
-    required void Function(PostgresChangePayload) callback,
-  }) {
-    // Unsubscribe existing channel if any
-    _channels[channelName]?.unsubscribe();
-
-    final channel = _supabase.channel(channelName);
-
-    if (filter != null) {
-      channel.onPostgresChanges(
-        event: PostgresChangeEvent.all,
-        schema: 'public',
-        table: table,
-        filter: filter,
-        callback: callback,
-      );
-    } else {
-      channel.onPostgresChanges(
-        event: PostgresChangeEvent.all,
-        schema: 'public',
-        table: table,
-        callback: callback,
-      );
-    }
-
-    channel.subscribe();
-    _channels[channelName] = channel;
-
-    return channel;
-  }
-
-  /// Unsubscribe from a specific channel
-  void unsubscribe(String channelName) {
-    _channels[channelName]?.unsubscribe();
-    _channels.remove(channelName);
-  }
-
-  /// Unsubscribe from all channels
-  void unsubscribeAll() {
-    for (final channel in _channels.values) {
-      channel.unsubscribe();
-    }
-    _channels.clear();
-  }
-
-  /// Get all active channel names
-  List<String> get activeChannels => _channels.keys.toList();
-}
-
-/// Provider for RealtimeManager
-final realtimeManagerProvider = Provider<RealtimeManager>((ref) {
-  final supabase = ref.watch(supabaseClientProvider);
-  final manager = RealtimeManager(supabase);
-
-  // Clean up on dispose
-  ref.onDispose(() {
-    manager.unsubscribeAll();
-  });
-
-  return manager;
 });

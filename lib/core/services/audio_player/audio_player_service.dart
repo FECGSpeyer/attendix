@@ -3,7 +3,9 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
 
+import '../../providers/branding_providers.dart';
 import 'audio_player_state.dart';
+import 'media_session.dart';
 
 /// Factory for the underlying `just_audio` `AudioPlayer`.
 ///
@@ -102,10 +104,50 @@ class AudioPlayerService extends Notifier<AudioPlayerState> {
     return '$m:${s.toString().padLeft(2, '0')}';
   }
 
+  /// MEDIA_REALTIME: lock-screen controls (Ionic `MediaSessionBridge`).
+  MediaSessionBridge _mediaSession = const NoopMediaSessionBridge();
+
   @override
   AudioPlayerState build() {
     ref.onDispose(_disposePlayer);
+    _mediaSession = ref.read(mediaSessionBridgeProvider);
+    _registerMediaSessionHandlers();
     return const AudioPlayerState();
+  }
+
+  /// MEDIA_REALTIME: Ionic `registerMediaSessionHandlers`.
+  void _registerMediaSessionHandlers() {
+    final session = _mediaSession;
+    if (!session.isSupported) return;
+    session.setActionHandler(MediaSessionAction.play, (_) => unawaited(_player?.play()));
+    session.setActionHandler(MediaSessionAction.pause, (_) => unawaited(_player?.pause()));
+    session.setActionHandler(MediaSessionAction.stop, (_) => unawaited(_player?.pause()));
+    session.setActionHandler(MediaSessionAction.previousTrack, (_) {
+      unawaited(previous().catchError((_) => stop()));
+    });
+    session.setActionHandler(MediaSessionAction.nextTrack, (_) {
+      unawaited(next().catchError((_) => stop()));
+    });
+    session.setActionHandler(MediaSessionAction.seekTo, (seekTime) {
+      if (seekTime == null || _player == null) return;
+      unawaited(seek(seekTime));
+    });
+  }
+
+  /// MEDIA_REALTIME: Ionic `syncPositionState`.
+  void _syncPositionState() {
+    final player = _player;
+    if (player == null || state.currentFileName == null) return;
+    _mediaSession.setPositionState(state.duration, player.position);
+  }
+
+  /// Branding logo as lock-screen cover (Ionic `audioPlayer.coverUrl`).
+  String? _coverUrl() {
+    try {
+      return ref.read(brandingSourceProvider).valueOrNull?.logoUrl;
+    } catch (_) {
+      return null;
+    }
   }
 
   /// Plays a single file. Stops any previous playback and clears the queue.
@@ -184,6 +226,14 @@ class AudioPlayerService extends Notifier<AudioPlayerState> {
         currentTime: Duration.zero,
         isSeeking: false,
       );
+      if (_mediaSession.isSupported) {
+        _mediaSession.setMetadata(
+          songName.isNotEmpty ? songName : fileName,
+          'Attendix',
+          coverUrl: _coverUrl(),
+        );
+        _mediaSession.setTrackSkipping(_queue.length > 1);
+      }
       await player.play();
     } catch (_) {
       // setUrl or play failed (network drop, bad URL, codec error).
@@ -215,6 +265,7 @@ class AudioPlayerService extends Notifier<AudioPlayerState> {
     if (player == null) return;
     await player.seek(position);
     state = state.copyWith(currentTime: position);
+    _syncPositionState();
   }
 
   void startSeeking() {
@@ -229,6 +280,13 @@ class AudioPlayerService extends Notifier<AudioPlayerState> {
   void _wireStreams(AudioPlayer player) {
     _playingSub = player.playingStream.listen((p) {
       state = state.copyWith(isPlaying: p);
+      // MEDIA_REALTIME: also reflects pauses from the lock screen/headphones.
+      if (state.currentFileName != null) {
+        _mediaSession.setPlaybackState(
+          p ? MediaSessionPlayback.playing : MediaSessionPlayback.paused,
+        );
+        _syncPositionState();
+      }
     });
     _positionSub = player.positionStream.listen((pos) {
       // Anti-flicker: while the user drags the slider, ignore the player's
@@ -237,7 +295,10 @@ class AudioPlayerService extends Notifier<AudioPlayerState> {
       state = state.copyWith(currentTime: pos);
     });
     _durationSub = player.durationStream.listen((d) {
-      if (d != null) state = state.copyWith(duration: d);
+      if (d != null) {
+        state = state.copyWith(duration: d);
+        _syncPositionState();
+      }
     });
     _processingSub = player.processingStateStream.listen((s) {
       if (s == ProcessingState.completed) {
@@ -272,6 +333,11 @@ class AudioPlayerService extends Notifier<AudioPlayerState> {
       _player = null;
     }
     state = const AudioPlayerState();
+    if (!keepQueue) {
+      // MEDIA_REALTIME: Ionic resetPlayback.
+      _mediaSession.setPlaybackState(MediaSessionPlayback.none);
+      _mediaSession.clearMetadata();
+    }
   }
 
   void _disposePlayer() {

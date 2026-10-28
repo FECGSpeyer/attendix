@@ -27,6 +27,7 @@ import '../../../../shared/widgets/loading/loading.dart';
 import '../../../../shared/widgets/common/empty_state.dart';
 import '../../../../shared/widgets/sheets/church_overview_sheet.dart';
 import '../widgets/handover_sheet.dart';
+import '../../../../core/utils/haptic_helper.dart';
 import '../widgets/pause_person_sheet.dart';
 import '../../../messages/presentation/widgets/notification_bell.dart'; // MESSAGES
 import 'bulk_edit_page.dart';
@@ -1235,6 +1236,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
   /// Pause flow (Ionic pausePlayer/confirmPause incl. "Pausiert ab" and
   /// "Auch in anderen Instanzen pausieren?")
   Future<void> _showPauseDialog(Person person) async {
+    HapticHelper.light(); // MEDIA_REALTIME: Ionic Haptics.impact Light
     await pausePersonFlow(context, ref, person);
   }
 
@@ -1393,6 +1395,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
 
   /// Ionic removePlayer: alert "Person wirklich entfernen?".
   Future<void> _removePlayer(Person person) async {
+    HapticHelper.medium(); // MEDIA_REALTIME: Ionic Haptics.impact Medium
     final confirmed = await DialogHelper.showConfirmation(
       context,
       title: 'Person wirklich entfernen?',
