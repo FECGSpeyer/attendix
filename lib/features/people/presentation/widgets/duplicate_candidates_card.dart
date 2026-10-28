@@ -52,6 +52,7 @@ class _DuplicateCandidatesCardState
   bool _merging = false;
 
   Future<void> _confirmMerge(Person candidate) async {
+    final playerRepo = ref.read(playerRepositoryWithTenantProvider);
     final p = widget.person;
     final name = '${p.firstName} ${p.lastName}';
     final candidateName = '${candidate.firstName} ${candidate.lastName}';
@@ -82,8 +83,7 @@ class _DuplicateCandidatesCardState
       final approver = tenantUser?.email ??
           ref.read(supabaseClientProvider).auth.currentUser?.email ??
           '';
-      await ref
-          .read(playerRepositoryWithTenantProvider)
+      await playerRepo
           .mergePendingPlayerIntoExisting(p, candidate, approverEmail: approver);
       messenger.showSnackBar(
         SnackBar(

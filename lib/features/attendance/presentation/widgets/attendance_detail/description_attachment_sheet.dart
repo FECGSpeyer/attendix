@@ -104,12 +104,12 @@ class _DescriptionAttachmentEditorState extends ConsumerState<DescriptionAttachm
   }
 
   Future<void> _upload() async {
+    final repo = ref.read(attendanceRepositoryWithTenantProvider);
     final result = await FilePicker.platform.pickFiles(withData: true);
     final file = result?.files.firstOrNull;
     if (file == null || file.bytes == null) return;
     setState(() => _busy = true);
     try {
-      final repo = ref.read(attendanceRepositoryWithTenantProvider);
       final uploaded = await repo.uploadAttachment(_id, file.bytes!, file.name,
           previousFileName: _attachmentName);
       if (!mounted) return;

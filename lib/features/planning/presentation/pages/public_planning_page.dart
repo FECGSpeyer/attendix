@@ -960,6 +960,7 @@ class _MyPlanTile extends ConsumerWidget {
 
   /// Ionic `deletePlan`: alert, then delete.
   Future<void> _delete(BuildContext context, WidgetRef ref, String title) async {
+    final planRepo = ref.read(planRepositoryWithTenantProvider);
     final ok = await showPlanConfirm(
       context,
       title: context.l10n.planningDeletePlan,
@@ -969,7 +970,7 @@ class _MyPlanTile extends ConsumerWidget {
     );
     if (!ok) return;
     try {
-      await ref.read(planRepositoryWithTenantProvider).deleteMySharedPlan(plan.id);
+      await planRepo.deleteMySharedPlan(plan.id);
       ref.invalidate(mySharedPlansProvider);
     } catch (_) {
       if (context.mounted) ToastHelper.showError(context, context.l10n.plansDeleteFailed);

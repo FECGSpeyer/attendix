@@ -209,6 +209,7 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
       builder: (sheetContext) => StatefulBuilder(
         builder: (ctx, setSheet) {
           Future<void> removeOption(int i) async {
+            final extraFieldsRepo = ref.read(extraFieldsRepositoryWithTenantProvider);
             final value = options[i].text;
             if (isEdit && isPerson && value.isNotEmpty && originalOptions.contains(value)) {
               final ok = await DialogHelper.showConfirmation(
@@ -222,8 +223,7 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
               final remaining = options.map((c) => c.text).toList()..removeAt(i);
               final newDefault = remaining.isNotEmpty ? remaining.first : '';
               try {
-                final count = await ref
-                    .read(extraFieldsRepositoryWithTenantProvider)
+                final count = await extraFieldsRepo
                     .updateFieldValue(existing.id, value, newDefault);
                 if (count > 0 && mounted) ToastHelper.showSuccess(context, context.l10n.extraFieldsPersonsUpdated(count));
               } catch (_) {
@@ -235,6 +235,7 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
           }
 
           Future<void> resetValues() async {
+            final extraFieldsRepo = ref.read(extraFieldsRepositoryWithTenantProvider);
             final ok = await DialogHelper.showConfirmation(
               ctx,
               title: context.l10n.extraFieldsResetValues,
@@ -255,7 +256,7 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
               churchIds: _churchIds,
             );
             try {
-              final count = await ref.read(extraFieldsRepositoryWithTenantProvider).resetFieldValues(existing!.id, resolved);
+              final count = await extraFieldsRepo.resetFieldValues(existing!.id, resolved);
               if (mounted) ToastHelper.showSuccess(context, context.l10n.extraFieldsPersonsUpdated(count));
             } catch (_) {
               if (mounted) ToastHelper.showError(context, context.l10n.svcUpdateExtraFieldsFailed);

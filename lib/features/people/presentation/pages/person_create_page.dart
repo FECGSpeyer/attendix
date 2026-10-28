@@ -104,6 +104,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
 
   Future<void> _lookupByName() async {
     if (!mounted) return;
+    final crossTenantPersonRepo = ref.read(crossTenantPersonRepositoryWithTenantProvider);
     final first = _firstNameController.text.trim();
     final last = _lastNameController.text.trim();
     if (first.length < 2 && last.length < 2) {
@@ -117,8 +118,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
     try {
       final linkedIds = await ref.read(linkedTenantIdsProvider.future);
       if (linkedIds.isEmpty) return;
-      final matches = await ref
-          .read(crossTenantPersonRepositoryWithTenantProvider)
+      final matches = await crossTenantPersonRepo
           .getPossiblePersonsByName(first, last, linkedTenantIds: linkedIds);
       if (!mounted || mySeq != _nameLookupSeq) return; // stale
       setState(() => _nameSuggestions = matches);
@@ -135,6 +135,8 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
   }
 
   Future<void> _onEmailBlur() async {
+    if (!mounted) return;
+    final crossTenantPersonRepo = ref.read(crossTenantPersonRepositoryWithTenantProvider);
     final email = _emailController.text.trim();
     final emailRegex = RegExp(r'^[\w-\.+]+@([\w-]+\.)+[\w-]{2,}$');
     if (email.isEmpty || !emailRegex.hasMatch(email)) return;
@@ -144,8 +146,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
     List<CrossTenantPersonCandidate> matches;
     try {
       final linkedIds = await ref.read(linkedTenantIdsProvider.future);
-      matches = await ref
-          .read(crossTenantPersonRepositoryWithTenantProvider)
+      matches = await crossTenantPersonRepo
           .getPossiblePersonsByEmail(email, linkedTenantIds: linkedIds);
     } catch (_) {
       return;

@@ -66,6 +66,7 @@ Future<void> selfServiceReportAbsence(
 
 /// "Pausieren" sheet + save (Ionic openPauseModal / confirmPause).
 Future<void> selfServicePause(BuildContext context, WidgetRef ref, Person player) async {
+  final repo = ref.read(playerRepositoryWithTenantProvider);
   final result = await showModalBottomSheet<({String reason, DateTime? until})>(
     context: context,
     isScrollControlled: true,
@@ -80,7 +81,6 @@ Future<void> selfServicePause(BuildContext context, WidgetRef ref, Person player
       : '${result.reason} (bis ${DateFormat('dd.MM.yyyy').format(result.until!)})';
 
   try {
-    final repo = ref.read(playerRepositoryWithTenantProvider);
     await repo.pausePlayer(player, untilIso, pauseText);
     // LOGIC_SELF: Ionic confirmPause → telegramService.notifyPlayerPaused
     // (best-effort, the pause itself is saved).
@@ -104,6 +104,7 @@ Future<void> selfServicePause(BuildContext context, WidgetRef ref, Person player
 
 /// "Pausierung beenden" alert (Ionic confirmUnpause).
 Future<void> selfServiceUnpause(BuildContext context, WidgetRef ref, Person player) async {
+  final repo = ref.read(playerRepositoryWithTenantProvider);
   final confirmed = await DialogHelper.showConfirmation(
     context,
     title: context.l10n.signoutEndPause,
@@ -112,7 +113,6 @@ Future<void> selfServiceUnpause(BuildContext context, WidgetRef ref, Person play
   );
   if (!confirmed || !context.mounted) return;
   try {
-    final repo = ref.read(playerRepositoryWithTenantProvider);
     await repo.unpausePlayer(player, historyText: 'Selbst reaktiviert');
     _refreshAfterAbsenceChange(ref);
   } catch (e) {

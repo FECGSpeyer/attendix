@@ -127,6 +127,7 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage> {
   }
 
   Future<void> _planInto(AgendaItem item) async {
+    final protocolRepo = ref.read(protocolRepositoryWithTenantProvider);
     final types = await ref.read(protocolTypesProvider.future);
     List<ProtocolAttendance> upcoming = [];
     try {
@@ -178,7 +179,7 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage> {
       if (id == null || !mounted) return;
       ProtocolAttendance? created;
       try {
-        created = await ref.read(protocolRepositoryWithTenantProvider).getAttendance(id);
+        created = await protocolRepo.getAttendance(id);
       } catch (_) {}
       if (created == null || !mounted) return;
       choice = created;
@@ -186,7 +187,7 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage> {
     if (choice is ProtocolAttendance) {
       final type = typeOf(choice);
       try {
-        await addTopicsToAttendance(ref.read(protocolRepositoryWithTenantProvider), choice, type,
+        await addTopicsToAttendance(protocolRepo, choice, type,
             [(item: item, duration: defaultTopicDuration(item, type))]);
         ref.invalidate(upcomingProtocolAttendancesProvider);
         ref.invalidate(agendaItemHistoryProvider(_itemId));

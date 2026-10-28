@@ -35,6 +35,7 @@ import '../../../../core/providers/realtime_providers.dart';
 import '../../../../core/providers/role_permission_providers.dart';
 import '../../../../core/providers/song_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
+import '../../../../data/repositories/attendance_repository.dart'; // UI_TENANT_HOIST
 import '../../../../core/services/export_service.dart';
 import '../../../../core/services/offline_queue_service.dart'; // PROFILE_OFFLINE
 import '../../../../core/services/telegram_service.dart';
@@ -162,6 +163,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
 
   /// Load song entries from attendance data with resolved names
   Future<void> _loadSongEntries() async {
+    final repo = ref.read(attendanceRepositoryWithTenantProvider);
     final Attendance? attendance;
     try {
       attendance = await ref.read(attendanceDetailProvider(widget.attendanceId).future);
@@ -176,7 +178,6 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     try {
       final songs = await ref.read(songsProvider.future);
       final allConductors = await ref.read(conductorsProvider.future);
-      final repo = ref.read(attendanceRepositoryWithTenantProvider);
       if (!repo.hasTenantId) return;
       final rows = await repo.getHistoryForAttendance(widget.attendanceId);
       if (!mounted) return;
@@ -715,14 +716,17 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
   }
 
   /// Validate that a personAttendance belongs to current tenant
-  Future<bool> _validatePersonAttendanceTenant(String personAttendanceId) async {
-    final repo = ref.read(attendanceRepositoryWithTenantProvider);
+  /// (UI_TENANT_HOIST: takes the repository the caller bound before its
+  /// first await.)
+  Future<bool> _validatePersonAttendanceTenant(
+      AttendanceRepository repo, String personAttendanceId) async {
     if (!repo.hasTenantId) return false;
     return repo.validatePersonAttendanceTenant(personAttendanceId);
   }
 
   /// Update notes for a specific person
   Future<void> _updatePersonNote(int personId, String? notes) async {
+    final repo = ref.read(attendanceRepositoryWithTenantProvider);
     final personAttendanceId = _personAttendanceIds[personId];
     if (personAttendanceId == null) {
       ToastHelper.showError(context, context.l10n.attendanceFlutterNoEntry);
@@ -737,7 +741,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       return;
     }
 
-    final isValid = await _validatePersonAttendanceTenant(personAttendanceId);
+    final isValid = await _validatePersonAttendanceTenant(repo, personAttendanceId);
     if (!isValid) {
       if (mounted) {
         ToastHelper.showError(context, context.l10n.attendanceFlutterNoPermission);
@@ -752,7 +756,6 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     _savingPersonIds.add(personId);
 
     try {
-      final repo = ref.read(attendanceRepositoryWithTenantProvider);
       await repo.updatePersonAttendance(personAttendanceId, {'notes': notes ?? ''});
 
       if (mounted) {
@@ -1168,6 +1171,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
 
   /// "Person hinzufügen" (Ionic openAddPersonModal / addPersonsToAttendance).
   Future<void> _openAddPersons() async {
+    final repo = ref.read(attendanceRepositoryWithTenantProvider);
     final AddPersonCandidates candidates;
     try {
       final allPersons = await ref.read(allPersonsForAttendanceProvider.future);
@@ -1226,7 +1230,6 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
           notes: notes,
         ));
       }
-      final repo = ref.read(attendanceRepositoryWithTenantProvider);
       await repo.createPersonAttendances(records);
       ref.invalidate(personAttendancesForAttendanceProvider(widget.attendanceId));
       if (!mounted) return;
@@ -1268,6 +1271,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
   /// "Erinnerung versenden" for the Termin or one person
   /// (`send-ad-hoc-reminder` Edge Function, push + e-mail).
   Future<void> _sendAdHocReminder({String? playerAppId}) async {
+    final repo = ref.read(attendanceRepositoryWithTenantProvider);
     final attendance = ref.read(attendanceDetailProvider(widget.attendanceId)).valueOrNull;
     if (attendance == null) return;
     final type = ref.read(attendanceTypeForAttendanceProvider(widget.attendanceId)).valueOrNull;
@@ -1299,7 +1303,6 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     if (result == null || !mounted || _isSendingReminder) return;
     _isSendingReminder = true;
     try {
-      final repo = ref.read(attendanceRepositoryWithTenantProvider);
       await repo.sendAdHocReminder(
         attendanceId: widget.attendanceId,
         title: result.title,
@@ -1671,6 +1674,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
   }
 
   Future<void> _selectDeadline() async {
+    final repo = ref.read(attendanceRepositoryWithTenantProvider);
     final attendance = ref.read(attendanceDetailProvider(widget.attendanceId)).valueOrNull;
     if (attendance == null) return;
 
@@ -1708,7 +1712,6 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     );
 
     try {
-      final repo = ref.read(attendanceRepositoryWithTenantProvider);
       if (!repo.hasTenantId) return;
       await repo.updateAttendance(
         widget.attendanceId,
@@ -2137,6 +2140,8 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
 
   /// "Datum ändern" (Ionic promptAttendanceDateChange / changeAttendanceDate).
   Future<void> _changeDate() async {
+    final repo = ref.read(attendanceRepositoryWithTenantProvider);
+    final playerAbsenceRepo = ref.read(playerAbsenceRepositoryWithTenantProvider);
     final attendance = ref.read(attendanceDetailProvider(widget.attendanceId)).valueOrNull;
     if (attendance == null) return;
     final current = DateTime.tryParse(attendance.date)?.toLocal() ?? DateTime.now();
@@ -2172,7 +2177,6 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     }
 
     try {
-      final repo = ref.read(attendanceRepositoryWithTenantProvider);
       if (!repo.hasTenantId) return;
       final normalized = DateTime(picked.year, picked.month, picked.day, 12);
       final days = DateUtils.dateOnly(normalized).difference(DateUtils.dateOnly(current)).inDays;
@@ -2201,7 +2205,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
         final rows = await ref.refresh(personAttendancesForAttendanceProvider(widget.attendanceId).future);
         List<PlayerAbsence> absences;
         try {
-          absences = await ref.read(playerAbsenceRepositoryWithTenantProvider).getAbsencesForTenant();
+          absences = await playerAbsenceRepo.getAbsencesForTenant();
         } catch (_) {
           absences = const []; // non-fatal — proceed without absence check
         }
@@ -2291,6 +2295,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
 
   /// "Anmeldefelder bearbeiten": merges the answers into registration_answers.
   Future<void> _editRegistrationFields(int personId, AttendanceType type) async {
+    final repo = ref.read(attendanceRepositoryWithTenantProvider);
     final personAttendanceId = _personAttendanceIds[personId];
     final fields = type.registrationFields ?? const <RegistrationField>[];
     if (personAttendanceId == null || fields.isEmpty) return;
@@ -2310,7 +2315,6 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
           personAttendanceId, {'registration_answers': merged},
           attendanceId: widget.attendanceId);
       if (!queued) {
-        final repo = ref.read(attendanceRepositoryWithTenantProvider);
         await repo.updatePersonAttendance(personAttendanceId, {'registration_answers': merged});
       }
       if (mounted) {
@@ -2342,6 +2346,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
   }
 
   Future<void> _selectStartTime() async {
+    final repo = ref.read(attendanceRepositoryWithTenantProvider);
     final attendance = ref.read(attendanceDetailProvider(widget.attendanceId)).valueOrNull;
     if (attendance == null) return;
 
@@ -2367,7 +2372,6 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     final previous = attendance.startTime;
 
     try {
-      final repo = ref.read(attendanceRepositoryWithTenantProvider);
       if (!repo.hasTenantId) return;
       await repo.updateAttendance(
         widget.attendanceId,
@@ -2391,6 +2395,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
   }
 
   Future<void> _selectEndTime() async {
+    final repo = ref.read(attendanceRepositoryWithTenantProvider);
     final attendance = ref.read(attendanceDetailProvider(widget.attendanceId)).valueOrNull;
     if (attendance == null) return;
 
@@ -2416,7 +2421,6 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     final previous = attendance.endTime;
 
     try {
-      final repo = ref.read(attendanceRepositoryWithTenantProvider);
       if (!repo.hasTenantId) return;
       await repo.updateAttendance(
         widget.attendanceId,
@@ -2470,13 +2474,14 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
   // ============== PERSON REMOVE METHOD ==============
 
   Future<void> _removePersonFromAttendance(int personId) async {
+    final repo = ref.read(attendanceRepositoryWithTenantProvider);
     final personAttendanceId = _personAttendanceIds[personId];
     if (personAttendanceId == null) {
       ToastHelper.showError(context, context.l10n.attendanceFlutterNoEntry);
       return;
     }
 
-    final isValid = await _validatePersonAttendanceTenant(personAttendanceId);
+    final isValid = await _validatePersonAttendanceTenant(repo, personAttendanceId);
     if (!isValid) {
       if (mounted) {
         ToastHelper.showError(context, context.l10n.attendanceFlutterNoPermission);
@@ -2500,7 +2505,6 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     if (!confirmed || !mounted) return;
 
     try {
-      final repo = ref.read(attendanceRepositoryWithTenantProvider);
       _ownDeletedPaIds.add(personAttendanceId);
       await repo.deletePersonAttendance(personAttendanceId);
       if (!mounted) return;
@@ -2545,6 +2549,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
   }
 
   Future<void> _takePhoto() async {
+    final repo = ref.read(attendanceRepositoryWithTenantProvider);
     final source = await showDialog<ImageSource>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -2592,7 +2597,6 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
 
       final bytes = await image.readAsBytes();
 
-      final repo = ref.read(attendanceRepositoryWithTenantProvider);
       if (!repo.hasTenantId) {
         if (mounted) {
           ToastHelper.showError(context, context.l10n.historyFlutterNoTenant);
@@ -2621,6 +2625,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     AttendanceStatus status, {
     AttendanceStatus? previousStatus,
   }) async {
+    final repo = ref.read(attendanceRepositoryWithTenantProvider);
     final personAttendanceId = _personAttendanceIds[personId];
     if (personAttendanceId == null) {
       if (mounted && previousStatus != null) {
@@ -2638,7 +2643,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       return;
     }
 
-    final isValid = await _validatePersonAttendanceTenant(personAttendanceId);
+    final isValid = await _validatePersonAttendanceTenant(repo, personAttendanceId);
     if (!isValid) {
       if (mounted && previousStatus != null) {
         setState(() {
@@ -2650,7 +2655,6 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
 
     _savingPersonIds.add(personId);
     try {
-      final repo = ref.read(attendanceRepositoryWithTenantProvider);
       await repo.updatePersonAttendance(
         personAttendanceId,
         {'status': status.value},

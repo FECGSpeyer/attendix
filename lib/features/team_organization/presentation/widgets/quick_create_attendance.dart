@@ -166,6 +166,11 @@ List<Map<String, dynamic>> newPersonAttendanceRows(
 /// types have "Protokoll & Tagesordnung") and the day, then creates the
 /// Termin with its persons. Returns the new Termin id, or null.
 Future<int?> promptCreateProtocolAttendance(BuildContext context, WidgetRef ref) async {
+  // UI_TENANT_HOIST: bind tenant + repositories before the first await.
+  final repo = ref.read(protocolRepositoryWithTenantProvider);
+  final tenant = ref.read(currentTenantProvider);
+  final absenceRepo = ref.read(playerAbsenceRepositoryWithTenantProvider);
+  final dutyRepo = ref.read(dutyRepositoryWithTenantProvider);
   List<AttendanceType> types;
   try {
     final all = await ref.read(attendanceTypesProvider.future);
@@ -229,8 +234,6 @@ Future<int?> promptCreateProtocolAttendance(BuildContext context, WidgetRef ref)
   }
 
   try {
-    final repo = ref.read(protocolRepositoryWithTenantProvider);
-    final tenant = ref.read(currentTenantProvider);
     // Ionic: is_org_plan = type.is_default_org_plan
     var isOrgPlan = false;
     try {
@@ -239,11 +242,10 @@ Future<int?> promptCreateProtocolAttendance(BuildContext context, WidgetRef ref)
     } catch (_) {}
     final results = await Future.wait([
       repo.getPersonsForNewAttendance(),
-      ref
-          .read(playerAbsenceRepositoryWithTenantProvider)
+      absenceRepo
           .getAbsencesForTenant()
           .catchError((_) => <PlayerAbsence>[]),
-      ref.read(dutyRepositoryWithTenantProvider).getUnavailabilityForTenant(),
+      dutyRepo.getUnavailabilityForTenant(),
       ref.read(shiftsProvider.future).catchError((_) => <ShiftPlan>[]),
     ]);
     final persons = personsForAttendanceType(

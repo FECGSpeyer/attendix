@@ -607,6 +607,10 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
   }
 
   Future<void> _createAttendances() async {
+    final dutyRepo = ref.read(dutyRepositoryWithTenantProvider);
+    final playerAbsenceRepo = ref.read(playerAbsenceRepositoryWithTenantProvider);
+    // UI_TENANT_HOIST: bind the tenant before the first await as well.
+    final tenant = ref.read(currentTenantProvider);
     if (_selectedType == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(context.l10n.attendanceFlutterChooseType)),
@@ -649,8 +653,6 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
     widget.savingNotifier?.value = true;
 
     try {
-      final tenant = ref.read(currentTenantProvider);
-
       if (tenant == null) throw Exception(context.l10n.historyFlutterNoTenant);
 
       // Read everything from ref before the loop (no ref use across awaits).
@@ -669,11 +671,11 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
       int? lastCreatedId;
 
       // DUTY: "Regelmäßig verhindert" rules (never throws)
-      _unavailability = await ref.read(dutyRepositoryWithTenantProvider).getUnavailabilityForTenant();
+      _unavailability = await dutyRepo.getUnavailabilityForTenant();
 
       // LOGIC_ATT: planned absences (Ionic getPlayerAbsencesForTenant, non-fatal)
       try {
-        _absences = await ref.read(playerAbsenceRepositoryWithTenantProvider).getAbsencesForTenant();
+        _absences = await playerAbsenceRepo.getAbsencesForTenant();
       } catch (_) {
         _absences = const [];
       }

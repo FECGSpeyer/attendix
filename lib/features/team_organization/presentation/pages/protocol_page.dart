@@ -14,7 +14,9 @@ import '../../../../core/providers/team_org_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/team_org/team_org.dart';
+import '../../../../data/repositories/agenda_item_repository.dart';
 import '../../../../data/repositories/protocol_repository.dart';
+import '../../../../data/repositories/task_repository.dart';
 import '../../../../l10n/l10n.dart';
 import '../../protocol_pdf.dart';
 import '../../team_org_utils.dart';
@@ -78,6 +80,10 @@ class ProtocolPage extends ConsumerStatefulWidget {
 
 class _ProtocolPageState extends ConsumerState<ProtocolPage> {
   late final ProtocolRepository _repo;
+  // UI_TENANT_HOIST: bound together with _repo in initState so every write
+  // of this page stays in the tenant the protocol was opened in.
+  late final TaskRepository _taskRepo;
+  late final AgendaItemRepository _agendaRepo;
   bool _isLeader = false;
   bool _loading = true;
   bool _loadFailed = false;
@@ -119,6 +125,8 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
   void initState() {
     super.initState();
     _repo = ref.read(protocolRepositoryWithTenantProvider);
+    _taskRepo = ref.read(taskRepositoryWithTenantProvider);
+    _agendaRepo = ref.read(agendaItemRepositoryWithTenantProvider);
     _isLeader = ref.read(isTeamLeaderProvider);
     _load();
     _loadWidths();
@@ -175,7 +183,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
       final results = await Future.wait([
         _repo.getAttendance(widget.attendanceId),
         _repo.getProtocolForAttendance(widget.attendanceId),
-        ref.read(taskRepositoryWithTenantProvider).getTasksForAttendance(widget.attendanceId).catchError((_) => <TeamTask>[]),
+        _taskRepo.getTasksForAttendance(widget.attendanceId).catchError((_) => <TeamTask>[]),
       ]);
       final attendance = results[0] as ProtocolAttendance?;
       final protocol = results[1] as Protocol?;
@@ -256,7 +264,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
     var items = <AgendaItem>[];
     if (ids.isNotEmpty) {
       try {
-        items = await ref.read(agendaItemRepositoryWithTenantProvider).getAgendaItemsByIds(ids);
+        items = await _agendaRepo.getAgendaItemsByIds(ids);
       } catch (_) {}
     }
     _leftovers = entries.map((e) {
@@ -493,7 +501,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
     _pending.add(sectionId);
     await _flush(sectionId);
     try {
-      final tasks = await ref.read(taskRepositoryWithTenantProvider).getTasksForAttendance(widget.attendanceId);
+      final tasks = await _taskRepo.getTasksForAttendance(widget.attendanceId);
       if (mounted) setState(() => _tasks = tasks);
     } catch (_) {
       if (mounted) setState(() => _tasks = [..._tasks, task]);
@@ -752,7 +760,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
     final agendaIds = _sections.map((s) => s.agendaItemId).whereType<String>().toList();
     if (agendaIds.isNotEmpty) {
       try {
-        final items = await ref.read(agendaItemRepositoryWithTenantProvider).getAgendaItemsByIds(agendaIds);
+        final items = await _agendaRepo.getAgendaItemsByIds(agendaIds);
         closures = topicClosureCandidates(
           _sections.map((s) => (id: s.id, name: s.name, agendaItemId: s.agendaItemId)).toList(),
           _outcomes,

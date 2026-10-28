@@ -35,6 +35,7 @@ class _BrandingPageState extends ConsumerState<BrandingPage> {
   }
 
   Future<void> _selectLogo() async {
+    final organisationSettingsRepo = ref.read(organisationSettingsRepositoryWithTenantProvider);
     final result = await FilePicker.platform.pickFiles(type: FileType.image, withData: true);
     final file = result?.files.firstOrNull;
     if (file == null || file.bytes == null || !mounted) return;
@@ -51,7 +52,7 @@ class _BrandingPageState extends ConsumerState<BrandingPage> {
 
     setState(() => _busy = true);
     try {
-      final url = await ref.read(organisationSettingsRepositoryWithTenantProvider).uploadLogo(
+      final url = await organisationSettingsRepo.uploadLogo(
             file.bytes!,
             contentType: ext == 'svg' ? 'image/svg+xml' : 'image/${ext == 'jpg' ? 'jpeg' : ext}',
           );

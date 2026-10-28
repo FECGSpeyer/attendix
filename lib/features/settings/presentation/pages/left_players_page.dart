@@ -99,6 +99,7 @@ class LeftPlayersPage extends ConsumerWidget {
   }
 
   Future<void> _reactivatePlayer(BuildContext context, WidgetRef ref, Person player) async {
+    final repository = ref.read(playerRepositoryWithTenantProvider);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -119,7 +120,6 @@ class LeftPlayersPage extends ConsumerWidget {
 
     if (confirmed == true && context.mounted) {
       try {
-        final repository = ref.read(playerRepositoryWithTenantProvider);
         await repository.reactivatePlayer(player);
 
         ref.invalidate(leftPlayersProvider);
