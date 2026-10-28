@@ -107,8 +107,8 @@ void main() {
     test('attendance list + songs purge on auth errors (source)', () {
       final realtime =
           File('lib/core/providers/realtime_providers.dart').readAsStringSync();
-      expect(realtime, contains('isAuthOrPermissionError(e)'));
-      expect(realtime, contains('purgeOfflineReadCachesFor(cacheUserId, tenantId)'));
+      // SOL_FIX10: the whole load runs in purgeOfflineCachesOnAuthError.
+      expect(realtime, contains('purgeOfflineCachesOnAuthError('));
       final songs = File('lib/data/repositories/song_repository.dart').readAsStringSync();
       expect(songs, contains('isAuthOrPermissionError(e)'));
       expect(songs, contains('_purgeOfflineSongs(cacheKey, tenantId)'));

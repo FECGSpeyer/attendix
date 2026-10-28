@@ -1,8 +1,10 @@
 // SOL_FIX8: readers of read-only shared plan links (no realtime channel)
 // get the plan re-fetched every 15 s; paused in background, stopped on
 // dispose.
+import 'dart:async';
 import 'dart:io';
 
+import 'package:attendix/core/utils/plan_utils.dart';
 import 'package:attendix/data/models/plan/plan.dart';
 import 'package:attendix/data/repositories/public_plan_repository.dart';
 import 'package:attendix/features/planning/presentation/pages/shared_plan_page.dart';
@@ -22,6 +24,8 @@ class _FakeRepo extends PublicPlanRepository {
   @override
   Future<SharedPlan?> getSharedPlan(String key) async {
     sharedCalls++;
+    final gate = _gate;
+    if (gate != null && !gate.isCompleted) await gate.future;
     return shared;
   }
 
@@ -129,6 +133,97 @@ void main() {
     await disposePage(tester);
   });
 
+  // SOL_FIX10
+  testWidgets('ad-hoc refresh takes over cleared values and the new date', (tester) async {
+    _shared = _shared!.copyWith(date: '2026-11-01', endTime: '2026-11-01T18:10');
+    await pumpPage(tester, const SharedPlanPage(shareKey: 'k1'));
+    expect(find.text(PlanUtils.longDate(DateTime(2026, 11, 1))), findsOneWidget);
+
+    // Date moved, everything else cleared.
+    repo.shared = const SharedPlan(id: 'k1', editKey: '', date: '2026-12-24');
+    await tester.pump(const Duration(seconds: 15));
+    await tester.pump();
+    expect(find.text(PlanUtils.longDate(DateTime(2026, 12, 24))), findsOneWidget);
+    expect(find.text(PlanUtils.longDate(DateTime(2026, 11, 1))), findsNothing);
+    expect(find.text('Plan A'), findsNothing);
+    expect(find.text('Einsingen'), findsNothing);
+    expect(find.text(lookupAppLocalizations(const Locale('de')).plansRunSheet), findsWidgets);
+
+    // Date cleared too → app bar falls back to the (fallback) title.
+    repo.shared = const SharedPlan(id: 'k1', editKey: '');
+    await tester.pump(const Duration(seconds: 15));
+    await tester.pump();
+    expect(find.text(PlanUtils.longDate(DateTime(2026, 12, 24))), findsNothing);
+    await disposePage(tester);
+  });
+
+  test('sharedPlanDisplay uses the fresh row completely', () {
+    final d = sharedPlanDisplay(const SharedPlan(id: 'k', editKey: ''), 'Ablaufplan');
+    expect(d.title, 'Ablaufplan');
+    expect(d.date, '');
+    expect(d.time, '');
+    expect(d.end, '');
+    expect(d.fields, isEmpty);
+    final full = sharedPlanDisplay(
+      const SharedPlan(
+        id: 'k',
+        editKey: '',
+        planTitle: 'T',
+        date: '2026-01-02',
+        time: '2026-01-02T10:00',
+        endTime: '2026-01-02T11:00',
+        fields: [PlanField(id: 'a', name: 'A', time: '5')],
+      ),
+      'Ablaufplan',
+    );
+    expect(full.title, 'T');
+    expect(full.date, '2026-01-02');
+    expect(full.time, '2026-01-02T10:00');
+    expect(full.end, '2026-01-02T11:00');
+    expect(full.fields.single.name, 'A');
+  });
+
+  test('isAppVisible', () {
+    expect(isAppVisible(null), isTrue);
+    expect(isAppVisible(AppLifecycleState.resumed), isTrue);
+    expect(isAppVisible(AppLifecycleState.inactive), isTrue);
+    expect(isAppVisible(AppLifecycleState.hidden), isFalse);
+    expect(isAppVisible(AppLifecycleState.paused), isFalse);
+    expect(isAppVisible(AppLifecycleState.detached), isFalse);
+  });
+
+  testWidgets('hidden while loading: no polling until the app is shown', (tester) async {
+    final gate = Completer<void>();
+    _gate = gate;
+    addTearDown(() => _gate = null);
+    await pumpPage(tester, const SharedPlanPage(shareKey: 'k1'));
+    expect(repo.sharedCalls, 1);
+    // App goes to the background while the initial fetch is in flight.
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.hidden);
+    gate.complete();
+    await tester.pump();
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 45));
+    expect(repo.sharedCalls, 1, reason: 'timer not started while hidden');
+
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+    await tester.pump();
+    expect(repo.sharedCalls, 2, reason: 'refresh when shown');
+    await tester.pump(const Duration(seconds: 15));
+    expect(repo.sharedCalls, 3);
+    await disposePage(tester);
+  });
+
+  test('lifecycle listener is registered before the initial fetch', () {
+    final src = File('lib/features/planning/presentation/pages/shared_plan_page.dart')
+        .readAsStringSync();
+    final init = src.substring(src.indexOf('void initState()'));
+    expect(init.indexOf('AppLifecycleListener('), lessThan(init.indexOf('_load();')));
+    expect(src, contains('isAppVisible(WidgetsBinding.instance.lifecycleState)'));
+  });
+
   test('polling only for read links, realtime only for verified edit links', () {
     final src = File('lib/features/planning/presentation/pages/shared_plan_page.dart')
         .readAsStringSync();
@@ -143,3 +238,4 @@ void main() {
 
 SharedPlan? _shared;
 PlanAttendance? _att;
+Completer<void>? _gate;

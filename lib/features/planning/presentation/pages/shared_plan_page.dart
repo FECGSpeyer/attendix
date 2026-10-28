@@ -22,6 +22,25 @@ import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 ///
 /// - `?id=<attendance>&key=<share_key>[&edit=<share_edit_key>]`: plan of a Termin
 /// - `?key=<shared_plans.id>[&edit=<edit_key>]`: ad-hoc plan
+/// SOL_FIX10: whether the app is visible for [state] (null = unknown, e.g.
+/// before the first lifecycle event → treated as visible).
+bool isAppVisible(AppLifecycleState? state) =>
+    state == null ||
+    state == AppLifecycleState.resumed ||
+    state == AppLifecycleState.inactive;
+
+/// SOL_FIX10: display values of an ad-hoc plan, taken completely from
+/// [plan] (Ionic loadSharedPlan): empty/cleared values stay empty, only the
+/// title falls back to [fallbackTitle].
+({String title, String date, String time, String end, List<PlanField> fields})
+    sharedPlanDisplay(SharedPlan plan, String fallbackTitle) => (
+          title: (plan.planTitle?.isNotEmpty ?? false) ? plan.planTitle! : fallbackTitle,
+          date: plan.date ?? '',
+          time: plan.time ?? '',
+          end: plan.endTime ?? '',
+          fields: [...plan.fields],
+        );
+
 class SharedPlanPage extends ConsumerStatefulWidget {
   const SharedPlanPage({super.key, this.attendanceId, this.shareKey, this.editKey});
 
@@ -71,6 +90,16 @@ class _SharedPlanPageState extends ConsumerState<SharedPlanPage> {
   @override
   void initState() {
     super.initState();
+    // SOL_FIX10: registered BEFORE the initial fetch, so a hide/show while
+    // the plan is still loading is not missed.
+    _lifecycle = AppLifecycleListener(
+      onHide: _stopRefresh,
+      onShow: () {
+        if (!mounted || !_pollingAllowed) return;
+        _refresh();
+        _startRefresh();
+      },
+    );
     _load();
     // Re-evaluate whether the live toggle is offered.
     _liveCheck = Timer.periodic(const Duration(minutes: 1), (_) {
@@ -112,17 +141,14 @@ class _SharedPlanPageState extends ConsumerState<SharedPlanPage> {
       _live = !_notFound && _isLiveNow();
     });
     if (!_notFound && !_editMode) {
-      _startRefresh();
-      _lifecycle = AppLifecycleListener(
-        onHide: _stopRefresh,
-        onShow: () {
-          if (!mounted || _notFound) return;
-          _refresh();
-          _startRefresh();
-        },
-      );
+      // SOL_FIX10: loaded while the app is hidden → the onShow handler
+      // starts polling once the app is visible again.
+      if (isAppVisible(WidgetsBinding.instance.lifecycleState)) _startRefresh();
     }
   }
+
+  /// Read-only link loaded and still valid: polling may run.
+  bool get _pollingAllowed => !_loading && !_notFound && !_editMode;
 
   // ---------------------------------------------------------------------------
   // Read-only refresh (SOL_FIX8)
@@ -130,6 +156,7 @@ class _SharedPlanPageState extends ConsumerState<SharedPlanPage> {
 
   void _startRefresh() {
     _refreshTimer?.cancel();
+    if (!_pollingAllowed) return;
     _refreshTimer = Timer.periodic(refreshInterval, (_) => _refresh());
   }
 
@@ -148,12 +175,12 @@ class _SharedPlanPageState extends ConsumerState<SharedPlanPage> {
         final fresh = await _repo.getSharedAttendancePlan(id, key);
         if (!mounted) return;
         if (fresh == null || fresh.plan == null) return _onLinkGone();
-        _onAttendanceUpdate(fresh.toJson());
+        _applyFreshAttendance(fresh);
       } else {
         final fresh = await _repo.getSharedPlan(key);
         if (!mounted) return;
         if (fresh == null) return _onLinkGone();
-        _onSharedUpdate(fresh.toJson());
+        _applyFreshSharedPlan(fresh);
       }
     } catch (_) {
       // Network hiccup: keep showing the last state, retry on the next tick.
@@ -213,21 +240,27 @@ class _SharedPlanPageState extends ConsumerState<SharedPlanPage> {
     final att = _att;
     if (!mounted || att == null || row['plan'] == null) return;
     try {
-      final updated = PlanAttendance.fromJson({
+      _applyFreshAttendance(PlanAttendance.fromJson({
         ...att.toJson(),
         'plan': row['plan'],
         'extra_plans': row['extra_plans'],
-      });
-      setState(() {
-        _att = updated;
-        final plans = PlanUtils.allPlans(updated);
-        _labels = plans.length > 1
-            ? [for (var i = 0; i < plans.length; i++) PlanUtils.planLabel(updated, i, plans)]
-            : const [];
-        _planIndex = _planIndex.clamp(0, plans.length - 1);
-        _applyAttendancePlan();
-      });
+      }));
     } catch (_) {}
+  }
+
+  /// SOL_FIX10: takes over the complete fresh Termin state (date, type,
+  /// plan + extra_plans) instead of patching the old one.
+  void _applyFreshAttendance(PlanAttendance updated) {
+    if (!mounted) return;
+    setState(() {
+      _att = updated;
+      final plans = PlanUtils.allPlans(updated);
+      _labels = plans.length > 1
+          ? [for (var i = 0; i < plans.length; i++) PlanUtils.planLabel(updated, i, plans)]
+          : const [];
+      _planIndex = _planIndex.clamp(0, plans.length - 1);
+      _applyAttendancePlan();
+    });
   }
 
   Future<void> _loadSharedPlan(String key) async {
@@ -236,12 +269,7 @@ class _SharedPlanPageState extends ConsumerState<SharedPlanPage> {
       _notFound = true;
       return;
     }
-    _shared = plan;
-    _title = (plan.planTitle?.isNotEmpty ?? false) ? plan.planTitle! : l10nWithoutContext.plansRunSheet;
-    _date = plan.date ?? '';
-    _time = plan.time ?? '';
-    _end = plan.endTime ?? '';
-    _fields = [...plan.fields];
+    _setSharedPlan(plan);
     final edit = widget.editKey;
     if (edit != null && edit.isNotEmpty && await _repo.verifySharedPlanEditKey(key, edit)) {
       _editMode = true;
@@ -249,6 +277,31 @@ class _SharedPlanPageState extends ConsumerState<SharedPlanPage> {
     }
   }
 
+  /// Ionic loadSharedPlan: every displayed value comes from [plan]; empty
+  /// values stay empty (title falls back to "Ablaufplan").
+  void _setSharedPlan(SharedPlan plan) {
+    final display = sharedPlanDisplay(plan, l10nWithoutContext.plansRunSheet);
+    _shared = plan;
+    _title = display.title;
+    _date = display.date;
+    _time = display.time;
+    _end = display.end;
+    _fields = display.fields;
+  }
+
+  /// SOL_FIX10: read-only refresh — the fresh row replaces the whole state
+  /// (incl. date and cleared title/time/end/fields), so live calculation and
+  /// export use exactly what is stored now.
+  void _applyFreshSharedPlan(SharedPlan fresh) {
+    if (!mounted) return;
+    setState(() {
+      _setSharedPlan(fresh);
+      if (!_isLiveNow()) _live = false;
+    });
+  }
+
+  /// Realtime payload of a verified edit link (Ionic
+  /// subscribeSharedPlanRealtime: title/time only overwritten when set).
   void _onSharedUpdate(Map<String, dynamic> row) {
     if (!mounted) return;
     try {

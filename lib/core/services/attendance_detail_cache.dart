@@ -213,7 +213,12 @@ Future<void> clearOfflineReadCaches() async {
 /// SOL_FIX8: removes every offline read cache entry (attendance detail +
 /// list, songs) of [userId] in [tenantId] — called when a load fails with an
 /// auth/permission error. Entries of other users/tenants stay. Never throws.
+///
+/// SOL_FIX10: first (synchronously) ends the cache session, so loads still in
+/// flight (of this user/tenant — conservatively of every scope; they just
+/// skip caching once) cannot recreate the purged entries.
 Future<void> purgeOfflineReadCachesFor(String userId, int tenantId) async {
+  bumpOfflineReadCacheGeneration();
   try {
     final prefs = await SharedPreferences.getInstance();
     final bases = [
@@ -228,6 +233,24 @@ Future<void> purgeOfflineReadCachesFor(String userId, int tenantId) async {
     }
   } catch (e) {
     debugPrint('[OfflineReadCache] purge failed: $e');
+  }
+}
+
+/// SOL_FIX10: runs [load]; an auth/permission error first purges the offline
+/// read caches of [userId] in [tenantId] (when a user is known), then is
+/// rethrown. Other errors are rethrown unchanged.
+Future<T> purgeOfflineCachesOnAuthError<T>(
+  String? userId,
+  int tenantId,
+  Future<T> Function() load,
+) async {
+  try {
+    return await load();
+  } catch (e) {
+    if (userId != null && isAuthOrPermissionError(e)) {
+      await purgeOfflineReadCachesFor(userId, tenantId);
+    }
+    rethrow;
   }
 }
 
