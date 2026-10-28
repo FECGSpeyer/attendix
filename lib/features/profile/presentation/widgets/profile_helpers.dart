@@ -34,6 +34,17 @@ String formatProfileDate(String? value) {
   return DateFormat(dateFmt()).format(parsed);
 }
 
+/// IOS_FORMS1: value shown by an Ionic `ion-datetime-button`
+/// (`presentation="date"`): Intl `{day: 'numeric', month: 'short',
+/// year: 'numeric'}` in the app locale, e.g. "16. Feb. 2002" (de) /
+/// "16 Feb 2002" (en-GB).
+String formatIonDateButton(String? value) {
+  if (value == null || value.isEmpty) return '';
+  final parsed = DateTime.tryParse(value);
+  if (parsed == null) return value;
+  return DateFormat.yMMMd(currentIntlLocale()).format(parsed);
+}
+
 /// Display value of an extra field (Ionic getExtraFieldDisplayValue).
 String extraFieldDisplayValue(
   ProfileExtraField field,

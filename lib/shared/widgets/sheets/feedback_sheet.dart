@@ -8,9 +8,31 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/toast_helper.dart';
 import '../../../l10n/l10n.dart';
 import '../adaptive/adaptive.dart'; // IOS_LOOK
+import '../layout/ion_modal_handle.dart'; // IOS_FORMS1
 
-/// Shows the feedback bottom sheet
+/// Shows the feedback bottom sheet.
+///
+/// Ionic: `ion-modal [breakpoints]="[0, 1]" [initialBreakpoint]="1"` – on
+/// iOS a full-height sheet (10pt below the safe area) with the grabber over
+/// the toolbar and the grouped grey content (IOS_FORMS1).
 void showFeedbackSheet(BuildContext context) {
+  if (useIosLook(context)) {
+    final available =
+        MediaQuery.sizeOf(context).height - MediaQuery.paddingOf(context).top;
+    final full = available > 100 ? (available - 10) / available : 1.0;
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      showDragHandle: false,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      builder: (context) => FractionallySizedBox(
+        heightFactor: full,
+        child: const IonModalHandleOverlay(child: _FeedbackSheet()),
+      ),
+    );
+    return;
+  }
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
@@ -118,8 +140,88 @@ class _FeedbackSheetState extends ConsumerState<_FeedbackSheet>
     });
   }
 
+  /// IOS_FORMS1: Ionic iOS feedback modal – toolbar title (17pt semibold,
+  /// centred, hairline), then ONE scrolling inset list: Telegram item,
+  /// "oder", neutral segment and the selected segment's form.
+  Widget _buildIos(BuildContext context) {
+    final index = _tabController.index;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        IonModalHeader(
+          title: Text(context.l10n.settingsHelpFeedback),
+          showClose: false,
+        ),
+        Expanded(
+          child: ListView(
+            padding: EdgeInsets.fromLTRB(
+              20,
+              16,
+              20,
+              16 +
+                  MediaQuery.paddingOf(context).bottom +
+                  MediaQuery.viewInsetsOf(context).bottom,
+            ),
+            children: [
+              _iosGroup([
+                ListTile(
+                  leading:
+                      const Icon(Icons.send_outlined, color: AppColors.primary),
+                  title: Text(context.l10n.settingsContactTelegram,
+                      style: const TextStyle(color: AppColors.primary)),
+                  onTap: () {
+                    try {
+                      launchUrl(Uri.parse('https://t.me/Eckstaedt'),
+                          mode: LaunchMode.externalApplication);
+                    } catch (_) {}
+                  },
+                ),
+              ]),
+              // ion-text color="medium" > p (centred)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 16),
+                child: Text(
+                  context.l10n.settingsOr,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(color: AppColors.medium),
+                ),
+              ),
+              // ion-segment without colour: neutral iOS segmented control
+              Padding(
+                padding: const EdgeInsets.only(bottom: 16),
+                child: IonSegment<int>(
+                  neutral: true,
+                  items: [
+                    IonSegmentItem(
+                        value: 0,
+                        label: Text(context.l10n.settingsHelpQuestion)),
+                    IonSegmentItem(
+                        value: 1, label: Text(context.l10n.settingsFeedback)),
+                  ],
+                  value: index,
+                  onChanged: (i) {
+                    if (i == index) return;
+                    _resetForm();
+                    _tabController.index = i;
+                  },
+                ),
+              ),
+              ...(index == 0 ? _questionFormIos() : _feedbackFormIos()),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (_ios) {
+      return AnimatedBuilder(
+        animation: _tabController,
+        builder: (context, _) => _buildIos(context),
+      );
+    }
     return Padding(
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom,
@@ -157,10 +259,6 @@ class _FeedbackSheetState extends ConsumerState<_FeedbackSheet>
                 padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM),
                 child: Card(
                   margin: EdgeInsets.zero,
-                  elevation: _ios ? 0 : null,
-                  shape: _ios
-                      ? RoundedRectangleBorder(borderRadius: BorderRadius.circular(24))
-                      : null,
                   clipBehavior: Clip.antiAlias,
                   child: ListTile(
                     leading: const Icon(Icons.send_outlined, color: AppColors.primary),
@@ -180,27 +278,8 @@ class _FeedbackSheetState extends ConsumerState<_FeedbackSheet>
                 child: Text(context.l10n.settingsOr,
                     style: const TextStyle(color: AppColors.medium)),
               ),
-              // Tab bar: Ionic `ion-segment` (iOS: shared adaptive segment)
-              if (_ios)
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM),
-                  child: AnimatedBuilder(
-                    animation: _tabController,
-                    builder: (context, _) => IonSegment<int>(
-                      items: [
-                        IonSegmentItem(value: 0, label: Text(context.l10n.settingsHelpQuestion)),
-                        IonSegmentItem(value: 1, label: Text(context.l10n.settingsFeedback)),
-                      ],
-                      value: _tabController.index,
-                      onChanged: (i) {
-                        _resetForm();
-                        _tabController.animateTo(i);
-                      },
-                    ),
-                  ),
-                )
-              else
-                TabBar(
+              // Tab bar: Ionic `ion-segment` (md)
+              TabBar(
                   controller: _tabController,
                   onTap: (_) => _resetForm(),
                   tabs: [
@@ -302,11 +381,8 @@ class _FeedbackSheetState extends ConsumerState<_FeedbackSheet>
         onTap: _isLoading ? null : onTap,
       );
 
-  Widget _buildQuestionTabIos(ScrollController scrollController) {
-    return ListView(
-      controller: scrollController,
-      padding: const EdgeInsets.all(16),
-      children: [
+  List<Widget> _questionFormIos() {
+    return [
         _iosGroup([
           _iosStacked(
             label: context.l10n.settingsYourQuestion,
@@ -323,15 +399,11 @@ class _FeedbackSheetState extends ConsumerState<_FeedbackSheet>
           ),
         ]),
         _iosGroup([_iosSubmit(_sendQuestion)]),
-      ],
-    );
+    ];
   }
 
-  Widget _buildFeedbackTabIos(ScrollController scrollController) {
-    return ListView(
-      controller: scrollController,
-      padding: const EdgeInsets.all(16),
-      children: [
+  List<Widget> _feedbackFormIos() {
+    return [
         _iosGroup([
           ListTile(
             title: Text(context.l10n.settingsYourRating),
@@ -374,12 +446,10 @@ class _FeedbackSheetState extends ConsumerState<_FeedbackSheet>
             ),
         ]),
         _iosGroup([_iosSubmit(_sendFeedback)]),
-      ],
-    );
+    ];
   }
 
   Widget _buildQuestionTab(ScrollController scrollController) {
-    if (_ios) return _buildQuestionTabIos(scrollController);
     return SingleChildScrollView(
       controller: scrollController,
       padding: const EdgeInsets.all(AppDimensions.paddingM),
@@ -437,7 +507,6 @@ class _FeedbackSheetState extends ConsumerState<_FeedbackSheet>
   }
 
   Widget _buildFeedbackTab(ScrollController scrollController) {
-    if (_ios) return _buildFeedbackTabIos(scrollController);
     return SingleChildScrollView(
       controller: scrollController,
       padding: const EdgeInsets.all(AppDimensions.paddingM),

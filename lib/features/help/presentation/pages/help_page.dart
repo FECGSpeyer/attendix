@@ -57,9 +57,25 @@ class _HelpPageState extends ConsumerState<HelpPage> {
           ),
         ),
       ),
-      body: results != null
-          ? _buildSearchResults(results, term)
-          : _buildOverview(service),
+      body: _noHoverOnIos(
+        results != null
+            ? _buildSearchResults(results, term)
+            : _buildOverview(service),
+      ),
+    );
+  }
+
+  /// IOS_FORMS1: Ionic iOS items have no hover / focus tint, so a tapped
+  /// row does not stay highlighted.
+  Widget _noHoverOnIos(Widget child) {
+    if (!ionIsIos(context)) return child;
+    final theme = Theme.of(context);
+    return Theme(
+      data: theme.copyWith(
+        hoverColor: Colors.transparent,
+        focusColor: Colors.transparent,
+      ),
+      child: child,
     );
   }
 
@@ -114,8 +130,14 @@ class _HelpPageState extends ConsumerState<HelpPage> {
           title: context.l10n.helpTopics,
           children: [
             for (final category in categories)
+              // IOS_FORMS1: ion-accordion header item – start icon and the
+              // toggle chevron inherit the black item text colour (iOS).
               ExpansionTile(
-                leading: Icon(helpCategoryIcon(category.icon)),
+                leading: Icon(
+                  helpCategoryIcon(category.icon),
+                  color: ios ? IonIos.text(context) : null,
+                  size: ios ? IonIos.itemIconSize : null,
+                ),
                 title: Text(category.label),
                 shape: const Border(),
                 collapsedShape: const Border(),
@@ -125,9 +147,8 @@ class _HelpPageState extends ConsumerState<HelpPage> {
                         right: IonIos.itemPaddingEnd,
                       )
                     : null,
-                iconColor: ios ? IonIos.text(context).withValues(alpha: 0.5) : null,
-                collapsedIconColor:
-                    ios ? IonIos.text(context).withValues(alpha: 0.5) : null,
+                iconColor: ios ? IonIos.text(context) : null,
+                collapsedIconColor: ios ? IonIos.text(context) : null,
                 children: [
                   for (final article
                       in service.getArticlesByCategory(category.id))

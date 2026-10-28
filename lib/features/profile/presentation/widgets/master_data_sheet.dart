@@ -16,16 +16,25 @@ import 'profile_helpers.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../shared/widgets/layout/ion_modal_handle.dart'; // IOS_FORMS1
 
 /// Opens the "Meine Stammdaten" sheet (Ionic settings master data modal).
+///
+/// Ionic: `ion-modal [breakpoints]="[0, .9]"` – on iOS a sheet with the
+/// grabber drawn over the toolbar (IOS_FORMS1).
 Future<void> showMasterDataSheet(BuildContext context) {
+  final ios = useIosLook(context);
   return showModalBottomSheet(
     context: context,
     isScrollControlled: true,
     useSafeArea: true,
-    builder: (_) => const FractionallySizedBox(
+    showDragHandle: false,
+    backgroundColor: ios ? Theme.of(context).scaffoldBackgroundColor : null,
+    builder: (_) => FractionallySizedBox(
       heightFactor: 0.9,
-      child: MasterDataSheet(),
+      child: ios
+          ? const IonModalHandleOverlay(child: MasterDataSheet())
+          : const MasterDataSheet(),
     ),
   );
 }
@@ -292,40 +301,32 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
                         size: 40,
                       ),
                     ),
-                    IonInputItem(
-                      child: TextField(
-                        controller: _firstName,
-                        style: inputStyle,
-                        textCapitalization: TextCapitalization.words,
-                        decoration: ionItemInputDecoration(
-                            context, context.l10n.peopleFirstName),
-                      ),
+                    _stackedInput(
+                      label: context.l10n.peopleFirstName,
+                      controller: _firstName,
+                      style: inputStyle,
+                      textCapitalization: TextCapitalization.words,
                     ),
-                    IonInputItem(
-                      child: TextField(
-                        controller: _lastName,
-                        style: inputStyle,
-                        textCapitalization: TextCapitalization.words,
-                        decoration: ionItemInputDecoration(
-                            context, context.l10n.peopleLastName),
-                      ),
+                    _stackedInput(
+                      label: context.l10n.peopleLastName,
+                      controller: _lastName,
+                      style: inputStyle,
+                      textCapitalization: TextCapitalization.words,
                     ),
-                    IonInputItem(
-                      child: TextField(
-                        controller: _phone,
-                        style: inputStyle,
-                        keyboardType: TextInputType.phone,
-                        decoration: ionItemInputDecoration(
-                            context, context.l10n.settingsMobile),
-                      ),
+                    _stackedInput(
+                      label: context.l10n.settingsMobile,
+                      controller: _phone,
+                      style: inputStyle,
+                      keyboardType: TextInputType.phone,
                     ),
                     IonItem(
                       label: context.l10n.peopleBirthday,
                       end: IonDateButton(
                         onTap: _pickBirthday,
+                        // Ionic ion-datetime-button: "16. Feb. 2002"
                         text: (_birthday ?? '').isEmpty
                             ? context.l10n.orgChoose
-                            : formatProfileDate(_birthday),
+                            : formatIonDateButton(_birthday),
                       ),
                     ),
                   ],
@@ -401,19 +402,90 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
           ),
         );
       default:
-        return IonInputItem(
-          child: TextField(
-            controller: _controllerFor(field),
-            style: ionItemInputStyle(context),
-            keyboardType: field.type == 'number'
-                ? TextInputType.number
-                : TextInputType.text,
-            maxLines: field.type == 'textarea' ? 3 : 1,
-            textCapitalization: TextCapitalization.sentences,
-            decoration: ionItemInputDecoration(context, field.name),
-          ),
+        // Ionic `ion-input labelPlacement="stacked"`: the label is scaled
+        // to .75 of the item font (legacy `ion-label` keeps the full size).
+        return _stackedInput(
+          label: field.name,
+          controller: _controllerFor(field),
+          style: ionItemInputStyle(context),
+          keyboardType: field.type == 'number'
+              ? TextInputType.number
+              : TextInputType.text,
+          maxLines: field.type == 'textarea' ? 3 : 1,
+          textCapitalization: TextCapitalization.sentences,
+          iosLabelScale: 0.75,
         );
     }
+  }
+
+  /// `ion-item` with a stacked label above an `ion-input`.
+  ///
+  /// iOS (IOS_FORMS1): label row (17pt, 10pt from the top, 4pt gap) above a
+  /// 44pt input row – two ≈40pt rows like the Ionic iOS item
+  /// (`item-label-stacked`, min-height 68). Material keeps the floating
+  /// label decoration.
+  Widget _stackedInput({
+    required String label,
+    required TextEditingController controller,
+    required TextStyle style,
+    TextInputType? keyboardType,
+    TextCapitalization textCapitalization = TextCapitalization.none,
+    int maxLines = 1,
+    double iosLabelScale = 1,
+  }) {
+    if (!useIosLook(context)) {
+      return IonInputItem(
+        child: TextField(
+          controller: controller,
+          style: style,
+          keyboardType: keyboardType,
+          maxLines: maxLines,
+          textCapitalization: textCapitalization,
+          decoration: ionItemInputDecoration(context, label),
+        ),
+      );
+    }
+    final fontSize = ionItemFontSize(context);
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 10, 16, 0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontSize: fontSize * iosLabelScale,
+              height: 20.33 / 17,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
+          ),
+          const SizedBox(height: 4),
+          ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 44),
+            child: TextField(
+              controller: controller,
+              style: style.copyWith(height: 20.33 / 17),
+              keyboardType: keyboardType,
+              maxLines: maxLines,
+              textCapitalization: textCapitalization,
+              decoration: const InputDecoration(
+                isDense: true,
+                filled: false,
+                contentPadding: EdgeInsets.symmetric(vertical: 12),
+                border: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
+                errorBorder: InputBorder.none,
+                focusedErrorBorder: InputBorder.none,
+                disabledBorder: InputBorder.none,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   String _churchLabel(ProfileExtraField field, List<Church> churches) {
