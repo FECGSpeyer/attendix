@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -32,57 +31,6 @@ import '../widgets/pause_person_sheet.dart';
 import '../../../messages/presentation/widgets/notification_bell.dart'; // MESSAGES
 import 'bulk_edit_page.dart';
 import 'person_import_page.dart';
-
-/// Provider for people list (active players only)
-final peopleListProvider = FutureProvider<List<Person>>((ref) async {
-  final supabase = ref.watch(supabaseClientProvider);
-  final tenant = ref.watch(currentTenantProvider);
-  // Use centralized groupsMapProvider (cached with keepAlive)
-  final groups = await ref.watch(groupsMapProvider.future);
-  final repository = ref.watch(playerRepositoryWithTenantProvider);
-
-  final tenantId = tenant?.id;
-  if (tenant == null || tenantId == null) return [];
-
-  // Check for auto-unpause (players whose pause period has ended)
-  await repository.checkAndUnpausePlayers();
-
-  try {
-    final response = await supabase
-        .from('player')
-        .select('*')
-        .eq('tenantId', tenantId)
-        .isFilter('left', null)      // Only active (not archived/left)
-        .isFilter('pending', false)  // Only confirmed players
-        .order('instrument')         // Sort by group (instrument) first
-        .order('isLeader', ascending: false)  // Leaders first
-        .order('lastName');
-
-    // Parse and add group name from groups map
-    return (response as List).map((e) {
-      try {
-        final person = Person.fromJson(e as Map<String, dynamic>);
-        // Add group name from the groups map
-        final groupName = person.instrument != null ? groups[person.instrument] : null;
-        return person.copyWith(groupName: groupName);
-      } catch (parseError) {
-        // SEC-002: Only log in debug mode to avoid PII exposure
-        if (kDebugMode) {
-          debugPrint('Error parsing person: $parseError');
-          debugPrint('JSON data: $e');
-        }
-        rethrow;
-      }
-    }).toList();
-  } catch (e, stack) {
-    // SEC-002: Only log in debug mode to avoid PII exposure
-    if (kDebugMode) {
-      debugPrint('Error fetching people: $e');
-      debugPrint('Stack trace: $stack');
-    }
-    rethrow;
-  }
-});
 
 /// People list page
 class PeopleListPage extends ConsumerStatefulWidget {
@@ -1196,7 +1144,6 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
     );
     if (updated == true && mounted) {
       ref.invalidate(realtimePlayersProvider);
-      ref.invalidate(peopleListProvider);
     }
   }
 
@@ -1210,7 +1157,6 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
     );
     if (imported == true && mounted) {
       ref.invalidate(realtimePlayersProvider);
-      ref.invalidate(peopleListProvider);
     }
   }
 

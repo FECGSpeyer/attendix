@@ -48,10 +48,9 @@ Future<void> _processLink(WidgetRef ref, GoRouter router, AuthLink link) async {
       _toast('E-Mail-Adresse bestätigt. Willkommen!', AppColors.success);
       router.go('/tenants');
     case AuthLinkOutcome.failed:
-      final description = link.errorDescription;
       _toast(
-        description != null
-            ? Uri.decodeComponent(description.replaceAll('+', ' '))
+        link.errorDescription != null
+            ? authLinkErrorText(link)
             : link.looksLikeRecovery
                 ? 'Der Link zum Zurücksetzen ist ungültig oder abgelaufen.'
                 : 'Der Bestätigungslink ist ungültig oder abgelaufen.',
@@ -74,4 +73,19 @@ void _toast(String message, Color color) {
   } catch (_) {
     // No messenger available (e.g. tests)
   }
+}
+
+/// German text for a Supabase `error_description` (English, already decoded
+/// by [Uri.splitQueryString]; never decoded twice).
+String authLinkErrorText(AuthLink link) {
+  final description = (link.errorDescription ?? '').toLowerCase();
+  if (description.contains('expired') || description.contains('invalid')) {
+    return link.looksLikeRecovery
+        ? 'Der Link zum Zurücksetzen ist ungültig oder abgelaufen.'
+        : 'Der Bestätigungslink ist ungültig oder abgelaufen.';
+  }
+  if (description.contains('denied')) {
+    return 'Der Zugriff wurde verweigert.';
+  }
+  return 'Der Link konnte nicht verarbeitet werden.';
 }

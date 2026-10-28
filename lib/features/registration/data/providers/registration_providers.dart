@@ -135,18 +135,28 @@ class RegistrationService {
               email: email,
               password: formData.password,
             );
-            userId = login.user!.id;
+            if (login.user == null) throw const AuthException('no user');
           } catch (_) {
             return RegistrationResult.error(
               'Fehler beim Erstellen des Accounts: Deine E-Mail-Adresse existiert bereits. Bitte melde dich an.',
             );
           }
+          // Existing account: go through registerUser so an existing
+          // membership raises "bereits in diesem Mandanten" instead of
+          // creating a duplicate tenantUsers row.
+          userId = await registration.registerUser(
+            email: email,
+            name: formData.firstName,
+            role: role,
+            tenantId: tenantId,
+            selfRegister: true,
+          );
         } else {
           userId = user.id;
           created = true;
+          await registration.addUserToTenant(userId, role, email,
+              tenantId: tenantId);
         }
-        await registration.addUserToTenant(userId, role, email,
-            tenantId: tenantId);
       } else {
         userId = await registration.registerUser(
           email: email,
@@ -176,22 +186,27 @@ class RegistrationService {
         todayIso: todayIso,
       );
 
-      // Ionic addPlayer: reactivate an existing (e.g. left) row instead of
-      // inserting a duplicate.
+      // Ionic addPlayer: reactivate a former (left) row instead of
+      // inserting a duplicate. Active rows are never overwritten.
       final existing = await supabase
           .from('player')
-          .select('id')
+          .select('id, left')
           .eq('appId', userId)
           .eq('tenantId', tenantId)
+          .order('id', ascending: false)
           .limit(1)
           .maybeSingle();
 
       final int playerId;
       if (existing != null) {
+        if (existing['left'] == null) {
+          return RegistrationResult.error(
+              'Der Benutzer ist bereits in diesem Mandanten');
+        }
         playerId = existing['id'] as int;
         await supabase
             .from('player')
-            .update({...playerData, 'left': null})
+            .update(reactivationPlayerData(playerData))
             .eq('id', playerId)
             .eq('tenantId', tenantId);
       } else {
@@ -255,9 +270,23 @@ class RegistrationService {
     } on AccountFlowException catch (e) {
       return RegistrationResult.error(e.message);
     } catch (e) {
-      return RegistrationResult.error(e.toString());
+      debugPrint('Registration failed: $e');
+      return RegistrationResult.error(
+          'Fehler beim Registrieren. Bitte versuche es erneut.');
     }
   }
+}
+
+/// Fields written when a former (left) member registers again: keeps the
+/// existing `history`, `joined` and `playsSince` (Ionic reactivation).
+Map<String, dynamic> reactivationPlayerData(Map<String, dynamic> playerData) {
+  return {
+    ...Map<String, dynamic>.of(playerData)
+      ..remove('history')
+      ..remove('joined')
+      ..remove('playsSince'),
+    'left': null,
+  };
 }
 
 /// Player row for a self registration (Ionic tenant-register addPlayer).

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' show SupabaseClient;
 import 'package:uuid/uuid.dart';
 
 import '../../../../core/config/supabase_config.dart';
@@ -20,6 +21,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../core/constants/enums.dart';
 import '../../../../data/models/duty/person_unavailability.dart';
 import '../../../../data/models/attendance/attendance.dart';
+import '../../../../data/models/tenant/tenant.dart';
 import '../widgets/multi_date_calendar.dart';
 import '../widgets/songs_selection_sheet.dart';
 import '../../../../core/utils/demo_guard.dart';
@@ -28,6 +30,8 @@ import '../../../../core/utils/demo_guard.dart';
 /// addAttModal, breakpoints [0, 0.8, 1], initial 0.8). Returns true when
 /// Termine were created.
 Future<bool> showAttendanceCreateSheet(BuildContext context) async {
+  // While saving, the sheet must not be dismissed (drag, barrier, back).
+  final saving = ValueNotifier<bool>(false);
   final result = await showModalBottomSheet<bool>(
     context: context,
     isScrollControlled: true,
@@ -37,19 +41,25 @@ Future<bool> showAttendanceCreateSheet(BuildContext context) async {
       borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
     ),
     clipBehavior: Clip.antiAlias,
-    builder: (context) => DraggableScrollableSheet(
-      initialChildSize: 0.8,
-      minChildSize: 0.4,
-      maxChildSize: 1,
-      expand: false,
-      snap: true,
-      snapSizes: const [0.8],
-      builder: (context, scrollController) => AttendanceCreatePage(
-        asSheet: true,
-        scrollController: scrollController,
+    builder: (context) => ValueListenableBuilder<bool>(
+      valueListenable: saving,
+      builder: (context, isSaving, _) => DraggableScrollableSheet(
+        initialChildSize: 0.8,
+        minChildSize: 0.4,
+        maxChildSize: 1,
+        expand: false,
+        snap: true,
+        snapSizes: const [0.8],
+        shouldCloseOnMinExtent: !isSaving,
+        builder: (context, scrollController) => AttendanceCreatePage(
+          asSheet: true,
+          scrollController: scrollController,
+          savingNotifier: saving,
+        ),
       ),
     ),
   );
+  saving.dispose();
   return result ?? false;
 }
 
@@ -72,12 +82,16 @@ class AttendanceCreatePage extends ConsumerStatefulWidget {
     super.key,
     this.asSheet = false,
     this.scrollController,
+    this.savingNotifier,
   });
 
   /// Shown via [showAttendanceCreateSheet]: pops with `true` after creating
   /// and stays on the list (Ionic), instead of opening the new Termin.
   final bool asSheet;
   final ScrollController? scrollController;
+
+  /// Set while saving so the hosting sheet blocks drag-to-close.
+  final ValueNotifier<bool>? savingNotifier;
 
   @override
   ConsumerState<AttendanceCreatePage> createState() =>
@@ -372,26 +386,32 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
       ],
     );
 
-    return Scaffold(
-      backgroundColor: Theme.of(context).brightness == Brightness.dark
-          ? null
-          : AppColors.light,
-      appBar: AppBar(
-        title: const Text('Termin hinzufügen'),
-        automaticallyImplyLeading: !widget.asSheet,
+    // No back/barrier dismissal while the Termine are being created.
+    return PopScope(
+      canPop: !_isLoading,
+      child: Scaffold(
         backgroundColor: Theme.of(context).brightness == Brightness.dark
             ? null
             : AppColors.light,
-        actions: [
-          if (widget.asSheet)
-            IconButton(
-              icon: const Icon(Icons.close),
-              tooltip: 'Schließen',
-              onPressed: () => Navigator.of(context).pop(false),
-            ),
-        ],
+        appBar: AppBar(
+          title: const Text('Termin hinzufügen'),
+          automaticallyImplyLeading: !widget.asSheet,
+          backgroundColor: Theme.of(context).brightness == Brightness.dark
+              ? null
+              : AppColors.light,
+          actions: [
+            if (widget.asSheet)
+              IconButton(
+                icon: const Icon(Icons.close),
+                tooltip: 'Schließen',
+                onPressed: _isLoading
+                    ? null
+                    : () => Navigator.of(context).pop(false),
+              ),
+          ],
+        ),
+        body: body,
       ),
-      body: body,
     );
   }
 
@@ -608,11 +628,25 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
     if (DemoGuard.blocked()) return; // DEMO_GUARD
 
     setState(() => _isLoading = true);
+    widget.savingNotifier?.value = true;
 
     try {
       final tenant = ref.read(currentTenantProvider);
 
       if (tenant == null) throw Exception('Kein Tenant ausgewählt');
+
+      // Read everything from ref before the loop (no ref use across awaits).
+      _saveClient = ref.read(supabaseClientProvider);
+      _saveTenant = tenant;
+      try {
+        final planTypes = await ref.read(planAttendanceTypesProvider.future);
+        _orgPlanTypeIds = {
+          for (final t in planTypes)
+            if (t.isDefaultOrgPlan) t.id,
+        };
+      } catch (_) {
+        _orgPlanTypeIds = const {};
+      }
 
       int? lastCreatedId;
 
@@ -652,15 +686,21 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
         SnackBar(content: Text('Fehler: $e')),
       );
     } finally {
+      widget.savingNotifier?.value = false;
       if (mounted) {
         setState(() => _isLoading = false);
       }
     }
   }
 
+  // Captured in _save before creating the Termine.
+  SupabaseClient? _saveClient;
+  Tenant? _saveTenant;
+  Set<Object?> _orgPlanTypeIds = const {};
+
   Future<int> _createSingleAttendance(DateTime date) async {
-    final supabase = ref.read(supabaseClientProvider);
-    final tenant = ref.read(currentTenantProvider);
+    final supabase = _saveClient!;
+    final tenant = _saveTenant;
     final type = _selectedType!;
 
     // Normalize date to noon to avoid timezone issues
@@ -707,14 +747,7 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
 
     // INTEGRATION: new Termine of a type marked as default org plan are
     // org plans (Ionic attendance-create: is_org_plan = type.is_default_org_plan).
-    var isOrgPlan = false;
-    try {
-      final planTypes = await ref.read(planAttendanceTypesProvider.future);
-      isOrgPlan =
-          planTypes.where((t) => t.id == type.id).firstOrNull?.isDefaultOrgPlan ?? false;
-    } catch (_) {
-      isOrgPlan = false;
-    }
+    final isOrgPlan = _orgPlanTypeIds.contains(type.id);
 
     // 1. Create the attendance record
     final response = await supabase.from('attendance').insert({
@@ -722,7 +755,8 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
       'date': dateString,
       'type_id': type.id,
       'type': type.name,
-      'typeInfo': _typeInfo ?? type.name,
+      // Ionic attendance-create: typeInfo ?? '' (hide_name types)
+      'typeInfo': _typeInfo ?? '',
       'start_time': resolvedStartTime,
       'end_time': resolvedEndTime,
       'notes': _notes,
@@ -754,8 +788,8 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
   /// Create PersonAttendance records for players based on relevant groups
   Future<void> _createPersonAttendancesForRelevant(
       int attendanceId, DateTime date) async {
-    final supabase = ref.read(supabaseClientProvider);
-    final tenant = ref.read(currentTenantProvider);
+    final supabase = _saveClient!;
+    final tenant = _saveTenant;
     final type = _selectedType!;
 
     if (tenant?.id == null) return;
@@ -893,8 +927,8 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
   /// Create song history entries for the attendance
   Future<void> _createSongHistoryEntries(
       int attendanceId, String dateString) async {
-    final supabase = ref.read(supabaseClientProvider);
-    final tenant = ref.read(currentTenantProvider);
+    final supabase = _saveClient!;
+    final tenant = _saveTenant;
 
     if (tenant?.id == null) return;
 
@@ -918,6 +952,7 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
     }
 
     // Invalidate song history providers
+    if (!mounted) return;
     ref.invalidate(songHistoryProvider(null));
     for (final entry in _songEntries) {
       ref.invalidate(songHistoryProvider(entry.songId));

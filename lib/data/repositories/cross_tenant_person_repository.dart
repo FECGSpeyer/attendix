@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/constants/enums.dart';
 import '../../core/utils/person_matcher.dart';
 import '../../core/utils/text_utils.dart';
 import '../models/person/person.dart';
@@ -284,6 +285,15 @@ class CrossTenantPersonRepository extends BaseRepository
         operation: 'pausePlayerInOtherTenant',
       );
     }
+    // The current user must be admin/responsible in the target tenant.
+    final manageable = await getManageableTenantIds([tenantId],
+        linkedTenantIds: linkedTenantIds);
+    if (!manageable.contains(tenantId)) {
+      throw RepositoryException(
+        message: 'Keine Berechtigung in dieser Instanz',
+        operation: 'pausePlayerInOtherTenant',
+      );
+    }
     try {
       // Append to that row's own history (Ionic copied the source history
       // over it, which dropped the other tenant's entries).
@@ -331,7 +341,33 @@ class CrossTenantPersonRepository extends BaseRepository
     }
   }
 
-  static const _viewerRole = 3; // Role.viewer
+  /// Linked tenants among [tenantIds] where the signed-in user is admin or
+  /// responsible (may pause people there).
+  Future<Set<int>> getManageableTenantIds(
+    List<int> tenantIds, {
+    required List<int> linkedTenantIds,
+  }) async {
+    final userId = supabase.auth.currentUser?.id;
+    final ids = tenantIds.where(linkedTenantIds.contains).toList();
+    if (userId == null || ids.isEmpty) return {};
+    try {
+      final response = await supabase
+          .from('tenantUsers')
+          .select('tenantId')
+          .eq('userId', userId)
+          .inFilter('tenantId', ids) // guarded: linked tenants
+          .inFilter('role', [Role.admin.value, Role.responsible.value]);
+      return (response as List)
+          .map((r) => r['tenantId'])
+          .whereType<int>()
+          .toSet();
+    } catch (e, stack) {
+      handleError(e, stack, 'getManageableTenantIds');
+      rethrow;
+    }
+  }
+
+  static final _viewerRole = Role.viewer.value;
 
   /// Propagate shared identity fields (firstName, lastName, birthday, email,
   /// phone) to all rows with the same global_person_id in linked tenants

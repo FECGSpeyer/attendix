@@ -6,6 +6,7 @@ import '../models/instrument/instrument.dart';
 import '../../core/utils/person_matcher.dart';
 import '../../core/utils/text_utils.dart';
 import 'base_repository.dart';
+import 'user_registration_repository.dart';
 
 /// Provider for PlayerRepository
 final playerRepositoryProvider = Provider<PlayerRepository>((ref) {
@@ -1361,10 +1362,23 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
           .eq('id', targetId)
           .eq('tenantId', currentTenantId);
 
+      // Role like Ionic createAccount: main group → RESPONSIBLE.
+      final mainGroup = await supabase
+          .from('instruments')
+          .select('id')
+          .eq('tenantId', currentTenantId)
+          .eq('maingroup', true)
+          .limit(1)
+          .maybeSingle();
+      final role = UserRegistrationRepository.accountRoleFor(
+        instrumentId: target.instrument,
+        mainGroupId: mainGroup?['id'] as int?,
+      );
+
       if (pending.appId != null) {
         await supabase
             .from('tenantUsers')
-            .update({'role': Role.player.value})
+            .update({'role': role.value})
             .eq('userId', pending.appId!)
             .eq('tenantId', currentTenantId);
       }
@@ -1377,15 +1391,18 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
             'action': 'approve',
             'email': email,
             'name': target.firstName,
-            'role': 'Mitglied',
-            'roleId': Role.player.value,
+            'role': UserRegistrationRepository.roleText(role),
+            'roleId': role.value,
             'tenantId': currentTenantId,
           });
         } catch (_) {}
       }
-      try {
-        await addToUpcomingAttendances(target);
-      } catch (_) {}
+      // A paused person is not added to upcoming attendances.
+      if (!target.paused) {
+        try {
+          await addToUpcomingAttendances(target);
+        } catch (_) {}
+      }
 
       await supabase
           .from('player')

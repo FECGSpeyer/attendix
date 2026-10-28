@@ -23,12 +23,15 @@ class AdminNotifier extends Notifier<AsyncValue<void>> {
   @override
   AsyncValue<void> build() => const AsyncValue.data(null);
 
-  Future<void> create(String email) async {
+  /// Returns `false` when the admin was added but could not be informed.
+  Future<bool> create(String email) async {
     state = const AsyncValue.loading();
     try {
-      await ref.read(adminRepositoryWithTenantProvider).createAdmin(email);
+      final informed =
+          await ref.read(adminRepositoryWithTenantProvider).createAdmin(email);
       state = const AsyncValue.data(null);
       ref.invalidate(adminsProvider);
+      return informed;
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
       rethrow;

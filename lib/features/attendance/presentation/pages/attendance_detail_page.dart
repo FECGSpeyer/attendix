@@ -582,8 +582,11 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                               ? () => openFilesFolderRoute(context, attendance.filesFolder!)
                               : null,
                           // ATT_DETAIL
-                          onEditDescription: () =>
-                              showDescriptionAttachmentSheet(context, attendance: attendance),
+                          onEditDescription: canMutateAttendanceDetail(
+                                  ref.watch(effectiveRoleProvider))
+                              ? () => showDescriptionAttachmentSheet(context,
+                                  attendance: attendance)
+                              : null,
                         ),
 
                         // UX_ATT: Ionic order Allgemein, Werke, Checkliste,
@@ -791,6 +794,13 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
   }
 
   void _handleMenuAction(String action) {
+    const mutating = {
+      'photo', 'add_person', 'start_checklist', 'reset_checklist', 'reminder',
+    };
+    if (mutating.contains(action) &&
+        !canMutateAttendanceDetail(ref.read(effectiveRoleProvider))) {
+      return;
+    }
     switch (action) {
       case 'stats':
         _showStatsDialog();
@@ -909,7 +919,8 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
 
   List<PopupMenuEntry<String>> _buildAttDetailMenuItems(Attendance attendance) {
     final role = ref.read(effectiveRoleProvider);
-    final isHelper = role.isHelperRole;
+    // Mutating actions only for admin/responsible (not helpers, not viewers).
+    final canMutate = canMutateAttendanceDetail(role);
     final type = ref.read(attendanceTypeForAttendanceProvider(widget.attendanceId)).valueOrNull;
     final sortFields = sortableFields(
       ref.read(personExtraFieldsProvider).valueOrNull ?? const [],
@@ -940,19 +951,19 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
         item('sort', Icons.swap_vert, 'Sortierung',
             subtitle: activeSort == null ? null : '${activeSort.name} ${_sort.ascending ? '↑' : '↓'}'),
       item('view', Icons.visibility_outlined, 'Ansicht'),
-      if (!isHelper) item('add_person', Icons.person_add_alt_1_outlined, 'Person hinzufügen'),
-      if (!isHelper && checklistEmpty)
+      if (canMutate) item('add_person', Icons.person_add_alt_1_outlined, 'Person hinzufügen'),
+      if (canMutate && checklistEmpty)
         item('start_checklist', Icons.check_box_outlined, 'Checkliste starten'),
-      if (!isHelper && canRestore)
+      if (canMutate && canRestore)
         item('reset_checklist', Icons.refresh, 'Checkliste zurücksetzen'),
       // UX_ATT: Ionic order continues with Status-Übersicht, Gemeinde-Übersicht,
       // Legende, Erinnerung versenden
       item('stats', Icons.bar_chart, 'Status-Übersicht'),
       if (hasChurch) item('church', Icons.business_outlined, 'Gemeinde-Übersicht'),
       item('legend', Icons.info_outline, 'Legende'),
-      if (!isHelper) item('reminder', Icons.notifications_outlined, 'Erinnerung versenden'),
+      if (canMutate) item('reminder', Icons.notifications_outlined, 'Erinnerung versenden'),
       // Flutter-only extra (Ionic has the photo upload commented out)
-      if (!isHelper) item('photo', Icons.camera_alt_outlined, 'Foto'),
+      if (canMutate) item('photo', Icons.camera_alt_outlined, 'Foto'),
     ];
   }
 
@@ -1987,24 +1998,26 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     final supabase = ref.read(supabaseClientProvider);
     final tenant = ref.read(currentTenantProvider);
     if (tenant?.id == null) return;
+    // Snapshot before the first await: the re-insert must run even if the
+    // page is closed meanwhile, otherwise the deleted history is lost.
+    final songEntries = List.of(_songEntries);
+    final attendanceId = widget.attendanceId;
 
     // Delete existing history entries for this attendance
     await supabase
         .from('history')
         .delete()
-        .eq('attendance_id', widget.attendanceId)
+        .eq('attendance_id', attendanceId)
         .eq('tenantId', tenant!.id!);
 
-    if (!mounted) return;
-
     // Create new history entries if there are songs
-    if (_songEntries.isNotEmpty) {
-      final entries = _songEntries.map((entry) {
+    if (songEntries.isNotEmpty) {
+      final entries = songEntries.map((entry) {
         return {
           // Ionic History columns: songId (camelCase), person_id,
           // otherConductor, visible. conductorName is not a column.
           'songId': entry.songId,
-          'attendance_id': widget.attendanceId,
+          'attendance_id': attendanceId,
           'date': date,
           'tenantId': tenant.id,
           'person_id': entry.otherConductor?.isNotEmpty == true ? null : entry.conductorId,
@@ -2423,6 +2436,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     try {
       final repo = ref.read(attendanceRepositoryWithTenantProvider);
       await repo.deletePersonAttendance(personAttendanceId);
+      if (!mounted) return;
 
       setState(() {
         _localStatuses.remove(personId);
@@ -2619,3 +2633,9 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     }
   }
 }
+
+/// Whether [role] may use the mutating attendance-detail actions (add
+/// persons, checklist, reminder, photo, description). Viewers are read-only
+/// and helpers only set statuses.
+bool canMutateAttendanceDetail(Role role) =>
+    role.canEdit && !role.isHelperRole;

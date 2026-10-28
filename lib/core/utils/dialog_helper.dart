@@ -67,6 +67,10 @@ class DialogHelper {
   }
 
   /// Shows a text input dialog
+  ///
+  /// The controller lives in the dialog's State, so it is disposed only after
+  /// the dialog's exit animation (disposing it right after `showDialog`
+  /// returns would hit "used after being disposed" during the animation).
   static Future<String?> showTextInput(
     BuildContext context, {
     required String title,
@@ -75,33 +79,77 @@ class DialogHelper {
     int maxLines = 1,
     String confirmText = 'OK',
     String cancelText = 'Abbrechen',
-  }) async {
-    final controller = TextEditingController(text: initialValue);
-
-    final result = await showDialog<String>(
+    TextInputType? keyboardType,
+  }) {
+    return showDialog<String>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(title),
-        content: TextField(
-          controller: controller,
-          maxLines: maxLines,
-          decoration: InputDecoration(hintText: hint),
-          autofocus: true,
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(null),
-            child: Text(cancelText),
-          ),
-          ElevatedButton(
-            onPressed: () => Navigator.of(context).pop(controller.text),
-            child: Text(confirmText),
-          ),
-        ],
+      builder: (context) => _TextInputDialog(
+        title: title,
+        initialValue: initialValue,
+        hint: hint,
+        maxLines: maxLines,
+        confirmText: confirmText,
+        cancelText: cancelText,
+        keyboardType: keyboardType,
       ),
     );
+  }
+}
 
-    controller.dispose();
-    return result;
+class _TextInputDialog extends StatefulWidget {
+  const _TextInputDialog({
+    required this.title,
+    required this.initialValue,
+    required this.hint,
+    required this.maxLines,
+    required this.confirmText,
+    required this.cancelText,
+    required this.keyboardType,
+  });
+
+  final String title;
+  final String? initialValue;
+  final String? hint;
+  final int maxLines;
+  final String confirmText;
+  final String cancelText;
+  final TextInputType? keyboardType;
+
+  @override
+  State<_TextInputDialog> createState() => _TextInputDialogState();
+}
+
+class _TextInputDialogState extends State<_TextInputDialog> {
+  late final TextEditingController _controller =
+      TextEditingController(text: widget.initialValue);
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text(widget.title),
+      content: TextField(
+        controller: _controller,
+        maxLines: widget.maxLines,
+        keyboardType: widget.keyboardType,
+        decoration: InputDecoration(hintText: widget.hint),
+        autofocus: true,
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(null),
+          child: Text(widget.cancelText),
+        ),
+        ElevatedButton(
+          onPressed: () => Navigator.of(context).pop(_controller.text),
+          child: Text(widget.confirmText),
+        ),
+      ],
+    );
   }
 }

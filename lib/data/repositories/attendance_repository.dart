@@ -748,6 +748,7 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
                 'attendance:attendance_id!inner(tenantId)')
             .inFilter('attendance_id', attendanceIds)
             .eq('attendance.tenantId', currentTenantId)
+            .order('id') // stable paging
             .range(offset, offset + batchSize - 1);
         final rows = response as List;
         for (final e in rows) {
@@ -912,11 +913,25 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
   Future<({String url, String name})> uploadAttachment(
     int attendanceId,
     Uint8List bytes,
-    String fileName,
-  ) async {
+    String fileName, {
+    String? previousFileName,
+  }) async {
     ensureNotDemo('uploadAttachment'); // DEMO_GUARD
     try {
       await _assertAttendanceInTenant(attendanceId, 'uploadAttachment');
+      // Only one attachment per Termin: drop a previous file with another
+      // name so it does not stay orphaned in storage.
+      if (previousFileName != null &&
+          previousFileName.isNotEmpty &&
+          previousFileName != fileName) {
+        try {
+          await supabase.storage
+              .from('attendances')
+              .remove([attachmentPath(attendanceId, previousFileName)]);
+        } catch (_) {
+          // Old file may already be gone.
+        }
+      }
       final path = attachmentPath(attendanceId, fileName);
       await supabase.storage
           .from('attendances')

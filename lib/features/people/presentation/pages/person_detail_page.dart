@@ -732,7 +732,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
             instrument: _selectedGroupId,
             additionalFields: _additionalFieldValues,
           ),
-          oldInstrument: _selectedGroupId,
+          oldInstrument: person.instrument,
           oldAdditionalFields: person.additionalFields,
         );
       } catch (_) {}
@@ -1084,7 +1084,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     }
     // PEOPLE2: Ionic confirmPause incl. "Pausiert ab" and other instances
     final paused = await pausePersonFlow(context, ref, widget.person);
-    if (paused) {
+    if (paused && mounted) {
       ref.invalidate(personProvider(widget.personId));
       ref.invalidate(realtimePlayersProvider);
     }

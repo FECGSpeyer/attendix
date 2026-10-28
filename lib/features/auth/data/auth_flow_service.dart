@@ -290,6 +290,27 @@ class AuthLink {
       (errorDescription != null && (type != null || path.contains('reset')));
 }
 
+/// Maps the link's `type` parameter to the [OtpType] for `verifyOTP`
+/// (invite / magiclink / email_change links must not be verified as signup).
+OtpType otpTypeForLink(AuthLink link) {
+  switch (link.type) {
+    case 'recovery':
+      return OtpType.recovery;
+    case 'invite':
+      return OtpType.invite;
+    case 'magiclink':
+      return OtpType.magiclink;
+    case 'email_change':
+      return OtpType.emailChange;
+    case 'email':
+      return OtpType.email;
+    case 'signup':
+      return OtpType.signup;
+    default:
+      return link.isRecovery ? OtpType.recovery : OtpType.signup;
+  }
+}
+
 /// Outcome of processing an [AuthLink].
 enum AuthLinkOutcome { none, recovery, signupConfirmed, failed }
 
@@ -446,7 +467,7 @@ class AuthFlowService {
       if (link.tokenHash != null) {
         await _auth.verifyOTP(
           tokenHash: link.tokenHash,
-          type: link.isRecovery ? OtpType.recovery : OtpType.signup,
+          type: otpTypeForLink(link),
         );
       } else if (_auth.currentSession == null) {
         // supabase_flutter (detectSessionInUri) may still be exchanging the

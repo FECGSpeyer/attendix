@@ -60,7 +60,11 @@ final personAttendancesProvider = FutureProvider.family<List<PersonAttendance>, 
 // ATT_DETAIL
 /// Termintyp filter of the attendance list (Ionic att-list `filterTypeId`).
 /// `null` = "Alle anzeigen".
-final attendanceListTypeFilterProvider = StateProvider<String?>((ref) => null);
+/// Reset on tenant switch (type ids are tenant specific).
+final attendanceListTypeFilterProvider = StateProvider<String?>((ref) {
+  ref.watch(currentTenantIdProvider);
+  return null;
+});
 
 /// Status counts (anwesend / entschuldigt / abwesend) of one Termin, used by
 /// the "Heute / Nächster Termin" card (Ionic att-list getStatusCounts).
@@ -120,8 +124,19 @@ class AttendanceStatusCounts {
 // query (Ionic att-list getCountText "{present} von {total} anwesend").
 final attendanceListStatusCountsProvider =
     FutureProvider.autoDispose<Map<int, AttendanceStatusCounts>>((ref) async {
-  final attendances = ref.watch(realtimeAttendanceListProvider).valueOrNull ?? const [];
-  final ids = attendances.map((a) => a.id).whereType<int>().toList();
+  // Refetch only when the Termine or their percentages change, not on every
+  // realtime event (e.g. notes edits).
+  final key = ref.watch(realtimeAttendanceListProvider.select((v) =>
+      (v.valueOrNull ?? const <Attendance>[])
+          .map((a) => '${a.id}:${a.percentage}')
+          .join(',')));
+  final ids = key.isEmpty
+      ? const <int>[]
+      : key
+          .split(',')
+          .map((e) => int.tryParse(e.split(':').first))
+          .whereType<int>()
+          .toList();
   if (ids.isEmpty) return const {};
   final repo = ref.watch(attendanceRepositoryWithTenantProvider);
   if (!repo.hasTenantId) return const {};

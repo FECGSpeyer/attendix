@@ -133,4 +133,12 @@ class DateHelper {
 
     return compareDate == today;
   }
+
+  /// "2026-03-07" (local calendar day, no time / timezone).
+  static String isoDay(DateTime d) =>
+      '${d.year.toString().padLeft(4, '0')}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
+
+  /// "19:00" from a DB time like "19:00:00" (shorter values unchanged).
+  static String hhmm(String time) =>
+      time.length >= 5 ? time.substring(0, 5) : time;
 }

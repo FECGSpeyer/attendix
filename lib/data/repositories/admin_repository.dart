@@ -59,7 +59,10 @@ class AdminRepository extends BaseRepository with TenantAwareRepository {
   }
 
   /// Ionic `createAdmin` → `registerUser(email, '', Role.ADMIN)`.
-  Future<void> createAdmin(String rawEmail) async {
+  ///
+  /// Returns `false` when the admin was added but the inform mail could not
+  /// be sent (non-blocking, the admin row already exists).
+  Future<bool> createAdmin(String rawEmail) async {
     ensureNotDemo('createAdmin'); // DEMO_GUARD
     final email = rawEmail.trim().toLowerCase();
     try {
@@ -68,7 +71,7 @@ class AdminRepository extends BaseRepository with TenantAwareRepository {
           .from('tenantUsers')
           .select('userId, role')
           .eq('tenantId', currentTenantId)
-          .ilike('email', email)
+          .eq('email', email)
           .maybeSingle();
       if (existing != null) {
         if (existing['role'] == Role.admin.value) {
@@ -79,7 +82,7 @@ class AdminRepository extends BaseRepository with TenantAwareRepository {
             .update({'role': Role.admin.value})
             .eq('tenantId', currentTenantId)
             .eq('userId', existing['userId'] as String);
-        return;
+        return true;
       }
 
       // 2. Existing account: add to tenant and inform by mail.
@@ -87,19 +90,7 @@ class AdminRepository extends BaseRepository with TenantAwareRepository {
       final foundId = (found is List && found.isNotEmpty) ? found.first['id'] as String? : null;
       if (foundId != null) {
         await _addAdminToTenant(foundId, email);
-        final res = await supabase.functions.invoke('attendix-user', body: {
-          'action': 'inform',
-          'email': email,
-          'name': '',
-          'role': 'Admin',
-          'roleId': Role.admin.value,
-          'tenantId': currentTenantId,
-        });
-        final data = res.data;
-        if (data is! Map || data['mailSent'] != true) {
-          throw const AdminException('Der Benutzer konnte nicht benachrichtigt werden.');
-        }
-        return;
+        return _informAdmin(email);
       }
 
       // 3. New account via the attendix-user Edge Function.
@@ -118,9 +109,30 @@ class AdminRepository extends BaseRepository with TenantAwareRepository {
         throw const AdminException('Der Account konnte nicht erstellt werden.');
       }
       await _addAdminToTenant(userId, email);
+      return true;
+    } on AdminException {
+      rethrow;
     } catch (e, stack) {
       handleError(e, stack, 'createAdmin');
       rethrow;
+    }
+  }
+
+  /// Inform mail for an existing account; failures are reported, not thrown.
+  Future<bool> _informAdmin(String email) async {
+    try {
+      final res = await supabase.functions.invoke('attendix-user', body: {
+        'action': 'inform',
+        'email': email,
+        'name': '',
+        'role': 'Admin',
+        'roleId': Role.admin.value,
+        'tenantId': currentTenantId,
+      });
+      final data = res.data;
+      return data is Map && data['mailSent'] == true;
+    } catch (_) {
+      return false;
     }
   }
 

@@ -9,6 +9,7 @@ import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/player_absence/player_absence.dart';
 import 'person_detail/upcoming_appointments_accordion.dart';
+import '../../../../core/utils/date_helper.dart';
 
 final _dateFormat = DateFormat('dd.MM.yyyy');
 
@@ -16,9 +17,6 @@ String _fmt(String isoDate) {
   final d = DateTime.tryParse(isoDate);
   return d == null ? isoDate : _dateFormat.format(d);
 }
-
-String _isoDay(DateTime d) =>
-    '${d.year.toString().padLeft(4, '0')}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
 
 /// Toast text after entering an absence (Ionic: signout.absenceEntered[Count]).
 String absenceEnteredMessage(int count) {
@@ -118,8 +116,8 @@ class _AbsenceInputSheetState extends State<_AbsenceInputSheet> {
     }
     Navigator.of(context).pop(AbsenceInput(
       reason: _reasonController.text.trim(),
-      fromDate: _isoDay(_from!),
-      untilDate: _isoDay(_until!),
+      fromDate: DateHelper.isoDay(_from!),
+      untilDate: DateHelper.isoDay(_until!),
     ));
   }
 

@@ -64,7 +64,14 @@ Future<void> showCalendarSubscriptionDialog(BuildContext context, WidgetRef ref)
           TextButton(
             onPressed: () async {
               final finalLink = hideExcused ? '$link&hideExcused=1' : link;
-              await Clipboard.setData(ClipboardData(text: finalLink));
+              try {
+                await Clipboard.setData(ClipboardData(text: finalLink));
+              } catch (_) {
+                if (ctx.mounted) {
+                  ToastHelper.showError(ctx, 'Link konnte nicht kopiert werden');
+                }
+                return;
+              }
               if (ctx.mounted) {
                 ToastHelper.showSuccess(ctx, 'Der Link wurde in die Zwischenablage kopiert');
               }
@@ -72,9 +79,9 @@ Future<void> showCalendarSubscriptionDialog(BuildContext context, WidgetRef ref)
             child: const Text('Link kopieren'),
           ),
           TextButton(
-            onPressed: () {
+            onPressed: () async {
               try {
-                launchUrl(
+                await launchUrl(
                   Uri.parse(isIos
                       ? 'https://support.apple.com/de-de/102301'
                       : 'https://support.google.com/calendar/answer/37100?hl=de&co=GENIE.Platform%3DAndroid'),

@@ -232,8 +232,11 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
         if (ref.read(hasDutyTypesProvider)) 'duty_view': _dutyView,
         'song_sharing_id': _songSharingEnabled ? (_songSharingId ?? const Uuid().v4()) : null,
         'register_id': _registrationEnabled ? (_registerId ?? const Uuid().v4()) : null,
-        'auto_approve_registrations': _autoApproveRegistrations,
-        'registration_fields': _registrationEnabled ? _selectedRegistrationFields : null,
+        // Ionic general.page: registration off → no auto approve, no fields
+        'auto_approve_registrations':
+            _registrationEnabled ? _autoApproveRegistrations : false,
+        'registration_fields':
+            _registrationEnabled ? _selectedRegistrationFields : <String>[],
         // SETTINGS_EXT: additional_fields werden auf der Seite "Zusatzfelder" gepflegt
         'critical_rules': _criticalRules.map((r) => {
           'id': r.id,
@@ -371,7 +374,12 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
   Future<void> _copyLink(String baseUrl, String? id) async {
     if (id == null) return;
     final link = '$baseUrl$id';
-    await Clipboard.setData(ClipboardData(text: link));
+    try {
+      await Clipboard.setData(ClipboardData(text: link));
+    } catch (_) {
+      if (mounted) ToastHelper.showError(context, 'Link konnte nicht kopiert werden');
+      return;
+    }
     if (mounted) {
       ToastHelper.showSuccess(context, 'Der Link wurde in die Zwischenablage kopiert');
     }

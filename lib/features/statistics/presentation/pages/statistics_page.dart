@@ -187,11 +187,17 @@ class _PeriodSection extends StatelessWidget {
 
   Future<void> _pick(BuildContext context, {required bool start}) async {
     final initial = start ? dateRange.start : dateRange.end;
+    // Von ≤ Bis: "Von" ends at the current "Bis", "Bis" starts at "Von".
+    final maxDate = DateTime.now().add(const Duration(days: 365 * 2));
+    final upper = dateRange.end.isAfter(maxDate) ? dateRange.end : maxDate;
+    final lower = DateTime(2000).isAfter(dateRange.start)
+        ? dateRange.start
+        : DateTime(2000);
     final picked = await showDatePicker(
       context: context,
       initialDate: initial,
-      firstDate: DateTime(2000),
-      lastDate: DateTime.now().add(const Duration(days: 365 * 2)),
+      firstDate: start ? lower : dateRange.start,
+      lastDate: start ? dateRange.end : upper,
       locale: const Locale('de', 'DE'),
     );
     if (picked == null) return;

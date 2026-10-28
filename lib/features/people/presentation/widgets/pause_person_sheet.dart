@@ -9,11 +9,9 @@ import '../../../../core/providers/player_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../data/repositories/cross_tenant_person_repository.dart';
+import '../../../../core/utils/date_helper.dart';
 
 final _fmt = DateFormat('dd.MM.yyyy');
-
-String _isoDay(DateTime d) =>
-    '${d.year.toString().padLeft(4, '0')}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
 
 /// Input of the "{name} Pausieren" sheet (Ionic people/person pause modal).
 class PauseInput {
@@ -222,8 +220,8 @@ Future<bool> pausePersonFlow(
   final repo = ref.read(playerRepositoryWithTenantProvider);
   final text = buildPauseHistoryText(input.reason,
       from: input.from, until: input.until);
-  final until = input.until != null ? _isoDay(input.until!) : null;
-  final from = input.from != null ? _isoDay(input.from!) : null;
+  final until = input.until != null ? DateHelper.isoDay(input.until!) : null;
+  final from = input.from != null ? DateHelper.isoDay(input.from!) : null;
 
   try {
     await repo.pausePlayer(person, until, text, pauseFrom: from);
@@ -249,8 +247,15 @@ Future<bool> pausePersonFlow(
     final linkedIds = await ref.read(linkedTenantIdsProvider.future);
     if (linkedIds.isEmpty) return true;
     final crossRepo = ref.read(crossTenantPersonRepositoryWithTenantProvider);
-    final others =
+    final memberOf =
         await crossRepo.getLinkedTenantsOfUser(appId, linkedTenantIds: linkedIds);
+    // Only offer instances where the current user may pause people.
+    final manageable = await crossRepo.getManageableTenantIds(
+      memberOf.map((t) => t.id).toList(),
+      linkedTenantIds: linkedIds,
+    );
+    final others =
+        memberOf.where((t) => manageable.contains(t.id)).toList();
     if (others.isEmpty || !context.mounted) return true;
 
     final selected = await _askPauseInOtherTenants(context, person, others);

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/utils/date_helper.dart';
 
 /// Result of the "Erinnerung versenden" sheet.
 class AdHocReminderResult {
@@ -30,7 +31,7 @@ class AdHocReminderResult {
   final parsed = DateTime.tryParse(date);
   final dateStr = parsed != null ? DateFormat('dd.MM.yyyy').format(parsed) : date;
   final type = (typeName?.isNotEmpty ?? false) ? typeName! : 'Termin';
-  final time = (startTime?.isNotEmpty ?? false) ? ' um ${_hhmm(startTime!)} Uhr' : '';
+  final time = (startTime?.isNotEmpty ?? false) ? ' um ${DateHelper.hhmm(startTime!)} Uhr' : '';
   final info = (typeInfo?.isNotEmpty ?? false) ? ' ($typeInfo)' : '';
   final eventLine = '$type am $dateStr$time$info';
   final title = '🔔 Erinnerung: $eventLine';
@@ -39,7 +40,6 @@ class AdHocReminderResult {
   return (title: title, message: message);
 }
 
-String _hhmm(String time) => time.length >= 5 ? time.substring(0, 5) : time;
 
 /// Link to the Termin that is added to the e-mail.
 String adHocReminderLink(int attendanceId, int tenantId) =>
