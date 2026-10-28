@@ -21,6 +21,12 @@ class GeneralInfoAccordion extends StatefulWidget {
     required this.onDeadlineSelect,
     required this.onExportExcel,
     this.hasNeutralStatuses = true,
+    this.onDateSelect,
+    this.onPlaceChanged,
+    this.onOpenNavigation,
+    this.onChooseFilesFolder,
+    this.onRemoveFilesFolder,
+    this.onOpenFilesFolder,
   });
 
   final Attendance attendance;
@@ -34,6 +40,18 @@ class GeneralInfoAccordion extends StatefulWidget {
   final VoidCallback onExportExcel;
   final bool hasNeutralStatuses;
 
+  /// "Datum" – move the Termin to another day.
+  final VoidCallback? onDateSelect;
+
+  /// "Ort" – only shown when the type has `place_enabled`.
+  final void Function(String)? onPlaceChanged;
+  final VoidCallback? onOpenNavigation;
+
+  /// "Ordner in der Dateiablage".
+  final VoidCallback? onChooseFilesFolder;
+  final VoidCallback? onRemoveFilesFolder;
+  final VoidCallback? onOpenFilesFolder;
+
   @override
   State<GeneralInfoAccordion> createState() => _GeneralInfoAccordionState();
 }
@@ -41,12 +59,22 @@ class GeneralInfoAccordion extends StatefulWidget {
 class _GeneralInfoAccordionState extends State<GeneralInfoAccordion> {
   late TextEditingController _typeInfoController;
   late TextEditingController _notesController;
+  late TextEditingController _placeController;
+  final FocusNode _placeFocus = FocusNode();
 
   @override
   void initState() {
     super.initState();
     _typeInfoController = TextEditingController(text: widget.attendance.typeInfo ?? '');
     _notesController = TextEditingController(text: widget.attendance.notes ?? '');
+    _placeController = TextEditingController(text: widget.attendance.place ?? '');
+    // Save the place when the field loses focus (Ionic: ionBlur).
+    _placeFocus.addListener(() {
+      if (!_placeFocus.hasFocus &&
+          _placeController.text.trim() != (widget.attendance.place ?? '')) {
+        widget.onPlaceChanged?.call(_placeController.text.trim());
+      }
+    });
   }
 
   @override
@@ -59,13 +87,24 @@ class _GeneralInfoAccordionState extends State<GeneralInfoAccordion> {
     if (oldWidget.attendance.notes != widget.attendance.notes) {
       _notesController.text = widget.attendance.notes ?? '';
     }
+    if (oldWidget.attendance.place != widget.attendance.place && !_placeFocus.hasFocus) {
+      _placeController.text = widget.attendance.place ?? '';
+    }
   }
 
   @override
   void dispose() {
     _typeInfoController.dispose();
     _notesController.dispose();
+    _placeController.dispose();
+    _placeFocus.dispose();
     super.dispose();
+  }
+
+  String _formatDate(String value) {
+    final date = DateTime.tryParse(value);
+    if (date == null) return value;
+    return DateFormat('EEE, dd.MM.yyyy', 'de_DE').format(date.toLocal());
   }
 
   @override
@@ -110,6 +149,25 @@ class _GeneralInfoAccordionState extends State<GeneralInfoAccordion> {
               dense: true,
             ),
 
+          // Datum (change date)
+          if (widget.onDateSelect != null)
+            ListTile(
+              leading: const Icon(Icons.event),
+              title: const Text('Datum'),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    _formatDate(widget.attendance.date),
+                    style: const TextStyle(fontWeight: FontWeight.w500),
+                  ),
+                  const Icon(Icons.chevron_right),
+                ],
+              ),
+              onTap: widget.onDateSelect,
+              dense: true,
+            ),
+
           // TypeInfo TextField
           Padding(
             padding: const EdgeInsets.symmetric(
@@ -146,6 +204,69 @@ class _GeneralInfoAccordionState extends State<GeneralInfoAccordion> {
               onSubmitted: widget.onNotesChanged,
             ),
           ),
+
+          // Ort (place) – only for types with place_enabled
+          if (widget.attendanceType?.placeEnabled == true && widget.onPlaceChanged != null)
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppDimensions.paddingM,
+                vertical: AppDimensions.paddingS,
+              ),
+              child: TextField(
+                controller: _placeController,
+                focusNode: _placeFocus,
+                decoration: InputDecoration(
+                  labelText: 'Ort',
+                  hintText: 'Adresse oder Ortsname',
+                  border: const OutlineInputBorder(),
+                  prefixIcon: const Icon(Icons.place_outlined),
+                  suffixIcon: (widget.attendance.place?.isNotEmpty ?? false) &&
+                          widget.onOpenNavigation != null
+                      ? IconButton(
+                          icon: const Icon(Icons.navigation_outlined),
+                          tooltip: 'Navigation öffnen',
+                          onPressed: widget.onOpenNavigation,
+                        )
+                      : null,
+                ),
+                textInputAction: TextInputAction.done,
+                onSubmitted: (v) => widget.onPlaceChanged!(v.trim()),
+              ),
+            ),
+
+          // Ordner in der Dateiablage
+          if (widget.onChooseFilesFolder != null)
+            ListTile(
+              leading: const Icon(Icons.folder_outlined),
+              title: const Text('Ordner in der Dateiablage'),
+              subtitle: Text(
+                widget.attendance.filesFolder?.isNotEmpty == true
+                    ? widget.attendance.filesFolder!
+                    : 'z. B. Aufnahmen des Termins',
+              ),
+              onTap: widget.attendance.filesFolder?.isNotEmpty == true
+                  ? widget.onOpenFilesFolder
+                  : widget.onChooseFilesFolder,
+              trailing: widget.attendance.filesFolder?.isNotEmpty == true
+                  ? PopupMenuButton<String>(
+                      onSelected: (v) {
+                        if (v == 'change') widget.onChooseFilesFolder?.call();
+                        if (v == 'remove') widget.onRemoveFilesFolder?.call();
+                      },
+                      itemBuilder: (_) => const [
+                        PopupMenuItem(value: 'change', child: Text('Ordner ändern')),
+                        PopupMenuItem(
+                          value: 'remove',
+                          child: Text('Ordner entfernen', style: TextStyle(color: AppColors.danger)),
+                        ),
+                      ],
+                    )
+                  : TextButton(
+                      onPressed: widget.onChooseFilesFolder,
+                      child: const Text('Wählen'),
+                    ),
+              dense: true,
+            ),
 
           // Time pickers (if not all-day)
           if (!isAllDay) ...[

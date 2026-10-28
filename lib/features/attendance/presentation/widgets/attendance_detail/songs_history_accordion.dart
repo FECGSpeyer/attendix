@@ -12,11 +12,15 @@ class SongsHistoryAccordion extends StatelessWidget {
     required this.entries,
     required this.onAdd,
     required this.onRemove,
+    this.onTap,
   });
 
   final List<SongHistoryEntry> entries;
   final VoidCallback onAdd;
   final void Function(int index) onRemove;
+
+  /// Tap on an entry ("Dirigent ändern" / "Zum Werk").
+  final void Function(int index)? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -92,6 +96,7 @@ class SongsHistoryAccordion extends StatelessWidget {
                   title: Text(songEntry.songName),
                   subtitle: Text(songEntry.displayConductor),
                   dense: true,
+                  onTap: onTap == null ? null : () => onTap!(index),
                 ),
               );
             }),

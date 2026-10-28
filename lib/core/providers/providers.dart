@@ -37,3 +37,4 @@ export 'player_absence_providers.dart';
 export 'import_providers.dart';
 // TEAM_ORG
 export 'team_org_providers.dart';
+export 'signout_providers.dart'; // ATTENDANCE_SIGNOUT

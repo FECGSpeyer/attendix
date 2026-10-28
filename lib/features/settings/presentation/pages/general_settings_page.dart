@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../../../core/utils/event_list_utils.dart'; // ATTENDANCE_SIGNOUT
+import '../widgets/reasons_list_editor.dart'; // ATTENDANCE_SIGNOUT
 import '../../../../core/config/supabase_config.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/attendance_type_providers.dart';
@@ -66,6 +68,12 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
   bool _showMembersList = false;
   bool _showHolidays = false;
 
+  // ATTENDANCE_SIGNOUT: show all Termine + absence/late reasons
+  bool _showAllAttendances = false;
+  final _showAllInfoTextController = TextEditingController();
+  List<String> _absenceReasons = [];
+  List<String> _lateReasons = [];
+
   // Sharing
   bool _songSharingEnabled = false;
   String? _songSharingId;
@@ -93,6 +101,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
     _longNameController.dispose();
     _practiceStartController.dispose();
     _practiceEndController.dispose();
+    _showAllInfoTextController.dispose(); // ATTENDANCE_SIGNOUT
     super.dispose();
   }
 
@@ -116,6 +125,11 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
       _parents = tenant.parents ?? false;
       _showMembersList = tenant.showMembersList;
       _showHolidays = tenant.showHolidays;
+      // ATTENDANCE_SIGNOUT
+      _showAllAttendances = tenant.showAllAttendances;
+      _showAllInfoTextController.text = tenant.showAllAttendancesInfoText ?? '';
+      _absenceReasons = EventListUtils.absenceReasonsOf(tenant.absenceReasons);
+      _lateReasons = EventListUtils.lateReasonsOf(tenant.lateReasons);
       _songSharingEnabled = tenant.songSharingId != null && tenant.songSharingId!.isNotEmpty;
       _songSharingId = tenant.songSharingId;
       _registrationEnabled = tenant.registerId != null && tenant.registerId!.isNotEmpty;
@@ -175,6 +189,13 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
         'withExcuses': _withExcuses,
         'parents': _parents,
         'show_members_list': _showMembersList,
+        // ATTENDANCE_SIGNOUT
+        'show_all_attendances': _showAllAttendances,
+        'show_all_attendances_info_text': _showAllInfoTextController.text.trim().isNotEmpty
+            ? _showAllInfoTextController.text.trim()
+            : null,
+        'absence_reasons': _absenceReasons,
+        'late_reasons': _lateReasons,
         'song_sharing_id': _songSharingEnabled ? (_songSharingId ?? const Uuid().v4()) : null,
         'register_id': _registrationEnabled ? (_registerId ?? const Uuid().v4()) : null,
         'auto_approve_registrations': _autoApproveRegistrations,
@@ -491,6 +512,56 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
                     value: _showMembersList,
                     onChanged: (v) {
                       setState(() => _showMembersList = v);
+                      _markChanged();
+                    },
+                  ),
+                  // ATTENDANCE_SIGNOUT: show all Termine for members
+                  SwitchListTile(
+                    contentPadding: EdgeInsets.zero,
+                    title: const Text('Alle Termine für Mitglieder sichtbar'),
+                    subtitle: const Text(
+                      'Aktivieren, damit Mitglieder auf der Abmelde-Seite alle Termine der Instanz '
+                      'sehen können (nicht nur eigene). Eigene Termine werden hervorgehoben.',
+                    ),
+                    value: _showAllAttendances,
+                    onChanged: (v) {
+                      setState(() => _showAllAttendances = v);
+                      _markChanged();
+                    },
+                  ),
+                  if (_showAllAttendances)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: AppDimensions.paddingS),
+                      child: TextFormField(
+                        controller: _showAllInfoTextController,
+                        decoration: const InputDecoration(
+                          labelText: 'Info-Text für fremde Termine',
+                          hintText: 'Du bist bei diesem Termin nicht dabei.',
+                          border: OutlineInputBorder(),
+                        ),
+                        onChanged: (_) => _markChanged(),
+                      ),
+                    ),
+
+                  const SizedBox(height: AppDimensions.paddingXL),
+
+                  // ATTENDANCE_SIGNOUT: absence / late reasons
+                  _buildSectionHeader('Abwesenheits- & Verspätungsgründe'),
+                  ReasonsListEditor(
+                    title: 'Abwesenheitsgründe',
+                    reasons: _absenceReasons,
+                    defaults: EventListUtils.defaultAbsenceReasons,
+                    onChanged: (list) {
+                      setState(() => _absenceReasons = list);
+                      _markChanged();
+                    },
+                  ),
+                  ReasonsListEditor(
+                    title: 'Verspätungsgründe',
+                    reasons: _lateReasons,
+                    defaults: EventListUtils.defaultLateReasons,
+                    onChanged: (list) {
+                      setState(() => _lateReasons = list);
                       _markChanged();
                     },
                   ),

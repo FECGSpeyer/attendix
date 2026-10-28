@@ -19,6 +19,8 @@ class AttendanceGrid extends StatelessWidget {
     required this.onShowModifierInfo,
     required this.onRemoveFromAttendance,
     this.clickMode = false,
+    this.registrationSummaries = const {},
+    this.onEditRegistrationFields,
   });
 
   final List<Person> persons;
@@ -30,6 +32,8 @@ class AttendanceGrid extends StatelessWidget {
   final void Function(int personId) onShowModifierInfo;
   final void Function(int personId) onRemoveFromAttendance;
   final bool clickMode;
+  final Map<int, String> registrationSummaries;
+  final void Function(int personId)? onEditRegistrationFields;
 
   @override
   Widget build(BuildContext context) {
@@ -58,6 +62,8 @@ class AttendanceGrid extends StatelessWidget {
           onStatusChanged: onStatusChanged,
           onNoteChanged: onNoteChanged,
           onShowModifierInfo: onShowModifierInfo,
+          registrationSummaries: registrationSummaries,
+          onEditRegistrationFields: onEditRegistrationFields,
           onRemoveFromAttendance: onRemoveFromAttendance,
           clickMode: clickMode,
         );
@@ -99,6 +105,8 @@ class _InstrumentGroupSection extends StatelessWidget {
     required this.onShowModifierInfo,
     required this.onRemoveFromAttendance,
     this.clickMode = false,
+    this.registrationSummaries = const {},
+    this.onEditRegistrationFields,
   });
 
   final String groupName;
@@ -111,6 +119,8 @@ class _InstrumentGroupSection extends StatelessWidget {
   final void Function(int personId) onShowModifierInfo;
   final void Function(int personId) onRemoveFromAttendance;
   final bool clickMode;
+  final Map<int, String> registrationSummaries;
+  final void Function(int personId)? onEditRegistrationFields;
 
   @override
   Widget build(BuildContext context) {
@@ -167,6 +177,10 @@ class _InstrumentGroupSection extends StatelessWidget {
             notes: notes,
             availableStatuses: availableStatuses,
             clickMode: clickMode,
+            registrationSummary: registrationSummaries[person.id],
+            onEditRegistrationFields: onEditRegistrationFields == null || person.id == null
+                ? null
+                : () => onEditRegistrationFields!(person.id!),
             onStatusChanged: (newStatus) {
               if (person.id != null) {
                 onStatusChanged(person.id!, newStatus);

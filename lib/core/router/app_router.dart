@@ -40,6 +40,7 @@ import '../../features/songs/presentation/pages/song_create_page.dart';
 import '../../features/songs/presentation/pages/song_edit_page.dart';
 import '../../features/instruments/presentation/pages/instruments_list_page.dart';
 import '../../features/self_service/presentation/pages/self_service_overview_page.dart';
+import '../../features/self_service/presentation/pages/signout_page.dart'; // ATTENDANCE_SIGNOUT
 import '../../features/statistics/presentation/pages/statistics_page.dart';
 import '../../features/planning/presentation/pages/planning_page.dart';
 import '../../features/history/presentation/pages/history_page.dart';
@@ -250,7 +251,7 @@ final routerProvider = Provider<GoRouter>((ref) {
               } else if (role.canSeeAttendanceTab) {
                 return '/attendance';
               } else {
-                return '/overview';
+                return '/signout';
               }
             }
             break;
@@ -405,6 +406,16 @@ final routerProvider = Provider<GoRouter>((ref) {
             name: 'selfServiceOverview',
             pageBuilder: (context, state) => AppPageTransitions.none(
               child: const SelfServiceOverviewPage(),
+              state: state,
+            ),
+          ),
+
+          // ATTENDANCE_SIGNOUT: "Meine Termine" of the current tenant
+          GoRoute(
+            path: '/signout',
+            name: 'signout',
+            pageBuilder: (context, state) => AppPageTransitions.none(
+              child: const SignoutPage(),
               state: state,
             ),
           ),

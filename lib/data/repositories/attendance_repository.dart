@@ -263,7 +263,8 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
             *,
             attendance:attendance_id(
               id, date, type, typeInfo, start_time, end_time, deadline, tenantId,
-              type_id, plan, share_plan
+              type_id, plan, share_plan, duration_days, place, description,
+              attachment_url, attachment_name
             )
           ''')
           .inFilter('person_id', personIds)
@@ -700,6 +701,76 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
       date: attendanceData?['date'],
       title: attendanceData?['typeInfo'],
     );
+  }
+
+  // ATTENDANCE_SIGNOUT: history + date-change helpers (Ionic parity)
+
+  /// Song history rows of one Termin (song, conductor person_id / otherConductor).
+  Future<List<Map<String, dynamic>>> getHistoryForAttendance(int attendanceId) async {
+    try {
+      final response = await supabase
+          .from('history')
+          .select('id, song_id, person_id, otherConductor, date')
+          .eq('attendance_id', attendanceId)
+          .eq('tenantId', currentTenantId)
+          .order('id', ascending: true);
+      return List<Map<String, dynamic>>.from(response as List);
+    } catch (e, stack) {
+      handleError(e, stack, 'getHistoryForAttendance');
+      rethrow;
+    }
+  }
+
+  /// Moves the song history of a Termin to its new date.
+  Future<void> updateHistoryDatesForAttendance(int attendanceId, String date) async {
+    try {
+      await supabase
+          .from('history')
+          .update({'date': date})
+          .eq('attendance_id', attendanceId)
+          .eq('tenantId', currentTenantId);
+    } catch (e, stack) {
+      handleError(e, stack, 'updateHistoryDatesForAttendance');
+      rethrow;
+    }
+  }
+
+  /// Sets every person of a Termin back to [status] and clears their notes
+  /// ("Status zurücksetzen" when moving a Termin).
+  ///
+  /// person_attendances has no tenantId column: the owning attendance is
+  /// verified against the current tenant first, then rows are filtered by
+  /// that attendance_id.
+  Future<void> resetPersonAttendancesForAttendance(
+    int attendanceId,
+    AttendanceStatus status,
+  ) async {
+    try {
+      final owner = await supabase
+          .from('attendance')
+          .select('id')
+          .eq('id', attendanceId)
+          .eq('tenantId', currentTenantId)
+          .maybeSingle();
+      if (owner == null) {
+        throw RepositoryException(
+          message: 'Attendance not found or belongs to different tenant',
+          operation: 'resetPersonAttendancesForAttendance',
+        );
+      }
+      await supabase
+          .from('person_attendances')
+          .update({
+            'status': status.value,
+            'notes': '',
+            'changed_at': DateTime.now().toIso8601String(),
+            'changed_by': supabase.auth.currentUser?.id,
+          })
+          .eq('attendance_id', attendanceId);
+    } catch (e, stack) {
+      handleError(e, stack, 'resetPersonAttendancesForAttendance');
+      rethrow;
+    }
   }
 
   AttendanceStatus _parseStatus(dynamic status) {

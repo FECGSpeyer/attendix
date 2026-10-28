@@ -51,6 +51,15 @@ _$AttendanceImpl _$$AttendanceImplFromJson(
       json['share_plan'] == null
           ? false
           : const _FlexibleBoolConverter().fromJson(json['share_plan']),
+  place: const _FlexibleStringConverter().fromJson(json['place']),
+  filesFolder: const _FlexibleStringConverter().fromJson(json['files_folder']),
+  description: const _FlexibleStringConverter().fromJson(json['description']),
+  attachmentUrl: const _FlexibleStringConverter().fromJson(
+    json['attachment_url'],
+  ),
+  attachmentName: const _FlexibleStringConverter().fromJson(
+    json['attachment_name'],
+  ),
 );
 
 Map<String, dynamic> _$$AttendanceImplToJson(
@@ -88,6 +97,15 @@ Map<String, dynamic> _$$AttendanceImplToJson(
   'conductors': const _FlexibleIntListConverter().toJson(instance.conductors),
   'players': instance.players,
   'share_plan': const _FlexibleBoolConverter().toJson(instance.sharePlan),
+  'place': const _FlexibleStringConverter().toJson(instance.place),
+  'files_folder': const _FlexibleStringConverter().toJson(instance.filesFolder),
+  'description': const _FlexibleStringConverter().toJson(instance.description),
+  'attachment_url': const _FlexibleStringConverter().toJson(
+    instance.attachmentUrl,
+  ),
+  'attachment_name': const _FlexibleStringConverter().toJson(
+    instance.attachmentName,
+  ),
 };
 
 _$PersonAttendanceImpl _$$PersonAttendanceImplFromJson(
@@ -122,6 +140,7 @@ _$PersonAttendanceImpl _$$PersonAttendanceImplFromJson(
       json['paused'] == null
           ? false
           : const _FlexibleBoolConverter().fromJson(json['paused']),
+  registrationAnswers: json['registration_answers'] as Map<String, dynamic>?,
 );
 
 Map<String, dynamic> _$$PersonAttendanceImplToJson(
@@ -147,6 +166,7 @@ Map<String, dynamic> _$$PersonAttendanceImplToJson(
   'highlight': const _FlexibleBoolConverter().toJson(instance.highlight),
   'left': const _FlexibleStringConverter().toJson(instance.left),
   'paused': const _FlexibleBoolConverter().toJson(instance.paused),
+  'registration_answers': instance.registrationAnswers,
 };
 
 _$ChecklistItemImpl _$$ChecklistItemImplFromJson(Map<String, dynamic> json) =>
@@ -243,6 +263,14 @@ _$AttendanceTypeImpl _$$AttendanceTypeImplFromJson(
   planningTitle: const _FlexibleStringConverter().fromJson(
     json['planning_title'],
   ),
+  placeEnabled:
+      json['place_enabled'] == null
+          ? false
+          : const _FlexibleBoolConverter().fromJson(json['place_enabled']),
+  registrationFields:
+      (json['registration_fields'] as List<dynamic>?)
+          ?.map((e) => RegistrationField.fromJson(e as Map<String, dynamic>))
+          .toList(),
 );
 
 Map<String, dynamic> _$$AttendanceTypeImplToJson(
@@ -280,4 +308,25 @@ Map<String, dynamic> _$$AttendanceTypeImplToJson(
   'planning_title': const _FlexibleStringConverter().toJson(
     instance.planningTitle,
   ),
+  'place_enabled': const _FlexibleBoolConverter().toJson(instance.placeEnabled),
+  'registration_fields': instance.registrationFields,
+};
+
+_$RegistrationFieldImpl _$$RegistrationFieldImplFromJson(
+  Map<String, dynamic> json,
+) => _$RegistrationFieldImpl(
+  id: json['id'] as String,
+  label: json['label'] as String? ?? '',
+  type: json['type'] as String? ?? RegistrationFieldType.text,
+  options:
+      (json['options'] as List<dynamic>?)?.map((e) => e as String).toList(),
+);
+
+Map<String, dynamic> _$$RegistrationFieldImplToJson(
+  _$RegistrationFieldImpl instance,
+) => <String, dynamic>{
+  'id': instance.id,
+  'label': instance.label,
+  'type': instance.type,
+  'options': instance.options,
 };

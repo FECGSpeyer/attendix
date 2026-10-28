@@ -169,6 +169,12 @@ class Attendance with _$Attendance {
     @_FlexibleIntListConverter() List<int>? conductors,
     Map<String, dynamic>? players,
     @JsonKey(name: 'share_plan') @_FlexibleBoolConverter() @Default(false) bool sharePlan,
+    // ATTENDANCE_SIGNOUT: place, files folder, description & attachment
+    @_FlexibleStringConverter() String? place,
+    @JsonKey(name: 'files_folder') @_FlexibleStringConverter() String? filesFolder,
+    @_FlexibleStringConverter() String? description,
+    @JsonKey(name: 'attachment_url') @_FlexibleStringConverter() String? attachmentUrl,
+    @JsonKey(name: 'attachment_name') @_FlexibleStringConverter() String? attachmentName,
   }) = _Attendance;
 
   factory Attendance.fromJson(Map<String, dynamic> json) =>
@@ -199,6 +205,8 @@ class PersonAttendance with _$PersonAttendance {
     @_FlexibleBoolConverter() @Default(false) bool highlight,
     @_FlexibleStringConverter() String? left,
     @_FlexibleBoolConverter() @Default(false) bool paused,
+    // ATTENDANCE_SIGNOUT: answers to the attendance type's registration fields
+    @JsonKey(name: 'registration_answers') Map<String, dynamic>? registrationAnswers,
   }) = _PersonAttendance;
 
   factory PersonAttendance.fromJson(Map<String, dynamic> json) =>
@@ -249,10 +257,52 @@ class AttendanceType with _$AttendanceType {
     List<ChecklistItem>? checklist,
     // Field from Ionic that was missing
     @JsonKey(name: 'planning_title') @_FlexibleStringConverter() String? planningTitle,
+    // ATTENDANCE_SIGNOUT: place/navigation and registration fields per type
+    @JsonKey(name: 'place_enabled') @_FlexibleBoolConverter() @Default(false) bool placeEnabled,
+    @JsonKey(name: 'registration_fields') List<RegistrationField>? registrationFields,
   }) = _AttendanceType;
 
   factory AttendanceType.fromJson(Map<String, dynamic> json) =>
       _$AttendanceTypeFromJson(json);
+}
+
+/// Type of a registration field (Anmeldefeld) of an attendance type.
+/// Stored as string in `attendance_types.registration_fields` (jsonb).
+abstract final class RegistrationFieldType {
+  static const text = 'text';
+  static const boolean = 'boolean';
+  static const select = 'select';
+  static const multiSelect = 'multi_select';
+
+  /// German label shown in settings
+  static String label(String type) {
+    switch (type) {
+      case text:
+        return 'Text';
+      case boolean:
+        return 'Ja / Nein';
+      case select:
+        return 'Einzelauswahl';
+      case multiSelect:
+        return 'Mehrfachauswahl';
+      default:
+        return type;
+    }
+  }
+}
+
+/// Registration field (Anmeldefeld) asked when a person signs in to a Termin.
+@freezed
+class RegistrationField with _$RegistrationField {
+  const factory RegistrationField({
+    required String id,
+    @Default('') String label,
+    @Default(RegistrationFieldType.text) String type,
+    List<String>? options,
+  }) = _RegistrationField;
+
+  factory RegistrationField.fromJson(Map<String, dynamic> json) =>
+      _$RegistrationFieldFromJson(json);
 }
 
 /// Extension for Attendance

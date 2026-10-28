@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../utils/event_list_utils.dart';
 import '../config/supabase_config.dart';
 import '../constants/enums.dart';
 import '../../data/models/attendance/attendance.dart';
@@ -73,7 +74,6 @@ final categorizedAttendancesProvider = Provider<CategorizedAttendances>((ref) {
   final attendances = ref.watch(realtimeAttendanceListProvider).valueOrNull ?? [];
 
   final now = DateTime.now();
-  final todayStart = DateTime(now.year, now.month, now.day);
 
   final upcoming = <Attendance>[];
   final past = <Attendance>[];
@@ -84,8 +84,8 @@ final categorizedAttendancesProvider = Provider<CategorizedAttendances>((ref) {
       past.add(attendance);
       continue;
     }
-    final dateOnly = DateTime(date.year, date.month, date.day);
-    if (dateOnly.isBefore(todayStart)) {
+    // Multi-day Termine count as past only after their last day.
+    if (EventListUtils.hasEnded(attendance.date, attendance.durationDays, now: now)) {
       past.add(attendance);
     } else {
       upcoming.add(attendance);

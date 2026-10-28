@@ -13,13 +13,13 @@ import '../../../../core/providers/role_permission_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/color_utils.dart';
 import '../../../../core/utils/dialog_helper.dart';
+import '../../../../core/utils/event_list_utils.dart';
 import '../../../../data/models/attendance/attendance.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../shared/widgets/loading/loading.dart';
 import '../../../../shared/widgets/common/empty_state.dart';
-import '../../../../shared/widgets/display/percentage_badge.dart';
-import '../../../../shared/widgets/animations/animated_list_item.dart';
 import '../../../messages/presentation/widgets/notification_bell.dart'; // MESSAGES
+import '../../../../shared/widgets/event_list/event_list_widgets.dart';
 
 
 /// Attendance list page
@@ -31,6 +31,7 @@ class AttendanceListPage extends ConsumerStatefulWidget {
 }
 
 class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
+  bool _showAllPast = false;
 
   /// Navigate to detail page, refresh list data when returning
   Future<void> _navigateToDetail(int attendanceId) async {
@@ -133,110 +134,133 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
           final categorized = ref.watch(categorizedAttendancesProvider);
           final averagePercent = ref.watch(averageAttendancePercentProvider);
 
+          final current = categorized.current;
+          final upcomingGroups = EventListUtils.groupByMonth(categorized.upcoming, (a) => a.date);
+          final past = categorized.past;
+          final pastPreview = _showAllPast
+              ? past
+              : past.take(EventListUtils.pastPreviewCount).toList();
+          final typesById = {for (final t in attendanceTypes) t.id: t};
+
+          String meta(Attendance att, {bool withDate = false}) {
+            final type = typesById[att.typeId];
+            return EventListUtils.meta([
+              if (withDate)
+                EventListUtils.readableDate(
+                  att.date,
+                  allDay: type?.allDay ?? false,
+                  durationDays: att.durationDays,
+                ),
+              if (!(type?.allDay ?? false)) EventListUtils.timeRange(att.startTime, att.endTime),
+              att.place,
+            ]);
+          }
+
+          EventPill percentPill(Attendance att) {
+            final perc = (att.percentage ?? 0).round();
+            return EventPill(label: '$perc%', color: EventListUtils.percentageColor(perc));
+          }
+
+          Widget slidable(Attendance att, Widget child) {
+            if (!role.canAddAttendance) return child;
+            return Slidable(
+              key: ValueKey('att-${att.id}'),
+              endActionPane: ActionPane(
+                motion: const ScrollMotion(),
+                extentRatio: 0.25,
+                children: [
+                  SlidableAction(
+                    onPressed: (_) => _confirmDelete(context, att),
+                    backgroundColor: AppColors.danger,
+                    foregroundColor: Colors.white,
+                    icon: Icons.delete,
+                    label: 'Löschen',
+                  ),
+                ],
+              ),
+              child: child,
+            );
+          }
+
           return RefreshIndicator(
             onRefresh: () async {
               // FN-008: invalidate to trigger fresh fetch from realtime provider
               ref.invalidate(realtimeAttendanceListProvider);
             },
             child: ListView(
-              padding: const EdgeInsets.all(AppDimensions.paddingM),
+              padding: const EdgeInsets.only(bottom: 96),
               children: [
-                // Current Attendance Section (like Ionic - collapsible)
-                if (categorized.current != null)
-                  _CollapsibleSection(
-                    title: 'Aktuell',
-                    count: 1,
-                    initiallyExpanded: true,
-                    isPrimary: true,
-                    children: [
-                      AnimatedListItem(
-                        index: 0,
-                        child: _AttendanceListItem(
-                          key: ValueKey(categorized.current!.id),
-                          attendance: categorized.current!,
-                          onTap: () => _navigateToDetail(categorized.current!.id!),
-                          onDelete: role.canAddAttendance
-                              ? () => _confirmDelete(context, categorized.current!)
-                              : null,
-                          isHighlighted: highlightedTypeIds.contains(categorized.current!.typeId),
-                        ),
-                      ),
-                    ],
+                // "Heute" / "Nächster Termin" – full-width card (Ionic ev-today)
+                if (current != null) ...[
+                  EventMonthHeader(
+                    label: EventListUtils.isRunning(current.date, current.durationDays)
+                        ? 'Heute'
+                        : 'Nächster Termin',
                   ),
+                  slidable(
+                    current,
+                    EventTodayCard(
+                      date: current.date,
+                      title: current.displayTitle,
+                      meta: meta(current, withDate: true),
+                      status: percentPill(current),
+                      actions: [
+                        FilledButton.icon(
+                          onPressed: () => _navigateToDetail(current.id!),
+                          icon: const Icon(Icons.fact_check_outlined, size: 18),
+                          label: const Text('Anwesenheit erfassen'),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
 
-                // Upcoming Attendances Section (collapsible)
-                if (categorized.upcoming.isNotEmpty)
-                  _CollapsibleSection(
-                    title: 'Anstehend',
-                    count: categorized.upcoming.length,
-                    initiallyExpanded: true,
-                    isPrimary: true,
-                    children: categorized.upcoming.asMap().entries.map((entry) =>
-                      AnimatedListItem(
-                        index: entry.key,
-                        child: _AttendanceListItem(
-                          key: ValueKey(entry.value.id),
-                          attendance: entry.value,
-                          onTap: () => _navigateToDetail(entry.value.id!),
-                          onDelete: role.canAddAttendance
-                              ? () => _confirmDelete(context, entry.value)
-                              : null,
-                          isHighlighted: highlightedTypeIds.contains(entry.value.typeId),
+                if (categorized.upcoming.isNotEmpty) ...[
+                  EventSectionHeader(title: 'Anstehend', count: categorized.upcoming.length),
+                  for (final group in upcomingGroups) ...[
+                    EventMonthHeader(label: group.label),
+                    EventListCard(children: [
+                      for (final att in group.items)
+                        slidable(
+                          att,
+                          EventRow(
+                            date: att.date,
+                            title: att.displayTitle,
+                            subtitle: meta(att),
+                            highlight: highlightedTypeIds.contains(att.typeId),
+                            onTap: () => _navigateToDetail(att.id!),
+                            trailing: [percentPill(att)],
+                          ),
                         ),
-                      ),
-                    ).toList(),
-                  ),
+                    ]),
+                  ],
+                ],
 
-                // Past Attendances Section (collapsed by default)
-                if (categorized.past.isNotEmpty)
-                  _CollapsibleSection(
-                    title: 'Vergangen',
-                    count: categorized.past.length,
-                    initiallyExpanded: false,
-                    isPrimary: false,
-                    trailing: averagePercent != null
-                        ? Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                            decoration: BoxDecoration(
-                              color: AppColors.success.withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(
-                                  Icons.analytics,
-                                  size: 14,
-                                  color: AppColors.success,
-                                ),
-                                const SizedBox(width: 4),
-                                Text(
-                                  'Ø ${averagePercent.toStringAsFixed(0)}%',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
-                                    color: AppColors.success,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          )
-                        : null,
-                    children: categorized.past.asMap().entries.map((entry) =>
-                      AnimatedListItem(
-                        index: entry.key,
-                        child: _AttendanceListItem(
-                          key: ValueKey(entry.value.id),
-                          attendance: entry.value,
-                          onTap: () => _navigateToDetail(entry.value.id!),
-                          onDelete: role.canAddAttendance
-                              ? () => _confirmDelete(context, entry.value)
-                              : null,
-                          isHighlighted: highlightedTypeIds.contains(entry.value.typeId),
+                if (past.isNotEmpty) ...[
+                  EventSectionHeader(title: 'Vergangen', count: past.length),
+                  if (averagePercent != null)
+                    EventSummary(percentage: averagePercent.round()),
+                  EventListCard(children: [
+                    for (final att in pastPreview)
+                      slidable(
+                        att,
+                        EventRow(
+                          date: att.date,
+                          title: att.displayTitle,
+                          subtitle: meta(att, withDate: true),
+                          past: true,
+                          highlight: highlightedTypeIds.contains(att.typeId),
+                          onTap: () => _navigateToDetail(att.id!),
+                          trailing: [percentPill(att)],
                         ),
                       ),
-                    ).toList(),
-                  ),
+                    if (past.length > EventListUtils.pastPreviewCount)
+                      EventMoreLink(
+                        label: _showAllPast ? 'Weniger anzeigen' : 'Alle ${past.length} anzeigen',
+                        onTap: () => setState(() => _showAllPast = !_showAllPast),
+                      ),
+                  ]),
+                ],
               ],
             ),
           );
@@ -252,240 +276,6 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
             )
           : null,
     );
-  }
-}
-
-/// Collapsible section widget (like Ionic accordion)
-class _CollapsibleSection extends StatefulWidget {
-  const _CollapsibleSection({
-    required this.title,
-    required this.count,
-    required this.children,
-    this.initiallyExpanded = true,
-    this.isPrimary = true,
-    this.trailing,
-  });
-
-  final String title;
-  final int count;
-  final List<Widget> children;
-  final bool initiallyExpanded;
-  final bool isPrimary;
-  final Widget? trailing;
-
-  @override
-  State<_CollapsibleSection> createState() => _CollapsibleSectionState();
-}
-
-class _CollapsibleSectionState extends State<_CollapsibleSection> {
-  late bool _isExpanded;
-
-  @override
-  void initState() {
-    super.initState();
-    _isExpanded = widget.initiallyExpanded;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final color = widget.isPrimary ? AppColors.primary : AppColors.medium;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        InkWell(
-          onTap: () => setState(() => _isExpanded = !_isExpanded),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              vertical: AppDimensions.paddingS,
-              horizontal: AppDimensions.paddingXS,
-            ),
-            child: Row(
-              children: [
-                Icon(
-                  _isExpanded ? Icons.expand_more : Icons.chevron_right,
-                  color: color,
-                  size: 20,
-                ),
-                const SizedBox(width: AppDimensions.paddingXS),
-                Text(
-                  widget.title,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: color,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(width: AppDimensions.paddingS),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: color.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    '${widget.count}',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: color,
-                    ),
-                  ),
-                ),
-                if (widget.trailing != null) ...[
-                  const Spacer(),
-                  widget.trailing!,
-                ],
-              ],
-            ),
-          ),
-        ),
-        if (_isExpanded) ...widget.children,
-        if (_isExpanded) const SizedBox(height: AppDimensions.paddingM),
-      ],
-    );
-  }
-}
-
-class _AttendanceListItem extends StatelessWidget {
-  const _AttendanceListItem({
-    super.key,
-    required this.attendance,
-    required this.onTap,
-    this.onDelete,
-    this.isHighlighted = false,
-  });
-
-  final Attendance attendance;
-  final VoidCallback onTap;
-  final VoidCallback? onDelete;
-  final bool isHighlighted;
-
-  @override
-  Widget build(BuildContext context) {
-    final card = Card(
-      margin: const EdgeInsets.only(bottom: AppDimensions.paddingS),
-      child: ListTile(
-        onTap: onTap,
-        leading: Container(
-          width: 44,
-          height: 44,
-          decoration: BoxDecoration(
-            color: attendance.isToday
-                ? AppColors.primary.withValues(alpha: 0.2)
-                : AppColors.primaryLight.withValues(alpha: 0.2),
-            borderRadius: BorderRadius.circular(AppDimensions.borderRadiusS),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                _getMonthShort(attendance.date),
-                style: TextStyle(
-                  fontSize: 9,
-                  fontWeight: FontWeight.w500,
-                  height: 1.0,
-                  color: attendance.isToday ? AppColors.primary : AppColors.medium,
-                ),
-              ),
-              Text(
-                _getDayNumber(attendance.date),
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
-                  height: 1.1,
-                  color: attendance.isToday ? AppColors.primary : AppColors.dark,
-                ),
-              ),
-              Text(
-                attendance.weekdayName,
-                style: TextStyle(
-                  fontSize: 8,
-                  fontWeight: FontWeight.w500,
-                  height: 1.0,
-                  color: attendance.isToday ? AppColors.primary : AppColors.medium,
-                ),
-              ),
-            ],
-          ),
-        ),
-        title: Text(
-          attendance.displayTitle,
-          style: TextStyle(
-            // Dezentes Highlighting: nur fetter Text (wie Ionic)
-            fontWeight: isHighlighted ? FontWeight.bold : FontWeight.w500,
-          ),
-        ),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (attendance.startTime != null || attendance.endTime != null)
-              Text(
-                _formatTimeRange(attendance.startTime, attendance.endTime),
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: AppColors.medium,
-                ),
-              ),
-            if (attendance.notes != null && attendance.notes!.isNotEmpty)
-              Text(
-                attendance.notes!,
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: AppColors.medium,
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-          ],
-        ),
-        trailing: PercentageBadge(
-          percentage: attendance.percentage ?? 0,
-          showBackground: true,
-        ),
-      ),
-    );
-
-    // Wrap in Slidable only if delete is available
-    if (onDelete == null) return card;
-
-    return Slidable(
-      key: ValueKey(attendance.id),
-      endActionPane: ActionPane(
-        motion: const ScrollMotion(),
-        extentRatio: 0.25,
-        children: [
-          SlidableAction(
-            onPressed: (_) => onDelete!(),
-            backgroundColor: AppColors.danger,
-            foregroundColor: Colors.white,
-            icon: Icons.delete,
-            label: 'Löschen',
-          ),
-        ],
-      ),
-      child: card,
-    );
-  }
-
-  String _getDayNumber(String dateString) {
-    final date = DateTime.tryParse(dateString);
-    if (date == null) return '';
-    return date.day.toString();
-  }
-
-  String _getMonthShort(String dateString) {
-    final date = DateTime.tryParse(dateString);
-    if (date == null) return '';
-    const months = ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'];
-    return months[date.month - 1];
-  }
-
-  String _formatTimeRange(String? start, String? end) {
-    if (start == null && end == null) return '';
-    if (start != null && end != null) return '$start - $end';
-    if (start != null) return 'ab $start';
-    return 'bis $end';
   }
 }
 
