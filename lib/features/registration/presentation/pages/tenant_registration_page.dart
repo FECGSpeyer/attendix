@@ -7,18 +7,19 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/config/supabase_config.dart';
-import '../../../../core/constants/app_constants.dart';
 import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/church_providers.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/utils/string_utils.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/providers/user_preferences_provider.dart';
 import '../../../../core/utils/dashboard_logic.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../auth/data/auth_flow_service.dart';
+import '../../../auth/presentation/widgets/ion_form_list.dart';
 import '../../../auth/presentation/widgets/otp_widgets.dart';
+import '../../../profile/presentation/widgets/church_picker.dart';
+import '../../../../data/models/church/church.dart';
 import '../../../legal/presentation/widgets/legal_content_view.dart';
 import '../../data/providers/registration_providers.dart';
 import '../../../../l10n/l10n.dart';
@@ -44,8 +45,6 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
   final _birthdayController = TextEditingController();
 
   bool _isLoading = false;
-  bool _obscurePassword = true;
-  bool _obscureConfirmPassword = true;
   Uint8List? _profileImageBytes;
   bool _hasCheckedRegistration = false;
 
@@ -62,6 +61,11 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
   bool _privacyAccepted = false;
   bool _noGroupsAvailable = false;
 
+  /// iOS large title (`collapse="condense"`): the toolbar title appears once
+  /// the large title has scrolled away.
+  final _scrollController = ScrollController();
+  final _showToolbarTitle = ValueNotifier<bool>(false);
+
   bool get _isLoggedIn => ref.read(supabaseClientProvider).auth.currentUser != null;
 
   @override
@@ -70,11 +74,17 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
     // Ionic default: birth date 18 years ago.
     final now = DateTime.now();
     _formData.birthDate = DateTime(now.year - 18, now.month, now.day);
+    _scrollController.addListener(() {
+      _showToolbarTitle.value =
+          _scrollController.hasClients && _scrollController.offset > 30;
+    });
   }
 
   @override
   void dispose() {
     _birthdayController.dispose();
+    _scrollController.dispose();
+    _showToolbarTitle.dispose();
     _emailController.dispose();
     _otpController.dispose();
     _firstNameController.dispose();
@@ -92,7 +102,19 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
       // Ionic tenant-register: no back/close on the left, a home button on
       // the right (goHome()).
       appBar: AppBar(
-        title: Text(context.l10n.tenantRegisterTitle),
+        title: ionIsIos(context) &&
+                ref.watch(tenantByRegisterIdProvider(widget.registerId)).valueOrNull !=
+                    null
+            ? ValueListenableBuilder<bool>(
+                valueListenable: _showToolbarTitle,
+                builder: (context, show, child) => AnimatedOpacity(
+                  opacity: show ? 1 : 0,
+                  duration: const Duration(milliseconds: 150),
+                  child: child,
+                ),
+                child: Text(context.l10n.tenantRegisterTitle),
+              )
+            : Text(context.l10n.tenantRegisterTitle),
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
@@ -146,6 +168,15 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
     );
   }
 
+  /// Ionic `common.groupLabel.*` for the group select of tenant-register.
+  String _groupLabel(Tenant tenant) {
+    if (tenant.type == 'choir' && tenant.id != 194) {
+      return context.l10n.commonGroupLabelVoice;
+    }
+    if (tenant.type == 'orchestra') return context.l10n.commonGroupLabelInstrument;
+    return context.l10n.commonGroupLabelGroup;
+  }
+
   Widget _buildForm(Tenant tenant) {
     // Check if logged-in user is already registered in this tenant
     if (!_hasCheckedRegistration && _isLoggedIn) {
@@ -158,234 +189,259 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
     final groupsAsync = ref.watch(registrationGroupsProvider(tenant.id!));
     final registrationFields = tenant.registrationFields ?? [];
     final additionalFields = tenant.additionalFields ?? [];
+    final theme = Theme.of(context);
+    final ios = ionIsIos(context);
+    final inputStyle = ionItemInputStyle(context);
+    final dateFormat = DateFormat(dateFmt());
 
+    // Ionic tenant-register: one inset list with a card (instance name +
+    // intro), then the "Account", "Persönliche Daten" and "Weitere
+    // Informationen" groups and the primary "Registrierung abschließen" item.
     return Form(
       key: _formKey,
       child: ListView(
-        padding: const EdgeInsets.all(AppDimensions.paddingM),
+        controller: _scrollController,
+        padding: const EdgeInsets.only(bottom: 32),
         children: [
-          // Tenant info header
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(AppDimensions.paddingM),
-              child: Row(
-                children: [
-                  CircleAvatar(
-                    backgroundColor: AppColors.primaryLight,
-                    child: Text(
-                      StringUtils.getTenantInitials(
-                        tenant.shortName,
-                        tenant.longName,
-                      ),
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: AppDimensions.paddingM),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          context.l10n.tenantRegisterFlutterRegistrationAt,
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: AppColors.medium,
-                              ),
-                        ),
-                        Text(
-                          tenant.shortName.isNotEmpty ? tenant.shortName : tenant.longName,
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.w600,
-                              ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+          // ion-header collapse="condense": large title on iOS
+          if (ios)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
+              child: Text(
+                context.l10n.tenantRegisterTitle,
+                style: TextStyle(
+                  fontSize: 34,
+                  fontWeight: FontWeight.w700,
+                  color: theme.colorScheme.onSurface,
+                ),
               ),
             ),
-          ),
-          const SizedBox(height: AppDimensions.paddingS),
-          Text(
-            context.l10n.tenantRegisterIntro,
-            style: Theme.of(context).textTheme.bodyMedium,
-          ),
-          const SizedBox(height: AppDimensions.paddingL),
 
-          // Account section (Ionic: "Account")
-          ..._buildAccountSection(),
-
-          // Personal data section
-          Text(
-            context.l10n.tenantRegisterPersonalData,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
+          // ion-card: business icon, instance name (ion-title), intro
+          Container(
+            margin: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+            padding: const EdgeInsets.fromLTRB(16, 20, 16, 20),
+            decoration: BoxDecoration(
+              color: theme.cardTheme.color ?? theme.colorScheme.surface,
+              borderRadius: BorderRadius.circular(ios ? 24 : 4),
+              boxShadow: [
+                BoxShadow(
+                  color: ios ? const Color(0x1F000000) : const Color(0x33000000),
+                  blurRadius: ios ? 12 : 2,
+                  offset: Offset(0, ios ? 4 : 1),
                 ),
-          ),
-          const SizedBox(height: AppDimensions.paddingM),
-          TextFormField(
-            controller: _firstNameController,
-            textCapitalization: TextCapitalization.words,
-            decoration: InputDecoration(
-              labelText: '${context.l10n.tenantRegisterFirstName} *',
-              prefixIcon: Icon(Icons.person_outlined),
+              ],
             ),
-            onSaved: (value) => _formData.firstName = value?.trim() ?? '',
-          ),
-          const SizedBox(height: AppDimensions.paddingM),
-          TextFormField(
-            controller: _lastNameController,
-            textCapitalization: TextCapitalization.words,
-            decoration: InputDecoration(
-              labelText: '${context.l10n.tenantRegisterLastName} *',
-              prefixIcon: Icon(Icons.person_outlined),
-            ),
-            onSaved: (value) => _formData.lastName = value?.trim() ?? '',
-          ),
-          const SizedBox(height: AppDimensions.paddingM),
-
-          // Group selection
-          groupsAsync.when(
-            loading: () => const Center(child: CircularProgressIndicator()),
-            error: (_, __) => Text(context.l10n.tenantRegisterFlutterLoadGroupsFailed),
-            data: (groups) {
-              _noGroupsAvailable = groups.isEmpty;
-              if (groups.isEmpty) {
-                return Card(
-                  color: AppColors.danger.withValues(alpha: 0.1),
-                  child: Padding(
-                    padding: EdgeInsets.all(AppDimensions.paddingM),
-                    child: Text(
-                      context.l10n.tenantRegisterNoGroups,
-                      style: TextStyle(color: AppColors.danger),
-                    ),
+            child: Column(
+              children: [
+                const Icon(Icons.business_outlined,
+                    size: 64, color: Color(0xFF666666)),
+                const SizedBox(height: 12),
+                Text(
+                  tenant.longName.isNotEmpty ? tenant.longName : tenant.shortName,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w600,
+                    color: theme.colorScheme.onSurface,
                   ),
-                );
-              }
-              // Ionic: first group preselected.
-              _formData.groupId ??= groups.first['id'] as int;
-              return DropdownButtonFormField<int>(
-                value: _formData.groupId,
-                decoration: InputDecoration(
-                  labelText: '${context.l10n.commonGroupLabelGroup} *',
-                  prefixIcon: Icon(Icons.group_outlined),
                 ),
-                items: groups.map((g) {
-                  return DropdownMenuItem<int>(
-                    value: g['id'] as int,
-                    child: Text(g['name'] as String),
-                  );
-                }).toList(),
-                validator: (value) {
-                  if (value == null) {
-                    return context.l10n.tenantRegisterFlutterGroupRequired;
+                const SizedBox(height: 16),
+                Text(
+                  context.l10n.tenantRegisterIntro,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontSize: 14, color: Color(0xFF666666)),
+                ),
+              ],
+            ),
+          ),
+
+          // Account
+          IonListHeader(context.l10n.tenantRegisterAccount),
+          _buildAccountGroup(),
+
+          // Persönliche Daten
+          IonListHeader(context.l10n.tenantRegisterPersonalData),
+          IonInsetGroup(
+            children: [
+              if (registrationFields.contains('picture'))
+                IonItem(
+                  onTap: _pickImage,
+                  start: CircleAvatar(
+                    radius: 20,
+                    backgroundColor: AppColors.light,
+                    backgroundImage: _profileImageBytes != null
+                        ? MemoryImage(_profileImageBytes!)
+                        : null,
+                    child: _profileImageBytes == null
+                        ? const Icon(Icons.person, color: AppColors.medium)
+                        : null,
+                  ),
+                  label: _profileImageBytes != null
+                      ? context.l10n.tenantRegisterReplacePicture
+                      : context.l10n.tenantRegisterChoosePicture,
+                  labelColor: AppColors.primary,
+                ),
+              IonInputItem(
+                child: TextFormField(
+                  controller: _firstNameController,
+                  style: inputStyle,
+                  textCapitalization: TextCapitalization.words,
+                  autofillHints: const [AutofillHints.givenName],
+                  decoration: ionItemInputDecoration(
+                      context, context.l10n.tenantRegisterFirstName),
+                  onSaved: (value) => _formData.firstName = value?.trim() ?? '',
+                ),
+              ),
+              IonInputItem(
+                child: TextFormField(
+                  controller: _lastNameController,
+                  style: inputStyle,
+                  textCapitalization: TextCapitalization.words,
+                  autofillHints: const [AutofillHints.familyName],
+                  decoration: ionItemInputDecoration(
+                      context, context.l10n.tenantRegisterLastName),
+                  onSaved: (value) => _formData.lastName = value?.trim() ?? '',
+                ),
+              ),
+              if (registrationFields.contains('birthDate'))
+                IonItem(
+                  label: context.l10n.tenantRegisterBirthDate,
+                  end: IonDateButton(
+                    onTap: _pickBirthday,
+                    text: _formData.birthDate != null
+                        ? dateFormat.format(_formData.birthDate!)
+                        : context.l10n.tenantRegisterPleaseChoose,
+                  ),
+                ),
+              if (registrationFields.contains('phone'))
+                IonInputItem(
+                  child: TextFormField(
+                    controller: _phoneController,
+                    style: inputStyle,
+                    keyboardType: TextInputType.phone,
+                    autofillHints: const [AutofillHints.telephoneNumber],
+                    decoration: ionItemInputDecoration(
+                        context, context.l10n.tenantRegisterPhone),
+                    onSaved: (value) => _formData.phone = value,
+                  ),
+                ),
+            ],
+          ),
+
+          // Weitere Informationen
+          IonListHeader(context.l10n.tenantRegisterMoreInfo),
+          IonInsetGroup(
+            children: [
+              groupsAsync.when(
+                loading: () => const Padding(
+                  padding: EdgeInsets.all(16),
+                  child: Center(child: CircularProgressIndicator()),
+                ),
+                error: (_, __) => IonItem(
+                  label: context.l10n.tenantRegisterFlutterLoadGroupsFailed,
+                  labelColor: AppColors.danger,
+                ),
+                data: (groups) {
+                  _noGroupsAvailable = groups.isEmpty;
+                  if (groups.isEmpty) {
+                    // ion-item color="warning" with warning icon
+                    return ColoredBox(
+                      color: AppColors.warning,
+                      child: IonItem(
+                        start: const Icon(Icons.warning_amber_outlined,
+                            color: Colors.black),
+                        title: Text(
+                          context.l10n.tenantRegisterNoGroups,
+                          style: const TextStyle(
+                              fontSize: 14, color: Colors.black),
+                        ),
+                      ),
+                    );
                   }
-                  return null;
+                  // Ionic: first group preselected.
+                  _formData.groupId ??= groups.first['id'] as int;
+                  final selected = groups
+                      .where((g) => g['id'] == _formData.groupId)
+                      .firstOrNull;
+                  final label = _groupLabel(tenant);
+                  return IonItem(
+                    label: label,
+                    onTap: () async {
+                      final value = await showIonSelectOptions<int>(
+                        context,
+                        title: label,
+                        options: [
+                          for (final g in groups)
+                            (g['id'] as int, g['name'] as String),
+                        ],
+                        selected: _formData.groupId,
+                      );
+                      if (value != null && mounted) {
+                        setState(() => _formData.groupId = value);
+                      }
+                    },
+                    end: IonSelectValue(
+                      text: selected?['name'] as String? ?? '',
+                    ),
+                  );
                 },
-                onChanged: (value) => _formData.groupId = value,
-                onSaved: (value) => _formData.groupId = value,
-              );
-            },
-          ),
-
-          // Profile picture
-          if (registrationFields.contains('picture')) ...[
-            const SizedBox(height: AppDimensions.paddingM),
-            _buildProfilePictureField(),
-          ],
-
-          // Optional fields based on registration_fields
-          if (registrationFields.contains('birthDate')) ...[
-            const SizedBox(height: AppDimensions.paddingM),
-            _buildBirthdayField(),
-          ],
-
-          if (registrationFields.contains('phone')) ...[
-            const SizedBox(height: AppDimensions.paddingM),
-            TextFormField(
-              controller: _phoneController,
-              decoration: InputDecoration(
-                labelText: context.l10n.tenantRegisterPhone,
-                prefixIcon: Icon(Icons.phone_outlined),
               ),
-              keyboardType: TextInputType.phone,
-              onSaved: (value) => _formData.phone = value,
-            ),
-          ],
-
-          // Dynamic additional fields
-          ..._buildAdditionalFields(registrationFields, additionalFields),
-
-          // Notes field
-          const SizedBox(height: AppDimensions.paddingM),
-          TextFormField(
-            decoration: InputDecoration(
-              labelText: context.l10n.tenantRegisterNotes,
-              prefixIcon: Icon(Icons.notes_outlined),
-              alignLabelWithHint: true,
-            ),
-            maxLines: 3,
-            onSaved: (value) => _formData.notes = value,
+              ..._buildAdditionalFields(registrationFields, additionalFields),
+              IonInputItem(
+                child: TextFormField(
+                  style: inputStyle,
+                  minLines: 1,
+                  maxLines: 4,
+                  textCapitalization: TextCapitalization.sentences,
+                  decoration: ionItemInputDecoration(
+                      context, context.l10n.tenantRegisterNotes),
+                  onSaved: (value) => _formData.notes = value,
+                ),
+              ),
+            ],
           ),
+          const SizedBox(height: 8),
 
-          const SizedBox(height: AppDimensions.paddingL),
-
-          // Submit button
-          FilledButton(
-            onPressed: _isLoading ||
-                    _noGroupsAvailable ||
-                    (!_isLoggedIn && _mode == AuthMode.otp)
-                ? null
-                : () => _submit(tenant),
-            child: _isLoading
-                ? const SizedBox(
-                    width: 24,
-                    height: 24,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : Text(context.l10n.tenantRegisterFinish),
+          // ion-item color="primary" button: Registrierung abschließen
+          IonInsetGroup(
+            children: [
+              IonButtonItem(
+                key: const ValueKey('tenant-register-finish'),
+                filled: true,
+                icon: Icons.check_circle_outline,
+                label: context.l10n.tenantRegisterFinish,
+                onTap: _isLoading ||
+                        _noGroupsAvailable ||
+                        (!_isLoggedIn && _mode == AuthMode.otp)
+                    ? null
+                    : () => _submit(tenant),
+              ),
+            ],
           ),
-
-          const SizedBox(height: AppDimensions.paddingL),
+          if (_isLoading)
+            const Padding(
+              padding: EdgeInsets.only(top: 16),
+              child: Center(child: CircularProgressIndicator()),
+            ),
         ],
       ),
     );
   }
 
-  Widget _buildBirthdayField() {
-    final dateFormat = DateFormat(dateFmt());
-    // FN-007: Use state-managed controller and update text on date change
-    if (_formData.birthDate != null && _birthdayController.text.isEmpty) {
-      _birthdayController.text = dateFormat.format(_formData.birthDate!);
-    }
-    return TextFormField(
-      decoration: InputDecoration(
-        labelText: context.l10n.tenantRegisterBirthDate,
-        prefixIcon: const Icon(Icons.cake_outlined),
-        suffixIcon: const Icon(Icons.calendar_today),
-        hintText: _formData.birthDate != null
-            ? dateFormat.format(_formData.birthDate!)
-            : null,
-      ),
-      readOnly: true,
-      controller: _birthdayController,
-      onTap: () async {
-        final date = await showDatePicker(
-          context: context,
-          initialDate: _formData.birthDate ?? DateTime(DateTime.now().year - 18),
-          firstDate: DateTime(1900),
-          lastDate: DateTime.now(),
-        );
-        if (date != null) {
-          setState(() {
-            _formData.birthDate = date;
-            _birthdayController.text = dateFormat.format(date);
-          });
-        }
-      },
+  Future<void> _pickBirthday() async {
+    final date = await showDatePicker(
+      context: context,
+      initialDate: _formData.birthDate ?? DateTime(DateTime.now().year - 18),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
     );
+    if (date != null) {
+      setState(() {
+        _formData.birthDate = date;
+        _birthdayController.text = DateFormat(dateFmt()).format(date);
+      });
+    }
   }
 
   List<Widget> _buildAdditionalFields(
@@ -393,220 +449,128 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
     List<ExtraField> additionalFields,
   ) {
     final widgets = <Widget>[];
+    final inputStyle = ionItemInputStyle(context);
 
     for (final field in additionalFields) {
       // Only show if in registration_fields
       if (!registrationFields.contains(field.id)) continue;
 
-      widgets.add(const SizedBox(height: AppDimensions.paddingM));
-
       switch (field.type) {
         case 'text':
         case 'textarea':
           widgets.add(
-            TextFormField(
-              decoration: InputDecoration(
-                labelText: field.name,
-                prefixIcon: const Icon(Icons.text_fields),
-              ),
-              maxLines: field.type == 'textarea' ? 3 : 1,
-              initialValue: field.defaultValue?.toString(),
-              onSaved: (value) {
-                if (value != null && value.isNotEmpty) {
-                  _formData.additionalFields[field.id] = value;
-                }
-              },
-            ),
-          );
-          break;
-
-        case 'number':
-          widgets.add(
-            TextFormField(
-              decoration: InputDecoration(
-                labelText: field.name,
-                prefixIcon: const Icon(Icons.numbers),
-              ),
-              keyboardType: TextInputType.number,
-              initialValue: field.defaultValue?.toString(),
-              onSaved: (value) {
-                if (value != null && value.isNotEmpty) {
-                  _formData.additionalFields[field.id] = int.tryParse(value) ?? value;
-                }
-              },
-            ),
-          );
-          break;
-
-        case 'boolean':
-          widgets.add(
-            StatefulBuilder(
-              builder: (context, setFieldState) {
-                final value = _formData.additionalFields[field.id] as bool? ??
-                    field.defaultValue as bool? ??
-                    false;
-                return SwitchListTile(
-                  title: Text(field.name),
-                  value: value,
-                  onChanged: (newValue) {
-                    setFieldState(() {
-                      _formData.additionalFields[field.id] = newValue;
-                    });
-                  },
-                );
-              },
-            ),
-          );
-          break;
-
-        case 'select':
-          if (field.options != null && field.options!.isNotEmpty) {
-            widgets.add(
-              DropdownButtonFormField<String>(
-                decoration: InputDecoration(
-                  labelText: field.name,
-                  prefixIcon: const Icon(Icons.list),
-                ),
-                value: _formData.additionalFields[field.id] as String? ??
-                    field.defaultValue?.toString(),
-                items: field.options!.map((option) {
-                  return DropdownMenuItem<String>(
-                    value: option,
-                    child: Text(option),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  _formData.additionalFields[field.id] = value;
-                },
+            IonInputItem(
+              child: TextFormField(
+                style: inputStyle,
+                textCapitalization: TextCapitalization.sentences,
+                decoration: ionItemInputDecoration(context, field.name),
+                maxLines: field.type == 'textarea' ? 3 : 1,
+                initialValue: field.defaultValue?.toString(),
                 onSaved: (value) {
-                  if (value != null) {
+                  if (value != null && value.isNotEmpty) {
                     _formData.additionalFields[field.id] = value;
                   }
                 },
               ),
-            );
-          }
-          break;
-
-        case 'date':
-          widgets.add(
-            StatefulBuilder(
-              builder: (context, setFieldState) {
-                final dateFormat = DateFormat(dateFmt());
-                final currentValue = _formData.additionalFields[field.id];
-                final currentDate = currentValue != null
-                    ? DateTime.tryParse(currentValue.toString())
-                    : null;
-
-                return TextFormField(
-                  decoration: InputDecoration(
-                    labelText: field.name,
-                    prefixIcon: const Icon(Icons.calendar_today),
-                  ),
-                  readOnly: true,
-                  controller: TextEditingController(
-                    text: currentDate != null ? dateFormat.format(currentDate) : '',
-                  ),
-                  onTap: () async {
-                    final date = await showDatePicker(
-                      context: context,
-                      initialDate: currentDate ?? DateTime.now(),
-                      firstDate: DateTime(1900),
-                      lastDate: DateTime(2100),
-                    );
-                    if (date != null) {
-                      setFieldState(() {
-                        _formData.additionalFields[field.id] =
-                            date.toIso8601String().split('T').first;
-                      });
-                    }
-                  },
-                );
-              },
             ),
           );
-          break;
+
+        case 'number':
+          widgets.add(
+            IonInputItem(
+              child: TextFormField(
+                style: inputStyle,
+                decoration: ionItemInputDecoration(context, field.name),
+                keyboardType: TextInputType.number,
+                initialValue: field.defaultValue?.toString(),
+                onSaved: (value) {
+                  if (value != null && value.isNotEmpty) {
+                    _formData.additionalFields[field.id] =
+                        int.tryParse(value) ?? value;
+                  }
+                },
+              ),
+            ),
+          );
+
+        case 'boolean':
+          final value = _formData.additionalFields[field.id] as bool? ??
+              field.defaultValue as bool? ??
+              false;
+          widgets.add(
+            IonItem(
+              title: Text(field.name),
+              end: Switch(
+                value: value,
+                onChanged: (newValue) => setState(
+                    () => _formData.additionalFields[field.id] = newValue),
+              ),
+            ),
+          );
+
+        case 'select':
+          if (field.options != null && field.options!.isNotEmpty) {
+            final current = _formData.additionalFields[field.id] as String? ??
+                field.defaultValue?.toString();
+            widgets.add(
+              IonItem(
+                label: field.name,
+                onTap: () async {
+                  final value = await showIonSelectOptions<String>(
+                    context,
+                    title: field.name,
+                    options: [for (final o in field.options!) (o, o)],
+                    selected: current,
+                  );
+                  if (value != null && mounted) {
+                    setState(
+                        () => _formData.additionalFields[field.id] = value);
+                  }
+                },
+                end: IonSelectValue(
+                  text: current ?? context.l10n.tenantRegisterPleaseChoose,
+                  placeholder: current == null,
+                ),
+              ),
+            );
+          }
+
+        case 'date':
+          final currentValue = _formData.additionalFields[field.id];
+          final currentDate = currentValue != null
+              ? DateTime.tryParse(currentValue.toString())
+              : null;
+          widgets.add(
+            IonItem(
+              label: field.name,
+              end: IonDateButton(
+                text: currentDate != null
+                    ? DateFormat(dateFmt()).format(currentDate)
+                    : context.l10n.tenantRegisterPleaseChoose,
+                onTap: () async {
+                  final date = await showDatePicker(
+                    context: context,
+                    initialDate: currentDate ?? DateTime.now(),
+                    firstDate: DateTime(1900),
+                    lastDate: DateTime(2100),
+                  );
+                  if (date != null && mounted) {
+                    setState(() {
+                      _formData.additionalFields[field.id] =
+                          date.toIso8601String().split('T').first;
+                    });
+                  }
+                },
+              ),
+            ),
+          );
 
         case 'bfecg_church':
-          widgets.add(_buildChurchField(field));
-          break;
+          widgets.addAll(_buildChurchField(field));
       }
     }
 
     return widgets;
-  }
-
-  Widget _buildProfilePictureField() {
-    return FormField<Uint8List>(
-      builder: (fieldState) => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          InkWell(
-            onTap: _pickImage,
-            borderRadius: BorderRadius.circular(AppDimensions.borderRadiusM),
-            child: Container(
-              padding: const EdgeInsets.all(AppDimensions.paddingM),
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: fieldState.hasError ? AppColors.danger : AppColors.light,
-                ),
-                borderRadius: BorderRadius.circular(AppDimensions.borderRadiusM),
-              ),
-              child: Row(
-                children: [
-                  CircleAvatar(
-                    radius: 30,
-                    backgroundColor: AppColors.primaryLight,
-                    backgroundImage: _profileImageBytes != null
-                        ? MemoryImage(_profileImageBytes!)
-                        : null,
-                    child: _profileImageBytes == null
-                        ? const Icon(Icons.person, size: 30, color: Colors.white)
-                        : null,
-                  ),
-                  const SizedBox(width: AppDimensions.paddingM),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          _profileImageBytes != null
-                              ? context.l10n.tenantRegisterReplacePicture
-                              : context.l10n.tenantRegisterChoosePicture,
-                          style: const TextStyle(
-                            color: AppColors.primary,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          context.l10n.tenantRegisterFlutterMaxSize,
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: AppColors.medium,
-                              ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const Icon(Icons.photo_camera, color: AppColors.primary),
-                ],
-              ),
-            ),
-          ),
-          if (fieldState.hasError)
-            Padding(
-              padding: const EdgeInsets.only(
-                left: AppDimensions.paddingM,
-                top: AppDimensions.paddingXS,
-              ),
-              child: Text(
-                fieldState.errorText!,
-                style: TextStyle(color: AppColors.danger, fontSize: 12),
-              ),
-            ),
-        ],
-      ),
-    );
   }
 
   Future<void> _pickImage() async {
@@ -640,69 +604,71 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
     }
   }
 
-  Widget _buildChurchField(ExtraField field) {
+  /// Ionic: label + clear button with the church name (opens the searchable
+  /// church modal); "Nicht gelistet" adds an item for the church name.
+  List<Widget> _buildChurchField(ExtraField field) {
     final churchesAsync = ref.watch(churchesProvider);
+    final churches = churchesAsync.valueOrNull ?? const <Church>[];
+    final selectedChurchId = _formData.additionalFields[field.id]?.toString();
+    final isCustom = selectedChurchId == '';
+    final name =
+        field.name.isNotEmpty ? field.name : context.l10n.exportChurch;
 
-    return churchesAsync.when(
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (_, __) => Text(context.l10n.tenantRegisterFlutterLoadChurchesFailed),
-      data: (churches) {
-        return StatefulBuilder(
-          builder: (context, setFieldState) {
-            final selectedChurchId =
-                _formData.additionalFields[field.id]?.toString();
-            final isCustom = selectedChurchId == '';
+    String churchLabel() {
+      if (selectedChurchId == null) {
+        return context.l10n.tenantRegisterPleaseChoose;
+      }
+      if (selectedChurchId.isEmpty) return context.l10n.tenantRegisterNotListed;
+      return churches.where((c) => c.id == selectedChurchId).firstOrNull?.name ??
+          context.l10n.tenantRegisterPleaseChoose;
+    }
 
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                DropdownButtonFormField<String>(
-                  decoration: InputDecoration(
-                    labelText: field.name.isNotEmpty ? field.name : context.l10n.exportChurch,
-                    prefixIcon: const Icon(Icons.church_outlined),
-                  ),
-                  value: selectedChurchId,
-                  isExpanded: true,
-                  items: [
-                    DropdownMenuItem<String>(
-                      value: '',
-                      child: Text(context.l10n.tenantRegisterNotListed),
-                    ),
-                    ...churches.map((c) => DropdownMenuItem<String>(
-                          value: c.id,
-                          child: Text(c.name),
-                        )),
-                  ],
-                  onChanged: (value) {
-                    setFieldState(() {
-                      _formData.additionalFields[field.id] = value;
-                      if (value != '') {
-                        _formData.additionalFields.remove('_custom_church');
-                      }
-                    });
-                  },
-                ),
-                if (isCustom) ...[
-                  const SizedBox(height: AppDimensions.paddingM),
-                  TextFormField(
-                    decoration: InputDecoration(
-                      labelText: context.l10n.tenantRegisterChurchNotListed,
-                      hintText: context.l10n.tenantRegisterChurchNamePlaceholder,
-                      prefixIcon: const Icon(Icons.edit),
-                      helperText: context.l10n.tenantRegisterFlutterMinFiveChars,
-                    ),
-                    onSaved: (value) {
-                      _formData.additionalFields['_custom_church'] =
-                          value?.trim();
-                    },
-                  ),
-                ],
-              ],
-            );
-          },
-        );
-      },
-    );
+    return [
+      IonItem(
+        label: name,
+        end: churchesAsync.hasError
+            ? Text(context.l10n.tenantRegisterFlutterLoadChurchesFailed,
+                style: const TextStyle(color: AppColors.danger, fontSize: 13))
+            : TextButton(
+                onPressed: churchesAsync.isLoading
+                    ? null
+                    : () async {
+                        final selected = await showChurchPicker(
+                          context,
+                          title: name,
+                          churches: churches,
+                          selectedId: selectedChurchId,
+                          searchHint: context.l10n.tenantRegisterSearchChurch,
+                          notListedLabel: context.l10n.tenantRegisterNotListed,
+                          noChurchLabel: context.l10n.tenantRegisterNoChurchFound,
+                        );
+                        if (selected == null || !mounted) return;
+                        setState(() {
+                          _formData.additionalFields[field.id] = selected;
+                          if (selected != '') {
+                            _formData.additionalFields.remove('_custom_church');
+                          }
+                        });
+                      },
+                child: Text(churchLabel()),
+              ),
+      ),
+      if (isCustom)
+        IonInputItem(
+          child: TextFormField(
+            style: ionItemInputStyle(context),
+            textCapitalization: TextCapitalization.words,
+            decoration: ionItemInputDecoration(
+              context,
+              context.l10n.tenantRegisterChurchNotListed,
+              hint: context.l10n.tenantRegisterChurchNamePlaceholder,
+            ),
+            onSaved: (value) {
+              _formData.additionalFields['_custom_church'] = value?.trim();
+            },
+          ),
+        ),
+    ];
   }
 
   Future<void> _checkExistingRegistration(Tenant tenant) async {
@@ -818,151 +784,150 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
   // AUTH: account block (Ionic tenant-register "Account")
   // ---------------------------------------------------------------------------
 
-  List<Widget> _buildAccountSection() {
-    final theme = Theme.of(context);
-    final title = Text(
-      context.l10n.tenantRegisterAccount,
-      style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
-    );
-
+  Widget _buildAccountGroup() {
     if (_isLoggedIn) {
       final email = ref.read(supabaseClientProvider).auth.currentUser?.email ?? '';
-      return [
-        title,
-        const SizedBox(height: AppDimensions.paddingS),
-        Card(
-          color: AppColors.success.withValues(alpha: 0.08),
-          child: ListTile(
-            leading: const Icon(Icons.verified_user_outlined,
-                color: AppColors.success),
-            title: Text(context.l10n.tenantRegisterSignedInAs(email)),
-          ),
-        ),
-        const SizedBox(height: AppDimensions.paddingL),
-      ];
+      return IonInsetGroup(
+        children: [IonItem(label: context.l10n.tenantRegisterSignedInAs(email))],
+      );
     }
 
-    return [
-      title,
-      Align(
-        alignment: Alignment.centerLeft,
-        child: TextButton(
-          onPressed: _isLoading ? null : _showLoginDialogForCurrentTenant,
-          child: Text(context.l10n.tenantRegisterHaveAccount),
+    final inputStyle = ionItemInputStyle(context);
+    return IonInsetGroup(
+      children: [
+        IonButtonItem(
+          label: context.l10n.tenantRegisterHaveAccount,
+          onTap: _isLoading ? null : _showLoginDialogForCurrentTenant,
         ),
-      ),
-      AuthModeSegment(
-        mode: _mode,
-        enabled: !_isLoading,
-        onChanged: (mode) {
-          setState(() {
-            _mode = mode;
-            _otpSent = false;
-            _otpController.clear();
-          });
-          _cooldown.reset();
-        },
-      ),
-      const SizedBox(height: AppDimensions.paddingM),
-      TextFormField(
-        controller: _emailController,
-        readOnly: _mode == AuthMode.otp && _otpSent,
-        decoration: InputDecoration(
-          labelText: '${context.l10n.tenantRegisterEmailAddress} *',
-          prefixIcon: const Icon(Icons.email_outlined),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
+          child: AuthModeSegment(
+            mode: _mode,
+            enabled: !_isLoading,
+            trackAlpha: 0.1,
+            fontSize: 13.6,
+            onChanged: (mode) {
+              setState(() {
+                _mode = mode;
+                _otpSent = false;
+                _otpController.clear();
+              });
+              _cooldown.reset();
+            },
+          ),
         ),
-        keyboardType: TextInputType.emailAddress,
-        autofillHints: const [AutofillHints.email],
-        onSaved: (value) => _formData.email = value?.trim() ?? '',
-      ),
-      const SizedBox(height: AppDimensions.paddingM),
-      if (_mode == AuthMode.password) ...[
-        TextFormField(
-          decoration: InputDecoration(
-            labelText: '${context.l10n.loginPassword} *',
-            prefixIcon: const Icon(Icons.lock_outlined),
-            suffixIcon: IconButton(
-              tooltip: context.l10n.loginShowPassword,
-              icon: Icon(_obscurePassword ? Icons.visibility : Icons.visibility_off),
-              onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+        IonInputItem(
+          child: TextFormField(
+            controller: _emailController,
+            style: inputStyle,
+            readOnly: _mode == AuthMode.otp && _otpSent,
+            decoration: ionItemInputDecoration(
+                context, context.l10n.tenantRegisterEmailAddress),
+            keyboardType: TextInputType.emailAddress,
+            autofillHints: const [AutofillHints.email],
+            onSaved: (value) => _formData.email = value?.trim() ?? '',
+          ),
+        ),
+        if (_mode == AuthMode.password) ...[
+          IonInputItem(
+            child: TextFormField(
+              style: inputStyle,
+              decoration: ionItemInputDecoration(
+                  context, context.l10n.loginModePassword),
+              obscureText: true,
+              autofillHints: const [AutofillHints.newPassword],
+              onChanged: (value) => _formData.password = value,
+              onSaved: (value) => _formData.password = value ?? '',
             ),
           ),
-          obscureText: _obscurePassword,
-          autofillHints: const [AutofillHints.newPassword],
-          onChanged: (value) => _formData.password = value,
-          onSaved: (value) => _formData.password = value ?? '',
-        ),
-        const SizedBox(height: AppDimensions.paddingM),
-        TextFormField(
-          decoration: InputDecoration(
-            labelText: '${context.l10n.registerModalConfirmPassword} *',
-            prefixIcon: const Icon(Icons.lock_outlined),
-            suffixIcon: IconButton(
-              icon: Icon(_obscureConfirmPassword
-                  ? Icons.visibility
-                  : Icons.visibility_off),
-              onPressed: () => setState(
-                  () => _obscureConfirmPassword = !_obscureConfirmPassword),
+          IonInputItem(
+            child: TextFormField(
+              style: inputStyle,
+              decoration: ionItemInputDecoration(
+                  context, context.l10n.registerModalConfirmPassword),
+              obscureText: true,
+              autofillHints: const [AutofillHints.newPassword],
+              onSaved: (value) => _formData.confirmPassword = value ?? '',
             ),
           ),
-          obscureText: _obscureConfirmPassword,
-          onSaved: (value) => _formData.confirmPassword = value ?? '',
-        ),
-        const SizedBox(height: AppDimensions.paddingS),
-      ] else if (_otpSent) ...[
-        OtpCodeField(
-          controller: _otpController,
-          enabled: !_isLoading,
-          onCompleted: (_) => _verifyCode(),
-        ),
-        const SizedBox(height: AppDimensions.paddingS),
-      ],
-      _buildTermsCheckbox(),
-      if (_mode == AuthMode.otp) ...[
-        const SizedBox(height: AppDimensions.paddingS),
-        if (!_otpSent)
-          OutlinedButton(
-            onPressed: _isLoading ? null : _requestCode,
-            child: Text(context.l10n.loginSendCode),
-          )
-        else ...[
-          OutlinedButton(
-            onPressed: _isLoading ? null : _verifyCode,
-            child: Text(context.l10n.tenantRegisterConfirmCode),
-          ),
-          Center(
-            child: ResendCodeButton(
-              cooldown: _cooldown,
+        ] else if (_otpSent) ...[
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 12),
+            child: OtpCodeField(
+              controller: _otpController,
               enabled: !_isLoading,
-              onResend: _requestCode,
+              onCompleted: (_) => _verifyCode(),
             ),
           ),
-        ],
+          ListenableBuilder(
+            listenable: _otpController,
+            builder: (context, _) => IonButtonItem(
+              label: context.l10n.tenantRegisterConfirmCode,
+              onTap: _isLoading || _otpController.text.isEmpty
+                  ? null
+                  : _verifyCode,
+            ),
+          ),
+          ListenableBuilder(
+            listenable: _cooldown,
+            builder: (context, _) => IonButtonItem(
+              label: _cooldown.active
+                  ? context.l10n.loginResendIn(_cooldown.remaining)
+                  : context.l10n.loginResendCode,
+              onTap: _isLoading || _cooldown.active ? null : _requestCode,
+            ),
+          ),
+        ] else
+          IonButtonItem(
+            label: context.l10n.loginSendCode,
+            onTap: _isLoading ? null : _requestCode,
+          ),
+        _buildTermsCheckbox(),
       ],
-      const SizedBox(height: AppDimensions.paddingL),
-    ];
+    );
   }
 
+  /// Ionic privacy-item: round checkbox (iOS) + "Ich akzeptiere die
+  /// Datenschutzerklärung." with the link.
   Widget _buildTermsCheckbox() {
-    return CheckboxListTile(
-      value: _privacyAccepted,
-      contentPadding: EdgeInsets.zero,
-      controlAffinity: ListTileControlAffinity.leading,
-      onChanged: (v) => setState(() => _privacyAccepted = v ?? false),
-      title: Wrap(
-        crossAxisAlignment: WrapCrossAlignment.center,
+    const privacyStyle = TextStyle(fontSize: 14.4, height: 1.4);
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(4, 6, 16, 6),
+      child: Row(
         children: [
-          InkWell(
-            onTap: () => showLegalModal(context),
-            child: Text(
-              context.l10n.tenantRegisterFlutterTermsLink,
-              style: const TextStyle(
-                color: AppColors.primary,
-                decoration: TextDecoration.underline,
+          Checkbox(
+            value: _privacyAccepted,
+            shape: ionIsIos(context) ? const CircleBorder() : null,
+            onChanged: (v) => setState(() => _privacyAccepted = v ?? false),
+          ),
+          const SizedBox(width: 4),
+          Expanded(
+            child: Text.rich(
+              TextSpan(
+                style: privacyStyle.copyWith(
+                    color: Theme.of(context).colorScheme.onSurface),
+                children: [
+                  TextSpan(text: '${context.l10n.registerModalPrivacyBefore} '),
+                  WidgetSpan(
+                    alignment: PlaceholderAlignment.baseline,
+                    baseline: TextBaseline.alphabetic,
+                    child: InkWell(
+                      onTap: () => showLegalModal(context),
+                      child: Text(
+                        context.l10n.registerModalPrivacyLink,
+                        style: privacyStyle.copyWith(
+                          color: AppColors.primary,
+                          decoration: TextDecoration.underline,
+                          decorationColor: AppColors.primary,
+                        ),
+                      ),
+                    ),
+                  ),
+                  TextSpan(text: context.l10n.registerModalPrivacyAfter),
+                ],
               ),
             ),
           ),
-          Text(context.l10n.tenantRegisterFlutterTermsAccept),
         ],
       ),
     );

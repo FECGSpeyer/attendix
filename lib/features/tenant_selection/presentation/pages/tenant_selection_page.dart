@@ -14,10 +14,10 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../core/utils/demo_guard.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../auth/presentation/widgets/ion_form_list.dart';
+import 'tenant_create_page.dart';
 import '../../../../core/providers/dashboard_providers.dart'; // DASHBOARD
 import '../../../../core/providers/push_providers.dart'; // PUSH
-import '../../../../core/providers/legal_providers.dart'; // DB_REVIEW_REST
-import '../../../../data/repositories/base_repository.dart'; // DB_REVIEW_REST
 
 /// Tenant selection page
 class TenantSelectionPage extends ConsumerStatefulWidget {
@@ -283,45 +283,6 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
     }
   }
 
-  /// DB_REVIEW_REST (F4): Ionic register.page confirmDeleteAccount.
-  Future<void> _confirmDeleteAccount() async {
-    final l10n = context.l10n;
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: Text(l10n.registerDeleteHeader),
-        content: Text(l10n.registerDeleteMessage),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(false),
-            child: Text(l10n.commonCancel),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(true),
-            style: TextButton.styleFrom(foregroundColor: AppColors.danger),
-            child: Text(l10n.registerDeleteConfirm),
-          ),
-        ],
-      ),
-    );
-    if (confirmed != true || !mounted) return;
-
-    ToastHelper.showInfo(context, l10n.registerDeleteRunning);
-    try {
-      await ref.read(accountNotifierProvider.notifier).deleteAccount();
-      if (!mounted) return;
-      ToastHelper.showSuccess(context, l10n.registerDeleteDone);
-      context.go('/login');
-    } catch (e) {
-      if (!mounted) return;
-      final message = e is RepositoryException ? e.message : e.toString();
-      ToastHelper.showError(
-        context,
-        l10n.registerDeleteFailed(message.isEmpty ? l10n.commonUnknown : message),
-      );
-    }
-  }
-
   Future<void> _logout() async {
     final supabase = ref.read(supabaseClientProvider);
     await ref.read(currentTenantProvider.notifier).clearTenant();
@@ -340,6 +301,12 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
     final tenantsAsync = ref.watch(userTenantsProvider);
     final currentTenant = ref.watch(currentTenantProvider);
     final count = tenantsAsync.valueOrNull?.length;
+
+    // Ionic routeAfterAuth: no instance → the full-page "Neue Instanz
+    // anlegen" (register.page, not dismissable, account menu).
+    if (tenantsAsync.hasValue && count == 0) {
+      return const TenantCreatePage(canDismiss: false);
+    }
 
     // UX_NAV: layout of the Ionic "Instanz wechseln" modal
     // (settings.page.html): "+" (Neue Instanz) left, title "Instanzen (n)",
@@ -407,78 +374,25 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
               ),
             ),
         data: (tenants) {
-          if (tenants.isEmpty) {
-            return Center(
-              child: Padding(
-                padding: const EdgeInsets.all(AppDimensions.paddingL),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(
-                      Icons.apps_outlined,
-                      size: 80,
-                      color: AppColors.medium,
-                    ),
-                    const SizedBox(height: AppDimensions.paddingL),
-                    Text(
-                      context.l10n.tenantSelectFlutterEmptyTitle,
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                    const SizedBox(height: AppDimensions.paddingS),
-                    Text(
-                      context.l10n.tenantSelectFlutterEmptyText,
-                      style: Theme.of(
-                        context,
-                      ).textTheme.bodyMedium?.copyWith(color: AppColors.medium),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: AppDimensions.paddingXL),
-                    OutlinedButton.icon(
-                      onPressed: () => context.push('/tenants/new'),
-                      icon: const Icon(Icons.add),
-                      label: Text(context.l10n.registerTitle),
-                    ),
-                    // DB_REVIEW_REST (F4): Ionic register.page menu – a user
-                    // without any instance (new or rejected) can still
-                    // delete the account (App Store requirement).
-                    const SizedBox(height: AppDimensions.paddingM),
-                    TextButton.icon(
-                      key: const ValueKey('tenant-empty-delete-account'),
-                      onPressed: _confirmDeleteAccount,
-                      style: TextButton.styleFrom(
-                        foregroundColor: AppColors.danger,
-                      ),
-                      icon: const Icon(Icons.delete_outline),
-                      label: Text(context.l10n.registerDeleteAccount),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          }
+          if (tenants.isEmpty) return const SizedBox.shrink();
 
           return RefreshIndicator(
             onRefresh: () async => ref.refresh(userTenantsProvider.future),
             child: ListView(
-              padding: const EdgeInsets.all(AppDimensions.paddingM),
+              padding: const EdgeInsets.symmetric(vertical: 16),
               children: [
-                Card(
-                  margin: EdgeInsets.zero,
-                  clipBehavior: Clip.antiAlias,
-                  child: Column(
-                    children: [
-                      for (var i = 0; i < tenants.length; i++) ...[
-                        if (i > 0) const Divider(indent: 16),
-                        _TenantTile(
-                          tenant: tenants[i],
-                          isCurrent: tenants[i].id == currentTenant?.id,
-                          onTap: () => _selectTenant(tenants[i]),
-                          onFavorite: () => _toggleFavorite(tenants[i]),
-                          onDelete: () => _deleteInstance(tenants[i]),
-                        ),
-                      ],
-                    ],
-                  ),
+                // ion-list [inset] > ion-item-group
+                IonInsetGroup(
+                  children: [
+                    for (final tenant in tenants)
+                      _TenantTile(
+                        tenant: tenant,
+                        isCurrent: tenant.id == currentTenant?.id,
+                        onTap: () => _selectTenant(tenant),
+                        onFavorite: () => _toggleFavorite(tenant),
+                        onDelete: () => _deleteInstance(tenant),
+                      ),
+                  ],
                 ),
               ],
             ),
@@ -536,18 +450,18 @@ class _TenantTile extends StatelessWidget {
           ),
         ],
       ),
-      child: ListTile(
+      // ion-item button detail="false": h2 short name, h3 long name,
+      // "Aktuell" badge and favourite star at the end.
+      child: IonItem(
         onTap: onTap,
-        title: Text(
-          tenant.shortName,
-          style: const TextStyle(fontWeight: FontWeight.w500),
-        ),
+        title: Text(tenant.shortName),
         subtitle: Text(
           tenant.longName,
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
+          style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
         ),
-        trailing: Row(
+        end: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             if (isCurrent)
@@ -556,14 +470,14 @@ class _TenantTile extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
                   color: AppColors.primary,
-                  borderRadius: BorderRadius.circular(6),
+                  borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
                   context.l10n.settingsCurrent,
                   style: const TextStyle(
                     color: Colors.white,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
               ),
@@ -572,6 +486,7 @@ class _TenantTile extends StatelessWidget {
             // Flutter-only: instance details (members, delete) page
             IconButton(
               tooltip: context.l10n.tasksDetails,
+              visualDensity: VisualDensity.compact,
               icon: const Icon(Icons.info_outline, color: AppColors.medium),
               onPressed: () {
                 if (tenant.id != null) {

@@ -49,10 +49,13 @@ class ProfileHeroCard extends ConsumerWidget {
         ),
     ];
 
+    // settings.page.scss .hero-card: 16 px radius, 16 px padding, flat white
+    // block (ion-item background), 8 px gap below.
     return Padding(
-      padding: const EdgeInsets.only(bottom: AppDimensions.paddingM),
-      child: Card(
-        margin: EdgeInsets.zero,
+      padding: const EdgeInsets.only(bottom: AppDimensions.paddingS),
+      child: Material(
+        color: theme.cardTheme.color ?? theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(16),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: () => showMasterDataSheet(context),
@@ -68,37 +71,44 @@ class ProfileHeroCard extends ConsumerWidget {
                           hasCustomProfileImage(person.img) ? person.img : null,
                       firstName: person.firstName,
                       lastName: person.lastName,
-                      size: 56,
+                      size: 52,
                     ),
-                    const SizedBox(width: AppDimensions.paddingM),
+                    const SizedBox(width: 14),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             '${person.firstName} ${person.lastName}'.trim(),
-                            style: theme.textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 18.4,
+                              fontWeight: FontWeight.w700,
+                              color: theme.colorScheme.onSurface,
                             ),
                           ),
+                          const SizedBox(height: 2),
                           if (profileRoleName(role).isNotEmpty)
                             Text(
                               profileRoleName(role),
-                              style: theme.textTheme.bodySmall?.copyWith(
+                              style: const TextStyle(
+                                fontSize: 13.6,
                                 color: AppColors.medium,
                               ),
                             ),
                         ],
                       ),
                     ),
-                    const Icon(Icons.chevron_right, color: AppColors.medium),
+                    const Icon(Icons.chevron_right,
+                        size: 18, color: AppColors.medium),
                   ],
                 ),
                 if (chips.isNotEmpty) ...[
-                  const SizedBox(height: AppDimensions.paddingM),
+                  const SizedBox(height: 12),
                   Wrap(
-                    spacing: AppDimensions.paddingS,
-                    runSpacing: AppDimensions.paddingS,
+                    spacing: 6,
+                    runSpacing: 6,
                     children: chips,
                   ),
                 ],
@@ -120,20 +130,24 @@ class _StatChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      // .stat-chip: 0.8rem, 8 px radius, 4/8 padding, primary 10 % tint
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: AppColors.primary.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(16),
+        color: AppColors.primary.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 14, color: AppColors.primary),
-          const SizedBox(width: 6),
+          Icon(icon, size: 14.4, color: AppColors.primaryDark),
+          const SizedBox(width: 5),
           Flexible(
             child: Text(
               label,
-              style: Theme.of(context).textTheme.bodySmall,
+              style: TextStyle(
+                fontSize: 12.8,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
               overflow: TextOverflow.ellipsis,
             ),
           ),

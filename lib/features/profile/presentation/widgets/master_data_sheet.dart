@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/church_providers.dart';
 import '../../../../core/providers/profile_providers.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -12,6 +11,8 @@ import '../../../../data/models/church/church.dart';
 import '../../../../data/repositories/profile_repository.dart';
 import '../../../../shared/widgets/display/avatar.dart';
 import '../../../../shared/widgets/sheets/image_viewer_sheet.dart';
+import '../../../auth/presentation/widgets/ion_form_list.dart';
+import 'church_picker.dart';
 import 'profile_helpers.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
@@ -271,17 +272,15 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
     if (!_initialized && profile != null && fieldsAsync.hasValue) {
       _init(profile, visibleFields);
     }
+    final inputStyle = ionItemInputStyle(context);
 
+    // Ionic master data modal: sheet (breakpoint .9) with a plain toolbar
+    // title "Meine Stammdaten" (no close button, swipe/backdrop closes) and
+    // an inset list on the light background; "Speichern" is the last item.
     return Scaffold(
       appBar: AppBar(
         title: Text(context.l10n.settingsMyData),
         automaticallyImplyLeading: false,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.close),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-        ],
       ),
       body: !_initialized
           ? (profileAsync.hasError
@@ -290,104 +289,77 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
                   ? Center(child: Text(context.l10n.settingsFlutterNoProfile))
                   : const Center(child: CircularProgressIndicator()))
           : ListView(
-              padding: const EdgeInsets.all(AppDimensions.paddingM),
+              padding: const EdgeInsets.symmetric(vertical: 16),
               children: [
-                Card(
-                  margin: EdgeInsets.zero,
-                  child: Column(
-                    children: [
-                      ListTile(
-                        title: Text(context.l10n.settingsPassPhoto),
-                        trailing: Avatar(
-                          imageUrl: hasCustomProfileImage(_img) ? _img : null,
-                          firstName: _firstName.text,
-                          lastName: _lastName.text,
-                          size: 44,
-                        ),
-                        onTap: _changeImg,
+                IonInsetGroup(
+                  children: [
+                    IonItem(
+                      label: context.l10n.settingsPassPhoto,
+                      onTap: _changeImg,
+                      detail: true,
+                      end: Avatar(
+                        imageUrl: hasCustomProfileImage(_img) ? _img : null,
+                        firstName: _firstName.text,
+                        lastName: _lastName.text,
+                        size: 40,
                       ),
-                      const Divider(height: 1),
-                      Padding(
-                        padding: const EdgeInsets.all(AppDimensions.paddingM),
-                        child: Column(
-                          children: [
-                            TextField(
-                              controller: _firstName,
-                              textCapitalization: TextCapitalization.words,
-                              decoration:
-                                  InputDecoration(labelText: context.l10n.peopleFirstName),
-                            ),
-                            const SizedBox(height: AppDimensions.paddingM),
-                            TextField(
-                              controller: _lastName,
-                              textCapitalization: TextCapitalization.words,
-                              decoration:
-                                  InputDecoration(labelText: context.l10n.peopleLastName),
-                            ),
-                            const SizedBox(height: AppDimensions.paddingM),
-                            TextField(
-                              controller: _phone,
-                              keyboardType: TextInputType.phone,
-                              decoration: InputDecoration(
-                                  labelText: context.l10n.settingsMobile),
-                            ),
-                          ],
-                        ),
+                    ),
+                    IonInputItem(
+                      child: TextField(
+                        controller: _firstName,
+                        style: inputStyle,
+                        textCapitalization: TextCapitalization.words,
+                        decoration: ionItemInputDecoration(
+                            context, context.l10n.peopleFirstName),
                       ),
-                      ListTile(
-                        title: Text(context.l10n.peopleBirthday),
-                        trailing: TextButton(
-                          onPressed: _pickBirthday,
-                          child: Text(
-                            (_birthday ?? '').isEmpty
-                                ? context.l10n.orgChoose
-                                : formatProfileDate(_birthday),
-                          ),
-                        ),
+                    ),
+                    IonInputItem(
+                      child: TextField(
+                        controller: _lastName,
+                        style: inputStyle,
+                        textCapitalization: TextCapitalization.words,
+                        decoration: ionItemInputDecoration(
+                            context, context.l10n.peopleLastName),
                       ),
-                    ],
-                  ),
+                    ),
+                    IonInputItem(
+                      child: TextField(
+                        controller: _phone,
+                        style: inputStyle,
+                        keyboardType: TextInputType.phone,
+                        decoration: ionItemInputDecoration(
+                            context, context.l10n.settingsMobile),
+                      ),
+                    ),
+                    IonItem(
+                      label: context.l10n.peopleBirthday,
+                      end: IonDateButton(
+                        onTap: _pickBirthday,
+                        text: (_birthday ?? '').isEmpty
+                            ? context.l10n.orgChoose
+                            : formatProfileDate(_birthday),
+                      ),
+                    ),
+                  ],
                 ),
                 if (visibleFields.isNotEmpty) ...[
-                  const SizedBox(height: AppDimensions.paddingM),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppDimensions.paddingS,
-                      vertical: AppDimensions.paddingXS,
-                    ),
-                    child: Text(
-                      context.l10n.settingsExtraFields,
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                            color: AppColors.medium,
-                            fontWeight: FontWeight.w600,
-                          ),
-                    ),
-                  ),
-                  Card(
-                    margin: EdgeInsets.zero,
-                    child: Column(
-                      children: [
-                        for (final field in visibleFields)
-                          _buildExtraField(field, churches),
-                      ],
-                    ),
+                  IonListHeader(context.l10n.settingsExtraFields),
+                  IonInsetGroup(
+                    children: [
+                      for (final field in visibleFields)
+                        _buildExtraField(field, churches),
+                    ],
                   ),
                 ],
-                const SizedBox(height: AppDimensions.paddingL),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: _saving ? null : () => _save(visibleFields),
-                    child: _saving
-                        ? const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : Text(context.l10n.commonSave),
-                  ),
+                const SizedBox(height: 8),
+                IonInsetGroup(
+                  children: [
+                    IonButtonItem(
+                      label: context.l10n.commonSave,
+                      onTap: _saving ? null : () => _save(visibleFields),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: AppDimensions.paddingL),
               ],
             ),
     );
@@ -395,54 +367,62 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
 
   Widget _buildExtraField(ProfileExtraField field, List<Church> churches) {
     if (!field.editableByPlayers) {
-      return ListTile(
-        title: Text(field.name),
+      // ion-label h3 name + p value
+      return IonItem(
+        title: Text(field.name, style: const TextStyle(fontSize: 14)),
         subtitle: Text(extraFieldDisplayValue(field, _additional, churches)),
       );
     }
 
     switch (field.type) {
       case 'boolean':
-        return SwitchListTile(
-          title: Text(field.name),
-          value: _additional[field.id] == true,
-          onChanged: (v) => setState(() => _additional[field.id] = v),
-        );
-      case 'select':
-        final current = _additional[field.id]?.toString();
-        return ListTile(
-          title: Text(field.name),
-          trailing: DropdownButton<String>(
-            value: field.options.contains(current) ? current : null,
-            hint: Text(context.l10n.settingsPleaseSelect),
-            items: field.options
-                .map((o) => DropdownMenuItem(value: o, child: Text(o)))
-                .toList(),
+        return IonItem(
+          label: field.name,
+          end: Switch(
+            value: _additional[field.id] == true,
             onChanged: (v) => setState(() => _additional[field.id] = v),
           ),
         );
+      case 'select':
+        final current = _additional[field.id]?.toString();
+        final valid = field.options.contains(current);
+        return IonItem(
+          label: field.name,
+          onTap: () async {
+            final value = await showIonSelectOptions<String>(
+              context,
+              title: field.name,
+              options: [for (final o in field.options) (o, o)],
+              selected: valid ? current : null,
+            );
+            if (value != null && mounted) {
+              setState(() => _additional[field.id] = value);
+            }
+          },
+          end: IonSelectValue(
+            text: valid ? current! : context.l10n.settingsPleaseSelect,
+            placeholder: !valid,
+          ),
+        );
       case 'bfecg_church':
-        return ListTile(
-          title: Text(field.name),
-          trailing: TextButton(
+        return IonItem(
+          label: field.name,
+          end: TextButton(
             onPressed: () => _selectChurch(field, churches),
             child: Text(_churchLabel(field, churches)),
           ),
         );
       default:
-        return Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppDimensions.paddingM,
-            vertical: AppDimensions.paddingS,
-          ),
+        return IonInputItem(
           child: TextField(
             controller: _controllerFor(field),
+            style: ionItemInputStyle(context),
             keyboardType: field.type == 'number'
                 ? TextInputType.number
                 : TextInputType.text,
             maxLines: field.type == 'textarea' ? 3 : 1,
             textCapitalization: TextCapitalization.sentences,
-            decoration: InputDecoration(labelText: field.name),
+            decoration: ionItemInputDecoration(context, field.name),
           ),
         );
     }
@@ -460,106 +440,17 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
     ProfileExtraField field,
     List<Church> churches,
   ) async {
-    final selected = await showModalBottomSheet<String>(
-      context: context,
-      isScrollControlled: true,
-      useSafeArea: true,
-      builder: (_) => FractionallySizedBox(
-        heightFactor: 0.85,
-        child: _ChurchPicker(
-          title: field.name,
-          churches: churches,
-          selectedId: _additional[field.id]?.toString(),
-        ),
-      ),
+    final selected = await showChurchPicker(
+      context,
+      title: field.name,
+      churches: churches,
+      selectedId: _additional[field.id]?.toString(),
+      searchHint: context.l10n.settingsSearchChurch,
+      notListedLabel: context.l10n.settingsNotListed,
+      noChurchLabel: context.l10n.settingsNoChurch,
     );
     if (selected != null && mounted) {
       setState(() => _additional[field.id] = selected);
     }
-  }
-}
-
-/// Searchable church picker (Ionic church modal in settings)
-class _ChurchPicker extends StatefulWidget {
-  const _ChurchPicker({
-    required this.title,
-    required this.churches,
-    this.selectedId,
-  });
-
-  final String title;
-  final List<Church> churches;
-  final String? selectedId;
-
-  @override
-  State<_ChurchPicker> createState() => _ChurchPickerState();
-}
-
-class _ChurchPickerState extends State<_ChurchPicker> {
-  String _search = '';
-
-  @override
-  Widget build(BuildContext context) {
-    final term = _search.trim().toLowerCase();
-    final filtered = term.isEmpty
-        ? widget.churches
-        : widget.churches
-            .where((c) => c.name.toLowerCase().contains(term))
-            .toList();
-
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-        automaticallyImplyLeading: false,
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text(context.l10n.commonClose),
-          ),
-        ],
-      ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(AppDimensions.paddingM),
-            child: TextField(
-              decoration: InputDecoration(
-                hintText: context.l10n.settingsSearchChurch,
-                prefixIcon: Icon(Icons.search),
-              ),
-              onChanged: (v) => setState(() => _search = v),
-            ),
-          ),
-          Expanded(
-            child: ListView(
-              children: [
-                ListTile(
-                  title: Text(context.l10n.settingsNotListed),
-                  trailing: widget.selectedId == ''
-                      ? const Icon(Icons.check, color: AppColors.primary)
-                      : null,
-                  onTap: () => Navigator.of(context).pop(''),
-                ),
-                for (final church in filtered)
-                  ListTile(
-                    title: Text(church.name),
-                    trailing: widget.selectedId == church.id
-                        ? const Icon(Icons.check, color: AppColors.primary)
-                        : null,
-                    onTap: () => Navigator.of(context).pop(church.id),
-                  ),
-                if (filtered.isEmpty)
-                  ListTile(
-                    title: Text(
-                      context.l10n.settingsNoChurch,
-                      style: const TextStyle(color: AppColors.medium),
-                    ),
-                  ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
   }
 }

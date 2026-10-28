@@ -315,3 +315,117 @@ class IonButtonItem extends StatelessWidget {
     return ColoredBox(color: color, child: item);
   }
 }
+
+/// `ion-datetime-button` at the end of an item: light grey rounded chip
+/// with the formatted value.
+class IonDateButton extends StatelessWidget {
+  const IonDateButton({super.key, required this.text, required this.onTap});
+
+  final String text;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    return Material(
+      color: dark ? const Color(0xFF2C2C2E) : const Color(0xFFEDEEF0),
+      borderRadius: BorderRadius.circular(8),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(8),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          child: Text(
+            text,
+            style: TextStyle(
+              fontSize: ionItemFontSize(context),
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Value + caret at the end of an `ion-select` item (non-stacked label).
+class IonSelectValue extends StatelessWidget {
+  const IonSelectValue({super.key, required this.text, this.placeholder = false});
+
+  final String text;
+  final bool placeholder;
+
+  @override
+  Widget build(BuildContext context) {
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+          maxWidth: MediaQuery.sizeOf(context).width * 0.5),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Flexible(
+            child: Text(
+              text,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: ionItemFontSize(context),
+                color: placeholder
+                    ? AppColors.medium
+                    : Theme.of(context).colorScheme.onSurface,
+              ),
+            ),
+          ),
+          const SizedBox(width: 4),
+          Icon(
+            ionIsIos(context) ? Icons.unfold_more : Icons.arrow_drop_down,
+            size: 18,
+            color: AppColors.medium,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Simple option list for an `ion-select` (alert interface): the options
+/// with a checkmark on the current value. Returns the chosen value.
+Future<T?> showIonSelectOptions<T>(
+  BuildContext context, {
+  required String title,
+  required List<(T, String)> options,
+  T? selected,
+}) {
+  return showModalBottomSheet<T>(
+    context: context,
+    useSafeArea: true,
+    isScrollControlled: true,
+    builder: (sheetContext) => SafeArea(
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+            maxHeight: MediaQuery.sizeOf(sheetContext).height * 0.7),
+        child: ListView(
+          shrinkWrap: true,
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+              child: Text(
+                title,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                    fontSize: 13, color: AppColors.medium),
+              ),
+            ),
+            for (final (value, label) in options)
+              ListTile(
+                title: Text(label),
+                trailing: value == selected
+                    ? const Icon(Icons.check, color: AppColors.primary)
+                    : null,
+                onTap: () => Navigator.of(sheetContext).pop(value),
+              ),
+          ],
+        ),
+      ),
+    ),
+  );
+}
