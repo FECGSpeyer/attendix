@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../l10n/l10n.dart';
 
 /// A person that can be assigned to a duty.
 class DutyCandidate {
@@ -96,40 +97,42 @@ class _DutyAssignSheetState extends State<_DutyAssignSheet> {
         .where((c) => _selected.contains(c.personAttendanceId))
         .map((c) => c.name.split(' ').first)
         .toList();
-    if (names.isEmpty) return 'Einteilen';
-    return names.length == 1 ? '${names.first} einteilen' : '${names.length} Personen einteilen';
+    final l10n = context.l10n;
+    if (names.isEmpty) return l10n.attendanceAssign;
+    return names.length == 1 ? l10n.dutyAssignName(names.first) : l10n.dutyAssignPeople(names.length);
   }
 
   String _subtitle(DutyCandidate c) {
     if (c.unavailableNote.isNotEmpty) return c.unavailableNote;
-    final duties = c.count == 1 ? '1 Dienst' : '${c.count} Dienste';
-    final month = widget.monthLabel.isNotEmpty ? ' im ${widget.monthLabel}' : '';
-    final sameDay = c.sameDay ? ' · am selben Tag schon dran' : '';
+    final l10n = context.l10n;
+    final duties = l10n.dutyDutiesCount(c.count);
+    final month = widget.monthLabel.isNotEmpty ? l10n.dutyInMonth(widget.monthLabel) : '';
+    final sameDay = c.sameDay ? ' ${l10n.dutySameDay}' : '';
     return '$duties$month$sameDay';
   }
 
   @override
   Widget build(BuildContext context) {
-    final places = widget.openPlaces == 1 ? '1 Platz frei' : '${widget.openPlaces} Plätze frei';
+    final places = context.l10n.dutyPlacesFree(widget.openPlaces);
     return Column(
       children: [
         ListTile(
           leading: IconButton(
             icon: const Icon(Icons.close),
-            tooltip: 'Abbrechen',
+            tooltip: context.l10n.commonCancel,
             onPressed: () => Navigator.of(context).pop(),
           ),
-          title: const Text('Person einteilen', style: TextStyle(fontWeight: FontWeight.w600)),
+          title: Text(context.l10n.attendanceAssignPerson, style: const TextStyle(fontWeight: FontWeight.w600)),
           subtitle: Text('${widget.title} · $places'),
         ),
         const Divider(height: 1),
         Expanded(
           child: _sorted.isEmpty
-              ? const Center(
+              ? Center(
                   child: Padding(
-                    padding: EdgeInsets.all(AppDimensions.paddingL),
+                    padding: const EdgeInsets.all(AppDimensions.paddingL),
                     child: Text(
-                      'Alle aus dem Personenkreis sind schon eingeteilt.',
+                      context.l10n.dutyAllAssigned,
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -152,21 +155,19 @@ class _DutyAssignSheetState extends State<_DutyAssignSheet> {
                           subtitle: Text(_subtitle(c)),
                         ),
                       ),
-                    const Padding(
-                      padding: EdgeInsets.all(AppDimensions.paddingM),
+                    Padding(
+                      padding: const EdgeInsets.all(AppDimensions.paddingM),
                       child: Text(
-                        'Sortiert nach Anzahl Dienste. Eingeteilte bekommen sofort eine '
-                        'Push-Nachricht und müssen bestätigen.',
-                        style: TextStyle(color: AppColors.medium, fontSize: 13),
+                        context.l10n.dutyAssignHint,
+                        style: const TextStyle(color: AppColors.medium, fontSize: 13),
                       ),
                     ),
                     if (_selected.length > widget.openPlaces)
-                      const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: AppDimensions.paddingM),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM),
                         child: Text(
-                          'Du hast mehr Personen gewählt als Plätze frei sind. '
-                          'Der Dienst ist dann überbesetzt.',
-                          style: TextStyle(color: AppColors.warningDark, fontSize: 13),
+                          context.l10n.dutyOverbooked,
+                          style: const TextStyle(color: AppColors.warningDark, fontSize: 13),
                         ),
                       ),
                   ],

@@ -7,6 +7,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/duty_utils.dart';
 import '../pages/unavailability_page.dart';
 import 'duty_actions.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Dienstplan part of "Meine Termine" (self service): "Bitte bestätigen",
 /// and – when the tenant uses the Dienstplan view – "Nächster Dienst",
@@ -59,7 +60,7 @@ class SelfServiceDutySection extends ConsumerWidget {
           margin: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM, vertical: AppDimensions.paddingXS),
           child: ListTile(
             leading: const Icon(Icons.headset_mic_outlined, color: AppColors.primary),
-            title: const Text('Offene Dienste'),
+            title: Text(context.l10n.signoutOpenDuties),
             subtitle: Text(openDutiesTileSubtitle(overview.openDuties.length)),
             trailing: const Icon(Icons.chevron_right),
             onTap: () => showOpenDutiesSheet(context),
@@ -70,7 +71,7 @@ class SelfServiceDutySection extends ConsumerWidget {
 
     // "Bitte bestätigen"
     if (_shows(SelfServiceDutyPart.requests) && overview.requests.isNotEmpty) {
-      children.add(_SectionTitle(title: 'Bitte bestätigen', count: overview.requests.length));
+      children.add(_SectionTitle(title: context.l10n.signoutPleaseConfirm, count: overview.requests.length));
       for (final r in overview.requests) {
         children.add(Card(
           margin: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM, vertical: AppDimensions.paddingXS),
@@ -83,19 +84,19 @@ class SelfServiceDutySection extends ConsumerWidget {
                 const SizedBox(height: 2),
                 Text(_dateLine(r.termin), style: const TextStyle(color: AppColors.medium)),
                 const SizedBox(height: 6),
-                const DutyPill(text: 'Du bist eingeteilt', color: AppColors.warningDark),
+                DutyPill(text: context.l10n.signoutYouAreAssigned, color: AppColors.warningDark),
                 const SizedBox(height: AppDimensions.paddingS),
                 Row(
                   children: [
                     FilledButton(
                       style: FilledButton.styleFrom(backgroundColor: AppColors.success),
                       onPressed: () => confirmDutyAction(context, ref, r.pa.id!, r.termin.attendance.id!),
-                      child: const Text('Bestätigen'),
+                      child: Text(context.l10n.commonConfirm),
                     ),
                     const SizedBox(width: AppDimensions.paddingS),
                     OutlinedButton(
                       onPressed: () => declineDutyAction(context, ref, r.pa.id!, r.termin.attendance.id!),
-                      child: const Text('Kann nicht'),
+                      child: Text(context.l10n.signoutCannot),
                     ),
                   ],
                 ),
@@ -110,7 +111,7 @@ class SelfServiceDutySection extends ConsumerWidget {
       // "Nächster Dienst"
       final next = overview.confirmed.isNotEmpty ? overview.confirmed.first : null;
       if (next != null) {
-        children.add(const _SectionTitle(title: 'Nächster Dienst'));
+        children.add(_SectionTitle(title: context.l10n.signoutNextDuty));
         children.add(Card(
           margin: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM, vertical: AppDimensions.paddingXS),
           child: Padding(
@@ -126,14 +127,14 @@ class SelfServiceDutySection extends ConsumerWidget {
                   spacing: 6,
                   runSpacing: 4,
                   children: [
-                    const DutyPill(text: 'Du', color: AppColors.primary),
+                    DutyPill(text: context.l10n.signoutYou, color: AppColors.primary),
                     for (final name in overview.teamOf(next.termin)) DutyPill(text: name, color: AppColors.medium),
                   ],
                 ),
                 const SizedBox(height: AppDimensions.paddingS),
                 OutlinedButton(
                   onPressed: () => declineDutyAction(context, ref, next.pa.id!, next.termin.attendance.id!),
-                  child: const Text('Kann doch nicht'),
+                  child: Text(context.l10n.signoutCannotAfterAll),
                 ),
               ],
             ),
@@ -145,11 +146,11 @@ class SelfServiceDutySection extends ConsumerWidget {
       final preview = [...overview.openDuties]
         ..sort((a, b) => (isUrgentDuty(b) ? 1 : 0) - (isUrgentDuty(a) ? 1 : 0));
       children.add(_SectionTitle(
-        title: 'Offene Dienste',
+        title: context.l10n.signoutOpenDuties,
         action: overview.openDuties.length > 3
             ? TextButton(
                 onPressed: () => showOpenDutiesSheet(context),
-                child: Text('Alle ${overview.openDuties.length}'),
+                child: Text(context.l10n.signoutAllCount(overview.openDuties.length)),
               )
             : null,
       ));
@@ -158,16 +159,16 @@ class SelfServiceDutySection extends ConsumerWidget {
         child: Column(
           children: [
             if (preview.isEmpty)
-              const ListTile(
-                title: Text('Gerade sind alle Dienste besetzt. Danke!', style: TextStyle(color: AppColors.medium)),
+              ListTile(
+                title: Text(context.l10n.signoutAllDutiesFilled, style: const TextStyle(color: AppColors.medium)),
               ),
             for (final t in preview.take(3))
               ListTile(
                 title: Text(t.title),
-                subtitle: Text('${_dateShort(t)}${isUrgentDuty(t) ? ' · Dringend' : ''} · ${_dutyMeta(t)}'),
+                subtitle: Text('${_dateShort(t)}${isUrgentDuty(t) ? ' · ${context.l10n.signoutUrgent}' : ''} · ${_dutyMeta(t)}'),
                 trailing: FilledButton.tonal(
                   onPressed: () => takeDutyAction(context, ref, t.attendance.id!),
-                  child: const Text('Übernehmen'),
+                  child: Text(context.l10n.commonApply),
                 ),
               ),
           ],
@@ -177,7 +178,7 @@ class SelfServiceDutySection extends ConsumerWidget {
       // "Meine Dienste"
       final mine = overview.confirmed.skip(1).toList();
       if (mine.isNotEmpty) {
-        children.add(_SectionTitle(title: 'Meine Dienste', count: mine.length));
+        children.add(_SectionTitle(title: context.l10n.signoutMyDuties, count: mine.length));
         children.add(Card(
           margin: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM, vertical: AppDimensions.paddingXS),
           child: Column(
@@ -187,9 +188,9 @@ class SelfServiceDutySection extends ConsumerWidget {
                   title: Text(d.termin.title),
                   subtitle: Text(
                     '${_dateLine(d.termin)}'
-                    '${overview.teamOf(d.termin).isNotEmpty ? ' · mit ${overview.teamOf(d.termin).join(', ')}' : ''}',
+                    '${overview.teamOf(d.termin).isNotEmpty ? context.l10n.signoutWithTeam(overview.teamOf(d.termin).join(', ')) : ''}',
                   ),
-                  trailing: const DutyPill(text: 'bestätigt', color: AppColors.successDark),
+                  trailing: DutyPill(text: context.l10n.signoutConfirmed, color: AppColors.successDark),
                   onLongPress: () => declineDutyAction(context, ref, d.pa.id!, d.termin.attendance.id!),
                 ),
             ],
@@ -203,7 +204,7 @@ class SelfServiceDutySection extends ConsumerWidget {
           children: [
             if (otherTermineCount > 0)
               ListTile(
-                title: const Text('Weitere Termine'),
+                title: Text(context.l10n.signoutMoreEvents),
                 subtitle: Text(otherTermineNames.isEmpty
                     ? '$otherTermineCount'
                     : '$otherTermineCount · $otherTermineNames'),
@@ -212,14 +213,14 @@ class SelfServiceDutySection extends ConsumerWidget {
               ),
             ListTile(
               leading: const Icon(Icons.event_busy_outlined),
-              title: const Text('Regelmäßig verhindert'),
+              title: Text(context.l10n.signoutRegularlyUnavailable),
               trailing: const Icon(Icons.chevron_right),
               onTap: () => openUnavailabilityPage(context, personId: overview.person!.id!),
             ),
             if (onReportAbsence != null)
               ListTile(
                 leading: const Icon(Icons.calendar_today_outlined),
-                title: const Text('Abwesenheit melden'),
+                title: Text(context.l10n.signoutReportAbsence),
                 trailing: const Icon(Icons.chevron_right),
                 onTap: onReportAbsence,
               ),
@@ -234,10 +235,8 @@ class SelfServiceDutySection extends ConsumerWidget {
 
 /// Subtitle of the "Offene Dienste" tile (Ionic signout greet tile).
 String openDutiesTileSubtitle(int count) => count == 0
-    ? 'alles besetzt'
-    : count == 1
-        ? '1 offen'
-        : '$count offen';
+    ? l10nWithoutContext.dutyFlutterAllFilled
+    : l10nWithoutContext.tasksOpenCount(count);
 
 String _dateShort(DutyTermin t) {
   final d = DateTime.tryParse(t.attendance.date)?.toLocal();
@@ -247,14 +246,14 @@ String _dateShort(DutyTermin t) {
 
 String _dateLine(DutyTermin t) {
   final time = t.attendance.startTime ?? t.type.startTime;
-  final timeText = time != null && time.length >= 5 ? ' · ${time.substring(0, 5)} Uhr' : '';
+  final timeText = time != null && time.length >= 5 ? ' · ${l10nWithoutContext.dutyFlutterTimeOClock(time.substring(0, 5))}' : '';
   return '${_dateShort(t)}$timeText';
 }
 
 String _dutyMeta(DutyTermin t) {
   final time = t.attendance.startTime ?? t.type.startTime;
   final timeText = time != null && time.length >= 5 ? '${time.substring(0, 5)} · ' : '';
-  return '$timeText${t.occupied} von ${t.required} besetzt';
+  return '$timeText${l10nWithoutContext.signoutDutyOccupied(t.occupied, t.required)}';
 }
 
 /// Sheet "Offene Dienste" with "Ich übernehme" and "Regelmäßig verhindert".
@@ -274,14 +273,14 @@ Future<void> showOpenDutiesSheet(BuildContext context) {
             controller: scroll,
             children: [
               ListTile(
-                title: const Text('Offene Dienste', style: TextStyle(fontWeight: FontWeight.w600)),
-                trailing: TextButton(onPressed: () => Navigator.of(ctx).pop(), child: const Text('Schließen')),
+                title: Text(context.l10n.signoutOpenDuties, style: const TextStyle(fontWeight: FontWeight.w600)),
+                trailing: TextButton(onPressed: () => Navigator.of(ctx).pop(), child: Text(context.l10n.commonClose)),
               ),
               const Divider(height: 1),
               if (open.isEmpty)
-                const Padding(
-                  padding: EdgeInsets.all(AppDimensions.paddingL),
-                  child: Text('Gerade sind alle Dienste besetzt. Danke!', textAlign: TextAlign.center),
+                Padding(
+                  padding: const EdgeInsets.all(AppDimensions.paddingL),
+                  child: Text(context.l10n.signoutAllDutiesFilled, textAlign: TextAlign.center),
                 ),
               for (final t in open)
                 ListTile(
@@ -289,15 +288,15 @@ Future<void> showOpenDutiesSheet(BuildContext context) {
                   subtitle: Text('${_dateShort(t)} · ${_dutyMeta(t)}'),
                   trailing: FilledButton(
                     onPressed: () => takeDutyAction(ctx, ref, t.attendance.id!),
-                    child: const Text('Ich übernehme'),
+                    child: Text(context.l10n.signoutIllTakeIt),
                   ),
                 ),
               const Divider(),
               if (overview?.person?.id != null)
                 ListTile(
                   leading: const Icon(Icons.event_busy_outlined),
-                  title: const Text('Regelmäßig verhindert'),
-                  subtitle: const Text('z. B. jeden Mittwoch wegen der Kinderstunde'),
+                  title: Text(context.l10n.signoutRegularlyUnavailable),
+                  subtitle: Text(context.l10n.signoutRegularlyUnavailableHint),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () {
                     Navigator.of(ctx).pop();
@@ -338,9 +337,9 @@ class _DutyStats extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingS),
       child: Row(
         children: [
-          stat(overview.dutiesThisMonth, overview.dutiesThisMonth == 1 ? 'Dienst diesen Monat' : 'Dienste diesen Monat'),
-          stat(overview.requests.length, 'zu bestätigen', warn: overview.requests.isNotEmpty),
-          stat(overview.openDuties.length, 'offen im Team'),
+          stat(overview.dutiesThisMonth, context.l10n.signoutDutiesThisMonth(overview.dutiesThisMonth)),
+          stat(overview.requests.length, context.l10n.signoutToConfirm, warn: overview.requests.isNotEmpty),
+          stat(overview.openDuties.length, context.l10n.signoutOpenInTeam),
         ],
       ),
     );

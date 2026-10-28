@@ -2220,6 +2220,51 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get dutyFlutterAllFilled => 'alles besetzt';
+
+  @override
+  String get dutyFlutterDeclineFailed => 'Fehler beim Abmelden';
+
+  @override
+  String get dutyFlutterDeleteFailed => 'Fehler beim Löschen';
+
+  @override
+  String dutyFlutterErrorWith(Object error) {
+    return 'Fehler: $error';
+  }
+
+  @override
+  String dutyFlutterNameRequested(Object name) {
+    return '$name (angefragt)';
+  }
+
+  @override
+  String get dutyFlutterNobodyAssigned => 'noch niemand eingeteilt';
+
+  @override
+  String get dutyFlutterNothingToDistribute => 'Nichts zu verteilen';
+
+  @override
+  String dutyFlutterPlannedNew(Object count) {
+    return '(+$count neu)';
+  }
+
+  @override
+  String dutyFlutterSaveAssignments(Object count) {
+    return '$count Einteilungen speichern';
+  }
+
+  @override
+  String dutyFlutterTimeOClock(Object time) {
+    return '$time Uhr';
+  }
+
+  @override
+  String dutyFlutterUnassignMessage(Object name) {
+    return '$name ist dann nicht mehr eingeteilt.';
+  }
+
+  @override
   String get dutyForWhichTypes => 'Für welche Termintypen?';
 
   @override
@@ -7607,6 +7652,233 @@ class AppLocalizationsDe extends AppLocalizations {
   String get shiftsFixedOptional => 'Feste Schichten (optional)';
 
   @override
+  String get shiftsFlutterAddSegment => 'Segment hinzufügen';
+
+  @override
+  String get shiftsFlutterAddSegmentsHint => 'Füge Segmente hinzu, um die Vorschau zu sehen';
+
+  @override
+  String get shiftsFlutterAddShift => 'Schicht hinzufügen';
+
+  @override
+  String shiftsFlutterAssigningPeople(Object count) {
+    return 'Weise $count Personen zu...';
+  }
+
+  @override
+  String get shiftsFlutterCopyAssignments => 'Zuweisungen kopieren';
+
+  @override
+  String shiftsFlutterCopyAssignmentsHint(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Personen nutzen',
+      one: '$count Person nutzt',
+    );
+    return '$_temp0 diesen Schichtplan. Versuche passende Personen in der Ziel-Instanz zuzuweisen.';
+  }
+
+  @override
+  String shiftsFlutterCopyFailedWith(Object error) {
+    return 'Fehler beim Kopieren: $error';
+  }
+
+  @override
+  String shiftsFlutterCopyInfo(Object name) {
+    return 'Der Schichtplan \"$name\" wird in die ausgewählte Instanz kopiert. Die Definition und feste Schichten werden übernommen.';
+  }
+
+  @override
+  String get shiftsFlutterCopyInfoAssignments => 'Zuweisungen werden anhand der App-ID (appId) der Personen gemappt.';
+
+  @override
+  String get shiftsFlutterCopyingShort => 'Wird kopiert...';
+
+  @override
+  String shiftsFlutterCreateFailed(Object error) {
+    return 'Fehler beim Erstellen: $error';
+  }
+
+  @override
+  String shiftsFlutterCreated(Object name) {
+    return 'Schichtplan \"$name\" erstellt';
+  }
+
+  @override
+  String get shiftsFlutterCreatingPlan => 'Erstelle Schichtplan...';
+
+  @override
+  String shiftsFlutterCycle(Object count) {
+    return 'Zyklus: $count Tage';
+  }
+
+  @override
+  String shiftsFlutterCycleDays(Object count) {
+    return '$count-Tage-Zyklus';
+  }
+
+  @override
+  String shiftsFlutterDayN(Object n) {
+    return 'Tag $n';
+  }
+
+  @override
+  String get shiftsFlutterDeleteConfirm => 'Möchtest du diesen Schichtplan wirklich löschen?';
+
+  @override
+  String shiftsFlutterDeleteConfirmUsed(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Mitglieder nutzen diesen Schichtplan.',
+      one: '$count Mitglied nutzen diesen Schichtplan.',
+    );
+    return '$_temp0 Möchtest du ihn trotzdem löschen?';
+  }
+
+  @override
+  String get shiftsFlutterDescriptionHint => 'z.B. Früh, Spät, Nacht';
+
+  @override
+  String get shiftsFlutterDurationHint => 'z.B. 8.0';
+
+  @override
+  String get shiftsFlutterEditSegment => 'Segment bearbeiten';
+
+  @override
+  String shiftsFlutterErrorWith(Object error) {
+    return 'Fehler: $error';
+  }
+
+  @override
+  String get shiftsFlutterFirstSegment => 'Erstes Segment';
+
+  @override
+  String get shiftsFlutterFixedHint => 'Feste Schichten definieren konkrete Startdaten für den Schichtzyklus.';
+
+  @override
+  String get shiftsFlutterFixedShifts => 'Feste Schichten';
+
+  @override
+  String get shiftsFlutterFreeHint => 'Mitarbeiter ist an diesem Tag frei';
+
+  @override
+  String get shiftsFlutterInfoText => 'Schichtpläne ermöglichen automatische Entschuldigungen basierend auf Arbeitsschichten. Weise einem Mitglied einen Schichtplan zu, um Konflikte mit Terminen automatisch zu erkennen.';
+
+  @override
+  String get shiftsFlutterInfoTitle => 'Automatische Entschuldigungen';
+
+  @override
+  String get shiftsFlutterLabelHint => 'z.B. Frühdienst';
+
+  @override
+  String get shiftsFlutterNameHint => 'z.B. 3-Schicht-System';
+
+  @override
+  String shiftsFlutterNext30From(Object date) {
+    return 'Nächste 30 Tage ab $date';
+  }
+
+  @override
+  String get shiftsFlutterNext30Today => 'Nächste 30 Tage ab heute';
+
+  @override
+  String get shiftsFlutterNoDefinition => 'Keine Definition';
+
+  @override
+  String get shiftsFlutterNoDefinitionYet => 'Keine Definition vorhanden';
+
+  @override
+  String get shiftsFlutterNoFixed => 'Keine festen Schichten';
+
+  @override
+  String get shiftsFlutterNoSegments => 'Keine Schicht-Segmente definiert';
+
+  @override
+  String get shiftsFlutterNotFound => 'Schichtplan nicht gefunden';
+
+  @override
+  String get shiftsFlutterNote => 'Hinweis';
+
+  @override
+  String get shiftsFlutterOneDay => '1 Tag';
+
+  @override
+  String get shiftsFlutterPlan => 'Schichtplan';
+
+  @override
+  String get shiftsFlutterPreview => 'Vorschau';
+
+  @override
+  String shiftsFlutterPreviewOf(Object name) {
+    return 'Vorschau: $name';
+  }
+
+  @override
+  String shiftsFlutterRepeatTimes(Object count) {
+    return '${count}x wiederholen';
+  }
+
+  @override
+  String get shiftsFlutterRepetitionsHint => 'Anzahl aufeinanderfolgender Tage';
+
+  @override
+  String get shiftsFlutterSearchingPeople => 'Suche passende Personen in Ziel-Instanz...';
+
+  @override
+  String shiftsFlutterSegments(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Segmente',
+      one: '$count Segment',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String shiftsFlutterShiftsCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Schichten',
+      one: '$count Schicht',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get shiftsFlutterStart => 'Start';
+
+  @override
+  String shiftsFlutterStartDateToday(Object date) {
+    return 'Startdatum: Heute ($date)';
+  }
+
+  @override
+  String shiftsFlutterStartDateWith(Object date, Object name) {
+    return 'Startdatum: $date ($name)';
+  }
+
+  @override
+  String get shiftsFlutterTargetTenant => 'Ziel-Instanz';
+
+  @override
+  String shiftsFlutterUsage(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Mitglieder nutzen diesen Schichtplan',
+      one: '$count Mitglied nutzen diesen Schichtplan',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get shiftsFlutterWillCopy => 'Wird kopiert:';
+
+  @override
   String get shiftsFree => 'Frei';
 
   @override
@@ -8254,6 +8526,133 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get songsFiles => 'Dateien';
+
+  @override
+  String songsFlutterCopiesCount(Object count) {
+    return '$count Kopien';
+  }
+
+  @override
+  String get songsFlutterCopiesPerInstrument => 'Kopien pro Instrument:';
+
+  @override
+  String get songsFlutterCreateFailed => 'Werk konnte nicht erstellt werden';
+
+  @override
+  String get songsFlutterCreatingInTarget => 'Erstelle Werk in Ziel-Instanz...';
+
+  @override
+  String get songsFlutterDeleteFailed => 'Werk konnte nicht gelöscht werden';
+
+  @override
+  String get songsFlutterDownloadFileFailed => 'Datei konnte nicht heruntergeladen werden';
+
+  @override
+  String songsFlutterErrorWith(Object error) {
+    return 'Fehler: $error';
+  }
+
+  @override
+  String songsFlutterFilesSkipped(Object count) {
+    return '$count Datei(en) konnten nicht eingebunden werden.';
+  }
+
+  @override
+  String songsFlutterFilesWillBeCopied(Object count) {
+    return '$count Dateien werden kopiert:';
+  }
+
+  @override
+  String get songsFlutterFilterAndView => 'Filter & Ansicht';
+
+  @override
+  String get songsFlutterFirstPage => 'Erste Seite';
+
+  @override
+  String get songsFlutterFullscreen => 'Vollbild';
+
+  @override
+  String get songsFlutterHideTab => 'Tab ausblenden';
+
+  @override
+  String get songsFlutterInvalidId => 'Ungültige Werk-ID';
+
+  @override
+  String get songsFlutterLastPage => 'Letzte Seite';
+
+  @override
+  String songsFlutterListAnd(Object rest, Object last) {
+    return '$rest und $last';
+  }
+
+  @override
+  String get songsFlutterLoadingTargetGroups => 'Lade Ziel-Instrumente...';
+
+  @override
+  String get songsFlutterMenu => 'Menü';
+
+  @override
+  String get songsFlutterNextPage => 'Nächste Seite';
+
+  @override
+  String get songsFlutterNoPlayers => 'Keine Spieler gefunden';
+
+  @override
+  String get songsFlutterNoSongs => 'Keine Werke vorhanden';
+
+  @override
+  String get songsFlutterNotFound => 'Werk nicht gefunden';
+
+  @override
+  String get songsFlutterOneEach => 'Je 1';
+
+  @override
+  String get songsFlutterOpenFileFailed => 'Konnte Datei nicht öffnen';
+
+  @override
+  String songsFlutterPdfCreateFailed(Object error) {
+    return 'Fehler beim Erstellen der PDF: $error';
+  }
+
+  @override
+  String get songsFlutterPdfLoadFailed => 'PDF konnte nicht geladen werden';
+
+  @override
+  String get songsFlutterPdfLoading => 'PDF wird geladen...';
+
+  @override
+  String get songsFlutterPreviousPage => 'Vorherige Seite';
+
+  @override
+  String songsFlutterPrintFailed(Object error) {
+    return 'Fehler beim Drucken: $error';
+  }
+
+  @override
+  String get songsFlutterPrintFileFailed => 'Datei konnte nicht gedruckt werden';
+
+  @override
+  String get songsFlutterPrintJobSent => 'Druckauftrag gesendet';
+
+  @override
+  String get songsFlutterPrinting => 'Wird gedruckt...';
+
+  @override
+  String get songsFlutterReorderCategoriesHint => 'Ziehe Kategorien um sie neu zu sortieren';
+
+  @override
+  String get songsFlutterShowAsTab => 'Als Tab anzeigen';
+
+  @override
+  String get songsFlutterSong => 'Werk';
+
+  @override
+  String get songsFlutterTelegramSent => 'Datei per Telegram gesendet';
+
+  @override
+  String songsFlutterUploadFailedWith(Object error) {
+    return 'Fehler beim Hochladen: $error';
+  }
 
   @override
   String get songsFreeText => 'Freitext';

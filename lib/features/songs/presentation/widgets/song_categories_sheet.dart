@@ -6,6 +6,7 @@ import '../../../../core/providers/song_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/song/song.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Bottom sheet for managing song categories (CRUD)
 class SongCategoriesSheet extends ConsumerStatefulWidget {
@@ -56,7 +57,7 @@ class _SongCategoriesSheetState extends ConsumerState<SongCategoriesSheet> {
                   children: [
                     Expanded(
                       child: Text(
-                        'Werk-Kategorien',
+                        context.l10n.songsSongCategories,
                         style:
                             Theme.of(context).textTheme.titleMedium?.copyWith(
                                   fontWeight: FontWeight.bold,
@@ -66,7 +67,7 @@ class _SongCategoriesSheetState extends ConsumerState<SongCategoriesSheet> {
                     IconButton(
                       icon: const Icon(Icons.add),
                       onPressed: () => _showAddCategoryDialog(context),
-                      tooltip: 'Kategorie hinzufügen',
+                      tooltip: context.l10n.songsAddCategory,
                     ),
                     IconButton(
                       icon: const Icon(Icons.close),
@@ -92,12 +93,12 @@ class _SongCategoriesSheetState extends ConsumerState<SongCategoriesSheet> {
                         const Icon(Icons.error_outline,
                             size: 48, color: AppColors.danger),
                         const SizedBox(height: AppDimensions.paddingM),
-                        Text('Fehler: $error'),
+                        Text(context.l10n.songsFlutterErrorWith(error)),
                         const SizedBox(height: AppDimensions.paddingM),
                         ElevatedButton(
                           onPressed: () =>
                               ref.invalidate(songCategoriesProvider),
-                          child: const Text('Erneut versuchen'),
+                          child: Text(context.l10n.messagesRetry),
                         ),
                       ],
                     ),
@@ -112,7 +113,7 @@ class _SongCategoriesSheetState extends ConsumerState<SongCategoriesSheet> {
                         child: Padding(
                           padding: const EdgeInsets.all(AppDimensions.paddingM),
                           child: Text(
-                            'Es wurden noch keine Kategorien angelegt.',
+                            context.l10n.songsNoCategories,
                             textAlign: TextAlign.center,
                             style: Theme.of(context).textTheme.bodyMedium,
                           ),
@@ -155,7 +156,7 @@ class _SongCategoriesSheetState extends ConsumerState<SongCategoriesSheet> {
               Padding(
                 padding: const EdgeInsets.all(AppDimensions.paddingM),
                 child: Text(
-                  'Ziehe Kategorien um sie neu zu sortieren',
+                  context.l10n.songsFlutterReorderCategoriesHint,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: AppColors.medium,
                       ),
@@ -182,11 +183,11 @@ class _SongCategoriesSheetState extends ConsumerState<SongCategoriesSheet> {
     final result = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Kategorie hinzufügen'),
+        title: Text(context.l10n.songsAddCategory),
         content: TextField(
           controller: controller,
-          decoration: const InputDecoration(
-            hintText: 'Name der Kategorie',
+          decoration: InputDecoration(
+            hintText: context.l10n.songsCategoryName,
           ),
           autofocus: true,
           textCapitalization: TextCapitalization.sentences,
@@ -194,7 +195,7 @@ class _SongCategoriesSheetState extends ConsumerState<SongCategoriesSheet> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Abbrechen'),
+            child: Text(context.l10n.commonCancel),
           ),
           FilledButton(
             onPressed: () {
@@ -203,7 +204,7 @@ class _SongCategoriesSheetState extends ConsumerState<SongCategoriesSheet> {
                 Navigator.of(context).pop(name);
               }
             },
-            child: const Text('Hinzufügen'),
+            child: Text(context.l10n.attendanceAdd),
           ),
         ],
       ),
@@ -212,7 +213,7 @@ class _SongCategoriesSheetState extends ConsumerState<SongCategoriesSheet> {
     if (result != null && mounted) {
       final created = await ref.read(songCategoryNotifierProvider.notifier).add(result);
       if (created != null && context.mounted) {
-        ToastHelper.showSuccess(context, 'Kategorie hinzugefügt');
+        ToastHelper.showSuccess(context, context.l10n.songsCategoryAdded);
       }
     }
   }
@@ -224,11 +225,11 @@ class _SongCategoriesSheetState extends ConsumerState<SongCategoriesSheet> {
     final result = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Kategorie bearbeiten'),
+        title: Text(context.l10n.songsEditCategory),
         content: TextField(
           controller: controller,
-          decoration: const InputDecoration(
-            hintText: 'Name der Kategorie',
+          decoration: InputDecoration(
+            hintText: context.l10n.songsCategoryName,
           ),
           autofocus: true,
           textCapitalization: TextCapitalization.sentences,
@@ -236,7 +237,7 @@ class _SongCategoriesSheetState extends ConsumerState<SongCategoriesSheet> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Abbrechen'),
+            child: Text(context.l10n.commonCancel),
           ),
           FilledButton(
             onPressed: () {
@@ -245,7 +246,7 @@ class _SongCategoriesSheetState extends ConsumerState<SongCategoriesSheet> {
                 Navigator.of(context).pop(name);
               }
             },
-            child: const Text('Speichern'),
+            child: Text(context.l10n.commonSave),
           ),
         ],
       ),
@@ -255,7 +256,7 @@ class _SongCategoriesSheetState extends ConsumerState<SongCategoriesSheet> {
       final ok = await ref
           .read(songCategoryNotifierProvider.notifier)
           .update(category.id!, result);
-      if (ok && context.mounted) ToastHelper.showSuccess(context, 'Kategorie gespeichert');
+      if (ok && context.mounted) ToastHelper.showSuccess(context, context.l10n.songsCategorySaved);
     }
   }
 
@@ -264,20 +265,19 @@ class _SongCategoriesSheetState extends ConsumerState<SongCategoriesSheet> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Kategorie löschen'),
-        content: const Text(
-            'Möchten Sie diese Kategorie wirklich löschen? Alle Werke in dieser Kategorie werden keiner neuen Kategorie zugewiesen.'),
+        title: Text(context.l10n.songsDeleteCategory),
+        content: Text(context.l10n.songsDeleteCategoryMessage),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Abbrechen'),
+            child: Text(context.l10n.commonCancel),
           ),
           FilledButton(
             style: FilledButton.styleFrom(
               backgroundColor: AppColors.danger,
             ),
             onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Löschen'),
+            child: Text(context.l10n.commonDelete),
           ),
         ],
       ),
@@ -287,7 +287,7 @@ class _SongCategoriesSheetState extends ConsumerState<SongCategoriesSheet> {
       final ok = await ref
           .read(songCategoryNotifierProvider.notifier)
           .delete(category.id!);
-      if (ok && context.mounted) ToastHelper.showSuccess(context, 'Kategorie gelöscht');
+      if (ok && context.mounted) ToastHelper.showSuccess(context, context.l10n.songsCategoryDeleted);
     }
   }
 }
@@ -317,12 +317,12 @@ class _CategoryTile extends StatelessWidget {
             IconButton(
               icon: const Icon(Icons.edit, size: 20),
               onPressed: onEdit,
-              tooltip: 'Bearbeiten',
+              tooltip: context.l10n.commonEdit,
             ),
             IconButton(
               icon: const Icon(Icons.delete, size: 20, color: AppColors.danger),
               onPressed: onDelete,
-              tooltip: 'Löschen',
+              tooltip: context.l10n.commonDelete,
             ),
           ],
         ),

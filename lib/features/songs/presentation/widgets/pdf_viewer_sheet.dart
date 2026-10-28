@@ -4,6 +4,7 @@ import 'package:pdfx/pdfx.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Bottom sheet for viewing PDF files in-app
 class PdfViewerSheet extends StatefulWidget {
@@ -144,7 +145,7 @@ class _PdfViewerSheetState extends State<PdfViewerSheet> {
                       IconButton(
                         icon: const Icon(Icons.fullscreen),
                         onPressed: _openFullscreen,
-                        tooltip: 'Vollbild',
+                        tooltip: context.l10n.songsFlutterFullscreen,
                       ),
                     IconButton(
                       icon: const Icon(Icons.close),
@@ -170,13 +171,13 @@ class _PdfViewerSheetState extends State<PdfViewerSheet> {
 
   Widget _buildContent() {
     if (_isLoading) {
-      return const Center(
+      return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CircularProgressIndicator(),
-            SizedBox(height: AppDimensions.paddingM),
-            Text('PDF wird geladen...'),
+            const CircularProgressIndicator(),
+            const SizedBox(height: AppDimensions.paddingM),
+            Text(context.l10n.songsFlutterPdfLoading),
           ],
         ),
       );
@@ -192,7 +193,7 @@ class _PdfViewerSheetState extends State<PdfViewerSheet> {
               const Icon(Icons.error_outline, size: 64, color: AppColors.danger),
               const SizedBox(height: AppDimensions.paddingM),
               Text(
-                'PDF konnte nicht geladen werden',
+                context.l10n.songsFlutterPdfLoadFailed,
                 style: Theme.of(context).textTheme.titleMedium,
                 textAlign: TextAlign.center,
               ),
@@ -212,7 +213,7 @@ class _PdfViewerSheetState extends State<PdfViewerSheet> {
                   _loadPdf();
                 },
                 icon: const Icon(Icons.refresh),
-                label: const Text('Erneut versuchen'),
+                label: Text(context.l10n.messagesRetry),
               ),
             ],
           ),
@@ -234,7 +235,7 @@ class _PdfViewerSheetState extends State<PdfViewerSheet> {
           child: CircularProgressIndicator(),
         ),
         errorBuilder: (_, error) => Center(
-          child: Text('Fehler: $error'),
+          child: Text(context.l10n.songsFlutterErrorWith(error)),
         ),
       ),
     );
@@ -262,18 +263,18 @@ class _PdfViewerSheetState extends State<PdfViewerSheet> {
           IconButton(
             icon: const Icon(Icons.first_page),
             onPressed: _currentPage > 1 ? () => _goToPage(1) : null,
-            tooltip: 'Erste Seite',
+            tooltip: context.l10n.songsFlutterFirstPage,
           ),
           IconButton(
             icon: const Icon(Icons.chevron_left),
             onPressed:
                 _currentPage > 1 ? () => _goToPage(_currentPage - 1) : null,
-            tooltip: 'Vorherige Seite',
+            tooltip: context.l10n.songsFlutterPreviousPage,
           ),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Text(
-              'Seite $_currentPage von $_totalPages',
+              context.l10n.protocolPage(_currentPage, _totalPages),
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w500,
                   ),
@@ -284,13 +285,13 @@ class _PdfViewerSheetState extends State<PdfViewerSheet> {
             onPressed: _currentPage < _totalPages
                 ? () => _goToPage(_currentPage + 1)
                 : null,
-            tooltip: 'Nächste Seite',
+            tooltip: context.l10n.songsFlutterNextPage,
           ),
           IconButton(
             icon: const Icon(Icons.last_page),
             onPressed:
                 _currentPage < _totalPages ? () => _goToPage(_totalPages) : null,
-            tooltip: 'Letzte Seite',
+            tooltip: context.l10n.songsFlutterLastPage,
           ),
         ],
       ),

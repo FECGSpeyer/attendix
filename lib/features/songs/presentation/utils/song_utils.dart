@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/models/song/song.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Shared helpers for the songs feature (ports of Ionic Utils / song.page).
 class SongUtils {
@@ -44,13 +45,13 @@ class SongUtils {
   /// Label of a file category (Ionic `getInstrumentName`)
   static String fileLabel(SongFile file, List<Group> instruments) {
     final id = file.instrumentId;
-    if (id == null || id == 0) return file.note ?? 'Sonstige';
-    if (id == 1) return 'Aufnahme';
-    if (id == 2) return 'Liedtext';
+    if (id == null || id == 0) return file.note ?? l10nWithoutContext.songsOther;
+    if (id == 1) return l10nWithoutContext.songsRecording;
+    if (id == 2) return l10nWithoutContext.songsLyrics;
     for (final g in instruments) {
       if (g.id == id) return g.name;
     }
-    return 'Unbekannt';
+    return l10nWithoutContext.commonUnknown;
   }
 
   /// Badge color of a file category (Ionic `getBadgeColor`)
@@ -105,7 +106,7 @@ class SongUtils {
     final nonMain = groups.where((g) => g.maingroup != true).toList();
     final missing = nonMain.where((g) => !instrumentIds.contains(g.id)).toList();
     if (missing.isEmpty) return '';
-    if (missing.length == 1) return 'Ohne ${missing.first.name}';
+    if (missing.length == 1) return l10nWithoutContext.commonWithout(missing.first.name);
 
     final byCategory = <int, List<Group>>{};
     for (final g in missing) {
@@ -118,11 +119,11 @@ class SongUtils {
       final total = nonMain.where((g) => (g.categoryId ?? -1) == catId).length;
       if (list.length == total) {
         if (catId == -1) {
-          fullCategories.add('Sonstige');
+          fullCategories.add(l10nWithoutContext.commonOtherPlural);
         } else {
           fullCategories.add(
             groupCategories.where((c) => c.id == catId).firstOrNull?.name ??
-                'Unbekannt',
+                l10nWithoutContext.commonUnknown,
           );
         }
       } else {
@@ -131,14 +132,14 @@ class SongUtils {
     });
 
     final parts = [...fullCategories, ...individual.map((g) => g.name)];
-    return 'Ohne ${formatList(parts)}';
+    return l10nWithoutContext.commonWithout(formatList(parts));
   }
 
-  /// German conjunction list ("a, b und c")
+  /// Conjunction list ("a, b und c" / "a, b and c")
   static String formatList(List<String> items) {
     if (items.isEmpty) return '';
     if (items.length == 1) return items.first;
-    return '${items.sublist(0, items.length - 1).join(', ')} und ${items.last}';
+    return l10nWithoutContext.songsFlutterListAnd(items.sublist(0, items.length - 1).join(', '), items.last);
   }
 
   /// dd.MM.yyyy (Ionic `common.ngDate`)
@@ -146,20 +147,20 @@ class SongUtils {
     if (iso == null || iso.isEmpty) return '';
     final d = DateTime.tryParse(iso);
     if (d == null) return iso;
-    return DateFormat('dd.MM.yyyy').format(d.toLocal());
+    return DateFormat(dateFmt()).format(d.toLocal());
   }
 
   /// Difficulty label (Ionic songs.easy/medium/hard)
   static String difficultyLabel(int? difficulty) {
     switch (difficulty) {
       case 1:
-        return '1 - Leicht';
+        return l10nWithoutContext.songsEasy;
       case 2:
-        return '2 - Mittel';
+        return l10nWithoutContext.songsMedium;
       case 3:
-        return '3 - Schwer';
+        return l10nWithoutContext.songsHard;
       default:
-        return 'Nicht definiert';
+        return l10nWithoutContext.songsNotDefined;
     }
   }
 

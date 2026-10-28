@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/providers/song_providers.dart';
 import '../widgets/add_song_sheet.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Full page variant of "Werk hinzufügen" (route `/settings/songs/new`).
 /// The songs list opens the same form as a sheet (like the Ionic modal).
@@ -14,10 +15,10 @@ class SongCreatePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final dataAsync = ref.watch(songsListDataProvider(null));
     return Scaffold(
-      appBar: AppBar(title: const Text('Werk hinzufügen')),
+      appBar: AppBar(title: Text(context.l10n.songsAddSong)),
       body: dataAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('Fehler: $e')),
+        error: (e, _) => Center(child: Text(context.l10n.songsFlutterErrorWith(e))),
         data: (data) => data == null
             ? const SizedBox.shrink()
             : AddSongSheet(

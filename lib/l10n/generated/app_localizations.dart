@@ -3929,6 +3929,72 @@ abstract class AppLocalizations {
   /// **'{count, plural, one {{count} Termin angepasst} other {{count} Termine angepasst}}'**
   String dutyEventsAdjusted(num count);
 
+  /// duty.flutter.allFilled
+  ///
+  /// In de, this message translates to:
+  /// **'alles besetzt'**
+  String get dutyFlutterAllFilled;
+
+  /// duty.flutter.declineFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Abmelden'**
+  String get dutyFlutterDeclineFailed;
+
+  /// duty.flutter.deleteFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Löschen'**
+  String get dutyFlutterDeleteFailed;
+
+  /// duty.flutter.errorWith
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler: {error}'**
+  String dutyFlutterErrorWith(Object error);
+
+  /// duty.flutter.nameRequested
+  ///
+  /// In de, this message translates to:
+  /// **'{name} (angefragt)'**
+  String dutyFlutterNameRequested(Object name);
+
+  /// duty.flutter.nobodyAssigned
+  ///
+  /// In de, this message translates to:
+  /// **'noch niemand eingeteilt'**
+  String get dutyFlutterNobodyAssigned;
+
+  /// duty.flutter.nothingToDistribute
+  ///
+  /// In de, this message translates to:
+  /// **'Nichts zu verteilen'**
+  String get dutyFlutterNothingToDistribute;
+
+  /// duty.flutter.plannedNew
+  ///
+  /// In de, this message translates to:
+  /// **'(+{count} neu)'**
+  String dutyFlutterPlannedNew(Object count);
+
+  /// duty.flutter.saveAssignments
+  ///
+  /// In de, this message translates to:
+  /// **'{count} Einteilungen speichern'**
+  String dutyFlutterSaveAssignments(Object count);
+
+  /// duty.flutter.timeOClock
+  ///
+  /// In de, this message translates to:
+  /// **'{time} Uhr'**
+  String dutyFlutterTimeOClock(Object time);
+
+  /// duty.flutter.unassignMessage
+  ///
+  /// In de, this message translates to:
+  /// **'{name} ist dann nicht mehr eingeteilt.'**
+  String dutyFlutterUnassignMessage(Object name);
+
   /// duty.forWhichTypes
   ///
   /// In de, this message translates to:
@@ -13427,6 +13493,324 @@ abstract class AppLocalizations {
   /// **'Feste Schichten (optional)'**
   String get shiftsFixedOptional;
 
+  /// shifts.flutter.addSegment
+  ///
+  /// In de, this message translates to:
+  /// **'Segment hinzufügen'**
+  String get shiftsFlutterAddSegment;
+
+  /// shifts.flutter.addSegmentsHint
+  ///
+  /// In de, this message translates to:
+  /// **'Füge Segmente hinzu, um die Vorschau zu sehen'**
+  String get shiftsFlutterAddSegmentsHint;
+
+  /// shifts.flutter.addShift
+  ///
+  /// In de, this message translates to:
+  /// **'Schicht hinzufügen'**
+  String get shiftsFlutterAddShift;
+
+  /// shifts.flutter.assigningPeople
+  ///
+  /// In de, this message translates to:
+  /// **'Weise {count} Personen zu...'**
+  String shiftsFlutterAssigningPeople(Object count);
+
+  /// shifts.flutter.copyAssignments
+  ///
+  /// In de, this message translates to:
+  /// **'Zuweisungen kopieren'**
+  String get shiftsFlutterCopyAssignments;
+
+  /// shifts.flutter.copyAssignmentsHint
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {{count} Person nutzt} other {{count} Personen nutzen}} diesen Schichtplan. Versuche passende Personen in der Ziel-Instanz zuzuweisen.'**
+  String shiftsFlutterCopyAssignmentsHint(num count);
+
+  /// shifts.flutter.copyFailedWith
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Kopieren: {error}'**
+  String shiftsFlutterCopyFailedWith(Object error);
+
+  /// shifts.flutter.copyInfo
+  ///
+  /// In de, this message translates to:
+  /// **'Der Schichtplan \"{name}\" wird in die ausgewählte Instanz kopiert. Die Definition und feste Schichten werden übernommen.'**
+  String shiftsFlutterCopyInfo(Object name);
+
+  /// shifts.flutter.copyInfoAssignments
+  ///
+  /// In de, this message translates to:
+  /// **'Zuweisungen werden anhand der App-ID (appId) der Personen gemappt.'**
+  String get shiftsFlutterCopyInfoAssignments;
+
+  /// shifts.flutter.copyingShort
+  ///
+  /// In de, this message translates to:
+  /// **'Wird kopiert...'**
+  String get shiftsFlutterCopyingShort;
+
+  /// shifts.flutter.createFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Erstellen: {error}'**
+  String shiftsFlutterCreateFailed(Object error);
+
+  /// shifts.flutter.created
+  ///
+  /// In de, this message translates to:
+  /// **'Schichtplan \"{name}\" erstellt'**
+  String shiftsFlutterCreated(Object name);
+
+  /// shifts.flutter.creatingPlan
+  ///
+  /// In de, this message translates to:
+  /// **'Erstelle Schichtplan...'**
+  String get shiftsFlutterCreatingPlan;
+
+  /// shifts.flutter.cycle
+  ///
+  /// In de, this message translates to:
+  /// **'Zyklus: {count} Tage'**
+  String shiftsFlutterCycle(Object count);
+
+  /// shifts.flutter.cycleDays
+  ///
+  /// In de, this message translates to:
+  /// **'{count}-Tage-Zyklus'**
+  String shiftsFlutterCycleDays(Object count);
+
+  /// shifts.flutter.dayN
+  ///
+  /// In de, this message translates to:
+  /// **'Tag {n}'**
+  String shiftsFlutterDayN(Object n);
+
+  /// shifts.flutter.deleteConfirm
+  ///
+  /// In de, this message translates to:
+  /// **'Möchtest du diesen Schichtplan wirklich löschen?'**
+  String get shiftsFlutterDeleteConfirm;
+
+  /// shifts.flutter.deleteConfirmUsed
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {{count} Mitglied nutzen diesen Schichtplan.} other {{count} Mitglieder nutzen diesen Schichtplan.}} Möchtest du ihn trotzdem löschen?'**
+  String shiftsFlutterDeleteConfirmUsed(num count);
+
+  /// shifts.flutter.descriptionHint
+  ///
+  /// In de, this message translates to:
+  /// **'z.B. Früh, Spät, Nacht'**
+  String get shiftsFlutterDescriptionHint;
+
+  /// shifts.flutter.durationHint
+  ///
+  /// In de, this message translates to:
+  /// **'z.B. 8.0'**
+  String get shiftsFlutterDurationHint;
+
+  /// shifts.flutter.editSegment
+  ///
+  /// In de, this message translates to:
+  /// **'Segment bearbeiten'**
+  String get shiftsFlutterEditSegment;
+
+  /// shifts.flutter.errorWith
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler: {error}'**
+  String shiftsFlutterErrorWith(Object error);
+
+  /// shifts.flutter.firstSegment
+  ///
+  /// In de, this message translates to:
+  /// **'Erstes Segment'**
+  String get shiftsFlutterFirstSegment;
+
+  /// shifts.flutter.fixedHint
+  ///
+  /// In de, this message translates to:
+  /// **'Feste Schichten definieren konkrete Startdaten für den Schichtzyklus.'**
+  String get shiftsFlutterFixedHint;
+
+  /// shifts.flutter.fixedShifts
+  ///
+  /// In de, this message translates to:
+  /// **'Feste Schichten'**
+  String get shiftsFlutterFixedShifts;
+
+  /// shifts.flutter.freeHint
+  ///
+  /// In de, this message translates to:
+  /// **'Mitarbeiter ist an diesem Tag frei'**
+  String get shiftsFlutterFreeHint;
+
+  /// shifts.flutter.infoText
+  ///
+  /// In de, this message translates to:
+  /// **'Schichtpläne ermöglichen automatische Entschuldigungen basierend auf Arbeitsschichten. Weise einem Mitglied einen Schichtplan zu, um Konflikte mit Terminen automatisch zu erkennen.'**
+  String get shiftsFlutterInfoText;
+
+  /// shifts.flutter.infoTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Automatische Entschuldigungen'**
+  String get shiftsFlutterInfoTitle;
+
+  /// shifts.flutter.labelHint
+  ///
+  /// In de, this message translates to:
+  /// **'z.B. Frühdienst'**
+  String get shiftsFlutterLabelHint;
+
+  /// shifts.flutter.nameHint
+  ///
+  /// In de, this message translates to:
+  /// **'z.B. 3-Schicht-System'**
+  String get shiftsFlutterNameHint;
+
+  /// shifts.flutter.next30From
+  ///
+  /// In de, this message translates to:
+  /// **'Nächste 30 Tage ab {date}'**
+  String shiftsFlutterNext30From(Object date);
+
+  /// shifts.flutter.next30Today
+  ///
+  /// In de, this message translates to:
+  /// **'Nächste 30 Tage ab heute'**
+  String get shiftsFlutterNext30Today;
+
+  /// shifts.flutter.noDefinition
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Definition'**
+  String get shiftsFlutterNoDefinition;
+
+  /// shifts.flutter.noDefinitionYet
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Definition vorhanden'**
+  String get shiftsFlutterNoDefinitionYet;
+
+  /// shifts.flutter.noFixed
+  ///
+  /// In de, this message translates to:
+  /// **'Keine festen Schichten'**
+  String get shiftsFlutterNoFixed;
+
+  /// shifts.flutter.noSegments
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Schicht-Segmente definiert'**
+  String get shiftsFlutterNoSegments;
+
+  /// shifts.flutter.notFound
+  ///
+  /// In de, this message translates to:
+  /// **'Schichtplan nicht gefunden'**
+  String get shiftsFlutterNotFound;
+
+  /// shifts.flutter.note
+  ///
+  /// In de, this message translates to:
+  /// **'Hinweis'**
+  String get shiftsFlutterNote;
+
+  /// shifts.flutter.oneDay
+  ///
+  /// In de, this message translates to:
+  /// **'1 Tag'**
+  String get shiftsFlutterOneDay;
+
+  /// shifts.flutter.plan
+  ///
+  /// In de, this message translates to:
+  /// **'Schichtplan'**
+  String get shiftsFlutterPlan;
+
+  /// shifts.flutter.preview
+  ///
+  /// In de, this message translates to:
+  /// **'Vorschau'**
+  String get shiftsFlutterPreview;
+
+  /// shifts.flutter.previewOf
+  ///
+  /// In de, this message translates to:
+  /// **'Vorschau: {name}'**
+  String shiftsFlutterPreviewOf(Object name);
+
+  /// shifts.flutter.repeatTimes
+  ///
+  /// In de, this message translates to:
+  /// **'{count}x wiederholen'**
+  String shiftsFlutterRepeatTimes(Object count);
+
+  /// shifts.flutter.repetitionsHint
+  ///
+  /// In de, this message translates to:
+  /// **'Anzahl aufeinanderfolgender Tage'**
+  String get shiftsFlutterRepetitionsHint;
+
+  /// shifts.flutter.searchingPeople
+  ///
+  /// In de, this message translates to:
+  /// **'Suche passende Personen in Ziel-Instanz...'**
+  String get shiftsFlutterSearchingPeople;
+
+  /// shifts.flutter.segments
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {{count} Segment} other {{count} Segmente}}'**
+  String shiftsFlutterSegments(num count);
+
+  /// shifts.flutter.shiftsCount
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {{count} Schicht} other {{count} Schichten}}'**
+  String shiftsFlutterShiftsCount(num count);
+
+  /// shifts.flutter.start
+  ///
+  /// In de, this message translates to:
+  /// **'Start'**
+  String get shiftsFlutterStart;
+
+  /// shifts.flutter.startDateToday
+  ///
+  /// In de, this message translates to:
+  /// **'Startdatum: Heute ({date})'**
+  String shiftsFlutterStartDateToday(Object date);
+
+  /// shifts.flutter.startDateWith
+  ///
+  /// In de, this message translates to:
+  /// **'Startdatum: {date} ({name})'**
+  String shiftsFlutterStartDateWith(Object date, Object name);
+
+  /// shifts.flutter.targetTenant
+  ///
+  /// In de, this message translates to:
+  /// **'Ziel-Instanz'**
+  String get shiftsFlutterTargetTenant;
+
+  /// shifts.flutter.usage
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {{count} Mitglied nutzen diesen Schichtplan} other {{count} Mitglieder nutzen diesen Schichtplan}}'**
+  String shiftsFlutterUsage(num count);
+
+  /// shifts.flutter.willCopy
+  ///
+  /// In de, this message translates to:
+  /// **'Wird kopiert:'**
+  String get shiftsFlutterWillCopy;
+
   /// shifts.free
   ///
   /// In de, this message translates to:
@@ -14608,6 +14992,228 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Dateien'**
   String get songsFiles;
+
+  /// songs.flutter.copiesCount
+  ///
+  /// In de, this message translates to:
+  /// **'{count} Kopien'**
+  String songsFlutterCopiesCount(Object count);
+
+  /// songs.flutter.copiesPerInstrument
+  ///
+  /// In de, this message translates to:
+  /// **'Kopien pro Instrument:'**
+  String get songsFlutterCopiesPerInstrument;
+
+  /// songs.flutter.createFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Werk konnte nicht erstellt werden'**
+  String get songsFlutterCreateFailed;
+
+  /// songs.flutter.creatingInTarget
+  ///
+  /// In de, this message translates to:
+  /// **'Erstelle Werk in Ziel-Instanz...'**
+  String get songsFlutterCreatingInTarget;
+
+  /// songs.flutter.deleteFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Werk konnte nicht gelöscht werden'**
+  String get songsFlutterDeleteFailed;
+
+  /// songs.flutter.downloadFileFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Datei konnte nicht heruntergeladen werden'**
+  String get songsFlutterDownloadFileFailed;
+
+  /// songs.flutter.errorWith
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler: {error}'**
+  String songsFlutterErrorWith(Object error);
+
+  /// songs.flutter.filesSkipped
+  ///
+  /// In de, this message translates to:
+  /// **'{count} Datei(en) konnten nicht eingebunden werden.'**
+  String songsFlutterFilesSkipped(Object count);
+
+  /// songs.flutter.filesWillBeCopied
+  ///
+  /// In de, this message translates to:
+  /// **'{count} Dateien werden kopiert:'**
+  String songsFlutterFilesWillBeCopied(Object count);
+
+  /// songs.flutter.filterAndView
+  ///
+  /// In de, this message translates to:
+  /// **'Filter & Ansicht'**
+  String get songsFlutterFilterAndView;
+
+  /// songs.flutter.firstPage
+  ///
+  /// In de, this message translates to:
+  /// **'Erste Seite'**
+  String get songsFlutterFirstPage;
+
+  /// songs.flutter.fullscreen
+  ///
+  /// In de, this message translates to:
+  /// **'Vollbild'**
+  String get songsFlutterFullscreen;
+
+  /// songs.flutter.hideTab
+  ///
+  /// In de, this message translates to:
+  /// **'Tab ausblenden'**
+  String get songsFlutterHideTab;
+
+  /// songs.flutter.invalidId
+  ///
+  /// In de, this message translates to:
+  /// **'Ungültige Werk-ID'**
+  String get songsFlutterInvalidId;
+
+  /// songs.flutter.lastPage
+  ///
+  /// In de, this message translates to:
+  /// **'Letzte Seite'**
+  String get songsFlutterLastPage;
+
+  /// songs.flutter.listAnd
+  ///
+  /// In de, this message translates to:
+  /// **'{rest} und {last}'**
+  String songsFlutterListAnd(Object rest, Object last);
+
+  /// songs.flutter.loadingTargetGroups
+  ///
+  /// In de, this message translates to:
+  /// **'Lade Ziel-Instrumente...'**
+  String get songsFlutterLoadingTargetGroups;
+
+  /// songs.flutter.menu
+  ///
+  /// In de, this message translates to:
+  /// **'Menü'**
+  String get songsFlutterMenu;
+
+  /// songs.flutter.nextPage
+  ///
+  /// In de, this message translates to:
+  /// **'Nächste Seite'**
+  String get songsFlutterNextPage;
+
+  /// songs.flutter.noPlayers
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Spieler gefunden'**
+  String get songsFlutterNoPlayers;
+
+  /// songs.flutter.noSongs
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Werke vorhanden'**
+  String get songsFlutterNoSongs;
+
+  /// songs.flutter.notFound
+  ///
+  /// In de, this message translates to:
+  /// **'Werk nicht gefunden'**
+  String get songsFlutterNotFound;
+
+  /// songs.flutter.oneEach
+  ///
+  /// In de, this message translates to:
+  /// **'Je 1'**
+  String get songsFlutterOneEach;
+
+  /// songs.flutter.openFileFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Konnte Datei nicht öffnen'**
+  String get songsFlutterOpenFileFailed;
+
+  /// songs.flutter.pdfCreateFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Erstellen der PDF: {error}'**
+  String songsFlutterPdfCreateFailed(Object error);
+
+  /// songs.flutter.pdfLoadFailed
+  ///
+  /// In de, this message translates to:
+  /// **'PDF konnte nicht geladen werden'**
+  String get songsFlutterPdfLoadFailed;
+
+  /// songs.flutter.pdfLoading
+  ///
+  /// In de, this message translates to:
+  /// **'PDF wird geladen...'**
+  String get songsFlutterPdfLoading;
+
+  /// songs.flutter.previousPage
+  ///
+  /// In de, this message translates to:
+  /// **'Vorherige Seite'**
+  String get songsFlutterPreviousPage;
+
+  /// songs.flutter.printFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Drucken: {error}'**
+  String songsFlutterPrintFailed(Object error);
+
+  /// songs.flutter.printFileFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Datei konnte nicht gedruckt werden'**
+  String get songsFlutterPrintFileFailed;
+
+  /// songs.flutter.printJobSent
+  ///
+  /// In de, this message translates to:
+  /// **'Druckauftrag gesendet'**
+  String get songsFlutterPrintJobSent;
+
+  /// songs.flutter.printing
+  ///
+  /// In de, this message translates to:
+  /// **'Wird gedruckt...'**
+  String get songsFlutterPrinting;
+
+  /// songs.flutter.reorderCategoriesHint
+  ///
+  /// In de, this message translates to:
+  /// **'Ziehe Kategorien um sie neu zu sortieren'**
+  String get songsFlutterReorderCategoriesHint;
+
+  /// songs.flutter.showAsTab
+  ///
+  /// In de, this message translates to:
+  /// **'Als Tab anzeigen'**
+  String get songsFlutterShowAsTab;
+
+  /// songs.flutter.song
+  ///
+  /// In de, this message translates to:
+  /// **'Werk'**
+  String get songsFlutterSong;
+
+  /// songs.flutter.telegramSent
+  ///
+  /// In de, this message translates to:
+  /// **'Datei per Telegram gesendet'**
+  String get songsFlutterTelegramSent;
+
+  /// songs.flutter.uploadFailedWith
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Hochladen: {error}'**
+  String songsFlutterUploadFailedWith(Object error);
 
   /// songs.freeText
   ///

@@ -10,6 +10,7 @@ import '../../../../core/utils/spreadsheet_reader.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../people/presentation/widgets/import_widgets.dart';
 import '../../../../core/providers/demo_providers.dart'; // DEMO_GUARD
+import '../../../../l10n/l10n.dart';
 
 enum _Step { file, mapping, preview }
 
@@ -42,15 +43,15 @@ class _SongImportPageState extends ConsumerState<SongImportPage> {
   }
 
   List<ImportTargetOption> _buildOptions() => [
-        (key: null, label: 'Ignorieren'),
-        (key: 'Nummer', label: 'Nummer'),
-        (key: 'Präfix', label: 'Präfix'),
-        (key: 'Name', label: 'Name'),
-        (key: 'Chor & Orchester', label: 'Chor & Orchester'),
-        (key: 'Mit Solo', label: 'Mit Solo'),
-        (key: 'Link', label: 'Link'),
-        (key: 'Schwierigkeit', label: 'Schwierigkeit (1/2/3)'),
-        (key: 'Kategorien', label: 'Kategorien'),
+        (key: null, label: context.l10n.peopleIgnore),
+        (key: 'Nummer', label: context.l10n.songsNumber),
+        (key: 'Präfix', label: context.l10n.songsPrefix),
+        (key: 'Name', label: context.l10n.songsName),
+        (key: 'Chor & Orchester', label: context.l10n.songsChoirOrchestra),
+        (key: 'Mit Solo', label: context.l10n.songsWithSolo),
+        (key: 'Link', label: context.l10n.songsLink),
+        (key: 'Schwierigkeit', label: context.l10n.songsDifficulty123),
+        (key: 'Kategorien', label: context.l10n.songsCategories),
         for (final f in _ctx.additionalFields)
           (key: '$kExtraPrefix${f.id}', label: f.name),
       ];
@@ -63,7 +64,7 @@ class _SongImportPageState extends ConsumerState<SongImportPage> {
     try {
       final data = readSpreadsheet(picked.bytes, picked.name);
       if (data.rows.isEmpty) {
-        if (mounted) ToastHelper.showWarning(context, 'Die Datei enthält keine Daten.');
+        if (mounted) ToastHelper.showWarning(context, context.l10n.peopleFileEmpty);
         return;
       }
       final ctx = await _buildContext();
@@ -79,7 +80,7 @@ class _SongImportPageState extends ConsumerState<SongImportPage> {
     } on SpreadsheetReadException catch (e) {
       if (mounted) ToastHelper.showError(context, e.message);
     } catch (_) {
-      if (mounted) ToastHelper.showError(context, 'Die Datei konnte nicht gelesen werden.');
+      if (mounted) ToastHelper.showError(context, context.l10n.peopleFileUnreadable);
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -94,13 +95,13 @@ class _SongImportPageState extends ConsumerState<SongImportPage> {
     try {
       await saveGeneratedFile(bytes, 'Werke_Import_Vorlage.xlsx');
     } catch (e) {
-      if (mounted) ToastHelper.showError(context, 'Fehler: $e');
+      if (mounted) ToastHelper.showError(context, context.l10n.songsFlutterErrorWith(e));
     }
   }
 
   Future<void> _proceedToPreview() async {
     if (!mappingSongHasRequired(_mapping)) {
-      ToastHelper.showWarning(context, 'Bitte Spalten für Nummer und Name zuordnen.');
+      ToastHelper.showWarning(context, context.l10n.songsMapNumberName);
       return;
     }
     setState(() => _busy = true);
@@ -113,7 +114,7 @@ class _SongImportPageState extends ConsumerState<SongImportPage> {
         _step = _Step.preview;
       });
     } catch (_) {
-      if (mounted) ToastHelper.showError(context, 'Fehler bei der Vorschau.');
+      if (mounted) ToastHelper.showError(context, context.l10n.peoplePreviewFailed);
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -125,7 +126,7 @@ class _SongImportPageState extends ConsumerState<SongImportPage> {
   Future<void> _startImport() async {
     final toImport = _importable;
     if (toImport.isEmpty) {
-      ToastHelper.showWarning(context, 'Keine importierbaren Werke.');
+      ToastHelper.showWarning(context, context.l10n.songsNothingToImport);
       return;
     }
     // DEMO_GUARD: Ionic `if (db.isDemo()) showToast(people.demoUnavailable)`.
@@ -137,7 +138,7 @@ class _SongImportPageState extends ConsumerState<SongImportPage> {
 
     setState(() {
       _busy = true;
-      _progress = '0 / ${toImport.length} importiert...';
+      _progress = context.l10n.peopleImportProgress(0, toImport.length);
     });
 
     var imported = 0;
@@ -151,7 +152,7 @@ class _SongImportPageState extends ConsumerState<SongImportPage> {
         failed.add('${row.displayTitle}: $e');
       }
       if (mounted) {
-        setState(() => _progress = '${i + 1} / ${toImport.length} importiert...');
+        setState(() => _progress = context.l10n.peopleImportProgress(i + 1, toImport.length));
       }
     }
 
@@ -159,14 +160,14 @@ class _SongImportPageState extends ConsumerState<SongImportPage> {
     setState(() => _busy = false);
 
     final parts = [
-      imported == 1 ? '1 Werk importiert.' : '$imported Werke importiert.',
-      if (failed.isNotEmpty) '${failed.length} fehlgeschlagen.',
+      context.l10n.songsImportedCount(imported),
+      if (failed.isNotEmpty) context.l10n.peopleFailedCount(failed.length),
     ];
     if (failed.isEmpty) {
       ToastHelper.showSuccess(context, parts.join(' '));
     } else {
       ToastHelper.showWarning(context, parts.join(' '));
-      await showImportFailures(context, title: 'Nicht importierte Werke', lines: failed);
+      await showImportFailures(context, title: context.l10n.songsNotImported, lines: failed);
     }
 
     if (imported > 0) {
@@ -179,7 +180,7 @@ class _SongImportPageState extends ConsumerState<SongImportPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Werke importieren'),
+        title: Text(context.l10n.songsImportSongs),
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
@@ -192,22 +193,19 @@ class _SongImportPageState extends ConsumerState<SongImportPage> {
         children: [
           switch (_step) {
             _Step.file => ImportFileStep(
-                intro: 'Importiere Werke aus einer Excel- (.xlsx) oder CSV-Datei. '
-                    'Die erste Zeile muss Spaltenüberschriften enthalten. Am einfachsten '
-                    'ist es, die Vorlage herunterzuladen und auszufüllen.',
+                intro: context.l10n.songsImportIntro,
                 onPickFile: _pickFile,
                 onDownloadTemplate: _downloadTemplate,
               ),
             _Step.mapping => ImportMappingStep(
                 fileName: _fileName,
                 rowCount: _rawRows.length,
-                intro: 'Ordne die Spalten deiner Datei den Werkfeldern zu. '
-                    'Nummer und Name sind erforderlich.',
+                intro: context.l10n.songsMappingIntro,
                 headers: _headers,
                 mapping: _mapping,
                 options: _options,
                 onChanged: (header, key) => setState(() => _mapping[header] = key),
-                missingHint: 'Bitte Spalten für Nummer und Name zuordnen.',
+                missingHint: context.l10n.songsMapNumberName,
                 canProceed: mappingSongHasRequired(_mapping),
               ),
             _Step.preview => _buildPreview(),
@@ -241,13 +239,13 @@ class _SongImportPageState extends ConsumerState<SongImportPage> {
         _Step.file => null,
         _Step.mapping => ImportBottomBar(
             onBack: () => setState(() => _step = _Step.file),
-            primaryLabel: 'Weiter',
+            primaryLabel: context.l10n.commonNext,
             onPrimary:
                 mappingSongHasRequired(_mapping) && !_busy ? _proceedToPreview : null,
           ),
         _Step.preview => ImportBottomBar(
             onBack: () => setState(() => _step = _Step.mapping),
-            primaryLabel: '${_importable.length} importieren',
+            primaryLabel: context.l10n.peopleImportCount(_importable.length),
             onPrimary: _busy || _importable.isEmpty ? null : _startImport,
           ),
       },

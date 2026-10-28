@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../../../../../core/theme/app_colors.dart';
 import 'file_drop_platform.dart';
 import 'file_drop_types.dart';
+import '../../../../../l10n/l10n.dart';
 
 export 'file_drop_platform.dart' show isFileDropSupported;
 
@@ -94,12 +95,13 @@ class FileDropZone extends StatelessWidget {
     super.key,
     required this.onTap,
     required this.onFiles,
-    this.label = 'Dateien hierher ziehen oder tippen zum Auswählen',
+    this.label,
   });
 
   final VoidCallback? onTap;
   final ValueChanged<List<PlatformFile>> onFiles;
-  final String label;
+  /// Defaults to `songs.dropHere`.
+  final String? label;
 
   @override
   Widget build(BuildContext context) {
@@ -124,7 +126,7 @@ class FileDropZone extends StatelessWidget {
                   Icon(Icons.cloud_upload_outlined, size: 36, color: color),
                   const SizedBox(height: 8),
                   Text(
-                    label,
+                    label ?? context.l10n.songsDropHere,
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 14, color: color),
                   ),

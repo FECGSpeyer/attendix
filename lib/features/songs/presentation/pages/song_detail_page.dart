@@ -38,6 +38,7 @@ import '../widgets/single_file_upload_sheet.dart';
 import '../widgets/song_file_opener.dart';
 import '../../../../core/services/tracking/tracking_event.dart';
 import '../../../../core/services/tracking/tracking_service.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Song detail page (Ionic `songs/song`): inline editing for admins and
 /// responsibles, read-only view for everybody else and for the public share
@@ -145,7 +146,7 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
     if (!mounted) return;
     setState(() => _saving = false);
     if (result == null) {
-      ToastHelper.showError(context, 'Fehler beim Speichern');
+      ToastHelper.showError(context, context.l10n.extraFieldsSaveFailed);
     }
   }
 
@@ -160,7 +161,7 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
   void _copyShareLink(String sharingId, int songId) {
     Clipboard.setData(ClipboardData(text: SongUtils.shareLink(sharingId, songId)));
     ref.read(trackingServiceProvider).track(TrackingEvent.songShared);
-    ToastHelper.showSuccess(context, 'Der Link wurde in die Zwischenablage kopiert');
+    ToastHelper.showSuccess(context, context.l10n.songsLinkCopied);
   }
 
   Future<void> _confirmDelete(SongDetailData data) async {
@@ -173,11 +174,11 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
     if (!mounted) return;
     final confirmed = await DialogHelper.showConfirmation(
       context,
-      title: 'Werk löschen',
+      title: context.l10n.songsDeleteSong,
       message: names.isNotEmpty
-          ? 'Die Werke werden mit ${names.join(', ')} geteilt. Das Werk wird dort ebenfalls gelöscht, inklusive der Historie aller beteiligten Instanzen. Soll das Werk wirklich gelöscht werden?'
-          : 'Soll das Werk wirklich gelöscht werden?',
-      confirmText: 'Löschen',
+          ? context.l10n.songsDeleteSyncedMessage(names.join(', '))
+          : context.l10n.songsDeleteConfirm,
+      confirmText: context.l10n.commonDelete,
       isDestructive: true,
     );
     if (!confirmed || !mounted) return;
@@ -186,7 +187,7 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
     if (ok) {
       context.go('/settings/songs');
     } else {
-      ToastHelper.showError(context, 'Werk konnte nicht gelöscht werden');
+      ToastHelper.showError(context, context.l10n.songsFlutterDeleteFailed);
     }
   }
 
@@ -194,8 +195,8 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
   Widget build(BuildContext context) {
     if (_songId == null) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Werk')),
-        body: const Center(child: Text('Ungültige Werk-ID')),
+        appBar: AppBar(title: Text(context.l10n.songsFlutterSong)),
+        body: Center(child: Text(context.l10n.songsFlutterInvalidId)),
       );
     }
     final dataAsync = ref.watch(songDetailDataProvider(_params));
@@ -203,15 +204,15 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
 
     if (data == null) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Werk')),
+        appBar: AppBar(title: Text(context.l10n.songsFlutterSong)),
         body: Center(
           child: dataAsync.isLoading
               ? const CircularProgressIndicator()
               : Text(dataAsync.hasError
-                  ? 'Fehler: ${dataAsync.error}'
+                  ? context.l10n.songsFlutterErrorWith('${dataAsync.error}')
                   : widget.songSharingId != null
-                      ? 'Ungültiger Freigabe-Link.'
-                      : 'Werk nicht gefunden'),
+                      ? context.l10n.songsInvalidShareLink
+                      : context.l10n.songsFlutterNotFound),
         ),
       );
     }
@@ -227,17 +228,17 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
       appBar: AppBar(
         title: Text(data.readOnly
             ? '${song.number ?? ''} ${song.name}'.trim()
-            : 'Werk bearbeiten'),
+            : context.l10n.songsEditSong),
         actions: [
           if (sharingId != null && sharingId.isNotEmpty)
             IconButton(
-              tooltip: 'Link kopieren',
+              tooltip: context.l10n.songsCopyLink,
               icon: const Icon(Icons.link),
               onPressed: () => _copyShareLink(sharingId, song.id!),
             ),
           if (!data.readOnly)
             IconButton(
-              tooltip: 'Werk löschen',
+              tooltip: context.l10n.songsDeleteSong,
               icon: const Icon(Icons.delete_outline),
               onPressed: () => _confirmDelete(data),
             ),
@@ -246,7 +247,7 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
       floatingActionButton: aufnahme == null
           ? null
           : FloatingActionButton(
-              tooltip: 'Aufnahme abspielen',
+              tooltip: context.l10n.songsPlayRecording,
               onPressed: () => ref
                   .read(audioPlayerServiceProvider.notifier)
                   .playFromUrl(aufnahme.url, aufnahme.fileName, song.name),
@@ -265,7 +266,7 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
             if (_saving) const LinearProgressIndicator(minHeight: 2),
             if (!data.readOnly) _buildEditForm(data),
             if (data.readOnly && (song.categoryIds?.isNotEmpty ?? false)) ...[
-              const _SectionHeader('Kategorien'),
+              _SectionHeader(context.l10n.songsCategories),
               Wrap(
                 spacing: 6,
                 runSpacing: 6,
@@ -274,7 +275,7 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
                     Chip(
                       label: Text(
                         data.categories.where((c) => c.id == id).firstOrNull?.name ??
-                            'Unbekannte Kategorie',
+                            context.l10n.songsUnknownCategory,
                       ),
                       backgroundColor: AppColors.secondary.withAlpha(40),
                     ),
@@ -296,8 +297,8 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
             if (data.readOnly && (song.link?.isNotEmpty ?? false))
               Card(
                 child: ListTile(
-                  title: const Text('Externen Noten-Link öffnen',
-                      style: TextStyle(color: AppColors.primary)),
+                  title: Text(context.l10n.songsOpenExternalLink,
+                      style: const TextStyle(color: AppColors.primary)),
                   trailing: const Icon(Icons.open_in_new),
                   onTap: () => launchUrl(Uri.parse(song.link!),
                       mode: LaunchMode.externalApplication),
@@ -313,7 +314,7 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
                   minLines: 1,
                   maxLines: 5,
                   keyboardType: TextInputType.url,
-                  decoration: const InputDecoration(labelText: 'Link'),
+                  decoration: InputDecoration(labelText: context.l10n.songsLink),
                 ),
               ),
             if (!data.isPublic) _CopyToOtherInstance(song: song),
@@ -343,10 +344,9 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
               TextField(
                 controller: _prefix,
                 textCapitalization: TextCapitalization.sentences,
-                decoration: const InputDecoration(
-                  labelText: 'Präfix (optional)',
-                  helperText:
-                      'Bspw. um Weihnachtslieder kennzeichnen zu können (z.B. W für Weihnachten -> W1)',
+                decoration: InputDecoration(
+                  labelText: context.l10n.songsPrefixOptional,
+                  helperText: context.l10n.songsPrefixHelper,
                   helperMaxLines: 2,
                 ),
               ),
@@ -357,7 +357,7 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
               TextField(
                 controller: _number,
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(labelText: 'Nummer'),
+                decoration: InputDecoration(labelText: context.l10n.songsNumber),
               ),
             ),
             const SizedBox(height: AppDimensions.paddingS),
@@ -366,18 +366,18 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
               TextField(
                 controller: _name,
                 textCapitalization: TextCapitalization.sentences,
-                decoration: const InputDecoration(labelText: 'Name'),
+                decoration: InputDecoration(labelText: context.l10n.songsName),
               ),
             ),
             const SizedBox(height: AppDimensions.paddingS),
             DropdownButtonFormField<int?>(
               value: _difficulty,
-              decoration: const InputDecoration(labelText: 'Schwierigkeitsgrad'),
-              items: const [
-                DropdownMenuItem(value: null, child: Text('Nicht definiert')),
-                DropdownMenuItem(value: 1, child: Text('1 - Leicht')),
-                DropdownMenuItem(value: 2, child: Text('2 - Mittel')),
-                DropdownMenuItem(value: 3, child: Text('3 - Schwer')),
+              decoration: InputDecoration(labelText: context.l10n.songsDifficulty),
+              items: [
+                DropdownMenuItem(value: null, child: Text(context.l10n.songsNotDefined)),
+                DropdownMenuItem(value: 1, child: Text(context.l10n.songsEasy)),
+                DropdownMenuItem(value: 2, child: Text(context.l10n.songsMedium)),
+                DropdownMenuItem(value: 3, child: Text(context.l10n.songsHard)),
               ],
               onChanged: (v) {
                 setState(() => _difficulty = v);
@@ -386,7 +386,7 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
             ),
             SwitchListTile(
               contentPadding: EdgeInsets.zero,
-              title: const Text('Chor & Orchester'),
+              title: Text(context.l10n.songsChoirOrchestra),
               value: _withChoir,
               onChanged: (v) {
                 setState(() => _withChoir = v);
@@ -395,7 +395,7 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
             ),
             SwitchListTile(
               contentPadding: EdgeInsets.zero,
-              title: const Text('Mit Solo-Gesang'),
+              title: Text(context.l10n.songsWithSoloSinging),
               value: _withSolo,
               onChanged: (v) {
                 setState(() => _withSolo = v);
@@ -404,7 +404,7 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
             ),
             if (data.isOrchestra)
               _MultiSelectTile<int>(
-                title: 'Besetzung',
+                title: context.l10n.songsInstrumentation,
                 options: [
                   for (final g in data.instruments)
                     if (g.id != null) (g.id!, g.name, fileIds.contains(g.id)),
@@ -416,7 +416,7 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
                 },
               ),
             _MultiSelectTile<String>(
-              title: 'Kategorien',
+              title: context.l10n.songsCategories,
               options: [
                 for (final c in data.categories)
                   if (c.id != null) (c.id!, c.name, false),
@@ -438,19 +438,19 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const _SectionHeader('Besetzung'),
+        _SectionHeader(context.l10n.songsInstrumentation),
         Wrap(
           spacing: 6,
           runSpacing: 6,
           children: [
             if (song.withChoir)
               Chip(
-                label: const Text('Chor & Orchester'),
+                label: Text(context.l10n.songsChoirOrchestra),
                 backgroundColor: AppColors.primary.withAlpha(40),
               ),
             if (song.withSolo)
               Chip(
-                label: const Text('Mit Solo-Gesang'),
+                label: Text(context.l10n.songsWithSoloSinging),
                 backgroundColor: AppColors.primary.withAlpha(40),
               ),
           ],
@@ -484,7 +484,7 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const _SectionHeader('Zusatzfelder'),
+        _SectionHeader(context.l10n.peopleExtraFields),
         Card(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM),
@@ -548,7 +548,7 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _SectionHeader('Historie (${data.history.length}x)'),
+        _SectionHeader(context.l10n.songsHistoryCount(data.history.length)),
         Card(
           child: Column(
             children: [
@@ -631,11 +631,11 @@ class _MultiSelectTile<T> extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx),
-              child: const Text('Abbrechen'),
+              child: Text(context.l10n.commonCancel),
             ),
             ElevatedButton(
               onPressed: () => Navigator.pop(ctx, selection),
-              child: const Text('OK'),
+              child: Text(context.l10n.commonOk),
             ),
           ],
         ),
@@ -687,7 +687,7 @@ class _CopyToOtherInstance extends ConsumerWidget {
       margin: const EdgeInsets.only(top: AppDimensions.paddingM),
       child: ListTile(
         leading: const Icon(Icons.copy_outlined),
-        title: const Text('Werk in andere Instanz kopieren'),
+        title: Text(context.l10n.songsCopyToOther),
         onTap: () => showModalBottomSheet(
           context: context,
           isScrollControlled: true,
@@ -727,7 +727,7 @@ class _FilesSectionState extends ConsumerState<_FilesSection> {
     try {
       await action();
     } catch (e) {
-      if (mounted) ToastHelper.showError(context, 'Fehler: $e');
+      if (mounted) ToastHelper.showError(context, context.l10n.songsFlutterErrorWith(e));
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -758,10 +758,7 @@ class _FilesSectionState extends ConsumerState<_FilesSection> {
     if (dropped.length > 1) return _upload(dropped);
     final file = dropped.first;
     if (file.size > 20 * 1024 * 1024) {
-      ToastHelper.showError(
-        context,
-        'Die Datei ${file.name} überschreitet die maximale Größe von 20MB.',
-      );
+      ToastHelper.showError(context, context.l10n.songsFileTooLarge(file.name));
       return;
     }
     final result = await showModalBottomSheet<SingleFileUploadResult>(
@@ -798,9 +795,9 @@ class _FilesSectionState extends ConsumerState<_FilesSection> {
   Future<void> _deleteAll() async {
     final ok = await DialogHelper.showConfirmation(
       context,
-      title: 'Alle Dateien löschen',
-      message: 'Möchten Sie wirklich alle Dateien dieses Werks löschen?',
-      confirmText: 'Löschen',
+      title: context.l10n.songsDeleteAll,
+      message: context.l10n.songsDeleteAllConfirm,
+      confirmText: context.l10n.commonDelete,
       isDestructive: true,
     );
     if (!ok) return;
@@ -819,7 +816,7 @@ class _FilesSectionState extends ConsumerState<_FilesSection> {
         .where((f) => f.instrumentId != null && f.instrumentId! > 2 && SongUtils.isPdf(f))
         .toList();
     if (groupPdfs.isEmpty) {
-      ToastHelper.showWarning(context, 'Keine Gruppen-PDFs zum Drucken gefunden');
+      ToastHelper.showWarning(context, context.l10n.songsNoGroupPdfs);
       return;
     }
     final counts = await ref.read(playerCountByInstrumentProvider.future);
@@ -827,7 +824,7 @@ class _FilesSectionState extends ConsumerState<_FilesSection> {
     final withPlayers =
         groupPdfs.where((f) => (counts[f.instrumentId] ?? 0) > 0).toList();
     if (withPlayers.isEmpty) {
-      ToastHelper.showWarning(context, 'Keine Gruppen mit zugewiesenen Personen gefunden');
+      ToastHelper.showWarning(context, context.l10n.songsNoGroupsWithPeople);
       return;
     }
 
@@ -853,7 +850,7 @@ class _FilesSectionState extends ConsumerState<_FilesSection> {
         .where((e) => e.copies > 0)
         .map((e) => '${SongUtils.fileLabel(e.file, data.instruments)}: ${e.copies}x')
         .join(', ');
-    ToastHelper.showSuccess(context, 'Druck vorbereitet: $summary');
+    ToastHelper.showSuccess(context, context.l10n.songsPrintPrepared(summary));
   }
 
   @override
@@ -864,16 +861,16 @@ class _FilesSectionState extends ConsumerState<_FilesSection> {
       children: [
         Row(
           children: [
-            const Expanded(child: _SectionHeader('Dateien')),
+            Expanded(child: _SectionHeader(context.l10n.songsFiles)),
             if (data.readOnly && files.isNotEmpty)
               IconButton(
-                tooltip: 'Alle Dateien herunterladen',
+                tooltip: context.l10n.songsDownloadAll,
                 icon: const Icon(Icons.download_outlined),
                 onPressed: _busy ? null : _downloadAll,
               ),
             if (!data.readOnly)
               IconButton(
-                tooltip: 'Dateien hochladen',
+                tooltip: context.l10n.songsUploadFiles,
                 icon: const Icon(Icons.cloud_upload_outlined),
                 onPressed: _busy ? null : () => _upload(),
               ),
@@ -890,28 +887,28 @@ class _FilesSectionState extends ConsumerState<_FilesSection> {
                       _deleteAll();
                   }
                 },
-                itemBuilder: (_) => const [
+                itemBuilder: (_) => [
                   PopupMenuItem(
                     value: 'print',
                     child: ListTile(
-                      leading: Icon(Icons.print_outlined),
-                      title: Text('Gruppen-PDFs drucken'),
+                      leading: const Icon(Icons.print_outlined),
+                      title: Text(context.l10n.songsPrintGroupPdfs),
                       contentPadding: EdgeInsets.zero,
                     ),
                   ),
                   PopupMenuItem(
                     value: 'download',
                     child: ListTile(
-                      leading: Icon(Icons.download_outlined),
-                      title: Text('Alle Dateien herunterladen'),
+                      leading: const Icon(Icons.download_outlined),
+                      title: Text(context.l10n.songsDownloadAll),
                       contentPadding: EdgeInsets.zero,
                     ),
                   ),
                   PopupMenuItem(
                     value: 'delete',
                     child: ListTile(
-                      leading: Icon(Icons.delete_outline),
-                      title: Text('Alle Dateien löschen'),
+                      leading: const Icon(Icons.delete_outline),
+                      title: Text(context.l10n.songsDeleteAll),
                       contentPadding: EdgeInsets.zero,
                     ),
                   ),
@@ -933,7 +930,7 @@ class _FilesSectionState extends ConsumerState<_FilesSection> {
                 : null,
             color: hovering ? Color.alphaBlend(AppColors.primary.withAlpha(13), Theme.of(context).cardColor) : null,
             child: files.isEmpty
-                ? const ListTile(title: Text('Keine Dateien vorhanden.'))
+                ? ListTile(title: Text(context.l10n.songsNoFiles))
                 : Column(
                     children: [
                       for (final file in sorted)
@@ -967,47 +964,47 @@ class _FilesSectionState extends ConsumerState<_FilesSection> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const ListTile(
-              title: Text('Datei Aktionen', style: TextStyle(fontWeight: FontWeight.bold)),
+            ListTile(
+              title: Text(context.l10n.songsFileActions, style: const TextStyle(fontWeight: FontWeight.bold)),
             ),
             ListTile(
               leading: Icon(isAudio ? Icons.play_circle_outline : Icons.open_in_new),
-              title: Text(isAudio ? 'Aufnahme abspielen' : 'Datei öffnen'),
+              title: Text(isAudio ? context.l10n.songsPlayRecording : context.l10n.songsOpenFile),
               onTap: () => Navigator.pop(ctx, 'open'),
             ),
             if (!isAudio)
               ListTile(
                 leading: const Icon(Icons.print_outlined),
-                title: const Text('Datei drucken'),
+                title: Text(context.l10n.songsPrintFile),
                 onTap: () => Navigator.pop(ctx, 'print'),
               ),
             if (!_isIos || isAudio)
               ListTile(
                 leading: const Icon(Icons.download_outlined),
-                title: Text(isAudio ? 'Aufnahme herunterladen' : 'Datei herunterladen'),
+                title: Text(isAudio ? context.l10n.songsDownloadRecording : context.l10n.songsDownloadFile),
                 onTap: () => Navigator.pop(ctx, 'download'),
               ),
             if (!data.readOnly)
               ListTile(
                 leading: const Icon(Icons.swap_horiz),
-                title: const Text('Kategorie ändern'),
+                title: Text(context.l10n.songsChangeCategory),
                 onTap: () => Navigator.pop(ctx, 'category'),
               ),
             if (telegramChatId != null && telegramChatId.isNotEmpty)
               ListTile(
                 leading: const Icon(Icons.send_outlined),
-                title: const Text('Per Telegram senden'),
+                title: Text(context.l10n.songsSendTelegram),
                 onTap: () => Navigator.pop(ctx, 'telegram'),
               ),
             if (!data.readOnly)
               ListTile(
                 leading: const Icon(Icons.delete_outline, color: AppColors.danger),
-                title: const Text('Datei löschen', style: TextStyle(color: AppColors.danger)),
+                title: Text(context.l10n.songsDeleteFile, style: const TextStyle(color: AppColors.danger)),
                 onTap: () => Navigator.pop(ctx, 'delete'),
               ),
             ListTile(
               leading: const Icon(Icons.close),
-              title: const Text('Abbrechen'),
+              title: Text(context.l10n.commonCancel),
               onTap: () => Navigator.pop(ctx),
             ),
           ],
@@ -1032,12 +1029,12 @@ class _FilesSectionState extends ConsumerState<_FilesSection> {
             .read(songPrintServiceProvider)
             .printEntries([SongPrintEntry(song: song, file: file)], '$baseName.pdf');
         if (mounted && result != null && result.pageCount == 0) {
-          ToastHelper.showWarning(context, 'Datei konnte nicht gedruckt werden');
+          ToastHelper.showWarning(context, context.l10n.songsFlutterPrintFileFailed);
         }
       case 'download':
         await _run(() async {
           final bytes = await ref.read(songFileServiceProvider).downloadFileBytes(file.url);
-          if (bytes == null) throw Exception('Datei konnte nicht heruntergeladen werden');
+          if (bytes == null) throw Exception(l10nWithoutContext.songsFlutterDownloadFileFailed);
           await file_saver.saveZipFile(bytes, file.fileName);
         });
       case 'category':
@@ -1047,14 +1044,14 @@ class _FilesSectionState extends ConsumerState<_FilesSection> {
           await ref
               .read(telegramServiceProvider)
               .sendDocumentPerTelegram(url: file.url, chatId: telegramChatId!);
-          if (mounted) ToastHelper.showSuccess(context, 'Datei per Telegram gesendet');
+          if (mounted) ToastHelper.showSuccess(context, context.l10n.songsFlutterTelegramSent);
         });
       case 'delete':
         final ok = await DialogHelper.showConfirmation(
           context,
-          title: 'Datei löschen',
-          message: 'Möchten Sie die Datei "${file.fileName}" wirklich löschen?',
-          confirmText: 'Löschen',
+          title: context.l10n.songsDeleteFile,
+          message: context.l10n.songsDeleteFileConfirm(file.fileName),
+          confirmText: context.l10n.commonDelete,
           isDestructive: true,
         );
         if (!ok) return;
@@ -1107,20 +1104,21 @@ class _RatioDialogState extends State<_RatioDialog> {
 
   @override
   Widget build(BuildContext context) {
-    const options = [
-      (1, 'Alle Personen (1 pro Person)'),
-      (2, 'Jede 2. Person'),
-      (3, 'Jede 3. Person'),
-      (4, 'Jede 4. Person'),
-      (0, '1 pro Gruppe'),
+    final l10n = context.l10n;
+    final options = [
+      (1, l10n.songsPerPerson),
+      (2, l10n.songsEvery2),
+      (3, l10n.songsEvery3),
+      (4, l10n.songsEvery4),
+      (0, l10n.songsPerGroup),
     ];
     return AlertDialog(
-      title: const Text('Druckoptionen'),
+      title: Text(l10n.songsPrintOptions),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Wie viele Ausdrucke pro Gruppe?'),
+          Text(l10n.songsCopiesPerGroup),
           for (final o in options)
             RadioListTile<int>(
               contentPadding: EdgeInsets.zero,
@@ -1134,11 +1132,11 @@ class _RatioDialogState extends State<_RatioDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Abbrechen'),
+          child: Text(l10n.commonCancel),
         ),
         ElevatedButton(
           onPressed: () => Navigator.pop(context, _ratio),
-          child: const Text('Drucken'),
+          child: Text(l10n.songsPrint),
         ),
       ],
     );
@@ -1175,13 +1173,13 @@ class _FileCategoryDialogState extends State<FileCategoryDialog> {
   @override
   Widget build(BuildContext context) {
     final options = <(int?, String)>[
-      (null, 'Sonstige (Freitext)'),
-      (1, 'Aufnahme'),
-      (2, 'Liedtext'),
+      (null, context.l10n.songsOtherFreeText),
+      (1, context.l10n.songsRecording),
+      (2, context.l10n.songsLyrics),
       for (final g in widget.instruments) (g.id, g.name),
     ];
     return AlertDialog(
-      title: const Text('Kategorie ändern'),
+      title: Text(context.l10n.songsChangeCategory),
       content: SizedBox(
         width: double.maxFinite,
         child: ListView(
@@ -1200,9 +1198,9 @@ class _FileCategoryDialogState extends State<FileCategoryDialog> {
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: TextField(
                   controller: _note,
-                  decoration: const InputDecoration(
-                    labelText: 'Freitext',
-                    hintText: 'Kategorie eingeben...',
+                  decoration: InputDecoration(
+                    labelText: context.l10n.songsFreeText,
+                    hintText: context.l10n.songsEnterCategory,
                   ),
                 ),
               ),
@@ -1212,14 +1210,14 @@ class _FileCategoryDialogState extends State<FileCategoryDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Abbrechen'),
+          child: Text(context.l10n.commonCancel),
         ),
         ElevatedButton(
           onPressed: () => Navigator.pop(
             context,
             (instrumentId: _id, note: _id == null ? _note.text.trim() : null),
           ),
-          child: const Text('Speichern'),
+          child: Text(context.l10n.commonSave),
         ),
       ],
     );

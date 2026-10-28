@@ -2226,6 +2226,51 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get dutyFlutterAllFilled => 'all filled';
+
+  @override
+  String get dutyFlutterDeclineFailed => 'Error while declining';
+
+  @override
+  String get dutyFlutterDeleteFailed => 'Error while deleting';
+
+  @override
+  String dutyFlutterErrorWith(Object error) {
+    return 'Error: $error';
+  }
+
+  @override
+  String dutyFlutterNameRequested(Object name) {
+    return '$name (requested)';
+  }
+
+  @override
+  String get dutyFlutterNobodyAssigned => 'nobody assigned yet';
+
+  @override
+  String get dutyFlutterNothingToDistribute => 'Nothing to distribute';
+
+  @override
+  String dutyFlutterPlannedNew(Object count) {
+    return '(+$count new)';
+  }
+
+  @override
+  String dutyFlutterSaveAssignments(Object count) {
+    return 'Save $count assignments';
+  }
+
+  @override
+  String dutyFlutterTimeOClock(Object time) {
+    return '$time';
+  }
+
+  @override
+  String dutyFlutterUnassignMessage(Object name) {
+    return '$name will then no longer be assigned.';
+  }
+
+  @override
   String get dutyForWhichTypes => 'For which event types?';
 
   @override
@@ -7613,6 +7658,233 @@ class AppLocalizationsEn extends AppLocalizations {
   String get shiftsFixedOptional => 'Fixed shifts (optional)';
 
   @override
+  String get shiftsFlutterAddSegment => 'Add segment';
+
+  @override
+  String get shiftsFlutterAddSegmentsHint => 'Add segments to see the preview';
+
+  @override
+  String get shiftsFlutterAddShift => 'Add shift';
+
+  @override
+  String shiftsFlutterAssigningPeople(Object count) {
+    return 'Assigning $count people...';
+  }
+
+  @override
+  String get shiftsFlutterCopyAssignments => 'Copy assignments';
+
+  @override
+  String shiftsFlutterCopyAssignmentsHint(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count people use',
+      one: '$count person uses',
+    );
+    return '$_temp0 this shift plan. Try to assign matching people in the target instance.';
+  }
+
+  @override
+  String shiftsFlutterCopyFailedWith(Object error) {
+    return 'Error while copying: $error';
+  }
+
+  @override
+  String shiftsFlutterCopyInfo(Object name) {
+    return 'The shift plan \"$name\" will be copied to the selected instance. The definition and fixed shifts are included.';
+  }
+
+  @override
+  String get shiftsFlutterCopyInfoAssignments => 'Assignments are mapped by the people\'s app ID (appId).';
+
+  @override
+  String get shiftsFlutterCopyingShort => 'Copying...';
+
+  @override
+  String shiftsFlutterCreateFailed(Object error) {
+    return 'Error while creating: $error';
+  }
+
+  @override
+  String shiftsFlutterCreated(Object name) {
+    return 'Shift plan \"$name\" created';
+  }
+
+  @override
+  String get shiftsFlutterCreatingPlan => 'Creating shift plan...';
+
+  @override
+  String shiftsFlutterCycle(Object count) {
+    return 'Cycle: $count days';
+  }
+
+  @override
+  String shiftsFlutterCycleDays(Object count) {
+    return '$count-day cycle';
+  }
+
+  @override
+  String shiftsFlutterDayN(Object n) {
+    return 'Day $n';
+  }
+
+  @override
+  String get shiftsFlutterDeleteConfirm => 'Do you really want to delete this shift plan?';
+
+  @override
+  String shiftsFlutterDeleteConfirmUsed(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count members use this shift plan.',
+      one: '$count member uses this shift plan.',
+    );
+    return '$_temp0 Do you still want to delete it?';
+  }
+
+  @override
+  String get shiftsFlutterDescriptionHint => 'e.g. early, late, night';
+
+  @override
+  String get shiftsFlutterDurationHint => 'e.g. 8.0';
+
+  @override
+  String get shiftsFlutterEditSegment => 'Edit segment';
+
+  @override
+  String shiftsFlutterErrorWith(Object error) {
+    return 'Error: $error';
+  }
+
+  @override
+  String get shiftsFlutterFirstSegment => 'First segment';
+
+  @override
+  String get shiftsFlutterFixedHint => 'Fixed shifts define concrete start dates for the shift cycle.';
+
+  @override
+  String get shiftsFlutterFixedShifts => 'Fixed shifts';
+
+  @override
+  String get shiftsFlutterFreeHint => 'Employee is off on this day';
+
+  @override
+  String get shiftsFlutterInfoText => 'Shift plans enable automatic excuses based on work shifts. Assign a shift plan to a member to detect conflicts with events automatically.';
+
+  @override
+  String get shiftsFlutterInfoTitle => 'Automatic excuses';
+
+  @override
+  String get shiftsFlutterLabelHint => 'e.g. early shift';
+
+  @override
+  String get shiftsFlutterNameHint => 'e.g. 3-shift system';
+
+  @override
+  String shiftsFlutterNext30From(Object date) {
+    return 'Next 30 days from $date';
+  }
+
+  @override
+  String get shiftsFlutterNext30Today => 'Next 30 days from today';
+
+  @override
+  String get shiftsFlutterNoDefinition => 'No definition';
+
+  @override
+  String get shiftsFlutterNoDefinitionYet => 'No definition yet';
+
+  @override
+  String get shiftsFlutterNoFixed => 'No fixed shifts';
+
+  @override
+  String get shiftsFlutterNoSegments => 'No shift segments defined';
+
+  @override
+  String get shiftsFlutterNotFound => 'Shift plan not found';
+
+  @override
+  String get shiftsFlutterNote => 'Note';
+
+  @override
+  String get shiftsFlutterOneDay => '1 day';
+
+  @override
+  String get shiftsFlutterPlan => 'Shift plan';
+
+  @override
+  String get shiftsFlutterPreview => 'Preview';
+
+  @override
+  String shiftsFlutterPreviewOf(Object name) {
+    return 'Preview: $name';
+  }
+
+  @override
+  String shiftsFlutterRepeatTimes(Object count) {
+    return 'repeat ${count}x';
+  }
+
+  @override
+  String get shiftsFlutterRepetitionsHint => 'Number of consecutive days';
+
+  @override
+  String get shiftsFlutterSearchingPeople => 'Searching matching people in target instance...';
+
+  @override
+  String shiftsFlutterSegments(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count segments',
+      one: '$count segment',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String shiftsFlutterShiftsCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count shifts',
+      one: '$count shift',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get shiftsFlutterStart => 'Start';
+
+  @override
+  String shiftsFlutterStartDateToday(Object date) {
+    return 'Start date: today ($date)';
+  }
+
+  @override
+  String shiftsFlutterStartDateWith(Object date, Object name) {
+    return 'Start date: $date ($name)';
+  }
+
+  @override
+  String get shiftsFlutterTargetTenant => 'Target instance';
+
+  @override
+  String shiftsFlutterUsage(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count members use this shift plan',
+      one: '$count member uses this shift plan',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get shiftsFlutterWillCopy => 'Will be copied:';
+
+  @override
   String get shiftsFree => 'Off';
 
   @override
@@ -8260,6 +8532,133 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get songsFiles => 'Files';
+
+  @override
+  String songsFlutterCopiesCount(Object count) {
+    return '$count copies';
+  }
+
+  @override
+  String get songsFlutterCopiesPerInstrument => 'Copies per instrument:';
+
+  @override
+  String get songsFlutterCreateFailed => 'Song could not be created';
+
+  @override
+  String get songsFlutterCreatingInTarget => 'Creating song in target instance...';
+
+  @override
+  String get songsFlutterDeleteFailed => 'Song could not be deleted';
+
+  @override
+  String get songsFlutterDownloadFileFailed => 'File could not be downloaded';
+
+  @override
+  String songsFlutterErrorWith(Object error) {
+    return 'Error: $error';
+  }
+
+  @override
+  String songsFlutterFilesSkipped(Object count) {
+    return '$count file(s) could not be included.';
+  }
+
+  @override
+  String songsFlutterFilesWillBeCopied(Object count) {
+    return '$count files will be copied:';
+  }
+
+  @override
+  String get songsFlutterFilterAndView => 'Filter & view';
+
+  @override
+  String get songsFlutterFirstPage => 'First page';
+
+  @override
+  String get songsFlutterFullscreen => 'Full screen';
+
+  @override
+  String get songsFlutterHideTab => 'Hide tab';
+
+  @override
+  String get songsFlutterInvalidId => 'Invalid song ID';
+
+  @override
+  String get songsFlutterLastPage => 'Last page';
+
+  @override
+  String songsFlutterListAnd(Object rest, Object last) {
+    return '$rest and $last';
+  }
+
+  @override
+  String get songsFlutterLoadingTargetGroups => 'Loading target groups...';
+
+  @override
+  String get songsFlutterMenu => 'Menu';
+
+  @override
+  String get songsFlutterNextPage => 'Next page';
+
+  @override
+  String get songsFlutterNoPlayers => 'No players found';
+
+  @override
+  String get songsFlutterNoSongs => 'No songs available';
+
+  @override
+  String get songsFlutterNotFound => 'Song not found';
+
+  @override
+  String get songsFlutterOneEach => '1 each';
+
+  @override
+  String get songsFlutterOpenFileFailed => 'Could not open file';
+
+  @override
+  String songsFlutterPdfCreateFailed(Object error) {
+    return 'Error while creating the PDF: $error';
+  }
+
+  @override
+  String get songsFlutterPdfLoadFailed => 'PDF could not be loaded';
+
+  @override
+  String get songsFlutterPdfLoading => 'Loading PDF...';
+
+  @override
+  String get songsFlutterPreviousPage => 'Previous page';
+
+  @override
+  String songsFlutterPrintFailed(Object error) {
+    return 'Error while printing: $error';
+  }
+
+  @override
+  String get songsFlutterPrintFileFailed => 'File could not be printed';
+
+  @override
+  String get songsFlutterPrintJobSent => 'Print job sent';
+
+  @override
+  String get songsFlutterPrinting => 'Printing...';
+
+  @override
+  String get songsFlutterReorderCategoriesHint => 'Drag categories to reorder them';
+
+  @override
+  String get songsFlutterShowAsTab => 'Show as tab';
+
+  @override
+  String get songsFlutterSong => 'Song';
+
+  @override
+  String get songsFlutterTelegramSent => 'File sent via Telegram';
+
+  @override
+  String songsFlutterUploadFailedWith(Object error) {
+    return 'Error while uploading: $error';
+  }
 
   @override
   String get songsFreeText => 'Free text';

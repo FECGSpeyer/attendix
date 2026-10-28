@@ -9,6 +9,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/shift/shift_plan.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../core/utils/demo_guard.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Sheet for copying a shift plan to another tenant
 class CopyShiftToTenantSheet extends ConsumerStatefulWidget {
@@ -58,7 +59,7 @@ class _CopyShiftToTenantSheetState
           children: [
             // Header
             AppBar(
-              title: const Text('Schichtplan kopieren'),
+              title: Text(context.l10n.shiftsCopyToTenant),
               leading: IconButton(
                 icon: const Icon(Icons.close),
                 onPressed: () => Navigator.pop(context),
@@ -70,15 +71,15 @@ class _CopyShiftToTenantSheetState
             Expanded(
               child: tenantsAsync.when(
                 loading: () => const Center(child: CircularProgressIndicator()),
-                error: (e, _) => Center(child: Text('Fehler: $e')),
+                error: (e, _) => Center(child: Text(context.l10n.shiftsFlutterErrorWith(e))),
                 data: (tenants) {
                   final otherTenants = tenants
                       .where((t) => t.id != currentTenantId)
                       .toList();
 
                   if (otherTenants.isEmpty) {
-                    return const Center(
-                      child: Text('Keine anderen Instanzen verfügbar'),
+                    return Center(
+                      child: Text(context.l10n.shiftsNoOtherTenants),
                     );
                   }
 
@@ -95,8 +96,8 @@ class _CopyShiftToTenantSheetState
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
-                                'Ziel-Instanz',
+                              Text(
+                                context.l10n.shiftsFlutterTargetTenant,
                                 style: TextStyle(
                                   fontWeight: FontWeight.w600,
                                   color: AppColors.medium,
@@ -133,10 +134,9 @@ class _CopyShiftToTenantSheetState
                       if (_playersWithShift > 0) ...[
                         Card(
                           child: SwitchListTile(
-                            title: const Text('Zuweisungen kopieren'),
+                            title: Text(context.l10n.shiftsFlutterCopyAssignments),
                             subtitle: Text(
-                              '$_playersWithShift ${_playersWithShift == 1 ? 'Person nutzt' : 'Personen nutzen'} diesen Schichtplan. '
-                              'Versuche passende Personen in der Ziel-Instanz zuzuweisen.',
+                              context.l10n.shiftsFlutterCopyAssignmentsHint(_playersWithShift),
                             ),
                             value: _copyAssignments,
                             onChanged: _isCopying
@@ -163,7 +163,7 @@ class _CopyShiftToTenantSheetState
                                       color: AppColors.info),
                                   const SizedBox(width: 8),
                                   Text(
-                                    'Hinweis',
+                                    context.l10n.shiftsFlutterNote,
                                     style: TextStyle(
                                       fontWeight: FontWeight.w600,
                                       color: AppColors.info,
@@ -173,9 +173,8 @@ class _CopyShiftToTenantSheetState
                               ),
                               const SizedBox(height: 8),
                               Text(
-                                'Der Schichtplan "${widget.shift.name}" wird in die ausgewählte Instanz kopiert. '
-                                'Die Definition und feste Schichten werden übernommen.'
-                                '${_copyAssignments ? ' Zuweisungen werden anhand der App-ID (appId) der Personen gemappt.' : ''}',
+                                '${context.l10n.shiftsFlutterCopyInfo(widget.shift.name)}'
+                                '${_copyAssignments ? ' ${context.l10n.shiftsFlutterCopyInfoAssignments}' : ''}',
                                 style: const TextStyle(color: AppColors.medium),
                               ),
                             ],
@@ -191,8 +190,8 @@ class _CopyShiftToTenantSheetState
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
-                                'Wird kopiert:',
+                              Text(
+                                context.l10n.shiftsFlutterWillCopy,
                                 style: TextStyle(
                                   fontWeight: FontWeight.w600,
                                   color: AppColors.medium,
@@ -201,27 +200,27 @@ class _CopyShiftToTenantSheetState
                               const SizedBox(height: 8),
                               _InfoRow(
                                 icon: Icons.schedule,
-                                label: 'Schichtplan',
+                                label: context.l10n.shiftsFlutterPlan,
                                 value: widget.shift.name,
                               ),
                               if (widget.shift.description.isNotEmpty)
                                 _InfoRow(
                                   icon: Icons.description,
-                                  label: 'Beschreibung',
+                                  label: context.l10n.tasksDescription,
                                   value: widget.shift.description,
                                 ),
                               _InfoRow(
                                 icon: Icons.timeline,
-                                label: 'Definition',
+                                label: context.l10n.shiftsDefinition,
                                 value:
-                                    '${widget.shift.definition.length} Segment${widget.shift.definition.length != 1 ? 'e' : ''}',
+                                    context.l10n.shiftsFlutterSegments(widget.shift.definition.length),
                               ),
                               if (widget.shift.shifts.isNotEmpty)
                                 _InfoRow(
                                   icon: Icons.calendar_today,
-                                  label: 'Feste Schichten',
+                                  label: context.l10n.shiftsFlutterFixedShifts,
                                   value:
-                                      '${widget.shift.shifts.length} Schicht${widget.shift.shifts.length != 1 ? 'en' : ''}',
+                                      context.l10n.shiftsFlutterShiftsCount(widget.shift.shifts.length),
                                 ),
                             ],
                           ),
@@ -254,7 +253,7 @@ class _CopyShiftToTenantSheetState
                               )
                             : const Icon(Icons.copy),
                         label:
-                            Text(_isCopying ? 'Wird kopiert...' : 'Kopieren'),
+                            Text(_isCopying ? context.l10n.shiftsFlutterCopyingShort : context.l10n.songsCopy),
                         style: ElevatedButton.styleFrom(
                           minimumSize: const Size(double.infinity, 48),
                         ),
@@ -273,10 +272,11 @@ class _CopyShiftToTenantSheetState
   Future<void> _copyShift() async {
     if (_targetTenantId == null) return;
     if (DemoGuard.blocked()) return; // DEMO_GUARD
+    final l10n = context.l10n;
 
     setState(() {
       _isCopying = true;
-      _progressMessage = 'Schichtplan wird kopiert...';
+      _progressMessage = l10n.shiftsCopying;
     });
 
     try {
@@ -304,7 +304,7 @@ class _CopyShiftToTenantSheetState
             .toList(),
       };
 
-      setState(() => _progressMessage = 'Erstelle Schichtplan...');
+      setState(() => _progressMessage = l10n.shiftsFlutterCreatingPlan);
 
       // Insert the shift
       final insertResponse = await supabase
@@ -320,7 +320,7 @@ class _CopyShiftToTenantSheetState
       // Copy assignments if requested
       if (_copyAssignments && _playersWithShift > 0) {
         setState(
-            () => _progressMessage = 'Suche passende Personen in Ziel-Instanz...');
+            () => _progressMessage = l10n.shiftsFlutterSearchingPeople);
 
         final currentTenantId = ref.read(currentTenantIdProvider);
 
@@ -342,7 +342,7 @@ class _CopyShiftToTenantSheetState
 
           if (appIds.isNotEmpty) {
             setState(() => _progressMessage =
-                'Weise ${appIds.length} Personen zu...');
+                l10n.shiftsFlutterAssigningPeople(appIds.length));
 
             // Find matching players in target tenant by appId
             final targetPlayersResponse = await supabase
@@ -385,18 +385,18 @@ class _CopyShiftToTenantSheetState
         final tenants = await ref.read(userTenantsProvider.future);
         final targetTenant = tenants.firstWhere(
           (t) => t.id == _targetTenantId,
-          orElse: () => const Tenant(shortName: '', longName: 'Ziel-Instanz'),
+          orElse: () => Tenant(shortName: '', longName: l10n.shiftsFlutterTargetTenant),
         );
 
         String message;
         if (_copyAssignments && assignedCount > 0) {
           message =
-              'Schichtplan nach "${targetTenant.longName}" kopiert und $assignedCount ${assignedCount == 1 ? 'Person' : 'Personen'} zugewiesen.';
+              l10n.shiftsCopiedAssigned(targetTenant.longName, assignedCount);
         } else if (_copyAssignments && assignedCount == 0 && _playersWithShift > 0) {
           message =
-              'Schichtplan nach "${targetTenant.longName}" kopiert. Keine passenden Personen in Ziel-Instanz gefunden.';
+              l10n.shiftsCopiedNoMatch(targetTenant.longName);
         } else {
-          message = 'Schichtplan nach "${targetTenant.longName}" kopiert.';
+          message = l10n.shiftsCopied(targetTenant.longName);
         }
 
         // Fix RT-005: Check mounted again after await before using context
@@ -407,7 +407,7 @@ class _CopyShiftToTenantSheetState
       }
     } catch (e) {
       if (mounted) {
-        ToastHelper.showError(context, 'Fehler beim Kopieren: $e');
+        ToastHelper.showError(context, l10n.shiftsFlutterCopyFailedWith(e));
       }
     } finally {
       if (mounted) {
