@@ -9,6 +9,7 @@ import '../../../../data/models/attendance/attendance.dart';
 import '../../../../data/repositories/sign_in_out_repository.dart';
 import '../../../../shared/widgets/event_list/event_list_widgets.dart';
 import '../../../../shared/widgets/event_list/excuse_reason_sheet.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Route of the Dateiablage (files module, `/settings/files?path=<folder>`).
 const String kFilesRoute = '/settings/files';
@@ -103,21 +104,21 @@ class SelfServiceEventActions {
     if (qa == null) return const [];
     return [
       EventActionButton(
-        label: 'Zusagen',
+        label: context.l10n.signoutAccept,
         active: qa.present,
         activeColor: AppColors.success,
         onPressed: qa.canSignin ? () => handleSigninWithFields(context, att) : null,
       ),
       if (qa.allowLate)
         EventActionButton(
-          label: 'Verspätung',
+          label: context.l10n.signoutLateButton,
           active: qa.late,
           activeColor: EventListUtils.rosa,
           onPressed: qa.blocked ? null : () => quickSignout(context, att, isLate: true),
         ),
       if (qa.allowExcuse)
         EventActionButton(
-          label: 'Absagen',
+          label: context.l10n.signoutDecline,
           active: qa.excused,
           activeColor: AppColors.warning,
           onPressed: qa.blocked ? null : () => quickSignout(context, att, isLate: false),
@@ -135,34 +136,34 @@ class SelfServiceEventActions {
       if (att.deadline != null && att.deadline!.isNotEmpty)
         EventChip(label: EventListUtils.deadlineText(att.deadline), danger: true),
       if (att.notes != null && att.notes!.isNotEmpty)
-        EventChip(label: 'Notiz: ${att.notes}'),
+        EventChip(label: context.l10n.signoutNoteChip(att.notes!)),
       if (withPlan && att.hasPlan && openPlan != null)
         EventChip(
-          label: 'Ablaufplan',
+          label: context.l10n.signoutRunSheet,
           icon: Icons.description_outlined,
           onTap: () => openPlan!(att),
         ),
       if (att.description != null && att.description!.isNotEmpty)
         EventChip(
-          label: 'Infos',
+          label: context.l10n.signoutInfos,
           icon: Icons.info_outline,
           onTap: () => showEventDescriptionSheet(context, att.description!),
         ),
       if (att.attachmentUrl != null && att.attachmentUrl!.isNotEmpty)
         EventChip(
-          label: att.attachmentName?.isNotEmpty == true ? att.attachmentName! : 'Anhang',
+          label: att.attachmentName?.isNotEmpty == true ? att.attachmentName! : context.l10n.selfServiceAttachment,
           icon: Icons.attach_file,
           onTap: () => openEventAttachment(att.attachmentUrl!),
         ),
       if (hasFilesFolder(att))
         EventChip(
-          label: 'Dateien',
+          label: context.l10n.signoutFiles,
           icon: Icons.folder_outlined,
           onTap: () => openFilesFolderRoute(context, att.filesFolder!),
         ),
       if (att.place != null && att.place!.isNotEmpty)
         EventChip(
-          label: 'Route',
+          label: context.l10n.signoutRoute,
           icon: Icons.navigation_outlined,
           onTap: () => openEventNavigation(context, att.place!),
         ),
@@ -191,11 +192,11 @@ class SelfServiceEventActions {
       ToastHelper.showSuccess(
         context,
         isLate
-            ? 'Vielen Dank für die Info und Gottes Segen dir!'
-            : 'Vielen Dank für deine rechtzeitige Abmeldung und Gottes Segen dir.',
+            ? context.l10n.signoutThanksLate
+            : context.l10n.signoutThanksSignout,
       );
     } else {
-      ToastHelper.showError(context, 'Abmeldung fehlgeschlagen. Bitte versuche es erneut.');
+      ToastHelper.showError(context, context.l10n.signoutFlutterSignoutFailed);
     }
   }
 
@@ -223,7 +224,7 @@ class SelfServiceEventActions {
       if (answers == null || !context.mounted) return;
       final missing = missingRegistrationField(fields, answers);
       if (missing != null) {
-        ToastHelper.showWarning(context, 'Bitte "$missing" ausfüllen');
+        ToastHelper.showWarning(context, context.l10n.signoutFillField(missing));
         return;
       }
     } else {
@@ -238,11 +239,11 @@ class SelfServiceEventActions {
     final saved = await saveRegistrationAnswers?.call(att, answers) ?? false;
     if (!context.mounted) return;
     if (!saved) {
-      ToastHelper.showError(context, 'Anmeldefelder konnten nicht gespeichert werden.');
+      ToastHelper.showError(context, context.l10n.signoutFlutterFieldsSaveFailed);
       return;
     }
     if (editMode) {
-      ToastHelper.showSuccess(context, 'Anmeldefelder gespeichert.');
+      ToastHelper.showSuccess(context, context.l10n.signoutRegistrationFieldsSaved);
       return;
     }
     await _signIn(context, att.copyWith(registrationAnswers: answers), note);
@@ -252,17 +253,17 @@ class SelfServiceEventActions {
     final ok = await signIn(att, note);
     if (!context.mounted) return;
     if (ok) {
-      ToastHelper.showSuccess(context, 'Schön, dass du dabei bist 🙂');
+      ToastHelper.showSuccess(context, context.l10n.signoutGladYouCome);
     } else {
-      ToastHelper.showError(context, 'Anmeldung fehlgeschlagen. Bitte versuche es erneut.');
+      ToastHelper.showError(context, context.l10n.signoutFlutterSigninFailed);
     }
   }
 
   Future<void> _signInWithNote(BuildContext context, CrossTenantPersonAttendance att) async {
     final note = await showEventNoteDialog(
       context,
-      title: 'Notiz für Anmeldung',
-      confirmText: 'Anmelden',
+      title: context.l10n.signoutNoteForSignin,
+      confirmText: context.l10n.signoutSignIn,
     );
     if (note == null || !context.mounted) return;
     await handleSigninWithFields(context, att, note: note);
@@ -271,17 +272,17 @@ class SelfServiceEventActions {
   Future<void> _editNote(BuildContext context, CrossTenantPersonAttendance att) async {
     final note = await showEventNoteDialog(
       context,
-      title: 'Notiz anpassen',
-      confirmText: 'Speichern',
+      title: context.l10n.signoutEditNote,
+      confirmText: context.l10n.commonSave,
       initialValue: att.notes ?? '',
     );
     if (note == null || !context.mounted) return;
     final ok = await updateNote(att, note);
     if (!context.mounted) return;
     if (ok) {
-      ToastHelper.showSuccess(context, 'Notiz erfolgreich aktualisiert.');
+      ToastHelper.showSuccess(context, context.l10n.signoutNoteUpdated);
     } else {
-      ToastHelper.showError(context, 'Notiz konnte nicht gespeichert werden.');
+      ToastHelper.showError(context, context.l10n.signoutFlutterNoteSaveFailed);
     }
   }
 
@@ -367,7 +368,7 @@ class SelfServiceEventActions {
 
     final actions = buildActions(att, hideQuickActions: hideQuickActions);
     if (actions.isEmpty) {
-      ToastHelper.showWarning(context, 'Für diesen Termin sind keine Aktionen verfügbar.');
+      ToastHelper.showWarning(context, context.l10n.signoutNoActions);
       return;
     }
 
@@ -386,12 +387,12 @@ class SelfServiceEventActions {
               for (final action in actions)
                 ListTile(
                   leading: Icon(action.type.icon),
-                  title: Text(action.type.label),
+                  title: Text(action.type.label(ctx.l10n)),
                   onTap: () => Navigator.pop(ctx, action.type),
                 ),
               ListTile(
                 leading: const Icon(Icons.close, color: AppColors.danger),
-                title: const Text('Abbrechen', style: TextStyle(color: AppColors.danger)),
+                title: Text(ctx.l10n.commonCancel, style: const TextStyle(color: AppColors.danger)),
                 onTap: () => Navigator.pop(ctx),
               ),
             ],
@@ -431,23 +432,38 @@ class SelfServiceEventActions {
 
 /// Entries of the Termin action sheet.
 enum SelfServiceActionType {
-  signIn('Anmelden', Icons.check_circle_outline),
-  undoSignout('Abmeldung zurücknehmen', Icons.undo),
-  signInWithNote('Anmelden mit Notiz', Icons.edit_note),
-  signOut('Abmelden', Icons.cancel_outlined),
-  enterLate('Verspätung eintragen', Icons.schedule),
-  editRegistrationFields('Anmeldefelder anpassen', Icons.assignment_outlined),
-  editNote('Notiz anpassen', Icons.sticky_note_2_outlined),
-  showPlan('Ablaufplan anzeigen', Icons.description_outlined),
-  showDescription('Beschreibung anzeigen', Icons.info_outline),
-  openAttachment('Anhang öffnen', Icons.attach_file),
-  openNavigation('Navigation öffnen', Icons.navigation_outlined),
-  openFiles('Dateiablage öffnen', Icons.folder_open_outlined);
+  signIn(Icons.check_circle_outline),
+  undoSignout(Icons.undo),
+  signInWithNote(Icons.edit_note),
+  signOut(Icons.cancel_outlined),
+  enterLate(Icons.schedule),
+  editRegistrationFields(Icons.assignment_outlined),
+  editNote(Icons.sticky_note_2_outlined),
+  showPlan(Icons.description_outlined),
+  showDescription(Icons.info_outline),
+  openAttachment(Icons.attach_file),
+  openNavigation(Icons.navigation_outlined),
+  openFiles(Icons.folder_open_outlined);
 
-  const SelfServiceActionType(this.label, this.icon);
+  const SelfServiceActionType(this.icon);
 
-  final String label;
   final IconData icon;
+
+  /// Ionic signout.* action sheet labels.
+  String label(AppLocalizations l10n) => switch (this) {
+        signIn => l10n.signoutSignIn,
+        undoSignout => l10n.signoutUndoSignout,
+        signInWithNote => l10n.signoutSignInWithNote,
+        signOut => l10n.signoutSignOut,
+        enterLate => l10n.signoutEnterLate,
+        editRegistrationFields => l10n.signoutEditRegistrationFields,
+        editNote => l10n.signoutEditNote,
+        showPlan => l10n.signoutShowRunSheet,
+        showDescription => l10n.signoutShowDescription,
+        openAttachment => l10n.signoutOpenAttachment,
+        openNavigation => l10n.signoutOpenNavigation,
+        openFiles => l10n.signoutOpenFiles,
+      };
 }
 
 /// One entry of the action sheet.
@@ -521,7 +537,7 @@ class _SingleFieldDialogState extends State<_SingleFieldDialog> {
                 contentPadding: EdgeInsets.zero,
                 value: opt,
                 groupValue: _value is bool ? _value as bool : null,
-                title: Text(opt ? 'Ja' : 'Nein'),
+                title: Text(opt ? context.l10n.commonYes : context.l10n.commonNo),
                 onChanged: (v) => setState(() => _value = v),
               ),
           ],
@@ -579,10 +595,10 @@ class _SingleFieldDialogState extends State<_SingleFieldDialog> {
       content: SingleChildScrollView(child: _content()),
       actions: [
         if (widget.editMode)
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Abbrechen')),
+          TextButton(onPressed: () => Navigator.pop(context), child: Text(context.l10n.commonCancel)),
         TextButton(
           onPressed: () => Navigator.pop(context, <String, dynamic>{widget.field.id: _value}),
-          child: Text(widget.editMode ? 'Speichern' : 'Anmelden'),
+          child: Text(widget.editMode ? context.l10n.commonSave : context.l10n.signoutSignIn),
         ),
       ],
     );

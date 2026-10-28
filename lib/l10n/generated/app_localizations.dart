@@ -13103,6 +13103,114 @@ abstract class AppLocalizations {
   /// **'Bitte fülle alle Pflichtfelder aus'**
   String get signoutFillRequired;
 
+  /// signout.flutter.absenceSaveFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Abwesenheit konnte nicht gespeichert werden'**
+  String get signoutFlutterAbsenceSaveFailed;
+
+  /// signout.flutter.error
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler: {error}'**
+  String signoutFlutterError(Object error);
+
+  /// signout.flutter.eventsCount
+  ///
+  /// In de, this message translates to:
+  /// **'{count} Termine'**
+  String signoutFlutterEventsCount(Object count);
+
+  /// signout.flutter.fieldsSaveFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Anmeldefelder konnten nicht gespeichert werden.'**
+  String get signoutFlutterFieldsSaveFailed;
+
+  /// signout.flutter.fileDownloadFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Datei konnte nicht heruntergeladen werden'**
+  String get signoutFlutterFileDownloadFailed;
+
+  /// signout.flutter.fileOpenFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Datei konnte nicht geöffnet werden'**
+  String get signoutFlutterFileOpenFailed;
+
+  /// signout.flutter.filesSkipped
+  ///
+  /// In de, this message translates to:
+  /// **'{count} Datei(en) konnten nicht eingebunden werden.'**
+  String signoutFlutterFilesSkipped(Object count);
+
+  /// signout.flutter.linkOpenFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Link konnte nicht geöffnet werden'**
+  String get signoutFlutterLinkOpenFailed;
+
+  /// signout.flutter.noCurrentSongs
+  ///
+  /// In de, this message translates to:
+  /// **'Keine aktuellen Werke'**
+  String get signoutFlutterNoCurrentSongs;
+
+  /// signout.flutter.noPerson
+  ///
+  /// In de, this message translates to:
+  /// **'Für dein Konto wurde in dieser Instanz keine Person gefunden.'**
+  String get signoutFlutterNoPerson;
+
+  /// signout.flutter.noPrintableScores
+  ///
+  /// In de, this message translates to:
+  /// **'Keine druckbaren Noten gefunden.'**
+  String get signoutFlutterNoPrintableScores;
+
+  /// signout.flutter.noteSaveFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Notiz konnte nicht gespeichert werden.'**
+  String get signoutFlutterNoteSaveFailed;
+
+  /// signout.flutter.printAllScores
+  ///
+  /// In de, this message translates to:
+  /// **'Alle Noten drucken'**
+  String get signoutFlutterPrintAllScores;
+
+  /// signout.flutter.showAll
+  ///
+  /// In de, this message translates to:
+  /// **'Alle {count} anzeigen'**
+  String signoutFlutterShowAll(Object count);
+
+  /// signout.flutter.showLess
+  ///
+  /// In de, this message translates to:
+  /// **'Weniger anzeigen'**
+  String get signoutFlutterShowLess;
+
+  /// signout.flutter.signinFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Anmeldung fehlgeschlagen. Bitte versuche es erneut.'**
+  String get signoutFlutterSigninFailed;
+
+  /// signout.flutter.signoutFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Abmeldung fehlgeschlagen. Bitte versuche es erneut.'**
+  String get signoutFlutterSignoutFailed;
+
+  /// signout.flutter.switchTenantFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Instanz konnte nicht gewechselt werden'**
+  String get signoutFlutterSwitchTenantFailed;
+
   /// signout.giveReason
   ///
   /// In de, this message translates to:

@@ -10,13 +10,14 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/song/song.dart';
 import '../../../songs/data/song_print_service.dart';
 import 'upcoming_songs_sheet.dart' show hasSongNotesForPlayer;
+import '../../../../l10n/l10n.dart';
 
 /// Opens the external notes link of a song (Ionic openSongLink).
 Future<void> openSongLink(BuildContext context, String link) async {
   final uri = Uri.tryParse(link);
   final ok = uri != null && await launchUrl(uri, mode: LaunchMode.externalApplication);
   if (!ok && context.mounted) {
-    ToastHelper.showError(context, 'Link konnte nicht geöffnet werden');
+    ToastHelper.showError(context, context.l10n.signoutFlutterLinkOpenFailed);
   }
 }
 
@@ -59,7 +60,7 @@ Future<_SheetAction?> _showActionSheet(
                 onTap: () => Navigator.pop(ctx, action),
               ),
             ListTile(
-              title: const Text('Abbrechen', style: TextStyle(color: AppColors.danger)),
+              title: Text(ctx.l10n.commonCancel, style: const TextStyle(color: AppColors.danger)),
               onTap: () => Navigator.pop(ctx),
             ),
           ],
@@ -87,7 +88,7 @@ Future<void> _openFile(BuildContext context, SongFile file) async {
   final uri = Uri.tryParse(file.url);
   final ok = uri != null && await launchUrl(uri, mode: LaunchMode.externalApplication);
   if (!ok && context.mounted) {
-    ToastHelper.showError(context, 'Datei konnte nicht geöffnet werden');
+    ToastHelper.showError(context, context.l10n.signoutFlutterFileOpenFailed);
   }
 }
 
@@ -97,7 +98,7 @@ Future<void> _downloadFile(BuildContext context, SongFile file) async {
   final uri = Uri.tryParse(url);
   final ok = uri != null && await launchUrl(uri, mode: LaunchMode.externalApplication);
   if (!ok && context.mounted) {
-    ToastHelper.showError(context, 'Datei konnte nicht heruntergeladen werden');
+    ToastHelper.showError(context, context.l10n.signoutFlutterFileDownloadFailed);
   }
 }
 
@@ -111,13 +112,14 @@ Future<void> showSongOptionsSheet(
   required Song song,
   int? playerInstrumentId,
 }) async {
+  final l10n = context.l10n;
   final container = ProviderScope.containerOf(context);
   final isChoir = container.read(currentTenantProvider)?.type == 'choir';
   final allFiles = song.files ?? const <SongFile>[];
   final songTitle = song.fullNumber.isEmpty ? song.name : '${song.fullNumber}. ${song.name}';
 
   if (!hasSongNotesForPlayer(song, playerInstrumentId, isChoir: isChoir)) {
-    ToastHelper.showError(context, 'Für dein Instrument sind leider keine Noten verfügbar.');
+    ToastHelper.showError(context, l10n.signoutNoScoresForInstrument);
   }
 
   // Files for the player's instrument (choir: plus files noted "Chor")
@@ -136,63 +138,63 @@ Future<void> showSongOptionsSheet(
         .read(songPrintServiceProvider)
         .printEntries([SongPrintEntry(song: song, file: file)], '${song.name}.pdf');
     if (context.mounted && result != null && result.pageCount == 0) {
-      ToastHelper.showWarning(context, 'Keine druckbaren Noten gefunden.');
+      ToastHelper.showWarning(context, l10n.signoutFlutterNoPrintableScores);
     }
   }
 
   final actions = <_SheetAction>[
     if (song.link != null && song.link!.isNotEmpty)
-      _SheetAction('Notenlink öffnen', () => openSongLink(context, song.link!)),
+      _SheetAction(l10n.signoutOpenScoreLink, () => openSongLink(context, song.link!)),
   ];
 
   if (files.length == 1) {
     final file = files.first;
-    if (canDownload) actions.add(_SheetAction('Noten downloaden', () => _downloadFile(context, file)));
-    actions.add(_SheetAction('Noten anzeigen', () => _openFile(context, file)));
-    actions.add(_SheetAction('Noten drucken', () => printFile(file)));
+    if (canDownload) actions.add(_SheetAction(l10n.signoutDownloadScores, () => _downloadFile(context, file)));
+    actions.add(_SheetAction(l10n.signoutShowScores, () => _openFile(context, file)));
+    actions.add(_SheetAction(l10n.signoutPrintScores, () => printFile(file)));
   } else if (files.length > 1) {
     if (canDownload) {
       actions.add(_SheetAction(
-        'Noten downloaden',
-        () => _chooseFile(context, 'Noten für $songTitle auswählen', files,
+        l10n.signoutDownloadScores,
+        () => _chooseFile(context, l10n.signoutChooseScoresFor(songTitle), files,
             (f) => _downloadFile(context, f)),
       ));
     }
     actions.add(_SheetAction(
-      'Noten anzeigen',
+      l10n.signoutShowScores,
       () => _chooseFile(
-          context, 'Noten für $songTitle auswählen', files, (f) => _openFile(context, f)),
+          context, l10n.signoutChooseScoresFor(songTitle), files, (f) => _openFile(context, f)),
     ));
     actions.add(_SheetAction(
-      'Noten drucken',
-      () => _chooseFile(context, 'Noten für $songTitle drucken', files, printFile),
+      l10n.signoutPrintScores,
+      () => _chooseFile(context, l10n.signoutPrintScoresFor(songTitle), files, printFile),
     ));
   }
 
   final audioFile = allFiles.where((f) => f.instrumentId == 1).firstOrNull;
   if (audioFile != null) {
     actions.add(_SheetAction(
-      'Aufnahme anhören',
+      l10n.signoutListenRecording,
       () => container
           .read(audioPlayerServiceProvider.notifier)
           .playFromUrl(audioFile.url, audioFile.fileName, '${song.fullNumber} ${song.name}'.trim()),
     ));
-    actions.add(_SheetAction('Aufnahme herunterladen', () => _downloadFile(context, audioFile)));
+    actions.add(_SheetAction(l10n.signoutDownloadRecording, () => _downloadFile(context, audioFile)));
   }
 
   final lyrics = allFiles.where((f) => f.instrumentId == 2).toList();
   if (lyrics.length == 1) {
-    actions.add(_SheetAction('Liedtext ansehen', () => _openFile(context, lyrics.first)));
+    actions.add(_SheetAction(l10n.signoutViewLyrics, () => _openFile(context, lyrics.first)));
   } else if (lyrics.length > 1) {
     actions.add(_SheetAction(
-      'Liedtext ansehen',
+      l10n.signoutViewLyrics,
       () => _chooseFile(
-          context, 'Liedtext für $songTitle auswählen', lyrics, (f) => _openFile(context, f)),
+          context, l10n.signoutChooseLyricsFor(songTitle), lyrics, (f) => _openFile(context, f)),
     ));
   }
 
   if (actions.isEmpty) {
-    ToastHelper.showWarning(context, 'Für dieses Werk sind keine Aktionen verfügbar.');
+    ToastHelper.showWarning(context, l10n.signoutNoSongActions);
     return;
   }
 

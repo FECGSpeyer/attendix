@@ -6,6 +6,7 @@ import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/plan/plan.dart'; // ORG_PLANS
 import '../../../../data/repositories/sign_in_out_repository.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../planning/presentation/pages/plan_viewer_page.dart'; // ORG_PLANS
 
 /// Plan viewer bottom sheet for displaying attendance plans
@@ -29,10 +30,10 @@ class PlanViewerSheet extends ConsumerWidget {
     final fields = (plan?['fields'] as List?)?.cast<Map<String, dynamic>>() ?? [];
 
     if (fields.isEmpty) {
-      return const SizedBox(
+      return SizedBox(
         height: 200,
         child: Center(
-          child: Text('Kein Ablaufplan verfügbar'),
+          child: Text(context.l10n.planningNoPlanAvailable),
         ),
       );
     }
@@ -74,7 +75,7 @@ class PlanViewerSheet extends ConsumerWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Ablaufplan',
+                            context.l10n.signoutRunSheet,
                             style: Theme.of(context).textTheme.titleMedium?.copyWith(
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -105,7 +106,7 @@ class PlanViewerSheet extends ConsumerWidget {
                   children: [
                     // Start time
                     _PlanTimeRow(
-                      label: 'Beginn',
+                      label: context.l10n.attendanceStart,
                       time: _getStartTime(),
                       isStart: true,
                     ),
@@ -131,7 +132,7 @@ class PlanViewerSheet extends ConsumerWidget {
                     const Divider(),
                     // End time
                     _PlanTimeRow(
-                      label: 'Ende',
+                      label: context.l10n.attendanceEnd,
                       time: _getEndTime(),
                       isStart: false,
                     ),
@@ -150,7 +151,7 @@ class PlanViewerSheet extends ConsumerWidget {
     if (date == null) return '';
     final dateObj = DateTime.tryParse(date);
     if (dateObj == null) return date;
-    return DateFormat('dd.MM.yyyy').format(dateObj);
+    return DateFormat(dateFmt()).format(dateObj);
   }
 
   String _getStartTime() {
@@ -337,7 +338,7 @@ class _PlanFieldRow extends StatelessWidget {
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
-                        '$duration min',
+                        context.l10n.planningMinShort(duration),
                         style: const TextStyle(
                           fontSize: 11,
                           color: AppColors.medium,
@@ -406,8 +407,8 @@ Future<void> showPlanViewerSheet(
       typeInfo: attendance.typeInfo,
     ),
     plan: plan,
-    title: (attendance.typeInfo?.isNotEmpty ?? false) ? attendance.typeInfo : 'Ablaufplan',
+    title: (attendance.typeInfo?.isNotEmpty ?? false) ? attendance.typeInfo : context.l10n.signoutRunSheet,
     defaultLive: isToday,
-    fieldWarning: (f) => missing(f.songId) ? 'Keine Noten für dein Instrument' : null,
+    fieldWarning: (f) => missing(f.songId) ? l10nWithoutContext.planningNoScoresInstrument : null,
   );
 }

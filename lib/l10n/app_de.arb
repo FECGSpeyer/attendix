@@ -9725,6 +9725,90 @@
   "@signoutFillRequired": {
     "description": "signout.fillRequired"
   },
+  "signoutFlutterAbsenceSaveFailed": "Abwesenheit konnte nicht gespeichert werden",
+  "@signoutFlutterAbsenceSaveFailed": {
+    "description": "signout.flutter.absenceSaveFailed"
+  },
+  "signoutFlutterError": "Fehler: {error}",
+  "@signoutFlutterError": {
+    "description": "signout.flutter.error",
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "signoutFlutterEventsCount": "{count} Termine",
+  "@signoutFlutterEventsCount": {
+    "description": "signout.flutter.eventsCount",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "signoutFlutterFieldsSaveFailed": "Anmeldefelder konnten nicht gespeichert werden.",
+  "@signoutFlutterFieldsSaveFailed": {
+    "description": "signout.flutter.fieldsSaveFailed"
+  },
+  "signoutFlutterFileDownloadFailed": "Datei konnte nicht heruntergeladen werden",
+  "@signoutFlutterFileDownloadFailed": {
+    "description": "signout.flutter.fileDownloadFailed"
+  },
+  "signoutFlutterFileOpenFailed": "Datei konnte nicht geöffnet werden",
+  "@signoutFlutterFileOpenFailed": {
+    "description": "signout.flutter.fileOpenFailed"
+  },
+  "signoutFlutterFilesSkipped": "{count} Datei(en) konnten nicht eingebunden werden.",
+  "@signoutFlutterFilesSkipped": {
+    "description": "signout.flutter.filesSkipped",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "signoutFlutterLinkOpenFailed": "Link konnte nicht geöffnet werden",
+  "@signoutFlutterLinkOpenFailed": {
+    "description": "signout.flutter.linkOpenFailed"
+  },
+  "signoutFlutterNoCurrentSongs": "Keine aktuellen Werke",
+  "@signoutFlutterNoCurrentSongs": {
+    "description": "signout.flutter.noCurrentSongs"
+  },
+  "signoutFlutterNoPerson": "Für dein Konto wurde in dieser Instanz keine Person gefunden.",
+  "@signoutFlutterNoPerson": {
+    "description": "signout.flutter.noPerson"
+  },
+  "signoutFlutterNoPrintableScores": "Keine druckbaren Noten gefunden.",
+  "@signoutFlutterNoPrintableScores": {
+    "description": "signout.flutter.noPrintableScores"
+  },
+  "signoutFlutterNoteSaveFailed": "Notiz konnte nicht gespeichert werden.",
+  "@signoutFlutterNoteSaveFailed": {
+    "description": "signout.flutter.noteSaveFailed"
+  },
+  "signoutFlutterPrintAllScores": "Alle Noten drucken",
+  "@signoutFlutterPrintAllScores": {
+    "description": "signout.flutter.printAllScores"
+  },
+  "signoutFlutterShowAll": "Alle {count} anzeigen",
+  "@signoutFlutterShowAll": {
+    "description": "signout.flutter.showAll",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "signoutFlutterShowLess": "Weniger anzeigen",
+  "@signoutFlutterShowLess": {
+    "description": "signout.flutter.showLess"
+  },
+  "signoutFlutterSigninFailed": "Anmeldung fehlgeschlagen. Bitte versuche es erneut.",
+  "@signoutFlutterSigninFailed": {
+    "description": "signout.flutter.signinFailed"
+  },
+  "signoutFlutterSignoutFailed": "Abmeldung fehlgeschlagen. Bitte versuche es erneut.",
+  "@signoutFlutterSignoutFailed": {
+    "description": "signout.flutter.signoutFailed"
+  },
+  "signoutFlutterSwitchTenantFailed": "Instanz konnte nicht gewechselt werden",
+  "@signoutFlutterSwitchTenantFailed": {
+    "description": "signout.flutter.switchTenantFailed"
+  },
   "signoutGiveReason": "Bitte gib einen Grund an!",
   "@signoutGiveReason": {
     "description": "signout.giveReason"

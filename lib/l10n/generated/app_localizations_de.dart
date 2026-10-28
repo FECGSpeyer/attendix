@@ -7411,6 +7411,68 @@ class AppLocalizationsDe extends AppLocalizations {
   String get signoutFillRequired => 'Bitte fülle alle Pflichtfelder aus';
 
   @override
+  String get signoutFlutterAbsenceSaveFailed => 'Abwesenheit konnte nicht gespeichert werden';
+
+  @override
+  String signoutFlutterError(Object error) {
+    return 'Fehler: $error';
+  }
+
+  @override
+  String signoutFlutterEventsCount(Object count) {
+    return '$count Termine';
+  }
+
+  @override
+  String get signoutFlutterFieldsSaveFailed => 'Anmeldefelder konnten nicht gespeichert werden.';
+
+  @override
+  String get signoutFlutterFileDownloadFailed => 'Datei konnte nicht heruntergeladen werden';
+
+  @override
+  String get signoutFlutterFileOpenFailed => 'Datei konnte nicht geöffnet werden';
+
+  @override
+  String signoutFlutterFilesSkipped(Object count) {
+    return '$count Datei(en) konnten nicht eingebunden werden.';
+  }
+
+  @override
+  String get signoutFlutterLinkOpenFailed => 'Link konnte nicht geöffnet werden';
+
+  @override
+  String get signoutFlutterNoCurrentSongs => 'Keine aktuellen Werke';
+
+  @override
+  String get signoutFlutterNoPerson => 'Für dein Konto wurde in dieser Instanz keine Person gefunden.';
+
+  @override
+  String get signoutFlutterNoPrintableScores => 'Keine druckbaren Noten gefunden.';
+
+  @override
+  String get signoutFlutterNoteSaveFailed => 'Notiz konnte nicht gespeichert werden.';
+
+  @override
+  String get signoutFlutterPrintAllScores => 'Alle Noten drucken';
+
+  @override
+  String signoutFlutterShowAll(Object count) {
+    return 'Alle $count anzeigen';
+  }
+
+  @override
+  String get signoutFlutterShowLess => 'Weniger anzeigen';
+
+  @override
+  String get signoutFlutterSigninFailed => 'Anmeldung fehlgeschlagen. Bitte versuche es erneut.';
+
+  @override
+  String get signoutFlutterSignoutFailed => 'Abmeldung fehlgeschlagen. Bitte versuche es erneut.';
+
+  @override
+  String get signoutFlutterSwitchTenantFailed => 'Instanz konnte nicht gewechselt werden';
+
+  @override
   String get signoutGiveReason => 'Bitte gib einen Grund an!';
 
   @override

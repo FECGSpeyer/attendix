@@ -62,6 +62,28 @@
         "deleteAllData": "Alle Daten dieser Instanz werden unwiderruflich gelöscht.",
         "enterNameToConfirm": "Bitte gib den Namen der Instanz ein, um das Löschen zu bestätigen:"
       }
+    },
+    "signout": {
+      "flutter": {
+        "switchTenantFailed": "Instanz konnte nicht gewechselt werden",
+        "error": "Fehler: {error}",
+        "noPerson": "Für dein Konto wurde in dieser Instanz keine Person gefunden.",
+        "eventsCount": "{count} Termine",
+        "showLess": "Weniger anzeigen",
+        "showAll": "Alle {count} anzeigen",
+        "signoutFailed": "Abmeldung fehlgeschlagen. Bitte versuche es erneut.",
+        "fieldsSaveFailed": "Anmeldefelder konnten nicht gespeichert werden.",
+        "signinFailed": "Anmeldung fehlgeschlagen. Bitte versuche es erneut.",
+        "noteSaveFailed": "Notiz konnte nicht gespeichert werden.",
+        "linkOpenFailed": "Link konnte nicht geöffnet werden",
+        "fileOpenFailed": "Datei konnte nicht geöffnet werden",
+        "fileDownloadFailed": "Datei konnte nicht heruntergeladen werden",
+        "noPrintableScores": "Keine druckbaren Noten gefunden.",
+        "filesSkipped": "{count} Datei(en) konnten nicht eingebunden werden.",
+        "printAllScores": "Alle Noten drucken",
+        "noCurrentSongs": "Keine aktuellen Werke",
+        "absenceSaveFailed": "Abwesenheit konnte nicht gespeichert werden"
+      }
     }
   },
   "en": {
@@ -126,6 +148,28 @@
         "deleteTenantHint": "Permanently delete this group",
         "deleteAllData": "All data of this instance will be permanently deleted.",
         "enterNameToConfirm": "Please enter the name of the instance to confirm the deletion:"
+      }
+    },
+    "signout": {
+      "flutter": {
+        "switchTenantFailed": "Could not switch instance",
+        "error": "Error: {error}",
+        "noPerson": "No person was found for your account in this instance.",
+        "eventsCount": "{count} events",
+        "showLess": "Show less",
+        "showAll": "Show all {count}",
+        "signoutFailed": "Sign-out failed. Please try again.",
+        "fieldsSaveFailed": "Registration fields could not be saved.",
+        "signinFailed": "Sign-in failed. Please try again.",
+        "noteSaveFailed": "Note could not be saved.",
+        "linkOpenFailed": "Link could not be opened",
+        "fileOpenFailed": "File could not be opened",
+        "fileDownloadFailed": "File could not be downloaded",
+        "noPrintableScores": "No printable scores found.",
+        "filesSkipped": "{count} file(s) could not be included.",
+        "printAllScores": "Print all scores",
+        "noCurrentSongs": "No current pieces",
+        "absenceSaveFailed": "Absence could not be saved"
       }
     }
   }

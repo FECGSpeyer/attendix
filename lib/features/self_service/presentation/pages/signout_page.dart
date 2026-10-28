@@ -25,6 +25,7 @@ import '../../../../core/providers/duty_providers.dart';
 import '../../../../core/providers/player_absence_providers.dart';
 import '../../../duty/presentation/widgets/duty_actions.dart';
 import '../../../duty/presentation/widgets/self_service_duty_section.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../messages/presentation/widgets/notification_bell.dart'; // MESSAGES
 import '../../../team_organization/presentation/widgets/my_tasks_card.dart'; // INTEGRATION
 
@@ -120,7 +121,7 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
       context.go(role.defaultRoute);
       prefs.updateCurrentTenantId(tenant.id!);
     } catch (e) {
-      if (mounted) ToastHelper.showError(context, 'Instanz konnte nicht gewechselt werden');
+      if (mounted) ToastHelper.showError(context, context.l10n.signoutFlutterSwitchTenantFailed);
     }
   }
 
@@ -129,7 +130,7 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
     final Widget title;
     if (tenants.length > 1) {
       title = PopupMenuButton<Tenant>(
-        tooltip: 'Instanz wechseln',
+        tooltip: context.l10n.settingsSwitchTenant,
         onSelected: _switchTenant,
         itemBuilder: (_) => [
           for (final t in tenants)
@@ -139,7 +140,7 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
                 children: [
                   Expanded(child: Text(t.longName.isNotEmpty ? t.longName : t.shortName)),
                   if (t.id == tenant?.id)
-                    const EventPill(label: 'Aktuell', color: AppColors.primary),
+                    EventPill(label: context.l10n.signoutCurrent, color: AppColors.primary),
                 ],
               ),
             ),
@@ -158,7 +159,7 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
         ),
       );
     } else {
-      title = Text(tenant?.shortName ?? 'Meine Termine');
+      title = Text(tenant?.shortName ?? context.l10n.tabsMyEvents);
     }
     return AppBar(
       title: title,
@@ -167,18 +168,18 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
         if (canSelfPause && player != null && !player.paused)
           IconButton(
             icon: const Icon(Icons.pause_circle_outline),
-            tooltip: 'Pausieren',
+            tooltip: context.l10n.signoutPause,
             onPressed: () => selfServicePause(context, ref, player),
           ),
         if (canSelfPause && player != null && player.paused)
           IconButton(
             icon: const Icon(Icons.play_circle_outline),
-            tooltip: 'Pausierung beenden',
+            tooltip: context.l10n.signoutEndPause,
             onPressed: () => selfServiceUnpause(context, ref, player),
           ),
         IconButton(
           icon: const Icon(Icons.info_outline),
-          tooltip: 'Legende',
+          tooltip: context.l10n.signoutLegend,
           onPressed: () => showEventLegendSheet(context),
         ),
         const NotificationBell(), // MESSAGES
@@ -210,13 +211,11 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
               children: [
                 if (playerAsync.valueOrNull != null)
                   Text(
-                    'Shalom ${playerAsync.valueOrNull!.firstName}!',
+                    context.l10n.signoutGreeting(playerAsync.valueOrNull!.firstName),
                     style: Theme.of(context).textTheme.headlineSmall,
                   ),
                 const SizedBox(height: 8),
-                const Text(
-                  'Deine Registrierung wurde erfolgreich übermittelt. Du wirst benachrichtigt, sobald diese bearbeitet wurde.',
-                ),
+                Text(context.l10n.signoutRegistrationSubmitted),
               ],
             ),
           ),
@@ -239,8 +238,8 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
             children: [
               const Icon(Icons.error_outline, size: 48, color: AppColors.danger),
               const SizedBox(height: 8),
-              Text('Fehler: $e', textAlign: TextAlign.center),
-              TextButton(onPressed: _refresh, child: const Text('Erneut versuchen')),
+              Text(context.l10n.signoutFlutterError(e), textAlign: TextAlign.center),
+              TextButton(onPressed: _refresh, child: Text(context.l10n.messagesRetry)),
             ],
           ),
         ),
@@ -262,10 +261,10 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
               // PEOPLE_IMPORT: "Geplante Abwesenheiten"
               if (player != null) const SelfServicePlannedAbsences(),
               if (player == null)
-                const Padding(
-                  padding: EdgeInsets.all(32),
+                Padding(
+                  padding: const EdgeInsets.all(32),
                   child: Text(
-                    'Für dein Konto wurde in dieser Instanz keine Person gefunden.',
+                    context.l10n.signoutFlutterNoPerson,
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -293,10 +292,10 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
                   data.current == null &&
                   data.upcoming.isEmpty &&
                   data.past.isEmpty)
-                const Padding(
+                Padding(
                   padding: EdgeInsets.all(32),
                   child: Text(
-                    'Keine Termine gefunden',
+                    context.l10n.selfServiceNoEvents,
                     textAlign: TextAlign.center,
                     style: TextStyle(color: AppColors.medium),
                   ),
@@ -337,7 +336,7 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Shalom ${player.firstName}!',
+                  context.l10n.signoutGreeting(player.firstName),
                   style: Theme.of(context)
                       .textTheme
                       .headlineSmall
@@ -349,26 +348,26 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
                   runSpacing: 4,
                   children: [
                     if (player.paused)
-                      const Row(
+                      Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Icon(Icons.pause_circle_outline, size: 16, color: AppColors.warningDark),
                           SizedBox(width: 2),
-                          Text('Pausiert', style: TextStyle(color: AppColors.warningDark)),
+                          Text(context.l10n.signoutPaused, style: const TextStyle(color: AppColors.warningDark)),
                         ],
                       ),
                     if (useDutyView)
-                      const Text('Dein Dienstplan', style: TextStyle(color: AppColors.medium))
+                      Text(context.l10n.signoutYourDutyRoster, style: const TextStyle(color: AppColors.medium))
                     else if (data.percentage > 0)
                       Text(
-                        '${data.percentage}% Anwesenheit',
+                        context.l10n.signoutAttendancePercent(data.percentage),
                         style: TextStyle(
                           color: EventListUtils.percentageColor(data.percentage),
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                     if (data.lateCount > 0)
-                      Text('${data.lateCount}× zu spät',
+                      Text(context.l10n.signoutLateCount(data.lateCount),
                           style: const TextStyle(color: AppColors.medium)),
                   ],
                 ),
@@ -390,22 +389,24 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
       if (songs.isNotEmpty)
         _GreetTile(
           icon: Icons.music_note_outlined,
-          title: 'Aktuelle Werke',
-          subtitle: songs.length == 1 ? 'Nächster Termin' : '${songs.length} Termine',
+          title: context.l10n.signoutCurrentSongs,
+          subtitle: songs.length == 1
+              ? context.l10n.teamOrgNextEvent
+              : context.l10n.signoutFlutterEventsCount(songs.length),
           onTap: () => showUpcomingSongsSheet(context),
         ),
       if (canPlannedAbsence)
         _GreetTile(
           icon: Icons.calendar_today_outlined,
-          title: 'Abwesenheit',
-          subtitle: 'melden',
+          title: context.l10n.signoutAbsenceTileTitle,
+          subtitle: context.l10n.signoutAbsenceTileSub,
           onTap: () => selfServiceReportAbsence(context, ref, player,
               canSelfPause: ref.read(canSelfPauseProvider)),
         ),
       if (inDutyCircle)
         _GreetTile(
           icon: Icons.headset_mic_outlined,
-          title: 'Offene Dienste',
+          title: context.l10n.signoutOpenDuties,
           subtitle: openDutiesTileSubtitle(duty!.openDuties.length),
           onTap: () => showOpenDutiesSheet(context),
         ),
@@ -445,7 +446,9 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
         : null;
     final qa = actions.quickActions(att);
     return [
-      EventMonthHeader(label: att.isRunning ? 'Heute' : 'Nächster Termin'),
+      EventMonthHeader(label: att.isRunning
+          ? context.l10n.teamOrgTodayCap
+          : context.l10n.teamOrgNextEvent),
       EventTodayCard(
         date: att.date,
         title: att.eventTitle,
@@ -467,7 +470,7 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
     if (data.upcoming.isEmpty) return const [];
     final groups = EventListUtils.groupByMonth(data.upcoming, (a) => a.date);
     return [
-      EventSectionHeader(title: 'Anstehend', count: data.upcoming.length),
+      EventSectionHeader(title: context.l10n.signoutUpcoming, count: data.upcoming.length),
       for (final group in groups) ...[
         EventMonthHeader(label: group.label),
         EventListCard(
@@ -509,7 +512,7 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
         ? data.past
         : data.past.take(EventListUtils.pastPreviewCount).toList();
     return [
-      EventSectionHeader(title: 'Vergangen', count: data.past.length),
+      EventSectionHeader(title: context.l10n.signoutPast, count: data.past.length),
       EventListCard(
         children: [
           EventSummary(
@@ -529,7 +532,7 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
                 if (actions.hasFilesFolder(att))
                   IconButton(
                     icon: const Icon(Icons.folder_open_outlined),
-                    tooltip: 'Dateiablage öffnen',
+                    tooltip: context.l10n.signoutOpenFiles,
                     onPressed: () => openFilesFolderRoute(context, att.filesFolder!),
                   ),
                 EventPill.status(att.status, past: true),
@@ -537,7 +540,9 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
             ),
           if (data.past.length > EventListUtils.pastPreviewCount)
             EventMoreLink(
-              label: _showAllPast ? 'Weniger anzeigen' : 'Alle ${data.past.length} anzeigen',
+              label: _showAllPast
+                  ? context.l10n.signoutFlutterShowLess
+                  : context.l10n.signoutFlutterShowAll(data.past.length),
               onTap: () => setState(() => _showAllPast = !_showAllPast),
             ),
         ],

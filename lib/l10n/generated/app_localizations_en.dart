@@ -7417,6 +7417,68 @@ class AppLocalizationsEn extends AppLocalizations {
   String get signoutFillRequired => 'Please fill in all required fields';
 
   @override
+  String get signoutFlutterAbsenceSaveFailed => 'Absence could not be saved';
+
+  @override
+  String signoutFlutterError(Object error) {
+    return 'Error: $error';
+  }
+
+  @override
+  String signoutFlutterEventsCount(Object count) {
+    return '$count events';
+  }
+
+  @override
+  String get signoutFlutterFieldsSaveFailed => 'Registration fields could not be saved.';
+
+  @override
+  String get signoutFlutterFileDownloadFailed => 'File could not be downloaded';
+
+  @override
+  String get signoutFlutterFileOpenFailed => 'File could not be opened';
+
+  @override
+  String signoutFlutterFilesSkipped(Object count) {
+    return '$count file(s) could not be included.';
+  }
+
+  @override
+  String get signoutFlutterLinkOpenFailed => 'Link could not be opened';
+
+  @override
+  String get signoutFlutterNoCurrentSongs => 'No current pieces';
+
+  @override
+  String get signoutFlutterNoPerson => 'No person was found for your account in this instance.';
+
+  @override
+  String get signoutFlutterNoPrintableScores => 'No printable scores found.';
+
+  @override
+  String get signoutFlutterNoteSaveFailed => 'Note could not be saved.';
+
+  @override
+  String get signoutFlutterPrintAllScores => 'Print all scores';
+
+  @override
+  String signoutFlutterShowAll(Object count) {
+    return 'Show all $count';
+  }
+
+  @override
+  String get signoutFlutterShowLess => 'Show less';
+
+  @override
+  String get signoutFlutterSigninFailed => 'Sign-in failed. Please try again.';
+
+  @override
+  String get signoutFlutterSignoutFailed => 'Sign-out failed. Please try again.';
+
+  @override
+  String get signoutFlutterSwitchTenantFailed => 'Could not switch instance';
+
+  @override
   String get signoutGiveReason => 'Please give a reason!';
 
   @override
