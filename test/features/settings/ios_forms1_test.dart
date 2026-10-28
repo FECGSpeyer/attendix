@@ -71,6 +71,10 @@ void main() {
 
   testWidgets('Passwort ändern (iOS): inputs without icons, '
       '"Abbrechen | Ändern" side by side', (tester) async {
+    // The test font is far wider than SF: scale it so both labels fit half
+    // the alert like on a device (they wrap onto two lines otherwise).
+    tester.platformDispatcher.textScaleFactorTestValue = 0.5;
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
     await tester.pumpWidget(app(const ChangePasswordDialog()));
     await tester.pumpAndSettle();
 

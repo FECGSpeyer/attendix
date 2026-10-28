@@ -74,13 +74,14 @@ void main() {
 
       expect(find.byType(AlertDialog), findsOneWidget);
       expect(find.text('Passwort zurücksetzen'), findsOneWidget);
-      expect(find.text('Abbrechen'), findsOneWidget);
-      expect(find.text('Zurücksetzen'), findsOneWidget);
+      // PARITY_R3: Ionic md alert buttons are UPPERCASE
+      expect(find.text('ABBRECHEN'), findsOneWidget);
+      expect(find.text('ZURÜCKSETZEN'), findsOneWidget);
       final field = tester.widget<TextField>(find.descendant(
           of: find.byType(AlertDialog), matching: find.byType(TextField)));
       expect(field.controller!.text, 'a@b.de');
 
-      await tester.tap(find.text('Abbrechen'));
+      await tester.tap(find.text('ABBRECHEN'));
       await tester.pumpAndSettle();
       expect(find.byType(AlertDialog), findsNothing);
     });

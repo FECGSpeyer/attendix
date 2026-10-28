@@ -222,7 +222,7 @@ void main() {
 
     testWidgets('iOS: plain rows on the white page, no card', (tester) async {
       await tester.pumpWidget(app(const EventListCard(
-        iosPlain: true,
+        plain: true,
         children: [Text('a'), Text('b')],
       )));
       expect(find.byType(Card), findsNothing);
@@ -231,14 +231,22 @@ void main() {
       expect(scaffold.backgroundColor, Colors.white);
     }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
 
-    testWidgets('Material: inset card stays', (tester) async {
+    testWidgets('Material: plain white list on the white page (Ionic md)',
+        (tester) async {
       await tester.pumpWidget(app(const EventListCard(
-        iosPlain: true,
+        plain: true,
+        children: [Text('a')],
+      )));
+      expect(find.byType(Card), findsNothing);
+      final scaffold = tester.widget<Scaffold>(find.byType(Scaffold));
+      expect(scaffold.backgroundColor, Colors.white);
+    }, variant: TargetPlatformVariant.only(TargetPlatform.android));
+
+    testWidgets('Material: non-plain list keeps the card', (tester) async {
+      await tester.pumpWidget(app(const EventListCard(
         children: [Text('a')],
       )));
       expect(find.byType(Card), findsOneWidget);
-      final scaffold = tester.widget<Scaffold>(find.byType(Scaffold));
-      expect(scaffold.backgroundColor, isNull);
     }, variant: TargetPlatformVariant.only(TargetPlatform.android));
 
     Widget segment(ValueChanged<String> onChanged) => IonToolbarSegment<String>(

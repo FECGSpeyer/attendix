@@ -176,32 +176,22 @@ extension on _ChangePasswordDialogState {
           ),
         ],
       ),
+      // Two buttons → side by side (IosAlertCard lays them out).
       actions: [
-        Row(
-          children: [
-            Expanded(
-              child: IosAlertButton(
-                bold: false,
-                onPressed:
-                    _isLoading ? null : () => Navigator.of(context).pop(false),
-                child: Text(l10n.commonCancel),
-              ),
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: IosAlertButton(
-                bold: false,
-                onPressed: _isLoading ? null : _submit,
-                child: _isLoading
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: AppSpinner(strokeWidth: 2),
-                      )
-                    : Text(l10n.settingsChange),
-              ),
-            ),
-          ],
+        IosAlertButton(
+          onPressed:
+              _isLoading ? null : () => Navigator.of(context).pop(false),
+          child: Text(l10n.commonCancel),
+        ),
+        IosAlertButton(
+          onPressed: _isLoading ? null : _submit,
+          child: _isLoading
+              ? const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: AppSpinner(strokeWidth: 2),
+                )
+              : Text(l10n.settingsChange),
         ),
       ],
     );

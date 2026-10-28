@@ -49,6 +49,7 @@ import '../../../../data/models/person/person.dart';
 import '../../../../data/models/song/song.dart';
 import '../../../../shared/widgets/event_list/event_list_widgets.dart';
 import '../../../../shared/widgets/event_list/excuse_reason_sheet.dart';
+import '../../../../shared/widgets/layout/ionic_ios.dart' show IonIos; // PARITY_R3
 import '../../../self_service/presentation/widgets/self_service_event_actions.dart';
 import '../../../duty/presentation/widgets/duty_staffing_section.dart';
 import '../widgets/attendance_detail/attendance_detail_widgets.dart';
@@ -371,6 +372,10 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
 
   /// UX_ATT: corner radius of the page's section cards (theme card shape).
   BorderRadius _sectionRadius(BuildContext context) {
+    // PARITY_R3: iOS inset item groups (ionic-theme-ios26/27) radius 28.
+    if (useIosLook(context)) {
+      return BorderRadius.circular(IonIos.groupRadius);
+    }
     final shape = Theme.of(context).cardTheme.shape;
     if (shape is RoundedRectangleBorder && shape.borderRadius is BorderRadius) {
       return shape.borderRadius as BorderRadius;
@@ -529,6 +534,9 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                         final action = await showAppPopoverMenu<String>(
                           context: buttonContext,
                           items: _buildAttDetailMenuItems(attendance),
+                          // PARITY_R3: nested popovers update the entries
+                          // ("Filter aktiv") while the menu stays open.
+                          itemsBuilder: () => _buildAttDetailMenuItems(attendance),
                         );
                         if (action != null && mounted) _handleMenuAction(action);
                       },
@@ -922,15 +930,9 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       case 'export_excel':
         _exportAttendanceToExcel();
         break;
-      // ATT_DETAIL
-      case 'status_filter':
-        _openStatusFilter();
-        break;
+      // ATT_DETAIL (Status-Filter / Ansicht open nested popovers)
       case 'sort':
         _openSortPicker();
-        break;
-      case 'view':
-        _openViewOptions();
         break;
       case 'add_person':
         _openAddPersons();
@@ -1046,9 +1048,12 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     final activeSort = sortFields.where((f) => f.id == _sort.fieldId).firstOrNull;
 
     // IOS_DETAIL: entries of the adaptive popover menu; Ionic `detail="true"`
-    // (Status-Filter, Ansicht) open a sub menu → chevron on iOS.
+    // (Status-Filter, Ansicht) open a nested popover (PARITY_R3) → chevron.
     AppPopoverMenuItem<String> item(String value, IconData icon, String title,
-            {String? subtitle, bool highlight = false, bool submenu = false}) =>
+            {String? subtitle,
+            bool highlight = false,
+            bool submenu = false,
+            List<AppPopoverSubItem> Function()? submenuItems}) =>
         AppPopoverMenuItem<String>(
           value: value,
           icon: icon,
@@ -1056,16 +1061,19 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
           subtitle: subtitle,
           color: highlight ? AppColors.primary : null,
           submenu: submenu,
+          submenuItems: submenuItems,
         );
 
     return [
       item('status_filter', Icons.filter_list, context.l10n.attendanceStatusFilter,
           subtitle: _statusFilter.isEmpty ? null : context.l10n.attendanceFilterActive(_statusFilter.length),
-          highlight: _statusFilter.isNotEmpty, submenu: true),
+          highlight: _statusFilter.isNotEmpty, submenu: true,
+          submenuItems: _statusFilterSubItems),
       if (sortFields.isNotEmpty)
         item('sort', Icons.swap_vert, context.l10n.attendanceSorting,
             subtitle: activeSort == null ? null : '${activeSort.name} ${_sort.ascending ? '↑' : '↓'}'),
-      item('view', Icons.visibility_outlined, context.l10n.attendanceView, submenu: true),
+      item('view', Icons.visibility_outlined, context.l10n.attendanceView, submenu: true,
+          submenuItems: _viewSubItems),
       if (canMutate) item('add_person', Icons.person_add_alt_1_outlined, context.l10n.attendanceAddPerson),
       if (canMutate && checklistEmpty)
         item('start_checklist', Icons.check_box_outlined, context.l10n.attendanceStartChecklist),
@@ -1082,8 +1090,10 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     ];
   }
 
-  /// Status filter sheet (Ionic toggleStatusFilter / clearStatusFilter).
-  Future<void> _openStatusFilter() async {
+  /// PARITY_R3: nested "Status-Filter" popover (Ionic toggleStatusFilter /
+  /// clearStatusFilter, `dismissOnSelect=false`): one checkbox per status,
+  /// "Filter zurücksetzen" while a filter is active.
+  List<AppPopoverSubItem> _statusFilterSubItems() {
     final type = ref.read(attendanceTypeForAttendanceProvider(widget.attendanceId)).valueOrNull;
     final available = (type?.availableStatuses?.isNotEmpty ?? false)
         ? type!.availableStatuses!
@@ -1097,51 +1107,30 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
         (AttendanceStatus.lateExcused, context.l10n.commonStatusLateExcused),
       if (available.contains(AttendanceStatus.absent)) (AttendanceStatus.absent, context.l10n.commonStatusAbsent),
     ];
-    await showModalBottomSheet<void>(
-      context: context,
-      useRootNavigator: true, // IOS_SHELL2: above the tab bar
-      showDragHandle: true,
-      builder: (ctx) => StatefulBuilder(
-        builder: (ctx, setSheetState) {
-          void toggle(AttendanceStatus s) {
+    return [
+      for (final (status, label) in options)
+        AppPopoverSubItem(
+          label: label,
+          checked: _statusFilter.contains(status),
+          onTap: () {
+            if (!mounted) return;
             setState(() {
               final next = {..._statusFilter};
-              if (!next.remove(s)) next.add(s);
+              if (!next.remove(status)) next.add(status);
               _statusFilter = next;
             });
-            setSheetState(() {});
-          }
-
-          return SafeArea(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ListTile(
-                  title: Text(context.l10n.attendanceStatusFilter, style: const TextStyle(fontWeight: FontWeight.bold)),
-                ),
-                for (final (status, label) in options)
-                  CheckboxListTile(
-                    value: _statusFilter.contains(status),
-                    onChanged: (_) => toggle(status),
-                    controlAffinity: ListTileControlAffinity.leading,
-                    title: Text(label),
-                  ),
-                if (_statusFilter.isNotEmpty)
-                  ListTile(
-                    leading: const Icon(Icons.highlight_off, color: AppColors.danger),
-                    title: Text(context.l10n.attendanceClearFilter, style: const TextStyle(color: AppColors.danger)),
-                    onTap: () {
-                      setState(() => _statusFilter = {});
-                      setSheetState(() {});
-                    },
-                  ),
-                const SizedBox(height: AppDimensions.paddingS),
-              ],
-            ),
-          );
-        },
-      ),
-    );
+          },
+        ),
+      if (_statusFilter.isNotEmpty)
+        AppPopoverSubItem(
+          label: context.l10n.attendanceClearFilter,
+          icon: Icons.highlight_off,
+          color: AppColors.danger,
+          onTap: () {
+            if (mounted) setState(() => _statusFilter = {});
+          },
+        ),
+    ];
   }
 
   /// "Sortierung": Standard (Gruppe) or an extra / registration field ↑↓.
@@ -1213,58 +1202,42 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     });
   }
 
-  /// "Ansicht": Bilder anzeigen / Anmeldefelder anzeigen / Explizite Statusauswahl.
-  Future<void> _openViewOptions() async {
+  /// PARITY_R3: nested "Ansicht" popover (Ionic `attendance-view-trigger`):
+  /// Bilder anzeigen / Anmeldefelder anzeigen / Explizite Statusauswahl.
+  List<AppPopoverSubItem> _viewSubItems() {
     final type = ref.read(attendanceTypeForAttendanceProvider(widget.attendanceId)).valueOrNull;
     final hasRegFields = type?.registrationFields?.isNotEmpty ?? false;
-    await showModalBottomSheet<void>(
-      context: context,
-      useRootNavigator: true, // IOS_SHELL2: above the tab bar
-      showDragHandle: true,
-      builder: (ctx) => StatefulBuilder(
-        builder: (ctx, setSheetState) => SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(title: Text(context.l10n.attendanceView, style: const TextStyle(fontWeight: FontWeight.bold))),
-              CheckboxListTile(
-                value: _showAvatars,
-                controlAffinity: ListTileControlAffinity.leading,
-                title: Text(context.l10n.attendanceShowPictures),
-                onChanged: (v) {
-                  setState(() => _showAvatars = v ?? false);
-                  setSheetState(() {});
-                  _savePref((p) => p.setBool(_prefShowAvatars, _showAvatars));
-                },
-              ),
-              if (hasRegFields)
-                CheckboxListTile(
-                  value: _showRegFields,
-                  controlAffinity: ListTileControlAffinity.leading,
-                  title: Text(context.l10n.attendanceShowRegFields),
-                  onChanged: (v) {
-                    setState(() => _showRegFields = v ?? true);
-                    setSheetState(() {});
-                    _savePref((p) => p.setBool(_prefShowRegFields, _showRegFields));
-                  },
-                ),
-              CheckboxListTile(
-                value: !_clickMode,
-                controlAffinity: ListTileControlAffinity.leading,
-                title: Text(context.l10n.attendanceExplicitStatus),
-                subtitle: Text(context.l10n.attendanceExplicitStatusHint),
-                onChanged: (v) {
-                  setState(() => _clickMode = !(v ?? true));
-                  setSheetState(() {});
-                  _savePref((p) => p.setString(_prefViewMode, _clickMode ? 'click' : 'select'));
-                },
-              ),
-              const SizedBox(height: AppDimensions.paddingS),
-            ],
-          ),
-        ),
+    return [
+      AppPopoverSubItem(
+        label: context.l10n.attendanceShowPictures,
+        checked: _showAvatars,
+        onTap: () {
+          if (!mounted) return;
+          setState(() => _showAvatars = !_showAvatars);
+          _savePref((p) => p.setBool(_prefShowAvatars, _showAvatars));
+        },
       ),
-    );
+      if (hasRegFields)
+        AppPopoverSubItem(
+          label: context.l10n.attendanceShowRegFields,
+          checked: _showRegFields,
+          onTap: () {
+            if (!mounted) return;
+            setState(() => _showRegFields = !_showRegFields);
+            _savePref((p) => p.setBool(_prefShowRegFields, _showRegFields));
+          },
+        ),
+      AppPopoverSubItem(
+        label: context.l10n.attendanceExplicitStatus,
+        subtitle: context.l10n.attendanceExplicitStatusHint,
+        checked: !_clickMode,
+        onTap: () {
+          if (!mounted) return;
+          setState(() => _clickMode = !_clickMode);
+          _savePref((p) => p.setString(_prefViewMode, _clickMode ? 'click' : 'select'));
+        },
+      ),
+    ];
   }
 
   /// "Person hinzufügen" (Ionic openAddPersonModal / addPersonsToAttendance).

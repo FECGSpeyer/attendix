@@ -487,8 +487,11 @@ class IonSheetHeader extends StatelessWidget {
       height: 56,
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        // Matches the bottom sheet's rounded top corners.
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+        // Matches the bottom sheet's rounded top corners (PARITY_R3: md
+        // sheets are square like Ionic md modals).
+        borderRadius: ios
+            ? const BorderRadius.vertical(top: Radius.circular(16))
+            : null,
       ),
       child: _PrimaryIconButtons(
         child: ios

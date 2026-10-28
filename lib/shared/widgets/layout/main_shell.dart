@@ -206,6 +206,9 @@ class MainShell extends ConsumerWidget {
     // The keyboard covers the bar: like MediaQuery.padding, the inset
     // shrinks by the keyboard height.
     final pagePadding = (inset - mq.viewInsets.bottom).clamp(0.0, inset);
+    // PARITY_R3: Ionic `ion-tab-bar` gets `tab-bar-hidden` (display: none)
+    // while the keyboard is open (keyboard controller, iOS and md).
+    final keyboardOpen = isKeyboardOpen(context);
 
     final content = MediaQuery(
       data: mq.copyWith(
@@ -229,7 +232,7 @@ class MainShell extends ConsumerWidget {
             Positioned.fill(
               child: _IosPageWithFade(
                 location: GoRouterState.of(context).uri.toString(),
-                fadeHeight: barInset,
+                fadeHeight: keyboardOpen ? 0 : barInset,
                 child: content,
               ),
             ),
@@ -257,6 +260,7 @@ class MainShell extends ConsumerWidget {
                 ),
               ),
             ),
+            if (!keyboardOpen)
             Positioned(
               left: 0,
               right: 0,
@@ -330,15 +334,25 @@ class MainShell extends ConsumerWidget {
       // Debug FAB only visible in debug mode
       floatingActionButton: kDebugMode ? const DebugRoleFab() : null,
       // IOS_LOOK: ion-tab-bar md; iOS: [_buildIos].
-      bottomNavigationBar: _MdTabBar(
-        selectedIndex: selectedIndex.clamp(0, destinations.length - 1),
-        onSelected: (index) => _onItemTapped(context, index, destinations),
-        destinations: destinations,
-      ),
+      // PARITY_R3: hidden while the keyboard is open (Ionic tab-bar-hidden).
+      bottomNavigationBar: isKeyboardOpen(context)
+          ? null
+          : _MdTabBar(
+              selectedIndex: selectedIndex.clamp(0, destinations.length - 1),
+              onSelected: (index) => _onItemTapped(context, index, destinations),
+              destinations: destinations,
+            ),
       ),
     );
   }
 }
+
+/// PARITY_R3: Ionic hides `ion-tab-bar` while the on-screen keyboard is
+/// open (`tab-bar-hidden`, keyboard controller). Flutter (native and mobile
+/// web) reports the keyboard as bottom view insets.
+@visibleForTesting
+bool isKeyboardOpen(BuildContext context) =>
+    MediaQuery.viewInsetsOf(context).bottom > 0;
 
 /// IOS_SHELL2: Ionic md `ion-tab-bar` (desktop / Android): 56px high, page
 /// background (#fff, dark #1f1f1f) with a 0.55px top hairline; the tab

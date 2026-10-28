@@ -498,7 +498,7 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
       for (final group in groups) ...[
         EventMonthHeader(label: group.label),
         EventListCard(
-          iosPlain: true,
+          plain: true,
           children: [
             for (final att in group.items)
               EventRow(
@@ -539,7 +539,7 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
     return [
       EventSectionHeader(title: context.l10n.signoutPast, count: data.past.length),
       EventListCard(
-        iosPlain: true,
+        plain: true,
         children: [
           EventSummary(
             percentage: data.percentage,

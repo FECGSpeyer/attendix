@@ -29,6 +29,7 @@ import '../../../../core/providers/branding_providers.dart'; // MISC2
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/common/error_state_view.dart';
+import '../../../../shared/widgets/adaptive/app_segmented_button.dart'; // PARITY_R3
 import '../../../../shared/widgets/adaptive/app_toolbar.dart'; // IOS_SHELL
 import '../../../../shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL
 
@@ -475,7 +476,8 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
 }
 
 /// Ionic `ion-segment [scrollable]="true" mode="md"`: horizontally
-/// scrollable segment buttons ("Alle" + categories) with an underline.
+/// scrollable md segment buttons ("Alle" + categories) with an underline,
+/// on iOS too (songs.page.scss: `padding: .5rem 0; margin: .5rem 0`).
 class _CategorySegment extends StatelessWidget {
   const _CategorySegment({
     required this.categories,
@@ -489,66 +491,18 @@ class _CategorySegment extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final entries = <(String?, String)>[
-      (null, context.l10n.commonAll),
-      for (final c in categories)
-        if (c.id != null) (c.id, c.name),
-    ];
-    return SizedBox(
-      height: 48,
-      child: ListView(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingS),
-        children: [
-          for (final e in entries)
-            _SegmentButton(
-              label: e.$2,
-              selected: selected == e.$1,
-              onTap: () => onSelected(e.$1),
-            ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      child: IonSegment<String?>(
+        forceMd: true,
+        scrollable: true,
+        value: selected,
+        onChanged: onSelected,
+        items: [
+          IonSegmentItem<String?>(value: null, label: Text(context.l10n.commonAll)),
+          for (final c in categories)
+            if (c.id != null) IonSegmentItem<String?>(value: c.id, label: Text(c.name)),
         ],
-      ),
-    );
-  }
-}
-
-class _SegmentButton extends StatelessWidget {
-  const _SegmentButton({
-    required this.label,
-    required this.selected,
-    required this.onTap,
-  });
-
-  final String label;
-  final bool selected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final color = selected ? AppColors.primary : AppColors.medium;
-    return InkWell(
-      onTap: onTap,
-      child: Container(
-        constraints: const BoxConstraints(minWidth: 72),
-        padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM),
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          border: Border(
-            bottom: BorderSide(
-              color: selected ? AppColors.primary : Colors.transparent,
-              width: 2,
-            ),
-          ),
-        ),
-        child: Text(
-          label.toUpperCase(),
-          style: TextStyle(
-            color: color,
-            fontWeight: FontWeight.w500,
-            fontSize: 14,
-            letterSpacing: 0.6,
-          ),
-        ),
       ),
     );
   }
