@@ -8,6 +8,7 @@ import '../../../../core/providers/song_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../data/models/song/song.dart';
+import '../../../../l10n/l10n.dart';
 
 part 'songs_selection_sheet.freezed.dart';
 part 'songs_selection_sheet.g.dart';
@@ -34,7 +35,7 @@ extension SongHistoryEntryExtension on SongHistoryEntry {
     if (otherConductor != null && otherConductor!.isNotEmpty) {
       return otherConductor!;
     }
-    return conductorName ?? 'Unbekannt';
+    return conductorName ?? l10nWithoutContext.commonUnknown;
   }
 }
 
@@ -119,15 +120,15 @@ class _SongsSelectionSheetState extends ConsumerState<SongsSelectionSheet> {
             padding: const EdgeInsets.fromLTRB(16, 16, 8, 0),
             child: Row(
               children: [
-                const Expanded(
+                Expanded(
                   child: Text(
-                    'Werk(e) hinzufügen',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    context.l10n.attListAddSongs,
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),
                 IconButton(
                   icon: const Icon(Icons.close),
-                  tooltip: 'Schließen',
+                  tooltip: context.l10n.commonClose,
                   onPressed: () => Navigator.of(context).pop(),
                 ),
               ],
@@ -145,28 +146,28 @@ class _SongsSelectionSheetState extends ConsumerState<SongsSelectionSheet> {
                     child: Column(
                       children: [
                         ListTile(
-                          title: const Text('Werk(e)'),
+                          title: Text(context.l10n.attListSongsLabel),
                           subtitle: Text(_selectedSongIds.isEmpty
-                              ? 'Keine Werke ausgewählt'
-                              : '${_selectedSongIds.length} Werk(e) ausgewählt'),
+                              ? context.l10n.attListNoSongsSelected
+                              : context.l10n.attListSongsSelected(_selectedSongIds.length)),
                           trailing: const Icon(Icons.chevron_right),
                           onTap: _openSongPicker,
                         ),
                         const Divider(height: 1, indent: 16),
                         ListTile(
-                          title: const Text('Dirigent'),
+                          title: Text(context.l10n.attListConductor),
                           trailing: DropdownButtonHideUnderline(
                             child: DropdownButton<int>(
                               value: conductorValue,
-                              hint: const Text('Wählen'),
+                              hint: Text(context.l10n.attendanceChoose),
                               alignment: AlignmentDirectional.centerEnd,
                               items: [
                                 for (final c in conductors)
                                   if (c.id != null)
                                     DropdownMenuItem(value: c.id, child: Text(c.fullName)),
-                                const DropdownMenuItem(
+                                DropdownMenuItem(
                                   value: otherValue,
-                                  child: Text('Anderer Dirigent'),
+                                  child: Text(context.l10n.attListOtherConductor),
                                 ),
                               ],
                               onChanged: (v) => setState(() {
@@ -189,8 +190,8 @@ class _SongsSelectionSheetState extends ConsumerState<SongsSelectionSheet> {
                             child: TextField(
                               autofocus: true,
                               textCapitalization: TextCapitalization.words,
-                              decoration: const InputDecoration(
-                                hintText: 'Dirigent eingeben',
+                              decoration: InputDecoration(
+                                hintText: context.l10n.attListEnterConductor,
                                 border: InputBorder.none,
                               ),
                               onChanged: (value) => setState(() => _otherConductorName = value),
@@ -208,7 +209,7 @@ class _SongsSelectionSheetState extends ConsumerState<SongsSelectionSheet> {
                     child: ListTile(
                       enabled: _canAdd(),
                       title: Text(
-                        'Werk(e) hinzufügen',
+                        context.l10n.attListAddSongs,
                         style: TextStyle(
                           color: _canAdd() ? AppColors.primary : AppColors.medium,
                         ),
@@ -262,7 +263,7 @@ class _SongsSelectionSheetState extends ConsumerState<SongsSelectionSheet> {
     for (final songId in _selectedSongIds) {
       final song = songs.firstWhere(
         (s) => s.id == songId,
-        orElse: () => const Song(name: 'Unbekannt'),
+        orElse: () => Song(name: context.l10n.commonUnknown),
       );
 
       String? conductorName;
@@ -310,11 +311,11 @@ class _SongPickerPageState extends ConsumerState<_SongPickerPage> {
     final songsAsync = ref.watch(songsProvider);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Werke auswählen'),
+        title: Text(context.l10n.attListChooseSongs),
         actions: [
           IconButton(
             icon: const Icon(Icons.check),
-            tooltip: 'Übernehmen',
+            tooltip: context.l10n.commonApply,
             onPressed: () => Navigator.of(context).pop(_selected),
           ),
         ],
@@ -323,7 +324,7 @@ class _SongPickerPageState extends ConsumerState<_SongPickerPage> {
           child: Padding(
             padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
             child: SearchBar(
-              hintText: 'Werk suchen...',
+              hintText: context.l10n.attListSearchSong,
               leading: const Icon(Icons.search),
               elevation: const WidgetStatePropertyAll(0),
               onChanged: (v) => setState(() => _search = v.trim().toLowerCase()),
@@ -333,7 +334,7 @@ class _SongPickerPageState extends ConsumerState<_SongPickerPage> {
       ),
       body: songsAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('Fehler: $e')),
+        error: (e, _) => Center(child: Text(context.l10n.attendanceFlutterErrorWith(e))),
         data: (songs) {
           final filtered = _search.isEmpty
               ? songs
@@ -343,8 +344,8 @@ class _SongPickerPageState extends ConsumerState<_SongPickerPage> {
                       .contains(_search))
                   .toList();
           if (filtered.isEmpty) {
-            return const Center(
-              child: Text('Keine Werke gefunden', style: TextStyle(color: AppColors.medium)),
+            return Center(
+              child: Text(context.l10n.attListNoSongsFound, style: const TextStyle(color: AppColors.medium)),
             );
           }
           return ListView.builder(
@@ -391,11 +392,11 @@ class SelectedSongsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (entries.isEmpty) {
-      return const Padding(
-        padding: EdgeInsets.all(16),
+      return Padding(
+        padding: const EdgeInsets.all(16),
         child: Text(
-          'Keine Werke ausgewählt',
-          style: TextStyle(color: AppColors.medium),
+          context.l10n.attListNoSongsSelected,
+          style: const TextStyle(color: AppColors.medium),
         ),
       );
     }

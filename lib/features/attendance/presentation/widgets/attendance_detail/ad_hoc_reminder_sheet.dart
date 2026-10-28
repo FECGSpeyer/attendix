@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/utils/date_helper.dart';
+import '../../../../../l10n/l10n.dart';
 
 /// Result of the "Erinnerung versenden" sheet.
 class AdHocReminderResult {
@@ -29,12 +30,13 @@ class AdHocReminderResult {
   String? tenantLongName,
 }) {
   final parsed = DateTime.tryParse(date);
-  final dateStr = parsed != null ? DateFormat('dd.MM.yyyy').format(parsed) : date;
-  final type = (typeName?.isNotEmpty ?? false) ? typeName! : 'Termin';
-  final time = (startTime?.isNotEmpty ?? false) ? ' um ${DateHelper.hhmm(startTime!)} Uhr' : '';
+  final l10n = l10nWithoutContext;
+  final dateStr = parsed != null ? DateFormat(dateFmt()).format(parsed) : date;
+  final type = (typeName?.isNotEmpty ?? false) ? typeName! : l10n.attendanceEventFallback;
+  final time = (startTime?.isNotEmpty ?? false) ? l10n.attendanceAtTime(DateHelper.hhmm(startTime!)) : '';
   final info = (typeInfo?.isNotEmpty ?? false) ? ' ($typeInfo)' : '';
-  final eventLine = '$type am $dateStr$time$info';
-  final title = '🔔 Erinnerung: $eventLine';
+  final eventLine = '${l10n.attendanceEventOnDate(type, dateStr)}$time$info';
+  final title = l10n.attendanceReminderTitle(eventLine);
   final message =
       (tenantLongName?.isNotEmpty ?? false) ? '$tenantLongName\n$eventLine' : eventLine;
   return (title: title, message: message);
@@ -110,12 +112,11 @@ class _AdHocReminderFormState extends State<_AdHocReminderForm> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('Erinnerung versenden', style: theme.textTheme.titleLarge),
+            Text(context.l10n.attendanceSendReminder, style: theme.textTheme.titleLarge),
             const SizedBox(height: 8),
-            const Text(
-              'Die Erinnerung wird per App-Benachrichtigung und per E-Mail verschickt. '
-              'Betreff und Nachricht können frei angepasst werden.',
-              style: TextStyle(color: AppColors.medium),
+            Text(
+              context.l10n.attendanceReminderInfo,
+              style: const TextStyle(color: AppColors.medium),
             ),
             const SizedBox(height: 16),
             TextField(
@@ -124,10 +125,10 @@ class _AdHocReminderFormState extends State<_AdHocReminderForm> {
               maxLines: 3,
               textCapitalization: TextCapitalization.sentences,
               onChanged: (_) => setState(() {}),
-              decoration: const InputDecoration(
-                labelText: 'Betreff',
-                hintText: 'z. B. 🔔 Erinnerung: Probe am 01.09.2026',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: context.l10n.attendanceSubject,
+                hintText: context.l10n.attendanceSubjectPlaceholder,
+                border: const OutlineInputBorder(),
               ),
             ),
             const SizedBox(height: 12),
@@ -137,10 +138,10 @@ class _AdHocReminderFormState extends State<_AdHocReminderForm> {
               maxLines: 8,
               textCapitalization: TextCapitalization.sentences,
               onChanged: (_) => setState(() {}),
-              decoration: const InputDecoration(
-                labelText: 'Nachricht',
-                hintText: 'Nachrichtentext',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: context.l10n.attendanceMessage,
+                hintText: context.l10n.attendanceMessagePlaceholder,
+                border: const OutlineInputBorder(),
               ),
             ),
             if (widget.hasNeutralPersons)
@@ -148,15 +149,15 @@ class _AdHocReminderFormState extends State<_AdHocReminderForm> {
                 contentPadding: EdgeInsets.zero,
                 value: _neutralOnly,
                 onChanged: (v) => setState(() => _neutralOnly = v),
-                title: const Text('Nur Personen ohne Status'),
-                subtitle: const Text('Sendet nur an Personen, die noch keine Rückmeldung gegeben haben'),
+                title: Text(context.l10n.attendanceOnlyNeutral),
+                subtitle: Text(context.l10n.attendanceOnlyNeutralHint),
               ),
             if (widget.attendanceLink != null) ...[
               const SizedBox(height: 8),
               ListTile(
                 contentPadding: EdgeInsets.zero,
                 leading: const Icon(Icons.link, color: AppColors.medium),
-                title: const Text('Link in der E-Mail', style: TextStyle(fontSize: 13, color: AppColors.medium)),
+                title: Text(context.l10n.attendanceEmailLink, style: const TextStyle(fontSize: 13, color: AppColors.medium)),
                 subtitle: SelectableText(widget.attendanceLink!),
               ),
             ],
@@ -170,7 +171,7 @@ class _AdHocReminderFormState extends State<_AdHocReminderForm> {
                       ))
                   : null,
               icon: const Icon(Icons.notifications_outlined),
-              label: const Text('Versenden'),
+              label: Text(context.l10n.attendanceSend),
             ),
           ],
         ),

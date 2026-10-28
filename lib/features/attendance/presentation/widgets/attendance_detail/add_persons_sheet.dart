@@ -4,6 +4,7 @@ import '../../../../../core/theme/app_colors.dart';
 import '../../../../../data/models/attendance/attendance.dart';
 import '../../../../../data/models/instrument/instrument.dart';
 import '../../../../../data/models/person/person.dart';
+import '../../../../../l10n/l10n.dart';
 
 /// Candidates for "Person hinzufügen" (Ionic openAddPersonModal).
 class AddPersonCandidates {
@@ -151,18 +152,18 @@ class _AddPersonsViewState extends State<_AddPersonsView> {
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Align(
             alignment: Alignment.centerLeft,
-            child: Text('Person hinzufügen', style: Theme.of(context).textTheme.titleLarge),
+            child: Text(context.l10n.attendanceAddPerson, style: Theme.of(context).textTheme.titleLarge),
           ),
         ),
         Expanded(
           child: c.isEmpty
-              ? const Center(
+              ? Center(
                   child: Padding(
-                    padding: EdgeInsets.all(24),
+                    padding: const EdgeInsets.all(24),
                     child: Text(
-                      'Alle Personen sind bereits in dieser Anwesenheit enthalten.',
+                      context.l10n.attendanceAllAlreadyIncluded,
                       textAlign: TextAlign.center,
-                      style: TextStyle(color: AppColors.medium),
+                      style: const TextStyle(color: AppColors.medium),
                     ),
                   ),
                 )
@@ -170,12 +171,12 @@ class _AddPersonsViewState extends State<_AddPersonsView> {
                   controller: widget.scrollController,
                   children: [
                     if (c.matching.isNotEmpty) ...[
-                      _sectionHeader('Passende Personen', c.matching.length, AppColors.primary),
+                      _sectionHeader(context.l10n.attendanceMatchingPeople, c.matching.length, AppColors.primary),
                       for (final p in c.matching) _personTile(p),
                     ],
                     if (c.others.isNotEmpty) ...[
                       _sectionHeader(
-                        'Andere Personen',
+                        context.l10n.attendanceOtherPeople,
                         c.others.length,
                         AppColors.medium,
                         expanded: _othersExpanded || c.matching.isEmpty,
@@ -198,10 +199,8 @@ class _AddPersonsViewState extends State<_AddPersonsView> {
                   onPressed: count == 0 ? null : () => Navigator.of(context).pop(_selected.toList()),
                   icon: const Icon(Icons.person_add_alt_1),
                   label: Text(count == 0
-                      ? 'Personen auswählen'
-                      : count == 1
-                          ? '1 Person hinzufügen'
-                          : '$count Personen hinzufügen'),
+                      ? context.l10n.attendanceChoosePeople
+                      : context.l10n.attendanceAddPersonsCount(count)),
                 ),
               ),
             ),

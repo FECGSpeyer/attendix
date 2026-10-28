@@ -25,6 +25,7 @@ import '../../../../data/models/tenant/tenant.dart';
 import '../widgets/multi_date_calendar.dart';
 import '../widgets/songs_selection_sheet.dart';
 import '../../../../core/utils/demo_guard.dart';
+import '../../../../l10n/l10n.dart';
 
 /// UX_ATT: opens "Termin hinzufügen" as a sheet over the list (Ionic att-list
 /// addAttModal, breakpoints [0, 0.8, 1], initial 0.8). Returns true when
@@ -166,7 +167,7 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
 
     final canSubmit = !_isLoading && _selectedDates.isNotEmpty;
     final submitLabel =
-        _selectedDates.length > 1 ? 'Termine hinzufügen' : 'Termin hinzufügen';
+        _selectedDates.length > 1 ? context.l10n.attListAddEvents : context.l10n.attListAddEvent;
 
     final body = ListView(
       controller: widget.scrollController,
@@ -175,9 +176,9 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
         _InsetGroup(children: [
           // Datum (Mehrfachauswahl möglich) + info button
           ListTile(
-            title: const Text(
-              'Datum (Mehrfachauswahl möglich)',
-              style: TextStyle(fontSize: 12, color: AppColors.medium),
+            title: Text(
+              context.l10n.attListDateMulti,
+              style: const TextStyle(fontSize: 12, color: AppColors.medium),
             ),
             subtitle: Padding(
               padding: const EdgeInsets.only(top: 4),
@@ -189,14 +190,14 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
             trailing: IconButton(
               icon: const Icon(Icons.info_outline),
               color: AppColors.primary,
-              tooltip: 'Veranstaltungstypen',
+              tooltip: context.l10n.attListEventTypes,
               onPressed: _showHolidayInfo,
             ),
             onTap: _onDateClick,
           ),
           // Typ (ion-select)
           ListTile(
-            title: const Text('Typ'),
+            title: Text(context.l10n.attListType),
             trailing: typesAsync.when(
               loading: () => const SizedBox(
                 width: 16,
@@ -207,7 +208,7 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
               data: (types) => DropdownButtonHideUnderline(
                 child: DropdownButton<AttendanceType>(
                   value: types.contains(_selectedType) ? _selectedType : null,
-                  hint: const Text('Keine Veranstaltungstypen konfiguriert'),
+                  hint: Text(context.l10n.attendanceFlutterNoEventTypes),
                   alignment: AlignmentDirectional.centerEnd,
                   items: [
                     for (final type in types)
@@ -226,8 +227,8 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
               child: TextField(
                 keyboardType: TextInputType.number,
                 controller: _durationController,
-                decoration: const InputDecoration(
-                  labelText: 'Dauer (in Tagen)',
+                decoration: InputDecoration(
+                  labelText: context.l10n.attListDurationDays,
                   border: InputBorder.none,
                 ),
                 onChanged: (value) {
@@ -243,9 +244,9 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
             child: TextField(
               textCapitalization: TextCapitalization.sentences,
               maxLines: null,
-              decoration: const InputDecoration(
-                labelText: 'Info-Text (optional)',
-                helperText: 'Dieser Text wird anstelle des Typs angezeigt.',
+              decoration: InputDecoration(
+                labelText: context.l10n.attListInfoText,
+                helperText: context.l10n.attListInfoTextHelper,
                 border: InputBorder.none,
               ),
               onChanged: (value) =>
@@ -256,14 +257,14 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
           if (_selectedType?.dutyMode == true)
             for (final wd in _dutyWeekdays())
               ListTile(
-                title: Text('Benötigte Personen · ${weekdayLongNames[wd.weekday - 1]}'),
-                subtitle: Text('${wd.count} ${wd.count == 1 ? 'Termin' : 'Termine'}'),
+                title: Text(context.l10n.attListNeededPeople(DateFormat('EEEE', currentIntlLocale()).format(DateTime(2024, 1, wd.weekday)))),
+                subtitle: Text(context.l10n.attendanceFlutterEventsCount(wd.count)),
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     IconButton(
                       icon: const Icon(Icons.remove),
-                      tooltip: 'Weniger',
+                      tooltip: context.l10n.attListLess,
                       onPressed: wd.required <= 1
                           ? null
                           : () => setState(
@@ -272,7 +273,7 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
                     Text('${wd.required}'),
                     IconButton(
                       icon: const Icon(Icons.add),
-                      tooltip: 'Mehr',
+                      tooltip: context.l10n.attListMore,
                       onPressed: () => setState(
                           () => _dutyRequiredByWeekday[wd.weekday] = wd.required + 1),
                     ),
@@ -287,9 +288,9 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
                 textCapitalization: TextCapitalization.sentences,
                 minLines: 2,
                 maxLines: 4,
-                decoration: const InputDecoration(
-                  labelText: 'Ort (für Navigation)',
-                  hintText: 'z. B. Gemeindehaus, Musterstr. 1, 12345 Berlin',
+                decoration: InputDecoration(
+                  labelText: context.l10n.attListPlace,
+                  hintText: context.l10n.attListPlacePlaceholder,
                   border: InputBorder.none,
                 ),
                 onChanged: (value) =>
@@ -299,7 +300,7 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
           // Flutter-only: time range (Ionic takes the type's default times)
           if (!isAllDay)
             ListTile(
-              title: const Text('Uhrzeit'),
+              title: Text(context.l10n.exportTime),
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -321,8 +322,8 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
             child: TextField(
               maxLines: null,
               textCapitalization: TextCapitalization.sentences,
-              decoration: const InputDecoration(
-                labelText: 'Notizen (optional)',
+              decoration: InputDecoration(
+                labelText: context.l10n.attendanceFlutterNotesOptional,
                 border: InputBorder.none,
               ),
               onChanged: (value) => _notes = value,
@@ -333,11 +334,11 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
         // Werke (only if type.manageSongs)
         if (showSongs) ...[
           _InsetListHeader(
-            title: 'Werke',
+            title: context.l10n.attListSongs,
             trailing: IconButton(
               icon: const Icon(Icons.add),
               color: AppColors.primary,
-              tooltip: 'Werk(e) hinzufügen',
+              tooltip: context.l10n.attListAddSongs,
               onPressed: _addSongs,
             ),
           ),
@@ -394,7 +395,7 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
             ? null
             : AppColors.light,
         appBar: AppBar(
-          title: const Text('Termin hinzufügen'),
+          title: Text(context.l10n.attListAddEvent),
           automaticallyImplyLeading: !widget.asSheet,
           backgroundColor: Theme.of(context).brightness == Brightness.dark
               ? null
@@ -403,7 +404,7 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
             if (widget.asSheet)
               IconButton(
                 icon: const Icon(Icons.close),
-                tooltip: 'Schließen',
+                tooltip: context.l10n.commonClose,
                 onPressed: _isLoading
                     ? null
                     : () => Navigator.of(context).pop(false),
@@ -422,7 +423,7 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
     if (_selectedDates.length == 1 &&
         DateUtils.isSameDay(_selectedDates.first, today)) {
       setState(() => _selectedDates = []);
-      ToastHelper.showInfo(context, 'Das aktuelle Datum wurde deselektiert');
+      ToastHelper.showInfo(context, context.l10n.attListTodayDeselected);
     }
     await _pickDates();
   }
@@ -454,7 +455,7 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
     if (tenant?.practiceStart != null) {
       return tenant!.practiceStart!;
     }
-    return 'Startzeit';
+    return context.l10n.shiftsStartTime;
   }
 
   /// Get display text for end time
@@ -468,17 +469,17 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
     if (tenant?.practiceEnd != null) {
       return tenant!.practiceEnd!;
     }
-    return 'Endzeit';
+    return context.l10n.attendanceFlutterEndTime;
   }
 
   // UX_ATT: Ionic dateString ("dd.MM.yyyy" / attList.eventsSelected / noDate)
   String _getDateDisplayText() {
     if (_selectedDates.isEmpty) {
-      return 'Kein Datum ausgewählt';
+      return context.l10n.attListNoDate;
     } else if (_selectedDates.length == 1) {
-      return DateFormat('dd.MM.yyyy', 'de_DE').format(_selectedDates.first);
+      return DateFormat(dateFmt()).format(_selectedDates.first);
     } else {
-      return '${_selectedDates.length} Termine ausgewählt';
+      return context.l10n.attListEventsSelected(_selectedDates.length);
     }
   }
 
@@ -532,7 +533,7 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
           padding: const EdgeInsets.fromLTRB(4, 16, 4, 4),
           child: Text(text, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
         );
-    final fmt = DateFormat('dd.MM.yyyy', 'de_DE');
+    final fmt = DateFormat(dateFmt());
 
     showModalBottomSheet(
       context: context,
@@ -548,7 +549,7 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
         builder: (context, scrollController) => holidaysAsync.when(
           loading: () =>
               const Center(child: CircularProgressIndicator()),
-          error: (e, _) => Center(child: Text('Fehler: $e')),
+          error: (e, _) => Center(child: Text(context.l10n.attendanceFlutterErrorWith(e))),
           data: (holidays) {
             final hasHolidays =
                 holidays.publicHolidays.isNotEmpty || holidays.schoolHolidays.isNotEmpty;
@@ -556,7 +557,7 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
               controller: scrollController,
               padding: const EdgeInsets.all(16),
               children: [
-                header('Veranstaltungstypen'),
+                header(context.l10n.attListEventTypes),
                 _InsetGroup(
                   margin: EdgeInsets.zero,
                   children: [
@@ -570,23 +571,23 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
                       ListTile(
                         dense: true,
                         leading: dot(AppColors.danger),
-                        title: const Text('Feiertage des ausgewählten Bundeslandes'),
+                        title: Text(context.l10n.attListHolidaysOfState),
                       ),
                       ListTile(
                         dense: true,
                         leading: dot(AppColors.medium),
-                        title: const Text('Ferien des ausgewählten Bundeslandes'),
+                        title: Text(context.l10n.attListSchoolHolidaysOfState),
                       ),
                     ],
                   ],
                 ),
-                header('Ferien'),
+                header(context.l10n.attListSchoolHolidays),
                 for (final h in holidays.schoolHolidays.where((h) => !h.isPast))
                   ListTile(
                     dense: true,
                     title: Text('${fmt.format(h.startDate)} - ${fmt.format(h.endDate)}: ${h.name}'),
                   ),
-                header('Feiertage'),
+                header(context.l10n.attListHolidays),
                 for (final h in holidays.publicHolidays.where((h) => !h.isPast))
                   ListTile(
                     dense: true,
@@ -603,13 +604,13 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
   Future<void> _createAttendances() async {
     if (_selectedType == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Bitte wähle einen Veranstaltungstyp')),
+        SnackBar(content: Text(context.l10n.attendanceFlutterChooseType)),
       );
       return;
     }
 
     if (_selectedDates.isEmpty) {
-      ToastHelper.showWarning(context, 'Bitte wähle mindestens ein Datum aus');
+      ToastHelper.showWarning(context, context.l10n.attListChooseOneDate);
       return;
     }
 
@@ -619,7 +620,7 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
       final endMinutes = _endTime!.hour * 60 + _endTime!.minute;
       if (endMinutes <= startMinutes) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Ende muss nach Beginn liegen')),
+          SnackBar(content: Text(context.l10n.attendanceFlutterEndAfterStart)),
         );
         return;
       }
@@ -633,7 +634,7 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
     try {
       final tenant = ref.read(currentTenantProvider);
 
-      if (tenant == null) throw Exception('Kein Tenant ausgewählt');
+      if (tenant == null) throw Exception(context.l10n.historyFlutterNoTenant);
 
       // Read everything from ref before the loop (no ref use across awaits).
       _saveClient = ref.read(supabaseClientProvider);
@@ -667,8 +668,8 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
 
       // UX_ATT: Ionic toasts attList.eventAdded / eventsAdded
       final message = _selectedDates.length == 1
-          ? 'Termin hinzugefügt'
-          : 'Termine hinzugefügt';
+          ? context.l10n.attListEventAdded
+          : context.l10n.attListEventsAdded;
       ToastHelper.showSuccess(context, message);
 
       // UX_ATT: as sheet (Ionic) dismiss and stay on the list
@@ -683,7 +684,7 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Fehler: $e')),
+        SnackBar(content: Text(context.l10n.attendanceFlutterErrorWith(e))),
       );
     } finally {
       widget.savingNotifier?.value = false;

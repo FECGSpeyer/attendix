@@ -50,6 +50,7 @@ import '../widgets/attendance_status_overview_sheet.dart';
 import '../widgets/songs_selection_sheet.dart';
 import '../../../../core/utils/demo_guard.dart';
 import '../../../team_organization/presentation/widgets/attendance_protocol_section.dart'; // PROTOCOL
+import '../../../../l10n/l10n.dart';
 
 /// Attendance detail/taking page
 class AttendanceDetailPage extends ConsumerStatefulWidget {
@@ -172,7 +173,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
             final conductor = allConductors.where((c) => c.id == personId).firstOrNull;
             return SongHistoryEntry(
               songId: songId,
-              songName: song?.displayName ?? 'Unbekanntes Werk',
+              songName: song?.displayName ?? context.l10n.historyFlutterUnknownSong,
               conductorId: personId,
               conductorName: conductor?.fullName,
               otherConductor: other?.isNotEmpty == true ? other : null,
@@ -194,7 +195,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
 
       // Find song name
       final song = songs.where((s) => s.id == songId).firstOrNull;
-      final songName = song?.displayName ?? 'Unbekanntes Werk';
+      final songName = song?.displayName ?? context.l10n.historyFlutterUnknownSong;
 
       // Find conductor name
       String? conductorName;
@@ -383,9 +384,9 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       _lastOnline = online;
       if (before == null || before == online || !mounted) return;
       if (online) {
-        ToastHelper.showSuccess(context, 'Verbindung wiederhergestellt');
+        ToastHelper.showSuccess(context, context.l10n.attendanceConnectionRestored);
       } else {
-        ToastHelper.showError(context, 'Keine Internetverbindung vorhanden');
+        ToastHelper.showError(context, context.l10n.attendanceNoConnection);
       }
     });
 
@@ -399,12 +400,12 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
 
     return attendanceAsync.when(
       loading: () => Scaffold(
-        appBar: AppBar(title: const Text('Anwesenheit')),
+        appBar: AppBar(title: Text(context.l10n.signoutAttendance)),
         body: const Center(child: CircularProgressIndicator()),
       ),
       // ATT_DETAIL: Ionic "loadFailedReopen" / "Neu laden"
       error: (error, stack) => Scaffold(
-        appBar: AppBar(title: const Text('Anwesenheit')),
+        appBar: AppBar(title: Text(context.l10n.signoutAttendance)),
         body: Center(
           child: Padding(
             padding: const EdgeInsets.all(AppDimensions.paddingL),
@@ -413,15 +414,15 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
               children: [
                 const Icon(Icons.error_outline, size: 64, color: AppColors.danger),
                 const SizedBox(height: AppDimensions.paddingM),
-                const Text(
-                  'Anwesenheit konnte nicht geladen werden — bitte erneut öffnen.',
+                Text(
+                  context.l10n.attendanceLoadFailedReopen,
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: AppDimensions.paddingM),
                 OutlinedButton.icon(
                   onPressed: () => ref.invalidate(attendanceDetailProvider(widget.attendanceId)),
                   icon: const Icon(Icons.refresh),
-                  label: const Text('Neu laden'),
+                  label: Text(context.l10n.attendanceReload),
                 ),
               ],
             ),
@@ -431,8 +432,8 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       data: (attendance) {
         if (attendance == null) {
           return Scaffold(
-            appBar: AppBar(title: const Text('Anwesenheit')),
-            body: const Center(child: Text('Anwesenheit nicht gefunden')),
+            appBar: AppBar(title: Text(context.l10n.signoutAttendance)),
+            body: Center(child: Text(context.l10n.attendanceFlutterNotFound)),
           );
         }
 
@@ -463,7 +464,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                     side: BorderSide.none,
                     avatar: const Icon(Icons.cloud_off, size: 16, color: Colors.black),
                     label: Text(
-                      pendingOffline > 0 ? '$pendingOffline ausstehend' : 'Offline',
+                      pendingOffline > 0 ? context.l10n.attendancePending(pendingOffline) : context.l10n.attendanceOffline,
                       style: const TextStyle(fontSize: 12, color: Colors.black),
                     ),
                   ),
@@ -526,14 +527,14 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                       for (final p in visiblePersons)
                         if (p.id != null)
                           p.id!: '${sortDisplayValueOf(p, _sort, sortField, _registrationAnswers, churches)}'
-                              ' · ${p.groupName ?? 'Keine Gruppe'}',
+                              ' · ${p.groupName ?? context.l10n.attendanceNoGroup}',
                     };
               final isHelper = ref.watch(effectiveRoleProvider).isHelperRole;
               final visibleNotes = canViewNotes
                   ? _personNotes
                   : {
                       for (final e in _personNotes.entries)
-                        e.key: (e.value?.isNotEmpty ?? false) ? 'Notiz hinzugefügt' : e.value,
+                        e.key: (e.value?.isNotEmpty ?? false) ? context.l10n.attendanceNoteAdded : e.value,
                     };
               final hasChecklist = canViewChecklist &&
                   (_localChecklist.isNotEmpty || (attendanceType?.checklist?.isNotEmpty ?? false));
@@ -561,7 +562,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                               ref.invalidate(attendanceDetailProvider(widget.attendanceId));
                             } catch (e) {
                               if (mounted) {
-                                ToastHelper.showError(context, 'Fehler: $e');
+                                ToastHelper.showError(context, context.l10n.attendanceFlutterErrorWith(e));
                               }
                             }
                           },
@@ -666,7 +667,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                       },
                       // Maskierte Notiz nicht als neuen Wert zurückschreiben
                       onNoteChanged: (personId, notes) {
-                        if (!canViewNotes && notes == 'Notiz hinzugefügt') return;
+                        if (!canViewNotes && notes == context.l10n.attendanceNoteAdded) return;
                         _updatePersonNote(personId, notes);
                       },
                       onShowModifierInfo: _showModifierInfo,
@@ -680,7 +681,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                       onSendReminder: (personId) {
                         final appId = visiblePersons.where((p) => p.id == personId).firstOrNull?.appId;
                         if (appId == null || appId.isEmpty) {
-                          ToastHelper.showWarning(context, 'Die Person hat keinen Account');
+                          ToastHelper.showWarning(context, context.l10n.attendanceFlutterNoAccount);
                           return;
                         }
                         _sendAdHocReminder(playerAppId: appId);
@@ -715,7 +716,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
   Future<void> _updatePersonNote(int personId, String? notes) async {
     final personAttendanceId = _personAttendanceIds[personId];
     if (personAttendanceId == null) {
-      ToastHelper.showError(context, 'Kein Anwesenheitseintrag gefunden');
+      ToastHelper.showError(context, context.l10n.attendanceFlutterNoEntry);
       return;
     }
 
@@ -730,7 +731,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     final isValid = await _validatePersonAttendanceTenant(personAttendanceId);
     if (!isValid) {
       if (mounted) {
-        ToastHelper.showError(context, 'Keine Berechtigung');
+        ToastHelper.showError(context, context.l10n.attendanceFlutterNoPermission);
       }
       return;
     }
@@ -746,12 +747,12 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       await repo.updatePersonAttendance(personAttendanceId, {'notes': notes ?? ''});
 
       if (mounted) {
-        ToastHelper.showSuccess(context, notes?.isNotEmpty == true ? 'Notiz hinzugefügt' : 'Notiz gelöscht');
+        ToastHelper.showSuccess(context, notes?.isNotEmpty == true ? context.l10n.attendanceNoteAdded : context.l10n.attendanceFlutterNoteDeleted);
       }
     } catch (e) {
       if (mounted) {
         setState(() => _personNotes[personId] = previousNote);
-        ToastHelper.showError(context, 'Fehler: $e');
+        ToastHelper.showError(context, context.l10n.attendanceFlutterErrorWith(e));
       }
     } finally {
       _savingPersonIds.remove(personId);
@@ -765,19 +766,19 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
 
     // ATT_DETAIL: Ionic getModifierInfo (toast when unchanged, alert otherwise)
     if (changedBy == null) {
-      ToastHelper.showWarning(context, 'Der Status wurde bisher nicht verändert');
+      ToastHelper.showWarning(context, context.l10n.attendanceStatusNotChanged);
       return;
     }
     final persons = ref.read(allPersonsForAttendanceProvider).valueOrNull ?? [];
     final modifier = persons.where((p) => p.appId == changedBy).firstOrNull;
     final modifierName = modifier != null && modifier.fullName.isNotEmpty
         ? modifier.fullName
-        : "'Unbekannt'";
-    var message = 'Zuletzt geändert von $modifierName';
+        : "'${context.l10n.commonUnknown}'";
     final date = changedAt == null ? null : DateTime.tryParse(changedAt)?.toLocal();
-    if (date != null) {
-      message += ' am ${DateFormat('dd.MM.yyyy').format(date)} um ${DateFormat('HH:mm').format(date)} Uhr';
-    }
+    final message = date == null
+        ? context.l10n.attendanceLastChangedBy(modifierName)
+        : context.l10n.attendanceLastChangedByAt(
+            modifierName, DateFormat(dateFmt()).format(date), DateFormat('HH:mm').format(date));
 
     showDialog(
       context: context,
@@ -786,7 +787,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('OK'),
+            child: Text(context.l10n.commonOk),
           ),
         ],
       ),
@@ -944,26 +945,26 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
         );
 
     return [
-      item('status_filter', Icons.filter_list, 'Status-Filter',
-          subtitle: _statusFilter.isEmpty ? null : '${_statusFilter.length} aktiv',
+      item('status_filter', Icons.filter_list, context.l10n.attendanceStatusFilter,
+          subtitle: _statusFilter.isEmpty ? null : context.l10n.attendanceFilterActive(_statusFilter.length),
           highlight: _statusFilter.isNotEmpty),
       if (sortFields.isNotEmpty)
-        item('sort', Icons.swap_vert, 'Sortierung',
+        item('sort', Icons.swap_vert, context.l10n.attendanceSorting,
             subtitle: activeSort == null ? null : '${activeSort.name} ${_sort.ascending ? '↑' : '↓'}'),
-      item('view', Icons.visibility_outlined, 'Ansicht'),
-      if (canMutate) item('add_person', Icons.person_add_alt_1_outlined, 'Person hinzufügen'),
+      item('view', Icons.visibility_outlined, context.l10n.attendanceView),
+      if (canMutate) item('add_person', Icons.person_add_alt_1_outlined, context.l10n.attendanceAddPerson),
       if (canMutate && checklistEmpty)
-        item('start_checklist', Icons.check_box_outlined, 'Checkliste starten'),
+        item('start_checklist', Icons.check_box_outlined, context.l10n.attendanceStartChecklist),
       if (canMutate && canRestore)
-        item('reset_checklist', Icons.refresh, 'Checkliste zurücksetzen'),
+        item('reset_checklist', Icons.refresh, context.l10n.attendanceResetChecklist),
       // UX_ATT: Ionic order continues with Status-Übersicht, Gemeinde-Übersicht,
       // Legende, Erinnerung versenden
-      item('stats', Icons.bar_chart, 'Status-Übersicht'),
-      if (hasChurch) item('church', Icons.business_outlined, 'Gemeinde-Übersicht'),
-      item('legend', Icons.info_outline, 'Legende'),
-      if (canMutate) item('reminder', Icons.notifications_outlined, 'Erinnerung versenden'),
+      item('stats', Icons.bar_chart, context.l10n.attendanceStatusOverview),
+      if (hasChurch) item('church', Icons.business_outlined, context.l10n.attendanceChurchOverview),
+      item('legend', Icons.info_outline, context.l10n.signoutLegend),
+      if (canMutate) item('reminder', Icons.notifications_outlined, context.l10n.attendanceSendReminder),
       // Flutter-only extra (Ionic has the photo upload commented out)
-      if (canMutate) item('photo', Icons.camera_alt_outlined, 'Foto'),
+      if (canMutate) item('photo', Icons.camera_alt_outlined, context.l10n.attendanceFlutterPhoto),
     ];
   }
 
@@ -974,13 +975,13 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
         ? type!.availableStatuses!
         : AttendanceStatus.values;
     final options = <(AttendanceStatus, String)>[
-      if (available.contains(AttendanceStatus.neutral)) (AttendanceStatus.neutral, 'Neutral'),
-      if (available.contains(AttendanceStatus.present)) (AttendanceStatus.present, 'Anwesend'),
-      if (available.contains(AttendanceStatus.excused)) (AttendanceStatus.excused, 'Entschuldigt'),
-      if (available.contains(AttendanceStatus.late)) (AttendanceStatus.late, 'Verspätet'),
+      if (available.contains(AttendanceStatus.neutral)) (AttendanceStatus.neutral, context.l10n.commonStatusNeutral),
+      if (available.contains(AttendanceStatus.present)) (AttendanceStatus.present, context.l10n.commonStatusPresent),
+      if (available.contains(AttendanceStatus.excused)) (AttendanceStatus.excused, context.l10n.commonStatusExcused),
+      if (available.contains(AttendanceStatus.late)) (AttendanceStatus.late, context.l10n.commonStatusLateShort),
       if (available.contains(AttendanceStatus.late))
-        (AttendanceStatus.lateExcused, 'Verspätet entschuldigt'),
-      if (available.contains(AttendanceStatus.absent)) (AttendanceStatus.absent, 'Abwesend'),
+        (AttendanceStatus.lateExcused, context.l10n.commonStatusLateExcused),
+      if (available.contains(AttendanceStatus.absent)) (AttendanceStatus.absent, context.l10n.commonStatusAbsent),
     ];
     await showModalBottomSheet<void>(
       context: context,
@@ -1000,8 +1001,8 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const ListTile(
-                  title: Text('Status-Filter', style: TextStyle(fontWeight: FontWeight.bold)),
+                ListTile(
+                  title: Text(context.l10n.attendanceStatusFilter, style: const TextStyle(fontWeight: FontWeight.bold)),
                 ),
                 for (final (status, label) in options)
                   CheckboxListTile(
@@ -1013,7 +1014,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                 if (_statusFilter.isNotEmpty)
                   ListTile(
                     leading: const Icon(Icons.highlight_off, color: AppColors.danger),
-                    title: const Text('Filter löschen', style: TextStyle(color: AppColors.danger)),
+                    title: Text(context.l10n.attendanceClearFilter, style: const TextStyle(color: AppColors.danger)),
                     onTap: () {
                       setState(() => _statusFilter = {});
                       setSheetState(() {});
@@ -1050,14 +1051,14 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                 onChanged: (v) => setDialogState(() => selected = v!),
               );
           return AlertDialog(
-            title: const Text('Sortierung'),
+            title: Text(context.l10n.attendanceSorting),
             contentPadding: const EdgeInsets.symmetric(vertical: 12),
             content: SizedBox(
               width: double.maxFinite,
               child: ListView(
                 shrinkWrap: true,
                 children: [
-                  radio('__default__', 'Standard (Gruppe)'),
+                  radio('__default__', context.l10n.attendanceDefaultSortGroup),
                   for (final f in fields) ...[
                     radio('${f.id}__asc', '${f.name} ↑'),
                     radio('${f.id}__desc', '${f.name} ↓'),
@@ -1066,8 +1067,8 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
               ),
             ),
             actions: [
-              TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Abbrechen')),
-              TextButton(onPressed: () => Navigator.pop(ctx, selected), child: const Text('OK')),
+              TextButton(onPressed: () => Navigator.pop(ctx), child: Text(context.l10n.commonCancel)),
+              TextButton(onPressed: () => Navigator.pop(ctx, selected), child: Text(context.l10n.commonOk)),
             ],
           );
         },
@@ -1109,11 +1110,11 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const ListTile(title: Text('Ansicht', style: TextStyle(fontWeight: FontWeight.bold))),
+              ListTile(title: Text(context.l10n.attendanceView, style: const TextStyle(fontWeight: FontWeight.bold))),
               CheckboxListTile(
                 value: _showAvatars,
                 controlAffinity: ListTileControlAffinity.leading,
-                title: const Text('Bilder anzeigen'),
+                title: Text(context.l10n.attendanceShowPictures),
                 onChanged: (v) {
                   setState(() => _showAvatars = v ?? false);
                   setSheetState(() {});
@@ -1124,7 +1125,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                 CheckboxListTile(
                   value: _showRegFields,
                   controlAffinity: ListTileControlAffinity.leading,
-                  title: const Text('Anmeldefelder anzeigen'),
+                  title: Text(context.l10n.attendanceShowRegFields),
                   onChanged: (v) {
                     setState(() => _showRegFields = v ?? true);
                     setSheetState(() {});
@@ -1134,8 +1135,8 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
               CheckboxListTile(
                 value: !_clickMode,
                 controlAffinity: ListTileControlAffinity.leading,
-                title: const Text('Explizite Statusauswahl'),
-                subtitle: const Text('Status über Dropdown statt Antippen wählen'),
+                title: Text(context.l10n.attendanceExplicitStatus),
+                subtitle: Text(context.l10n.attendanceExplicitStatusHint),
                 onChanged: (v) {
                   setState(() => _clickMode = !(v ?? true));
                   setSheetState(() {});
@@ -1166,14 +1167,14 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
         extraFieldDefaults: {for (final f in extraFields) f.id: f.defaultValue},
       );
     } catch (_) {
-      if (mounted) ToastHelper.showError(context, 'Fehler beim Laden der Personen');
+      if (mounted) ToastHelper.showError(context, context.l10n.attendanceLoadPeopleFailed);
       return;
     }
     if (!mounted) return;
     final selected = await showAddPersonsSheet(
       context,
       candidates: candidates,
-      groupNameOf: (p) => p.groupName ?? 'Keine Gruppe',
+      groupNameOf: (p) => p.groupName ?? context.l10n.attendanceNoGroup,
     );
     if (selected == null || selected.isEmpty || !mounted) return;
 
@@ -1215,10 +1216,10 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       if (!mounted) return;
       ToastHelper.showSuccess(
         context,
-        records.length == 1 ? '1 Person hinzugefügt' : '${records.length} Personen hinzugefügt',
+        context.l10n.attendancePeopleAdded(records.length),
       );
     } catch (_) {
-      if (mounted) ToastHelper.showError(context, 'Fehler beim Hinzufügen der Personen');
+      if (mounted) ToastHelper.showError(context, context.l10n.attendanceAddPeopleFailed);
     }
   }
 
@@ -1244,7 +1245,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       context,
       churchIds: churchIds,
       churches: churches,
-      subtitle: 'Anwesende',
+      subtitle: context.l10n.attendancePresentPeople,
     );
   }
 
@@ -1290,9 +1291,9 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
         playerAppId: playerAppId,
         playerAppIds: (result.neutralOnly && playerAppId == null) ? neutralAppIds : null,
       );
-      if (mounted) ToastHelper.showSuccess(context, 'Erinnerung versendet');
+      if (mounted) ToastHelper.showSuccess(context, context.l10n.attendanceReminderSent);
     } catch (_) {
-      if (mounted) ToastHelper.showError(context, 'Fehler beim Versenden');
+      if (mounted) ToastHelper.showError(context, context.l10n.attendanceSendFailed);
     } finally {
       _isSendingReminder = false;
     }
@@ -1305,7 +1306,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     if (oldId == null || oldId.toString() != widget.attendanceId.toString()) return;
     if (_isDisposed || !mounted || _deletedHandled) return;
     _deletedHandled = true;
-    ToastHelper.showError(context, 'Die Anwesenheit wurde soeben von einem anderen Nutzer gelöscht');
+    ToastHelper.showError(context, context.l10n.attendanceDeletedByOther);
     ref.read(attendanceRefetchCounter.notifier).state++;
     if (context.canPop()) {
       context.pop();
@@ -1322,14 +1323,14 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
         padding: const EdgeInsets.all(AppDimensions.paddingM),
         child: Row(
           children: [
-            const Expanded(
+            Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Anwesenheitsliste konnte nicht geladen werden',
-                      style: TextStyle(fontWeight: FontWeight.w600)),
-                  SizedBox(height: 4),
-                  Text('Bitte versuche es erneut.', style: TextStyle(color: AppColors.medium)),
+                  Text(context.l10n.attendanceLoadFailed,
+                      style: const TextStyle(fontWeight: FontWeight.w600)),
+                  const SizedBox(height: 4),
+                  Text(context.l10n.attendanceTryAgain, style: const TextStyle(color: AppColors.medium)),
                 ],
               ),
             ),
@@ -1340,7 +1341,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                 ref.invalidate(attendanceDetailProvider(widget.attendanceId));
               },
               icon: const Icon(Icons.refresh),
-              label: const Text('Neu laden'),
+              label: Text(context.l10n.attendanceReload),
             ),
           ],
         ),
@@ -1390,7 +1391,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     final result = await showDialog<({String text, int? hours})>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('To-Do hinzufügen'),
+        title: Text(context.l10n.attendanceAddTodo),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -1398,22 +1399,22 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
               controller: textController,
               autofocus: true,
               textCapitalization: TextCapitalization.sentences,
-              decoration: const InputDecoration(hintText: 'To-Do Text...'),
+              decoration: InputDecoration(hintText: context.l10n.attendanceTodoText),
             ),
             const SizedBox(height: 8),
             TextField(
               controller: hoursController,
               keyboardType: TextInputType.number,
-              decoration: const InputDecoration(hintText: 'Deadline in Stunden (optional)'),
+              decoration: InputDecoration(hintText: context.l10n.attendanceDeadlineHours),
             ),
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Abbrechen')),
+          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(context.l10n.commonCancel)),
           TextButton(
             onPressed: () {
               if (textController.text.trim().isEmpty) {
-                ToastHelper.showWarning(ctx, 'Bitte einen Text eingeben');
+                ToastHelper.showWarning(ctx, context.l10n.attendanceEnterText);
                 return;
               }
               Navigator.pop(ctx, (
@@ -1421,7 +1422,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                 hours: int.tryParse(hoursController.text.trim()),
               ));
             },
-            child: const Text('Hinzufügen'),
+            child: Text(context.l10n.attendanceAdd),
           ),
         ],
       ),
@@ -1455,7 +1456,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
 
       await _saveChecklist();
       if (!mounted) return;
-      ToastHelper.showSuccess(context, 'To-Do hinzugefügt');
+      ToastHelper.showSuccess(context, context.l10n.attendanceFlutterTodoAdded);
     }
   }
 
@@ -1464,9 +1465,9 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
 
     final confirmed = await DialogHelper.showConfirmation(
       context,
-      title: 'To-Do löschen?',
-      message: 'Möchtest du dieses To-Do wirklich löschen?',
-      confirmText: 'Löschen',
+      title: context.l10n.attendanceFlutterDeleteTodoTitle,
+      message: context.l10n.attendanceDeleteTodoConfirm,
+      confirmText: context.l10n.commonDelete,
       isDestructive: true,
     );
 
@@ -1477,14 +1478,14 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
 
       await _saveChecklist();
       if (!mounted) return;
-      ToastHelper.showSuccess(context, 'To-Do gelöscht');
+      ToastHelper.showSuccess(context, context.l10n.attendanceFlutterTodoDeleted);
     }
   }
 
   Future<void> _restoreChecklist({bool confirm = true}) async {
     final attendanceType = ref.read(attendanceTypeForAttendanceProvider(widget.attendanceId)).valueOrNull;
     if (attendanceType?.checklist == null || attendanceType!.checklist!.isEmpty) {
-      ToastHelper.showWarning(context, 'Keine Standard-Checkliste vorhanden');
+      ToastHelper.showWarning(context, context.l10n.attendanceNoDefaultChecklist);
       return;
     }
 
@@ -1492,9 +1493,9 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     final confirmed = !confirm ||
         await DialogHelper.showConfirmation(
           context,
-          title: 'Checkliste wiederherstellen?',
-          message: 'Die aktuelle Checkliste wird durch die Standard-Checkliste ersetzt.',
-          confirmText: 'Wiederherstellen',
+          title: context.l10n.attendanceFlutterRestoreChecklistTitle,
+          message: context.l10n.attendanceFlutterRestoreChecklistMessage,
+          confirmText: context.l10n.plansRestore,
         );
 
     if (confirmed == true && mounted) {
@@ -1522,7 +1523,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       });
 
       await _saveChecklist();
-      ToastHelper.showSuccess(context, 'Checkliste wiederhergestellt');
+      ToastHelper.showSuccess(context, context.l10n.attendanceChecklistRestored);
     }
   }
 
@@ -1540,7 +1541,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       ref.invalidate(attendanceDetailProvider(widget.attendanceId));
     } catch (e) {
       if (mounted) {
-        ToastHelper.showError(context, 'Fehler beim Speichern: $e');
+        ToastHelper.showError(context, context.l10n.attendanceFlutterSaveFailedWith(e));
       }
     }
   }
@@ -1574,24 +1575,16 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     final now = DateTime.now();
     final diff = dueDate.difference(now);
 
+    // Ionic formatDeadline (attendance.overdue* / dueNow / in*)
+    final l10n = context.l10n;
     if (diff.isNegative) {
       final absDiff = diff.abs();
-      if (absDiff.inDays > 0) {
-        return '${absDiff.inDays} Tag(e) überfällig';
-      } else if (absDiff.inHours > 0) {
-        return '${absDiff.inHours} Std. überfällig';
-      } else {
-        return 'überfällig';
-      }
-    } else {
-      if (diff.inDays > 0) {
-        return 'in ${diff.inDays} Tag(en)';
-      } else if (diff.inHours > 0) {
-        return 'in ${diff.inHours} Std.';
-      } else {
-        return 'in ${diff.inMinutes} Min.';
-      }
+      if (absDiff.inDays >= 1) return l10n.attendanceOverdueDays(absDiff.inDays);
+      return l10n.attendanceOverdueHours(absDiff.inHours);
     }
+    if (diff.inHours < 1) return l10n.attendanceDueNow;
+    if (diff.inHours < 24) return l10n.attendanceInHours(diff.inHours);
+    return l10n.attendanceInDays(diff.inDays);
   }
 
   // ============== DEADLINE METHODS ==============
@@ -1623,12 +1616,12 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       if (mounted) {
         ToastHelper.showSuccess(
           context,
-          enabled ? 'Anmeldefrist aktiviert' : 'Anmeldefrist deaktiviert',
+          enabled ? context.l10n.attendanceFlutterDeadlineEnabled : context.l10n.attendanceFlutterDeadlineDisabled,
         );
       }
     } catch (e) {
       if (mounted) {
-        ToastHelper.showError(context, 'Fehler: $e');
+        ToastHelper.showError(context, context.l10n.attendanceFlutterErrorWith(e));
       }
     }
   }
@@ -1650,7 +1643,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       initialDate: initialDate,
       firstDate: now,
       lastDate: attendanceDate ?? now.add(const Duration(days: 365)),
-      helpText: 'Anmeldefrist wählen',
+      helpText: context.l10n.attendanceFlutterChooseDeadline,
     );
 
     if (selectedDate == null || !mounted) return;
@@ -1681,11 +1674,11 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       ref.invalidate(attendanceDetailProvider(widget.attendanceId));
 
       if (mounted) {
-        ToastHelper.showSuccess(context, 'Anmeldefrist aktualisiert');
+        ToastHelper.showSuccess(context, context.l10n.attendanceFlutterDeadlineUpdated);
       }
     } catch (e) {
       if (mounted) {
-        ToastHelper.showError(context, 'Fehler: $e');
+        ToastHelper.showError(context, context.l10n.attendanceFlutterErrorWith(e));
       }
     }
   }
@@ -1697,13 +1690,13 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     final plan = attendance?.plan;
 
     if (plan == null || plan.isEmpty) {
-      ToastHelper.showWarning(context, 'Kein Ablaufplan zum Exportieren');
+      ToastHelper.showWarning(context, context.l10n.attendanceFlutterNoPlanToExport);
       return;
     }
 
     final fields = plan['fields'] as List?;
     if (fields == null || fields.isEmpty) {
-      ToastHelper.showWarning(context, 'Keine Programmpunkte zum Exportieren');
+      ToastHelper.showWarning(context, context.l10n.attendanceFlutterNoItemsToExport);
       return;
     }
 
@@ -1711,20 +1704,20 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     final format = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Export-Format'),
+        title: Text(context.l10n.attendanceFlutterExportFormat),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
               leading: const Icon(Icons.description),
-              title: const Text('A4 (Standard)'),
-              subtitle: const Text('Ein Plan pro Seite'),
+              title: Text(context.l10n.attendanceFlutterA4Standard),
+              subtitle: Text(context.l10n.attendanceFlutterOnePlanPerPage),
               onTap: () => Navigator.pop(context, 'a4'),
             ),
             ListTile(
               leading: const Icon(Icons.content_cut),
-              title: const Text('2x A5 auf A4'),
-              subtitle: const Text('Zwei identische Pläne (Querformat)'),
+              title: Text(context.l10n.attendanceFlutterA5OnA4),
+              subtitle: Text(context.l10n.attendanceFlutterTwoIdenticalPlans),
               onTap: () => Navigator.pop(context, '2xa5'),
             ),
           ],
@@ -1732,7 +1725,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Abbrechen'),
+            child: Text(context.l10n.commonCancel),
           ),
         ],
       ),
@@ -1742,7 +1735,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
 
     final tenant = ref.read(currentTenantProvider);
     if (tenant == null) {
-      ToastHelper.showError(context, 'Kein Tenant ausgewählt');
+      ToastHelper.showError(context, context.l10n.historyFlutterNoTenant);
       return;
     }
 
@@ -1774,7 +1767,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       }
     } catch (e) {
       if (mounted) {
-        ToastHelper.showError(context, 'Fehler beim Export: $e');
+        ToastHelper.showError(context, context.l10n.exportFlutterFailedWith(e));
       }
     }
   }
@@ -1789,19 +1782,19 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
             ListTile(
               leading: const Icon(Icons.picture_as_pdf),
               title: const Text('PDF (A4)'),
-              subtitle: const Text('Standard-Format'),
+              subtitle: Text(context.l10n.attendanceFlutterStandardFormat),
               onTap: () => Navigator.pop(ctx, 'pdf'),
             ),
             ListTile(
               leading: const Icon(Icons.content_cut),
               title: const Text('PDF (2x A5)'),
-              subtitle: const Text('Zwei Pläne auf einer Seite'),
+              subtitle: Text(context.l10n.attendanceFlutterTwoPlansOnePage),
               onTap: () => Navigator.pop(ctx, '2xa5'),
             ),
             ListTile(
               leading: const Icon(Icons.image),
-              title: const Text('Als Bild'),
-              subtitle: const Text('Für schnelle Vorschau'),
+              title: Text(context.l10n.attendanceFlutterAsImage),
+              subtitle: Text(context.l10n.attendanceFlutterQuickPreview),
               onTap: () => Navigator.pop(ctx, 'image'),
             ),
             const SizedBox(height: 8),
@@ -1817,13 +1810,13 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     final plan = attendance?.plan;
 
     if (plan == null || plan.isEmpty) {
-      ToastHelper.showWarning(context, 'Kein Ablaufplan zum Senden');
+      ToastHelper.showWarning(context, context.l10n.attendanceFlutterNoPlanToSend);
       return;
     }
 
     final fields = plan['fields'] as List?;
     if (fields == null || fields.isEmpty) {
-      ToastHelper.showWarning(context, 'Keine Programmpunkte zum Senden');
+      ToastHelper.showWarning(context, context.l10n.attendanceFlutterNoItemsToSend);
       return;
     }
 
@@ -1833,7 +1826,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       if (mounted) {
         ToastHelper.showError(
           context,
-          'Telegram nicht verbunden. Bitte zuerst in den Einstellungen verbinden.',
+          context.l10n.attendanceFlutterTelegramNotConnected,
         );
       }
       return;
@@ -1844,7 +1837,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     final tenant = ref.read(currentTenantProvider);
     if (tenant == null) {
       if (mounted) {
-        ToastHelper.showError(context, 'Kein Tenant ausgewählt');
+        ToastHelper.showError(context, context.l10n.historyFlutterNoTenant);
       }
       return;
     }
@@ -1883,11 +1876,11 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       );
 
       if (mounted) {
-        ToastHelper.showSuccess(context, 'Plan per Telegram gesendet');
+        ToastHelper.showSuccess(context, context.l10n.attendanceFlutterPlanSentTelegram);
       }
     } catch (e) {
       if (mounted) {
-        ToastHelper.showError(context, 'Fehler beim Senden: $e');
+        ToastHelper.showError(context, context.l10n.attendanceFlutterSendFailedWith(e));
       }
     }
   }
@@ -1909,12 +1902,12 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       if (mounted) {
         ToastHelper.showSuccess(
           context,
-          value ? 'Plan wird jetzt mit Mitgliedern geteilt' : 'Plan wird nicht mehr geteilt',
+          value ? context.l10n.attendanceFlutterPlanShared : context.l10n.attendanceFlutterPlanNotShared,
         );
       }
     } catch (e) {
       if (mounted) {
-        ToastHelper.showError(context, 'Fehler: $e');
+        ToastHelper.showError(context, context.l10n.attendanceFlutterErrorWith(e));
       }
     }
   }
@@ -1944,7 +1937,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
 
     await _saveSongEntries();
     if (mounted) {
-      ToastHelper.showSuccess(context, 'Werk entfernt');
+      ToastHelper.showSuccess(context, context.l10n.attendanceFlutterSongRemoved);
     }
   }
 
@@ -1982,7 +1975,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       ref.invalidate(songHistoryProvider(null));
     } catch (e) {
       if (mounted) {
-        ToastHelper.showError(context, 'Fehler beim Speichern: $e');
+        ToastHelper.showError(context, context.l10n.attendanceFlutterSaveFailedWith(e));
       }
     } finally {
       _isSavingSongs = false;
@@ -2052,16 +2045,16 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
             const Divider(height: 1),
             ListTile(
               leading: const Icon(Icons.person_outline),
-              title: const Text('Dirigent ändern'),
+              title: Text(context.l10n.attendanceChangeConductor),
               onTap: () => Navigator.pop(ctx, 'conductor'),
             ),
             ListTile(
               leading: const Icon(Icons.music_note_outlined),
-              title: const Text('Zum Werk'),
+              title: Text(context.l10n.attendanceToSong),
               onTap: () => Navigator.pop(ctx, 'song'),
             ),
             ListTile(
-              title: const Text('Abbrechen'),
+              title: Text(context.l10n.commonCancel),
               onTap: () => Navigator.pop(ctx),
             ),
           ],
@@ -2113,7 +2106,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       initialDate: current,
       firstDate: DateTime(current.year - 5),
       lastDate: DateTime(current.year + 5),
-      helpText: 'Auf welchen Tag soll der Termin verschoben werden?',
+      helpText: context.l10n.dateDialogMoveTo,
     );
     if (picked == null || !mounted) return;
     if (DateUtils.isSameDay(picked, current)) return;
@@ -2124,15 +2117,14 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       final choice = await showDialog<String>(
         context: context,
         builder: (ctx) => AlertDialog(
-          title: const Text('Status zurücksetzen?'),
+          title: Text(context.l10n.dateDialogResetStatus),
           content: Text(
-            'Nicht alle stehen auf „${type.defaultStatus.label}“. Sollen mit der '
-            'Verschiebung alle auf den Standardstatus zurückgesetzt werden?',
+            context.l10n.dateDialogResetStatusMessage(ionicStatusLabel(type.defaultStatus)),
           ),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Abbrechen')),
-            TextButton(onPressed: () => Navigator.pop(ctx, 'keep'), child: const Text('Behalten')),
-            FilledButton(onPressed: () => Navigator.pop(ctx, 'reset'), child: const Text('Zurücksetzen')),
+            TextButton(onPressed: () => Navigator.pop(ctx), child: Text(context.l10n.commonCancel)),
+            TextButton(onPressed: () => Navigator.pop(ctx, 'keep'), child: Text(context.l10n.dateDialogKeep)),
+            FilledButton(onPressed: () => Navigator.pop(ctx, 'reset'), child: Text(context.l10n.dateDialogReset)),
           ],
         ),
       );
@@ -2183,11 +2175,11 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       if (mounted) {
         ToastHelper.showSuccess(
           context,
-          'Termin auf ${DateFormat('EE, dd.MM.yyyy', 'de_DE').format(normalized)} verschoben',
+          context.l10n.dateDialogMoved(DateFormat('EE, ${dateFmt()}', currentIntlLocale()).format(normalized)),
         );
       }
     } catch (e) {
-      if (mounted) ToastHelper.showError(context, 'Datum konnte nicht geändert werden');
+      if (mounted) ToastHelper.showError(context, context.l10n.dateDialogChangeFailed);
     }
   }
 
@@ -2198,7 +2190,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       await repo.updateAttendance(widget.attendanceId, updates);
       ref.invalidate(attendanceDetailProvider(widget.attendanceId));
     } catch (e) {
-      if (mounted) ToastHelper.showError(context, 'Fehler: $e');
+      if (mounted) ToastHelper.showError(context, context.l10n.attendanceFlutterErrorWith(e));
     }
   }
 
@@ -2264,10 +2256,10 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       }
       if (mounted) {
         setState(() => _registrationAnswers[personId] = merged);
-        ToastHelper.showSuccess(context, 'Anmeldefelder gespeichert');
+        ToastHelper.showSuccess(context, context.l10n.attendanceFlutterRegFieldsSaved);
       }
     } catch (e) {
-      if (mounted) ToastHelper.showError(context, 'Fehler: $e');
+      if (mounted) ToastHelper.showError(context, context.l10n.attendanceFlutterErrorWith(e));
     }
   }
 
@@ -2285,7 +2277,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       ref.invalidate(attendanceDetailProvider(widget.attendanceId));
     } catch (e) {
       if (mounted) {
-        ToastHelper.showError(context, 'Fehler: $e');
+        ToastHelper.showError(context, context.l10n.attendanceFlutterErrorWith(e));
       }
     }
   }
@@ -2323,10 +2315,10 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       );
 
       ref.invalidate(attendanceDetailProvider(widget.attendanceId));
-      ToastHelper.showSuccess(context, 'Startzeit aktualisiert');
+      ToastHelper.showSuccess(context, context.l10n.attendanceFlutterStartTimeUpdated);
     } catch (e) {
       if (mounted) {
-        ToastHelper.showError(context, 'Fehler: $e');
+        ToastHelper.showError(context, context.l10n.attendanceFlutterErrorWith(e));
       }
     }
   }
@@ -2364,10 +2356,10 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       );
 
       ref.invalidate(attendanceDetailProvider(widget.attendanceId));
-      ToastHelper.showSuccess(context, 'Endzeit aktualisiert');
+      ToastHelper.showSuccess(context, context.l10n.attendanceFlutterEndTimeUpdated);
     } catch (e) {
       if (mounted) {
-        ToastHelper.showError(context, 'Fehler: $e');
+        ToastHelper.showError(context, context.l10n.attendanceFlutterErrorWith(e));
       }
     }
   }
@@ -2379,11 +2371,11 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       final tenant = ref.read(currentTenantProvider);
 
       if (attendance == null || persons == null || tenant == null) {
-        ToastHelper.showError(context, 'Daten nicht verfügbar');
+        ToastHelper.showError(context, context.l10n.attendanceFlutterDataUnavailable);
         return;
       }
 
-      ToastHelper.showInfo(context, 'Erstelle Excel-Export...');
+      ToastHelper.showInfo(context, context.l10n.attendanceFlutterCreatingExcel);
 
       final exportService = ExportService();
       await exportService.exportAttendanceToExcel(
@@ -2395,7 +2387,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       );
     } catch (e) {
       if (mounted) {
-        ToastHelper.showError(context, 'Fehler beim Export: $e');
+        ToastHelper.showError(context, context.l10n.exportFlutterFailedWith(e));
       }
     }
   }
@@ -2405,14 +2397,14 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
   Future<void> _removePersonFromAttendance(int personId) async {
     final personAttendanceId = _personAttendanceIds[personId];
     if (personAttendanceId == null) {
-      ToastHelper.showError(context, 'Kein Anwesenheitseintrag gefunden');
+      ToastHelper.showError(context, context.l10n.attendanceFlutterNoEntry);
       return;
     }
 
     final isValid = await _validatePersonAttendanceTenant(personAttendanceId);
     if (!isValid) {
       if (mounted) {
-        ToastHelper.showError(context, 'Keine Berechtigung');
+        ToastHelper.showError(context, context.l10n.attendanceFlutterNoPermission);
       }
       return;
     }
@@ -2424,10 +2416,9 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
         '';
     final confirmed = await DialogHelper.showConfirmation(
       context,
-      title: 'Person entfernen',
-      message: 'Möchtest du $name wirklich aus dieser Anwesenheit entfernen? '
-          'Diese Aktion kann nicht rückgängig gemacht werden.',
-      confirmText: 'Entfernen',
+      title: context.l10n.attendanceRemovePerson,
+      message: context.l10n.attendanceRemovePersonConfirm(name),
+      confirmText: context.l10n.commonRemove,
       isDestructive: true,
     );
 
@@ -2449,10 +2440,10 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       ref.invalidate(personAttendancesForAttendanceProvider(widget.attendanceId));
       ref.invalidate(filteredPersonsForAttendanceProvider(widget.attendanceId));
 
-      ToastHelper.showSuccess(context, 'Person aus Anwesenheit entfernt');
+      ToastHelper.showSuccess(context, context.l10n.attendancePersonRemoved);
     } catch (e) {
       if (mounted) {
-        ToastHelper.showError(context, 'Fehler beim Entfernen der Person');
+        ToastHelper.showError(context, context.l10n.attendancePersonRemoveFailed);
       }
     }
   }
@@ -2481,18 +2472,18 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     final source = await showDialog<ImageSource>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Foto hinzufügen'),
+        title: Text(context.l10n.attendanceFlutterAddPhoto),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
               leading: const Icon(Icons.camera_alt),
-              title: const Text('Kamera'),
+              title: Text(context.l10n.attendanceFlutterCamera),
               onTap: () => Navigator.of(ctx).pop(ImageSource.camera),
             ),
             ListTile(
               leading: const Icon(Icons.photo_library),
-              title: const Text('Galerie'),
+              title: Text(context.l10n.attendanceFlutterGallery),
               onTap: () => Navigator.of(ctx).pop(ImageSource.gallery),
             ),
           ],
@@ -2500,7 +2491,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('Abbrechen'),
+            child: Text(context.l10n.commonCancel),
           ),
         ],
       ),
@@ -2521,7 +2512,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       if (image == null) return;
 
       if (!mounted) return;
-      ToastHelper.showInfo(context, 'Lade Foto hoch...');
+      ToastHelper.showInfo(context, context.l10n.attendanceFlutterUploadingPhoto);
 
       final bytes = await image.readAsBytes();
       final fileName = 'attendance_${widget.attendanceId}_${DateTime.now().millisecondsSinceEpoch}.jpg';
@@ -2534,7 +2525,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
 
       if (tenant == null) {
         if (mounted) {
-          ToastHelper.showError(context, 'Kein Tenant ausgewählt');
+          ToastHelper.showError(context, context.l10n.historyFlutterNoTenant);
         }
         return;
       }
@@ -2558,11 +2549,11 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       ref.invalidate(attendanceDetailProvider(widget.attendanceId));
 
       if (mounted) {
-        ToastHelper.showSuccess(context, 'Foto hochgeladen');
+        ToastHelper.showSuccess(context, context.l10n.attendanceFlutterPhotoUploaded);
       }
     } catch (e) {
       if (mounted) {
-        ToastHelper.showError(context, 'Fehler beim Hochladen: $e');
+        ToastHelper.showError(context, context.l10n.attendanceFlutterUploadFailedWith(e));
       }
     }
   }
@@ -2626,7 +2617,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
             _localStatuses[personId] = previousStatus;
           });
         }
-        ToastHelper.showError(context, 'Fehler beim Speichern: $e');
+        ToastHelper.showError(context, context.l10n.attendanceFlutterSaveFailedWith(e));
       }
     } finally {
       _savingPersonIds.remove(personId);

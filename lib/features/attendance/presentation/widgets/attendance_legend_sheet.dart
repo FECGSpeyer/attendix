@@ -4,6 +4,7 @@ import '../../../../core/constants/app_constants.dart';
 import '../../../../core/constants/enums.dart';
 import '../../../../core/theme/app_colors.dart';
 import 'attendance_detail/status_chip.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Shows a modal bottom sheet explaining attendance status types
 ///
@@ -29,19 +30,20 @@ class AttendanceLegendSheet extends StatelessWidget {
   final Set<AttendanceStatus>? availableStatuses;
 
   // UX_ATT: Ionic legend modal (badge + common.status label, Ionic order)
-  static const _allItems = [
-    (AttendanceStatus.present, 'Anwesend'),
-    (AttendanceStatus.excused, 'Entschuldigt'),
-    (AttendanceStatus.absent, 'Abwesend'),
-    (AttendanceStatus.late, 'Verspätet anwesend'),
-    (AttendanceStatus.lateExcused, 'Verspätet entschuldigt'),
-    (AttendanceStatus.neutral, 'Neutral'),
-  ];
+  static List<(AttendanceStatus, String)> _allItems(AppLocalizations l10n) => [
+        (AttendanceStatus.present, l10n.commonStatusPresent),
+        (AttendanceStatus.excused, l10n.commonStatusExcused),
+        (AttendanceStatus.absent, l10n.commonStatusAbsent),
+        (AttendanceStatus.late, l10n.commonStatusLate),
+        (AttendanceStatus.lateExcused, l10n.commonStatusLateExcused),
+        (AttendanceStatus.neutral, l10n.commonStatusNeutral),
+      ];
 
-  List<Widget> _buildLegendItems() {
+  List<Widget> _buildLegendItems(AppLocalizations l10n) {
+    final all = _allItems(l10n);
     final items = availableStatuses != null
-        ? _allItems.where((item) => availableStatuses!.contains(item.$1))
-        : _allItems;
+        ? all.where((item) => availableStatuses!.contains(item.$1))
+        : all;
     return items
         .map((item) => _LegendItem(status: item.$1, label: item.$2))
         .toList();
@@ -80,7 +82,7 @@ class AttendanceLegendSheet extends StatelessWidget {
                     const Icon(Icons.help_outline, color: AppColors.primary),
                     const SizedBox(width: 8),
                     Text(
-                      'Legende',
+                      context.l10n.signoutLegend,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
@@ -99,7 +101,7 @@ class AttendanceLegendSheet extends StatelessWidget {
                 child: ListView(
                   controller: scrollController,
                   padding: const EdgeInsets.all(AppDimensions.paddingM),
-                  children: _buildLegendItems(),
+                  children: _buildLegendItems(context.l10n),
                 ),
               ),
             ],

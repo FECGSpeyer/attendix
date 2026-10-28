@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../../core/constants/enums.dart';
 import '../../../../../core/theme/app_colors.dart';
+import '../../../../../l10n/l10n.dart';
 
 // UX_ATT: Ionic attendance page status badges and click cycle.
 
@@ -21,15 +22,16 @@ const Color ionicRosa = Color(0xFFBE72C0);
   };
 }
 
-/// German labels of the Ionic status select / filter (common.status.*).
+/// Labels of the Ionic status select / filter (common.status.*).
 String ionicStatusLabel(AttendanceStatus status) {
+  final l10n = l10nWithoutContext;
   return switch (status) {
-    AttendanceStatus.neutral => 'Neutral',
-    AttendanceStatus.present => 'Anwesend',
-    AttendanceStatus.excused => 'Entschuldigt',
-    AttendanceStatus.late => 'Verspätet',
-    AttendanceStatus.lateExcused => 'Verspätet entschuldigt',
-    AttendanceStatus.absent => 'Abwesend',
+    AttendanceStatus.neutral => l10n.commonStatusNeutral,
+    AttendanceStatus.present => l10n.commonStatusPresent,
+    AttendanceStatus.excused => l10n.commonStatusExcused,
+    AttendanceStatus.late => l10n.commonStatusLateShort,
+    AttendanceStatus.lateExcused => l10n.commonStatusLateExcused,
+    AttendanceStatus.absent => l10n.commonStatusAbsent,
   };
 }
 

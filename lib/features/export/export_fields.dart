@@ -3,9 +3,11 @@ import 'package:intl/intl.dart';
 import '../../core/utils/extra_field_utils.dart';
 import '../../data/models/person/person.dart';
 import '../../data/models/tenant/tenant.dart';
+import '../../l10n/l10n.dart';
 
 /// Export field definitions — port of Ionic export.page.ts.
-/// Standard fields are identified by their German name.
+/// Standard fields are identified by their German name; only the label is
+/// translated (Ionic FIELD_LABEL_KEYS / fieldLabel()).
 const playerStandardExportFields = [
   'Vorname',
   'Nachname',
@@ -26,6 +28,24 @@ const attendanceStandardExportFields = [
 ];
 const defaultPlayerExportFields = ['Vorname', 'Nachname', 'Geburtsdatum', 'Gruppe'];
 const defaultAttendanceExportFields = ['Vorname', 'Nachname', 'Gruppe'];
+
+/// Translated label of an export field (Ionic `fieldLabel`). Extra fields
+/// and custom columns keep their name.
+String exportFieldLabel(String field, [AppLocalizations? l10n]) {
+  final t = l10n ?? l10nWithoutContext;
+  return switch (field) {
+    'Vorname' => t.peopleFirstName,
+    'Nachname' => t.peopleLastName,
+    'Geburtsdatum' => t.peopleBirthday,
+    'Gruppe' => t.peopleGroup,
+    'E-Mail' => t.peopleEmail,
+    'Telefon' => t.peoplePhone,
+    'Eingetreten' => t.peopleJoined,
+    'Notizen' => t.peopleNotes,
+    'Anwesenheit %' => t.exportAttendancePercent,
+    _ => field,
+  };
+}
 
 /// Selectable sort options for export.
 class ExportSortOption {
@@ -51,18 +71,18 @@ List<ExportSortOption> exportSortOptions(
   List<ExtraField> extraFields,
 ) {
   final standard = content == 'player'
-      ? const [
-          ExportSortOption('nachname', 'Nachname'),
-          ExportSortOption('vorname', 'Vorname'),
-          ExportSortOption('gruppe', 'Gruppe'),
-          ExportSortOption('geburtsdatum', 'Geburtsdatum'),
-          ExportSortOption('eingetreten', 'Eingetreten'),
-          ExportSortOption('anwesenheit', 'Anwesenheit %'),
+      ? [
+          ExportSortOption('nachname', exportFieldLabel('Nachname')),
+          ExportSortOption('vorname', exportFieldLabel('Vorname')),
+          ExportSortOption('gruppe', exportFieldLabel('Gruppe')),
+          ExportSortOption('geburtsdatum', exportFieldLabel('Geburtsdatum')),
+          ExportSortOption('eingetreten', exportFieldLabel('Eingetreten')),
+          ExportSortOption('anwesenheit', exportFieldLabel('Anwesenheit %')),
         ]
-      : const [
-          ExportSortOption('nachname', 'Nachname'),
-          ExportSortOption('vorname', 'Vorname'),
-          ExportSortOption('gruppe', 'Gruppe'),
+      : [
+          ExportSortOption('nachname', exportFieldLabel('Nachname')),
+          ExportSortOption('vorname', exportFieldLabel('Vorname')),
+          ExportSortOption('gruppe', exportFieldLabel('Gruppe')),
         ];
   return [
     ...standard,
@@ -73,7 +93,7 @@ List<ExportSortOption> exportSortOptions(
 String _fmtDate(String? iso) {
   if (iso == null || iso.isEmpty) return '';
   final d = DateTime.tryParse(iso);
-  return d == null ? '' : DateFormat('dd.MM.yyyy').format(d);
+  return d == null ? '' : DateFormat(dateFmt()).format(d);
 }
 
 /// Value of an export column for a person (Ionic getFieldValues).

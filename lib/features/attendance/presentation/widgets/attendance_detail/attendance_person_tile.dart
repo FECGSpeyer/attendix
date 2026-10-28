@@ -11,6 +11,7 @@ import '../../../../../core/utils/toast_helper.dart';
 import '../../../../../data/models/person/person.dart';
 import 'attendance_detail_sheets.dart';
 import 'status_chip.dart';
+import '../../../../../l10n/l10n.dart';
 
 /// Person row of the attendance detail page.
 ///
@@ -198,23 +199,23 @@ class AttendancePersonTile extends StatelessWidget {
                   ),
                 ),
                 if (status != AttendanceStatus.neutral)
-                  option('Status neutral setzen', Icons.remove_circle_outline,
+                  option(context.l10n.attendanceSetNeutral, Icons.remove_circle_outline,
                       () => _onStatusChangedWithHaptic(AttendanceStatus.neutral)),
                 if (canLateExcused)
-                  option('Verspätet entschuldigt', Icons.schedule,
+                  option(context.l10n.commonStatusLateExcused, Icons.schedule,
                       () => _onStatusChangedWithHaptic(AttendanceStatus.lateExcused)),
                 if (onEditRegistrationFields != null)
-                  option('Anmeldefelder bearbeiten', Icons.edit_outlined, onEditRegistrationFields!),
+                  option(context.l10n.attendanceEditRegFields, Icons.edit_outlined, onEditRegistrationFields!),
                 if (showModifierInfo) ...[
-                  option('Wer hat geändert?', Icons.info_outline, onShowModifierInfo),
-                  option('Person entfernen', Icons.delete_outline, onRemoveFromAttendance,
+                  option(context.l10n.attendanceWhoChanged, Icons.info_outline, onShowModifierInfo),
+                  option(context.l10n.attendanceRemovePerson, Icons.delete_outline, onRemoveFromAttendance,
                       destructive: true),
                 ],
                 if (onSendReminder != null)
-                  option('Erinnerung senden', Icons.notifications_outlined, onSendReminder!),
+                  option(context.l10n.attendanceSendReminderShort, Icons.notifications_outlined, onSendReminder!),
                 const Divider(height: 1),
                 ListTile(
-                  title: const Text('Abbrechen', textAlign: TextAlign.center),
+                  title: Text(context.l10n.commonCancel, textAlign: TextAlign.center),
                   onTap: () => Navigator.pop(ctx),
                 ),
               ],
@@ -237,7 +238,7 @@ class AttendancePersonTile extends StatelessWidget {
     if (next == null) {
       ToastHelper.showError(
         context,
-        'Fehler beim Ändern des Anwesenheitsstatus, bitte versuche es später erneut',
+        context.l10n.attendanceStatusChangeFailed,
       );
       return;
     }
