@@ -6919,6 +6919,77 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get settingsFlutterUserMgmtAdd => 'Add user';
+
+  @override
+  String get settingsFlutterUserMgmtAddFailed => 'Error adding the user';
+
+  @override
+  String get settingsFlutterUserMgmtAdded => 'User added';
+
+  @override
+  String get settingsFlutterUserMgmtEmailPh => 'email@example.com';
+
+  @override
+  String get settingsFlutterUserMgmtLastAdmin => 'The last administrator cannot be demoted. Please add another admin first.';
+
+  @override
+  String get settingsFlutterUserMgmtNoAdmins => 'No administrators';
+
+  @override
+  String get settingsFlutterUserMgmtNoAdminsHint => 'Add admins using the + button';
+
+  @override
+  String get settingsFlutterUserMgmtNoParents => 'No parents';
+
+  @override
+  String get settingsFlutterUserMgmtNoParentsHint => 'Parents can sign their children in and out';
+
+  @override
+  String get settingsFlutterUserMgmtNoRole => 'No role';
+
+  @override
+  String get settingsFlutterUserMgmtNoUsers => 'No users available';
+
+  @override
+  String get settingsFlutterUserMgmtNoViewers => 'No observers';
+
+  @override
+  String get settingsFlutterUserMgmtNoViewersHint => 'Observers can view attendance but not edit it';
+
+  @override
+  String get settingsFlutterUserMgmtPlayers => 'Players';
+
+  @override
+  String get settingsFlutterUserMgmtResponsibles => 'Responsible persons';
+
+  @override
+  String get settingsFlutterUserMgmtRoleChangeFailed => 'Error changing the role';
+
+  @override
+  String settingsFlutterUserMgmtRoleChanged(Object role) {
+    return 'Role changed to $role';
+  }
+
+  @override
+  String get settingsFlutterUserMgmtSelfDemoteConfirm => 'Yes, change role';
+
+  @override
+  String get settingsFlutterUserMgmtSelfDemoteMessage => 'You are about to remove your own admin role. You will lose access to user management. Do you want to continue?';
+
+  @override
+  String get settingsFlutterUserMgmtSelfDemoteTitle => 'Change your own role?';
+
+  @override
+  String get settingsFlutterUserMgmtTabAdmins => 'Admins';
+
+  @override
+  String get settingsFlutterUserMgmtTabAll => 'All users';
+
+  @override
+  String get settingsFlutterUserMgmtTitle => 'User management';
+
+  @override
   String get settingsFlutterUsers => 'Users';
 
   @override

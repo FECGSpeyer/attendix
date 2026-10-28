@@ -12191,6 +12191,144 @@ abstract class AppLocalizations {
   /// **'{name} wurde reaktiviert'**
   String settingsFlutterReactivated(Object name);
 
+  /// settings.flutter.userMgmt.add
+  ///
+  /// In de, this message translates to:
+  /// **'Benutzer hinzufügen'**
+  String get settingsFlutterUserMgmtAdd;
+
+  /// settings.flutter.userMgmt.addFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Hinzufügen des Benutzers'**
+  String get settingsFlutterUserMgmtAddFailed;
+
+  /// settings.flutter.userMgmt.added
+  ///
+  /// In de, this message translates to:
+  /// **'Benutzer hinzugefügt'**
+  String get settingsFlutterUserMgmtAdded;
+
+  /// settings.flutter.userMgmt.emailPh
+  ///
+  /// In de, this message translates to:
+  /// **'email@beispiel.de'**
+  String get settingsFlutterUserMgmtEmailPh;
+
+  /// settings.flutter.userMgmt.lastAdmin
+  ///
+  /// In de, this message translates to:
+  /// **'Der letzte Administrator kann nicht herabgestuft werden. Bitte füge zuerst einen weiteren Admin hinzu.'**
+  String get settingsFlutterUserMgmtLastAdmin;
+
+  /// settings.flutter.userMgmt.noAdmins
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Administratoren'**
+  String get settingsFlutterUserMgmtNoAdmins;
+
+  /// settings.flutter.userMgmt.noAdminsHint
+  ///
+  /// In de, this message translates to:
+  /// **'Füge Admins über den + Button hinzu'**
+  String get settingsFlutterUserMgmtNoAdminsHint;
+
+  /// settings.flutter.userMgmt.noParents
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Eltern'**
+  String get settingsFlutterUserMgmtNoParents;
+
+  /// settings.flutter.userMgmt.noParentsHint
+  ///
+  /// In de, this message translates to:
+  /// **'Eltern können ihre Kinder an-/abmelden'**
+  String get settingsFlutterUserMgmtNoParentsHint;
+
+  /// settings.flutter.userMgmt.noRole
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Rolle'**
+  String get settingsFlutterUserMgmtNoRole;
+
+  /// settings.flutter.userMgmt.noUsers
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Benutzer vorhanden'**
+  String get settingsFlutterUserMgmtNoUsers;
+
+  /// settings.flutter.userMgmt.noViewers
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Betrachter'**
+  String get settingsFlutterUserMgmtNoViewers;
+
+  /// settings.flutter.userMgmt.noViewersHint
+  ///
+  /// In de, this message translates to:
+  /// **'Betrachter können Anwesenheit sehen, aber nicht bearbeiten'**
+  String get settingsFlutterUserMgmtNoViewersHint;
+
+  /// settings.flutter.userMgmt.players
+  ///
+  /// In de, this message translates to:
+  /// **'Spieler'**
+  String get settingsFlutterUserMgmtPlayers;
+
+  /// settings.flutter.userMgmt.responsibles
+  ///
+  /// In de, this message translates to:
+  /// **'Verantwortliche'**
+  String get settingsFlutterUserMgmtResponsibles;
+
+  /// settings.flutter.userMgmt.roleChangeFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Ändern der Rolle'**
+  String get settingsFlutterUserMgmtRoleChangeFailed;
+
+  /// settings.flutter.userMgmt.roleChanged
+  ///
+  /// In de, this message translates to:
+  /// **'Rolle geändert zu {role}'**
+  String settingsFlutterUserMgmtRoleChanged(Object role);
+
+  /// settings.flutter.userMgmt.selfDemoteConfirm
+  ///
+  /// In de, this message translates to:
+  /// **'Ja, Rolle ändern'**
+  String get settingsFlutterUserMgmtSelfDemoteConfirm;
+
+  /// settings.flutter.userMgmt.selfDemoteMessage
+  ///
+  /// In de, this message translates to:
+  /// **'Du bist dabei, deine eigene Admin-Rolle zu entfernen. Du verlierst dadurch den Zugang zur Benutzerverwaltung. Möchtest du fortfahren?'**
+  String get settingsFlutterUserMgmtSelfDemoteMessage;
+
+  /// settings.flutter.userMgmt.selfDemoteTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Eigene Rolle ändern?'**
+  String get settingsFlutterUserMgmtSelfDemoteTitle;
+
+  /// settings.flutter.userMgmt.tabAdmins
+  ///
+  /// In de, this message translates to:
+  /// **'Admins'**
+  String get settingsFlutterUserMgmtTabAdmins;
+
+  /// settings.flutter.userMgmt.tabAll
+  ///
+  /// In de, this message translates to:
+  /// **'Alle Benutzer'**
+  String get settingsFlutterUserMgmtTabAll;
+
+  /// settings.flutter.userMgmt.title
+  ///
+  /// In de, this message translates to:
+  /// **'Benutzerverwaltung'**
+  String get settingsFlutterUserMgmtTitle;
+
   /// settings.flutter.users
   ///
   /// In de, this message translates to:

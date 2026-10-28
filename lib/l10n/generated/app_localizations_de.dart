@@ -6913,6 +6913,77 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get settingsFlutterUserMgmtAdd => 'Benutzer hinzufügen';
+
+  @override
+  String get settingsFlutterUserMgmtAddFailed => 'Fehler beim Hinzufügen des Benutzers';
+
+  @override
+  String get settingsFlutterUserMgmtAdded => 'Benutzer hinzugefügt';
+
+  @override
+  String get settingsFlutterUserMgmtEmailPh => 'email@beispiel.de';
+
+  @override
+  String get settingsFlutterUserMgmtLastAdmin => 'Der letzte Administrator kann nicht herabgestuft werden. Bitte füge zuerst einen weiteren Admin hinzu.';
+
+  @override
+  String get settingsFlutterUserMgmtNoAdmins => 'Keine Administratoren';
+
+  @override
+  String get settingsFlutterUserMgmtNoAdminsHint => 'Füge Admins über den + Button hinzu';
+
+  @override
+  String get settingsFlutterUserMgmtNoParents => 'Keine Eltern';
+
+  @override
+  String get settingsFlutterUserMgmtNoParentsHint => 'Eltern können ihre Kinder an-/abmelden';
+
+  @override
+  String get settingsFlutterUserMgmtNoRole => 'Keine Rolle';
+
+  @override
+  String get settingsFlutterUserMgmtNoUsers => 'Keine Benutzer vorhanden';
+
+  @override
+  String get settingsFlutterUserMgmtNoViewers => 'Keine Betrachter';
+
+  @override
+  String get settingsFlutterUserMgmtNoViewersHint => 'Betrachter können Anwesenheit sehen, aber nicht bearbeiten';
+
+  @override
+  String get settingsFlutterUserMgmtPlayers => 'Spieler';
+
+  @override
+  String get settingsFlutterUserMgmtResponsibles => 'Verantwortliche';
+
+  @override
+  String get settingsFlutterUserMgmtRoleChangeFailed => 'Fehler beim Ändern der Rolle';
+
+  @override
+  String settingsFlutterUserMgmtRoleChanged(Object role) {
+    return 'Rolle geändert zu $role';
+  }
+
+  @override
+  String get settingsFlutterUserMgmtSelfDemoteConfirm => 'Ja, Rolle ändern';
+
+  @override
+  String get settingsFlutterUserMgmtSelfDemoteMessage => 'Du bist dabei, deine eigene Admin-Rolle zu entfernen. Du verlierst dadurch den Zugang zur Benutzerverwaltung. Möchtest du fortfahren?';
+
+  @override
+  String get settingsFlutterUserMgmtSelfDemoteTitle => 'Eigene Rolle ändern?';
+
+  @override
+  String get settingsFlutterUserMgmtTabAdmins => 'Admins';
+
+  @override
+  String get settingsFlutterUserMgmtTabAll => 'Alle Benutzer';
+
+  @override
+  String get settingsFlutterUserMgmtTitle => 'Benutzerverwaltung';
+
+  @override
   String get settingsFlutterUsers => 'Benutzer';
 
   @override

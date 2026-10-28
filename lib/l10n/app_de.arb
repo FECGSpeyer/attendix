@@ -9078,6 +9078,101 @@
       "name": {}
     }
   },
+  "settingsFlutterUserMgmtAdd": "Benutzer hinzufügen",
+  "@settingsFlutterUserMgmtAdd": {
+    "description": "settings.flutter.userMgmt.add"
+  },
+  "settingsFlutterUserMgmtAddFailed": "Fehler beim Hinzufügen des Benutzers",
+  "@settingsFlutterUserMgmtAddFailed": {
+    "description": "settings.flutter.userMgmt.addFailed"
+  },
+  "settingsFlutterUserMgmtAdded": "Benutzer hinzugefügt",
+  "@settingsFlutterUserMgmtAdded": {
+    "description": "settings.flutter.userMgmt.added"
+  },
+  "settingsFlutterUserMgmtEmailPh": "email@beispiel.de",
+  "@settingsFlutterUserMgmtEmailPh": {
+    "description": "settings.flutter.userMgmt.emailPh"
+  },
+  "settingsFlutterUserMgmtLastAdmin": "Der letzte Administrator kann nicht herabgestuft werden. Bitte füge zuerst einen weiteren Admin hinzu.",
+  "@settingsFlutterUserMgmtLastAdmin": {
+    "description": "settings.flutter.userMgmt.lastAdmin"
+  },
+  "settingsFlutterUserMgmtNoAdmins": "Keine Administratoren",
+  "@settingsFlutterUserMgmtNoAdmins": {
+    "description": "settings.flutter.userMgmt.noAdmins"
+  },
+  "settingsFlutterUserMgmtNoAdminsHint": "Füge Admins über den + Button hinzu",
+  "@settingsFlutterUserMgmtNoAdminsHint": {
+    "description": "settings.flutter.userMgmt.noAdminsHint"
+  },
+  "settingsFlutterUserMgmtNoParents": "Keine Eltern",
+  "@settingsFlutterUserMgmtNoParents": {
+    "description": "settings.flutter.userMgmt.noParents"
+  },
+  "settingsFlutterUserMgmtNoParentsHint": "Eltern können ihre Kinder an-/abmelden",
+  "@settingsFlutterUserMgmtNoParentsHint": {
+    "description": "settings.flutter.userMgmt.noParentsHint"
+  },
+  "settingsFlutterUserMgmtNoRole": "Keine Rolle",
+  "@settingsFlutterUserMgmtNoRole": {
+    "description": "settings.flutter.userMgmt.noRole"
+  },
+  "settingsFlutterUserMgmtNoUsers": "Keine Benutzer vorhanden",
+  "@settingsFlutterUserMgmtNoUsers": {
+    "description": "settings.flutter.userMgmt.noUsers"
+  },
+  "settingsFlutterUserMgmtNoViewers": "Keine Betrachter",
+  "@settingsFlutterUserMgmtNoViewers": {
+    "description": "settings.flutter.userMgmt.noViewers"
+  },
+  "settingsFlutterUserMgmtNoViewersHint": "Betrachter können Anwesenheit sehen, aber nicht bearbeiten",
+  "@settingsFlutterUserMgmtNoViewersHint": {
+    "description": "settings.flutter.userMgmt.noViewersHint"
+  },
+  "settingsFlutterUserMgmtPlayers": "Spieler",
+  "@settingsFlutterUserMgmtPlayers": {
+    "description": "settings.flutter.userMgmt.players"
+  },
+  "settingsFlutterUserMgmtResponsibles": "Verantwortliche",
+  "@settingsFlutterUserMgmtResponsibles": {
+    "description": "settings.flutter.userMgmt.responsibles"
+  },
+  "settingsFlutterUserMgmtRoleChangeFailed": "Fehler beim Ändern der Rolle",
+  "@settingsFlutterUserMgmtRoleChangeFailed": {
+    "description": "settings.flutter.userMgmt.roleChangeFailed"
+  },
+  "settingsFlutterUserMgmtRoleChanged": "Rolle geändert zu {role}",
+  "@settingsFlutterUserMgmtRoleChanged": {
+    "description": "settings.flutter.userMgmt.roleChanged",
+    "placeholders": {
+      "role": {}
+    }
+  },
+  "settingsFlutterUserMgmtSelfDemoteConfirm": "Ja, Rolle ändern",
+  "@settingsFlutterUserMgmtSelfDemoteConfirm": {
+    "description": "settings.flutter.userMgmt.selfDemoteConfirm"
+  },
+  "settingsFlutterUserMgmtSelfDemoteMessage": "Du bist dabei, deine eigene Admin-Rolle zu entfernen. Du verlierst dadurch den Zugang zur Benutzerverwaltung. Möchtest du fortfahren?",
+  "@settingsFlutterUserMgmtSelfDemoteMessage": {
+    "description": "settings.flutter.userMgmt.selfDemoteMessage"
+  },
+  "settingsFlutterUserMgmtSelfDemoteTitle": "Eigene Rolle ändern?",
+  "@settingsFlutterUserMgmtSelfDemoteTitle": {
+    "description": "settings.flutter.userMgmt.selfDemoteTitle"
+  },
+  "settingsFlutterUserMgmtTabAdmins": "Admins",
+  "@settingsFlutterUserMgmtTabAdmins": {
+    "description": "settings.flutter.userMgmt.tabAdmins"
+  },
+  "settingsFlutterUserMgmtTabAll": "Alle Benutzer",
+  "@settingsFlutterUserMgmtTabAll": {
+    "description": "settings.flutter.userMgmt.tabAll"
+  },
+  "settingsFlutterUserMgmtTitle": "Benutzerverwaltung",
+  "@settingsFlutterUserMgmtTitle": {
+    "description": "settings.flutter.userMgmt.title"
+  },
   "settingsFlutterUsers": "Benutzer",
   "@settingsFlutterUsers": {
     "description": "settings.flutter.users"

@@ -54,6 +54,31 @@
           "declineTitle": "Registrierung ablehnen?",
           "declineMessage": "Möchtest du die Registrierung von {name} ablehnen? Der Eintrag wird gelöscht.",
           "declined": "Registrierung abgelehnt"
+        },
+        "userMgmt": {
+          "title": "Benutzerverwaltung",
+          "tabAdmins": "Admins",
+          "tabAll": "Alle Benutzer",
+          "added": "Benutzer hinzugefügt",
+          "addFailed": "Fehler beim Hinzufügen des Benutzers",
+          "add": "Benutzer hinzufügen",
+          "emailPh": "email@beispiel.de",
+          "noAdmins": "Keine Administratoren",
+          "noAdminsHint": "Füge Admins über den + Button hinzu",
+          "noViewers": "Keine Betrachter",
+          "noViewersHint": "Betrachter können Anwesenheit sehen, aber nicht bearbeiten",
+          "noParents": "Keine Eltern",
+          "noParentsHint": "Eltern können ihre Kinder an-/abmelden",
+          "noUsers": "Keine Benutzer vorhanden",
+          "responsibles": "Verantwortliche",
+          "players": "Spieler",
+          "lastAdmin": "Der letzte Administrator kann nicht herabgestuft werden. Bitte füge zuerst einen weiteren Admin hinzu.",
+          "selfDemoteTitle": "Eigene Rolle ändern?",
+          "selfDemoteMessage": "Du bist dabei, deine eigene Admin-Rolle zu entfernen. Du verlierst dadurch den Zugang zur Benutzerverwaltung. Möchtest du fortfahren?",
+          "selfDemoteConfirm": "Ja, Rolle ändern",
+          "roleChanged": "Rolle geändert zu {role}",
+          "roleChangeFailed": "Fehler beim Ändern der Rolle",
+          "noRole": "Keine Rolle"
         }
       }
     },
@@ -151,6 +176,31 @@
           "declineTitle": "Decline registration?",
           "declineMessage": "Do you want to decline the registration of {name}? The entry will be deleted.",
           "declined": "Registration declined"
+        },
+        "userMgmt": {
+          "title": "User management",
+          "tabAdmins": "Admins",
+          "tabAll": "All users",
+          "added": "User added",
+          "addFailed": "Error adding the user",
+          "add": "Add user",
+          "emailPh": "email@example.com",
+          "noAdmins": "No administrators",
+          "noAdminsHint": "Add admins using the + button",
+          "noViewers": "No observers",
+          "noViewersHint": "Observers can view attendance but not edit it",
+          "noParents": "No parents",
+          "noParentsHint": "Parents can sign their children in and out",
+          "noUsers": "No users available",
+          "responsibles": "Responsible persons",
+          "players": "Players",
+          "lastAdmin": "The last administrator cannot be demoted. Please add another admin first.",
+          "selfDemoteTitle": "Change your own role?",
+          "selfDemoteMessage": "You are about to remove your own admin role. You will lose access to user management. Do you want to continue?",
+          "selfDemoteConfirm": "Yes, change role",
+          "roleChanged": "Role changed to {role}",
+          "roleChangeFailed": "Error changing the role",
+          "noRole": "No role"
         }
       }
     },
