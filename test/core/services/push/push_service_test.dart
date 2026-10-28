@@ -19,8 +19,17 @@ class FakeClient implements PushMessagingClient {
   final opened = StreamController<PushMessage>.broadcast();
   final refresh = StreamController<String>.broadcast();
 
+  /// SOL_FIX16: when set, initialize() waits for it.
+  Completer<void>? initGate;
+  int initializations = 0;
+
   @override
-  Future<bool> initialize() async => available;
+  Future<bool> initialize() async {
+    initializations++;
+    final gate = initGate;
+    if (gate != null) await gate.future;
+    return available;
+  }
   @override
   Future<PushPermission> checkPermission() async => permission;
   @override
@@ -276,4 +285,76 @@ void main() {
     await Future.wait([s.promptAndEnable(), s.promptAndEnable()]);
     expect(host.confirms, 1);
   });
+
+  // SOL_FIX16: the bootstrap starts start() without awaiting it; a sign-in
+  // (initialSession) processed meanwhile must wait for the initialisation
+  // instead of giving up with "not available".
+  group('shared initialisation', () {
+    test('sign-in during the bootstrap init waits and registers the token', () async {
+      final gate = Completer<void>();
+      client.initGate = gate;
+      final s = build();
+      unawaited(s.start()); // bootstrap
+      final enabling = s.promptAndEnable(); // initialSession right away
+      await pumpEventQueue();
+      expect(tokens.saved, isEmpty);
+
+      gate.complete();
+      await enabling;
+      expect(tokens.saved, ['android:tok-1']);
+      expect(client.initializations, 1);
+    });
+
+    test('initPush during the bootstrap init waits too', () async {
+      final gate = Completer<void>();
+      client.initGate = gate;
+      final s = build();
+      unawaited(s.start());
+      final registering = s.initPush();
+      await pumpEventQueue();
+      gate.complete();
+      await registering;
+      expect(tokens.saved, ['android:tok-1']);
+      expect(client.initializations, 1);
+    });
+
+    test('start() is one shared run; listeners are added once', () async {
+      final s = build();
+      final a = s.start();
+      final b = s.start();
+      expect(identical(a, b), isTrue);
+      await Future.wait([a, b, s.initPush(), s.promptAndEnable()]);
+      expect(client.initializations, 1);
+      client.foreground.add(const PushMessage(title: 'T', data: {'type': 'x'}));
+      await pumpEventQueue();
+      expect(host.alerts.length, 1);
+    });
+
+    test('promptAndEnable without bootstrap still handles the cold start', () async {
+      client.initial = const PushMessage(data: {'type': 'task', 'taskId': '2'});
+      final s = build();
+      await s.promptAndEnable();
+      await pumpEventQueue();
+      expect(host.navigations.single['taskId'], '2');
+    });
+
+    test('a failing initialize is no crash and registers nothing', () async {
+      final s = PushService(
+        client: _ThrowingClient(),
+        tokens: tokens,
+        promptStore: prompt,
+        host: host,
+        isNativePlatform: true,
+        platform: 'android',
+      );
+      await s.start();
+      await s.promptAndEnable();
+      expect(tokens.saved, isEmpty);
+    });
+  });
+}
+
+class _ThrowingClient extends FakeClient {
+  @override
+  Future<bool> initialize() async => throw StateError('no firebase');
 }

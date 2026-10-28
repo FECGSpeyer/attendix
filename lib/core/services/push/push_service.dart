@@ -75,7 +75,12 @@ class PushService {
   /// once the startup redirect has landed (Ionic `pendingPushData`).
   Map<String, dynamic>? pendingPushData;
 
-  bool _started = false;
+  /// SOL_FIX16: one shared initialisation (Firebase + listeners). Everything
+  /// that reads [_available] awaits it first, so a sign-in processed while
+  /// the bootstrap's unawaited [start] is still initialising waits for it
+  /// instead of giving up.
+  Future<void>? _initialization;
+  Future<void>? _startup;
   bool _available = false;
   final List<StreamSubscription<dynamic>> _subscriptions = [];
   StreamSubscription<String>? _tokenRefreshSub;
@@ -85,18 +90,45 @@ class PushService {
   }
 
   /// Ionic constructor → setupPushListeners(): foreground pushes and taps,
-  /// plus the notification that cold-started the app.
-  Future<void> start() async {
-    if (!isNativePlatform || _started) return;
-    _started = true;
-    _available = await client.initialize();
+  /// plus the notification that cold-started the app. Idempotent: every
+  /// call returns the same run.
+  Future<void> start() {
+    if (!isNativePlatform) return Future.value();
+    return _startup ??= _start();
+  }
+
+  Future<void> _start() async {
+    await _ensureInitialized();
+    if (!_available) return;
+    try {
+      final initial = await client.getInitialMessage();
+      if (initial != null) await onNotificationTapped(initial);
+    } catch (e) {
+      _log('initial message failed', e);
+    }
+  }
+
+  /// SOL_FIX16: the shared initialisation, started once.
+  Future<void> _ensureInitialized() => _initialization ??= _initialize();
+
+  /// SOL_FIX16: makes sure [start] runs (cold-start handling) and waits for
+  /// the shared initialisation – not for the cold-start navigation.
+  Future<void> _ready() {
+    unawaited(start());
+    return _ensureInitialized();
+  }
+
+  Future<void> _initialize() async {
+    try {
+      _available = await client.initialize();
+    } catch (e) {
+      _log('initialize failed', e);
+      _available = false;
+    }
     if (!_available) return;
 
     _subscriptions.add(client.onForegroundMessage.listen(_onForegroundMessage));
     _subscriptions.add(client.onMessageOpened.listen(onNotificationTapped));
-
-    final initial = await client.getInitialMessage();
-    if (initial != null) await onNotificationTapped(initial);
   }
 
   Future<void> dispose() async {
@@ -156,7 +188,7 @@ class PushService {
   }
 
   Future<void> _promptAndEnable() async {
-    if (!_started) await start();
+    await _ready();
     if (!_available) return;
 
     if (await promptStore.wasShown()) {
@@ -187,7 +219,7 @@ class PushService {
   /// Ionic initPush: permission → FCM token → device_tokens, clear badge.
   Future<void> initPush() async {
     if (!isNativePlatform) return;
-    if (!_started) await start();
+    await _ready();
     if (!_available) return;
 
     final permission = await client.checkPermission();
