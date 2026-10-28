@@ -819,6 +819,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
           child: Column(
             children: [
               AppBar(
+                toolbarHeight: ionModalToolbarHeight(context), // PARITY_R5
                 automaticallyImplyLeading: false,
                 leading: TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: Text(ctx.l10n.commonCancel)),
                 leadingWidth: 100,
@@ -1166,6 +1167,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
         child: Column(
           children: [
             AppBar(
+              toolbarHeight: ionModalToolbarHeight(context), // PARITY_R5
               automaticallyImplyLeading: false,
               title: Text(ctx.l10n.protocolParticipants),
               actions: [TextButton(onPressed: () => Navigator.of(ctx).pop(), child: Text(ctx.l10n.personDone))],
@@ -1227,6 +1229,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
         child: Column(
           children: [
             AppBar(
+              toolbarHeight: ionModalToolbarHeight(context), // PARITY_R5
               automaticallyImplyLeading: false,
               title: Text(ctx.l10n.protocolGeneralNotes),
               actions: [TextButton(onPressed: () => Navigator.of(ctx).pop(), child: Text(ctx.l10n.personDone))],

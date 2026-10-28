@@ -21,6 +21,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
+import '../../../../shared/widgets/dialogs/ion_modal.dart' show showIonModal; // PARITY_R5
 
 /// Statistics Page with Charts
 ///
@@ -32,8 +33,30 @@ import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 /// - Age distribution chart
 /// - Average age per instrument chart
 /// - "Diva Index" (unexcused absences) chart
+/// PARITY_R5: Ionic settings `openStats()` presents the StatsPage with
+/// `modalController.create({ component, presentingElement })`: on iOS a
+/// card modal ([showIosCardModal]), in md mode a regular `ion-modal`
+/// ([showIonModal]: full screen on phones, centred card on desktop).
+Future<void> showStatisticsModal(BuildContext context) {
+  final dark = Theme.of(context).brightness == Brightness.dark;
+  if (useIosLook(context)) {
+    return showIosCardModal<void>(
+      context,
+      backgroundColor: dark ? null : AppColors.light,
+      builder: (_) => const StatisticsPage(asModal: true),
+    );
+  }
+  return showIonModal<void>(
+    context,
+    builder: (_) => const StatisticsPage(asModal: true),
+  );
+}
+
 class StatisticsPage extends ConsumerStatefulWidget {
-  const StatisticsPage({super.key});
+  const StatisticsPage({super.key, this.asModal = false});
+
+  /// Presented by [showStatisticsModal]: the ✕ closes the modal.
+  final bool asModal;
 
   @override
   ConsumerState<StatisticsPage> createState() => _StatisticsPageState();
@@ -73,7 +96,9 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> {
           IconButton(
             icon: const Icon(Icons.close),
             tooltip: context.l10n.commonClose,
-            onPressed: () => context.canPop() ? context.pop() : context.go('/settings'),
+            onPressed: () => widget.asModal
+                ? Navigator.of(context).pop()
+                : (context.canPop() ? context.pop() : context.go('/settings')),
           ),
         ],
       ),

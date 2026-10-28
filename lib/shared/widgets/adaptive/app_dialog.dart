@@ -40,7 +40,7 @@ Future<T?> showAppDialog<T>({
 /// IOS_LOOK: drop-in replacement for [AlertDialog] that looks like
 /// `ion-alert`.
 ///
-/// - iOS: Ionic iOS 26 alert – frosted rounded card (≈275pt wide), bold
+/// - iOS: Ionic iOS 27 alert – frosted rounded card (280–320pt wide), bold
 ///   17pt title and grey message aligned left, any content (text fields,
 ///   lists …) below, and the actions as full-width grey pill buttons stacked
 ///   vertically in the given order (black semibold label, destructive ones
@@ -317,9 +317,57 @@ class IosAlertCard extends StatelessWidget {
   final String? semanticLabel;
   final List<Widget> actions;
 
-  /// Ionic: `--min-width: 280px`, `--max-width: 322px`; on an iPhone 15 the
-  /// alert renders ≈275pt wide.
+  /// ionic-theme-ios27 `ion-alert`: `--width: auto`, `--min-width: 280px`,
+  /// `--max-width: 320px` – the card is as wide as its widest line of
+  /// title / message text (plus the 30pt side padding), at least 280pt.
+  /// An alert with inputs only (`.alert-input` has the intrinsic width of a
+  /// 20 character input, < 280pt) stays 280pt wide.
   static const double width = 280;
+
+  /// Upper bound of the auto width (ios27 `--max-width`).
+  static const double maxWidth = 320;
+
+  /// PARITY_R5: ios27 `.alert-title` 1rem / line-height 1.21 and
+  /// `.alert-message` .94rem / 1.19 with the iOS root font of 17px
+  /// (Ionic `--ion-dynamic-font: -apple-system-body`).
+  static const double titleFontSize = 17;
+  static const double messageFontSize = 16;
+
+  /// PARITY_R5: card width for the given title / message text on a screen
+  /// [screenWidth] wide (shrink-to-fit between 280 and 320, never wider
+  /// than the screen minus 16pt on each side).
+  static double widthFor({
+    String? title,
+    String? message,
+    double screenWidth = double.infinity,
+    TextScaler textScaler = TextScaler.noScaling,
+  }) {
+    double line(String? text, TextStyle style) {
+      if (text == null || text.isEmpty) return 0;
+      var widest = 0.0;
+      for (final l in text.split('\n')) {
+        final painter = TextPainter(
+          text: TextSpan(text: l, style: style),
+          textDirection: TextDirection.ltr,
+          textScaler: textScaler,
+          maxLines: 1,
+        )..layout();
+        if (painter.width > widest) widest = painter.width;
+        painter.dispose();
+      }
+      return widest;
+    }
+
+    final content = [
+      line(title, const TextStyle(
+          fontSize: titleFontSize, fontWeight: FontWeight.w600)),
+      line(message, const TextStyle(fontSize: messageFontSize)),
+    ].reduce((a, b) => a > b ? a : b);
+    final natural = (content + 60).clamp(width, maxWidth);
+    return natural.clamp(200.0, (screenWidth - 32).clamp(200.0, maxWidth));
+  }
+
+  static String? _plainText(Widget? w) => w is Text ? w.data : null;
 
   @override
   Widget build(BuildContext context) {
@@ -329,26 +377,55 @@ class IosAlertCard extends StatelessWidget {
     final messageColor =
         b == Brightness.dark ? const Color(0xFF999999) : const Color(0xFF666666);
     final mq = MediaQuery.of(context);
-    final maxWidth = (mq.size.width - 32).clamp(200.0, width);
+    final cardWidth = widthFor(
+      title: _plainText(title),
+      message: message ?? _plainText(content),
+      screenWidth: mq.size.width,
+      textScaler: mq.textScaler,
+    );
 
     final titleStyle = TextStyle(
-      fontSize: 17,
-      height: 1.25,
+      fontSize: titleFontSize,
+      height: 1.21,
       fontWeight: FontWeight.w600,
       color: textColor,
     );
-    final messageStyle =
-        TextStyle(fontSize: 15, height: 1.25, color: messageColor);
+    final messageStyle = TextStyle(
+        fontSize: messageFontSize, height: 1.19, color: messageColor);
 
-    Widget? body = content ??
-        (message != null && message!.isNotEmpty ? Text(message!) : null);
-    if (body != null) {
-      body = DefaultTextStyle.merge(style: messageStyle, child: body);
-      body = Padding(
-        padding:
-            contentPadding ?? const EdgeInsets.fromLTRB(30, 0, 30, 20),
-        child: body,
+    final hasMessage = message != null && message!.isNotEmpty;
+    Widget? body;
+    if (content != null && hasMessage) {
+      // PARITY_R5: `.alert-message` above the `.alert-input-group` (alert
+      // with message and inputs).
+      body = Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(30, 0, 30, 20),
+            child: Text(message!),
+          ),
+          Padding(
+            padding:
+                contentPadding ?? const EdgeInsets.fromLTRB(30, 0, 30, 20),
+            child: content,
+          ),
+        ],
       );
+      body = DefaultTextStyle.merge(style: messageStyle, child: body);
+    } else {
+      body = content ?? (hasMessage ? Text(message!) : null);
+      if (body != null) {
+        body = DefaultTextStyle.merge(style: messageStyle, child: body);
+        body = Padding(
+          padding:
+              contentPadding ?? const EdgeInsets.fromLTRB(30, 0, 30, 20),
+          child: body,
+        );
+      }
+    }
+    if (body != null) {
       body = scrollable
           ? Flexible(child: SingleChildScrollView(child: body))
           : Flexible(child: body);
@@ -397,7 +474,7 @@ class IosAlertCard extends StatelessWidget {
               namesRoute: true,
               label: semanticLabel,
               child: SizedBox(
-                width: maxWidth,
+                width: cardWidth,
                 child: Material(
                   type: MaterialType.transparency,
                   child: IosGlassSurface(
@@ -711,6 +788,33 @@ class _PromptDialogState extends State<_PromptDialog> {
 
   @override
   Widget build(BuildContext context) {
+    if (useIosLook(context) && widget.maxLines == 1) {
+      // PARITY_R5: Ionic iOS `ion-alert` with one input: optional message,
+      // `.alert-input-group` (16/0/16/21) with the bordered input, the two
+      // buttons side by side.
+      return IosAlertCard(
+        title: Text(widget.title),
+        message: widget.message,
+        contentPadding: const EdgeInsets.fromLTRB(16, 0, 16, 21),
+        content: IosAlertInput(
+          controller: _controller,
+          placeholder: widget.hint,
+          keyboardType: widget.keyboardType,
+          autofocus: true,
+          onSubmitted: (_) => Navigator.of(context).pop(_controller.text),
+        ),
+        actions: [
+          IosAlertButton(
+            onPressed: () => Navigator.of(context).pop(null),
+            child: Text(widget.cancelText),
+          ),
+          IosAlertButton(
+            onPressed: () => Navigator.of(context).pop(_controller.text),
+            child: Text(widget.confirmText),
+          ),
+        ],
+      );
+    }
     return AppAlertDialog(
       title: Text(widget.title),
       content: Column(
@@ -740,6 +844,72 @@ class _PromptDialogState extends State<_PromptDialog> {
           child: Text(widget.confirmText),
         ),
       ],
+    );
+  }
+}
+
+/// IOS_FORMS1 / PARITY_R5: text input of an iOS `ion-alert`
+/// (`.alert-input`): `font-size: 1rem` = 17pt with the iOS root font
+/// (`-apple-system-body`), 7pt padding and radius, 0.55pt grey border on
+/// the page background, 10pt above each input.
+class IosAlertInput extends StatelessWidget {
+  const IosAlertInput({
+    super.key,
+    required this.controller,
+    this.placeholder,
+    this.obscureText = false,
+    this.autofocus = false,
+    this.keyboardType,
+    this.onSubmitted,
+  });
+
+  final TextEditingController controller;
+  final String? placeholder;
+  final bool obscureText;
+  final bool autofocus;
+  final TextInputType? keyboardType;
+  final ValueChanged<String>? onSubmitted;
+
+  /// `.alert-input { font-size: 1rem }` on iOS.
+  static const double fontSize = 17;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final dark = theme.brightness == Brightness.dark;
+    final border = OutlineInputBorder(
+      borderRadius: BorderRadius.circular(7),
+      borderSide: BorderSide(
+        color: dark ? const Color(0xFF404040) : const Color(0xFFBFBFBF),
+        width: 0.55,
+      ),
+    );
+    return Padding(
+      padding: const EdgeInsets.only(top: 10),
+      child: TextField(
+        controller: controller,
+        obscureText: obscureText,
+        autofocus: autofocus,
+        keyboardType: keyboardType,
+        onSubmitted: onSubmitted,
+        style:
+            TextStyle(fontSize: fontSize, color: theme.colorScheme.onSurface),
+        decoration: InputDecoration(
+          hintText: placeholder,
+          hintStyle: TextStyle(
+            fontSize: fontSize,
+            color: dark ? const Color(0xFF8C8C8C) : const Color(0xFF999999),
+          ),
+          isDense: true,
+          filled: true,
+          fillColor: dark ? Colors.black : Colors.white,
+          contentPadding: const EdgeInsets.all(7),
+          border: border,
+          enabledBorder: border,
+          focusedBorder: border,
+          disabledBorder: border,
+        ),
+      ),
     );
   }
 }

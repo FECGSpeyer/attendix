@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../planning/presentation/widgets/ion_items.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // PARITY_R5
 
 /// A person that can be assigned to a duty.
 class DutyCandidate {
@@ -121,6 +122,7 @@ class _DutyAssignSheetState extends State<_DutyAssignSheet> {
       children: [
         // Ionic toolbar: close at the start, centered title with `.sub` line.
         AppBar(
+          toolbarHeight: ionModalToolbarHeight(context), // PARITY_R5
           automaticallyImplyLeading: false,
           primary: false,
           leading: IconButton(

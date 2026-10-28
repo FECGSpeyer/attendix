@@ -53,6 +53,9 @@ import '../../../../core/providers/push_providers.dart'; // PUSH
 import '../../../../shared/widgets/adaptive/app_toolbar.dart'; // IOS_SHELL
 import '../../../../shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL
 import '../../../history/presentation/pages/history_page.dart' show showHistoryModal; // IOS_FORMS2
+// PARITY_R5
+import '../../../statistics/presentation/pages/statistics_page.dart' show showStatisticsModal;
+import '../../../export/presentation/pages/export_page.dart' show showExportModal;
 
 /// "Mehr" tab — UX_SETTINGS: same sections, order and role visibility as the
 /// Ionic settings page (src/app/settings/settings/settings.page.html):
@@ -418,13 +421,13 @@ class SettingsPage extends ConsumerWidget {
                       icon: Icons.insert_chart_outlined,
                       title: l10n.statsTitle,
                       detail: false,
-                      onTap: () => context.push('/statistics'),
+                      onTap: () => showStatisticsModal(context), // PARITY_R5: modal like Ionic
                     ),
                     SettingsListTile(
                       icon: Icons.download_outlined,
                       title: l10n.settingsExport,
                       detail: false,
-                      onTap: () => context.push('/export'),
+                      onTap: () => showExportModal(context), // PARITY_R5: modal like Ionic
                     ),
                     // MISC2: Urkunden generieren (Vorkurs tenants only)
                     if (isVorkursTenantName(tenant?.shortName, tenant?.longName))

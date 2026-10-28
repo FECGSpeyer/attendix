@@ -17,6 +17,7 @@ import '../../../../data/models/tenant/tenant.dart';
 import '../../data/providers/parents_providers.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // PARITY_R5
 
 /// App bar title of the parents page (Ionic: tenant switcher when the user
 /// has more than one tenant, otherwise the tenant's long name).
@@ -241,6 +242,7 @@ Future<void> showCurrentSongsSheet(
       heightFactor: groups.length > 1 ? 0.8 : 0.6,
       child: Scaffold(
         appBar: AppBar(
+          toolbarHeight: ionModalToolbarHeight(context), // PARITY_R5
           title: Text(sheetContext.l10n.signoutCurrentSongs),
           automaticallyImplyLeading: false,
           leading: IconButton(

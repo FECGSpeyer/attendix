@@ -286,6 +286,7 @@ class _AgendaPickerSheetState extends ConsumerState<AgendaPickerSheet> {
       child: Column(
         children: [
           AppBar(
+            toolbarHeight: ionModalToolbarHeight(context), // PARITY_R5
             automaticallyImplyLeading: false,
             primary: false,
             leading: IconButton(

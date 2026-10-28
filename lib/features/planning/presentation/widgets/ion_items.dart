@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import '../../../../core/theme/app_colors.dart';
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../shared/widgets/layout/ionic_ios.dart' show IonSearchIcon; // PARITY_R5
 
 // UX_PLANNING (wave 8): page-structure building blocks that mirror the Ionic
 // components as rendered in iOS mode (the app on an iPhone). They are used by
@@ -268,6 +269,9 @@ class _IonSearchbarState extends State<IonSearchbar> {
               controller: _controller,
               placeholder: widget.placeholder,
               onChanged: widget.onChanged,
+              // PARITY_R5: ios27 icons in the text colour, 22pt magnifier
+              itemColor: Theme.of(context).colorScheme.onSurface,
+              itemSize: IonSearchIcon.size,
             )
           : TextField(
               controller: _controller,

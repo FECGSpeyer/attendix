@@ -277,6 +277,7 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
     // an inset list on the light background; "Speichern" is the last item.
     return Scaffold(
       appBar: AppBar(
+        toolbarHeight: ionModalToolbarHeight(context), // PARITY_R5
         title: Text(context.l10n.settingsMyData),
         automaticallyImplyLeading: false,
       ),

@@ -493,10 +493,11 @@ class AppTheme {
         dragHandleColor: ios
             ? (isDark ? const Color(0xFF404040) : const Color(0xFFC8C7CC))
             : null,
-        dragHandleSize: ios ? const Size(36, 5) : null,
+        // PARITY_R5: ionic-theme-ios27 handle 60 × 4 and sheet radius 32.
+        dragHandleSize: ios ? const Size(60, 4) : null,
         shape: ios
             ? const RoundedRectangleBorder(
-                borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+                borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
               )
             : const RoundedRectangleBorder(),
       ),

@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
-import '../../../profile/presentation/widgets/account_dialogs.dart'
-    show IosAlertInput;
 
 /// Ionic login `forgotPassword()` alert: header "Passwort zurücksetzen", one
 /// e-mail input (prefilled with the login e-mail, placeholder "E-Mail

@@ -199,6 +199,7 @@ class _TaskFormSheetState extends ConsumerState<TaskFormSheet> {
         child: Column(
           children: [
             AppBar(
+              toolbarHeight: ionModalToolbarHeight(context), // PARITY_R5
               automaticallyImplyLeading: false,
               primary: false,
               leading: IconButton(
@@ -393,6 +394,7 @@ class _PersonPickerState extends State<_PersonPicker> {
       child: Column(
         children: [
           AppBar(
+            toolbarHeight: ionModalToolbarHeight(context), // PARITY_R5
             automaticallyImplyLeading: false,
             primary: false,
             title: Text(l10n.tasksResponsible),

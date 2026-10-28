@@ -16,6 +16,7 @@ import '../../../../core/utils/error_message.dart';
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 import '../../../people/presentation/widgets/ion/ion_widgets.dart'; // UX_PEOPLE
+import '../../../../shared/widgets/layout/ionic_ios.dart' show ionPlainContentBackground; // PARITY_R5
 
 /// Teacher list (Ionic teachers.page): "Lehrer", rows with name, instrument
 /// names and a "n Spieler" badge; FAB opens the "Lehrer hinzufügen" sheet,
@@ -423,6 +424,8 @@ class _TeacherEditPage extends ConsumerWidget {
         .map((p) => '${p.firstName} ${p.lastName}')
         .toList();
     return Scaffold(
+      // PARITY_R5: teacher.page.html `<ion-content>` without colour → white.
+      backgroundColor: ionPlainContentBackground(context),
       appBar: AppBar(
         title: Text(context.l10n.teachersEdit),
         automaticallyImplyLeading: false,

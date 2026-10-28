@@ -6,6 +6,10 @@ import '../../../core/theme/app_colors.dart';
 import '../../../l10n/l10n.dart';
 import 'adaptive_platform.dart';
 
+/// PARITY_R5: top offset (below the safe area) of an iOS nested popover
+/// that does not fit to the left of its parent.
+const double kIosNestedPopoverTop = 12;
+
 /// One entry of [showAppPopoverMenu] (an `ion-item button` inside the
 /// `ion-list lines="none"` of an `ion-popover`).
 class AppPopoverMenuItem<T> {
@@ -313,10 +317,17 @@ class _PopoverLayerState<T> extends State<_PopoverLayer<T>> {
       final sw = math.min(ios ? 200.0 : 250.0, size.width - 2 * _margin);
       // side="start": right edge at the trigger's left edge, top aligned;
       // pushed back into the viewport when there is no room.
-      final subLeft = (left - sw)
+      var subLeft = (left - sw)
           .clamp(_margin, math.max(_margin, size.width - sw - _margin))
           .toDouble();
-      final subTop = rowRect.top;
+      var subTop = rowRect.top;
+      if (ios && left - sw < _margin) {
+        // PARITY_R5: no room on the left (phone) – Ionic iOS lays the
+        // nested popover over the parent, right-aligned with it, at the
+        // top of the screen (iPhone audit: x 181–381, y 12 on 393pt).
+        subLeft = math.max(_margin, left + w - sw);
+        subTop = MediaQuery.paddingOf(context).top + kIosNestedPopoverTop;
+      }
       children.add(
         Positioned(
           top: subTop,

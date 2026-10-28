@@ -2598,17 +2598,21 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
   }
 
   void _showStatsDialog() {
-    final persons = ref.read(filteredPersonsForAttendanceProvider(widget.attendanceId)).valueOrNull ?? [];
-    final total = persons.length;
-
-    // Only count statuses for persons in the filtered list (consistent with status bar)
-    final personIds = persons.map((p) => p.id).whereType<int>().toSet();
-    final statusCounts = <AttendanceStatus, int>{};
-    for (final status in AttendanceStatus.values) {
-      statusCounts[status] = _localStatuses.entries
-          .where((e) => personIds.contains(e.key) && e.value == status)
-          .length;
-    }
+    final all = ref.read(filteredPersonsForAttendanceProvider(widget.attendanceId)).valueOrNull ?? [];
+    // PARITY_R5: Ionic counts `this.players` – all person rows of the Termin
+    // (helper group only), not the search / status-filtered list and not
+    // the tenant's other persons.
+    final groupScope = resolvedGroupScope(ref.read(attendanceGroupScopeProvider));
+    final inAttendance = _personsInAttendance(all);
+    final persons = groupScope.isAll
+        ? inAttendance
+        : inAttendance.where((p) => groupScope.allowsGroup(p.instrument)).toList();
+    final result = statusOverviewCounts(
+      persons.map((p) => p.id).whereType<int>(),
+      _localStatuses,
+    );
+    final statusCounts = result.counts;
+    final total = result.total;
 
     showStatusOverviewSheet(
       context,

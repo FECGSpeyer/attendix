@@ -27,6 +27,9 @@ class Avatar extends StatelessWidget {
       return CachedNetworkImage(
         imageUrl: imageUrl!,
         imageBuilder: (context, imageProvider) => CircleAvatar(
+          // PARITY_R5: `ion-avatar img` has no fill (no teal behind
+          // transparent pictures).
+          backgroundColor: Colors.transparent,
           backgroundImage: imageProvider,
           radius: size / 2,
         ),
@@ -40,32 +43,10 @@ class Avatar extends StatelessWidget {
   }
 
   Widget _buildInitials(BuildContext context) {
-    // IOS_R4: Ionic shows `assets/icon/avatar-placeholder.svg` for people
-    // without a picture (hero card, Stammdaten) – no teal initials disc.
-    if (Theme.of(context).platform == TargetPlatform.iOS) {
-      return IonAvatarPlaceholder(size: size);
-    }
-    final initials = _getInitials();
-    final theme = Theme.of(context);
-
-    return CircleAvatar(
-      radius: size / 2,
-      backgroundColor: theme.colorScheme.primary,
-      child: Text(
-        initials,
-        style: TextStyle(
-          fontSize: size * 0.4,
-          fontWeight: FontWeight.bold,
-          color: theme.colorScheme.onPrimary,
-        ),
-      ),
-    );
-  }
-
-  String _getInitials() {
-    final first = firstName.isNotEmpty ? firstName[0] : '';
-    final last = lastName.isNotEmpty ? lastName[0] : '';
-    return '$first$last'.toUpperCase();
+    // IOS_R4 / PARITY_R5: Ionic shows `assets/icon/avatar-placeholder.svg`
+    // for people without a picture (hero card, Stammdaten) in iOS and md
+    // mode – no teal initials disc.
+    return IonAvatarPlaceholder(size: size);
   }
 }
 

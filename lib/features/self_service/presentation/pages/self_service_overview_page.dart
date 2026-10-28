@@ -84,9 +84,15 @@ class _SelfServiceOverviewPageState
         // IOS_R4: Ionic collapse="condense" – no hairline under the segment
         // toolbar (and the page colour behind it) until the large title has
         // scrolled away.
-        backgroundColor: condenseBarColor(context, condensed,
-            pageBackground: eventPageBackground(context)),
-        shape: condenseBarShape(context, condensed),
+        // PARITY_R5: iOS translucent header (blur once condensed).
+        backgroundColor: isIosLook(context)
+            ? Colors.transparent
+            : condenseBarColor(context, condensed,
+                pageBackground: eventPageBackground(context)),
+        shape: isIosLook(context)
+            ? const Border()
+            : condenseBarShape(context, condensed),
+        flexibleSpace: IonTranslucentBarBackground(visible: condensed),
         title: CondenseTitle(
           condensed: condensed,
           child: Text(context.l10n.selfServiceAllEvents),
@@ -117,6 +123,8 @@ class _SelfServiceOverviewPageState
           ),
         ),
       ),
+      // PARITY_R5: Ionic `ion-content fullscreen` under the translucent header
+      extendBodyBehindAppBar: isIosLook(context),
       // IOS_ATT_PAGES: Ionic iOS page is white, rows sit directly on it
       backgroundColor: eventPageBackground(context),
       body: attendancesAsync.when(
@@ -154,10 +162,13 @@ class _SelfServiceOverviewPageState
         data: (attendances) {
           final current = upcomingAll.isNotEmpty ? upcomingAll.first : null;
           final upcoming = upcomingAll.length > 1 ? upcomingAll.sublist(1) : const <CrossTenantPersonAttendance>[];
-          return RefreshIndicator.adaptive(
+          return Builder(builder: (body) => RefreshIndicator.adaptive(
             onRefresh: _refresh,
+            edgeOffset: ionTranslucentTopPadding(body, isIosLook(context)),
             child: ListView(
-              padding: EdgeInsets.only(bottom: scrollEndPadding(context, base: 32)),
+              padding: EdgeInsets.only(
+                  top: ionTranslucentTopPadding(body, isIosLook(context)), // PARITY_R5
+                  bottom: scrollEndPadding(context, base: 32)),
               children: [
                 IonLargeTitle(context.l10n.selfServiceAllEvents),
                 // Ionic `.ev-summary.overview-summary`: card, margin 8 16 0
@@ -179,7 +190,7 @@ class _SelfServiceOverviewPageState
                   ..._buildByTenant(attendances, actions),
               ],
             ),
-          );
+          ));
         },
       ),
       ),

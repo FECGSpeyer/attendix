@@ -108,6 +108,7 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
           children: [
             // Header
             AppBar(
+              toolbarHeight: ionModalToolbarHeight(context), // PARITY_R5
               title: Text(
                 _stayInInstance ? context.l10n.peopleFlutterHandoverCopyTitle : context.l10n.peopleFlutterHandoverTransferTitle,
               ),
