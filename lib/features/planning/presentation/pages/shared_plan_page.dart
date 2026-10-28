@@ -13,6 +13,8 @@ import '../widgets/plan_export_actions.dart';
 import '../widgets/plan_field_dialogs.dart';
 import '../widgets/plan_fields_editor.dart';
 import '../widgets/plan_view_list.dart';
+import '../widgets/ion_items.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../l10n/l10n.dart';
 
 /// Public plan link without login (Ionic `SharedPlanPage`, route `/plan`).
@@ -272,12 +274,13 @@ class _SharedPlanPageState extends ConsumerState<SharedPlanPage> {
     await _save();
   }
 
-  Future<void> _showAddMenu() async {
-    final action = await showPlanActionSheet<String>(
-      context,
-      actions: [
-        PlanSheetAction('field', context.l10n.planningAddField, icon: Icons.add),
-        PlanSheetAction('note', context.l10n.planningAddNoteField, icon: Icons.sticky_note_2_outlined),
+  Future<void> _showAddMenu(BuildContext anchor) async {
+    // Ionic: ion-popover anchored to the "+" in the list header.
+    final action = await showIonPopover<String>(
+      anchor,
+      items: [
+        PopupMenuItem(value: 'field', child: Text(context.l10n.planningAddField)),
+        PopupMenuItem(value: 'note', child: Text(context.l10n.planningAddNoteField)),
       ],
     );
     if (action == null || !mounted) return;
@@ -353,8 +356,9 @@ class _SharedPlanPageState extends ConsumerState<SharedPlanPage> {
           if (liveNow)
             IconButton(
               tooltip: context.l10n.planningFlutterLive,
-              icon: Icon(_live ? Icons.radio_button_checked : Icons.radio_button_unchecked,
-                  color: _live ? Colors.red : null),
+              // Ionic: radio / radio-outline, danger while live.
+              color: _live ? AppColors.danger : AppColors.primary,
+              icon: Icon(_live ? Icons.sensors : Icons.sensors_outlined),
               onPressed: () => setState(() => _live = !_live),
             ),
           if (!_loading && !_notFound)
@@ -383,49 +387,58 @@ class _SharedPlanPageState extends ConsumerState<SharedPlanPage> {
       children: [
         if (_labels.isNotEmpty)
           PlanChips(labels: _labels, selected: _planIndex, todayIndex: _todayIndex, onSelected: _selectPlan),
-        Card(
-          margin: const EdgeInsets.all(12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              ListTile(
-                title: Row(
-                  children: [
-                    Flexible(child: Text(_title, style: Theme.of(context).textTheme.titleMedium)),
-                    if (_editMode) const Padding(
-                      padding: EdgeInsets.only(left: 4),
-                      child: Icon(Icons.edit_outlined, size: 16),
+        // Ionic: ion-list [inset]; header = plan title (+ edit icon and the
+        // "+" popover trigger in edit mode); start/end as ion-note.
+        IonInsetList(
+          headerWidget: IonListHeader(
+            trailing: _editMode
+                ? Builder(
+                    builder: (anchor) => IconButton(
+                      color: AppColors.primary,
+                      tooltip: context.l10n.attendanceAdd,
+                      icon: const Icon(Icons.add),
+                      onPressed: () => _showAddMenu(anchor),
                     ),
-                  ],
-                ),
-                onTap: _editMode ? _editTitle : null,
-                trailing: _editMode
-                    ? IconButton(tooltip: context.l10n.attendanceAdd, icon: const Icon(Icons.add), onPressed: _showAddMenu)
-                    : null,
-              ),
-              if (_editMode) ...[
-                ListTile(
-                  title: Text(context.l10n.attendanceStartLabel),
-                  trailing: Text(context.l10n.attendanceTimeOClock(PlanUtils.formatTime(_time))),
-                  onTap: _editStartTime,
-                ),
-                PlanFieldsEditor(
-                  fields: _fields,
-                  startTime: PlanUtils.formatTime(_time),
-                  onChanged: (f) {
-                    setState(() => _fields = PlanUtils.normalizeGroups(f));
-                    _save();
-                  },
-                ),
-                if (_end.isNotEmpty)
-                  ListTile(
-                    title: Text(context.l10n.attendanceEnd),
-                    trailing: Text(context.l10n.attendanceTimeOClock(PlanUtils.formatTime(_end))),
+                  )
+                : null,
+            titleWidget: GestureDetector(
+              onTap: _editMode ? _editTitle : null,
+              child: Text.rich(TextSpan(children: [
+                TextSpan(text: _title),
+                if (_editMode)
+                  const WidgetSpan(
+                    alignment: PlaceholderAlignment.middle,
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 4),
+                      child: Icon(Icons.edit_outlined, size: 15, color: AppColors.medium),
+                    ),
                   ),
-              ] else
-                PlanViewList(plan: _plan, date: date, liveMode: _live),
-            ],
+              ])),
+            ),
           ),
+          dividerIndent: _editMode ? 16 : null,
+          children: _editMode
+              ? [
+                  ListTile(
+                    title: Text(context.l10n.attendanceStartLabel),
+                    trailing: IonNote(context.l10n.attendanceTimeOClock(PlanUtils.formatTime(_time))),
+                    onTap: _editStartTime,
+                  ),
+                  PlanFieldsEditor(
+                    fields: _fields,
+                    startTime: PlanUtils.formatTime(_time),
+                    onChanged: (f) {
+                      setState(() => _fields = PlanUtils.normalizeGroups(f));
+                      _save();
+                    },
+                  ),
+                  if (_end.isNotEmpty)
+                    ListTile(
+                      title: Text(context.l10n.attendanceEnd),
+                      trailing: IonNote(context.l10n.attendanceTimeOClock(PlanUtils.formatTime(_end))),
+                    ),
+                ]
+              : [PlanViewList(plan: _plan, date: date, liveMode: _live)],
         ),
       ],
     );

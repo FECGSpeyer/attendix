@@ -5,6 +5,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/plan_utils.dart';
 import '../../../../data/models/plan/plan.dart';
+import 'ion_items.dart';
 import 'plan_field_dialogs.dart';
 import '../../../../l10n/l10n.dart';
 
@@ -367,7 +368,8 @@ class _PlanFieldsEditorState extends State<PlanFieldsEditor> {
       index: rowIndex,
       child: const Padding(
         padding: EdgeInsets.symmetric(horizontal: 4),
-        child: Icon(Icons.drag_handle, color: AppColors.medium),
+        // Ionic ion-reorder (reorder-three icon)
+        child: Icon(Icons.reorder, color: AppColors.medium),
       ),
     );
 
@@ -378,8 +380,10 @@ class _PlanFieldsEditorState extends State<PlanFieldsEditor> {
         isChild: false,
         child: ListTile(
           dense: true,
+          minTileHeight: 36,
           leading: const Icon(Icons.commit, color: AppColors.medium),
-          title: Text(context.l10n.planningAgendaInsertPos, style: const TextStyle(color: AppColors.medium)),
+          title: Text(context.l10n.planningAgendaInsertPos,
+              style: const TextStyle(color: AppColors.medium, fontSize: 14)),
           trailing: Row(mainAxisSize: MainAxisSize.min, children: [
             if (widget.onAddTopics != null)
               TextButton(onPressed: widget.onAddTopics, child: Text(context.l10n.attendanceAddTopics)),
@@ -389,28 +393,34 @@ class _PlanFieldsEditorState extends State<PlanFieldsEditor> {
       );
     }
 
+    // Ionic ion-label h3: 14px in the text color.
+    final h3Style = TextStyle(fontSize: 14, color: theme.colorScheme.onSurface);
     final subtitleParts = <Widget>[];
     if (isHead) {
       final start = _startMinutes;
       final range = start == null ? '' : PlanUtils.groupRange(start, _fields, index);
       final conductor = (field.conductor ?? '').isNotEmpty ? ' | ${field.conductor}' : '';
-      subtitleParts.add(Text('$range$conductor'));
-    } else if (!isNote && widget.showTimes) {
-      final conductor = (field.conductor ?? '').isNotEmpty ? ' | ${field.conductor}' : '';
-      subtitleParts.add(Text('${_timeAt(index)}$conductor'));
+      subtitleParts.add(Text('$range$conductor', style: h3Style));
     }
+    // Ionic: song warning (h3.danger) comes before the time line (h3).
     final warning = widget.fieldWarning?.call(field);
     if (warning != null && warning.isNotEmpty) {
-      subtitleParts.add(Text(warning, style: const TextStyle(color: AppColors.danger, fontSize: 12)));
+      subtitleParts.add(Text(warning, style: h3Style.copyWith(color: AppColors.danger)));
+    }
+    if (!isHead && !isNote && widget.showTimes) {
+      final conductor = (field.conductor ?? '').isNotEmpty ? ' | ${field.conductor}' : '';
+      subtitleParts.add(Text('${_timeAt(index)}$conductor', style: h3Style));
     }
     if (!isNote && (field.info ?? '').isNotEmpty) {
+      // Ionic `.field-info`: italic muted line.
       subtitleParts.add(Text(
         field.info!,
-        style: theme.textTheme.bodySmall?.copyWith(fontStyle: FontStyle.italic),
+        style: const TextStyle(fontSize: 14, fontStyle: FontStyle.italic, color: AppColors.medium),
       ));
     }
 
     final canIndent = PlanUtils.canIndent(_fields, index);
+    final isDark = theme.brightness == Brightness.dark;
 
     // Ionic: group heads show their summed duration as a badge, plain fields an
     // inline minutes input ("min"), notes nothing. Edit/indent/delete via tap
@@ -418,13 +428,14 @@ class _PlanFieldsEditorState extends State<PlanFieldsEditor> {
     final Widget? minutesWidget = isNote
         ? null
         : isHead
-            ? Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                decoration: BoxDecoration(
-                  color: AppColors.primary.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(10),
+            // Ionic `.group-duration` badge: step-100 background, step-700 text.
+            ? Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: IonBadge(
+                  label: context.l10n.planningMinShort(PlanUtils.displayMinutes(field, _fields)),
+                  color: isDark ? const Color(0xFF2E2E2E) : const Color(0xFFE6E6E6),
+                  textColor: isDark ? const Color(0xFFB3B3B3) : const Color(0xFF4D4D4D),
                 ),
-                child: Text(context.l10n.planningMinShort(PlanUtils.displayMinutes(field, _fields)), style: const TextStyle(fontSize: 12)),
               )
             : _MinutesInput(
                 key: ValueKey('min-${field.id}'),
@@ -432,52 +443,60 @@ class _PlanFieldsEditorState extends State<PlanFieldsEditor> {
                 onChanged: (v) => _setMinutes(index, v),
               );
 
+    Widget tile = Container(
+      // Ionic `.note-item`: grey background (#f2f2f2 / #1c1c1c), no line,
+      // tight against the field it belongs to.
+      decoration: BoxDecoration(
+        color: isNote ? (isDark ? const Color(0xFF1C1C1C) : const Color(0xFFF2F2F2)) : null,
+        border: Border(
+          bottom: isNote ? BorderSide.none : BorderSide(color: theme.dividerColor, width: 0.5),
+        ),
+      ),
+      child: ListTile(
+        dense: isNote,
+        minTileHeight: isNote ? 0 : null,
+        // Ionic `.group-child`: --padding-start 34px; group head toggle pulled left.
+        contentPadding: EdgeInsets.only(left: isHead ? 0 : (isChild ? 34 : 16), right: 0),
+        leading: isHead
+            ? IconButton(
+                tooltip: _collapsed.contains(field.id) ? context.l10n.planningExpandBlock : context.l10n.planningCollapseBlock,
+                color: AppColors.primary,
+                icon: Icon(_collapsed.contains(field.id) ? Icons.chevron_right : Icons.expand_more),
+                onPressed: () => setState(() {
+                  if (!_collapsed.remove(field.id)) _collapsed.add(field.id);
+                }),
+              )
+            : null,
+        // Ionic `fieldName`: "TOP n · Titel" for agenda fields.
+        title: Text(
+          PlanUtils.fieldDisplayName(field, PlanUtils.topNumbers(_fields)),
+          style: TextStyle(
+            fontWeight: isHead ? FontWeight.w700 : FontWeight.w400,
+            fontStyle: isNote ? FontStyle.italic : FontStyle.normal,
+            fontSize: isChild ? 15 : null,
+            color: isNote ? AppColors.medium : null,
+          ),
+        ),
+        subtitle: subtitleParts.isEmpty
+            ? null
+            : Column(crossAxisAlignment: CrossAxisAlignment.start, children: subtitleParts),
+        onTap: () => _editField(index),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (minutesWidget != null) minutesWidget,
+            dragHandle,
+          ],
+        ),
+      ),
+    );
+    if (isChild) tile = _GroupChildLine(child: tile);
+
     return _slidable(
       index: index,
       canIndent: canIndent,
       isChild: isChild,
-      child: Container(
-        margin: EdgeInsets.only(left: isChild ? 20 : 0),
-        decoration: BoxDecoration(
-          color: isNote ? AppColors.medium.withValues(alpha: 0.08) : null,
-          border: Border(
-            bottom: isNote ? BorderSide.none : BorderSide(color: theme.dividerColor.withValues(alpha: 0.3)),
-            left: isChild ? BorderSide(color: AppColors.primary.withValues(alpha: 0.4), width: 2) : BorderSide.none,
-          ),
-        ),
-        child: ListTile(
-          dense: isNote,
-          contentPadding: EdgeInsets.only(left: isHead ? 0 : 16, right: 0),
-          leading: isHead
-              ? IconButton(
-                  tooltip: _collapsed.contains(field.id) ? context.l10n.planningExpandBlock : context.l10n.planningCollapseBlock,
-                  icon: Icon(_collapsed.contains(field.id) ? Icons.chevron_right : Icons.expand_more),
-                  onPressed: () => setState(() {
-                    if (!_collapsed.remove(field.id)) _collapsed.add(field.id);
-                  }),
-                )
-              : null,
-          // Ionic `fieldName`: "TOP n · Titel" for agenda fields.
-          title: Text(
-            PlanUtils.fieldDisplayName(field, PlanUtils.topNumbers(_fields)),
-            style: TextStyle(
-              fontWeight: isHead ? FontWeight.bold : FontWeight.w500,
-              fontStyle: isNote ? FontStyle.italic : FontStyle.normal,
-            ),
-          ),
-          subtitle: subtitleParts.isEmpty
-              ? null
-              : Column(crossAxisAlignment: CrossAxisAlignment.start, children: subtitleParts),
-          onTap: () => _editField(index),
-          trailing: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (minutesWidget != null) minutesWidget,
-              dragHandle,
-            ],
-          ),
-        ),
-      ),
+      child: tile,
     );
   }
 
@@ -566,6 +585,29 @@ class _MinutesInputState extends State<_MinutesInput> {
   }
 }
 
+/// Ionic `.group-child::before`: 2px grey line at 20px over the full row height.
+class _GroupChildLine extends StatelessWidget {
+  const _GroupChildLine({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Stack(
+      children: [
+        child,
+        Positioned(
+          left: 20,
+          top: 0,
+          bottom: 0,
+          child: Container(width: 2, color: isDark ? const Color(0xFF444444) : const Color(0xFFCCCCCC)),
+        ),
+      ],
+    );
+  }
+}
+
 class _AddSubItemRow extends StatelessWidget {
   const _AddSubItemRow({super.key, required this.onTap});
 
@@ -573,16 +615,20 @@ class _AddSubItemRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(left: 20),
-      decoration: BoxDecoration(
-        border: Border(left: BorderSide(color: AppColors.primary.withValues(alpha: 0.4), width: 2)),
-      ),
-      child: ListTile(
-        dense: true,
-        leading: const Icon(Icons.add, color: AppColors.primary),
-        title: Text(context.l10n.planningAddSubItem, style: const TextStyle(color: AppColors.primary)),
-        onTap: onTap,
+    // Ionic `.group-child.group-add`: min-height 40, primary icon + label, full line.
+    return _GroupChildLine(
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border(bottom: BorderSide(color: Theme.of(context).dividerColor, width: 0.5)),
+        ),
+        child: ListTile(
+          dense: true,
+          minTileHeight: 40,
+          contentPadding: const EdgeInsets.only(left: 34, right: 16),
+          leading: const Icon(Icons.add, color: AppColors.primary),
+          title: Text(context.l10n.planningAddSubItem, style: const TextStyle(color: AppColors.primary, fontSize: 15)),
+          onTap: onTap,
+        ),
       ),
     );
   }

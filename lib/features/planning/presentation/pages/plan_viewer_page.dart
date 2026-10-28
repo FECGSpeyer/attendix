@@ -7,6 +7,8 @@ import '../../../../core/utils/plan_utils.dart';
 import '../../../../data/models/plan/plan.dart';
 import '../widgets/plan_export_actions.dart';
 import '../widgets/plan_view_list.dart';
+import '../widgets/ion_items.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../l10n/l10n.dart';
 
 /// Read-only Ablaufplan with chips for several plans, live mode and export
@@ -90,28 +92,35 @@ class _PlanViewerPageState extends ConsumerState<PlanViewerPage> {
     );
   }
 
-  Future<void> _export() async {
-    var all = false;
-    if (_labels.length > 1) {
-      final scope = await showModalBottomSheet<bool>(
-        context: context,
-        builder: (ctx) => SafeArea(
-          child: Column(mainAxisSize: MainAxisSize.min, children: [
-            ListTile(title: Text(ctx.l10n.planningOnlyLabel(_labels[_index])), onTap: () => Navigator.pop(ctx, false)),
-            ListTile(title: Text(ctx.l10n.planningAllPlans(_labels.length)), onTap: () => Navigator.pop(ctx, true)),
-          ]),
-        ),
-      );
-      if (scope == null) return;
-      all = scope;
-    }
-    if (!mounted) return;
+  String get _fileName {
     final date = _date;
+    return '${_title}_${date != null ? '${date.day.toString().padLeft(2, '0')}_${date.month.toString().padLeft(2, '0')}_${date.year}' : ''}';
+  }
+
+  Future<void> _export() async {
+    if (_labels.isNotEmpty) {
+      // Ionic: openPlanShareSheet (segment "Nur …" / "Alle n Pläne" + options).
+      final choice = await showPlanShareSheet(
+        context,
+        ref,
+        currentLabel: _labels[_index],
+        planCount: _labels.length,
+      );
+      if (choice == null || !mounted) return;
+      await runPlanExport(
+        context,
+        ref,
+        choice.action,
+        pages: choice.all ? [for (var i = 0; i < _plans.length; i++) _page(i)] : [_page(_index)],
+        fileName: _fileName,
+      );
+      return;
+    }
     await showPlanExportSheet(
       context,
       ref,
-      pages: () => all ? [for (var i = 0; i < _plans.length; i++) _page(i)] : [_page(_index)],
-      fileName: '${_title}_${date != null ? '${date.day.toString().padLeft(2, '0')}_${date.month.toString().padLeft(2, '0')}_${date.year}' : ''}',
+      pages: () => [_page(_index)],
+      fileName: _fileName,
     );
   }
 
@@ -131,8 +140,9 @@ class _PlanViewerPageState extends ConsumerState<PlanViewerPage> {
           if (_isLiveNow())
             IconButton(
               tooltip: _live ? context.l10n.planningFlutterLiveModeEnd : context.l10n.planningFlutterLiveMode,
-              icon: Icon(_live ? Icons.radio_button_checked : Icons.radio_button_unchecked,
-                  color: _live ? Colors.red : null),
+              // Ionic: radio / radio-outline, danger while live.
+              color: _live ? AppColors.danger : AppColors.primary,
+              icon: Icon(_live ? Icons.sensors : Icons.sensors_outlined),
               onPressed: () => setState(() => _live = !_live),
             ),
           if (widget.onEdit != null)
@@ -164,29 +174,28 @@ class _PlanViewerPageState extends ConsumerState<PlanViewerPage> {
               }),
             ),
           if (_plan.fields.isEmpty)
-            Padding(
-              padding: const EdgeInsets.all(24),
-              child: Text(context.l10n.planningNoPlanAvailable),
+            // Ionic: ion-card with "Kein Ablaufplan vorhanden".
+            Card(
+              margin: const EdgeInsets.all(16),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Text(context.l10n.planningNoPlanAvailable, textAlign: TextAlign.center),
+              ),
             )
           else
-            Card(
-              margin: const EdgeInsets.all(12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-                    child: Text(_title, style: Theme.of(context).textTheme.titleMedium),
-                  ),
-                  PlanViewList(
-                    plan: _plan,
-                    date: date,
-                    liveMode: _live,
-                    fieldWarning: widget.fieldWarning,
-                  ),
-                ],
-              ),
+            // Ionic: ion-list [inset] with header "Ablauf".
+            IonInsetList(
+              header: context.l10n.planningRunSheet,
+              children: [
+                PlanViewList(
+                  plan: _plan,
+                  date: date,
+                  liveMode: _live,
+                  fieldWarning: widget.fieldWarning,
+                ),
+              ],
             ),
+          const SizedBox(height: 16),
         ],
       ),
     );

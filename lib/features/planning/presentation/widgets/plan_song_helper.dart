@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import '../../../../core/utils/plan_utils.dart';
 import '../../../../data/models/plan/plan.dart';
 import '../../../../data/models/song/song.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../l10n/l10n.dart';
+import 'ion_items.dart';
 
 /// Song related helpers of the Ablaufplan editor (Ionic `PlanningPage`
 /// `onSongsChange`, `addCurrentSongs`, `resolvePlaceholderFields`).
@@ -83,13 +85,13 @@ class PlanSongHelper {
   }
 }
 
-/// Searchable song picker ("Werk hinzufügen").
+/// Searchable song picker (Ionic `songSelectModal`: "Werk auswählen" with a
+/// searchbar toolbar and an inset list).
 Future<Song?> showPlanSongPicker(BuildContext context, List<Song> songs) {
-  return showModalBottomSheet<Song>(
-    context: context,
-    isScrollControlled: true,
-    builder: (ctx) => _SongPicker(songs: songs),
-  );
+  return Navigator.of(context, rootNavigator: true).push<Song>(MaterialPageRoute(
+    fullscreenDialog: true,
+    builder: (_) => _SongPicker(songs: songs),
+  ));
 }
 
 class _SongPicker extends StatefulWidget {
@@ -105,42 +107,53 @@ class _SongPickerState extends State<_SongPicker> {
 
   @override
   Widget build(BuildContext context) {
-    final q = _query.toLowerCase();
+    final q = _query.trim().toLowerCase();
     final filtered = widget.songs.where((s) {
       if (q.isEmpty) return true;
-      final label = '${s.prefix ?? ''}${s.number ?? ''} ${s.name}'.toLowerCase();
+      final label = '${s.prefix ?? ''}${s.number ?? ''} ${s.name} ${s.composer ?? ''}'.toLowerCase();
       return label.contains(q);
     }).toList();
-    return SafeArea(
-      child: SizedBox(
-        height: MediaQuery.of(context).size.height * 0.75,
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(12),
-              child: TextField(
-                autofocus: true,
-                decoration: InputDecoration(
-                  hintText: context.l10n.attListSearchSong,
-                  prefixIcon: const Icon(Icons.search),
-                ),
-                onChanged: (v) => setState(() => _query = v),
-              ),
-            ),
-            Expanded(
-              child: ListView.builder(
-                itemCount: filtered.length,
-                itemBuilder: (_, i) {
-                  final s = filtered[i];
-                  return ListTile(
-                    title: Text('${s.prefix ?? ''}${s.number ?? ''}. ${s.name}'),
-                    onTap: () => Navigator.pop(context, s),
-                  );
-                },
-              ),
-            ),
-          ],
+    return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: Text(context.l10n.planningChooseSong),
+        actions: [
+          IconButton(
+            tooltip: context.l10n.commonClose,
+            icon: const Icon(Icons.close),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+        ],
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(52),
+          child: IonSearchbar(
+            placeholder: context.l10n.attListSearchSong,
+            onChanged: (v) => setState(() => _query = v),
+          ),
         ),
+      ),
+      body: ListView(
+        padding: const EdgeInsets.only(bottom: 16),
+        children: [
+          if (filtered.isEmpty && q.isNotEmpty)
+            IonInsetList(children: [
+              ListTile(
+                title: Text(context.l10n.attListNoSongsFound,
+                    textAlign: TextAlign.center, style: const TextStyle(color: AppColors.medium, fontSize: 14)),
+              ),
+            ]),
+          if (filtered.isNotEmpty)
+            IonInsetList(children: [
+              for (final s in filtered)
+                ListTile(
+                  title: Text('${s.prefix ?? ''}${s.number ?? ''} ${s.name}'),
+                  subtitle: (s.composer ?? '').isNotEmpty
+                      ? Text(s.composer!, style: const TextStyle(color: AppColors.medium))
+                      : null,
+                  onTap: () => Navigator.pop(context, s),
+                ),
+            ]),
+        ],
       ),
     );
   }

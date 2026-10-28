@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
-import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/attendance_detail_providers.dart';
 import '../../../../core/providers/debug_providers.dart';
 import '../../../../core/providers/group_providers.dart';
@@ -26,6 +25,7 @@ import '../widgets/plan_field_dialogs.dart';
 import '../widgets/plan_fields_editor.dart';
 import '../widgets/plan_song_helper.dart';
 import '../widgets/plan_view_list.dart';
+import '../widgets/ion_items.dart';
 import '../widgets/register_plan_sheet.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../songs/presentation/utils/song_utils.dart';
@@ -658,7 +658,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     return _att?.id != null && _planIndex == 0 && hasProtocol && ref.read(isTeamLeaderProvider);
   }
 
-  Future<void> _showAddMenu() async {
+  Future<void> _showAddMenu(BuildContext anchorContext) async {
     final role = ref.read(effectiveRoleProvider);
     final tenant = ref.read(currentTenantProvider);
     final isGeneral = tenant?.type == 'general';
@@ -671,94 +671,88 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     final canAddTopics = _att?.id != null && _planIndex == 0 && hasProtocol && ref.read(isTeamLeaderProvider);
     final canInsertAgenda = hasProtocol && _planIndex == 0 && !_fields.any(PlanUtils.isAgendaPlaceholder);
 
-    final action = await showModalBottomSheet<String>(
-      context: context,
-      isScrollControlled: true,
-      builder: (ctx) => SafeArea(
-        child: ConstrainedBox(
-          constraints: BoxConstraints(maxHeight: MediaQuery.of(ctx).size.height * 0.8),
-          child: ListView(
-            shrinkWrap: true,
+    // Ionic: ion-popover (class add-popover, max 70vh) anchored to the "+".
+    final l10n = context.l10n;
+    PopupMenuItem<String> item(String value, String label, {Widget? icon, String? note, Color? color, Widget? trailing}) =>
+        PopupMenuItem<String>(
+          value: value,
+          child: Row(
             children: [
-              ListTile(
-                  leading: const Icon(Icons.add),
-                  title: Text(ctx.l10n.planningAddField),
-                  onTap: () => Navigator.pop(ctx, 'field')),
-              ListTile(
-                  leading: const Icon(Icons.view_agenda_outlined),
-                  title: Text(ctx.l10n.planningAddBlock),
-                  onTap: () => Navigator.pop(ctx, 'group')),
-              ListTile(
-                  leading: const Icon(Icons.sticky_note_2_outlined),
-                  title: Text(ctx.l10n.planningAddNoteField),
-                  onTap: () => Navigator.pop(ctx, 'note')),
-              if (!isGeneral) ...[
-                ListTile(
-                    leading: const Icon(Icons.library_music_outlined),
-                    title: Text(ctx.l10n.planningAddCurrentSongs),
-                    onTap: () => Navigator.pop(ctx, 'current')),
-                if (_songs.isNotEmpty)
-                  ListTile(
-                      leading: const Icon(Icons.music_note_outlined),
-                      title: Text(ctx.l10n.planningAddSong),
-                      onTap: () => Navigator.pop(ctx, 'song')),
-              ],
-              // PROTOCOL
-              if (canAddTopics)
-                ListTile(
-                    leading: const Icon(Icons.playlist_add_circle_outlined, color: AppColors.primary),
-                    title: Text(ctx.l10n.attendanceAddTopics),
-                    onTap: () => Navigator.pop(ctx, 'topics')),
-              if (canInsertAgenda)
-                ListTile(
-                    leading: const Icon(Icons.commit, color: AppColors.medium),
-                    title: Text(ctx.l10n.planningInsertAgenda),
-                    onTap: () => Navigator.pop(ctx, 'agenda')),
-              if (blockTemplates.isNotEmpty) ...[
-                const Divider(),
-                _MenuHeader(ctx.l10n.planningBlocks),
-                for (final tpl in blockTemplates)
-                  ListTile(
-                    title: Text(tpl.name),
-                    subtitle: Text(ctx.l10n.planningMinShort(PlanUtils.templateMinutes(tpl))),
-                    onTap: () => Navigator.pop(ctx, 'block:${tpl.id}'),
-                    trailing: role.isAdmin
-                        ? IconButton(
-                            tooltip: ctx.l10n.planningDeleteTemplate,
-                            icon: const Icon(Icons.delete_outline),
-                            onPressed: () => Navigator.pop(ctx, 'delblock:${tpl.id}'),
-                          )
-                        : null,
-                  ),
-              ],
-              if (orgTemplates.isNotEmpty) ...[
-                const Divider(),
-                _MenuHeader(ctx.l10n.planningTemplates),
-                for (var i = 0; i < orgTemplates.length; i++)
-                  ListTile(title: Text(orgTemplates[i].title ?? ''), onTap: () => Navigator.pop(ctx, 'tpl:$i')),
-              ],
-              if (orgFields.isNotEmpty) ...[
-                const Divider(),
-                _MenuHeader(ctx.l10n.planningFields),
-                for (var i = 0; i < orgFields.length; i++)
-                  ListTile(
-                    title: Text(orgFields[i].name),
-                    subtitle: Text(ctx.l10n.planningMinShort(orgFields[i].time)),
-                    onTap: () => Navigator.pop(ctx, 'orgfield:$i'),
-                  ),
-              ],
-              if (_att != null) ...[
-                const Divider(),
-                ListTile(
-                  leading: const Icon(Icons.copy_outlined, color: AppColors.medium),
-                  title: Text(ctx.l10n.planningAddAnotherPlan, style: const TextStyle(color: AppColors.medium)),
-                  onTap: () => Navigator.pop(ctx, 'plan'),
-                ),
-              ],
+              if (icon != null) ...[icon, const SizedBox(width: 12)],
+              Expanded(
+                child: Text.rich(TextSpan(children: [
+                  TextSpan(text: label, style: color != null ? TextStyle(color: color) : null),
+                  if (note != null) TextSpan(text: ' $note', style: const TextStyle(color: AppColors.medium)),
+                ])),
+              ),
+              if (trailing != null) trailing,
             ],
           ),
-        ),
-      ),
+        );
+    PopupMenuItem<String> section(String label) => PopupMenuItem<String>(
+          enabled: false,
+          height: 32,
+          child: Text(label,
+              style: TextStyle(
+                  fontSize: 12, fontWeight: FontWeight.bold, color: Theme.of(context).textTheme.bodyMedium?.color)),
+        );
+    final box = anchorContext.findRenderObject() as RenderBox;
+    final overlay = Navigator.of(anchorContext).overlay!.context.findRenderObject() as RenderBox;
+    final topLeft = box.localToGlobal(Offset(0, box.size.height), ancestor: overlay);
+    final bottomRight = box.localToGlobal(box.size.bottomRight(Offset.zero), ancestor: overlay);
+    final action = await showMenu<String>(
+      context: anchorContext,
+      position: RelativeRect.fromRect(Rect.fromPoints(topLeft, bottomRight), Offset.zero & overlay.size),
+      constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.7, minWidth: 250, maxWidth: 320),
+      items: [
+        item('field', l10n.planningAddField),
+        item('group', l10n.planningAddBlock),
+        item('note', l10n.planningAddNoteField),
+        if (!isGeneral) item('current', l10n.planningAddCurrentSongs),
+        if (!isGeneral && _songs.isNotEmpty) item('song', l10n.planningAddSong),
+        // PROTOCOL
+        if (canAddTopics)
+          item('topics', l10n.attendanceAddTopics,
+              icon: const Icon(Icons.playlist_add_circle_outlined, color: AppColors.primary)),
+        if (canInsertAgenda)
+          item('agenda', l10n.planningInsertAgenda, icon: const Icon(Icons.commit, color: AppColors.medium)),
+        if (blockTemplates.isNotEmpty) ...[
+          const PopupMenuDivider(),
+          section(l10n.planningBlocks),
+          for (final tpl in blockTemplates)
+            item(
+              'block:${tpl.id}',
+              tpl.name,
+              note: l10n.planningMinShort(PlanUtils.templateMinutes(tpl)),
+              trailing: role.isAdmin
+                  ? Builder(
+                      builder: (menuCtx) => IconButton(
+                        tooltip: l10n.planningDeleteTemplate,
+                        visualDensity: VisualDensity.compact,
+                        color: AppColors.medium,
+                        icon: const Icon(Icons.delete_outline, size: 20),
+                        onPressed: () => Navigator.pop(menuCtx, 'delblock:${tpl.id}'),
+                      ),
+                    )
+                  : null,
+            ),
+        ],
+        if (orgTemplates.isNotEmpty || orgFields.isNotEmpty) const PopupMenuDivider(),
+        if (orgTemplates.isNotEmpty) ...[
+          section(l10n.planningTemplates),
+          for (var i = 0; i < orgTemplates.length; i++) item('tpl:$i', orgTemplates[i].title ?? ''),
+        ],
+        if (orgFields.isNotEmpty) ...[
+          section(l10n.planningFields),
+          for (var i = 0; i < orgFields.length; i++)
+            item('orgfield:$i', orgFields[i].name, note: l10n.planningMinShort(orgFields[i].time)),
+        ],
+        if (_att != null) ...[
+          const PopupMenuDivider(),
+          item('plan', l10n.planningAddAnotherPlan,
+              icon: const Icon(Icons.copy_outlined, color: AppColors.medium), color: AppColors.medium),
+        ],
+      ],
     );
     if (action == null || !mounted) return;
     if (action.startsWith('block:')) {
@@ -1072,15 +1066,23 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
             padding: const EdgeInsets.only(bottom: 96),
             children: [
               _buildAttendanceCard(att),
-              Card(
-                margin: const EdgeInsets.fromLTRB(
-                    AppDimensions.paddingM, 0, AppDimensions.paddingM, AppDimensions.paddingM),
-                child: Column(
+              // Ionic: second ion-list [inset] "Ablauf" with the "+" popover
+              // trigger, the plan chips and the white item group.
+              IonInsetList(
+                dividerIndent: null,
+                headerWidget: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    ListTile(
-                      title: Text(context.l10n.planningRunSheet, style: const TextStyle(fontWeight: FontWeight.bold)),
-                      trailing: IconButton(icon: const Icon(Icons.add), onPressed: _showAddMenu),
+                    IonListHeader(
+                      title: context.l10n.planningRunSheet,
+                      trailing: Builder(
+                        builder: (anchor) => IconButton(
+                          color: AppColors.primary,
+                          tooltip: context.l10n.planningAddField,
+                          icon: const Icon(Icons.add),
+                          onPressed: () => _showAddMenu(anchor),
+                        ),
+                      ),
                     ),
                     if (labels.isNotEmpty)
                       PlanChips(
@@ -1089,34 +1091,38 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
                         onSelected: _selectPlan,
                         trailing: IconButton(
                           tooltip: context.l10n.planningPlanOptions,
+                          color: AppColors.medium,
                           icon: const Icon(Icons.more_horiz),
                           onPressed: _showPlanOptions,
                         ),
                       ),
-                    ListTile(
-                      title: Text(context.l10n.attendanceStartLabel),
-                      trailing: TextButton(onPressed: _pickTime, child: Text(context.l10n.attendanceTimeOClock(_time))),
-                    ),
-                    const Divider(height: 1),
-                    PlanFieldsEditor(
-                      fields: _fields,
-                      startTime: _time,
-                      onChanged: (f) {
-                        setState(() => _fields = f);
-                        _changed();
-                      },
-                      blockTemplateNames: blockTemplates.map((t) => t.name).toSet(),
-                      onAddTopics: _canAddTopics ? _openAgendaPicker : null,
-                      fieldWarning: _missingGroups,
-                      onSaveBlockTemplate: role.isAdmin ? _saveBlockTemplate : null,
-                    ),
-                    if (_fields.isNotEmpty)
-                      ListTile(
-                        title: Text(context.l10n.attendanceEnd),
-                        trailing: Text(context.l10n.attendanceTimeOClock(PlanUtils.formatTime(_end)), style: const TextStyle(fontWeight: FontWeight.bold)),
-                      ),
                   ],
                 ),
+                children: [
+                  ListTile(
+                    title: Text(context.l10n.attendanceStartLabel),
+                    trailing: IonDatetimeChip(text: _time, onTap: _pickTime),
+                  ),
+                  const Divider(height: 1, indent: 16),
+                  PlanFieldsEditor(
+                    fields: _fields,
+                    startTime: _time,
+                    onChanged: (f) {
+                      setState(() => _fields = f);
+                      _changed();
+                    },
+                    blockTemplateNames: blockTemplates.map((t) => t.name).toSet(),
+                    onAddTopics: _canAddTopics ? _openAgendaPicker : null,
+                    fieldWarning: _missingGroups,
+                    onSaveBlockTemplate: role.isAdmin ? _saveBlockTemplate : null,
+                  ),
+                  if (_fields.isNotEmpty)
+                    ListTile(
+                      title: Text(context.l10n.attendanceEnd),
+                      // Ionic: disabled ion-datetime-button (read-only chip)
+                      trailing: IonDatetimeChip(text: PlanUtils.formatTime(_end)),
+                    ),
+                ],
               ),
             ],
           ),
@@ -1127,123 +1133,101 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
 
   Widget _buildAttendanceCard(PlanAttendance? att) {
     final org = ref.watch(currentOrganisationProvider).valueOrNull;
-    return Card(
-      margin: const EdgeInsets.all(AppDimensions.paddingM),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 4),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            ListTile(
-              title: Text(context.l10n.planningRelatedAttendance, style: const TextStyle(fontWeight: FontWeight.bold)),
-              trailing: IconButton(
-                  tooltip: context.l10n.planningResetPlan, icon: const Icon(Icons.refresh), onPressed: _resetPlan),
-            ),
-            if (_attendances.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: DropdownButtonFormField<int>(
-                  key: ValueKey(_attId),
-                  isExpanded: true,
-                  value: _attId,
-                  decoration: InputDecoration(labelText: context.l10n.planningCurrent),
-                  items: [
-                    for (final a in _attendances)
-                      if (a.id != null)
-                        DropdownMenuItem(value: a.id, child: Text(_attLabel(a), overflow: TextOverflow.ellipsis)),
-                  ],
-                  onChanged: _selectAttendance,
-                ),
-              )
-            else
-              ListTile(title: Text(context.l10n.planningFlutterNoEvents)),
-            if (att != null && (att.notes ?? '').isNotEmpty)
-              ListTile(
-                title: Text(context.l10n.planningAttendanceNotes, style: const TextStyle(fontSize: 12, color: AppColors.medium)),
-                subtitle: Text(att.notes!),
-              ),
-            if (att != null) ...[
-              SwitchListTile(
-                title: Text(context.l10n.planningShareWithMembers),
-                value: _sharePlan,
-                onChanged: (v) async {
-                  setState(() => _sharePlan = v);
-                  try {
-                    await _updateFlags({'share_plan': v});
-                  } catch (_) {
-                    if (mounted) setState(() => _sharePlan = !v);
-                  }
-                },
-              ),
-              if (org != null)
-                SwitchListTile(
-                  title: Text(context.l10n.planningOrgPlan),
-                  value: _isOrgPlan,
-                  onChanged: (v) async {
-                    setState(() => _isOrgPlan = v);
-                    try {
-                      await _updateFlags({'is_org_plan': v});
-                    } catch (_) {
-                      if (mounted) setState(() => _isOrgPlan = !v);
-                    }
-                  },
-                ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Focus(
-                  onFocusChange: (f) {
-                    if (!f) _changed();
-                  },
-                  child: TextField(
-                    controller: _titleController,
-                    textCapitalization: TextCapitalization.sentences,
-                    decoration: InputDecoration(
-                      labelText: context.l10n.planningHeadingLabel,
-                      hintText: context.l10n.planningDefaultTitle,
-                    ),
-                  ),
-                ),
-              ),
+    // Ionic: ion-list [inset] with header "Zugehöriger Termin" + reset button;
+    // the items have lines="none".
+    return IonInsetList(
+      header: context.l10n.planningRelatedAttendance,
+      headerTrailing: IconButton(
+        color: AppColors.primary,
+        tooltip: context.l10n.planningResetPlan,
+        icon: const Icon(Icons.refresh),
+        onPressed: _resetPlan,
+      ),
+      dividerIndent: null,
+      children: [
+        if (_attendances.isNotEmpty)
+          IonSelect<int>(
+            key: ValueKey(_attId),
+            label: context.l10n.planningCurrent,
+            value: _attId,
+            items: [
+              for (final a in _attendances)
+                if (a.id != null)
+                  DropdownMenuItem(value: a.id, child: Text(_attLabel(a), overflow: TextOverflow.ellipsis)),
             ],
-            // MISC2: "Branding einbeziehen" (only when logo/text configured)
-            if (ref.watch(hasBrandingProvider))
-              SwitchListTile(
-                title: Text(context.l10n.planningIncludeBranding),
-                value: ref.watch(includeBrandingProvider),
-                onChanged: (v) => ref.read(includeBrandingProvider.notifier).state = v,
+            onChanged: _selectAttendance,
+          )
+        else
+          ListTile(title: Text(context.l10n.planningFlutterNoEvents)),
+        if (att != null && (att.notes ?? '').isNotEmpty) ...[
+          const Divider(height: 1, indent: 16),
+          ListTile(
+            title: Text(context.l10n.planningAttendanceNotes,
+                style: const TextStyle(fontSize: 12, color: AppColors.medium)),
+            subtitle: Text(att.notes!),
+          ),
+        ],
+        if (att != null) ...[
+          SwitchListTile(
+            title: Text(context.l10n.planningShareWithMembers),
+            value: _sharePlan,
+            onChanged: (v) async {
+              setState(() => _sharePlan = v);
+              try {
+                await _updateFlags({'share_plan': v});
+              } catch (_) {
+                if (mounted) setState(() => _sharePlan = !v);
+              }
+            },
+          ),
+          if (org != null)
+            SwitchListTile(
+              title: Text(context.l10n.planningOrgPlan),
+              value: _isOrgPlan,
+              onChanged: (v) async {
+                setState(() => _isOrgPlan = v);
+                try {
+                  await _updateFlags({'is_org_plan': v});
+                } catch (_) {
+                  if (mounted) setState(() => _isOrgPlan = !v);
+                }
+              },
+            ),
+          IonStackedInput(
+            controller: _titleController,
+            label: context.l10n.planningHeadingLabel,
+            hint: context.l10n.planningDefaultTitle,
+            onFocusLost: _changed,
+          ),
+        ],
+        // MISC2: "Branding einbeziehen" (only when logo/text configured)
+        if (ref.watch(hasBrandingProvider))
+          SwitchListTile(
+            title: Text(context.l10n.planningIncludeBranding),
+            value: ref.watch(includeBrandingProvider),
+            onChanged: (v) => ref.read(includeBrandingProvider.notifier).state = v,
+          ),
+        // Ionic: two small clear buttons (expand="full") side by side.
+        Row(
+          children: [
+            Expanded(
+              child: TextButton.icon(
+                onPressed: () => _navigate(-1),
+                icon: const Icon(Icons.arrow_back, size: 18),
+                label: Text(context.l10n.planningPrevious),
               ),
-            Row(
-              children: [
-                Expanded(
-                  child: TextButton.icon(
-                    onPressed: () => _navigate(-1),
-                    icon: const BackButtonIcon(),
-                    label: Text(context.l10n.planningPrevious),
-                  ),
-                ),
-                Expanded(
-                  child: TextButton.icon(
-                    onPressed: () => _navigate(1),
-                    icon: const Icon(Icons.arrow_forward),
-                    label: Text(context.l10n.planningNext),
-                  ),
-                ),
-              ],
+            ),
+            Expanded(
+              child: TextButton.icon(
+                onPressed: () => _navigate(1),
+                iconAlignment: IconAlignment.end,
+                icon: const Icon(Icons.arrow_forward, size: 18),
+                label: Text(context.l10n.planningNext),
+              ),
             ),
           ],
         ),
-      ),
+      ],
     );
   }
-}
-
-class _MenuHeader extends StatelessWidget {
-  const _MenuHeader(this.text);
-  final String text;
-
-  @override
-  Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
-        child: Text(text, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: AppColors.medium)),
-      );
 }
