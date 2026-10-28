@@ -341,247 +341,300 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     );
   }
 
+  /// Ionic login.page.scss: ion-item with stacked label and a primary-tinted
+  /// bottom line instead of a filled/outlined field.
+  InputDecoration _ionInputDecoration(String label, {Widget? suffixIcon}) {
+    final line = UnderlineInputBorder(
+      borderSide: BorderSide(color: AppColors.primary.withValues(alpha: 0.3)),
+    );
+    return InputDecoration(
+      labelText: label,
+      hintText: label,
+      floatingLabelBehavior: FloatingLabelBehavior.always,
+      filled: false,
+      contentPadding: const EdgeInsets.symmetric(vertical: 8),
+      border: line,
+      enabledBorder: line,
+      focusedBorder: const UnderlineInputBorder(
+        borderSide: BorderSide(color: AppColors.primary, width: 2),
+      ),
+      suffixIcon: suffixIcon,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final cardColor = Theme.of(context).cardTheme.color ??
+        Theme.of(context).colorScheme.surface;
+    const footerStyle = TextStyle(fontSize: 13, color: Colors.white);
+
+    // Ionic login: background photo, centered card (60 % / 95 % under
+    // 700px, max 500px) with the round app logo overlapping its top edge and
+    // the version/demo/legal line in white at the bottom of the screen.
     return Scaffold(
-      body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(AppDimensions.paddingL),
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: AppDimensions.maxFormWidth),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    // Logo/Title
-                    const Icon(
-                      Icons.people_outline,
-                      size: 80,
-                      color: AppColors.primary,
-                    ),
-                    const SizedBox(height: AppDimensions.paddingM),
-                    Text(
-                      'Attendix',
-                      style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.primary,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: AppDimensions.paddingXS),
-                    Text(
-                      'Anwesenheitsverwaltung',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: AppColors.medium,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: AppDimensions.paddingXL),
-
-                    // Error message
-                    if (_errorMessage != null) ...[
-                      Container(
-                        padding: const EdgeInsets.all(AppDimensions.paddingM),
-                        decoration: BoxDecoration(
-                          color: AppColors.danger.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(AppDimensions.borderRadiusM),
-                        ),
-                        child: Row(
-                          children: [
-                            const Icon(Icons.error_outline, color: AppColors.danger),
-                            const SizedBox(width: AppDimensions.paddingS),
-                            Expanded(
-                              child: Text(
-                                _errorMessage!,
-                                style: const TextStyle(color: AppColors.danger),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: AppDimensions.paddingM),
-                    ],
-
-                    // AUTH: mode segment (Passwort / Code per E-Mail)
-                    AuthModeSegment(
-                      mode: _mode,
-                      enabled: !_isLoading,
-                      onChanged: _setMode,
-                    ),
-                    const SizedBox(height: AppDimensions.paddingM),
-
-                    // Email field
-                    TextFormField(
-                      controller: _emailController,
-                      keyboardType: TextInputType.emailAddress,
-                      textInputAction: _mode == AuthMode.password
-                          ? TextInputAction.next
-                          : TextInputAction.go,
-                      autocorrect: false,
-                      readOnly: _mode == AuthMode.otp && _otpSent,
-                      autofillHints: const [AutofillHints.email],
-                      onFieldSubmitted: _mode == AuthMode.otp && !_otpSent
-                          ? (_) => _requestCode()
-                          : null,
-                      decoration: const InputDecoration(
-                        labelText: 'E-Mail',
-                        prefixIcon: Icon(Icons.email_outlined),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return 'Bitte gib deine E-Mail-Adresse ein.';
-                        }
-                        if (!isValidEmail(value)) {
-                          return 'Bitte eine gültige E-Mail Adresse eingeben.';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: AppDimensions.paddingM),
-
-                    if (_mode == AuthMode.password) ...[
-                      // Password field
-                      TextFormField(
-                        controller: _passwordController,
-                        obscureText: _obscurePassword,
-                        textInputAction: TextInputAction.done,
-                        autofillHints: const [AutofillHints.password],
-                        onFieldSubmitted: (_) => _onSubmit(),
-                        decoration: InputDecoration(
-                          labelText: 'Passwort',
-                          prefixIcon: const Icon(Icons.lock_outlined),
-                          suffixIcon: IconButton(
-                            tooltip: 'Passwort anzeigen',
-                            icon: Icon(
-                              _obscurePassword
-                                  ? Icons.visibility_outlined
-                                  : Icons.visibility_off_outlined,
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                _obscurePassword = !_obscurePassword;
-                              });
-                            },
-                          ),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Bitte Passwort eingeben';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: AppDimensions.paddingS),
-
-                      // Register + forgot password links (Ionic)
-                      Wrap(
-                        alignment: WrapAlignment.spaceBetween,
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          Image.asset(
+            'assets/images/login_bg.jpg',
+            fit: BoxFit.cover,
+            errorBuilder: (_, __, ___) =>
+                const ColoredBox(color: AppColors.primary),
+          ),
+          SafeArea(
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final width = constraints.maxWidth;
+                final cardWidth =
+                    (width < 700 ? width * 0.95 : width * 0.6).clamp(0.0, 500.0);
+                return Center(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.only(top: 80, bottom: 56),
+                    child: SizedBox(
+                      width: cardWidth,
+                      child: Stack(
+                        clipBehavior: Clip.none,
+                        alignment: Alignment.topCenter,
                         children: [
-                          TextButton(
-                            onPressed: _openRegister,
-                            child: const Text('Registrieren'),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              final email = _emailController.text.trim();
-                              context.push(email.isNotEmpty
-                                  ? '/forgot-password?email=${Uri.encodeComponent(email)}'
-                                  : '/forgot-password');
-                            },
-                            child: const Text('Passwort vergessen?'),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: AppDimensions.paddingM),
-                      _primaryButton('Anmelden', _login),
-                    ] else if (!_otpSent) ...[
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: TextButton(
-                          onPressed: _openRegister,
-                          child: const Text('Registrieren'),
-                        ),
-                      ),
-                      const SizedBox(height: AppDimensions.paddingM),
-                      _primaryButton('Code senden', _requestCode),
-                    ] else ...[
-                      OtpCodeField(
-                        controller: _otpController,
-                        enabled: !_isLoading,
-                        onCompleted: (_) => _verifyCode(),
-                      ),
-                      const SizedBox(height: AppDimensions.paddingM),
-                      _primaryButton('Anmelden', _verifyCode),
-                      const SizedBox(height: AppDimensions.paddingS),
-                      Center(
-                        child: ResendCodeButton(
-                          cooldown: _cooldown,
-                          enabled: !_isLoading,
-                          onResend: _requestCode,
-                        ),
-                      ),
-                    ],
-                    const SizedBox(height: AppDimensions.paddingL),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'v${AppConstants.appVersion}',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: AppColors.medium,
-                          ),
-                        ),
-                        if (AppConstants.demoMail.isNotEmpty && AppConstants.demoPassword.isNotEmpty) ...[
-                          Text(
-                            ' | ',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: AppColors.medium,
+                          Container(
+                            padding: const EdgeInsets.fromLTRB(24, 28, 24, 24),
+                            decoration: BoxDecoration(
+                              color: cardColor,
+                              borderRadius: BorderRadius.circular(20),
+                              boxShadow: const [
+                                BoxShadow(
+                                  color: Color(0x73000000),
+                                  blurRadius: 60,
+                                  spreadRadius: -15,
+                                  offset: Offset(0, 20),
+                                ),
+                              ],
+                            ),
+                            child: Padding(
+                              // room for the overlapping logo (115 - 80) + 2rem
+                              padding: const EdgeInsets.only(top: 35 + 32),
+                              child: _buildForm(context),
                             ),
                           ),
-                          GestureDetector(
-                            onTap: _startDemo,
-                            child: Text(
-                              'Demo starten',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: AppColors.primary,
-                                fontWeight: FontWeight.w500,
+                          Positioned(
+                            top: -80,
+                            child: Container(
+                              width: 115,
+                              height: 115,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: cardColor,
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: Color(0x8F000000),
+                                    blurRadius: 38,
+                                    spreadRadius: -12,
+                                    offset: Offset(0, 16),
+                                  ),
+                                ],
+                              ),
+                              clipBehavior: Clip.antiAlias,
+                              child: Image.asset(
+                                'assets/images/logo.png',
+                                fit: BoxFit.cover,
+                                errorBuilder: (_, __, ___) => const Icon(
+                                  Icons.people_outline,
+                                  size: 64,
+                                  color: AppColors.primary,
+                                ),
                               ),
                             ),
                           ),
                         ],
-                        // LEGAL_HELP: Impressum & Datenschutz modal
-                        Text(
-                          ' | ',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: AppColors.medium,
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: () => showLegalModal(context),
-                          child: Text(
-                            'Impressum & Datenschutz',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: AppColors.primary,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      ],
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 16,
+            child: SafeArea(
+              top: false,
+              child: Wrap(
+                alignment: WrapAlignment.center,
+                children: [
+                  Text('Version ${AppConstants.appVersion}', style: footerStyle),
+                  if (AppConstants.demoMail.isNotEmpty &&
+                      AppConstants.demoPassword.isNotEmpty) ...[
+                    const Text(' | ', style: footerStyle),
+                    GestureDetector(
+                      onTap: _startDemo,
+                      child: const Text('Demo starten', style: footerStyle),
                     ),
                   ],
-                ),
+                  // LEGAL_HELP: Impressum & Datenschutz modal
+                  const Text(' | ', style: footerStyle),
+                  GestureDetector(
+                    onTap: () => showLegalModal(context),
+                    child: const Text('Impressum & Datenschutz',
+                        style: footerStyle),
+                  ),
+                ],
               ),
             ),
           ),
-        ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildForm(BuildContext context) {
+    return Form(
+      key: _formKey,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // Error message
+          if (_errorMessage != null) ...[
+            Container(
+              padding: const EdgeInsets.all(AppDimensions.paddingM),
+              decoration: BoxDecoration(
+                color: AppColors.danger.withValues(alpha: 0.1),
+                borderRadius:
+                    BorderRadius.circular(AppDimensions.borderRadiusM),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.error_outline, color: AppColors.danger),
+                  const SizedBox(width: AppDimensions.paddingS),
+                  Expanded(
+                    child: Text(
+                      _errorMessage!,
+                      style: const TextStyle(color: AppColors.danger),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: AppDimensions.paddingM),
+          ],
+
+          // AUTH: mode segment (Passwort / Code per E-Mail)
+          AuthModeSegment(
+            mode: _mode,
+            enabled: !_isLoading,
+            onChanged: _setMode,
+          ),
+          const SizedBox(height: AppDimensions.paddingM),
+
+          // Email field
+          TextFormField(
+            controller: _emailController,
+            keyboardType: TextInputType.emailAddress,
+            textInputAction: _mode == AuthMode.password
+                ? TextInputAction.next
+                : TextInputAction.go,
+            autocorrect: false,
+            readOnly: _mode == AuthMode.otp && _otpSent,
+            autofillHints: const [AutofillHints.email],
+            onFieldSubmitted: _mode == AuthMode.otp && !_otpSent
+                ? (_) => _requestCode()
+                : null,
+            decoration: _ionInputDecoration('E-Mail'),
+            validator: (value) {
+              if (value == null || value.trim().isEmpty) {
+                return 'Bitte gib deine E-Mail-Adresse ein.';
+              }
+              if (!isValidEmail(value)) {
+                return 'Bitte eine gültige E-Mail Adresse eingeben.';
+              }
+              return null;
+            },
+          ),
+          const SizedBox(height: AppDimensions.paddingM),
+
+          if (_mode == AuthMode.password) ...[
+            // Password field
+            TextFormField(
+              controller: _passwordController,
+              obscureText: _obscurePassword,
+              textInputAction: TextInputAction.done,
+              autofillHints: const [AutofillHints.password],
+              onFieldSubmitted: (_) => _onSubmit(),
+              decoration: _ionInputDecoration(
+                'Passwort',
+                suffixIcon: IconButton(
+                  tooltip: 'Passwort anzeigen',
+                  color: AppColors.primary,
+                  icon: Icon(
+                    _obscurePassword
+                        ? Icons.visibility_outlined
+                        : Icons.visibility_off_outlined,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _obscurePassword = !_obscurePassword;
+                    });
+                  },
+                ),
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Bitte Passwort eingeben';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: AppDimensions.paddingS),
+
+            // Register + forgot password (Ionic: small clear buttons, left)
+            Wrap(
+              children: [
+                TextButton(
+                  onPressed: _openRegister,
+                  child: const Text('Registrieren'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    final email = _emailController.text.trim();
+                    context.push(email.isNotEmpty
+                        ? '/forgot-password?email=${Uri.encodeComponent(email)}'
+                        : '/forgot-password');
+                  },
+                  child: const Text('Passwort vergessen?'),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppDimensions.paddingS),
+            _primaryButton('Anmelden', _login),
+          ] else if (!_otpSent) ...[
+            Align(
+              alignment: Alignment.centerLeft,
+              child: TextButton(
+                onPressed: _openRegister,
+                child: const Text('Registrieren'),
+              ),
+            ),
+            const SizedBox(height: AppDimensions.paddingS),
+            _primaryButton('Code senden', _requestCode),
+          ] else ...[
+            OtpCodeField(
+              controller: _otpController,
+              enabled: !_isLoading,
+              onCompleted: (_) => _verifyCode(),
+            ),
+            const SizedBox(height: AppDimensions.paddingM),
+            _primaryButton('Anmelden', _verifyCode),
+            const SizedBox(height: AppDimensions.paddingS),
+            Center(
+              child: ResendCodeButton(
+                cooldown: _cooldown,
+                enabled: !_isLoading,
+                onResend: _requestCode,
+              ),
+            ),
+          ],
+        ],
       ),
     );
   }

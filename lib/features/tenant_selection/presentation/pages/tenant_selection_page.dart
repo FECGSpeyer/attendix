@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/config/supabase_config.dart';
@@ -9,6 +10,7 @@ import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/providers/user_preferences_provider.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../core/providers/dashboard_providers.dart'; // DASHBOARD
 
@@ -45,9 +47,6 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
     // If user wants to see selection, don't auto-navigate
     if (userPrefs.wantInstanceSelection) return;
 
-    // If no saved tenant, don't auto-navigate
-    if (userPrefs.currentTenantId == null) return;
-
     // If tenant is already set, user navigated here to switch - show selection
     final currentTenant = ref.read(currentTenantProvider);
     if (currentTenant != null) return;
@@ -57,13 +56,15 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
     try {
       // Wait for tenants to load
       final tenants = await ref.read(userTenantsProvider.future);
-      final savedTenant = tenants
-          .where((t) => t.id == userPrefs.currentTenantId)
-          .firstOrNull;
+      // UX_NAV: Ionic db.setTenant opens the stored tenant, otherwise the
+      // first one (no selection screen unless "Instanzauswahl" is enabled).
+      final savedTenant =
+          tenants.where((t) => t.id == userPrefs.currentTenantId).firstOrNull ??
+          tenants.firstOrNull;
 
-      // User no longer has access to saved tenant
+      // No tenant at all: show the (empty) list with "Neue Instanz anlegen"
       if (savedTenant == null) {
-        setState(() => _isAutoNavigating = false);
+        if (mounted) setState(() => _isAutoNavigating = false);
         return;
       }
 
@@ -73,7 +74,9 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
       if (!mounted) return;
 
       // Set tenant locally WITHOUT triggering auth sync
-      await ref.read(currentTenantProvider.notifier).setTenantLocal(savedTenant);
+      await ref
+          .read(currentTenantProvider.notifier)
+          .setTenantLocal(savedTenant);
 
       // Wait for currentTenantUserProvider to load so router doesn't redirect back
       await ref.read(currentTenantUserProvider.future);
@@ -84,7 +87,13 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
       final prefsNotifier = ref.read(userPreferencesNotifierProvider.notifier);
 
       // Navigate FIRST
-      context.go(homeRouteFor(role, savedTenant.id, ref.read(supabaseAuthProvider).currentUser?.userMetadata)); // DASHBOARD
+      context.go(
+        homeRouteFor(
+          role,
+          savedTenant.id,
+          ref.read(supabaseAuthProvider).currentUser?.userMetadata,
+        ),
+      ); // DASHBOARD
 
       // Auth sync AFTER navigation (fire and forget, notifier captured above)
       prefsNotifier.updateCurrentTenantId(savedTenant.id!);
@@ -103,12 +112,13 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
 
     if (userId == null) return Role.none;
 
-    final response = await supabase
-        .from('tenantUsers')
-        .select('role')
-        .eq('tenantId', tenantId)
-        .eq('userId', userId)
-        .maybeSingle();
+    final response =
+        await supabase
+            .from('tenantUsers')
+            .select('role')
+            .eq('tenantId', tenantId)
+            .eq('userId', userId)
+            .maybeSingle();
 
     if (response == null) return Role.none;
     return Role.fromValue(response['role'] as int? ?? 99);
@@ -134,74 +144,225 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
     final prefsNotifier = ref.read(userPreferencesNotifierProvider.notifier);
 
     // Navigate FIRST - before auth sync can cause rebuilds
-    context.go(homeRouteFor(role, tenant.id, ref.read(supabaseAuthProvider).currentUser?.userMetadata)); // DASHBOARD
+    context.go(
+      homeRouteFor(
+        role,
+        tenant.id,
+        ref.read(supabaseAuthProvider).currentUser?.userMetadata,
+      ),
+    ); // DASHBOARD
 
     // Auth sync AFTER navigation (fire and forget, notifier captured above)
     prefsNotifier.updateCurrentTenantId(tenant.id!);
+  }
+
+  /// Ionic settings.page.html instances modal: cog button opens a small sheet
+  /// with the "Instanzauswahl aktivieren" toggle.
+  void _openInstanceSettings() {
+    showModalBottomSheet<void>(
+      context: context,
+      showDragHandle: true,
+      builder:
+          (sheetContext) => Consumer(
+            builder: (context, ref, _) {
+              final prefs = ref.watch(userPreferencesProvider);
+              return SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                  child: Card(
+                    margin: EdgeInsets.zero,
+                    child: SwitchListTile(
+                      title: const Text('Instanzauswahl aktivieren'),
+                      subtitle: const Text(
+                        'Wenn diese Option aktiv ist, wirst du vor dem Öffnen der '
+                        'App immer gefragt, welche Instanz du öffnen möchtest.',
+                      ),
+                      value: prefs.wantInstanceSelection,
+                      onChanged:
+                          (value) => ref
+                              .read(userPreferencesNotifierProvider.notifier)
+                              .updatePreferences(wantInstanceSelection: value),
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+    );
+  }
+
+  Future<void> _toggleFavorite(Tenant tenant) async {
+    if (tenant.id == null) return;
+    final setFavorite = tenant.favorite != true;
+    try {
+      await toggleTenantFavorite(ref, tenant.id!, setFavorite);
+      if (!mounted) return;
+      ToastHelper.showSuccess(
+        context,
+        setFavorite
+            ? 'Die Instanz „${tenant.longName}“ wurde als Favorit gesetzt.'
+            : 'Die Instanz „${tenant.longName}“ wurde als Favorit entfernt.',
+      );
+    } catch (_) {
+      if (mounted) ToastHelper.showError(context, 'Fehler beim Speichern');
+    }
+  }
+
+  /// Ionic deleteInstance: only admins; alert with the instance name input.
+  Future<void> _deleteInstance(Tenant tenant) async {
+    if (tenant.id == null) return;
+    if (tenant.role != Role.admin.value) {
+      ToastHelper.showError(context, 'Du kannst diese Instanz nicht löschen.');
+      return;
+    }
+    final controller = TextEditingController();
+    String? error;
+    try {
+      final confirmed = await showDialog<bool>(
+        context: context,
+        builder:
+            (dialogContext) => StatefulBuilder(
+              builder:
+                  (dialogContext, setDialogState) => AlertDialog(
+                    title: const Text('Instanz löschen?'),
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          error ??
+                              'Möchtest du die Instanz „${tenant.longName}“ wirklich '
+                                  'löschen? Dies kann nicht rückgängig gemacht werden! '
+                                  'Wenn du die Instanz wirklich löschen willst, dann '
+                                  'gebe den Namen der Instanz ein:',
+                        ),
+                        const SizedBox(height: 12),
+                        TextField(
+                          controller: controller,
+                          autofocus: true,
+                          decoration: const InputDecoration(
+                            hintText: 'Name der Instanz eingeben...',
+                          ),
+                        ),
+                      ],
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.of(dialogContext).pop(false),
+                        child: const Text('Abbrechen'),
+                      ),
+                      TextButton(
+                        style: TextButton.styleFrom(
+                          foregroundColor: AppColors.danger,
+                        ),
+                        onPressed: () {
+                          if (controller.text == tenant.longName) {
+                            Navigator.of(dialogContext).pop(true);
+                          } else {
+                            setDialogState(
+                              () =>
+                                  error =
+                                      'Der eingegebene Name ist nicht korrekt.',
+                            );
+                          }
+                        },
+                        child: const Text('Löschen'),
+                      ),
+                    ],
+                  ),
+            ),
+      );
+      if (confirmed != true || !mounted) return;
+      await deleteTenant(ref, tenant.id!);
+      if (mounted) ToastHelper.showSuccess(context, 'Instanz gelöscht');
+    } catch (_) {
+      if (mounted) ToastHelper.showError(context, 'Fehler beim Löschen');
+    } finally {
+      controller.dispose();
+    }
+  }
+
+  Future<void> _logout() async {
+    final supabase = ref.read(supabaseClientProvider);
+    await ref.read(currentTenantProvider.notifier).clearTenant();
+    await supabase.auth.signOut();
+    if (mounted) context.go('/login');
   }
 
   @override
   Widget build(BuildContext context) {
     // Show loading while auto-navigating
     if (_isAutoNavigating) {
-      return const Scaffold(
-        body: Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     final tenantsAsync = ref.watch(userTenantsProvider);
+    final currentTenant = ref.watch(currentTenantProvider);
+    final count = tenantsAsync.valueOrNull?.length;
 
+    // UX_NAV: layout of the Ionic "Instanz wechseln" modal
+    // (settings.page.html): "+" (Neue Instanz) left, title "Instanzen (n)",
+    // cog (Instanzauswahl) right; inset list with short/long name, "Aktuell"
+    // badge, favorite star and swipe actions Löschen / Favorit.
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Gruppe auswählen'),
+        leading: IconButton(
+          tooltip: 'Neue Instanz',
+          icon: const Icon(Icons.add),
+          onPressed: () => context.push('/register'),
+        ),
+        title: Text(count == null ? 'Instanzen' : 'Instanzen ($count)'),
         actions: [
           IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () async {
-              final supabase = ref.read(supabaseClientProvider);
-              await ref.read(currentTenantProvider.notifier).clearTenant();
-              await supabase.auth.signOut();
-              if (context.mounted) {
-                context.go('/login');
-              }
-            },
+            tooltip: 'Instanzauswahl',
+            icon: const Icon(Icons.settings_outlined),
+            onPressed: _openInstanceSettings,
           ),
+          if (currentTenant == null)
+            IconButton(
+              tooltip: 'Abmelden',
+              icon: const Icon(Icons.logout),
+              onPressed: _logout,
+            )
+          else
+            IconButton(
+              tooltip: 'Schließen',
+              icon: const Icon(Icons.close),
+              onPressed: () => context.go('/settings'),
+            ),
         ],
       ),
       body: tenantsAsync.when(
-        loading: () => const Center(
-          child: CircularProgressIndicator(),
-        ),
-        error: (error, stack) => Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(
-                Icons.error_outline,
-                size: 64,
-                color: AppColors.danger,
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error:
+            (error, stack) => Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(
+                    Icons.error_outline,
+                    size: 64,
+                    color: AppColors.danger,
+                  ),
+                  const SizedBox(height: AppDimensions.paddingM),
+                  Text(
+                    'Fehler beim Laden',
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  const SizedBox(height: AppDimensions.paddingS),
+                  Text(
+                    error.toString(),
+                    style: Theme.of(context).textTheme.bodySmall,
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: AppDimensions.paddingL),
+                  ElevatedButton(
+                    onPressed: () => ref.refresh(userTenantsProvider),
+                    child: const Text('Erneut versuchen'),
+                  ),
+                ],
               ),
-              const SizedBox(height: AppDimensions.paddingM),
-              Text(
-                'Fehler beim Laden',
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-              const SizedBox(height: AppDimensions.paddingS),
-              Text(
-                error.toString(),
-                style: Theme.of(context).textTheme.bodySmall,
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: AppDimensions.paddingL),
-              ElevatedButton(
-                onPressed: () => ref.refresh(userTenantsProvider),
-                child: const Text('Erneut versuchen'),
-              ),
-            ],
-          ),
-        ),
+            ),
         data: (tenants) {
           if (tenants.isEmpty) {
             return Center(
@@ -211,29 +372,29 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Icon(
-                      Icons.group_off_outlined,
+                      Icons.apps_outlined,
                       size: 80,
                       color: AppColors.medium,
                     ),
                     const SizedBox(height: AppDimensions.paddingL),
                     Text(
-                      'Keine Gruppen',
+                      'Keine Instanzen',
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
                     const SizedBox(height: AppDimensions.paddingS),
                     Text(
-                      'Du bist noch keiner Gruppe zugeordnet. '
-                      'Bitte wende dich an einen Administrator oder erstelle eine neue Gruppe.',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: AppColors.medium,
-                          ),
+                      'Du bist noch keiner Instanz zugeordnet. '
+                      'Bitte wende dich an einen Administrator oder lege eine neue Instanz an.',
+                      style: Theme.of(
+                        context,
+                      ).textTheme.bodyMedium?.copyWith(color: AppColors.medium),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: AppDimensions.paddingXL),
                     OutlinedButton.icon(
                       onPressed: () => context.push('/register'),
                       icon: const Icon(Icons.add),
-                      label: const Text('Neue Gruppe erstellen'),
+                      label: const Text('Neue Instanz anlegen'),
                     ),
                   ],
                 ),
@@ -241,28 +402,31 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
             );
           }
 
-          return ListView.separated(
-            padding: const EdgeInsets.all(AppDimensions.paddingM),
-            itemCount: tenants.length + 1, // +1 for create button
-            separatorBuilder: (_, __) =>
-                const SizedBox(height: AppDimensions.paddingS),
-            itemBuilder: (context, index) {
-              if (index == tenants.length) {
-                return Padding(
-                  padding: const EdgeInsets.only(top: AppDimensions.paddingS),
-                  child: OutlinedButton.icon(
-                    onPressed: () => context.push('/register'),
-                    icon: const Icon(Icons.add),
-                    label: const Text('Neue Instanz erstellen'),
+          return RefreshIndicator(
+            onRefresh: () async => ref.refresh(userTenantsProvider.future),
+            child: ListView(
+              padding: const EdgeInsets.all(AppDimensions.paddingM),
+              children: [
+                Card(
+                  margin: EdgeInsets.zero,
+                  clipBehavior: Clip.antiAlias,
+                  child: Column(
+                    children: [
+                      for (var i = 0; i < tenants.length; i++) ...[
+                        if (i > 0) const Divider(indent: 16),
+                        _TenantTile(
+                          tenant: tenants[i],
+                          isCurrent: tenants[i].id == currentTenant?.id,
+                          onTap: () => _selectTenant(tenants[i]),
+                          onFavorite: () => _toggleFavorite(tenants[i]),
+                          onDelete: () => _deleteInstance(tenants[i]),
+                        ),
+                      ],
+                    ],
                   ),
-                );
-              }
-              final tenant = tenants[index];
-              return _TenantCard(
-                tenant: tenant,
-                onTap: () => _selectTenant(tenant),
-              );
-            },
+                ),
+              ],
+            ),
           );
         },
       ),
@@ -270,109 +434,100 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
   }
 }
 
-class _TenantCard extends ConsumerWidget {
-  const _TenantCard({
+class _TenantTile extends StatelessWidget {
+  const _TenantTile({
     required this.tenant,
+    required this.isCurrent,
     required this.onTap,
+    required this.onFavorite,
+    required this.onDelete,
   });
 
   final Tenant tenant;
+  final bool isCurrent;
   final VoidCallback onTap;
-
-  String get _displayName =>
-      tenant.shortName.isNotEmpty ? tenant.shortName : tenant.longName;
-  String? get _description =>
-      tenant.longName != tenant.shortName ? tenant.longName : null;
-  String get _initials => _displayName.length >= 2
-      ? _displayName.substring(0, 2).toUpperCase()
-      : _displayName.toUpperCase();
+  final VoidCallback onFavorite;
+  final VoidCallback onDelete;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final isFavorite = tenant.favorite == true;
 
-    return Card(
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
+    return Slidable(
+      key: ValueKey('tenant-${tenant.id}'),
+      endActionPane: ActionPane(
+        motion: const ScrollMotion(),
+        extentRatio: 0.4,
+        // Ionic (ionSwipe) on the end options: full swipe toggles favorite.
+        dismissible: DismissiblePane(
+          onDismissed: () {},
+          confirmDismiss: () async {
+            onFavorite();
+            return false;
+          },
+        ),
+        children: [
+          SlidableAction(
+            onPressed: (_) => onDelete(),
+            backgroundColor: AppColors.danger,
+            foregroundColor: Colors.white,
+            icon: Icons.delete_outline,
+          ),
+          SlidableAction(
+            onPressed: (_) => onFavorite(),
+            backgroundColor: AppColors.warning,
+            foregroundColor: Colors.black,
+            icon: isFavorite ? Icons.star_border : Icons.star,
+          ),
+        ],
+      ),
+      child: ListTile(
         onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.all(AppDimensions.paddingM),
-          child: Row(
-            children: [
-              // Tenant avatar/image
-              CircleAvatar(
-                radius: 28,
-                backgroundColor: AppColors.primaryLight,
-                child: Text(
-                  _initials,
-                  style: const TextStyle(
+        title: Text(
+          tenant.shortName,
+          style: const TextStyle(fontWeight: FontWeight.w500),
+        ),
+        subtitle: Text(
+          tenant.longName,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+        ),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (isCurrent)
+              Container(
+                margin: const EdgeInsets.only(right: 5),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: AppColors.primary,
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: const Text(
+                  'Aktuell',
+                  style: TextStyle(
                     color: Colors.white,
-                    fontWeight: FontWeight.bold,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ),
-              const SizedBox(width: AppDimensions.paddingM),
-
-              // Tenant info
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      _displayName,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w600,
-                          ),
-                    ),
-                    if (_description != null) ...[
-                      const SizedBox(height: AppDimensions.paddingXS),
-                      Text(
-                        _description!,
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: AppColors.medium,
-                            ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-
-              // Favorite toggle
-              IconButton(
-                icon: Icon(
-                  isFavorite ? Icons.star : Icons.star_border,
-                  color: isFavorite ? AppColors.warning : AppColors.medium,
-                ),
-                onPressed: () {
-                  if (tenant.id != null) {
-                    toggleTenantFavorite(ref, tenant.id!, !isFavorite);
-                  }
-                },
-              ),
-
-              IconButton(
-                icon: const Icon(
-                  Icons.info_outline,
-                  color: AppColors.medium,
-                ),
-                onPressed: () {
-                  if (tenant.id != null) {
-                    context.pushNamed(
-                      AppRoutes.tenantDetail,
-                      pathParameters: {'id': '${tenant.id}'},
-                    );
-                  }
-                },
-              ),
-
-              const Icon(
-                Icons.chevron_right,
-                color: AppColors.medium,
-              ),
-            ],
-          ),
+            if (isFavorite)
+              const Icon(Icons.star, size: 18, color: AppColors.warning),
+            // Flutter-only: instance details (members, delete) page
+            IconButton(
+              tooltip: 'Details',
+              icon: const Icon(Icons.info_outline, color: AppColors.medium),
+              onPressed: () {
+                if (tenant.id != null) {
+                  context.pushNamed(
+                    AppRoutes.tenantDetail,
+                    pathParameters: {'id': '${tenant.id}'},
+                  );
+                }
+              },
+            ),
+          ],
         ),
       ),
     );

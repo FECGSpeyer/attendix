@@ -36,7 +36,13 @@ class MainShell extends ConsumerWidget {
 
   final Widget child;
 
-  /// Build navigation destinations based on user role and tenant settings
+  /// Build navigation destinations based on user role and tenant settings.
+  ///
+  /// UX_NAV: order, labels, icons and visibility follow Ionic
+  /// src/app/tabs/tabs.page.html + tabs.page.ts exactly:
+  /// Dashboard · Termine (Eltern) · Meine Termine · Mitglieder · Übersicht ·
+  /// Personen · Termine · Werke · Org · Mehr. Ionic keeps the outline icon
+  /// when selected and only tints it, hence icon == selectedIcon.
   List<_NavDestination> _buildDestinations(Role role, Tenant? tenant,
       {bool hasMultipleTenants = false,
       bool showDashboardTab = false,
@@ -44,83 +50,89 @@ class MainShell extends ConsumerWidget {
       bool showOrgPlansTab = false}) {
     final List<_NavDestination> destinations = [];
 
-    // DASHBOARD: first tab for Admin/Responsible when enabled (Ionic tabs.page.html)
+    // Ionic isPlayer = PLAYER || NONE, isHelper = HELPER || VOICE_LEADER_HELPER
+    final isPlayer = role == Role.player || role == Role.none;
+    final isHelper = role.isHelperRole;
+
+    // DASHBOARD: first tab for Admin/Responsible when enabled
     if (showDashboardTab) {
       destinations.add(const _NavDestination(
         route: '/home-dashboard',
         label: 'Dashboard',
         icon: Icons.grid_view_outlined,
-        selectedIcon: Icons.grid_view,
+        selectedIcon: Icons.grid_view_outlined,
       ));
     }
 
-    // Conductors (Admin, Responsible, Viewer): People tab
+    // Parents: "Termine" (parents portal)
+    if (role.isParent) {
+      destinations.add(const _NavDestination(
+        route: '/parents',
+        label: 'Termine',
+        icon: Icons.person_outline,
+        selectedIcon: Icons.person_outline,
+      ));
+    }
+
+    // !isConductor && !isParent: "Meine Termine" (self-service sign-out)
+    if (role.canSeeSelfServiceTab) {
+      destinations.add(const _NavDestination(
+        route: '/signout',
+        label: 'Meine Termine',
+        icon: Icons.person_outline,
+        selectedIcon: Icons.person_outline,
+      ));
+    }
+
+    // Members tab: HELPER, VOICE_LEADER, VOICE_LEADER_HELPER, PLAYER, NONE
+    // when the tenant shows the members list
+    if ((role.canSeeMembersTab || role == Role.none) &&
+        tenant?.showMembersList == true) {
+      destinations.add(const _NavDestination(
+        route: '/members',
+        label: 'Mitglieder',
+        icon: Icons.people_outline,
+        selectedIcon: Icons.people_outline,
+      ));
+    }
+
+    // (isPlayer || isHelper) && several tenants: cross-tenant "Übersicht"
+    if ((isPlayer || isHelper) && hasMultipleTenants) {
+      destinations.add(const _NavDestination(
+        route: '/overview',
+        label: 'Übersicht',
+        icon: Icons.calendar_today_outlined,
+        selectedIcon: Icons.calendar_today_outlined,
+      ));
+    }
+
+    // Conductors (Admin, Responsible, Viewer): "Personen"
     if (role.canSeePeopleTab) {
       destinations.add(const _NavDestination(
         route: '/people',
         label: 'Personen',
         icon: Icons.people_outline,
-        selectedIcon: Icons.people,
+        selectedIcon: Icons.people_outline,
       ));
     }
 
-    // Parents: Parents Portal tab
-    if (role.isParent) {
-      destinations.add(const _NavDestination(
-        route: '/parents',
-        label: 'Termine',
-        icon: Icons.family_restroom_outlined,
-        selectedIcon: Icons.family_restroom,
-      ));
-    }
-
-    // Players/Helpers: Self-Service tab
-    // ATTENDANCE_SIGNOUT: "Meine Termine" (current tenant) and the
-    // cross-tenant "Übersicht" when the user is in several tenants.
-    if (role.canSeeSelfServiceTab) {
-      destinations.add(const _NavDestination(
-        route: '/signout',
-        label: 'Meine Termine',
-        icon: Icons.event_available_outlined,
-        selectedIcon: Icons.event_available,
-      ));
-      if (hasMultipleTenants) {
-        destinations.add(const _NavDestination(
-          route: '/overview',
-          label: 'Übersicht',
-          icon: Icons.calendar_month_outlined,
-          selectedIcon: Icons.calendar_month,
-        ));
-      }
-    }
-
-    // Members tab (if tenant has showMembersList enabled)
-    if (role.canSeeMembersTab && tenant?.showMembersList == true) {
-      destinations.add(const _NavDestination(
-        route: '/members',
-        label: 'Mitglieder',
-        icon: Icons.group_outlined,
-        selectedIcon: Icons.group,
-      ));
-    }
-
-    // Conductors/Helpers: Attendance tab
+    // Conductors/Helpers: "Termine" (attendance list)
     if (role.canSeeAttendanceTab) {
       destinations.add(const _NavDestination(
         route: '/attendance',
-        label: 'Anwesenheit',
-        icon: Icons.fact_check_outlined,
-        selectedIcon: Icons.fact_check,
+        label: 'Termine',
+        icon: Icons.check_box_outlined,
+        selectedIcon: Icons.check_box_outlined,
       ));
     }
 
-    // SETTINGS2: optional "Werke" / "Org" tabs (Ionic tabs.page.html)
+    // SETTINGS2: optional "Werke" / "Org" tabs
     if (showSongsTab) {
       destinations.add(const _NavDestination(
         route: '/songs-tab',
         label: 'Werke',
         icon: Icons.music_note_outlined,
-        selectedIcon: Icons.music_note,
+        selectedIcon: Icons.music_note_outlined,
       ));
     }
     if (showOrgPlansTab) {
@@ -128,16 +140,16 @@ class MainShell extends ConsumerWidget {
         route: '/org-plans-tab',
         label: 'Org',
         icon: Icons.business_outlined,
-        selectedIcon: Icons.business,
+        selectedIcon: Icons.business_outlined,
       ));
     }
 
-    // Everyone: Settings tab
+    // Everyone: "Mehr" (settings menu, ellipsis-horizontal)
     destinations.add(const _NavDestination(
       route: '/settings',
-      label: 'Einstellungen',
-      icon: Icons.settings_outlined,
-      selectedIcon: Icons.settings,
+      label: 'Mehr',
+      icon: Icons.more_horiz,
+      selectedIcon: Icons.more_horiz,
     ));
 
     return destinations;
@@ -196,7 +208,15 @@ class MainShell extends ConsumerWidget {
       ),
       // Debug FAB only visible in debug mode
       floatingActionButton: kDebugMode ? const DebugRoleFab() : null,
-      bottomNavigationBar: NavigationBar(
+      // UX_NAV: Ionic ion-tab-bar has a hairline on top; no selection pill
+      // (see navigationBarTheme in app_theme.dart).
+      bottomNavigationBar: DecoratedBox(
+        decoration: BoxDecoration(
+          border: Border(
+            top: BorderSide(color: Theme.of(context).dividerColor, width: 0.5),
+          ),
+        ),
+        child: NavigationBar(
         selectedIndex: selectedIndex.clamp(0, destinations.length - 1),
         onDestinationSelected: (index) => _onItemTapped(context, index, destinations),
         destinations: destinations
@@ -206,6 +226,7 @@ class MainShell extends ConsumerWidget {
                   label: d.label,
                 ))
             .toList(),
+        ),
       ),
     );
   }
