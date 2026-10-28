@@ -1,0 +1,40 @@
+{
+  "de": {
+    "settings": {
+      "flutter": {
+        "users": "Benutzer",
+        "changeEmail": "E-Mail ändern",
+        "applicantTitle": "Mitgliedschaft wird geprüft",
+        "applicantText": "Ein Administrator wird deine Registrierung prüfen.",
+        "pwa": {
+          "title": "App installieren",
+          "text": "Für ein besseres Erlebnis kannst du diese App installieren:",
+          "iosStep1": "Tippe auf das Teilen-Symbol",
+          "iosStep2": "\"Zum Home-Bildschirm\"",
+          "iosStep3": "\"Hinzufügen\"",
+          "androidStep1": "Tippe auf das Menü (⋮)",
+          "androidStep2": "\"App installieren\" oder \"Zum Startbildschirm\""
+        }
+      }
+    }
+  },
+  "en": {
+    "settings": {
+      "flutter": {
+        "users": "Users",
+        "changeEmail": "Change email",
+        "applicantTitle": "Membership under review",
+        "applicantText": "An administrator will review your registration.",
+        "pwa": {
+          "title": "Install app",
+          "text": "For a better experience you can install this app:",
+          "iosStep1": "Tap the share icon",
+          "iosStep2": "\"Add to Home Screen\"",
+          "iosStep3": "\"Add\"",
+          "androidStep1": "Tap the menu (⋮)",
+          "androidStep2": "\"Install app\" or \"Add to Home screen\""
+        }
+      }
+    }
+  }
+}

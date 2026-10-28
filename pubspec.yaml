@@ -99,6 +99,8 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  # I18N_INFRA: gen-l10n (see l10n.yaml); generated files are committed
+  generate: true
 
   assets:
     - assets/images/

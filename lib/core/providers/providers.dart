@@ -56,3 +56,5 @@ export 'admin_providers.dart'; // SETTINGS2
 export 'user_registration_providers.dart';
 // DEMO_GUARD
 export 'demo_providers.dart';
+// I18N_INFRA
+export 'locale_provider.dart';

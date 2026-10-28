@@ -5,7 +5,8 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// UX_SETTINGS: the settings screens follow the Ionic information
-/// architecture (section order + wording). These source checks guard the
+/// architecture (section order + wording). I18N_INFRA: the wording now
+/// comes from the Ionic i18n keys (context.l10n.settings*). These source checks guard the
 /// order so later edits don't silently drift away from Ionic again.
 void main() {
   String read(String path) => File(path).readAsStringSync();
@@ -25,40 +26,41 @@ void main() {
 
     test('sections appear in Ionic order', () {
       expectInOrder(source, [
-        "title: 'Stimmführer'",
-        "title: 'Instanz-Verwaltung'",
-        "title: 'Kommunikation'",
-        "title: 'Benutzer & Rollen'",
-        "title: 'Werke & Proben'",
-        "title: 'Dateien'",
-        "title: 'Planung'",
-        "title: 'Organisation'",
-        "title: 'Auswertung & Daten'",
-        "title: 'System'",
+        "title: l10n.settingsVoiceLeader",
+        "title: l10n.settingsTenantAdmin",
+        "title: l10n.settingsCommunication",
+        "title: l10n.settingsUsersRoles",
+        "title: l10n.settingsSongsRehearsals",
+        "title: l10n.settingsFiles",
+        "title: l10n.settingsPlanning",
+        "title: l10n.settingsOrganisation",
+        "title: l10n.settingsAnalyticsData",
+        "title: l10n.settingsSystem",
       ]);
     });
 
     test('Instanz-Verwaltung items in Ionic order', () {
       expectInOrder(source, [
-        "title: 'Einstellungen'",
-        "title: 'Gruppen'",
-        "title: 'Lehrer'",
-        "title: 'Rollen & Berechtigungen'",
-        "title: 'Dashboard konfigurieren'",
+        "title: l10n.settingsSettings",
+        "title: l10n.settingsGroups",
+        "title: l10n.settingsTeachers",
+        "title: l10n.settingsRolesPerms",
+        "title: l10n.settingsConfigureDashboard",
       ]);
     });
 
     test('System items in Ionic order and logout wording', () {
       expectInOrder(source, [
-        "title: 'Instanz wechseln'",
-        "title: 'Benachrichtigungen'",
-        "title: 'Passwort ändern'",
-        "title: 'Hilfe'",
-        "title: 'Feedback geben'",
-        "title: 'Was ist neu?'",
-        "title: 'Ausloggen'",
+        "title: l10n.settingsSwitchTenant",
+        'const LanguagePickerTile()', // I18N_INFRA: Ionic ion-select "Sprache"
+        "title: l10n.settingsNotifications",
+        "title: l10n.settingsChangePassword",
+        "title: l10n.settingsHelp",
+        "title: l10n.settingsGiveFeedback",
+        "title: l10n.settingsWhatsNew",
+        "title: l10n.settingsLogout",
       ]);
-      expect(source, contains("const Text('Konto löschen')"));
+      expect(source, contains('Text(l10n.settingsDeleteAccount)'));
     });
 
     test('Kalender abonnieren opens the Ionic alert instead of a page', () {

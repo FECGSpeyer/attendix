@@ -56,3 +56,5 @@ export 'tenant_create_repository.dart'; // STATS_PEOPLE_FIXES
 export 'admin_repository.dart'; // SETTINGS2
 // AUTH
 export 'user_registration_repository.dart';
+// I18N_INFRA
+export 'user_language_repository.dart';
