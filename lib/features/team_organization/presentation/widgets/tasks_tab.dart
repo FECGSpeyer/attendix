@@ -7,6 +7,7 @@ import '../../../../core/providers/team_org_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/team_org/team_org.dart';
+import '../../../../shared/widgets/loading/loading.dart';
 import '../../team_org_utils.dart';
 import 'task_form_sheet.dart';
 
@@ -59,7 +60,7 @@ class _TasksTabState extends ConsumerState<TasksTab> {
             )
           : null,
       body: tasksAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => const TeamOrgListSkeleton(), // Ionic ion-skeleton-text (3 rows)
         error: (_, __) => const Center(child: Text('Aufgaben konnten nicht geladen werden')),
         data: (raw) {
           final tasks = raw
@@ -280,3 +281,18 @@ Color outcomeColor(String? outcome) => switch (outcome) {
       'discussed' => AppColors.primary,
       _ => AppColors.medium,
     };
+
+/// Loading placeholder of the Aufgaben / Themen tabs (Ionic: inset list with
+/// three skeleton rows).
+class TeamOrgListSkeleton extends StatelessWidget {
+  const TeamOrgListSkeleton({super.key});
+
+  @override
+  Widget build(BuildContext context) => const Padding(
+        padding: EdgeInsets.all(AppDimensions.paddingM),
+        child: Card(
+          margin: EdgeInsets.zero,
+          child: ListSkeleton(itemCount: 3, showAvatar: false),
+        ),
+      );
+}
