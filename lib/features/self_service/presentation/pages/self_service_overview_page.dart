@@ -83,13 +83,16 @@ class _SelfServiceOverviewPageState
           condensed: condensed,
           child: Text(context.l10n.selfServiceAllEvents),
         ),
+        // IOS_SHELL: iOS → one glass capsule (ion-buttons slot="end")
         actions: [
-          IconButton(
-            icon: const Icon(Icons.info_outline),
-            tooltip: context.l10n.signoutLegend,
-            onPressed: () => showEventLegendSheet(context),
-          ),
-          const NotificationBell(), // MESSAGES
+          ToolbarButtonGroup(children: [
+            IconButton(
+              icon: const Icon(Icons.info_outline),
+              tooltip: context.l10n.signoutLegend,
+              onPressed: () => showEventLegendSheet(context),
+            ),
+            const NotificationBell(), // MESSAGES
+          ]),
         ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(52),

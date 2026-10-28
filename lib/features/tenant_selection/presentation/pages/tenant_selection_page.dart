@@ -59,9 +59,15 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
 
     setState(() => _isAutoNavigating = true);
 
+    // IOS_SHELL: setting the tenant lets the router replace this page, so
+    // don't touch `ref` / `context` after async gaps ("Cannot use ref after
+    // the widget was disposed"): use the captured container and router.
+    final container = ProviderScope.containerOf(context, listen: false);
+    final router = GoRouter.of(context);
+
     try {
       // Wait for tenants to load
-      final tenants = await ref.read(userTenantsProvider.future);
+      final tenants = await container.read(userTenantsProvider.future);
       // UX_NAV: Ionic db.setTenant opens the stored tenant, otherwise the
       // first one (no selection screen unless "Instanzauswahl" is enabled).
       final savedTenant =
@@ -75,29 +81,29 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
       }
 
       // Get role FIRST, before any state changes (same pattern as _selectTenant)
-      final role = await _getTenantUserRole(savedTenant.id!);
+      final role =
+          await _getTenantUserRole(savedTenant.id!, container: container);
 
       if (!mounted) return;
 
       // Set tenant locally WITHOUT triggering auth sync
-      await ref
+      await container
           .read(currentTenantProvider.notifier)
           .setTenantLocal(savedTenant);
 
       // Wait for currentTenantUserProvider to load so router doesn't redirect back
-      await ref.read(currentTenantUserProvider.future);
-
-      if (!mounted) return;
+      await container.read(currentTenantUserProvider.future);
 
       // Get notifier BEFORE navigation (widget may be disposed after go())
-      final prefsNotifier = ref.read(userPreferencesNotifierProvider.notifier);
+      final prefsNotifier =
+          container.read(userPreferencesNotifierProvider.notifier);
 
-      // Navigate FIRST
-      context.go(
+      // Navigate FIRST (also when the router already replaced this page)
+      router.go(
         homeRouteFor(
           role,
           savedTenant.id,
-          ref.read(supabaseAuthProvider).currentUser?.userMetadata,
+          container.read(supabaseAuthProvider).currentUser?.userMetadata,
         ),
       ); // DASHBOARD
 
@@ -112,8 +118,11 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
   }
 
   /// Get the user's role for a specific tenant
-  Future<Role> _getTenantUserRole(int tenantId) async {
-    final supabase = ref.read(supabaseClientProvider);
+  Future<Role> _getTenantUserRole(int tenantId,
+      {ProviderContainer? container}) async {
+    final supabase = container != null
+        ? container.read(supabaseClientProvider)
+        : ref.read(supabaseClientProvider);
     final userId = supabase.auth.currentUser?.id;
 
     if (userId == null) return Role.none;
@@ -132,29 +141,32 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
 
   /// Navigate to the appropriate page based on role
   Future<void> _selectTenant(Tenant tenant) async {
+    // IOS_SHELL: same lifecycle guard as _tryAutoNavigation.
+    final container = ProviderScope.containerOf(context, listen: false);
+    final router = GoRouter.of(context);
+
     // Get the user's role FIRST, before any state changes
-    final role = await _getTenantUserRole(tenant.id!);
+    final role = await _getTenantUserRole(tenant.id!, container: container);
 
     // Check mounted before state change
     if (!mounted) return;
 
     // Set tenant locally WITHOUT triggering auth sync
-    await ref.read(currentTenantProvider.notifier).setTenantLocal(tenant);
+    await container.read(currentTenantProvider.notifier).setTenantLocal(tenant);
 
     // Wait for currentTenantUserProvider to load so router doesn't redirect back
-    await ref.read(currentTenantUserProvider.future);
-
-    if (!mounted) return;
+    await container.read(currentTenantUserProvider.future);
 
     // Get notifier BEFORE navigation (widget may be disposed after go())
-    final prefsNotifier = ref.read(userPreferencesNotifierProvider.notifier);
+    final prefsNotifier =
+        container.read(userPreferencesNotifierProvider.notifier);
 
     // Navigate FIRST - before auth sync can cause rebuilds
-    context.go(
+    router.go(
       homeRouteFor(
         role,
         tenant.id,
-        ref.read(supabaseAuthProvider).currentUser?.userMetadata,
+        container.read(supabaseAuthProvider).currentUser?.userMetadata,
       ),
     ); // DASHBOARD
 

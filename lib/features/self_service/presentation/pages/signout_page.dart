@@ -31,6 +31,7 @@ import '../../../messages/presentation/widgets/notification_bell.dart'; // MESSA
 import '../../../team_organization/presentation/widgets/my_tasks_card.dart'; // INTEGRATION
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../shared/widgets/tenant/tenant_switcher_title.dart'; // IOS_SHELL
 
 /// "Meine Termine" – self-service sign in/out of the current tenant
 /// (Ionic `selfService/signout`).
@@ -139,7 +140,11 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
     // (long name + chevron-down) and otherwise the short name as title.
     Widget? title;
     Widget? switcher;
-    if (tenants.length > 1) {
+    final ios = useIosLook(context);
+    if (tenants.length > 1 && ios) {
+      // IOS_SHELL: same glass capsule + popover as Termine / Mehr.
+      title = TenantSwitcherTitle(onSelected: _switchTenant);
+    } else if (tenants.length > 1) {
       switcher = PopupMenuButton<Tenant>(
         tooltip: context.l10n.settingsSwitchTenant,
         onSelected: _switchTenant,
@@ -184,8 +189,31 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
         child: Text(tenant?.shortName ?? context.l10n.tabsMyEvents),
       );
     }
+    final buttons = <Widget>[
+      // UX_SELF: pause / unpause sit in the header like in Ionic
+      if (canSelfPause && player != null && !player.paused)
+        IconButton(
+          icon: const Icon(Icons.pause_circle_outline),
+          tooltip: context.l10n.signoutPause,
+          onPressed: () => selfServicePause(context, ref, player),
+        ),
+      if (canSelfPause && player != null && player.paused)
+        IconButton(
+          icon: const Icon(Icons.play_circle_outline),
+          tooltip: context.l10n.signoutEndPause,
+          onPressed: () => selfServiceUnpause(context, ref, player),
+        ),
+      IconButton(
+        icon: const Icon(Icons.info_outline),
+        tooltip: context.l10n.signoutLegend,
+        onPressed: () => showEventLegendSheet(context),
+      ),
+      const NotificationBell(), // MESSAGES
+    ];
     return AppBar(
       title: title,
+      // IOS_SHELL: tenant capsule left like ion-buttons slot="start"
+      centerTitle: tenants.length > 1 && ios ? false : null,
       automaticallyImplyLeading: false,
       leading: switcher == null
           ? null
@@ -193,27 +221,8 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
       leadingWidth: switcher == null ? null : MediaQuery.sizeOf(context).width * 0.55,
       backgroundColor: condenseBarColor(context, condensed),
       shape: condenseBarShape(context, condensed),
-      actions: [
-        // UX_SELF: pause / unpause sit in the header like in Ionic
-        if (canSelfPause && player != null && !player.paused)
-          IconButton(
-            icon: const Icon(Icons.pause_circle_outline),
-            tooltip: context.l10n.signoutPause,
-            onPressed: () => selfServicePause(context, ref, player),
-          ),
-        if (canSelfPause && player != null && player.paused)
-          IconButton(
-            icon: const Icon(Icons.play_circle_outline),
-            tooltip: context.l10n.signoutEndPause,
-            onPressed: () => selfServiceUnpause(context, ref, player),
-          ),
-        IconButton(
-          icon: const Icon(Icons.info_outline),
-          tooltip: context.l10n.signoutLegend,
-          onPressed: () => showEventLegendSheet(context),
-        ),
-        const NotificationBell(), // MESSAGES
-      ],
+      // IOS_SHELL: iOS → one glass capsule (ion-buttons slot="end")
+      actions: [ToolbarButtonGroup(children: buttons)],
     );
   }
 

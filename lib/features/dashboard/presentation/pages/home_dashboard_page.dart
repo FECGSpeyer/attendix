@@ -13,6 +13,7 @@ import '../../../team_organization/presentation/widgets/my_tasks_card.dart';
 import '../widgets/event_cards.dart';
 import '../widgets/people_cards.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/adaptive/app_toolbar.dart'; // IOS_SHELL
 
 /// Home dashboard tab (Ionic `home-dashboard`): configurable set of cards in a
 /// masonry-like grid (1 / 2 / 3 columns depending on width).
@@ -46,13 +47,16 @@ class HomeDashboardPage extends ConsumerWidget {
         title: tenants.length > 1
             ? _TenantSwitcher(tenants: tenants, current: tenant)
             : Text(context.l10n.tabsDashboard),
+        // IOS_SHELL: iOS → one glass capsule (ion-buttons slot="end")
         actions: [
-          IconButton(
-            tooltip: context.l10n.homeDashboardConfigure,
-            icon: const Icon(Icons.settings_outlined),
-            onPressed: () => context.push('/settings/dashboard'),
-          ),
-          const NotificationBell(), // INTEGRATION (Ionic app-notification-bell)
+          ToolbarButtonGroup(children: [
+            IconButton(
+              tooltip: context.l10n.homeDashboardConfigure,
+              icon: const Icon(Icons.settings_outlined),
+              onPressed: () => context.push('/settings/dashboard'),
+            ),
+            const NotificationBell(), // INTEGRATION (Ionic app-notification-bell)
+          ]),
         ],
       ),
       body: RefreshIndicator.adaptive(

@@ -208,12 +208,23 @@ class MainShell extends ConsumerWidget {
     // NATIVE_MISC: Android back at a root tab exits the app (Ionic
     // @capacitor/app backButton → exitApp); nested pages pop normally because
     // go_router pops the inner navigator before this scope is asked.
+    // IOS_SHELL: pages put their ion-fab into the tab bar row (TabBarFab).
+    final ios = useIosLook(context);
+    Widget page = NativeAppAdGate(child: child);
+    if (ios) {
+      page = IosTabBarScope(
+        bottom: IosTabBar.bottomOffset(context),
+        right: IosTabBar.fabRight(context),
+        child: page,
+      );
+    }
+
     return RootBackButtonScope(
       child: Scaffold(
       body: Column(
         children: [
           // LINKS_STARTUP: one-time "Attendix als App verfügbar!" (web)
-          Expanded(child: NativeAppAdGate(child: child)),
+          Expanded(child: page),
           const AudioPlayerWidget(),
         ],
       ),
@@ -222,7 +233,7 @@ class MainShell extends ConsumerWidget {
       // IOS_LOOK: iOS → Ionic iOS 26 floating Liquid Glass tab bar;
       // elsewhere ion-tab-bar md with a hairline on top and no selection pill
       // (see navigationBarTheme in app_theme.dart).
-      bottomNavigationBar: useIosLook(context)
+      bottomNavigationBar: ios
           ? IosTabBar(
               selectedIndex: selectedIndex.clamp(0, destinations.length - 1),
               onSelected: (index) =>

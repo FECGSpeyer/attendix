@@ -14,9 +14,12 @@ class IosTabBarItem {
 /// IOS_LOOK: `ion-tab-bar` in the Ionic iOS 26 theme (as configured in
 /// Ionic tabs.page.scss): a floating Liquid Glass pill at the bottom left
 /// (16pt from the edge, `max(10, safe-area-bottom − 12)` above the bottom),
-/// 56pt high with 40pt corners, leaving 72pt on the right for a FAB.
-/// Tabs show a 26pt icon over a 10pt label; the selected tab gets a soft
-/// grey pill and the primary colour, the others use the text colour.
+/// 60pt high (56pt buttons + 2pt padding) with 40pt corners, leaving 72pt on
+/// the right for the page's `ion-fab` (see [TabBarFab]), which sits in the
+/// same row, vertically centred with the bar.
+/// Tabs show a 26pt icon over a 10pt label (scaled down instead of
+/// truncated, e.g. "Meine Termine"); the selected tab gets a soft grey pill
+/// and the primary colour, the others use the text colour.
 class IosTabBar extends StatelessWidget {
   const IosTabBar({
     super.key,
@@ -29,7 +32,12 @@ class IosTabBar extends StatelessWidget {
   final int selectedIndex;
   final ValueChanged<int> onSelected;
 
-  static const double barHeight = 56;
+  /// `min-height: 56px` + `padding: 2px` (content-box).
+  static const double barHeight = 60;
+
+  /// Right edge of the tab bar row (`ion-fab` `right: 16px + safe-right`).
+  static double fabRight(BuildContext context) =>
+      16 + MediaQuery.paddingOf(context).right;
 
   /// `max(10px, var(--ion-safe-area-bottom) - 12px)`
   static double bottomOffset(BuildContext context) =>
@@ -118,27 +126,108 @@ class _TabButton extends StatelessWidget {
             color: selected ? pill : Colors.transparent,
             borderRadius: BorderRadius.circular(32),
           ),
-          padding: const EdgeInsets.symmetric(horizontal: 2),
+          padding: const EdgeInsets.symmetric(horizontal: 3),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(item.icon, size: 26, color: color),
               const SizedBox(height: 2),
-              Text(
-                item.label,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontSize: 10,
-                  height: 1.2,
-                  fontWeight: FontWeight.w500,
-                  color: color,
+              // Ionic shows long labels ("Meine Termine") in full: shrink
+              // the 10pt label to the button width instead of an ellipsis.
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  item.label,
+                  maxLines: 1,
+                  softWrap: false,
+                  style: TextStyle(
+                    fontSize: 10,
+                    height: 1.2,
+                    fontWeight: FontWeight.w500,
+                    letterSpacing: -0.1,
+                    color: color,
+                  ),
                 ),
               ),
             ],
           ),
         ),
       ),
+    );
+  }
+}
+
+/// IOS_LOOK: marks the subtree of [MainShell] that shows the floating
+/// [IosTabBar]; pages below use it (via [TabBarFab]) to put their `ion-fab`
+/// into the tab bar row like the Ionic iOS 26 theme.
+class IosTabBarScope extends InheritedWidget {
+  const IosTabBarScope({
+    super.key,
+    required this.bottom,
+    required this.right,
+    required super.child,
+  });
+
+  /// Distance of the tab bar row from the bottom of the screen.
+  final double bottom;
+
+  /// Distance of the FAB from the right edge of the screen.
+  final double right;
+
+  static IosTabBarScope? maybeOf(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<IosTabBarScope>();
+
+  @override
+  bool updateShouldNotify(IosTabBarScope oldWidget) =>
+      bottom != oldWidget.bottom || right != oldWidget.right;
+}
+
+/// IOS_LOOK: wraps a page's `floatingActionButton`. Inside the iOS tab shell
+/// ([IosTabBarScope]) the button is rendered in the tab bar row – right of
+/// the floating tab bar, vertically centred with it (Ionic iOS 26:
+/// `ion-fab` bottom = tab bar bottom, right 16pt) – so it never covers page
+/// content. It is only shown while its page is the current route. Outside
+/// the iOS shell (Material, desktop) the child is returned unchanged and the
+/// Scaffold places it as usual.
+class TabBarFab extends StatefulWidget {
+  const TabBarFab({super.key, required this.child});
+
+  final Widget child;
+
+  /// `TabBarFab(child: fab)` or null when [fab] is null.
+  static Widget? wrap(Widget? fab) => fab == null ? null : TabBarFab(child: fab);
+
+  @override
+  State<TabBarFab> createState() => _TabBarFabState();
+}
+
+class _TabBarFabState extends State<TabBarFab> {
+  final _controller = OverlayPortalController();
+
+  @override
+  void initState() {
+    super.initState();
+    _controller.show();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final scope = IosTabBarScope.maybeOf(context);
+    if (scope == null || !useIosLook(context)) return widget.child;
+    // Hide while another route (pushed page, sheet, dialog of the shell
+    // navigator) lies on top of this page.
+    final visible = ModalRoute.of(context)?.isCurrent ?? true;
+    return OverlayPortal.targetsRootOverlay(
+      controller: _controller,
+      overlayChildBuilder: (context) => !visible
+          ? const SizedBox.shrink()
+          : Positioned(
+              right: scope.right,
+              bottom: scope.bottom,
+              height: IosTabBar.barHeight,
+              child: Center(widthFactor: 1, child: widget.child),
+            ),
+      child: const SizedBox.shrink(),
     );
   }
 }
