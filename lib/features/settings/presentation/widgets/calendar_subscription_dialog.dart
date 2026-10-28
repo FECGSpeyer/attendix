@@ -8,6 +8,7 @@ import '../../../../core/providers/debug_providers.dart';
 import '../../../../core/providers/profile_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/utils/toast_helper.dart';
+import '../../../../l10n/l10n.dart';
 
 /// iCal feed URL of the Supabase edge function `ical-tenant`
 /// (Ionic settings `openCalendarSubscription()`).
@@ -42,19 +43,19 @@ Future<void> showCalendarSubscriptionDialog(BuildContext context, WidgetRef ref)
     context: context,
     builder: (ctx) => StatefulBuilder(
       builder: (ctx, setState) => AlertDialog(
-        title: const Text('Kalender abonnieren'),
+        title: Text(ctx.l10n.settingsSubscribeCalendar),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Kopiere den folgenden Link in deine Kalender-App, um die Termine zu abonnieren:'),
+            Text(ctx.l10n.settingsFlutterCalendarIntro),
             const SizedBox(height: 12),
             SelectableText(link, style: const TextStyle(fontSize: 12)),
             if (personal)
               CheckboxListTile(
                 contentPadding: EdgeInsets.zero,
                 controlAffinity: ListTileControlAffinity.leading,
-                title: const Text('Abgesagte Termine ausblenden'),
+                title: Text(ctx.l10n.settingsHideCancelled),
                 value: hideExcused,
                 onChanged: (v) => setState(() => hideExcused = v ?? false),
               ),
@@ -68,15 +69,15 @@ Future<void> showCalendarSubscriptionDialog(BuildContext context, WidgetRef ref)
                 await Clipboard.setData(ClipboardData(text: finalLink));
               } catch (_) {
                 if (ctx.mounted) {
-                  ToastHelper.showError(ctx, 'Link konnte nicht kopiert werden');
+                  ToastHelper.showError(ctx, ctx.l10n.settingsFlutterCopyLinkFailed);
                 }
                 return;
               }
               if (ctx.mounted) {
-                ToastHelper.showSuccess(ctx, 'Der Link wurde in die Zwischenablage kopiert');
+                ToastHelper.showSuccess(ctx, ctx.l10n.settingsLinkCopied);
               }
             },
-            child: const Text('Link kopieren'),
+            child: Text(ctx.l10n.settingsCopyLink),
           ),
           TextButton(
             onPressed: () async {
@@ -89,11 +90,11 @@ Future<void> showCalendarSubscriptionDialog(BuildContext context, WidgetRef ref)
                 );
               } catch (_) {}
             },
-            child: const Text('Anleitung öffnen'),
+            child: Text(ctx.l10n.settingsOpenGuide),
           ),
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('Schließen'),
+            child: Text(ctx.l10n.commonClose),
           ),
         ],
       ),

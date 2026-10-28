@@ -14,6 +14,7 @@ import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../data/repositories/player_repository.dart';
 import 'handover_page.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Ionic handover-detail auto mapping: same name, or one name contains the
 /// other (e.g. "Trompete" vs. "Bb Trompete", "Flöte" vs. "Querflöte").
@@ -54,7 +55,7 @@ class _HandoverDetailPageState extends ConsumerState<HandoverDetailPage> {
   Future<void> _init() async {
     final data = widget.data;
     if (data == null || data.tenant.id == null) {
-      ToastHelper.showError(context, 'Keine Daten für die Personenübergabe vorhanden.');
+      ToastHelper.showError(context, context.l10n.handoverNoData);
       context.go('/settings/handover');
       return;
     }
@@ -74,20 +75,20 @@ class _HandoverDetailPageState extends ConsumerState<HandoverDetailPage> {
     } catch (e) {
       if (!mounted) return;
       setState(() => _loading = false);
-      ToastHelper.showError(context, 'Fehler: $e');
+      ToastHelper.showError(context, context.l10n.settingsFlutterErrorDetail(e));
     }
   }
 
   String _groupName(int? id) =>
       _targetGroups.where((g) => g.id == id).map((g) => g.name).firstOrNull ??
-      'Unbekannt';
+      context.l10n.commonUnknown;
 
   Future<void> _changeGroup(Person person) async {
     final current = _groupMapping[person.id];
     final picked = await showDialog<int>(
       context: context,
       builder: (context) => SimpleDialog(
-        title: const Text('Gruppe auswählen'),
+        title: Text(context.l10n.handoverSelectGroup),
         children: [
           for (final g in _targetGroups)
             RadioListTile<int>(
@@ -107,14 +108,13 @@ class _HandoverDetailPageState extends ConsumerState<HandoverDetailPage> {
   Future<void> _confirmProceed() async {
     final data = widget.data!;
     final note = data.stayInInstance
-        ? 'Die Personen bleiben in dieser Instanz erhalten.'
-        : 'Die Personen werden in dieser Instanz archiviert.';
+        ? context.l10n.handoverStayNote
+        : context.l10n.handoverArchiveNote;
     final confirmed = await DialogHelper.showConfirmation(
       context,
-      title: 'Personenübergabe',
-      message: 'Möchtest du die ${data.persons.length} ausgewählten Personen wirklich '
-          'in die Instanz „${data.tenant.longName}“ übertragen? $note',
-      confirmText: 'Übertragen',
+      title: context.l10n.handoverTitle,
+      message: context.l10n.handoverConfirm(data.persons.length, data.tenant.longName, note),
+      confirmText: context.l10n.handoverTransfer,
       isDestructive: !data.stayInInstance,
     );
     if (confirmed) await _proceed();
@@ -154,19 +154,18 @@ class _HandoverDetailPageState extends ConsumerState<HandoverDetailPage> {
       if (failed.isNotEmpty) {
         await DialogHelper.showAlert(
           context,
-          title: 'Fehler bei der Personenübergabe',
-          message: 'Die folgenden Personen konnten nicht übertragen werden, da sie '
-              'bereits in der Zielinstanz vorhanden sind:\n'
-              '${failed.map((p) => '${p.firstName} ${p.lastName}').join('\n')}',
+          title: context.l10n.handoverFailed,
+          message: context.l10n.handoverAlreadyThere(
+              failed.map((p) => '${p.firstName} ${p.lastName}').join('\n')),
         );
       } else {
         ToastHelper.showSuccess(
-            context, '${data.persons.length} Personen wurden übertragen.');
+            context, context.l10n.handoverTransferred(data.persons.length));
       }
       if (mounted) context.go('/settings');
     } catch (e) {
       if (mounted) {
-        ToastHelper.showError(context, 'Fehler bei der Personenübergabe: $e');
+        ToastHelper.showError(context, context.l10n.handoverFailedWith(e));
       }
     } finally {
       if (mounted) setState(() => _transferring = false);
@@ -177,7 +176,7 @@ class _HandoverDetailPageState extends ConsumerState<HandoverDetailPage> {
   Widget build(BuildContext context) {
     final data = widget.data;
     return Scaffold(
-      appBar: AppBar(title: const Text('Personenübergabe')),
+      appBar: AppBar(title: Text(context.l10n.handoverTitle)),
       floatingActionButton: data == null || _loading
           ? null
           : FloatingActionButton(
@@ -201,7 +200,7 @@ class _HandoverDetailPageState extends ConsumerState<HandoverDetailPage> {
                 100,
               ),
               children: [
-                Text('Gruppen-Zuordnung',
+                Text(context.l10n.handoverGroupMapping,
                     style: Theme.of(context).textTheme.titleSmall),
                 const SizedBox(height: AppDimensions.paddingS),
                 Card(

@@ -5,6 +5,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/attendance/attendance.dart';
 import '../../../../shared/widgets/common/swipe_actions.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Editor for the "Anmeldefelder" of an attendance type
 /// (Ionic `type.page.html` registration_fields section).
@@ -43,7 +44,7 @@ class _RegistrationFieldsEditorState extends State<RegistrationFieldsEditor> {
   void _add() {
     final label = _labelController.text.trim();
     if (label.isEmpty) {
-      ToastHelper.showWarning(context, 'Bitte eine Feldbezeichnung eingeben');
+      ToastHelper.showWarning(context, context.l10n.typeSettingsEnterFieldLabel);
       return;
     }
     List<String>? options;
@@ -54,7 +55,7 @@ class _RegistrationFieldsEditorState extends State<RegistrationFieldsEditor> {
           .where((o) => o.isNotEmpty)
           .toList();
       if (options.length < 2) {
-        ToastHelper.showWarning(context, 'Bitte mindestens 2 Optionen angeben');
+        ToastHelper.showWarning(context, context.l10n.typeSettingsTwoOptions);
         return;
       }
     }
@@ -75,12 +76,12 @@ class _RegistrationFieldsEditorState extends State<RegistrationFieldsEditor> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         if (widget.fields.isEmpty)
-          const Padding(
-            padding: EdgeInsets.symmetric(vertical: 8),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
             child: Text(
-              'Keine Anmeldefelder konfiguriert',
+              context.l10n.typeSettingsNoSignupFields,
               textAlign: TextAlign.center,
-              style: TextStyle(color: AppColors.medium),
+              style: const TextStyle(color: AppColors.medium),
             ),
           ),
         for (var i = 0; i < widget.fields.length; i++)
@@ -92,7 +93,7 @@ class _RegistrationFieldsEditorState extends State<RegistrationFieldsEditor> {
               contentPadding: EdgeInsets.zero,
               title: Text(widget.fields[i].label),
               subtitle: Text([
-                RegistrationFieldType.label(widget.fields[i].type),
+                _typeLabel(context, widget.fields[i].type),
                 if (widget.fields[i].options?.isNotEmpty ?? false) widget.fields[i].options!.join(', '),
               ].join(' · ')),
             ),
@@ -100,16 +101,16 @@ class _RegistrationFieldsEditorState extends State<RegistrationFieldsEditor> {
         const SizedBox(height: 8),
         TextField(
           controller: _labelController,
-          decoration: const InputDecoration(
-            labelText: 'Feldbezeichnung',
-            hintText: 'z.B. Instrument mitbringen?',
-            border: OutlineInputBorder(),
+          decoration: InputDecoration(
+            labelText: context.l10n.typeSettingsFieldLabel,
+            hintText: context.l10n.typeSettingsFieldLabelPh,
+            border: const OutlineInputBorder(),
           ),
         ),
         const SizedBox(height: 8),
         DropdownButtonFormField<String>(
           value: _type,
-          decoration: const InputDecoration(labelText: 'Typ', border: OutlineInputBorder()),
+          decoration: InputDecoration(labelText: context.l10n.typeSettingsType, border: const OutlineInputBorder()),
           items: [
             for (final t in const [
               RegistrationFieldType.text,
@@ -117,7 +118,7 @@ class _RegistrationFieldsEditorState extends State<RegistrationFieldsEditor> {
               RegistrationFieldType.select,
               RegistrationFieldType.multiSelect,
             ])
-              DropdownMenuItem(value: t, child: Text(RegistrationFieldType.label(t))),
+              DropdownMenuItem(value: t, child: Text(_typeLabel(context, t))),
           ],
           onChanged: (v) => setState(() => _type = v ?? RegistrationFieldType.text),
         ),
@@ -125,10 +126,10 @@ class _RegistrationFieldsEditorState extends State<RegistrationFieldsEditor> {
           const SizedBox(height: 8),
           TextField(
             controller: _optionsController,
-            decoration: const InputDecoration(
-              labelText: 'Optionen (kommagetrennt)',
-              hintText: 'Option A, Option B, Option C',
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              labelText: context.l10n.typeSettingsOptionsComma,
+              hintText: context.l10n.typeSettingsOptionsPh,
+              border: const OutlineInputBorder(),
             ),
           ),
         ],
@@ -136,9 +137,26 @@ class _RegistrationFieldsEditorState extends State<RegistrationFieldsEditor> {
         FilledButton.icon(
           onPressed: _add,
           icon: const Icon(Icons.add_circle_outline),
-          label: const Text('Feld hinzufügen'),
+          label: Text(context.l10n.typeSettingsAddField),
         ),
       ],
     );
+  }
+}
+
+/// Localized label of a [RegistrationFieldType] (Ionic typeSettings.* keys).
+String _typeLabel(BuildContext context, String type) {
+  final l10n = context.l10n;
+  switch (type) {
+    case RegistrationFieldType.text:
+      return l10n.typeSettingsText;
+    case RegistrationFieldType.boolean:
+      return l10n.typeSettingsYesNo;
+    case RegistrationFieldType.select:
+      return l10n.typeSettingsSingle;
+    case RegistrationFieldType.multiSelect:
+      return l10n.typeSettingsMulti;
+    default:
+      return type;
   }
 }

@@ -23,6 +23,7 @@ import '../../../../data/repositories/files_repository.dart';
 import '../../../../shared/widgets/sheets/image_viewer_sheet.dart';
 import '../../../../core/services/tracking/tracking_event.dart';
 import '../../../../core/services/tracking/tracking_service.dart';
+import '../../../../l10n/l10n.dart';
 
 enum FilesSortBy { name, updatedAt, size }
 
@@ -79,7 +80,7 @@ class FilesSearch {
   }
 
   static String formatUpdatedAt(DateTime? d) =>
-      d == null ? '' : DateFormat('dd.MM.yyyy, HH:mm').format(d);
+      d == null ? '' : DateFormat('${dateFmt()}, HH:mm').format(d);
 
   static bool _matchesType(StorageEntry entry, String typeFilter) {
     if (typeFilter.isEmpty) return true;
@@ -198,7 +199,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
     if (openName == null || openName.isEmpty || !mounted) return;
     final entry = _entries.where((e) => !e.isFolder && e.name == openName).firstOrNull;
     if (entry == null) {
-      ToastHelper.showWarning(context, 'Die verlinkte Datei wurde nicht gefunden.');
+      ToastHelper.showWarning(context, context.l10n.filesLinkedNotFound);
       return;
     }
     await _openEntry(entry);
@@ -235,18 +236,19 @@ class _FilesPageState extends ConsumerState<FilesPage> {
 
   String get _storageStatusLabel {
     if (!_isStorageAlmostFull) return '';
-    return (_usedBytes ?? 0) >= (_maxBytes ?? 0) ? ' · voll' : ' · fast voll';
+    return (_usedBytes ?? 0) >= (_maxBytes ?? 0) ? context.l10n.filesFull : context.l10n.filesAlmostFull;
   }
 
   String get _sortLabel {
-    final dir = _ascending ? 'aufsteigend' : 'absteigend';
+    final l10n = context.l10n;
+    final dir = _ascending ? l10n.filesAscending : l10n.filesDescending;
     switch (_sortBy) {
       case FilesSortBy.updatedAt:
-        return 'Datum ($dir)';
+        return l10n.filesSortDate(dir);
       case FilesSortBy.size:
-        return 'Größe ($dir)';
+        return l10n.filesSortSize(dir);
       case FilesSortBy.name:
-        return 'Name (${_ascending ? 'A-Z' : 'Z-A'})';
+        return l10n.filesSortName(_ascending ? 'A-Z' : 'Z-A');
     }
   }
 
@@ -261,7 +263,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
       await _loadImagePreviews();
       if (_canEdit) await _loadUsage();
     } catch (e) {
-      if (mounted) ToastHelper.showError(context, 'Fehler beim Laden der Dateien: ${_errorText(e)}');
+      if (mounted) ToastHelper.showError(context, context.l10n.filesLoadFailed(_errorText(e)));
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -330,7 +332,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
         url = await _repo.getSignedFileUrl(entry.path, expiresInSeconds: 3600);
         _imagePreviewUrls[entry.path] = url;
       } catch (e) {
-        if (mounted) ToastHelper.showError(context, 'Bildvorschau fehlgeschlagen: ${_errorText(e)}');
+        if (mounted) ToastHelper.showError(context, context.l10n.filesPreviewFailed(_errorText(e)));
         return;
       }
     }
@@ -355,7 +357,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
     try {
       await ref.read(audioPlayerServiceProvider.notifier).playQueue(queue, startIndex);
     } catch (e) {
-      if (mounted) ToastHelper.showError(context, 'Fehler beim Abspielen: ${_errorText(e)}');
+      if (mounted) ToastHelper.showError(context, context.l10n.filesPlayFailed(_errorText(e)));
     }
   }
 
@@ -368,27 +370,28 @@ class _FilesPageState extends ConsumerState<FilesPage> {
     if (entry.isFolder) return;
     final chatId = _telegramChatId;
     if (chatId == null || chatId.isEmpty) {
-      ToastHelper.showWarning(context, 'Bitte verbinde zuerst Telegram in den Benachrichtigungen.');
+      ToastHelper.showWarning(context, context.l10n.filesConnectTelegram);
       return;
     }
-    ToastHelper.showInfo(context, 'Datei wird per Telegram gesendet...');
+    ToastHelper.showInfo(context, context.l10n.filesSendingTelegram);
     try {
       final url = await _repo.getSignedFileUrl(entry.path, expiresInSeconds: 600);
       await ref.read(telegramServiceProvider).sendDocumentPerTelegram(url: url, chatId: chatId);
-      if (mounted) ToastHelper.showSuccess(context, 'Nachricht wurde erfolgreich gesendet!');
+      if (mounted) ToastHelper.showSuccess(context, context.l10n.svcMessageSent);
     } catch (e) {
-      if (mounted) ToastHelper.showError(context, 'Telegram-Versand fehlgeschlagen: ${_errorText(e)}');
+      if (mounted) ToastHelper.showError(context, context.l10n.filesTelegramFailed(_errorText(e)));
     }
   }
 
   Future<void> _downloadEntry(StorageEntry entry) async {
     if (entry.isFolder) return;
+    final openFailed = context.l10n.filesFlutterOpenLinkFailed;
     try {
       final url = await _repo.getSignedFileUrl(entry.path, downloadName: entry.name);
       final ok = await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
-      if (!ok) throw Exception('Link konnte nicht geöffnet werden');
+      if (!ok) throw Exception(openFailed);
     } catch (e) {
-      if (mounted) ToastHelper.showError(context, 'Download fehlgeschlagen: ${_errorText(e)}');
+      if (mounted) ToastHelper.showError(context, context.l10n.filesDownloadFailed(_errorText(e)));
     }
   }
 
@@ -406,52 +409,52 @@ class _FilesPageState extends ConsumerState<FilesPage> {
     final url = _shareLink(entry?.path ?? _currentPath, entry?.isFolder ?? true);
     try {
       await Clipboard.setData(ClipboardData(text: url));
-      if (mounted) ToastHelper.showSuccess(context, 'Link in Zwischenablage kopiert');
+      if (mounted) ToastHelper.showSuccess(context, context.l10n.filesLinkCopied);
     } catch (_) {
       try {
         await Share.share(url);
       } catch (_) {
-        if (mounted) ToastHelper.showInfo(context, 'Link: $url');
+        if (mounted) ToastHelper.showInfo(context, context.l10n.filesLinkToast(url));
       }
     }
   }
 
   Future<void> _createFolder() async {
     if (!_canEdit) {
-      ToastHelper.showWarning(context, 'Du darfst Dateien nicht bearbeiten.');
+      ToastHelper.showWarning(context, context.l10n.filesNoEditRights);
       return;
     }
     final name = await DialogHelper.showTextInput(
       context,
-      title: 'Ordner erstellen',
-      hint: 'Ordnername',
-      confirmText: 'Erstellen',
+      title: context.l10n.filesCreateFolder,
+      hint: context.l10n.filesFolderName,
+      confirmText: context.l10n.filesCreate,
     );
     if (name == null || name.trim().isEmpty || !mounted) return;
     try {
       await _repo.createFolder(_currentPath, name);
-      if (mounted) ToastHelper.showSuccess(context, 'Ordner wurde erstellt.');
+      if (mounted) ToastHelper.showSuccess(context, context.l10n.filesFolderCreated);
       await _loadEntries();
     } catch (e) {
-      if (mounted) ToastHelper.showError(context, 'Ordner konnte nicht erstellt werden: ${_errorText(e)}');
+      if (mounted) ToastHelper.showError(context, context.l10n.filesFolderFailed(_errorText(e)));
     }
   }
 
   Future<void> _renameEntry(StorageEntry entry) async {
     final name = await DialogHelper.showTextInput(
       context,
-      title: entry.isFolder ? 'Ordner umbenennen' : 'Datei umbenennen',
+      title: entry.isFolder ? context.l10n.filesRenameFolder : context.l10n.filesRenameFile,
       initialValue: entry.name,
-      hint: 'Neuer Name',
-      confirmText: 'Speichern',
+      hint: context.l10n.filesNewName,
+      confirmText: context.l10n.commonSave,
     );
     if (name == null || name.trim().isEmpty || !mounted) return;
     try {
       await _repo.renameEntry(entry.path, name, isFolder: entry.isFolder);
-      if (mounted) ToastHelper.showSuccess(context, 'Eintrag wurde umbenannt.');
+      if (mounted) ToastHelper.showSuccess(context, context.l10n.filesRenamed);
       await _loadEntries();
     } catch (e) {
-      if (mounted) ToastHelper.showError(context, 'Umbenennen fehlgeschlagen: ${_errorText(e)}');
+      if (mounted) ToastHelper.showError(context, context.l10n.filesRenameFailed(_errorText(e)));
     }
   }
 
@@ -460,22 +463,22 @@ class _FilesPageState extends ConsumerState<FilesPage> {
     final target = await showDialog<String>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Verschieben'),
+        title: Text(context.l10n.filesMove),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Zielordner relativ zum Tenant-Root. Leer lassen für Root.'),
+            Text(context.l10n.filesMoveHint),
             TextField(
               controller: controller,
               autofocus: true,
-              decoration: const InputDecoration(hintText: 'z. B. Dokumente/2026'),
+              decoration: InputDecoration(hintText: ctx.l10n.filesFlutterMovePh),
             ),
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Abbrechen')),
-          ElevatedButton(onPressed: () => Navigator.pop(ctx, controller.text), child: const Text('Verschieben')),
+          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(context.l10n.commonCancel)),
+          ElevatedButton(onPressed: () => Navigator.pop(ctx, controller.text), child: Text(context.l10n.filesMove)),
         ],
       ),
     );
@@ -483,28 +486,28 @@ class _FilesPageState extends ConsumerState<FilesPage> {
     if (target == null || !mounted) return;
     try {
       await _repo.moveEntry(entry.path, target, isFolder: entry.isFolder);
-      if (mounted) ToastHelper.showSuccess(context, 'Eintrag wurde verschoben.');
+      if (mounted) ToastHelper.showSuccess(context, context.l10n.filesMoved);
       await _loadEntries();
     } catch (e) {
-      if (mounted) ToastHelper.showError(context, 'Verschieben fehlgeschlagen: ${_errorText(e)}');
+      if (mounted) ToastHelper.showError(context, context.l10n.filesMoveFailed(_errorText(e)));
     }
   }
 
   Future<void> _deleteEntry(StorageEntry entry) async {
     final confirmed = await DialogHelper.showConfirmation(
       context,
-      title: entry.isFolder ? 'Ordner löschen?' : 'Datei löschen?',
-      message: 'Möchtest du ${entry.name} wirklich löschen?',
-      confirmText: 'Löschen',
+      title: entry.isFolder ? context.l10n.filesDeleteFolder : context.l10n.filesDeleteFile,
+      message: context.l10n.filesDeleteMessage(entry.name),
+      confirmText: context.l10n.commonDelete,
       isDestructive: true,
     );
     if (!confirmed || !mounted) return;
     try {
       await _repo.deleteEntry(entry.path, isFolder: entry.isFolder);
-      if (mounted) ToastHelper.showSuccess(context, 'Eintrag wurde gelöscht.');
+      if (mounted) ToastHelper.showSuccess(context, context.l10n.filesDeleted);
       await _loadEntries();
     } catch (e) {
-      if (mounted) ToastHelper.showError(context, 'Löschen fehlgeschlagen: ${_errorText(e)}');
+      if (mounted) ToastHelper.showError(context, context.l10n.filesDeleteFailed(_errorText(e)));
     }
   }
 
@@ -513,22 +516,22 @@ class _FilesPageState extends ConsumerState<FilesPage> {
     final note = await showDialog<String>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Mehr Speicher anfragen'),
+        title: Text(context.l10n.filesRequestMore),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text('Die Anfrage geht an den Attendix-Admin. Er meldet sich bei dir.'),
+            Text(context.l10n.filesRequestHint),
             const SizedBox(height: AppDimensions.paddingS),
             TextField(
               controller: controller,
               maxLines: 3,
-              decoration: const InputDecoration(hintText: 'Wie viel Speicher braucht ihr ungefähr? (optional)'),
+              decoration: InputDecoration(hintText: ctx.l10n.filesHowMuch),
             ),
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Abbrechen')),
-          ElevatedButton(onPressed: () => Navigator.pop(ctx, controller.text), child: const Text('Senden')),
+          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(context.l10n.commonCancel)),
+          ElevatedButton(onPressed: () => Navigator.pop(ctx, controller.text), child: Text(context.l10n.filesSend)),
         ],
       ),
     );
@@ -550,26 +553,26 @@ class _FilesPageState extends ConsumerState<FilesPage> {
     final ok = await ref.read(feedbackNotifierProvider.notifier).sendQuestion(message: message);
     if (!mounted) return;
     if (ok) {
-      ToastHelper.showSuccess(context, 'Deine Anfrage wurde gesendet. Wir melden uns so schnell wie möglich.');
+      ToastHelper.showSuccess(context, context.l10n.filesRequestSent);
     } else {
       final error = ref.read(feedbackNotifierProvider).error;
-      ToastHelper.showError(context, 'Fehler beim Senden der Anfrage: ${error ?? ''}');
+      ToastHelper.showError(context, context.l10n.filesRequestFailed(error ?? ''));
     }
   }
 
   /// Fragt bei Duplikaten nach: 'overwrite' | 'skip' | null (Abbrechen)
   Future<String?> _askDuplicateHandling(List<String> names) {
     final preview = names.take(5).join(', ');
-    final suffix = names.length > 5 ? ' und ${names.length - 5} weitere' : '';
+    final suffix = names.length > 5 ? context.l10n.filesAndMore(names.length - 5) : '';
     return showDialog<String>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Datei existiert bereits'),
-        content: Text('Folgende Datei(en) existieren bereits: $preview$suffix. Möchtest du diese überschreiben?'),
+        title: Text(context.l10n.filesExists),
+        content: Text(ctx.l10n.filesExistsMessage('$preview$suffix')),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Abbrechen')),
-          TextButton(onPressed: () => Navigator.pop(ctx, 'skip'), child: const Text('Überspringen')),
-          ElevatedButton(onPressed: () => Navigator.pop(ctx, 'overwrite'), child: const Text('Überschreiben')),
+          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(context.l10n.commonCancel)),
+          TextButton(onPressed: () => Navigator.pop(ctx, 'skip'), child: Text(context.l10n.filesSkip)),
+          ElevatedButton(onPressed: () => Navigator.pop(ctx, 'overwrite'), child: Text(context.l10n.filesOverwrite)),
         ],
       ),
     );
@@ -600,15 +603,13 @@ class _FilesPageState extends ConsumerState<FilesPage> {
     final request = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Speicher voll'),
+        title: Text(context.l10n.filesStorageFull),
         content: Text(
-          'Für diesen Upload werden ${formatFileSize(needed)} benötigt, frei sind noch '
-          '${formatFileSize(free)} von ${formatFileSize(max)}. Lösche nicht mehr benötigte '
-          'Dateien oder frage mehr Speicher an.',
+          ctx.l10n.filesStorageFullMessage(formatFileSize(needed), formatFileSize(free), formatFileSize(max)),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('OK')),
-          ElevatedButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Mehr Speicher anfragen')),
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(ctx.l10n.commonOk)),
+          ElevatedButton(onPressed: () => Navigator.pop(ctx, true), child: Text(context.l10n.filesRequestMore)),
         ],
       ),
     );
@@ -618,7 +619,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
 
   Future<void> _upload() async {
     if (!_canEdit) {
-      ToastHelper.showWarning(context, 'Du darfst Dateien nicht bearbeiten.');
+      ToastHelper.showWarning(context, context.l10n.filesNoEditRights);
       return;
     }
     final result = await FilePicker.platform.pickFiles(allowMultiple: true, withData: true);
@@ -638,7 +639,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
     }
     if (!await _hasEnoughSpace(files, names, duplicates, overwrite) || !mounted) return;
 
-    final progress = ValueNotifier<String>('Upload 0/${files.length} (0%)');
+    final progress = ValueNotifier<String>(context.l10n.filesUploadProgress(0, files.length, 0));
     showDialog<void>(
       context: context,
       barrierDismissible: false,
@@ -661,7 +662,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
     var success = 0, failed = 0, skipped = 0, processed = 0;
     String progressText(String? name) {
       final percent = files.isEmpty ? 0 : ((processed / files.length) * 100).round();
-      final base = 'Upload $processed/${files.length} ($percent%)';
+      final base = context.l10n.filesUploadProgress(processed, files.length, percent);
       return name != null ? '$base\n$name' : base;
     }
 
@@ -690,23 +691,33 @@ class _FilesPageState extends ConsumerState<FilesPage> {
     if (!mounted) return;
 
     if (success > 0 && failed == 0 && skipped == 0) {
-      ToastHelper.showSuccess(context, success == 1 ? 'Datei wurde hochgeladen.' : '$success Dateien wurden hochgeladen.');
+      ToastHelper.showSuccess(
+          context, success == 1 ? context.l10n.filesUploadedOne : context.l10n.filesUploadedMany(success));
     } else if (success > 0 || failed > 0 || skipped > 0) {
-      ToastHelper.showWarning(context, '$success hochgeladen, $skipped übersprungen, $failed fehlgeschlagen.');
+      ToastHelper.showWarning(context, context.l10n.filesUploadSummary(success, skipped, failed));
     } else {
-      ToastHelper.showInfo(context, 'Keine Datei hochgeladen.');
+      ToastHelper.showInfo(context, context.l10n.filesNoneUploaded);
     }
     await _loadEntries();
   }
 
+  /// Ionic renders the search help keys as HTML; the alert shows plain text.
+  static String _plainHtml(String html) => html
+      .replaceAll(RegExp(r'<[^>]+>'), '')
+      .replaceAll('&lt;', '<')
+      .replaceAll('&gt;', '>')
+      .replaceAll('&amp;', '&');
+
   void _showSearchHelp() {
     DialogHelper.showAlert(
       context,
-      title: 'Suche',
-      message: 'Freitext durchsucht den Dateinamen/Ordnernamen.\n\n'
-          'typ:<wert> · Filtert nach Dateityp oder Art (z. B. typ:pdf, typ:ordner, typ:datei).\n\n'
-          'datum:<wert> · Filtert nach Änderungsdatum (z. B. datum:2026, datum:03.2026, datum:03.03.2026).\n\n'
-          'Filter sind kombinierbar, z. B. protokoll typ:pdf datum:2026.',
+      title: context.l10n.filesSearch,
+      message: [
+        context.l10n.filesSearchHelp,
+        context.l10n.filesSearchType,
+        context.l10n.filesSearchDate,
+        context.l10n.filesSearchCombine,
+      ].map(_plainHtml).join('\n\n'),
     );
   }
 
@@ -721,10 +732,10 @@ class _FilesPageState extends ConsumerState<FilesPage> {
             ListTile(
               leading: Icon(FilesSearch.isAudio(entry) ? Icons.play_circle_outline : Icons.open_in_new),
               title: Text(entry.isFolder
-                  ? 'Ordner öffnen'
+                  ? context.l10n.filesFlutterOpenFolder
                   : FilesSearch.isAudio(entry)
-                      ? 'Aufnahme abspielen'
-                      : 'Datei öffnen/downloaden'),
+                      ? context.l10n.songsPlayRecording
+                      : context.l10n.filesFlutterOpenDownload),
               onTap: () {
                 Navigator.pop(ctx);
                 _openEntry(entry);
@@ -733,7 +744,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
             if (!entry.isFolder)
               ListTile(
                 leading: const Icon(Icons.download_outlined),
-                title: const Text('Datei herunterladen'),
+                title: Text(context.l10n.filesDownload),
                 onTap: () {
                   Navigator.pop(ctx);
                   _downloadEntry(entry);
@@ -741,7 +752,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
               ),
             ListTile(
               leading: const Icon(Icons.link),
-              title: const Text('Link teilen'),
+              title: Text(context.l10n.filesShareLink),
               onTap: () {
                 Navigator.pop(ctx);
                 _shareEntry(entry);
@@ -751,7 +762,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
             if (!entry.isFolder && (_telegramChatId?.isNotEmpty ?? false))
               ListTile(
                 leading: const Icon(Icons.send_outlined),
-                title: const Text('Per Telegram senden'),
+                title: Text(context.l10n.filesSendTelegram),
                 onTap: () {
                   Navigator.pop(ctx);
                   _sendEntryPerTelegram(entry);
@@ -760,7 +771,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
             if (canEdit) ...[
               ListTile(
                 leading: const Icon(Icons.edit_outlined),
-                title: const Text('Umbenennen'),
+                title: Text(context.l10n.filesRename),
                 onTap: () {
                   Navigator.pop(ctx);
                   _renameEntry(entry);
@@ -768,7 +779,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
               ),
               ListTile(
                 leading: const Icon(Icons.swap_horiz),
-                title: const Text('Verschieben'),
+                title: Text(context.l10n.filesMove),
                 onTap: () {
                   Navigator.pop(ctx);
                   _moveEntry(entry);
@@ -776,7 +787,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
               ),
               ListTile(
                 leading: const Icon(Icons.delete_outline, color: AppColors.danger),
-                title: const Text('Löschen', style: TextStyle(color: AppColors.danger)),
+                title: Text(context.l10n.commonDelete, style: TextStyle(color: AppColors.danger)),
                 onTap: () {
                   Navigator.pop(ctx);
                   _deleteEntry(entry);
@@ -832,7 +843,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Dateien'),
+        title: Text(context.l10n.filesTitle),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => context.canPop() ? context.pop() : context.go('/settings'),
@@ -844,45 +855,45 @@ class _FilesPageState extends ConsumerState<FilesPage> {
               onSelected: _onMenuSelected,
               itemBuilder: (_) => [
                 if (canEdit) ...[
-                  const PopupMenuItem(
+                  PopupMenuItem(
                     value: 'upload',
-                    child: ListTile(leading: Icon(Icons.cloud_upload_outlined), title: Text('Dateien hochladen'), contentPadding: EdgeInsets.zero),
+                    child: ListTile(leading: const Icon(Icons.cloud_upload_outlined), title: Text(context.l10n.filesUpload), contentPadding: EdgeInsets.zero),
                   ),
-                  const PopupMenuItem(
+                  PopupMenuItem(
                     value: 'folder',
-                    child: ListTile(leading: Icon(Icons.create_new_folder_outlined), title: Text('Ordner erstellen'), contentPadding: EdgeInsets.zero),
+                    child: ListTile(leading: const Icon(Icons.create_new_folder_outlined), title: Text(context.l10n.filesCreateFolder), contentPadding: EdgeInsets.zero),
                   ),
                 ],
                 PopupMenuItem(
                   value: 'share',
                   child: ListTile(
                     leading: const Icon(Icons.share_outlined),
-                    title: Text(_currentPath.isNotEmpty ? 'Link zu diesem Ordner teilen' : 'Link zur Dateiablage teilen'),
+                    title: Text(_currentPath.isNotEmpty ? context.l10n.filesFlutterShareFolderLink : context.l10n.filesFlutterShareRootLink),
                     contentPadding: EdgeInsets.zero,
                   ),
                 ),
                 const PopupMenuDivider(),
                 PopupMenuItem(
                   enabled: false,
-                  child: ListTile(title: const Text('Sortierung'), subtitle: Text(_sortLabel), contentPadding: EdgeInsets.zero),
+                  child: ListTile(title: Text(context.l10n.filesSorting), subtitle: Text(_sortLabel), contentPadding: EdgeInsets.zero),
                 ),
-                const PopupMenuItem(
+                PopupMenuItem(
                   value: 'sort_name',
-                  child: ListTile(leading: Icon(Icons.text_fields), title: Text('Name'), contentPadding: EdgeInsets.zero),
+                  child: ListTile(leading: const Icon(Icons.text_fields), title: Text(context.l10n.filesName), contentPadding: EdgeInsets.zero),
                 ),
-                const PopupMenuItem(
+                PopupMenuItem(
                   value: 'sort_date',
-                  child: ListTile(leading: Icon(Icons.calendar_today_outlined), title: Text('Änderungsdatum'), contentPadding: EdgeInsets.zero),
+                  child: ListTile(leading: const Icon(Icons.calendar_today_outlined), title: Text(context.l10n.filesModified), contentPadding: EdgeInsets.zero),
                 ),
-                const PopupMenuItem(
+                PopupMenuItem(
                   value: 'sort_size',
-                  child: ListTile(leading: Icon(Icons.straighten), title: Text('Dateigröße'), contentPadding: EdgeInsets.zero),
+                  child: ListTile(leading: const Icon(Icons.straighten), title: Text(context.l10n.filesSize), contentPadding: EdgeInsets.zero),
                 ),
                 PopupMenuItem(
                   value: 'sort_dir',
                   child: ListTile(
                     leading: Icon(_ascending ? Icons.arrow_upward : Icons.arrow_downward),
-                    title: Text(_ascending ? 'Aufsteigend' : 'Absteigend'),
+                    title: Text(_ascending ? context.l10n.filesFlutterAscending : context.l10n.filesFlutterDescending),
                     contentPadding: EdgeInsets.zero,
                   ),
                 ),
@@ -893,17 +904,17 @@ class _FilesPageState extends ConsumerState<FilesPage> {
       floatingActionButton: canAccess && canEdit
           ? FloatingActionButton(
               onPressed: _upload,
-              tooltip: 'Dateien hochladen',
+              tooltip: context.l10n.filesUpload,
               child: const Icon(Icons.cloud_upload_outlined),
             )
           : null,
       body: isRoleLoading
           ? const Center(child: CircularProgressIndicator())
           : !canAccess
-              ? const Center(
+              ? Center(
                   child: Padding(
-                    padding: EdgeInsets.all(AppDimensions.paddingL),
-                    child: Text('Du hast keinen Zugriff auf Dateien.', textAlign: TextAlign.center),
+                    padding: const EdgeInsets.all(AppDimensions.paddingL),
+                    child: Text(context.l10n.filesNoAccess, textAlign: TextAlign.center),
                   ),
                 )
               : RefreshIndicator(
@@ -925,7 +936,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
   Widget _buildBreadcrumbs() {
     final segments = _pathSegments;
     final chips = <Widget>[
-      TextButton(onPressed: () => _navigateTo(''), child: const Text('Root')),
+      TextButton(onPressed: () => _navigateTo(''), child: Text(context.l10n.filesRoot)),
     ];
     for (var i = 0; i < segments.length; i++) {
       chips.add(const Icon(Icons.chevron_right, size: 18, color: AppColors.medium));
@@ -945,8 +956,8 @@ class _FilesPageState extends ConsumerState<FilesPage> {
     final max = _maxBytes;
     final used = _usedBytes ?? 0;
     final text = max != null
-        ? 'Speicher: ${formatFileSize(used)} von ${formatFileSize(max)} belegt'
-        : 'Speicher: ${formatFileSize(used)} belegt';
+        ? context.l10n.filesStorageUsedOf(formatFileSize(used), formatFileSize(max))
+        : context.l10n.filesStorageUsed(formatFileSize(used));
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM, vertical: AppDimensions.paddingS),
       child: Column(
@@ -965,7 +976,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
             TextButton.icon(
               onPressed: _requestMoreStorage,
               icon: const Icon(Icons.add_circle_outline),
-              label: const Text('Mehr Speicher anfragen'),
+              label: Text(context.l10n.filesRequestMore),
             ),
         ],
       ),
@@ -984,7 +995,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
                 child: TextField(
                   controller: _searchController,
                   decoration: InputDecoration(
-                    hintText: 'Dateien & Ordner suchen...',
+                    hintText: context.l10n.filesSearchPlaceholder,
                     prefixIcon: const Icon(Icons.search),
                     isDense: true,
                     suffixIcon: _hasSearchTerm
@@ -1000,7 +1011,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
             ],
           ),
           if (_hasSearchTerm)
-            TextButton(onPressed: _searchController.clear, child: const Text('Suche zurücksetzen')),
+            TextButton(onPressed: _searchController.clear, child: Text(context.l10n.filesResetSearch)),
         ],
       ),
     );
@@ -1011,11 +1022,11 @@ class _FilesPageState extends ConsumerState<FilesPage> {
       return const [Padding(padding: EdgeInsets.all(32), child: Center(child: CircularProgressIndicator()))];
     }
     if (_entries.isEmpty) {
-      return const [_EmptyCard(icon: Icons.folder_open_outlined, text: 'Dieser Ordner ist leer.')];
+      return [_EmptyCard(icon: Icons.folder_open_outlined, text: context.l10n.filesFolderEmpty)];
     }
     final filtered = _filteredEntries;
     if (filtered.isEmpty) {
-      return [_EmptyCard(icon: Icons.search, text: 'Keine Treffer für „${_searchController.text}“.')];
+      return [_EmptyCard(icon: Icons.search, text: context.l10n.filesNoHits(_searchController.text))];
     }
     return [
       Card(
@@ -1061,7 +1072,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
     if (!entry.isFolder && entry.size != null) {
       subtitle = formatFileSize(entry.size);
       if (entry.updatedAt != null) {
-        subtitle += ' · Geändert: ${FilesSearch.formatUpdatedAt(entry.updatedAt)}';
+        subtitle += ' ${context.l10n.filesChangedAt(FilesSearch.formatUpdatedAt(entry.updatedAt))}';
       }
     }
 

@@ -20,6 +20,7 @@ import '../widgets/critical_rule_card.dart';
 import '../widgets/critical_rule_sheet.dart';
 import '../../../../core/utils/demo_guard.dart';
 import '../widgets/settings_list.dart'; // UX_SETTINGS
+import '../../../../l10n/l10n.dart';
 
 /// German holiday regions
 const _holidayRegions = [
@@ -154,7 +155,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
 
     } catch (e) {
       if (mounted) {
-        ToastHelper.showError(context, 'Fehler beim Laden: $e');
+        ToastHelper.showError(context, context.l10n.settingsFlutterLoadFailed(e));
       }
     } finally {
       if (mounted) {
@@ -173,11 +174,11 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
   Future<void> _saveSettings() async {
     // SETTINGS2: Ionic saveGeneralSettings validation toasts
     if (_longNameController.text.trim().isEmpty) {
-      ToastHelper.showError(context, 'Der Gruppenname darf nicht leer sein.');
+      ToastHelper.showError(context, context.l10n.generalSettingsGroupNameEmpty);
       return;
     }
     if (_shortNameController.text.trim().isEmpty) {
-      ToastHelper.showError(context, 'Der Kurzname darf nicht leer sein.');
+      ToastHelper.showError(context, context.l10n.generalSettingsShortNameEmpty);
       return;
     }
     if (_registrationEnabled) {
@@ -186,7 +187,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
       if (!groups.any((g) => g.maingroup != true)) {
         ToastHelper.showError(
           context,
-          'Registrierung kann nicht aktiviert werden: Bitte lege zuerst mindestens eine Gruppe an.',
+          context.l10n.generalSettingsRegisterNoGroups,
         );
         return;
       }
@@ -266,10 +267,10 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Text('Einstellungen gespeichert. Bitte lade die Seite neu, um die Änderungen zu sehen.'),
+            content: Text(context.l10n.generalSettingsSavedReload),
             duration: const Duration(seconds: 5),
             action: SnackBarAction(
-              label: 'OK',
+              label: context.l10n.commonOk,
               onPressed: () {},
             ),
           ),
@@ -278,7 +279,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
       }
     } catch (e) {
       if (mounted) {
-        ToastHelper.showError(context, 'Fehler: $e');
+        ToastHelper.showError(context, context.l10n.generalSettingsSaveFailed);
       }
     } finally {
       if (mounted) {
@@ -335,12 +336,12 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
   List<Widget> _buildRegistrationFieldChips() {
     // Base fields: firstName and lastName are always required (disabled)
     final baseFields = [
-      (key: 'firstName', label: 'Vorname', required: true),
-      (key: 'lastName', label: 'Nachname', required: true),
-      (key: 'group', label: 'Gruppe', required: true),
-      (key: 'picture', label: 'Passbild', required: false),
-      (key: 'birthDate', label: 'Geburtsdatum', required: false),
-      (key: 'phone', label: 'Handynummer', required: false),
+      (key: 'firstName', label: context.l10n.peopleFirstName, required: true),
+      (key: 'lastName', label: context.l10n.peopleLastName, required: true),
+      (key: 'group', label: context.l10n.peopleGroup, required: true),
+      (key: 'picture', label: context.l10n.settingsPassPhoto, required: false),
+      (key: 'birthDate', label: context.l10n.peopleBirthday, required: false),
+      (key: 'phone', label: context.l10n.settingsMobile, required: false),
     ];
 
     // Add any extra fields defined for the tenant
@@ -377,11 +378,11 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
     try {
       await Clipboard.setData(ClipboardData(text: link));
     } catch (_) {
-      if (mounted) ToastHelper.showError(context, 'Link konnte nicht kopiert werden');
+      if (mounted) ToastHelper.showError(context, context.l10n.settingsFlutterCopyLinkFailed);
       return;
     }
     if (mounted) {
-      ToastHelper.showSuccess(context, 'Der Link wurde in die Zwischenablage kopiert');
+      ToastHelper.showSuccess(context, context.l10n.settingsLinkCopied);
     }
   }
 
@@ -394,7 +395,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
       },
       child: Scaffold(
       appBar: AppBar(
-        title: const Text('Einstellungen'),
+        title: Text(context.l10n.settingsSettings),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -411,7 +412,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
           ? null
           : FloatingActionButton(
               onPressed: _isSaving ? null : _saveSettings,
-              tooltip: 'Speichern',
+              tooltip: context.l10n.commonSave,
               child: _isSaving
                   ? const SizedBox(
                       width: 22,
@@ -435,21 +436,21 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
                   // UX_SETTINGS: sections in Ionic order (general.page.html)
                   // ============ ALLGEMEIN ============
                   SettingsListSection(
-                    title: 'Allgemein',
+                    title: context.l10n.generalSettingsGeneral,
                     children: [
                       _padded(TextFormField(
                         controller: _longNameController,
                         textCapitalization: TextCapitalization.words,
-                        decoration: const InputDecoration(labelText: 'Instanz-Name'),
+                        decoration: InputDecoration(labelText: context.l10n.generalSettingsTenantName),
                         onChanged: (_) => _markChanged(),
                       )),
                       _padded(TextFormField(
                         controller: _shortNameController,
-                        decoration: const InputDecoration(
-                          labelText: 'Instanz-Kürzel',
-                          helperText: 'Wird vor allem als Dateiname bei Exports verwendet',
+                        decoration: InputDecoration(
+                          labelText: context.l10n.generalSettingsTenantShort,
+                          helperText: context.l10n.generalSettingsShortNameHelper,
                         ),
-                        validator: (v) => v?.trim().isEmpty ?? true ? 'Erforderlich' : null,
+                        validator: (v) => v?.trim().isEmpty ?? true ? context.l10n.generalSettingsShortNameEmpty : null,
                         onChanged: (_) => _markChanged(),
                       )),
                     ],
@@ -457,13 +458,13 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
 
                   // ============ ANWESENHEITEN ============
                   SettingsListSection(
-                    title: 'Anwesenheiten',
+                    title: context.l10n.generalSettingsAttendance,
                     children: [
                       ListTile(
-                        title: const Text('Saisonbeginn'),
+                        title: Text(context.l10n.generalSettingsSeasonStart),
                         subtitle: Text(
-                          '${_seasonStart != null ? DateFormat('dd.MM.yyyy').format(_seasonStart!) : 'Nicht festgelegt'}\n'
-                          'Anwesenheiten werden erst ab diesem Datum bei den Personen berücksichtigt',
+                          '${_seasonStart != null ? DateFormat(dateFmt()).format(_seasonStart!) : context.l10n.personNotSet}\n'
+                          '${context.l10n.generalSettingsSeasonHelper}',
                         ),
                         isThreeLine: true,
                         trailing: const Icon(Icons.calendar_today_outlined),
@@ -475,7 +476,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
                           Expanded(
                             child: TextFormField(
                               controller: _practiceStartController,
-                              decoration: const InputDecoration(labelText: 'Probenbeginn', hintText: '19:00'),
+                              decoration: InputDecoration(labelText: context.l10n.generalSettingsFlutterPracticeStart, hintText: '19:00'),
                               readOnly: true,
                               onTap: () => _selectTime(_practiceStartController),
                             ),
@@ -484,7 +485,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
                           Expanded(
                             child: TextFormField(
                               controller: _practiceEndController,
-                              decoration: const InputDecoration(labelText: 'Probenende', hintText: '21:30'),
+                              decoration: InputDecoration(labelText: context.l10n.generalSettingsFlutterPracticeEnd, hintText: '21:30'),
                               readOnly: true,
                               onTap: () => _selectTime(_practiceEndController),
                             ),
@@ -492,49 +493,46 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
                         ],
                       )),
                       ListTile(
-                        title: const Text('Anwesenheits-Typen'),
+                        title: Text(context.l10n.generalSettingsAttTypes),
                         trailing: const Icon(Icons.chevron_right),
                         onTap: () => context.push('/settings/types'),
                       ),
                       ListTile(
-                        title: const Text('Schichtpläne'),
+                        title: Text(context.l10n.generalSettingsShiftPlans),
                         trailing: const Icon(Icons.chevron_right),
                         onTap: () => context.push('/settings/shifts'),
                       ),
                       ListTile(
-                        title: const Text('Branding'),
+                        title: Text(context.l10n.generalSettingsBranding),
                         trailing: const Icon(Icons.chevron_right),
                         onTap: () => context.push('/settings/general/branding'),
                       ),
                       _toggle(
-                        'Schicht-/Arbeitsbedingt = Anwesend',
-                        'Aktivieren, um schicht- oder arbeitsbedingt entschuldigte Abwesenheiten '
-                            'als anwesend für die prozentuale Berechnung zu werten.',
+                        context.l10n.generalSettingsShiftPresent,
+                        context.l10n.generalSettingsShiftPresentHelper,
                         _shiftExcusedAsPresent,
                         (v) => _shiftExcusedAsPresent = v,
                       ),
                       _toggle(
-                        'Alle Termine für Mitglieder sichtbar',
-                        'Aktivieren, damit Mitglieder auf der Abmelde-Seite alle Termine der Instanz '
-                            'sehen können (nicht nur eigene). Eigene Termine werden hervorgehoben.',
+                        context.l10n.generalSettingsAllEvents,
+                        context.l10n.generalSettingsAllEventsHelper,
                         _showAllAttendances,
                         (v) => _showAllAttendances = v,
                       ),
                       // DUTY: Dienstplan-Ansicht (only when a type uses Dienst-Modus)
                       if (ref.watch(hasDutyTypesProvider))
                         _toggle(
-                          'Dienstplan-Ansicht für Meine Termine',
-                          '„Meine Termine“ zeigt für Personen aus einem Dienst-Team zuerst ihre Dienste, offene '
-                              'Dienste und Zahlen statt der Anwesenheitsquote. Andere Termine stehen eingeklappt darunter.',
+                          context.l10n.generalSettingsDutyView,
+                          context.l10n.generalSettingsDutyViewHelper,
                           _dutyView,
                           (v) => _dutyView = v,
                         ),
                       if (_showAllAttendances)
                         _padded(TextFormField(
                           controller: _showAllInfoTextController,
-                          decoration: const InputDecoration(
-                            labelText: 'Info-Text für fremde Termine',
-                            hintText: 'Du bist bei diesem Termin nicht dabei.',
+                          decoration: InputDecoration(
+                            labelText: context.l10n.generalSettingsForeignInfo,
+                            hintText: context.l10n.generalSettingsForeignInfoPh,
                           ),
                           onChanged: (_) => _markChanged(),
                         )),
@@ -543,10 +541,10 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
 
                   // ============ ABWESENHEITS- & VERSPÄTUNGSGRÜNDE ============
                   SettingsListSection(
-                    title: 'Abwesenheits- & Verspätungsgründe',
+                    title: context.l10n.generalSettingsReasons,
                     children: [
                       ReasonsListEditor(
-                        title: 'Abwesenheitsgründe',
+                        title: context.l10n.generalSettingsAbsenceReasons,
                         reasons: _absenceReasons,
                         defaults: EventListUtils.defaultAbsenceReasons,
                         onChanged: (list) {
@@ -555,7 +553,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
                         },
                       ),
                       ReasonsListEditor(
-                        title: 'Verspätungsgründe',
+                        title: context.l10n.generalSettingsLateReasons,
                         reasons: _lateReasons,
                         defaults: EventListUtils.defaultLateReasons,
                         onChanged: (list) {
@@ -568,12 +566,11 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
 
                   // ============ REGISTRIERUNG ============
                   SettingsListSection(
-                    title: 'Registrierung',
+                    title: context.l10n.generalSettingsRegistration,
                     children: [
                       _toggle(
-                        'Registrierung erlauben',
-                        'Aktivieren, um neuen Personen die Registrierung in dieser Instanz zu erlauben. '
-                            'Der Link wird automatisch generiert und kann nach dem Speichern kopiert werden.',
+                        context.l10n.generalSettingsAllowRegister,
+                        context.l10n.generalSettingsRegisterHelper,
                         _registrationEnabled,
                         (v) {
                           _registrationEnabled = v;
@@ -586,11 +583,10 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
                           !_hasSelectableGroups)
                         Container(
                           color: AppColors.warning,
-                          child: const ListTile(
-                            leading: Icon(Icons.warning_amber_outlined, color: Colors.black87),
+                          child: ListTile(
+                            leading: const Icon(Icons.warning_amber_outlined, color: Colors.black87),
                             title: Text(
-                              'Es sind noch keine Gruppen vorhanden. Bitte lege zuerst mindestens eine '
-                              'Gruppe an, bevor du die Registrierung aktivierst.',
+                              context.l10n.generalSettingsNoGroupsYet,
                               style: TextStyle(color: Colors.black87),
                             ),
                           ),
@@ -599,21 +595,20 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
                       if (_registrationEnabled &&
                           (ref.watch(currentTenantProvider)?.registerId ?? '').isNotEmpty)
                         ListTile(
-                          title: const Text('Link kopieren', style: TextStyle(color: AppColors.primary)),
+                          title: Text(context.l10n.settingsCopyLink, style: const TextStyle(color: AppColors.primary)),
                           onTap: () => _copyLink('https://attendix.de/register/', _registerId),
                         ),
                       if (_registrationEnabled) ...[
                         _toggle(
-                          'Auto-Genehmigung',
-                          'Aktivieren, um neue Registrierungen automatisch zu genehmigen. '
-                              'Andernfalls müssen neue Registrierungen manuell genehmigt werden.',
+                          context.l10n.generalSettingsAutoApprove,
+                          context.l10n.generalSettingsAutoApproveHelper,
                           _autoApproveRegistrations,
                           (v) => _autoApproveRegistrations = v,
                         ),
                         _padded(Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text('Registrierungsfelder', style: TextStyle(fontWeight: FontWeight.w600)),
+                            Text(context.l10n.generalSettingsRegisterFields, style: const TextStyle(fontWeight: FontWeight.w600)),
                             const SizedBox(height: AppDimensions.paddingS),
                             Wrap(
                               spacing: AppDimensions.paddingS,
@@ -622,8 +617,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
                             ),
                             const SizedBox(height: AppDimensions.paddingS),
                             Text(
-                              'Wähle die Felder aus, die bei der Registrierung angezeigt werden sollen. '
-                              'Alle ausgewählten Felder sind Pflichtfelder.',
+                              context.l10n.generalSettingsRegisterFieldsHint,
                               style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.medium),
                             ),
                           ],
@@ -634,13 +628,11 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
 
                   // ============ WERK-DATENBANK ============
                   SettingsListSection(
-                    title: 'Werk-Datenbank',
+                    title: context.l10n.generalSettingsSongDb,
                     children: [
                       _toggle(
-                        'Werke öffentlich teilen',
-                        'Aktivieren, um Werke als öffentlichen link zu teilen. Jeder mit dem Link kann die '
-                            'Werke ansehen aber nicht bearbeiten. Der Link wird automatisch generiert und '
-                            'kann nach dem Speichern kopiert werden.',
+                        context.l10n.generalSettingsShareSongs,
+                        context.l10n.generalSettingsShareSongsHelper,
                         _songSharingEnabled,
                         (v) {
                           _songSharingEnabled = v;
@@ -649,7 +641,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
                       ),
                       if ((ref.watch(currentTenantProvider)?.songSharingId ?? '').isNotEmpty)
                         ListTile(
-                          title: const Text('Link kopieren', style: TextStyle(color: AppColors.primary)),
+                          title: Text(context.l10n.settingsCopyLink, style: const TextStyle(color: AppColors.primary)),
                           onTap: () => _copyLink('https://attendix.de/', _songSharingId),
                         ),
                     ],
@@ -657,18 +649,18 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
 
                   // ============ SONSTIGES ============
                   SettingsListSection(
-                    title: 'Sonstiges',
+                    title: context.l10n.generalSettingsOther,
                     children: [
                       Builder(builder: (context) {
                         final t = ref.watch(currentTenantProvider);
                         final total = (t?.additionalFields?.length ?? 0) + (t?.songAdditionalFields?.length ?? 0);
                         return ListTile(
-                          title: const Text('Zusatzfelder'),
+                          title: Text(context.l10n.settingsExtraFields),
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
-                                total == 0 ? 'Keine' : '$total ${total == 1 ? 'Feld' : 'Felder'}',
+                                total == 0 ? context.l10n.generalSettingsNone : context.l10n.generalSettingsFlutterFieldsCount(total),
                                 style: const TextStyle(color: AppColors.medium),
                               ),
                               const Icon(Icons.chevron_right),
@@ -680,37 +672,37 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
                       // SETTINGS2: Ionic "Lehrer pflegen" (only for orchestras)
                       if (ref.watch(currentTenantProvider)?.type == 'orchestra')
                         _toggle(
-                          'Lehrer pflegen',
-                          'Aktivieren, um die Lehrer der Spieler verwalten zu können.',
+                          context.l10n.generalSettingsMaintainTeachers,
+                          context.l10n.generalSettingsTeachersHelper,
                           _maintainTeachers,
                           (v) => _maintainTeachers = v,
                         ),
                       _toggle(
-                        'Eltern-Funktion',
-                        'Aktivieren, um Eltern die Möglichkeit zu geben, Einsicht in die Anwesenheiten '
-                            'ihrer Kinder zu geben und Abwesenheiten pflegen zu können.',
+                        context.l10n.generalSettingsParentsFeature,
+                        context.l10n.generalSettingsParentsHelper,
                         _parents,
                         (v) => _parents = v,
                       ),
                       _toggle(
-                        'Mitgliederliste für alle',
-                        'Aktivieren, um Mitgliedern (Spieler, Helfer, Stimmführer) eine Übersicht aller Personen anzuzeigen.',
+                        context.l10n.generalSettingsMembersList,
+                        context.l10n.generalSettingsMembersListHelper,
                         _showMembersList,
                         (v) => _showMembersList = v,
                       ),
                       _toggle(
-                        'Ferien/Feiertage anzeigen',
-                        'Aktivieren, um beim Anlegen der Anwesenheiten die Ferien und Feiertage hervorzuheben. '
-                            '(nur verfügbar für Deutschland)',
+                        context.l10n.generalSettingsShowHolidays,
+                        context.l10n.generalSettingsHolidaysHelper,
                         _showHolidays,
                         (v) => _showHolidays = v,
                       ),
                       if (_showHolidays)
                         _padded(DropdownButtonFormField<String>(
                           value: _selectedRegion,
-                          decoration: const InputDecoration(labelText: 'Bundesland für Ferien/Feiertage'),
+                          decoration: InputDecoration(labelText: context.l10n.generalSettingsHolidayState),
                           items: _holidayRegions
-                              .map((r) => DropdownMenuItem(value: r.$1, child: Text(r.$2)))
+                              .map((r) => DropdownMenuItem(
+                                  value: r.$1,
+                                  child: Text(r.$1.isEmpty ? context.l10n.generalSettingsFlutterNoHolidays : r.$2)))
                               .toList(),
                           onChanged: (v) {
                             setState(() => _selectedRegion = v ?? '');
@@ -719,8 +711,8 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
                         )),
                       // Flutter: Status "Entschuldigt" erlauben
                       _toggle(
-                        'Entschuldigungen',
-                        'Erlaubt "Entschuldigt" als Status',
+                        context.l10n.generalSettingsFlutterExcuses,
+                        context.l10n.generalSettingsFlutterExcusesHelper,
                         _withExcuses,
                         (v) => _withExcuses = v,
                       ),
@@ -729,18 +721,17 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
 
                   // ============ PROBLEMFALL-REGELN ============
                   SettingsListSection(
-                    title: 'Problemfall-Regeln',
+                    title: context.l10n.generalSettingsCriticalRules,
                     headerAction: IconButton(
                       icon: const Icon(Icons.add, color: AppColors.primary),
-                      tooltip: 'Neue Regel hinzufügen',
+                      tooltip: context.l10n.generalSettingsNewRule,
                       onPressed: _showAddCriticalRuleSheet,
                     ),
                     children: [
                       if (_criticalRules.isEmpty)
-                        const ListTile(
+                        ListTile(
                           subtitle: Text(
-                            'Es wurden noch keine Problemfall-Regeln definiert. Regeln bestimmen, '
-                            'wann eine Person als Problemfall markiert wird.',
+                            context.l10n.generalSettingsNoRules,
                           ),
                         ),
                       for (var index = 0; index < _criticalRules.length; index++)
@@ -784,7 +775,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
 
     if (attendanceTypes.isEmpty) {
       if (mounted) {
-        ToastHelper.showError(context, 'Keine Terminarten vorhanden');
+        ToastHelper.showError(context, context.l10n.generalSettingsFlutterNoTypes);
       }
       return;
     }
@@ -801,7 +792,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
             _criticalRules.add(rule);
             _markChanged();
           });
-          ToastHelper.showSuccess(context, 'Regel hinzugefügt');
+          ToastHelper.showSuccess(context, context.l10n.generalSettingsFlutterRuleAdded);
         },
       ),
     );
@@ -825,7 +816,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
             _criticalRules[index] = updatedRule;
             _markChanged();
           });
-          ToastHelper.showSuccess(context, 'Regel aktualisiert');
+          ToastHelper.showSuccess(context, context.l10n.generalSettingsFlutterRuleUpdated);
         },
       ),
     );
@@ -837,21 +828,21 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Regel löschen?'),
+        title: Text(context.l10n.generalSettingsDeleteRule),
         content: Text(
-          'Möchtest du die Regel "$ruleName" wirklich löschen?',
+          context.l10n.generalSettingsFlutterDeleteRuleNamed(ruleName),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Abbrechen'),
+            child: Text(context.l10n.commonCancel),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.danger,
             ),
             onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('Löschen'),
+            child: Text(context.l10n.commonDelete),
           ),
         ],
       ),
@@ -863,7 +854,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
         _markChanged();
       });
       if (mounted) {
-        ToastHelper.showSuccess(context, 'Regel gelöscht');
+        ToastHelper.showSuccess(context, context.l10n.generalSettingsFlutterRuleDeleted);
       }
     }
   }
@@ -872,21 +863,21 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
     final result = await showDialog<String>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Ungespeicherte Änderungen'),
-        content: const Text('Du hast ungespeicherte Änderungen. Was möchtest du tun?'),
+        title: Text(context.l10n.rolePermUnsaved),
+        content: Text(context.l10n.rolePermUnsavedMessage),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop('cancel'),
-            child: const Text('Abbrechen'),
+            child: Text(context.l10n.commonCancel),
           ),
           TextButton(
             onPressed: () => Navigator.of(ctx).pop('discard'),
             style: TextButton.styleFrom(foregroundColor: AppColors.danger),
-            child: const Text('Verwerfen'),
+            child: Text(context.l10n.rolePermDiscard),
           ),
           ElevatedButton(
             onPressed: () => Navigator.of(ctx).pop('save'),
-            child: const Text('Speichern'),
+            child: Text(context.l10n.commonSave),
           ),
         ],
       ),

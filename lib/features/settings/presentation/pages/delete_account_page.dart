@@ -9,6 +9,8 @@ import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/repositories/base_repository.dart';
+import '../../../../l10n/l10n.dart';
+import '../widgets/strong_html_text.dart';
 
 /// Characters for the verification code — avoids visually ambiguous chars
 /// (0/O, 1/I/L), identical to Ionic.
@@ -59,20 +61,17 @@ class _DeleteAccountPageState extends ConsumerState<DeleteAccountPage> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Konto wirklich löschen?'),
-        content: const Text(
-          'Dein Konto und alle damit verbundenen Daten werden unwiderruflich '
-          'entfernt. Diese Aktion kann nicht rückgängig gemacht werden.',
-        ),
+        title: Text(context.l10n.deleteAccountConfirm),
+        content: Text(context.l10n.deleteAccountConfirmMessage),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Abbrechen'),
+            child: Text(context.l10n.commonCancel),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
             style: TextButton.styleFrom(foregroundColor: AppColors.danger),
-            child: const Text('Endgültig löschen'),
+            child: Text(context.l10n.deleteAccountDeleteFinal),
           ),
         ],
       ),
@@ -82,14 +81,14 @@ class _DeleteAccountPageState extends ConsumerState<DeleteAccountPage> {
     try {
       await ref.read(accountNotifierProvider.notifier).deleteAccount();
       if (!mounted) return;
-      ToastHelper.showSuccess(context, 'Dein Konto wurde gelöscht.');
+      ToastHelper.showSuccess(context, context.l10n.deleteAccountDeleted);
       context.go('/login');
     } catch (e) {
       if (!mounted) return;
       final message = e is RepositoryException ? e.message : e.toString();
       ToastHelper.showError(
         context,
-        'Fehler beim Löschen: ${message.isEmpty ? 'Unbekannt' : message}',
+        context.l10n.deleteAccountFailed(message.isEmpty ? context.l10n.commonUnknown : message),
       );
     }
   }
@@ -101,7 +100,7 @@ class _DeleteAccountPageState extends ConsumerState<DeleteAccountPage> {
     const white = TextStyle(color: Colors.white);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Konto löschen')),
+      appBar: AppBar(title: Text(context.l10n.deleteAccountTitle)),
       body: ListView(
         padding: const EdgeInsets.all(AppDimensions.paddingM),
         children: [
@@ -123,7 +122,7 @@ class _DeleteAccountPageState extends ConsumerState<DeleteAccountPage> {
                   const SizedBox(height: AppDimensions.paddingS),
                   Center(
                     child: Text(
-                      'Achtung',
+                      context.l10n.deleteAccountWarning,
                       style: theme.textTheme.titleLarge?.copyWith(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
@@ -131,42 +130,27 @@ class _DeleteAccountPageState extends ConsumerState<DeleteAccountPage> {
                     ),
                   ),
                   const SizedBox(height: AppDimensions.paddingS),
-                  const Text.rich(TextSpan(children: [
-                    TextSpan(text: 'Wenn du dein Konto löschst, werden '),
-                    TextSpan(
-                      text: 'alle',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    TextSpan(
-                        text: ' deine Daten unwiderruflich entfernt:'),
-                  ])),
+                  StrongHtmlText(context.l10n.deleteAccountIntro),
                   const SizedBox(height: AppDimensions.paddingS),
-                  for (final item in const [
-                    'Dein Profil und Passbild',
-                    'Alle deine Anwesenheitsdaten',
-                    'Alle deine Mitgliedschaften in jeder Instanz',
-                    'Dein Zugang zur App',
+                  for (final item in [
+                    context.l10n.deleteAccountProfile,
+                    context.l10n.deleteAccountAttendance,
+                    context.l10n.deleteAccountMemberships,
+                    context.l10n.deleteAccountAccess,
                   ])
                     Padding(
                       padding: const EdgeInsets.only(left: 8, bottom: 2),
                       child: Text('•  $item'),
                     ),
                   const SizedBox(height: AppDimensions.paddingS),
-                  const Text.rich(TextSpan(children: [
-                    TextSpan(text: 'Diese Aktion kann '),
-                    TextSpan(
-                      text: 'nicht rückgängig',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    TextSpan(text: ' gemacht werden.'),
-                  ])),
+                  StrongHtmlText(context.l10n.deleteAccountCannotUndo),
                 ],
               ),
             ),
           ),
           const SizedBox(height: AppDimensions.paddingL),
-          const Text(
-            'Bitte gib zur Bestätigung den folgenden Code ein:',
+          Text(
+            context.l10n.deleteAccountEnterCode,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: AppDimensions.paddingS),
@@ -197,9 +181,9 @@ class _DeleteAccountPageState extends ConsumerState<DeleteAccountPage> {
             autocorrect: false,
             enableSuggestions: false,
             textCapitalization: TextCapitalization.characters,
-            decoration: const InputDecoration(
-              labelText: 'Bestätigungscode',
-              hintText: 'Code eingeben',
+            decoration: InputDecoration(
+              labelText: context.l10n.deleteAccountCode,
+              hintText: context.l10n.deleteAccountCodePlaceholder,
             ),
             onChanged: (_) => setState(() {}),
           ),
@@ -219,7 +203,7 @@ class _DeleteAccountPageState extends ConsumerState<DeleteAccountPage> {
                   )
                 : const Icon(Icons.delete_outline),
             label: Text(
-                isDeleting ? 'Konto wird gelöscht...' : 'Konto endgültig löschen'),
+                isDeleting ? context.l10n.deleteAccountDeleting : context.l10n.deleteAccountDeleteForever),
           ),
         ],
       ),

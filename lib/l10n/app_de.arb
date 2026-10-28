@@ -1916,6 +1916,14 @@
   "@bellTitle": {
     "description": "bell.title"
   },
+  "brandingFlutterReplaceLogo": "Logo ersetzen",
+  "@brandingFlutterReplaceLogo": {
+    "description": "branding.flutter.replaceLogo"
+  },
+  "brandingFlutterUploadLogo": "Logo hochladen",
+  "@brandingFlutterUploadLogo": {
+    "description": "branding.flutter.uploadLogo"
+  },
   "brandingIntro": "Logo und Text erscheinen dezent auf exportierten Plänen und Listen (PDF/Bild). Das Logo darf maximal 2 MB groß sein. Das Branding gilt für alle Instanzen der Organisation.",
   "@brandingIntro": {
     "description": "branding.intro"
@@ -4013,6 +4021,14 @@
   "@extraFieldsEditableSuffix": {
     "description": "extraFields.editableSuffix"
   },
+  "extraFieldsFlutterFirstOptionDefault": "Erste Option ist der Standardwert",
+  "@extraFieldsFlutterFirstOptionDefault": {
+    "description": "extraFields.flutter.firstOptionDefault"
+  },
+  "extraFieldsFlutterLeaveMessage": "Du hast ungespeicherte Änderungen. Möchtest du die Seite trotzdem verlassen?",
+  "@extraFieldsFlutterLeaveMessage": {
+    "description": "extraFields.flutter.leaveMessage"
+  },
   "extraFieldsForPersons": "Zusätzliche Felder für Personen",
   "@extraFieldsForPersons": {
     "description": "extraFields.forPersons"
@@ -4225,6 +4241,38 @@
     "placeholders": {
       "names": {}
     }
+  },
+  "filesFlutterAscending": "Aufsteigend",
+  "@filesFlutterAscending": {
+    "description": "files.flutter.ascending"
+  },
+  "filesFlutterDescending": "Absteigend",
+  "@filesFlutterDescending": {
+    "description": "files.flutter.descending"
+  },
+  "filesFlutterMovePh": "z. B. Dokumente/2026",
+  "@filesFlutterMovePh": {
+    "description": "files.flutter.movePh"
+  },
+  "filesFlutterOpenDownload": "Datei öffnen/downloaden",
+  "@filesFlutterOpenDownload": {
+    "description": "files.flutter.openDownload"
+  },
+  "filesFlutterOpenFolder": "Ordner öffnen",
+  "@filesFlutterOpenFolder": {
+    "description": "files.flutter.openFolder"
+  },
+  "filesFlutterOpenLinkFailed": "Link konnte nicht geöffnet werden",
+  "@filesFlutterOpenLinkFailed": {
+    "description": "files.flutter.openLinkFailed"
+  },
+  "filesFlutterShareFolderLink": "Link zu diesem Ordner teilen",
+  "@filesFlutterShareFolderLink": {
+    "description": "files.flutter.shareFolderLink"
+  },
+  "filesFlutterShareRootLink": "Link zur Dateiablage teilen",
+  "@filesFlutterShareRootLink": {
+    "description": "files.flutter.shareRootLink"
   },
   "filesFolderCreated": "Ordner wurde erstellt.",
   "@filesFolderCreated": {
@@ -4664,6 +4712,98 @@
   "generalSettingsDutyViewHelper": "„Meine Termine“ zeigt für Personen aus einem Dienst-Team zuerst ihre Dienste, offene Dienste und Zahlen statt der Anwesenheitsquote. Andere Termine stehen eingeklappt darunter.",
   "@generalSettingsDutyViewHelper": {
     "description": "generalSettings.dutyViewHelper"
+  },
+  "generalSettingsFlutterAndHint": "Person ist kritisch, wenn ALLE Regeln zutreffen",
+  "@generalSettingsFlutterAndHint": {
+    "description": "generalSettings.flutter.andHint"
+  },
+  "generalSettingsFlutterAndShort": "UND",
+  "@generalSettingsFlutterAndShort": {
+    "description": "generalSettings.flutter.andShort"
+  },
+  "generalSettingsFlutterDaysSuffix": "Tage",
+  "@generalSettingsFlutterDaysSuffix": {
+    "description": "generalSettings.flutter.daysSuffix"
+  },
+  "generalSettingsFlutterDeleteRuleNamed": "Möchtest du die Regel \"{name}\" wirklich löschen?",
+  "@generalSettingsFlutterDeleteRuleNamed": {
+    "description": "generalSettings.flutter.deleteRuleNamed",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "generalSettingsFlutterDisabled": "Deaktiviert",
+  "@generalSettingsFlutterDisabled": {
+    "description": "generalSettings.flutter.disabled"
+  },
+  "generalSettingsFlutterEditRule": "Regel bearbeiten",
+  "@generalSettingsFlutterEditRule": {
+    "description": "generalSettings.flutter.editRule"
+  },
+  "generalSettingsFlutterExcuses": "Entschuldigungen",
+  "@generalSettingsFlutterExcuses": {
+    "description": "generalSettings.flutter.excuses"
+  },
+  "generalSettingsFlutterExcusesHelper": "Erlaubt \"Entschuldigt\" als Status",
+  "@generalSettingsFlutterExcusesHelper": {
+    "description": "generalSettings.flutter.excusesHelper"
+  },
+  "generalSettingsFlutterFieldsCount": "{count, plural, one {{count} Feld} other {{count} Felder}}",
+  "@generalSettingsFlutterFieldsCount": {
+    "description": "generalSettings.flutter.fieldsCount",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "generalSettingsFlutterNoHolidays": "Keine Feiertage",
+  "@generalSettingsFlutterNoHolidays": {
+    "description": "generalSettings.flutter.noHolidays"
+  },
+  "generalSettingsFlutterNoTypes": "Keine Terminarten vorhanden",
+  "@generalSettingsFlutterNoTypes": {
+    "description": "generalSettings.flutter.noTypes"
+  },
+  "generalSettingsFlutterOrHint": "Person ist kritisch, wenn EINE der Regeln zutrifft",
+  "@generalSettingsFlutterOrHint": {
+    "description": "generalSettings.flutter.orHint"
+  },
+  "generalSettingsFlutterOrShort": "ODER",
+  "@generalSettingsFlutterOrShort": {
+    "description": "generalSettings.flutter.orShort"
+  },
+  "generalSettingsFlutterPracticeEnd": "Probenende",
+  "@generalSettingsFlutterPracticeEnd": {
+    "description": "generalSettings.flutter.practiceEnd"
+  },
+  "generalSettingsFlutterPracticeStart": "Probenbeginn",
+  "@generalSettingsFlutterPracticeStart": {
+    "description": "generalSettings.flutter.practiceStart"
+  },
+  "generalSettingsFlutterRuleAdded": "Regel hinzugefügt",
+  "@generalSettingsFlutterRuleAdded": {
+    "description": "generalSettings.flutter.ruleAdded"
+  },
+  "generalSettingsFlutterRuleDeleted": "Regel gelöscht",
+  "@generalSettingsFlutterRuleDeleted": {
+    "description": "generalSettings.flutter.ruleDeleted"
+  },
+  "generalSettingsFlutterRuleEnabled": "Regel aktiviert",
+  "@generalSettingsFlutterRuleEnabled": {
+    "description": "generalSettings.flutter.ruleEnabled"
+  },
+  "generalSettingsFlutterRuleEnabledHelper": "Deaktivierte Regeln werden nicht ausgewertet",
+  "@generalSettingsFlutterRuleEnabledHelper": {
+    "description": "generalSettings.flutter.ruleEnabledHelper"
+  },
+  "generalSettingsFlutterRuleUpdated": "Regel aktualisiert",
+  "@generalSettingsFlutterRuleUpdated": {
+    "description": "generalSettings.flutter.ruleUpdated"
+  },
+  "generalSettingsFlutterStatusCritical": "Status (zählt als kritisch)",
+  "@generalSettingsFlutterStatusCritical": {
+    "description": "generalSettings.flutter.statusCritical"
   },
   "generalSettingsForeignInfo": "Info-Text für fremde Termine",
   "@generalSettingsForeignInfo": {
@@ -10313,6 +10453,13 @@
   "@rolePermFilesHelper": {
     "description": "rolePerm.filesHelper"
   },
+  "rolePermFlutterLoadFailed": "Fehler beim Laden der Rollenberechtigungen\n{error}",
+  "@rolePermFlutterLoadFailed": {
+    "description": "rolePerm.flutter.loadFailed",
+    "placeholders": {
+      "error": {}
+    }
+  },
   "rolePermNotesHelper": "Wenn aktiviert, können Personen mit dieser Rolle die Notizen der Mitglieder in der Anwesenheitsansicht sehen.",
   "@rolePermNotesHelper": {
     "description": "rolePerm.notesHelper"
@@ -10682,6 +10829,14 @@
   "@settingsFiles": {
     "description": "settings.files"
   },
+  "settingsFlutterAddFailed": "Fehler beim Hinzufügen",
+  "@settingsFlutterAddFailed": {
+    "description": "settings.flutter.addFailed"
+  },
+  "settingsFlutterAdminAddedNotNotified": "Der Admin wurde hinzugefügt, konnte aber nicht benachrichtigt werden.",
+  "@settingsFlutterAdminAddedNotNotified": {
+    "description": "settings.flutter.adminAddedNotNotified"
+  },
   "settingsFlutterApplicantText": "Ein Administrator wird deine Registrierung prüfen.",
   "@settingsFlutterApplicantText": {
     "description": "settings.flutter.applicantText"
@@ -10690,9 +10845,167 @@
   "@settingsFlutterApplicantTitle": {
     "description": "settings.flutter.applicantTitle"
   },
+  "settingsFlutterArchiveHint": "Hier erscheinen archivierte Mitglieder",
+  "@settingsFlutterArchiveHint": {
+    "description": "settings.flutter.archiveHint"
+  },
+  "settingsFlutterBatchAllHaveAccount": "Alle Spieler mit E-Mail haben bereits einen Account.",
+  "@settingsFlutterBatchAllHaveAccount": {
+    "description": "settings.flutter.batch.allHaveAccount"
+  },
+  "settingsFlutterBatchCreateButton": "Accounts für {count} Spieler erstellen",
+  "@settingsFlutterBatchCreateButton": {
+    "description": "settings.flutter.batch.createButton",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "settingsFlutterBatchEligible": "Account erstellbar (mit E-Mail)",
+  "@settingsFlutterBatchEligible": {
+    "description": "settings.flutter.batch.eligible"
+  },
+  "settingsFlutterBatchEligibleList": "Spieler ohne Account ({count})",
+  "@settingsFlutterBatchEligibleList": {
+    "description": "settings.flutter.batch.eligibleList",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "settingsFlutterBatchFailed": "{count} fehlgeschlagen",
+  "@settingsFlutterBatchFailed": {
+    "description": "settings.flutter.batch.failed",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "settingsFlutterBatchNoEmail": "Ohne E-Mail (manuell nötig)",
+  "@settingsFlutterBatchNoEmail": {
+    "description": "settings.flutter.batch.noEmail"
+  },
+  "settingsFlutterBatchProcessed": "{processed} / {total} verarbeitet",
+  "@settingsFlutterBatchProcessed": {
+    "description": "settings.flutter.batch.processed",
+    "placeholders": {
+      "processed": {},
+      "total": {}
+    }
+  },
+  "settingsFlutterBatchSucceeded": "{count} erfolgreich",
+  "@settingsFlutterBatchSucceeded": {
+    "description": "settings.flutter.batch.succeeded",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "settingsFlutterBatchTitle": "Accounts erstellen",
+  "@settingsFlutterBatchTitle": {
+    "description": "settings.flutter.batch.title"
+  },
+  "settingsFlutterBatchWithAccount": "Mit Account",
+  "@settingsFlutterBatchWithAccount": {
+    "description": "settings.flutter.batch.withAccount"
+  },
+  "settingsFlutterCalendarIntro": "Kopiere den folgenden Link in deine Kalender-App, um die Termine zu abonnieren:",
+  "@settingsFlutterCalendarIntro": {
+    "description": "settings.flutter.calendarIntro"
+  },
   "settingsFlutterChangeEmail": "E-Mail ändern",
   "@settingsFlutterChangeEmail": {
     "description": "settings.flutter.changeEmail"
+  },
+  "settingsFlutterCopyLinkFailed": "Link konnte nicht kopiert werden",
+  "@settingsFlutterCopyLinkFailed": {
+    "description": "settings.flutter.copyLinkFailed"
+  },
+  "settingsFlutterCreateFailed": "Fehler beim Erstellen: {error}",
+  "@settingsFlutterCreateFailed": {
+    "description": "settings.flutter.createFailed",
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "settingsFlutterEmailRequired": "E-Mail ist erforderlich",
+  "@settingsFlutterEmailRequired": {
+    "description": "settings.flutter.emailRequired"
+  },
+  "settingsFlutterErrorDetail": "Fehler: {error}",
+  "@settingsFlutterErrorDetail": {
+    "description": "settings.flutter.errorDetail",
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "settingsFlutterFirstNameRequired": "Vorname ist erforderlich",
+  "@settingsFlutterFirstNameRequired": {
+    "description": "settings.flutter.firstNameRequired"
+  },
+  "settingsFlutterInvalidEmail": "Bitte gib eine gültige E-Mail-Adresse ein.",
+  "@settingsFlutterInvalidEmail": {
+    "description": "settings.flutter.invalidEmail"
+  },
+  "settingsFlutterLastNameRequired": "Nachname ist erforderlich",
+  "@settingsFlutterLastNameRequired": {
+    "description": "settings.flutter.lastNameRequired"
+  },
+  "settingsFlutterLoadFailed": "Fehler beim Laden: {error}",
+  "@settingsFlutterLoadFailed": {
+    "description": "settings.flutter.loadFailed",
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "settingsFlutterParentRemoved": "Elternteil entfernt",
+  "@settingsFlutterParentRemoved": {
+    "description": "settings.flutter.parentRemoved"
+  },
+  "settingsFlutterPendingApprove": "Genehmigen",
+  "@settingsFlutterPendingApprove": {
+    "description": "settings.flutter.pending.approve"
+  },
+  "settingsFlutterPendingApproveMessage": "Möchtest du {name} als Mitglied freischalten?",
+  "@settingsFlutterPendingApproveMessage": {
+    "description": "settings.flutter.pending.approveMessage",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "settingsFlutterPendingApproveTitle": "Registrierung genehmigen?",
+  "@settingsFlutterPendingApproveTitle": {
+    "description": "settings.flutter.pending.approveTitle"
+  },
+  "settingsFlutterPendingApproved": "{name} wurde freigeschaltet",
+  "@settingsFlutterPendingApproved": {
+    "description": "settings.flutter.pending.approved",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "settingsFlutterPendingDeclineMessage": "Möchtest du die Registrierung von {name} ablehnen? Der Eintrag wird gelöscht.",
+  "@settingsFlutterPendingDeclineMessage": {
+    "description": "settings.flutter.pending.declineMessage",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "settingsFlutterPendingDeclineTitle": "Registrierung ablehnen?",
+  "@settingsFlutterPendingDeclineTitle": {
+    "description": "settings.flutter.pending.declineTitle"
+  },
+  "settingsFlutterPendingDeclined": "Registrierung abgelehnt",
+  "@settingsFlutterPendingDeclined": {
+    "description": "settings.flutter.pending.declined"
+  },
+  "settingsFlutterPendingEmpty": "Keine ausstehenden Registrierungen",
+  "@settingsFlutterPendingEmpty": {
+    "description": "settings.flutter.pending.empty"
+  },
+  "settingsFlutterPendingEmptyHint": "Neue Registrierungen erscheinen hier automatisch",
+  "@settingsFlutterPendingEmptyHint": {
+    "description": "settings.flutter.pending.emptyHint"
+  },
+  "settingsFlutterPendingInvalidId": "Ungültige Spieler-ID",
+  "@settingsFlutterPendingInvalidId": {
+    "description": "settings.flutter.pending.invalidId"
   },
   "settingsFlutterPwaAndroidStep1": "Tippe auf das Menü (⋮)",
   "@settingsFlutterPwaAndroidStep1": {
@@ -10722,9 +11035,122 @@
   "@settingsFlutterPwaTitle": {
     "description": "settings.flutter.pwa.title"
   },
+  "settingsFlutterReactivateMessage": "Möchtest du {name} wieder aktivieren?",
+  "@settingsFlutterReactivateMessage": {
+    "description": "settings.flutter.reactivateMessage",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "settingsFlutterReactivated": "{name} wurde reaktiviert",
+  "@settingsFlutterReactivated": {
+    "description": "settings.flutter.reactivated",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "settingsFlutterUserMgmtAdd": "Benutzer hinzufügen",
+  "@settingsFlutterUserMgmtAdd": {
+    "description": "settings.flutter.userMgmt.add"
+  },
+  "settingsFlutterUserMgmtAddFailed": "Fehler beim Hinzufügen des Benutzers",
+  "@settingsFlutterUserMgmtAddFailed": {
+    "description": "settings.flutter.userMgmt.addFailed"
+  },
+  "settingsFlutterUserMgmtAdded": "Benutzer hinzugefügt",
+  "@settingsFlutterUserMgmtAdded": {
+    "description": "settings.flutter.userMgmt.added"
+  },
+  "settingsFlutterUserMgmtEmailPh": "email@beispiel.de",
+  "@settingsFlutterUserMgmtEmailPh": {
+    "description": "settings.flutter.userMgmt.emailPh"
+  },
+  "settingsFlutterUserMgmtLastAdmin": "Der letzte Administrator kann nicht herabgestuft werden. Bitte füge zuerst einen weiteren Admin hinzu.",
+  "@settingsFlutterUserMgmtLastAdmin": {
+    "description": "settings.flutter.userMgmt.lastAdmin"
+  },
+  "settingsFlutterUserMgmtNoAdmins": "Keine Administratoren",
+  "@settingsFlutterUserMgmtNoAdmins": {
+    "description": "settings.flutter.userMgmt.noAdmins"
+  },
+  "settingsFlutterUserMgmtNoAdminsHint": "Füge Admins über den + Button hinzu",
+  "@settingsFlutterUserMgmtNoAdminsHint": {
+    "description": "settings.flutter.userMgmt.noAdminsHint"
+  },
+  "settingsFlutterUserMgmtNoParents": "Keine Eltern",
+  "@settingsFlutterUserMgmtNoParents": {
+    "description": "settings.flutter.userMgmt.noParents"
+  },
+  "settingsFlutterUserMgmtNoParentsHint": "Eltern können ihre Kinder an-/abmelden",
+  "@settingsFlutterUserMgmtNoParentsHint": {
+    "description": "settings.flutter.userMgmt.noParentsHint"
+  },
+  "settingsFlutterUserMgmtNoRole": "Keine Rolle",
+  "@settingsFlutterUserMgmtNoRole": {
+    "description": "settings.flutter.userMgmt.noRole"
+  },
+  "settingsFlutterUserMgmtNoUsers": "Keine Benutzer vorhanden",
+  "@settingsFlutterUserMgmtNoUsers": {
+    "description": "settings.flutter.userMgmt.noUsers"
+  },
+  "settingsFlutterUserMgmtNoViewers": "Keine Betrachter",
+  "@settingsFlutterUserMgmtNoViewers": {
+    "description": "settings.flutter.userMgmt.noViewers"
+  },
+  "settingsFlutterUserMgmtNoViewersHint": "Betrachter können Anwesenheit sehen, aber nicht bearbeiten",
+  "@settingsFlutterUserMgmtNoViewersHint": {
+    "description": "settings.flutter.userMgmt.noViewersHint"
+  },
+  "settingsFlutterUserMgmtPlayers": "Spieler",
+  "@settingsFlutterUserMgmtPlayers": {
+    "description": "settings.flutter.userMgmt.players"
+  },
+  "settingsFlutterUserMgmtResponsibles": "Verantwortliche",
+  "@settingsFlutterUserMgmtResponsibles": {
+    "description": "settings.flutter.userMgmt.responsibles"
+  },
+  "settingsFlutterUserMgmtRoleChangeFailed": "Fehler beim Ändern der Rolle",
+  "@settingsFlutterUserMgmtRoleChangeFailed": {
+    "description": "settings.flutter.userMgmt.roleChangeFailed"
+  },
+  "settingsFlutterUserMgmtRoleChanged": "Rolle geändert zu {role}",
+  "@settingsFlutterUserMgmtRoleChanged": {
+    "description": "settings.flutter.userMgmt.roleChanged",
+    "placeholders": {
+      "role": {}
+    }
+  },
+  "settingsFlutterUserMgmtSelfDemoteConfirm": "Ja, Rolle ändern",
+  "@settingsFlutterUserMgmtSelfDemoteConfirm": {
+    "description": "settings.flutter.userMgmt.selfDemoteConfirm"
+  },
+  "settingsFlutterUserMgmtSelfDemoteMessage": "Du bist dabei, deine eigene Admin-Rolle zu entfernen. Du verlierst dadurch den Zugang zur Benutzerverwaltung. Möchtest du fortfahren?",
+  "@settingsFlutterUserMgmtSelfDemoteMessage": {
+    "description": "settings.flutter.userMgmt.selfDemoteMessage"
+  },
+  "settingsFlutterUserMgmtSelfDemoteTitle": "Eigene Rolle ändern?",
+  "@settingsFlutterUserMgmtSelfDemoteTitle": {
+    "description": "settings.flutter.userMgmt.selfDemoteTitle"
+  },
+  "settingsFlutterUserMgmtTabAdmins": "Admins",
+  "@settingsFlutterUserMgmtTabAdmins": {
+    "description": "settings.flutter.userMgmt.tabAdmins"
+  },
+  "settingsFlutterUserMgmtTabAll": "Alle Benutzer",
+  "@settingsFlutterUserMgmtTabAll": {
+    "description": "settings.flutter.userMgmt.tabAll"
+  },
+  "settingsFlutterUserMgmtTitle": "Benutzerverwaltung",
+  "@settingsFlutterUserMgmtTitle": {
+    "description": "settings.flutter.userMgmt.title"
+  },
   "settingsFlutterUsers": "Benutzer",
   "@settingsFlutterUsers": {
     "description": "settings.flutter.users"
+  },
+  "settingsFlutterViewerRemoved": "Beobachter entfernt",
+  "@settingsFlutterViewerRemoved": {
+    "description": "settings.flutter.viewerRemoved"
   },
   "settingsGenerate": "Generieren",
   "@settingsGenerate": {
@@ -14937,6 +15363,122 @@
   "typeSettingsFilter": "Filter",
   "@typeSettingsFilter": {
     "description": "typeSettings.filter"
+  },
+  "typeSettingsFlutterAllGroupsHint": "Leer = gilt für alle Gruppen",
+  "@typeSettingsFlutterAllGroupsHint": {
+    "description": "typeSettings.flutter.allGroupsHint"
+  },
+  "typeSettingsFlutterCreateType": "Typ erstellen",
+  "@typeSettingsFlutterCreateType": {
+    "description": "typeSettings.flutter.createType"
+  },
+  "typeSettingsFlutterCreatedNamed": "Anwesenheitstyp \"{name}\" erstellt",
+  "@typeSettingsFlutterCreatedNamed": {
+    "description": "typeSettings.flutter.createdNamed",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "typeSettingsFlutterDeadlineLabel": "Frist (Stunden vorher, optional)",
+  "@typeSettingsFlutterDeadlineLabel": {
+    "description": "typeSettings.flutter.deadlineLabel"
+  },
+  "typeSettingsFlutterDeadlinePh": "z.B. 24 für 1 Tag",
+  "@typeSettingsFlutterDeadlinePh": {
+    "description": "typeSettings.flutter.deadlinePh"
+  },
+  "typeSettingsFlutterDurationMinutes": "Dauer (Minuten)",
+  "@typeSettingsFlutterDurationMinutes": {
+    "description": "typeSettings.flutter.durationMinutes"
+  },
+  "typeSettingsFlutterDurationPh": "z.B. 10",
+  "@typeSettingsFlutterDurationPh": {
+    "description": "typeSettings.flutter.durationPh"
+  },
+  "typeSettingsFlutterExtraField": "Zusatzfeld",
+  "@typeSettingsFlutterExtraField": {
+    "description": "typeSettings.flutter.extraField"
+  },
+  "typeSettingsFlutterExtraFilterHint": "Nur Spieler mit diesem Zusatzfeld-Wert einbeziehen",
+  "@typeSettingsFlutterExtraFilterHint": {
+    "description": "typeSettings.flutter.extraFilterHint"
+  },
+  "typeSettingsFlutterFieldNamePh": "z.B. Einspielen, Pause",
+  "@typeSettingsFlutterFieldNamePh": {
+    "description": "typeSettings.flutter.fieldNamePh"
+  },
+  "typeSettingsFlutterHidden": "Ausgeblendet",
+  "@typeSettingsFlutterHidden": {
+    "description": "typeSettings.flutter.hidden"
+  },
+  "typeSettingsFlutterMinutes": "{minutes} Min.",
+  "@typeSettingsFlutterMinutes": {
+    "description": "typeSettings.flutter.minutes",
+    "placeholders": {
+      "minutes": {}
+    }
+  },
+  "typeSettingsFlutterNamePh": "z.B. Probe, Konzert, Generalprobe",
+  "@typeSettingsFlutterNamePh": {
+    "description": "typeSettings.flutter.namePh"
+  },
+  "typeSettingsFlutterNamePhShort": "z.B. Probe, Konzert",
+  "@typeSettingsFlutterNamePhShort": {
+    "description": "typeSettings.flutter.namePhShort"
+  },
+  "typeSettingsFlutterNewField": "Neues Feld",
+  "@typeSettingsFlutterNewField": {
+    "description": "typeSettings.flutter.newField"
+  },
+  "typeSettingsFlutterNewType": "Neuer Anwesenheitstyp",
+  "@typeSettingsFlutterNewType": {
+    "description": "typeSettings.flutter.newType"
+  },
+  "typeSettingsFlutterNoTypes": "Keine Anwesenheitstypen vorhanden",
+  "@typeSettingsFlutterNoTypes": {
+    "description": "typeSettings.flutter.noTypes"
+  },
+  "typeSettingsFlutterNotFound": "Typ nicht gefunden",
+  "@typeSettingsFlutterNotFound": {
+    "description": "typeSettings.flutter.notFound"
+  },
+  "typeSettingsFlutterPlanHeadingPh": "z.B. Probenplan",
+  "@typeSettingsFlutterPlanHeadingPh": {
+    "description": "typeSettings.flutter.planHeadingPh"
+  },
+  "typeSettingsFlutterReorder": "Reihenfolge ändern",
+  "@typeSettingsFlutterReorder": {
+    "description": "typeSettings.flutter.reorder"
+  },
+  "typeSettingsFlutterSaveOrderFailed": "Fehler beim Speichern. Bitte erneut versuchen.",
+  "@typeSettingsFlutterSaveOrderFailed": {
+    "description": "typeSettings.flutter.saveOrderFailed"
+  },
+  "typeSettingsFlutterTodoPh": "z.B. Noten vorbereiten",
+  "@typeSettingsFlutterTodoPh": {
+    "description": "typeSettings.flutter.todoPh"
+  },
+  "typeSettingsFlutterTotalMinutes": "Gesamt: {minutes} Min.",
+  "@typeSettingsFlutterTotalMinutes": {
+    "description": "typeSettings.flutter.totalMinutes",
+    "placeholders": {
+      "minutes": {}
+    }
+  },
+  "typeSettingsFlutterTypeTitle": "Anwesenheitstyp",
+  "@typeSettingsFlutterTypeTitle": {
+    "description": "typeSettings.flutter.typeTitle"
+  },
+  "typeSettingsFlutterUsageWarning": "Wird in {count} Termin(en) verwendet. Änderungen wirken sich auf bestehende Einträge aus.",
+  "@typeSettingsFlutterUsageWarning": {
+    "description": "typeSettings.flutter.usageWarning",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "typeSettingsFlutterWithProgramme": "Mit Programm",
+  "@typeSettingsFlutterWithProgramme": {
+    "description": "typeSettings.flutter.withProgramme"
   },
   "typeSettingsFreeTextPh": "Freitext eingeben...",
   "@typeSettingsFreeTextPh": {

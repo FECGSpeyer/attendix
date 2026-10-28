@@ -1477,6 +1477,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get bellTitle => 'Benachrichtigungen';
 
   @override
+  String get brandingFlutterReplaceLogo => 'Logo ersetzen';
+
+  @override
+  String get brandingFlutterUploadLogo => 'Logo hochladen';
+
+  @override
   String get brandingIntro => 'Logo und Text erscheinen dezent auf exportierten Plänen und Listen (PDF/Bild). Das Logo darf maximal 2 MB groß sein. Das Branding gilt für alle Instanzen der Organisation.';
 
   @override
@@ -3066,6 +3072,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get extraFieldsEditableSuffix => ' (bearbeitbar)';
 
   @override
+  String get extraFieldsFlutterFirstOptionDefault => 'Erste Option ist der Standardwert';
+
+  @override
+  String get extraFieldsFlutterLeaveMessage => 'Du hast ungespeicherte Änderungen. Möchtest du die Seite trotzdem verlassen?';
+
+  @override
   String get extraFieldsForPersons => 'Zusätzliche Felder für Personen';
 
   @override
@@ -3221,6 +3233,30 @@ class AppLocalizationsDe extends AppLocalizations {
   String filesExistsMessage(Object names) {
     return 'Folgende Datei(en) existieren bereits: $names. Möchtest du diese überschreiben?';
   }
+
+  @override
+  String get filesFlutterAscending => 'Aufsteigend';
+
+  @override
+  String get filesFlutterDescending => 'Absteigend';
+
+  @override
+  String get filesFlutterMovePh => 'z. B. Dokumente/2026';
+
+  @override
+  String get filesFlutterOpenDownload => 'Datei öffnen/downloaden';
+
+  @override
+  String get filesFlutterOpenFolder => 'Ordner öffnen';
+
+  @override
+  String get filesFlutterOpenLinkFailed => 'Link konnte nicht geöffnet werden';
+
+  @override
+  String get filesFlutterShareFolderLink => 'Link zu diesem Ordner teilen';
+
+  @override
+  String get filesFlutterShareRootLink => 'Link zur Dateiablage teilen';
 
   @override
   String get filesFolderCreated => 'Ordner wurde erstellt.';
@@ -3540,6 +3576,79 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get generalSettingsDutyViewHelper => '„Meine Termine“ zeigt für Personen aus einem Dienst-Team zuerst ihre Dienste, offene Dienste und Zahlen statt der Anwesenheitsquote. Andere Termine stehen eingeklappt darunter.';
+
+  @override
+  String get generalSettingsFlutterAndHint => 'Person ist kritisch, wenn ALLE Regeln zutreffen';
+
+  @override
+  String get generalSettingsFlutterAndShort => 'UND';
+
+  @override
+  String get generalSettingsFlutterDaysSuffix => 'Tage';
+
+  @override
+  String generalSettingsFlutterDeleteRuleNamed(Object name) {
+    return 'Möchtest du die Regel \"$name\" wirklich löschen?';
+  }
+
+  @override
+  String get generalSettingsFlutterDisabled => 'Deaktiviert';
+
+  @override
+  String get generalSettingsFlutterEditRule => 'Regel bearbeiten';
+
+  @override
+  String get generalSettingsFlutterExcuses => 'Entschuldigungen';
+
+  @override
+  String get generalSettingsFlutterExcusesHelper => 'Erlaubt \"Entschuldigt\" als Status';
+
+  @override
+  String generalSettingsFlutterFieldsCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Felder',
+      one: '$count Feld',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get generalSettingsFlutterNoHolidays => 'Keine Feiertage';
+
+  @override
+  String get generalSettingsFlutterNoTypes => 'Keine Terminarten vorhanden';
+
+  @override
+  String get generalSettingsFlutterOrHint => 'Person ist kritisch, wenn EINE der Regeln zutrifft';
+
+  @override
+  String get generalSettingsFlutterOrShort => 'ODER';
+
+  @override
+  String get generalSettingsFlutterPracticeEnd => 'Probenende';
+
+  @override
+  String get generalSettingsFlutterPracticeStart => 'Probenbeginn';
+
+  @override
+  String get generalSettingsFlutterRuleAdded => 'Regel hinzugefügt';
+
+  @override
+  String get generalSettingsFlutterRuleDeleted => 'Regel gelöscht';
+
+  @override
+  String get generalSettingsFlutterRuleEnabled => 'Regel aktiviert';
+
+  @override
+  String get generalSettingsFlutterRuleEnabledHelper => 'Deaktivierte Regeln werden nicht ausgewertet';
+
+  @override
+  String get generalSettingsFlutterRuleUpdated => 'Regel aktualisiert';
+
+  @override
+  String get generalSettingsFlutterStatusCritical => 'Status (zählt als kritisch)';
 
   @override
   String get generalSettingsForeignInfo => 'Info-Text für fremde Termine';
@@ -7819,6 +7928,11 @@ class AppLocalizationsDe extends AppLocalizations {
   String get rolePermFilesHelper => 'Admins, Verantwortliche und Helfer sehen die Dateiablage immer. Wenn aktiviert, können auch alle anderen Mitglieder außer Bewerber sie lesen. Hochladen bleibt Admins und Verantwortlichen vorbehalten.';
 
   @override
+  String rolePermFlutterLoadFailed(Object error) {
+    return 'Fehler beim Laden der Rollenberechtigungen\n$error';
+  }
+
+  @override
   String get rolePermNotesHelper => 'Wenn aktiviert, können Personen mit dieser Rolle die Notizen der Mitglieder in der Anwesenheitsansicht sehen.';
 
   @override
@@ -8098,13 +8212,134 @@ class AppLocalizationsDe extends AppLocalizations {
   String get settingsFiles => 'Dateien';
 
   @override
+  String get settingsFlutterAddFailed => 'Fehler beim Hinzufügen';
+
+  @override
+  String get settingsFlutterAdminAddedNotNotified => 'Der Admin wurde hinzugefügt, konnte aber nicht benachrichtigt werden.';
+
+  @override
   String get settingsFlutterApplicantText => 'Ein Administrator wird deine Registrierung prüfen.';
 
   @override
   String get settingsFlutterApplicantTitle => 'Mitgliedschaft wird geprüft';
 
   @override
+  String get settingsFlutterArchiveHint => 'Hier erscheinen archivierte Mitglieder';
+
+  @override
+  String get settingsFlutterBatchAllHaveAccount => 'Alle Spieler mit E-Mail haben bereits einen Account.';
+
+  @override
+  String settingsFlutterBatchCreateButton(Object count) {
+    return 'Accounts für $count Spieler erstellen';
+  }
+
+  @override
+  String get settingsFlutterBatchEligible => 'Account erstellbar (mit E-Mail)';
+
+  @override
+  String settingsFlutterBatchEligibleList(Object count) {
+    return 'Spieler ohne Account ($count)';
+  }
+
+  @override
+  String settingsFlutterBatchFailed(Object count) {
+    return '$count fehlgeschlagen';
+  }
+
+  @override
+  String get settingsFlutterBatchNoEmail => 'Ohne E-Mail (manuell nötig)';
+
+  @override
+  String settingsFlutterBatchProcessed(Object processed, Object total) {
+    return '$processed / $total verarbeitet';
+  }
+
+  @override
+  String settingsFlutterBatchSucceeded(Object count) {
+    return '$count erfolgreich';
+  }
+
+  @override
+  String get settingsFlutterBatchTitle => 'Accounts erstellen';
+
+  @override
+  String get settingsFlutterBatchWithAccount => 'Mit Account';
+
+  @override
+  String get settingsFlutterCalendarIntro => 'Kopiere den folgenden Link in deine Kalender-App, um die Termine zu abonnieren:';
+
+  @override
   String get settingsFlutterChangeEmail => 'E-Mail ändern';
+
+  @override
+  String get settingsFlutterCopyLinkFailed => 'Link konnte nicht kopiert werden';
+
+  @override
+  String settingsFlutterCreateFailed(Object error) {
+    return 'Fehler beim Erstellen: $error';
+  }
+
+  @override
+  String get settingsFlutterEmailRequired => 'E-Mail ist erforderlich';
+
+  @override
+  String settingsFlutterErrorDetail(Object error) {
+    return 'Fehler: $error';
+  }
+
+  @override
+  String get settingsFlutterFirstNameRequired => 'Vorname ist erforderlich';
+
+  @override
+  String get settingsFlutterInvalidEmail => 'Bitte gib eine gültige E-Mail-Adresse ein.';
+
+  @override
+  String get settingsFlutterLastNameRequired => 'Nachname ist erforderlich';
+
+  @override
+  String settingsFlutterLoadFailed(Object error) {
+    return 'Fehler beim Laden: $error';
+  }
+
+  @override
+  String get settingsFlutterParentRemoved => 'Elternteil entfernt';
+
+  @override
+  String get settingsFlutterPendingApprove => 'Genehmigen';
+
+  @override
+  String settingsFlutterPendingApproveMessage(Object name) {
+    return 'Möchtest du $name als Mitglied freischalten?';
+  }
+
+  @override
+  String get settingsFlutterPendingApproveTitle => 'Registrierung genehmigen?';
+
+  @override
+  String settingsFlutterPendingApproved(Object name) {
+    return '$name wurde freigeschaltet';
+  }
+
+  @override
+  String settingsFlutterPendingDeclineMessage(Object name) {
+    return 'Möchtest du die Registrierung von $name ablehnen? Der Eintrag wird gelöscht.';
+  }
+
+  @override
+  String get settingsFlutterPendingDeclineTitle => 'Registrierung ablehnen?';
+
+  @override
+  String get settingsFlutterPendingDeclined => 'Registrierung abgelehnt';
+
+  @override
+  String get settingsFlutterPendingEmpty => 'Keine ausstehenden Registrierungen';
+
+  @override
+  String get settingsFlutterPendingEmptyHint => 'Neue Registrierungen erscheinen hier automatisch';
+
+  @override
+  String get settingsFlutterPendingInvalidId => 'Ungültige Spieler-ID';
 
   @override
   String get settingsFlutterPwaAndroidStep1 => 'Tippe auf das Menü (⋮)';
@@ -8128,7 +8363,91 @@ class AppLocalizationsDe extends AppLocalizations {
   String get settingsFlutterPwaTitle => 'App installieren';
 
   @override
+  String settingsFlutterReactivateMessage(Object name) {
+    return 'Möchtest du $name wieder aktivieren?';
+  }
+
+  @override
+  String settingsFlutterReactivated(Object name) {
+    return '$name wurde reaktiviert';
+  }
+
+  @override
+  String get settingsFlutterUserMgmtAdd => 'Benutzer hinzufügen';
+
+  @override
+  String get settingsFlutterUserMgmtAddFailed => 'Fehler beim Hinzufügen des Benutzers';
+
+  @override
+  String get settingsFlutterUserMgmtAdded => 'Benutzer hinzugefügt';
+
+  @override
+  String get settingsFlutterUserMgmtEmailPh => 'email@beispiel.de';
+
+  @override
+  String get settingsFlutterUserMgmtLastAdmin => 'Der letzte Administrator kann nicht herabgestuft werden. Bitte füge zuerst einen weiteren Admin hinzu.';
+
+  @override
+  String get settingsFlutterUserMgmtNoAdmins => 'Keine Administratoren';
+
+  @override
+  String get settingsFlutterUserMgmtNoAdminsHint => 'Füge Admins über den + Button hinzu';
+
+  @override
+  String get settingsFlutterUserMgmtNoParents => 'Keine Eltern';
+
+  @override
+  String get settingsFlutterUserMgmtNoParentsHint => 'Eltern können ihre Kinder an-/abmelden';
+
+  @override
+  String get settingsFlutterUserMgmtNoRole => 'Keine Rolle';
+
+  @override
+  String get settingsFlutterUserMgmtNoUsers => 'Keine Benutzer vorhanden';
+
+  @override
+  String get settingsFlutterUserMgmtNoViewers => 'Keine Betrachter';
+
+  @override
+  String get settingsFlutterUserMgmtNoViewersHint => 'Betrachter können Anwesenheit sehen, aber nicht bearbeiten';
+
+  @override
+  String get settingsFlutterUserMgmtPlayers => 'Spieler';
+
+  @override
+  String get settingsFlutterUserMgmtResponsibles => 'Verantwortliche';
+
+  @override
+  String get settingsFlutterUserMgmtRoleChangeFailed => 'Fehler beim Ändern der Rolle';
+
+  @override
+  String settingsFlutterUserMgmtRoleChanged(Object role) {
+    return 'Rolle geändert zu $role';
+  }
+
+  @override
+  String get settingsFlutterUserMgmtSelfDemoteConfirm => 'Ja, Rolle ändern';
+
+  @override
+  String get settingsFlutterUserMgmtSelfDemoteMessage => 'Du bist dabei, deine eigene Admin-Rolle zu entfernen. Du verlierst dadurch den Zugang zur Benutzerverwaltung. Möchtest du fortfahren?';
+
+  @override
+  String get settingsFlutterUserMgmtSelfDemoteTitle => 'Eigene Rolle ändern?';
+
+  @override
+  String get settingsFlutterUserMgmtTabAdmins => 'Admins';
+
+  @override
+  String get settingsFlutterUserMgmtTabAll => 'Alle Benutzer';
+
+  @override
+  String get settingsFlutterUserMgmtTitle => 'Benutzerverwaltung';
+
+  @override
   String get settingsFlutterUsers => 'Benutzer';
+
+  @override
+  String get settingsFlutterViewerRemoved => 'Beobachter entfernt';
 
   @override
   String get settingsGenerate => 'Generieren';
@@ -11316,6 +11635,92 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get typeSettingsFilter => 'Filter';
+
+  @override
+  String get typeSettingsFlutterAllGroupsHint => 'Leer = gilt für alle Gruppen';
+
+  @override
+  String get typeSettingsFlutterCreateType => 'Typ erstellen';
+
+  @override
+  String typeSettingsFlutterCreatedNamed(Object name) {
+    return 'Anwesenheitstyp \"$name\" erstellt';
+  }
+
+  @override
+  String get typeSettingsFlutterDeadlineLabel => 'Frist (Stunden vorher, optional)';
+
+  @override
+  String get typeSettingsFlutterDeadlinePh => 'z.B. 24 für 1 Tag';
+
+  @override
+  String get typeSettingsFlutterDurationMinutes => 'Dauer (Minuten)';
+
+  @override
+  String get typeSettingsFlutterDurationPh => 'z.B. 10';
+
+  @override
+  String get typeSettingsFlutterExtraField => 'Zusatzfeld';
+
+  @override
+  String get typeSettingsFlutterExtraFilterHint => 'Nur Spieler mit diesem Zusatzfeld-Wert einbeziehen';
+
+  @override
+  String get typeSettingsFlutterFieldNamePh => 'z.B. Einspielen, Pause';
+
+  @override
+  String get typeSettingsFlutterHidden => 'Ausgeblendet';
+
+  @override
+  String typeSettingsFlutterMinutes(Object minutes) {
+    return '$minutes Min.';
+  }
+
+  @override
+  String get typeSettingsFlutterNamePh => 'z.B. Probe, Konzert, Generalprobe';
+
+  @override
+  String get typeSettingsFlutterNamePhShort => 'z.B. Probe, Konzert';
+
+  @override
+  String get typeSettingsFlutterNewField => 'Neues Feld';
+
+  @override
+  String get typeSettingsFlutterNewType => 'Neuer Anwesenheitstyp';
+
+  @override
+  String get typeSettingsFlutterNoTypes => 'Keine Anwesenheitstypen vorhanden';
+
+  @override
+  String get typeSettingsFlutterNotFound => 'Typ nicht gefunden';
+
+  @override
+  String get typeSettingsFlutterPlanHeadingPh => 'z.B. Probenplan';
+
+  @override
+  String get typeSettingsFlutterReorder => 'Reihenfolge ändern';
+
+  @override
+  String get typeSettingsFlutterSaveOrderFailed => 'Fehler beim Speichern. Bitte erneut versuchen.';
+
+  @override
+  String get typeSettingsFlutterTodoPh => 'z.B. Noten vorbereiten';
+
+  @override
+  String typeSettingsFlutterTotalMinutes(Object minutes) {
+    return 'Gesamt: $minutes Min.';
+  }
+
+  @override
+  String get typeSettingsFlutterTypeTitle => 'Anwesenheitstyp';
+
+  @override
+  String typeSettingsFlutterUsageWarning(Object count) {
+    return 'Wird in $count Termin(en) verwendet. Änderungen wirken sich auf bestehende Einträge aus.';
+  }
+
+  @override
+  String get typeSettingsFlutterWithProgramme => 'Mit Programm';
 
   @override
   String get typeSettingsFreeTextPh => 'Freitext eingeben...';

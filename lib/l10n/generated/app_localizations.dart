@@ -2591,6 +2591,18 @@ abstract class AppLocalizations {
   /// **'Benachrichtigungen'**
   String get bellTitle;
 
+  /// branding.flutter.replaceLogo
+  ///
+  /// In de, this message translates to:
+  /// **'Logo ersetzen'**
+  String get brandingFlutterReplaceLogo;
+
+  /// branding.flutter.uploadLogo
+  ///
+  /// In de, this message translates to:
+  /// **'Logo hochladen'**
+  String get brandingFlutterUploadLogo;
+
   /// branding.intro
   ///
   /// In de, this message translates to:
@@ -5369,6 +5381,18 @@ abstract class AppLocalizations {
   /// **' (bearbeitbar)'**
   String get extraFieldsEditableSuffix;
 
+  /// extraFields.flutter.firstOptionDefault
+  ///
+  /// In de, this message translates to:
+  /// **'Erste Option ist der Standardwert'**
+  String get extraFieldsFlutterFirstOptionDefault;
+
+  /// extraFields.flutter.leaveMessage
+  ///
+  /// In de, this message translates to:
+  /// **'Du hast ungespeicherte Änderungen. Möchtest du die Seite trotzdem verlassen?'**
+  String get extraFieldsFlutterLeaveMessage;
+
   /// extraFields.forPersons
   ///
   /// In de, this message translates to:
@@ -5638,6 +5662,54 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Folgende Datei(en) existieren bereits: {names}. Möchtest du diese überschreiben?'**
   String filesExistsMessage(Object names);
+
+  /// files.flutter.ascending
+  ///
+  /// In de, this message translates to:
+  /// **'Aufsteigend'**
+  String get filesFlutterAscending;
+
+  /// files.flutter.descending
+  ///
+  /// In de, this message translates to:
+  /// **'Absteigend'**
+  String get filesFlutterDescending;
+
+  /// files.flutter.movePh
+  ///
+  /// In de, this message translates to:
+  /// **'z. B. Dokumente/2026'**
+  String get filesFlutterMovePh;
+
+  /// files.flutter.openDownload
+  ///
+  /// In de, this message translates to:
+  /// **'Datei öffnen/downloaden'**
+  String get filesFlutterOpenDownload;
+
+  /// files.flutter.openFolder
+  ///
+  /// In de, this message translates to:
+  /// **'Ordner öffnen'**
+  String get filesFlutterOpenFolder;
+
+  /// files.flutter.openLinkFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Link konnte nicht geöffnet werden'**
+  String get filesFlutterOpenLinkFailed;
+
+  /// files.flutter.shareFolderLink
+  ///
+  /// In de, this message translates to:
+  /// **'Link zu diesem Ordner teilen'**
+  String get filesFlutterShareFolderLink;
+
+  /// files.flutter.shareRootLink
+  ///
+  /// In de, this message translates to:
+  /// **'Link zur Dateiablage teilen'**
+  String get filesFlutterShareRootLink;
 
   /// files.folderCreated
   ///
@@ -6196,6 +6268,132 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'„Meine Termine“ zeigt für Personen aus einem Dienst-Team zuerst ihre Dienste, offene Dienste und Zahlen statt der Anwesenheitsquote. Andere Termine stehen eingeklappt darunter.'**
   String get generalSettingsDutyViewHelper;
+
+  /// generalSettings.flutter.andHint
+  ///
+  /// In de, this message translates to:
+  /// **'Person ist kritisch, wenn ALLE Regeln zutreffen'**
+  String get generalSettingsFlutterAndHint;
+
+  /// generalSettings.flutter.andShort
+  ///
+  /// In de, this message translates to:
+  /// **'UND'**
+  String get generalSettingsFlutterAndShort;
+
+  /// generalSettings.flutter.daysSuffix
+  ///
+  /// In de, this message translates to:
+  /// **'Tage'**
+  String get generalSettingsFlutterDaysSuffix;
+
+  /// generalSettings.flutter.deleteRuleNamed
+  ///
+  /// In de, this message translates to:
+  /// **'Möchtest du die Regel \"{name}\" wirklich löschen?'**
+  String generalSettingsFlutterDeleteRuleNamed(Object name);
+
+  /// generalSettings.flutter.disabled
+  ///
+  /// In de, this message translates to:
+  /// **'Deaktiviert'**
+  String get generalSettingsFlutterDisabled;
+
+  /// generalSettings.flutter.editRule
+  ///
+  /// In de, this message translates to:
+  /// **'Regel bearbeiten'**
+  String get generalSettingsFlutterEditRule;
+
+  /// generalSettings.flutter.excuses
+  ///
+  /// In de, this message translates to:
+  /// **'Entschuldigungen'**
+  String get generalSettingsFlutterExcuses;
+
+  /// generalSettings.flutter.excusesHelper
+  ///
+  /// In de, this message translates to:
+  /// **'Erlaubt \"Entschuldigt\" als Status'**
+  String get generalSettingsFlutterExcusesHelper;
+
+  /// generalSettings.flutter.fieldsCount
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {{count} Feld} other {{count} Felder}}'**
+  String generalSettingsFlutterFieldsCount(num count);
+
+  /// generalSettings.flutter.noHolidays
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Feiertage'**
+  String get generalSettingsFlutterNoHolidays;
+
+  /// generalSettings.flutter.noTypes
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Terminarten vorhanden'**
+  String get generalSettingsFlutterNoTypes;
+
+  /// generalSettings.flutter.orHint
+  ///
+  /// In de, this message translates to:
+  /// **'Person ist kritisch, wenn EINE der Regeln zutrifft'**
+  String get generalSettingsFlutterOrHint;
+
+  /// generalSettings.flutter.orShort
+  ///
+  /// In de, this message translates to:
+  /// **'ODER'**
+  String get generalSettingsFlutterOrShort;
+
+  /// generalSettings.flutter.practiceEnd
+  ///
+  /// In de, this message translates to:
+  /// **'Probenende'**
+  String get generalSettingsFlutterPracticeEnd;
+
+  /// generalSettings.flutter.practiceStart
+  ///
+  /// In de, this message translates to:
+  /// **'Probenbeginn'**
+  String get generalSettingsFlutterPracticeStart;
+
+  /// generalSettings.flutter.ruleAdded
+  ///
+  /// In de, this message translates to:
+  /// **'Regel hinzugefügt'**
+  String get generalSettingsFlutterRuleAdded;
+
+  /// generalSettings.flutter.ruleDeleted
+  ///
+  /// In de, this message translates to:
+  /// **'Regel gelöscht'**
+  String get generalSettingsFlutterRuleDeleted;
+
+  /// generalSettings.flutter.ruleEnabled
+  ///
+  /// In de, this message translates to:
+  /// **'Regel aktiviert'**
+  String get generalSettingsFlutterRuleEnabled;
+
+  /// generalSettings.flutter.ruleEnabledHelper
+  ///
+  /// In de, this message translates to:
+  /// **'Deaktivierte Regeln werden nicht ausgewertet'**
+  String get generalSettingsFlutterRuleEnabledHelper;
+
+  /// generalSettings.flutter.ruleUpdated
+  ///
+  /// In de, this message translates to:
+  /// **'Regel aktualisiert'**
+  String get generalSettingsFlutterRuleUpdated;
+
+  /// generalSettings.flutter.statusCritical
+  ///
+  /// In de, this message translates to:
+  /// **'Status (zählt als kritisch)'**
+  String get generalSettingsFlutterStatusCritical;
 
   /// generalSettings.foreignInfo
   ///
@@ -13691,6 +13889,12 @@ abstract class AppLocalizations {
   /// **'Admins, Verantwortliche und Helfer sehen die Dateiablage immer. Wenn aktiviert, können auch alle anderen Mitglieder außer Bewerber sie lesen. Hochladen bleibt Admins und Verantwortlichen vorbehalten.'**
   String get rolePermFilesHelper;
 
+  /// rolePerm.flutter.loadFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Laden der Rollenberechtigungen\n{error}'**
+  String rolePermFlutterLoadFailed(Object error);
+
   /// rolePerm.notesHelper
   ///
   /// In de, this message translates to:
@@ -14201,6 +14405,18 @@ abstract class AppLocalizations {
   /// **'Dateien'**
   String get settingsFiles;
 
+  /// settings.flutter.addFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Hinzufügen'**
+  String get settingsFlutterAddFailed;
+
+  /// settings.flutter.adminAddedNotNotified
+  ///
+  /// In de, this message translates to:
+  /// **'Der Admin wurde hinzugefügt, konnte aber nicht benachrichtigt werden.'**
+  String get settingsFlutterAdminAddedNotNotified;
+
   /// settings.flutter.applicantText
   ///
   /// In de, this message translates to:
@@ -14213,11 +14429,197 @@ abstract class AppLocalizations {
   /// **'Mitgliedschaft wird geprüft'**
   String get settingsFlutterApplicantTitle;
 
+  /// settings.flutter.archiveHint
+  ///
+  /// In de, this message translates to:
+  /// **'Hier erscheinen archivierte Mitglieder'**
+  String get settingsFlutterArchiveHint;
+
+  /// settings.flutter.batch.allHaveAccount
+  ///
+  /// In de, this message translates to:
+  /// **'Alle Spieler mit E-Mail haben bereits einen Account.'**
+  String get settingsFlutterBatchAllHaveAccount;
+
+  /// settings.flutter.batch.createButton
+  ///
+  /// In de, this message translates to:
+  /// **'Accounts für {count} Spieler erstellen'**
+  String settingsFlutterBatchCreateButton(Object count);
+
+  /// settings.flutter.batch.eligible
+  ///
+  /// In de, this message translates to:
+  /// **'Account erstellbar (mit E-Mail)'**
+  String get settingsFlutterBatchEligible;
+
+  /// settings.flutter.batch.eligibleList
+  ///
+  /// In de, this message translates to:
+  /// **'Spieler ohne Account ({count})'**
+  String settingsFlutterBatchEligibleList(Object count);
+
+  /// settings.flutter.batch.failed
+  ///
+  /// In de, this message translates to:
+  /// **'{count} fehlgeschlagen'**
+  String settingsFlutterBatchFailed(Object count);
+
+  /// settings.flutter.batch.noEmail
+  ///
+  /// In de, this message translates to:
+  /// **'Ohne E-Mail (manuell nötig)'**
+  String get settingsFlutterBatchNoEmail;
+
+  /// settings.flutter.batch.processed
+  ///
+  /// In de, this message translates to:
+  /// **'{processed} / {total} verarbeitet'**
+  String settingsFlutterBatchProcessed(Object processed, Object total);
+
+  /// settings.flutter.batch.succeeded
+  ///
+  /// In de, this message translates to:
+  /// **'{count} erfolgreich'**
+  String settingsFlutterBatchSucceeded(Object count);
+
+  /// settings.flutter.batch.title
+  ///
+  /// In de, this message translates to:
+  /// **'Accounts erstellen'**
+  String get settingsFlutterBatchTitle;
+
+  /// settings.flutter.batch.withAccount
+  ///
+  /// In de, this message translates to:
+  /// **'Mit Account'**
+  String get settingsFlutterBatchWithAccount;
+
+  /// settings.flutter.calendarIntro
+  ///
+  /// In de, this message translates to:
+  /// **'Kopiere den folgenden Link in deine Kalender-App, um die Termine zu abonnieren:'**
+  String get settingsFlutterCalendarIntro;
+
   /// settings.flutter.changeEmail
   ///
   /// In de, this message translates to:
   /// **'E-Mail ändern'**
   String get settingsFlutterChangeEmail;
+
+  /// settings.flutter.copyLinkFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Link konnte nicht kopiert werden'**
+  String get settingsFlutterCopyLinkFailed;
+
+  /// settings.flutter.createFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Erstellen: {error}'**
+  String settingsFlutterCreateFailed(Object error);
+
+  /// settings.flutter.emailRequired
+  ///
+  /// In de, this message translates to:
+  /// **'E-Mail ist erforderlich'**
+  String get settingsFlutterEmailRequired;
+
+  /// settings.flutter.errorDetail
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler: {error}'**
+  String settingsFlutterErrorDetail(Object error);
+
+  /// settings.flutter.firstNameRequired
+  ///
+  /// In de, this message translates to:
+  /// **'Vorname ist erforderlich'**
+  String get settingsFlutterFirstNameRequired;
+
+  /// settings.flutter.invalidEmail
+  ///
+  /// In de, this message translates to:
+  /// **'Bitte gib eine gültige E-Mail-Adresse ein.'**
+  String get settingsFlutterInvalidEmail;
+
+  /// settings.flutter.lastNameRequired
+  ///
+  /// In de, this message translates to:
+  /// **'Nachname ist erforderlich'**
+  String get settingsFlutterLastNameRequired;
+
+  /// settings.flutter.loadFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Laden: {error}'**
+  String settingsFlutterLoadFailed(Object error);
+
+  /// settings.flutter.parentRemoved
+  ///
+  /// In de, this message translates to:
+  /// **'Elternteil entfernt'**
+  String get settingsFlutterParentRemoved;
+
+  /// settings.flutter.pending.approve
+  ///
+  /// In de, this message translates to:
+  /// **'Genehmigen'**
+  String get settingsFlutterPendingApprove;
+
+  /// settings.flutter.pending.approveMessage
+  ///
+  /// In de, this message translates to:
+  /// **'Möchtest du {name} als Mitglied freischalten?'**
+  String settingsFlutterPendingApproveMessage(Object name);
+
+  /// settings.flutter.pending.approveTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Registrierung genehmigen?'**
+  String get settingsFlutterPendingApproveTitle;
+
+  /// settings.flutter.pending.approved
+  ///
+  /// In de, this message translates to:
+  /// **'{name} wurde freigeschaltet'**
+  String settingsFlutterPendingApproved(Object name);
+
+  /// settings.flutter.pending.declineMessage
+  ///
+  /// In de, this message translates to:
+  /// **'Möchtest du die Registrierung von {name} ablehnen? Der Eintrag wird gelöscht.'**
+  String settingsFlutterPendingDeclineMessage(Object name);
+
+  /// settings.flutter.pending.declineTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Registrierung ablehnen?'**
+  String get settingsFlutterPendingDeclineTitle;
+
+  /// settings.flutter.pending.declined
+  ///
+  /// In de, this message translates to:
+  /// **'Registrierung abgelehnt'**
+  String get settingsFlutterPendingDeclined;
+
+  /// settings.flutter.pending.empty
+  ///
+  /// In de, this message translates to:
+  /// **'Keine ausstehenden Registrierungen'**
+  String get settingsFlutterPendingEmpty;
+
+  /// settings.flutter.pending.emptyHint
+  ///
+  /// In de, this message translates to:
+  /// **'Neue Registrierungen erscheinen hier automatisch'**
+  String get settingsFlutterPendingEmptyHint;
+
+  /// settings.flutter.pending.invalidId
+  ///
+  /// In de, this message translates to:
+  /// **'Ungültige Spieler-ID'**
+  String get settingsFlutterPendingInvalidId;
 
   /// settings.flutter.pwa.androidStep1
   ///
@@ -14261,11 +14663,167 @@ abstract class AppLocalizations {
   /// **'App installieren'**
   String get settingsFlutterPwaTitle;
 
+  /// settings.flutter.reactivateMessage
+  ///
+  /// In de, this message translates to:
+  /// **'Möchtest du {name} wieder aktivieren?'**
+  String settingsFlutterReactivateMessage(Object name);
+
+  /// settings.flutter.reactivated
+  ///
+  /// In de, this message translates to:
+  /// **'{name} wurde reaktiviert'**
+  String settingsFlutterReactivated(Object name);
+
+  /// settings.flutter.userMgmt.add
+  ///
+  /// In de, this message translates to:
+  /// **'Benutzer hinzufügen'**
+  String get settingsFlutterUserMgmtAdd;
+
+  /// settings.flutter.userMgmt.addFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Hinzufügen des Benutzers'**
+  String get settingsFlutterUserMgmtAddFailed;
+
+  /// settings.flutter.userMgmt.added
+  ///
+  /// In de, this message translates to:
+  /// **'Benutzer hinzugefügt'**
+  String get settingsFlutterUserMgmtAdded;
+
+  /// settings.flutter.userMgmt.emailPh
+  ///
+  /// In de, this message translates to:
+  /// **'email@beispiel.de'**
+  String get settingsFlutterUserMgmtEmailPh;
+
+  /// settings.flutter.userMgmt.lastAdmin
+  ///
+  /// In de, this message translates to:
+  /// **'Der letzte Administrator kann nicht herabgestuft werden. Bitte füge zuerst einen weiteren Admin hinzu.'**
+  String get settingsFlutterUserMgmtLastAdmin;
+
+  /// settings.flutter.userMgmt.noAdmins
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Administratoren'**
+  String get settingsFlutterUserMgmtNoAdmins;
+
+  /// settings.flutter.userMgmt.noAdminsHint
+  ///
+  /// In de, this message translates to:
+  /// **'Füge Admins über den + Button hinzu'**
+  String get settingsFlutterUserMgmtNoAdminsHint;
+
+  /// settings.flutter.userMgmt.noParents
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Eltern'**
+  String get settingsFlutterUserMgmtNoParents;
+
+  /// settings.flutter.userMgmt.noParentsHint
+  ///
+  /// In de, this message translates to:
+  /// **'Eltern können ihre Kinder an-/abmelden'**
+  String get settingsFlutterUserMgmtNoParentsHint;
+
+  /// settings.flutter.userMgmt.noRole
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Rolle'**
+  String get settingsFlutterUserMgmtNoRole;
+
+  /// settings.flutter.userMgmt.noUsers
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Benutzer vorhanden'**
+  String get settingsFlutterUserMgmtNoUsers;
+
+  /// settings.flutter.userMgmt.noViewers
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Betrachter'**
+  String get settingsFlutterUserMgmtNoViewers;
+
+  /// settings.flutter.userMgmt.noViewersHint
+  ///
+  /// In de, this message translates to:
+  /// **'Betrachter können Anwesenheit sehen, aber nicht bearbeiten'**
+  String get settingsFlutterUserMgmtNoViewersHint;
+
+  /// settings.flutter.userMgmt.players
+  ///
+  /// In de, this message translates to:
+  /// **'Spieler'**
+  String get settingsFlutterUserMgmtPlayers;
+
+  /// settings.flutter.userMgmt.responsibles
+  ///
+  /// In de, this message translates to:
+  /// **'Verantwortliche'**
+  String get settingsFlutterUserMgmtResponsibles;
+
+  /// settings.flutter.userMgmt.roleChangeFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Ändern der Rolle'**
+  String get settingsFlutterUserMgmtRoleChangeFailed;
+
+  /// settings.flutter.userMgmt.roleChanged
+  ///
+  /// In de, this message translates to:
+  /// **'Rolle geändert zu {role}'**
+  String settingsFlutterUserMgmtRoleChanged(Object role);
+
+  /// settings.flutter.userMgmt.selfDemoteConfirm
+  ///
+  /// In de, this message translates to:
+  /// **'Ja, Rolle ändern'**
+  String get settingsFlutterUserMgmtSelfDemoteConfirm;
+
+  /// settings.flutter.userMgmt.selfDemoteMessage
+  ///
+  /// In de, this message translates to:
+  /// **'Du bist dabei, deine eigene Admin-Rolle zu entfernen. Du verlierst dadurch den Zugang zur Benutzerverwaltung. Möchtest du fortfahren?'**
+  String get settingsFlutterUserMgmtSelfDemoteMessage;
+
+  /// settings.flutter.userMgmt.selfDemoteTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Eigene Rolle ändern?'**
+  String get settingsFlutterUserMgmtSelfDemoteTitle;
+
+  /// settings.flutter.userMgmt.tabAdmins
+  ///
+  /// In de, this message translates to:
+  /// **'Admins'**
+  String get settingsFlutterUserMgmtTabAdmins;
+
+  /// settings.flutter.userMgmt.tabAll
+  ///
+  /// In de, this message translates to:
+  /// **'Alle Benutzer'**
+  String get settingsFlutterUserMgmtTabAll;
+
+  /// settings.flutter.userMgmt.title
+  ///
+  /// In de, this message translates to:
+  /// **'Benutzerverwaltung'**
+  String get settingsFlutterUserMgmtTitle;
+
   /// settings.flutter.users
   ///
   /// In de, this message translates to:
   /// **'Benutzer'**
   String get settingsFlutterUsers;
+
+  /// settings.flutter.viewerRemoved
+  ///
+  /// In de, this message translates to:
+  /// **'Beobachter entfernt'**
+  String get settingsFlutterViewerRemoved;
 
   /// settings.generate
   ///
@@ -20008,6 +20566,162 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Filter'**
   String get typeSettingsFilter;
+
+  /// typeSettings.flutter.allGroupsHint
+  ///
+  /// In de, this message translates to:
+  /// **'Leer = gilt für alle Gruppen'**
+  String get typeSettingsFlutterAllGroupsHint;
+
+  /// typeSettings.flutter.createType
+  ///
+  /// In de, this message translates to:
+  /// **'Typ erstellen'**
+  String get typeSettingsFlutterCreateType;
+
+  /// typeSettings.flutter.createdNamed
+  ///
+  /// In de, this message translates to:
+  /// **'Anwesenheitstyp \"{name}\" erstellt'**
+  String typeSettingsFlutterCreatedNamed(Object name);
+
+  /// typeSettings.flutter.deadlineLabel
+  ///
+  /// In de, this message translates to:
+  /// **'Frist (Stunden vorher, optional)'**
+  String get typeSettingsFlutterDeadlineLabel;
+
+  /// typeSettings.flutter.deadlinePh
+  ///
+  /// In de, this message translates to:
+  /// **'z.B. 24 für 1 Tag'**
+  String get typeSettingsFlutterDeadlinePh;
+
+  /// typeSettings.flutter.durationMinutes
+  ///
+  /// In de, this message translates to:
+  /// **'Dauer (Minuten)'**
+  String get typeSettingsFlutterDurationMinutes;
+
+  /// typeSettings.flutter.durationPh
+  ///
+  /// In de, this message translates to:
+  /// **'z.B. 10'**
+  String get typeSettingsFlutterDurationPh;
+
+  /// typeSettings.flutter.extraField
+  ///
+  /// In de, this message translates to:
+  /// **'Zusatzfeld'**
+  String get typeSettingsFlutterExtraField;
+
+  /// typeSettings.flutter.extraFilterHint
+  ///
+  /// In de, this message translates to:
+  /// **'Nur Spieler mit diesem Zusatzfeld-Wert einbeziehen'**
+  String get typeSettingsFlutterExtraFilterHint;
+
+  /// typeSettings.flutter.fieldNamePh
+  ///
+  /// In de, this message translates to:
+  /// **'z.B. Einspielen, Pause'**
+  String get typeSettingsFlutterFieldNamePh;
+
+  /// typeSettings.flutter.hidden
+  ///
+  /// In de, this message translates to:
+  /// **'Ausgeblendet'**
+  String get typeSettingsFlutterHidden;
+
+  /// typeSettings.flutter.minutes
+  ///
+  /// In de, this message translates to:
+  /// **'{minutes} Min.'**
+  String typeSettingsFlutterMinutes(Object minutes);
+
+  /// typeSettings.flutter.namePh
+  ///
+  /// In de, this message translates to:
+  /// **'z.B. Probe, Konzert, Generalprobe'**
+  String get typeSettingsFlutterNamePh;
+
+  /// typeSettings.flutter.namePhShort
+  ///
+  /// In de, this message translates to:
+  /// **'z.B. Probe, Konzert'**
+  String get typeSettingsFlutterNamePhShort;
+
+  /// typeSettings.flutter.newField
+  ///
+  /// In de, this message translates to:
+  /// **'Neues Feld'**
+  String get typeSettingsFlutterNewField;
+
+  /// typeSettings.flutter.newType
+  ///
+  /// In de, this message translates to:
+  /// **'Neuer Anwesenheitstyp'**
+  String get typeSettingsFlutterNewType;
+
+  /// typeSettings.flutter.noTypes
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Anwesenheitstypen vorhanden'**
+  String get typeSettingsFlutterNoTypes;
+
+  /// typeSettings.flutter.notFound
+  ///
+  /// In de, this message translates to:
+  /// **'Typ nicht gefunden'**
+  String get typeSettingsFlutterNotFound;
+
+  /// typeSettings.flutter.planHeadingPh
+  ///
+  /// In de, this message translates to:
+  /// **'z.B. Probenplan'**
+  String get typeSettingsFlutterPlanHeadingPh;
+
+  /// typeSettings.flutter.reorder
+  ///
+  /// In de, this message translates to:
+  /// **'Reihenfolge ändern'**
+  String get typeSettingsFlutterReorder;
+
+  /// typeSettings.flutter.saveOrderFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Speichern. Bitte erneut versuchen.'**
+  String get typeSettingsFlutterSaveOrderFailed;
+
+  /// typeSettings.flutter.todoPh
+  ///
+  /// In de, this message translates to:
+  /// **'z.B. Noten vorbereiten'**
+  String get typeSettingsFlutterTodoPh;
+
+  /// typeSettings.flutter.totalMinutes
+  ///
+  /// In de, this message translates to:
+  /// **'Gesamt: {minutes} Min.'**
+  String typeSettingsFlutterTotalMinutes(Object minutes);
+
+  /// typeSettings.flutter.typeTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Anwesenheitstyp'**
+  String get typeSettingsFlutterTypeTitle;
+
+  /// typeSettings.flutter.usageWarning
+  ///
+  /// In de, this message translates to:
+  /// **'Wird in {count} Termin(en) verwendet. Änderungen wirken sich auf bestehende Einträge aus.'**
+  String typeSettingsFlutterUsageWarning(Object count);
+
+  /// typeSettings.flutter.withProgramme
+  ///
+  /// In de, this message translates to:
+  /// **'Mit Programm'**
+  String get typeSettingsFlutterWithProgramme;
 
   /// typeSettings.freeTextPh
   ///

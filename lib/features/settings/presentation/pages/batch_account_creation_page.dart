@@ -8,6 +8,7 @@ import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../core/providers/user_registration_providers.dart'; // AUTH
+import '../../../../l10n/l10n.dart';
 
 /// Page for batch creating accounts for players without accounts
 class BatchAccountCreationPage extends ConsumerStatefulWidget {
@@ -33,11 +34,11 @@ class _BatchAccountCreationPageState
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Accounts erstellen'),
+        title: Text(context.l10n.settingsFlutterBatchTitle),
       ),
       body: playersAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('Fehler: $e')),
+        error: (e, _) => Center(child: Text(context.l10n.settingsFlutterErrorDetail(e))),
         data: (players) {
           // Ionic getPlayersWithoutAccount: not pending, not left, e-mail, no appId
           final eligible = players
@@ -70,7 +71,7 @@ class _BatchAccountCreationPageState
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Übersicht',
+                        context.l10n.messagesOverview,
                         style:
                             Theme.of(context).textTheme.titleMedium?.copyWith(
                                   fontWeight: FontWeight.bold,
@@ -80,21 +81,21 @@ class _BatchAccountCreationPageState
                       _SummaryRow(
                         icon: Icons.check_circle,
                         color: AppColors.success,
-                        label: 'Mit Account',
+                        label: context.l10n.settingsFlutterBatchWithAccount,
                         count: withAccount.length,
                       ),
                       const SizedBox(height: 8),
                       _SummaryRow(
                         icon: Icons.person_add,
                         color: AppColors.primary,
-                        label: 'Account erstellbar (mit E-Mail)',
+                        label: context.l10n.settingsFlutterBatchEligible,
                         count: eligible.length,
                       ),
                       const SizedBox(height: 8),
                       _SummaryRow(
                         icon: Icons.warning,
                         color: AppColors.warning,
-                        label: 'Ohne E-Mail (manuell nötig)',
+                        label: context.l10n.settingsFlutterBatchNoEmail,
                         count: noEmail.length,
                       ),
                     ],
@@ -115,7 +116,7 @@ class _BatchAccountCreationPageState
                         ),
                         const SizedBox(height: 12),
                         Text(
-                          '$_processed / $_total verarbeitet',
+                          context.l10n.settingsFlutterBatchProcessed(_processed, _total),
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                         if (_succeeded > 0 || _failed > 0) ...[
@@ -125,11 +126,11 @@ class _BatchAccountCreationPageState
                             children: [
                               Icon(Icons.check, color: AppColors.success, size: 16),
                               const SizedBox(width: 4),
-                              Text('$_succeeded erfolgreich'),
+                              Text(context.l10n.settingsFlutterBatchSucceeded(_succeeded)),
                               const SizedBox(width: 16),
                               Icon(Icons.close, color: AppColors.danger, size: 16),
                               const SizedBox(width: 4),
-                              Text('$_failed fehlgeschlagen'),
+                              Text(context.l10n.settingsFlutterBatchFailed(_failed)),
                             ],
                           ),
                         ],
@@ -150,7 +151,7 @@ class _BatchAccountCreationPageState
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Fehler',
+                          context.l10n.commonError,
                           style: Theme.of(context)
                               .textTheme
                               .titleSmall
@@ -177,7 +178,7 @@ class _BatchAccountCreationPageState
               // Eligible players list
               if (eligible.isNotEmpty) ...[
                 Text(
-                  'Spieler ohne Account (${eligible.length})',
+                  context.l10n.settingsFlutterBatchEligibleList(eligible.length),
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
@@ -226,7 +227,7 @@ class _BatchAccountCreationPageState
                         : () => _confirmAndCreateAccounts(eligible),
                     icon: const Icon(Icons.person_add),
                     label: Text(
-                        'Accounts für ${eligible.length} Spieler erstellen'),
+                        context.l10n.settingsFlutterBatchCreateButton(eligible.length)),
                   ),
                 ),
               ],
@@ -240,7 +241,7 @@ class _BatchAccountCreationPageState
                           size: 64, color: AppColors.success),
                       const SizedBox(height: 16),
                       Text(
-                        'Alle Spieler mit E-Mail haben bereits einen Account.',
+                        context.l10n.settingsFlutterBatchAllHaveAccount,
                         textAlign: TextAlign.center,
                         style: Theme.of(context)
                             .textTheme
@@ -268,11 +269,11 @@ class _BatchAccountCreationPageState
   Future<void> _confirmAndCreateAccounts(List<Person> players) async {
     final confirmed = await DialogHelper.showConfirmation(
       context,
-      title: 'Accounts anlegen',
-      message: 'Folgende Accounts werden angelegt: '
-          '${players.map((p) => '${p.firstName} ${p.lastName}').join(', ')}',
-      confirmText: 'Fortfahren',
-      cancelText: 'Abbrechen',
+      title: context.l10n.settingsCreateAccounts,
+      message: context.l10n.settingsCreateAccountsMessage(
+          players.map((p) => '${p.firstName} ${p.lastName}').join(', ')),
+      confirmText: context.l10n.settingsContinue,
+      cancelText: context.l10n.commonCancel,
     );
 
     if (!confirmed || !mounted) return;
@@ -305,10 +306,10 @@ class _BatchAccountCreationPageState
       });
       if (!result.hasErrors) {
         ToastHelper.showSuccess(
-            context, 'Die Accounts wurden erfolgreich angelegt');
+            context, context.l10n.settingsAccountsCreated);
       } else {
         ToastHelper.showError(context,
-            'Fehler beim Erstellen der Accounts: ${result.errors.first}');
+            context.l10n.settingsCreateAccountsFailed(result.errors.first));
       }
     }
   }

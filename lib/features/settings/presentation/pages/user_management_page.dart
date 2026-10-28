@@ -9,6 +9,7 @@ import '../../../../core/providers/user_registration_providers.dart'; // AUTH
 import '../../../../data/repositories/user_registration_repository.dart'; // AUTH
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
+import '../../../../l10n/l10n.dart';
 
 /// TenantUser model
 class TenantUser {
@@ -106,14 +107,14 @@ class UserManagementPage extends ConsumerWidget {
       length: showParents ? 4 : 3,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Benutzerverwaltung'),
+          title: Text(context.l10n.settingsFlutterUserMgmtTitle),
           bottom: TabBar(
             isScrollable: true,
             tabs: [
-              const Tab(text: 'Admins'),
-              const Tab(text: 'Betrachter'),
-              if (showParents) const Tab(text: 'Eltern'),
-              const Tab(text: 'Alle Benutzer'),
+              Tab(text: context.l10n.settingsFlutterUserMgmtTabAdmins),
+              Tab(text: context.l10n.settingsViewers),
+              if (showParents) Tab(text: context.l10n.settingsParents),
+              Tab(text: context.l10n.settingsFlutterUserMgmtTabAll),
             ],
           ),
         ),
@@ -164,7 +165,7 @@ class UserManagementPage extends ConsumerWidget {
       ref.invalidate(tenantUsersProvider);
 
       if (context.mounted) {
-        ToastHelper.showSuccess(context, 'Benutzer hinzugefügt');
+        ToastHelper.showSuccess(context, context.l10n.settingsFlutterUserMgmtAdded);
       }
     } on AccountFlowException catch (e) {
       if (context.mounted) ToastHelper.showError(context, e.message);
@@ -172,7 +173,7 @@ class UserManagementPage extends ConsumerWidget {
       // SEC-020: Don't expose internal error details to user
       debugPrint('Error adding user: $e');
       if (context.mounted) {
-        ToastHelper.showError(context, 'Fehler beim Hinzufügen des Benutzers');
+        ToastHelper.showError(context, context.l10n.settingsFlutterUserMgmtAddFailed);
       }
     }
   }
@@ -201,15 +202,15 @@ class _AddUserDialogState extends State<_AddUserDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Benutzer hinzufügen'),
+      title: Text(context.l10n.settingsFlutterUserMgmtAdd),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           TextField(
             controller: _emailController,
-            decoration: const InputDecoration(
-              labelText: 'E-Mail-Adresse',
-              hintText: 'email@beispiel.de',
+            decoration: InputDecoration(
+              labelText: context.l10n.settingsEmailAddress,
+              hintText: context.l10n.settingsFlutterUserMgmtEmailPh,
             ),
             keyboardType: TextInputType.emailAddress,
             autofocus: true,
@@ -217,13 +218,13 @@ class _AddUserDialogState extends State<_AddUserDialog> {
           const SizedBox(height: AppDimensions.paddingM),
           DropdownButtonFormField<Role>(
             value: _selectedRole,
-            decoration: const InputDecoration(labelText: 'Rolle'),
+            decoration: InputDecoration(labelText: context.l10n.personRole),
             items: [
-              const DropdownMenuItem(value: Role.admin, child: Text('Administrator')),
-              const DropdownMenuItem(value: Role.responsible, child: Text('Verantwortlich')),
-              const DropdownMenuItem(value: Role.viewer, child: Text('Betrachter')),
+              DropdownMenuItem(value: Role.admin, child: Text(context.l10n.rolesAdministrator)),
+              DropdownMenuItem(value: Role.responsible, child: Text(context.l10n.commonRolesResponsible)),
+              DropdownMenuItem(value: Role.viewer, child: Text(context.l10n.commonRolesViewer)),
               if (widget.showParents)
-                const DropdownMenuItem(value: Role.parent, child: Text('Elternteil')),
+                DropdownMenuItem(value: Role.parent, child: Text(context.l10n.commonRolesParent)),
             ],
             onChanged: (role) {
               if (role != null) setState(() => _selectedRole = role);
@@ -234,13 +235,13 @@ class _AddUserDialogState extends State<_AddUserDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Abbrechen'),
+          child: Text(context.l10n.commonCancel),
         ),
         ElevatedButton(
           onPressed: () {
             final email = _emailController.text.trim();
             if (email.isEmpty || !email.contains('@')) {
-              ToastHelper.showError(context, 'Bitte gültige E-Mail eingeben');
+              ToastHelper.showError(context, context.l10n.loginToastInvalidEmail);
               return;
             }
             Navigator.of(context).pop({
@@ -248,7 +249,7 @@ class _AddUserDialogState extends State<_AddUserDialog> {
               'role': _selectedRole.value,
             });
           },
-          child: const Text('Hinzufügen'),
+          child: Text(context.l10n.attendanceAdd),
         ),
       ],
     );
@@ -263,21 +264,21 @@ class _AdminsTab extends ConsumerWidget {
 
     return usersAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, _) => Center(child: Text('Fehler: $error')),
+      error: (error, _) => Center(child: Text(context.l10n.settingsFlutterErrorDetail(error))),
       data: (users) {
         final admins = users.where((u) => u.roleEnum == Role.admin).toList();
 
         if (admins.isEmpty) {
-          return const Center(
+          return Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(Icons.admin_panel_settings, size: 64, color: AppColors.medium),
                 SizedBox(height: 16),
-                Text('Keine Administratoren'),
+                Text(context.l10n.settingsFlutterUserMgmtNoAdmins),
                 SizedBox(height: 8),
                 Text(
-                  'Füge Admins über den + Button hinzu',
+                  context.l10n.settingsFlutterUserMgmtNoAdminsHint,
                   style: TextStyle(color: AppColors.medium, fontSize: 12),
                 ),
               ],
@@ -310,21 +311,21 @@ class _ViewersTab extends ConsumerWidget {
 
     return usersAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, _) => Center(child: Text('Fehler: $error')),
+      error: (error, _) => Center(child: Text(context.l10n.settingsFlutterErrorDetail(error))),
       data: (users) {
         final viewers = users.where((u) => u.roleEnum == Role.viewer).toList();
 
         if (viewers.isEmpty) {
-          return const Center(
+          return Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(Icons.visibility, size: 64, color: AppColors.medium),
                 SizedBox(height: 16),
-                Text('Keine Betrachter'),
+                Text(context.l10n.settingsFlutterUserMgmtNoViewers),
                 SizedBox(height: 8),
                 Text(
-                  'Betrachter können Anwesenheit sehen, aber nicht bearbeiten',
+                  context.l10n.settingsFlutterUserMgmtNoViewersHint,
                   style: TextStyle(color: AppColors.medium, fontSize: 12),
                   textAlign: TextAlign.center,
                 ),
@@ -358,21 +359,21 @@ class _ParentsTab extends ConsumerWidget {
 
     return usersAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, _) => Center(child: Text('Fehler: $error')),
+      error: (error, _) => Center(child: Text(context.l10n.settingsFlutterErrorDetail(error))),
       data: (users) {
         final parents = users.where((u) => u.roleEnum == Role.parent).toList();
 
         if (parents.isEmpty) {
-          return const Center(
+          return Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(Icons.family_restroom, size: 64, color: AppColors.medium),
                 SizedBox(height: 16),
-                Text('Keine Eltern'),
+                Text(context.l10n.settingsFlutterUserMgmtNoParents),
                 SizedBox(height: 8),
                 Text(
-                  'Eltern können ihre Kinder an-/abmelden',
+                  context.l10n.settingsFlutterUserMgmtNoParentsHint,
                   style: TextStyle(color: AppColors.medium, fontSize: 12),
                   textAlign: TextAlign.center,
                 ),
@@ -408,16 +409,16 @@ class _AllUsersTab extends ConsumerWidget {
 
     return usersAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, _) => Center(child: Text('Fehler: $error')),
+      error: (error, _) => Center(child: Text(context.l10n.settingsFlutterErrorDetail(error))),
       data: (users) {
         if (users.isEmpty) {
-          return const Center(
+          return Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(Icons.people_outline, size: 64, color: AppColors.medium),
                 SizedBox(height: 16),
-                Text('Keine Benutzer vorhanden'),
+                Text(context.l10n.settingsFlutterUserMgmtNoUsers),
               ],
             ),
           );
@@ -442,19 +443,19 @@ class _AllUsersTab extends ConsumerWidget {
             padding: const EdgeInsets.all(AppDimensions.paddingM),
             children: [
               if (admins.isNotEmpty) ...[
-                _buildRoleSection(context, ref, 'Administratoren', admins, Icons.admin_panel_settings),
+                _buildRoleSection(context, ref, context.l10n.settingsAdmins, admins, Icons.admin_panel_settings),
               ],
               if (responsibles.isNotEmpty) ...[
-                _buildRoleSection(context, ref, 'Verantwortliche', responsibles, Icons.supervisor_account),
+                _buildRoleSection(context, ref, context.l10n.settingsFlutterUserMgmtResponsibles, responsibles, Icons.supervisor_account),
               ],
               if (players.isNotEmpty) ...[
-                _buildRoleSection(context, ref, 'Spieler', players, Icons.person),
+                _buildRoleSection(context, ref, context.l10n.settingsFlutterUserMgmtPlayers, players, Icons.person),
               ],
               if (viewers.isNotEmpty) ...[
-                _buildRoleSection(context, ref, 'Betrachter', viewers, Icons.visibility),
+                _buildRoleSection(context, ref, context.l10n.settingsViewers, viewers, Icons.visibility),
               ],
               if (others.isNotEmpty) ...[
-                _buildRoleSection(context, ref, 'Sonstige', others, Icons.person_outline),
+                _buildRoleSection(context, ref, context.l10n.commonOtherPlural, others, Icons.person_outline),
               ],
             ],
           ),
@@ -516,7 +517,7 @@ class _UserTile extends ConsumerWidget {
           size: 20,
         ),
       ),
-      title: Text(user.email ?? 'Unbekannt'),
+      title: Text(user.email ?? context.l10n.commonUnknown),
       subtitle: Text(_getRoleLabel(user.roleEnum)),
       trailing: PopupMenuButton<Role>(
         onSelected: (role) => _changeRole(context, ref, role),
@@ -593,8 +594,7 @@ class _UserTile extends ConsumerWidget {
         if (context.mounted) {
           ToastHelper.showError(
             context,
-            'Der letzte Administrator kann nicht herabgestuft werden. '
-            'Bitte füge zuerst einen weiteren Admin hinzu.',
+            context.l10n.settingsFlutterUserMgmtLastAdmin,
           );
         }
         return;
@@ -605,23 +605,21 @@ class _UserTile extends ConsumerWidget {
         final confirmed = await showDialog<bool>(
           context: context,
           builder: (ctx) => AlertDialog(
-            title: const Text('Eigene Rolle ändern?'),
-            content: const Text(
-              'Du bist dabei, deine eigene Admin-Rolle zu entfernen. '
-              'Du verlierst dadurch den Zugang zur Benutzerverwaltung. '
-              'Möchtest du fortfahren?',
+            title: Text(context.l10n.settingsFlutterUserMgmtSelfDemoteTitle),
+            content: Text(
+              context.l10n.settingsFlutterUserMgmtSelfDemoteMessage,
             ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(ctx).pop(false),
-                child: const Text('Abbrechen'),
+                child: Text(context.l10n.commonCancel),
               ),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.danger,
                 ),
                 onPressed: () => Navigator.of(ctx).pop(true),
-                child: const Text('Ja, Rolle ändern'),
+                child: Text(context.l10n.settingsFlutterUserMgmtSelfDemoteConfirm),
               ),
             ],
           ),
@@ -641,13 +639,13 @@ class _UserTile extends ConsumerWidget {
       ref.invalidate(tenantUsersProvider);
 
       if (context.mounted) {
-        ToastHelper.showSuccess(context, 'Rolle geändert zu ${_getRoleLabel(newRole)}');
+        ToastHelper.showSuccess(context, context.l10n.settingsFlutterUserMgmtRoleChanged(_getRoleLabel(newRole)));
       }
     } catch (e) {
       // SEC-020: Don't expose internal error details to user
       debugPrint('Error changing role: $e');
       if (context.mounted) {
-        ToastHelper.showError(context, 'Fehler beim Ändern der Rolle');
+        ToastHelper.showError(context, context.l10n.settingsFlutterUserMgmtRoleChangeFailed);
       }
     }
   }
@@ -677,17 +675,18 @@ class _UserTile extends ConsumerWidget {
   }
 
   String _getRoleLabel(Role role) {
+    final l10n = l10nWithoutContext;
     return switch (role) {
-      Role.admin => 'Administrator',
-      Role.responsible => 'Verantwortlich',
-      Role.player => 'Spieler',
-      Role.viewer => 'Betrachter',
-      Role.helper => 'Helfer',
-      Role.parent => 'Elternteil',
-      Role.applicant => 'Bewerber',
-      Role.voiceLeader => 'Stimmführer',
-      Role.voiceLeaderHelper => 'Stimmführer & Helfer',
-      Role.none => 'Keine Rolle',
+      Role.admin => l10n.rolesAdministrator,
+      Role.responsible => l10n.commonRolesResponsible,
+      Role.player => l10n.commonRolesMember,
+      Role.viewer => l10n.commonRolesViewer,
+      Role.helper => l10n.commonRolesHelper,
+      Role.parent => l10n.commonRolesParent,
+      Role.applicant => l10n.rolesApplicant,
+      Role.voiceLeader => l10n.commonRolesVoiceLeader,
+      Role.voiceLeaderHelper => l10n.commonRolesVoiceLeaderHelper,
+      Role.none => l10n.settingsFlutterUserMgmtNoRole,
     };
   }
 }
