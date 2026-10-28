@@ -172,9 +172,10 @@ class _PersonImportPageState extends ConsumerState<PersonImportPage> {
       final row = toImport[i];
       try {
         final person = await importRepo.insertPlayer(row.data);
-        // Ionic addPlayer: backfill attendances (best effort).
+        // Ionic addPlayer → addPlayerToAttendancesByDate: add the person to
+        // all Termine after their join date (best effort).
         try {
-          await playerRepo.addToUpcomingAttendances(person);
+          await playerRepo.addPlayerToAttendancesByDate(person);
         } catch (_) {}
         // Accounts only when the toggle is on and an email exists.
         if (_createAccounts &&

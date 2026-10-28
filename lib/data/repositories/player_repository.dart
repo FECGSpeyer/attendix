@@ -1380,6 +1380,202 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
     }
   }
 
+  /// Attendance types of the current tenant with parsed filter data.
+  Future<List<_TypeFilter>> _loadTypeFilters() async {
+    final types = await supabase
+        .from('attendance_types')
+        .select('id, relevant_groups, default_status, additional_fields_filter')
+        .eq('tenant_id', currentTenantId);
+    return (types as List).map((t) {
+      final raw = t['default_status'];
+      final status = raw is int
+          ? raw
+          : AttendanceStatus.values
+              .firstWhere((s) => s.name == raw,
+                  orElse: () => AttendanceStatus.neutral)
+              .value;
+      final groups = t['relevant_groups'];
+      final filter = t['additional_fields_filter'];
+      return _TypeFilter(
+        id: t['id'],
+        relevantGroups: groups is List ? groups.whereType<int>().toList() : const [],
+        defaultStatus: status,
+        filterKey: filter is Map ? filter['key']?.toString() : null,
+        filterOption: filter is Map ? filter['option'] : null,
+      );
+    }).toList();
+  }
+
+  /// Default values of the tenant's extra fields (for filter matching).
+  Future<Map<String, dynamic>> _loadExtraFieldDefaults() async {
+    final row = await supabase
+        .from('tenants')
+        .select('additional_fields')
+        .eq('id', currentTenantId)
+        .maybeSingle();
+    final fields = row?['additional_fields'];
+    return {
+      if (fields is List)
+        for (final f in fields.whereType<Map>())
+          f['id'].toString(): f['defaultValue'],
+    };
+  }
+
+  bool _matchesType(
+    Person player,
+    _TypeFilter type,
+    Map<String, dynamic> defaults, {
+    bool checkPaused = true,
+  }) {
+    if (checkPaused && player.paused) return false;
+    if (type.relevantGroups.isNotEmpty &&
+        !type.relevantGroups.contains(player.instrument)) {
+      return false;
+    }
+    final key = type.filterKey;
+    if (key != null && type.filterOption != null && defaults.containsKey(key)) {
+      final value = player.additionalFields?[key] ?? defaults[key];
+      if (value != type.filterOption) return false;
+    }
+    return true;
+  }
+
+  /// Ionic db.addPlayerToAttendancesByDate: add the person to every
+  /// attendance after their join date (or today when unknown) that matches
+  /// the type's group / extra field filters.
+  Future<void> addPlayerToAttendancesByDate(Person player) async {
+    final playerId = player.id;
+    if (playerId == null) return;
+    try {
+      final joined = player.joined != null && player.joined!.length >= 10
+          ? player.joined!.substring(0, 10)
+          : DateTime.now().toIso8601String().substring(0, 10);
+      final attendances = await supabase
+          .from('attendance')
+          .select('id, type_id')
+          .eq('tenantId', currentTenantId)
+          .gt('date', joined);
+      if ((attendances as List).isEmpty) return;
+
+      final types = await _loadTypeFilters();
+      final defaults = await _loadExtraFieldDefaults();
+      final existing = await _existingAttendanceIds(playerId);
+
+      final rows = <Map<String, dynamic>>[];
+      for (final att in attendances) {
+        if (existing.contains(att['id']?.toString())) continue;
+        final type = types.where((t) => t.id == att['type_id']).firstOrNull;
+        if (type == null) continue;
+        if (!_matchesType(player, type, defaults, checkPaused: false)) continue;
+        rows.add({
+          'attendance_id': att['id'],
+          'person_id': playerId,
+          'notes': '',
+          'status': type.defaultStatus,
+        });
+      }
+      if (rows.isNotEmpty) {
+        await supabase.from('person_attendances').insert(rows);
+      }
+    } catch (e, stack) {
+      handleError(e, stack, 'addPlayerToAttendancesByDate');
+      rethrow;
+    }
+  }
+
+  /// Ionic db.syncPlayerWithUpcomingAttendances: after a group or
+  /// filter-relevant extra field change, add the person to upcoming
+  /// attendances they now match and remove them from ones they no longer
+  /// match. Only attendance types with a filter are touched.
+  Future<void> syncPlayerWithUpcomingAttendances(
+    Person player, {
+    int? oldInstrument,
+    Map<String, dynamic>? oldAdditionalFields,
+  }) async {
+    final playerId = player.id;
+    if (playerId == null) return;
+    try {
+      final types = (await _loadTypeFilters())
+          .where((t) =>
+              t.relevantGroups.isNotEmpty ||
+              (t.filterKey != null && t.filterOption != null))
+          .toList();
+      if (types.isEmpty) return;
+
+      final defaults = await _loadExtraFieldDefaults();
+      final groupChanged = oldInstrument != player.instrument;
+      final changedFields = <String>{};
+      for (final t in types) {
+        final key = t.filterKey;
+        if (key == null || !defaults.containsKey(key)) continue;
+        final oldValue = oldAdditionalFields?[key] ?? defaults[key];
+        final newValue = player.additionalFields?[key] ?? defaults[key];
+        if (oldValue != newValue) changedFields.add(key);
+      }
+      if (!groupChanged && changedFields.isEmpty) return;
+
+      final today = DateTime.now().toIso8601String().substring(0, 10);
+      final upcoming = await supabase
+          .from('attendance')
+          .select('id, type_id')
+          .eq('tenantId', currentTenantId)
+          .gte('date', today);
+      if ((upcoming as List).isEmpty) return;
+
+      final existing = await _existingAttendanceIds(playerId);
+      final toAdd = <Map<String, dynamic>>[];
+      final toRemove = <dynamic>[];
+      for (final att in upcoming) {
+        final type = types.where((t) => t.id == att['type_id']).firstOrNull;
+        if (type == null) continue;
+        final affectsGroup = groupChanged && type.relevantGroups.isNotEmpty;
+        final affectsField =
+            type.filterKey != null && changedFields.contains(type.filterKey);
+        if (!affectsGroup && !affectsField) continue;
+
+        final should = _matchesType(player, type, defaults);
+        final isIn = existing.contains(att['id']?.toString());
+        if (should && !isIn) {
+          toAdd.add({
+            'attendance_id': att['id'],
+            'person_id': playerId,
+            'notes': '',
+            'status': type.defaultStatus,
+          });
+        } else if (!should && isIn) {
+          toRemove.add(att['id']);
+        }
+      }
+      if (toAdd.isNotEmpty) {
+        await supabase.from('person_attendances').insert(toAdd);
+      }
+      if (toRemove.isNotEmpty) {
+        await supabase
+            .from('person_attendances')
+            .delete()
+            .eq('person_id', playerId)
+            .inFilter('attendance_id', toRemove);
+      }
+    } catch (e, stack) {
+      handleError(e, stack, 'syncPlayerWithUpcomingAttendances');
+      rethrow;
+    }
+  }
+
+  /// Attendance ids (as strings) the player already has rows for, restricted
+  /// to the current tenant via the attendance join.
+  Future<Set<String>> _existingAttendanceIds(int playerId) async {
+    final rows = await supabase
+        .from('person_attendances')
+        .select('attendance_id, attendance:attendance_id!inner(tenantId)')
+        .eq('person_id', playerId)
+        .eq('attendance.tenantId', currentTenantId);
+    return (rows as List)
+        .map((r) => r['attendance_id']?.toString())
+        .whereType<String>()
+        .toSet();
+  }
+
   /// Move person_attendances from [fromId] to [toId]; rows that would
   /// conflict (same attendance) are deleted, the target's row wins.
   /// Callers must verify both ids belong to the current tenant
@@ -1423,4 +1619,21 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
           .eq('person_id', fromId);
     }
   }
+}
+
+/// Filter data of an attendance type (relevant groups + extra field filter).
+class _TypeFilter {
+  const _TypeFilter({
+    required this.id,
+    required this.relevantGroups,
+    required this.defaultStatus,
+    this.filterKey,
+    this.filterOption,
+  });
+
+  final dynamic id;
+  final List<int> relevantGroups;
+  final int defaultStatus;
+  final String? filterKey;
+  final dynamic filterOption;
 }

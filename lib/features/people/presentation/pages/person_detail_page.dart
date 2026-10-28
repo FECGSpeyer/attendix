@@ -716,6 +716,18 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
       );
       await _propagateSharedIdentityFields();
 
+      // Ionic syncPlayerWithUpcomingAttendancesByAdditionalFields
+      try {
+        await repo.syncPlayerWithUpcomingAttendances(
+          person.copyWith(
+            instrument: _selectedGroupId,
+            additionalFields: _additionalFieldValues,
+          ),
+          oldInstrument: _selectedGroupId,
+          oldAdditionalFields: person.additionalFields,
+        );
+      } catch (_) {}
+
       ref.invalidate(personProvider(widget.personId));
       ref.invalidate(realtimePlayersProvider);
 

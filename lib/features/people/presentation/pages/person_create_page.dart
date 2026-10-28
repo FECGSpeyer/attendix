@@ -910,6 +910,10 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
       );
 
       final created = await repo.createPlayer(person);
+      // Ionic addPlayer → addPlayerToAttendancesByDate (best effort)
+      try {
+        await repo.addPlayerToAttendancesByDate(created);
+      } catch (_) {}
       if (mounted && created.email != null && created.email!.isNotEmpty) {
         await _offerAccountCreation(created);
       }
