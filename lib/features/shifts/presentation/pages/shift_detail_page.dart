@@ -13,6 +13,8 @@ import '../../../../data/models/shift/shift_instance.dart';
 import '../../../../data/models/shift/shift_plan.dart';
 import '../widgets/copy_shift_to_tenant_sheet.dart';
 import '../widgets/shift_preview_sheet.dart';
+import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
 
 /// Shift Detail Page
 ///
@@ -68,7 +70,7 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Schichtplan bearbeiten'),
+        title: Text(context.l10n.shiftsEdit),
         actions: [
           // Copy to tenant button
           tenantsAsync.when(
@@ -81,14 +83,14 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
 
               return IconButton(
                 icon: const Icon(Icons.copy),
-                tooltip: 'In andere Instanz kopieren',
+                tooltip: context.l10n.shiftsCopyToTenant,
                 onPressed: () => _showCopySheet(context, shiftAsync.valueOrNull),
               );
             },
           ),
           IconButton(
             icon: const Icon(Icons.delete_outline),
-            tooltip: 'Löschen',
+            tooltip: context.l10n.commonDelete,
             onPressed: () =>
                 _confirmDelete(context, usageCount.valueOrNull ?? 0),
           ),
@@ -96,10 +98,10 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
       ),
       body: shiftAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => Center(child: Text('Fehler: $error')),
+        error: (error, stack) => Center(child: Text(context.l10n.shiftsFlutterErrorWith(friendlyErrorMessage(error)))),
         data: (shift) {
           if (shift == null) {
-            return const Center(child: Text('Schichtplan nicht gefunden'));
+            return Center(child: Text(context.l10n.shiftsFlutterNotFound));
           }
 
           _initializeFromShift(shift);
@@ -119,7 +121,7 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
                 ),
               )
             : const Icon(Icons.save),
-        label: const Text('Speichern'),
+        label: Text(context.l10n.commonSave),
       ),
     );
   }
@@ -131,7 +133,7 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // General section
-          _buildSectionHeader(context, 'Allgemein'),
+          _buildSectionHeader(context, context.l10n.generalSettingsGeneral),
           Card(
             child: Padding(
               padding: const EdgeInsets.all(AppDimensions.paddingM),
@@ -139,18 +141,18 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
                 children: [
                   TextField(
                     controller: _nameController,
-                    decoration: const InputDecoration(
-                      labelText: 'Name',
-                      hintText: 'z.B. 3-Schicht-System',
+                    decoration: InputDecoration(
+                      labelText: context.l10n.typeSettingsName,
+                      hintText: context.l10n.shiftsFlutterNameHint,
                     ),
                     onChanged: (_) => _markChanged(),
                   ),
                   const SizedBox(height: AppDimensions.paddingM),
                   TextField(
                     controller: _descriptionController,
-                    decoration: const InputDecoration(
-                      labelText: 'Beschreibung',
-                      hintText: 'z.B. Früh, Spät, Nacht',
+                    decoration: InputDecoration(
+                      labelText: context.l10n.tasksDescription,
+                      hintText: context.l10n.shiftsFlutterDescriptionHint,
                     ),
                     maxLines: 2,
                     onChanged: (_) => _markChanged(),
@@ -172,7 +174,7 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
                     Icon(Icons.people, color: AppColors.info),
                     const SizedBox(width: AppDimensions.paddingM),
                     Text(
-                      '$usageCount Mitglied${usageCount != 1 ? 'er' : ''} nutzen diesen Schichtplan',
+                      context.l10n.shiftsFlutterUsage(usageCount),
                       style: TextStyle(color: AppColors.info),
                     ),
                   ],
@@ -186,11 +188,11 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
           // Definition section
           _buildSectionHeader(
             context,
-            'Definition',
+            context.l10n.shiftsDefinition,
             action: TextButton.icon(
               onPressed: _addSegment,
               icon: const Icon(Icons.add, size: 18),
-              label: const Text('Segment hinzufügen'),
+              label: Text(context.l10n.shiftsFlutterAddSegment),
             ),
           ),
 
@@ -204,15 +206,15 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
                       const Icon(Icons.timeline_outlined,
                           size: 48, color: AppColors.medium),
                       const SizedBox(height: AppDimensions.paddingM),
-                      const Text(
-                        'Keine Schicht-Segmente definiert',
+                      Text(
+                        context.l10n.shiftsFlutterNoSegments,
                         style: TextStyle(color: AppColors.medium),
                       ),
                       const SizedBox(height: AppDimensions.paddingM),
                       ElevatedButton.icon(
                         onPressed: _addSegment,
                         icon: const Icon(Icons.add),
-                        label: const Text('Erstes Segment'),
+                        label: Text(context.l10n.shiftsFlutterFirstSegment),
                       ),
                     ],
                   ),
@@ -257,7 +259,7 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
                     const SizedBox(width: AppDimensions.paddingM),
                     Expanded(
                       child: Text(
-                        'Zyklus: ${_calculateCycleLength()} Tage',
+                        context.l10n.shiftsFlutterCycle(_calculateCycleLength()),
                         style: TextStyle(
                           color: AppColors.success,
                           fontWeight: FontWeight.w500,
@@ -266,7 +268,7 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
                     ),
                     TextButton(
                       onPressed: () => _showPreview(context, shift, null),
-                      child: const Text('Beispiel-Rechnung'),
+                      child: Text(context.l10n.shiftsExample),
                     ),
                   ],
                 ),
@@ -279,11 +281,11 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
           // Fixed shifts section (optional)
           _buildSectionHeader(
             context,
-            'Feste Schichten (optional)',
+            context.l10n.shiftsFixedOptional,
             action: TextButton.icon(
               onPressed: _addShiftInstance,
               icon: const Icon(Icons.add, size: 18),
-              label: const Text('Schicht hinzufügen'),
+              label: Text(context.l10n.shiftsFlutterAddShift),
             ),
           ),
 
@@ -298,7 +300,7 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      'Feste Schichten definieren konkrete Startdaten für den Schichtzyklus.',
+                      context.l10n.shiftsFlutterFixedHint,
                       style: TextStyle(
                         fontSize: 12,
                         color: AppColors.warning,
@@ -322,8 +324,8 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
                       const Icon(Icons.calendar_today_outlined,
                           size: 32, color: AppColors.medium),
                       const SizedBox(height: AppDimensions.paddingS),
-                      const Text(
-                        'Keine festen Schichten',
+                      Text(
+                        context.l10n.shiftsFlutterNoFixed,
                         style: TextStyle(color: AppColors.medium),
                       ),
                     ],
@@ -337,6 +339,9 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
                 key: ValueKey('shift_$index'),
                 instance: _shifts[index],
                 index: index,
+                // LOGIC_SETTINGS: Ionic disables name/date/remove when the
+                // plan is used by persons (they reference shift_name).
+                isUsed: usageCount > 0,
                 onNameChanged: (name) => _updateShiftName(index, name),
                 onDateChanged: (date) => _updateShiftDate(index, date),
                 onDelete: () => _deleteShiftInstance(index),
@@ -458,15 +463,15 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
         context: context,
         builder: (context) => StatefulBuilder(
           builder: (context, setDialogState) => AlertDialog(
-            title: const Text('Segment bearbeiten'),
+            title: Text(context.l10n.shiftsFlutterEditSegment),
             content: SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   // Free toggle
                   SwitchListTile(
-                    title: const Text('Frei'),
-                    subtitle: const Text('Mitarbeiter ist an diesem Tag frei'),
+                    title: Text(context.l10n.shiftsFree),
+                    subtitle: Text(context.l10n.shiftsFlutterFreeHint),
                     value: isFree,
                     onChanged: (value) {
                       setDialogState(() => isFree = value);
@@ -478,7 +483,7 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
                   if (!isFree) ...[
                     ListTile(
                       contentPadding: EdgeInsets.zero,
-                      title: const Text('Startzeit'),
+                      title: Text(context.l10n.shiftsStartTime),
                       subtitle: Text(startTimeController.text),
                       trailing: const Icon(Icons.access_time),
                       onTap: () async {
@@ -502,9 +507,9 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
                     // Duration
                     TextField(
                       controller: durationController,
-                      decoration: const InputDecoration(
-                        labelText: 'Dauer (in Stunden)',
-                        hintText: 'z.B. 8.0',
+                      decoration: InputDecoration(
+                        labelText: context.l10n.shiftsDurationHours,
+                        hintText: context.l10n.shiftsFlutterDurationHint,
                       ),
                       keyboardType:
                           const TextInputType.numberWithOptions(decimal: true),
@@ -514,9 +519,9 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
                   // Repeat count
                   TextField(
                     controller: repeatController,
-                    decoration: const InputDecoration(
-                      labelText: 'Wiederholungen',
-                      hintText: 'Anzahl aufeinanderfolgender Tage',
+                    decoration: InputDecoration(
+                      labelText: context.l10n.shiftsRepetitions,
+                      hintText: context.l10n.shiftsFlutterRepetitionsHint,
                     ),
                     keyboardType: TextInputType.number,
                   ),
@@ -526,7 +531,7 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text('Abbrechen'),
+                child: Text(context.l10n.commonCancel),
               ),
               ElevatedButton(
                 onPressed: () {
@@ -549,7 +554,7 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
                     ),
                   );
                 },
-                child: const Text('Speichern'),
+                child: Text(context.l10n.commonSave),
               ),
             ],
           ),
@@ -565,7 +570,7 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
 
   Future<void> _saveChanges() async {
     if (_nameController.text.trim().isEmpty) {
-      ToastHelper.showError(context, 'Name ist erforderlich');
+      ToastHelper.showError(context, context.l10n.shiftsEnterName);
       return;
     }
 
@@ -587,38 +592,37 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
 
       if (result != null) {
         setState(() => _hasChanges = false);
-        ToastHelper.showSuccess(context, 'Änderungen gespeichert');
+        ToastHelper.showSuccess(context, context.l10n.shiftsSaved);
       } else {
         final error = ref.read(shiftNotifierProvider);
         if (error.hasError) {
-          ToastHelper.showError(context, 'Fehler: ${error.error}');
+          ToastHelper.showError(context, context.l10n.shiftsFlutterErrorWith(friendlyErrorMessage(error.error)));
         }
       }
     }
   }
 
   Future<void> _confirmDelete(BuildContext context, int usageCount) async {
-    String message = 'Möchtest du diesen Schichtplan wirklich löschen?';
+    final l10n = context.l10n;
+    String message = l10n.shiftsFlutterDeleteConfirm;
     if (usageCount > 0) {
-      message =
-          '$usageCount Mitglied${usageCount != 1 ? 'er' : ''} nutzen diesen Schichtplan. '
-          'Möchtest du ihn trotzdem löschen?';
+      message = l10n.shiftsFlutterDeleteConfirmUsed(usageCount);
     }
 
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Schichtplan löschen'),
+        title: Text(l10n.shiftsDelete),
         content: Text(message),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Abbrechen'),
+            child: Text(context.l10n.commonCancel),
           ),
           TextButton(
             style: TextButton.styleFrom(foregroundColor: AppColors.danger),
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Löschen'),
+            child: Text(l10n.commonDelete),
           ),
         ],
       ),
@@ -630,10 +634,10 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
 
       if (mounted) {
         if (success) {
-          ToastHelper.showSuccess(context, 'Schichtplan gelöscht');
+          ToastHelper.showSuccess(context, l10n.shiftsDeleted);
           context.pop();
         } else {
-          ToastHelper.showError(context, 'Fehler beim Löschen');
+          ToastHelper.showError(context, l10n.shiftsDeleteFailed);
         }
       }
     }
@@ -706,12 +710,12 @@ class _DefinitionSegmentTile extends StatelessWidget {
         ),
         title: Text(
           definition.free
-              ? 'Frei'
+              ? context.l10n.shiftsFree
               : '${definition.startTime} - ${definition.endTime}',
           style: const TextStyle(fontWeight: FontWeight.w500),
         ),
         subtitle: Text(
-          _getSubtitle(),
+          _getSubtitle(context.l10n),
           style: TextStyle(color: AppColors.medium, fontSize: 12),
         ),
         trailing: Row(
@@ -720,12 +724,12 @@ class _DefinitionSegmentTile extends StatelessWidget {
             IconButton(
               icon: const Icon(Icons.edit_outlined),
               onPressed: onEdit,
-              tooltip: 'Bearbeiten',
+              tooltip: context.l10n.commonEdit,
             ),
             IconButton(
               icon: Icon(Icons.delete_outline, color: AppColors.danger),
               onPressed: onDelete,
-              tooltip: 'Löschen',
+              tooltip: context.l10n.commonDelete,
             ),
             const Icon(Icons.drag_handle, color: AppColors.medium),
           ],
@@ -735,7 +739,7 @@ class _DefinitionSegmentTile extends StatelessWidget {
     );
   }
 
-  String _getSubtitle() {
+  String _getSubtitle(AppLocalizations l10n) {
     final parts = <String>[];
 
     if (!definition.free) {
@@ -743,9 +747,9 @@ class _DefinitionSegmentTile extends StatelessWidget {
     }
 
     if (definition.repeatCount > 1) {
-      parts.add('${definition.repeatCount}x wiederholen');
+      parts.add(l10n.shiftsFlutterRepeatTimes(definition.repeatCount));
     } else {
-      parts.add('1 Tag');
+      parts.add(l10n.shiftsFlutterOneDay);
     }
 
     return parts.join(' • ');
@@ -756,6 +760,7 @@ class _DefinitionSegmentTile extends StatelessWidget {
 class _ShiftInstanceTile extends StatefulWidget {
   final ShiftInstance instance;
   final int index;
+  final bool isUsed;
   final ValueChanged<String> onNameChanged;
   final ValueChanged<DateTime> onDateChanged;
   final VoidCallback onDelete;
@@ -765,6 +770,7 @@ class _ShiftInstanceTile extends StatefulWidget {
     super.key,
     required this.instance,
     required this.index,
+    this.isUsed = false,
     required this.onNameChanged,
     required this.onDateChanged,
     required this.onDelete,
@@ -801,7 +807,7 @@ class _ShiftInstanceTileState extends State<_ShiftInstanceTile> {
   @override
   Widget build(BuildContext context) {
     final date = DateTime.tryParse(widget.instance.date) ?? DateTime.now();
-    final dateFormat = DateFormat('EEE, dd.MM.yyyy', 'de');
+    final dateFormat = DateFormat('EEE, ${dateFmt()}', currentIntlLocale());
 
     return Card(
       margin: const EdgeInsets.only(bottom: AppDimensions.paddingS),
@@ -812,12 +818,13 @@ class _ShiftInstanceTileState extends State<_ShiftInstanceTile> {
           children: [
             // Name field
             TextField(
-              decoration: const InputDecoration(
-                labelText: 'Bezeichnung',
-                hintText: 'z.B. Frühdienst',
+              decoration: InputDecoration(
+                labelText: context.l10n.shiftsLabel,
+                hintText: context.l10n.shiftsFlutterLabelHint,
                 isDense: true,
               ),
               controller: _nameController,
+              enabled: !widget.isUsed,
               onChanged: widget.onNameChanged,
             ),
             const SizedBox(height: AppDimensions.paddingS),
@@ -827,10 +834,12 @@ class _ShiftInstanceTileState extends State<_ShiftInstanceTile> {
               children: [
                 Expanded(
                   child: InkWell(
-                    onTap: () => _selectDate(context, date),
+                    onTap: widget.isUsed
+                        ? null
+                        : () => _selectDate(context, date),
                     child: InputDecorator(
-                      decoration: const InputDecoration(
-                        labelText: 'Anfangsdatum',
+                      decoration: InputDecoration(
+                        labelText: context.l10n.shiftsStartDate,
                         isDense: true,
                         suffixIcon: Icon(Icons.calendar_today, size: 18),
                       ),
@@ -841,12 +850,12 @@ class _ShiftInstanceTileState extends State<_ShiftInstanceTile> {
                 const SizedBox(width: 8),
                 TextButton(
                   onPressed: widget.onShowPreview,
-                  child: const Text('Vorschau'),
+                  child: Text(context.l10n.shiftsFlutterPreview),
                 ),
                 IconButton(
-                  icon: Icon(Icons.delete_outline, color: AppColors.danger),
-                  onPressed: widget.onDelete,
-                  tooltip: 'Löschen',
+                  icon: Icon(Icons.delete_outline, color: widget.isUsed ? AppColors.medium : AppColors.danger),
+                  onPressed: widget.isUsed ? null : widget.onDelete,
+                  tooltip: context.l10n.commonDelete,
                 ),
               ],
             ),
@@ -862,7 +871,7 @@ class _ShiftInstanceTileState extends State<_ShiftInstanceTile> {
       initialDate: currentDate,
       firstDate: DateTime(2020),
       lastDate: DateTime(2030),
-      locale: const Locale('de'),
+      locale: Locale(currentLanguage()),
     );
 
     if (selected != null) {

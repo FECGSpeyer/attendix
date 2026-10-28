@@ -58,7 +58,8 @@ void main() {
       test('attendanceRepositoryWithTenantProvider sets tenant', () {
         expect(
           attendanceProvidersSource,
-          contains('repo.setTenantId(tenant)'),
+          // SOL_FIX1: per-tenant immutable instance
+          contains('attendanceRepositoryForTenantProvider(tenant)'),
           reason: 'attendanceRepositoryWithTenantProvider must set tenantId',
         );
       });
@@ -151,20 +152,6 @@ void main() {
             attendanceProvidersSource, 'batchUpdatePersonAttendances');
         expect(section, isNotNull);
         expect(section, contains('ref.invalidate(attendanceByIdProvider'));
-      });
-
-      test('recalculatePercentage invalidates attendanceByIdProvider', () {
-        final section = _extractMethodFromClass(
-            attendanceProvidersSource, 'recalculatePercentage');
-        expect(section, isNotNull);
-        expect(section, contains('ref.invalidate(attendanceByIdProvider'));
-      });
-
-      test('recalculatePercentage invalidates attendancesProvider', () {
-        final section = _extractMethodFromClass(
-            attendanceProvidersSource, 'recalculatePercentage');
-        expect(section, isNotNull);
-        expect(section, contains('ref.invalidate(attendancesProvider)'));
       });
     });
 

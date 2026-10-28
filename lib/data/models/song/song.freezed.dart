@@ -28,15 +28,37 @@ mixin _$Song {
   String? get prefix => throw _privateConstructorUsedError;
   bool get withChoir => throw _privateConstructorUsedError;
   bool get withSolo => throw _privateConstructorUsedError;
+
+  /// Computed client-side from history (last past entry). Not a DB column.
+  @JsonKey(includeToJson: false)
   String? get lastSung => throw _privateConstructorUsedError;
+
+  /// Computed client-side: next planned (future) history entry. Not a DB column.
+  @JsonKey(includeToJson: false)
+  String? get nextPlanned => throw _privateConstructorUsedError;
   String? get link => throw _privateConstructorUsedError;
+
+  /// Computed client-side: conductor of [lastSung]. Not a DB column.
+  @JsonKey(includeToJson: false)
   String? get conductor => throw _privateConstructorUsedError;
+  String? get composer => throw _privateConstructorUsedError;
   int? get legacyId => throw _privateConstructorUsedError;
   @JsonKey(name: 'instrument_ids')
   List<int>? get instrumentIds => throw _privateConstructorUsedError;
   List<SongFile>? get files => throw _privateConstructorUsedError;
   int? get difficulty => throw _privateConstructorUsedError;
+
+  /// Legacy single category (superseded by [categoryIds])
   String? get category => throw _privateConstructorUsedError;
+
+  /// Song category ids (uuid[] column `category_ids`)
+  @JsonKey(name: 'category_ids')
+  List<String>? get categoryIds => throw _privateConstructorUsedError;
+
+  /// Values of the tenant's `song_additional_fields`
+  @JsonKey(name: 'additional_fields')
+  Map<String, dynamic>? get additionalFields =>
+      throw _privateConstructorUsedError;
   @JsonKey(name: 'created_at')
   DateTime? get createdAt => throw _privateConstructorUsedError;
 
@@ -62,14 +84,18 @@ abstract class $SongCopyWith<$Res> {
     String? prefix,
     bool withChoir,
     bool withSolo,
-    String? lastSung,
+    @JsonKey(includeToJson: false) String? lastSung,
+    @JsonKey(includeToJson: false) String? nextPlanned,
     String? link,
-    String? conductor,
+    @JsonKey(includeToJson: false) String? conductor,
+    String? composer,
     int? legacyId,
     @JsonKey(name: 'instrument_ids') List<int>? instrumentIds,
     List<SongFile>? files,
     int? difficulty,
     String? category,
+    @JsonKey(name: 'category_ids') List<String>? categoryIds,
+    @JsonKey(name: 'additional_fields') Map<String, dynamic>? additionalFields,
     @JsonKey(name: 'created_at') DateTime? createdAt,
   });
 }
@@ -97,13 +123,17 @@ class _$SongCopyWithImpl<$Res, $Val extends Song>
     Object? withChoir = null,
     Object? withSolo = null,
     Object? lastSung = freezed,
+    Object? nextPlanned = freezed,
     Object? link = freezed,
     Object? conductor = freezed,
+    Object? composer = freezed,
     Object? legacyId = freezed,
     Object? instrumentIds = freezed,
     Object? files = freezed,
     Object? difficulty = freezed,
     Object? category = freezed,
+    Object? categoryIds = freezed,
+    Object? additionalFields = freezed,
     Object? createdAt = freezed,
   }) {
     return _then(
@@ -148,6 +178,11 @@ class _$SongCopyWithImpl<$Res, $Val extends Song>
                     ? _value.lastSung
                     : lastSung // ignore: cast_nullable_to_non_nullable
                         as String?,
+            nextPlanned:
+                freezed == nextPlanned
+                    ? _value.nextPlanned
+                    : nextPlanned // ignore: cast_nullable_to_non_nullable
+                        as String?,
             link:
                 freezed == link
                     ? _value.link
@@ -157,6 +192,11 @@ class _$SongCopyWithImpl<$Res, $Val extends Song>
                 freezed == conductor
                     ? _value.conductor
                     : conductor // ignore: cast_nullable_to_non_nullable
+                        as String?,
+            composer:
+                freezed == composer
+                    ? _value.composer
+                    : composer // ignore: cast_nullable_to_non_nullable
                         as String?,
             legacyId:
                 freezed == legacyId
@@ -183,6 +223,16 @@ class _$SongCopyWithImpl<$Res, $Val extends Song>
                     ? _value.category
                     : category // ignore: cast_nullable_to_non_nullable
                         as String?,
+            categoryIds:
+                freezed == categoryIds
+                    ? _value.categoryIds
+                    : categoryIds // ignore: cast_nullable_to_non_nullable
+                        as List<String>?,
+            additionalFields:
+                freezed == additionalFields
+                    ? _value.additionalFields
+                    : additionalFields // ignore: cast_nullable_to_non_nullable
+                        as Map<String, dynamic>?,
             createdAt:
                 freezed == createdAt
                     ? _value.createdAt
@@ -210,14 +260,18 @@ abstract class _$$SongImplCopyWith<$Res> implements $SongCopyWith<$Res> {
     String? prefix,
     bool withChoir,
     bool withSolo,
-    String? lastSung,
+    @JsonKey(includeToJson: false) String? lastSung,
+    @JsonKey(includeToJson: false) String? nextPlanned,
     String? link,
-    String? conductor,
+    @JsonKey(includeToJson: false) String? conductor,
+    String? composer,
     int? legacyId,
     @JsonKey(name: 'instrument_ids') List<int>? instrumentIds,
     List<SongFile>? files,
     int? difficulty,
     String? category,
+    @JsonKey(name: 'category_ids') List<String>? categoryIds,
+    @JsonKey(name: 'additional_fields') Map<String, dynamic>? additionalFields,
     @JsonKey(name: 'created_at') DateTime? createdAt,
   });
 }
@@ -242,13 +296,17 @@ class __$$SongImplCopyWithImpl<$Res>
     Object? withChoir = null,
     Object? withSolo = null,
     Object? lastSung = freezed,
+    Object? nextPlanned = freezed,
     Object? link = freezed,
     Object? conductor = freezed,
+    Object? composer = freezed,
     Object? legacyId = freezed,
     Object? instrumentIds = freezed,
     Object? files = freezed,
     Object? difficulty = freezed,
     Object? category = freezed,
+    Object? categoryIds = freezed,
+    Object? additionalFields = freezed,
     Object? createdAt = freezed,
   }) {
     return _then(
@@ -293,6 +351,11 @@ class __$$SongImplCopyWithImpl<$Res>
                 ? _value.lastSung
                 : lastSung // ignore: cast_nullable_to_non_nullable
                     as String?,
+        nextPlanned:
+            freezed == nextPlanned
+                ? _value.nextPlanned
+                : nextPlanned // ignore: cast_nullable_to_non_nullable
+                    as String?,
         link:
             freezed == link
                 ? _value.link
@@ -302,6 +365,11 @@ class __$$SongImplCopyWithImpl<$Res>
             freezed == conductor
                 ? _value.conductor
                 : conductor // ignore: cast_nullable_to_non_nullable
+                    as String?,
+        composer:
+            freezed == composer
+                ? _value.composer
+                : composer // ignore: cast_nullable_to_non_nullable
                     as String?,
         legacyId:
             freezed == legacyId
@@ -328,6 +396,16 @@ class __$$SongImplCopyWithImpl<$Res>
                 ? _value.category
                 : category // ignore: cast_nullable_to_non_nullable
                     as String?,
+        categoryIds:
+            freezed == categoryIds
+                ? _value._categoryIds
+                : categoryIds // ignore: cast_nullable_to_non_nullable
+                    as List<String>?,
+        additionalFields:
+            freezed == additionalFields
+                ? _value._additionalFields
+                : additionalFields // ignore: cast_nullable_to_non_nullable
+                    as Map<String, dynamic>?,
         createdAt:
             freezed == createdAt
                 ? _value.createdAt
@@ -349,17 +427,24 @@ class _$SongImpl implements _Song {
     this.prefix,
     this.withChoir = false,
     this.withSolo = false,
-    this.lastSung,
+    @JsonKey(includeToJson: false) this.lastSung,
+    @JsonKey(includeToJson: false) this.nextPlanned,
     this.link,
-    this.conductor,
+    @JsonKey(includeToJson: false) this.conductor,
+    this.composer,
     this.legacyId,
     @JsonKey(name: 'instrument_ids') final List<int>? instrumentIds,
     final List<SongFile>? files,
     this.difficulty,
     this.category,
+    @JsonKey(name: 'category_ids') final List<String>? categoryIds,
+    @JsonKey(name: 'additional_fields')
+    final Map<String, dynamic>? additionalFields,
     @JsonKey(name: 'created_at') this.createdAt,
   }) : _instrumentIds = instrumentIds,
-       _files = files;
+       _files = files,
+       _categoryIds = categoryIds,
+       _additionalFields = additionalFields;
 
   factory _$SongImpl.fromJson(Map<String, dynamic> json) =>
       _$$SongImplFromJson(json);
@@ -380,12 +465,25 @@ class _$SongImpl implements _Song {
   @override
   @JsonKey()
   final bool withSolo;
+
+  /// Computed client-side from history (last past entry). Not a DB column.
   @override
+  @JsonKey(includeToJson: false)
   final String? lastSung;
+
+  /// Computed client-side: next planned (future) history entry. Not a DB column.
+  @override
+  @JsonKey(includeToJson: false)
+  final String? nextPlanned;
   @override
   final String? link;
+
+  /// Computed client-side: conductor of [lastSung]. Not a DB column.
   @override
+  @JsonKey(includeToJson: false)
   final String? conductor;
+  @override
+  final String? composer;
   @override
   final int? legacyId;
   final List<int>? _instrumentIds;
@@ -411,15 +509,46 @@ class _$SongImpl implements _Song {
 
   @override
   final int? difficulty;
+
+  /// Legacy single category (superseded by [categoryIds])
   @override
   final String? category;
+
+  /// Song category ids (uuid[] column `category_ids`)
+  final List<String>? _categoryIds;
+
+  /// Song category ids (uuid[] column `category_ids`)
+  @override
+  @JsonKey(name: 'category_ids')
+  List<String>? get categoryIds {
+    final value = _categoryIds;
+    if (value == null) return null;
+    if (_categoryIds is EqualUnmodifiableListView) return _categoryIds;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  /// Values of the tenant's `song_additional_fields`
+  final Map<String, dynamic>? _additionalFields;
+
+  /// Values of the tenant's `song_additional_fields`
+  @override
+  @JsonKey(name: 'additional_fields')
+  Map<String, dynamic>? get additionalFields {
+    final value = _additionalFields;
+    if (value == null) return null;
+    if (_additionalFields is EqualUnmodifiableMapView) return _additionalFields;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(value);
+  }
+
   @override
   @JsonKey(name: 'created_at')
   final DateTime? createdAt;
 
   @override
   String toString() {
-    return 'Song(id: $id, tenantId: $tenantId, name: $name, number: $number, prefix: $prefix, withChoir: $withChoir, withSolo: $withSolo, lastSung: $lastSung, link: $link, conductor: $conductor, legacyId: $legacyId, instrumentIds: $instrumentIds, files: $files, difficulty: $difficulty, category: $category, createdAt: $createdAt)';
+    return 'Song(id: $id, tenantId: $tenantId, name: $name, number: $number, prefix: $prefix, withChoir: $withChoir, withSolo: $withSolo, lastSung: $lastSung, nextPlanned: $nextPlanned, link: $link, conductor: $conductor, composer: $composer, legacyId: $legacyId, instrumentIds: $instrumentIds, files: $files, difficulty: $difficulty, category: $category, categoryIds: $categoryIds, additionalFields: $additionalFields, createdAt: $createdAt)';
   }
 
   @override
@@ -439,9 +568,13 @@ class _$SongImpl implements _Song {
                 other.withSolo == withSolo) &&
             (identical(other.lastSung, lastSung) ||
                 other.lastSung == lastSung) &&
+            (identical(other.nextPlanned, nextPlanned) ||
+                other.nextPlanned == nextPlanned) &&
             (identical(other.link, link) || other.link == link) &&
             (identical(other.conductor, conductor) ||
                 other.conductor == conductor) &&
+            (identical(other.composer, composer) ||
+                other.composer == composer) &&
             (identical(other.legacyId, legacyId) ||
                 other.legacyId == legacyId) &&
             const DeepCollectionEquality().equals(
@@ -453,13 +586,21 @@ class _$SongImpl implements _Song {
                 other.difficulty == difficulty) &&
             (identical(other.category, category) ||
                 other.category == category) &&
+            const DeepCollectionEquality().equals(
+              other._categoryIds,
+              _categoryIds,
+            ) &&
+            const DeepCollectionEquality().equals(
+              other._additionalFields,
+              _additionalFields,
+            ) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
+  int get hashCode => Object.hashAll([
     runtimeType,
     id,
     tenantId,
@@ -469,15 +610,19 @@ class _$SongImpl implements _Song {
     withChoir,
     withSolo,
     lastSung,
+    nextPlanned,
     link,
     conductor,
+    composer,
     legacyId,
     const DeepCollectionEquality().hash(_instrumentIds),
     const DeepCollectionEquality().hash(_files),
     difficulty,
     category,
+    const DeepCollectionEquality().hash(_categoryIds),
+    const DeepCollectionEquality().hash(_additionalFields),
     createdAt,
-  );
+  ]);
 
   /// Create a copy of Song
   /// with the given fields replaced by the non-null parameter values.
@@ -502,14 +647,19 @@ abstract class _Song implements Song {
     final String? prefix,
     final bool withChoir,
     final bool withSolo,
-    final String? lastSung,
+    @JsonKey(includeToJson: false) final String? lastSung,
+    @JsonKey(includeToJson: false) final String? nextPlanned,
     final String? link,
-    final String? conductor,
+    @JsonKey(includeToJson: false) final String? conductor,
+    final String? composer,
     final int? legacyId,
     @JsonKey(name: 'instrument_ids') final List<int>? instrumentIds,
     final List<SongFile>? files,
     final int? difficulty,
     final String? category,
+    @JsonKey(name: 'category_ids') final List<String>? categoryIds,
+    @JsonKey(name: 'additional_fields')
+    final Map<String, dynamic>? additionalFields,
     @JsonKey(name: 'created_at') final DateTime? createdAt,
   }) = _$SongImpl;
 
@@ -529,12 +679,25 @@ abstract class _Song implements Song {
   bool get withChoir;
   @override
   bool get withSolo;
+
+  /// Computed client-side from history (last past entry). Not a DB column.
   @override
+  @JsonKey(includeToJson: false)
   String? get lastSung;
+
+  /// Computed client-side: next planned (future) history entry. Not a DB column.
+  @override
+  @JsonKey(includeToJson: false)
+  String? get nextPlanned;
   @override
   String? get link;
+
+  /// Computed client-side: conductor of [lastSung]. Not a DB column.
   @override
+  @JsonKey(includeToJson: false)
   String? get conductor;
+  @override
+  String? get composer;
   @override
   int? get legacyId;
   @override
@@ -544,8 +707,20 @@ abstract class _Song implements Song {
   List<SongFile>? get files;
   @override
   int? get difficulty;
+
+  /// Legacy single category (superseded by [categoryIds])
   @override
   String? get category;
+
+  /// Song category ids (uuid[] column `category_ids`)
+  @override
+  @JsonKey(name: 'category_ids')
+  List<String>? get categoryIds;
+
+  /// Values of the tenant's `song_additional_fields`
+  @override
+  @JsonKey(name: 'additional_fields')
+  Map<String, dynamic>? get additionalFields;
   @override
   @JsonKey(name: 'created_at')
   DateTime? get createdAt;
@@ -878,16 +1053,33 @@ SongHistory _$SongHistoryFromJson(Map<String, dynamic> json) {
 mixin _$SongHistory {
   int? get id => throw _privateConstructorUsedError;
   int? get tenantId => throw _privateConstructorUsedError;
-  @JsonKey(name: 'song_id')
+
+  /// DB column is `songId` (camelCase, see Ionic pickHistoryFields)
+  @JsonKey(name: 'songId')
   int? get songId => throw _privateConstructorUsedError;
   @JsonKey(name: 'attendance_id')
   int? get attendanceId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'person_id')
+  int? get personId => throw _privateConstructorUsedError;
   String? get date => throw _privateConstructorUsedError;
+
+  /// Computed client-side (conductor person name or otherConductor). Not a DB column.
+  @JsonKey(includeToJson: false)
   String? get conductorName => throw _privateConstructorUsedError;
   String? get otherConductor => throw _privateConstructorUsedError;
   int? get count => throw _privateConstructorUsedError;
+  bool? get visible => throw _privateConstructorUsedError;
   @JsonKey(name: 'created_at')
   DateTime? get createdAt => throw _privateConstructorUsedError;
+
+  /// Computed client-side: attendance typeInfo or type name. Not a DB column.
+  @JsonKey(includeToJson: false)
+  String? get typeTitle => throw _privateConstructorUsedError;
+
+  /// Computed client-side: date of the linked attendance. Not a DB column.
+  @JsonKey(includeToJson: false)
+  String? get attendanceDate => throw _privateConstructorUsedError;
+  @JsonKey(includeToJson: false)
   Song? get song => throw _privateConstructorUsedError;
 
   /// Serializes this SongHistory to a JSON map.
@@ -910,14 +1102,18 @@ abstract class $SongHistoryCopyWith<$Res> {
   $Res call({
     int? id,
     int? tenantId,
-    @JsonKey(name: 'song_id') int? songId,
+    @JsonKey(name: 'songId') int? songId,
     @JsonKey(name: 'attendance_id') int? attendanceId,
+    @JsonKey(name: 'person_id') int? personId,
     String? date,
-    String? conductorName,
+    @JsonKey(includeToJson: false) String? conductorName,
     String? otherConductor,
     int? count,
+    bool? visible,
     @JsonKey(name: 'created_at') DateTime? createdAt,
-    Song? song,
+    @JsonKey(includeToJson: false) String? typeTitle,
+    @JsonKey(includeToJson: false) String? attendanceDate,
+    @JsonKey(includeToJson: false) Song? song,
   });
 
   $SongCopyWith<$Res>? get song;
@@ -942,11 +1138,15 @@ class _$SongHistoryCopyWithImpl<$Res, $Val extends SongHistory>
     Object? tenantId = freezed,
     Object? songId = freezed,
     Object? attendanceId = freezed,
+    Object? personId = freezed,
     Object? date = freezed,
     Object? conductorName = freezed,
     Object? otherConductor = freezed,
     Object? count = freezed,
+    Object? visible = freezed,
     Object? createdAt = freezed,
+    Object? typeTitle = freezed,
+    Object? attendanceDate = freezed,
     Object? song = freezed,
   }) {
     return _then(
@@ -971,6 +1171,11 @@ class _$SongHistoryCopyWithImpl<$Res, $Val extends SongHistory>
                     ? _value.attendanceId
                     : attendanceId // ignore: cast_nullable_to_non_nullable
                         as int?,
+            personId:
+                freezed == personId
+                    ? _value.personId
+                    : personId // ignore: cast_nullable_to_non_nullable
+                        as int?,
             date:
                 freezed == date
                     ? _value.date
@@ -991,11 +1196,26 @@ class _$SongHistoryCopyWithImpl<$Res, $Val extends SongHistory>
                     ? _value.count
                     : count // ignore: cast_nullable_to_non_nullable
                         as int?,
+            visible:
+                freezed == visible
+                    ? _value.visible
+                    : visible // ignore: cast_nullable_to_non_nullable
+                        as bool?,
             createdAt:
                 freezed == createdAt
                     ? _value.createdAt
                     : createdAt // ignore: cast_nullable_to_non_nullable
                         as DateTime?,
+            typeTitle:
+                freezed == typeTitle
+                    ? _value.typeTitle
+                    : typeTitle // ignore: cast_nullable_to_non_nullable
+                        as String?,
+            attendanceDate:
+                freezed == attendanceDate
+                    ? _value.attendanceDate
+                    : attendanceDate // ignore: cast_nullable_to_non_nullable
+                        as String?,
             song:
                 freezed == song
                     ? _value.song
@@ -1033,14 +1253,18 @@ abstract class _$$SongHistoryImplCopyWith<$Res>
   $Res call({
     int? id,
     int? tenantId,
-    @JsonKey(name: 'song_id') int? songId,
+    @JsonKey(name: 'songId') int? songId,
     @JsonKey(name: 'attendance_id') int? attendanceId,
+    @JsonKey(name: 'person_id') int? personId,
     String? date,
-    String? conductorName,
+    @JsonKey(includeToJson: false) String? conductorName,
     String? otherConductor,
     int? count,
+    bool? visible,
     @JsonKey(name: 'created_at') DateTime? createdAt,
-    Song? song,
+    @JsonKey(includeToJson: false) String? typeTitle,
+    @JsonKey(includeToJson: false) String? attendanceDate,
+    @JsonKey(includeToJson: false) Song? song,
   });
 
   @override
@@ -1065,11 +1289,15 @@ class __$$SongHistoryImplCopyWithImpl<$Res>
     Object? tenantId = freezed,
     Object? songId = freezed,
     Object? attendanceId = freezed,
+    Object? personId = freezed,
     Object? date = freezed,
     Object? conductorName = freezed,
     Object? otherConductor = freezed,
     Object? count = freezed,
+    Object? visible = freezed,
     Object? createdAt = freezed,
+    Object? typeTitle = freezed,
+    Object? attendanceDate = freezed,
     Object? song = freezed,
   }) {
     return _then(
@@ -1094,6 +1322,11 @@ class __$$SongHistoryImplCopyWithImpl<$Res>
                 ? _value.attendanceId
                 : attendanceId // ignore: cast_nullable_to_non_nullable
                     as int?,
+        personId:
+            freezed == personId
+                ? _value.personId
+                : personId // ignore: cast_nullable_to_non_nullable
+                    as int?,
         date:
             freezed == date
                 ? _value.date
@@ -1114,11 +1347,26 @@ class __$$SongHistoryImplCopyWithImpl<$Res>
                 ? _value.count
                 : count // ignore: cast_nullable_to_non_nullable
                     as int?,
+        visible:
+            freezed == visible
+                ? _value.visible
+                : visible // ignore: cast_nullable_to_non_nullable
+                    as bool?,
         createdAt:
             freezed == createdAt
                 ? _value.createdAt
                 : createdAt // ignore: cast_nullable_to_non_nullable
                     as DateTime?,
+        typeTitle:
+            freezed == typeTitle
+                ? _value.typeTitle
+                : typeTitle // ignore: cast_nullable_to_non_nullable
+                    as String?,
+        attendanceDate:
+            freezed == attendanceDate
+                ? _value.attendanceDate
+                : attendanceDate // ignore: cast_nullable_to_non_nullable
+                    as String?,
         song:
             freezed == song
                 ? _value.song
@@ -1135,14 +1383,18 @@ class _$SongHistoryImpl implements _SongHistory {
   const _$SongHistoryImpl({
     this.id,
     this.tenantId,
-    @JsonKey(name: 'song_id') this.songId,
+    @JsonKey(name: 'songId') this.songId,
     @JsonKey(name: 'attendance_id') this.attendanceId,
+    @JsonKey(name: 'person_id') this.personId,
     this.date,
-    this.conductorName,
+    @JsonKey(includeToJson: false) this.conductorName,
     this.otherConductor,
     this.count,
+    this.visible,
     @JsonKey(name: 'created_at') this.createdAt,
-    this.song,
+    @JsonKey(includeToJson: false) this.typeTitle,
+    @JsonKey(includeToJson: false) this.attendanceDate,
+    @JsonKey(includeToJson: false) this.song,
   });
 
   factory _$SongHistoryImpl.fromJson(Map<String, dynamic> json) =>
@@ -1152,29 +1404,50 @@ class _$SongHistoryImpl implements _SongHistory {
   final int? id;
   @override
   final int? tenantId;
+
+  /// DB column is `songId` (camelCase, see Ionic pickHistoryFields)
   @override
-  @JsonKey(name: 'song_id')
+  @JsonKey(name: 'songId')
   final int? songId;
   @override
   @JsonKey(name: 'attendance_id')
   final int? attendanceId;
   @override
-  final String? date;
+  @JsonKey(name: 'person_id')
+  final int? personId;
   @override
+  final String? date;
+
+  /// Computed client-side (conductor person name or otherConductor). Not a DB column.
+  @override
+  @JsonKey(includeToJson: false)
   final String? conductorName;
   @override
   final String? otherConductor;
   @override
   final int? count;
   @override
+  final bool? visible;
+  @override
   @JsonKey(name: 'created_at')
   final DateTime? createdAt;
+
+  /// Computed client-side: attendance typeInfo or type name. Not a DB column.
   @override
+  @JsonKey(includeToJson: false)
+  final String? typeTitle;
+
+  /// Computed client-side: date of the linked attendance. Not a DB column.
+  @override
+  @JsonKey(includeToJson: false)
+  final String? attendanceDate;
+  @override
+  @JsonKey(includeToJson: false)
   final Song? song;
 
   @override
   String toString() {
-    return 'SongHistory(id: $id, tenantId: $tenantId, songId: $songId, attendanceId: $attendanceId, date: $date, conductorName: $conductorName, otherConductor: $otherConductor, count: $count, createdAt: $createdAt, song: $song)';
+    return 'SongHistory(id: $id, tenantId: $tenantId, songId: $songId, attendanceId: $attendanceId, personId: $personId, date: $date, conductorName: $conductorName, otherConductor: $otherConductor, count: $count, visible: $visible, createdAt: $createdAt, typeTitle: $typeTitle, attendanceDate: $attendanceDate, song: $song)';
   }
 
   @override
@@ -1188,14 +1461,21 @@ class _$SongHistoryImpl implements _SongHistory {
             (identical(other.songId, songId) || other.songId == songId) &&
             (identical(other.attendanceId, attendanceId) ||
                 other.attendanceId == attendanceId) &&
+            (identical(other.personId, personId) ||
+                other.personId == personId) &&
             (identical(other.date, date) || other.date == date) &&
             (identical(other.conductorName, conductorName) ||
                 other.conductorName == conductorName) &&
             (identical(other.otherConductor, otherConductor) ||
                 other.otherConductor == otherConductor) &&
             (identical(other.count, count) || other.count == count) &&
+            (identical(other.visible, visible) || other.visible == visible) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
+            (identical(other.typeTitle, typeTitle) ||
+                other.typeTitle == typeTitle) &&
+            (identical(other.attendanceDate, attendanceDate) ||
+                other.attendanceDate == attendanceDate) &&
             (identical(other.song, song) || other.song == song));
   }
 
@@ -1207,11 +1487,15 @@ class _$SongHistoryImpl implements _SongHistory {
     tenantId,
     songId,
     attendanceId,
+    personId,
     date,
     conductorName,
     otherConductor,
     count,
+    visible,
     createdAt,
+    typeTitle,
+    attendanceDate,
     song,
   );
 
@@ -1233,14 +1517,18 @@ abstract class _SongHistory implements SongHistory {
   const factory _SongHistory({
     final int? id,
     final int? tenantId,
-    @JsonKey(name: 'song_id') final int? songId,
+    @JsonKey(name: 'songId') final int? songId,
     @JsonKey(name: 'attendance_id') final int? attendanceId,
+    @JsonKey(name: 'person_id') final int? personId,
     final String? date,
-    final String? conductorName,
+    @JsonKey(includeToJson: false) final String? conductorName,
     final String? otherConductor,
     final int? count,
+    final bool? visible,
     @JsonKey(name: 'created_at') final DateTime? createdAt,
-    final Song? song,
+    @JsonKey(includeToJson: false) final String? typeTitle,
+    @JsonKey(includeToJson: false) final String? attendanceDate,
+    @JsonKey(includeToJson: false) final Song? song,
   }) = _$SongHistoryImpl;
 
   factory _SongHistory.fromJson(Map<String, dynamic> json) =
@@ -1250,24 +1538,45 @@ abstract class _SongHistory implements SongHistory {
   int? get id;
   @override
   int? get tenantId;
+
+  /// DB column is `songId` (camelCase, see Ionic pickHistoryFields)
   @override
-  @JsonKey(name: 'song_id')
+  @JsonKey(name: 'songId')
   int? get songId;
   @override
   @JsonKey(name: 'attendance_id')
   int? get attendanceId;
   @override
-  String? get date;
+  @JsonKey(name: 'person_id')
+  int? get personId;
   @override
+  String? get date;
+
+  /// Computed client-side (conductor person name or otherConductor). Not a DB column.
+  @override
+  @JsonKey(includeToJson: false)
   String? get conductorName;
   @override
   String? get otherConductor;
   @override
   int? get count;
   @override
+  bool? get visible;
+  @override
   @JsonKey(name: 'created_at')
   DateTime? get createdAt;
+
+  /// Computed client-side: attendance typeInfo or type name. Not a DB column.
   @override
+  @JsonKey(includeToJson: false)
+  String? get typeTitle;
+
+  /// Computed client-side: date of the linked attendance. Not a DB column.
+  @override
+  @JsonKey(includeToJson: false)
+  String? get attendanceDate;
+  @override
+  @JsonKey(includeToJson: false)
   Song? get song;
 
   /// Create a copy of SongHistory

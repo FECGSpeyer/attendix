@@ -4,7 +4,9 @@ import 'package:intl/intl.dart';
 
 import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/providers/group_providers.dart';
+import '../../../../../core/providers/church_providers.dart';
 import '../../../../../core/providers/parent_providers.dart';
+import '../../../../../core/providers/profile_providers.dart';
 import '../../../../../core/providers/shift_providers.dart';
 import '../../../../../core/providers/teacher_providers.dart';
 import '../../../../../core/providers/tenant_providers.dart';
@@ -17,6 +19,30 @@ import '../../../../../data/models/tenant/tenant.dart';
 import '../../../../../shared/widgets/editable/editable_info_row.dart';
 import '../../../../../shared/widgets/sheets/field_editor_sheet.dart';
 import '../../../../../shared/widgets/sheets/selection_sheet.dart';
+import '../church_picker_sheet.dart';
+import '../../../../../l10n/l10n.dart';
+import '../../../../../core/utils/error_message.dart';
+
+/// Ionic VoS "Andere Orchester" options
+const otherOrchestraOptions = ['SoS', 'GoS', 'BoS'];
+
+/// Person extra fields: organisation fields first, then tenant fields not
+/// overridden by the organisation (Ionic getPersonExtraFields).
+List<ExtraField> personExtraFields(WidgetRef ref, Tenant? tenant) {
+  final all = ref.watch(personExtraFieldsProvider).valueOrNull;
+  if (all == null) return tenant?.additionalFields ?? const [];
+  return all
+      .map((f) => ExtraField(
+            id: f.id,
+            name: f.name,
+            type: f.type,
+            defaultValue: f.defaultValue,
+            options: f.options,
+            visibleToPlayers: f.visibleToPlayers,
+            editableByPlayers: f.editableByPlayers,
+          ))
+      .toList();
+}
 
 /// Callback type for person field changes.
 typedef PersonFieldChanged = void Function(String field, dynamic value);
@@ -39,6 +65,8 @@ class AllgemeinAccordion extends ConsumerWidget {
     this.isLeader,
     this.hasTeacher,
     this.additionalFieldValues,
+    this.isMainGroup = false,
+    this.otherOrchestras,
   });
 
   final Person person;
@@ -58,11 +86,20 @@ class AllgemeinAccordion extends ConsumerWidget {
   final bool? hasTeacher;
   final Map<String, dynamic>? additionalFieldValues;
 
+  /// Selected group is the main group (Ionic isMainGroup)
+  final bool isMainGroup;
+
+  /// Draft "Andere Orchester" (VoS)
+  final List<String>? otherOrchestras;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final tenant = ref.watch(currentTenantProvider);
-    final extraFields = tenant?.additionalFields ?? [];
+    final extraFields = personExtraFields(ref, tenant);
     final additionalFields = additionalFieldValues ?? person.additionalFields ?? {};
+    final isGeneral = tenant?.type == 'general';
+    final isChoir = tenant?.type == 'choir';
+    final isVoS = tenant?.shortName == 'VoS';
 
     return Card(
       margin: const EdgeInsets.symmetric(
@@ -72,9 +109,9 @@ class AllgemeinAccordion extends ConsumerWidget {
       child: Column(
         children: [
           ListTile(
-            title: const Text(
-              'Allgemein',
-              style: TextStyle(fontWeight: FontWeight.w600),
+            title: Text(
+              context.l10n.attendanceGeneral,
+              style: const TextStyle(fontWeight: FontWeight.w600),
             ),
             trailing: Icon(isExpanded ? Icons.expand_less : Icons.expand_more),
             onTap: onToggle,
@@ -108,19 +145,22 @@ class AllgemeinAccordion extends ConsumerWidget {
                     _buildDateField(
                       context,
                       icon: Icons.cake,
-                      label: 'Geburtsdatum',
+                      label: context.l10n.peopleBirthday,
                       value: person.birthday,
                       fieldKey: 'birthday',
                       highlight: !person.correctBirthday,
                       highlightColor: AppColors.warning,
                     ),
 
-                  // Plays Since
-                  if (person.playsSince != null || canEdit)
+                  // Plays Since (Ionic: !general && !choir && !mainGroup)
+                  if ((person.playsSince != null || canEdit) &&
+                      !isGeneral &&
+                      !isChoir &&
+                      !isMainGroup)
                     _buildDateField(
                       context,
                       icon: Icons.music_note,
-                      label: 'Spielt auf dem Instrument seit',
+                      label: context.l10n.personPlaysSince,
                       value: person.playsSince,
                       fieldKey: 'playsSince',
                     ),
@@ -130,22 +170,24 @@ class AllgemeinAccordion extends ConsumerWidget {
                     _buildDateField(
                       context,
                       icon: Icons.login,
-                      label: 'Beigetreten am',
+                      label: context.l10n.personJoinedOn,
                       value: person.joined,
                       fieldKey: 'joined',
                     ),
 
-                  // Is Leader toggle
-                  _buildIsLeaderField(context),
+                  // Is Leader toggle (Ionic: !general && !mainGroup)
+                  if (!isGeneral && !isMainGroup) _buildIsLeaderField(context),
 
-                  // Has Teacher toggle
-                  _buildHasTeacherField(context, ref),
+                  // Has Teacher toggle (Ionic: maintainTeachers && !mainGroup)
+                  if ((tenant?.maintainTeachers ?? false) && !isMainGroup)
+                    _buildHasTeacherField(context, ref),
 
                   // Shift Plan
                   _buildShiftPlanField(context, ref),
 
-                  // Parent
-                  _buildParentField(context, ref),
+                  // Parent (Ionic: parents enabled && !mainGroup)
+                  if ((tenant?.parents ?? false) && !isMainGroup)
+                    _buildParentField(context, ref),
 
                   // Other Exercise
                   if (person.otherExercise != null || canEdit)
@@ -159,6 +201,13 @@ class AllgemeinAccordion extends ConsumerWidget {
                   if (tenant != null && tenant.type == 'choir')
                     _buildInstrumentsField(context),
 
+                  // VoS: Andere Orchester
+                  if (isVoS && !isMainGroup &&
+                      (canEdit ||
+                          (otherOrchestras ?? person.otherOrchestras ?? [])
+                              .isNotEmpty))
+                    _buildOtherOrchestrasField(context),
+
                   // Non-general: Prüfling (examinee)
                   if (tenant != null && tenant.type != 'general')
                     _buildExamineeField(context),
@@ -171,7 +220,7 @@ class AllgemeinAccordion extends ConsumerWidget {
                   if (extraFields.isNotEmpty) ...[
                     const Divider(height: 32),
                     Text(
-                      'Zusatzfelder',
+                      context.l10n.peopleExtraFields,
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(
                             fontWeight: FontWeight.w600,
                             color: AppColors.primary,
@@ -196,30 +245,32 @@ class AllgemeinAccordion extends ConsumerWidget {
         Expanded(
           child: EditableInfoRow(
             icon: Icons.person,
-            label: 'Vorname',
+            label: context.l10n.peopleFirstName,
             value: person.firstName,
             editable: canEdit,
             onEdit: () => _editTextField(
               context,
-              title: 'Vorname',
+              title: context.l10n.peopleFirstName,
               initialValue: person.firstName,
               fieldKey: 'firstName',
-              validator: (v) => v?.isEmpty ?? true ? 'Pflichtfeld' : null,
+              textCapitalization: TextCapitalization.words,
+              validator: (v) => v?.isEmpty ?? true ? context.l10n.personFlutterRequired : null,
             ),
           ),
         ),
         Expanded(
           child: EditableInfoRow(
             icon: Icons.person_outline,
-            label: 'Nachname',
+            label: context.l10n.peopleLastName,
             value: person.lastName,
             editable: canEdit,
             onEdit: () => _editTextField(
               context,
-              title: 'Nachname',
+              title: context.l10n.peopleLastName,
               initialValue: person.lastName,
               fieldKey: 'lastName',
-              validator: (v) => v?.isEmpty ?? true ? 'Pflichtfeld' : null,
+              textCapitalization: TextCapitalization.words,
+              validator: (v) => v?.isEmpty ?? true ? context.l10n.personFlutterRequired : null,
             ),
           ),
         ),
@@ -233,16 +284,16 @@ class AllgemeinAccordion extends ConsumerWidget {
 
     return EditableInfoRow(
       icon: Icons.notes,
-      label: 'Notizen',
-      value: notes ?? 'Keine Notizen',
+      label: context.l10n.peopleNotes,
+      value: notes ?? context.l10n.personFlutterNoNotes,
       editable: canEdit,
       onEdit: () => _editTextField(
         context,
-        title: 'Notizen',
+        title: context.l10n.peopleNotes,
         initialValue: notes ?? '',
         fieldKey: 'notes',
         maxLines: 4,
-        hint: 'Notizen zur Person...',
+        hint: context.l10n.personFlutterNotesHint,
       ),
     );
   }
@@ -254,11 +305,11 @@ class AllgemeinAccordion extends ConsumerWidget {
 
     return groupsAsync.when(
       loading: () => const LinearProgressIndicator(),
-      error: (e, _) => Text('Fehler: $e'),
+      error: (e, _) => Text(context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e))),
       data: (groups) {
         final groupName = currentGroupId != null
-            ? groups[currentGroupId] ?? 'Unbekannt'
-            : 'Nicht zugewiesen';
+            ? groups[currentGroupId] ?? context.l10n.commonUnknown
+            : context.l10n.personFlutterNotAssigned;
 
         return EditableInfoRow(
           icon: Icons.group,
@@ -272,10 +323,10 @@ class AllgemeinAccordion extends ConsumerWidget {
 
             final result = await SelectionSheet.show<int>(
               context,
-              title: '${groupLabel(tenantType)} auswählen',
+              title: context.l10n.personFlutterChooseLabel(groupLabel(tenantType)),
               items: items,
               selectedValue: currentGroupId,
-              noneLabel: 'Keine ${groupLabel(tenantType)}',
+              noneLabel: context.l10n.personFlutterNoneLabel(groupLabel(tenantType)),
               icon: Icons.group,
             );
 
@@ -297,13 +348,13 @@ class AllgemeinAccordion extends ConsumerWidget {
 
     return EditableInfoRow(
       icon: Icons.phone,
-      label: 'Telefon',
-      value: phone ?? 'Nicht angegeben',
+      label: context.l10n.peoplePhone,
+      value: phone ?? context.l10n.personFlutterNotSpecified,
       editable: canEdit,
       onTap: phone != null ? () => _launchPhone(phone) : null,
       onEdit: () => _editTextField(
         context,
-        title: 'Telefon',
+        title: context.l10n.peoplePhone,
         initialValue: phone ?? '',
         fieldKey: 'phone',
         keyboardType: TextInputType.phone,
@@ -321,7 +372,7 @@ class AllgemeinAccordion extends ConsumerWidget {
     bool highlight = false,
     Color? highlightColor,
   }) {
-    final displayValue = value != null ? _formatDate(value) : 'Nicht angegeben';
+    final displayValue = value != null ? _formatDate(value) : context.l10n.personFlutterNotSpecified;
 
     return EditableInfoRow(
       icon: icon,
@@ -350,7 +401,7 @@ class AllgemeinAccordion extends ConsumerWidget {
 
     return EditableToggleRow(
       icon: Icons.star,
-      label: 'Stimmführer',
+      label: context.l10n.peopleVoiceLeader,
       value: value,
       editable: canEdit,
       onChanged: (v) => onFieldChanged('isLeader', v),
@@ -365,7 +416,7 @@ class AllgemeinAccordion extends ConsumerWidget {
       children: [
         EditableToggleRow(
           icon: Icons.school,
-          label: 'Spielt beim Lehrer',
+          label: context.l10n.personPlaysWithTeacher,
           value: hasTeacherValue,
           editable: canEdit,
           onChanged: (v) {
@@ -389,16 +440,16 @@ class AllgemeinAccordion extends ConsumerWidget {
         padding: EdgeInsets.all(AppDimensions.paddingM),
         child: LinearProgressIndicator(),
       ),
-      error: (e, _) => Text('Fehler: $e'),
+      error: (e, _) => Text(context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e))),
       data: (teachers) {
         final teacher = teachers.where((t) => t.id == teacherId).firstOrNull;
-        final teacherName = teacher?.name ?? 'Nicht ausgewählt';
+        final teacherName = teacher?.name ?? context.l10n.personFlutterNotSelected;
 
         return Padding(
           padding: const EdgeInsets.only(left: AppDimensions.paddingL),
           child: EditableInfoRow(
             icon: Icons.person,
-            label: 'Lehrer',
+            label: context.l10n.peopleTeacher,
             value: teacherName,
             editable: canEdit,
             onEdit: () async {
@@ -408,10 +459,10 @@ class AllgemeinAccordion extends ConsumerWidget {
 
               final result = await SelectionSheet.show<int>(
                 context,
-                title: 'Lehrer auswählen',
+                title: context.l10n.personFlutterChooseLabel(context.l10n.peopleTeacher),
                 items: items,
                 selectedValue: teacherId,
-                noneLabel: 'Kein Lehrer',
+                noneLabel: context.l10n.peopleNoTeacher,
                 icon: Icons.school,
               );
 
@@ -434,16 +485,16 @@ class AllgemeinAccordion extends ConsumerWidget {
 
     return shiftsAsync.when(
       loading: () => const LinearProgressIndicator(),
-      error: (e, _) => Text('Fehler: $e'),
+      error: (e, _) => Text(context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e))),
       data: (shifts) {
         final shift = shifts.where((s) => s.id == currentShiftId).firstOrNull;
-        final shiftName = shift?.name ?? 'Kein Schichtplan';
+        final shiftName = shift?.name ?? context.l10n.personFlutterNoShiftPlan;
 
         return Column(
           children: [
             EditableInfoRow(
               icon: Icons.schedule,
-              label: 'Schichtplan',
+              label: context.l10n.personShiftPlan,
               value: shiftName,
               editable: canEdit,
               onEdit: () async {
@@ -453,10 +504,10 @@ class AllgemeinAccordion extends ConsumerWidget {
 
                 final result = await SelectionSheet.show<String>(
                   context,
-                  title: 'Schichtplan auswählen',
+                  title: context.l10n.personFlutterChooseLabel(context.l10n.personShiftPlan),
                   items: items,
                   selectedValue: currentShiftId,
-                  noneLabel: 'Kein Schichtplan',
+                  noneLabel: context.l10n.personFlutterNoShiftPlan,
                   icon: Icons.schedule,
                 );
 
@@ -493,8 +544,8 @@ class AllgemeinAccordion extends ConsumerWidget {
       padding: const EdgeInsets.only(left: AppDimensions.paddingL),
       child: EditableInfoRow(
         icon: Icons.access_time,
-        label: 'Schicht',
-        value: currentShiftName ?? 'Nicht ausgewählt',
+        label: context.l10n.personShift,
+        value: currentShiftName ?? context.l10n.personFlutterNotSelected,
         editable: canEdit,
         onEdit: () async {
           final items = uniqueShiftNames
@@ -503,10 +554,10 @@ class AllgemeinAccordion extends ConsumerWidget {
 
           final result = await SelectionSheet.show<String>(
             context,
-            title: 'Schicht auswählen',
+            title: context.l10n.personFlutterChooseLabel(context.l10n.personShift),
             items: items,
             selectedValue: currentShiftName,
-            noneLabel: 'Keine Schicht',
+            noneLabel: context.l10n.personNoShift,
             icon: Icons.access_time,
           );
 
@@ -526,20 +577,20 @@ class AllgemeinAccordion extends ConsumerWidget {
         (person.shiftStart != null ? DateTime.tryParse(person.shiftStart!) : null);
 
     final displayValue = currentShiftStart != null
-        ? DateFormat('dd.MM.yyyy').format(currentShiftStart)
-        : 'Nicht angegeben';
+        ? DateFormat(dateFmt()).format(currentShiftStart)
+        : context.l10n.personFlutterNotSpecified;
 
     return Padding(
       padding: const EdgeInsets.only(left: AppDimensions.paddingL),
       child: EditableInfoRow(
         icon: Icons.calendar_today,
-        label: 'Schichtplan-Start',
+        label: context.l10n.personStartDate,
         value: displayValue,
         editable: canEdit,
         onEdit: () async {
           final date = await DateEditorSheet.show(
             context,
-            title: 'Schichtplan-Start',
+            title: context.l10n.personStartDate,
             initialDate: currentShiftStart,
             firstDate: DateTime(2000),
             lastDate: DateTime(2100),
@@ -558,14 +609,14 @@ class AllgemeinAccordion extends ConsumerWidget {
 
     return parentsAsync.when(
       loading: () => const LinearProgressIndicator(),
-      error: (e, _) => Text('Fehler: $e'),
+      error: (e, _) => Text(context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e))),
       data: (parents) {
         final parent = parents.where((p) => p.id == currentParentId).firstOrNull;
-        final parentName = parent?.fullName ?? 'Nicht zugewiesen';
+        final parentName = parent?.fullName ?? context.l10n.personFlutterNotAssigned;
 
         return EditableInfoRow(
           icon: Icons.family_restroom,
-          label: 'Erziehungsberechtigter',
+          label: context.l10n.personParents,
           value: parentName,
           editable: canEdit,
           onEdit: () async {
@@ -575,10 +626,10 @@ class AllgemeinAccordion extends ConsumerWidget {
 
             final result = await SelectionSheet.show<int>(
               context,
-              title: 'Erziehungsberechtigten auswählen',
+              title: context.l10n.personFlutterChooseLabel(context.l10n.personParents),
               items: items,
               selectedValue: currentParentId,
-              noneLabel: 'Kein Erziehungsberechtigter',
+              noneLabel: context.l10n.personNotSet,
               icon: Icons.family_restroom,
             );
 
@@ -599,16 +650,68 @@ class AllgemeinAccordion extends ConsumerWidget {
 
     return EditableInfoRow(
       icon: Icons.work,
-      label: 'Sonstige Dienste',
-      value: otherExercise ?? 'Nicht angegeben',
+      label: context.l10n.peopleOtherDuties,
+      value: otherExercise ?? context.l10n.personFlutterNotSpecified,
       editable: canEdit,
       onEdit: () => _editTextField(
         context,
-        title: 'Sonstige Dienste',
+        title: context.l10n.peopleOtherDuties,
         initialValue: otherExercise ?? '',
         fieldKey: 'otherExercise',
-        hint: 'Weitere Aufgaben...',
+        hint: context.l10n.personFlutterOtherDutiesHint,
       ),
+    );
+  }
+
+  Widget _buildOtherOrchestrasField(BuildContext context) {
+    final selected = otherOrchestras ?? person.otherOrchestras ?? const [];
+    return EditableInfoRow(
+      icon: Icons.groups_2_outlined,
+      label: context.l10n.personOtherOrchestras,
+      value: selected.isEmpty ? context.l10n.generalSettingsNone : selected.join(', '),
+      editable: canEdit,
+      onEdit: () async {
+        final current = Set<String>.from(selected);
+        final result = await showDialog<List<String>>(
+          context: context,
+          builder: (ctx) => StatefulBuilder(
+            builder: (ctx, setState) => AlertDialog(
+              title: Text(context.l10n.personOtherOrchestras),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  for (final o in otherOrchestraOptions)
+                    CheckboxListTile(
+                      title: Text(o),
+                      value: current.contains(o),
+                      onChanged: (v) => setState(() {
+                        if (v == true) {
+                          current.add(o);
+                        } else {
+                          current.remove(o);
+                        }
+                      }),
+                    ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx),
+                  child: Text(context.l10n.commonCancel),
+                ),
+                FilledButton(
+                  onPressed: () => Navigator.pop(
+                    ctx,
+                    otherOrchestraOptions.where(current.contains).toList(),
+                  ),
+                  child: Text(context.l10n.commonApply),
+                ),
+              ],
+            ),
+          ),
+        );
+        if (result != null) onFieldChanged('otherOrchestras', result);
+      },
     );
   }
 
@@ -620,6 +723,31 @@ class AllgemeinAccordion extends ConsumerWidget {
     final value = additionalFields[field.id];
     final displayValue = _formatExtraFieldValue(field, value);
     final icon = _getExtraFieldIcon(field.type);
+
+    if (field.type == 'bfecg_church') {
+      return Consumer(
+        builder: (context, ref, _) {
+          final churches = ref.watch(churchesProvider).valueOrNull ?? const [];
+          return EditableInfoRow(
+            icon: Icons.church_outlined,
+            label: field.name,
+            value: churchLabel(value, churches),
+            editable: canEdit,
+            onEdit: () async {
+              final selected = await showChurchPickerSheet(
+                context,
+                title: field.name,
+                churches: churches,
+                selectedId: value?.toString(),
+              );
+              if (selected != null) {
+                onFieldChanged('additionalFields.${field.id}', selected);
+              }
+            },
+          );
+        },
+      );
+    }
 
     if (field.type == 'boolean') {
       return EditableToggleRow(
@@ -711,15 +839,15 @@ class AllgemeinAccordion extends ConsumerWidget {
 
     return EditableInfoRow(
       icon: Icons.music_note_outlined,
-      label: 'Stimmumfang',
-      value: rangeValue ?? 'Nicht angegeben',
+      label: context.l10n.personVocalRange,
+      value: rangeValue ?? context.l10n.personFlutterNotSpecified,
       editable: canEdit,
       onEdit: () => _editTextField(
         context,
-        title: 'Stimmumfang',
+        title: context.l10n.personVocalRange,
         initialValue: rangeValue ?? '',
         fieldKey: 'range',
-        hint: 'z.B. C3 - C5',
+        hint: context.l10n.personFlutterRangeHint,
       ),
     );
   }
@@ -730,15 +858,15 @@ class AllgemeinAccordion extends ConsumerWidget {
 
     return EditableInfoRow(
       icon: Icons.piano_outlined,
-      label: 'Instrumente',
-      value: instrumentsValue ?? 'Nicht angegeben',
+      label: context.l10n.peopleInstruments,
+      value: instrumentsValue ?? context.l10n.personFlutterNotSpecified,
       editable: canEdit,
       onEdit: () => _editTextField(
         context,
-        title: 'Instrumente',
+        title: context.l10n.peopleInstruments,
         initialValue: instrumentsValue ?? '',
         fieldKey: 'instruments',
-        hint: 'z.B. Klavier, Gitarre',
+        hint: context.l10n.personFlutterInstrumentsHint,
       ),
     );
   }
@@ -746,7 +874,7 @@ class AllgemeinAccordion extends ConsumerWidget {
   Widget _buildExamineeField(BuildContext context) {
     return EditableToggleRow(
       icon: Icons.school_outlined,
-      label: 'Prüfling',
+      label: context.l10n.peopleCandidate,
       value: person.examinee,
       editable: canEdit,
       onChanged: (v) => onFieldChanged('examinee', v),
@@ -759,15 +887,15 @@ class AllgemeinAccordion extends ConsumerWidget {
 
     return EditableInfoRow(
       icon: Icons.assignment_outlined,
-      label: 'Testergebnis',
-      value: testResultValue ?? 'Nicht angegeben',
+      label: context.l10n.peopleTestResult,
+      value: testResultValue ?? context.l10n.personFlutterNotSpecified,
       editable: canEdit,
       onEdit: () => _editTextField(
         context,
-        title: 'Testergebnis',
+        title: context.l10n.peopleTestResult,
         initialValue: testResultValue ?? '',
         fieldKey: 'testResult',
-        hint: 'Ergebnis eingeben...',
+        hint: context.l10n.personFlutterTestResultHint,
       ),
     );
   }
@@ -782,6 +910,7 @@ class AllgemeinAccordion extends ConsumerWidget {
     TextInputType? keyboardType,
     String? Function(String?)? validator,
     IconData? icon,
+    TextCapitalization? textCapitalization,
   }) async {
     final result = await FieldEditorSheet.show(
       context,
@@ -792,6 +921,7 @@ class AllgemeinAccordion extends ConsumerWidget {
       keyboardType: keyboardType,
       validator: validator,
       icon: icon,
+      textCapitalization: textCapitalization,
     );
     if (result != null) {
       onFieldChanged(fieldKey, result.isEmpty ? null : result);
@@ -805,19 +935,19 @@ class AllgemeinAccordion extends ConsumerWidget {
   String _formatDate(String dateStr) {
     final date = DateTime.tryParse(dateStr);
     if (date == null) return dateStr;
-    return DateFormat('dd.MM.yyyy').format(date);
+    return DateFormat(dateFmt()).format(date);
   }
 
   String _formatExtraFieldValue(ExtraField field, dynamic value) {
-    if (value == null) return 'Nicht angegeben';
+    if (value == null) return l10nWithoutContext.personFlutterNotSpecified;
 
     switch (field.type) {
       case 'boolean':
-        return value == true ? 'Ja' : 'Nein';
+        return value == true ? l10nWithoutContext.commonYes : l10nWithoutContext.commonNo;
       case 'date':
         final date = DateTime.tryParse(value.toString());
         if (date != null) {
-          return DateFormat('dd.MM.yyyy').format(date);
+          return DateFormat(dateFmt()).format(date);
         }
         return value.toString();
       default:

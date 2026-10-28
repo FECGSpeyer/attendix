@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -7,16 +9,28 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 import 'core/config/supabase_config.dart';
+import 'core/providers/locale_provider.dart'; // I18N_INFRA
 import 'core/router/app_router.dart';
+import 'core/router/legacy_url.dart'; // LINKS_STARTUP
 import 'core/services/app_update_service.dart';
+import 'core/services/offline_queue_service.dart'; // PROFILE_OFFLINE
+import 'core/services/live_activity_service.dart'; // LIVE_ACTIVITY
 import 'core/theme/app_theme.dart';
 import 'core/utils/toast_helper.dart';
+import 'features/auth/data/auth_link_listener.dart'; // AUTH
+import 'core/services/teams/teams_service.dart'; // TEAMS
+import 'core/providers/push_providers.dart'; // PUSH
+import 'l10n/l10n.dart'; // I18N_INFRA
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize locale data for German date formatting
-  await initializeDateFormatting('de_DE', null);
+  // I18N_INFRA: date symbols for every enabled language (de_DE, en_GB) and
+  // the start language: stored choice -> device language -> 'de'.
+  for (final lang in enabledLanguages) {
+    await initializeDateFormatting(intlLocales[lang]!, null);
+  }
+  final initialLanguage = await loadInitialLanguage();
 
   // Load environment variables
   try {
@@ -30,9 +44,20 @@ void main() async {
   // Initialize Supabase
   await SupabaseConfig.initialize();
 
+  // LINKS_STARTUP: path links (/tabs/..., /open-attendance?..) → #/... so the
+  // hash-based router sees them (after Supabase read auth params from the URL)
+  if (kIsWeb) promoteLegacyPathToHash();
+  // TEAMS: detect a Microsoft Teams tab (no-op outside an iframe / on native).
+  // Not awaited (REVIEW_FIX2): a non-Teams iframe would otherwise keep the
+  // app blank until the SDK timeouts; SSO/theme react once it completes.
+  unawaited(TeamsService.instance.init());
+
   runApp(
-    const ProviderScope(
-      child: AttendixApp(),
+    ProviderScope(
+      overrides: [
+        initialLanguageProvider.overrideWithValue(initialLanguage), // I18N_INFRA
+      ],
+      child: const AttendixApp(),
     ),
   );
 }
@@ -49,17 +74,46 @@ class _AttendixAppState extends ConsumerState<AttendixApp> {
   @override
   void initState() {
     super.initState();
-    // Start update listener (web only)
-    if (kIsWeb) {
-      ref.read(appUpdateServiceProvider).startListening();
-    }
+    // Start update listener (web: service worker; NATIVE_MISC: native store check)
+    ref.read(appUpdateServiceProvider).startListening();
+    // PROFILE_OFFLINE: replay queued offline attendance writes
+    Future.microtask(
+        () => ref.read(offlineQueueNotifierProvider.notifier).init());
+    // AUTH: password-recovery / signup-confirmation links (Ionic handleAuthUrl)
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // PUSH: native push listeners + token registration (no-op on the web)
+      if (mounted && isNativePushPlatform) ref.read(pushBootstrapProvider);
+      if (mounted) initAuthLinkHandling(ref, ref.read(routerProvider));
+      // LIVE_ACTIVITY: iOS Live Activity for running Ablaufpläne (no-op elsewhere)
+      if (mounted) ref.read(liveActivityBootstrapProvider);
+      // TEAMS: silent Microsoft SSO inside a Teams tab, once detection is done
+      final teams = ref.read(teamsServiceProvider);
+      unawaited(teams.init().then((_) {
+        if (!mounted || !teams.isInTeams()) return;
+        trySsoSignIn(
+          teams: teams,
+          hasSession:
+              ref.read(supabaseClientProvider).auth.currentSession != null,
+          go: (location) => ref.read(routerProvider).go(location),
+        );
+      }));
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    // SOL_FIX4: the offline queue follows the signed-in account (recount and
+    // replay only that user's writes on login / logout / account switch).
+    ref.listen(currentUserProvider, (previous, next) {
+      if (previous?.valueOrNull?.id != next.valueOrNull?.id) {
+        unawaited(
+            ref.read(offlineQueueNotifierProvider.notifier).onUserChanged());
+      }
+    });
     final router = ref.watch(routerProvider);
     final updateAvailable = ref.watch(appUpdateAvailableProvider);
     final updateService = ref.read(appUpdateServiceProvider);
+    final locale = ref.watch(localeProvider); // I18N_INFRA
 
     // Show update snackbar when available (only once)
     if (updateAvailable && !updateService.wasDialogShown) {
@@ -76,21 +130,25 @@ class _AttendixAppState extends ConsumerState<AttendixApp> {
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
-      themeMode: ThemeMode.system,
+      themeMode: ref.watch(teamsThemeModeProvider) ?? ThemeMode.system, // TEAMS
       routerConfig: router,
+      scaffoldMessengerKey: rootScaffoldMessengerKey, // PROFILE_OFFLINE
+      // I18N_INFRA: UI language from localeProvider (de default, en optional)
+      locale: locale,
       localizationsDelegates: const [
+        AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         FlutterQuillLocalizations.delegate,
       ],
-      supportedLocales: const [Locale('de', 'DE'), Locale('en', 'US')],
+      supportedLocales: AppLocalizations.supportedLocales,
     );
   }
 
   void _showUpdateSnackbar() {
     ToastHelper.showUpdateAvailable(
-      context,
+      rootScaffoldMessengerKey.currentState,
       onUpdate: () {
         ref.read(appUpdateServiceProvider).applyUpdate();
       },

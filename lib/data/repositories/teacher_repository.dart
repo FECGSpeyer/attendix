@@ -47,6 +47,7 @@ class TeacherRepository extends BaseRepository with TenantAwareRepository {
 
   /// Create a new teacher
   Future<Teacher?> createTeacher(Teacher teacher) async {
+    ensureNotDemo('createTeacher'); // DEMO_GUARD
     try {
       final data = {
         'name': teacher.name,
@@ -72,6 +73,7 @@ class TeacherRepository extends BaseRepository with TenantAwareRepository {
 
   /// Update a teacher
   Future<Teacher?> updateTeacher(int id, Map<String, dynamic> updates) async {
+    ensureNotDemo('updateTeacher'); // DEMO_GUARD
     try {
       updates.remove('id');
       updates.remove('created_at');
@@ -94,6 +96,7 @@ class TeacherRepository extends BaseRepository with TenantAwareRepository {
 
   /// Delete a teacher
   Future<bool> deleteTeacher(int id) async {
+    ensureNotDemo('deleteTeacher'); // DEMO_GUARD
     try {
       await supabase
           .from('teachers')

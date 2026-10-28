@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import '../../../core/constants/enums.dart';
+import '../../../l10n/l10n.dart';
 
 part 'tenant.freezed.dart';
 part 'tenant.g.dart';
@@ -21,7 +22,7 @@ class Tenant with _$Tenant {
     String? seasonStart,
     @Default(false) bool? parents,
     @Default(false) bool betaProgram,
-    @JsonKey(name: 'show_members_list') @Default(false) bool showMembersList,
+    @Default(false) bool showMembersList, // DB_FIX: column "showMembersList"
     String? region,
     int? role,
     @JsonKey(name: 'song_sharing_id') String? songSharingId,
@@ -34,6 +35,21 @@ class Tenant with _$Tenant {
     @Default(false) bool? favorite,
     @JsonKey(name: 'critical_rules') List<CriticalRule>? criticalRules,
     @Default('Europe/Berlin') String timezone,
+    // SETTINGS_EXT: Zusatzfelder für Werke + Dateiablage (files bucket)
+    @JsonKey(name: 'song_additional_fields') List<ExtraField>? songAdditionalFields,
+    @JsonKey(name: 'files_enabled') @Default(false) bool filesEnabled,
+    @JsonKey(name: 'files_shared') @Default(false) bool filesShared,
+    /// Speicherlimit der Dateiablage in Bytes, null = unbegrenzt.
+    @JsonKey(name: 'files_max_bytes') int? filesMaxBytes,
+    // ATTENDANCE_SIGNOUT: show all Termine on the signout page, excuse reasons
+    @JsonKey(name: 'show_all_attendances') @Default(false) bool showAllAttendances,
+    @JsonKey(name: 'show_all_attendances_info_text') String? showAllAttendancesInfoText,
+    @JsonKey(name: 'absence_reasons') List<String>? absenceReasons,
+    @JsonKey(name: 'late_reasons') List<String>? lateReasons,
+    // DUTY: "Meine Termine" als Dienstplan-Ansicht
+    @JsonKey(name: 'duty_view') @Default(false) bool dutyView,
+    // SETTINGS2: schicht-/arbeitsbedingt entschuldigt zählt als anwesend
+    @JsonKey(name: 'shift_excused_as_present') @Default(false) bool shiftExcusedAsPresent,
   }) = _Tenant;
 
   factory Tenant.fromJson(Map<String, dynamic> json) => _$TenantFromJson(json);
@@ -60,6 +76,11 @@ class ExtraField with _$ExtraField {
     required String type,
     dynamic defaultValue,
     List<String>? options,
+    // SETTINGS_EXT: Sichtbarkeit/Bearbeitbarkeit für Mitglieder + Anzeige
+    bool? visibleToPlayers,
+    bool? editableByPlayers,
+    /// 'chip' | 'underneath'
+    String? displayMode,
   }) = _ExtraField;
 
   factory ExtraField.fromJson(Map<String, dynamic> json) =>
@@ -120,19 +141,20 @@ extension CriticalRuleExtension on CriticalRule {
         ? '${thresholdValue}x'
         : '$thresholdValue%';
 
+    final l10n = l10nWithoutContext;
     final statusLabels = statuses.map((s) {
       return switch (s) {
-        4 => 'Abwesend',
-        3 => 'Verspätet',
-        5 => 'Verspätet (entsch.)',
-        _ => 'Status $s',
+        4 => l10n.commonStatusAbsent,
+        3 => l10n.commonStatusLateShort,
+        5 => l10n.attendanceLateExcusedParen,
+        _ => l10n.coreFlutterRuleStatusN(s),
       };
     }).join(' / ');
 
     final period = switch (periodType) {
-      CriticalRulePeriodType.days => 'in ${periodDays ?? 30} Tagen',
-      CriticalRulePeriodType.season => 'seit Saisonstart',
-      _ => 'insgesamt',
+      CriticalRulePeriodType.days => l10n.homeDashboardInDays(periodDays ?? 30),
+      CriticalRulePeriodType.season => l10n.coreFlutterRuleSinceSeasonStart,
+      _ => l10n.coreFlutterRuleOverall,
     };
 
     return '$threshold $statusLabels $period';

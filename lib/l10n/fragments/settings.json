@@ -1,0 +1,338 @@
+{
+  "de": {
+    "settings": {
+      "flutter": {
+        "users": "Benutzer",
+        "changeEmail": "E-Mail ändern",
+        "applicantTitle": "Mitgliedschaft wird geprüft",
+        "applicantText": "Ein Administrator wird deine Registrierung prüfen.",
+        "pwa": {
+          "title": "App installieren",
+          "text": "Für ein besseres Erlebnis kannst du diese App installieren:",
+          "iosStep1": "Tippe auf das Teilen-Symbol",
+          "iosStep2": "\"Zum Home-Bildschirm\"",
+          "iosStep3": "\"Hinzufügen\"",
+          "androidStep1": "Tippe auf das Menü (⋮)",
+          "androidStep2": "\"App installieren\" oder \"Zum Startbildschirm\""
+        },
+        "calendarIntro": "Kopiere den folgenden Link in deine Kalender-App, um die Termine zu abonnieren:",
+        "copyLinkFailed": "Link konnte nicht kopiert werden",
+        "invalidEmail": "Bitte gib eine gültige E-Mail-Adresse ein.",
+        "adminAddedNotNotified": "Der Admin wurde hinzugefügt, konnte aber nicht benachrichtigt werden.",
+        "errorDetail": "Fehler: {error}",
+        "batch": {
+          "title": "Accounts erstellen",
+          "withAccount": "Mit Account",
+          "eligible": "Account erstellbar (mit E-Mail)",
+          "noEmail": "Ohne E-Mail (manuell nötig)",
+          "processed": "{processed} / {total} verarbeitet",
+          "succeeded": "{count} erfolgreich",
+          "failed": "{count} fehlgeschlagen",
+          "eligibleList": "Spieler ohne Account ({count})",
+          "createButton": "Accounts für {count} Spieler erstellen",
+          "allHaveAccount": "Alle Spieler mit E-Mail haben bereits einen Account."
+        },
+        "archiveHint": "Hier erscheinen archivierte Mitglieder",
+        "reactivateMessage": "Möchtest du {name} wieder aktivieren?",
+        "reactivated": "{name} wurde reaktiviert",
+        "loadFailed": "Fehler beim Laden: {error}",
+        "createFailed": "Fehler beim Erstellen: {error}",
+        "emailRequired": "E-Mail ist erforderlich",
+        "firstNameRequired": "Vorname ist erforderlich",
+        "lastNameRequired": "Nachname ist erforderlich",
+        "addFailed": "Fehler beim Hinzufügen",
+        "parentRemoved": "Elternteil entfernt",
+        "viewerRemoved": "Beobachter entfernt",
+        "pending": {
+          "empty": "Keine ausstehenden Registrierungen",
+          "emptyHint": "Neue Registrierungen erscheinen hier automatisch",
+          "invalidId": "Ungültige Spieler-ID",
+          "approveTitle": "Registrierung genehmigen?",
+          "approveMessage": "Möchtest du {name} als Mitglied freischalten?",
+          "approve": "Genehmigen",
+          "approved": "{name} wurde freigeschaltet",
+          "declineTitle": "Registrierung ablehnen?",
+          "declineMessage": "Möchtest du die Registrierung von {name} ablehnen? Der Eintrag wird gelöscht.",
+          "declined": "Registrierung abgelehnt"
+        },
+        "userMgmt": {
+          "title": "Benutzerverwaltung",
+          "tabAdmins": "Admins",
+          "tabAll": "Alle Benutzer",
+          "added": "Benutzer hinzugefügt",
+          "addFailed": "Fehler beim Hinzufügen des Benutzers",
+          "add": "Benutzer hinzufügen",
+          "emailPh": "email@beispiel.de",
+          "noAdmins": "Keine Administratoren",
+          "noAdminsHint": "Füge Admins über den + Button hinzu",
+          "noViewers": "Keine Betrachter",
+          "noViewersHint": "Betrachter können Anwesenheit sehen, aber nicht bearbeiten",
+          "noParents": "Keine Eltern",
+          "noParentsHint": "Eltern können ihre Kinder an-/abmelden",
+          "noUsers": "Keine Benutzer vorhanden",
+          "responsibles": "Verantwortliche",
+          "players": "Spieler",
+          "lastAdmin": "Der letzte Administrator kann nicht herabgestuft werden. Bitte füge zuerst einen weiteren Admin hinzu.",
+          "selfDemoteTitle": "Eigene Rolle ändern?",
+          "selfDemoteMessage": "Du bist dabei, deine eigene Admin-Rolle zu entfernen. Du verlierst dadurch den Zugang zur Benutzerverwaltung. Möchtest du fortfahren?",
+          "selfDemoteConfirm": "Ja, Rolle ändern",
+          "roleChanged": "Rolle geändert zu {role}",
+          "roleChangeFailed": "Fehler beim Ändern der Rolle",
+          "noRole": "Keine Rolle"
+        }
+      }
+    },
+    "generalSettings": {
+      "flutter": {
+        "disabled": "Deaktiviert",
+        "andShort": "UND",
+        "editRule": "Regel bearbeiten",
+        "statusCritical": "Status (zählt als kritisch)",
+        "daysSuffix": "Tage",
+        "orHint": "Person ist kritisch, wenn EINE der Regeln zutrifft",
+        "andHint": "Person ist kritisch, wenn ALLE Regeln zutreffen",
+        "ruleEnabled": "Regel aktiviert",
+        "ruleEnabledHelper": "Deaktivierte Regeln werden nicht ausgewertet",
+        "orShort": "ODER",
+        "noHolidays": "Keine Feiertage",
+        "practiceStart": "Probenbeginn",
+        "practiceEnd": "Probenende",
+        "fieldsCount": "{count, plural, one {{count} Feld} other {{count} Felder}}",
+        "deleteRuleNamed": "Möchtest du die Regel \"{name}\" wirklich löschen?",
+        "excuses": "Entschuldigungen",
+        "excusesHelper": "Erlaubt \"Entschuldigt\" als Status",
+        "noTypes": "Keine Terminarten vorhanden",
+        "ruleAdded": "Regel hinzugefügt",
+        "ruleUpdated": "Regel aktualisiert",
+        "ruleDeleted": "Regel gelöscht"
+      }
+    },
+    "branding": {
+      "flutter": {
+        "replaceLogo": "Logo ersetzen",
+        "uploadLogo": "Logo hochladen"
+      }
+    },
+    "typeSettings": {
+      "flutter": {
+        "reorder": "Reihenfolge ändern",
+        "noTypes": "Keine Anwesenheitstypen vorhanden",
+        "createType": "Typ erstellen",
+        "saveOrderFailed": "Fehler beim Speichern. Bitte erneut versuchen.",
+        "newType": "Neuer Anwesenheitstyp",
+        "namePh": "z.B. Probe, Konzert, Generalprobe",
+        "createdNamed": "Anwesenheitstyp \"{name}\" erstellt",
+        "withProgramme": "Mit Programm",
+        "hidden": "Ausgeblendet",
+        "typeTitle": "Anwesenheitstyp",
+        "notFound": "Typ nicht gefunden",
+        "usageWarning": "Wird in {count} Termin(en) verwendet. Änderungen wirken sich auf bestehende Einträge aus.",
+        "namePhShort": "z.B. Probe, Konzert",
+        "minutes": "{minutes} Min.",
+        "totalMinutes": "Gesamt: {minutes} Min.",
+        "planHeadingPh": "z.B. Probenplan",
+        "allGroupsHint": "Leer = gilt für alle Gruppen",
+        "extraFilterHint": "Nur Spieler mit diesem Zusatzfeld-Wert einbeziehen",
+        "extraField": "Zusatzfeld",
+        "newField": "Neues Feld",
+        "fieldNamePh": "z.B. Einspielen, Pause",
+        "durationMinutes": "Dauer (Minuten)",
+        "durationPh": "z.B. 10",
+        "todoPh": "z.B. Noten vorbereiten",
+        "deadlineLabel": "Frist (Stunden vorher, optional)",
+        "deadlinePh": "z.B. 24 für 1 Tag"
+      }
+    },
+    "rolePerm": {
+      "flutter": {
+        "loadFailed": "Fehler beim Laden der Rollenberechtigungen\n{error}"
+      }
+    },
+    "extraFields": {
+      "flutter": {
+        "firstOptionDefault": "Erste Option ist der Standardwert",
+        "leaveMessage": "Du hast ungespeicherte Änderungen. Möchtest du die Seite trotzdem verlassen?"
+      }
+    },
+    "files": {
+      "flutter": {
+        "openLinkFailed": "Link konnte nicht geöffnet werden",
+        "movePh": "z. B. Dokumente/2026",
+        "openFolder": "Ordner öffnen",
+        "openDownload": "Datei öffnen/downloaden",
+        "shareFolderLink": "Link zu diesem Ordner teilen",
+        "shareRootLink": "Link zur Dateiablage teilen",
+        "ascending": "Aufsteigend",
+        "descending": "Absteigend"
+      }
+    }
+  },
+  "en": {
+    "settings": {
+      "flutter": {
+        "users": "Users",
+        "changeEmail": "Change email",
+        "applicantTitle": "Membership under review",
+        "applicantText": "An administrator will review your registration.",
+        "pwa": {
+          "title": "Install app",
+          "text": "For a better experience you can install this app:",
+          "iosStep1": "Tap the share icon",
+          "iosStep2": "\"Add to Home Screen\"",
+          "iosStep3": "\"Add\"",
+          "androidStep1": "Tap the menu (⋮)",
+          "androidStep2": "\"Install app\" or \"Add to Home screen\""
+        },
+        "calendarIntro": "Copy the following link into your calendar app to subscribe to the events:",
+        "copyLinkFailed": "Link could not be copied",
+        "invalidEmail": "Please enter a valid email address.",
+        "adminAddedNotNotified": "The admin was added but could not be notified.",
+        "errorDetail": "Error: {error}",
+        "batch": {
+          "title": "Create accounts",
+          "withAccount": "With account",
+          "eligible": "Account can be created (with email)",
+          "noEmail": "Without email (manual)",
+          "processed": "{processed} / {total} processed",
+          "succeeded": "{count} succeeded",
+          "failed": "{count} failed",
+          "eligibleList": "Players without account ({count})",
+          "createButton": "Create accounts for {count} players",
+          "allHaveAccount": "All players with email already have an account."
+        },
+        "archiveHint": "Archived members appear here",
+        "reactivateMessage": "Do you want to reactivate {name}?",
+        "reactivated": "{name} has been reactivated",
+        "loadFailed": "Error while loading: {error}",
+        "createFailed": "Error while creating: {error}",
+        "emailRequired": "Email is required",
+        "firstNameRequired": "First name is required",
+        "lastNameRequired": "Last name is required",
+        "addFailed": "Error while adding",
+        "parentRemoved": "Parent removed",
+        "viewerRemoved": "Observer removed",
+        "pending": {
+          "empty": "No pending registrations",
+          "emptyHint": "New registrations appear here automatically",
+          "invalidId": "Invalid player ID",
+          "approveTitle": "Approve registration?",
+          "approveMessage": "Do you want to approve {name} as a member?",
+          "approve": "Approve",
+          "approved": "{name} has been approved",
+          "declineTitle": "Decline registration?",
+          "declineMessage": "Do you want to decline the registration of {name}? The entry will be deleted.",
+          "declined": "Registration declined"
+        },
+        "userMgmt": {
+          "title": "User management",
+          "tabAdmins": "Admins",
+          "tabAll": "All users",
+          "added": "User added",
+          "addFailed": "Error adding the user",
+          "add": "Add user",
+          "emailPh": "email@example.com",
+          "noAdmins": "No administrators",
+          "noAdminsHint": "Add admins using the + button",
+          "noViewers": "No observers",
+          "noViewersHint": "Observers can view attendance but not edit it",
+          "noParents": "No parents",
+          "noParentsHint": "Parents can sign their children in and out",
+          "noUsers": "No users available",
+          "responsibles": "Responsible persons",
+          "players": "Players",
+          "lastAdmin": "The last administrator cannot be demoted. Please add another admin first.",
+          "selfDemoteTitle": "Change your own role?",
+          "selfDemoteMessage": "You are about to remove your own admin role. You will lose access to user management. Do you want to continue?",
+          "selfDemoteConfirm": "Yes, change role",
+          "roleChanged": "Role changed to {role}",
+          "roleChangeFailed": "Error changing the role",
+          "noRole": "No role"
+        }
+      }
+    },
+    "generalSettings": {
+      "flutter": {
+        "disabled": "Disabled",
+        "andShort": "AND",
+        "editRule": "Edit rule",
+        "statusCritical": "Status (counts as critical)",
+        "daysSuffix": "days",
+        "orHint": "Person is critical if ANY of the rules applies",
+        "andHint": "Person is critical if ALL rules apply",
+        "ruleEnabled": "Rule enabled",
+        "ruleEnabledHelper": "Disabled rules are not evaluated",
+        "orShort": "OR",
+        "noHolidays": "No holidays",
+        "practiceStart": "Rehearsal start",
+        "practiceEnd": "Rehearsal end",
+        "fieldsCount": "{count, plural, one {{count} field} other {{count} fields}}",
+        "deleteRuleNamed": "Do you really want to delete the rule \"{name}\"?",
+        "excuses": "Excuses",
+        "excusesHelper": "Allows \"Excused\" as a status",
+        "noTypes": "No event types available",
+        "ruleAdded": "Rule added",
+        "ruleUpdated": "Rule updated",
+        "ruleDeleted": "Rule deleted"
+      }
+    },
+    "branding": {
+      "flutter": {
+        "replaceLogo": "Replace logo",
+        "uploadLogo": "Upload logo"
+      }
+    },
+    "typeSettings": {
+      "flutter": {
+        "reorder": "Change order",
+        "noTypes": "No attendance types available",
+        "createType": "Create type",
+        "saveOrderFailed": "Error while saving. Please try again.",
+        "newType": "New attendance type",
+        "namePh": "e.g. rehearsal, concert, dress rehearsal",
+        "createdNamed": "Attendance type \"{name}\" created",
+        "withProgramme": "With programme",
+        "hidden": "Hidden",
+        "typeTitle": "Attendance type",
+        "notFound": "Type not found",
+        "usageWarning": "Used in {count} event(s). Changes affect existing entries.",
+        "namePhShort": "e.g. rehearsal, concert",
+        "minutes": "{minutes} min.",
+        "totalMinutes": "Total: {minutes} min.",
+        "planHeadingPh": "e.g. rehearsal plan",
+        "allGroupsHint": "Empty = applies to all groups",
+        "extraFilterHint": "Only include players with this additional field value",
+        "extraField": "Additional field",
+        "newField": "New field",
+        "fieldNamePh": "e.g. warm-up, break",
+        "durationMinutes": "Duration (minutes)",
+        "durationPh": "e.g. 10",
+        "todoPh": "e.g. prepare sheet music",
+        "deadlineLabel": "Deadline (hours before, optional)",
+        "deadlinePh": "e.g. 24 for 1 day"
+      }
+    },
+    "rolePerm": {
+      "flutter": {
+        "loadFailed": "Error loading role permissions\n{error}"
+      }
+    },
+    "extraFields": {
+      "flutter": {
+        "firstOptionDefault": "The first option is the default value",
+        "leaveMessage": "You have unsaved changes. Do you want to leave the page anyway?"
+      }
+    },
+    "files": {
+      "flutter": {
+        "openLinkFailed": "Link could not be opened",
+        "movePh": "e.g. Documents/2026",
+        "openFolder": "Open folder",
+        "openDownload": "Open/download file",
+        "shareFolderLink": "Share link to this folder",
+        "shareRootLink": "Share link to the file storage",
+        "ascending": "Ascending",
+        "descending": "Descending"
+      }
+    }
+  }
+}

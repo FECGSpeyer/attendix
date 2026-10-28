@@ -1,22 +1,22 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../utils/event_list_utils.dart';
 import '../config/supabase_config.dart';
 import '../constants/enums.dart';
 import '../../data/models/attendance/attendance.dart';
 import '../../data/repositories/repositories.dart';
+import 'attendance_type_providers.dart';
 import 'realtime_providers.dart';
 import 'tenant_providers.dart';
+import 'role_permission_providers.dart'; // SOL_FIX2
+import '../../l10n/l10n.dart';
 
 /// Initialized attendance repository with tenant context
+/// SOL_FIX1: per-tenant immutable instance, so a tenant switch never
+/// changes the tenant of an operation that is already running.
 final attendanceRepositoryWithTenantProvider = Provider<AttendanceRepository>((ref) {
-  final repo = ref.watch(attendanceRepositoryProvider);
   final tenant = ref.watch(currentTenantIdProvider);
-  
-  if (tenant != null) {
-    repo.setTenantId(tenant);
-  }
-  
-  return repo;
+  return ref.watch(attendanceRepositoryForTenantProvider(tenant));
 });
 
 /// Provider for attendance list
@@ -25,7 +25,12 @@ final attendancesProvider = FutureProvider<List<Attendance>>((ref) async {
   
   if (!repo.hasTenantId) return [];
   
-  return repo.getAttendances();
+  // PARITY_A (R1): Ionic att-list getAttendance(false, ...) -> all Termine
+  // after getCurrentAttDate() (season start, fallback 2023-01-01).
+  final tenant = ref.watch(currentTenantProvider);
+  return repo.getAttendances(
+    since: AttendanceRepository.currentAttDate(tenant?.seasonStart),
+  );
 });
 
 /// Provider for upcoming attendances
@@ -55,6 +60,103 @@ final personAttendancesProvider = FutureProvider.family<List<PersonAttendance>, 
   return repo.getPersonAttendancesForPerson(personId);
 });
 
+// ATT_DETAIL
+/// Termintyp filter of the attendance list (Ionic att-list `filterTypeId`).
+/// `null` = "Alle anzeigen".
+/// Reset on tenant switch (type ids are tenant specific).
+final attendanceListTypeFilterProvider = StateProvider<String?>((ref) {
+  ref.watch(currentTenantIdProvider);
+  return null;
+});
+
+/// Status counts (anwesend / entschuldigt / abwesend) of one Termin, used by
+/// the "Heute / Nächster Termin" card (Ionic att-list getStatusCounts).
+final attendanceStatusCountsProvider =
+    FutureProvider.autoDispose.family<AttendanceStatusCounts, int>((ref, attendanceId) async {
+  ref.watch(attendanceRefetchCounter);
+  final repo = ref.watch(attendanceRepositoryWithTenantProvider);
+  if (!repo.hasTenantId) return const AttendanceStatusCounts();
+  final rows = await repo.getPersonAttendancesForAttendances([attendanceId]);
+  return AttendanceStatusCounts.fromStatuses(rows.map((r) => r.status));
+});
+
+/// Counts like Ionic getStatusCounts: Verspätet counts as present,
+/// Verspätet entschuldigt as excused.
+class AttendanceStatusCounts {
+  const AttendanceStatusCounts({
+    this.present = 0,
+    this.excused = 0,
+    this.absent = 0,
+    this.total = 0,
+  });
+
+  factory AttendanceStatusCounts.fromStatuses(Iterable<AttendanceStatus> statuses) {
+    var present = 0, excused = 0, absent = 0, total = 0;
+    for (final s in statuses) {
+      total++;
+      switch (s) {
+        case AttendanceStatus.present:
+        case AttendanceStatus.late:
+          present++;
+        case AttendanceStatus.excused:
+        case AttendanceStatus.lateExcused:
+          excused++;
+        case AttendanceStatus.absent:
+          absent++;
+        default:
+          break;
+      }
+    }
+    return AttendanceStatusCounts(
+      present: present,
+      excused: excused,
+      absent: absent,
+      total: total,
+    );
+  }
+
+  final int present;
+  final int excused;
+  final int absent;
+
+  /// All persons of the Termin (Ionic `att.persons.length`).
+  final int total;
+}
+
+// UX_ATT: status counts of all Termine shown in the list, loaded with one
+// query (Ionic att-list getCountText "{present} von {total} anwesend").
+final attendanceListStatusCountsProvider =
+    FutureProvider.autoDispose<Map<int, AttendanceStatusCounts>>((ref) async {
+  // Refetch only when the Termine or their percentages change, not on every
+  // realtime event (e.g. notes edits).
+  final key = ref.watch(realtimeAttendanceListProvider.select((v) =>
+      (v.valueOrNull ?? const <Attendance>[])
+          .map((a) => '${a.id}:${a.percentage}')
+          .join(',')));
+  final ids = key.isEmpty
+      ? const <int>[]
+      : key
+          .split(',')
+          .map((e) => int.tryParse(e.split(':').first))
+          .whereType<int>()
+          .toList();
+  if (ids.isEmpty) return const {};
+  final repo = ref.watch(attendanceRepositoryWithTenantProvider);
+  if (!repo.hasTenantId) return const {};
+  final rows = await repo.getPersonAttendancesForAttendances(ids);
+  final byAttendance = <int, List<AttendanceStatus>>{};
+  for (final r in rows) {
+    final id = r.attendanceId;
+    if (id == null) continue;
+    byAttendance.putIfAbsent(id, () => []).add(r.status);
+  }
+  return {
+    for (final e in byAttendance.entries)
+      e.key: AttendanceStatusCounts.fromStatuses(e.value),
+  };
+});
+// END ATT_DETAIL
+
 /// Data class for categorized attendances (memoized)
 class CategorizedAttendances {
   final Attendance? current;
@@ -70,10 +172,13 @@ class CategorizedAttendances {
 
 /// Provider that categorizes and sorts attendances (computed once per data change)
 final categorizedAttendancesProvider = Provider<CategorizedAttendances>((ref) {
-  final attendances = ref.watch(realtimeAttendanceListProvider).valueOrNull ?? [];
+  final all = ref.watch(realtimeAttendanceListProvider).valueOrNull ?? [];
+  // ATT_DETAIL: Termintyp filter of the list ("Alle anzeigen" = null)
+  final typeFilter = ref.watch(attendanceListTypeFilterProvider);
+  final attendances =
+      typeFilter == null ? all : all.where((a) => a.typeId == typeFilter).toList();
 
   final now = DateTime.now();
-  final todayStart = DateTime(now.year, now.month, now.day);
 
   final upcoming = <Attendance>[];
   final past = <Attendance>[];
@@ -84,8 +189,8 @@ final categorizedAttendancesProvider = Provider<CategorizedAttendances>((ref) {
       past.add(attendance);
       continue;
     }
-    final dateOnly = DateTime(date.year, date.month, date.day);
-    if (dateOnly.isBefore(todayStart)) {
+    // Multi-day Termine count as past only after their last day.
+    if (EventListUtils.hasEnded(attendance.date, attendance.durationDays, now: now)) {
       past.add(attendance);
     } else {
       upcoming.add(attendance);
@@ -117,6 +222,8 @@ final categorizedAttendancesProvider = Provider<CategorizedAttendances>((ref) {
 final averageAttendancePercentProvider = Provider<double?>((ref) {
   final categorized = ref.watch(categorizedAttendancesProvider);
   // BL-005: Include 0% attendances in average calculation (changed > 0 to != null)
+  // LOGIC_SELF: duty Termine with nobody assigned have percentage == null
+  // (attendanceListPercentage) and are left out like in Ionic applyAttendances.
   final pastAttendances = categorized.past
       .where((a) => a.percentage != null)
       .toList();
@@ -143,7 +250,7 @@ final playerAttendancePercentagesProvider =
   final tenant = ref.watch(currentTenantProvider);
   if (tenant == null || tenant.id == null) return {};
 
-  final now = DateTime.now().toIso8601String();
+  final now = DateTime.now().toUtc().toIso8601String();
   final seasonStart = tenant.seasonStart;
 
   // Fetch all records using pagination to avoid the PostgREST 1000-row default limit.
@@ -155,7 +262,7 @@ final playerAttendancePercentagesProvider =
   while (true) {
     var query = supabase
         .from('person_attendances')
-        .select('person_id, status, attendance:attendance_id!inner(date, tenantId)')
+        .select('person_id, status, notes, duty_state, attendance:attendance_id!inner(date, tenantId, type_id)')
         .eq('attendance.tenantId', tenant.id!)
         .lte('attendance.date', now);
 
@@ -164,13 +271,30 @@ final playerAttendancePercentagesProvider =
       query = query.gte('attendance.date', seasonStart);
     }
 
-    final batch = await query.range(offset, offset + batchSize - 1);
+    // SOL_FIX1: stable order, otherwise pages can overlap / skip rows.
+    final batch = await query
+        .order('id', ascending: true)
+        .range(offset, offset + batchSize - 1);
 
     final rows = batch as List;
     allAttendances.addAll(rows);
     if (rows.length < batchSize) break;
     offset += batchSize;
   }
+
+  // Only attendance types with include_in_average count (Ionic
+  // Utils.getModifiedPlayersForList). Unknown types are excluded.
+  final types = await ref.watch(attendanceTypesProvider.future);
+  final includedTypeIds = types
+      .where((t) => t.includeInAverage && t.id != null)
+      .map((t) => t.id!)
+      .toSet();
+  // LOGIC_PEOPLE: duties only count for persons who were assigned
+  // (Ionic: `type.duty_mode && !personAttendance.duty_state` → skip).
+  final dutyTypeIds = types
+      .where((t) => t.dutyMode && t.id != null)
+      .map((t) => t.id!)
+      .toSet();
 
   // Group by person_id
   final totals = <int, int>{};
@@ -179,10 +303,21 @@ final playerAttendancePercentagesProvider =
   for (final a in allAttendances) {
     final personId = a['person_id'] as int?;
     if (personId == null) continue;
+    final typeId = (a['attendance'] as Map?)?['type_id']?.toString();
+    if (typeId == null || !includedTypeIds.contains(typeId)) continue;
+    final dutyState = a['duty_state'];
+    if (dutyTypeIds.contains(typeId) &&
+        (dutyState == null || (dutyState is String && dutyState.isEmpty))) {
+      continue;
+    }
     totals[personId] = (totals[personId] ?? 0) + 1;
     final status = a['status'] as int?;
     // BL-003: Use centralized definition for which statuses count as attended
-    if (AttendanceStatus.fromValue(status ?? 0).countsAsPresent) {
+    // SETTINGS2: shift_excused_as_present (Ionic getModifiedPlayersForList)
+    if (AttendanceStatus.fromValue(status ?? 0).countsAsAttended(
+      notes: a['notes'] as String?,
+      shiftExcusedAsPresent: tenant.shiftExcusedAsPresent,
+    )) {
       attended[personId] = (attended[personId] ?? 0) + 1;
     }
   }
@@ -202,9 +337,14 @@ class AttendanceNotifier extends Notifier<AsyncValue<void>> {
   AttendanceRepository get _repo => ref.read(attendanceRepositoryWithTenantProvider);
 
   Future<Attendance?> createAttendance(Attendance attendance) async {
+    final repo = _repo; // SOL_FIX4: bind the tenant repository before the first await.
     state = const AsyncValue.loading();
     try {
-      final result = await _repo.createAttendance(attendance);
+      // SOL_FIX2: resolved create permission (helpers: attendance_create).
+      if (!await ref.read(canCreateAttendanceConfirmedProvider.future)) {
+        throw StateError(l10nWithoutContext.attendanceFlutterNoPermission);
+      }
+      final result = await repo.createAttendance(attendance);
       state = const AsyncValue.data(null);
       ref.invalidate(attendancesProvider);
       ref.invalidate(upcomingAttendancesProvider);
@@ -281,16 +421,6 @@ class AttendanceNotifier extends Notifier<AsyncValue<void>> {
     }
   }
 
-  Future<void> recalculatePercentage(int attendanceId) async {
-    try {
-      await _repo.recalculatePercentage(attendanceId);
-      ref.invalidate(attendanceByIdProvider(attendanceId));
-      ref.invalidate(attendancesProvider);
-    } catch (e, stack) {
-      state = AsyncValue.error(e, stack);
-    }
-  }
-
   /// Batch update multiple person attendances with the same status
   Future<void> batchUpdatePersonAttendances(
     List<String> personAttendanceIds,
@@ -302,9 +432,9 @@ class AttendanceNotifier extends Notifier<AsyncValue<void>> {
       await _repo.batchUpdatePersonAttendances(personAttendanceIds, newStatus);
       state = const AsyncValue.data(null);
       ref.invalidate(attendanceByIdProvider(attendanceId));
-      // Fire-and-forget: don't await so a recalculation failure doesn't
-      // overwrite the successful batch update state
-      recalculatePercentage(attendanceId);
+      // LOGIC_ATT: Ionic never stores attendance.percentage (not a column in
+      // the Ionic schema); the list computes it from the person rows.
+      ref.invalidate(attendancesProvider);
       ref.invalidate(playerAttendancePercentagesProvider);
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);

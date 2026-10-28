@@ -1,0 +1,90 @@
+{
+  "de": {
+    "messages": {
+      "flutter": {
+        "problems": "{count, plural, one {# Problem} other {# Probleme}}",
+        "hideMessage": "Nachricht ausblenden",
+        "showMessage": "Nachricht anzeigen"
+      }
+    },
+    "teamOrg": {
+      "flutter": {
+        "and": "und",
+        "createType": "{name} anlegen",
+        "member": "Mitglied",
+        "newSuggestions": "{count, plural, one {# neuer Vorschlag} other {# neue Vorschläge}}"
+      }
+    },
+    "tasks": {
+      "flutter": {
+        "showAllCount": "Alle anzeigen ({count})",
+        "allTasks": "Alle Aufgaben",
+        "reopen": "Wieder öffnen",
+        "editTask": "Aufgabe bearbeiten",
+        "newTask": "Neue Aufgabe",
+        "noDate": "Kein Datum"
+      }
+    },
+    "agenda": {
+      "flutter": {
+        "noMatch": "Kein passendes Thema gefunden.",
+        "noOpenTopics": "Keine offenen Themen. Lege oben ein neues an.",
+        "notFound": "Thema nicht gefunden"
+      }
+    },
+    "protocol": {
+      "flutter": {
+        "doneLower": "erledigt",
+        "publishNotify": "Freigeben & benachrichtigen",
+        "republishNotify": "Erneut freigeben & benachrichtigen",
+        "keepDraft": "Als Entwurf lassen",
+        "chooseLeft": "Wähle links einen Punkt aus.",
+        "planEmptyShort": "Der Ablaufplan ist noch leer."
+      }
+    }
+  },
+  "en": {
+    "messages": {
+      "flutter": {
+        "problems": "{count, plural, one {# problem} other {# problems}}",
+        "hideMessage": "Hide message",
+        "showMessage": "Show message"
+      }
+    },
+    "teamOrg": {
+      "flutter": {
+        "and": "and",
+        "createType": "Create {name}",
+        "member": "Member",
+        "newSuggestions": "{count, plural, one {# new suggestion} other {# new suggestions}}"
+      }
+    },
+    "tasks": {
+      "flutter": {
+        "showAllCount": "Show all ({count})",
+        "allTasks": "All tasks",
+        "reopen": "Reopen",
+        "editTask": "Edit task",
+        "newTask": "New task",
+        "noDate": "No date"
+      }
+    },
+    "agenda": {
+      "flutter": {
+        "noMatch": "No matching topic found.",
+        "noOpenTopics": "No open topics. Create a new one above.",
+        "notFound": "Topic not found"
+      }
+    },
+    "protocol": {
+      "flutter": {
+        "doneLower": "done",
+        "publishNotify": "Publish & notify",
+        "republishNotify": "Publish again & notify",
+        "keepDraft": "Keep as draft",
+        "chooseLeft": "Choose an item on the left.",
+        "planEmptyShort": "The run sheet is still empty."
+      }
+    }
+  }
+}

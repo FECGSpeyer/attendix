@@ -6,6 +6,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/shift/shift_definition.dart';
 import '../../../../data/models/shift/shift_instance.dart';
 import '../../../../data/models/shift/shift_plan.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Shows a preview sheet with calculated shifts for the next 30 days
 void showShiftPreviewSheet(BuildContext context, ShiftPlan plan, {ShiftInstance? startInstance}) {
@@ -43,7 +44,7 @@ class ShiftPreviewSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final today = DateTime.now();
     final startDate = startInstance?.dateTime ?? today;
-    final dateFormat = DateFormat('E, d. MMM', 'de_DE');
+    final dateFormat = DateFormat('E, d. MMM', currentIntlLocale());
     // RT-011: Extract name once for null-safe access
     final startInstanceName = startInstance?.name;
     final hasCustomStart = startInstanceName != null;
@@ -72,16 +73,16 @@ class ShiftPreviewSheet extends StatelessWidget {
                   children: [
                     Text(
                       hasCustomStart
-                          ? 'Vorschau: $startInstanceName'
-                          : 'Beispiel-Rechnung',
+                          ? context.l10n.shiftsFlutterPreviewOf(startInstanceName)
+                          : context.l10n.shiftsExample,
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
                     ),
                     Text(
                       hasCustomStart
-                          ? 'Nächste 30 Tage ab ${dateFormat.format(startDate)}'
-                          : 'Nächste 30 Tage ab heute',
+                          ? context.l10n.shiftsFlutterNext30From(dateFormat.format(startDate))
+                          : context.l10n.shiftsFlutterNext30Today,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             color: AppColors.medium,
                           ),
@@ -113,10 +114,10 @@ class ShiftPreviewSheet extends StatelessWidget {
                   Expanded(
                     child: Text(
                       hasCustomStart
-                          ? 'Startdatum: ${dateFormat.format(startDate)} ($startInstanceName)\n'
-                              'Zyklus: ${plan.cycleLengthDays} Tage'
-                          : 'Startdatum: Heute (${dateFormat.format(today)})\n'
-                              'Zyklus: ${plan.cycleLengthDays} Tage',
+                          ? '${context.l10n.shiftsFlutterStartDateWith(dateFormat.format(startDate), startInstanceName)}\n'
+                              '${context.l10n.shiftsFlutterCycle(plan.cycleLengthDays)}'
+                          : '${context.l10n.shiftsFlutterStartDateToday(dateFormat.format(today))}\n'
+                              '${context.l10n.shiftsFlutterCycle(plan.cycleLengthDays)}',
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
                   ),
@@ -136,13 +137,13 @@ class ShiftPreviewSheet extends StatelessWidget {
                       const Icon(Icons.timeline_outlined,
                           size: 48, color: AppColors.medium),
                       const SizedBox(height: AppDimensions.paddingM),
-                      const Text(
-                        'Keine Definition vorhanden',
+                      Text(
+                        context.l10n.shiftsFlutterNoDefinitionYet,
                         style: TextStyle(color: AppColors.medium),
                       ),
                       const SizedBox(height: AppDimensions.paddingS),
                       Text(
-                        'Füge Segmente hinzu, um die Vorschau zu sehen',
+                        context.l10n.shiftsFlutterAddSegmentsHint,
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
                               color: AppColors.medium,
                             ),
@@ -253,8 +254,8 @@ class _DayPreviewTile extends StatelessWidget {
                   color: AppColors.primary,
                   borderRadius: BorderRadius.circular(4),
                 ),
-                child: const Text(
-                  'Heute',
+                child: Text(
+                  context.l10n.teamOrgTodayCap,
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 10,
@@ -271,8 +272,8 @@ class _DayPreviewTile extends StatelessWidget {
                   color: AppColors.secondary,
                   borderRadius: BorderRadius.circular(4),
                 ),
-                child: const Text(
-                  'Start',
+                child: Text(
+                  context.l10n.shiftsFlutterStart,
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 10,
@@ -284,14 +285,14 @@ class _DayPreviewTile extends StatelessWidget {
           ],
         ),
         subtitle: Text(
-          _getSubtitle(),
+          _getSubtitle(context.l10n),
           style: TextStyle(
             color: isFree ? AppColors.success : AppColors.warning,
             fontSize: 12,
           ),
         ),
         trailing: Text(
-          'Tag ${dayInCycle + 1}',
+          context.l10n.shiftsFlutterDayN(dayInCycle + 1),
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
                 color: AppColors.medium,
               ),
@@ -300,13 +301,13 @@ class _DayPreviewTile extends StatelessWidget {
     );
   }
 
-  String _getSubtitle() {
+  String _getSubtitle(AppLocalizations l10n) {
     if (segment == null) {
-      return 'Keine Definition';
+      return l10n.shiftsFlutterNoDefinition;
     }
 
     if (segment!.free) {
-      return 'Frei';
+      return l10n.shiftsFree;
     }
 
     return '${segment!.startTime} - ${segment!.endTime} (${segment!.duration}h)';

@@ -8,6 +8,8 @@ import '../../../../core/providers/realtime_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/person/person.dart';
+import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
 
 /// Pending Players Page - shows self-registered members awaiting approval
 /// BL-006: Converted to StatefulWidget to track processing state
@@ -28,9 +30,9 @@ class _PendingPlayersPageState extends ConsumerState<PendingPlayersPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Ausstehende Registrierungen'),
+        title: Text(context.l10n.settingsPendingPersons),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const BackButtonIcon(),
           onPressed: () => context.pop(),
         ),
       ),
@@ -42,11 +44,11 @@ class _PendingPlayersPageState extends ConsumerState<PendingPlayersPage> {
             children: [
               const Icon(Icons.error_outline, size: 64, color: AppColors.danger),
               const SizedBox(height: AppDimensions.paddingM),
-              Text('Fehler: $e'),
+              Text(context.l10n.settingsFlutterErrorDetail(friendlyErrorMessage(e))),
               const SizedBox(height: AppDimensions.paddingM),
               ElevatedButton(
                 onPressed: () => ref.invalidate(realtimePendingPlayersProvider),
-                child: const Text('Erneut versuchen'),
+                child: Text(context.l10n.messagesRetry),
               ),
             ],
           ),
@@ -60,12 +62,12 @@ class _PendingPlayersPageState extends ConsumerState<PendingPlayersPage> {
                   const Icon(Icons.people_outline, size: 80, color: AppColors.medium),
                   const SizedBox(height: AppDimensions.paddingL),
                   Text(
-                    'Keine ausstehenden Registrierungen',
+                    context.l10n.settingsFlutterPendingEmpty,
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                   const SizedBox(height: AppDimensions.paddingS),
                   Text(
-                    'Neue Registrierungen erscheinen hier automatisch',
+                    context.l10n.settingsFlutterPendingEmptyHint,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: AppColors.medium,
                         ),
@@ -103,7 +105,7 @@ class _PendingPlayersPageState extends ConsumerState<PendingPlayersPage> {
   Future<void> _approvePlayer(Person player) async {
     final playerId = player.id;
     if (playerId == null) {
-      ToastHelper.showError(context, 'Ungültige Spieler-ID');
+      ToastHelper.showError(context, context.l10n.settingsFlutterPendingInvalidId);
       return;
     }
 
@@ -113,16 +115,16 @@ class _PendingPlayersPageState extends ConsumerState<PendingPlayersPage> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Registrierung genehmigen?'),
-        content: Text('Möchtest du ${player.fullName} als Mitglied freischalten?'),
+        title: Text(context.l10n.settingsFlutterPendingApproveTitle),
+        content: Text(context.l10n.settingsFlutterPendingApproveMessage(player.fullName)),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Abbrechen'),
+            child: Text(context.l10n.commonCancel),
           ),
           ElevatedButton(
             onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('Genehmigen'),
+            child: Text(context.l10n.settingsFlutterPendingApprove),
           ),
         ],
       ),
@@ -136,11 +138,11 @@ class _PendingPlayersPageState extends ConsumerState<PendingPlayersPage> {
       await ref.read(playerNotifierProvider.notifier).approvePlayer(player);
 
       if (mounted) {
-        ToastHelper.showSuccess(context, '${player.fullName} wurde freigeschaltet');
+        ToastHelper.showSuccess(context, context.l10n.settingsFlutterPendingApproved(player.fullName));
       }
     } catch (e) {
       if (mounted) {
-        ToastHelper.showError(context, 'Fehler: $e');
+        ToastHelper.showError(context, context.l10n.settingsFlutterErrorDetail(friendlyErrorMessage(e)));
       }
     } finally {
       if (mounted) {
@@ -152,51 +154,107 @@ class _PendingPlayersPageState extends ConsumerState<PendingPlayersPage> {
   Future<void> _declinePlayer(Person player) async {
     final playerId = player.id;
     if (playerId == null) {
-      ToastHelper.showError(context, 'Ungültige Spieler-ID');
+      ToastHelper.showError(context, context.l10n.settingsFlutterPendingInvalidId);
       return;
     }
 
     // BL-006: Guard against double-click
     if (_processingIds.contains(playerId)) return;
 
-    final confirmed = await showDialog<bool>(
+    // LOGIC_PEOPLE: Ionic person.page declinePlayer — a reason is required
+    // ("Person ablehnen" / "Gib einen Grund an." + textarea).
+    final reason = await showDialog<String>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Registrierung ablehnen?'),
-        content: Text('Möchtest du die Registrierung von ${player.fullName} ablehnen? Der Eintrag wird gelöscht.'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Abbrechen'),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: AppColors.danger),
-            onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('Ablehnen'),
-          ),
-        ],
-      ),
+      builder: (ctx) => _DeclineReasonDialog(name: player.fullName),
     );
 
-    if (confirmed != true || !mounted) return;
+    if (reason == null || reason.isEmpty || !mounted) return;
 
     setState(() => _processingIds.add(playerId));
 
     try {
-      await ref.read(playerNotifierProvider.notifier).declinePlayer(player, 'Abgelehnt');
+      await ref.read(playerNotifierProvider.notifier).declinePlayer(player, reason);
 
       if (mounted) {
-        ToastHelper.showSuccess(context, 'Registrierung abgelehnt');
+        ToastHelper.showSuccess(context, context.l10n.settingsFlutterPendingDeclined);
       }
     } catch (e) {
       if (mounted) {
-        ToastHelper.showError(context, 'Fehler: $e');
+        ToastHelper.showError(context, context.l10n.settingsFlutterErrorDetail(friendlyErrorMessage(e)));
       }
     } finally {
       if (mounted) {
         setState(() => _processingIds.remove(playerId));
       }
     }
+  }
+}
+
+/// Reason prompt for declining (Ionic alert with textarea; empty reason
+/// shows "Bitte gib einen Grund an!" and keeps the dialog open).
+class _DeclineReasonDialog extends StatefulWidget {
+  const _DeclineReasonDialog({required this.name});
+
+  final String name;
+
+  @override
+  State<_DeclineReasonDialog> createState() => _DeclineReasonDialogState();
+}
+
+class _DeclineReasonDialogState extends State<_DeclineReasonDialog> {
+  final _controller = TextEditingController();
+  bool _missing = false;
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text(context.l10n.personDeclinePerson),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(context.l10n.personGiveReasonShort),
+          if (_missing) ...[
+            const SizedBox(height: 8),
+            Text(
+              context.l10n.signoutGiveReason,
+              style: const TextStyle(color: AppColors.danger),
+            ),
+          ],
+          const SizedBox(height: 12),
+          TextField(
+            controller: _controller,
+            autofocus: true,
+            maxLines: 3,
+            decoration: const InputDecoration(border: OutlineInputBorder()),
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: Text(context.l10n.commonCancel),
+        ),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(backgroundColor: AppColors.danger),
+          onPressed: () {
+            final text = _controller.text.trim();
+            if (text.isEmpty) {
+              setState(() => _missing = true);
+              return;
+            }
+            Navigator.of(context).pop(text);
+          },
+          child: Text(context.l10n.personDecline),
+        ),
+      ],
+    );
   }
 }
 
@@ -215,8 +273,13 @@ class _PendingPlayerItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // UX_PEOPLE: Ionic opens the person page in approve mode on tap
+    // (duplicate check / merge + approve/decline sheet).
     return Card(
       margin: const EdgeInsets.only(bottom: AppDimensions.paddingS),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+      onTap: player.id == null ? null : () => context.push('/people/${player.id}'),
       child: Padding(
         padding: const EdgeInsets.all(AppDimensions.paddingM),
         child: Column(
@@ -287,7 +350,7 @@ class _PendingPlayerItem extends StatelessWidget {
                   OutlinedButton.icon(
                     onPressed: onDecline,
                     icon: const Icon(Icons.close, size: 18),
-                    label: const Text('Ablehnen'),
+                    label: Text(context.l10n.personDecline),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: AppColors.danger,
                       side: const BorderSide(color: AppColors.danger),
@@ -297,13 +360,14 @@ class _PendingPlayerItem extends StatelessWidget {
                   ElevatedButton.icon(
                     onPressed: onApprove,
                     icon: const Icon(Icons.check, size: 18),
-                    label: const Text('Genehmigen'),
+                    label: Text(context.l10n.settingsFlutterPendingApprove),
                   ),
                 ],
               ],
             ),
           ],
         ),
+      ),
       ),
     );
   }
