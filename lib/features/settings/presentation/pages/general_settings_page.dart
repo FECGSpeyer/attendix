@@ -19,6 +19,7 @@ import '../../../../data/models/tenant/tenant.dart';
 import '../widgets/critical_rule_card.dart';
 import '../widgets/critical_rule_sheet.dart';
 import '../../../../core/utils/demo_guard.dart';
+import '../../../../core/utils/page_reload.dart'; // LOGIC_SETTINGS
 import '../widgets/settings_list.dart'; // UX_SETTINGS
 import '../../../../l10n/l10n.dart';
 
@@ -172,6 +173,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
       (ref.read(groupsProvider).valueOrNull ?? const []).any((g) => g.maingroup != true);
 
   Future<void> _saveSettings() async {
+    final defaultInfoText = context.l10n.defaultsShowAllInfoText; // LOGIC_SETTINGS
     // SETTINGS2: Ionic saveGeneralSettings validation toasts
     if (_longNameController.text.trim().isEmpty) {
       ToastHelper.showError(context, context.l10n.generalSettingsGroupNameEmpty);
@@ -224,11 +226,15 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
         'shift_excused_as_present': _shiftExcusedAsPresent, // SETTINGS2
         // ATTENDANCE_SIGNOUT
         'show_all_attendances': _showAllAttendances,
-        'show_all_attendances_info_text': _showAllInfoTextController.text.trim().isNotEmpty
-            ? _showAllInfoTextController.text.trim()
-            : null,
-        'absence_reasons': _absenceReasons,
-        'late_reasons': _lateReasons,
+        // LOGIC_SETTINGS: Ionic — null when off, otherwise trimmed or default
+        'show_all_attendances_info_text': normalizeShowAllInfoText(
+          enabled: _showAllAttendances,
+          text: _showAllInfoTextController.text,
+          defaultText: defaultInfoText,
+        ),
+        // LOGIC_SETTINGS: Ionic filters empty reasons; empty list -> null
+        'absence_reasons': normalizeReasons(_absenceReasons),
+        'late_reasons': normalizeReasons(_lateReasons),
         // DUTY: only sent when the tenant uses the Dienstplan at all
         if (ref.read(hasDutyTypesProvider)) 'duty_view': _dutyView,
         'song_sharing_id': _songSharingEnabled ? (_songSharingId ?? const Uuid().v4()) : null,
@@ -265,17 +271,27 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
       ref.invalidate(userTenantsProvider);
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(context.l10n.generalSettingsSavedReload),
-            duration: const Duration(seconds: 5),
-            action: SnackBarAction(
-              label: context.l10n.commonOk,
-              onPressed: () {},
-            ),
+        setState(() => _hasChanges = false);
+        // LOGIC_SETTINGS: Ionic success toast + alert with "Neu laden"
+        ToastHelper.showSuccess(context, context.l10n.generalSettingsSaved);
+        final reload = await showDialog<bool>(
+          context: context,
+          builder: (dialogContext) => AlertDialog(
+            title: Text(dialogContext.l10n.generalSettingsSaved),
+            content: Text(dialogContext.l10n.generalSettingsSavedReload),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(dialogContext).pop(false),
+                child: Text(dialogContext.l10n.commonCancel),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(dialogContext).pop(true),
+                child: Text(dialogContext.l10n.generalSettingsReload),
+              ),
+            ],
           ),
         );
-        setState(() => _hasChanges = false);
+        if (reload == true) reloadPage();
       }
     } catch (e) {
       if (mounted) {
@@ -890,4 +906,23 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
       context.pop();
     }
   }
+}
+
+/// LOGIC_SETTINGS: Ionic saveGeneralSettings — empty/blank reasons are
+/// filtered out; an empty result is stored as null.
+List<String>? normalizeReasons(List<String> reasons) {
+  final filtered = reasons.where((r) => r.trim().isNotEmpty).toList();
+  return filtered.isEmpty ? null : filtered;
+}
+
+/// LOGIC_SETTINGS: Ionic saveGeneralSettings — `show_all_attendances_info_text`
+/// is null when the feature is off, otherwise the trimmed text or the default.
+String? normalizeShowAllInfoText({
+  required bool enabled,
+  required String text,
+  required String defaultText,
+}) {
+  if (!enabled) return null;
+  final trimmed = text.trim();
+  return trimmed.isNotEmpty ? trimmed : defaultText;
 }

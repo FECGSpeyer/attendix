@@ -1370,12 +1370,17 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
         'checklist': _checklist.isNotEmpty
             ? _checklist.map((item) => item.toJson()).toList()
             : null,
-        'default_plan': _planFields.isNotEmpty
-            ? {'fields': _planFields}
-            : null,
+        // LOGIC_SETTINGS: Ionic always keeps default_plan = {time, end, fields}
+        // (never null) and preserves the stored time/end.
+        'default_plan': buildDefaultPlanUpdate(
+          _originalType?.defaultPlan,
+          _planFields,
+        ),
         'planning_title': _planningTitle.isNotEmpty ? _planningTitle : null,
         'planning_prefix_instance_name': _planningPrefixInstanceName, // SETTINGS2
-        'relevant_groups': _relevantGroups.isNotEmpty ? _relevantGroups : null,
+        // LOGIC_SETTINGS: Ionic keeps relevant_groups as [] (never null);
+        // Ionic code calls relevant_groups.length without null check.
+        'relevant_groups': _relevantGroups,
         'additional_fields_filter': _additionalFieldsFilter,
         // ATTENDANCE_SIGNOUT
         'place_enabled': _placeEnabled,
@@ -1390,8 +1395,17 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
         ..._protocol.toUpdate(), // PROTOCOL
       };
 
-      await ref.read(attendanceTypeNotifierProvider.notifier).updateType(widget.typeId, updates);
+      final updated = await ref
+          .read(attendanceTypeNotifierProvider.notifier)
+          .updateType(widget.typeId, updates);
       ref.invalidate(protocolTypesProvider); // PROTOCOL
+      // LOGIC_SETTINGS: Ionic shows updateFailed when the save fails
+      if (updated == null) {
+        if (mounted) {
+          ToastHelper.showError(context, context.l10n.typeSettingsUpdateFailed);
+        }
+        return;
+      }
 
       if (mounted) {
         ToastHelper.showSuccess(context, context.l10n.typeSettingsUpdated);
@@ -1431,4 +1445,19 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
       }
     }
   }
+}
+
+/// LOGIC_SETTINGS: Ionic always stores `default_plan` as
+/// `{time, end, fields}` (never null). Keeps any other stored keys
+/// (e.g. time/end) and replaces only the fields list.
+Map<String, dynamic> buildDefaultPlanUpdate(
+  Map<String, dynamic>? original,
+  List<Map<String, dynamic>> fields,
+) {
+  return <String, dynamic>{
+    ...?original,
+    'time': original?['time'] ?? '',
+    'end': original?['end'] ?? '',
+    'fields': fields,
+  };
 }
