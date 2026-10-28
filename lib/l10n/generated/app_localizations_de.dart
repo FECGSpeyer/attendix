@@ -4000,6 +4000,23 @@ class AppLocalizationsDe extends AppLocalizations {
   String get notifEventReminders => 'Terminerinnerungen';
 
   @override
+  String get notifFlutterConfigNotFound => 'Konfiguration nicht gefunden';
+
+  @override
+  String notifFlutterLoadFailed(Object error) {
+    return 'Fehler beim Laden: $error';
+  }
+
+  @override
+  String get notifFlutterTelegramOpenFailed => 'Konnte Telegram nicht öffnen';
+
+  @override
+  String get notifFlutterUpdateFailed => 'Fehler beim Aktualisieren der Konfiguration';
+
+  @override
+  String get notifFlutterUserIdCopied => 'Benutzer-Id kopiert';
+
+  @override
   String get notifLinked => 'Konto erfolgreich verknüpft';
 
   @override

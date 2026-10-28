@@ -5,6 +5,7 @@ import '../../../../core/constants/app_constants.dart';
 import '../../data/help_content_service.dart';
 import '../widgets/glossary_term_dialog.dart';
 import '../widgets/help_markdown.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Single help article with tappable glossary references.
 ///
@@ -20,11 +21,11 @@ class HelpArticlePage extends ConsumerWidget {
     final article = service.getArticle(articleId);
 
     return Scaffold(
-      appBar: AppBar(title: Text(article?.title ?? 'Hilfe')),
+      appBar: AppBar(title: Text(article?.title ?? context.l10n.helpTitle)),
       body: article == null
-          ? const Padding(
-              padding: EdgeInsets.all(AppDimensions.paddingM),
-              child: Text('Dieser Artikel wurde nicht gefunden.'),
+          ? Padding(
+              padding: const EdgeInsets.all(AppDimensions.paddingM),
+              child: Text(context.l10n.helpArticleNotFound),
             )
           : SingleChildScrollView(
               padding: const EdgeInsets.all(AppDimensions.paddingM),

@@ -1,6 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/providers/locale_provider.dart';
 import 'help_content.dart';
+import 'help_content_en.dart';
 import 'help_models.dart';
 
 /// Help-center content access + search.
@@ -191,7 +193,51 @@ class HelpContentService {
   }
 }
 
-/// Help content service (static, German content ported from Ionic).
+/// Help content in the UI language (Ionic `localizeHelp`): untranslated
+/// entries stay German; translated glossary terms keep their German name as
+/// alias so `[[Begriff]]` links in German articles still resolve.
+HelpContentService localizedHelpContentService(String language) {
+  if (language != 'en') return const HelpContentService();
+  return HelpContentService(
+    categories: [
+      for (final c in helpCategories)
+        HelpCategory(
+          id: c.id,
+          label: helpCategoriesEn[c.id] ?? c.label,
+          icon: c.icon,
+          order: c.order,
+        ),
+    ],
+    articles: [
+      for (final a in helpArticles)
+        if (helpArticlesEn[a.id] case final t?)
+          HelpArticle(
+            id: a.id,
+            title: t.title,
+            categoryId: a.categoryId,
+            keywords: t.keywords,
+            body: t.body,
+          )
+        else
+          a,
+    ],
+    glossary: [
+      for (final g in glossaryTerms)
+        if (glossaryTermsEn[g.id] case final t?)
+          GlossaryTerm(
+            id: g.id,
+            term: t.term,
+            aliases: [...t.aliases, g.term, ...g.aliases],
+            definition: t.definition,
+          )
+        else
+          g,
+    ],
+  );
+}
+
+/// Help content service (German content ported from Ionic, English
+/// translation from Ionic content/en), following the UI language.
 final helpContentServiceProvider = Provider<HelpContentService>(
-  (ref) => const HelpContentService(),
+  (ref) => localizedHelpContentService(ref.watch(localeProvider).languageCode),
 );

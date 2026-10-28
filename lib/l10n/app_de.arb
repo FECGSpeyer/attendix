@@ -5231,6 +5231,29 @@
   "@notifEventReminders": {
     "description": "notif.eventReminders"
   },
+  "notifFlutterConfigNotFound": "Konfiguration nicht gefunden",
+  "@notifFlutterConfigNotFound": {
+    "description": "notif.flutter.configNotFound"
+  },
+  "notifFlutterLoadFailed": "Fehler beim Laden: {error}",
+  "@notifFlutterLoadFailed": {
+    "description": "notif.flutter.loadFailed",
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "notifFlutterTelegramOpenFailed": "Konnte Telegram nicht öffnen",
+  "@notifFlutterTelegramOpenFailed": {
+    "description": "notif.flutter.telegramOpenFailed"
+  },
+  "notifFlutterUpdateFailed": "Fehler beim Aktualisieren der Konfiguration",
+  "@notifFlutterUpdateFailed": {
+    "description": "notif.flutter.updateFailed"
+  },
+  "notifFlutterUserIdCopied": "Benutzer-Id kopiert",
+  "@notifFlutterUserIdCopied": {
+    "description": "notif.flutter.userIdCopied"
+  },
   "notifLinked": "Konto erfolgreich verknüpft",
   "@notifLinked": {
     "description": "notif.linked"

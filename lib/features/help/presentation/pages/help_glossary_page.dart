@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../data/help_content_service.dart';
 import '../widgets/help_markdown.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Alphabetical glossary with search.
 ///
@@ -28,7 +29,7 @@ class _HelpGlossaryPageState extends ConsumerState<HelpGlossaryPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Glossar'),
+        title: Text(context.l10n.helpGlossary),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(64),
           child: Padding(
@@ -39,8 +40,8 @@ class _HelpGlossaryPageState extends ConsumerState<HelpGlossaryPage> {
               AppDimensions.paddingS,
             ),
             child: TextField(
-              decoration: const InputDecoration(
-                hintText: 'Begriff suchen...',
+              decoration: InputDecoration(
+                hintText: context.l10n.helpSearchTerm,
                 prefixIcon: Icon(Icons.search),
                 isDense: true,
               ),
@@ -58,7 +59,7 @@ class _HelpGlossaryPageState extends ConsumerState<HelpGlossaryPage> {
             child: Column(
               children: [
                 if (terms.isEmpty)
-                  const ListTile(title: Text('Keine Begriffe gefunden.')),
+                  ListTile(title: Text(context.l10n.helpNoTerms)),
                 for (final g in terms)
                   ExpansionTile(
                     key: PageStorageKey('glossary-${g.id}'),

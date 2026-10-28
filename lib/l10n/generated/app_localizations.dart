@@ -7025,6 +7025,36 @@ abstract class AppLocalizations {
   /// **'Terminerinnerungen'**
   String get notifEventReminders;
 
+  /// notif.flutter.configNotFound
+  ///
+  /// In de, this message translates to:
+  /// **'Konfiguration nicht gefunden'**
+  String get notifFlutterConfigNotFound;
+
+  /// notif.flutter.loadFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Laden: {error}'**
+  String notifFlutterLoadFailed(Object error);
+
+  /// notif.flutter.telegramOpenFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Konnte Telegram nicht öffnen'**
+  String get notifFlutterTelegramOpenFailed;
+
+  /// notif.flutter.updateFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Aktualisieren der Konfiguration'**
+  String get notifFlutterUpdateFailed;
+
+  /// notif.flutter.userIdCopied
+  ///
+  /// In de, this message translates to:
+  /// **'Benutzer-Id kopiert'**
+  String get notifFlutterUserIdCopied;
+
   /// notif.linked
   ///
   /// In de, this message translates to:

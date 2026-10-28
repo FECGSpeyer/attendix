@@ -4006,6 +4006,23 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notifEventReminders => 'Event reminders';
 
   @override
+  String get notifFlutterConfigNotFound => 'Configuration not found';
+
+  @override
+  String notifFlutterLoadFailed(Object error) {
+    return 'Error while loading: $error';
+  }
+
+  @override
+  String get notifFlutterTelegramOpenFailed => 'Could not open Telegram';
+
+  @override
+  String get notifFlutterUpdateFailed => 'Error updating the configuration';
+
+  @override
+  String get notifFlutterUserIdCopied => 'User ID copied';
+
+  @override
   String get notifLinked => 'Account linked';
 
   @override

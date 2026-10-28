@@ -105,6 +105,15 @@
         "newEmailPh": "Neue E-Mail-Adresse...",
         "noProfile": "Kein Profil gefunden"
       }
+    },
+    "notif": {
+      "flutter": {
+        "loadFailed": "Fehler beim Laden: {error}",
+        "updateFailed": "Fehler beim Aktualisieren der Konfiguration",
+        "telegramOpenFailed": "Konnte Telegram nicht öffnen",
+        "configNotFound": "Konfiguration nicht gefunden",
+        "userIdCopied": "Benutzer-Id kopiert"
+      }
     }
   },
   "en": {
@@ -212,6 +221,15 @@
         "currentEmail": "Current: {email}",
         "newEmailPh": "New email address...",
         "noProfile": "No profile found"
+      }
+    },
+    "notif": {
+      "flutter": {
+        "loadFailed": "Error while loading: {error}",
+        "updateFailed": "Error updating the configuration",
+        "telegramOpenFailed": "Could not open Telegram",
+        "configNotFound": "Configuration not found",
+        "userIdCopied": "User ID copied"
       }
     }
   }
