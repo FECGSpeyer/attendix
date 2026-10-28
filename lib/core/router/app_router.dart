@@ -44,8 +44,12 @@ import '../../features/statistics/presentation/pages/statistics_page.dart';
 import '../../features/planning/presentation/pages/planning_page.dart';
 import '../../features/history/presentation/pages/history_page.dart';
 import '../../features/profile/presentation/pages/profile_page.dart';
-import '../../features/meetings/presentation/pages/meetings_list_page.dart';
-import '../../features/meetings/presentation/pages/meeting_detail_page.dart';
+// TEAM_ORG: Teamorganisation replaces the old meetings pages (kept, unlinked)
+import '../../features/team_organization/presentation/pages/agenda_item_detail_page.dart';
+import '../../features/team_organization/presentation/pages/protocol_page.dart';
+import '../../features/team_organization/presentation/pages/task_detail_page.dart';
+import '../../features/team_organization/presentation/pages/team_organization_page.dart';
+import '../../features/team_organization/presentation/pages/teams_config_page.dart';
 import '../../features/voice_leader/presentation/pages/voice_leader_page.dart';
 import '../../features/members/presentation/pages/members_page.dart';
 import '../../features/registration/presentation/pages/tenant_registration_page.dart';
@@ -212,6 +216,13 @@ final routerProvider = Provider<GoRouter>((ref) {
           final registerId = state.pathParameters['id'] ?? '';
           return TenantRegistrationPage(registerId: registerId);
         },
+      ),
+
+      // TEAM_ORG: Microsoft Teams tab configuration (hint only)
+      GoRoute(
+        path: '/teams-config',
+        name: 'teamsConfig',
+        builder: (context, state) => const TeamsConfigPage(),
       ),
 
       // Tenant selection
@@ -424,21 +435,46 @@ final routerProvider = Provider<GoRouter>((ref) {
                 name: 'teachers',
                 builder: (context, state) => const TeachersListPage(),
               ),
+              // TEAM_ORG: Teamorganisation (replaces Besprechungen)
               GoRoute(
                 path: 'meetings',
                 name: 'meetings',
-                builder: (context, state) => const MeetingsListPage(),
+                redirect: (context, state) => '/settings/team-organization',
                 routes: [
                   GoRoute(
                     path: ':id',
                     name: 'meetingDetail',
-                    builder: (context, state) {
-                      final id = int.tryParse(state.pathParameters['id'] ?? '');
-                      if (id == null) return const MeetingsListPage();
-                      return MeetingDetailPage(meetingId: id);
-                    },
+                    redirect: (context, state) => '/settings/team-organization',
                   ),
                 ],
+              ),
+              GoRoute(
+                path: 'team-organization',
+                name: 'teamOrganization',
+                builder: (context, state) => TeamOrganizationPage(
+                  initialTab: state.uri.queryParameters['tab'],
+                ),
+              ),
+              GoRoute(
+                path: 'tasks/:id',
+                name: 'taskDetail',
+                builder: (context, state) => TaskDetailPage(taskId: state.pathParameters['id'] ?? ''),
+              ),
+              GoRoute(
+                path: 'agenda-items/:id',
+                name: 'agendaItemDetail',
+                builder: (context, state) => AgendaItemDetailPage(itemId: state.pathParameters['id'] ?? 'new'),
+              ),
+              GoRoute(
+                path: 'protocol/:attendanceId',
+                name: 'protocol',
+                redirect: (context, state) =>
+                    int.tryParse(state.pathParameters['attendanceId'] ?? '') == null
+                        ? '/settings/team-organization?tab=protocols'
+                        : null,
+                builder: (context, state) => ProtocolPage(
+                  attendanceId: int.parse(state.pathParameters['attendanceId']!),
+                ),
               ),
               GoRoute(
                 path: 'notifications',

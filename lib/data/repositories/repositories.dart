@@ -16,3 +16,7 @@ export 'viewer_repository.dart';
 export 'parent_repository.dart';
 export 'church_repository.dart';
 export 'usage_events_repository.dart';
+// TEAM_ORG
+export 'agenda_item_repository.dart';
+export 'task_repository.dart';
+export 'protocol_repository.dart';

@@ -21,3 +21,5 @@ export 'attendance_detail_providers.dart';
 export 'pwa_providers.dart';
 export 'teacher_providers.dart';
 export 'history_providers.dart';
+// TEAM_ORG
+export 'team_org_providers.dart';
