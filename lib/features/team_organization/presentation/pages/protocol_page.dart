@@ -17,6 +17,7 @@ import '../../../../data/models/team_org/team_org.dart';
 import '../../../../data/repositories/agenda_item_repository.dart';
 import '../../../../data/repositories/protocol_repository.dart';
 import '../../../../data/repositories/task_repository.dart';
+import '../../../planning/presentation/widgets/ion_items.dart';
 import '../../../../l10n/l10n.dart';
 import '../../protocol_pdf.dart';
 import '../../team_org_utils.dart';
@@ -976,14 +977,17 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
       },
       child: Scaffold(
         appBar: AppBar(
+          // Ionic `.title-stack`: centered title with a small grey second line.
           title: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
               Text(context.l10n.protocolTitle),
               if (_attendance != null && !_notAvailable)
                 Text(
                   '$_title · $_shortDate · ${_isPublished ? context.l10n.teamOrgPublished : context.l10n.teamOrgDraft}',
-                  style: Theme.of(context).textTheme.bodySmall,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w400, color: AppColors.medium),
                 ),
             ],
           ),
@@ -992,33 +996,54 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
               IconButton(tooltip: context.l10n.protocolSharePdf, icon: const Icon(Icons.ios_share), onPressed: _sharePdf),
           ],
         ),
+        // Ionic `.protocol-footer`: centered save state above two equal buttons.
         bottomNavigationBar: showFooter
-            ? SafeArea(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM, vertical: AppDimensions.paddingS),
-                  child: Row(
-                    children: [
-                      if (_savingCount > 0)
-                        const Padding(
-                          padding: EdgeInsets.only(right: 6),
-                          child: SizedBox(width: 12, height: 12, child: AppSpinner(strokeWidth: 2)),
+            ? Material(
+                color: Theme.of(context).appBarTheme.backgroundColor,
+                child: SafeArea(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(AppDimensions.paddingM, 4, AppDimensions.paddingM, 8),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            if (_savingCount > 0)
+                              const Padding(
+                                padding: EdgeInsets.only(right: 6),
+                                child: SizedBox(width: 12, height: 12, child: AppSpinner(strokeWidth: 2)),
+                              ),
+                            Text(_saveLabel, style: const TextStyle(fontSize: 12, color: AppColors.medium)),
+                          ],
                         ),
-                      Expanded(child: Text(_saveLabel, style: Theme.of(context).textTheme.bodySmall)),
-                      OutlinedButton.icon(
-                        onPressed: _openGeneralNotes,
-                        icon: Badge(
-                          isLabelVisible: _hasNotes(protocolGeneralSectionId),
-                          smallSize: 8,
-                          child: const Icon(Icons.description_outlined),
+                        const SizedBox(height: 4),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: OutlinedButton.icon(
+                                onPressed: _openGeneralNotes,
+                                icon: Badge(
+                                  isLabelVisible: _hasNotes(protocolGeneralSectionId),
+                                  smallSize: 7,
+                                  backgroundColor: AppColors.primary,
+                                  child: const Icon(Icons.description_outlined),
+                                ),
+                                label: Text(context.l10n.protocolNotes),
+                              ),
+                            ),
+                            const SizedBox(width: AppDimensions.paddingS),
+                            Expanded(
+                              child: FilledButton(
+                                onPressed: _openPublish,
+                                child: Text(
+                                    _isPublished ? context.l10n.protocolRepublish : context.l10n.protocolPublishShort),
+                              ),
+                            ),
+                          ],
                         ),
-                        label: Text(context.l10n.protocolNotes),
-                      ),
-                      const SizedBox(width: AppDimensions.paddingS),
-                      FilledButton(
-                        onPressed: _openPublish,
-                        child: Text(_isPublished ? context.l10n.protocolRepublish : context.l10n.protocolPublishShort),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               )
@@ -1028,16 +1053,12 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
             : _notAvailable
                 ? _centerState(Icons.lock_outline, context.l10n.protocolNotPublished, context.l10n.protocolNotPublishedHint)
                 : _loadFailed || _attendance == null
-                    ? Center(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(Icons.cloud_off, size: 56, color: AppColors.medium),
-                            const SizedBox(height: AppDimensions.paddingM),
-                            Text(context.l10n.protocolLoadFailed),
-                            OutlinedButton(onPressed: _load, child: Text(context.l10n.protocolRetry)),
-                          ],
-                        ),
+                    ? IonEmptyState(
+                        icon: Icons.cloud_off,
+                        padding: const EdgeInsets.symmetric(vertical: 64, horizontal: 24),
+                        title: context.l10n.protocolLoadFailed,
+                        text: '',
+                        action: OutlinedButton(onPressed: _load, child: Text(context.l10n.protocolRetry)),
                       )
                     : _isLeader
                         ? (wide ? _buildWideLayout(context) : _buildEditLayout(context))
@@ -1046,20 +1067,12 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
     );
   }
 
-  Widget _centerState(IconData icon, String title, String text) => Center(
-        child: Padding(
-          padding: const EdgeInsets.all(AppDimensions.paddingL),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(icon, size: 56, color: AppColors.medium),
-              const SizedBox(height: AppDimensions.paddingM),
-              Text(title, style: Theme.of(context).textTheme.titleMedium, textAlign: TextAlign.center),
-              const SizedBox(height: 4),
-              Text(text, textAlign: TextAlign.center),
-            ],
-          ),
-        ),
+  /// Ionic `.center-state`: 44px icon, 17px/600 title, grey text.
+  Widget _centerState(IconData icon, String title, String text) => IonEmptyState(
+        icon: icon,
+        padding: const EdgeInsets.symmetric(vertical: 64, horizontal: 24),
+        title: title,
+        text: text,
       );
 
   Widget _attendeeRow() {
@@ -1093,7 +1106,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
         title: Text(context.l10n.protocolPresentCount(att.present.length)),
         subtitle: Text(
             '${att.excused.isNotEmpty ? context.l10n.protocolExcusedCount(att.excused.length) : ''}${context.l10n.protocolFromAttendance}'),
-        trailing: const Icon(Icons.chevron_right),
+        trailing: const IonDetailIcon(),
       ),
     );
   }

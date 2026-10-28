@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/shift_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/shift/shift_plan.dart';
+import '../../../planning/presentation/widgets/ion_items.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
@@ -26,98 +26,76 @@ class _ShiftsListPageState extends ConsumerState<ShiftsListPage> {
   Widget build(BuildContext context) {
     final shiftsAsync = ref.watch(shiftsProvider);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(context.l10n.shiftsPlans),
-      ),
-      body: Column(
-        children: [
-          // Info card explaining the feature
-          _buildInfoCard(context),
-
-          // Shifts list
-          Expanded(
-            child: shiftsAsync.when(
-              loading: () => const Center(child: AppSpinner()),
-              error: (error, stack) => Center(child: Text(context.l10n.shiftsFlutterErrorWith(friendlyErrorMessage(error)))),
-              data: (shifts) {
-                if (shifts.isEmpty) {
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(Icons.schedule_outlined,
-                            size: 64, color: AppColors.medium),
-                        const SizedBox(height: 16),
-                        Text(context.l10n.shiftsNone),
-                        const SizedBox(height: 16),
-                        ElevatedButton.icon(
-                          onPressed: () => _showCreateDialog(context),
-                          icon: const Icon(Icons.add),
-                          label: Text(context.l10n.shiftsCreate),
-                        ),
-                      ],
-                    ),
-                  );
-                }
-
-                return ListView.builder(
-                  itemCount: shifts.length,
-                  itemBuilder: (context, index) {
-                    final shift = shifts[index];
-                    return _ShiftPlanTile(
-                      // FN-005: Add key for proper widget identity
-                      key: ValueKey(shift.id),
-                      shift: shift,
-                      onTap: () => _openShiftDetail(shift),
-                    );
-                  },
-                );
-              },
-            ),
-          ),
-        ],
+    // Ionic: light toolbar with arrow-back, collapse="condense" large title,
+    // intro ion-card, inset list "Pläne", FAB opening the create sheet.
+    return IonCondenseScaffold(
+      title: context.l10n.shiftsPlans,
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back),
+        tooltip: context.l10n.commonBack,
+        onPressed: () => context.pop(),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showCreateDialog(context),
         child: const Icon(Icons.add),
       ),
+      bodyBuilder: (context, largeTitle) => ListView(
+        padding: const EdgeInsets.only(bottom: 96),
+        children: [
+          if (largeTitle != null) largeTitle,
+          _buildInfoCard(context),
+          shiftsAsync.when(
+            loading: () => const Padding(
+              padding: EdgeInsets.all(24),
+              child: Center(child: AppSpinner()),
+            ),
+            error: (error, stack) => Padding(
+              padding: const EdgeInsets.all(16),
+              child: Text(context.l10n.shiftsFlutterErrorWith(friendlyErrorMessage(error))),
+            ),
+            data: (shifts) => IonInsetList(
+              header: context.l10n.shiftsPlans,
+              children: shifts.isEmpty
+                  ? [ListTile(title: Text(context.l10n.shiftsNone))]
+                  : [
+                      for (final shift in shifts)
+                        _ShiftPlanTile(
+                          // FN-005: Add key for proper widget identity
+                          key: ValueKey(shift.id),
+                          shift: shift,
+                          onTap: () => _openShiftDetail(shift),
+                        ),
+                    ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
+  /// Ionic intro `ion-card`: centered time icon (4rem) and centered text with
+  /// the warning line.
   Widget _buildInfoCard(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(AppDimensions.paddingM),
-      child: Card(
-        color: AppColors.info.withValues(alpha: 0.1),
-        child: Padding(
-          padding: const EdgeInsets.all(AppDimensions.paddingM),
-          child: Row(
-            children: [
-              Icon(Icons.info_outline, color: AppColors.info),
-              const SizedBox(width: AppDimensions.paddingM),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      context.l10n.shiftsFlutterInfoTitle,
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                            fontWeight: FontWeight.w600,
-                          ),
-                    ),
-                    const SizedBox(height: AppDimensions.paddingXS),
-                    Text(
-                      context.l10n.shiftsFlutterInfoText,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: AppColors.medium,
-                          ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
+    return Card(
+      margin: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
+        child: Column(
+          children: [
+            const Icon(Icons.schedule, size: 64, color: AppColors.medium),
+            const SizedBox(height: 16),
+            Text(
+              context.l10n.shiftsIntro,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 14, color: AppColors.medium),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              context.l10n.shiftsImportant,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 14, color: AppColors.warning),
+            ),
+          ],
         ),
       ),
     );
@@ -129,68 +107,72 @@ class _ShiftsListPageState extends ConsumerState<ShiftsListPage> {
     }
   }
 
+  /// Ionic: ion-modal sheet (breakpoint 0.7) "Schichtplan erstellen" with
+  /// stacked name/description inputs and a block "Erstellen" button.
   Future<void> _showCreateDialog(BuildContext context) async {
     final nameController = TextEditingController();
     final descriptionController = TextEditingController();
 
     try {
-      final result = await showAppDialog<Map<String, String>?>(
+      final result = await showModalBottomSheet<Map<String, String>?>(
         context: context,
-        builder: (context) => AppAlertDialog(
-          title: Text(context.l10n.shiftsCreate),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: nameController,
-                decoration: InputDecoration(
-                  labelText: context.l10n.typeSettingsName,
-                  hintText: context.l10n.shiftsFlutterNameHint,
+        isScrollControlled: true,
+        useSafeArea: true,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        builder: (sheetContext) => Padding(
+          padding: EdgeInsets.only(bottom: MediaQuery.of(sheetContext).viewInsets.bottom),
+          child: FractionallySizedBox(
+            heightFactor: 0.7,
+            child: Column(
+              children: [
+                AppBar(
+                  automaticallyImplyLeading: false,
+                  primary: false,
+                  title: Text(sheetContext.l10n.shiftsCreate),
                 ),
-                autofocus: true,
-              ),
-              const SizedBox(height: AppDimensions.paddingM),
-              TextField(
-                controller: descriptionController,
-                decoration: InputDecoration(
-                  labelText: context.l10n.tasksDescriptionOptional,
-                  hintText: context.l10n.shiftsFlutterDescriptionHint,
+                Expanded(
+                  child: ListView(
+                    children: [
+                      IonInsetList(
+                        children: [
+                          IonStackedInput(
+                            controller: nameController,
+                            label: sheetContext.l10n.typeSettingsName,
+                            autofocus: true,
+                          ),
+                          IonStackedInput(
+                            controller: descriptionController,
+                            label: sheetContext.l10n.tasksDescription,
+                          ),
+                        ],
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 10, 16, 16),
+                        child: FilledButton(
+                          onPressed: () => Navigator.pop(sheetContext, {
+                            'name': nameController.text,
+                            'description': descriptionController.text,
+                          }),
+                          child: Text(sheetContext.l10n.filesCreate),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                maxLines: 2,
-              ),
-            ],
+              ],
+            ),
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text(context.l10n.commonCancel),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                // FN-002: Validate before submit
-                final name = nameController.text.trim();
-                if (name.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(context.l10n.shiftsEnterName)),
-                  );
-                  return;
-                }
-                Navigator.pop(context, {
-                  'name': name,
-                  'description': descriptionController.text,
-                });
-              },
-              child: Text(context.l10n.filesCreate),
-            ),
-          ],
         ),
       );
 
-      // RT-014: Safe access to dialog result
-      final name = result?['name']?.trim() ?? '';
-      if (name.isNotEmpty) {
-        await _createShift(name, result?['description']?.trim() ?? '');
+      if (result == null || !context.mounted) return;
+      // Ionic: dismiss first, then validate with a danger toast.
+      final name = result['name']?.trim() ?? '';
+      if (name.isEmpty) {
+        ToastHelper.showError(context, context.l10n.shiftsEnterName);
+        return;
       }
+      await _createShift(name, result['description']?.trim() ?? '');
     } finally {
       // FN-001: Dispose controllers
       nameController.dispose();
@@ -237,46 +219,11 @@ class _ShiftPlanTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Ionic: ion-item with routerLink (label + iOS detail chevron).
     return ListTile(
-      leading: Container(
-        width: 40,
-        height: 40,
-        decoration: BoxDecoration(
-          color: AppColors.primary.withValues(alpha: 0.2),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: const Icon(
-          Icons.schedule,
-          color: AppColors.primary,
-        ),
-      ),
       title: Text(shift.name),
-      subtitle: Text(
-        _getSubtitle(context.l10n),
-        style: TextStyle(color: AppColors.medium, fontSize: 12),
-      ),
-      trailing: const Icon(Icons.chevron_right, color: AppColors.medium),
+      trailing: const IonDetailIcon(),
       onTap: onTap,
     );
-  }
-
-  String _getSubtitle(AppLocalizations l10n) {
-    final parts = <String>[];
-
-    if (shift.description.isNotEmpty) {
-      parts.add(shift.description);
-    }
-
-    final cycleDays = shift.cycleLengthDays;
-    if (cycleDays > 1) {
-      parts.add(l10n.shiftsFlutterCycleDays(cycleDays));
-    }
-
-    if (shift.definition.isNotEmpty) {
-      final segments = shift.definition.length;
-      parts.add(l10n.shiftsFlutterSegments(segments));
-    }
-
-    return parts.isEmpty ? l10n.shiftsFlutterNoDefinition : parts.join(' • ');
   }
 }

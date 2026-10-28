@@ -12,6 +12,7 @@ import '../../../../core/utils/duty_utils.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/attendance/attendance.dart';
 import '../../../../data/models/duty/person_unavailability.dart';
+import '../../../planning/presentation/widgets/ion_items.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
@@ -180,13 +181,14 @@ class _UnavailabilityPageState extends ConsumerState<UnavailabilityPage> {
   @override
   Widget build(BuildContext context) {
     final editing = _editing;
+    // Ionic: centered title with a small grey `.sub` line.
     final title = Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
       children: [
         Text(context.l10n.signoutRegularlyUnavailable),
         if (widget.forOther && widget.personName.isNotEmpty)
           Text(widget.personName,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.medium)),
+              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w400, color: AppColors.medium)),
       ],
     );
 
@@ -197,11 +199,12 @@ class _UnavailabilityPageState extends ConsumerState<UnavailabilityPage> {
       },
       child: Scaffold(
         appBar: AppBar(
+          // Ionic: text button "Zurück" while editing a rule.
+          leadingWidth: editing != null ? 90 : null,
           leading: editing != null
-              ? IconButton(
-                  icon: const BackButtonIcon(),
-                  tooltip: context.l10n.commonBack,
+              ? TextButton(
                   onPressed: () => setState(() => _editing = null),
+                  child: Text(context.l10n.commonBack),
                 )
               : IconButton(
                   icon: const Icon(Icons.close),
@@ -229,11 +232,12 @@ class _UnavailabilityPageState extends ConsumerState<UnavailabilityPage> {
       loading: () => const Center(child: AppSpinner()),
       error: (e, _) => Center(child: Text(context.l10n.dutyFlutterErrorWith(friendlyErrorMessage(e)))),
       data: (rules) => ListView(
-        padding: const EdgeInsets.all(AppDimensions.paddingM),
+        padding: const EdgeInsets.only(bottom: 16),
         children: [
           if (rules.isEmpty)
+            // Ionic `.empty`
             Padding(
-              padding: const EdgeInsets.all(AppDimensions.paddingL),
+              padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
               child: Text(
                 widget.forOther
                     ? context.l10n.dutyNoRuleOther
@@ -243,29 +247,36 @@ class _UnavailabilityPageState extends ConsumerState<UnavailabilityPage> {
               ),
             )
           else
-            Card(
-              child: Column(
-                children: [
-                  for (final rule in rules)
-                    ListTile(
-                      title: Text(
-                          '${weekdaysText(rule.weekdays)}${rule.reason.isNotEmpty ? ' · ${rule.reason}' : ''}'),
-                      subtitle: Text('${_typesText(rule, types)} · ${_untilText(rule)}'),
-                      onTap: () => _edit(rule),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.delete_outline, color: AppColors.danger),
-                        tooltip: context.l10n.dutyDeleteRule,
-                        onPressed: () => _remove(rule),
-                      ),
+            IonInsetList(
+              children: [
+                for (final rule in rules)
+                  ListTile(
+                    title: Text(
+                        '${weekdaysText(rule.weekdays)}${rule.reason.isNotEmpty ? ' · ${rule.reason}' : ''}'),
+                    subtitle: Text('${_typesText(rule, types)} · ${_untilText(rule)}',
+                        style: const TextStyle(color: AppColors.medium)),
+                    onTap: () => _edit(rule),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.delete_outline, color: AppColors.danger),
+                          tooltip: context.l10n.dutyDeleteRule,
+                          onPressed: () => _remove(rule),
+                        ),
+                        const IonDetailIcon(),
+                      ],
                     ),
-                ],
-              ),
+                  ),
+              ],
             ),
-          const SizedBox(height: AppDimensions.paddingM),
-          FilledButton.icon(
-            onPressed: _add,
-            icon: const Icon(Icons.add),
-            label: Text(context.l10n.dutyAddRule),
+          Padding(
+            padding: const EdgeInsets.all(AppDimensions.paddingM),
+            child: FilledButton.icon(
+              onPressed: _add,
+              icon: const Icon(Icons.add),
+              label: Text(context.l10n.dutyAddRule),
+            ),
           ),
         ],
       ),
@@ -275,69 +286,87 @@ class _UnavailabilityPageState extends ConsumerState<UnavailabilityPage> {
   Widget _buildEditor(PersonUnavailability editing) {
     final types = _types;
     return ListView(
-      padding: const EdgeInsets.all(AppDimensions.paddingM),
+      padding: const EdgeInsets.only(bottom: 16),
       children: [
-        Text(context.l10n.dutyWeekdays, style: Theme.of(context).textTheme.titleSmall),
-        const SizedBox(height: AppDimensions.paddingS),
-        Wrap(
-          spacing: 6,
-          runSpacing: 6,
+        // Ionic: inset list "Wochentage" with ion-chips.
+        IonInsetList(
+          header: context.l10n.dutyWeekdays,
           children: [
-            for (var i = 0; i < 7; i++)
-              FilterChip(
-                label: Text(weekdayShortNames[i]),
-                tooltip: weekdayLongNames[i],
-                selected: editing.weekdays.contains(i + 1),
-                onSelected: (sel) {
-                  final list = [...editing.weekdays];
-                  sel ? list.add(i + 1) : list.remove(i + 1);
-                  list.sort();
-                  setState(() => _editing = editing.copyWith(weekdays: list));
-                },
+            Padding(
+              padding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
+              child: Wrap(
+                spacing: 4,
+                runSpacing: 4,
+                children: [
+                  for (var i = 0; i < 7; i++)
+                    Tooltip(
+                      message: weekdayLongNames[i],
+                      child: IonChip(
+                        label: weekdayShortNames[i],
+                        color: editing.weekdays.contains(i + 1) ? AppColors.primary : AppColors.medium,
+                        outline: !editing.weekdays.contains(i + 1),
+                        onTap: () {
+                          final list = [...editing.weekdays];
+                          list.contains(i + 1) ? list.remove(i + 1) : list.add(i + 1);
+                          list.sort();
+                          setState(() => _editing = editing.copyWith(weekdays: list));
+                        },
+                      ),
+                    ),
+                ],
               ),
+            ),
           ],
         ),
-        const SizedBox(height: AppDimensions.paddingL),
-        Text(context.l10n.dutyForWhichTypes, style: Theme.of(context).textTheme.titleSmall),
-        for (final t in types)
-          CheckboxListTile(
-            contentPadding: EdgeInsets.zero,
-            controlAffinity: ListTileControlAffinity.leading,
-            value: editing.typeIds.contains(t.id),
-            title: Text(t.name),
-            onChanged: (_) {
-              final list = [...editing.typeIds];
-              if (!list.remove(t.id)) list.add(t.id!);
-              setState(() => _editing = editing.copyWith(typeIds: list));
-            },
-          ),
-        Text(context.l10n.dutyAllTypesHint,
-            style: const TextStyle(color: AppColors.medium, fontSize: 13)),
-        const SizedBox(height: AppDimensions.paddingL),
-        TextField(
-          controller: _reasonController,
-          decoration: InputDecoration(
-            labelText: context.l10n.dutyReasonOptional,
-            hintText: context.l10n.dutyChildrenHourPlaceholder,
-          ),
+        IonInsetList(
+          header: context.l10n.dutyForWhichTypes,
+          dividerIndent: 56,
+          children: [
+            for (final t in types)
+              CheckboxListTile(
+                controlAffinity: ListTileControlAffinity.leading,
+                value: editing.typeIds.contains(t.id),
+                title: Text(t.name),
+                onChanged: (_) {
+                  final list = [...editing.typeIds];
+                  if (!list.remove(t.id)) list.add(t.id!);
+                  setState(() => _editing = editing.copyWith(typeIds: list));
+                },
+              ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 10, 16, 12),
+              child: Text(context.l10n.dutyAllTypesHint,
+                  style: const TextStyle(color: AppColors.medium, fontSize: 12)),
+            ),
+          ],
         ),
-        const SizedBox(height: AppDimensions.paddingM),
-        ListTile(
-          contentPadding: EdgeInsets.zero,
-          title: Text(context.l10n.dutyValidUntil),
-          subtitle: Text(_untilText(editing)),
-          onTap: _pickValidUntil,
-          trailing: editing.validUntil != null
-              ? IconButton(
-                  icon: const Icon(Icons.clear),
-                  onPressed: () => setState(() => _editing = editing.copyWith(validUntil: null)),
-                )
-              : const Icon(Icons.calendar_today),
+        IonInsetList(
+          children: [
+            IonStackedInput(
+              controller: _reasonController,
+              label: context.l10n.dutyReasonOptional,
+              hint: context.l10n.dutyChildrenHourPlaceholder,
+            ),
+            ListTile(
+              title: Text(context.l10n.dutyValidUntil, style: const TextStyle(fontSize: 12, color: AppColors.medium)),
+              subtitle: Text(_untilText(editing), style: Theme.of(context).textTheme.bodyLarge),
+              onTap: _pickValidUntil,
+              trailing: editing.validUntil != null
+                  ? IconButton(
+                      icon: const Icon(Icons.clear, color: AppColors.medium),
+                      onPressed: () => setState(() => _editing = editing.copyWith(validUntil: null)),
+                    )
+                  : const Icon(Icons.calendar_today, color: AppColors.medium),
+            ),
+          ],
         ),
-        const SizedBox(height: AppDimensions.paddingM),
-        Text(
-          context.l10n.dutyRuleHint,
-          style: const TextStyle(color: AppColors.medium, fontSize: 13),
+        // Ionic `.hint`
+        Padding(
+          padding: const EdgeInsets.fromLTRB(24, 8, 24, 16),
+          child: Text(
+            context.l10n.dutyRuleHint,
+            style: const TextStyle(color: AppColors.medium, fontSize: 13),
+          ),
         ),
       ],
     );

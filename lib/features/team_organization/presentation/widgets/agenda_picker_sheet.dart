@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
-import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/team_org_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/team_org/team_org.dart';
+import '../../../planning/presentation/widgets/ion_items.dart';
 import '../../../../l10n/l10n.dart';
 import '../../team_org_utils.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
@@ -23,6 +23,8 @@ Future<Map<String, dynamic>?> showAgendaPickerSheet(
     context: context,
     isScrollControlled: true,
     useSafeArea: true,
+    // Ionic: ion-content color="light".
+    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
     builder: (_) => AgendaPickerSheet(attendance: attendance, type: type),
   );
 }
@@ -232,25 +234,44 @@ class _AgendaPickerSheetState extends ConsumerState<AgendaPickerSheet> {
         color: row.selected ? AppColors.primary : AppColors.medium,
       ),
       title: Text(row.item.title),
-      subtitle: Text([if (postponedLabel != null) postponedLabel, ...parts].join(' · ')),
+      // Ionic: warning badge for postponed topics, then the grey subtitle.
+      subtitle: Text.rich(
+        TextSpan(children: [
+          if (postponedLabel != null)
+            WidgetSpan(
+              alignment: PlaceholderAlignment.middle,
+              child: Padding(
+                padding: const EdgeInsets.only(right: 4),
+                child: IonBadge(label: postponedLabel, color: AppColors.warning),
+              ),
+            ),
+          TextSpan(text: parts.join(' · ')),
+        ]),
+        style: const TextStyle(color: AppColors.medium),
+      ),
       trailing: row.selected && !row.inPlan
           ? Row(
               mainAxisSize: MainAxisSize.min,
               children: [
+                // Ionic `.stepper`: clear "−" / "+" text buttons around the minutes.
                 IconButton(
                   tooltip: l10n.agendaShorter,
+                  color: AppColors.primary,
+                  visualDensity: VisualDensity.compact,
                   icon: const Icon(Icons.remove),
                   onPressed: () => setState(() => row.duration = (row.duration - 5).clamp(5, 999)),
                 ),
                 Text(l10n.planningMinShort(row.duration)),
                 IconButton(
                   tooltip: l10n.agendaLonger,
+                  color: AppColors.primary,
+                  visualDensity: VisualDensity.compact,
                   icon: const Icon(Icons.add),
                   onPressed: () => setState(() => row.duration += 5),
                 ),
               ],
             )
-          : Text(l10n.planningMinShort(row.duration)),
+          : IonNote(l10n.planningMinShort(row.duration)),
     );
   }
 
@@ -265,71 +286,85 @@ class _AgendaPickerSheetState extends ConsumerState<AgendaPickerSheet> {
         children: [
           AppBar(
             automaticallyImplyLeading: false,
+            primary: false,
             leading: IconButton(
               icon: const Icon(Icons.close),
               tooltip: l10n.commonClose,
               onPressed: () => Navigator.of(context).pop(),
             ),
             title: Text(l10n.attendanceAddTopics),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(AppDimensions.paddingS),
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                prefixIcon: const Icon(Icons.search),
-                hintText: l10n.agendaSearchOrCreate,
+            // Ionic: second toolbar with the searchbar.
+            bottom: PreferredSize(
+              preferredSize: const Size.fromHeight(52),
+              child: IonSearchbar(
+                controller: _searchController,
+                placeholder: l10n.agendaSearchOrCreate,
+                onChanged: (v) => setState(() => _search = v),
               ),
-              onChanged: (v) => setState(() => _search = v),
             ),
           ),
           Expanded(
             child: _loading
                 ? const Center(child: AppSpinner())
                 : ListView(
+                    padding: const EdgeInsets.only(bottom: 16),
                     children: [
                       if (_canCreateFromSearch)
-                        ListTile(
-                          leading: const Icon(Icons.add_circle_outline, color: AppColors.primary),
-                          title: Text(l10n.agendaCreateAsNew(_search.trim()),
-                              style: const TextStyle(color: AppColors.primary)),
-                          onTap: _createFromSearch,
-                        ),
-                      if (visiblePostponed.isNotEmpty) ...[
-                        _Header(l10n.agendaPostponedFromLast),
-                        ...visiblePostponed.map(_rowTile),
-                      ],
-                      _Header(l10n.agendaTopicStore),
-                      ...visibleOthers.map(_rowTile),
-                      if (visibleOthers.isEmpty)
-                        ListTile(
-                          title: Text(
-                            _search.trim().isNotEmpty
-                                ? l10n.agendaFlutterNoMatch
-                                : l10n.agendaFlutterNoOpenTopics,
-                            style: const TextStyle(color: AppColors.medium),
+                        IonInsetList(children: [
+                          ListTile(
+                            leading: const Icon(Icons.add_circle_outline, color: AppColors.primary),
+                            title: Text(l10n.agendaCreateAsNew(_search.trim()),
+                                style: const TextStyle(color: AppColors.primary)),
+                            onTap: _createFromSearch,
                           ),
+                        ]),
+                      if (visiblePostponed.isNotEmpty)
+                        IonInsetList(
+                          header: l10n.agendaPostponedFromLast,
+                          dividerIndent: 0,
+                          children: visiblePostponed.map(_rowTile).toList(),
                         ),
+                      IonInsetList(
+                        header: l10n.agendaTopicStore,
+                        dividerIndent: 0,
+                        children: [
+                          ...visibleOthers.map(_rowTile),
+                          if (visibleOthers.isEmpty)
+                            ListTile(
+                              title: Text(
+                                _search.trim().isNotEmpty
+                                    ? l10n.agendaFlutterNoMatch
+                                    : l10n.agendaFlutterNoOpenTopics,
+                                style: const TextStyle(color: AppColors.medium),
+                              ),
+                            ),
+                        ],
+                      ),
                     ],
                   ),
           ),
-          SafeArea(
-            top: false,
-            child: Padding(
-              padding: const EdgeInsets.all(AppDimensions.paddingM),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(_insertHint, style: Theme.of(context).textTheme.bodySmall),
-                  const SizedBox(height: AppDimensions.paddingS),
-                  SizedBox(
-                    width: double.infinity,
-                    child: FilledButton(
-                      onPressed: !_hasChanges || _saving ? null : _confirm,
-                      child: Text(_confirmLabel),
+          // Ionic ion-footer: insert hint + block button.
+          Material(
+            color: Theme.of(context).appBarTheme.backgroundColor,
+            child: SafeArea(
+              top: false,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(_insertHint,
+                        textAlign: TextAlign.center, style: const TextStyle(fontSize: 13, color: AppColors.medium)),
+                    const SizedBox(height: 8),
+                    SizedBox(
+                      width: double.infinity,
+                      child: FilledButton(
+                        onPressed: !_hasChanges || _saving ? null : _confirm,
+                        child: Text(_confirmLabel),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -337,15 +372,4 @@ class _AgendaPickerSheetState extends ConsumerState<AgendaPickerSheet> {
       ),
     );
   }
-}
-
-class _Header extends StatelessWidget {
-  const _Header(this.text);
-  final String text;
-
-  @override
-  Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.fromLTRB(AppDimensions.paddingM, AppDimensions.paddingM, AppDimensions.paddingM, 4),
-        child: Text(text, style: Theme.of(context).textTheme.titleSmall),
-      );
 }

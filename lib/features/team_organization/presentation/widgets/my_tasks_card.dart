@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/providers/team_org_providers.dart';
+import '../../../planning/presentation/widgets/ion_items.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
@@ -73,7 +74,9 @@ class _MyTasksCardState extends ConsumerState<MyTasksCard> {
       strip: _strip,
       child: Column(
         children: [
-          for (final task in shown)
+          for (final task in shown) ...[
+            // Ionic: ion-list lines="full"
+            if (task != shown.first) const Divider(height: 1),
             ListTile(
               contentPadding: const EdgeInsets.only(left: 4, right: 12),
               leading: IconButton(
@@ -81,26 +84,19 @@ class _MyTasksCardState extends ConsumerState<MyTasksCard> {
                 icon: const Icon(Icons.radio_button_unchecked, color: AppColors.medium),
                 onPressed: () => _complete(task),
               ),
-              title: Text(task.title),
+              title: Text(task.title, style: const TextStyle(fontSize: 15)),
               subtitle: Text(
                 _dueLabel(l10n, task, today),
-                style: isTaskOverdue(task, today)
-                    ? const TextStyle(color: AppColors.danger)
-                    : null,
+                style: TextStyle(color: isTaskOverdue(task, today) ? AppColors.danger : AppColors.medium),
               ),
               trailing: task.status == 'in_progress'
-                  ? Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: AppColors.warning,
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Text(l10n.tasksInProgress, style: const TextStyle(fontSize: 12)),
-                    )
+                  ? IonBadge(label: l10n.tasksInProgress, color: AppColors.warning)
                   : null,
               onTap: task.id == null ? null : () => context.push('/settings/tasks/${task.id}'),
             ),
-          if (open.length > widget.limit || isLeader)
+          ],
+          if (open.length > widget.limit || isLeader) ...[
+            const Divider(height: 1),
             ListTile(
               title: Text(
                 open.length > widget.limit
@@ -108,9 +104,10 @@ class _MyTasksCardState extends ConsumerState<MyTasksCard> {
                     : l10n.tasksFlutterAllTasks,
                 style: const TextStyle(color: AppColors.primary),
               ),
-              trailing: const Icon(Icons.chevron_right),
+              trailing: const IonDetailIcon(),
               onTap: () => context.push('/settings/team-organization?tab=tasks'),
             ),
+          ],
         ],
       ),
     );

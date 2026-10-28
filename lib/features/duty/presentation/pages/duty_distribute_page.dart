@@ -11,6 +11,7 @@ import '../../../../core/utils/duty_utils.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/attendance/attendance.dart';
 import '../../../../data/models/duty/person_unavailability.dart';
+import '../../../planning/presentation/widgets/ion_items.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
@@ -298,11 +299,12 @@ class _DutyDistributePageState extends ConsumerState<DutyDistributePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        // Ionic: text button "Zurück" in the preview step, close icon otherwise.
+        leadingWidth: _preview ? 90 : null,
         leading: _preview
-            ? IconButton(
-                icon: const BackButtonIcon(),
-                tooltip: context.l10n.commonBack,
+            ? TextButton(
                 onPressed: () => setState(() => _preview = false),
+                child: Text(context.l10n.commonBack),
               )
             : IconButton(
                 icon: const Icon(Icons.close),
@@ -325,9 +327,11 @@ class _DutyDistributePageState extends ConsumerState<DutyDistributePage> {
               ? _buildPreview()
               : _buildRules(),
       bottomNavigationBar: _preview && _rows.isNotEmpty
-          ? SafeArea(
+          ? Material(
+              color: Theme.of(context).appBarTheme.backgroundColor,
+              child: SafeArea(
               child: Padding(
-                padding: const EdgeInsets.all(AppDimensions.paddingM),
+                padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM, vertical: 8),
                 child: FilledButton(
                   onPressed: _saving || _plannedTotal == 0 ? null : _save,
                   child: Text(_plannedTotal > 0
@@ -335,32 +339,41 @@ class _DutyDistributePageState extends ConsumerState<DutyDistributePage> {
                       : context.l10n.dutyFlutterNothingToDistribute),
                 ),
               ),
+              ),
             )
           : null,
     );
   }
 
-  Widget _header(String text) => Padding(
-        padding: const EdgeInsets.fromLTRB(4, 16, 4, 8),
-        child: Text(text, style: Theme.of(context).textTheme.titleSmall),
+  /// Ionic `.hint`: grey 13px text below a list.
+  Widget _hint(String text, {bool top = false}) => Padding(
+        padding: EdgeInsets.fromLTRB(24, top ? 16 : 8, 24, 16),
+        child: Text(text, style: const TextStyle(color: AppColors.medium, fontSize: 13)),
       );
 
   Widget _buildRules() {
     final dutyTypes = ref.watch(dutyTypesProvider);
     return ListView(
-      padding: const EdgeInsets.all(AppDimensions.paddingM),
+      padding: const EdgeInsets.only(bottom: 16),
       children: [
-        _header(context.l10n.dutyPeriod),
-        Card(
-          child: Column(children: [
-            ListTile(title: Text(context.l10n.dutyFrom), trailing: Text(_fmt(_from)), onTap: () => _pickDate(true)),
-            ListTile(title: Text(context.l10n.dutyTo), trailing: Text(_fmt(_to)), onTap: () => _pickDate(false)),
-          ]),
+        IonInsetList(
+          header: context.l10n.dutyPeriod,
+          children: [
+            ListTile(
+              title: Text(context.l10n.dutyFrom),
+              trailing: IonDatetimeChip(text: _fmt(_from), onTap: () => _pickDate(true)),
+            ),
+            ListTile(
+              title: Text(context.l10n.dutyTo),
+              trailing: IonDatetimeChip(text: _fmt(_to), onTap: () => _pickDate(false)),
+            ),
+          ],
         ),
-        if (dutyTypes.length > 1) ...[
-          _header(context.l10n.dutyEventTypes),
-          Card(
-            child: Column(children: [
+        if (dutyTypes.length > 1)
+          IonInsetList(
+            header: context.l10n.dutyEventTypes,
+            dividerIndent: 56,
+            children: [
               for (final t in dutyTypes)
                 CheckboxListTile(
                   controlAffinity: ListTileControlAffinity.leading,
@@ -370,25 +383,33 @@ class _DutyDistributePageState extends ConsumerState<DutyDistributePage> {
                     if (!_selectedTypeIds.remove(t.id)) _selectedTypeIds.add(t.id!);
                   }),
                 ),
-            ]),
+            ],
           ),
-        ],
-        _header(context.l10n.dutyRules),
-        Card(
-          child: Column(children: [
+        IonInsetList(
+          header: context.l10n.dutyRules,
+          children: [
             ListTile(
               title: Text(context.l10n.dutyMaxPerPerson),
+              // Ionic `.stepper`
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   IconButton(
                     icon: const Icon(Icons.remove_circle_outline),
+                    color: AppColors.primary,
+                    visualDensity: VisualDensity.compact,
                     tooltip: context.l10n.attListLess,
                     onPressed: _maxPerPerson <= 1 ? null : () => setState(() => _maxPerPerson--),
                   ),
-                  Text('$_maxPerPerson'),
+                  SizedBox(
+                    width: 20,
+                    child: Text('$_maxPerPerson',
+                        textAlign: TextAlign.center, style: const TextStyle(fontWeight: FontWeight.w600)),
+                  ),
                   IconButton(
                     icon: const Icon(Icons.add_circle_outline),
+                    color: AppColors.primary,
+                    visualDensity: VisualDensity.compact,
                     tooltip: context.l10n.attListMore,
                     onPressed: _maxPerPerson >= 10 ? null : () => setState(() => _maxPerPerson++),
                   ),
@@ -400,28 +421,24 @@ class _DutyDistributePageState extends ConsumerState<DutyDistributePage> {
               value: _notTwiceSameDay,
               onChanged: (v) => setState(() => _notTwiceSameDay = v),
             ),
-          ]),
+          ],
         ),
+        _hint(context.l10n.dutyDistributeHint),
         Padding(
-          padding: const EdgeInsets.all(AppDimensions.paddingS),
-          child: Text(
-            context.l10n.dutyDistributeHint,
-            style: const TextStyle(color: AppColors.medium, fontSize: 13),
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM),
+          child: FilledButton(onPressed: _calculate, child: Text(context.l10n.dutyCalculate)),
         ),
-        const SizedBox(height: AppDimensions.paddingM),
-        FilledButton(onPressed: _calculate, child: Text(context.l10n.dutyCalculate)),
       ],
     );
   }
 
   Widget _buildPreview() {
     if (_rows.isEmpty) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(AppDimensions.paddingL),
-          child: Text(context.l10n.dutyNoDutyEvents, textAlign: TextAlign.center),
-        ),
+      // Ionic `.empty`
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
+        child: Text(context.l10n.dutyNoDutyEvents,
+            textAlign: TextAlign.center, style: const TextStyle(color: AppColors.medium)),
       );
     }
     final planned = _plannedTotal;
@@ -442,67 +459,58 @@ class _DutyDistributePageState extends ConsumerState<DutyDistributePage> {
       });
 
     return ListView(
-      padding: const EdgeInsets.all(AppDimensions.paddingM),
+      padding: const EdgeInsets.only(bottom: 16),
       children: [
-        Text('$summary ${context.l10n.dutyTapToSwap}', style: const TextStyle(color: AppColors.medium)),
-        const SizedBox(height: AppDimensions.paddingS),
-        Card(
-          child: Column(children: [
+        _hint('$summary ${context.l10n.dutyTapToSwap}', top: true),
+        IonInsetList(
+          margin: const EdgeInsets.symmetric(horizontal: 16),
+          dividerIndent: 0,
+          children: [
             for (final row in _rows)
               ListTile(
                 title: Text(_dateLabel(row.termin)),
                 subtitle: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('${row.termin.title} · ${row.existing.length + row.picked.length}/${row.termin.required}'),
+                    Text('${row.termin.title} · ${row.existing.length + row.picked.length}/${row.termin.required}',
+                        style: const TextStyle(color: AppColors.medium)),
                     const SizedBox(height: 4),
                     Wrap(
-                      spacing: 6,
+                      spacing: 4,
                       runSpacing: 4,
                       children: [
+                        // Ionic ion-chips: existing = outline medium (disabled),
+                        // picked = primary, open = outline danger.
                         for (final pa in row.existing)
-                          Chip(
-                            label: Text(pa.firstName ?? ''),
-                            backgroundColor: AppColors.medium.withAlpha(31),
-                            visualDensity: VisualDensity.compact,
-                          ),
+                          IonChip(label: pa.firstName ?? '', color: AppColors.medium, outline: true, disabled: true),
                         for (final pa in row.picked)
-                          ActionChip(
-                            label: Text(pa.firstName ?? '', style: const TextStyle(color: Colors.white)),
-                            backgroundColor: AppColors.primary,
-                            visualDensity: VisualDensity.compact,
-                            onPressed: () => _change(row, pa),
-                          ),
+                          IonChip(label: pa.firstName ?? '', color: AppColors.primary, onTap: () => _change(row, pa)),
                         for (var i = 0; i < row.missing; i++)
-                          ActionChip(
-                            label: Text(context.l10n.dutyOpen, style: const TextStyle(color: AppColors.danger)),
-                            side: const BorderSide(color: AppColors.danger),
-                            visualDensity: VisualDensity.compact,
-                            onPressed: () => _change(row),
+                          IonChip(
+                            label: context.l10n.dutyOpen,
+                            color: AppColors.danger,
+                            outline: true,
+                            onTap: () => _change(row),
                           ),
                       ],
                     ),
                   ],
                 ),
               ),
-          ]),
+          ],
         ),
-        _header(context.l10n.dutyDutiesPerPerson),
-        Card(
-          child: Column(children: [
+        IonInsetList(
+          header: context.l10n.dutyDutiesPerPerson,
+          children: [
             for (final e in counts)
               ListTile(
-                dense: true,
                 title: Text(names[e.key]!),
-                trailing: Text('${e.value.count}${e.value.planned > 0 ? ' ${context.l10n.dutyFlutterPlannedNew(e.value.planned)}' : ''}'),
+                trailing: IonNote(
+                    '${e.value.count}${e.value.planned > 0 ? ' ${context.l10n.dutyFlutterPlannedNew(e.value.planned)}' : ''}'),
               ),
-          ]),
+          ],
         ),
-        Padding(
-          padding: const EdgeInsets.all(AppDimensions.paddingS),
-          child: Text(context.l10n.dutyGreyHint,
-              style: const TextStyle(color: AppColors.medium, fontSize: 13)),
-        ),
+        _hint(context.l10n.dutyGreyHint),
       ],
     );
   }
