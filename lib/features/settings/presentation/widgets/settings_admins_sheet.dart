@@ -10,6 +10,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/repositories/admin_repository.dart';
 import '../../../auth/data/auth_flow_service.dart';
 import '../../../../l10n/l10n.dart';
+import 'settings_list.dart'; // UX_SETTINGS (WAVE 8)
 import '../../../../core/utils/error_message.dart';
 
 /// SETTINGS2: Ionic settings "Administratoren" modal (super admins only):
@@ -116,23 +117,14 @@ class _AdminsSheet extends ConsumerWidget {
                 width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
             : const Icon(Icons.add),
       ),
+      // UX_SETTINGS (WAVE 8): Ionic admins modal — hint card with the
+      // shield icon, then one inset list (h3 e-mail, p created-at).
       body: ListView(
+        padding: const EdgeInsets.fromLTRB(16, 16, 16, 88),
         children: [
-          Card(
-            margin: const EdgeInsets.all(12),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                children: [
-                  const Icon(Icons.verified_user_outlined, size: 40, color: AppColors.primary),
-                  const SizedBox(height: 8),
-                  Text(
-                    context.l10n.settingsAdminsHint,
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
-            ),
+          SettingsHintCard(
+            icon: Icons.verified_user_outlined,
+            text: context.l10n.settingsAdminsHint,
           ),
           ...adminsAsync.when(
             loading: () => [
@@ -142,15 +134,21 @@ class _AdminsSheet extends ConsumerWidget {
               ),
             ],
             error: (e, _) => [ListTile(title: Text(context.l10n.settingsFlutterErrorDetail(_errorText(e))))],
-            data: (admins) => admins
-                .map((a) => ListTile(
+            data: (admins) => [
+              SettingsListSection(
+                icons: false,
+                children: [
+                  for (final a in admins)
+                    ListTile(
                       title: Text(a.email ?? ''),
                       subtitle: a.createdAt != null
                           ? Text(context.l10n.commonCreatedAt(DateFormat(dateFmt()).format(a.createdAt!.toLocal())))
                           : null,
                       onTap: () => _remove(context, ref, a),
-                    ))
-                .toList(),
+                    ),
+                ],
+              ),
+            ],
           ),
         ],
       ),
