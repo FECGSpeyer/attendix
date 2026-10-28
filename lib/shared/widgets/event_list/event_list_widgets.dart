@@ -11,62 +11,76 @@ import '../../../l10n/l10n.dart';
 /// date tile, pills, chips, section and month headers, the "Heute" card and
 /// inset list cards.
 
-/// Date tile with weekday and day ("Di" / "20").
+/// Date tile with weekday and day ("DI" / "20") – Ionic `.ev-tile`:
+/// 46x50, radius 12, primary 13 % background with primary-shade text;
+/// highlighted types are solid primary, past Termine are faded (0.7).
 class EventDateTile extends StatelessWidget {
   const EventDateTile({
     super.key,
     required this.date,
     this.highlight = false,
     this.past = false,
-    this.size = 44,
+    this.size = 46,
+    this.background,
+    this.foreground,
   });
 
   final String? date;
   final bool highlight;
   final bool past;
+
+  /// Tile width; the height is `size + 4` (Ionic 46x50, today card 54x58).
   final double size;
+
+  /// UX_ATT: overrides for the today card (`.ev-today .ev-tile`).
+  final Color? background;
+  final Color? foreground;
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
     final Color bg;
     final Color fg;
     if (highlight) {
-      bg = AppColors.warning.withValues(alpha: 0.2);
-      fg = AppColors.warningDark;
-    } else if (past) {
-      bg = scheme.surfaceContainerHighest.withValues(alpha: 0.6);
-      fg = AppColors.medium;
+      bg = AppColors.primary;
+      fg = Colors.white;
     } else {
-      bg = AppColors.primary.withValues(alpha: 0.12);
-      fg = AppColors.primary;
+      bg = AppColors.primary.withValues(alpha: 0.13);
+      fg = AppColors.primaryDark;
     }
-    return Container(
+    final large = size > 50;
+    final tile = Container(
       width: size,
       height: size + 4,
       decoration: BoxDecoration(
-        color: bg,
-        borderRadius: BorderRadius.circular(10),
+        color: background ?? bg,
+        borderRadius: BorderRadius.circular(large ? 14 : 12),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            EventListUtils.weekday(date),
-            style: TextStyle(fontSize: 11, color: fg, fontWeight: FontWeight.w500),
+            EventListUtils.weekday(date).toUpperCase(),
+            style: TextStyle(
+              fontSize: 10.9,
+              height: 1,
+              letterSpacing: 0.65,
+              color: foreground ?? fg,
+              fontWeight: FontWeight.w600,
+            ),
           ),
           Text(
             EventListUtils.day(date),
             style: TextStyle(
-              fontSize: 18,
-              height: 1.1,
-              color: fg,
-              fontWeight: FontWeight.bold,
+              fontSize: large ? 24 : 20,
+              height: 1.15,
+              color: foreground ?? fg,
+              fontWeight: FontWeight.w700,
             ),
           ),
         ],
       ),
     );
+    return past ? Opacity(opacity: 0.7, child: tile) : tile;
   }
 }
 
@@ -86,20 +100,25 @@ class EventPill extends StatelessWidget {
   final String label;
   final Color color;
 
+  // UX_ATT: Ionic `.ev-pill`: 4/10 padding, 0.8rem bold tabular figures,
+  // 20 % tint of the color and the normal text color.
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.15),
+        color: color.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(999),
       ),
       child: Text(
         label,
+        maxLines: 1,
+        softWrap: false,
         style: TextStyle(
-          color: color == AppColors.warning ? AppColors.warningDark : color,
-          fontSize: 12,
-          fontWeight: FontWeight.w600,
+          color: Theme.of(context).colorScheme.onSurface,
+          fontSize: 12.8,
+          fontWeight: FontWeight.w700,
+          fontFeatures: const [FontFeature.tabularFigures()],
         ),
       ),
     );
@@ -158,7 +177,7 @@ class EventChip extends StatelessWidget {
   }
 }
 
-/// Section header ("Anstehend 12").
+/// Section header ("Anstehend 12") – Ionic `.ev-section`.
 class EventSectionHeader extends StatelessWidget {
   const EventSectionHeader({
     super.key,
@@ -176,24 +195,23 @@ class EventSectionHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 20, 20, 4),
+      padding: const EdgeInsets.fromLTRB(20, 22, 20, 0),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.baseline,
+        textBaseline: TextBaseline.alphabetic,
         children: [
           if (leading != null) ...[leading!, const SizedBox(width: 8)],
           Flexible(
             child: Text(
               title,
-              style: Theme.of(context)
-                  .textTheme
-                  .titleLarge
-                  ?.copyWith(fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 21.6, fontWeight: FontWeight.w700),
             ),
           ),
           if (count != null) ...[
             const SizedBox(width: 8),
             Text(
               '$count',
-              style: const TextStyle(color: AppColors.medium, fontSize: 16),
+              style: const TextStyle(color: AppColors.medium, fontSize: 15.2),
             ),
           ],
           if (trailing != null) ...[const Spacer(), trailing!],
@@ -203,7 +221,7 @@ class EventSectionHeader extends StatelessWidget {
   }
 }
 
-/// Month header ("Oktober 2026") or label like "Heute".
+/// Month header ("OKTOBER 2026") or label like "Heute" – Ionic `.ev-month`.
 class EventMonthHeader extends StatelessWidget {
   const EventMonthHeader({super.key, required this.label});
 
@@ -212,12 +230,12 @@ class EventMonthHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 12, 20, 4),
+      padding: const EdgeInsets.fromLTRB(20, 14, 20, 0),
       child: Text(
         label.toUpperCase(),
         style: const TextStyle(
-          fontSize: 12,
-          letterSpacing: 0.6,
+          fontSize: 12.8,
+          letterSpacing: 0.64,
           fontWeight: FontWeight.w600,
           color: AppColors.medium,
         ),
@@ -226,29 +244,37 @@ class EventMonthHeader extends StatelessWidget {
   }
 }
 
-/// Inset rounded card holding Termin rows (Ionic `ion-list inset ev-list`).
+/// Inset rounded card holding Termin rows (Ionic iOS `ion-list inset ev-list`:
+/// 16 px side margin, 10 px radius, inset lines starting at the label).
+/// No line is drawn next to [EventSummaryRow] / [EventMoreLink] (plain divs
+/// in Ionic, and the last item of an inset list has no line).
 class EventListCard extends StatelessWidget {
   const EventListCard({super.key, required this.children});
 
   final List<Widget> children;
 
+  static bool _isPlain(Widget w) => w is EventSummaryRow || w is EventMoreLink;
+
   @override
   Widget build(BuildContext context) {
     final rows = <Widget>[];
     for (var i = 0; i < children.length; i++) {
-      if (i > 0) rows.add(const Divider(height: 1, indent: 72));
+      if (i > 0 && !_isPlain(children[i]) && !_isPlain(children[i - 1])) {
+        rows.add(const Divider(height: 0.5, thickness: 0.5, indent: 74));
+      }
       rows.add(children[i]);
     }
     return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      margin: const EdgeInsets.fromLTRB(16, 6, 16, 0),
       clipBehavior: Clip.antiAlias,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       child: Column(mainAxisSize: MainAxisSize.min, children: rows),
     );
   }
 }
 
-/// One Termin row inside an [EventListCard].
+/// One Termin row inside an [EventListCard] (Ionic `ion-item` with the
+/// `ev-tile` in the start slot: min height 64, 16 px start padding).
 class EventRow extends StatelessWidget {
   const EventRow({
     super.key,
@@ -262,6 +288,7 @@ class EventRow extends StatelessWidget {
     this.dimmed = false,
     this.onTap,
     this.titleSuffix,
+    this.titleLeading,
   });
 
   final String? date;
@@ -277,47 +304,60 @@ class EventRow extends StatelessWidget {
   final VoidCallback? onTap;
   final Widget? titleSuffix;
 
+  /// UX_ATT: inline icon before the title (Ionic duty headset icon).
+  final Widget? titleLeading;
+
   @override
   Widget build(BuildContext context) {
-    final content = Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          EventDateTile(date: date, highlight: highlight, past: past),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
+    final content = ConstrainedBox(
+      constraints: const BoxConstraints(minHeight: 64),
+      child: Padding(
+        padding: const EdgeInsets.only(left: 16, right: 16),
+        child: Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 7),
+              child: EventDateTile(date: date, highlight: highlight, past: past),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Flexible(
-                      child: Text(
-                        title,
-                        style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
-                      ),
+                    Row(
+                      children: [
+                        if (titleLeading != null) ...[titleLeading!, const SizedBox(width: 4)],
+                        Flexible(
+                          child: Text(
+                            title,
+                            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+                          ),
+                        ),
+                        if (titleSuffix != null) ...[const SizedBox(width: 6), titleSuffix!],
+                      ],
                     ),
-                    if (titleSuffix != null) ...[const SizedBox(width: 6), titleSuffix!],
+                    if (subtitle != null && subtitle!.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 2),
+                        child: Text(
+                          subtitle!,
+                          style: const TextStyle(color: AppColors.medium, fontSize: 14),
+                        ),
+                      ),
+                    ...extra,
                   ],
                 ),
-                if (subtitle != null && subtitle!.isNotEmpty)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 2),
-                    child: Text(
-                      subtitle!,
-                      style: const TextStyle(color: AppColors.medium, fontSize: 13),
-                    ),
-                  ),
-                ...extra,
-              ],
+              ),
             ),
-          ),
-          if (trailing.isNotEmpty) ...[
-            const SizedBox(width: 8),
-            Row(mainAxisSize: MainAxisSize.min, children: trailing),
+            if (trailing.isNotEmpty) ...[
+              const SizedBox(width: 8),
+              Row(mainAxisSize: MainAxisSize.min, children: trailing),
+            ],
           ],
-        ],
+        ),
       ),
     );
     final child = Opacity(opacity: dimmed ? 0.6 : 1, child: content);
@@ -388,7 +428,13 @@ class EventTodayCard extends StatelessWidget {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  EventDateTile(date: date, size: 52),
+                  // UX_ATT: `.ev-today .ev-tile`: 54x58, solid primary
+                  EventDateTile(
+                    date: date,
+                    size: 54,
+                    background: AppColors.primary,
+                    foreground: Colors.white,
+                  ),
                   const SizedBox(width: 14),
                   Expanded(
                     child: Column(
@@ -562,7 +608,8 @@ class EventSummary extends StatelessWidget {
   }
 }
 
-/// "Alle 12 anzeigen" / "Weniger anzeigen" toggle.
+/// "Alle 12 anzeigen" / "Weniger anzeigen" toggle – Ionic `.ev-more-link`:
+/// full-width plain button, 14 px padding, semibold primary text.
 class EventMoreLink extends StatelessWidget {
   const EventMoreLink({super.key, required this.label, required this.onTap});
 
@@ -571,7 +618,22 @@ class EventMoreLink extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(child: TextButton(onPressed: onTap, child: Text(label)));
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.all(14),
+        child: Center(
+          child: Text(
+            label,
+            style: const TextStyle(
+              color: AppColors.primary,
+              fontWeight: FontWeight.w600,
+              fontSize: 16,
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
 
@@ -644,5 +706,237 @@ Future<void> openEventAttachment(String url) async {
     await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
   } catch (e) {
     if (kDebugMode) debugPrint('openEventAttachment failed: $e');
+  }
+}
+
+/// UX_ATT: "Durchschnitt" row at the top of the past list (Ionic att-list
+/// `.ev-summary` with `.ev-summary__label` and an `.ev-pill`).
+class EventSummaryRow extends StatelessWidget {
+  const EventSummaryRow({super.key, required this.label, required this.pill});
+
+  final String label;
+  final Widget pill;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(label, style: const TextStyle(fontSize: 14, color: AppColors.medium)),
+          ),
+          const SizedBox(width: 12),
+          pill,
+        ],
+      ),
+    );
+  }
+}
+
+/// UX_ATT: one stat bubble of [EventTodayFilledCard] (`.ev-today__stats span`).
+class EventTodayStat {
+  const EventTodayStat(this.text, {this.strong = false});
+
+  final String text;
+
+  /// `.ev-today__stat-strong`: bold on a stronger white tint.
+  final bool strong;
+}
+
+/// UX_ATT: call to action of [EventTodayFilledCard] (`.ev-today__cta`).
+class EventTodayCta {
+  const EventTodayCta({
+    required this.label,
+    required this.icon,
+    required this.onTap,
+    this.secondary = false,
+  });
+
+  final String label;
+  final IconData icon;
+  final VoidCallback onTap;
+
+  /// `.ev-today__cta--secondary`: white tint with white text.
+  final bool secondary;
+}
+
+/// UX_ATT: filled "Heute" / "Nächster Termin" card of the Termine tab
+/// (Ionic att-list `.ev-today.ev-today--filled`): primary background, white
+/// text, translucent date tile, stat bubbles and two equal-width buttons.
+class EventTodayFilledCard extends StatelessWidget {
+  const EventTodayFilledCard({
+    super.key,
+    required this.date,
+    required this.title,
+    this.meta,
+    this.place,
+    this.stats = const [],
+    this.ctas = const [],
+    this.onTap,
+  });
+
+  final String? date;
+  final String title;
+  final String? meta;
+  final String? place;
+  final List<EventTodayStat> stats;
+  final List<EventTodayCta> ctas;
+  final VoidCallback? onTap;
+
+  static const _white18 = Color(0x2EFFFFFF);
+  static const _white30 = Color(0x4DFFFFFF);
+
+  @override
+  Widget build(BuildContext context) {
+    const onPrimary = Colors.white;
+    final dimmed = onPrimary.withValues(alpha: 0.9);
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+      child: Material(
+        color: AppColors.primary,
+        borderRadius: BorderRadius.circular(18),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: DefaultTextStyle.merge(
+              style: const TextStyle(color: onPrimary),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      EventDateTile(
+                        date: date,
+                        size: 54,
+                        background: _white18,
+                        foreground: onPrimary,
+                      ),
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              title,
+                              style: const TextStyle(
+                                fontSize: 18.4,
+                                height: 1.25,
+                                fontWeight: FontWeight.w700,
+                                color: onPrimary,
+                              ),
+                            ),
+                            if (meta != null && meta!.isNotEmpty)
+                              Padding(
+                                padding: const EdgeInsets.only(top: 2),
+                                child: Text(meta!, style: TextStyle(fontSize: 14, color: dimmed)),
+                              ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  if (place != null && place!.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(top: 2),
+                            child: Icon(Icons.location_on_outlined, size: 16, color: dimmed),
+                          ),
+                          const SizedBox(width: 6),
+                          Expanded(
+                            child: Text(place!, style: TextStyle(fontSize: 14, color: dimmed)),
+                          ),
+                        ],
+                      ),
+                    ),
+                  if (stats.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 14),
+                      child: Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: [
+                          for (final stat in stats)
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                              decoration: BoxDecoration(
+                                color: stat.strong ? _white30 : _white18,
+                                borderRadius: BorderRadius.circular(999),
+                              ),
+                              child: Text(
+                                stat.text,
+                                style: TextStyle(
+                                  fontSize: 12.8,
+                                  color: onPrimary,
+                                  fontWeight: stat.strong ? FontWeight.w700 : FontWeight.w400,
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  if (ctas.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 14),
+                      child: Row(
+                        children: [
+                          for (var i = 0; i < ctas.length; i++) ...[
+                            if (i > 0) const SizedBox(width: 8),
+                            Expanded(child: _EventTodayCtaButton(cta: ctas[i])),
+                          ],
+                        ],
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _EventTodayCtaButton extends StatelessWidget {
+  const _EventTodayCtaButton({required this.cta});
+
+  final EventTodayCta cta;
+
+  @override
+  Widget build(BuildContext context) {
+    final fg = cta.secondary ? Colors.white : AppColors.primaryDark;
+    return Material(
+      color: cta.secondary ? EventTodayFilledCard._white18 : Colors.white,
+      borderRadius: BorderRadius.circular(12),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: cta.onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(cta.icon, size: 18, color: fg),
+              const SizedBox(width: 6),
+              Flexible(
+                child: Text(
+                  cta.label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontSize: 15.2, fontWeight: FontWeight.w600, color: fg),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

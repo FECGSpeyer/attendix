@@ -51,6 +51,7 @@ import '../../../../shared/widgets/event_list/excuse_reason_sheet.dart';
 import '../../../self_service/presentation/widgets/self_service_event_actions.dart';
 import '../../../duty/presentation/widgets/duty_staffing_section.dart';
 import '../widgets/attendance_detail/attendance_detail_widgets.dart';
+import '../widgets/ios_condense_header.dart'; // UX_ATT
 import '../widgets/attendance_legend_sheet.dart';
 import '../widgets/attendance_status_overview_sheet.dart';
 import '../widgets/songs_selection_sheet.dart';
@@ -368,6 +369,15 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     }
   }
 
+  /// UX_ATT: corner radius of the page's section cards (theme card shape).
+  BorderRadius _sectionRadius(BuildContext context) {
+    final shape = Theme.of(context).cardTheme.shape;
+    if (shape is RoundedRectangleBorder && shape.borderRadius is BorderRadius) {
+      return shape.borderRadius as BorderRadius;
+    }
+    return BorderRadius.circular(12);
+  }
+
   @override
   Widget build(BuildContext context) {
     // Tenant switched while this Termin is open -> close it (it belongs to
@@ -541,16 +551,19 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                       for (final e in _personNotes.entries)
                         e.key: (e.value?.isNotEmpty ?? false) ? context.l10n.attendanceNoteAdded : e.value,
                     };
-              final hasChecklist = canViewChecklist &&
-                  (_localChecklist.isNotEmpty || (attendanceType?.checklist?.isNotEmpty ?? false));
+              // UX_ATT: Ionic shows the Checkliste only once it has items;
+              // an empty one is started via the menu ("Checkliste starten").
+              final hasChecklist = canViewChecklist && _localChecklist.isNotEmpty;
               final hasSongs = attendanceType?.manageSongs ?? false;
 
               return CustomScrollView(
                 slivers: [
                   SliverToBoxAdapter(
+                    // UX_ATT: Ionic iOS inset list: 16 px between the groups
                     child: Column(
+                      spacing: AppDimensions.paddingS,
                       children: [
-                        const SizedBox(height: AppDimensions.paddingS),
+                        const SizedBox(height: AppDimensions.paddingXS),
 
                         GeneralInfoAccordion(
                           attendance: attendance,
@@ -647,8 +660,6 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                           onSendViaTelegram: _showTelegramFormatOptions,
                           onSharePlanChanged: _toggleSharePlan,
                         ),
-
-                        const SizedBox(height: AppDimensions.paddingS),
                       ],
                     ),
                   ),
@@ -660,7 +671,12 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                   if (groupScopeAsync.isLoading)
                     const SliverToBoxAdapter(child: LinearProgressIndicator()),
 
-                  AttendanceGrid(
+                  // UX_ATT: the persons are the last item-group of Ionic's
+                  // inset list: a rounded white section with 16 px margins.
+                  SliverPadding(
+                    padding: const EdgeInsets.fromLTRB(AppDimensions.paddingM, 12, AppDimensions.paddingM, 0),
+                    sliver: AttendanceGrid(
+                      cornerRadius: _sectionRadius(context),
                       persons: visiblePersons,
                       localStatuses: _localStatuses,
                       personNotes: visibleNotes,
@@ -699,17 +715,30 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                       onEditRegistrationFields: (attendanceType?.registrationFields?.isNotEmpty ?? false)
                           ? (personId) => _editRegistrationFields(personId, attendanceType!)
                           : null,
+                    ),
                   ),
-                  const SliverToBoxAdapter(child: SizedBox(height: AppDimensions.paddingL)),
+                  // Ionic .marginBottom (5rem) below the list
+                  const SliverToBoxAdapter(child: SizedBox(height: 80)),
                 ],
               );
             },
           ),
-          bottomNavigationBar: AttendanceStatusBar(
-            persons: _personsInAttendance(personsAsync.valueOrNull ?? []),
-            localStatuses: _localStatuses,
-            availableStatuses: availableStatuses,
-          ),
+          // UX_ATT: no Flutter-only bottom summary bar (Ionic has none; the
+          // counts live in "Statusübersicht"). On iOS Ionic shows a FAB that
+          // opens the Ablaufplan editor (isIos && attendance → editPlan()).
+          floatingActionButton: isIosLook(context) && !ref.watch(effectiveRoleProvider).isViewer
+              ? IonFabButton(
+                  heroTag: 'att-detail-plan-fab',
+                  icon: Icons.format_list_bulleted,
+                  onPressed: () async {
+                    final hasChanges =
+                        await context.push<bool>('/planning?attendanceId=${widget.attendanceId}');
+                    if (hasChanges == true && mounted) {
+                      setState(() => _planAccordionExpanded = true);
+                    }
+                  },
+                )
+              : null,
         );
       },
     );

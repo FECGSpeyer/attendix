@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:go_router/go_router.dart';
-import 'package:table_calendar/table_calendar.dart';
 
-import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/attendance_providers.dart';
 import '../../../../core/providers/attendance_type_providers.dart';
 import '../../../../core/providers/debug_providers.dart';
@@ -12,6 +10,7 @@ import '../../../../core/providers/realtime_providers.dart';
 import '../../../../core/providers/role_permission_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/color_utils.dart';
+import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/utils/haptic_helper.dart';
 import '../../../../core/utils/event_list_utils.dart';
 import '../../../../data/models/attendance/attendance.dart';
@@ -27,6 +26,7 @@ import '../../../duty/presentation/pages/duty_distribute_page.dart';
 import '../../../duty/presentation/widgets/duty_actions.dart';
 import '../../../duty/presentation/widgets/my_duty_requests_section.dart';
 import '../../../../shared/widgets/tenant/tenant_switcher_title.dart'; // SETTINGS2
+import '../widgets/ios_condense_header.dart'; // UX_ATT
 import '../../../../l10n/l10n.dart';
 
 
@@ -40,6 +40,14 @@ class AttendanceListPage extends ConsumerStatefulWidget {
 
 class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
   bool _showAllPast = false;
+  // UX_ATT: iOS large title (Ionic ion-header collapse="condense")
+  final _condense = CondenseHeaderController();
+
+  @override
+  void dispose() {
+    _condense.dispose();
+    super.dispose();
+  }
 
   /// Navigate to detail page, refresh list data when returning
   Future<void> _navigateToDetail(int attendanceId) async {
@@ -165,31 +173,24 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
     );
   }
 
-  /// "{n} anwesend · {n} entschuldigt · {n} abwesend" line of the today card;
-  /// duty Termine show "{text} besetzt" plus the names (Ionic ev-today__stats).
-  Widget _buildTodayStats(Attendance att, DutyTermin? duty) {
-    final style = Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.medium);
-    final strong = style?.copyWith(fontWeight: FontWeight.bold, color: AppColors.dark);
-    final List<Widget> children;
+  /// "{n} % · {n} anwesend · {n} entschuldigt · {n} abwesend" bubbles of the
+  /// today card; duty Termine show "{text} besetzt" plus the names
+  /// (Ionic ev-today__stats).
+  List<EventTodayStat> _todayStats(Attendance att, DutyTermin? duty) {
     if (duty != null) {
-      children = [
-        Text(context.l10n.attListDutyFilled(dutyBadge(duty).text), style: strong),
-        Text(dutyNames(duty), style: style),
-      ];
-    } else {
-      final counts = ref.watch(attendanceStatusCountsProvider(att.id!)).valueOrNull;
-      if (counts == null) return const SizedBox.shrink();
-      children = [
-        Text('${(att.percentage ?? 0).round()} %', style: strong),
-        Text(context.l10n.attListCountPresent(counts.present), style: style),
-        if (counts.excused > 0) Text(context.l10n.attListCountExcused(counts.excused), style: style),
-        if (counts.absent > 0) Text(context.l10n.attListCountAbsent(counts.absent), style: style),
+      return [
+        EventTodayStat(context.l10n.attListDutyFilled(dutyBadge(duty).text), strong: true),
+        EventTodayStat(dutyNames(duty)),
       ];
     }
-    return Padding(
-      padding: const EdgeInsets.only(top: 6),
-      child: Wrap(spacing: 12, runSpacing: 4, children: children),
-    );
+    final counts = ref.watch(attendanceStatusCountsProvider(att.id!)).valueOrNull;
+    if (counts == null) return const [];
+    return [
+      EventTodayStat('${(att.percentage ?? 0).round()} %', strong: true),
+      EventTodayStat(context.l10n.attListCountPresent(counts.present)),
+      if (counts.excused > 0) EventTodayStat(context.l10n.attListCountExcused(counts.excused)),
+      if (counts.absent > 0) EventTodayStat(context.l10n.attListCountAbsent(counts.absent)),
+    ];
   }
   // END ATT_DETAIL
 
@@ -199,22 +200,77 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
     if (created && mounted) ref.invalidate(realtimeAttendanceListProvider);
   }
 
+  /// UX_ATT: Ionic noDataContainer: plain 80 px icon, label, small button.
+  Widget _buildEmpty(bool largeTitle) {
+    final canCreate = ref.watch(canCreateAttendanceProvider);
+    return _condense.listen(
+      child: ListView(
+        children: [
+          if (largeTitle) IosLargeTitle(context.l10n.attListEvents),
+          SizedBox(
+            height: MediaQuery.sizeOf(context).height * 0.6,
+            child: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.check_box_outlined,
+                    size: 80,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(context.l10n.attListNoEventsYet, style: const TextStyle(fontSize: 16)),
+                  if (canCreate) ...[
+                    const SizedBox(height: 8),
+                    FilledButton(
+                      onPressed: _openCreate,
+                      style: FilledButton.styleFrom(
+                        visualDensity: VisualDensity.compact,
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                      ),
+                      child: Text(context.l10n.attListAddEvent),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// UX_ATT: round "+" FAB bottom right (Ionic ion-fab). On iOS the Ionic
+  /// iOS 26 theme draws it as a 61 px white glass button with a dark icon.
+  Widget _buildFab(BuildContext context) => IonFabButton(
+        onPressed: _openCreate,
+        tooltip: context.l10n.attListAddEvent,
+        icon: Icons.add,
+      );
+
   @override
   Widget build(BuildContext context) {
     final ref = this.ref;
     final attendanceAsync = ref.watch(realtimeAttendanceListProvider);
     // Use effectiveRoleProvider to support debug role override
     final role = ref.watch(effectiveRoleProvider);
+    // UX_ATT: Ionic shows the large "Termine" title (iOS) only with one tenant;
+    // with several tenants the toolbar holds the tenant switcher instead.
+    final singleTenant = (ref.watch(userTenantsProvider).valueOrNull?.length ?? 0) <= 1;
+    final largeTitle = isIosLook(context) && singleTenant;
 
     return Scaffold(
       appBar: AppBar(
         // SETTINGS2: Ionic att-list header tenant switcher
-        title: TenantSwitcherTitle(
-          fallbackTitle: context.l10n.attListEvents,
-          singleTenantTitle: context.l10n.attListEvents,
+        title: _condense.toolbarTitle(
+          enabled: largeTitle,
+          title: TenantSwitcherTitle(
+            fallbackTitle: context.l10n.attListEvents,
+            singleTenantTitle: context.l10n.attListEvents,
+          ),
         ),
         // UX_ATT: Ionic order: Filter, Dienste verteilen, Glocke
-        // (Kalender is Flutter-only and sits before the bell).
         actions: [
           // ATT_DETAIL: Termintyp filter
           _buildTypeFilterButton(ref.watch(attendanceTypesProvider).valueOrNull ?? const []),
@@ -229,21 +285,23 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
                 if (saved && mounted) ref.invalidate(realtimeAttendanceListProvider);
               },
             ),
-          IconButton(
-            icon: const Icon(Icons.calendar_today),
-            tooltip: context.l10n.attendanceFlutterCalendar,
-            onPressed: () => _showCalendarView(context, ref),
-          ),
           const NotificationBell(), // MESSAGES
         ],
       ),
       body: attendanceAsync.when(
         skipLoadingOnReload: true,
-        loading: () => const ListSkeleton(
-          itemCount: 8,
-          showAvatar: true,
-          showSubtitle: true,
-          showTrailing: true,
+        // UX_ATT: Ionic skeleton: one-line items
+        loading: () => ListView(
+          physics: const NeverScrollableScrollPhysics(),
+          children: [
+            if (largeTitle) IosLargeTitle(context.l10n.attListEvents),
+            const ListSkeleton(
+              itemCount: 12,
+              showAvatar: false,
+              showSubtitle: false,
+              showDividers: true,
+            ),
+          ],
         ),
         error: (error, stack) => EmptyStateWidget(
           icon: Icons.error_outline,
@@ -255,14 +313,7 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
         data: (attendances) {
           // ATT_DETAIL: an active type filter without matches still shows the list
           if (attendances.isEmpty && ref.watch(attendanceListTypeFilterProvider) == null) {
-            // UX_ATT: Ionic noDataContainer
-            final canCreate = ref.watch(canCreateAttendanceProvider);
-            return EmptyStateWidget(
-              icon: Icons.check_box_outlined,
-              title: context.l10n.attListNoEventsYet,
-              actionLabel: canCreate ? context.l10n.attListAddEvent : null,
-              onAction: canCreate ? _openCreate : null,
-            );
+            return _buildEmpty(largeTitle);
           }
 
           // Get highlighted type IDs from AttendanceTypes (like Ionic)
@@ -304,6 +355,8 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
             return readableDate(att);
           }
 
+          // Ionic getEventMeta: date (multi-day / today card), time, place.
+          // Duty names are a separate line (Ionic second <p>).
           String meta(Attendance att, {bool withDate = false, bool withPlace = true}) {
             final type = typesById[att.typeId];
             final multiDay = (att.durationDays ?? 1) > 1 ||
@@ -317,8 +370,6 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
                   att.endTime ?? type?.endTime,
                 ),
               if (withPlace) att.place,
-              // DUTY: names of the assigned persons
-              if (dutyTermine[att.id] != null) dutyNames(dutyTermine[att.id]!),
             ]);
           }
 
@@ -346,7 +397,8 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
           }
 
           // UX_ATT: Ionic: delete on the current card for Dirigent + Helfer,
-          // on list rows only for the Dirigent; icon-only trash option.
+          // on list rows only for the Dirigent; icon-only trash option that
+          // also fires on a full swipe (ion-item-option expandable / ionSwipe).
           Widget slidable(Attendance att, Widget child, {bool helperToo = false}) {
             final allowed = helperToo ? role.canAddAttendance : role.isConductor;
             if (!allowed) return child;
@@ -355,6 +407,14 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
               endActionPane: ActionPane(
                 motion: const ScrollMotion(),
                 extentRatio: 0.25,
+                dismissible: DismissiblePane(
+                  closeOnCancel: true,
+                  confirmDismiss: () async {
+                    await _confirmDelete(context, att);
+                    return false;
+                  },
+                  onDismissed: () {},
+                ),
                 children: [
                   SlidableAction(
                     onPressed: (_) => _confirmDelete(context, att),
@@ -368,426 +428,151 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
             );
           }
 
+          final currentDuty = current == null ? null : dutyTermine[current.id];
+          final averageRounded = averagePercent?.round() ?? 0;
+
           return RefreshIndicator(
             onRefresh: () async {
               // FN-008: invalidate to trigger fresh fetch from realtime provider
               ref.invalidate(realtimeAttendanceListProvider);
             },
-            child: ListView(
-              padding: const EdgeInsets.only(bottom: 96),
-              children: [
-                // DUTY: own duties waiting for confirmation
-                const MyDutyRequestsSection(),
-                // "Heute" / "Nächster Termin" – full-width card (Ionic ev-today)
-                if (current != null) ...[
-                  EventMonthHeader(
-                    label: EventListUtils.isRunning(current.date, current.durationDays)
-                        ? context.l10n.teamOrgTodayCap
-                        : context.l10n.teamOrgNextEvent,
-                  ),
-                  slidable(
-                    current,
-                    helperToo: true,
-                    EventTodayCard(
-                      date: current.date,
-                      title: title(current),
-                      meta: meta(current, withDate: true, withPlace: false),
-                      place: current.place,
-                      // ATT_DETAIL: status counters / duty Besetzung
-                      extraHeader: [
-                        if (current.id != null)
-                          _buildTodayStats(current, dutyTermine[current.id]),
-                      ],
-                      actions: [
-                        if (role.canAddAttendance)
-                        FilledButton.icon(
-                          onPressed: () => _navigateToDetail(current.id!),
-                          icon: const Icon(Icons.check_box_outlined, size: 18),
-                          label: Text(_hasPlan(current) ? context.l10n.signoutAttendance : context.l10n.attendanceFlutterRecordAttendance),
-                        ),
-                        // ATT_DETAIL: Ablaufplan
-                        if (_hasPlan(current))
-                          OutlinedButton.icon(
-                            onPressed: () => _openPlanViewer(current),
-                            icon: const Icon(Icons.description_outlined, size: 18),
-                            label: Text(context.l10n.signoutRunSheet),
-                          ),
-                      ],
+            child: _condense.listen(
+              child: ListView(
+                // Room for the FAB below the last card (Ionic marginBottom)
+                padding: const EdgeInsets.only(bottom: 96),
+                children: [
+                  if (largeTitle) IosLargeTitle(context.l10n.attListEvents),
+                  // DUTY: own duties waiting for confirmation
+                  const MyDutyRequestsSection(),
+                  // "Heute" / "Nächster Termin" – filled card (Ionic ev-today--filled),
+                  // only for Dirigent + Helfer like Ionic.
+                  if (current != null && role.canAddAttendance) ...[
+                    EventMonthHeader(
+                      label: EventListUtils.isRunning(current.date, current.durationDays)
+                          ? context.l10n.teamOrgTodayCap
+                          : context.l10n.teamOrgNextEvent,
                     ),
-                  ),
-                ],
+                    slidable(
+                      current,
+                      helperToo: true,
+                      EventTodayFilledCard(
+                        date: current.date,
+                        title: title(current),
+                        meta: meta(current, withDate: true, withPlace: false),
+                        place: current.place,
+                        onTap: () => _navigateToDetail(current.id!),
+                        // ATT_DETAIL: status counters / duty Besetzung
+                        stats: current.id == null ? const [] : _todayStats(current, currentDuty),
+                        ctas: [
+                          EventTodayCta(
+                            icon: Icons.check_box_outlined,
+                            label: _hasPlan(current)
+                                ? context.l10n.signoutAttendance
+                                : context.l10n.attendanceFlutterRecordAttendance,
+                            onTap: () => _navigateToDetail(current.id!),
+                          ),
+                          // ATT_DETAIL: Ablaufplan
+                          if (_hasPlan(current))
+                            EventTodayCta(
+                              icon: Icons.description_outlined,
+                              label: context.l10n.signoutRunSheet,
+                              secondary: true,
+                              onTap: () => _openPlanViewer(current),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ],
 
-                if (categorized.upcoming.isNotEmpty) ...[
-                  EventSectionHeader(title: context.l10n.signoutUpcoming, count: categorized.upcoming.length),
-                  for (final group in upcomingGroups) ...[
-                    EventMonthHeader(label: group.label),
+                  if (categorized.upcoming.isNotEmpty) ...[
+                    EventSectionHeader(title: context.l10n.signoutUpcoming, count: categorized.upcoming.length),
+                    for (final group in upcomingGroups) ...[
+                      EventMonthHeader(label: group.label),
+                      EventListCard(children: [
+                        for (final att in group.items)
+                          slidable(
+                            att,
+                            EventRow(
+                              date: att.date,
+                              title: title(att),
+                              // DUTY: headset icon before duty Termine
+                              titleLeading: dutyTermine[att.id] != null
+                                  ? const Icon(Icons.headset_mic_outlined, size: 16, color: AppColors.primary)
+                                  : null,
+                              subtitle: meta(att),
+                              extra: [
+                                if (dutyTermine[att.id] != null)
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 2),
+                                    child: Text(
+                                      dutyNames(dutyTermine[att.id]!),
+                                      style: const TextStyle(color: AppColors.medium, fontSize: 14),
+                                    ),
+                                  ),
+                              ],
+                              highlight: highlightedTypeIds.contains(att.typeId),
+                              onTap: () => _navigateToDetail(att.id!),
+                              trailing: [
+                                // ATT_DETAIL: "Ablaufplan anzeigen"
+                                if (_hasPlan(att))
+                                  IconButton(
+                                    tooltip: context.l10n.signoutShowRunSheet,
+                                    visualDensity: VisualDensity.compact,
+                                    icon: const Icon(Icons.description_outlined, color: AppColors.primary),
+                                    onPressed: () => _openPlanViewer(att),
+                                  ),
+                                percentPill(att),
+                              ],
+                            ),
+                          ),
+                      ]),
+                    ],
+                  ],
+
+                  if (past.isNotEmpty) ...[
+                    EventSectionHeader(title: context.l10n.signoutPast, count: past.length),
                     EventListCard(children: [
-                      for (final att in group.items)
+                      // UX_ATT: Ionic ev-summary "Durchschnitt" + pill inside the list
+                      EventSummaryRow(
+                        label: context.l10n.attListAverage,
+                        pill: EventPill(
+                          label: '$averageRounded%',
+                          color: EventListUtils.percentageColor(averageRounded),
+                        ),
+                      ),
+                      for (final att in pastPreview)
                         slidable(
                           att,
                           EventRow(
                             date: att.date,
                             title: title(att),
-                            subtitle: meta(att),
+                            subtitle: [readableDate(att), countText(att)]
+                                .whereType<String>()
+                                .join(' · '),
+                            past: true,
                             highlight: highlightedTypeIds.contains(att.typeId),
                             onTap: () => _navigateToDetail(att.id!),
-                            trailing: [
-                              // ATT_DETAIL: "Ablaufplan anzeigen"
-                              if (_hasPlan(att))
-                                IconButton(
-                                  tooltip: context.l10n.signoutShowRunSheet,
-                                  visualDensity: VisualDensity.compact,
-                                  icon: const Icon(Icons.description_outlined, color: AppColors.primary),
-                                  onPressed: () => _openPlanViewer(att),
-                                ),
-                              percentPill(att),
-                            ],
+                            trailing: [percentPill(att)],
                           ),
+                        ),
+                      if (past.length > EventListUtils.pastPreviewCount)
+                        EventMoreLink(
+                          label: _showAllPast ? context.l10n.attendanceFlutterShowLess : context.l10n.attendanceFlutterShowAllCount(past.length),
+                          onTap: () => setState(() => _showAllPast = !_showAllPast),
                         ),
                     ]),
                   ],
                 ],
-
-                if (past.isNotEmpty) ...[
-                  EventSectionHeader(title: context.l10n.signoutPast, count: past.length),
-                  if (averagePercent != null)
-                    EventSummary(percentage: averagePercent.round()),
-                  EventListCard(children: [
-                    for (final att in pastPreview)
-                      slidable(
-                        att,
-                        EventRow(
-                          date: att.date,
-                          title: title(att),
-                          subtitle: [readableDate(att), countText(att)]
-                              .whereType<String>()
-                              .join(' · '),
-                          past: true,
-                          highlight: highlightedTypeIds.contains(att.typeId),
-                          onTap: () => _navigateToDetail(att.id!),
-                          trailing: [percentPill(att)],
-                        ),
-                      ),
-                    if (past.length > EventListUtils.pastPreviewCount)
-                      EventMoreLink(
-                        label: _showAllPast ? context.l10n.attendanceFlutterShowLess : context.l10n.attendanceFlutterShowAllCount(past.length),
-                        onTap: () => setState(() => _showAllPast = !_showAllPast),
-                      ),
-                  ]),
-                ],
-              ],
+              ),
             ),
           );
         },
       ),
       // FAB only for roles that can add attendances (not VIEWER).
       // SETTINGS_EXT: Helfer abhängig von Rollenberechtigung attendance_create
-      // UX_ATT: round "+" FAB bottom right that opens the create sheet (Ionic ion-fab)
       floatingActionButton: ref.watch(canCreateAttendanceProvider)
-          ? FloatingActionButton(
-              onPressed: _openCreate,
-              tooltip: context.l10n.attListAddEvent,
-              child: const Icon(Icons.add),
-            )
+          ? _buildFab(context)
           : null,
-    );
-  }
-}
-
-/// Show calendar view modal
-void _showCalendarView(BuildContext context, WidgetRef ref) {
-  final attendances = ref.read(realtimeAttendanceListProvider).valueOrNull ?? [];
-
-  // Build a map of dates to attendances
-  final Map<DateTime, List<Attendance>> attendanceMap = {};
-  for (final attendance in attendances) {
-    final date = DateTime.tryParse(attendance.date);
-    if (date != null) {
-      final normalizedDate = DateTime(date.year, date.month, date.day);
-      attendanceMap.putIfAbsent(normalizedDate, () => []).add(attendance);
-    }
-  }
-
-  showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    builder: (context) => _CalendarViewSheet(
-      attendanceMap: attendanceMap,
-      onDateSelected: (date, attendances) {
-        Navigator.of(context).pop();
-        if (attendances.length == 1) {
-          context.push('/attendance/${attendances.first.id}');
-        } else if (attendances.length > 1) {
-          // Show selection dialog
-          _showAttendanceSelectionDialog(context, attendances);
-        }
-      },
-    ),
-  );
-}
-
-/// Show dialog to select an attendance when multiple exist on the same date
-void _showAttendanceSelectionDialog(BuildContext context, List<Attendance> attendances) {
-  showDialog(
-    context: context,
-    builder: (ctx) => AlertDialog(
-      title: Text(context.l10n.attendanceFlutterAttendancesCount(attendances.length)),
-      content: SizedBox(
-        width: double.maxFinite,
-        child: ListView.builder(
-          shrinkWrap: true,
-          itemCount: attendances.length,
-          itemBuilder: (context, index) {
-            final attendance = attendances[index];
-            return ListTile(
-              title: Text(attendance.displayTitle),
-              subtitle: attendance.startTime != null
-                  ? Text(attendance.startTime!)
-                  : null,
-              onTap: () {
-                Navigator.of(ctx).pop();
-                context.push('/attendance/${attendance.id}');
-              },
-            );
-          },
-        ),
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(ctx).pop(),
-          child: Text(context.l10n.commonCancel),
-        ),
-      ],
-    ),
-  );
-}
-
-/// Calendar view sheet widget
-class _CalendarViewSheet extends ConsumerStatefulWidget {
-  const _CalendarViewSheet({
-    required this.attendanceMap,
-    required this.onDateSelected,
-  });
-
-  final Map<DateTime, List<Attendance>> attendanceMap;
-  final void Function(DateTime date, List<Attendance> attendances) onDateSelected;
-
-  @override
-  ConsumerState<_CalendarViewSheet> createState() => _CalendarViewSheetState();
-}
-
-class _CalendarViewSheetState extends ConsumerState<_CalendarViewSheet> {
-  CalendarFormat _calendarFormat = CalendarFormat.month;
-  DateTime _focusedDay = DateTime.now();
-  DateTime? _selectedDay;
-
-  List<Attendance> _getAttendancesForDay(DateTime day) {
-    final normalizedDay = DateTime(day.year, day.month, day.day);
-    return widget.attendanceMap[normalizedDay] ?? [];
-  }
-
-  Color? _getTypeColorForDay(DateTime day, List<AttendanceType> types) {
-    final attendances = _getAttendancesForDay(day);
-    if (attendances.isEmpty) return null;
-
-    final attendance = attendances.first;
-    if (attendance.typeId == null) return null;
-
-    final type = types.cast<AttendanceType?>().firstWhere(
-      (t) => t!.id == attendance.typeId,
-      orElse: () => null,
-    );
-    if (type == null) return null;
-
-    return ColorUtils.parseNamedColor(type.color);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final typesAsync = ref.watch(attendanceTypesProvider);
-    final types = typesAsync.valueOrNull ?? [];
-
-    return DraggableScrollableSheet(
-      initialChildSize: 0.7,
-      minChildSize: 0.5,
-      maxChildSize: 0.95,
-      expand: false,
-      builder: (context, scrollController) {
-        return Column(
-          children: [
-            // Drag handle
-            Container(
-              margin: const EdgeInsets.only(top: 12, bottom: 8),
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: AppColors.medium,
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-            // Header
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    context.l10n.attendanceFlutterCalendar,
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: () => Navigator.of(context).pop(),
-                  ),
-                ],
-              ),
-            ),
-            const Divider(),
-            // Calendar
-            Expanded(
-              child: SingleChildScrollView(
-                controller: scrollController,
-                child: TableCalendar<Attendance>(
-                  firstDay: DateTime.now().subtract(const Duration(days: 365)),
-                  lastDay: DateTime.now().add(const Duration(days: 365)),
-                  focusedDay: _focusedDay,
-                  calendarFormat: _calendarFormat,
-                  locale: currentIntlLocale(),
-                  startingDayOfWeek: StartingDayOfWeek.monday,
-                  selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
-                  eventLoader: _getAttendancesForDay,
-                  onDaySelected: (selectedDay, focusedDay) {
-                    setState(() {
-                      _selectedDay = selectedDay;
-                      _focusedDay = focusedDay;
-                    });
-                    final attendances = _getAttendancesForDay(selectedDay);
-                    if (attendances.isNotEmpty) {
-                      widget.onDateSelected(selectedDay, attendances);
-                    }
-                  },
-                  onFormatChanged: (format) {
-                    setState(() {
-                      _calendarFormat = format;
-                    });
-                  },
-                  onPageChanged: (focusedDay) {
-                    _focusedDay = focusedDay;
-                  },
-                  calendarStyle: const CalendarStyle(
-                    todayDecoration: BoxDecoration(
-                      color: AppColors.primary,
-                      shape: BoxShape.circle,
-                    ),
-                    todayTextStyle: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    selectedDecoration: BoxDecoration(
-                      color: AppColors.primary,
-                      shape: BoxShape.circle,
-                    ),
-                    markersMaxCount: 0,
-                  ),
-                  headerStyle: const HeaderStyle(
-                    formatButtonVisible: true,
-                    titleCentered: true,
-                  ),
-                  calendarBuilders: CalendarBuilders(
-                    defaultBuilder: (context, day, focusedDay) {
-                      final color = _getTypeColorForDay(day, types);
-                      if (color == null) return null;
-                      return Container(
-                        margin: const EdgeInsets.all(4),
-                        decoration: BoxDecoration(
-                          color: color.withValues(alpha: 0.18),
-                          shape: BoxShape.circle,
-                        ),
-                        alignment: Alignment.center,
-                        child: Text(
-                          '${day.day}',
-                          style: TextStyle(color: color),
-                        ),
-                      );
-                    },
-                    todayBuilder: (context, day, focusedDay) {
-                      return Container(
-                        margin: const EdgeInsets.all(4),
-                        decoration: const BoxDecoration(
-                          color: AppColors.primary,
-                          shape: BoxShape.circle,
-                        ),
-                        alignment: Alignment.center,
-                        child: Text(
-                          '${day.day}',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      );
-                    },
-                    selectedBuilder: (context, day, focusedDay) {
-                      final color = _getTypeColorForDay(day, types);
-                      return Container(
-                        margin: const EdgeInsets.all(4),
-                        decoration: BoxDecoration(
-                          color: color ?? AppColors.primary,
-                          shape: BoxShape.circle,
-                        ),
-                        alignment: Alignment.center,
-                        child: Text(
-                          '${day.day}',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ),
-            ),
-            // Legend
-            if (types.isNotEmpty)
-              _buildLegend(types),
-          ],
-        );
-      },
-    );
-  }
-
-  Widget _buildLegend(List<AttendanceType> types) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Row(
-        children: types.where((t) => t.visible == true).map((type) {
-          final color = ColorUtils.parseNamedColor(type.color);
-          return Padding(
-            padding: const EdgeInsets.only(right: 16),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 12,
-                  height: 12,
-                  decoration: BoxDecoration(
-                    color: color,
-                    shape: BoxShape.circle,
-                  ),
-                ),
-                const SizedBox(width: 4),
-                Text(
-                  type.name,
-                  style: TextStyle(fontSize: 12, color: AppColors.dark),
-                ),
-              ],
-            ),
-          );
-        }).toList(),
-      ),
     );
   }
 }

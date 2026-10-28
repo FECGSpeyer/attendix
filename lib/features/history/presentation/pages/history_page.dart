@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/config/supabase_config.dart';
-import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/conductor_providers.dart';
 import '../../../../core/providers/history_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
@@ -17,6 +18,7 @@ import '../../history_utils.dart';
 import '../../../../core/utils/demo_guard.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
+import '../../../attendance/presentation/widgets/ios_condense_header.dart'; // UX_ATT
 
 /// History Page - Song performance history
 class HistoryPage extends ConsumerStatefulWidget {
@@ -41,30 +43,26 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
     final historyAsync = ref.watch(performanceHistoryProvider);
 
     return Scaffold(
-      appBar: AppBar(title: Text(context.l10n.historyTitle)),
+      // UX_ATT: Ionic opens the Historie as a modal: title + close (X) at the
+      // end, no back button.
+      appBar: AppBar(
+        title: Text(context.l10n.historyTitle),
+        automaticallyImplyLeading: false,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.close),
+            tooltip: context.l10n.commonClose,
+            onPressed: () => context.canPop() ? context.pop() : context.go('/settings'),
+          ),
+        ],
+      ),
       body: Column(
         children: [
-          // Search bar
-          Padding(
-            padding: const EdgeInsets.all(AppDimensions.paddingM),
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                hintText: context.l10n.historySearchSong,
-                prefixIcon: const Icon(Icons.search),
-                suffixIcon:
-                    _searchQuery.isNotEmpty
-                        ? IconButton(
-                          icon: const Icon(Icons.clear),
-                          onPressed: () {
-                            _searchController.clear();
-                            setState(() => _searchQuery = '');
-                          },
-                        )
-                        : null,
-              ),
-              onChanged: (value) => setState(() => _searchQuery = value),
-            ),
+          // Search bar (Ionic ion-searchbar)
+          IonSearchbar(
+            controller: _searchController,
+            hintText: context.l10n.historySearchSong,
+            onChanged: (value) => setState(() => _searchQuery = value),
           ),
 
           // History list
@@ -101,17 +99,16 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        // UX_SETTINGS: Ionic empty state
-                        const Icon(
+                        // UX_ATT: Ionic noDataContainer: plain large icon + label
+                        Icon(
                           Icons.music_note_outlined,
-                          size: 48,
-                          color: AppColors.medium,
+                          size: 80,
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: 8),
                         Text(
                           context.l10n.historyNoneYet,
-                          style: Theme.of(context).textTheme.bodyLarge
-                              ?.copyWith(color: AppColors.medium),
+                          style: const TextStyle(fontSize: 16),
                         ),
                       ],
                     ),
@@ -175,9 +172,9 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: IonFabButton(
         onPressed: () => _showAddDialog(),
-        child: const Icon(Icons.add),
+        icon: Icons.add,
       ),
     );
   }
@@ -207,6 +204,10 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
         .toList();
   }
 
+  // UX_ATT: Ionic addHisModal: sheet (breakpoint 0.7) with the title
+  // "Werk(e) hinzufügen", a "Werk(e)" row that opens "Werke auswählen"
+  // (search + checkboxes), the Dirigent select, the Datum field with a
+  // calendar button and the block button "Hinzufügen".
   Future<void> _showAddDialog() async {
     final songsAsync = ref.read(planSongsProviderHistory);
     final conductorsAsync = ref.read(conductorsProvider);
@@ -223,204 +224,143 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
     int? selectedConductorId;
     String? otherConductor;
     DateTime selectedDate = DateTime.now();
-    String songFilter = '';
 
-    final result = await showDialog<bool>(
+    final result = await showModalBottomSheet<bool>(
       context: context,
-      builder:
-          (context) => StatefulBuilder(
-            builder: (context, setDialogState) {
-              final filteredSongs =
-                  songFilter.isEmpty
-                      ? songs
-                      : songs
-                          .where(
-                            (s) => s.displayName.toLowerCase().contains(
-                              songFilter.toLowerCase(),
-                            ),
-                          )
-                          .toList();
-
-              return AlertDialog(
-                title: Text(
-                  selectedSongIds.isEmpty
-                      ? context.l10n.historyAddSongs
-                      : context.l10n.historySelectedCount(selectedSongIds.length),
+      isScrollControlled: true,
+      showDragHandle: true,
+      useSafeArea: true,
+      builder: (sheetContext) => StatefulBuilder(
+        builder: (sheetContext, setSheetState) {
+          final l10n = sheetContext.l10n;
+          final divider = Divider(height: 0.5, thickness: 0.5, indent: 16, color: Theme.of(sheetContext).dividerColor);
+          return SizedBox(
+            height: MediaQuery.sizeOf(sheetContext).height * 0.7,
+            child: ListView(
+              padding: const EdgeInsets.only(bottom: 24),
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: Text(
+                    l10n.historyAddSongs,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
+                  ),
                 ),
-                content: SizedBox(
-                  width: double.maxFinite,
-                  child: SingleChildScrollView(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Song search
-                        TextField(
-                          decoration: InputDecoration(
-                            hintText: context.l10n.historySearchSong,
-                            prefixIcon: const Icon(Icons.search),
-                            isDense: true,
-                          ),
-                          onChanged:
-                              (v) => setDialogState(() => songFilter = v),
-                        ),
-                        const SizedBox(height: 8),
-
-                        // Song multi-select list
-                        ConstrainedBox(
-                          constraints: const BoxConstraints(maxHeight: 200),
-                          child: ListView.builder(
-                            shrinkWrap: true,
-                            itemCount: filteredSongs.length,
-                            itemBuilder: (context, index) {
-                              final song = filteredSongs[index];
-                              final isSelected = selectedSongIds.contains(
-                                song.id,
-                              );
-                              return CheckboxListTile(
-                                value: isSelected,
-                                title: Text(
-                                  song.displayName,
-                                  style: const TextStyle(fontSize: 14),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                dense: true,
-                                controlAffinity:
-                                    ListTileControlAffinity.leading,
-                                onChanged: (v) {
-                                  setDialogState(() {
-                                    if (v == true && song.id != null) {
-                                      selectedSongIds.add(song.id!);
-                                    } else if (song.id != null) {
-                                      selectedSongIds.remove(song.id!);
-                                    }
-                                  });
-                                },
-                              );
-                            },
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-
-                        // Conductor selector
-                        DropdownButtonFormField<int>(
-                          value: selectedConductorId,
-                          decoration: InputDecoration(
-                            labelText: context.l10n.attListConductor,
-                          ),
-                          // UX_SETTINGS: Ionic "Anderer Dirigent"
+                // Werk(e) → "Werke auswählen"
+                ListTile(
+                  title: Text(l10n.historySongs, style: const TextStyle(fontSize: 17)),
+                  subtitle: Text(
+                    selectedSongIds.isEmpty
+                        ? l10n.historyNoneSelected
+                        : l10n.historySelectedCount(selectedSongIds.length),
+                  ),
+                  trailing: const Icon(Icons.chevron_right, color: AppColors.medium),
+                  onTap: () async {
+                    final picked = await _pickSongs(songs, selectedSongIds);
+                    if (picked != null) {
+                      setSheetState(() {
+                        selectedSongIds
+                          ..clear()
+                          ..addAll(picked);
+                      });
+                    }
+                  },
+                ),
+                divider,
+                // Dirigent (ion-select)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Row(
+                    children: [
+                      Expanded(child: Text(l10n.attListConductor, style: const TextStyle(fontSize: 17))),
+                      DropdownButtonHideUnderline(
+                        child: DropdownButton<int>(
+                          value: otherConductor != null ? -1 : selectedConductorId,
+                          alignment: AlignmentDirectional.centerEnd,
                           items: [
-                            ...conductors
-                                .where((c) => c.left == null)
-                                .map(
+                            ...conductors.where((c) => c.left == null).map(
                                   (c) => DropdownMenuItem(
                                     value: c.id,
                                     child: Text('${c.firstName} ${c.lastName}'),
                                   ),
                                 ),
-                            DropdownMenuItem(
-                              value: -1,
-                              child: Text(context.l10n.attListOtherConductor),
-                            ),
+                            // UX_SETTINGS: Ionic "Anderer Dirigent"
+                            DropdownMenuItem(value: -1, child: Text(l10n.attListOtherConductor)),
                           ],
                           onChanged: (v) async {
                             if (v == -1) {
-                              final controller = TextEditingController();
-                              try {
-                                final result = await showDialog<String>(
-                                  context: context,
-                                  builder:
-                                      (context) => AlertDialog(
-                                        title: Text(context.l10n.attListEnterConductor),
-                                        content: TextField(
-                                          controller: controller,
-                                          decoration: InputDecoration(
-                                            labelText: context.l10n.attListConductor,
-                                          ),
-                                        ),
-                                        actions: [
-                                          TextButton(
-                                            onPressed:
-                                                () => Navigator.pop(context),
-                                            child: Text(context.l10n.commonCancel),
-                                          ),
-                                          ElevatedButton(
-                                            onPressed:
-                                                () => Navigator.pop(
-                                                  context,
-                                                  controller.text,
-                                                ),
-                                            child: Text(context.l10n.commonSave),
-                                          ),
-                                        ],
-                                      ),
-                                );
-                                if (result != null && result.isNotEmpty) {
-                                  setDialogState(() {
-                                    selectedConductorId = null;
-                                    otherConductor = result;
-                                  });
-                                }
-                              } finally {
-                                controller.dispose();
+                              final name = await _askOtherConductor(sheetContext);
+                              if (name != null && name.isNotEmpty) {
+                                setSheetState(() {
+                                  selectedConductorId = null;
+                                  otherConductor = name;
+                                });
                               }
                             } else {
-                              setDialogState(() {
+                              setSheetState(() {
                                 selectedConductorId = v;
                                 otherConductor = null;
                               });
                             }
                           },
                         ),
-                        if (otherConductor != null)
-                          Padding(
-                            padding: const EdgeInsets.only(top: 8),
-                            child: Text('${context.l10n.attListConductor}: $otherConductor'),
-                          ),
-                        const SizedBox(height: 16),
-
-                        // Date selector
-                        ListTile(
-                          contentPadding: EdgeInsets.zero,
-                          title: Text(context.l10n.attendanceDate),
-                          subtitle: Text(
-                            DateFormat(dateFmt()).format(selectedDate),
-                          ),
-                          trailing: const Icon(Icons.calendar_today),
-                          onTap: () async {
-                            final date = await showDatePicker(
-                              context: context,
-                              initialDate: selectedDate,
-                              firstDate: DateTime(2000),
-                              lastDate: DateTime.now().add(
-                                const Duration(days: 365),
-                              ),
-                            );
-                            if (date != null) {
-                              setDialogState(() => selectedDate = date);
-                            }
-                          },
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(context, false),
-                    child: Text(context.l10n.commonCancel),
-                  ),
-                  ElevatedButton(
-                    onPressed:
-                        selectedSongIds.isEmpty
-                            ? null
-                            : () => Navigator.pop(context, true),
-                    child: Text(context.l10n.attendanceAdd),
-                  ),
+                if (otherConductor != null) ...[
+                  divider,
+                  ListTile(title: Text(otherConductor!)),
                 ],
-              );
-            },
-          ),
+                divider,
+                // Datum (stacked label, value, calendar button)
+                ListTile(
+                  title: Text(
+                    l10n.attendanceDate,
+                    style: const TextStyle(fontSize: 12.75),
+                  ),
+                  subtitle: Text(
+                    DateFormat(dateFmt()).format(selectedDate),
+                    style: TextStyle(fontSize: 17, color: Theme.of(sheetContext).colorScheme.onSurface),
+                  ),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.calendar_today_outlined, color: AppColors.primary),
+                    onPressed: () async {
+                      final date = await showDatePicker(
+                        context: sheetContext,
+                        initialDate: selectedDate,
+                        firstDate: DateTime(2000),
+                        lastDate: DateTime.now().add(const Duration(days: 365)),
+                      );
+                      if (date != null) setSheetState(() => selectedDate = date);
+                    },
+                  ),
+                ),
+                divider,
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                  child: FilledButton(
+                    style: FilledButton.styleFrom(
+                      minimumSize: const Size.fromHeight(44),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    ),
+                    onPressed: () {
+                      // Ionic: toast "Bitte wähle mindestens ein Werk an"
+                      if (selectedSongIds.isEmpty) {
+                        ToastHelper.showWarning(sheetContext, l10n.historySelectAtLeastOne);
+                        return;
+                      }
+                      Navigator.pop(sheetContext, true);
+                    },
+                    child: Text(l10n.attendanceAdd),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
     );
 
     if (result == true && selectedSongIds.isNotEmpty) {
@@ -431,6 +371,47 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
         date: selectedDate,
       );
     }
+  }
+
+  /// "Anderer Dirigent": asks for the name (Ionic onConChange alert).
+  Future<String?> _askOtherConductor(BuildContext context) async {
+    final controller = TextEditingController();
+    try {
+      return await showDialog<String>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text(context.l10n.attListEnterConductor),
+          content: TextField(
+            controller: controller,
+            textCapitalization: TextCapitalization.words,
+            decoration: InputDecoration(labelText: context.l10n.attListConductor),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(context.l10n.commonCancel),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.pop(context, controller.text),
+              child: Text(context.l10n.commonSave),
+            ),
+          ],
+        ),
+      );
+    } finally {
+      controller.dispose();
+    }
+  }
+
+  /// Ionic songSelectModal: full-screen "Werke auswählen" with a checkmark
+  /// button, a searchbar toolbar and an inset checkbox list.
+  Future<Set<int>?> _pickSongs(List<Song> songs, Set<int> initial) {
+    return Navigator.of(context).push<Set<int>>(
+      MaterialPageRoute(
+        fullscreenDialog: true,
+        builder: (_) => _HistorySongPicker(songs: songs, initial: initial),
+      ),
+    );
   }
 
   Future<void> _addEntries({
@@ -551,13 +532,15 @@ class _HistoryGroup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // UX_ATT: accordion header is an `ion-item color="light"` (grey row)
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    final headerColor = dark ? const Color(0xFF222428) : AppColors.light;
     return ExpansionTile(
       backgroundColor: Theme.of(context).colorScheme.surface,
-      collapsedBackgroundColor:
-          Theme.of(context).colorScheme.surfaceContainerLow,
-      shape: const Border(),
-      collapsedShape: const Border(),
-      title: Text(date),
+      collapsedBackgroundColor: headerColor,
+      shape: Border(bottom: BorderSide(color: Theme.of(context).dividerColor, width: 0.5)),
+      collapsedShape: Border(bottom: BorderSide(color: Theme.of(context).dividerColor, width: 0.5)),
+      title: Text(date, style: const TextStyle(fontSize: 17)),
       children: [
         for (final entry in entries)
           _HistoryEntryTile(entry: entry, onDelete: onDelete),
@@ -582,27 +565,33 @@ class _HistoryEntryTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final name = entry.songName ?? context.l10n.historyFlutterUnknownSong;
-    return Dismissible(
+    // UX_ATT: Ionic ion-item-sliding with a red trash option (tap to delete)
+    return Slidable(
       key: ValueKey(entry.id ?? '${entry.songId}_${entry.date}'),
-      direction: DismissDirection.endToStart,
-      background: Container(
-        alignment: Alignment.centerRight,
-        padding: const EdgeInsets.only(right: 16),
-        color: AppColors.danger,
-        child: const Icon(Icons.delete, color: Colors.white),
+      endActionPane: ActionPane(
+        motion: const ScrollMotion(),
+        extentRatio: 0.22,
+        children: [
+          SlidableAction(
+            onPressed: (_) => onDelete(entry),
+            backgroundColor: AppColors.danger,
+            foregroundColor: Colors.white,
+            icon: Icons.delete,
+          ),
+        ],
       ),
-      confirmDismiss: (_) async {
-        onDelete(entry);
-        return false; // Deletion handled after confirmation
-      },
       child: ListTile(
         title: Text(
           showCount && entry.songNumber != null
               ? '${entry.songNumber} $name'
               : name,
-          style: const TextStyle(fontWeight: FontWeight.w500),
+          // Ionic iOS label: h2 17 px, h3 15 px in the text color
+          style: const TextStyle(fontSize: 17),
         ),
-        subtitle: Text('${entry.formattedDate} | ${entry.displayConductor}'),
+        subtitle: Text(
+          '${entry.formattedDate} | ${entry.displayConductor}',
+          style: TextStyle(fontSize: 15, color: Theme.of(context).colorScheme.onSurface),
+        ),
         trailing:
             showCount && entry.count != 0
                 ? Container(
@@ -618,12 +607,107 @@ class _HistoryEntryTile extends StatelessWidget {
                     rehearsalsLabel(entry.count),
                     style: const TextStyle(
                       color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 13,
                     ),
                   ),
                 )
                 : null,
+      ),
+    );
+  }
+}
+
+/// UX_ATT: Ionic "Werke auswählen" modal of the history sheet.
+class _HistorySongPicker extends StatefulWidget {
+  const _HistorySongPicker({required this.songs, required this.initial});
+
+  final List<Song> songs;
+  final Set<int> initial;
+
+  @override
+  State<_HistorySongPicker> createState() => _HistorySongPickerState();
+}
+
+class _HistorySongPickerState extends State<_HistorySongPicker> {
+  late final Set<int> _selected = {...widget.initial};
+  final _search = TextEditingController();
+  String _term = '';
+
+  @override
+  void dispose() {
+    _search.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final term = _term.toLowerCase();
+    final filtered = term.isEmpty
+        ? widget.songs
+        : widget.songs.where((s) => s.displayName.toLowerCase().contains(term)).toList();
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    return Scaffold(
+      backgroundColor: dark ? null : AppColors.light,
+      appBar: AppBar(
+        title: Text(context.l10n.historySelectSongs),
+        automaticallyImplyLeading: false,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.check),
+            tooltip: context.l10n.commonApply,
+            onPressed: () => Navigator.pop(context, _selected),
+          ),
+        ],
+      ),
+      body: Column(
+        children: [
+          IonSearchbar(
+            controller: _search,
+            hintText: context.l10n.historySearchSong,
+            onChanged: (v) => setState(() => _term = v),
+          ),
+          Expanded(
+            child: filtered.isEmpty
+                ? Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Text(
+                      context.l10n.historyNoneFound,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(color: AppColors.medium),
+                    ),
+                  )
+                : ListView(
+                    padding: const EdgeInsets.only(bottom: 24),
+                    children: [
+                      Card(
+                        margin: const EdgeInsets.all(16),
+                        clipBehavior: Clip.antiAlias,
+                        child: Column(
+                          children: [
+                            for (var i = 0; i < filtered.length; i++) ...[
+                              if (i > 0) const Divider(height: 0.5, thickness: 0.5, indent: 56),
+                              CheckboxListTile(
+                                value: filtered[i].id != null && _selected.contains(filtered[i].id),
+                                controlAffinity: ListTileControlAffinity.leading,
+                                title: Text(filtered[i].displayName),
+                                subtitle: (filtered[i].composer?.isNotEmpty ?? false)
+                                    ? Text(filtered[i].composer!)
+                                    : null,
+                                onChanged: (v) {
+                                  final id = filtered[i].id;
+                                  if (id == null) return;
+                                  setState(() => v == true ? _selected.add(id) : _selected.remove(id));
+                                },
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+          ),
+        ],
       ),
     );
   }

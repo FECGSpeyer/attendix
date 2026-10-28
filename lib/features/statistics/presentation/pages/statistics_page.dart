@@ -1,6 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/constants/enums.dart';
@@ -57,9 +58,22 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> {
       }
     }
 
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    // UX_ATT: Ionic opens the Statistik as a modal: light toolbar and page,
+    // title + close (X) at the end, no back button.
     return Scaffold(
+      backgroundColor: dark ? null : AppColors.light,
       appBar: AppBar(
         title: Text(context.l10n.statsTitle),
+        automaticallyImplyLeading: false,
+        backgroundColor: dark ? null : AppColors.light,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.close),
+            tooltip: context.l10n.commonClose,
+            onPressed: () => context.canPop() ? context.pop() : context.go('/settings'),
+          ),
+        ],
       ),
       // UX_SETTINGS: sections in Ionic order (stats.page.html); the period
       // ("📅 Zeitraum") is always visible so it can be changed when empty.
@@ -111,9 +125,7 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> {
                   return [
                     _buildSectionTitle(context.l10n.statsOverview),
                     const SizedBox(height: AppDimensions.paddingS),
-                    _SummaryCards(statistics: statistics),
-                    const SizedBox(height: AppDimensions.paddingS),
-                    const _EventTypeOverview(),
+                    _OverviewList(statistics: statistics),
                     const SizedBox(height: AppDimensions.paddingL),
 
                     _buildSectionTitle(context.l10n.statsTrend),
@@ -169,12 +181,14 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> {
     );
   }
 
+  // UX_ATT: Ionic iOS `ion-list-header` (plain text): 22 px bold
   Widget _buildSectionTitle(String title) {
-    return Text(
-      title,
-      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
+    return Padding(
+      padding: const EdgeInsets.only(left: 4),
+      child: Text(
+        title,
+        style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
+      ),
     );
   }
 
@@ -208,11 +222,12 @@ class _PeriodSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // UX_ATT: `ion-datetime-button`: grey rounded value button
     Widget item(String label, DateTime date, bool start) => ListTile(
           title: Text(label),
-          trailing: ActionChip(
-            label: Text(DateHelper.getShortDate(date)),
-            onPressed: () => _pick(context, start: start),
+          trailing: _IonDatetimeButton(
+            label: DateHelper.getShortDate(date),
+            onTap: () => _pick(context, start: start),
           ),
         );
     return Card(
@@ -228,129 +243,118 @@ class _PeriodSection extends StatelessWidget {
   }
 }
 
-class _SummaryCards extends StatelessWidget {
-  final AttendanceStatistics statistics;
+/// UX_ATT: Ionic `ion-badge` (iOS: radius 10, 3/8 padding, 13 px bold).
+class _IonBadge extends StatelessWidget {
+  const _IonBadge(this.text, {this.color = AppColors.primary});
 
-  const _SummaryCards({required this.statistics});
+  final String text;
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
-    final avgColor = statistics.averagePercentage >= 80
-        ? AppColors.success
-        : statistics.averagePercentage >= 50
-            ? AppColors.warning
-            : AppColors.danger;
-
-    return Column(
-      children: [
-        Row(
-          children: [
-            Expanded(
-              child: _StatCard(
-                title: context.l10n.statsAvgAttendance,
-                value: '${statistics.averagePercentage}%',
-                color: avgColor,
-                icon: Icons.trending_up,
-              ),
-            ),
-            const SizedBox(width: AppDimensions.paddingM),
-            Expanded(
-              child: _StatCard(
-                title: context.l10n.statsEventsInPeriod,
-                value: '${statistics.totalAttendances}',
-                color: AppColors.primary,
-                icon: Icons.event,
-              ),
-            ),
-          ],
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(10)),
+      child: Text(
+        text,
+        style: TextStyle(
+          color: color == AppColors.warning ? Colors.black : Colors.white,
+          fontWeight: FontWeight.bold,
+          fontSize: 13,
         ),
-        if (statistics.bestAttendance != null ||
-            statistics.worstAttendance != null) ...[
-          const SizedBox(height: AppDimensions.paddingM),
-          Row(
-            children: [
-              Expanded(
-                child: _StatCard(
-                  title: context.l10n.statsBest,
-                  value: '${statistics.bestAttendance?.percentage?.round() ?? 0}%',
-                  color: AppColors.success,
-                  icon: Icons.emoji_events,
-                  subtitle: statistics.bestAttendance?.formattedDate,
-                ),
-              ),
-              const SizedBox(width: AppDimensions.paddingM),
-              Expanded(
-                child: _StatCard(
-                  title: context.l10n.statsWorst,
-                  value: '${statistics.worstAttendance?.percentage?.round() ?? 0}%',
-                  color: AppColors.danger,
-                  icon: Icons.trending_down,
-                  subtitle: statistics.worstAttendance?.formattedDate,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ],
+      ),
     );
   }
 }
 
-class _StatCard extends StatelessWidget {
-  final String title;
-  final String value;
-  final Color color;
-  final IconData icon;
-  final String? subtitle;
+/// UX_ATT: Ionic `ion-datetime-button`.
+class _IonDatetimeButton extends StatelessWidget {
+  const _IonDatetimeButton({required this.label, required this.onTap});
 
-  const _StatCard({
-    required this.title,
-    required this.value,
-    required this.color,
-    required this.icon,
-    this.subtitle,
-  });
+  final String label;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(AppDimensions.paddingM),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(icon, color: color, size: 20),
-                const SizedBox(width: 8),
-                Text(
-                  value,
-                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        color: color,
-                        fontWeight: FontWeight.bold,
-                      ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 4),
-            Text(
-              title,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: AppColors.medium,
-                  ),
-            ),
-            if (subtitle != null) ...[
-              const SizedBox(height: 2),
-              Text(
-                subtitle!,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: AppColors.medium,
-                      fontSize: 10,
-                    ),
-              ),
-            ],
-          ],
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    return Material(
+      color: dark ? const Color(0xFF2C2C2E) : const Color(0xFFEDEEF0),
+      borderRadius: BorderRadius.circular(8),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(8),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          child: Text(label, style: const TextStyle(fontSize: 17)),
         ),
+      ),
+    );
+  }
+}
+
+/// UX_ATT: Ionic "Übersicht" list: Termine im Zeitraum, one row per Termintyp
+/// (type order, only types with Terminen), Ø Anwesenheit (≥70 success,
+/// ≥50 warning, else danger), Beste / Schlechteste with date and %.
+class _OverviewList extends ConsumerWidget {
+  final AttendanceStatistics statistics;
+
+  const _OverviewList({required this.statistics});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final attendances = ref.watch(filteredAttendancesForStatsProvider).valueOrNull ?? const <Attendance>[];
+    final types = ref.watch(attendanceTypesProvider).valueOrNull ?? const <AttendanceType>[];
+    final avg = statistics.averagePercentage;
+    final avgColor = avg >= 70
+        ? AppColors.success
+        : avg >= 50
+            ? AppColors.warning
+            : AppColors.danger;
+
+    final rows = <Widget>[
+      ListTile(
+        title: Text(context.l10n.statsEventsInPeriod),
+        trailing: _IonBadge('${attendances.length}'),
+      ),
+      for (final type in types)
+        if (attendances.where((a) => a.typeId == type.id).isNotEmpty)
+          ListTile(
+            title: Text(type.name),
+            trailing: _IonBadge('${attendances.where((a) => a.typeId == type.id).length}'),
+          ),
+      ListTile(
+        title: Text(context.l10n.statsAvgAttendance),
+        trailing: _IonBadge('$avg%', color: avgColor),
+      ),
+      if (statistics.bestAttendance != null)
+        ListTile(
+          title: Text(context.l10n.statsBest,
+              style: const TextStyle(fontSize: 14, color: AppColors.medium)),
+          subtitle: Text(statistics.bestAttendance!.formattedDate,
+              style: TextStyle(fontSize: 17, color: Theme.of(context).colorScheme.onSurface)),
+          trailing: _IonBadge('${statistics.bestAttendance!.percentage?.round() ?? 0}%',
+              color: AppColors.success),
+        ),
+      if (statistics.worstAttendance != null)
+        ListTile(
+          title: Text(context.l10n.statsWorst,
+              style: const TextStyle(fontSize: 14, color: AppColors.medium)),
+          subtitle: Text(statistics.worstAttendance!.formattedDate,
+              style: TextStyle(fontSize: 17, color: Theme.of(context).colorScheme.onSurface)),
+          trailing: _IonBadge('${statistics.worstAttendance!.percentage?.round() ?? 0}%',
+              color: AppColors.danger),
+        ),
+    ];
+    return Card(
+      margin: EdgeInsets.zero,
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        children: [
+          for (var i = 0; i < rows.length; i++) ...[
+            if (i > 0) const Divider(height: 0.5, thickness: 0.5, indent: 16),
+            rows[i],
+          ],
+        ],
       ),
     );
   }
@@ -372,12 +376,7 @@ class _MembersOverview extends ConsumerWidget {
     Widget row(String label, int count, Color color, {bool bold = false}) => ListTile(
           dense: true,
           title: Text(label, style: bold ? const TextStyle(fontWeight: FontWeight.bold) : null),
-          trailing: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-            decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(10)),
-            child: Text('$count',
-                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 12)),
-          ),
+          trailing: _IonBadge('$count', color: color),
         );
 
     return Card(
@@ -389,86 +388,6 @@ class _MembersOverview extends ConsumerWidget {
           row(context.l10n.statsLeft, left.length, AppColors.medium),
           row(context.l10n.churchOverviewTotal, current.length + left.length, AppColors.primary, bold: true),
         ],
-      ),
-    );
-  }
-}
-
-class _EventTypeOverview extends ConsumerWidget {
-  const _EventTypeOverview();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final attendancesAsync = ref.watch(filteredAttendancesForStatsProvider);
-    final typesAsync = ref.watch(attendanceTypesProvider);
-
-    final attendances = attendancesAsync.valueOrNull ?? [];
-    final types = typesAsync.valueOrNull ?? [];
-
-    if (attendances.isEmpty) return const _EmptyChartPlaceholder();
-
-    // Group by typeId
-    final Map<String, int> typeCounts = {};
-    for (final a in attendances) {
-      final typeId = a.typeId;
-      if (typeId != null) {
-        typeCounts[typeId] = (typeCounts[typeId] ?? 0) + 1;
-      }
-    }
-
-    if (typeCounts.isEmpty) return const _EmptyChartPlaceholder();
-
-    // Map typeId to name
-    final typeNameMap = {for (final t in types) if (t.id != null) t.id!: t.name};
-    final sorted = typeCounts.entries.toList()
-      ..sort((a, b) => b.value.compareTo(a.value));
-
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(AppDimensions.paddingM),
-        child: Column(
-          children: sorted.map((e) {
-            final name = typeNameMap[e.key] ?? context.l10n.commonUnknown;
-            final count = e.value;
-            final fraction = count / attendances.length;
-            return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 3),
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: 100,
-                    child: Text(
-                      name,
-                      style: Theme.of(context).textTheme.bodySmall,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: LinearProgressIndicator(
-                      value: fraction,
-                      backgroundColor: AppColors.light,
-                      color: AppColors.primary,
-                      minHeight: 14,
-                      borderRadius: BorderRadius.circular(7),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  SizedBox(
-                    width: 24,
-                    child: Text(
-                      '$count',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                      textAlign: TextAlign.end,
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }).toList(),
-        ),
       ),
     );
   }
@@ -1232,12 +1151,13 @@ class _OrganisationStatsSectionState
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Divider(height: 32),
-            Text(
-              context.l10n.statsFlutterOrganisation(organisation.name),
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+            // UX_ATT: Ionic list header "🏢 {name}"
+            Padding(
+              padding: const EdgeInsets.only(left: 4),
+              child: Text(
+              '🏢 ${organisation.name}',
+              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
+              ),
             ),
             const SizedBox(height: AppDimensions.paddingS),
 

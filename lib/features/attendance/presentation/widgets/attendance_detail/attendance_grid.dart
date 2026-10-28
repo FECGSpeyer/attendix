@@ -59,6 +59,7 @@ class AttendanceGrid extends StatelessWidget {
     this.extraLines,
     this.onSendReminder,
     this.showModifierInfo = true,
+    this.cornerRadius,
   });
 
   final List<Person> persons;
@@ -80,15 +81,34 @@ class AttendanceGrid extends StatelessWidget {
   final void Function(int personId)? onSendReminder;
   final bool showModifierInfo;
 
+  /// UX_ATT: when set, the list is drawn as a rounded white section (Ionic
+  /// item-group inside the inset list); first divider and last row get the
+  /// matching corners.
+  final BorderRadius? cornerRadius;
+
   @override
   Widget build(BuildContext context) {
     if (persons.isEmpty) {
       return const SliverToBoxAdapter(child: SizedBox.shrink());
     }
 
+    final lastId = persons.last.id;
+    final radius = cornerRadius;
+
+    Widget decorate(Widget sliver) {
+      if (radius == null) return sliver;
+      return DecoratedSliver(
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+          borderRadius: radius,
+        ),
+        sliver: sliver,
+      );
+    }
+
     // Sorted by an extra field -> one flat list without group dividers
     if (extraLines != null) {
-      return _personsSliver(persons);
+      return decorate(_personsSliver(persons, lastId: lastId, first: true));
     }
 
     final groups = <({String name, List<Person> persons})>[];
@@ -106,22 +126,23 @@ class AttendanceGrid extends StatelessWidget {
       }
     }
 
-    return SliverMainAxisGroup(
+    return decorate(SliverMainAxisGroup(
       slivers: [
-        for (final group in groups)
+        for (var i = 0; i < groups.length; i++)
           SliverMainAxisGroup(
             slivers: [
               PinnedHeaderSliver(
                 child: _GroupDivider(
-                  label: '${group.name} '
-                      '(${_attendedCount(group.persons)}/${group.persons.length})',
+                  label: '${groups[i].name} '
+                      '(${_attendedCount(groups[i].persons)}/${groups[i].persons.length})',
+                  topRadius: i == 0 && radius != null ? radius.topLeft : null,
                 ),
               ),
-              _personsSliver(group.persons),
+              _personsSliver(groups[i].persons, lastId: lastId),
             ],
           ),
       ],
-    );
+    ));
   }
 
   /// Ionic getAttendedPlayersForGroup: Anwesend, Verspätet, Verspätet entsch.
@@ -132,14 +153,16 @@ class AttendanceGrid extends StatelessWidget {
             s == AttendanceStatus.lateExcused;
       }).length;
 
-  Widget _personsSliver(List<Person> list) {
+  Widget _personsSliver(List<Person> list, {int? lastId, bool first = false}) {
+    // UX_ATT: iOS inset lines start at the label (after the avatar)
+    final indent = showAvatars ? 68.0 : 16.0;
     return SliverList.separated(
       itemCount: list.length,
-      separatorBuilder: (_, __) => const Divider(height: 1, indent: 16),
+      separatorBuilder: (_, __) => Divider(height: 0.5, thickness: 0.5, indent: indent),
       itemBuilder: (context, index) {
         final person = list[index];
         final id = person.id;
-        return AttendancePersonTile(
+        final tile = AttendancePersonTile(
           person: person,
           status: localStatuses[id] ?? AttendanceStatus.neutral,
           notes: personNotes[id],
@@ -167,29 +190,52 @@ class AttendanceGrid extends StatelessWidget {
             if (id != null) onRemoveFromAttendance(id);
           },
         );
+        final radius = cornerRadius;
+        if (radius == null) return tile;
+        final isFirst = first && index == 0;
+        final isLast = id == lastId && index == list.length - 1;
+        if (!isFirst && !isLast) return tile;
+        return ClipRRect(
+          borderRadius: BorderRadius.only(
+            topLeft: isFirst ? radius.topLeft : Radius.zero,
+            topRight: isFirst ? radius.topRight : Radius.zero,
+            bottomLeft: isLast ? radius.bottomLeft : Radius.zero,
+            bottomRight: isLast ? radius.bottomRight : Radius.zero,
+          ),
+          child: tile,
+        );
       },
     );
   }
 }
 
-/// Ionic `ion-item-divider color="primary" sticky`.
+/// Ionic `ion-item-divider color="primary" sticky` (iOS: 17 px semibold).
 class _GroupDivider extends StatelessWidget {
-  const _GroupDivider({required this.label});
+  const _GroupDivider({required this.label, this.topRadius});
 
   final String label;
+
+  /// Rounded top corners for the first divider of the section.
+  final Radius? topRadius;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      color: AppColors.primary,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: AppColors.primary,
+        borderRadius: topRadius == null
+            ? null
+            : BorderRadius.only(topLeft: topRadius!, topRight: topRadius!),
+      ),
+      constraints: const BoxConstraints(minHeight: 30),
+      padding: const EdgeInsets.fromLTRB(16, 6, 16, 6),
       child: Text(
         label,
         style: const TextStyle(
           color: Colors.white,
           fontWeight: FontWeight.w600,
-          fontSize: 14,
+          fontSize: 17,
         ),
       ),
     );

@@ -98,21 +98,23 @@ class AttendanceStatusBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final badge = ionicStatusBadge(status);
+    // UX_ATT: Ionic iOS ion-badge: 3/8 padding, radius 10, 13 px bold,
+    // color contrast text (black on warning).
     return Container(
       constraints: const BoxConstraints(minWidth: 26),
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
         color: badge.color,
-        borderRadius: BorderRadius.circular(6),
+        borderRadius: BorderRadius.circular(10),
       ),
       child: Text(
         badge.text,
         textAlign: TextAlign.center,
-        style: const TextStyle(
-          color: Colors.white,
+        style: TextStyle(
+          color: badge.color == AppColors.warning ? Colors.black : Colors.white,
           fontSize: 13,
           fontWeight: FontWeight.bold,
-          height: 1.1,
+          height: 1.15,
         ),
       ),
     );
