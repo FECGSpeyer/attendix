@@ -6,6 +6,7 @@ import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/services/teams/teams_service.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/tenant/tenant.dart';
+import '../../../../l10n/l10n.dart';
 
 /// TEAMS: configuration page of the Attendix channel tab (Ionic
 /// `teams-config`). Teams loads it in a dialog when someone adds Attendix to
@@ -15,8 +16,7 @@ import '../../../../data/models/tenant/tenant.dart';
 class TeamsConfigPage extends ConsumerStatefulWidget {
   const TeamsConfigPage({super.key});
 
-  static const String saveFailed =
-      'Konfiguration konnte nicht gespeichert werden';
+  static String get saveFailed => l10nWithoutContext.teamsSaveFailed;
 
   @override
   ConsumerState<TeamsConfigPage> createState() => _TeamsConfigPageState();
@@ -60,10 +60,10 @@ class _TeamsConfigPageState extends ConsumerState<TeamsConfigPage> {
   @override
   Widget build(BuildContext context) {
     if (!ref.watch(isInTeamsProvider)) {
-      return const Scaffold(
+      return Scaffold(
         body: _Centered(
           child: Text(
-            'Diese Seite wird nur innerhalb von Microsoft Teams verwendet.',
+            context.l10n.teamsOnlyInTeams,
             textAlign: TextAlign.center,
           ),
         ),
@@ -91,13 +91,10 @@ class _TeamsConfigPageState extends ConsumerState<TeamsConfigPage> {
       child: ListView(
         padding: const EdgeInsets.all(AppDimensions.paddingM),
         children: [
-          Text('Attendix-Tab einrichten', style: theme.textTheme.titleLarge),
+          Text(context.l10n.teamsSetup, style: theme.textTheme.titleLarge),
           const SizedBox(height: AppDimensions.paddingM),
           if (tenants.isEmpty)
-            const Text(
-              'Kein Attendix-Konto gefunden. Bitte melde dich zuerst im '
-              'Attendix-Tab an.',
-            )
+            Text(context.l10n.teamsNoAccount)
           else ...[
             _TenantRadioList(
               tenants: tenants,
@@ -106,8 +103,7 @@ class _TeamsConfigPageState extends ConsumerState<TeamsConfigPage> {
             ),
             const SizedBox(height: AppDimensions.paddingM),
             Text(
-              'Wähle aus, welche Attendix-Instanz in diesem Kanal angezeigt '
-              'werden soll.',
+              context.l10n.teamsChoose,
               style: theme.textTheme.bodyMedium
                   ?.copyWith(color: AppColors.medium),
             ),

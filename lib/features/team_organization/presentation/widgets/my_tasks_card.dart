@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/providers/team_org_providers.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/team_org/team_org.dart';
@@ -37,11 +38,11 @@ class _MyTasksCardState extends ConsumerState<MyTasksCard> {
       await ref
           .read(teamTaskNotifierProvider.notifier)
           .update(id, {'status': 'completed'});
-      if (mounted) ToastHelper.showSuccess(context, 'Erledigt');
+      if (mounted) ToastHelper.showSuccess(context, context.l10n.tasksDone);
     } catch (_) {
       if (!mounted) return;
       setState(() => _done.remove(id));
-      ToastHelper.showError(context, 'Status konnte nicht geändert werden');
+      ToastHelper.showError(context, context.l10n.tasksStatusFailed);
     }
   }
 
@@ -59,14 +60,15 @@ class _MyTasksCardState extends ConsumerState<MyTasksCard> {
     if (open.isEmpty) return const SizedBox.shrink();
 
     final overdue = open.where((t) => isTaskOverdue(t, today)).length;
-    final subtitle =
-        overdue > 0 ? '${open.length} offen · $overdue überfällig' : '${open.length} offen';
+    final l10n = context.l10n;
+    final openText = l10n.tasksOpenCount(open.length);
+    final subtitle = overdue > 0 ? '$openText · ${l10n.tasksOverdueCount(overdue)}' : openText;
     final isLeader = ref.watch(isTeamLeaderProvider);
     final shown = open.take(widget.limit).toList();
 
     return DashboardCard(
       icon: Icons.check_box_outlined,
-      title: 'Meine Aufgaben',
+      title: l10n.tasksMyTasks,
       subtitle: subtitle,
       strip: _strip,
       child: Column(
@@ -75,13 +77,13 @@ class _MyTasksCardState extends ConsumerState<MyTasksCard> {
             ListTile(
               contentPadding: const EdgeInsets.only(left: 4, right: 12),
               leading: IconButton(
-                tooltip: 'Als erledigt markieren',
+                tooltip: l10n.tasksMarkDone,
                 icon: const Icon(Icons.radio_button_unchecked, color: AppColors.medium),
                 onPressed: () => _complete(task),
               ),
               title: Text(task.title),
               subtitle: Text(
-                _dueLabel(task, today),
+                _dueLabel(l10n, task, today),
                 style: isTaskOverdue(task, today)
                     ? const TextStyle(color: AppColors.danger)
                     : null,
@@ -93,7 +95,7 @@ class _MyTasksCardState extends ConsumerState<MyTasksCard> {
                         color: AppColors.warning,
                         borderRadius: BorderRadius.circular(6),
                       ),
-                      child: const Text('In Arbeit', style: TextStyle(fontSize: 12)),
+                      child: Text(l10n.tasksInProgress, style: const TextStyle(fontSize: 12)),
                     )
                   : null,
               onTap: task.id == null ? null : () => context.push('/settings/tasks/${task.id}'),
@@ -102,8 +104,8 @@ class _MyTasksCardState extends ConsumerState<MyTasksCard> {
             ListTile(
               title: Text(
                 open.length > widget.limit
-                    ? 'Alle anzeigen (${open.length})'
-                    : 'Alle Aufgaben',
+                    ? l10n.tasksFlutterShowAllCount(open.length)
+                    : l10n.tasksFlutterAllTasks,
                 style: const TextStyle(color: AppColors.primary),
               ),
               trailing: const Icon(Icons.chevron_right),
@@ -114,9 +116,9 @@ class _MyTasksCardState extends ConsumerState<MyTasksCard> {
     );
   }
 
-  String _dueLabel(TeamTask task, String today) {
-    if (task.dueDate == null) return 'Ohne Fälligkeit';
+  String _dueLabel(AppLocalizations l10n, TeamTask task, String today) {
+    if (task.dueDate == null) return l10n.tasksNoDue;
     final label = formatTaskDue(task, today);
-    return isTaskOverdue(task, today) ? 'Überfällig $label' : 'Fällig $label';
+    return isTaskOverdue(task, today) ? l10n.tasksOverdueLabel(label) : l10n.tasksDueLabel(label);
   }
 }

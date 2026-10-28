@@ -8,6 +8,7 @@ import '../../../../core/providers/team_org_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/team_org/team_org.dart';
+import '../../../../l10n/l10n.dart';
 import '../../team_org_utils.dart';
 import 'agenda_picker_sheet.dart';
 import 'quick_create_attendance.dart';
@@ -23,16 +24,16 @@ class TopicsTab extends ConsumerWidget {
     final isLeader = ref.watch(isTeamLeaderProvider);
     if (isLeader) return const _LeaderTopics();
     if (ref.watch(inTeamCircleProvider)) return const _MemberTopics();
-    return const Center(
+    return Center(
       child: Padding(
-        padding: EdgeInsets.all(AppDimensions.paddingL),
+        padding: const EdgeInsets.all(AppDimensions.paddingL),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.forum_outlined, size: 56, color: AppColors.medium),
-            SizedBox(height: AppDimensions.paddingM),
+            const Icon(Icons.forum_outlined, size: 56, color: AppColors.medium),
+            const SizedBox(height: AppDimensions.paddingM),
             Text(
-              'Themen und Tagesordnungen plant die Leitung. Du gehörst zu keiner Gruppe mit Protokoll & Tagesordnung.',
+              context.l10n.teamOrgLeadersPlan,
               textAlign: TextAlign.center,
             ),
           ],
@@ -74,7 +75,7 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
         child: ListView(
           shrinkWrap: true,
           children: [
-            const ListTile(title: Text('Für welchen Termin planen?')),
+            ListTile(title: Text(ctx.l10n.teamOrgPlanForWhich)),
             for (final att in upcoming.take(8))
               ListTile(
                 title: Text(_attendanceTitle(att, types)),
@@ -84,12 +85,12 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
             if (current != null)
               ListTile(
                 leading: const Icon(Icons.calendar_today_outlined),
-                title: const Text('Datum dieses Termins ändern'),
+                title: Text(ctx.l10n.teamOrgChangeDate),
                 onTap: () => Navigator.of(ctx).pop('date'),
               ),
             ListTile(
               leading: const Icon(Icons.add_circle_outline),
-              title: const Text('Neuen Termin anlegen'),
+              title: Text(ctx.l10n.agendaNewEvent),
               onTap: () => Navigator.of(ctx).pop('new'),
             ),
           ],
@@ -124,9 +125,9 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(title: Text(fieldName(top), style: Theme.of(ctx).textTheme.titleSmall)),
-            ListTile(title: const Text('Thema öffnen'), onTap: () => Navigator.of(ctx).pop('open')),
+            ListTile(title: Text(ctx.l10n.teamOrgOpenTopic), onTap: () => Navigator.of(ctx).pop('open')),
             ListTile(
-              title: const Text('Aus diesem Termin entfernen', style: TextStyle(color: AppColors.danger)),
+              title: Text(ctx.l10n.teamOrgRemoveFromEvent, style: const TextStyle(color: AppColors.danger)),
               onTap: () => Navigator.of(ctx).pop('remove'),
             ),
           ],
@@ -142,25 +143,26 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
         await addTopicsToAttendance(ref.read(protocolRepositoryWithTenantProvider), att, type, const [],
             removeIds: [agendaId]);
         ref.invalidate(upcomingProtocolAttendancesProvider);
-        if (mounted) ToastHelper.showInfo(context, 'Aus dem Termin entfernt, bleibt im Themenspeicher');
+        if (mounted) ToastHelper.showInfo(context, context.l10n.teamOrgRemovedStays);
       } catch (_) {
-        if (mounted) ToastHelper.showError(context, 'Thema konnte nicht entfernt werden');
+        if (mounted) ToastHelper.showError(context, context.l10n.teamOrgRemoveFailed);
       }
     }
   }
 
   Future<void> _accept(AgendaItem item) async {
+    final l10n = context.l10n;
     var priority = item.priority;
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setLocal) => AlertDialog(
-          title: const Text('Vorschlag übernehmen'),
+          title: Text(ctx.l10n.teamOrgAcceptSuggestion),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('Mit welcher Priorität kommt das Thema in den Themenspeicher?'),
+              Text(ctx.l10n.teamOrgWhichPriority),
               for (final p in const ['high', 'medium', 'low'])
                 RadioListTile<String>(
                   value: p,
@@ -171,44 +173,47 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
             ],
           ),
           actions: [
-            TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: const Text('Abbrechen')),
-            FilledButton(onPressed: () => Navigator.of(ctx).pop(true), child: const Text('Übernehmen')),
+            TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: Text(ctx.l10n.commonCancel)),
+            FilledButton(onPressed: () => Navigator.of(ctx).pop(true), child: Text(ctx.l10n.commonApply)),
           ],
         ),
       ),
     );
     if (ok != true) return;
-    await _decide(item, {'proposal_status': 'accepted', 'priority': priority, 'decision_note': null}, 'Übernommen');
+    await _decide(item, {'proposal_status': 'accepted', 'priority': priority, 'decision_note': null},
+        l10n.teamOrgSuggestionAccepted);
   }
 
   Future<void> _reject(AgendaItem item) async {
+    final l10n = context.l10n;
     final controller = TextEditingController();
-    final name = item.proposer.fullName.isNotEmpty ? item.proposer.fullName : 'Die Person';
+    final name = item.proposer.fullName.isNotEmpty ? item.proposer.fullName : l10n.teamOrgThePerson;
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Vorschlag ablehnen'),
+        title: Text(ctx.l10n.teamOrgRejectSuggestion),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('$name wird informiert. Eine kurze Begründung hilft.'),
+            Text(ctx.l10n.teamOrgPersonInformed(name)),
             TextField(
               controller: controller,
               maxLines: 3,
-              decoration: const InputDecoration(hintText: 'Begründung (optional)'),
+              decoration: InputDecoration(hintText: ctx.l10n.teamOrgReasonOptional),
             ),
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: const Text('Abbrechen')),
-          FilledButton(onPressed: () => Navigator.of(ctx).pop(true), child: const Text('Ablehnen')),
+          TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: Text(ctx.l10n.commonCancel)),
+          FilledButton(onPressed: () => Navigator.of(ctx).pop(true), child: Text(ctx.l10n.teamOrgReject)),
         ],
       ),
     );
     final note = controller.text.trim();
     controller.dispose();
     if (ok != true) return;
-    await _decide(item, {'proposal_status': 'rejected', 'decision_note': note.isEmpty ? null : note}, 'Abgelehnt');
+    await _decide(item, {'proposal_status': 'rejected', 'decision_note': note.isEmpty ? null : note},
+        l10n.teamOrgSuggestionRejected);
   }
 
   Future<void> _decide(AgendaItem item, Map<String, dynamic> changes, String doneText) async {
@@ -219,7 +224,7 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
       await ref.read(agendaItemNotifierProvider.notifier).decide(id, changes);
       if (mounted) ToastHelper.showSuccess(context, doneText);
     } catch (_) {
-      if (mounted) ToastHelper.showError(context, 'Entscheidung konnte nicht gespeichert werden');
+      if (mounted) ToastHelper.showError(context, context.l10n.teamOrgDecisionFailed);
     } finally {
       if (mounted) setState(() => _deciding.remove(id));
     }
@@ -241,20 +246,18 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
                 automaticallyImplyLeading: false,
                 leading: IconButton(
                   icon: const Icon(Icons.close),
-                  tooltip: 'Schließen',
+                  tooltip: ctx.l10n.commonClose,
                   onPressed: () => Navigator.of(ctx).pop(),
                 ),
-                title: const Text('Vorschläge'),
+                title: Text(ctx.l10n.teamOrgSuggestions),
               ),
               Expanded(
                 child: ListView(
                   padding: const EdgeInsets.all(AppDimensions.paddingM),
                   children: [
-                    const Text(
-                      'Übernommene Vorschläge landen im Themenspeicher. Wer vorgeschlagen hat, wird über deine Entscheidung informiert.',
-                    ),
+                    Text(ctx.l10n.teamOrgSuggestionsHint),
                     const SizedBox(height: AppDimensions.paddingM),
-                    if (pending.isEmpty) const Text('Alle Vorschläge sind entschieden.'),
+                    if (pending.isEmpty) Text(ctx.l10n.teamOrgAllDecided),
                     for (final item in pending)
                       Card(
                         child: Padding(
@@ -272,7 +275,7 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        Text(item.proposer.fullName.isNotEmpty ? item.proposer.fullName : 'Mitglied'),
+                                        Text(item.proposer.fullName.isNotEmpty ? item.proposer.fullName : ctx.l10n.teamOrgFlutterMember),
                                         Text(relativeDay(item.createdAt), style: Theme.of(ctx).textTheme.bodySmall),
                                       ],
                                     ),
@@ -288,12 +291,12 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
                                 children: [
                                   OutlinedButton(
                                     onPressed: _deciding.contains(item.id) ? null : () => _reject(item),
-                                    child: const Text('Ablehnen'),
+                                    child: Text(ctx.l10n.teamOrgReject),
                                   ),
                                   const SizedBox(width: AppDimensions.paddingS),
                                   FilledButton(
                                     onPressed: _deciding.contains(item.id) ? null : () => _accept(item),
-                                    child: const Text('Übernehmen'),
+                                    child: Text(ctx.l10n.commonApply),
                                   ),
                                 ],
                               ),
@@ -312,12 +315,13 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
   }
 
   String _topicSubtitle(AgendaItem item) {
+    final l10n = context.l10n;
     final parts = [
-      item.responsiblePerson.fullName.isNotEmpty ? item.responsiblePerson.fullName : 'Noch niemand verantwortlich',
+      item.responsiblePerson.fullName.isNotEmpty ? item.responsiblePerson.fullName : l10n.teamOrgNobodyResponsible,
     ];
     if (item.proposedBy != null) {
       final by = item.proposer.fullName;
-      parts.add(by.isNotEmpty ? 'Vorschlag von $by' : 'Vorschlag');
+      parts.add(by.isNotEmpty ? l10n.agendaProposedBy(by) : l10n.teamOrgProposal);
     }
     return parts.join(' · ');
   }
@@ -328,17 +332,18 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
     final protocols = ref.watch(protocolsProvider).valueOrNull ?? const <Protocol>[];
     final upcoming = ref.watch(upcomingProtocolAttendancesProvider).valueOrNull ?? const <ProtocolAttendance>[];
     final types = ref.watch(protocolTypesProvider).valueOrNull ?? const <ProtocolType>[];
+    final l10n = context.l10n;
 
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         heroTag: 'team-org-add-topic',
-        tooltip: 'Thema anlegen',
+        tooltip: l10n.teamOrgCreateTopic,
         onPressed: () => context.push('/settings/agenda-items/new'),
         child: const Icon(Icons.add),
       ),
       body: itemsAsync.when(
         loading: () => const TeamOrgListSkeleton(), // Ionic ion-skeleton-text (3 rows)
-        error: (_, __) => const Center(child: Text('Themen konnten nicht geladen werden')),
+        error: (_, __) => Center(child: Text(l10n.agendaLoadFailed)),
         data: (items) {
           final postponed = postponedAgendaItemIds(protocols);
           final buckets = splitTopics(items);
@@ -368,21 +373,19 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
                   Card(
                     child: ListTile(
                       leading: const Icon(Icons.lightbulb_outline, color: AppColors.warning),
-                      title: Text(buckets.pending.length == 1
-                          ? '1 neuer Vorschlag'
-                          : '${buckets.pending.length} neue Vorschläge'),
-                      subtitle: const Text('Von Mitgliedern eingereicht'),
-                      trailing: FilledButton.tonal(onPressed: _openReview, child: const Text('Prüfen')),
+                      title: Text(l10n.teamOrgFlutterNewSuggestions(buckets.pending.length)),
+                      subtitle: Text(l10n.teamOrgSubmittedByMembers),
+                      trailing: FilledButton.tonal(onPressed: _openReview, child: Text(l10n.teamOrgReview)),
                       onTap: _openReview,
                     ),
                   ),
                 _sectionHeader(
                   context,
-                  next != null && next.id != upcoming.first.id ? 'Gewählter Termin' : 'Nächster Termin',
+                  next != null && next.id != upcoming.first.id ? l10n.teamOrgChosenEvent : l10n.teamOrgNextEvent,
                   trailing: next != null
                       ? TextButton(
                           onPressed: () => _changeAttendance(upcoming, next, types),
-                          child: const Text('Ändern'),
+                          child: Text(l10n.teamOrgChange),
                         )
                       : null,
                 ),
@@ -391,13 +394,13 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
                   child: next == null
                       ? Column(
                           children: [
-                            const ListTile(
-                              title: Text('Kein Termin mit Protokoll & Tagesordnung geplant.',
-                                  style: TextStyle(color: AppColors.medium)),
+                            ListTile(
+                              title: Text(l10n.teamOrgNoProtocolEvent,
+                                  style: const TextStyle(color: AppColors.medium)),
                             ),
                             ListTile(
                               leading: const Icon(Icons.add_circle_outline, color: AppColors.primary),
-                              title: const Text('Termin anlegen', style: TextStyle(color: AppColors.primary)),
+                              title: Text(l10n.teamOrgCreateEvent, style: const TextStyle(color: AppColors.primary)),
                               onTap: _createAttendance,
                             ),
                           ],
@@ -407,24 +410,24 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
                             ListTile(
                               leading: const Icon(Icons.calendar_today_outlined, color: AppColors.primary),
                               title: Text(_attendanceTitle(next, types)),
-                              trailing: tops.minutes > 0 ? Text('${tops.minutes} min') : null,
+                              trailing: tops.minutes > 0 ? Text(l10n.teamOrgMinutes(tops.minutes)) : null,
                               onTap: () => context.push('/attendance/${next!.id}'),
                             ),
                             for (final top in tops.tops)
                               ListTile(
-                                title: Text('TOP ${numbers[fieldId(top)] ?? 0} · ${fieldName(top)}'),
+                                title: Text(l10n.teamOrgTopName(numbers[fieldId(top)] ?? 0, fieldName(top))),
                                 subtitle: fieldConductor(top) != null ? Text(fieldConductor(top)!) : null,
-                                trailing: Text('${fieldMinutes(top)} min'),
+                                trailing: Text(l10n.teamOrgMinutes(fieldMinutes(top))),
                                 onTap: () => _topAction(top, next!, nextType),
                               ),
                             if (tops.tops.isEmpty)
-                              const ListTile(
-                                title: Text('Noch keine Themen auf der Tagesordnung.',
-                                    style: TextStyle(color: AppColors.medium)),
+                              ListTile(
+                                title: Text(l10n.teamOrgNoTopsYet,
+                                    style: const TextStyle(color: AppColors.medium)),
                               ),
                             ListTile(
                               leading: const Icon(Icons.add_circle_outline, color: AppColors.primary),
-                              title: const Text('Themen aufnehmen', style: TextStyle(color: AppColors.primary)),
+                              title: Text(l10n.teamOrgAddTopics, style: const TextStyle(color: AppColors.primary)),
                               onTap: () async {
                                 await showAgendaPickerSheet(context, attendance: next!, type: nextType);
                               },
@@ -432,7 +435,7 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
                           ],
                         ),
                 ),
-                _sectionHeader(context, 'Themenspeicher', trailing: Text('${openTopics.length} offen')),
+                _sectionHeader(context, l10n.agendaTopicStore, trailing: Text(l10n.teamOrgOpenCount(openTopics.length))),
                 Card(
                   margin: EdgeInsets.zero,
                   child: Column(
@@ -442,9 +445,13 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
                           title: Text(item.title),
                           subtitle: Text.rich(TextSpan(children: [
                             if (postponed.contains(item.id))
-                              const TextSpan(text: 'vertagt · ', style: TextStyle(color: AppColors.warningDark)),
+                              TextSpan(
+                                  text: '${l10n.teamOrgPostponedLower} · ',
+                                  style: const TextStyle(color: AppColors.warningDark)),
                             if (nextAgendaIds.contains(item.id))
-                              const TextSpan(text: 'eingeplant · ', style: TextStyle(color: AppColors.primary)),
+                              TextSpan(
+                                  text: '${l10n.teamOrgPlannedLower} · ',
+                                  style: const TextStyle(color: AppColors.primary)),
                             TextSpan(text: _topicSubtitle(item)),
                           ])),
                           trailing: TeamOrgBadge(
@@ -454,9 +461,9 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
                           onTap: () => context.push('/settings/agenda-items/${item.id}'),
                         ),
                       if (openTopics.isEmpty)
-                        const ListTile(
-                          title: Text('Keine offenen Themen. Lege mit + ein neues an.',
-                              style: TextStyle(color: AppColors.medium)),
+                        ListTile(
+                          title: Text(l10n.teamOrgNoOpenTopics,
+                              style: const TextStyle(color: AppColors.medium)),
                         ),
                     ],
                   ),
@@ -469,14 +476,14 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
                         SwitchListTile(
                           value: _showDone,
                           onChanged: (v) => setState(() => _showDone = v),
-                          title: Text('Erledigte anzeigen (${buckets.done.length})'),
+                          title: Text(l10n.teamOrgShowDone(buckets.done.length)),
                         ),
                         if (_showDone)
                           for (final item in buckets.done)
                             ListTile(
                               title: Text(item.title, style: const TextStyle(color: AppColors.medium)),
                               subtitle: Text([
-                                item.status == 'dropped' ? 'Verworfen' : 'Erledigt',
+                                item.status == 'dropped' ? l10n.agendaStatusDropped : l10n.agendaStatusDone,
                                 if (item.responsiblePerson.fullName.isNotEmpty) item.responsiblePerson.fullName,
                               ].join(' · ')),
                               onTap: () => context.push('/settings/agenda-items/${item.id}'),
@@ -515,12 +522,13 @@ class _MemberTopics extends ConsumerWidget {
       useSafeArea: true,
       builder: (_) => const _SuggestSheet(),
     );
-    if (result == true && context.mounted) ToastHelper.showSuccess(context, 'Vorschlag gesendet');
+    if (result == true && context.mounted) ToastHelper.showSuccess(context, context.l10n.teamOrgSuggestionSent);
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final itemsAsync = ref.watch(agendaItemsProvider);
+    final l10n = context.l10n;
     return RefreshIndicator(
       onRefresh: () async => ref.invalidate(agendaItemsProvider),
       child: ListView(
@@ -533,33 +541,32 @@ class _MemberTopics extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Thema vorschlagen', style: Theme.of(context).textTheme.titleMedium),
+                  Text(l10n.teamOrgSuggestTopic, style: Theme.of(context).textTheme.titleMedium),
                   const SizedBox(height: 4),
-                  const Text(
-                      'Du hast ein Anliegen für die nächste Sitzung? Die Leitung entscheidet, ob es auf die Tagesordnung kommt.'),
+                  Text(l10n.teamOrgSuggestHint),
                   const SizedBox(height: AppDimensions.paddingM),
                   SizedBox(
                     width: double.infinity,
                     child: FilledButton.icon(
                       onPressed: () => _suggest(context, ref),
                       icon: const Icon(Icons.lightbulb_outline),
-                      label: const Text('Thema vorschlagen'),
+                      label: Text(l10n.teamOrgSuggestTopic),
                     ),
                   ),
                 ],
               ),
             ),
           ),
-          _sectionHeader(context, 'Meine Vorschläge'),
+          _sectionHeader(context, l10n.teamOrgMySuggestions),
           itemsAsync.when(
             loading: () => const Center(child: CircularProgressIndicator()),
-            error: (_, __) => const Text('Themen konnten nicht geladen werden'),
+            error: (_, __) => Text(l10n.agendaLoadFailed),
             data: (items) {
               final sorted = [...items]..sort((a, b) => (b.createdAt ?? '').compareTo(a.createdAt ?? ''));
               if (sorted.isEmpty) {
-                return const Card(
+                return Card(
                   child: ListTile(
-                    title: Text('Du hast noch nichts vorgeschlagen.', style: TextStyle(color: AppColors.medium)),
+                    title: Text(l10n.teamOrgNothingSuggested, style: const TextStyle(color: AppColors.medium)),
                   ),
                 );
               }
@@ -574,8 +581,8 @@ class _MemberTopics extends ConsumerWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(item.proposalStatus == 'accepted'
-                                ? 'Von der Leitung übernommen'
-                                : 'Eingereicht am ${_date(item.createdAt)}'),
+                                ? l10n.teamOrgAcceptedByLeaders
+                                : l10n.teamOrgSubmittedOn(_date(item.createdAt))),
                             if (item.proposalStatus == 'rejected' && item.decisionNote?.isNotEmpty == true)
                               Text('„${item.decisionNote}“', style: const TextStyle(fontStyle: FontStyle.italic)),
                           ],
@@ -601,7 +608,7 @@ class _MemberTopics extends ConsumerWidget {
 
   static String _date(String? iso) {
     final d = DateTime.tryParse(iso ?? '')?.toLocal();
-    return d == null ? '' : DateFormat('dd.MM.yyyy').format(d);
+    return d == null ? '' : DateFormat(dateFmt()).format(d);
   }
 }
 
@@ -633,7 +640,7 @@ class _SuggestSheetState extends ConsumerState<_SuggestSheet> {
   Future<void> _send() async {
     final title = _title.text.trim();
     if (title.isEmpty) {
-      ToastHelper.showWarning(context, 'Bitte einen Titel eingeben');
+      ToastHelper.showWarning(context, context.l10n.agendaEnterTitle);
       return;
     }
     if (_sending) return;
@@ -643,7 +650,7 @@ class _SuggestSheetState extends ConsumerState<_SuggestSheet> {
       await ref.read(agendaItemNotifierProvider.notifier).propose(title, desc.isEmpty ? null : desc);
       if (mounted) Navigator.of(context).pop(true);
     } catch (_) {
-      if (mounted) ToastHelper.showError(context, 'Vorschlag konnte nicht gesendet werden');
+      if (mounted) ToastHelper.showError(context, context.l10n.teamOrgSuggestionFailed);
     } finally {
       if (mounted) setState(() => _sending = false);
     }
@@ -651,6 +658,7 @@ class _SuggestSheetState extends ConsumerState<_SuggestSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return Padding(
       padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
       child: Column(
@@ -658,21 +666,20 @@ class _SuggestSheetState extends ConsumerState<_SuggestSheet> {
         children: [
           AppBar(
             automaticallyImplyLeading: false,
-            leading: TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Abbrechen')),
+            leading: TextButton(onPressed: () => Navigator.of(context).pop(), child: Text(l10n.commonCancel)),
             leadingWidth: 100,
-            title: const Text('Thema vorschlagen'),
+            title: Text(l10n.teamOrgSuggestTopic),
           ),
           Padding(
             padding: const EdgeInsets.all(AppDimensions.paddingM),
             child: Column(
               children: [
-                const Text(
-                    'Du hast ein Anliegen für die nächste Sitzung? Die Leitung entscheidet, ob es auf die Tagesordnung kommt.'),
+                Text(l10n.teamOrgSuggestHint),
                 const SizedBox(height: AppDimensions.paddingM),
                 TextField(
                   controller: _title,
                   textCapitalization: TextCapitalization.sentences,
-                  decoration: const InputDecoration(labelText: 'Titel', hintText: 'z. B. Neue Notenpulte'),
+                  decoration: InputDecoration(labelText: l10n.tasksTitle, hintText: l10n.teamOrgTitlePlaceholder),
                 ),
                 const SizedBox(height: AppDimensions.paddingS),
                 TextField(
@@ -680,7 +687,7 @@ class _SuggestSheetState extends ConsumerState<_SuggestSheet> {
                   minLines: 4,
                   maxLines: 8,
                   textCapitalization: TextCapitalization.sentences,
-                  decoration: const InputDecoration(labelText: 'Beschreibung', hintText: 'Worum geht es? (optional)'),
+                  decoration: InputDecoration(labelText: l10n.tasksDescription, hintText: l10n.teamOrgDescPlaceholder),
                 ),
                 const SizedBox(height: AppDimensions.paddingM),
                 SafeArea(
@@ -689,7 +696,7 @@ class _SuggestSheetState extends ConsumerState<_SuggestSheet> {
                     width: double.infinity,
                     child: FilledButton(
                       onPressed: _title.text.trim().isEmpty || _sending ? null : _send,
-                      child: const Text('Vorschlag senden'),
+                      child: Text(l10n.teamOrgSendSuggestion),
                     ),
                   ),
                 ),

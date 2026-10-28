@@ -7,6 +7,7 @@ import '../../../../core/providers/team_org_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/team_org/team_org.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/loading/loading.dart';
 import '../../team_org_utils.dart';
 import 'task_form_sheet.dart';
@@ -33,7 +34,7 @@ class _TasksTabState extends ConsumerState<TasksTab> {
     try {
       await ref.read(teamTaskNotifierProvider.notifier).update(id, {'status': next});
     } catch (_) {
-      if (mounted) ToastHelper.showError(context, 'Status konnte nicht geändert werden');
+      if (mounted) ToastHelper.showError(context, context.l10n.tasksStatusFailed);
     } finally {
       if (mounted) setState(() => _optimistic.remove(id));
     }
@@ -49,19 +50,20 @@ class _TasksTabState extends ConsumerState<TasksTab> {
     final tasksAsync = ref.watch(teamTasksProvider);
     final myPersonId = ref.watch(teamPersonProvider).valueOrNull?.id;
     final today = localToday();
+    final l10n = context.l10n;
 
     return Scaffold(
       floatingActionButton: isLeader
           ? FloatingActionButton(
               heroTag: 'team-org-add-task',
-              tooltip: 'Aufgabe anlegen',
+              tooltip: l10n.teamOrgCreateTask,
               onPressed: _addTask,
               child: const Icon(Icons.add),
             )
           : null,
       body: tasksAsync.when(
         loading: () => const TeamOrgListSkeleton(), // Ionic ion-skeleton-text (3 rows)
-        error: (_, __) => const Center(child: Text('Aufgaben konnten nicht geladen werden')),
+        error: (_, __) => Center(child: Text(l10n.teamOrgTasksLoadFailed)),
         data: (raw) {
           final tasks = raw
               .map((t) => _optimistic.containsKey(t.id)
@@ -83,10 +85,10 @@ class _TasksTabState extends ConsumerState<TasksTab> {
               : tasks.where((t) => t.responsiblePersonId == myPersonId && t.status != 'completed').length;
 
           String emptyText() {
-            if (!isLeader) return 'Dir sind gerade keine Aufgaben zugewiesen. Genieß die Ruhe!';
-            if (filter == 'mine') return 'Du hast keine Aufgaben. Alles erledigt!';
-            if (tasks.isEmpty) return 'Noch keine Aufgaben. Leg die erste mit + an oder direkt aus einem Protokoll.';
-            return 'Hier ist nichts offen.';
+            if (!isLeader) return l10n.teamOrgEmptyMineAssigned;
+            if (filter == 'mine') return l10n.teamOrgEmptyMine;
+            if (tasks.isEmpty) return l10n.teamOrgEmptyAll;
+            return l10n.teamOrgEmptyPerson;
           }
 
           return RefreshIndicator(
@@ -101,9 +103,9 @@ class _TasksTabState extends ConsumerState<TasksTab> {
                     scrollDirection: Axis.horizontal,
                     child: Row(
                       children: [
-                        _chip('Alle · $allOpen', filter == 'all', () => setState(() => _filter = 'all')),
+                        _chip(l10n.teamOrgAllCount(allOpen), filter == 'all', () => setState(() => _filter = 'all')),
                         if (myPersonId != null)
-                          _chip('Meine · $myOpen', filter == 'mine', () => setState(() => _filter = 'mine')),
+                          _chip(l10n.teamOrgMineCount(myOpen), filter == 'mine', () => setState(() => _filter = 'mine')),
                         for (final c in chips)
                           if (c.personId != myPersonId)
                             _chip('${c.label} · ${c.openCount}', filter == c.personId,
@@ -123,7 +125,7 @@ class _TasksTabState extends ConsumerState<TasksTab> {
                           TextButton.icon(
                             onPressed: _addTask,
                             icon: const Icon(Icons.add),
-                            label: const Text('Aufgabe anlegen'),
+                            label: Text(l10n.teamOrgCreateTask),
                           ),
                       ],
                     ),
@@ -166,8 +168,8 @@ class _TasksTabState extends ConsumerState<TasksTab> {
                     child: SwitchListTile(
                       value: _includeArchived,
                       onChanged: (v) => setState(() => _includeArchived = v),
-                      title: const Text('Ältere erledigte anzeigen'),
-                      subtitle: const Text('Erledigte Aufgaben verschwinden nach 30 Tagen aus der Liste.'),
+                      title: Text(l10n.teamOrgShowOlderDone),
+                      subtitle: Text(l10n.teamOrgDoneDisappear),
                     ),
                   ),
               ],
@@ -203,22 +205,23 @@ class TaskListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final done = task.status == 'completed';
     final overdue = isTaskOverdue(task, today);
+    final l10n = context.l10n;
     final parts = <String>[];
     if (showPerson) {
       final name = task.responsiblePerson.fullName;
-      parts.add(name.isNotEmpty ? name : 'Niemand zugewiesen');
+      parts.add(name.isNotEmpty ? name : l10n.teamOrgNobodyAssigned);
     }
     final due = formatTaskDue(task, today);
     if (due.isNotEmpty) {
       parts.add(due);
     } else if (!showPerson) {
-      parts.add('Ohne Fälligkeit');
+      parts.add(l10n.tasksNoDue);
     }
 
     return ListTile(
       onTap: task.id == null ? null : () => context.push('/settings/tasks/${task.id}'),
       leading: IconButton(
-        tooltip: done ? 'Wieder öffnen' : 'Als erledigt markieren',
+        tooltip: done ? l10n.tasksFlutterReopen : l10n.tasksMarkDone,
         icon: Icon(
           done ? Icons.check_circle : Icons.radio_button_unchecked,
           color: done ? AppColors.success : AppColors.medium,
@@ -238,8 +241,8 @@ class TaskListTile extends StatelessWidget {
       trailing: Wrap(
         spacing: 4,
         children: [
-          if (task.status == 'in_progress') const _Badge(label: 'In Arbeit', color: AppColors.warning),
-          if (!done && task.priority == 'high') const _Badge(label: 'Hoch', color: AppColors.danger),
+          if (task.status == 'in_progress') _Badge(label: l10n.tasksInProgress, color: AppColors.warning),
+          if (!done && task.priority == 'high') _Badge(label: l10n.agendaHigh, color: AppColors.danger),
         ],
       ),
     );

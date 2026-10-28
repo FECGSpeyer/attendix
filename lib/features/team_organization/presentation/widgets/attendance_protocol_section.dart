@@ -9,6 +9,7 @@ import '../../../../core/providers/plan_providers.dart';
 import '../../../../core/providers/team_org_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/team_org/team_org.dart';
+import '../../../../l10n/l10n.dart';
 import '../../team_org_utils.dart';
 import 'agenda_picker_sheet.dart';
 
@@ -16,19 +17,22 @@ import 'agenda_picker_sheet.dart';
 /// "Noch nicht begonnen" / "Freigegeben am …[ · geändert am …]" /
 /// "Entwurf · zuletzt bearbeitet … Uhr".
 String protocolCardStatus(Protocol? protocol) {
-  if (protocol == null) return 'Noch nicht begonnen';
-  final date = DateFormat('dd.MM.yyyy');
+  final l10n = l10nWithoutContext;
+  if (protocol == null) return l10n.attendanceNotStarted;
+  final date = DateFormat(dateFmt());
   if (protocol.status == 'published') {
     final pub = DateTime.tryParse(protocol.publishedAt ?? '')?.toLocal();
-    var line = 'Freigegeben am ${pub != null ? date.format(pub) : ''}';
+    var line = l10n.attendancePublishedOn(pub != null ? date.format(pub) : '');
     if (isEditedAfterPublish(protocol)) {
       final upd = DateTime.tryParse(protocol.updatedAt ?? '')?.toLocal();
-      line = '$line · geändert am ${upd != null ? date.format(upd) : ''}';
+      line = '$line ${l10n.attendanceChangedOn(upd != null ? date.format(upd) : '')}';
     }
     return line;
   }
   final edited = DateTime.tryParse(protocol.updatedAt ?? protocol.createdAt ?? '')?.toLocal();
-  return 'Entwurf · zuletzt bearbeitet ${edited != null ? DateFormat('dd.MM.yyyy, HH:mm').format(edited) : ''} Uhr';
+  return l10n.attendanceDraftEdited(
+    edited != null ? DateFormat('${dateFmt()}, HH:mm').format(edited) : '',
+  );
 }
 
 /// "Themen aufnehmen" for a Termin (Ionic attendance.page `openAgendaPicker`):
@@ -61,9 +65,9 @@ void openPlanFieldTopic(BuildContext context, WidgetRef ref, String? agendaItemI
 
 /// "Offen" / "In Arbeit" / "Erledigt".
 String taskStatusLabel(String status) => switch (status) {
-      'completed' => 'Erledigt',
-      'in_progress' => 'In Arbeit',
-      _ => 'Offen',
+      'completed' => l10nWithoutContext.tasksStatusCompleted,
+      'in_progress' => l10nWithoutContext.tasksStatusInProgress,
+      _ => l10nWithoutContext.tasksStatusOpen,
     };
 
 /// Protocol card and "Aufgaben aus diesem Termin" of a Termin whose type has
@@ -99,7 +103,7 @@ class AttendanceProtocolSection extends ConsumerWidget {
         children: [
           ListTile(
             leading: const Icon(Icons.description_outlined, color: AppColors.primary),
-            title: const Text('Protokoll', style: TextStyle(fontWeight: FontWeight.w600)),
+            title: Text(context.l10n.attendanceProtocol, style: const TextStyle(fontWeight: FontWeight.w600)),
             subtitle: protocolAsync.isLoading && protocol == null
                 ? const Text('…')
                 : Text(protocolCardStatus(protocol)),
@@ -112,7 +116,7 @@ class AttendanceProtocolSection extends ConsumerWidget {
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Text(
-                      published ? 'Freigegeben' : 'Entwurf',
+                      published ? context.l10n.attendancePublished : context.l10n.attendanceDraft,
                       style: const TextStyle(color: Colors.white, fontSize: 12),
                     ),
                   ),
@@ -122,7 +126,7 @@ class AttendanceProtocolSection extends ConsumerWidget {
               leading: Icon(protocol != null ? Icons.edit_outlined : Icons.play_circle_outline,
                   color: AppColors.primary),
               title: Text(
-                protocol != null ? 'Protokoll öffnen' : 'Sitzung starten & protokollieren',
+                protocol != null ? context.l10n.attendanceOpenProtocol : context.l10n.attendanceStartSession,
                 style: const TextStyle(color: AppColors.primary),
               ),
               onTap: () => _push(context, ref, '/settings/protocol/$attendanceId'),
@@ -130,14 +134,14 @@ class AttendanceProtocolSection extends ConsumerWidget {
           else if (published)
             ListTile(
               leading: const Icon(Icons.chrome_reader_mode_outlined, color: AppColors.primary),
-              title: const Text('Protokoll lesen', style: TextStyle(color: AppColors.primary)),
+              title: Text(context.l10n.attendanceReadProtocol, style: const TextStyle(color: AppColors.primary)),
               onTap: () => _push(context, ref, '/settings/protocol/$attendanceId'),
             ),
           if (tasks.isNotEmpty) ...[
             const Divider(height: 1),
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
-              child: Text('Aufgaben aus diesem Termin', style: Theme.of(context).textTheme.titleSmall),
+              child: Text(context.l10n.attendanceTasksFromEvent, style: Theme.of(context).textTheme.titleSmall),
             ),
             for (final task in tasks) _taskTile(context, ref, task),
           ],
@@ -148,9 +152,11 @@ class AttendanceProtocolSection extends ConsumerWidget {
 
   Widget _taskTile(BuildContext context, WidgetRef ref, TeamTask task) {
     final done = task.status == 'completed';
-    final who = task.responsiblePerson.fullName.isNotEmpty ? task.responsiblePerson.fullName : 'Niemand zugewiesen';
+    final who = task.responsiblePerson.fullName.isNotEmpty ? task.responsiblePerson.fullName : context.l10n.attendanceNobodyAssigned;
     final due = DateTime.tryParse(task.dueDate ?? '');
-    final subtitle = due != null && !done ? '$who · fällig ${DateFormat('dd.MM.').format(due)}' : who;
+    final subtitle = due != null && !done
+        ? '$who ${context.l10n.attendanceDueOn(DateFormat(dateFmt(DateFmtKind.dayMonth)).format(due))}'
+        : who;
     return ListTile(
       leading: Icon(
         done ? Icons.check_circle : Icons.radio_button_unchecked,

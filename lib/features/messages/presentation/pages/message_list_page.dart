@@ -9,6 +9,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/message/message.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/common/empty_state.dart';
 import '../message_format.dart';
 import 'message_compose_page.dart';
@@ -28,28 +29,27 @@ class MessageListPage extends ConsumerWidget {
   Future<void> _delete(BuildContext context, WidgetRef ref, Message m) async {
     final confirmed = await DialogHelper.showConfirmation(
       context,
-      title: 'Mitteilung löschen?',
-      message:
-          'Die Mitteilung verschwindet auch bei allen Empfängern aus der App. '
-          'Bereits versendete E-Mails bleiben bestehen.',
-      confirmText: 'Löschen',
+      title: context.l10n.messagesDeleteConfirm,
+      message: context.l10n.messagesDeleteHint,
+      confirmText: context.l10n.commonDelete,
       isDestructive: true,
     );
     if (!confirmed) return;
     final ok = await ref.read(messageNotifierProvider.notifier).delete(m.id);
     if (!ok && context.mounted) {
-      ToastHelper.showError(context, 'Fehler beim Löschen');
+      ToastHelper.showError(context, context.l10n.messagesDeleteFailed);
     }
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final messagesAsync = ref.watch(messagesProvider);
+    final l10n = context.l10n;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Mitteilungen')),
+      appBar: AppBar(title: Text(l10n.messagesMessages)),
       floatingActionButton: FloatingActionButton(
-        tooltip: 'Neue Mitteilung',
+        tooltip: l10n.messagesNewMessage,
         onPressed: () => _compose(context),
         child: const Icon(Icons.add),
       ),
@@ -60,9 +60,9 @@ class MessageListPage extends ConsumerWidget {
           error:
               (e, _) => ListView(
                 physics: const AlwaysScrollableScrollPhysics(),
-                children: const [
-                  SizedBox(height: 120),
-                  Center(child: Text('Mitteilungen konnten nicht geladen werden')),
+                children: [
+                  const SizedBox(height: 120),
+                  Center(child: Text(l10n.messagesListLoadFailed)),
                 ],
               ),
           data: (messages) {
@@ -73,11 +73,9 @@ class MessageListPage extends ConsumerWidget {
                   const SizedBox(height: 48),
                   EmptyStateWidget(
                     icon: Icons.campaign_outlined,
-                    title: 'Noch keine Mitteilungen',
-                    subtitle:
-                        'Informiere deine Gruppe mit einer Mitteilung und sieh direkt, '
-                        'wer sie schon gelesen hat.',
-                    actionLabel: 'Erste Mitteilung schreiben',
+                    title: l10n.messagesNone,
+                    subtitle: l10n.messagesNoneHint,
+                    actionLabel: l10n.messagesWriteFirst,
                     onAction: () => _compose(context),
                   ),
                 ],
@@ -98,7 +96,7 @@ class MessageListPage extends ConsumerWidget {
                     bottom: AppDimensions.paddingS,
                   ),
                   child: Text(
-                    'Gesendet',
+                    l10n.messagesSent,
                     style: Theme.of(
                       context,
                     ).textTheme.titleSmall?.copyWith(color: AppColors.medium),
@@ -197,8 +195,8 @@ class _MessageRow extends StatelessWidget {
                         Expanded(
                           child: Text(
                             m.isSending
-                                ? 'Versand läuft …'
-                                : '${item.stats.read} von ${m.recipientCount} gelesen',
+                                ? context.l10n.messagesSending
+                                : context.l10n.messagesReadOf(item.stats.read, m.recipientCount),
                             style: theme.textTheme.bodySmall,
                           ),
                         ),

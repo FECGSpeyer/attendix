@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 
 import '../../core/constants/enums.dart';
 import '../../data/models/team_org/team_org.dart';
+import '../../l10n/l10n.dart';
 
 /// Plan field ids of agenda items are derived from the topic.
 const String agendaFieldPrefix = 'agenda-';
@@ -21,29 +22,31 @@ typedef PlanField = Map<String, dynamic>;
 
 // ── Labels ─────────────────────────────────────────────────
 
-const Map<String, String> outcomeLabels = {
-  'discussed': 'Besprochen',
-  'decided': 'Beschlossen',
-  'postponed': 'Vertagt',
-};
+// Labels follow the active UI language (resolved on every access).
 
-const Map<String, String> taskStatusLabels = {
-  'open': 'Offen',
-  'in_progress': 'In Arbeit',
-  'completed': 'Erledigt',
-};
+Map<String, String> get outcomeLabels => {
+      'discussed': l10nWithoutContext.teamOrgOutcomeDiscussed,
+      'decided': l10nWithoutContext.teamOrgOutcomeDecided,
+      'postponed': l10nWithoutContext.agendaPostponed,
+    };
 
-const Map<String, String> priorityLabels = {
-  'high': 'Hoch',
-  'medium': 'Mittel',
-  'low': 'Niedrig',
-};
+Map<String, String> get taskStatusLabels => {
+      'open': l10nWithoutContext.tasksStatusOpen,
+      'in_progress': l10nWithoutContext.tasksStatusInProgress,
+      'completed': l10nWithoutContext.tasksStatusCompleted,
+    };
 
-const Map<String, String> topicStatusLabels = {
-  'open': 'Offen',
-  'completed': 'Erledigt',
-  'dropped': 'Verworfen',
-};
+Map<String, String> get priorityLabels => {
+      'high': l10nWithoutContext.agendaHigh,
+      'medium': l10nWithoutContext.agendaMedium,
+      'low': l10nWithoutContext.agendaLow,
+    };
+
+Map<String, String> get topicStatusLabels => {
+      'open': l10nWithoutContext.agendaStatusOpen,
+      'completed': l10nWithoutContext.agendaStatusDone,
+      'dropped': l10nWithoutContext.agendaStatusDropped,
+    };
 
 // ── Roles / circle ─────────────────────────────────────────
 
@@ -123,7 +126,7 @@ Map<String, int> topNumbers(List<PlanField>? fields) {
 
 String fieldDisplayName(PlanField field, Map<String, int> numbers) {
   final n = numbers[fieldId(field)];
-  return n != null ? 'TOP $n · ${fieldName(field)}' : fieldName(field);
+  return n != null ? l10nWithoutContext.teamOrgTopName(n, fieldName(field)) : fieldName(field);
 }
 
 /// Parses "HH:mm" or an ISO date time into a DateTime (only the time matters).
@@ -309,11 +312,11 @@ List<AgendaItem> sortTopicsForPlanning(List<AgendaItem> items, Set<String> postp
 String suggestionStatusLabel(AgendaItem item) {
   switch (item.proposalStatus) {
     case 'accepted':
-      return 'Übernommen';
+      return l10nWithoutContext.teamOrgSuggestionAccepted;
     case 'rejected':
-      return 'Abgelehnt';
+      return l10nWithoutContext.teamOrgSuggestionRejected;
     default:
-      return 'Wartet';
+      return l10nWithoutContext.teamOrgSuggestionWaiting;
   }
 }
 
@@ -324,10 +327,10 @@ String relativeDay(String? date, {DateTime? now}) {
   if (d == null) return '';
   final n = now ?? DateTime.now();
   final days = DateTime(n.year, n.month, n.day).difference(DateTime(d.year, d.month, d.day)).inDays;
-  if (days <= 0) return 'heute';
-  if (days == 1) return 'gestern';
-  if (days < 14) return 'vor $days Tagen';
-  return DateFormat('dd.MM.yyyy').format(d);
+  if (days <= 0) return l10nWithoutContext.teamOrgToday;
+  if (days == 1) return l10nWithoutContext.teamOrgYesterday;
+  if (days < 14) return l10nWithoutContext.teamOrgDaysAgo(days);
+  return DateFormat(dateFmt()).format(d);
 }
 
 // ── Tasks ──────────────────────────────────────────────────
@@ -352,13 +355,13 @@ class TaskGroup {
   final List<TeamTask> tasks;
 }
 
-const Map<String, String> _taskGroupLabels = {
-  'overdue': 'Überfällig',
-  'week': 'Diese Woche',
-  'later': 'Später',
-  'none': 'Ohne Datum',
-  'done': 'Erledigt',
-};
+Map<String, String> get _taskGroupLabels => {
+      'overdue': l10nWithoutContext.teamOrgGroupOverdue,
+      'week': l10nWithoutContext.teamOrgGroupWeek,
+      'later': l10nWithoutContext.svcLater,
+      'none': l10nWithoutContext.teamOrgGroupNone,
+      'done': l10nWithoutContext.tasksDone,
+    };
 
 /// Groups tasks: overdue, next 7 days, later, without date, completed.
 List<TaskGroup> groupTasksByDue(List<TeamTask> tasks, String today,
@@ -392,9 +395,10 @@ List<TaskGroup> groupTasksByDue(List<TeamTask> tasks, String today,
   buckets['none']!.sort((a, b) => a.title.compareTo(b.title));
   buckets['done']!.sort((a, b) =>
       (b.completedAt ?? b.updatedAt ?? '').compareTo(a.completedAt ?? a.updatedAt ?? ''));
+  final labels = _taskGroupLabels;
   return buckets.entries
       .where((e) => e.value.isNotEmpty)
-      .map((e) => TaskGroup(e.key, _taskGroupLabels[e.key]!, e.value))
+      .map((e) => TaskGroup(e.key, labels[e.key]!, e.value))
       .toList();
 }
 
@@ -418,7 +422,7 @@ List<TaskPersonChip> taskPersonChips(List<TeamTask> tasks) {
       continue;
     }
     final p = t.responsiblePerson;
-    final name = p.fullName.isNotEmpty ? p.fullName : 'Unbekannt';
+    final name = p.fullName.isNotEmpty ? p.fullName : l10nWithoutContext.commonUnknown;
     final first = (p?.firstName?.trim().isNotEmpty ?? false) ? p!.firstName!.trim() : name;
     byId[pid] = (name: name, first: first, last: p?.lastName?.trim() ?? '', count: 1);
   }
@@ -443,7 +447,15 @@ List<TeamTask> filterTasks(List<TeamTask> tasks, Object filter, int? myPersonId)
   return tasks.where((t) => t.responsiblePersonId == personId).toList();
 }
 
-const _weekdays = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
+// dayjs 'dd' (two-letter weekday) per UI language; German is the fallback.
+const _weekdaysByLanguage = {
+  'de': ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'],
+  'en': ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'],
+};
+
+/// Two-letter weekday ("Mo", "Di" …) in the active UI language.
+String weekdayShort(DateTime d) =>
+    (_weekdaysByLanguage[currentLanguage()] ?? _weekdaysByLanguage['de']!)[d.weekday - 1];
 
 /// "Di, 28.10." / "seit 12.10." / "Heute" / "Morgen".
 String formatTaskDue(TeamTask task, String today) {
@@ -454,11 +466,12 @@ String formatTaskDue(TeamTask task, String today) {
   final sameYear = due.substring(0, 4) == today.substring(0, 4);
   final dayMonth =
       '${date.day.toString().padLeft(2, '0')}.${date.month.toString().padLeft(2, '0')}.${sameYear ? '' : date.year}';
-  if (task.status != 'completed' && due.compareTo(today) < 0) return 'seit $dayMonth';
-  if (due == today) return 'Heute';
+  final l10n = l10nWithoutContext;
+  if (task.status != 'completed' && due.compareTo(today) < 0) return l10n.teamOrgSince(dayMonth);
+  if (due == today) return l10n.teamOrgTodayCap;
   final tomorrow = localToday(DateTime.parse(today).add(const Duration(days: 1)));
-  if (due == tomorrow) return 'Morgen';
-  return '${_weekdays[date.weekday - 1]}, $dayMonth';
+  if (due == tomorrow) return l10n.teamOrgTomorrow;
+  return '${weekdayShort(date)}, $dayMonth';
 }
 
 /// "Do, 30.10.2026".
@@ -466,14 +479,14 @@ String formatLongDate(String? isoDate) {
   if (isoDate == null || isoDate.isEmpty) return '';
   final d = DateTime.tryParse(isoDate.length >= 10 ? isoDate.substring(0, 10) : isoDate);
   if (d == null) return isoDate;
-  return '${_weekdays[d.weekday - 1]}, ${DateFormat('dd.MM.yyyy').format(d)}';
+  return '${weekdayShort(d)}, ${DateFormat('dd.MM.yyyy').format(d)}';
 }
 
 /// "Di, 21.10." for an attendance date.
 String formatShortWeekdayDate(String? isoDate) {
   final d = DateTime.tryParse(isoDate ?? '')?.toLocal();
   if (d == null) return '';
-  return '${_weekdays[d.weekday - 1]}, ${DateFormat('dd.MM.').format(d)}';
+  return '${weekdayShort(d)}, ${DateFormat(dateFmt(DateFmtKind.dayMonth)).format(d)}';
 }
 
 String toggledStatus(String status) => status == 'completed' ? 'open' : 'completed';
@@ -494,7 +507,7 @@ bool isEditedAfterPublish(Protocol? p) {
 String attendanceTitle(String? typeInfo, ProtocolType? type) {
   if (typeInfo != null && typeInfo.trim().isNotEmpty) return typeInfo;
   if (type != null && type.name.isNotEmpty) return type.name;
-  return 'Termin';
+  return l10nWithoutContext.attendanceEventFallback;
 }
 
 // ── Protocol helpers ───────────────────────────────────────
@@ -550,7 +563,7 @@ List<TopicClosure> topicClosureCandidates(
 String joinNames(List<String> names) {
   if (names.isEmpty) return '';
   if (names.length == 1) return names.first;
-  return '${names.sublist(0, names.length - 1).join(', ')} und ${names.last}';
+  return '${names.sublist(0, names.length - 1).join(', ')} ${l10nWithoutContext.teamOrgFlutterAnd} ${names.last}';
 }
 
 /// Case-insensitive search; every word of the query must match.
@@ -561,12 +574,20 @@ bool matchesSearch(String query, List<String?> texts) {
   return words.every(haystack.contains);
 }
 
-const _months = [
-  'Januar', 'Februar', 'März', 'April', 'Mai', 'Juni',
-  'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember',
-];
+const _monthsByLanguage = {
+  'de': [
+    'Januar', 'Februar', 'März', 'April', 'Mai', 'Juni',
+    'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember',
+  ],
+  'en': [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December',
+  ],
+};
 
-String monthLabel(DateTime d) => '${_months[d.month - 1]} ${d.year}';
+/// "Oktober 2026" in the active UI language (Ionic dayjs 'MMMM YYYY').
+String monthLabel(DateTime d) =>
+    '${(_monthsByLanguage[currentLanguage()] ?? _monthsByLanguage['de']!)[d.month - 1]} ${d.year}';
 
 /// Groups items (already sorted) by month of their date, keeping the order.
 List<({String key, String label, List<T> items})> groupByMonth<T>(
@@ -577,7 +598,7 @@ List<({String key, String label, List<T> items})> groupByMonth<T>(
     final key = d == null ? 'none' : '${d.year}-${d.month}';
     var idx = groups.indexWhere((g) => g.key == key);
     if (idx == -1) {
-      groups.add((key: key, label: d == null ? 'Ohne Datum' : monthLabel(d), items: <T>[]));
+      groups.add((key: key, label: d == null ? l10nWithoutContext.teamOrgGroupNone : monthLabel(d), items: <T>[]));
       idx = groups.length - 1;
     }
     groups[idx].items.add(item);

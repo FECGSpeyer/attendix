@@ -1,15 +1,17 @@
 import 'package:intl/intl.dart';
 
 import '../../../data/models/message/message.dart';
+import '../../../l10n/l10n.dart';
 
-/// German text helpers for Mitteilungen (texts from Ionic i18n de.json `messages.*`).
+/// Text helpers for Mitteilungen (texts from Ionic i18n `messages.*`).
+/// Follow the active UI language via [l10nWithoutContext].
 class MessageFormat {
   MessageFormat._();
 
-  static String date(DateTime? d) => d == null ? '' : DateFormat('dd.MM.yyyy').format(d.toLocal());
+  static String date(DateTime? d) => d == null ? '' : DateFormat(dateFmt()).format(d.toLocal());
 
   static String dateTime(DateTime? d) =>
-      d == null ? '' : DateFormat('dd.MM.yyyy, HH:mm').format(d.toLocal());
+      d == null ? '' : DateFormat('${dateFmt()}, HH:mm').format(d.toLocal());
 
   /// Time for chips: "HH:mm" today, otherwise "dd.MM. HH:mm".
   static String chipTime(DateTime d, {DateTime? now}) {
@@ -17,15 +19,15 @@ class MessageFormat {
     final n = (now ?? DateTime.now()).toLocal();
     final sameDay = local.year == n.year && local.month == n.month && local.day == n.day;
     final hm = DateFormat('HH:mm').format(local);
-    return sameDay ? hm : '${DateFormat('dd.MM.').format(local)} $hm';
+    return sameDay ? hm : '${DateFormat(dateFmt(DateFmtKind.dayMonth)).format(local)} $hm';
   }
 
   /// "# Person" / "# Personen"
-  static String persons(int count) => count == 1 ? '1 Person' : '$count Personen';
+  static String persons(int count) => l10nWithoutContext.commonPersons(count);
 
-  static String toPeople(int count) => 'an ${persons(count)}';
+  static String toPeople(int count) => l10nWithoutContext.messagesToPeople(count);
 
-  static String problems(int count) => count == 1 ? '1 Problem' : '$count Probleme';
+  static String problems(int count) => l10nWithoutContext.messagesFlutterProblems(count);
 }
 
 /// Tone of a recipient status chip.
@@ -50,11 +52,12 @@ class RecipientChip {
 
 /// Delivery/read chips of one recipient (port of Ionic `chipsFor`).
 List<RecipientChip> recipientChips(MessageRecipient r, {DateTime? now}) {
+  final l10n = l10nWithoutContext;
   final unreachable = r.isUnreachable;
   if (unreachable && r.readAt == null) {
     return [
       RecipientChip(
-        r.userId != null ? 'Nicht erreichbar' : 'Kein App-Konto, keine E-Mail',
+        r.userId != null ? l10n.messagesUnreachable : l10n.messagesNoAccountNoEmail,
         ChipTone.warn,
       ),
     ];
@@ -62,42 +65,45 @@ List<RecipientChip> recipientChips(MessageRecipient r, {DateTime? now}) {
   final chips = <RecipientChip>[];
   chips.add(
     r.readAt != null
-        ? RecipientChip('✓ Gelesen ${MessageFormat.chipTime(r.readAt!, now: now)}', ChipTone.ok)
-        : const RecipientChip('Ungelesen', ChipTone.neutral),
+        ? RecipientChip(
+            l10n.messagesReadAt(MessageFormat.chipTime(r.readAt!, now: now)),
+            ChipTone.ok,
+          )
+        : RecipientChip(l10n.messagesUnread, ChipTone.neutral),
   );
 
   if (r.userId == null) {
-    chips.add(const RecipientChip('Kein App-Konto', ChipTone.neutral));
+    chips.add(RecipientChip(l10n.messagesNoAccount, ChipTone.neutral));
   } else if (r.pushSentAt != null) {
-    chips.add(const RecipientChip('Push', ChipTone.ok));
+    chips.add(RecipientChip(l10n.messagesPush, ChipTone.ok));
   } else if (!r.pushEnabled) {
-    chips.add(const RecipientChip('Push aus', ChipTone.neutral));
+    chips.add(RecipientChip(l10n.messagesPushOff, ChipTone.neutral));
   } else if (r.pushFailed) {
-    chips.add(const RecipientChip('Push fehlgeschlagen', ChipTone.bad));
+    chips.add(RecipientChip(l10n.messagesPushFailed, ChipTone.bad));
   }
   if (r.telegramSentAt != null) {
-    chips.add(const RecipientChip('Telegram', ChipTone.ok));
+    chips.add(RecipientChip(l10n.messagesTelegram, ChipTone.ok));
   }
 
   if (r.email == null) {
-    chips.add(const RecipientChip('Keine E-Mail', ChipTone.neutral));
+    chips.add(RecipientChip(l10n.messagesNoEmail, ChipTone.neutral));
   } else if (r.emailBouncedAt != null) {
-    chips.add(const RecipientChip('E-Mail unzustellbar', ChipTone.bad));
+    chips.add(RecipientChip(l10n.messagesEmailBounced, ChipTone.bad));
   } else if (r.emailFailed) {
-    chips.add(const RecipientChip('E-Mail fehlgeschlagen', ChipTone.bad));
+    chips.add(RecipientChip(l10n.messagesEmailFailed, ChipTone.bad));
   } else if (r.emailOpenedAt != null) {
     chips.add(
       RecipientChip(
-        'E-Mail geöffnet ${MessageFormat.chipTime(r.emailOpenedAt!, now: now)}',
+        l10n.messagesEmailOpened(MessageFormat.chipTime(r.emailOpenedAt!, now: now)),
         ChipTone.ok,
       ),
     );
   } else if (r.emailDeliveredAt != null) {
-    chips.add(const RecipientChip('E-Mail zugestellt', ChipTone.ok));
+    chips.add(RecipientChip(l10n.messagesEmailDeliveredChip, ChipTone.ok));
   } else if (r.emailSentAt != null) {
-    chips.add(const RecipientChip('E-Mail gesendet', ChipTone.neutral));
+    chips.add(RecipientChip(l10n.messagesEmailSent, ChipTone.neutral));
   } else {
-    chips.add(const RecipientChip('E-Mail ausstehend', ChipTone.neutral));
+    chips.add(RecipientChip(l10n.messagesEmailPending, ChipTone.neutral));
   }
   return chips;
 }

@@ -217,6 +217,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get agendaEnterTitle => 'Please enter a title';
 
   @override
+  String get agendaFlutterNoMatch => 'No matching topic found.';
+
+  @override
+  String get agendaFlutterNoOpenTopics => 'No open topics. Create a new one above.';
+
+  @override
+  String get agendaFlutterNotFound => 'Topic not found';
+
+  @override
   String get agendaHigh => 'High';
 
   @override
@@ -3697,6 +3706,23 @@ class AppLocalizationsEn extends AppLocalizations {
   String get messagesEmailSent => 'Email sent';
 
   @override
+  String get messagesFlutterHideMessage => 'Hide message';
+
+  @override
+  String messagesFlutterProblems(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count problems',
+      one: '$count problem',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get messagesFlutterShowMessage => 'Show message';
+
+  @override
   String messagesFrom(Object name, Object date) {
     return 'From $name · $date';
   }
@@ -6048,6 +6074,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String protocolFileName(Object title, Object date) {
     return 'Minutes $title $date';
   }
+
+  @override
+  String get protocolFlutterChooseLeft => 'Choose an item on the left.';
+
+  @override
+  String get protocolFlutterDoneLower => 'done';
+
+  @override
+  String get protocolFlutterKeepDraft => 'Keep as draft';
+
+  @override
+  String get protocolFlutterPlanEmptyShort => 'The run sheet is still empty.';
+
+  @override
+  String get protocolFlutterPublishNotify => 'Publish & notify';
+
+  @override
+  String get protocolFlutterRepublishNotify => 'Publish again & notify';
 
   @override
   String protocolForNames(Object names) {
@@ -8803,6 +8847,26 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get tasksFlutterAllTasks => 'All tasks';
+
+  @override
+  String get tasksFlutterEditTask => 'Edit task';
+
+  @override
+  String get tasksFlutterNewTask => 'New task';
+
+  @override
+  String get tasksFlutterNoDate => 'No date';
+
+  @override
+  String get tasksFlutterReopen => 'Reopen';
+
+  @override
+  String tasksFlutterShowAllCount(Object count) {
+    return 'Show all ($count)';
+  }
+
+  @override
   String get tasksInProgress => 'In progress';
 
   @override
@@ -9021,6 +9085,28 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get teamOrgFilter => 'Filter';
+
+  @override
+  String get teamOrgFlutterAnd => 'and';
+
+  @override
+  String teamOrgFlutterCreateType(Object name) {
+    return 'Create $name';
+  }
+
+  @override
+  String get teamOrgFlutterMember => 'Member';
+
+  @override
+  String teamOrgFlutterNewSuggestions(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count new suggestions',
+      one: '$count new suggestion',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get teamOrgGroupNone => 'No date';

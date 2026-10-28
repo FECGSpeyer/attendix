@@ -7,6 +7,7 @@ import '../../../../core/providers/team_org_providers.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../data/models/team_org/team_org.dart';
+import '../../../../l10n/l10n.dart';
 import '../../team_org_utils.dart';
 
 /// Opens "Neue Aufgabe" / "Aufgabe bearbeiten" as a sheet (leadership only).
@@ -126,7 +127,7 @@ class _TaskFormSheetState extends ConsumerState<TaskFormSheet> {
       initialDate: initial,
       firstDate: DateTime(now.year - 2),
       lastDate: DateTime(now.year + 5),
-      locale: const Locale('de'),
+      locale: Locale(currentLanguage()),
     );
     if (picked != null) setState(() => _dueDate = localToday(picked));
   }
@@ -134,7 +135,7 @@ class _TaskFormSheetState extends ConsumerState<TaskFormSheet> {
   Future<void> _save() async {
     final title = _title.text.trim();
     if (title.isEmpty) {
-      ToastHelper.showWarning(context, 'Bitte einen Titel eingeben');
+      ToastHelper.showWarning(context, context.l10n.tasksEnterTitle);
       return;
     }
     if (_saving) return;
@@ -169,10 +170,10 @@ class _TaskFormSheetState extends ConsumerState<TaskFormSheet> {
         );
       }
       if (!mounted) return;
-      ToastHelper.showSuccess(context, _isEdit ? 'Gespeichert' : 'Aufgabe angelegt');
+      ToastHelper.showSuccess(context, _isEdit ? context.l10n.tasksSaved : context.l10n.tasksCreated);
       Navigator.of(context).pop(saved);
     } catch (_) {
-      if (mounted) ToastHelper.showError(context, 'Aufgabe konnte nicht gespeichert werden');
+      if (mounted) ToastHelper.showError(context, context.l10n.tasksSaveFailed);
     } finally {
       if (mounted) setState(() => _saving = false);
     }
@@ -183,6 +184,7 @@ class _TaskFormSheetState extends ConsumerState<TaskFormSheet> {
     final persons = _persons();
     final personName = _personName(persons);
     final theme = Theme.of(context);
+    final l10n = context.l10n;
 
     return Padding(
       padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
@@ -193,10 +195,10 @@ class _TaskFormSheetState extends ConsumerState<TaskFormSheet> {
             automaticallyImplyLeading: false,
             leading: IconButton(
               icon: const Icon(Icons.close),
-              tooltip: 'Schließen',
+              tooltip: l10n.commonClose,
               onPressed: () => Navigator.of(context).pop(),
             ),
-            title: Text(_isEdit ? 'Aufgabe bearbeiten' : 'Neue Aufgabe'),
+            title: Text(_isEdit ? l10n.tasksFlutterEditTask : l10n.tasksFlutterNewTask),
           ),
           Flexible(
             child: ListView(
@@ -217,7 +219,7 @@ class _TaskFormSheetState extends ConsumerState<TaskFormSheet> {
                 TextField(
                   controller: _title,
                   textCapitalization: TextCapitalization.sentences,
-                  decoration: const InputDecoration(labelText: 'Titel', hintText: 'Was ist zu tun?'),
+                  decoration: InputDecoration(labelText: l10n.tasksTitle, hintText: l10n.tasksWhatToDo),
                 ),
                 const SizedBox(height: AppDimensions.paddingS),
                 TextField(
@@ -225,17 +227,17 @@ class _TaskFormSheetState extends ConsumerState<TaskFormSheet> {
                   minLines: 3,
                   maxLines: 8,
                   textCapitalization: TextCapitalization.sentences,
-                  decoration: const InputDecoration(labelText: 'Beschreibung (optional)'),
+                  decoration: InputDecoration(labelText: l10n.tasksDescriptionOptional),
                 ),
                 const SizedBox(height: AppDimensions.paddingM),
-                Text('Wer & bis wann', style: theme.textTheme.titleSmall),
+                Text(l10n.tasksWhoWhen, style: theme.textTheme.titleSmall),
                 ListTile(
                   contentPadding: EdgeInsets.zero,
-                  title: const Text('Verantwortlich'),
+                  title: Text(l10n.tasksResponsible),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(_personId != null && personName.isNotEmpty ? personName : 'Niemand'),
+                      Text(_personId != null && personName.isNotEmpty ? personName : l10n.tasksNobody),
                       const Icon(Icons.chevron_right),
                     ],
                   ),
@@ -243,17 +245,17 @@ class _TaskFormSheetState extends ConsumerState<TaskFormSheet> {
                 ),
                 ListTile(
                   contentPadding: EdgeInsets.zero,
-                  title: const Text('Fällig am'),
+                  title: Text(l10n.tasksDueOn),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       OutlinedButton(
                         onPressed: _pickDate,
-                        child: Text(_dueDate != null ? formatLongDate(_dueDate) : 'Kein Datum'),
+                        child: Text(_dueDate != null ? formatLongDate(_dueDate) : l10n.tasksFlutterNoDate),
                       ),
                       if (_dueDate != null)
                         IconButton(
-                          tooltip: 'Löschen',
+                          tooltip: l10n.commonDelete,
                           icon: const Icon(Icons.clear),
                           onPressed: () => setState(() => _dueDate = null),
                         ),
@@ -262,7 +264,7 @@ class _TaskFormSheetState extends ConsumerState<TaskFormSheet> {
                 ),
                 DropdownButtonFormField<String>(
                   value: _priority,
-                  decoration: const InputDecoration(labelText: 'Priorität'),
+                  decoration: InputDecoration(labelText: l10n.tasksPriority),
                   items: const ['low', 'medium', 'high']
                       .map((p) => DropdownMenuItem(value: p, child: Text(priorityLabels[p]!)))
                       .toList(),
@@ -273,8 +275,8 @@ class _TaskFormSheetState extends ConsumerState<TaskFormSheet> {
                     contentPadding: EdgeInsets.zero,
                     value: _notify,
                     onChanged: (v) => setState(() => _notify = v),
-                    title: Text('${_firstName(persons) ?? 'Person'} benachrichtigen'),
-                    subtitle: const Text('Sofort per Push oder Telegram'),
+                    title: Text(l10n.tasksNotify(_firstName(persons) ?? l10n.tasksPerson)),
+                    subtitle: Text(l10n.tasksNotifyHint),
                   ),
               ],
             ),
@@ -287,7 +289,7 @@ class _TaskFormSheetState extends ConsumerState<TaskFormSheet> {
                 width: double.infinity,
                 child: FilledButton(
                   onPressed: _saving || _title.text.trim().isEmpty ? null : _save,
-                  child: Text(_isEdit ? 'Speichern' : 'Aufgabe anlegen'),
+                  child: Text(_isEdit ? l10n.commonSave : l10n.teamOrgCreateTask),
                 ),
               ),
             ),
@@ -319,6 +321,7 @@ class _PersonPickerState extends State<_PersonPicker> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final q = _search.trim().toLowerCase();
     final filtered = q.isEmpty
         ? widget.persons
@@ -329,15 +332,15 @@ class _PersonPickerState extends State<_PersonPicker> {
         children: [
           AppBar(
             automaticallyImplyLeading: false,
-            title: const Text('Verantwortlich'),
+            title: Text(l10n.tasksResponsible),
             actions: [
-              TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Fertig')),
+              TextButton(onPressed: () => Navigator.of(context).pop(), child: Text(l10n.personDone)),
             ],
           ),
           Padding(
             padding: const EdgeInsets.all(AppDimensions.paddingS),
             child: TextField(
-              decoration: const InputDecoration(prefixIcon: Icon(Icons.search), hintText: 'Person suchen'),
+              decoration: InputDecoration(prefixIcon: const Icon(Icons.search), hintText: l10n.tasksSearchPerson),
               onChanged: (v) => setState(() => _search = v),
             ),
           ),
@@ -346,7 +349,7 @@ class _PersonPickerState extends State<_PersonPicker> {
               children: [
                 if (q.isEmpty)
                   ListTile(
-                    title: const Text('Niemand'),
+                    title: Text(l10n.tasksNobody),
                     trailing: widget.selectedId == null ? const Icon(Icons.check) : null,
                     onTap: () => Navigator.of(context).pop((id: null)),
                   ),
@@ -358,7 +361,7 @@ class _PersonPickerState extends State<_PersonPicker> {
                     onTap: () => Navigator.of(context).pop((id: p.id)),
                   ),
                 if (filtered.isEmpty)
-                  const ListTile(title: Text('Keine Person gefunden')),
+                  ListTile(title: Text(l10n.tasksNoPersonFound)),
               ],
             ),
           ),

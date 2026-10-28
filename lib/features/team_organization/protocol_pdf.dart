@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
+import '../../l10n/l10n.dart';
 import 'tiptap_delta.dart';
 
 class ProtocolPdfSection {
@@ -45,6 +46,7 @@ const _accent = PdfColor.fromInt(0xFF438E96);
 /// Builds the protocol as A4 PDF (port of Ionic protocol-pdf.ts).
 Future<Uint8List> createProtocolPdf(ProtocolPdfData data) async {
   final doc = pw.Document();
+  final l10n = l10nWithoutContext;
 
   List<pw.Widget> docWidgets(Map<String, dynamic>? d) => [
         for (final line in docToLines(d))
@@ -86,7 +88,7 @@ Future<Uint8List> createProtocolPdf(ProtocolPdfData data) async {
       margin: const pw.EdgeInsets.all(40),
       footer: (context) => pw.Container(
         alignment: pw.Alignment.centerRight,
-        child: pw.Text('Seite ${context.pageNumber} von ${context.pagesCount}',
+        child: pw.Text(l10n.protocolPage(context.pageNumber, context.pagesCount),
             style: const pw.TextStyle(fontSize: 8)),
       ),
       build: (context) => [
@@ -96,11 +98,11 @@ Future<Uint8List> createProtocolPdf(ProtocolPdfData data) async {
           pw.Text(data.status!, style: const pw.TextStyle(fontSize: 9, color: PdfColors.grey700)),
         pw.Divider(color: _accent),
         if (data.present.isNotEmpty) ...[
-          label('Anwesend (${data.present.length})'),
+          label(l10n.protocolPresentList(data.present.length)),
           pw.Text(data.present.join(', '), style: const pw.TextStyle(fontSize: 10)),
         ],
         if (data.excused.isNotEmpty) ...[
-          label('Entschuldigt (${data.excused.length})'),
+          label(l10n.protocolExcusedList(data.excused.length)),
           pw.Text(data.excused.join(', '), style: const pw.TextStyle(fontSize: 10)),
         ],
         for (final s in data.sections) ...[
@@ -119,11 +121,11 @@ Future<Uint8List> createProtocolPdf(ProtocolPdfData data) async {
           for (final t in s.tasks) pw.Text('-> $t', style: const pw.TextStyle(fontSize: 10)),
         ],
         if (data.generalNotes != null && !isDocEmpty(data.generalNotes)) ...[
-          label('Allgemeine Notizen'),
+          label(l10n.protocolGeneralNotes),
           ...docWidgets(data.generalNotes),
         ],
         if (data.otherTasks.isNotEmpty) ...[
-          label('Weitere Aufgaben'),
+          label(l10n.protocolFurtherTasks),
           for (final t in data.otherTasks) pw.Text('-> $t', style: const pw.TextStyle(fontSize: 10)),
         ],
       ],

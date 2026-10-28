@@ -7,6 +7,7 @@ import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/team_org_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/team_org/team_org.dart';
+import '../../../../l10n/l10n.dart';
 import '../../team_org_utils.dart';
 import 'tasks_tab.dart' show TeamOrgBadge;
 
@@ -43,8 +44,6 @@ class ProtocolsTab extends ConsumerStatefulWidget {
 class _ProtocolsTabState extends ConsumerState<ProtocolsTab> {
   String _search = '';
 
-  static const _weekdays = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
-
   List<_ProtocolRow> _rows(List<Protocol> protocols, List<ProtocolType> types) {
     return protocols.where((p) => p.attendanceId != null).map((p) {
       final att = p.attendance;
@@ -55,14 +54,14 @@ class _ProtocolsTabState extends ConsumerState<ProtocolsTab> {
       final d = DateTime.tryParse(att?.date ?? '')?.toLocal();
       final title = (att?.typeInfo?.isNotEmpty == true)
           ? att!.typeInfo!
-          : (typeName.isNotEmpty ? typeName : 'Termin');
+          : (typeName.isNotEmpty ? typeName : context.l10n.attendanceEventFallback);
       return _ProtocolRow(
         protocol: p,
         attendanceId: p.attendanceId!,
         date: att?.date,
         title: title,
         subtitle: att?.typeInfo?.isNotEmpty == true && typeName.isNotEmpty && typeName != title ? typeName : '',
-        dateText: d != null ? '${_weekdays[d.weekday - 1]}, ${DateFormat('dd.MM.yyyy').format(d)}' : '',
+        dateText: d != null ? '${weekdayShort(d)}, ${DateFormat(dateFmt()).format(d)}' : '',
         isDraft: p.status != 'published',
         edited: isEditedAfterPublish(p),
       );
@@ -72,12 +71,13 @@ class _ProtocolsTabState extends ConsumerState<ProtocolsTab> {
   String _publishedText(_ProtocolRow row) {
     final p = row.protocol;
     if (row.isDraft || p.publishedAt == null) return '';
-    final fmt = DateFormat('dd.MM.');
+    final fmt = DateFormat(dateFmt(DateFmtKind.dayMonth));
     final pub = DateTime.tryParse(p.publishedAt!)?.toLocal();
     if (pub == null) return '';
-    final text = 'Freigegeben am ${fmt.format(pub)}';
+    final l10n = context.l10n;
+    final text = l10n.teamOrgPublishedOn(fmt.format(pub));
     final upd = DateTime.tryParse(p.updatedAt ?? '')?.toLocal();
-    return row.edited && upd != null ? '$text · geändert am ${fmt.format(upd)}' : text;
+    return row.edited && upd != null ? l10n.teamOrgEditedOn(text, fmt.format(upd)) : text;
   }
 
   @override
@@ -85,10 +85,11 @@ class _ProtocolsTabState extends ConsumerState<ProtocolsTab> {
     final isLeader = ref.watch(isTeamLeaderProvider);
     final protocolsAsync = ref.watch(protocolsProvider);
     final types = ref.watch(protocolTypesProvider).valueOrNull ?? const <ProtocolType>[];
+    final l10n = context.l10n;
 
     return protocolsAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (_, __) => const Center(child: Text('Protokoll konnte nicht geladen werden.')),
+      error: (_, __) => Center(child: Text(l10n.protocolLoadFailed)),
       data: (protocols) {
         final rows = _rows(protocols, types);
         final query = _search.trim();
@@ -97,7 +98,7 @@ class _ProtocolsTabState extends ConsumerState<ProtocolsTab> {
                   r.title,
                   r.subtitle,
                   r.dateText,
-                  r.isDraft ? 'Entwurf' : 'Freigegeben',
+                  r.isDraft ? l10n.teamOrgDraft : l10n.teamOrgPublished,
                 ]))
             .toList();
         final groups = groupByMonth(filtered, (r) => r.date);
@@ -123,20 +124,18 @@ class _ProtocolsTabState extends ConsumerState<ProtocolsTab> {
             children: [
               if (rows.isNotEmpty || _search.isNotEmpty)
                 TextField(
-                  decoration: const InputDecoration(
-                    prefixIcon: Icon(Icons.search),
-                    hintText: 'Termin oder Datum suchen',
+                  decoration: InputDecoration(
+                    prefixIcon: const Icon(Icons.search),
+                    hintText: l10n.teamOrgSearchProtocols,
                   ),
                   onChanged: (v) => setState(() => _search = v),
                 ),
               if (rows.isEmpty)
                 isLeader
-                    ? state(Icons.description_outlined, 'Noch keine Protokolle',
-                        'Ein Protokoll schreibst du direkt im Termin: Öffne den Termin und tippe auf „Protokoll“.')
-                    : state(Icons.description_outlined, 'Noch keine Protokolle freigegeben',
-                        'Sobald die Leitung ein Protokoll freigibt, findest du es hier.')
+                    ? state(Icons.description_outlined, l10n.teamOrgNoProtocols, l10n.teamOrgNoProtocolsHint)
+                    : state(Icons.description_outlined, l10n.teamOrgNoPublished, l10n.teamOrgNoPublishedHint)
               else if (groups.isEmpty)
-                state(Icons.search, 'Keine Treffer', 'Kein Protokoll passt zu „$_search“.')
+                state(Icons.search, l10n.teamOrgNoHits, l10n.teamOrgNoProtocolMatch(_search))
               else
                 for (final group in groups) ...[
                   Padding(
@@ -160,9 +159,9 @@ class _ProtocolsTabState extends ConsumerState<ProtocolsTab> {
                               ],
                             ),
                             trailing: row.isDraft
-                                ? const TeamOrgBadge(label: 'Entwurf', color: AppColors.warning)
+                                ? TeamOrgBadge(label: l10n.teamOrgDraft, color: AppColors.warning)
                                 : isLeader
-                                    ? const TeamOrgBadge(label: 'Freigegeben', color: AppColors.success)
+                                    ? TeamOrgBadge(label: l10n.teamOrgPublished, color: AppColors.success)
                                     : const Icon(Icons.chevron_right),
                             onTap: () => context.push('/settings/protocol/${row.attendanceId}'),
                           ),
@@ -182,8 +181,6 @@ class _DateBadge extends StatelessWidget {
   const _DateBadge({this.date});
   final String? date;
 
-  static const _weekdays = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
-
   @override
   Widget build(BuildContext context) {
     final d = DateTime.tryParse(date ?? '')?.toLocal();
@@ -194,7 +191,7 @@ class _DateBadge extends StatelessWidget {
         children: [
           Text(d != null ? d.day.toString().padLeft(2, '0') : '–',
               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-          Text(d != null ? _weekdays[d.weekday - 1] : '', style: Theme.of(context).textTheme.bodySmall),
+          Text(d != null ? weekdayShort(d) : '', style: Theme.of(context).textTheme.bodySmall),
         ],
       ),
     );

@@ -284,6 +284,18 @@
   "@agendaEnterTitle": {
     "description": "agenda.enterTitle"
   },
+  "agendaFlutterNoMatch": "Kein passendes Thema gefunden.",
+  "@agendaFlutterNoMatch": {
+    "description": "agenda.flutter.noMatch"
+  },
+  "agendaFlutterNoOpenTopics": "Keine offenen Themen. Lege oben ein neues an.",
+  "@agendaFlutterNoOpenTopics": {
+    "description": "agenda.flutter.noOpenTopics"
+  },
+  "agendaFlutterNotFound": "Thema nicht gefunden",
+  "@agendaFlutterNotFound": {
+    "description": "agenda.flutter.notFound"
+  },
   "agendaHigh": "Hoch",
   "@agendaHigh": {
     "description": "agenda.high"
@@ -4840,6 +4852,23 @@
   "@messagesEmailSent": {
     "description": "messages.emailSent"
   },
+  "messagesFlutterHideMessage": "Nachricht ausblenden",
+  "@messagesFlutterHideMessage": {
+    "description": "messages.flutter.hideMessage"
+  },
+  "messagesFlutterProblems": "{count, plural, one {{count} Problem} other {{count} Probleme}}",
+  "@messagesFlutterProblems": {
+    "description": "messages.flutter.problems",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "messagesFlutterShowMessage": "Nachricht anzeigen",
+  "@messagesFlutterShowMessage": {
+    "description": "messages.flutter.showMessage"
+  },
   "messagesFrom": "Von {name} · {date}",
   "@messagesFrom": {
     "description": "messages.from",
@@ -7925,6 +7954,30 @@
       "title": {},
       "date": {}
     }
+  },
+  "protocolFlutterChooseLeft": "Wähle links einen Punkt aus.",
+  "@protocolFlutterChooseLeft": {
+    "description": "protocol.flutter.chooseLeft"
+  },
+  "protocolFlutterDoneLower": "erledigt",
+  "@protocolFlutterDoneLower": {
+    "description": "protocol.flutter.doneLower"
+  },
+  "protocolFlutterKeepDraft": "Als Entwurf lassen",
+  "@protocolFlutterKeepDraft": {
+    "description": "protocol.flutter.keepDraft"
+  },
+  "protocolFlutterPlanEmptyShort": "Der Ablaufplan ist noch leer.",
+  "@protocolFlutterPlanEmptyShort": {
+    "description": "protocol.flutter.planEmptyShort"
+  },
+  "protocolFlutterPublishNotify": "Freigeben & benachrichtigen",
+  "@protocolFlutterPublishNotify": {
+    "description": "protocol.flutter.publishNotify"
+  },
+  "protocolFlutterRepublishNotify": "Erneut freigeben & benachrichtigen",
+  "@protocolFlutterRepublishNotify": {
+    "description": "protocol.flutter.republishNotify"
   },
   "protocolForNames": "für {names}",
   "@protocolForNames": {
@@ -11565,6 +11618,33 @@
       "date": {}
     }
   },
+  "tasksFlutterAllTasks": "Alle Aufgaben",
+  "@tasksFlutterAllTasks": {
+    "description": "tasks.flutter.allTasks"
+  },
+  "tasksFlutterEditTask": "Aufgabe bearbeiten",
+  "@tasksFlutterEditTask": {
+    "description": "tasks.flutter.editTask"
+  },
+  "tasksFlutterNewTask": "Neue Aufgabe",
+  "@tasksFlutterNewTask": {
+    "description": "tasks.flutter.newTask"
+  },
+  "tasksFlutterNoDate": "Kein Datum",
+  "@tasksFlutterNoDate": {
+    "description": "tasks.flutter.noDate"
+  },
+  "tasksFlutterReopen": "Wieder öffnen",
+  "@tasksFlutterReopen": {
+    "description": "tasks.flutter.reopen"
+  },
+  "tasksFlutterShowAllCount": "Alle anzeigen ({count})",
+  "@tasksFlutterShowAllCount": {
+    "description": "tasks.flutter.showAllCount",
+    "placeholders": {
+      "count": {}
+    }
+  },
   "tasksInProgress": "In Arbeit",
   "@tasksInProgress": {
     "description": "tasks.inProgress"
@@ -11853,6 +11933,30 @@
   "teamOrgFilter": "Filter",
   "@teamOrgFilter": {
     "description": "teamOrg.filter"
+  },
+  "teamOrgFlutterAnd": "und",
+  "@teamOrgFlutterAnd": {
+    "description": "teamOrg.flutter.and"
+  },
+  "teamOrgFlutterCreateType": "{name} anlegen",
+  "@teamOrgFlutterCreateType": {
+    "description": "teamOrg.flutter.createType",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "teamOrgFlutterMember": "Mitglied",
+  "@teamOrgFlutterMember": {
+    "description": "teamOrg.flutter.member"
+  },
+  "teamOrgFlutterNewSuggestions": "{count, plural, one {{count} neuer Vorschlag} other {{count} neue Vorschläge}}",
+  "@teamOrgFlutterNewSuggestions": {
+    "description": "teamOrg.flutter.newSuggestions",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
   },
   "teamOrgGroupNone": "Ohne Datum",
   "@teamOrgGroupNone": {

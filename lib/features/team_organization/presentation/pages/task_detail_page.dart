@@ -8,6 +8,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/team_org/team_org.dart';
+import '../../../../l10n/l10n.dart';
 import '../../team_org_utils.dart';
 import '../widgets/task_form_sheet.dart';
 import '../widgets/tasks_tab.dart' show TeamOrgBadge, priorityColor;
@@ -30,9 +31,9 @@ class _TaskDetailPageState extends ConsumerState<TaskDetailPage> {
     setState(() => _savingStatus = true);
     try {
       await ref.read(teamTaskNotifierProvider.notifier).update(task.id!, {'status': status});
-      if (mounted && status == 'completed') ToastHelper.showSuccess(context, 'Erledigt – danke!');
+      if (mounted && status == 'completed') ToastHelper.showSuccess(context, context.l10n.tasksDoneThanks);
     } catch (_) {
-      if (mounted) ToastHelper.showError(context, 'Status konnte nicht geändert werden');
+      if (mounted) ToastHelper.showError(context, context.l10n.tasksStatusFailed);
     } finally {
       if (mounted) setState(() => _savingStatus = false);
     }
@@ -41,19 +42,19 @@ class _TaskDetailPageState extends ConsumerState<TaskDetailPage> {
   Future<void> _delete(TeamTask task) async {
     final ok = await DialogHelper.showConfirmation(
       context,
-      title: 'Aufgabe löschen?',
-      message: 'Die Aufgabe wird endgültig entfernt.',
-      confirmText: 'Löschen',
+      title: context.l10n.tasksDeleteConfirm,
+      message: context.l10n.tasksDeleteMessage,
+      confirmText: context.l10n.commonDelete,
       isDestructive: true,
     );
     if (!ok || !mounted) return;
     try {
       await ref.read(teamTaskNotifierProvider.notifier).delete(task);
       if (!mounted) return;
-      ToastHelper.showSuccess(context, 'Aufgabe gelöscht');
+      ToastHelper.showSuccess(context, context.l10n.tasksDeleted);
       context.go('/settings/team-organization');
     } catch (_) {
-      if (mounted) ToastHelper.showError(context, 'Löschen fehlgeschlagen');
+      if (mounted) ToastHelper.showError(context, context.l10n.tasksDeleteFailed);
     }
   }
 
@@ -65,19 +66,20 @@ class _TaskDetailPageState extends ConsumerState<TaskDetailPage> {
     final types = ref.watch(protocolTypesProvider).valueOrNull ?? const <ProtocolType>[];
     final task = taskAsync.valueOrNull;
     final today = localToday();
+    final l10n = context.l10n;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Aufgabe'),
+        title: Text(l10n.tasksTask),
         actions: [
           if (isLeader && task != null) ...[
             IconButton(
-              tooltip: 'Bearbeiten',
+              tooltip: l10n.commonEdit,
               icon: const Icon(Icons.edit_outlined),
               onPressed: () => showTaskFormSheet(context, task: task),
             ),
             IconButton(
-              tooltip: 'Löschen',
+              tooltip: l10n.commonDelete,
               icon: const Icon(Icons.delete_outline, color: AppColors.danger),
               onPressed: () => _delete(task),
             ),
@@ -91,7 +93,7 @@ class _TaskDetailPageState extends ConsumerState<TaskDetailPage> {
                 child: FilledButton.icon(
                   onPressed: _savingStatus ? null : () => _setStatus(task, 'completed'),
                   icon: const Icon(Icons.check),
-                  label: const Text('Als erledigt markieren'),
+                  label: Text(l10n.tasksMarkDone),
                 ),
               ),
             )
@@ -105,9 +107,8 @@ class _TaskDetailPageState extends ConsumerState<TaskDetailPage> {
                     children: [
                       const Icon(Icons.search, size: 56, color: AppColors.medium),
                       const SizedBox(height: AppDimensions.paddingM),
-                      const Text('Diese Aufgabe gibt es nicht mehr oder du kannst sie nicht sehen.',
-                          textAlign: TextAlign.center),
-                      TextButton(onPressed: () => context.pop(), child: const Text('Zurück')),
+                      Text(l10n.tasksNotAvailable, textAlign: TextAlign.center),
+                      TextButton(onPressed: () => context.pop(), child: Text(l10n.commonBack)),
                     ],
                   ),
                 )
@@ -121,14 +122,15 @@ class _TaskDetailPageState extends ConsumerState<TaskDetailPage> {
   Widget _buildBody(
       BuildContext context, TeamTask task, bool isLeader, int? myId, List<ProtocolType> types, String today) {
     final theme = Theme.of(context);
+    final l10n = context.l10n;
     final isMine = myId != null && task.responsiblePersonId == myId;
     final overdue = isTaskOverdue(task, today);
     final name = task.responsiblePerson.fullName;
     final assignee = isMine
-        ? 'Dir zugewiesen'
+        ? l10n.tasksAssignedToYou
         : name.isNotEmpty
-            ? 'Zugewiesen an $name'
-            : 'Noch niemandem zugewiesen';
+            ? l10n.tasksAssignedTo(name)
+            : l10n.tasksNotAssigned;
 
     String? attendanceLabel;
     final att = task.attendance;
@@ -139,7 +141,7 @@ class _TaskDetailPageState extends ConsumerState<TaskDetailPage> {
           if (t.id == att.typeId) typeName = t.name;
         }
       }
-      attendanceLabel = '${typeName ?? 'Termin'} vom ${formatLongDate(att.date)}';
+      attendanceLabel = l10n.tasksEventFrom(typeName ?? l10n.attendanceEventFallback, formatLongDate(att.date));
     }
 
     return ListView(
@@ -165,26 +167,26 @@ class _TaskDetailPageState extends ConsumerState<TaskDetailPage> {
           onSelectionChanged: _savingStatus ? null : (s) => _setStatus(task, s.first),
         ),
         const SizedBox(height: AppDimensions.paddingM),
-        Text('Details', style: theme.textTheme.titleSmall),
+        Text(l10n.tasksDetails, style: theme.textTheme.titleSmall),
         Card(
           child: Column(
             children: [
               if (isLeader)
                 ListTile(
-                  title: const Text('Verantwortlich'),
-                  trailing: Text(name.isNotEmpty ? name : 'Niemand'),
+                  title: Text(l10n.tasksResponsible),
+                  trailing: Text(name.isNotEmpty ? name : l10n.tasksNobody),
                 ),
               ListTile(
-                title: const Text('Fällig am'),
+                title: Text(l10n.tasksDueOn),
                 trailing: Text(
                   task.dueDate != null
-                      ? '${formatLongDate(task.dueDate)}${overdue ? ' · überfällig' : ''}'
-                      : 'Ohne Fälligkeit',
+                      ? '${formatLongDate(task.dueDate)}${overdue ? ' ${l10n.tasksOverdueSuffix}' : ''}'
+                      : l10n.tasksNoDue,
                   style: overdue ? const TextStyle(color: AppColors.danger) : null,
                 ),
               ),
               ListTile(
-                title: const Text('Priorität'),
+                title: Text(l10n.tasksPriority),
                 trailing: TeamOrgBadge(
                   label: priorityLabels[task.priority] ?? task.priority,
                   color: priorityColor(task.priority),
@@ -192,7 +194,7 @@ class _TaskDetailPageState extends ConsumerState<TaskDetailPage> {
               ),
               if (task.description?.isNotEmpty == true)
                 ListTile(
-                  title: const Text('Beschreibung'),
+                  title: Text(l10n.tasksDescription),
                   subtitle: SelectableText(task.description!),
                 ),
             ],
@@ -200,14 +202,14 @@ class _TaskDetailPageState extends ConsumerState<TaskDetailPage> {
         ),
         if (task.attendanceId != null || task.agendaItemId != null) ...[
           const SizedBox(height: AppDimensions.paddingM),
-          Text('Herkunft', style: theme.textTheme.titleSmall),
+          Text(l10n.tasksOrigin, style: theme.textTheme.titleSmall),
           Card(
             child: Column(
               children: [
                 if (task.attendanceId != null)
                   ListTile(
                     leading: const Icon(Icons.description_outlined, color: AppColors.primary),
-                    title: const Text('Protokoll'),
+                    title: Text(l10n.tasksProtocol),
                     subtitle: attendanceLabel != null ? Text(attendanceLabel) : null,
                     trailing: const Icon(Icons.chevron_right),
                     onTap: () => context.push('/settings/protocol/${task.attendanceId}'),
@@ -216,15 +218,15 @@ class _TaskDetailPageState extends ConsumerState<TaskDetailPage> {
                   if (isLeader)
                     ListTile(
                       leading: const Icon(Icons.list, color: AppColors.primary),
-                      title: const Text('Thema'),
-                      subtitle: Text(task.agendaItem?.title ?? 'Thema öffnen'),
+                      title: Text(l10n.tasksTopic),
+                      subtitle: Text(task.agendaItem?.title ?? l10n.teamOrgOpenTopic),
                       trailing: const Icon(Icons.chevron_right),
                       onTap: () => context.push('/settings/agenda-items/${task.agendaItemId}'),
                     )
                   else if (task.agendaItem?.title != null)
                     ListTile(
                       leading: const Icon(Icons.list, color: AppColors.medium),
-                      title: const Text('Thema'),
+                      title: Text(l10n.tasksTopic),
                       subtitle: Text(task.agendaItem!.title!),
                     ),
               ],
@@ -235,9 +237,7 @@ class _TaskDetailPageState extends ConsumerState<TaskDetailPage> {
           Padding(
             padding: const EdgeInsets.all(AppDimensions.paddingS),
             child: Text(
-              isMine
-                  ? 'Du bekommst 2 Tage vor Fälligkeit eine Erinnerung und noch eine, falls die Aufgabe überfällig wird.'
-                  : 'Die verantwortliche Person bekommt 2 Tage vor Fälligkeit eine Erinnerung und noch eine, falls die Aufgabe überfällig wird.',
+              isMine ? l10n.tasksReminderSelf : l10n.tasksReminderOther,
               style: theme.textTheme.bodySmall,
             ),
           ),
