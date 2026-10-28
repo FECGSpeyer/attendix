@@ -102,6 +102,14 @@ class _AttendixAppState extends ConsumerState<AttendixApp> {
 
   @override
   Widget build(BuildContext context) {
+    // SOL_FIX4: the offline queue follows the signed-in account (recount and
+    // replay only that user's writes on login / logout / account switch).
+    ref.listen(currentUserProvider, (previous, next) {
+      if (previous?.valueOrNull?.id != next.valueOrNull?.id) {
+        unawaited(
+            ref.read(offlineQueueNotifierProvider.notifier).onUserChanged());
+      }
+    });
     final router = ref.watch(routerProvider);
     final updateAvailable = ref.watch(appUpdateAvailableProvider);
     final updateService = ref.read(appUpdateServiceProvider);

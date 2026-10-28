@@ -246,18 +246,20 @@ class UserNotificationNotifier extends Notifier<AsyncValue<void>> {
   Future<void> deleteOne(UserNotification n) => _run(() => _repo.deleteOne(n));
 
   Future<void> markAllRead({required bool allTenants}) => _run(() async {
+    final repo = _repo; // SOL_FIX4: bind the tenant repository before the first await.
     if (allTenants) {
-      await _repo.markAllReadAllTenants();
+      await repo.markAllReadAllTenants();
     } else {
-      await _repo.markAllRead();
+      await repo.markAllRead();
     }
   });
 
   Future<void> deleteAll({required bool allTenants}) => _run(() async {
+    final repo = _repo; // SOL_FIX4: bind the tenant repository before the first await.
     if (allTenants) {
-      await _repo.deleteAllAllTenants();
+      await repo.deleteAllAllTenants();
     } else {
-      await _repo.deleteAll();
+      await repo.deleteAll();
     }
   });
 }

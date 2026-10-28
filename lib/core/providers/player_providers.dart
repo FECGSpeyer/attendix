@@ -193,10 +193,15 @@ class PlayerNotifier extends Notifier<AsyncValue<void>> {
   }
 
   Future<void> approvePlayer(Person player) async {
+    // SOL_FIX4: read both tenant-bound repositories once before the first
+    // await, so a tenant switch A→B mid-flow cannot approve in A but change
+    // the account role in B.
+    final repo = _repo;
+    final registration = ref.read(userRegistrationRepositoryWithTenantProvider);
     state = const AsyncValue.loading();
     try {
-      await _repo.approvePlayer(player);
-      await _notifyApproval(player); // AUTH
+      await repo.approvePlayer(player);
+      await _notifyApproval(registration, player); // AUTH
       state = const AsyncValue.data(null);
       ref.invalidate(pendingPlayersProvider);
       ref.invalidate(playersProvider);
@@ -207,10 +212,13 @@ class PlayerNotifier extends Notifier<AsyncValue<void>> {
   }
 
   Future<void> declinePlayer(Person player, String reason) async {
+    // SOL_FIX4: both repositories bound before the first await.
+    final repo = _repo;
+    final registration = ref.read(userRegistrationRepositoryWithTenantProvider);
     state = const AsyncValue.loading();
     try {
-      await _repo.declinePlayer(player, reason);
-      await _notifyReject(player); // AUTH
+      await repo.declinePlayer(player, reason);
+      await _notifyReject(registration, player); // AUTH
       state = const AsyncValue.data(null);
       ref.invalidate(pendingPlayersProvider);
       ref.invalidate(playersProvider);
@@ -224,8 +232,8 @@ class PlayerNotifier extends Notifier<AsyncValue<void>> {
   // AUTH: Ionic approvePlayer/declinePlayer – applicant becomes PLAYER and
   // gets the approve/reject mail via the attendix-user Edge Function.
   // Mail failures are non-blocking (the person is already updated).
-  Future<void> _notifyApproval(Person player) async {
-    final registration = ref.read(userRegistrationRepositoryWithTenantProvider);
+  Future<void> _notifyApproval(
+      UserRegistrationRepository registration, Person player) async {
     if (!registration.hasTenantId) return;
     // DB_REVIEW_REST: like Ionic person.page approvePlayer a failed role
     // update fails the approval (otherwise the account silently stays
@@ -243,8 +251,8 @@ class PlayerNotifier extends Notifier<AsyncValue<void>> {
     }
   }
 
-  Future<void> _notifyReject(Person player) async {
-    final registration = ref.read(userRegistrationRepositoryWithTenantProvider);
+  Future<void> _notifyReject(
+      UserRegistrationRepository registration, Person player) async {
     if (!registration.hasTenantId) return;
     if (player.email == null || player.email!.isEmpty) return;
     try {

@@ -234,13 +234,15 @@ class DutyNotifier extends Notifier<AsyncValue<void>> {
   /// `duty-notify {type: 'understaffed'}`.
   Future<bool> decline(String personAttendanceId, int attendanceId, String reason) =>
       _run(() async {
+        // SOL_FIX4: bind the tenant repository before the first await.
+        final repo = _repo;
         await ref.read(signInOutRepositoryWithTenantProvider).signOut(
               [personAttendanceId],
               reason,
               isLateComing: false,
               isSelf: true,
             );
-        await _repo.notify(DutyNotifyType.understaffed, attendanceId);
+        await repo.notify(DutyNotifyType.understaffed, attendanceId);
       }, attendanceId: attendanceId);
 
   Future<bool> updateDutyRequired(int attendanceId, int required) =>

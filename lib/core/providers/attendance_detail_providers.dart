@@ -6,7 +6,11 @@ import '../config/supabase_config.dart';
 import 'tenant_providers.dart';
 import '../services/attendance_detail_cache.dart'; // LEFTOVERS
 import '../services/offline_queue_service.dart'
-    show OfflineQueueStore, connectivityCheckProvider, offlineQueueStoreProvider; // LEFTOVERS, SOL_FIX1
+    show
+        OfflineQueueStore,
+        connectivityCheckProvider,
+        offlineQueueStoreProvider,
+        offlineQueueUserIdProvider; // LEFTOVERS, SOL_FIX1, SOL_FIX4
 
 /// Provider for attendance detail with tenant-scoped query
 final attendanceDetailProvider = FutureProvider.autoDispose.family<Attendance?, int>((ref, attendanceId) async {
@@ -89,6 +93,7 @@ final personAttendancesForAttendanceProvider = FutureProvider.autoDispose.family
     loaded,
     await ref.read(offlineQueueStoreProvider).load(),
     tenantId: tenantId,
+    userId: ref.read(offlineQueueUserIdProvider)(), // SOL_FIX4
   );
 
   return response.map((e) {

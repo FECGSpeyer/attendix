@@ -9,6 +9,7 @@ import '../../core/utils/people_shift_status.dart';
 import '../../core/utils/person_matcher.dart';
 import '../../core/utils/text_utils.dart';
 import '../../core/utils/db_helpers.dart';
+import '../../core/utils/paged_query.dart'; // SOL_FIX4
 import 'base_repository.dart';
 import 'user_registration_repository.dart';
 import '../../l10n/l10n.dart';
@@ -774,13 +775,20 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
       final today = DateTime.now().toIso8601String().substring(0, 10);
 
       // Get upcoming attendances for this tenant
-      final upcomingAttendances = await supabase
-          .from('attendance')
-          .select('id, type_id, date, start_time, end_time')
-          .eq('tenantId', currentTenantId)
-          .gte('date', today);
+      // SOL_FIX4: paginated (PostgREST max-rows), stable order by id.
+      final upcomingAttendances =
+          await fetchAllPages<Map<String, dynamic>>((from, to) async {
+        final page = await supabase
+            .from('attendance')
+            .select('id, type_id, date, start_time, end_time')
+            .eq('tenantId', currentTenantId)
+            .gte('date', today)
+            .order('id', ascending: true)
+            .range(from, to);
+        return (page as List).cast<Map<String, dynamic>>();
+      });
 
-      if ((upcomingAttendances as List).isEmpty) return;
+      if (upcomingAttendances.isEmpty) return;
 
       final types = await _loadTypeFilters();
       final defaults = await _loadExtraFieldDefaults();
@@ -1860,12 +1868,20 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
       final joined = player.joined != null && player.joined!.length >= 10
           ? player.joined!.substring(0, 10)
           : DateTime.now().toIso8601String().substring(0, 10);
-      final attendances = await supabase
-          .from('attendance')
-          .select('id, type_id, date, start_time, end_time')
-          .eq('tenantId', targetTenantId)
-          .gt('date', joined);
-      if ((attendances as List).isEmpty) return;
+      // SOL_FIX4: paginated — more than 1000 matching Termine (PostgREST
+      // max-rows) were silently missed; stable order by id.
+      final attendances =
+          await fetchAllPages<Map<String, dynamic>>((from, to) async {
+        final page = await supabase
+            .from('attendance')
+            .select('id, type_id, date, start_time, end_time')
+            .eq('tenantId', targetTenantId)
+            .gt('date', joined)
+            .order('id', ascending: true)
+            .range(from, to);
+        return (page as List).cast<Map<String, dynamic>>();
+      });
+      if (attendances.isEmpty) return;
 
       final types = await _loadTypeFilters(tenantId: targetTenantId);
       final defaults = await _loadExtraFieldDefaults(tenantId: targetTenantId);
@@ -1930,12 +1946,19 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
       if (!groupChanged && changedFields.isEmpty) return;
 
       final today = DateTime.now().toIso8601String().substring(0, 10);
-      final upcoming = await supabase
-          .from('attendance')
-          .select('id, type_id')
-          .eq('tenantId', currentTenantId)
-          .gte('date', today);
-      if ((upcoming as List).isEmpty) return;
+      // SOL_FIX4: paginated, stable order by id.
+      final upcoming =
+          await fetchAllPages<Map<String, dynamic>>((from, to) async {
+        final page = await supabase
+            .from('attendance')
+            .select('id, type_id')
+            .eq('tenantId', currentTenantId)
+            .gte('date', today)
+            .order('id', ascending: true)
+            .range(from, to);
+        return (page as List).cast<Map<String, dynamic>>();
+      });
+      if (upcoming.isEmpty) return;
 
       final existing = await _existingAttendanceIds(playerId);
       final toAdd = <Map<String, dynamic>>[];
@@ -1979,14 +2002,22 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
 
   /// Attendance ids (as strings) the player already has rows for, restricted
   /// to the current tenant via the attendance join.
+  ///
+  /// SOL_FIX4: paginated (a long-standing member easily has more than 1000
+  /// rows; a truncated set re-inserted duplicates), stable order by id.
   Future<Set<String>> _existingAttendanceIds(int playerId,
       {int? tenantId}) async {
-    final rows = await supabase
-        .from('person_attendances')
-        .select('attendance_id, attendance:attendance_id!inner(tenantId)')
-        .eq('person_id', playerId)
-        .eq('attendance.tenantId', tenantId ?? currentTenantId);
-    return (rows as List)
+    final rows = await fetchAllPages<Map<String, dynamic>>((from, to) async {
+      final page = await supabase
+          .from('person_attendances')
+          .select('id, attendance_id, attendance:attendance_id!inner(tenantId)')
+          .eq('person_id', playerId)
+          .eq('attendance.tenantId', tenantId ?? currentTenantId)
+          .order('id', ascending: true)
+          .range(from, to);
+      return (page as List).cast<Map<String, dynamic>>();
+    });
+    return rows
         .map((r) => r['attendance_id']?.toString())
         .whereType<String>()
         .toSet();

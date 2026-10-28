@@ -67,6 +67,7 @@ class ProfileNotifier extends Notifier<AsyncValue<void>> {
     required Map<String, dynamic> additionalFields,
     required List<ProfileExtraField> visibleFields,
   }) async {
+    final repo = _repo; // SOL_FIX4: bind the tenant repository before the first await.
     state = const AsyncValue.loading();
     try {
       final oldFields = original.person.additionalFields ?? const {};
@@ -92,10 +93,10 @@ class ProfileNotifier extends Notifier<AsyncValue<void>> {
       final orgId = original.organisationId;
       final personKey = original.organisationPersonKey;
       if (orgId != null && personKey != null && sharedValues.isNotEmpty) {
-        await _repo.updateSharedFieldValues(orgId, personKey, sharedValues);
+        await repo.updateSharedFieldValues(orgId, personKey, sharedValues);
       }
 
-      await _repo.updateOwnProfile(
+      await repo.updateOwnProfile(
         personalData: {
           'firstName': firstName.trim(),
           'lastName': lastName.trim(),
