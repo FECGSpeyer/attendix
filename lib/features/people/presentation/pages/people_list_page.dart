@@ -15,6 +15,9 @@ import '../../../../core/providers/realtime_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/dialog_helper.dart';
+import '../../../../core/utils/toast_helper.dart';
+import '../../../../core/providers/organisation_providers.dart';
+import '../../../../core/providers/cross_tenant_person_providers.dart';
 import '../../../../core/providers/church_providers.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../data/models/tenant/tenant.dart';
@@ -24,6 +27,7 @@ import '../../../../shared/widgets/loading/loading.dart';
 import '../../../../shared/widgets/common/empty_state.dart';
 import '../../../../shared/widgets/animations/animated_list_item.dart';
 import '../widgets/handover_sheet.dart';
+import '../widgets/pause_person_sheet.dart';
 import '../../../messages/presentation/widgets/notification_bell.dart'; // MESSAGES
 import 'bulk_edit_page.dart';
 import 'person_import_page.dart';
@@ -96,24 +100,62 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
   /// Value for extra-field filters (filter option `extra:<fieldId>`)
   String? _extraFilterValue;
 
+  /// "Mitglied anderer Instanz": user ids of the chosen linked tenant
+  Set<String>? _otherInstanceUserIds;
+  String? _otherInstanceName;
+
+  /// "Reihenfolge anpassen" (Ionic toggleReorderMode)
+  bool _isReordering = false;
+  bool _isSavingOrder = false;
+
+  /// Working order while reordering: group key → player ids
+  final Map<String, List<int>> _reorderIds = {};
+
   // Selection mode state
   bool _isSelectionMode = false;
   final Set<int> _selectedPlayerIds = {};
 
-  // View options
-  Set<String> _viewOptions = {'group', 'paused', 'critical', 'leader'};
+  // View options (Ionic list.page viewOpts)
+  Set<String> _viewOptions = Set.of(_defaultViewOptions);
 
-  static const _defaultViewOptions = {'group', 'paused', 'critical', 'leader'};
-  static const _allViewOptionLabels = {
-    'group': 'Gruppe',
-    'birthday': 'Geburtsdatum',
-    'notes': 'Notizen',
-    'leader': 'Stimmführer',
-    'paused': 'Pausiert',
-    'critical': 'Problemfälle',
-    'teacher': 'Lehrer',
-    'photo': 'Passbild',
+  static const _defaultViewOptions = {
+    'group',
+    'leader',
+    'attendance',
+    'critical',
+    'paused',
   };
+
+  /// Marker: saved options already know the 'attendance' option
+  static const _viewOptionsVersionMarker = '__v2';
+
+  /// Labels of the selectable view options for the current tenant
+  /// (order and conditions as in Ionic list.page.html).
+  Map<String, String> _viewOptionLabels(Tenant? tenant) {
+    final isVoS = _isVoS(tenant);
+    final isChoir = tenant?.type == 'choir';
+    final isGeneral = tenant?.type == 'general';
+    return {
+      'group': 'Gruppe',
+      'attendance': 'Anwesenheit',
+      'birthday': 'Geburtsdatum',
+      if (isChoir) 'instruments': 'Instrumente',
+      if (isVoS) 'test': 'Testergebnis',
+      'exercises': 'Sonstige Dienste',
+      if (!isGeneral) 'leader': 'Stimmführer',
+      'critical': 'Problemfälle',
+      if (isVoS) 'new': 'Neu',
+      'paused': 'Pausiert',
+      'notes': 'Notizen',
+      'photo': 'Passbild',
+      if (tenant?.maintainTeachers ?? false) 'teacher': 'Lehrer',
+      if (isVoS) 'examinee': 'Prüfling',
+      for (final f in tenant?.additionalFields ?? const <ExtraField>[])
+        if (const ['boolean', 'text', 'select', 'bfecg_church', 'number']
+            .contains(f.type))
+          'extra:${f.id}': f.name,
+    };
+  }
 
   @override
   void initState() {
@@ -133,7 +175,11 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
     final prefs = await SharedPreferences.getInstance();
     final saved = prefs.getStringList('viewOpts_${tenant.id}');
     if (saved != null && mounted) {
-      setState(() => _viewOptions = saved.toSet());
+      final opts = saved.toSet();
+      // Attendance used to be always visible: keep it for old saved options
+      if (!opts.contains(_viewOptionsVersionMarker)) opts.add('attendance');
+      opts.remove(_viewOptionsVersionMarker);
+      setState(() => _viewOptions = opts);
     }
   }
 
@@ -141,7 +187,8 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
     final tenant = ref.read(currentTenantProvider);
     if (tenant == null) return;
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setStringList('viewOpts_${tenant.id}', _viewOptions.toList());
+    await prefs.setStringList('viewOpts_${tenant.id}',
+        [..._viewOptions, _viewOptionsVersionMarker]);
   }
 
   Future<void> _showViewOptionsDialog() async {
@@ -154,7 +201,9 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
-              children: _allViewOptionLabels.entries.map((entry) {
+              children: _viewOptionLabels(ref.read(currentTenantProvider))
+                  .entries
+                  .map((entry) {
                 return CheckboxListTile(
                   title: Text(entry.value),
                   value: selected.contains(entry.key),
@@ -229,6 +278,17 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
       case 'noTest':
         filtered = filtered.where((p) =>
             p.testResult == null || p.testResult!.isEmpty).toList();
+        break;
+      case 'new':
+        filtered = filtered.where(isNewPerson).toList();
+        break;
+      case 'otherInstance':
+        final ids = _otherInstanceUserIds;
+        if (ids != null) {
+          filtered = filtered
+              .where((p) => p.appId != null && ids.contains(p.appId))
+              .toList();
+        }
         break;
     }
 
@@ -379,6 +439,43 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
     // Use realtime provider for live updates
     final peopleAsync = ref.watch(realtimePlayersProvider);
     final percentages = ref.watch(playerAttendancePercentagesProvider).valueOrNull ?? {};
+    final extraFields = tenant?.additionalFields ?? const <ExtraField>[];
+    final churchNames = <String, String>{
+      if (_churchField(tenant) != null)
+        for (final c in ref.watch(churchesProvider).valueOrNull ?? const [])
+          if (c.id != null) c.id!: c.name,
+    };
+
+    if (_isReordering) {
+      return Scaffold(
+        appBar: AppBar(
+          backgroundColor: AppColors.warning,
+          title: const Text('Reihenfolge anpassen'),
+          leading: IconButton(
+            icon: const Icon(Icons.close),
+            tooltip: 'Abbrechen',
+            onPressed: () => setState(() {
+              _isReordering = false;
+              _reorderIds.clear();
+            }),
+          ),
+          actions: [
+            IconButton(
+              icon: _isSavingOrder
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Icon(Icons.check),
+              tooltip: 'Reihenfolge speichern',
+              onPressed: _isSavingOrder ? null : _toggleReorderMode,
+            ),
+          ],
+        ),
+        body: _buildReorderList(peopleAsync.valueOrNull ?? const []),
+      );
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -437,6 +534,18 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
                       await _selectExtraFieldFilter(value);
                       return;
                     }
+                    if (value == 'otherInstance') {
+                      await _selectOtherInstanceFilter();
+                      return;
+                    }
+                    if (value == 'churchOverview') {
+                      _showChurchOverview();
+                      return;
+                    }
+                    if (value == 'reorder') {
+                      _toggleReorderMode();
+                      return;
+                    }
                     setState(() {
                       _filterOption = value;
                       _extraFilterValue = null;
@@ -455,12 +564,44 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
                       const PopupMenuItem(value: 'examinees', child: Text('Prüflinge')),
                     if (tenant != null && tenant.type != 'general')
                       const PopupMenuItem(value: 'noTest', child: Text('Ohne Test')),
+                    if (_isVoS(tenant))
+                      const PopupMenuItem(value: 'new', child: Text('Neue Spieler')),
+                    if ((ref.watch(allLinkedTenantsProvider).valueOrNull ?? const [])
+                        .isNotEmpty)
+                      const PopupMenuItem(
+                        value: 'otherInstance',
+                        child: Text('Mitglied anderer Instanz'),
+                      ),
                     if (_filterableExtraFields(tenant).isNotEmpty)
                       const PopupMenuDivider(),
                     ..._filterableExtraFields(tenant).map((f) => PopupMenuItem(
                           value: 'extra:${f.id}',
                           child: Text(f.name),
                         )),
+                    if (_churchField(tenant) != null) ...[
+                      const PopupMenuDivider(),
+                      const PopupMenuItem(
+                        value: 'churchOverview',
+                        child: ListTile(
+                          leading: Icon(Icons.business_outlined),
+                          title: Text('Gemeinde-Übersicht'),
+                          contentPadding: EdgeInsets.zero,
+                        ),
+                      ),
+                    ],
+                    if (_sortOption == 'group' &&
+                        (ref.watch(currentRoleProvider).isAdmin ||
+                            ref.watch(currentRoleProvider).isResponsible)) ...[
+                      const PopupMenuDivider(),
+                      const PopupMenuItem(
+                        value: 'reorder',
+                        child: ListTile(
+                          leading: Icon(Icons.swap_vert),
+                          title: Text('Reihenfolge anpassen'),
+                          contentPadding: EdgeInsets.zero,
+                        ),
+                      ),
+                    ],
                   ],
                 ),
                 // Sort button
@@ -603,27 +744,52 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
                 final sortedPeople = _sortPeople(filteredPeople);
 
                 if (people.isEmpty) {
-                  return EmptyStateWidget(
-                    icon: Icons.people_outline,
-                    title: 'Keine Personen',
-                    subtitle: 'Füge die erste Person hinzu',
-                    actionLabel: 'Person hinzufügen',
-                    onAction: () => context.push('/people/new'),
+                  // Ionic: "Bisher wurden noch keine Personen angelegt"
+                  final role = ref.watch(currentRoleProvider);
+                  return Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(AppDimensions.paddingL),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.people_outline,
+                              size: 48, color: AppColors.medium),
+                          const SizedBox(height: AppDimensions.paddingM),
+                          const Text(
+                            'Bisher wurden noch keine Personen angelegt',
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: AppDimensions.paddingM),
+                          OutlinedButton(
+                            onPressed: () => context.push('/people/new'),
+                            child: const Text('Person hinzufügen'),
+                          ),
+                          if (role.isAdmin || role.isResponsible) ...[
+                            const SizedBox(height: AppDimensions.paddingS),
+                            OutlinedButton(
+                              onPressed: _openImport,
+                              child: const Text('Personen importieren'),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
                   );
                 }
 
                 if (sortedPeople.isEmpty) {
+                  // Ionic: noPeopleFound / filtersNoMatch / resetFilter
                   return EmptyStateWidget(
-                    icon: Icons.search_off,
-                    title: _searchQuery.isNotEmpty
-                        ? 'Keine Ergebnisse für "$_searchQuery"'
-                        : 'Keine Personen für diesen Filter',
-                    subtitle: _searchQuery.isNotEmpty
-                        ? 'Versuche es mit einem anderen Suchbegriff'
-                        : 'Passe den Filter an oder setze ihn zurück',
+                    icon: Icons.filter_alt_outlined,
+                    title: 'Keine Personen gefunden',
+                    subtitle: 'Die aktiven Filter ergeben keine Treffer.',
+                    actionLabel: 'Filter zurücksetzen',
+                    onAction: _clearFilters,
                     animateIcon: false,
                   );
                 }
+
+                if (_isReordering) return _buildReorderList(people);
 
                 // Group by group if sorted by group
                 if (_sortOption == 'group') {
@@ -698,6 +864,8 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
                                   isSelectionMode: _isSelectionMode,
                                   isSelected: isSelected,
                                   viewOptions: _viewOptions,
+                                  extraFields: extraFields,
+                                  churchNames: churchNames,
                                   onTap: _isSelectionMode && person.id != null
                                       ? () => _togglePlayerSelection(person.id!)
                                       : () => context.push('/people/${person.id}'),
@@ -741,6 +909,8 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
                           isSelectionMode: _isSelectionMode,
                           isSelected: isSelected,
                           viewOptions: _viewOptions,
+                          extraFields: extraFields,
+                          churchNames: churchNames,
                           onTap: _isSelectionMode && person.id != null
                               ? () => _togglePlayerSelection(person.id!)
                               : () => context.push('/people/${person.id}'),
@@ -861,6 +1031,173 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
     });
   }
 
+  // ---------------------------------------------------------------------
+  // PEOPLE2: other-instance filter, church overview, reorder mode
+  // ---------------------------------------------------------------------
+
+  bool _isVoS(Tenant? tenant) => tenant?.shortName == 'VoS';
+
+  ExtraField? _churchField(Tenant? tenant) =>
+      (tenant?.additionalFields ?? const <ExtraField>[])
+          .where((f) => f.type == 'bfecg_church')
+          .firstOrNull;
+
+  /// Ionic onFilterChanged('otherInstance'): pick a linked instance and show
+  /// only people whose account is also a member there.
+  Future<void> _selectOtherInstanceFilter() async {
+    final linked = await ref.read(allLinkedTenantsProvider.future);
+    if (!mounted) return;
+    if (linked.isEmpty) {
+      setState(() => _filterOption = 'all');
+      return;
+    }
+    final chosen = await showDialog<Tenant>(
+      context: context,
+      builder: (ctx) => SimpleDialog(
+        title: const Text('Instanz wählen'),
+        children: [
+          for (final t in linked)
+            SimpleDialogOption(
+              onPressed: () => Navigator.pop(ctx, t),
+              child: Text(t.longName.isNotEmpty ? t.longName : t.shortName),
+            ),
+        ],
+      ),
+    );
+    if (chosen == null || chosen.id == null || !mounted) return;
+    try {
+      final linkedIds = await ref.read(linkedTenantIdsProvider.future);
+      final ids = await ref
+          .read(crossTenantPersonRepositoryWithTenantProvider)
+          .getUserIdsInTenant(chosen.id!, linkedTenantIds: linkedIds);
+      if (!mounted) return;
+      setState(() {
+        _filterOption = 'otherInstance';
+        _extraFilterValue = null;
+        _otherInstanceUserIds = ids;
+        _otherInstanceName =
+            chosen.longName.isNotEmpty ? chosen.longName : chosen.shortName;
+      });
+    } catch (e) {
+      if (mounted) ToastHelper.showError(context, 'Fehler: $e');
+    }
+  }
+
+  /// "Gemeinde-Übersicht" (Ionic showChurchOverview).
+  void _showChurchOverview() {
+    // TODO(PEOPLE2): open the ChurchOverview widget built by ATT_DETAIL once
+    // it is merged, passing the church ids of the filtered people:
+    //   _filterPeople(people).map((p) => p.additionalFields?[field.id])
+    ToastHelper.showInfo(context, 'Gemeinde-Übersicht ist noch nicht verfügbar');
+  }
+
+  /// Ionic toggleReorderMode: enter reorder mode, or save the new order.
+  Future<void> _toggleReorderMode() async {
+    if (!_isReordering) {
+      final people = ref.read(realtimePlayersProvider).valueOrNull ?? [];
+      final grouped = _groupByGroup(_sortPeople(_filterPeople(people)));
+      setState(() {
+        _reorderIds
+          ..clear()
+          ..addAll(grouped.map((k, v) =>
+              MapEntry(k, v.map((p) => p.id).whereType<int>().toList())));
+        _isReordering = true;
+        _sortOption = 'group';
+      });
+      return;
+    }
+
+    final orders = <int, int>{};
+    for (final ids in _reorderIds.values) {
+      for (var i = 0; i < ids.length; i++) {
+        orders[ids[i]] = i + 1;
+      }
+    }
+    setState(() => _isSavingOrder = true);
+    try {
+      await ref.read(playerRepositoryWithTenantProvider).savePlayerOrder(orders);
+      ref.invalidate(realtimePlayersProvider);
+      if (mounted) ToastHelper.showSuccess(context, 'Reihenfolge gespeichert');
+    } catch (_) {
+      if (mounted) {
+        ToastHelper.showError(context, 'Fehler beim Speichern der Reihenfolge');
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSavingOrder = false;
+          _isReordering = false;
+          _reorderIds.clear();
+        });
+      }
+    }
+  }
+
+  Widget _buildReorderList(List<Person> people) {
+    final byId = {for (final p in people) if (p.id != null) p.id!: p};
+    final groupNames = _reorderIds.keys.toList();
+    return ListView(
+      padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM),
+      children: [
+        for (final groupName in groupNames) ...[
+          Padding(
+            padding: const EdgeInsets.only(
+              top: AppDimensions.paddingM,
+              bottom: AppDimensions.paddingS,
+            ),
+            child: Text(
+              '$groupName (${_reorderIds[groupName]!.length})',
+              style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.primary,
+                  ),
+            ),
+          ),
+          ReorderableListView(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            buildDefaultDragHandles: false,
+            onReorder: (oldIndex, newIndex) {
+              setState(() {
+                final ids = _reorderIds[groupName]!;
+                if (newIndex > oldIndex) newIndex -= 1;
+                final moved = ids.removeAt(oldIndex);
+                ids.insert(newIndex, moved);
+              });
+            },
+            children: [
+              for (var i = 0; i < _reorderIds[groupName]!.length; i++)
+                Card(
+                  key: ValueKey('reorder_${_reorderIds[groupName]![i]}'),
+                  margin: const EdgeInsets.only(bottom: AppDimensions.paddingS),
+                  child: ListTile(
+                    leading: ReorderableDragStartListener(
+                      index: i,
+                      child: const Icon(Icons.drag_handle),
+                    ),
+                    title: Text(
+                        byId[_reorderIds[groupName]![i]]?.fullName ?? '?'),
+                  ),
+                ),
+            ],
+          ),
+        ],
+        const SizedBox(height: 80),
+      ],
+    );
+  }
+
+  void _clearFilters() {
+    _searchController.clear();
+    setState(() {
+      _searchQuery = '';
+      _filterOption = 'all';
+      _extraFilterValue = null;
+      _otherInstanceUserIds = null;
+      _otherInstanceName = null;
+    });
+  }
+
   String _getFilterLabel(String filter) {
     if (filter.startsWith('extra:')) {
       final field = _filterableExtraFields(ref.read(currentTenantProvider))
@@ -883,6 +1220,8 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
       'examinees' => 'Prüflinge',
       'noTeacher' => 'Ohne Lehrer',
       'noTest' => 'Ohne Test',
+      'new' => 'Neue Spieler',
+      'otherInstance' => 'Mitglied anderer Instanz: ${_otherInstanceName ?? ''}',
       _ => 'Alle',
     };
   }
@@ -976,162 +1315,10 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
     }
   }
 
-  /// Show pause dialog for a person
+  /// Pause flow (Ionic pausePlayer/confirmPause incl. "Pausiert ab" and
+  /// "Auch in anderen Instanzen pausieren?")
   Future<void> _showPauseDialog(Person person) async {
-    final reasonController = TextEditingController();
-    DateTime? pauseUntil;
-
-    try {
-      final result = await showModalBottomSheet<Map<String, dynamic>>(
-        context: context,
-        isScrollControlled: true,
-        useSafeArea: true,
-        builder: (context) => StatefulBuilder(
-          builder: (context, setDialogState) => Padding(
-            padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).viewInsets.bottom,
-              left: AppDimensions.paddingL,
-              right: AppDimensions.paddingL,
-              top: AppDimensions.paddingL,
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Row(
-                  children: [
-                    const Icon(Icons.pause_circle,
-                        color: AppColors.warning, size: 28),
-                    const SizedBox(width: AppDimensions.paddingS),
-                    Expanded(
-                      child: Text(
-                        '${person.firstName} pausieren',
-                        style: Theme.of(context).textTheme.titleLarge,
-                      ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.close),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: AppDimensions.paddingL),
-                TextField(
-                  controller: reasonController,
-                  decoration: const InputDecoration(
-                    labelText: 'Grund *',
-                    hintText: 'Warum wird pausiert?',
-                    border: OutlineInputBorder(),
-                  ),
-                  maxLines: 2,
-                  autofocus: true,
-                ),
-                const SizedBox(height: AppDimensions.paddingM),
-                ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  leading:
-                      const Icon(Icons.calendar_today, color: AppColors.primary),
-                  title: const Text('Pausiert bis (optional)'),
-                  subtitle: Text(
-                    pauseUntil != null
-                        ? DateFormat('dd.MM.yyyy').format(pauseUntil!)
-                        : 'Kein Enddatum',
-                    style: TextStyle(
-                      color:
-                          pauseUntil != null ? AppColors.primary : AppColors.medium,
-                    ),
-                  ),
-                  trailing: pauseUntil != null
-                      ? IconButton(
-                          icon: const Icon(Icons.clear, color: AppColors.medium),
-                          onPressed: () => setDialogState(() => pauseUntil = null),
-                        )
-                      : null,
-                  onTap: () async {
-                    final date = await showDatePicker(
-                      context: context,
-                      initialDate: DateTime.now().add(const Duration(days: 30)),
-                      firstDate: DateTime.now(),
-                      lastDate: DateTime.now().add(const Duration(days: 365)),
-                    );
-                    if (date != null) {
-                      setDialogState(() => pauseUntil = date);
-                    }
-                  },
-                ),
-                const SizedBox(height: AppDimensions.paddingL),
-                FilledButton.icon(
-                  onPressed: () {
-                    if (reasonController.text.isEmpty) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Bitte Grund angeben')),
-                      );
-                      return;
-                    }
-                    Navigator.pop(context, {
-                      'reason': reasonController.text,
-                      'until': pauseUntil?.toIso8601String(),
-                    });
-                  },
-                  icon: const Icon(Icons.pause),
-                  label: const Text('Pausieren'),
-                  style: FilledButton.styleFrom(
-                    backgroundColor: AppColors.warning,
-                    padding:
-                        const EdgeInsets.symmetric(vertical: AppDimensions.paddingM),
-                  ),
-                ),
-                const SizedBox(height: AppDimensions.paddingL),
-              ],
-            ),
-          ),
-        ),
-      );
-
-      if (result != null && mounted) {
-        await _pausePerson(person, result['reason'], result['until']);
-      }
-    } finally {
-      // FN-001: Dispose controller
-      reasonController.dispose();
-    }
-  }
-
-  /// Pause a person
-  Future<void> _pausePerson(Person person, String reason, String? until) async {
-    final repository = ref.read(playerRepositoryWithTenantProvider);
-    // Cache ScaffoldMessenger before async gap to avoid disposed context issues
-    final messenger = ScaffoldMessenger.of(context);
-
-    // Format reason with date if provided - RT-005: Safe date parsing
-    String reasonText = reason;
-    if (until != null) {
-      final parsedDate = DateTime.tryParse(until);
-      final dateStr = parsedDate != null
-          ? DateFormat('dd.MM.yyyy').format(parsedDate)
-          : until;
-      reasonText = '$reason (bis $dateStr)';
-    }
-
-    try {
-      await repository.pausePlayer(person, until, reasonText);
-      // Realtime handles the refresh automatically
-
-      if (mounted) {
-        messenger.showSnackBar(
-          SnackBar(
-            content: Text('${person.firstName} wurde pausiert'),
-            backgroundColor: AppColors.success,
-          ),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        messenger.showSnackBar(
-          SnackBar(content: Text('Fehler: $e'), backgroundColor: AppColors.danger),
-        );
-      }
-    }
+    await pausePersonFlow(context, ref, person);
   }
 
   /// Unpause a person
@@ -1312,6 +1499,8 @@ class _PersonListItem extends StatelessWidget {
     this.onDelete,
     this.attendancePercentage,
     this.viewOptions = const {'group', 'paused', 'critical', 'leader'},
+    this.extraFields = const [],
+    this.churchNames = const {},
   });
 
   final Person person;
@@ -1324,6 +1513,41 @@ class _PersonListItem extends StatelessWidget {
   final VoidCallback? onDelete;
   final int? attendancePercentage;
   final Set<String> viewOptions;
+  final List<ExtraField> extraFields;
+  final Map<String, String> churchNames;
+
+  String _extraValueText(ExtraField field, dynamic value) {
+    if (field.type == 'bfecg_church') {
+      return churchNames[value?.toString()] ?? value.toString();
+    }
+    return value.toString();
+  }
+
+  bool _hasExtraValue(dynamic v) => v != null && v != false && v != '';
+
+  /// Extra fields shown underneath the name (displayMode 'underneath')
+  List<String> get _extraLines => [
+        for (final f in extraFields)
+          if (viewOptions.contains('extra:${f.id}') &&
+              f.displayMode == 'underneath' &&
+              _hasExtraValue(person.additionalFields?[f.id]))
+            f.type == 'boolean'
+                ? f.name
+                : '${f.name}: ${_extraValueText(f, person.additionalFields?[f.id])}',
+      ];
+
+  /// Extra fields shown as badges
+  List<String> get _extraBadges => [
+        for (final f in extraFields)
+          if (viewOptions.contains('extra:${f.id}') &&
+              f.displayMode != 'underneath' &&
+              _hasExtraValue(person.additionalFields?[f.id]))
+            switch (f.type) {
+              'boolean' => f.name,
+              'number' => '${f.name} ${person.additionalFields?[f.id]}',
+              _ => _extraValueText(f, person.additionalFields?[f.id]),
+            },
+      ];
 
   String? _buildSubtitle() {
     final parts = <String>[];
@@ -1334,9 +1558,24 @@ class _PersonListItem extends StatelessWidget {
     if (viewOptions.contains('birthday') && person.birthday != null) {
       final date = DateTime.tryParse(person.birthday!);
       if (date != null) {
-        parts.add(DateFormat('dd.MM.yyyy').format(date));
+        parts.add(
+            '${DateFormat('dd.MM.yyyy').format(date)} (${ageInYears(person.birthday!)} J.)');
       }
     }
+    if (viewOptions.contains('test')) {
+      parts.add((person.testResult?.isNotEmpty ?? false)
+          ? person.testResult!
+          : 'Kein Ergebnis');
+    }
+    if (viewOptions.contains('instruments') &&
+        (person.instruments?.isNotEmpty ?? false)) {
+      parts.add(person.instruments!);
+    }
+    if (viewOptions.contains('exercises') &&
+        (person.otherExercise?.isNotEmpty ?? false)) {
+      parts.add(person.otherExercise!);
+    }
+    parts.addAll(_extraLines);
     if (viewOptions.contains('notes') && person.notes != null && person.notes!.isNotEmpty) {
       parts.add(person.notes!);
     }
@@ -1352,6 +1591,11 @@ class _PersonListItem extends StatelessWidget {
   bool get _showPausedBadge => viewOptions.contains('paused') && person.paused;
   bool get _showCriticalBadge => viewOptions.contains('critical') && person.critical;
   bool get _showNotesBadge => person.notes != null && person.notes!.isNotEmpty;
+  bool get _showNewBadge =>
+      viewOptions.contains('new') && isNewPerson(person) && !person.isLeader;
+  bool get _showExamineeBadge =>
+      viewOptions.contains('examinee') && person.examinee;
+  bool get _showAttendance => viewOptions.contains('attendance');
 
   @override
   Widget build(BuildContext context) {
@@ -1639,6 +1883,12 @@ class _PersonListItem extends StatelessWidget {
                       color: AppColors.medium,
                     ),
                   ),
+                if (_showNewBadge)
+                  const _TextBadge(text: 'Neu', color: AppColors.danger),
+                if (_showExamineeBadge)
+                  const _TextBadge(text: 'Prüfling', color: AppColors.dark),
+                for (final b in _extraBadges)
+                  Flexible(child: _TextBadge(text: b, color: AppColors.dark)),
               ],
             ),
             subtitle: _buildSubtitle() != null
@@ -1655,7 +1905,7 @@ class _PersonListItem extends StatelessWidget {
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                if (attendancePercentage != null)
+                if (_showAttendance && attendancePercentage != null)
                   _AttendanceBadge(percentage: attendancePercentage!),
                 const Icon(
                   Icons.chevron_right,
@@ -1665,6 +1915,30 @@ class _PersonListItem extends StatelessWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _TextBadge extends StatelessWidget {
+  const _TextBadge({required this.text, required this.color});
+
+  final String text;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(left: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Text(
+        text,
+        style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: color),
+        overflow: TextOverflow.ellipsis,
       ),
     );
   }

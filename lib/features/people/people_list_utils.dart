@@ -85,3 +85,12 @@ List<Person> sortPeopleByGroup(List<Person> people, List<Group> groups) {
   });
   return list;
 }
+
+/// Joined within the last month (Ionic Utils.getModifiedPlayersForList isNew).
+bool isNewPerson(Person p, {DateTime? now}) {
+  final joined = p.joined != null ? DateTime.tryParse(p.joined!) : null;
+  if (joined == null) return false;
+  final n = now ?? DateTime.now();
+  final oneMonthAgo = DateTime(n.year, n.month - 1, n.day, n.hour, n.minute);
+  return joined.isAfter(oneMonthAgo);
+}
