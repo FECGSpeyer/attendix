@@ -59,12 +59,27 @@ class ParentsTenantTitle extends ConsumerWidget {
             ),
           ),
       ],
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Flexible(child: Text(name, overflow: TextOverflow.ellipsis)),
-          const Icon(Icons.expand_more),
-        ],
+      // UX_SONGS_SELF: Ionic start button (long name + chevron-down, primary)
+      child: Padding(
+        padding: const EdgeInsets.only(left: 12),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Flexible(
+              child: Text(
+                name,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  color: AppColors.primary,
+                  fontSize: 17,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+            const SizedBox(width: 4),
+            const Icon(Icons.keyboard_arrow_down, color: AppColors.primary, size: 20),
+          ],
+        ),
       ),
     );
   }
@@ -104,26 +119,30 @@ class ParentsWelcomeCard extends ConsumerWidget {
     final songs = ref.watch(currentSongsProvider).valueOrNull ?? const [];
     final theme = Theme.of(context);
 
+    // Ionic ion-card: content centered (global ion-card-content rule),
+    // h1.title (margin-bottom 17px), p, ion-chips with badge, clear button.
     return Card(
       margin: const EdgeInsets.all(AppDimensions.paddingM),
       child: Padding(
-        padding: const EdgeInsets.all(AppDimensions.paddingM),
+        padding: const EdgeInsets.all(20),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(
               context.l10n.selfServiceShalom,
-              style: theme.textTheme.headlineSmall
-                  ?.copyWith(fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+              style: theme.textTheme.headlineSmall?.copyWith(fontSize: 24),
             ),
-            const SizedBox(height: AppDimensions.paddingXS),
+            const SizedBox(height: 17),
             Text(
               context.l10n.selfServiceYouManageKids(kids.length),
+              textAlign: TextAlign.center,
             ),
             const SizedBox(height: AppDimensions.paddingS),
             Wrap(
-              spacing: AppDimensions.paddingS,
-              runSpacing: AppDimensions.paddingS,
+              alignment: WrapAlignment.center,
+              spacing: 4,
+              runSpacing: 4,
               children: [
                 for (final kid in kids)
                   _KidChip(
@@ -164,24 +183,33 @@ class _KidChip extends StatelessWidget {
             : perc >= 50
                 ? AppColors.warning
                 : AppColors.danger;
-    return Chip(
-      label: Row(
+    // Ionic ion-chip (32px, radius 16, text color at 12 %) + ion-badge.
+    final ios = Theme.of(context).platform == TargetPlatform.iOS;
+    final onSurface = Theme.of(context).colorScheme.onSurface;
+    return Container(
+      height: 32,
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      decoration: BoxDecoration(
+        color: onSurface.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(name),
+          Text(name, style: TextStyle(fontSize: 14, color: onSurface.withValues(alpha: 0.87))),
           if (perc != null) ...[
-            const SizedBox(width: 6),
+            const SizedBox(width: 8),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              padding: EdgeInsets.symmetric(horizontal: ios ? 8 : 4, vertical: 3),
               decoration: BoxDecoration(
                 color: color,
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(ios ? 10 : 4),
               ),
               child: Text(
                 '$perc%',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 11,
+                style: TextStyle(
+                  color: color == AppColors.warning ? Colors.black : Colors.white,
+                  fontSize: 13,
                   fontWeight: FontWeight.bold,
                 ),
               ),

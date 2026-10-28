@@ -16,6 +16,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../shared/widgets/event_list/event_list_widgets.dart';
+import '../../../../shared/widgets/layout/ionic_ios.dart';
 import '../../data/providers/upcoming_songs_provider.dart';
 import '../widgets/plan_viewer_sheet.dart';
 import '../widgets/self_service_event_actions.dart';
@@ -126,11 +127,19 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
     }
   }
 
-  PreferredSizeWidget _buildAppBar(Tenant? tenant, List<Tenant> tenants, {Person? player}) {
+  PreferredSizeWidget _buildAppBar(
+    Tenant? tenant,
+    List<Tenant> tenants, {
+    Person? player,
+    bool condensed = true,
+  }) {
     final canSelfPause = ref.watch(canSelfPauseProvider);
-    final Widget title;
+    // UX_SONGS_SELF: Ionic shows the tenant switcher as a start button
+    // (long name + chevron-down) and otherwise the short name as title.
+    Widget? title;
+    Widget? switcher;
     if (tenants.length > 1) {
-      title = PopupMenuButton<Tenant>(
+      switcher = PopupMenuButton<Tenant>(
         tooltip: context.l10n.settingsSwitchTenant,
         onSelected: _switchTenant,
         itemBuilder: (_) => [
@@ -146,24 +155,43 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
               ),
             ),
         ],
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Flexible(
-              child: Text(
-                tenant?.longName.isNotEmpty == true ? tenant!.longName : (tenant?.shortName ?? ''),
-                overflow: TextOverflow.ellipsis,
+        child: Padding(
+          padding: const EdgeInsets.only(left: 12),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Flexible(
+                child: Text(
+                  tenant?.longName.isNotEmpty == true ? tenant!.longName : (tenant?.shortName ?? ''),
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: AppColors.primary,
+                    fontSize: 17,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
               ),
-            ),
-            const Icon(Icons.expand_more),
-          ],
+              const SizedBox(width: 4),
+              const Icon(Icons.keyboard_arrow_down, color: AppColors.primary, size: 20),
+            ],
+          ),
         ),
       );
     } else {
-      title = Text(tenant?.shortName ?? context.l10n.tabsMyEvents);
+      title = CondenseTitle(
+        condensed: condensed,
+        child: Text(tenant?.shortName ?? context.l10n.tabsMyEvents),
+      );
     }
     return AppBar(
       title: title,
+      automaticallyImplyLeading: false,
+      leading: switcher == null
+          ? null
+          : Align(alignment: Alignment.centerLeft, child: switcher),
+      leadingWidth: switcher == null ? null : MediaQuery.sizeOf(context).width * 0.55,
+      backgroundColor: condenseBarColor(context, condensed),
+      shape: condenseBarShape(context, condensed),
       actions: [
         // UX_SELF: pause / unpause sit in the header like in Ionic
         if (canSelfPause && player != null && !player.paused)
@@ -200,24 +228,29 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
         ref.watch(myDutyOverviewProvider).valueOrNull?.useDutyView ?? false; // DUTY
 
     if (isApplicant) {
+      // Ionic: ion-card, content centered (global ion-card-content rule)
       return Scaffold(
         appBar: _buildAppBar(tenant, tenants),
-        body: Card(
-          margin: const EdgeInsets.all(16),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (playerAsync.valueOrNull != null)
-                  Text(
-                    context.l10n.signoutGreeting(playerAsync.valueOrNull!.firstName),
-                    style: Theme.of(context).textTheme.headlineSmall,
-                  ),
-                const SizedBox(height: 8),
-                Text(context.l10n.signoutRegistrationSubmitted),
-              ],
+        body: Align(
+          alignment: Alignment.topCenter,
+          child: Card(
+            margin: const EdgeInsets.all(16),
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (playerAsync.valueOrNull != null)
+                    Text(
+                      context.l10n.signoutGreeting(playerAsync.valueOrNull!.firstName),
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w500),
+                    ),
+                  const SizedBox(height: 8),
+                  Text(context.l10n.signoutRegistrationSubmitted, textAlign: TextAlign.center),
+                ],
+              ),
             ),
           ),
         ),
@@ -232,8 +265,11 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
     ref.watch(pendingAttendanceIdProvider);
     if (loaded != null) _openPendingAttendance(loaded, actions);
 
-    return Scaffold(
-      appBar: _buildAppBar(tenant, tenants, player: player),
+    // Ionic: condensed large title (short name) when there is no switcher.
+    return CondenseHeader(
+      enabled: tenants.length <= 1 && player != null,
+      builder: (context, condensed) => Scaffold(
+      appBar: _buildAppBar(tenant, tenants, player: player, condensed: condensed),
       body: dataAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(
@@ -252,6 +288,8 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
           child: ListView(
             padding: const EdgeInsets.only(bottom: 32),
             children: [
+              if (player != null)
+                IonLargeTitle(tenant?.shortName ?? '', enabled: tenants.length <= 1),
               // UX_SELF: element order of the Ionic signout page
               if (player != null) _buildGreeting(player, data, useDutyView: useDutyView),
               if (player != null && useDutyView)
@@ -308,6 +346,7 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
           ),
         ),
       ),
+      ),
     );
   }
 
@@ -320,13 +359,14 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
     return names.take(3).join(', ');
   }
 
+  /// Ionic `.greet`: 48px avatar, h1 1.35rem bold, meta line 14px medium.
   Widget _buildGreeting(Person player, SignoutData data, {bool useDutyView = false}) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+      padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
       child: Row(
         children: [
           CircleAvatar(
-            radius: 28,
+            radius: 24,
             backgroundImage: player.img != null && player.img!.isNotEmpty
                 ? NetworkImage(player.img!)
                 : null,
@@ -334,20 +374,19 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
                 ? Text(player.initials)
                 : null,
           ),
-          const SizedBox(width: 14),
+          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   context.l10n.signoutGreeting(player.firstName),
-                  style: Theme.of(context)
-                      .textTheme
-                      .headlineSmall
-                      ?.copyWith(fontWeight: FontWeight.bold),
+                  style: const TextStyle(fontSize: 21.6, fontWeight: FontWeight.w700),
                 ),
-                const SizedBox(height: 4),
-                Wrap(
+                const SizedBox(height: 2),
+                DefaultTextStyle.merge(
+                  style: const TextStyle(fontSize: 14),
+                  child: Wrap(
                   spacing: 10,
                   runSpacing: 4,
                   children: [
@@ -356,8 +395,14 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Icon(Icons.pause_circle_outline, size: 16, color: AppColors.warningDark),
-                          SizedBox(width: 2),
-                          Text(context.l10n.signoutPaused, style: const TextStyle(color: AppColors.warningDark)),
+                          SizedBox(width: 3),
+                          Text(
+                            context.l10n.signoutPaused,
+                            style: const TextStyle(
+                              color: AppColors.warningDark,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
                         ],
                       ),
                     if (useDutyView)
@@ -374,6 +419,7 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
                       Text(context.l10n.signoutLateCount(data.lateCount),
                           style: const TextStyle(color: AppColors.medium)),
                   ],
+                ),
                 ),
               ],
             ),
@@ -419,7 +465,7 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
     // Ionic: 2-column grid
     return [
       Padding(
-        padding: const EdgeInsets.fromLTRB(16, 6, 16, 4),
+        padding: const EdgeInsets.fromLTRB(16, 14, 16, 0),
         child: Column(
           children: [
             for (var i = 0; i < tiles.length; i += 2) ...[
@@ -454,6 +500,7 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
           ? context.l10n.teamOrgTodayCap
           : context.l10n.teamOrgNextEvent),
       EventTodayCard(
+        bordered: true,
         date: att.date,
         title: att.eventTitle,
         meta: att.eventMeta(withDate: true, withPlace: false),
@@ -576,7 +623,8 @@ class _GreetTile extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(14),
         onTap: onTap,
-        child: Padding(
+        child: Container(
+          constraints: const BoxConstraints(minHeight: 60),
           padding: const EdgeInsets.all(12),
           child: Row(
             children: [
@@ -587,7 +635,7 @@ class _GreetTile extends StatelessWidget {
                   color: AppColors.primary.withValues(alpha: 0.13),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: Icon(icon, color: AppColors.primary, size: 18),
+                child: Icon(icon, color: AppColors.primaryDark, size: 18),
               ),
               const SizedBox(width: 10),
               Expanded(

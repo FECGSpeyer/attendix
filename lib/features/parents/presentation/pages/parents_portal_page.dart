@@ -12,6 +12,7 @@ import '../../../../data/models/attendance/attendance.dart';
 import '../../../../data/repositories/sign_in_out_repository.dart';
 import '../../../../shared/widgets/event_list/event_list_widgets.dart';
 import '../../../../shared/widgets/event_list/excuse_reason_sheet.dart';
+import '../../../../shared/widgets/layout/ionic_ios.dart';
 import '../../../self_service/presentation/widgets/plan_viewer_sheet.dart';
 import '../../data/providers/parents_providers.dart';
 import '../../../../core/services/tracking/tracking_event.dart';
@@ -111,10 +112,25 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
     ref.watch(pendingAttendanceIdProvider);
 
     final upcoming = upcomingAll.where((g) => !g.isRunning).toList();
+    final tenant = ref.watch(currentTenantProvider);
+    final multiTenant = (ref.watch(userTenantsProvider).valueOrNull?.length ?? 0) > 1;
 
-    return Scaffold(
+    // UX_SONGS_SELF: Ionic: tenant switcher as start button, otherwise the
+    // long name as (condensed large) title.
+    return CondenseHeader(
+      enabled: !multiTenant,
+      builder: (context, condensed) => Scaffold(
       appBar: AppBar(
-        title: const ParentsTenantTitle(), // PROFILE_OFFLINE: tenant switcher
+        title: multiTenant
+            ? null
+            : CondenseTitle(condensed: condensed, child: const ParentsTenantTitle()),
+        automaticallyImplyLeading: false,
+        leading: multiTenant
+            ? const Align(alignment: Alignment.centerLeft, child: ParentsTenantTitle())
+            : null,
+        leadingWidth: multiTenant ? MediaQuery.sizeOf(context).width * 0.55 : null,
+        backgroundColor: condenseBarColor(context, condensed),
+        shape: condenseBarShape(context, condensed),
         actions: [
           IconButton(
             icon: const Icon(Icons.info_outline),
@@ -179,10 +195,14 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
                 child: ListView(
                   padding: const EdgeInsets.only(bottom: 32),
                   children: [
+                    IonLargeTitle(tenant?.longName ?? '', enabled: !multiTenant),
                     ParentsWelcomeCard(kids: children), // PROFILE_OFFLINE
+                    // Ionic `.ev-today`: kids as rows inside the card and the
+                    // "Alle Kinder" button at its end.
                     if (current != null) ...[
                       EventMonthHeader(label: context.l10n.teamOrgTodayCap),
                       EventTodayCard(
+                        bordered: true,
                         date: current.date,
                         title: _title(current),
                         meta: _meta(current, withDate: true, withPlace: false),
@@ -190,52 +210,40 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
                         chips: _chips(current),
                         extraHeader: const [],
                         actions: const [],
+                        rows: [
+                          for (final c in current.childAttendances)
+                            _TodayChildRow(
+                              child: c,
+                              initials: _initials(c),
+                              onTap: () => _showActions(current, child: c),
+                            ),
+                        ],
+                        footer: [
+                          if (children.length != 1)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 12),
+                              child: OutlinedButton(
+                                onPressed: () => _showActions(current),
+                                child: Text(context.l10n.selfServiceAllKidsSignInOut),
+                              ),
+                            ),
+                        ],
                       ),
-                      _TodayChildren(
-                        group: current,
-                        initials: _initials,
-                        onChildTap: (c) => _showActions(current, child: c),
-                      ),
-                      if (children.length != 1)
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                          child: OutlinedButton(
-                            onPressed: () => _showActions(current),
-                            child: Text(context.l10n.selfServiceAllKidsSignInOut),
-                          ),
-                        ),
                     ],
                     if (upcoming.isNotEmpty) ...[
                       EventSectionHeader(title: context.l10n.signoutUpcoming, count: upcoming.length),
                       for (final group in groups) ...[
                         EventMonthHeader(label: group.label),
+                        // Ionic: one `ev-list--card` per Termin, item
+                        // without lines and the `.ev-kids` row below it.
                         for (final g in group.items)
-                          EventListCard(children: [
+                          EventListCard(dividers: false, children: [
                             EventRow(
                               date: g.date,
                               title: _title(g),
                               subtitle: _meta(g),
                               highlight: _highlight(g),
-                              extra: [
-                                EventChips(chips: _chips(g)),
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 8),
-                                  child: Wrap(
-                                    spacing: 6,
-                                    runSpacing: 6,
-                                    children: [
-                                      for (final c in g.childAttendances)
-                                        _KidChip(
-                                          initials: _initials(c),
-                                          label:
-                                              '${c.childFirstName} · ${EventListUtils.statusLabel(c.status)}',
-                                          status: c.status,
-                                          onTap: () => _showActions(g, child: c),
-                                        ),
-                                    ],
-                                  ),
-                                ),
-                              ],
+                              extra: [EventChips(chips: _chips(g))],
                               trailing: [
                                 if (children.length != 1)
                                   TextButton(
@@ -244,6 +252,24 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
                                   ),
                               ],
                             ),
+                            if (g.childAttendances.isNotEmpty)
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(16, 2, 16, 12),
+                                child: Wrap(
+                                  spacing: 8,
+                                  runSpacing: 8,
+                                  children: [
+                                    for (final c in g.childAttendances)
+                                      _KidChip(
+                                        initials: _initials(c),
+                                        label:
+                                            '${c.childFirstName} · ${EventListUtils.statusLabel(c.status)}',
+                                        status: c.status,
+                                        onTap: () => _showActions(g, child: c),
+                                      ),
+                                  ],
+                                ),
+                              ),
                           ]),
                       ],
                     ],
@@ -298,6 +324,7 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
             },
           );
         },
+      ),
       ),
     );
   }
@@ -517,34 +544,64 @@ class _ErrorView extends StatelessWidget {
   }
 }
 
-/// One row per child below the "Heute" card.
-class _TodayChildren extends StatelessWidget {
-  const _TodayChildren({
-    required this.group,
+/// Ionic `.ev-today__row`: status avatar with initials, first name (+ note)
+/// and the status pill.
+class _TodayChildRow extends StatelessWidget {
+  const _TodayChildRow({
+    required this.child,
     required this.initials,
-    required this.onChildTap,
+    required this.onTap,
   });
 
-  final ParentAttendanceGroup group;
-  final String Function(ChildPersonAttendance) initials;
-  final void Function(ChildPersonAttendance) onChildTap;
+  final ChildPersonAttendance child;
+  final String initials;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return EventListCard(children: [
-      for (final c in group.childAttendances)
-        ListTile(
-          onTap: () => onChildTap(c),
-          leading: CircleAvatar(
-            backgroundColor: EventListUtils.statusColor(c.status).withValues(alpha: 0.2),
-            child: Text(initials(c),
-                style: TextStyle(color: EventListUtils.statusColor(c.status), fontSize: 13)),
-          ),
-          title: Text(c.childFirstName),
-          subtitle: (c.notes?.isNotEmpty ?? false) ? Text(context.l10n.signoutNoteChip(c.notes!)) : null,
-          trailing: EventPill.status(c.status),
+    final color = EventListUtils.statusColor(child.status);
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        child: Row(
+          children: [
+            Container(
+              width: 32,
+              height: 32,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.2),
+                shape: BoxShape.circle,
+              ),
+              child: Text(
+                initials,
+                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    child.childFirstName,
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  ),
+                  if (child.notes?.isNotEmpty ?? false)
+                    Text(
+                      context.l10n.signoutNoteChip(child.notes!),
+                      style: const TextStyle(fontSize: 14, color: AppColors.medium),
+                    ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 10),
+            EventPill.status(child.status),
+          ],
         ),
-    ]);
+      ),
+    );
   }
 }
 
@@ -564,26 +621,40 @@ class _KidChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Ionic `.ev-kid`: status tint pill (min 36px) with a surface avatar.
     final color = EventListUtils.statusColor(status);
+    final onSurface = Theme.of(context).colorScheme.onSurface;
     return InkWell(
       borderRadius: BorderRadius.circular(999),
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.fromLTRB(4, 4, 10, 4),
+        constraints: const BoxConstraints(minHeight: 36),
+        padding: const EdgeInsets.fromLTRB(3, 3, 12, 3),
         decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.12),
+          color: color.withValues(alpha: 0.2),
           borderRadius: BorderRadius.circular(999),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            CircleAvatar(
-              radius: 11,
-              backgroundColor: color,
-              child: Text(initials, style: const TextStyle(fontSize: 9, color: Colors.white)),
+            Container(
+              width: 30,
+              height: 30,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surface,
+                shape: BoxShape.circle,
+              ),
+              child: Text(
+                initials,
+                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: onSurface),
+              ),
             ),
             const SizedBox(width: 6),
-            Text(label, style: TextStyle(fontSize: 12, color: color == AppColors.warning ? AppColors.warningDark : color)),
+            Text(
+              label,
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: onSurface),
+            ),
           ],
         ),
       ),
