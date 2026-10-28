@@ -384,7 +384,7 @@ Future<void> showImageViewerSheet(
   required String url,
   required String fileName,
 }) {
-  return Navigator.of(context).push(
+  return Navigator.of(context, rootNavigator: true).push(
     PageRouteBuilder<void>(
       opaque: false,
       barrierColor: Colors.transparent,

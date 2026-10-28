@@ -32,6 +32,7 @@ import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 Future<void> showRegisterPlanSheet(BuildContext context, {DateTime? attendanceDate}) async {
   await showModalBottomSheet(
     context: context,
+    useRootNavigator: true, // IOS_SHELL2: above the tab bar
     isScrollControlled: true,
     useSafeArea: true,
     builder: (context) => FractionallySizedBox(

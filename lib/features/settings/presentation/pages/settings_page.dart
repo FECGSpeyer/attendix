@@ -140,11 +140,14 @@ class SettingsPage extends ConsumerWidget {
         },
         child: ListView(
           physics: const AlwaysScrollableScrollPhysics(),
-          // iOS: inset lists 16pt from the edges, hero card margin-top 12,
-          // room for the ion-fab at the bottom.
+          // iOS: inset lists 16pt from the edges, hero card margin-top 12;
+          // the ion-fab sits in the tab bar row, the list ends above the
+          // floating tab bar (IOS_SHELL2: MediaQuery bottom padding).
           padding: ios
-              ? const EdgeInsets.fromLTRB(16, 12, 16, 88)
-              : const EdgeInsets.all(AppDimensions.paddingM),
+              ? EdgeInsets.fromLTRB(16, 12, 16, scrollEndPadding(context, base: 16))
+              : EdgeInsets.fromLTRB(AppDimensions.paddingM, AppDimensions.paddingM,
+                  AppDimensions.paddingM,
+                  scrollEndPadding(context, base: AppDimensions.paddingM)),
           children: [
             // PWA Install Hint (only shown on mobile web)
             const _PwaInstallHint(),

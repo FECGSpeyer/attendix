@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart' show CupertinoButton;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,6 +9,7 @@ import '../../../core/providers/dashboard_providers.dart';
 import '../../../core/providers/debug_providers.dart';
 import '../../../core/providers/optional_tabs_providers.dart'; // SETTINGS2
 import '../../../core/providers/tenant_providers.dart';
+import '../../../core/services/app_update_service.dart'; // IOS_SHELL2
 import '../../../data/models/tenant/tenant.dart';
 import '../../../l10n/l10n.dart'; // I18N_INFRA
 import '../adaptive/adaptive_platform.dart'; // IOS_LOOK
@@ -182,6 +184,107 @@ class MainShell extends ConsumerWidget {
     }
   }
 
+  /// IOS_SHELL2: Ionic iOS 26 tabs. The pages fill the whole screen and
+  /// scroll UNDER the floating Liquid Glass tab bar (with the theme's fade);
+  /// the room the bar takes is handed to them as MediaQuery bottom padding,
+  /// so scroll views end above the bar and page FABs/footers clear it.
+  /// The mini audio player and the update toast float above the bar.
+  Widget _buildIos(
+    BuildContext context,
+    WidgetRef ref,
+    Widget page,
+    List<_NavDestination> destinations,
+    int selectedIndex,
+  ) {
+    final mq = MediaQuery.of(context);
+    final bottomOffset = IosTabBar.bottomOffset(context);
+    final barInset = IosTabBar.contentInset(context);
+    final showUpdate = ref.watch(appUpdateAvailableProvider) &&
+        !ref.watch(_updateToastDismissedProvider);
+    final inset =
+        barInset + (showUpdate ? _IosUpdateToast.height + _IosUpdateToast.gap : 0);
+    // The keyboard covers the bar: like MediaQuery.padding, the inset
+    // shrinks by the keyboard height.
+    final pagePadding = (inset - mq.viewInsets.bottom).clamp(0.0, inset);
+
+    final content = MediaQuery(
+      data: mq.copyWith(
+        padding: mq.padding.copyWith(bottom: pagePadding),
+        viewPadding: mq.viewPadding.copyWith(bottom: inset),
+      ),
+      child: IosTabBarScope(
+        bottom: bottomOffset,
+        right: IosTabBar.fabRight(context),
+        child: page,
+      ),
+    );
+
+    return RootBackButtonScope(
+      child: Scaffold(
+        // Pages handle the keyboard themselves (their Scaffolds get the view
+        // insets); the bar stays at the bottom, under the keyboard.
+        resizeToAvoidBottomInset: false,
+        body: Stack(
+          children: [
+            Positioned.fill(
+              child: _IosPageWithFade(
+                location: GoRouterState.of(context).uri.toString(),
+                fadeHeight: barInset,
+                child: content,
+              ),
+            ),
+            // Ionic `.audio-player-bar`: bottom = tab bar offset + 68px.
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: bottomOffset + IosTabBar.barHeight,
+              child: MediaQuery.removePadding(
+                context: context,
+                removeBottom: true,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const AudioPlayerWidget(),
+                    if (showUpdate)
+                      _IosUpdateToast(
+                        onUpdate: () =>
+                            ref.read(appUpdateServiceProvider).applyUpdate(),
+                        onClose: () => ref
+                            .read(_updateToastDismissedProvider.notifier)
+                            .state = true,
+                      ),
+                  ],
+                ),
+              ),
+            ),
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: IosTabBar(
+                selectedIndex: selectedIndex.clamp(0, destinations.length - 1),
+                onSelected: (index) =>
+                    _onItemTapped(context, index, destinations),
+                items: [
+                  for (final d in destinations)
+                    IosTabBarItem(icon: d.icon, label: d.label),
+                ],
+              ),
+            ),
+          ],
+        ),
+        // Debug FAB only visible in debug mode (above the tab bar row, where
+        // the page FABs sit)
+        floatingActionButton: kDebugMode
+            ? Padding(
+                padding: EdgeInsets.only(bottom: barInset),
+                child: const DebugRoleFab(),
+              )
+            : null,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // Use effectiveRoleProvider to support debug role override
@@ -210,13 +313,9 @@ class MainShell extends ConsumerWidget {
     // go_router pops the inner navigator before this scope is asked.
     // IOS_SHELL: pages put their ion-fab into the tab bar row (TabBarFab).
     final ios = useIosLook(context);
-    Widget page = NativeAppAdGate(child: child);
+    final Widget page = NativeAppAdGate(child: child);
     if (ios) {
-      page = IosTabBarScope(
-        bottom: IosTabBar.bottomOffset(context),
-        right: IosTabBar.fabRight(context),
-        child: page,
-      );
+      return _buildIos(context, ref, page, destinations, selectedIndex);
     }
 
     return RootBackButtonScope(
@@ -230,37 +329,275 @@ class MainShell extends ConsumerWidget {
       ),
       // Debug FAB only visible in debug mode
       floatingActionButton: kDebugMode ? const DebugRoleFab() : null,
-      // IOS_LOOK: iOS → Ionic iOS 26 floating Liquid Glass tab bar;
-      // elsewhere ion-tab-bar md with a hairline on top and no selection pill
-      // (see navigationBarTheme in app_theme.dart).
-      bottomNavigationBar: ios
-          ? IosTabBar(
-              selectedIndex: selectedIndex.clamp(0, destinations.length - 1),
-              onSelected: (index) =>
-                  _onItemTapped(context, index, destinations),
-              items: [
-                for (final d in destinations)
-                  IosTabBarItem(icon: d.icon, label: d.label),
-              ],
-            )
-          : DecoratedBox(
-        decoration: BoxDecoration(
-          border: Border(
-            top: BorderSide(color: Theme.of(context).dividerColor, width: 0.5),
+      // IOS_LOOK: ion-tab-bar md; iOS: [_buildIos].
+      bottomNavigationBar: _MdTabBar(
+        selectedIndex: selectedIndex.clamp(0, destinations.length - 1),
+        onSelected: (index) => _onItemTapped(context, index, destinations),
+        destinations: destinations,
+      ),
+      ),
+    );
+  }
+}
+
+/// IOS_SHELL2: Ionic md `ion-tab-bar` (desktop / Android): 56px high, page
+/// background (#fff, dark #1f1f1f) with a 0.55px top hairline; the tab
+/// buttons are at most 168px wide (`ion-tab-button` max-width), so on wide
+/// screens they cluster in the centre and on phones they fill the width.
+/// 22px icon over a 12px label, unselected `--ion-color-step-600`, selected
+/// primary; no tooltips (Ionic has none).
+class _MdTabBar extends StatelessWidget {
+  const _MdTabBar({
+    required this.selectedIndex,
+    required this.onSelected,
+    required this.destinations,
+  });
+
+  /// `ion-tab-button` max-width.
+  static const double tabMaxWidth = 168;
+
+  final int selectedIndex;
+  final ValueChanged<int> onSelected;
+  final List<_NavDestination> destinations;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final dark = theme.brightness == Brightness.dark;
+    final background = dark ? const Color(0xFF1F1F1F) : Colors.white;
+    final unselected = dark ? const Color(0xFFA0A0A0) : const Color(0xFF666666);
+    final primary = theme.colorScheme.primary;
+    final base = NavigationBarTheme.of(context);
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: background,
+        border: Border(
+          top: BorderSide(
+            color: dark
+                ? Colors.white.withValues(alpha: 0.12)
+                : Colors.black.withValues(alpha: 0.07),
+            width: 0.55,
           ),
         ),
-        child: NavigationBar(
-        selectedIndex: selectedIndex.clamp(0, destinations.length - 1),
-        onDestinationSelected: (index) => _onItemTapped(context, index, destinations),
-        destinations: destinations
-            .map((d) => NavigationDestination(
-                  icon: Icon(d.icon),
-                  selectedIcon: Icon(d.selectedIcon),
-                  label: d.label,
-                ))
-            .toList(),
+      ),
+      child: Center(
+        heightFactor: 1,
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+              maxWidth: tabMaxWidth * destinations.length),
+          child: NavigationBarTheme(
+            data: base.copyWith(
+              backgroundColor: background,
+              surfaceTintColor: Colors.transparent,
+              elevation: 0,
+              height: 56,
+              indicatorColor: Colors.transparent,
+              labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+              iconTheme: WidgetStateProperty.resolveWith((states) =>
+                  IconThemeData(
+                    size: 22,
+                    color: states.contains(WidgetState.selected)
+                        ? primary
+                        : unselected,
+                  )),
+              labelTextStyle: WidgetStateProperty.resolveWith((states) =>
+                  TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w400,
+                    letterSpacing: 0.36,
+                    color: states.contains(WidgetState.selected)
+                        ? primary
+                        : unselected,
+                  )),
+            ),
+            child: NavigationBar(
+              selectedIndex: selectedIndex,
+              onDestinationSelected: onSelected,
+              destinations: [
+                for (final d in destinations)
+                  NavigationDestination(
+                    icon: Icon(d.icon),
+                    selectedIcon: Icon(d.selectedIcon),
+                    label: d.label,
+                    tooltip: '',
+                  ),
+              ],
+            ),
+          ),
         ),
       ),
+    );
+  }
+}
+
+/// IOS_SHELL2: the shell pages plus Ionic's fade behind the tab bar. The fade
+/// uses the background of the page on top (Ionic: the `ion-content`
+/// colour, e.g. white for Meine Termine, light grey for inset-list pages), so
+/// no grey band appears below white pages. The page is looked up after each
+/// navigation and when a page's scroll view reports its metrics.
+class _IosPageWithFade extends StatefulWidget {
+  const _IosPageWithFade({
+    required this.location,
+    required this.fadeHeight,
+    required this.child,
+  });
+
+  final String location;
+  final double fadeHeight;
+  final Widget child;
+
+  @override
+  State<_IosPageWithFade> createState() => _IosPageWithFadeState();
+}
+
+class _IosPageWithFadeState extends State<_IosPageWithFade> {
+  Color? _pageColor;
+
+  @override
+  void initState() {
+    super.initState();
+    _scheduleProbe();
+  }
+
+  @override
+  void didUpdateWidget(_IosPageWithFade oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.location != widget.location) _scheduleProbe();
+  }
+
+  void _scheduleProbe() {
+    WidgetsBinding.instance.addPostFrameCallback((_) => _probe());
+  }
+
+  /// Background of the outermost Scaffold of the top-most route (routes
+  /// below an opaque route have their tickers disabled; a popped route that
+  /// is still animating out is no longer active).
+  void _probe() {
+    if (!mounted) return;
+    Color? found;
+    void visit(Element e) {
+      final w = e.widget;
+      if (w is TickerMode && !w.enabled) return;
+      if (w is Scaffold) {
+        if (ModalRoute.of(e)?.isActive ?? true) {
+          found =
+              w.backgroundColor ?? Theme.of(context).scaffoldBackgroundColor;
+        }
+        return;
+      }
+      e.visitChildElements(visit);
+    }
+
+    context.visitChildElements(visit);
+    if (found != null && found != _pageColor) {
+      setState(() => _pageColor = found);
+    }
+  }
+
+  bool _onScrollMetrics(ScrollMetricsNotification n) {
+    if (n.depth == 0 && n.metrics.axis == Axis.vertical) {
+      // The Scaffold around the scroll view paints the page background.
+      final scaffold = n.context.findAncestorWidgetOfExactType<Scaffold>();
+      if (scaffold != null) {
+        final color = scaffold.backgroundColor ??
+            Theme.of(context).scaffoldBackgroundColor;
+        if (color != _pageColor) setState(() => _pageColor = color);
+      }
+    }
+    return false;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        Positioned.fill(
+          child: NotificationListener<ScrollMetricsNotification>(
+            onNotification: _onScrollMetrics,
+            child: widget.child,
+          ),
+        ),
+        Positioned(
+          left: 0,
+          right: 0,
+          bottom: 0,
+          child: IosTabBarFade(height: widget.fadeHeight, color: _pageColor),
+        ),
+      ],
+    );
+  }
+}
+
+/// IOS_SHELL2: "Neue Version verfügbar" closed for this session (iOS toast).
+final _updateToastDismissedProvider = StateProvider<bool>((ref) => false);
+
+/// IOS_SHELL2: iOS update notice as an Ionic iOS 26 `ion-toast` (Liquid
+/// Glass pill, radius 24, 16pt from the sides) floating right above the tab
+/// bar. The shell adds its height to the pages' bottom inset, so it never
+/// covers the end of a list. Material keeps the floating SnackBar
+/// ([ToastHelper.showUpdateAvailable]).
+class _IosUpdateToast extends StatelessWidget {
+  const _IosUpdateToast({required this.onUpdate, required this.onClose});
+
+  static const double height = 50;
+  static const double gap = 8;
+
+  final VoidCallback onUpdate;
+  final VoidCallback onClose;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final theme = Theme.of(context);
+    final text = theme.colorScheme.onSurface;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, gap),
+      child: SizedBox(
+        height: height,
+        child: IosGlassSurface(
+          borderRadius: const BorderRadius.all(Radius.circular(24)),
+          padding: const EdgeInsets.only(left: 16, right: 4),
+          child: Row(
+            children: [
+              Icon(Icons.cloud_download_outlined,
+                  size: 20, color: theme.colorScheme.primary),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  l10n.coreFlutterNewVersionAvailable,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontSize: 14, color: text),
+                ),
+              ),
+              CupertinoButton(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                minSize: 36,
+                onPressed: onUpdate,
+                child: Text(
+                  l10n.coreFlutterUpdate,
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: theme.colorScheme.primary,
+                  ),
+                ),
+              ),
+              Semantics(
+                button: true,
+                label: l10n.commonClose,
+                excludeSemantics: true,
+                child: CupertinoButton(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  minSize: 36,
+                  onPressed: onClose,
+                  child: Icon(Icons.close,
+                      size: 18, color: text.withValues(alpha: 0.6)),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

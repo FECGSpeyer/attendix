@@ -14,6 +14,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 
 /// TenantUser model
 class TenantUser {
@@ -130,10 +131,10 @@ class UserManagementPage extends ConsumerWidget {
             const _AllUsersTab(),
           ],
         ),
-        floatingActionButton: FloatingActionButton(
+        floatingActionButton: TabBarFab.wrap(FloatingActionButton(
           onPressed: () => _showAddUserDialog(context, ref),
           child: const Icon(Icons.person_add),
-        ),
+        )),
       ),
     );
   }
@@ -360,7 +361,7 @@ class _AdminsTab extends ConsumerWidget {
             await ref.read(tenantUsersProvider.future);
           },
           child: ListView.builder(
-            padding: const EdgeInsets.all(AppDimensions.paddingM),
+            padding: EdgeInsets.fromLTRB(AppDimensions.paddingM, AppDimensions.paddingM, AppDimensions.paddingM, scrollEndPadding(context, base: AppDimensions.paddingM)),
             itemCount: admins.length,
             itemBuilder: (context, index) => _UserTile(user: admins[index]),
           ),
@@ -408,7 +409,7 @@ class _ViewersTab extends ConsumerWidget {
             await ref.read(tenantUsersProvider.future);
           },
           child: ListView.builder(
-            padding: const EdgeInsets.all(AppDimensions.paddingM),
+            padding: EdgeInsets.fromLTRB(AppDimensions.paddingM, AppDimensions.paddingM, AppDimensions.paddingM, scrollEndPadding(context, base: AppDimensions.paddingM)),
             itemCount: viewers.length,
             itemBuilder: (context, index) => _UserTile(user: viewers[index]),
           ),
@@ -456,7 +457,7 @@ class _ParentsTab extends ConsumerWidget {
             await ref.read(tenantUsersProvider.future);
           },
           child: ListView.builder(
-            padding: const EdgeInsets.all(AppDimensions.paddingM),
+            padding: EdgeInsets.fromLTRB(AppDimensions.paddingM, AppDimensions.paddingM, AppDimensions.paddingM, scrollEndPadding(context, base: AppDimensions.paddingM)),
             itemCount: parents.length,
             itemBuilder: (context, index) => _UserTile(user: parents[index]),
           ),
@@ -507,7 +508,7 @@ class _AllUsersTab extends ConsumerWidget {
             await ref.read(tenantUsersProvider.future);
           },
           child: ListView(
-            padding: const EdgeInsets.all(AppDimensions.paddingM),
+            padding: EdgeInsets.fromLTRB(AppDimensions.paddingM, AppDimensions.paddingM, AppDimensions.paddingM, scrollEndPadding(context, base: AppDimensions.paddingM)),
             children: [
               if (admins.isNotEmpty) ...[
                 _buildRoleSection(context, ref, context.l10n.settingsAdmins, admins, Icons.admin_panel_settings),

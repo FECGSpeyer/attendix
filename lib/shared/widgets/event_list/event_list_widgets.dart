@@ -769,6 +769,7 @@ Future<void> showEventLegendSheet(BuildContext context) {
     final full = available > 100 ? (available - 10) / available : 1.0;
     return showModalBottomSheet(
       context: context,
+      useRootNavigator: true, // IOS_SHELL2: above the tab bar
       isScrollControlled: true,
       useSafeArea: true,
       showDragHandle: false,
@@ -828,6 +829,7 @@ Future<void> showEventLegendSheet(BuildContext context) {
       );
   return showModalBottomSheet(
     context: context,
+    useRootNavigator: true, // IOS_SHELL2: above the tab bar
     isScrollControlled: true,
     backgroundColor: Theme.of(context).scaffoldBackgroundColor,
     builder: (ctx) => FractionallySizedBox(

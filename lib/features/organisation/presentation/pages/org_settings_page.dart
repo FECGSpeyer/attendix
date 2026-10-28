@@ -18,6 +18,7 @@ import '../../../settings/presentation/widgets/settings_list.dart'; // UX_SETTIN
 import '../widgets/org_link_dialogs.dart'; // UX_SETTINGS
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 
 /// Organisation settings (Ionic `OrgSettingsPage`, route `/settings/org-settings`).
 class OrgSettingsPage extends ConsumerWidget {
@@ -97,7 +98,7 @@ class OrgSettingsPage extends ConsumerWidget {
             );
           }
           return ListView(
-            padding: const EdgeInsets.only(bottom: 24),
+            padding: EdgeInsets.only(bottom: scrollEndPadding(context, base: 24)),
             children: [
               IonLargeTitle(context.l10n.orgTitle),
               if (ionIsIos(context)) const SizedBox(height: 16),

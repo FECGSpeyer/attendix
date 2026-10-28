@@ -17,6 +17,7 @@ import 'handover_page.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 
 /// Ionic handover-detail auto mapping: same name, or one name contains the
 /// other (e.g. "Trompete" vs. "Bb Trompete", "Flöte" vs. "Querflöte").
@@ -179,7 +180,7 @@ class _HandoverDetailPageState extends ConsumerState<HandoverDetailPage> {
     final data = widget.data;
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.handoverTitle)),
-      floatingActionButton: data == null || _loading
+      floatingActionButton: TabBarFab.wrap(data == null || _loading
           ? null
           : FloatingActionButton(
               onPressed: _transferring ? null : _confirmProceed,
@@ -191,16 +192,11 @@ class _HandoverDetailPageState extends ConsumerState<HandoverDetailPage> {
                           strokeWidth: 2, color: Colors.white),
                     )
                   : const Icon(Icons.directions_walk),
-            ),
+            )),
       body: data == null || _loading
           ? const Center(child: AppSpinner())
           : ListView(
-              padding: const EdgeInsets.fromLTRB(
-                AppDimensions.paddingM,
-                AppDimensions.paddingM,
-                AppDimensions.paddingM,
-                100,
-              ),
+              padding: EdgeInsets.fromLTRB(AppDimensions.paddingM, AppDimensions.paddingM, AppDimensions.paddingM, scrollEndPadding(context, base: 16, fabRoom: 84)),
               children: [
                 Text(context.l10n.handoverGroupMapping,
                     style: Theme.of(context).textTheme.titleSmall),

@@ -21,6 +21,7 @@ import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 Future<void> showMasterDataSheet(BuildContext context) {
   return showModalBottomSheet(
     context: context,
+    useRootNavigator: true, // IOS_SHELL2: above the tab bar
     isScrollControlled: true,
     useSafeArea: true,
     builder: (_) => const FractionallySizedBox(

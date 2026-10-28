@@ -16,6 +16,7 @@ import '../../../messages/presentation/widgets/notification_bell.dart'; // MESSA
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 import '../../../../shared/widgets/adaptive/ion_toolbar_segment.dart'; // IOS_ATT_PAGES
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 
 /// "Übersicht" – all Termine of the user across all tenants
 /// (Ionic `selfService/overview`) in the card layout.
@@ -149,7 +150,7 @@ class _SelfServiceOverviewPageState
           return RefreshIndicator.adaptive(
             onRefresh: _refresh,
             child: ListView(
-              padding: const EdgeInsets.only(bottom: 32),
+              padding: EdgeInsets.only(bottom: scrollEndPadding(context, base: 32)),
               children: [
                 IonLargeTitle(context.l10n.selfServiceAllEvents),
                 // Ionic `.ev-summary.overview-summary`: card, margin 8 16 0

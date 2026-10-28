@@ -13,6 +13,7 @@ import '../../../../l10n/l10n.dart';
 import '../widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
 import '../widgets/strong_html_text.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 
 /// Characters for the verification code — avoids visually ambiguous chars
 /// (0/O, 1/I/L), identical to Ionic.
@@ -113,7 +114,7 @@ class _DeleteAccountPageState extends ConsumerState<DeleteAccountPage> {
         title: Text(context.l10n.deleteAccountTitle),
       ),
       body: ListView(
-        padding: const EdgeInsets.all(AppDimensions.paddingM),
+        padding: EdgeInsets.fromLTRB(AppDimensions.paddingM, AppDimensions.paddingM, AppDimensions.paddingM, scrollEndPadding(context, base: AppDimensions.paddingM)),
         children: [
           Container(
             padding: const EdgeInsets.all(AppDimensions.paddingM),

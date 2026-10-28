@@ -6,6 +6,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart'; // IOS_SHELL2
 import 'package:intl/date_symbol_data_local.dart';
 
 import 'core/config/supabase_config.dart';
@@ -30,6 +31,11 @@ void main() async {
   // Like Ionic's `?ionic:mode=ios|md`: on the web `?mode=ios` forces the
   // iPhone look (and `?mode=md` the Material look) regardless of the browser.
   if (kIsWeb) applyWebModeOverride(Uri.base);
+
+  // IOS_SHELL2: like Ionic's router, pushed sub-pages (Mehr → Werke, Hilfe,
+  // Benachrichtigungen …) change the browser URL, so reload, browser back
+  // and deep links work (go_router keeps the URL on push by default).
+  GoRouter.optionURLReflectsImperativeAPIs = true;
 
   // I18N_INFRA: date symbols for every enabled language (de_DE, en_GB) and
   // the start language: stored choice -> device language -> 'de'.
@@ -165,6 +171,15 @@ class _AttendixAppState extends ConsumerState<AttendixApp> {
   }
 
   void _showUpdateSnackbar() {
+    // IOS_SHELL2: on iOS the tab shell shows the notice as an Ionic glass
+    // toast above the tab bar (MainShell) instead of a SnackBar over the
+    // page content; outside the tabs the login banner / "Update installieren"
+    // row in Mehr remain (Ionic shows no toast at all).
+    final messengerContext = rootScaffoldMessengerKey.currentContext;
+    if (messengerContext != null &&
+        Theme.of(messengerContext).platform == TargetPlatform.iOS) {
+      return;
+    }
     ToastHelper.showUpdateAvailable(
       rootScaffoldMessengerKey.currentState,
       onUpdate: () {

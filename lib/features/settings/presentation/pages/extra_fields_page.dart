@@ -15,6 +15,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 import '../widgets/ion_condense.dart'; // UX_SETTINGS (WAVE 8)
 import '../widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 
 enum ExtraFieldTarget { person, song }
 
@@ -208,6 +209,7 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
 
     return showModalBottomSheet<ExtraField>(
       context: context,
+      useRootNavigator: true, // IOS_SHELL2: above the tab bar
       isScrollControlled: true,
       builder: (sheetContext) => StatefulBuilder(
         builder: (ctx, setSheet) {
@@ -515,7 +517,8 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
           ],
         ),
         body: ListView(
-          padding: EdgeInsets.fromLTRB(16, ionIsIos(context) ? 0 : 16, 16, 16),
+          padding: EdgeInsets.fromLTRB(16, ionIsIos(context) ? 0 : 16, 16,
+              scrollEndPadding(context, base: 16)),
           children: [
             IonLargeTitle(context.l10n.extraFieldsTitle, padding: const EdgeInsets.only(bottom: 4)),
             if (ionIsIos(context)) const SizedBox(height: 16),

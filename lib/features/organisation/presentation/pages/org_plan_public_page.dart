@@ -237,7 +237,7 @@ class _OrgPlanPublicPageState extends ConsumerState<OrgPlanPublicPage> {
   }
 
   void _showHistory() {
-    Navigator.of(context).push(MaterialPageRoute(
+    Navigator.of(context, rootNavigator: true).push(MaterialPageRoute(
       fullscreenDialog: true,
       builder: (ctx) => Scaffold(
         appBar: AppBar(

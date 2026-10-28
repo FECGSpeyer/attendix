@@ -29,6 +29,7 @@ import '../widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
 import '../../../../core/utils/file_mime.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 
 enum FilesSortBy { name, updatedAt, size }
 
@@ -916,7 +917,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
                   onRefresh: _loadEntries,
                   child: ListView(
                     physics: const AlwaysScrollableScrollPhysics(),
-                    padding: const EdgeInsets.only(bottom: 80),
+                    padding: EdgeInsets.only(bottom: scrollEndPadding(context, base: 16, fabRoom: 64)),
                     children: [
                       _buildBreadcrumbs(),
                       if (canEdit && _usedBytes != null) _buildStorageUsage(),

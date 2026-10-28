@@ -14,6 +14,7 @@ import '../../../../data/models/person/person.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 
 /// Data handed from the handover page to the detail page
 /// (Ionic: DataService.setHandoverData).
@@ -120,7 +121,7 @@ class _HandoverPageState extends ConsumerState<HandoverPage> {
 
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.handoverTitle)),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: TabBarFab.wrap(FloatingActionButton(
         onPressed: _targetTenantId == null || selectedPersons.isEmpty
             ? null
             : () {
@@ -141,14 +142,9 @@ class _HandoverPageState extends ConsumerState<HandoverPage> {
             ? AppColors.medium
             : null,
         child: const Icon(Icons.arrow_forward),
-      ),
+      )),
       body: ListView(
-        padding: const EdgeInsets.fromLTRB(
-          AppDimensions.paddingM,
-          AppDimensions.paddingM,
-          AppDimensions.paddingM,
-          100,
-        ),
+        padding: EdgeInsets.fromLTRB(AppDimensions.paddingM, AppDimensions.paddingM, AppDimensions.paddingM, scrollEndPadding(context, base: 16, fabRoom: 84)),
         children: [
           Card(
             child: Padding(

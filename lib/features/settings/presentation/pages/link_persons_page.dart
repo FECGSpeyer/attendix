@@ -15,6 +15,7 @@ import '../../../../data/repositories/organisation_repository.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 
 class PersonLinkMatch {
   PersonLinkMatch(this.match);
@@ -186,7 +187,7 @@ class _LinkPersonsPageState extends ConsumerState<LinkPersonsPage> {
                   ),
                 )
               : ListView(
-                  padding: const EdgeInsets.all(AppDimensions.paddingM),
+                  padding: EdgeInsets.fromLTRB(AppDimensions.paddingM, AppDimensions.paddingM, AppDimensions.paddingM, scrollEndPadding(context, base: AppDimensions.paddingM)),
                   children: [
                     Padding(
                       padding: const EdgeInsets.only(bottom: AppDimensions.paddingM),

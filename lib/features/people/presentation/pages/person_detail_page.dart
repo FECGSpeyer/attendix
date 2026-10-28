@@ -39,6 +39,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 import '../../../../core/utils/people_shift_status.dart' show shiftAssignmentChanged; // SOL_FIX4
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 
 /// Provider for single person with group name
 final personProvider =
@@ -1822,7 +1823,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
           ],
         ),
         body: ListView(
-          padding: const EdgeInsets.only(bottom: 100),
+          padding: EdgeInsets.only(bottom: scrollEndPadding(context, base: 16, fabRoom: 84)),
           children: [
             // Ionic .profile-header: avatar + name with pencil
             PersonHeader(
@@ -1957,7 +1958,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
         ),
         // Ionic FAB: save (changes) / approve sheet (pending) / key (create
         // account when e-mail but no account) / "..." more menu.
-        floatingActionButton: _hasChanges
+        floatingActionButton: TabBarFab.wrap(_hasChanges
             ? IonFabButton(
                 onPressed: _isSaving ? null : _saveChanges,
                 tooltip: context.l10n.commonSave,
@@ -1981,7 +1982,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
                             onPressed: _showMoreActions,
                             tooltip: context.l10n.personFlutterMore,
                             icon: Icons.more_horiz,
-                          ),
+                          )),
       ),
     );
   }

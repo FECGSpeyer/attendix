@@ -34,6 +34,7 @@ import '../../../../core/services/tracking/tracking_service.dart';
 import '../../../../l10n/l10n.dart';
 import '../widgets/ion/ion_widgets.dart'; // UX_PEOPLE
 import '../../../../core/utils/error_message.dart';
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Page for creating a new person
@@ -267,20 +268,25 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
           ),
         ],
       ),
-      floatingActionButton: IonFabButton(
-        key: const Key('person_create_save'),
-        tooltip: context.l10n.commonSave,
-        onPressed: _isLoading ? null : _save,
-        icon: Icons.person_add_alt_1_outlined,
+      // IOS_SHELL2: iOS → ion-fab in the tab bar row
+      floatingActionButton: TabBarFab(
+        child: IonFabButton(
+          key: const Key('person_create_save'),
+          tooltip: context.l10n.commonSave,
+          onPressed: _isLoading ? null : _save,
+          icon: Icons.person_add_alt_1_outlined,
+        ),
       ),
       body: Form(
         key: _formKey,
         child: IonFormTheme(
           child: ListView(
           padding: ios
-              ? const EdgeInsets.fromLTRB(16, 0, 0, 96)
-              : const EdgeInsets.fromLTRB(AppDimensions.paddingM,
-                  AppDimensions.paddingM, AppDimensions.paddingM, 96),
+              ? EdgeInsets.fromLTRB(
+                  16, 0, 0, scrollEndPadding(context, base: 16, fabRoom: 80))
+              : EdgeInsets.fromLTRB(AppDimensions.paddingM,
+                  AppDimensions.paddingM, AppDimensions.paddingM,
+                  scrollEndPadding(context, base: 16, fabRoom: 80)),
           children: [
             // Ionic .profile-header: placeholder avatar + typed name
             _CreateProfileHeader(

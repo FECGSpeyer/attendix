@@ -12,6 +12,7 @@ import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 import '../widgets/ion_condense.dart'; // UX_SETTINGS (WAVE 8)
 import '../widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 
 /// Attendance Types List Page
 ///
@@ -70,7 +71,7 @@ class _AttendanceTypesPageState extends ConsumerState<AttendanceTypesPage> {
         data: (types) {
           final displayTypes = _isReordering ? _localTypes : types;
           return ListView(
-            padding: EdgeInsets.fromLTRB(16, ios ? 0 : 16, 16, 96),
+            padding: EdgeInsets.fromLTRB(16, ios ? 0 : 16, 16, scrollEndPadding(context, base: 16, fabRoom: 80)),
             children: [
               IonLargeTitle(title, padding: const EdgeInsets.only(bottom: 4)),
               SizedBox(height: ios ? 24 : 0),
@@ -118,7 +119,7 @@ class _AttendanceTypesPageState extends ConsumerState<AttendanceTypesPage> {
           );
         },
       ),
-      floatingActionButton: !_isReordering
+      floatingActionButton: TabBarFab.wrap(!_isReordering
           ? FloatingActionButton(
               onPressed: () => _showCreateDialog(context),
               child: const Icon(Icons.add),
@@ -132,7 +133,7 @@ class _AttendanceTypesPageState extends ConsumerState<AttendanceTypesPage> {
               },
               backgroundColor: AppColors.medium,
               child: const Icon(Icons.close),
-            ),
+            )),
     ));
   }
 

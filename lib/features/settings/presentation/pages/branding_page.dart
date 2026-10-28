@@ -12,6 +12,7 @@ import '../../../../l10n/l10n.dart';
 import '../widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 
 /// Maximale Logo-Größe (2 MB, wie Ionic)
 const int kMaxLogoBytes = 2 * 1024 * 1024;
@@ -134,7 +135,7 @@ class _BrandingPageState extends ConsumerState<BrandingPage> {
         data: (org) {
           if (org == null) {
             return ListView(
-              padding: const EdgeInsets.all(AppDimensions.paddingM),
+              padding: EdgeInsets.fromLTRB(AppDimensions.paddingM, AppDimensions.paddingM, AppDimensions.paddingM, scrollEndPadding(context, base: AppDimensions.paddingM)),
               children: [
                 SettingsListSection(
                   children: [
@@ -157,7 +158,7 @@ class _BrandingPageState extends ConsumerState<BrandingPage> {
           return Stack(
             children: [
               ListView(
-                padding: const EdgeInsets.all(AppDimensions.paddingM),
+                padding: EdgeInsets.fromLTRB(AppDimensions.paddingM, AppDimensions.paddingM, AppDimensions.paddingM, scrollEndPadding(context, base: AppDimensions.paddingM)),
                 children: [
                   SettingsListSection(
                     icons: false,

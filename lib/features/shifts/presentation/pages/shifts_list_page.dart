@@ -10,6 +10,7 @@ import '../../../planning/presentation/widgets/ion_items.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 
 /// Shifts List Page
 ///
@@ -35,12 +36,12 @@ class _ShiftsListPageState extends ConsumerState<ShiftsListPage> {
         tooltip: context.l10n.commonBack,
         onPressed: () => context.pop(),
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: TabBarFab.wrap(FloatingActionButton(
         onPressed: () => _showCreateDialog(context),
         child: const Icon(Icons.add),
-      ),
+      )),
       bodyBuilder: (context, largeTitle) => ListView(
-        padding: const EdgeInsets.only(bottom: 96),
+        padding: EdgeInsets.only(bottom: scrollEndPadding(context, base: 16, fabRoom: 80)),
         children: [
           if (largeTitle != null) largeTitle,
           _buildInfoCard(context),
@@ -116,6 +117,7 @@ class _ShiftsListPageState extends ConsumerState<ShiftsListPage> {
     try {
       final result = await showModalBottomSheet<Map<String, String>?>(
         context: context,
+        useRootNavigator: true, // IOS_SHELL2: above the tab bar
         isScrollControlled: true,
         useSafeArea: true,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,

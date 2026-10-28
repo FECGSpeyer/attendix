@@ -15,6 +15,7 @@ import '../widgets/ion_condense.dart'; // UX_SETTINGS (WAVE 8)
 import '../widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 
 /// Konfigurierbare Rollen (Reihenfolge wie Ionic)
 List<(Role, String)> _configurableRoles(AppLocalizations l10n) => [
@@ -149,12 +150,12 @@ class _RolePermissionsPageState extends ConsumerState<RolePermissionsPage> {
           ),
           title: IonCondenseTitle(context.l10n.rolePermTitle, collapsed: collapsed),
         ),
-        floatingActionButton: FloatingActionButton(
+        floatingActionButton: TabBarFab.wrap(FloatingActionButton(
           onPressed: saving ? null : _save,
           child: saving
               ? const SizedBox(width: 20, height: 20, child: AppSpinner(strokeWidth: 2, color: Colors.white))
               : const Icon(Icons.save_outlined),
-        ),
+        )),
         body: permissionsAsync.when(
           loading: () => const Center(child: AppSpinner()),
           error: (e, _) => Center(child: Text(context.l10n.rolePermFlutterLoadFailed(friendlyErrorMessage(e)), textAlign: TextAlign.center)),
@@ -162,8 +163,7 @@ class _RolePermissionsPageState extends ConsumerState<RolePermissionsPage> {
             _initFrom(permissions);
             final ios = ionIsIos(context);
             return ListView(
-              padding: EdgeInsets.fromLTRB(
-                  AppDimensions.paddingM, ios ? 0 : AppDimensions.paddingM, AppDimensions.paddingM, 96),
+              padding: EdgeInsets.fromLTRB(AppDimensions.paddingM, ios ? 0 : AppDimensions.paddingM, AppDimensions.paddingM, scrollEndPadding(context, base: 16, fabRoom: 80)),
               children: [
                 IonLargeTitle(context.l10n.rolePermTitle, padding: const EdgeInsets.only(bottom: 4)),
                 if (ios) const SizedBox(height: 16),

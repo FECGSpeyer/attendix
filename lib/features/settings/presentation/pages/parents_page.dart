@@ -13,6 +13,7 @@ import '../../../../data/models/parent/parent_model.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 
 /// Parents Page - manage parents of players
 class ParentsPage extends ConsumerWidget {
@@ -30,10 +31,10 @@ class ParentsPage extends ConsumerWidget {
           onPressed: () => context.pop(),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: TabBarFab.wrap(FloatingActionButton(
         onPressed: () => _showAddParentDialog(context, ref),
         child: const Icon(Icons.add),
-      ),
+      )),
       body: parentsAsync.when(
         loading: () => const Center(child: AppSpinner()),
         error: (e, _) => Center(
@@ -62,8 +63,7 @@ class ParentsPage extends ConsumerWidget {
             // h2 name / h3 e-mail; tapping an item asks to remove it.
             child: ListView(
               physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.fromLTRB(
-                AppDimensions.paddingM, AppDimensions.paddingM, AppDimensions.paddingM, 88),
+              padding: EdgeInsets.fromLTRB(AppDimensions.paddingM, AppDimensions.paddingM, AppDimensions.paddingM, scrollEndPadding(context, base: 16, fabRoom: 72)),
               children: [
                 SettingsHintCard(
                   icon: Icons.favorite_border,

@@ -15,6 +15,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 import '../../../settings/presentation/widgets/ion_condense.dart'; // UX_SETTINGS (WAVE 8)
 import '../../../settings/presentation/widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 
 /// "Planvorlagen & Felder" of the organisation (Ionic `OrgPlanningTemplatesPage`).
 ///
@@ -326,7 +327,7 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
       body: _templates == null
           ? const Center(child: AppSpinner())
           : ListView(
-              padding: const EdgeInsets.only(bottom: 32),
+              padding: EdgeInsets.only(bottom: scrollEndPadding(context, base: 32)),
               children: [
                 IonLargeTitle(context.l10n.orgTemplatesTitle),
                 _header(context.l10n.orgTemplatesDefaultFields, _addDefaultField),

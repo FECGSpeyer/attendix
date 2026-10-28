@@ -43,6 +43,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/common/error_state_view.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 
 /// Song detail page (Ionic `songs/song`): inline editing for admins and
 /// responsibles, read-only view for everybody else and for the public share
@@ -268,7 +269,7 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
             ),
         ],
       ),
-      floatingActionButton: aufnahme == null
+      floatingActionButton: TabBarFab.wrap(aufnahme == null
           ? null
           : FloatingActionButton(
               tooltip: context.l10n.songsPlayRecording,
@@ -276,7 +277,7 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
                   .read(audioPlayerServiceProvider.notifier)
                   .playFromUrl(aufnahme.url, aufnahme.fileName, song.name),
               child: const Icon(Icons.play_arrow),
-            ),
+            )),
       bottomNavigationBar: data.isPublic ? const AudioPlayerWidget() : null,
       body: RefreshIndicator.adaptive(
         onRefresh: () async {
@@ -285,7 +286,7 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
         },
         // Ionic: one `ion-list inset` with item groups and list headers.
         child: ListView(
-          padding: const EdgeInsets.fromLTRB(0, AppDimensions.paddingS, 0, 96),
+          padding: EdgeInsets.fromLTRB(0, AppDimensions.paddingS, 0, scrollEndPadding(context, base: 16, fabRoom: 80)),
           children: [
             IonLargeTitle(title),
             if (_saving) const LinearProgressIndicator(minHeight: 2),
@@ -732,6 +733,7 @@ class _CopyToOtherInstance extends ConsumerWidget {
           title: Text(context.l10n.songsCopyToOther),
           onTap: () => showModalBottomSheet(
             context: context,
+            useRootNavigator: true, // IOS_SHELL2: above the tab bar
             isScrollControlled: true,
             useSafeArea: true,
             builder: (_) => CopyToTenantSheet(song: song, availableTenants: allowed),
@@ -779,6 +781,7 @@ class _FilesSectionState extends ConsumerState<_FilesSection> {
   Future<void> _upload([List<PlatformFile> initialFiles = const []]) async {
     final result = await showModalBottomSheet<bool>(
       context: context,
+      useRootNavigator: true, // IOS_SHELL2: above the tab bar
       isScrollControlled: true,
       useSafeArea: true,
       isDismissible: false,
@@ -806,6 +809,7 @@ class _FilesSectionState extends ConsumerState<_FilesSection> {
     }
     final result = await showModalBottomSheet<SingleFileUploadResult>(
       context: context,
+      useRootNavigator: true, // IOS_SHELL2: above the tab bar
       isScrollControlled: true,
       useSafeArea: true,
       builder: (_) => SingleFileUploadSheet(

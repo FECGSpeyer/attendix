@@ -6,6 +6,7 @@ import '../../data/help_content_service.dart';
 import '../widgets/glossary_term_dialog.dart';
 import '../widgets/help_markdown.dart';
 import '../../../../l10n/l10n.dart';
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 
 /// Single help article with tappable glossary references.
 ///
@@ -35,7 +36,7 @@ class HelpArticlePage extends ConsumerWidget {
               child: Text(context.l10n.helpArticleNotFound),
             )
           : SingleChildScrollView(
-              padding: const EdgeInsets.all(AppDimensions.paddingM),
+              padding: EdgeInsets.fromLTRB(AppDimensions.paddingM, AppDimensions.paddingM, AppDimensions.paddingM, scrollEndPadding(context, base: AppDimensions.paddingM)),
               child: Center(
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 720),

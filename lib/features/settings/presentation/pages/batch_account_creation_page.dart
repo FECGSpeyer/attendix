@@ -11,6 +11,7 @@ import '../../../../core/providers/user_registration_providers.dart'; // AUTH
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 
 /// Page for batch creating accounts for players without accounts
 class BatchAccountCreationPage extends ConsumerStatefulWidget {
@@ -63,7 +64,7 @@ class _BatchAccountCreationPageState
               .toList();
 
           return ListView(
-            padding: const EdgeInsets.all(AppDimensions.paddingM),
+            padding: EdgeInsets.fromLTRB(AppDimensions.paddingM, AppDimensions.paddingM, AppDimensions.paddingM, scrollEndPadding(context, base: AppDimensions.paddingM)),
             children: [
               // Summary card
               Card(

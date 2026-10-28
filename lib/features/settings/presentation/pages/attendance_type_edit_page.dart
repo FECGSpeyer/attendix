@@ -24,6 +24,7 @@ import '../../../organisation/presentation/widgets/type_default_org_plan_toggle.
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 
 
 /// Attendance Type Edit Page
@@ -222,16 +223,16 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: TabBarFab.wrap(FloatingActionButton(
         onPressed: _hasChanges ? _save : null,
         tooltip: context.l10n.commonSave,
         child: const Icon(Icons.save_outlined),
-      ),
+      )),
       body: Form(
         key: _formKey,
         onChanged: () => setState(() => _hasChanges = true),
         child: ListView(
-          padding: const EdgeInsets.all(AppDimensions.paddingM),
+          padding: EdgeInsets.fromLTRB(AppDimensions.paddingM, AppDimensions.paddingM, AppDimensions.paddingM, scrollEndPadding(context, base: AppDimensions.paddingM)),
           children: [
             // Usage warning
             if (_usageCount > 0) ...[

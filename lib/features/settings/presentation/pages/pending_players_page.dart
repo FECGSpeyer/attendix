@@ -11,6 +11,7 @@ import '../../../../data/models/person/person.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 
 /// Pending Players Page - shows self-registered members awaiting approval
 /// BL-006: Converted to StatefulWidget to track processing state
@@ -84,7 +85,7 @@ class _PendingPlayersPageState extends ConsumerState<PendingPlayersPage> {
               await ref.read(realtimePendingPlayersProvider.future);
             },
             child: ListView.builder(
-              padding: const EdgeInsets.all(AppDimensions.paddingM),
+              padding: EdgeInsets.fromLTRB(AppDimensions.paddingM, AppDimensions.paddingM, AppDimensions.paddingM, scrollEndPadding(context, base: AppDimensions.paddingM)),
               itemCount: players.length,
               itemBuilder: (context, index) {
                 final player = players[index];

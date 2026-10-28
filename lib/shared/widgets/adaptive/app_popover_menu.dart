@@ -58,7 +58,7 @@ Future<T?> showAppPopoverMenu<T>({
   double iosWidth = 250,
 }) {
   final button = context.findRenderObject()! as RenderBox;
-  final navigator = Navigator.of(context);
+  final navigator = Navigator.of(context, rootNavigator: true); // IOS_SHELL2
   final overlay = navigator.overlay!.context.findRenderObject()! as RenderBox;
   final anchor = Rect.fromPoints(
     button.localToGlobal(Offset.zero, ancestor: overlay),
@@ -68,6 +68,7 @@ Future<T?> showAppPopoverMenu<T>({
   if (!useIosLook(context)) {
     return showMenu<T>(
       context: context,
+      useRootNavigator: true,
       position: RelativeRect.fromRect(anchor, Offset.zero & overlay.size),
       items: [
         for (final item in items)

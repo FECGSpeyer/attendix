@@ -32,6 +32,7 @@ import '../../../team_organization/presentation/widgets/my_tasks_card.dart'; // 
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 import '../../../../shared/widgets/tenant/tenant_switcher_title.dart'; // IOS_SHELL
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 
 /// "Meine Termine" – self-service sign in/out of the current tenant
 /// (Ionic `selfService/signout`).
@@ -298,7 +299,7 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
         data: (data) => RefreshIndicator.adaptive(
           onRefresh: _refresh,
           child: ListView(
-            padding: const EdgeInsets.only(bottom: 32),
+            padding: EdgeInsets.only(bottom: scrollEndPadding(context, base: 32)),
             children: [
               if (player != null)
                 IonLargeTitle(tenant?.shortName ?? '', enabled: tenants.length <= 1),

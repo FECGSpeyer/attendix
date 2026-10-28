@@ -57,6 +57,7 @@ Future<AdHocReminderResult?> showAdHocReminderSheet(
 }) {
   return showModalBottomSheet<AdHocReminderResult>(
     context: context,
+    useRootNavigator: true, // IOS_SHELL2: above the tab bar
     isScrollControlled: true,
     showDragHandle: true,
     builder: (ctx) => Padding(

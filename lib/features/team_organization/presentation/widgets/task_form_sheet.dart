@@ -26,6 +26,7 @@ Future<TeamTask?> showTaskFormSheet(
 }) {
   return showModalBottomSheet<TeamTask>(
     context: context,
+    useRootNavigator: true, // IOS_SHELL2: above the tab bar
     isScrollControlled: true,
     useSafeArea: true,
     // Ionic: ion-modal breakpoints [0, 1] (full height), content color light.

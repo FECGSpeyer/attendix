@@ -411,6 +411,7 @@ class _CategoryTile extends StatelessWidget {
 Future<void> showInstrumentCategoriesSheet(BuildContext context) {
   return showModalBottomSheet(
     context: context,
+    useRootNavigator: true, // IOS_SHELL2: above the tab bar
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
     builder: (context) => const InstrumentCategoriesSheet(),

@@ -13,6 +13,7 @@ void showStatusOverviewSheet(
 }) {
   showModalBottomSheet(
     context: context,
+    useRootNavigator: true, // IOS_SHELL2: above the tab bar
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
     builder: (context) => StatusOverviewSheet(

@@ -59,6 +59,7 @@ class SelectionSheet<T> extends StatefulWidget {
   }) async {
     return showModalBottomSheet<SelectionResult<T>>(
       context: context,
+      useRootNavigator: true, // IOS_SHELL2: above the tab bar
       isScrollControlled: true,
       useSafeArea: true,
       builder: (context) => SelectionSheet<T>(

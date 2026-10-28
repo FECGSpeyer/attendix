@@ -21,6 +21,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../settings/presentation/widgets/ion_condense.dart'; // UX_SETTINGS (WAVE 8)
 import '../../../settings/presentation/widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
 import '../../../../core/utils/error_message.dart';
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Notifications settings page (Ionic notifications.page).
@@ -176,8 +177,10 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
       appBar: AppBar(title: IonCondenseTitle(context.l10n.notifTitle, collapsed: collapsed)),
       body: ListView(
         padding: ios
-            ? const EdgeInsets.fromLTRB(16, 0, 16, 24)
-            : const EdgeInsets.all(AppDimensions.paddingM),
+            ? EdgeInsets.fromLTRB(16, 0, 16, scrollEndPadding(context, base: 24))
+            : EdgeInsets.fromLTRB(AppDimensions.paddingM, AppDimensions.paddingM,
+                AppDimensions.paddingM,
+                scrollEndPadding(context, base: AppDimensions.paddingM)),
         children: [
           IonLargeTitle(context.l10n.notifTitle, padding: const EdgeInsets.only(bottom: 4)),
           _group(

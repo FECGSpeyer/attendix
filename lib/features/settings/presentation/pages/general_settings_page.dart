@@ -25,6 +25,7 @@ import '../widgets/ion_condense.dart'; // UX_SETTINGS (WAVE 8)
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 
 /// German holiday regions
 const _holidayRegions = [
@@ -424,7 +425,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
         ),
       ),
       // UX_SETTINGS: Ionic saves via FAB (save-outline)
-      floatingActionButton: _isLoading
+      floatingActionButton: TabBarFab.wrap(_isLoading
           ? null
           : FloatingActionButton(
               onPressed: _isSaving ? null : _saveSettings,
@@ -436,7 +437,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
                       child: AppSpinner(strokeWidth: 2, color: Colors.white),
                     )
                   : const Icon(Icons.save_outlined),
-            ),
+            )),
       body: _isLoading
           ? const Center(child: AppSpinner())
           : Form(
@@ -446,7 +447,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
                   AppDimensions.paddingM,
                   ionIsIos(context) ? 0 : AppDimensions.paddingM,
                   AppDimensions.paddingM,
-                  96,
+                  scrollEndPadding(context, base: 16, fabRoom: 80),
                 ),
                 children: [
                   IonLargeTitle(context.l10n.settingsSettings, padding: const EdgeInsets.only(bottom: 4)),
@@ -807,6 +808,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
 
     await showModalBottomSheet(
       context: context,
+      useRootNavigator: true, // IOS_SHELL2: above the tab bar
       isScrollControlled: true,
       builder: (ctx) => CriticalRuleSheet(
         attendanceTypes: attendanceTypes,
@@ -830,6 +832,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
 
     await showModalBottomSheet(
       context: context,
+      useRootNavigator: true, // IOS_SHELL2: above the tab bar
       isScrollControlled: true,
       builder: (ctx) => CriticalRuleSheet(
         rule: rule,

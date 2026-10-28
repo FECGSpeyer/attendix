@@ -13,6 +13,7 @@ import '../adaptive/adaptive.dart'; // IOS_LOOK
 void showFeedbackSheet(BuildContext context) {
   showModalBottomSheet(
     context: context,
+    useRootNavigator: true, // IOS_SHELL2: above the tab bar
     isScrollControlled: true,
     useSafeArea: true,
     builder: (context) => const _FeedbackSheet(),

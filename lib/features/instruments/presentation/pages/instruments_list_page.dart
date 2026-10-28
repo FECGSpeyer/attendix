@@ -15,6 +15,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 import '../../../people/presentation/widgets/ion/ion_widgets.dart'; // UX_PEOPLE
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 
 /// Instruments list page — grouped by category with player counts.
 /// Supports drag & drop reordering (sort_order) like Ionic instrument-list.
@@ -156,12 +157,12 @@ class _InstrumentsListPageState extends ConsumerState<InstrumentsListPage> {
           },
         ),
       ],
-      floatingActionButton: isAdmin
+      floatingActionButton: TabBarFab.wrap(isAdmin
           ? IonFabButton(
               onPressed: () => _showAddGroupSheet(
                   context, ref, categoriesAsync.valueOrNull ?? const []),
             )
-          : null,
+          : null),
     );
   }
 }
@@ -334,6 +335,7 @@ Future<void> _showAddGroupSheet(
 ) async {
   final added = await showModalBottomSheet<bool>(
     context: context,
+    useRootNavigator: true, // IOS_SHELL2: above the tab bar
     isScrollControlled: true,
     showDragHandle: true,
     builder: (ctx) => _AddGroupSheet(categories: categories),
@@ -436,7 +438,7 @@ Future<void> _openInstrumentPage(
   List<GroupCategory> categories, {
   String? tenantType,
 }) async {
-  final result = await Navigator.of(context).push<Map<String, dynamic>>(
+  final result = await Navigator.of(context, rootNavigator: true).push<Map<String, dynamic>>(
     MaterialPageRoute(
       fullscreenDialog: true,
       builder: (_) => _InstrumentEditDialog(
@@ -588,7 +590,7 @@ class _InstrumentEditDialogState extends ConsumerState<_InstrumentEditDialog> {
       body: Form(
         key: _formKey,
         child: ListView(
-          padding: const EdgeInsets.all(AppDimensions.paddingM),
+          padding: EdgeInsets.fromLTRB(AppDimensions.paddingM, AppDimensions.paddingM, AppDimensions.paddingM, scrollEndPadding(context, base: AppDimensions.paddingM)),
           children: [
             TextFormField(
               controller: _nameController,

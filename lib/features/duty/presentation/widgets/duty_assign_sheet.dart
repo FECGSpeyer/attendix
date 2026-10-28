@@ -38,6 +38,7 @@ Future<List<String>?> showDutyAssignSheet(
 }) {
   return showModalBottomSheet<List<String>>(
     context: context,
+    useRootNavigator: true, // IOS_SHELL2: above the tab bar
     isScrollControlled: true,
     useSafeArea: true,
     // Ionic: ion-content color="light".

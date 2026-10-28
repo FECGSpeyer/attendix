@@ -28,6 +28,7 @@ import '../widgets/task_form_sheet.dart';
 import '../widgets/tasks_tab.dart' show TeamOrgBadge, outcomeColor;
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 import '../../../../core/services/native/native_file_service.dart'; // NATIVE_MISC
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 
 const _saveDebounce = Duration(milliseconds: 800);
 const _avatarColors = [
@@ -775,6 +776,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
     var sendPdf = true;
     final confirmed = await showModalBottomSheet<bool>(
       context: context,
+      useRootNavigator: true, // IOS_SHELL2: above the tab bar
       isScrollControlled: true,
       useSafeArea: true,
       builder: (ctx) => StatefulBuilder(
@@ -1122,6 +1124,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
     final att = _attendees;
     await showModalBottomSheet<void>(
       context: context,
+      useRootNavigator: true, // IOS_SHELL2: above the tab bar
       isScrollControlled: true,
       useSafeArea: true,
       builder: (ctx) => SizedBox(
@@ -1182,6 +1185,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
     final controller = _controllerFor(protocolGeneralSectionId);
     await showModalBottomSheet<void>(
       context: context,
+      useRootNavigator: true, // IOS_SHELL2: above the tab bar
       isScrollControlled: true,
       useSafeArea: true,
       builder: (ctx) => SizedBox(
@@ -1304,7 +1308,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
     final hasNext = activeIndex >= 0 && activeIndex + 1 < _sections.length;
 
     return ListView(
-      padding: const EdgeInsets.all(AppDimensions.paddingM),
+      padding: EdgeInsets.fromLTRB(AppDimensions.paddingM, AppDimensions.paddingM, AppDimensions.paddingM, scrollEndPadding(context, base: AppDimensions.paddingM)),
       children: [
         _attendeeRow(),
         if (_live != null && liveSec != null)
@@ -1620,7 +1624,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
     }
 
     final left = ListView(
-      padding: const EdgeInsets.all(AppDimensions.paddingM),
+      padding: EdgeInsets.fromLTRB(AppDimensions.paddingM, AppDimensions.paddingM, AppDimensions.paddingM, scrollEndPadding(context, base: AppDimensions.paddingM)),
       children: [
         Text(_title, style: theme.textTheme.titleLarge),
         Text([_dateLabel, if (_timeRange.isNotEmpty) _timeRange].join(' · '), style: theme.textTheme.bodySmall),
@@ -1776,7 +1780,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
     } else if (activeLeftover != null) {
       final l = activeLeftover;
       main = ListView(
-        padding: const EdgeInsets.all(AppDimensions.paddingM),
+        padding: EdgeInsets.fromLTRB(AppDimensions.paddingM, AppDimensions.paddingM, AppDimensions.paddingM, scrollEndPadding(context, base: AppDimensions.paddingM)),
         children: [
           Text(context.l10n.protocolMoreNotes, style: theme.textTheme.labelMedium?.copyWith(color: AppColors.medium)),
           Text(l.title, style: theme.textTheme.headlineSmall),
@@ -1804,7 +1808,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
     }
 
     final right = ListView(
-      padding: const EdgeInsets.all(AppDimensions.paddingM),
+      padding: EdgeInsets.fromLTRB(AppDimensions.paddingM, AppDimensions.paddingM, AppDimensions.paddingM, scrollEndPadding(context, base: AppDimensions.paddingM)),
       children: [
         Row(
           children: [
@@ -1907,7 +1911,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
     final att = _attendees;
     final unassigned = _unassignedTasks(map);
     return ListView(
-      padding: const EdgeInsets.all(AppDimensions.paddingM),
+      padding: EdgeInsets.fromLTRB(AppDimensions.paddingM, AppDimensions.paddingM, AppDimensions.paddingM, scrollEndPadding(context, base: AppDimensions.paddingM)),
       children: [
         Text(_title, style: theme.textTheme.headlineSmall),
         Text([_dateLabel, if (_timeRange.isNotEmpty) context.l10n.attendanceTimeOClock(_timeRange)].join(' · ')),

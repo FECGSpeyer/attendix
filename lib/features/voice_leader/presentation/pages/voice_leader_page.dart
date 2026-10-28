@@ -10,6 +10,7 @@ import '../../data/providers/voice_leader_providers.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 import '../../../people/presentation/widgets/ion/ion_widgets.dart'; // UX_PEOPLE
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 
 /// Voice Leader page - shows members of the same voice group.
 ///
@@ -65,7 +66,7 @@ class VoiceLeaderPage extends ConsumerWidget {
 
             return ListView(
               physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.only(bottom: AppDimensions.paddingL),
+              padding: EdgeInsets.only(bottom: scrollEndPadding(context, base: AppDimensions.paddingL)),
               children: [
                 _GroupHeader(groupName: groupName, memberCount: members.length),
                 if (members.isEmpty)

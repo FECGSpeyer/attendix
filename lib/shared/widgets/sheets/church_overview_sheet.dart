@@ -76,6 +76,7 @@ Future<void> showChurchOverviewSheet(
   final data = computeChurchOverview(churchIds, churches);
   return showModalBottomSheet<void>(
     context: context,
+    useRootNavigator: true, // IOS_SHELL2: above the tab bar
     isScrollControlled: true,
     showDragHandle: true,
     builder: (ctx) => DraggableScrollableSheet(

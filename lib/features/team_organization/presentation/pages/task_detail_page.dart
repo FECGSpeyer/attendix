@@ -13,6 +13,7 @@ import '../../team_org_utils.dart';
 import '../widgets/task_form_sheet.dart';
 import '../widgets/tasks_tab.dart' show TeamOrgBadge, priorityColor;
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 
 /// Aufgabe: leadership edits everything (task form) and can delete; the
 /// responsible person only changes the status.
@@ -156,7 +157,7 @@ class _TaskDetailPageState extends ConsumerState<TaskDetailPage> {
 
     return ListView(
       physics: const AlwaysScrollableScrollPhysics(),
-      padding: const EdgeInsets.only(bottom: 24),
+      padding: EdgeInsets.only(bottom: scrollEndPadding(context, base: 24)),
       children: [
         // Ionic `.task-hero`
         Padding(

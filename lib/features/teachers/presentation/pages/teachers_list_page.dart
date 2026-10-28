@@ -13,6 +13,7 @@ import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/repositories/teacher_repository.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 import '../../../people/presentation/widgets/ion/ion_widgets.dart'; // UX_PEOPLE
 
@@ -81,9 +82,9 @@ class TeachersListPage extends ConsumerWidget {
           ],
         ),
       ],
-      floatingActionButton: isAdmin
+      floatingActionButton: TabBarFab.wrap(isAdmin
           ? IonFabButton(onPressed: () => _showAddSheet(context, ref))
-          : null,
+          : null),
     );
   }
 
@@ -92,6 +93,7 @@ class TeachersListPage extends ConsumerWidget {
     final groups = ref.read(groupsProvider).valueOrNull ?? [];
     final result = await showModalBottomSheet<Teacher>(
       context: context,
+      useRootNavigator: true, // IOS_SHELL2: above the tab bar
       isScrollControlled: true,
       showDragHandle: true,
       builder: (ctx) => Padding(
@@ -114,7 +116,7 @@ class TeachersListPage extends ConsumerWidget {
     Teacher teacher,
   ) async {
     final groups = ref.read(groupsProvider).valueOrNull ?? [];
-    final result = await Navigator.of(context).push<Teacher>(
+    final result = await Navigator.of(context, rootNavigator: true).push<Teacher>(
       MaterialPageRoute(
         fullscreenDialog: true,
         builder: (_) => _TeacherEditPage(

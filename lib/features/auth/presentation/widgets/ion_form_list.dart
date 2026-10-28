@@ -397,6 +397,7 @@ Future<T?> showIonSelectOptions<T>(
 }) {
   return showModalBottomSheet<T>(
     context: context,
+    useRootNavigator: true, // IOS_SHELL2: above the tab bar
     useSafeArea: true,
     isScrollControlled: true,
     builder: (sheetContext) => SafeArea(

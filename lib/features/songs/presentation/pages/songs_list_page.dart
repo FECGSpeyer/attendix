@@ -82,7 +82,7 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
   }
 
   Future<void> _openSongImport() async {
-    final imported = await Navigator.of(context).push<bool>(
+    final imported = await Navigator.of(context, rootNavigator: true).push<bool>(
       MaterialPageRoute(
         fullscreenDialog: true,
         builder: (_) => const SongImportPage(),
@@ -442,7 +442,9 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
                   ),
                 ),
               ),
-            const SliverToBoxAdapter(child: SizedBox(height: 88)),
+            SliverToBoxAdapter(
+                child: SizedBox(
+                    height: scrollEndPadding(context, base: 16, fabRoom: 72))),
           ],
         ),
       ),

@@ -23,6 +23,7 @@ import '../../../../core/providers/song_providers.dart'; // PROFILE_OFFLINE
 import '../../../messages/presentation/widgets/notification_bell.dart'; // MESSAGES
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 
 /// Parents Portal Page (Ionic `selfService/parents`) in the card layout:
 /// children with percentage, "Heute" card with one row per child, upcoming
@@ -197,7 +198,7 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
                   await ref.read(childrenAttendancesProvider.future);
                 },
                 child: ListView(
-                  padding: const EdgeInsets.only(bottom: 32),
+                  padding: EdgeInsets.only(bottom: scrollEndPadding(context, base: 32)),
                   children: [
                     IonLargeTitle(tenant?.longName ?? '', enabled: !multiTenant),
                     ParentsWelcomeCard(kids: children), // PROFILE_OFFLINE

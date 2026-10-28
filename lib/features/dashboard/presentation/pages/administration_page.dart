@@ -13,6 +13,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 import '../../../settings/presentation/widgets/ion_condense.dart'; // UX_SETTINGS (WAVE 8)
 import '../../../settings/presentation/widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 
 const int _gb = 1024 * 1024 * 1024;
 
@@ -232,7 +233,7 @@ class _AdministrationPageState extends ConsumerState<AdministrationPage> {
     return IonCondense(builder: (context, collapsed) => Scaffold(
       appBar: AppBar(title: IonCondenseTitle(context.l10n.adminTitle, collapsed: collapsed)),
       body: ListView(
-        padding: EdgeInsets.fromLTRB(16, ios ? 0 : 8, 16, 24),
+        padding: EdgeInsets.fromLTRB(16, ios ? 0 : 8, 16, scrollEndPadding(context, base: 24)),
         children: [
           IonLargeTitle(context.l10n.adminTitle, padding: const EdgeInsets.only(bottom: 4)),
           if (ios) const SizedBox(height: 16),
