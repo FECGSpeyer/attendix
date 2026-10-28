@@ -74,10 +74,8 @@ class _AttendixAppState extends ConsumerState<AttendixApp> {
   @override
   void initState() {
     super.initState();
-    // Start update listener (web only)
-    if (kIsWeb) {
-      ref.read(appUpdateServiceProvider).startListening();
-    }
+    // Start update listener (web: service worker; NATIVE_MISC: native store check)
+    ref.read(appUpdateServiceProvider).startListening();
     // PROFILE_OFFLINE: replay queued offline attendance writes
     Future.microtask(
         () => ref.read(offlineQueueNotifierProvider.notifier).init());

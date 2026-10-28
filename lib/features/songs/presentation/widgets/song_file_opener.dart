@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 
+import '../../../../core/services/native/native_file_service.dart'; // NATIVE_MISC
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/song/song.dart';
 import '../../../../shared/widgets/sheets/image_viewer_sheet.dart';
@@ -21,16 +21,13 @@ Future<void> openSongFile(BuildContext context, SongFile file) async {
   }
 }
 
-/// Open a file URL in the browser / external app
+/// Open a file URL in the browser / external app; in the native app the file
+/// is downloaded and opened in the system viewer (NATIVE_MISC, Ionic
+/// `Utils.openFileNative`).
 Future<void> openSongFileExternally(BuildContext context, SongFile file) async {
-  final uri = Uri.tryParse(file.url);
-  if (uri == null) return;
-  try {
-    final ok = await launchUrl(uri, mode: LaunchMode.externalApplication);
-    if (!ok && context.mounted) {
-      ToastHelper.showError(context, context.l10n.songsFlutterOpenFileFailed);
-    }
-  } catch (_) {
-    if (context.mounted) ToastHelper.showError(context, context.l10n.songsFlutterOpenFileFailed);
+  if (Uri.tryParse(file.url) == null) return;
+  final ok = await NativeFileService.openUrl(file.url, fileName: file.fileName);
+  if (!ok && context.mounted) {
+    ToastHelper.showError(context, context.l10n.songsFlutterOpenFileFailed);
   }
 }

@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/services/audio_player/audio_player_service.dart';
+import '../../../../core/services/native/native_file_service.dart'; // NATIVE_MISC
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/song/song.dart';
@@ -84,9 +85,9 @@ Future<void> _chooseFile(
   await picked?.onTap();
 }
 
+// NATIVE_MISC: native app → system file viewer (Ionic Utils.openFileNative).
 Future<void> _openFile(BuildContext context, SongFile file) async {
-  final uri = Uri.tryParse(file.url);
-  final ok = uri != null && await launchUrl(uri, mode: LaunchMode.externalApplication);
+  final ok = await NativeFileService.openUrl(file.url, fileName: file.fileName);
   if (!ok && context.mounted) {
     ToastHelper.showError(context, context.l10n.signoutFlutterFileOpenFailed);
   }
@@ -95,8 +96,8 @@ Future<void> _openFile(BuildContext context, SongFile file) async {
 Future<void> _downloadFile(BuildContext context, SongFile file) async {
   // Append ?download= to force Content-Disposition: attachment
   final url = file.url.contains('?') ? '${file.url}&download=' : '${file.url}?download=';
-  final uri = Uri.tryParse(url);
-  final ok = uri != null && await launchUrl(uri, mode: LaunchMode.externalApplication);
+  // NATIVE_MISC: native app → cache dir + system viewer (Ionic downloadFileNative).
+  final ok = await NativeFileService.openUrl(url, fileName: file.fileName);
   if (!ok && context.mounted) {
     ToastHelper.showError(context, context.l10n.signoutFlutterFileDownloadFailed);
   }

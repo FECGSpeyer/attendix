@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:printing/printing.dart';
 
 import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/player_providers.dart';
@@ -10,6 +9,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../core/services/native/native_file_service.dart'; // NATIVE_MISC
 
 /// Persons that receive a certificate: active (not left/paused/pending)
 /// members of the selected groups (Ionic settings.page filter).
@@ -53,7 +53,7 @@ Future<void> generateVorkursCertificates(BuildContext context, WidgetRef ref) as
       persons.map((p) => (firstName: p.firstName, lastName: p.lastName)).toList(),
     );
     final fileName = 'Urkunden_Vorkurs_${DateFormat('yyyy-MM-dd').format(DateTime.now())}.pdf';
-    await Printing.sharePdf(bytes: bytes, filename: fileName);
+    await NativeFileService.saveBytes(bytes, fileName); // NATIVE_MISC
   } catch (_) {
     if (context.mounted) ToastHelper.showError(context, context.l10n.settingsCertificatesFailed);
   }

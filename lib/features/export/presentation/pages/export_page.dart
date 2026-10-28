@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
-import 'package:printing/printing.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/attendance_providers.dart';
@@ -23,6 +22,7 @@ import '../../../../core/services/tracking/tracking_event.dart';
 import '../../../../core/services/tracking/tracking_service.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
+import '../../../../core/services/native/native_file_service.dart'; // NATIVE_MISC
 
 /// Export Page
 ///
@@ -466,7 +466,7 @@ class _ExportPageState extends ConsumerState<ExportPage> {
 
   /// Share/download the Excel file (works on web/PWA as well)
   Future<void> _shareExcel(Uint8List bytes, String baseName) async {
-    await Printing.sharePdf(bytes: bytes, filename: '$baseName.xlsx');
+    await NativeFileService.saveBytes(bytes, '$baseName.xlsx'); // NATIVE_MISC
   }
 }
 

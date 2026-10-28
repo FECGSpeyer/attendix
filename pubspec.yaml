@@ -83,6 +83,11 @@ dependencies:
   firebase_messaging: ^15.2.5
   # PUSH: pinned (AGP 8.3 / Kotlin 1.7 build); 1.2.10 needs AGP 8.13 / Kotlin 2.3
   app_badge_plus: 1.2.3
+  # NATIVE_MISC
+  open_filex: ^5.0.0
+  audio_service: ^0.18.19
+  in_app_update: ^4.2.5
+  audio_session: ^0.1.25
 
 dev_dependencies:
   flutter_test:

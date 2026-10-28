@@ -28,6 +28,7 @@ import '../../../../core/services/certificate_service.dart'; // MISC2
 import '../widgets/vorkurs_certificates.dart'; // MISC2
 // SETTINGS2
 import '../../../../core/providers/admin_providers.dart';
+import '../../../../core/services/app_update_service.dart'; // NATIVE_MISC
 import '../widgets/app_promo_card.dart';
 import '../widgets/settings_admins_sheet.dart';
 // UX_SETTINGS
@@ -463,6 +464,16 @@ class SettingsPage extends ConsumerWidget {
                   trailing: _VersionBadge(version: AppConstants.appVersion),
                   onTap: () => showVersionHistorySheet(context),
                 ),
+                // NATIVE_MISC: Ionic liveUpdate.updateAvailable() → "Update installieren"
+                if (ref.watch(appUpdateAvailableProvider))
+                  SettingsListTile(
+                    icon: Icons.cloud_download_outlined,
+                    title: l10n.settingsInstallUpdate,
+                    detail: false,
+                    color: AppColors.success,
+                    iconColor: AppColors.success,
+                    onTap: () => ref.read(appUpdateServiceProvider).applyUpdate(),
+                  ),
                 if (isSuperDeveloper)
                   SettingsListTile(
                     icon: Icons.construction_outlined,

@@ -6,7 +6,6 @@ import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:printing/printing.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../core/constants/app_constants.dart';
@@ -24,6 +23,7 @@ import '../../protocol_layout.dart';
 import '../widgets/protocol_editor.dart';
 import '../widgets/task_form_sheet.dart';
 import '../widgets/tasks_tab.dart' show TeamOrgBadge, outcomeColor;
+import '../../../../core/services/native/native_file_service.dart'; // NATIVE_MISC
 
 const _saveDebounce = Duration(milliseconds: 800);
 const _avatarColors = [
@@ -663,7 +663,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
           .protocolFileName(_title, d != null ? DateFormat('yyyy-MM-dd').format(d) : '')
           .trim()
           .replaceAll(RegExp(r'[\\/:*?"<>|]+'), '-');
-      await Printing.sharePdf(bytes: bytes, filename: '$name.pdf');
+      await NativeFileService.saveBytes(bytes, '$name.pdf'); // NATIVE_MISC
     } catch (_) {
       if (mounted) ToastHelper.showError(context, context.l10n.protocolPdfFailed);
     }
