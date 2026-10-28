@@ -168,13 +168,30 @@ final allPersonsForAttendanceProvider = FutureProvider.autoDispose<List<Person>>
       ) ??
       const [];
 
-  return response.map((e) {
-    final instrumentData = e['instrument'] as Map<String, dynamic>?;
-    return Person.fromJson(e as Map<String, dynamic>).copyWith(
-      groupName: instrumentData?['name'] as String?,
-    );
-  }).toList();
+  return response
+      .map((e) => personFromPlayerRowWithGroup(e as Map<String, dynamic>))
+      .toList();
 });
+
+/// GROUP_ORDER: a `player` row loaded with `instrument:instrument(id, name)`
+/// carries the group as an embedded object, not as the id. `Person.instrument`
+/// must stay the group id (Ionic `getModifiedAttendanceData`:
+/// `instrument = person.instrument.id`, `groupName = person.instrument.name`),
+/// otherwise every person has `instrument == null` and the Ionic group order
+/// (main group first, group sort_order, name) and the helper group filter
+/// silently fall back to the query order.
+Person personFromPlayerRowWithGroup(Map<String, dynamic> row) {
+  final instrumentData = row['instrument'];
+  if (instrumentData is Map) {
+    final id = instrumentData['id'];
+    return Person.fromJson({
+      ...row,
+      'instrument': id is int ? id : int.tryParse('$id'),
+    }).copyWith(groupName: instrumentData['name']?.toString());
+  }
+  // Older cache entries / plain rows: `instrument` is already the id.
+  return Person.fromJson(row);
+}
 
 /// Persons for the Termin page. LOGIC_ATT: not filtered by paused/left –
 /// the page shows exactly the persons that have a row in the Termin

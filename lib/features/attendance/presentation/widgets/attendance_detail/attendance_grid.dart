@@ -18,16 +18,22 @@ import '../../../../../l10n/l10n.dart';
 ///    last name (JS `localeCompare`).
 ///
 /// IOS_DETAIL: equal keys keep their incoming order (JS sort is stable).
+///
+/// GROUP_ORDER: [usePersonSortOrder] = false sorts the persons of a group
+/// by last name only. That is what the Ionic Termin page renders: its
+/// `attendanceSelect` never loads `player.sort_order`, so the person
+/// sort_order branch of `Utils.sortPlayers` never applies there.
 List<Person> sortPersonsByGroup(
   List<Person> persons, {
   List<Group> groups = const [],
   int? mainGroupId,
+  bool usePersonSortOrder = true,
 }) {
   final byId = {for (final g in groups) g.id: g};
 
   int personCmp(Person a, Person b) {
-    final ao = a.sortOrder;
-    final bo = b.sortOrder;
+    final ao = usePersonSortOrder ? a.sortOrder : null;
+    final bo = usePersonSortOrder ? b.sortOrder : null;
     if (ao != null && bo != null) return ao.compareTo(bo);
     if (ao != null) return -1;
     if (bo != null) return 1;
