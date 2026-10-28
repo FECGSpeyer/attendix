@@ -43,6 +43,7 @@ final attendanceDetailProvider = FutureProvider.autoDispose.family<Attendance?, 
   final response = await const AttendanceDetailCache().fetchWithCache<Map<String, dynamic>>(
     key: _detailCacheKey(ref, tenant!.id!, attendanceId, 'attendance'), // SOL_FIX7
     scope: _cacheScope(ref, tenant.id!), // SOL_FIX8
+    currentUserId: ref.read(offlineQueueUserIdProvider), // SOL_FIX9
     isOnline: ref.read(connectivityCheckProvider),
     fetch: () => supabase
         .from('attendance')
@@ -71,6 +72,7 @@ final attendanceTypeForAttendanceProvider = FutureProvider.autoDispose.family<At
   final response = await const AttendanceDetailCache().fetchWithCache<Map<String, dynamic>>(
     key: _detailCacheKey(ref, tenant!.id!, attendanceId, 'type'), // SOL_FIX7
     scope: _cacheScope(ref, tenant.id!), // SOL_FIX8
+    currentUserId: ref.read(offlineQueueUserIdProvider), // SOL_FIX9
     isOnline: ref.read(connectivityCheckProvider),
     fetch: () => supabase
         .from('attendance_types')
@@ -101,6 +103,7 @@ final personAttendancesForAttendanceProvider = FutureProvider.autoDispose.family
   final loaded = await const AttendanceDetailCache().fetchWithCache<List<dynamic>>(
         key: _detailCacheKey(ref, tenantId, attendanceId, 'persons'), // SOL_FIX7
         scope: _cacheScope(ref, tenantId), // SOL_FIX8
+        currentUserId: ref.read(offlineQueueUserIdProvider), // SOL_FIX9
         isOnline: ref.read(connectivityCheckProvider),
         fetch: () => supabase
             .from('person_attendances')
@@ -155,6 +158,7 @@ final allPersonsForAttendanceProvider = FutureProvider.autoDispose<List<Person>>
   final response = await const AttendanceDetailCache().fetchWithCache<List<dynamic>>(
         key: _playersCacheKey(ref, tenant.id!), // SOL_FIX7
         scope: _cacheScope(ref, tenant.id!), // SOL_FIX8
+        currentUserId: ref.read(offlineQueueUserIdProvider), // SOL_FIX9
         isOnline: ref.read(connectivityCheckProvider),
         fetch: () => supabase
             .from('player')

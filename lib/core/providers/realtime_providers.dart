@@ -6,7 +6,11 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../config/supabase_config.dart';
 import '../services/attendance_list_cache.dart';
 import '../services/attendance_detail_cache.dart'
-    show isAuthOrPermissionError, isOfflineFallbackError, purgeOfflineReadCachesFor; // SOL_FIX7, SOL_FIX8
+    show
+        OfflineReadCacheGuard,
+        isAuthOrPermissionError,
+        isOfflineFallbackError,
+        purgeOfflineReadCachesFor; // SOL_FIX7, SOL_FIX8, SOL_FIX9
 import '../services/offline_queue_service.dart'
     show connectivityCheckProvider, offlineQueueUserIdProvider;
 import '../utils/attendance_percentage_utils.dart';
@@ -152,6 +156,14 @@ final realtimeAttendanceListProvider = FutureProvider.autoDispose<List<Attendanc
   // SOL_FIX7: the offline copy belongs to the signed-in user + tenant; no
   // user → no cache.
   final cacheUserId = ref.read(offlineQueueUserIdProvider)();
+  // SOL_FIX9: cache session captured before the load; a result arriving
+  // after sign-out / account switch is not stored.
+  final cacheGuard = cacheUserId == null
+      ? null
+      : OfflineReadCacheGuard.capture(
+          userId: cacheUserId,
+          currentUserId: ref.read(offlineQueueUserIdProvider),
+        );
 
   // LOGIC_SELF: Ionic att-list getAttendance — offline the cached list is
   // shown (offline_att_list_v1_<tenant>).
@@ -206,7 +218,9 @@ final realtimeAttendanceListProvider = FutureProvider.autoDispose<List<Attendanc
   }).toList();
   ref.read(loadedAttendanceIdsProvider).ids =
       attendances.map((a) => a.id).whereType<int>().toSet();
-  if (cacheUserId != null) await cache.save(cacheUserId, tenantId, attendances);
+  if (cacheUserId != null) {
+    await cache.save(cacheUserId, tenantId, attendances, guard: cacheGuard);
+  }
   return attendances;
 });
 

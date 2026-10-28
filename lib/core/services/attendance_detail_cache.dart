@@ -37,10 +37,15 @@ class AttendanceDetailCache {
   static String tenantPrefixFor(String userId, int tenantId) =>
       '$prefix${userId}_${tenantId}_';
 
-  Future<void> save(String key, Object? json) async {
+  /// Stores [json] under [key]. SOL_FIX9: with a [guard], nothing is written
+  /// once the session it was captured in has ended (sign-out, account
+  /// switch, [clearOfflineReadCaches]) — the check runs right before the
+  /// synchronous in-memory write, so a concurrent clear cannot be undone.
+  Future<void> save(String key, Object? json, {OfflineReadCacheGuard? guard}) async {
     if (json == null) return;
     try {
       final prefs = await SharedPreferences.getInstance();
+      if (guard != null && !guard.isCurrent) return;
       await prefs.setString(key, jsonEncode(json));
     } catch (e) {
       debugPrint('[AttendanceDetailCache] save failed: $e');
@@ -82,13 +87,23 @@ class AttendanceDetailCache {
   /// that returns null (row deleted / no longer visible) removes [key].
   ///
   /// [key] is null when no user is signed in: then nothing is cached.
+  ///
+  /// SOL_FIX9: the cache session (generation + [scope] user, re-read via
+  /// [currentUserId]) is captured BEFORE the fetch; a result that arrives
+  /// after sign-out / account switch / [clearOfflineReadCaches] is returned
+  /// but not stored, so a cleared cache is never recreated.
   Future<T?> fetchWithCache<T extends Object>({
     required String? key,
     required Future<bool> Function() isOnline,
     required Future<T?> Function() fetch,
     OfflineCacheScope? scope,
+    String? Function()? currentUserId,
   }) async {
     if (key == null) return fetch();
+    final guard = OfflineReadCacheGuard.capture(
+      userId: scope?.userId,
+      currentUserId: currentUserId,
+    );
     if (!await isOnline()) {
       final cached = await load(key);
       if (cached is T) return cached;
@@ -115,8 +130,52 @@ class AttendanceDetailCache {
       await remove(key);
       return null;
     }
-    await save(key, fresh);
+    await save(key, fresh, guard: guard);
     return fresh;
+  }
+}
+
+/// SOL_FIX9: session generation of the offline read caches. Bumped
+/// (synchronously) by [clearOfflineReadCaches] / [bumpOfflineReadCacheGeneration]
+/// on sign-out and account switch; a load captured in an older generation
+/// must not write its result into the cache any more.
+int _offlineReadCacheGeneration = 0;
+
+/// Current offline read cache session generation (see [OfflineReadCacheGuard]).
+int get offlineReadCacheGeneration => _offlineReadCacheGeneration;
+
+/// Ends the current offline read cache session: every in-flight load stops
+/// being allowed to write its result into the cache.
+void bumpOfflineReadCacheGeneration() => _offlineReadCacheGeneration++;
+
+/// SOL_FIX9: the offline read cache session a load started in. Captured
+/// before the fetch; [isCurrent] is checked right before the cache write.
+///
+/// The tenant is part of every cache key, so a result is always stored for
+/// the tenant it was loaded for; a tenant switch does not end the session.
+class OfflineReadCacheGuard {
+  /// [userId]: signed-in user at capture time; [currentUserId] re-reads the
+  /// signed-in user at write time (both optional: then only the generation
+  /// is checked).
+  OfflineReadCacheGuard.capture({this.userId, String? Function()? currentUserId})
+      : generation = _offlineReadCacheGeneration,
+        _currentUserId = currentUserId;
+
+  final int generation;
+  final String? userId;
+  final String? Function()? _currentUserId;
+
+  /// Whether the session is unchanged: same generation and (when known)
+  /// still the same signed-in user.
+  bool get isCurrent {
+    if (generation != _offlineReadCacheGeneration) return false;
+    final read = _currentUserId;
+    if (userId == null || read == null) return true;
+    try {
+      return read() == userId;
+    } catch (_) {
+      return false;
+    }
   }
 }
 
@@ -132,7 +191,11 @@ const List<String> offlineReadCachePrefixes = [
 
 /// SOL_FIX7: removes every offline read cache entry (all users, all
 /// tenants). Called on sign-out and account switch. Never throws.
+///
+/// SOL_FIX9: first (synchronously) ends the cache session, so loads still in
+/// flight cannot recreate entries after the clear.
 Future<void> clearOfflineReadCaches() async {
+  bumpOfflineReadCacheGeneration();
   try {
     final prefs = await SharedPreferences.getInstance();
     final keys = prefs
