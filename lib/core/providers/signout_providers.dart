@@ -5,6 +5,8 @@ import '../constants/enums.dart';
 import '../utils/event_list_utils.dart';
 import 'self_service_providers.dart';
 import 'tenant_providers.dart';
+import '../services/tracking/tracking_event.dart';
+import '../services/tracking/tracking_service.dart';
 
 /// ATTENDANCE_SIGNOUT: providers for "Meine Termine" (Ionic signout page).
 
@@ -153,12 +155,14 @@ class SignoutNotifier extends Notifier<AsyncValue<void>> {
   Future<bool> signIn(CrossTenantPersonAttendance att, {String notes = ''}) {
     final id = att.id;
     if (id == null) return Future.value(false);
-    return _run(() => _repo.signIn(id, SignInType.fromStatus(att.status), notes: notes));
+    return _run(() => _repo.signIn(id, SignInType.fromStatus(att.status), notes: notes)
+        .then((_) => ref.read(trackingServiceProvider).track(TrackingEvent.attendanceCheckIn)));
   }
 
   /// Absagen / Verspätung with reason.
   Future<bool> signOut(List<String> ids, String reason, {required bool isLate}) {
-    return _run(() => _repo.signOut(ids, reason, isLateComing: isLate, isSelf: true));
+    return _run(() => _repo.signOut(ids, reason, isLateComing: isLate, isSelf: true)
+        .then((_) => ref.read(trackingServiceProvider).track(TrackingEvent.attendanceCheckOut, properties: {'count': ids.length, 'isLate': isLate})));
   }
 
   /// Notiz anpassen.

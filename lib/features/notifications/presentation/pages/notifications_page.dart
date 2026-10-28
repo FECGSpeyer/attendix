@@ -13,6 +13,8 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/tenant/tenant.dart';
+import '../../../../core/services/tracking/tracking_event.dart';
+import '../../../../core/services/tracking/tracking_service.dart';
 
 /// Notifications settings page (Ionic notifications.page).
 ///
@@ -94,6 +96,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
     setState(() => _config = newConfig);
     try {
       await ref.read(telegramServiceProvider).updateNotificationConfig(newConfig);
+      ref.read(trackingServiceProvider).track(TrackingEvent.notificationSettingsChanged, properties: {'enabled': newConfig.enabled, 'pushEnabled': newConfig.pushEnabled});
     } catch (_) {
       if (mounted) {
         setState(() => _config = previous);

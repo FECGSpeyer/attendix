@@ -6,11 +6,41 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/date_helper.dart';
 import '../../../../data/models/song/song.dart';
 import '../../data/providers/upcoming_songs_provider.dart';
+import '../../../../core/providers/self_service_providers.dart';
+import '../../../../core/providers/tenant_providers.dart';
+import '../../../../core/utils/toast_helper.dart';
+import '../../../songs/data/song_print_service.dart';
 import 'song_options_sheet.dart';
 
 /// Bottom sheet showing upcoming songs grouped by date
 class UpcomingSongsSheet extends ConsumerWidget {
   const UpcomingSongsSheet({super.key});
+
+  /// One merged PDF of all upcoming songs' files for the player's own
+  /// instrument (choir: fallback to files noted "Chor").
+  Future<void> _printAllCurrentFiles(BuildContext context, WidgetRef ref) async {
+    final groups = ref.read(upcomingSongsProvider).valueOrNull ?? const [];
+    final player = await ref.read(currentSelfServicePlayerProvider.future);
+    final instrumentId =
+        player?.instrument ?? await ref.read(currentPlayerInstrumentProvider.future);
+    final isChoir = ref.read(currentTenantProvider)?.type == 'choir';
+    final entries = collectCurrentSongPrintEntries(groups, instrumentId, isChoir: isChoir);
+    if (!context.mounted) return;
+    if (entries.isEmpty) {
+      ToastHelper.showWarning(context, 'Keine Noten für dein Instrument gefunden.');
+      return;
+    }
+    final result = await ref
+        .read(songPrintServiceProvider)
+        .printEntries(entries, 'aktuelle_noten.pdf');
+    if (!context.mounted || result == null) return;
+    if (result.pageCount == 0) {
+      ToastHelper.showWarning(context, 'Keine druckbaren Noten gefunden.');
+    } else if (result.skipped > 0) {
+      ToastHelper.showWarning(
+          context, '${result.skipped} Datei(en) konnten nicht eingebunden werden.');
+    }
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -56,6 +86,12 @@ class UpcomingSongsSheet extends ConsumerWidget {
                               fontWeight: FontWeight.bold,
                             ),
                       ),
+                    ),
+                    // MISC2: Ionic signout printAllCurrentFiles
+                    IconButton(
+                      tooltip: 'Alle Noten drucken',
+                      icon: const Icon(Icons.print_outlined),
+                      onPressed: () => _printAllCurrentFiles(context, ref),
                     ),
                     IconButton(
                       icon: const Icon(Icons.close),
@@ -291,6 +327,29 @@ class _SongListItem extends StatelessWidget {
       playerInstrumentId: playerInstrumentId,
     );
   }
+}
+
+/// Collects one print entry per upcoming song: the file for [instrumentId],
+/// or for choirs the file noted "Chor" (Ionic printAllCurrentFiles).
+List<SongPrintEntry> collectCurrentSongPrintEntries(
+  List<UpcomingSongGroup> groups,
+  int? instrumentId, {
+  required bool isChoir,
+}) {
+  final entries = <SongPrintEntry>[];
+  for (final group in groups) {
+    for (final his in group.songs) {
+      final song = his.song;
+      final files = song?.files;
+      if (song == null || files == null) continue;
+      var file = files.where((f) => f.instrumentId == instrumentId).firstOrNull;
+      if (file == null && isChoir) {
+        file = files.where((f) => f.note?.toLowerCase() == 'chor').firstOrNull;
+      }
+      if (file != null) entries.add(SongPrintEntry(song: song, file: file));
+    }
+  }
+  return entries;
 }
 
 /// Shows the upcoming songs sheet as a bottom sheet

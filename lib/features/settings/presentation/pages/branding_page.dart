@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/providers/branding_providers.dart';
 import '../../../../core/providers/files_providers.dart';
 import '../../../../core/providers/organisation_providers.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -84,6 +85,7 @@ class _BrandingPageState extends ConsumerState<BrandingPage> {
             brandingText: _textController.text,
           );
       ref.invalidate(brandingOrganisationProvider);
+      ref.invalidate(brandingSourceProvider); // MISC2: refresh export branding
       ref.invalidate(currentOrganisationProvider);
       if (mounted) ToastHelper.showSuccess(context, 'Branding gespeichert.');
     } catch (e) {

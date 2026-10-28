@@ -6,8 +6,10 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/providers/branding_providers.dart';
 import '../../../../core/providers/player_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
+import '../../../../core/services/pdf_branding.dart';
 import '../../../../core/services/register_plan_service.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
@@ -490,6 +492,8 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
     final tenant = ref.read(currentTenantProvider);
     final plan = _generatedPlan!;
     final date = DateFormat('dd.MM.yyyy').format(DateTime.now());
+    // MISC2: letterhead with tenant/org branding (Ionic addBrandingHeader)
+    final branding = ref.read(includeBrandingProvider) ? await resolvePdfBranding(ref) : null;
 
     final pdf = pw.Document();
 
@@ -509,16 +513,11 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
         build: (context) => pw.Column(
           crossAxisAlignment: pw.CrossAxisAlignment.start,
           children: [
-            pw.Text(
-              '${tenant?.shortName ?? 'Gruppe'} - Registerprobenplan',
-              style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold),
+            buildPdfBrandingHeader(
+              branding: branding,
+              title: '${tenant?.shortName ?? 'Gruppe'} Registerprobenplan',
+              subtitle: 'Stand: $date | ${plan.totalMinutes} Min. | ${plan.minutesPerUnit} Min./Einheit',
             ),
-            pw.SizedBox(height: 4),
-            pw.Text(
-              'Stand: $date | ${plan.totalMinutes} Min. | ${plan.minutesPerUnit} Min./Einheit',
-              style: const pw.TextStyle(fontSize: 10),
-            ),
-            pw.SizedBox(height: 16),
             pw.TableHelper.fromTextArray(
               headers: headers,
               data: data,

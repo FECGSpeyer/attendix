@@ -7,6 +7,7 @@ import 'package:printing/printing.dart';
 
 import '../../data/models/plan/plan.dart';
 import '../utils/plan_utils.dart';
+import 'pdf_branding.dart';
 
 /// One plan page of an export.
 class PlanExportPage {
@@ -35,10 +36,11 @@ class PlanExportPage {
 class PlanExportService {
   const PlanExportService();
 
-  static const _green = PdfColor.fromInt(0xFF005238);
-
   /// Builds the PDF. Every page in [pages] becomes its own PDF page.
-  Future<Uint8List> buildPdf(List<PlanExportPage> pages, {bool sideBySide = false}) async {
+  ///
+  /// [branding] (logo + text) is drawn in the letterhead of every page
+  /// (Ionic `Utils.addBrandingHeader`); without it only title/subtitle/rule.
+  Future<Uint8List> buildPdf(List<PlanExportPage> pages, {bool sideBySide = false, PdfBranding? branding}) async {
     final doc = pw.Document();
     for (final page in pages) {
       if (sideBySide) {
@@ -48,21 +50,26 @@ class PlanExportService {
           build: (_) => pw.Row(
             crossAxisAlignment: pw.CrossAxisAlignment.start,
             children: [
-              pw.Expanded(child: _planContent(page, small: true)),
+              pw.Expanded(child: _withHeader(page, branding)),
               pw.Container(
                 width: 1,
                 margin: const pw.EdgeInsets.symmetric(horizontal: 12),
                 color: PdfColors.grey400,
                 height: PdfPageFormat.a4.landscape.availableHeight,
               ),
-              pw.Expanded(child: _planContent(page, small: true)),
+              pw.Expanded(child: _withHeader(page, branding)),
             ],
           ),
         ));
       } else {
         doc.addPage(pw.MultiPage(
           pageFormat: PdfPageFormat.a4,
-          margin: const pw.EdgeInsets.all(36),
+          margin: const pw.EdgeInsets.fromLTRB(36, 28, 36, 36),
+          header: (_) => buildPdfBrandingHeader(
+            branding: branding,
+            title: page.title,
+            subtitle: page.subtitle,
+          ),
           build: (_) => [_planContent(page, small: false)],
         ));
       }
@@ -71,8 +78,8 @@ class PlanExportService {
   }
 
   /// Renders the first page of the PDF as PNG (for "Als Bild").
-  Future<Uint8List> buildImage(List<PlanExportPage> pages, {bool sideBySide = false}) async {
-    final pdf = await buildPdf(pages, sideBySide: sideBySide);
+  Future<Uint8List> buildImage(List<PlanExportPage> pages, {bool sideBySide = false, PdfBranding? branding}) async {
+    final pdf = await buildPdf(pages, sideBySide: sideBySide, branding: branding);
     await for (final page in Printing.raster(pdf, pages: const [0], dpi: 150)) {
       return page.toPng();
     }
@@ -80,15 +87,32 @@ class PlanExportService {
   }
 
   /// Opens the system print / save dialog with the PDF.
-  Future<void> sharePdf(List<PlanExportPage> pages, {bool sideBySide = false, required String fileName}) async {
-    final bytes = await buildPdf(pages, sideBySide: sideBySide);
+  Future<void> sharePdf(List<PlanExportPage> pages,
+      {bool sideBySide = false, required String fileName, PdfBranding? branding}) async {
+    final bytes = await buildPdf(pages, sideBySide: sideBySide, branding: branding);
     await Printing.layoutPdf(onLayout: (_) async => bytes, name: '$fileName.pdf');
   }
 
   /// Saves the PNG via the share sheet / download.
-  Future<void> shareImage(List<PlanExportPage> pages, {bool sideBySide = false, required String fileName}) async {
-    final bytes = await buildImage(pages, sideBySide: sideBySide);
+  Future<void> shareImage(List<PlanExportPage> pages,
+      {bool sideBySide = false, required String fileName, PdfBranding? branding}) async {
+    final bytes = await buildImage(pages, sideBySide: sideBySide, branding: branding);
     await Printing.sharePdf(bytes: bytes, filename: '$fileName.png');
+  }
+
+  pw.Widget _withHeader(PlanExportPage page, PdfBranding? branding) {
+    return pw.Column(
+      crossAxisAlignment: pw.CrossAxisAlignment.start,
+      children: [
+        buildPdfBrandingHeader(
+          branding: branding,
+          title: page.title,
+          subtitle: page.subtitle,
+          compact: true,
+        ),
+        _planContent(page, small: true),
+      ],
+    );
   }
 
   pw.Widget _planContent(PlanExportPage page, {required bool small}) {
@@ -189,11 +213,6 @@ class PlanExportService {
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
-        pw.Text(page.title,
-            style: pw.TextStyle(fontSize: small ? 13 : 18, fontWeight: pw.FontWeight.bold, color: _green)),
-        pw.SizedBox(height: 2),
-        pw.Text(page.subtitle, style: pw.TextStyle(fontSize: small ? 9 : 12, color: PdfColors.grey700)),
-        pw.SizedBox(height: small ? 8 : 14),
         pw.Table(
           columnWidths: {
             0: pw.FixedColumnWidth(small ? 46 : 64),
