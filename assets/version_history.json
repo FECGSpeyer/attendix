@@ -1,6 +1,20 @@
 {
   "versions": [
     {
+      "version": "0.6.0",
+      "date": "28.10.2026",
+      "changes": [
+        "✨ Schichtpläne bestimmen den Status bei neuen Terminen, Datums- und Zeitänderungen",
+        "✨ Registerprobenplan wie in der bisherigen App (Gruppen, Dirigenten, Telegram)",
+        "✨ Termin- und Liederliste auch offline verfügbar",
+        "🎨 Anmeldung, Registrierung und Fehlermeldungen wie gewohnt, mit 'Erneut versuchen'",
+        "🔒 Archivieren, Löschen und Ablehnen entfernen den Zugang sauber",
+        "🐛 Prozentwerte und Statistiken rechnen wie in der bisherigen App",
+        "🐛 Eltern sehen wieder alle ihre Kinder",
+        "🐛 Neue Termintypen und Gruppenlöschung speichern korrekt"
+      ]
+    },
+    {
       "version": "0.5.0",
       "date": "28.10.2026",
       "changes": [
