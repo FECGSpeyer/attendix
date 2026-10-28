@@ -69,7 +69,7 @@ Future<void> showCalendarSubscriptionDialog(BuildContext context, WidgetRef ref)
                 children: [
                   Padding(
                     padding: EdgeInsets.fromLTRB(30, 0, 30, personal ? 21 : 19),
-                    child: SelectableText(ctx.l10n.settingsCalendarMessage(link)),
+                    child: SelectableText(_htmlMessage(ctx.l10n.settingsCalendarMessage(link))),
                   ),
                   if (personal)
                     _IosAlertCheckbox(
@@ -82,11 +82,15 @@ Future<void> showCalendarSubscriptionDialog(BuildContext context, WidgetRef ref)
             // IOS_FORMS1 (md): message, then the checkbox group between two
             // hairlines (`.alert-checkbox-group` border-top/-bottom) on the
             // dialog background.
-            : Column(
+            // PARITY_R3: Ionic md alert ≈272 wide (min 250, the long link
+            // wraps anywhere instead of widening the alert).
+            : SizedBox(
+                width: 224,
+                child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  SelectableText(ctx.l10n.settingsCalendarMessage(link)),
+                  SelectableText(_htmlMessage(ctx.l10n.settingsCalendarMessage(link))),
                   if (personal) ...[
                     const SizedBox(height: 16),
                     _MdAlertCheckbox(
@@ -96,6 +100,7 @@ Future<void> showCalendarSubscriptionDialog(BuildContext context, WidgetRef ref)
                     ),
                   ],
                 ],
+              ),
               ),
         // 3 buttons: stacked (iOS pills / md right-aligned uppercase),
         // laid out centrally by AppAlertDialog.
@@ -263,3 +268,8 @@ class _IosAlertCheckbox extends StatelessWidget {
     );
   }
 }
+
+/// PARITY_R3: ion-alert renders `message` as HTML – line breaks collapse
+/// to a space, so the link follows the text inline.
+String _htmlMessage(String message) =>
+    message.replaceAll(RegExp(r'\s*\n\s*'), ' ');

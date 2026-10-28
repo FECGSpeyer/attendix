@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:attendix/core/theme/app_theme.dart';
+import 'package:attendix/features/attendance/presentation/widgets/attendance_detail/attendance_accordion.dart';
 import 'package:attendix/shared/widgets/adaptive/adaptive.dart';
 import 'package:attendix/shared/widgets/dialogs/ion_modal.dart';
 import 'package:attendix/shared/widgets/layout/main_shell.dart';
@@ -91,6 +92,63 @@ void main() {
     expect(find.text('SPIELER'), findsOneWidget);
     expect(find.text('ANWESENHEIT'), findsOneWidget);
   }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
+
+  testWidgets('md segment buttons are at most 360 wide, centred',
+      (tester) async {
+    await setSize(tester, const Size(1440, 900));
+    await tester.pumpWidget(MaterialApp(
+      theme: AppTheme.light,
+      home: Scaffold(
+        body: IonSegment<String>(
+          value: 'a',
+          onChanged: (_) {},
+          items: const [
+            IonSegmentItem(value: 'a', label: Text('A')),
+            IonSegmentItem(value: 'b', label: Text('B')),
+          ],
+        ),
+      ),
+    ));
+    final a = tester.getCenter(find.text('A'));
+    final b = tester.getCenter(find.text('B'));
+    expect(b.dx - a.dx, 360);
+    expect((a.dx + b.dx) / 2, 720);
+  }, variant: TargetPlatformVariant.only(TargetPlatform.android));
+
+  for (final platform in [TargetPlatform.iOS, TargetPlatform.android]) {
+    testWidgets('accordion uses the ionicon chevron-down ($platform)',
+        (tester) async {
+      await tester.pumpWidget(MaterialApp(
+        theme: AppTheme.light,
+        home: const Scaffold(
+          body: AttendanceAccordion(
+            title: Text('Allgemein'),
+            children: [Text('Inhalt')],
+          ),
+        ),
+      ));
+      expect(find.byType(IonChevronDownIcon), findsOneWidget);
+      final icon =
+          tester.widget<IonChevronDownIcon>(find.byType(IonChevronDownIcon));
+      expect(icon.size, platform == TargetPlatform.iOS ? 20 : 24);
+      await tester.tap(find.text('Allgemein'));
+      await tester.pumpAndSettle();
+      expect(find.text('Inhalt'), findsOneWidget);
+      expect(
+          tester
+              .widget<AnimatedRotation>(find.byType(AnimatedRotation))
+              .turns,
+          0.5);
+    }, variant: TargetPlatformVariant.only(platform));
+  }
+
+  test('md dark page is #121212 (Ionic md dark)', () {
+    expect(
+      AppTheme.forPlatform(Brightness.dark, TargetPlatform.android)
+          .scaffoldBackgroundColor,
+      const Color(0xFF121212),
+    );
+  });
 
   testWidgets('isKeyboardOpen follows the bottom view inset', (tester) async {
     bool? open;

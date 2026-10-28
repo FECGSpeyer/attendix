@@ -138,6 +138,9 @@ class IonSegment<T> extends StatelessWidget {
   /// iOS height (ionic-theme-ios26 `min-height: 31px`).
   static const double height = 31;
 
+  /// md `ion-segment-button` max-width.
+  static const double mdButtonMaxWidth = 360;
+
   /// md height (`ion-segment-button` md min-height 48px).
   static const double mdHeight = 48;
 
@@ -314,7 +317,17 @@ class IonSegment<T> extends StatelessWidget {
       type: MaterialType.transparency,
       child: scrollable
           ? SingleChildScrollView(scrollDirection: Axis.horizontal, child: row)
-          : row,
+          : natural
+              ? row
+              // PARITY_R3: md `ion-segment-button { max-width: 360px }` –
+              // on wide screens the buttons stay 360 wide, centred.
+              : Center(
+                  child: ConstrainedBox(
+                    constraints:
+                        BoxConstraints(maxWidth: mdButtonMaxWidth * items.length),
+                    child: row,
+                  ),
+                ),
     );
   }
 }

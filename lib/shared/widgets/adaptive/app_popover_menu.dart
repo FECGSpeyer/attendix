@@ -308,17 +308,20 @@ class _PopoverLayerState<T> extends State<_PopoverLayer<T>> {
     final rowRect = _openRowRect;
     if (openIndex != null && rowRect != null && openIndex < _items.length) {
       final sub = _items[openIndex].submenuItems!();
+      // Nested popovers keep Ionic's default width (iOS `--width: 200px`,
+      // md 250px).
+      final sw = math.min(ios ? 200.0 : 250.0, size.width - 2 * _margin);
       // side="start": right edge at the trigger's left edge, top aligned;
       // pushed back into the viewport when there is no room.
-      final subLeft = (left - w)
-          .clamp(_margin, math.max(_margin, size.width - w - _margin))
+      final subLeft = (left - sw)
+          .clamp(_margin, math.max(_margin, size.width - sw - _margin))
           .toDouble();
       final subTop = rowRect.top;
       children.add(
         Positioned(
           top: subTop,
           left: subLeft,
-          width: w,
+          width: sw,
           child: ConstrainedBox(
             constraints: BoxConstraints(
               maxHeight: math.max(

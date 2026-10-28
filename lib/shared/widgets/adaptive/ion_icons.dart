@@ -65,3 +65,62 @@ class _InformationOutlinePainter extends CustomPainter {
   @override
   bool shouldRepaint(_InformationOutlinePainter old) => old.color != color;
 }
+
+/// PARITY_R3: ionicon `chevron-down` (the `ion-accordion` toggle icon),
+/// polyline 112,184 256,328 400,184 on a 512 viewBox. [strokeWidth] in
+/// viewBox units (ionicons: 48; bolder for the iOS 26 theme).
+class IonChevronDownIcon extends StatelessWidget {
+  const IonChevronDownIcon({
+    super.key,
+    this.size,
+    this.color,
+    this.strokeWidth = 48,
+  });
+
+  final double? size;
+  final Color? color;
+  final double strokeWidth;
+
+  @override
+  Widget build(BuildContext context) {
+    final iconTheme = IconTheme.of(context);
+    final s = size ?? iconTheme.size ?? 24;
+    final c = color ?? iconTheme.color ?? const Color(0xFF000000);
+    return Semantics(
+      excludeSemantics: true,
+      child: SizedBox(
+        width: s,
+        height: s,
+        child: CustomPaint(painter: _ChevronDownPainter(c, strokeWidth)),
+      ),
+    );
+  }
+}
+
+class _ChevronDownPainter extends CustomPainter {
+  const _ChevronDownPainter(this.color, this.strokeWidth);
+
+  final Color color;
+  final double strokeWidth;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    canvas.scale(size.shortestSide / 512);
+    canvas.drawPath(
+      Path()
+        ..moveTo(112, 184)
+        ..lineTo(256, 328)
+        ..lineTo(400, 184),
+      Paint()
+        ..color = color
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = strokeWidth
+        ..strokeCap = StrokeCap.round
+        ..strokeJoin = StrokeJoin.round,
+    );
+  }
+
+  @override
+  bool shouldRepaint(_ChevronDownPainter old) =>
+      old.color != color || old.strokeWidth != strokeWidth;
+}
