@@ -17537,6 +17537,12 @@ abstract class AppLocalizations {
   /// **'Filter'**
   String get typeSettingsFilter;
 
+  /// typeSettings.flutter.allGroupsHint
+  ///
+  /// In de, this message translates to:
+  /// **'Leer = gilt für alle Gruppen'**
+  String get typeSettingsFlutterAllGroupsHint;
+
   /// typeSettings.flutter.createType
   ///
   /// In de, this message translates to:
@@ -17549,17 +17555,77 @@ abstract class AppLocalizations {
   /// **'Anwesenheitstyp \"{name}\" erstellt'**
   String typeSettingsFlutterCreatedNamed(Object name);
 
+  /// typeSettings.flutter.deadlineLabel
+  ///
+  /// In de, this message translates to:
+  /// **'Frist (Stunden vorher, optional)'**
+  String get typeSettingsFlutterDeadlineLabel;
+
+  /// typeSettings.flutter.deadlinePh
+  ///
+  /// In de, this message translates to:
+  /// **'z.B. 24 für 1 Tag'**
+  String get typeSettingsFlutterDeadlinePh;
+
+  /// typeSettings.flutter.durationMinutes
+  ///
+  /// In de, this message translates to:
+  /// **'Dauer (Minuten)'**
+  String get typeSettingsFlutterDurationMinutes;
+
+  /// typeSettings.flutter.durationPh
+  ///
+  /// In de, this message translates to:
+  /// **'z.B. 10'**
+  String get typeSettingsFlutterDurationPh;
+
+  /// typeSettings.flutter.extraField
+  ///
+  /// In de, this message translates to:
+  /// **'Zusatzfeld'**
+  String get typeSettingsFlutterExtraField;
+
+  /// typeSettings.flutter.extraFilterHint
+  ///
+  /// In de, this message translates to:
+  /// **'Nur Spieler mit diesem Zusatzfeld-Wert einbeziehen'**
+  String get typeSettingsFlutterExtraFilterHint;
+
+  /// typeSettings.flutter.fieldNamePh
+  ///
+  /// In de, this message translates to:
+  /// **'z.B. Einspielen, Pause'**
+  String get typeSettingsFlutterFieldNamePh;
+
   /// typeSettings.flutter.hidden
   ///
   /// In de, this message translates to:
   /// **'Ausgeblendet'**
   String get typeSettingsFlutterHidden;
 
+  /// typeSettings.flutter.minutes
+  ///
+  /// In de, this message translates to:
+  /// **'{minutes} Min.'**
+  String typeSettingsFlutterMinutes(Object minutes);
+
   /// typeSettings.flutter.namePh
   ///
   /// In de, this message translates to:
   /// **'z.B. Probe, Konzert, Generalprobe'**
   String get typeSettingsFlutterNamePh;
+
+  /// typeSettings.flutter.namePhShort
+  ///
+  /// In de, this message translates to:
+  /// **'z.B. Probe, Konzert'**
+  String get typeSettingsFlutterNamePhShort;
+
+  /// typeSettings.flutter.newField
+  ///
+  /// In de, this message translates to:
+  /// **'Neues Feld'**
+  String get typeSettingsFlutterNewField;
 
   /// typeSettings.flutter.newType
   ///
@@ -17573,6 +17639,18 @@ abstract class AppLocalizations {
   /// **'Keine Anwesenheitstypen vorhanden'**
   String get typeSettingsFlutterNoTypes;
 
+  /// typeSettings.flutter.notFound
+  ///
+  /// In de, this message translates to:
+  /// **'Typ nicht gefunden'**
+  String get typeSettingsFlutterNotFound;
+
+  /// typeSettings.flutter.planHeadingPh
+  ///
+  /// In de, this message translates to:
+  /// **'z.B. Probenplan'**
+  String get typeSettingsFlutterPlanHeadingPh;
+
   /// typeSettings.flutter.reorder
   ///
   /// In de, this message translates to:
@@ -17584,6 +17662,30 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Fehler beim Speichern. Bitte erneut versuchen.'**
   String get typeSettingsFlutterSaveOrderFailed;
+
+  /// typeSettings.flutter.todoPh
+  ///
+  /// In de, this message translates to:
+  /// **'z.B. Noten vorbereiten'**
+  String get typeSettingsFlutterTodoPh;
+
+  /// typeSettings.flutter.totalMinutes
+  ///
+  /// In de, this message translates to:
+  /// **'Gesamt: {minutes} Min.'**
+  String typeSettingsFlutterTotalMinutes(Object minutes);
+
+  /// typeSettings.flutter.typeTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Anwesenheitstyp'**
+  String get typeSettingsFlutterTypeTitle;
+
+  /// typeSettings.flutter.usageWarning
+  ///
+  /// In de, this message translates to:
+  /// **'Wird in {count} Termin(en) verwendet. Änderungen wirken sich auf bestehende Einträge aus.'**
+  String typeSettingsFlutterUsageWarning(Object count);
 
   /// typeSettings.flutter.withProgramme
   ///

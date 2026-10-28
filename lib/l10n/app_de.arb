@@ -12917,6 +12917,10 @@
   "@typeSettingsFilter": {
     "description": "typeSettings.filter"
   },
+  "typeSettingsFlutterAllGroupsHint": "Leer = gilt für alle Gruppen",
+  "@typeSettingsFlutterAllGroupsHint": {
+    "description": "typeSettings.flutter.allGroupsHint"
+  },
   "typeSettingsFlutterCreateType": "Typ erstellen",
   "@typeSettingsFlutterCreateType": {
     "description": "typeSettings.flutter.createType"
@@ -12928,13 +12932,56 @@
       "name": {}
     }
   },
+  "typeSettingsFlutterDeadlineLabel": "Frist (Stunden vorher, optional)",
+  "@typeSettingsFlutterDeadlineLabel": {
+    "description": "typeSettings.flutter.deadlineLabel"
+  },
+  "typeSettingsFlutterDeadlinePh": "z.B. 24 für 1 Tag",
+  "@typeSettingsFlutterDeadlinePh": {
+    "description": "typeSettings.flutter.deadlinePh"
+  },
+  "typeSettingsFlutterDurationMinutes": "Dauer (Minuten)",
+  "@typeSettingsFlutterDurationMinutes": {
+    "description": "typeSettings.flutter.durationMinutes"
+  },
+  "typeSettingsFlutterDurationPh": "z.B. 10",
+  "@typeSettingsFlutterDurationPh": {
+    "description": "typeSettings.flutter.durationPh"
+  },
+  "typeSettingsFlutterExtraField": "Zusatzfeld",
+  "@typeSettingsFlutterExtraField": {
+    "description": "typeSettings.flutter.extraField"
+  },
+  "typeSettingsFlutterExtraFilterHint": "Nur Spieler mit diesem Zusatzfeld-Wert einbeziehen",
+  "@typeSettingsFlutterExtraFilterHint": {
+    "description": "typeSettings.flutter.extraFilterHint"
+  },
+  "typeSettingsFlutterFieldNamePh": "z.B. Einspielen, Pause",
+  "@typeSettingsFlutterFieldNamePh": {
+    "description": "typeSettings.flutter.fieldNamePh"
+  },
   "typeSettingsFlutterHidden": "Ausgeblendet",
   "@typeSettingsFlutterHidden": {
     "description": "typeSettings.flutter.hidden"
   },
+  "typeSettingsFlutterMinutes": "{minutes} Min.",
+  "@typeSettingsFlutterMinutes": {
+    "description": "typeSettings.flutter.minutes",
+    "placeholders": {
+      "minutes": {}
+    }
+  },
   "typeSettingsFlutterNamePh": "z.B. Probe, Konzert, Generalprobe",
   "@typeSettingsFlutterNamePh": {
     "description": "typeSettings.flutter.namePh"
+  },
+  "typeSettingsFlutterNamePhShort": "z.B. Probe, Konzert",
+  "@typeSettingsFlutterNamePhShort": {
+    "description": "typeSettings.flutter.namePhShort"
+  },
+  "typeSettingsFlutterNewField": "Neues Feld",
+  "@typeSettingsFlutterNewField": {
+    "description": "typeSettings.flutter.newField"
   },
   "typeSettingsFlutterNewType": "Neuer Anwesenheitstyp",
   "@typeSettingsFlutterNewType": {
@@ -12944,6 +12991,14 @@
   "@typeSettingsFlutterNoTypes": {
     "description": "typeSettings.flutter.noTypes"
   },
+  "typeSettingsFlutterNotFound": "Typ nicht gefunden",
+  "@typeSettingsFlutterNotFound": {
+    "description": "typeSettings.flutter.notFound"
+  },
+  "typeSettingsFlutterPlanHeadingPh": "z.B. Probenplan",
+  "@typeSettingsFlutterPlanHeadingPh": {
+    "description": "typeSettings.flutter.planHeadingPh"
+  },
   "typeSettingsFlutterReorder": "Reihenfolge ändern",
   "@typeSettingsFlutterReorder": {
     "description": "typeSettings.flutter.reorder"
@@ -12951,6 +13006,28 @@
   "typeSettingsFlutterSaveOrderFailed": "Fehler beim Speichern. Bitte erneut versuchen.",
   "@typeSettingsFlutterSaveOrderFailed": {
     "description": "typeSettings.flutter.saveOrderFailed"
+  },
+  "typeSettingsFlutterTodoPh": "z.B. Noten vorbereiten",
+  "@typeSettingsFlutterTodoPh": {
+    "description": "typeSettings.flutter.todoPh"
+  },
+  "typeSettingsFlutterTotalMinutes": "Gesamt: {minutes} Min.",
+  "@typeSettingsFlutterTotalMinutes": {
+    "description": "typeSettings.flutter.totalMinutes",
+    "placeholders": {
+      "minutes": {}
+    }
+  },
+  "typeSettingsFlutterTypeTitle": "Anwesenheitstyp",
+  "@typeSettingsFlutterTypeTitle": {
+    "description": "typeSettings.flutter.typeTitle"
+  },
+  "typeSettingsFlutterUsageWarning": "Wird in {count} Termin(en) verwendet. Änderungen wirken sich auf bestehende Einträge aus.",
+  "@typeSettingsFlutterUsageWarning": {
+    "description": "typeSettings.flutter.usageWarning",
+    "placeholders": {
+      "count": {}
+    }
   },
   "typeSettingsFlutterWithProgramme": "Mit Programm",
   "@typeSettingsFlutterWithProgramme": {

@@ -19,6 +19,7 @@ import '../widgets/type_protocol_settings.dart'; // PROTOCOL
 import '../widgets/registration_fields_editor.dart'; // ATTENDANCE_SIGNOUT
 import '../widgets/type_reminders_editor.dart'; // SETTINGS2
 import '../../../organisation/presentation/widgets/type_default_org_plan_toggle.dart'; // ORG_PLANS
+import '../../../../l10n/l10n.dart';
 
 
 /// Attendance Type Edit Page
@@ -183,15 +184,15 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
   Widget build(BuildContext context) {
     if (_isLoading) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Anwesenheitstyp')),
+        appBar: AppBar(title: Text(context.l10n.typeSettingsFlutterTypeTitle)),
         body: const Center(child: CircularProgressIndicator()),
       );
     }
 
     if (_originalType == null) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Anwesenheitstyp')),
-        body: const Center(child: Text('Typ nicht gefunden')),
+        appBar: AppBar(title: Text(context.l10n.typeSettingsFlutterTypeTitle)),
+        body: Center(child: Text(context.l10n.typeSettingsFlutterNotFound)),
       );
     }
 
@@ -210,7 +211,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
         actions: [
           IconButton(
             icon: const Icon(Icons.delete_outline),
-            tooltip: 'Löschen',
+            tooltip: context.l10n.commonDelete,
             onPressed: _deleteType,
           ),
         ],
@@ -233,7 +234,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
-                          'Wird in $_usageCount Termin(en) verwendet. Änderungen wirken sich auf bestehende Einträge aus.',
+                          context.l10n.typeSettingsFlutterUsageWarning(_usageCount),
                           style: const TextStyle(fontSize: 12),
                         ),
                       ),
@@ -246,13 +247,13 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
             // Name
             TextFormField(
               controller: _nameController,
-              decoration: const InputDecoration(
-                labelText: 'Name *',
-                hintText: 'z.B. Probe, Konzert',
+              decoration: InputDecoration(
+                labelText: '${context.l10n.typeSettingsName} *',
+                hintText: context.l10n.typeSettingsFlutterNamePhShort,
               ),
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {
-                  return 'Bitte einen Namen eingeben';
+                  return context.l10n.typeSettingsEnterName;
                 }
                 return null;
               },
@@ -263,14 +264,14 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
             // Status, Standard-Status, Werke verwalten, Ganztägig/Zeiten, Name
             // verbergen, Hervorheben, Für Ø berücksichtigen, Protokoll, Ort.
             _buildSection(
-              title: 'Optionen',
+              title: context.l10n.typeSettingsOptions,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   SwitchListTile(
-                    title: const Text('Aktiv'),
-                    subtitle: const Text(
-                      'Wenn du diese Option deaktivierst, wird der Anwesenheitstyp beim Anlegen einer Anwesenheit nicht mehr als Option angezeigt.',
+                    title: Text(context.l10n.typeSettingsActive),
+                    subtitle: Text(
+                      context.l10n.typeSettingsActiveHelper,
                     ),
                     value: _visible,
                     onChanged: (value) => setState(() {
@@ -279,9 +280,9 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                     }),
                     contentPadding: EdgeInsets.zero,
                   ),
-                  const Padding(
+                  Padding(
                     padding: EdgeInsets.only(top: 8),
-                    child: Text('Verfügbare Anwesenheitsstatus', style: TextStyle(fontWeight: FontWeight.w600)),
+                    child: Text(context.l10n.typeSettingsAvailableStatus, style: TextStyle(fontWeight: FontWeight.w600)),
                   ),
                   ...AttendanceStatus.values.map((status) {
                     return CheckboxListTile(
@@ -309,7 +310,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                     );
                   }),
                   DropdownButtonFormField<AttendanceStatus>(
-                    decoration: const InputDecoration(labelText: 'Standard Anwesenheitsstatus'),
+                    decoration: InputDecoration(labelText: context.l10n.typeSettingsDefaultStatus),
                     value: _availableStatuses.contains(_defaultStatus)
                         ? _defaultStatus
                         : _availableStatuses.firstOrNull ?? AttendanceStatus.present,
@@ -329,9 +330,9 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                         .toList(),
                   ),
                   SwitchListTile(
-                    title: const Text('Werke verwalten'),
-                    subtitle: const Text(
-                      'Wenn du diese Option aktivierst, dann kannst du beim Anlegen einer Anwesenheit von diesem Typ, Werke hinzufügen, die für die kommenden Proben relevant sind und automatisch im Probenplan berücksichtigt werden.',
+                    title: Text(context.l10n.typeSettingsManageSongs),
+                    subtitle: Text(
+                      context.l10n.typeSettingsSongsHelper,
                     ),
                     value: _manageSongs,
                     onChanged: (value) => setState(() {
@@ -341,9 +342,9 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                     contentPadding: EdgeInsets.zero,
                   ),
                   SwitchListTile(
-                    title: const Text('Ganztägig'),
-                    subtitle: const Text(
-                      'Wenn du diese Option aktivierst, wird bei einer Anwesenheit von diesem Typ keine Uhrzeit festgelegt aber eine Dauer angegeben.',
+                    title: Text(context.l10n.typeSettingsAllDay),
+                    subtitle: Text(
+                      context.l10n.typeSettingsAllDayHelper,
                     ),
                     value: _allDay,
                     onChanged: (value) => setState(() {
@@ -357,7 +358,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                       padding: const EdgeInsets.only(bottom: 8),
                       child: Row(
                         children: [
-                          const Expanded(child: Text('Standarddauer (in Tagen)')),
+                          Expanded(child: Text(context.l10n.typeSettingsDefaultDays)),
                           SizedBox(
                             width: 60,
                             child: TextFormField(
@@ -383,9 +384,9 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                   else ...[
                     ListTile(
                       contentPadding: EdgeInsets.zero,
-                      title: const Text('Beginn'),
-                      subtitle: const Text(
-                        'Die Zeiten können nachträglich individuell in jeder Anwesenheit angepasst werden',
+                      title: Text(context.l10n.typeSettingsStart),
+                      subtitle: Text(
+                        context.l10n.typeSettingsTimesHint,
                       ),
                       trailing: Text(_formatTime(_startTime ?? const TimeOfDay(hour: 19, minute: 0)),
                           style: Theme.of(context).textTheme.titleMedium),
@@ -393,16 +394,16 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                     ),
                     ListTile(
                       contentPadding: EdgeInsets.zero,
-                      title: const Text('Ende'),
+                      title: Text(context.l10n.typeSettingsEnd),
                       trailing: Text(_formatTime(_endTime ?? const TimeOfDay(hour: 20, minute: 30)),
                           style: Theme.of(context).textTheme.titleMedium),
                       onTap: () => _pickTime(isStart: false),
                     ),
                   ],
                   SwitchListTile(
-                    title: const Text('Name verbergen'),
-                    subtitle: const Text(
-                      'Wenn du diese Option aktivierst, wird der Name dieses Anwesenheitstyps in der Liste verborgen. Nur die Zusatzinfo (falls vorhanden) wird angezeigt.',
+                    title: Text(context.l10n.typeSettingsHideName),
+                    subtitle: Text(
+                      context.l10n.typeSettingsHideNameHelper,
                     ),
                     value: _hideName,
                     onChanged: (value) => setState(() {
@@ -412,9 +413,9 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                     contentPadding: EdgeInsets.zero,
                   ),
                   SwitchListTile(
-                    title: const Text('Hervorheben'),
-                    subtitle: const Text(
-                      'Wenn du diese Option aktivierst, wird dieser Anwesenheitstyp in der Liste als Fett dargestellt.',
+                    title: Text(context.l10n.typeSettingsHighlight),
+                    subtitle: Text(
+                      context.l10n.typeSettingsHighlightHelper,
                     ),
                     value: _highlight,
                     onChanged: (value) => setState(() {
@@ -424,9 +425,9 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                     contentPadding: EdgeInsets.zero,
                   ),
                   SwitchListTile(
-                    title: const Text('Für Ø berücksichtigen'),
-                    subtitle: const Text(
-                      'Wenn diese Option aktiviert ist, wird dieser Typ beim Anwesenheitsdurchschnitt berücksichtigt.',
+                    title: Text(context.l10n.typeSettingsCountForAvg),
+                    subtitle: Text(
+                      context.l10n.typeSettingsCountForAvgHelper,
                     ),
                     value: _includeInAverage,
                     onChanged: (value) => setState(() {
@@ -450,10 +451,9 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                   ),
                   // ATTENDANCE_SIGNOUT: place / navigation
                   SwitchListTile(
-                    title: const Text('Ort / Navigation aktivieren'),
-                    subtitle: const Text(
-                      'Wenn aktiviert, kann bei Terminen dieses Typs ein Ort hinterlegt werden. '
-                      'Dieser wird dann als Navigationslink in Google Maps oder Apple Karten angezeigt.',
+                    title: Text(context.l10n.typeSettingsEnableLocation),
+                    subtitle: Text(
+                      context.l10n.typeSettingsLocationHelper,
                     ),
                     value: _placeEnabled,
                     onChanged: (value) => setState(() {
@@ -473,14 +473,13 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
 
             // Terminerinnerungen (SETTINGS2: Ionic reminders modal)
             _buildSection(
-              title: 'Terminerinnerungen',
+              title: context.l10n.typeSettingsEventReminders,
               child: Column(
                 children: [
                   SwitchListTile(
-                    title: const Text('Terminerinnerung'),
-                    subtitle: const Text(
-                      'Wenn diese Option aktiviert ist, Erinnerungen angelegt wurden und die '
-                      'Benachrichtigungen aktiviert sind, erhalten Personen eine Terminerinnerung.',
+                    title: Text(context.l10n.typeSettingsEventReminder),
+                    subtitle: Text(
+                      context.l10n.typeSettingsEventReminderHelper,
                     ),
                     value: _notification,
                     onChanged: (value) => setState(() {
@@ -504,11 +503,11 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
 
             // Color Picker
             _buildSection(
-              title: 'Darstellung',
+              title: context.l10n.typeSettingsAppearance,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Farbe', style: TextStyle(fontWeight: FontWeight.w600)),
+                  Text(context.l10n.typeSettingsColor, style: TextStyle(fontWeight: FontWeight.w600)),
                   const SizedBox(height: 8),
                   Wrap(
                 spacing: 8,
@@ -539,8 +538,8 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                 }).toList(),
               ),
                   const SizedBox(height: 8),
-                  const Text(
-                    'Die Farbe ist nur für den Kalender relevant (beim Anlegen einer Anwesenheit).',
+                  Text(
+                    context.l10n.typeSettingsColorHint,
                     style: TextStyle(fontSize: 12, color: AppColors.medium),
                   ),
                 ],
@@ -559,15 +558,15 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
             // Ablaufplan (Default Plan) - only when manageSongs is enabled
             if (_manageSongs) ...[
               _buildSection(
-                title: 'Ablaufplan',
+                title: context.l10n.typeSettingsRunSheet,
                 child: Column(
                   children: [
                     // Planning title
                     TextFormField(
                       controller: _planningTitleController,
-                      decoration: const InputDecoration(
-                        labelText: 'Ablaufplan Überschrift',
-                        hintText: 'z.B. Probenplan',
+                      decoration: InputDecoration(
+                        labelText: context.l10n.typeSettingsPlanHeading,
+                        hintText: context.l10n.typeSettingsFlutterPlanHeadingPh,
                       ),
                       onChanged: (value) {
                         _planningTitle = value;
@@ -578,9 +577,9 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                     if (ref.watch(currentTenantProvider)?.type != 'general')
                       SwitchListTile(
                         contentPadding: EdgeInsets.zero,
-                        title: const Text('Instanz-Name vor Werken'),
-                        subtitle: const Text(
-                          'Falls aktiviert, wird der Instanz-Name vor jedem Werk im Ablaufplan angezeigt.',
+                        title: Text(context.l10n.typeSettingsTenantNameBefore),
+                        subtitle: Text(
+                          context.l10n.typeSettingsTenantNameHelper,
                         ),
                         value: _planningPrefixInstanceName,
                         onChanged: (v) => setState(() {
@@ -592,8 +591,8 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                     if (_allDay)
                       ListTile(
                         contentPadding: EdgeInsets.zero,
-                        title: const Text('Start'),
-                        subtitle: const Text('Startzeit für den Ablaufplan bei ganztägigen Terminen'),
+                        title: Text(context.l10n.typeSettingsStartShort),
+                        subtitle: Text(context.l10n.typeSettingsStartAllDay),
                         trailing: Text(
                           _formatTime(_startTime ?? const TimeOfDay(hour: 19, minute: 0)),
                           style: Theme.of(context).textTheme.titleMedium,
@@ -634,7 +633,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                                     ? const TextStyle(fontStyle: FontStyle.italic)
                                     : null,
                               ),
-                              subtitle: Text('${field['time'] ?? '0'} Min.'),
+                              subtitle: Text(context.l10n.typeSettingsFlutterMinutes('${field['time'] ?? '0'}')),
                               trailing: ReorderableDragStartListener(
                                 index: index,
                                 child: const Icon(Icons.drag_handle),
@@ -652,7 +651,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             Text(
-                              'Gesamt: ${_totalPlanMinutes()} Min.',
+                              context.l10n.typeSettingsFlutterTotalMinutes(_totalPlanMinutes()),
                               style: const TextStyle(
                                 fontWeight: FontWeight.w600,
                                 color: AppColors.medium,
@@ -668,7 +667,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                           child: OutlinedButton.icon(
                             onPressed: _addPlanField,
                             icon: const Icon(Icons.add, size: 18),
-                            label: const Text('Feld hinzufügen'),
+                            label: Text(context.l10n.typeSettingsAddField),
                           ),
                         ),
                         const SizedBox(width: 8),
@@ -676,7 +675,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                           child: OutlinedButton.icon(
                             onPressed: _addSongPlaceholder,
                             icon: const Icon(Icons.music_note, size: 18),
-                            label: const Text('Werk Platzhalter'),
+                            label: Text(context.l10n.typeSettingsSongPlaceholder),
                           ),
                         ),
                       ],
@@ -691,7 +690,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
 
             // Checkliste (Template)
             _buildSection(
-              title: 'Checkliste',
+              title: context.l10n.typeSettingsChecklist,
               child: Column(
                 children: [
                   if (_checklist.isNotEmpty)
@@ -730,17 +729,17 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                       },
                     ),
                   if (_checklist.isEmpty)
-                    const Padding(
+                    Padding(
                       padding: EdgeInsets.symmetric(vertical: 8),
                       child: Text(
-                        'Noch keine To-Dos angelegt',
+                        context.l10n.typeSettingsNoTodos,
                         style: TextStyle(color: AppColors.medium),
                       ),
                     ),
                   OutlinedButton.icon(
                     onPressed: _addChecklistItem,
                     icon: const Icon(Icons.add, size: 18),
-                    label: const Text('To-Do hinzufügen'),
+                    label: Text(context.l10n.typeSettingsAddTodo),
                   ),
                 ],
               ),
@@ -749,7 +748,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
             const SizedBox(height: AppDimensions.paddingL),
             // ATTENDANCE_SIGNOUT: Anmeldefelder (adjustable at any time)
             _buildSection(
-              title: 'Anmeldefelder',
+              title: context.l10n.typeSettingsSignupFields,
               child: RegistrationFieldsEditor(
                 fields: _registrationFields,
                 onChanged: (fields) => setState(() {
@@ -768,9 +767,9 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
           padding: const EdgeInsets.all(AppDimensions.paddingM),
           child: ElevatedButton(
             onPressed: _hasChanges ? _save : null,
-            child: const Padding(
+            child: Padding(
               padding: EdgeInsets.all(AppDimensions.paddingM),
-              child: Text('Speichern'),
+              child: Text(context.l10n.commonSave),
             ),
           ),
         ),
@@ -805,15 +804,14 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
         });
 
     return _buildSection(
-      title: 'Dienstplan',
+      title: context.l10n.typeSettingsDutyRoster,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           SwitchListTile(
-            title: const Text('Dienst-Modus'),
-            subtitle: const Text(
-              'Für Dienste wie Tontechnik: Pro Termin wird eine feste Zahl Personen eingeteilt. '
-              'Nur Eingeteilte sind erwartet, alle anderen aus dem Personenkreis sind Springer.',
+            title: Text(context.l10n.typeSettingsDutyMode),
+            subtitle: Text(
+              context.l10n.typeSettingsDutyHelper,
             ),
             value: _dutyMode,
             onChanged: (value) => mark(() {
@@ -835,52 +833,51 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
           if (_dutyMode) ...[
             ListTile(
               contentPadding: EdgeInsets.zero,
-              title: const Text('Benötigte Personen'),
+              title: Text(context.l10n.typeSettingsNeededPeople),
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   IconButton(
                     icon: const Icon(Icons.remove),
-                    tooltip: 'Weniger',
+                    tooltip: context.l10n.attListLess,
                     onPressed: _dutyRequired <= 1 ? null : () => mark(() => _dutyRequired--),
                   ),
                   Text('$_dutyRequired'),
                   IconButton(
                     icon: const Icon(Icons.add),
-                    tooltip: 'Mehr',
+                    tooltip: context.l10n.attListMore,
                     onPressed: () => mark(() => _dutyRequired++),
                   ),
                 ],
               ),
             ),
             SwitchListTile(
-              title: const Text('Selbst eintragen erlaubt'),
-              subtitle: const Text('Personen aus dem Personenkreis können offene Dienste selbst übernehmen.'),
+              title: Text(context.l10n.typeSettingsSelfAssign),
+              subtitle: Text(context.l10n.typeSettingsSelfAssignHelper),
               value: _dutySelfSignup,
               onChanged: (v) => mark(() => _dutySelfSignup = v),
               contentPadding: EdgeInsets.zero,
             ),
             ListTile(
               contentPadding: EdgeInsets.zero,
-              title: const Text('Erinnern, wenn unbestätigt'),
+              title: Text(context.l10n.typeSettingsRemindUnconfirmed),
               trailing: DropdownButton<int?>(
                 value: _dutyConfirmReminderDays,
                 underline: const SizedBox.shrink(),
-                items: const [
-                  DropdownMenuItem(value: null, child: Text('Aus')),
-                  DropdownMenuItem(value: 1, child: Text('nach 1 Tag')),
-                  DropdownMenuItem(value: 2, child: Text('nach 2 Tagen')),
-                  DropdownMenuItem(value: 3, child: Text('nach 3 Tagen')),
-                  DropdownMenuItem(value: 7, child: Text('nach 7 Tagen')),
+                items: [
+                  DropdownMenuItem(value: null, child: Text(context.l10n.typeSettingsOff)),
+                  DropdownMenuItem(value: 1, child: Text(context.l10n.typeSettingsAfter1Day)),
+                  DropdownMenuItem(value: 2, child: Text(context.l10n.typeSettingsAfter2Days)),
+                  DropdownMenuItem(value: 3, child: Text(context.l10n.typeSettingsAfter3Days)),
+                  DropdownMenuItem(value: 7, child: Text(context.l10n.typeSettingsAfter7Days)),
                 ],
                 onChanged: (v) => mark(() => _dutyConfirmReminderDays = v),
               ),
             ),
             SwitchListTile(
-              title: const Text('Gruppe bei Ausfall benachrichtigen'),
-              subtitle: const Text(
-                'Sagt eine eingeteilte Person ab und der Dienst ist unterbesetzt, bekommen alle aus dem '
-                'Personenkreis eine Nachricht.',
+              title: Text(context.l10n.typeSettingsNotifyGroup),
+              subtitle: Text(
+                context.l10n.typeSettingsNotifyGroupHelper,
               ),
               value: _dutyNotifyUnderstaffed,
               onChanged: (v) => mark(() => _dutyNotifyUnderstaffed = v),
@@ -888,28 +885,26 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
             ),
             ListTile(
               contentPadding: EdgeInsets.zero,
-              title: const Text('Dringend, wenn noch offen'),
-              subtitle: const Text('Einmaliger dringender Push an alle aus dem Personenkreis und die Leitung.'),
+              title: Text(context.l10n.typeSettingsUrgentIfOpen),
+              subtitle: Text(context.l10n.typeSettingsUrgentHelper),
               trailing: DropdownButton<int?>(
                 value: _dutyUrgentHours,
                 underline: const SizedBox.shrink(),
-                items: const [
-                  DropdownMenuItem(value: null, child: Text('Aus')),
-                  DropdownMenuItem(value: 6, child: Text('6 h vorher')),
-                  DropdownMenuItem(value: 12, child: Text('12 h vorher')),
-                  DropdownMenuItem(value: 24, child: Text('24 h vorher')),
-                  DropdownMenuItem(value: 48, child: Text('48 h vorher')),
-                  DropdownMenuItem(value: 72, child: Text('72 h vorher')),
+                items: [
+                  DropdownMenuItem(value: null, child: Text(context.l10n.typeSettingsOff)),
+                  DropdownMenuItem(value: 6, child: Text(context.l10n.typeSettingsH6)),
+                  DropdownMenuItem(value: 12, child: Text(context.l10n.typeSettingsH12)),
+                  DropdownMenuItem(value: 24, child: Text(context.l10n.typeSettingsH24)),
+                  DropdownMenuItem(value: 48, child: Text(context.l10n.typeSettingsH48)),
+                  DropdownMenuItem(value: 72, child: Text(context.l10n.typeSettingsH72)),
                 ],
                 onChanged: (v) => mark(() => _dutyUrgentHours = v),
               ),
             ),
-            const Padding(
+            Padding(
               padding: EdgeInsets.only(top: AppDimensions.paddingS),
               child: Text(
-                'Den Personenkreis legst du wie gewohnt über relevante Gruppen oder unter „Filter“ mit einem '
-                'Zusatzfeld fest (z. B. Ja/Nein-Feld „Tontechnik“). Dienste zählen in die Anwesenheitsquote, '
-                'aber nur für eingeteilte Personen.',
+                context.l10n.typeSettingsCircleHint,
                 style: TextStyle(color: AppColors.medium, fontSize: 13),
               ),
             ),
@@ -930,12 +925,10 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
     if (types.any((t) => t.dutyMode && t.id != widget.typeId)) return;
     final useIt = await DialogHelper.showConfirmation(
       context,
-      title: 'Dienstplan-Ansicht verwenden?',
-      message: 'Sind Dienste bei euch der Normalfall? Dann zeigt „Meine Termine“ für alle im Dienst-Team '
-          'zuerst ihre Dienste, offene Dienste und Zahlen statt der Anwesenheitsquote. Du kannst das '
-          'jederzeit unter Mehr → Einstellungen ändern.',
-      confirmText: 'Ja, verwenden',
-      cancelText: 'Nein, normale Ansicht',
+      title: context.l10n.typeSettingsUseDutyView,
+      message: context.l10n.typeSettingsUseDutyViewMessage,
+      confirmText: context.l10n.typeSettingsUseIt,
+      cancelText: context.l10n.typeSettingsNormalView,
     );
     if (!useIt || !mounted) return;
     try {
@@ -944,9 +937,9 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
           .update({'duty_view': true})
           .eq('id', tenant.id!);
       await ref.read(currentTenantProvider.notifier).setTenantLocal(tenant.copyWith(dutyView: true));
-      if (mounted) ToastHelper.showSuccess(context, 'Dienstplan-Ansicht ist aktiv');
+      if (mounted) ToastHelper.showSuccess(context, context.l10n.typeSettingsDutyViewActive);
     } catch (_) {
-      if (mounted) ToastHelper.showError(context, 'Konnte die Ansicht nicht umstellen');
+      if (mounted) ToastHelper.showError(context, context.l10n.typeSettingsViewFailed);
     }
   }
 
@@ -954,18 +947,18 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
     final groupsAsync = ref.watch(groupsProvider);
 
     return _buildSection(
-      title: 'Relevante Gruppen',
+      title: context.l10n.typeSettingsRelevantGroups,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Leer = gilt für alle Gruppen',
+          Text(
+            context.l10n.typeSettingsFlutterAllGroupsHint,
             style: TextStyle(fontSize: 12, color: AppColors.medium),
           ),
           const SizedBox(height: 8),
           groupsAsync.when(
             loading: () => const LinearProgressIndicator(),
-            error: (e, _) => Text('Fehler: $e'),
+            error: (e, _) => Text(context.l10n.settingsFlutterErrorDetail(e)),
             data: (groups) => Wrap(
               spacing: 8,
               runSpacing: 8,
@@ -1005,25 +998,25 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
     final options = selectedField?.options ?? [];
 
     return _buildSection(
-      title: 'Zusatzfeld-Filter',
+      title: context.l10n.typeSettingsExtraFilter,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Nur Spieler mit diesem Zusatzfeld-Wert einbeziehen',
+          Text(
+            context.l10n.typeSettingsFlutterExtraFilterHint,
             style: TextStyle(fontSize: 12, color: AppColors.medium),
           ),
           const SizedBox(height: 8),
           DropdownButtonFormField<String?>(
             value: selectedFieldId,
-            decoration: const InputDecoration(
-              labelText: 'Zusatzfeld',
+            decoration: InputDecoration(
+              labelText: context.l10n.typeSettingsFlutterExtraField,
               isDense: true,
             ),
             items: [
-              const DropdownMenuItem(
+              DropdownMenuItem(
                 value: null,
-                child: Text('Kein Filter'),
+                child: Text(context.l10n.typeSettingsNoFilter),
               ),
               ...extraFields.map((f) => DropdownMenuItem(
                     value: f.id,
@@ -1047,8 +1040,8 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
             const SizedBox(height: 8),
             DropdownButtonFormField<String>(
               value: options.contains(selectedOption) ? selectedOption : options.firstOrNull,
-              decoration: const InputDecoration(
-                labelText: 'Wert',
+              decoration: InputDecoration(
+                labelText: context.l10n.typeSettingsValue,
                 isDense: true,
               ),
               items: options
@@ -1069,19 +1062,20 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
   }
 
   String _getStatusName(AttendanceStatus status) {
+    final l10n = context.l10n;
     switch (status) {
       case AttendanceStatus.present:
-        return 'Anwesend';
+        return l10n.commonStatusPresent;
       case AttendanceStatus.absent:
-        return 'Abwesend';
+        return l10n.commonStatusAbsent;
       case AttendanceStatus.excused:
-        return 'Entschuldigt';
+        return l10n.commonStatusExcused;
       case AttendanceStatus.late:
-        return 'Verspätet';
+        return l10n.commonStatusLateShort;
       case AttendanceStatus.lateExcused:
-        return 'Verspätet (entsch.)';
+        return l10n.generalSettingsLateExcusedShort;
       case AttendanceStatus.neutral:
-        return 'Neutral';
+        return l10n.generalSettingsNeutral;
     }
   }
 
@@ -1148,7 +1142,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
     setState(() {
       _planFields.add({
         'id': 'song-placeholder-$index',
-        'name': 'Werk ${index + 1}',
+        'name': context.l10n.typeSettingsSongPlaceholderN(index + 1),
         'time': '20',
       });
       _hasChanges = true;
@@ -1174,24 +1168,24 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
       return await showDialog<Map<String, dynamic>>(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text(existing != null ? 'Feld bearbeiten' : 'Neues Feld'),
+          title: Text(existing != null ? context.l10n.typeSettingsEditField : context.l10n.typeSettingsFlutterNewField),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
                 controller: nameCtrl,
-                decoration: const InputDecoration(
-                  labelText: 'Bezeichnung',
-                  hintText: 'z.B. Einspielen, Pause',
+                decoration: InputDecoration(
+                  labelText: context.l10n.shiftsLabel,
+                  hintText: context.l10n.typeSettingsFlutterFieldNamePh,
                 ),
                 autofocus: true,
               ),
               const SizedBox(height: 12),
               TextField(
                 controller: timeCtrl,
-                decoration: const InputDecoration(
-                  labelText: 'Dauer (Minuten)',
-                  hintText: 'z.B. 10',
+                decoration: InputDecoration(
+                  labelText: context.l10n.typeSettingsFlutterDurationMinutes,
+                  hintText: context.l10n.typeSettingsFlutterDurationPh,
                 ),
                 keyboardType: TextInputType.number,
               ),
@@ -1200,7 +1194,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Abbrechen'),
+              child: Text(context.l10n.commonCancel),
             ),
             FilledButton(
               onPressed: () {
@@ -1212,7 +1206,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                   'time': timeCtrl.text.trim().isEmpty ? '0' : timeCtrl.text.trim(),
                 });
               },
-              child: const Text('OK'),
+              child: Text(context.l10n.commonOk),
             ),
           ],
         ),
@@ -1253,24 +1247,24 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
       return await showDialog<ChecklistItem>(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text(existing != null ? 'To-Do bearbeiten' : 'Neues To-Do'),
+          title: Text(existing != null ? context.l10n.typeSettingsEditTodo : context.l10n.typeSettingsNewTodo),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
                 controller: textCtrl,
-                decoration: const InputDecoration(
-                  labelText: 'Aufgabe',
-                  hintText: 'z.B. Noten vorbereiten',
+                decoration: InputDecoration(
+                  labelText: context.l10n.tasksTask,
+                  hintText: context.l10n.typeSettingsFlutterTodoPh,
                 ),
                 autofocus: true,
               ),
               const SizedBox(height: 12),
               TextField(
                 controller: deadlineCtrl,
-                decoration: const InputDecoration(
-                  labelText: 'Frist (Stunden vorher, optional)',
-                  hintText: 'z.B. 24 für 1 Tag',
+                decoration: InputDecoration(
+                  labelText: context.l10n.typeSettingsFlutterDeadlineLabel,
+                  hintText: context.l10n.typeSettingsFlutterDeadlinePh,
                 ),
                 keyboardType: TextInputType.number,
               ),
@@ -1279,7 +1273,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Abbrechen'),
+              child: Text(context.l10n.commonCancel),
             ),
             FilledButton(
               onPressed: () {
@@ -1291,7 +1285,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                   deadlineHours: int.tryParse(deadlineCtrl.text.trim()),
                 ));
               },
-              child: const Text('OK'),
+              child: Text(context.l10n.commonOk),
             ),
           ],
         ),
@@ -1304,11 +1298,11 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
 
   /// Ionic getChecklistDeadlineText / getFormattedReminder.
   String _checklistDeadlineText(int? hours) {
-    if (hours == null) return 'Keine Deadline';
-    if (hours == 0) return 'Zur gleichen Zeit';
-    if (hours < 24) return hours == 1 ? '1 Stunde vorher' : '$hours Stunden vorher';
-    final days = hours ~/ 24;
-    return days == 1 ? '1 Tag vorher' : '$days Tage vorher';
+    final l10n = context.l10n;
+    if (hours == null) return l10n.typeSettingsNoDeadline;
+    if (hours == 0) return l10n.typeSettingsSameTime;
+    if (hours < 24) return l10n.typeSettingsHoursBeforeN(hours);
+    return l10n.typeSettingsDaysBeforeN(hours ~/ 24);
   }
 
   Future<void> _onBackPressed() async {
@@ -1316,21 +1310,21 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
       final result = await showDialog<String>(
         context: context,
         builder: (context) => AlertDialog(
-          title: const Text('Ungespeicherte Änderungen'),
-          content: const Text('Du hast ungespeicherte Änderungen. Was möchtest du tun?'),
+          title: Text(context.l10n.rolePermUnsaved),
+          content: Text(context.l10n.rolePermUnsavedMessage),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop('cancel'),
-              child: const Text('Abbrechen'),
+              child: Text(context.l10n.commonCancel),
             ),
             TextButton(
               onPressed: () => Navigator.of(context).pop('discard'),
               style: TextButton.styleFrom(foregroundColor: AppColors.danger),
-              child: const Text('Verwerfen'),
+              child: Text(context.l10n.rolePermDiscard),
             ),
             ElevatedButton(
               onPressed: () => Navigator.of(context).pop('save'),
-              child: const Text('Speichern'),
+              child: Text(context.l10n.commonSave),
             ),
           ],
         ),
@@ -1353,7 +1347,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
     if (_availableStatuses.length < 2) {
       ToastHelper.showError(
         context,
-        'Bitte mindestens zwei verfügbare Anwesenheitsstatus auswählen.',
+        context.l10n.typeSettingsTwoStatus,
       );
       return;
     }
@@ -1403,13 +1397,13 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
       ref.invalidate(protocolTypesProvider); // PROTOCOL
 
       if (mounted) {
-        ToastHelper.showSuccess(context, 'Änderungen gespeichert');
+        ToastHelper.showSuccess(context, context.l10n.typeSettingsUpdated);
         setState(() => _hasChanges = false);
         await _offerDutyView(); // DUTY
       }
     } catch (e) {
       if (mounted) {
-        ToastHelper.showError(context, 'Fehler beim Speichern: $e');
+        ToastHelper.showError(context, context.l10n.typeSettingsUpdateFailed);
       }
     }
   }
@@ -1417,11 +1411,10 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
   Future<void> _deleteType() async {
     final confirmed = await DialogHelper.showConfirmation(
       context,
-      title: 'Typ löschen',
-      message:
-          'Möchtest du "${_originalType!.name}" wirklich löschen? Alle Anwesenheiten dieses Typs werden ebenfalls gelöscht.',
-      confirmText: 'Löschen',
-      cancelText: 'Abbrechen',
+      title: context.l10n.typeSettingsDeleteType,
+      message: context.l10n.typeSettingsDeleteTypeMessage(_originalType!.name),
+      confirmText: context.l10n.commonDelete,
+      cancelText: context.l10n.commonCancel,
     );
 
     if (!confirmed) return;
@@ -1430,14 +1423,14 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
       final success = await ref.read(attendanceTypeNotifierProvider.notifier).deleteType(widget.typeId);
 
       if (success && mounted) {
-        ToastHelper.showSuccess(context, 'Typ gelöscht');
+        ToastHelper.showSuccess(context, context.l10n.typeSettingsDeleted);
         context.pop();
       } else if (!success && mounted) {
-        ToastHelper.showError(context, 'Fehler beim Löschen');
+        ToastHelper.showError(context, context.l10n.typeSettingsDeleteFailed);
       }
     } catch (e) {
       if (mounted) {
-        ToastHelper.showError(context, 'Fehler beim Löschen: $e');
+        ToastHelper.showError(context, context.l10n.typeSettingsDeleteFailed);
       }
     }
   }

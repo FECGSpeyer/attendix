@@ -123,7 +123,24 @@
         "namePh": "z.B. Probe, Konzert, Generalprobe",
         "createdNamed": "Anwesenheitstyp \"{name}\" erstellt",
         "withProgramme": "Mit Programm",
-        "hidden": "Ausgeblendet"
+        "hidden": "Ausgeblendet",
+        "typeTitle": "Anwesenheitstyp",
+        "notFound": "Typ nicht gefunden",
+        "usageWarning": "Wird in {count} Termin(en) verwendet. Änderungen wirken sich auf bestehende Einträge aus.",
+        "namePhShort": "z.B. Probe, Konzert",
+        "minutes": "{minutes} Min.",
+        "totalMinutes": "Gesamt: {minutes} Min.",
+        "planHeadingPh": "z.B. Probenplan",
+        "allGroupsHint": "Leer = gilt für alle Gruppen",
+        "extraFilterHint": "Nur Spieler mit diesem Zusatzfeld-Wert einbeziehen",
+        "extraField": "Zusatzfeld",
+        "newField": "Neues Feld",
+        "fieldNamePh": "z.B. Einspielen, Pause",
+        "durationMinutes": "Dauer (Minuten)",
+        "durationPh": "z.B. 10",
+        "todoPh": "z.B. Noten vorbereiten",
+        "deadlineLabel": "Frist (Stunden vorher, optional)",
+        "deadlinePh": "z.B. 24 für 1 Tag"
       }
     },
     "rolePerm": {
@@ -274,7 +291,24 @@
         "namePh": "e.g. rehearsal, concert, dress rehearsal",
         "createdNamed": "Attendance type \"{name}\" created",
         "withProgramme": "With programme",
-        "hidden": "Hidden"
+        "hidden": "Hidden",
+        "typeTitle": "Attendance type",
+        "notFound": "Type not found",
+        "usageWarning": "Used in {count} event(s). Changes affect existing entries.",
+        "namePhShort": "e.g. rehearsal, concert",
+        "minutes": "{minutes} min.",
+        "totalMinutes": "Total: {minutes} min.",
+        "planHeadingPh": "e.g. rehearsal plan",
+        "allGroupsHint": "Empty = applies to all groups",
+        "extraFilterHint": "Only include players with this additional field value",
+        "extraField": "Additional field",
+        "newField": "New field",
+        "fieldNamePh": "e.g. warm-up, break",
+        "durationMinutes": "Duration (minutes)",
+        "durationPh": "e.g. 10",
+        "todoPh": "e.g. prepare sheet music",
+        "deadlineLabel": "Deadline (hours before, optional)",
+        "deadlinePh": "e.g. 24 for 1 day"
       }
     },
     "rolePerm": {

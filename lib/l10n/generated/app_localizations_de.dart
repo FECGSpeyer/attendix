@@ -9808,6 +9808,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get typeSettingsFilter => 'Filter';
 
   @override
+  String get typeSettingsFlutterAllGroupsHint => 'Leer = gilt für alle Gruppen';
+
+  @override
   String get typeSettingsFlutterCreateType => 'Typ erstellen';
 
   @override
@@ -9816,10 +9819,42 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get typeSettingsFlutterDeadlineLabel => 'Frist (Stunden vorher, optional)';
+
+  @override
+  String get typeSettingsFlutterDeadlinePh => 'z.B. 24 für 1 Tag';
+
+  @override
+  String get typeSettingsFlutterDurationMinutes => 'Dauer (Minuten)';
+
+  @override
+  String get typeSettingsFlutterDurationPh => 'z.B. 10';
+
+  @override
+  String get typeSettingsFlutterExtraField => 'Zusatzfeld';
+
+  @override
+  String get typeSettingsFlutterExtraFilterHint => 'Nur Spieler mit diesem Zusatzfeld-Wert einbeziehen';
+
+  @override
+  String get typeSettingsFlutterFieldNamePh => 'z.B. Einspielen, Pause';
+
+  @override
   String get typeSettingsFlutterHidden => 'Ausgeblendet';
 
   @override
+  String typeSettingsFlutterMinutes(Object minutes) {
+    return '$minutes Min.';
+  }
+
+  @override
   String get typeSettingsFlutterNamePh => 'z.B. Probe, Konzert, Generalprobe';
+
+  @override
+  String get typeSettingsFlutterNamePhShort => 'z.B. Probe, Konzert';
+
+  @override
+  String get typeSettingsFlutterNewField => 'Neues Feld';
 
   @override
   String get typeSettingsFlutterNewType => 'Neuer Anwesenheitstyp';
@@ -9828,10 +9863,32 @@ class AppLocalizationsDe extends AppLocalizations {
   String get typeSettingsFlutterNoTypes => 'Keine Anwesenheitstypen vorhanden';
 
   @override
+  String get typeSettingsFlutterNotFound => 'Typ nicht gefunden';
+
+  @override
+  String get typeSettingsFlutterPlanHeadingPh => 'z.B. Probenplan';
+
+  @override
   String get typeSettingsFlutterReorder => 'Reihenfolge ändern';
 
   @override
   String get typeSettingsFlutterSaveOrderFailed => 'Fehler beim Speichern. Bitte erneut versuchen.';
+
+  @override
+  String get typeSettingsFlutterTodoPh => 'z.B. Noten vorbereiten';
+
+  @override
+  String typeSettingsFlutterTotalMinutes(Object minutes) {
+    return 'Gesamt: $minutes Min.';
+  }
+
+  @override
+  String get typeSettingsFlutterTypeTitle => 'Anwesenheitstyp';
+
+  @override
+  String typeSettingsFlutterUsageWarning(Object count) {
+    return 'Wird in $count Termin(en) verwendet. Änderungen wirken sich auf bestehende Einträge aus.';
+  }
 
   @override
   String get typeSettingsFlutterWithProgramme => 'Mit Programm';
