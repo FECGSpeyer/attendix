@@ -5,6 +5,7 @@ import '../../data/models/history/history_entry.dart';
 import '../../data/models/song/song.dart';
 import '../../features/history/history_utils.dart';
 import 'conductor_providers.dart';
+import 'song_providers.dart';
 import 'tenant_providers.dart';
 
 /// Provider for performance history (song performances/Aufführungen).
@@ -64,19 +65,15 @@ final performanceHistoryProvider = FutureProvider<List<HistoryEntry>>((ref) asyn
   }).toList();
 });
 
-/// Provider for songs (for history page add dialog)
+/// Provider for songs (for history page add dialog).
+///
+/// Ionic history.page `db.getSongs()`: songs of the effective song library
+/// (Werk-Synchronisierung source tenant), loaded in pages of 1000.
 final planSongsProviderHistory = FutureProvider<List<Song>>((ref) async {
-  final supabase = ref.watch(supabaseClientProvider);
-  final tenant = ref.watch(currentTenantProvider);
-
-  if (tenant == null) return [];
-
-  final response = await supabase
-      .from('songs')
-      .select('*')
-      .eq('tenantId', tenant.id!)
-      .order('number')
-      .order('name');
-
-  return (response as List).map((e) => Song.fromJson(e as Map<String, dynamic>)).toList();
+  // Wait for the song source tenant so synced instances never read their
+  // own (empty) library.
+  await ref.watch(songTenantSettingsProvider.future);
+  final repo = ref.watch(songRepositoryWithTenantProvider);
+  if (!repo.hasTenantId) return [];
+  return repo.getSongs();
 });

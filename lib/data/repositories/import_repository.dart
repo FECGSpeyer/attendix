@@ -68,8 +68,12 @@ class ImportRepository extends BaseRepository with TenantAwareRepository {
     }
   }
 
-  /// Composite song keys (`${prefix ?? ''}${number}`) already in the tenant.
-  Future<Set<String>> getExistingSongKeys() async {
+  /// Composite song keys (`${prefix ?? ''}${number}`) already in the
+  /// effective song library. [songTenantId] is the Werk-Synchronisierung
+  /// source tenant (Ionic `getExistingNumbers`: `effectiveSongTenantId()`);
+  /// null = own library.
+  Future<Set<String>> getExistingSongKeys({int? songTenantId}) async {
+    final libraryTenantId = songTenantId ?? currentTenantId;
     try {
       final keys = <String>{};
       var from = 0;
@@ -77,7 +81,7 @@ class ImportRepository extends BaseRepository with TenantAwareRepository {
         final data = await supabase
             .from('songs')
             .select('number, prefix')
-            .eq('tenantId', currentTenantId)
+            .eq('tenantId', libraryTenantId)
             .range(from, from + _pageSize - 1);
         final rows = data as List;
         for (final row in rows) {
@@ -93,12 +97,17 @@ class ImportRepository extends BaseRepository with TenantAwareRepository {
     }
   }
 
-  /// Insert one imported song into the current tenant.
-  Future<Map<String, dynamic>> insertSong(Map<String, dynamic> songData) async {
+  /// Insert one imported song into the effective song library
+  /// (Ionic `importSongs` → `addSong`: `effectiveSongTenantId()`).
+  /// [songTenantId] = Werk-Synchronisierung source tenant, null = own library.
+  Future<Map<String, dynamic>> insertSong(
+    Map<String, dynamic> songData, {
+    int? songTenantId,
+  }) async {
     ensureNotDemo('insertSong'); // DEMO_GUARD
     try {
       final data = Map<String, dynamic>.from(songData)..remove('id');
-      data['tenantId'] = currentTenantId;
+      data['tenantId'] = songTenantId ?? currentTenantId;
 
       final response = await supabase
           .from('songs')

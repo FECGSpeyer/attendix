@@ -232,7 +232,7 @@ class ProtocolRepository extends BaseRepository with TenantAwareRepository {
     try {
       final response = await supabase
           .from('player')
-          .select('id, instrument, additional_fields')
+          .select('id, instrument, additional_fields, shift_id, shift_start, shift_name')
           .eq('tenantId', currentTenantId)
           .isFilter('left', null)
           .eq('pending', false)

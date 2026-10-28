@@ -17327,6 +17327,12 @@ abstract class AppLocalizations {
   /// **'Fehler: {error}'**
   String songsFlutterErrorWith(Object error);
 
+  /// songs.flutter.fileDownloadFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Datei konnte nicht heruntergeladen werden: {name}'**
+  String songsFlutterFileDownloadFailed(Object name);
+
   /// songs.flutter.filesSkipped
   ///
   /// In de, this message translates to:

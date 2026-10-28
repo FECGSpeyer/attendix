@@ -105,7 +105,6 @@ void main() {
         'lib/core/providers/group_providers.dart': ['TrackingEvent.instrumentAdded', 'TrackingEvent.instrumentUpdated', 'TrackingEvent.instrumentRemoved'],
         'lib/features/notifications/presentation/pages/notifications_page.dart': ['TrackingEvent.notificationSettingsChanged'],
         'lib/features/settings/presentation/pages/files_page.dart': ['TrackingEvent.fileUploaded'],
-        'lib/core/providers/meeting_providers.dart': ['TrackingEvent.meetingCreated'],
       };
       expectations.forEach((path, events) {
         final src = read(path);

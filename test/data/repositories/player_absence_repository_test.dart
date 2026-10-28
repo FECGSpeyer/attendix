@@ -97,15 +97,22 @@ void main() {
       ).allMatches(importSource).toList();
       expect(selects.length, 2);
       for (final m in selects) {
-        expect(m.group(0), contains(".eq('tenantId', currentTenantId)"));
+        // songs: effective song library (Werk-Synchronisierung source tenant
+        // or the current tenant), Ionic getExistingNumbers.
+        final q = m.group(0)!;
+        expect(
+          q.contains(".eq('tenantId', currentTenantId)") ||
+              q.contains(".eq('tenantId', libraryTenantId)"),
+          isTrue,
+          reason: q,
+        );
       }
+      expect(importSource, contains('final libraryTenantId = songTenantId ?? currentTenantId;'));
     });
 
-    test('inserts always set tenantId to currentTenantId', () {
-      expect(
-        "data['tenantId'] = currentTenantId".allMatches(importSource).length,
-        2,
-      );
+    test('inserts always set tenantId (current tenant / song library)', () {
+      expect("data['tenantId'] = currentTenantId".allMatches(importSource).length, 1);
+      expect("data['tenantId'] = songTenantId ?? currentTenantId".allMatches(importSource).length, 1);
     });
 
     test('tenants lookup is restricted to the current tenant row', () {

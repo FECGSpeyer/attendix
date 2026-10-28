@@ -9883,6 +9883,11 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String songsFlutterFileDownloadFailed(Object name) {
+    return 'Datei konnte nicht heruntergeladen werden: $name';
+  }
+
+  @override
   String songsFlutterFilesSkipped(Object count) {
     return '$count Datei(en) konnten nicht eingebunden werden.';
   }

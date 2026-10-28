@@ -2872,6 +2872,7 @@
   "songsFlutterDeleteFailed": "Song could not be deleted",
   "songsFlutterDownloadFileFailed": "File could not be downloaded",
   "songsFlutterErrorWith": "Error: {error}",
+  "songsFlutterFileDownloadFailed": "File could not be downloaded: {name}",
   "songsFlutterFilesSkipped": "{count} file(s) could not be included.",
   "songsFlutterFilesWillBeCopied": "{count} files will be copied:",
   "songsFlutterFilterAndView": "Filter & view",

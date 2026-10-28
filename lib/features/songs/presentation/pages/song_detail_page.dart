@@ -802,7 +802,7 @@ class _FilesSectionState extends ConsumerState<_FilesSection> {
     );
     if (!ok) return;
     await _run(() async {
-      await ref.read(songFileServiceProvider).deleteAllFiles(songId: song.id!);
+      await (await ref.read(readySongFileServiceProvider.future)).deleteAllFiles(songId: song.id!);
       await ref
           .read(songNotifierProvider.notifier)
           .updateSong(song.id!, {'instrument_ids': <int>[]});
@@ -1056,7 +1056,7 @@ class _FilesSectionState extends ConsumerState<_FilesSection> {
         );
         if (!ok) return;
         await _run(() async {
-          await ref.read(songFileServiceProvider).deleteFile(
+          await (await ref.read(readySongFileServiceProvider.future)).deleteFile(
                 songId: song.id!,
                 url: file.url,
                 storageName: file.storageName,
@@ -1081,7 +1081,7 @@ class _FilesSectionState extends ConsumerState<_FilesSection> {
     );
     if (result == null) return;
     await _run(() async {
-      await ref.read(songFileServiceProvider).updateFileCategory(
+      await (await ref.read(readySongFileServiceProvider.future)).updateFileCategory(
             songId: song.id!,
             url: file.url,
             storageName: file.storageName,

@@ -32,11 +32,20 @@ final messagesProvider = FutureProvider.autoDispose<List<MessageWithStats>>((ref
       .toList();
 });
 
-/// Single message by id (current tenant only).
+/// Single message by id, from the current tenant or any other tenant of the
+/// user (Ionic message-detail: links from push/email may point to another
+/// instance; the page then switches to it).
 final messageByIdProvider = FutureProvider.autoDispose.family<Message?, String>((ref, id) async {
   final repo = ref.watch(messageRepositoryWithTenantProvider);
   if (!repo.hasTenantId) return null;
-  return repo.getMessageById(id);
+  List<int> userTenantIds;
+  try {
+    final tenants = await ref.watch(userTenantsProvider.future);
+    userTenantIds = tenants.map((t) => t.id).whereType<int>().toList();
+  } catch (_) {
+    userTenantIds = const [];
+  }
+  return repo.getMessageById(id, userTenantIds: userTenantIds);
 });
 
 /// Recipient rows of a message (admins: all, members: own row).
@@ -132,12 +141,6 @@ final userNotificationRepositoryWithTenantProvider = Provider<UserNotificationRe
   return repo;
 });
 
-/// Ids of all tenants the user belongs to (for the "Alle" feed).
-final _userTenantIdsProvider = FutureProvider<List<int>>((ref) async {
-  final tenants = await ref.watch(userTenantsProvider.future);
-  return tenants.map((t) => t.id).whereType<int>().toList();
-});
-
 /// Notification feed. `allTenants == false`: current instance only.
 final userNotificationsProvider = FutureProvider.autoDispose.family<List<UserNotification>, bool>((
   ref,
@@ -146,8 +149,8 @@ final userNotificationsProvider = FutureProvider.autoDispose.family<List<UserNot
   final repo = ref.watch(userNotificationRepositoryWithTenantProvider);
   if (!repo.hasTenantId) return [];
   if (allTenants) {
-    final tenantIds = await ref.watch(_userTenantIdsProvider.future);
-    return repo.getAllNotifications(tenantIds);
+    // Ionic getAllNotifications: all rows of the user (incl. left instances).
+    return repo.getAllNotifications();
   }
   return repo.getNotifications();
 });
@@ -226,7 +229,7 @@ class UserNotificationNotifier extends Notifier<AsyncValue<void>> {
 
   Future<void> markAllRead({required bool allTenants}) => _run(() async {
     if (allTenants) {
-      await _repo.markAllReadAllTenants(await ref.read(_userTenantIdsProvider.future));
+      await _repo.markAllReadAllTenants();
     } else {
       await _repo.markAllRead();
     }
@@ -234,7 +237,7 @@ class UserNotificationNotifier extends Notifier<AsyncValue<void>> {
 
   Future<void> deleteAll({required bool allTenants}) => _run(() async {
     if (allTenants) {
-      await _repo.deleteAllAllTenants(await ref.read(_userTenantIdsProvider.future));
+      await _repo.deleteAllAllTenants();
     } else {
       await _repo.deleteAll();
     }

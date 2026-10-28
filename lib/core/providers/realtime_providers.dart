@@ -50,6 +50,22 @@ final realtimePlayersProvider = StreamProvider.autoDispose<List<Person>>((ref) a
 
   // Create a stream controller to manage updates
   final controller = StreamController<List<Person>>();
+  var knownIds = initialData.map((p) => p.id).whereType<int>().toSet();
+
+  Future<void> refetchPlayers() async {
+    // Fetch fresh data when changes occur
+    try {
+      final freshData = await playerRepo.getPlayers();
+      knownIds = freshData.map((p) => p.id).whereType<int>().toSet();
+      if (!controller.isClosed) {
+        controller.add(enrichPlayers(freshData));
+      }
+    } catch (e) {
+      if (!controller.isClosed) {
+        controller.addError(e);
+      }
+    }
+  }
 
   // Setup realtime channel
   final channel = supabase
@@ -63,18 +79,17 @@ final realtimePlayersProvider = StreamProvider.autoDispose<List<Person>>((ref) a
           column: 'tenantId',
           value: tenantId,
         ),
-        callback: (payload) async {
-          // Fetch fresh data when changes occur
-          try {
-            final freshData = await playerRepo.getPlayers();
-            if (!controller.isClosed) {
-              controller.add(enrichPlayers(freshData));
-            }
-          } catch (e) {
-            if (!controller.isClosed) {
-              controller.addError(e);
-            }
-          }
+        callback: (payload) => refetchPlayers(),
+      )
+      // Supabase does not apply column filters to DELETE events, so deletes
+      // are received unfiltered and matched by id (Ionic list.page: old.id).
+      .onPostgresChanges(
+        event: PostgresChangeEvent.delete,
+        schema: 'public',
+        table: 'player',
+        callback: (payload) {
+          final id = (payload.oldRecord['id'] as num?)?.toInt();
+          if (id != null && knownIds.contains(id)) refetchPlayers();
         },
       )
       .subscribe();
@@ -176,6 +191,14 @@ final _attendanceRealtimeSubscriptionProvider = Provider.autoDispose<void>((ref)
         ),
         callback: onChanged,
       )
+      // DELETE events are not filtered by Supabase (old record = id only):
+      // listen unfiltered, the refetch itself is tenant-filtered.
+      .onPostgresChanges(
+        event: PostgresChangeEvent.delete,
+        schema: 'public',
+        table: 'attendance',
+        callback: onChanged,
+      )
       .onPostgresChanges(
         event: PostgresChangeEvent.update,
         schema: 'public',
@@ -210,6 +233,21 @@ final realtimePendingPlayersProvider = StreamProvider.autoDispose<List<Person>>(
 
   // Create a stream controller
   final controller = StreamController<List<Person>>();
+  var pendingIds = initialData.map((p) => p.id).whereType<int>().toSet();
+
+  Future<void> refetchPending() async {
+    try {
+      final freshData = await playerRepo.getPendingPlayers();
+      pendingIds = freshData.map((p) => p.id).whereType<int>().toSet();
+      if (!controller.isClosed) {
+        controller.add(freshData);
+      }
+    } catch (e) {
+      if (!controller.isClosed) {
+        controller.addError(e);
+      }
+    }
+  }
 
   // Setup realtime channel — listen for all player changes (pending flag changes)
   final channel = supabase
@@ -223,22 +261,24 @@ final realtimePendingPlayersProvider = StreamProvider.autoDispose<List<Person>>(
           column: 'tenantId',
           value: tenantId,
         ),
-        callback: (payload) async {
+        callback: (payload) {
           // MEDIA_REALTIME: like Ionic settings.page.ts — refetch for new
           // pending registrations and for any update/delete (old.id set).
           final isPendingInsert = payload.newRecord['pending'] == true;
           final hasOld = payload.oldRecord['id'] != null;
           if (!isPendingInsert && !hasOld) return;
-          try {
-            final freshData = await playerRepo.getPendingPlayers();
-            if (!controller.isClosed) {
-              controller.add(freshData);
-            }
-          } catch (e) {
-            if (!controller.isClosed) {
-              controller.addError(e);
-            }
-          }
+          refetchPending();
+        },
+      )
+      // DELETE events arrive only without a column filter; refetch when a
+      // known pending person was deleted (e.g. registration declined).
+      .onPostgresChanges(
+        event: PostgresChangeEvent.delete,
+        schema: 'public',
+        table: 'player',
+        callback: (payload) {
+          final id = (payload.oldRecord['id'] as num?)?.toInt();
+          if (id != null && pendingIds.contains(id)) refetchPending();
         },
       )
       .subscribe();

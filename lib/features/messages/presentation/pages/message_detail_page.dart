@@ -8,11 +8,13 @@ import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/debug_providers.dart';
 import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/message_providers.dart';
+import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/quill_utils.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/message/message.dart';
+import '../../../../data/models/tenant/tenant.dart';
 import '../../../../l10n/l10n.dart';
 import '../message_format.dart';
 
@@ -36,9 +38,35 @@ class _MessageDetailPageState extends ConsumerState<MessageDetailPage> {
   bool? _showContent;
   _Filter _filter = _Filter.all;
 
+  bool _switchingTenant = false;
+
   bool get _isManager {
     final role = ref.watch(effectiveRoleProvider);
     return role.isAdmin || role.isResponsible;
+  }
+
+  /// Ionic message-detail load: a message of another instance of the user
+  /// switches the current instance to it. Returns true while switching.
+  bool _switchTenantIfNeeded(Message message) {
+    final currentId = ref.read(currentTenantIdProvider);
+    if (currentId == null || message.tenantId == currentId) return false;
+    if (_switchingTenant) return true;
+    final tenant = (ref.read(userTenantsProvider).valueOrNull ?? const <Tenant>[])
+        .where((t) => t.id == message.tenantId)
+        .firstOrNull;
+    if (tenant == null) return false;
+    _switchingTenant = true;
+    Future.microtask(() async {
+      try {
+        await ref.read(currentTenantProvider.notifier).setTenant(tenant);
+        await ref.read(currentTenantUserProvider.future);
+      } catch (_) {
+        // Stay on the current instance; the message is still shown.
+      } finally {
+        if (mounted) setState(() => _switchingTenant = false);
+      }
+    });
+    return true;
   }
 
   void _markReadOnce() {
@@ -82,8 +110,10 @@ class _MessageDetailPageState extends ConsumerState<MessageDetailPage> {
   @override
   Widget build(BuildContext context) {
     final messageAsync = ref.watch(messageByIdProvider(widget.messageId));
-    final isManager = _isManager;
     final message = messageAsync.valueOrNull;
+    // Ionic: manager view only for messages of the current instance.
+    final isManager = _isManager &&
+        (message == null || message.tenantId == ref.watch(currentTenantIdProvider));
     final l10n = context.l10n;
 
     return Scaffold(
@@ -120,6 +150,9 @@ class _MessageDetailPageState extends ConsumerState<MessageDetailPage> {
                 ),
               ),
             );
+          }
+          if (_switchTenantIfNeeded(message)) {
+            return const Center(child: CircularProgressIndicator());
           }
           _markReadOnce();
           final showContent = _showContent ?? !isManager;

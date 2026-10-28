@@ -44,14 +44,18 @@ class MessageRepository extends BaseRepository with TenantAwareRepository {
   }
 
   /// A single message of the current tenant, or null if not visible.
-  Future<Message?> getMessageById(String id) async {
+  Future<Message?> getMessageById(String id, {Iterable<int> userTenantIds = const []}) async {
+    // Ionic message-detail: push/email links may point to another instance
+    // of the user, so the message is looked up in all of the user's tenants
+    // (always including the current one) and the page switches to it.
+    final tenantIds = {currentTenantId, ...userTenantIds}.toList();
     try {
       final response =
           await supabase
               .from('messages')
               .select('*')
               .eq('id', id)
-              .eq('tenantId', currentTenantId)
+              .inFilter('tenantId', tenantIds)
               .maybeSingle();
 
       if (response == null) return null;

@@ -3,8 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/models/meeting/meeting.dart';
 import '../../data/repositories/meeting_repository.dart';
 import 'tenant_providers.dart';
-import '../services/tracking/tracking_event.dart';
-import '../services/tracking/tracking_service.dart';
 
 /// Initialized meeting repository with tenant context
 final meetingRepositoryWithTenantProvider = Provider<MeetingRepository>((ref) {
@@ -47,7 +45,6 @@ class MeetingNotifier extends Notifier<AsyncValue<void>> {
     state = const AsyncValue.loading();
     try {
       final result = await _repo.createMeeting(meeting);
-      ref.read(trackingServiceProvider).track(TrackingEvent.meetingCreated);
       state = const AsyncValue.data(null);
       ref.invalidate(meetingsProvider);
       return result;

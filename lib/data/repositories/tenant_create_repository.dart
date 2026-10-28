@@ -1,6 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/constants/enums.dart';
 import '../../features/tenant_selection/tenant_defaults.dart';
 import '../models/tenant/tenant.dart';
 import 'base_repository.dart';
@@ -24,6 +23,7 @@ class TenantCreateRepository extends BaseRepository {
     required String longName,
     required String type,
     required String mainGroupName,
+    String? timezone,
   }) async {
     ensureNotDemo('createTenant'); // DEMO_GUARD
     try {
@@ -41,17 +41,19 @@ class TenantCreateRepository extends BaseRepository {
             shortName: shortName,
             longName: longName,
             type: type,
+            timezone: timezone ?? defaultTenantTimezone,
           ))
           .select()
           .single();
       final tenantId = tenantRow['id'] as int;
 
-      await supabase.from('tenantUsers').insert({
-        'tenantId': tenantId,
-        'userId': user.id,
-        'role': Role.admin.value,
-        'email': user.email,
-      });
+      await supabase.from('tenantUsers').insert(
+        buildNewTenantUsers(
+          tenantId: tenantId,
+          userId: user.id,
+          email: user.email,
+        ),
+      );
 
       await supabase
           .from('instruments')

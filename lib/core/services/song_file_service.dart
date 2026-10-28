@@ -9,6 +9,7 @@ import '../providers/song_providers.dart';
 import '../providers/tenant_providers.dart';
 import '../utils/demo_guard.dart'; // DEMO_GUARD
 import '../../l10n/l10n.dart';
+import '../utils/file_mime.dart';
 
 /// Service for managing song file uploads to Supabase Storage
 class SongFileService {
@@ -87,7 +88,7 @@ class SongFileService {
           storagePath,
           fileBytes,
           fileOptions: FileOptions(
-            contentType: _getContentType(file.extension ?? 'pdf'),
+            contentType: _getContentType(file.extension ?? ''),
             upsert: true,
           ),
         );
@@ -113,11 +114,12 @@ class SongFileService {
 
     // Build new files array
     final existingFiles = (songResponse['files'] as List?) ?? [];
-    // Like Ionic: fileType is the MIME type
+    // Like Ionic: fileType is the browser MIME type (`file.type`), which
+    // is empty for types the browser does not know.
     final newFile = {
       'storageName': fileId,
       'fileName': file.name,
-      'fileType': _getContentType(file.extension ?? ''),
+      'fileType': songFileMimeType(file.extension ?? '') ?? '',
       'url': url,
       'instrumentId': instrumentId,
       'note': note,
@@ -394,7 +396,8 @@ class SongFileService {
     final newFile = {
       'storageName': fileId,
       'fileName': fileName,
-      'fileType': fileType.contains('/') ? fileType : _getContentType(fileType),
+      // Ionic uploadSongFileToTenant: keep the source file's type as is.
+      'fileType': fileType,
       'url': url,
       'instrumentId': instrumentId,
       'note': note,
@@ -411,42 +414,13 @@ class SongFileService {
     return url;
   }
 
-  /// Get content type for file
-  String _getContentType(String extension) {
-    switch (extension.toLowerCase()) {
-      case 'pdf':
-        return 'application/pdf';
-      case 'png':
-        return 'image/png';
-      case 'jpg':
-      case 'jpeg':
-        return 'image/jpeg';
-      case 'mp3':
-        return 'audio/mpeg';
-      case 'wav':
-        return 'audio/wav';
-      case 'ogg':
-        return 'audio/ogg';
-      case 'm4a':
-        return 'audio/mp4';
-      case 'aac':
-        return 'audio/aac';
-      case 'flac':
-        return 'audio/flac';
-      case 'doc':
-        return 'application/msword';
-      case 'docx':
-        return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
-      case 'txt':
-        return 'text/plain';
-      case 'gif':
-        return 'image/gif';
-      case 'webp':
-        return 'image/webp';
-      default:
-        return 'application/octet-stream';
-    }
+  /// Storage content type for an upload: the MIME type, or
+  /// `application/octet-stream` when unknown.
+  String _getContentType(String extensionOrMime) {
+    if (extensionOrMime.contains('/')) return extensionOrMime;
+    return songFileMimeType(extensionOrMime) ?? 'application/octet-stream';
   }
+
 }
 
 /// Provider for SongFileService
@@ -457,4 +431,12 @@ final songFileServiceProvider = Provider<SongFileService>((ref) {
   final sourceId =
       ref.watch(songTenantSettingsProvider).valueOrNull?.songSourceTenantId;
   return SongFileService(supabase, sourceId ?? tenant?.id);
+});
+
+/// [songFileServiceProvider] once the song source tenant is known, so a first
+/// upload/delete on a cold start never targets the own tenant of a synced
+/// instance (`songs/<own>/…` → "Song nicht gefunden").
+final readySongFileServiceProvider = FutureProvider<SongFileService>((ref) async {
+  await ref.watch(songTenantSettingsProvider.future);
+  return ref.watch(songFileServiceProvider);
 });

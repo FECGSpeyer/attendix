@@ -46,15 +46,16 @@ class UserNotificationRepository extends BaseRepository with TenantAwareReposito
     }
   }
 
-  /// Feed across all of the user's tenants (newest first).
-  Future<List<UserNotification>> getAllNotifications(List<int> tenantIds, {int limit = 50}) async {
-    if (tenantIds.isEmpty) return [];
+  /// Feed across all tenants of the user (newest first), including
+  /// instances the user has left (Ionic getAllNotifications).
+  /// Cross-tenant by design: the feed rows belong to the user, so this query
+  /// is keyed on `user_id` only (RLS: own rows).
+  Future<List<UserNotification>> getAllNotifications({int limit = 50}) async {
     try {
       final response = await supabase
           .from('user_notifications')
           .select('*')
           .eq('user_id', _userId)
-          .inFilter('tenantId', tenantIds)
           .order('created_at', ascending: false)
           .limit(limit);
       return _parse(response);
@@ -144,14 +145,14 @@ class UserNotificationRepository extends BaseRepository with TenantAwareReposito
   }
 
   /// Marks all unread entries in all of the user's tenants read.
-  Future<void> markAllReadAllTenants(List<int> tenantIds) async {
-    if (tenantIds.isEmpty) return;
+  /// Cross-tenant by design (Ionic markAllReadAllTenants): keyed on
+  /// `user_id` only, so rows of left instances are included.
+  Future<void> markAllReadAllTenants() async {
     try {
       await supabase
           .from('user_notifications')
           .update({'read': true})
           .eq('user_id', _userId)
-          .inFilter('tenantId', tenantIds)
           .eq('read', false);
     } catch (e, stack) {
       handleError(e, stack, 'markAllReadAllTenants');
@@ -174,14 +175,14 @@ class UserNotificationRepository extends BaseRepository with TenantAwareReposito
   }
 
   /// Deletes all entries in all of the user's tenants.
-  Future<void> deleteAllAllTenants(List<int> tenantIds) async {
-    if (tenantIds.isEmpty) return;
+  /// Cross-tenant by design (Ionic deleteAllAllTenants): keyed on
+  /// `user_id` only, so rows of left instances are included.
+  Future<void> deleteAllAllTenants() async {
     try {
       await supabase
           .from('user_notifications')
           .delete()
-          .eq('user_id', _userId)
-          .inFilter('tenantId', tenantIds);
+          .eq('user_id', _userId);
     } catch (e, stack) {
       handleError(e, stack, 'deleteAllAllTenants');
       rethrow;
