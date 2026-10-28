@@ -271,6 +271,8 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
       enabled: tenants.length <= 1 && player != null,
       builder: (context, condensed) => Scaffold(
       appBar: _buildAppBar(tenant, tenants, player: player, condensed: condensed),
+      // IOS_ATT_PAGES: Ionic iOS page is white, rows sit directly on it
+      backgroundColor: eventPageBackground(context),
       body: dataAsync.when(
         loading: () => const Center(child: AppSpinner()),
         error: (e, _) => Center(
@@ -526,6 +528,7 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
       for (final group in groups) ...[
         EventMonthHeader(label: group.label),
         EventListCard(
+          iosPlain: true,
           children: [
             for (final att in group.items)
               EventRow(
@@ -566,6 +569,7 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
     return [
       EventSectionHeader(title: context.l10n.signoutPast, count: data.past.length),
       EventListCard(
+        iosPlain: true,
         children: [
           EventSummary(
             percentage: data.percentage,
