@@ -3057,6 +3057,14 @@
   "@extraFieldsEditableSuffix": {
     "description": "extraFields.editableSuffix"
   },
+  "extraFieldsFlutterFirstOptionDefault": "Erste Option ist der Standardwert",
+  "@extraFieldsFlutterFirstOptionDefault": {
+    "description": "extraFields.flutter.firstOptionDefault"
+  },
+  "extraFieldsFlutterLeaveMessage": "Du hast ungespeicherte Änderungen. Möchtest du die Seite trotzdem verlassen?",
+  "@extraFieldsFlutterLeaveMessage": {
+    "description": "extraFields.flutter.leaveMessage"
+  },
   "extraFieldsForPersons": "Zusätzliche Felder für Personen",
   "@extraFieldsForPersons": {
     "description": "extraFields.forPersons"
@@ -3721,6 +3729,13 @@
   "@generalSettingsFlutterDaysSuffix": {
     "description": "generalSettings.flutter.daysSuffix"
   },
+  "generalSettingsFlutterDeleteRuleNamed": "Möchtest du die Regel \"{name}\" wirklich löschen?",
+  "@generalSettingsFlutterDeleteRuleNamed": {
+    "description": "generalSettings.flutter.deleteRuleNamed",
+    "placeholders": {
+      "name": {}
+    }
+  },
   "generalSettingsFlutterDisabled": "Deaktiviert",
   "@generalSettingsFlutterDisabled": {
     "description": "generalSettings.flutter.disabled"
@@ -3728,6 +3743,31 @@
   "generalSettingsFlutterEditRule": "Regel bearbeiten",
   "@generalSettingsFlutterEditRule": {
     "description": "generalSettings.flutter.editRule"
+  },
+  "generalSettingsFlutterExcuses": "Entschuldigungen",
+  "@generalSettingsFlutterExcuses": {
+    "description": "generalSettings.flutter.excuses"
+  },
+  "generalSettingsFlutterExcusesHelper": "Erlaubt \"Entschuldigt\" als Status",
+  "@generalSettingsFlutterExcusesHelper": {
+    "description": "generalSettings.flutter.excusesHelper"
+  },
+  "generalSettingsFlutterFieldsCount": "{count, plural, one {{count} Feld} other {{count} Felder}}",
+  "@generalSettingsFlutterFieldsCount": {
+    "description": "generalSettings.flutter.fieldsCount",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "generalSettingsFlutterNoHolidays": "Keine Feiertage",
+  "@generalSettingsFlutterNoHolidays": {
+    "description": "generalSettings.flutter.noHolidays"
+  },
+  "generalSettingsFlutterNoTypes": "Keine Terminarten vorhanden",
+  "@generalSettingsFlutterNoTypes": {
+    "description": "generalSettings.flutter.noTypes"
   },
   "generalSettingsFlutterOrHint": "Person ist kritisch, wenn EINE der Regeln zutrifft",
   "@generalSettingsFlutterOrHint": {
@@ -3737,6 +3777,22 @@
   "@generalSettingsFlutterOrShort": {
     "description": "generalSettings.flutter.orShort"
   },
+  "generalSettingsFlutterPracticeEnd": "Probenende",
+  "@generalSettingsFlutterPracticeEnd": {
+    "description": "generalSettings.flutter.practiceEnd"
+  },
+  "generalSettingsFlutterPracticeStart": "Probenbeginn",
+  "@generalSettingsFlutterPracticeStart": {
+    "description": "generalSettings.flutter.practiceStart"
+  },
+  "generalSettingsFlutterRuleAdded": "Regel hinzugefügt",
+  "@generalSettingsFlutterRuleAdded": {
+    "description": "generalSettings.flutter.ruleAdded"
+  },
+  "generalSettingsFlutterRuleDeleted": "Regel gelöscht",
+  "@generalSettingsFlutterRuleDeleted": {
+    "description": "generalSettings.flutter.ruleDeleted"
+  },
   "generalSettingsFlutterRuleEnabled": "Regel aktiviert",
   "@generalSettingsFlutterRuleEnabled": {
     "description": "generalSettings.flutter.ruleEnabled"
@@ -3744,6 +3800,10 @@
   "generalSettingsFlutterRuleEnabledHelper": "Deaktivierte Regeln werden nicht ausgewertet",
   "@generalSettingsFlutterRuleEnabledHelper": {
     "description": "generalSettings.flutter.ruleEnabledHelper"
+  },
+  "generalSettingsFlutterRuleUpdated": "Regel aktualisiert",
+  "@generalSettingsFlutterRuleUpdated": {
+    "description": "generalSettings.flutter.ruleUpdated"
   },
   "generalSettingsFlutterStatusCritical": "Status (zählt als kritisch)",
   "@generalSettingsFlutterStatusCritical": {

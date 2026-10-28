@@ -4145,6 +4145,18 @@ abstract class AppLocalizations {
   /// **' (bearbeitbar)'**
   String get extraFieldsEditableSuffix;
 
+  /// extraFields.flutter.firstOptionDefault
+  ///
+  /// In de, this message translates to:
+  /// **'Erste Option ist der Standardwert'**
+  String get extraFieldsFlutterFirstOptionDefault;
+
+  /// extraFields.flutter.leaveMessage
+  ///
+  /// In de, this message translates to:
+  /// **'Du hast ungespeicherte Änderungen. Möchtest du die Seite trotzdem verlassen?'**
+  String get extraFieldsFlutterLeaveMessage;
+
   /// extraFields.forPersons
   ///
   /// In de, this message translates to:
@@ -4991,6 +5003,12 @@ abstract class AppLocalizations {
   /// **'Tage'**
   String get generalSettingsFlutterDaysSuffix;
 
+  /// generalSettings.flutter.deleteRuleNamed
+  ///
+  /// In de, this message translates to:
+  /// **'Möchtest du die Regel \"{name}\" wirklich löschen?'**
+  String generalSettingsFlutterDeleteRuleNamed(Object name);
+
   /// generalSettings.flutter.disabled
   ///
   /// In de, this message translates to:
@@ -5002,6 +5020,36 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Regel bearbeiten'**
   String get generalSettingsFlutterEditRule;
+
+  /// generalSettings.flutter.excuses
+  ///
+  /// In de, this message translates to:
+  /// **'Entschuldigungen'**
+  String get generalSettingsFlutterExcuses;
+
+  /// generalSettings.flutter.excusesHelper
+  ///
+  /// In de, this message translates to:
+  /// **'Erlaubt \"Entschuldigt\" als Status'**
+  String get generalSettingsFlutterExcusesHelper;
+
+  /// generalSettings.flutter.fieldsCount
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {{count} Feld} other {{count} Felder}}'**
+  String generalSettingsFlutterFieldsCount(num count);
+
+  /// generalSettings.flutter.noHolidays
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Feiertage'**
+  String get generalSettingsFlutterNoHolidays;
+
+  /// generalSettings.flutter.noTypes
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Terminarten vorhanden'**
+  String get generalSettingsFlutterNoTypes;
 
   /// generalSettings.flutter.orHint
   ///
@@ -5015,6 +5063,30 @@ abstract class AppLocalizations {
   /// **'ODER'**
   String get generalSettingsFlutterOrShort;
 
+  /// generalSettings.flutter.practiceEnd
+  ///
+  /// In de, this message translates to:
+  /// **'Probenende'**
+  String get generalSettingsFlutterPracticeEnd;
+
+  /// generalSettings.flutter.practiceStart
+  ///
+  /// In de, this message translates to:
+  /// **'Probenbeginn'**
+  String get generalSettingsFlutterPracticeStart;
+
+  /// generalSettings.flutter.ruleAdded
+  ///
+  /// In de, this message translates to:
+  /// **'Regel hinzugefügt'**
+  String get generalSettingsFlutterRuleAdded;
+
+  /// generalSettings.flutter.ruleDeleted
+  ///
+  /// In de, this message translates to:
+  /// **'Regel gelöscht'**
+  String get generalSettingsFlutterRuleDeleted;
+
   /// generalSettings.flutter.ruleEnabled
   ///
   /// In de, this message translates to:
@@ -5026,6 +5098,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Deaktivierte Regeln werden nicht ausgewertet'**
   String get generalSettingsFlutterRuleEnabledHelper;
+
+  /// generalSettings.flutter.ruleUpdated
+  ///
+  /// In de, this message translates to:
+  /// **'Regel aktualisiert'**
+  String get generalSettingsFlutterRuleUpdated;
 
   /// generalSettings.flutter.statusCritical
   ///

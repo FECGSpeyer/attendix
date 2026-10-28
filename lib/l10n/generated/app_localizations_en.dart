@@ -2366,6 +2366,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get extraFieldsEditableSuffix => ' (editable)';
 
   @override
+  String get extraFieldsFlutterFirstOptionDefault => 'The first option is the default value';
+
+  @override
+  String get extraFieldsFlutterLeaveMessage => 'You have unsaved changes. Do you want to leave the page anyway?';
+
+  @override
   String get extraFieldsForPersons => 'Additional fields for people';
 
   @override
@@ -2851,10 +2857,38 @@ class AppLocalizationsEn extends AppLocalizations {
   String get generalSettingsFlutterDaysSuffix => 'days';
 
   @override
+  String generalSettingsFlutterDeleteRuleNamed(Object name) {
+    return 'Do you really want to delete the rule \"$name\"?';
+  }
+
+  @override
   String get generalSettingsFlutterDisabled => 'Disabled';
 
   @override
   String get generalSettingsFlutterEditRule => 'Edit rule';
+
+  @override
+  String get generalSettingsFlutterExcuses => 'Excuses';
+
+  @override
+  String get generalSettingsFlutterExcusesHelper => 'Allows \"Excused\" as a status';
+
+  @override
+  String generalSettingsFlutterFieldsCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count fields',
+      one: '$count field',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get generalSettingsFlutterNoHolidays => 'No holidays';
+
+  @override
+  String get generalSettingsFlutterNoTypes => 'No event types available';
 
   @override
   String get generalSettingsFlutterOrHint => 'Person is critical if ANY of the rules applies';
@@ -2863,10 +2897,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get generalSettingsFlutterOrShort => 'OR';
 
   @override
+  String get generalSettingsFlutterPracticeEnd => 'Rehearsal end';
+
+  @override
+  String get generalSettingsFlutterPracticeStart => 'Rehearsal start';
+
+  @override
+  String get generalSettingsFlutterRuleAdded => 'Rule added';
+
+  @override
+  String get generalSettingsFlutterRuleDeleted => 'Rule deleted';
+
+  @override
   String get generalSettingsFlutterRuleEnabled => 'Rule enabled';
 
   @override
   String get generalSettingsFlutterRuleEnabledHelper => 'Disabled rules are not evaluated';
+
+  @override
+  String get generalSettingsFlutterRuleUpdated => 'Rule updated';
 
   @override
   String get generalSettingsFlutterStatusCritical => 'Status (counts as critical)';

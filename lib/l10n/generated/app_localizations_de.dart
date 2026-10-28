@@ -2360,6 +2360,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get extraFieldsEditableSuffix => ' (bearbeitbar)';
 
   @override
+  String get extraFieldsFlutterFirstOptionDefault => 'Erste Option ist der Standardwert';
+
+  @override
+  String get extraFieldsFlutterLeaveMessage => 'Du hast ungespeicherte Änderungen. Möchtest du die Seite trotzdem verlassen?';
+
+  @override
   String get extraFieldsForPersons => 'Zusätzliche Felder für Personen';
 
   @override
@@ -2845,10 +2851,38 @@ class AppLocalizationsDe extends AppLocalizations {
   String get generalSettingsFlutterDaysSuffix => 'Tage';
 
   @override
+  String generalSettingsFlutterDeleteRuleNamed(Object name) {
+    return 'Möchtest du die Regel \"$name\" wirklich löschen?';
+  }
+
+  @override
   String get generalSettingsFlutterDisabled => 'Deaktiviert';
 
   @override
   String get generalSettingsFlutterEditRule => 'Regel bearbeiten';
+
+  @override
+  String get generalSettingsFlutterExcuses => 'Entschuldigungen';
+
+  @override
+  String get generalSettingsFlutterExcusesHelper => 'Erlaubt \"Entschuldigt\" als Status';
+
+  @override
+  String generalSettingsFlutterFieldsCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Felder',
+      one: '$count Feld',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get generalSettingsFlutterNoHolidays => 'Keine Feiertage';
+
+  @override
+  String get generalSettingsFlutterNoTypes => 'Keine Terminarten vorhanden';
 
   @override
   String get generalSettingsFlutterOrHint => 'Person ist kritisch, wenn EINE der Regeln zutrifft';
@@ -2857,10 +2891,25 @@ class AppLocalizationsDe extends AppLocalizations {
   String get generalSettingsFlutterOrShort => 'ODER';
 
   @override
+  String get generalSettingsFlutterPracticeEnd => 'Probenende';
+
+  @override
+  String get generalSettingsFlutterPracticeStart => 'Probenbeginn';
+
+  @override
+  String get generalSettingsFlutterRuleAdded => 'Regel hinzugefügt';
+
+  @override
+  String get generalSettingsFlutterRuleDeleted => 'Regel gelöscht';
+
+  @override
   String get generalSettingsFlutterRuleEnabled => 'Regel aktiviert';
 
   @override
   String get generalSettingsFlutterRuleEnabledHelper => 'Deaktivierte Regeln werden nicht ausgewertet';
+
+  @override
+  String get generalSettingsFlutterRuleUpdated => 'Regel aktualisiert';
 
   @override
   String get generalSettingsFlutterStatusCritical => 'Status (zählt als kritisch)';

@@ -11,6 +11,7 @@ import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../data/repositories/extra_fields_repository.dart';
+import '../../../../l10n/l10n.dart';
 
 enum ExtraFieldTarget { person, song }
 
@@ -24,36 +25,38 @@ String extraFieldIdFromName(String name) {
 }
 
 String extraFieldTypeName(String type) {
+  final l10n = l10nWithoutContext;
   switch (type) {
     case 'text':
-      return 'Text';
+      return l10n.typeSettingsText;
     case 'textarea':
-      return 'Textbereich';
+      return l10n.extraFieldsTextarea;
     case 'number':
-      return 'Zahl';
+      return l10n.extraFieldsNumber;
     case 'select':
-      return 'Auswahl';
+      return l10n.extraFieldsSelect;
     case 'date':
-      return 'Datum';
+      return l10n.attendanceDate;
     case 'boolean':
-      return 'Ja/Nein';
+      return l10n.extraFieldsYesNo;
     case 'bfecg_church':
-      return 'BFECG Gemeinde';
+      return l10n.extraFieldsChurch;
     default:
-      return 'Unbekannt';
+      return l10n.commonUnknown;
   }
 }
 
 /// Validierung vor dem Speichern (null = ok, sonst Fehlermeldung)
 String? validateExtraFields(List<ExtraField> fields) {
+  final l10n = l10nWithoutContext;
   for (final f in fields) {
-    if (f.name.trim().isEmpty) return 'Alle Zusatzfelder müssen einen Namen haben.';
+    if (f.name.trim().isEmpty) return l10n.extraFieldsAllNeedName;
     if (f.type == 'select') {
       if (f.options == null || f.options!.isEmpty) {
-        return 'Das Auswahlfeld „${f.name}“ muss mindestens eine Option haben.';
+        return l10n.extraFieldsSelectNeedsOption(f.name);
       }
       if (f.options!.any((o) => o.trim().isEmpty)) {
-        return 'Die Optionen im Feld „${f.name}“ dürfen nicht leer sein.';
+        return l10n.extraFieldsOptionsEmptyIn(f.name);
       }
     }
   }
@@ -104,12 +107,12 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
     final fields = _fields(target);
     final id = result.type == 'bfecg_church' ? 'bfecg_church' : extraFieldIdFromName(result.name);
     if (id.isEmpty) {
-      if (mounted) ToastHelper.showError(context, 'Die ID des Zusatzfeldes darf nicht leer sein.');
+      if (mounted) ToastHelper.showError(context, context.l10n.extraFieldsIdEmpty);
       return;
     }
     if (fields.any((f) => f.id == id)) {
       if (mounted) {
-        ToastHelper.showError(context, 'Ein Zusatzfeld mit dieser ID existiert bereits. Bitte wähle einen anderen Namen.');
+        ToastHelper.showError(context, context.l10n.extraFieldsIdExists);
       }
       return;
     }
@@ -129,9 +132,9 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
     final fields = _fields(target);
     final confirmed = await DialogHelper.showConfirmation(
       context,
-      title: 'Zusatzfeld löschen?',
-      message: 'Möchtest du das Zusatzfeld „${fields[index].name}“ wirklich löschen?',
-      confirmText: 'Löschen',
+      title: context.l10n.extraFieldsDeleteField,
+      message: context.l10n.extraFieldsDeleteFieldMessage(fields[index].name),
+      confirmText: context.l10n.commonDelete,
       isDestructive: true,
     );
     if (!confirmed) return;
@@ -168,9 +171,9 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
       }
       if (!mounted) return;
       setState(() => _hasChanges = false);
-      ToastHelper.showSuccess(context, 'Felder gespeichert');
+      ToastHelper.showSuccess(context, context.l10n.extraFieldsSaved);
     } catch (e) {
-      if (mounted) ToastHelper.showError(context, 'Fehler beim Speichern');
+      if (mounted) ToastHelper.showError(context, context.l10n.extraFieldsSaveFailed);
     } finally {
       if (mounted) setState(() => _saving = false);
     }
@@ -210,9 +213,9 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
             if (isEdit && isPerson && value.isNotEmpty && originalOptions.contains(value)) {
               final ok = await DialogHelper.showConfirmation(
                 ctx,
-                title: 'Option löschen?',
-                message: 'Wenn du die Option „$value“ löschst, werden alle betroffenen Datensätze auf den Standardwert zurückgesetzt.',
-                confirmText: 'Löschen',
+                title: context.l10n.extraFieldsDeleteOption,
+                message: context.l10n.extraFieldsDeleteOptionMessage(value),
+                confirmText: context.l10n.commonDelete,
                 isDestructive: true,
               );
               if (!ok) return;
@@ -222,9 +225,9 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
                 final count = await ref
                     .read(extraFieldsRepositoryWithTenantProvider)
                     .updateFieldValue(existing.id, value, newDefault);
-                if (count > 0 && mounted) ToastHelper.showSuccess(context, '$count Personen aktualisiert');
+                if (count > 0 && mounted) ToastHelper.showSuccess(context, context.l10n.extraFieldsPersonsUpdated(count));
               } catch (_) {
-                if (mounted) ToastHelper.showError(context, 'Fehler beim updaten der Zusatzfelder');
+                if (mounted) ToastHelper.showError(context, context.l10n.svcUpdateExtraFieldsFailed);
                 return;
               }
             }
@@ -234,10 +237,9 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
           Future<void> resetValues() async {
             final ok = await DialogHelper.showConfirmation(
               ctx,
-              title: 'Werte zurücksetzen?',
-              message:
-                  'Möchtest du alle Werte des Feldes „${nameController.text}“ auf den Standardwert zurücksetzen? Dies kann nicht rückgängig gemacht werden!',
-              confirmText: 'Zurücksetzen',
+              title: context.l10n.extraFieldsResetValues,
+              message: context.l10n.extraFieldsResetValuesMessage(nameController.text),
+              confirmText: context.l10n.dashSettingsReset,
               isDestructive: true,
             );
             if (!ok) return;
@@ -254,27 +256,27 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
             );
             try {
               final count = await ref.read(extraFieldsRepositoryWithTenantProvider).resetFieldValues(existing!.id, resolved);
-              if (mounted) ToastHelper.showSuccess(context, '$count Personen aktualisiert');
+              if (mounted) ToastHelper.showSuccess(context, context.l10n.extraFieldsPersonsUpdated(count));
             } catch (_) {
-              if (mounted) ToastHelper.showError(context, 'Fehler beim updaten der Zusatzfelder');
+              if (mounted) ToastHelper.showError(context, context.l10n.svcUpdateExtraFieldsFailed);
             }
           }
 
           void submit() {
             final name = nameController.text.trim();
             if (name.isEmpty) {
-              ToastHelper.showError(ctx, 'Bitte gib einen gültigen Namen für das Zusatzfeld ein.');
+              ToastHelper.showError(ctx, context.l10n.extraFieldsInvalidName);
               return;
             }
             final optionValues = options.map((c) => c.text).toList();
             dynamic defaultValue;
             if (type == 'select') {
               if (optionValues.isEmpty) {
-                ToastHelper.showError(ctx, 'Bitte füge mindestens eine Option für das Auswahlfeld hinzu.');
+                ToastHelper.showError(ctx, context.l10n.extraFieldsAddOption);
                 return;
               }
               if (optionValues.any((o) => o.trim().isEmpty)) {
-                ToastHelper.showError(ctx, 'Optionen dürfen nicht leer sein.');
+                ToastHelper.showError(ctx, context.l10n.extraFieldsOptionsEmpty);
                 return;
               }
               defaultValue = optionValues.first;
@@ -313,7 +315,7 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
                       children: [
                         Expanded(
                           child: Text(
-                            isEdit ? 'Feld bearbeiten' : 'Neues Feld hinzufügen',
+                            isEdit ? context.l10n.typeSettingsEditField : context.l10n.extraFieldsAddNew,
                             style: Theme.of(ctx).textTheme.titleLarge,
                           ),
                         ),
@@ -324,20 +326,20 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
                     if (isEdit)
                       ListTile(
                         contentPadding: EdgeInsets.zero,
-                        title: const Text('Typ'),
+                        title: Text(context.l10n.typeSettingsType),
                         trailing: Text(extraFieldTypeName(type)),
                       )
                     else
                       DropdownButtonFormField<String>(
                         value: type,
-                        decoration: const InputDecoration(labelText: 'Typ'),
+                        decoration: InputDecoration(labelText: context.l10n.typeSettingsType),
                         items: [
-                          const DropdownMenuItem(value: 'text', child: Text('Text')),
-                          const DropdownMenuItem(value: 'number', child: Text('Zahl')),
-                          const DropdownMenuItem(value: 'boolean', child: Text('Ja/Nein')),
-                          const DropdownMenuItem(value: 'select', child: Text('Auswahl')),
+                          DropdownMenuItem(value: 'text', child: Text(context.l10n.typeSettingsText)),
+                          DropdownMenuItem(value: 'number', child: Text(context.l10n.extraFieldsNumber)),
+                          DropdownMenuItem(value: 'boolean', child: Text(context.l10n.extraFieldsYesNo)),
+                          DropdownMenuItem(value: 'select', child: Text(context.l10n.extraFieldsSelect)),
                           if (isPerson && tenantId == 12)
-                            const DropdownMenuItem(value: 'bfecg_church', child: Text('BFECG Gemeinde')),
+                            DropdownMenuItem(value: 'bfecg_church', child: Text(context.l10n.extraFieldsChurch)),
                         ],
                         onChanged: (v) => setSheet(() {
                           type = v ?? 'text';
@@ -348,30 +350,30 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
                     TextField(
                       controller: nameController,
                       textCapitalization: TextCapitalization.sentences,
-                      decoration: const InputDecoration(labelText: 'Name'),
+                      decoration: InputDecoration(labelText: context.l10n.typeSettingsName),
                     ),
                     DropdownButtonFormField<String>(
                       value: displayMode,
-                      decoration: const InputDecoration(labelText: 'Anzeige in Listen'),
-                      items: const [
-                        DropdownMenuItem(value: 'chip', child: Text('Als Chip')),
-                        DropdownMenuItem(value: 'underneath', child: Text('Unter dem Namen')),
+                      decoration: InputDecoration(labelText: context.l10n.extraFieldsDisplay),
+                      items: [
+                        DropdownMenuItem(value: 'chip', child: Text(context.l10n.extraFieldsAsChip)),
+                        DropdownMenuItem(value: 'underneath', child: Text(context.l10n.extraFieldsUnderName)),
                       ],
                       onChanged: (v) => setSheet(() => displayMode = v ?? 'chip'),
                     ),
                     if (isPerson) ...[
                       SwitchListTile(
                         contentPadding: EdgeInsets.zero,
-                        title: const Text('Für Mitglieder sichtbar'),
-                        subtitle: const Text('Aktivieren, damit Mitglieder dieses Feld in ihren Stammdaten sehen können.'),
+                        title: Text(context.l10n.extraFieldsVisible),
+                        subtitle: Text(context.l10n.extraFieldsVisibleHelper),
                         value: visible,
                         onChanged: (v) => setSheet(() => visible = v),
                       ),
                       if (visible)
                         SwitchListTile(
                           contentPadding: EdgeInsets.zero,
-                          title: const Text('Von Mitgliedern bearbeitbar'),
-                          subtitle: const Text('Aktivieren, damit Mitglieder den Wert selbst ändern können.'),
+                          title: Text(context.l10n.extraFieldsEditable),
+                          subtitle: Text(context.l10n.extraFieldsEditableHelper),
                           value: editable,
                           onChanged: (v) => setSheet(() => editable = v),
                         ),
@@ -380,7 +382,7 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
                       const SizedBox(height: AppDimensions.paddingS),
                       Row(
                         children: [
-                          Expanded(child: Text('Optionen', style: Theme.of(ctx).textTheme.titleSmall)),
+                          Expanded(child: Text(context.l10n.typeSettingsOptions, style: Theme.of(ctx).textTheme.titleSmall)),
                           IconButton(
                             icon: const Icon(Icons.add),
                             onPressed: () => setSheet(() => options.add(TextEditingController())),
@@ -388,7 +390,7 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
                         ],
                       ),
                       if (options.isEmpty)
-                        Text(isEdit ? 'Keine Optionen' : 'Keine Optionen ausgewählt',
+                        Text(isEdit ? context.l10n.extraFieldsNoOptions : context.l10n.extraFieldsNoOptionsSelected,
                             style: const TextStyle(color: AppColors.medium)),
                       for (var i = 0; i < options.length; i++)
                         Row(
@@ -398,8 +400,8 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
                                 controller: options[i],
                                 textCapitalization: TextCapitalization.sentences,
                                 decoration: InputDecoration(
-                                  hintText: 'Wert eingeben...',
-                                  helperText: i == 0 ? 'Erste Option ist der Standardwert' : null,
+                                  hintText: context.l10n.extraFieldsValuePh,
+                                  helperText: i == 0 ? context.l10n.extraFieldsFlutterFirstOptionDefault : null,
                                 ),
                               ),
                             ),
@@ -415,7 +417,7 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
                       if (type == 'boolean')
                         SwitchListTile(
                           contentPadding: EdgeInsets.zero,
-                          title: const Text('Standardwert'),
+                          title: Text(context.l10n.extraFieldsDefaultValue),
                           value: boolDefault,
                           onChanged: (v) => setSheet(() => boolDefault = v),
                         )
@@ -424,7 +426,7 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
                           controller: defaultController,
                           keyboardType: type == 'number' ? TextInputType.number : TextInputType.text,
                           decoration: InputDecoration(
-                            labelText: isEdit ? 'Standardwert' : 'Standardwert (optional)',
+                            labelText: isEdit ? context.l10n.extraFieldsDefaultValue : context.l10n.extraFieldsDefaultOptional,
                           ),
                         ),
                     ],
@@ -432,14 +434,14 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
                       const SizedBox(height: AppDimensions.paddingS),
                       TextButton(
                         onPressed: resetValues,
-                        child: const Text('Alle Werte auf Standard zurücksetzen',
-                            style: TextStyle(color: AppColors.warning)),
+                        child: Text(context.l10n.extraFieldsResetAll,
+                            style: const TextStyle(color: AppColors.warning)),
                       ),
                     ],
                     const SizedBox(height: AppDimensions.paddingM),
                     ElevatedButton(
                       onPressed: submit,
-                      child: Text(isEdit ? 'Übernehmen' : 'Feld hinzufügen'),
+                      child: Text(isEdit ? context.l10n.commonApply : context.l10n.typeSettingsAddField),
                     ),
                   ],
                 ),
@@ -469,9 +471,9 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
   Future<void> _confirmLeave() async {
     final leave = await DialogHelper.showConfirmation(
       context,
-      title: 'Ungespeicherte Änderungen',
-      message: 'Du hast ungespeicherte Änderungen. Möchtest du die Seite trotzdem verlassen?',
-      confirmText: 'Verwerfen',
+      title: context.l10n.rolePermUnsaved,
+      message: context.l10n.extraFieldsFlutterLeaveMessage,
+      confirmText: context.l10n.rolePermDiscard,
       isDestructive: true,
     );
     if (leave && mounted) {
@@ -492,7 +494,7 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Zusatzfelder'),
+          title: Text(context.l10n.extraFieldsTitle),
           actions: [
             IconButton(
               icon: _saving
@@ -505,13 +507,13 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
         body: ListView(
           padding: const EdgeInsets.all(AppDimensions.paddingM),
           children: [
-            _buildSection(ExtraFieldTarget.person, 'Zusätzliche Felder für Personen'),
+            _buildSection(ExtraFieldTarget.person, context.l10n.extraFieldsForPersons),
             const SizedBox(height: AppDimensions.paddingL),
-            _buildSection(ExtraFieldTarget.song, 'Zusätzliche Felder für Werke'),
+            _buildSection(ExtraFieldTarget.song, context.l10n.extraFieldsForSongs),
             const SizedBox(height: AppDimensions.paddingL),
             ElevatedButton(
               onPressed: _saving ? null : _save,
-              child: const Text('Speichern'),
+              child: Text(context.l10n.commonSave),
             ),
           ],
         ),
@@ -537,14 +539,14 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
             ),
             IconButton(
               icon: const Icon(Icons.add),
-              tooltip: 'Neues Feld hinzufügen',
+              tooltip: context.l10n.extraFieldsAddNew,
               onPressed: () => _addField(target),
             ),
           ],
         ),
         Card(
           child: fields.isEmpty
-              ? const ListTile(title: Text('Es wurden noch keine zusätzlichen Felder hinzugefügt.'))
+              ? ListTile(title: Text(context.l10n.extraFieldsNoneYet))
               : ReorderableListView.builder(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
@@ -554,10 +556,12 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
                   itemBuilder: (context, i) {
                     final f = fields[i];
                     final lines = <String>[
-                      if (f.id != 'bfecg_church') 'Typ: ${extraFieldTypeName(f.type)}',
-                      'Anzeige: ${f.displayMode == 'underneath' ? 'Unter dem Namen' : 'Als Chip'}',
+                      if (f.id != 'bfecg_church') context.l10n.extraFieldsTypeLine(extraFieldTypeName(f.type)),
+                      context.l10n.extraFieldsDisplayLine(f.displayMode == 'underneath'
+                          ? context.l10n.extraFieldsUnderName
+                          : context.l10n.extraFieldsAsChip),
                       if (target == ExtraFieldTarget.person && (f.visibleToPlayers ?? false))
-                        'Für Mitglieder sichtbar${(f.editableByPlayers ?? false) ? ' (bearbeitbar)' : ''}',
+                        '${context.l10n.extraFieldsVisible}${(f.editableByPlayers ?? false) ? context.l10n.extraFieldsEditableSuffix : ''}',
                     ];
                     return ListTile(
                       key: ValueKey('${target.name}-${f.id}-$i'),
