@@ -1496,6 +1496,21 @@ class AppLocalizationsDe extends AppLocalizations {
   String get commonYes => 'Ja';
 
   @override
+  String get coreFlutterAccessDenied => 'Zugriff verweigert';
+
+  @override
+  String get coreFlutterDifficultyEasy => 'Leicht';
+
+  @override
+  String get coreFlutterDifficultyHard => 'Schwer';
+
+  @override
+  String get coreFlutterDifficultyMedium => 'Mittel';
+
+  @override
+  String get coreFlutterDifficultyVeryHard => 'Sehr schwer';
+
+  @override
   String coreFlutterErrorWith(Object error) {
     return 'Fehler: $error';
   }
@@ -1577,6 +1592,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get coreFlutterHistoryUnpaused => 'Pause beendet';
+
+  @override
+  String get coreFlutterHoliday => 'Feiertag';
 
   @override
   String coreFlutterImportBirthdayUnreadable(Object value) {
@@ -1666,6 +1684,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get coreFlutterNotLoggedIn => 'Nicht eingeloggt';
+
+  @override
+  String get coreFlutterNotSignedIn => 'Nicht angemeldet';
 
   @override
   String get coreFlutterPausedLower => 'pausiert';
@@ -1824,6 +1845,9 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get coreFlutterRolePermissionWithoutId => 'Rollenberechtigung ohne ID';
+
+  @override
   String get coreFlutterRouterGoHome => 'Zur Startseite';
 
   @override
@@ -1852,7 +1876,26 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get coreFlutterSchoolHolidays => 'Schulferien';
+
+  @override
   String get coreFlutterSearchHint => 'Suchen...';
+
+  @override
+  String get coreFlutterSheetMusic => 'Notenblatt';
+
+  @override
+  String coreFlutterShiftFreeRange(Object start, Object end) {
+    return 'Frei ($start - $end)';
+  }
+
+  @override
+  String coreFlutterShiftWorkRange(Object start, Object end, Object hours) {
+    return 'Arbeit ($start - $end, ${hours}h)';
+  }
+
+  @override
+  String get coreFlutterSongFiles => 'Song-Dateien';
 
   @override
   String get coreFlutterSongNotFound => 'Song wurde nicht gefunden oder bereits gelöscht';

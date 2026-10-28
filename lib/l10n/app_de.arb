@@ -1940,6 +1940,26 @@
   "@commonYes": {
     "description": "common.yes"
   },
+  "coreFlutterAccessDenied": "Zugriff verweigert",
+  "@coreFlutterAccessDenied": {
+    "description": "core.flutter.accessDenied"
+  },
+  "coreFlutterDifficultyEasy": "Leicht",
+  "@coreFlutterDifficultyEasy": {
+    "description": "core.flutter.difficulty.easy"
+  },
+  "coreFlutterDifficultyHard": "Schwer",
+  "@coreFlutterDifficultyHard": {
+    "description": "core.flutter.difficulty.hard"
+  },
+  "coreFlutterDifficultyMedium": "Mittel",
+  "@coreFlutterDifficultyMedium": {
+    "description": "core.flutter.difficulty.medium"
+  },
+  "coreFlutterDifficultyVeryHard": "Sehr schwer",
+  "@coreFlutterDifficultyVeryHard": {
+    "description": "core.flutter.difficulty.veryHard"
+  },
   "coreFlutterErrorWith": "Fehler: {error}",
   "@coreFlutterErrorWith": {
     "description": "core.flutter.errorWith",
@@ -2053,6 +2073,10 @@
   "coreFlutterHistoryUnpaused": "Pause beendet",
   "@coreFlutterHistoryUnpaused": {
     "description": "core.flutter.history.unpaused"
+  },
+  "coreFlutterHoliday": "Feiertag",
+  "@coreFlutterHoliday": {
+    "description": "core.flutter.holiday"
   },
   "coreFlutterImportBirthdayUnreadable": "Geburtsdatum \"{value}\" konnte nicht gelesen werden",
   "@coreFlutterImportBirthdayUnreadable": {
@@ -2174,6 +2198,10 @@
   "coreFlutterNotLoggedIn": "Nicht eingeloggt",
   "@coreFlutterNotLoggedIn": {
     "description": "core.flutter.notLoggedIn"
+  },
+  "coreFlutterNotSignedIn": "Nicht angemeldet",
+  "@coreFlutterNotSignedIn": {
+    "description": "core.flutter.notSignedIn"
   },
   "coreFlutterPausedLower": "pausiert",
   "@coreFlutterPausedLower": {
@@ -2389,6 +2417,10 @@
       "error": {}
     }
   },
+  "coreFlutterRolePermissionWithoutId": "Rollenberechtigung ohne ID",
+  "@coreFlutterRolePermissionWithoutId": {
+    "description": "core.flutter.rolePermissionWithoutId"
+  },
   "coreFlutterRouterGoHome": "Zur Startseite",
   "@coreFlutterRouterGoHome": {
     "description": "core.flutter.router.goHome"
@@ -2427,9 +2459,38 @@
       "n": {}
     }
   },
+  "coreFlutterSchoolHolidays": "Schulferien",
+  "@coreFlutterSchoolHolidays": {
+    "description": "core.flutter.schoolHolidays"
+  },
   "coreFlutterSearchHint": "Suchen...",
   "@coreFlutterSearchHint": {
     "description": "core.flutter.searchHint"
+  },
+  "coreFlutterSheetMusic": "Notenblatt",
+  "@coreFlutterSheetMusic": {
+    "description": "core.flutter.sheetMusic"
+  },
+  "coreFlutterShiftFreeRange": "Frei ({start} - {end})",
+  "@coreFlutterShiftFreeRange": {
+    "description": "core.flutter.shift.freeRange",
+    "placeholders": {
+      "start": {},
+      "end": {}
+    }
+  },
+  "coreFlutterShiftWorkRange": "Arbeit ({start} - {end}, {hours}h)",
+  "@coreFlutterShiftWorkRange": {
+    "description": "core.flutter.shift.workRange",
+    "placeholders": {
+      "start": {},
+      "end": {},
+      "hours": {}
+    }
+  },
+  "coreFlutterSongFiles": "Song-Dateien",
+  "@coreFlutterSongFiles": {
+    "description": "core.flutter.songFiles"
   },
   "coreFlutterSongNotFound": "Song wurde nicht gefunden oder bereits gelöscht",
   "@coreFlutterSongNotFound": {

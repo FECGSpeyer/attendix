@@ -2645,6 +2645,36 @@ abstract class AppLocalizations {
   /// **'Ja'**
   String get commonYes;
 
+  /// core.flutter.accessDenied
+  ///
+  /// In de, this message translates to:
+  /// **'Zugriff verweigert'**
+  String get coreFlutterAccessDenied;
+
+  /// core.flutter.difficulty.easy
+  ///
+  /// In de, this message translates to:
+  /// **'Leicht'**
+  String get coreFlutterDifficultyEasy;
+
+  /// core.flutter.difficulty.hard
+  ///
+  /// In de, this message translates to:
+  /// **'Schwer'**
+  String get coreFlutterDifficultyHard;
+
+  /// core.flutter.difficulty.medium
+  ///
+  /// In de, this message translates to:
+  /// **'Mittel'**
+  String get coreFlutterDifficultyMedium;
+
+  /// core.flutter.difficulty.veryHard
+  ///
+  /// In de, this message translates to:
+  /// **'Sehr schwer'**
+  String get coreFlutterDifficultyVeryHard;
+
   /// core.flutter.errorWith
   ///
   /// In de, this message translates to:
@@ -2795,6 +2825,12 @@ abstract class AppLocalizations {
   /// **'Pause beendet'**
   String get coreFlutterHistoryUnpaused;
 
+  /// core.flutter.holiday
+  ///
+  /// In de, this message translates to:
+  /// **'Feiertag'**
+  String get coreFlutterHoliday;
+
   /// core.flutter.import.birthdayUnreadable
   ///
   /// In de, this message translates to:
@@ -2944,6 +2980,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Nicht eingeloggt'**
   String get coreFlutterNotLoggedIn;
+
+  /// core.flutter.notSignedIn
+  ///
+  /// In de, this message translates to:
+  /// **'Nicht angemeldet'**
+  String get coreFlutterNotSignedIn;
 
   /// core.flutter.pausedLower
   ///
@@ -3197,6 +3239,12 @@ abstract class AppLocalizations {
   /// **'Fehler beim Entfernen der Account-Verknüpfung: {error}'**
   String coreFlutterRepoUnlinkAccountFailed(Object error);
 
+  /// core.flutter.rolePermissionWithoutId
+  ///
+  /// In de, this message translates to:
+  /// **'Rollenberechtigung ohne ID'**
+  String get coreFlutterRolePermissionWithoutId;
+
   /// core.flutter.router.goHome
   ///
   /// In de, this message translates to:
@@ -3245,11 +3293,41 @@ abstract class AppLocalizations {
   /// **'Status {n}'**
   String coreFlutterRuleStatusN(Object n);
 
+  /// core.flutter.schoolHolidays
+  ///
+  /// In de, this message translates to:
+  /// **'Schulferien'**
+  String get coreFlutterSchoolHolidays;
+
   /// core.flutter.searchHint
   ///
   /// In de, this message translates to:
   /// **'Suchen...'**
   String get coreFlutterSearchHint;
+
+  /// core.flutter.sheetMusic
+  ///
+  /// In de, this message translates to:
+  /// **'Notenblatt'**
+  String get coreFlutterSheetMusic;
+
+  /// core.flutter.shift.freeRange
+  ///
+  /// In de, this message translates to:
+  /// **'Frei ({start} - {end})'**
+  String coreFlutterShiftFreeRange(Object start, Object end);
+
+  /// core.flutter.shift.workRange
+  ///
+  /// In de, this message translates to:
+  /// **'Arbeit ({start} - {end}, {hours}h)'**
+  String coreFlutterShiftWorkRange(Object start, Object end, Object hours);
+
+  /// core.flutter.songFiles
+  ///
+  /// In de, this message translates to:
+  /// **'Song-Dateien'**
+  String get coreFlutterSongFiles;
 
   /// core.flutter.songNotFound
   ///

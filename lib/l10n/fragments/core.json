@@ -125,7 +125,24 @@
           "copiedTo": "Kopiert an",
           "approved": "Genehmigt",
           "declined": "Abgelehnt"
-        }
+        },
+        "difficulty": {
+          "easy": "Leicht",
+          "medium": "Mittel",
+          "hard": "Schwer",
+          "veryHard": "Sehr schwer"
+        },
+        "shift": {
+          "freeRange": "Frei ({start} - {end})",
+          "workRange": "Arbeit ({start} - {end}, {hours}h)"
+        },
+        "accessDenied": "Zugriff verweigert",
+        "notSignedIn": "Nicht angemeldet",
+        "rolePermissionWithoutId": "Rollenberechtigung ohne ID",
+        "holiday": "Feiertag",
+        "schoolHolidays": "Schulferien",
+        "sheetMusic": "Notenblatt",
+        "songFiles": "Song-Dateien"
       }
     }
   },
@@ -255,7 +272,24 @@
           "copiedTo": "Copied to",
           "approved": "Approved",
           "declined": "Declined"
-        }
+        },
+        "difficulty": {
+          "easy": "Easy",
+          "medium": "Medium",
+          "hard": "Hard",
+          "veryHard": "Very hard"
+        },
+        "shift": {
+          "freeRange": "Off ({start} - {end})",
+          "workRange": "Work ({start} - {end}, {hours}h)"
+        },
+        "accessDenied": "Access denied",
+        "notSignedIn": "Not signed in",
+        "rolePermissionWithoutId": "Role permission without ID",
+        "holiday": "Public holiday",
+        "schoolHolidays": "School holidays",
+        "sheetMusic": "Sheet music",
+        "songFiles": "Song files"
       }
     }
   }

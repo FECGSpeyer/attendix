@@ -652,7 +652,7 @@ List<Group> buildGroupsWithFiles(List<Song> songs, List<Group> groups) {
       .toList()
     ..sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
   if (hasScores) {
-    result.insert(0, const Group(id: songConductorGroupId, name: 'Dirigenten'));
+    result.insert(0, Group(id: songConductorGroupId, name: l10nWithoutContext.songsConductors));
   }
   return result;
 }

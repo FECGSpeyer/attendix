@@ -600,7 +600,7 @@ Future<List<CurrentSongsGroup>> loadCurrentSongsForTenant(
       t['id'].toString(): Map<String, dynamic>.from(t as Map),
   };
 
-  final fmt = DateFormat('dd.MM.yyyy');
+  final fmt = DateFormat(dateFmt());
   final grouped = <String, List<(int, SongHistory)>>{};
   final keyDates = <String, DateTime>{};
 

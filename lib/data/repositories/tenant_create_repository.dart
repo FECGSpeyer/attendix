@@ -4,6 +4,7 @@ import '../../core/constants/enums.dart';
 import '../../features/tenant_selection/tenant_defaults.dart';
 import '../models/tenant/tenant.dart';
 import 'base_repository.dart';
+import '../../l10n/l10n.dart';
 
 final tenantCreateRepositoryProvider = Provider<TenantCreateRepository>((ref) {
   return TenantCreateRepository(ref);
@@ -29,7 +30,7 @@ class TenantCreateRepository extends BaseRepository {
       final user = supabase.auth.currentUser;
       if (user == null) {
         throw RepositoryException(
-          message: 'Nicht angemeldet',
+          message: l10nWithoutContext.coreFlutterNotSignedIn,
           operation: 'createTenant',
         );
       }

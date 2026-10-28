@@ -1502,6 +1502,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonYes => 'Yes';
 
   @override
+  String get coreFlutterAccessDenied => 'Access denied';
+
+  @override
+  String get coreFlutterDifficultyEasy => 'Easy';
+
+  @override
+  String get coreFlutterDifficultyHard => 'Hard';
+
+  @override
+  String get coreFlutterDifficultyMedium => 'Medium';
+
+  @override
+  String get coreFlutterDifficultyVeryHard => 'Very hard';
+
+  @override
   String coreFlutterErrorWith(Object error) {
     return 'Error: $error';
   }
@@ -1583,6 +1598,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get coreFlutterHistoryUnpaused => 'Pause ended';
+
+  @override
+  String get coreFlutterHoliday => 'Public holiday';
 
   @override
   String coreFlutterImportBirthdayUnreadable(Object value) {
@@ -1672,6 +1690,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get coreFlutterNotLoggedIn => 'Not logged in';
+
+  @override
+  String get coreFlutterNotSignedIn => 'Not signed in';
 
   @override
   String get coreFlutterPausedLower => 'paused';
@@ -1830,6 +1851,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get coreFlutterRolePermissionWithoutId => 'Role permission without ID';
+
+  @override
   String get coreFlutterRouterGoHome => 'Go home';
 
   @override
@@ -1858,7 +1882,26 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get coreFlutterSchoolHolidays => 'School holidays';
+
+  @override
   String get coreFlutterSearchHint => 'Search...';
+
+  @override
+  String get coreFlutterSheetMusic => 'Sheet music';
+
+  @override
+  String coreFlutterShiftFreeRange(Object start, Object end) {
+    return 'Off ($start - $end)';
+  }
+
+  @override
+  String coreFlutterShiftWorkRange(Object start, Object end, Object hours) {
+    return 'Work ($start - $end, ${hours}h)';
+  }
+
+  @override
+  String get coreFlutterSongFiles => 'Song files';
 
   @override
   String get coreFlutterSongNotFound => 'Song not found or already deleted';

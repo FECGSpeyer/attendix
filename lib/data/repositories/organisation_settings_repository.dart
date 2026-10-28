@@ -148,8 +148,8 @@ class OrganisationSettingsRepository extends BaseRepository with TenantAwareRepo
       final orgId = await _requireOrganisationId('setGlobalPersonId');
       final tenantIds = await _organisationTenantIds(orgId);
       if (!tenantIds.contains(currentTenantId)) {
-        throw const RepositoryException(
-          message: 'Zugriff verweigert',
+        throw RepositoryException(
+          message: l10nWithoutContext.coreFlutterAccessDenied,
           operation: 'setGlobalPersonId',
         );
       }

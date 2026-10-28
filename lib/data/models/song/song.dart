@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import '../../../l10n/l10n.dart';
 
 part 'song.freezed.dart';
 part 'song.g.dart';
@@ -118,10 +119,10 @@ extension SongExtension on Song {
   String? get difficultyLabel {
     if (difficulty == null) return null;
     switch (difficulty!) {
-      case 1: return 'Leicht';
-      case 2: return 'Mittel';
-      case 3: return 'Schwer';
-      case 4: return 'Sehr schwer';
+      case 1: return l10nWithoutContext.coreFlutterDifficultyEasy;
+      case 2: return l10nWithoutContext.coreFlutterDifficultyMedium;
+      case 3: return l10nWithoutContext.coreFlutterDifficultyHard;
+      case 4: return l10nWithoutContext.coreFlutterDifficultyVeryHard;
       default: return null;
     }
   }

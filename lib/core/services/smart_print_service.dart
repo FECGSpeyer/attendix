@@ -105,7 +105,7 @@ class SmartPrintService {
     // Note: The printing package handles the print dialog natively
     await Printing.layoutPdf(
       onLayout: (_) async => pdfData,
-      name: fileName ?? 'Notenblatt',
+      name: fileName ?? l10nWithoutContext.coreFlutterSheetMusic,
     );
   }
 
@@ -130,7 +130,7 @@ class SmartPrintService {
     // Print using the printing package
     await Printing.layoutPdf(
       onLayout: (_) async => pdfData,
-      name: fileName ?? 'Notenblatt',
+      name: fileName ?? l10nWithoutContext.coreFlutterSheetMusic,
     );
   }
 }
