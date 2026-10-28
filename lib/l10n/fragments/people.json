@@ -1,0 +1,158 @@
+{
+  "de": {
+    "voiceLeader": {
+      "flutter": {
+        "noGroup": "Du bist noch keiner Stimmgruppe zugeordnet.",
+        "voiceGroup": "Stimmgruppe",
+        "memberCount": "{count} Mitglieder",
+        "moreCount": "+{count} weitere"
+      }
+    },
+    "people": {
+      "flutter": {
+        "errorWith": "Fehler: {error}",
+        "saveOrder": "Reihenfolge speichern",
+        "pausedToast": "{name} wurde pausiert",
+        "hint": "Hinweis",
+        "attention": "Achtung",
+        "groupsLoadFailed": "Fehler beim Laden der Gruppen",
+        "ageFrom": "Ab",
+        "ageTo": "Bis",
+        "ageSuffix": "J.",
+        "handover": {
+          "copyTitle": "Spieler kopieren",
+          "transferTitle": "Spieler übertragen",
+          "transferring": "Wird übertragen...",
+          "copy": "Kopieren",
+          "noTenants": "Keine anderen Instanzen verfügbar",
+          "noTenantsHint": "Du hast nur Zugriff auf eine Instanz. Um Spieler zu übertragen, benötigst du Zugriff auf mindestens zwei Instanzen.",
+          "count": "{count} von {total} Spieler",
+          "mode": "Modus",
+          "modeCopy": "Spieler werden kopiert (bleiben hier aktiv)",
+          "modeTransfer": "Spieler werden übertragen (hier archiviert)",
+          "mappingHint": "Ordne die Gruppen der Quell-Instanz den Gruppen der Ziel-Instanz zu:",
+          "noMapping": "-- Nicht zuordnen --",
+          "copyNote": "Die ausgewählten Spieler werden in die Ziel-Instanz kopiert. Sie bleiben in dieser Instanz aktiv. Der App-Zugang muss in der Ziel-Instanz neu verknüpft werden.",
+          "transferNote": "Die ausgewählten Spieler werden in die Ziel-Instanz übertragen. Sie werden in dieser Instanz archiviert und der App-Zugang wird getrennt. Dieser Vorgang kann nicht rückgängig gemacht werden.",
+          "noPermission": "Keine Berechtigung in der Ziel-Instanz",
+          "targetNotFound": "Ziel-Instanz nicht gefunden",
+          "transferQuestion": "Spieler übertragen?",
+          "copyQuestion": "Spieler kopieren?",
+          "transferConfirm": "{count} Spieler an \"{tenant}\" übertragen? Die Spieler werden in dieser Instanz archiviert. Dieser Vorgang kann nicht rückgängig gemacht werden.",
+          "copyConfirm": "{count} Spieler nach \"{tenant}\" kopieren?",
+          "preparing": "Bereite Übertragung vor...",
+          "progress": "Übertrage {name} ({current}/{total})...",
+          "partialCopied": "{success} kopiert, {duplicate} bereits vorhanden, {error} fehlgeschlagen",
+          "partialTransferred": "{success} übertragen, {duplicate} bereits vorhanden, {error} fehlgeschlagen",
+          "copied": "{count} Spieler erfolgreich kopiert",
+          "transferred": "{count} Spieler erfolgreich übertragen"
+        }
+      }
+    },
+    "teachers": {
+      "flutter": {
+        "loadFailed": "Lehrer konnten nicht geladen werden",
+        "delete": "Lehrer löschen",
+        "deleteConfirm": "Möchtest du \"{name}\" wirklich löschen?",
+        "deleted": "Lehrer gelöscht"
+      }
+    },
+    "instruments": {
+      "flutter": {
+        "addFailed": "Fehler beim Hinzufügen",
+        "clef": "{clef}-Schlüssel",
+        "clefs": "Notenschlüssel",
+        "generateSynonyms": "Synonyme generieren",
+        "shortName": "Kurzname",
+        "noCategories": "Keine Kategorien",
+        "noCategoriesHint": "Tippe + um eine Kategorie zu erstellen"
+      }
+    },
+    "person": {
+      "flutter": {
+        "matchFound": "Person in anderer Instanz gefunden?",
+        "chooseRange": "Zeitraum wählen",
+        "absenceSaveFailed": "Abwesenheit konnte nicht gespeichert werden",
+        "absenceDeleteFailed": "Abwesenheit konnte nicht gelöscht werden"
+      }
+    }
+  },
+  "en": {
+    "voiceLeader": {
+      "flutter": {
+        "noGroup": "You are not assigned to a section yet.",
+        "voiceGroup": "Section",
+        "memberCount": "{count} members",
+        "moreCount": "+{count} more"
+      }
+    },
+    "people": {
+      "flutter": {
+        "errorWith": "Error: {error}",
+        "saveOrder": "Save order",
+        "pausedToast": "{name} was paused",
+        "hint": "Note",
+        "attention": "Attention",
+        "groupsLoadFailed": "Could not load the groups",
+        "ageFrom": "From",
+        "ageTo": "To",
+        "ageSuffix": "y",
+        "handover": {
+          "copyTitle": "Copy players",
+          "transferTitle": "Transfer players",
+          "transferring": "Transferring...",
+          "copy": "Copy",
+          "noTenants": "No other instances available",
+          "noTenantsHint": "You only have access to one instance. To transfer players you need access to at least two instances.",
+          "count": "{count} of {total} players",
+          "mode": "Mode",
+          "modeCopy": "Players are copied (stay active here)",
+          "modeTransfer": "Players are transferred (archived here)",
+          "mappingHint": "Map the groups of the source instance to the groups of the target instance:",
+          "noMapping": "-- Do not map --",
+          "copyNote": "The selected players are copied to the target instance. They stay active in this instance. App access has to be linked again in the target instance.",
+          "transferNote": "The selected players are transferred to the target instance. They are archived in this instance and app access is removed. This cannot be undone.",
+          "noPermission": "No permission in the target instance",
+          "targetNotFound": "Target instance not found",
+          "transferQuestion": "Transfer players?",
+          "copyQuestion": "Copy players?",
+          "transferConfirm": "Transfer {count} players to \"{tenant}\"? The players will be archived in this instance. This cannot be undone.",
+          "copyConfirm": "Copy {count} players to \"{tenant}\"?",
+          "preparing": "Preparing transfer...",
+          "progress": "Transferring {name} ({current}/{total})...",
+          "partialCopied": "{success} copied, {duplicate} already present, {error} failed",
+          "partialTransferred": "{success} transferred, {duplicate} already present, {error} failed",
+          "copied": "{count} players copied successfully",
+          "transferred": "{count} players transferred successfully"
+        }
+      }
+    },
+    "teachers": {
+      "flutter": {
+        "loadFailed": "Teachers could not be loaded",
+        "delete": "Delete teacher",
+        "deleteConfirm": "Do you really want to delete \"{name}\"?",
+        "deleted": "Teacher deleted"
+      }
+    },
+    "instruments": {
+      "flutter": {
+        "addFailed": "Could not add",
+        "clef": "{clef} clef",
+        "clefs": "Clefs",
+        "generateSynonyms": "Generate synonyms",
+        "shortName": "Short name",
+        "noCategories": "No categories",
+        "noCategoriesHint": "Tap + to create a category"
+      }
+    },
+    "person": {
+      "flutter": {
+        "matchFound": "Person found in another instance?",
+        "chooseRange": "Choose period",
+        "absenceSaveFailed": "Absence could not be saved",
+        "absenceDeleteFailed": "Absence could not be deleted"
+      }
+    }
+  }
+}

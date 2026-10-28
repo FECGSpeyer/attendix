@@ -11,6 +11,7 @@ import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/repositories/teacher_repository.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Teacher list (Ionic teachers.page): "Lehrer", rows with name, instrument
 /// names and a "n Spieler" badge; FAB opens the "Lehrer hinzufügen" sheet,
@@ -26,7 +27,7 @@ class TeachersListPage extends ConsumerWidget {
     final isAdmin = currentRole.isAdmin || currentRole.isResponsible;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Lehrer')),
+      appBar: AppBar(title: Text(context.l10n.teachersTitle)),
       body: teachersAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stack) => Center(
@@ -36,13 +37,13 @@ class TeachersListPage extends ConsumerWidget {
               const Icon(Icons.error_outline, size: 64, color: AppColors.danger),
               const SizedBox(height: AppDimensions.paddingM),
               Text(
-                'Lehrer konnten nicht geladen werden',
+                context.l10n.teachersFlutterLoadFailed,
                 style: Theme.of(context).textTheme.titleMedium,
               ),
               const SizedBox(height: AppDimensions.paddingM),
               ElevatedButton(
                 onPressed: () => ref.invalidate(enrichedTeachersProvider),
-                child: const Text('Erneut versuchen'),
+                child: Text(context.l10n.messagesRetry),
               ),
             ],
           ),
@@ -98,7 +99,7 @@ class TeachersListPage extends ConsumerWidget {
     try {
       await ref.read(teacherNotifierProvider.notifier).createTeacher(result);
     } catch (e) {
-      if (context.mounted) ToastHelper.showError(context, 'Fehler: $e');
+      if (context.mounted) ToastHelper.showError(context, context.l10n.peopleFlutterErrorWith(e));
     }
   }
 
@@ -132,10 +133,10 @@ class TeachersListPage extends ConsumerWidget {
           },
         );
         if (context.mounted) {
-          ToastHelper.showSuccess(context, 'Lehrer erfolgreich geupdated!');
+          ToastHelper.showSuccess(context, context.l10n.teachersUpdated);
         }
       } catch (e) {
-        if (context.mounted) ToastHelper.showError(context, 'Fehler: $e');
+        if (context.mounted) ToastHelper.showError(context, context.l10n.peopleFlutterErrorWith(e));
       }
     }
   }
@@ -147,18 +148,18 @@ class TeachersListPage extends ConsumerWidget {
   ) async {
     final confirmed = await DialogHelper.showConfirmation(
       context,
-      title: 'Lehrer löschen',
-      message: 'Möchtest du "${teacher.name}" wirklich löschen?',
-      confirmText: 'Löschen',
-      cancelText: 'Abbrechen',
+      title: context.l10n.teachersFlutterDelete,
+      message: context.l10n.teachersFlutterDeleteConfirm(teacher.name),
+      confirmText: context.l10n.commonDelete,
+      cancelText: context.l10n.commonCancel,
     );
     if (!confirmed || teacher.id == null) return;
 
     try {
       await ref.read(teacherNotifierProvider.notifier).deleteTeacher(teacher.id!);
-      if (context.mounted) ToastHelper.showSuccess(context, 'Lehrer gelöscht');
+      if (context.mounted) ToastHelper.showSuccess(context, context.l10n.teachersFlutterDeleted);
     } catch (e) {
-      if (context.mounted) ToastHelper.showError(context, 'Fehler: $e');
+      if (context.mounted) ToastHelper.showError(context, context.l10n.peopleFlutterErrorWith(e));
     }
   }
 }
@@ -226,7 +227,7 @@ class _TeacherTile extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
-                  '$count Spieler',
+                  context.l10n.teachersPlayerCount(count),
                   style: const TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
@@ -295,7 +296,7 @@ class _TeacherFormState extends State<_TeacherForm> {
       context: context,
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setDialogState) => AlertDialog(
-          title: const Text('Instrumente'),
+          title: Text(context.l10n.teachersInstruments),
           content: SizedBox(
             width: double.maxFinite,
             child: ListView(
@@ -320,11 +321,11 @@ class _TeacherFormState extends State<_TeacherForm> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx),
-              child: const Text('Abbrechen'),
+              child: Text(context.l10n.commonCancel),
             ),
             TextButton(
               onPressed: () => Navigator.pop(ctx, selected),
-              child: const Text('OK'),
+              child: Text(context.l10n.commonOk),
             ),
           ],
         ),
@@ -336,7 +337,7 @@ class _TeacherFormState extends State<_TeacherForm> {
   void _submit() {
     // Ionic teachers.page addTeacher: name (≥ 3 chars) and instruments required
     if (_nameController.text.trim().length < 3 || _selectedInstruments.isEmpty) {
-      ToastHelper.showError(context, 'Bitte fülle alle Felder aus...');
+      ToastHelper.showError(context, context.l10n.teachersFillAll);
       return;
     }
     Navigator.pop(
@@ -366,45 +367,45 @@ class _TeacherFormState extends State<_TeacherForm> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           if (_isNew) ...[
-            Text('Lehrer hinzufügen',
+            Text(context.l10n.teachersAdd,
                 style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: AppDimensions.paddingM),
           ],
           TextField(
             controller: _nameController,
             textCapitalization: TextCapitalization.words,
-            decoration: const InputDecoration(labelText: 'Name'),
+            decoration: InputDecoration(labelText: context.l10n.typeSettingsName),
           ),
           ListTile(
             contentPadding: EdgeInsets.zero,
-            title: const Text('Instrumente'),
+            title: Text(context.l10n.teachersInstruments),
             subtitle: names.isEmpty ? null : Text(names),
             trailing: const Icon(Icons.arrow_drop_down),
             onTap: _pickInstruments,
           ),
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
-            title: const Text('Privatlehrer'),
+            title: Text(context.l10n.teachersPrivate),
             value: _private,
             onChanged: (v) => setState(() => _private = v),
           ),
           TextField(
             controller: _numberController,
             textCapitalization: TextCapitalization.sentences,
-            decoration: const InputDecoration(labelText: 'Kontakt'),
+            decoration: InputDecoration(labelText: context.l10n.teachersContact),
           ),
           const SizedBox(height: AppDimensions.paddingM),
           TextField(
             controller: _notesController,
             textCapitalization: TextCapitalization.sentences,
-            decoration: const InputDecoration(labelText: 'Notizen'),
+            decoration: InputDecoration(labelText: context.l10n.peopleNotes),
             minLines: 1,
             maxLines: 5,
           ),
           if (widget.players.isNotEmpty) ...[
             const SizedBox(height: AppDimensions.paddingM),
             ExpansionTile(
-              title: const Text('Spieler'),
+              title: Text(context.l10n.teachersPlayers),
               initiallyExpanded: true,
               tilePadding: EdgeInsets.zero,
               children: [
@@ -416,7 +417,7 @@ class _TeacherFormState extends State<_TeacherForm> {
           const SizedBox(height: AppDimensions.paddingL),
           FilledButton(
             onPressed: _submit,
-            child: Text(_isNew ? 'Hinzufügen' : 'Lehrer updaten'),
+            child: Text(_isNew ? context.l10n.attendanceAdd : context.l10n.teachersUpdate),
           ),
         ],
       ),
@@ -442,12 +443,12 @@ class _TeacherEditPage extends ConsumerWidget {
         .toList();
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Lehrer bearbeiten'),
+        title: Text(context.l10n.teachersEdit),
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
             icon: const Icon(Icons.close),
-            tooltip: 'Schließen',
+            tooltip: context.l10n.commonClose,
             onPressed: () => Navigator.pop(context),
           ),
         ],

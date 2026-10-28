@@ -3,13 +3,14 @@ import 'package:flutter/material.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/church/church.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Label of a `bfecg_church` value (Ionic person.page getChurchLabel).
 String churchLabel(dynamic value, List<Church> churches) {
-  if (value == null) return 'Bitte auswählen';
-  if (value == '') return 'Nicht gelistet';
+  if (value == null) return l10nWithoutContext.personPleaseChoose;
+  if (value == '') return l10nWithoutContext.personNotListed;
   return churches.where((c) => c.id == value).firstOrNull?.name ??
-      'Bitte auswählen';
+      l10nWithoutContext.personPleaseChoose;
 }
 
 /// Searchable church picker with "Nicht gelistet" (Ionic person.page church
@@ -70,7 +71,7 @@ class _ChurchPickerState extends State<_ChurchPicker> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Schließen'),
+            child: Text(context.l10n.commonClose),
           ),
         ],
       ),
@@ -79,8 +80,8 @@ class _ChurchPickerState extends State<_ChurchPicker> {
           Padding(
             padding: const EdgeInsets.all(AppDimensions.paddingM),
             child: TextField(
-              decoration: const InputDecoration(
-                hintText: 'Gemeinde suchen',
+              decoration: InputDecoration(
+                hintText: context.l10n.personSearchChurch,
                 prefixIcon: Icon(Icons.search),
               ),
               onChanged: (v) => setState(() => _search = v),
@@ -90,7 +91,7 @@ class _ChurchPickerState extends State<_ChurchPicker> {
             child: ListView(
               children: [
                 ListTile(
-                  title: const Text('Nicht gelistet'),
+                  title: Text(context.l10n.personNotListed),
                   trailing: widget.selectedId == ''
                       ? const Icon(Icons.check, color: AppColors.primary)
                       : null,
@@ -105,10 +106,10 @@ class _ChurchPickerState extends State<_ChurchPicker> {
                     onTap: () => Navigator.of(context).pop(church.id),
                   ),
                 if (filtered.isEmpty)
-                  const ListTile(
+                  ListTile(
                     title: Text(
-                      'Keine Gemeinde gefunden.',
-                      style: TextStyle(color: AppColors.medium),
+                      context.l10n.personNoChurchFound,
+                      style: const TextStyle(color: AppColors.medium),
                     ),
                   ),
               ],

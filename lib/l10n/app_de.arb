@@ -4440,6 +4440,37 @@
   "@instrumentsEs": {
     "description": "instruments.es"
   },
+  "instrumentsFlutterAddFailed": "Fehler beim Hinzufügen",
+  "@instrumentsFlutterAddFailed": {
+    "description": "instruments.flutter.addFailed"
+  },
+  "instrumentsFlutterClef": "{clef}-Schlüssel",
+  "@instrumentsFlutterClef": {
+    "description": "instruments.flutter.clef",
+    "placeholders": {
+      "clef": {}
+    }
+  },
+  "instrumentsFlutterClefs": "Notenschlüssel",
+  "@instrumentsFlutterClefs": {
+    "description": "instruments.flutter.clefs"
+  },
+  "instrumentsFlutterGenerateSynonyms": "Synonyme generieren",
+  "@instrumentsFlutterGenerateSynonyms": {
+    "description": "instruments.flutter.generateSynonyms"
+  },
+  "instrumentsFlutterNoCategories": "Keine Kategorien",
+  "@instrumentsFlutterNoCategories": {
+    "description": "instruments.flutter.noCategories"
+  },
+  "instrumentsFlutterNoCategoriesHint": "Tippe + um eine Kategorie zu erstellen",
+  "@instrumentsFlutterNoCategoriesHint": {
+    "description": "instruments.flutter.noCategoriesHint"
+  },
+  "instrumentsFlutterShortName": "Kurzname",
+  "@instrumentsFlutterShortName": {
+    "description": "instruments.flutter.shortName"
+  },
   "instrumentsGeneratingSynonyms": "Synonyme werden generiert...",
   "@instrumentsGeneratingSynonyms": {
     "description": "instruments.generatingSynonyms"
@@ -5763,6 +5794,185 @@
   "@peopleFirstName": {
     "description": "people.firstName"
   },
+  "peopleFlutterAgeFrom": "Ab",
+  "@peopleFlutterAgeFrom": {
+    "description": "people.flutter.ageFrom"
+  },
+  "peopleFlutterAgeSuffix": "J.",
+  "@peopleFlutterAgeSuffix": {
+    "description": "people.flutter.ageSuffix"
+  },
+  "peopleFlutterAgeTo": "Bis",
+  "@peopleFlutterAgeTo": {
+    "description": "people.flutter.ageTo"
+  },
+  "peopleFlutterAttention": "Achtung",
+  "@peopleFlutterAttention": {
+    "description": "people.flutter.attention"
+  },
+  "peopleFlutterErrorWith": "Fehler: {error}",
+  "@peopleFlutterErrorWith": {
+    "description": "people.flutter.errorWith",
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "peopleFlutterGroupsLoadFailed": "Fehler beim Laden der Gruppen",
+  "@peopleFlutterGroupsLoadFailed": {
+    "description": "people.flutter.groupsLoadFailed"
+  },
+  "peopleFlutterHandoverCopied": "{count} Spieler erfolgreich kopiert",
+  "@peopleFlutterHandoverCopied": {
+    "description": "people.flutter.handover.copied",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "peopleFlutterHandoverCopy": "Kopieren",
+  "@peopleFlutterHandoverCopy": {
+    "description": "people.flutter.handover.copy"
+  },
+  "peopleFlutterHandoverCopyConfirm": "{count} Spieler nach \"{tenant}\" kopieren?",
+  "@peopleFlutterHandoverCopyConfirm": {
+    "description": "people.flutter.handover.copyConfirm",
+    "placeholders": {
+      "count": {},
+      "tenant": {}
+    }
+  },
+  "peopleFlutterHandoverCopyNote": "Die ausgewählten Spieler werden in die Ziel-Instanz kopiert. Sie bleiben in dieser Instanz aktiv. Der App-Zugang muss in der Ziel-Instanz neu verknüpft werden.",
+  "@peopleFlutterHandoverCopyNote": {
+    "description": "people.flutter.handover.copyNote"
+  },
+  "peopleFlutterHandoverCopyQuestion": "Spieler kopieren?",
+  "@peopleFlutterHandoverCopyQuestion": {
+    "description": "people.flutter.handover.copyQuestion"
+  },
+  "peopleFlutterHandoverCopyTitle": "Spieler kopieren",
+  "@peopleFlutterHandoverCopyTitle": {
+    "description": "people.flutter.handover.copyTitle"
+  },
+  "peopleFlutterHandoverCount": "{count} von {total} Spieler",
+  "@peopleFlutterHandoverCount": {
+    "description": "people.flutter.handover.count",
+    "placeholders": {
+      "count": {},
+      "total": {}
+    }
+  },
+  "peopleFlutterHandoverMappingHint": "Ordne die Gruppen der Quell-Instanz den Gruppen der Ziel-Instanz zu:",
+  "@peopleFlutterHandoverMappingHint": {
+    "description": "people.flutter.handover.mappingHint"
+  },
+  "peopleFlutterHandoverMode": "Modus",
+  "@peopleFlutterHandoverMode": {
+    "description": "people.flutter.handover.mode"
+  },
+  "peopleFlutterHandoverModeCopy": "Spieler werden kopiert (bleiben hier aktiv)",
+  "@peopleFlutterHandoverModeCopy": {
+    "description": "people.flutter.handover.modeCopy"
+  },
+  "peopleFlutterHandoverModeTransfer": "Spieler werden übertragen (hier archiviert)",
+  "@peopleFlutterHandoverModeTransfer": {
+    "description": "people.flutter.handover.modeTransfer"
+  },
+  "peopleFlutterHandoverNoMapping": "-- Nicht zuordnen --",
+  "@peopleFlutterHandoverNoMapping": {
+    "description": "people.flutter.handover.noMapping"
+  },
+  "peopleFlutterHandoverNoPermission": "Keine Berechtigung in der Ziel-Instanz",
+  "@peopleFlutterHandoverNoPermission": {
+    "description": "people.flutter.handover.noPermission"
+  },
+  "peopleFlutterHandoverNoTenants": "Keine anderen Instanzen verfügbar",
+  "@peopleFlutterHandoverNoTenants": {
+    "description": "people.flutter.handover.noTenants"
+  },
+  "peopleFlutterHandoverNoTenantsHint": "Du hast nur Zugriff auf eine Instanz. Um Spieler zu übertragen, benötigst du Zugriff auf mindestens zwei Instanzen.",
+  "@peopleFlutterHandoverNoTenantsHint": {
+    "description": "people.flutter.handover.noTenantsHint"
+  },
+  "peopleFlutterHandoverPartialCopied": "{success} kopiert, {duplicate} bereits vorhanden, {error} fehlgeschlagen",
+  "@peopleFlutterHandoverPartialCopied": {
+    "description": "people.flutter.handover.partialCopied",
+    "placeholders": {
+      "success": {},
+      "duplicate": {},
+      "error": {}
+    }
+  },
+  "peopleFlutterHandoverPartialTransferred": "{success} übertragen, {duplicate} bereits vorhanden, {error} fehlgeschlagen",
+  "@peopleFlutterHandoverPartialTransferred": {
+    "description": "people.flutter.handover.partialTransferred",
+    "placeholders": {
+      "success": {},
+      "duplicate": {},
+      "error": {}
+    }
+  },
+  "peopleFlutterHandoverPreparing": "Bereite Übertragung vor...",
+  "@peopleFlutterHandoverPreparing": {
+    "description": "people.flutter.handover.preparing"
+  },
+  "peopleFlutterHandoverProgress": "Übertrage {name} ({current}/{total})...",
+  "@peopleFlutterHandoverProgress": {
+    "description": "people.flutter.handover.progress",
+    "placeholders": {
+      "name": {},
+      "current": {},
+      "total": {}
+    }
+  },
+  "peopleFlutterHandoverTargetNotFound": "Ziel-Instanz nicht gefunden",
+  "@peopleFlutterHandoverTargetNotFound": {
+    "description": "people.flutter.handover.targetNotFound"
+  },
+  "peopleFlutterHandoverTransferConfirm": "{count} Spieler an \"{tenant}\" übertragen? Die Spieler werden in dieser Instanz archiviert. Dieser Vorgang kann nicht rückgängig gemacht werden.",
+  "@peopleFlutterHandoverTransferConfirm": {
+    "description": "people.flutter.handover.transferConfirm",
+    "placeholders": {
+      "count": {},
+      "tenant": {}
+    }
+  },
+  "peopleFlutterHandoverTransferNote": "Die ausgewählten Spieler werden in die Ziel-Instanz übertragen. Sie werden in dieser Instanz archiviert und der App-Zugang wird getrennt. Dieser Vorgang kann nicht rückgängig gemacht werden.",
+  "@peopleFlutterHandoverTransferNote": {
+    "description": "people.flutter.handover.transferNote"
+  },
+  "peopleFlutterHandoverTransferQuestion": "Spieler übertragen?",
+  "@peopleFlutterHandoverTransferQuestion": {
+    "description": "people.flutter.handover.transferQuestion"
+  },
+  "peopleFlutterHandoverTransferTitle": "Spieler übertragen",
+  "@peopleFlutterHandoverTransferTitle": {
+    "description": "people.flutter.handover.transferTitle"
+  },
+  "peopleFlutterHandoverTransferred": "{count} Spieler erfolgreich übertragen",
+  "@peopleFlutterHandoverTransferred": {
+    "description": "people.flutter.handover.transferred",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "peopleFlutterHandoverTransferring": "Wird übertragen...",
+  "@peopleFlutterHandoverTransferring": {
+    "description": "people.flutter.handover.transferring"
+  },
+  "peopleFlutterHint": "Hinweis",
+  "@peopleFlutterHint": {
+    "description": "people.flutter.hint"
+  },
+  "peopleFlutterPausedToast": "{name} wurde pausiert",
+  "@peopleFlutterPausedToast": {
+    "description": "people.flutter.pausedToast",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "peopleFlutterSaveOrder": "Reihenfolge speichern",
+  "@peopleFlutterSaveOrder": {
+    "description": "people.flutter.saveOrder"
+  },
   "peopleFromToday": "Ab heute",
   "@peopleFromToday": {
     "description": "people.fromToday"
@@ -6378,6 +6588,22 @@
       "tenant": {},
       "name": {}
     }
+  },
+  "personFlutterAbsenceDeleteFailed": "Abwesenheit konnte nicht gelöscht werden",
+  "@personFlutterAbsenceDeleteFailed": {
+    "description": "person.flutter.absenceDeleteFailed"
+  },
+  "personFlutterAbsenceSaveFailed": "Abwesenheit konnte nicht gespeichert werden",
+  "@personFlutterAbsenceSaveFailed": {
+    "description": "person.flutter.absenceSaveFailed"
+  },
+  "personFlutterChooseRange": "Zeitraum wählen",
+  "@personFlutterChooseRange": {
+    "description": "person.flutter.chooseRange"
+  },
+  "personFlutterMatchFound": "Person in anderer Instanz gefunden?",
+  "@personFlutterMatchFound": {
+    "description": "person.flutter.matchFound"
   },
   "personFromRequired": "Von *",
   "@personFromRequired": {
@@ -11502,6 +11728,25 @@
   "@teachersFillAll": {
     "description": "teachers.fillAll"
   },
+  "teachersFlutterDelete": "Lehrer löschen",
+  "@teachersFlutterDelete": {
+    "description": "teachers.flutter.delete"
+  },
+  "teachersFlutterDeleteConfirm": "Möchtest du \"{name}\" wirklich löschen?",
+  "@teachersFlutterDeleteConfirm": {
+    "description": "teachers.flutter.deleteConfirm",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "teachersFlutterDeleted": "Lehrer gelöscht",
+  "@teachersFlutterDeleted": {
+    "description": "teachers.flutter.deleted"
+  },
+  "teachersFlutterLoadFailed": "Lehrer konnten nicht geladen werden",
+  "@teachersFlutterLoadFailed": {
+    "description": "teachers.flutter.loadFailed"
+  },
   "teachersInstruments": "Instrumente",
   "@teachersInstruments": {
     "description": "teachers.instruments"
@@ -12992,6 +13237,28 @@
   "usageTotalEvents": "Events gesamt",
   "@usageTotalEvents": {
     "description": "usage.totalEvents"
+  },
+  "voiceLeaderFlutterMemberCount": "{count} Mitglieder",
+  "@voiceLeaderFlutterMemberCount": {
+    "description": "voiceLeader.flutter.memberCount",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "voiceLeaderFlutterMoreCount": "+{count} weitere",
+  "@voiceLeaderFlutterMoreCount": {
+    "description": "voiceLeader.flutter.moreCount",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "voiceLeaderFlutterNoGroup": "Du bist noch keiner Stimmgruppe zugeordnet.",
+  "@voiceLeaderFlutterNoGroup": {
+    "description": "voiceLeader.flutter.noGroup"
+  },
+  "voiceLeaderFlutterVoiceGroup": "Stimmgruppe",
+  "@voiceLeaderFlutterVoiceGroup": {
+    "description": "voiceLeader.flutter.voiceGroup"
   },
   "voiceLeaderLoadFailed": "Fehler beim Laden der Gruppenmitglieder.",
   "@voiceLeaderLoadFailed": {

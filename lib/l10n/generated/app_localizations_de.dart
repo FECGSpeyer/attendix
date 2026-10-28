@@ -3389,6 +3389,29 @@ class AppLocalizationsDe extends AppLocalizations {
   String get instrumentsEs => 'Es';
 
   @override
+  String get instrumentsFlutterAddFailed => 'Fehler beim Hinzufügen';
+
+  @override
+  String instrumentsFlutterClef(Object clef) {
+    return '$clef-Schlüssel';
+  }
+
+  @override
+  String get instrumentsFlutterClefs => 'Notenschlüssel';
+
+  @override
+  String get instrumentsFlutterGenerateSynonyms => 'Synonyme generieren';
+
+  @override
+  String get instrumentsFlutterNoCategories => 'Keine Kategorien';
+
+  @override
+  String get instrumentsFlutterNoCategoriesHint => 'Tippe + um eine Kategorie zu erstellen';
+
+  @override
+  String get instrumentsFlutterShortName => 'Kurzname';
+
+  @override
   String get instrumentsGeneratingSynonyms => 'Synonyme werden generiert...';
 
   @override
@@ -4407,6 +4430,131 @@ class AppLocalizationsDe extends AppLocalizations {
   String get peopleFirstName => 'Vorname';
 
   @override
+  String get peopleFlutterAgeFrom => 'Ab';
+
+  @override
+  String get peopleFlutterAgeSuffix => 'J.';
+
+  @override
+  String get peopleFlutterAgeTo => 'Bis';
+
+  @override
+  String get peopleFlutterAttention => 'Achtung';
+
+  @override
+  String peopleFlutterErrorWith(Object error) {
+    return 'Fehler: $error';
+  }
+
+  @override
+  String get peopleFlutterGroupsLoadFailed => 'Fehler beim Laden der Gruppen';
+
+  @override
+  String peopleFlutterHandoverCopied(Object count) {
+    return '$count Spieler erfolgreich kopiert';
+  }
+
+  @override
+  String get peopleFlutterHandoverCopy => 'Kopieren';
+
+  @override
+  String peopleFlutterHandoverCopyConfirm(Object count, Object tenant) {
+    return '$count Spieler nach \"$tenant\" kopieren?';
+  }
+
+  @override
+  String get peopleFlutterHandoverCopyNote => 'Die ausgewählten Spieler werden in die Ziel-Instanz kopiert. Sie bleiben in dieser Instanz aktiv. Der App-Zugang muss in der Ziel-Instanz neu verknüpft werden.';
+
+  @override
+  String get peopleFlutterHandoverCopyQuestion => 'Spieler kopieren?';
+
+  @override
+  String get peopleFlutterHandoverCopyTitle => 'Spieler kopieren';
+
+  @override
+  String peopleFlutterHandoverCount(Object count, Object total) {
+    return '$count von $total Spieler';
+  }
+
+  @override
+  String get peopleFlutterHandoverMappingHint => 'Ordne die Gruppen der Quell-Instanz den Gruppen der Ziel-Instanz zu:';
+
+  @override
+  String get peopleFlutterHandoverMode => 'Modus';
+
+  @override
+  String get peopleFlutterHandoverModeCopy => 'Spieler werden kopiert (bleiben hier aktiv)';
+
+  @override
+  String get peopleFlutterHandoverModeTransfer => 'Spieler werden übertragen (hier archiviert)';
+
+  @override
+  String get peopleFlutterHandoverNoMapping => '-- Nicht zuordnen --';
+
+  @override
+  String get peopleFlutterHandoverNoPermission => 'Keine Berechtigung in der Ziel-Instanz';
+
+  @override
+  String get peopleFlutterHandoverNoTenants => 'Keine anderen Instanzen verfügbar';
+
+  @override
+  String get peopleFlutterHandoverNoTenantsHint => 'Du hast nur Zugriff auf eine Instanz. Um Spieler zu übertragen, benötigst du Zugriff auf mindestens zwei Instanzen.';
+
+  @override
+  String peopleFlutterHandoverPartialCopied(Object success, Object duplicate, Object error) {
+    return '$success kopiert, $duplicate bereits vorhanden, $error fehlgeschlagen';
+  }
+
+  @override
+  String peopleFlutterHandoverPartialTransferred(Object success, Object duplicate, Object error) {
+    return '$success übertragen, $duplicate bereits vorhanden, $error fehlgeschlagen';
+  }
+
+  @override
+  String get peopleFlutterHandoverPreparing => 'Bereite Übertragung vor...';
+
+  @override
+  String peopleFlutterHandoverProgress(Object name, Object current, Object total) {
+    return 'Übertrage $name ($current/$total)...';
+  }
+
+  @override
+  String get peopleFlutterHandoverTargetNotFound => 'Ziel-Instanz nicht gefunden';
+
+  @override
+  String peopleFlutterHandoverTransferConfirm(Object count, Object tenant) {
+    return '$count Spieler an \"$tenant\" übertragen? Die Spieler werden in dieser Instanz archiviert. Dieser Vorgang kann nicht rückgängig gemacht werden.';
+  }
+
+  @override
+  String get peopleFlutterHandoverTransferNote => 'Die ausgewählten Spieler werden in die Ziel-Instanz übertragen. Sie werden in dieser Instanz archiviert und der App-Zugang wird getrennt. Dieser Vorgang kann nicht rückgängig gemacht werden.';
+
+  @override
+  String get peopleFlutterHandoverTransferQuestion => 'Spieler übertragen?';
+
+  @override
+  String get peopleFlutterHandoverTransferTitle => 'Spieler übertragen';
+
+  @override
+  String peopleFlutterHandoverTransferred(Object count) {
+    return '$count Spieler erfolgreich übertragen';
+  }
+
+  @override
+  String get peopleFlutterHandoverTransferring => 'Wird übertragen...';
+
+  @override
+  String get peopleFlutterHint => 'Hinweis';
+
+  @override
+  String peopleFlutterPausedToast(Object name) {
+    return '$name wurde pausiert';
+  }
+
+  @override
+  String get peopleFlutterSaveOrder => 'Reihenfolge speichern';
+
+  @override
   String get peopleFromToday => 'Ab heute';
 
   @override
@@ -4873,6 +5021,18 @@ class AppLocalizationsDe extends AppLocalizations {
   String personExistsWithName(Object tenant, Object name) {
     return 'In der Instanz \"$tenant\" existiert bereits eine Person mit dem Namen \"$name\".';
   }
+
+  @override
+  String get personFlutterAbsenceDeleteFailed => 'Abwesenheit konnte nicht gelöscht werden';
+
+  @override
+  String get personFlutterAbsenceSaveFailed => 'Abwesenheit konnte nicht gespeichert werden';
+
+  @override
+  String get personFlutterChooseRange => 'Zeitraum wählen';
+
+  @override
+  String get personFlutterMatchFound => 'Person in anderer Instanz gefunden?';
 
   @override
   String get personFromRequired => 'Von *';
@@ -8750,6 +8910,20 @@ class AppLocalizationsDe extends AppLocalizations {
   String get teachersFillAll => 'Bitte fülle alle Felder aus...';
 
   @override
+  String get teachersFlutterDelete => 'Lehrer löschen';
+
+  @override
+  String teachersFlutterDeleteConfirm(Object name) {
+    return 'Möchtest du \"$name\" wirklich löschen?';
+  }
+
+  @override
+  String get teachersFlutterDeleted => 'Lehrer gelöscht';
+
+  @override
+  String get teachersFlutterLoadFailed => 'Lehrer konnten nicht geladen werden';
+
+  @override
   String get teachersInstruments => 'Instrumente';
 
   @override
@@ -9867,6 +10041,22 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get usageTotalEvents => 'Events gesamt';
+
+  @override
+  String voiceLeaderFlutterMemberCount(Object count) {
+    return '$count Mitglieder';
+  }
+
+  @override
+  String voiceLeaderFlutterMoreCount(Object count) {
+    return '+$count weitere';
+  }
+
+  @override
+  String get voiceLeaderFlutterNoGroup => 'Du bist noch keiner Stimmgruppe zugeordnet.';
+
+  @override
+  String get voiceLeaderFlutterVoiceGroup => 'Stimmgruppe';
 
   @override
   String get voiceLeaderLoadFailed => 'Fehler beim Laden der Gruppenmitglieder.';

@@ -10,6 +10,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../data/repositories/cross_tenant_person_repository.dart';
 import '../../../../core/utils/date_helper.dart';
+import '../../../../l10n/l10n.dart';
 
 final _fmt = DateFormat('dd.MM.yyyy');
 
@@ -90,7 +91,7 @@ class _PauseSheetState extends State<_PauseSheet> {
                 const SizedBox(width: AppDimensions.paddingS),
                 Expanded(
                   child: Text(
-                    '${p.firstName} ${p.lastName} Pausieren',
+                    context.l10n.peoplePauseTitle('${p.firstName} ${p.lastName}'),
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                 ),
@@ -103,10 +104,10 @@ class _PauseSheetState extends State<_PauseSheet> {
             const SizedBox(height: AppDimensions.paddingL),
             TextField(
               controller: _reasonController,
-              decoration: const InputDecoration(
-                labelText: 'Grund *',
-                hintText: 'Gib einen Grund für die Pause an...',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: context.l10n.peopleReasonRequired,
+                hintText: context.l10n.personPauseReasonPlaceholder,
+                border: const OutlineInputBorder(),
               ),
               textCapitalization: TextCapitalization.sentences,
               minLines: 2,
@@ -118,9 +119,9 @@ class _PauseSheetState extends State<_PauseSheet> {
             ListTile(
               contentPadding: EdgeInsets.zero,
               leading: const Icon(Icons.event, color: AppColors.primary),
-              title: const Text('Pausiert ab (optional)'),
+              title: Text(context.l10n.peoplePausedFrom),
               subtitle: Text(
-                _from != null ? _fmt.format(_from!) : 'Ab heute',
+                _from != null ? DateFormat(dateFmt()).format(_from!) : context.l10n.peopleFromToday,
                 style: TextStyle(
                   color: _from != null ? AppColors.primary : AppColors.medium,
                 ),
@@ -144,9 +145,9 @@ class _PauseSheetState extends State<_PauseSheet> {
             ListTile(
               contentPadding: EdgeInsets.zero,
               leading: const Icon(Icons.event_available, color: AppColors.primary),
-              title: const Text('Pausiert bis (optional)'),
+              title: Text(context.l10n.signoutPausedUntil),
               subtitle: Text(
-                _until != null ? _fmt.format(_until!) : 'Kein Enddatum gewählt',
+                _until != null ? DateFormat(dateFmt()).format(_until!) : context.l10n.peopleNoEndDate,
                 style: TextStyle(
                   color: _until != null ? AppColors.primary : AppColors.medium,
                 ),
@@ -167,14 +168,11 @@ class _PauseSheetState extends State<_PauseSheet> {
                 if (date != null) setState(() => _until = date);
               },
             ),
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: AppDimensions.paddingS),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: AppDimensions.paddingS),
               child: Text(
-                'Mit einem Startdatum in der Vergangenheit wird die Person auch '
-                'aus zurückliegenden Anwesenheiten ab diesem Datum entfernt. '
-                'Wenn ein Enddatum angegeben ist, wird die Person danach '
-                'automatisch wieder aktiviert.',
-                style: TextStyle(color: AppColors.medium, fontSize: 13),
+                context.l10n.personPauseHintAuto,
+                style: const TextStyle(color: AppColors.medium, fontSize: 13),
               ),
             ),
             const SizedBox(height: AppDimensions.paddingS),
@@ -190,7 +188,7 @@ class _PauseSheetState extends State<_PauseSheet> {
                       )
                   : null,
               icon: const Icon(Icons.pause),
-              label: const Text('Pausieren'),
+              label: Text(context.l10n.peoplePause),
               style: FilledButton.styleFrom(
                 backgroundColor: AppColors.warning,
                 padding:
@@ -227,14 +225,14 @@ Future<bool> pausePersonFlow(
     await repo.pausePlayer(person, until, text, pauseFrom: from);
   } catch (e) {
     messenger.showSnackBar(
-      SnackBar(content: Text('Fehler: $e'), backgroundColor: AppColors.danger),
+      SnackBar(content: Text(l10nWithoutContext.peopleFlutterErrorWith(e)), backgroundColor: AppColors.danger),
     );
     return false;
   }
 
   messenger.showSnackBar(
     SnackBar(
-      content: Text('${person.firstName} wurde pausiert'),
+      content: Text(l10nWithoutContext.peopleFlutterPausedToast(person.firstName)),
       backgroundColor: AppColors.success,
     ),
   );
@@ -285,8 +283,8 @@ Future<bool> pausePersonFlow(
       } catch (e) {
         messenger.showSnackBar(
           SnackBar(
-            content: Text(
-                'Fehler bei ${tenant.shortName.isNotEmpty ? tenant.shortName : tenant.name}: $e'),
+            content: Text(l10nWithoutContext.peopleErrorAt(
+                tenant.shortName.isNotEmpty ? tenant.shortName : tenant.name, e)),
             backgroundColor: AppColors.danger,
           ),
         );
@@ -308,16 +306,14 @@ Future<List<LinkedTenantRef>?> _askPauseInOtherTenants(
     context: context,
     builder: (ctx) => StatefulBuilder(
       builder: (ctx, setState) => AlertDialog(
-        title: const Text('Auch in anderen Instanzen pausieren?'),
+        title: Text(context.l10n.peoplePauseOthers),
         content: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '${person.firstName} ${person.lastName} ist auch in anderen '
-                'Instanzen aktiv. In welchen soll die Person ebenfalls '
-                'pausiert werden?',
+                context.l10n.peoplePauseOthersMessage('${person.firstName} ${person.lastName}'),
               ),
               const SizedBox(height: AppDimensions.paddingS),
               for (final t in tenants)
@@ -339,14 +335,14 @@ Future<List<LinkedTenantRef>?> _askPauseInOtherTenants(
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Überspringen'),
+            child: Text(context.l10n.peopleSkip),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(
               ctx,
               tenants.where((t) => selected.contains(t.id)).toList(),
             ),
-            child: const Text('Pausieren'),
+            child: Text(context.l10n.peoplePause),
           ),
         ],
       ),

@@ -3395,6 +3395,29 @@ class AppLocalizationsEn extends AppLocalizations {
   String get instrumentsEs => 'E♭';
 
   @override
+  String get instrumentsFlutterAddFailed => 'Could not add';
+
+  @override
+  String instrumentsFlutterClef(Object clef) {
+    return '$clef clef';
+  }
+
+  @override
+  String get instrumentsFlutterClefs => 'Clefs';
+
+  @override
+  String get instrumentsFlutterGenerateSynonyms => 'Generate synonyms';
+
+  @override
+  String get instrumentsFlutterNoCategories => 'No categories';
+
+  @override
+  String get instrumentsFlutterNoCategoriesHint => 'Tap + to create a category';
+
+  @override
+  String get instrumentsFlutterShortName => 'Short name';
+
+  @override
   String get instrumentsGeneratingSynonyms => 'Generating synonyms...';
 
   @override
@@ -4413,6 +4436,131 @@ class AppLocalizationsEn extends AppLocalizations {
   String get peopleFirstName => 'First name';
 
   @override
+  String get peopleFlutterAgeFrom => 'From';
+
+  @override
+  String get peopleFlutterAgeSuffix => 'y';
+
+  @override
+  String get peopleFlutterAgeTo => 'To';
+
+  @override
+  String get peopleFlutterAttention => 'Attention';
+
+  @override
+  String peopleFlutterErrorWith(Object error) {
+    return 'Error: $error';
+  }
+
+  @override
+  String get peopleFlutterGroupsLoadFailed => 'Could not load the groups';
+
+  @override
+  String peopleFlutterHandoverCopied(Object count) {
+    return '$count players copied successfully';
+  }
+
+  @override
+  String get peopleFlutterHandoverCopy => 'Copy';
+
+  @override
+  String peopleFlutterHandoverCopyConfirm(Object count, Object tenant) {
+    return 'Copy $count players to \"$tenant\"?';
+  }
+
+  @override
+  String get peopleFlutterHandoverCopyNote => 'The selected players are copied to the target instance. They stay active in this instance. App access has to be linked again in the target instance.';
+
+  @override
+  String get peopleFlutterHandoverCopyQuestion => 'Copy players?';
+
+  @override
+  String get peopleFlutterHandoverCopyTitle => 'Copy players';
+
+  @override
+  String peopleFlutterHandoverCount(Object count, Object total) {
+    return '$count of $total players';
+  }
+
+  @override
+  String get peopleFlutterHandoverMappingHint => 'Map the groups of the source instance to the groups of the target instance:';
+
+  @override
+  String get peopleFlutterHandoverMode => 'Mode';
+
+  @override
+  String get peopleFlutterHandoverModeCopy => 'Players are copied (stay active here)';
+
+  @override
+  String get peopleFlutterHandoverModeTransfer => 'Players are transferred (archived here)';
+
+  @override
+  String get peopleFlutterHandoverNoMapping => '-- Do not map --';
+
+  @override
+  String get peopleFlutterHandoverNoPermission => 'No permission in the target instance';
+
+  @override
+  String get peopleFlutterHandoverNoTenants => 'No other instances available';
+
+  @override
+  String get peopleFlutterHandoverNoTenantsHint => 'You only have access to one instance. To transfer players you need access to at least two instances.';
+
+  @override
+  String peopleFlutterHandoverPartialCopied(Object success, Object duplicate, Object error) {
+    return '$success copied, $duplicate already present, $error failed';
+  }
+
+  @override
+  String peopleFlutterHandoverPartialTransferred(Object success, Object duplicate, Object error) {
+    return '$success transferred, $duplicate already present, $error failed';
+  }
+
+  @override
+  String get peopleFlutterHandoverPreparing => 'Preparing transfer...';
+
+  @override
+  String peopleFlutterHandoverProgress(Object name, Object current, Object total) {
+    return 'Transferring $name ($current/$total)...';
+  }
+
+  @override
+  String get peopleFlutterHandoverTargetNotFound => 'Target instance not found';
+
+  @override
+  String peopleFlutterHandoverTransferConfirm(Object count, Object tenant) {
+    return 'Transfer $count players to \"$tenant\"? The players will be archived in this instance. This cannot be undone.';
+  }
+
+  @override
+  String get peopleFlutterHandoverTransferNote => 'The selected players are transferred to the target instance. They are archived in this instance and app access is removed. This cannot be undone.';
+
+  @override
+  String get peopleFlutterHandoverTransferQuestion => 'Transfer players?';
+
+  @override
+  String get peopleFlutterHandoverTransferTitle => 'Transfer players';
+
+  @override
+  String peopleFlutterHandoverTransferred(Object count) {
+    return '$count players transferred successfully';
+  }
+
+  @override
+  String get peopleFlutterHandoverTransferring => 'Transferring...';
+
+  @override
+  String get peopleFlutterHint => 'Note';
+
+  @override
+  String peopleFlutterPausedToast(Object name) {
+    return '$name was paused';
+  }
+
+  @override
+  String get peopleFlutterSaveOrder => 'Save order';
+
+  @override
   String get peopleFromToday => 'From today';
 
   @override
@@ -4879,6 +5027,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String personExistsWithName(Object tenant, Object name) {
     return 'A person named \"$name\" already exists in the instance \"$tenant\".';
   }
+
+  @override
+  String get personFlutterAbsenceDeleteFailed => 'Absence could not be deleted';
+
+  @override
+  String get personFlutterAbsenceSaveFailed => 'Absence could not be saved';
+
+  @override
+  String get personFlutterChooseRange => 'Choose period';
+
+  @override
+  String get personFlutterMatchFound => 'Person found in another instance?';
 
   @override
   String get personFromRequired => 'From *';
@@ -8756,6 +8916,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get teachersFillAll => 'Please fill in all fields...';
 
   @override
+  String get teachersFlutterDelete => 'Delete teacher';
+
+  @override
+  String teachersFlutterDeleteConfirm(Object name) {
+    return 'Do you really want to delete \"$name\"?';
+  }
+
+  @override
+  String get teachersFlutterDeleted => 'Teacher deleted';
+
+  @override
+  String get teachersFlutterLoadFailed => 'Teachers could not be loaded';
+
+  @override
   String get teachersInstruments => 'Instruments';
 
   @override
@@ -9879,6 +10053,22 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get usageTotalEvents => 'Total events';
+
+  @override
+  String voiceLeaderFlutterMemberCount(Object count) {
+    return '$count members';
+  }
+
+  @override
+  String voiceLeaderFlutterMoreCount(Object count) {
+    return '+$count more';
+  }
+
+  @override
+  String get voiceLeaderFlutterNoGroup => 'You are not assigned to a section yet.';
+
+  @override
+  String get voiceLeaderFlutterVoiceGroup => 'Section';
 
   @override
   String get voiceLeaderLoadFailed => 'Error loading the group members.';

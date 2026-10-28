@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/person_matcher.dart';
 import '../../../../data/repositories/cross_tenant_person_repository.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Inline typeahead list of possible matches in linked tenants
 /// (Ionic person.page `name-suggestions`).
@@ -35,13 +36,13 @@ class PersonMatchSuggestions extends StatelessWidget {
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    'Person in anderer Instanz gefunden?',
+                    context.l10n.personFlutterMatchFound,
                     style: theme.textTheme.titleSmall,
                   ),
                 ),
                 IconButton(
                   icon: const Icon(Icons.close),
-                  tooltip: 'Vorschläge schließen',
+                  tooltip: context.l10n.personCloseSuggestions,
                   onPressed: onDismiss,
                 ),
               ],
@@ -73,9 +74,9 @@ class PersonMatchSuggestions extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   if (m.candidate.person.appId != null)
-                    const _Badge(text: 'Konto', color: AppColors.success)
+                    _Badge(text: context.l10n.personAccountBadge, color: AppColors.success)
                   else if (m.candidate.person.email?.isNotEmpty ?? false)
-                    const _Badge(text: 'E-Mail', color: AppColors.primary),
+                    _Badge(text: context.l10n.peopleEmail, color: AppColors.primary),
                   const SizedBox(height: 4),
                   _Badge(
                     text: '${(m.score * 100).round()}%',
@@ -124,19 +125,18 @@ Future<CrossTenantPersonCandidate?> showEmailTakenDialog(
     return showDialog<CrossTenantPersonCandidate>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('E-Mail bereits vergeben'),
+        title: Text(context.l10n.personEmailTaken),
         content: Text(
-          'Diese E-Mail wird in einer anderen Instanz von '
-          '${m.person.firstName} ${m.person.lastName} verwendet. Daten übernehmen?',
+          context.l10n.personEmailUsedBy('${m.person.firstName} ${m.person.lastName}'),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Abbrechen'),
+            child: Text(context.l10n.commonCancel),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(ctx, m),
-            child: const Text('Ja'),
+            child: Text(context.l10n.commonYes),
           ),
         ],
       ),
@@ -145,13 +145,12 @@ Future<CrossTenantPersonCandidate?> showEmailTakenDialog(
   return showDialog<CrossTenantPersonCandidate>(
     context: context,
     builder: (ctx) => SimpleDialog(
-      title: const Text('E-Mail bereits vergeben'),
+      title: Text(context.l10n.personEmailTaken),
       children: [
-        const Padding(
-          padding: EdgeInsets.fromLTRB(24, 0, 24, 8),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(24, 0, 24, 8),
           child: Text(
-            'Diese E-Mail wird bereits in anderen Instanzen verwendet. '
-            'Daten welcher Person übernehmen?',
+            context.l10n.personEmailUsedMany,
           ),
         ),
         for (final m in matches)
@@ -163,7 +162,7 @@ Future<CrossTenantPersonCandidate?> showEmailTakenDialog(
           alignment: Alignment.centerRight,
           child: TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Abbrechen'),
+            child: Text(context.l10n.commonCancel),
           ),
         ),
       ],

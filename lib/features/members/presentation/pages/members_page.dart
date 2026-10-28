@@ -5,6 +5,7 @@ import '../../../../core/providers/profile_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/person/person.dart';
 import '../../data/providers/members_providers.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../messages/presentation/widgets/notification_bell.dart'; // MESSAGES
 
 /// Members page - read-only list of all members for players/helpers
@@ -22,7 +23,7 @@ class MembersPage extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Mitglieder'),
+        title: Text(context.l10n.peopleMembers),
         actions: const [NotificationBell()], // MESSAGES
       ),
       body: Column(
@@ -36,7 +37,7 @@ class MembersPage extends ConsumerWidget {
               AppDimensions.paddingS,
             ),
             child: SearchBar(
-              hintText: 'Person suchen...',
+              hintText: context.l10n.peopleSearchPerson,
               elevation: const WidgetStatePropertyAll(0),
               leading: const Icon(Icons.search),
               trailing: [
@@ -60,7 +61,7 @@ class MembersPage extends ConsumerWidget {
                 children: [
                   for (final option in ['all', ...einteilungOptions])
                     _SegmentTab(
-                      label: option == 'all' ? 'Alle' : option,
+                      label: option == 'all' ? context.l10n.commonAll : option,
                       selected: einteilung == option,
                       onTap: () => ref.read(membersEinteilungFilterProvider.notifier).state = option,
                     ),
@@ -79,8 +80,8 @@ class MembersPage extends ConsumerWidget {
                 loading: () => const Center(child: CircularProgressIndicator()),
                 error: (error, stack) => ListView(
                   physics: const AlwaysScrollableScrollPhysics(),
-                  children: const [
-                    _NoData(text: 'Mitglieder konnten nicht geladen werden.'),
+                  children: [
+                    _NoData(text: context.l10n.peopleMembersLoadFailed),
                   ],
                 ),
                 data: (groups) {
@@ -88,7 +89,7 @@ class MembersPage extends ConsumerWidget {
                   if (count == 0) {
                     return ListView(
                       physics: const AlwaysScrollableScrollPhysics(),
-                      children: const [_NoData(text: 'Keine Mitglieder gefunden.')],
+                      children: [_NoData(text: context.l10n.peopleNoMembersFound)],
                     );
                   }
 
@@ -105,14 +106,14 @@ class MembersPage extends ConsumerWidget {
                           AppDimensions.paddingS,
                         ),
                         child: Text(
-                          'Personen ($count)',
+                          context.l10n.peoplePeopleCount(count),
                           style: Theme.of(context).textTheme.titleMedium?.copyWith(
                                 fontWeight: FontWeight.w700,
                               ),
                         ),
                       ),
                       for (final group in groups) ...[
-                        _GroupDivider(label: '${group.groupName} (${group.members.length})'),
+                        _GroupDivider(label: '${group.groupId == -1 ? context.l10n.peopleNoGroupAssigned : group.groupName} (${group.members.length})'),
                         for (final member in group.members)
                           _MemberTile(key: ValueKey(member.id), person: member),
                       ],
@@ -221,9 +222,9 @@ class _MemberTile extends StatelessWidget {
                     color: AppColors.primary,
                     borderRadius: BorderRadius.circular(4),
                   ),
-                  child: const Text(
-                    'Stimmführer',
-                    style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600),
+                  child: Text(
+                    context.l10n.peopleVoiceLeader,
+                    style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600),
                   ),
                 )
               : null,

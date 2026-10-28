@@ -5975,6 +5975,48 @@ abstract class AppLocalizations {
   /// **'Es'**
   String get instrumentsEs;
 
+  /// instruments.flutter.addFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Hinzufügen'**
+  String get instrumentsFlutterAddFailed;
+
+  /// instruments.flutter.clef
+  ///
+  /// In de, this message translates to:
+  /// **'{clef}-Schlüssel'**
+  String instrumentsFlutterClef(Object clef);
+
+  /// instruments.flutter.clefs
+  ///
+  /// In de, this message translates to:
+  /// **'Notenschlüssel'**
+  String get instrumentsFlutterClefs;
+
+  /// instruments.flutter.generateSynonyms
+  ///
+  /// In de, this message translates to:
+  /// **'Synonyme generieren'**
+  String get instrumentsFlutterGenerateSynonyms;
+
+  /// instruments.flutter.noCategories
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Kategorien'**
+  String get instrumentsFlutterNoCategories;
+
+  /// instruments.flutter.noCategoriesHint
+  ///
+  /// In de, this message translates to:
+  /// **'Tippe + um eine Kategorie zu erstellen'**
+  String get instrumentsFlutterNoCategoriesHint;
+
+  /// instruments.flutter.shortName
+  ///
+  /// In de, this message translates to:
+  /// **'Kurzname'**
+  String get instrumentsFlutterShortName;
+
   /// instruments.generatingSynonyms
   ///
   /// In de, this message translates to:
@@ -7751,6 +7793,216 @@ abstract class AppLocalizations {
   /// **'Vorname'**
   String get peopleFirstName;
 
+  /// people.flutter.ageFrom
+  ///
+  /// In de, this message translates to:
+  /// **'Ab'**
+  String get peopleFlutterAgeFrom;
+
+  /// people.flutter.ageSuffix
+  ///
+  /// In de, this message translates to:
+  /// **'J.'**
+  String get peopleFlutterAgeSuffix;
+
+  /// people.flutter.ageTo
+  ///
+  /// In de, this message translates to:
+  /// **'Bis'**
+  String get peopleFlutterAgeTo;
+
+  /// people.flutter.attention
+  ///
+  /// In de, this message translates to:
+  /// **'Achtung'**
+  String get peopleFlutterAttention;
+
+  /// people.flutter.errorWith
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler: {error}'**
+  String peopleFlutterErrorWith(Object error);
+
+  /// people.flutter.groupsLoadFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Laden der Gruppen'**
+  String get peopleFlutterGroupsLoadFailed;
+
+  /// people.flutter.handover.copied
+  ///
+  /// In de, this message translates to:
+  /// **'{count} Spieler erfolgreich kopiert'**
+  String peopleFlutterHandoverCopied(Object count);
+
+  /// people.flutter.handover.copy
+  ///
+  /// In de, this message translates to:
+  /// **'Kopieren'**
+  String get peopleFlutterHandoverCopy;
+
+  /// people.flutter.handover.copyConfirm
+  ///
+  /// In de, this message translates to:
+  /// **'{count} Spieler nach \"{tenant}\" kopieren?'**
+  String peopleFlutterHandoverCopyConfirm(Object count, Object tenant);
+
+  /// people.flutter.handover.copyNote
+  ///
+  /// In de, this message translates to:
+  /// **'Die ausgewählten Spieler werden in die Ziel-Instanz kopiert. Sie bleiben in dieser Instanz aktiv. Der App-Zugang muss in der Ziel-Instanz neu verknüpft werden.'**
+  String get peopleFlutterHandoverCopyNote;
+
+  /// people.flutter.handover.copyQuestion
+  ///
+  /// In de, this message translates to:
+  /// **'Spieler kopieren?'**
+  String get peopleFlutterHandoverCopyQuestion;
+
+  /// people.flutter.handover.copyTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Spieler kopieren'**
+  String get peopleFlutterHandoverCopyTitle;
+
+  /// people.flutter.handover.count
+  ///
+  /// In de, this message translates to:
+  /// **'{count} von {total} Spieler'**
+  String peopleFlutterHandoverCount(Object count, Object total);
+
+  /// people.flutter.handover.mappingHint
+  ///
+  /// In de, this message translates to:
+  /// **'Ordne die Gruppen der Quell-Instanz den Gruppen der Ziel-Instanz zu:'**
+  String get peopleFlutterHandoverMappingHint;
+
+  /// people.flutter.handover.mode
+  ///
+  /// In de, this message translates to:
+  /// **'Modus'**
+  String get peopleFlutterHandoverMode;
+
+  /// people.flutter.handover.modeCopy
+  ///
+  /// In de, this message translates to:
+  /// **'Spieler werden kopiert (bleiben hier aktiv)'**
+  String get peopleFlutterHandoverModeCopy;
+
+  /// people.flutter.handover.modeTransfer
+  ///
+  /// In de, this message translates to:
+  /// **'Spieler werden übertragen (hier archiviert)'**
+  String get peopleFlutterHandoverModeTransfer;
+
+  /// people.flutter.handover.noMapping
+  ///
+  /// In de, this message translates to:
+  /// **'-- Nicht zuordnen --'**
+  String get peopleFlutterHandoverNoMapping;
+
+  /// people.flutter.handover.noPermission
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Berechtigung in der Ziel-Instanz'**
+  String get peopleFlutterHandoverNoPermission;
+
+  /// people.flutter.handover.noTenants
+  ///
+  /// In de, this message translates to:
+  /// **'Keine anderen Instanzen verfügbar'**
+  String get peopleFlutterHandoverNoTenants;
+
+  /// people.flutter.handover.noTenantsHint
+  ///
+  /// In de, this message translates to:
+  /// **'Du hast nur Zugriff auf eine Instanz. Um Spieler zu übertragen, benötigst du Zugriff auf mindestens zwei Instanzen.'**
+  String get peopleFlutterHandoverNoTenantsHint;
+
+  /// people.flutter.handover.partialCopied
+  ///
+  /// In de, this message translates to:
+  /// **'{success} kopiert, {duplicate} bereits vorhanden, {error} fehlgeschlagen'**
+  String peopleFlutterHandoverPartialCopied(Object success, Object duplicate, Object error);
+
+  /// people.flutter.handover.partialTransferred
+  ///
+  /// In de, this message translates to:
+  /// **'{success} übertragen, {duplicate} bereits vorhanden, {error} fehlgeschlagen'**
+  String peopleFlutterHandoverPartialTransferred(Object success, Object duplicate, Object error);
+
+  /// people.flutter.handover.preparing
+  ///
+  /// In de, this message translates to:
+  /// **'Bereite Übertragung vor...'**
+  String get peopleFlutterHandoverPreparing;
+
+  /// people.flutter.handover.progress
+  ///
+  /// In de, this message translates to:
+  /// **'Übertrage {name} ({current}/{total})...'**
+  String peopleFlutterHandoverProgress(Object name, Object current, Object total);
+
+  /// people.flutter.handover.targetNotFound
+  ///
+  /// In de, this message translates to:
+  /// **'Ziel-Instanz nicht gefunden'**
+  String get peopleFlutterHandoverTargetNotFound;
+
+  /// people.flutter.handover.transferConfirm
+  ///
+  /// In de, this message translates to:
+  /// **'{count} Spieler an \"{tenant}\" übertragen? Die Spieler werden in dieser Instanz archiviert. Dieser Vorgang kann nicht rückgängig gemacht werden.'**
+  String peopleFlutterHandoverTransferConfirm(Object count, Object tenant);
+
+  /// people.flutter.handover.transferNote
+  ///
+  /// In de, this message translates to:
+  /// **'Die ausgewählten Spieler werden in die Ziel-Instanz übertragen. Sie werden in dieser Instanz archiviert und der App-Zugang wird getrennt. Dieser Vorgang kann nicht rückgängig gemacht werden.'**
+  String get peopleFlutterHandoverTransferNote;
+
+  /// people.flutter.handover.transferQuestion
+  ///
+  /// In de, this message translates to:
+  /// **'Spieler übertragen?'**
+  String get peopleFlutterHandoverTransferQuestion;
+
+  /// people.flutter.handover.transferTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Spieler übertragen'**
+  String get peopleFlutterHandoverTransferTitle;
+
+  /// people.flutter.handover.transferred
+  ///
+  /// In de, this message translates to:
+  /// **'{count} Spieler erfolgreich übertragen'**
+  String peopleFlutterHandoverTransferred(Object count);
+
+  /// people.flutter.handover.transferring
+  ///
+  /// In de, this message translates to:
+  /// **'Wird übertragen...'**
+  String get peopleFlutterHandoverTransferring;
+
+  /// people.flutter.hint
+  ///
+  /// In de, this message translates to:
+  /// **'Hinweis'**
+  String get peopleFlutterHint;
+
+  /// people.flutter.pausedToast
+  ///
+  /// In de, this message translates to:
+  /// **'{name} wurde pausiert'**
+  String peopleFlutterPausedToast(Object name);
+
+  /// people.flutter.saveOrder
+  ///
+  /// In de, this message translates to:
+  /// **'Reihenfolge speichern'**
+  String get peopleFlutterSaveOrder;
+
   /// people.fromToday
   ///
   /// In de, this message translates to:
@@ -8566,6 +8818,30 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'In der Instanz \"{tenant}\" existiert bereits eine Person mit dem Namen \"{name}\".'**
   String personExistsWithName(Object tenant, Object name);
+
+  /// person.flutter.absenceDeleteFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Abwesenheit konnte nicht gelöscht werden'**
+  String get personFlutterAbsenceDeleteFailed;
+
+  /// person.flutter.absenceSaveFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Abwesenheit konnte nicht gespeichert werden'**
+  String get personFlutterAbsenceSaveFailed;
+
+  /// person.flutter.chooseRange
+  ///
+  /// In de, this message translates to:
+  /// **'Zeitraum wählen'**
+  String get personFlutterChooseRange;
+
+  /// person.flutter.matchFound
+  ///
+  /// In de, this message translates to:
+  /// **'Person in anderer Instanz gefunden?'**
+  String get personFlutterMatchFound;
 
   /// person.fromRequired
   ///
@@ -15605,6 +15881,30 @@ abstract class AppLocalizations {
   /// **'Bitte fülle alle Felder aus...'**
   String get teachersFillAll;
 
+  /// teachers.flutter.delete
+  ///
+  /// In de, this message translates to:
+  /// **'Lehrer löschen'**
+  String get teachersFlutterDelete;
+
+  /// teachers.flutter.deleteConfirm
+  ///
+  /// In de, this message translates to:
+  /// **'Möchtest du \"{name}\" wirklich löschen?'**
+  String teachersFlutterDeleteConfirm(Object name);
+
+  /// teachers.flutter.deleted
+  ///
+  /// In de, this message translates to:
+  /// **'Lehrer gelöscht'**
+  String get teachersFlutterDeleted;
+
+  /// teachers.flutter.loadFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Lehrer konnten nicht geladen werden'**
+  String get teachersFlutterLoadFailed;
+
   /// teachers.instruments
   ///
   /// In de, this message translates to:
@@ -17710,6 +18010,30 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Events gesamt'**
   String get usageTotalEvents;
+
+  /// voiceLeader.flutter.memberCount
+  ///
+  /// In de, this message translates to:
+  /// **'{count} Mitglieder'**
+  String voiceLeaderFlutterMemberCount(Object count);
+
+  /// voiceLeader.flutter.moreCount
+  ///
+  /// In de, this message translates to:
+  /// **'+{count} weitere'**
+  String voiceLeaderFlutterMoreCount(Object count);
+
+  /// voiceLeader.flutter.noGroup
+  ///
+  /// In de, this message translates to:
+  /// **'Du bist noch keiner Stimmgruppe zugeordnet.'**
+  String get voiceLeaderFlutterNoGroup;
+
+  /// voiceLeader.flutter.voiceGroup
+  ///
+  /// In de, this message translates to:
+  /// **'Stimmgruppe'**
+  String get voiceLeaderFlutterVoiceGroup;
 
   /// voiceLeader.loadFailed
   ///

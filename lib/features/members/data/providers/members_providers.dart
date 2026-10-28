@@ -4,6 +4,7 @@ import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/player_providers.dart';
 import '../../../../core/providers/profile_providers.dart';
 import '../../../../data/models/person/person.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Model for a grouped member list
 class MembersGroup {
@@ -70,7 +71,7 @@ final membersGroupedProvider = FutureProvider<List<MembersGroup>>((ref) async {
   final knownIds = sortedGroups.map((g) => g.id).whereType<int>().toSet();
   final ungrouped = players.where((p) => !knownIds.contains(p.instrument)).toList();
   if (ungrouped.isNotEmpty) {
-    result.add(MembersGroup(groupId: -1, groupName: 'Ohne Gruppe', members: ungrouped));
+    result.add(MembersGroup(groupId: -1, groupName: l10nWithoutContext.peopleNoGroupAssigned, members: ungrouped));
   }
 
   return result;

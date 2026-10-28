@@ -11,6 +11,7 @@ import '../../../../core/utils/instrument_sort.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/instrument/instrument.dart';
 import '../widgets/instrument_categories_sheet.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Instruments list page — grouped by category with player counts.
 /// Supports drag & drop reordering (sort_order) like Ionic instrument-list.
@@ -49,7 +50,7 @@ class _InstrumentsListPageState extends ConsumerState<InstrumentsListPage> {
         await ref.read(groupNotifierProvider.notifier).saveGroupOrder(orders);
     if (!mounted) return;
     if (!ok) {
-      ToastHelper.showError(context, 'Fehler beim Speichern der Reihenfolge');
+      ToastHelper.showError(context, context.l10n.instrumentsOrderFailed);
     }
   }
 
@@ -76,7 +77,7 @@ class _InstrumentsListPageState extends ConsumerState<InstrumentsListPage> {
     return Scaffold(
       // Ionic header: back, "Gruppen (n)", reorder toggle + categories
       appBar: AppBar(
-        title: Text('Gruppen ($count)'),
+        title: Text(context.l10n.instrumentsGroupsCount(count)),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => context.go('/settings'),
@@ -86,8 +87,8 @@ class _InstrumentsListPageState extends ConsumerState<InstrumentsListPage> {
             IconButton(
               icon: Icon(_isReordering ? Icons.check : Icons.swap_vert),
               tooltip: _isReordering
-                  ? 'Reihenfolge speichern'
-                  : 'Reihenfolge anpassen',
+                  ? context.l10n.peopleFlutterSaveOrder
+                  : context.l10n.peopleReorder,
               onPressed: groupsAsync.hasValue
                   ? () => _toggleReorder(groupsAsync.value!,
                       categoriesAsync.valueOrNull ?? const [])
@@ -96,7 +97,7 @@ class _InstrumentsListPageState extends ConsumerState<InstrumentsListPage> {
             IconButton(
               icon: const Icon(Icons.sell_outlined),
               onPressed: () => showInstrumentCategoriesSheet(context),
-              tooltip: 'Kategorien',
+              tooltip: context.l10n.instrumentsCategories,
             ),
           ],
         ],
@@ -109,11 +110,11 @@ class _InstrumentsListPageState extends ConsumerState<InstrumentsListPage> {
             children: [
               const Icon(Icons.error_outline, size: 64, color: AppColors.danger),
               const SizedBox(height: AppDimensions.paddingM),
-              Text('Fehler: $error'),
+              Text(context.l10n.peopleFlutterErrorWith(error)),
               const SizedBox(height: AppDimensions.paddingM),
               ElevatedButton(
                 onPressed: () => ref.invalidate(groupsProvider),
-                child: const Text('Erneut versuchen'),
+                child: Text(context.l10n.messagesRetry),
               ),
             ],
           ),
@@ -187,15 +188,14 @@ class _GroupedInstrumentsList extends StatelessWidget {
             color: AppColors.primary,
             padding: const EdgeInsets.symmetric(
                 horizontal: AppDimensions.paddingM, vertical: 10),
-            child: const Row(
+            child: Row(
               children: [
-                Icon(Icons.info, color: Colors.white),
-                SizedBox(width: AppDimensions.paddingM),
+                const Icon(Icons.info, color: Colors.white),
+                const SizedBox(width: AppDimensions.paddingM),
                 Expanded(
                   child: Text(
-                    'Ziehe die Gruppen, um die Reihenfolge anzupassen. '
-                    'Klicke auf das Häkchen, um zu speichern.',
-                    style: TextStyle(color: Colors.white, fontSize: 13),
+                    context.l10n.instrumentsDragGroups,
+                    style: const TextStyle(color: Colors.white, fontSize: 13),
                   ),
                 ),
               ],
@@ -287,14 +287,14 @@ class _GroupListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final String title;
     if (group.maingroup == true) {
-      title = '${group.name} (Hauptgruppe)';
+      title = context.l10n.instrumentsMainGroup(group.name);
     } else if (!_isChoirOrGeneral) {
       title = '${group.name} (${group.tuning ?? 'C'})';
     } else {
       title = group.name;
     }
     final clefText =
-        (group.clefs ?? const <String>[]).map(_clefLabel).join(', ');
+        (group.clefs ?? const <String>[]).map((c) => _clefLabel(context.l10n, c)).join(', ');
 
     return Material(
       color: Colors.transparent,
@@ -337,7 +337,7 @@ class _GroupListItem extends StatelessWidget {
                 ),
               ),
               _Badge(
-                text: playerCount == 1 ? '1 Person' : '$playerCount Personen',
+                text: context.l10n.commonPersons(playerCount),
                 color: playerCount == 0 ? AppColors.danger : AppColors.primary,
               ),
             ],
@@ -389,7 +389,7 @@ Future<void> _showAddGroupSheet(
   );
   if (added == true) ref.invalidate(playerCountsForGroupsProvider);
   if (added == false && context.mounted) {
-    ToastHelper.showError(context, 'Fehler beim Hinzufügen');
+    ToastHelper.showError(context, context.l10n.instrumentsFlutterAddFailed);
   }
 }
 
@@ -416,7 +416,7 @@ class _AddGroupSheetState extends ConsumerState<_AddGroupSheet> {
   Future<void> _add() async {
     final name = _controller.text.trim();
     if (name.isEmpty) {
-      ToastHelper.showError(context, 'Bitte gib einen Namen an');
+      ToastHelper.showError(context, context.l10n.instrumentsEnterName);
       return;
     }
     final created =
@@ -441,25 +441,25 @@ class _AddGroupSheetState extends ConsumerState<_AddGroupSheet> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text('Gruppe hinzufügen',
+          Text(context.l10n.instrumentsAddGroup,
               style: Theme.of(context).textTheme.titleLarge),
           const SizedBox(height: AppDimensions.paddingM),
           TextField(
             controller: _controller,
             autofocus: true,
             textCapitalization: TextCapitalization.sentences,
-            decoration: const InputDecoration(
-              labelText: 'Gruppe',
-              hintText: 'z.B. Mädchen, Posaune, Alt 1, etc.',
+            decoration: InputDecoration(
+              labelText: context.l10n.peopleGroup,
+              hintText: context.l10n.instrumentsGroupPh,
             ),
           ),
           if (categories.isNotEmpty) ...[
             const SizedBox(height: AppDimensions.paddingM),
             DropdownButtonFormField<int?>(
               value: _categoryId,
-              decoration: const InputDecoration(labelText: 'Kategorie'),
+              decoration: InputDecoration(labelText: context.l10n.instrumentsCategory),
               items: [
-                const DropdownMenuItem<int?>(value: null, child: Text('Keine')),
+                DropdownMenuItem<int?>(value: null, child: Text(context.l10n.generalSettingsNone)),
                 for (final c in categories)
                   DropdownMenuItem<int?>(value: c.id, child: Text(c.name)),
               ],
@@ -469,7 +469,7 @@ class _AddGroupSheetState extends ConsumerState<_AddGroupSheet> {
           const SizedBox(height: AppDimensions.paddingL),
           FilledButton(
             onPressed: _add,
-            child: const Text('Hinzufügen'),
+            child: Text(context.l10n.attendanceAdd),
           ),
         ],
       ),
@@ -497,8 +497,7 @@ Future<void> _openInstrumentPage(
   );
   if (result == null || !context.mounted) return;
 
-  const cannotDelete =
-      'Du kannst das Instrument nicht löschen, da es Spieler gibt (gab), die darauf spielen';
+  final cannotDelete = context.l10n.instrumentsCannotDelete;
   final notifier = ref.read(groupNotifierProvider.notifier);
   if (result['_delete'] == true) {
     final count =
@@ -517,9 +516,9 @@ Future<void> _openInstrumentPage(
     if (!context.mounted) return;
     if (updated != null) {
       ToastHelper.showSuccess(
-          context, '${result['name']} wurde erfolgreich aktualisiert');
+          context, context.l10n.instrumentsUpdated(result['name'] as Object));
     } else {
-      ToastHelper.showError(context, 'Fehler beim Speichern');
+      ToastHelper.showError(context, context.l10n.peopleSaveFailed);
     }
   }
   ref.invalidate(playerCountsForGroupsProvider);
@@ -532,8 +531,12 @@ const _tuningOptions = ['C', 'Es', 'B', 'F'];
 const _clefOptions = ['G', 'F', 'C'];
 
 /// MISC2: localized clef names (Ionic common.clef.*)
-const _clefNames = {'G': 'Violinschlüssel', 'F': 'Bassschlüssel', 'C': 'Altschlüssel'};
-String _clefLabel(String clef) => _clefNames[clef.toUpperCase()] ?? '${clef.toUpperCase()}-Schlüssel';
+String _clefLabel(AppLocalizations l10n, String clef) => switch (clef.toUpperCase()) {
+      'G' => l10n.commonClefG,
+      'F' => l10n.commonClefF,
+      'C' => l10n.commonClefC,
+      _ => l10n.instrumentsFlutterClef(clef.toUpperCase()),
+    };
 
 /// Dialog for editing/creating an instrument with all fields
 class _InstrumentEditDialog extends ConsumerStatefulWidget {
@@ -558,16 +561,16 @@ class _InstrumentEditDialogState extends ConsumerState<_InstrumentEditDialog> {
   Future<void> _generateSynonyms() async {
     final name = _nameController.text.trim();
     if (name.isEmpty) {
-      ToastHelper.showError(context, 'Bitte gib zuerst einen Namen an!');
+      ToastHelper.showError(context, context.l10n.instrumentsNameFirst);
       return;
     }
     setState(() => _generatingSynonyms = true);
     try {
       final synonyms = await ref.read(aiServiceProvider).getGroupSynonyms(name);
       _synonymsController.text = synonyms;
-      if (mounted) ToastHelper.showSuccess(context, 'Synonyme erfolgreich generiert!');
+      if (mounted) ToastHelper.showSuccess(context, context.l10n.instrumentsSynonymsGenerated);
     } catch (_) {
-      if (mounted) ToastHelper.showError(context, 'Fehler beim Generieren der Synonyme');
+      if (mounted) ToastHelper.showError(context, context.l10n.instrumentsSynonymsFailed);
     } finally {
       if (mounted) setState(() => _generatingSynonyms = false);
     }
@@ -624,12 +627,12 @@ class _InstrumentEditDialogState extends ConsumerState<_InstrumentEditDialog> {
     final showMusicFields = !_isChoir && !_isGeneral && !_isMain;
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.group?.name ?? 'Gruppe hinzufügen'),
+        title: Text(widget.group?.name ?? context.l10n.instrumentsAddGroup),
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
             icon: const Icon(Icons.close),
-            tooltip: 'Schließen',
+            tooltip: context.l10n.commonClose,
             onPressed: () => Navigator.of(context).pop(),
           ),
         ],
@@ -642,10 +645,10 @@ class _InstrumentEditDialogState extends ConsumerState<_InstrumentEditDialog> {
             TextFormField(
               controller: _nameController,
               textCapitalization: TextCapitalization.sentences,
-              decoration: const InputDecoration(labelText: 'Name'),
+              decoration: InputDecoration(labelText: context.l10n.typeSettingsName),
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {
-                  return 'Bitte gib einen Namen an!';
+                  return context.l10n.instrumentsNameRequired;
                 }
                 return null;
               },
@@ -654,9 +657,9 @@ class _InstrumentEditDialogState extends ConsumerState<_InstrumentEditDialog> {
             const SizedBox(height: AppDimensions.paddingM),
             DropdownButtonFormField<int?>(
               value: _selectedCategoryId,
-              decoration: const InputDecoration(labelText: 'Kategorie'),
+              decoration: InputDecoration(labelText: context.l10n.instrumentsCategory),
               items: [
-                const DropdownMenuItem<int?>(value: null, child: Text('Keine')),
+                DropdownMenuItem<int?>(value: null, child: Text(context.l10n.generalSettingsNone)),
                 ...widget.categories.map((cat) => DropdownMenuItem<int?>(
                       value: cat.id,
                       child: Text(cat.name),
@@ -670,7 +673,7 @@ class _InstrumentEditDialogState extends ConsumerState<_InstrumentEditDialog> {
                 value: _tuningOptions.contains(_selectedTuning)
                     ? _selectedTuning
                     : 'C',
-                decoration: const InputDecoration(labelText: 'Stimmung'),
+                decoration: InputDecoration(labelText: context.l10n.instrumentsTuning),
                 items: _tuningOptions
                     .map((t) => DropdownMenuItem(value: t, child: Text(t)))
                     .toList(),
@@ -681,11 +684,11 @@ class _InstrumentEditDialogState extends ConsumerState<_InstrumentEditDialog> {
               const SizedBox(height: AppDimensions.paddingM),
               TextFormField(
                 controller: _rangeController,
-                decoration: const InputDecoration(labelText: 'Tonumfang'),
+                decoration: InputDecoration(labelText: context.l10n.instrumentsRange),
               ),
               const SizedBox(height: AppDimensions.paddingM),
               Text(
-                'Notenschlüssel',
+                context.l10n.instrumentsFlutterClefs,
                 style: Theme.of(context)
                     .textTheme
                     .bodySmall
@@ -697,7 +700,7 @@ class _InstrumentEditDialogState extends ConsumerState<_InstrumentEditDialog> {
                 children: _clefOptions.map((clef) {
                   final isSelected = _selectedClefs.contains(clef);
                   return FilterChip(
-                    label: Text('${_clefLabel(clef)} ($clef)'),
+                    label: Text('${_clefLabel(context.l10n, clef)} ($clef)'),
                     selected: isSelected,
                     onSelected: (selected) {
                       setState(() {
@@ -718,9 +721,8 @@ class _InstrumentEditDialogState extends ConsumerState<_InstrumentEditDialog> {
                 controller: _synonymsController,
                 textCapitalization: TextCapitalization.sentences,
                 decoration: InputDecoration(
-                  labelText: 'Synonyme',
-                  helperText:
-                      'Definiere Synonyme um beim Hinzufügen von Dateien zu Werken die Instrumente automatisch zuordnen zu können. Synonyme durch Komma trennen.',
+                  labelText: context.l10n.instrumentsSynonyms,
+                  helperText: context.l10n.instrumentsSynonymsHelper,
                   helperMaxLines: 4,
                   suffixIcon: _generatingSynonyms
                       ? const Padding(
@@ -732,7 +734,7 @@ class _InstrumentEditDialogState extends ConsumerState<_InstrumentEditDialog> {
                           ),
                         )
                       : IconButton(
-                          tooltip: 'Synonyme generieren',
+                          tooltip: context.l10n.instrumentsFlutterGenerateSynonyms,
                           icon: const Icon(Icons.auto_awesome_outlined),
                           onPressed: _generateSynonyms,
                         ),
@@ -743,7 +745,7 @@ class _InstrumentEditDialogState extends ConsumerState<_InstrumentEditDialog> {
             TextFormField(
               controller: _notesController,
               textCapitalization: TextCapitalization.sentences,
-              decoration: const InputDecoration(labelText: 'Notizen'),
+              decoration: InputDecoration(labelText: context.l10n.peopleNotes),
               minLines: 1,
               maxLines: 5,
             ),
@@ -751,19 +753,19 @@ class _InstrumentEditDialogState extends ConsumerState<_InstrumentEditDialog> {
             // Flutter extra (not in Ionic): short name used in exports
             TextFormField(
               controller: _shortNameController,
-              decoration: const InputDecoration(labelText: 'Kurzname'),
+              decoration: InputDecoration(labelText: context.l10n.instrumentsFlutterShortName),
             ),
             const SizedBox(height: AppDimensions.paddingL),
             FilledButton(
               onPressed: _save,
-              child: Text(isEditing ? 'Aktualisieren' : 'Hinzufügen'),
+              child: Text(isEditing ? context.l10n.instrumentsUpdate : context.l10n.attendanceAdd),
             ),
             if (isEditing && !_isMain) ...[
               const SizedBox(height: AppDimensions.paddingS),
               FilledButton(
                 onPressed: () => _confirmDelete(context),
                 style: FilledButton.styleFrom(backgroundColor: AppColors.danger),
-                child: const Text('Entfernen'),
+                child: Text(context.l10n.commonRemove),
               ),
             ],
           ],
@@ -808,16 +810,16 @@ class _InstrumentEditDialogState extends ConsumerState<_InstrumentEditDialog> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Bestätigen'),
-        content: const Text('Gruppe wirklich löschen?'),
+        title: Text(context.l10n.commonConfirm),
+        content: Text(context.l10n.instrumentsDeleteGroup),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Abbrechen'),
+            child: Text(context.l10n.commonCancel),
           ),
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('Ja'),
+            child: Text(context.l10n.commonYes),
           ),
         ],
       ),
