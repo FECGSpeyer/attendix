@@ -209,28 +209,16 @@ class HistorieAccordion extends ConsumerWidget {
     final meetingName = item['meetingName']?.toString();
     final notes = item['notes']?.toString();
 
-    // Determine display title
+    // Determine display title (Ionic person.page.html history section,
+    // PlayerHistoryType codes from utilities/constants.ts)
     String displayTitle = '';
+    String? fullTitle;
     if (type == PlayerHistoryType.attendance.value) {
       displayTitle = meetingName ?? '';
-    } else {
-      switch (type) {
-        case 0: // paused
-          displayTitle = 'Pausiert';
-          break;
-        case 5: // active
-          displayTitle = 'Wieder aktiv';
-          break;
-        case 6: // instrumentChange
-          displayTitle = 'Gruppenwechsel';
-          break;
-        case 7: // archived
-          displayTitle = 'Archiviert';
-          break;
-        default:
-          displayTitle = item['title']?.toString() ?? 'Eintrag';
-      }
+    } else if (date != null) {
+      fullTitle = historyEntryTitle(type, date);
     }
+    final bodyText = historyEntryBody(type, text);
 
     // Build badge for attendance status
     String? badgeText;
@@ -255,8 +243,8 @@ class HistorieAccordion extends ConsumerWidget {
     }
 
     final dateStr = date != null ? DateFormat('dd.MM.yyyy').format(date) : '';
-    final titleStr =
-        displayTitle.isNotEmpty ? '$dateStr | $displayTitle' : dateStr;
+    final titleStr = fullTitle ??
+        (displayTitle.isNotEmpty ? '$dateStr | $displayTitle' : dateStr);
 
     final isAttendance = type == PlayerHistoryType.attendance.value;
     final isDeletable = canEdit && !isAttendance;
@@ -282,11 +270,11 @@ class HistorieAccordion extends ConsumerWidget {
                           TextStyle(fontSize: 12, color: Colors.grey.shade600),
                     ),
                   ),
-                if (!isAttendance && text.isNotEmpty)
+                if (!isAttendance && bodyText.isNotEmpty)
                   Padding(
                     padding: const EdgeInsets.only(top: 2),
                     child: Text(
-                      text,
+                      bodyText,
                       style:
                           TextStyle(fontSize: 12, color: Colors.grey.shade600),
                     ),
@@ -410,4 +398,48 @@ class HistorieAccordion extends ConsumerWidget {
       }
     }
   }
+}
+
+/// Title of a player history entry (Ionic person.page.html history section).
+String historyEntryTitle(int? type, DateTime date) {
+  final d = DateFormat('dd.MM.yyyy').format(date);
+  final dt = DateFormat('dd.MM.yyyy HH:mm').format(date);
+  return switch (type) {
+    2 || 3 => 'Mit Person gesprochen ($dt)',
+    5 => 'Notiz geändert am $dt',
+    1 => 'Pausiert am $dt',
+    6 => 'Wieder aktiv seit $dt',
+    8 => 'Archiviert am $d',
+    9 => 'Reaktiviert am $d',
+    10 || 11 => 'Übertragen am $d',
+    12 || 13 => 'Kopiert am $d',
+    _ => d,
+  };
+}
+
+/// Body text of a player history entry (Ionic getPlayerHistoryTypeText).
+String historyEntryBody(int? type, String text) {
+  switch (type) {
+    case 4:
+    case 6:
+    case 9:
+      return '';
+    case 5:
+      return 'Alte Notiz: ${text.isNotEmpty ? text : 'Keine Notiz'}';
+    case 8:
+    case 10:
+    case 11:
+    case 12:
+    case 13:
+      return text;
+  }
+  final typeText = switch (type) {
+    1 => 'Pausiert',
+    2 => 'Unentschuldigt',
+    3 => '',
+    7 => 'Wechsel',
+    _ => 'Sonstiges',
+  };
+  final body = text.isNotEmpty ? text : 'Keine Anmerkung';
+  return typeText.isEmpty ? body : '$typeText: $body';
 }

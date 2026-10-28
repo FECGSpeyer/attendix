@@ -23,6 +23,9 @@ import '../../../../data/repositories/cross_tenant_person_repository.dart';
 import '../widgets/person_match_suggestions.dart';
 import 'package:uuid/uuid.dart';
 import '../widgets/handover_sheet.dart';
+import '../widgets/pause_person_sheet.dart';
+import '../widgets/duplicate_candidates_card.dart';
+import '../../people_list_utils.dart';
 import '../widgets/person_detail/person_detail.dart';
 
 /// Provider for single person with group name
@@ -983,166 +986,21 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
   }
 
   Future<void> _showPauseDialog() async {
-    final reasonController = TextEditingController();
-    DateTime? pauseUntil;
-
-    try {
-      final result = await showModalBottomSheet<Map<String, dynamic>>(
-        context: context,
-        isScrollControlled: true,
-        useSafeArea: true,
-        builder: (context) => StatefulBuilder(
-          builder: (context, setDialogState) => Padding(
-            padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).viewInsets.bottom,
-              left: AppDimensions.paddingL,
-              right: AppDimensions.paddingL,
-              top: AppDimensions.paddingL,
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Row(
-                  children: [
-                    const Icon(Icons.pause_circle, color: AppColors.warning, size: 28),
-                    const SizedBox(width: AppDimensions.paddingS),
-                    Expanded(
-                      child: Text(
-                        '${widget.person.firstName} pausieren',
-                        style: Theme.of(context).textTheme.titleLarge,
-                      ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.close),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: AppDimensions.paddingL),
-                TextField(
-                  controller: reasonController,
-                  decoration: const InputDecoration(
-                    labelText: 'Grund *',
-                    hintText: 'Warum wird pausiert?',
-                    border: OutlineInputBorder(),
-                  ),
-                  maxLines: 2,
-                  autofocus: true,
-                ),
-                const SizedBox(height: AppDimensions.paddingM),
-                ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  leading: const Icon(Icons.calendar_today, color: AppColors.primary),
-                  title: const Text('Pausiert bis (optional)'),
-                  subtitle: Text(
-                    pauseUntil != null
-                        ? DateFormat('dd.MM.yyyy').format(pauseUntil!)
-                        : 'Kein Enddatum',
-                    style: TextStyle(
-                      color: pauseUntil != null ? AppColors.primary : AppColors.medium,
-                    ),
-                  ),
-                  trailing: pauseUntil != null
-                      ? IconButton(
-                          icon: const Icon(Icons.clear, color: AppColors.medium),
-                          onPressed: () => setDialogState(() => pauseUntil = null),
-                        )
-                      : null,
-                  onTap: () async {
-                    final date = await showDatePicker(
-                      context: context,
-                      initialDate: DateTime.now().add(const Duration(days: 30)),
-                      firstDate: DateTime.now(),
-                      lastDate: DateTime.now().add(const Duration(days: 365)),
-                    );
-                    if (date != null) {
-                      setDialogState(() => pauseUntil = date);
-                    }
-                  },
-                ),
-                const SizedBox(height: AppDimensions.paddingL),
-                FilledButton.icon(
-                  onPressed: () {
-                    if (reasonController.text.isEmpty) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Bitte Grund angeben')),
-                      );
-                      return;
-                    }
-                    Navigator.pop(context, {
-                      'reason': reasonController.text,
-                      'until': pauseUntil?.toIso8601String(),
-                    });
-                  },
-                  icon: const Icon(Icons.pause),
-                  label: const Text('Pausieren'),
-                  style: FilledButton.styleFrom(
-                    backgroundColor: AppColors.warning,
-                    padding: const EdgeInsets.symmetric(vertical: AppDimensions.paddingM),
-                  ),
-                ),
-                const SizedBox(height: AppDimensions.paddingL),
-              ],
-            ),
-          ),
-        ),
-      );
-
-      if (result != null && mounted) {
-        await _pausePerson(result['reason'], result['until']);
-      }
-    } finally {
-      reasonController.dispose();
-    }
-  }
-
-  Future<void> _pausePerson(String reason, String? until) async {
     final currentRole = ref.read(currentRoleProvider);
     if (!currentRole.canEdit) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Keine Berechtigung zum Pausieren'),
-            backgroundColor: AppColors.danger,
-          ),
-        );
-      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Keine Berechtigung zum Pausieren'),
+          backgroundColor: AppColors.danger,
+        ),
+      );
       return;
     }
-
-    final repository = ref.read(playerRepositoryWithTenantProvider);
-    final person = widget.person;
-
-    String reasonText = reason;
-    if (until != null) {
-      final parsedDate = DateTime.tryParse(until);
-      final dateStr = parsedDate != null
-          ? DateFormat('dd.MM.yyyy').format(parsedDate)
-          : until;
-      reasonText = '$reason (bis $dateStr)';
-    }
-
-    try {
-      await repository.pausePlayer(person, until, reasonText);
-
+    // PEOPLE2: Ionic confirmPause incl. "Pausiert ab" and other instances
+    final paused = await pausePersonFlow(context, ref, widget.person);
+    if (paused) {
       ref.invalidate(personProvider(widget.personId));
       ref.invalidate(realtimePlayersProvider);
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Person wurde pausiert'),
-            backgroundColor: AppColors.success,
-          ),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Fehler: $e'), backgroundColor: AppColors.danger),
-        );
-      }
     }
   }
 
@@ -1164,7 +1022,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     final person = widget.person;
 
     try {
-      await repository.unpausePlayer(person);
+      await repository.unpausePlayer(person, historyText: 'Person wieder aktiv');
 
       ref.invalidate(personProvider(widget.personId));
       ref.invalidate(realtimePlayersProvider);
@@ -1500,7 +1358,8 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
           mainAxisSize: MainAxisSize.min,
           children: [
             if (widget.person.appId == null &&
-                ref.read(currentRoleProvider).isConductor)
+                (ref.read(currentRoleProvider).isAdmin ||
+                    ref.read(currentRoleProvider).isResponsible))
               ListTile(
                 leading: const Icon(Icons.person_pin, color: AppColors.primary),
                 title: const Text('Meinen Benutzer zuweisen'),
@@ -1825,9 +1684,10 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
 
     try {
       final authService = ref.read(authServiceProvider);
+      final mainGroupId = (await ref.read(mainGroupProvider.future))?.id;
       await authService.createAccountForPerson(
         person: person,
-        role: Role.player,
+        role: accountRoleForGroup(person.instrument, mainGroupId),
         tenantId: tenant!.id!,
       );
 
@@ -1897,6 +1757,17 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
 
             // Status badges
             PersonStatusBadges(person: person),
+
+            // PEOPLE2: duplicate candidates + merge for pending registrations
+            if (widget.person.pending && canEdit)
+              DuplicateCandidatesCard(
+                person: widget.person,
+                onMerged: () {
+                  ref.invalidate(realtimePlayersProvider);
+                  ref.invalidate(pendingPlayersProvider);
+                  if (mounted) context.pop();
+                },
+              ),
 
             // Late Warning Card
             LateWarningCard(

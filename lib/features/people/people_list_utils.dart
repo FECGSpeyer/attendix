@@ -1,3 +1,4 @@
+import '../../core/constants/enums.dart';
 import '../../core/utils/instrument_sort.dart';
 import '../../data/models/instrument/instrument.dart';
 import '../../data/models/person/person.dart';
@@ -85,6 +86,14 @@ List<Person> sortPeopleByGroup(List<Person> people, List<Group> groups) {
   });
   return list;
 }
+
+/// Role for a newly created account (Ionic db.createAccount / addPlayer):
+/// members of the main group become "Verantwortlicher", everyone else
+/// "Mitglied".
+Role accountRoleForGroup(int? groupId, int? mainGroupId) =>
+    mainGroupId != null && groupId == mainGroupId
+        ? Role.responsible
+        : Role.player;
 
 /// Joined within the last month (Ionic Utils.getModifiedPlayersForList isNew).
 bool isNewPerson(Person p, {DateTime? now}) {
