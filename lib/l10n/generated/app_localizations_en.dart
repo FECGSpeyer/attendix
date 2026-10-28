@@ -8077,6 +8077,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get songsFlutterCreatingInTarget => 'Creating song in target instance...';
 
   @override
+  String get songsFlutterDeleteFailed => 'Song could not be deleted';
+
+  @override
+  String get songsFlutterDownloadFileFailed => 'File could not be downloaded';
+
+  @override
   String songsFlutterErrorWith(Object error) {
     return 'Error: $error';
   }
@@ -8101,6 +8107,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get songsFlutterFullscreen => 'Full screen';
 
   @override
+  String get songsFlutterHideTab => 'Hide tab';
+
+  @override
+  String get songsFlutterInvalidId => 'Invalid song ID';
+
+  @override
   String get songsFlutterLastPage => 'Last page';
 
   @override
@@ -8112,16 +8124,30 @@ class AppLocalizationsEn extends AppLocalizations {
   String get songsFlutterLoadingTargetGroups => 'Loading target groups...';
 
   @override
+  String get songsFlutterMenu => 'Menu';
+
+  @override
   String get songsFlutterNextPage => 'Next page';
 
   @override
   String get songsFlutterNoPlayers => 'No players found';
 
   @override
+  String get songsFlutterNoSongs => 'No songs available';
+
+  @override
+  String get songsFlutterNotFound => 'Song not found';
+
+  @override
   String get songsFlutterOneEach => '1 each';
 
   @override
   String get songsFlutterOpenFileFailed => 'Could not open file';
+
+  @override
+  String songsFlutterPdfCreateFailed(Object error) {
+    return 'Error while creating the PDF: $error';
+  }
 
   @override
   String get songsFlutterPdfLoadFailed => 'PDF could not be loaded';
@@ -8138,6 +8164,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get songsFlutterPrintFileFailed => 'File could not be printed';
+
+  @override
   String get songsFlutterPrintJobSent => 'Print job sent';
 
   @override
@@ -8145,6 +8174,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get songsFlutterReorderCategoriesHint => 'Drag categories to reorder them';
+
+  @override
+  String get songsFlutterShowAsTab => 'Show as tab';
+
+  @override
+  String get songsFlutterSong => 'Song';
+
+  @override
+  String get songsFlutterTelegramSent => 'File sent via Telegram';
 
   @override
   String songsFlutterUploadFailedWith(Object error) {

@@ -14219,6 +14219,18 @@ abstract class AppLocalizations {
   /// **'Erstelle Werk in Ziel-Instanz...'**
   String get songsFlutterCreatingInTarget;
 
+  /// songs.flutter.deleteFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Werk konnte nicht gelöscht werden'**
+  String get songsFlutterDeleteFailed;
+
+  /// songs.flutter.downloadFileFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Datei konnte nicht heruntergeladen werden'**
+  String get songsFlutterDownloadFileFailed;
+
   /// songs.flutter.errorWith
   ///
   /// In de, this message translates to:
@@ -14255,6 +14267,18 @@ abstract class AppLocalizations {
   /// **'Vollbild'**
   String get songsFlutterFullscreen;
 
+  /// songs.flutter.hideTab
+  ///
+  /// In de, this message translates to:
+  /// **'Tab ausblenden'**
+  String get songsFlutterHideTab;
+
+  /// songs.flutter.invalidId
+  ///
+  /// In de, this message translates to:
+  /// **'Ungültige Werk-ID'**
+  String get songsFlutterInvalidId;
+
   /// songs.flutter.lastPage
   ///
   /// In de, this message translates to:
@@ -14273,6 +14297,12 @@ abstract class AppLocalizations {
   /// **'Lade Ziel-Instrumente...'**
   String get songsFlutterLoadingTargetGroups;
 
+  /// songs.flutter.menu
+  ///
+  /// In de, this message translates to:
+  /// **'Menü'**
+  String get songsFlutterMenu;
+
   /// songs.flutter.nextPage
   ///
   /// In de, this message translates to:
@@ -14285,6 +14315,18 @@ abstract class AppLocalizations {
   /// **'Keine Spieler gefunden'**
   String get songsFlutterNoPlayers;
 
+  /// songs.flutter.noSongs
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Werke vorhanden'**
+  String get songsFlutterNoSongs;
+
+  /// songs.flutter.notFound
+  ///
+  /// In de, this message translates to:
+  /// **'Werk nicht gefunden'**
+  String get songsFlutterNotFound;
+
   /// songs.flutter.oneEach
   ///
   /// In de, this message translates to:
@@ -14296,6 +14338,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Konnte Datei nicht öffnen'**
   String get songsFlutterOpenFileFailed;
+
+  /// songs.flutter.pdfCreateFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Erstellen der PDF: {error}'**
+  String songsFlutterPdfCreateFailed(Object error);
 
   /// songs.flutter.pdfLoadFailed
   ///
@@ -14321,6 +14369,12 @@ abstract class AppLocalizations {
   /// **'Fehler beim Drucken: {error}'**
   String songsFlutterPrintFailed(Object error);
 
+  /// songs.flutter.printFileFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Datei konnte nicht gedruckt werden'**
+  String get songsFlutterPrintFileFailed;
+
   /// songs.flutter.printJobSent
   ///
   /// In de, this message translates to:
@@ -14338,6 +14392,24 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Ziehe Kategorien um sie neu zu sortieren'**
   String get songsFlutterReorderCategoriesHint;
+
+  /// songs.flutter.showAsTab
+  ///
+  /// In de, this message translates to:
+  /// **'Als Tab anzeigen'**
+  String get songsFlutterShowAsTab;
+
+  /// songs.flutter.song
+  ///
+  /// In de, this message translates to:
+  /// **'Werk'**
+  String get songsFlutterSong;
+
+  /// songs.flutter.telegramSent
+  ///
+  /// In de, this message translates to:
+  /// **'Datei per Telegram gesendet'**
+  String get songsFlutterTelegramSent;
 
   /// songs.flutter.uploadFailedWith
   ///

@@ -98,7 +98,19 @@
         "filterAndView": "Filter & Ansicht",
         "filesWillBeCopied": "{count} Dateien werden kopiert:",
         "loadingTargetGroups": "Lade Ziel-Instrumente...",
-        "creatingInTarget": "Erstelle Werk in Ziel-Instanz..."
+        "creatingInTarget": "Erstelle Werk in Ziel-Instanz...",
+        "pdfCreateFailed": "Fehler beim Erstellen der PDF: {error}",
+        "menu": "Menü",
+        "hideTab": "Tab ausblenden",
+        "showAsTab": "Als Tab anzeigen",
+        "noSongs": "Keine Werke vorhanden",
+        "deleteFailed": "Werk konnte nicht gelöscht werden",
+        "song": "Werk",
+        "invalidId": "Ungültige Werk-ID",
+        "notFound": "Werk nicht gefunden",
+        "printFileFailed": "Datei konnte nicht gedruckt werden",
+        "downloadFileFailed": "Datei konnte nicht heruntergeladen werden",
+        "telegramSent": "Datei per Telegram gesendet"
       }
     }
   },
@@ -201,7 +213,19 @@
         "filterAndView": "Filter & view",
         "filesWillBeCopied": "{count} files will be copied:",
         "loadingTargetGroups": "Loading target groups...",
-        "creatingInTarget": "Creating song in target instance..."
+        "creatingInTarget": "Creating song in target instance...",
+        "pdfCreateFailed": "Error while creating the PDF: {error}",
+        "menu": "Menu",
+        "hideTab": "Hide tab",
+        "showAsTab": "Show as tab",
+        "noSongs": "No songs available",
+        "deleteFailed": "Song could not be deleted",
+        "song": "Song",
+        "invalidId": "Invalid song ID",
+        "notFound": "Song not found",
+        "printFileFailed": "File could not be printed",
+        "downloadFileFailed": "File could not be downloaded",
+        "telegramSent": "File sent via Telegram"
       }
     }
   }

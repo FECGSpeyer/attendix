@@ -10589,6 +10589,14 @@
   "@songsFlutterCreatingInTarget": {
     "description": "songs.flutter.creatingInTarget"
   },
+  "songsFlutterDeleteFailed": "Werk konnte nicht gelöscht werden",
+  "@songsFlutterDeleteFailed": {
+    "description": "songs.flutter.deleteFailed"
+  },
+  "songsFlutterDownloadFileFailed": "Datei konnte nicht heruntergeladen werden",
+  "@songsFlutterDownloadFileFailed": {
+    "description": "songs.flutter.downloadFileFailed"
+  },
   "songsFlutterErrorWith": "Fehler: {error}",
   "@songsFlutterErrorWith": {
     "description": "songs.flutter.errorWith",
@@ -10622,6 +10630,14 @@
   "@songsFlutterFullscreen": {
     "description": "songs.flutter.fullscreen"
   },
+  "songsFlutterHideTab": "Tab ausblenden",
+  "@songsFlutterHideTab": {
+    "description": "songs.flutter.hideTab"
+  },
+  "songsFlutterInvalidId": "Ungültige Werk-ID",
+  "@songsFlutterInvalidId": {
+    "description": "songs.flutter.invalidId"
+  },
   "songsFlutterLastPage": "Letzte Seite",
   "@songsFlutterLastPage": {
     "description": "songs.flutter.lastPage"
@@ -10638,6 +10654,10 @@
   "@songsFlutterLoadingTargetGroups": {
     "description": "songs.flutter.loadingTargetGroups"
   },
+  "songsFlutterMenu": "Menü",
+  "@songsFlutterMenu": {
+    "description": "songs.flutter.menu"
+  },
   "songsFlutterNextPage": "Nächste Seite",
   "@songsFlutterNextPage": {
     "description": "songs.flutter.nextPage"
@@ -10646,6 +10666,14 @@
   "@songsFlutterNoPlayers": {
     "description": "songs.flutter.noPlayers"
   },
+  "songsFlutterNoSongs": "Keine Werke vorhanden",
+  "@songsFlutterNoSongs": {
+    "description": "songs.flutter.noSongs"
+  },
+  "songsFlutterNotFound": "Werk nicht gefunden",
+  "@songsFlutterNotFound": {
+    "description": "songs.flutter.notFound"
+  },
   "songsFlutterOneEach": "Je 1",
   "@songsFlutterOneEach": {
     "description": "songs.flutter.oneEach"
@@ -10653,6 +10681,13 @@
   "songsFlutterOpenFileFailed": "Konnte Datei nicht öffnen",
   "@songsFlutterOpenFileFailed": {
     "description": "songs.flutter.openFileFailed"
+  },
+  "songsFlutterPdfCreateFailed": "Fehler beim Erstellen der PDF: {error}",
+  "@songsFlutterPdfCreateFailed": {
+    "description": "songs.flutter.pdfCreateFailed",
+    "placeholders": {
+      "error": {}
+    }
   },
   "songsFlutterPdfLoadFailed": "PDF konnte nicht geladen werden",
   "@songsFlutterPdfLoadFailed": {
@@ -10673,6 +10708,10 @@
       "error": {}
     }
   },
+  "songsFlutterPrintFileFailed": "Datei konnte nicht gedruckt werden",
+  "@songsFlutterPrintFileFailed": {
+    "description": "songs.flutter.printFileFailed"
+  },
   "songsFlutterPrintJobSent": "Druckauftrag gesendet",
   "@songsFlutterPrintJobSent": {
     "description": "songs.flutter.printJobSent"
@@ -10684,6 +10723,18 @@
   "songsFlutterReorderCategoriesHint": "Ziehe Kategorien um sie neu zu sortieren",
   "@songsFlutterReorderCategoriesHint": {
     "description": "songs.flutter.reorderCategoriesHint"
+  },
+  "songsFlutterShowAsTab": "Als Tab anzeigen",
+  "@songsFlutterShowAsTab": {
+    "description": "songs.flutter.showAsTab"
+  },
+  "songsFlutterSong": "Werk",
+  "@songsFlutterSong": {
+    "description": "songs.flutter.song"
+  },
+  "songsFlutterTelegramSent": "Datei per Telegram gesendet",
+  "@songsFlutterTelegramSent": {
+    "description": "songs.flutter.telegramSent"
   },
   "songsFlutterUploadFailedWith": "Fehler beim Hochladen: {error}",
   "@songsFlutterUploadFailedWith": {

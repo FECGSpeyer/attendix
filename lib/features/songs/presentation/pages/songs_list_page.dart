@@ -25,6 +25,7 @@ import '../widgets/song_categories_sheet.dart';
 import '../widgets/song_filter_sheet.dart';
 import 'song_import_page.dart';
 import '../../../../core/providers/branding_providers.dart'; // MISC2
+import '../../../../l10n/l10n.dart';
 
 /// Songs list (Ionic `songs.page`).
 ///
@@ -101,13 +102,13 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
     try {
       await ref.read(optionalTabsNotifierProvider.notifier).setShowSongsTab(!current);
     } catch (_) {
-      if (mounted) ToastHelper.showError(context, 'Fehler beim Speichern');
+      if (mounted) ToastHelper.showError(context, context.l10n.extraFieldsSaveFailed);
     }
   }
 
   void _copyShareLink(String sharingId) {
     Clipboard.setData(ClipboardData(text: SongUtils.shareLink(sharingId)));
-    ToastHelper.showSuccess(context, 'Der Link wurde in die Zwischenablage kopiert');
+    ToastHelper.showSuccess(context, context.l10n.songsLinkCopied);
   }
 
   Future<void> _exportPdf(SongsListData data, List<Song> filtered, SongViewOptions view) async {
@@ -124,7 +125,7 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
             additionalFields: data.additionalFields,
           );
     } catch (e) {
-      if (mounted) ToastHelper.showError(context, 'Fehler beim Erstellen der PDF: $e');
+      if (mounted) ToastHelper.showError(context, context.l10n.songsFlutterPdfCreateFailed(e));
     }
   }
 
@@ -138,18 +139,18 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
 
     if (dataAsync.hasError && data == null) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Werke')),
+        appBar: AppBar(title: Text(context.l10n.settingsSongs)),
         body: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               const Icon(Icons.error_outline, size: 64, color: AppColors.danger),
               const SizedBox(height: AppDimensions.paddingM),
-              Text('Fehler: ${dataAsync.error}'),
+              Text(context.l10n.songsFlutterErrorWith('${dataAsync.error}')),
               const SizedBox(height: AppDimensions.paddingM),
               ElevatedButton(
                 onPressed: _refresh,
-                child: const Text('Erneut versuchen'),
+                child: Text(context.l10n.messagesRetry),
               ),
             ],
           ),
@@ -160,14 +161,14 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
     if (dataAsync.hasValue && data == null) {
       // Invalid public sharing link (or no tenant selected)
       return Scaffold(
-        appBar: AppBar(title: const Text('Werke')),
-        body: const Center(child: Text('Ungültiger Freigabe-Link.')),
+        appBar: AppBar(title: Text(context.l10n.settingsSongs)),
+        body: Center(child: Text(context.l10n.songsInvalidShareLink)),
       );
     }
 
     if (data == null) {
       return Scaffold(
-        appBar: AppBar(title: Text(_isPublic ? '' : 'Werke')),
+        appBar: AppBar(title: Text(_isPublic ? '' : context.l10n.settingsSongs)),
         body: ListView(
           children: List.generate(10, (_) => const SkeletonListTile(showAvatar: false)),
         ),
@@ -200,12 +201,12 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
       appBar: AppBar(
         title: Text(data.isPublic
             ? data.publicTenant!.longName
-            : 'Werke (${data.songs.length})'),
+            : context.l10n.songsSongsCount(data.songs.length)),
         automaticallyImplyLeading: !data.isPublic,
         actions: [
           PopupMenuButton<String>(
             icon: const Icon(Icons.more_vert),
-            tooltip: 'Menü',
+            tooltip: context.l10n.songsFlutterMenu,
             onSelected: (value) {
               switch (value) {
                 case 'categories':
@@ -224,20 +225,20 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
             },
             itemBuilder: (context) => [
               if (isAdmin)
-                const PopupMenuItem(
+                PopupMenuItem(
                   value: 'categories',
                   child: ListTile(
-                    leading: Icon(Icons.local_library_outlined),
-                    title: Text('Werk-Kategorien'),
+                    leading: const Icon(Icons.local_library_outlined),
+                    title: Text(context.l10n.songsSongCategories),
                     contentPadding: EdgeInsets.zero,
                   ),
                 ),
               if (hasSongSharing)
-                const PopupMenuItem(
+                PopupMenuItem(
                   value: 'share',
                   child: ListTile(
-                    leading: Icon(Icons.link),
-                    title: Text('Link kopieren'),
+                    leading: const Icon(Icons.link),
+                    title: Text(context.l10n.songsCopyLink),
                     contentPadding: EdgeInsets.zero,
                   ),
                 ),
@@ -250,26 +251,26 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
                         ? Icons.bookmark
                         : Icons.bookmark_outline),
                     title: Text(ref.watch(optionalTabsNotifierProvider).songs
-                        ? 'Tab ausblenden'
-                        : 'Als Tab anzeigen'),
+                        ? context.l10n.songsFlutterHideTab
+                        : context.l10n.songsFlutterShowAsTab),
                     contentPadding: EdgeInsets.zero,
                   ),
                 ),
               // UX_SETTINGS: Ionic order (import before PDF)
               if (isAdmin)
-                const PopupMenuItem(
+                PopupMenuItem(
                   value: 'import',
                   child: ListTile(
-                    leading: Icon(Icons.cloud_upload_outlined),
-                    title: Text('Werke importieren'),
+                    leading: const Icon(Icons.cloud_upload_outlined),
+                    title: Text(context.l10n.songsImportSongs),
                     contentPadding: EdgeInsets.zero,
                   ),
                 ),
-              const PopupMenuItem(
+              PopupMenuItem(
                 value: 'pdf',
                 child: ListTile(
-                  leading: Icon(Icons.description_outlined),
-                  title: Text('Werkverzeichnis als PDF'),
+                  leading: const Icon(Icons.description_outlined),
+                  title: Text(context.l10n.songsCatalogPdf),
                   contentPadding: EdgeInsets.zero,
                 ),
               ),
@@ -312,7 +313,7 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
                       child: TextField(
                         controller: _searchController,
                         decoration: InputDecoration(
-                          hintText: 'Werk suchen...',
+                          hintText: context.l10n.attListSearchSong,
                           prefixIcon: const Icon(Icons.search),
                           isDense: true,
                           suffixIcon: _searchController.text.isNotEmpty
@@ -330,7 +331,7 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
                       ),
                     ),
                     IconButton(
-                      tooltip: 'Filter & Ansicht',
+                      tooltip: context.l10n.songsFlutterFilterAndView,
                       icon: Badge(
                         isLabelVisible: filter.hasActiveFilters,
                         smallSize: 8,
@@ -372,7 +373,7 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
                   AppDimensions.paddingXS,
                 ),
                 child: Text(
-                  'Werke (${filtered.length})',
+                  context.l10n.songsSongsCount(filtered.length),
                   style: Theme.of(context).textTheme.labelLarge?.copyWith(
                         color: AppColors.medium,
                         fontWeight: FontWeight.w600,
@@ -390,15 +391,15 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
                       const SizedBox(height: AppDimensions.paddingS),
                       Text(
                         data.songs.isEmpty
-                            ? 'Keine Werke vorhanden'
-                            : 'Keine Werke gefunden',
+                            ? context.l10n.songsFlutterNoSongs
+                            : context.l10n.attListNoSongsFound,
                         style: Theme.of(context).textTheme.bodyLarge,
                       ),
                       if (filter.hasActiveFilters)
                         TextButton.icon(
                           onPressed: filterNotifier.reset,
                           icon: const Icon(Icons.filter_list_off),
-                          label: const Text('Filter zurücksetzen'),
+                          label: Text(context.l10n.peopleResetFilter),
                         ),
                     ],
                   ),
@@ -453,7 +454,7 @@ class _CategorySegment extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final entries = <(String?, String)>[
-      (null, 'Alle'),
+      (null, context.l10n.commonAll),
       for (final c in categories)
         if (c.id != null) (c.id, c.name),
     ];
@@ -540,15 +541,15 @@ class _QuickLinks extends StatelessWidget {
         children: [
           if (showCurrent)
             ListTile(
-              title: const Text('Aktuelle Werke anzeigen',
-                  style: TextStyle(color: AppColors.primary)),
+              title: Text(context.l10n.songsShowCurrent,
+                  style: const TextStyle(color: AppColors.primary)),
               onTap: onCurrent,
             ),
           if (showCurrent && showGroups) const Divider(height: 1),
           if (showGroups)
             ListTile(
-              title: const Text('Gruppenverzeichnis',
-                  style: TextStyle(color: AppColors.primary)),
+              title: Text(context.l10n.songsGroupDirectory,
+                  style: const TextStyle(color: AppColors.primary)),
               onTap: onGroups,
             ),
         ],
@@ -594,16 +595,18 @@ class _SongListItem extends StatelessWidget {
       if (song.lastSung != null) {
         final date = SongUtils.formatDate(song.lastSung);
         lines.add(Text(
-          '${orchestra ? 'Zuletzt gespielt' : 'Zuletzt gesungen'} am $date | ${song.conductor ?? ''}',
+          orchestra
+              ? context.l10n.songsLastPlayedOn(date, song.conductor ?? '')
+              : context.l10n.songsLastSungOn(date, song.conductor ?? ''),
           style: subtitleStyle,
         ));
       }
       if (song.nextPlanned != null) {
         final prefix = song.lastSung == null
-            ? (orchestra ? 'Noch nicht gespielt · ' : 'Noch nicht gesungen · ')
+            ? (orchestra ? context.l10n.songsNotPlayedYet : context.l10n.songsNotSungYet)
             : '';
         lines.add(Text(
-          '${prefix}Geplant am ${SongUtils.formatDate(song.nextPlanned)}',
+          '$prefix${context.l10n.songsPlannedOn(SongUtils.formatDate(song.nextPlanned))}',
           style: subtitleStyle,
         ));
       }
@@ -622,12 +625,12 @@ class _SongListItem extends StatelessWidget {
     }
 
     if (song.withSolo && view.showSoloBadge) {
-      badges.add(const SongBadge(color: AppColors.success, label: 'Solo'));
+      badges.add(SongBadge(color: AppColors.success, label: context.l10n.songsSolo));
     }
     if (song.withChoir && view.showChoirBadge) {
       badges.add(SongBadge(
         color: AppColors.tertiary,
-        label: orchestra ? 'Chor' : 'Orchester',
+        label: orchestra ? context.l10n.songsChoir : context.l10n.songsOrchestra,
       ));
     }
     if ((song.link?.isNotEmpty ?? false) && view.showLink) {
