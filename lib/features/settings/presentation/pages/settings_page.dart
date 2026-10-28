@@ -14,6 +14,7 @@ import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/services/pwa_service.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/string_utils.dart';
+import '../../../team_organization/presentation/widgets/team_org_settings_section.dart'; // TEAM_ORG
 import '../../../../shared/widgets/sheets/feedback_sheet.dart';
 import '../../../../shared/widgets/sheets/version_history_sheet.dart';
 import '../../../messages/presentation/widgets/notification_bell.dart'; // MESSAGES
@@ -116,14 +117,6 @@ class SettingsPage extends ConsumerWidget {
                     subtitle: 'Lehrer und Ausbilder verwalten',
                     onTap: () => context.push('/settings/teachers'),
                   ),
-                // Only Admin/Responsible can manage meetings
-                if (role.isAdmin || role.isResponsible)
-                  _SettingsTile(
-                    leading: const _SettingsIcon(icon: Icons.event),
-                    title: 'Besprechungen',
-                    subtitle: 'Vorstandsbesprechungen verwalten',
-                    onTap: () => context.push('/settings/meetings'),
-                  ),
                 // Only Admin/Responsible can manage shifts
                 if (role.isAdmin || role.isResponsible)
                   _SettingsTile(
@@ -160,6 +153,9 @@ class SettingsPage extends ConsumerWidget {
             ),
             const SizedBox(height: AppDimensions.paddingM),
           ],
+
+          // TEAM_ORG: group "Planung" (replaces the old "Besprechungen" entry)
+          const TeamOrgSettingsSection(),
 
           // Songs for players who can't edit but can view
           if (!role.canEdit && role.canView) ...[

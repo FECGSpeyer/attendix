@@ -35,3 +35,7 @@ export 'administration_repository.dart';
 // PEOPLE_IMPORT
 export 'player_absence_repository.dart';
 export 'import_repository.dart';
+// TEAM_ORG
+export 'agenda_item_repository.dart';
+export 'task_repository.dart';
+export 'protocol_repository.dart';

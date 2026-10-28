@@ -35,3 +35,5 @@ export 'dashboard_providers.dart';
 // PEOPLE_IMPORT
 export 'player_absence_providers.dart';
 export 'import_providers.dart';
+// TEAM_ORG
+export 'team_org_providers.dart';
