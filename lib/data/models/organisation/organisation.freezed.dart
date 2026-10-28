@@ -24,7 +24,21 @@ mixin _$Organisation {
   int? get id => throw _privateConstructorUsedError;
   @JsonKey(name: 'created_at')
   DateTime? get createdAt => throw _privateConstructorUsedError;
-  String get name => throw _privateConstructorUsedError;
+  String get name =>
+      throw _privateConstructorUsedError; // ORG_PLANS: Ablaufpläne / Org-Einstellungen (tenant_groups columns)
+  @JsonKey(name: 'public_plan_key')
+  String? get publicPlanKey => throw _privateConstructorUsedError;
+  @JsonKey(name: 'logo_url')
+  String? get logoUrl => throw _privateConstructorUsedError;
+  @JsonKey(name: 'branding_text')
+  String? get brandingText => throw _privateConstructorUsedError;
+  @JsonKey(name: 'additional_fields')
+  List<OrgExtraField>? get additionalFields =>
+      throw _privateConstructorUsedError;
+  @JsonKey(name: 'planning_templates')
+  List<Plan>? get planningTemplates => throw _privateConstructorUsedError;
+  @JsonKey(name: 'default_fields')
+  List<PlanField>? get defaultFields => throw _privateConstructorUsedError;
 
   /// Serializes this Organisation to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -47,6 +61,12 @@ abstract class $OrganisationCopyWith<$Res> {
     int? id,
     @JsonKey(name: 'created_at') DateTime? createdAt,
     String name,
+    @JsonKey(name: 'public_plan_key') String? publicPlanKey,
+    @JsonKey(name: 'logo_url') String? logoUrl,
+    @JsonKey(name: 'branding_text') String? brandingText,
+    @JsonKey(name: 'additional_fields') List<OrgExtraField>? additionalFields,
+    @JsonKey(name: 'planning_templates') List<Plan>? planningTemplates,
+    @JsonKey(name: 'default_fields') List<PlanField>? defaultFields,
   });
 }
 
@@ -68,6 +88,12 @@ class _$OrganisationCopyWithImpl<$Res, $Val extends Organisation>
     Object? id = freezed,
     Object? createdAt = freezed,
     Object? name = null,
+    Object? publicPlanKey = freezed,
+    Object? logoUrl = freezed,
+    Object? brandingText = freezed,
+    Object? additionalFields = freezed,
+    Object? planningTemplates = freezed,
+    Object? defaultFields = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -86,6 +112,36 @@ class _$OrganisationCopyWithImpl<$Res, $Val extends Organisation>
                     ? _value.name
                     : name // ignore: cast_nullable_to_non_nullable
                         as String,
+            publicPlanKey:
+                freezed == publicPlanKey
+                    ? _value.publicPlanKey
+                    : publicPlanKey // ignore: cast_nullable_to_non_nullable
+                        as String?,
+            logoUrl:
+                freezed == logoUrl
+                    ? _value.logoUrl
+                    : logoUrl // ignore: cast_nullable_to_non_nullable
+                        as String?,
+            brandingText:
+                freezed == brandingText
+                    ? _value.brandingText
+                    : brandingText // ignore: cast_nullable_to_non_nullable
+                        as String?,
+            additionalFields:
+                freezed == additionalFields
+                    ? _value.additionalFields
+                    : additionalFields // ignore: cast_nullable_to_non_nullable
+                        as List<OrgExtraField>?,
+            planningTemplates:
+                freezed == planningTemplates
+                    ? _value.planningTemplates
+                    : planningTemplates // ignore: cast_nullable_to_non_nullable
+                        as List<Plan>?,
+            defaultFields:
+                freezed == defaultFields
+                    ? _value.defaultFields
+                    : defaultFields // ignore: cast_nullable_to_non_nullable
+                        as List<PlanField>?,
           )
           as $Val,
     );
@@ -105,6 +161,12 @@ abstract class _$$OrganisationImplCopyWith<$Res>
     int? id,
     @JsonKey(name: 'created_at') DateTime? createdAt,
     String name,
+    @JsonKey(name: 'public_plan_key') String? publicPlanKey,
+    @JsonKey(name: 'logo_url') String? logoUrl,
+    @JsonKey(name: 'branding_text') String? brandingText,
+    @JsonKey(name: 'additional_fields') List<OrgExtraField>? additionalFields,
+    @JsonKey(name: 'planning_templates') List<Plan>? planningTemplates,
+    @JsonKey(name: 'default_fields') List<PlanField>? defaultFields,
   });
 }
 
@@ -125,6 +187,12 @@ class __$$OrganisationImplCopyWithImpl<$Res>
     Object? id = freezed,
     Object? createdAt = freezed,
     Object? name = null,
+    Object? publicPlanKey = freezed,
+    Object? logoUrl = freezed,
+    Object? brandingText = freezed,
+    Object? additionalFields = freezed,
+    Object? planningTemplates = freezed,
+    Object? defaultFields = freezed,
   }) {
     return _then(
       _$OrganisationImpl(
@@ -143,19 +211,59 @@ class __$$OrganisationImplCopyWithImpl<$Res>
                 ? _value.name
                 : name // ignore: cast_nullable_to_non_nullable
                     as String,
+        publicPlanKey:
+            freezed == publicPlanKey
+                ? _value.publicPlanKey
+                : publicPlanKey // ignore: cast_nullable_to_non_nullable
+                    as String?,
+        logoUrl:
+            freezed == logoUrl
+                ? _value.logoUrl
+                : logoUrl // ignore: cast_nullable_to_non_nullable
+                    as String?,
+        brandingText:
+            freezed == brandingText
+                ? _value.brandingText
+                : brandingText // ignore: cast_nullable_to_non_nullable
+                    as String?,
+        additionalFields:
+            freezed == additionalFields
+                ? _value._additionalFields
+                : additionalFields // ignore: cast_nullable_to_non_nullable
+                    as List<OrgExtraField>?,
+        planningTemplates:
+            freezed == planningTemplates
+                ? _value._planningTemplates
+                : planningTemplates // ignore: cast_nullable_to_non_nullable
+                    as List<Plan>?,
+        defaultFields:
+            freezed == defaultFields
+                ? _value._defaultFields
+                : defaultFields // ignore: cast_nullable_to_non_nullable
+                    as List<PlanField>?,
       ),
     );
   }
 }
 
 /// @nodoc
-@JsonSerializable()
+
+@JsonSerializable(explicitToJson: true)
 class _$OrganisationImpl implements _Organisation {
   const _$OrganisationImpl({
     this.id,
     @JsonKey(name: 'created_at') this.createdAt,
     required this.name,
-  });
+    @JsonKey(name: 'public_plan_key') this.publicPlanKey,
+    @JsonKey(name: 'logo_url') this.logoUrl,
+    @JsonKey(name: 'branding_text') this.brandingText,
+    @JsonKey(name: 'additional_fields')
+    final List<OrgExtraField>? additionalFields,
+    @JsonKey(name: 'planning_templates') final List<Plan>? planningTemplates,
+    @JsonKey(name: 'default_fields') final List<PlanField>? defaultFields,
+  }) : _additionalFields = additionalFields,
+       _planningTemplates = planningTemplates,
+       _defaultFields = defaultFields;
 
   factory _$OrganisationImpl.fromJson(Map<String, dynamic> json) =>
       _$$OrganisationImplFromJson(json);
@@ -167,10 +275,54 @@ class _$OrganisationImpl implements _Organisation {
   final DateTime? createdAt;
   @override
   final String name;
+  // ORG_PLANS: Ablaufpläne / Org-Einstellungen (tenant_groups columns)
+  @override
+  @JsonKey(name: 'public_plan_key')
+  final String? publicPlanKey;
+  @override
+  @JsonKey(name: 'logo_url')
+  final String? logoUrl;
+  @override
+  @JsonKey(name: 'branding_text')
+  final String? brandingText;
+  final List<OrgExtraField>? _additionalFields;
+  @override
+  @JsonKey(name: 'additional_fields')
+  List<OrgExtraField>? get additionalFields {
+    final value = _additionalFields;
+    if (value == null) return null;
+    if (_additionalFields is EqualUnmodifiableListView)
+      return _additionalFields;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  final List<Plan>? _planningTemplates;
+  @override
+  @JsonKey(name: 'planning_templates')
+  List<Plan>? get planningTemplates {
+    final value = _planningTemplates;
+    if (value == null) return null;
+    if (_planningTemplates is EqualUnmodifiableListView)
+      return _planningTemplates;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  final List<PlanField>? _defaultFields;
+  @override
+  @JsonKey(name: 'default_fields')
+  List<PlanField>? get defaultFields {
+    final value = _defaultFields;
+    if (value == null) return null;
+    if (_defaultFields is EqualUnmodifiableListView) return _defaultFields;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
 
   @override
   String toString() {
-    return 'Organisation(id: $id, createdAt: $createdAt, name: $name)';
+    return 'Organisation(id: $id, createdAt: $createdAt, name: $name, publicPlanKey: $publicPlanKey, logoUrl: $logoUrl, brandingText: $brandingText, additionalFields: $additionalFields, planningTemplates: $planningTemplates, defaultFields: $defaultFields)';
   }
 
   @override
@@ -181,12 +333,40 @@ class _$OrganisationImpl implements _Organisation {
             (identical(other.id, id) || other.id == id) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
-            (identical(other.name, name) || other.name == name));
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.publicPlanKey, publicPlanKey) ||
+                other.publicPlanKey == publicPlanKey) &&
+            (identical(other.logoUrl, logoUrl) || other.logoUrl == logoUrl) &&
+            (identical(other.brandingText, brandingText) ||
+                other.brandingText == brandingText) &&
+            const DeepCollectionEquality().equals(
+              other._additionalFields,
+              _additionalFields,
+            ) &&
+            const DeepCollectionEquality().equals(
+              other._planningTemplates,
+              _planningTemplates,
+            ) &&
+            const DeepCollectionEquality().equals(
+              other._defaultFields,
+              _defaultFields,
+            ));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, createdAt, name);
+  int get hashCode => Object.hash(
+    runtimeType,
+    id,
+    createdAt,
+    name,
+    publicPlanKey,
+    logoUrl,
+    brandingText,
+    const DeepCollectionEquality().hash(_additionalFields),
+    const DeepCollectionEquality().hash(_planningTemplates),
+    const DeepCollectionEquality().hash(_defaultFields),
+  );
 
   /// Create a copy of Organisation
   /// with the given fields replaced by the non-null parameter values.
@@ -207,6 +387,13 @@ abstract class _Organisation implements Organisation {
     final int? id,
     @JsonKey(name: 'created_at') final DateTime? createdAt,
     required final String name,
+    @JsonKey(name: 'public_plan_key') final String? publicPlanKey,
+    @JsonKey(name: 'logo_url') final String? logoUrl,
+    @JsonKey(name: 'branding_text') final String? brandingText,
+    @JsonKey(name: 'additional_fields')
+    final List<OrgExtraField>? additionalFields,
+    @JsonKey(name: 'planning_templates') final List<Plan>? planningTemplates,
+    @JsonKey(name: 'default_fields') final List<PlanField>? defaultFields,
   }) = _$OrganisationImpl;
 
   factory _Organisation.fromJson(Map<String, dynamic> json) =
@@ -218,7 +405,25 @@ abstract class _Organisation implements Organisation {
   @JsonKey(name: 'created_at')
   DateTime? get createdAt;
   @override
-  String get name;
+  String get name; // ORG_PLANS: Ablaufpläne / Org-Einstellungen (tenant_groups columns)
+  @override
+  @JsonKey(name: 'public_plan_key')
+  String? get publicPlanKey;
+  @override
+  @JsonKey(name: 'logo_url')
+  String? get logoUrl;
+  @override
+  @JsonKey(name: 'branding_text')
+  String? get brandingText;
+  @override
+  @JsonKey(name: 'additional_fields')
+  List<OrgExtraField>? get additionalFields;
+  @override
+  @JsonKey(name: 'planning_templates')
+  List<Plan>? get planningTemplates;
+  @override
+  @JsonKey(name: 'default_fields')
+  List<PlanField>? get defaultFields;
 
   /// Create a copy of Organisation
   /// with the given fields replaced by the non-null parameter values.

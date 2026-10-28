@@ -35,14 +35,24 @@
   <link rel="manifest" href="manifest.json">
 </head>
 <body>
-  <script src='https://cdn.jsdelivr.net/npm/pdfjs-dist@4.6.82/build/pdf.min.mjs' type='module'></script>
+  <!-- pdf.js for the in-app PDF viewer (pdfx). Loaded from a CDN, so it can
+       be blocked (offline, ad blocker, firewall). Everything below is guarded:
+       without pdf.js the app still starts and the PDF viewer shows a friendly
+       error with an "open externally" fallback instead of crashing. -->
+  <script src='https://cdn.jsdelivr.net/npm/pdfjs-dist@4.6.82/build/pdf.min.mjs' type='module'
+    onerror="console.warn('pdf.js could not be loaded; in-app PDF viewing is disabled.')"></script>
   <script type='module'>
-  var { pdfjsLib } = globalThis;
-  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.6.82/build/pdf.worker.mjs';
-
-  var pdfRenderOptions = {
+  globalThis.pdfRenderOptions = {
     cMapUrl: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.6.82/cmaps/',
     cMapPacked: true,
+  };
+  try {
+    var pdfjsLib = globalThis.pdfjsLib;
+    if (pdfjsLib && pdfjsLib.GlobalWorkerOptions) {
+      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.6.82/build/pdf.worker.mjs';
+    }
+  } catch (e) {
+    console.warn('pdf.js setup failed', e);
   }
   </script>
   <!-- Service Worker Update Detection -->
@@ -55,11 +65,24 @@
 
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.ready.then(registration => {
-        // Check for updates on page load
-        registration.update();
-
-        // Check for updates periodically (every 30 seconds)
-        setInterval(() => registration.update(), 30000);
+        // DB_REVIEW_REST (F6): like Ionic app.component checkForUpdates –
+        // an update check is a CDN request, so don't poll every 30 s. Check
+        // on start, when the tab becomes visible again (at most every
+        // 5 minutes) and hourly while visible. Hidden tabs never check.
+        var UPDATE_CHECK_INTERVAL_MS = 60 * 60 * 1000;
+        var UPDATE_CHECK_MIN_GAP_MS = 5 * 60 * 1000;
+        var lastUpdateCheck = 0;
+        var checkForUpdate = function () {
+          if (document.visibilityState !== 'visible') return;
+          if (Date.now() - lastUpdateCheck < UPDATE_CHECK_MIN_GAP_MS) return;
+          lastUpdateCheck = Date.now();
+          registration.update().catch(function (err) {
+            console.warn('[SW] update check failed', err);
+          });
+        };
+        document.addEventListener('visibilitychange', checkForUpdate);
+        setInterval(checkForUpdate, UPDATE_CHECK_INTERVAL_MS);
+        checkForUpdate();
 
         // Listen for new service worker waiting
         registration.addEventListener('updatefound', () => {
@@ -92,6 +115,33 @@
       userRequestedUpdate = true;
       window.location.reload();
     };
+  </script>
+
+  <!-- TEAMS: Microsoft Teams tab support (same teams-js version as the Ionic app).
+       Teams always frames the app, so the SDK is only loaded inside an iframe;
+       regular browser/PWA visits load nothing. Dart reads these globals
+       (lib/core/services/teams/teams_sdk_web.dart). -->
+  <script>
+    (function () {
+      var framed;
+      try {
+        framed = window.self !== window.top;
+      } catch (e) {
+        // Cross-origin access to window.top throws – only when framed.
+        framed = true;
+      }
+      window.attendixInIframe = framed;
+      if (!framed) return;
+      window.attendixTeamsSdk = new Promise(function (resolve) {
+        var s = document.createElement('script');
+        s.src = 'https://cdn.jsdelivr.net/npm/@microsoft/teams-js@2.54.0/dist/umd/MicrosoftTeams.min.js';
+        s.integrity = 'sha384-PIuQ2V7hlz4b1x3G1mPCYYZiWTjxzRTL6bf547xR9ARsAeNv2DAzti86LQnFCwlo';
+        s.crossOrigin = 'anonymous';
+        s.onload = function () { resolve(!!window.microsoftTeams); };
+        s.onerror = function () { resolve(false); };
+        document.head.appendChild(s);
+      });
+    })();
   </script>
 
   <script src="flutter_bootstrap.js" async></script>

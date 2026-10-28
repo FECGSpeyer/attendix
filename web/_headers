@@ -1,0 +1,11 @@
+# Cloudflare Pages response headers (copied to build/web by `flutter build web`).
+# Same frame-ancestors list as the Ionic app (vercel.json) so Microsoft Teams /
+# Outlook / M365 can embed the app as a tab. Do NOT add X-Frame-Options: it
+# would block those frames (frame-ancestors supersedes it).
+/*
+  Content-Security-Policy: frame-ancestors 'self' *.cloud.microsoft teams.microsoft.com *.teams.microsoft.com *.microsoft365.com *.office.com *.skype.com *.teams.microsoft.us *.gov.teams.microsoft.us local.teams.office.com;
+
+# DB_REVIEW_REST (F1): Universal Links / App Links files (Ionic src/.well-known).
+# Apple requires the AASA file (no extension) to be served as JSON.
+/.well-known/apple-app-site-association
+  Content-Type: application/json

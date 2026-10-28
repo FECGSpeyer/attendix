@@ -4,7 +4,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/group_providers.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/utils/instrument_sort.dart';
+import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/instrument/instrument.dart';
+import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
 
 /// Bottom sheet for managing instrument categories (CRUD)
 class InstrumentCategoriesSheet extends ConsumerStatefulWidget {
@@ -17,6 +21,47 @@ class InstrumentCategoriesSheet extends ConsumerStatefulWidget {
 
 class _InstrumentCategoriesSheetState
     extends ConsumerState<InstrumentCategoriesSheet> {
+  bool _isReordering = false;
+  List<GroupCategory>? _working;
+
+  Future<void> _toggleReorder(List<GroupCategory> categories) async {
+    if (!_isReordering) {
+      setState(() {
+        _isReordering = true;
+        _working = [...categories];
+      });
+      return;
+    }
+    final ordered = _working ?? categories;
+    setState(() {
+      _isReordering = false;
+      _working = null;
+    });
+
+    // New category sort_order (1-based) + resulting global instrument order
+    final categoryOrders = <int, int>{};
+    final updatedCats = <GroupCategory>[];
+    for (var i = 0; i < ordered.length; i++) {
+      final c = ordered[i];
+      if (c.id != null) categoryOrders[c.id!] = i + 1;
+      updatedCats.add(c.copyWith(sortOrder: i + 1));
+    }
+    final groups = ref.read(groupsProvider).valueOrNull ?? const [];
+    final groupOrders = computeGlobalSortOrder(
+      groupInstrumentsByCategory(groups, updatedCats),
+    );
+
+    final ok = await ref
+        .read(groupNotifierProvider.notifier)
+        .saveCategoryOrder(categoryOrders, groupSortOrders: groupOrders);
+    if (!mounted) return;
+    if (ok) {
+      ToastHelper.showSuccess(context, context.l10n.typeSettingsOrderSaved);
+    } else {
+      ToastHelper.showError(context, context.l10n.instrumentsOrderFailed);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final categoriesAsync = ref.watch(groupCategoriesProvider);
@@ -56,7 +101,7 @@ class _InstrumentCategoriesSheetState
                     const SizedBox(width: AppDimensions.paddingS),
                     Expanded(
                       child: Text(
-                        'Kategorien verwalten',
+                        context.l10n.instrumentsCategories,
                         style:
                             Theme.of(context).textTheme.titleMedium?.copyWith(
                                   fontWeight: FontWeight.bold,
@@ -64,10 +109,21 @@ class _InstrumentCategoriesSheetState
                       ),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.add),
-                      onPressed: () => _showAddCategoryDialog(context),
-                      tooltip: 'Neue Kategorie',
+                      icon: Icon(
+                          _isReordering ? Icons.check : Icons.swap_vert),
+                      tooltip: _isReordering
+                          ? context.l10n.peopleFlutterSaveOrder
+                          : context.l10n.peopleReorder,
+                      onPressed: categoriesAsync.hasValue
+                          ? () => _toggleReorder(categoriesAsync.value!)
+                          : null,
                     ),
+                    if (!_isReordering)
+                      IconButton(
+                        icon: const Icon(Icons.add),
+                        onPressed: () => _showAddCategoryDialog(context),
+                        tooltip: context.l10n.instrumentsNewCategory,
+                      ),
                     IconButton(
                       icon: const Icon(Icons.close),
                       onPressed: () => Navigator.of(context).pop(),
@@ -91,12 +147,12 @@ class _InstrumentCategoriesSheetState
                         const Icon(Icons.error_outline,
                             size: 48, color: AppColors.danger),
                         const SizedBox(height: AppDimensions.paddingM),
-                        Text('Fehler: $error'),
+                        Text(context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(error))),
                         const SizedBox(height: AppDimensions.paddingM),
                         ElevatedButton(
                           onPressed: () =>
                               ref.invalidate(groupCategoriesProvider),
-                          child: const Text('Erneut versuchen'),
+                          child: Text(context.l10n.messagesRetry),
                         ),
                       ],
                     ),
@@ -114,16 +170,63 @@ class _InstrumentCategoriesSheetState
                             ),
                             const SizedBox(height: AppDimensions.paddingM),
                             Text(
-                              'Keine Kategorien',
+                              context.l10n.instrumentsFlutterNoCategories,
                               style: Theme.of(context).textTheme.titleMedium,
                             ),
                             const SizedBox(height: AppDimensions.paddingS),
-                            const Text(
-                              'Tippe + um eine Kategorie zu erstellen',
-                              style: TextStyle(color: AppColors.medium),
+                            Text(
+                              context.l10n.instrumentsFlutterNoCategoriesHint,
+                              style: const TextStyle(color: AppColors.medium),
                             ),
                           ],
                         ),
+                      );
+                    }
+
+                    if (_isReordering) {
+                      final working = _working ?? categories;
+                      return Column(
+                        children: [
+                          ListTile(
+                            leading: const Icon(Icons.info_outline,
+                                color: AppColors.primary),
+                            title: Text(context.l10n.instrumentsDragCategories),
+                          ),
+                          Expanded(
+                            child: ReorderableListView.builder(
+                              scrollController: scrollController,
+                              padding:
+                                  const EdgeInsets.all(AppDimensions.paddingM),
+                              itemCount: working.length,
+                              onReorder: (oldIndex, newIndex) {
+                                setState(() {
+                                  final list = [...working];
+                                  if (newIndex > oldIndex) newIndex -= 1;
+                                  final item = list.removeAt(oldIndex);
+                                  list.insert(newIndex, item);
+                                  _working = list;
+                                });
+                              },
+                              itemBuilder: (context, index) {
+                                final category = working[index];
+                                return Card(
+                                  key: ValueKey(category.id ?? index),
+                                  margin: const EdgeInsets.only(
+                                      bottom: AppDimensions.paddingS),
+                                  child: ListTile(
+                                    leading: CircleAvatar(
+                                      radius: 14,
+                                      child: Text('${index + 1}',
+                                          style:
+                                              const TextStyle(fontSize: 12)),
+                                    ),
+                                    title: Text(category.name),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ],
                       );
                     }
 
@@ -159,12 +262,11 @@ class _InstrumentCategoriesSheetState
     final result = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Neue Kategorie'),
+        title: Text(context.l10n.instrumentsNewCategory),
         content: TextField(
           controller: controller,
-          decoration: const InputDecoration(
-            labelText: 'Name',
-            hintText: 'z.B. Streicher',
+          decoration: InputDecoration(
+            labelText: context.l10n.instrumentsCategoryName,
           ),
           autofocus: true,
           textCapitalization: TextCapitalization.sentences,
@@ -172,7 +274,7 @@ class _InstrumentCategoriesSheetState
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Abbrechen'),
+            child: Text(context.l10n.commonCancel),
           ),
           FilledButton(
             onPressed: () {
@@ -181,7 +283,7 @@ class _InstrumentCategoriesSheetState
                 Navigator.of(context).pop(name);
               }
             },
-            child: const Text('Erstellen'),
+            child: Text(context.l10n.attendanceAdd),
           ),
         ],
       ),
@@ -199,11 +301,11 @@ class _InstrumentCategoriesSheetState
     final result = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Kategorie bearbeiten'),
+        title: Text(context.l10n.instrumentsEditCategory),
         content: TextField(
           controller: controller,
-          decoration: const InputDecoration(
-            labelText: 'Name',
+          decoration: InputDecoration(
+            labelText: context.l10n.instrumentsCategoryName,
           ),
           autofocus: true,
           textCapitalization: TextCapitalization.sentences,
@@ -211,7 +313,7 @@ class _InstrumentCategoriesSheetState
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Abbrechen'),
+            child: Text(context.l10n.commonCancel),
           ),
           FilledButton(
             onPressed: () {
@@ -220,7 +322,7 @@ class _InstrumentCategoriesSheetState
                 Navigator.of(context).pop(name);
               }
             },
-            child: const Text('Speichern'),
+            child: Text(context.l10n.commonSave),
           ),
         ],
       ),
@@ -238,20 +340,19 @@ class _InstrumentCategoriesSheetState
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Kategorie löschen?'),
-        content: Text(
-            'Möchtest du die Kategorie "${category.name}" wirklich löschen?'),
+        title: Text(context.l10n.commonConfirm),
+        content: Text(context.l10n.instrumentsDeleteCategory),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Abbrechen'),
+            child: Text(context.l10n.commonCancel),
           ),
           FilledButton(
             style: FilledButton.styleFrom(
               backgroundColor: AppColors.danger,
             ),
             onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Löschen'),
+            child: Text(context.l10n.commonYes),
           ),
         ],
       ),
@@ -290,13 +391,13 @@ class _CategoryTile extends StatelessWidget {
             IconButton(
               icon: const Icon(Icons.edit, size: 20),
               onPressed: onEdit,
-              tooltip: 'Bearbeiten',
+              tooltip: context.l10n.commonEdit,
             ),
             IconButton(
               icon:
                   const Icon(Icons.delete, size: 20, color: AppColors.danger),
               onPressed: onDelete,
-              tooltip: 'Löschen',
+              tooltip: context.l10n.commonDelete,
             ),
           ],
         ),

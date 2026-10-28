@@ -73,7 +73,8 @@ void main() {
         // Verify the provider sets tenantId
         expect(
           playerProvidersSource,
-          contains('repo.setTenantId(tenant)'),
+          // SOL_FIX1: per-tenant immutable instance
+          contains('playerRepositoryForTenantProvider(tenant)'),
           reason: 'playerRepositoryWithTenantProvider must set tenantId',
         );
       });
