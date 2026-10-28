@@ -29,7 +29,9 @@ final songTenantSettingsProvider =
   // The settings query only uses the current tenant id (never the song
   // source), so the base repository with tenant context is sufficient here.
   // songRepositoryWithTenantProvider itself depends on this provider.
-  final repo = ref.watch(songRepositoryProvider)..setTenantId(tenantId);
+  // SOL_FIX1: per-tenant instance instead of mutating the shared one.
+  final repo = ref.watch(songRepositoryForTenantProvider(
+      (tenantId: tenantId, songSourceTenantId: null)));
   try {
     return await repo.getSongTenantSettings();
   } catch (_) {
@@ -38,18 +40,14 @@ final songTenantSettingsProvider =
 });
 
 /// Initialized song repository with tenant context and song source tenant.
+/// SOL_FIX1: per-(tenant, song source) immutable instance, so a tenant
+/// switch never changes the tenant of an operation that is already running.
 final songRepositoryWithTenantProvider = Provider<SongRepository>((ref) {
-  final repo = ref.watch(songRepositoryProvider);
   final tenant = ref.watch(currentTenantIdProvider);
-
-  if (tenant != null) {
-    repo.setTenantId(tenant);
-  }
-  repo.setSongSourceTenantId(
-    ref.watch(songTenantSettingsProvider).valueOrNull?.songSourceTenantId,
-  );
-
-  return repo;
+  final source =
+      ref.watch(songTenantSettingsProvider).valueOrNull?.songSourceTenantId;
+  return ref.watch(songRepositoryForTenantProvider(
+      (tenantId: tenant, songSourceTenantId: source)));
 });
 
 /// Resolve the repository only after the song source tenant is known, so

@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/plan/plan.dart';
 import 'base_repository.dart';
+import '../../core/utils/paged_query.dart'; // SOL_FIX1
 
 /// Provider for PlanRepository (without tenant; use planRepositoryWithTenantProvider)
 final planRepositoryProvider = Provider<PlanRepository>((ref) {
@@ -42,14 +43,20 @@ class PlanRepository extends BaseRepository with TenantAwareRepository {
   /// fallback 2023-01-01).
   Future<List<PlanAttendance>> getPlanAttendances({required String since}) async {
     try {
-      final response = await supabase
-          .from('attendance')
-          .select(planAttendanceColumns)
-          .eq('tenantId', currentTenantId)
-          .gt('date', since)
-          .order('date', ascending: false);
+      // SOL_FIX1: paged (PostgREST max-rows 1000), stable order date+id;
+      // tenant captured once for all pages.
+      final tenantId = currentTenantId;
+      final response = await fetchAllPages<dynamic>((from, to) async =>
+          await supabase
+              .from('attendance')
+              .select(planAttendanceColumns)
+              .eq('tenantId', tenantId)
+              .gt('date', since)
+              .order('date', ascending: false)
+              .order('id', ascending: false)
+              .range(from, to) as List);
 
-      return (response as List)
+      return response
           .map((e) => PlanAttendance.fromJson(e as Map<String, dynamic>))
           .toList();
     } catch (e, stack) {

@@ -102,12 +102,15 @@ void main() {
         final q = m.group(0)!;
         expect(
           q.contains(".eq('tenantId', currentTenantId)") ||
-              q.contains(".eq('tenantId', libraryTenantId)"),
+              q.contains(".eq('tenantId', libraryTenantId)") ||
+              // SOL_FIX1: tenant captured once for all pages
+              q.contains(".eq('tenantId', tenantId)"),
           isTrue,
           reason: q,
         );
       }
       expect(importSource, contains('final libraryTenantId = songTenantId ?? currentTenantId;'));
+      expect(importSource, contains('final tenantId = currentTenantId;'));
     });
 
     test('inserts always set tenantId (current tenant / song library)', () {

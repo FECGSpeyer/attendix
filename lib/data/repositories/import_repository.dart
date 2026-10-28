@@ -26,12 +26,14 @@ class ImportRepository extends BaseRepository with TenantAwareRepository {
   Future<Set<String>> getExistingPlayerEmails() async {
     try {
       final emails = <String>{};
+      final tenantId = currentTenantId; // SOL_FIX1: one tenant for all pages
       var from = 0;
       while (true) {
         final data = await supabase
             .from('player')
             .select('email')
-            .eq('tenantId', currentTenantId)
+            .eq('tenantId', tenantId)
+            .order('id') // SOL_FIX1: stable paging
             .range(from, from + _pageSize - 1);
         final rows = data as List;
         for (final row in rows) {
@@ -82,6 +84,7 @@ class ImportRepository extends BaseRepository with TenantAwareRepository {
             .from('songs')
             .select('number, prefix')
             .eq('tenantId', libraryTenantId)
+            .order('id') // SOL_FIX1: stable paging
             .range(from, from + _pageSize - 1);
         final rows = data as List;
         for (final row in rows) {

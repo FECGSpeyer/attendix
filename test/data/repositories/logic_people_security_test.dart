@@ -91,8 +91,14 @@ void main() {
       final b = body(source, 'addToUpcomingAttendances');
       expect(b, contains(".eq('tenantId', currentTenantId)"));
       expect(b, contains('_matchesType('));
-      expect(b, contains('peopleStatusByShift('));
-      expect(b, contains('!type.allDay'));
+      // SOL_FIX1: shift computation shared via _initialStatus.
+      expect(b, contains('_initialStatus(player, type, att, shift)'));
+      final hs = source.indexOf('_initialStatus(\n');
+      expect(hs, isNot(-1));
+      final helper =
+          source.substring(hs, source.indexOf('\n  ///', hs));
+      expect(helper, contains('peopleStatusByShift('));
+      expect(helper, contains('type.allDay'));
     });
 
     test('updateShiftAssignmentsForPerson is tenant-scoped', () {

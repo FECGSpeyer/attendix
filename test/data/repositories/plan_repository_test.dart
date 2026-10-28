@@ -34,8 +34,17 @@ void main() {
       final q = queries(planRepo, 'attendance').toList();
       expect(q, isNotEmpty);
       for (final query in q) {
-        expect(query, contains(".eq('tenantId', currentTenantId)"), reason: query);
+        // SOL_FIX1: getPlanAttendances uses its captured tenant id.
+        expect(
+            query.contains(".eq('tenantId', currentTenantId)") ||
+                query.contains(".eq('tenantId', tenantId)"),
+            isTrue,
+            reason: query);
       }
+    });
+
+    test('SOL_FIX1: captured tenant id is the current tenant', () {
+      expect(planRepo, contains('final tenantId = currentTenantId;'));
     });
 
     test('attendance update filters by id AND tenantId', () {

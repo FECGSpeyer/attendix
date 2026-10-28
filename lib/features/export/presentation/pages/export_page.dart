@@ -399,8 +399,8 @@ class _ExportPageState extends ConsumerState<ExportPage> {
       } else {
         // All attendances of the current season up to yesterday
         // (Ionic: getAttendance(false, true) + date < today).
-        final attendanceRepo = ref.read(attendanceRepositoryProvider)
-          ..setTenantId(tenantId);
+        final attendanceRepo =
+            ref.read(attendanceRepositoryForTenantProvider(tenantId));
         final seasonStart = tenant.seasonStart != null
             ? DateTime.tryParse(tenant.seasonStart!)
             : null;

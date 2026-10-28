@@ -13,6 +13,7 @@ import 'attendance_type_providers.dart';
 import 'player_providers.dart';
 import 'tenant_providers.dart';
 import 'group_providers.dart';
+import '../utils/paged_query.dart'; // SOL_FIX1
 
 // Keep alive counter: incrementing forces providers watching it to refetch.
 final attendanceRefetchCounter = StateProvider<int>((ref) => 0);
@@ -158,12 +159,15 @@ final realtimeAttendanceListProvider = FutureProvider.autoDispose<List<Attendanc
   // (getCurrentAttDate), no row limit.
   final List<dynamic> response;
   try {
-    response = await supabase
+    // SOL_FIX1: paged (PostgREST max-rows 1000), stable order date+id.
+    response = await fetchAllPages<dynamic>((from, to) async => await supabase
         .from('attendance')
         .select('*, person_attendances(status, notes, duty_state)')
         .eq('tenantId', tenantId)
         .gt('date', attendanceListStartDate(tenant.seasonStart))
-        .order('date', ascending: false);
+        .order('date', ascending: false)
+        .order('id', ascending: false)
+        .range(from, to) as List);
   } catch (_) {
     final cached = await cache.load(tenantId);
     if (cached != null) return cached;

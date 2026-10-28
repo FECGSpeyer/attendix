@@ -55,10 +55,11 @@ class _OrgSongSyncSectionState extends ConsumerState<OrgSongSyncSection> {
     }
     setState(() => _saving = true);
     try {
-      final repo = ref.read(songRepositoryProvider);
       final tenantId = ref.read(currentTenantIdProvider);
       if (tenantId == null) return;
-      repo.setTenantId(tenantId);
+      // SOL_FIX1: per-tenant instance instead of mutating the shared one.
+      final repo = ref.read(songRepositoryForTenantProvider(
+          (tenantId: tenantId, songSourceTenantId: null)));
       await repo.updateSongSourceTenantId(newSourceId);
       ref.invalidate(songTenantSettingsProvider);
       ref.invalidate(currentTenantProvider);

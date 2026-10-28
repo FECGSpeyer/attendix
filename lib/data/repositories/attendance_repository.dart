@@ -16,6 +16,15 @@ final attendanceRepositoryProvider = Provider<AttendanceRepository>((ref) {
   return AttendanceRepository(ref);
 });
 
+/// SOL_FIX1: one immutable repository instance per tenant (see
+/// playerRepositoryForTenantProvider).
+final attendanceRepositoryForTenantProvider =
+    Provider.family<AttendanceRepository, int?>((ref, tenantId) {
+  final repo = AttendanceRepository(ref);
+  if (tenantId != null) repo.bindTenantId(tenantId);
+  return repo;
+});
+
 /// Repository for attendance operations
 class AttendanceRepository extends BaseRepository with TenantAwareRepository {
   AttendanceRepository(super.ref);

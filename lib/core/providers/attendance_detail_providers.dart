@@ -5,7 +5,8 @@ import '../../data/models/person/person.dart';
 import '../config/supabase_config.dart';
 import 'tenant_providers.dart';
 import '../services/attendance_detail_cache.dart'; // LEFTOVERS
-import '../services/offline_queue_service.dart' show connectivityCheckProvider; // LEFTOVERS
+import '../services/offline_queue_service.dart'
+    show OfflineQueueStore, connectivityCheckProvider, offlineQueueStoreProvider; // LEFTOVERS, SOL_FIX1
 
 /// Provider for attendance detail with tenant-scoped query
 final attendanceDetailProvider = FutureProvider.autoDispose.family<Attendance?, int>((ref, attendanceId) async {
@@ -70,16 +71,25 @@ final personAttendancesForAttendanceProvider = FutureProvider.autoDispose.family
   // Get all persons with their attendance status for this attendance
   // SEC-017: Use inner join with attendance to filter by tenant
   // LEFTOVERS: offline read cache (Ionic getAttendanceByIdRobust persons)
-  final response = await const AttendanceDetailCache().fetchWithCache<List<dynamic>>(
-        key: AttendanceDetailCache.keyFor(tenant.id!, attendanceId, 'persons'),
+  final tenantId = tenant.id!;
+  final loaded = await const AttendanceDetailCache().fetchWithCache<List<dynamic>>(
+        key: AttendanceDetailCache.keyFor(tenantId, attendanceId, 'persons'),
         isOnline: ref.read(connectivityCheckProvider),
         fetch: () => supabase
             .from('person_attendances')
             .select('*, player:person_id(firstName, lastName, img, instrument, left, paused), attendance:attendance_id!inner(tenantId)')
             .eq('attendance_id', attendanceId)
-            .eq('attendance.tenantId', tenant.id!),
+            .eq('attendance.tenantId', tenantId),
       ) ??
       const [];
+
+  // SOL_FIX1: pending offline writes (not yet replayed) win over the cached
+  // or loaded rows, so an offline status/notes change survives reopening.
+  final response = OfflineQueueStore.overlayPending(
+    loaded,
+    await ref.read(offlineQueueStoreProvider).load(),
+    tenantId: tenantId,
+  );
 
   return response.map((e) {
     // Extract player data from nested structure - handle potential type mismatch
