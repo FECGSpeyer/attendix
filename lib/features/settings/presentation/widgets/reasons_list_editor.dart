@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Editable list of absence / late reasons (Ionic general settings
 /// "Abwesenheits- & Verspätungsgründe").
@@ -23,19 +24,19 @@ class ReasonsListEditor extends StatelessWidget {
     final value = await showDialog<String>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Grund hinzufügen'),
+        title: Text(ctx.l10n.generalSettingsAddReason),
         content: TextField(
           controller: controller,
           autofocus: true,
           textCapitalization: TextCapitalization.sentences,
-          decoration: const InputDecoration(hintText: 'Grund'),
+          decoration: InputDecoration(hintText: ctx.l10n.excuseReason),
           onSubmitted: (v) => Navigator.pop(ctx, v.trim()),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Abbrechen')),
+          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(ctx.l10n.commonCancel)),
           FilledButton(
             onPressed: () => Navigator.pop(ctx, controller.text.trim()),
-            child: const Text('Hinzufügen'),
+            child: Text(ctx.l10n.attendanceAdd),
           ),
         ],
       ),
@@ -51,7 +52,7 @@ class ReasonsListEditor extends StatelessWidget {
       tilePadding: EdgeInsets.zero,
       title: Text(title),
       subtitle: Text(
-        reasons.length == 1 ? '1 Grund konfiguriert' : '${reasons.length} Gründe konfiguriert',
+        context.l10n.generalSettingsReasonsCount(reasons.length),
       ),
       children: [
         ReorderableListView(
@@ -76,7 +77,7 @@ class ReasonsListEditor extends StatelessWidget {
                 title: Text(reasons[i]),
                 trailing: IconButton(
                   icon: const Icon(Icons.delete_outline, color: AppColors.danger),
-                  tooltip: 'Entfernen',
+                  tooltip: context.l10n.commonRemove,
                   onPressed: () => onChanged([...reasons]..removeAt(i)),
                 ),
               ),
@@ -88,12 +89,12 @@ class ReasonsListEditor extends StatelessWidget {
             TextButton.icon(
               onPressed: () => _add(context),
               icon: const Icon(Icons.add),
-              label: const Text('Grund hinzufügen'),
+              label: Text(context.l10n.generalSettingsAddReason),
             ),
             TextButton.icon(
               onPressed: () => onChanged([...defaults]),
               icon: const Icon(Icons.restore),
-              label: const Text('Standardwerte wiederherstellen'),
+              label: Text(context.l10n.generalSettingsRestoreDefaults),
             ),
           ],
         ),

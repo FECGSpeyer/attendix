@@ -14,7 +14,25 @@
           "iosStep3": "\"Hinzufügen\"",
           "androidStep1": "Tippe auf das Menü (⋮)",
           "androidStep2": "\"App installieren\" oder \"Zum Startbildschirm\""
-        }
+        },
+        "calendarIntro": "Kopiere den folgenden Link in deine Kalender-App, um die Termine zu abonnieren:",
+        "copyLinkFailed": "Link konnte nicht kopiert werden",
+        "invalidEmail": "Bitte gib eine gültige E-Mail-Adresse ein.",
+        "adminAddedNotNotified": "Der Admin wurde hinzugefügt, konnte aber nicht benachrichtigt werden.",
+        "errorDetail": "Fehler: {error}"
+      }
+    },
+    "generalSettings": {
+      "flutter": {
+        "disabled": "Deaktiviert",
+        "andShort": "UND",
+        "editRule": "Regel bearbeiten",
+        "statusCritical": "Status (zählt als kritisch)",
+        "daysSuffix": "Tage",
+        "orHint": "Person ist kritisch, wenn EINE der Regeln zutrifft",
+        "andHint": "Person ist kritisch, wenn ALLE Regeln zutreffen",
+        "ruleEnabled": "Regel aktiviert",
+        "ruleEnabledHelper": "Deaktivierte Regeln werden nicht ausgewertet"
       }
     }
   },
@@ -33,7 +51,25 @@
           "iosStep3": "\"Add\"",
           "androidStep1": "Tap the menu (⋮)",
           "androidStep2": "\"Install app\" or \"Add to Home screen\""
-        }
+        },
+        "calendarIntro": "Copy the following link into your calendar app to subscribe to the events:",
+        "copyLinkFailed": "Link could not be copied",
+        "invalidEmail": "Please enter a valid email address.",
+        "adminAddedNotNotified": "The admin was added but could not be notified.",
+        "errorDetail": "Error: {error}"
+      }
+    },
+    "generalSettings": {
+      "flutter": {
+        "disabled": "Disabled",
+        "andShort": "AND",
+        "editRule": "Edit rule",
+        "statusCritical": "Status (counts as critical)",
+        "daysSuffix": "days",
+        "orHint": "Person is critical if ANY of the rules applies",
+        "andHint": "Person is critical if ALL rules apply",
+        "ruleEnabled": "Rule enabled",
+        "ruleEnabledHelper": "Disabled rules are not evaluated"
       }
     }
   }

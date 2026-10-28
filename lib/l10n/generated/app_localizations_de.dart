@@ -2830,6 +2830,33 @@ class AppLocalizationsDe extends AppLocalizations {
   String get generalSettingsDutyViewHelper => '„Meine Termine“ zeigt für Personen aus einem Dienst-Team zuerst ihre Dienste, offene Dienste und Zahlen statt der Anwesenheitsquote. Andere Termine stehen eingeklappt darunter.';
 
   @override
+  String get generalSettingsFlutterAndHint => 'Person ist kritisch, wenn ALLE Regeln zutreffen';
+
+  @override
+  String get generalSettingsFlutterAndShort => 'UND';
+
+  @override
+  String get generalSettingsFlutterDaysSuffix => 'Tage';
+
+  @override
+  String get generalSettingsFlutterDisabled => 'Deaktiviert';
+
+  @override
+  String get generalSettingsFlutterEditRule => 'Regel bearbeiten';
+
+  @override
+  String get generalSettingsFlutterOrHint => 'Person ist kritisch, wenn EINE der Regeln zutrifft';
+
+  @override
+  String get generalSettingsFlutterRuleEnabled => 'Regel aktiviert';
+
+  @override
+  String get generalSettingsFlutterRuleEnabledHelper => 'Deaktivierte Regeln werden nicht ausgewertet';
+
+  @override
+  String get generalSettingsFlutterStatusCritical => 'Status (zählt als kritisch)';
+
+  @override
   String get generalSettingsForeignInfo => 'Info-Text für fremde Termine';
 
   @override
@@ -6711,13 +6738,30 @@ class AppLocalizationsDe extends AppLocalizations {
   String get settingsFiles => 'Dateien';
 
   @override
+  String get settingsFlutterAdminAddedNotNotified => 'Der Admin wurde hinzugefügt, konnte aber nicht benachrichtigt werden.';
+
+  @override
   String get settingsFlutterApplicantText => 'Ein Administrator wird deine Registrierung prüfen.';
 
   @override
   String get settingsFlutterApplicantTitle => 'Mitgliedschaft wird geprüft';
 
   @override
+  String get settingsFlutterCalendarIntro => 'Kopiere den folgenden Link in deine Kalender-App, um die Termine zu abonnieren:';
+
+  @override
   String get settingsFlutterChangeEmail => 'E-Mail ändern';
+
+  @override
+  String get settingsFlutterCopyLinkFailed => 'Link konnte nicht kopiert werden';
+
+  @override
+  String settingsFlutterErrorDetail(Object error) {
+    return 'Fehler: $error';
+  }
+
+  @override
+  String get settingsFlutterInvalidEmail => 'Bitte gib eine gültige E-Mail-Adresse ein.';
 
   @override
   String get settingsFlutterPwaAndroidStep1 => 'Tippe auf das Menü (⋮)';

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../shared/widgets/common/swipe_actions.dart';
+import '../../../../l10n/l10n.dart';
 
 /// SETTINGS2: Ionic type.page "Erinnerungen" (reminders modal content).
 ///
@@ -22,23 +23,24 @@ class TypeRemindersEditor extends StatefulWidget {
 
   /// Ionic `getFormattedReminder`.
   static String format(int hours) {
-    if (hours == 0) return 'Zur gleichen Zeit';
-    if (hours < 24) return hours == 1 ? '1 Stunde vorher' : '$hours Stunden vorher';
-    final days = hours ~/ 24;
-    return days == 1 ? '1 Tag vorher' : '$days Tage vorher';
+    final l10n = l10nWithoutContext;
+    if (hours == 0) return l10n.typeSettingsSameTime;
+    if (hours < 24) return l10n.typeSettingsHoursBeforeN(hours);
+    return l10n.typeSettingsDaysBeforeN(hours ~/ 24);
   }
 
   /// Ionic `addReminder` validation. Returns the error text or null.
   static String? validate(List<int> reminders, int? hours) {
+    final l10n = l10nWithoutContext;
     if (hours == null || hours < 0) {
-      return 'Bitte geben Sie eine positive Ganzzahl ein';
+      return l10n.typeSettingsPositiveInt;
     }
     if (hours > 168) {
-      return 'Gültige Werte: 0-168 Stunden (max. 1 Woche vorher)';
+      return l10n.typeSettingsValidHours;
     }
-    if (reminders.contains(hours)) return 'Diese Erinnerung existiert bereits';
+    if (reminders.contains(hours)) return l10n.typeSettingsReminderExists;
     if (reminders.length >= maxReminders) {
-      return 'Maximal 3 Erinnerungen pro Typ möglich';
+      return l10n.typeSettingsMax3;
     }
     return null;
   }
@@ -82,23 +84,23 @@ class _TypeRemindersEditorState extends State<TypeRemindersEditor> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('So funktionieren Erinnerungen',
+                Text(context.l10n.typeSettingsHowReminders,
                     style: Theme.of(context).textTheme.titleSmall),
                 const SizedBox(height: 8),
                 _info(Icons.schedule,
-                    'Erinnerungen werden alle 5 Minuten geprüft und versendet.', small),
+                    _stripHtml(context.l10n.typeSettingsHowEvery5), small),
                 _info(Icons.calculate_outlined,
-                    'Die Erinnerung wird versendet, sobald die verbleibende Zeit dem konfigurierten Wert entspricht.',
+                    _stripHtml(context.l10n.typeSettingsHowRemaining),
                     small),
                 _info(Icons.notifications_outlined,
-                    'Maximal 3 Erinnerungen pro Termintyp möglich.', small),
+                    _stripHtml(context.l10n.typeSettingsHowMax), small),
               ],
             ),
           ),
         ),
         Row(
           children: [
-            Text('Aktive Erinnerungen', style: Theme.of(context).textTheme.titleSmall),
+            Text(context.l10n.typeSettingsActiveReminders, style: Theme.of(context).textTheme.titleSmall),
             const SizedBox(width: 8),
             Badge(
               label: Text('${reminders.length}/${TypeRemindersEditor.maxReminders}'),
@@ -108,7 +110,7 @@ class _TypeRemindersEditorState extends State<TypeRemindersEditor> {
         ),
         const SizedBox(height: 4),
         if (reminders.isEmpty)
-          Text('Noch keine Erinnerungen konfiguriert', style: small)
+          Text(context.l10n.typeSettingsNoRemindersYet, style: small)
         else
           // Ionic: ion-item-sliding with a trash option.
           ...reminders.map((h) => SwipeActions.delete(
@@ -119,12 +121,12 @@ class _TypeRemindersEditorState extends State<TypeRemindersEditor> {
                   dense: true,
                   leading: const Icon(Icons.alarm, color: AppColors.primary),
                   title: Text(TypeRemindersEditor.format(h)),
-                  subtitle: Text(h == 1 ? '1 Stunde vor Terminbeginn' : '$h Stunden vor Terminbeginn'),
+                  subtitle: Text(context.l10n.typeSettingsHoursBeforeStart(h)),
                 ),
               )),
         const SizedBox(height: 8),
         if (canAdd) ...[
-          Text('Schnellauswahl', style: Theme.of(context).textTheme.titleSmall),
+          Text(context.l10n.typeSettingsQuickSelect, style: Theme.of(context).textTheme.titleSmall),
           const SizedBox(height: 4),
           Wrap(
             spacing: 8,
@@ -144,10 +146,10 @@ class _TypeRemindersEditorState extends State<TypeRemindersEditor> {
               Expanded(
                 child: TextField(
                   controller: _customController,
-                  decoration: const InputDecoration(
-                    labelText: 'Stunden vor Termin',
-                    hintText: 'z.B. 12 für 12 Stunden vorher',
-                    helperText: 'Gültige Werte: 0-168 Stunden (max. 1 Woche vorher)',
+                  decoration: InputDecoration(
+                    labelText: context.l10n.typeSettingsHoursBefore,
+                    hintText: context.l10n.typeSettingsHoursPlaceholder,
+                    helperText: context.l10n.typeSettingsValidHours,
                     isDense: true,
                   ),
                   keyboardType: TextInputType.number,
@@ -156,7 +158,7 @@ class _TypeRemindersEditorState extends State<TypeRemindersEditor> {
               ),
               const SizedBox(width: 8),
               IconButton.filled(
-                tooltip: 'Erinnerung hinzufügen',
+                tooltip: context.l10n.typeSettingsAddReminder,
                 icon: const Icon(Icons.add),
                 onPressed: () => _add(int.tryParse(_customController.text.trim())),
               ),
@@ -165,17 +167,14 @@ class _TypeRemindersEditorState extends State<TypeRemindersEditor> {
         ] else
           Card(
             color: AppColors.warning.withValues(alpha: 0.15),
-            child: const Padding(
-              padding: EdgeInsets.all(12),
+            child: Padding(
+              padding: const EdgeInsets.all(12),
               child: Row(
                 children: [
-                  Icon(Icons.warning_amber_outlined, color: AppColors.warning),
-                  SizedBox(width: 8),
+                  const Icon(Icons.warning_amber_outlined, color: AppColors.warning),
+                  const SizedBox(width: 8),
                   Expanded(
-                    child: Text(
-                      'Maximum von 3 Erinnerungen erreicht. Entferne eine bestehende '
-                      'Erinnerung, um eine neue hinzuzufügen.',
-                    ),
+                    child: Text(context.l10n.typeSettingsMaxReached),
                   ),
                 ],
               ),
@@ -184,6 +183,9 @@ class _TypeRemindersEditorState extends State<TypeRemindersEditor> {
       ],
     );
   }
+
+  /// Ionic renders the `*Html` keys via innerHTML; here the tags are dropped.
+  static String _stripHtml(String html) => html.replaceAll(RegExp(r'<[^>]+>'), '');
 
   Widget _info(IconData icon, String text, TextStyle? style) => Padding(
         padding: const EdgeInsets.only(bottom: 6),

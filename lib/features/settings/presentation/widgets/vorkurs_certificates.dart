@@ -9,6 +9,7 @@ import '../../../../core/services/certificate_service.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/models/person/person.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Persons that receive a certificate: active (not left/paused/pending)
 /// members of the selected groups (Ionic settings.page filter).
@@ -34,17 +35,17 @@ Future<void> generateVorkursCertificates(BuildContext context, WidgetRef ref) as
   );
   if (selected == null || !context.mounted) return;
   if (selected.isEmpty) {
-    ToastHelper.showWarning(context, 'Bitte mindestens eine Gruppe auswählen.');
+    ToastHelper.showWarning(context, context.l10n.settingsSelectOneGroup);
     return;
   }
 
-  ToastHelper.showInfo(context, 'Urkunden werden erstellt...');
+  ToastHelper.showInfo(context, context.l10n.settingsCreatingCertificates);
   try {
     ref.invalidate(playersProvider);
     final persons = filterCertificatePersons(await ref.read(playersProvider.future), selected);
     if (persons.isEmpty) {
       if (context.mounted) {
-        ToastHelper.showWarning(context, 'Keine Personen in den gewählten Gruppen gefunden.');
+        ToastHelper.showWarning(context, context.l10n.settingsNoPersonsInGroups);
       }
       return;
     }
@@ -54,7 +55,7 @@ Future<void> generateVorkursCertificates(BuildContext context, WidgetRef ref) as
     final fileName = 'Urkunden_Vorkurs_${DateFormat('yyyy-MM-dd').format(DateTime.now())}.pdf';
     await Printing.sharePdf(bytes: bytes, filename: fileName);
   } catch (_) {
-    if (context.mounted) ToastHelper.showError(context, 'Fehler beim Erstellen der Urkunden.');
+    if (context.mounted) ToastHelper.showError(context, context.l10n.settingsCertificatesFailed);
   }
 }
 
@@ -73,14 +74,14 @@ class _GroupSelectDialogState extends State<_GroupSelectDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Gruppen auswählen'),
+      title: Text(context.l10n.settingsSelectGroups),
       content: SizedBox(
         width: double.maxFinite,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Für welche Gruppen sollen Urkunden erstellt werden?'),
+            Text(context.l10n.settingsCertificatesFor),
             const SizedBox(height: 8),
             Flexible(
               child: ListView(
@@ -110,11 +111,11 @@ class _GroupSelectDialogState extends State<_GroupSelectDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Abbrechen'),
+          child: Text(context.l10n.commonCancel),
         ),
         FilledButton(
           onPressed: () => Navigator.pop(context, _selected),
-          child: const Text('Generieren'),
+          child: Text(context.l10n.settingsGenerate),
         ),
       ],
     );

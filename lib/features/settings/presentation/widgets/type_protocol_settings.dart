@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/team_org/team_org.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Protocol settings of an attendance type (Ionic type.page "Protokoll &
 /// Tagesordnung"): columns `enable_protocol`, `agenda_default_duration`,
@@ -55,7 +56,7 @@ bool hasAgendaPlaceholder(List<Map<String, dynamic>> fields) =>
 
 /// Ionic `addAgendaItemsPlaceholder`: the marker takes no time.
 Map<String, dynamic> agendaPlaceholderField() =>
-    {'id': agendaItemsPlaceholderId, 'name': 'Tagesordnung', 'time': '0'};
+    {'id': agendaItemsPlaceholderId, 'name': l10nWithoutContext.typeSettingsAgenda, 'time': '0'};
 
 /// Tiles of the "Protokoll & Tagesordnung" settings (toggle, duration per
 /// topic, postponed topics, agenda placeholder hint).
@@ -110,11 +111,8 @@ class _TypeProtocolSettingsTilesState extends State<TypeProtocolSettingsTiles> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         SwitchListTile(
-          title: const Text('Protokoll & Tagesordnung'),
-          subtitle: const Text(
-            'Termine dieses Typs bekommen eine Tagesordnung im Ablaufplan und ein Protokoll. '
-            'Wer dazugehört, regeln die relevanten Gruppen.',
-          ),
+          title: Text(context.l10n.typeSettingsProtocolAgenda),
+          subtitle: Text(context.l10n.typeSettingsProtocolHelper),
           value: s.enableProtocol,
           onChanged: (v) => widget.onChanged(s.toggled(v)),
           contentPadding: EdgeInsets.zero,
@@ -123,13 +121,13 @@ class _TypeProtocolSettingsTilesState extends State<TypeProtocolSettingsTiles> {
           ListTile(
             contentPadding: EdgeInsets.zero,
             leading: const Icon(Icons.help_outline, color: AppColors.primary),
-            title: const Text('Mehr erfahren', style: TextStyle(color: AppColors.primary)),
+            title: Text(context.l10n.typeSettingsLearnMore, style: const TextStyle(color: AppColors.primary)),
             onTap: () => context.push('/settings/help/article/team-activate'),
           ),
         if (s.enableProtocol) ...[
           Row(
             children: [
-              const Expanded(child: Text('Standarddauer pro Thema (Min.)')),
+              Expanded(child: Text(context.l10n.typeSettingsTopicMinutes)),
               SizedBox(
                 width: 80,
                 child: TextField(
@@ -148,23 +146,20 @@ class _TypeProtocolSettingsTilesState extends State<TypeProtocolSettingsTiles> {
             ],
           ),
           SwitchListTile(
-            title: const Text('Vertagte Themen vorschlagen'),
-            subtitle: const Text('Beim nächsten Termin dieses Typs stehen vertagte Themen beim Aufnehmen ganz oben.'),
+            title: Text(context.l10n.typeSettingsSuggestPostponed),
+            subtitle: Text(context.l10n.typeSettingsPostponedHelper),
             value: s.suggestPostponed,
             onChanged: (v) => widget.onChanged(s.copyWith(suggestPostponed: v)),
             contentPadding: EdgeInsets.zero,
           ),
           ListTile(
             contentPadding: EdgeInsets.zero,
-            subtitle: const Text(
-              'Der Platzhalter „Tagesordnung“ im Standard-Ablaufplan legt fest, wo Themen eingefügt werden. '
-              'Ohne Platzhalter landen sie am Ende.',
-            ),
+            subtitle: Text(context.l10n.typeSettingsPlaceholderHint),
             trailing: widget.hasPlaceholder
                 ? null
                 : TextButton(
                     onPressed: widget.onInsertPlaceholder,
-                    child: const Text('Platzhalter einfügen'),
+                    child: Text(context.l10n.typeSettingsInsertPlaceholder),
                   ),
           ),
         ],

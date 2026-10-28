@@ -4961,6 +4961,60 @@ abstract class AppLocalizations {
   /// **'„Meine Termine“ zeigt für Personen aus einem Dienst-Team zuerst ihre Dienste, offene Dienste und Zahlen statt der Anwesenheitsquote. Andere Termine stehen eingeklappt darunter.'**
   String get generalSettingsDutyViewHelper;
 
+  /// generalSettings.flutter.andHint
+  ///
+  /// In de, this message translates to:
+  /// **'Person ist kritisch, wenn ALLE Regeln zutreffen'**
+  String get generalSettingsFlutterAndHint;
+
+  /// generalSettings.flutter.andShort
+  ///
+  /// In de, this message translates to:
+  /// **'UND'**
+  String get generalSettingsFlutterAndShort;
+
+  /// generalSettings.flutter.daysSuffix
+  ///
+  /// In de, this message translates to:
+  /// **'Tage'**
+  String get generalSettingsFlutterDaysSuffix;
+
+  /// generalSettings.flutter.disabled
+  ///
+  /// In de, this message translates to:
+  /// **'Deaktiviert'**
+  String get generalSettingsFlutterDisabled;
+
+  /// generalSettings.flutter.editRule
+  ///
+  /// In de, this message translates to:
+  /// **'Regel bearbeiten'**
+  String get generalSettingsFlutterEditRule;
+
+  /// generalSettings.flutter.orHint
+  ///
+  /// In de, this message translates to:
+  /// **'Person ist kritisch, wenn EINE der Regeln zutrifft'**
+  String get generalSettingsFlutterOrHint;
+
+  /// generalSettings.flutter.ruleEnabled
+  ///
+  /// In de, this message translates to:
+  /// **'Regel aktiviert'**
+  String get generalSettingsFlutterRuleEnabled;
+
+  /// generalSettings.flutter.ruleEnabledHelper
+  ///
+  /// In de, this message translates to:
+  /// **'Deaktivierte Regeln werden nicht ausgewertet'**
+  String get generalSettingsFlutterRuleEnabledHelper;
+
+  /// generalSettings.flutter.statusCritical
+  ///
+  /// In de, this message translates to:
+  /// **'Status (zählt als kritisch)'**
+  String get generalSettingsFlutterStatusCritical;
+
   /// generalSettings.foreignInfo
   ///
   /// In de, this message translates to:
@@ -11843,6 +11897,12 @@ abstract class AppLocalizations {
   /// **'Dateien'**
   String get settingsFiles;
 
+  /// settings.flutter.adminAddedNotNotified
+  ///
+  /// In de, this message translates to:
+  /// **'Der Admin wurde hinzugefügt, konnte aber nicht benachrichtigt werden.'**
+  String get settingsFlutterAdminAddedNotNotified;
+
   /// settings.flutter.applicantText
   ///
   /// In de, this message translates to:
@@ -11855,11 +11915,35 @@ abstract class AppLocalizations {
   /// **'Mitgliedschaft wird geprüft'**
   String get settingsFlutterApplicantTitle;
 
+  /// settings.flutter.calendarIntro
+  ///
+  /// In de, this message translates to:
+  /// **'Kopiere den folgenden Link in deine Kalender-App, um die Termine zu abonnieren:'**
+  String get settingsFlutterCalendarIntro;
+
   /// settings.flutter.changeEmail
   ///
   /// In de, this message translates to:
   /// **'E-Mail ändern'**
   String get settingsFlutterChangeEmail;
+
+  /// settings.flutter.copyLinkFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Link konnte nicht kopiert werden'**
+  String get settingsFlutterCopyLinkFailed;
+
+  /// settings.flutter.errorDetail
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler: {error}'**
+  String settingsFlutterErrorDetail(Object error);
+
+  /// settings.flutter.invalidEmail
+  ///
+  /// In de, this message translates to:
+  /// **'Bitte gib eine gültige E-Mail-Adresse ein.'**
+  String get settingsFlutterInvalidEmail;
 
   /// settings.flutter.pwa.androidStep1
   ///

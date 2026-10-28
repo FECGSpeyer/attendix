@@ -2836,6 +2836,33 @@ class AppLocalizationsEn extends AppLocalizations {
   String get generalSettingsDutyViewHelper => '“My events” shows people in a duty team their duties, open duties and numbers instead of the attendance rate first. Other events are collapsed below.';
 
   @override
+  String get generalSettingsFlutterAndHint => 'Person is critical if ALL rules apply';
+
+  @override
+  String get generalSettingsFlutterAndShort => 'AND';
+
+  @override
+  String get generalSettingsFlutterDaysSuffix => 'days';
+
+  @override
+  String get generalSettingsFlutterDisabled => 'Disabled';
+
+  @override
+  String get generalSettingsFlutterEditRule => 'Edit rule';
+
+  @override
+  String get generalSettingsFlutterOrHint => 'Person is critical if ANY of the rules applies';
+
+  @override
+  String get generalSettingsFlutterRuleEnabled => 'Rule enabled';
+
+  @override
+  String get generalSettingsFlutterRuleEnabledHelper => 'Disabled rules are not evaluated';
+
+  @override
+  String get generalSettingsFlutterStatusCritical => 'Status (counts as critical)';
+
+  @override
   String get generalSettingsForeignInfo => 'Info text for other events';
 
   @override
@@ -6717,13 +6744,30 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsFiles => 'Files';
 
   @override
+  String get settingsFlutterAdminAddedNotNotified => 'The admin was added but could not be notified.';
+
+  @override
   String get settingsFlutterApplicantText => 'An administrator will review your registration.';
 
   @override
   String get settingsFlutterApplicantTitle => 'Membership under review';
 
   @override
+  String get settingsFlutterCalendarIntro => 'Copy the following link into your calendar app to subscribe to the events:';
+
+  @override
   String get settingsFlutterChangeEmail => 'Change email';
+
+  @override
+  String get settingsFlutterCopyLinkFailed => 'Link could not be copied';
+
+  @override
+  String settingsFlutterErrorDetail(Object error) {
+    return 'Error: $error';
+  }
+
+  @override
+  String get settingsFlutterInvalidEmail => 'Please enter a valid email address.';
 
   @override
   String get settingsFlutterPwaAndroidStep1 => 'Tap the menu (⋮)';

@@ -10,6 +10,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/repositories/admin_repository.dart';
 import '../../../../data/repositories/base_repository.dart';
 import '../../../auth/data/auth_flow_service.dart';
+import '../../../../l10n/l10n.dart';
 
 /// SETTINGS2: Ionic settings "Administratoren" modal (super admins only):
 /// list with "Erstellt am", tap to remove, + to add an admin by e-mail.
@@ -34,15 +35,15 @@ class _AdminsSheet extends ConsumerWidget {
   Future<void> _add(BuildContext context, WidgetRef ref) async {
     final email = (await DialogHelper.showTextInput(
       context,
-      title: 'Admin hinzufügen',
-      hint: 'E-Mail-Adresse',
-      confirmText: 'Hinzufügen',
+      title: context.l10n.settingsAddAdmin,
+      hint: context.l10n.settingsEmailAddress,
+      confirmText: context.l10n.attendanceAdd,
       keyboardType: TextInputType.emailAddress,
     ))
         ?.trim();
     if (email == null || email.isEmpty || !context.mounted) return;
     if (!isValidEmail(email)) {
-      ToastHelper.showError(context, 'Bitte gib eine gültige E-Mail-Adresse ein.');
+      ToastHelper.showError(context, context.l10n.settingsFlutterInvalidEmail);
       return;
     }
     try {
@@ -50,10 +51,9 @@ class _AdminsSheet extends ConsumerWidget {
           await ref.read(adminNotifierProvider.notifier).create(email);
       if (context.mounted) {
         if (informed) {
-          ToastHelper.showSuccess(context, 'Der Admin wurde erfolgreich hinzugefügt.');
+          ToastHelper.showSuccess(context, context.l10n.settingsAdminAdded);
         } else {
-          ToastHelper.showWarning(context,
-              'Der Admin wurde hinzugefügt, konnte aber nicht benachrichtigt werden.');
+          ToastHelper.showWarning(context, context.l10n.settingsFlutterAdminAddedNotNotified);
         }
       }
     } catch (e) {
@@ -64,20 +64,20 @@ class _AdminsSheet extends ConsumerWidget {
   Future<void> _remove(BuildContext context, WidgetRef ref, TenantAdmin admin) async {
     final ownId = ref.read(supabaseClientProvider).auth.currentUser?.id;
     if (admin.userId == ownId) {
-      ToastHelper.showError(context, 'Du kannst dich nicht selbst entfernen.');
+      ToastHelper.showError(context, context.l10n.settingsCannotRemoveSelf);
       return;
     }
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Admin entfernen?'),
-        content: Text('Möchtest du ${admin.email ?? ''} wirklich entfernen?'),
+        title: Text(ctx.l10n.settingsRemoveAdmin),
+        content: Text(ctx.l10n.settingsRemoveMessage(admin.email ?? '')),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Abbrechen')),
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(ctx.l10n.commonCancel)),
           TextButton(
             style: TextButton.styleFrom(foregroundColor: AppColors.danger),
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Ja'),
+            child: Text(ctx.l10n.commonYes),
           ),
         ],
       ),
@@ -86,7 +86,7 @@ class _AdminsSheet extends ConsumerWidget {
     try {
       await ref.read(adminNotifierProvider.notifier).remove(admin.userId);
       if (context.mounted) {
-        ToastHelper.showSuccess(context, 'Der Admin wurde erfolgreich entfernt.');
+        ToastHelper.showSuccess(context, context.l10n.settingsAdminRemoved);
       }
     } catch (e) {
       if (context.mounted) ToastHelper.showError(context, _errorText(e));
@@ -100,7 +100,7 @@ class _AdminsSheet extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Administratoren'),
+        title: Text(context.l10n.settingsAdmins),
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
@@ -118,16 +118,16 @@ class _AdminsSheet extends ConsumerWidget {
       ),
       body: ListView(
         children: [
-          const Card(
-            margin: EdgeInsets.all(12),
+          Card(
+            margin: const EdgeInsets.all(12),
             child: Padding(
-              padding: EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16),
               child: Column(
                 children: [
-                  Icon(Icons.verified_user_outlined, size: 40, color: AppColors.primary),
-                  SizedBox(height: 8),
+                  const Icon(Icons.verified_user_outlined, size: 40, color: AppColors.primary),
+                  const SizedBox(height: 8),
                   Text(
-                    'Administratoren haben alle Rechte in der Instanz und können auch die Instanz löschen.',
+                    context.l10n.settingsAdminsHint,
                     textAlign: TextAlign.center,
                   ),
                 ],
@@ -141,12 +141,12 @@ class _AdminsSheet extends ConsumerWidget {
                 child: Center(child: CircularProgressIndicator()),
               ),
             ],
-            error: (e, _) => [ListTile(title: Text('Fehler: ${_errorText(e)}'))],
+            error: (e, _) => [ListTile(title: Text(context.l10n.settingsFlutterErrorDetail(_errorText(e))))],
             data: (admins) => admins
                 .map((a) => ListTile(
                       title: Text(a.email ?? ''),
                       subtitle: a.createdAt != null
-                          ? Text('Erstellt am: ${DateFormat('dd.MM.yyyy').format(a.createdAt!.toLocal())}')
+                          ? Text(context.l10n.commonCreatedAt(DateFormat(dateFmt()).format(a.createdAt!.toLocal())))
                           : null,
                       onTap: () => _remove(context, ref, a),
                     ))

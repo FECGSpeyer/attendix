@@ -8,6 +8,7 @@ import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/dashboard_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/services/teams/teams_service.dart'; // TEAMS
+import '../../../../l10n/l10n.dart';
 
 /// SETTINGS2: Ionic settings "📱 Attendix als App" promo card.
 ///
@@ -87,10 +88,10 @@ class _AppPromoCardState extends ConsumerState<AppPromoCard> {
             children: [
               Row(
                 children: [
-                  const Expanded(
+                  Expanded(
                     child: Text(
-                      '📱 Attendix als App',
-                      style: TextStyle(
+                      context.l10n.settingsAsApp,
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
@@ -103,16 +104,16 @@ class _AppPromoCardState extends ConsumerState<AppPromoCard> {
                   ),
                 ],
               ),
-              const Text(
-                'Attendix gibt es jetzt als native App mit Push-Benachrichtigungen und schnellerem Zugriff.',
-                style: TextStyle(color: Colors.white),
+              Text(
+                context.l10n.settingsAsAppText,
+                style: const TextStyle(color: Colors.white),
               ),
               const SizedBox(height: AppDimensions.paddingM),
               if (isMobile)
                 FilledButton.icon(
                   style: buttonStyle,
                   icon: Icon(isIos ? Icons.apple : Icons.shop),
-                  label: Text(isIos ? 'Im App Store laden' : 'Bei Google Play laden'),
+                  label: Text(isIos ? context.l10n.settingsAppStore : context.l10n.settingsGooglePlay),
                   onPressed: () =>
                       _open(isIos ? AppPromoCard.iosUrl : AppPromoCard.androidUrl),
                 )
@@ -120,14 +121,14 @@ class _AppPromoCardState extends ConsumerState<AppPromoCard> {
                 FilledButton.icon(
                   style: buttonStyle,
                   icon: const Icon(Icons.apple),
-                  label: const Text('Im App Store laden'),
+                  label: Text(context.l10n.settingsAppStore),
                   onPressed: () => _open(AppPromoCard.iosUrl),
                 ),
                 const SizedBox(height: 8),
                 FilledButton.icon(
                   style: buttonStyle,
                   icon: const Icon(Icons.shop),
-                  label: const Text('Bei Google Play laden'),
+                  label: Text(context.l10n.settingsGooglePlay),
                   onPressed: () => _open(AppPromoCard.androidUrl),
                 ),
               ],

@@ -3701,6 +3701,42 @@
   "@generalSettingsDutyViewHelper": {
     "description": "generalSettings.dutyViewHelper"
   },
+  "generalSettingsFlutterAndHint": "Person ist kritisch, wenn ALLE Regeln zutreffen",
+  "@generalSettingsFlutterAndHint": {
+    "description": "generalSettings.flutter.andHint"
+  },
+  "generalSettingsFlutterAndShort": "UND",
+  "@generalSettingsFlutterAndShort": {
+    "description": "generalSettings.flutter.andShort"
+  },
+  "generalSettingsFlutterDaysSuffix": "Tage",
+  "@generalSettingsFlutterDaysSuffix": {
+    "description": "generalSettings.flutter.daysSuffix"
+  },
+  "generalSettingsFlutterDisabled": "Deaktiviert",
+  "@generalSettingsFlutterDisabled": {
+    "description": "generalSettings.flutter.disabled"
+  },
+  "generalSettingsFlutterEditRule": "Regel bearbeiten",
+  "@generalSettingsFlutterEditRule": {
+    "description": "generalSettings.flutter.editRule"
+  },
+  "generalSettingsFlutterOrHint": "Person ist kritisch, wenn EINE der Regeln zutrifft",
+  "@generalSettingsFlutterOrHint": {
+    "description": "generalSettings.flutter.orHint"
+  },
+  "generalSettingsFlutterRuleEnabled": "Regel aktiviert",
+  "@generalSettingsFlutterRuleEnabled": {
+    "description": "generalSettings.flutter.ruleEnabled"
+  },
+  "generalSettingsFlutterRuleEnabledHelper": "Deaktivierte Regeln werden nicht ausgewertet",
+  "@generalSettingsFlutterRuleEnabledHelper": {
+    "description": "generalSettings.flutter.ruleEnabledHelper"
+  },
+  "generalSettingsFlutterStatusCritical": "Status (zählt als kritisch)",
+  "@generalSettingsFlutterStatusCritical": {
+    "description": "generalSettings.flutter.statusCritical"
+  },
   "generalSettingsForeignInfo": "Info-Text für fremde Termine",
   "@generalSettingsForeignInfo": {
     "description": "generalSettings.foreignInfo"
@@ -8803,6 +8839,10 @@
   "@settingsFiles": {
     "description": "settings.files"
   },
+  "settingsFlutterAdminAddedNotNotified": "Der Admin wurde hinzugefügt, konnte aber nicht benachrichtigt werden.",
+  "@settingsFlutterAdminAddedNotNotified": {
+    "description": "settings.flutter.adminAddedNotNotified"
+  },
   "settingsFlutterApplicantText": "Ein Administrator wird deine Registrierung prüfen.",
   "@settingsFlutterApplicantText": {
     "description": "settings.flutter.applicantText"
@@ -8811,9 +8851,28 @@
   "@settingsFlutterApplicantTitle": {
     "description": "settings.flutter.applicantTitle"
   },
+  "settingsFlutterCalendarIntro": "Kopiere den folgenden Link in deine Kalender-App, um die Termine zu abonnieren:",
+  "@settingsFlutterCalendarIntro": {
+    "description": "settings.flutter.calendarIntro"
+  },
   "settingsFlutterChangeEmail": "E-Mail ändern",
   "@settingsFlutterChangeEmail": {
     "description": "settings.flutter.changeEmail"
+  },
+  "settingsFlutterCopyLinkFailed": "Link konnte nicht kopiert werden",
+  "@settingsFlutterCopyLinkFailed": {
+    "description": "settings.flutter.copyLinkFailed"
+  },
+  "settingsFlutterErrorDetail": "Fehler: {error}",
+  "@settingsFlutterErrorDetail": {
+    "description": "settings.flutter.errorDetail",
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "settingsFlutterInvalidEmail": "Bitte gib eine gültige E-Mail-Adresse ein.",
+  "@settingsFlutterInvalidEmail": {
+    "description": "settings.flutter.invalidEmail"
   },
   "settingsFlutterPwaAndroidStep1": "Tippe auf das Menü (⋮)",
   "@settingsFlutterPwaAndroidStep1": {
