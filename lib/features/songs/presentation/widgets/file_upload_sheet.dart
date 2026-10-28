@@ -1,6 +1,7 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 
 import '../../../../core/services/song_file_service.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -8,6 +9,8 @@ import '../../../../core/utils/instrument_matcher.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/models/song/song.dart';
+import '../utils/song_utils.dart';
+import 'file_drop/file_drop_target.dart';
 
 /// Ionic `detectSpecialFileType`: category from the file name / extension
 /// when no group matched. Returns null if nothing special was detected.
@@ -48,6 +51,38 @@ List<SongFile> findConflictingFiles(List<SongFile> files, int? instrumentId, Str
       .toList();
 }
 
+bool _isPdfName(String name) => name.toLowerCase().endsWith('.pdf');
+
+/// Ionic `addFiles` category detection: group by name/synonym, then special
+/// types (Aufnahme, Liedtext, Partitur, ...), then "Chor" for PDFs in choirs.
+({int? instrumentId, String? note}) detectFileCategory(
+  String fileName, {
+  required List<InstrumentInfo> instruments,
+  required bool isChoir,
+}) {
+  int? id = instruments.isEmpty
+      ? null
+      : InstrumentMatcher.matchInstrument(fileName, instruments);
+  String? note;
+  if (id == null) {
+    final special = detectSpecialFileType(fileName);
+    if (special != null) {
+      id = special.instrumentId;
+      note = special.note;
+    }
+  }
+  if (id == null && note == null && isChoir && _isPdfName(fileName)) {
+    note = 'Chor';
+  }
+  return (instrumentId: id, note: note);
+}
+
+/// Ionic: preselect same-named files, otherwise all conflicts.
+Set<String> defaultReplaceSelection(List<SongFile> conflicts, String name) {
+  final same = conflicts.where((f) => f.fileName == name).map((f) => f.url).toSet();
+  return same.isNotEmpty ? same : conflicts.map((f) => f.url).toSet();
+}
+
 /// File upload sheet (Ionic file upload modal): multi-file selection with
 /// automatic category detection, free-text categories, replacement of
 /// existing files of the same category and a progress indicator.
@@ -65,7 +100,11 @@ class FileUploadSheet extends ConsumerStatefulWidget {
     this.existingFiles = const [],
     this.mainGroupId,
     this.isChoir = false,
+    this.initialFiles = const [],
   });
+
+  /// Files dropped onto the song page (Ionic `handlePageDrop` with >1 file).
+  final List<PlatformFile> initialFiles;
 
   @override
   ConsumerState<FileUploadSheet> createState() => _FileUploadSheetState();
@@ -84,8 +123,6 @@ class _FileUploadSheetState extends ConsumerState<FileUploadSheet> {
       .map((g) => InstrumentInfo(id: g.id!, name: g.name))
       .toList();
 
-  bool get _hasReplacements => _files.any((f) => f.toReplace.isNotEmpty);
-
   void _setCategory(int index, int? instrumentId, String? note) {
     final file = _files[index];
     final conflicts = findConflictingFiles(widget.existingFiles, instrumentId, note);
@@ -98,15 +135,27 @@ class _FileUploadSheetState extends ConsumerState<FileUploadSheet> {
   }
 
   /// Ionic: preselect same-named files, otherwise all conflicts
-  Set<String> _defaultReplace(List<SongFile> conflicts, String name) {
-    final same = conflicts.where((f) => f.fileName == name).map((f) => f.url).toSet();
-    return same.isNotEmpty ? same : conflicts.map((f) => f.url).toSet();
+  Set<String> _defaultReplace(List<SongFile> conflicts, String name) =>
+      defaultReplaceSelection(conflicts, name);
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.initialFiles.isNotEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _addFiles(widget.initialFiles);
+      });
+    }
   }
 
   Future<void> _pickFiles() async {
     final files = await ref.read(songFileServiceProvider).pickMultipleFiles();
     if (files == null || files.isEmpty || !mounted) return;
+    _addFiles(files);
+  }
 
+  /// Ionic `addFiles`: size check, automatic category, conflicts.
+  void _addFiles(List<PlatformFile> files) {
     setState(() {
       for (final file in files) {
         if (file.size > _maxSizeBytes) {
@@ -116,25 +165,17 @@ class _FileUploadSheetState extends ConsumerState<FileUploadSheet> {
           );
           continue;
         }
-        int? id = _instruments.isEmpty
-            ? null
-            : InstrumentMatcher.matchInstrument(file.name, _instruments);
-        String? note;
-        if (id == null) {
-          final special = detectSpecialFileType(file.name);
-          if (special != null) {
-            id = special.instrumentId;
-            note = special.note;
-          }
-        }
-        if (id == null && note == null && widget.isChoir && _isPdf(file)) {
-          note = 'Chor';
-        }
-        final conflicts = findConflictingFiles(widget.existingFiles, id, note);
+        final cat = detectFileCategory(
+          file.name,
+          instruments: _instruments,
+          isChoir: widget.isChoir,
+        );
+        final conflicts =
+            findConflictingFiles(widget.existingFiles, cat.instrumentId, cat.note);
         _files.add(_FileToUpload(
           platformFile: file,
-          instrumentId: id,
-          note: note,
+          instrumentId: cat.instrumentId,
+          note: cat.note,
           conflicts: conflicts,
           toReplace: _defaultReplace(conflicts, file.name),
         ));
@@ -142,7 +183,7 @@ class _FileUploadSheetState extends ConsumerState<FileUploadSheet> {
     });
   }
 
-  static bool _isPdf(PlatformFile f) => f.name.toLowerCase().endsWith('.pdf');
+  static bool _isPdf(PlatformFile f) => _isPdfName(f.name);
 
   Future<void> _upload({required bool replace}) async {
     if (_files.isEmpty) return;
@@ -241,130 +282,155 @@ class _FileUploadSheetState extends ConsumerState<FileUploadSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-      child: Container(
-        constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.9),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 12, 8, 12),
-              child: Row(
-                children: [
-                  const Icon(Icons.cloud_upload),
-                  const SizedBox(width: 12),
-                  const Expanded(
-                    child: Text(
-                      'Dateien hochladen',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: _isUploading ? null : () => Navigator.pop(context, false),
-                  ),
-                ],
-              ),
-            ),
-            const Divider(height: 1),
-            if (_files.isEmpty)
+    final percent = (_uploadProgress * 100).round();
+    final scheme = Theme.of(context).colorScheme;
+    return PopScope(
+      canPop: !_isUploading,
+      child: Padding(
+        padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+        child: Container(
+          constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.95),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Ionic toolbar: title + close button (+ progress bar while uploading)
               Padding(
-                padding: const EdgeInsets.all(16),
-                child: Card(
-                  color: AppColors.primary.withAlpha(20),
-                  child: const Padding(
-                    padding: EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Wichtige Infos',
-                          style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.primary),
-                        ),
-                        SizedBox(height: 8),
-                        Text(
-                          '- Die Besetzung wird nach dem Hochladen automatisch anhand der ausgewählten Instrumente aktualisiert.\n'
-                          '- Füge den Instrumenten Synonyme hinzu (Gruppeneinstellungen), um die automatische Zuordnung der Dateien zu verbessern.\n'
-                          '- Beim Hochladen mehrerer Dateien kann es je nach Dateigröße und Internetverbindung einige Zeit dauern, bis alle Dateien vollständig hochgeladen sind. Bitte schließen Sie das Fenster nicht, bis der Upload abgeschlossen ist.',
-                          style: TextStyle(fontSize: 13),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            if (_files.isNotEmpty)
-              Flexible(
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  itemCount: _files.length,
-                  itemBuilder: (context, index) => _FileItem(
-                    key: ObjectKey(_files[index]),
-                    file: _files[index],
-                    groups: widget.groups,
-                    enabled: !_isUploading,
-                    onCategoryChanged: (id, note) => _setCategory(index, id, note),
-                    onToggleReplace: (url) => setState(() {
-                      final set = _files[index].toReplace;
-                      set.contains(url) ? set.remove(url) : set.add(url);
-                    }),
-                    onRemove: () => setState(() => _files.removeAt(index)),
-                  ),
-                ),
-              ),
-            if (_isUploading)
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-                child: Column(
+                padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
+                child: Row(
                   children: [
-                    LinearProgressIndicator(value: _uploadProgress),
-                    const SizedBox(height: 8),
-                    Text(
-                      '$_doneCount von ${_files.length} Dateien hochgeladen',
-                      style: const TextStyle(fontSize: 12),
+                    const Expanded(
+                      child: Text(
+                        'Dateien hochladen',
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                      ),
                     ),
-                    const Text(
-                      'Bitte das Fenster nicht schließen, bis der Upload abgeschlossen ist.',
-                      style: TextStyle(fontSize: 12, color: AppColors.medium),
-                      textAlign: TextAlign.center,
+                    IconButton(
+                      icon: const Icon(Icons.close),
+                      onPressed: _isUploading ? null : () => Navigator.pop(context, false),
                     ),
                   ],
                 ),
               ),
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Wrap(
-                spacing: 12,
-                runSpacing: 8,
-                alignment: WrapAlignment.end,
-                children: [
-                  OutlinedButton.icon(
-                    onPressed: _isUploading ? null : _pickFiles,
-                    icon: const Icon(Icons.add),
-                    label: Text(_files.isEmpty ? 'Dateien wählen' : 'Weitere'),
-                  ),
-                  if (_files.isNotEmpty && _hasReplacements) ...[
-                    OutlinedButton(
-                      onPressed: _isUploading ? null : () => _upload(replace: false),
-                      child: const Text('Ohne Ersetzen hinzufügen'),
+              if (_isUploading)
+                LinearProgressIndicator(value: _uploadProgress, minHeight: 2)
+              else
+                const Divider(height: 1),
+              Flexible(
+                child: ListView(
+                  shrinkWrap: true,
+                  padding: const EdgeInsets.only(bottom: 24),
+                  children: [
+                    // Ionic accordion "Wichtige Infos" (warning colour, collapsed)
+                    Material(
+                      color: AppColors.warning.withAlpha(45),
+                      child: const ExpansionTile(
+                        leading: Icon(Icons.info_outline),
+                        title: Text('Wichtige Infos'),
+                        shape: Border(),
+                        collapsedShape: Border(),
+                        childrenPadding: EdgeInsets.fromLTRB(16, 0, 16, 16),
+                        expandedAlignment: Alignment.centerLeft,
+                        children: [
+                          Text(
+                            '- Die Besetzung wird nach dem Hochladen automatisch anhand der ausgewählten Instrumente aktualisiert.\n'
+                            '- Füge den Instrumenten Synonyme hinzu (Gruppeneinstellungen), um die automatische Zuordnung der Dateien zu verbessern.\n'
+                            '- Beim Hochladen mehrerer Dateien kann es je nach Dateigröße und Internetverbindung einige Zeit dauern, bis alle Dateien vollständig hochgeladen sind. Bitte schließen Sie das Fenster nicht, bis der Upload abgeschlossen ist.',
+                            style: TextStyle(fontSize: 14),
+                          ),
+                        ],
+                      ),
                     ),
-                    ElevatedButton(
-                      onPressed: _isUploading ? null : () => _upload(replace: true),
-                      child: const Text('Ersetzen & Hinzufügen'),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                      child: _isUploading
+                          ? Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        '$_doneCount von ${_files.length} Dateien hochgeladen',
+                                        style: const TextStyle(
+                                            fontSize: 14, fontWeight: FontWeight.w500),
+                                      ),
+                                    ),
+                                    Text(
+                                      '$percent %',
+                                      style: const TextStyle(
+                                          fontSize: 14, fontWeight: FontWeight.w500),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 8),
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(4),
+                                  child: LinearProgressIndicator(
+                                    value: _uploadProgress,
+                                    minHeight: 8,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                const Text(
+                                  'Bitte das Fenster nicht schließen, bis der Upload abgeschlossen ist.',
+                                  style: TextStyle(fontSize: 12, color: AppColors.medium),
+                                ),
+                              ],
+                            )
+                          : FileDropZone(onTap: _pickFiles, onFiles: _addFiles),
                     ),
-                  ] else if (_files.isNotEmpty)
-                    ElevatedButton.icon(
-                      onPressed: _isUploading ? null : () => _upload(replace: false),
-                      icon: const Icon(Icons.upload),
-                      label: const Text('Hochladen'),
-                    ),
-                ],
+                    if (_files.isNotEmpty)
+                      Card(
+                        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        color: scheme.surface,
+                        clipBehavior: Clip.antiAlias,
+                        child: SlidableAutoCloseBehavior(
+                          child: Column(
+                            children: [
+                              for (var i = 0; i < _files.length; i++) ...[
+                                if (i > 0) const Divider(height: 1),
+                                _FileItem(
+                                  key: ObjectKey(_files[i]),
+                                  file: _files[i],
+                                  groups: widget.groups,
+                                  enabled: !_isUploading,
+                                  onCategoryChanged: (id, note) => _setCategory(i, id, note),
+                                  onToggleReplace: (url) => setState(() {
+                                    final set = _files[i].toReplace;
+                                    set.contains(url) ? set.remove(url) : set.add(url);
+                                  }),
+                                  onRemove: () => setState(() => _files.removeAt(i)),
+                                ),
+                              ],
+                            ],
+                          ),
+                        ),
+                      ),
+                    // Ionic: both buttons as soon as files are selected
+                    if (_files.isNotEmpty && !_isUploading)
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            FilledButton(
+                              onPressed: () => _upload(replace: true),
+                              child: const Text('Ersetzen & Hinzufügen'),
+                            ),
+                            const SizedBox(height: 8),
+                            OutlinedButton(
+                              onPressed: () => _upload(replace: false),
+                              child: const Text('Ohne Ersetzen hinzufügen'),
+                            ),
+                          ],
+                        ),
+                      ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -421,11 +487,12 @@ class _FileItemState extends State<_FileItem> {
     super.dispose();
   }
 
-  Widget _statusIcon() {
+  /// Ionic: upload status icon, otherwise a warning icon for conflicts.
+  Widget? _leading() {
     switch (widget.file.status) {
       case _UploadStatus.uploading:
         return const SizedBox(
-            width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2));
+            width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2));
       case _UploadStatus.done:
         return const Icon(Icons.check_circle, color: AppColors.success, size: 20);
       case _UploadStatus.error:
@@ -433,12 +500,16 @@ class _FileItemState extends State<_FileItem> {
       case _UploadStatus.pending:
         return const Icon(Icons.schedule, color: AppColors.medium, size: 20);
       case null:
-        return IconButton(
-          icon: const Icon(Icons.close, size: 20),
-          onPressed: widget.enabled ? widget.onRemove : null,
-          padding: EdgeInsets.zero,
-          constraints: const BoxConstraints(),
-        );
+        final conflicts = widget.file.conflicts;
+        if (conflicts.isEmpty) return null;
+        const icon = Icon(Icons.warning_amber_rounded, color: AppColors.warning, size: 20);
+        return conflicts.length == 1
+            ? Tooltip(
+                message: 'Ersetzt: ${conflicts.first.fileName}',
+                triggerMode: TooltipTriggerMode.tap,
+                child: icon,
+              )
+            : icon;
     }
   }
 
@@ -452,15 +523,32 @@ class _FileItemState extends State<_FileItem> {
       for (final g in widget.groups)
         if (g.id != null) DropdownMenuItem(value: g.id, child: Text(g.name)),
     ];
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 4),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
+    final leading = _leading();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        // Ionic ion-item-sliding: swipe left to remove the selected file
+        Slidable(
+          key: ValueKey(file),
+          enabled: widget.enabled,
+          endActionPane: ActionPane(
+            motion: const DrawerMotion(),
+            extentRatio: 0.25,
+            dismissible: DismissiblePane(onDismissed: widget.onRemove),
+            children: [
+              SlidableAction(
+                onPressed: (_) => widget.onRemove(),
+                backgroundColor: AppColors.danger,
+                foregroundColor: Colors.white,
+                icon: Icons.delete_outline,
+              ),
+            ],
+          ),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 4, 12, 4),
+            child: Row(
               children: [
+                if (leading != null) ...[leading, const SizedBox(width: 12)],
                 Expanded(
                   child: Text(
                     file.platformFile.name,
@@ -469,56 +557,54 @@ class _FileItemState extends State<_FileItem> {
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                _statusIcon(),
+                const SizedBox(width: 8),
+                Flexible(
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<int?>(
+                      value: file.instrumentId,
+                      items: items,
+                      isExpanded: true,
+                      hint: const Text('Instrument'),
+                      onChanged: widget.enabled
+                          ? (id) => widget.onCategoryChanged(
+                              id, id == null ? _note.text.trim() : null)
+                          : null,
+                    ),
+                  ),
+                ),
               ],
             ),
-            const SizedBox(height: 8),
-            DropdownButtonFormField<int?>(
-              value: file.instrumentId,
-              items: items,
-              isExpanded: true,
-              onChanged: widget.enabled
-                  ? (id) => widget.onCategoryChanged(id, id == null ? _note.text.trim() : null)
-                  : null,
-              decoration: const InputDecoration(
-                labelText: 'Instrument',
-                isDense: true,
-                border: OutlineInputBorder(),
-              ),
-            ),
-            if (file.instrumentId == null) ...[
-              const SizedBox(height: 8),
-              TextField(
-                controller: _note,
-                enabled: widget.enabled,
-                decoration: const InputDecoration(
-                  labelText: 'Freitext',
-                  hintText: 'Kategorie eingeben...',
-                  isDense: true,
-                  border: OutlineInputBorder(),
-                ),
-                onChanged: (v) => widget.onCategoryChanged(null, v.trim()),
-              ),
-            ],
-            if (file.conflicts.isNotEmpty) ...[
-              const SizedBox(height: 8),
-              const Text(
-                'Welche Dateien sollen ersetzt werden?',
-                style: TextStyle(fontSize: 12, color: AppColors.warning),
-              ),
-              for (final c in file.conflicts)
-                CheckboxListTile(
-                  dense: true,
-                  contentPadding: EdgeInsets.zero,
-                  controlAffinity: ListTileControlAffinity.leading,
-                  value: file.toReplace.contains(c.url),
-                  title: Text('Ersetzt: ${c.fileName}', style: const TextStyle(fontSize: 13)),
-                  onChanged: widget.enabled ? (_) => widget.onToggleReplace(c.url) : null,
-                ),
-            ],
-          ],
+          ),
         ),
-      ),
+        if (file.instrumentId == null)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+            child: TextField(
+              controller: _note,
+              enabled: widget.enabled,
+              decoration: const InputDecoration(
+                labelText: 'Freitext',
+                hintText: 'Kategorie eingeben...',
+                isDense: true,
+              ),
+              onChanged: (v) => widget.onCategoryChanged(null, v.trim()),
+            ),
+          ),
+        // Ionic: checkbox per conflicting file when more than one
+        if (file.conflicts.length > 1)
+          for (final c in file.conflicts)
+            CheckboxListTile(
+              dense: true,
+              controlAffinity: ListTileControlAffinity.leading,
+              value: file.toReplace.contains(c.url),
+              title: Text(c.fileName, style: const TextStyle(fontSize: 13)),
+              secondary: SongBadge(
+                color: SongUtils.fileBadgeColor(c),
+                label: SongUtils.fileLabel(c, widget.groups),
+              ),
+              onChanged: widget.enabled ? (_) => widget.onToggleReplace(c.url) : null,
+            ),
+      ],
     );
   }
 }

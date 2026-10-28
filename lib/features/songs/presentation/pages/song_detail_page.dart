@@ -1,5 +1,6 @@
 import 'dart:io' show Platform;
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -31,7 +32,9 @@ import '../../../../shared/widgets/audio_player/audio_player_widget.dart';
 import '../../data/song_print_service.dart';
 import '../utils/song_utils.dart';
 import '../widgets/copy_to_tenant_sheet.dart';
+import '../widgets/file_drop/file_drop_target.dart';
 import '../widgets/file_upload_sheet.dart';
+import '../widgets/single_file_upload_sheet.dart';
 import '../widgets/song_file_opener.dart';
 import '../../../../core/services/tracking/tracking_event.dart';
 import '../../../../core/services/tracking/tracking_service.dart';
@@ -730,20 +733,59 @@ class _FilesSectionState extends ConsumerState<_FilesSection> {
     }
   }
 
-  Future<void> _upload() async {
+  Future<void> _upload([List<PlatformFile> initialFiles = const []]) async {
     final result = await showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
+      isDismissible: false,
       builder: (_) => FileUploadSheet(
         songId: song.id!,
         groups: data.instruments,
         existingFiles: files,
         mainGroupId: data.mainGroupId,
         isChoir: data.isChoir,
+        initialFiles: initialFiles,
       ),
     );
     if (result == true) widget.onChanged();
+  }
+
+  /// Ionic `handlePageDrop`: one file -> single-file modal, several files ->
+  /// upload modal with the files preselected.
+  Future<void> _onFilesDropped(List<PlatformFile> dropped) async {
+    if (dropped.isEmpty || _busy) return;
+    if (dropped.length > 1) return _upload(dropped);
+    final file = dropped.first;
+    if (file.size > 20 * 1024 * 1024) {
+      ToastHelper.showError(
+        context,
+        'Die Datei ${file.name} überschreitet die maximale Größe von 20MB.',
+      );
+      return;
+    }
+    final result = await showModalBottomSheet<SingleFileUploadResult>(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      builder: (_) => SingleFileUploadSheet(
+        songId: song.id!,
+        file: file,
+        groups: data.instruments,
+        existingFiles: files,
+        mainGroupId: data.mainGroupId,
+        isChoir: data.isChoir,
+      ),
+    );
+    if (!mounted) return;
+    switch (result) {
+      case SingleFileUploadResult.uploaded:
+        widget.onChanged();
+      case SingleFileUploadResult.openUploadSheet:
+        await _upload(dropped);
+      case null:
+        break;
+    }
   }
 
   Future<void> _downloadAll() => _run(() async {
@@ -833,7 +875,7 @@ class _FilesSectionState extends ConsumerState<_FilesSection> {
               IconButton(
                 tooltip: 'Dateien hochladen',
                 icon: const Icon(Icons.cloud_upload_outlined),
-                onPressed: _busy ? null : _upload,
+                onPressed: _busy ? null : () => _upload(),
               ),
             if (!data.readOnly && files.isNotEmpty)
               PopupMenuButton<String>(
@@ -878,22 +920,34 @@ class _FilesSectionState extends ConsumerState<_FilesSection> {
           ],
         ),
         if (_busy) const LinearProgressIndicator(minHeight: 2),
-        Card(
-          child: files.isEmpty
-              ? const ListTile(title: Text('Keine Dateien vorhanden.'))
-              : Column(
-                  children: [
-                    for (final file in sorted)
-                      ListTile(
-                        title: Text(file.fileName),
-                        trailing: SongBadge(
-                          color: SongUtils.fileBadgeColor(file),
-                          label: SongUtils.fileLabel(file, data.instruments),
+        // Ionic `.files-drop-area`: drop files from the desktop onto the list
+        FileDropTarget(
+          enabled: !data.readOnly && !_busy,
+          onFiles: _onFilesDropped,
+          builder: (context, hovering) => Card(
+            shape: hovering
+                ? RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    side: const BorderSide(color: AppColors.primary, width: 2),
+                  )
+                : null,
+            color: hovering ? Color.alphaBlend(AppColors.primary.withAlpha(13), Theme.of(context).cardColor) : null,
+            child: files.isEmpty
+                ? const ListTile(title: Text('Keine Dateien vorhanden.'))
+                : Column(
+                    children: [
+                      for (final file in sorted)
+                        ListTile(
+                          title: Text(file.fileName),
+                          trailing: SongBadge(
+                            color: SongUtils.fileBadgeColor(file),
+                            label: SongUtils.fileLabel(file, data.instruments),
+                          ),
+                          onTap: () => _openActions(file),
                         ),
-                        onTap: () => _openActions(file),
-                      ),
-                  ],
-                ),
+                    ],
+                  ),
+          ),
         ),
       ],
     );
