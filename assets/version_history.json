@@ -1,6 +1,20 @@
 {
   "versions": [
     {
+      "version": "0.7.0",
+      "date": "28.10.2026",
+      "changes": [
+        "✨ Push-Benachrichtigungen in der iOS- und Android-App inkl. Badge am App-Icon",
+        "✨ Live Activities: laufender Ablaufplan auf dem Sperrbildschirm (iOS)",
+        "✨ Dateien und Noten öffnen in der App im System-Viewer, Steuerung auf dem Sperrbildschirm",
+        "✨ Hinweis 'Update installieren', wenn im Store eine neue Version bereitsteht",
+        "🎨 Anmeldung, Registrierung und 'Passwort zurücksetzen' wie in der bisherigen App",
+        "🎨 Öffentlicher Ablaufplaner im gewohnten Aussehen",
+        "✨ Termine auch offline ansehen, Änderungen werden nachgereicht",
+        "🔒 Beobachter können Termine nicht mehr per Link öffnen"
+      ]
+    },
+    {
       "version": "0.6.0",
       "date": "28.10.2026",
       "changes": [
