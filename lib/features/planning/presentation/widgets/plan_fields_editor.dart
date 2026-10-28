@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/plan_utils.dart';
@@ -35,6 +37,7 @@ class PlanFieldsEditor extends StatefulWidget {
     this.fieldWarning,
     this.showTimes = true,
     this.emptyText = 'Keine Programmpunkte',
+    this.onAddTopics,
   });
 
   final List<PlanField> fields;
@@ -51,6 +54,9 @@ class PlanFieldsEditor extends StatefulWidget {
   final String? Function(PlanField field)? fieldWarning;
   final bool showTimes;
   final String emptyText;
+
+  /// "Themen aufnehmen" on the Tagesordnung insert marker (Ionic `openAgendaPicker`).
+  final VoidCallback? onAddTopics;
 
   @override
   State<PlanFieldsEditor> createState() => _PlanFieldsEditorState();
@@ -178,6 +184,12 @@ class _PlanFieldsEditorState extends State<PlanFieldsEditor> {
       return;
     }
     _emit([..._fields]..removeAt(index));
+  }
+
+  void _setMinutes(int index, String value) {
+    final updated = [..._fields];
+    updated[index] = updated[index].copyWith(time: value.trim());
+    _emit(updated);
   }
 
   void _toggleIndent(int index) {
@@ -358,17 +370,20 @@ class _PlanFieldsEditorState extends State<PlanFieldsEditor> {
     );
 
     if (PlanUtils.isAgendaPlaceholder(field)) {
-      return ListTile(
-        dense: true,
-        leading: const Icon(Icons.commit, color: AppColors.medium),
-        title: const Text('Einfügeposition Tagesordnung', style: TextStyle(color: AppColors.medium)),
-        trailing: Row(mainAxisSize: MainAxisSize.min, children: [
-          IconButton(
-            icon: const Icon(Icons.delete_outline, size: 20),
-            onPressed: () => _removeField(index),
-          ),
-          dragHandle,
-        ]),
+      return _slidable(
+        index: index,
+        canIndent: false,
+        isChild: false,
+        child: ListTile(
+          dense: true,
+          leading: const Icon(Icons.commit, color: AppColors.medium),
+          title: const Text('Einfügeposition Tagesordnung', style: TextStyle(color: AppColors.medium)),
+          trailing: Row(mainAxisSize: MainAxisSize.min, children: [
+            if (widget.onAddTopics != null)
+              TextButton(onPressed: widget.onAddTopics, child: const Text('Themen aufnehmen')),
+            dragHandle,
+          ]),
+        ),
       );
     }
 
@@ -393,80 +408,156 @@ class _PlanFieldsEditorState extends State<PlanFieldsEditor> {
       ));
     }
 
-    final minutes = PlanUtils.displayMinutes(field, _fields);
     final canIndent = PlanUtils.canIndent(_fields, index);
 
-    return Container(
-      margin: EdgeInsets.only(left: isChild ? 20 : 0),
-      decoration: BoxDecoration(
-        color: isHead
-            ? AppColors.primary.withValues(alpha: 0.06)
-            : isNote
-                ? AppColors.medium.withValues(alpha: 0.08)
-                : null,
-        border: Border(
-          bottom: BorderSide(color: theme.dividerColor.withValues(alpha: 0.3)),
-          left: isChild ? BorderSide(color: AppColors.primary.withValues(alpha: 0.4), width: 2) : BorderSide.none,
-        ),
-      ),
-      child: ListTile(
-        contentPadding: const EdgeInsets.only(left: 8, right: 0),
-        leading: isHead
-            ? IconButton(
-                tooltip: _collapsed.contains(field.id) ? 'Block aufklappen' : 'Block einklappen',
-                icon: Icon(_collapsed.contains(field.id) ? Icons.chevron_right : Icons.expand_more),
-                onPressed: () => setState(() {
-                  if (!_collapsed.remove(field.id)) _collapsed.add(field.id);
-                }),
-              )
-            : isNote
-                ? const Icon(Icons.sticky_note_2_outlined, color: AppColors.info)
-                : null,
-        title: Text(
-          field.name,
-          style: TextStyle(
-            fontWeight: isHead ? FontWeight.bold : FontWeight.w500,
-            fontStyle: isNote ? FontStyle.italic : FontStyle.normal,
-          ),
-        ),
-        subtitle: subtitleParts.isEmpty
-            ? null
-            : Column(crossAxisAlignment: CrossAxisAlignment.start, children: subtitleParts),
-        onTap: () => _editField(index),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (!isNote)
-              Container(
+    // Ionic: group heads show their summed duration as a badge, plain fields an
+    // inline minutes input ("min"), notes nothing. Edit/indent/delete via tap
+    // and swipe (ion-item-sliding).
+    final Widget? minutesWidget = isNote
+        ? null
+        : isHead
+            ? Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                 decoration: BoxDecoration(
-                  color: isHead ? AppColors.primary.withValues(alpha: 0.12) : AppColors.medium.withValues(alpha: 0.1),
+                  color: AppColors.primary.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: Text('$minutes min', style: const TextStyle(fontSize: 12)),
-              ),
-            PopupMenuButton<String>(
-              icon: const Icon(Icons.more_vert, size: 20),
-              onSelected: (v) {
-                switch (v) {
-                  case 'edit':
-                    _editField(index);
-                  case 'indent':
-                    _toggleIndent(index);
-                  case 'delete':
-                    _removeField(index);
-                }
-              },
-              itemBuilder: (_) => [
-                PopupMenuItem(value: 'edit', child: Text(isHead ? 'Block-Optionen' : 'Bearbeiten')),
-                if (canIndent)
-                  PopupMenuItem(value: 'indent', child: Text(isChild ? 'Ausrücken' : 'Einrücken')),
-                const PopupMenuItem(value: 'delete', child: Text('Löschen')),
-              ],
-            ),
-            dragHandle,
-          ],
+                child: Text('${PlanUtils.displayMinutes(field, _fields)} min', style: const TextStyle(fontSize: 12)),
+              )
+            : _MinutesInput(
+                key: ValueKey('min-${field.id}'),
+                value: field.time,
+                onChanged: (v) => _setMinutes(index, v),
+              );
+
+    return _slidable(
+      index: index,
+      canIndent: canIndent,
+      isChild: isChild,
+      child: Container(
+        margin: EdgeInsets.only(left: isChild ? 20 : 0),
+        decoration: BoxDecoration(
+          color: isNote ? AppColors.medium.withValues(alpha: 0.08) : null,
+          border: Border(
+            bottom: isNote ? BorderSide.none : BorderSide(color: theme.dividerColor.withValues(alpha: 0.3)),
+            left: isChild ? BorderSide(color: AppColors.primary.withValues(alpha: 0.4), width: 2) : BorderSide.none,
+          ),
         ),
+        child: ListTile(
+          dense: isNote,
+          contentPadding: EdgeInsets.only(left: isHead ? 0 : 16, right: 0),
+          leading: isHead
+              ? IconButton(
+                  tooltip: _collapsed.contains(field.id) ? 'Block aufklappen' : 'Block einklappen',
+                  icon: Icon(_collapsed.contains(field.id) ? Icons.chevron_right : Icons.expand_more),
+                  onPressed: () => setState(() {
+                    if (!_collapsed.remove(field.id)) _collapsed.add(field.id);
+                  }),
+                )
+              : null,
+          title: Text(
+            field.name,
+            style: TextStyle(
+              fontWeight: isHead ? FontWeight.bold : FontWeight.w500,
+              fontStyle: isNote ? FontStyle.italic : FontStyle.normal,
+            ),
+          ),
+          subtitle: subtitleParts.isEmpty
+              ? null
+              : Column(crossAxisAlignment: CrossAxisAlignment.start, children: subtitleParts),
+          onTap: () => _editField(index),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (minutesWidget != null) minutesWidget,
+              dragHandle,
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Ionic `ion-item-options`: "Einrücken"/"Ausrücken" (medium) and delete (danger).
+  Widget _slidable({
+    required int index,
+    required bool canIndent,
+    required bool isChild,
+    required Widget child,
+  }) {
+    return Slidable(
+      key: ValueKey('slide-${_fields[index].id}-$index'),
+      endActionPane: ActionPane(
+        motion: const ScrollMotion(),
+        extentRatio: canIndent ? 0.45 : 0.2,
+        children: [
+          if (canIndent)
+            SlidableAction(
+              onPressed: (_) => _toggleIndent(index),
+              backgroundColor: AppColors.medium,
+              foregroundColor: Colors.white,
+              label: isChild ? 'Ausrücken' : 'Einrücken',
+            ),
+          SlidableAction(
+            onPressed: (_) => _removeField(index),
+            backgroundColor: AppColors.danger,
+            foregroundColor: Colors.white,
+            icon: Icons.delete,
+          ),
+        ],
+      ),
+      child: child,
+    );
+  }
+}
+
+/// Inline minutes input of a plan row (Ionic `ion-input type="number"` with placeholder "min").
+class _MinutesInput extends StatefulWidget {
+  const _MinutesInput({super.key, required this.value, required this.onChanged});
+
+  final String value;
+  final ValueChanged<String> onChanged;
+
+  @override
+  State<_MinutesInput> createState() => _MinutesInputState();
+}
+
+class _MinutesInputState extends State<_MinutesInput> {
+  late final TextEditingController _controller = TextEditingController(text: widget.value);
+  final FocusNode _focus = FocusNode();
+
+  @override
+  void didUpdateWidget(covariant _MinutesInput oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!_focus.hasFocus && widget.value != _controller.text) {
+      _controller.text = widget.value;
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    _focus.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 48,
+      child: TextField(
+        controller: _controller,
+        focusNode: _focus,
+        keyboardType: TextInputType.number,
+        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+        textAlign: TextAlign.center,
+        decoration: const InputDecoration(
+          hintText: 'min',
+          isDense: true,
+          border: InputBorder.none,
+          contentPadding: EdgeInsets.symmetric(vertical: 8),
+        ),
+        onChanged: widget.onChanged,
       ),
     );
   }

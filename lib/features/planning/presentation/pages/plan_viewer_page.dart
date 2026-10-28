@@ -118,6 +118,12 @@ class _PlanViewerPageState extends ConsumerState<PlanViewerPage> {
     final date = _date;
     return Scaffold(
       appBar: AppBar(
+        // Ionic: modal with close button at the start.
+        leading: IconButton(
+          tooltip: 'Schließen',
+          icon: const Icon(Icons.close),
+          onPressed: () => Navigator.of(context).maybePop(),
+        ),
         title: Text(date != null ? '${date.day.toString().padLeft(2, '0')}.${date.month.toString().padLeft(2, '0')}.${date.year}' : _title),
         actions: [
           if (_isLiveNow())

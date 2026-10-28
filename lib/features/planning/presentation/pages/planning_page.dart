@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/attendance_detail_providers.dart';
 import '../../../../core/providers/debug_providers.dart';
+import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/organisation_providers.dart';
 import '../../../../core/providers/plan_providers.dart';
 import '../../../../core/providers/song_providers.dart';
@@ -25,6 +26,7 @@ import '../widgets/plan_fields_editor.dart';
 import '../widgets/plan_song_helper.dart';
 import '../widgets/plan_view_list.dart';
 import '../widgets/register_plan_sheet.dart';
+import '../../../songs/presentation/utils/song_utils.dart';
 import '../../../../core/providers/branding_providers.dart'; // MISC2
 
 /// Provider for songs list (for adding to plan)
@@ -596,6 +598,25 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     _changed();
   }
 
+  /// Ionic `getMissingGroups`: red "Ohne …" line under songs (not for general tenants).
+  String? _missingGroups(PlanField field) {
+    if (field.songId == null || ref.read(currentTenantProvider)?.type == 'general') return null;
+    final song = _songs.where((s) => s.id == field.songId).firstOrNull;
+    final ids = song?.instrumentIds;
+    if (ids == null || ids.isEmpty) return null;
+    return SongUtils.missingInstrumentsText(
+      ids,
+      ref.read(groupsProvider).valueOrNull ?? const [],
+      ref.read(groupCategoriesProvider).valueOrNull ?? const [],
+    );
+  }
+
+  /// Ionic `canAddTopics`: topics only live in the first plan of a protocol type.
+  bool get _canAddTopics {
+    final hasProtocol = ref.read(protocolTypeByIdProvider(_att?.typeId))?.enableProtocol ?? false;
+    return _att?.id != null && _planIndex == 0 && hasProtocol && ref.read(isTeamLeaderProvider);
+  }
+
   Future<void> _showAddMenu() async {
     final role = ref.read(effectiveRoleProvider);
     final tenant = ref.read(currentTenantProvider);
@@ -949,6 +970,8 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     final typesAsync = ref.watch(planAttendanceTypesProvider);
     ref.watch(planSongsProvider);
     ref.watch(currentSongsProvider);
+    ref.watch(groupsProvider);
+    ref.watch(groupCategoriesProvider);
     ref.watch(protocolTypesProvider); // PROTOCOL: keeps the protocol settings loaded
     final blockTemplates = ref.watch(planBlockTemplatesProvider).valueOrNull ?? const <PlanBlockTemplate>[];
     final role = ref.watch(effectiveRoleProvider);
@@ -974,17 +997,23 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
         if (context.mounted) Navigator.of(context).pop(_hasChanges);
       },
       child: Scaffold(
+        // Ionic: modal toolbar [Link teilen, Schließen]; actions in the FAB (…).
         appBar: AppBar(
+          automaticallyImplyLeading: false,
           title: const Text('Ablaufplan erstellen'),
           actions: [
             IconButton(tooltip: 'Link teilen', icon: const Icon(Icons.link), onPressed: _shareLink),
-            IconButton(tooltip: 'Aktionen', icon: const Icon(Icons.more_horiz), onPressed: _showOptions),
+            IconButton(
+              tooltip: 'Schließen',
+              icon: const Icon(Icons.close),
+              onPressed: () => Navigator.of(context).maybePop(),
+            ),
           ],
         ),
         floatingActionButton: FloatingActionButton(
-          tooltip: 'Hinzufügen',
-          onPressed: _showAddMenu,
-          child: const Icon(Icons.add),
+          tooltip: 'Aktionen',
+          onPressed: _showOptions,
+          child: const Icon(Icons.more_horiz),
         ),
         body: attendancesAsync.when(
           loading: () => const Center(child: CircularProgressIndicator()),
@@ -1027,6 +1056,8 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
                         _changed();
                       },
                       blockTemplateNames: blockTemplates.map((t) => t.name).toSet(),
+                      onAddTopics: _canAddTopics ? _openAgendaPicker : null,
+                      fieldWarning: _missingGroups,
                       onSaveBlockTemplate: role.isAdmin ? _saveBlockTemplate : null,
                     ),
                     if (_fields.isNotEmpty)
