@@ -30,20 +30,8 @@ import '../../../messages/presentation/widgets/notification_bell.dart'; // MESSA
 /// Card layout: greeting, "Heute"/"Nächster Termin" card with the buttons
 /// Zusagen / Verspätung / Absagen in one row and directly tappable chips,
 /// upcoming Termine grouped by month and past Termine with summary.
-///
-/// Hook points for other packages: [SignoutPage.extraTilesBuilder] (e.g.
-/// Abwesenheit melden, Offene Dienste) and [SignoutPage.extraSectionsBuilder]
-/// (geplante Abwesenheiten, Dienstplan).
 class SignoutPage extends ConsumerStatefulWidget {
   const SignoutPage({super.key});
-
-  /// Additional greeting tiles (player absences, duty roster, ...).
-  static List<Widget> Function(BuildContext context, WidgetRef ref, Person player)?
-      extraTilesBuilder;
-
-  /// Additional sections shown above the Termine.
-  static List<Widget> Function(BuildContext context, WidgetRef ref, Person player)?
-      extraSectionsBuilder;
 
   @override
   ConsumerState<SignoutPage> createState() => _SignoutPageState();
@@ -73,6 +61,23 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
       ),
       canAccessFiles: (_) => canAccessFiles,
     );
+  }
+
+  /// INTEGRATION: opens the Termin of an /open-attendance deep link once the
+  /// data is loaded (Ionic consumePendingAttendanceId).
+  void _openPendingAttendance(SignoutData data, SelfServiceEventActions actions) {
+    final pendingId = ref.read(pendingAttendanceIdProvider);
+    if (pendingId == null) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || ref.read(pendingAttendanceIdProvider) != pendingId) return;
+      ref.read(pendingAttendanceIdProvider.notifier).state = null;
+      final att = [
+        if (data.current != null) data.current!,
+        ...data.upcoming,
+        ...data.past,
+      ].where((a) => a.attendanceId == pendingId).firstOrNull;
+      if (att != null) actions.presentActions(context, att);
+    });
   }
 
   Future<void> _refresh() async {
@@ -195,6 +200,8 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
 
     final player = playerAsync.valueOrNull;
     final actions = _actions(tenant, player);
+    final loaded = dataAsync.valueOrNull;
+    if (loaded != null) _openPendingAttendance(loaded, actions);
 
     return Scaffold(
       appBar: _buildAppBar(tenant, tenants),
@@ -220,8 +227,6 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
               if (player != null) ..._buildTiles(player),
               // PEOPLE_IMPORT: planned absences + self pause
               if (player != null) const SelfServiceAbsenceSection(),
-              if (player != null && SignoutPage.extraSectionsBuilder != null)
-                ...SignoutPage.extraSectionsBuilder!(context, ref, player),
               if (player == null)
                 const Padding(
                   padding: EdgeInsets.all(32),
@@ -325,7 +330,6 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
 
   List<Widget> _buildTiles(Person player) {
     final songs = ref.watch(upcomingSongsProvider).valueOrNull ?? const [];
-    final extra = SignoutPage.extraTilesBuilder?.call(context, ref, player) ?? const <Widget>[];
     final tiles = <Widget>[
       if (songs.isNotEmpty)
         _GreetTile(
@@ -334,7 +338,6 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
           subtitle: songs.length == 1 ? 'Nächster Termin' : '${songs.length} Termine',
           onTap: () => showUpcomingSongsSheet(context),
         ),
-      ...extra,
     ];
     if (tiles.isEmpty) return const [];
     return [

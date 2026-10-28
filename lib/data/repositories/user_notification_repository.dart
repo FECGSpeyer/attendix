@@ -126,6 +126,23 @@ class UserNotificationRepository extends BaseRepository with TenantAwareReposito
     }
   }
 
+  /// INTEGRATION: marks the unread entries of one Termin read (Ionic
+  /// markReadByAttendance, used by the /open-attendance deep link).
+  Future<void> markReadByAttendance(int attendanceId) async {
+    try {
+      await supabase
+          .from('user_notifications')
+          .update({'read': true})
+          .eq('user_id', _userId)
+          .eq('tenantId', currentTenantId)
+          .eq('read', false)
+          .eq('data->>attendanceId', '$attendanceId');
+    } catch (e, stack) {
+      handleError(e, stack, 'markReadByAttendance');
+      rethrow;
+    }
+  }
+
   /// Marks all unread entries in all of the user's tenants read.
   Future<void> markAllReadAllTenants(List<int> tenantIds) async {
     if (tenantIds.isEmpty) return;

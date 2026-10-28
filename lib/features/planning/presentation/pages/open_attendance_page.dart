@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/enums.dart';
+import '../../../../core/providers/message_providers.dart';
+import '../../../../core/providers/signout_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../data/models/tenant/tenant.dart';
 
@@ -61,9 +63,21 @@ class _OpenAttendancePageState extends ConsumerState<OpenAttendancePage> {
       context.go('/tenants');
       return;
     }
-    if (attendanceId != null && role.canSeeAttendanceTab) {
-      context.go('/attendance/$attendanceId');
-      return;
+    if (attendanceId != null) {
+      // INTEGRATION: opening a Termin via a mail/Telegram link marks its
+      // notification-center entries read (Ionic, best-effort).
+      try {
+        final repo = ref.read(userNotificationRepositoryWithTenantProvider);
+        if (repo.hasTenantId) await repo.markReadByAttendance(attendanceId);
+      } catch (_) {}
+      if (!mounted) return;
+      if (role.canSeeAttendanceTab) {
+        context.go('/attendance/$attendanceId');
+        return;
+      }
+      // Players land on "Meine Termine", which opens this Termin's action
+      // sheet (Ionic PushService.pendingAttendanceId).
+      ref.read(pendingAttendanceIdProvider.notifier).state = attendanceId;
     }
     context.go(role.defaultRoute);
   }
