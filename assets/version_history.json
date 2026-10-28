@@ -1,6 +1,22 @@
 {
   "versions": [
     {
+      "version": "0.4.0",
+      "date": "28.10.2026",
+      "changes": [
+        "🎨 Aussehen und Bedienung wie in der bisherigen App: Farben, Kopfzeilen, Tab-Leiste, Login, Instanzauswahl",
+        "🎨 Termine, Personen, Meine Termine und Einstellungen in gewohnter Reihenfolge und mit gewohnten Menüs",
+        "✨ Login mit Code per E-Mail, Passwort zurücksetzen, bessere Fehlermeldungen",
+        "✨ Accounts werden serverseitig angelegt, Registrierung für Instanzen mit Nutzungsbedingungen",
+        "✨ Termin-Detail: Filter, Sortierung, Person hinzufügen, Erinnerungen senden, Beschreibung & Anhang, Checkliste",
+        "✨ Protokoll und Aufgaben direkt im Termin, Schnell-Termin aus der Teamorganisation",
+        "✨ Personen: Pausieren ab Datum, Duplikate zusammenführen, Reihenfolge anpassen, Gemeinde-Übersicht",
+        "✨ Administratoren verwalten, Werk-Synchronisierung, Werke/Org-Pläne als Tab",
+        "✨ Branding auf Exporten, Urkunden für Vorkurse, Noten drucken, Dateien per Telegram senden",
+        "🐛 Historie, Benachrichtigungs-Links und Offline-Speichern korrigiert"
+      ]
+    },
+    {
       "version": "0.3.0",
       "date": "28.10.2026",
       "changes": [
