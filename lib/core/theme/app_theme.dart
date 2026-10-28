@@ -1,3 +1,5 @@
+import 'package:flutter/cupertino.dart'
+    show CupertinoFullscreenDialogTransition, CupertinoPageTransition;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -161,15 +163,16 @@ class AppTheme {
       // IOS_THEME2: ion-toggle is primary (teal) on iOS too – the default
       // iOS switch adaptation would drop the theme and use system green.
       adaptations: const <Adaptation<Object>>[_IonToggleAdaptation()],
-      // IOS_R6: Ionic iOS pushes pages with the iOS slide and edge
-      // swipe-back (ion-router-outlet `swipeGesture`): every MaterialPage /
-      // MaterialPageRoute uses the Cupertino transition on iOS (incl. the
-      // iPhone Safari PWA). Pinned explicitly so a theme change cannot drop
-      // the gesture; md keeps the Flutter defaults.
+      // IOS_R6: Ionic iOS pushes pages with the iOS slide; every
+      // MaterialPage / MaterialPageRoute uses it on iOS (incl. the iPhone
+      // Safari PWA). Ionic disables the edge swipe-back
+      // (`swipeBackEnabled: false` in app.module.ts, it caused a double back
+      // with the browser's own swipe), so the slide comes without the
+      // gesture. md keeps the Flutter defaults.
       pageTransitionsTheme: const PageTransitionsTheme(
         builders: <TargetPlatform, PageTransitionsBuilder>{
           TargetPlatform.android: ZoomPageTransitionsBuilder(),
-          TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+          TargetPlatform.iOS: IonIosPageTransitionsBuilder(),
           TargetPlatform.macOS: CupertinoPageTransitionsBuilder(),
         },
       ),
@@ -531,4 +534,35 @@ class _IonToggleAdaptation extends Adaptation<SwitchThemeData> {
   @override
   SwitchThemeData adapt(ThemeData theme, SwitchThemeData defaultValue) =>
       defaultValue;
+}
+
+/// IOS_R6: the iOS page slide (and the bottom-up slide for full-screen
+/// dialogs) without the edge swipe-back gesture, like Ionic with
+/// `swipeBackEnabled: false`.
+class IonIosPageTransitionsBuilder extends PageTransitionsBuilder {
+  const IonIosPageTransitionsBuilder();
+
+  @override
+  Widget buildTransitions<T>(
+    PageRoute<T> route,
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
+    if (route.fullscreenDialog) {
+      return CupertinoFullscreenDialogTransition(
+        primaryRouteAnimation: animation,
+        secondaryRouteAnimation: secondaryAnimation,
+        linearTransition: false,
+        child: child,
+      );
+    }
+    return CupertinoPageTransition(
+      primaryRouteAnimation: animation,
+      secondaryRouteAnimation: secondaryAnimation,
+      linearTransition: false,
+      child: child,
+    );
+  }
 }

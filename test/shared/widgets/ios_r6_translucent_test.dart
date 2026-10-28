@@ -108,18 +108,19 @@ void main() {
   });
 
   group('iOS swipe-back', () {
-    test('theme pins the Cupertino transition on iOS, Zoom on Android', () {
+    test('theme pins the iOS slide (no swipe) on iOS, Zoom on Android', () {
       final iosTheme =
           AppTheme.forPlatform(Brightness.light, TargetPlatform.iOS);
       final mdTheme =
           AppTheme.forPlatform(Brightness.light, TargetPlatform.android);
       expect(iosTheme.pageTransitionsTheme.builders[TargetPlatform.iOS],
-          isA<CupertinoPageTransitionsBuilder>());
+          isA<IonIosPageTransitionsBuilder>());
       expect(mdTheme.pageTransitionsTheme.builders[TargetPlatform.android],
           isA<ZoomPageTransitionsBuilder>());
     });
 
-    testWidgets('edge swipe pops a pushed page', (tester) async {
+    // Ionic: `swipeBackEnabled: false` (app.module.ts).
+    testWidgets('edge swipe does not pop a pushed page', (tester) async {
       final navKey = GlobalKey<NavigatorState>();
       await tester.pumpWidget(MaterialApp(
         navigatorKey: navKey,
@@ -138,8 +139,7 @@ void main() {
       }
       await gesture.up();
       await tester.pumpAndSettle();
-      expect(find.text('Detail'), findsNothing);
-      expect(find.text('Liste'), findsOneWidget);
+      expect(find.text('Detail'), findsOneWidget);
     }, variant: ios);
   });
 
