@@ -67,7 +67,7 @@ void main() {
         connectivityCheckProvider.overrideWithValue(() async => online),
         currentTenantIdProvider.overrideWithValue(42),
         offlineQueueUserIdProvider.overrideWithValue(() => currentUser),
-        offlineFlushFnProvider.overrideWithValue((entry) async {
+        offlineFlushFnProvider.overrideWithValue((entry, _) async {
           if (failFlush) throw Exception('network');
           flushed.add(entry);
         }),
@@ -154,7 +154,7 @@ void main() {
         connectivityCheckProvider.overrideWithValue(() async => online),
         currentTenantIdProvider.overrideWithValue(42),
         offlineQueueUserIdProvider.overrideWithValue(() => 'u1'),
-        offlineFlushFnProvider.overrideWithValue((entry) async {
+        offlineFlushFnProvider.overrideWithValue((entry, _) async {
           if (!injected) {
             injected = true;
             // a new write and a merge into the entry being replayed

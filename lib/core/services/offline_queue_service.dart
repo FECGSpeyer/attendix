@@ -339,16 +339,28 @@ final offlineQueueAuthEventsProvider = Provider<Stream<AuthChangeEvent>>((ref) {
 });
 
 /// Replays one queued write against Supabase.
-typedef OfflineFlushFn = Future<void> Function(QueuedWrite entry);
+///
+/// SOL_FIX11: [isSessionCurrent] must be checked again right before the
+/// mutation (after any async validation). When it returns false the write
+/// must not run; throw [OfflineSessionChangedException] so the entry stays
+/// queued for its author.
+typedef OfflineFlushFn = Future<void> Function(
+  QueuedWrite entry,
+  bool Function() isSessionCurrent,
+);
 
 final offlineFlushFnProvider = Provider<OfflineFlushFn>((ref) {
-  return (entry) async {
+  return (entry, isSessionCurrent) async {
     // Fresh repository instance so the replay uses the tenant of the entry
     // without touching the shared (current tenant) repository.
     final repo = AttendanceRepository(ref)..bindTenantId(entry.tenantId);
     await repo.updatePersonAttendance(
       entry.personAttendanceId,
       Map<String, dynamic>.from(entry.payload),
+      isSessionCurrent: isSessionCurrent,
+      // changed_by = author of the queued write (the guard ensures it is
+      // still the signed-in user), never a user re-read later.
+      actingUserId: entry.userId,
     );
   };
 });
@@ -549,11 +561,19 @@ class OfflineQueueNotifier extends Notifier<int> {
         break;
       }
       try {
-        await flushFn(entry);
+        // SOL_FIX11: the repository re-checks the session after its async
+        // validation, immediately before the mutation.
+        await flushFn(entry, sessionUnchanged);
         confirmed.add(entry);
         if (entry.attendanceId != null) {
           flushedAttendanceIds.add(entry.attendanceId!);
         }
+      } on OfflineSessionChangedException {
+        // Session changed during the write's validation: nothing was
+        // written; keep this and the remaining entries queued.
+        aborted = true;
+        debugPrint('[OfflineQueue] session changed – replay stopped');
+        break;
       } catch (e) {
         debugPrint('[OfflineQueue] flush failed for ${entry.id}: $e');
         failed.add(entry);
