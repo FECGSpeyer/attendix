@@ -14,17 +14,33 @@ import 'duty_actions.dart';
 ///
 /// Outside the Dienstplan view a compact "Offene Dienste" tile is shown for
 /// persons in a duty circle.
+/// UX_SELF: which part of the Dienstplan block is rendered. Ionic places the
+/// stats below the greeting, "Bitte bestätigen" before "Meine Aufgaben" and
+/// the Dienstplan lists after the planned absences.
+enum SelfServiceDutyPart { all, stats, requests, dutyView }
+
 class SelfServiceDutySection extends ConsumerWidget {
   const SelfServiceDutySection({
     super.key,
+    this.part = SelfServiceDutyPart.all,
     this.showOtherTermine = false,
     this.otherTermineCount = 0,
+    this.otherTermineNames = '',
     this.onToggleOtherTermine,
+    this.onReportAbsence,
   });
 
+  final SelfServiceDutyPart part;
   final bool showOtherTermine;
   final int otherTermineCount;
+  final String otherTermineNames;
   final VoidCallback? onToggleOtherTermine;
+
+  /// UX_SELF: "Abwesenheit melden" entry of the Dienstplan view (only when
+  /// planned absences are allowed).
+  final VoidCallback? onReportAbsence;
+
+  bool _shows(SelfServiceDutyPart p) => part == SelfServiceDutyPart.all || part == p;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -34,27 +50,26 @@ class SelfServiceDutySection extends ConsumerWidget {
 
     final children = <Widget>[];
 
-    if (overview.useDutyView) {
-      children.add(_DutyStats(overview: overview));
-    } else if (overview.inDutyCircle) {
-      children.add(Card(
-        margin: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM, vertical: AppDimensions.paddingXS),
-        child: ListTile(
-          leading: const Icon(Icons.headset_mic_outlined, color: AppColors.primary),
-          title: const Text('Offene Dienste'),
-          subtitle: Text(overview.openDuties.isEmpty
-              ? 'alles besetzt'
-              : overview.openDuties.length == 1
-                  ? '1 offen'
-                  : '${overview.openDuties.length} offen'),
-          trailing: const Icon(Icons.chevron_right),
-          onTap: () => showOpenDutiesSheet(context),
-        ),
-      ));
+    if (_shows(SelfServiceDutyPart.stats)) {
+      if (overview.useDutyView) {
+        children.add(_DutyStats(overview: overview));
+      } else if (overview.inDutyCircle && part == SelfServiceDutyPart.all) {
+        // UX_SELF: on "Meine Termine" this is a greet tile next to "Aktuelle Werke".
+        children.add(Card(
+          margin: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM, vertical: AppDimensions.paddingXS),
+          child: ListTile(
+            leading: const Icon(Icons.headset_mic_outlined, color: AppColors.primary),
+            title: const Text('Offene Dienste'),
+            subtitle: Text(openDutiesTileSubtitle(overview.openDuties.length)),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => showOpenDutiesSheet(context),
+          ),
+        ));
+      }
     }
 
     // "Bitte bestätigen"
-    if (overview.requests.isNotEmpty) {
+    if (_shows(SelfServiceDutyPart.requests) && overview.requests.isNotEmpty) {
       children.add(_SectionTitle(title: 'Bitte bestätigen', count: overview.requests.length));
       for (final r in overview.requests) {
         children.add(Card(
@@ -91,7 +106,7 @@ class SelfServiceDutySection extends ConsumerWidget {
       }
     }
 
-    if (overview.useDutyView) {
+    if (_shows(SelfServiceDutyPart.dutyView) && overview.useDutyView) {
       // "Nächster Dienst"
       final next = overview.confirmed.isNotEmpty ? overview.confirmed.first : null;
       if (next != null) {
@@ -189,7 +204,9 @@ class SelfServiceDutySection extends ConsumerWidget {
             if (otherTermineCount > 0)
               ListTile(
                 title: const Text('Weitere Termine'),
-                subtitle: Text('$otherTermineCount'),
+                subtitle: Text(otherTermineNames.isEmpty
+                    ? '$otherTermineCount'
+                    : '$otherTermineCount · $otherTermineNames'),
                 trailing: Icon(showOtherTermine ? Icons.expand_less : Icons.expand_more),
                 onTap: onToggleOtherTermine,
               ),
@@ -199,6 +216,13 @@ class SelfServiceDutySection extends ConsumerWidget {
               trailing: const Icon(Icons.chevron_right),
               onTap: () => openUnavailabilityPage(context, personId: overview.person!.id!),
             ),
+            if (onReportAbsence != null)
+              ListTile(
+                leading: const Icon(Icons.calendar_today_outlined),
+                title: const Text('Abwesenheit melden'),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: onReportAbsence,
+              ),
           ],
         ),
       ));
@@ -207,6 +231,13 @@ class SelfServiceDutySection extends ConsumerWidget {
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: children);
   }
 }
+
+/// Subtitle of the "Offene Dienste" tile (Ionic signout greet tile).
+String openDutiesTileSubtitle(int count) => count == 0
+    ? 'alles besetzt'
+    : count == 1
+        ? '1 offen'
+        : '$count offen';
 
 String _dateShort(DutyTermin t) {
   final d = DateTime.tryParse(t.attendance.date)?.toLocal();

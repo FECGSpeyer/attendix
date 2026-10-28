@@ -7,36 +7,113 @@ import '../../../../core/providers/player_absence_providers.dart';
 import '../../../../core/providers/role_permission_providers.dart';
 import '../../../../core/providers/player_providers.dart';
 import '../../../../core/providers/self_service_providers.dart';
+import '../../../../core/providers/signout_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../people/presentation/widgets/planned_absences.dart';
 
-/// Self-service block for planned absences and self pause
-/// (Ionic signout page: absence tile, "Geplante Abwesenheiten", pause button).
+/// Self-service planned absences and self pause (Ionic signout page).
 ///
-/// - Planned absences: visible when `tenant_role_permissions.player_planned_absence`
-///   is set for the user's role.
-/// - Self pause: visible when `player_self_pause` is set for Role.player.
-class SelfServiceAbsenceSection extends ConsumerStatefulWidget {
-  const SelfServiceAbsenceSection({super.key});
+/// Entry points live where Ionic has them:
+/// - pause / unpause: header button of "Meine Termine" ([selfServicePause],
+///   [selfServiceUnpause])
+/// - "Abwesenheit melden": greet tile ([selfServiceReportAbsence])
+/// - "Geplante Abwesenheiten": inset list ([SelfServicePlannedAbsences])
 
-  @override
-  ConsumerState<SelfServiceAbsenceSection> createState() =>
-      _SelfServiceAbsenceSectionState();
+void _refreshAfterAbsenceChange(WidgetRef ref) {
+  ref.invalidate(signoutDataProvider);
+  ref.invalidate(allPersonAttendancesAcrossTenantsProvider);
+  ref.invalidate(currentSelfServicePlayerProvider);
 }
 
-class _SelfServiceAbsenceSectionState
-    extends ConsumerState<SelfServiceAbsenceSection> {
+/// "Abwesenheit melden" sheet + save (Ionic confirmAbsence).
+Future<void> selfServiceReportAbsence(
+  BuildContext context,
+  WidgetRef ref,
+  Person player, {
+  required bool canSelfPause,
+}) async {
+  final input = await showModalBottomSheet<AbsenceInput>(
+    context: context,
+    isScrollControlled: true,
+    useSafeArea: true,
+    builder: (_) => SelfServiceAbsenceSheet(showLongAbsenceHint: canSelfPause),
+  );
+  if (input == null || !context.mounted || player.id == null) return;
+
+  final count = await ref.read(playerAbsenceNotifierProvider.notifier).addAbsence(
+        personId: player.id!,
+        fromDate: input.fromDate,
+        untilDate: input.untilDate,
+        reason: input.reason,
+      );
+  if (!context.mounted) return;
+  if (count == null) {
+    ToastHelper.showError(context, 'Abwesenheit konnte nicht gespeichert werden');
+    return;
+  }
+  _refreshAfterAbsenceChange(ref);
+  ToastHelper.showSuccess(context, absenceEnteredMessage(count));
+}
+
+/// "Pausieren" sheet + save (Ionic openPauseModal / confirmPause).
+Future<void> selfServicePause(BuildContext context, WidgetRef ref, Person player) async {
+  final result = await showModalBottomSheet<({String reason, DateTime? until})>(
+    context: context,
+    isScrollControlled: true,
+    useSafeArea: true,
+    builder: (context) => const _SelfPauseSheet(),
+  );
+  if (result == null || !context.mounted) return;
+
+  final untilIso = result.until == null ? null : DateFormat('yyyy-MM-dd').format(result.until!);
+  final pauseText = result.until == null
+      ? result.reason
+      : '${result.reason} (bis ${DateFormat('dd.MM.yyyy').format(result.until!)})';
+
+  try {
+    final repo = ref.read(playerRepositoryWithTenantProvider);
+    await repo.pausePlayer(player, untilIso, pauseText);
+    _refreshAfterAbsenceChange(ref);
+  } catch (e) {
+    if (context.mounted) ToastHelper.showError(context, 'Fehler: $e');
+  }
+}
+
+/// "Pausierung beenden" alert (Ionic confirmUnpause).
+Future<void> selfServiceUnpause(BuildContext context, WidgetRef ref, Person player) async {
+  final confirmed = await DialogHelper.showConfirmation(
+    context,
+    title: 'Pausierung beenden',
+    message: 'Möchtest du deine Pausierung wirklich beenden und wieder aktiv werden?',
+    confirmText: 'Reaktivieren',
+  );
+  if (!confirmed || !context.mounted) return;
+  try {
+    final repo = ref.read(playerRepositoryWithTenantProvider);
+    await repo.unpausePlayer(player, historyText: 'Selbst reaktiviert');
+    _refreshAfterAbsenceChange(ref);
+  } catch (e) {
+    if (context.mounted) ToastHelper.showError(context, 'Fehler: $e');
+  }
+}
+
+/// "Geplante Abwesenheiten" inset list with a trash button per entry.
+///
+/// Also lifts expired self pauses once (Ionic: checkAndUnpausePlayers on load
+/// when self pause is allowed).
+class SelfServicePlannedAbsences extends ConsumerStatefulWidget {
+  const SelfServicePlannedAbsences({super.key});
+
+  @override
+  ConsumerState<SelfServicePlannedAbsences> createState() => _SelfServicePlannedAbsencesState();
+}
+
+class _SelfServicePlannedAbsencesState extends ConsumerState<SelfServicePlannedAbsences> {
   bool _unpauseChecked = false;
 
-  void _refreshAttendances() {
-    ref.invalidate(allPersonAttendancesAcrossTenantsProvider);
-    ref.invalidate(currentSelfServicePlayerProvider);
-  }
-
-  /// Ionic: when self pause is allowed, expired pauses are lifted on load.
   void _maybeCheckUnpause(bool canSelfPause) {
     if (!canSelfPause || _unpauseChecked) return;
     _unpauseChecked = true;
@@ -47,135 +124,222 @@ class _SelfServiceAbsenceSectionState
     });
   }
 
-  Future<void> _reportAbsence(Person player, bool canSelfPause) async {
-    final ok = await addPlannedAbsenceFlow(
-      context,
-      ref,
-      personId: player.id!,
-      showLongAbsenceHint: canSelfPause,
-    );
-    if (ok) _refreshAttendances();
-  }
-
-  Future<void> _pause(Person player) async {
-    final result = await showModalBottomSheet<({String reason, DateTime? until})>(
-      context: context,
-      isScrollControlled: true,
-      useSafeArea: true,
-      builder: (context) => const _SelfPauseSheet(),
-    );
-    if (result == null || !mounted) return;
-
-    final untilIso = result.until == null
-        ? null
-        : DateFormat('yyyy-MM-dd').format(result.until!);
-    final pauseText = result.until == null
-        ? result.reason
-        : '${result.reason} (bis ${DateFormat('dd.MM.yyyy').format(result.until!)})';
-
-    try {
-      final repo = ref.read(playerRepositoryWithTenantProvider);
-      await repo.pausePlayer(player, untilIso, pauseText);
-      _refreshAttendances();
-    } catch (e) {
-      if (mounted) ToastHelper.showError(context, 'Fehler: $e');
-    }
-  }
-
-  Future<void> _unpause(Person player) async {
-    final confirmed = await DialogHelper.showConfirmation(
-      context,
-      title: 'Pausierung beenden',
-      message: 'Möchtest du deine Pausierung wirklich beenden und wieder aktiv werden?',
-      confirmText: 'Reaktivieren',
-    );
-    if (!confirmed || !mounted) return;
-    try {
-      final repo = ref.read(playerRepositoryWithTenantProvider);
-      await repo.unpausePlayer(player, historyText: 'Selbst reaktiviert');
-      _refreshAttendances();
-    } catch (e) {
-      if (mounted) ToastHelper.showError(context, 'Fehler: $e');
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final player = ref.watch(currentSelfServicePlayerProvider).valueOrNull;
     if (player?.id == null) return const SizedBox.shrink();
 
-    final canSelfPause = ref.watch(canSelfPauseProvider);
-    final canPlannedAbsence = ref.watch(canSelfReportAbsenceProvider);
-    _maybeCheckUnpause(canSelfPause);
+    _maybeCheckUnpause(ref.watch(canSelfPauseProvider));
+    if (!ref.watch(canSelfReportAbsenceProvider)) return const SizedBox.shrink();
 
-    if (!canSelfPause && !canPlannedAbsence) return const SizedBox.shrink();
+    final absences =
+        ref.watch(playerAbsencesByPersonIdProvider(player!.id!)).valueOrNull ?? const [];
+    if (absences.isEmpty) return const SizedBox.shrink();
 
-    final absences = canPlannedAbsence
-        ? ref.watch(playerAbsencesByPersonIdProvider(player!.id!)).valueOrNull ??
-            const []
-        : const [];
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(
+    return Card(
+      margin: const EdgeInsets.symmetric(
         horizontal: AppDimensions.paddingM,
-        vertical: AppDimensions.paddingXS,
+        vertical: AppDimensions.paddingS,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Wrap(
-            spacing: AppDimensions.paddingS,
-            runSpacing: AppDimensions.paddingS,
-            children: [
-              if (canPlannedAbsence)
-                ActionChip(
-                  avatar: const Icon(Icons.calendar_month, size: 18),
-                  label: const Text('Abwesenheit melden'),
-                  onPressed: () => _reportAbsence(player!, canSelfPause),
-                ),
-              if (canSelfPause && !player!.paused)
-                ActionChip(
-                  avatar: const Icon(Icons.pause_circle_outline, size: 18),
-                  label: const Text('Pausieren'),
-                  onPressed: () => _pause(player),
-                ),
-              if (canSelfPause && player!.paused)
-                ActionChip(
-                  avatar: const Icon(Icons.play_circle_outline, size: 18),
-                  label: const Text('Pausierung beenden'),
-                  onPressed: () => _unpause(player),
-                ),
-            ],
+          const Padding(
+            padding: EdgeInsets.fromLTRB(16, 14, 16, 4),
+            child: Text(
+              'Geplante Abwesenheiten',
+              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+            ),
           ),
-          if (canPlannedAbsence && absences.isNotEmpty)
-            Card(
-              margin: const EdgeInsets.only(top: AppDimensions.paddingS),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const ListTile(
-                    title: Text(
-                      'Geplante Abwesenheiten',
-                      style: TextStyle(fontWeight: FontWeight.w600),
-                    ),
-                  ),
-                  for (final absence in absences)
-                    PlannedAbsenceTile(
-                      absence: absence,
-                      onDelete: () async {
-                        final ok = await deletePlannedAbsenceFlow(
-                          context,
-                          ref,
-                          absence,
-                          selfService: true,
-                        );
-                        if (ok) _refreshAttendances();
-                      },
-                    ),
-                ],
-              ),
+          for (final absence in absences)
+            PlannedAbsenceTile(
+              absence: absence,
+              onDelete: () async {
+                final ok = await deletePlannedAbsenceFlow(
+                  context,
+                  ref,
+                  absence,
+                  selfService: true,
+                );
+                if (ok) _refreshAfterAbsenceChange(ref);
+              },
             ),
         ],
+      ),
+    );
+  }
+}
+
+/// "Abwesenheit melden" sheet (Ionic signout absence modal): reason, then
+/// start and end day tapped in one inline calendar.
+class SelfServiceAbsenceSheet extends StatefulWidget {
+  const SelfServiceAbsenceSheet({super.key, this.showLongAbsenceHint = false});
+
+  final bool showLongAbsenceHint;
+
+  @override
+  State<SelfServiceAbsenceSheet> createState() => _SelfServiceAbsenceSheetState();
+}
+
+class _SelfServiceAbsenceSheetState extends State<SelfServiceAbsenceSheet> {
+  final _reasonController = TextEditingController();
+  DateTime? _from;
+  DateTime? _until;
+  int _calendarKey = 0;
+
+  @override
+  void dispose() {
+    _reasonController.dispose();
+    super.dispose();
+  }
+
+  static String _iso(DateTime d) => DateFormat('yyyy-MM-dd').format(d);
+
+  /// First tap: start; second tap: end (swapped when before start).
+  void _onPick(DateTime date) {
+    setState(() {
+      if (_from == null || _until != null) {
+        _from = date;
+        _until = null;
+      } else if (date.isBefore(_from!)) {
+        _until = _from;
+        _from = date;
+      } else {
+        _until = date;
+      }
+    });
+  }
+
+  void _reset() => setState(() {
+        _from = null;
+        _until = null;
+        _calendarKey++;
+      });
+
+  bool get _valid =>
+      _reasonController.text.trim().isNotEmpty && _from != null && _until != null;
+
+  void _confirm() {
+    if (!_valid) {
+      ToastHelper.showError(context, 'Bitte fülle alle Pflichtfelder aus');
+      return;
+    }
+    Navigator.of(context).pop(AbsenceInput(
+      reason: _reasonController.text.trim(),
+      fromDate: _iso(_from!),
+      untilDate: _iso(_until!),
+    ));
+  }
+
+  Widget _rangeHeader() {
+    final theme = Theme.of(context);
+    final Widget content;
+    if (_from == null || _until == null) {
+      content = Row(
+        children: [
+          const Icon(Icons.calendar_today_outlined, size: 18, color: AppColors.medium),
+          const SizedBox(width: 6),
+          Text(
+            _from == null ? 'Starttag wählen' : 'Endtag wählen',
+            style: theme.textTheme.bodyMedium?.copyWith(color: AppColors.medium),
+          ),
+        ],
+      );
+    } else {
+      content = Row(
+        children: [
+          const Icon(Icons.calendar_today_outlined, size: 18, color: AppColors.primary),
+          const SizedBox(width: 6),
+          Expanded(
+            child: Text(
+              '${DateFormat('dd.MM.').format(_from!)} – ${DateFormat('dd.MM.yyyy').format(_until!)}',
+              style: theme.textTheme.bodyLarge?.copyWith(
+                color: AppColors.primary,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.cancel_outlined, color: AppColors.medium),
+            tooltip: 'Zurücksetzen',
+            onPressed: _reset,
+          ),
+        ],
+      );
+    }
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 8, 12, 0),
+      child: SizedBox(height: 40, child: content),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final now = DateTime.now();
+    return Padding(
+      padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            AppBar(
+              title: const Text('Abwesenheit melden'),
+              automaticallyImplyLeading: false,
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.close),
+                  tooltip: 'Schließen',
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+              ],
+            ),
+            Card(
+              margin: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                child: TextField(
+                  controller: _reasonController,
+                  textCapitalization: TextCapitalization.sentences,
+                  minLines: 1,
+                  maxLines: 4,
+                  onChanged: (_) => setState(() {}),
+                  decoration: const InputDecoration(
+                    labelText: 'Grund *',
+                    hintText: 'z.B. Urlaub, Krankheit...',
+                    floatingLabelBehavior: FloatingLabelBehavior.always,
+                    border: InputBorder.none,
+                  ),
+                ),
+              ),
+            ),
+            _rangeHeader(),
+            CalendarDatePicker(
+              key: ValueKey(_calendarKey),
+              initialDate: _until ?? _from ?? now,
+              firstDate: DateTime(now.year - 1),
+              lastDate: DateTime(now.year + 5),
+              onDateChanged: _onPick,
+            ),
+            if (widget.showLongAbsenceHint)
+              const Padding(
+                padding: EdgeInsets.fromLTRB(16, 8, 16, 0),
+                child: Text(
+                  'Für längere Abwesenheiten empfiehlt sich die Pausieren-Funktion, '
+                  'damit du nicht in neuen Terminen erscheinst.',
+                  style: TextStyle(color: AppColors.warningDark),
+                ),
+              ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+              child: FilledButton.icon(
+                onPressed: _valid ? _confirm : null,
+                icon: const Icon(Icons.calendar_today_outlined),
+                label: const Text('Abwesenheit eintragen'),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -192,23 +356,12 @@ class _SelfPauseSheet extends StatefulWidget {
 class _SelfPauseSheetState extends State<_SelfPauseSheet> {
   final _reasonController = TextEditingController();
   DateTime? _until;
+  bool _calendarOpen = false;
 
   @override
   void dispose() {
     _reasonController.dispose();
     super.dispose();
-  }
-
-  Future<void> _pickDate() async {
-    final now = DateTime.now();
-    final picked = await showDatePicker(
-      context: context,
-      initialDate: _until ?? now.add(const Duration(days: 30)),
-      firstDate: now,
-      lastDate: DateTime(now.year + 5),
-      locale: const Locale('de', 'DE'),
-    );
-    if (picked != null) setState(() => _until = picked);
   }
 
   void _confirm() {
@@ -222,6 +375,7 @@ class _SelfPauseSheetState extends State<_SelfPauseSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final now = DateTime.now();
     return Padding(
       padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
       child: SingleChildScrollView(
@@ -235,6 +389,7 @@ class _SelfPauseSheetState extends State<_SelfPauseSheet> {
               actions: [
                 IconButton(
                   icon: const Icon(Icons.close),
+                  tooltip: 'Schließen',
                   onPressed: () => Navigator.of(context).pop(),
                 ),
               ],
@@ -249,23 +404,37 @@ class _SelfPauseSheetState extends State<_SelfPauseSheet> {
                 decoration: const InputDecoration(
                   labelText: 'Grund',
                   hintText: 'Warum möchtest du pausieren?',
+                  floatingLabelBehavior: FloatingLabelBehavior.always,
                 ),
               ),
             ),
+            // Ionic: accordion "Pausiert bis (optional)" with inline calendar
             ListTile(
-              leading: const Icon(Icons.event),
+              tileColor: Theme.of(context).colorScheme.surfaceContainerHighest,
               title: const Text('Pausiert bis (optional)'),
               subtitle: Text(_until != null
                   ? DateFormat('dd.MM.yyyy').format(_until!)
                   : 'Kein Enddatum gewählt'),
-              trailing: _until != null
-                  ? IconButton(
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (_until != null)
+                    IconButton(
                       icon: const Icon(Icons.cancel_outlined, color: AppColors.medium),
                       onPressed: () => setState(() => _until = null),
-                    )
-                  : null,
-              onTap: _pickDate,
+                    ),
+                  Icon(_calendarOpen ? Icons.expand_less : Icons.expand_more),
+                ],
+              ),
+              onTap: () => setState(() => _calendarOpen = !_calendarOpen),
             ),
+            if (_calendarOpen)
+              CalendarDatePicker(
+                initialDate: _until ?? now,
+                firstDate: DateTime(now.year, now.month, now.day),
+                lastDate: DateTime(now.year + 5),
+                onDateChanged: (d) => setState(() => _until = d),
+              ),
             Padding(
               padding: const EdgeInsets.all(AppDimensions.paddingM),
               child: FilledButton(
