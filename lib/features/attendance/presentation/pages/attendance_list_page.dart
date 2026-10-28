@@ -448,7 +448,7 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
             child: _condense.listen(
               child: ListView(
                 // Room for the FAB below the last card (Ionic marginBottom)
-                padding: const EdgeInsets.only(bottom: 96),
+                padding: EdgeInsets.only(bottom: scrollEndPadding(context, base: 16, fabRoom: 80)),
                 children: [
                   if (largeTitle) IosLargeTitle(context.l10n.attListEvents),
                   // DUTY: own duties waiting for confirmation

@@ -20,6 +20,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 import '../../../attendance/presentation/widgets/ios_condense_header.dart'; // UX_ATT
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 
 /// IOS_FORMS2: Ionic opens the Werkhistorie with
 /// `modalController.create({ component: HistoryPage, presentingElement })`,
@@ -193,7 +194,7 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
                       _searchQuery.isNotEmpty
                           // UX_SETTINGS: Ionic shows a flat list while searching
                           ? ListView.separated(
-                            padding: const EdgeInsets.only(bottom: 88),
+                            padding: EdgeInsets.only(bottom: scrollEndPadding(context, base: 16, fabRoom: 72)),
                             itemCount: filtered.length,
                             separatorBuilder:
                                 (_, __) => const Divider(height: 1),
@@ -205,7 +206,7 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
                                 ),
                           )
                           : ListView.builder(
-                            padding: const EdgeInsets.only(bottom: 88),
+                            padding: EdgeInsets.only(bottom: scrollEndPadding(context, base: 16, fabRoom: 72)),
                             itemCount: grouped.length,
                             itemBuilder: (context, index) {
                               final group = grouped[index];
@@ -224,10 +225,10 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
           ),
         ],
       ),
-      floatingActionButton: IonFabButton(
+      floatingActionButton: TabBarFab.wrap(IonFabButton(
         onPressed: () => _showAddDialog(),
         icon: Icons.add,
-      ),
+      )),
     );
   }
 
@@ -279,6 +280,7 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
 
     final result = await showModalBottomSheet<bool>(
       context: context,
+      useRootNavigator: true, // IOS_SHELL2: above the tab bar
       isScrollControlled: true,
       showDragHandle: true,
       useSafeArea: true,
@@ -459,7 +461,7 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
   /// Ionic songSelectModal: full-screen "Werke auswählen" with a checkmark
   /// button, a searchbar toolbar and an inset checkbox list.
   Future<Set<int>?> _pickSongs(List<Song> songs, Set<int> initial) {
-    return Navigator.of(context).push<Set<int>>(
+    return Navigator.of(context, rootNavigator: true).push<Set<int>>(
       MaterialPageRoute(
         fullscreenDialog: true,
         builder: (_) => _HistorySongPicker(songs: songs, initial: initial),

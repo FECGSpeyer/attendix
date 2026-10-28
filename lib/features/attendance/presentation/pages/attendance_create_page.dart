@@ -39,6 +39,7 @@ import '../../../../shared/widgets/adaptive/adaptive.dart'
     hide IonInformationIcon; // IOS_LOOK
 import '../../../../shared/widgets/layout/ionic_ios.dart'; // IOS_FORMS2
 import '../widgets/ion_glyph_icons.dart'; // IOS_FORMS2
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 
 /// UX_ATT: opens "Termin hinzufügen" as a sheet over the list (Ionic att-list
 /// addAttModal, breakpoints [0, 0.8, 1], initial 0.8). Returns true when
@@ -48,6 +49,7 @@ Future<bool> showAttendanceCreateSheet(BuildContext context) async {
   final saving = ValueNotifier<bool>(false);
   final result = await showModalBottomSheet<bool>(
     context: context,
+    useRootNavigator: true, // IOS_SHELL2: above the tab bar
     isScrollControlled: true,
     useSafeArea: true,
     // UX_ATT: Ionic sheet modals show the grabber (handle) at the top
@@ -186,7 +188,7 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
 
     final body = ListView(
       controller: widget.scrollController,
-      padding: const EdgeInsets.only(bottom: 32),
+      padding: EdgeInsets.only(bottom: scrollEndPadding(context, base: 32)),
       children: [
         _InsetGroup(children: [
           // Datum (Mehrfachauswahl möglich) + info button
@@ -754,6 +756,7 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
 
     showModalBottomSheet(
       context: context,
+      useRootNavigator: true, // IOS_SHELL2: above the tab bar
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),

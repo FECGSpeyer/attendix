@@ -18,7 +18,7 @@ import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Opens "Dienste verteilen". Returns true when assignments were saved.
 Future<bool> openDutyDistributePage(BuildContext context) async {
-  final result = await Navigator.of(context).push<bool>(MaterialPageRoute(
+  final result = await Navigator.of(context, rootNavigator: true).push<bool>(MaterialPageRoute(
     fullscreenDialog: true,
     builder: (_) => const DutyDistributePage(),
   ));

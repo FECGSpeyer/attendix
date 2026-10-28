@@ -260,6 +260,7 @@ String _dutyMeta(DutyTermin t) {
 Future<void> showOpenDutiesSheet(BuildContext context) {
   return showModalBottomSheet<void>(
     context: context,
+    useRootNavigator: true, // IOS_SHELL2: above the tab bar
     isScrollControlled: true,
     useSafeArea: true,
     builder: (ctx) => DraggableScrollableSheet(

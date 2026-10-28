@@ -11,6 +11,7 @@ import '../../../planning/presentation/widgets/ion_items.dart';
 void showShiftPreviewSheet(BuildContext context, ShiftPlan plan, {ShiftInstance? startInstance}) {
   showModalBottomSheet(
     context: context,
+    useRootNavigator: true, // IOS_SHELL2: above the tab bar
     isScrollControlled: true,
     useSafeArea: true,
     builder: (context) => FractionallySizedBox(

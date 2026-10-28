@@ -10,6 +10,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../../core/theme/app_colors.dart';
+import 'package:attendix/shared/widgets/adaptive/app_toolbar.dart' show ToolbarButtonGroup; // IOS_SHELL2
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 
 /// True when the page should look like Ionic's iOS mode.
 bool ionIsIos(BuildContext context) =>
@@ -562,6 +564,12 @@ Widget ionCondenseHeader(
               child: trailing,
             ),
           ),
+    // IOS_SHELL2: a header button group brings its own 12pt edge margin
+    // (like in the AppBar); Cupertino's 16pt bar padding would push the
+    // capsule 28pt from the right.
+    padding: trailing is ToolbarButtonGroup
+        ? const EdgeInsetsDirectional.only(start: 16)
+        : null,
     transitionBetweenRoutes: false,
     backgroundColor: bg.withValues(alpha: 0.92),
     // ios26 toolbars have no hairline
@@ -937,12 +945,18 @@ class IonPage extends StatelessWidget {
             leading: leading,
             trailing: actions.isEmpty
                 ? null
-                : Row(mainAxisSize: MainAxisSize.min, children: actions),
+                : actions.length == 1
+                    ? actions.first
+                    : Row(mainAxisSize: MainAxisSize.min, children: actions),
           ),
         if (ios && onRefresh != null)
           CupertinoSliverRefreshControl(onRefresh: onRefresh),
         ...slivers,
-        const SliverToBoxAdapter(child: SizedBox(height: 96)),
+        // IOS_SHELL2: list end above the floating tab bar (iOS shell:
+        // MediaQuery padding; the FAB sits in the tab bar row).
+        SliverToBoxAdapter(
+            child: SizedBox(
+                height: scrollEndPadding(context, base: 16, fabRoom: 80))),
       ],
     );
     if (!ios && onRefresh != null) {
@@ -954,7 +968,7 @@ class IonPage extends StatelessWidget {
           ? null
           : AppBar(title: Text(title), leading: leading, actions: actions),
       body: body,
-      floatingActionButton: floatingActionButton,
+      floatingActionButton: TabBarFab.wrap(floatingActionButton), // IOS_SHELL2
     );
   }
 }

@@ -22,6 +22,7 @@ void showFeedbackSheet(BuildContext context) {
     final full = available > 100 ? (available - 10) / available : 1.0;
     showModalBottomSheet(
       context: context,
+      useRootNavigator: true, // IOS_SHELL2: above the tab bar
       isScrollControlled: true,
       useSafeArea: true,
       showDragHandle: false,
@@ -35,6 +36,7 @@ void showFeedbackSheet(BuildContext context) {
   }
   showModalBottomSheet(
     context: context,
+    useRootNavigator: true, // IOS_SHELL2: above the tab bar
     isScrollControlled: true,
     useSafeArea: true,
     builder: (context) => const _FeedbackSheet(),

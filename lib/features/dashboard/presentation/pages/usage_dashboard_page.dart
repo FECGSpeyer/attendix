@@ -9,6 +9,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/dashboard/dashboard_models.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 
 const _palette = [
   Color(0xFF2DD36F), Color(0xFF3880FF), Color(0xFFFFC409), Color(0xFFEB445A),
@@ -105,7 +106,7 @@ class UsageDashboardPage extends ConsumerWidget {
     final perDay = fillUsagePerDay(data.perDay, range);
 
     return ListView(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.fromLTRB(16, 16, 16, scrollEndPadding(context, base: 16)),
       children: [
         GridView.count(
           crossAxisCount: MediaQuery.sizeOf(context).width >= 768 ? 4 : 2,

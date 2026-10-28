@@ -12,6 +12,7 @@ import '../../../../shared/widgets/loading/loading.dart';
 import '../../../planning/presentation/widgets/ion_items.dart';
 import '../../team_org_utils.dart';
 import 'task_form_sheet.dart';
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 
 /// Tab "Aufgaben": leadership sees all tasks with person filters and can add
 /// tasks; members see only their own tasks (RLS) and can complete them.
@@ -54,14 +55,14 @@ class _TasksTabState extends ConsumerState<TasksTab> {
     final l10n = context.l10n;
 
     return Scaffold(
-      floatingActionButton: isLeader
+      floatingActionButton: TabBarFab.wrap(isLeader
           ? FloatingActionButton(
               heroTag: 'team-org-add-task',
               tooltip: l10n.teamOrgCreateTask,
               onPressed: _addTask,
               child: const Icon(Icons.add),
             )
-          : null,
+          : null),
       body: tasksAsync.when(
         loading: () => const TeamOrgListSkeleton(), // Ionic ion-skeleton-text (3 rows)
         error: (_, __) => Center(child: Text(l10n.teamOrgTasksLoadFailed)),
@@ -96,7 +97,7 @@ class _TasksTabState extends ConsumerState<TasksTab> {
             onRefresh: () async => ref.invalidate(teamTasksProvider),
             child: ListView(
               physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.only(bottom: 88),
+              padding: EdgeInsets.only(bottom: scrollEndPadding(context, base: 16, fabRoom: 72)),
               children: [
                 // Ionic `.task-chips`: horizontally scrolling ion-chips (white,
                 // active = primary shade).

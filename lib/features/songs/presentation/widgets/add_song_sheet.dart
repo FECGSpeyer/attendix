@@ -238,6 +238,7 @@ class _AddSongSheetState extends ConsumerState<AddSongSheet> {
 Future<int?> showAddSongSheet(BuildContext context, SongsListData data) {
   return showModalBottomSheet<int>(
     context: context,
+    useRootNavigator: true, // IOS_SHELL2: above the tab bar
     isScrollControlled: true,
     useSafeArea: true,
     builder: (_) => AddSongSheet(data: data),

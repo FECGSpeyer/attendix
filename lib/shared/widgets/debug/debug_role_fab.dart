@@ -40,6 +40,7 @@ class DebugRoleFab extends ConsumerWidget {
   ) {
     showModalBottomSheet(
       context: context,
+      useRootNavigator: true, // IOS_SHELL2: above the tab bar
       builder: (context) => _RolePickerSheet(
         realRole: realRole,
         currentOverride: currentOverride,

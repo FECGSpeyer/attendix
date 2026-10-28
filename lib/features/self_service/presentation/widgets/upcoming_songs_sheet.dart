@@ -284,6 +284,7 @@ List<SongPrintEntry> collectCurrentSongPrintEntries(
 Future<void> showUpcomingSongsSheet(BuildContext context) {
   return showModalBottomSheet(
     context: context,
+    useRootNavigator: true, // IOS_SHELL2: above the tab bar
     isScrollControlled: true,
     useSafeArea: true,
     backgroundColor: Colors.transparent,

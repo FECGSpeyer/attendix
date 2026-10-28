@@ -16,6 +16,7 @@ import '../../team_org_utils.dart';
 import '../widgets/task_form_sheet.dart';
 import '../widgets/tasks_tab.dart' show TeamOrgBadge, priorityColor, outcomeColor;
 import '../widgets/quick_create_attendance.dart';
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// How many upcoming Termine "Einplanen" offers.
@@ -216,19 +217,22 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage> {
             ),
         ],
       ),
-      floatingActionButton: isLeader && (item != null || _isNew)
+      floatingActionButton: TabBarFab.wrap(isLeader && (item != null || _isNew)
           ? FloatingActionButton(
               tooltip: l10n.commonSave,
               onPressed: _saving ? null : _save,
               child: const Icon(Icons.save_outlined),
             )
-          : null,
+          : null),
       body: itemAsync.isLoading
           ? const Center(child: AppSpinner())
           : (!_isNew && item == null)
               ? Center(child: Text(l10n.agendaFlutterNotFound))
               : ListView(
-                  padding: EdgeInsets.only(bottom: isLeader ? 96 : 32),
+                  padding: EdgeInsets.only(
+                      bottom: isLeader
+                          ? scrollEndPadding(context, base: 16, fabRoom: 80)
+                          : scrollEndPadding(context, base: 32)),
                   children: [
                     if (isLeader) ..._leaderForm() else ..._readOnly(item!),
                     if (item != null && item.proposer.fullName.isNotEmpty)

@@ -153,10 +153,14 @@ class SettingsPage extends ConsumerWidget {
         child: ListView(
           physics: const AlwaysScrollableScrollPhysics(),
           // iOS: inset lists 20pt from the edges (ios26 insetGrouped,
-          // IOS_SETTINGS2), hero card margin-top 12, room for the ion-fab.
+          // IOS_SETTINGS2), hero card margin-top 12; the ion-fab sits in the
+          // tab bar row, the list ends above the floating tab bar (IOS_SHELL2).
           padding: ios
-              ? const EdgeInsets.fromLTRB(IonIos.insetMargin, 12, IonIos.insetMargin, 88)
-              : const EdgeInsets.all(AppDimensions.paddingM),
+              ? EdgeInsets.fromLTRB(IonIos.insetMargin, 12, IonIos.insetMargin,
+                  scrollEndPadding(context, base: 16))
+              : EdgeInsets.fromLTRB(AppDimensions.paddingM, AppDimensions.paddingM,
+                  AppDimensions.paddingM,
+                  scrollEndPadding(context, base: AppDimensions.paddingM)),
           children: [
             // IOS_SETTINGS2: no Flutter-only PWA install hint here — Ionic
             // only shows its "Attendix als App" promo card.

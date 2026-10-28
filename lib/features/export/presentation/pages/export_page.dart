@@ -27,6 +27,7 @@ import '../../../settings/presentation/widgets/settings_list.dart'; // UX_SETTIN
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 import '../../../../core/services/native/native_file_service.dart'; // NATIVE_MISC
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 
 /// Export Page
 ///
@@ -144,7 +145,7 @@ class _ExportPageState extends ConsumerState<ExportPage> {
         ],
       ),
       body: ListView(
-        padding: const EdgeInsets.only(bottom: AppDimensions.paddingL),
+        padding: EdgeInsets.only(bottom: scrollEndPadding(context, base: AppDimensions.paddingL)),
         children: [
           // Ionic `ion-segment mode="md"`: Spieler | Anwesenheit
           _ExportSegment(

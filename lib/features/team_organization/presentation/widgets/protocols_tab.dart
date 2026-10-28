@@ -11,6 +11,7 @@ import '../../team_org_utils.dart';
 import '../../../planning/presentation/widgets/ion_items.dart';
 import 'tasks_tab.dart' show TeamOrgBadge;
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 
 class _ProtocolRow {
   _ProtocolRow({
@@ -111,7 +112,7 @@ class _ProtocolsTabState extends ConsumerState<ProtocolsTab> {
           onRefresh: () async => ref.invalidate(protocolsProvider),
           child: ListView(
             physics: const AlwaysScrollableScrollPhysics(),
-            padding: const EdgeInsets.only(bottom: 80),
+            padding: EdgeInsets.only(bottom: scrollEndPadding(context, base: 16, fabRoom: 64)),
             children: [
               if (rows.isNotEmpty || _search.isNotEmpty)
                 IonSearchbar(

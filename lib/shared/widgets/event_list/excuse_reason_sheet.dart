@@ -24,6 +24,7 @@ Future<String?> showExcuseReasonSheet(
 }) {
   return showModalBottomSheet<String>(
     context: context,
+    useRootNavigator: true, // IOS_SHELL2: above the tab bar
     isScrollControlled: true,
     showDragHandle: true,
     builder: (ctx) => _ExcuseReasonSheet(
@@ -249,6 +250,7 @@ Future<Map<String, dynamic>?> showRegistrationFieldsSheet(
   };
   return showModalBottomSheet<Map<String, dynamic>>(
     context: context,
+    useRootNavigator: true, // IOS_SHELL2: above the tab bar
     isScrollControlled: true,
     showDragHandle: true,
     isDismissible: editMode,
@@ -423,6 +425,7 @@ class _RegistrationFieldsSheetState extends State<_RegistrationFieldsSheet> {
 Future<void> showEventDescriptionSheet(BuildContext context, String description) {
   return showModalBottomSheet(
     context: context,
+    useRootNavigator: true, // IOS_SHELL2: above the tab bar
     isScrollControlled: true,
     showDragHandle: true,
     builder: (ctx) => SafeArea(

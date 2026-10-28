@@ -43,6 +43,14 @@ class IosTabBar extends StatelessWidget {
   static double bottomOffset(BuildContext context) =>
       (MediaQuery.paddingOf(context).bottom - 12).clamp(10.0, double.infinity);
 
+  /// IOS_SHELL2: room the floating bar takes at the bottom of the page
+  /// (Ionic iOS 26 `ion-content.content-fullscreen`
+  /// `--padding-bottom: calc(60px + floating-safe-area-bottom)`). Pages scroll
+  /// under the bar; [MainShell] hands this to them as MediaQuery bottom
+  /// padding.
+  static double contentInset(BuildContext context) =>
+      barHeight + bottomOffset(context);
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -155,6 +163,62 @@ class _TabButton extends StatelessWidget {
       ),
     );
   }
+}
+
+/// IOS_SHELL2: the fade at the bottom of the page behind the floating tab
+/// bar (Ionic iOS 26 `ion-content.content-fullscreen::part(background)::after`:
+/// `calc(60px + floating-safe-area-bottom)` high, page background from 0 %
+/// opacity to 80 % at half height and below). Content scrolling under the bar
+/// fades out instead of ending in a separate strip.
+class IosTabBarFade extends StatelessWidget {
+  const IosTabBarFade({super.key, required this.height, this.color});
+
+  final double height;
+
+  /// Page background (`--ios26-content-box-shadow-rgb`); defaults to the
+  /// scaffold background.
+  final Color? color;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = color ?? Theme.of(context).scaffoldBackgroundColor;
+    return IgnorePointer(
+      child: SizedBox(
+        height: height,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                c.withValues(alpha: 0),
+                c.withValues(alpha: 0.8),
+                c.withValues(alpha: 0.8),
+              ],
+              stops: const [0, 0.5, 1],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// IOS_SHELL2: end padding for a page scroll view that sets its own
+/// `padding` (scroll views without one get the MediaQuery padding
+/// automatically): [base] plus the MediaQuery bottom padding, which is the
+/// floating tab bar inset inside the iOS tab shell and the safe area
+/// elsewhere. [fabRoom] is the extra room a floating Material FAB needs over
+/// the list end; it is dropped inside the iOS tab shell, where the page FAB
+/// sits in the tab bar row ([TabBarFab]).
+double scrollEndPadding(
+  BuildContext context, {
+  double base = 0,
+  double fabRoom = 0,
+}) {
+  final inIosShell =
+      IosTabBarScope.maybeOf(context) != null && useIosLook(context);
+  return base + (inIosShell ? 0 : fabRoom) + MediaQuery.paddingOf(context).bottom;
 }
 
 /// IOS_LOOK: marks the subtree of [MainShell] that shows the floating

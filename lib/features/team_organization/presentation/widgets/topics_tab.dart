@@ -14,6 +14,7 @@ import 'agenda_picker_sheet.dart';
 import 'quick_create_attendance.dart';
 import 'tasks_tab.dart' show TeamOrgBadge, TeamOrgListSkeleton, priorityColor;
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 
 /// Tab "Themen": leadership reviews suggestions, plans the next Termin and
 /// keeps the Themenspeicher; members suggest topics and see their suggestions.
@@ -215,6 +216,7 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
   Future<void> _openReview() async {
     await showModalBottomSheet<void>(
       context: context,
+      useRootNavigator: true, // IOS_SHELL2: above the tab bar
       isScrollControlled: true,
       useSafeArea: true,
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -330,12 +332,12 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
     final l10n = context.l10n;
 
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: TabBarFab.wrap(FloatingActionButton(
         heroTag: 'team-org-add-topic',
         tooltip: l10n.teamOrgCreateTopic,
         onPressed: () => context.push('/settings/agenda-items/new'),
         child: const Icon(Icons.add),
-      ),
+      )),
       body: itemsAsync.when(
         loading: () => const TeamOrgListSkeleton(), // Ionic ion-skeleton-text (3 rows)
         error: (_, __) => Center(child: Text(l10n.agendaLoadFailed)),
@@ -361,7 +363,7 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
             },
             child: ListView(
               physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.only(bottom: 88),
+              padding: EdgeInsets.only(bottom: scrollEndPadding(context, base: 16, fabRoom: 72)),
               children: [
                 // Neue Vorschläge (Ionic `.proposal-banner`)
                 if (buckets.pending.isNotEmpty)
@@ -525,6 +527,7 @@ class _MemberTopics extends ConsumerWidget {
   Future<void> _suggest(BuildContext context, WidgetRef ref) async {
     final result = await showModalBottomSheet<bool>(
       context: context,
+      useRootNavigator: true, // IOS_SHELL2: above the tab bar
       isScrollControlled: true,
       useSafeArea: true,
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,

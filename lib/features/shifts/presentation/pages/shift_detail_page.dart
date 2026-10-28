@@ -16,6 +16,7 @@ import '../widgets/shift_preview_sheet.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 
 /// Shift Detail Page
 ///
@@ -126,7 +127,7 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
           onPressed: () => _confirmDelete(context, usageCount.valueOrNull ?? 0),
         ),
       ],
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: TabBarFab.wrap(FloatingActionButton(
         onPressed: _isLoading ? null : _saveChanges,
         tooltip: context.l10n.commonSave,
         child: _isLoading
@@ -136,9 +137,9 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
                 child: AppSpinner(strokeWidth: 2, color: Colors.white),
               )
             : const Icon(Icons.save_outlined),
-      ),
+      )),
       bodyBuilder: (context, largeTitle) => ListView(
-        padding: const EdgeInsets.only(bottom: 100), // Space for FAB
+        padding: EdgeInsets.only(bottom: scrollEndPadding(context, base: 16, fabRoom: 84)), // Space for FAB
         children: [
           if (largeTitle != null) largeTitle,
           _buildIntroCard(context),
@@ -530,6 +531,7 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
 
     await showModalBottomSheet(
       context: context,
+      useRootNavigator: true, // IOS_SHELL2: above the tab bar
       isScrollControlled: true,
       useSafeArea: true,
       builder: (context) => CopyShiftToTenantSheet(shift: currentPlan),

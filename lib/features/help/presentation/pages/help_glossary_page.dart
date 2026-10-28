@@ -6,6 +6,7 @@ import '../../data/help_content_service.dart';
 import '../widgets/help_markdown.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../settings/presentation/widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 
 /// Alphabetical glossary with search.
 ///
@@ -55,7 +56,7 @@ class _HelpGlossaryPageState extends ConsumerState<HelpGlossaryPage> {
         ),
       ),
       body: ListView(
-        padding: const EdgeInsets.all(AppDimensions.paddingM),
+        padding: EdgeInsets.fromLTRB(AppDimensions.paddingM, AppDimensions.paddingM, AppDimensions.paddingM, scrollEndPadding(context, base: AppDimensions.paddingM)),
         children: [
           SettingsListSection(
             icons: false,

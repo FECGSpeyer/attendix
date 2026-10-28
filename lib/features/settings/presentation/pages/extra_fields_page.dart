@@ -208,6 +208,7 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
 
     return showModalBottomSheet<ExtraField>(
       context: context,
+      useRootNavigator: true, // IOS_SHELL2: above the tab bar
       isScrollControlled: true,
       builder: (sheetContext) => StatefulBuilder(
         builder: (ctx, setSheet) {

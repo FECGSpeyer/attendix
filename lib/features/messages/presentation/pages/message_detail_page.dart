@@ -19,6 +19,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../settings/presentation/widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
 import '../message_format.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 
 enum _Filter { all, read, open, problems }
 
@@ -169,7 +170,7 @@ class _MessageDetailPageState extends ConsumerState<MessageDetailPage> {
 
           final list = ListView(
             physics: const AlwaysScrollableScrollPhysics(),
-            padding: const EdgeInsets.all(AppDimensions.paddingM),
+            padding: EdgeInsets.fromLTRB(AppDimensions.paddingM, AppDimensions.paddingM, AppDimensions.paddingM, scrollEndPadding(context, base: AppDimensions.paddingM)),
             children: children,
           );
           return isManager ? RefreshIndicator.adaptive(onRefresh: _refresh, child: list) : list;

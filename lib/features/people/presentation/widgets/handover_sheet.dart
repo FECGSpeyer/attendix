@@ -828,6 +828,7 @@ Future<bool?> showHandoverSheet(
 }) {
   return showModalBottomSheet<bool>(
     context: context,
+    useRootNavigator: true, // IOS_SHELL2: above the tab bar
     isScrollControlled: true,
     builder: (context) => HandoverSheet(
       selectedPlayers: selectedPlayers,

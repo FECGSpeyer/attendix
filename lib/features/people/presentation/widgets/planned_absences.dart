@@ -51,6 +51,7 @@ Future<AbsenceInput?> showAbsenceInputSheet(
 }) {
   return showModalBottomSheet<AbsenceInput>(
     context: context,
+    useRootNavigator: true, // IOS_SHELL2: above the tab bar
     isScrollControlled: true,
     useSafeArea: true,
     builder: (context) =>

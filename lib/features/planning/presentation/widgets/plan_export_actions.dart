@@ -172,6 +172,7 @@ Future<PlanShareChoice?> showPlanShareSheet(
   final hasChatId = planTelegramChatId(ref) != null;
   return showModalBottomSheet<PlanShareChoice>(
     context: context,
+    useRootNavigator: true, // IOS_SHELL2: above the tab bar
     isScrollControlled: true,
     useSafeArea: true,
     backgroundColor: Theme.of(context).scaffoldBackgroundColor,

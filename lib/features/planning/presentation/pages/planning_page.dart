@@ -32,6 +32,7 @@ import '../../../songs/presentation/utils/song_utils.dart';
 import '../../../../core/providers/branding_providers.dart'; // MISC2
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 
 /// Provider for songs list (for adding to plan)
 final planSongsProvider = FutureProvider<List<Song>>((ref) async {
@@ -1052,11 +1053,11 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
             ),
           ],
         ),
-        floatingActionButton: FloatingActionButton(
+        floatingActionButton: TabBarFab.wrap(FloatingActionButton(
           tooltip: context.l10n.personActions,
           onPressed: _showOptions,
           child: const Icon(Icons.more_horiz),
-        ),
+        )),
         body: attendancesAsync.when(
           loading: () => const Center(child: AppSpinner()),
           error: (e, _) => Center(child: Text(context.l10n.planningFlutterErrorWith(friendlyErrorMessage(e)))),
@@ -1064,7 +1065,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
           data: (_) => _requestedNotFound
               ? Center(child: Text(context.l10n.attendanceFlutterNotFound))
               : ListView(
-            padding: const EdgeInsets.only(bottom: 96),
+            padding: EdgeInsets.only(bottom: scrollEndPadding(context, base: 16, fabRoom: 80)),
             children: [
               _buildAttendanceCard(att),
               // Ionic: second ion-list [inset] "Ablauf" with the "+" popover

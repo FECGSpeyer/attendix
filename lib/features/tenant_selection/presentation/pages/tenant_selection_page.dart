@@ -202,6 +202,7 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
   void _openInstanceSettings() {
     showModalBottomSheet<void>(
       context: context,
+      useRootNavigator: true, // IOS_SHELL2: above the tab bar
       showDragHandle: true,
       builder:
           (sheetContext) => Consumer(

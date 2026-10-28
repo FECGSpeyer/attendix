@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 // UX_PLANNING (wave 8): page-structure building blocks that mirror the Ionic
@@ -639,7 +640,7 @@ class _IonCondenseScaffoldState extends State<IonCondenseScaffold> {
     final ios = isIonIos(context);
     return Scaffold(
       backgroundColor: widget.backgroundColor,
-      floatingActionButton: widget.floatingActionButton,
+      floatingActionButton: TabBarFab.wrap(widget.floatingActionButton), // IOS_SHELL2
       appBar: AppBar(
         leading: widget.leading,
         automaticallyImplyLeading: widget.automaticallyImplyLeading,

@@ -24,7 +24,7 @@ Future<void> openUnavailabilityPage(
   String personName = '',
   bool forOther = false,
 }) {
-  return Navigator.of(context).push(MaterialPageRoute<void>(
+  return Navigator.of(context, rootNavigator: true).push(MaterialPageRoute<void>(
     fullscreenDialog: true,
     builder: (_) => UnavailabilityPage(personId: personId, personName: personName, forOther: forOther),
   ));

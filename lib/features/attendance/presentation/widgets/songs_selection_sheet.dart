@@ -61,6 +61,7 @@ class SongsSelectionSheet extends ConsumerStatefulWidget {
 
     await showModalBottomSheet(
       context: context,
+      useRootNavigator: true, // IOS_SHELL2: above the tab bar
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
@@ -231,7 +232,7 @@ class _SongsSelectionSheetState extends ConsumerState<SongsSelectionSheet> {
 
   /// Full-screen "Werke auswählen" with "Werk suchen..." (Ionic songSelectModal).
   Future<void> _openSongPicker() async {
-    final result = await Navigator.of(context).push<Set<int>>(
+    final result = await Navigator.of(context, rootNavigator: true).push<Set<int>>(
       MaterialPageRoute(
         fullscreenDialog: true,
         builder: (_) => _SongPickerPage(initialSelection: _selectedSongIds),

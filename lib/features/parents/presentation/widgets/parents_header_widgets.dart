@@ -234,6 +234,7 @@ Future<void> showCurrentSongsSheet(
 ) {
   return showModalBottomSheet(
     context: context,
+    useRootNavigator: true, // IOS_SHELL2: above the tab bar
     isScrollControlled: true,
     useSafeArea: true,
     builder: (sheetContext) => FractionallySizedBox(
@@ -319,6 +320,7 @@ Future<void> showParentsLegendSheet(BuildContext context) {
   final l10n = context.l10n;
   return showModalBottomSheet(
     context: context,
+    useRootNavigator: true, // IOS_SHELL2: above the tab bar
     isScrollControlled: true,
     builder: (_) => SafeArea(
       child: SingleChildScrollView(

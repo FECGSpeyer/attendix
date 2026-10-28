@@ -29,6 +29,7 @@ Future<T?> showSettingsSheet<T>(
 }) {
   return showModalBottomSheet<T>(
     context: context,
+    useRootNavigator: false, // IOS_SETTINGS2: shell navigator, so pages pushed from the sheet open above it like Ionic
     isScrollControlled: true,
     useSafeArea: true,
     clipBehavior: Clip.antiAlias,

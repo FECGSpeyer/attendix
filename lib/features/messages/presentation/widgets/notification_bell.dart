@@ -15,6 +15,7 @@ import '../../../../data/models/tenant/tenant.dart';
 import '../../../../data/models/user_notification/user_notification.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../shared/widgets/dialogs/ion_modal.dart'; // IOS_SHELL2
 import '../../../../shared/widgets/layout/ion_modal_handle.dart'; // IOS_SHEETS
 
 /// Notification bell for page app bars (port of Ionic `NotificationBellComponent`).
@@ -50,11 +51,27 @@ class NotificationBell extends ConsumerWidget {
     // over the header (no extra 48pt drag-handle row), so the sheet top sits
     // where Ionic's does.
     final ios = useIosLook(context);
+    // IOS_SHELL2: Ionic md on desktop/tablet (min 768 × 600) shows the modal
+    // as a centred 600 × 500 card instead of a full-width sheet.
+    if (!ios && isIonModalCard(MediaQuery.sizeOf(context))) {
+      final target = await showIonModal<_BellTarget>(
+        context,
+        builder: (_) => Material(
+          color: Theme.of(context).scaffoldBackgroundColor,
+          child: _NotificationCenter(initialAllTenants: allTenants),
+        ),
+      );
+      if (target != null && context.mounted) {
+        await _navigate(context, ref, target.notification);
+      }
+      return;
+    }
     final available =
         MediaQuery.sizeOf(context).height - MediaQuery.paddingOf(context).top;
     final full = ios && available > 100 ? (available - 10) / available : 1.0;
     final target = await showModalBottomSheet<_BellTarget>(
       context: context,
+      useRootNavigator: true, // IOS_SHELL2: above the tab bar
       isScrollControlled: true,
       useSafeArea: true,
       showDragHandle: !ios,
@@ -158,10 +175,10 @@ class _BellTarget {
 }
 
 class _NotificationCenter extends ConsumerStatefulWidget {
-  const _NotificationCenter({required this.initialAllTenants, required this.scrollController});
+  const _NotificationCenter({required this.initialAllTenants, this.scrollController});
 
   final bool initialAllTenants;
-  final ScrollController scrollController;
+  final ScrollController? scrollController;
 
   @override
   ConsumerState<_NotificationCenter> createState() => _NotificationCenterState();

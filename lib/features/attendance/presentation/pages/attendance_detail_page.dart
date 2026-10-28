@@ -60,6 +60,7 @@ import '../../../../core/utils/demo_guard.dart';
 import '../../../team_organization/presentation/widgets/attendance_protocol_section.dart'; // PROTOCOL
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Attendance detail/taking page
@@ -462,7 +463,10 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
         // IOS_DETAIL: the shell's floating button / FAB never covers the
         // last row (Ionic .marginBottom 5rem + tabbar-safe padding).
         final fabShown = ios && !ref.watch(effectiveRoleProvider).isViewer;
-        final bottomSpace = MediaQuery.paddingOf(context).bottom + (fabShown ? 96.0 : 80.0);
+        // IOS_SHELL2: iOS shell → the FAB sits in the tab bar row and the
+        // MediaQuery padding is the floating tab bar inset.
+        final bottomSpace = scrollEndPadding(context,
+            base: 16, fabRoom: fabShown ? 80.0 : 64.0);
 
         return Scaffold(
           backgroundColor: Theme.of(context).brightness == Brightness.dark ? null : AppColors.light,
@@ -774,11 +778,14 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
           // UX_ATT: no Flutter-only bottom summary bar (Ionic has none; the
           // counts live in "Statusübersicht"). On iOS Ionic shows a FAB that
           // opens the Ablaufplan editor (isIos && attendance → editPlan()).
+          // IOS_SHELL2: iOS → ion-fab in the tab bar row
           floatingActionButton: fabShown
-              ? IonFabButton(
-                  heroTag: 'att-detail-plan-fab',
-                  icon: Icons.format_list_bulleted,
-                  onPressed: () => context.push<bool>('/planning?attendanceId=${widget.attendanceId}'),
+              ? TabBarFab(
+                  child: IonFabButton(
+                    heroTag: 'att-detail-plan-fab',
+                    icon: Icons.format_list_bulleted,
+                    onPressed: () => context.push<bool>('/planning?attendanceId=${widget.attendanceId}'),
+                  ),
                 )
               : null,
         );
@@ -1084,6 +1091,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     ];
     await showModalBottomSheet<void>(
       context: context,
+      useRootNavigator: true, // IOS_SHELL2: above the tab bar
       showDragHandle: true,
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setSheetState) {
@@ -1203,6 +1211,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     final hasRegFields = type?.registrationFields?.isNotEmpty ?? false;
     await showModalBottomSheet<void>(
       context: context,
+      useRootNavigator: true, // IOS_SHELL2: above the tab bar
       showDragHandle: true,
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setSheetState) => SafeArea(

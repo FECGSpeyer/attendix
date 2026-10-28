@@ -23,6 +23,7 @@ Future<String?> showChurchPicker(
 }) {
   return showModalBottomSheet<String>(
     context: context,
+    useRootNavigator: true, // IOS_SHELL2: above the tab bar
     isScrollControlled: true,
     useSafeArea: true,
     builder: (_) => FractionallySizedBox(

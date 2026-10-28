@@ -13,6 +13,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 import '../../../settings/presentation/widgets/ion_condense.dart'; // UX_SETTINGS (WAVE 8)
 import '../../../settings/presentation/widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 
 Map<String, String> _fieldTypes(AppLocalizations l10n) => <String, String>{
       'text': l10n.typeSettingsText,
@@ -50,6 +51,7 @@ class _OrgPersonFieldsPageState extends ConsumerState<OrgPersonFieldsPage> {
   Future<void> _add(int orgId) async {
     final field = await showModalBottomSheet<OrgExtraField>(
       context: context,
+      useRootNavigator: true, // IOS_SHELL2: above the tab bar
       isScrollControlled: true,
       builder: (_) => const _FieldEditorSheet(),
     );
@@ -65,6 +67,7 @@ class _OrgPersonFieldsPageState extends ConsumerState<OrgPersonFieldsPage> {
   Future<void> _edit(int index) async {
     final field = await showModalBottomSheet<OrgExtraField>(
       context: context,
+      useRootNavigator: true, // IOS_SHELL2: above the tab bar
       isScrollControlled: true,
       builder: (_) => _FieldEditorSheet(initial: _fields![index]),
     );
@@ -171,7 +174,7 @@ class _OrgPersonFieldsPageState extends ConsumerState<OrgPersonFieldsPage> {
           ? const Center(child: AppSpinner())
           : ios
               ? ListView(
-                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+                  padding: EdgeInsets.fromLTRB(16, 0, 16, scrollEndPadding(context, base: 24)),
                   children: [
                     IonLargeTitle(context.l10n.orgPersonFields, padding: const EdgeInsets.only(bottom: 4)),
                     const SizedBox(height: 16),
@@ -197,7 +200,7 @@ class _OrgPersonFieldsPageState extends ConsumerState<OrgPersonFieldsPage> {
                   ],
                 )
               : ListView(
-              padding: const EdgeInsets.only(bottom: 24),
+              padding: EdgeInsets.only(bottom: scrollEndPadding(context, base: 24)),
               children: [
                 ListTile(
                   leading: const Icon(Icons.info_outline, color: AppColors.medium),

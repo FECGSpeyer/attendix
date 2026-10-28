@@ -14,6 +14,7 @@ import '../widgets/event_cards.dart';
 import '../widgets/people_cards.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/app_toolbar.dart'; // IOS_SHELL
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 
 /// Home dashboard tab (Ionic `home-dashboard`): configurable set of cards in a
 /// masonry-like grid (1 / 2 / 3 columns depending on width).
@@ -93,7 +94,7 @@ class HomeDashboardPage extends ConsumerWidget {
                   if (columns == 1) {
                     return ListView(
                       physics: const AlwaysScrollableScrollPhysics(),
-                      padding: const EdgeInsets.only(bottom: 24),
+                      padding: EdgeInsets.only(bottom: scrollEndPadding(context, base: 24)),
                       children: widgets,
                     );
                   }
@@ -101,7 +102,7 @@ class HomeDashboardPage extends ConsumerWidget {
                   final perColumn = (widgets.length / columns).ceil();
                   return SingleChildScrollView(
                     physics: const AlwaysScrollableScrollPhysics(),
-                    padding: const EdgeInsets.fromLTRB(8, 0, 8, 24),
+                    padding: EdgeInsets.fromLTRB(8, 0, 8, scrollEndPadding(context, base: 24)),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [

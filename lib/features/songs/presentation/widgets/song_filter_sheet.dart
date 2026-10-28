@@ -214,6 +214,7 @@ class _Header extends StatelessWidget {
 Future<void> showSongFilterSheet(BuildContext context, SongsListData data) {
   return showModalBottomSheet(
     context: context,
+    useRootNavigator: true, // IOS_SHELL2: above the tab bar
     isScrollControlled: true,
     useSafeArea: true,
     builder: (context) => SongFilterSheet(data: data),

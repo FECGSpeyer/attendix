@@ -44,6 +44,7 @@ Future<void> selfServiceReportAbsence(
 }) async {
   final input = await showModalBottomSheet<AbsenceInput>(
     context: context,
+    useRootNavigator: true, // IOS_SHELL2: above the tab bar
     isScrollControlled: true,
     useSafeArea: true,
     builder: (_) => SelfServiceAbsenceSheet(showLongAbsenceHint: canSelfPause),

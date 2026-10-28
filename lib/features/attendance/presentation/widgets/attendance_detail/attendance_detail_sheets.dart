@@ -178,6 +178,7 @@ Future<String?> showFilesFolderPicker(
   final supabase = ProviderScope.containerOf(context, listen: false).read(supabaseClientProvider);
   return showModalBottomSheet<String>(
     context: context,
+    useRootNavigator: true, // IOS_SHELL2: above the tab bar
     isScrollControlled: true,
     showDragHandle: true,
     builder: (ctx) => _FilesFolderPicker(

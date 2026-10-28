@@ -554,7 +554,8 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
           } else {
             children.addAll(sortedPeople.map(tile));
           }
-          children.add(const SizedBox(height: 104));
+          children.add(SizedBox(
+              height: scrollEndPadding(context, base: 16, fabRoom: 88)));
           return [SliverList(delegate: SliverChildListDelegate(children))];
         },
       ),
@@ -573,11 +574,13 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
           : RefreshIndicator.adaptive(onRefresh: _refresh, child: scrollView),
       floatingActionButton: _isSelectionMode
           ? _selectedPlayerIds.isNotEmpty
-              ? FloatingActionButton.extended(
-                  onPressed: _showHandoverSheet,
-                  icon: const Icon(Icons.swap_horiz),
-                  label: Text(context.l10n.peopleFlutterTransferCount(_selectedPlayerIds.length)),
-                  backgroundColor: AppColors.warning,
+              ? TabBarFab(
+                  child: FloatingActionButton.extended(
+                    onPressed: _showHandoverSheet,
+                    icon: const Icon(Icons.swap_horiz),
+                    label: Text(context.l10n.peopleFlutterTransferCount(_selectedPlayerIds.length)),
+                    backgroundColor: AppColors.warning,
+                  ),
                 )
               : null
           // Ionic: FAB "add" only for admins
@@ -1146,7 +1149,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
             ],
           ),
         ],
-        const SizedBox(height: 80),
+        SizedBox(height: scrollEndPadding(context, base: 16, fabRoom: 64)),
       ],
     );
   }
@@ -1193,7 +1196,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
         ref.read(realtimePlayersProvider).valueOrNull ?? [],
         ref.read(sharedPersonFieldValuesProvider).valueOrNull ?? const {});
     final players = _sortPeople(_filterPeople(people));
-    final updated = await Navigator.of(context).push<bool>(
+    final updated = await Navigator.of(context, rootNavigator: true).push<bool>(
       MaterialPageRoute(
         fullscreenDialog: true,
         builder: (_) => BulkEditPage(players: players),
@@ -1206,7 +1209,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
 
   // PEOPLE_IMPORT: open the person import
   Future<void> _openImport() async {
-    final imported = await Navigator.of(context).push<bool>(
+    final imported = await Navigator.of(context, rootNavigator: true).push<bool>(
       MaterialPageRoute(
         fullscreenDialog: true,
         builder: (_) => const PersonImportPage(),

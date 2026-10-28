@@ -43,6 +43,7 @@ String buildPauseHistoryText(String reason, {DateTime? from, DateTime? until}) {
 Future<PauseInput?> showPauseSheet(BuildContext context, Person person) {
   return showModalBottomSheet<PauseInput>(
     context: context,
+    useRootNavigator: true, // IOS_SHELL2: above the tab bar
     isScrollControlled: true,
     useSafeArea: true,
     builder: (_) => _PauseSheet(person: person),

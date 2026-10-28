@@ -14,6 +14,7 @@ import '../../../settings/presentation/widgets/settings_list.dart'; // UX_SETTIN
 import '../message_format.dart';
 import 'message_compose_page.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 
 /// Mitteilungen overview for admins/responsibles: all sent messages of the tenant.
 /// Port of Ionic `MessageListPage` (route `/settings/messages`).
@@ -49,11 +50,11 @@ class MessageListPage extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.messagesMessages)),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: TabBarFab.wrap(FloatingActionButton(
         tooltip: l10n.messagesNewMessage,
         onPressed: () => _compose(context),
         child: const Icon(Icons.add),
-      ),
+      )),
       body: RefreshIndicator.adaptive(
         onRefresh: () => ref.refresh(messagesProvider.future),
         child: messagesAsync.when(
@@ -78,12 +79,7 @@ class MessageListPage extends ConsumerWidget {
             }
             return ListView(
               physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.fromLTRB(
-                AppDimensions.paddingM,
-                AppDimensions.paddingM,
-                AppDimensions.paddingM,
-                96,
-              ),
+              padding: EdgeInsets.fromLTRB(AppDimensions.paddingM, AppDimensions.paddingM, AppDimensions.paddingM, scrollEndPadding(context, base: 16, fabRoom: 80)),
               // UX_SETTINGS (WAVE 8): message-list.page.html — list header
               // "Gesendet" + one inset list of sliding detail items.
               children: [

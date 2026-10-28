@@ -808,6 +808,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
 
     await showModalBottomSheet(
       context: context,
+      useRootNavigator: true, // IOS_SHELL2: above the tab bar
       isScrollControlled: true,
       builder: (ctx) => CriticalRuleSheet(
         attendanceTypes: attendanceTypes,
@@ -831,6 +832,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
 
     await showModalBottomSheet(
       context: context,
+      useRootNavigator: true, // IOS_SHELL2: above the tab bar
       isScrollControlled: true,
       builder: (ctx) => CriticalRuleSheet(
         rule: rule,

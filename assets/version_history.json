@@ -1,6 +1,18 @@
 {
   "versions": [
     {
+      "version": "0.10.0",
+      "date": "28.10.2026",
+      "changes": [
+        "🎨 Tableiste, Header-Knöpfe, Instanz-Wechsler und Sheets wie in der bisherigen App",
+        "🎨 Termin-Detail, Meine Termine, Übersicht, Mehr, Einstellungen, Formulare und Dark Mode angeglichen",
+        "🖥️ Am Computer im gewohnten Desktop-Aussehen (Web: ?mode=ios / ?mode=md zum Umschalten)",
+        "🐛 Übersicht zählt nur noch Termine der eigenen Instanzen",
+        "🐛 Gruppen im Termin wieder in der richtigen Reihenfolge",
+        "🔒 Offline-Änderungen und Plan-Entwürfe bleiben beim Kontowechsel getrennt"
+      ]
+    },
+    {
       "version": "0.9.0",
       "date": "28.10.2026",
       "changes": [

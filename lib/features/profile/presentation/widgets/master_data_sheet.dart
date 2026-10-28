@@ -26,6 +26,7 @@ Future<void> showMasterDataSheet(BuildContext context) {
   final ios = useIosLook(context);
   return showModalBottomSheet(
     context: context,
+    useRootNavigator: true, // IOS_SHELL2: above the tab bar
     isScrollControlled: true,
     useSafeArea: true,
     showDragHandle: false,

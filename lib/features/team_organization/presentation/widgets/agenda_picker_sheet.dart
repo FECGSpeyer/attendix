@@ -21,6 +21,7 @@ Future<Map<String, dynamic>?> showAgendaPickerSheet(
 }) {
   return showModalBottomSheet<Map<String, dynamic>>(
     context: context,
+    useRootNavigator: true, // IOS_SHELL2: above the tab bar
     isScrollControlled: true,
     useSafeArea: true,
     // Ionic: ion-content color="light".
