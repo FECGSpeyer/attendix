@@ -85,8 +85,11 @@ class SettingsPage extends ConsumerWidget {
     final pendingCount =
         isAdmin ? (ref.watch(realtimePendingPlayersProvider).valueOrNull?.length ?? 0) : 0;
     // Ionic getPlayersWithoutAccount: not pending, not left, e-mail, no appId
+    // SOL_FIX13: only a settled list of the current tenant (during a tenant
+    // switch `valueOrNull` may still hold the previous tenant's persons).
     final playersWithoutAccount = isAdmin
-        ? (ref.watch(playersProvider).valueOrNull ?? const <Person>[])
+        ? playersOfCurrentTenant(
+                ref.watch(playersProvider), ref.watch(currentTenantIdProvider))
             .where((p) =>
                 (p.appId == null || p.appId!.isEmpty) &&
                 !p.pending &&
@@ -607,17 +610,38 @@ class _PendingPersonsCard extends StatelessWidget {
   }
 }
 
+/// SOL_FIX13: the persons of [players] only while the list is settled
+/// (not loading / refreshing, no error) and every entry belongs to
+/// [tenantId]; otherwise empty (e.g. the previous tenant's list during a
+/// tenant switch).
+List<Person> playersOfCurrentTenant(AsyncValue<List<Person>> players, int? tenantId) {
+  if (tenantId == null || players.isLoading || players.hasError) return const [];
+  final list = players.valueOrNull ?? const <Person>[];
+  if (list.any((p) => p.tenantId != tenantId)) return const [];
+  return list;
+}
+
 /// IOS_SETTINGS2: Ionic `showAlertForAccountsCreation()` + `createAccounts()`:
 /// confirm alert listing all names ("Accounts erstellen" / "Fortfahren"),
 /// loading overlay, then one account after another (attendix-user Edge
 /// Function via [AccountCreationNotifier]); the first failure stops the run
 /// with "Fehler beim Erstellen der Accounts", otherwise "Accounts erstellt".
+///
+/// SOL_FIX13: the tenant is captured before the first await; the job only
+/// runs when every person belongs to it, and the notifier refuses to start
+/// when its repository is bound to another tenant by then.
 Future<void> createMissingAccounts(
   BuildContext context,
   WidgetRef ref,
   List<Person> players,
 ) async {
   final l10n = context.l10n;
+  final tenantId = ref.read(currentTenantIdProvider);
+  if (tenantId == null || players.any((p) => p.tenantId != tenantId)) {
+    ToastHelper.showError(context,
+        l10n.settingsCreateAccountsFailed(l10n.coreFlutterRepoPersonsNotInTenant));
+    return;
+  }
   final confirmed = await DialogHelper.showConfirmation(
     context,
     title: l10n.settingsCreateAccounts,
@@ -642,7 +666,7 @@ Future<void> createMissingAccounts(
   try {
     result = await ref
         .read(accountCreationNotifierProvider.notifier)
-        .createAccounts(players, stopOnError: true);
+        .createAccounts(players, stopOnError: true, expectedTenantId: tenantId);
   } finally {
     navigator.pop();
   }

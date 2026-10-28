@@ -36,6 +36,27 @@ const _avatarColors = [
   Color(0xFFA6475F), Color(0xFF4A6FA5), Color(0xFF8A7A2F),
 ];
 
+/// SOL_FIX13: runs [save] for section [id] after the save of the same
+/// section that is still running in [inFlight] (one chain per section, so
+/// an older document can never be written after a newer one). The returned
+/// future completes with false when [save] failed; it never throws.
+Future<bool> chainProtocolSectionSave(
+  Map<String, Future<bool>> inFlight,
+  String id,
+  Future<bool> Function() save,
+) {
+  final previous = inFlight[id] ?? Future<bool>.value(true);
+  final next = previous
+      .catchError((Object _) => false)
+      .then((_) => save())
+      .catchError((Object _) => false);
+  inFlight[id] = next;
+  next.whenComplete(() {
+    if (identical(inFlight[id], next)) inFlight.remove(id);
+  });
+  return next;
+}
+
 /// One protocol section = one field of the Ablaufplan.
 class _Section {
   _Section({
@@ -111,6 +132,9 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
   /// saves never overlap). Completes with false when the save failed.
   final Map<String, Future<bool>> _inFlight = {};
 
+  /// SOL_FIX13: set in dispose; documents are then read from [_docs].
+  bool _disposed = false;
+
   String? _activeId;
   int _savingCount = 0;
   DateTime? _lastSavedAt;
@@ -156,11 +180,24 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
   void dispose() {
     _liveTimer?.cancel();
     // Last chance: send what is still waiting in the debounce.
+    // SOL_FIX13: the latest document is captured now (before the
+    // controllers are disposed) and saved through the section's save chain,
+    // i.e. after a save of the same section that is still running — an
+    // older note can never win over the newer one.
     for (final id in _pending.toList()) {
-      _timers[id]?.cancel();
+      _timers.remove(id)?.cancel();
       final doc = _currentDoc(id);
-      if (doc != null) unawaited(_repo.saveSection(widget.attendanceId, id, doc: doc).catchError((_) => null));
+      // A save already queued in the chain finds nothing pending (no-op).
+      _pending.remove(id);
+      if (doc == null) continue;
+      _docs[id] = doc;
+      final attendanceId = widget.attendanceId;
+      unawaited(chainProtocolSectionSave(_inFlight, id, () async {
+        await _repo.saveSection(attendanceId, id, doc: doc);
+        return true;
+      }));
     }
+    _disposed = true;
     for (final s in _subscriptions.values) {
       s.cancel();
     }
@@ -330,7 +367,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
 
   Map<String, dynamic>? _currentDoc(String id) {
     final c = _controllers[id];
-    if (c == null) return _docs[id];
+    if (c == null || _disposed) return _docs[id];
     return deltaToTiptap(c.document.toDelta().toJson());
   }
 
@@ -344,13 +381,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
   /// running). Returns false when the save failed (the section stays pending).
   Future<bool> _flush(String id) {
     _timers.remove(id)?.cancel();
-    final previous = _inFlight[id];
-    final next = (previous ?? Future<bool>.value(true)).then((_) => _saveSectionNow(id));
-    _inFlight[id] = next;
-    next.whenComplete(() {
-      if (identical(_inFlight[id], next)) _inFlight.remove(id);
-    });
-    return next;
+    return chainProtocolSectionSave(_inFlight, id, () => _saveSectionNow(id));
   }
 
   Future<bool> _saveSectionNow(String id) async {

@@ -99,6 +99,18 @@ class OfflineQueuePersistException implements Exception {
   String toString() => l10nWithoutContext.coreFlutterOfflineQueueSaveFailed;
 }
 
+/// SOL_FIX13: the persisted offline queue could not be read (storage error,
+/// undecodable JSON or not a list). It is never treated as empty: nothing is
+/// written over it, so the pending writes stay stored.
+class OfflineQueueLoadException extends OfflineQueuePersistException {
+  const OfflineQueueLoadException([super.cause]);
+}
+
+/// SOL_FIX13: result of reading the persisted queue: the valid entries plus
+/// the raw JSON of entries that could not be parsed (kept verbatim on the
+/// next save, never dropped).
+typedef _LoadedQueue = ({List<QueuedWrite> valid, List<Object?> invalidRaw});
+
 /// Persistent storage + merge logic of the offline queue.
 class OfflineQueueStore {
   /// [prefs]: storage access (tests inject failing storages).
@@ -127,13 +139,20 @@ class OfflineQueueStore {
   /// SOL_FIX12: nothing is written when [change] returns the loaded list
   /// unchanged (identical). Throws [OfflineQueuePersistException] when the
   /// result could not be persisted.
+  ///
+  /// SOL_FIX13: throws [OfflineQueueLoadException] (and writes nothing) when
+  /// the stored queue could not be read; entries that could not be parsed
+  /// are written back unchanged.
   Future<List<QueuedWrite>> update(
     List<QueuedWrite> Function(List<QueuedWrite> current) change,
   ) {
     return synchronized(() async {
-      final current = await load();
+      final loaded = await _loadRaw();
+      final current = loaded.valid;
       final next = change(current);
-      if (!identical(next, current)) await save(next);
+      if (!identical(next, current)) {
+        await save(next, preserveRaw: loaded.invalidRaw);
+      }
       return next;
     });
   }
@@ -151,32 +170,57 @@ class OfflineQueueStore {
     ];
   }
 
-  Future<List<QueuedWrite>> load() async {
+  /// The valid queued writes.
+  ///
+  /// SOL_FIX13: throws [OfflineQueueLoadException] when the stored queue
+  /// cannot be read (it is never reported as empty — a following save would
+  /// otherwise overwrite the pending writes). Single invalid entries are
+  /// skipped here but kept in storage (see [update]).
+  Future<List<QueuedWrite>> load() async => (await _loadRaw()).valid;
+
+  Future<_LoadedQueue> _loadRaw() async {
+    final Object? decoded;
     try {
       final prefs = await _prefs();
       final raw = prefs.getString(queueKey);
-      if (raw == null || raw.isEmpty) return [];
-      final decoded = jsonDecode(raw);
-      if (decoded is! List) return [];
-      return decoded
-          .whereType<Map>()
-          .map((e) => QueuedWrite.fromJson(Map<String, dynamic>.from(e)))
-          .toList();
+      if (raw == null || raw.isEmpty) return (valid: <QueuedWrite>[], invalidRaw: const <Object?>[]);
+      decoded = jsonDecode(raw);
     } catch (e) {
       debugPrint('[OfflineQueue] load failed: $e');
-      return [];
+      throw OfflineQueueLoadException(e);
     }
+    if (decoded is! List) {
+      debugPrint('[OfflineQueue] load failed: stored queue is not a list');
+      throw const OfflineQueueLoadException('stored queue is not a list');
+    }
+    final valid = <QueuedWrite>[];
+    final invalid = <Object?>[];
+    for (final e in decoded) {
+      try {
+        valid.add(QueuedWrite.fromJson(Map<String, dynamic>.from(e as Map)));
+      } catch (error) {
+        debugPrint('[OfflineQueue] skipping invalid entry: $error');
+        invalid.add(e);
+      }
+    }
+    return (valid: valid, invalidRaw: invalid);
   }
 
   /// SOL_FIX12: throws [OfflineQueuePersistException] when the queue could
   /// not be persisted (never reports a write as queued that is not stored).
-  Future<void> save(List<QueuedWrite> queue) async {
+  ///
+  /// SOL_FIX13: [preserveRaw] = raw entries that could not be parsed; they
+  /// are written back unchanged.
+  Future<void> save(
+    List<QueuedWrite> queue, {
+    List<Object?> preserveRaw = const [],
+  }) async {
     bool stored;
     try {
       final prefs = await _prefs();
       stored = await prefs.setString(
         queueKey,
-        jsonEncode(queue.map((e) => e.toJson()).toList()),
+        jsonEncode([...queue.map((e) => e.toJson()), ...preserveRaw]),
       );
     } catch (e) {
       debugPrint('[OfflineQueue] save failed: $e');
@@ -409,6 +453,41 @@ final offlineFlushFnProvider = Provider<OfflineFlushFn>((ref) {
   };
 });
 
+/// SOL_FIX13: author, tenant and auth session of one person_attendances
+/// write, captured synchronously when the user acts. [OfflineQueueNotifier.enqueueIfOffline]
+/// binds the write to it; on the online path the caller passes [isCurrent]
+/// and [userId] to the repository, which checks the session again right
+/// before the mutation (an account / tenant switch in between never writes
+/// under the new account).
+class OfflineWriteSession {
+  OfflineWriteSession._({
+    required this.userId,
+    required this.tenantId,
+    required bool Function() isCurrent,
+  }) : _isCurrent = isCurrent;
+
+  /// Signed-in user at capture time (null = signed out).
+  final String? userId;
+
+  /// Current tenant at capture time.
+  final int? tenantId;
+  final bool Function() _isCurrent;
+
+  /// Whether the captured user, auth session and tenant are still active.
+  bool isCurrent() {
+    try {
+      return _isCurrent();
+    } catch (_) {
+      return false;
+    }
+  }
+
+  /// Throws [OfflineSessionChangedException] when the session changed.
+  void ensureCurrent() {
+    if (!isCurrent()) throw const OfflineSessionChangedException();
+  }
+}
+
 /// Offline queue for attendance status changes (Ionic OfflineQueueService).
 ///
 /// State = number of pending writes.
@@ -466,7 +545,15 @@ class OfflineQueueNotifier extends Notifier<int> {
   Future<void> onUserChanged() async {
     // SOL_FIX9: (synchronously) end a replay of the previous session.
     _sessionGeneration++;
-    final own = ownedBy(await _store.load(), _currentUserId);
+    final List<QueuedWrite> stored;
+    try {
+      stored = await _store.load();
+    } on OfflineQueueLoadException catch (e) {
+      // SOL_FIX13: unreadable queue – keep it stored, nothing to replay.
+      debugPrint('[OfflineQueue] queue unreadable: $e');
+      return;
+    }
+    final own = ownedBy(stored, _currentUserId);
     state = own.length;
     if (own.isNotEmpty && await ref.read(connectivityCheckProvider)()) {
       await flush();
@@ -486,27 +573,30 @@ class OfflineQueueNotifier extends Notifier<int> {
   ///
   /// Throws [OfflineQueuePersistException] when the write could not be
   /// persisted in the queue (it is then NOT queued — show an error).
+  ///
+  /// SOL_FIX13: [session] (from [captureWriteSession], taken when the user
+  /// acted) binds the write to its author; without it the session is
+  /// captured on entry. The session is re-checked after EVERY await; when it
+  /// changed and the write was not queued for its author,
+  /// [OfflineSessionChangedException] is thrown (never `false`, so the
+  /// caller cannot write directly under the new account). Callers pass the
+  /// same session to the direct write (`isSessionCurrent`/`actingUserId`).
   Future<bool> enqueueIfOffline(
     String personAttendanceId,
     Map<String, dynamic> payload, {
     int? attendanceId,
+    OfflineWriteSession? session,
   }) async {
     // SOL_FIX12: capture author, tenant and session BEFORE the first await,
     // so an account / tenant switch during the connectivity check can never
     // attribute A's action to B (and never falls back to a direct write).
-    final tenantId = ref.read(currentTenantIdProvider);
+    final captured = session ?? captureWriteSession();
+    final tenantId = captured.tenantId;
     // SOL_FIX4: record the author so the write is only replayed for them.
-    final userId = _currentUserId;
-    final sessionIdFn = ref.read(offlineQueueSessionIdProvider);
-    final sessionId = sessionIdFn();
-    final generation = _sessionGeneration;
+    final userId = captured.userId;
+    captured.ensureCurrent();
     final online = await ref.read(connectivityCheckProvider)();
-    if (_sessionGeneration != generation ||
-        _currentUserId != userId ||
-        sessionIdFn() != sessionId ||
-        ref.read(currentTenantIdProvider) != tenantId) {
-      throw const OfflineSessionChangedException();
-    }
+    captured.ensureCurrent();
     if (tenantId == null || userId == null) return false;
     if (online) {
       final routed = await _mergeIntoPending(
@@ -516,9 +606,15 @@ class OfflineQueueNotifier extends Notifier<int> {
         attendanceId: attendanceId,
         userId: userId,
       );
-      if (!routed) return false;
-      await flush();
-      return true;
+      if (routed) {
+        // Queued for its author (the flush is bound to the current session).
+        await flush();
+        return true;
+      }
+      // SOL_FIX13: the caller writes directly next – only while the
+      // captured session is still active.
+      captured.ensureCurrent();
+      return false;
     }
     await enqueue(
       personAttendanceId,
@@ -528,6 +624,26 @@ class OfflineQueueNotifier extends Notifier<int> {
       userId: userId,
     );
     return true;
+  }
+
+  /// SOL_FIX13: captures the signed-in user, auth session, session
+  /// generation and current tenant (synchronously, no await).
+  OfflineWriteSession captureWriteSession() {
+    final tenantId = ref.read(currentTenantIdProvider);
+    final userIdFn = ref.read(offlineQueueUserIdProvider);
+    final sessionIdFn = ref.read(offlineQueueSessionIdProvider);
+    final userId = userIdFn();
+    final sessionId = sessionIdFn();
+    final generation = _sessionGeneration;
+    return OfflineWriteSession._(
+      userId: userId,
+      tenantId: tenantId,
+      isCurrent: () =>
+          _sessionGeneration == generation &&
+          userIdFn() == userId &&
+          sessionIdFn() == sessionId &&
+          ref.read(currentTenantIdProvider) == tenantId,
+    );
   }
 
   /// SOL_FIX12: merges the write into a pending entry of the same record
@@ -644,7 +760,14 @@ class OfflineQueueNotifier extends Notifier<int> {
       currentUserId: userIdFn,
     );
 
-    final all = await OfflineQueueStore.synchronized(_store.load);
+    final List<QueuedWrite> all;
+    try {
+      all = await OfflineQueueStore.synchronized(_store.load);
+    } on OfflineQueueLoadException catch (e) {
+      // SOL_FIX13: unreadable queue – replay nothing, overwrite nothing.
+      debugPrint('[OfflineQueue] queue unreadable, replay skipped: $e');
+      return;
+    }
     final legacy = [for (final e in all) if (e.userId == null) e];
     if (legacy.isNotEmpty) {
       debugPrint('[OfflineQueue] dropping ${legacy.length} unattributed writes');
@@ -706,7 +829,11 @@ class OfflineQueueNotifier extends Notifier<int> {
     } on OfflineQueuePersistException catch (e) {
       // SOL_FIX12: the replayed entries stay queued (replayed again later).
       debugPrint('[OfflineQueue] removing replayed writes failed: $e');
-      remaining = await OfflineQueueStore.synchronized(_store.load);
+      try {
+        remaining = await OfflineQueueStore.synchronized(_store.load);
+      } on OfflineQueueLoadException {
+        remaining = queue; // SOL_FIX13: unreadable – count stays as before
+      }
     }
     // SOL_FIX9: count for whoever is signed in now.
     state = ownedBy(remaining, aborted ? userIdFn() : userId).length;

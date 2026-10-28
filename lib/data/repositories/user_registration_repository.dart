@@ -396,6 +396,26 @@ class UserRegistrationRepository extends BaseRepository
     if (person.id == null) {
       throw AccountFlowException(l10nWithoutContext.coreFlutterPersonHasNoId);
     }
+    // SOL_FIX13: the person must belong to this repository's (bound) tenant
+    // BEFORE any registration side effect — a stale list of another tenant
+    // never creates accounts / tenantUsers rows here.
+    if (person.tenantId != null && person.tenantId != currentTenantId) {
+      throw AccountFlowException(l10nWithoutContext.coreFlutterRepoPersonsNotInTenant);
+    }
+    final Map<String, dynamic>? member;
+    try {
+      member = await supabase
+          .from('player')
+          .select('id')
+          .eq('id', person.id!)
+          .eq('tenantId', currentTenantId)
+          .maybeSingle();
+    } catch (_) {
+      throw AccountFlowException(l10nWithoutContext.dbLoadUserFailed);
+    }
+    if (member == null) {
+      throw AccountFlowException(l10nWithoutContext.coreFlutterRepoPersonsNotInTenant);
+    }
     final role = accountRoleFor(
         instrumentId: person.instrument, mainGroupId: mainGroupId);
 
