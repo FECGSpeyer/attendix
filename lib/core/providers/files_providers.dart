@@ -9,10 +9,19 @@ import 'tenant_providers.dart';
 // SETTINGS_EXT: Dateiablage, Zusatzfelder, Branding, Personen verknüpfen
 
 /// Dateiablage-Repository mit Tenant-Kontext
+///
+/// SOL_FIX3: per-tenant bound instance (see [filesRepositoryForTenantProvider])
+/// so a running upload loop keeps its tenant after a tenant switch.
 final filesRepositoryWithTenantProvider = Provider<FilesRepository>((ref) {
-  final repo = ref.watch(filesRepositoryProvider);
   final tenantId = ref.watch(currentTenantIdProvider);
-  if (tenantId != null) repo.setTenantId(tenantId);
+  return ref.watch(filesRepositoryForTenantProvider(tenantId));
+});
+
+/// SOL_FIX3: one immutable [FilesRepository] per tenant.
+final filesRepositoryForTenantProvider =
+    Provider.family<FilesRepository, int?>((ref, tenantId) {
+  final repo = FilesRepository(ref);
+  if (tenantId != null) repo.bindTenantId(tenantId);
   return repo;
 });
 

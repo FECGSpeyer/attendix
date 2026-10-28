@@ -2,17 +2,26 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/models/person/person.dart';
 import '../../data/repositories/user_registration_repository.dart';
-import 'group_providers.dart';
 import 'player_providers.dart';
 import 'tenant_providers.dart';
 import '../../l10n/l10n.dart';
 
 /// AUTH: [UserRegistrationRepository] with tenant context.
+///
+/// SOL_FIX3: per-tenant bound instance (see
+/// [userRegistrationRepositoryForTenantProvider]); a captured instance keeps
+/// its tenant even when the user switches tenants mid-flow.
 final userRegistrationRepositoryWithTenantProvider =
     Provider<UserRegistrationRepository>((ref) {
-  final repo = ref.watch(userRegistrationRepositoryProvider);
   final tenantId = ref.watch(currentTenantIdProvider);
-  if (tenantId != null) repo.setTenantId(tenantId);
+  return ref.watch(userRegistrationRepositoryForTenantProvider(tenantId));
+});
+
+/// SOL_FIX3: one immutable [UserRegistrationRepository] per tenant.
+final userRegistrationRepositoryForTenantProvider =
+    Provider.family<UserRegistrationRepository, int?>((ref, tenantId) {
+  final repo = UserRegistrationRepository(ref);
+  if (tenantId != null) repo.bindTenantId(tenantId);
   return repo;
 });
 
@@ -33,12 +42,17 @@ class AccountCreationNotifier extends Notifier<AsyncValue<void>> {
   @override
   AsyncValue<void> build() => const AsyncValue.data(null);
 
-  UserRegistrationRepository get _repo =>
+  /// SOL_FIX3: repository bound to the tenant that is current when a job
+  /// starts. Callers read it ONCE (before the first await) and use that
+  /// instance for the whole job, so a tenant switch A→B never registers the
+  /// remaining persons of A in B.
+  UserRegistrationRepository _boundRepo() =>
       ref.read(userRegistrationRepositoryWithTenantProvider);
 
-  Future<int?> _mainGroupId() async {
+  /// Main group of the bound repository's tenant (null on error).
+  Future<int?> _mainGroupId(UserRegistrationRepository repo) async {
     try {
-      return (await ref.read(mainGroupProvider.future))?.id;
+      return await repo.getMainGroupId();
     } catch (_) {
       return null;
     }
@@ -47,14 +61,15 @@ class AccountCreationNotifier extends Notifier<AsyncValue<void>> {
   /// Creates (or links) the account of one person. Throws
   /// [AccountFlowException] with a German message on failure.
   Future<String> createAccount(Person person) async {
-    if (!_repo.hasTenantId) {
+    final repo = _boundRepo();
+    if (!repo.hasTenantId) {
       throw AccountFlowException(l10nWithoutContext.coreFlutterNoInstanceSelected);
     }
     state = const AsyncValue.loading();
     try {
-      final appId = await _repo.createPlayerAccount(
+      final appId = await repo.createPlayerAccount(
         person,
-        mainGroupId: await _mainGroupId(),
+        mainGroupId: await _mainGroupId(repo),
       );
       state = const AsyncValue.data(null);
       _invalidate(person.id);
@@ -71,18 +86,20 @@ class AccountCreationNotifier extends Notifier<AsyncValue<void>> {
     List<Person> persons, {
     void Function(int done, int total)? onProgress,
   }) async {
-    if (!_repo.hasTenantId) {
+    // SOL_FIX3: bind repository + tenant once for the whole job.
+    final repo = _boundRepo();
+    if (!repo.hasTenantId) {
       return AccountCreationResult(
           created: 0, errors: [l10nWithoutContext.coreFlutterNoInstanceSelected]);
     }
     state = const AsyncValue.loading();
-    final mainGroupId = await _mainGroupId();
+    final mainGroupId = await _mainGroupId(repo);
     var created = 0;
     final errors = <String>[];
     for (var i = 0; i < persons.length; i++) {
       final person = persons[i];
       try {
-        await _repo.createPlayerAccount(person, mainGroupId: mainGroupId);
+        await repo.createPlayerAccount(person, mainGroupId: mainGroupId);
         created++;
       } catch (e) {
         errors.add('${person.firstName} ${person.lastName}: $e');

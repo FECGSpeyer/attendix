@@ -41,7 +41,13 @@ void main() {
       final queries = _queries(source, 'message_recipients');
       expect(queries, isNotEmpty);
       for (final q in queries) {
-        expect(q, contains(".eq('tenantId', currentTenantId)"), reason: q);
+        // SOL_FIX3: paged queries capture `final tenantId = currentTenantId`.
+        expect(
+          q.contains(".eq('tenantId', currentTenantId)") ||
+              q.contains(".eq('tenantId', tenantId)"),
+          isTrue,
+          reason: q,
+        );
       }
     });
 

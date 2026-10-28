@@ -5,10 +5,19 @@ import '../../data/repositories/import_repository.dart';
 import 'tenant_providers.dart';
 
 /// ImportRepository with tenant context
+///
+/// SOL_FIX3: per-tenant bound instance (see [importRepositoryForTenantProvider])
+/// so a running import loop keeps its tenant after a tenant switch.
 final importRepositoryWithTenantProvider = Provider<ImportRepository>((ref) {
-  final repo = ref.watch(importRepositoryProvider);
   final tenantId = ref.watch(currentTenantIdProvider);
-  if (tenantId != null) repo.setTenantId(tenantId);
+  return ref.watch(importRepositoryForTenantProvider(tenantId));
+});
+
+/// SOL_FIX3: one immutable [ImportRepository] per tenant.
+final importRepositoryForTenantProvider =
+    Provider.family<ImportRepository, int?>((ref, tenantId) {
+  final repo = ImportRepository(ref);
+  if (tenantId != null) repo.bindTenantId(tenantId);
   return repo;
 });
 

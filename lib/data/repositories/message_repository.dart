@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/utils/paged_query.dart';
 import '../models/message/message.dart';
 import 'base_repository.dart';
 
@@ -67,19 +68,25 @@ class MessageRepository extends BaseRepository with TenantAwareRepository {
   }
 
   /// Recipient rows of one message. Admins get all rows, members only their own (RLS).
+  ///
+  /// SOL_FIX3: loaded page by page (PostgREST max-rows) ordered by name and
+  /// the unique id (stable order across pages).
   Future<List<MessageRecipient>> getRecipients(String messageId) async {
     try {
-      final response = await supabase
-          .from('message_recipients')
-          .select('*')
-          .eq('message_id', messageId)
-          .eq('tenantId', currentTenantId)
-          .order('name', ascending: true)
-          .range(0, 4999);
+      final tenantId = currentTenantId;
+      final rows = await fetchAllPages<Map<String, dynamic>>((from, to) async {
+        final page = await supabase
+            .from('message_recipients')
+            .select('*')
+            .eq('message_id', messageId)
+            .eq('tenantId', tenantId)
+            .order('name', ascending: true)
+            .order('id', ascending: true)
+            .range(from, to);
+        return (page as List).cast<Map<String, dynamic>>();
+      });
 
-      return (response as List)
-          .map((e) => MessageRecipient.fromJson(e as Map<String, dynamic>))
-          .toList();
+      return rows.map(MessageRecipient.fromJson).toList();
     } catch (e, stack) {
       handleError(e, stack, 'getRecipients');
       rethrow;
@@ -90,14 +97,21 @@ class MessageRepository extends BaseRepository with TenantAwareRepository {
   Future<Map<String, MessageStats>> getStats(List<String> messageIds) async {
     if (messageIds.isEmpty) return {};
     try {
-      final response = await supabase
-          .from('message_recipients')
-          .select('message_id, read_at, email_opened_at, push_failed, email_failed')
-          .inFilter('message_id', messageIds)
-          .eq('tenantId', currentTenantId)
-          .range(0, 49999);
+      // SOL_FIX3: all recipient rows, page by page with a stable order
+      // (a large `.range` does not bypass PostgREST max-rows).
+      final tenantId = currentTenantId;
+      final rows = await fetchAllPages<Map<String, dynamic>>((from, to) async {
+        final page = await supabase
+            .from('message_recipients')
+            .select('id, message_id, read_at, email_opened_at, push_failed, email_failed')
+            .inFilter('message_id', messageIds)
+            .eq('tenantId', tenantId)
+            .order('id', ascending: true)
+            .range(from, to);
+        return (page as List).cast<Map<String, dynamic>>();
+      });
 
-      return aggregateStats((response as List).cast<Map<String, dynamic>>());
+      return aggregateStats(rows);
     } catch (e, stack) {
       handleError(e, stack, 'getStats');
       rethrow;
