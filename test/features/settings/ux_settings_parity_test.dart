@@ -71,29 +71,29 @@ void main() {
   test('Allgemeine Einstellungen sections in Ionic order', () {
     final source = read('lib/features/settings/presentation/pages/general_settings_page.dart');
     expectInOrder(source, [
-      "title: 'Allgemein'",
-      "title: 'Anwesenheiten'",
-      "title: 'Abwesenheits- & Verspätungsgründe'",
-      "title: 'Registrierung'",
-      "title: 'Werk-Datenbank'",
-      "title: 'Sonstiges'",
-      "title: 'Problemfall-Regeln'",
+      'title: context.l10n.generalSettingsGeneral,',
+      'title: context.l10n.generalSettingsAttendance,',
+      'title: context.l10n.generalSettingsReasons,',
+      'title: context.l10n.generalSettingsRegistration,',
+      'title: context.l10n.generalSettingsSongDb,',
+      'title: context.l10n.generalSettingsOther,',
+      'title: context.l10n.generalSettingsCriticalRules,',
     ]);
     // Typen + Schichtpläne live under "Anwesenheiten" like in Ionic
-    expectInOrder(source, ["'Anwesenheits-Typen'", "'/settings/types'", "'Schichtpläne'", "'/settings/shifts'"]);
+    expectInOrder(source, ['generalSettingsAttTypes', "'/settings/types'", 'generalSettingsShiftPlans', "'/settings/shifts'"]);
   });
 
   test('Termintyp sections in Ionic order', () {
     final source = read('lib/features/settings/presentation/pages/attendance_type_edit_page.dart');
     expectInOrder(source, [
-      "title: 'Optionen'",
+      'title: context.l10n.typeSettingsOptions,',
       '_buildDutySection(),',
-      "title: 'Terminerinnerungen'",
-      "title: 'Darstellung'",
+      'title: context.l10n.typeSettingsEventReminders,',
+      'title: context.l10n.typeSettingsAppearance,',
       '_buildRelevantGroupsSection(),',
-      "title: 'Ablaufplan'",
-      "title: 'Checkliste'",
-      "title: 'Anmeldefelder'",
+      'title: context.l10n.typeSettingsRunSheet,',
+      'title: context.l10n.typeSettingsChecklist,',
+      'title: context.l10n.typeSettingsSignupFields,',
     ]);
   });
 

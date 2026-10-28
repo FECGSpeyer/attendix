@@ -38,7 +38,7 @@ void main() {
       // Find the Time Settings section
       final timeSectionMatch = RegExp(
         // UX_SETTINGS: Beginn/Ende tiles inside "Optionen" (Ionic order)
-        r"title:\s*const Text\('Beginn'\).*?_pickTime\(isStart: false\)",
+        r"title:\s*Text\(context\.l10n\.typeSettingsStart\).*?_pickTime\(isStart: false\)",
         dotAll: true,
       ).firstMatch(pageSource);
 
