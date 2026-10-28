@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/config/supabase_config.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/attendance_type_providers.dart';
@@ -71,6 +72,15 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
   List<int> _relevantGroups = [];
   Map<String, dynamic>? _additionalFieldsFilter;
 
+  // DUTY: Dienst-Modus (Dienstplan)
+  bool _dutyMode = false;
+  bool _dutyModeAtLoad = false;
+  int _dutyRequired = 1;
+  bool _dutySelfSignup = true;
+  int? _dutyConfirmReminderDays = 2;
+  bool _dutyNotifyUnderstaffed = true;
+  int? _dutyUrgentHours;
+
   bool _isLoading = true;
   bool _hasChanges = false;
   AttendanceType? _originalType;
@@ -119,6 +129,14 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
         _highlight = type.highlight;
         _hideName = type.hideName;
         _includeInAverage = type.includeInAverage;
+        // DUTY
+        _dutyMode = type.dutyMode;
+        _dutyModeAtLoad = type.dutyMode;
+        _dutyRequired = type.dutyRequired ?? 1;
+        _dutySelfSignup = type.dutySelfSignup;
+        _dutyConfirmReminderDays = type.dutyConfirmReminderDays;
+        _dutyNotifyUnderstaffed = type.dutyNotifyUnderstaffed;
+        _dutyUrgentHours = type.dutyUrgentHours;
         _color = type.color ?? 'primary';
         _allDay = type.allDay;
         _durationDays = type.durationDays ?? 1;
@@ -460,6 +478,10 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
             ),
             const SizedBox(height: AppDimensions.paddingL),
 
+            // DUTY: Dienstplan
+            _buildDutySection(),
+            const SizedBox(height: AppDimensions.paddingL),
+
             // Relevant Groups (B8-009)
             _buildRelevantGroupsSection(),
             const SizedBox(height: AppDimensions.paddingL),
@@ -754,6 +776,159 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
         child,
       ],
     );
+  }
+
+  // DUTY: Dienstplan section (Ionic type.page "Dienstplan")
+  Widget _buildDutySection() {
+    void mark(VoidCallback fn) => setState(() {
+          fn();
+          _hasChanges = true;
+        });
+
+    return _buildSection(
+      title: 'Dienstplan',
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          SwitchListTile(
+            title: const Text('Dienst-Modus'),
+            subtitle: const Text(
+              'Für Dienste wie Tontechnik: Pro Termin wird eine feste Zahl Personen eingeteilt. '
+              'Nur Eingeteilte sind erwartet, alle anderen aus dem Personenkreis sind Springer.',
+            ),
+            value: _dutyMode,
+            onChanged: (value) => mark(() {
+              _dutyMode = value;
+              if (value) {
+                // Nobody is expected until assigned, so new Termine start neutral.
+                if (_dutyRequired < 1) _dutyRequired = 1;
+                _availableStatuses = {
+                  ..._availableStatuses,
+                  AttendanceStatus.neutral,
+                  AttendanceStatus.present,
+                  AttendanceStatus.excused,
+                };
+                _defaultStatus = AttendanceStatus.neutral;
+              }
+            }),
+            contentPadding: EdgeInsets.zero,
+          ),
+          if (_dutyMode) ...[
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              title: const Text('Benötigte Personen'),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.remove),
+                    tooltip: 'Weniger',
+                    onPressed: _dutyRequired <= 1 ? null : () => mark(() => _dutyRequired--),
+                  ),
+                  Text('$_dutyRequired'),
+                  IconButton(
+                    icon: const Icon(Icons.add),
+                    tooltip: 'Mehr',
+                    onPressed: () => mark(() => _dutyRequired++),
+                  ),
+                ],
+              ),
+            ),
+            SwitchListTile(
+              title: const Text('Selbst eintragen erlaubt'),
+              subtitle: const Text('Personen aus dem Personenkreis können offene Dienste selbst übernehmen.'),
+              value: _dutySelfSignup,
+              onChanged: (v) => mark(() => _dutySelfSignup = v),
+              contentPadding: EdgeInsets.zero,
+            ),
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              title: const Text('Erinnern, wenn unbestätigt'),
+              trailing: DropdownButton<int?>(
+                value: _dutyConfirmReminderDays,
+                underline: const SizedBox.shrink(),
+                items: const [
+                  DropdownMenuItem(value: null, child: Text('Aus')),
+                  DropdownMenuItem(value: 1, child: Text('nach 1 Tag')),
+                  DropdownMenuItem(value: 2, child: Text('nach 2 Tagen')),
+                  DropdownMenuItem(value: 3, child: Text('nach 3 Tagen')),
+                  DropdownMenuItem(value: 7, child: Text('nach 7 Tagen')),
+                ],
+                onChanged: (v) => mark(() => _dutyConfirmReminderDays = v),
+              ),
+            ),
+            SwitchListTile(
+              title: const Text('Gruppe bei Ausfall benachrichtigen'),
+              subtitle: const Text(
+                'Sagt eine eingeteilte Person ab und der Dienst ist unterbesetzt, bekommen alle aus dem '
+                'Personenkreis eine Nachricht.',
+              ),
+              value: _dutyNotifyUnderstaffed,
+              onChanged: (v) => mark(() => _dutyNotifyUnderstaffed = v),
+              contentPadding: EdgeInsets.zero,
+            ),
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              title: const Text('Dringend, wenn noch offen'),
+              subtitle: const Text('Einmaliger dringender Push an alle aus dem Personenkreis und die Leitung.'),
+              trailing: DropdownButton<int?>(
+                value: _dutyUrgentHours,
+                underline: const SizedBox.shrink(),
+                items: const [
+                  DropdownMenuItem(value: null, child: Text('Aus')),
+                  DropdownMenuItem(value: 6, child: Text('6 h vorher')),
+                  DropdownMenuItem(value: 12, child: Text('12 h vorher')),
+                  DropdownMenuItem(value: 24, child: Text('24 h vorher')),
+                  DropdownMenuItem(value: 48, child: Text('48 h vorher')),
+                  DropdownMenuItem(value: 72, child: Text('72 h vorher')),
+                ],
+                onChanged: (v) => mark(() => _dutyUrgentHours = v),
+              ),
+            ),
+            const Padding(
+              padding: EdgeInsets.only(top: AppDimensions.paddingS),
+              child: Text(
+                'Den Personenkreis legst du wie gewohnt über relevante Gruppen oder unter „Filter“ mit einem '
+                'Zusatzfeld fest (z. B. Ja/Nein-Feld „Tontechnik“). Dienste zählen in die Anwesenheitsquote, '
+                'aber nur für eingeteilte Personen.',
+                style: TextStyle(color: AppColors.medium, fontSize: 13),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  /// DUTY: after the first Termintyp with Dienst-Modus ask once whether
+  /// "Meine Termine" should become the Dienstplan view.
+  Future<void> _offerDutyView() async {
+    if (!_dutyMode || _dutyModeAtLoad) return;
+    _dutyModeAtLoad = true;
+    final tenant = ref.read(currentTenantProvider);
+    if (tenant == null || tenant.dutyView) return;
+    final types = ref.read(attendanceTypesProvider).valueOrNull ?? const <AttendanceType>[];
+    if (types.any((t) => t.dutyMode && t.id != widget.typeId)) return;
+    final useIt = await DialogHelper.showConfirmation(
+      context,
+      title: 'Dienstplan-Ansicht verwenden?',
+      message: 'Sind Dienste bei euch der Normalfall? Dann zeigt „Meine Termine“ für alle im Dienst-Team '
+          'zuerst ihre Dienste, offene Dienste und Zahlen statt der Anwesenheitsquote. Du kannst das '
+          'jederzeit unter Mehr → Einstellungen ändern.',
+      confirmText: 'Ja, verwenden',
+      cancelText: 'Nein, normale Ansicht',
+    );
+    if (!useIt || !mounted) return;
+    try {
+      await ref.read(supabaseClientProvider)
+          .from('tenants')
+          .update({'duty_view': true})
+          .eq('id', tenant.id!);
+      await ref.read(currentTenantProvider.notifier).setTenantLocal(tenant.copyWith(dutyView: true));
+      if (mounted) ToastHelper.showSuccess(context, 'Dienstplan-Ansicht ist aktiv');
+    } catch (_) {
+      if (mounted) ToastHelper.showError(context, 'Konnte die Ansicht nicht umstellen');
+    }
   }
 
   Widget _buildRelevantGroupsSection() {
@@ -1185,6 +1360,13 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
         'planning_title': _planningTitle.isNotEmpty ? _planningTitle : null,
         'relevant_groups': _relevantGroups.isNotEmpty ? _relevantGroups : null,
         'additional_fields_filter': _additionalFieldsFilter,
+        // DUTY
+        'duty_mode': _dutyMode,
+        'duty_required': _dutyRequired < 1 ? 1 : _dutyRequired,
+        'duty_self_signup': _dutySelfSignup,
+        'duty_confirm_reminder_days': _dutyConfirmReminderDays,
+        'duty_notify_understaffed': _dutyNotifyUnderstaffed,
+        'duty_urgent_hours': _dutyUrgentHours,
       };
 
       await ref.read(attendanceTypeNotifierProvider.notifier).updateType(widget.typeId, updates);
@@ -1192,6 +1374,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
       if (mounted) {
         ToastHelper.showSuccess(context, 'Änderungen gespeichert');
         setState(() => _hasChanges = false);
+        await _offerDutyView(); // DUTY
       }
     } catch (e) {
       if (mounted) {

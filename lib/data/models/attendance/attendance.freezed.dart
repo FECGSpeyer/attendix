@@ -74,7 +74,10 @@ mixin _$Attendance {
   Map<String, dynamic>? get players => throw _privateConstructorUsedError;
   @JsonKey(name: 'share_plan')
   @_FlexibleBoolConverter()
-  bool get sharePlan => throw _privateConstructorUsedError;
+  bool get sharePlan => throw _privateConstructorUsedError; // DUTY: persons needed for this Termin (Dienst-Modus); null = type default
+  @JsonKey(name: 'duty_required')
+  @_FlexibleIntConverter()
+  int? get dutyRequired => throw _privateConstructorUsedError;
 
   /// Serializes this Attendance to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -122,6 +125,7 @@ abstract class $AttendanceCopyWith<$Res> {
     @_FlexibleIntListConverter() List<int>? conductors,
     Map<String, dynamic>? players,
     @JsonKey(name: 'share_plan') @_FlexibleBoolConverter() bool sharePlan,
+    @JsonKey(name: 'duty_required') @_FlexibleIntConverter() int? dutyRequired,
   });
 }
 
@@ -166,6 +170,7 @@ class _$AttendanceCopyWithImpl<$Res, $Val extends Attendance>
     Object? conductors = freezed,
     Object? players = freezed,
     Object? sharePlan = null,
+    Object? dutyRequired = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -299,6 +304,11 @@ class _$AttendanceCopyWithImpl<$Res, $Val extends Attendance>
                     ? _value.sharePlan
                     : sharePlan // ignore: cast_nullable_to_non_nullable
                         as bool,
+            dutyRequired:
+                freezed == dutyRequired
+                    ? _value.dutyRequired
+                    : dutyRequired // ignore: cast_nullable_to_non_nullable
+                        as int?,
           )
           as $Val,
     );
@@ -343,6 +353,7 @@ abstract class _$$AttendanceImplCopyWith<$Res>
     @_FlexibleIntListConverter() List<int>? conductors,
     Map<String, dynamic>? players,
     @JsonKey(name: 'share_plan') @_FlexibleBoolConverter() bool sharePlan,
+    @JsonKey(name: 'duty_required') @_FlexibleIntConverter() int? dutyRequired,
   });
 }
 
@@ -386,6 +397,7 @@ class __$$AttendanceImplCopyWithImpl<$Res>
     Object? conductors = freezed,
     Object? players = freezed,
     Object? sharePlan = null,
+    Object? dutyRequired = freezed,
   }) {
     return _then(
       _$AttendanceImpl(
@@ -519,6 +531,11 @@ class __$$AttendanceImplCopyWithImpl<$Res>
                 ? _value.sharePlan
                 : sharePlan // ignore: cast_nullable_to_non_nullable
                     as bool,
+        dutyRequired:
+            freezed == dutyRequired
+                ? _value.dutyRequired
+                : dutyRequired // ignore: cast_nullable_to_non_nullable
+                    as int?,
       ),
     );
   }
@@ -558,6 +575,7 @@ class _$AttendanceImpl implements _Attendance {
     @JsonKey(name: 'share_plan')
     @_FlexibleBoolConverter()
     this.sharePlan = false,
+    @JsonKey(name: 'duty_required') @_FlexibleIntConverter() this.dutyRequired,
   }) : _excused = excused,
        _plan = plan,
        _lateExcused = lateExcused,
@@ -724,10 +742,15 @@ class _$AttendanceImpl implements _Attendance {
   @JsonKey(name: 'share_plan')
   @_FlexibleBoolConverter()
   final bool sharePlan;
+  // DUTY: persons needed for this Termin (Dienst-Modus); null = type default
+  @override
+  @JsonKey(name: 'duty_required')
+  @_FlexibleIntConverter()
+  final int? dutyRequired;
 
   @override
   String toString() {
-    return 'Attendance(id: $id, tenantId: $tenantId, createdAt: $createdAt, createdBy: $createdBy, date: $date, type: $type, typeId: $typeId, saveInHistory: $saveInHistory, percentage: $percentage, excused: $excused, typeInfo: $typeInfo, notes: $notes, img: $img, plan: $plan, lateExcused: $lateExcused, songs: $songs, criticalPlayers: $criticalPlayers, playerNotes: $playerNotes, startTime: $startTime, endTime: $endTime, deadline: $deadline, durationDays: $durationDays, checklist: $checklist, conductors: $conductors, players: $players, sharePlan: $sharePlan)';
+    return 'Attendance(id: $id, tenantId: $tenantId, createdAt: $createdAt, createdBy: $createdBy, date: $date, type: $type, typeId: $typeId, saveInHistory: $saveInHistory, percentage: $percentage, excused: $excused, typeInfo: $typeInfo, notes: $notes, img: $img, plan: $plan, lateExcused: $lateExcused, songs: $songs, criticalPlayers: $criticalPlayers, playerNotes: $playerNotes, startTime: $startTime, endTime: $endTime, deadline: $deadline, durationDays: $durationDays, checklist: $checklist, conductors: $conductors, players: $players, sharePlan: $sharePlan, dutyRequired: $dutyRequired)';
   }
 
   @override
@@ -785,7 +808,9 @@ class _$AttendanceImpl implements _Attendance {
             ) &&
             const DeepCollectionEquality().equals(other._players, _players) &&
             (identical(other.sharePlan, sharePlan) ||
-                other.sharePlan == sharePlan));
+                other.sharePlan == sharePlan) &&
+            (identical(other.dutyRequired, dutyRequired) ||
+                other.dutyRequired == dutyRequired));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -818,6 +843,7 @@ class _$AttendanceImpl implements _Attendance {
     const DeepCollectionEquality().hash(_conductors),
     const DeepCollectionEquality().hash(_players),
     sharePlan,
+    dutyRequired,
   ]);
 
   /// Create a copy of Attendance
@@ -872,6 +898,9 @@ abstract class _Attendance implements Attendance {
     @_FlexibleIntListConverter() final List<int>? conductors,
     final Map<String, dynamic>? players,
     @JsonKey(name: 'share_plan') @_FlexibleBoolConverter() final bool sharePlan,
+    @JsonKey(name: 'duty_required')
+    @_FlexibleIntConverter()
+    final int? dutyRequired,
   }) = _$AttendanceImpl;
 
   factory _Attendance.fromJson(Map<String, dynamic> json) =
@@ -955,7 +984,11 @@ abstract class _Attendance implements Attendance {
   @override
   @JsonKey(name: 'share_plan')
   @_FlexibleBoolConverter()
-  bool get sharePlan;
+  bool get sharePlan; // DUTY: persons needed for this Termin (Dienst-Modus); null = type default
+  @override
+  @JsonKey(name: 'duty_required')
+  @_FlexibleIntConverter()
+  int? get dutyRequired;
 
   /// Create a copy of Attendance
   /// with the given fields replaced by the non-null parameter values.
@@ -1015,7 +1048,16 @@ mixin _$PersonAttendance {
   @_FlexibleStringConverter()
   String? get left => throw _privateConstructorUsedError;
   @_FlexibleBoolConverter()
-  bool get paused => throw _privateConstructorUsedError;
+  bool get paused => throw _privateConstructorUsedError; // DUTY: 'requested' | 'confirmed' | 'self' (null = not assigned / stand-in)
+  @JsonKey(name: 'duty_state')
+  @_FlexibleStringConverter()
+  String? get dutyState => throw _privateConstructorUsedError;
+  @JsonKey(name: 'duty_assigned_by')
+  @_FlexibleStringConverter()
+  String? get dutyAssignedBy => throw _privateConstructorUsedError;
+  @JsonKey(name: 'duty_assigned_at')
+  @_FlexibleStringConverter()
+  String? get dutyAssignedAt => throw _privateConstructorUsedError;
 
   /// Serializes this PersonAttendance to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -1055,6 +1097,13 @@ abstract class $PersonAttendanceCopyWith<$Res> {
     @_FlexibleBoolConverter() bool highlight,
     @_FlexibleStringConverter() String? left,
     @_FlexibleBoolConverter() bool paused,
+    @JsonKey(name: 'duty_state') @_FlexibleStringConverter() String? dutyState,
+    @JsonKey(name: 'duty_assigned_by')
+    @_FlexibleStringConverter()
+    String? dutyAssignedBy,
+    @JsonKey(name: 'duty_assigned_at')
+    @_FlexibleStringConverter()
+    String? dutyAssignedAt,
   });
 }
 
@@ -1093,6 +1142,9 @@ class _$PersonAttendanceCopyWithImpl<$Res, $Val extends PersonAttendance>
     Object? highlight = null,
     Object? left = freezed,
     Object? paused = null,
+    Object? dutyState = freezed,
+    Object? dutyAssignedBy = freezed,
+    Object? dutyAssignedAt = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -1196,6 +1248,21 @@ class _$PersonAttendanceCopyWithImpl<$Res, $Val extends PersonAttendance>
                     ? _value.paused
                     : paused // ignore: cast_nullable_to_non_nullable
                         as bool,
+            dutyState:
+                freezed == dutyState
+                    ? _value.dutyState
+                    : dutyState // ignore: cast_nullable_to_non_nullable
+                        as String?,
+            dutyAssignedBy:
+                freezed == dutyAssignedBy
+                    ? _value.dutyAssignedBy
+                    : dutyAssignedBy // ignore: cast_nullable_to_non_nullable
+                        as String?,
+            dutyAssignedAt:
+                freezed == dutyAssignedAt
+                    ? _value.dutyAssignedAt
+                    : dutyAssignedAt // ignore: cast_nullable_to_non_nullable
+                        as String?,
           )
           as $Val,
     );
@@ -1232,6 +1299,13 @@ abstract class _$$PersonAttendanceImplCopyWith<$Res>
     @_FlexibleBoolConverter() bool highlight,
     @_FlexibleStringConverter() String? left,
     @_FlexibleBoolConverter() bool paused,
+    @JsonKey(name: 'duty_state') @_FlexibleStringConverter() String? dutyState,
+    @JsonKey(name: 'duty_assigned_by')
+    @_FlexibleStringConverter()
+    String? dutyAssignedBy,
+    @JsonKey(name: 'duty_assigned_at')
+    @_FlexibleStringConverter()
+    String? dutyAssignedAt,
   });
 }
 
@@ -1269,6 +1343,9 @@ class __$$PersonAttendanceImplCopyWithImpl<$Res>
     Object? highlight = null,
     Object? left = freezed,
     Object? paused = null,
+    Object? dutyState = freezed,
+    Object? dutyAssignedBy = freezed,
+    Object? dutyAssignedAt = freezed,
   }) {
     return _then(
       _$PersonAttendanceImpl(
@@ -1372,6 +1449,21 @@ class __$$PersonAttendanceImplCopyWithImpl<$Res>
                 ? _value.paused
                 : paused // ignore: cast_nullable_to_non_nullable
                     as bool,
+        dutyState:
+            freezed == dutyState
+                ? _value.dutyState
+                : dutyState // ignore: cast_nullable_to_non_nullable
+                    as String?,
+        dutyAssignedBy:
+            freezed == dutyAssignedBy
+                ? _value.dutyAssignedBy
+                : dutyAssignedBy // ignore: cast_nullable_to_non_nullable
+                    as String?,
+        dutyAssignedAt:
+            freezed == dutyAssignedAt
+                ? _value.dutyAssignedAt
+                : dutyAssignedAt // ignore: cast_nullable_to_non_nullable
+                    as String?,
       ),
     );
   }
@@ -1402,6 +1494,13 @@ class _$PersonAttendanceImpl implements _PersonAttendance {
     @_FlexibleBoolConverter() this.highlight = false,
     @_FlexibleStringConverter() this.left,
     @_FlexibleBoolConverter() this.paused = false,
+    @JsonKey(name: 'duty_state') @_FlexibleStringConverter() this.dutyState,
+    @JsonKey(name: 'duty_assigned_by')
+    @_FlexibleStringConverter()
+    this.dutyAssignedBy,
+    @JsonKey(name: 'duty_assigned_at')
+    @_FlexibleStringConverter()
+    this.dutyAssignedAt,
   });
 
   factory _$PersonAttendanceImpl.fromJson(Map<String, dynamic> json) =>
@@ -1475,10 +1574,23 @@ class _$PersonAttendanceImpl implements _PersonAttendance {
   @JsonKey()
   @_FlexibleBoolConverter()
   final bool paused;
+  // DUTY: 'requested' | 'confirmed' | 'self' (null = not assigned / stand-in)
+  @override
+  @JsonKey(name: 'duty_state')
+  @_FlexibleStringConverter()
+  final String? dutyState;
+  @override
+  @JsonKey(name: 'duty_assigned_by')
+  @_FlexibleStringConverter()
+  final String? dutyAssignedBy;
+  @override
+  @JsonKey(name: 'duty_assigned_at')
+  @_FlexibleStringConverter()
+  final String? dutyAssignedAt;
 
   @override
   String toString() {
-    return 'PersonAttendance(id: $id, attendanceId: $attendanceId, personId: $personId, status: $status, notes: $notes, firstName: $firstName, lastName: $lastName, img: $img, instrument: $instrument, groupName: $groupName, joined: $joined, date: $date, text: $text, title: $title, changedBy: $changedBy, changedAt: $changedAt, typeId: $typeId, highlight: $highlight, left: $left, paused: $paused)';
+    return 'PersonAttendance(id: $id, attendanceId: $attendanceId, personId: $personId, status: $status, notes: $notes, firstName: $firstName, lastName: $lastName, img: $img, instrument: $instrument, groupName: $groupName, joined: $joined, date: $date, text: $text, title: $title, changedBy: $changedBy, changedAt: $changedAt, typeId: $typeId, highlight: $highlight, left: $left, paused: $paused, dutyState: $dutyState, dutyAssignedBy: $dutyAssignedBy, dutyAssignedAt: $dutyAssignedAt)';
   }
 
   @override
@@ -1514,7 +1626,13 @@ class _$PersonAttendanceImpl implements _PersonAttendance {
             (identical(other.highlight, highlight) ||
                 other.highlight == highlight) &&
             (identical(other.left, left) || other.left == left) &&
-            (identical(other.paused, paused) || other.paused == paused));
+            (identical(other.paused, paused) || other.paused == paused) &&
+            (identical(other.dutyState, dutyState) ||
+                other.dutyState == dutyState) &&
+            (identical(other.dutyAssignedBy, dutyAssignedBy) ||
+                other.dutyAssignedBy == dutyAssignedBy) &&
+            (identical(other.dutyAssignedAt, dutyAssignedAt) ||
+                other.dutyAssignedAt == dutyAssignedAt));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -1541,6 +1659,9 @@ class _$PersonAttendanceImpl implements _PersonAttendance {
     highlight,
     left,
     paused,
+    dutyState,
+    dutyAssignedBy,
+    dutyAssignedAt,
   ]);
 
   /// Create a copy of PersonAttendance
@@ -1588,6 +1709,15 @@ abstract class _PersonAttendance implements PersonAttendance {
     @_FlexibleBoolConverter() final bool highlight,
     @_FlexibleStringConverter() final String? left,
     @_FlexibleBoolConverter() final bool paused,
+    @JsonKey(name: 'duty_state')
+    @_FlexibleStringConverter()
+    final String? dutyState,
+    @JsonKey(name: 'duty_assigned_by')
+    @_FlexibleStringConverter()
+    final String? dutyAssignedBy,
+    @JsonKey(name: 'duty_assigned_at')
+    @_FlexibleStringConverter()
+    final String? dutyAssignedAt,
   }) = _$PersonAttendanceImpl;
 
   factory _PersonAttendance.fromJson(Map<String, dynamic> json) =
@@ -1657,7 +1787,19 @@ abstract class _PersonAttendance implements PersonAttendance {
   String? get left;
   @override
   @_FlexibleBoolConverter()
-  bool get paused;
+  bool get paused; // DUTY: 'requested' | 'confirmed' | 'self' (null = not assigned / stand-in)
+  @override
+  @JsonKey(name: 'duty_state')
+  @_FlexibleStringConverter()
+  String? get dutyState;
+  @override
+  @JsonKey(name: 'duty_assigned_by')
+  @_FlexibleStringConverter()
+  String? get dutyAssignedBy;
+  @override
+  @JsonKey(name: 'duty_assigned_at')
+  @_FlexibleStringConverter()
+  String? get dutyAssignedAt;
 
   /// Create a copy of PersonAttendance
   /// with the given fields replaced by the non-null parameter values.
@@ -1997,7 +2139,23 @@ mixin _$AttendanceType {
       throw _privateConstructorUsedError; // Field from Ionic that was missing
   @JsonKey(name: 'planning_title')
   @_FlexibleStringConverter()
-  String? get planningTitle => throw _privateConstructorUsedError;
+  String? get planningTitle => throw _privateConstructorUsedError; // DUTY: Dienst-Modus (Dienstplan)
+  @JsonKey(name: 'duty_mode')
+  @_FlexibleBoolConverter()
+  bool get dutyMode => throw _privateConstructorUsedError;
+  @JsonKey(name: 'duty_required')
+  @_FlexibleIntConverter()
+  int? get dutyRequired => throw _privateConstructorUsedError;
+  @JsonKey(name: 'duty_self_signup')
+  bool get dutySelfSignup => throw _privateConstructorUsedError;
+  @JsonKey(name: 'duty_confirm_reminder_days')
+  @_FlexibleIntConverter()
+  int? get dutyConfirmReminderDays => throw _privateConstructorUsedError;
+  @JsonKey(name: 'duty_notify_understaffed')
+  bool get dutyNotifyUnderstaffed => throw _privateConstructorUsedError;
+  @JsonKey(name: 'duty_urgent_hours')
+  @_FlexibleIntConverter()
+  int? get dutyUrgentHours => throw _privateConstructorUsedError;
 
   /// Serializes this AttendanceType to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -2050,6 +2208,16 @@ abstract class $AttendanceTypeCopyWith<$Res> {
     @JsonKey(name: 'planning_title')
     @_FlexibleStringConverter()
     String? planningTitle,
+    @JsonKey(name: 'duty_mode') @_FlexibleBoolConverter() bool dutyMode,
+    @JsonKey(name: 'duty_required') @_FlexibleIntConverter() int? dutyRequired,
+    @JsonKey(name: 'duty_self_signup') bool dutySelfSignup,
+    @JsonKey(name: 'duty_confirm_reminder_days')
+    @_FlexibleIntConverter()
+    int? dutyConfirmReminderDays,
+    @JsonKey(name: 'duty_notify_understaffed') bool dutyNotifyUnderstaffed,
+    @JsonKey(name: 'duty_urgent_hours')
+    @_FlexibleIntConverter()
+    int? dutyUrgentHours,
   });
 }
 
@@ -2092,6 +2260,12 @@ class _$AttendanceTypeCopyWithImpl<$Res, $Val extends AttendanceType>
     Object? additionalFieldsFilter = freezed,
     Object? checklist = freezed,
     Object? planningTitle = freezed,
+    Object? dutyMode = null,
+    Object? dutyRequired = freezed,
+    Object? dutySelfSignup = null,
+    Object? dutyConfirmReminderDays = freezed,
+    Object? dutyNotifyUnderstaffed = null,
+    Object? dutyUrgentHours = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -2215,6 +2389,36 @@ class _$AttendanceTypeCopyWithImpl<$Res, $Val extends AttendanceType>
                     ? _value.planningTitle
                     : planningTitle // ignore: cast_nullable_to_non_nullable
                         as String?,
+            dutyMode:
+                null == dutyMode
+                    ? _value.dutyMode
+                    : dutyMode // ignore: cast_nullable_to_non_nullable
+                        as bool,
+            dutyRequired:
+                freezed == dutyRequired
+                    ? _value.dutyRequired
+                    : dutyRequired // ignore: cast_nullable_to_non_nullable
+                        as int?,
+            dutySelfSignup:
+                null == dutySelfSignup
+                    ? _value.dutySelfSignup
+                    : dutySelfSignup // ignore: cast_nullable_to_non_nullable
+                        as bool,
+            dutyConfirmReminderDays:
+                freezed == dutyConfirmReminderDays
+                    ? _value.dutyConfirmReminderDays
+                    : dutyConfirmReminderDays // ignore: cast_nullable_to_non_nullable
+                        as int?,
+            dutyNotifyUnderstaffed:
+                null == dutyNotifyUnderstaffed
+                    ? _value.dutyNotifyUnderstaffed
+                    : dutyNotifyUnderstaffed // ignore: cast_nullable_to_non_nullable
+                        as bool,
+            dutyUrgentHours:
+                freezed == dutyUrgentHours
+                    ? _value.dutyUrgentHours
+                    : dutyUrgentHours // ignore: cast_nullable_to_non_nullable
+                        as int?,
           )
           as $Val,
     );
@@ -2264,6 +2468,16 @@ abstract class _$$AttendanceTypeImplCopyWith<$Res>
     @JsonKey(name: 'planning_title')
     @_FlexibleStringConverter()
     String? planningTitle,
+    @JsonKey(name: 'duty_mode') @_FlexibleBoolConverter() bool dutyMode,
+    @JsonKey(name: 'duty_required') @_FlexibleIntConverter() int? dutyRequired,
+    @JsonKey(name: 'duty_self_signup') bool dutySelfSignup,
+    @JsonKey(name: 'duty_confirm_reminder_days')
+    @_FlexibleIntConverter()
+    int? dutyConfirmReminderDays,
+    @JsonKey(name: 'duty_notify_understaffed') bool dutyNotifyUnderstaffed,
+    @JsonKey(name: 'duty_urgent_hours')
+    @_FlexibleIntConverter()
+    int? dutyUrgentHours,
   });
 }
 
@@ -2305,6 +2519,12 @@ class __$$AttendanceTypeImplCopyWithImpl<$Res>
     Object? additionalFieldsFilter = freezed,
     Object? checklist = freezed,
     Object? planningTitle = freezed,
+    Object? dutyMode = null,
+    Object? dutyRequired = freezed,
+    Object? dutySelfSignup = null,
+    Object? dutyConfirmReminderDays = freezed,
+    Object? dutyNotifyUnderstaffed = null,
+    Object? dutyUrgentHours = freezed,
   }) {
     return _then(
       _$AttendanceTypeImpl(
@@ -2428,6 +2648,36 @@ class __$$AttendanceTypeImplCopyWithImpl<$Res>
                 ? _value.planningTitle
                 : planningTitle // ignore: cast_nullable_to_non_nullable
                     as String?,
+        dutyMode:
+            null == dutyMode
+                ? _value.dutyMode
+                : dutyMode // ignore: cast_nullable_to_non_nullable
+                    as bool,
+        dutyRequired:
+            freezed == dutyRequired
+                ? _value.dutyRequired
+                : dutyRequired // ignore: cast_nullable_to_non_nullable
+                    as int?,
+        dutySelfSignup:
+            null == dutySelfSignup
+                ? _value.dutySelfSignup
+                : dutySelfSignup // ignore: cast_nullable_to_non_nullable
+                    as bool,
+        dutyConfirmReminderDays:
+            freezed == dutyConfirmReminderDays
+                ? _value.dutyConfirmReminderDays
+                : dutyConfirmReminderDays // ignore: cast_nullable_to_non_nullable
+                    as int?,
+        dutyNotifyUnderstaffed:
+            null == dutyNotifyUnderstaffed
+                ? _value.dutyNotifyUnderstaffed
+                : dutyNotifyUnderstaffed // ignore: cast_nullable_to_non_nullable
+                    as bool,
+        dutyUrgentHours:
+            freezed == dutyUrgentHours
+                ? _value.dutyUrgentHours
+                : dutyUrgentHours // ignore: cast_nullable_to_non_nullable
+                    as int?,
       ),
     );
   }
@@ -2472,6 +2722,17 @@ class _$AttendanceTypeImpl implements _AttendanceType {
     @JsonKey(name: 'planning_title')
     @_FlexibleStringConverter()
     this.planningTitle,
+    @JsonKey(name: 'duty_mode') @_FlexibleBoolConverter() this.dutyMode = false,
+    @JsonKey(name: 'duty_required') @_FlexibleIntConverter() this.dutyRequired,
+    @JsonKey(name: 'duty_self_signup') this.dutySelfSignup = true,
+    @JsonKey(name: 'duty_confirm_reminder_days')
+    @_FlexibleIntConverter()
+    this.dutyConfirmReminderDays,
+    @JsonKey(name: 'duty_notify_understaffed')
+    this.dutyNotifyUnderstaffed = true,
+    @JsonKey(name: 'duty_urgent_hours')
+    @_FlexibleIntConverter()
+    this.dutyUrgentHours,
   }) : _availableStatuses = availableStatuses,
        _defaultPlan = defaultPlan,
        _relevantGroups = relevantGroups,
@@ -2616,10 +2877,33 @@ class _$AttendanceTypeImpl implements _AttendanceType {
   @JsonKey(name: 'planning_title')
   @_FlexibleStringConverter()
   final String? planningTitle;
+  // DUTY: Dienst-Modus (Dienstplan)
+  @override
+  @JsonKey(name: 'duty_mode')
+  @_FlexibleBoolConverter()
+  final bool dutyMode;
+  @override
+  @JsonKey(name: 'duty_required')
+  @_FlexibleIntConverter()
+  final int? dutyRequired;
+  @override
+  @JsonKey(name: 'duty_self_signup')
+  final bool dutySelfSignup;
+  @override
+  @JsonKey(name: 'duty_confirm_reminder_days')
+  @_FlexibleIntConverter()
+  final int? dutyConfirmReminderDays;
+  @override
+  @JsonKey(name: 'duty_notify_understaffed')
+  final bool dutyNotifyUnderstaffed;
+  @override
+  @JsonKey(name: 'duty_urgent_hours')
+  @_FlexibleIntConverter()
+  final int? dutyUrgentHours;
 
   @override
   String toString() {
-    return 'AttendanceType(id: $id, createdAt: $createdAt, name: $name, defaultStatus: $defaultStatus, availableStatuses: $availableStatuses, defaultPlan: $defaultPlan, tenantId: $tenantId, relevantGroups: $relevantGroups, startTime: $startTime, endTime: $endTime, manageSongs: $manageSongs, index: $index, visible: $visible, color: $color, highlight: $highlight, hideName: $hideName, includeInAverage: $includeInAverage, allDay: $allDay, durationDays: $durationDays, notification: $notification, reminders: $reminders, additionalFieldsFilter: $additionalFieldsFilter, checklist: $checklist, planningTitle: $planningTitle)';
+    return 'AttendanceType(id: $id, createdAt: $createdAt, name: $name, defaultStatus: $defaultStatus, availableStatuses: $availableStatuses, defaultPlan: $defaultPlan, tenantId: $tenantId, relevantGroups: $relevantGroups, startTime: $startTime, endTime: $endTime, manageSongs: $manageSongs, index: $index, visible: $visible, color: $color, highlight: $highlight, hideName: $hideName, includeInAverage: $includeInAverage, allDay: $allDay, durationDays: $durationDays, notification: $notification, reminders: $reminders, additionalFieldsFilter: $additionalFieldsFilter, checklist: $checklist, planningTitle: $planningTitle, dutyMode: $dutyMode, dutyRequired: $dutyRequired, dutySelfSignup: $dutySelfSignup, dutyConfirmReminderDays: $dutyConfirmReminderDays, dutyNotifyUnderstaffed: $dutyNotifyUnderstaffed, dutyUrgentHours: $dutyUrgentHours)';
   }
 
   @override
@@ -2679,7 +2963,22 @@ class _$AttendanceTypeImpl implements _AttendanceType {
               _checklist,
             ) &&
             (identical(other.planningTitle, planningTitle) ||
-                other.planningTitle == planningTitle));
+                other.planningTitle == planningTitle) &&
+            (identical(other.dutyMode, dutyMode) ||
+                other.dutyMode == dutyMode) &&
+            (identical(other.dutyRequired, dutyRequired) ||
+                other.dutyRequired == dutyRequired) &&
+            (identical(other.dutySelfSignup, dutySelfSignup) ||
+                other.dutySelfSignup == dutySelfSignup) &&
+            (identical(
+                  other.dutyConfirmReminderDays,
+                  dutyConfirmReminderDays,
+                ) ||
+                other.dutyConfirmReminderDays == dutyConfirmReminderDays) &&
+            (identical(other.dutyNotifyUnderstaffed, dutyNotifyUnderstaffed) ||
+                other.dutyNotifyUnderstaffed == dutyNotifyUnderstaffed) &&
+            (identical(other.dutyUrgentHours, dutyUrgentHours) ||
+                other.dutyUrgentHours == dutyUrgentHours));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -2710,6 +3009,12 @@ class _$AttendanceTypeImpl implements _AttendanceType {
     const DeepCollectionEquality().hash(_additionalFieldsFilter),
     const DeepCollectionEquality().hash(_checklist),
     planningTitle,
+    dutyMode,
+    dutyRequired,
+    dutySelfSignup,
+    dutyConfirmReminderDays,
+    dutyNotifyUnderstaffed,
+    dutyUrgentHours,
   ]);
 
   /// Create a copy of AttendanceType
@@ -2772,6 +3077,19 @@ abstract class _AttendanceType implements AttendanceType {
     @JsonKey(name: 'planning_title')
     @_FlexibleStringConverter()
     final String? planningTitle,
+    @JsonKey(name: 'duty_mode') @_FlexibleBoolConverter() final bool dutyMode,
+    @JsonKey(name: 'duty_required')
+    @_FlexibleIntConverter()
+    final int? dutyRequired,
+    @JsonKey(name: 'duty_self_signup') final bool dutySelfSignup,
+    @JsonKey(name: 'duty_confirm_reminder_days')
+    @_FlexibleIntConverter()
+    final int? dutyConfirmReminderDays,
+    @JsonKey(name: 'duty_notify_understaffed')
+    final bool dutyNotifyUnderstaffed,
+    @JsonKey(name: 'duty_urgent_hours')
+    @_FlexibleIntConverter()
+    final int? dutyUrgentHours,
   }) = _$AttendanceTypeImpl;
 
   factory _AttendanceType.fromJson(Map<String, dynamic> json) =
@@ -2856,7 +3174,29 @@ abstract class _AttendanceType implements AttendanceType {
   @override
   @JsonKey(name: 'planning_title')
   @_FlexibleStringConverter()
-  String? get planningTitle;
+  String? get planningTitle; // DUTY: Dienst-Modus (Dienstplan)
+  @override
+  @JsonKey(name: 'duty_mode')
+  @_FlexibleBoolConverter()
+  bool get dutyMode;
+  @override
+  @JsonKey(name: 'duty_required')
+  @_FlexibleIntConverter()
+  int? get dutyRequired;
+  @override
+  @JsonKey(name: 'duty_self_signup')
+  bool get dutySelfSignup;
+  @override
+  @JsonKey(name: 'duty_confirm_reminder_days')
+  @_FlexibleIntConverter()
+  int? get dutyConfirmReminderDays;
+  @override
+  @JsonKey(name: 'duty_notify_understaffed')
+  bool get dutyNotifyUnderstaffed;
+  @override
+  @JsonKey(name: 'duty_urgent_hours')
+  @_FlexibleIntConverter()
+  int? get dutyUrgentHours;
 
   /// Create a copy of AttendanceType
   /// with the given fields replaced by the non-null parameter values.

@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/constants/enums.dart';
+import '../../core/utils/duty_utils.dart';
 import 'base_repository.dart';
 
 /// Provider for SignInOutRepository
@@ -48,9 +49,10 @@ class SignInOutRepository extends BaseRepository with TenantAwareRepository {
   }) async {
     try {
       // SEC-009: Validate that personAttendance belongs to current tenant
+      // DUTY: also load duty_state + the type's duty_mode for syncDutyWithStatus
       final validation = await supabase
           .from('person_attendances')
-          .select('id, attendance:attendance_id(tenantId)')
+          .select('id, duty_state, attendance:attendance_id(tenantId, attType:type_id(duty_mode))')
           .eq('id', personAttendanceId)
           .maybeSingle();
 
@@ -83,12 +85,30 @@ class SignInOutRepository extends BaseRepository with TenantAwareRepository {
           break;
       }
 
-      await supabase.from('person_attendances').update({
+      final update = <String, dynamic>{
         'status': newStatus.value,
         'notes': notes,
         'changed_at': DateTime.now().toIso8601String(),
         'changed_by': supabase.auth.currentUser?.id,
-      }).eq('id', personAttendanceId);
+      };
+
+      // DUTY: keep assignment and status in sync (Ionic syncDutyWithStatus)
+      if (validation['attendance']?['attType']?['duty_mode'] == true) {
+        final current = validation['duty_state'] as String?;
+        final next = dutyStateAfterStatus(current, newStatus);
+        if (next != current) {
+          update['duty_state'] = next;
+          if (next == DutyState.confirmed) {
+            update['duty_reminder_sent'] = true;
+            if (current == null) {
+              update['duty_assigned_by'] = supabase.auth.currentUser?.id;
+              update['duty_assigned_at'] = DateTime.now().toUtc().toIso8601String();
+            }
+          }
+        }
+      }
+
+      await supabase.from('person_attendances').update(update).eq('id', personAttendanceId);
     } catch (e, stack) {
       handleError(e, stack, 'signIn');
       rethrow;
@@ -229,16 +249,25 @@ class SignInOutRepository extends BaseRepository with TenantAwareRepository {
       // Get attendance types to resolve includeInAverage
       final attendanceTypes = await supabase
           .from('attendance_types')
-          .select('id, include_in_average')
-          .inFilter('tenantId', tenantIds);
+          .select('id, include_in_average, duty_mode')
+          .inFilter('tenant_id', tenantIds);
 
       final includeInAverageMap = {
         for (final at in attendanceTypes as List)
           at['id'].toString(): at['include_in_average'] as bool? ?? true,
       };
+      // DUTY: types in Dienst-Modus
+      final dutyTypeIds = {
+        for (final at in attendanceTypes)
+          if (at['duty_mode'] == true) at['id'].toString(),
+      };
 
       // Map to CrossTenantPersonAttendance
-      return (response as List).map((json) {
+      // DUTY: duties only show up for persons who were assigned
+      return (response as List).where((json) {
+        final typeId = json['attendance']?['type_id']?.toString();
+        return json['duty_state'] != null || !dutyTypeIds.contains(typeId);
+      }).map((json) {
         final attendance = json['attendance'] as Map<String, dynamic>?;
         final tenantId = attendance?['tenantId'] as int? ?? 0;
         final tenantInfo = tenantMap[tenantId];
@@ -261,6 +290,8 @@ class SignInOutRepository extends BaseRepository with TenantAwareRepository {
           sharePlan: attendance?['share_plan'] == true,
           typeId: attendance?['type_id']?.toString(),
           includeInAverage: includeInAverageMap[attendance?['type_id']?.toString()] ?? true,
+          dutyState: json['duty_state'] as String?,
+          isDutyType: dutyTypeIds.contains(attendance?['type_id']?.toString()),
         );
       }).toList();
     } catch (e, stack) {
@@ -319,6 +350,16 @@ class CrossTenantPersonAttendance {
   final String? typeId;
   final bool includeInAverage;
 
+  /// DUTY: 'requested' | 'confirmed' | 'self' or null
+  final String? dutyState;
+
+  /// DUTY: Termin of a type in Dienst-Modus
+  final bool isDutyType;
+
+  /// DUTY: own assignment that still waits for confirmation
+  bool get isDutyRequested =>
+      isDutyType && dutyState == DutyState.requested && !isCancelledStatus(status);
+
   CrossTenantPersonAttendance({
     this.id,
     this.personId,
@@ -337,6 +378,8 @@ class CrossTenantPersonAttendance {
     this.sharePlan = false,
     this.typeId,
     this.includeInAverage = true,
+    this.dutyState,
+    this.isDutyType = false,
   });
 
   /// Check if this attendance is in the past

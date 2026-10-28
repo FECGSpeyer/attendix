@@ -26,6 +26,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/attendance/attendance.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../data/models/song/song.dart';
+import '../../../duty/presentation/widgets/duty_staffing_section.dart';
 import '../widgets/attendance_detail/attendance_detail_widgets.dart';
 import '../widgets/attendance_legend_sheet.dart';
 import '../widgets/attendance_status_overview_sheet.dart';
@@ -514,6 +515,13 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                           onSendViaTelegram: _showTelegramFormatOptions,
                           onSharePlanChanged: _toggleSharePlan,
                         ),
+
+                        // DUTY: Dienstplan "Besetzung"
+                        if (attendanceType != null && attendanceType.dutyMode && attendance.id != null)
+                          DutyStaffingSection(
+                            attendance: attendance,
+                            attendanceType: attendanceType,
+                          ),
 
                         const SizedBox(height: AppDimensions.paddingS),
                       ],
@@ -1623,6 +1631,11 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
 
       // Invalidate list provider so percentage updates when navigating back
       ref.invalidate(realtimeAttendanceListProvider);
+
+      // DUTY: status changes also change the assignment (synced in the repository)
+      if (ref.read(attendanceTypeForAttendanceProvider(widget.attendanceId)).valueOrNull?.dutyMode ?? false) {
+        ref.invalidate(personAttendancesForAttendanceProvider(widget.attendanceId));
+      }
 
       // Fire-and-forget: update stored percentage for consistency
       ref.read(attendanceNotifierProvider.notifier)

@@ -54,7 +54,10 @@ mixin _$Tenant {
   bool? get favorite => throw _privateConstructorUsedError;
   @JsonKey(name: 'critical_rules')
   List<CriticalRule>? get criticalRules => throw _privateConstructorUsedError;
-  String get timezone => throw _privateConstructorUsedError;
+  String get timezone =>
+      throw _privateConstructorUsedError; // DUTY: "Meine Termine" als Dienstplan-Ansicht
+  @JsonKey(name: 'duty_view')
+  bool get dutyView => throw _privateConstructorUsedError;
 
   /// Serializes this Tenant to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -97,6 +100,7 @@ abstract class $TenantCopyWith<$Res> {
     bool? favorite,
     @JsonKey(name: 'critical_rules') List<CriticalRule>? criticalRules,
     String timezone,
+    @JsonKey(name: 'duty_view') bool dutyView,
   });
 }
 
@@ -141,6 +145,7 @@ class _$TenantCopyWithImpl<$Res, $Val extends Tenant>
     Object? favorite = freezed,
     Object? criticalRules = freezed,
     Object? timezone = null,
+    Object? dutyView = null,
   }) {
     return _then(
       _value.copyWith(
@@ -274,6 +279,11 @@ class _$TenantCopyWithImpl<$Res, $Val extends Tenant>
                     ? _value.timezone
                     : timezone // ignore: cast_nullable_to_non_nullable
                         as String,
+            dutyView:
+                null == dutyView
+                    ? _value.dutyView
+                    : dutyView // ignore: cast_nullable_to_non_nullable
+                        as bool,
           )
           as $Val,
     );
@@ -315,6 +325,7 @@ abstract class _$$TenantImplCopyWith<$Res> implements $TenantCopyWith<$Res> {
     bool? favorite,
     @JsonKey(name: 'critical_rules') List<CriticalRule>? criticalRules,
     String timezone,
+    @JsonKey(name: 'duty_view') bool dutyView,
   });
 }
 
@@ -358,6 +369,7 @@ class __$$TenantImplCopyWithImpl<$Res>
     Object? favorite = freezed,
     Object? criticalRules = freezed,
     Object? timezone = null,
+    Object? dutyView = null,
   }) {
     return _then(
       _$TenantImpl(
@@ -491,6 +503,11 @@ class __$$TenantImplCopyWithImpl<$Res>
                 ? _value.timezone
                 : timezone // ignore: cast_nullable_to_non_nullable
                     as String,
+        dutyView:
+            null == dutyView
+                ? _value.dutyView
+                : dutyView // ignore: cast_nullable_to_non_nullable
+                    as bool,
       ),
     );
   }
@@ -529,6 +546,7 @@ class _$TenantImpl implements _Tenant {
     this.favorite = false,
     @JsonKey(name: 'critical_rules') final List<CriticalRule>? criticalRules,
     this.timezone = 'Europe/Berlin',
+    @JsonKey(name: 'duty_view') this.dutyView = false,
   }) : _additionalFields = additionalFields,
        _registrationFields = registrationFields,
        _criticalRules = criticalRules;
@@ -630,10 +648,14 @@ class _$TenantImpl implements _Tenant {
   @override
   @JsonKey()
   final String timezone;
+  // DUTY: "Meine Termine" als Dienstplan-Ansicht
+  @override
+  @JsonKey(name: 'duty_view')
+  final bool dutyView;
 
   @override
   String toString() {
-    return 'Tenant(id: $id, createdAt: $createdAt, shortName: $shortName, longName: $longName, maintainTeachers: $maintainTeachers, showHolidays: $showHolidays, type: $type, withExcuses: $withExcuses, practiceStart: $practiceStart, practiceEnd: $practiceEnd, seasonStart: $seasonStart, parents: $parents, betaProgram: $betaProgram, showMembersList: $showMembersList, region: $region, role: $role, songSharingId: $songSharingId, additionalFields: $additionalFields, perc: $perc, percColor: $percColor, registerId: $registerId, autoApproveRegistrations: $autoApproveRegistrations, registrationFields: $registrationFields, favorite: $favorite, criticalRules: $criticalRules, timezone: $timezone)';
+    return 'Tenant(id: $id, createdAt: $createdAt, shortName: $shortName, longName: $longName, maintainTeachers: $maintainTeachers, showHolidays: $showHolidays, type: $type, withExcuses: $withExcuses, practiceStart: $practiceStart, practiceEnd: $practiceEnd, seasonStart: $seasonStart, parents: $parents, betaProgram: $betaProgram, showMembersList: $showMembersList, region: $region, role: $role, songSharingId: $songSharingId, additionalFields: $additionalFields, perc: $perc, percColor: $percColor, registerId: $registerId, autoApproveRegistrations: $autoApproveRegistrations, registrationFields: $registrationFields, favorite: $favorite, criticalRules: $criticalRules, timezone: $timezone, dutyView: $dutyView)';
   }
 
   @override
@@ -695,7 +717,9 @@ class _$TenantImpl implements _Tenant {
               _criticalRules,
             ) &&
             (identical(other.timezone, timezone) ||
-                other.timezone == timezone));
+                other.timezone == timezone) &&
+            (identical(other.dutyView, dutyView) ||
+                other.dutyView == dutyView));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -728,6 +752,7 @@ class _$TenantImpl implements _Tenant {
     favorite,
     const DeepCollectionEquality().hash(_criticalRules),
     timezone,
+    dutyView,
   ]);
 
   /// Create a copy of Tenant
@@ -775,6 +800,7 @@ abstract class _Tenant implements Tenant {
     final bool? favorite,
     @JsonKey(name: 'critical_rules') final List<CriticalRule>? criticalRules,
     final String timezone,
+    @JsonKey(name: 'duty_view') final bool dutyView,
   }) = _$TenantImpl;
 
   factory _Tenant.fromJson(Map<String, dynamic> json) = _$TenantImpl.fromJson;
@@ -838,7 +864,10 @@ abstract class _Tenant implements Tenant {
   @JsonKey(name: 'critical_rules')
   List<CriticalRule>? get criticalRules;
   @override
-  String get timezone;
+  String get timezone; // DUTY: "Meine Termine" als Dienstplan-Ansicht
+  @override
+  @JsonKey(name: 'duty_view')
+  bool get dutyView;
 
   /// Create a copy of Tenant
   /// with the given fields replaced by the non-null parameter values.

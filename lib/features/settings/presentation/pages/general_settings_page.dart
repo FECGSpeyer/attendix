@@ -11,6 +11,7 @@ import '../../../../core/providers/attendance_type_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../core/providers/tenant_providers.dart';
+import '../../../../core/providers/duty_providers.dart';
 import '../../../../core/providers/organisation_providers.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../data/models/organisation/organisation.dart';
@@ -65,6 +66,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
   bool _parents = false;
   bool _showMembersList = false;
   bool _showHolidays = false;
+  bool _dutyView = false; // DUTY: "Meine Termine" als Dienstplan-Ansicht
 
   // Sharing
   bool _songSharingEnabled = false;
@@ -120,6 +122,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
       _parents = tenant.parents ?? false;
       _showMembersList = tenant.showMembersList;
       _showHolidays = tenant.showHolidays;
+      _dutyView = tenant.dutyView; // DUTY
       _songSharingEnabled = tenant.songSharingId != null && tenant.songSharingId!.isNotEmpty;
       _songSharingId = tenant.songSharingId;
       _registrationEnabled = tenant.registerId != null && tenant.registerId!.isNotEmpty;
@@ -181,6 +184,8 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
         'withExcuses': _withExcuses,
         'parents': _parents,
         'show_members_list': _showMembersList,
+        // DUTY: only sent when the tenant uses the Dienstplan at all
+        if (ref.read(hasDutyTypesProvider)) 'duty_view': _dutyView,
         'song_sharing_id': _songSharingEnabled ? (_songSharingId ?? const Uuid().v4()) : null,
         'register_id': _registrationEnabled ? (_registerId ?? const Uuid().v4()) : null,
         'auto_approve_registrations': _autoApproveRegistrations,
@@ -514,6 +519,21 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
                       _markChanged();
                     },
                   ),
+                  // DUTY: Dienstplan-Ansicht (only when a type uses Dienst-Modus)
+                  if (ref.watch(hasDutyTypesProvider))
+                    SwitchListTile(
+                      contentPadding: EdgeInsets.zero,
+                      title: const Text('Dienstplan-Ansicht für Meine Termine'),
+                      subtitle: const Text(
+                        '„Meine Termine“ zeigt für Personen aus einem Dienst-Team zuerst ihre Dienste, offene '
+                        'Dienste und Zahlen statt der Anwesenheitsquote. Andere Termine stehen eingeklappt darunter.',
+                      ),
+                      value: _dutyView,
+                      onChanged: (v) {
+                        setState(() => _dutyView = v);
+                        _markChanged();
+                      },
+                    ),
 
                   const SizedBox(height: AppDimensions.paddingXL),
 

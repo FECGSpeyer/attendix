@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import '../../../../core/config/supabase_config.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/constants/enums.dart';
+import '../../../../core/providers/duty_providers.dart';
 import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/player_providers.dart';
 import '../../../../core/providers/realtime_providers.dart';
@@ -14,6 +15,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../data/services/auth_service.dart';
+import '../../../duty/presentation/pages/unavailability_page.dart';
 import '../widgets/handover_sheet.dart';
 import '../widgets/person_detail/person_detail.dart';
 
@@ -1572,6 +1574,23 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
 
             // Upcoming Appointments Accordion
             UpcomingAppointmentsAccordion(personId: widget.personId),
+
+            // DUTY: "Regelmäßig verhindert" (only when the tenant uses the Dienstplan)
+            if (canEdit && ref.watch(hasDutyTypesProvider))
+              Card(
+                margin: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM, vertical: AppDimensions.paddingXS),
+                child: ListTile(
+                  leading: const Icon(Icons.event_busy_outlined, color: AppColors.primary),
+                  title: const Text('Regelmäßig verhindert', style: TextStyle(color: AppColors.primary)),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => openUnavailabilityPage(
+                    context,
+                    personId: widget.personId,
+                    personName: person.fullName,
+                    forOther: true,
+                  ),
+                ),
+              ),
 
             // Other Tenants Accordion (only if person has an account)
             if (widget.person.appId != null)

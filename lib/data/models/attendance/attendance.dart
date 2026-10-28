@@ -169,6 +169,8 @@ class Attendance with _$Attendance {
     @_FlexibleIntListConverter() List<int>? conductors,
     Map<String, dynamic>? players,
     @JsonKey(name: 'share_plan') @_FlexibleBoolConverter() @Default(false) bool sharePlan,
+    // DUTY: persons needed for this Termin (Dienst-Modus); null = type default
+    @JsonKey(name: 'duty_required') @_FlexibleIntConverter() int? dutyRequired,
   }) = _Attendance;
 
   factory Attendance.fromJson(Map<String, dynamic> json) =>
@@ -199,6 +201,10 @@ class PersonAttendance with _$PersonAttendance {
     @_FlexibleBoolConverter() @Default(false) bool highlight,
     @_FlexibleStringConverter() String? left,
     @_FlexibleBoolConverter() @Default(false) bool paused,
+    // DUTY: 'requested' | 'confirmed' | 'self' (null = not assigned / stand-in)
+    @JsonKey(name: 'duty_state') @_FlexibleStringConverter() String? dutyState,
+    @JsonKey(name: 'duty_assigned_by') @_FlexibleStringConverter() String? dutyAssignedBy,
+    @JsonKey(name: 'duty_assigned_at') @_FlexibleStringConverter() String? dutyAssignedAt,
   }) = _PersonAttendance;
 
   factory PersonAttendance.fromJson(Map<String, dynamic> json) =>
@@ -249,6 +255,13 @@ class AttendanceType with _$AttendanceType {
     List<ChecklistItem>? checklist,
     // Field from Ionic that was missing
     @JsonKey(name: 'planning_title') @_FlexibleStringConverter() String? planningTitle,
+    // DUTY: Dienst-Modus (Dienstplan)
+    @JsonKey(name: 'duty_mode') @_FlexibleBoolConverter() @Default(false) bool dutyMode,
+    @JsonKey(name: 'duty_required') @_FlexibleIntConverter() int? dutyRequired,
+    @JsonKey(name: 'duty_self_signup') @Default(true) bool dutySelfSignup,
+    @JsonKey(name: 'duty_confirm_reminder_days') @_FlexibleIntConverter() int? dutyConfirmReminderDays,
+    @JsonKey(name: 'duty_notify_understaffed') @Default(true) bool dutyNotifyUnderstaffed,
+    @JsonKey(name: 'duty_urgent_hours') @_FlexibleIntConverter() int? dutyUrgentHours,
   }) = _AttendanceType;
 
   factory AttendanceType.fromJson(Map<String, dynamic> json) =>

@@ -14,6 +14,10 @@ import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/color_utils.dart';
 import '../../../../core/utils/shift_utils.dart';
+import '../../../../core/providers/duty_providers.dart';
+import '../../../../core/utils/duty_utils.dart';
+import '../../../../core/constants/enums.dart';
+import '../../../../data/models/duty/person_unavailability.dart';
 import '../../../../data/models/attendance/attendance.dart';
 import '../widgets/multi_date_calendar.dart';
 import '../widgets/songs_selection_sheet.dart';
@@ -62,6 +66,10 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
 
   // Loading state
   bool _isLoading = false;
+
+  // DUTY: persons needed per ISO weekday (Dienst-Modus), unavailability rules
+  Map<int, int> _dutyRequiredByWeekday = {};
+  List<PersonUnavailability> _unavailability = [];
 
   @override
   void initState() {
@@ -247,6 +255,41 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
             ),
 
             const SizedBox(height: AppDimensions.paddingM),
+
+            // DUTY: persons needed per weekday (Dienst-Modus)
+            if (_selectedType?.dutyMode == true && _selectedDates.isNotEmpty) ...[
+              _SectionCard(
+                title: 'Benötigte Personen',
+                child: Column(
+                  children: [
+                    for (final wd in _dutyWeekdays())
+                      ListTile(
+                        title: Text('Benötigte Personen · ${weekdayLongNames[wd.weekday - 1]}'),
+                        subtitle: Text('${wd.count} ${wd.count == 1 ? 'Termin' : 'Termine'}'),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.remove),
+                              tooltip: 'Weniger',
+                              onPressed: wd.required <= 1
+                                  ? null
+                                  : () => setState(() => _dutyRequiredByWeekday[wd.weekday] = wd.required - 1),
+                            ),
+                            Text('${wd.required}'),
+                            IconButton(
+                              icon: const Icon(Icons.add),
+                              tooltip: 'Mehr',
+                              onPressed: () => setState(() => _dutyRequiredByWeekday[wd.weekday] = wd.required + 1),
+                            ),
+                          ],
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: AppDimensions.paddingM),
+            ],
 
             // Time range (only for non-all-day events)
             if (!isAllDay) ...[
@@ -477,6 +520,7 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
   void _onTypeChanged(AttendanceType type) {
     setState(() {
       _selectedType = type;
+      _dutyRequiredByWeekday = {}; // DUTY
       // Set default times from type (always overwrite to match type defaults)
       _startTime = type.startTime != null ? _parseTime(type.startTime!) : null;
       _endTime = type.endTime != null ? _parseTime(type.endTime!) : null;
@@ -716,6 +760,9 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
 
       int? lastCreatedId;
 
+      // DUTY: "Regelmäßig verhindert" rules (never throws)
+      _unavailability = await ref.read(dutyRepositoryWithTenantProvider).getUnavailabilityForTenant();
+
       // Create attendance for each selected date
       for (final date in _selectedDates) {
         final attendanceId = await _createSingleAttendance(date);
@@ -815,6 +862,9 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
       'checklist': checklist,
       'created_by': supabase.auth.currentUser?.id,
       'save_in_history': true,
+      // DUTY: only stored when it differs from the type default
+      if (type.dutyMode && _dutyRequiredFor(normalizedDate) != type.dutyRequired)
+        'duty_required': _dutyRequiredFor(normalizedDate),
     }).select().single();
 
     final attendanceId = response['id'] as int;
@@ -853,7 +903,9 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
     if (playerList.isEmpty) return;
 
     // Get default status from attendance type
-    final defaultStatus = type.defaultStatus;
+    // DUTY: nobody is expected until assigned → Neutral for duty types
+    final defaultStatus = type.dutyMode ? AttendanceStatus.neutral : type.defaultStatus;
+    final canExcuse = type.availableStatuses?.contains(AttendanceStatus.excused) ?? true;
 
     // Filter players based on relevant_groups
     final relevantGroups = type.relevantGroups;
@@ -925,6 +977,16 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
         notes = result.note;
       }
 
+      // DUTY: "Regelmäßig verhindert" → Entschuldigt
+      if (canExcuse) {
+        final rule = matchingUnavailability(
+            _unavailability, player['id'] as int, date.toIso8601String(), type.id);
+        if (rule != null) {
+          status = AttendanceStatus.excused;
+          notes = unavailabilityNote(rule);
+        }
+      }
+
       records.add({
         'attendance_id': attendanceId,
         'person_id': player['id'],
@@ -936,6 +998,26 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
     // Batch insert all records
     await supabase.from('person_attendances').insert(records);
   }
+
+  // DUTY: weekdays of the selected dates with count and persons needed
+  List<({int weekday, int count, int required})> _dutyWeekdays() {
+    final counts = <int, int>{};
+    for (final d in _selectedDates) {
+      counts[d.weekday] = (counts[d.weekday] ?? 0) + 1;
+    }
+    final keys = counts.keys.toList()..sort();
+    return [
+      for (final wd in keys)
+        (
+          weekday: wd,
+          count: counts[wd]!,
+          required: _dutyRequiredByWeekday[wd] ?? _selectedType?.dutyRequired ?? 1,
+        ),
+    ];
+  }
+
+  int _dutyRequiredFor(DateTime date) =>
+      _dutyRequiredByWeekday[date.weekday] ?? _selectedType?.dutyRequired ?? 1;
 
   /// Create song history entries for the attendance
   Future<void> _createSongHistoryEntries(

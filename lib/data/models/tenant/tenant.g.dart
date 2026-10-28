@@ -46,6 +46,7 @@ _$TenantImpl _$$TenantImplFromJson(Map<String, dynamic> json) => _$TenantImpl(
           ?.map((e) => CriticalRule.fromJson(e as Map<String, dynamic>))
           .toList(),
   timezone: json['timezone'] as String? ?? 'Europe/Berlin',
+  dutyView: json['duty_view'] as bool? ?? false,
 );
 
 Map<String, dynamic> _$$TenantImplToJson(_$TenantImpl instance) =>
@@ -76,6 +77,7 @@ Map<String, dynamic> _$$TenantImplToJson(_$TenantImpl instance) =>
       'favorite': instance.favorite,
       'critical_rules': instance.criticalRules,
       'timezone': instance.timezone,
+      'duty_view': instance.dutyView,
     };
 
 _$ExtraFieldImpl _$$ExtraFieldImplFromJson(Map<String, dynamic> json) =>

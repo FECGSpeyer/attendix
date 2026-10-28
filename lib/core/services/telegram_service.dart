@@ -20,6 +20,9 @@ class NotificationConfig {
   final bool checklist;
   final List<int>? enabledTenants;
 
+  /// DUTY: Dienste (Einteilung, Erinnerung, unterbesetzt); null counts as on
+  final bool? duties;
+
   NotificationConfig({
     required this.id,
     this.createdAt,
@@ -34,6 +37,7 @@ class NotificationConfig {
     this.reminders = true,
     this.checklist = true,
     this.enabledTenants,
+    this.duties,
   });
 
   factory NotificationConfig.fromJson(Map<String, dynamic> json) => NotificationConfig(
@@ -50,6 +54,7 @@ class NotificationConfig {
         reminders: json['reminders'] as bool? ?? true,
         checklist: json['checklist'] as bool? ?? true,
         enabledTenants: (json['enabled_tenants'] as List?)?.cast<int>(),
+        duties: json['duties'] as bool?,
       );
 
   Map<String, dynamic> toJson() => {
@@ -65,6 +70,7 @@ class NotificationConfig {
         'reminders': reminders,
         'checklist': checklist,
         'enabled_tenants': enabledTenants,
+        'duties': duties,
       };
 
   NotificationConfig copyWith({
@@ -83,6 +89,7 @@ class NotificationConfig {
     bool? checklist,
     List<int>? enabledTenants,
     bool clearEnabledTenants = false,
+    bool? duties,
   }) =>
       NotificationConfig(
         id: id ?? this.id,
@@ -98,6 +105,7 @@ class NotificationConfig {
         reminders: reminders ?? this.reminders,
         checklist: checklist ?? this.checklist,
         enabledTenants: clearEnabledTenants ? null : (enabledTenants ?? this.enabledTenants),
+        duties: duties ?? this.duties,
       );
 
   bool get isConnected => telegramChatId != null && telegramChatId!.isNotEmpty;

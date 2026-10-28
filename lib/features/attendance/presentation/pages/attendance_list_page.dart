@@ -18,6 +18,10 @@ import '../../../../shared/widgets/loading/loading.dart';
 import '../../../../shared/widgets/common/empty_state.dart';
 import '../../../../shared/widgets/display/percentage_badge.dart';
 import '../../../../shared/widgets/animations/animated_list_item.dart';
+import '../../../../core/providers/duty_providers.dart';
+import '../../../duty/presentation/pages/duty_distribute_page.dart';
+import '../../../duty/presentation/widgets/duty_actions.dart';
+import '../../../duty/presentation/widgets/my_duty_requests_section.dart';
 
 
 /// Attendance list page
@@ -85,6 +89,16 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
           ],
         ),
         actions: [
+          // DUTY: "Dienste verteilen" for leaders when the tenant uses the Dienstplan
+          if (role.isConductor && ref.watch(hasDutyTypesProvider))
+            IconButton(
+              icon: const Icon(Icons.shuffle),
+              tooltip: 'Dienste verteilen',
+              onPressed: () async {
+                final saved = await openDutyDistributePage(context);
+                if (saved && mounted) ref.invalidate(realtimeAttendanceListProvider);
+              },
+            ),
           IconButton(
             icon: const Icon(Icons.calendar_today),
             tooltip: 'Kalender',
@@ -129,6 +143,8 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
           // Use memoized categorized attendances (no more date parsing in build)
           final categorized = ref.watch(categorizedAttendancesProvider);
           final averagePercent = ref.watch(averageAttendancePercentProvider);
+          // DUTY: Besetzung of duty Termine by attendance id
+          final dutyTermine = ref.watch(dutyTermineByIdProvider).valueOrNull ?? const <int, DutyTermin>{};
 
           return RefreshIndicator(
             onRefresh: () async {
@@ -138,6 +154,9 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
             child: ListView(
               padding: const EdgeInsets.all(AppDimensions.paddingM),
               children: [
+                // DUTY: own duties waiting for confirmation
+                const MyDutyRequestsSection(),
+
                 // Current Attendance Section (like Ionic - collapsible)
                 if (categorized.current != null)
                   _CollapsibleSection(
@@ -156,6 +175,7 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
                               ? () => _confirmDelete(context, categorized.current!)
                               : null,
                           isHighlighted: highlightedTypeIds.contains(categorized.current!.typeId),
+                          dutyTermin: dutyTermine[categorized.current!.id],
                         ),
                       ),
                     ],
@@ -179,6 +199,7 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
                               ? () => _confirmDelete(context, entry.value)
                               : null,
                           isHighlighted: highlightedTypeIds.contains(entry.value.typeId),
+                          dutyTermin: dutyTermine[entry.value.id],
                         ),
                       ),
                     ).toList(),
@@ -230,6 +251,7 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
                               ? () => _confirmDelete(context, entry.value)
                               : null,
                           isHighlighted: highlightedTypeIds.contains(entry.value.typeId),
+                          dutyTermin: dutyTermine[entry.value.id],
                         ),
                       ),
                     ).toList(),
@@ -349,12 +371,16 @@ class _AttendanceListItem extends StatelessWidget {
     required this.onTap,
     this.onDelete,
     this.isHighlighted = false,
+    this.dutyTermin,
   });
 
   final Attendance attendance;
   final VoidCallback onTap;
   final VoidCallback? onDelete;
   final bool isHighlighted;
+
+  /// DUTY: set for Termine of duty types (shows Besetzung instead of %)
+  final DutyTermin? dutyTermin;
 
   @override
   Widget build(BuildContext context) {
@@ -405,12 +431,22 @@ class _AttendanceListItem extends StatelessWidget {
             ],
           ),
         ),
-        title: Text(
-          attendance.displayTitle,
-          style: TextStyle(
-            // Dezentes Highlighting: nur fetter Text (wie Ionic)
-            fontWeight: isHighlighted ? FontWeight.bold : FontWeight.w500,
-          ),
+        title: Row(
+          children: [
+            if (dutyTermin != null) ...[
+              const Icon(Icons.headset_mic_outlined, size: 16, color: AppColors.primary),
+              const SizedBox(width: 4),
+            ],
+            Expanded(
+              child: Text(
+                attendance.displayTitle,
+                style: TextStyle(
+                  // Dezentes Highlighting: nur fetter Text (wie Ionic)
+                  fontWeight: isHighlighted ? FontWeight.bold : FontWeight.w500,
+                ),
+              ),
+            ),
+          ],
         ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -422,6 +458,13 @@ class _AttendanceListItem extends StatelessWidget {
                   fontSize: 12,
                   color: AppColors.medium,
                 ),
+              ),
+            if (dutyTermin != null)
+              Text(
+                dutyNames(dutyTermin!),
+                style: const TextStyle(fontSize: 12, color: AppColors.medium),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
             if (attendance.notes != null && attendance.notes!.isNotEmpty)
               Text(
@@ -435,10 +478,12 @@ class _AttendanceListItem extends StatelessWidget {
               ),
           ],
         ),
-        trailing: PercentageBadge(
-          percentage: attendance.percentage ?? 0,
-          showBackground: true,
-        ),
+        trailing: dutyTermin != null
+            ? DutyPill(text: dutyBadge(dutyTermin!).text, color: dutyBadge(dutyTermin!).color)
+            : PercentageBadge(
+                percentage: attendance.percentage ?? 0,
+                showBackground: true,
+              ),
       ),
     );
 

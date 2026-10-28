@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/attendance_type_providers.dart';
+import '../../../../core/providers/duty_providers.dart';
+import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/providers/self_service_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/color_utils.dart';
@@ -10,6 +12,7 @@ import '../../../../core/utils/date_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/attendance/attendance.dart';
 import '../../../../data/models/person/person.dart';
+import '../../../duty/presentation/widgets/self_service_duty_section.dart';
 import '../widgets/plan_viewer_sheet.dart';
 import '../widgets/upcoming_songs_sheet.dart';
 
@@ -28,13 +31,26 @@ class SelfServiceOverviewPage extends ConsumerStatefulWidget {
 class _SelfServiceOverviewPageState
     extends ConsumerState<SelfServiceOverviewPage> {
   String _groupingMode = 'chronological'; // or 'byTenant'
+  bool _showOtherTermine = false; // DUTY: "Weitere Termine" in the Dienstplan view
 
   @override
   Widget build(BuildContext context) {
     final attendancesAsync = ref.watch(allPersonAttendancesAcrossTenantsProvider);
     final stats = ref.watch(attendanceStatsProvider);
-    final currentAttendance = ref.watch(currentAttendanceProvider);
-    final upcoming = ref.watch(upcomingAttendancesAcrossTenantsProvider);
+    var currentAttendance = ref.watch(currentAttendanceProvider);
+    var upcoming = ref.watch(upcomingAttendancesAcrossTenantsProvider);
+
+    // DUTY: in the Dienstplan view the own duties of this tenant are shown in
+    // the duty section; all other Termine are collapsed under "Weitere Termine".
+    final dutyOverview = ref.watch(myDutyOverviewProvider).valueOrNull;
+    final useDutyView = dutyOverview?.useDutyView ?? false;
+    if (useDutyView) {
+      final tenantId = ref.watch(currentTenantIdProvider);
+      upcoming = upcoming.where((a) => !(a.isDutyType && a.tenantId == tenantId)).toList();
+      currentAttendance = upcoming.isNotEmpty ? upcoming.first : null;
+    }
+    final otherTermineCount = upcoming.length;
+    final showLists = !useDutyView || _showOtherTermine;
     final past = ref.watch(pastAttendancesAcrossTenantsProvider);
     final isApplicant = ref.watch(isApplicantProvider);
     final playerAsync = ref.watch(currentSelfServicePlayerProvider);
@@ -127,20 +143,30 @@ class _SelfServiceOverviewPageState
                   ),
                 ),
 
+                // DUTY: Dienstplan ("Bitte bestätigen", "Meine Dienste", "Offene Dienste")
+                SliverToBoxAdapter(
+                  child: SelfServiceDutySection(
+                    showOtherTermine: _showOtherTermine,
+                    otherTermineCount: otherTermineCount,
+                    onToggleOtherTermine: () => setState(() => _showOtherTermine = !_showOtherTermine),
+                  ),
+                ),
+
                 // Current Attendance Card
-                if (currentAttendance != null)
+                if (showLists && currentAttendance != null)
                   SliverToBoxAdapter(
                     child: _CurrentAttendanceCard(
                       attendance: currentAttendance,
-                      onSignIn: () => _signIn(currentAttendance),
-                      onSignOut: () => _showSignOutDialog(currentAttendance),
+                      onSignIn: () => _signIn(currentAttendance!),
+                      onSignOut: () => _showSignOutDialog(currentAttendance!),
                       onShowPlan: currentAttendance.hasPlan
-                          ? () => _showPlanViewer(currentAttendance)
+                          ? () => _showPlanViewer(currentAttendance!)
                           : null,
                     ),
                   ),
 
                 // Grouping mode toggle
+                if (showLists)
                 SliverToBoxAdapter(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM, vertical: AppDimensions.paddingS),
@@ -158,7 +184,9 @@ class _SelfServiceOverviewPageState
                 ),
 
                 // Upcoming/Past Lists
-                if (_groupingMode == 'chronological') ...[
+                if (!showLists) ...[
+                  // DUTY: other Termine collapsed in the Dienstplan view
+                ] else if (_groupingMode == 'chronological') ...[
                   // Skip the first upcoming (already shown as current)
                   if (upcoming.length > 1) ...[
                     const SliverToBoxAdapter(

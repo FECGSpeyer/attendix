@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/config/supabase_config.dart';
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/providers/duty_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/services/telegram_service.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -165,6 +166,18 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
                     onChanged: (v) => _updateConfig(_config!.copyWith(reminders: v)),
                   ),
                   const Divider(height: 1),
+                  // DUTY: only when the tenant uses the Dienstplan
+                  if (ref.watch(hasDutyTypesProvider)) ...[
+                    _NotificationToggle(
+                      title: 'Dienste',
+                      subtitle: 'Wenn du für einen Dienst eingeteilt wirst, an die Bestätigung erinnert wirst '
+                          'oder jemand zum Einspringen gesucht wird. Dringende Anfragen kommen trotzdem an.',
+                      icon: Icons.headset_mic_outlined,
+                      value: _config!.duties != false,
+                      onChanged: (v) => _updateConfig(_config!.copyWith(duties: v)),
+                    ),
+                    const Divider(height: 1),
+                  ],
                   _NotificationToggle(
                     title: 'Checklisten',
                     subtitle: 'Checklisten-Updates',

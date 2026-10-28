@@ -16,3 +16,5 @@ export 'viewer_repository.dart';
 export 'parent_repository.dart';
 export 'church_repository.dart';
 export 'usage_events_repository.dart';
+// DUTY
+export 'duty_repository.dart';

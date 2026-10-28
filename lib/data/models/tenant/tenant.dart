@@ -34,6 +34,8 @@ class Tenant with _$Tenant {
     @Default(false) bool? favorite,
     @JsonKey(name: 'critical_rules') List<CriticalRule>? criticalRules,
     @Default('Europe/Berlin') String timezone,
+    // DUTY: "Meine Termine" als Dienstplan-Ansicht
+    @JsonKey(name: 'duty_view') @Default(false) bool dutyView,
   }) = _Tenant;
 
   factory Tenant.fromJson(Map<String, dynamic> json) => _$TenantFromJson(json);

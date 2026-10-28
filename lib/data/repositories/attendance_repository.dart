@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/constants/enums.dart';
+import '../../core/utils/duty_utils.dart';
 import '../models/attendance/attendance.dart';
 import 'base_repository.dart';
 
@@ -462,9 +463,10 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
   ) async {
     try {
       // Validate that personAttendance belongs to current tenant
+      // DUTY: also load duty_state + the type's duty_mode for syncDutyWithStatus
       final validation = await supabase
           .from('person_attendances')
-          .select('id, attendance:attendance_id(tenantId)')
+          .select('id, duty_state, attendance:attendance_id(tenantId, type_id, attType:type_id(duty_mode))')
           .eq('id', id)
           .maybeSingle();
 
@@ -473,6 +475,28 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
           message: 'PersonAttendance not found',
           operation: 'updatePersonAttendance',
         );
+      }
+
+      // DUTY: keep assignment and status in sync for Termine of duty types
+      // (Ionic syncDutyWithStatus). Explicit duty changes are left alone.
+      final isDutyTermin = validation['attendance']?['attType']?['duty_mode'] == true;
+      if (isDutyTermin && updates.containsKey('status') && !updates.containsKey('duty_state')) {
+        final rawStatus = updates['status'];
+        final newStatus = rawStatus is AttendanceStatus
+            ? rawStatus
+            : AttendanceStatus.fromValue((rawStatus as num?)?.toInt() ?? 0);
+        final current = validation['duty_state'] as String?;
+        final next = dutyStateAfterStatus(current, newStatus);
+        if (next != current) {
+          updates['duty_state'] = next;
+          if (next == DutyState.confirmed) {
+            updates['duty_reminder_sent'] = true;
+            if (current == null) {
+              updates['duty_assigned_by'] = supabase.auth.currentUser?.id;
+              updates['duty_assigned_at'] = DateTime.now().toUtc().toIso8601String();
+            }
+          }
+        }
       }
 
       final attendanceTenantId = validation['attendance']?['tenantId'];
@@ -642,7 +666,7 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
       // Validate attendance belongs to current tenant
       final attendanceCheck = await supabase
           .from('attendance')
-          .select('id')
+          .select('id, attType:type_id(duty_mode)')
           .eq('id', attendanceId)
           .eq('tenantId', currentTenantId)
           .maybeSingle();
@@ -654,10 +678,15 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
 
       final response = await supabase
           .from('person_attendances')
-          .select('status')
+          .select('status, duty_state')
           .eq('attendance_id', attendanceId);
 
-      final statusList = (response as List).map((e) => e['status']).toList();
+      // DUTY: for duty types only assigned persons count (stand-ins are left out)
+      final isDutyTermin = attendanceCheck['attType']?['duty_mode'] == true;
+      final statusList = (response as List)
+          .where((e) => !isDutyTermin || e['duty_state'] != null)
+          .map((e) => e['status'])
+          .toList();
 
       if (statusList.isEmpty) {
         await updateAttendance(attendanceId, {'percentage': null});
