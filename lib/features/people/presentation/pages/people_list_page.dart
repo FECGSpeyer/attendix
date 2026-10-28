@@ -15,7 +15,11 @@ import '../../../../core/providers/realtime_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/dialog_helper.dart';
+import '../../../../core/providers/church_providers.dart';
 import '../../../../data/models/person/person.dart';
+import '../../../../data/models/tenant/tenant.dart';
+import '../../../../shared/widgets/tenant/tenant_switcher_title.dart';
+import '../../people_list_utils.dart';
 import '../../../../shared/widgets/loading/loading.dart';
 import '../../../../shared/widgets/common/empty_state.dart';
 import '../../../../shared/widgets/animations/animated_list_item.dart';
@@ -88,6 +92,9 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
   final _searchController = TextEditingController();
   String _filterOption = 'all';
   String _sortOption = 'group';
+
+  /// Value for extra-field filters (filter option `extra:<fieldId>`)
+  String? _extraFilterValue;
 
   // Selection mode state
   bool _isSelectionMode = false;
@@ -225,14 +232,25 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
         break;
     }
 
-    // Apply search
+    final extraFields =
+        ref.read(currentTenantProvider)?.additionalFields ?? const <ExtraField>[];
+
+    // Extra field filter (Ionic: select / boolean / number / bfecg_church)
+    if (_filterOption.startsWith('extra:') && _extraFilterValue != null) {
+      final fieldId = _filterOption.substring(6);
+      final field = extraFields.where((f) => f.id == fieldId).firstOrNull;
+      if (field != null) {
+        filtered = filtered.where((p) {
+          final raw = p.additionalFields?[fieldId] ??
+              (field.type == 'boolean' ? (field.defaultValue ?? true) : null);
+          return raw?.toString() == _extraFilterValue;
+        }).toList();
+      }
+    }
+
+    // Apply search (names, group and text/number extra fields)
     if (_searchQuery.isNotEmpty) {
-      final query = _searchQuery.toLowerCase();
-      filtered = filtered.where((person) {
-        return person.firstName.toLowerCase().contains(query) ||
-            person.lastName.toLowerCase().contains(query) ||
-            (person.groupName?.toLowerCase().contains(query) ?? false);
-      }).toList();
+      filtered = searchPeople(filtered, _searchQuery, extraFields: extraFields);
     }
 
     return filtered;
@@ -309,14 +327,21 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
           return bVal.compareTo(aVal); // descending
         });
         break;
-      case 'group':
-      default:
+      case 'attAsc':
+      case 'attDesc':
+        final pct = ref.read(playerAttendancePercentagesProvider).valueOrNull ??
+            const <int, int>{};
         sorted.sort((a, b) {
-          final groupCompare = (a.groupName ?? '').compareTo(b.groupName ?? '');
-          if (groupCompare != 0) return groupCompare;
-          return a.lastName.compareTo(b.lastName);
+          final c = (pct[a.id] ?? 0).compareTo(pct[b.id] ?? 0);
+          return _sortOption == 'attAsc' ? c : -c;
         });
         break;
+      case 'group':
+      default:
+        // Main group first, then instrument sort_order, then group name;
+        // inside a group: player sort_order, then last name (Ionic Utils)
+        final groups = ref.read(groupsProvider).valueOrNull ?? const [];
+        return sortPeopleByGroup(sorted, groups);
     }
 
     return sorted;
@@ -341,6 +366,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
       if (previous?.id != next?.id) {
         setState(() {
           _filterOption = 'all';
+          _extraFilterValue = null;
           _sortOption = 'group';
           _searchQuery = '';
           _searchController.clear();
@@ -358,19 +384,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
       appBar: AppBar(
         title: _isSelectionMode
             ? Text('${_selectedPlayerIds.length} ausgewählt')
-            : Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('Personen'),
-                  if (tenant != null)
-                    Text(
-                      tenant.shortName,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: AppColors.medium,
-                          ),
-                    ),
-                ],
-              ),
+            : const TenantSwitcherTitle(fallbackTitle: 'Personen'),
         leading: _isSelectionMode
             ? IconButton(
                 icon: const Icon(Icons.close),
@@ -418,9 +432,14 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
                     color: _filterOption != 'all' ? AppColors.primary : null,
                   ),
                   tooltip: 'Filter',
-                  onSelected: (value) {
+                  onSelected: (value) async {
+                    if (value.startsWith('extra:')) {
+                      await _selectExtraFieldFilter(value);
+                      return;
+                    }
                     setState(() {
                       _filterOption = value;
+                      _extraFilterValue = null;
                     });
                   },
                   itemBuilder: (context) => [
@@ -436,6 +455,12 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
                       const PopupMenuItem(value: 'examinees', child: Text('Prüflinge')),
                     if (tenant != null && tenant.type != 'general')
                       const PopupMenuItem(value: 'noTest', child: Text('Ohne Test')),
+                    if (_filterableExtraFields(tenant).isNotEmpty)
+                      const PopupMenuDivider(),
+                    ..._filterableExtraFields(tenant).map((f) => PopupMenuItem(
+                          value: 'extra:${f.id}',
+                          child: Text(f.name),
+                        )),
                   ],
                 ),
                 // Sort button
@@ -460,6 +485,9 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
                     _buildSortMenuItem('joinedDesc', 'Beitritt (neueste)'),
                     if (tenant != null && tenant.type != 'general')
                       _buildSortMenuItem('testResult', 'Testergebnis'),
+                    const PopupMenuDivider(),
+                    _buildSortMenuItem('attAsc', 'Anwesenheit (aufsteigend)'),
+                    _buildSortMenuItem('attDesc', 'Anwesenheit (absteigend)'),
                   ],
                 ),
                 IconButton(
@@ -540,11 +568,19 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
                     onDeleted: () {
                       setState(() {
                         _filterOption = 'all';
+                        _extraFilterValue = null;
                       });
                     },
                   ),
                 ],
               ),
+            ),
+
+          // Birthday banner (Ionic people/list birthday-banner)
+          if (!_isSelectionMode)
+            _BirthdayBanner(
+              people: todaysBirthdays(peopleAsync.valueOrNull ?? const []),
+              onTap: (p) => context.push('/people/${p.id}'),
             ),
 
           // People list
@@ -591,8 +627,9 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
 
                 // Group by group if sorted by group
                 if (_sortOption == 'group') {
+                  // Keys keep the order of sortedPeople (sort_order aware)
                   final grouped = _groupByGroup(sortedPeople);
-                  final groups = grouped.keys.toList()..sort();
+                  final groups = grouped.keys.toList();
                   
                   return RefreshIndicator(
                     onRefresh: () async {
@@ -742,7 +779,101 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
     );
   }
 
+  List<ExtraField> _filterableExtraFields(Tenant? tenant) =>
+      (tenant?.additionalFields ?? const <ExtraField>[])
+          .where((f) => const ['boolean', 'select', 'number', 'bfecg_church']
+              .contains(f.type))
+          .toList();
+
+  /// Ask for the value of an extra-field filter (Ionic onFilterChanged).
+  Future<void> _selectExtraFieldFilter(String option) async {
+    final tenant = ref.read(currentTenantProvider);
+    final fieldId = option.substring(6);
+    final field = _filterableExtraFields(tenant)
+        .where((f) => f.id == fieldId)
+        .firstOrNull;
+    if (field == null) return;
+
+    String? value;
+    if (field.type == 'number') {
+      final controller = TextEditingController(
+          text: _filterOption == option ? _extraFilterValue ?? '' : '');
+      value = await showDialog<String>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: Text(field.name),
+          content: TextField(
+            controller: controller,
+            autofocus: true,
+            keyboardType: TextInputType.number,
+            decoration: const InputDecoration(hintText: 'Wert eingeben'),
+          ),
+          actions: [
+            TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: const Text('Abbrechen')),
+            FilledButton(
+                onPressed: () => Navigator.pop(ctx, controller.text.trim()),
+                child: const Text('Filtern')),
+          ],
+        ),
+      );
+      controller.dispose();
+    } else {
+      final List<MapEntry<String, String>> choices;
+      if (field.type == 'boolean') {
+        choices = const [MapEntry('true', 'Ja'), MapEntry('false', 'Nein')];
+      } else if (field.type == 'bfecg_church') {
+        final churches = await ref.read(churchesProvider.future);
+        choices = churches
+            .where((c) => c.id != null)
+            .map((c) => MapEntry(c.id!, c.name))
+            .toList();
+      } else {
+        choices = (field.options ?? const <String>[])
+            .map((o) => MapEntry(o, o))
+            .toList();
+      }
+      if (!mounted) return;
+      value = await showDialog<String>(
+        context: context,
+        builder: (ctx) => SimpleDialog(
+          title: Text(field.name),
+          children: choices
+              .map((c) => SimpleDialogOption(
+                    onPressed: () => Navigator.pop(ctx, c.key),
+                    child: Text(c.value),
+                  ))
+              .toList(),
+        ),
+      );
+    }
+
+    if (!mounted) return;
+    setState(() {
+      if (value == null || value.isEmpty) {
+        _filterOption = 'all';
+        _extraFilterValue = null;
+      } else {
+        _filterOption = option;
+        _extraFilterValue = value;
+      }
+    });
+  }
+
   String _getFilterLabel(String filter) {
+    if (filter.startsWith('extra:')) {
+      final field = _filterableExtraFields(ref.read(currentTenantProvider))
+          .where((f) => f.id == filter.substring(6))
+          .firstOrNull;
+      final v = _extraFilterValue;
+      final display = v == 'true'
+          ? 'Ja'
+          : v == 'false'
+              ? 'Nein'
+              : v;
+      return '${field?.name ?? 'Feld'}: ${display ?? ''}';
+    }
     return switch (filter) {
       'critical' => 'Kritisch',
       'paused' => 'Pausiert',
@@ -1566,6 +1697,68 @@ class _AttendanceBadge extends StatelessWidget {
           fontWeight: FontWeight.w600,
           color: color,
         ),
+      ),
+    );
+  }
+}
+
+/// Banner listing people whose birthday is today.
+class _BirthdayBanner extends StatelessWidget {
+  const _BirthdayBanner({required this.people, required this.onTap});
+
+  final List<Person> people;
+  final void Function(Person) onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    if (people.isEmpty) return const SizedBox.shrink();
+    final theme = Theme.of(context);
+    return Container(
+      margin: const EdgeInsets.fromLTRB(
+        AppDimensions.paddingM,
+        0,
+        AppDimensions.paddingM,
+        AppDimensions.paddingS,
+      ),
+      padding: const EdgeInsets.all(AppDimensions.paddingS),
+      decoration: BoxDecoration(
+        color: AppColors.warning.withAlpha(31),
+        borderRadius: BorderRadius.circular(AppDimensions.borderRadiusM),
+        border: Border.all(color: AppColors.warning.withAlpha(102)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.card_giftcard, color: AppColors.warning, size: 20),
+              const SizedBox(width: 8),
+              Text(
+                people.length == 1
+                    ? 'Geburtstag heute'
+                    : '${people.length} Geburtstage heute',
+                style: theme.textTheme.titleSmall
+                    ?.copyWith(fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          Wrap(
+            spacing: 8,
+            runSpacing: 6,
+            children: people.map((p) {
+              final age = p.birthday != null ? ageInYears(p.birthday!) : 0;
+              return ActionChip(
+                avatar: p.img != null && p.img!.isNotEmpty
+                    ? CircleAvatar(backgroundImage: NetworkImage(p.img!))
+                    : const Text('🎂'),
+                label: Text(
+                    '${p.firstName} ${p.lastName} · ${age == 1 ? '1 Jahr' : '$age Jahre'}'),
+                onPressed: () => onTap(p),
+              );
+            }).toList(),
+          ),
+        ],
       ),
     );
   }

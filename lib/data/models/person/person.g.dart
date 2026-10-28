@@ -19,6 +19,9 @@ _$PersonImpl _$$PersonImplFromJson(Map<String, dynamic> json) => _$PersonImpl(
   left: const _FlexibleStringConverter().fromJson(json['left']),
   email: const _FlexibleStringConverter().fromJson(json['email']),
   appId: const _FlexibleStringConverter().fromJson(json['appId']),
+  globalPersonId: const _FlexibleStringConverter().fromJson(
+    json['global_person_id'],
+  ),
   notes: const _FlexibleStringConverter().fromJson(json['notes']),
   img: const _FlexibleStringConverter().fromJson(json['img']),
   telegramId: const _FlexibleStringConverter().fromJson(json['telegramId']),
@@ -82,12 +85,10 @@ _$PersonImpl _$$PersonImplFromJson(Map<String, dynamic> json) => _$PersonImpl(
   range: const _FlexibleStringConverter().fromJson(json['range']),
   instruments: const _FlexibleStringConverter().fromJson(json['instruments']),
   parentId: const _FlexibleIntConverter().fromJson(json['parent_id']),
+  sortOrder: const _FlexibleIntConverter().fromJson(json['sort_order']),
   legacyId: const _FlexibleIntConverter().fromJson(json['legacyId']),
   legacyConductorId: const _FlexibleIntConverter().fromJson(
     json['legacyConductorId'],
-  ),
-  globalPersonId: const _FlexibleStringConverter().fromJson(
-    json['global_person_id'],
   ),
 );
 
@@ -103,6 +104,9 @@ Map<String, dynamic> _$$PersonImplToJson(
   'left': const _FlexibleStringConverter().toJson(instance.left),
   'email': const _FlexibleStringConverter().toJson(instance.email),
   'appId': const _FlexibleStringConverter().toJson(instance.appId),
+  if (const _FlexibleStringConverter().toJson(instance.globalPersonId)
+      case final value?)
+    'global_person_id': value,
   'notes': const _FlexibleStringConverter().toJson(instance.notes),
   'img': const _FlexibleStringConverter().toJson(instance.img),
   'telegramId': const _FlexibleStringConverter().toJson(instance.telegramId),
@@ -141,6 +145,9 @@ Map<String, dynamic> _$$PersonImplToJson(
   'range': const _FlexibleStringConverter().toJson(instance.range),
   'instruments': const _FlexibleStringConverter().toJson(instance.instruments),
   'parent_id': const _FlexibleIntConverter().toJson(instance.parentId),
+  if (const _FlexibleIntConverter().toJson(instance.sortOrder)
+      case final value?)
+    'sort_order': value,
   'legacyId': const _FlexibleIntConverter().toJson(instance.legacyId),
   'legacyConductorId': const _FlexibleIntConverter().toJson(
     instance.legacyConductorId,

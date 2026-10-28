@@ -378,12 +378,14 @@ class _TeacherEditDialogState extends State<_TeacherEditDialog> {
                     labelText: 'Name *',
                     hintText: 'z.B. Max Mustermann',
                   ),
+                  textCapitalization: TextCapitalization.words,
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
                       return 'Bitte einen Namen eingeben';
                     }
-                    if (value.trim().length < 2) {
-                      return 'Name muss mindestens 2 Zeichen haben';
+                    // Ionic teachers.page: name must have at least 3 chars
+                    if (value.trim().length < 3) {
+                      return 'Name muss mindestens 3 Zeichen haben';
                     }
                     return null;
                   },
@@ -411,7 +413,7 @@ class _TeacherEditDialogState extends State<_TeacherEditDialog> {
                 // Instruments multi-select
                 if (instruments.isNotEmpty) ...[
                   Text(
-                    'Instrumente',
+                    'Instrumente *',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           color: AppColors.medium,
                         ),
@@ -447,6 +449,7 @@ class _TeacherEditDialogState extends State<_TeacherEditDialog> {
                     labelText: 'Notizen',
                     hintText: 'Zusätzliche Informationen...',
                   ),
+                  textCapitalization: TextCapitalization.sentences,
                   maxLines: 3,
                 ),
                 const SizedBox(height: AppDimensions.paddingM),
@@ -477,6 +480,14 @@ class _TeacherEditDialogState extends State<_TeacherEditDialog> {
 
   void _submit() {
     if (!_formKey.currentState!.validate()) return;
+    // Ionic teachers.page: at least one instrument is required
+    if (_selectedInstruments.isEmpty) {
+      ToastHelper.showError(
+        context,
+        'Bitte fülle alle Felder aus, um fortzufahren.',
+      );
+      return;
+    }
 
     final result = Teacher(
       id: widget.teacher?.id,

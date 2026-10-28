@@ -5,6 +5,7 @@ import '../config/supabase_config.dart';
 import '../constants/enums.dart';
 import '../../data/models/attendance/attendance.dart';
 import '../../data/repositories/repositories.dart';
+import 'attendance_type_providers.dart';
 import 'realtime_providers.dart';
 import 'tenant_providers.dart';
 
@@ -155,7 +156,7 @@ final playerAttendancePercentagesProvider =
   while (true) {
     var query = supabase
         .from('person_attendances')
-        .select('person_id, status, attendance:attendance_id!inner(date, tenantId)')
+        .select('person_id, status, attendance:attendance_id!inner(date, tenantId, type_id)')
         .eq('attendance.tenantId', tenant.id!)
         .lte('attendance.date', now);
 
@@ -172,6 +173,14 @@ final playerAttendancePercentagesProvider =
     offset += batchSize;
   }
 
+  // Only attendance types with include_in_average count (Ionic
+  // Utils.getModifiedPlayersForList). Unknown types are excluded.
+  final types = await ref.watch(attendanceTypesProvider.future);
+  final includedTypeIds = types
+      .where((t) => t.includeInAverage && t.id != null)
+      .map((t) => t.id!)
+      .toSet();
+
   // Group by person_id
   final totals = <int, int>{};
   final attended = <int, int>{};
@@ -179,6 +188,8 @@ final playerAttendancePercentagesProvider =
   for (final a in allAttendances) {
     final personId = a['person_id'] as int?;
     if (personId == null) continue;
+    final typeId = (a['attendance'] as Map?)?['type_id']?.toString();
+    if (typeId == null || !includedTypeIds.contains(typeId)) continue;
     totals[personId] = (totals[personId] ?? 0) + 1;
     final status = a['status'] as int?;
     // BL-003: Use centralized definition for which statuses count as attended

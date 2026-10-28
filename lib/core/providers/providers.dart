@@ -45,3 +45,5 @@ export 'notification_settings_providers.dart';
 export 'duty_providers.dart';
 // ORG_PLANS
 export 'plan_providers.dart';
+// STATS_PEOPLE_FIXES
+export 'cross_tenant_person_providers.dart';

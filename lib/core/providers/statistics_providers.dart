@@ -4,11 +4,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/config/supabase_config.dart';
 import '../../core/constants/enums.dart';
+import '../../core/utils/statistics_utils.dart';
 import '../../core/utils/status_utils.dart';
 import '../../data/models/attendance/attendance.dart';
 import '../../data/models/person/person.dart';
 import '../../data/repositories/attendance_repository.dart';
 import '../../data/repositories/player_repository.dart';
+import 'attendance_type_providers.dart';
 import 'tenant_providers.dart';
 
 /// Date range for statistics filtering
@@ -206,13 +208,10 @@ final attendanceStatisticsProvider = Provider<AttendanceStatistics>((ref) {
   final sorted = [...attendances]
     ..sort((a, b) => (a.percentage ?? 0).compareTo(b.percentage ?? 0));
 
-  // Calculate average percentage
-  final validPercentages =
-      attendances.where((a) => a.percentage != null).map((a) => a.percentage!);
-  final avgPercentage = validPercentages.isEmpty
-      ? 0
-      : (validPercentages.reduce((a, b) => a + b) / validPercentages.length)
-          .round();
+  // Calculate average percentage — only attendance types with
+  // include_in_average=true count (Ionic stats.page.ts applyDateFilter)
+  final types = ref.watch(attendanceTypesProvider).valueOrNull ?? const [];
+  final avgPercentage = calculateAveragePercentage(attendances, types);
 
   // Aggregate status counts
   int presentCount = 0;

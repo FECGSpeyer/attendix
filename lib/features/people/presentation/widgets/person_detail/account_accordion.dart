@@ -24,6 +24,10 @@ class AccountAccordion extends ConsumerWidget {
     required this.onCreateAccount,
     required this.canEdit,
     this.onFieldChanged,
+    this.draftEmail,
+    this.isLeader = false,
+    this.isMainGroup = false,
+    this.onSearchOtherInstance,
   });
 
   final Person person;
@@ -36,6 +40,18 @@ class AccountAccordion extends ConsumerWidget {
   final VoidCallback onCreateAccount;
   final bool canEdit;
   final void Function(String field, dynamic value)? onFieldChanged;
+
+  /// Unsaved email value (shown instead of the stored one)
+  final String? draftEmail;
+
+  /// Draft "Stimmführer" flag — enables voice leader roles (Ionic)
+  final bool isLeader;
+
+  /// Person is in the main group → role is managed automatically (Ionic)
+  final bool isMainGroup;
+
+  /// Ionic searchPerson(): link to the same person in a linked tenant
+  final VoidCallback? onSearchOtherInstance;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -84,13 +100,25 @@ class AccountAccordion extends ConsumerWidget {
         EditableInfoRow(
           icon: Icons.email,
           label: 'E-Mail',
-          value: person.email ?? 'Nicht angegeben',
+          value: (draftEmail ?? person.email) ?? 'Nicht angegeben',
           editable: canEdit && person.appId == null,
           onTap: person.email != null
               ? () => _launchEmail(person.email!)
               : null,
           onEdit: () => _editEmail(context),
         ),
+        if (canEdit &&
+            person.appId == null &&
+            onSearchOtherInstance != null &&
+            ((draftEmail ?? person.email)?.trim().isNotEmpty ?? false))
+          Align(
+            alignment: Alignment.centerLeft,
+            child: TextButton.icon(
+              onPressed: onSearchOtherInstance,
+              icon: const Icon(Icons.search, size: 18),
+              label: const Text('In anderer Instanz suchen'),
+            ),
+          ),
 
         // Account linked status
         if (person.appId != null) ...[
@@ -175,19 +203,25 @@ class AccountAccordion extends ConsumerWidget {
       return const SizedBox.shrink();
     }
 
-    final availableRoles = [
-      Role.player,
-      Role.helper,
-      Role.viewer,
-      Role.responsible,
-      Role.admin,
-    ];
-
     if (isLoadingRole) {
       return const Center(child: CircularProgressIndicator());
     }
 
     final currentRole = userRole ?? Role.player;
+
+    // Ionic person.page: Mitglied, Verantwortlicher, Helfer and — for
+    // Stimmführer — the voice leader roles. A role outside this list
+    // (e.g. Admin) stays visible but is not selectable from here.
+    final availableRoles = <Role>[
+      Role.player,
+      Role.responsible,
+      Role.helper,
+      if (isLeader) Role.voiceLeaderHelper,
+      if (isLeader) Role.voiceLeader,
+    ];
+    if (!availableRoles.contains(currentRole)) {
+      availableRoles.add(currentRole);
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -218,7 +252,7 @@ class AccountAccordion extends ConsumerWidget {
               ),
             );
           }).toList(),
-          onChanged: canEdit
+          onChanged: canEdit && !isMainGroup
               ? (newRole) {
                   if (newRole != null && newRole != currentRole) {
                     onRoleChanged(newRole);

@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/config/supabase_config.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
-import '../../../../data/models/tenant/tenant.dart';
+import '../../../../data/repositories/tenant_create_repository.dart';
 
 /// Page for creating a new tenant/group
 class TenantCreatePage extends ConsumerStatefulWidget {
@@ -159,7 +158,8 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
                 helperText: 'Wird in der Navigation angezeigt',
                 prefixIcon: const Icon(Icons.short_text),
               ),
-              textCapitalization: TextCapitalization.words,
+              // Ionic register.page: autocapitalize="sentences"
+              textCapitalization: TextCapitalization.sentences,
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {
                   return 'Kurzname ist erforderlich';
@@ -225,7 +225,7 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
                 helperText: 'Die erste $_groupLabel deiner Organisation',
                 prefixIcon: const Icon(Icons.group),
               ),
-              textCapitalization: TextCapitalization.words,
+              textCapitalization: TextCapitalization.sentences,
             ),
 
             const SizedBox(height: AppDimensions.paddingXL),
@@ -428,37 +428,10 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
     setState(() => _isLoading = true);
 
     try {
-      final supabase = ref.read(supabaseClientProvider);
-      final userId = supabase.auth.currentUser?.id;
-
-      if (userId == null) {
-        throw Exception('Nicht angemeldet');
-      }
-
       final shortName = _shortNameController.text.trim();
       final longName = _longNameController.text.trim().isNotEmpty
           ? _longNameController.text.trim()
           : shortName;
-
-      // Create the tenant
-      final tenantResponse = await supabase
-          .from('tenants')
-          .insert({
-            'shortName': shortName,
-            'longName': longName,
-            'type': _selectedType,
-          })
-          .select()
-          .single();
-
-      final tenantId = tenantResponse['id'] as int;
-
-      // Create tenant user association as ADMIN (role = 5)
-      await supabase.from('tenantUsers').insert({
-        'tenantId': tenantId,
-        'userId': userId,
-        'role': 5, // ADMIN
-      });
 
       // Create default instrument/section group
       final defaultGroupName = switch (_selectedType) {
@@ -471,22 +444,24 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
           ? _mainGroupNameController.text.trim()
           : defaultGroupName;
 
-      await supabase.from('instruments').insert({
-        'tenantId': tenantId,
-        'name': groupName,
-        'isSection': true,
-        'maingroup': true,
-      });
+      // Ionic createInstance: tenant with register defaults, creator as
+      // ADMIN, main group and default attendance types.
+      final newTenant =
+          await ref.read(tenantCreateRepositoryProvider).createTenant(
+                shortName: shortName,
+                longName: longName,
+                type: _selectedType,
+                mainGroupName: groupName,
+              );
 
       // Refresh the tenants list
       ref.invalidate(userTenantsProvider);
 
       // Set as current tenant
-      final newTenant = Tenant.fromJson(tenantResponse);
       await ref.read(currentTenantProvider.notifier).setTenant(newTenant);
 
       if (mounted) {
-        ToastHelper.showSuccess(context, 'Gruppe "$shortName" erstellt!');
+        ToastHelper.showSuccess(context, 'Instanz wurde erfolgreich erstellt!');
         context.go('/people');
       }
     } catch (e) {

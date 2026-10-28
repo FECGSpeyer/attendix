@@ -94,6 +94,8 @@ class Person with _$Person {
     @_FlexibleStringConverter() String? left,
     @_FlexibleStringConverter() String? email,
     @_FlexibleStringConverter() String? appId,
+    /// Links the same real person across tenants (uuid, Ionic add_global_person_id.sql)
+    @JsonKey(name: 'global_person_id', includeIfNull: false) @_FlexibleStringConverter() String? globalPersonId,
     @_FlexibleStringConverter() String? notes,
     @_FlexibleStringConverter() String? img,
     @_FlexibleStringConverter() String? telegramId,
@@ -126,12 +128,10 @@ class Person with _$Person {
     @_FlexibleStringConverter() String? range,
     @_FlexibleStringConverter() String? instruments,
     @JsonKey(name: 'parent_id') @_FlexibleIntConverter() int? parentId,
+    /// Manual order within the group (Ionic add_player_sort_order.sql)
+    @JsonKey(name: 'sort_order', includeIfNull: false) @_FlexibleIntConverter() int? sortOrder,
     @_FlexibleIntConverter() int? legacyId,
     @_FlexibleIntConverter() int? legacyConductorId,
-    // SETTINGS_EXT: Verknüpfung über Instanzen hinweg (Personen verknüpfen).
-    // Nicht in toJson, damit generische Updates den Wert nie überschreiben.
-    @JsonKey(name: 'global_person_id', includeToJson: false)
-    @_FlexibleStringConverter() String? globalPersonId,
     
     // Computed/transient fields (not in DB, used for display)
     @JsonKey(includeFromJson: false, includeToJson: false)

@@ -18,6 +18,7 @@ class FieldEditorSheet extends StatefulWidget {
     this.iconColor,
     this.confirmText = 'Speichern',
     this.cancelText = 'Abbrechen',
+    this.textCapitalization,
   });
 
   final String title;
@@ -30,6 +31,10 @@ class FieldEditorSheet extends StatefulWidget {
   final Color? iconColor;
   final String confirmText;
   final String cancelText;
+
+  /// Keyboard capitalization. Defaults to sentence case for free text
+  /// (Ionic `autocapitalize="sentences"`) and none for email/phone/number.
+  final TextCapitalization? textCapitalization;
 
   /// Shows the field editor sheet and returns the new value, or null if cancelled.
   static Future<String?> show(
@@ -44,6 +49,7 @@ class FieldEditorSheet extends StatefulWidget {
     Color? iconColor,
     String confirmText = 'Speichern',
     String cancelText = 'Abbrechen',
+    TextCapitalization? textCapitalization,
   }) async {
     return showModalBottomSheet<String>(
       context: context,
@@ -60,6 +66,7 @@ class FieldEditorSheet extends StatefulWidget {
         iconColor: iconColor,
         confirmText: confirmText,
         cancelText: cancelText,
+        textCapitalization: textCapitalization,
       ),
     );
   }
@@ -146,6 +153,12 @@ class _FieldEditorSheetState extends State<FieldEditorSheet> {
               ),
               maxLines: widget.maxLines,
               keyboardType: widget.keyboardType,
+              textCapitalization: widget.textCapitalization ??
+                  (widget.keyboardType == null ||
+                          widget.keyboardType == TextInputType.text ||
+                          widget.keyboardType == TextInputType.multiline
+                      ? TextCapitalization.sentences
+                      : TextCapitalization.none),
               autofocus: true,
               onChanged: (_) {
                 if (_errorText != null) {

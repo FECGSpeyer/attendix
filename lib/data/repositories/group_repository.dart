@@ -20,6 +20,7 @@ class GroupRepository extends BaseRepository with TenantAwareRepository {
           .select('*, categoryData:category(*)')
           .eq('tenantId', currentTenantId)
           .order('category')
+          .order('sort_order', ascending: true, nullsFirst: false)
           .order('name');
 
       return (response as List)
@@ -232,6 +233,7 @@ class GroupRepository extends BaseRepository with TenantAwareRepository {
           .from('group_categories')
           .select('*')
           .eq('tenant_id', currentTenantId)
+          .order('sort_order', ascending: true, nullsFirst: false)
           .order('name');
 
       return (response as List)
@@ -296,6 +298,40 @@ class GroupRepository extends BaseRepository with TenantAwareRepository {
       return GroupCategory.fromJson(response);
     } catch (e, stack) {
       handleError(e, stack, 'updateGroupCategory');
+      rethrow;
+    }
+  }
+
+  /// Persist new sort_order values for instruments (id -> sort_order).
+  /// Ionic: instrument-list.page.ts saveOrder()
+  Future<void> updateGroupSortOrders(Map<int, int> sortOrders) async {
+    try {
+      for (final entry in sortOrders.entries) {
+        await supabase
+            .from('instruments')
+            .update({'sort_order': entry.value})
+            .eq('id', entry.key)
+            .eq('tenantId', currentTenantId);
+      }
+    } catch (e, stack) {
+      handleError(e, stack, 'updateGroupSortOrders');
+      rethrow;
+    }
+  }
+
+  /// Persist new sort_order values for group categories (id -> sort_order).
+  /// Ionic: group-category.service.ts updateGroupCategorySortOrder()
+  Future<void> updateGroupCategorySortOrders(Map<int, int> sortOrders) async {
+    try {
+      for (final entry in sortOrders.entries) {
+        await supabase
+            .from('group_categories')
+            .update({'sort_order': entry.value})
+            .eq('id', entry.key)
+            .eq('tenant_id', currentTenantId);
+      }
+    } catch (e, stack) {
+      handleError(e, stack, 'updateGroupCategorySortOrders');
       rethrow;
     }
   }

@@ -50,3 +50,6 @@ export 'duty_repository.dart';
 export 'plan_repository.dart';
 export 'org_plan_repository.dart';
 export 'public_plan_repository.dart';
+// STATS_PEOPLE_FIXES
+export 'cross_tenant_person_repository.dart';
+export 'tenant_create_repository.dart'; // STATS_PEOPLE_FIXES

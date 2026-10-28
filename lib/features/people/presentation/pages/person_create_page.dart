@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -13,6 +15,10 @@ import '../../../../core/utils/tenant_label_utils.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../core/providers/group_providers.dart';
+import '../../../../core/providers/cross_tenant_person_providers.dart';
+import '../../../../core/utils/person_matcher.dart';
+import '../../../../data/repositories/cross_tenant_person_repository.dart';
+import '../widgets/person_match_suggestions.dart';
 import 'people_list_page.dart';
 
 /// Page for creating a new person
@@ -36,6 +42,116 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
   bool _isLoading = false;
   final Map<String, dynamic> _additionalFieldValues = {};
   bool _extraFieldsInitialized = false;
+
+  // Cross-tenant person matching (Ionic person.page onNameInput/onEmailBlur)
+  final _emailFocus = FocusNode();
+  Timer? _nameDebounce;
+  int _nameLookupSeq = 0;
+  String? _dismissedFor;
+  String _lastEmailLookup = '';
+  List<RankedMatch<CrossTenantPersonCandidate>> _nameSuggestions = const [];
+
+  /// Data adopted from a matched person that has no form field here
+  String? _adoptedImg;
+  String? _adoptedOtherExercise;
+  String? _adoptedRange;
+
+  @override
+  void initState() {
+    super.initState();
+    _firstNameController.addListener(_onNameInput);
+    _lastNameController.addListener(_onNameInput);
+    _emailFocus.addListener(() {
+      if (!_emailFocus.hasFocus) _onEmailBlur();
+    });
+  }
+
+  String get _nameKey =>
+      '${_firstNameController.text.trim()}|${_lastNameController.text.trim()}';
+
+  void _onNameInput() {
+    _nameDebounce?.cancel();
+    _nameDebounce = Timer(const Duration(milliseconds: 250), _lookupByName);
+  }
+
+  Future<void> _lookupByName() async {
+    if (!mounted) return;
+    final first = _firstNameController.text.trim();
+    final last = _lastNameController.text.trim();
+    if (first.length < 2 && last.length < 2) {
+      if (_nameSuggestions.isNotEmpty) setState(() => _nameSuggestions = const []);
+      return;
+    }
+    if (_dismissedFor == _nameKey) return;
+    _dismissedFor = null;
+
+    final mySeq = ++_nameLookupSeq;
+    try {
+      final linkedIds = await ref.read(linkedTenantIdsProvider.future);
+      if (linkedIds.isEmpty) return;
+      final matches = await ref
+          .read(crossTenantPersonRepositoryWithTenantProvider)
+          .getPossiblePersonsByName(first, last, linkedTenantIds: linkedIds);
+      if (!mounted || mySeq != _nameLookupSeq) return; // stale
+      setState(() => _nameSuggestions = matches);
+    } catch (_) {
+      // Silent — suggestions are optional
+    }
+  }
+
+  void _dismissNameSuggestions() {
+    setState(() {
+      _dismissedFor = _nameKey;
+      _nameSuggestions = const [];
+    });
+  }
+
+  Future<void> _onEmailBlur() async {
+    final email = _emailController.text.trim();
+    final emailRegex = RegExp(r'^[\w-\.+]+@([\w-]+\.)+[\w-]{2,}$');
+    if (email.isEmpty || !emailRegex.hasMatch(email)) return;
+    if (email == _lastEmailLookup) return;
+    _lastEmailLookup = email;
+
+    List<CrossTenantPersonCandidate> matches;
+    try {
+      final linkedIds = await ref.read(linkedTenantIdsProvider.future);
+      matches = await ref
+          .read(crossTenantPersonRepositoryWithTenantProvider)
+          .getPossiblePersonsByEmail(email, linkedTenantIds: linkedIds);
+    } catch (_) {
+      return;
+    }
+    if (matches.isEmpty || !mounted) return;
+
+    final chosen = await showEmailTakenDialog(context, matches);
+    if (chosen != null && mounted) _applyMatchedPerson(chosen);
+  }
+
+  /// Adopt data from a matched cross-tenant person (Ionic applyMatchedPerson)
+  void _applyMatchedPerson(CrossTenantPersonCandidate match) {
+    final p = match.person;
+    final groups = ref.read(groupsProvider).valueOrNull ?? const [];
+    final group = groups.where((g) => g.name == match.groupName).firstOrNull;
+    _nameDebounce?.cancel();
+    setState(() {
+      _firstNameController.text = p.firstName;
+      _lastNameController.text = p.lastName;
+      _emailController.text = p.email ?? '';
+      _lastEmailLookup = _emailController.text.trim();
+      if (p.correctBirthday && p.birthday != null) {
+        _birthday = DateTime.tryParse(p.birthday!);
+      }
+      _adoptedImg = p.img;
+      _adoptedOtherExercise = p.otherExercise;
+      _adoptedRange = p.range;
+      if (group != null) _selectedInstrument = group.id;
+      _nameSuggestions = const [];
+      _dismissedFor = _nameKey;
+    });
+    _nameDebounce?.cancel();
+    ToastHelper.showSuccess(context, 'Die Daten wurden erfolgreich übernommen');
+  }
 
   /// Returns the default value for a field type (like Utils.getFieldTypeDefaultValue in Ionic)
   /// For NEW person: defaultValue is NOT used (only type-based defaults)
@@ -69,6 +185,8 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
 
   @override
   void dispose() {
+    _nameDebounce?.cancel();
+    _emailFocus.dispose();
     _firstNameController.dispose();
     _lastNameController.dispose();
     _emailController.dispose();
@@ -158,6 +276,16 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
             ),
             const SizedBox(height: AppDimensions.paddingM),
 
+            // Cross-tenant name suggestions
+            if (_nameSuggestions.isNotEmpty) ...[
+              PersonMatchSuggestions(
+                matches: _nameSuggestions,
+                onSelected: _applyMatchedPerson,
+                onDismiss: _dismissNameSuggestions,
+              ),
+              const SizedBox(height: AppDimensions.paddingM),
+            ],
+
             // Instrument Dropdown
             instrumentsAsync.when(
               loading: () => const LinearProgressIndicator(),
@@ -212,6 +340,9 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
             // Email
             TextFormField(
               controller: _emailController,
+              focusNode: _emailFocus,
+              textCapitalization: TextCapitalization.none,
+              autocorrect: false,
               decoration: const InputDecoration(
                 labelText: 'E-Mail (optional)',
                 hintText: 'max@example.com',
@@ -251,6 +382,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
                 prefixIcon: Icon(Icons.note),
                 alignLabelWithHint: true,
               ),
+              textCapitalization: TextCapitalization.sentences,
               maxLines: 3,
             ),
 
@@ -277,6 +409,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: TextFormField(
             decoration: InputDecoration(labelText: field.name),
+            textCapitalization: TextCapitalization.sentences,
             initialValue: _additionalFieldValues[field.id]?.toString() ?? '',
             onChanged: (value) => _additionalFieldValues[field.id] = value,
           ),
@@ -291,6 +424,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
               alignLabelWithHint: true,
             ),
             maxLines: 3,
+            textCapitalization: TextCapitalization.sentences,
             initialValue: _additionalFieldValues[field.id]?.toString() ?? '',
             onChanged: (value) => _additionalFieldValues[field.id] = value,
           ),
@@ -411,6 +545,9 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
         birthday: _birthday?.toIso8601String().split('T').first,
         joined: DateTime.now().toIso8601String().split('T').first,
         additionalFields: _additionalFieldValues.isNotEmpty ? _additionalFieldValues : null,
+        img: _adoptedImg,
+        otherExercise: _adoptedOtherExercise,
+        range: _adoptedRange,
       );
 
       await repo.createPlayer(person);
