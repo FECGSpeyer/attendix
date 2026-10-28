@@ -8,8 +8,17 @@ import 'tenant_providers.dart';
 
 /// LiveActivityRepository with tenant set
 final liveActivityRepositoryWithTenantProvider = Provider<LiveActivityRepository>((ref) {
-  final repo = ref.watch(liveActivityRepositoryProvider);
-  final tenantId = ref.watch(currentTenantIdProvider);
-  if (tenantId != null) repo.setTenantId(tenantId);
+  final tenant = ref.watch(currentTenantIdProvider);
+  return ref.watch(liveActivityRepositoryForTenantProvider(tenant));
+});
+
+/// TENANT_BIND: one immutable [LiveActivityRepository] per tenant (`bindTenantId`),
+/// so a tenant switch never changes the tenant of a running flow and
+/// cross-tenant work uses its own bound instance. `null` (no tenant)
+/// yields an unbound instance with `hasTenantId == false`.
+final liveActivityRepositoryForTenantProvider =
+    Provider.family<LiveActivityRepository, int?>((ref, tenantId) {
+  final repo = LiveActivityRepository(ref);
+  if (tenantId != null) repo.bindTenantId(tenantId);
   return repo;
 });

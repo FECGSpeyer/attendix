@@ -5,15 +5,19 @@ import '../config/supabase_config.dart';
 import 'tenant_providers.dart';
 
 /// Initialized feedback repository with tenant context
-final feedbackRepositoryWithTenantProvider =
-    Provider<FeedbackRepository>((ref) {
-  final repo = ref.watch(feedbackRepositoryProvider);
+final feedbackRepositoryWithTenantProvider = Provider<FeedbackRepository>((ref) {
   final tenant = ref.watch(currentTenantIdProvider);
+  return ref.watch(feedbackRepositoryForTenantProvider(tenant));
+});
 
-  if (tenant != null) {
-    repo.setTenantId(tenant);
-  }
-
+/// TENANT_BIND: one immutable [FeedbackRepository] per tenant (`bindTenantId`),
+/// so a tenant switch never changes the tenant of a running flow and
+/// cross-tenant work uses its own bound instance. `null` (no tenant)
+/// yields an unbound instance with `hasTenantId == false`.
+final feedbackRepositoryForTenantProvider =
+    Provider.family<FeedbackRepository, int?>((ref, tenantId) {
+  final repo = FeedbackRepository(ref);
+  if (tenantId != null) repo.bindTenantId(tenantId);
   return repo;
 });
 

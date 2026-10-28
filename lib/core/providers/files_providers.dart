@@ -9,15 +9,15 @@ import 'tenant_providers.dart';
 // SETTINGS_EXT: Dateiablage, Zusatzfelder, Branding, Personen verknüpfen
 
 /// Dateiablage-Repository mit Tenant-Kontext
-///
-/// SOL_FIX3: per-tenant bound instance (see [filesRepositoryForTenantProvider])
-/// so a running upload loop keeps its tenant after a tenant switch.
 final filesRepositoryWithTenantProvider = Provider<FilesRepository>((ref) {
-  final tenantId = ref.watch(currentTenantIdProvider);
-  return ref.watch(filesRepositoryForTenantProvider(tenantId));
+  final tenant = ref.watch(currentTenantIdProvider);
+  return ref.watch(filesRepositoryForTenantProvider(tenant));
 });
 
-/// SOL_FIX3: one immutable [FilesRepository] per tenant.
+/// TENANT_BIND: one immutable [FilesRepository] per tenant (`bindTenantId`),
+/// so a tenant switch never changes the tenant of a running flow and
+/// cross-tenant work uses its own bound instance. `null` (no tenant)
+/// yields an unbound instance with `hasTenantId == false`.
 final filesRepositoryForTenantProvider =
     Provider.family<FilesRepository, int?>((ref, tenantId) {
   final repo = FilesRepository(ref);
@@ -38,17 +38,35 @@ final filesUsedBytesProvider = FutureProvider.autoDispose<int?>((ref) async {
 
 /// Zusatzfelder-Repository mit Tenant-Kontext
 final extraFieldsRepositoryWithTenantProvider = Provider<ExtraFieldsRepository>((ref) {
-  final repo = ref.watch(extraFieldsRepositoryProvider);
-  final tenantId = ref.watch(currentTenantIdProvider);
-  if (tenantId != null) repo.setTenantId(tenantId);
+  final tenant = ref.watch(currentTenantIdProvider);
+  return ref.watch(extraFieldsRepositoryForTenantProvider(tenant));
+});
+
+/// TENANT_BIND: one immutable [ExtraFieldsRepository] per tenant (`bindTenantId`),
+/// so a tenant switch never changes the tenant of a running flow and
+/// cross-tenant work uses its own bound instance. `null` (no tenant)
+/// yields an unbound instance with `hasTenantId == false`.
+final extraFieldsRepositoryForTenantProvider =
+    Provider.family<ExtraFieldsRepository, int?>((ref, tenantId) {
+  final repo = ExtraFieldsRepository(ref);
+  if (tenantId != null) repo.bindTenantId(tenantId);
   return repo;
 });
 
 /// Organisations-Einstellungen (Branding, Personen verknüpfen) mit Tenant-Kontext
 final organisationSettingsRepositoryWithTenantProvider = Provider<OrganisationSettingsRepository>((ref) {
-  final repo = ref.watch(organisationSettingsRepositoryProvider);
-  final tenantId = ref.watch(currentTenantIdProvider);
-  if (tenantId != null) repo.setTenantId(tenantId);
+  final tenant = ref.watch(currentTenantIdProvider);
+  return ref.watch(organisationSettingsRepositoryForTenantProvider(tenant));
+});
+
+/// TENANT_BIND: one immutable [OrganisationSettingsRepository] per tenant (`bindTenantId`),
+/// so a tenant switch never changes the tenant of a running flow and
+/// cross-tenant work uses its own bound instance. `null` (no tenant)
+/// yields an unbound instance with `hasTenantId == false`.
+final organisationSettingsRepositoryForTenantProvider =
+    Provider.family<OrganisationSettingsRepository, int?>((ref, tenantId) {
+  final repo = OrganisationSettingsRepository(ref);
+  if (tenantId != null) repo.bindTenantId(tenantId);
   return repo;
 });
 

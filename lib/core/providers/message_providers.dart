@@ -14,9 +14,18 @@ import 'tenant_providers.dart';
 
 /// Message repository with tenant context
 final messageRepositoryWithTenantProvider = Provider<MessageRepository>((ref) {
-  final repo = ref.watch(messageRepositoryProvider);
-  final tenantId = ref.watch(currentTenantIdProvider);
-  if (tenantId != null) repo.setTenantId(tenantId);
+  final tenant = ref.watch(currentTenantIdProvider);
+  return ref.watch(messageRepositoryForTenantProvider(tenant));
+});
+
+/// TENANT_BIND: one immutable [MessageRepository] per tenant (`bindTenantId`),
+/// so a tenant switch never changes the tenant of a running flow and
+/// cross-tenant work uses its own bound instance. `null` (no tenant)
+/// yields an unbound instance with `hasTenantId == false`.
+final messageRepositoryForTenantProvider =
+    Provider.family<MessageRepository, int?>((ref, tenantId) {
+  final repo = MessageRepository(ref);
+  if (tenantId != null) repo.bindTenantId(tenantId);
   return repo;
 });
 
@@ -135,9 +144,18 @@ final messageNotifierProvider = NotifierProvider<MessageNotifier, AsyncValue<voi
 
 /// User notification repository with tenant context
 final userNotificationRepositoryWithTenantProvider = Provider<UserNotificationRepository>((ref) {
-  final repo = ref.watch(userNotificationRepositoryProvider);
-  final tenantId = ref.watch(currentTenantIdProvider);
-  if (tenantId != null) repo.setTenantId(tenantId);
+  final tenant = ref.watch(currentTenantIdProvider);
+  return ref.watch(userNotificationRepositoryForTenantProvider(tenant));
+});
+
+/// TENANT_BIND: one immutable [UserNotificationRepository] per tenant (`bindTenantId`),
+/// so a tenant switch never changes the tenant of a running flow and
+/// cross-tenant work uses its own bound instance. `null` (no tenant)
+/// yields an unbound instance with `hasTenantId == false`.
+final userNotificationRepositoryForTenantProvider =
+    Provider.family<UserNotificationRepository, int?>((ref, tenantId) {
+  final repo = UserNotificationRepository(ref);
+  if (tenantId != null) repo.bindTenantId(tenantId);
   return repo;
 });
 

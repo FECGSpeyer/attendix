@@ -5,6 +5,7 @@ import '../../core/constants/enums.dart';
 import '../../data/models/person/person.dart';
 import '../../data/repositories/sign_in_out_repository.dart';
 import 'player_providers.dart';
+import 'signout_providers.dart';
 import 'tenant_providers.dart';
 
 export '../../core/constants/enums.dart' show AttendanceStatus;
@@ -95,7 +96,8 @@ class SignInOutNotifier extends Notifier<AsyncValue<void>> {
   @override
   AsyncValue<void> build() => const AsyncValue.data(null);
 
-  SignInOutRepository get _repo => ref.read(signInOutRepositoryProvider);
+  SignInOutRepository get _repo =>
+      ref.read(signInOutRepositoryWithTenantProvider);
 
   /// Sign in to an attendance
   Future<void> signIn(

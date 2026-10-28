@@ -17,9 +17,18 @@ export '../../data/repositories/duty_repository.dart'
 
 /// Duty repository with tenant context
 final dutyRepositoryWithTenantProvider = Provider<DutyRepository>((ref) {
-  final repo = ref.watch(dutyRepositoryProvider);
-  final tenantId = ref.watch(currentTenantIdProvider);
-  if (tenantId != null) repo.setTenantId(tenantId);
+  final tenant = ref.watch(currentTenantIdProvider);
+  return ref.watch(dutyRepositoryForTenantProvider(tenant));
+});
+
+/// TENANT_BIND: one immutable [DutyRepository] per tenant (`bindTenantId`),
+/// so a tenant switch never changes the tenant of a running flow and
+/// cross-tenant work uses its own bound instance. `null` (no tenant)
+/// yields an unbound instance with `hasTenantId == false`.
+final dutyRepositoryForTenantProvider =
+    Provider.family<DutyRepository, int?>((ref, tenantId) {
+  final repo = DutyRepository(ref);
+  if (tenantId != null) repo.bindTenantId(tenantId);
   return repo;
 });
 

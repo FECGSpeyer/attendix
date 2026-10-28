@@ -4,11 +4,19 @@ import '../../data/repositories/notification_settings_repository.dart';
 import 'tenant_providers.dart';
 
 /// Notification settings repository with tenant context
-final notificationSettingsRepositoryWithTenantProvider =
-    Provider<NotificationSettingsRepository>((ref) {
-  final repo = ref.watch(notificationSettingsRepositoryProvider);
-  final tenantId = ref.watch(currentTenantIdProvider);
-  if (tenantId != null) repo.setTenantId(tenantId);
+final notificationSettingsRepositoryWithTenantProvider = Provider<NotificationSettingsRepository>((ref) {
+  final tenant = ref.watch(currentTenantIdProvider);
+  return ref.watch(notificationSettingsRepositoryForTenantProvider(tenant));
+});
+
+/// TENANT_BIND: one immutable [NotificationSettingsRepository] per tenant (`bindTenantId`),
+/// so a tenant switch never changes the tenant of a running flow and
+/// cross-tenant work uses its own bound instance. `null` (no tenant)
+/// yields an unbound instance with `hasTenantId == false`.
+final notificationSettingsRepositoryForTenantProvider =
+    Provider.family<NotificationSettingsRepository, int?>((ref, tenantId) {
+  final repo = NotificationSettingsRepository(ref);
+  if (tenantId != null) repo.bindTenantId(tenantId);
   return repo;
 });
 

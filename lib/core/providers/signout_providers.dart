@@ -16,9 +16,18 @@ import '../services/tracking/tracking_service.dart';
 
 /// Sign in/out repository with the current tenant set.
 final signInOutRepositoryWithTenantProvider = Provider<SignInOutRepository>((ref) {
-  final repo = ref.watch(signInOutRepositoryProvider);
-  final tenantId = ref.watch(currentTenantIdProvider);
-  if (tenantId != null) repo.setTenantId(tenantId);
+  final tenant = ref.watch(currentTenantIdProvider);
+  return ref.watch(signInOutRepositoryForTenantProvider(tenant));
+});
+
+/// TENANT_BIND: one immutable [SignInOutRepository] per tenant (`bindTenantId`),
+/// so a tenant switch never changes the tenant of a running flow and
+/// cross-tenant work uses its own bound instance. `null` (no tenant)
+/// yields an unbound instance with `hasTenantId == false`.
+final signInOutRepositoryForTenantProvider =
+    Provider.family<SignInOutRepository, int?>((ref, tenantId) {
+  final repo = SignInOutRepository(ref);
+  if (tenantId != null) repo.bindTenantId(tenantId);
   return repo;
 });
 

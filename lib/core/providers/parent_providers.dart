@@ -11,13 +11,18 @@ import 'user_registration_providers.dart';
 
 /// Provider for ParentRepository with tenant context
 final parentRepositoryWithTenantProvider = Provider<ParentRepository>((ref) {
-  final repo = ref.watch(parentRepositoryProvider);
-  final tenantId = ref.watch(currentTenantIdProvider);
+  final tenant = ref.watch(currentTenantIdProvider);
+  return ref.watch(parentRepositoryForTenantProvider(tenant));
+});
 
-  if (tenantId != null) {
-    repo.setTenantId(tenantId);
-  }
-
+/// TENANT_BIND: one immutable [ParentRepository] per tenant (`bindTenantId`),
+/// so a tenant switch never changes the tenant of a running flow and
+/// cross-tenant work uses its own bound instance. `null` (no tenant)
+/// yields an unbound instance with `hasTenantId == false`.
+final parentRepositoryForTenantProvider =
+    Provider.family<ParentRepository, int?>((ref, tenantId) {
+  final repo = ParentRepository(ref);
+  if (tenantId != null) repo.bindTenantId(tenantId);
   return repo;
 });
 
