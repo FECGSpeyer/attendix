@@ -37,7 +37,8 @@ void main() {
     test('time section uses tappable widgets, not TextFormField', () {
       // Find the Time Settings section
       final timeSectionMatch = RegExp(
-        r"title:\s*'Zeiten'[^}]*child:\s*Row\([^;]+",
+        // UX_SETTINGS: Beginn/Ende tiles inside "Optionen" (Ionic order)
+        r"title:\s*const Text\('Beginn'\).*?_pickTime\(isStart: false\)",
         dotAll: true,
       ).firstMatch(pageSource);
 
