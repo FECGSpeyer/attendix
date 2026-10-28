@@ -2,303 +2,220 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/constants/app_constants.dart';
-import '../../../../core/providers/group_providers.dart';
-import '../../../../core/providers/song_providers.dart';
 import '../../../../core/providers/song_filter_providers.dart';
+import '../../../../core/providers/song_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/song/song_filter.dart';
+import '../../../../l10n/l10n.dart';
 
-/// Bottom sheet for filtering and sorting songs
+/// Filter, sort and view options of the songs list (Ionic filter popover)
 class SongFilterSheet extends ConsumerWidget {
-  const SongFilterSheet({super.key});
+  const SongFilterSheet({super.key, required this.data});
+
+  final SongsListData data;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final filter = ref.watch(songFilterProvider);
-    final groupsAsync = ref.watch(groupsProvider);
-    final categoriesAsync = ref.watch(songCategoriesProvider);
+    final filter = ref.watch(songFilterProvider(data.tenantId));
+    final view = ref.watch(songViewOptionsProvider(data.tenantId));
+    final notifier = ref.read(songFilterProvider(data.tenantId).notifier);
+    final viewNotifier = ref.read(songViewOptionsProvider(data.tenantId).notifier);
+    final orchestra = data.isOrchestra;
+    final l10n = context.l10n;
+    final lastLabel = orchestra ? l10n.songsLastPlayed : l10n.songsLastSung;
+
+    final sortOptions = SongSortOption.values
+        .where((o) => !o.isLastSung || !data.isPublic)
+        .toList();
+
+    final viewEntries = <(String, String)>[
+      ('link', l10n.songsLink),
+      ('difficulty', l10n.songsDifficulty),
+      ('withChoir', l10n.songsChoirOrchestra),
+      ('withSolo', l10n.songsSolo),
+      ('missingInstruments', l10n.songsMissingInstruments),
+      if (!data.isPublic) ('lastSung', lastLabel),
+      for (final f in data.additionalFields) (f.id, f.name),
+    ];
 
     return DraggableScrollableSheet(
-      initialChildSize: 0.7,
+      initialChildSize: 0.75,
       minChildSize: 0.4,
       maxChildSize: 0.95,
       expand: false,
       builder: (context, scrollController) {
-        return Container(
-          decoration: BoxDecoration(
-            color: Theme.of(context).scaffoldBackgroundColor,
-            borderRadius: const BorderRadius.vertical(
-              top: Radius.circular(AppDimensions.borderRadiusL),
+        return ListView(
+          controller: scrollController,
+          padding: const EdgeInsets.all(AppDimensions.paddingM),
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    l10n.songsFlutterFilterAndView,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                ),
+                if (filter.hasActiveFilters)
+                  TextButton(
+                    onPressed: notifier.reset,
+                    child: Text(l10n.dateDialogReset),
+                  ),
+                IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+              ],
             ),
-          ),
-          child: Column(
-            children: [
-              // Handle bar
-              Container(
-                margin: const EdgeInsets.only(top: 12),
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: AppColors.medium.withValues(alpha: 0.3),
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-              // Header
-              Padding(
-                padding: const EdgeInsets.all(AppDimensions.paddingM),
-                child: Row(
-                  children: [
-                    const Icon(Icons.filter_list, color: AppColors.primary),
-                    const SizedBox(width: AppDimensions.paddingS),
-                    Expanded(
-                      child: Text(
-                        'Filter & Sortierung',
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
-                      ),
-                    ),
-                    if (filter.hasActiveFilters)
-                      TextButton(
-                        onPressed: () {
-                          ref.read(songFilterProvider.notifier).reset();
-                        },
-                        child: const Text('Zurücksetzen'),
-                      ),
-                    IconButton(
-                      icon: const Icon(Icons.close),
-                      onPressed: () => Navigator.of(context).pop(),
-                    ),
-                  ],
-                ),
-              ),
-              const Divider(height: 1),
-              // Content
-              Expanded(
-                child: ListView(
-                  controller: scrollController,
-                  padding: const EdgeInsets.all(AppDimensions.paddingM),
-                  children: [
-                    // Sort dropdown
-                    _SectionHeader(title: 'Sortierung'),
-                    const SizedBox(height: AppDimensions.paddingS),
-                    DropdownButtonFormField<SongSortOption>(
-                      value: filter.sortOption,
-                      decoration: const InputDecoration(
-                        prefixIcon: Icon(Icons.sort),
-                        border: OutlineInputBorder(),
-                        contentPadding:
-                            EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      ),
-                      items: SongSortOption.values
-                          .map((option) => DropdownMenuItem(
-                                value: option,
-                                child: Text(option.label),
-                              ))
-                          .toList(),
-                      onChanged: (value) {
-                        if (value != null) {
-                          ref
-                              .read(songFilterProvider.notifier)
-                              .setSortOption(value);
-                        }
+            _Header(icon: Icons.sort, title: l10n.attendanceSorting),
+            DropdownButtonFormField<SongSortOption>(
+              value: sortOptions.contains(filter.sortOption)
+                  ? filter.sortOption
+                  : SongSortOption.numberAsc,
+              isDense: true,
+              items: [
+                for (final o in sortOptions)
+                  DropdownMenuItem(value: o, child: Text(o.labelFor(orchestra: orchestra))),
+              ],
+              onChanged: (v) {
+                if (v != null) notifier.setSortOption(v);
+              },
+            ),
+            _Header(icon: Icons.speed, title: l10n.songsDifficulty),
+            DropdownButtonFormField<int?>(
+              value: filter.difficulty,
+              isDense: true,
+              items: [
+                DropdownMenuItem(value: null, child: Text(l10n.commonAll)),
+                DropdownMenuItem(value: 1, child: Text(l10n.songsEasy)),
+                DropdownMenuItem(value: 2, child: Text(l10n.songsMedium)),
+                DropdownMenuItem(value: 3, child: Text(l10n.songsHard)),
+              ],
+              onChanged: notifier.setDifficulty,
+            ),
+            const SizedBox(height: AppDimensions.paddingS),
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              secondary: const Icon(Icons.people),
+              title: Text(l10n.songsChoirOrchestra),
+              value: filter.withChoir,
+              onChanged: notifier.setWithChoir,
+            ),
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              secondary: const Icon(Icons.person),
+              title: Text(l10n.songsSolo),
+              value: filter.withSolo,
+              onChanged: notifier.setWithSolo,
+            ),
+            if (data.categories.isNotEmpty) ...[
+              _Header(icon: Icons.sell_outlined, title: l10n.songsCategories),
+              Wrap(
+                spacing: 8,
+                runSpacing: 4,
+                children: [
+                  for (final c in data.categories)
+                    FilterChip(
+                      label: Text(c.name),
+                      selected: filter.categoryIds.contains(c.id),
+                      onSelected: (selected) {
+                        final ids = [...filter.categoryIds];
+                        selected ? ids.add(c.id!) : ids.remove(c.id);
+                        notifier.setCategoryIds(ids);
                       },
                     ),
-                    const SizedBox(height: AppDimensions.paddingL),
-
-                    // Difficulty filter
-                    _SectionHeader(title: 'Schwierigkeit'),
-                    const SizedBox(height: AppDimensions.paddingS),
-                    DropdownButtonFormField<int?>(
-                      value: filter.difficulty,
-                      decoration: const InputDecoration(
-                        prefixIcon: Icon(Icons.speed),
-                        border: OutlineInputBorder(),
-                        contentPadding:
-                            EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      ),
-                      items: const [
-                        DropdownMenuItem(value: null, child: Text('Alle')),
-                        DropdownMenuItem(value: 1, child: Text('1 - Leicht')),
-                        DropdownMenuItem(value: 2, child: Text('2 - Mittel')),
-                        DropdownMenuItem(value: 3, child: Text('3 - Schwer')),
-                      ],
-                      onChanged: (value) {
-                        ref
-                            .read(songFilterProvider.notifier)
-                            .setDifficulty(value);
-                      },
-                    ),
-                    const SizedBox(height: AppDimensions.paddingL),
-
-                    // Category filter
-                    categoriesAsync.when(
-                      loading: () => const LinearProgressIndicator(),
-                      error: (_, __) => const SizedBox.shrink(),
-                      data: (categories) {
-                        if (categories.isEmpty) return const SizedBox.shrink();
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            _SectionHeader(title: 'Kategorie'),
-                            const SizedBox(height: AppDimensions.paddingS),
-                            DropdownButtonFormField<String?>(
-                              value: filter.category,
-                              decoration: const InputDecoration(
-                                prefixIcon: Icon(Icons.category),
-                                border: OutlineInputBorder(),
-                                contentPadding: EdgeInsets.symmetric(
-                                    horizontal: 12, vertical: 8),
-                              ),
-                              items: [
-                                const DropdownMenuItem(
-                                    value: null, child: Text('Alle')),
-                                ...categories.map((c) => DropdownMenuItem(
-                                      value: c.name,
-                                      child: Text(c.name),
-                                    )),
-                              ],
-                              onChanged: (value) {
-                                ref
-                                    .read(songFilterProvider.notifier)
-                                    .setCategory(value);
-                              },
-                            ),
-                            const SizedBox(height: AppDimensions.paddingL),
-                          ],
-                        );
-                      },
-                    ),
-
-                    // Toggle filters
-                    _SectionHeader(title: 'Eigenschaften'),
-                    const SizedBox(height: AppDimensions.paddingS),
-                    Card(
-                      margin: EdgeInsets.zero,
-                      child: Column(
-                        children: [
-                          SwitchListTile(
-                            title: const Text('Chor & Orchester'),
-                            subtitle: const Text('Nur Stücke mit Chor'),
-                            secondary: const Icon(Icons.groups),
-                            value: filter.withChoir,
-                            onChanged: (value) {
-                              ref
-                                  .read(songFilterProvider.notifier)
-                                  .setWithChoir(value);
-                            },
-                          ),
-                          const Divider(height: 1),
-                          SwitchListTile(
-                            title: const Text('Mit Solo'),
-                            subtitle: const Text('Nur Stücke mit Solo-Part'),
-                            secondary: const Icon(Icons.mic),
-                            value: filter.withSolo,
-                            onChanged: (value) {
-                              ref
-                                  .read(songFilterProvider.notifier)
-                                  .setWithSolo(value);
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: AppDimensions.paddingL),
-
-                    // Instruments multi-select
-                    groupsAsync.when(
-                      loading: () => const LinearProgressIndicator(),
-                      error: (_, __) => const SizedBox.shrink(),
-                      data: (groups) {
-                        if (groups.isEmpty) return const SizedBox.shrink();
-                        // All groups are valid instruments for filtering
-                        final instruments = groups;
-                        if (instruments.isEmpty) return const SizedBox.shrink();
-
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            _SectionHeader(
-                              title:
-                                  'Instrumente (${filter.instrumentIds.length})',
-                            ),
-                            const SizedBox(height: AppDimensions.paddingS),
-                            Card(
-                              margin: EdgeInsets.zero,
-                              child: ExpansionTile(
-                                title: Text(
-                                  filter.instrumentIds.isEmpty
-                                      ? 'Alle Instrumente'
-                                      : '${filter.instrumentIds.length} ausgewählt',
-                                ),
-                                leading: const Icon(Icons.music_note_outlined),
-                                children: [
-                                  if (filter.instrumentIds.isNotEmpty)
-                                    ListTile(
-                                      title: const Text('Alle abwählen'),
-                                      leading: const Icon(Icons.clear_all),
-                                      onTap: () {
-                                        ref
-                                            .read(songFilterProvider.notifier)
-                                            .clearInstruments();
-                                      },
-                                    ),
-                                  ...instruments.map((g) => CheckboxListTile(
-                                        title: Text(g.name),
-                                        value: filter.instrumentIds
-                                            .contains(g.id),
-                                        onChanged: (selected) {
-                                          if (g.id != null) {
-                                            ref
-                                                .read(songFilterProvider
-                                                    .notifier)
-                                                .toggleInstrumentId(g.id!);
-                                          }
-                                        },
-                                      )),
-                                ],
-                              ),
-                            ),
-                          ],
-                        );
-                      },
-                    ),
-
-                    const SizedBox(height: AppDimensions.paddingL),
-                  ],
-                ),
+                ],
               ),
             ],
-          ),
+            if (data.instruments.isNotEmpty) ...[
+              _Header(icon: Icons.music_note, title: l10n.settingsGroups),
+              Wrap(
+                spacing: 8,
+                runSpacing: 4,
+                children: [
+                  for (final g in data.instruments)
+                    FilterChip(
+                      label: Text(g.name),
+                      selected: filter.instrumentIds.contains(g.id),
+                      onSelected: (selected) {
+                        final ids = [...filter.instrumentIds];
+                        selected ? ids.add(g.id!) : ids.remove(g.id);
+                        notifier.setInstrumentIds(ids);
+                      },
+                    ),
+                ],
+              ),
+            ],
+            for (final field in data.additionalFields)
+              if (field.isSelect || field.isBoolean) ...[
+                _Header(icon: Icons.filter_alt_outlined, title: field.name),
+                DropdownButtonFormField<String>(
+                  value: filter.fieldFilters[field.id] ?? '',
+                  isDense: true,
+                  items: [
+                    DropdownMenuItem(value: '', child: Text(l10n.commonAll)),
+                    if (field.isBoolean) ...[
+                      DropdownMenuItem(value: 'true', child: Text(l10n.commonYes)),
+                      DropdownMenuItem(value: 'false', child: Text(l10n.commonNo)),
+                    ] else
+                      for (final opt in field.options)
+                        DropdownMenuItem(value: opt, child: Text(opt)),
+                  ],
+                  onChanged: (v) => notifier.setFieldFilter(field.id, v ?? ''),
+                ),
+              ],
+            _Header(icon: Icons.visibility, title: l10n.attendanceView),
+            for (final entry in viewEntries)
+              CheckboxListTile(
+                contentPadding: EdgeInsets.zero,
+                dense: true,
+                title: Text(entry.$2),
+                value: view.has(entry.$1),
+                onChanged: (_) => viewNotifier.toggle(entry.$1),
+              ),
+            const SizedBox(height: AppDimensions.paddingL),
+          ],
         );
       },
     );
   }
 }
 
-class _SectionHeader extends StatelessWidget {
-  final String title;
+class _Header extends StatelessWidget {
+  const _Header({required this.icon, required this.title});
 
-  const _SectionHeader({required this.title});
+  final IconData icon;
+  final String title;
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      title,
-      style: Theme.of(context).textTheme.titleSmall?.copyWith(
-            fontWeight: FontWeight.w600,
-            color: AppColors.medium,
+    return Padding(
+      padding: const EdgeInsets.only(top: AppDimensions.paddingM, bottom: 6),
+      child: Row(
+        children: [
+          Icon(icon, size: 16, color: AppColors.medium),
+          const SizedBox(width: 6),
+          Text(
+            title,
+            style: const TextStyle(
+              fontWeight: FontWeight.w600,
+              color: AppColors.medium,
+            ),
           ),
+        ],
+      ),
     );
   }
 }
 
-/// Shows the song filter sheet as a bottom sheet
-Future<void> showSongFilterSheet(BuildContext context) {
+/// Show the filter sheet
+Future<void> showSongFilterSheet(BuildContext context, SongsListData data) {
   return showModalBottomSheet(
     context: context,
     isScrollControlled: true,
-    backgroundColor: Colors.transparent,
-    builder: (context) => const SongFilterSheet(),
+    useSafeArea: true,
+    builder: (context) => SongFilterSheet(data: data),
   );
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../l10n/l10n.dart';
 
 /// A selection item for the SelectionSheet.
 class SelectionItem<T> {
@@ -26,7 +27,7 @@ class SelectionSheet<T> extends StatefulWidget {
     required this.title,
     required this.items,
     this.selectedValue,
-    this.searchHint = 'Suchen...',
+    this.searchHint,
     this.noneLabel,
     this.showSearch = true,
     this.icon,
@@ -36,7 +37,7 @@ class SelectionSheet<T> extends StatefulWidget {
   final String title;
   final List<SelectionItem<T>> items;
   final T? selectedValue;
-  final String searchHint;
+  final String? searchHint;
   final String? noneLabel;
   final bool showSearch;
   final IconData? icon;
@@ -50,7 +51,7 @@ class SelectionSheet<T> extends StatefulWidget {
     required String title,
     required List<SelectionItem<T>> items,
     T? selectedValue,
-    String searchHint = 'Suchen...',
+    String? searchHint,
     String? noneLabel,
     bool showSearch = true,
     IconData? icon,
@@ -162,7 +163,7 @@ class _SelectionSheetState<T> extends State<SelectionSheet<T>> {
               TextField(
                 controller: _searchController,
                 decoration: InputDecoration(
-                  hintText: widget.searchHint,
+                  hintText: widget.searchHint ?? context.l10n.coreFlutterSearchHint,
                   prefixIcon: const Icon(Icons.search),
                   border: const OutlineInputBorder(),
                   suffixIcon: _searchQuery.isNotEmpty
@@ -214,7 +215,7 @@ class _SelectionSheetState<T> extends State<SelectionSheet<T>> {
                       padding: const EdgeInsets.all(AppDimensions.paddingL),
                       child: Center(
                         child: Text(
-                          'Keine Ergebnisse für "$_searchQuery"',
+                          context.l10n.coreFlutterNoResultsFor(_searchQuery),
                           style: const TextStyle(color: AppColors.medium),
                         ),
                       ),

@@ -1,7 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/utils/db_helpers.dart';
 import '../models/instrument/instrument.dart';
 import 'base_repository.dart';
+import '../../l10n/l10n.dart';
 
 /// Provider for GroupRepository
 final groupRepositoryProvider = Provider<GroupRepository>((ref) {
@@ -20,6 +22,7 @@ class GroupRepository extends BaseRepository with TenantAwareRepository {
           .select('*, categoryData:category(*)')
           .eq('tenantId', currentTenantId)
           .order('category')
+          .order('sort_order', ascending: true, nullsFirst: false)
           .order('name');
 
       return (response as List)
@@ -41,7 +44,8 @@ class GroupRepository extends BaseRepository with TenantAwareRepository {
 
       final map = <int, String>{};
       for (final row in response as List) {
-        map[row['id'] as int] = row['name'] as String;
+        // DB_REVIEW_REST: instruments.name is nullable.
+        map[row['id'] as int] = (row['name'] as String?) ?? '';
       }
       return map;
     } catch (e, stack) {
@@ -88,9 +92,11 @@ class GroupRepository extends BaseRepository with TenantAwareRepository {
 
   /// Create a new group/instrument
   Future<Group> createGroup(Map<String, dynamic> data) async {
+    ensureNotDemo('createGroup'); // DEMO_GUARD
     try {
-      // Create a sanitized copy — don't mutate caller's map
-      final sanitized = Map<String, dynamic>.from(data);
+      // Create a sanitized copy — don't mutate caller's map.
+      // DB_FIX: only `instruments` columns (Ionic pickGroupFields).
+      final sanitized = pickGroupFields(data);
       sanitized['tenantId'] = currentTenantId;
       sanitized.putIfAbsent('tuning', () => 'C');
       sanitized.putIfAbsent('clefs', () => ['g']);
@@ -108,7 +114,7 @@ class GroupRepository extends BaseRepository with TenantAwareRepository {
 
       if (response == null) {
         throw RepositoryException(
-          message: 'Gruppe konnte nicht erstellt werden',
+          message: l10nWithoutContext.coreFlutterRepoGroupCreateFailed,
           operation: 'createGroup',
         );
       }
@@ -121,6 +127,7 @@ class GroupRepository extends BaseRepository with TenantAwareRepository {
 
   /// Update a group
   Future<Group> updateGroup(int id, Map<String, dynamic> updates) async {
+    ensureNotDemo('updateGroup'); // DEMO_GUARD
     try {
       // Remove read-only fields
       updates.remove('id');
@@ -132,7 +139,8 @@ class GroupRepository extends BaseRepository with TenantAwareRepository {
       // RT-008: Use maybeSingle() to avoid StateError
       final response = await supabase
           .from('instruments')
-          .update(updates)
+          // DB_FIX: Ionic updateGroup → update(pickGroupFields(group))
+          .update(pickGroupFields(updates))
           .eq('id', id)
           .eq('tenantId', currentTenantId)
           .select()
@@ -140,7 +148,7 @@ class GroupRepository extends BaseRepository with TenantAwareRepository {
 
       if (response == null) {
         throw RepositoryException(
-          message: 'Gruppe mit ID $id nicht gefunden',
+          message: l10nWithoutContext.coreFlutterRepoGroupNotFound(id),
           operation: 'updateGroup',
         );
       }
@@ -149,7 +157,7 @@ class GroupRepository extends BaseRepository with TenantAwareRepository {
       // Handle unique constraint violation (only one maingroup)
       if (e.toString().contains('23505')) {
         throw RepositoryException(
-          message: 'Es kann nur eine Hauptgruppe existieren',
+          message: l10nWithoutContext.svcOnlyOneMainGroup,
           operation: 'updateGroup',
           code: '23505',
         );
@@ -159,15 +167,23 @@ class GroupRepository extends BaseRepository with TenantAwareRepository {
     }
   }
 
-  /// Get count of players assigned to a group
-  Future<int> getPlayerCountInGroup(int groupId) async {
+  /// Get count of players assigned to a group.
+  /// LOGIC_SETTINGS: with [includeArchived] also archived (left) people count
+  /// (Ionic instrument.page.ts:delete uses `getPlayers(true)`).
+  Future<int> getPlayerCountInGroup(
+    int groupId, {
+    bool includeArchived = false,
+  }) async {
     try {
-      final response = await supabase
+      var query = supabase
           .from('player')
           .select('id')
           .eq('tenantId', currentTenantId)
-          .eq('instrument', groupId)
-          .isFilter('left', null); // Only active players
+          .eq('instrument', groupId);
+      if (!includeArchived) {
+        query = query.isFilter('left', null); // Only active players
+      }
+      final response = await query;
 
       return (response as List).length;
     } catch (e, stack) {
@@ -201,12 +217,15 @@ class GroupRepository extends BaseRepository with TenantAwareRepository {
   /// Delete a group
   /// BL-008: Throws if players are still assigned to the group
   Future<void> deleteGroup(int id) async {
+    ensureNotDemo('deleteGroup'); // DEMO_GUARD
     try {
       // BL-008: Check for assigned players before deletion
-      final playerCount = await getPlayerCountInGroup(id);
+      // LOGIC_SETTINGS: archived people block deletion too (Ionic parity)
+      final playerCount =
+          await getPlayerCountInGroup(id, includeArchived: true);
       if (playerCount > 0) {
         throw RepositoryException(
-          message: 'Gruppe kann nicht gelöscht werden: $playerCount Spieler sind noch zugewiesen',
+          message: l10nWithoutContext.coreFlutterRepoGroupHasPlayers(playerCount),
           operation: 'deleteGroup',
           code: 'FK_VIOLATION',
         );
@@ -232,6 +251,7 @@ class GroupRepository extends BaseRepository with TenantAwareRepository {
           .from('group_categories')
           .select('*')
           .eq('tenant_id', currentTenantId)
+          .order('sort_order', ascending: true, nullsFirst: false)
           .order('name');
 
       return (response as List)
@@ -247,6 +267,7 @@ class GroupRepository extends BaseRepository with TenantAwareRepository {
   Future<GroupCategory> createGroupCategory({
     required String name,
   }) async {
+    ensureNotDemo('createGroupCategory'); // DEMO_GUARD
     try {
       // RT-008: Use maybeSingle() to avoid StateError
       final response = await supabase
@@ -260,7 +281,7 @@ class GroupRepository extends BaseRepository with TenantAwareRepository {
 
       if (response == null) {
         throw RepositoryException(
-          message: 'Kategorie konnte nicht erstellt werden',
+          message: l10nWithoutContext.coreFlutterRepoCategoryCreateFailed,
           operation: 'createGroupCategory',
         );
       }
@@ -273,6 +294,7 @@ class GroupRepository extends BaseRepository with TenantAwareRepository {
 
   /// Update a group category
   Future<GroupCategory> updateGroupCategory(int id, Map<String, dynamic> updates) async {
+    ensureNotDemo('updateGroupCategory'); // DEMO_GUARD
     try {
       updates.remove('id');
       updates.remove('created_at');
@@ -289,7 +311,7 @@ class GroupRepository extends BaseRepository with TenantAwareRepository {
 
       if (response == null) {
         throw RepositoryException(
-          message: 'Gruppenkategorie mit ID $id nicht gefunden',
+          message: l10nWithoutContext.coreFlutterRepoCategoryNotFound(id),
           operation: 'updateGroupCategory',
         );
       }
@@ -300,8 +322,45 @@ class GroupRepository extends BaseRepository with TenantAwareRepository {
     }
   }
 
+  /// Persist new sort_order values for instruments (id -> sort_order).
+  /// Ionic: instrument-list.page.ts saveOrder()
+  Future<void> updateGroupSortOrders(Map<int, int> sortOrders) async {
+    ensureNotDemo('updateGroupSortOrders'); // DEMO_GUARD
+    try {
+      for (final entry in sortOrders.entries) {
+        await supabase
+            .from('instruments')
+            .update({'sort_order': entry.value})
+            .eq('id', entry.key)
+            .eq('tenantId', currentTenantId);
+      }
+    } catch (e, stack) {
+      handleError(e, stack, 'updateGroupSortOrders');
+      rethrow;
+    }
+  }
+
+  /// Persist new sort_order values for group categories (id -> sort_order).
+  /// Ionic: group-category.service.ts updateGroupCategorySortOrder()
+  Future<void> updateGroupCategorySortOrders(Map<int, int> sortOrders) async {
+    ensureNotDemo('updateGroupCategorySortOrders'); // DEMO_GUARD
+    try {
+      for (final entry in sortOrders.entries) {
+        await supabase
+            .from('group_categories')
+            .update({'sort_order': entry.value})
+            .eq('id', entry.key)
+            .eq('tenant_id', currentTenantId);
+      }
+    } catch (e, stack) {
+      handleError(e, stack, 'updateGroupCategorySortOrders');
+      rethrow;
+    }
+  }
+
   /// Delete a group category
   Future<void> deleteGroupCategory(int id) async {
+    ensureNotDemo('deleteGroupCategory'); // DEMO_GUARD
     try {
       await supabase
           .from('group_categories')

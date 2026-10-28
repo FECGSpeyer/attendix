@@ -15,8 +15,17 @@ _$SongFilterImpl _$$SongFilterImplFromJson(Map<String, dynamic> json) =>
               ?.map((e) => (e as num).toInt())
               .toList() ??
           const [],
-      difficulty: (json['difficulty'] as num?)?.toInt(),
       category: json['category'] as String?,
+      categoryIds:
+          (json['categoryIds'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          const [],
+      fieldFilters:
+          (json['fieldFilters'] as Map<String, dynamic>?)?.map(
+            (k, e) => MapEntry(k, e as String),
+          ) ??
+          const {},
       sortOption:
           $enumDecodeNullable(_$SongSortOptionEnumMap, json['sortOption']) ??
           SongSortOption.numberAsc,
@@ -27,8 +36,9 @@ Map<String, dynamic> _$$SongFilterImplToJson(_$SongFilterImpl instance) =>
       'withChoir': instance.withChoir,
       'withSolo': instance.withSolo,
       'instrumentIds': instance.instrumentIds,
-      'difficulty': instance.difficulty,
       'category': instance.category,
+      'categoryIds': instance.categoryIds,
+      'fieldFilters': instance.fieldFilters,
       'sortOption': _$SongSortOptionEnumMap[instance.sortOption]!,
     };
 
@@ -44,19 +54,11 @@ const _$SongSortOptionEnumMap = {
 _$SongViewOptionsImpl _$$SongViewOptionsImplFromJson(
   Map<String, dynamic> json,
 ) => _$SongViewOptionsImpl(
-  showChoirBadge: json['showChoirBadge'] as bool? ?? true,
-  showSoloBadge: json['showSoloBadge'] as bool? ?? true,
-  showMissingInstruments: json['showMissingInstruments'] as bool? ?? true,
-  showLink: json['showLink'] as bool? ?? true,
-  showLastSung: json['showLastSung'] as bool? ?? true,
+  opts:
+      (json['opts'] as List<dynamic>?)?.map((e) => e as String).toList() ??
+      defaultSongViewOpts,
 );
 
 Map<String, dynamic> _$$SongViewOptionsImplToJson(
   _$SongViewOptionsImpl instance,
-) => <String, dynamic>{
-  'showChoirBadge': instance.showChoirBadge,
-  'showSoloBadge': instance.showSoloBadge,
-  'showMissingInstruments': instance.showMissingInstruments,
-  'showLink': instance.showLink,
-  'showLastSung': instance.showLastSung,
-};
+) => <String, dynamic>{'opts': instance.opts};

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../l10n/l10n.dart';
 import '../theme/app_colors.dart';
+import 'demo_guard.dart';
 
 /// Helper class for showing toast messages (SnackBars)
 ///
@@ -8,6 +10,9 @@ import '../theme/app_colors.dart';
 class ToastHelper {
   /// Shows a success toast with green background
   static void showSuccess(BuildContext context, String message) {
+    // DEMO_GUARD: the operation was blocked (notifiers may swallow the
+    // DemoModeException); don't claim success right after the demo toast.
+    if (DemoGuard.recentlyShown) return;
     _showToast(
       context,
       message,
@@ -18,6 +23,13 @@ class ToastHelper {
 
   /// Shows an error toast with red background
   static void showError(BuildContext context, String message) {
+    // DEMO_GUARD: a blocked demo mutation already showed Ionic's warning
+    // toast; don't stack the generic error toast of the same operation.
+    if (DemoGuard.recentlyShown) return;
+    if (message.contains(kDemoRestrictedMessage)) {
+      showDemoRestricted(context);
+      return;
+    }
     _showToast(
       context,
       message,
@@ -45,21 +57,33 @@ class ToastHelper {
     );
   }
 
+  /// DEMO_GUARD: Ionic `Utils.showToast(translate('people.demoUnavailable'),
+  /// 'warning')`.
+  static void showDemoRestricted(BuildContext context) {
+    showWarning(context, kDemoRestrictedMessage);
+  }
+
   /// Shows a persistent update available snackbar (does not auto-dismiss)
+  ///
+  /// REVIEW_FIX2: called from the root widget, whose context sits above
+  /// MaterialApp (no ScaffoldMessenger / localizations there), so it takes
+  /// the root messenger and uses the context-free l10n.
   static void showUpdateAvailable(
-    BuildContext context, {
+    ScaffoldMessengerState? messenger, {
     required VoidCallback onUpdate,
   }) {
-    ScaffoldMessenger.of(context).showSnackBar(
+    if (messenger == null) return;
+    final l10n = l10nWithoutContext;
+    messenger.showSnackBar(
       SnackBar(
-        content: const Row(
+        content: Row(
           children: [
-            Icon(Icons.system_update, color: Colors.white),
-            SizedBox(width: 12),
+            const Icon(Icons.system_update, color: Colors.white),
+            const SizedBox(width: 12),
             Expanded(
               child: Text(
-                'Neue Version verfügbar',
-                style: TextStyle(color: Colors.white),
+                l10n.coreFlutterNewVersionAvailable,
+                style: const TextStyle(color: Colors.white),
               ),
             ),
           ],
@@ -68,7 +92,7 @@ class ToastHelper {
         behavior: SnackBarBehavior.floating,
         duration: const Duration(days: 365), // Persistent - won't auto-dismiss
         action: SnackBarAction(
-          label: 'Aktualisieren',
+          label: l10n.coreFlutterUpdate,
           textColor: Colors.white,
           onPressed: onUpdate,
         ),
@@ -103,7 +127,7 @@ class ToastHelper {
         behavior: SnackBarBehavior.floating,
         duration: duration,
         action: SnackBarAction(
-          label: 'OK',
+          label: context.l10n.commonOk,
           textColor: Colors.white,
           onPressed: () {
             ScaffoldMessenger.of(context).hideCurrentSnackBar();

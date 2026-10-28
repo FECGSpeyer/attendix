@@ -3,8 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('TrackingEvent', () {
-    test('exposes all 29 event names from Ionic v4.0.5', () {
-      expect(TrackingEvent.values.length, 29);
+    test('exposes all event names from Ionic (no Flutter-only events)', () {
+      expect(TrackingEvent.values.length, 28);
     });
 
     test('wireName matches Ionic snake_case strings', () {
@@ -16,7 +16,6 @@ void main() {
       expect(TrackingEvent.parentSignOut.wireName, 'parent_signout');
       expect(TrackingEvent.pushReceived.wireName, 'push_received');
       expect(TrackingEvent.pushOpened.wireName, 'push_opened');
-      expect(TrackingEvent.meetingCreated.wireName, 'meeting_created');
       expect(TrackingEvent.songShared.wireName, 'song_shared');
       expect(TrackingEvent.reportExported.wireName, 'report_exported');
       expect(TrackingEvent.handoverCreated.wireName, 'handover_created');

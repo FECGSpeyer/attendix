@@ -7,6 +7,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/attendance/attendance.dart';
 import '../../../../data/models/tenant/tenant.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Bottom sheet for creating or editing a critical rule
 class CriticalRuleSheet extends StatefulWidget {
@@ -40,7 +41,6 @@ class _CriticalRuleSheetState extends State<CriticalRuleSheet> {
   late CriticalRuleThresholdType _thresholdType;
   late CriticalRulePeriodType _periodType;
   late CriticalRuleOperator _operator;
-  late bool _enabled;
 
   bool get _isEditing => widget.rule != null;
 
@@ -57,7 +57,6 @@ class _CriticalRuleSheetState extends State<CriticalRuleSheet> {
       _thresholdType = rule.thresholdType;
       _periodType = rule.periodType ?? CriticalRulePeriodType.days;
       _operator = rule.operator;
-      _enabled = rule.enabled;
     } else {
       _thresholdController.text = '3';
       _periodDaysController.text = '30';
@@ -68,7 +67,6 @@ class _CriticalRuleSheetState extends State<CriticalRuleSheet> {
       _thresholdType = CriticalRuleThresholdType.count;
       _periodType = CriticalRulePeriodType.days;
       _operator = CriticalRuleOperator.or;
-      _enabled = true;
     }
   }
 
@@ -82,23 +80,21 @@ class _CriticalRuleSheetState extends State<CriticalRuleSheet> {
 
   void _save() {
     // Validation
-    if (_selectedTypeIds.isEmpty) {
-      ToastHelper.showError(context, 'Bitte wähle mindestens eine Terminart');
-      return;
-    }
+    // SETTINGS2: Ionic addCriticalRule validation. An empty type list means
+    // "Alle Typen" (evaluate-critical-rules treats [] as every type).
     if (_selectedStatuses.isEmpty) {
-      ToastHelper.showError(context, 'Bitte wähle mindestens einen Status');
+      ToastHelper.showError(context, context.l10n.generalSettingsSelectStatus);
       return;
     }
     final threshold = int.tryParse(_thresholdController.text);
     if (threshold == null || threshold <= 0) {
-      ToastHelper.showError(context, 'Bitte gib einen gültigen Schwellenwert ein');
+      ToastHelper.showError(context, context.l10n.generalSettingsThresholdPositive);
       return;
     }
     if (_periodType == CriticalRulePeriodType.days) {
       final days = int.tryParse(_periodDaysController.text);
       if (days == null || days <= 0) {
-        ToastHelper.showError(context, 'Bitte gib eine gültige Anzahl Tage ein');
+        ToastHelper.showError(context, context.l10n.generalSettingsPeriodPositive);
         return;
       }
     }
@@ -115,7 +111,9 @@ class _CriticalRuleSheetState extends State<CriticalRuleSheet> {
           ? int.tryParse(_periodDaysController.text) ?? 30
           : null,
       operator: _operator,
-      enabled: _enabled,
+      // DB_REVIEW_REST (M3): Ionic + edge function `evaluate-critical-rules`
+      // have no `enabled` flag; every saved rule is active.
+      enabled: true,
     );
 
     widget.onSave(rule);
@@ -141,7 +139,7 @@ class _CriticalRuleSheetState extends State<CriticalRuleSheet> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  _isEditing ? 'Regel bearbeiten' : 'Neue Problemfall-Regel',
+                  _isEditing ? context.l10n.generalSettingsFlutterEditRule : context.l10n.generalSettingsNewRule,
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
                 IconButton(
@@ -155,18 +153,23 @@ class _CriticalRuleSheetState extends State<CriticalRuleSheet> {
             // Optional name
             TextField(
               controller: _nameController,
-              decoration: const InputDecoration(
-                labelText: 'Name (optional)',
-                hintText: 'z.B. "Zu oft abwesend"',
+              decoration: InputDecoration(
+                labelText: context.l10n.generalSettingsNameOptional,
+                hintText: context.l10n.generalSettingsRulePh,
               ),
             ),
             const SizedBox(height: AppDimensions.paddingM),
 
             // Attendance types selection
             Text(
-              'Terminarten',
+              context.l10n.generalSettingsAttTypes,
               style: Theme.of(context).textTheme.titleSmall,
             ),
+            if (_selectedTypeIds.isEmpty)
+              Text(
+                context.l10n.generalSettingsAllTypes,
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
             const SizedBox(height: AppDimensions.paddingS),
             Wrap(
               spacing: 8,
@@ -192,7 +195,7 @@ class _CriticalRuleSheetState extends State<CriticalRuleSheet> {
 
             // Status selection
             Text(
-              'Status (zählt als kritisch)',
+              context.l10n.generalSettingsFlutterStatusCritical,
               style: Theme.of(context).textTheme.titleSmall,
             ),
             const SizedBox(height: AppDimensions.paddingS),
@@ -229,17 +232,17 @@ class _CriticalRuleSheetState extends State<CriticalRuleSheet> {
                 Expanded(
                   child: DropdownButtonFormField<CriticalRuleThresholdType>(
                     value: _thresholdType,
-                    decoration: const InputDecoration(
-                      labelText: 'Schwellentyp',
+                    decoration: InputDecoration(
+                      labelText: context.l10n.generalSettingsThresholdType,
                     ),
-                    items: const [
+                    items: [
                       DropdownMenuItem(
                         value: CriticalRuleThresholdType.count,
-                        child: Text('Anzahl'),
+                        child: Text(context.l10n.generalSettingsCount),
                       ),
                       DropdownMenuItem(
                         value: CriticalRuleThresholdType.percentage,
-                        child: Text('Prozent'),
+                        child: Text(context.l10n.generalSettingsPercent),
                       ),
                     ],
                     onChanged: (v) {
@@ -253,7 +256,7 @@ class _CriticalRuleSheetState extends State<CriticalRuleSheet> {
                     controller: _thresholdController,
                     keyboardType: TextInputType.number,
                     decoration: InputDecoration(
-                      labelText: 'Wert',
+                      labelText: context.l10n.typeSettingsValue,
                       suffixText: _thresholdType == CriticalRuleThresholdType.percentage
                           ? '%'
                           : 'x',
@@ -267,21 +270,22 @@ class _CriticalRuleSheetState extends State<CriticalRuleSheet> {
             // Period type
             DropdownButtonFormField<CriticalRulePeriodType>(
               value: _periodType,
-              decoration: const InputDecoration(
-                labelText: 'Zeitraum',
+              decoration: InputDecoration(
+                labelText: context.l10n.generalSettingsPeriodType,
+                helperText: context.l10n.generalSettingsPeriodHelper,
               ),
-              items: const [
+              items: [
                 DropdownMenuItem(
                   value: CriticalRulePeriodType.days,
-                  child: Text('Letzte X Tage'),
+                  child: Text(context.l10n.generalSettingsLastXDays),
                 ),
                 DropdownMenuItem(
                   value: CriticalRulePeriodType.season,
-                  child: Text('Seit Saisonstart'),
+                  child: Text(context.l10n.generalSettingsSinceSeason),
                 ),
                 DropdownMenuItem(
                   value: CriticalRulePeriodType.allTime,
-                  child: Text('Gesamte Zeit'),
+                  child: Text(context.l10n.generalSettingsAllTime),
                 ),
               ],
               onChanged: (v) {
@@ -295,9 +299,10 @@ class _CriticalRuleSheetState extends State<CriticalRuleSheet> {
               TextField(
                 controller: _periodDaysController,
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  labelText: 'Anzahl Tage',
-                  suffixText: 'Tage',
+                decoration: InputDecoration(
+                  labelText: context.l10n.generalSettingsDays,
+                  helperText: context.l10n.generalSettingsDaysHelper,
+                  suffixText: context.l10n.generalSettingsFlutterDaysSuffix,
                 ),
               ),
             ],
@@ -307,19 +312,19 @@ class _CriticalRuleSheetState extends State<CriticalRuleSheet> {
             Row(
               children: [
                 Text(
-                  'Verknüpfung mit anderen Regeln:',
+                  context.l10n.generalSettingsCombine,
                   style: Theme.of(context).textTheme.titleSmall,
                 ),
                 const Spacer(),
                 SegmentedButton<CriticalRuleOperator>(
-                  segments: const [
+                  segments: [
                     ButtonSegment(
                       value: CriticalRuleOperator.or,
-                      label: Text('ODER'),
+                      label: Text(context.l10n.generalSettingsFlutterOrShort),
                     ),
                     ButtonSegment(
                       value: CriticalRuleOperator.and,
-                      label: Text('UND'),
+                      label: Text(context.l10n.generalSettingsFlutterAndShort),
                     ),
                   ],
                   selected: {_operator},
@@ -332,21 +337,11 @@ class _CriticalRuleSheetState extends State<CriticalRuleSheet> {
             const SizedBox(height: AppDimensions.paddingS),
             Text(
               _operator == CriticalRuleOperator.or
-                  ? 'Person ist kritisch, wenn EINE der Regeln zutrifft'
-                  : 'Person ist kritisch, wenn ALLE Regeln zutreffen',
+                  ? context.l10n.generalSettingsFlutterOrHint
+                  : context.l10n.generalSettingsFlutterAndHint,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: AppColors.medium,
                   ),
-            ),
-            const SizedBox(height: AppDimensions.paddingM),
-
-            // Enabled toggle
-            SwitchListTile(
-              contentPadding: EdgeInsets.zero,
-              title: const Text('Regel aktiviert'),
-              subtitle: const Text('Deaktivierte Regeln werden nicht ausgewertet'),
-              value: _enabled,
-              onChanged: (v) => setState(() => _enabled = v),
             ),
             const SizedBox(height: AppDimensions.paddingM),
 
@@ -355,7 +350,7 @@ class _CriticalRuleSheetState extends State<CriticalRuleSheet> {
               width: double.infinity,
               child: FilledButton(
                 onPressed: _save,
-                child: Text(_isEditing ? 'Speichern' : 'Regel hinzufügen'),
+                child: Text(_isEditing ? context.l10n.commonSave : context.l10n.generalSettingsAddRule),
               ),
             ),
             const SizedBox(height: AppDimensions.paddingM),

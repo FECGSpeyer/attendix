@@ -3,6 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../core/config/supabase_config.dart';
+import '../../core/utils/demo_guard.dart';
+
+export '../../core/utils/demo_guard.dart' show DemoModeException, kDemoRestrictedMessage;
 
 /// Base class for all repositories
 /// Provides common functionality like Supabase access and error handling
@@ -10,6 +13,11 @@ abstract class BaseRepository {
   BaseRepository(this._ref);
 
   final Ref _ref;
+
+  /// Riverpod ref for repositories that compose other repositories
+  /// (LOGIC_PEOPLE: player flows that create/link accounts).
+  @protected
+  Ref get ref => _ref;
 
   /// Get Supabase client
   SupabaseClient get supabase => _ref.read(supabaseClientProvider);
@@ -21,8 +29,35 @@ abstract class BaseRepository {
     throw UnimplementedError('Override in subclass or use mixin');
   }
 
+  /// DEMO_GUARD: Ionic `checkDemoRestriction()`.
+  ///
+  /// Call at the start of every mutation that Ionic's db.service blocks for
+  /// the demo account. Shows the warning toast
+  /// "Diese Funktion ist im Demo-Modus nicht verfügbar." and throws
+  /// [DemoModeException] when the signed-in user is the demo account.
+  void ensureNotDemo(String operation) {
+    DemoGuard.check(_currentUserEmail(), operation);
+  }
+
+  /// Ionic `isDemo()`.
+  bool get isDemo => DemoGuard.isDemoEmail(_currentUserEmail());
+
+  String? _currentUserEmail() {
+    try {
+      return supabase.auth.currentUser?.email;
+    } catch (_) {
+      // Supabase not initialised (tests) → never demo.
+      return null;
+    }
+  }
+
   /// Handle Supabase errors consistently
   T handleError<T>(Object error, StackTrace stack, String operation) {
+    // DEMO_GUARD: keep the typed demo error so the UI can show its text.
+    if (error is DemoModeException) {
+      Error.throwWithStackTrace(error, stack);
+    }
+
     // SEC-006: Only log errors in debug mode to avoid exposing internal structure
     if (kDebugMode) {
       debugPrint('[$runtimeType] Error in $operation: $error');
@@ -50,10 +85,29 @@ abstract class BaseRepository {
 /// Mixin for repositories that need tenant context
 mixin TenantAwareRepository on BaseRepository {
   int? _tenantId;
+  bool _tenantLocked = false;
 
   /// Set the current tenant ID
+  ///
+  /// SOL_FIX1: a repository instance bound to one tenant via
+  /// [bindTenantId] never changes its tenant again, so a running
+  /// multi-step operation cannot switch tenants between two queries
+  /// (tenant switch A→B mid-flow).
   void setTenantId(int tenantId) {
+    if (_tenantLocked && _tenantId != tenantId) {
+      throw StateError(
+        '$runtimeType is bound to tenant $_tenantId and cannot switch to '
+        '$tenantId; use a per-tenant instance instead.',
+      );
+    }
     _tenantId = tenantId;
+  }
+
+  /// SOL_FIX1: binds this instance permanently to [tenantId] (per-tenant
+  /// repository instances, see `*RepositoryForTenantProvider`).
+  void bindTenantId(int tenantId) {
+    setTenantId(tenantId);
+    _tenantLocked = true;
   }
 
   /// Get tenant ID or throw if not set

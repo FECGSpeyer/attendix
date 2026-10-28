@@ -6,13 +6,18 @@ import 'tenant_providers.dart';
 
 /// Initialized meeting repository with tenant context
 final meetingRepositoryWithTenantProvider = Provider<MeetingRepository>((ref) {
-  final repo = ref.watch(meetingRepositoryProvider);
   final tenant = ref.watch(currentTenantIdProvider);
+  return ref.watch(meetingRepositoryForTenantProvider(tenant));
+});
 
-  if (tenant != null) {
-    repo.setTenantId(tenant);
-  }
-
+/// TENANT_BIND: one immutable [MeetingRepository] per tenant (`bindTenantId`),
+/// so a tenant switch never changes the tenant of a running flow and
+/// cross-tenant work uses its own bound instance. `null` (no tenant)
+/// yields an unbound instance with `hasTenantId == false`.
+final meetingRepositoryForTenantProvider =
+    Provider.family<MeetingRepository, int?>((ref, tenantId) {
+  final repo = MeetingRepository(ref);
+  if (tenantId != null) repo.bindTenantId(tenantId);
   return repo;
 });
 
