@@ -172,9 +172,13 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
     // UX_SETTINGS (WAVE 8): notifications.page.html — condense title, an
     // ion-card per block (ios26 radius 24 + shadow), uppercase
     // ion-card-subtitle above the category and tenant cards.
+    // IOS_FORMS1: Ionic renders this page as a plain (non-inset) ion-list on
+    // the white ion-content – no grouped grey background – and Ionic iOS has
+    // no hover/focus tint on items.
     return IonCondense(builder: (context, collapsed) => Scaffold(
+      backgroundColor: ios ? Theme.of(context).colorScheme.surface : null,
       appBar: AppBar(title: IonCondenseTitle(context.l10n.notifTitle, collapsed: collapsed)),
-      body: ListView(
+      body: _noHoverOnIos(context, ListView(
         padding: ios
             ? const EdgeInsets.fromLTRB(16, 0, 16, 24)
             : const EdgeInsets.all(AppDimensions.paddingM),
@@ -204,7 +208,17 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
                           style: const TextStyle(color: AppColors.success),
                         )
                       : null,
-                  trailing: isConnected
+                  trailing: ios
+                      // IOS_FORMS1: ion-button in an ion-item = small
+                      // solid pill (24pt, 13pt label).
+                      ? _SmallPillButton(
+                          label: isConnected
+                              ? context.l10n.notifDisconnect
+                              : context.l10n.notifConnect,
+                          color: isConnected ? AppColors.danger : AppColors.primary,
+                          onPressed: isConnected ? _disconnectTelegram : _connectTelegram,
+                        )
+                      : isConnected
                       // Ionic: solid ion-button color="danger"
                       ? ElevatedButton(
                           onPressed: _disconnectTelegram,
@@ -350,8 +364,22 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
           ],
           if (!ios) const SizedBox(height: AppDimensions.paddingL),
         ],
-      ),
+      )),
     ));
+  }
+
+  /// IOS_FORMS1: Ionic iOS items have no hover / focus highlight
+  /// (`--background-hover-opacity: 0`), so a tapped row does not stay grey.
+  Widget _noHoverOnIos(BuildContext context, Widget child) {
+    if (!ionIsIos(context)) return child;
+    final theme = Theme.of(context);
+    return Theme(
+      data: theme.copyWith(
+        hoverColor: Colors.transparent,
+        focusColor: Colors.transparent,
+      ),
+      child: child,
+    );
   }
 
   /// One Ionic `ion-card` holding items. iOS: ios26 card (radius 24,
@@ -398,10 +426,30 @@ class _UserIdTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (ionIsIos(context)) {
+      // IOS_FORMS1: ion-item > ion-label stacked + readonly ion-input –
+      // label and value in the text colour, 16pt, no copy button (the
+      // value is selectable like the readonly input).
+      final style = TextStyle(
+        fontSize: 16,
+        color: Theme.of(context).colorScheme.onSurface,
+      );
+      return Padding(
+        padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(context.l10n.notifUserId, style: style),
+            const SizedBox(height: 8),
+            SelectableText(userId, style: style),
+          ],
+        ),
+      );
+    }
     return ListTile(
       title: Text(
         context.l10n.notifUserId,
-        style: TextStyle(fontSize: ionIsIos(context) ? 14 : 12),
+        style: const TextStyle(fontSize: 12),
       ),
       subtitle: SelectableText(
         userId,
@@ -414,6 +462,46 @@ class _UserIdTile extends StatelessWidget {
           Clipboard.setData(ClipboardData(text: userId));
           ToastHelper.showSuccess(context, context.l10n.notifFlutterUserIdCopied);
         },
+      ),
+    );
+  }
+}
+
+/// IOS_FORMS1: `ion-button` inside an `ion-item` on iOS – Ionic makes it
+/// `size="small"`: solid 24pt capsule with a 13pt white label.
+class _SmallPillButton extends StatelessWidget {
+  const _SmallPillButton({
+    required this.label,
+    required this.color,
+    required this.onPressed,
+  });
+
+  final String label;
+  final Color color;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: color,
+      shape: const StadiumBorder(),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onPressed,
+        child: Container(
+          constraints: const BoxConstraints(minHeight: 24),
+          padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 4),
+          alignment: Alignment.center,
+          child: Text(
+            label,
+            style: const TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+              color: Colors.white,
+              height: 1.2,
+            ),
+          ),
+        ),
       ),
     );
   }

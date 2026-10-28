@@ -24,12 +24,13 @@ void main() {
         expect(find.text('Was ist neu?'), findsOneWidget);
       });
 
-      widgetTest('has close button', (tester) async {
+      widgetTest('has no close button (Ionic toolbar shows only the title)',
+          (tester) async {
         await tester.pumpApp(
           const VersionHistorySheet(),
         );
 
-        expect(find.byIcon(Icons.close), findsOneWidget);
+        expect(find.byIcon(Icons.close), findsNothing);
       });
 
       widgetTest('has handle bar at top', (tester) async {
@@ -41,12 +42,12 @@ void main() {
         expect(find.byType(DraggableScrollableSheet), findsOneWidget);
       });
 
-      widgetTest('has sparkle icon in header', (tester) async {
+      widgetTest('has no sparkle icon in header (Ionic parity)', (tester) async {
         await tester.pumpApp(
           const VersionHistorySheet(),
         );
 
-        expect(find.byIcon(Icons.auto_awesome), findsOneWidget);
+        expect(find.byIcon(Icons.auto_awesome), findsNothing);
       });
     });
 

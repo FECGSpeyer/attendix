@@ -46,7 +46,6 @@ class ChangePasswordDialog extends ConsumerStatefulWidget {
 class _ChangePasswordDialogState extends ConsumerState<ChangePasswordDialog> {
   final _passwordController = TextEditingController();
   final _confirmController = TextEditingController();
-  bool _obscure = true;
   bool _isLoading = false;
 
   @override
@@ -89,6 +88,27 @@ class _ChangePasswordDialogState extends ConsumerState<ChangePasswordDialog> {
 
   @override
   Widget build(BuildContext context) {
+    if (useIosLook(context)) return _buildIos(context);
+    // IOS_FORMS1 (md): Ionic md alert – underlined inputs without icons and
+    // the uppercase text buttons "ABBRECHEN  ÄNDERN" right-aligned.
+    InputDecoration underline(String hint) {
+      final theme = Theme.of(context);
+      final line = UnderlineInputBorder(
+        borderSide: BorderSide(color: theme.dividerColor),
+      );
+      return InputDecoration(
+        hintText: hint,
+        filled: false,
+        isDense: true,
+        contentPadding: const EdgeInsets.symmetric(vertical: 13),
+        border: line,
+        enabledBorder: line,
+        focusedBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: theme.colorScheme.primary, width: 2),
+        ),
+      );
+    }
+
     return AppAlertDialog(
       title: Text(context.l10n.settingsChangePassword),
       content: Column(
@@ -96,25 +116,15 @@ class _ChangePasswordDialogState extends ConsumerState<ChangePasswordDialog> {
         children: [
           TextField(
             controller: _passwordController,
-            obscureText: _obscure,
+            obscureText: true,
             autofocus: true,
-            decoration: InputDecoration(
-              hintText: context.l10n.settingsNewPasswordPh,
-              prefixIcon: const Icon(Icons.lock_outline),
-              suffixIcon: IconButton(
-                icon: Icon(_obscure ? Icons.visibility : Icons.visibility_off),
-                onPressed: () => setState(() => _obscure = !_obscure),
-              ),
-            ),
+            decoration: underline(context.l10n.settingsNewPasswordPh),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 8),
           TextField(
             controller: _confirmController,
-            obscureText: _obscure,
-            decoration: InputDecoration(
-              hintText: context.l10n.settingsRepeatPasswordPh,
-              prefixIcon: const Icon(Icons.lock_outline),
-            ),
+            obscureText: true,
+            decoration: underline(context.l10n.settingsRepeatPasswordPh),
             onSubmitted: (_) => _submit(),
           ),
         ],
@@ -122,9 +132,9 @@ class _ChangePasswordDialogState extends ConsumerState<ChangePasswordDialog> {
       actions: [
         TextButton(
           onPressed: _isLoading ? null : () => Navigator.of(context).pop(false),
-          child: Text(context.l10n.commonCancel),
+          child: Text(context.l10n.commonCancel.toUpperCase()),
         ),
-        ElevatedButton(
+        TextButton(
           onPressed: _isLoading ? null : _submit,
           child: _isLoading
               ? const SizedBox(
@@ -132,9 +142,129 @@ class _ChangePasswordDialogState extends ConsumerState<ChangePasswordDialog> {
                   height: 20,
                   child: AppSpinner(strokeWidth: 2),
                 )
-              : Text(context.l10n.settingsChange),
+              : Text(context.l10n.settingsChange.toUpperCase()),
         ),
       ],
+    );
+  }
+}
+
+/// IOS_FORMS1: Ionic iOS `ion-alert` with two password inputs (rounded
+/// 7pt boxes with a hairline border, no icons) and the two buttons
+/// "Abbrechen | Ändern" side by side.
+extension on _ChangePasswordDialogState {
+  Widget _buildIos(BuildContext context) {
+    final l10n = context.l10n;
+    return IosAlertCard(
+      title: Text(l10n.settingsChangePassword),
+      contentPadding: const EdgeInsets.fromLTRB(16, 0, 16, 21),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          IosAlertInput(
+            controller: _passwordController,
+            placeholder: l10n.settingsNewPasswordPh,
+            obscureText: true,
+            autofocus: true,
+          ),
+          IosAlertInput(
+            controller: _confirmController,
+            placeholder: l10n.settingsRepeatPasswordPh,
+            obscureText: true,
+            onSubmitted: (_) => _submit(),
+          ),
+        ],
+      ),
+      actions: [
+        Row(
+          children: [
+            Expanded(
+              child: IosAlertButton(
+                bold: false,
+                onPressed:
+                    _isLoading ? null : () => Navigator.of(context).pop(false),
+                child: Text(l10n.commonCancel),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: IosAlertButton(
+                bold: false,
+                onPressed: _isLoading ? null : _submit,
+                child: _isLoading
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: AppSpinner(strokeWidth: 2),
+                      )
+                    : Text(l10n.settingsChange),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+/// IOS_FORMS1: text input of an iOS `ion-alert` (`.alert-input`): 16pt
+/// text, 7pt padding and radius, 0.55pt grey border on the page
+/// background, 10pt above each input.
+class IosAlertInput extends StatelessWidget {
+  const IosAlertInput({
+    super.key,
+    required this.controller,
+    this.placeholder,
+    this.obscureText = false,
+    this.autofocus = false,
+    this.keyboardType,
+    this.onSubmitted,
+  });
+
+  final TextEditingController controller;
+  final String? placeholder;
+  final bool obscureText;
+  final bool autofocus;
+  final TextInputType? keyboardType;
+  final ValueChanged<String>? onSubmitted;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final dark = theme.brightness == Brightness.dark;
+    final border = OutlineInputBorder(
+      borderRadius: BorderRadius.circular(7),
+      borderSide: BorderSide(
+        color: dark ? const Color(0xFF404040) : const Color(0xFFBFBFBF),
+        width: 0.55,
+      ),
+    );
+    return Padding(
+      padding: const EdgeInsets.only(top: 10),
+      child: TextField(
+        controller: controller,
+        obscureText: obscureText,
+        autofocus: autofocus,
+        keyboardType: keyboardType,
+        onSubmitted: onSubmitted,
+        style: TextStyle(fontSize: 16, color: theme.colorScheme.onSurface),
+        decoration: InputDecoration(
+          hintText: placeholder,
+          hintStyle: TextStyle(
+            fontSize: 16,
+            color: dark ? const Color(0xFF8C8C8C) : const Color(0xFF999999),
+          ),
+          isDense: true,
+          filled: true,
+          fillColor: dark ? Colors.black : Colors.white,
+          contentPadding: const EdgeInsets.all(7),
+          border: border,
+          enabledBorder: border,
+          focusedBorder: border,
+          disabledBorder: border,
+        ),
+      ),
     );
   }
 }

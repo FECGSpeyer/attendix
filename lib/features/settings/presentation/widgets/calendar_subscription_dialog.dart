@@ -13,9 +13,18 @@ import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// iCal feed URL of the Supabase edge function `ical-tenant`
 /// (Ionic settings `openCalendarSubscription()`).
-String calendarSubscriptionLink({required int tenantId, int? personId}) {
-  final base = '${SupabaseConfig.supabaseUrl}/functions/v1/ical-tenant?tenantId=$tenantId';
-  return personId != null ? '$base&personId=$personId' : base;
+///
+/// Calendar texts follow the app language: Ionic appends `&lang=<code>`
+/// for every language except German (the server default).
+String calendarSubscriptionLink({
+  required int tenantId,
+  int? personId,
+  String? language,
+}) {
+  var link = '${SupabaseConfig.supabaseUrl}/functions/v1/ical-tenant?tenantId=$tenantId';
+  if (personId != null) link += '&personId=$personId';
+  if (language != null && language != 'de') link += '&lang=$language';
+  return link;
 }
 
 /// UX_SETTINGS: Ionic settings "Kalender abonnieren" alert.
@@ -34,7 +43,11 @@ Future<void> showCalendarSubscriptionDialog(BuildContext context, WidgetRef ref)
       personId = null;
     }
   }
-  final link = calendarSubscriptionLink(tenantId: tenantId, personId: personId);
+  final link = calendarSubscriptionLink(
+    tenantId: tenantId,
+    personId: personId,
+    language: currentLanguage(),
+  );
   final personal = personId != null;
   if (!context.mounted) return;
   final isIos = Theme.of(context).platform == TargetPlatform.iOS;
@@ -45,24 +58,46 @@ Future<void> showCalendarSubscriptionDialog(BuildContext context, WidgetRef ref)
     builder: (ctx) => StatefulBuilder(
       builder: (ctx, setState) => AppAlertDialog(
         title: Text(ctx.l10n.settingsSubscribeCalendar),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(ctx.l10n.settingsFlutterCalendarIntro),
-            const SizedBox(height: 12),
-            SelectableText(link, style: const TextStyle(fontSize: 12)),
-            if (personal)
-              CheckboxListTile(
-                contentPadding: EdgeInsets.zero,
-                controlAffinity: ListTileControlAffinity.leading,
-                title: Text(ctx.l10n.settingsHideCancelled),
-                value: hideExcused,
-                onChanged: (v) => setState(() => hideExcused = v ?? false),
+        // IOS_FORMS1: ion-alert message `settings.calendarMessage` (text +
+        // link in one grey 15pt block); the checkbox input sits in its own
+        // group below a hairline (iOS).
+        contentPadding: useIosLook(ctx) ? EdgeInsets.zero : null,
+        content: useIosLook(ctx)
+            ? Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(22, 0, 22, personal ? 21 : 18),
+                    child: SelectableText(ctx.l10n.settingsCalendarMessage(link)),
+                  ),
+                  if (personal)
+                    _IosAlertCheckbox(
+                      label: ctx.l10n.settingsHideCancelled,
+                      value: hideExcused,
+                      onChanged: (v) => setState(() => hideExcused = v),
+                    ),
+                ],
+              )
+            // IOS_FORMS1 (md): message, then the checkbox group between two
+            // hairlines (`.alert-checkbox-group` border-top/-bottom) on the
+            // dialog background.
+            : Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  SelectableText(ctx.l10n.settingsCalendarMessage(link)),
+                  if (personal) ...[
+                    const SizedBox(height: 16),
+                    _MdAlertCheckbox(
+                      label: ctx.l10n.settingsHideCancelled,
+                      value: hideExcused,
+                      onChanged: (v) => setState(() => hideExcused = v),
+                    ),
+                  ],
+                ],
               ),
-          ],
-        ),
-        actions: [
+        actions: _mdStackedActions(ctx, [
           TextButton(
             onPressed: () async {
               final finalLink = hideExcused ? '$link&hideExcused=1' : link;
@@ -97,8 +132,154 @@ Future<void> showCalendarSubscriptionDialog(BuildContext context, WidgetRef ref)
             onPressed: () => Navigator.of(ctx).pop(),
             child: Text(ctx.l10n.commonClose),
           ),
-        ],
+        ]),
       ),
     ),
   );
+}
+
+/// IOS_FORMS1 (md): Ionic md alert with more than two buttons
+/// (`.alert-button-group-vertical`): uppercase text buttons stacked and
+/// right-aligned. iOS keeps the given buttons (rendered as pills).
+List<Widget> _mdStackedActions(BuildContext context, List<TextButton> buttons) {
+  if (useIosLook(context)) return buttons;
+  return [
+    Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        for (final b in buttons)
+          TextButton(
+            onPressed: b.onPressed,
+            child: b.child is Text
+                ? Text(((b.child as Text).data ?? '').toUpperCase())
+                : b.child!,
+          ),
+      ],
+    ),
+  ];
+}
+
+/// IOS_FORMS1 (md): checkbox input of an Ionic md `ion-alert` – hairlines
+/// above and below the group, square primary checkbox and the label, no
+/// tinted row background.
+class _MdAlertCheckbox extends StatelessWidget {
+  const _MdAlertCheckbox({
+    required this.label,
+    required this.value,
+    required this.onChanged,
+  });
+
+  final String label;
+  final bool value;
+  final ValueChanged<bool> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final line = BorderSide(color: Theme.of(context).dividerColor, width: 1);
+    return DecoratedBox(
+      decoration: BoxDecoration(border: Border(top: line, bottom: line)),
+      child: InkWell(
+        onTap: () => onChanged(!value),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 48),
+          child: Row(
+            children: [
+              Checkbox(
+                value: value,
+                onChanged: (v) => onChanged(v ?? false),
+                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// IOS_FORMS1: checkbox input of an iOS `ion-alert` – hairline above the
+/// group, round 22pt check circle (primary when checked) 16pt from the edge
+/// and a single-line 14pt label.
+class _IosAlertCheckbox extends StatelessWidget {
+  const _IosAlertCheckbox({
+    required this.label,
+    required this.value,
+    required this.onChanged,
+  });
+
+  final String label;
+  final bool value;
+  final ValueChanged<bool> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final onSurface = theme.colorScheme.onSurface;
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        border: Border(
+          top: BorderSide(color: onSurface.withValues(alpha: 0.2), width: 0.55),
+        ),
+      ),
+      child: Semantics(
+        checked: value,
+        button: true,
+        label: label,
+        excludeSemantics: true,
+        child: InkWell(
+          onTap: () => onChanged(!value),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 44),
+            child: Row(
+              children: [
+                const SizedBox(width: 16),
+                Container(
+                  width: 22,
+                  height: 22,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: value ? theme.colorScheme.primary : Colors.transparent,
+                    border: Border.all(
+                      width: 2,
+                      color: value
+                          ? theme.colorScheme.primary
+                          : (theme.brightness == Brightness.dark
+                              ? const Color(0xFF545458)
+                              : const Color(0xFFC8C7CC)),
+                    ),
+                  ),
+                  child: value
+                      ? const Icon(Icons.check, size: 14, color: Colors.white)
+                      : null,
+                ),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(13),
+                    child: Text(
+                      label,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(fontSize: 14, color: onSurface),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }
