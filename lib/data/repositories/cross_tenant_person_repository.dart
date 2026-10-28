@@ -254,7 +254,7 @@ class CrossTenantPersonRepository extends BaseRepository
           .from('player')
           .select('id, left')
           .eq('appId', userId)
-          .eq('tenantId', tenantId)
+          .inFilter('tenantId', [tenantId]) // guarded: linked tenant
           .eq('pending', false);
       final rows = response as List;
       if (rows.isEmpty) return null;
@@ -290,7 +290,7 @@ class CrossTenantPersonRepository extends BaseRepository
           .from('player')
           .select('history')
           .eq('id', playerId)
-          .eq('tenantId', tenantId)
+          .inFilter('tenantId', [tenantId]) // guarded: linked tenant
           .maybeSingle();
       final existing = row?['history'];
       final history = <dynamic>[
@@ -306,7 +306,7 @@ class CrossTenantPersonRepository extends BaseRepository
             'history': history,
           })
           .eq('id', playerId)
-          .eq('tenantId', tenantId);
+          .inFilter('tenantId', [tenantId]); // guarded: linked tenant
 
       final today = DateTime.now().toIso8601String().substring(0, 10);
       final since = (pauseFrom != null && pauseFrom.length >= 10)

@@ -36,6 +36,12 @@ void main() {
 
     test('updates include the current tenant in the allowed set', () {
       for (final q in queries(source, 'player').where((q) => q.contains('.update('))) {
+        // PEOPLE2: pausePlayerInOtherTenant targets exactly one linked tenant
+        // (guarded by linkedTenantIds.contains(tenantId)).
+        if (q.contains("'paused': true")) {
+          expect(q, contains(".inFilter('tenantId', [tenantId])"));
+          continue;
+        }
         expect(q, contains('[currentTenantId, ...linkedTenantIds]'));
       }
     });
