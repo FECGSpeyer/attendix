@@ -38,8 +38,16 @@ class FakeClient implements PushMessagingClient {
     return requestResult;
   }
 
+  /// SOL_FIX17: when set, the next getToken waits for it (one-shot).
+  Completer<void>? tokenGate;
+
   @override
-  Future<String?> getToken() async => token;
+  Future<String?> getToken() async {
+    final gate = tokenGate;
+    tokenGate = null;
+    if (gate != null) await gate.future;
+    return token;
+  }
   @override
   Future<void> deleteToken() async => deletes++;
   @override
@@ -58,11 +66,36 @@ class FakeTokens implements DeviceTokenStore {
   final saved = <String>[];
   final removed = <String>[];
   final pushEnabled = <bool>[];
+
+  /// SOL_FIX17: delayed writes. [beforeCheckGate] holds the save before its
+  /// generation check (like the two deletes of the real repository),
+  /// [afterCheckGate] holds the upsert itself after the check passed.
+  /// Both one-shot. [log] records the order of upserts and deletes.
+  Completer<void>? beforeCheckGate;
+  Completer<void>? afterCheckGate;
+  final log = <String>[];
+
   @override
-  Future<void> saveToken(String token, String platform) async =>
-      saved.add('$platform:$token');
+  Future<void> saveToken(String token, String platform, {bool Function()? isCurrent}) async {
+    final before = beforeCheckGate;
+    beforeCheckGate = null;
+    if (before != null) await before.future;
+    if (isCurrent != null && !isCurrent()) {
+      log.add('skipped:$token');
+      return;
+    }
+    final after = afterCheckGate;
+    afterCheckGate = null;
+    if (after != null) await after.future;
+    saved.add('$platform:$token');
+    log.add('upsert:$token');
+  }
+
   @override
-  Future<void> removeToken(String token) async => removed.add(token);
+  Future<void> removeToken(String token) async {
+    removed.add(token);
+    log.add('delete:$token');
+  }
   @override
   Future<void> setPushEnabled(bool enabled) async => pushEnabled.add(enabled);
 }
@@ -209,15 +242,17 @@ void main() {
     expect(s.currentToken, 'tok-2');
   });
 
-  test('removeToken deletes the row; FCM token only on iOS', () async {
+  test('removeToken deletes the row and the FCM token (SOL_FIX17: Android too)', () async {
     final android = build();
     await android.initPush();
     await android.removeToken();
     expect(tokens.removed, ['tok-1']);
-    expect(client.deletes, 0);
+    expect(client.deletes, 1);
     expect(android.currentToken, isNull);
     await android.removeToken(); // idempotent
     expect(tokens.removed, hasLength(1));
+    expect(client.deletes, 1);
+    client.deletes = 0;
 
     final ios = build(platform: 'ios');
     await ios.initPush();
@@ -350,6 +385,110 @@ void main() {
       await s.start();
       await s.promptAndEnable();
       expect(tokens.saved, isEmpty);
+    });
+  });
+
+  // SOL_FIX17: Sol review of 2c0550c – registrations and token refreshes
+  // racing the logout must never recreate the deleted device_tokens row.
+  group('logout during registration', () {
+    test('a save in flight is awaited and stops before its upsert', () async {
+      final gate = Completer<void>();
+      tokens.beforeCheckGate = gate;
+      final s = build();
+      final registering = s.initPush();
+      await pumpEventQueue();
+
+      final removing = s.removeToken();
+      await pumpEventQueue();
+      expect(tokens.removed, isEmpty, reason: 'delete waits for the write');
+
+      gate.complete();
+      await removing;
+      await registering;
+      expect(tokens.log, ['skipped:tok-1', 'delete:tok-1']);
+      expect(tokens.saved, isEmpty);
+      expect(client.deletes, 1);
+    });
+
+    test('an upsert already running lands before the final delete', () async {
+      final gate = Completer<void>();
+      tokens.afterCheckGate = gate;
+      final s = build();
+      final registering = s.initPush();
+      await pumpEventQueue();
+
+      final removing = s.removeToken();
+      await pumpEventQueue();
+      expect(tokens.removed, isEmpty);
+
+      gate.complete();
+      await removing;
+      await registering;
+      expect(tokens.log, ['upsert:tok-1', 'delete:tok-1']);
+    });
+
+    test('getToken returning after logout saves nothing', () async {
+      final gate = Completer<void>();
+      client.tokenGate = gate;
+      final s = build();
+      final registering = s.initPush();
+      await pumpEventQueue();
+      await s.removeToken();
+
+      gate.complete();
+      await registering;
+      expect(tokens.saved, isEmpty);
+      expect(tokens.log, isEmpty);
+      expect(s.currentToken, isNull);
+    });
+
+    test('token refresh listener is stopped on logout', () async {
+      final s = build();
+      await s.initPush();
+      expect(client.refresh.hasListener, isTrue);
+      await s.removeToken();
+      expect(client.refresh.hasListener, isFalse);
+
+      client.refresh.add('tok-late');
+      await pumpEventQueue();
+      expect(tokens.saved, ['android:tok-1']);
+      expect(s.currentToken, isNull);
+    });
+
+    test('a refresh save in flight at logout is awaited and deleted', () async {
+      final s = build();
+      await s.initPush();
+      final gate = Completer<void>();
+      tokens.afterCheckGate = gate;
+      client.refresh.add('tok-2');
+      await pumpEventQueue();
+
+      final removing = s.removeToken();
+      await pumpEventQueue();
+      gate.complete();
+      await removing;
+      expect(tokens.log, ['upsert:tok-1', 'upsert:tok-2', 'delete:tok-2', 'delete:tok-1']);
+    });
+
+    test('sign-in after logout registers again; the stale run does not', () async {
+      final gate = Completer<void>();
+      client.tokenGate = gate;
+      final s = build();
+      final stale = s.promptAndEnable();
+      await pumpEventQueue();
+      await s.removeToken();
+
+      // New session: a fresh run, not the cancelled one.
+      final next = s.promptAndEnable();
+      expect(identical(next, stale), isFalse);
+      await next;
+      expect(tokens.saved, ['android:tok-1']);
+      expect(client.refresh.hasListener, isTrue);
+
+      gate.complete();
+      await stale;
+      expect(tokens.saved, ['android:tok-1'], reason: 'stale run wrote nothing');
+      expect(s.currentToken, 'tok-1');
     });
   });
 }

@@ -85,6 +85,23 @@ class PushService {
   final List<StreamSubscription<dynamic>> _subscriptions = [];
   StreamSubscription<String>? _tokenRefreshSub;
 
+  /// SOL_FIX17: push session generation. [removeToken] (logout) bumps it
+  /// synchronously; every registration ([promptAndEnable], [initPush]) and
+  /// the token refresh listener capture it at their start and re-check it
+  /// after each await and right before every upsert, so a registration
+  /// that finishes after the logout never recreates the deleted row.
+  int _generation = 0;
+
+  bool _isStale(int generation) => generation != _generation;
+
+  /// SOL_FIX17: token writes that are still running; [removeToken] awaits
+  /// them before its final delete.
+  final Set<Future<void>> _pendingWrites = {};
+
+  /// SOL_FIX17: tokens written (or being written) in this generation – all
+  /// of them are deleted on logout, not only the last one.
+  final Set<String> _sessionTokens = {};
+
   void _log(String message, [Object? error]) {
     if (kDebugMode) debugPrint('[push] $message${error != null ? ': $error' : ''}');
   }
@@ -178,28 +195,42 @@ class PushService {
   }
 
   Future<void>? _promptInFlight;
+  int? _promptGeneration;
 
   /// Ionic promptAndEnable (after SIGNED_IN): ask once, then register.
-  /// Concurrent calls (sign-in + restored session) share one run.
+  /// Concurrent calls (sign-in + restored session) share one run – of the
+  /// same generation only (SOL_FIX17): a sign-in after a logout starts a new
+  /// run instead of joining the cancelled one.
   Future<void> promptAndEnable() {
     if (!isNativePlatform) return Future.value();
-    return _promptInFlight ??=
-        _promptAndEnable().whenComplete(() => _promptInFlight = null);
+    final generation = _generation;
+    final running = _promptInFlight;
+    if (running != null && _promptGeneration == generation) return running;
+    late final Future<void> run;
+    run = _promptAndEnable(generation).whenComplete(() {
+      if (identical(_promptInFlight, run)) {
+        _promptInFlight = null;
+        _promptGeneration = null;
+      }
+    });
+    _promptGeneration = generation;
+    return _promptInFlight = run;
   }
 
-  Future<void> _promptAndEnable() async {
+  Future<void> _promptAndEnable(int generation) async {
     await _ready();
-    if (!_available) return;
+    if (!_available || _isStale(generation)) return;
 
     if (await promptStore.wasShown()) {
-      await initPush();
+      await _initPush(generation);
       return;
     }
 
     final permission = await client.checkPermission();
+    if (_isStale(generation)) return;
     if (permission == PushPermission.granted) {
       await promptStore.markShown();
-      await initPush();
+      await _initPush(generation);
       return;
     }
     if (permission == PushPermission.denied) {
@@ -210,36 +241,44 @@ class PushService {
     final answer = await host.confirmEnablePush();
     if (answer == null) return; // dismissed: ask again next time (Ionic backdrop)
     await promptStore.markShown();
-    if (answer) {
-      await initPush();
-      await _setPushEnabled(true);
+    if (answer && !_isStale(generation)) {
+      await _initPush(generation);
+      if (!_isStale(generation)) await _setPushEnabled(true);
     }
   }
 
   /// Ionic initPush: permission → FCM token → device_tokens, clear badge.
-  Future<void> initPush() async {
-    if (!isNativePlatform) return;
+  Future<void> initPush() {
+    if (!isNativePlatform) return Future.value();
+    return _initPush(_generation);
+  }
+
+  Future<void> _initPush(int generation) async {
     await _ready();
-    if (!_available) return;
+    if (!_available || _isStale(generation)) return;
 
     final permission = await client.checkPermission();
+    if (_isStale(generation)) return;
     if (permission == PushPermission.prompt) {
       final result = await client.requestPermission();
-      if (result != PushPermission.granted) return;
+      if (result != PushPermission.granted || _isStale(generation)) return;
     } else if (permission != PushPermission.granted) {
       return;
     }
 
+    // SOL_FIX17: the listener belongs to this generation; removeToken
+    // cancels it, the next sign-in subscribes again.
     _tokenRefreshSub ??= client.onTokenRefresh.listen((token) async {
-      if (token.isEmpty) return;
+      if (token.isEmpty || _isStale(generation)) return;
       _currentToken = token;
-      await _saveToken(token);
+      await _saveToken(token, generation);
     });
 
     final token = await client.getToken();
+    if (_isStale(generation)) return;
     if (token != null && token.isNotEmpty) {
       _currentToken = token;
-      await _saveToken(token);
+      await _saveToken(token, generation);
     } else {
       _log('Push Error: no FCM token received from getToken()');
     }
@@ -248,9 +287,24 @@ class PushService {
     await clearBadge();
   }
 
-  Future<void> _saveToken(String token) async {
+  /// SOL_FIX17: tracked in [_pendingWrites]; the store re-checks the
+  /// generation before each of its writes (last one: the upsert).
+  Future<void> _saveToken(String token, int generation) {
+    if (_isStale(generation)) return Future.value();
+    _sessionTokens.add(token);
+    final write = _write(token, generation);
+    _pendingWrites.add(write);
+    unawaited(write.whenComplete(() => _pendingWrites.remove(write)));
+    return write;
+  }
+
+  Future<void> _write(String token, int generation) async {
     try {
-      await tokens.saveToken(token, platform);
+      await tokens.saveToken(
+        token,
+        platform,
+        isCurrent: () => !_isStale(generation),
+      );
     } catch (e) {
       _log('Save Token Exception', e);
     }
@@ -258,18 +312,47 @@ class PushService {
 
   /// Ionic removeToken (logout): deletes this device's token row and the
   /// FCM token. Call BEFORE `auth.signOut()` so RLS still allows the delete.
+  ///
+  /// SOL_FIX17: first ends the push session synchronously (new generation,
+  /// token refresh listener stopped) so no running registration can write
+  /// again, then waits for the writes already in flight, and only then
+  /// deletes the rows – a late upsert cannot recreate them.
   Future<void> removeToken() async {
     if (!isNativePlatform) return;
-    final token = _currentToken;
-    if (token == null) return;
+    _generation++;
+    _promptInFlight = null;
+    _promptGeneration = null;
+    final refresh = _tokenRefreshSub;
+    _tokenRefreshSub = null;
+    final current = _currentToken;
     _currentToken = null;
+    final toDelete = {if (current != null) current, ..._sessionTokens};
+    _sessionTokens.clear();
+    final inFlight = _pendingWrites.toList();
+
     try {
-      await tokens.removeToken(token);
+      await refresh?.cancel();
     } catch (e) {
-      _log('removeToken failed', e);
+      _log('token refresh cancel failed', e);
     }
-    // Ionic deletes the FCM token on iOS only.
-    if (platform == 'ios') await client.deleteToken();
+    if (inFlight.isNotEmpty) await Future.wait(inFlight);
+    if (toDelete.isEmpty) return;
+
+    for (final token in toDelete) {
+      try {
+        await tokens.removeToken(token);
+      } catch (e) {
+        _log('removeToken failed', e);
+      }
+    }
+    // Ionic deletes the FCM token on iOS only; SOL_FIX17: on Android too,
+    // so the token of the signed-out account stops being valid. The client
+    // never throws (no-op without Firebase); guarded anyway (PWA rule).
+    try {
+      await client.deleteToken();
+    } catch (e) {
+      _log('Failed to delete FCM token', e);
+    }
   }
 
   /// Ionic togglePush (Einstellungen → Benachrichtigungen).

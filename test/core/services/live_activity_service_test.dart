@@ -34,6 +34,11 @@ class FakeHost implements LiveActivityHost {
   Completer<void>? enabledGate;
   Completer<void>? attendancesGate;
 
+  /// SOL_FIX17: when set, the next saveToken waits for it (one-shot), and
+  /// [log] records the order of finished upserts and deletes.
+  Completer<void>? saveGate;
+  final log = <String>[];
+
   @override
   Future<bool> loadEnabled() async {
     final gate = enabledGate;
@@ -59,12 +64,17 @@ class FakeHost implements LiveActivityHost {
     int attendanceId = 0,
     String planKey = '',
   }) async {
+    final gate = saveGate;
+    saveGate = null;
+    if (gate != null) await gate.future;
     saved.add({'userId': userId, 'kind': kind, 'token': token, 'attendanceId': attendanceId, 'planKey': planKey});
+    log.add('upsert:$token');
   }
 
   @override
   Future<void> removeTokens({required String userId, required List<String> tokens}) async {
     removed.add({'userId': userId, 'tokens': [...tokens]..sort()});
+    log.add('delete');
   }
 
   @override
@@ -245,10 +255,22 @@ void main() {
     expect(methods(), isNot(contains('start')));
   });
 
+  Future<void> sendNative(String method, Object args) async {
+    await messenger.handlePlatformMessage(
+      LiveActivityService.channelName,
+      const StandardMethodCodec().encodeMethodCall(MethodCall(method, args)),
+      (_) {},
+    );
+  }
+
   test('native token events are stored', () async {
     final host = FakeHost();
     final s = service(host);
     await s.attach();
+    // SOL_FIX17: registration opens with the session's init.
+    await s.init();
+    s.stopLoop();
+    host.saved.clear();
     Future<void> send(String method, Object args) async {
       await messenger.handlePlatformMessage(
         LiveActivityService.channelName,
@@ -442,6 +464,100 @@ void main() {
   });
 
   // DB_REVIEW_REST (F2): Android live plan notification (Ionic LiveActivityPlugin.java)
+  // SOL_FIX17: Sol review of 2c0550c – token writes racing the logout and
+  // syncs racing the disable toggle.
+  group('SOL_FIX17', () {
+    test('an upsert in flight finishes before the logout deletes the tokens', () async {
+      final host = FakeHost();
+      final s = service(host);
+      final gate = Completer<void>();
+      host.saveGate = gate; // first token upsert of init hangs
+      final initializing = s.onTenantReady(7, hasTenantUser: true, userId: 'user-1');
+      await pumpEventQueue();
+      expect(host.saved, isEmpty);
+
+      final ending = endLiveActivitiesBeforeSignOut(s, 'user-1');
+      await pumpEventQueue();
+      expect(host.removed, isEmpty, reason: 'delete waits for the running upsert');
+
+      gate.complete();
+      await ending;
+      await initializing;
+      // The in-flight upsert landed first, then the delete; the stale init
+      // registered nothing else afterwards.
+      expect(host.log, ['upsert:abc123', 'delete']);
+      expect(host.removed.single['tokens'], containsAll(['abc123', 'def456']));
+      expect(s.sessionUserId, isNull);
+    });
+
+    test('native token callbacks after the session ended are dropped', () async {
+      final host = FakeHost();
+      final s = service(host);
+      await s.attach();
+      await s.onTenantReady(7, hasTenantUser: true, userId: 'user-1');
+      s.stopLoop();
+      await endLiveActivitiesBeforeSignOut(s, 'user-1');
+      host.saved.clear();
+      host.log.clear();
+
+      await sendNative('pushToStartToken', {'token': 'late1'});
+      await sendNative('activityToken', {'attendanceId': 5, 'planKey': 'p2', 'token': 'late2'});
+      expect(host.saved, isEmpty);
+      expect(s.sessionUserId, isNull);
+
+      // The next session opens registration again.
+      await s.onTenantReady(7, hasTenantUser: true, userId: 'user-1');
+      s.stopLoop();
+      await sendNative('pushToStartToken', {'token': 'next1'});
+      expect(host.saved.map((r) => r['token']), contains('next1'));
+      s.dispose();
+    });
+
+    test('native callbacks before any session init are dropped', () async {
+      final host = FakeHost();
+      final s = service(host);
+      await s.attach();
+      await sendNative('pushToStartToken', {'token': 'early'});
+      expect(host.saved, isEmpty);
+      s.dispose();
+    });
+
+    test('setEnabled(false) while a sync loads plans: nothing is started', () async {
+      final host = FakeHost();
+      final s = service(host);
+      await s.init(); // no running plan yet
+      s.stopLoop();
+      calls.clear();
+
+      host.attendances = [attendance()];
+      final gate = Completer<void>();
+      host.attendancesGate = gate;
+      final pending = s.sync(); // delayed plan query
+      await pumpEventQueue();
+      await s.setEnabled(false);
+      expect(methods(), ['endAll']);
+
+      gate.complete();
+      await pending;
+      expect(methods(), ['endAll'], reason: 'the old sync must not restart activities');
+
+      // Enabling again syncs normally (the stale sync released its flag).
+      await s.setEnabled(true);
+      expect(methods(), contains('start'));
+    });
+
+    test('disabled: a sync never starts an activity', () async {
+      final host = FakeHost(attendances: [attendance()]);
+      final s = service(host);
+      await s.init();
+      s.stopLoop();
+      await s.setEnabled(false);
+      calls.clear();
+      await s.sync();
+      expect(methods(), isNot(contains('start')));
+    });
+  });
+
   group('Android', () {
     test('registers the "android" start token instead of configure', () async {
       final host = FakeHost(attendances: [attendance()]);

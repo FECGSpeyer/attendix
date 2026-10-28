@@ -173,6 +173,20 @@ class LiveActivityService {
 
   bool _isStale(int generation) => generation != _generation;
 
+  /// SOL_FIX17: token registration is open only while a session is
+  /// initialised ([init] opens it, [endSession] closes it synchronously).
+  /// Native token callbacks carry no generation and are dropped while it
+  /// is closed, so they cannot recreate rows the logout deletes.
+  bool _registrationOpen = false;
+
+  /// SOL_FIX17: token upserts still running; [endSession] waits for them
+  /// before it deletes this device's token rows.
+  final Set<Future<void>> _pendingWrites = {};
+
+  /// SOL_FIX17: bumped by [setEnabled]. A sync that started before the
+  /// toggle changed must not start or update activities afterwards.
+  int _enableEpoch = 0;
+
   /// True when this build has the native side (Ionic `hasNativePlugin`);
   /// controls the toggle in the notification settings.
   bool get hasNativePlugin => _platformSupported;
@@ -230,6 +244,7 @@ class LiveActivityService {
     // state synchronously, before the first await, so neither a stale fetch
     // nor a late reset can touch the next session.
     _generation++;
+    _registrationOpen = false;
     _syncing = false;
     stopLoop();
     _lifecycle?.dispose();
@@ -239,6 +254,7 @@ class LiveActivityService {
     final sessionUserId = _sessionUserId;
     final savedTokens = {..._savedTokens};
     _savedTokens.clear();
+    final inFlight = _pendingWrites.toList();
     _sessionUserId = null;
     _loadedTenantId = null;
     _started = false;
@@ -252,6 +268,9 @@ class LiveActivityService {
     }
     final owner = removeTokensOf;
     if (owner != null && (sessionUserId == null || sessionUserId == owner)) {
+      // SOL_FIX17: let the upserts already running finish first – their
+      // tokens are in [savedTokens] – so none of them lands after the delete.
+      if (inFlight.isNotEmpty) await Future.wait(inFlight);
       final tokens = {...savedTokens, ...await _deviceTokens()}.toList();
       if (tokens.isNotEmpty) {
         try {
@@ -301,6 +320,7 @@ class LiveActivityService {
     _enabled = enabled;
     if (!_started) {
       _started = true;
+      _registrationOpen = true;
       await _registerTokens(generation);
       if (_isStale(generation)) return;
       if (_listenToLifecycle) {
@@ -330,6 +350,10 @@ class LiveActivityService {
   /// Called from the notification settings toggle.
   Future<void> setEnabled(bool enabled) async {
     _enabled = enabled;
+    // SOL_FIX17: invalidate a sync that is still loading plans (it would
+    // restart the activities that are ended here), and release its flag.
+    _enableEpoch++;
+    _syncing = false;
     if (!_supported) return;
     if (!enabled) {
       _lastKeys.clear();
@@ -357,6 +381,9 @@ class LiveActivityService {
   Future<void> sync() async {
     if (!_supported || _syncing) return;
     final generation = _generation;
+    final epoch = _enableEpoch;
+    // SOL_FIX16 session generation + SOL_FIX17 enable epoch.
+    bool stale() => _isStale(generation) || epoch != _enableEpoch;
     if (_host.tenantId == null) {
       // SOL_FIX15: no tenant (logged out / cleared) → nothing may stay
       // on the lock screen.
@@ -372,11 +399,11 @@ class LiveActivityService {
     try {
       final running = _enabled ? await runningPlans() : null;
       // SOL_FIX16: plans loaded for a session that has ended meanwhile.
-      if (_isStale(generation)) return;
+      if (stale()) return;
       final candidates = running?.candidates ?? const <LivePlanCandidate>[];
       final attendanceIds = running?.attendanceIds;
       final listed = await _channel.invokeMapMethod<String, dynamic>('list');
-      if (_isStale(generation)) return;
+      if (stale()) return;
       final activities = ((listed?['activities'] as List?) ?? const [])
           .map(LiveActivityTarget.fromMap)
           .whereType<LiveActivityTarget>()
@@ -391,7 +418,7 @@ class LiveActivityService {
         // Ionic: iOS gets iosLiveState, Android the raw state.
         final shown = (_isAndroid ? c.state : iosLiveState(c.state)).toMap();
         // SOL_FIX16: re-checked before every native change.
-        if (_isStale(generation)) return;
+        if (stale()) return;
         if (c.state.phase == 'ended') {
           if (isRunning) {
             await _channel.invokeMethod<void>('end', {
@@ -407,6 +434,8 @@ class LiveActivityService {
             'state': shown,
           });
         } else {
+          // SOL_FIX17: never start an activity while disabled.
+          if (!_enabled) continue;
           await _channel.invokeMethod<void>('start', {
             'attendanceId': c.attendanceId,
             'planKey': c.planKey,
@@ -421,7 +450,7 @@ class LiveActivityService {
       for (final a in activities) {
         if (!wanted.contains(a.key) &&
             (attendanceIds == null || attendanceIds.contains(a.attendanceId))) {
-          if (_isStale(generation)) return;
+          if (stale()) return;
           await _channel.invokeMethod<void>('end', {
             'attendanceId': a.attendanceId,
             'planKey': a.planKey,
@@ -434,7 +463,7 @@ class LiveActivityService {
       _log('sync', e);
     } finally {
       // A stale sync must not release the flag of the next session's sync.
-      if (!_isStale(generation)) _syncing = false;
+      if (!stale()) _syncing = false;
     }
   }
 
@@ -512,12 +541,30 @@ class LiveActivityService {
     LiveActivityTarget? target,
     int? generation,
   }) async {
+    // SOL_FIX17: native callbacks (no generation) only while a session is
+    // registering; registrations of an ended session never write again.
+    if (!_registrationOpen) return;
     if (generation != null && _isStale(generation)) return;
     final userId = _host.userId;
     if (userId == null || token.isEmpty) return;
     // SOL_FIX15: tokens belong to the account of this session only.
     if (_sessionUserId != null && _sessionUserId != userId) return;
     _sessionUserId = userId;
+    // SOL_FIX17: remembered before the write, so a logout that starts while
+    // the upsert runs deletes this token too (after awaiting the write).
+    if (kind != 'start' || token != 'android') _savedTokens.add(token);
+    final write = _write(userId, kind, token, target);
+    _pendingWrites.add(write);
+    unawaited(write.whenComplete(() => _pendingWrites.remove(write)));
+    await write;
+  }
+
+  Future<void> _write(
+    String userId,
+    String kind,
+    String token,
+    LiveActivityTarget? target,
+  ) async {
     try {
       await _host.saveToken(
         userId: userId,
@@ -526,7 +573,6 @@ class LiveActivityService {
         attendanceId: target?.attendanceId ?? 0,
         planKey: target?.planKey ?? '',
       );
-      if (kind != 'start' || token != 'android') _savedTokens.add(token);
     } catch (e) {
       _log('Live Activity token not saved', e);
     }
