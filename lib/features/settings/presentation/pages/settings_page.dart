@@ -33,6 +33,9 @@ import '../widgets/settings_admins_sheet.dart';
 import '../widgets/calendar_subscription_dialog.dart';
 import '../widgets/settings_list.dart';
 import 'left_players_page.dart' show leftPlayersProvider;
+// I18N_INFRA
+import '../../../../l10n/l10n.dart';
+import '../widgets/language_picker_tile.dart';
 
 /// "Mehr" tab — UX_SETTINGS: same sections, order and role visibility as the
 /// Ionic settings page (src/app/settings/settings/settings.page.html):
@@ -44,6 +47,7 @@ class SettingsPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n; // I18N_INFRA
     final tenant = ref.watch(currentTenantProvider);
     // Use effectiveRoleProvider to support debug role override
     final role = ref.watch(effectiveRoleProvider);
@@ -88,7 +92,7 @@ class SettingsPage extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         // Ionic: tenant switcher (long name + chevron) in the header
-        title: const TenantSwitcherTitle(fallbackTitle: 'Einstellungen'),
+        title: TenantSwitcherTitle(fallbackTitle: l10n.settingsSettings),
         actions: const [NotificationBell()], // MESSAGES
       ),
       body: RefreshIndicator(
@@ -120,11 +124,11 @@ class SettingsPage extends ConsumerWidget {
             if (isVoiceLeader && !isGeneral)
               SettingsListSection(
                 icon: Icons.music_note_outlined,
-                title: 'Stimmführer',
+                title: l10n.settingsVoiceLeader,
                 children: [
                   SettingsListTile(
                     icon: Icons.people_outline,
-                    title: 'Meine Stimme',
+                    title: l10n.settingsMyVoice,
                     onTap: () => context.push('/settings/voice-leader'),
                   ),
                 ],
@@ -134,32 +138,32 @@ class SettingsPage extends ConsumerWidget {
             if (isAdmin)
               SettingsListSection(
                 icon: Icons.business_outlined,
-                title: 'Instanz-Verwaltung',
+                title: l10n.settingsTenantAdmin,
                 children: [
                   SettingsListTile(
                     icon: Icons.settings_outlined,
-                    title: 'Einstellungen',
+                    title: l10n.settingsSettings,
                     onTap: () => context.push('/settings/general'),
                   ),
                   SettingsListTile(
                     icon: Icons.people_outline,
-                    title: 'Gruppen',
+                    title: l10n.settingsGroups,
                     onTap: () => context.push('/settings/instruments'),
                   ),
                   if (tenant?.maintainTeachers == true)
                     SettingsListTile(
                       icon: Icons.school_outlined,
-                      title: 'Lehrer',
+                      title: l10n.settingsTeachers,
                       onTap: () => context.push('/settings/teachers'),
                     ),
                   SettingsListTile(
                     icon: Icons.key_outlined,
-                    title: 'Rollen & Berechtigungen',
+                    title: l10n.settingsRolesPerms,
                     onTap: () => context.push('/settings/role-permissions'),
                   ),
                   SettingsListTile(
                     icon: Icons.grid_view_outlined,
-                    title: 'Dashboard konfigurieren',
+                    title: l10n.settingsConfigureDashboard,
                     onTap: () => context.push('/settings/dashboard'),
                   ),
                 ],
@@ -169,12 +173,12 @@ class SettingsPage extends ConsumerWidget {
             if (isAdmin)
               SettingsListSection(
                 icon: Icons.campaign_outlined,
-                title: 'Kommunikation',
+                title: l10n.settingsCommunication,
                 children: [
                   SettingsListTile(
                     icon: Icons.mail_outline,
-                    title: 'Mitteilungen',
-                    subtitle: 'Nachricht an alle senden',
+                    title: l10n.settingsAnnouncements,
+                    subtitle: l10n.settingsMessageAll,
                     onTap: () => context.push('/settings/messages'),
                   ),
                 ],
@@ -184,12 +188,12 @@ class SettingsPage extends ConsumerWidget {
             if (isAdmin)
               SettingsListSection(
                 icon: Icons.supervised_user_circle_outlined,
-                title: 'Benutzer & Rollen',
+                title: l10n.settingsUsersRoles,
                 children: [
                   if (!isDemo && isSuperAdmin)
                     SettingsListTile(
                       icon: Icons.verified_user_outlined,
-                      title: 'Administratoren',
+                      title: l10n.settingsAdmins,
                       detail: false,
                       trailing: SettingsCountBadge(ref.watch(adminsProvider).valueOrNull?.length ?? 0),
                       onTap: () => showAdminsSheet(context),
@@ -197,14 +201,14 @@ class SettingsPage extends ConsumerWidget {
                   if (parentsEnabled)
                     SettingsListTile(
                       icon: Icons.favorite_border,
-                      title: 'Eltern',
+                      title: l10n.settingsParents,
                       detail: false,
                       trailing: SettingsCountBadge(ref.watch(parentsProvider).valueOrNull?.length ?? 0),
                       onTap: () => context.push('/settings/parents'),
                     ),
                   SettingsListTile(
                     icon: Icons.visibility_outlined,
-                    title: 'Beobachter',
+                    title: l10n.settingsViewers,
                     detail: false,
                     trailing: SettingsCountBadge(ref.watch(viewersProvider).valueOrNull?.length ?? 0),
                     onTap: () => context.push('/settings/viewers'),
@@ -213,14 +217,14 @@ class SettingsPage extends ConsumerWidget {
                   // Ionic über die Person; hier im selben Block.
                   SettingsListTile(
                     icon: Icons.manage_accounts_outlined,
-                    title: 'Benutzer',
+                    title: l10n.settingsFlutterUsers,
                     onTap: () => context.push('/settings/users'),
                   ),
                   if (playersWithoutAccount > 0)
                     SettingsListTile(
                       icon: Icons.person_add_alt_outlined,
                       iconColor: AppColors.warning,
-                      title: 'Fehlende Accounts anlegen',
+                      title: l10n.settingsCreateMissing,
                       detail: false,
                       trailing: SettingsCountBadge(playersWithoutAccount, color: AppColors.warning),
                       onTap: () => context.push('/settings/batch-accounts'),
@@ -232,24 +236,24 @@ class SettingsPage extends ConsumerWidget {
             if (!isGeneral && !isApplicant)
               SettingsListSection(
                 icon: Icons.music_note_outlined,
-                title: 'Werke & Proben',
+                title: l10n.settingsSongsRehearsals,
                 children: [
                   SettingsListTile(
                     icon: Icons.library_music_outlined,
-                    title: 'Werke',
+                    title: l10n.settingsSongs,
                     onTap: () => context.push('/settings/songs'),
                   ),
                   if (isAdmin || isHelper)
                     SettingsListTile(
                       icon: Icons.schedule,
-                      title: 'Werkhistorie',
+                      title: l10n.historyTitle,
                       detail: false,
                       onTap: () => context.push('/history'),
                     ),
                   if (canAccessFiles)
                     SettingsListTile(
                       icon: Icons.folder_outlined,
-                      title: 'Dateiablage',
+                      title: l10n.settingsFileStorage,
                       onTap: () => context.push('/settings/files'),
                     ),
                 ],
@@ -259,11 +263,11 @@ class SettingsPage extends ConsumerWidget {
             if (isGeneral && canAccessFiles)
               SettingsListSection(
                 icon: Icons.folder_outlined,
-                title: 'Dateien',
+                title: l10n.settingsFiles,
                 children: [
                   SettingsListTile(
                     icon: Icons.folder_outlined,
-                    title: 'Dateiablage',
+                    title: l10n.settingsFileStorage,
                     onTap: () => context.push('/settings/files'),
                   ),
                 ],
@@ -273,25 +277,25 @@ class SettingsPage extends ConsumerWidget {
             if (showPlanning || showTeam)
               SettingsListSection(
                 icon: Icons.list,
-                title: 'Planung',
+                title: l10n.settingsPlanning,
                 children: [
                   if (showPlanning) ...[
                     SettingsListTile(
                       icon: Icons.list,
-                      title: 'Ablaufpläne',
+                      title: l10n.settingsRunSheets,
                       detail: false,
                       onTap: () => context.push('/planning'),
                     ),
                     SettingsListTile(
                       icon: Icons.calendar_today_outlined,
-                      title: 'Ad-Hoc Ablaufplanung',
+                      title: l10n.settingsAdHocPlanning,
                       detail: false,
                       onTap: () => context.push('/settings/planung'),
                     ),
                     if (org != null)
                       SettingsListTile(
                         icon: Icons.description_outlined,
-                        title: 'Planvorlagen & Felder',
+                        title: l10n.settingsTemplatesFields,
                         detail: false,
                         onTap: () => context.push('/settings/org-settings/planning-templates'),
                       ),
@@ -300,27 +304,27 @@ class SettingsPage extends ConsumerWidget {
                     if (isTeamLeader)
                       SettingsListTile(
                         icon: Icons.supervised_user_circle_outlined,
-                        title: 'Teamorganisation',
+                        title: l10n.teamOrgTitle,
                         detail: false,
                         onTap: () => openTeamOrg('tasks'),
                       )
                     else ...[
                       SettingsListTile(
                         icon: Icons.check_circle_outline,
-                        title: 'Meine Aufgaben',
+                        title: l10n.tasksMyTasks,
                         detail: false,
                         onTap: () => openTeamOrg('tasks'),
                       ),
                       if (inTeamCircle) ...[
                         SettingsListTile(
                           icon: Icons.lightbulb_outline,
-                          title: 'Thema vorschlagen',
+                          title: l10n.teamOrgSuggestTopic,
                           detail: false,
                           onTap: () => openTeamOrg('topics'),
                         ),
                         SettingsListTile(
                           icon: Icons.description_outlined,
-                          title: 'Protokolle',
+                          title: l10n.teamOrgTabProtocols,
                           detail: false,
                           onTap: () => openTeamOrg('protocols'),
                         ),
@@ -334,13 +338,13 @@ class SettingsPage extends ConsumerWidget {
             if (isAdmin)
               SettingsListSection(
                 icon: Icons.business_outlined,
-                title: 'Organisation',
+                title: l10n.settingsOrganisation,
                 children: [
                   SettingsListTile(
                     icon: Icons.settings_outlined,
-                    title: org?.name ?? 'Organisation',
+                    title: org?.name ?? l10n.settingsOrganisation,
                     trailing: org == null
-                        ? const Text('Nicht verknüpft', style: TextStyle(color: AppColors.medium))
+                        ? Text(l10n.settingsNotLinked, style: const TextStyle(color: AppColors.medium))
                         : null,
                     onTap: () => context.push('/settings/org-settings'),
                   ),
@@ -351,24 +355,24 @@ class SettingsPage extends ConsumerWidget {
             if (!isApplicant)
               SettingsListSection(
                 icon: Icons.bar_chart,
-                title: 'Auswertung & Daten',
+                title: l10n.settingsAnalyticsData,
                 children: [
                   SettingsListTile(
                     icon: Icons.calendar_today_outlined,
-                    title: 'Kalender abonnieren',
+                    title: l10n.settingsSubscribeCalendar,
                     detail: false,
                     onTap: () => showCalendarSubscriptionDialog(context, ref),
                   ),
                   if (isAdmin) ...[
                     SettingsListTile(
                       icon: Icons.insert_chart_outlined,
-                      title: 'Statistiken',
+                      title: l10n.statsTitle,
                       detail: false,
                       onTap: () => context.push('/statistics'),
                     ),
                     SettingsListTile(
                       icon: Icons.download_outlined,
-                      title: 'Export',
+                      title: l10n.settingsExport,
                       detail: false,
                       onTap: () => context.push('/export'),
                     ),
@@ -376,7 +380,7 @@ class SettingsPage extends ConsumerWidget {
                     if (isVorkursTenantName(tenant?.shortName, tenant?.longName))
                       SettingsListTile(
                         icon: Icons.workspace_premium_outlined,
-                        title: 'Urkunden generieren',
+                        title: l10n.settingsCertificates,
                         detail: false,
                         onTap: () => generateVorkursCertificates(context, ref),
                       ),
@@ -384,7 +388,7 @@ class SettingsPage extends ConsumerWidget {
                       final left = ref.watch(leftPlayersProvider).valueOrNull?.length ?? 0;
                       return SettingsListTile(
                         icon: Icons.archive_outlined,
-                        title: 'Archiv',
+                        title: l10n.settingsArchive,
                         detail: false,
                         trailing: left > 0 ? SettingsCountBadge(left) : null,
                         onTap: () => context.push('/settings/left'),
@@ -400,55 +404,56 @@ class SettingsPage extends ConsumerWidget {
             // ============ SYSTEM ============
             SettingsListSection(
               icon: Icons.settings_outlined,
-              title: 'System',
+              title: l10n.settingsSystem,
               footer: Center(
                 child: TextButton(
                   onPressed: () => context.push('/settings/delete-account'),
                   style: TextButton.styleFrom(foregroundColor: AppColors.medium),
-                  child: const Text('Konto löschen'),
+                  child: Text(l10n.settingsDeleteAccount),
                 ),
               ),
               children: [
                 SettingsListTile(
                   icon: Icons.apps,
-                  title: 'Instanz wechseln',
+                  title: l10n.settingsSwitchTenant,
                   subtitle: tenant?.longName,
                   detail: false,
                   onTap: () => context.go('/tenants'),
                 ),
+                const LanguagePickerTile(), // I18N_INFRA
                 SettingsListTile(
                   icon: Icons.notifications_outlined,
-                  title: 'Benachrichtigungen',
+                  title: l10n.settingsNotifications,
                   onTap: () => context.push('/settings/notifications'),
                 ),
                 SettingsListTile(
                   icon: Icons.key_outlined,
-                  title: 'Passwort ändern',
+                  title: l10n.settingsChangePassword,
                   detail: false,
                   onTap: () => showChangePasswordDialog(context),
                 ),
                 // Flutter: E-Mail ändern (neben Passwort ändern)
                 SettingsListTile(
                   icon: Icons.alternate_email,
-                  title: 'E-Mail ändern',
+                  title: l10n.settingsFlutterChangeEmail,
                   detail: false,
                   onTap: () => showChangeEmailDialog(context),
                 ),
                 // LEGAL_HELP: help center
                 SettingsListTile(
                   icon: Icons.help_outline,
-                  title: 'Hilfe',
+                  title: l10n.settingsHelp,
                   onTap: () => context.push('/settings/help'),
                 ),
                 SettingsListTile(
                   icon: Icons.chat_bubble_outline,
-                  title: 'Feedback geben',
+                  title: l10n.settingsGiveFeedback,
                   detail: false,
                   onTap: () => showFeedbackSheet(context),
                 ),
                 SettingsListTile(
                   icon: Icons.auto_awesome_outlined,
-                  title: 'Was ist neu?',
+                  title: l10n.settingsWhatsNew,
                   detail: false,
                   trailing: _VersionBadge(version: AppConstants.appVersion),
                   onTap: () => showVersionHistorySheet(context),
@@ -456,12 +461,12 @@ class SettingsPage extends ConsumerWidget {
                 if (isSuperDeveloper)
                   SettingsListTile(
                     icon: Icons.construction_outlined,
-                    title: 'Administration',
+                    title: l10n.adminTitle,
                     onTap: () => context.push('/settings/administration'),
                   ),
                 SettingsListTile(
                   icon: Icons.logout,
-                  title: 'Ausloggen',
+                  title: l10n.settingsLogout,
                   detail: false,
                   background: AppColors.danger,
                   onTap: () async {
@@ -510,13 +515,13 @@ class _PendingPersonsCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '$count ausstehende Registrierung(en)',
+                        context.l10n.settingsPendingCount(count),
                         style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),
                       ),
                       const SizedBox(height: 2),
-                      const Text(
-                        'Personen warten auf Genehmigung',
-                        style: TextStyle(color: Colors.black87),
+                      Text(
+                        context.l10n.settingsWaitingApproval,
+                        style: const TextStyle(color: Colors.black87),
                       ),
                     ],
                   ),
@@ -572,12 +577,12 @@ class _ApplicantHint extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Mitgliedschaft wird geprüft',
+                      context.l10n.settingsFlutterApplicantTitle,
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
                     ),
                     const SizedBox(height: AppDimensions.paddingXS),
                     Text(
-                      'Ein Administrator wird deine Registrierung prüfen.',
+                      context.l10n.settingsFlutterApplicantText,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.medium),
                     ),
                   ],
@@ -619,7 +624,7 @@ class _PwaInstallHint extends ConsumerWidget {
                       const SizedBox(width: AppDimensions.paddingS),
                       Expanded(
                         child: Text(
-                          'App installieren',
+                          context.l10n.settingsFlutterPwaTitle,
                           style:
                               Theme.of(context).textTheme.titleSmall?.copyWith(
                                     fontWeight: FontWeight.w600,
@@ -640,19 +645,19 @@ class _PwaInstallHint extends ConsumerWidget {
                   ),
                   const SizedBox(height: AppDimensions.paddingS),
                   Text(
-                    'Für ein besseres Erlebnis kannst du diese App installieren:',
+                    context.l10n.settingsFlutterPwaText,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           color: AppColors.medium,
                         ),
                   ),
                   const SizedBox(height: AppDimensions.paddingM),
                   if (platform == PwaPlatform.ios) ...[
-                    _buildInstructionStep(context, '1', 'Tippe auf das Teilen-Symbol'),
-                    _buildInstructionStep(context, '2', '"Zum Home-Bildschirm"'),
-                    _buildInstructionStep(context, '3', '"Hinzufügen"'),
+                    _buildInstructionStep(context, '1', context.l10n.settingsFlutterPwaIosStep1),
+                    _buildInstructionStep(context, '2', context.l10n.settingsFlutterPwaIosStep2),
+                    _buildInstructionStep(context, '3', context.l10n.settingsFlutterPwaIosStep3),
                   ] else if (platform == PwaPlatform.android) ...[
-                    _buildInstructionStep(context, '1', 'Tippe auf das Menü (⋮)'),
-                    _buildInstructionStep(context, '2', '"App installieren" oder "Zum Startbildschirm"'),
+                    _buildInstructionStep(context, '1', context.l10n.settingsFlutterPwaAndroidStep1),
+                    _buildInstructionStep(context, '2', context.l10n.settingsFlutterPwaAndroidStep2),
                   ],
                 ],
               ),

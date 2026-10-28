@@ -15,6 +15,7 @@ import '../../../legal/presentation/widgets/legal_content_view.dart';
 import '../../data/auth_flow_service.dart';
 import '../widgets/otp_widgets.dart';
 import '../../../../core/providers/dashboard_providers.dart'; // DASHBOARD
+import '../../../../l10n/l10n.dart'; // I18N_INFRA
 
 /// Login page
 class LoginPage extends ConsumerStatefulWidget {
@@ -103,8 +104,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       debugPrint('Login error: $e');
       if (!mounted) return;
       setState(() {
-        _errorMessage =
-            'Ein unerwarteter Fehler ist aufgetreten. Bitte versuche es erneut.';
+        _errorMessage = context.l10n.loginFlutterUnexpectedError;
       });
     } finally {
       if (mounted) {
@@ -119,8 +119,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   Future<void> _requestCode() async {
     final email = _emailController.text.trim();
     if (!isValidEmail(email)) {
-      setState(() =>
-          _errorMessage = 'Bitte eine gültige E-Mail Adresse eingeben.');
+      setState(() => _errorMessage = context.l10n.loginToastInvalidEmail);
       return;
     }
     setState(() {
@@ -195,38 +194,36 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     final target = await showDialog<String>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('E-Mail nicht bestätigt'),
+        title: Text(ctx.l10n.loginNotConfirmedHeader),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Deine E-Mail-Adresse wurde noch nicht bestätigt. Möchtest du die Bestätigungs-E-Mail erneut senden?',
-            ),
+            Text(ctx.l10n.loginNotConfirmedMessage),
             const SizedBox(height: AppDimensions.paddingM),
             TextField(
               controller: controller,
               keyboardType: TextInputType.emailAddress,
-              decoration: const InputDecoration(hintText: 'E-Mail eingeben...'),
+              decoration:
+                  InputDecoration(hintText: ctx.l10n.loginEmailPlaceholder),
             ),
           ],
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Abbrechen'),
+            child: Text(ctx.l10n.commonCancel),
           ),
           FilledButton(
             onPressed: () {
               final value = controller.text.trim();
               if (value.isEmpty) {
-                ToastHelper.showWarning(
-                    ctx, 'Bitte gib deine E-Mail-Adresse ein.');
+                ToastHelper.showWarning(ctx, ctx.l10n.loginToastEnterEmail);
                 return;
               }
               Navigator.pop(ctx, value);
             },
-            child: const Text('Erneut senden'),
+            child: Text(ctx.l10n.loginNotConfirmedResend),
           ),
         ],
       ),
@@ -245,10 +242,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   Future<void> _promptRegister() async {
     final register = await DialogHelper.showConfirmation(
       context,
-      title: 'Kein Konto gefunden',
-      message:
-          'Für diese E-Mail-Adresse existiert noch kein Konto. Möchtest du dich jetzt registrieren?',
-      confirmText: 'Registrieren',
+      title: context.l10n.loginNoAccountHeader,
+      message: context.l10n.loginNoAccountMessage,
+      confirmText: context.l10n.loginRegister,
     );
     if (register && mounted) _openRegister();
   }
@@ -257,10 +253,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   Future<void> _promptSwitchToOtp() async {
     final switchMode = await DialogHelper.showConfirmation(
       context,
-      title: 'Anmeldung fehlgeschlagen',
-      message:
-          'E-Mail oder Passwort ist falsch. Falls du kein Passwort gesetzt hast, kannst du dich stattdessen mit einem Code per E-Mail anmelden.',
-      confirmText: 'Code per E-Mail',
+      title: context.l10n.loginFailedHeader,
+      message: context.l10n.loginFailedMessage,
+      confirmText: context.l10n.loginModeOtp,
     );
     if (switchMode && mounted) _setMode(AuthMode.otp);
   }
@@ -462,21 +457,21 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               child: Wrap(
                 alignment: WrapAlignment.center,
                 children: [
-                  Text('Version ${AppConstants.appVersion}', style: footerStyle),
+                  Text(context.l10n.loginVersion(AppConstants.appVersion),
+                      style: footerStyle),
                   if (AppConstants.demoMail.isNotEmpty &&
                       AppConstants.demoPassword.isNotEmpty) ...[
                     const Text(' | ', style: footerStyle),
                     GestureDetector(
                       onTap: _startDemo,
-                      child: const Text('Demo starten', style: footerStyle),
+                      child: Text(context.l10n.loginStartDemo, style: footerStyle),
                     ),
                   ],
                   // LEGAL_HELP: Impressum & Datenschutz modal
                   const Text(' | ', style: footerStyle),
                   GestureDetector(
                     onTap: () => showLegalModal(context),
-                    child: const Text('Impressum & Datenschutz',
-                        style: footerStyle),
+                    child: Text(context.l10n.loginLegal, style: footerStyle),
                   ),
                 ],
               ),
@@ -540,13 +535,13 @@ class _LoginPageState extends ConsumerState<LoginPage> {
             onFieldSubmitted: _mode == AuthMode.otp && !_otpSent
                 ? (_) => _requestCode()
                 : null,
-            decoration: _ionInputDecoration('E-Mail'),
+            decoration: _ionInputDecoration(context.l10n.loginEmail),
             validator: (value) {
               if (value == null || value.trim().isEmpty) {
-                return 'Bitte gib deine E-Mail-Adresse ein.';
+                return context.l10n.loginToastEnterEmail;
               }
               if (!isValidEmail(value)) {
-                return 'Bitte eine gültige E-Mail Adresse eingeben.';
+                return context.l10n.loginToastInvalidEmail;
               }
               return null;
             },
@@ -562,9 +557,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               autofillHints: const [AutofillHints.password],
               onFieldSubmitted: (_) => _onSubmit(),
               decoration: _ionInputDecoration(
-                'Passwort',
+                context.l10n.loginPassword,
                 suffixIcon: IconButton(
-                  tooltip: 'Passwort anzeigen',
+                  tooltip: context.l10n.loginShowPassword,
                   color: AppColors.primary,
                   icon: Icon(
                     _obscurePassword
@@ -580,7 +575,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'Bitte Passwort eingeben';
+                  return context.l10n.loginFlutterEnterPassword;
                 }
                 return null;
               },
@@ -592,7 +587,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               children: [
                 TextButton(
                   onPressed: _openRegister,
-                  child: const Text('Registrieren'),
+                  child: Text(context.l10n.loginRegister),
                 ),
                 TextButton(
                   onPressed: () {
@@ -601,22 +596,22 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         ? '/forgot-password?email=${Uri.encodeComponent(email)}'
                         : '/forgot-password');
                   },
-                  child: const Text('Passwort vergessen?'),
+                  child: Text(context.l10n.loginForgotPassword),
                 ),
               ],
             ),
             const SizedBox(height: AppDimensions.paddingS),
-            _primaryButton('Anmelden', _login),
+            _primaryButton(context.l10n.loginSignIn, _login),
           ] else if (!_otpSent) ...[
             Align(
               alignment: Alignment.centerLeft,
               child: TextButton(
                 onPressed: _openRegister,
-                child: const Text('Registrieren'),
+                child: Text(context.l10n.loginRegister),
               ),
             ),
             const SizedBox(height: AppDimensions.paddingS),
-            _primaryButton('Code senden', _requestCode),
+            _primaryButton(context.l10n.loginSendCode, _requestCode),
           ] else ...[
             OtpCodeField(
               controller: _otpController,
@@ -624,7 +619,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               onCompleted: (_) => _verifyCode(),
             ),
             const SizedBox(height: AppDimensions.paddingM),
-            _primaryButton('Anmelden', _verifyCode),
+            _primaryButton(context.l10n.loginSignIn, _verifyCode),
             const SizedBox(height: AppDimensions.paddingS),
             Center(
               child: ResendCodeButton(

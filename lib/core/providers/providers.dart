@@ -54,3 +54,5 @@ export 'optional_tabs_providers.dart';
 export 'admin_providers.dart'; // SETTINGS2
 // AUTH
 export 'user_registration_providers.dart';
+// I18N_INFRA
+export 'locale_provider.dart';

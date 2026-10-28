@@ -7,18 +7,24 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 import 'core/config/supabase_config.dart';
+import 'core/providers/locale_provider.dart'; // I18N_INFRA
 import 'core/router/app_router.dart';
 import 'core/services/app_update_service.dart';
 import 'core/services/offline_queue_service.dart'; // PROFILE_OFFLINE
 import 'core/theme/app_theme.dart';
 import 'core/utils/toast_helper.dart';
 import 'features/auth/data/auth_link_listener.dart'; // AUTH
+import 'l10n/l10n.dart'; // I18N_INFRA
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize locale data for German date formatting
-  await initializeDateFormatting('de_DE', null);
+  // I18N_INFRA: date symbols for every enabled language (de_DE, en_GB) and
+  // the start language: stored choice -> device language -> 'de'.
+  for (final lang in enabledLanguages) {
+    await initializeDateFormatting(intlLocales[lang]!, null);
+  }
+  final initialLanguage = await loadInitialLanguage();
 
   // Load environment variables
   try {
@@ -33,8 +39,11 @@ void main() async {
   await SupabaseConfig.initialize();
 
   runApp(
-    const ProviderScope(
-      child: AttendixApp(),
+    ProviderScope(
+      overrides: [
+        initialLanguageProvider.overrideWithValue(initialLanguage), // I18N_INFRA
+      ],
+      child: const AttendixApp(),
     ),
   );
 }
@@ -69,6 +78,7 @@ class _AttendixAppState extends ConsumerState<AttendixApp> {
     final router = ref.watch(routerProvider);
     final updateAvailable = ref.watch(appUpdateAvailableProvider);
     final updateService = ref.read(appUpdateServiceProvider);
+    final locale = ref.watch(localeProvider); // I18N_INFRA
 
     // Show update snackbar when available (only once)
     if (updateAvailable && !updateService.wasDialogShown) {
@@ -88,13 +98,16 @@ class _AttendixAppState extends ConsumerState<AttendixApp> {
       themeMode: ThemeMode.system,
       routerConfig: router,
       scaffoldMessengerKey: rootScaffoldMessengerKey, // PROFILE_OFFLINE
+      // I18N_INFRA: UI language from localeProvider (de default, en optional)
+      locale: locale,
       localizationsDelegates: const [
+        AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         FlutterQuillLocalizations.delegate,
       ],
-      supportedLocales: const [Locale('de', 'DE'), Locale('en', 'US')],
+      supportedLocales: AppLocalizations.supportedLocales,
     );
   }
 

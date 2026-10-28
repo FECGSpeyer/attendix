@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../data/auth_flow_service.dart';
+import '../../../../l10n/l10n.dart'; // I18N_INFRA
 
 /// AUTH: Login-Modus (Ionic ion-segment "Passwort" / "Code per E-Mail").
 enum AuthMode { password, otp }
@@ -24,16 +25,16 @@ class AuthModeSegment extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SegmentedButton<AuthMode>(
-      segments: const [
+      segments: [
         ButtonSegment(
           value: AuthMode.password,
-          label: Text('Passwort'),
-          icon: Icon(Icons.lock_outline),
+          label: Text(context.l10n.loginModePassword),
+          icon: const Icon(Icons.lock_outline),
         ),
         ButtonSegment(
           value: AuthMode.otp,
-          label: Text('Code per E-Mail'),
-          icon: Icon(Icons.mark_email_unread_outlined),
+          label: Text(context.l10n.loginModeOtp),
+          icon: const Icon(Icons.mark_email_unread_outlined),
         ),
       ],
       selected: {mode},
@@ -108,10 +109,10 @@ class OtpCodeField extends StatelessWidget {
             fontWeight: FontWeight.w600,
           ),
       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-      decoration: const InputDecoration(
-        labelText: 'Code aus der E-Mail',
+      decoration: InputDecoration(
+        labelText: context.l10n.loginOtpLabel,
         counterText: '',
-        prefixIcon: Icon(Icons.pin_outlined),
+        prefixIcon: const Icon(Icons.pin_outlined),
       ),
       onChanged: (value) {
         if (value.length == kOtpLength) onCompleted?.call(value);
@@ -143,8 +144,8 @@ class ResendCodeButton extends StatelessWidget {
       builder: (context, _) => TextButton(
         onPressed: (!enabled || cooldown.active) ? null : onResend,
         child: Text(cooldown.active
-            ? 'Erneut senden (${cooldown.remaining}s)'
-            : 'Code erneut senden'),
+            ? context.l10n.loginResendIn(cooldown.remaining)
+            : context.l10n.loginResendCode),
       ),
     );
   }
