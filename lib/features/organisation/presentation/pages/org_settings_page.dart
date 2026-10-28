@@ -12,6 +12,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/organisation/organisation.dart';
 import '../../../planning/presentation/widgets/plan_field_dialogs.dart';
 import '../widgets/org_song_sync_section.dart'; // SETTINGS2
+import '../widgets/org_link_dialogs.dart'; // UX_SETTINGS
 
 /// Organisation settings (Ionic `OrgSettingsPage`, route `/settings/org-settings`).
 class OrgSettingsPage extends ConsumerWidget {
@@ -80,7 +81,7 @@ class OrgSettingsPage extends ConsumerWidget {
                       leading: const Icon(Icons.add_circle_outline, color: AppColors.primary),
                       title: const Text('Organisation erstellen / verknüpfen',
                           style: TextStyle(color: AppColors.primary)),
-                      onTap: () => context.push('/settings/general'),
+                      onTap: () => showOrganisationLinkDialog(context, ref), // UX_SETTINGS
                     ),
                 ]),
               ],
@@ -105,6 +106,13 @@ class OrgSettingsPage extends ConsumerWidget {
                   ),
               ]),
               _Section(title: 'Darstellung & Pläne', children: [
+                // UX_SETTINGS: Ionic org-settings → Branding
+                ListTile(
+                  leading: const Icon(Icons.palette_outlined),
+                  title: const Text('Branding'),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => context.push('/settings/general/branding'),
+                ),
                 ListTile(
                   leading: const Icon(Icons.description_outlined),
                   title: const Text('Planvorlagen & Felder'),
@@ -120,12 +128,30 @@ class OrgSettingsPage extends ConsumerWidget {
               ]),
               if (isSuperAdmin)
                 _Section(title: 'Personen', children: [
+                  // UX_SETTINGS: Ionic org-settings → Personen verknüpfen
+                  ListTile(
+                    leading: const Icon(Icons.merge_type),
+                    title: const Text('Personen verknüpfen'),
+                    subtitle: const Text('Personen aus verschiedenen Instanzen miteinander verbinden'),
+                    trailing: const Icon(Icons.chevron_right),
+                    onTap: () => context.push('/settings/general/link-persons'),
+                  ),
                   ListTile(
                     leading: const Icon(Icons.list_alt),
                     title: const Text('Personen-Zusatzfelder'),
                     subtitle: const Text('Felder und Werte für verknüpfte Personen gemeinsam verwalten'),
                     trailing: const Icon(Icons.chevron_right),
                     onTap: () => context.push('/settings/org-settings/person-fields'),
+                  ),
+                ]),
+              // UX_SETTINGS: Ionic org-settings → Übergabe (admins/responsibles)
+              if (role.isAdmin || role.isResponsible)
+                _Section(title: 'Übergabe', children: [
+                  ListTile(
+                    leading: const Icon(Icons.swap_horiz),
+                    title: const Text('Personenübergabe'),
+                    trailing: const Icon(Icons.chevron_right),
+                    onTap: () => context.push('/settings/handover'),
                   ),
                 ]),
               // SETTINGS2: Werk-Synchronisierung (Ionic: super admin + linked tenants)

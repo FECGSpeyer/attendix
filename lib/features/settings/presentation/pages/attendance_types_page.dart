@@ -30,16 +30,18 @@ class _AttendanceTypesPageState extends ConsumerState<AttendanceTypesPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Anwesenheitstypen'),
+        title: const Text('Typen'),
         actions: [
           if (_isReordering)
-            TextButton(
+            IconButton(
+              // UX_SETTINGS: Ionic checkmark to save the order
+              icon: const Icon(Icons.check),
+              tooltip: 'Speichern',
               onPressed: _saveOrder,
-              child: const Text('Speichern'),
             )
           else
             IconButton(
-              icon: const Icon(Icons.reorder),
+              icon: const Icon(Icons.repeat),
               tooltip: 'Reihenfolge ändern',
               onPressed: () {
                 setState(() {
@@ -90,7 +92,8 @@ class _AttendanceTypesPageState extends ConsumerState<AttendanceTypesPage> {
                     SizedBox(width: AppDimensions.paddingS),
                     Expanded(
                       child: Text(
-                        'Anwesenheitstypen definieren die verschiedenen Termine deiner Gruppe. Jeder Typ hat eigene Einstellungen für Status, Uhrzeit und Programm.',
+                        'Pflege deine eigenen Typen für Anwesenheiten. So kannst du individuelle Bezeichnungen, einen Standard-Status, '
+                        'Probenvorlagen und Start- bzw. Endzeiten hinterlegen und auch Anwesenheiten nur für bestimmte Gruppen konfigurieren.',
                         style: TextStyle(fontSize: 13, color: AppColors.dark),
                       ),
                     ),

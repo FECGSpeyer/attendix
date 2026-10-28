@@ -36,9 +36,7 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
     final historyAsync = ref.watch(performanceHistoryProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Aufführungshistorie'),
-      ),
+      appBar: AppBar(title: const Text('Werkhistorie')),
       body: Column(
         children: [
           // Search bar
@@ -47,17 +45,18 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
             child: TextField(
               controller: _searchController,
               decoration: InputDecoration(
-                hintText: 'Suchen...',
+                hintText: 'Werk suchen...',
                 prefixIcon: const Icon(Icons.search),
-                suffixIcon: _searchQuery.isNotEmpty
-                    ? IconButton(
-                        icon: const Icon(Icons.clear),
-                        onPressed: () {
-                          _searchController.clear();
-                          setState(() => _searchQuery = '');
-                        },
-                      )
-                    : null,
+                suffixIcon:
+                    _searchQuery.isNotEmpty
+                        ? IconButton(
+                          icon: const Icon(Icons.clear),
+                          onPressed: () {
+                            _searchController.clear();
+                            setState(() => _searchQuery = '');
+                          },
+                        )
+                        : null,
               ),
               onChanged: (value) => setState(() => _searchQuery = value),
             ),
@@ -67,21 +66,27 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
           Expanded(
             child: historyAsync.when(
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (e, _) => Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(Icons.error_outline, size: 64, color: AppColors.danger),
-                    const SizedBox(height: 16),
-                    Text('Fehler: $e'),
-                    const SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: () => ref.invalidate(performanceHistoryProvider),
-                      child: const Text('Erneut versuchen'),
+              error:
+                  (e, _) => Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(
+                          Icons.error_outline,
+                          size: 64,
+                          color: AppColors.danger,
+                        ),
+                        const SizedBox(height: 16),
+                        Text('Fehler: $e'),
+                        const SizedBox(height: 16),
+                        ElevatedButton(
+                          onPressed:
+                              () => ref.invalidate(performanceHistoryProvider),
+                          child: const Text('Erneut versuchen'),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              ),
+                  ),
               data: (history) {
                 final filtered = _filterHistory(history);
                 final grouped = _groupByDate(filtered);
@@ -91,18 +96,17 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(Icons.history, size: 80, color: AppColors.medium),
-                        const SizedBox(height: 16),
-                        Text(
-                          'Keine Aufführungen',
-                          style: Theme.of(context).textTheme.titleLarge,
+                        // UX_SETTINGS: Ionic empty state
+                        const Icon(
+                          Icons.music_note_outlined,
+                          size: 48,
+                          color: AppColors.medium,
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 12),
                         Text(
-                          'Füge die erste Aufführung hinzu',
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color: AppColors.medium,
-                              ),
+                          'Noch keine Werke gespielt',
+                          style: Theme.of(context).textTheme.bodyLarge
+                              ?.copyWith(color: AppColors.medium),
                         ),
                       ],
                     ),
@@ -114,9 +118,13 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(Icons.search_off, size: 64, color: AppColors.medium),
+                        const Icon(
+                          Icons.search_off,
+                          size: 64,
+                          color: AppColors.medium,
+                        ),
                         const SizedBox(height: 16),
-                        Text('Keine Ergebnisse für "$_searchQuery"'),
+                        const Text('Keine Werke gefunden'),
                       ],
                     ),
                   );
@@ -127,21 +135,35 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
                     ref.invalidate(performanceHistoryProvider);
                     await ref.read(performanceHistoryProvider.future);
                   },
-                  child: ListView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM),
-                    itemCount: grouped.length,
-                    itemBuilder: (context, index) {
-                      final group = grouped[index];
-                      return _HistoryGroup(
-                        key: ValueKey('${group.date}_${_searchQuery.isNotEmpty}'),
-                        date: group.date,
-                        entries: group.entries,
-                        // Ionic: collapsed accordion, flat list while searching
-                        initiallyExpanded: _searchQuery.isNotEmpty,
-                        onDelete: (entry) => _deleteEntry(entry),
-                      );
-                    },
-                  ),
+                  child:
+                      _searchQuery.isNotEmpty
+                          // UX_SETTINGS: Ionic shows a flat list while searching
+                          ? ListView.separated(
+                            padding: const EdgeInsets.only(bottom: 88),
+                            itemCount: filtered.length,
+                            separatorBuilder:
+                                (_, __) => const Divider(height: 1),
+                            itemBuilder:
+                                (context, index) => _HistoryEntryTile(
+                                  entry: filtered[index],
+                                  onDelete: _deleteEntry,
+                                  showCount: false,
+                                ),
+                          )
+                          : ListView.builder(
+                            padding: const EdgeInsets.only(bottom: 88),
+                            itemCount: grouped.length,
+                            itemBuilder: (context, index) {
+                              final group = grouped[index];
+                              return _HistoryGroup(
+                                key: ValueKey(group.date),
+                                date: group.date,
+                                entries: group.entries,
+                                // Ionic: collapsed accordion
+                                onDelete: (entry) => _deleteEntry(entry),
+                              );
+                            },
+                          ),
                 );
               },
             ),
@@ -188,7 +210,7 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
     final conductors = conductorsAsync.valueOrNull ?? [];
 
     if (songs.isEmpty) {
-      ToastHelper.showWarning(context, 'Keine Lieder vorhanden');
+      ToastHelper.showWarning(context, 'Keine Werke gefunden');
       return;
     }
 
@@ -200,177 +222,200 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
 
     final result = await showDialog<bool>(
       context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setDialogState) {
-          final filteredSongs = songFilter.isEmpty
-              ? songs
-              : songs.where((s) =>
-                  s.displayName.toLowerCase().contains(songFilter.toLowerCase())).toList();
-
-          return AlertDialog(
-            title: Text(
-              selectedSongIds.isEmpty
-                  ? 'Aufführung hinzufügen'
-                  : 'Aufführung hinzufügen (${selectedSongIds.length})',
-            ),
-            content: SizedBox(
-              width: double.maxFinite,
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Song search
-                    TextField(
-                      decoration: const InputDecoration(
-                        hintText: 'Werk suchen...',
-                        prefixIcon: Icon(Icons.search),
-                        isDense: true,
-                      ),
-                      onChanged: (v) => setDialogState(() => songFilter = v),
-                    ),
-                    const SizedBox(height: 8),
-
-                    // Song multi-select list
-                    ConstrainedBox(
-                      constraints: const BoxConstraints(maxHeight: 200),
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: filteredSongs.length,
-                        itemBuilder: (context, index) {
-                          final song = filteredSongs[index];
-                          final isSelected = selectedSongIds.contains(song.id);
-                          return CheckboxListTile(
-                            value: isSelected,
-                            title: Text(
-                              song.displayName,
-                              style: const TextStyle(fontSize: 14),
-                              overflow: TextOverflow.ellipsis,
+      builder:
+          (context) => StatefulBuilder(
+            builder: (context, setDialogState) {
+              final filteredSongs =
+                  songFilter.isEmpty
+                      ? songs
+                      : songs
+                          .where(
+                            (s) => s.displayName.toLowerCase().contains(
+                              songFilter.toLowerCase(),
                             ),
-                            dense: true,
-                            controlAffinity: ListTileControlAffinity.leading,
-                            onChanged: (v) {
-                              setDialogState(() {
-                                if (v == true && song.id != null) {
-                                  selectedSongIds.add(song.id!);
-                                } else if (song.id != null) {
-                                  selectedSongIds.remove(song.id!);
-                                }
-                              });
-                            },
-                          );
-                        },
-                      ),
-                    ),
-                    const SizedBox(height: 16),
+                          )
+                          .toList();
 
-                    // Conductor selector
-                    DropdownButtonFormField<int>(
-                      value: selectedConductorId,
-                      decoration: const InputDecoration(labelText: 'Dirigent'),
-                      items: [
-                        ...conductors
-                            .where((c) => c.left == null)
-                            .map((c) => DropdownMenuItem(
-                                  value: c.id,
-                                  child: Text('${c.firstName} ${c.lastName}'),
-                                )),
-                        const DropdownMenuItem(
-                          value: -1,
-                          child: Text('Andere...'),
+              return AlertDialog(
+                title: Text(
+                  selectedSongIds.isEmpty
+                      ? 'Werk(e) hinzufügen'
+                      : '${selectedSongIds.length} Werk(e) ausgewählt',
+                ),
+                content: SizedBox(
+                  width: double.maxFinite,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Song search
+                        TextField(
+                          decoration: const InputDecoration(
+                            hintText: 'Werk suchen...',
+                            prefixIcon: Icon(Icons.search),
+                            isDense: true,
+                          ),
+                          onChanged:
+                              (v) => setDialogState(() => songFilter = v),
                         ),
-                      ],
-                      onChanged: (v) async {
-                        if (v == -1) {
-                          final controller = TextEditingController();
-                          try {
-                            final result = await showDialog<String>(
-                              context: context,
-                              builder: (context) => AlertDialog(
-                                title: const Text('Dirigent eingeben'),
-                                content: TextField(
-                                  controller: controller,
-                                  decoration: const InputDecoration(labelText: 'Name'),
+                        const SizedBox(height: 8),
+
+                        // Song multi-select list
+                        ConstrainedBox(
+                          constraints: const BoxConstraints(maxHeight: 200),
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: filteredSongs.length,
+                            itemBuilder: (context, index) {
+                              final song = filteredSongs[index];
+                              final isSelected = selectedSongIds.contains(
+                                song.id,
+                              );
+                              return CheckboxListTile(
+                                value: isSelected,
+                                title: Text(
+                                  song.displayName,
+                                  style: const TextStyle(fontSize: 14),
+                                  overflow: TextOverflow.ellipsis,
                                 ),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () => Navigator.pop(context),
-                                    child: const Text('Abbrechen'),
+                                dense: true,
+                                controlAffinity:
+                                    ListTileControlAffinity.leading,
+                                onChanged: (v) {
+                                  setDialogState(() {
+                                    if (v == true && song.id != null) {
+                                      selectedSongIds.add(song.id!);
+                                    } else if (song.id != null) {
+                                      selectedSongIds.remove(song.id!);
+                                    }
+                                  });
+                                },
+                              );
+                            },
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+
+                        // Conductor selector
+                        DropdownButtonFormField<int>(
+                          value: selectedConductorId,
+                          decoration: const InputDecoration(
+                            labelText: 'Dirigent',
+                          ),
+                          // UX_SETTINGS: Ionic "Anderer Dirigent"
+                          items: [
+                            ...conductors
+                                .where((c) => c.left == null)
+                                .map(
+                                  (c) => DropdownMenuItem(
+                                    value: c.id,
+                                    child: Text('${c.firstName} ${c.lastName}'),
                                   ),
-                                  ElevatedButton(
-                                    onPressed: () => Navigator.pop(context, controller.text),
-                                    child: const Text('OK'),
-                                  ),
-                                ],
-                              ),
-                            );
-                            if (result != null && result.isNotEmpty) {
+                                ),
+                            const DropdownMenuItem(
+                              value: -1,
+                              child: Text('Anderer Dirigent'),
+                            ),
+                          ],
+                          onChanged: (v) async {
+                            if (v == -1) {
+                              final controller = TextEditingController();
+                              try {
+                                final result = await showDialog<String>(
+                                  context: context,
+                                  builder:
+                                      (context) => AlertDialog(
+                                        title: const Text('Anderer Dirigent'),
+                                        content: TextField(
+                                          controller: controller,
+                                          decoration: const InputDecoration(
+                                            labelText: 'Name',
+                                          ),
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            onPressed:
+                                                () => Navigator.pop(context),
+                                            child: const Text('Abbrechen'),
+                                          ),
+                                          ElevatedButton(
+                                            onPressed:
+                                                () => Navigator.pop(
+                                                  context,
+                                                  controller.text,
+                                                ),
+                                            child: const Text('OK'),
+                                          ),
+                                        ],
+                                      ),
+                                );
+                                if (result != null && result.isNotEmpty) {
+                                  setDialogState(() {
+                                    selectedConductorId = null;
+                                    otherConductor = result;
+                                  });
+                                }
+                              } finally {
+                                controller.dispose();
+                              }
+                            } else {
                               setDialogState(() {
-                                selectedConductorId = null;
-                                otherConductor = result;
+                                selectedConductorId = v;
+                                otherConductor = null;
                               });
                             }
-                          } finally {
-                            controller.dispose();
-                          }
-                        } else {
-                          setDialogState(() {
-                            selectedConductorId = v;
-                            otherConductor = null;
-                          });
-                        }
-                      },
-                    ),
-                    if (otherConductor != null)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8),
-                        child: Text('Dirigent: $otherConductor'),
-                      ),
-                    const SizedBox(height: 16),
+                          },
+                        ),
+                        if (otherConductor != null)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8),
+                            child: Text('Dirigent: $otherConductor'),
+                          ),
+                        const SizedBox(height: 16),
 
-                    // Date selector
-                    ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      title: const Text('Datum'),
-                      subtitle: Text(
-                        '${selectedDate.day.toString().padLeft(2, '0')}.${selectedDate.month.toString().padLeft(2, '0')}.${selectedDate.year}',
-                      ),
-                      trailing: const Icon(Icons.calendar_today),
-                      onTap: () async {
-                        final date = await showDatePicker(
-                          context: context,
-                          initialDate: selectedDate,
-                          firstDate: DateTime(2000),
-                          lastDate: DateTime.now().add(const Duration(days: 365)),
-                        );
-                        if (date != null) {
-                          setDialogState(() => selectedDate = date);
-                        }
-                      },
+                        // Date selector
+                        ListTile(
+                          contentPadding: EdgeInsets.zero,
+                          title: const Text('Datum'),
+                          subtitle: Text(
+                            '${selectedDate.day.toString().padLeft(2, '0')}.${selectedDate.month.toString().padLeft(2, '0')}.${selectedDate.year}',
+                          ),
+                          trailing: const Icon(Icons.calendar_today),
+                          onTap: () async {
+                            final date = await showDatePicker(
+                              context: context,
+                              initialDate: selectedDate,
+                              firstDate: DateTime(2000),
+                              lastDate: DateTime.now().add(
+                                const Duration(days: 365),
+                              ),
+                            );
+                            if (date != null) {
+                              setDialogState(() => selectedDate = date);
+                            }
+                          },
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
-              ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context, false),
-                child: const Text('Abbrechen'),
-              ),
-              ElevatedButton(
-                onPressed: selectedSongIds.isEmpty
-                    ? null
-                    : () => Navigator.pop(context, true),
-                child: Text(
-                  selectedSongIds.isEmpty
-                      ? 'Hinzufügen'
-                      : 'Hinzufügen (${selectedSongIds.length})',
-                ),
-              ),
-            ],
-          );
-        },
-      ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context, false),
+                    child: const Text('Abbrechen'),
+                  ),
+                  ElevatedButton(
+                    onPressed:
+                        selectedSongIds.isEmpty
+                            ? null
+                            : () => Navigator.pop(context, true),
+                    child: const Text('Hinzufügen'),
+                  ),
+                ],
+              );
+            },
+          ),
     );
 
     if (result == true && selectedSongIds.isNotEmpty) {
@@ -401,23 +446,29 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
       }
 
       final dateStr = date.toIso8601String().substring(0, 10);
-      await supabase.from('history').insert(
-        songIds.map((songId) => {
-          'tenantId': tenant!.id!,
-          'songId': songId, // DB column (Ionic History.songId)
-          'person_id': conductorId,
-          'otherConductor': otherConductor,
-          'date': dateStr,
-          'visible': true,
-        }).toList(),
-      );
+      await supabase
+          .from('history')
+          .insert(
+            songIds
+                .map(
+                  (songId) => {
+                    'tenantId': tenant!.id!,
+                    'songId': songId, // DB column (Ionic History.songId)
+                    'person_id': conductorId,
+                    'otherConductor': otherConductor,
+                    'date': dateStr,
+                    'visible': true,
+                  },
+                )
+                .toList(),
+          );
 
       ref.invalidate(performanceHistoryProvider);
       if (mounted) {
         final count = songIds.length;
         ToastHelper.showSuccess(
           context,
-          count == 1 ? 'Aufführung hinzugefügt' : '$count Aufführungen hinzugefügt',
+          count == 1 ? 'Werk hinzugefügt' : '$count Werke hinzugefügt',
         );
       }
     } catch (e) {
@@ -432,9 +483,9 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
 
     final confirmed = await DialogHelper.showConfirmation(
       context,
-      title: 'Eintrag löschen',
-      message: 'Möchtest du diesen Eintrag wirklich löschen?',
-      confirmText: 'Löschen',
+      title: 'Möchtest du den Eintrag wirklich entfernen?',
+      message: '',
+      confirmText: 'Ja',
       cancelText: 'Abbrechen',
     );
 
@@ -477,108 +528,95 @@ class _GroupedHistory {
   _GroupedHistory({required this.date, required this.entries});
 }
 
-/// History group widget
+/// History group (Ionic `ion-accordion` with the date as header)
 class _HistoryGroup extends StatelessWidget {
   final String date;
   final List<HistoryEntry> entries;
   final Function(HistoryEntry) onDelete;
-
-  final bool initiallyExpanded;
 
   const _HistoryGroup({
     super.key,
     required this.date,
     required this.entries,
     required this.onDelete,
-    this.initiallyExpanded = false,
   });
 
   @override
   Widget build(BuildContext context) {
     return ExpansionTile(
-      initiallyExpanded: initiallyExpanded,
-      tilePadding: const EdgeInsets.symmetric(horizontal: 4),
-      childrenPadding: EdgeInsets.zero,
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      collapsedBackgroundColor:
+          Theme.of(context).colorScheme.surfaceContainerLow,
       shape: const Border(),
       collapsedShape: const Border(),
-      title: Text(
-        date,
-        style: const TextStyle(
-          fontWeight: FontWeight.bold,
-          color: AppColors.primary,
-          fontSize: 14,
-        ),
-      ),
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            '${entries.length}',
-            style: const TextStyle(color: AppColors.medium, fontSize: 12),
-          ),
-          const SizedBox(width: 4),
-          const Icon(Icons.expand_more),
-        ],
-      ),
+      title: Text(date),
       children: [
-        ...entries.map((entry) => Dismissible(
-              key: ValueKey(entry.id ?? '${entry.songId}_${entry.date}'),
-              direction: DismissDirection.endToStart,
-              background: Container(
-                alignment: Alignment.centerRight,
-                padding: const EdgeInsets.only(right: 16),
-                color: AppColors.danger,
-                child: const Icon(Icons.delete, color: Colors.white),
-              ),
-              confirmDismiss: (_) async {
-                onDelete(entry);
-                return false; // Don't auto-dismiss, we handle it in onDelete
-              },
-              child: Card(
-                margin: const EdgeInsets.only(bottom: 8),
-                child: ListTile(
-                  leading: entry.songNumber != null
-                      ? CircleAvatar(
-                          backgroundColor: AppColors.primary.withValues(alpha: 0.1),
-                          child: Text(
-                            entry.songNumber!,
-                            style: const TextStyle(
-                              fontSize: 12,
-                              color: AppColors.primary,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        )
-                      : const CircleAvatar(
-                          child: Icon(Icons.music_note),
-                        ),
-                  title: Text(
-                    entry.songName ?? 'Unbekanntes Werk',
-                    style: const TextStyle(fontWeight: FontWeight.w500),
-                  ),
-                  subtitle: Text(entry.displayConductor),
-                  // Ionic: number of rehearsals before the performance
-                  trailing: entry.count != 0
-                      ? Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: AppColors.primary.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Text(
-                            rehearsalsLabel(entry.count),
-                            style: const TextStyle(
-                              color: AppColors.primary,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12,
-                            ),
-                          ),
-                        )
-                      : null,
-                ),
-              ),
-            )),
+        for (final entry in entries)
+          _HistoryEntryTile(entry: entry, onDelete: onDelete),
       ],
+    );
+  }
+}
+
+/// Ionic history item: "Nr Name", "Datum | Dirigent", badge "N Proben";
+/// swipe left reveals the red delete option.
+class _HistoryEntryTile extends StatelessWidget {
+  const _HistoryEntryTile({
+    required this.entry,
+    required this.onDelete,
+    this.showCount = true,
+  });
+
+  final HistoryEntry entry;
+  final Function(HistoryEntry) onDelete;
+  final bool showCount;
+
+  @override
+  Widget build(BuildContext context) {
+    final name = entry.songName ?? 'Unbekanntes Werk';
+    return Dismissible(
+      key: ValueKey(entry.id ?? '${entry.songId}_${entry.date}'),
+      direction: DismissDirection.endToStart,
+      background: Container(
+        alignment: Alignment.centerRight,
+        padding: const EdgeInsets.only(right: 16),
+        color: AppColors.danger,
+        child: const Icon(Icons.delete, color: Colors.white),
+      ),
+      confirmDismiss: (_) async {
+        onDelete(entry);
+        return false; // Deletion handled after confirmation
+      },
+      child: ListTile(
+        title: Text(
+          showCount && entry.songNumber != null
+              ? '${entry.songNumber} $name'
+              : name,
+          style: const TextStyle(fontWeight: FontWeight.w500),
+        ),
+        subtitle: Text('${entry.formattedDate} | ${entry.displayConductor}'),
+        trailing:
+            showCount && entry.count != 0
+                ? Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 3,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.primary,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Text(
+                    rehearsalsLabel(entry.count),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 12,
+                    ),
+                  ),
+                )
+                : null,
+      ),
     );
   }
 }

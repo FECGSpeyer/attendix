@@ -7,6 +7,7 @@ import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/user_registration_providers.dart'; // AUTH
 import '../../../../core/providers/viewer_providers.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../widgets/settings_list.dart'; // UX_SETTINGS
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/viewer/viewer.dart';
 
@@ -47,46 +48,26 @@ class ViewersPage extends ConsumerWidget {
             ],
           ),
         ),
+        // UX_SETTINGS: Ionic modal layout — hint card on top, then the list
         data: (viewers) {
-          if (viewers.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.visibility_outlined, size: 80, color: AppColors.medium),
-                  const SizedBox(height: AppDimensions.paddingL),
-                  Text(
-                    'Keine Beobachter',
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                  const SizedBox(height: AppDimensions.paddingS),
-                  Text(
-                    'Beobachter können Anwesenheitsdaten einsehen,\naber nicht bearbeiten.',
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppColors.medium),
-                  ),
-                  const SizedBox(height: AppDimensions.paddingL),
-                  ElevatedButton.icon(
-                    onPressed: () => _showAddViewerDialog(context, ref),
-                    icon: const Icon(Icons.add),
-                    label: const Text('Beobachter hinzufügen'),
-                  ),
-                ],
-              ),
-            );
-          }
-
           return RefreshIndicator(
-            // FN-011: await provider.future to show spinner until data loads
             onRefresh: () async {
               ref.invalidate(viewersProvider);
               await ref.read(viewersProvider.future);
             },
             child: ListView.builder(
-              padding: const EdgeInsets.all(AppDimensions.paddingM),
-              itemCount: viewers.length,
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.fromLTRB(
+                AppDimensions.paddingM, AppDimensions.paddingM, AppDimensions.paddingM, 88),
+              itemCount: viewers.length + 1,
               itemBuilder: (context, index) {
-                final viewer = viewers[index];
+                if (index == 0) {
+                  return const SettingsHintCard(
+                    icon: Icons.visibility_outlined,
+                    text: 'Beobachter haben nur Leserechte auf Anwesenheitsübersicht und Personendaten.',
+                  );
+                }
+                final viewer = viewers[index - 1];
                 return _ViewerItem(
                   viewer: viewer,
                   onDelete: () => _deleteViewer(context, ref, viewer),
@@ -173,7 +154,7 @@ class ViewersPage extends ConsumerWidget {
                 Navigator.of(ctx).pop(true);
               }
             },
-            child: const Text('Hinzufügen'),
+            child: const Text('Einladen'),
           ),
         ],
       ),
@@ -220,7 +201,7 @@ class ViewersPage extends ConsumerWidget {
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('Beobachter entfernen?'),
-        content: Text('Möchtest du ${viewer.fullName} als Beobachter entfernen?'),
+        content: Text('Möchtest du ${viewer.firstName} wirklich entfernen?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
@@ -229,7 +210,7 @@ class ViewersPage extends ConsumerWidget {
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: AppColors.danger),
             onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('Entfernen'),
+            child: const Text('Ja'),
           ),
         ],
       ),

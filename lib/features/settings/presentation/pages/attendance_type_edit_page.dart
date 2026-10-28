@@ -258,48 +258,92 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
             ),
             const SizedBox(height: AppDimensions.paddingL),
 
-            // Color Picker
+            // UX_SETTINGS: Ionic "Optionen" (type.page.html order): Aktiv, verfügbare
+            // Status, Standard-Status, Werke verwalten, Ganztägig/Zeiten, Name
+            // verbergen, Hervorheben, Für Ø berücksichtigen, Protokoll, Ort.
             _buildSection(
-              title: 'Farbe',
-              child: Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: ColorUtils.availableColors.map((colorName) {
-                  final color = ColorUtils.getColorForPicker(colorName);
-                  final isSelected = _color == colorName;
-                  return GestureDetector(
-                    onTap: () => setState(() {
-                      _color = colorName;
-                      _hasChanges = true;
-                    }),
-                    child: Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: color,
-                        borderRadius: BorderRadius.circular(8),
-                        border: isSelected
-                            ? Border.all(color: Colors.black, width: 3)
-                            : null,
-                      ),
-                      child: isSelected
-                          ? const Icon(Icons.check, color: Colors.white, size: 20)
-                          : null,
-                    ),
-                  );
-                }).toList(),
-              ),
-            ),
-            const SizedBox(height: AppDimensions.paddingL),
-
-            // All-day toggle
-            _buildSection(
-              title: 'Ganztägig',
+              title: 'Optionen',
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   SwitchListTile(
-                    title: const Text('Ganztägiger Termin'),
-                    subtitle: const Text('Keine Uhrzeit, nur Dauer in Tagen'),
+                    title: const Text('Aktiv'),
+                    subtitle: const Text(
+                      'Wenn du diese Option deaktivierst, wird der Anwesenheitstyp beim Anlegen einer Anwesenheit nicht mehr als Option angezeigt.',
+                    ),
+                    value: _visible,
+                    onChanged: (value) => setState(() {
+                      _visible = value;
+                      _hasChanges = true;
+                    }),
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.only(top: 8),
+                    child: Text('Verfügbare Anwesenheitsstatus', style: TextStyle(fontWeight: FontWeight.w600)),
+                  ),
+                  ...AttendanceStatus.values.map((status) {
+                    return CheckboxListTile(
+                      title: Text(_getStatusName(status)),
+                      value: _availableStatuses.contains(status),
+                      onChanged: (value) {
+                        setState(() {
+                          if (value == true) {
+                            _availableStatuses.add(status);
+                          } else {
+                            // Don't allow removing last status
+                            if (_availableStatuses.length > 1) {
+                              _availableStatuses.remove(status);
+                              // Reset default if removed (Issue #21 - safe .first)
+                              if (_defaultStatus == status) {
+                                _defaultStatus = _availableStatuses.firstOrNull ?? AttendanceStatus.present;
+                              }
+                            }
+                          }
+                          _hasChanges = true;
+                        });
+                      },
+                      contentPadding: EdgeInsets.zero,
+                      dense: true,
+                    );
+                  }),
+                  DropdownButtonFormField<AttendanceStatus>(
+                    decoration: const InputDecoration(labelText: 'Standard Anwesenheitsstatus'),
+                    value: _availableStatuses.contains(_defaultStatus)
+                        ? _defaultStatus
+                        : _availableStatuses.firstOrNull ?? AttendanceStatus.present,
+                    onChanged: (value) {
+                      if (value != null) {
+                        setState(() {
+                          _defaultStatus = value;
+                          _hasChanges = true;
+                        });
+                      }
+                    },
+                    items: _availableStatuses
+                        .map((status) => DropdownMenuItem(
+                              value: status,
+                              child: Text(_getStatusName(status)),
+                            ))
+                        .toList(),
+                  ),
+                  SwitchListTile(
+                    title: const Text('Werke verwalten'),
+                    subtitle: const Text(
+                      'Wenn du diese Option aktivierst, dann kannst du beim Anlegen einer Anwesenheit von diesem Typ, Werke hinzufügen, die für die kommenden Proben relevant sind und automatisch im Probenplan berücksichtigt werden.',
+                    ),
+                    value: _manageSongs,
+                    onChanged: (value) => setState(() {
+                      _manageSongs = value;
+                      _hasChanges = true;
+                    }),
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                  SwitchListTile(
+                    title: const Text('Ganztägig'),
+                    subtitle: const Text(
+                      'Wenn du diese Option aktivierst, wird bei einer Anwesenheit von diesem Typ keine Uhrzeit festgelegt aber eine Dauer angegeben.',
+                    ),
                     value: _allDay,
                     onChanged: (value) => setState(() {
                       _allDay = value;
@@ -309,10 +353,10 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                   ),
                   if (_allDay)
                     Padding(
-                      padding: const EdgeInsets.only(top: 8),
+                      padding: const EdgeInsets.only(bottom: 8),
                       child: Row(
                         children: [
-                          const Text('Dauer: '),
+                          const Expanded(child: Text('Standarddauer (in Tagen)')),
                           SizedBox(
                             width: 60,
                             child: TextFormField(
@@ -332,141 +376,33 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                               },
                             ),
                           ),
-                          const SizedBox(width: 8),
-                          Text(_durationDays == 1 ? 'Tag' : 'Tage'),
                         ],
                       ),
-                    ),
-                ],
-              ),
-            ),
-            const SizedBox(height: AppDimensions.paddingL),
-
-            // Time Settings (hidden when allDay)
-            if (!_allDay) ...[
-              _buildSection(
-              title: 'Zeiten',
-              child: Row(
-                children: [
-                  Expanded(
-                    child: ListTile(
-                      leading: const Icon(Icons.access_time, color: AppColors.primary),
-                      title: Text(_formatTime(_startTime ?? const TimeOfDay(hour: 19, minute: 0))),
-                      subtitle: const Text('Beginn'),
+                    )
+                  else ...[
+                    ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      title: const Text('Beginn'),
+                      subtitle: const Text(
+                        'Die Zeiten können nachträglich individuell in jeder Anwesenheit angepasst werden',
+                      ),
+                      trailing: Text(_formatTime(_startTime ?? const TimeOfDay(hour: 19, minute: 0)),
+                          style: Theme.of(context).textTheme.titleMedium),
                       onTap: () => _pickTime(isStart: true),
                     ),
-                  ),
-                  const Icon(Icons.arrow_forward, color: AppColors.medium),
-                  Expanded(
-                    child: ListTile(
-                      leading: const Icon(Icons.access_time_filled, color: AppColors.primary),
-                      title: Text(_formatTime(_endTime ?? const TimeOfDay(hour: 20, minute: 30))),
-                      subtitle: const Text('Ende'),
+                    ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      title: const Text('Ende'),
+                      trailing: Text(_formatTime(_endTime ?? const TimeOfDay(hour: 20, minute: 30)),
+                          style: Theme.of(context).textTheme.titleMedium),
                       onTap: () => _pickTime(isStart: false),
                     ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: AppDimensions.paddingL),
-            ], // end if (!_allDay)
-
-            // Default Status
-            _buildSection(
-              title: 'Standard-Status',
-              child: DropdownButtonFormField<AttendanceStatus>(
-                value: _availableStatuses.contains(_defaultStatus)
-                    ? _defaultStatus
-                    : _availableStatuses.firstOrNull ?? AttendanceStatus.present,
-                onChanged: (value) {
-                  if (value != null) {
-                    setState(() {
-                      _defaultStatus = value;
-                      _hasChanges = true;
-                    });
-                  }
-                },
-                items: _availableStatuses
-                    .map((status) => DropdownMenuItem(
-                          value: status,
-                          child: Text(_getStatusName(status)),
-                        ))
-                    .toList(),
-              ),
-            ),
-            const SizedBox(height: AppDimensions.paddingL),
-
-            // Available Statuses
-            _buildSection(
-              title: 'Verfügbare Status',
-              child: Column(
-                children: AttendanceStatus.values.map((status) {
-                  return CheckboxListTile(
-                    title: Text(_getStatusName(status)),
-                    value: _availableStatuses.contains(status),
-                    onChanged: (value) {
-                      setState(() {
-                        if (value == true) {
-                          _availableStatuses.add(status);
-                        } else {
-                          // Don't allow removing last status
-                          if (_availableStatuses.length > 1) {
-                            _availableStatuses.remove(status);
-                            // Reset default if removed (Issue #21 - safe .first)
-                            if (_defaultStatus == status) {
-                              _defaultStatus = _availableStatuses.firstOrNull ?? AttendanceStatus.present;
-                            }
-                          }
-                        }
-                        _hasChanges = true;
-                      });
-                    },
-                    contentPadding: EdgeInsets.zero,
-                    dense: true,
-                  );
-                }).toList(),
-              ),
-            ),
-            const SizedBox(height: AppDimensions.paddingL),
-
-            // Options
-            _buildSection(
-              title: 'Optionen',
-              child: Column(
-                children: [
-                  SwitchListTile(
-                    title: const Text('Mit Programm/Werke'),
-                    subtitle: const Text('Songs können diesem Typ zugeordnet werden'),
-                    value: _manageSongs,
-                    onChanged: (value) => setState(() {
-                      _manageSongs = value;
-                      _hasChanges = true;
-                    }),
-                    contentPadding: EdgeInsets.zero,
-                  ),
-                  SwitchListTile(
-                    title: const Text('Sichtbar'),
-                    subtitle: const Text('In der Auswahl anzeigen'),
-                    value: _visible,
-                    onChanged: (value) => setState(() {
-                      _visible = value;
-                      _hasChanges = true;
-                    }),
-                    contentPadding: EdgeInsets.zero,
-                  ),
-                  SwitchListTile(
-                    title: const Text('Hervorheben'),
-                    subtitle: const Text('Visuell hervorheben'),
-                    value: _highlight,
-                    onChanged: (value) => setState(() {
-                      _highlight = value;
-                      _hasChanges = true;
-                    }),
-                    contentPadding: EdgeInsets.zero,
-                  ),
+                  ],
                   SwitchListTile(
                     title: const Text('Name verbergen'),
-                    subtitle: const Text('Nur Datum anzeigen'),
+                    subtitle: const Text(
+                      'Wenn du diese Option aktivierst, wird der Name dieses Anwesenheitstyps in der Liste verborgen. Nur die Zusatzinfo (falls vorhanden) wird angezeigt.',
+                    ),
                     value: _hideName,
                     onChanged: (value) => setState(() {
                       _hideName = value;
@@ -475,8 +411,22 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                     contentPadding: EdgeInsets.zero,
                   ),
                   SwitchListTile(
-                    title: const Text('In Durchschnitt einbeziehen'),
-                    subtitle: const Text('Für Anwesenheitsstatistiken berücksichtigen'),
+                    title: const Text('Hervorheben'),
+                    subtitle: const Text(
+                      'Wenn du diese Option aktivierst, wird dieser Anwesenheitstyp in der Liste als Fett dargestellt.',
+                    ),
+                    value: _highlight,
+                    onChanged: (value) => setState(() {
+                      _highlight = value;
+                      _hasChanges = true;
+                    }),
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                  SwitchListTile(
+                    title: const Text('Für Ø berücksichtigen'),
+                    subtitle: const Text(
+                      'Wenn diese Option aktiviert ist, wird dieser Typ beim Anwesenheitsdurchschnitt berücksichtigt.',
+                    ),
                     value: _includeInAverage,
                     onChanged: (value) => setState(() {
                       _includeInAverage = value;
@@ -516,19 +466,85 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
             ),
             const SizedBox(height: AppDimensions.paddingL),
 
-            // ATTENDANCE_SIGNOUT: Anmeldefelder (adjustable at any time)
-            _buildSection(
-              title: 'Anmeldefelder',
-              child: RegistrationFieldsEditor(
-                fields: _registrationFields,
-                onChanged: (fields) => setState(() {
-                  _registrationFields = fields;
-                  _hasChanges = true;
-                }),
-              ),
-            ),
             // DUTY: Dienstplan
             _buildDutySection(),
+            const SizedBox(height: AppDimensions.paddingL),
+
+            // Terminerinnerungen (SETTINGS2: Ionic reminders modal)
+            _buildSection(
+              title: 'Terminerinnerungen',
+              child: Column(
+                children: [
+                  SwitchListTile(
+                    title: const Text('Terminerinnerung'),
+                    subtitle: const Text(
+                      'Wenn diese Option aktiviert ist, Erinnerungen angelegt wurden und die '
+                      'Benachrichtigungen aktiviert sind, erhalten Personen eine Terminerinnerung.',
+                    ),
+                    value: _notification,
+                    onChanged: (value) => setState(() {
+                      _notification = value;
+                      _hasChanges = true;
+                    }),
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                  if (_notification)
+                    TypeRemindersEditor(
+                      reminders: _reminders,
+                      onChanged: (list) => setState(() {
+                        _reminders = list;
+                        _hasChanges = true;
+                      }),
+                    ),
+                ],
+              ),
+            ),
+            const SizedBox(height: AppDimensions.paddingL),
+
+            // Color Picker
+            _buildSection(
+              title: 'Darstellung',
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Farbe', style: TextStyle(fontWeight: FontWeight.w600)),
+                  const SizedBox(height: 8),
+                  Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: ColorUtils.availableColors.map((colorName) {
+                  final color = ColorUtils.getColorForPicker(colorName);
+                  final isSelected = _color == colorName;
+                  return GestureDetector(
+                    onTap: () => setState(() {
+                      _color = colorName;
+                      _hasChanges = true;
+                    }),
+                    child: Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: color,
+                        borderRadius: BorderRadius.circular(8),
+                        border: isSelected
+                            ? Border.all(color: Colors.black, width: 3)
+                            : null,
+                      ),
+                      child: isSelected
+                          ? const Icon(Icons.check, color: Colors.white, size: 20)
+                          : null,
+                    ),
+                  );
+                }).toList(),
+              ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    'Die Farbe ist nur für den Kalender relevant (beim Anlegen einer Anwesenheit).',
+                    style: TextStyle(fontSize: 12, color: AppColors.medium),
+                  ),
+                ],
+              ),
+            ),
             const SizedBox(height: AppDimensions.paddingL),
 
             // Relevant Groups (B8-009)
@@ -542,14 +558,14 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
             // Ablaufplan (Default Plan) - only when manageSongs is enabled
             if (_manageSongs) ...[
               _buildSection(
-                title: 'Ablaufplan-Vorlage',
+                title: 'Ablaufplan',
                 child: Column(
                   children: [
                     // Planning title
                     TextFormField(
                       controller: _planningTitleController,
                       decoration: const InputDecoration(
-                        labelText: 'Ablaufplan-Titel',
+                        labelText: 'Ablaufplan Überschrift',
                         hintText: 'z.B. Probenplan',
                       ),
                       onChanged: (value) {
@@ -649,7 +665,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                           child: OutlinedButton.icon(
                             onPressed: _addPlanField,
                             icon: const Icon(Icons.add, size: 18),
-                            label: const Text('Feld'),
+                            label: const Text('Feld hinzufügen'),
                           ),
                         ),
                         const SizedBox(width: 8),
@@ -657,7 +673,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                           child: OutlinedButton.icon(
                             onPressed: _addSongPlaceholder,
                             icon: const Icon(Icons.music_note, size: 18),
-                            label: const Text('Werk'),
+                            label: const Text('Werk Platzhalter'),
                           ),
                         ),
                       ],
@@ -669,37 +685,6 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
             ],
             // ORG_PLANS: Termine of this type start as org plan
             TypeDefaultOrgPlanToggle(typeId: widget.typeId),
-
-            // Terminerinnerungen (SETTINGS2: Ionic reminders modal)
-            _buildSection(
-              title: 'Terminerinnerungen',
-              child: Column(
-                children: [
-                  SwitchListTile(
-                    title: const Text('Terminerinnerung'),
-                    subtitle: const Text(
-                      'Wenn diese Option aktiviert ist, Erinnerungen angelegt wurden und die '
-                      'Benachrichtigungen aktiviert sind, erhalten Personen eine Terminerinnerung.',
-                    ),
-                    value: _notification,
-                    onChanged: (value) => setState(() {
-                      _notification = value;
-                      _hasChanges = true;
-                    }),
-                    contentPadding: EdgeInsets.zero,
-                  ),
-                  if (_notification)
-                    TypeRemindersEditor(
-                      reminders: _reminders,
-                      onChanged: (list) => setState(() {
-                        _reminders = list;
-                        _hasChanges = true;
-                      }),
-                    ),
-                ],
-              ),
-            ),
-            const SizedBox(height: AppDimensions.paddingL),
 
             // Checkliste (Template)
             _buildSection(
@@ -746,7 +731,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                     const Padding(
                       padding: EdgeInsets.symmetric(vertical: 8),
                       child: Text(
-                        'Keine To-Dos definiert',
+                        'Noch keine To-Dos angelegt',
                         style: TextStyle(color: AppColors.medium),
                       ),
                     ),
@@ -759,6 +744,19 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
               ),
             ),
 
+            const SizedBox(height: AppDimensions.paddingL),
+            // ATTENDANCE_SIGNOUT: Anmeldefelder (adjustable at any time)
+            _buildSection(
+              title: 'Anmeldefelder',
+              child: RegistrationFieldsEditor(
+                fields: _registrationFields,
+                onChanged: (fields) => setState(() {
+                  _registrationFields = fields;
+                  _hasChanges = true;
+                }),
+              ),
+            ),
+            const SizedBox(height: AppDimensions.paddingL),
             const SizedBox(height: AppDimensions.paddingXL),
           ],
         ),

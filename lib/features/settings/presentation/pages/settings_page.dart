@@ -1,35 +1,44 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/config/supabase_config.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/dashboard_providers.dart';
 import '../../../../core/providers/debug_providers.dart';
+import '../../../../core/providers/organisation_providers.dart';
+import '../../../../core/providers/parent_providers.dart';
 import '../../../../core/providers/player_providers.dart';
 import '../../../../core/providers/pwa_providers.dart';
 import '../../../../core/providers/role_permission_providers.dart'; // SETTINGS_EXT
+import '../../../../core/providers/team_org_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
+import '../../../../core/providers/viewer_providers.dart';
 import '../../../../core/services/pwa_service.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/utils/string_utils.dart';
-import '../../../team_organization/presentation/widgets/team_org_settings_section.dart'; // TEAM_ORG
 import '../../../../shared/widgets/sheets/feedback_sheet.dart';
+import '../../../../shared/widgets/tenant/tenant_switcher_title.dart';
 // PROFILE_OFFLINE
 import '../../../profile/presentation/widgets/account_dialogs.dart';
 import '../../../profile/presentation/widgets/profile_hero_card.dart';
 import '../../../../shared/widgets/sheets/version_history_sheet.dart';
 import '../../../messages/presentation/widgets/notification_bell.dart'; // MESSAGES
-import '../../../organisation/presentation/widgets/org_plans_settings_section.dart'; // ORG_PLANS
 import '../../../../core/services/certificate_service.dart'; // MISC2
 import '../widgets/vorkurs_certificates.dart'; // MISC2
 // SETTINGS2
 import '../../../../core/providers/admin_providers.dart';
 import '../widgets/app_promo_card.dart';
 import '../widgets/settings_admins_sheet.dart';
+// UX_SETTINGS
+import '../widgets/calendar_subscription_dialog.dart';
+import '../widgets/settings_list.dart';
+import 'left_players_page.dart' show leftPlayersProvider;
 
-/// Settings page with role-based menu filtering
+/// "Mehr" tab — UX_SETTINGS: same sections, order and role visibility as the
+/// Ionic settings page (src/app/settings/settings/settings.page.html):
+/// App-Hinweis, ausstehende Registrierungen, Meine Stammdaten, Stimmführer,
+/// Instanz-Verwaltung, Kommunikation, Benutzer & Rollen, Werke & Proben
+/// (bzw. Dateien), Planung, Organisation, Auswertung & Daten, System.
 class SettingsPage extends ConsumerWidget {
   const SettingsPage({super.key});
 
@@ -38,679 +47,545 @@ class SettingsPage extends ConsumerWidget {
     final tenant = ref.watch(currentTenantProvider);
     // Use effectiveRoleProvider to support debug role override
     final role = ref.watch(effectiveRoleProvider);
-    final pendingCount = ref.watch(pendingPlayersProvider).valueOrNull?.length ?? 0;
+
+    // Ionic role flags (settings.page.ts)
+    final isAdmin = role.isAdmin || role.isResponsible;
+    final isSuperAdmin = role.isAdmin;
+    final isHelper = role.isHelperRole;
+    final isApplicant = role.isApplicant;
+    final isVoiceLeader = role.canSeeVoiceLeaderSettings;
+    final isGeneral = tenant?.type == 'general';
+    final parentsEnabled = tenant?.parents == true;
+    final canAccessFiles = ref.watch(canAccessFilesProvider);
+    final isSuperDeveloper = ref.watch(isSuperDeveloperProvider);
+    final userEmail = ref.watch(supabaseClientProvider).auth.currentUser?.email;
+    final isDemo = AppConstants.demoMail.isNotEmpty && userEmail == AppConstants.demoMail;
+
+    final pendingCount = isAdmin ? (ref.watch(pendingPlayersProvider).valueOrNull?.length ?? 0) : 0;
+    final playersWithoutAccount = isAdmin
+        ? (ref.watch(playersProvider).valueOrNull ?? const [])
+            .where((p) =>
+                (p.appId == null || p.appId!.isEmpty) &&
+                !p.pending &&
+                p.left == null &&
+                (p.email ?? '').trim().isNotEmpty)
+            .length
+        : 0;
+
+    // Planung (inkl. Teamorganisation)
+    final showPlanning = isAdmin && !isApplicant;
+    final teamOrgEnabled = ref.watch(teamOrgEnabledProvider);
+    final isTeamLeader = ref.watch(isTeamLeaderProvider);
+    final inTeamCircle = ref.watch(inTeamCircleProvider);
+    final hasOwnTasks = teamOrgEnabled &&
+        !isTeamLeader &&
+        (ref.watch(myTasksProvider).valueOrNull?.isNotEmpty ?? false);
+    final showTeam = teamOrgEnabled && (isTeamLeader || inTeamCircle || hasOwnTasks);
+    final org = isAdmin ? ref.watch(currentOrganisationProvider).valueOrNull : null;
+
+    void openTeamOrg(String tab) => context.push('/settings/team-organization?tab=$tab');
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Einstellungen'),
+        // Ionic: tenant switcher (long name + chevron) in the header
+        title: const TenantSwitcherTitle(fallbackTitle: 'Einstellungen'),
         actions: const [NotificationBell()], // MESSAGES
       ),
       body: RefreshIndicator(
         onRefresh: () async {
           ref.invalidate(currentTenantProvider);
           ref.invalidate(userTenantsProvider);
+          ref.invalidate(pendingPlayersProvider);
+          ref.invalidate(playersProvider);
+          ref.invalidate(viewersProvider);
+          ref.invalidate(parentsProvider);
+          ref.invalidate(adminsProvider);
+          ref.invalidate(leftPlayersProvider);
         },
         child: ListView(
           physics: const AlwaysScrollableScrollPhysics(),
           padding: const EdgeInsets.all(AppDimensions.paddingM),
-        children: [
-          // PWA Install Hint (only shown on mobile web)
-          const _PwaInstallHint(),
-          const AppPromoCard(), // SETTINGS2: "📱 Attendix als App"
-          // PROFILE_OFFLINE: profile card ("Meine Stammdaten")
-          const ProfileHeroCard(),
-          // Tenant info section
-          if (tenant != null) ...[
-            _SettingsSection(
-              title: 'Aktuelle Gruppe',
-              children: [
-                _SettingsTile(
-                  leading: CircleAvatar(
-                    backgroundColor: AppColors.primaryLight,
-                    child: Text(
-                      StringUtils.getTenantInitials(
-                        tenant.shortName,
-                        tenant.longName,
-                      ),
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  title: tenant.shortName.isNotEmpty
-                      ? tenant.shortName
-                      : tenant.longName,
-                  subtitle: tenant.longName != tenant.shortName
-                      ? tenant.longName
-                      : null,
-                  trailing: TextButton(
-                    onPressed: () => context.go('/tenants'),
-                    child: const Text('Wechseln'),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: AppDimensions.paddingM),
-          ],
+          children: [
+            // PWA Install Hint (only shown on mobile web)
+            const _PwaInstallHint(),
+            const AppPromoCard(), // SETTINGS2: "📱 Attendix als App"
 
-          // Content management section - only for users who can edit
-          if (role.canEdit) ...[
-            _SettingsSection(
-              title: 'Verwaltung',
-              children: [
-                // Only Admin/Responsible can manage attendance types
-                if (role.isAdmin || role.isResponsible)
-                  _SettingsTile(
-                    leading: const _SettingsIcon(icon: Icons.category),
-                    title: 'Terminarten',
-                    subtitle: 'Proben, Auftritte, etc. verwalten',
-                    onTap: () => context.push('/settings/types'),
-                  ),
-                // All roles can see songs
-                _SettingsTile(
-                  leading: const _SettingsIcon(icon: Icons.music_note),
-                  title: 'Lieder',
-                  subtitle: 'Lieder und Notenblätter verwalten',
-                  onTap: () => context.push('/settings/songs'),
-                ),
-                // Only Admin/Responsible can manage instruments
-                if (role.isAdmin || role.isResponsible)
-                  _SettingsTile(
-                    leading: const _SettingsIcon(icon: Icons.piano),
-                    title: 'Instrumente',
-                    subtitle: 'Instrumentenliste verwalten',
-                    onTap: () => context.push('/settings/instruments'),
-                  ),
-                // Conductors (Admin, Responsible, Viewer) can see teachers
-                if (role.isConductor)
-                  _SettingsTile(
-                    leading: const _SettingsIcon(icon: Icons.school),
-                    title: 'Lehrer',
-                    subtitle: 'Lehrer und Ausbilder verwalten',
-                    onTap: () => context.push('/settings/teachers'),
-                  ),
-                // Only Admin/Responsible can manage shifts
-                if (role.isAdmin || role.isResponsible)
-                  _SettingsTile(
-                    leading: const _SettingsIcon(icon: Icons.schedule),
-                    title: 'Schichtpläne',
-                    subtitle: 'Arbeitsschichten für automatische Entschuldigungen',
-                    onTap: () => context.push('/settings/shifts'),
-                  ),
-                // Only Admin can manage users
-                if (role.isAdmin)
-                  _SettingsTile(
-                    leading: const _SettingsIcon(icon: Icons.people),
-                    title: 'Benutzer',
-                    subtitle: 'Rollen und Berechtigungen verwalten',
-                    onTap: () => context.push('/settings/users'),
-                  ),
-                // Only Admin can manage viewers
-                if (role.isAdmin)
-                  _SettingsTile(
-                    leading: const _SettingsIcon(icon: Icons.visibility),
-                    title: 'Beobachter',
-                    subtitle: 'Externe Beobachter verwalten',
-                    onTap: () => context.push('/settings/viewers'),
-                  ),
-                // Only Admin can manage parents (if feature enabled)
-                if (role.isAdmin && tenant?.parents == true)
-                  _SettingsTile(
-                    leading: const _SettingsIcon(icon: Icons.family_restroom),
-                    title: 'Elternteile',
-                    subtitle: 'Eltern-Accounts verwalten',
-                    onTap: () => context.push('/settings/parents'),
-                  ),
-              ],
-            ),
-            const SizedBox(height: AppDimensions.paddingM),
-          ],
+            // Ionic: pending persons alert card (warning)
+            if (pendingCount > 0) _PendingPersonsCard(count: pendingCount),
 
-          // TEAM_ORG: group "Planung" (replaces the old "Besprechungen" entry)
-          const TeamOrgSettingsSection(),
+            // PROFILE_OFFLINE: profile card ("Meine Stammdaten")
+            const ProfileHeroCard(),
 
-          // Songs for players who can't edit but can view
-          if (!role.canEdit && role.canView) ...[
-            _SettingsSection(
-              title: 'Inhalte',
-              children: [
-                _SettingsTile(
-                  leading: const _SettingsIcon(icon: Icons.music_note),
-                  title: 'Lieder',
-                  subtitle: 'Lieder und Notenblätter ansehen',
-                  onTap: () => context.push('/settings/songs'),
-                ),
-              ],
-            ),
-            const SizedBox(height: AppDimensions.paddingM),
-          ],
-
-          // Voice Leader settings - only for voice leaders
-          if (role.canSeeVoiceLeaderSettings) ...[
-            _SettingsSection(
-              title: 'Stimmführer',
-              children: [
-                _SettingsTile(
-                  leading: const _SettingsIcon(icon: Icons.record_voice_over),
-                  title: 'Stimmführer-Bereich',
-                  subtitle: 'Deine Stimmgruppe verwalten',
-                  onTap: () => context.push('/settings/voice-leader'),
-                ),
-              ],
-            ),
-            const SizedBox(height: AppDimensions.paddingM),
-          ],
-
-          // MESSAGES: Kommunikation section - only for Admin/Responsible
-          if (role.isAdmin || role.isResponsible) ...[
-            _SettingsSection(
-              title: 'Kommunikation',
-              children: [
-                _SettingsTile(
-                  leading: const _SettingsIcon(icon: Icons.mail_outline),
-                  title: 'Mitteilungen',
-                  subtitle: 'Nachricht an alle senden',
-                  onTap: () => context.push('/settings/messages'),
-                ),
-              ],
-            ),
-            const SizedBox(height: AppDimensions.paddingM),
-          ],
-
-          // Member management section - only for Admin/Responsible
-          if (role.isAdmin || role.isResponsible) ...[
-            _SettingsSection(
-              title: 'Mitgliederverwaltung',
-              children: [
-                // SETTINGS2: Administratoren (Ionic: super admin only)
-                if (role.isAdmin)
-                  _SettingsTile(
-                    leading: const _SettingsIcon(icon: Icons.verified_user_outlined),
-                    title: 'Administratoren',
-                    trailing: Badge(
-                      label: Text('${ref.watch(adminsProvider).valueOrNull?.length ?? 0}'),
-                      backgroundColor: AppColors.medium,
-                    ),
-                    onTap: () => showAdminsSheet(context),
-                  ),
-                _SettingsTile(
-                  leading: _SettingsIcon(
-                    icon: Icons.hourglass_empty,
-                    color: AppColors.warning,
-                  ),
-                  title: 'Ausstehende Registrierungen',
-                  subtitle: 'Neue Selbst-Registrierungen prüfen',
-                  trailing: pendingCount > 0
-                      ? Badge(
-                          label: Text('$pendingCount'),
-                          child: const Icon(Icons.chevron_right, color: AppColors.medium),
-                        )
-                      : null,
-                  onTap: () => context.push('/settings/pending'),
-                ),
-                if (role.isAdmin)
-                  _SettingsTile(
-                    leading: const _SettingsIcon(icon: Icons.person_add),
-                    title: 'Fehlende Accounts anlegen',
-                    subtitle: 'Accounts für Spieler ohne Login erstellen',
-                    onTap: () => context.push('/settings/batch-accounts'),
-                  ),
-                _SettingsTile(
-                  leading: const _SettingsIcon(icon: Icons.history),
-                  title: 'Ehemalige Mitglieder',
-                  subtitle: 'Archivierte Mitglieder verwalten',
-                  onTap: () => context.push('/settings/left'),
-                ),
-                // PEOPLE_IMPORT: Personenübergabe (Ionic org-settings "Übergabe")
-                _SettingsTile(
-                  leading: const _SettingsIcon(icon: Icons.swap_horiz),
-                  title: 'Personenübergabe',
-                  subtitle: 'Personen an andere Instanzen der Organisation übergeben',
-                  onTap: () => context.push('/settings/handover'),
-                ),
-                // MISC2: Urkunden generieren (Vorkurs tenants only)
-                if (role.isAdmin && isVorkursTenantName(tenant?.shortName, tenant?.longName))
-                  _SettingsTile(
-                    leading: const _SettingsIcon(icon: Icons.workspace_premium_outlined),
-                    title: 'Urkunden generieren',
-                    onTap: () => generateVorkursCertificates(context, ref),
-                  ),
-              ],
-            ),
-            const SizedBox(height: AppDimensions.paddingM),
-          ],
-
-          // SETTINGS2: Ionic "Werke & Proben" > Historie (Admin/Responsible/Helper)
-          if (tenant?.type != 'general' &&
-              !role.isApplicant &&
-              (role.isAdmin || role.isResponsible || role.isHelperRole)) ...[
-            _SettingsSection(
-              title: 'Werke & Proben',
-              children: [
-                _SettingsTile(
-                  leading: const _SettingsIcon(icon: Icons.history_toggle_off),
-                  title: 'Historie',
-                  subtitle: 'Gespielte Werke',
-                  onTap: () => context.push('/history'),
-                ),
-              ],
-            ),
-            const SizedBox(height: AppDimensions.paddingM),
-          ],
-
-          // SETTINGS_EXT: Dateiablage + Rollen & Berechtigungen
-          if (ref.watch(canAccessFilesProvider) || role.isAdmin || role.isResponsible) ...[
-            _SettingsSection(
-              title: 'Dateien & Berechtigungen',
-              children: [
-                if (ref.watch(canAccessFilesProvider))
-                  _SettingsTile(
-                    leading: const _SettingsIcon(icon: Icons.folder_outlined),
-                    title: 'Dateiablage',
-                    subtitle: 'Dateien und Ordner der Gruppe',
-                    onTap: () => context.push('/settings/files'),
-                  ),
-                if (role.isAdmin || role.isResponsible)
-                  _SettingsTile(
-                    leading: const _SettingsIcon(icon: Icons.key_outlined),
-                    title: 'Rollen & Berechtigungen',
-                    subtitle: 'Berechtigungen je Rolle konfigurieren',
-                    onTap: () => context.push('/settings/role-permissions'),
-                  ),
-              ],
-            ),
-            const SizedBox(height: AppDimensions.paddingM),
-          ],
-          // END SETTINGS_EXT
-          // ORG_PLANS: Planung (Ablaufpläne) & Organisation
-          const OrgPlansSettingsSection(),
-
-          // SETTINGS2: Ionic "Auswertung & Daten" (not for applicants)
-          if (!role.isApplicant) ...[
-            _SettingsSection(
-              title: 'Auswertung & Daten',
-              children: [
-                _SettingsTile(
-                  leading: const _SettingsIcon(icon: Icons.calendar_month),
-                  title: 'Kalender-Abo',
-                  subtitle: 'Termine im eigenen Kalender anzeigen',
-                  onTap: () => context.push('/settings/calendar'),
-                ),
-                if (role.isAdmin || role.isResponsible) ...[
-                  _SettingsTile(
-                    leading: const _SettingsIcon(icon: Icons.bar_chart),
-                    title: 'Statistiken',
-                    onTap: () => context.push('/statistics'),
-                  ),
-                  _SettingsTile(
-                    leading: const _SettingsIcon(icon: Icons.download_outlined),
-                    title: 'Exportieren',
-                    onTap: () => context.push('/export'),
+            // ============ STIMMFÜHRER ============
+            if (isVoiceLeader && !isGeneral)
+              SettingsListSection(
+                icon: Icons.music_note_outlined,
+                title: 'Stimmführer',
+                children: [
+                  SettingsListTile(
+                    icon: Icons.people_outline,
+                    title: 'Meine Stimme',
+                    onTap: () => context.push('/settings/voice-leader'),
                   ),
                 ],
-              ],
-            ),
-            const SizedBox(height: AppDimensions.paddingM),
-          ],
+              ),
 
-          // App settings section - for users with notification permission
-          if (role.canSeeNotifications) ...[
-            _SettingsSection(
-              title: 'App-Einstellungen',
-              children: [
-                _SettingsTile(
-                  leading: const _SettingsIcon(icon: Icons.notifications),
-                  title: 'Benachrichtigungen',
-                  subtitle: 'Push-Benachrichtigungen konfigurieren',
-                  onTap: () => context.push('/settings/notifications'),
-                ),
-                // General settings only for Admin/Responsible
-                if (role.isAdmin || role.isResponsible)
-                  _SettingsTile(
-                    leading: const _SettingsIcon(icon: Icons.tune),
-                    title: 'Allgemein',
-                    subtitle: 'Sprache, Theme und weitere Optionen',
+            // ============ INSTANZ-VERWALTUNG ============
+            if (isAdmin)
+              SettingsListSection(
+                icon: Icons.business_outlined,
+                title: 'Instanz-Verwaltung',
+                children: [
+                  SettingsListTile(
+                    icon: Icons.settings_outlined,
+                    title: 'Einstellungen',
                     onTap: () => context.push('/settings/general'),
                   ),
-                _SettingsTile(
-                  leading: const _SettingsIcon(icon: Icons.feedback),
-                  title: 'Feedback & Hilfe',
-                  subtitle: 'Fragen stellen oder Feedback geben',
-                  onTap: () => showFeedbackSheet(context),
-                ),
-                _SettingsTile(
-                  leading: _SettingsIcon(icon: Icons.telegram, color: const Color(0xFF0088CC)),
-                  title: 'Telegram Support',
-                  subtitle: 'Direkt per Telegram kontaktieren',
-                  onTap: () => _openTelegramSupport(context),
-                ),
-              ],
-            ),
-            const SizedBox(height: AppDimensions.paddingM),
-          ],
-
-          // DASHBOARD: Dashboard konfigurieren (Admin/Responsible) +
-          // Administration (super developer only)
-          if (role.isAdmin ||
-              role.isResponsible ||
-              ref.watch(isSuperDeveloperProvider)) ...[
-            _SettingsSection(
-              title: 'Dashboard',
-              children: [
-                if (role.isAdmin || role.isResponsible)
-                  _SettingsTile(
-                    leading: const _SettingsIcon(icon: Icons.grid_view),
+                  SettingsListTile(
+                    icon: Icons.people_outline,
+                    title: 'Gruppen',
+                    onTap: () => context.push('/settings/instruments'),
+                  ),
+                  if (tenant?.maintainTeachers == true)
+                    SettingsListTile(
+                      icon: Icons.school_outlined,
+                      title: 'Lehrer',
+                      onTap: () => context.push('/settings/teachers'),
+                    ),
+                  SettingsListTile(
+                    icon: Icons.key_outlined,
+                    title: 'Rollen & Berechtigungen',
+                    onTap: () => context.push('/settings/role-permissions'),
+                  ),
+                  SettingsListTile(
+                    icon: Icons.grid_view_outlined,
                     title: 'Dashboard konfigurieren',
                     onTap: () => context.push('/settings/dashboard'),
                   ),
-                if (ref.watch(isSuperDeveloperProvider))
-                  _SettingsTile(
-                    leading: const _SettingsIcon(icon: Icons.construction),
-                    title: 'Administration',
-                    onTap: () => context.push('/settings/administration'),
-                  ),
-              ],
-            ),
-            const SizedBox(height: AppDimensions.paddingM),
-          ],
+                ],
+              ),
 
-          // Account section - for all users
-          _SettingsSection(
-            title: 'Konto',
-            children: [
-              _SettingsTile(
-                leading: const _SettingsIcon(icon: Icons.person),
-                title: 'Profil',
-                subtitle: 'Persönliche Daten bearbeiten',
-                onTap: () => context.push('/settings/profile'),
+            // ============ KOMMUNIKATION ============
+            if (isAdmin)
+              SettingsListSection(
+                icon: Icons.campaign_outlined,
+                title: 'Kommunikation',
+                children: [
+                  SettingsListTile(
+                    icon: Icons.mail_outline,
+                    title: 'Mitteilungen',
+                    subtitle: 'Nachricht an alle senden',
+                    onTap: () => context.push('/settings/messages'),
+                  ),
+                ],
               ),
-              // LEGAL_HELP: help center (Ionic settings → Hilfe)
-              _SettingsTile(
-                leading: const _SettingsIcon(icon: Icons.help_outline),
-                title: 'Hilfe',
-                subtitle: 'Anleitungen und Glossar',
-                onTap: () => context.push('/settings/help'),
+
+            // ============ BENUTZER & ROLLEN ============
+            if (isAdmin)
+              SettingsListSection(
+                icon: Icons.supervised_user_circle_outlined,
+                title: 'Benutzer & Rollen',
+                children: [
+                  if (!isDemo && isSuperAdmin)
+                    SettingsListTile(
+                      icon: Icons.verified_user_outlined,
+                      title: 'Administratoren',
+                      detail: false,
+                      trailing: SettingsCountBadge(ref.watch(adminsProvider).valueOrNull?.length ?? 0),
+                      onTap: () => showAdminsSheet(context),
+                    ),
+                  if (parentsEnabled)
+                    SettingsListTile(
+                      icon: Icons.favorite_border,
+                      title: 'Eltern',
+                      detail: false,
+                      trailing: SettingsCountBadge(ref.watch(parentsProvider).valueOrNull?.length ?? 0),
+                      onTap: () => context.push('/settings/parents'),
+                    ),
+                  SettingsListTile(
+                    icon: Icons.visibility_outlined,
+                    title: 'Beobachter',
+                    detail: false,
+                    trailing: SettingsCountBadge(ref.watch(viewersProvider).valueOrNull?.length ?? 0),
+                    onTap: () => context.push('/settings/viewers'),
+                  ),
+                  // Flutter: Benutzerverwaltung (Rollen der Accounts) — in
+                  // Ionic über die Person; hier im selben Block.
+                  SettingsListTile(
+                    icon: Icons.manage_accounts_outlined,
+                    title: 'Benutzer',
+                    onTap: () => context.push('/settings/users'),
+                  ),
+                  if (playersWithoutAccount > 0)
+                    SettingsListTile(
+                      icon: Icons.person_add_alt_outlined,
+                      iconColor: AppColors.warning,
+                      title: 'Fehlende Accounts anlegen',
+                      detail: false,
+                      trailing: SettingsCountBadge(playersWithoutAccount, color: AppColors.warning),
+                      onTap: () => context.push('/settings/batch-accounts'),
+                    ),
+                ],
               ),
-              // PROFILE_OFFLINE: account actions (Ionic system section)
-              if (!role.canSeeNotifications)
-                _SettingsTile(
-                  leading: const _SettingsIcon(icon: Icons.notifications),
+
+            // ============ WERKE & PROBEN ============
+            if (!isGeneral && !isApplicant)
+              SettingsListSection(
+                icon: Icons.music_note_outlined,
+                title: 'Werke & Proben',
+                children: [
+                  SettingsListTile(
+                    icon: Icons.library_music_outlined,
+                    title: 'Werke',
+                    onTap: () => context.push('/settings/songs'),
+                  ),
+                  if (isAdmin || isHelper)
+                    SettingsListTile(
+                      icon: Icons.schedule,
+                      title: 'Werkhistorie',
+                      detail: false,
+                      onTap: () => context.push('/history'),
+                    ),
+                  if (canAccessFiles)
+                    SettingsListTile(
+                      icon: Icons.folder_outlined,
+                      title: 'Dateiablage',
+                      onTap: () => context.push('/settings/files'),
+                    ),
+                ],
+              ),
+
+            // Allgemeine Instanzen: Dateiablage steht allein
+            if (isGeneral && canAccessFiles)
+              SettingsListSection(
+                icon: Icons.folder_outlined,
+                title: 'Dateien',
+                children: [
+                  SettingsListTile(
+                    icon: Icons.folder_outlined,
+                    title: 'Dateiablage',
+                    onTap: () => context.push('/settings/files'),
+                  ),
+                ],
+              ),
+
+            // ============ PLANUNG (inkl. Teamorganisation) ============
+            if (showPlanning || showTeam)
+              SettingsListSection(
+                icon: Icons.list,
+                title: 'Planung',
+                children: [
+                  if (showPlanning) ...[
+                    SettingsListTile(
+                      icon: Icons.list,
+                      title: 'Ablaufpläne',
+                      detail: false,
+                      onTap: () => context.push('/planning'),
+                    ),
+                    SettingsListTile(
+                      icon: Icons.calendar_today_outlined,
+                      title: 'Ad-Hoc Ablaufplanung',
+                      detail: false,
+                      onTap: () => context.push('/settings/planung'),
+                    ),
+                    if (org != null)
+                      SettingsListTile(
+                        icon: Icons.description_outlined,
+                        title: 'Planvorlagen & Felder',
+                        detail: false,
+                        onTap: () => context.push('/settings/org-settings/planning-templates'),
+                      ),
+                  ],
+                  if (showTeam) ...[
+                    if (isTeamLeader)
+                      SettingsListTile(
+                        icon: Icons.supervised_user_circle_outlined,
+                        title: 'Teamorganisation',
+                        detail: false,
+                        onTap: () => openTeamOrg('tasks'),
+                      )
+                    else ...[
+                      SettingsListTile(
+                        icon: Icons.check_circle_outline,
+                        title: 'Meine Aufgaben',
+                        detail: false,
+                        onTap: () => openTeamOrg('tasks'),
+                      ),
+                      if (inTeamCircle) ...[
+                        SettingsListTile(
+                          icon: Icons.lightbulb_outline,
+                          title: 'Thema vorschlagen',
+                          detail: false,
+                          onTap: () => openTeamOrg('topics'),
+                        ),
+                        SettingsListTile(
+                          icon: Icons.description_outlined,
+                          title: 'Protokolle',
+                          detail: false,
+                          onTap: () => openTeamOrg('protocols'),
+                        ),
+                      ],
+                    ],
+                  ],
+                ],
+              ),
+
+            // ============ ORGANISATION ============
+            if (isAdmin)
+              SettingsListSection(
+                icon: Icons.business_outlined,
+                title: 'Organisation',
+                children: [
+                  SettingsListTile(
+                    icon: Icons.settings_outlined,
+                    title: org?.name ?? 'Organisation',
+                    trailing: org == null
+                        ? const Text('Nicht verknüpft', style: TextStyle(color: AppColors.medium))
+                        : null,
+                    onTap: () => context.push('/settings/org-settings'),
+                  ),
+                ],
+              ),
+
+            // ============ AUSWERTUNG & DATEN ============
+            if (!isApplicant)
+              SettingsListSection(
+                icon: Icons.bar_chart,
+                title: 'Auswertung & Daten',
+                children: [
+                  SettingsListTile(
+                    icon: Icons.calendar_today_outlined,
+                    title: 'Kalender abonnieren',
+                    detail: false,
+                    onTap: () => showCalendarSubscriptionDialog(context, ref),
+                  ),
+                  if (isAdmin) ...[
+                    SettingsListTile(
+                      icon: Icons.insert_chart_outlined,
+                      title: 'Statistiken',
+                      detail: false,
+                      onTap: () => context.push('/statistics'),
+                    ),
+                    SettingsListTile(
+                      icon: Icons.download_outlined,
+                      title: 'Export',
+                      detail: false,
+                      onTap: () => context.push('/export'),
+                    ),
+                    // MISC2: Urkunden generieren (Vorkurs tenants only)
+                    if (isVorkursTenantName(tenant?.shortName, tenant?.longName))
+                      SettingsListTile(
+                        icon: Icons.workspace_premium_outlined,
+                        title: 'Urkunden generieren',
+                        detail: false,
+                        onTap: () => generateVorkursCertificates(context, ref),
+                      ),
+                    Builder(builder: (context) {
+                      final left = ref.watch(leftPlayersProvider).valueOrNull?.length ?? 0;
+                      return SettingsListTile(
+                        icon: Icons.archive_outlined,
+                        title: 'Archiv',
+                        detail: false,
+                        trailing: left > 0 ? SettingsCountBadge(left) : null,
+                        onTap: () => context.push('/settings/left'),
+                      );
+                    }),
+                  ],
+                ],
+              ),
+
+            // Applicant status hint (Flutter)
+            if (isApplicant) const _ApplicantHint(),
+
+            // ============ SYSTEM ============
+            SettingsListSection(
+              icon: Icons.settings_outlined,
+              title: 'System',
+              footer: Center(
+                child: TextButton(
+                  onPressed: () => context.push('/settings/delete-account'),
+                  style: TextButton.styleFrom(foregroundColor: AppColors.medium),
+                  child: const Text('Konto löschen'),
+                ),
+              ),
+              children: [
+                SettingsListTile(
+                  icon: Icons.apps,
+                  title: 'Instanz wechseln',
+                  subtitle: tenant?.longName,
+                  detail: false,
+                  onTap: () => context.go('/tenants'),
+                ),
+                SettingsListTile(
+                  icon: Icons.notifications_outlined,
                   title: 'Benachrichtigungen',
                   onTap: () => context.push('/settings/notifications'),
                 ),
-              _SettingsTile(
-                leading: const _SettingsIcon(icon: Icons.key),
-                title: 'Passwort ändern',
-                onTap: () => showChangePasswordDialog(context),
-              ),
-              _SettingsTile(
-                leading: const _SettingsIcon(icon: Icons.alternate_email),
-                title: 'E-Mail ändern',
-                onTap: () => showChangeEmailDialog(context),
-              ),
-              _SettingsTile(
-                leading: _SettingsIcon(
-                  icon: Icons.logout,
-                  color: AppColors.danger,
+                SettingsListTile(
+                  icon: Icons.key_outlined,
+                  title: 'Passwort ändern',
+                  detail: false,
+                  onTap: () => showChangePasswordDialog(context),
                 ),
-                title: 'Abmelden',
-                titleColor: AppColors.danger,
-                onTap: () async {
-                  // Store refs before async gap to avoid using ref after dispose
-                  final supabase = ref.read(supabaseClientProvider);
-                  final tenantNotifier =
-                      ref.read(currentTenantProvider.notifier);
-
-                  final confirmed = await showDialog<bool>(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                      title: const Text('Abmelden'),
-                      content:
-                          const Text('Möchtest du dich wirklich abmelden?'),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.of(context).pop(false),
-                          child: const Text('Abbrechen'),
-                        ),
-                        TextButton(
-                          onPressed: () => Navigator.of(context).pop(true),
-                          child: const Text('Abmelden'),
-                        ),
-                      ],
-                    ),
-                  );
-
-                  if (confirmed == true && context.mounted) {
+                // Flutter: E-Mail ändern (neben Passwort ändern)
+                SettingsListTile(
+                  icon: Icons.alternate_email,
+                  title: 'E-Mail ändern',
+                  detail: false,
+                  onTap: () => showChangeEmailDialog(context),
+                ),
+                // LEGAL_HELP: help center
+                SettingsListTile(
+                  icon: Icons.help_outline,
+                  title: 'Hilfe',
+                  onTap: () => context.push('/settings/help'),
+                ),
+                SettingsListTile(
+                  icon: Icons.chat_bubble_outline,
+                  title: 'Feedback geben',
+                  detail: false,
+                  onTap: () => showFeedbackSheet(context),
+                ),
+                SettingsListTile(
+                  icon: Icons.auto_awesome_outlined,
+                  title: 'Was ist neu?',
+                  detail: false,
+                  trailing: _VersionBadge(version: AppConstants.appVersion),
+                  onTap: () => showVersionHistorySheet(context),
+                ),
+                if (isSuperDeveloper)
+                  SettingsListTile(
+                    icon: Icons.construction_outlined,
+                    title: 'Administration',
+                    onTap: () => context.push('/settings/administration'),
+                  ),
+                SettingsListTile(
+                  icon: Icons.logout,
+                  title: 'Ausloggen',
+                  detail: false,
+                  background: AppColors.danger,
+                  onTap: () async {
+                    // Ionic logs out directly (no confirmation)
+                    final supabase = ref.read(supabaseClientProvider);
+                    final tenantNotifier = ref.read(currentTenantProvider.notifier);
                     await supabase.auth.signOut();
                     await tenantNotifier.clearTenant();
-                    if (context.mounted) {
-                      context.go('/login');
-                    }
-                  }
-                },
-              ),
-            ],
-          ),
-          // LEGAL_HELP: DSGVO account deletion (Ionic settings → Konto löschen)
-          Center(
-            child: TextButton(
-              onPressed: () => context.push('/settings/delete-account'),
-              style: TextButton.styleFrom(foregroundColor: AppColors.medium),
-              child: const Text('Konto löschen'),
+                    if (context.mounted) context.go('/login');
+                  },
+                ),
+              ],
+            ),
+            const SizedBox(height: AppDimensions.paddingL),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Ionic `ion-card color="warning"` "X ausstehende Registrierung(en)".
+class _PendingPersonsCard extends StatelessWidget {
+  const _PendingPersonsCard({required this.count});
+
+  final int count;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AppDimensions.paddingM),
+      child: Card(
+        margin: EdgeInsets.zero,
+        color: AppColors.warning,
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: () => context.push('/settings/pending'),
+          child: Padding(
+            padding: const EdgeInsets.all(AppDimensions.paddingM),
+            child: Row(
+              children: [
+                const Icon(Icons.person_add, size: 32, color: Colors.black87),
+                const SizedBox(width: AppDimensions.paddingM),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '$count ausstehende Registrierung(en)',
+                        style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),
+                      ),
+                      const SizedBox(height: 2),
+                      const Text(
+                        'Personen warten auf Genehmigung',
+                        style: TextStyle(color: Colors.black87),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: AppDimensions.paddingL),
+        ),
+      ),
+    );
+  }
+}
 
-          // Applicant status hint
-          if (role.isApplicant) ...[
-            Card(
-              color: AppColors.warning.withValues(alpha: 0.1),
-              child: Padding(
-                padding: const EdgeInsets.all(AppDimensions.paddingM),
-                child: Row(
+class _VersionBadge extends StatelessWidget {
+  const _VersionBadge({required this.version});
+
+  final String version;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      decoration: BoxDecoration(
+        color: AppColors.primary,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Text(
+        version,
+        style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600),
+      ),
+    );
+  }
+}
+
+class _ApplicantHint extends StatelessWidget {
+  const _ApplicantHint();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AppDimensions.paddingM),
+      child: Card(
+        margin: EdgeInsets.zero,
+        color: AppColors.warning.withValues(alpha: 0.1),
+        child: Padding(
+          padding: const EdgeInsets.all(AppDimensions.paddingM),
+          child: Row(
+            children: [
+              const Icon(Icons.hourglass_empty, color: AppColors.warning),
+              const SizedBox(width: AppDimensions.paddingM),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(Icons.hourglass_empty, color: AppColors.warning),
-                    const SizedBox(width: AppDimensions.paddingM),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Mitgliedschaft wird geprüft',
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleSmall
-                                ?.copyWith(
-                                  fontWeight: FontWeight.w600,
-                                ),
-                          ),
-                          const SizedBox(height: AppDimensions.paddingXS),
-                          Text(
-                            'Ein Administrator wird deine Registrierung prüfen.',
-                            style:
-                                Theme.of(context).textTheme.bodySmall?.copyWith(
-                                      color: AppColors.medium,
-                                    ),
-                          ),
-                        ],
-                      ),
+                    Text(
+                      'Mitgliedschaft wird geprüft',
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
+                    ),
+                    const SizedBox(height: AppDimensions.paddingXS),
+                    Text(
+                      'Ein Administrator wird deine Registrierung prüfen.',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.medium),
                     ),
                   ],
                 ),
               ),
-            ),
-            const SizedBox(height: AppDimensions.paddingL),
-          ],
-
-          // App info - tappable to show version history
-          GestureDetector(
-            onTap: () => showVersionHistorySheet(context),
-            child: Center(
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Icons.auto_awesome,
-                          size: 16, color: AppColors.warning),
-                      const SizedBox(width: AppDimensions.paddingXS),
-                      Text(
-                        'Was ist neu?',
-                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                              color: AppColors.primary,
-                              fontWeight: FontWeight.w500,
-                            ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: AppDimensions.paddingXS),
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
-                    decoration: BoxDecoration(
-                      color: AppColors.primary,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      'v${AppConstants.appVersion}',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: AppDimensions.paddingL),
-        ],
-      ),
-      ),
-    );
-  }
-}
-
-void _openTelegramSupport(BuildContext context) {
-  launchUrl(
-    Uri.parse('https://t.me/attendix_bot'),
-    mode: LaunchMode.externalApplication,
-  );
-}
-
-class _SettingsSection extends StatelessWidget {
-  const _SettingsSection({
-    required this.title,
-    required this.children,
-  });
-
-  final String title;
-  final List<Widget> children;
-
-  @override
-  Widget build(BuildContext context) {
-    // Filter out null children (from conditional rendering)
-    final filteredChildren = children.whereType<Widget>().toList();
-    if (filteredChildren.isEmpty) return const SizedBox.shrink();
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppDimensions.paddingS,
-            vertical: AppDimensions.paddingXS,
-          ),
-          child: Text(
-            title,
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  color: AppColors.medium,
-                  fontWeight: FontWeight.w600,
-                ),
+            ],
           ),
         ),
-        Card(
-          margin: EdgeInsets.zero,
-          child: Column(
-            children: filteredChildren,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _SettingsTile extends StatelessWidget {
-  const _SettingsTile({
-    required this.leading,
-    required this.title,
-    this.subtitle,
-    this.trailing,
-    this.onTap,
-    this.titleColor,
-  });
-
-  final Widget leading;
-  final String title;
-  final String? subtitle;
-  final Widget? trailing;
-  final VoidCallback? onTap;
-  final Color? titleColor;
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      leading: leading,
-      title: Text(
-        title,
-        style: TextStyle(
-          fontWeight: FontWeight.w500,
-          color: titleColor,
-        ),
-      ),
-      subtitle: subtitle != null
-          ? Text(
-              subtitle!,
-              style: TextStyle(
-                fontSize: 13,
-                color: AppColors.medium,
-              ),
-            )
-          : null,
-      trailing: trailing ??
-          (onTap != null
-              ? const Icon(Icons.chevron_right, color: AppColors.medium)
-              : null),
-      onTap: onTap,
-    );
-  }
-}
-
-class _SettingsIcon extends StatelessWidget {
-  const _SettingsIcon({
-    required this.icon,
-    this.color,
-  });
-
-  final IconData icon;
-  final Color? color;
-
-  @override
-  Widget build(BuildContext context) {
-    final iconColor = color ?? AppColors.primary;
-    return Container(
-      width: 40,
-      height: 40,
-      decoration: BoxDecoration(
-        color: iconColor.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(AppDimensions.borderRadiusS),
-      ),
-      child: Icon(
-        icon,
-        color: iconColor,
-        size: 22,
       ),
     );
   }

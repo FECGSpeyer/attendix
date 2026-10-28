@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/constants/app_constants.dart';
 import '../../../core/providers/feedback_providers.dart';
@@ -143,18 +144,40 @@ class _FeedbackSheetState extends ConsumerState<_FeedbackSheet>
               Padding(
                 padding: const EdgeInsets.all(AppDimensions.paddingM),
                 child: Text(
-                  'Feedback & Hilfe',
+                  'Hilfe & Feedback',
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                 ),
+              ),
+              // UX_SETTINGS: Ionic "Per Telegram kontaktieren" + "oder"
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM),
+                child: Card(
+                  margin: EdgeInsets.zero,
+                  child: ListTile(
+                    leading: const Icon(Icons.send_outlined, color: AppColors.primary),
+                    title: const Text('Per Telegram kontaktieren',
+                        style: TextStyle(color: AppColors.primary)),
+                    onTap: () {
+                      try {
+                        launchUrl(Uri.parse('https://t.me/Eckstaedt'),
+                            mode: LaunchMode.externalApplication);
+                      } catch (_) {}
+                    },
+                  ),
+                ),
+              ),
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: AppDimensions.paddingS),
+                child: Text('oder', style: TextStyle(color: AppColors.medium)),
               ),
               // Tab bar
               TabBar(
                 controller: _tabController,
                 onTap: (_) => _resetForm(),
                 tabs: const [
-                  Tab(text: 'Hilfe / Frage'),
+                  Tab(text: 'Hilfe/Frage'),
                   Tab(text: 'Feedback'),
                 ],
               ),
@@ -202,8 +225,8 @@ class _FeedbackSheetState extends ConsumerState<_FeedbackSheet>
             controller: _phoneController,
             keyboardType: TextInputType.phone,
             decoration: const InputDecoration(
-              labelText: 'Handynummer (optional)',
-              hintText: 'Für Rückfragen',
+              labelText: 'Deine Handynummer (optional)',
+              helperText: 'Dient nur zur Kontaktaufnahme bei Rückfragen',
               border: OutlineInputBorder(),
               prefixIcon: Icon(Icons.phone),
             ),
@@ -223,7 +246,7 @@ class _FeedbackSheetState extends ConsumerState<_FeedbackSheet>
                       ),
                     )
                   : const Icon(Icons.send),
-              label: const Text('Frage senden'),
+              label: const Text('Absenden'),
             ),
           ),
         ],
@@ -274,7 +297,7 @@ class _FeedbackSheetState extends ConsumerState<_FeedbackSheet>
           const SizedBox(height: AppDimensions.paddingM),
           // Anonymous toggle
           SwitchListTile(
-            title: const Text('Anonym senden'),
+            title: const Text('Anonym'),
             subtitle: const Text(
               'Deine Daten werden nicht mitgesendet',
               style: TextStyle(fontSize: 12),
@@ -289,8 +312,8 @@ class _FeedbackSheetState extends ConsumerState<_FeedbackSheet>
               controller: _phoneController,
               keyboardType: TextInputType.phone,
               decoration: const InputDecoration(
-                labelText: 'Handynummer (optional)',
-                hintText: 'Für Rückfragen',
+                labelText: 'Deine Handynummer (optional)',
+                helperText: 'Dient nur zur Kontaktaufnahme bei Rückfragen',
                 border: OutlineInputBorder(),
                 prefixIcon: Icon(Icons.phone),
               ),
@@ -311,7 +334,7 @@ class _FeedbackSheetState extends ConsumerState<_FeedbackSheet>
                       ),
                     )
                   : const Icon(Icons.send),
-              label: const Text('Feedback senden'),
+              label: const Text('Absenden'),
             ),
           ),
         ],
