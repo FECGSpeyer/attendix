@@ -4,10 +4,10 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/player_providers.dart';
+import '../../../../core/providers/realtime_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/person/person.dart';
-import '../../../people/presentation/pages/people_list_page.dart';
 
 /// Provider for left (archived) players using repository
 final leftPlayersProvider = FutureProvider<List<Person>>((ref) async {
@@ -120,7 +120,8 @@ class LeftPlayersPage extends ConsumerWidget {
         await repository.reactivatePlayer(player);
 
         ref.invalidate(leftPlayersProvider);
-        ref.invalidate(peopleListProvider);
+        ref.invalidate(realtimePlayersProvider);
+        ref.invalidate(playersProvider);
 
         if (context.mounted) {
           ToastHelper.showSuccess(context, '${player.fullName} wurde reaktiviert');

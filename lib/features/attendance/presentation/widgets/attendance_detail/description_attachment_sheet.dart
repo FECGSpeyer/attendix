@@ -108,7 +108,8 @@ class _DescriptionAttachmentEditorState extends ConsumerState<DescriptionAttachm
     setState(() => _busy = true);
     try {
       final repo = ref.read(attendanceRepositoryWithTenantProvider);
-      final uploaded = await repo.uploadAttachment(_id, file.bytes!, file.name);
+      final uploaded = await repo.uploadAttachment(_id, file.bytes!, file.name,
+          previousFileName: _attachmentName);
       if (!mounted) return;
       setState(() {
         _attachmentUrl = uploaded.url;

@@ -32,7 +32,6 @@ import '../../features/settings/presentation/pages/user_management_page.dart';
 import '../../features/settings/presentation/pages/pending_players_page.dart';
 import '../../features/settings/presentation/pages/batch_account_creation_page.dart';
 import '../../features/settings/presentation/pages/left_players_page.dart';
-import '../../features/settings/presentation/pages/calendar_subscription_page.dart';
 import '../../features/settings/presentation/pages/viewers_page.dart';
 import '../../features/settings/presentation/pages/parents_page.dart';
 import '../../features/notifications/presentation/pages/notifications_page.dart';
@@ -48,7 +47,6 @@ import '../../features/self_service/presentation/pages/signout_page.dart'; // AT
 import '../../features/statistics/presentation/pages/statistics_page.dart';
 import '../../features/planning/presentation/pages/planning_page.dart';
 import '../../features/history/presentation/pages/history_page.dart';
-import '../../features/profile/presentation/pages/profile_page.dart';
 // TEAM_ORG: Teamorganisation replaces the old meetings pages (kept, unlinked)
 import '../../features/team_organization/presentation/pages/agenda_item_detail_page.dart';
 import '../../features/team_organization/presentation/pages/protocol_page.dart';
@@ -576,10 +574,11 @@ final routerProvider = Provider<GoRouter>((ref) {
               state: state,
             ),
             routes: [
+              // REVIEW_FIX: profile lives on the settings page (ProfileHeroCard)
               GoRoute(
                 path: 'profile',
                 name: 'profile',
-                builder: (context, state) => const ProfilePage(),
+                redirect: (context, state) => '/settings',
               ),
               GoRoute(
                 path: 'songs',
@@ -716,10 +715,11 @@ final routerProvider = Provider<GoRouter>((ref) {
                 name: 'leftPlayers',
                 builder: (context, state) => const LeftPlayersPage(),
               ),
+              // REVIEW_FIX: Kalender abonnieren is a dialog on the settings page
               GoRoute(
                 path: 'calendar',
                 name: 'calendarSubscription',
-                builder: (context, state) => const CalendarSubscriptionPage(),
+                redirect: (context, state) => '/settings',
               ),
               GoRoute(
                 path: 'voice-leader',

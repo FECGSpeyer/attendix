@@ -5,6 +5,7 @@ import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/utils/color_utils.dart';
 import '../../../../../data/models/attendance/attendance.dart';
+import '../../../../../core/utils/date_helper.dart';
 
 /// Accordion widget for displaying and editing general attendance info
 /// Uses StatefulWidget to properly manage TextEditingController lifecycle
@@ -358,6 +359,6 @@ class _GeneralInfoAccordionState extends State<GeneralInfoAccordion> {
   /// "19:00" from "19:00:00"; Ionic shows the datetime button value.
   String _formatTime(String? value) {
     if (value == null || value.isEmpty) return '--:--';
-    return value.length >= 5 ? value.substring(0, 5) : value;
+    return DateHelper.hhmm(value);
   }
 }

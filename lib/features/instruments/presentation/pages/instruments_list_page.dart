@@ -381,81 +381,99 @@ Future<void> _showAddGroupSheet(
   WidgetRef ref,
   List<GroupCategory> categories,
 ) async {
-  final controller = TextEditingController();
-  int? categoryId;
-  try {
-    final added = await showModalBottomSheet<bool>(
-      context: context,
-      isScrollControlled: true,
-      showDragHandle: true,
-      builder: (ctx) => StatefulBuilder(
-        builder: (ctx, setSheetState) => Padding(
-          padding: EdgeInsets.only(
-            left: AppDimensions.paddingM,
-            right: AppDimensions.paddingM,
-            bottom:
-                MediaQuery.of(ctx).viewInsets.bottom + AppDimensions.paddingM,
+  final added = await showModalBottomSheet<bool>(
+    context: context,
+    isScrollControlled: true,
+    showDragHandle: true,
+    builder: (ctx) => _AddGroupSheet(categories: categories),
+  );
+  if (added == true) ref.invalidate(playerCountsForGroupsProvider);
+  if (added == false && context.mounted) {
+    ToastHelper.showError(context, 'Fehler beim Hinzufügen');
+  }
+}
+
+/// Owns its controller so it is disposed after the sheet's exit animation.
+class _AddGroupSheet extends ConsumerStatefulWidget {
+  const _AddGroupSheet({required this.categories});
+
+  final List<GroupCategory> categories;
+
+  @override
+  ConsumerState<_AddGroupSheet> createState() => _AddGroupSheetState();
+}
+
+class _AddGroupSheetState extends ConsumerState<_AddGroupSheet> {
+  final _controller = TextEditingController();
+  int? _categoryId;
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  Future<void> _add() async {
+    final name = _controller.text.trim();
+    if (name.isEmpty) {
+      ToastHelper.showError(context, 'Bitte gib einen Namen an');
+      return;
+    }
+    final created =
+        await ref.read(groupNotifierProvider.notifier).createGroup({
+      'name': name,
+      'maingroup': false,
+      if (_categoryId != null) 'category': _categoryId,
+    });
+    if (mounted) Navigator.pop(context, created != null);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final categories = widget.categories;
+    return Padding(
+      padding: EdgeInsets.only(
+        left: AppDimensions.paddingM,
+        right: AppDimensions.paddingM,
+        bottom: MediaQuery.of(context).viewInsets.bottom + AppDimensions.paddingM,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text('Gruppe hinzufügen',
+              style: Theme.of(context).textTheme.titleLarge),
+          const SizedBox(height: AppDimensions.paddingM),
+          TextField(
+            controller: _controller,
+            autofocus: true,
+            textCapitalization: TextCapitalization.sentences,
+            decoration: const InputDecoration(
+              labelText: 'Gruppe',
+              hintText: 'z.B. Mädchen, Posaune, Alt 1, etc.',
+            ),
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text('Gruppe hinzufügen',
-                  style: Theme.of(ctx).textTheme.titleLarge),
-              const SizedBox(height: AppDimensions.paddingM),
-              TextField(
-                controller: controller,
-                autofocus: true,
-                textCapitalization: TextCapitalization.sentences,
-                decoration: const InputDecoration(
-                  labelText: 'Gruppe',
-                  hintText: 'z.B. Mädchen, Posaune, Alt 1, etc.',
-                ),
-              ),
-              if (categories.isNotEmpty) ...[
-                const SizedBox(height: AppDimensions.paddingM),
-                DropdownButtonFormField<int?>(
-                  value: categoryId,
-                  decoration: const InputDecoration(labelText: 'Kategorie'),
-                  items: [
-                    const DropdownMenuItem<int?>(
-                        value: null, child: Text('Keine')),
-                    for (final c in categories)
-                      DropdownMenuItem<int?>(value: c.id, child: Text(c.name)),
-                  ],
-                  onChanged: (v) => setSheetState(() => categoryId = v),
-                ),
+          if (categories.isNotEmpty) ...[
+            const SizedBox(height: AppDimensions.paddingM),
+            DropdownButtonFormField<int?>(
+              value: _categoryId,
+              decoration: const InputDecoration(labelText: 'Kategorie'),
+              items: [
+                const DropdownMenuItem<int?>(value: null, child: Text('Keine')),
+                for (final c in categories)
+                  DropdownMenuItem<int?>(value: c.id, child: Text(c.name)),
               ],
-              const SizedBox(height: AppDimensions.paddingL),
-              FilledButton(
-                onPressed: () async {
-                  final name = controller.text.trim();
-                  if (name.isEmpty) {
-                    ToastHelper.showError(ctx, 'Bitte gib einem Namen an');
-                    return;
-                  }
-                  final created = await ref
-                      .read(groupNotifierProvider.notifier)
-                      .createGroup({
-                    'name': name,
-                    'maingroup': false,
-                    if (categoryId != null) 'category': categoryId,
-                  });
-                  if (ctx.mounted) Navigator.pop(ctx, created != null);
-                },
-                child: const Text('Hinzufügen'),
-              ),
-            ],
+              onChanged: (v) => setState(() => _categoryId = v),
+            ),
+          ],
+          const SizedBox(height: AppDimensions.paddingL),
+          FilledButton(
+            onPressed: _add,
+            child: const Text('Hinzufügen'),
           ),
-        ),
+        ],
       ),
     );
-    if (added == true) ref.invalidate(playerCountsForGroupsProvider);
-    if (added == false && context.mounted) {
-      ToastHelper.showError(context, 'Fehler beim Hinzufügen');
-    }
-  } finally {
-    controller.dispose();
   }
 }
 

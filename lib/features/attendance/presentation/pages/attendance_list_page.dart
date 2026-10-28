@@ -318,10 +318,13 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
           }
 
           // UX_ATT: "{present} von {total} anwesend" of past rows
+          // Hidden until the counts are loaded (no "0 von 0" flash).
           final listCounts =
-              ref.watch(attendanceListStatusCountsProvider).valueOrNull ?? const {};
-          String countText(Attendance att) {
-            final total = listCounts[att.id]?.total ?? 0;
+              ref.watch(attendanceListStatusCountsProvider).valueOrNull;
+          String? countText(Attendance att) {
+            final counts = listCounts?[att.id];
+            if (counts == null) return null;
+            final total = counts.total;
             final present = ((att.percentage ?? 0) / 100 * total).round();
             return '$present von $total anwesend';
           }
@@ -450,7 +453,9 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
                         EventRow(
                           date: att.date,
                           title: title(att),
-                          subtitle: '${readableDate(att)} · ${countText(att)}',
+                          subtitle: [readableDate(att), countText(att)]
+                              .whereType<String>()
+                              .join(' · '),
                           past: true,
                           highlight: highlightedTypeIds.contains(att.typeId),
                           onTap: () => _navigateToDetail(att.id!),

@@ -5,9 +5,11 @@ import 'package:intl/intl.dart';
 import '../../../../core/config/supabase_config.dart';
 import '../../../../core/providers/admin_providers.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/repositories/admin_repository.dart';
 import '../../../../data/repositories/base_repository.dart';
+import '../../../auth/data/auth_flow_service.dart';
 
 /// SETTINGS2: Ionic settings "Administratoren" modal (super admins only):
 /// list with "Erstellt am", tap to remove, + to add an admin by e-mail.
@@ -30,36 +32,29 @@ class _AdminsSheet extends ConsumerWidget {
   const _AdminsSheet();
 
   Future<void> _add(BuildContext context, WidgetRef ref) async {
-    final controller = TextEditingController();
-    final email = await showDialog<String>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Admin hinzufügen'),
-        content: TextField(
-          controller: controller,
-          autofocus: true,
-          keyboardType: TextInputType.emailAddress,
-          decoration: const InputDecoration(hintText: 'E-Mail-Adresse'),
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Abbrechen')),
-          FilledButton(
-            onPressed: () => Navigator.pop(ctx, controller.text.trim()),
-            child: const Text('Hinzufügen'),
-          ),
-        ],
-      ),
-    );
-    controller.dispose();
+    final email = (await DialogHelper.showTextInput(
+      context,
+      title: 'Admin hinzufügen',
+      hint: 'E-Mail-Adresse',
+      confirmText: 'Hinzufügen',
+      keyboardType: TextInputType.emailAddress,
+    ))
+        ?.trim();
     if (email == null || email.isEmpty || !context.mounted) return;
-    if (!RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(email)) {
+    if (!isValidEmail(email)) {
       ToastHelper.showError(context, 'Bitte gib eine gültige E-Mail-Adresse ein.');
       return;
     }
     try {
-      await ref.read(adminNotifierProvider.notifier).create(email);
+      final informed =
+          await ref.read(adminNotifierProvider.notifier).create(email);
       if (context.mounted) {
-        ToastHelper.showSuccess(context, 'Der Admin wurde erfolgreich hinzugefügt.');
+        if (informed) {
+          ToastHelper.showSuccess(context, 'Der Admin wurde erfolgreich hinzugefügt.');
+        } else {
+          ToastHelper.showWarning(context,
+              'Der Admin wurde hinzugefügt, konnte aber nicht benachrichtigt werden.');
+        }
       }
     } catch (e) {
       if (context.mounted) ToastHelper.showError(context, _errorText(e));

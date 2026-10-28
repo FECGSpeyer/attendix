@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/player_providers.dart';
+import '../../../../core/providers/realtime_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
@@ -30,7 +31,6 @@ import '../widgets/person_detail/account_accordion.dart'
     show accountHelpText, existingUserHintText;
 import '../widgets/person_detail/allgemein_accordion.dart'
     show otherOrchestraOptions, personExtraFields;
-import 'people_list_page.dart';
 import '../../../../core/services/tracking/tracking_event.dart';
 import '../../../../core/services/tracking/tracking_service.dart';
 
@@ -920,7 +920,8 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
       }
 
       // Invalidate the people list to trigger refresh
-      ref.invalidate(peopleListProvider);
+      ref.invalidate(realtimePlayersProvider);
+      ref.invalidate(playersProvider);
 
       if (mounted) {
         ToastHelper.showSuccess(context, 'Person erstellt');

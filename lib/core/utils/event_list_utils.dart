@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 
 import '../constants/enums.dart';
 import '../theme/app_colors.dart';
+import 'date_helper.dart';
 
 /// Helpers for the card layout of the Terminlisten (Termine, Meine Termine,
 /// Eltern, Übersicht): date tile, month groups, time line, status pills and
@@ -103,7 +104,7 @@ abstract final class EventListUtils {
   /// "19:00–21:00", "19:00" or '' when no time is set.
   static String timeRange(String? start, String? end) {
     String cut(String? v) =>
-        (v == null || v.isEmpty) ? '' : (v.length >= 5 ? v.substring(0, 5) : v);
+        (v == null || v.isEmpty) ? '' : DateHelper.hhmm(v);
     final s = cut(start);
     final e = cut(end);
     if (s.isNotEmpty && e.isNotEmpty) return '$s–$e';
