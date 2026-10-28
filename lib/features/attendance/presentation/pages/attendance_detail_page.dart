@@ -92,6 +92,10 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
   // Provider subscription - managed separately from realtime
   ProviderSubscription? _providerSubscription;
 
+  // LEFTOVERS: Ionic onVisibilityChange – refetch + resubscribe when the
+  // app/tab becomes visible again (realtime events may have been missed).
+  AppLifecycleListener? _lifecycleListener;
+
   // Local checklist state - maintained separately to allow editing
   List<ChecklistItem> _localChecklist = [];
   bool _checklistLoaded = false;
@@ -132,6 +136,17 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       _loadSongEntries();
       _loadViewPrefs(); // ATT_DETAIL
     });
+    _lifecycleListener = AppLifecycleListener(onShow: _onBecameVisible); // LEFTOVERS
+  }
+
+  /// LEFTOVERS: Ionic onVisibilityChange (document visible again) – reload
+  /// the Termin and its persons and resubscribe the realtime channel.
+  void _onBecameVisible() {
+    if (_isDisposed || !mounted || _deletedHandled) return;
+    ref.invalidate(attendanceDetailProvider(widget.attendanceId));
+    ref.invalidate(personAttendancesForAttendanceProvider(widget.attendanceId));
+    _unsubscribeFromRealtimeChanges();
+    _subscribeToRealtimeChanges();
   }
 
   /// Load checklist from attendance data
@@ -188,6 +203,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
   @override
   void dispose() {
     _isDisposed = true;
+    _lifecycleListener?.dispose(); // LEFTOVERS
     _providerSubscription?.close();
     _unsubscribeFromRealtimeChanges();
     super.dispose();
@@ -304,6 +320,13 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       return;
     }
     if (personId != null && _savingPersonIds.contains(personId)) return;
+
+    // LEFTOVERS: Ionic also takes duty_state from the payload; the Dienst
+    // section reads the provider rows, so reload them when it changed.
+    final rows = ref.read(personAttendancesForAttendanceProvider(widget.attendanceId)).valueOrNull;
+    if (rows != null && realtimeDutyStateChanged(newRecord, rows) && mounted) {
+      ref.invalidate(personAttendancesForAttendanceProvider(widget.attendanceId));
+    }
 
     final statusValue = newRecord['status'];
     final notes = newRecord['notes'] as String?;
@@ -2185,8 +2208,14 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
           defaultStatus: type.defaultStatus,
           resetStatuses: reset,
         );
+        // LEFTOVERS: like every Ionic updatePersonAttendance, queued while offline
+        final offlineQueue = ref.read(offlineQueueNotifierProvider.notifier);
         for (final u in updates) {
-          await repo.updatePersonAttendance(u.id, {'status': u.status.value, 'notes': u.notes});
+          final payload = {'status': u.status.value, 'notes': u.notes};
+          if (await offlineQueue.enqueueIfOffline(u.id, payload, attendanceId: widget.attendanceId)) {
+            continue;
+          }
+          await repo.updatePersonAttendance(u.id, payload);
         }
         await repo.updateShiftAssignmentsForAttendance(widget.attendanceId);
       }
@@ -2665,3 +2694,16 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
 /// and helpers only set statuses.
 bool canMutateAttendanceDetail(Role role) =>
     role.canEdit && !role.isHelperRole;
+
+/// LEFTOVERS: whether a realtime person_attendances payload carries a
+/// duty_state that differs from the loaded row (Ionic copies duty_state from
+/// the payload in onPersonAttRealtimeChanges).
+bool realtimeDutyStateChanged(Map<String, dynamic> newRecord, List<PersonAttendance> rows) {
+  if (!newRecord.containsKey('duty_state')) return false;
+  final id = newRecord['id']?.toString();
+  if (id == null) return false;
+  final row = rows.where((r) => r.id == id).firstOrNull;
+  if (row == null) return false;
+  final incoming = newRecord['duty_state']?.toString();
+  return (incoming ?? '') != (row.dutyState ?? '');
+}

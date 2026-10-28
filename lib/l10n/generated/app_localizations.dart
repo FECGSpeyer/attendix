@@ -3503,78 +3503,6 @@ abstract class AppLocalizations {
   /// **'beginnt gleich'**
   String get coreFlutterPlanStartsSoon;
 
-  /// core.flutter.registerPlan.alto
-  ///
-  /// In de, this message translates to:
-  /// **'Alt'**
-  String get coreFlutterRegisterPlanAlto;
-
-  /// core.flutter.registerPlan.bass
-  ///
-  /// In de, this message translates to:
-  /// **'Bass'**
-  String get coreFlutterRegisterPlanBass;
-
-  /// core.flutter.registerPlan.groupN
-  ///
-  /// In de, this message translates to:
-  /// **'Gruppe {n}'**
-  String coreFlutterRegisterPlanGroupN(Object n);
-
-  /// core.flutter.registerPlan.other
-  ///
-  /// In de, this message translates to:
-  /// **'Sonstige'**
-  String get coreFlutterRegisterPlanOther;
-
-  /// core.flutter.registerPlan.perUnit
-  ///
-  /// In de, this message translates to:
-  /// **'{min} Min. pro Einheit'**
-  String coreFlutterRegisterPlanPerUnit(Object min);
-
-  /// core.flutter.registerPlan.soprano
-  ///
-  /// In de, this message translates to:
-  /// **'Sopran'**
-  String get coreFlutterRegisterPlanSoprano;
-
-  /// core.flutter.registerPlan.strings
-  ///
-  /// In de, this message translates to:
-  /// **'Streicher'**
-  String get coreFlutterRegisterPlanStrings;
-
-  /// core.flutter.registerPlan.tenor
-  ///
-  /// In de, this message translates to:
-  /// **'Tenor'**
-  String get coreFlutterRegisterPlanTenor;
-
-  /// core.flutter.registerPlan.time
-  ///
-  /// In de, this message translates to:
-  /// **'Zeit'**
-  String get coreFlutterRegisterPlanTime;
-
-  /// core.flutter.registerPlan.title
-  ///
-  /// In de, this message translates to:
-  /// **'Registerprobenplan'**
-  String get coreFlutterRegisterPlanTitle;
-
-  /// core.flutter.registerPlan.totalDuration
-  ///
-  /// In de, this message translates to:
-  /// **'Gesamtdauer: {min} Min.'**
-  String coreFlutterRegisterPlanTotalDuration(Object min);
-
-  /// core.flutter.registerPlan.woodwinds
-  ///
-  /// In de, this message translates to:
-  /// **'Holzbläser'**
-  String get coreFlutterRegisterPlanWoodwinds;
-
   /// core.flutter.registration
   ///
   /// In de, this message translates to:
@@ -7840,12 +7768,6 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Bitte Passwort eingeben'**
   String get loginFlutterEnterPassword;
-
-  /// login.flutter.haveAccount
-  ///
-  /// In de, this message translates to:
-  /// **'Bereits ein Konto?'**
-  String get loginFlutterHaveAccount;
 
   /// login.flutter.linkFailed
   ///

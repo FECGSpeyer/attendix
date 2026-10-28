@@ -2589,63 +2589,6 @@
   "@coreFlutterPlanStartsSoon": {
     "description": "core.flutter.plan.startsSoon"
   },
-  "coreFlutterRegisterPlanAlto": "Alt",
-  "@coreFlutterRegisterPlanAlto": {
-    "description": "core.flutter.registerPlan.alto"
-  },
-  "coreFlutterRegisterPlanBass": "Bass",
-  "@coreFlutterRegisterPlanBass": {
-    "description": "core.flutter.registerPlan.bass"
-  },
-  "coreFlutterRegisterPlanGroupN": "Gruppe {n}",
-  "@coreFlutterRegisterPlanGroupN": {
-    "description": "core.flutter.registerPlan.groupN",
-    "placeholders": {
-      "n": {}
-    }
-  },
-  "coreFlutterRegisterPlanOther": "Sonstige",
-  "@coreFlutterRegisterPlanOther": {
-    "description": "core.flutter.registerPlan.other"
-  },
-  "coreFlutterRegisterPlanPerUnit": "{min} Min. pro Einheit",
-  "@coreFlutterRegisterPlanPerUnit": {
-    "description": "core.flutter.registerPlan.perUnit",
-    "placeholders": {
-      "min": {}
-    }
-  },
-  "coreFlutterRegisterPlanSoprano": "Sopran",
-  "@coreFlutterRegisterPlanSoprano": {
-    "description": "core.flutter.registerPlan.soprano"
-  },
-  "coreFlutterRegisterPlanStrings": "Streicher",
-  "@coreFlutterRegisterPlanStrings": {
-    "description": "core.flutter.registerPlan.strings"
-  },
-  "coreFlutterRegisterPlanTenor": "Tenor",
-  "@coreFlutterRegisterPlanTenor": {
-    "description": "core.flutter.registerPlan.tenor"
-  },
-  "coreFlutterRegisterPlanTime": "Zeit",
-  "@coreFlutterRegisterPlanTime": {
-    "description": "core.flutter.registerPlan.time"
-  },
-  "coreFlutterRegisterPlanTitle": "Registerprobenplan",
-  "@coreFlutterRegisterPlanTitle": {
-    "description": "core.flutter.registerPlan.title"
-  },
-  "coreFlutterRegisterPlanTotalDuration": "Gesamtdauer: {min} Min.",
-  "@coreFlutterRegisterPlanTotalDuration": {
-    "description": "core.flutter.registerPlan.totalDuration",
-    "placeholders": {
-      "min": {}
-    }
-  },
-  "coreFlutterRegisterPlanWoodwinds": "Holzbläser",
-  "@coreFlutterRegisterPlanWoodwinds": {
-    "description": "core.flutter.registerPlan.woodwinds"
-  },
   "coreFlutterRegistration": "Anmeldung",
   "@coreFlutterRegistration": {
     "description": "core.flutter.registration"
@@ -5866,10 +5809,6 @@
   "loginFlutterEnterPassword": "Bitte Passwort eingeben",
   "@loginFlutterEnterPassword": {
     "description": "login.flutter.enterPassword"
-  },
-  "loginFlutterHaveAccount": "Bereits ein Konto?",
-  "@loginFlutterHaveAccount": {
-    "description": "login.flutter.haveAccount"
   },
   "loginFlutterLinkFailed": "Der Link konnte nicht verarbeitet werden.",
   "@loginFlutterLinkFailed": {

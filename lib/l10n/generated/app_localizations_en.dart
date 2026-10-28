@@ -1985,48 +1985,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get coreFlutterPlanStartsSoon => 'starts soon';
 
   @override
-  String get coreFlutterRegisterPlanAlto => 'Alto';
-
-  @override
-  String get coreFlutterRegisterPlanBass => 'Bass';
-
-  @override
-  String coreFlutterRegisterPlanGroupN(Object n) {
-    return 'Group $n';
-  }
-
-  @override
-  String get coreFlutterRegisterPlanOther => 'Other';
-
-  @override
-  String coreFlutterRegisterPlanPerUnit(Object min) {
-    return '$min min per unit';
-  }
-
-  @override
-  String get coreFlutterRegisterPlanSoprano => 'Soprano';
-
-  @override
-  String get coreFlutterRegisterPlanStrings => 'Strings';
-
-  @override
-  String get coreFlutterRegisterPlanTenor => 'Tenor';
-
-  @override
-  String get coreFlutterRegisterPlanTime => 'Time';
-
-  @override
-  String get coreFlutterRegisterPlanTitle => 'Sectional rehearsal plan';
-
-  @override
-  String coreFlutterRegisterPlanTotalDuration(Object min) {
-    return 'Total duration: $min min';
-  }
-
-  @override
-  String get coreFlutterRegisterPlanWoodwinds => 'Woodwinds';
-
-  @override
   String get coreFlutterRegistration => 'Registration';
 
   @override
@@ -4458,9 +4416,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get loginFlutterEnterPassword => 'Please enter your password';
-
-  @override
-  String get loginFlutterHaveAccount => 'Already have an account?';
 
   @override
   String get loginFlutterLinkFailed => 'The link could not be processed.';

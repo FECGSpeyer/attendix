@@ -103,6 +103,7 @@ import '../../features/planning/presentation/pages/shared_plan_page.dart';
 import '../../features/deep_links/presentation/pages/open_link_page.dart';
 import '../../shared/widgets/dialogs/native_app_ad.dart';
 import 'legacy_routes.dart';
+import 'attendance_detail_guard.dart'; // LEFTOVERS
 import '../../l10n/l10n.dart';
 
 /// Listenable that notifies when auth state changes
@@ -332,6 +333,13 @@ final routerProvider = Provider<GoRouter>((ref) {
 
         final role = ref.read(currentRoleProvider);
         final location = state.matchedLocation;
+
+        // LEFTOVERS: typed /attendance/:id only for roles that may open a
+        // Termin in Ionic (canAddAttendance); must run before the generic
+        // '/attendance' prefix entry below (first match wins).
+        final attendanceDetailTarget = attendanceDetailRedirect(location, role);
+        if (attendanceDetailTarget != null) return attendanceDetailTarget;
+        // END LEFTOVERS
 
         // Check if route (or parent route) is protected
         for (final entry in _protectedRoutes.entries) {

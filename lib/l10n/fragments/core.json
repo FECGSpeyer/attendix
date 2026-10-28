@@ -57,20 +57,6 @@
           "endAt": "Ende: {time} Uhr",
           "pdfRenderFailed": "PDF konnte nicht gerendert werden"
         },
-        "registerPlan": {
-          "strings": "Streicher",
-          "woodwinds": "Holzbläser",
-          "other": "Sonstige",
-          "groupN": "Gruppe {n}",
-          "time": "Zeit",
-          "soprano": "Sopran",
-          "alto": "Alt",
-          "tenor": "Tenor",
-          "bass": "Bass",
-          "title": "Registerprobenplan",
-          "totalDuration": "Gesamtdauer: {min} Min.",
-          "perUnit": "{min} Min. pro Einheit"
-        },
         "noTenantSelected": "Kein Tenant ausgewählt",
         "fileBytesUnavailable": "Datei-Bytes nicht verfügbar",
         "filePathUnavailable": "Dateipfad nicht verfügbar",
@@ -206,20 +192,6 @@
           "rate": "Rate",
           "endAt": "End: {time}",
           "pdfRenderFailed": "PDF could not be rendered"
-        },
-        "registerPlan": {
-          "strings": "Strings",
-          "woodwinds": "Woodwinds",
-          "other": "Other",
-          "groupN": "Group {n}",
-          "time": "Time",
-          "soprano": "Soprano",
-          "alto": "Alto",
-          "tenor": "Tenor",
-          "bass": "Bass",
-          "title": "Sectional rehearsal plan",
-          "totalDuration": "Total duration: {min} min",
-          "perUnit": "{min} min per unit"
         },
         "noTenantSelected": "No tenant selected",
         "fileBytesUnavailable": "File bytes not available",
