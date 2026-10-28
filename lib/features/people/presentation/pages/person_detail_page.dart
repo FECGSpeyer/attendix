@@ -31,6 +31,7 @@ import '../widgets/handover_sheet.dart';
 import '../widgets/pause_person_sheet.dart';
 import '../widgets/duplicate_candidates_card.dart';
 import '../widgets/person_detail/person_detail.dart';
+import '../widgets/ion/ion_widgets.dart'; // UX_PEOPLE
 import '../../../../core/services/tracking/tracking_event.dart';
 import '../../../../core/services/tracking/tracking_service.dart';
 import '../../../../core/utils/demo_guard.dart';
@@ -363,8 +364,6 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
   late Map<String, dynamic> _additionalFieldValues;
 
   // Section states
-  bool _showAllgemein = false;
-  bool _showAccount = false;
   bool _showHistorie = true;
   bool _showProblemfall = true;
 
@@ -1775,12 +1774,52 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     }
   }
 
+  /// UX_PEOPLE: Ionic accordion group "Allgemein / Account / Zusatzfelder /
+  /// Andere Instanzen" — only one section open at a time. Allgemein starts
+  /// open for read-only viewers (`existingPlayer && !readOnly ? '' : 'more'`).
+  bool _sectionTouched = false;
+  String? _openSection;
+  bool _editingName = false;
+
+  String? _currentSection(bool canEdit) =>
+      _sectionTouched ? _openSection : (canEdit ? null : 'general');
+
+  void _toggleSection(String key, bool canEdit) {
+    final current = _currentSection(canEdit);
+    setState(() {
+      _sectionTouched = true;
+      _openSection = current == key ? null : key;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final person = _draft;
     final statsAsync = ref.watch(personAttendanceStatsProvider(widget.personId));
     final historyAsync = ref.watch(personHistoryProvider(widget.personId));
     final canEdit = ref.watch(currentRoleProvider).canEdit;
+    final openSection = _currentSection(canEdit);
+
+    AllgemeinAccordion allgemein(AllgemeinPart part, String key) =>
+        AllgemeinAccordion(
+          part: part,
+          person: person,
+          isExpanded: openSection == key,
+          onToggle: () => _toggleSection(key, canEdit),
+          onFieldChanged: _onFieldChanged,
+          canEdit: canEdit,
+          selectedGroupId: _selectedGroupId,
+          selectedTeacherId: _selectedTeacherId,
+          selectedShiftId: _selectedShiftId,
+          selectedShiftName: _selectedShiftName,
+          shiftStart: _shiftStart,
+          selectedParentId: _selectedParentId,
+          isLeader: _isLeader,
+          hasTeacher: _hasTeacher,
+          additionalFieldValues: _additionalFieldValues,
+          isMainGroup: _isMainGroupSelected,
+          otherOrchestras: _draft.otherOrchestras,
+        );
 
     return PopScope(
       canPop: !_hasChanges,
@@ -1802,9 +1841,13 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
         }
       },
       child: Scaffold(
+        // UX_PEOPLE: Ionic `ion-content.modalBackground` (white / black)
+        backgroundColor: ionContentBackground(context),
         // Ionic person.page header: "Person bearbeiten" / "Person genehmigen",
-        // red toolbar for Problemfälle; actions live in the FAB.
+        // red toolbar for Problemfälle, close button at the end; actions
+        // live in the FAB.
         appBar: AppBar(
+          automaticallyImplyLeading: false,
           title: canEdit
               ? Text(widget.person.pending
                   ? context.l10n.personApprovePerson
@@ -1812,15 +1855,42 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
               : null,
           backgroundColor: person.isCritical ? AppColors.danger : null,
           foregroundColor: person.isCritical ? Colors.white : null,
+          actions: [
+            IconButton(
+              tooltip: context.l10n.commonClose,
+              icon: Icon(
+                Icons.close,
+                color: person.isCritical ? Colors.white : null,
+              ),
+              onPressed: () => Navigator.of(context).maybePop(),
+            ),
+          ],
         ),
         body: ListView(
           padding: const EdgeInsets.only(bottom: 100),
           children: [
-            // Header with avatar and stats
-            PersonHeader(person: person, statsAsync: statsAsync, canEdit: canEdit),
+            // Ionic .profile-header: avatar + name with pencil
+            PersonHeader(
+              person: person,
+              statsAsync: statsAsync,
+              canEdit: canEdit,
+              onEditName: canEdit && !_editingName
+                  ? () => setState(() => _editingName = true)
+                  : null,
+            ),
 
-            // Status badges
-            PersonStatusBadges(person: person),
+            // Ionic: Vorname | Nachname inputs while editing the name
+            if (canEdit && _editingName) ...[
+              allgemein(AllgemeinPart.names, 'names'),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: TextButton.icon(
+                  onPressed: () => setState(() => _editingName = false),
+                  icon: const Icon(Icons.check, size: 18),
+                  label: Text(context.l10n.personDone),
+                ),
+              ),
+            ],
 
             // PEOPLE2: duplicate candidates + merge for pending registrations
             if (widget.person.pending && canEdit)
@@ -1832,6 +1902,9 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
                   if (mounted) context.pop();
                 },
               ),
+
+            // Ionic: "Notizen" textarea (existingPlayer && isAdmin)
+            if (canEdit) allgemein(AllgemeinPart.notes, 'notes'),
 
             // Problem Person Accordion
             ProblemfallAccordion(
@@ -1852,47 +1925,39 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
               onResetLateCount: _resetLateCount,
             ),
 
-            // Allgemein Accordion with inline editing
-            AllgemeinAccordion(
-              person: person,
-              isExpanded: _showAllgemein,
-              onToggle: () => setState(() => _showAllgemein = !_showAllgemein),
-              onFieldChanged: _onFieldChanged,
-              canEdit: canEdit,
-              selectedGroupId: _selectedGroupId,
-              selectedTeacherId: _selectedTeacherId,
-              selectedShiftId: _selectedShiftId,
-              selectedShiftName: _selectedShiftName,
-              shiftStart: _shiftStart,
-              selectedParentId: _selectedParentId,
-              isLeader: _isLeader,
-              hasTeacher: _hasTeacher,
-              additionalFieldValues: _additionalFieldValues,
-              isMainGroup: _isMainGroupSelected,
-              otherOrchestras: _draft.otherOrchestras,
-            ),
+            // Ionic accordion group: Allgemein, Account, Zusatzfelder,
+            // Andere Instanzen (single open)
+            allgemein(AllgemeinPart.general, 'general'),
 
-            // Account Accordion
-            AccountAccordion(
-              person: person,
-              isExpanded: _showAccount,
-              onToggle: () => setState(() => _showAccount = !_showAccount),
-              userRole: _userRole,
-              isLoadingRole: _isLoadingRole,
-              onRoleChanged: _updateUserRole,
-              onUnlinkAccount: _unlinkAccount,
-              onCreateAccount: () => _createAccount(person),
-              canEdit: canEdit,
-              onFieldChanged: _onAccountFieldChanged,
-              draftEmail: _draft.email,
-              isLeader: _isLeader,
-              isMainGroup: _isMainGroupSelected,
-              onSearchOtherInstance: _searchPersonInOtherInstance,
-            ),
+            // Account (!readOnly && !approveMode)
+            if (canEdit && !widget.person.pending)
+              AccountAccordion(
+                person: person,
+                isExpanded: openSection == 'account',
+                onToggle: () => _toggleSection('account', canEdit),
+                userRole: _userRole,
+                isLoadingRole: _isLoadingRole,
+                onRoleChanged: _updateUserRole,
+                onUnlinkAccount: _unlinkAccount,
+                onCreateAccount: () => _createAccount(person),
+                canEdit: canEdit,
+                onFieldChanged: _onAccountFieldChanged,
+                draftEmail: _draft.email,
+                isLeader: _isLeader,
+                isMainGroup: _isMainGroupSelected,
+                onSearchOtherInstance: _searchPersonInOtherInstance,
+              ),
 
-            // Ionic order: Andere Instanzen after Allgemein. Other Tenants Accordion (only if person has an account)
+            // Zusatzfelder
+            allgemein(AllgemeinPart.extraFields, 'extra'),
+
+            // Andere Instanzen (only if person has an account)
             if (widget.person.appId != null)
-              AndereInstanzenAccordion(appId: widget.person.appId!),
+              AndereInstanzenAccordion(
+                appId: widget.person.appId!,
+                isExpanded: openSection == 'otherTenants',
+                onToggle: () => _toggleSection('otherTenants', canEdit),
+              ),
 
             // Historie Accordion
             HistorieAccordion(
@@ -1908,59 +1973,59 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
             UpcomingAppointmentsAccordion(personId: widget.personId),
 
             // PEOPLE_IMPORT: Planned absences (Ionic person.page "Abwesenheiten")
-            if (canEdit) PlannedAbsencesAccordion(personId: widget.personId),
-            // DUTY: "Regelmäßig verhindert" (only when the tenant uses the Dienstplan)
-            if (canEdit && ref.watch(hasDutyTypesProvider))
-              Card(
-                margin: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM, vertical: AppDimensions.paddingXS),
-                child: ListTile(
-                  leading: const Icon(Icons.event_busy_outlined, color: AppColors.primary),
-                  title: Text(context.l10n.signoutRegularlyUnavailable, style: TextStyle(color: AppColors.primary)),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () => openUnavailabilityPage(
-                    context,
-                    personId: widget.personId,
-                    personName: person.fullName,
-                    forOther: true,
-                  ),
-                ),
+            // DUTY: "Regelmäßig verhindert" as the last item of that list
+            // (only when the tenant uses the Dienstplan)
+            if (canEdit)
+              PlannedAbsencesAccordion(
+                personId: widget.personId,
+                extra: [
+                  if (ref.watch(hasDutyTypesProvider))
+                    IonItem(
+                      detail: true,
+                      start: const Icon(Icons.event_busy_outlined,
+                          color: AppColors.primary),
+                      onTap: () => openUnavailabilityPage(
+                        context,
+                        personId: widget.personId,
+                        personName: person.fullName,
+                        forOther: true,
+                      ),
+                      child: Text(
+                        context.l10n.signoutRegularlyUnavailable,
+                        style: IonText.h2(context)
+                            .copyWith(color: AppColors.primary),
+                      ),
+                    ),
+                ],
               ),
-
           ],
         ),
         // Ionic FAB: save (changes) / approve sheet (pending) / key (create
         // account when e-mail but no account) / "..." more menu.
         floatingActionButton: _hasChanges
-            ? FloatingActionButton(
+            ? IonFabButton(
                 onPressed: _isSaving ? null : _saveChanges,
                 tooltip: context.l10n.commonSave,
-                child: _isSaving
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(
-                            strokeWidth: 2, color: Colors.white),
-                      )
-                    : const Icon(Icons.save_outlined),
+                icon: Icons.save_outlined,
               )
             : !canEdit
                 ? null
                 : widget.person.pending
-                    ? FloatingActionButton(
+                    ? IonFabButton(
                         onPressed: _showPendingActions,
-                        child: const Icon(Icons.more_horiz),
+                        icon: Icons.more_horiz,
                       )
                     : person.appId == null &&
                             (person.email?.isNotEmpty ?? false)
-                        ? FloatingActionButton(
+                        ? IonFabButton(
                             onPressed: () => _createAccount(person),
                             tooltip: context.l10n.personFlutterCreateAccount,
-                            child: const Icon(Icons.key_outlined),
+                            icon: Icons.key_outlined,
                           )
-                        : FloatingActionButton(
+                        : IonFabButton(
                             onPressed: _showMoreActions,
                             tooltip: context.l10n.personFlutterMore,
-                            child: const Icon(Icons.more_horiz),
+                            icon: Icons.more_horiz,
                           ),
       ),
     );

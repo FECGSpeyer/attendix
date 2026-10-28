@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -31,6 +32,7 @@ import '../../../../shared/widgets/sheets/church_overview_sheet.dart';
 import '../widgets/handover_sheet.dart';
 import '../../../../core/utils/haptic_helper.dart';
 import '../widgets/pause_person_sheet.dart';
+import '../widgets/ion/ion_widgets.dart';
 import '../../../messages/presentation/widgets/notification_bell.dart'; // MESSAGES
 import 'bulk_edit_page.dart';
 import 'person_import_page.dart';
@@ -168,64 +170,6 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
       await prefs.setString('sortOpt_${tenant.id}', _sortOption);
     } catch (_) {
       // Preferences are a convenience only
-    }
-  }
-
-  Future<void> _showViewOptionsDialog() async {
-    final selected = Set<String>.from(_viewOptions);
-    final result = await showDialog<Set<String>>(
-      context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setDialogState) => AlertDialog(
-          title: Text(context.l10n.attendanceView),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: _viewOptionLabels(ref.read(currentTenantProvider))
-                  .entries
-                  .map((entry) {
-                return CheckboxListTile(
-                  title: Text(entry.value),
-                  value: selected.contains(entry.key),
-                  onChanged: (v) {
-                    setDialogState(() {
-                      if (v == true) {
-                        selected.add(entry.key);
-                      } else {
-                        selected.remove(entry.key);
-                      }
-                    });
-                  },
-                );
-              }).toList(),
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                setDialogState(() {
-                  selected.clear();
-                  selected.addAll(_defaultViewOptions);
-                });
-              },
-              child: Text(context.l10n.peopleFlutterDefaultView),
-            ),
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text(context.l10n.commonCancel),
-            ),
-            FilledButton(
-              onPressed: () => Navigator.pop(context, selected),
-              child: Text(context.l10n.commonApply),
-            ),
-          ],
-        ),
-      ),
-    );
-
-    if (result != null) {
-      setState(() => _viewOptions = result);
-      _saveViewOptions();
     }
   }
 
@@ -424,11 +368,16 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
         for (final c in ref.watch(churchesProvider).valueOrNull ?? const [])
           if (c.id != null) c.id!: c.name,
     };
+    final ios = ionIsIos(context);
+    final background = ionContentBackground(context);
 
     if (_isReordering) {
+      // Ionic: toolbar color="warning" "Reihenfolge anpassen" + checkmark
       return Scaffold(
+        backgroundColor: background,
         appBar: AppBar(
           backgroundColor: AppColors.warning,
+          foregroundColor: Colors.black,
           title: Text(context.l10n.peopleReorder),
           leading: IconButton(
             icon: const Icon(Icons.close),
@@ -459,227 +408,166 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
     final role = ref.watch(currentRoleProvider);
     // Ionic list.page isAdmin = Admin or Responsible
     final isAdmin = role.isAdmin || role.isResponsible;
+    final tenants = ref.watch(userTenantsProvider).valueOrNull ?? const [];
+    final multiTenant = tenants.length > 1;
+    final tenantTitle = tenant?.longName.isNotEmpty == true
+        ? tenant!.longName
+        : (tenant?.shortName ?? context.l10n.commonPeople);
+    // Ionic iOS: single tenant → ion-header collapse="condense" large title
+    final largeTitle = ios && !multiTenant && !_isSelectionMode;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: _isSelectionMode
-            ? Text(context.l10n.peopleFlutterSelectedCount(_selectedPlayerIds.length))
-            : TenantSwitcherTitle(fallbackTitle: context.l10n.commonPeople),
-        leading: _isSelectionMode
-            ? IconButton(
-                icon: const Icon(Icons.close),
-                onPressed: _exitSelectionMode,
-              )
-            : null,
-        actions: _isSelectionMode
-            ? [
-                IconButton(
-                  icon: const Icon(Icons.select_all),
-                  tooltip: context.l10n.handoverSelectAll,
-                  onPressed: () {
-                    final people =
-                        ref.read(realtimePlayersProvider).valueOrNull ?? [];
-                    final filtered = _filterPeople(people);
-                    setState(() {
-                      _selectedPlayerIds.clear();
-                      for (final p in filtered) {
-                        if (p.id != null) _selectedPlayerIds.add(p.id!);
-                      }
-                    });
-                  },
-                ),
-                IconButton(
-                  icon: const Icon(Icons.deselect),
-                  tooltip: context.l10n.peopleFlutterDeselectAll,
-                  onPressed: () => setState(() => _selectedPlayerIds.clear()),
-                ),
-              ]
-            // Ionic: only the notification bell in the header; filter, sort,
-            // view and admin actions live in the options popover next to the
-            // search bar.
-            : const [NotificationBell()], // MESSAGES
+    final slivers = <Widget>[
+      if (largeTitle)
+        ionCondenseHeader(
+          context,
+          title: tenantTitle,
+          trailing: const NotificationBell(), // MESSAGES
+        ),
+      if (ios) CupertinoSliverRefreshControl(onRefresh: _refresh),
+      // Search bar + options button (Ionic div.flex: ion-searchbar (86%) +
+      // "options" icon that opens the filter popover)
+      SliverToBoxAdapter(
+        child: Row(
+          children: [
+            Expanded(
+              child: IonSearchbar(
+                controller: _searchController,
+                placeholder: context.l10n.peopleSearchPerson,
+                onChanged: (value) => setState(() => _searchQuery = value),
+                padding: ios
+                    ? const EdgeInsets.fromLTRB(8, 6, 0, 6)
+                    : null,
+              ),
+            ),
+            _buildOptionsButton(isAdmin: isAdmin),
+            SizedBox(width: ios ? 8 : 4),
+          ],
+        ),
       ),
-      body: Column(
-        children: [
-          // Search bar + options button (Ionic div.flex: ion-searchbar +
-          // "options" icon that opens the filter popover)
-          Padding(
-            padding: const EdgeInsets.fromLTRB(
-              AppDimensions.paddingM,
-              AppDimensions.paddingS,
-              AppDimensions.paddingXS,
-              AppDimensions.paddingS,
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _searchController,
-                    decoration: InputDecoration(
-                      hintText: context.l10n.peopleSearchPerson,
-                      prefixIcon: const Icon(Icons.search),
-                      isDense: true,
-                      suffixIcon: _searchQuery.isNotEmpty
-                          ? IconButton(
-                              icon: const Icon(Icons.clear),
-                              onPressed: () {
-                                _searchController.clear();
-                                setState(() => _searchQuery = '');
-                              },
-                            )
-                          : null,
-                    ),
-                    onChanged: (value) => setState(() => _searchQuery = value),
-                  ),
-                ),
-                IconButton(
-                  key: const Key('people_options_button'),
-                  icon: Icon(
-                    Icons.tune,
-                    color: _filterOption != 'all' ? AppColors.primary : null,
-                  ),
-                  tooltip: context.l10n.typeSettingsOptions,
-                  onPressed: () => _showOptionsSheet(isAdmin: isAdmin),
-                ),
-              ],
-            ),
+      // Birthday banner (Ionic people/list birthday-banner)
+      if (!_isSelectionMode && peopleAsync.hasValue)
+        SliverToBoxAdapter(
+          child: _BirthdayBanner(
+            people: todaysBirthdays(peopleAsync.valueOrNull ?? const []),
+            onTap: (p) => context.push('/people/${p.id}'),
           ),
-
-          // Birthday banner (Ionic people/list birthday-banner)
-          if (!_isSelectionMode && peopleAsync.hasValue)
-            _BirthdayBanner(
-              people: todaysBirthdays(peopleAsync.valueOrNull ?? const []),
-              onTap: (p) => context.push('/people/${p.id}'),
-            ),
-
-          Expanded(
-            child: peopleAsync.when(
-              loading: () => const ListSkeleton(
-                itemCount: 10,
-                showAvatar: true,
-                showSubtitle: true,
-                showDividers: true,
-              ),
-              error: (error, stack) => EmptyStateWidget(
-                icon: Icons.error_outline,
-                title: context.l10n.peopleFlutterLoadFailed,
-                subtitle: context.l10n.peopleFlutterListLoadFailed,
-                actionLabel: context.l10n.messagesRetry,
-                onAction: () => ref.invalidate(realtimePlayersProvider),
-              ),
-              data: (rawPeople) {
-                final people =
-                    mergeSharedPersonFieldValues(rawPeople, sharedFieldValues);
-                final filteredPeople = _filterPeople(people);
-                final sortedPeople = _sortPeople(filteredPeople);
-
-                if (people.isEmpty) {
-                  // Ionic: "Bisher wurden noch keine Personen angelegt"
-                  return Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(AppDimensions.paddingL),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(Icons.people_outline,
-                              size: 48, color: AppColors.medium),
-                          const SizedBox(height: AppDimensions.paddingM),
-                          Text(
-                            context.l10n.peopleNoPeopleYet,
-                            textAlign: TextAlign.center,
-                          ),
-                          const SizedBox(height: AppDimensions.paddingM),
-                          OutlinedButton(
-                            onPressed: () => context.push('/people/new'),
-                            child: Text(context.l10n.attendanceAddPerson),
-                          ),
-                          if (isAdmin) ...[
-                            const SizedBox(height: AppDimensions.paddingS),
-                            OutlinedButton(
-                              onPressed: _openImport,
-                              child: Text(context.l10n.peopleImportPeople),
-                            ),
-                          ],
-                        ],
-                      ),
-                    ),
-                  );
-                }
-
-                if (sortedPeople.isEmpty) {
-                  // Ionic: noPeopleFound / filtersNoMatch / resetFilter
-                  return EmptyStateWidget(
-                    icon: Icons.filter_alt_outlined,
-                    title: context.l10n.peopleNoPeopleFound,
-                    subtitle: context.l10n.peopleFiltersNoMatch,
-                    actionLabel: context.l10n.peopleResetFilter,
-                    onAction: _clearFilters,
-                    animateIcon: false,
-                  );
-                }
-
-                if (_isReordering) return _buildReorderList(people);
-
-                Widget tile(Person person) {
-                  final isSelected = person.id != null &&
-                      _selectedPlayerIds.contains(person.id);
-                  return _PersonListItem(
-                    person: person,
-                    isSelectionMode: _isSelectionMode,
-                    isSelected: isSelected,
-                    viewOptions: _viewOptions,
-                    extraFields: extraFields,
-                    churchNames: churchNames,
-                    isMainGroup: mainGroupId != null &&
-                        person.instrument == mainGroupId,
-                    otherInstanceName: _filterOption == 'otherInstance'
-                        ? _otherInstanceName
-                        : null,
-                    onTap: _isSelectionMode && person.id != null
-                        ? () => _togglePlayerSelection(person.id!)
-                        : () => context.push('/people/${person.id}'),
-                    onPause: isAdmin ? () => _showPauseDialog(person) : null,
-                    onUnpause: isAdmin ? () => _unpausePerson(person) : null,
-                    onRemove: isAdmin ? () => _remove(person) : null,
-                    attendancePercentage:
-                        person.id != null ? percentages[person.id] : null,
-                  );
-                }
-
-                // Ionic: ion-list-header "Personen (n)", then (sorted by
-                // group) a primary ion-item-divider per group.
-                final children = <Widget>[
-                  _ListHeader(text: context.l10n.peoplePeopleCount(sortedPeople.length)),
-                ];
-                if (_sortOption == 'group') {
-                  final grouped = _groupByGroup(sortedPeople);
-                  for (final entry in grouped.entries) {
-                    children.add(_GroupDivider(
-                        text: '${entry.key} (${entry.value.length})'));
-                    for (final p in entry.value) {
-                      children.add(tile(p));
-                    }
-                  }
-                } else {
-                  children.addAll(sortedPeople.map(tile));
-                }
-                children.add(const SizedBox(height: 88));
-
-                return RefreshIndicator(
-                  onRefresh: () async {
-                    // FN-007: manual refresh (realtime handles live updates)
-                    ref.invalidate(realtimePlayersProvider);
-                  },
-                  child: ListView(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    children: children,
-                  ),
-                );
-              },
+        ),
+      ...peopleAsync.when(
+        loading: () => [_skeletonSliver()],
+        error: (error, stack) => [
+          SliverFillRemaining(
+            hasScrollBody: false,
+            child: EmptyStateWidget(
+              icon: Icons.error_outline,
+              title: context.l10n.peopleFlutterLoadFailed,
+              subtitle: context.l10n.peopleFlutterListLoadFailed,
+              actionLabel: context.l10n.messagesRetry,
+              onAction: () => ref.invalidate(realtimePlayersProvider),
             ),
           ),
         ],
+        data: (rawPeople) {
+          final people =
+              mergeSharedPersonFieldValues(rawPeople, sharedFieldValues);
+          final sortedPeople = _sortPeople(_filterPeople(people));
+
+          if (people.isEmpty) {
+            // Ionic: people-outline + "Bisher wurden noch keine Personen
+            // angelegt" + "Person hinzufügen" / "Personen importieren"
+            return [
+              SliverFillRemaining(
+                hasScrollBody: false,
+                child: IonNoData(
+                  icon: Icons.people_outline,
+                  label: context.l10n.peopleNoPeopleYet,
+                  actions: [
+                    (
+                      context.l10n.attendanceAddPerson,
+                      () => context.push('/people/new'),
+                    ),
+                    if (isAdmin)
+                      (context.l10n.peopleImportPeople, _openImport),
+                  ],
+                ),
+              ),
+            ];
+          }
+
+          if (sortedPeople.isEmpty) {
+            // Ionic: noPeopleFound / filtersNoMatch / resetFilter
+            return [
+              SliverFillRemaining(
+                hasScrollBody: false,
+                child: IonNoData(
+                  icon: Icons.filter_alt_outlined,
+                  label: context.l10n.peopleNoPeopleFound,
+                  message: context.l10n.peopleFiltersNoMatch,
+                  actions: [(context.l10n.peopleResetFilter, _clearFilters)],
+                ),
+              ),
+            ];
+          }
+
+          Widget tile(Person person) {
+            final isSelected = person.id != null &&
+                _selectedPlayerIds.contains(person.id);
+            return _PersonListItem(
+              person: person,
+              isSelectionMode: _isSelectionMode,
+              isSelected: isSelected,
+              viewOptions: _viewOptions,
+              extraFields: extraFields,
+              churchNames: churchNames,
+              isMainGroup:
+                  mainGroupId != null && person.instrument == mainGroupId,
+              otherInstanceName:
+                  _filterOption == 'otherInstance' ? _otherInstanceName : null,
+              onTap: _isSelectionMode && person.id != null
+                  ? () => _togglePlayerSelection(person.id!)
+                  : () => context.push('/people/${person.id}'),
+              onPause: isAdmin ? () => _showPauseDialog(person) : null,
+              onUnpause: isAdmin ? () => _unpausePerson(person) : null,
+              onRemove: isAdmin ? () => _remove(person) : null,
+              attendancePercentage:
+                  person.id != null ? percentages[person.id] : null,
+            );
+          }
+
+          // Ionic: ion-list-header "Personen (n)", then (sorted by group) a
+          // primary ion-item-divider per group.
+          final children = <Widget>[
+            IonListHeader(
+                text: context.l10n.peoplePeopleCount(sortedPeople.length)),
+          ];
+          if (_sortOption == 'group') {
+            final grouped = _groupByGroup(sortedPeople);
+            for (final entry in grouped.entries) {
+              children.add(IonItemDivider(
+                text: '${entry.key} (${entry.value.length})',
+                color: AppColors.primary,
+              ));
+              children.addAll(entry.value.map(tile));
+            }
+          } else {
+            children.addAll(sortedPeople.map(tile));
+          }
+          children.add(const SizedBox(height: 104));
+          return [SliverList(delegate: SliverChildListDelegate(children))];
+        },
       ),
+    ];
+
+    final scrollView = CustomScrollView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      slivers: slivers,
+    );
+
+    return Scaffold(
+      backgroundColor: background,
+      appBar: largeTitle ? null : _buildAppBar(context, ios: ios, multiTenant: multiTenant, tenantTitle: tenantTitle),
+      body: ios
+          ? scrollView
+          : RefreshIndicator(onRefresh: _refresh, child: scrollView),
       floatingActionButton: _isSelectionMode
           ? _selectedPlayerIds.isNotEmpty
               ? FloatingActionButton.extended(
@@ -691,11 +579,90 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
               : null
           // Ionic: FAB "add" only for admins
           : isAdmin
-              ? FloatingActionButton(
-                  onPressed: () => context.push('/people/new'),
-                  child: const Icon(Icons.add),
-                )
+              ? IonFabButton(onPressed: () => context.push('/people/new'))
               : null,
+    );
+  }
+
+  /// FN-007: manual refresh (realtime handles live updates)
+  Future<void> _refresh() async {
+    ref.invalidate(realtimePlayersProvider);
+  }
+
+  /// Ionic loading state: list header skeleton + 10 items with thumbnail.
+  Widget _skeletonSliver() => const SliverToBoxAdapter(
+        child: ListSkeleton(
+          itemCount: 10,
+          showAvatar: true,
+          showSubtitle: true,
+          showDividers: true,
+        ),
+      );
+
+  /// Ionic header: tenant switcher button (slot start) when the user has
+  /// several tenants, otherwise the tenant name; notification bell at the end.
+  PreferredSizeWidget _buildAppBar(
+    BuildContext context, {
+    required bool ios,
+    required bool multiTenant,
+    required String tenantTitle,
+  }) {
+    if (_isSelectionMode) {
+      return AppBar(
+        title: Text(context.l10n.peopleFlutterSelectedCount(_selectedPlayerIds.length)),
+        leading: IconButton(
+          icon: const Icon(Icons.close),
+          onPressed: _exitSelectionMode,
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.select_all),
+            tooltip: context.l10n.handoverSelectAll,
+            onPressed: () {
+              final people = ref.read(realtimePlayersProvider).valueOrNull ?? [];
+              final filtered = _filterPeople(people);
+              setState(() {
+                _selectedPlayerIds.clear();
+                for (final p in filtered) {
+                  if (p.id != null) _selectedPlayerIds.add(p.id!);
+                }
+              });
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.deselect),
+            tooltip: context.l10n.peopleFlutterDeselectAll,
+            onPressed: () => setState(() => _selectedPlayerIds.clear()),
+          ),
+        ],
+      );
+    }
+    if (ios && multiTenant) {
+      // Ionic iOS: <ion-buttons slot="start"> tenant name + chevron-down,
+      // no title.
+      return AppBar(
+        centerTitle: false,
+        automaticallyImplyLeading: false,
+        titleSpacing: 8,
+        title: DefaultTextStyle.merge(
+          style: const TextStyle(
+            color: AppColors.primary,
+            fontSize: 17,
+            fontWeight: FontWeight.w400,
+          ),
+          child: IconTheme.merge(
+            data: const IconThemeData(color: AppColors.primary, size: 20),
+            child: TenantSwitcherTitle(fallbackTitle: tenantTitle),
+          ),
+        ),
+        actions: const [NotificationBell()], // MESSAGES
+      );
+    }
+    // Ionic: only the notification bell in the header; filter, sort, view
+    // and admin actions live in the options popover next to the search bar.
+    return AppBar(
+      title: TenantSwitcherTitle(fallbackTitle: context.l10n.commonPeople),
+      actions: const [NotificationBell()], // MESSAGES
     );
   }
 
@@ -760,110 +727,171 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
     _saveSortOption();
   }
 
-  /// Ionic filter popover: Filter (funnel), Sortierung (filter), Ansicht
-  /// (eye), Gemeinde-Übersicht, Bulk-Bearbeitung, Personen importieren,
-  /// Reihenfolge anpassen.
-  Future<void> _showOptionsSheet({required bool isAdmin}) async {
+  /// Ionic `#filterPopover` (ion-popover at the options button): Filter
+  /// (funnel), Sortierung (filter), Ansicht (eye, multiple) as popover
+  /// selects, then Gemeinde-Übersicht, Bulk-Bearbeitung, Personen
+  /// importieren and Reihenfolge anpassen.
+  Widget _buildOptionsButton({required bool isAdmin}) {
     final tenant = ref.read(currentTenantProvider);
     final filterLabels = _filterOptionLabels(tenant);
     final sortLabels = _sortOptionLabels(tenant);
     final viewLabels = _viewOptionLabels(tenant);
-    final action = await showModalBottomSheet<String>(
-      context: context,
-      showDragHandle: true,
-      isScrollControlled: true,
-      builder: (ctx) => SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _OptionDropdownTile(
-                icon: Icons.filter_alt,
-                label: context.l10n.teamOrgFilter,
-                value: filterLabels.containsKey(_filterOption)
-                    ? _filterOption
-                    : 'all',
-                options: filterLabels,
-                onChanged: (v) => Navigator.pop(ctx, 'filter:$v'),
-              ),
-              _OptionDropdownTile(
-                icon: Icons.filter_list,
-                label: context.l10n.attendanceSorting,
-                value: sortLabels.containsKey(_sortOption) ? _sortOption : 'group',
-                options: sortLabels,
-                onChanged: (v) => Navigator.pop(ctx, 'sort:$v'),
-              ),
-              ListTile(
-                leading: const Icon(Icons.visibility, size: 20),
-                title: Text(context.l10n.attendanceView),
-                subtitle: Text(
-                  viewLabels.entries
-                      .where((e) => _viewOptions.contains(e.key))
-                      .map((e) => e.value)
-                      .join(', '),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                trailing: const Icon(Icons.arrow_drop_down),
-                onTap: () => Navigator.pop(ctx, 'view'),
-              ),
-              if (_churchField(tenant) != null)
-                ListTile(
-                  leading: const Icon(Icons.business_outlined, size: 20),
-                  title: Text(context.l10n.attendanceChurchOverview),
-                  onTap: () => Navigator.pop(ctx, 'churchOverview'),
-                ),
-              if (isAdmin) ...[
-                ListTile(
-                  leading: const Icon(Icons.edit, size: 20),
-                  title: Text(context.l10n.peopleBulkEdit),
-                  onTap: () => Navigator.pop(ctx, 'bulkEdit'),
-                ),
-                ListTile(
-                  leading: const Icon(Icons.cloud_upload_outlined, size: 20),
-                  title: Text(context.l10n.peopleImportPeople),
-                  onTap: () => Navigator.pop(ctx, 'import'),
-                ),
-                if (_sortOption == 'group')
-                  ListTile(
-                    leading: const Icon(Icons.swap_vert, size: 20),
-                    title: Text(context.l10n.peopleReorder),
-                    onTap: () => Navigator.pop(ctx, 'reorder'),
-                  ),
-                // Flutter extra: multi-select handover (Ionic only has the
-                // handover page in the settings)
-                ListTile(
-                  leading: const Icon(Icons.checklist, size: 20),
-                  title: Text(context.l10n.peopleFlutterTransferPeople),
-                  onTap: () => Navigator.pop(ctx, 'select'),
-                ),
-              ],
-            ],
+    final ios = ionIsIos(context);
+    final menuStyle = MenuStyle(
+      backgroundColor: WidgetStatePropertyAll(
+        Theme.of(context).brightness == Brightness.dark
+            ? AppColors.surfaceDark
+            : Colors.white,
+      ),
+      shape: WidgetStatePropertyAll(RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(ios ? 13 : 4),
+      )),
+      padding: const WidgetStatePropertyAll(EdgeInsets.symmetric(vertical: 4)),
+    );
+    final itemStyle = MenuItemButton.styleFrom(
+      minimumSize: const Size(256, 44),
+      textStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(fontSize: 16),
+    );
+    Widget check(bool on) => SizedBox(
+          width: 24,
+          child: on
+              ? const Icon(Icons.check, size: 20, color: AppColors.primary)
+              : null,
+        );
+
+    Widget selectRow({
+      required IconData icon,
+      required String value,
+      required Map<String, String> options,
+      required void Function(String) onSelected,
+    }) {
+      return SubmenuButton(
+        style: itemStyle,
+        menuStyle: menuStyle,
+        leadingIcon: Icon(icon, size: 18),
+        menuChildren: [
+          for (final e in options.entries)
+            MenuItemButton(
+              style: itemStyle,
+              leadingIcon: check(e.key == value),
+              onPressed: () => onSelected(e.key),
+              child: Text(e.value),
+            ),
+        ],
+        // Ionic: ion-select slot="end", text width 9rem
+        child: SizedBox(
+          width: 144,
+          child: Text(
+            options[value] ?? options.values.first,
+            textAlign: TextAlign.right,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
         ),
+      );
+    }
+
+    final viewSummary = viewLabels.entries
+        .where((e) => _viewOptions.contains(e.key))
+        .map((e) => e.value)
+        .join(', ');
+
+    return MenuAnchor(
+      style: menuStyle,
+      menuChildren: [
+        selectRow(
+          icon: Icons.filter_alt,
+          value: filterLabels.containsKey(_filterOption) ? _filterOption : 'all',
+          options: filterLabels,
+          onSelected: _onFilterSelected,
+        ),
+        selectRow(
+          icon: Icons.filter_list,
+          value: sortLabels.containsKey(_sortOption) ? _sortOption : 'group',
+          options: sortLabels,
+          onSelected: _onSortSelected,
+        ),
+        SubmenuButton(
+          style: itemStyle,
+          menuStyle: menuStyle,
+          leadingIcon: const Icon(Icons.visibility, size: 18),
+          menuChildren: [
+            for (final e in viewLabels.entries)
+              CheckboxMenuButton(
+                style: itemStyle,
+                closeOnActivate: false,
+                value: _viewOptions.contains(e.key),
+                onChanged: (v) {
+                  setState(() {
+                    if (v == true) {
+                      _viewOptions.add(e.key);
+                    } else {
+                      _viewOptions.remove(e.key);
+                    }
+                  });
+                  _saveViewOptions();
+                },
+                child: Text(e.value),
+              ),
+          ],
+          child: SizedBox(
+            width: 144,
+            child: Text(
+              viewSummary,
+              textAlign: TextAlign.right,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ),
+        if (_churchField(tenant) != null)
+          MenuItemButton(
+            style: itemStyle,
+            leadingIcon: const Icon(Icons.business_outlined, size: 18),
+            onPressed: _showChurchOverview,
+            child: Text(context.l10n.attendanceChurchOverview),
+          ),
+        if (isAdmin) ...[
+          MenuItemButton(
+            style: itemStyle,
+            leadingIcon: const Icon(Icons.edit, size: 18),
+            onPressed: _openBulkEdit,
+            child: Text(context.l10n.peopleBulkEdit),
+          ),
+          MenuItemButton(
+            style: itemStyle,
+            leadingIcon: const Icon(Icons.cloud_upload_outlined, size: 18),
+            onPressed: _openImport,
+            child: Text(context.l10n.peopleImportPeople),
+          ),
+          if (_sortOption == 'group')
+            MenuItemButton(
+              style: itemStyle,
+              leadingIcon: const Icon(Icons.swap_vert, size: 18),
+              onPressed: _toggleReorderMode,
+              child: Text(context.l10n.peopleReorder),
+            ),
+          // Flutter extra: multi-select handover (Ionic only has the
+          // handover page in the settings)
+          MenuItemButton(
+            style: itemStyle,
+            leadingIcon: const Icon(Icons.checklist, size: 18),
+            onPressed: _enterSelectionMode,
+            child: Text(context.l10n.peopleFlutterTransferPeople),
+          ),
+        ],
+      ],
+      builder: (context, controller, _) => IconButton(
+        key: const Key('people_options_button'),
+        icon: Icon(
+          Icons.tune,
+          color: _filterOption != 'all' ? AppColors.primary : null,
+        ),
+        tooltip: context.l10n.typeSettingsOptions,
+        onPressed: () =>
+            controller.isOpen ? controller.close() : controller.open(),
       ),
     );
-    if (action == null || !mounted) return;
-    if (action.startsWith('filter:')) {
-      await _onFilterSelected(action.substring(7));
-    } else if (action.startsWith('sort:')) {
-      _onSortSelected(action.substring(5));
-    } else {
-      switch (action) {
-        case 'view':
-          await _showViewOptionsDialog();
-        case 'churchOverview':
-          await _showChurchOverview();
-        case 'bulkEdit':
-          await _openBulkEdit();
-        case 'import':
-          await _openImport();
-        case 'reorder':
-          await _toggleReorderMode();
-        case 'select':
-          _enterSelectionMode();
-      }
-    }
   }
 
   List<ExtraField> _filterableExtraFields(Tenant? tenant) =>
@@ -1384,90 +1412,6 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
   }
 }
 
-/// Ionic ion-list-header ("Personen (n)").
-class _ListHeader extends StatelessWidget {
-  const _ListHeader({required this.text});
-
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(
-          AppDimensions.paddingM, AppDimensions.paddingS, AppDimensions.paddingM, 4),
-      child: Text(
-        text,
-        style: Theme.of(context)
-            .textTheme
-            .titleMedium
-            ?.copyWith(fontWeight: FontWeight.bold),
-      ),
-    );
-  }
-}
-
-/// Ionic ion-item-divider color="primary" (group header).
-class _GroupDivider extends StatelessWidget {
-  const _GroupDivider({required this.text});
-
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      color: AppColors.primary,
-      padding: const EdgeInsets.symmetric(
-          horizontal: AppDimensions.paddingM, vertical: 6),
-      child: Text(
-        text,
-        style: const TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.w600,
-          fontSize: 14,
-        ),
-      ),
-    );
-  }
-}
-
-/// One option row of the options popover (icon + dropdown, Ionic ion-select
-/// interface="popover").
-class _OptionDropdownTile extends StatelessWidget {
-  const _OptionDropdownTile({
-    required this.icon,
-    required this.label,
-    required this.value,
-    required this.options,
-    required this.onChanged,
-  });
-
-  final IconData icon;
-  final String label;
-  final String value;
-  final Map<String, String> options;
-  final ValueChanged<String> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      leading: Icon(icon, size: 20),
-      title: Text(label),
-      trailing: DropdownButton<String>(
-        value: value,
-        underline: const SizedBox.shrink(),
-        items: [
-          for (final e in options.entries)
-            DropdownMenuItem(value: e.key, child: Text(e.value)),
-        ],
-        onChanged: (v) {
-          if (v != null) onChanged(v);
-        },
-      ),
-    );
-  }
-}
-
 /// Person row (Ionic ion-item-sliding in people/list).
 class _PersonListItem extends StatelessWidget {
   const _PersonListItem({
@@ -1541,30 +1485,36 @@ class _PersonListItem extends StatelessWidget {
 
   /// Additional label lines (h3 / p in Ionic) below the name.
   List<Widget> _lines(BuildContext context) {
-    const h3 = TextStyle(fontSize: 14);
-    final p = TextStyle(fontSize: 13, color: Theme.of(context).hintColor);
+    final h3 = IonText.h3(context);
+    final p = IonText.p(context);
+    Widget line(String text) => Padding(
+          padding: const EdgeInsets.only(top: 2),
+          child: Text(text, style: h3, maxLines: 1, overflow: TextOverflow.ellipsis),
+        );
     final sub = _subText(context);
     return [
-      if (sub.isNotEmpty) Text(sub, style: h3),
+      if (sub.isNotEmpty) line(sub),
       if (!isMainGroup && viewOptions.contains('teacher'))
-        Text(
+        line(
           person.teacherName != null
               ? context.l10n.peopleTeacherName(person.teacherName!)
               : context.l10n.peopleNoTeacher,
-          style: h3,
         ),
-      if (otherInstanceName != null) Text(otherInstanceName!, style: h3),
+      if (otherInstanceName != null) line(otherInstanceName!),
+      // Ionic: <p style="white-space: pre-line">
       if (viewOptions.contains('notes') && (person.notes?.isNotEmpty ?? false))
-        Text(person.notes!, style: p),
+        Padding(
+          padding: const EdgeInsets.only(top: 2),
+          child: Text(person.notes!, style: p),
+        ),
       for (final f in extraFields)
         if (viewOptions.contains('extra:${f.id}') &&
             f.displayMode == 'underneath' &&
             _hasExtraValue(person.additionalFields?[f.id]))
-          Text(
+          line(
             f.type == 'boolean'
                 ? f.name
                 : '${f.name}: ${_extraValueText(f, person.additionalFields?[f.id])}',
-            style: h3,
           ),
     ];
   }
@@ -1575,24 +1525,24 @@ class _PersonListItem extends StatelessWidget {
     final notHiddenByPause = !showPaused || !person.paused;
     return [
       if (notHiddenByPause && viewOptions.contains('leader') && person.isLeader)
-        _IonBadge(text: context.l10n.peopleVoiceLeader, color: AppColors.secondary),
+        IonBadge(text: context.l10n.peopleVoiceLeader, color: AppColors.secondary),
       if (notHiddenByPause &&
           viewOptions.contains('new') &&
           isNewPerson(person) &&
           !person.isLeader)
-        _IonBadge(text: context.l10n.peopleNew, color: AppColors.danger),
+        IonBadge(text: context.l10n.peopleNew, color: AppColors.danger),
       if (notHiddenByPause && viewOptions.contains('critical') && person.isCritical)
-        _IonBadge(text: context.l10n.peopleProblemCase, color: AppColors.danger),
+        IonBadge(text: context.l10n.peopleProblemCase, color: AppColors.danger),
       if (showPaused && person.paused)
-        _IonBadge(
+        IonBadge(
             text: context.l10n.peoplePaused, color: AppColors.warning, textColor: Colors.black),
       if (viewOptions.contains('examinee') && person.examinee)
-        _IonBadge(text: context.l10n.peopleCandidate, color: AppColors.dark),
+        IonBadge(text: context.l10n.peopleCandidate, color: AppColors.dark),
       for (final f in extraFields)
         if (viewOptions.contains('extra:${f.id}') &&
             f.displayMode != 'underneath' &&
             _hasExtraValue(person.additionalFields?[f.id]))
-          _IonBadge(
+          IonBadge(
             text: switch (f.type) {
               'boolean' => f.name,
               'number' => '${f.name} ${person.additionalFields?[f.id]}',
@@ -1601,7 +1551,7 @@ class _PersonListItem extends StatelessWidget {
             color: f.type == 'boolean' ? AppColors.success : AppColors.dark,
           ),
       if (viewOptions.contains('attendance') && attendancePercentage != null)
-        _IonBadge(
+        IonBadge(
           text: '$attendancePercentage%',
           color: attendancePercentage! >= 75
               ? AppColors.success
@@ -1619,48 +1569,37 @@ class _PersonListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final showPhoto = viewOptions.contains('photo');
     final badges = _badges(context);
-    final tile = InkWell(
+    final tile = IonItem(
       onTap: onTap,
-      child: Container(
-        decoration: BoxDecoration(
-          color: isSelected ? AppColors.primary.withValues(alpha: 0.1) : null,
-          border: Border(
-            bottom: BorderSide(color: Theme.of(context).dividerColor, width: 0.5),
-          ),
-        ),
-        padding: const EdgeInsets.symmetric(
-            horizontal: AppDimensions.paddingM, vertical: 10),
-        child: Row(
-          children: [
-            if (isSelectionMode)
-              Checkbox(value: isSelected, onChanged: (_) => onTap()),
-            if (showPhoto) ...[
-              _Avatar(person: person),
-              const SizedBox(width: AppDimensions.paddingM),
-            ],
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '${person.firstName} ${person.lastName}',
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                  ),
-                  ..._lines(context),
-                ],
-              ),
+      selected: isSelected,
+      start: isSelectionMode
+          ? Checkbox(value: isSelected, onChanged: (_) => onTap())
+          : (showPhoto ? IonAvatar(url: person.imageUrl) : null),
+      end: [
+        if (badges.isNotEmpty)
+          ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: MediaQuery.sizeOf(context).width * 0.55,
             ),
-            if (badges.isNotEmpty)
-              Flexible(
-                child: Wrap(
-                  alignment: WrapAlignment.end,
-                  spacing: 4,
-                  runSpacing: 4,
-                  children: badges,
-                ),
-              ),
-          ],
-        ),
+            child: Wrap(
+              alignment: WrapAlignment.end,
+              spacing: 4,
+              runSpacing: 4,
+              children: badges,
+            ),
+          ),
+      ],
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '${person.firstName} ${person.lastName}',
+            style: IonText.h2(context),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          ..._lines(context),
+        ],
       ),
     );
 
@@ -1707,60 +1646,9 @@ class _PersonListItem extends StatelessWidget {
   }
 }
 
-class _Avatar extends StatelessWidget {
-  const _Avatar({required this.person});
-
-  final Person person;
-
-  @override
-  Widget build(BuildContext context) {
-    final url = person.imageUrl;
-    final hasImage = url != null && url.isNotEmpty && !url.contains('.svg');
-    return CircleAvatar(
-      radius: 20,
-      backgroundColor: AppColors.primaryLight.withValues(alpha: 0.2),
-      backgroundImage: hasImage ? NetworkImage(url) : null,
-      child: hasImage
-          ? null
-          : const Icon(Icons.person, color: AppColors.medium),
-    );
-  }
-}
-
-/// Ionic ion-badge: filled, rounded, small bold text.
-class _IonBadge extends StatelessWidget {
-  const _IonBadge({
-    required this.text,
-    required this.color,
-    this.textColor = Colors.white,
-  });
-
-  final String text;
-  final Color color;
-  final Color textColor;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Text(
-        text,
-        style: TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.w600,
-          color: textColor,
-        ),
-        overflow: TextOverflow.ellipsis,
-      ),
-    );
-  }
-}
-
-/// Banner listing people whose birthday is today.
+/// Ionic `.birthday-banner`: card (radius 16, 1px step-150 border) with a
+/// gift icon tile, the title and one pill per person (avatar or 🎂, name,
+/// age).
 class _BirthdayBanner extends StatelessWidget {
   const _BirthdayBanner({required this.people, required this.onTap});
 
@@ -1770,49 +1658,91 @@ class _BirthdayBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (people.isEmpty) return const SizedBox.shrink();
-    final theme = Theme.of(context);
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    final cardColor = dark ? AppColors.surfaceDark : Colors.white;
     return Container(
-      margin: const EdgeInsets.fromLTRB(
-        AppDimensions.paddingM,
-        0,
-        AppDimensions.paddingM,
-        AppDimensions.paddingS,
-      ),
-      padding: const EdgeInsets.all(AppDimensions.paddingS),
+      margin: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
-        color: AppColors.warning.withAlpha(31),
-        borderRadius: BorderRadius.circular(AppDimensions.borderRadiusM),
-        border: Border.all(color: AppColors.warning.withAlpha(102)),
+        color: cardColor,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: dark ? const Color(0xFF262626) : const Color(0xFFE5E5EA),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              const Icon(Icons.card_giftcard, color: AppColors.warning, size: 20),
-              const SizedBox(width: 8),
-              Text(
-                people.length == 1
-                    ? context.l10n.peopleBirthdayToday
-                    : context.l10n.peopleBirthdaysToday(people.length),
-                style: theme.textTheme.titleSmall
-                    ?.copyWith(fontWeight: FontWeight.bold),
+              Container(
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withValues(alpha: 0.13),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Icon(Icons.card_giftcard_outlined,
+                    size: 18, color: AppColors.primaryDark),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  people.length == 1
+                      ? context.l10n.peopleBirthdayToday
+                      : context.l10n.peopleBirthdaysToday(people.length),
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                ),
               ),
             ],
           ),
-          const SizedBox(height: 6),
+          const SizedBox(height: 10),
           Wrap(
             spacing: 8,
-            runSpacing: 6,
+            runSpacing: 8,
             children: people.map((p) {
               final age = p.birthday != null ? ageInYears(p.birthday!) : 0;
-              return ActionChip(
-                avatar: p.img != null && p.img!.isNotEmpty
-                    ? CircleAvatar(backgroundImage: NetworkImage(p.img!))
-                    : const Text('🎂'),
-                label: Text(
-                    '${p.firstName} ${p.lastName} · ${context.l10n.peopleAgeYears(age)}'),
-                onPressed: () => onTap(p),
+              final hasImg = p.img != null && p.img!.isNotEmpty;
+              return Material(
+                color: AppColors.primary.withValues(alpha: 0.1),
+                shape: const StadiumBorder(),
+                clipBehavior: Clip.antiAlias,
+                child: InkWell(
+                  onTap: () => onTap(p),
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(4, 4, 10, 4),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (hasImg)
+                          IonAvatar(url: p.img, size: 28)
+                        else
+                          Container(
+                            width: 28,
+                            height: 28,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: cardColor,
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Text('🎂', style: TextStyle(fontSize: 14)),
+                          ),
+                        const SizedBox(width: 8),
+                        Text(
+                          '${p.firstName} ${p.lastName}',
+                          style: const TextStyle(
+                              fontSize: 15, fontWeight: FontWeight.w500),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          context.l10n.peopleAgeYears(age),
+                          style: const TextStyle(
+                              fontSize: 13.5, color: AppColors.medium),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               );
             }).toList(),
           ),

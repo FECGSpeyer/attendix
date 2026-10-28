@@ -11,6 +11,7 @@ import '../../../../data/models/player_absence/player_absence.dart';
 import 'person_detail/upcoming_appointments_accordion.dart';
 import '../../../../core/utils/date_helper.dart';
 import '../../../../l10n/l10n.dart';
+import 'ion/ion_widgets.dart';
 
 DateFormat get _dateFormat => DateFormat(dateFmt());
 
@@ -298,9 +299,17 @@ class PlannedAbsenceTile extends StatelessWidget {
 /// Person detail: "Abwesenheiten" accordion (Ionic person.page absences).
 /// Only rendered when the current user may manage planned absences.
 class PlannedAbsencesAccordion extends ConsumerStatefulWidget {
-  const PlannedAbsencesAccordion({super.key, required this.personId});
+  const PlannedAbsencesAccordion({
+    super.key,
+    required this.personId,
+    this.extra = const [],
+  });
 
   final int personId;
+
+  /// UX_PEOPLE: further items at the end of the list (Ionic: "Regelmäßig
+  /// verhindert" when the tenant uses duty types).
+  final List<Widget> extra;
 
   @override
   ConsumerState<PlannedAbsencesAccordion> createState() =>
@@ -320,24 +329,15 @@ class _PlannedAbsencesAccordionState
         ref.watch(playerAbsencesByPersonIdProvider(widget.personId)).valueOrNull ??
             const <PlayerAbsence>[];
 
-    return Card(
-      margin: const EdgeInsets.symmetric(
-        horizontal: AppDimensions.paddingM,
-        vertical: AppDimensions.paddingXS,
-      ),
-      child: Column(
-        children: [
-          ListTile(
-            title: Text(
-              absences.isNotEmpty
+    return IonAccordion(
+      title: absences.isNotEmpty
                   ? context.l10n.personAbsencesCount(absences.length)
                   : context.l10n.personAbsences,
-              style: const TextStyle(fontWeight: FontWeight.w600),
-            ),
-            trailing: Icon(_isExpanded ? Icons.expand_less : Icons.expand_more),
-            onTap: () => setState(() => _isExpanded = !_isExpanded),
-          ),
-          if (_isExpanded) ...[
+      expanded: _isExpanded,
+      onToggle: () => setState(() => _isExpanded = !_isExpanded),
+      child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
             for (final absence in absences)
               PlannedAbsenceTile(
                 absence: absence,
@@ -364,8 +364,8 @@ class _PlannedAbsencesAccordionState
                 forOther: true,
               ),
             ),
+            ...widget.extra,
           ],
-        ],
       ),
     );
   }
