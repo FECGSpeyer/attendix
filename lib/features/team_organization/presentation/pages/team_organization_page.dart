@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/providers/team_org_providers.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../planning/presentation/widgets/ion_items.dart';
 import '../widgets/protocols_tab.dart';
 import '../widgets/tasks_tab.dart';
 import '../widgets/topics_tab.dart';
@@ -46,12 +47,13 @@ class _TeamOrganizationPageState extends ConsumerState<TeamOrganizationPage>
     return Scaffold(
       appBar: AppBar(
         title: Text(context.l10n.teamOrgTitle),
-        bottom: TabBar(
+        // Ionic: ion-segment in a second toolbar (iOS segmented control).
+        bottom: IonSegmentBar(
           controller: _controller,
-          tabs: [
-            Tab(text: context.l10n.teamOrgTabTasks),
-            Tab(text: context.l10n.teamOrgTabTopics),
-            Tab(text: context.l10n.teamOrgTabProtocols),
+          labels: [
+            context.l10n.teamOrgTabTasks,
+            context.l10n.teamOrgTabTopics,
+            context.l10n.teamOrgTabProtocols,
           ],
         ),
       ),

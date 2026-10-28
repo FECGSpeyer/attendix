@@ -3,12 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
-import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/team_org_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/team_org/team_org.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../planning/presentation/widgets/ion_items.dart';
 import '../../team_org_utils.dart';
 import 'agenda_picker_sheet.dart';
 import 'quick_create_attendance.dart';
@@ -24,22 +24,15 @@ class TopicsTab extends ConsumerWidget {
     final isLeader = ref.watch(isTeamLeaderProvider);
     if (isLeader) return const _LeaderTopics();
     if (ref.watch(inTeamCircleProvider)) return const _MemberTopics();
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(AppDimensions.paddingL),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Icons.forum_outlined, size: 56, color: AppColors.medium),
-            const SizedBox(height: AppDimensions.paddingM),
-            Text(
-              context.l10n.teamOrgLeadersPlan,
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
+    // Ionic `.topic-empty` (chatbubbles icon, grey text).
+    return ListView(children: [
+      IonEmptyState(
+        icon: Icons.forum_outlined,
+        iconSize: 48,
+        padding: const EdgeInsets.fromLTRB(32, 48, 32, 16),
+        text: context.l10n.teamOrgLeadersPlan,
       ),
-    );
+    ]);
   }
 }
 
@@ -236,6 +229,7 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       builder: (ctx) => Consumer(builder: (ctx, ref, _) {
         final items = ref.watch(agendaItemsProvider).valueOrNull ?? const <AgendaItem>[];
         final pending = splitTopics(items).pending;
@@ -253,59 +247,71 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
                 title: Text(ctx.l10n.teamOrgSuggestions),
               ),
               Expanded(
-                child: ListView(
-                  padding: const EdgeInsets.all(AppDimensions.paddingM),
-                  children: [
-                    Text(ctx.l10n.teamOrgSuggestionsHint),
-                    const SizedBox(height: AppDimensions.paddingM),
-                    if (pending.isEmpty) Text(ctx.l10n.teamOrgAllDecided),
-                    for (final item in pending)
-                      Card(
-                        child: Padding(
-                          padding: const EdgeInsets.all(AppDimensions.paddingM),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
+                child: ColoredBox(
+                  color: Theme.of(ctx).scaffoldBackgroundColor,
+                  child: ListView(
+                    padding: const EdgeInsets.only(bottom: 24),
+                    children: [
+                      // Ionic `.sheet-hint`
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+                        child: Text(pending.isEmpty ? ctx.l10n.teamOrgAllDecided : ctx.l10n.teamOrgSuggestionsHint,
+                            style: const TextStyle(fontSize: 13, color: AppColors.medium)),
+                      ),
+                      for (final item in pending)
+                        IonInsetList(
+                          dividerIndent: null,
+                          children: [
+                            ListTile(
+                              leading: CircleAvatar(
+                                radius: 18,
+                                backgroundColor: AppColors.primaryDark,
+                                child: Text(
+                                  item.proposer.initials.isNotEmpty ? item.proposer.initials : '?',
+                                  style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Colors.white),
+                                ),
+                              ),
+                              title: Text(
+                                item.proposer.fullName.isNotEmpty ? item.proposer.fullName : ctx.l10n.teamOrgFlutterMember,
+                                style: const TextStyle(fontSize: 15),
+                              ),
+                              subtitle: Text(relativeDay(item.createdAt), style: const TextStyle(color: AppColors.medium)),
+                            ),
+                            ListTile(
+                              title: Text(item.title, style: const TextStyle(fontWeight: FontWeight.w600)),
+                              subtitle: item.description?.isNotEmpty == true
+                                  ? Text(item.description!, style: const TextStyle(color: AppColors.medium))
+                                  : null,
+                            ),
+                            // Ionic `.proposal-actions`: two equal buttons.
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                              child: Row(
                                 children: [
-                                  CircleAvatar(
-                                    child: Text(item.proposer.initials.isNotEmpty ? item.proposer.initials : '?'),
-                                  ),
-                                  const SizedBox(width: AppDimensions.paddingS),
                                   Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(item.proposer.fullName.isNotEmpty ? item.proposer.fullName : ctx.l10n.teamOrgFlutterMember),
-                                        Text(relativeDay(item.createdAt), style: Theme.of(ctx).textTheme.bodySmall),
-                                      ],
+                                    child: OutlinedButton(
+                                      style: OutlinedButton.styleFrom(
+                                        foregroundColor: AppColors.medium,
+                                        side: const BorderSide(color: AppColors.medium),
+                                      ),
+                                      onPressed: _deciding.contains(item.id) ? null : () => _reject(item),
+                                      child: Text(ctx.l10n.teamOrgReject),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: FilledButton(
+                                      onPressed: _deciding.contains(item.id) ? null : () => _accept(item),
+                                      child: Text(ctx.l10n.commonApply),
                                     ),
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: AppDimensions.paddingS),
-                              Text(item.title, style: Theme.of(ctx).textTheme.titleMedium),
-                              if (item.description?.isNotEmpty == true) Text(item.description!),
-                              const SizedBox(height: AppDimensions.paddingS),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  OutlinedButton(
-                                    onPressed: _deciding.contains(item.id) ? null : () => _reject(item),
-                                    child: Text(ctx.l10n.teamOrgReject),
-                                  ),
-                                  const SizedBox(width: AppDimensions.paddingS),
-                                  FilledButton(
-                                    onPressed: _deciding.contains(item.id) ? null : () => _accept(item),
-                                    child: Text(ctx.l10n.commonApply),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                      ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -367,130 +373,152 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
             },
             child: ListView(
               physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.fromLTRB(
-                  AppDimensions.paddingM, AppDimensions.paddingS, AppDimensions.paddingM, 96),
+              padding: const EdgeInsets.only(bottom: 88),
               children: [
+                // Neue Vorschläge (Ionic `.proposal-banner`)
                 if (buckets.pending.isNotEmpty)
-                  Card(
-                    child: ListTile(
+                  IonInsetList(children: [
+                    ListTile(
                       leading: const Icon(Icons.lightbulb_outline, color: AppColors.warning),
                       title: Text(l10n.teamOrgFlutterNewSuggestions(buckets.pending.length)),
-                      subtitle: Text(l10n.teamOrgSubmittedByMembers),
-                      trailing: FilledButton.tonal(onPressed: _openReview, child: Text(l10n.teamOrgReview)),
+                      subtitle: Text(l10n.teamOrgSubmittedByMembers, style: const TextStyle(color: AppColors.medium)),
+                      trailing: FilledButton(
+                        style: FilledButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          minimumSize: const Size(0, 32),
+                          visualDensity: VisualDensity.compact,
+                        ),
+                        onPressed: _openReview,
+                        child: Text(l10n.teamOrgReview),
+                      ),
                       onTap: _openReview,
                     ),
-                  ),
-                _sectionHeader(
-                  context,
-                  next != null && next.id != upcoming.first.id ? l10n.teamOrgChosenEvent : l10n.teamOrgNextEvent,
-                  trailing: next != null
-                      ? TextButton(
-                          onPressed: () => _changeAttendance(upcoming, next, types),
-                          child: Text(l10n.teamOrgChange),
-                        )
-                      : null,
-                ),
-                Card(
-                  margin: EdgeInsets.zero,
-                  child: next == null
-                      ? Column(
-                          children: [
-                            ListTile(
-                              title: Text(l10n.teamOrgNoProtocolEvent,
-                                  style: const TextStyle(color: AppColors.medium)),
-                            ),
-                            ListTile(
-                              leading: const Icon(Icons.add_circle_outline, color: AppColors.primary),
-                              title: Text(l10n.teamOrgCreateEvent, style: const TextStyle(color: AppColors.primary)),
-                              onTap: _createAttendance,
-                            ),
-                          ],
-                        )
-                      : Column(
-                          children: [
-                            ListTile(
-                              leading: const Icon(Icons.calendar_today_outlined, color: AppColors.primary),
-                              title: Text(_attendanceTitle(next, types)),
-                              trailing: tops.minutes > 0 ? Text(l10n.teamOrgMinutes(tops.minutes)) : null,
-                              onTap: () => context.push('/attendance/${next!.id}'),
-                            ),
-                            for (final top in tops.tops)
-                              ListTile(
-                                title: Text(l10n.teamOrgTopName(numbers[fieldId(top)] ?? 0, fieldName(top))),
-                                subtitle: fieldConductor(top) != null ? Text(fieldConductor(top)!) : null,
-                                trailing: Text(l10n.teamOrgMinutes(fieldMinutes(top))),
-                                onTap: () => _topAction(top, next!, nextType),
-                              ),
-                            if (tops.tops.isEmpty)
-                              ListTile(
-                                title: Text(l10n.teamOrgNoTopsYet,
-                                    style: const TextStyle(color: AppColors.medium)),
-                              ),
-                            ListTile(
-                              leading: const Icon(Icons.add_circle_outline, color: AppColors.primary),
-                              title: Text(l10n.teamOrgAddTopics, style: const TextStyle(color: AppColors.primary)),
-                              onTap: () async {
-                                await showAgendaPickerSheet(context, attendance: next!, type: nextType);
-                              },
-                            ),
-                          ],
-                        ),
-                ),
-                _sectionHeader(context, l10n.agendaTopicStore, trailing: Text(l10n.teamOrgOpenCount(openTopics.length))),
-                Card(
-                  margin: EdgeInsets.zero,
-                  child: Column(
+                  ]),
+                // Nächster Termin
+                if (next != null)
+                  IonInsetList(
+                    header: next.id != upcoming.first.id ? l10n.teamOrgChosenEvent : l10n.teamOrgNextEvent,
+                    headerTrailing: TextButton(
+                      onPressed: () => _changeAttendance(upcoming, next, types),
+                      child: Text(l10n.teamOrgChange),
+                    ),
                     children: [
-                      for (final item in openTopics)
+                      ListTile(
+                        leading: const Icon(Icons.calendar_today_outlined, color: AppColors.primary),
+                        title: Text(_attendanceTitle(next, types)),
+                        trailing: Row(mainAxisSize: MainAxisSize.min, children: [
+                          if (tops.minutes > 0) IonNote(l10n.teamOrgMinutes(tops.minutes)),
+                          const SizedBox(width: 4),
+                          const IonDetailIcon(),
+                        ]),
+                        onTap: () => context.push('/attendance/${next!.id}'),
+                      ),
+                      for (final top in tops.tops)
                         ListTile(
-                          title: Text(item.title),
-                          subtitle: Text.rich(TextSpan(children: [
-                            if (postponed.contains(item.id))
-                              TextSpan(
-                                  text: '${l10n.teamOrgPostponedLower} · ',
-                                  style: const TextStyle(color: AppColors.warningDark)),
-                            if (nextAgendaIds.contains(item.id))
-                              TextSpan(
-                                  text: '${l10n.teamOrgPlannedLower} · ',
-                                  style: const TextStyle(color: AppColors.primary)),
-                            TextSpan(text: _topicSubtitle(item)),
-                          ])),
-                          trailing: TeamOrgBadge(
-                            label: priorityLabels[item.priority] ?? item.priority,
-                            color: priorityColor(item.priority),
-                          ),
-                          onTap: () => context.push('/settings/agenda-items/${item.id}'),
+                          title: Text(l10n.teamOrgTopName(numbers[fieldId(top)] ?? 0, fieldName(top)),
+                              style: const TextStyle(fontSize: 15)),
+                          subtitle: fieldConductor(top) != null
+                              ? Text(fieldConductor(top)!, style: const TextStyle(color: AppColors.medium))
+                              : null,
+                          trailing: IonNote(l10n.teamOrgMinutes(fieldMinutes(top))),
+                          onTap: () => _topAction(top, next!, nextType),
                         ),
-                      if (openTopics.isEmpty)
+                      if (tops.tops.isEmpty)
                         ListTile(
-                          title: Text(l10n.teamOrgNoOpenTopics,
-                              style: const TextStyle(color: AppColors.medium)),
+                          title: Text(l10n.teamOrgNoTopsYet, style: const TextStyle(color: AppColors.medium)),
                         ),
+                      ListTile(
+                        leading: const Icon(Icons.add_circle_outline, color: AppColors.primary),
+                        title: Text(l10n.teamOrgAddTopics, style: const TextStyle(color: AppColors.primary)),
+                        onTap: () async {
+                          await showAgendaPickerSheet(context, attendance: next!, type: nextType);
+                        },
+                      ),
+                    ],
+                  )
+                else
+                  IonInsetList(
+                    header: l10n.teamOrgNextEvent,
+                    children: [
+                      ListTile(
+                        title: Text(l10n.teamOrgNoProtocolEvent, style: const TextStyle(color: AppColors.medium)),
+                      ),
+                      ListTile(
+                        leading: const Icon(Icons.add_circle_outline, color: AppColors.primary),
+                        title: Text(l10n.teamOrgCreateEvent, style: const TextStyle(color: AppColors.primary)),
+                        onTap: _createAttendance,
+                      ),
                     ],
                   ),
+                // Themenspeicher
+                IonInsetList(
+                  header: l10n.agendaTopicStore,
+                  headerTrailing: Padding(
+                    padding: const EdgeInsets.only(right: 12, bottom: 4),
+                    child: IonNote(l10n.teamOrgOpenCount(openTopics.length), style: const TextStyle(fontSize: 14)),
+                  ),
+                  children: [
+                    for (final item in openTopics)
+                      ListTile(
+                        title: Text(item.title),
+                        subtitle: Text.rich(
+                          TextSpan(children: [
+                            if (postponed.contains(item.id))
+                              WidgetSpan(
+                                alignment: PlaceholderAlignment.middle,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(right: 4),
+                                  child: TeamOrgBadge(label: l10n.teamOrgPostponedLower, color: AppColors.warning),
+                                ),
+                              ),
+                            if (nextAgendaIds.contains(item.id))
+                              WidgetSpan(
+                                alignment: PlaceholderAlignment.middle,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(right: 4),
+                                  child: TeamOrgBadge(label: l10n.teamOrgPlannedLower, color: AppColors.primary),
+                                ),
+                              ),
+                            TextSpan(text: _topicSubtitle(item)),
+                          ]),
+                          style: const TextStyle(color: AppColors.medium),
+                        ),
+                        trailing: TeamOrgBadge(
+                          label: priorityLabels[item.priority] ?? item.priority,
+                          color: priorityColor(item.priority),
+                        ),
+                        onTap: () => context.push('/settings/agenda-items/${item.id}'),
+                      ),
+                    if (openTopics.isEmpty)
+                      ListTile(
+                        title: Text(l10n.teamOrgNoOpenTopics, style: const TextStyle(color: AppColors.medium)),
+                      ),
+                  ],
                 ),
                 if (buckets.done.isNotEmpty)
-                  Card(
-                    margin: const EdgeInsets.only(top: AppDimensions.paddingM),
-                    child: Column(
-                      children: [
-                        SwitchListTile(
-                          value: _showDone,
-                          onChanged: (v) => setState(() => _showDone = v),
-                          title: Text(l10n.teamOrgShowDone(buckets.done.length)),
-                        ),
-                        if (_showDone)
-                          for (final item in buckets.done)
-                            ListTile(
-                              title: Text(item.title, style: const TextStyle(color: AppColors.medium)),
-                              subtitle: Text([
+                  IonInsetList(
+                    children: [
+                      SwitchListTile(
+                        value: _showDone,
+                        onChanged: (v) => setState(() => _showDone = v),
+                        title: Text(l10n.teamOrgShowDone(buckets.done.length)),
+                      ),
+                      if (_showDone)
+                        for (final item in buckets.done)
+                          ListTile(
+                            title: Text(item.title,
+                                style: const TextStyle(
+                                    color: AppColors.medium, decoration: TextDecoration.lineThrough)),
+                            subtitle: Text(
+                              [
                                 item.status == 'dropped' ? l10n.agendaStatusDropped : l10n.agendaStatusDone,
                                 if (item.responsiblePerson.fullName.isNotEmpty) item.responsiblePerson.fullName,
-                              ].join(' · ')),
-                              onTap: () => context.push('/settings/agenda-items/${item.id}'),
+                              ].join(' · '),
+                              style: const TextStyle(color: AppColors.medium),
                             ),
-                      ],
-                    ),
+                            onTap: () => context.push('/settings/agenda-items/${item.id}'),
+                          ),
+                    ],
                   ),
               ],
             ),
@@ -500,16 +528,6 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
     );
   }
 }
-
-Widget _sectionHeader(BuildContext context, String title, {Widget? trailing}) => Padding(
-      padding: const EdgeInsets.only(top: AppDimensions.paddingM, bottom: 4),
-      child: Row(
-        children: [
-          Expanded(child: Text(title, style: Theme.of(context).textTheme.titleSmall)),
-          if (trailing != null) trailing,
-        ],
-      ),
-    );
 
 // ── Members ──────────────────────────────────────────────────
 
@@ -521,6 +539,7 @@ class _MemberTopics extends ConsumerWidget {
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       builder: (_) => const _SuggestSheet(),
     );
     if (result == true && context.mounted) ToastHelper.showSuccess(context, context.l10n.teamOrgSuggestionSent);
@@ -534,71 +553,68 @@ class _MemberTopics extends ConsumerWidget {
       onRefresh: () async => ref.invalidate(agendaItemsProvider),
       child: ListView(
         physics: const AlwaysScrollableScrollPhysics(),
-        padding: const EdgeInsets.all(AppDimensions.paddingM),
+        padding: const EdgeInsets.only(bottom: 32),
         children: [
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(AppDimensions.paddingM),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(l10n.teamOrgSuggestTopic, style: Theme.of(context).textTheme.titleMedium),
-                  const SizedBox(height: 4),
-                  Text(l10n.teamOrgSuggestHint),
-                  const SizedBox(height: AppDimensions.paddingM),
-                  SizedBox(
-                    width: double.infinity,
-                    child: FilledButton.icon(
-                      onPressed: () => _suggest(context, ref),
-                      icon: const Icon(Icons.lightbulb_outline),
-                      label: Text(l10n.teamOrgSuggestTopic),
-                    ),
-                  ),
-                ],
+          // Ionic: inset list with the hint item and a block button.
+          IonInsetList(
+            dividerIndent: null,
+            children: [
+              ListTile(
+                title: Text(l10n.teamOrgSuggestTopic),
+                subtitle: Text(l10n.teamOrgSuggestHint, style: const TextStyle(color: AppColors.medium)),
               ),
-            ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                child: FilledButton.icon(
+                  onPressed: () => _suggest(context, ref),
+                  icon: const Icon(Icons.lightbulb_outline),
+                  label: Text(l10n.teamOrgSuggestTopic),
+                ),
+              ),
+            ],
           ),
-          _sectionHeader(context, l10n.teamOrgMySuggestions),
           itemsAsync.when(
-            loading: () => const Center(child: CircularProgressIndicator()),
-            error: (_, __) => Text(l10n.agendaLoadFailed),
+            loading: () => const Padding(
+              padding: EdgeInsets.all(24),
+              child: Center(child: CircularProgressIndicator()),
+            ),
+            error: (_, __) => Padding(padding: const EdgeInsets.all(16), child: Text(l10n.agendaLoadFailed)),
             data: (items) {
               final sorted = [...items]..sort((a, b) => (b.createdAt ?? '').compareTo(a.createdAt ?? ''));
-              if (sorted.isEmpty) {
-                return Card(
-                  child: ListTile(
-                    title: Text(l10n.teamOrgNothingSuggested, style: const TextStyle(color: AppColors.medium)),
-                  ),
-                );
-              }
-              return Card(
-                margin: EdgeInsets.zero,
-                child: Column(
-                  children: [
-                    for (final item in sorted)
-                      ListTile(
-                        title: Text(item.title),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(item.proposalStatus == 'accepted'
+              return IonInsetList(
+                header: l10n.teamOrgMySuggestions,
+                children: [
+                  if (sorted.isEmpty)
+                    ListTile(
+                      title: Text(l10n.teamOrgNothingSuggested, style: const TextStyle(color: AppColors.medium)),
+                    ),
+                  for (final item in sorted)
+                    ListTile(
+                      title: Text(item.title),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            item.proposalStatus == 'accepted'
                                 ? l10n.teamOrgAcceptedByLeaders
-                                : l10n.teamOrgSubmittedOn(_date(item.createdAt))),
-                            if (item.proposalStatus == 'rejected' && item.decisionNote?.isNotEmpty == true)
-                              Text('„${item.decisionNote}“', style: const TextStyle(fontStyle: FontStyle.italic)),
-                          ],
-                        ),
-                        trailing: TeamOrgBadge(
-                          label: suggestionStatusLabel(item),
-                          color: switch (item.proposalStatus) {
-                            'accepted' => AppColors.success,
-                            'rejected' => AppColors.danger,
-                            _ => AppColors.medium,
-                          },
-                        ),
+                                : l10n.teamOrgSubmittedOn(_date(item.createdAt)),
+                            style: const TextStyle(color: AppColors.medium),
+                          ),
+                          if (item.proposalStatus == 'rejected' && item.decisionNote?.isNotEmpty == true)
+                            Text('„${item.decisionNote}“',
+                                style: const TextStyle(fontStyle: FontStyle.italic, color: AppColors.medium)),
+                        ],
                       ),
-                  ],
-                ),
+                      trailing: TeamOrgBadge(
+                        label: suggestionStatusLabel(item),
+                        color: switch (item.proposalStatus) {
+                          'accepted' => AppColors.success,
+                          'rejected' => AppColors.danger,
+                          _ => AppColors.medium,
+                        },
+                      ),
+                    ),
+                ],
               );
             },
           ),
@@ -671,37 +687,38 @@ class _SuggestSheetState extends ConsumerState<_SuggestSheet> {
             leadingWidth: 100,
             title: Text(l10n.teamOrgSuggestTopic),
           ),
+          // Ionic: sheet hint, inset list with stacked title/description, block button.
           Padding(
-            padding: const EdgeInsets.all(AppDimensions.paddingM),
-            child: Column(
-              children: [
-                Text(l10n.teamOrgSuggestHint),
-                const SizedBox(height: AppDimensions.paddingM),
-                TextField(
-                  controller: _title,
-                  textCapitalization: TextCapitalization.sentences,
-                  decoration: InputDecoration(labelText: l10n.tasksTitle, hintText: l10n.teamOrgTitlePlaceholder),
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+            child: Text(l10n.teamOrgSuggestHint, style: const TextStyle(fontSize: 13, color: AppColors.medium)),
+          ),
+          IonInsetList(
+            children: [
+              IonStackedInput(
+                controller: _title,
+                label: l10n.tasksTitle,
+                hint: l10n.teamOrgTitlePlaceholder,
+              ),
+              IonStackedInput(
+                controller: _description,
+                label: l10n.tasksDescription,
+                hint: l10n.teamOrgDescPlaceholder,
+                minLines: 4,
+                maxLines: 8,
+              ),
+            ],
+          ),
+          SafeArea(
+            top: false,
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: SizedBox(
+                width: double.infinity,
+                child: FilledButton(
+                  onPressed: _title.text.trim().isEmpty || _sending ? null : _send,
+                  child: Text(l10n.teamOrgSendSuggestion),
                 ),
-                const SizedBox(height: AppDimensions.paddingS),
-                TextField(
-                  controller: _description,
-                  minLines: 4,
-                  maxLines: 8,
-                  textCapitalization: TextCapitalization.sentences,
-                  decoration: InputDecoration(labelText: l10n.tasksDescription, hintText: l10n.teamOrgDescPlaceholder),
-                ),
-                const SizedBox(height: AppDimensions.paddingM),
-                SafeArea(
-                  top: false,
-                  child: SizedBox(
-                    width: double.infinity,
-                    child: FilledButton(
-                      onPressed: _title.text.trim().isEmpty || _sending ? null : _send,
-                      child: Text(l10n.teamOrgSendSuggestion),
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
         ],

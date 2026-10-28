@@ -9,6 +9,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/team_org/team_org.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/loading/loading.dart';
+import '../../../planning/presentation/widgets/ion_items.dart';
 import '../../team_org_utils.dart';
 import 'task_form_sheet.dart';
 
@@ -95,12 +96,14 @@ class _TasksTabState extends ConsumerState<TasksTab> {
             onRefresh: () async => ref.invalidate(teamTasksProvider),
             child: ListView(
               physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.fromLTRB(
-                  AppDimensions.paddingM, AppDimensions.paddingS, AppDimensions.paddingM, 96),
+              padding: const EdgeInsets.only(bottom: 88),
               children: [
+                // Ionic `.task-chips`: horizontally scrolling ion-chips (white,
+                // active = primary shade).
                 if (isLeader && tasks.isNotEmpty)
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
+                    padding: const EdgeInsets.fromLTRB(16, 10, 16, 0),
                     child: Row(
                       children: [
                         _chip(l10n.teamOrgAllCount(allOpen), filter == 'all', () => setState(() => _filter = 'all')),
@@ -114,63 +117,49 @@ class _TasksTabState extends ConsumerState<TasksTab> {
                     ),
                   ),
                 if (groups.isEmpty)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 48),
-                    child: Column(
-                      children: [
-                        const Icon(Icons.task_alt, size: 56, color: AppColors.medium),
-                        const SizedBox(height: AppDimensions.paddingM),
-                        Text(emptyText(), textAlign: TextAlign.center),
-                        if (isLeader && tasks.isEmpty)
-                          TextButton.icon(
+                  IonEmptyState(
+                    icon: Icons.done_all,
+                    iconSize: 48,
+                    padding: const EdgeInsets.fromLTRB(32, 48, 32, 16),
+                    text: emptyText(),
+                    action: isLeader && tasks.isEmpty
+                        ? TextButton.icon(
                             onPressed: _addTask,
                             icon: const Icon(Icons.add),
                             label: Text(l10n.teamOrgCreateTask),
-                          ),
-                      ],
-                    ),
+                          )
+                        : null,
                   ),
-                for (final group in groups) ...[
-                  Padding(
-                    padding: const EdgeInsets.only(top: AppDimensions.paddingM, bottom: 4),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            group.label,
-                            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                                  color: group.key == 'overdue' ? AppColors.danger : null,
-                                ),
-                          ),
+                // Ionic: one ion-list [inset] per due group, header with count note.
+                for (final group in groups)
+                  IonInsetList(
+                    header: group.label,
+                    headerColor: group.key == 'overdue' ? AppColors.danger : null,
+                    headerTrailing: Padding(
+                      padding: const EdgeInsets.only(right: 12, bottom: 4),
+                      child: IonNote('${group.tasks.length}', style: const TextStyle(fontSize: 14)),
+                    ),
+                    dividerIndent: 56,
+                    children: [
+                      for (final task in group.tasks)
+                        TaskListTile(
+                          task: task,
+                          today: today,
+                          showPerson: isLeader,
+                          onToggle: () => _toggle(task),
                         ),
-                        Text('${group.tasks.length}', style: Theme.of(context).textTheme.bodySmall),
-                      ],
-                    ),
+                    ],
                   ),
-                  Card(
-                    margin: EdgeInsets.zero,
-                    child: Column(
-                      children: [
-                        for (final task in group.tasks)
-                          TaskListTile(
-                            task: task,
-                            today: today,
-                            showPerson: isLeader,
-                            onToggle: () => _toggle(task),
-                          ),
-                      ],
-                    ),
-                  ),
-                ],
                 if (archivedCount > 0 || _includeArchived)
-                  Card(
-                    margin: const EdgeInsets.only(top: AppDimensions.paddingM),
-                    child: SwitchListTile(
-                      value: _includeArchived,
-                      onChanged: (v) => setState(() => _includeArchived = v),
-                      title: Text(l10n.teamOrgShowOlderDone),
-                      subtitle: Text(l10n.teamOrgDoneDisappear),
-                    ),
+                  IonInsetList(
+                    children: [
+                      SwitchListTile(
+                        value: _includeArchived,
+                        onChanged: (v) => setState(() => _includeArchived = v),
+                        title: Text(l10n.teamOrgShowOlderDone),
+                        subtitle: Text(l10n.teamOrgDoneDisappear, style: const TextStyle(color: AppColors.medium)),
+                      ),
+                    ],
                   ),
               ],
             ),
@@ -181,8 +170,8 @@ class _TasksTabState extends ConsumerState<TasksTab> {
   }
 
   Widget _chip(String label, bool selected, VoidCallback onTap) => Padding(
-        padding: const EdgeInsets.only(right: AppDimensions.paddingS),
-        child: ChoiceChip(label: Text(label), selected: selected, onSelected: (_) => onTap()),
+        padding: const EdgeInsets.only(right: 4),
+        child: IonFilterChip(label: label, selected: selected, onTap: onTap),
       );
 }
 
@@ -220,14 +209,18 @@ class TaskListTile extends StatelessWidget {
 
     return ListTile(
       onTap: task.id == null ? null : () => context.push('/settings/tasks/${task.id}'),
+      // Ionic `.task-check`: clear icon button (26px) at the start.
       leading: IconButton(
         tooltip: done ? l10n.tasksFlutterReopen : l10n.tasksMarkDone,
+        iconSize: 26,
         icon: Icon(
           done ? Icons.check_circle : Icons.radio_button_unchecked,
           color: done ? AppColors.success : AppColors.medium,
         ),
         onPressed: onToggle,
       ),
+      minLeadingWidth: 0,
+      contentPadding: const EdgeInsets.only(left: 4, right: 16),
       title: Text(
         task.title,
         style: done
@@ -236,7 +229,7 @@ class TaskListTile extends StatelessWidget {
       ),
       subtitle: Text(
         parts.join(' · '),
-        style: overdue ? const TextStyle(color: AppColors.danger) : null,
+        style: TextStyle(color: overdue ? AppColors.danger : AppColors.medium),
       ),
       trailing: Wrap(
         spacing: 4,
@@ -249,17 +242,14 @@ class TaskListTile extends StatelessWidget {
   }
 }
 
+/// Ionic `ion-badge` (contrast text: black on warning).
 class _Badge extends StatelessWidget {
   const _Badge({required this.label, required this.color});
   final String label;
   final Color color;
 
   @override
-  Widget build(BuildContext context) => Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-        decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(10)),
-        child: Text(label, style: const TextStyle(color: Colors.white, fontSize: 12)),
-      );
+  Widget build(BuildContext context) => IonBadge(label: label, color: color);
 }
 
 /// Colored pill badge used across the Teamorganisation pages.

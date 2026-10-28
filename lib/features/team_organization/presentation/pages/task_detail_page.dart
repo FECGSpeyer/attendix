@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/team_org_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/team_org/team_org.dart';
+import '../../../planning/presentation/widgets/ion_items.dart';
 import '../../../../l10n/l10n.dart';
 import '../../team_org_utils.dart';
 import '../widgets/task_form_sheet.dart';
@@ -87,13 +87,26 @@ class _TaskDetailPageState extends ConsumerState<TaskDetailPage> {
         ],
       ),
       bottomNavigationBar: task != null && task.status != 'completed'
-          ? SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.all(AppDimensions.paddingM),
-                child: FilledButton.icon(
-                  onPressed: _savingStatus ? null : () => _setStatus(task, 'completed'),
-                  icon: const Icon(Icons.check),
-                  label: Text(l10n.tasksMarkDone),
+          // Ionic `.task-footer`: round success button (50px, 600).
+          ? ColoredBox(
+              color: Theme.of(context).scaffoldBackgroundColor,
+              child: SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  child: SizedBox(
+                    height: 50,
+                    child: FilledButton.icon(
+                      style: FilledButton.styleFrom(
+                        backgroundColor: AppColors.success,
+                        foregroundColor: Colors.white,
+                        shape: const StadiumBorder(),
+                        textStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+                      ),
+                      onPressed: _savingStatus ? null : () => _setStatus(task, 'completed'),
+                      icon: const Icon(Icons.check),
+                      label: Text(l10n.tasksMarkDone),
+                    ),
+                  ),
                 ),
               ),
             )
@@ -101,16 +114,12 @@ class _TaskDetailPageState extends ConsumerState<TaskDetailPage> {
       body: taskAsync.isLoading && task == null
           ? const Center(child: CircularProgressIndicator())
           : task == null
-              ? Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Icons.search, size: 56, color: AppColors.medium),
-                      const SizedBox(height: AppDimensions.paddingM),
-                      Text(l10n.tasksNotAvailable, textAlign: TextAlign.center),
-                      TextButton(onPressed: () => context.pop(), child: Text(l10n.commonBack)),
-                    ],
-                  ),
+              ? IonEmptyState(
+                  icon: Icons.search,
+                  iconSize: 48,
+                  padding: const EdgeInsets.symmetric(vertical: 64, horizontal: 32),
+                  text: l10n.tasksNotAvailable,
+                  action: TextButton(onPressed: () => context.pop(), child: Text(l10n.commonBack)),
                 )
               : RefreshIndicator(
                   onRefresh: () async => ref.invalidate(taskByIdProvider(widget.taskId)),
@@ -146,99 +155,113 @@ class _TaskDetailPageState extends ConsumerState<TaskDetailPage> {
 
     return ListView(
       physics: const AlwaysScrollableScrollPhysics(),
-      padding: const EdgeInsets.all(AppDimensions.paddingM),
+      padding: const EdgeInsets.only(bottom: 24),
       children: [
-        Text(
-          task.title,
-          style: theme.textTheme.headlineSmall?.copyWith(
-            decoration: task.status == 'completed' ? TextDecoration.lineThrough : null,
-          ),
-        ),
-        const SizedBox(height: 4),
-        Text(assignee, style: theme.textTheme.bodyMedium?.copyWith(color: AppColors.medium)),
-        const SizedBox(height: AppDimensions.paddingM),
-        SegmentedButton<String>(
-          segments: [
-            for (final s in const ['open', 'in_progress', 'completed'])
-              ButtonSegment(value: s, label: Text(taskStatusLabels[s]!)),
-          ],
-          selected: {task.status},
-          showSelectedIcon: false,
-          onSelectionChanged: _savingStatus ? null : (s) => _setStatus(task, s.first),
-        ),
-        const SizedBox(height: AppDimensions.paddingM),
-        Text(l10n.tasksDetails, style: theme.textTheme.titleSmall),
-        Card(
+        // Ionic `.task-hero`
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 8, 20, 12),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (isLeader)
-                ListTile(
-                  title: Text(l10n.tasksResponsible),
-                  trailing: Text(name.isNotEmpty ? name : l10n.tasksNobody),
-                ),
-              ListTile(
-                title: Text(l10n.tasksDueOn),
-                trailing: Text(
-                  task.dueDate != null
-                      ? '${formatLongDate(task.dueDate)}${overdue ? ' ${l10n.tasksOverdueSuffix}' : ''}'
-                      : l10n.tasksNoDue,
-                  style: overdue ? const TextStyle(color: AppColors.danger) : null,
+              Text(
+                task.title,
+                style: TextStyle(
+                  fontSize: 25.6,
+                  fontWeight: FontWeight.w700,
+                  height: 1.15,
+                  color: task.status == 'completed' ? AppColors.medium : theme.colorScheme.onSurface,
+                  decoration: task.status == 'completed' ? TextDecoration.lineThrough : null,
                 ),
               ),
-              ListTile(
-                title: Text(l10n.tasksPriority),
-                trailing: TeamOrgBadge(
-                  label: priorityLabels[task.priority] ?? task.priority,
-                  color: priorityColor(task.priority),
-                ),
-              ),
-              if (task.description?.isNotEmpty == true)
-                ListTile(
-                  title: Text(l10n.tasksDescription),
-                  subtitle: SelectableText(task.description!),
-                ),
+              const SizedBox(height: 8),
+              Text(assignee, style: const TextStyle(color: AppColors.medium)),
             ],
           ),
         ),
-        if (task.attendanceId != null || task.agendaItemId != null) ...[
-          const SizedBox(height: AppDimensions.paddingM),
-          Text(l10n.tasksOrigin, style: theme.textTheme.titleSmall),
-          Card(
-            child: Column(
-              children: [
-                if (task.attendanceId != null)
-                  ListTile(
-                    leading: const Icon(Icons.description_outlined, color: AppColors.primary),
-                    title: Text(l10n.tasksProtocol),
-                    subtitle: attendanceLabel != null ? Text(attendanceLabel) : null,
-                    trailing: const Icon(Icons.chevron_right),
-                    onTap: () => context.push('/settings/protocol/${task.attendanceId}'),
-                  ),
-                if (task.agendaItemId != null)
-                  if (isLeader)
-                    ListTile(
-                      leading: const Icon(Icons.list, color: AppColors.primary),
-                      title: Text(l10n.tasksTopic),
-                      subtitle: Text(task.agendaItem?.title ?? l10n.teamOrgOpenTopic),
-                      trailing: const Icon(Icons.chevron_right),
-                      onTap: () => context.push('/settings/agenda-items/${task.agendaItemId}'),
-                    )
-                  else if (task.agendaItem?.title != null)
-                    ListTile(
-                      leading: const Icon(Icons.list, color: AppColors.medium),
-                      title: Text(l10n.tasksTopic),
-                      subtitle: Text(task.agendaItem!.title!),
-                    ),
-              ],
-            ),
+        // Ionic `.task-status`: ion-segment
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          child: IonSegment<String>(
+            value: task.status,
+            segments: {for (final s in const ['open', 'in_progress', 'completed']) s: taskStatusLabels[s]!},
+            onChanged: _savingStatus ? null : (s) => _setStatus(task, s),
           ),
-        ],
+        ),
+        IonInsetList(
+          header: l10n.tasksDetails,
+          children: [
+            if (isLeader)
+              ListTile(
+                title: Text(l10n.tasksResponsible),
+                trailing: IonNote(name.isNotEmpty ? name : l10n.tasksNobody),
+              ),
+            ListTile(
+              title: Text(l10n.tasksDueOn),
+              trailing: IonNote(
+                task.dueDate != null
+                    ? '${formatLongDate(task.dueDate)}${overdue ? ' ${l10n.tasksOverdueSuffix}' : ''}'
+                    : l10n.tasksNoDue,
+                style: overdue ? const TextStyle(color: AppColors.danger) : null,
+              ),
+            ),
+            ListTile(
+              title: Text(l10n.tasksPriority),
+              trailing: TeamOrgBadge(
+                label: priorityLabels[task.priority] ?? task.priority,
+                color: priorityColor(task.priority),
+              ),
+            ),
+            if (task.description?.isNotEmpty == true)
+              ListTile(
+                title: Text(l10n.tasksDescription, style: const TextStyle(fontSize: 14, color: AppColors.medium)),
+                subtitle: Padding(
+                  padding: const EdgeInsets.only(top: 4),
+                  child: SelectableText(task.description!,
+                      style: TextStyle(height: 1.4, color: theme.colorScheme.onSurface)),
+                ),
+              ),
+          ],
+        ),
+        if (task.attendanceId != null || task.agendaItemId != null)
+          IonInsetList(
+            header: l10n.tasksOrigin,
+            dividerIndent: 56,
+            children: [
+              if (task.attendanceId != null)
+                ListTile(
+                  leading: const Icon(Icons.description_outlined, color: AppColors.primary),
+                  title: Text(l10n.tasksProtocol),
+                  subtitle: attendanceLabel != null
+                      ? Text(attendanceLabel, style: const TextStyle(color: AppColors.medium))
+                      : null,
+                  trailing: const IonDetailIcon(),
+                  onTap: () => context.push('/settings/protocol/${task.attendanceId}'),
+                ),
+              if (task.agendaItemId != null)
+                if (isLeader)
+                  ListTile(
+                    leading: const Icon(Icons.list, color: AppColors.primary),
+                    title: Text(l10n.tasksTopic),
+                    subtitle: Text(task.agendaItem?.title ?? l10n.teamOrgOpenTopic,
+                        style: const TextStyle(color: AppColors.medium)),
+                    trailing: const IonDetailIcon(),
+                    onTap: () => context.push('/settings/agenda-items/${task.agendaItemId}'),
+                  )
+                else if (task.agendaItem?.title != null)
+                  ListTile(
+                    leading: const Icon(Icons.list, color: AppColors.medium),
+                    title: Text(l10n.tasksTopic),
+                    subtitle: Text(task.agendaItem!.title!, style: const TextStyle(color: AppColors.medium)),
+                  ),
+            ],
+          ),
         if (task.status != 'completed' && task.dueDate != null)
+          // Ionic `.task-hint`: grey note under the lists.
           Padding(
-            padding: const EdgeInsets.all(AppDimensions.paddingS),
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
             child: Text(
               isMine ? l10n.tasksReminderSelf : l10n.tasksReminderOther,
-              style: theme.textTheme.bodySmall,
+              style: const TextStyle(fontSize: 13, height: 1.4, color: AppColors.medium),
             ),
           ),
       ],

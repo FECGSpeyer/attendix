@@ -6,6 +6,7 @@ import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/services/teams/teams_service.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/tenant/tenant.dart';
+import '../../../planning/presentation/widgets/ion_items.dart';
 import '../../../../l10n/l10n.dart';
 
 /// TEAMS: configuration page of the Attendix channel tab (Ionic
@@ -139,6 +140,23 @@ class _TenantRadioList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Ionic iOS ion-radio: label left, primary checkmark on the selected row.
+    if (isIonIos(context)) {
+      return Column(
+        children: [
+          for (var i = 0; i < tenants.length; i++) ...[
+            if (i > 0) const Divider(height: 1, indent: 16),
+            ListTile(
+              title: Text(tenants[i].longName.isNotEmpty ? tenants[i].longName : tenants[i].shortName),
+              trailing: tenants[i].id != null && tenants[i].id == selectedId
+                  ? const Icon(Icons.check, color: AppColors.primary)
+                  : null,
+              onTap: tenants[i].id == null ? null : () => onChanged(tenants[i].id),
+            ),
+          ],
+        ],
+      );
+    }
     return Column(
       children: [
         for (final tenant in tenants)

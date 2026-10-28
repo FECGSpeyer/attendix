@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../core/constants/app_constants.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/providers/player_providers.dart';
 import '../../../../core/providers/team_org_providers.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../data/models/team_org/team_org.dart';
+import '../../../planning/presentation/widgets/ion_items.dart';
 import '../../../../l10n/l10n.dart';
 import '../../team_org_utils.dart';
 
@@ -26,6 +27,8 @@ Future<TeamTask?> showTaskFormSheet(
     context: context,
     isScrollControlled: true,
     useSafeArea: true,
+    // Ionic: ion-modal breakpoints [0, 1] (full height), content color light.
+    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
     builder: (_) => TaskFormSheet(
       task: task,
       attendanceId: attendanceId,
@@ -186,117 +189,174 @@ class _TaskFormSheetState extends ConsumerState<TaskFormSheet> {
     final theme = Theme.of(context);
     final l10n = context.l10n;
 
+    final hasPerson = _personId != null && personName.isNotEmpty;
     return Padding(
       padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          AppBar(
-            automaticallyImplyLeading: false,
-            leading: IconButton(
-              icon: const Icon(Icons.close),
-              tooltip: l10n.commonClose,
-              onPressed: () => Navigator.of(context).pop(),
+      child: SizedBox(
+        height: MediaQuery.of(context).size.height,
+        child: Column(
+          children: [
+            AppBar(
+              automaticallyImplyLeading: false,
+              primary: false,
+              leading: IconButton(
+                icon: const Icon(Icons.close),
+                tooltip: l10n.commonClose,
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+              title: Text(_isEdit ? l10n.tasksFlutterEditTask : l10n.tasksFlutterNewTask),
             ),
-            title: Text(_isEdit ? l10n.tasksFlutterEditTask : l10n.tasksFlutterNewTask),
-          ),
-          Flexible(
-            child: ListView(
-              shrinkWrap: true,
-              padding: const EdgeInsets.all(AppDimensions.paddingM),
-              children: [
-                if (widget.contextLabel != null && widget.contextLabel!.isNotEmpty)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: AppDimensions.paddingS),
-                    child: Row(
-                      children: [
-                        const Icon(Icons.link, size: 18),
-                        const SizedBox(width: 6),
-                        Expanded(child: Text(widget.contextLabel!, style: theme.textTheme.bodySmall)),
-                      ],
+            Expanded(
+              child: ListView(
+                padding: const EdgeInsets.only(bottom: 16),
+                children: [
+                  // Ionic `.task-form-context`
+                  if (widget.contextLabel != null && widget.contextLabel!.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.link, size: 18, color: AppColors.primaryDark),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(widget.contextLabel!,
+                                style: const TextStyle(
+                                    fontSize: 13.6, fontWeight: FontWeight.w600, color: AppColors.primaryDark)),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                TextField(
-                  controller: _title,
-                  textCapitalization: TextCapitalization.sentences,
-                  decoration: InputDecoration(labelText: l10n.tasksTitle, hintText: l10n.tasksWhatToDo),
-                ),
-                const SizedBox(height: AppDimensions.paddingS),
-                TextField(
-                  controller: _description,
-                  minLines: 3,
-                  maxLines: 8,
-                  textCapitalization: TextCapitalization.sentences,
-                  decoration: InputDecoration(labelText: l10n.tasksDescriptionOptional),
-                ),
-                const SizedBox(height: AppDimensions.paddingM),
-                Text(l10n.tasksWhoWhen, style: theme.textTheme.titleSmall),
-                ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  title: Text(l10n.tasksResponsible),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
+                  // Ionic: title + description without labels (placeholders only).
+                  IonInsetList(
                     children: [
-                      Text(_personId != null && personName.isNotEmpty ? personName : l10n.tasksNobody),
-                      const Icon(Icons.chevron_right),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: TextField(
+                          controller: _title,
+                          textCapitalization: TextCapitalization.sentences,
+                          decoration: ionStackedInputDecoration(label: '', hint: l10n.tasksWhatToDo).copyWith(
+                            labelText: null,
+                            contentPadding: const EdgeInsets.symmetric(vertical: 14),
+                            suffixIcon: _title.text.isEmpty
+                                ? null
+                                : IconButton(
+                                    tooltip: l10n.commonDelete,
+                                    icon: const Icon(Icons.cancel, size: 18, color: AppColors.medium),
+                                    onPressed: () => setState(() => _title.clear()),
+                                  ),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: TextField(
+                          controller: _description,
+                          minLines: 3,
+                          maxLines: 8,
+                          textCapitalization: TextCapitalization.sentences,
+                          decoration: ionStackedInputDecoration(label: '', hint: l10n.tasksDescriptionOptional)
+                              .copyWith(labelText: null, contentPadding: const EdgeInsets.symmetric(vertical: 12)),
+                        ),
+                      ),
                     ],
                   ),
-                  onTap: () => _pickPerson(persons),
-                ),
-                ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  title: Text(l10n.tasksDueOn),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
+                  IonInsetList(
+                    header: l10n.tasksWhoWhen,
                     children: [
-                      OutlinedButton(
-                        onPressed: _pickDate,
-                        child: Text(_dueDate != null ? formatLongDate(_dueDate) : l10n.tasksFlutterNoDate),
+                      ListTile(
+                        title: Text(l10n.tasksResponsible),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (hasPerson) ...[
+                              _Initials(text: _initialsOf(persons)),
+                              const SizedBox(width: 8),
+                            ],
+                            Text(
+                              hasPerson ? personName : l10n.tasksNobody,
+                              style: TextStyle(color: hasPerson ? theme.colorScheme.onSurface : AppColors.medium),
+                            ),
+                            const SizedBox(width: 4),
+                            const IonDetailIcon(),
+                          ],
+                        ),
+                        onTap: () => _pickPerson(persons),
                       ),
-                      if (_dueDate != null)
-                        IconButton(
-                          tooltip: l10n.commonDelete,
-                          icon: const Icon(Icons.clear),
-                          onPressed: () => setState(() => _dueDate = null),
+                      ListTile(
+                        title: Text(l10n.tasksDueOn),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            // Ionic: small outline button with the date.
+                            OutlinedButton(
+                              style: OutlinedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(horizontal: 12),
+                                minimumSize: const Size(0, 32),
+                                visualDensity: VisualDensity.compact,
+                              ),
+                              onPressed: _pickDate,
+                              child: Text(_dueDate != null ? formatLongDate(_dueDate) : l10n.tasksFlutterNoDate),
+                            ),
+                            if (_dueDate != null)
+                              IconButton(
+                                tooltip: l10n.commonDelete,
+                                icon: const Icon(Icons.clear, color: AppColors.medium),
+                                onPressed: () => setState(() => _dueDate = null),
+                              ),
+                          ],
+                        ),
+                      ),
+                      IonSelect<String>(
+                        label: l10n.tasksPriority,
+                        value: _priority,
+                        items: const ['low', 'medium', 'high']
+                            .map((p) => DropdownMenuItem(value: p, child: Text(priorityLabels[p]!)))
+                            .toList(),
+                        onChanged: (v) => setState(() => _priority = v ?? 'medium'),
+                      ),
+                      if (_showNotifyToggle)
+                        SwitchListTile(
+                          value: _notify,
+                          onChanged: (v) => setState(() => _notify = v),
+                          title: Text(l10n.tasksNotify(_firstName(persons) ?? l10n.tasksPerson)),
+                          subtitle: Text(l10n.tasksNotifyHint, style: const TextStyle(color: AppColors.medium)),
                         ),
                     ],
                   ),
-                ),
-                DropdownButtonFormField<String>(
-                  value: _priority,
-                  decoration: InputDecoration(labelText: l10n.tasksPriority),
-                  items: const ['low', 'medium', 'high']
-                      .map((p) => DropdownMenuItem(value: p, child: Text(priorityLabels[p]!)))
-                      .toList(),
-                  onChanged: (v) => setState(() => _priority = v ?? 'medium'),
-                ),
-                if (_showNotifyToggle)
-                  SwitchListTile(
-                    contentPadding: EdgeInsets.zero,
-                    value: _notify,
-                    onChanged: (v) => setState(() => _notify = v),
-                    title: Text(l10n.tasksNotify(_firstName(persons) ?? l10n.tasksPerson)),
-                    subtitle: Text(l10n.tasksNotifyHint),
-                  ),
-              ],
+                ],
+              ),
             ),
-          ),
-          SafeArea(
-            top: false,
-            child: Padding(
-              padding: const EdgeInsets.all(AppDimensions.paddingM),
-              child: SizedBox(
-                width: double.infinity,
-                child: FilledButton(
-                  onPressed: _saving || _title.text.trim().isEmpty ? null : _save,
-                  child: Text(_isEdit ? l10n.commonSave : l10n.teamOrgCreateTask),
+            // Ionic `.task-form-footer`: round primary-shade button, 50px.
+            SafeArea(
+              top: false,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: SizedBox(
+                  width: double.infinity,
+                  height: 50,
+                  child: FilledButton(
+                    style: FilledButton.styleFrom(
+                      backgroundColor: AppColors.primaryDark,
+                      shape: const StadiumBorder(),
+                      textStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+                    ),
+                    onPressed: _saving || _title.text.trim().isEmpty ? null : _save,
+                    child: Text(_isEdit ? l10n.commonSave : l10n.teamOrgCreateTask),
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
+  }
+
+  String _initialsOf(List<Person> persons) {
+    for (final p in persons) {
+      if (p.id == _personId) return p.initials;
+    }
+    return widget.task?.responsiblePerson.initials ?? '';
   }
 
   String? _firstName(List<Person> persons) {
@@ -332,41 +392,61 @@ class _PersonPickerState extends State<_PersonPicker> {
         children: [
           AppBar(
             automaticallyImplyLeading: false,
+            primary: false,
             title: Text(l10n.tasksResponsible),
             actions: [
               TextButton(onPressed: () => Navigator.of(context).pop(), child: Text(l10n.personDone)),
             ],
           ),
-          Padding(
-            padding: const EdgeInsets.all(AppDimensions.paddingS),
-            child: TextField(
-              decoration: InputDecoration(prefixIcon: const Icon(Icons.search), hintText: l10n.tasksSearchPerson),
-              onChanged: (v) => setState(() => _search = v),
-            ),
+          IonSearchbar(
+            placeholder: l10n.tasksSearchPerson,
+            onChanged: (v) => setState(() => _search = v),
           ),
           Expanded(
-            child: ListView(
-              children: [
-                if (q.isEmpty)
-                  ListTile(
-                    title: Text(l10n.tasksNobody),
-                    trailing: widget.selectedId == null ? const Icon(Icons.check) : null,
-                    onTap: () => Navigator.of(context).pop((id: null)),
-                  ),
-                for (final p in filtered)
-                  ListTile(
-                    leading: CircleAvatar(child: Text(p.initials)),
-                    title: Text(p.fullName),
-                    trailing: p.id == widget.selectedId ? const Icon(Icons.check) : null,
-                    onTap: () => Navigator.of(context).pop((id: p.id)),
-                  ),
-                if (filtered.isEmpty)
-                  ListTile(title: Text(l10n.tasksNoPersonFound)),
-              ],
+            child: ListView.separated(
+              itemCount: (q.isEmpty ? 1 : 0) + (filtered.isEmpty ? 1 : filtered.length),
+              separatorBuilder: (_, __) => const Divider(height: 1, indent: 16),
+              itemBuilder: (context, i) {
+                if (q.isEmpty) {
+                  if (i == 0) {
+                    return ListTile(
+                      title: Text(l10n.tasksNobody, style: const TextStyle(color: AppColors.medium)),
+                      trailing: widget.selectedId == null ? const Icon(Icons.check, color: AppColors.primary) : null,
+                      onTap: () => Navigator.of(context).pop((id: null)),
+                    );
+                  }
+                  i -= 1;
+                }
+                if (filtered.isEmpty) {
+                  return ListTile(title: Text(l10n.tasksNoPersonFound, style: const TextStyle(color: AppColors.medium)));
+                }
+                final p = filtered[i];
+                return ListTile(
+                  leading: _Initials(text: p.initials),
+                  title: Text(p.fullName),
+                  trailing: p.id == widget.selectedId ? const Icon(Icons.check, color: AppColors.primary) : null,
+                  onTap: () => Navigator.of(context).pop((id: p.id)),
+                );
+              },
             ),
           ),
         ],
       ),
     );
   }
+}
+
+/// Ionic `.task-initials`: 30px circle in primary shade with white initials.
+class _Initials extends StatelessWidget {
+  const _Initials({required this.text});
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => Container(
+        width: 30,
+        height: 30,
+        alignment: Alignment.center,
+        decoration: const BoxDecoration(color: AppColors.primaryDark, shape: BoxShape.circle),
+        child: Text(text, style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.w700, color: Colors.white)),
+      );
 }

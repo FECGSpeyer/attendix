@@ -228,10 +228,14 @@ class IonSearchbar extends StatefulWidget {
     super.key,
     required this.placeholder,
     required this.onChanged,
+    this.controller,
     this.padding = const EdgeInsets.fromLTRB(12, 8, 12, 4),
   });
 
   final String placeholder;
+
+  /// Optional external controller (e.g. to clear the search programmatically).
+  final TextEditingController? controller;
   final ValueChanged<String> onChanged;
   final EdgeInsetsGeometry padding;
 
@@ -240,11 +244,13 @@ class IonSearchbar extends StatefulWidget {
 }
 
 class _IonSearchbarState extends State<IonSearchbar> {
-  final _controller = TextEditingController();
+  TextEditingController? _own;
+
+  TextEditingController get _controller => widget.controller ?? (_own ??= TextEditingController());
 
   @override
   void dispose() {
-    _controller.dispose();
+    _own?.dispose();
     super.dispose();
   }
 
@@ -683,4 +689,44 @@ Future<T?> showIonPopover<T>(
     constraints: constraints,
     items: items,
   );
+}
+
+/// Ionic `ion-segment` in the page content: iOS segmented control on iOS,
+/// a Material [SegmentedButton] elsewhere.
+class IonSegment<T extends Object> extends StatelessWidget {
+  const IonSegment({super.key, required this.value, required this.segments, required this.onChanged});
+
+  final T value;
+  final Map<T, String> segments;
+
+  /// null disables the segment.
+  final ValueChanged<T>? onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    if (isIonIos(context)) {
+      return SizedBox(
+        width: double.infinity,
+        child: CupertinoSlidingSegmentedControl<T>(
+          groupValue: value,
+          children: {
+            for (final e in segments.entries)
+              e.key: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: Text(e.value, maxLines: 1, overflow: TextOverflow.ellipsis),
+              ),
+          },
+          onValueChanged: (v) {
+            if (v != null && onChanged != null) onChanged!(v);
+          },
+        ),
+      );
+    }
+    return SegmentedButton<T>(
+      segments: [for (final e in segments.entries) ButtonSegment(value: e.key, label: Text(e.value))],
+      selected: {value},
+      showSelectedIcon: false,
+      onSelectionChanged: onChanged == null ? null : (s) => onChanged!(s.first),
+    );
+  }
 }

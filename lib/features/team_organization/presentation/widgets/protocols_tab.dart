@@ -3,12 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
-import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/team_org_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/team_org/team_org.dart';
 import '../../../../l10n/l10n.dart';
 import '../../team_org_utils.dart';
+import '../../../planning/presentation/widgets/ion_items.dart';
 import 'tasks_tab.dart' show TeamOrgBadge;
 
 class _ProtocolRow {
@@ -103,31 +103,18 @@ class _ProtocolsTabState extends ConsumerState<ProtocolsTab> {
             .toList();
         final groups = groupByMonth(filtered, (r) => r.date);
 
-        Widget state(IconData icon, String title, String text) => Padding(
-              padding: const EdgeInsets.symmetric(vertical: 48, horizontal: AppDimensions.paddingL),
-              child: Column(
-                children: [
-                  Icon(icon, size: 56, color: AppColors.medium),
-                  const SizedBox(height: AppDimensions.paddingM),
-                  Text(title, style: Theme.of(context).textTheme.titleMedium, textAlign: TextAlign.center),
-                  const SizedBox(height: 4),
-                  Text(text, textAlign: TextAlign.center),
-                ],
-              ),
-            );
+        Widget state(IconData icon, String title, String text) =>
+            IonEmptyState(icon: icon, title: title, text: text);
 
         return RefreshIndicator(
           onRefresh: () async => ref.invalidate(protocolsProvider),
           child: ListView(
             physics: const AlwaysScrollableScrollPhysics(),
-            padding: const EdgeInsets.all(AppDimensions.paddingM),
+            padding: const EdgeInsets.only(bottom: 80),
             children: [
               if (rows.isNotEmpty || _search.isNotEmpty)
-                TextField(
-                  decoration: InputDecoration(
-                    prefixIcon: const Icon(Icons.search),
-                    hintText: l10n.teamOrgSearchProtocols,
-                  ),
+                IonSearchbar(
+                  placeholder: l10n.teamOrgSearchProtocols,
                   onChanged: (v) => setState(() => _search = v),
                 ),
               if (rows.isEmpty)
@@ -137,38 +124,44 @@ class _ProtocolsTabState extends ConsumerState<ProtocolsTab> {
               else if (groups.isEmpty)
                 state(Icons.search, l10n.teamOrgNoHits, l10n.teamOrgNoProtocolMatch(_search))
               else
-                for (final group in groups) ...[
-                  Padding(
-                    padding: const EdgeInsets.only(top: AppDimensions.paddingM, bottom: 4),
-                    child: Text(group.label, style: Theme.of(context).textTheme.titleSmall),
-                  ),
-                  Card(
-                    margin: EdgeInsets.zero,
-                    child: Column(
-                      children: [
-                        for (final row in group.items)
-                          ListTile(
-                            leading: _DateBadge(date: row.date),
-                            title: Text(row.title),
-                            subtitle: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text([row.dateText, if (row.subtitle.isNotEmpty) row.subtitle].join(' · ')),
-                                if (_publishedText(row).isNotEmpty)
-                                  Text(_publishedText(row), style: Theme.of(context).textTheme.bodySmall),
-                              ],
-                            ),
-                            trailing: row.isDraft
-                                ? TeamOrgBadge(label: l10n.teamOrgDraft, color: AppColors.warning)
-                                : isLeader
-                                    ? TeamOrgBadge(label: l10n.teamOrgPublished, color: AppColors.success)
-                                    : const Icon(Icons.chevron_right),
-                            onTap: () => context.push('/settings/protocol/${row.attendanceId}'),
+                // Ionic: one ion-list [inset] per month with an ion-list-header.
+                for (final group in groups)
+                  IonInsetList(
+                    header: group.label,
+                    dividerIndent: 74,
+                    children: [
+                      for (final row in group.items)
+                        ListTile(
+                          leading: _DateBadge(date: row.date),
+                          title: Text(row.title, style: const TextStyle(fontSize: 15)),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                [row.dateText, if (row.subtitle.isNotEmpty) row.subtitle].join(' · '),
+                                style: const TextStyle(color: AppColors.medium),
+                              ),
+                              if (_publishedText(row).isNotEmpty)
+                                Text(_publishedText(row),
+                                    style: const TextStyle(fontSize: 12, color: AppColors.medium)),
+                            ],
                           ),
-                      ],
-                    ),
+                          // Ionic: badge (draft / published for leaders) + detail chevron.
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              if (row.isDraft)
+                                TeamOrgBadge(label: l10n.teamOrgDraft, color: AppColors.warning)
+                              else if (isLeader)
+                                TeamOrgBadge(label: l10n.teamOrgPublished, color: AppColors.success),
+                              const SizedBox(width: 4),
+                              const IonDetailIcon(),
+                            ],
+                          ),
+                          onTap: () => context.push('/settings/protocol/${row.attendanceId}'),
+                        ),
+                    ],
                   ),
-                ],
             ],
           ),
         );
@@ -177,6 +170,7 @@ class _ProtocolsTabState extends ConsumerState<ProtocolsTab> {
   }
 }
 
+/// Ionic `.date-badge`: 42×42 rounded tile (primary 12 %) with day and weekday.
 class _DateBadge extends StatelessWidget {
   const _DateBadge({this.date});
   final String? date;
@@ -184,14 +178,21 @@ class _DateBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final d = DateTime.tryParse(date ?? '')?.toLocal();
-    return SizedBox(
-      width: 40,
+    return Container(
+      width: 42,
+      height: 42,
+      decoration: BoxDecoration(
+        color: AppColors.primary.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(12),
+      ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(d != null ? d.day.toString().padLeft(2, '0') : '–',
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-          Text(d != null ? weekdayShort(d) : '', style: Theme.of(context).textTheme.bodySmall),
+              style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 17, height: 1, color: AppColors.primaryDark)),
+          const SizedBox(height: 2),
+          Text(d != null ? weekdayShort(d) : '',
+              style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 11, height: 1, color: AppColors.primaryDark)),
         ],
       ),
     );
