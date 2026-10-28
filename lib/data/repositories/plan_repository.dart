@@ -37,15 +37,17 @@ class PlanRepository extends BaseRepository with TenantAwareRepository {
   // Attendance plans
   // ---------------------------------------------------------------------------
 
-  /// All Termine of the instance (newest first), like Ionic `db.getAttendance()`.
-  Future<List<PlanAttendance>> getPlanAttendances({int limit = 300}) async {
+  /// Termine of the instance since [since] (newest first), like Ionic
+  /// `db.getAttendance()` (`gt('date', getCurrentAttDate())`: season start,
+  /// fallback 2023-01-01).
+  Future<List<PlanAttendance>> getPlanAttendances({required String since}) async {
     try {
       final response = await supabase
           .from('attendance')
           .select(planAttendanceColumns)
           .eq('tenantId', currentTenantId)
-          .order('date', ascending: false)
-          .limit(limit);
+          .gt('date', since)
+          .order('date', ascending: false);
 
       return (response as List)
           .map((e) => PlanAttendance.fromJson(e as Map<String, dynamic>))

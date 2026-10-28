@@ -36,6 +36,8 @@ Future<void> showPlanExportSheet(
   List<PlanSheetAction<String>> extraActions = const [],
   Future<void> Function(String action)? onExtraAction,
   bool includeBranding = true,
+  bool showExports = true,
+  bool Function()? beforeExport,
 }) async {
   final chatId = planTelegramChatId(ref);
   final l10n = context.l10n;
@@ -44,10 +46,12 @@ Future<void> showPlanExportSheet(
     title: title ?? l10n.planningExport,
     actions: [
       ...extraActions,
-      PlanSheetAction('pdf', l10n.planningFlutterPdfA4, icon: Icons.picture_as_pdf_outlined),
-      PlanSheetAction('pdf2x', l10n.planningFlutterPdf2xA5, icon: Icons.content_copy_outlined),
-      if (withImage) PlanSheetAction('image', l10n.plansImageA4, icon: Icons.image_outlined),
-      if (chatId != null) ...[
+      if (showExports) ...[
+        PlanSheetAction('pdf', l10n.planningFlutterPdfA4, icon: Icons.picture_as_pdf_outlined),
+        PlanSheetAction('pdf2x', l10n.planningFlutterPdf2xA5, icon: Icons.content_copy_outlined),
+        if (withImage) PlanSheetAction('image', l10n.plansImageA4, icon: Icons.image_outlined),
+      ],
+      if (showExports && chatId != null) ...[
         PlanSheetAction('telegram', l10n.attendanceTelegramPdf, icon: Icons.send_outlined),
         PlanSheetAction('telegram2x', l10n.planningFlutterTelegramPdf2x, icon: Icons.send_outlined),
         PlanSheetAction('telegramImage', l10n.attendanceTelegramImage, icon: Icons.send_outlined),
@@ -59,6 +63,8 @@ Future<void> showPlanExportSheet(
     await onExtraAction?.call(action);
     return;
   }
+  // Ionic `export()` / `send()` validate (with toast) when clicked.
+  if (beforeExport != null && !beforeExport()) return;
   final parsed = PlanExportAction.values.byName(action);
   await runPlanExport(context, ref, parsed,
       pages: pages(), fileName: fileName, includeBranding: includeBranding);
@@ -113,7 +119,9 @@ Future<void> runPlanExport(
   }
 }
 
-String _safeName(String name) => name.replaceAll('(', '').replaceAll(')', '').replaceAll(' ', '_');
+/// Ionic `send`: `planningTitle.replace('(', '').replace(')', '')` (first
+/// occurrence only); the storage key is sanitised by `encodeFilename`.
+String _safeName(String name) => name.replaceFirst('(', '').replaceFirst(')', '');
 
 /// Shares a link via the system share sheet, falls back to the clipboard.
 Future<void> sharePlanLink(BuildContext context, String url, {String? title}) async {

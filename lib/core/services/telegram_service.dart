@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:typed_data';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -242,13 +243,14 @@ class TelegramService {
     bool asImage = false,
   }) async {
     final extension = asImage ? '.png' : '.pdf';
-    final fileName = '${name}_${DateTime.now().millisecondsSinceEpoch}$extension';
+    final fileName = encodeFilename(name, extension);
 
-    // Upload to storage
+    // Upload to storage (Ionic: `upsert: true`)
     await _supabase.storage.from('attendances').uploadBinary(
           fileName,
           fileBytes,
           fileOptions: FileOptions(
+            upsert: true,
             contentType: asImage ? 'image/png' : 'application/pdf',
           ),
         );
@@ -258,16 +260,61 @@ class TelegramService {
 
     // Send via Telegram
     final functionName = asImage ? 'send-photo' : 'send-document';
-    await _supabase.functions.invoke(functionName, body: {
-      'url': url,
-      'chat_id': chatId,
-    });
-
-    // Clean up after delay
-    Future.delayed(const Duration(seconds: 10), () async {
-      await _supabase.storage.from('attendances').remove([fileName]);
-    });
+    try {
+      await _supabase.functions.invoke(functionName, body: {
+        'url': url,
+        'chat_id': chatId,
+      });
+    } finally {
+      // Clean up after delay (Ionic: also when sending failed)
+      Future.delayed(const Duration(seconds: 10), () async {
+        try {
+          await _supabase.storage.from('attendances').remove([fileName]);
+        } catch (_) {}
+      });
+    }
   }
+
+  /// Ionic `encodeFilename`: NFD + strip combining marks, every char outside
+  /// `[A-Za-z0-9_\s-]` becomes `-`, collapse whitespace / dashes, trim dashes,
+  /// then `_<100-999><extension>`.
+  static String encodeFilename(String name, String extension, {Random? random}) {
+    final buffer = StringBuffer();
+    for (final rune in name.runes) {
+      final char = String.fromCharCode(rune);
+      // NFD: decomposable Latin letters lose their diacritic, combining marks vanish.
+      if (rune >= 0x0300 && rune <= 0x036f) continue;
+      buffer.write(_nfdBase[char] ?? char);
+    }
+    final sanitized = buffer
+        .toString()
+        .replaceAll(RegExp(r'[^A-Za-z0-9_\s-]'), '-')
+        .replaceAll(RegExp(r'\s+'), ' ')
+        .replaceAll(RegExp(r'-+'), '-')
+        .replaceAll(RegExp(r'^-+|-+$'), '')
+        .trim();
+    final randomNumber = 100 + (random ?? Random()).nextInt(900);
+    return '${sanitized.isEmpty ? 'file' : sanitized}_$randomNumber$extension';
+  }
+
+  /// Base letters of the precomposed Latin letters that NFD decomposes
+  /// (Latin-1 Supplement + Latin Extended-A). `ß`, `æ`, `ø`, `đ`, `ł` … have
+  /// no decomposition and therefore stay (and become `-`), like in Ionic.
+  static final Map<String, String> _nfdBase = () {
+    const groups = {
+      'A': 'ÀÁÂÃÄÅĀĂĄ', 'a': 'àáâãäåāăą', 'C': 'ÇĆĈĊČ', 'c': 'çćĉċč', 'D': 'Ď', 'd': 'ď',
+      'E': 'ÈÉÊËĒĔĖĘĚ', 'e': 'èéêëēĕėęě', 'G': 'ĜĞĠĢ', 'g': 'ĝğġģ', 'H': 'Ĥ', 'h': 'ĥ',
+      'I': 'ÌÍÎÏĨĪĬĮİ', 'i': 'ìíîïĩīĭį', 'J': 'Ĵ', 'j': 'ĵ', 'K': 'Ķ', 'k': 'ķ',
+      'L': 'ĹĻĽ', 'l': 'ĺļľ', 'N': 'ÑŃŅŇ', 'n': 'ñńņň', 'O': 'ÒÓÔÕÖŌŎŐ', 'o': 'òóôõöōŏő',
+      'R': 'ŔŖŘ', 'r': 'ŕŗř', 'S': 'ŚŜŞŠ', 's': 'śŝşš', 'T': 'ŢŤ', 't': 'ţť',
+      'U': 'ÙÚÛÜŨŪŬŮŰŲ', 'u': 'ùúûüũūŭůűų', 'W': 'Ŵ', 'w': 'ŵ', 'Y': 'ÝŶŸ', 'y': 'ýÿŷ',
+      'Z': 'ŹŻŽ', 'z': 'źżž',
+    };
+    return {
+      for (final e in groups.entries)
+        for (final ch in e.value.split('')) ch: e.key,
+    };
+  }();
 
   /// Send document/song via Telegram
   Future<void> sendDocumentPerTelegram({

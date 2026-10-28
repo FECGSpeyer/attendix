@@ -457,8 +457,9 @@ class _PlanFieldsEditorState extends State<PlanFieldsEditor> {
                   }),
                 )
               : null,
+          // Ionic `fieldName`: "TOP n · Titel" for agenda fields.
           title: Text(
-            field.name,
+            PlanUtils.fieldDisplayName(field, PlanUtils.topNumbers(_fields)),
             style: TextStyle(
               fontWeight: isHead ? FontWeight.bold : FontWeight.w500,
               fontStyle: isNote ? FontStyle.italic : FontStyle.normal,

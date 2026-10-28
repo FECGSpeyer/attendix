@@ -6814,24 +6814,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get planningFirstEvent => 'This is currently the first event';
 
   @override
-  String get planningFlutterAsPdf => 'As PDF';
-
-  @override
-  String get planningFlutterAsPdfHint => 'Printable, A4 landscape';
-
-  @override
-  String get planningFlutterAsText => 'As text';
-
-  @override
-  String get planningFlutterAsTextHint => 'For copying';
-
-  @override
   String planningFlutterBlockEntry(Object name, Object min) {
     return 'Programme block: $name ($min min)';
   }
-
-  @override
-  String get planningFlutterChooseFormat => 'Choose format';
 
   @override
   String planningFlutterErrorWith(Object error) {
@@ -6849,14 +6834,6 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String planningFlutterGenerateFailed(Object error) {
-    return 'Generation failed: $error';
-  }
-
-  @override
-  String get planningFlutterGeneratePlan => 'Generate plan';
-
-  @override
   String get planningFlutterLive => 'Live';
 
   @override
@@ -6864,16 +6841,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get planningFlutterLiveModeEnd => 'End live mode';
-
-  @override
-  String planningFlutterMinAbbr(Object min) {
-    return '$min min';
-  }
-
-  @override
-  String planningFlutterMinPerUnit(Object min) {
-    return '$min min/unit';
-  }
 
   @override
   String get planningFlutterNoEvents => 'No events available';
@@ -6888,33 +6855,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get planningFlutterPdfA4 => 'PDF (A4)';
 
   @override
-  String get planningFlutterPerUnit => 'Per unit';
-
-  @override
   String planningFlutterPlanPosition(Object index, Object total) {
     return '$index of $total';
   }
 
   @override
-  String get planningFlutterRegenerate => 'Regenerate';
-
-  @override
   String planningFlutterSaveFailedWith(Object error) {
     return 'Error while saving: $error';
-  }
-
-  @override
-  String get planningFlutterSectionalGroups => 'Groups 1-3';
-
-  @override
-  String get planningFlutterSelectConductors => 'Select conductors/section leaders';
-
-  @override
-  String get planningFlutterSelectOnePerson => 'Please select at least one person';
-
-  @override
-  String planningFlutterSelectedCount(Object count) {
-    return '$count selected';
   }
 
   @override
@@ -6927,12 +6874,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get planningFlutterTelegramPdf2x => 'Send via Telegram (PDF 2x A5)';
-
-  @override
-  String get planningFlutterTime => 'Time';
-
-  @override
-  String get planningFlutterTotalDuration => 'Total duration';
 
   @override
   String get planningFlutterUnshareAction => 'Stop sharing';

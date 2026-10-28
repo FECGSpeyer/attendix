@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:intl/intl.dart';
 
 import '../../data/models/plan/plan.dart';
+import '../../features/team_organization/team_org_utils.dart' as team_org;
 import '../../l10n/l10n.dart';
 
 /// Helpers for Ablaufpläne, ported from Ionic `utilities/plan-days.ts` and
@@ -279,6 +280,42 @@ class PlanUtils {
     return formatMinutes(s + totalMinutes(fields));
   }
 
+  /// Ionic `calculateEnd`: end as "YYYY-MM-DDTHH:mm" (stored in `plan.end`).
+  ///
+  /// [start] is "HH:mm" (then today's date is used, like `dayjs().hour().minute()`)
+  /// or an ISO date time. Readers ([parseTimeToMinutes], [formatTime]) accept both.
+  static String computeEndIso(String start, List<PlanField> fields, {DateTime? now}) {
+    DateTime? base;
+    if (start.contains('T')) {
+      final iso = DateTime.tryParse(start.trim());
+      if (iso != null) base = DateTime(iso.year, iso.month, iso.day, iso.hour, iso.minute);
+    }
+    if (base == null) {
+      final m = parseTimeToMinutes(start);
+      if (m == null) return '';
+      final today = now ?? DateTime.now();
+      base = DateTime(today.year, today.month, today.day, m ~/ 60, m % 60);
+    }
+    final end = base.add(Duration(minutes: totalMinutes(fields)));
+    return DateFormat("yyyy-MM-dd'T'HH:mm").format(end);
+  }
+
+  /// Ionic `planning.page validate`: a start time, at least one field and a
+  /// duration on every field (`every(field => field.time)`).
+  static PlanValidation validate(String time, List<PlanField> fields) {
+    if (time.isEmpty || fields.isEmpty) return PlanValidation.noFields;
+    if (!fields.every((f) => f.time.isNotEmpty)) return PlanValidation.missingTime;
+    return PlanValidation.ok;
+  }
+
+  /// TOP numbers by field id (Ionic `topNumbers`, via team_org_utils).
+  static Map<String, int> topNumbers(List<PlanField> fields) =>
+      team_org.topNumbers(fields.map((f) => f.toJson()).toList());
+
+  /// "TOP n · Titel" for agenda fields, otherwise the name (Ionic `fieldDisplayName`).
+  static String fieldDisplayName(PlanField field, Map<String, int> numbers) =>
+      team_org.fieldDisplayName(field.toJson(), numbers);
+
   /// "10:37 – 10:55" for a block head.
   static String groupRange(int startMinutes, List<PlanField> fields, int index) {
     final head = fields[index];
@@ -468,3 +505,6 @@ class PlanUtils {
     return '${days[date.weekday - 1]}, ${DateFormat('dd.MM.yyyy').format(date)}';
   }
 }
+
+/// Result of [PlanUtils.validate].
+enum PlanValidation { ok, noFields, missingTime }

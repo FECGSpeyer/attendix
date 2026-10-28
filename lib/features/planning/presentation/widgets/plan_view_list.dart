@@ -74,6 +74,7 @@ class _PlanViewListState extends State<PlanViewList> {
   Widget build(BuildContext context) {
     final plan = widget.plan;
     final fields = plan.fields;
+    final numbers = PlanUtils.topNumbers(fields);
     final start = PlanUtils.parseTimeToMinutes(plan.time);
     final now = DateTime.now();
     final active = widget.liveMode ? PlanUtils.activeIndex(widget.date, plan.time, fields, now) : -1;
@@ -157,8 +158,9 @@ class _PlanViewListState extends State<PlanViewList> {
           child: ListTile(
             dense: true,
             onTap: widget.onFieldTap != null ? () => widget.onFieldTap!(i) : null,
+            // Ionic plan-viewer `fieldName`: "TOP n · Titel" for agenda fields.
             title: Text(
-              f.name,
+              PlanUtils.fieldDisplayName(f, numbers),
               style: TextStyle(
                 fontWeight: isHead || isActive ? FontWeight.bold : FontWeight.w500,
                 fontStyle: isNote ? FontStyle.italic : FontStyle.normal,
