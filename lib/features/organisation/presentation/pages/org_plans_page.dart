@@ -16,6 +16,8 @@ import '../../../planning/presentation/pages/plan_viewer_page.dart';
 import '../../../planning/presentation/widgets/plan_export_actions.dart';
 import '../../../planning/presentation/widgets/plan_field_dialogs.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../settings/presentation/widgets/ion_condense.dart'; // UX_SETTINGS (WAVE 8)
+import '../../../settings/presentation/widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
 import '../../../../core/utils/error_message.dart';
 
 /// Short date "Mo, 03.11.2026" (Ionic dayjs `dd, ${dateFmt()}`).
@@ -176,9 +178,11 @@ class _OrgPlansPageState extends ConsumerState<OrgPlansPage> {
     final plansAsync = ref.watch(orgPlansProvider);
     final key = org?.publicPlanKey;
 
-    return Scaffold(
+    // UX_SETTINGS (WAVE 8): org-plans.page.html — condense title and
+    // inset lists on the light page (iOS).
+    return IonCondense(builder: (context, collapsed) => Scaffold(
       appBar: AppBar(
-        title: Text(context.l10n.plansOrgPlans),
+        title: IonCondenseTitle(context.l10n.plansOrgPlans, collapsed: collapsed),
         actions: [
           // SETTINGS2: Ionic toggleOrgTab ("Als Tab anzeigen" / "Tab ausblenden")
           IconButton(
@@ -220,13 +224,16 @@ class _OrgPlansPageState extends ConsumerState<OrgPlansPage> {
         },
         child: ListView(
           children: [
+            IonLargeTitle(context.l10n.plansOrgPlans),
             if (orgAsync.isLoading)
               const Padding(padding: EdgeInsets.all(24), child: Center(child: CircularProgressIndicator()))
             else if (org == null)
-              ListTile(
-                leading: const Icon(Icons.info_outline, color: AppColors.medium),
-                title: Text(context.l10n.plansNoOrg),
-              )
+              _orgPlansBox(context, [
+                ListTile(
+                  leading: const Icon(Icons.info_outline, color: AppColors.medium),
+                  title: Text(context.l10n.plansNoOrg),
+                ),
+              ], margin: const EdgeInsets.all(16), bare: true)
             else
               ...plansAsync.when(
                 loading: () => [
@@ -237,23 +244,22 @@ class _OrgPlansPageState extends ConsumerState<OrgPlansPage> {
                   final split = splitOrgPlanEntries(entries);
                   return [
                     if (split.upcoming.isEmpty)
-                      ListTile(
-                        leading: const Icon(Icons.event_outlined, color: AppColors.medium),
-                        title: Text(context.l10n.plansNoUpcomingOrgPlans),
-                      )
+                      _orgPlansBox(context, [
+                        ListTile(
+                          leading: const Icon(Icons.event_outlined, color: AppColors.medium),
+                          title: Text(context.l10n.plansNoUpcomingOrgPlans),
+                        ),
+                      ], margin: ionIsIos(context) ? const EdgeInsets.all(16) : EdgeInsets.zero, bare: true)
                     else
-                      Card(
-                        margin: const EdgeInsets.all(12),
-                        child: Column(children: [for (final e in split.upcoming) _entryTile(e)]),
-                      ),
-                    Card(
-                      margin: const EdgeInsets.symmetric(horizontal: 12),
-                      child: Column(
-                        children: [
+                      _orgPlansBox(context, [for (final e in split.upcoming) _entryTile(e)],
+                          margin: EdgeInsets.all(ionIsIos(context) ? 16 : 12)),
+                    _orgPlansBox(context, margin: EdgeInsets.symmetric(horizontal: ionIsIos(context) ? 16 : 12), [
                           ListTile(
                             leading: const Icon(Icons.add_circle_outline, color: AppColors.primary),
                             title: Text(context.l10n.plansOpenPlanning, style: const TextStyle(color: AppColors.primary)),
-                            trailing: const Icon(Icons.chevron_right),
+                            trailing: ionIsIos(context)
+                                ? const IonDetailChevron()
+                                : const Icon(Icons.chevron_right),
                             onTap: () => context.push('/settings/org-plans/planung'),
                           ),
                           if (split.past.isNotEmpty)
@@ -262,28 +268,38 @@ class _OrgPlansPageState extends ConsumerState<OrgPlansPage> {
                               title: Text(context.l10n.plansPastPlans, style: const TextStyle(color: AppColors.medium)),
                               onTap: () => _showHistory(split.past),
                             ),
-                        ],
-                      ),
-                    ),
+                    ]),
                     if (key != null)
-                      Card(
-                        margin: const EdgeInsets.all(12),
-                        child: ListTile(
+                      _orgPlansBox(context, margin: EdgeInsets.all(ionIsIos(context) ? 16 : 12), [ListTile(
                           leading: const Icon(Icons.public, color: AppColors.success),
                           title: Text(context.l10n.plansPublicLinkActive),
                           trailing: TextButton(
                             onPressed: () => _managePublicLink(key),
                             child: Text(context.l10n.plansManage),
                           ),
-                        ),
-                      ),
+                        )]),
                   ];
                 },
               ),
           ],
         ),
       ),
-    );
+    ));
   }
+}
+
+/// Ionic `ion-list [inset]`: iOS item group with hairlines (margin 16);
+/// md: Material card (or the bare tiles when [bare]).
+Widget _orgPlansBox(
+  BuildContext context,
+  List<Widget> children, {
+  EdgeInsetsGeometry margin = EdgeInsets.zero,
+  bool bare = false,
+}) {
+  if (ionIsIos(context)) {
+    return Padding(padding: margin, child: IonInsetGroup(children: children));
+  }
+  if (bare) return Column(children: children);
+  return Card(margin: margin, child: Column(children: children));
 }
 

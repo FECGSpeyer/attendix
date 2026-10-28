@@ -12,6 +12,8 @@ import '../../../../data/models/plan/plan.dart';
 import '../../../planning/presentation/widgets/plan_field_dialogs.dart';
 import '../../../planning/presentation/widgets/plan_fields_editor.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../settings/presentation/widgets/ion_condense.dart'; // UX_SETTINGS (WAVE 8)
+import '../../../settings/presentation/widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
 
 /// "Planvorlagen & Felder" of the organisation (Ionic `OrgPlanningTemplatesPage`).
 ///
@@ -261,7 +263,28 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
   // Build
   // ---------------------------------------------------------------------------
 
-  Widget _header(String text, VoidCallback onAdd) => Padding(
+  // UX_SETTINGS (WAVE 8): org-planning-templates.page.html — condense
+  // title, inset lists with header "+" buttons, hint items in their own
+  // inset lists (iOS).
+  Widget _box(Widget child) => ionIsIos(context)
+      ? Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+          child: IonInsetGroup(children: [child]),
+        )
+      : Card(margin: const EdgeInsets.symmetric(horizontal: 12), child: child);
+
+  Widget _header(String text, VoidCallback onAdd) => ionIsIos(context)
+      ? Padding(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+          child: IonListHeader(
+            title: text,
+            action: IconButton(
+              icon: const Icon(Icons.add, color: AppColors.primary),
+              onPressed: onAdd,
+            ),
+          ),
+        )
+      : Padding(
         padding: const EdgeInsets.fromLTRB(16, 16, 4, 0),
         child: Row(
           children: [
@@ -274,10 +297,19 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
         ),
       );
 
-  Widget _hint(String text) => ListTile(
-        leading: const Icon(Icons.info_outline, color: AppColors.medium),
-        title: Text(text, style: const TextStyle(fontSize: 13, color: AppColors.medium)),
-      );
+  Widget _hint(String text) {
+    final tile = ListTile(
+      leading: const Icon(Icons.info_outline, color: AppColors.medium),
+      title: Text(
+        text,
+        style: TextStyle(
+          fontSize: ionIsIos(context) ? 14 : 13,
+          color: ionIsIos(context) ? IonIos.labelP(context) : AppColors.medium,
+        ),
+      ),
+    );
+    return ionIsIos(context) ? _box(tile) : tile;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -288,17 +320,16 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
       _defaultFields = [...?org?.defaultFields];
     }
 
-    return Scaffold(
-      appBar: AppBar(title: Text(context.l10n.orgTemplatesTitle)),
+    return IonCondense(builder: (context, collapsed) => Scaffold(
+      appBar: AppBar(title: IonCondenseTitle(context.l10n.orgTemplatesTitle, collapsed: collapsed)),
       body: _templates == null
           ? const Center(child: CircularProgressIndicator())
           : ListView(
               padding: const EdgeInsets.only(bottom: 32),
               children: [
+                IonLargeTitle(context.l10n.orgTemplatesTitle),
                 _header(context.l10n.orgTemplatesDefaultFields, _addDefaultField),
-                Card(
-                  margin: const EdgeInsets.symmetric(horizontal: 12),
-                  child: _defaultFields.isEmpty
+                _box(_defaultFields.isEmpty
                       ? ListTile(
                           title: Text(context.l10n.orgTemplatesNoDefaultFields,
                               style: const TextStyle(color: AppColors.medium)))
@@ -355,9 +386,7 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
                 ),
                 _hint(context.l10n.orgTemplatesDefaultFieldsHint),
                 _header(context.l10n.orgTemplatesTemplates, _addTemplate),
-                Card(
-                  margin: const EdgeInsets.symmetric(horizontal: 12),
-                  child: Column(
+                _box(Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       if (_templates!.isEmpty)
@@ -371,7 +400,7 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
                 _hint(context.l10n.orgTemplatesTemplatesHint),
               ],
             ),
-    );
+    ));
   }
 
   List<Widget> _templateTiles(int i) {
