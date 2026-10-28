@@ -15,6 +15,7 @@ import '../../../legal/presentation/widgets/legal_content_view.dart';
 import '../../data/auth_flow_service.dart';
 import '../widgets/otp_widgets.dart';
 import '../../../../core/providers/dashboard_providers.dart'; // DASHBOARD
+import '../../../../core/services/teams/teams_service.dart'; // TEAMS
 
 /// Login page
 class LoginPage extends ConsumerStatefulWidget {
@@ -36,6 +37,22 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   // AUTH: passwordless e-mail code mode (Ionic otpMode/otpSent)
   AuthMode _mode = AuthMode.password;
   bool _otpSent = false;
+  // TEAMS: one-time account-linking mode (/login?teamsLink=1 after silent SSO
+  // found no linked account; only inside Teams).
+  bool _teamsLinkMode = false;
+
+  // TEAMS
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!ref.read(isInTeamsProvider)) return;
+    try {
+      _teamsLinkMode =
+          GoRouterState.of(context).uri.queryParameters['teamsLink'] == '1';
+    } catch (_) {
+      _teamsLinkMode = false;
+    }
+  }
 
   @override
   void dispose() {
@@ -81,6 +98,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     });
 
     try {
+      if (_teamsLinkMode) {
+        await _linkTeamsAccount(); // TEAMS
+        return;
+      }
       final user = await ref.read(authFlowServiceProvider).signInWithPassword(
             _emailController.text.trim(),
             _passwordController.text,
@@ -113,6 +134,35 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         });
       }
     }
+  }
+
+  /// TEAMS: verify the Attendix credentials, then bind the Microsoft identity
+  /// so future Teams launches sign in silently (Ionic login() in linkMode).
+  /// LoginFailure from the password sign-in propagates to [_login].
+  Future<void> _linkTeamsAccount() async {
+    // The root messenger outlives this page (the auth redirect may already
+    // have left /login when linking finishes).
+    final messenger = ScaffoldMessenger.maybeOf(context);
+    final result = await ref.read(teamsServiceProvider).ssoLink(() async {
+      await ref.read(authFlowServiceProvider).signInWithPassword(
+            _emailController.text.trim(),
+            _passwordController.text,
+          );
+    });
+    final message = result.ok
+        ? 'Microsoft-Konto verknüpft. Du wirst künftig automatisch angemeldet.'
+        : (result.error ?? 'Verknüpfung fehlgeschlagen');
+    messenger?.showSnackBar(SnackBar(
+      content: Text(message),
+      backgroundColor: result.ok ? AppColors.success : AppColors.danger,
+      behavior: SnackBarBehavior.floating,
+      duration: const Duration(seconds: 4),
+    ));
+    // Usually the auth redirect has already left /login at this point.
+    if (!result.ok || !mounted) return;
+    setState(() => _teamsLinkMode = false);
+    final user = ref.read(supabaseClientProvider).auth.currentUser;
+    if (user != null) await _routeAfterAuth(user);
   }
 
   /// Ionic requestCode(): sign-in only, never creates a new account.
@@ -519,6 +569,15 @@ class _LoginPageState extends ConsumerState<LoginPage> {
             const SizedBox(height: AppDimensions.paddingM),
           ],
 
+          // TEAMS: link-mode note replaces the mode segment
+          if (_teamsLinkMode)
+            const Text(
+              'Verknüpfe dein Attendix-Konto einmalig mit Microsoft. Melde '
+              'dich mit deinen Attendix-Zugangsdaten an – danach wirst du in '
+              'Teams automatisch angemeldet.',
+              style: TextStyle(color: AppColors.medium),
+            )
+          else
           // AUTH: mode segment (Passwort / Code per E-Mail)
           AuthModeSegment(
             mode: _mode,
@@ -606,7 +665,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               ],
             ),
             const SizedBox(height: AppDimensions.paddingS),
-            _primaryButton('Anmelden', _login),
+            _primaryButton(
+                _teamsLinkMode ? 'Verknüpfen & anmelden' : 'Anmelden', // TEAMS
+                _login),
           ] else if (!_otpSent) ...[
             Align(
               alignment: Alignment.centerLeft,

@@ -7,6 +7,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/dashboard_providers.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/services/teams/teams_service.dart'; // TEAMS
 
 /// SETTINGS2: Ionic settings "📱 Attendix als App" promo card.
 ///
@@ -59,7 +60,11 @@ class _AppPromoCardState extends ConsumerState<AppPromoCard> {
 
   @override
   Widget build(BuildContext context) {
-    if (!kIsWeb || _dismissed || !ref.watch(isSuperDeveloperProvider)) {
+    // TEAMS: no native-app promotion inside a Teams tab (Ionic checkAppPromo)
+    if (!kIsWeb ||
+        _dismissed ||
+        !ref.watch(isSuperDeveloperProvider) ||
+        ref.watch(isInTeamsProvider)) {
       return const SizedBox.shrink();
     }
     final platform = defaultTargetPlatform;

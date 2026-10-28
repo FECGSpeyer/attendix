@@ -1,34 +1,164 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/providers/tenant_providers.dart';
+import '../../../../core/services/teams/teams_service.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../data/models/tenant/tenant.dart';
 
-/// Configuration page of the Microsoft Teams tab (Ionic `teams-config`).
-///
-/// In Ionic this page runs inside Teams and uses the teams-js SDK to save the
-/// tab settings. That SDK is not available in Flutter, so this page only shows
-/// the hint that is displayed outside of Teams.
-class TeamsConfigPage extends StatelessWidget {
+/// TEAMS: configuration page of the Attendix channel tab (Ionic
+/// `teams-config`). Teams loads it in a dialog when someone adds Attendix to
+/// a channel. The installer picks the Attendix instance; we save a content
+/// URL scoped by that tenant id (`/open-attendance?tenantId=`), which then
+/// switches to that tenant.
+class TeamsConfigPage extends ConsumerStatefulWidget {
   const TeamsConfigPage({super.key});
+
+  static const String saveFailed =
+      'Konfiguration konnte nicht gespeichert werden';
+
+  @override
+  ConsumerState<TeamsConfigPage> createState() => _TeamsConfigPageState();
+}
+
+class _TeamsConfigPageState extends ConsumerState<TeamsConfigPage> {
+  int? _selectedTenantId;
+  List<Tenant> _tenants = const [];
+  bool _saveHandlerRegistered = false;
+
+  TeamsService get _teams => ref.read(teamsServiceProvider);
+
+  void _registerSaveHandler(List<Tenant> tenants) {
+    _tenants = tenants;
+    if (_saveHandlerRegistered) return;
+    _saveHandlerRegistered = true;
+    if (tenants.length == 1) _selectedTenantId = tenants.first.id;
+    // Enable the Teams "Save" button only once a tenant is chosen, and
+    // define what gets persisted when the installer clicks it.
+    _teams.sdk.registerConfigSaveHandler(() {
+      final id = _selectedTenantId;
+      if (id == null) return null;
+      final tenant = _tenants.where((t) => t.id == id).firstOrNull;
+      return TeamsService.tabConfigFor(
+        tenantId: id,
+        shortName: tenant?.shortName,
+      );
+    }, TeamsConfigPage.saveFailed);
+    _updateValidity();
+  }
+
+  void _updateValidity() {
+    _teams.sdk.setValidityState(_selectedTenantId != null);
+  }
+
+  void _onTenantChange(int? id) {
+    setState(() => _selectedTenantId = id);
+    _updateValidity();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: Padding(
-          padding: EdgeInsets.all(AppDimensions.paddingL),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(Icons.groups_outlined, size: 56, color: AppColors.medium),
-              SizedBox(height: AppDimensions.paddingM),
-              Text(
-                'Diese Seite wird nur innerhalb von Microsoft Teams verwendet.',
-                textAlign: TextAlign.center,
-              ),
-            ],
+    if (!ref.watch(isInTeamsProvider)) {
+      return const Scaffold(
+        body: _Centered(
+          child: Text(
+            'Diese Seite wird nur innerhalb von Microsoft Teams verwendet.',
+            textAlign: TextAlign.center,
           ),
         ),
+      );
+    }
+
+    final tenantsAsync = ref.watch(userTenantsProvider);
+    return Scaffold(
+      body: tenantsAsync.when(
+        loading: () =>
+            const _Centered(child: CircularProgressIndicator()),
+        error: (_, __) => _buildContent(context, const []),
+        data: (tenants) => _buildContent(context, tenants),
+      ),
+    );
+  }
+
+  Widget _buildContent(BuildContext context, List<Tenant> tenants) {
+    if (!_saveHandlerRegistered) {
+      // Registering touches state read by the save handler only.
+      _registerSaveHandler(tenants);
+    }
+    final theme = Theme.of(context);
+    return SafeArea(
+      child: ListView(
+        padding: const EdgeInsets.all(AppDimensions.paddingM),
+        children: [
+          Text('Attendix-Tab einrichten', style: theme.textTheme.titleLarge),
+          const SizedBox(height: AppDimensions.paddingM),
+          if (tenants.isEmpty)
+            const Text(
+              'Kein Attendix-Konto gefunden. Bitte melde dich zuerst im '
+              'Attendix-Tab an.',
+            )
+          else ...[
+            _TenantRadioList(
+              tenants: tenants,
+              selectedId: _selectedTenantId,
+              onChanged: _onTenantChange,
+            ),
+            const SizedBox(height: AppDimensions.paddingM),
+            Text(
+              'Wähle aus, welche Attendix-Instanz in diesem Kanal angezeigt '
+              'werden soll.',
+              style: theme.textTheme.bodyMedium
+                  ?.copyWith(color: AppColors.medium),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+/// Radio list of the user's instances (Ionic ion-radio-group).
+class _TenantRadioList extends StatelessWidget {
+  const _TenantRadioList({
+    required this.tenants,
+    required this.selectedId,
+    required this.onChanged,
+  });
+
+  final List<Tenant> tenants;
+  final int? selectedId;
+  final ValueChanged<int?> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        for (final tenant in tenants)
+          RadioListTile<int>(
+            value: tenant.id ?? -1,
+            groupValue: selectedId,
+            onChanged: tenant.id == null ? null : onChanged,
+            title: Text(
+              tenant.longName.isNotEmpty ? tenant.longName : tenant.shortName,
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+class _Centered extends StatelessWidget {
+  const _Centered({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(AppDimensions.paddingL),
+        child: child,
       ),
     );
   }
