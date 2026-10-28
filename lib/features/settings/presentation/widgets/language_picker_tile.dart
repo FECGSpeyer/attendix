@@ -85,9 +85,12 @@ class LanguagePickerTile extends ConsumerWidget {
       );
     }
 
+    // PARITY_R3: Ionic md select popover marks the current option with
+    // `.item-radio-checked` – a primary 8 % row background (no grey
+    // Material "initial value" highlight, no radio circle).
+    final primary = Theme.of(context).colorScheme.primary;
     return PopupMenuButton<String>(
       key: const Key('languagePicker'),
-      initialValue: current,
       tooltip: l10n.settingsLanguageTitle,
       position: PopupMenuPosition.under,
       onSelected: (value) {
@@ -98,7 +101,15 @@ class LanguagePickerTile extends ConsumerWidget {
         for (final lang in enabledLanguages)
           PopupMenuItem<String>(
             value: lang,
-            child: Text(languageNames[lang] ?? lang),
+            padding: EdgeInsets.zero,
+            child: Container(
+              key: Key('languageOption_$lang'),
+              constraints: const BoxConstraints(minHeight: 48),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              alignment: AlignmentDirectional.centerStart,
+              color: lang == current ? primary.withValues(alpha: 0.08) : null,
+              child: Text(languageNames[lang] ?? lang),
+            ),
           ),
       ],
       child: tile(),
