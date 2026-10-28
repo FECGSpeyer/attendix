@@ -6,6 +6,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/dashboard/dashboard_models.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../settings/presentation/widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
 import '../../../../core/utils/error_message.dart';
 
 /// Card labels (Ionic `CARD_LABELS`).
@@ -64,19 +65,17 @@ class _DashboardSettingsPageState extends ConsumerState<DashboardSettingsPage> {
         padding: const EdgeInsets.symmetric(vertical: 8),
         children: [
           _Header(context.l10n.dashSettingsTab),
-          Card(
-            margin: const EdgeInsets.symmetric(horizontal: 16),
+          // UX_SETTINGS (WAVE 8): dashboard-settings.page.html — inset lists.
+          _Box(
             child: SwitchListTile(
               title: Text(context.l10n.dashSettingsShowTab),
               value: settings.showTab,
               onChanged: (v) => _guard(() => notifier.setShowTab(v)),
             ),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: ionIsIos(context) ? 32 : 16),
           _Header(context.l10n.dashSettingsCards),
-          Card(
-            margin: const EdgeInsets.symmetric(horizontal: 16),
-            clipBehavior: Clip.antiAlias,
+          _Box(
             child: Column(
               children: [
                 ReorderableListView(
@@ -105,11 +104,20 @@ class _DashboardSettingsPageState extends ConsumerState<DashboardSettingsPage> {
                       ),
                   ],
                 ),
-                const Divider(height: 1),
-                ListTile(
-                  leading: const Icon(Icons.refresh, color: AppColors.medium),
-                  title: Text(context.l10n.dashSettingsReset, style: const TextStyle(color: AppColors.medium)),
-                  onTap: () => _guard(notifier.resetCards),
+                if (ionIsIos(context))
+                  Divider(height: 0.5, thickness: 0.5, indent: 16, color: IonIos.line(context))
+                else
+                  const Divider(height: 1),
+                // ion-item color="light"
+                Material(
+                  color: ionIsIos(context)
+                      ? Theme.of(context).scaffoldBackgroundColor
+                      : Colors.transparent,
+                  child: ListTile(
+                    leading: const Icon(Icons.refresh, color: AppColors.medium),
+                    title: Text(context.l10n.dashSettingsReset, style: const TextStyle(color: AppColors.medium)),
+                    onTap: () => _guard(notifier.resetCards),
+                  ),
                 ),
               ],
             ),
@@ -133,7 +141,12 @@ class _Header extends StatelessWidget {
   final String text;
 
   @override
-  Widget build(BuildContext context) => Padding(
+  Widget build(BuildContext context) => ionIsIos(context)
+      ? Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: IonListHeader(title: text),
+        )
+      : Padding(
         padding: const EdgeInsets.fromLTRB(24, 8, 24, 6),
         child: Text(
           text,
@@ -143,4 +156,32 @@ class _Header extends StatelessWidget {
               ),
         ),
       );
+}
+
+/// Ionic `ion-list [inset]` box: iOS item group (radius 24), md card.
+class _Box extends StatelessWidget {
+  const _Box({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!ionIsIos(context)) {
+      return Card(
+        margin: const EdgeInsets.symmetric(horizontal: 16),
+        clipBehavior: Clip.antiAlias,
+        child: child,
+      );
+    }
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(IonIos.groupRadius),
+        child: Material(
+          color: IonIos.itemBackground(context),
+          child: ionIosListTileTheme(context, child: child),
+        ),
+      ),
+    );
+  }
 }
