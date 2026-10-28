@@ -95,7 +95,7 @@ class SignInOutRepository extends BaseRepository with TenantAwareRepository {
   ) async {
     await supabase.from('person_attendances').update({
       ...fields,
-      'changed_at': DateTime.now().toIso8601String(),
+      'changed_at': DateTime.now().toUtc().toIso8601String(),
       'changed_by': supabase.auth.currentUser?.id,
     }).inFilter('id', ids);
   }

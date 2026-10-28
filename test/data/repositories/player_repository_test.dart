@@ -184,8 +184,9 @@ void main() {
         expect(section, contains(".eq('parent_id', parentId)"));
         expect(
           section,
-          contains(".isFilter('pending', null)"),
-          reason: 'getChildrenForParent must exclude pending players',
+          contains(".isFilter('pending', false)"),
+          reason: 'getChildrenForParent must exclude pending players '
+              '(Ionic: pending IS false; approved players have pending=false)',
         );
         expect(
           section,

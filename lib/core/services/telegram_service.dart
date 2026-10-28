@@ -234,6 +234,23 @@ class TelegramService {
     });
   }
 
+  /// LOGIC_SELF: Ionic TelegramService.notifyPlayerPaused — tells the
+  /// leaders that a member paused themselves.
+  Future<void> notifyPlayerPaused({
+    required int playerId,
+    required int tenantId,
+    required String reason,
+    String? pauseUntil,
+  }) async {
+    await _supabase.functions.invoke('quick-processor', body: {
+      'type': 'playerPaused',
+      'playerId': playerId,
+      'tenantId': tenantId,
+      'reason': reason,
+      if (pauseUntil != null) 'pauseUntil': pauseUntil,
+    });
+  }
+
   /// Send plan as PDF or image via Telegram
   Future<void> sendPlanPerTelegram({
     required Uint8List fileBytes,

@@ -664,7 +664,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
         final oldGroupName = groups[person.instrument] ?? 'Unbekannt';
         final newGroupName = groups[_selectedGroupId] ?? 'Unbekannt';
         newHistoryEntries.add({
-          'date': DateTime.now().toIso8601String(),
+          'date': DateTime.now().toUtc().toIso8601String(),
           'text': '$oldGroupName -> $newGroupName',
           'type': PlayerHistoryType.instrumentChange.value,
         });
@@ -672,7 +672,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
 
       if (_draft.notes != (person.notes ?? '')) {
         newHistoryEntries.add({
-          'date': DateTime.now().toIso8601String(),
+          'date': DateTime.now().toUtc().toIso8601String(),
           'text': person.notes ?? 'Keine Notiz',
           'type': PlayerHistoryType.notes.value,
         });

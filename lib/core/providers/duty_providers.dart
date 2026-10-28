@@ -9,6 +9,7 @@ import '../utils/duty_utils.dart';
 import 'attendance_detail_providers.dart';
 import 'attendance_type_providers.dart';
 import 'self_service_providers.dart';
+import 'signout_providers.dart';
 import 'tenant_providers.dart';
 
 export '../../data/repositories/duty_repository.dart'
@@ -218,8 +219,20 @@ class DutyNotifier extends Notifier<AsyncValue<void>> {
   Future<bool> confirm(String personAttendanceId, int attendanceId) =>
       _run(() => _repo.confirm(personAttendanceId), attendanceId: attendanceId);
 
+  /// "Kann nicht": LOGIC_SELF — Ionic declineMyDuty/declineOwnDuty call
+  /// `db.signout([pa.id], reason, false, false, true)` (Entschuldigt, leaders
+  /// get the "abgemeldet" quick-processor notification with isSelf) and then
+  /// `duty-notify {type: 'understaffed'}`.
   Future<bool> decline(String personAttendanceId, int attendanceId, String reason) =>
-      _run(() => _repo.decline(personAttendanceId, attendanceId, reason), attendanceId: attendanceId);
+      _run(() async {
+        await ref.read(signInOutRepositoryWithTenantProvider).signOut(
+              [personAttendanceId],
+              reason,
+              isLateComing: false,
+              isSelf: true,
+            );
+        await _repo.notify(DutyNotifyType.understaffed, attendanceId);
+      }, attendanceId: attendanceId);
 
   Future<bool> updateDutyRequired(int attendanceId, int required) =>
       _run(() => _repo.updateDutyRequired(attendanceId, required), attendanceId: attendanceId);

@@ -260,7 +260,7 @@ Future<bool> pausePersonFlow(
     if (selected == null || selected.isEmpty) return true;
 
     final entry = {
-      'date': DateTime.now().toIso8601String(),
+      'date': DateTime.now().toUtc().toIso8601String(),
       'text': text,
       'type': PlayerHistoryType.paused.value,
     };

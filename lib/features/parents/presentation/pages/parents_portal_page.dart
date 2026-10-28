@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/attendance_type_providers.dart';
+import '../../../../core/providers/signout_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/event_list_utils.dart';
@@ -155,6 +156,11 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
               onRetry: () => ref.invalidate(childrenAttendancesProvider),
             ),
             data: (attendances) {
+              _openPendingAttendance([
+                if (current != null) current,
+                ...upcomingAll,
+                ...past,
+              ]);
               final pastPreview = _showAllPast
                   ? past
                   : past.take(EventListUtils.pastPreviewCount).toList();
@@ -290,6 +296,20 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
         },
       ),
     );
+  }
+
+  /// LOGIC_SELF: opens the Termin of a deep link / bell tap once the data is
+  /// loaded (Ionic ParentsPage pendingAttendanceId → openAttendanceById,
+  /// action sheet for all kids).
+  void _openPendingAttendance(List<ParentAttendanceGroup> groups) {
+    final pendingId = ref.read(pendingAttendanceIdProvider);
+    if (pendingId == null) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || ref.read(pendingAttendanceIdProvider) != pendingId) return;
+      ref.read(pendingAttendanceIdProvider.notifier).state = null;
+      final group = groups.where((g) => g.attendanceId == pendingId).firstOrNull;
+      if (group != null) _showActions(group);
+    });
   }
 
   /// Action sheet for one child or all children of a Termin (Ionic openActionSheet).

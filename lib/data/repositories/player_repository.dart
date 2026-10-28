@@ -174,8 +174,8 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
   }
 
   /// Returns players whose `parent_id` equals [parentId], in the current
-  /// tenant. Filters out pending and left players (matches `isFilter`
-  /// semantics used by the parents portal).
+  /// tenant. Filters out pending (`pending IS false`, like Ionic) and left
+  /// players.
   ///
   /// Note: the DB column is `parent_id` (snake_case). Confirmed against
   /// existing repository methods and the Ionic db.service.ts.
@@ -186,7 +186,9 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
           .select('*')
           .eq('tenantId', currentTenantId)
           .eq('parent_id', parentId)
-          .isFilter('pending', null)
+          // LOGIC_SELF: Ionic getPlayers (PARENT) `.is('pending', false)` —
+          // approved players have pending=false, not NULL.
+          .isFilter('pending', false)
           .isFilter('left', null)
           .order('lastName');
       return (response as List)
@@ -360,7 +362,7 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
         player.history.map((e) => e.toJson()),
       );
       history.add({
-        'date': DateTime.now().toIso8601String(),
+        'date': DateTime.now().toUtc().toIso8601String(),
         'text': reason ?? 'Kein Grund angegeben',
         'type': PlayerHistoryType.archived.value,
       });
@@ -396,7 +398,7 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
         player.history.map((e) => e.toJson()),
       );
       history.add({
-        'date': DateTime.now().toIso8601String(),
+        'date': DateTime.now().toUtc().toIso8601String(),
         'text': 'Person wurde reaktiviert',
         'type': PlayerHistoryType.returned.value,
       });
@@ -456,7 +458,7 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
         player.history.map((e) => e.toJson()),
       );
       history.add({
-        'date': DateTime.now().toIso8601String(),
+        'date': DateTime.now().toUtc().toIso8601String(),
         'text': reason,
         'type': PlayerHistoryType.paused.value,
       });
@@ -496,7 +498,7 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
         player.history.map((e) => e.toJson()),
       );
       history.add({
-        'date': DateTime.now().toIso8601String(),
+        'date': DateTime.now().toUtc().toIso8601String(),
         'text': historyText,
         'type': PlayerHistoryType.unpaused.value,
       });
@@ -665,7 +667,7 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
           player.history.map((e) => e.toJson()),
         );
         history.add({
-          'date': DateTime.now().toIso8601String(),
+          'date': DateTime.now().toUtc().toIso8601String(),
           'text': 'Automatisch reaktiviert (Pausenzeit abgelaufen)',
           'type': PlayerHistoryType.unpaused.value,
         });
@@ -702,7 +704,7 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
         player.history.map((e) => e.toJson()),
       );
       history.add({
-        'date': DateTime.now().toIso8601String(),
+        'date': DateTime.now().toUtc().toIso8601String(),
         'text': 'Genehmigt',
         'type': PlayerHistoryType.approved.value,
       });
@@ -739,7 +741,7 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
         player.history.map((e) => e.toJson()),
       );
       history.add({
-        'date': DateTime.now().toIso8601String(),
+        'date': DateTime.now().toUtc().toIso8601String(),
         'text': reason,
         'type': PlayerHistoryType.declined.value,
       });
@@ -748,7 +750,7 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
           .from('player')
           .update({
             'pending': false,
-            'left': DateTime.now().toIso8601String(),
+            'left': DateTime.now().toUtc().toIso8601String(),
             'history': history,
           })
           .eq('id', player.id!)
@@ -788,7 +790,7 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
         player.history.map((e) => e.toJson()),
       );
       history.add({
-        'date': DateTime.now().toIso8601String(),
+        'date': DateTime.now().toUtc().toIso8601String(),
         'text': reason ?? 'Instrument gewechselt',
         'type': PlayerHistoryType.instrumentChange.value,
       });
@@ -892,7 +894,7 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
         player.history.map((e) => e.toJson()),
       );
       history.add({
-        'date': DateTime.now().toIso8601String(),
+        'date': DateTime.now().toUtc().toIso8601String(),
         'text': 'Verspätungen besprochen und zurückgesetzt',
         'type': PlayerHistoryType.notes.value,
       });
@@ -900,7 +902,7 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
       final response = await supabase
           .from('player')
           .update({
-            'lastSolve': DateTime.now().toIso8601String(),
+            'lastSolve': DateTime.now().toUtc().toIso8601String(),
             'history': history,
           })
           .eq('id', player.id!)
@@ -931,7 +933,7 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
         player.history.map((e) => e.toJson()),
       );
       history.add({
-        'date': DateTime.now().toIso8601String(),
+        'date': DateTime.now().toUtc().toIso8601String(),
         'text': notes ?? 'Problemfall besprochen und gelöst',
         'type': PlayerHistoryType.criticalPerson.value,
       });
@@ -940,7 +942,7 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
           .from('player')
           .update({
             'isCritical': false,
-            'lastSolve': DateTime.now().toIso8601String(),
+            'lastSolve': DateTime.now().toUtc().toIso8601String(),
             'criticalReason': null,
             'history': history,
           })
@@ -1109,7 +1111,7 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
           ? PlayerHistoryType.copiedFrom
           : PlayerHistoryType.transferredFrom;
 
-      final now = DateTime.now().toIso8601String();
+      final now = DateTime.now().toUtc().toIso8601String();
 
       // 1. Update source player with history entry
       final sourceHistory = List<Map<String, dynamic>>.from(
@@ -1343,7 +1345,7 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
       final history = [
         ...target.history.map((e) => e.toJson()),
         {
-          'date': DateTime.now().toIso8601String(),
+          'date': DateTime.now().toUtc().toIso8601String(),
           'text': 'Zusammengeführt mit Registrierung von '
               '${pending.firstName} ${pending.lastName} '
               '(genehmigt von $approverEmail)',

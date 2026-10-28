@@ -43,6 +43,9 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
 
   /// Navigate to detail page, refresh list data when returning
   Future<void> _navigateToDetail(int attendanceId) async {
+    // LOGIC_SELF: Ionic openAttendance returns for anyone who is not a
+    // conductor (ADMIN/RESPONSIBLE) or helper (HELPER/VOICE_LEADER_HELPER).
+    if (!ref.read(effectiveRoleProvider).canAddAttendance) return;
     await context.push('/attendance/$attendanceId');
     if (mounted) {
       ref.invalidate(realtimeAttendanceListProvider);
@@ -216,7 +219,8 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
           // ATT_DETAIL: Termintyp filter
           _buildTypeFilterButton(ref.watch(attendanceTypesProvider).valueOrNull ?? const []),
           // DUTY: "Dienste verteilen" for leaders when the tenant uses the Dienstplan
-          if (role.isConductor && ref.watch(hasDutyTypesProvider))
+          // LOGIC_SELF: Ionic isConductor = ADMIN || RESPONSIBLE (no viewer)
+          if ((role.isAdmin || role.isResponsible) && ref.watch(hasDutyTypesProvider))
             IconButton(
               icon: const Icon(Icons.shuffle),
               tooltip: context.l10n.attListDistributeDuties,
@@ -395,6 +399,7 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
                           _buildTodayStats(current, dutyTermine[current.id]),
                       ],
                       actions: [
+                        if (role.canAddAttendance)
                         FilledButton.icon(
                           onPressed: () => _navigateToDetail(current.id!),
                           icon: const Icon(Icons.check_box_outlined, size: 18),

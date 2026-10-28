@@ -121,7 +121,7 @@ class SongFileService {
       'url': url,
       'instrumentId': instrumentId,
       'note': note,
-      'created_at': DateTime.now().toIso8601String(),
+      'created_at': DateTime.now().toUtc().toIso8601String(),
     };
 
     final updatedFiles = [...existingFiles, newFile];
@@ -398,7 +398,7 @@ class SongFileService {
       'url': url,
       'instrumentId': instrumentId,
       'note': note,
-      'created_at': DateTime.now().toIso8601String(),
+      'created_at': DateTime.now().toUtc().toIso8601String(),
     };
 
     final updatedFiles = [...existingFiles, newFile];

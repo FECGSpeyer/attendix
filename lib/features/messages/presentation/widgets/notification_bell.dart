@@ -110,6 +110,9 @@ class NotificationBell extends ConsumerWidget {
         (role.isAdmin || role.isResponsible || role.isHelper || role.isVoiceLeaderHelper)) {
       router.push('/attendance/$attendanceId');
     } else if (role != null && role.isParent) {
+      // LOGIC_SELF: the parents portal opens the Termin's action sheet
+      // (Ionic navigateToAttendance sets pendingAttendanceId for PARENT too).
+      ref.read(pendingAttendanceIdProvider.notifier).state = attendanceId;
       router.go('/parents');
     } else {
       // INTEGRATION: Ionic navigateToAttendance – "Meine Termine" opens the
