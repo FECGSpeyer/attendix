@@ -10,6 +10,7 @@ import '../../../../core/providers/attendance_type_providers.dart';
 import '../../../../core/providers/duty_providers.dart';
 import '../../../../core/providers/plan_providers.dart';
 import '../../../../core/providers/player_absence_providers.dart';
+import '../../../../core/providers/shift_providers.dart';
 import '../../../../core/providers/team_org_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/utils/duty_utils.dart';
@@ -18,6 +19,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/attendance/attendance.dart';
 import '../../../../data/models/duty/person_unavailability.dart';
 import '../../../../data/models/player_absence/player_absence.dart';
+import '../../../../data/models/shift/shift_plan.dart';
 import '../../../../data/models/team_org/team_org.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../l10n/l10n.dart';
@@ -112,6 +114,7 @@ List<Map<String, dynamic>> newPersonAttendanceRows(
   DateTime day, {
   List<PlayerAbsence> absences = const [],
   List<PersonUnavailability> unavailability = const [],
+  List<ShiftPlan> shifts = const [],
 }) {
   final date = _noon(day);
   final dayKey = DateFormat('yyyy-MM-dd').format(date);
@@ -123,17 +126,21 @@ List<Map<String, dynamic>> newPersonAttendanceRows(
     var notes = '';
     final shiftId = p['shift_id']?.toString();
     if (shiftId != null && shiftId.isNotEmpty && !type.allDay) {
-      final result = ShiftUtils.getStatusByShift(
-        shiftId: shiftId,
-        attendanceDate: day,
-        attendanceStart: type.startTime ?? '19:00',
-        attendanceEnd: type.endTime ?? '21:00',
-        defaultStatus: status,
-        shiftStart: p['shift_start']?.toString(),
-        shiftName: p['shift_name']?.toString(),
-      );
-      status = result.status;
-      notes = result.note;
+      try {
+        final result = ShiftUtils.getStatusByShift(
+          shift: ShiftUtils.findShift(shifts, shiftId),
+          attendanceDate: day,
+          attendanceStart: type.startTime ?? '19:00',
+          attendanceEnd: type.endTime ?? '21:00',
+          defaultStatus: status,
+          shiftStart: p['shift_start']?.toString(),
+          shiftName: p['shift_name']?.toString(),
+        );
+        status = result.status;
+        notes = result.note;
+      } on ShiftNameNotFoundException {
+        // Ionic: unknown shift name keeps the default status.
+      }
     }
     final absence = absences.where((a) =>
         a.personId == personId &&
@@ -237,6 +244,7 @@ Future<int?> promptCreateProtocolAttendance(BuildContext context, WidgetRef ref)
           .getAbsencesForTenant()
           .catchError((_) => <PlayerAbsence>[]),
       ref.read(dutyRepositoryWithTenantProvider).getUnavailabilityForTenant(),
+      ref.read(shiftsProvider.future).catchError((_) => <ShiftPlan>[]),
     ]);
     final persons = personsForAttendanceType(
       results[0] as List<Map<String, dynamic>>,
@@ -257,6 +265,7 @@ Future<int?> promptCreateProtocolAttendance(BuildContext context, WidgetRef ref)
         day,
         absences: results[1] as List<PlayerAbsence>,
         unavailability: results[2] as List<PersonUnavailability>,
+        shifts: results[3] as List<ShiftPlan>,
       ),
     );
     ref.invalidate(attendancesProvider);

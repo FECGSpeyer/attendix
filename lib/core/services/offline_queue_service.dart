@@ -150,13 +150,6 @@ final offlineFlushFnProvider = Provider<OfflineFlushFn>((ref) {
       entry.personAttendanceId,
       Map<String, dynamic>.from(entry.payload),
     );
-    if (entry.attendanceId != null) {
-      try {
-        await repo.recalculatePercentage(entry.attendanceId!);
-      } catch (_) {
-        // Percentage is recalculated on the next save anyway
-      }
-    }
   };
 });
 

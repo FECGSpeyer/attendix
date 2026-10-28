@@ -143,15 +143,12 @@ void main() {
         );
       });
 
-      test('recalculatePercentage validates tenant (SEC-015)', () {
-        final section = _extractMethodBody(attendanceRepoSource, 'recalculatePercentage');
-        expect(section, isNotNull);
-        // Should validate attendance belongs to current tenant before calculation
-        expect(
-          section,
-          contains(".eq('tenantId', currentTenantId)"),
-          reason: 'recalculatePercentage must validate attendance belongs to tenant (SEC-015)',
-        );
+      // LOGIC_ATT: Ionic never stores attendance.percentage and never
+      // auto-creates person rows when a Termin is opened.
+      test('does not write attendance.percentage nor auto-fill persons', () {
+        expect(attendanceRepoSource, isNot(contains('recalculatePercentage')));
+        expect(attendanceRepoSource, isNot(contains("'percentage'")));
+        expect(attendanceRepoSource, isNot(contains('ensurePersonAttendances')));
       });
 
       test('getPersonAttendancesForPerson uses inner join for tenant (SEC-016)', () {
@@ -208,31 +205,6 @@ void main() {
     });
 
     group('Sprint 2a Task 7 - New Methods', () {
-      test('ensurePersonAttendances validates attendance tenant and filters player tenant', () {
-        final section = _extractMethodBody(
-          attendanceRepoSource,
-          'ensurePersonAttendances',
-        );
-        expect(section, isNotNull, reason: 'ensurePersonAttendances should exist');
-        // Validates attendance ownership
-        expect(
-          section,
-          contains(".eq('tenantId', currentTenantId)"),
-          reason: 'ensurePersonAttendances must filter by tenantId for attendance + player',
-        );
-        // Filters by current tenant when listing active players
-        expect(
-          section,
-          contains(".from('player')"),
-          reason: 'ensurePersonAttendances must query the player table for active players',
-        );
-        expect(
-          section,
-          contains('upsert'),
-          reason: 'ensurePersonAttendances must upsert to avoid duplicates (TOCTOU)',
-        );
-      });
-
       test('validatePersonAttendanceTenant uses inner join with attendance.tenantId filter', () {
         final section = _extractMethodBody(
           attendanceRepoSource,

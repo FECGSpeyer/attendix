@@ -152,20 +152,6 @@ void main() {
         expect(section, isNotNull);
         expect(section, contains('ref.invalidate(attendanceByIdProvider'));
       });
-
-      test('recalculatePercentage invalidates attendanceByIdProvider', () {
-        final section = _extractMethodFromClass(
-            attendanceProvidersSource, 'recalculatePercentage');
-        expect(section, isNotNull);
-        expect(section, contains('ref.invalidate(attendanceByIdProvider'));
-      });
-
-      test('recalculatePercentage invalidates attendancesProvider', () {
-        final section = _extractMethodFromClass(
-            attendanceProvidersSource, 'recalculatePercentage');
-        expect(section, isNotNull);
-        expect(section, contains('ref.invalidate(attendancesProvider)'));
-      });
     });
 
     group('Provider Patterns', () {

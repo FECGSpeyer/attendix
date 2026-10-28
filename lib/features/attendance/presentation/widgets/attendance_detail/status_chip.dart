@@ -84,7 +84,9 @@ AttendanceStatus? nextClickStatus(
     mapping = const {p: a, a: p, l: p, le: p, e: p}; // ONLY_PRESENT_ABSENT
   }
   if (mapping == null) return null;
-  return mapping[current] ?? p;
+  // LOGIC_ATT: Ionic writes `undefined` when the current status is not in
+  // the mapping (no change) – keep the status instead of jumping to Anwesend.
+  return mapping[current] ?? current;
 }
 
 /// Ionic `ion-badge` with the status letter.

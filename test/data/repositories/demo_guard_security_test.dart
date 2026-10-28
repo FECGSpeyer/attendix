@@ -32,6 +32,7 @@ void main() {
     'attendance': [
       'createAttendance', 'updateAttendance', 'deleteAttendance',
       'updateHistoryDatesForAttendance', 'uploadAttachment', 'removeAttachment',
+      'updateHistoryEntry', 'deleteHistoryEntry',
     ],
     'attendance_type': ['createType', 'updateType', 'deleteType', 'reorderTypes'],
     'shift': ['createShift', 'updateShift', 'deleteShift'],
@@ -76,7 +77,7 @@ void main() {
   const open = <String, List<String>>{
     'attendance': [
       'updatePersonAttendance', 'createPersonAttendances',
-      'ensurePersonAttendances', 'recalculatePercentage',
+      'updateShiftAssignmentsForAttendance', 'addHistoryEntries',
     ],
     'player': ['checkAndUnpausePlayers', 'mergePendingPlayerIntoExisting'],
     'sign_in_out': ['updateAttendanceNote'],

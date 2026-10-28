@@ -5,7 +5,9 @@ import 'package:supabase_flutter/supabase_flutter.dart' show FileOptions;
 
 import '../../core/constants/enums.dart';
 import '../../core/utils/duty_utils.dart';
+import '../../core/utils/shift_utils.dart';
 import '../models/attendance/attendance.dart';
+import '../models/shift/shift_plan.dart';
 import 'base_repository.dart';
 import '../../l10n/l10n.dart';
 
@@ -288,55 +290,83 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
     }
   }
 
-  /// Ensure PersonAttendance rows exist for every active player in the tenant
-  /// for the given attendance. Validates that the attendance belongs to the
-  /// current tenant, then upserts one row per active (non-paused, non-left)
-  /// player with the supplied [defaultStatusValue] (e.g. neutral).
-  ///
-  /// Upsert with `ignoreDuplicates` prevents duplicates from concurrent
-  /// devices (TOCTOU race).
-  Future<void> ensurePersonAttendances(
-    int attendanceId,
-    int defaultStatusValue,
-  ) async {
+  /// Ionic `DbService.updateShiftAssignmentsForAttendance`: after the date or
+  /// time window of a Termin changed, re-run the shift computation for every
+  /// person of the Termin (see [ShiftUtils.shiftUpdatesForAttendance]).
+  /// Skips past Termine and all-day types.
+  Future<void> updateShiftAssignmentsForAttendance(int attendanceId) async {
     try {
-      // Validate attendance belongs to current tenant before inserting
-      final attendanceCheck = await supabase
+      final att = await supabase
           .from('attendance')
-          .select('id')
+          .select('id, date, start_time, end_time, '
+              'attType:type_id(start_time, end_time, all_day, default_status)')
           .eq('id', attendanceId)
           .eq('tenantId', currentTenantId)
           .maybeSingle();
+      if (att == null) return;
+      final type = att['attType'] as Map<String, dynamic>?;
+      if (type == null) return;
+      final typeModel = AttendanceType.fromJson({
+        'name': '',
+        ...type,
+      });
 
-      if (attendanceCheck == null) return;
+      // person_attendances has no tenantId: the Termin was validated above.
+      final paRows = await supabase
+          .from('person_attendances')
+          .select('id, person_id, status, notes')
+          .eq('attendance_id', attendanceId);
+      final rows = [
+        for (final r in (paRows as List).cast<Map<String, dynamic>>())
+          if (r['person_id'] != null)
+            ShiftAttendanceRow(
+              id: r['id'].toString(),
+              personId: (r['person_id'] as num).toInt(),
+              status: _parseStatus(r['status']),
+              notes: r['notes'] as String?,
+            ),
+      ];
+      if (rows.isEmpty) return;
 
       final players = await supabase
           .from('player')
-          .select('id')
+          .select('id, shift_id, shift_start, shift_name')
           .eq('tenantId', currentTenantId)
-          .isFilter('left', null)
-          .eq('paused', false);
+          .inFilter('id', rows.map((r) => r.personId).toSet().toList());
+      final persons = {
+        for (final p in (players as List).cast<Map<String, dynamic>>())
+          (p['id'] as num).toInt(): ShiftPerson(
+            shiftId: p['shift_id']?.toString(),
+            shiftStart: p['shift_start']?.toString(),
+            shiftName: p['shift_name']?.toString(),
+          ),
+      };
 
-      final playerList = players as List;
-      if (playerList.isEmpty) return;
+      final shiftRows = await supabase
+          .from(SupabaseTable.shiftPlans.tableName)
+          .select('*')
+          .eq('tenant_id', currentTenantId);
+      final shifts = [
+        for (final s in (shiftRows as List).cast<Map<String, dynamic>>()) ShiftPlan.fromJson(s),
+      ];
 
-      final records = playerList
-          .map((p) => {
-                'attendance_id': attendanceId,
-                'person_id': p['id'],
-                'status': defaultStatusValue,
-              })
-          .toList();
-
-      await supabase
-          .from('person_attendances')
-          .upsert(
-            records,
-            onConflict: 'attendance_id,person_id',
-            ignoreDuplicates: true,
-          );
+      final updates = ShiftUtils.shiftUpdatesForAttendance(
+        attendanceDate: att['date'] as String,
+        attendanceStart: att['start_time'] as String?,
+        attendanceEnd: att['end_time'] as String?,
+        typeStart: typeModel.startTime,
+        typeEnd: typeModel.endTime,
+        typeAllDay: typeModel.allDay,
+        defaultStatus: typeModel.defaultStatus,
+        rows: rows,
+        persons: persons,
+        shifts: shifts,
+      );
+      for (final u in updates) {
+        await updatePersonAttendance(u.id, {'status': u.status.value, 'notes': u.notes});
+      }
     } catch (e, stack) {
-      handleError(e, stack, 'ensurePersonAttendances');
+      handleError(e, stack, 'updateShiftAssignmentsForAttendance');
       rethrow;
     }
   }
@@ -667,66 +697,6 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
     }
   }
 
-  /// Calculate percentage for an attendance
-  /// SEC-015: Added tenant validation before percentage calculation
-  Future<void> recalculatePercentage(int attendanceId) async {
-    try {
-      // Validate attendance belongs to current tenant
-      final attendanceCheck = await supabase
-          .from('attendance')
-          .select('id, attType:type_id(duty_mode)')
-          .eq('id', attendanceId)
-          .eq('tenantId', currentTenantId)
-          .maybeSingle();
-
-      if (attendanceCheck == null) {
-        // Attendance doesn't belong to current tenant, skip silently
-        return;
-      }
-
-      final response = await supabase
-          .from('person_attendances')
-          .select('status, duty_state, notes')
-          .eq('attendance_id', attendanceId);
-
-      // SETTINGS2: Ionic att-list getPercentage(…, tenant.shift_excused_as_present)
-      final tenantRow = await supabase
-          .from('tenants')
-          .select('shift_excused_as_present')
-          .eq('id', currentTenantId)
-          .maybeSingle();
-      final shiftExcusedAsPresent =
-          tenantRow?['shift_excused_as_present'] == true;
-
-      // DUTY: for duty types only assigned persons count (stand-ins are left out)
-      final isDutyTermin = attendanceCheck['attType']?['duty_mode'] == true;
-      final rows = (response as List)
-          .where((e) => !isDutyTermin || e['duty_state'] != null)
-          .toList();
-      final statusList = rows.map((e) => e['status']).toList();
-
-      if (statusList.isEmpty) {
-        await updateAttendance(attendanceId, {'percentage': null});
-        return;
-      }
-
-      final presentCount = rows.where((e) {
-        final status = _parseStatus(e['status']);
-        return status.countsAsAttended(
-          notes: e['notes'] as String?,
-          shiftExcusedAsPresent: shiftExcusedAsPresent,
-        );
-      }).length;
-
-      final percentage = (presentCount / statusList.length * 100).round();
-
-      await updateAttendance(attendanceId, {'percentage': percentage.toDouble()});
-    } catch (e, stack) {
-      handleError(e, stack, 'recalculatePercentage');
-      rethrow;
-    }
-  }
-
   // Helper to parse attendance with optional person attendances
   // STATS_PEOPLE_FIXES
   /// Load person_attendances for the given attendance ids (export).
@@ -801,6 +771,50 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
       return List<Map<String, dynamic>>.from(response as List);
     } catch (e, stack) {
       handleError(e, stack, 'getHistoryForAttendance');
+      rethrow;
+    }
+  }
+
+  /// LOGIC_ATT: Ionic addSongsToHistory – inserts song history rows of a
+  /// Termin. `tenantId` is always forced to the current tenant.
+  Future<void> addHistoryEntries(List<Map<String, dynamic>> rows) async {
+    if (rows.isEmpty) return;
+    try {
+      await supabase
+          .from('history')
+          .insert([for (final r in rows) {...r, 'tenantId': currentTenantId}]);
+    } catch (e, stack) {
+      handleError(e, stack, 'addHistoryEntries');
+      rethrow;
+    }
+  }
+
+  /// LOGIC_ATT: Ionic updateHistoryEntry (e.g. conductor change).
+  Future<void> updateHistoryEntry(int id, Map<String, dynamic> updates) async {
+    ensureNotDemo('updateHistoryEntry'); // DEMO_GUARD
+    try {
+      await supabase
+          .from('history')
+          .update(updates)
+          .eq('id', id)
+          .eq('tenantId', currentTenantId);
+    } catch (e, stack) {
+      handleError(e, stack, 'updateHistoryEntry');
+      rethrow;
+    }
+  }
+
+  /// LOGIC_ATT: Ionic removeHistoryEntry.
+  Future<void> deleteHistoryEntry(int id) async {
+    ensureNotDemo('deleteHistoryEntry'); // DEMO_GUARD
+    try {
+      await supabase
+          .from('history')
+          .delete()
+          .eq('id', id)
+          .eq('tenantId', currentTenantId);
+    } catch (e, stack) {
+      handleError(e, stack, 'deleteHistoryEntry');
       rethrow;
     }
   }

@@ -399,16 +399,6 @@ class AttendanceNotifier extends Notifier<AsyncValue<void>> {
     }
   }
 
-  Future<void> recalculatePercentage(int attendanceId) async {
-    try {
-      await _repo.recalculatePercentage(attendanceId);
-      ref.invalidate(attendanceByIdProvider(attendanceId));
-      ref.invalidate(attendancesProvider);
-    } catch (e, stack) {
-      state = AsyncValue.error(e, stack);
-    }
-  }
-
   /// Batch update multiple person attendances with the same status
   Future<void> batchUpdatePersonAttendances(
     List<String> personAttendanceIds,
@@ -420,9 +410,9 @@ class AttendanceNotifier extends Notifier<AsyncValue<void>> {
       await _repo.batchUpdatePersonAttendances(personAttendanceIds, newStatus);
       state = const AsyncValue.data(null);
       ref.invalidate(attendanceByIdProvider(attendanceId));
-      // Fire-and-forget: don't await so a recalculation failure doesn't
-      // overwrite the successful batch update state
-      recalculatePercentage(attendanceId);
+      // LOGIC_ATT: Ionic never stores attendance.percentage (not a column in
+      // the Ionic schema); the list computes it from the person rows.
+      ref.invalidate(attendancesProvider);
       ref.invalidate(playerAttendancePercentagesProvider);
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
