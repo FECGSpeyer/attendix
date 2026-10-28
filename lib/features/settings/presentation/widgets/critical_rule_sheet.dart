@@ -41,7 +41,6 @@ class _CriticalRuleSheetState extends State<CriticalRuleSheet> {
   late CriticalRuleThresholdType _thresholdType;
   late CriticalRulePeriodType _periodType;
   late CriticalRuleOperator _operator;
-  late bool _enabled;
 
   bool get _isEditing => widget.rule != null;
 
@@ -58,7 +57,6 @@ class _CriticalRuleSheetState extends State<CriticalRuleSheet> {
       _thresholdType = rule.thresholdType;
       _periodType = rule.periodType ?? CriticalRulePeriodType.days;
       _operator = rule.operator;
-      _enabled = rule.enabled;
     } else {
       _thresholdController.text = '3';
       _periodDaysController.text = '30';
@@ -69,7 +67,6 @@ class _CriticalRuleSheetState extends State<CriticalRuleSheet> {
       _thresholdType = CriticalRuleThresholdType.count;
       _periodType = CriticalRulePeriodType.days;
       _operator = CriticalRuleOperator.or;
-      _enabled = true;
     }
   }
 
@@ -114,7 +111,9 @@ class _CriticalRuleSheetState extends State<CriticalRuleSheet> {
           ? int.tryParse(_periodDaysController.text) ?? 30
           : null,
       operator: _operator,
-      enabled: _enabled,
+      // DB_REVIEW_REST (M3): Ionic + edge function `evaluate-critical-rules`
+      // have no `enabled` flag; every saved rule is active.
+      enabled: true,
     );
 
     widget.onSave(rule);
@@ -343,16 +342,6 @@ class _CriticalRuleSheetState extends State<CriticalRuleSheet> {
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: AppColors.medium,
                   ),
-            ),
-            const SizedBox(height: AppDimensions.paddingM),
-
-            // Enabled toggle
-            SwitchListTile(
-              contentPadding: EdgeInsets.zero,
-              title: Text(context.l10n.generalSettingsFlutterRuleEnabled),
-              subtitle: Text(context.l10n.generalSettingsFlutterRuleEnabledHelper),
-              value: _enabled,
-              onChanged: (v) => setState(() => _enabled = v),
             ),
             const SizedBox(height: AppDimensions.paddingM),
 

@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/constants/enums.dart';
+import '../../core/utils/string_utils.dart';
 import '../models/person/person.dart';
 import 'base_repository.dart';
 import '../../l10n/l10n.dart';
@@ -291,7 +292,8 @@ class UserRegistrationRepository extends BaseRepository
       rows = await supabase
           .from('tenantUsers')
           .select('userId, tenantId, role')
-          .eq('email', email.toLowerCase().trim());
+          // DB_REVIEW_REST (M7): case-insensitive like Ionic `ilike`.
+          .ilike('email', StringUtils.exactIlikePattern(email));
     } catch (_) {
       throw AccountFlowException(l10nWithoutContext.dbLoadUserFailed);
     }

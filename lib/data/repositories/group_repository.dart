@@ -43,7 +43,8 @@ class GroupRepository extends BaseRepository with TenantAwareRepository {
 
       final map = <int, String>{};
       for (final row in response as List) {
-        map[row['id'] as int] = row['name'] as String;
+        // DB_REVIEW_REST: instruments.name is nullable.
+        map[row['id'] as int] = (row['name'] as String?) ?? '';
       }
       return map;
     } catch (e, stack) {

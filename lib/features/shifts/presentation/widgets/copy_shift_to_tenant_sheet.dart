@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../core/config/supabase_config.dart';
 import '../../../../core/providers/shift_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/utils/shift_utils.dart'; // DB_REVIEW_REST
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/shift/shift_plan.dart';
 import '../../../../data/models/tenant/tenant.dart';
@@ -346,11 +348,13 @@ class _CopyShiftToTenantSheetState
                 l10n.shiftsFlutterAssigningPeople(appIds.length));
 
             // Find matching players in target tenant by appId
+            // DB_REVIEW_REST (M5): only active people (Ionic `.is('left', null)`).
             final targetPlayersResponse = await supabase
                 .from('player')
                 .select('id, appId')
                 .eq('tenantId', _targetTenantId!)
-                .inFilter('appId', appIds);
+                .inFilter('appId', appIds)
+                .isFilter('left', null);
 
             final targetPlayers = targetPlayersResponse as List;
 
@@ -364,19 +368,35 @@ class _CopyShiftToTenantSheetState
             }
 
             // Update target players with shift assignment
+            final shiftDataByPersonId =
+                <int, ({String? shiftName, String? shiftStart})>{};
             for (final sourcePlayer in playersWithShift) {
               final appId = sourcePlayer['appId'] as String?;
               if (appId != null && appIdToTargetId.containsKey(appId)) {
                 final targetPlayerId = appIdToTargetId[appId]!;
+                final shiftName = _emptyToNull(sourcePlayer['shift_name']);
+                final shiftStart = _emptyToNull(sourcePlayer['shift_start']);
 
                 await supabase.from('player').update({
                   'shift_id': newShiftId,
-                  'shift_name': sourcePlayer['shift_name'],
-                  'shift_start': sourcePlayer['shift_start'],
+                  'shift_name': shiftName,
+                  'shift_start': shiftStart,
                 }).eq('id', targetPlayerId).eq('tenantId', _targetTenantId!);
 
+                shiftDataByPersonId[targetPlayerId] =
+                    (shiftName: shiftName, shiftStart: shiftStart);
                 assignedCount++;
               }
+            }
+
+            // DB_REVIEW_REST (M5): Ionic updateShiftAttendancesInTenant –
+            // excuse upcoming Termine that collide with the copied shift.
+            if (shiftDataByPersonId.isNotEmpty) {
+              await _updateShiftAttendancesInTenant(
+                supabase,
+                ShiftPlan.fromJson(insertResponse),
+                shiftDataByPersonId,
+              );
             }
           }
         }
@@ -414,6 +434,55 @@ class _CopyShiftToTenantSheetState
       if (mounted) {
         setState(() => _isCopying = false);
       }
+    }
+  }
+
+  static String? _emptyToNull(dynamic value) {
+    final s = value?.toString();
+    return (s == null || s.isEmpty) ? null : s;
+  }
+
+  /// DB_REVIEW_REST (M5): Ionic ShiftService.updateShiftAttendancesInTenant.
+  /// All reads are scoped to the target tenant; person_attendances has no
+  /// tenant column, so it is filtered through the attendance join.
+  Future<void> _updateShiftAttendancesInTenant(
+    SupabaseClient supabase,
+    ShiftPlan shift,
+    Map<int, ({String? shiftName, String? shiftStart})> shiftDataByPersonId,
+  ) async {
+    final targetTenantId = _targetTenantId!;
+    final types = await supabase
+        .from('attendance_types')
+        .select('id, all_day, start_time, end_time, default_status')
+        .eq('tenant_id', targetTenantId);
+    final today = DateTime.now().toIso8601String().substring(0, 10);
+    final upcoming = await supabase
+        .from('attendance')
+        .select('id, date, type_id, start_time, end_time')
+        .eq('tenantId', targetTenantId)
+        .gte('date', today);
+    if ((upcoming as List).isEmpty) return;
+
+    final personAttendances = await supabase
+        .from('person_attendances')
+        .select(
+            'id, person_id, attendance_id, status, attendance:attendance_id!inner(tenantId)')
+        .inFilter('person_id', shiftDataByPersonId.keys.toList())
+        .inFilter('attendance_id', upcoming.map((a) => a['id']).toList())
+        .eq('attendance.tenantId', targetTenantId);
+
+    final updates = ShiftUtils.copiedShiftAttendanceUpdates(
+      shift: shift,
+      attendances: upcoming.cast<Map<String, dynamic>>(),
+      types: (types as List).cast<Map<String, dynamic>>(),
+      personAttendances: (personAttendances as List).cast<Map<String, dynamic>>(),
+      shiftDataByPersonId: shiftDataByPersonId,
+    );
+    for (final u in updates) {
+      await supabase
+          .from('person_attendances')
+          .update({'status': u.status.value, 'notes': u.notes})
+          .eq('id', u.id);
     }
   }
 }

@@ -87,7 +87,8 @@ final personAttendanceStatsProvider =
   final criticalRules = tenant?.criticalRules;
   if (criticalRules != null) {
     for (final rule in criticalRules) {
-      if (rule.statuses.contains(3) && rule.enabled) {
+      // DB_REVIEW_REST (M3): Ionic ignores any `enabled` flag.
+      if (rule.statuses.contains(3)) {
         lateStatuses = rule.statuses;
         latePeriodType = rule.periodType;
         latePeriodDays = rule.periodDays;
@@ -752,13 +753,17 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
       await _propagateSharedIdentityFields();
 
       // Ionic syncPlayerWithUpcomingAttendancesByAdditionalFields
+      // DB_REVIEW_REST (M2): Ionic person.page only syncs extra-field
+      // filters here; a group change must NOT add/remove future
+      // person_attendances (that would drop sign-outs and notes). Passing the
+      // new group as "old" group disables the group branch of the sync.
       try {
         await repo.syncPlayerWithUpcomingAttendances(
           person.copyWith(
             instrument: _selectedGroupId,
             additionalFields: _additionalFieldValues,
           ),
-          oldInstrument: person.instrument,
+          oldInstrument: _selectedGroupId,
           oldAdditionalFields: person.additionalFields,
         );
       } catch (_) {}

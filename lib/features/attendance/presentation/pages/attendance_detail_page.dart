@@ -2583,36 +2583,17 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       ToastHelper.showInfo(context, context.l10n.attendanceFlutterUploadingPhoto);
 
       final bytes = await image.readAsBytes();
-      final fileName = 'attendance_${widget.attendanceId}_${DateTime.now().millisecondsSinceEpoch}.jpg';
 
-      // TODO(sprint-2c): migrate Storage upload + public URL retrieval to a
-      // dedicated storage service. The subsequent attendance update can move
-      // to repo.updateAttendance once the URL is returned by that service.
-      final supabase = ref.read(supabaseClientProvider);
-      final tenant = ref.read(currentTenantProvider);
-
-      if (tenant == null) {
+      final repo = ref.read(attendanceRepositoryWithTenantProvider);
+      if (!repo.hasTenantId) {
         if (mounted) {
           ToastHelper.showError(context, context.l10n.historyFlutterNoTenant);
         }
         return;
       }
 
-      final storagePath = '${tenant.id}/attendance/$fileName';
-
-      await supabase.storage
-          .from('attendance-images')
-          .uploadBinary(storagePath, bytes);
-
-      final publicUrl = supabase.storage
-          .from('attendance-images')
-          .getPublicUrl(storagePath);
-
-      await supabase
-          .from('attendance')
-          .update({'img': publicUrl})
-          .eq('id', widget.attendanceId)
-          .eq('tenantId', tenant.id!);
+      // DB_REVIEW_REST (H4): bucket `attendances`, key `<id>`, upsert (Ionic).
+      await repo.uploadAttendanceImage(widget.attendanceId, bytes);
 
       ref.invalidate(attendanceDetailProvider(widget.attendanceId));
 

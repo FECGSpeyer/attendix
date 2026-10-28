@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/utils/paged_query.dart';
 import '../models/tenant/tenant.dart';
 import 'base_repository.dart';
 
@@ -69,11 +70,15 @@ class ExtraFieldsRepository extends BaseRepository with TenantAwareRepository {
   }
 
   Future<List<Map<String, dynamic>>> _loadRows(String table) async {
-    final response = await supabase
-        .from(table)
-        .select('id, additional_fields')
-        .eq('tenantId', currentTenantId);
-    return (response as List).cast<Map<String, dynamic>>();
+    // DB_REVIEW_REST (M9): paged, more than 1000 persons/songs possible.
+    final response = await fetchAllPages<dynamic>((from, to) async =>
+        await supabase
+            .from(table)
+            .select('id, additional_fields')
+            .eq('tenantId', currentTenantId)
+            .order('id', ascending: true)
+            .range(from, to) as List);
+    return response.cast<Map<String, dynamic>>();
   }
 
   Future<void> _updateRow(String table, int id, Map<String, dynamic> fields) async {

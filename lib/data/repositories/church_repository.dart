@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/utils/paged_query.dart';
 import '../models/church/church.dart';
 import 'base_repository.dart';
 
@@ -73,13 +74,19 @@ class ChurchRepository extends BaseRepository {
   Future<int> mergeChurches(String targetId, String duplicateId) async {
     ensureNotDemo('mergeChurches'); // DEMO_GUARD
     try {
-      final players = await supabase
-          .from('player')
-          .select('id, additional_fields')
-          .not('additional_fields', 'is', null);
+      // DB_REVIEW_REST (M9): load every page (PostgREST max-rows 1000)
+      // before rewriting, otherwise persons beyond row 1000 keep the
+      // duplicate church.
+      final players = await fetchAllPages<dynamic>((from, to) async =>
+          await supabase
+              .from('player')
+              .select('id, additional_fields')
+              .not('additional_fields', 'is', null)
+              .order('id', ascending: true)
+              .range(from, to) as List);
 
       var updated = 0;
-      for (final row in players as List) {
+      for (final row in players) {
         final fields = row['additional_fields'];
         if (fields is Map && fields['bfecg_church'] == duplicateId) {
           final newFields = Map<String, dynamic>.from(fields)

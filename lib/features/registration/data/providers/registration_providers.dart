@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/config/supabase_config.dart';
 import '../../../../core/constants/table_names.dart';
 import '../../../../core/constants/enums.dart';
+import '../../../../core/utils/profile_image_path.dart'; // DB_REVIEW_REST
 import '../../../../data/models/person/person.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../data/repositories/account_repository.dart';
@@ -222,7 +223,8 @@ class RegistrationService {
       // Upload profile image if provided
       if (formData.profileImageBytes != null) {
         try {
-          final storagePath = '$tenantId/$playerId.jpg';
+          // DB_REVIEW_REST (M4): Ionic updateImage key `<id>`.
+          final storagePath = profileImageStoragePath(playerId);
           await supabase.storage.from(SupabaseBuckets.profiles).uploadBinary(
                 storagePath,
                 formData.profileImageBytes!,

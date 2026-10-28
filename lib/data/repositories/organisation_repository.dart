@@ -146,6 +146,7 @@ class OrganisationRepository extends BaseRepository {
           .from('tenant_group_tenants')
           .select('tenant_group, tenant_group_data:tenant_group(*)')
           .eq('tenant_id', tenantId)
+          .limit(1) // DB_REVIEW_REST: no PGRST116 on duplicate links
           .maybeSingle();
 
       if (response == null || response['tenant_group_data'] == null) {
