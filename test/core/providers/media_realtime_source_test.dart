@@ -15,7 +15,10 @@ void main() {
       // person_attendances has no tenantId column (documented exception;
       // the refetch itself is tenant-filtered).
       final documentedExceptions =
-          RegExp(r'person_attendances has no tenantId column').allMatches(realtime).length;
+          RegExp(r'person_attendances has no tenantId column').allMatches(realtime).length +
+              // Supabase does not filter DELETE events by column; they are
+              // received unfiltered and matched by id / refetched tenant-filtered.
+              RegExp(r'event: PostgresChangeEvent\.delete,').allMatches(realtime).length;
       expect(channels, greaterThan(0));
       expect(tenantFilters + documentedExceptions, channels);
     });

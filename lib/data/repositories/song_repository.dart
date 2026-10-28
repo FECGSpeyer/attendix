@@ -1,5 +1,10 @@
+import 'dart:async';
+import 'dart:convert';
+
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../models/song/song.dart';
@@ -61,11 +66,35 @@ class SongRepository extends BaseRepository with TenantAwareRepository {
   // Songs
   // ==========================================================================
 
+  /// Ionic song.service `offline_songs_v1_<tenantId>` storage key.
+  static String offlineSongsCacheKey(int tenantId) => 'offline_songs_v1_$tenantId';
+
+  /// Connectivity check, overridable in tests. Never throws (PWA-safe).
+  static Future<bool> Function() isOnline = _defaultIsOnline;
+
+  static Future<bool> _defaultIsOnline() async {
+    try {
+      final results = await Connectivity().checkConnectivity();
+      return results.any((r) => r != ConnectivityResult.none);
+    } catch (_) {
+      return true;
+    }
+  }
+
   /// Get all songs of the (effective) song tenant.
   /// PostgREST caps each response, so songs are loaded in pages.
+  ///
+  /// Offline cache (Ionic song.service getSongs): offline, the songs are
+  /// read from the local cache; online, the loaded list is cached. A failed
+  /// load also falls back to the cache when one exists.
   Future<List<Song>> getSongs() async {
+    final tenantId = songTenantId;
+    if (!await isOnline()) {
+      return await _readOfflineSongs(tenantId) ?? const [];
+    }
     try {
       final songs = <Song>[];
+      final rawRows = <dynamic>[];
       for (var from = 0;; from += _pageSize) {
         final response = await supabase
             .from('songs')
@@ -75,16 +104,44 @@ class SongRepository extends BaseRepository with TenantAwareRepository {
             .order('id', ascending: true)
             .range(from, from + _pageSize - 1);
 
-        final page = (response as List)
+        final rows = response as List;
+        rawRows.addAll(rows);
+        final page = rows
             .map((e) => Song.fromJson(e as Map<String, dynamic>))
             .toList();
         songs.addAll(page);
         if (page.length < _pageSize) break;
       }
+      unawaited(_writeOfflineSongs(tenantId, rawRows));
       return songs;
     } catch (e, stack) {
+      final cached = await _readOfflineSongs(tenantId);
+      if (cached != null) return cached;
       handleError(e, stack, 'getSongs');
       rethrow;
+    }
+  }
+
+  Future<List<Song>?> _readOfflineSongs(int tenantId) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final raw = prefs.getString(offlineSongsCacheKey(tenantId));
+      if (raw == null) return null;
+      return (jsonDecode(raw) as List)
+          .map((e) => Song.fromJson(e as Map<String, dynamic>))
+          .toList();
+    } catch (_) {
+      return null;
+    }
+  }
+
+  /// Caches the raw `songs` rows (lossless, like Ionic storing the rows).
+  Future<void> _writeOfflineSongs(int tenantId, List<dynamic> rows) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(offlineSongsCacheKey(tenantId), jsonEncode(rows));
+    } catch (_) {
+      // Cache is best effort (quota, private mode).
     }
   }
 

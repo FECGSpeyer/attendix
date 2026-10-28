@@ -208,11 +208,10 @@ final routerProvider = Provider<GoRouter>((ref) {
   // locations left by a logout are not.
   var sessionSeen = false;
 
-  return GoRouter(
+  final router = GoRouter(
     initialLocation: '/login',
     debugLogDiagnostics: true,
     refreshListenable: authNotifier,
-    observers: [TrackingObserver(ref.container)],
     redirect: (context, state) {
       // Read auth state inside redirect (not watch)
       final authState = ref.read(authStateProvider);
@@ -1012,6 +1011,12 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
     ),
   );
+
+  // TRACKING: page_view {url} for every navigation incl. ShellRoute tabs
+  // (Ionic app.component trackPageViews).
+  final pageViewTracker = PageViewTracker(ref.container, router);
+  ref.onDispose(pageViewTracker.dispose);
+  return router;
 });
 
 /// Route names for type-safe navigation

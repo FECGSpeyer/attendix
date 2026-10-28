@@ -13117,6 +13117,13 @@
       "error": {}
     }
   },
+  "songsFlutterFileDownloadFailed": "Datei konnte nicht heruntergeladen werden: {name}",
+  "@songsFlutterFileDownloadFailed": {
+    "description": "songs.flutter.fileDownloadFailed",
+    "placeholders": {
+      "name": {}
+    }
+  },
   "songsFlutterFilesSkipped": "{count} Datei(en) konnten nicht eingebunden werden.",
   "@songsFlutterFilesSkipped": {
     "description": "songs.flutter.filesSkipped",

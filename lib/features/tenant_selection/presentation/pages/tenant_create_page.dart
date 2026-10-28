@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/constants/enums.dart';
+import '../../../../core/utils/device_timezone.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
@@ -389,16 +391,24 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
                 longName: _longName,
                 type: _selectedType,
                 mainGroupName: _mainGroupName,
+                // Ionic register.page: device timezone
+                timezone: deviceTimezone(),
               );
+
+      if (mounted) ToastHelper.showSuccess(context, context.l10n.dbInstanceCreated);
 
       // Refresh the tenants list
       ref.invalidate(userTenantsProvider);
 
       // Set as current tenant
       await ref.read(currentTenantProvider.notifier).setTenant(newTenant);
+      try {
+        await ref.read(currentTenantUserProvider.future);
+      } catch (_) {}
 
+      // Ionic: navigateByUrl(Utils.getUrl(Role.ADMIN))
       if (mounted) {
-        context.go('/people');
+        context.go(Role.admin.defaultRoute);
       }
     } catch (e) {
       if (mounted) {

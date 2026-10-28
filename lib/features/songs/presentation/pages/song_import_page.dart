@@ -107,8 +107,11 @@ class _SongImportPageState extends ConsumerState<SongImportPage> {
     setState(() => _busy = true);
     try {
       final mapped = mapSongRows(_rawRows, _mapping, _ctx);
-      final existing =
-          await ref.read(importRepositoryWithTenantProvider).getExistingSongKeys();
+      // Ionic getExistingNumbers: effective song library (Werk-Synchronisierung).
+      final settings = await ref.read(songTenantSettingsProvider.future);
+      final existing = await ref
+          .read(importRepositoryWithTenantProvider)
+          .getExistingSongKeys(songTenantId: settings.songSourceTenantId);
       setState(() {
         _mappedRows = detectSongDuplicates(mapped, existing);
         _step = _Step.preview;
@@ -135,6 +138,10 @@ class _SongImportPageState extends ConsumerState<SongImportPage> {
       return;
     }
     final repo = ref.read(importRepositoryWithTenantProvider);
+    // Ionic importSongs → addSong: songs go into the effective song library.
+    final songTenantId =
+        (await ref.read(songTenantSettingsProvider.future)).songSourceTenantId;
+    if (!mounted) return;
 
     setState(() {
       _busy = true;
@@ -146,7 +153,7 @@ class _SongImportPageState extends ConsumerState<SongImportPage> {
     for (var i = 0; i < toImport.length; i++) {
       final row = toImport[i];
       try {
-        await repo.insertSong(row.data);
+        await repo.insertSong(row.data, songTenantId: songTenantId);
         imported++;
       } catch (e) {
         failed.add('${row.displayTitle}: $e');

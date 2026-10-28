@@ -170,7 +170,7 @@ final songHistoryProvider =
 /// Provider for current songs (all upcoming events from tomorrow onwards)
 final currentSongsProvider =
     FutureProvider<List<CurrentSongsGroup>>((ref) async {
-  final repo = ref.watch(songRepositoryWithTenantProvider);
+  final repo = await _readySongRepository(ref);
 
   if (!repo.hasTenantId) return [];
 
@@ -189,6 +189,15 @@ final songSyncedTenantNamesProvider =
   }
 });
 
+/// True if a realtime DELETE (old record, usually only the `id`) concerns a
+/// loaded song. Unknown song lists (not loaded yet) count as relevant.
+bool isRelevantSongDelete(Map<String, dynamic> oldRecord, List<Song>? songs) {
+  final id = (oldRecord['id'] as num?)?.toInt();
+  if (id == null) return false;
+  if (songs == null) return true;
+  return songs.any((s) => s.id == id);
+}
+
 /// Realtime subscription on the songs table of the effective song tenant.
 /// Watch it from a page to refresh [songsProvider] on changes.
 final songsRealtimeProvider = Provider.autoDispose<void>((ref) {
@@ -199,10 +208,17 @@ final songsRealtimeProvider = Provider.autoDispose<void>((ref) {
 
   final supabase = ref.watch(supabaseClientProvider);
   Timer? debounce;
+  void refresh() {
+    debounce?.cancel();
+    debounce = Timer(const Duration(milliseconds: 300), () {
+      ref.invalidate(songsProvider);
+    });
+  }
+
   final channel = supabase
       .channel('songs-changes-$songTenantId')
       .onPostgresChanges(
-        event: PostgresChangeEvent.all,
+        event: PostgresChangeEvent.insert,
         schema: 'public',
         table: 'songs',
         filter: PostgresChangeFilter(
@@ -210,11 +226,33 @@ final songsRealtimeProvider = Provider.autoDispose<void>((ref) {
           column: 'tenantId',
           value: songTenantId,
         ),
-        callback: (_) {
-          debounce?.cancel();
-          debounce = Timer(const Duration(milliseconds: 300), () {
-            ref.invalidate(songsProvider);
-          });
+        callback: (_) => refresh(),
+      )
+      .onPostgresChanges(
+        event: PostgresChangeEvent.update,
+        schema: 'public',
+        table: 'songs',
+        filter: PostgresChangeFilter(
+          type: PostgresChangeFilterType.eq,
+          column: 'tenantId',
+          value: songTenantId,
+        ),
+        callback: (_) => refresh(),
+      )
+      // Supabase does not apply column filters to DELETE events (the old
+      // record only carries the id), so deletes are received unfiltered and
+      // matched against the loaded songs (Ionic songs.page: `payload.old.id`).
+      .onPostgresChanges(
+        event: PostgresChangeEvent.delete,
+        schema: 'public',
+        table: 'songs',
+        callback: (payload) {
+          if (isRelevantSongDelete(
+            payload.oldRecord,
+            ref.read(songsProvider).valueOrNull,
+          )) {
+            refresh();
+          }
         },
       )
       .subscribe();

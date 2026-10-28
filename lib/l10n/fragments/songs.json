@@ -110,7 +110,8 @@
         "notFound": "Werk nicht gefunden",
         "printFileFailed": "Datei konnte nicht gedruckt werden",
         "downloadFileFailed": "Datei konnte nicht heruntergeladen werden",
-        "telegramSent": "Datei per Telegram gesendet"
+        "telegramSent": "Datei per Telegram gesendet",
+        "fileDownloadFailed": "Datei konnte nicht heruntergeladen werden: {name}"
       }
     }
   },
@@ -225,7 +226,8 @@
         "notFound": "Song not found",
         "printFileFailed": "File could not be printed",
         "downloadFileFailed": "File could not be downloaded",
-        "telegramSent": "File sent via Telegram"
+        "telegramSent": "File sent via Telegram",
+        "fileDownloadFailed": "File could not be downloaded: {name}"
       }
     }
   }

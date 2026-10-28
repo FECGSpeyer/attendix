@@ -8,10 +8,12 @@ import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/attendance_providers.dart';
 import '../../../../core/providers/attendance_type_providers.dart';
 import '../../../../core/providers/duty_providers.dart';
+import '../../../../core/providers/plan_providers.dart';
 import '../../../../core/providers/player_absence_providers.dart';
 import '../../../../core/providers/team_org_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/utils/duty_utils.dart';
+import '../../../../core/utils/shift_utils.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/attendance/attendance.dart';
 import '../../../../data/models/duty/person_unavailability.dart';
@@ -57,8 +59,14 @@ List<Map<String, dynamic>> personsForAttendanceType(
 DateTime _noon(DateTime d) => DateTime(d.year, d.month, d.day, 12);
 
 /// Row of the new Termin (Ionic `createAttendanceForType`): date at 12:00,
-/// times of the type and the checklist with computed due dates.
-Map<String, dynamic> newAttendanceRow(AttendanceType type, DateTime day, {String? createdBy}) {
+/// times of the type, the checklist with computed due dates and `is_org_plan`
+/// (= `attendance_types.is_default_org_plan`, passed as [isOrgPlan]).
+Map<String, dynamic> newAttendanceRow(
+  AttendanceType type,
+  DateTime day, {
+  String? createdBy,
+  bool isOrgPlan = false,
+}) {
   final date = _noon(day);
   List<Map<String, dynamic>>? checklist;
   if (type.checklist != null && type.checklist!.isNotEmpty) {
@@ -88,13 +96,16 @@ Map<String, dynamic> newAttendanceRow(AttendanceType type, DateTime day, {String
     'start_time': type.startTime,
     'end_time': type.endTime,
     'duration_days': type.allDay ? (type.durationDays ?? 1) : 1,
+    'is_org_plan': isOrgPlan,
     if (checklist != null) 'checklist': checklist,
     if (createdBy != null) 'created_by': createdBy,
   };
 }
 
 /// Person attendances of the new Termin: default status (Neutral for duty
-/// types), planned absences and "Regelmäßig verhindert" excuse.
+/// types), shift-based status (persons with `shift_id`, not for all-day
+/// types), planned absences and "Regelmäßig verhindert" excuse
+/// (Ionic `createAttendanceForType`, same order).
 List<Map<String, dynamic>> newPersonAttendanceRows(
   List<Map<String, dynamic>> persons,
   AttendanceType type,
@@ -110,6 +121,20 @@ List<Map<String, dynamic>> newPersonAttendanceRows(
     final personId = (p['id'] as num).toInt();
     var status = type.dutyMode ? AttendanceStatus.neutral : type.defaultStatus;
     var notes = '';
+    final shiftId = p['shift_id']?.toString();
+    if (shiftId != null && shiftId.isNotEmpty && !type.allDay) {
+      final result = ShiftUtils.getStatusByShift(
+        shiftId: shiftId,
+        attendanceDate: day,
+        attendanceStart: type.startTime ?? '19:00',
+        attendanceEnd: type.endTime ?? '21:00',
+        defaultStatus: status,
+        shiftStart: p['shift_start']?.toString(),
+        shiftName: p['shift_name']?.toString(),
+      );
+      status = result.status;
+      notes = result.note;
+    }
     final absence = absences.where((a) =>
         a.personId == personId &&
         a.fromDate.substring(0, 10).compareTo(dayKey) <= 0 &&
@@ -199,6 +224,12 @@ Future<int?> promptCreateProtocolAttendance(BuildContext context, WidgetRef ref)
   try {
     final repo = ref.read(protocolRepositoryWithTenantProvider);
     final tenant = ref.read(currentTenantProvider);
+    // Ionic: is_org_plan = type.is_default_org_plan
+    var isOrgPlan = false;
+    try {
+      final planTypes = await ref.read(planAttendanceTypesProvider.future);
+      isOrgPlan = planTypes.any((t) => t.id == type.id && t.isDefaultOrgPlan);
+    } catch (_) {}
     final results = await Future.wait([
       repo.getPersonsForNewAttendance(),
       ref
@@ -216,6 +247,7 @@ Future<int?> promptCreateProtocolAttendance(BuildContext context, WidgetRef ref)
       type,
       day,
       createdBy: ref.read(supabaseClientProvider).auth.currentUser?.id,
+      isOrgPlan: isOrgPlan,
     ));
     await repo.createPersonAttendances(
       id,

@@ -101,11 +101,12 @@ void main() {
         source = read('lib/data/repositories/tenant_create_repository.dart'));
 
     test('creator becomes admin via Role enum (not a magic number)', () {
-      expect(source, contains("'role': Role.admin.value"));
+      final defaults = read('lib/features/tenant_selection/tenant_defaults.dart');
+      expect(defaults, contains("'role': Role.admin.value"));
     });
 
     test('all follow-up inserts are scoped to the new tenant id', () {
-      expect(source, contains("'tenantId': tenantId"));
+      expect(source, contains('buildNewTenantUsers(\n          tenantId: tenantId,'));
       expect(source, contains('buildMainGroupPayload(tenantId: tenantId'));
       expect(source, contains('buildDefaultAttendanceTypes(tenantId: tenantId'));
       expect(source, isNot(contains('.update(')));

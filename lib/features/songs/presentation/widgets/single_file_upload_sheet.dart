@@ -86,7 +86,7 @@ class _SingleFileUploadSheetState extends ConsumerState<SingleFileUploadSheet> {
   /// Ionic `performDirectUpload`
   Future<void> _upload({required bool replace}) async {
     setState(() => _uploading = true);
-    final service = ref.read(songFileServiceProvider);
+    final service = await ref.read(readySongFileServiceProvider.future);
     try {
       if (replace) {
         for (final c in _conflicts.where((c) => _toReplace.contains(c.url))) {

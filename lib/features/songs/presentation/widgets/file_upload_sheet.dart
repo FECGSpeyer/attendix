@@ -208,7 +208,7 @@ class _FileUploadSheetState extends ConsumerState<FileUploadSheet> {
       if (proceed != true || !mounted) return;
     }
 
-    final service = ref.read(songFileServiceProvider);
+    final service = await ref.read(readySongFileServiceProvider.future);
     final infos = [..._files];
     final totalBytes = infos.fold<int>(0, (s, f) => s + (f.platformFile.size == 0 ? 1 : f.platformFile.size));
     var doneBytes = 0;

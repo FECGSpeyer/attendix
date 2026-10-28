@@ -24,6 +24,7 @@ import '../../../../shared/widgets/sheets/image_viewer_sheet.dart';
 import '../../../../core/services/tracking/tracking_event.dart';
 import '../../../../core/services/tracking/tracking_service.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/file_mime.dart';
 
 enum FilesSortBy { name, updatedAt, size }
 
@@ -677,7 +678,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
       }
       try {
         await _repo.uploadFile(_currentPath, f.name, f.bytes!, overwrite: isDuplicate && overwrite);
-        ref.read(trackingServiceProvider).track(TrackingEvent.fileUploaded, properties: {'size': f.size, 'mime': null});
+        ref.read(trackingServiceProvider).track(TrackingEvent.fileUploaded, properties: {'size': f.size, 'mime': songFileMimeType(f.extension ?? '')});
         success++;
       } catch (_) {
         failed++;

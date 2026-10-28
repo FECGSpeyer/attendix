@@ -13,6 +13,15 @@ import '../../../../core/utils/demo_guard.dart';
 import '../../../../l10n/l10n.dart';
 
 /// Sheet for copying a song to another tenant
+/// `instrument_ids` of a copied song (Ionic copySongToTenant): the mapped
+/// target instrument ids of the copied files, without null and the reserved
+/// ids 1 and 2, de-duplicated in first-seen order.
+List<int> copiedSongInstrumentIds(Iterable<int?> mappedIds) => mappedIds
+    .whereType<int>()
+    .where((id) => id != 1 && id != 2)
+    .toSet()
+    .toList();
+
 class CopyToTenantSheet extends ConsumerStatefulWidget {
   final Song song;
   final List<Tenant> availableTenants;
@@ -302,20 +311,26 @@ class _CopyToTenantSheetState extends ConsumerState<CopyToTenantSheet> {
       if (files != null && files.isNotEmpty) {
         final songFileService = ref.read(songFileServiceProvider);
         final fileCount = files.length;
+        final mappedInstrumentIds = <int?>[];
 
         for (var i = 0; i < fileCount; i++) {
           final file = files[i];
           setState(() => _progressMessage =
               l10n.songsCopyingFile(i + 1, fileCount));
 
-          // Download file bytes
+          // Download file bytes. Ionic copySongToTenant: a failed download
+          // aborts the copy (→ toast songs.copyFailed) instead of silently
+          // creating a song with missing files.
           final bytes = await songFileService.downloadFileBytes(file.url);
-          if (bytes == null) continue;
+          if (bytes == null) {
+            throw l10n.songsFlutterFileDownloadFailed(file.fileName);
+          }
 
           // Map instrument ID
           final mappedInstrumentId = file.instrumentId != null
               ? instrumentMapping[file.instrumentId]
               : null;
+          mappedInstrumentIds.add(mappedInstrumentId);
 
           // Upload to new song
           await songFileService.uploadFileBytes(
@@ -329,21 +344,13 @@ class _CopyToTenantSheetState extends ConsumerState<CopyToTenantSheet> {
           );
         }
 
-        // Update instrument_ids on the new song based on uploaded files
-        final newInstrumentIds = widget.song.files!
-            .where((f) => f.instrumentId != null && f.instrumentId! > 2)
-            .map((f) => instrumentMapping[f.instrumentId])
-            .where((id) => id != null)
-            .toSet()
-            .toList();
-
-        if (newInstrumentIds.isNotEmpty) {
-          await supabase
-              .from('songs')
-              .update({'instrument_ids': newInstrumentIds})
-              .eq('id', newSongId)
-              .eq('tenantId', _targetTenantId);
-        }
+        // Update instrument_ids on the new song from the mapped target ids
+        // of the copied files (Ionic: filter null, 1 and 2; Set order).
+        await supabase
+            .from('songs')
+            .update({'instrument_ids': copiedSongInstrumentIds(mappedInstrumentIds)})
+            .eq('id', newSongId)
+            .eq('tenantId', _targetTenantId);
       }
 
       if (mounted) {

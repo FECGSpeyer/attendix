@@ -27,8 +27,14 @@ void main() {
       final queries = _queries(source, 'messages');
       expect(queries, isNotEmpty);
       for (final q in queries) {
-        expect(q, contains(".eq('tenantId', currentTenantId)"), reason: q);
+        // getMessageById: current tenant or another tenant of the user
+        // (Ionic message-detail switches the instance); currentTenantId is
+        // always part of tenantIds.
+        final ok = q.contains(".eq('tenantId', currentTenantId)") ||
+            q.contains(".inFilter('tenantId', tenantIds)");
+        expect(ok, isTrue, reason: q);
       }
+      expect(source, contains('final tenantIds = {currentTenantId, ...userTenantIds}.toList();'));
     });
 
     test('all message_recipients queries include tenantId filter', () {

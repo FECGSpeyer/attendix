@@ -33,6 +33,8 @@ import '../../../../core/providers/branding_providers.dart'; // MISC2
 
 /// Provider for songs list (for adding to plan)
 final planSongsProvider = FutureProvider<List<Song>>((ref) async {
+  // Wait for the song source tenant (Werk-Synchronisierung) first.
+  await ref.watch(songTenantSettingsProvider.future);
   final repo = ref.watch(songRepositoryWithTenantProvider);
   if (!repo.hasTenantId) return [];
   return repo.getSongs();

@@ -26,8 +26,12 @@ void main() {
       }
     });
 
-    test('every query filters by tenantId', () {
-      for (final q in queries) {
+    test('every query filters by tenantId (except the user-wide feed variants)', () {
+      // Ionic getAllNotifications / *AllTenants: keyed on user_id only, so
+      // entries of left instances stay visible.
+      final perTenant = queries.where((q) => !_isUserWide(q, source)).toList();
+      expect(perTenant.length, queries.length - 3);
+      for (final q in perTenant) {
         final hasTenantFilter = q.contains(".eq('tenantId', currentTenantId)") ||
             q.contains(".eq('tenantId', n.tenantId)") ||
             q.contains(".inFilter('tenantId', tenantIds)");
@@ -47,4 +51,12 @@ void main() {
       expect(source, isNot(contains('.insert(')));
     });
   });
+}
+
+/// True for the three cross-tenant feed queries (method name precedes them).
+bool _isUserWide(String query, String source) {
+  final idx = source.indexOf(query);
+  final head = source.substring(0, idx);
+  final method = RegExp(r'Future<[^>]*>+\s+(\w+)\(').allMatches(head).last.group(1);
+  return const {'getAllNotifications', 'markAllReadAllTenants', 'deleteAllAllTenants'}.contains(method);
 }
