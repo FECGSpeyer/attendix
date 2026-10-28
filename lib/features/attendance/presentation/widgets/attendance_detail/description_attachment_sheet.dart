@@ -10,6 +10,7 @@ import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/utils/quill_utils.dart';
 import '../../../../../core/utils/toast_helper.dart';
 import '../../../../../data/models/attendance/attendance.dart';
+import '../../../../../l10n/l10n.dart';
 
 /// "Beschreibung & Anhang" editor of a Termin (Ionic descriptionModal):
 /// rich text description (stored as HTML like the Ionic quill editor) and
@@ -97,7 +98,7 @@ class _DescriptionAttachmentEditorState extends ConsumerState<DescriptionAttachm
       await repo.updateAttendance(_id, {'description': html});
       _container.invalidate(attendanceDetailProvider(_id));
     } catch (e) {
-      if (mounted) ToastHelper.showError(context, 'Fehler beim Speichern: $e');
+      if (mounted) ToastHelper.showError(context, context.l10n.attendanceFlutterSaveFailedWith(e));
     }
   }
 
@@ -116,9 +117,9 @@ class _DescriptionAttachmentEditorState extends ConsumerState<DescriptionAttachm
         _attachmentName = uploaded.name;
       });
       ref.invalidate(attendanceDetailProvider(_id));
-      ToastHelper.showSuccess(context, 'Anhang hochgeladen');
+      ToastHelper.showSuccess(context, context.l10n.attendanceAttachmentUploaded);
     } catch (_) {
-      if (mounted) ToastHelper.showError(context, 'Fehler beim Hochladen');
+      if (mounted) ToastHelper.showError(context, context.l10n.attendanceUploadFailed);
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -136,7 +137,7 @@ class _DescriptionAttachmentEditorState extends ConsumerState<DescriptionAttachm
       });
       ref.invalidate(attendanceDetailProvider(_id));
     } catch (e) {
-      if (mounted) ToastHelper.showError(context, 'Fehler: $e');
+      if (mounted) ToastHelper.showError(context, context.l10n.attendanceFlutterErrorWith(e));
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -156,7 +157,7 @@ class _DescriptionAttachmentEditorState extends ConsumerState<DescriptionAttachm
       controller: widget.scrollController,
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
       children: [
-        Text('Beschreibung & Anhang', style: Theme.of(context).textTheme.titleLarge),
+        Text(context.l10n.attendanceDescriptionAttachment, style: Theme.of(context).textTheme.titleLarge),
         const SizedBox(height: 12),
         Card(
           margin: EdgeInsets.zero,
@@ -203,9 +204,9 @@ class _DescriptionAttachmentEditorState extends ConsumerState<DescriptionAttachm
                   child: QuillEditor.basic(
                     controller: _quill,
                     focusNode: _focus,
-                    config: const QuillEditorConfig(
+                    config: QuillEditorConfig(
                       scrollable: false,
-                      placeholder: 'Beschreibung eingeben...',
+                      placeholder: context.l10n.attendanceDescriptionPlaceholder,
                     ),
                   ),
                 ),
@@ -216,12 +217,12 @@ class _DescriptionAttachmentEditorState extends ConsumerState<DescriptionAttachm
         const SizedBox(height: 16),
         Row(
           children: [
-            const Expanded(child: Text('Anhang', style: TextStyle(fontWeight: FontWeight.w500))),
+            Expanded(child: Text(context.l10n.selfServiceAttachment, style: const TextStyle(fontWeight: FontWeight.w500))),
             if (_busy)
               const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(strokeWidth: 2))
             else if (_attachmentUrl == null)
               IconButton(
-                tooltip: 'Anhang hinzufügen',
+                tooltip: context.l10n.attendanceFlutterAddAttachment,
                 icon: const Icon(Icons.attach_file),
                 onPressed: _upload,
               )
@@ -229,12 +230,12 @@ class _DescriptionAttachmentEditorState extends ConsumerState<DescriptionAttachm
               Flexible(
                 child: ActionChip(
                   avatar: const Icon(Icons.description_outlined, size: 18),
-                  label: Text(_attachmentName ?? 'Anhang', overflow: TextOverflow.ellipsis),
+                  label: Text(_attachmentName ?? context.l10n.selfServiceAttachment, overflow: TextOverflow.ellipsis),
                   onPressed: _open,
                 ),
               ),
               IconButton(
-                tooltip: 'Anhang entfernen',
+                tooltip: context.l10n.attendanceFlutterRemoveAttachment,
                 icon: const Icon(Icons.cancel_outlined, color: AppColors.danger),
                 onPressed: _remove,
               ),

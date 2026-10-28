@@ -818,6 +818,40 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get attendanceFlutterAddAttachment => 'Anhang hinzufügen';
+
+  @override
+  String attendanceFlutterErrorWith(Object error) {
+    return 'Fehler: $error';
+  }
+
+  @override
+  String get attendanceFlutterExcusedShort => 'Entsch.';
+
+  @override
+  String get attendanceFlutterHoliday => 'Feiertag';
+
+  @override
+  String get attendanceFlutterNoTodos => 'Keine To-Dos vorhanden';
+
+  @override
+  String get attendanceFlutterOpen => 'Offen';
+
+  @override
+  String get attendanceFlutterRemoveAttachment => 'Anhang entfernen';
+
+  @override
+  String attendanceFlutterSaveFailedWith(Object error) {
+    return 'Fehler beim Speichern: $error';
+  }
+
+  @override
+  String get attendanceFlutterSchoolHolidays => 'Schulferien';
+
+  @override
+  String get attendanceFlutterSelectDate => 'Datum auswählen';
+
+  @override
   String get attendanceGeneral => 'Allgemein';
 
   @override
@@ -2251,6 +2285,23 @@ class AppLocalizationsDe extends AppLocalizations {
   String get exportFirstName => 'Vorname';
 
   @override
+  String get exportFlutterColumnName => 'Spaltenname';
+
+  @override
+  String get exportFlutterCustomFieldEmpty => 'Eigenes Feld (leer)';
+
+  @override
+  String exportFlutterFailedWith(Object error) {
+    return 'Fehler beim Export: $error';
+  }
+
+  @override
+  String get exportFlutterPdfLimitHint => 'PDF-Export ist auf die letzten 8 Termine begrenzt. Für alle Termine der Saison nutze den Excel-Export.';
+
+  @override
+  String get exportFlutterSuccess => 'Export erfolgreich';
+
+  @override
   String get exportGroup => 'Gruppe';
 
   @override
@@ -3149,6 +3200,26 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get historyDatePlaceholder => 'TT.MM.JJJJ';
+
+  @override
+  String get historyFlutterEntryDeleted => 'Eintrag gelöscht';
+
+  @override
+  String get historyFlutterNoTenant => 'Kein Tenant ausgewählt';
+
+  @override
+  String historyFlutterSongsAdded(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Werke hinzugefügt',
+      one: 'Werk hinzugefügt',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get historyFlutterUnknownSong => 'Unbekanntes Werk';
 
   @override
   String get historyNoneFound => 'Keine Werke gefunden';
@@ -8133,6 +8204,38 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get statsFilterTenants => 'Instanzen filtern';
+
+  @override
+  String statsFlutterAbsencesCount(Object count) {
+    return '$count Fehlzeiten';
+  }
+
+  @override
+  String get statsFlutterNoBirthdays => 'Keine Geburtsdaten vorhanden';
+
+  @override
+  String get statsFlutterNoData => 'Keine Daten verfügbar';
+
+  @override
+  String get statsFlutterNoDataInPeriod => 'Keine Daten im ausgewählten Zeitraum';
+
+  @override
+  String get statsFlutterNoUnexcused => 'Keine unentschuldigten Abwesenheiten';
+
+  @override
+  String statsFlutterOrganisation(Object name) {
+    return 'Organisation: $name';
+  }
+
+  @override
+  String statsFlutterSelectedOf(Object selected, Object total) {
+    return '$selected von $total ausgewählt';
+  }
+
+  @override
+  String statsFlutterTenantsCount(Object count) {
+    return '$count Instanzen';
+  }
 
   @override
   String get statsHistoryChart => 'Anwesenheitsverlauf (letzte 20 Termine)';

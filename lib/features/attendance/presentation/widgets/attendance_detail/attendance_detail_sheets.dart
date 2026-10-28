@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../../core/config/supabase_config.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../data/models/person/person.dart';
+import '../../../../../l10n/l10n.dart';
 
 /// Result of [showPersonNoteSheet]: `null` = cancelled, `''` = delete note,
 /// anything else = the new note.
@@ -35,12 +36,12 @@ Future<String?> showPersonNoteSheet(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Notiz hinzufügen', style: Theme.of(ctx).textTheme.titleMedium),
+                  Text(context.l10n.attendanceAddNote, style: Theme.of(ctx).textTheme.titleMedium),
                   if (hasNote)
                     Padding(
                       padding: const EdgeInsets.only(top: 4),
                       child: Text(
-                        'Aktuell: $currentNote',
+                        context.l10n.attendanceCurrentNote(currentNote ?? ''),
                         style: const TextStyle(color: AppColors.medium),
                       ),
                     ),
@@ -53,16 +54,16 @@ Future<String?> showPersonNoteSheet(
                 onTap: () => Navigator.pop(ctx, reason),
               ),
             ListTile(
-              title: const Text('Eigene Notiz...'),
+              title: Text(context.l10n.attendanceCustomNoteEllipsis),
               onTap: () => Navigator.pop(ctx, custom),
             ),
             if (hasNote)
               ListTile(
-                title: const Text('Notiz löschen', style: TextStyle(color: AppColors.danger)),
+                title: Text(context.l10n.attendanceDeleteNote, style: const TextStyle(color: AppColors.danger)),
                 onTap: () => Navigator.pop(ctx, delete),
               ),
             ListTile(
-              title: const Text('Abbrechen'),
+              title: Text(context.l10n.commonCancel),
               onTap: () => Navigator.pop(ctx),
             ),
           ],
@@ -82,20 +83,20 @@ Future<String?> showPersonNoteSheet(
   final result = await showDialog<String>(
     context: context,
     builder: (ctx) => AlertDialog(
-      title: const Text('Eigene Notiz'),
+      title: Text(context.l10n.attendanceCustomNote),
       content: TextField(
         controller: controller,
         autofocus: true,
         maxLines: 4,
         minLines: 2,
         textCapitalization: TextCapitalization.sentences,
-        decoration: const InputDecoration(hintText: 'Notiz eingeben...'),
+        decoration: InputDecoration(hintText: context.l10n.attendanceEnterNote),
       ),
       actions: [
-        TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Abbrechen')),
+        TextButton(onPressed: () => Navigator.pop(ctx), child: Text(context.l10n.commonCancel)),
         FilledButton(
           onPressed: () => Navigator.pop(ctx, controller.text.trim()),
-          child: const Text('Speichern'),
+          child: Text(context.l10n.commonSave),
         ),
       ],
     ),
@@ -128,7 +129,7 @@ Future<ConductorChoice?> showConductorChangeDialog(
     context: context,
     builder: (ctx) => StatefulBuilder(
       builder: (ctx, setState) => AlertDialog(
-        title: const Text('Dirigent ändern'),
+        title: Text(context.l10n.attendanceChangeConductor),
         contentPadding: const EdgeInsets.only(top: 12),
         content: SizedBox(
           width: double.maxFinite,
@@ -146,16 +147,16 @@ Future<ConductorChoice?> showConductorChangeDialog(
                 value: otherValue,
                 groupValue: selected,
                 onChanged: (v) => setState(() => selected = v),
-                title: const Text('Anderer Dirigent'),
+                title: Text(context.l10n.attListOtherConductor),
               ),
             ],
           ),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Abbrechen')),
+          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(context.l10n.commonCancel)),
           FilledButton(
             onPressed: selected == null ? null : () => Navigator.pop(ctx, selected),
-            child: const Text('Speichern'),
+            child: Text(context.l10n.commonSave),
           ),
         ],
       ),
@@ -173,18 +174,18 @@ Future<ConductorChoice?> showConductorChangeDialog(
   final name = await showDialog<String>(
     context: context,
     builder: (ctx) => AlertDialog(
-      title: const Text('Dirigent eingeben'),
+      title: Text(context.l10n.attListEnterConductor),
       content: TextField(
         controller: controller,
         autofocus: true,
         textCapitalization: TextCapitalization.words,
-        decoration: const InputDecoration(hintText: 'Dirigent'),
+        decoration: InputDecoration(hintText: context.l10n.attListConductor),
       ),
       actions: [
-        TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Abbrechen')),
+        TextButton(onPressed: () => Navigator.pop(ctx), child: Text(context.l10n.commonCancel)),
         FilledButton(
           onPressed: () => Navigator.pop(ctx, controller.text.trim()),
-          child: const Text('Speichern'),
+          child: Text(context.l10n.commonSave),
         ),
       ],
     ),
@@ -274,7 +275,7 @@ class _FilesFolderPickerState extends State<_FilesFolderPicker> {
       }
       setState(() {
         _loading = false;
-        _error = 'Fehler beim Laden der Ordner: $e';
+        _error = context.l10n.folderPickerLoadFailed(e);
       });
     }
   }
@@ -293,7 +294,7 @@ class _FilesFolderPickerState extends State<_FilesFolderPicker> {
           children: [
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-              child: Text('Ordner wählen', style: Theme.of(context).textTheme.titleMedium),
+              child: Text(context.l10n.folderPickerTitle, style: Theme.of(context).textTheme.titleMedium),
             ),
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
@@ -329,7 +330,7 @@ class _FilesFolderPickerState extends State<_FilesFolderPicker> {
                         if (segments.isNotEmpty)
                           ListTile(
                             leading: const Icon(Icons.arrow_upward),
-                            title: const Text('Übergeordneter Ordner'),
+                            title: Text(context.l10n.folderPickerParent),
                             onTap: () => _navigate(segments.sublist(0, segments.length - 1).join('/')),
                           ),
                         for (final folder in _folders)
@@ -341,16 +342,16 @@ class _FilesFolderPickerState extends State<_FilesFolderPicker> {
                                 context,
                                 _path.isEmpty ? folder : '$_path/$folder',
                               ),
-                              child: const Text('Wählen'),
+                              child: Text(context.l10n.folderPickerChoose),
                             ),
                             onTap: () => _navigate(_path.isEmpty ? folder : '$_path/$folder'),
                           ),
                         if (_folders.isEmpty && _error == null)
-                          const Padding(
-                            padding: EdgeInsets.all(16),
+                          Padding(
+                            padding: const EdgeInsets.all(16),
                             child: Text(
-                              'Keine Unterordner vorhanden.',
-                              style: TextStyle(color: AppColors.medium),
+                              context.l10n.folderPickerNoSubfolders,
+                              style: const TextStyle(color: AppColors.medium),
                             ),
                           ),
                       ],
@@ -362,7 +363,7 @@ class _FilesFolderPickerState extends State<_FilesFolderPicker> {
                 child: FilledButton.icon(
                   onPressed: () => Navigator.pop(context, _path),
                   icon: const Icon(Icons.check),
-                  label: const Text('Diesen Ordner wählen'),
+                  label: Text(context.l10n.folderPickerChooseThis),
                 ),
               ),
           ],

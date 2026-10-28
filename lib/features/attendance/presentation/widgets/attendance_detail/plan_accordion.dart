@@ -14,6 +14,7 @@ import '../../../../planning/presentation/widgets/plan_export_actions.dart';
 import '../../../../planning/presentation/widgets/plan_field_dialogs.dart';
 import '../../../../planning/presentation/widgets/plan_view_list.dart';
 import '../../../../team_organization/presentation/widgets/attendance_protocol_section.dart'; // PROTOCOL
+import '../../../../../l10n/l10n.dart';
 
 /// Accordion widget for displaying attendance plan/schedule.
 ///
@@ -99,7 +100,7 @@ class _PlanAccordionState extends ConsumerState<PlanAccordion> {
   String _title(PlanAttendance att, Plan plan) {
     final t = plan.title?.trim();
     if (t != null && t.isNotEmpty) return t;
-    return (att.typeInfo?.isNotEmpty ?? false) ? att.typeInfo! : 'Ablaufplan';
+    return (att.typeInfo?.isNotEmpty ?? false) ? att.typeInfo! : context.l10n.plansRunSheet;
   }
 
   Future<void> _export(PlanAttendance att, List<Plan> plans, int index) async {
@@ -124,7 +125,7 @@ class _PlanAccordionState extends ConsumerState<PlanAccordion> {
       fileName: '${_title(att, plans[index])}$date',
       extraActions: [
         if (plans.length > 1)
-          const PlanSheetAction('all', 'PDF exportieren (alle Pläne)', icon: Icons.picture_as_pdf),
+          PlanSheetAction('all', context.l10n.planningExportPdfAll, icon: Icons.picture_as_pdf),
       ],
       onExtraAction: (_) => runPlanExport(
         context,
@@ -157,7 +158,7 @@ class _PlanAccordionState extends ConsumerState<PlanAccordion> {
     final addTopicsRow = ListTile(
       dense: true,
       leading: const Icon(Icons.add_circle_outline, color: AppColors.primary),
-      title: const Text('Themen aufnehmen', style: primaryStyle),
+      title: Text(context.l10n.attendanceAddTopics, style: primaryStyle),
       onTap: () => openAgendaPickerForAttendance(context, ref,
           attendanceId: widget.attendance.id!, type: protocolType),
     );
@@ -172,13 +173,13 @@ class _PlanAccordionState extends ConsumerState<PlanAccordion> {
         initiallyExpanded: widget.initiallyExpanded,
         shape: const Border(),
         collapsedShape: const Border(),
-        title: Text(hasProtocol ? 'Ablaufplan & Tagesordnung' : 'Ablaufplan'),
+        title: Text(hasProtocol ? context.l10n.attendanceRunSheetAgenda : context.l10n.plansRunSheet),
         children: [
           if (!hasPlan) ...[
             if (canAddTopics) addTopicsRow,
             ListTile(
               dense: true,
-              title: const Text('Ablaufplan erstellen', style: primaryStyle),
+              title: Text(context.l10n.attendanceCreateRunSheet, style: primaryStyle),
               onTap: widget.onCreate ?? widget.onEdit,
             ),
           ] else ...[
@@ -199,20 +200,20 @@ class _PlanAccordionState extends ConsumerState<PlanAccordion> {
             if (canAddTopics) addTopicsRow,
             ListTile(
               dense: true,
-              title: const Text('Ablaufplan bearbeiten', style: primaryStyle),
+              title: Text(context.l10n.attendanceEditRunSheet, style: primaryStyle),
               onTap: widget.onEdit,
             ),
             ListTile(
               dense: true,
               leading: const Icon(Icons.ios_share, color: AppColors.primary),
-              title: const Text('Teilen', style: primaryStyle),
+              title: Text(context.l10n.attendanceShare, style: primaryStyle),
               onTap: () => _export(att, plans, _planIndex),
             ),
             // Flutter-only extra: read-only / live plan viewer
             ListTile(
               dense: true,
               leading: const Icon(Icons.play_circle_outline, color: AppColors.primary),
-              title: const Text('Ablaufplan anzeigen', style: primaryStyle),
+              title: Text(context.l10n.signoutShowRunSheet, style: primaryStyle),
               onTap: () => showPlanViewer(
                 context,
                 attendance: att,

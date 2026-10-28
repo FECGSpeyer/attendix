@@ -16,6 +16,7 @@ import '../../../../data/models/attendance/attendance.dart';
 import '../../../../data/models/organisation/organisation.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../data/models/tenant/tenant.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Statistics Page with Charts
 ///
@@ -57,7 +58,7 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Statistiken'),
+        title: Text(context.l10n.statsTitle),
       ),
       // UX_SETTINGS: sections in Ionic order (stats.page.html); the period
       // ("📅 Zeitraum") is always visible so it can be changed when empty.
@@ -73,7 +74,7 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildSectionTitle('📅 Zeitraum'),
+              _buildSectionTitle(context.l10n.statsPeriod),
               const SizedBox(height: AppDimensions.paddingS),
               _PeriodSection(
                 dateRange: dateRange,
@@ -88,18 +89,18 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> {
                     child: Center(child: CircularProgressIndicator()),
                   ),
                 ],
-                error: (error, stack) => [Center(child: Text('Fehler: $error'))],
+                error: (error, stack) => [Center(child: Text(context.l10n.attendanceFlutterErrorWith(error)))],
                 data: (attendances) {
                   if (attendances.isEmpty) {
-                    return const [
+                    return [
                       Padding(
-                        padding: EdgeInsets.all(AppDimensions.paddingXL),
+                        padding: const EdgeInsets.all(AppDimensions.paddingXL),
                         child: Center(
                           child: Column(
                             children: [
-                              Icon(Icons.bar_chart, size: 64, color: AppColors.medium),
-                              SizedBox(height: 16),
-                              Text('Keine Daten im ausgewählten Zeitraum'),
+                              const Icon(Icons.bar_chart, size: 64, color: AppColors.medium),
+                              const SizedBox(height: 16),
+                              Text(context.l10n.statsFlutterNoDataInPeriod),
                             ],
                           ),
                         ),
@@ -107,49 +108,49 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> {
                     ];
                   }
                   return [
-                    _buildSectionTitle('📊 Anwesenheits-Übersicht'),
+                    _buildSectionTitle(context.l10n.statsOverview),
                     const SizedBox(height: AppDimensions.paddingS),
                     _SummaryCards(statistics: statistics),
                     const SizedBox(height: AppDimensions.paddingS),
                     const _EventTypeOverview(),
                     const SizedBox(height: AppDimensions.paddingL),
 
-                    _buildSectionTitle('📈 Anwesenheits-Trend'),
+                    _buildSectionTitle(context.l10n.statsTrend),
                     const SizedBox(height: AppDimensions.paddingS),
                     const _TrendLineChart(),
                     const SizedBox(height: AppDimensions.paddingL),
 
-                    _buildSectionTitle('📉 Statusverteilung'),
+                    _buildSectionTitle(context.l10n.statsStatusDistribution),
                     const SizedBox(height: AppDimensions.paddingS),
                     const _StatusPieChart(),
                     const SizedBox(height: AppDimensions.paddingL),
 
-                    _buildSectionTitle('🏆 Top 20 Anwesenheit'),
+                    _buildSectionTitle(context.l10n.statsTop20),
                     const SizedBox(height: AppDimensions.paddingS),
                     const _TopPlayersChart(),
                     const SizedBox(height: AppDimensions.paddingL),
 
-                    _buildSectionTitle('🎻 Anwesenheit pro Instrument'),
+                    _buildSectionTitle(context.l10n.statsPerInstrument),
                     const SizedBox(height: AppDimensions.paddingS),
                     const _InstrumentBarChart(),
                     const SizedBox(height: AppDimensions.paddingL),
 
-                    _buildSectionTitle('⚠️ Unentschuldigte Abwesenheiten'),
+                    _buildSectionTitle(context.l10n.statsUnexcused),
                     const SizedBox(height: AppDimensions.paddingS),
                     const _DivaIndexChart(),
                     const SizedBox(height: AppDimensions.paddingL),
 
-                    _buildSectionTitle('👥 Mitglieder'),
+                    _buildSectionTitle(context.l10n.statsMembers),
                     const SizedBox(height: AppDimensions.paddingS),
                     const _MembersOverview(),
                     const SizedBox(height: AppDimensions.paddingL),
 
-                    _buildSectionTitle('🎂 Altersverteilung'),
+                    _buildSectionTitle(context.l10n.statsAgeDistribution),
                     const SizedBox(height: AppDimensions.paddingS),
                     const _AgeDistributionChart(),
                     const SizedBox(height: AppDimensions.paddingL),
 
-                    _buildSectionTitle('📊 Durchschnittsalter pro Instrument'),
+                    _buildSectionTitle(context.l10n.statsAvgAgeInstrument),
                     const SizedBox(height: AppDimensions.paddingS),
                     const _AvgAgePerInstrumentChart(),
                     const SizedBox(height: AppDimensions.paddingL),
@@ -198,7 +199,7 @@ class _PeriodSection extends StatelessWidget {
       initialDate: initial,
       firstDate: start ? lower : dateRange.start,
       lastDate: start ? dateRange.end : upper,
-      locale: const Locale('de', 'DE'),
+      locale: Locale(currentLanguage()),
     );
     if (picked == null) return;
     start ? onPick(picked, dateRange.end) : onPick(dateRange.start, picked);
@@ -217,9 +218,9 @@ class _PeriodSection extends StatelessWidget {
       margin: EdgeInsets.zero,
       child: Column(
         children: [
-          item('Von', dateRange.start, true),
+          item(context.l10n.dutyFrom, dateRange.start, true),
           const Divider(height: 1),
-          item('Bis', dateRange.end, false),
+          item(context.l10n.dutyTo, dateRange.end, false),
         ],
       ),
     );
@@ -245,7 +246,7 @@ class _SummaryCards extends StatelessWidget {
           children: [
             Expanded(
               child: _StatCard(
-                title: 'Ø Anwesenheit',
+                title: context.l10n.statsAvgAttendance,
                 value: '${statistics.averagePercentage}%',
                 color: avgColor,
                 icon: Icons.trending_up,
@@ -254,7 +255,7 @@ class _SummaryCards extends StatelessWidget {
             const SizedBox(width: AppDimensions.paddingM),
             Expanded(
               child: _StatCard(
-                title: 'Termine im Zeitraum',
+                title: context.l10n.statsEventsInPeriod,
                 value: '${statistics.totalAttendances}',
                 color: AppColors.primary,
                 icon: Icons.event,
@@ -269,7 +270,7 @@ class _SummaryCards extends StatelessWidget {
             children: [
               Expanded(
                 child: _StatCard(
-                  title: 'Beste Anwesenheit',
+                  title: context.l10n.statsBest,
                   value: '${statistics.bestAttendance?.percentage?.round() ?? 0}%',
                   color: AppColors.success,
                   icon: Icons.emoji_events,
@@ -279,7 +280,7 @@ class _SummaryCards extends StatelessWidget {
               const SizedBox(width: AppDimensions.paddingM),
               Expanded(
                 child: _StatCard(
-                  title: 'Schlechteste Anwesenheit',
+                  title: context.l10n.statsWorst,
                   value: '${statistics.worstAttendance?.percentage?.round() ?? 0}%',
                   color: AppColors.danger,
                   icon: Icons.trending_down,
@@ -382,10 +383,10 @@ class _MembersOverview extends ConsumerWidget {
       margin: EdgeInsets.zero,
       child: Column(
         children: [
-          row('Aktive Mitglieder', active, AppColors.success),
-          row('Pausierend', paused, AppColors.warning),
-          row('Ausgetreten', left.length, AppColors.medium),
-          row('Gesamt', current.length + left.length, AppColors.primary, bold: true),
+          row(context.l10n.statsActiveMembers, active, AppColors.success),
+          row(context.l10n.statsPausing, paused, AppColors.warning),
+          row(context.l10n.statsLeft, left.length, AppColors.medium),
+          row(context.l10n.churchOverviewTotal, current.length + left.length, AppColors.primary, bold: true),
         ],
       ),
     );
@@ -426,7 +427,7 @@ class _EventTypeOverview extends ConsumerWidget {
         padding: const EdgeInsets.all(AppDimensions.paddingM),
         child: Column(
           children: sorted.map((e) {
-            final name = typeNameMap[e.key] ?? 'Unbekannt';
+            final name = typeNameMap[e.key] ?? context.l10n.commonUnknown;
             final count = e.value;
             final fraction = count / attendances.length;
             return Padding(
@@ -644,10 +645,10 @@ class _StatusPieChart extends ConsumerWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _LegendItem(color: AttendanceStatus.present.color, label: 'Anwesend'),
-                    _LegendItem(color: AttendanceStatus.excused.color, label: 'Entschuldigt'),
-                    _LegendItem(color: AttendanceStatus.late.color, label: 'Verspätet'),
-                    _LegendItem(color: AttendanceStatus.absent.color, label: 'Abwesend'),
+                    _LegendItem(color: AttendanceStatus.present.color, label: context.l10n.commonStatusPresent),
+                    _LegendItem(color: AttendanceStatus.excused.color, label: context.l10n.commonStatusExcused),
+                    _LegendItem(color: AttendanceStatus.late.color, label: context.l10n.commonStatusLateShort),
+                    _LegendItem(color: AttendanceStatus.absent.color, label: context.l10n.commonStatusAbsent),
                   ],
                 ),
               ),
@@ -881,7 +882,7 @@ class _AgeDistributionChart extends ConsumerWidget {
     final data = ref.watch(ageDistributionProvider);
 
     if (data.isEmpty) {
-      return const _EmptyChartPlaceholder(message: 'Keine Geburtsdaten vorhanden');
+      return _EmptyChartPlaceholder(message: context.l10n.statsFlutterNoBirthdays);
     }
 
     // BL-006: Use fold instead of reduce for safety
@@ -901,7 +902,7 @@ class _AgeDistributionChart extends ConsumerWidget {
                 touchTooltipData: BarTouchTooltipData(
                   getTooltipItem: (group, groupIndex, rod, rodIndex) {
                     return BarTooltipItem(
-                      '${data[groupIndex].label} Jahre\n${rod.toY.toInt()} Personen',
+                      '${data[groupIndex].label} ${context.l10n.statsYears}\n${context.l10n.commonPersons(rod.toY.toInt())}',
                       const TextStyle(color: Colors.white, fontSize: 12),
                     );
                   },
@@ -972,7 +973,7 @@ class _AvgAgePerInstrumentChart extends ConsumerWidget {
     final data = ref.watch(avgAgePerInstrumentProvider);
 
     if (data.isEmpty) {
-      return const _EmptyChartPlaceholder(message: 'Keine Geburtsdaten vorhanden');
+      return _EmptyChartPlaceholder(message: context.l10n.statsFlutterNoBirthdays);
     }
 
     // BL-006: Use fold instead of reduce for safety
@@ -993,7 +994,7 @@ class _AvgAgePerInstrumentChart extends ConsumerWidget {
                 touchTooltipData: BarTouchTooltipData(
                   getTooltipItem: (group, groupIndex, rod, rodIndex) {
                     return BarTooltipItem(
-                      '${data[groupIndex].name}\nØ ${rod.toY.round()} Jahre',
+                      '${data[groupIndex].name}\nØ ${rod.toY.round()} ${context.l10n.statsYears}',
                       const TextStyle(color: Colors.white, fontSize: 12),
                     );
                   },
@@ -1064,7 +1065,7 @@ class _DivaIndexChart extends ConsumerWidget {
     final data = ref.watch(divaIndexChartDataProvider);
 
     if (data.isEmpty) {
-      return const _EmptyChartPlaceholder(message: 'Keine unentschuldigten Abwesenheiten');
+      return _EmptyChartPlaceholder(message: context.l10n.statsFlutterNoUnexcused);
     }
 
     // BL-006: Use fold instead of reduce for safety
@@ -1085,7 +1086,7 @@ class _DivaIndexChart extends ConsumerWidget {
                 touchTooltipData: BarTouchTooltipData(
                   getTooltipItem: (group, groupIndex, rod, rodIndex) {
                     return BarTooltipItem(
-                      '${data[groupIndex].name}\n${rod.toY.toInt()} Fehlzeiten',
+                      '${data[groupIndex].name}\n${context.l10n.statsFlutterAbsencesCount(rod.toY.toInt())}',
                       const TextStyle(color: Colors.white, fontSize: 12),
                     );
                   },
@@ -1150,9 +1151,9 @@ class _DivaIndexChart extends ConsumerWidget {
 }
 
 class _EmptyChartPlaceholder extends StatelessWidget {
-  final String message;
+  final String? message;
 
-  const _EmptyChartPlaceholder({this.message = 'Keine Daten verfügbar'});
+  const _EmptyChartPlaceholder({this.message});
 
   @override
   Widget build(BuildContext context) {
@@ -1166,7 +1167,7 @@ class _EmptyChartPlaceholder extends StatelessWidget {
             const Icon(Icons.show_chart, size: 32, color: AppColors.medium),
             const SizedBox(height: 8),
             Text(
-              message,
+              message ?? context.l10n.statsFlutterNoData,
               style: TextStyle(color: AppColors.medium),
             ),
           ],
@@ -1232,7 +1233,7 @@ class _OrganisationStatsSectionState
           children: [
             const Divider(height: 32),
             Text(
-              'Organisation: ${organisation.name}',
+              context.l10n.statsFlutterOrganisation(organisation.name),
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -1263,8 +1264,8 @@ class _OrganisationStatsSectionState
             const SizedBox(height: AppDimensions.paddingS),
             Text(
               _selectedTenantIds.length == tenants.length
-                  ? 'Alle (${tenants.length})'
-                  : '${_selectedTenantIds.length} von ${tenants.length} ausgewählt',
+                  ? context.l10n.statsAllCount(tenants.length)
+                  : context.l10n.statsFlutterSelectedOf(_selectedTenantIds.length, tenants.length),
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: AppColors.medium,
                   ),
@@ -1274,7 +1275,7 @@ class _OrganisationStatsSectionState
             // Persons count + modal
             personsAsync.when(
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (e, _) => Text('Fehler: $e'),
+              error: (e, _) => Text(context.l10n.attendanceFlutterErrorWith(e)),
               data: (persons) {
                 final uniquePersons =
                     _deduplicatePersons(persons, filteredTenants);
@@ -1282,7 +1283,7 @@ class _OrganisationStatsSectionState
                 return Card(
                   child: ListTile(
                     leading: const Icon(Icons.people, color: AppColors.primary),
-                    title: const Text('Personen über alle Instanzen'),
+                    title: Text(context.l10n.statsPersonsAllTenants),
                     trailing: Container(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 12, vertical: 4),
@@ -1319,7 +1320,7 @@ class _OrganisationStatsSectionState
 
     for (final person in allPersons) {
       final tenantName =
-          tenantMap[person.tenantId]?.shortName ?? 'Unbekannt';
+          tenantMap[person.tenantId]?.shortName ?? context.l10n.commonUnknown;
       final key = personIdentityKey(
         globalPersonId: person.globalPersonId,
         appId: person.appId,
@@ -1363,11 +1364,11 @@ class _OrganisationStatsSectionState
             children: [
               ListTile(
                 title: Text(
-                  'Personen (${persons.length})',
+                  context.l10n.statsPersonsCount(persons.length),
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
                 subtitle: Text(
-                    '${tenants.length} Instanzen'),
+                    context.l10n.statsFlutterTenantsCount(tenants.length)),
                 trailing: IconButton(
                   icon: const Icon(Icons.close),
                   onPressed: () => Navigator.pop(context),

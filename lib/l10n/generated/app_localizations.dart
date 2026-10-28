@@ -1469,6 +1469,66 @@ abstract class AppLocalizations {
   /// **'{count} aktiv'**
   String attendanceFilterActive(Object count);
 
+  /// attendance.flutter.addAttachment
+  ///
+  /// In de, this message translates to:
+  /// **'Anhang hinzufügen'**
+  String get attendanceFlutterAddAttachment;
+
+  /// attendance.flutter.errorWith
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler: {error}'**
+  String attendanceFlutterErrorWith(Object error);
+
+  /// attendance.flutter.excusedShort
+  ///
+  /// In de, this message translates to:
+  /// **'Entsch.'**
+  String get attendanceFlutterExcusedShort;
+
+  /// attendance.flutter.holiday
+  ///
+  /// In de, this message translates to:
+  /// **'Feiertag'**
+  String get attendanceFlutterHoliday;
+
+  /// attendance.flutter.noTodos
+  ///
+  /// In de, this message translates to:
+  /// **'Keine To-Dos vorhanden'**
+  String get attendanceFlutterNoTodos;
+
+  /// attendance.flutter.open
+  ///
+  /// In de, this message translates to:
+  /// **'Offen'**
+  String get attendanceFlutterOpen;
+
+  /// attendance.flutter.removeAttachment
+  ///
+  /// In de, this message translates to:
+  /// **'Anhang entfernen'**
+  String get attendanceFlutterRemoveAttachment;
+
+  /// attendance.flutter.saveFailedWith
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Speichern: {error}'**
+  String attendanceFlutterSaveFailedWith(Object error);
+
+  /// attendance.flutter.schoolHolidays
+  ///
+  /// In de, this message translates to:
+  /// **'Schulferien'**
+  String get attendanceFlutterSchoolHolidays;
+
+  /// attendance.flutter.selectDate
+  ///
+  /// In de, this message translates to:
+  /// **'Datum auswählen'**
+  String get attendanceFlutterSelectDate;
+
   /// attendance.general
   ///
   /// In de, this message translates to:
@@ -3947,6 +4007,36 @@ abstract class AppLocalizations {
   /// **'Vorname'**
   String get exportFirstName;
 
+  /// export.flutter.columnName
+  ///
+  /// In de, this message translates to:
+  /// **'Spaltenname'**
+  String get exportFlutterColumnName;
+
+  /// export.flutter.customFieldEmpty
+  ///
+  /// In de, this message translates to:
+  /// **'Eigenes Feld (leer)'**
+  String get exportFlutterCustomFieldEmpty;
+
+  /// export.flutter.failedWith
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Export: {error}'**
+  String exportFlutterFailedWith(Object error);
+
+  /// export.flutter.pdfLimitHint
+  ///
+  /// In de, this message translates to:
+  /// **'PDF-Export ist auf die letzten 8 Termine begrenzt. Für alle Termine der Saison nutze den Excel-Export.'**
+  String get exportFlutterPdfLimitHint;
+
+  /// export.flutter.success
+  ///
+  /// In de, this message translates to:
+  /// **'Export erfolgreich'**
+  String get exportFlutterSuccess;
+
   /// export.group
   ///
   /// In de, this message translates to:
@@ -5566,6 +5656,30 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'TT.MM.JJJJ'**
   String get historyDatePlaceholder;
+
+  /// history.flutter.entryDeleted
+  ///
+  /// In de, this message translates to:
+  /// **'Eintrag gelöscht'**
+  String get historyFlutterEntryDeleted;
+
+  /// history.flutter.noTenant
+  ///
+  /// In de, this message translates to:
+  /// **'Kein Tenant ausgewählt'**
+  String get historyFlutterNoTenant;
+
+  /// history.flutter.songsAdded
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {Werk hinzugefügt} other {{count} Werke hinzugefügt}}'**
+  String historyFlutterSongsAdded(num count);
+
+  /// history.flutter.unknownSong
+  ///
+  /// In de, this message translates to:
+  /// **'Unbekanntes Werk'**
+  String get historyFlutterUnknownSong;
 
   /// history.noneFound
   ///
@@ -14410,6 +14524,54 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Instanzen filtern'**
   String get statsFilterTenants;
+
+  /// stats.flutter.absencesCount
+  ///
+  /// In de, this message translates to:
+  /// **'{count} Fehlzeiten'**
+  String statsFlutterAbsencesCount(Object count);
+
+  /// stats.flutter.noBirthdays
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Geburtsdaten vorhanden'**
+  String get statsFlutterNoBirthdays;
+
+  /// stats.flutter.noData
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Daten verfügbar'**
+  String get statsFlutterNoData;
+
+  /// stats.flutter.noDataInPeriod
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Daten im ausgewählten Zeitraum'**
+  String get statsFlutterNoDataInPeriod;
+
+  /// stats.flutter.noUnexcused
+  ///
+  /// In de, this message translates to:
+  /// **'Keine unentschuldigten Abwesenheiten'**
+  String get statsFlutterNoUnexcused;
+
+  /// stats.flutter.organisation
+  ///
+  /// In de, this message translates to:
+  /// **'Organisation: {name}'**
+  String statsFlutterOrganisation(Object name);
+
+  /// stats.flutter.selectedOf
+  ///
+  /// In de, this message translates to:
+  /// **'{selected} von {total} ausgewählt'**
+  String statsFlutterSelectedOf(Object selected, Object total);
+
+  /// stats.flutter.tenantsCount
+  ///
+  /// In de, this message translates to:
+  /// **'{count} Instanzen'**
+  String statsFlutterTenantsCount(Object count);
 
   /// stats.historyChart
   ///

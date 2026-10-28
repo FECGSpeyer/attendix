@@ -1075,6 +1075,52 @@
       "count": {}
     }
   },
+  "attendanceFlutterAddAttachment": "Anhang hinzufügen",
+  "@attendanceFlutterAddAttachment": {
+    "description": "attendance.flutter.addAttachment"
+  },
+  "attendanceFlutterErrorWith": "Fehler: {error}",
+  "@attendanceFlutterErrorWith": {
+    "description": "attendance.flutter.errorWith",
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "attendanceFlutterExcusedShort": "Entsch.",
+  "@attendanceFlutterExcusedShort": {
+    "description": "attendance.flutter.excusedShort"
+  },
+  "attendanceFlutterHoliday": "Feiertag",
+  "@attendanceFlutterHoliday": {
+    "description": "attendance.flutter.holiday"
+  },
+  "attendanceFlutterNoTodos": "Keine To-Dos vorhanden",
+  "@attendanceFlutterNoTodos": {
+    "description": "attendance.flutter.noTodos"
+  },
+  "attendanceFlutterOpen": "Offen",
+  "@attendanceFlutterOpen": {
+    "description": "attendance.flutter.open"
+  },
+  "attendanceFlutterRemoveAttachment": "Anhang entfernen",
+  "@attendanceFlutterRemoveAttachment": {
+    "description": "attendance.flutter.removeAttachment"
+  },
+  "attendanceFlutterSaveFailedWith": "Fehler beim Speichern: {error}",
+  "@attendanceFlutterSaveFailedWith": {
+    "description": "attendance.flutter.saveFailedWith",
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "attendanceFlutterSchoolHolidays": "Schulferien",
+  "@attendanceFlutterSchoolHolidays": {
+    "description": "attendance.flutter.schoolHolidays"
+  },
+  "attendanceFlutterSelectDate": "Datum auswählen",
+  "@attendanceFlutterSelectDate": {
+    "description": "attendance.flutter.selectDate"
+  },
   "attendanceGeneral": "Allgemein",
   "@attendanceGeneral": {
     "description": "attendance.general"
@@ -2909,6 +2955,29 @@
   "@exportFirstName": {
     "description": "export.firstName"
   },
+  "exportFlutterColumnName": "Spaltenname",
+  "@exportFlutterColumnName": {
+    "description": "export.flutter.columnName"
+  },
+  "exportFlutterCustomFieldEmpty": "Eigenes Feld (leer)",
+  "@exportFlutterCustomFieldEmpty": {
+    "description": "export.flutter.customFieldEmpty"
+  },
+  "exportFlutterFailedWith": "Fehler beim Export: {error}",
+  "@exportFlutterFailedWith": {
+    "description": "export.flutter.failedWith",
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "exportFlutterPdfLimitHint": "PDF-Export ist auf die letzten 8 Termine begrenzt. Für alle Termine der Saison nutze den Excel-Export.",
+  "@exportFlutterPdfLimitHint": {
+    "description": "export.flutter.pdfLimitHint"
+  },
+  "exportFlutterSuccess": "Export erfolgreich",
+  "@exportFlutterSuccess": {
+    "description": "export.flutter.success"
+  },
   "exportGroup": "Gruppe",
   "@exportGroup": {
     "description": "export.group"
@@ -4126,6 +4195,27 @@
   "historyDatePlaceholder": "TT.MM.JJJJ",
   "@historyDatePlaceholder": {
     "description": "history.datePlaceholder"
+  },
+  "historyFlutterEntryDeleted": "Eintrag gelöscht",
+  "@historyFlutterEntryDeleted": {
+    "description": "history.flutter.entryDeleted"
+  },
+  "historyFlutterNoTenant": "Kein Tenant ausgewählt",
+  "@historyFlutterNoTenant": {
+    "description": "history.flutter.noTenant"
+  },
+  "historyFlutterSongsAdded": "{count, plural, one {Werk hinzugefügt} other {{count} Werke hinzugefügt}}",
+  "@historyFlutterSongsAdded": {
+    "description": "history.flutter.songsAdded",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "historyFlutterUnknownSong": "Unbekanntes Werk",
+  "@historyFlutterUnknownSong": {
+    "description": "history.flutter.unknownSong"
   },
   "historyNoneFound": "Keine Werke gefunden",
   "@historyNoneFound": {
@@ -10676,6 +10766,51 @@
   "statsFilterTenants": "Instanzen filtern",
   "@statsFilterTenants": {
     "description": "stats.filterTenants"
+  },
+  "statsFlutterAbsencesCount": "{count} Fehlzeiten",
+  "@statsFlutterAbsencesCount": {
+    "description": "stats.flutter.absencesCount",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "statsFlutterNoBirthdays": "Keine Geburtsdaten vorhanden",
+  "@statsFlutterNoBirthdays": {
+    "description": "stats.flutter.noBirthdays"
+  },
+  "statsFlutterNoData": "Keine Daten verfügbar",
+  "@statsFlutterNoData": {
+    "description": "stats.flutter.noData"
+  },
+  "statsFlutterNoDataInPeriod": "Keine Daten im ausgewählten Zeitraum",
+  "@statsFlutterNoDataInPeriod": {
+    "description": "stats.flutter.noDataInPeriod"
+  },
+  "statsFlutterNoUnexcused": "Keine unentschuldigten Abwesenheiten",
+  "@statsFlutterNoUnexcused": {
+    "description": "stats.flutter.noUnexcused"
+  },
+  "statsFlutterOrganisation": "Organisation: {name}",
+  "@statsFlutterOrganisation": {
+    "description": "stats.flutter.organisation",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "statsFlutterSelectedOf": "{selected} von {total} ausgewählt",
+  "@statsFlutterSelectedOf": {
+    "description": "stats.flutter.selectedOf",
+    "placeholders": {
+      "selected": {},
+      "total": {}
+    }
+  },
+  "statsFlutterTenantsCount": "{count} Instanzen",
+  "@statsFlutterTenantsCount": {
+    "description": "stats.flutter.tenantsCount",
+    "placeholders": {
+      "count": {}
+    }
   },
   "statsHistoryChart": "Anwesenheitsverlauf (letzte 20 Termine)",
   "@statsHistoryChart": {

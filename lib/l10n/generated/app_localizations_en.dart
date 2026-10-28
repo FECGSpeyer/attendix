@@ -824,6 +824,40 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get attendanceFlutterAddAttachment => 'Add attachment';
+
+  @override
+  String attendanceFlutterErrorWith(Object error) {
+    return 'Error: $error';
+  }
+
+  @override
+  String get attendanceFlutterExcusedShort => 'Exc.';
+
+  @override
+  String get attendanceFlutterHoliday => 'Public holiday';
+
+  @override
+  String get attendanceFlutterNoTodos => 'No to-dos yet';
+
+  @override
+  String get attendanceFlutterOpen => 'Open';
+
+  @override
+  String get attendanceFlutterRemoveAttachment => 'Remove attachment';
+
+  @override
+  String attendanceFlutterSaveFailedWith(Object error) {
+    return 'Could not save: $error';
+  }
+
+  @override
+  String get attendanceFlutterSchoolHolidays => 'School holidays';
+
+  @override
+  String get attendanceFlutterSelectDate => 'Select date';
+
+  @override
   String get attendanceGeneral => 'General';
 
   @override
@@ -2257,6 +2291,23 @@ class AppLocalizationsEn extends AppLocalizations {
   String get exportFirstName => 'First name';
 
   @override
+  String get exportFlutterColumnName => 'Column name';
+
+  @override
+  String get exportFlutterCustomFieldEmpty => 'Custom field (empty)';
+
+  @override
+  String exportFlutterFailedWith(Object error) {
+    return 'Export failed: $error';
+  }
+
+  @override
+  String get exportFlutterPdfLimitHint => 'The PDF export is limited to the last 8 events. Use the Excel export for all events of the season.';
+
+  @override
+  String get exportFlutterSuccess => 'Export successful';
+
+  @override
   String get exportGroup => 'Group';
 
   @override
@@ -3155,6 +3206,26 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get historyDatePlaceholder => 'DD.MM.YYYY';
+
+  @override
+  String get historyFlutterEntryDeleted => 'Entry deleted';
+
+  @override
+  String get historyFlutterNoTenant => 'No tenant selected';
+
+  @override
+  String historyFlutterSongsAdded(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count pieces added',
+      one: 'Piece added',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get historyFlutterUnknownSong => 'Unknown piece';
 
   @override
   String get historyNoneFound => 'No pieces found';
@@ -8139,6 +8210,38 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get statsFilterTenants => 'Filter instances';
+
+  @override
+  String statsFlutterAbsencesCount(Object count) {
+    return '$count absences';
+  }
+
+  @override
+  String get statsFlutterNoBirthdays => 'No birthdays available';
+
+  @override
+  String get statsFlutterNoData => 'No data available';
+
+  @override
+  String get statsFlutterNoDataInPeriod => 'No data in the selected period';
+
+  @override
+  String get statsFlutterNoUnexcused => 'No unexcused absences';
+
+  @override
+  String statsFlutterOrganisation(Object name) {
+    return 'Organisation: $name';
+  }
+
+  @override
+  String statsFlutterSelectedOf(Object selected, Object total) {
+    return '$selected of $total selected';
+  }
+
+  @override
+  String statsFlutterTenantsCount(Object count) {
+    return '$count instances';
+  }
 
   @override
   String get statsHistoryChart => 'Attendance history (last 20 events)';

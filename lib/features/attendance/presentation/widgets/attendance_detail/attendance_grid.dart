@@ -5,6 +5,7 @@ import '../../../../../core/theme/app_colors.dart';
 import '../../../../../data/models/instrument/instrument.dart';
 import '../../../../../data/models/person/person.dart';
 import 'attendance_person_tile.dart';
+import '../../../../../l10n/l10n.dart';
 
 /// Ionic Utils.getModifiedPlayersForList order: main group first, then the
 /// group's sort_order, group name, the person's sort_order and last name.
@@ -92,7 +93,7 @@ class AttendanceGrid extends StatelessWidget {
 
     final groups = <({String name, List<Person> persons})>[];
     for (final person in persons) {
-      final name = person.groupName ?? 'Keine Gruppe';
+      final name = person.groupName ?? l10nWithoutContext.attendanceNoGroup;
       if (groups.isEmpty || groups.last.name != name) {
         final existing = groups.where((g) => g.name == name).firstOrNull;
         if (existing != null) {

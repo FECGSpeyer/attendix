@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../core/config/supabase_config.dart';
 import '../../../../core/constants/app_constants.dart';
@@ -14,6 +15,7 @@ import '../../../../data/models/history/history_entry.dart';
 import '../../../../data/models/song/song.dart';
 import '../../history_utils.dart';
 import '../../../../core/utils/demo_guard.dart';
+import '../../../../l10n/l10n.dart';
 
 /// History Page - Song performance history
 class HistoryPage extends ConsumerStatefulWidget {
@@ -38,7 +40,7 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
     final historyAsync = ref.watch(performanceHistoryProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Werkhistorie')),
+      appBar: AppBar(title: Text(context.l10n.historyTitle)),
       body: Column(
         children: [
           // Search bar
@@ -47,7 +49,7 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
             child: TextField(
               controller: _searchController,
               decoration: InputDecoration(
-                hintText: 'Werk suchen...',
+                hintText: context.l10n.historySearchSong,
                 prefixIcon: const Icon(Icons.search),
                 suffixIcon:
                     _searchQuery.isNotEmpty
@@ -79,12 +81,12 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
                           color: AppColors.danger,
                         ),
                         const SizedBox(height: 16),
-                        Text('Fehler: $e'),
+                        Text(context.l10n.attendanceFlutterErrorWith(e)),
                         const SizedBox(height: 16),
                         ElevatedButton(
                           onPressed:
                               () => ref.invalidate(performanceHistoryProvider),
-                          child: const Text('Erneut versuchen'),
+                          child: Text(context.l10n.messagesRetry),
                         ),
                       ],
                     ),
@@ -106,7 +108,7 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
                         ),
                         const SizedBox(height: 12),
                         Text(
-                          'Noch keine Werke gespielt',
+                          context.l10n.historyNoneYet,
                           style: Theme.of(context).textTheme.bodyLarge
                               ?.copyWith(color: AppColors.medium),
                         ),
@@ -126,7 +128,7 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
                           color: AppColors.medium,
                         ),
                         const SizedBox(height: 16),
-                        const Text('Keine Werke gefunden'),
+                        Text(context.l10n.historyNoneFound),
                       ],
                     ),
                   );
@@ -212,7 +214,7 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
     final conductors = conductorsAsync.valueOrNull ?? [];
 
     if (songs.isEmpty) {
-      ToastHelper.showWarning(context, 'Keine Werke gefunden');
+      ToastHelper.showWarning(context, context.l10n.historyNoneFound);
       return;
     }
 
@@ -241,8 +243,8 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
               return AlertDialog(
                 title: Text(
                   selectedSongIds.isEmpty
-                      ? 'Werk(e) hinzufügen'
-                      : '${selectedSongIds.length} Werk(e) ausgewählt',
+                      ? context.l10n.historyAddSongs
+                      : context.l10n.historySelectedCount(selectedSongIds.length),
                 ),
                 content: SizedBox(
                   width: double.maxFinite,
@@ -253,9 +255,9 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
                       children: [
                         // Song search
                         TextField(
-                          decoration: const InputDecoration(
-                            hintText: 'Werk suchen...',
-                            prefixIcon: Icon(Icons.search),
+                          decoration: InputDecoration(
+                            hintText: context.l10n.historySearchSong,
+                            prefixIcon: const Icon(Icons.search),
                             isDense: true,
                           ),
                           onChanged:
@@ -302,8 +304,8 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
                         // Conductor selector
                         DropdownButtonFormField<int>(
                           value: selectedConductorId,
-                          decoration: const InputDecoration(
-                            labelText: 'Dirigent',
+                          decoration: InputDecoration(
+                            labelText: context.l10n.attListConductor,
                           ),
                           // UX_SETTINGS: Ionic "Anderer Dirigent"
                           items: [
@@ -315,9 +317,9 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
                                     child: Text('${c.firstName} ${c.lastName}'),
                                   ),
                                 ),
-                            const DropdownMenuItem(
+                            DropdownMenuItem(
                               value: -1,
-                              child: Text('Anderer Dirigent'),
+                              child: Text(context.l10n.attListOtherConductor),
                             ),
                           ],
                           onChanged: (v) async {
@@ -328,18 +330,18 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
                                   context: context,
                                   builder:
                                       (context) => AlertDialog(
-                                        title: const Text('Anderer Dirigent'),
+                                        title: Text(context.l10n.attListEnterConductor),
                                         content: TextField(
                                           controller: controller,
-                                          decoration: const InputDecoration(
-                                            labelText: 'Name',
+                                          decoration: InputDecoration(
+                                            labelText: context.l10n.attListConductor,
                                           ),
                                         ),
                                         actions: [
                                           TextButton(
                                             onPressed:
                                                 () => Navigator.pop(context),
-                                            child: const Text('Abbrechen'),
+                                            child: Text(context.l10n.commonCancel),
                                           ),
                                           ElevatedButton(
                                             onPressed:
@@ -347,7 +349,7 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
                                                   context,
                                                   controller.text,
                                                 ),
-                                            child: const Text('OK'),
+                                            child: Text(context.l10n.commonSave),
                                           ),
                                         ],
                                       ),
@@ -372,16 +374,16 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
                         if (otherConductor != null)
                           Padding(
                             padding: const EdgeInsets.only(top: 8),
-                            child: Text('Dirigent: $otherConductor'),
+                            child: Text('${context.l10n.attListConductor}: $otherConductor'),
                           ),
                         const SizedBox(height: 16),
 
                         // Date selector
                         ListTile(
                           contentPadding: EdgeInsets.zero,
-                          title: const Text('Datum'),
+                          title: Text(context.l10n.attendanceDate),
                           subtitle: Text(
-                            '${selectedDate.day.toString().padLeft(2, '0')}.${selectedDate.month.toString().padLeft(2, '0')}.${selectedDate.year}',
+                            DateFormat(dateFmt()).format(selectedDate),
                           ),
                           trailing: const Icon(Icons.calendar_today),
                           onTap: () async {
@@ -405,14 +407,14 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
                 actions: [
                   TextButton(
                     onPressed: () => Navigator.pop(context, false),
-                    child: const Text('Abbrechen'),
+                    child: Text(context.l10n.commonCancel),
                   ),
                   ElevatedButton(
                     onPressed:
                         selectedSongIds.isEmpty
                             ? null
                             : () => Navigator.pop(context, true),
-                    child: const Text('Hinzufügen'),
+                    child: Text(context.l10n.attendanceAdd),
                   ),
                 ],
               );
@@ -443,7 +445,7 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
 
       if (tenant?.id == null) {
         if (mounted) {
-          ToastHelper.showError(context, 'Kein Tenant ausgewählt');
+          ToastHelper.showError(context, context.l10n.historyFlutterNoTenant);
         }
         return;
       }
@@ -471,12 +473,12 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
         final count = songIds.length;
         ToastHelper.showSuccess(
           context,
-          count == 1 ? 'Werk hinzugefügt' : '$count Werke hinzugefügt',
+          context.l10n.historyFlutterSongsAdded(count),
         );
       }
     } catch (e) {
       if (mounted) {
-        ToastHelper.showError(context, 'Fehler: $e');
+        ToastHelper.showError(context, context.l10n.attendanceFlutterErrorWith(e));
       }
     }
   }
@@ -487,10 +489,10 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
 
     final confirmed = await DialogHelper.showConfirmation(
       context,
-      title: 'Möchtest du den Eintrag wirklich entfernen?',
+      title: context.l10n.historyRemoveConfirm,
       message: '',
-      confirmText: 'Ja',
-      cancelText: 'Abbrechen',
+      confirmText: context.l10n.commonYes,
+      cancelText: context.l10n.commonCancel,
     );
 
     if (!confirmed) return;
@@ -502,7 +504,7 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
 
       if (tenant?.id == null) {
         if (mounted) {
-          ToastHelper.showError(context, 'Kein Tenant ausgewählt');
+          ToastHelper.showError(context, context.l10n.historyFlutterNoTenant);
         }
         return;
       }
@@ -515,11 +517,11 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
 
       ref.invalidate(performanceHistoryProvider);
       if (mounted) {
-        ToastHelper.showSuccess(context, 'Eintrag gelöscht');
+        ToastHelper.showSuccess(context, context.l10n.historyFlutterEntryDeleted);
       }
     } catch (e) {
       if (mounted) {
-        ToastHelper.showError(context, 'Fehler: $e');
+        ToastHelper.showError(context, context.l10n.attendanceFlutterErrorWith(e));
       }
     }
   }
@@ -578,7 +580,7 @@ class _HistoryEntryTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final name = entry.songName ?? 'Unbekanntes Werk';
+    final name = entry.songName ?? context.l10n.historyFlutterUnknownSong;
     return Dismissible(
       key: ValueKey(entry.id ?? '${entry.songId}_${entry.date}'),
       direction: DismissDirection.endToStart,

@@ -3,6 +3,7 @@ import '../../../../../data/models/attendance/attendance.dart';
 import '../../../../../data/models/church/church.dart';
 import '../../../../../data/models/person/person.dart';
 import '../../../../../data/repositories/profile_repository.dart';
+import '../../../../../l10n/l10n.dart';
 
 /// Where the value of a sortable field lives.
 enum SortFieldLevel { person, registration }
@@ -99,7 +100,7 @@ String sortDisplayValueOf(
 ) {
   final raw = _rawValue(person, sort, registrationAnswers);
   if (raw == null || raw == '') return '–';
-  if (raw is bool) return raw ? 'Ja' : 'Nein';
+  if (raw is bool) return raw ? l10nWithoutContext.commonYes : l10nWithoutContext.commonNo;
   if (raw is List) return raw.join(', ');
   if (field?.fieldType == 'bfecg_church') return _churchName(raw, churches);
   return raw.toString();

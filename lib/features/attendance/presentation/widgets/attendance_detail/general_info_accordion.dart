@@ -6,6 +6,7 @@ import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/utils/color_utils.dart';
 import '../../../../../data/models/attendance/attendance.dart';
 import '../../../../../core/utils/date_helper.dart';
+import '../../../../../l10n/l10n.dart';
 
 /// Accordion widget for displaying and editing general attendance info
 /// Uses StatefulWidget to properly manage TextEditingController lifecycle
@@ -126,7 +127,7 @@ class _GeneralInfoAccordionState extends State<GeneralInfoAccordion> {
   String _formatDate(String value) {
     final date = DateTime.tryParse(value);
     if (date == null) return value;
-    return DateFormat('dd.MM.yyyy', 'de_DE').format(date.toLocal());
+    return DateFormat(dateFmt()).format(date.toLocal());
   }
 
   @override
@@ -138,7 +139,7 @@ class _GeneralInfoAccordionState extends State<GeneralInfoAccordion> {
     if (hasDeadline && widget.attendance.deadline != null) {
       final deadline = DateTime.tryParse(widget.attendance.deadline!);
       if (deadline != null) {
-        formattedDeadline = DateFormat('dd.MM.yyyy HH:mm').format(deadline);
+        formattedDeadline = DateFormat('${dateFmt()} HH:mm').format(deadline);
       }
     }
 
@@ -157,14 +158,14 @@ class _GeneralInfoAccordionState extends State<GeneralInfoAccordion> {
       ),
       clipBehavior: Clip.antiAlias,
       child: ExpansionTile(
-        title: const Text('Allgemein'),
+        title: Text(context.l10n.attendanceGeneral),
         shape: const Border(),
         collapsedShape: const Border(),
         children: [
           // Typ (badge)
           if (widget.attendanceType != null)
             ListTile(
-              title: const Text('Typ'),
+              title: Text(context.l10n.attListType),
               trailing: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
@@ -182,7 +183,7 @@ class _GeneralInfoAccordionState extends State<GeneralInfoAccordion> {
           // Datum (tap to change)
           if (widget.onDateSelect != null)
             ListTile(
-              title: const Text('Datum'),
+              title: Text(context.l10n.attendanceDate),
               trailing: Text(_formatDate(widget.attendance.date), style: valueStyle),
               onTap: widget.onDateSelect,
               dense: true,
@@ -192,8 +193,8 @@ class _GeneralInfoAccordionState extends State<GeneralInfoAccordion> {
           Padding(
             padding: fieldPadding,
             child: TextField(
-              decoration: const InputDecoration(
-                labelText: 'Info-Text',
+              decoration: InputDecoration(
+                labelText: context.l10n.attendanceInfoText,
                 floatingLabelBehavior: FloatingLabelBehavior.always,
                 border: InputBorder.none,
               ),
@@ -209,8 +210,8 @@ class _GeneralInfoAccordionState extends State<GeneralInfoAccordion> {
           Padding(
             padding: fieldPadding,
             child: TextField(
-              decoration: const InputDecoration(
-                labelText: 'Notizen',
+              decoration: InputDecoration(
+                labelText: context.l10n.attendanceNotes,
                 floatingLabelBehavior: FloatingLabelBehavior.always,
                 border: InputBorder.none,
               ),
@@ -226,17 +227,17 @@ class _GeneralInfoAccordionState extends State<GeneralInfoAccordion> {
           // Anmeldefrist setzen + Fristdatum
           if (widget.hasNeutralStatuses || hasDeadline) ...[
             SwitchListTile(
-              title: const Text('Anmeldefrist setzen'),
-              subtitle: const Text(
-                'Personen können sich nur bis zu diesem Datum anmelden. Eine Abmeldung ist weiterhin möglich.',
-                style: TextStyle(fontSize: 12),
+              title: Text(context.l10n.attendanceSetDeadline),
+              subtitle: Text(
+                context.l10n.attendanceDeadlineHelper,
+                style: const TextStyle(fontSize: 12),
               ),
               value: hasDeadline,
               onChanged: widget.onDeadlineToggle,
             ),
             if (hasDeadline)
               ListTile(
-                title: const Text('Fristdatum'),
+                title: Text(context.l10n.attendanceDeadlineDate),
                 trailing: Text(formattedDeadline ?? '', style: valueStyle),
                 onTap: widget.onDeadlineSelect,
                 dense: true,
@@ -246,13 +247,13 @@ class _GeneralInfoAccordionState extends State<GeneralInfoAccordion> {
           // Beginn / Ende (or Dauer for all-day types)
           if (!isAllDay) ...[
             ListTile(
-              title: const Text('Beginn'),
+              title: Text(context.l10n.attendanceStart),
               trailing: Text(_formatTime(widget.attendance.startTime), style: valueStyle),
               onTap: widget.onStartTimeSelect,
               dense: true,
             ),
             ListTile(
-              title: const Text('Ende'),
+              title: Text(context.l10n.attendanceEnd),
               trailing: Text(_formatTime(widget.attendance.endTime), style: valueStyle),
               onTap: widget.onEndTimeSelect,
               dense: true,
@@ -260,7 +261,7 @@ class _GeneralInfoAccordionState extends State<GeneralInfoAccordion> {
           ],
           if (isAllDay)
             ListTile(
-              title: const Text('Dauer (in Tagen)'),
+              title: Text(context.l10n.attListDurationDays),
               trailing: Text('${widget.attendance.durationDays ?? 1}'),
               dense: true,
             ),
@@ -269,13 +270,13 @@ class _GeneralInfoAccordionState extends State<GeneralInfoAccordion> {
           if (widget.onChooseFilesFolder != null) ...[
             ListTile(
               leading: const Icon(Icons.folder_outlined, color: AppColors.primary),
-              title: const Text('Ordner in der Dateiablage'),
-              subtitle: const Text('z. B. Aufnahmen des Termins'),
+              title: Text(context.l10n.attendanceFilesFolder),
+              subtitle: Text(context.l10n.attendanceFilesFolderHint),
               trailing: widget.attendance.filesFolder?.isNotEmpty == true
                   ? null
                   : TextButton(
                       onPressed: widget.onChooseFilesFolder,
-                      child: const Text('Wählen'),
+                      child: Text(context.l10n.attendanceChoose),
                     ),
               dense: true,
             ),
@@ -295,13 +296,13 @@ class _GeneralInfoAccordionState extends State<GeneralInfoAccordion> {
                     IconButton(
                       icon: const Icon(Icons.edit_outlined),
                       color: AppColors.primary,
-                      tooltip: 'Ordner ändern',
+                      tooltip: context.l10n.attendanceChangeFolder,
                       onPressed: widget.onChooseFilesFolder,
                     ),
                     IconButton(
                       icon: const Icon(Icons.highlight_off),
                       color: AppColors.danger,
-                      tooltip: 'Ordner entfernen',
+                      tooltip: context.l10n.attendanceRemoveFolder,
                       onPressed: widget.onRemoveFilesFolder,
                     ),
                   ],
@@ -319,9 +320,9 @@ class _GeneralInfoAccordionState extends State<GeneralInfoAccordion> {
                 minLines: 2,
                 maxLines: 4,
                 textCapitalization: TextCapitalization.sentences,
-                decoration: const InputDecoration(
-                  labelText: 'Ort',
-                  hintText: 'Adresse oder Ortsname',
+                decoration: InputDecoration(
+                  labelText: context.l10n.attendancePlace,
+                  hintText: context.l10n.attendanceAddressPlaceholder,
                   floatingLabelBehavior: FloatingLabelBehavior.always,
                   border: InputBorder.none,
                 ),
@@ -331,7 +332,7 @@ class _GeneralInfoAccordionState extends State<GeneralInfoAccordion> {
             ),
             if ((widget.attendance.place?.isNotEmpty ?? false) && widget.onOpenNavigation != null)
               ListTile(
-                title: const Text('Navigation öffnen', style: primaryStyle),
+                title: Text(context.l10n.signoutOpenNavigation, style: primaryStyle),
                 onTap: widget.onOpenNavigation,
                 dense: true,
               ),
@@ -340,14 +341,14 @@ class _GeneralInfoAccordionState extends State<GeneralInfoAccordion> {
           // Beschreibung & Anhang bearbeiten
           if (widget.onEditDescription != null)
             ListTile(
-              title: const Text('Beschreibung & Anhang bearbeiten', style: primaryStyle),
+              title: Text(context.l10n.attendanceEditDescription, style: primaryStyle),
               onTap: widget.onEditDescription,
               dense: true,
             ),
 
           // Anwesenheit als Excel exportieren
           ListTile(
-            title: const Text('Anwesenheit als Excel exportieren', style: primaryStyle),
+            title: Text(context.l10n.attendanceExportExcel, style: primaryStyle),
             onTap: widget.onExportExcel,
             dense: true,
           ),

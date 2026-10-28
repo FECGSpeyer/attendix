@@ -4,6 +4,7 @@ import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/constants/enums.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../data/models/person/person.dart';
+import '../../../../../l10n/l10n.dart';
 
 /// Bottom status bar showing attendance summary statistics
 class AttendanceStatusBar extends StatelessWidget {
@@ -62,23 +63,23 @@ class AttendanceStatusBar extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             _StatItem(
-              label: 'Anwesend',
+              label: context.l10n.commonStatusPresent,
               value: '$present',
               color: AttendanceStatus.present.color,
             ),
             _StatItem(
-              label: 'Entsch.',
+              label: context.l10n.attendanceFlutterExcusedShort,
               value: '$excused',
               color: AttendanceStatus.excused.color,
             ),
             _StatItem(
-              label: 'Abwesend',
+              label: context.l10n.commonStatusAbsent,
               value: '$absent',
               color: AttendanceStatus.absent.color,
             ),
             if (showNeutral)
               _StatItem(
-                label: 'Offen',
+                label: context.l10n.attendanceFlutterOpen,
                 value: '$unknown',
                 color: AttendanceStatus.neutral.color,
               ),

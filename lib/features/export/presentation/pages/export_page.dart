@@ -21,6 +21,7 @@ import '../../../../data/repositories/attendance_repository.dart';
 import '../../export_fields.dart';
 import '../../../../core/services/tracking/tracking_event.dart';
 import '../../../../core/services/tracking/tracking_service.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Export Page
 ///
@@ -66,7 +67,7 @@ class _ExportPageState extends ConsumerState<ExportPage> {
       context: context,
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setLocal) => AlertDialog(
-          title: const Text('Felder'),
+          title: Text(context.l10n.exportFields),
           content: SizedBox(
             width: double.maxFinite,
             child: ListView(
@@ -75,7 +76,7 @@ class _ExportPageState extends ConsumerState<ExportPage> {
                 for (final f in available)
                   CheckboxListTile(
                     dense: true,
-                    title: Text(f),
+                    title: Text(exportFieldLabel(f, context.l10n)),
                     value: selection.contains(f),
                     onChanged: (v) => setLocal(() {
                       v == true ? selection.add(f) : selection.remove(f);
@@ -87,11 +88,11 @@ class _ExportPageState extends ConsumerState<ExportPage> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx),
-              child: const Text('Abbrechen'),
+              child: Text(context.l10n.commonCancel),
             ),
             TextButton(
               onPressed: () => Navigator.pop(ctx, selection),
-              child: const Text('OK'),
+              child: Text(context.l10n.commonOk),
             ),
           ],
         ),
@@ -118,11 +119,14 @@ class _ExportPageState extends ConsumerState<ExportPage> {
     if (!sortOptions.any((o) => o.value == _sortField)) {
       _sortField = 'gruppe';
     }
-    final selectedAvailable = _selectedFields.where(available.contains).join(', ');
+    final selectedAvailable = _selectedFields
+        .where(available.contains)
+        .map((f) => exportFieldLabel(f, context.l10n))
+        .join(', ');
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Daten exportieren'),
+        title: Text(context.l10n.exportTitle),
       ),
       body: ListView(
         padding: const EdgeInsets.only(bottom: AppDimensions.paddingL),
@@ -130,12 +134,12 @@ class _ExportPageState extends ConsumerState<ExportPage> {
           // Ionic `ion-segment mode="md"`: Spieler | Anwesenheit
           _ExportSegment(
             value: _contentType,
-            options: const [('player', 'Spieler'), ('attendance', 'Anwesenheit')],
+            options: [('player', context.l10n.exportPlayers), ('attendance', context.l10n.exportAttendance)],
             onChanged: _setContentType,
           ),
           // "Felder" multi select
           ListTile(
-            title: const Text('Felder'),
+            title: Text(context.l10n.exportFields),
             trailing: ConstrainedBox(
               constraints: BoxConstraints(maxWidth: MediaQuery.sizeOf(context).width * 0.55),
               child: Row(
@@ -193,10 +197,10 @@ class _ExportPageState extends ConsumerState<ExportPage> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         ListTile(
-                          title: Text(field),
+                          title: Text(exportFieldLabel(field, context.l10n)),
                           subtitle: available.contains(field)
                               ? null
-                              : const Text('Eigenes Feld (leer)'),
+                              : Text(context.l10n.exportFlutterCustomFieldEmpty),
                           trailing: ReorderableDragStartListener(
                             index: index,
                             child: const Padding(
@@ -223,35 +227,35 @@ class _ExportPageState extends ConsumerState<ExportPage> {
                   textStyle: const TextStyle(fontSize: 13),
                 ),
                 onPressed: _addCustomField,
-                child: const Text('Extrafeld hinzufügen'),
+                child: Text(context.l10n.exportAddExtraField),
               ),
             ),
           ),
           _SelectItem<String>(
-            label: 'Sortieren nach',
+            label: context.l10n.exportSortBy,
             value: _sortField,
             options: [for (final o in sortOptions) (o.value, o.label)],
             onChanged: (v) => setState(() => _sortField = v),
           ),
           _SelectItem<bool>(
-            label: 'Reihenfolge',
+            label: context.l10n.exportOrder,
             value: _sortAscending,
-            options: const [(true, 'Aufsteigend (A–Z)'), (false, 'Absteigend (Z–A)')],
+            options: [(true, context.l10n.exportAsc), (false, context.l10n.exportDesc)],
             onChanged: (v) => setState(() => _sortAscending = v),
           ),
           _SelectItem<String>(
-            label: 'Export-Typ',
+            label: context.l10n.exportExportType,
             value: _exportType,
             options: const [('pdf', 'PDF'), ('excel', 'Excel')],
             onChanged: (v) => setState(() => _exportType = v),
           ),
           // Flutter hint: the PDF attendance export is limited to 8 dates
           if (_contentType == 'attendance' && _exportType == 'pdf')
-            const Padding(
-              padding: EdgeInsets.fromLTRB(16, 8, 16, 0),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
               child: Text(
-                'PDF-Export ist auf die letzten 8 Termine begrenzt. Für alle Termine der Saison nutze den Excel-Export.',
-                style: TextStyle(fontSize: 12, color: AppColors.medium),
+                context.l10n.exportFlutterPdfLimitHint,
+                style: const TextStyle(fontSize: 12, color: AppColors.medium),
               ),
             ),
           Padding(
@@ -264,7 +268,7 @@ class _ExportPageState extends ConsumerState<ExportPage> {
                       height: 20,
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
-                  : const Text('Exportieren'),
+                  : Text(context.l10n.exportExport),
             ),
           ),
         ],
@@ -278,22 +282,22 @@ class _ExportPageState extends ConsumerState<ExportPage> {
     final name = await showDialog<String>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Feld hinzufügen'),
+        title: Text(context.l10n.exportAddField),
         content: TextField(
           controller: controller,
           autofocus: true,
           textCapitalization: TextCapitalization.sentences,
-          decoration: const InputDecoration(labelText: 'Spaltenname'),
+          decoration: InputDecoration(labelText: context.l10n.exportFlutterColumnName),
           onSubmitted: (v) => Navigator.pop(ctx, v.trim()),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Abbrechen'),
+            child: Text(context.l10n.commonCancel),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(ctx, controller.text.trim()),
-            child: const Text('Hinzufügen'),
+            child: Text(context.l10n.attendanceAdd),
           ),
         ],
       ),
@@ -306,7 +310,7 @@ class _ExportPageState extends ConsumerState<ExportPage> {
 
   Future<void> _export() async {
     if (_selectedFields.isEmpty) {
-      ToastHelper.showError(context, 'Bitte mindestens ein Feld auswählen');
+      ToastHelper.showError(context, context.l10n.planningChooseFieldMin);
       return;
     }
 
@@ -316,7 +320,7 @@ class _ExportPageState extends ConsumerState<ExportPage> {
       final tenant = ref.read(currentTenantProvider);
       final tenantId = ref.read(currentTenantIdProvider);
       if (tenant == null || tenantId == null) {
-        throw Exception('Kein Tenant ausgewählt');
+        throw Exception(context.l10n.historyFlutterNoTenant);
       }
       final tenantName = tenant.shortName;
 
@@ -345,9 +349,17 @@ class _ExportPageState extends ConsumerState<ExportPage> {
         }
       }
 
-      String valueOf(Person p, String field) => exportFieldValue(
+      // Ionic: column headers are the translated labels (fieldLabel); the
+      // values are still resolved by the German field id.
+      final l10n = context.l10n;
+      final headerFields = [for (final f in _selectedFields) exportFieldLabel(f, l10n)];
+      final idByHeader = {
+        for (var i = 0; i < _selectedFields.length; i++) headerFields[i]: _selectedFields[i],
+      };
+
+      String valueOf(Person p, String header) => exportFieldValue(
             p,
-            field,
+            idByHeader[header] ?? header,
             extraFields: extraFields,
             churchNames: churchNames,
             percentage: p.id != null ? percentages[p.id] : null,
@@ -361,7 +373,7 @@ class _ExportPageState extends ConsumerState<ExportPage> {
       );
 
       final exportService = ExportService();
-      final date = DateFormat('dd.MM.yyyy').format(DateTime.now());
+      final date = DateFormat(dateFmt()).format(DateTime.now());
       ref.read(trackingServiceProvider).track(TrackingEvent.reportExported, properties: {'format': _exportType == 'pdf' ? 'pdf' : 'xlsx', 'kind': _contentType == 'player' ? 'player' : 'attendance'});
 
       if (_contentType == 'player') {
@@ -370,18 +382,18 @@ class _ExportPageState extends ConsumerState<ExportPage> {
           await exportService.exportPlayerListPdf(
             context: context,
             players: sortedPlayers,
-            fields: _selectedFields,
+            fields: headerFields,
             tenantName: tenantName,
             valueOf: valueOf,
           );
         } else {
           final bytes = await exportService.exportPlayerListExcel(
             players: sortedPlayers,
-            fields: _selectedFields,
+            fields: headerFields,
             tenantName: tenantName,
             valueOf: valueOf,
           );
-          await _shareExcel(bytes, '$tenantName Personenliste Stand $date');
+          await _shareExcel(bytes, l10n.exportPlayerListFile(tenantName, date));
         }
       } else {
         // All attendances of the current season up to yesterday
@@ -420,7 +432,7 @@ class _ExportPageState extends ConsumerState<ExportPage> {
             players: sortedPlayers,
             attendances: relevant,
             personAttendances: personAttendances,
-            fields: _selectedFields,
+            fields: headerFields,
             tenantName: tenantName,
             valueOf: valueOf,
           );
@@ -429,20 +441,20 @@ class _ExportPageState extends ConsumerState<ExportPage> {
             players: sortedPlayers,
             attendances: relevant,
             personAttendances: personAttendances,
-            fields: _selectedFields,
+            fields: headerFields,
             tenantName: tenantName,
             valueOf: valueOf,
           );
-          await _shareExcel(bytes, '$tenantName Anwesenheit Stand $date');
+          await _shareExcel(bytes, l10n.exportAttendanceFileAsOf(tenantName, date));
         }
       }
 
       if (mounted) {
-        ToastHelper.showSuccess(context, 'Export erfolgreich');
+        ToastHelper.showSuccess(context, context.l10n.exportFlutterSuccess);
       }
     } catch (e) {
       if (mounted) {
-        ToastHelper.showError(context, 'Fehler beim Export: $e');
+        ToastHelper.showError(context, context.l10n.exportFlutterFailedWith(e));
       }
     } finally {
       if (mounted) {

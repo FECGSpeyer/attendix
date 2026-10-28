@@ -1,6 +1,8 @@
 /// Pure helpers for the performance history page (Ionic history.page.ts).
 library;
 
+import '../../l10n/l10n.dart';
+
 /// All plans of a Termin: `plan` plus `extra_plans` (Ionic `allPlans`).
 List<Map<String, dynamic>> allPlansOf(Map<String, dynamic> attendance) {
   final plan = attendance['plan'];
@@ -58,5 +60,5 @@ int countRehearsalsForSong(
   return attendances.where((a) => isSongInPlan(a, songId, date)).length;
 }
 
-/// German plural label for the rehearsal badge (de.json `history.rehearsals`).
-String rehearsalsLabel(int count) => count == 1 ? '1 Probe' : '$count Proben';
+/// Plural label for the rehearsal badge (Ionic `history.rehearsals`).
+String rehearsalsLabel(int count) => l10nWithoutContext.historyRehearsals(count);

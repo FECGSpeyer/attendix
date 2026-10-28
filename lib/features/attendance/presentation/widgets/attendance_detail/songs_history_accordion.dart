@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/theme/app_colors.dart';
+import '../../../../../l10n/l10n.dart';
 import '../songs_selection_sheet.dart';
 
 /// Accordion widget for displaying songs/works in attendance
@@ -34,7 +35,7 @@ class SongsHistoryAccordion extends StatelessWidget {
       child: ExpansionTile(
         shape: const Border(),
         collapsedShape: const Border(),
-        title: Text('Werke (${entries.length})'),
+        title: Text(context.l10n.attendanceSongsCount(entries.length)),
         children: [
           for (var index = 0; index < entries.length; index++)
             ListTile(
@@ -46,14 +47,14 @@ class SongsHistoryAccordion extends StatelessWidget {
               subtitle: Text(entries[index].displayConductor),
               trailing: IconButton(
                 icon: const Icon(Icons.close),
-                tooltip: 'Entfernen',
+                tooltip: context.l10n.commonRemove,
                 onPressed: () => onRemove(index),
               ),
               onTap: onTap == null ? null : () => onTap!(index),
             ),
           ListTile(
             dense: true,
-            title: const Text('Werk(e) hinzufügen', style: TextStyle(color: AppColors.primary)),
+            title: Text(context.l10n.attListAddSongs, style: const TextStyle(color: AppColors.primary)),
             onTap: onAdd,
           ),
         ],

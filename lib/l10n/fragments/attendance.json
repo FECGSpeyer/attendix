@@ -1,0 +1,92 @@
+{
+  "de": {
+    "attendance": {
+      "flutter": {
+        "noTodos": "Keine To-Dos vorhanden",
+        "excusedShort": "Entsch.",
+        "open": "Offen",
+        "holiday": "Feiertag",
+        "schoolHolidays": "Schulferien",
+        "selectDate": "Datum auswählen",
+        "saveFailedWith": "Fehler beim Speichern: {error}",
+        "errorWith": "Fehler: {error}",
+        "addAttachment": "Anhang hinzufügen",
+        "removeAttachment": "Anhang entfernen"
+      }
+    },
+    "history": {
+      "flutter": {
+        "noTenant": "Kein Tenant ausgewählt",
+        "songsAdded": "{count, plural, one {Werk hinzugefügt} other {{count} Werke hinzugefügt}}",
+        "entryDeleted": "Eintrag gelöscht",
+        "unknownSong": "Unbekanntes Werk"
+      }
+    },
+    "export": {
+      "flutter": {
+        "customFieldEmpty": "Eigenes Feld (leer)",
+        "pdfLimitHint": "PDF-Export ist auf die letzten 8 Termine begrenzt. Für alle Termine der Saison nutze den Excel-Export.",
+        "columnName": "Spaltenname",
+        "success": "Export erfolgreich",
+        "failedWith": "Fehler beim Export: {error}"
+      }
+    },
+    "stats": {
+      "flutter": {
+        "noDataInPeriod": "Keine Daten im ausgewählten Zeitraum",
+        "noBirthdays": "Keine Geburtsdaten vorhanden",
+        "noUnexcused": "Keine unentschuldigten Abwesenheiten",
+        "noData": "Keine Daten verfügbar",
+        "absencesCount": "{count} Fehlzeiten",
+        "organisation": "Organisation: {name}",
+        "selectedOf": "{selected} von {total} ausgewählt",
+        "tenantsCount": "{count} Instanzen"
+      }
+    }
+  },
+  "en": {
+    "attendance": {
+      "flutter": {
+        "noTodos": "No to-dos yet",
+        "excusedShort": "Exc.",
+        "open": "Open",
+        "holiday": "Public holiday",
+        "schoolHolidays": "School holidays",
+        "selectDate": "Select date",
+        "saveFailedWith": "Could not save: {error}",
+        "errorWith": "Error: {error}",
+        "addAttachment": "Add attachment",
+        "removeAttachment": "Remove attachment"
+      }
+    },
+    "history": {
+      "flutter": {
+        "noTenant": "No tenant selected",
+        "songsAdded": "{count, plural, one {Piece added} other {{count} pieces added}}",
+        "entryDeleted": "Entry deleted",
+        "unknownSong": "Unknown piece"
+      }
+    },
+    "export": {
+      "flutter": {
+        "customFieldEmpty": "Custom field (empty)",
+        "pdfLimitHint": "The PDF export is limited to the last 8 events. Use the Excel export for all events of the season.",
+        "columnName": "Column name",
+        "success": "Export successful",
+        "failedWith": "Export failed: {error}"
+      }
+    },
+    "stats": {
+      "flutter": {
+        "noDataInPeriod": "No data in the selected period",
+        "noBirthdays": "No birthdays available",
+        "noUnexcused": "No unexcused absences",
+        "noData": "No data available",
+        "absencesCount": "{count} absences",
+        "organisation": "Organisation: {name}",
+        "selectedOf": "{selected} of {total} selected",
+        "tenantsCount": "{count} instances"
+      }
+    }
+  }
+}
