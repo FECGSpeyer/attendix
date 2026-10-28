@@ -173,3 +173,29 @@ class SettingsCountBadge extends StatelessWidget {
     );
   }
 }
+
+/// Ionic `ion-card class="marginTop"` with a big header icon and a hint
+/// text (used on top of the Admins/Eltern/Beobachter lists).
+class SettingsHintCard extends StatelessWidget {
+  const SettingsHintCard({super.key, required this.icon, required this.text});
+
+  final IconData icon;
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: AppDimensions.paddingM),
+      child: Padding(
+        padding: const EdgeInsets.all(AppDimensions.paddingM),
+        child: Column(
+          children: [
+            Icon(icon, size: 40, color: AppColors.primary),
+            const SizedBox(height: AppDimensions.paddingS),
+            Text(text, textAlign: TextAlign.center),
+          ],
+        ),
+      ),
+    );
+  }
+}

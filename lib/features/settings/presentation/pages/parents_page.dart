@@ -7,6 +7,7 @@ import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/user_registration_providers.dart'; // AUTH
 import '../../../../core/providers/parent_providers.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../widgets/settings_list.dart'; // UX_SETTINGS
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/parent/parent_model.dart';
 
@@ -20,7 +21,7 @@ class ParentsPage extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Elternteile'),
+        title: const Text('Eltern'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => context.pop(),
@@ -47,46 +48,26 @@ class ParentsPage extends ConsumerWidget {
             ],
           ),
         ),
+        // UX_SETTINGS: Ionic modal layout — hint card on top, then the list
         data: (parents) {
-          if (parents.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.family_restroom_outlined, size: 80, color: AppColors.medium),
-                  const SizedBox(height: AppDimensions.paddingL),
-                  Text(
-                    'Keine Elternteile',
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                  const SizedBox(height: AppDimensions.paddingS),
-                  Text(
-                    'Elternteile können die Anwesenheit\nihrer Kinder einsehen.',
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppColors.medium),
-                  ),
-                  const SizedBox(height: AppDimensions.paddingL),
-                  ElevatedButton.icon(
-                    onPressed: () => _showAddParentDialog(context, ref),
-                    icon: const Icon(Icons.add),
-                    label: const Text('Elternteil hinzufügen'),
-                  ),
-                ],
-              ),
-            );
-          }
-
           return RefreshIndicator(
-            // FN-012: await provider.future to show spinner until data loads
             onRefresh: () async {
               ref.invalidate(parentsProvider);
               await ref.read(parentsProvider.future);
             },
             child: ListView.builder(
-              padding: const EdgeInsets.all(AppDimensions.paddingM),
-              itemCount: parents.length,
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.fromLTRB(
+                AppDimensions.paddingM, AppDimensions.paddingM, AppDimensions.paddingM, 88),
+              itemCount: parents.length + 1,
               itemBuilder: (context, index) {
-                final parent = parents[index];
+                if (index == 0) {
+                  return const SettingsHintCard(
+                    icon: Icons.favorite_border,
+                    text: 'Eltern können die Anwesenheiten ihrer Kinder einsehen und Abwesenheiten pflegen.',
+                  );
+                }
+                final parent = parents[index - 1];
                 return _ParentItem(
                   parent: parent,
                   onDelete: () => _deleteParent(context, ref, parent),
@@ -173,7 +154,7 @@ class ParentsPage extends ConsumerWidget {
                 Navigator.of(ctx).pop(true);
               }
             },
-            child: const Text('Hinzufügen'),
+            child: const Text('Einladen'),
           ),
         ],
       ),
@@ -225,7 +206,7 @@ class ParentsPage extends ConsumerWidget {
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('Elternteil entfernen?'),
-        content: Text('Möchtest du ${parent.fullName} als Elternteil entfernen?'),
+        content: Text('Möchtest du ${parent.firstName} wirklich entfernen?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
@@ -234,7 +215,7 @@ class ParentsPage extends ConsumerWidget {
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: AppColors.danger),
             onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('Entfernen'),
+            child: const Text('Ja'),
           ),
         ],
       ),
