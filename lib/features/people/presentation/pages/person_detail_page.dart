@@ -9,6 +9,7 @@ import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/duty_providers.dart';
 import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/player_providers.dart';
+import '../../../../core/providers/profile_providers.dart';
 import '../../../../core/providers/realtime_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -361,11 +362,70 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
   Role? _userRole;
   bool _isLoadingRole = false;
 
+  // PEOPLE2: organisation person fields (tenant_group_person_fields)
+  Set<String> _orgFieldIds = {};
+  int? _orgId;
+
   @override
   void initState() {
     super.initState();
     _initDraft();
     _loadUserRole();
+    _loadSharedFieldValues();
+  }
+
+  /// Ionic getOrganisationPersonKey
+  String? get _personKey {
+    final g = widget.person.globalPersonId;
+    if (g != null && g.isNotEmpty) return 'global:$g';
+    final a = widget.person.appId;
+    if (a != null && a.isNotEmpty) return 'app:$a';
+    return null;
+  }
+
+  /// Ionic getSharedPersonFieldValues: organisation field values are shared
+  /// across the tenants of an organisation.
+  Future<void> _loadSharedFieldValues() async {
+    try {
+      final fields = await ref.read(personExtraFieldsProvider.future);
+      _orgFieldIds = fields
+          .where((f) => f.isOrganisationField)
+          .map((f) => f.id)
+          .toSet();
+      if (_orgFieldIds.isEmpty) return;
+      final repo = ref.read(profileRepositoryWithTenantProvider);
+      _orgId = await repo.getOrganisationId();
+      final key = _personKey;
+      if (_orgId == null || key == null) return;
+      final shared = await repo.getSharedFieldValues(_orgId!, key);
+      if (!mounted || shared.isEmpty) return;
+      setState(() {
+        for (final e in shared.entries) {
+          if (_orgFieldIds.contains(e.key) &&
+              !_changedFields.contains('additionalFields.${e.key}')) {
+            _additionalFieldValues[e.key] = e.value;
+          }
+        }
+      });
+    } catch (_) {
+      // Optional — tenant values are shown instead
+    }
+  }
+
+  /// Ionic continueUpdatingPlayer: organisation field values go to
+  /// tenant_group_person_fields, the rest stays in additional_fields.
+  Future<Map<String, dynamic>> _splitAndSaveSharedFields() async {
+    final local = Map<String, dynamic>.from(_additionalFieldValues);
+    final key = _personKey;
+    if (_orgFieldIds.isEmpty || _orgId == null || key == null) return local;
+    final shared = <String, dynamic>{
+      for (final id in _orgFieldIds)
+        if (local.containsKey(id)) id: local.remove(id),
+    };
+    await ref
+        .read(profileRepositoryWithTenantProvider)
+        .updateSharedFieldValues(_orgId!, key, shared);
+    return local;
   }
 
   void _initDraft() {
@@ -479,6 +539,8 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
         _draft = _draft.copyWith(testResult: value as String?);
       } else if (field == 'email') {
         _draft = _draft.copyWith(email: value as String?);
+      } else if (field == 'otherOrchestras') {
+        _draft = _draft.copyWith(otherOrchestras: value as List<String>?);
       } else if (field.startsWith('additionalFields.')) {
         final fieldId = field.substring('additionalFields.'.length);
         _additionalFieldValues[fieldId] = value;
@@ -616,6 +678,8 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
         throw Exception('Person-ID oder Tenant-ID fehlt');
       }
 
+      final localAdditional = await _splitAndSaveSharedFields();
+
       await repo.updatePlayerFields(personId, {
         'firstName': _draft.firstName,
         'lastName': _draft.lastName,
@@ -635,7 +699,8 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
         'parent_id': _selectedParentId,
         'correctBirthday': true,
         'history': updatedHistory,
-        'additional_fields': _additionalFieldValues.isNotEmpty ? _additionalFieldValues : null,
+        'additional_fields': localAdditional.isNotEmpty ? localAdditional : null,
+        'otherOrchestras': _draft.otherOrchestras,
         'range': _draft.range?.isEmpty ?? true ? null : _draft.range,
         'instruments': _draft.instruments?.isEmpty ?? true ? null : _draft.instruments,
         'examinee': _draft.examinee,
@@ -1804,6 +1869,8 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
               isLeader: _isLeader,
               hasTeacher: _hasTeacher,
               additionalFieldValues: _additionalFieldValues,
+              isMainGroup: _isMainGroupSelected,
+              otherOrchestras: _draft.otherOrchestras,
             ),
 
             // Account Accordion
