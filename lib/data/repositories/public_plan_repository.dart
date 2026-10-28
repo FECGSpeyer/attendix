@@ -149,15 +149,22 @@ class PublicPlanRepository extends BaseRepository {
   }
 
   /// Saves edits of an ad-hoc plan (edit link).
-  Future<void> updateSharedPlan(String key, String editKey, {required List<PlanField> fields, String? title, String? time}) async {
+  ///
+  /// SOL_FIX12: [endTime] (the recomputed end, same "YYYY-MM-DDTHH:mm" format
+  /// as the planning pages store in `end_time`) is persisted together with
+  /// the start time and the fields, so viewers never see a stale end.
+  Future<void> updateSharedPlan(
+    String key,
+    String editKey, {
+    required List<PlanField> fields,
+    String? title,
+    String? time,
+    String? endTime,
+  }) async {
     try {
       await supabase
           .from('shared_plans')
-          .update({
-            'fields': fields.map((f) => f.toJson()).toList(),
-            if (title != null) 'plan_title': title,
-            if (time != null) 'time': time,
-          })
+          .update(sharedPlanUpdateData(fields: fields, title: title, time: time, endTime: endTime))
           .eq('id', key)
           .eq('edit_key', editKey);
     } catch (e, stack) {
@@ -165,6 +172,20 @@ class PublicPlanRepository extends BaseRepository {
       rethrow;
     }
   }
+
+  /// Columns written by [updateSharedPlan] (empty values are not written).
+  static Map<String, dynamic> sharedPlanUpdateData({
+    required List<PlanField> fields,
+    String? title,
+    String? time,
+    String? endTime,
+  }) =>
+      {
+        'fields': fields.map((f) => f.toJson()).toList(),
+        if (title != null) 'plan_title': title,
+        if (time != null) 'time': time,
+        if (endTime != null && endTime.isNotEmpty) 'end_time': endTime,
+      };
 
   /// Anonymous one-off share from /planung (no creator).
   Future<void> insertAnonymousSharedPlan(SharedPlan plan) async {

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -317,9 +319,16 @@ enum AuthLinkOutcome { none, recovery, signupConfirmed, failed }
 
 /// Service with the Ionic auth flows.
 class AuthFlowService {
-  AuthFlowService(this._auth);
+  AuthFlowService(
+    this._auth, {
+    this.linkProcessingTimeout = const Duration(seconds: 4),
+  });
 
   final GoTrueClient _auth;
+
+  /// How long to wait for supabase_flutter's own processing of a PKCE link
+  /// (detectSessionInUri) when the code can no longer be exchanged here.
+  final Duration linkProcessingTimeout;
 
   /// Password login. Throws [LoginFailure].
   Future<User> signInWithPassword(String email, String password) async {
@@ -445,56 +454,84 @@ class AuthFlowService {
     }
   }
 
-  Future<void> _waitForSession(Duration timeout) async {
-    if (_auth.currentSession != null) return;
-    try {
-      await _auth.onAuthStateChange
-          .firstWhere((state) => state.session != null)
-          .timeout(timeout);
-    } catch (_) {
-      // Timeout or stream error – caller falls back to its own exchange.
-    }
-  }
-
   /// Process an auth deep link (Ionic `handleAuthUrl`).
   ///
-  /// supabase_flutter may already have consumed `?code=` / `#access_token`
-  /// (detectSessionInUri); in that case an existing session counts as success.
+  /// SOL_FIX12: success is only reported when THIS link was processed
+  /// successfully — an already existing session (e.g. account A signed in
+  /// while an invalid reset link is opened) never counts:
+  /// * `token_hash`: verifyOTP succeeded;
+  /// * `#access_token`: the current session carries this link's access
+  ///   token, or setSession with its refresh token succeeded;
+  /// * `?code` (PKCE): our exchange succeeded, or supabase_flutter
+  ///   (detectSessionInUri) exchanged it — observed as the
+  ///   `passwordRecovery` (recovery) / `signedIn` (other links) auth event of
+  ///   the now current user.
+  /// Every error (catch path included) is a failure.
   Future<AuthLinkOutcome> handleAuthLink(AuthLink link) async {
     if (!link.isAuthLink) return AuthLinkOutcome.none;
     if (link.errorDescription != null) return AuthLinkOutcome.failed;
+    final success =
+        link.isRecovery ? AuthLinkOutcome.recovery : AuthLinkOutcome.signupConfirmed;
+    final expectedEvent =
+        link.isRecovery ? AuthChangeEvent.passwordRecovery : AuthChangeEvent.signedIn;
+
+    // onAuthStateChange replays the latest event, so an exchange that
+    // supabase_flutter already finished before this call is seen as well.
+    String? processedUserId;
+    StreamSubscription<AuthState>? sub;
+    try {
+      sub = _auth.onAuthStateChange.listen(
+        (state) {
+          final user = state.session?.user.id;
+          if (state.event == expectedEvent && user != null) processedUserId = user;
+        },
+        onError: (Object _) {},
+      );
+    } catch (_) {
+      // No auth event stream (tests) – only our own processing counts.
+    }
+
+    bool processedByClient() =>
+        processedUserId != null && processedUserId == _auth.currentUser?.id;
 
     try {
       if (link.tokenHash != null) {
-        await _auth.verifyOTP(
+        final res = await _auth.verifyOTP(
           tokenHash: link.tokenHash,
           type: otpTypeForLink(link),
         );
-      } else if (_auth.currentSession == null) {
-        // supabase_flutter (detectSessionInUri) may still be exchanging the
-        // code/token itself – give it a moment before doing it ourselves.
-        await _waitForSession(const Duration(seconds: 4));
+        return res.session != null || _auth.currentSession != null
+            ? success
+            : AuthLinkOutcome.failed;
       }
-      if (link.tokenHash == null && _auth.currentSession == null) {
-        if (link.accessToken != null && link.refreshToken != null) {
-          await _auth.setSession(link.refreshToken!);
-        } else if (link.code != null) {
-          await _auth.exchangeCodeForSession(link.code!);
+      if (link.accessToken != null && link.refreshToken != null) {
+        if (_auth.currentSession?.accessToken == link.accessToken) return success;
+        final res = await _auth.setSession(link.refreshToken!);
+        return res.session != null ? success : AuthLinkOutcome.failed;
+      }
+      if (link.code != null) {
+        try {
+          final res = await _auth.exchangeCodeForSession(link.code!);
+          return res.session.accessToken.isNotEmpty ? success : AuthLinkOutcome.failed;
+        } catch (e) {
+          // supabase_flutter may have exchanged (or still be exchanging)
+          // the code itself.
+          final deadline = DateTime.now().add(linkProcessingTimeout);
+          while (true) {
+            await Future<void>.delayed(const Duration(milliseconds: 50));
+            if (processedByClient()) return success;
+            if (!DateTime.now().isBefore(deadline)) break;
+          }
+          debugPrint('[handleAuthLink] code exchange failed: $e');
+          return AuthLinkOutcome.failed;
         }
       }
-      if (_auth.currentSession == null) return AuthLinkOutcome.failed;
-      return link.isRecovery
-          ? AuthLinkOutcome.recovery
-          : AuthLinkOutcome.signupConfirmed;
+      return AuthLinkOutcome.failed;
     } catch (e) {
       debugPrint('[handleAuthLink] failed: $e');
-      // A code may already have been exchanged by supabase_flutter.
-      if (link.tokenHash == null && _auth.currentSession != null) {
-        return link.isRecovery
-            ? AuthLinkOutcome.recovery
-            : AuthLinkOutcome.signupConfirmed;
-      }
       return AuthLinkOutcome.failed;
+    } finally {
+      await sub?.cancel();
     }
   }
 }

@@ -15,6 +15,7 @@ import '../../../../core/providers/plan_providers.dart';
 import '../../../../core/providers/song_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/services/plan_export_service.dart';
+import '../../../../core/services/public_plan_draft_storage.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/plan_utils.dart';
 import '../../../../core/utils/toast_helper.dart';
@@ -136,7 +137,12 @@ class PublicPlanningPage extends ConsumerStatefulWidget {
 }
 
 class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
-  static const _storageKey = 'attendix-public-plan';
+  /// SOL_FIX12: the draft belongs to the auth user that opened the page
+  /// (anonymous drafts separate) — never a global key shared by accounts.
+  String? _draftUserId;
+  String get _storageKey => PublicPlanDraftStorage.keyFor(_draftUserId);
+
+  String? get _currentUserId => ref.read(supabaseClientProvider).auth.currentUser?.id;
 
   final _titleController = TextEditingController(text: l10nWithoutContext.plansRunSheet);
   String? _templateId;
@@ -185,8 +191,10 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
 
   Future<void> _restore() async {
     var restored = false;
+    _draftUserId = _currentUserId;
     try {
       final prefs = await SharedPreferences.getInstance();
+      await PublicPlanDraftStorage.dropLegacy(prefs);
       final raw = prefs.getString(_storageKey);
       if (raw != null) {
         final s = jsonDecode(raw) as Map<String, dynamic>;
@@ -216,6 +224,9 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
   }
 
   Future<void> _persistLocal() async {
+    // SOL_FIX12: never write a draft once the account has changed (sign-out
+    // clears it; a late write must not recreate it or leak into another key).
+    if (_currentUserId != _draftUserId) return;
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(

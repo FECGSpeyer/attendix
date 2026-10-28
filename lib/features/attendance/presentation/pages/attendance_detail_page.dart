@@ -796,10 +796,19 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     }
 
     // INTEGRATION: queue while offline like every Ionic updatePersonAttendance
-    if (await ref.read(offlineQueueNotifierProvider.notifier).enqueueIfOffline(
-        personAttendanceId, {'notes': notes ?? ''},
-        attendanceId: widget.attendanceId)) {
-      if (mounted) setState(() => _personNotes[personId] = notes);
+    // SOL_FIX12: a write that could not be queued is reported, never
+    // treated as saved.
+    try {
+      if (await ref.read(offlineQueueNotifierProvider.notifier).enqueueIfOffline(
+          personAttendanceId, {'notes': notes ?? ''},
+          attendanceId: widget.attendanceId)) {
+        if (mounted) setState(() => _personNotes[personId] = notes);
+        return;
+      }
+    } catch (e) {
+      if (mounted) {
+        ToastHelper.showError(context, context.l10n.attendanceFlutterErrorWith(friendlyErrorMessage(e)));
+      }
       return;
     }
 
@@ -2680,9 +2689,20 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     }
 
     // PROFILE_OFFLINE: queue the change while offline (Ionic OfflineQueueService)
-    if (await ref.read(offlineQueueNotifierProvider.notifier).enqueueIfOffline(
-        personAttendanceId, {'status': status.value},
-        attendanceId: widget.attendanceId)) {
+    // SOL_FIX12: a write that could not be queued reverts and is reported.
+    try {
+      if (await ref.read(offlineQueueNotifierProvider.notifier).enqueueIfOffline(
+          personAttendanceId, {'status': status.value},
+          attendanceId: widget.attendanceId)) {
+        return;
+      }
+    } catch (e) {
+      if (mounted) {
+        if (previousStatus != null) {
+          setState(() => _localStatuses[personId] = previousStatus);
+        }
+        ToastHelper.showError(context, context.l10n.attendanceFlutterSaveFailedWith(friendlyErrorMessage(e)));
+      }
       return;
     }
 

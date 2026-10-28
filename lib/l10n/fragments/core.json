@@ -132,7 +132,8 @@
         "noConnection": "Keine Internetverbindung vorhanden",
         "noBranding": "Kein Branding",
         "openExternally": "Extern öffnen",
-        "loadFailed": "Fehler beim Laden"
+        "loadFailed": "Fehler beim Laden",
+        "offlineQueueSaveFailed": "Die Änderung konnte nicht offline gespeichert werden"
       }
     }
   },
@@ -269,7 +270,8 @@
         "noConnection": "No internet connection",
         "noBranding": "No branding",
         "openExternally": "Open externally",
-        "loadFailed": "Error loading"
+        "loadFailed": "Error loading",
+        "offlineQueueSaveFailed": "The change could not be saved offline"
       }
     }
   }

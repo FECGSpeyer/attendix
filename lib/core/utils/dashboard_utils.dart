@@ -101,12 +101,21 @@ abstract class DashboardUtils {
       final bday = parse(p.birthday);
       if (bday == null) continue;
 
-      var date = _safeDate(today.year, bday.month, bday.day);
-      var diff = dayDiff(today, date);
-      if (diff < -birthdayWindow) {
-        date = _safeDate(today.year + 1, bday.month, bday.day);
-        diff = dayDiff(today, date);
+      // SOL_FIX12: the closest occurrence of the birthday among the previous,
+      // current and next year — so a December birthday is still in the
+      // look-back in early January and a January birthday in the look-ahead
+      // at the end of December.
+      DateTime? date;
+      int? diff;
+      for (final year in [today.year - 1, today.year, today.year + 1]) {
+        final candidate = _safeDate(year, bday.month, bday.day);
+        final d = dayDiff(today, candidate);
+        if (diff == null || d.abs() < diff.abs()) {
+          date = candidate;
+          diff = d;
+        }
       }
+      if (date == null || diff == null) continue;
       if (diff < -birthdayWindow || diff > birthdayWindow) continue;
 
       final age = _age(bday, today);
