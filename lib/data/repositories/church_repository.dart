@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/utils/paged_query.dart';
 import '../models/church/church.dart';
 import 'base_repository.dart';
 
@@ -69,31 +70,63 @@ class ChurchRepository extends BaseRepository {
   ///
   /// NOTE: Intentionally cross-tenant (churches are global and persons of all
   /// BFECG tenants reference them). Only reachable from the super-developer
-  /// administration page; each update is scoped to a single player `id`.
+  /// administration page; each update is scoped to the player `id` AND its own
+  /// `tenantId`.
+  ///
+  /// SOL_FIX3: the church reference lives inside the JSON column
+  /// `additional_fields` (no FK column), so a single `UPDATE … SET church`
+  /// statement is impossible without overwriting the other fields. Instead:
+  /// 1. load ALL referencing persons server-side filtered by the church id,
+  ///    page by page (PostgREST max-rows) with a stable order — completely
+  ///    loaded before any update, so updated rows leaving the filter cannot
+  ///    shift the pages,
+  /// 2. update each person with error checking (an update that matches no
+  ///    row, e.g. blocked by RLS, counts as failed),
+  /// 3. delete the duplicate ONLY if every update succeeded and no reference
+  ///    is left; otherwise throw [ChurchMergeIncompleteException] and keep the
+  ///    duplicate so no person points to a deleted church.
   Future<int> mergeChurches(String targetId, String duplicateId) async {
     ensureNotDemo('mergeChurches'); // DEMO_GUARD
+    if (targetId == duplicateId) return 0;
     try {
-      final players = await supabase
-          .from('player')
-          .select('id, additional_fields')
-          .not('additional_fields', 'is', null);
+      final players = await _playersReferencingChurch(duplicateId);
 
       var updated = 0;
-      for (final row in players as List) {
+      var failed = 0;
+      for (final row in players) {
         final fields = row['additional_fields'];
-        if (fields is Map && fields['bfecg_church'] == duplicateId) {
-          final newFields = Map<String, dynamic>.from(fields)
-            ..['bfecg_church'] = targetId;
-          try {
-            await supabase
-                .from('player')
-                .update({'additional_fields': newFields})
-                .eq('id', row['id']);
+        if (fields is! Map || fields[kChurchFieldKey] != duplicateId) continue;
+        final newFields = Map<String, dynamic>.from(fields)
+          ..[kChurchFieldKey] = targetId;
+        try {
+          final result = await supabase
+              .from('player')
+              .update({'additional_fields': newFields})
+              .eq('id', row['id'] as Object)
+              .eq('tenantId', row['tenantId'] as Object)
+              .select('id');
+          if ((result as List).isEmpty) {
+            failed++;
+          } else {
             updated++;
-          } catch (_) {
-            // Ionic counts only successful updates and continues.
           }
+        } catch (_) {
+          failed++;
         }
+      }
+
+      if (failed > 0) {
+        throw ChurchMergeIncompleteException(updated: updated, failed: failed);
+      }
+
+      // Re-check: a reference added meanwhile must not end up dangling.
+      final remaining = await supabase
+          .from('player')
+          .select('id')
+          .eq(_churchFilterColumn, duplicateId)
+          .limit(1);
+      if ((remaining as List).isNotEmpty) {
+        throw ChurchMergeIncompleteException(updated: updated, failed: 0);
       }
 
       await supabase.from('churches').delete().eq('id', duplicateId);
@@ -103,4 +136,42 @@ class ChurchRepository extends BaseRepository {
       rethrow;
     }
   }
+
+  /// JSON key of the church reference inside `player.additional_fields`.
+  static const String kChurchFieldKey = 'bfecg_church';
+
+  /// PostgREST JSON path filter on the church reference.
+  static const String _churchFilterColumn =
+      'additional_fields->>$kChurchFieldKey';
+
+  /// SOL_FIX3: every person (all tenants, see [mergeChurches]) referencing
+  /// [churchId], loaded page by page ordered by the unique `id`.
+  Future<List<Map<String, dynamic>>> _playersReferencingChurch(
+      String churchId) {
+    return fetchAllPages<Map<String, dynamic>>((from, to) async {
+      final page = await supabase
+          .from('player')
+          .select('id, tenantId, additional_fields')
+          .eq(_churchFilterColumn, churchId)
+          .order('id')
+          .range(from, to);
+      return (page as List).cast<Map<String, dynamic>>();
+    });
+  }
+}
+
+/// SOL_FIX3: church merge stopped before deleting the duplicate because not
+/// every referencing person could be re-pointed.
+class ChurchMergeIncompleteException implements Exception {
+  const ChurchMergeIncompleteException({
+    required this.updated,
+    required this.failed,
+  });
+
+  final int updated;
+  final int failed;
+
+  @override
+  String toString() =>
+      'ChurchMergeIncompleteException(updated: $updated, failed: $failed)';
 }

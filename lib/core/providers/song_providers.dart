@@ -638,11 +638,13 @@ class SongCategoryNotifier extends Notifier<AsyncValue<void>> {
   /// Reorder categories
   Future<bool> reorder(List<SongCategory> categories) async {
     state = const AsyncValue.loading();
+    // SOL_FIX3: bind the per-tenant repository once for the whole loop.
+    final repo = _repo;
     try {
       for (int i = 0; i < categories.length; i++) {
         final category = categories[i];
         if (category.id != null) {
-          await _repo.updateSongCategory(category.id!, {'index': i});
+          await repo.updateSongCategory(category.id!, {'index': i});
         }
       }
       state = const AsyncValue.data(null);

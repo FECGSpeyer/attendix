@@ -5,11 +5,20 @@ import 'organisation_providers.dart';
 import 'tenant_providers.dart';
 
 /// CrossTenantPersonRepository with the current tenant set
+///
+/// SOL_FIX3: per-tenant bound instance so a running multi-step flow
+/// (e.g. pausing a person in all linked tenants) keeps its tenant.
 final crossTenantPersonRepositoryWithTenantProvider =
     Provider<CrossTenantPersonRepository>((ref) {
-  final repo = ref.watch(crossTenantPersonRepositoryProvider);
   final tenantId = ref.watch(currentTenantIdProvider);
-  if (tenantId != null) repo.setTenantId(tenantId);
+  return ref.watch(crossTenantPersonRepositoryForTenantProvider(tenantId));
+});
+
+/// SOL_FIX3: one immutable [CrossTenantPersonRepository] per tenant.
+final crossTenantPersonRepositoryForTenantProvider =
+    Provider.family<CrossTenantPersonRepository, int?>((ref, tenantId) {
+  final repo = CrossTenantPersonRepository(ref);
+  if (tenantId != null) repo.bindTenantId(tenantId);
   return repo;
 });
 

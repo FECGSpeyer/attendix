@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/constants/enums.dart';
 import '../../core/utils/duty_utils.dart';
+import '../../core/utils/paged_query.dart';
 import '../models/attendance/attendance.dart';
 import '../models/duty/person_unavailability.dart';
 import 'base_repository.dart';
@@ -279,19 +280,25 @@ class DutyRepository extends BaseRepository with TenantAwareRepository {
     final counts = <int, int>{};
     if (personIds.isEmpty) return counts;
     try {
-      var query = supabase
-          .from('person_attendances')
-          .select('person_id, status, duty_state, attendance:attendance_id!inner(date, type_id, tenantId)')
-          .inFilter('person_id', personIds)
-          .eq('attendance.tenantId', currentTenantId)
-          .not('duty_state', 'is', null)
-          .gte('attendance.date', from.toUtc().toIso8601String())
-          .lte('attendance.date', to.toUtc().toIso8601String());
-      if (typeIds != null && typeIds.isNotEmpty) {
-        query = query.inFilter('attendance.type_id', typeIds);
-      }
-      final rows = await query.range(0, 9999);
-      for (final row in rows as List) {
+      // SOL_FIX3: all rows page by page ordered by the unique id (a large
+      // `.range` does not bypass PostgREST max-rows → truncated counts).
+      final tenantId = currentTenantId;
+      final rows = await fetchAllPages<Map<String, dynamic>>((pageFrom, pageTo) async {
+        var query = supabase
+            .from('person_attendances')
+            .select('id, person_id, status, duty_state, attendance:attendance_id!inner(date, type_id, tenantId)')
+            .inFilter('person_id', personIds)
+            .eq('attendance.tenantId', tenantId)
+            .not('duty_state', 'is', null)
+            .gte('attendance.date', from.toUtc().toIso8601String())
+            .lte('attendance.date', to.toUtc().toIso8601String());
+        if (typeIds != null && typeIds.isNotEmpty) {
+          query = query.inFilter('attendance.type_id', typeIds);
+        }
+        final page = await query.order('id', ascending: true).range(pageFrom, pageTo);
+        return (page as List).cast<Map<String, dynamic>>();
+      });
+      for (final row in rows) {
         final status = AttendanceStatus.fromValue((row['status'] as num?)?.toInt() ?? 0);
         if (!occupiesDutyRaw(row['duty_state'] as String?, status)) continue;
         final id = (row['person_id'] as num).toInt();

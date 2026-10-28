@@ -42,7 +42,13 @@ void main() {
       expect(selects, isNotEmpty);
       for (final q in selects) {
         expect(q, contains('attendance:attendance_id!inner'), reason: q);
-        expect(q, contains(".eq('attendance.tenantId', currentTenantId)"), reason: q);
+        // SOL_FIX3: paged queries capture `final tenantId = currentTenantId`.
+        expect(
+          q.contains(".eq('attendance.tenantId', currentTenantId)") ||
+              q.contains(".eq('attendance.tenantId', tenantId)"),
+          isTrue,
+          reason: q,
+        );
       }
     });
 

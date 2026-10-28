@@ -625,6 +625,9 @@ class _FilesPageState extends ConsumerState<FilesPage> {
       ToastHelper.showWarning(context, context.l10n.filesNoEditRights);
       return;
     }
+    // SOL_FIX3: bind the (per-tenant) repository once for the whole upload
+    // job, so a tenant switch mid-upload never uploads into another tenant.
+    final repo = _repo;
     final result = await FilePicker.platform.pickFiles(allowMultiple: true, withData: true);
     if (result == null || result.files.isEmpty || !mounted) return;
     final files = result.files.where((f) => f.bytes != null).toList();
@@ -679,7 +682,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
         continue;
       }
       try {
-        await _repo.uploadFile(_currentPath, f.name, f.bytes!, overwrite: isDuplicate && overwrite);
+        await repo.uploadFile(_currentPath, f.name, f.bytes!, overwrite: isDuplicate && overwrite);
         ref.read(trackingServiceProvider).track(TrackingEvent.fileUploaded, properties: {'size': f.size, 'mime': songFileMimeType(f.extension ?? '')});
         success++;
       } catch (_) {

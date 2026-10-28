@@ -363,6 +363,27 @@ class UserRegistrationRepository extends BaseRepository
     return ((rows.first as Map<String, dynamic>)['userId'] as String, false);
   }
 
+  /// Main group (Hauptgruppe) id of this repository's tenant (Ionic
+  /// `getMainGroup()?.id`), null if none.
+  ///
+  /// SOL_FIX3: read from the repository's own (bound) tenant, so a bulk
+  /// account job never mixes in the main group of another tenant.
+  Future<int?> getMainGroupId() async {
+    try {
+      final row = await supabase
+          .from('instruments')
+          .select('id')
+          .eq('tenantId', currentTenantId)
+          .eq('maingroup', true)
+          .limit(1)
+          .maybeSingle();
+      return row?['id'] as int?;
+    } catch (e, stack) {
+      handleError(e, stack, 'getMainGroupId');
+      rethrow;
+    }
+  }
+
   /// Ionic `createAccount(player)`: account for a person + link `appId`.
   Future<String> createPlayerAccount(Person person, {int? mainGroupId}) async {
     ensureNotDemo('createPlayerAccount'); // DEMO_GUARD

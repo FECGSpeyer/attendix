@@ -86,7 +86,9 @@ void main() {
           .toList();
       expect(updates, isNotEmpty);
       for (final u in updates) {
-        expect(u, contains(".eq('id', row['id'])"));
+        // SOL_FIX3: scoped to the row's id AND its own tenantId.
+        expect(u, contains(".eq('id', row['id'] as Object)"));
+        expect(u, contains(".eq('tenantId', row['tenantId'] as Object)"));
       }
     });
   });
