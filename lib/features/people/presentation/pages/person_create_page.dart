@@ -19,6 +19,18 @@ import '../../../../core/providers/cross_tenant_person_providers.dart';
 import '../../../../core/utils/person_matcher.dart';
 import '../../../../data/repositories/cross_tenant_person_repository.dart';
 import '../widgets/person_match_suggestions.dart';
+import '../../../../core/providers/church_providers.dart';
+import '../../../../core/providers/parent_providers.dart';
+import '../../../../core/providers/shift_providers.dart';
+import '../../../../core/providers/teacher_providers.dart';
+import '../../../../data/models/shift/shift_plan.dart';
+import '../../../../data/services/auth_service.dart';
+import '../../people_list_utils.dart';
+import '../widgets/church_picker_sheet.dart';
+import '../widgets/person_detail/account_accordion.dart'
+    show accountHelpText, existingUserHintText;
+import '../widgets/person_detail/allgemein_accordion.dart'
+    show otherOrchestraOptions, personExtraFields;
 import 'people_list_page.dart';
 
 /// Page for creating a new person
@@ -53,8 +65,23 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
 
   /// Data adopted from a matched person that has no form field here
   String? _adoptedImg;
-  String? _adoptedOtherExercise;
-  String? _adoptedRange;
+
+  // PEOPLE2: full create form like Ionic person.page (create mode)
+  final _rangeController = TextEditingController();
+  final _instrumentsController = TextEditingController();
+  final _testResultController = TextEditingController();
+  final _otherExerciseController = TextEditingController();
+  DateTime? _playsSince;
+  DateTime _joined = DateTime.now();
+  bool _hasTeacher = false;
+  int? _teacherId;
+  bool _isLeader = false;
+  int? _parentId;
+  bool _examinee = false;
+  List<String> _otherOrchestras = [];
+  String? _shiftId;
+  String? _shiftName;
+  DateTime? _shiftStart;
 
   @override
   void initState() {
@@ -143,8 +170,8 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
         _birthday = DateTime.tryParse(p.birthday!);
       }
       _adoptedImg = p.img;
-      _adoptedOtherExercise = p.otherExercise;
-      _adoptedRange = p.range;
+      _otherExerciseController.text = p.otherExercise ?? '';
+      _rangeController.text = p.range ?? '';
       if (group != null) _selectedInstrument = group.id;
       _nameSuggestions = const [];
       _dismissedFor = _nameKey;
@@ -192,6 +219,10 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
     _emailController.dispose();
     _phoneController.dispose();
     _notesController.dispose();
+    _rangeController.dispose();
+    _instrumentsController.dispose();
+    _testResultController.dispose();
+    _otherExerciseController.dispose();
     super.dispose();
   }
 
@@ -199,7 +230,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
   Widget build(BuildContext context) {
     final instrumentsAsync = ref.watch(groupsProvider);
     final tenant = ref.watch(currentTenantProvider);
-    final extraFields = tenant?.additionalFields ?? [];
+    final extraFields = personExtraFields(ref, tenant);
 
     // Initialize additional_fields with defaults (like Ionic lines 166-174)
     // For NEW person: use type-based defaults only (NO field.defaultValue)
@@ -386,6 +417,17 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
               maxLines: 3,
             ),
 
+            ..._buildIonicFields(tenant),
+
+            // Account help (Ionic person.accountHelp / existingUserHint)
+            const Padding(
+              padding: EdgeInsets.only(top: AppDimensions.paddingM),
+              child: Text(
+                '$accountHelpText\n$existingUserHintText',
+                style: TextStyle(fontSize: 12, color: AppColors.medium),
+              ),
+            ),
+
             // Extra Fields Section - as ExpansionTile like Ionic Accordion
             if (extraFields.isNotEmpty)
               ExpansionTile(
@@ -472,6 +514,26 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
           },
         );
 
+      case 'bfecg_church':
+        final churches = ref.watch(churchesProvider).valueOrNull ?? const [];
+        return ListTile(
+          title: Text(field.name),
+          trailing: TextButton(
+            onPressed: () async {
+              final selected = await showChurchPickerSheet(
+                context,
+                title: field.name,
+                churches: churches,
+                selectedId: _additionalFieldValues[field.id]?.toString(),
+              );
+              if (selected != null) {
+                setState(() => _additionalFieldValues[field.id] = selected);
+              }
+            },
+            child: Text(churchLabel(_additionalFieldValues[field.id], churches)),
+          ),
+        );
+
       case 'select':
         final options = field.options ?? [];
         return Padding(
@@ -487,6 +549,290 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
       default:
         return const SizedBox.shrink();
     }
+  }
+
+  String? _textOrNull(TextEditingController c) =>
+      c.text.trim().isEmpty ? null : c.text.trim();
+
+  bool get _isMainGroup {
+    final main = ref.read(mainGroupProvider).valueOrNull;
+    return main?.id != null && main!.id == _selectedInstrument;
+  }
+
+  /// Ionic: "Möchtest du gleich ein Konto für die Person anlegen?" — the
+  /// account is created server-side via AuthService.createAccountForPerson.
+  Future<void> _offerAccountCreation(Person created) async {
+    final create = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('E-Mail Adresse hinzugefügt'),
+        content: const Text(
+            'Möchtest du gleich ein Konto für die Person anlegen?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Nein'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Ja'),
+          ),
+        ],
+      ),
+    );
+    if (create != true || !mounted) return;
+    final tenantId = ref.read(currentTenantIdProvider);
+    if (tenantId == null) return;
+    try {
+      final mainGroupId = (await ref.read(mainGroupProvider.future))?.id;
+      await ref.read(authServiceProvider).createAccountForPerson(
+            person: created,
+            role: accountRoleForGroup(created.instrument, mainGroupId),
+            tenantId: tenantId,
+          );
+      if (mounted) {
+        ToastHelper.showSuccess(context, 'Account erstellt');
+      }
+    } catch (e) {
+      if (mounted) ToastHelper.showError(context, 'Fehler: $e');
+    }
+  }
+
+  Widget _dateTile({
+    required IconData icon,
+    required String label,
+    required DateTime? value,
+    required ValueChanged<DateTime?> onChanged,
+    bool clearable = true,
+    DateTime? lastDate,
+  }) {
+    return ListTile(
+      contentPadding: EdgeInsets.zero,
+      leading: Icon(icon),
+      title: Text(label),
+      subtitle: Text(
+        value != null ? DateFormat('dd.MM.yyyy').format(value) : 'Nicht angegeben',
+        style: TextStyle(color: value != null ? null : AppColors.medium),
+      ),
+      trailing: clearable && value != null
+          ? IconButton(
+              icon: const Icon(Icons.clear),
+              onPressed: () => onChanged(null),
+            )
+          : null,
+      onTap: () async {
+        final picked = await showDatePicker(
+          context: context,
+          initialDate: value ?? DateTime.now(),
+          firstDate: DateTime(1900),
+          lastDate: lastDate ?? DateTime(2100),
+        );
+        if (picked != null) onChanged(picked);
+      },
+    );
+  }
+
+  /// Fields Ionic person.page shows when adding a person.
+  List<Widget> _buildIonicFields(Tenant? tenant) {
+    final isGeneral = tenant?.type == 'general';
+    final isChoir = tenant?.type == 'choir';
+    final isVoS = tenant?.shortName == 'VoS';
+    final isMain = _isMainGroup;
+    final teachers = (ref.watch(teachersProvider).valueOrNull ?? const [])
+        .where((t) =>
+            _selectedInstrument == null ||
+            t.instruments.contains(_selectedInstrument))
+        .toList();
+    final parents = (tenant?.parents ?? false)
+        ? ref.watch(parentsProvider).valueOrNull ?? const []
+        : const [];
+    final shifts = ref.watch(shiftsProvider).valueOrNull ?? const [];
+    final shift = shifts.where((s) => s.id == _shiftId).firstOrNull;
+    const gap = SizedBox(height: AppDimensions.paddingM);
+
+    return [
+      gap,
+      if (isChoir) ...[
+        TextFormField(
+          controller: _rangeController,
+          decoration: const InputDecoration(
+            labelText: 'Stimmumfang',
+            prefixIcon: Icon(Icons.music_note_outlined),
+          ),
+        ),
+        gap,
+      ],
+      if (!isGeneral && !isChoir && !isMain)
+        _dateTile(
+          icon: Icons.music_note,
+          label: 'Spielt auf dem Instrument seit',
+          value: _playsSince,
+          lastDate: DateTime.now(),
+          onChanged: (d) => setState(() => _playsSince = d),
+        ),
+      _dateTile(
+        icon: Icons.login,
+        label: 'Beigetreten am',
+        value: _joined,
+        clearable: false,
+        onChanged: (d) => setState(() => _joined = d ?? _joined),
+      ),
+      if ((tenant?.parents ?? false) && !isMain)
+        DropdownButtonFormField<int?>(
+          value: _parentId,
+          decoration: const InputDecoration(
+            labelText: 'Eltern',
+            prefixIcon: Icon(Icons.family_restroom),
+          ),
+          items: [
+            const DropdownMenuItem<int?>(
+                value: null, child: Text('Nicht festgelegt')),
+            for (final p in parents)
+              DropdownMenuItem<int?>(value: p.id, child: Text(p.fullName)),
+          ],
+          onChanged: (v) => setState(() => _parentId = v),
+        ),
+      if ((tenant?.maintainTeachers ?? false) && !isMain) ...[
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Spielt beim Lehrer'),
+          value: _hasTeacher,
+          onChanged: (v) => setState(() {
+            _hasTeacher = v;
+            if (!v) _teacherId = null;
+          }),
+        ),
+        if (_hasTeacher)
+          DropdownButtonFormField<int?>(
+            value: teachers.any((t) => t.id == _teacherId) ? _teacherId : null,
+            decoration: const InputDecoration(
+              labelText: 'Lehrer',
+              prefixIcon: Icon(Icons.school),
+            ),
+            items: [
+              const DropdownMenuItem<int?>(value: null, child: Text('Kein Lehrer')),
+              for (final t in teachers)
+                DropdownMenuItem<int?>(value: t.id, child: Text(t.name)),
+            ],
+            onChanged: (v) => setState(() => _teacherId = v),
+          ),
+      ],
+      if (!isGeneral && !isMain)
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Stimmführer'),
+          value: _isLeader,
+          onChanged: (v) => setState(() => _isLeader = v),
+        ),
+      if (!isMain && isChoir) ...[
+        TextFormField(
+          controller: _instrumentsController,
+          decoration: const InputDecoration(
+            labelText: 'Instrumente',
+            prefixIcon: Icon(Icons.piano_outlined),
+          ),
+        ),
+        gap,
+      ],
+      if (!isMain && isVoS) ...[
+        const Padding(
+          padding: EdgeInsets.only(top: AppDimensions.paddingS),
+          child: Text('Andere Orchester'),
+        ),
+        Wrap(
+          spacing: 8,
+          children: [
+            for (final o in otherOrchestraOptions)
+              FilterChip(
+                label: Text(o),
+                selected: _otherOrchestras.contains(o),
+                onSelected: (v) => setState(() {
+                  if (v) {
+                    _otherOrchestras = [..._otherOrchestras, o];
+                  } else {
+                    _otherOrchestras =
+                        _otherOrchestras.where((x) => x != o).toList();
+                  }
+                }),
+              ),
+          ],
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Prüfling'),
+          value: _examinee,
+          onChanged: (v) => setState(() => _examinee = v),
+        ),
+        TextFormField(
+          controller: _testResultController,
+          decoration: const InputDecoration(
+            labelText: 'Testergebnis',
+            prefixIcon: Icon(Icons.assignment_outlined),
+          ),
+        ),
+        gap,
+      ],
+      if (shifts.isNotEmpty) ...[
+        DropdownButtonFormField<String?>(
+          value: _shiftId,
+          decoration: const InputDecoration(
+            labelText: 'Schichtplan',
+            prefixIcon: Icon(Icons.schedule),
+          ),
+          items: [
+            const DropdownMenuItem<String?>(
+                value: null, child: Text('Keine Schicht zugewiesen')),
+            for (final sp in shifts)
+              DropdownMenuItem<String?>(value: sp.id, child: Text(sp.name)),
+          ],
+          // Ionic onShiftChange: named shifts → first name, else start = today
+          onChanged: (v) => setState(() {
+            _shiftId = v;
+            final sp = shifts.where((x) => x.id == v).firstOrNull;
+            if (sp == null) {
+              _shiftName = null;
+              _shiftStart = null;
+            } else if (sp.hasNamedShifts) {
+              _shiftName = sp.shifts.first.name;
+              _shiftStart = null;
+            } else {
+              _shiftName = null;
+              _shiftStart = DateTime.now();
+            }
+          }),
+        ),
+        if (shift != null && shift.hasNamedShifts)
+          DropdownButtonFormField<String?>(
+            value: _shiftName,
+            decoration: const InputDecoration(
+              labelText: 'Schicht',
+              prefixIcon: Icon(Icons.access_time),
+            ),
+            items: [
+              for (final name in shift.shifts.map((x) => x.name).toSet())
+                DropdownMenuItem<String?>(value: name, child: Text(name)),
+            ],
+            onChanged: (v) => setState(() => _shiftName = v),
+          ),
+        if (shift != null && !shift.hasNamedShifts)
+          _dateTile(
+            icon: Icons.calendar_today,
+            label: 'Anfangsdatum',
+            value: _shiftStart,
+            clearable: false,
+            onChanged: (d) => setState(() => _shiftStart = d ?? _shiftStart),
+          ),
+        gap,
+      ],
+      TextFormField(
+        controller: _otherExerciseController,
+        decoration: const InputDecoration(
+          labelText: 'Sonstige Dienste',
+          prefixIcon: Icon(Icons.work_outline),
+        ),
+        textCapitalization: TextCapitalization.sentences,
+      ),
+    ];
   }
 
   Future<void> _pickBirthday() async {
@@ -543,14 +889,30 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
             : null,
         instrument: _selectedInstrument,
         birthday: _birthday?.toIso8601String().split('T').first,
-        joined: DateTime.now().toIso8601String().split('T').first,
+        joined: _joined.toIso8601String().split('T').first,
         additionalFields: _additionalFieldValues.isNotEmpty ? _additionalFieldValues : null,
         img: _adoptedImg,
-        otherExercise: _adoptedOtherExercise,
-        range: _adoptedRange,
+        otherExercise: _textOrNull(_otherExerciseController),
+        range: _textOrNull(_rangeController),
+        instruments: _textOrNull(_instrumentsController),
+        testResult: _textOrNull(_testResultController),
+        playsSince: _playsSince?.toIso8601String().split('T').first,
+        hasTeacher: _hasTeacher,
+        teacher: _hasTeacher ? _teacherId : null,
+        isLeader: _isLeader,
+        parentId: _parentId,
+        examinee: _examinee,
+        otherOrchestras: _otherOrchestras.isEmpty ? null : _otherOrchestras,
+        shiftId: _shiftId,
+        shiftName: _shiftName,
+        shiftStart: _shiftStart?.toIso8601String(),
+        correctBirthday: _birthday != null,
       );
 
-      await repo.createPlayer(person);
+      final created = await repo.createPlayer(person);
+      if (mounted && created.email != null && created.email!.isNotEmpty) {
+        await _offerAccountCreation(created);
+      }
 
       // Invalidate the people list to trigger refresh
       ref.invalidate(peopleListProvider);
