@@ -60,17 +60,33 @@ class AttendanceDetailCache {
     }
   }
 
+  /// Removes one cached entry. Never throws.
+  Future<void> remove(String key) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(key);
+    } catch (e) {
+      debugPrint('[AttendanceDetailCache] remove failed: $e');
+    }
+  }
+
   /// Offline → cached copy (if any); online → [fetch] and store the result.
   /// A fetch that failed because of the network falls back to the cached
   /// copy (the connectivity check can report "online" without a working
   /// connection). Auth/permission and all other errors are rethrown — a
   /// revoked access must never be hidden behind an old copy (SOL_FIX7).
   ///
+  /// SOL_FIX8: an auth/permission error also deletes [key] and — when
+  /// [scope] is given — every offline read cache entry of that user in that
+  /// tenant, so a later offline read cannot show the revoked data. A fetch
+  /// that returns null (row deleted / no longer visible) removes [key].
+  ///
   /// [key] is null when no user is signed in: then nothing is cached.
   Future<T?> fetchWithCache<T extends Object>({
     required String? key,
     required Future<bool> Function() isOnline,
     required Future<T?> Function() fetch,
+    OfflineCacheScope? scope,
   }) async {
     if (key == null) return fetch();
     if (!await isOnline()) {
@@ -81,15 +97,31 @@ class AttendanceDetailCache {
     try {
       fresh = await fetch();
     } catch (e) {
+      if (isAuthOrPermissionError(e)) {
+        // SOL_FIX8: access revoked → drop the copies before reporting.
+        await remove(key);
+        if (scope != null) {
+          await purgeOfflineReadCachesFor(scope.userId, scope.tenantId);
+        }
+        rethrow;
+      }
       if (!isOfflineFallbackError(e)) rethrow;
       final cached = await load(key);
       if (cached is T) return cached;
       rethrow;
     }
+    if (fresh == null) {
+      // SOL_FIX8: not found (any more) → no stale offline copy.
+      await remove(key);
+      return null;
+    }
     await save(key, fresh);
     return fresh;
   }
 }
+
+/// SOL_FIX8: signed-in user + tenant an offline read cache entry belongs to.
+typedef OfflineCacheScope = ({String userId, int tenantId});
 
 /// Key prefixes of all offline read caches (attendance detail + list, songs).
 const List<String> offlineReadCachePrefixes = [
@@ -112,6 +144,27 @@ Future<void> clearOfflineReadCaches() async {
     }
   } catch (e) {
     debugPrint('[OfflineReadCache] clear failed: $e');
+  }
+}
+
+/// SOL_FIX8: removes every offline read cache entry (attendance detail +
+/// list, songs) of [userId] in [tenantId] — called when a load fails with an
+/// auth/permission error. Entries of other users/tenants stay. Never throws.
+Future<void> purgeOfflineReadCachesFor(String userId, int tenantId) async {
+  try {
+    final prefs = await SharedPreferences.getInstance();
+    final bases = [
+      for (final p in offlineReadCachePrefixes) '$p${userId}_$tenantId',
+    ];
+    final keys = prefs
+        .getKeys()
+        .where((k) => bases.any((b) => k == b || k.startsWith('${b}_')))
+        .toList();
+    for (final k in keys) {
+      await prefs.remove(k);
+    }
+  } catch (e) {
+    debugPrint('[OfflineReadCache] purge failed: $e');
   }
 }
 
