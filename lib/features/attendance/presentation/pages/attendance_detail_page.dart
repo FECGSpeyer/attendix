@@ -539,6 +539,13 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
             // ATT_DETAIL: "Neu laden" banner
             error: (error, stack) => ListView(children: [_buildLoadFailedBanner()]),
             data: (persons) {
+              // GROUP_ORDER: Ionic has the groups (main group, sort_order)
+              // before the list renders; never show a first frame in query
+              // order that re-sorts once the groups arrive.
+              final groupsAsync = ref.watch(groupsProvider);
+              if (groupsAsync.isLoading && !groupsAsync.hasValue) {
+                return const Center(child: AppSpinner());
+              }
               if (!_checklistLoaded && attendance.checklist != null) {
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   if (mounted && !_checklistLoaded) {
@@ -566,13 +573,15 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
               final sortField = sortFields.where((f) => f.id == _sort.fieldId).firstOrNull;
               final churches = ref.watch(churchesProvider).valueOrNull ?? const [];
               final statusFiltered = filterPersonsByStatus(groupPersons, _localStatuses, _statusFilter);
-              final groups = ref.watch(groupsProvider).valueOrNull ?? const [];
+              final groups = groupsAsync.valueOrNull ?? const [];
               final visiblePersons = sortField == null
                   // UX_ATT: Ionic group order (main group, sort_order, name)
                   ? sortPersonsByGroup(
                       statusFiltered,
                       groups: groups,
                       mainGroupId: mainGroupIdOf(groups) ?? ref.watch(mainGroupProvider).valueOrNull?.id,
+                      // GROUP_ORDER: Ionic Termin page sorts by last name only
+                      usePersonSortOrder: false,
                     )
                   : sortPersonsByField(statusFiltered, _sort, sortField, _registrationAnswers, churches);
               final sortLines = sortField == null
