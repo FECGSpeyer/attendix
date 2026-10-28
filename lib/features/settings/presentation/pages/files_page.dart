@@ -13,6 +13,7 @@ import '../../../../core/providers/files_providers.dart';
 import '../../../../core/providers/role_permission_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/services/audio_player/audio_player_service.dart';
+import '../../../../core/services/telegram_service.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
@@ -381,6 +382,24 @@ class _FilesPageState extends ConsumerState<FilesPage> {
     }
   }
 
+  // MISC2: Ionic files.page sendEntryPerTelegram (send-document Edge Function)
+  Future<void> _sendEntryPerTelegram(StorageEntry entry) async {
+    if (entry.isFolder) return;
+    final chatId = ref.read(currentTenantUserProvider).valueOrNull?.telegramChatId;
+    if (chatId == null || chatId.isEmpty) {
+      ToastHelper.showWarning(context, 'Bitte verbinde zuerst Telegram in den Benachrichtigungen.');
+      return;
+    }
+    ToastHelper.showInfo(context, 'Datei wird per Telegram gesendet...');
+    try {
+      final url = await _repo.getSignedFileUrl(entry.path, expiresInSeconds: 600);
+      await ref.read(telegramServiceProvider).sendDocumentPerTelegram(url: url, chatId: chatId);
+      if (mounted) ToastHelper.showSuccess(context, 'Nachricht wurde erfolgreich gesendet!');
+    } catch (e) {
+      if (mounted) ToastHelper.showError(context, 'Telegram-Versand fehlgeschlagen: ${_errorText(e)}');
+    }
+  }
+
   Future<void> _createFolder() async {
     if (!_canEdit) {
       ToastHelper.showWarning(context, 'Du darfst Dateien nicht bearbeiten.');
@@ -712,6 +731,16 @@ class _FilesPageState extends ConsumerState<FilesPage> {
                 _shareEntry(entry);
               },
             ),
+            if (!entry.isFolder &&
+                (ref.read(currentTenantUserProvider).valueOrNull?.telegramChatId?.isNotEmpty ?? false))
+              ListTile(
+                leading: const Icon(Icons.send_outlined),
+                title: const Text('Per Telegram senden'),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  _sendEntryPerTelegram(entry);
+                },
+              ),
             if (canEdit) ...[
               ListTile(
                 leading: const Icon(Icons.edit_outlined),
