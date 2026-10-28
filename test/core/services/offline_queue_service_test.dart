@@ -1,5 +1,6 @@
 import 'package:attendix/core/providers/connectivity_provider.dart';
 import 'package:attendix/core/providers/tenant_providers.dart';
+import 'package:attendix/core/services/attendance_detail_cache.dart';
 import 'package:attendix/core/services/offline_queue_service.dart';
 import 'package:attendix/core/services/telegram_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -127,6 +128,102 @@ void main() {
       await notifier.flush();
       expect(container.read(offlinePendingCountProvider), 1);
       expect((await OfflineQueueStore().load()).length, 1);
+    });
+
+    // SOL_FIX2: serialized queue access
+    test('concurrent enqueues do not overwrite each other', () async {
+      final container = createContainer();
+      final notifier = container.read(offlineQueueNotifierProvider.notifier);
+      await Future.wait([
+        for (var i = 0; i < 20; i++) notifier.enqueue('pa$i', {'status': i}, tenantId: 42),
+      ]);
+      final stored = await OfflineQueueStore().load();
+      expect(stored.map((e) => e.personAttendanceId).toSet().length, 20);
+      expect(container.read(offlinePendingCountProvider), 20);
+    });
+
+    test('entries added during a flush are kept', () async {
+      late ProviderContainer container;
+      var injected = false;
+      container = ProviderContainer(overrides: [
+        connectivityProvider.overrideWith((ref) => const Stream<bool>.empty()),
+        connectivityCheckProvider.overrideWithValue(() async => online),
+        currentTenantIdProvider.overrideWithValue(42),
+        offlineFlushFnProvider.overrideWithValue((entry) async {
+          if (!injected) {
+            injected = true;
+            // a new write and a merge into the entry being replayed
+            await container.read(offlineQueueNotifierProvider.notifier).enqueue('paNew', {'status': 9}, tenantId: 42);
+            await container.read(offlineQueueNotifierProvider.notifier).enqueue('pa1', {'notes': 'later'}, tenantId: 42);
+          }
+          flushed.add(entry);
+        }),
+      ]);
+      addTearDown(container.dispose);
+      final notifier = container.read(offlineQueueNotifierProvider.notifier);
+      await notifier.enqueue('pa1', {'status': 1}, tenantId: 42);
+
+      await notifier.flush();
+      final stored = await OfflineQueueStore().load();
+      expect(stored.map((e) => e.personAttendanceId).toSet(), {'pa1', 'paNew'});
+      expect(stored.firstWhere((e) => e.personAttendanceId == 'pa1').payload, {'status': 1, 'notes': 'later'});
+      expect(container.read(offlinePendingCountProvider), 2);
+
+      await notifier.flush();
+      expect(await OfflineQueueStore().load(), isEmpty);
+    });
+
+    test('removeConfirmed matches id and revision', () {
+      final a = _write('a', {'status': 1});
+      final merged = OfflineQueueStore.merge([a], _write('a', {'status': 2}));
+      expect(OfflineQueueStore.removeConfirmed(merged, [a]), hasLength(1));
+      expect(OfflineQueueStore.removeConfirmed(merged, merged), isEmpty);
+    });
+
+    test('flush applies replayed writes to the offline detail cache', () async {
+      final key5 = AttendanceDetailCache.keyFor(42, 5, 'persons');
+      final key6 = AttendanceDetailCache.keyFor(42, 6, 'persons');
+      final otherTenant = AttendanceDetailCache.keyFor(7, 5, 'persons');
+      const cache = AttendanceDetailCache();
+      await cache.save(key5, [
+        {'id': 'pa1', 'status': 0},
+        {'id': 'pa2', 'status': 0},
+      ]);
+      await cache.save(key6, [
+        {'id': 'pa3', 'status': 0},
+      ]);
+      await cache.save(otherTenant, [
+        {'id': 'pa1', 'status': 0},
+      ]);
+      online = false;
+      final container = createContainer();
+      final notifier = container.read(offlineQueueNotifierProvider.notifier);
+      await notifier.enqueueIfOffline('pa1', {'status': 1}, attendanceId: 5);
+      await notifier.enqueueIfOffline('pa3', {'status': 2}); // no attendanceId
+
+      online = true;
+      await notifier.flush();
+      expect(await OfflineQueueStore().load(), isEmpty);
+      final c5 = (await cache.load(key5)) as List;
+      expect(c5.first['status'], 1);
+      expect(c5.last['status'], 0);
+      expect(((await cache.load(key6)) as List).first['status'], 2);
+      expect(((await cache.load(otherTenant)) as List).first['status'], 0, reason: 'other tenant untouched');
+    });
+
+    test('failed replays do not touch the detail cache', () async {
+      final key = AttendanceDetailCache.keyFor(42, 5, 'persons');
+      const cache = AttendanceDetailCache();
+      await cache.save(key, [
+        {'id': 'pa1', 'status': 0},
+      ]);
+      online = false;
+      final container = createContainer();
+      final notifier = container.read(offlineQueueNotifierProvider.notifier);
+      await notifier.enqueueIfOffline('pa1', {'status': 1}, attendanceId: 5);
+      failFlush = true;
+      await notifier.flush();
+      expect(((await cache.load(key)) as List).first['status'], 0);
     });
 
     test('init loads persisted queue and flushes when online', () async {

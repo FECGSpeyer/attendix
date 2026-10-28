@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../config/supabase_config.dart';
 import '../constants/enums.dart';
 import '../providers/tenant_providers.dart';
+import '../providers/role_permission_providers.dart'; // SOL_FIX2
 import 'page_transitions.dart';
 import 'tracking_observer.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' show AuthChangeEvent; // MISC2
@@ -336,7 +337,11 @@ final routerProvider = Provider<GoRouter>((ref) {
         // LEFTOVERS: typed /attendance/:id only for roles that may open a
         // Termin in Ionic (canAddAttendance); must run before the generic
         // '/attendance' prefix entry below (first match wins).
-        final attendanceDetailTarget = attendanceDetailRedirect(location, role);
+        final attendanceDetailTarget = attendanceDetailRedirect(
+          location,
+          role,
+          canCreate: ref.read(canCreateAttendanceProvider), // SOL_FIX2
+        );
         if (attendanceDetailTarget != null) return attendanceDetailTarget;
         // END LEFTOVERS
 

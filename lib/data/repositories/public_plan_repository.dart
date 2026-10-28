@@ -25,11 +25,32 @@ class PublicOrg {
 /// - shared_plans: the row id IS the access token; edits require `edit_key`
 /// - tenant_groups: `.eq('public_plan_key', key)`; org plans are then read
 ///   with `.inFilter('tenantId', <instances of that org>)` + `is_org_plan`
+///
+/// Edit keys (`attendance.share_edit_key`, `shared_plans.edit_key`) are NEVER
+/// selected in a public read path: a viewer could otherwise rebuild the edit
+/// link. Edit mode is verified with [verifySharedAttendanceEditKey] /
+/// [verifySharedPlanEditKey], which filter by id AND the key from the URL and
+/// only return whether a row matched.
 class PublicPlanRepository extends BaseRepository {
   PublicPlanRepository(super.ref);
 
   static const String _sharedAttendanceColumns =
-      'id, date, duration_days, plan, extra_plans, type_id, typeInfo, share_key, share_edit_key';
+      'id, date, duration_days, plan, extra_plans, type_id, typeInfo';
+
+  /// Public columns of `shared_plans` (everything except `edit_key`).
+  static const String _sharedPlanColumns =
+      'id, plan_title, date, time, end_time, fields, branding_id, creator_user_id, created_at, org_id';
+
+  /// Columns that must never reach a public viewer (realtime payloads included).
+  static const Set<String> _secretColumns = {'share_key', 'share_edit_key', 'edit_key'};
+
+  /// Removes edit/share keys from a row before it is handed to the UI.
+  static Map<String, dynamic> stripSecrets(Map<String, dynamic> row) =>
+      Map<String, dynamic>.fromEntries(row.entries.where((e) => !_secretColumns.contains(e.key)));
+
+  /// `SharedPlan.editKey` is required by the model; public reads never load it.
+  static SharedPlan _sharedPlanFromPublicRow(Map<String, dynamic> row) =>
+      SharedPlan.fromJson({...stripSecrets(row), 'edit_key': ''});
 
   /// A Termin shared with `share_key`.
   Future<PlanAttendance?> getSharedAttendancePlan(int id, String key) async {
@@ -44,6 +65,27 @@ class PublicPlanRepository extends BaseRepository {
       return PlanAttendance.fromJson(response);
     } catch (e, stack) {
       handleError(e, stack, 'getSharedAttendancePlan');
+      rethrow;
+    }
+  }
+
+  /// Whether [editKey] is the edit key of the shared Termin [id]/[key].
+  ///
+  /// The key is compared server side (filter on id + share_key +
+  /// share_edit_key) and never read back.
+  Future<bool> verifySharedAttendanceEditKey(int id, String key, String editKey) async {
+    if (editKey.isEmpty) return false;
+    try {
+      final response = await supabase
+          .from('attendance')
+          .select('id')
+          .eq('id', id)
+          .eq('share_key', key)
+          .eq('share_edit_key', editKey)
+          .maybeSingle();
+      return response != null;
+    } catch (e, stack) {
+      handleError(e, stack, 'verifySharedAttendanceEditKey');
       rethrow;
     }
   }
@@ -76,13 +118,32 @@ class PublicPlanRepository extends BaseRepository {
     try {
       final response = await supabase
           .from('shared_plans')
-          .select('*')
+          .select(_sharedPlanColumns)
           .eq('id', key)
           .maybeSingle();
       if (response == null) return null;
-      return SharedPlan.fromJson(response);
+      return _sharedPlanFromPublicRow(response);
     } catch (e, stack) {
       handleError(e, stack, 'getSharedPlan');
+      rethrow;
+    }
+  }
+
+  /// Whether [editKey] is the edit key of the ad-hoc plan [key].
+  ///
+  /// Compared server side (filter on id + edit_key), never read back.
+  Future<bool> verifySharedPlanEditKey(String key, String editKey) async {
+    if (editKey.isEmpty) return false;
+    try {
+      final response = await supabase
+          .from('shared_plans')
+          .select('id')
+          .eq('id', key)
+          .eq('edit_key', editKey)
+          .maybeSingle();
+      return response != null;
+    } catch (e, stack) {
+      handleError(e, stack, 'verifySharedPlanEditKey');
       rethrow;
     }
   }
@@ -169,11 +230,11 @@ class PublicPlanRepository extends BaseRepository {
 
       final adHocRows = await supabase
           .from('shared_plans')
-          .select('*')
+          .select(_sharedPlanColumns)
           .eq('org_id', orgId)
           .order('date', ascending: true);
       final adHoc = (adHocRows as List)
-          .map((e) => SharedPlan.fromJson(e as Map<String, dynamic>))
+          .map((e) => _sharedPlanFromPublicRow(e as Map<String, dynamic>))
           .toList();
 
       return (attendances: attendances, adHoc: adHoc);
@@ -195,7 +256,7 @@ class PublicPlanRepository extends BaseRepository {
           schema: 'public',
           table: 'attendance',
           filter: PostgresChangeFilter(type: PostgresChangeFilterType.eq, column: 'id', value: id),
-          callback: (payload) => onUpdate(payload.newRecord),
+          callback: (payload) => onUpdate(stripSecrets(payload.newRecord)),
         )
         .subscribe();
   }
@@ -209,7 +270,7 @@ class PublicPlanRepository extends BaseRepository {
           schema: 'public',
           table: 'shared_plans',
           filter: PostgresChangeFilter(type: PostgresChangeFilterType.eq, column: 'id', value: key),
-          callback: (payload) => onUpdate(payload.newRecord),
+          callback: (payload) => onUpdate(stripSecrets(payload.newRecord)),
         )
         .subscribe();
   }

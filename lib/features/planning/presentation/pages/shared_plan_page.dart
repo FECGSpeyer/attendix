@@ -113,7 +113,7 @@ class _SharedPlanPageState extends ConsumerState<SharedPlanPage> {
     }
     _applyAttendancePlan();
     final edit = widget.editKey;
-    if (edit != null && edit.isNotEmpty && edit == att.shareEditKey) {
+    if (edit != null && edit.isNotEmpty && await _repo.verifySharedAttendanceEditKey(id, key, edit)) {
       _editMode = true;
       _channel = _repo.watchSharedAttendancePlan(id, _onAttendanceUpdate);
     }
@@ -168,7 +168,7 @@ class _SharedPlanPageState extends ConsumerState<SharedPlanPage> {
     _end = plan.endTime ?? '';
     _fields = [...plan.fields];
     final edit = widget.editKey;
-    if (edit != null && edit.isNotEmpty && edit == plan.editKey) {
+    if (edit != null && edit.isNotEmpty && await _repo.verifySharedPlanEditKey(key, edit)) {
       _editMode = true;
       _channel = _repo.watchSharedPlan(key, _onSharedUpdate);
     }

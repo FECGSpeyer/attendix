@@ -178,6 +178,55 @@ void main() {
       expect(body, contains(".select('id, name')"));
     });
 
+    // SOL_FIX2: edit keys must never be readable by a public viewer.
+    test('public read paths never select edit keys', () {
+      for (final query in [...queries(publicRepo, 'attendance'), ...queries(publicRepo, 'shared_plans')]) {
+        final select = RegExp(r"\.select\(([^)]*)\)").firstMatch(query);
+        if (select == null) continue; // update / insert
+        final arg = select.group(1)!;
+        expect(arg, isNot(contains("'*'")), reason: query);
+        expect(arg, isNot(contains('edit_key')), reason: query);
+      }
+      final columnConsts = RegExp(r"static const String _\w+Columns =\s*'([^']*)'")
+          .allMatches(publicRepo)
+          .map((m) => m.group(1)!)
+          .toList();
+      expect(columnConsts, isNotEmpty);
+      for (final cols in columnConsts) {
+        expect(cols, isNot(contains('edit_key')));
+        expect(cols, isNot(contains('share_key')));
+      }
+    });
+
+    test('no select(\'*\') anywhere in the public repository', () {
+      expect(publicRepo, isNot(contains(".select('*')")));
+      expect(publicRepo, isNot(contains('.select()')));
+      expect(RegExp(r"_sharedPlanColumns =\s*'[^']*'").firstMatch(publicRepo)!.group(0), isNot(contains('edit_key')));
+    });
+
+    test('edit mode is verified by filtering on the key, not by reading it', () {
+      final att = _extractMethodBody(publicRepo, 'verifySharedAttendanceEditKey')!;
+      expect(att, contains(".select('id')"));
+      expect(att, contains(".eq('id', id)"));
+      expect(att, contains(".eq('share_key', key)"));
+      expect(att, contains(".eq('share_edit_key', editKey)"));
+      final adHoc = _extractMethodBody(publicRepo, 'verifySharedPlanEditKey')!;
+      expect(adHoc, contains(".select('id')"));
+      expect(adHoc, contains(".eq('id', key)"));
+      expect(adHoc, contains(".eq('edit_key', editKey)"));
+
+      final page = File('lib/features/planning/presentation/pages/shared_plan_page.dart').readAsStringSync();
+      expect(page, isNot(contains('shareEditKey')));
+      expect(page, isNot(contains('plan.editKey')));
+      expect(page, contains('verifySharedAttendanceEditKey('));
+      expect(page, contains('verifySharedPlanEditKey('));
+    });
+
+    test('realtime payloads are stripped of keys', () {
+      expect(RegExp(r'onUpdate\(payload\.newRecord\)').hasMatch(publicRepo), isFalse);
+      expect('stripSecrets(payload.newRecord)'.allMatches(publicRepo).length, 2);
+    });
+
     test('no public query reads attendance without a key or org filter', () {
       for (final query in queries(publicRepo, 'attendance')) {
         final scoped = query.contains(".eq('share_key', key)") || query.contains(".inFilter('tenantId'");

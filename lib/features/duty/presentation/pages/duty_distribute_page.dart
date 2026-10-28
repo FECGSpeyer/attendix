@@ -1,3 +1,5 @@
+import 'dart:math' show max;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -63,6 +65,10 @@ class _DutyDistributePageState extends ConsumerState<DutyDistributePage> {
 
   List<_PreviewRow> _rows = [];
   List<DutyTermin> _termine = [];
+
+  /// SOL_FIX2: duties of the other duty types in the period; only used to
+  /// block days ("Nicht zweimal am selben Tag"), never filled.
+  List<DutyTermin> _otherTermine = [];
   Map<int, int> _baseCounts = {};
   List<PersonUnavailability> _unavailability = [];
 
@@ -106,16 +112,19 @@ class _DutyDistributePageState extends ConsumerState<DutyDistributePage> {
     try {
       final repo = ref.read(dutyRepositoryWithTenantProvider);
       final dutyTypes = ref.read(dutyTypesProvider);
-      final types = dutyTypes.where((t) => _selectedTypeIds.contains(t.id)).toList();
       final now = DateTime.now();
       final today = DateTime(now.year, now.month, now.day);
       final fromDay = DateTime(_from.year, _from.month, _from.day);
       final toDay = DateTime(_to.year, _to.month, _to.day, 23, 59, 59);
+      // SOL_FIX2: load all duty types so assignments of every duty in the
+      // period count for the same-day lock; only selected types are filled.
       final results = await Future.wait([
-        repo.getUpcomingDutyTermine(types, from: fromDay.isBefore(today) ? today : fromDay, until: toDay),
+        repo.getUpcomingDutyTermine(dutyTypes, from: fromDay.isBefore(today) ? today : fromDay, until: toDay),
         repo.getUnavailabilityForTenant(),
       ]);
-      _termine = results[0] as List<DutyTermin>;
+      final all = results[0] as List<DutyTermin>;
+      _termine = all.where((t) => _selectedTypeIds.contains(t.type.id)).toList();
+      _otherTermine = all.where((t) => !_selectedTypeIds.contains(t.type.id)).toList();
       _unavailability = results[1] as List<PersonUnavailability>;
       final personIds = _termine
           .expand((t) => t.persons.map((p) => p.personId))
@@ -148,16 +157,25 @@ class _DutyDistributePageState extends ConsumerState<DutyDistributePage> {
 
   /// (Re-)runs the distribution; ties are random, so every run can differ.
   void _run() {
+    // SOL_FIX2: fully staffed duties stay in (open: 0) so their people count
+    // for "Nicht zweimal am selben Tag" (Ionic dropped them before computing).
     final slots = _termine
-        .where((t) => t.occupied < t.required && t.attendance.id != null)
+        .where((t) => t.attendance.id != null)
         .map((t) => DutySlot(
               attendanceId: t.attendance.id!,
               date: t.attendance.date,
               candidates: _candidatesOf(t).map((p) => p.personId!).toList(),
               occupied: t.persons.where(occupiesDuty).map((p) => p.personId).whereType<int>().toList(),
-              open: t.required - t.occupied,
+              open: max(0, t.required - t.occupied),
             ))
-        .toList();
+        .toList()
+      ..addAll(_otherTermine.where((t) => t.attendance.id != null).map((t) => DutySlot(
+            attendanceId: t.attendance.id!,
+            date: t.attendance.date,
+            candidates: const [],
+            occupied: t.persons.where(occupiesDuty).map((p) => p.personId).whereType<int>().toList(),
+            open: 0,
+          )));
     final result = distributeDuties(
       slots,
       _baseCounts,

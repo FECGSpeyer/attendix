@@ -16,31 +16,47 @@ void main() {
   group('attendanceDetailRedirect (Ionic att-list openAttendance)', () {
     test('admin, responsible, helper, voice-leader-helper may open a Termin', () {
       for (final role in [Role.admin, Role.responsible, Role.helper, Role.voiceLeaderHelper]) {
-        expect(attendanceDetailRedirect('/attendance/42', role), isNull, reason: role.name);
-        expect(attendanceDetailRedirect('/attendance/new', role), isNull, reason: role.name);
+        expect(attendanceDetailRedirect('/attendance/42', role, canCreate: true), isNull, reason: role.name);
+        expect(attendanceDetailRedirect('/attendance/new', role, canCreate: true), isNull, reason: role.name);
       }
     });
 
     test('viewer is sent to its home page (/people, Ionic /tabs/player)', () {
-      expect(attendanceDetailRedirect('/attendance/42', Role.viewer), '/people');
-      expect(attendanceDetailRedirect('/attendance/new', Role.viewer), '/people');
+      expect(attendanceDetailRedirect('/attendance/42', Role.viewer, canCreate: true), '/people');
+      expect(attendanceDetailRedirect('/attendance/new', Role.viewer, canCreate: true), '/people');
     });
 
     test('other roles land on their default route', () {
-      expect(attendanceDetailRedirect('/attendance/42', Role.player), '/signout');
-      expect(attendanceDetailRedirect('/attendance/42', Role.voiceLeader), '/signout');
-      expect(attendanceDetailRedirect('/attendance/42', Role.parent), '/parents');
+      expect(attendanceDetailRedirect('/attendance/42', Role.player, canCreate: true), '/signout');
+      expect(attendanceDetailRedirect('/attendance/42', Role.voiceLeader, canCreate: true), '/signout');
+      expect(attendanceDetailRedirect('/attendance/42', Role.parent, canCreate: true), '/parents');
+    });
+
+    // SOL_FIX2: attendance_create enforced for typed /attendance/new
+    test('helper without attendance_create cannot open /attendance/new', () {
+      for (final role in [Role.helper, Role.voiceLeaderHelper]) {
+        expect(attendanceDetailRedirect('/attendance/new', role, canCreate: false), '/attendance');
+        expect(attendanceDetailRedirect('/attendance/new?date=2026-01-01', role, canCreate: false), '/attendance');
+        // an existing Termin stays reachable
+        expect(attendanceDetailRedirect('/attendance/42', role, canCreate: false), isNull);
+      }
+      expect(attendanceDetailRedirect('/attendance/new', Role.viewer, canCreate: false), '/people');
+    });
+
+    test('router passes the resolved create permission', () {
+      final src = File('lib/core/router/app_router.dart').readAsStringSync();
+      expect(src, contains('canCreate: ref.read(canCreateAttendanceProvider)'));
     });
 
     test('list and unrelated routes are not touched', () {
-      expect(attendanceDetailRedirect('/attendance', Role.viewer), isNull);
-      expect(attendanceDetailRedirect('/people', Role.viewer), isNull);
-      expect(attendanceDetailRedirect('/attendances/1', Role.viewer), isNull);
+      expect(attendanceDetailRedirect('/attendance', Role.viewer, canCreate: true), isNull);
+      expect(attendanceDetailRedirect('/people', Role.viewer, canCreate: true), isNull);
+      expect(attendanceDetailRedirect('/attendances/1', Role.viewer, canCreate: true), isNull);
     });
 
     test('router applies the rule before the generic route table', () {
       final src = File('lib/core/router/app_router.dart').readAsStringSync();
-      final rule = src.indexOf('attendanceDetailRedirect(location, role)');
+      final rule = src.indexOf('attendanceDetailRedirect(\n          location,\n          role,');
       final table = src.indexOf('for (final entry in _protectedRoutes.entries)');
       expect(rule, greaterThan(0));
       expect(table, greaterThan(rule), reason: 'first match wins');

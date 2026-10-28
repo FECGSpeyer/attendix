@@ -505,10 +505,13 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
               // SETTINGS_EXT: Rollenberechtigungen für Helfer (Checkliste, Notizen, Gruppe)
               final canViewChecklist = ref.watch(canViewAttendanceChecklistProvider);
               final canViewNotes = ref.watch(canViewAttendanceNotesProvider);
-              final helperGroupId = ref.watch(helperGroupFilterProvider).valueOrNull;
-              final groupPersons = helperGroupId == null
+              // SOL_FIX2: loading/error/missing profile group = no access
+              // (never "all groups" before the permission is confirmed).
+              final groupScopeAsync = ref.watch(attendanceGroupScopeProvider);
+              final groupScope = resolvedGroupScope(groupScopeAsync);
+              final groupPersons = groupScope.isAll
                   ? _personsInAttendance(persons)
-                  : _personsInAttendance(persons).where((p) => p.instrument == helperGroupId).toList();
+                  : _personsInAttendance(persons).where((p) => groupScope.allowsGroup(p.instrument)).toList();
               // ATT_DETAIL: status filter + extra field sort
               final sortFields = _sortableFields(attendanceType);
               final sortField = sortFields.where((f) => f.id == _sort.fieldId).firstOrNull;
@@ -650,8 +653,11 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                   ),
 
                   // ATT_DETAIL: no persons could be loaded
-                  if ((persons.isEmpty || _noPersonRows) && helperGroupId == null)
+                  if ((persons.isEmpty || _noPersonRows) && groupScope.isAll)
                     SliverToBoxAdapter(child: _buildLoadFailedBanner()),
+                  // SOL_FIX2: group permission not confirmed yet
+                  if (groupScopeAsync.isLoading)
+                    const SliverToBoxAdapter(child: LinearProgressIndicator()),
 
                   AttendanceGrid(
                       persons: visiblePersons,
@@ -660,6 +666,8 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                       availableStatuses: availableStatuses,
                       clickMode: _clickMode,
                       onStatusChanged: (personId, status) {
+                        // SOL_FIX2: only persons inside the confirmed group scope
+                        if (!groupPersons.any((p) => p.id == personId)) return;
                         final previousStatus = _localStatuses[personId];
                         setState(() {
                           _localStatuses[personId] = status;
@@ -900,11 +908,11 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
   // UX_ATT: persons counted in the Ionic header title (helper group +
   // status filter applied, like Ionic `filteredPlayers`).
   List<Person> _titlePersons(List<Person> persons) {
-    final helperGroupId = ref.watch(helperGroupFilterProvider).valueOrNull;
+    final groupScope = resolvedGroupScope(ref.watch(attendanceGroupScopeProvider));
     final inAttendance = _personsInAttendance(persons);
-    final group = helperGroupId == null
+    final group = groupScope.isAll
         ? inAttendance
-        : inAttendance.where((p) => p.instrument == helperGroupId).toList();
+        : inAttendance.where((p) => groupScope.allowsGroup(p.instrument)).toList();
     return filterPersonsByStatus(group, _localStatuses, _statusFilter);
   }
 
