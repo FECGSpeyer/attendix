@@ -52,6 +52,9 @@ import '../../features/registration/presentation/pages/tenant_registration_page.
 import '../../features/parents/presentation/pages/parents_portal_page.dart';
 import '../../features/shifts/presentation/pages/shifts_list_page.dart';
 import '../../features/shifts/presentation/pages/shift_detail_page.dart';
+// SONGS
+import '../../features/public_links/presentation/pages/app_redirect_page.dart';
+import '../../features/public_links/presentation/pages/open_file_page.dart';
 
 /// Listenable that notifies when auth state changes
 /// Used by GoRouter to re-evaluate redirects without recreating the router
@@ -109,6 +112,15 @@ final authChangeNotifierProvider = Provider<AuthChangeNotifier>((ref) {
   return AuthChangeNotifier(ref);
 });
 
+// SONGS: routes reachable without login (see public GoRoutes at the end)
+bool _isPublicSongsRoute(GoRouterState state) {
+  final path = state.fullPath;
+  return path == '/app' ||
+      path == '/open-file' ||
+      path == '/:songSharingId' ||
+      path == '/:songSharingId/:songId';
+}
+
 /// Router provider
 final routerProvider = Provider<GoRouter>((ref) {
   // Use refreshListenable instead of watching authState directly
@@ -134,6 +146,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       // Public tenant registration route - allow access without login
       final isTenantRegistration = state.matchedLocation.startsWith('/register/');
 
+      // SONGS: public routes (song share links, /app, /open-file) need no
+      // login; /open-file handles auth itself and stashes the link.
+      if (_isPublicSongsRoute(state)) return null;
+
       // If not logged in and not on auth route or tenant registration, redirect to login
       if (!isLoggedIn && !isAuthRoute && !isTenantRegistration) {
         return '/login';
@@ -141,7 +157,8 @@ final routerProvider = Provider<GoRouter>((ref) {
 
       // If logged in and on auth route, redirect to tenant selection
       if (isLoggedIn && isAuthRoute) {
-        return '/tenants';
+        // SONGS: resume a shared file link opened while signed out
+        return PendingFileLink.consume() ?? '/tenants';
       }
 
       // SEC-006: Role-based access control for protected routes
@@ -523,6 +540,35 @@ final routerProvider = Provider<GoRouter>((ref) {
                 builder: (context, state) => const ParentsPage(),
               ),
             ],
+          ),
+        ],
+      ),
+      // SONGS: public routes, registered last so the wildcard share link
+      // routes `/:songSharingId` never shadow app routes (Ionic order).
+      GoRoute(
+        path: '/app',
+        builder: (context, state) => const AppRedirectPage(),
+      ),
+      GoRoute(
+        path: '/open-file',
+        builder: (context, state) => OpenFilePage(
+          tenantId: int.tryParse(state.uri.queryParameters['tenantId'] ?? ''),
+          path: state.uri.queryParameters['path'] ?? '',
+          isFolder: state.uri.queryParameters['folder'] == '1',
+        ),
+      ),
+      GoRoute(
+        path: '/:songSharingId',
+        builder: (context, state) => SongsListPage(
+          songSharingId: state.pathParameters['songSharingId'],
+        ),
+        routes: [
+          GoRoute(
+            path: ':songId',
+            builder: (context, state) => SongDetailPage(
+              songId: state.pathParameters['songId'] ?? '',
+              songSharingId: state.pathParameters['songSharingId'],
+            ),
           ),
         ],
       ),

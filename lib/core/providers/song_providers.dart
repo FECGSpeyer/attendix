@@ -80,21 +80,30 @@ List<Song> enrichSongsWithHistory(
     if (id != null) bySong.putIfAbsent(id, () => []).add(h);
   }
 
-  bool isFuture(SongHistory h) {
+  DateTime? dayOf(SongHistory h) {
     final d = DateTime.tryParse(h.date ?? '')?.toLocal();
-    if (d == null) return false;
-    return DateTime(d.year, d.month, d.day).isAfter(todayDate);
+    return d == null ? null : DateTime(d.year, d.month, d.day);
   }
 
   return songs.map((song) {
     final entries = bySong[song.id] ?? const <SongHistory>[];
+    // Ionic: lastSung = latest entry not after today (future attendances
+    // are ignored), nextPlanned = nearest future entry. Order independent.
     SongHistory? last;
+    DateTime? lastDay;
     SongHistory? next;
+    DateTime? nextDay;
     for (final h in entries) {
-      if (isFuture(h)) {
-        next = h; // descending order: the last future entry is the nearest
-      } else {
-        last ??= h;
+      final day = dayOf(h);
+      if (day == null) continue;
+      if (day.isAfter(todayDate)) {
+        if (nextDay == null || day.isBefore(nextDay)) {
+          next = h;
+          nextDay = day;
+        }
+      } else if (lastDay == null || day.isAfter(lastDay)) {
+        last = h;
+        lastDay = day;
       }
     }
     final conductor = last == null
