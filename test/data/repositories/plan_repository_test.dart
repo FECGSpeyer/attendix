@@ -198,6 +198,12 @@ void main() {
       }
     });
 
+    test('no select(\'*\') anywhere in the public repository', () {
+      expect(publicRepo, isNot(contains(".select('*')")));
+      expect(publicRepo, isNot(contains('.select()')));
+      expect(RegExp(r"_sharedPlanColumns =\s*'[^']*'").firstMatch(publicRepo)!.group(0), isNot(contains('edit_key')));
+    });
+
     test('edit mode is verified by filtering on the key, not by reading it', () {
       final att = _extractMethodBody(publicRepo, 'verifySharedAttendanceEditKey')!;
       expect(att, contains(".select('id')"));

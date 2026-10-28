@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../data/repositories/attendance_repository.dart';
+import 'attendance_detail_cache.dart';
 import '../providers/attendance_providers.dart';
 import '../providers/connectivity_provider.dart';
 import '../providers/tenant_providers.dart';
@@ -201,6 +202,40 @@ class OfflineQueueStore {
   }
 }
 
+/// SOL_FIX2: writes replayed by the queue are applied to the offline detail
+/// cache (`persons` part, matched by tenant + person_attendances id), so a
+/// Termin opened offline later does not show the stale cached status again.
+/// Entries without attendanceId update every cached Termin of their tenant.
+Future<void> applyConfirmedWritesToDetailCache(
+  List<QueuedWrite> confirmed, {
+  AttendanceDetailCache cache = const AttendanceDetailCache(),
+}) async {
+  if (confirmed.isEmpty) return;
+  try {
+    final keys = <String, int>{}; // cache key → tenant
+    List<String>? allKeys;
+    for (final e in confirmed) {
+      if (e.attendanceId != null) {
+        keys[AttendanceDetailCache.keyFor(e.tenantId, e.attendanceId!, 'persons')] = e.tenantId;
+      } else {
+        allKeys ??= (await SharedPreferences.getInstance()).getKeys().toList();
+        final prefix = 'offline_att_detail_v1_${e.tenantId}_';
+        for (final k in allKeys) {
+          if (k.startsWith(prefix) && k.endsWith('_persons')) keys[k] = e.tenantId;
+        }
+      }
+    }
+    for (final entry in keys.entries) {
+      final cached = await cache.load(entry.key);
+      if (cached is! List) continue;
+      final updated = OfflineQueueStore.overlayPending(cached, confirmed, tenantId: entry.value);
+      if (!identical(updated, cached)) await cache.save(entry.key, updated);
+    }
+  } catch (e) {
+    debugPrint('[OfflineQueue] detail cache update failed: $e');
+  }
+}
+
 final offlineQueueStoreProvider =
     Provider<OfflineQueueStore>((ref) => OfflineQueueStore());
 
@@ -337,8 +372,10 @@ class OfflineQueueNotifier extends Notifier<int> {
         }
       }
 
-      // SOL_FIX2: remove only the confirmed entries from the CURRENT queue
+      // SOL_FIX2: bring the offline detail cache up to date first, then
+      // remove only the confirmed entries from the CURRENT queue
       // (never overwrite it with the stale failure set).
+      await applyConfirmedWritesToDetailCache(confirmed);
       final remaining = await _store.update(
         (current) => OfflineQueueStore.removeConfirmed(current, confirmed),
       );
