@@ -11,6 +11,7 @@ import '../constants/enums.dart';
 import '../../data/models/attendance/attendance.dart';
 import '../../data/models/person/person.dart';
 import '../../l10n/l10n.dart';
+import 'native/native_file_service.dart'; // NATIVE_MISC
 
 /// Export Service for generating PDF and Excel files
 ///
@@ -619,10 +620,7 @@ class ExportService {
     final bytes = Uint8List.fromList(excel.encode()!);
     final fileName = '${tenantName}_${l10n.exportAttendance}_$dateStr.xlsx';
 
-    await Printing.sharePdf(
-      bytes: bytes,
-      filename: fileName,
-    );
+    await NativeFileService.saveBytes(bytes, fileName); // NATIVE_MISC
   }
 
   /// Generate plan/program PDF in 2xA5 format (two identical plans side-by-side on A4 landscape)

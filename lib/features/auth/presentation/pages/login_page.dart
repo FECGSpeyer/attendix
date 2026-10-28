@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../core/config/supabase_config.dart';
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/services/app_update_service.dart'; // NATIVE_MISC
 import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/providers/user_preferences_provider.dart';
@@ -511,7 +512,25 @@ class _LoginPageState extends ConsumerState<LoginPage> {
             bottom: 16,
             child: SafeArea(
               top: false,
-              child: Wrap(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // NATIVE_MISC: Ionic login update-banner ("Update installieren")
+                  if (ref.watch(appUpdateAvailableProvider))
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: FilledButton.icon(
+                        style: FilledButton.styleFrom(
+                          backgroundColor: AppColors.success,
+                          foregroundColor: Colors.white,
+                          visualDensity: VisualDensity.compact,
+                        ),
+                        onPressed: () => ref.read(appUpdateServiceProvider).applyUpdate(),
+                        icon: const Icon(Icons.cloud_download_outlined, size: 18),
+                        label: Text(context.l10n.loginInstallUpdate),
+                      ),
+                    ),
+                  Wrap(
                 alignment: WrapAlignment.center,
                 children: [
                   Text(context.l10n.loginVersion(AppConstants.appVersion),
@@ -530,6 +549,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     onTap: () => showLegalModal(context),
                     child: Text(context.l10n.loginLegal, style: footerStyle),
                   ),
+                ],
+              ),
                 ],
               ),
             ),

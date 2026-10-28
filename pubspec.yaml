@@ -77,6 +77,10 @@ dependencies:
   vsc_quill_delta_to_html: ^1.0.5
   flutter_quill_delta_from_html: ^1.5.3
   connectivity_plus: ^7.0.0
+  open_filex: ^5.0.0
+  audio_service: ^0.18.19
+  in_app_update: ^4.2.5
+  audio_session: ^0.1.25
 
 dev_dependencies:
   flutter_test:

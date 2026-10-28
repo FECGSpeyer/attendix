@@ -1,5 +1,7 @@
 package de.attendix.attendix
 
-import io.flutter.embedding.android.FlutterActivity
+import com.ryanheise.audioservice.AudioServiceActivity
 
-class MainActivity : FlutterActivity()
+// NATIVE_MISC: AudioServiceActivity (a FlutterActivity) shares its engine with
+// audio_service so lock-screen / notification media controls work.
+class MainActivity : AudioServiceActivity()

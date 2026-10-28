@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/feedback_providers.dart';
@@ -13,6 +12,7 @@ import '../../../../core/providers/files_providers.dart';
 import '../../../../core/providers/role_permission_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/services/audio_player/audio_player_service.dart';
+import '../../../../core/services/native/native_file_service.dart'; // NATIVE_MISC
 import '../../../../core/services/telegram_service.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/dialog_helper.dart';
@@ -390,7 +390,8 @@ class _FilesPageState extends ConsumerState<FilesPage> {
     final openFailed = context.l10n.filesFlutterOpenLinkFailed;
     try {
       final url = await _repo.getSignedFileUrl(entry.path, downloadName: entry.name);
-      final ok = await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+      // NATIVE_MISC: native app → cache dir + system viewer (Ionic downloadFileNative)
+      final ok = await NativeFileService.openUrl(url, fileName: entry.name);
       if (!ok) throw Exception(openFailed);
     } catch (e) {
       if (mounted) ToastHelper.showError(context, context.l10n.filesDownloadFailed(_errorText(e)));

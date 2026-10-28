@@ -13,6 +13,7 @@ import '../../../l10n/l10n.dart'; // I18N_INFRA
 import '../audio_player/audio_player_widget.dart';
 import '../debug/debug_role_fab.dart';
 import '../dialogs/native_app_ad.dart'; // LINKS_STARTUP
+import 'root_back_button_scope.dart'; // NATIVE_MISC
 
 /// Represents a navigation destination with its route
 class _NavDestination {
@@ -202,7 +203,11 @@ class MainShell extends ConsumerWidget {
       );
     }
 
-    return Scaffold(
+    // NATIVE_MISC: Android back at a root tab exits the app (Ionic
+    // @capacitor/app backButton → exitApp); nested pages pop normally because
+    // go_router pops the inner navigator before this scope is asked.
+    return RootBackButtonScope(
+      child: Scaffold(
       body: Column(
         children: [
           // LINKS_STARTUP: one-time "Attendix als App verfügbar!" (web)
@@ -231,6 +236,7 @@ class MainShell extends ConsumerWidget {
                 ))
             .toList(),
         ),
+      ),
       ),
     );
   }

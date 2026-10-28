@@ -12,6 +12,7 @@ import '../../../data/models/song/song.dart';
 import '../../../data/models/song/song_additional_field.dart';
 import '../presentation/utils/song_utils.dart';
 import '../../../l10n/l10n.dart';
+import '../../../core/services/native/native_file_service.dart'; // NATIVE_MISC
 
 /// One file to print (optionally several copies)
 class SongPrintEntry {
@@ -112,7 +113,7 @@ class SongPrintService {
 
       if (pages > 0) {
         final data = await doc.save();
-        await Printing.layoutPdf(onLayout: (_) async => data, name: fileName);
+        await NativeFileService.printPdf(data, fileName); // NATIVE_MISC
       }
       return SongPrintResult(pageCount: pages, skipped: skipped);
     } finally {
@@ -189,6 +190,6 @@ class SongPrintService {
     final bytes = await doc.save();
     final fileName =
         '${tenantShortName}_Werkverzeichnis_${date.replaceAll('.', '-')}.pdf';
-    await Printing.sharePdf(bytes: bytes, filename: fileName);
+    await NativeFileService.saveBytes(bytes, fileName); // NATIVE_MISC
   }
 }
