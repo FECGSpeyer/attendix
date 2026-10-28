@@ -40,3 +40,5 @@ Wenn nichts kommt: Der Postbote kommentiert selbst, wenn beide Konten leer oder 
 („Review nicht möglich“), wenn der Sandbox-Selbsttest scheitert oder wenn Codex einen anderen Fehler
 meldet. Nach sechs Stunden ganz ohne Antwort gilt der Ausweichweg: ein Claude-Reviewer mit Wechsel zum
 Autor (schrieb Sonnet, prüft Opus; schrieb Opus, prüft Sonnet xhigh).
+
+Probe am 28.10.2026: erstes Review über den gemeinsamen Postboten.
