@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -152,7 +153,7 @@ class SettingsPage extends ConsumerWidget {
             // ============ STIMMFÜHRER ============
             if (isVoiceLeader && !isGeneral)
               SettingsListSection(
-                icon: Icons.music_note_outlined,
+                icon: CupertinoIcons.music_note_2, // musical-notes-outline
                 title: l10n.settingsVoiceLeader,
                 children: [
                   SettingsListTile(
@@ -264,11 +265,12 @@ class SettingsPage extends ConsumerWidget {
             // ============ WERKE & PROBEN ============
             if (!isGeneral && !isApplicant)
               SettingsListSection(
-                icon: Icons.music_note_outlined,
+                icon: CupertinoIcons.music_note_2, // musical-notes-outline
                 title: l10n.settingsSongsRehearsals,
                 children: [
                   SettingsListTile(
-                    icon: Icons.library_music_outlined,
+                    // Ionic library-outline: books on a shelf.
+                    iconWidget: const IonLibraryOutlineIcon(),
                     title: l10n.settingsSongs,
                     onTap: () => context.push('/settings/songs'),
                   ),
@@ -433,9 +435,11 @@ class SettingsPage extends ConsumerWidget {
               icon: Icons.settings_outlined,
               title: l10n.settingsSystem,
               // Ionic .delete-account-link: transparent, margin-top 24,
-              // 13px, opacity .55, centered + underlined.
+              // 13px, opacity .55, centered + underlined. It sits inside the
+              // ion-list below the item group; on iOS global.scss gives the
+              // group margin-bottom 16 → 40pt gap below the logout card.
               footer: Padding(
-                padding: const EdgeInsets.only(top: 24),
+                padding: EdgeInsets.only(top: ios ? 40 : 24),
                 child: Center(
                   child: InkWell(
                     onTap: () => context.push('/settings/delete-account'),
@@ -459,7 +463,8 @@ class SettingsPage extends ConsumerWidget {
               ),
               children: [
                 SettingsListTile(
-                  icon: Icons.apps,
+                  // Ionic apps-outline: 3×3 grid of round dots.
+                  icon: CupertinoIcons.circle_grid_3x3,
                   title: l10n.settingsSwitchTenant,
                   subtitle: tenant?.longName,
                   detail: false,
@@ -477,13 +482,8 @@ class SettingsPage extends ConsumerWidget {
                   detail: false,
                   onTap: () => showChangePasswordDialog(context),
                 ),
-                // Flutter: E-Mail ändern (neben Passwort ändern)
-                SettingsListTile(
-                  icon: Icons.alternate_email,
-                  title: l10n.settingsFlutterChangeEmail,
-                  detail: false,
-                  onTap: () => showChangeEmailDialog(context),
-                ),
+                // Ionic offers no "E-Mail ändern" here (nor anywhere else),
+                // so the Mehr tab shows only "Passwort ändern".
                 // LEGAL_HELP: help center
                 SettingsListTile(
                   icon: Icons.help_outline,
@@ -491,7 +491,8 @@ class SettingsPage extends ConsumerWidget {
                   onTap: () => context.push('/settings/help'),
                 ),
                 SettingsListTile(
-                  icon: Icons.chat_bubble_outline,
+                  // Ionic chatbubble-ellipses-outline (bubble with dots).
+                  icon: Icons.sms_outlined,
                   title: l10n.settingsGiveFeedback,
                   detail: false,
                   onTap: () => showFeedbackSheet(context),
@@ -519,6 +520,7 @@ class SettingsPage extends ConsumerWidget {
                     title: l10n.adminTitle,
                     onTap: () => context.push('/settings/administration'),
                   ),
+                // Ionic: red `ion-item color="danger"` row, no detail chevron.
                 SettingsListTile(
                   icon: Icons.logout,
                   title: l10n.settingsLogout,

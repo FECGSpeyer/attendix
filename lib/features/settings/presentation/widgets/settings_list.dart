@@ -303,10 +303,14 @@ class IonInsetGroup extends StatelessWidget {
             children: [
               for (var i = 0; i < children.length; i++) ...[
                 if (i > 0)
+                  // Ionic inset list: the line is the border of `.item-inner`,
+                  // which starts at the label and stops at the item's native
+                  // padding-end, so it is inset on both sides.
                   Divider(
                     height: 0.5,
                     thickness: 0.5,
                     indent: dividerIndent,
+                    endIndent: IonIos.itemPaddingEnd,
                     color: IonIos.line(context),
                   ),
                 children[i],
@@ -345,6 +349,7 @@ class SettingsListTile extends StatelessWidget {
   const SettingsListTile({
     super.key,
     this.icon,
+    this.iconWidget,
     required this.title,
     this.subtitle,
     this.trailing,
@@ -357,6 +362,10 @@ class SettingsListTile extends StatelessWidget {
   });
 
   final IconData? icon;
+
+  /// Start icon drawn by a widget (Ionic ionicons without a font glyph,
+  /// e.g. [IonLibraryOutlineIcon]); takes precedence over [icon].
+  final Widget? iconWidget;
   final String title;
   final String? subtitle;
   final Widget? trailing;
@@ -389,7 +398,15 @@ class SettingsListTile extends StatelessWidget {
     final showChevron = detail && onTap != null;
     final tile = ListTile(
       leading:
-          icon != null
+          iconWidget != null
+              ? IconTheme.merge(
+                data: IconThemeData(
+                  color: iconFg,
+                  size: ios ? IonIos.itemIconSize : 24,
+                ),
+                child: iconWidget!,
+              )
+              : icon != null
               ? Icon(
                 icon,
                 color: iconFg,
@@ -975,4 +992,77 @@ class IonSearchbar extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Ionicons `library-outline` (books on a shelf), which has no
+/// Material/Cupertino glyph. Drawn from the ionicons 512×512 SVG with the
+/// ambient [IconTheme] colour and size.
+class IonLibraryOutlineIcon extends StatelessWidget {
+  const IonLibraryOutlineIcon({super.key, this.size, this.color});
+
+  final double? size;
+  final Color? color;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = IconTheme.of(context);
+    final s = size ?? theme.size ?? 24;
+    return SizedBox.square(
+      dimension: s,
+      child: CustomPaint(
+        painter: _IonLibraryPainter(
+          color ?? theme.color ?? IonIos.text(context),
+        ),
+      ),
+    );
+  }
+}
+
+class _IonLibraryPainter extends CustomPainter {
+  _IonLibraryPainter(this.color);
+
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final k = size.width / 512;
+    canvas.save();
+    canvas.scale(k, k);
+    final paint =
+        Paint()
+          ..color = color
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 32
+          ..strokeJoin = StrokeJoin.round
+          ..strokeCap = StrokeCap.round;
+    RRect book(double x, double y, double w, double h) =>
+        RRect.fromRectAndRadius(
+          Rect.fromLTWH(x, y, w, h),
+          const Radius.circular(16),
+        );
+    canvas.drawRRect(book(32, 96, 64, 368), paint);
+    canvas.drawRRect(book(112, 160, 128, 304), paint);
+    canvas.drawRRect(book(256, 48, 96, 416), paint);
+    canvas.drawLine(const Offset(112, 224), const Offset(240, 224), paint);
+    canvas.drawLine(const Offset(112, 400), const Offset(240, 400), paint);
+    // Tilted book (the SVG path verbatim).
+    final tilted =
+        Path()
+          ..moveTo(422.46, 96.11)
+          ..relativeLineTo(-40.4, 4.25)
+          ..relativeCubicTo(-11.12, 1.17, -19.18, 11.57, -17.93, 23.1)
+          ..relativeLineTo(34.92, 321.59)
+          ..relativeCubicTo(1.26, 11.53, 11.37, 20, 22.49, 18.84)
+          ..relativeLineTo(40.4, -4.25)
+          ..relativeCubicTo(11.12, -1.17, 19.18, -11.57, 17.93, -23.1)
+          ..lineTo(445, 115)
+          ..relativeCubicTo(-1.31, -11.58, -11.42, -20.06, -22.54, -18.89)
+          ..close();
+    canvas.drawPath(tilted, paint);
+    canvas.restore();
+  }
+
+  @override
+  bool shouldRepaint(_IonLibraryPainter oldDelegate) =>
+      oldDelegate.color != color;
 }
