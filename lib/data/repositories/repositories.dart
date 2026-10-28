@@ -26,3 +26,6 @@ export 'role_permission_repository.dart';
 export 'extra_fields_repository.dart';
 export 'organisation_settings_repository.dart';
 // END SETTINGS_EXT
+// MESSAGES
+export 'message_repository.dart';
+export 'user_notification_repository.dart';

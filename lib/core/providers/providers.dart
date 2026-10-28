@@ -28,3 +28,5 @@ export 'legal_providers.dart';
 export 'role_permission_providers.dart';
 export 'files_providers.dart';
 // END SETTINGS_EXT
+// MESSAGES
+export 'message_providers.dart';

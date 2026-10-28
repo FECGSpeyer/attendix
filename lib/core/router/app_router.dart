@@ -67,6 +67,9 @@ import '../../features/settings/presentation/pages/extra_fields_page.dart';
 import '../../features/settings/presentation/pages/branding_page.dart';
 import '../../features/settings/presentation/pages/link_persons_page.dart';
 // END SETTINGS_EXT
+// MESSAGES
+import '../../features/messages/presentation/pages/message_detail_page.dart';
+import '../../features/messages/presentation/pages/message_list_page.dart';
 
 /// Listenable that notifies when auth state changes
 /// Used by GoRouter to re-evaluate redirects without recreating the router
@@ -103,6 +106,8 @@ const Map<String, RoleCheck> _protectedRoutes = {
   '/settings/role-permissions': _isAdminOrResponsible,
   // (/settings/files prüft den Zugriff selbst: abhängig von tenants.files_shared)
   // END SETTINGS_EXT
+  // MESSAGES
+  '/settings/messages': _isAdminOrResponsible,
 
   // Conductor routes (Admin, Responsible, Viewer)
   '/settings/teachers': _isConductor,
@@ -417,6 +422,13 @@ final routerProvider = Provider<GoRouter>((ref) {
           ),
 
           // Settings
+          // MESSAGES: Mitteilung detail (recipients + admins, Ionic /tabs/messages/:id)
+          GoRoute(
+            path: '/messages/:id',
+            name: 'messageDetail',
+            builder: (context, state) =>
+                MessageDetailPage(messageId: state.pathParameters['id'] ?? ''),
+          ),
           GoRoute(
             path: '/settings',
             name: 'settings',
@@ -487,6 +499,12 @@ final routerProvider = Provider<GoRouter>((ref) {
                     },
                   ),
                 ],
+              ),
+              // MESSAGES: Mitteilungen list (admins/responsibles, Ionic /tabs/settings/messages)
+              GoRoute(
+                path: 'messages',
+                name: 'messages',
+                builder: (context, state) => const MessageListPage(),
               ),
               GoRoute(
                 path: 'notifications',

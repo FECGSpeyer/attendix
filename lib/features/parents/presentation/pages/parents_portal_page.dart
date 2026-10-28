@@ -10,6 +10,7 @@ import '../../../../data/models/person/person.dart';
 import '../../../../data/repositories/sign_in_out_repository.dart';
 import '../../../self_service/presentation/widgets/plan_viewer_sheet.dart';
 import '../../data/providers/parents_providers.dart';
+import '../../../messages/presentation/widgets/notification_bell.dart'; // MESSAGES
 
 /// Parents Portal Page
 ///
@@ -39,6 +40,7 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
             tooltip: 'Legende',
             onPressed: () => _showLegend(context),
           ),
+          const NotificationBell(), // MESSAGES
         ],
       ),
       body: childrenAsync.when(

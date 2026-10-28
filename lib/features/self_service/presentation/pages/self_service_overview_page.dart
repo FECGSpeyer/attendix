@@ -12,6 +12,7 @@ import '../../../../data/models/attendance/attendance.dart';
 import '../../../../data/models/person/person.dart';
 import '../widgets/plan_viewer_sheet.dart';
 import '../widgets/upcoming_songs_sheet.dart';
+import '../../../messages/presentation/widgets/notification_bell.dart'; // MESSAGES
 
 /// Self-Service Overview Page
 ///
@@ -72,6 +73,7 @@ class _SelfServiceOverviewPageState
             tooltip: 'Aktuelle Stücke',
             onPressed: () => showUpcomingSongsSheet(context),
           ),
+          const NotificationBell(), // MESSAGES
         ],
       ),
       body: attendancesAsync.when(
