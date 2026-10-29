@@ -99,6 +99,10 @@ void main() {
       // top of the screen below the safe area.
       expect(sub.width, 200);
       expect(sub.right, closeTo(parent.right, 0.5));
+      // Ionic iOS popovers share `--width: 200px`, so the nested one covers
+      // the parent's upper rows completely – no icon-only strip beside it.
+      expect(parent.width, 200);
+      expect(sub.left, closeTo(parent.left, 0.5));
       expect(sub.top, closeTo(safeTop + kIosNestedPopoverTop, 0.5));
       expect(sub.top, lessThan(parent.top));
 

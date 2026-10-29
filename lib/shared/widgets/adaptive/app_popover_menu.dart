@@ -103,7 +103,8 @@ Future<T?> showAppPopoverMenu<T>({
   required BuildContext context,
   required List<AppPopoverMenuItem<T>> items,
   List<AppPopoverMenuItem<T>> Function()? itemsBuilder,
-  double iosWidth = 250,
+  // Ionic `popover.ios.css`: `--width: 200px` (md 250px).
+  double iosWidth = 200,
 }) {
   final button = context.findRenderObject()! as RenderBox;
   final navigator = Navigator.of(context, rootNavigator: true); // IOS_SHELL2

@@ -199,6 +199,12 @@ final realtimeAttendanceListProvider = FutureProvider.autoDispose<List<Attendanc
       cacheUserId,
       tenantId,
       () async {
+        // P3: attendance types load in parallel with the list (Ionic needs
+        // a single request here; sequential loads delayed the first paint).
+        final typesFuture = ref.watch(attendanceTypesProvider.future);
+        // Its error is rethrown by the await below; this listener only keeps
+        // an early failure from being reported as unhandled meanwhile.
+        typesFuture.then<void>((_) {}, onError: (Object _) {});
         // SOL_FIX1: paged (PostgREST max-rows 1000), stable order date+id.
         final rows = await fetchAllPages<dynamic>((from, to) async => await supabase
             .from('attendance')
@@ -208,7 +214,7 @@ final realtimeAttendanceListProvider = FutureProvider.autoDispose<List<Attendanc
             .order('date', ascending: false)
             .order('id', ascending: false)
             .range(from, to) as List);
-        final loadedTypes = await ref.watch(attendanceTypesProvider.future);
+        final loadedTypes = await typesFuture;
         return (rows, loadedTypes);
       },
     );
