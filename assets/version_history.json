@@ -1,6 +1,14 @@
 {
   "versions": [
     {
+      "version": "0.22.6",
+      "date": "29.10.2026",
+      "changes": [
+        "🐛 Neues Design (Beta): „Gruppe wechseln“ bleibt offen, bis der Wechsel fertig ist",
+        "🐛 Neues Design (Beta): Wird beim Anlegen der Start einer Serie über die Zeitumstellung verschoben, bleibt der letzte Termin erhalten"
+      ]
+    },
+    {
       "version": "0.22.5",
       "date": "29.10.2026",
       "changes": [

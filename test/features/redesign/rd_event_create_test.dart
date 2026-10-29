@@ -132,6 +132,24 @@ void main() {
     });
   });
 
+  test('rdMovedSeriesEnd keeps the series length in calendar days', () {
+    // Over the change to summer time (Europe/Berlin: 47 h between the days).
+    expect(rdMovedSeriesEnd(DateTime(2026, 3, 28), DateTime(2026, 3, 30), DateTime(2026, 5, 9)),
+        DateTime(2026, 5, 11));
+    // Back to winter time (49 h), and moving the start earlier.
+    expect(rdMovedSeriesEnd(DateTime(2026, 10, 24), DateTime(2026, 10, 26), DateTime(2026, 12, 5)),
+        DateTime(2026, 12, 7));
+    expect(rdMovedSeriesEnd(DateTime(2026, 3, 30), DateTime(2026, 3, 28), DateTime(2026, 5, 11)),
+        DateTime(2026, 5, 9));
+    // Never before the new first day.
+    expect(rdMovedSeriesEnd(DateTime(2026, 5, 1), DateTime(2026, 6, 1), DateTime(2026, 4, 1)),
+        DateTime(2026, 6, 1));
+    // The page moves the end only this way.
+    final page = File('lib/features/redesign/presentation/pages/rd_event_create_page.dart').readAsStringSync();
+    expect(page, contains('rdMovedSeriesEnd(_date, day, _until)'));
+    expect(page, isNot(contains('.difference(_date)')));
+  });
+
   test('rdHolidayOn: school holidays are a range, public holidays one day', () {
     final data = HolidayData(
       publicHolidays: [

@@ -144,10 +144,10 @@ class _RdEventCreatePageState extends ConsumerState<RdEventCreatePage> {
     );
     if (picked == null || !mounted) return;
     _touch(() {
-      final shift = rdDay(picked).difference(_date);
-      _date = rdDay(picked);
+      final day = rdDay(picked);
       // A series keeps its length when its first day moves.
-      if (_repeat != RdRepeat.once) _until = rdDay(_until.add(shift));
+      if (_repeat != RdRepeat.once) _until = rdMovedSeriesEnd(_date, day, _until);
+      _date = day;
       if (_until.isBefore(_date)) _until = _date;
     });
   }

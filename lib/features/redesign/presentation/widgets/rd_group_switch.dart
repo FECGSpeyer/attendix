@@ -94,7 +94,13 @@ class _RdGroupSwitchSheetState extends ConsumerState<_RdGroupSwitchSheet> {
 
   /// Same steps as the old tenant switcher ([switchTenant]), but the new
   /// design always lands on "Heute".
+  ///
+  /// While it runs the sheet stays open (no back gesture, no buttons); if
+  /// it was dragged closed anyway, the switch still finishes without
+  /// popping the route below. Providers are read through the container
+  /// bound before the first await.
   Future<void> _switch(Tenant tenant) async {
+    if (_switchingTo != null) return;
     final current = ref.read(currentTenantProvider);
     final navigator = Navigator.of(context);
     final router = GoRouter.of(context);
@@ -103,13 +109,14 @@ class _RdGroupSwitchSheetState extends ConsumerState<_RdGroupSwitchSheet> {
       return;
     }
     setState(() => _switchingTo = tenant.id);
-    final prefs = ref.read(userPreferencesNotifierProvider.notifier);
+    final container = ProviderScope.containerOf(context, listen: false);
+    final prefs = container.read(userPreferencesNotifierProvider.notifier);
     try {
-      await ref.read(currentTenantProvider.notifier).setTenantLocal(tenant);
+      await container.read(currentTenantProvider.notifier).setTenantLocal(tenant);
       // Wait for the role of the new group so the router does not send the
       // user back.
-      await ref.read(currentTenantUserProvider.future);
-      navigator.pop();
+      await container.read(currentTenantUserProvider.future);
+      if (mounted) navigator.pop();
       router.go(RedesignRoutes.today);
       prefs.updateCurrentTenantId(tenant.id!);
     } catch (_) {
@@ -126,90 +133,95 @@ class _RdGroupSwitchSheetState extends ConsumerState<_RdGroupSwitchSheet> {
     final tenants = ref.watch(userTenantsProvider);
     final current = ref.watch(currentTenantProvider);
 
-    return SafeArea(
-      top: false,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Semantics(
-                    header: true,
-                    child: Text(l10n.redesignGroupsTitle, style: RdType.section(p)),
+    return PopScope(
+      canPop: _switchingTo == null,
+      child: SafeArea(
+        top: false,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Semantics(
+                      header: true,
+                      child: Text(l10n.redesignGroupsTitle, style: RdType.section(p)),
+                    ),
                   ),
-                ),
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  style: TextButton.styleFrom(foregroundColor: p.link),
-                  child: Text(
-                    l10n.redesignCommonDone,
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  TextButton(
+                    onPressed: _switchingTo == null ? () => Navigator.of(context).pop() : null,
+                    style: TextButton.styleFrom(foregroundColor: p.link),
+                    child: Text(
+                      l10n.redesignCommonDone,
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                    ),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Flexible(
-              child: tenants.when(
-                loading: () => const Padding(
-                  padding: EdgeInsets.all(24),
-                  child: Center(child: CircularProgressIndicator()),
-                ),
-                error: (_, __) => Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Text(l10n.redesignGroupsLoadFailed, style: RdType.meta(p)),
-                ),
-                data: (list) => SingleChildScrollView(
-                  child: RdGroupedList(
-                    children: [
-                      for (final t in list)
-                        RdListRow(
-                          leading: RdInitials(
-                            rdInitialsOf(t.shortName.isNotEmpty ? t.shortName : t.longName),
-                            size: 40,
-                            square: true,
+                ],
+              ),
+              const SizedBox(height: 8),
+              Flexible(
+                child: tenants.when(
+                  loading: () => const Padding(
+                    padding: EdgeInsets.all(24),
+                    child: Center(child: CircularProgressIndicator()),
+                  ),
+                  error: (_, __) => Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Text(l10n.redesignGroupsLoadFailed, style: RdType.meta(p)),
+                  ),
+                  data: (list) => SingleChildScrollView(
+                    child: RdGroupedList(
+                      children: [
+                        for (final t in list)
+                          RdListRow(
+                            leading: RdInitials(
+                              rdInitialsOf(t.shortName.isNotEmpty ? t.shortName : t.longName),
+                              size: 40,
+                              square: true,
+                            ),
+                            title: t.longName.isNotEmpty ? t.longName : t.shortName,
+                            subtitle: profileRoleName(Role.fromValue(t.role ?? 99)),
+                            selected: t.id == current?.id,
+                            showChevron: false,
+                            trailing: _switchingTo == t.id
+                                ? const SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(strokeWidth: 2),
+                                  )
+                                : t.id == current?.id
+                                    ? Icon(Icons.check_circle, color: p.primary)
+                                    : null,
+                            onTap: _switchingTo == null ? () => _switch(t) : null,
                           ),
-                          title: t.longName.isNotEmpty ? t.longName : t.shortName,
-                          subtitle: profileRoleName(Role.fromValue(t.role ?? 99)),
-                          selected: t.id == current?.id,
-                          showChevron: false,
-                          trailing: _switchingTo == t.id
-                              ? const SizedBox(
-                                  width: 20,
-                                  height: 20,
-                                  child: CircularProgressIndicator(strokeWidth: 2),
-                                )
-                              : t.id == current?.id
-                                  ? Icon(Icons.check_circle, color: p.primary)
-                                  : null,
-                          onTap: _switchingTo == null ? () => _switch(t) : null,
-                        ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(
-                  child: RdOutlineButton(
-                    label: l10n.redesignGroupsManage,
-                    icon: Icons.apps,
-                    onPressed: () {
-                      final router = GoRouter.of(context);
-                      Navigator.of(context).pop();
-                      router.go('/tenants');
-                    },
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Expanded(
+                    child: RdOutlineButton(
+                      label: l10n.redesignGroupsManage,
+                      icon: Icons.apps,
+                      onPressed: _switchingTo != null
+                          ? null
+                          : () {
+                              final router = GoRouter.of(context);
+                              Navigator.of(context).pop();
+                              router.go('/tenants');
+                            },
+                    ),
                   ),
-                ),
-              ],
-            ),
-          ],
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

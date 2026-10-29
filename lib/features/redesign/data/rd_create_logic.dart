@@ -2,6 +2,7 @@ import '../../../core/services/holiday_service.dart';
 import '../../../data/models/attendance/attendance.dart';
 import '../../../data/models/person/person.dart';
 import '../../../data/repositories/profile_repository.dart' show ProfileExtraField;
+import 'rd_dates.dart';
 
 /// REDESIGN: pure logic of "Termin anlegen" (canvas "TerminAnlegen").
 
@@ -15,6 +16,14 @@ enum RdDeadline { none, hours24, days2, week }
 const rdMaxCreateDates = 60;
 
 DateTime rdDay(DateTime d) => DateTime(d.year, d.month, d.day);
+
+/// End of a series whose first day moved from [from] to [to]: the series
+/// keeps its length in calendar days (also across a DST change), and never
+/// ends before [to].
+DateTime rdMovedSeriesEnd(DateTime from, DateTime to, DateTime until) {
+  final end = rdAddDays(rdDay(until), rdDaysBetween(from, to));
+  return end.isBefore(rdDay(to)) ? rdDay(to) : end;
+}
 
 /// [start] and every [everyWeeks] weeks after it up to [until] (inclusive),
 /// at most [rdMaxCreateDates] days.
