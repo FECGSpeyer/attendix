@@ -204,6 +204,9 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
   /// onFilterChanged(implicit) with the stored instance name).
   Future<void> _restoreOtherInstanceFilter(String? name) async {
     if (name == null || name.isEmpty) return;
+    // Read the tenant-bound repository before the first await.
+    final crossTenantPersonRepo =
+        ref.read(crossTenantPersonRepositoryWithTenantProvider);
     try {
       final linked = await ref.read(allLinkedTenantsProvider.future);
       final tenant = linked
@@ -211,8 +214,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
           .firstOrNull;
       if (tenant?.id == null) return;
       final linkedIds = await ref.read(linkedTenantIdsProvider.future);
-      final ids = await ref
-          .read(crossTenantPersonRepositoryWithTenantProvider)
+      final ids = await crossTenantPersonRepo
           .getUserIdsInTenant(tenant!.id!, linkedTenantIds: linkedIds);
       if (!mounted) return;
       setState(() {
