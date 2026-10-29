@@ -49,12 +49,13 @@ final planSongsProvider = FutureProvider<List<Song>>((ref) async {
 /// block templates, org templates / default fields, share links and the
 /// org plan flag.
 class PlanningPage extends ConsumerStatefulWidget {
-  const PlanningPage({super.key, this.attendanceId, this.initialPlanIndex = 0});
+  const PlanningPage({super.key, this.attendanceId, this.initialPlanIndex});
 
   final int? attendanceId;
 
-  /// Plan to open first when the Termin has several.
-  final int initialPlanIndex;
+  /// Plan to open first when the Termin has several. Null or out of range
+  /// (SOL_FIX22: also negative) opens the first plan.
+  final int? initialPlanIndex;
 
   @override
   ConsumerState<PlanningPage> createState() => _PlanningPageState();
@@ -75,6 +76,15 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   /// editor then shows an error and never falls back to another Termin.
   bool _requestedNotFound = false;
   bool _hasChanges = false;
+
+  /// SOL_FIX22: the editor holds changes that are not stored yet. `_save()`
+  /// only writes when this is set (or the title differs from [_savedTitle]),
+  /// so leftovers in the editor (e.g. after the last plan was deleted) are
+  /// never written back as a plan.
+  bool _dirty = false;
+
+  /// Title as last loaded / saved (dirty check for the title field).
+  String _savedTitle = '';
   Timer? _saveTimer;
 
   @override
@@ -164,9 +174,10 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     return _typeOf(att)?.isDefaultOrgPlan ?? false;
   }
 
-  void _loadAttendance(PlanAttendance att, {int planIndex = 0}) {
+  void _loadAttendance(PlanAttendance att, {int? planIndex}) {
     final plans = PlanUtils.allPlans(att);
-    final index = planIndex < plans.length ? planIndex : 0;
+    // SOL_FIX22: `?plan=-1` (or too large) falls back to the first plan.
+    final index = PlanUtils.validPlanIndex(planIndex, plans.length) ?? 0;
     setState(() {
       _attId = att.id;
       _planIndex = index;
@@ -188,11 +199,17 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
         _fields = [PlanField(id: 'Wort', name: context.l10n.planningDefaultWord.trim(), time: '10')];
       });
       _applyTypeDefaultPlan(att, save: false);
+      _savedTitle = _titleController.text.trim();
+      // Ionic `onAttChange` → `calculateEnd` → `updateAttendance` stores the
+      // default plan of a Termin without plan; keep it as a pending change.
+      _dirty = true;
     }
   }
 
   void _loadPlan(PlanAttendance att, Plan plan) {
     final history = _history;
+    _saveTimer?.cancel();
+    _dirty = false;
     setState(() {
       _titleController.text = plan.title ?? _defaultTitle(att);
       final t = PlanUtils.formatTime(plan.time);
@@ -207,6 +224,21 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
         return field;
       }).toList();
     });
+    _savedTitle = _titleController.text.trim();
+  }
+
+  /// SOL_FIX22 / Ionic `deletePlan` → `loadPlan(att, undefined)`: after the
+  /// last plan is deleted the editor is empty (default title, no fields, time
+  /// kept) and holds no pending change, so closing writes nothing back.
+  void _clearEditor(PlanAttendance att) {
+    _saveTimer?.cancel();
+    _dirty = false;
+    setState(() {
+      _planIndex = 0;
+      _titleController.text = _defaultTitle(att);
+      _fields = [];
+    });
+    _savedTitle = _titleController.text.trim();
   }
 
   List<SongHistory> get _history =>
@@ -248,6 +280,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   void _changed() {
     _fields = PlanUtils.normalizeGroups(_fields);
     _hasChanges = true;
+    _dirty = true;
     _saveTimer?.cancel();
     _saveTimer = Timer(const Duration(milliseconds: 400), _save);
   }
@@ -266,9 +299,18 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     }
   }
 
+  /// Title field lost focus: only a real edit counts as a change.
+  void _onTitleFocusLost() {
+    if (_titleController.text.trim() != _savedTitle) _changed();
+  }
+
+  /// SOL_FIX22: true while the editor holds changes that are not stored yet.
+  bool get _hasPendingChanges => _dirty || _titleController.text.trim() != _savedTitle;
+
   Future<void> _save() async {
     _saveTimer?.cancel();
     final att = _att;
+    if (!_hasPendingChanges) return;
     if (att?.id == null || !_validate()) return;
     final plans = PlanUtils.allPlans(att);
     final title = _titleController.text.trim();
@@ -286,10 +328,16 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       plans[_planIndex] = current;
       update = PlanUtils.splitPlans(plans);
     }
+    // Changes made while the request runs set `_dirty` again.
+    _dirty = false;
+    final savedTitle = _savedTitle;
+    _savedTitle = title;
     try {
       final saved = await ref.read(planRepositoryWithTenantProvider).updateAttendancePlanFields(att!.id!, update);
       _replaceAtt(saved);
     } catch (e) {
+      _dirty = true;
+      _savedTitle = savedTitle;
       if (mounted) ToastHelper.showError(context, context.l10n.planningFlutterSaveFailedWith(friendlyErrorMessage(e)));
     }
   }
@@ -499,9 +547,14 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
           if (!ok) return;
           list.removeAt(index);
           await _savePlans(current, list);
-          final newIndex = list.isEmpty ? 0 : index.clamp(0, list.length - 1);
-          setState(() => _planIndex = newIndex);
-          if (list.isNotEmpty) _loadPlan(_att!, list[newIndex]);
+          if (list.isEmpty) {
+            // SOL_FIX22: last plan deleted → empty editor, nothing pending.
+            _clearEditor(_att ?? current);
+          } else {
+            final newIndex = index.clamp(0, list.length - 1);
+            setState(() => _planIndex = newIndex);
+            _loadPlan(_att!, list[newIndex]);
+          }
       }
     } catch (e) {
       if (mounted) ToastHelper.showError(context, context.l10n.planningFlutterSaveFailedWith(friendlyErrorMessage(e)));
@@ -1202,7 +1255,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
             controller: _titleController,
             label: context.l10n.planningHeadingLabel,
             hint: context.l10n.planningDefaultTitle,
-            onFocusLost: _changed,
+            onFocusLost: _onTitleFocusLost,
           ),
         ],
         // MISC2: "Branding einbeziehen" (only when logo/text configured)

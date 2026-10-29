@@ -276,8 +276,9 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
                     contentPadding: EdgeInsets.zero,
                   ),
                 ),
-              // SETTINGS2: Ionic toggleSongsTab (not on the public page)
-              if (!data.isPublic)
+              // SETTINGS2: Ionic toggleSongsTab (not on the public page);
+              // SOL_FIX22: only for roles that may open the Werke tab.
+              if (!data.isPublic && ref.watch(songsTabAllowedProvider))
                 PopupMenuItem(
                   value: 'tab',
                   child: ListTile(

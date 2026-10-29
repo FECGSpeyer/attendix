@@ -39,6 +39,12 @@ class RouteAccessTenant {
 
 bool _isAdminOrResponsible(Role role) => role.isAdmin || role.isResponsible;
 
+/// Werke tab (`/songs-tab`): Ionic isUrlAccessAllowed
+/// `role !== APPLICANT && role !== PARENT`. SOL_FIX22: also gates the tab
+/// itself and its "Als Tab anzeigen" toggle (`songsTabAllowedProvider`), so
+/// no role sees a tab the guard would redirect away from.
+bool canOpenSongsTab(Role role) => !role.isApplicant && !role.isParent;
+
 /// Ionic `isPlayer || isHelper` of tabs.page.ts.
 bool _isPlayerOrHelper(Role role) =>
     role == Role.player ||
@@ -83,7 +89,7 @@ final List<_Gate> _gates = [
   // Werke tab: Ionic isUrlAccessAllowed `role !== APPLICANT && role !== PARENT`.
   _Gate(
     (l) => _matches(l, '/songs-tab'),
-    (role, _, __) => !role.isApplicant && !role.isParent,
+    (role, _, __) => canOpenSongsTab(role),
   ),
   // Stimmführer settings: VOICE_LEADER / VOICE_LEADER_HELPER.
   _Gate(

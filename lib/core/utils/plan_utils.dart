@@ -332,6 +332,11 @@ class PlanUtils {
     return [att!.plan!, ...(att.extraPlans ?? const <Plan>[])];
   }
 
+  /// SOL_FIX22: a requested plan index (`?plan=`) is only valid inside
+  /// `0..count-1`; anything else (negative, too large, unparsable) is null.
+  static int? validPlanIndex(int? index, int count) =>
+      index != null && index >= 0 && index < count ? index : null;
+
   static bool isMultiDay(PlanAttendance? att) => (att?.durationDays ?? 1) > 1;
 
   static int? planDay(PlanAttendance att, List<Plan> plans, int index) {

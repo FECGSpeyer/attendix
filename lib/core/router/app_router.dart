@@ -633,7 +633,9 @@ final routerProvider = Provider<GoRouter>((ref) {
                 state.uri.queryParameters['attendanceId'] ?? '',
               );
               // ORG_PLANS: open a specific plan of a Termin with several plans
-              final planIndex = int.tryParse(state.uri.queryParameters['plan'] ?? '') ?? 0;
+              // SOL_FIX22: negative / invalid values are reset to null (first plan)
+              final rawPlan = int.tryParse(state.uri.queryParameters['plan'] ?? '');
+              final planIndex = rawPlan != null && rawPlan >= 0 ? rawPlan : null;
               return PlanningPage(attendanceId: attendanceId, initialPlanIndex: planIndex);
             },
           ),
