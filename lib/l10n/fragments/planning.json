@@ -28,7 +28,10 @@
         "noEvents": "Keine Termine vorhanden",
         "draftSavedLocally": "Ablaufplan konnte nicht gespeichert werden – Entwurf lokal gesichert",
         "draftRestored": "Nicht gespeicherte Änderungen wiederhergestellt",
-        "draftLost": "Ablaufplan konnte nicht gespeichert werden – Änderungen gehen verloren"
+        "draftLost": "Ablaufplan konnte nicht gespeichert werden – Änderungen gehen verloren",
+        "planDeleted": "Plan wurde inzwischen gelöscht",
+        "planDeletedDraftSaved": "Plan wurde inzwischen gelöscht – Änderungen als Entwurf gesichert",
+        "planDeletedDraftLost": "Plan wurde inzwischen gelöscht – Änderungen gehen verloren"
       }
     },
     "orgFields": {
@@ -76,7 +79,10 @@
         "noEvents": "No events available",
         "draftSavedLocally": "Run sheet could not be saved – draft kept on this device",
         "draftRestored": "Unsaved changes restored",
-        "draftLost": "Run sheet could not be saved – changes are lost"
+        "draftLost": "Run sheet could not be saved – changes are lost",
+        "planDeleted": "The plan was deleted in the meantime",
+        "planDeletedDraftSaved": "The plan was deleted in the meantime – changes kept as a draft",
+        "planDeletedDraftLost": "The plan was deleted in the meantime – changes are lost"
       }
     },
     "orgFields": {

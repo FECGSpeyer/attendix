@@ -9002,6 +9002,18 @@
   "@planningFlutterPdfA4": {
     "description": "planning.flutter.pdfA4"
   },
+  "planningFlutterPlanDeleted": "Plan wurde inzwischen gelöscht",
+  "@planningFlutterPlanDeleted": {
+    "description": "planning.flutter.planDeleted"
+  },
+  "planningFlutterPlanDeletedDraftLost": "Plan wurde inzwischen gelöscht – Änderungen gehen verloren",
+  "@planningFlutterPlanDeletedDraftLost": {
+    "description": "planning.flutter.planDeletedDraftLost"
+  },
+  "planningFlutterPlanDeletedDraftSaved": "Plan wurde inzwischen gelöscht – Änderungen als Entwurf gesichert",
+  "@planningFlutterPlanDeletedDraftSaved": {
+    "description": "planning.flutter.planDeletedDraftSaved"
+  },
   "planningFlutterPlanPosition": "{index} von {total}",
   "@planningFlutterPlanPosition": {
     "description": "planning.flutter.planPosition",
