@@ -18,6 +18,7 @@ Future<Map<String, dynamic>?> showAgendaPickerSheet(
   BuildContext context, {
   required ProtocolAttendance attendance,
   ProtocolType? type,
+  AgendaPlanSave? save, // SOL_FIX30
 }) {
   return showModalBottomSheet<Map<String, dynamic>>(
     context: context,
@@ -26,9 +27,15 @@ Future<Map<String, dynamic>?> showAgendaPickerSheet(
     useSafeArea: true,
     // Ionic: ion-content color="light".
     backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-    builder: (_) => AgendaPickerSheet(attendance: attendance, type: type),
+    builder: (_) => AgendaPickerSheet(attendance: attendance, type: type, save: save),
   );
 }
+
+/// SOL_FIX30: stores the chosen topics in the Termin's plan and returns the
+/// stored plan (default: [addTopicsToAttendance]). The Ablaufplan editor
+/// passes its own write so it runs in the editor's write queue.
+typedef AgendaPlanSave = Future<Map<String, dynamic>> Function(
+    List<({AgendaItem item, int duration})> selections, List<String> removeIds);
 
 class _Row {
   _Row({required this.item, required this.selected, required this.inPlan, required this.duration, this.postponedOn});
@@ -42,9 +49,12 @@ class _Row {
 }
 
 class AgendaPickerSheet extends ConsumerStatefulWidget {
-  const AgendaPickerSheet({super.key, required this.attendance, this.type});
+  const AgendaPickerSheet({super.key, required this.attendance, this.type, this.save});
   final ProtocolAttendance attendance;
   final ProtocolType? type;
+
+  /// SOL_FIX30: see [AgendaPlanSave].
+  final AgendaPlanSave? save;
 
   @override
   ConsumerState<AgendaPickerSheet> createState() => _AgendaPickerSheetState();
@@ -188,13 +198,16 @@ class _AgendaPickerSheetState extends ConsumerState<AgendaPickerSheet> {
     if ((selections.isEmpty && removeIds.isEmpty) || _saving) return;
     setState(() => _saving = true);
     try {
-      final plan = await addTopicsToAttendance(
-        ref.read(protocolRepositoryWithTenantProvider),
-        widget.attendance,
-        widget.type,
-        selections,
-        removeIds: removeIds,
-      );
+      final save = widget.save;
+      final plan = save != null
+          ? await save(selections, removeIds)
+          : await addTopicsToAttendance(
+              ref.read(protocolRepositoryWithTenantProvider),
+              widget.attendance,
+              widget.type,
+              selections,
+              removeIds: removeIds,
+            );
       ref.invalidate(upcomingProtocolAttendancesProvider);
       if (!mounted) return;
       final added = selections.length;

@@ -317,11 +317,12 @@ void main() {
 
     test('all attendance writes of the editor go through the chain', () {
       // SOL_FIX25: + the write of pending edits queued by dispose().
-      expect(RegExp(r'updateAttendancePlanFields\(').allMatches(src), hasLength(4));
+      // SOL_FIX30: + the "Themen aufnehmen" write (`_saveTopics`).
+      expect(RegExp(r'updateAttendancePlanFields\(').allMatches(src), hasLength(5));
       // SOL_FIX26: + the cache invalidation queued by dispose().
       // SOL_FIX27: the write queued by dispose() runs on the process-wide
       // chain directly; `_serialised` is that chain too.
-      expect(RegExp(r'_serialised\(').allMatches(src), hasLength(4));
+      expect(RegExp(r'_serialised\(').allMatches(src), hasLength(5));
       expect(RegExp(r'PlanningWriteSync\.run\(').allMatches(src), hasLength(2));
       expect(src, isNot(contains('_writeChain')));
     });

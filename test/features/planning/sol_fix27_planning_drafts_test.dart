@@ -293,12 +293,18 @@ void main() {
       expect(db.calls, hasLength(1), reason: 'B waits behind A\'s running write');
 
       await releaseAll(tester);
+      // SOL_FIX30: B's copy of the main plan (no id) is older than A's
+      // stored write, so the position no longer proves the plan's identity:
+      // B's write is a conflict. Nothing of B is written over A's write; B's
+      // edit is kept as a confirmed local draft and B is told.
+      expect(find.text('Plan wurde inzwischen geändert – Änderungen als Entwurf gesichert'), findsOneWidget);
       await tester.pump(const Duration(seconds: 5));
       await tester.pumpAndSettle();
-      expect(planOf(db.calls.last)['title'], 'Von B', reason: 'the newer editor is written last');
-      expect(planOf(db.row.toJson())['title'], 'Von B');
+      expect(db.calls.where((c) => planOf(c)['title'] == 'Von B'), isEmpty);
+      expect(planOf(db.row.toJson())['title'], 'Probe');
       expect(((planOf(db.row.toJson())['fields'] as List).first as Map)['time'], '15');
-      expect(await draftKeys(), isEmpty);
+      final prefs = await SharedPreferences.getInstance();
+      expect(prefs.getString('planning_draft_u1_1_7_i0'), contains('Von B'));
       router.go('/attendance');
       await tester.pumpAndSettle();
       await tester.pump(const Duration(seconds: 1));
