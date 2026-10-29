@@ -120,17 +120,18 @@ void main() {
     await _settle(tester);
     expect(find.text('Gruppe wechseln'), findsOneWidget);
 
-    // Dragged closed anyway: the switch finishes when the role arrives, and
-    // nothing below the sheet is popped.
-    await tester.fling(find.text('Gruppe wechseln'), const Offset(0, 800), 2000);
-    await _settle(tester);
-    expect(find.text('Gruppe wechseln'), findsNothing);
-    expect(find.text('open sheet'), findsOneWidget);
-    expect(saved, isEmpty);
+    // Dragged closed anyway and the role arrives while the sheet still
+    // animates out: the switch finishes, nothing below the sheet is popped.
     pops.pages.clear();
+    await tester.fling(find.text('Gruppe wechseln'), const Offset(0, 60), 1500);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 16));
+    expect(find.text('Gruppe wechseln'), findsOneWidget, reason: 'still animating out');
+    expect(saved, isEmpty);
 
     role.complete(null);
     await _settle(tester);
+    expect(find.text('Gruppe wechseln'), findsNothing);
     expect(pops.pages, isEmpty);
     expect(find.text('page heute'), findsOneWidget);
     expect(saved, [8]);

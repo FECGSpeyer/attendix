@@ -96,13 +96,14 @@ class _RdGroupSwitchSheetState extends ConsumerState<_RdGroupSwitchSheet> {
   /// design always lands on "Heute".
   ///
   /// While it runs the sheet stays open (no back gesture, no buttons); if
-  /// it was dragged closed anyway, the switch still finishes without
-  /// popping the route below. Providers are read through the container
-  /// bound before the first await.
+  /// it was dragged closed anyway (also while it still animates out), the
+  /// switch still finishes without popping the route below. The sheet's
+  /// route and the providers' container are bound before the first await.
   Future<void> _switch(Tenant tenant) async {
     if (_switchingTo != null) return;
     final current = ref.read(currentTenantProvider);
     final navigator = Navigator.of(context);
+    final sheet = ModalRoute.of(context);
     final router = GoRouter.of(context);
     if (tenant.id == null || current?.id == tenant.id) {
       navigator.pop();
@@ -116,7 +117,7 @@ class _RdGroupSwitchSheetState extends ConsumerState<_RdGroupSwitchSheet> {
       // Wait for the role of the new group so the router does not send the
       // user back.
       await container.read(currentTenantUserProvider.future);
-      if (mounted) navigator.pop();
+      if (sheet != null && sheet.isCurrent) navigator.pop();
       router.go(RedesignRoutes.today);
       prefs.updateCurrentTenantId(tenant.id!);
     } catch (_) {
