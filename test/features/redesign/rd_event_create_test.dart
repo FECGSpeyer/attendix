@@ -20,6 +20,7 @@ import 'package:attendix/data/repositories/profile_repository.dart';
 import 'package:attendix/features/redesign/data/rd_create_logic.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_event_create_page.dart';
 import 'package:attendix/l10n/l10n.dart';
+import 'package:attendix/shared/widgets/layout/route_leave_guard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -286,6 +287,38 @@ void main() {
       await _settle(tester);
       expect(find.text('Neuer Termin'), findsOneWidget);
     });
+  });
+
+  testWidgets('a tab switch asks the leave guard before discarding input', (tester) async {
+    tester.view.physicalSize = const Size(430, 1800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(_app(history: const []));
+    await _settle(tester);
+    final guards = ProviderScope.containerOf(tester.element(find.byType(RdEventCreatePage)))
+        .read(routeLeaveGuardRegistryProvider);
+    expect(guards.hasGuards, isTrue);
+
+    // Untouched: the tab switch goes ahead without asking.
+    expect(await guards.canLeave(), isTrue);
+
+    await tester.enterText(find.byType(TextField).first, 'Sonderprobe');
+    await _settle(tester);
+    var leave = guards.canLeave();
+    await _settle(tester);
+    expect(find.text('Termin verwerfen?'), findsOneWidget);
+    await tester.tap(find.text('Weiter bearbeiten'));
+    await _settle(tester);
+    expect(await leave, isFalse);
+
+    leave = guards.canLeave();
+    await _settle(tester);
+    await tester.tap(find.text('Verwerfen'));
+    await _settle(tester);
+    expect(await leave, isTrue);
+
+    await tester.pumpWidget(const SizedBox());
+    expect(guards.hasGuards, isFalse);
   });
 
   group('source', () {

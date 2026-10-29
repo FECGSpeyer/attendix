@@ -125,6 +125,30 @@ void main() {
       expect(isTenantScopedRoute('/abc/def'), isFalse);
     });
 
+    test('isTenantScopedRoute: every tab of the new design with subpages', () {
+      for (final path in [
+        '/heute',
+        '/termine',
+        '/termine/12',
+        '/termine/meine/pa-1',
+        '/mitglieder',
+        '/mitglieder/5',
+        '/werke',
+        '/werke/7',
+        '/ich',
+        '/ich/darstellung',
+        '/ich/verwaltung/proben',
+      ]) {
+        expect(isTenantScopedRoute(path), isTrue, reason: path);
+      }
+      expect(isTenantScopedRoute('/mitgliederx'), isFalse);
+      expect(isTenantScopedRoute('/werkex'), isFalse);
+      expect(sanitizeOpenLinkTarget('/mitglieder/5'), '/mitglieder/5');
+      expect(sanitizeOpenLinkTarget('/werke/7?tab=noten'), '/werke/7?tab=noten');
+      expect(openLinkLocation(Uri.parse('/werke/7?tenantId=3'), tenantId: '3'),
+          openLinkLocation(Uri.parse('/werke/7'), tenantId: '3'));
+    });
+
     test('openLinkLocation moves tenantId out of the target', () {
       final loc = openLinkLocation(Uri.parse('/attendance/5?tenantId=3&x=1'),
           tenantId: '3');

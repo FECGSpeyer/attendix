@@ -162,6 +162,21 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
 
   void _hold(int personId) => _saving[personId] = (_saving[personId] ?? 0) + 1;
 
+  /// Last pending write per person: status, undo and note writes of one
+  /// person run one after the other, so a slow earlier write can never land
+  /// after (and overwrite) a later one such as "Rückgängig".
+  final Map<int, Future<void>> _queues = {};
+
+  Future<T> _serial<T>(int personId, Future<T> Function() task) {
+    final before = _queues[personId] ?? Future<void>.value();
+    final done = Completer<void>();
+    _queues[personId] = done.future;
+    return before.then((_) => task()).whenComplete(() {
+      done.complete();
+      if (identical(_queues[personId], done.future)) _queues.remove(personId);
+    });
+  }
+
   void _release(int personId) {
     final left = (_saving[personId] ?? 1) - 1;
     if (left <= 0) {
@@ -178,8 +193,9 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
     AttendanceStatus previous, {
     bool refresh = true,
   }) async {
+    // Only when nothing newer was set meanwhile (e.g. "Rückgängig").
     void revert() {
-      if (mounted) setState(() => _statuses[personId] = previous);
+      if (mounted && _statuses[personId] == status) setState(() => _statuses[personId] = previous);
     }
 
     final paId = _paIds[personId];
@@ -189,12 +205,15 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
     }
     _hold(personId);
     try {
-      final result = await writePersonStatus(
-        ref,
-        attendanceId: _id,
-        personAttendanceId: paId,
-        status: status,
-        refresh: refresh,
+      final result = await _serial(
+        personId,
+        () => writePersonStatus(
+          ref,
+          attendanceId: _id,
+          personAttendanceId: paId,
+          status: status,
+          refresh: refresh,
+        ),
       );
       if (result == PersonAttendanceWrite.notAllowed) {
         revert();
@@ -313,16 +332,19 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
     var direct = false;
     _hold(member.id);
     try {
-      final result = await writePersonAttendance(
-        ref,
-        attendanceId: _id,
-        personAttendanceId: paId,
-        updates: {'notes': note},
-        beforeWrite: () {
-          direct = true;
-          previousNote = _notes[member.id];
-          if (mounted) setState(() => _notes[member.id] = note);
-        },
+      final result = await _serial(
+        member.id,
+        () => writePersonAttendance(
+          ref,
+          attendanceId: _id,
+          personAttendanceId: paId,
+          updates: {'notes': note},
+          beforeWrite: () {
+            direct = true;
+            previousNote = _notes[member.id];
+            if (mounted) setState(() => _notes[member.id] = note);
+          },
+        ),
       );
       if (!mounted) return;
       switch (result) {

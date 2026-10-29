@@ -475,7 +475,9 @@ void main() {
       await tester.pumpWidget(_personApp(Role.viewer, _repo(), person: anna));
       await _settle(tester);
       expect(find.text('Bearbeiten'), findsNothing);
-      expect(find.text('Notiz'), findsOneWidget);
+      // The internal note stays with Admins and Verantwortliche.
+      expect(find.text('Notiz'), findsNothing);
+      expect(find.text('Spielt auch Bratsche'), findsNothing);
       expect(find.text('Pausieren'), findsNothing);
       expect(find.text('Archivieren'), findsNothing);
     });

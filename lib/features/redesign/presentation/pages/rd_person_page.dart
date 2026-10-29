@@ -402,7 +402,10 @@ class _InfoList extends ConsumerWidget {
         ));
       }
     }
-    final notes = (person.notes ?? '').trim();
+    // Internal note: only Admins and Verantwortliche, as on the person page
+    // of the normal app (Ionic person.page: existingPlayer && isAdmin).
+    final role = ref.watch(effectiveRoleProvider);
+    final notes = role.isAdmin || role.isResponsible ? (person.notes ?? '').trim() : '';
     if (notes.isNotEmpty) {
       rows.add(SizedBox(
         width: double.infinity,

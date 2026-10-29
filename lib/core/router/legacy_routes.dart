@@ -122,9 +122,11 @@ const List<String> _tenantScopedRoots = [
   '/dashboard',
   '/songs-tab',
   '/org-plans-tab',
-  // REDESIGN: "Heute", "Termine" and "Ich" of the new design
+  // REDESIGN: the tabs of the new design (with their subpages)
   '/heute',
   '/termine',
+  '/mitglieder',
+  '/werke',
   '/ich',
 ];
 

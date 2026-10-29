@@ -1,6 +1,17 @@
 {
   "versions": [
     {
+      "version": "0.22.3",
+      "date": "29.10.2026",
+      "changes": [
+        "🔧 PDFs öffnen im bisherigen Design wieder wie gewohnt, die neue PDF-Ansicht gibt es nur im neuen Design (Beta)",
+        "🔒 Neues Design (Beta): Notizen zu Personen sehen nur Dirigenten und Verantwortliche",
+        "🐛 Neues Design (Beta): Schnelles Rückgängig beim Erfassen überholt keine laufende Speicherung mehr",
+        "🐛 Neues Design (Beta): Beim Tabwechsel fragt „Neuer Termin“ vor dem Verwerfen von Eingaben",
+        "🐛 Neues Design (Beta): Links auf Mitglieder und Werke öffnen nach dem Anmelden die richtige Gruppe"
+      ]
+    },
+    {
       "version": "0.22.2",
       "date": "29.10.2026",
       "changes": [
@@ -38,7 +49,7 @@
       "changes": [
         "✨ Neues Design (Beta): Pultmodus beim Erfassen mit großen Kacheln pro Register, antippen = da, nochmal antippen = zurück",
         "✨ Neues Design (Beta): Im Pultmodus gedrückt halten für weitere Status und Notiz, „Alle Offenen da“ mit Rückgängig",
-        "✨ PDF-Ansicht: Auf dem Tablet startet sie seitenweise, auf dem Handy durchgehend"
+        "✨ Neues Design (Beta): PDF-Ansicht startet auf dem Tablet seitenweise, auf dem Handy durchgehend"
       ]
     },
     {
@@ -55,8 +66,8 @@
       "version": "0.18.1",
       "date": "29.10.2026",
       "changes": [
-        "🐛 PDFs öffnen im Vollbild und lassen sich durch alle Seiten scrollen, mit zwei Fingern zoomen",
-        "✨ PDF-Ansicht: Umschalter auf seitenweises Blättern (senkrecht wischen oder oben bzw. unten tippen)"
+        "🐛 Neues Design (Beta): PDFs öffnen im Vollbild und lassen sich durch alle Seiten scrollen, mit zwei Fingern zoomen",
+        "✨ Neues Design (Beta): PDF-Ansicht mit Umschalter auf seitenweises Blättern (senkrecht wischen oder oben bzw. unten tippen)"
       ]
     },
     {

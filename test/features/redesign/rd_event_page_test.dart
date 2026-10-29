@@ -93,6 +93,9 @@ class _Harness {
   final repo = MockAttendanceRepository();
   final writes = <String>[];
 
+  /// When set, every write waits for it after it was recorded.
+  Completer<void>? gate;
+
   Widget app({RdEventTab tab = RdEventTab.overview, bool split = false}) {
     when(() => repo.hasTenantId).thenReturn(true);
     when(() => repo.validatePersonAttendanceTenant(any())).thenAnswer((_) async => valid);
@@ -105,6 +108,7 @@ class _Harness {
       final id = inv.positionalArguments[0] as String;
       final updates = Map<String, dynamic>.from(inv.positionalArguments[1] as Map);
       writes.add('$id $updates');
+      await gate?.future;
       return TestFactories.createPersonAttendance(id: id, attendanceId: 21);
     });
 
@@ -287,8 +291,10 @@ void main() {
     final source = File('lib/features/redesign/presentation/pages/rd_event_page.dart').readAsStringSync();
     expect(source, isNot(contains('updatePersonAttendance(')));
     expect(source, isNot(contains('.from(')));
-    expect(source, contains('await writePersonStatus('));
-    expect(source, contains('await writePersonAttendance('));
+    // Serialised per person (_serial), see "Rückgängig during a slow write".
+    expect(source, contains('() => writePersonStatus('));
+    expect(source, contains('() => writePersonAttendance('));
+    expect(RegExp(r'await _serial\(').allMatches(source), hasLength(2));
   });
 
   testWidgets('Überblick: answers, empty register, sign-outs, notes', (tester) async {
@@ -338,6 +344,30 @@ void main() {
     await tester.tap(find.text('Rückgängig'));
     await _settle(tester);
     expect(h.writes.last, 'pa-2 {status: 0}');
+    expect(find.text('0 da'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Rückgängig during a slow write runs after it, never before', (tester) async {
+    _size(tester, const Size(393, 852));
+    final h = _Harness()..gate = Completer<void>();
+    await tester.pumpWidget(h.app(tab: RdEventTab.record));
+    await _settle(tester);
+
+    final anna = find.byKey(const ValueKey('rd-record-2'));
+    await tester.tap(find.descendant(of: anna, matching: find.bySemanticsLabel('Anwesend')));
+    await _settle(tester);
+    expect(h.writes, ['pa-2 {status: 1}']);
+
+    await tester.tap(find.text('Rückgängig'));
+    await _settle(tester);
+    // The undo waits for the first write of the same person.
+    expect(h.writes, ['pa-2 {status: 1}']);
+    expect(find.text('0 da'), findsOneWidget);
+
+    h.gate!.complete();
+    await _settle(tester);
+    expect(h.writes, ['pa-2 {status: 1}', 'pa-2 {status: 0}']);
     expect(find.text('0 da'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });

@@ -19,6 +19,7 @@ import '../../../../core/utils/error_message.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/attendance/attendance.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/layout/route_leave_guard.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'
     show showAppDatePicker, showAppTimePicker;
 import '../../../attendance/presentation/attendance_create_writes.dart';
@@ -67,8 +68,28 @@ class _RdEventCreatePageState extends ConsumerState<RdEventCreatePage> {
   /// automatic template).
   bool _touched = false;
 
+  /// A tab switch replaces the page with `context.go`, which skips
+  /// [PopScope]; the shell asks this guard first (SOL_FIX25).
+  late final RouteLeaveGuardRegistry _leaveGuards;
+
+  @override
+  void initState() {
+    super.initState();
+    _leaveGuards = ref.read(routeLeaveGuardRegistryProvider);
+    _leaveGuards.add(_onLeave);
+  }
+
+  /// Stay while saving; ask before throwing away input.
+  Future<bool> _onLeave() async {
+    if (_saving) return false;
+    if (!await _confirmDiscard()) return false;
+    _touched = false;
+    return true;
+  }
+
   @override
   void dispose() {
+    _leaveGuards.remove(_onLeave);
     _title.dispose();
     _place.dispose();
     super.dispose();

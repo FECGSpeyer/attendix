@@ -83,4 +83,11 @@ void main() {
     final opener = File('lib/features/songs/presentation/widgets/song_file_opener.dart').readAsStringSync();
     expect(opener, contains('showPdfViewer(context'));
   });
+
+  test('the normal app keeps its PDF viewer, the new design opens the page', () {
+    final opener = File('lib/features/songs/presentation/widgets/song_file_opener.dart').readAsStringSync();
+    expect(opener, contains('if (RedesignRoutes.active) {'));
+    expect(opener, contains('await showPdfViewer(context'));
+    expect(opener, contains('await showPdfViewerSheet(context'));
+  });
 }
