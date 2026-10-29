@@ -643,9 +643,14 @@ class IonCardBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (!ionIsIos(context)) {
+      // PARITY_R7: Ionic md `ion-card` – 4px radius with the md elevation-2
+      // shadow (the app card theme is flat with a 12px radius).
       return Card(
         margin: margin,
         color: color,
+        elevation: 2,
+        shadowColor: Colors.black,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
         clipBehavior: Clip.antiAlias,
         child: onTap != null ? InkWell(onTap: onTap, child: child) : child,
       );

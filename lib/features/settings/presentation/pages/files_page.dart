@@ -846,7 +846,10 @@ class _FilesPageState extends ConsumerState<FilesPage> {
                   label: MaterialLocalizations.of(context).backButtonTooltip,
                   child: GestureDetector(
                     onTap: () => context.canPop() ? context.pop() : context.go('/settings'),
-                    child: const IosCircleIcon(icon: Icons.arrow_back, size: 44),
+                    // PARITY_R7: Ionic `ion-buttons` glass around a clear
+                    // icon-only `ion-button` (28px ionicon, 25px radius) is
+                    // larger than the 44pt back circle.
+                    child: const IosCircleIcon(icon: Icons.arrow_back, size: 48, iconSize: 24),
                   ),
                 ),
               )
@@ -854,7 +857,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
                 icon: const Icon(Icons.arrow_back),
                 onPressed: () => context.canPop() ? context.pop() : context.go('/settings'),
               ),
-        leadingWidth: ionIsIos(context) ? 68 : null,
+        leadingWidth: ionIsIos(context) ? 72 : null, // PARITY_R7: 12 + 48 + 12
         actions: [
           if (canAccess)
             ToolbarButtonGroup(children: [
@@ -1178,7 +1181,13 @@ class _EmptyCard extends StatelessWidget {
         ),
         child: Column(
           children: [
-            Icon(icon, size: 48, color: IonIos.text(context).withValues(alpha: 0.6)),
+            // PARITY_R7: Ionic `folder-open-outline` at 48px draws a ≈36pt
+            // outline folder; the Material glyph fills more of its box.
+            Icon(
+              icon == Icons.folder_open_outlined ? CupertinoIcons.folder_open : icon,
+              size: 44,
+              color: IonIos.text(context).withValues(alpha: 0.6),
+            ),
             const SizedBox(height: AppDimensions.paddingS),
             Text(
               text,

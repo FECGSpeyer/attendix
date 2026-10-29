@@ -213,6 +213,11 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
     );
     final groupsWithFiles = buildGroupsWithFiles(data.songs, data.groups,
         conductorsLabel: context.l10n.songsConductors);
+    // PARITY_R7: entries of the quick-link item group (Ionic songs.page)
+    final showCurrentLink = data.currentSongs.isNotEmpty &&
+        filter.category == null &&
+        filter.categoryIds.isEmpty;
+    final showQuickLinks = showCurrentLink || groupsWithFiles.isNotEmpty;
     final sharingId = data.songSharingId;
     final hasSongSharing = sharingId != null && sharingId.isNotEmpty;
 
@@ -396,11 +401,15 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
             ),
             if (dataAsync.isLoading && dataAsync.hasValue)
               const SliverToBoxAdapter(child: LinearProgressIndicator(minHeight: 2)),
+            // PARITY_R7: Ionic iOS – the quick links and the "N Werke" header
+            // sit in one `ion-list inset` (margin-top 16) whose
+            // `ion-item-group` keeps margin-bottom 16 (global.scss) even when
+            // empty: ≈60pt from the searchbar to the header text (was ≈40).
+            if (isIosLook(context))
+              SliverToBoxAdapter(child: SizedBox(height: showQuickLinks ? 12 : 20)),
             SliverToBoxAdapter(
               child: _QuickLinks(
-                showCurrent: data.currentSongs.isNotEmpty &&
-                    filter.category == null &&
-                    filter.categoryIds.isEmpty,
+                showCurrent: showCurrentLink,
                 showGroups: groupsWithFiles.isNotEmpty,
                 onCurrent: () => showCurrentSongsSheet(
                   context,
@@ -415,9 +424,16 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
                 ),
               ),
             ),
-            // Ionic `ion-list-header`: "N Werke"
+            if (isIosLook(context) && showQuickLinks)
+              const SliverToBoxAdapter(child: SizedBox(height: 12)),
+            // Ionic `ion-list-header`: "N Werke". PARITY_R7: on iOS it is
+            // inside the inset list → 16pt list margin + 20pt header padding
+            // = 36pt from the screen edge (shared header: 20pt).
             SliverToBoxAdapter(
-              child: IonListHeader(context.l10n.songsSongsCount(filtered.length)),
+              child: Padding(
+                padding: EdgeInsets.only(left: isIosLook(context) ? 16 : 0),
+                child: IonListHeader(context.l10n.songsSongsCount(filtered.length)),
+              ),
             ),
             if (filtered.isEmpty)
               SliverToBoxAdapter(
