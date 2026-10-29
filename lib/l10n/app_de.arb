@@ -10750,6 +10750,10 @@
       "count": {}
     }
   },
+  "redesignEventKeyboardHint": "Tastatur: A anwesend · V verspätet · F fehlt · ↑↓ nächste Person · ⌘Z oder Strg+Z rückgängig",
+  "@redesignEventKeyboardHint": {
+    "description": "redesign.event.keyboardHint"
+  },
   "redesignEventMore": "Alle Details und Bearbeiten",
   "@redesignEventMore": {
     "description": "redesign.event.more"
@@ -11465,6 +11469,14 @@
   "@redesignSignoutSubmitLate": {
     "description": "redesign.signout.submitLate"
   },
+  "redesignSplitEventsEmpty": "Wähle links einen Termin aus.",
+  "@redesignSplitEventsEmpty": {
+    "description": "redesign.split.eventsEmpty"
+  },
+  "redesignSplitMembersEmpty": "Wähle links eine Person aus.",
+  "@redesignSplitMembersEmpty": {
+    "description": "redesign.split.membersEmpty"
+  },
   "redesignStatusAbsent": "Abwesend",
   "@redesignStatusAbsent": {
     "description": "redesign.status.absent"
@@ -11881,7 +11893,7 @@
   "@redesignWorkScore": {
     "description": "redesign.work.score"
   },
-  "redesignWorkShare": "Link kopieren",
+  "redesignWorkShare": "Teilen",
   "@redesignWorkShare": {
     "description": "redesign.work.share"
   },

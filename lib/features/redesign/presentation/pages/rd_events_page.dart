@@ -23,6 +23,7 @@ import '../../data/providers/rd_events_providers.dart';
 import '../../data/providers/rd_today_providers.dart';
 import '../widgets/event/rd_absence_sheet.dart';
 import '../widgets/event/rd_signout_sheet.dart';
+import '../widgets/rd_split_view.dart';
 import '../widgets/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart';
 
@@ -250,7 +251,10 @@ class _RdEventsPageState extends ConsumerState<RdEventsPage> {
                     type: typeById[a.typeId],
                     counts: a.id == null ? null : counts[a.id],
                     past: _past,
-                    onTap: a.id != null && canOpen ? () => context.push(RedesignRoutes.event(a.id!)) : null,
+                    selected: a.id != null && RdSplitScope.of(context)?.selectedId == a.id,
+                    onTap: a.id != null && canOpen
+                        ? () => RdSplitScope.open(context, RedesignRoutes.event(a.id!))
+                        : null,
                   ),
                 ),
             ],
@@ -452,6 +456,7 @@ class _LeaderEventCard extends StatelessWidget {
     required this.counts,
     required this.past,
     required this.onTap,
+    this.selected = false,
   });
 
   final Attendance attendance;
@@ -459,6 +464,9 @@ class _LeaderEventCard extends StatelessWidget {
   final RdStatusCounts? counts;
   final bool past;
   final VoidCallback? onTap;
+
+  /// Open on the right of the split view.
+  final bool selected;
 
   @override
   Widget build(BuildContext context) {
@@ -477,6 +485,7 @@ class _LeaderEventCard extends StatelessWidget {
     return RdCard(
       padding: const EdgeInsets.all(14),
       onTap: onTap,
+      border: selected ? Border.all(color: p.primary, width: 2) : null,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

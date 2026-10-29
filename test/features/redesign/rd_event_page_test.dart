@@ -19,6 +19,7 @@ import 'package:attendix/data/models/person/person.dart';
 import 'package:attendix/features/redesign/data/rd_event_logic.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_event_page.dart';
 import 'package:attendix/features/redesign/presentation/widgets/event/rd_pult_view.dart';
+import 'package:attendix/features/redesign/presentation/widgets/rd_split_view.dart';
 import 'package:attendix/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -91,7 +92,7 @@ class _Harness {
   final repo = MockAttendanceRepository();
   final writes = <String>[];
 
-  Widget app({RdEventTab tab = RdEventTab.overview}) {
+  Widget app({RdEventTab tab = RdEventTab.overview, bool split = false}) {
     when(() => repo.hasTenantId).thenReturn(true);
     when(() => repo.validatePersonAttendanceTenant(any())).thenAnswer((_) async => valid);
     when(() => repo.updatePersonAttendance(
@@ -115,7 +116,13 @@ class _Harness {
           path: '/termine',
           builder: (_, __) => const Scaffold(body: Text('page termine')),
           routes: [
-            GoRoute(path: ':id', builder: (_, __) => RdEventPage(attendanceId: 21, initialTab: tab)),
+            GoRoute(
+              path: ':id',
+              builder: (_, __) {
+                final page = RdEventPage(attendanceId: 21, initialTab: tab);
+                return split ? RdSplitScope(isDetail: true, selectedId: 21, child: page) : page;
+              },
+            ),
           ],
         ),
         GoRoute(
@@ -483,6 +490,15 @@ void main() {
       expect(find.text('Gesamtprobe · Pultmodus'), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
+  });
+
+  testWidgets('on the right of the split view: no back link', (tester) async {
+    _size(tester, const Size(880, 800));
+    await tester.pumpWidget(_Harness().app(split: true));
+    await _settle(tester);
+    expect(find.text('Gesamtprobe'), findsOneWidget);
+    expect(find.bySemanticsLabel('Termine'), findsNothing);
+    expect(find.text('Alle Details'), findsOneWidget);
   });
 
   testWidgets('fits on a 320 px phone', (tester) async {

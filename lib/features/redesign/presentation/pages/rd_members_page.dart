@@ -16,6 +16,7 @@ import '../../../../data/models/person/person.dart';
 import '../../../../data/models/player_absence/player_absence.dart';
 import '../../../../l10n/l10n.dart';
 import '../../data/rd_members_logic.dart';
+import '../widgets/rd_split_view.dart';
 import '../widgets/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 
@@ -212,13 +213,12 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
               showGroup: s.isRegister,
               percent: filter == RdMembersFilter.pending || person.id == null ? null : percentages[person.id],
               absence: person.id == null ? null : rdCurrentAbsence(absences, person.id!),
+              selected: person.id != null && RdSplitScope.of(context)?.selectedId == person.id,
               onTap: person.id == null
                   ? null
-                  : () => context.push(
-                        filter == RdMembersFilter.pending
-                            ? '/people/${person.id}'
-                            : RedesignRoutes.person(person.id!),
-                      ),
+                  : () => filter == RdMembersFilter.pending
+                      ? context.push('/people/${person.id}')
+                      : RdSplitScope.open(context, RedesignRoutes.person(person.id!)),
             ),
         ]));
         body.add(const SizedBox(height: 18));
@@ -296,6 +296,7 @@ class _MemberRow extends StatelessWidget {
     required this.percent,
     required this.absence,
     required this.onTap,
+    this.selected = false,
   });
 
   final Person person;
@@ -303,6 +304,9 @@ class _MemberRow extends StatelessWidget {
   final int? percent;
   final PlayerAbsence? absence;
   final VoidCallback? onTap;
+
+  /// Open on the right of the split view.
+  final bool selected;
 
   @override
   Widget build(BuildContext context) {
@@ -345,8 +349,9 @@ class _MemberRow extends StatelessWidget {
 
     return Semantics(
       button: onTap != null,
+      selected: selected,
       child: Material(
-        color: Colors.transparent,
+        color: selected ? p.soft : Colors.transparent,
         child: InkWell(
           onTap: onTap,
           child: ConstrainedBox(

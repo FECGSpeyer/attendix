@@ -1,6 +1,14 @@
 {
   "versions": [
     {
+      "version": "0.21.0",
+      "date": "29.10.2026",
+      "changes": [
+        "✨ Neues Design (Beta): „Teilen“ auf der Werk-Seite öffnet das Teilen-Menü (WhatsApp, Telegram, Kopieren …)",
+        "✨ Neues Design (Beta): Auf Tablet quer und Desktop stehen Termine und Mitglieder als Liste links, der gewählte Eintrag rechts"
+      ]
+    },
+    {
       "version": "0.20.0",
       "date": "29.10.2026",
       "changes": [

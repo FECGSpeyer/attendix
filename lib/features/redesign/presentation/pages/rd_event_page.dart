@@ -28,6 +28,7 @@ import '../../data/providers/rd_today_providers.dart';
 import '../../data/rd_event_logic.dart';
 import '../widgets/event/rd_pult_view.dart';
 import '../widgets/event/rd_record_widgets.dart';
+import '../widgets/rd_split_view.dart';
 import '../widgets/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart';
 
@@ -367,7 +368,11 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
     final children = <Widget>[
       Row(
         children: [
-          Expanded(child: RdBackLink(label: l10n.redesignTabEvents, onTap: _back)),
+          Expanded(
+            child: RdSplitScope.of(context)?.isDetail ?? false
+                ? const SizedBox(height: 44)
+                : RdBackLink(label: l10n.redesignTabEvents, onTap: _back),
+          ),
           if (_tab == RdEventTab.record)
             RdCircleButton(
               icon: _searching ? Icons.close : Icons.search,

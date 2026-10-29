@@ -17,7 +17,9 @@ import 'package:attendix/features/redesign/data/rd_works_logic.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_work_page.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_works_page.dart';
 import 'package:attendix/l10n/l10n.dart';
+import 'package:attendix/features/songs/presentation/utils/song_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -433,6 +435,47 @@ void main() {
       await _settle(tester);
       expect(find.text('Für deine Stimme gibt es noch keine Noten.'), findsNothing);
       expect(find.text('PARTITUR'), findsOneWidget);
+    });
+
+    testWidgets('Teilen opens the system share sheet with name and link', (tester) async {
+      _phone(tester);
+      const channel = MethodChannel('dev.fluttercommunity.plus/share');
+      final calls = <MethodCall>[];
+      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(channel, (call) async {
+        calls.add(call);
+        return 'net.whatsapp.WhatsApp.ShareExtension';
+      });
+      addTearDown(() => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(channel, null));
+      await tester.pumpWidget(_workApp(Role.player, song: _ouverture));
+      await _settle(tester);
+
+      await tester.tap(find.byTooltip('Teilen'));
+      await _settle(tester);
+      expect(calls.single.method, 'share');
+      final args = Map<String, dynamic>.from(calls.single.arguments as Map);
+      expect(args['text'], 'Festliche Ouvertüre\n${SongUtils.shareLink('abc', 5)}');
+      expect(args['subject'], 'Festliche Ouvertüre');
+      expect(args['originX'], isNotNull);
+      expect(find.text('Link kopiert'), findsNothing);
+    });
+
+    testWidgets('without a share sheet the link is copied', (tester) async {
+      _phone(tester);
+      const channel = MethodChannel('dev.fluttercommunity.plus/share');
+      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(channel, (call) async => null);
+      addTearDown(() => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(channel, null));
+      String? copied;
+      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.platform, (call) async {
+        if (call.method == 'Clipboard.setData') copied = (call.arguments as Map)['text'] as String?;
+        return null;
+      });
+      addTearDown(() => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(SystemChannels.platform, null));
+      await tester.pumpWidget(_workApp(Role.player, song: _ouverture));
+      await _settle(tester);
+
+      await tester.tap(find.byTooltip('Teilen'));
+      await _settle(tester);
+      expect(copied, SongUtils.shareLink('abc', 5));
     });
 
     testWidgets('admin: Bearbeiten opens the existing page', (tester) async {

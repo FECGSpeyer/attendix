@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -19,6 +18,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../songs/presentation/utils/song_utils.dart';
 import '../../../songs/presentation/widgets/song_file_opener.dart';
 import '../../data/rd_works_logic.dart';
+import '../rd_actions.dart';
 import '../widgets/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 
@@ -48,13 +48,17 @@ class RdWorkPage extends ConsumerWidget {
           ),
         ),
         if (sharingId != null && sharingId.isNotEmpty)
-          IconButton(
-            tooltip: l10n.redesignWorkShare,
-            icon: Icon(Icons.ios_share, color: p.link),
-            onPressed: () {
-              Clipboard.setData(ClipboardData(text: SongUtils.shareLink(sharingId, songId)));
-              ToastHelper.showSuccess(context, l10n.songsLinkCopied);
-            },
+          Builder(
+            builder: (button) => IconButton(
+              tooltip: l10n.redesignWorkShare,
+              icon: Icon(Icons.ios_share, color: p.link),
+              onPressed: () => rdShareLink(
+                button,
+                SongUtils.shareLink(sharingId, songId),
+                subject: data?.song.name,
+                copiedMessage: l10n.songsLinkCopied,
+              ),
+            ),
           ),
         if (data != null && !data.readOnly)
           RdTextLink(label: l10n.redesignWorkEdit, onTap: () => context.push('/settings/songs/$songId')),

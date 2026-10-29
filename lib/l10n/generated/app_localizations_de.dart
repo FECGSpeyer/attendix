@@ -8189,6 +8189,9 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get redesignEventKeyboardHint => 'Tastatur: A anwesend · V verspätet · F fehlt · ↑↓ nächste Person · ⌘Z oder Strg+Z rückgängig';
+
+  @override
   String get redesignEventMore => 'Alle Details und Bearbeiten';
 
   @override
@@ -8730,6 +8733,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignSignoutSubmitLate => 'Verspätung melden';
 
   @override
+  String get redesignSplitEventsEmpty => 'Wähle links einen Termin aus.';
+
+  @override
+  String get redesignSplitMembersEmpty => 'Wähle links eine Person aus.';
+
+  @override
   String get redesignStatusAbsent => 'Abwesend';
 
   @override
@@ -9067,7 +9076,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignWorkScore => 'Partitur';
 
   @override
-  String get redesignWorkShare => 'Link kopieren';
+  String get redesignWorkShare => 'Teilen';
 
   @override
   String get redesignWorkSlower => 'Langsamer abspielen';

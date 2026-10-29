@@ -125,6 +125,7 @@ import '../../features/redesign/presentation/pages/rd_person_page.dart';
 import '../../features/redesign/presentation/pages/rd_appearance_page.dart';
 import '../../features/redesign/data/rd_manage_logic.dart' show RdManageArea;
 import '../../features/redesign/presentation/pages/rd_manage_page.dart';
+import '../../features/redesign/presentation/widgets/rd_split_view.dart';
 
 /// Listenable that notifies when auth state changes
 /// Used by GoRouter to re-evaluate redirects without recreating the router
@@ -577,7 +578,14 @@ final routerProvider = Provider<GoRouter>((ref) {
             path: RedesignRoutes.events,
             name: 'redesignEvents',
             pageBuilder: (context, state) => AppPageTransitions.none(
-              child: const RdEventsPage(),
+              child: rdUseSplit(context)
+                  ? RdSplitView(
+                      list: const RdEventsPage(),
+                      detail: null,
+                      selectedId: null,
+                      emptyText: context.l10n.redesignSplitEventsEmpty,
+                    )
+                  : const RdEventsPage(),
               state: state,
             ),
             routes: [
@@ -596,16 +604,31 @@ final routerProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: ':id',
                 name: 'redesignEvent',
-                builder: (context, state) {
+                pageBuilder: (context, state) {
                   final id = int.tryParse(state.pathParameters['id'] ?? '');
-                  if (id == null) return const RdEventsPage();
-                  return RdEventPage(
-                    key: ValueKey('rd-event-$id'),
-                    attendanceId: id,
-                    initialTab: state.uri.queryParameters['tab'] == 'anwesenheit'
-                        ? RdEventTab.record
-                        : RdEventTab.overview,
-                  );
+                  final detail = id == null
+                      ? null
+                      : RdEventPage(
+                          key: ValueKey('rd-event-$id'),
+                          attendanceId: id,
+                          initialTab: state.uri.queryParameters['tab'] == 'anwesenheit'
+                              ? RdEventTab.record
+                              : RdEventTab.overview,
+                        );
+                  // Wide screens: list and Termin side by side; one page
+                  // for every Termin, so the list keeps its state.
+                  if (rdUseSplit(context)) {
+                    return NoTransitionPage<void>(
+                      key: const ValueKey('rd-events-split'),
+                      child: RdSplitView(
+                        list: const RdEventsPage(),
+                        detail: detail,
+                        selectedId: id,
+                        emptyText: context.l10n.redesignSplitEventsEmpty,
+                      ),
+                    );
+                  }
+                  return MaterialPage<void>(key: state.pageKey, child: detail ?? const RdEventsPage());
                 },
               ),
             ],
@@ -614,17 +637,35 @@ final routerProvider = Provider<GoRouter>((ref) {
             path: RedesignRoutes.members,
             name: 'redesignMembers',
             pageBuilder: (context, state) => AppPageTransitions.none(
-              child: const RdMembersPage(),
+              child: rdUseSplit(context)
+                  ? RdSplitView(
+                      list: const RdMembersPage(),
+                      detail: null,
+                      selectedId: null,
+                      emptyText: context.l10n.redesignSplitMembersEmpty,
+                    )
+                  : const RdMembersPage(),
               state: state,
             ),
             routes: [
               GoRoute(
                 path: ':id',
                 name: 'redesignPerson',
-                builder: (context, state) {
+                pageBuilder: (context, state) {
                   final id = int.tryParse(state.pathParameters['id'] ?? '');
-                  if (id == null) return const RdMembersPage();
-                  return RdPersonPage(key: ValueKey('rd-person-$id'), personId: id);
+                  final detail = id == null ? null : RdPersonPage(key: ValueKey('rd-person-$id'), personId: id);
+                  if (rdUseSplit(context)) {
+                    return NoTransitionPage<void>(
+                      key: const ValueKey('rd-members-split'),
+                      child: RdSplitView(
+                        list: const RdMembersPage(),
+                        detail: detail,
+                        selectedId: id,
+                        emptyText: context.l10n.redesignSplitMembersEmpty,
+                      ),
+                    );
+                  }
+                  return MaterialPage<void>(key: state.pageKey, child: detail ?? const RdMembersPage());
                 },
               ),
             ],

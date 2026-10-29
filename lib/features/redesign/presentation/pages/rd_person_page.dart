@@ -24,6 +24,7 @@ import '../../../people/presentation/pages/person_detail_page.dart'
 import '../../../people/presentation/widgets/pause_person_sheet.dart' show pausePersonFlow;
 import '../../data/rd_members_logic.dart';
 import '../widgets/event/rd_record_widgets.dart' show rdStatusLook;
+import '../widgets/rd_split_view.dart';
 import '../widgets/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 import 'rd_members_page.dart' show rdPercentColor;
@@ -47,10 +48,12 @@ class RdPersonPage extends ConsumerWidget {
     final header = Row(
       children: [
         Expanded(
-          child: RdBackLink(
-            label: l10n.redesignTabMembers,
-            onTap: () => context.canPop() ? context.pop() : context.go(RedesignRoutes.members),
-          ),
+          child: RdSplitScope.of(context)?.isDetail ?? false
+              ? const SizedBox(height: 44)
+              : RdBackLink(
+                  label: l10n.redesignTabMembers,
+                  onTap: () => context.canPop() ? context.pop() : context.go(RedesignRoutes.members),
+                ),
         ),
         if (person != null && role.canEdit)
           RdTextLink(label: l10n.redesignPersonEdit, onTap: () => context.push('/people/$personId')),

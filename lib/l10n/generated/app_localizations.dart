@@ -14201,6 +14201,12 @@ abstract class AppLocalizations {
   /// **'{count} eingeladen'**
   String redesignEventInvited(Object count);
 
+  /// redesign.event.keyboardHint
+  ///
+  /// In de, this message translates to:
+  /// **'Tastatur: A anwesend · V verspätet · F fehlt · ↑↓ nächste Person · ⌘Z oder Strg+Z rückgängig'**
+  String get redesignEventKeyboardHint;
+
   /// redesign.event.more
   ///
   /// In de, this message translates to:
@@ -15107,6 +15113,18 @@ abstract class AppLocalizations {
   /// **'Verspätung melden'**
   String get redesignSignoutSubmitLate;
 
+  /// redesign.split.eventsEmpty
+  ///
+  /// In de, this message translates to:
+  /// **'Wähle links einen Termin aus.'**
+  String get redesignSplitEventsEmpty;
+
+  /// redesign.split.membersEmpty
+  ///
+  /// In de, this message translates to:
+  /// **'Wähle links eine Person aus.'**
+  String get redesignSplitMembersEmpty;
+
   /// redesign.status.absent
   ///
   /// In de, this message translates to:
@@ -15632,7 +15650,7 @@ abstract class AppLocalizations {
   /// redesign.work.share
   ///
   /// In de, this message translates to:
-  /// **'Link kopieren'**
+  /// **'Teilen'**
   String get redesignWorkShare;
 
   /// redesign.work.slower

@@ -20,6 +20,7 @@ import 'package:attendix/features/people/presentation/pages/person_detail_page.d
 import 'package:attendix/features/redesign/data/rd_members_logic.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_members_page.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_person_page.dart';
+import 'package:attendix/features/redesign/presentation/widgets/rd_split_view.dart';
 import 'package:attendix/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -143,7 +144,7 @@ Widget _membersApp(Role role, MockPlayerRepository repo) {
   );
 }
 
-Widget _personApp(Role role, MockPlayerRepository repo, {Person? person, int id = 1}) {
+Widget _personApp(Role role, MockPlayerRepository repo, {Person? person, int id = 1, bool split = false}) {
   final router = GoRouter(
     initialLocation: '/mitglieder/$id',
     routes: [
@@ -151,7 +152,13 @@ Widget _personApp(Role role, MockPlayerRepository repo, {Person? person, int id 
         path: '/mitglieder',
         builder: (_, __) => const Scaffold(body: Text('page members')),
         routes: [
-          GoRoute(path: ':id', builder: (_, state) => RdPersonPage(personId: int.parse(state.pathParameters['id']!))),
+          GoRoute(
+            path: ':id',
+            builder: (_, state) {
+              final page = RdPersonPage(personId: int.parse(state.pathParameters['id']!));
+              return split ? RdSplitScope(isDetail: true, selectedId: id, child: page) : page;
+            },
+          ),
         ],
       ),
       GoRoute(
@@ -191,6 +198,51 @@ MockPlayerRepository _repo({bool hasTenant = true}) {
 
 /// REDESIGN: tab "Mitglieder" and the person page (canvas "Menschen",
 /// "PersonDetail").
+/// Like the router on wide screens: one page for list and detail.
+Widget _splitApp(MockPlayerRepository repo) {
+  Widget split(int? id) => RdSplitView(
+        list: const RdMembersPage(),
+        detail: id == null ? null : Scaffold(body: Center(child: Text('detail $id'))),
+        selectedId: id,
+        emptyText: 'Wähle links eine Person aus.',
+      );
+  final router = GoRouter(
+    initialLocation: '/mitglieder',
+    routes: [
+      GoRoute(
+        path: '/mitglieder',
+        builder: (_, __) => split(null),
+        routes: [
+          GoRoute(
+            path: ':id',
+            pageBuilder: (_, state) => NoTransitionPage<void>(
+              key: const ValueKey('split'),
+              child: split(int.parse(state.pathParameters['id']!)),
+            ),
+          ),
+        ],
+      ),
+    ],
+  );
+  return ProviderScope(
+    overrides: [
+      ..._common(Role.admin, repo),
+      realtimePlayersProvider.overrideWith((ref) => Stream.value([_anna, _ben, _clara, _dora])),
+      realtimePendingPlayersProvider.overrideWith((ref) => Stream.value(const <Person>[])),
+      playerAttendancePercentagesProvider.overrideWith((ref) async => const {1: 90, 2: 40, 3: 80, 4: 70}),
+      groupsProvider.overrideWith((ref) async => _groups),
+      playerAbsencesProvider.overrideWith((ref) async => const <PlayerAbsence>[]),
+    ],
+    child: MaterialApp.router(
+      locale: const Locale('de'),
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      theme: buildRdTheme(RdFarbwelt.petrol, Brightness.light),
+      routerConfig: router,
+    ),
+  );
+}
+
 void main() {
   setUpAll(() async {
     registerFallbackValue(TestFactories.createPerson());
@@ -469,6 +521,55 @@ void main() {
       await tester.pumpWidget(_personApp(Role.admin, _repo(), person: null, id: 99));
       await _settle(tester);
       expect(find.text('Diese Person gibt es hier nicht mehr.'), findsOneWidget);
+    });
+  });
+
+  group('split view (tablet, desktop)', () {
+    test('from 1100 pt wide', () {
+      expect(rdSplitBreakpoint, 1100);
+    });
+
+    testWidgets('list stays, the person opens on the right and replaces the last one', (tester) async {
+      tester.view.physicalSize = const Size(1280, 800);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(_splitApp(_repo()));
+      await _settle(tester);
+      expect(find.text('Wähle links eine Person aus.'), findsOneWidget);
+
+      await tester.tap(find.text('Anna Berg'));
+      await _settle(tester);
+      expect(find.text('detail 1'), findsOneWidget);
+      expect(find.text('Ben Clas'), findsOneWidget);
+      bool selected(String name) => tester
+          .widgetList<Semantics>(find.ancestor(of: find.text(name), matching: find.byType(Semantics)))
+          .any((w) => w.properties.selected == true);
+      expect(selected('Anna Berg'), isTrue);
+      expect(selected('Ben Clas'), isFalse);
+
+      await tester.tap(find.text('Ben Clas'));
+      await _settle(tester);
+      expect(find.text('detail 2'), findsOneWidget);
+      expect(find.text('detail 1'), findsNothing);
+
+      // Replaced, not stacked: back leads to the list, not to Anna.
+      GoRouter.of(tester.element(find.text('detail 2'))).pop();
+      await _settle(tester);
+      expect(find.text('Wähle links eine Person aus.'), findsOneWidget);
+    });
+
+    testWidgets('the person page has no back link on the right', (tester) async {
+      await tester.pumpWidget(_personApp(Role.admin, _repo(), person: _anna, split: true));
+      await _settle(tester);
+      expect(find.text('Anna Berg'), findsOneWidget);
+      expect(find.bySemanticsLabel('Mitglieder'), findsNothing);
+    });
+
+    test('the router uses the split for Termine and Mitglieder', () {
+      final router = File('lib/core/router/app_router.dart').readAsStringSync();
+      expect(RegExp('RdSplitView\\(').allMatches(router).length, 4);
+      expect(router, contains("ValueKey('rd-events-split')"));
+      expect(router, contains("ValueKey('rd-members-split')"));
     });
   });
 

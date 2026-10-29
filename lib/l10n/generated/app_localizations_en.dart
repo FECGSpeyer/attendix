@@ -8195,6 +8195,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get redesignEventKeyboardHint => 'Keyboard: A present · V late · F absent · ↑↓ next person · ⌘Z or Ctrl+Z undo';
+
+  @override
   String get redesignEventMore => 'All details and editing';
 
   @override
@@ -8736,6 +8739,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignSignoutSubmitLate => 'Report delay';
 
   @override
+  String get redesignSplitEventsEmpty => 'Choose an event on the left.';
+
+  @override
+  String get redesignSplitMembersEmpty => 'Choose a person on the left.';
+
+  @override
   String get redesignStatusAbsent => 'Absent';
 
   @override
@@ -9073,7 +9082,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignWorkScore => 'Score';
 
   @override
-  String get redesignWorkShare => 'Copy link';
+  String get redesignWorkShare => 'Share';
 
   @override
   String get redesignWorkSlower => 'Play slower';
