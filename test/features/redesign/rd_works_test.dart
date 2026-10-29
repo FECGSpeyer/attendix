@@ -78,6 +78,7 @@ const _kirche = SongCategory(id: 'c', name: 'Kirche', index: 1);
 final _groups = [
   TestFactories.createGroup(id: 11, name: 'Klarinette'),
   TestFactories.createGroup(id: 12, name: 'Flöte'),
+  TestFactories.createGroup(id: 13, name: 'Dirigent', maingroup: true),
 ];
 
 const _pdf = 'application/pdf';
@@ -258,6 +259,18 @@ void main() {
       expect(rdFileKind(_ouverture.files![0]), 'PDF');
     });
 
+    test('top card: own part, else score or all parts for conductors', () {
+      expect(rdWorkLead(_ouverture, 11, isMainGroup: false), RdWorkLead.part);
+      expect(rdWorkLead(_ouverture, 99, isMainGroup: false), RdWorkLead.noPart);
+      // Main group (Dirigent) and persons without a group: never "no part".
+      expect(rdWorkLead(_ouverture, 13, isMainGroup: true), RdWorkLead.score);
+      expect(rdWorkLead(_ouverture, null, isMainGroup: false), RdWorkLead.score);
+      expect(rdWorkLead(_abend, 13, isMainGroup: true), RdWorkLead.allParts);
+      expect(rdWorkLead(_abend, null, isMainGroup: false), RdWorkLead.allParts);
+      expect(rdWorkLead(_ave, 13, isMainGroup: true), RdWorkLead.none);
+      expect(rdWorkLead(_ave, 11, isMainGroup: false), RdWorkLead.none);
+    });
+
     test('Werke routes follow the /songs-tab guard', () {
       for (final role in [Role.parent, Role.applicant]) {
         expect(RedesignRoutes.roleRedirect('/werke', role), '/heute', reason: role.name);
@@ -384,6 +397,42 @@ void main() {
       await _settle(tester);
       expect(find.text('DEINE STIMME'), findsNothing);
       expect(find.text('Für deine Stimme gibt es noch keine Noten.'), findsOneWidget);
+    });
+
+    testWidgets('conductor (main group): the score on top, no "no part" hint', (tester) async {
+      _phone(tester);
+      await tester.pumpWidget(_workApp(Role.admin, song: _ouverture, instrument: 13));
+      await _settle(tester);
+      expect(find.text('Für deine Stimme gibt es noch keine Noten.'), findsNothing);
+      expect(find.text('DEINE STIMME'), findsNothing);
+      expect(find.text('PARTITUR'), findsOneWidget);
+      expect(find.text('partitur.pdf'), findsOneWidget);
+      expect(find.text('Öffnen'), findsOneWidget);
+      // The score is not listed twice; all parts stay in the list.
+      expect(find.text('Partitur'), findsNothing);
+      expect(find.text('Alle Stimmen'), findsOneWidget);
+    });
+
+    testWidgets('conductor without a score: all parts on top', (tester) async {
+      _phone(tester);
+      await tester.pumpWidget(_workApp(Role.admin, song: _abend, instrument: 13));
+      await _settle(tester);
+      expect(find.text('Für deine Stimme gibt es noch keine Noten.'), findsNothing);
+      expect(find.text('ALLE STIMMEN'), findsOneWidget);
+      expect(find.text('1 Datei'), findsOneWidget);
+      expect(find.text('Alle Stimmen'), findsNothing);
+
+      await tester.tap(find.text('Öffnen'));
+      await _settle(tester);
+      expect(find.text('abend.pdf'), findsOneWidget);
+    });
+
+    testWidgets('no own person entry: like a conductor', (tester) async {
+      _phone(tester);
+      await tester.pumpWidget(_workApp(Role.admin, song: _ouverture, instrument: null));
+      await _settle(tester);
+      expect(find.text('Für deine Stimme gibt es noch keine Noten.'), findsNothing);
+      expect(find.text('PARTITUR'), findsOneWidget);
     });
 
     testWidgets('admin: Bearbeiten opens the existing page', (tester) async {

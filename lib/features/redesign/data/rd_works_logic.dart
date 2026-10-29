@@ -77,3 +77,34 @@ String rdFileKind(SongFile file) {
   final slash = file.fileType.lastIndexOf('/');
   return (slash >= 0 ? file.fileType.substring(slash + 1) : file.fileType).toUpperCase();
 }
+
+/// What the top card of the work page offers the viewer.
+enum RdWorkLead {
+  /// "Deine Stimme" with the files of the viewer's group.
+  part,
+
+  /// The viewer's group has no files, other groups do.
+  noPart,
+
+  /// Conductors (main group, or no group): the score.
+  score,
+
+  /// Conductors without a score: all parts.
+  allParts,
+
+  /// Nothing to show on top.
+  none,
+}
+
+/// The top card for a viewer in group [groupId]. The main group (Dirigent)
+/// gets no parts of its own (the file upload skips it), so conductors and
+/// persons without a group see the score or all parts, never "no part".
+RdWorkLead rdWorkLead(Song song, int? groupId, {required bool isMainGroup}) {
+  if (!isMainGroup && rdPartFiles(song, groupId).isNotEmpty) return RdWorkLead.part;
+  final hasGroupFiles = (song.files ?? const <SongFile>[]).any((f) => (f.instrumentId ?? 0) > rdLyricsCategory);
+  if (groupId == null || isMainGroup) {
+    if (rdScore(song) != null) return RdWorkLead.score;
+    return hasGroupFiles ? RdWorkLead.allParts : RdWorkLead.none;
+  }
+  return hasGroupFiles ? RdWorkLead.noPart : RdWorkLead.none;
+}

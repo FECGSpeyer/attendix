@@ -123,6 +123,8 @@ import '../../features/redesign/presentation/pages/rd_members_page.dart';
 import '../../features/redesign/presentation/pages/rd_own_event_page.dart';
 import '../../features/redesign/presentation/pages/rd_person_page.dart';
 import '../../features/redesign/presentation/pages/rd_appearance_page.dart';
+import '../../features/redesign/data/rd_manage_logic.dart' show RdManageArea;
+import '../../features/redesign/presentation/pages/rd_manage_page.dart';
 
 /// Listenable that notifies when auth state changes
 /// Used by GoRouter to re-evaluate redirects without recreating the router
@@ -658,6 +660,19 @@ final routerProvider = Provider<GoRouter>((ref) {
                 path: 'darstellung',
                 name: 'redesignAppearance',
                 builder: (context, state) => const RdAppearancePage(),
+              ),
+              GoRoute(
+                path: 'verwaltung',
+                name: 'redesignManage',
+                builder: (context, state) => const RdManagePage(),
+                routes: [
+                  GoRoute(
+                    path: ':area',
+                    builder: (context, state) => RdManageAreaPage(
+                      area: RdManageArea.fromKey(state.pathParameters['area']),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

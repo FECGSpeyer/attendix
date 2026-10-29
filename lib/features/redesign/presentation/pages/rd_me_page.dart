@@ -23,14 +23,17 @@ import '../../../profile/presentation/widgets/master_data_sheet.dart';
 import '../../../profile/presentation/widgets/profile_helpers.dart';
 import '../../../self_service/presentation/widgets/self_service_absences.dart';
 import '../../../settings/presentation/widgets/calendar_subscription_dialog.dart';
+import '../../data/rd_manage_logic.dart';
 import '../rd_actions.dart';
+import '../widgets/manage/rd_manage_entries.dart';
 import '../widgets/event/rd_absence_sheet.dart';
 import '../widgets/rd_group_switch.dart';
 import '../widgets/rd_widgets.dart';
 import 'rd_appearance_page.dart' show rdModeName, rdWorldName;
 
 /// REDESIGN: tab "Ich" (canvas E1): own profile, things for me, the app,
-/// help and the account. Verwaltung leads to the existing settings.
+/// help and the account. Verwaltung leads to the old settings sorted into
+/// six areas (rd_manage_page.dart).
 class RdMePage extends ConsumerWidget {
   const RdMePage({super.key});
 
@@ -44,6 +47,7 @@ class RdMePage extends ConsumerWidget {
     final player = ref.watch(currentSelfServicePlayerProvider).valueOrNull;
     final settings = ref.watch(redesignSettingsProvider);
     final isLead = role.isAdmin || role.isResponsible;
+    final showManage = rdShowsManage(ref.watch(rdManageAccessProvider));
     final pending = isLead ? (ref.watch(pendingPlayersProvider).valueOrNull?.length ?? 0) : 0;
     final canReportAbsence = player != null && ref.watch(canSelfReportAbsenceProvider);
     final canPause = player != null && ref.watch(canSelfPauseProvider);
@@ -61,16 +65,16 @@ class RdMePage extends ConsumerWidget {
         ),
         const SizedBox(height: 18),
         const _ProfileCard(),
-        if (isLead) ...[
+        if (showManage) ...[
           const SizedBox(height: 20),
           RdGroupedList(
             children: [
               RdListRow(
                 leading: const RdRowIcon(Icons.admin_panel_settings_outlined),
                 title: l10n.redesignMeAdmin,
-                subtitle: l10n.redesignMeAdminHint,
+                subtitle: isLead ? l10n.redesignMeAdminHint : null,
                 trailing: pending > 0 ? RdCountBadge(pending) : null,
-                onTap: () => context.push('/settings'),
+                onTap: () => context.push(RedesignRoutes.manage),
               ),
             ],
           ),
@@ -181,7 +185,7 @@ class RdMePage extends ConsumerWidget {
               title: l10n.settingsChangePassword,
               onTap: () => showChangePasswordDialog(context),
             ),
-            if (!isLead && !role.isApplicant)
+            if (!showManage && !role.isApplicant)
               RdListRow(
                 leading: const RdRowIcon(Icons.settings_outlined),
                 title: l10n.redesignMeAllSettings,

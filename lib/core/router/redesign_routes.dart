@@ -46,6 +46,12 @@ class RedesignRoutes {
   /// Ich › Darstellung (Farbwelt, hell/dunkel).
   static const String appearance = '/ich/darstellung';
 
+  /// Ich › Verwaltung (the old settings in six areas).
+  static const String manage = '/ich/verwaltung';
+
+  /// One area of the Verwaltung (`RdManageArea.key`).
+  static String manageArea(String key) => '$manage/$key';
+
   /// True while the new design is switched on (set by
   /// `RedesignSettingsNotifier`).
   static bool active = false;
@@ -73,7 +79,12 @@ class RedesignRoutes {
   /// * Mitglieder and its persons only for roles with the old people tab
   ///   (`Role.canSeePeopleTab`, like `/people`).
   /// * Werke like `/songs-tab` (not for parents and applicants).
+  /// * Verwaltung not for applicants and parents (nothing to manage there);
+  ///   each entry keeps the guard of the page it opens.
   static String? roleRedirect(String location, Role role) {
+    if (location == manage || location.startsWith('$manage/')) {
+      return role.isApplicant || role.isParent ? me : null;
+    }
     if (location == members || location.startsWith('$members/')) {
       return role.canSeePeopleTab ? null : today;
     }

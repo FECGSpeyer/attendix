@@ -7,6 +7,7 @@ import '../../../../core/providers/debug_providers.dart';
 import '../../../../core/services/app_update_service.dart';
 import '../../../../core/providers/player_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
+import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/theme/redesign/rd_palette.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../l10n/l10n.dart';
@@ -15,6 +16,8 @@ import '../../../../shared/widgets/debug/debug_role_fab.dart';
 import '../../../../shared/widgets/dialogs/native_app_ad.dart';
 import '../../../../shared/widgets/layout/root_back_button_scope.dart';
 import '../../../../shared/widgets/layout/route_leave_guard.dart';
+import '../../data/rd_manage_logic.dart';
+import '../widgets/manage/rd_manage_entries.dart';
 import '../widgets/rd_group_switch.dart';
 import '../widgets/rd_widgets.dart';
 import 'rd_destinations.dart';
@@ -76,7 +79,7 @@ class RdShell extends ConsumerWidget {
             destinations: destinations,
             selectedIndex: selected,
             onSelected: onSelect,
-            showAdmin: role.isAdmin || role.isResponsible,
+            showAdmin: rdShowsManage(ref.watch(rdManageAccessProvider)),
           ),
           Expanded(child: _withPlayer(page)),
         ],
@@ -308,7 +311,7 @@ class _RdSidebar extends ConsumerWidget {
   final int selectedIndex;
   final ValueChanged<int> onSelected;
 
-  /// "Verwaltung" for admins and responsibles.
+  /// "Verwaltung" for everyone with something to manage (`rdShowsManage`).
   final bool showAdmin;
 
   @override
@@ -319,11 +322,14 @@ class _RdSidebar extends ConsumerWidget {
     final name = tenant?.longName.isNotEmpty == true
         ? tenant!.longName
         : (tenant?.shortName ?? '');
-    final pending = showAdmin
+    final role = ref.watch(effectiveRoleProvider);
+    final pending = showAdmin && (role.isAdmin || role.isResponsible)
         ? (ref.watch(pendingPlayersProvider).valueOrNull?.length ?? 0)
         : 0;
     final location = GoRouterState.of(context).matchedLocation;
-    final adminSelected = location == '/settings' ||
+    final adminSelected = location == RedesignRoutes.manage ||
+        location.startsWith('${RedesignRoutes.manage}/') ||
+        location == '/settings' ||
         (location.startsWith('/settings/') &&
             rdTabForLocation(location) == RdTab.me &&
             !location.startsWith('/settings/notifications') &&
@@ -399,7 +405,7 @@ class _RdSidebar extends ConsumerWidget {
                   label: l10n.redesignAdminTitle,
                   selected: adminSelected,
                   badge: pending,
-                  onTap: () => RdShell.navigate(context, ref, '/settings'),
+                  onTap: () => RdShell.navigate(context, ref, RedesignRoutes.manage),
                 ),
               ],
             ],

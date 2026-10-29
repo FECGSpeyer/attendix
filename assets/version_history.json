@@ -1,6 +1,16 @@
 {
   "versions": [
     {
+      "version": "0.19.0",
+      "date": "29.10.2026",
+      "changes": [
+        "✨ Neues Design (Beta): Verwaltung unter „Ich“ mit sechs Bereichen statt einer langen Liste",
+        "✨ Neues Design (Beta): Einstellungen direkt suchen, mit „Zuletzt geöffnet“",
+        "✨ Neues Design (Beta): Wartende Freigaben stehen oben in der Verwaltung",
+        "🐛 Neues Design (Beta): Dirigenten sehen auf der Werk-Seite die Partitur oder alle Stimmen statt „keine Noten“"
+      ]
+    },
+    {
       "version": "0.18.1",
       "date": "29.10.2026",
       "changes": [

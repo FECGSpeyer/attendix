@@ -87,6 +87,8 @@ class RdWorkPage extends ConsumerWidget {
     );
     final groups = ref.watch(groupsProvider).valueOrNull ?? data.instruments;
     final groupId = ref.watch(currentSelfServicePlayerProvider).valueOrNull?.instrument;
+    final isMainGroup = groups.where((g) => g.id == groupId).firstOrNull?.maingroup ?? false;
+    final lead = rdWorkLead(song, groupId, isMainGroup: isMainGroup);
     final part = rdPartFiles(song, groupId);
     final files = SongUtils.sortedFiles(song.files ?? const <SongFile>[], groups);
     final recording = rdRecording(song);
@@ -99,13 +101,13 @@ class RdWorkPage extends ConsumerWidget {
     ].join(' · ');
 
     final rows = <Widget>[
-      if (files.isNotEmpty)
+      if (files.isNotEmpty && lead != RdWorkLead.allParts)
         RdListRow(
           title: hasGroupFiles ? l10n.redesignWorkAllParts : l10n.redesignWorkAllFiles,
           value: l10n.redesignWorkFileCount(files.length),
           onTap: () => _showFiles(context, ref, song, files, groups),
         ),
-      if (score != null)
+      if (score != null && lead != RdWorkLead.score)
         RdListRow(
           title: l10n.redesignWorkScore,
           value: rdFileKind(score),
@@ -158,17 +160,42 @@ class RdWorkPage extends ConsumerWidget {
             child: Text(song.composer!, style: RdType.meta(p, size: 15)),
           ),
         const SizedBox(height: 14),
-        if (part.isNotEmpty) ...[
-          _PartCard(
-            groupName: groups.where((g) => g.id == groupId).firstOrNull?.name ?? SongUtils.fileLabel(part.first, groups),
-            file: part.first,
-            count: part.length,
-          ),
-          const SizedBox(height: 12),
-        ] else if (groupId != null && hasGroupFiles) ...[
-          RdInfoCard(text: l10n.redesignWorkNoPart, icon: Icons.description_outlined),
-          const SizedBox(height: 12),
-        ],
+        ...switch (lead) {
+          RdWorkLead.part => [
+              _PartCard(
+                eyebrow: l10n.redesignWorkYourPart,
+                title: groups.where((g) => g.id == groupId).firstOrNull?.name ??
+                    SongUtils.fileLabel(part.first, groups),
+                detail: [rdFileKind(part.first), if (part.length > 1) l10n.redesignWorkFileCount(part.length)]
+                    .join(' · '),
+                onOpen: () => openSongFile(context, part.first),
+              ),
+              const SizedBox(height: 12),
+            ],
+          RdWorkLead.score => [
+              _PartCard(
+                eyebrow: l10n.redesignWorkScore,
+                title: score!.fileName,
+                detail: rdFileKind(score),
+                onOpen: () => openSongFile(context, score),
+              ),
+              const SizedBox(height: 12),
+            ],
+          RdWorkLead.allParts => [
+              _PartCard(
+                eyebrow: l10n.redesignWorkAllParts,
+                title: l10n.redesignWorkFileCount(files.length),
+                detail: song.name,
+                onOpen: () => _showFiles(context, ref, song, files, groups),
+              ),
+              const SizedBox(height: 12),
+            ],
+          RdWorkLead.noPart => [
+              RdInfoCard(text: l10n.redesignWorkNoPart, icon: Icons.description_outlined),
+              const SizedBox(height: 12),
+            ],
+          RdWorkLead.none => const <Widget>[],
+        },
         if (recording != null) ...[
           _RecordingCard(song: song, file: recording),
           const SizedBox(height: 12),
@@ -252,19 +279,20 @@ class RdWorkPage extends ConsumerWidget {
   }
 }
 
-/// "Deine Stimme": the person's part with "Öffnen".
+/// The top card with "Öffnen": "Deine Stimme" (the person's part), or for
+/// conductors the score or all parts.
 class _PartCard extends StatelessWidget {
-  const _PartCard({required this.groupName, required this.file, required this.count});
+  const _PartCard({required this.eyebrow, required this.title, required this.detail, required this.onOpen});
 
-  final String groupName;
-  final SongFile file;
-  final int count;
+  final String eyebrow;
+  final String title;
+  final String detail;
+  final VoidCallback onOpen;
 
   @override
   Widget build(BuildContext context) {
     final p = context.rd;
     final l10n = context.l10n;
-    final detail = [rdFileKind(file), if (count > 1) l10n.redesignWorkFileCount(count)].join(' · ');
     return RdCard(
       padding: const EdgeInsets.all(14),
       child: Row(
@@ -290,10 +318,15 @@ class _PartCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                RdEyebrow(l10n.redesignWorkYourPart),
+                RdEyebrow(eyebrow),
                 const SizedBox(height: 2),
-                Text(groupName, style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: p.text)),
-                Text(detail, style: RdType.meta(p, size: 13)),
+                Text(
+                  title,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: p.text),
+                ),
+                Text(detail, maxLines: 1, overflow: TextOverflow.ellipsis, style: RdType.meta(p, size: 13)),
               ],
             ),
           ),
@@ -307,7 +340,7 @@ class _PartCard extends StatelessWidget {
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
             ),
-            onPressed: () => openSongFile(context, file),
+            onPressed: onOpen,
             child: Text(l10n.redesignWorkOpen),
           ),
         ],
