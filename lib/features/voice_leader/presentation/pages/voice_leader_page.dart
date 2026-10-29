@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/utils/contact_links.dart';
 import '../../../../data/models/person/person.dart';
 import '../../data/providers/voice_leader_providers.dart';
 import '../../../../l10n/l10n.dart';
@@ -193,8 +193,16 @@ class _MemberTile extends StatelessWidget {
   final VoiceGroupMember member;
   final bool last;
 
-  // PWA may not support mailto:/tel: links; launchContactUri catches that.
-  Future<void> _launchUrl(String url) => launchContactUri(Uri.parse(url));
+  Future<void> _launchUrl(String url) async {
+    try {
+      final uri = Uri.parse(url);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri);
+      }
+    } catch (_) {
+      // PWA may not support mailto:/tel: links
+    }
+  }
 
   static const _smallBadge = TextStyle(fontSize: 10.4, fontWeight: FontWeight.w700);
 
@@ -225,8 +233,6 @@ class _MemberTile extends StatelessWidget {
     final einteilung = showEinteilung ? (person.additionalFields?['einteilung']) : null;
     final hasEmail = person.email != null && person.email!.isNotEmpty;
     final hasPhone = person.phone != null && person.phone!.isNotEmpty;
-    final whatsApp = whatsAppUri(person.phone);
-    final telegram = telegramUri(person.phone);
     final dateFormat = DateFormat(dateFmt(DateFmtKind.dayMonth));
 
     return IonItem(
@@ -259,17 +265,6 @@ class _MemberTile extends StatelessWidget {
             if (hasEmail) _contactLink(Icons.mail_outline, person.email!, 'mailto:${person.email}'),
             if (hasEmail && hasPhone) const SizedBox(height: 4),
             if (hasPhone) _contactLink(Icons.call_outlined, person.phone!, 'tel:${person.phone}'),
-            if (whatsApp != null && telegram != null) ...[
-              const SizedBox(height: 4),
-              Wrap(
-                spacing: 16,
-                runSpacing: 4,
-                children: [
-                  _contactLink(Icons.chat_outlined, 'WhatsApp', whatsApp.toString()),
-                  _contactLink(Icons.send_outlined, 'Telegram', telegram.toString()),
-                ],
-              ),
-            ],
             if (!hasEmail && !hasPhone)
               Text(
                 context.l10n.voiceLeaderNoContact,

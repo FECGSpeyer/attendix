@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.22.2",
+      "date": "29.10.2026",
+      "changes": [
+        "🔧 Das bisherige Design bleibt in allen Funktionen wie die Ionic-App; Neues gibt es nur im neuen Design (Beta, Einstellungen › System)"
+      ]
+    },
+    {
       "version": "0.22.1",
       "date": "29.10.2026",
       "changes": [
@@ -118,8 +125,7 @@
       "version": "0.13.0",
       "date": "29.10.2026",
       "changes": [
-        "✨ Personen direkt per WhatsApp oder Telegram anschreiben: neue Knöpfe Anrufen, WhatsApp, Telegram und E-Mail bei der Person und auf der Stimmführer-Seite",
-        "🐛 Ohne Bearbeitungsrechte startet Tippen auf die Telefonnummer jetzt den Anruf"
+        "✨ Neues Design (Beta): Personen per Anrufen, WhatsApp, Telegram oder E-Mail kontaktieren"
       ]
     },
     {
