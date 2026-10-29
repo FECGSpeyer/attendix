@@ -89,7 +89,8 @@ String? _plainText(Widget? w) {
 }
 
 /// iOS radius of popovers (ionic-theme-ios26 `ion-popover::part(content)`).
-const double kIosPopoverRadius = 24;
+/// IOS27_SWEEP: ionic-theme-ios27 `ion-popover::part(content)` radius 34.
+const double kIosPopoverRadius = 34;
 
 /// Ionic iOS popover default `--width: 200px`.
 const double kIosSelectPopoverWidth = 200;
@@ -191,6 +192,9 @@ Future<AppSelection<T>?> showAppSelect<T>({
       return showAppActionSheet<AppSelection<T>>(
         context,
         title: header,
+        // IOS27_SWEEP: ios27 hides the cancel button of
+        // `ion-select[interface=action-sheet]` (`.select-action-sheet`).
+        showCancel: false,
         actions: [
           for (final o in options)
             AppActionSheetAction<AppSelection<T>>(
@@ -330,10 +334,10 @@ class _IosSelectPopoverCard<T> extends StatelessWidget {
         ),
       ));
     }
-    return IosGlassSurface(
-      borderRadius: const BorderRadius.all(Radius.circular(kIosPopoverRadius)),
-      opacity: 0.9,
-      blur: 20,
+    // IOS27_SWEEP: ios27 popover glass; `ion-select-popover` items are
+    // transparent, the last one without a line.
+    return IosGlassSurface.popover(
+      brightness: Theme.of(context).brightness,
       child: Material(
         type: MaterialType.transparency,
         child: SingleChildScrollView(
@@ -381,7 +385,7 @@ class _IosSelectRow<T> extends StatelessWidget {
         child: InkWell(
           // iOS: no ripple, nothing highlighted before a touch.
           splashFactory: NoSplash.splashFactory,
-          highlightColor: IosGlass.overlayButton(theme.brightness),
+          highlightColor: IosGlass.itemActivated(theme.brightness),
           hoverColor: Colors.transparent,
           focusColor: Colors.transparent,
           onTap: option.enabled ? onTap : null,
@@ -393,7 +397,8 @@ class _IosSelectRow<T> extends StatelessWidget {
                 children: [
                   Expanded(
                     child: DefaultTextStyle.merge(
-                      style: TextStyle(fontSize: 16, color: fg),
+                      // ion-item 1rem = 17pt on the iPhone
+                      style: TextStyle(fontSize: 17, color: fg),
                       child: IconTheme.merge(
                         data: IconThemeData(color: fg, size: 20),
                         child: option.child ?? Text(option.label!),

@@ -6,7 +6,8 @@ import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../adaptive/adaptive_platform.dart';
-import '../adaptive/app_toolbar.dart' show kIonModalToolbarHeight; // PARITY_R5
+import '../adaptive/app_toolbar.dart'
+    show kIonModalToolbarHeight, kIonTitleFontSize; // PARITY_R5, IOS27_SWEEP
 import 'ion_modal_handle.dart' show kIonModalSheetRadius; // PARITY_R5
 
 /// Page building blocks that mirror Ionic components as they render in
@@ -34,42 +35,150 @@ Color? ionPlainContentBackground(BuildContext context) {
   return theme.colorScheme.surface;
 }
 
-/// Ionic iOS metrics (ionic-theme-ios26).
+/// Ionic iOS metrics as the iPhone renders them: @ionic/core 9 iOS mode
+/// with @rdlabo/ionic-theme-ios27 1.1.0 (src/global.scss loads it under
+/// `@supports (overflow-anchor: auto)`, which iOS 27 WebKit matches).
+///
+/// IOS27_SWEEP: on the iPhone Ionic sets `html { font: -apple-system-body }`
+/// (`--ion-dynamic-font`), so **1rem = 17px**; rem values below are
+/// converted with [rem].
 class IonIos {
   IonIos._();
 
-  // IOS_SETTINGS2: @rdlabo/ionic-theme-ios26 9.4 ion-list.scss — "Native
-  // iOS 26.5 insetGrouped: 20pt outside, 28pt corners, 53pt rows". Shared by
-  // the settings lane (settings_list.dart) and the auth lane (ion_form_list).
+  /// Root font size on the iPhone (`-apple-system-body`).
+  static const double rem = 17;
 
-  /// `ion-list inset` horizontal margin (20pt from the screen edge).
-  static const double insetMargin = 20;
+  /// `ion-list inset` horizontal margin: ios27 keeps the Ionic core
+  /// `.list-ios.list-inset { margin: 16px }` (ios26 had 20pt).
+  static const double insetMargin = 16;
 
-  /// `ion-list inset > ion-item-group` corner radius.
+  /// `ion-list inset > ion-item-group` corner radius (structured-list
+  /// `layout(20px, 28px)`).
   static const double groupRadius = 28;
 
   /// `ion-list inset` without item group (plain inset list, Ionic core).
   static const double listRadius = 10;
 
-  /// `ion-item` min height inside inset lists.
-  static const double itemMinHeight = 53;
+  /// ios27: `ion-item --min-height` inside inset groups (52px; ios26 53).
+  static const double itemMinHeight = 52;
 
-  /// `ion-item::part(native)` padding-inline-end inside inset groups.
-  static const double itemPaddingEnd = 16;
+  /// Ionic core `ion-item` min height in plain lists.
+  static const double plainItemMinHeight = 44;
 
-  /// `ion-item` font size inside inset groups (`max(17px, 1rem)`).
-  static const double itemFontSize = 17;
+  /// `ion-item --padding-start`.
+  static const double itemPaddingStart = 16;
 
-  /// `--ion-color-medium-tint`
-  static const Color mediumTint = Color(0xFF9D9FA6);
+  /// ios27: `ion-item::part(native)` padding-right inside inset groups
+  /// (`calc(safe-area-right + 18px)`; ios26 16).
+  static const double itemPaddingEnd = 18;
 
-  /// `ion-title size="large"`: 34px bold.
+  /// ios27: `ion-item { font-size: 1rem }` inside inset groups (17pt).
+  static const double itemFontSize = rem;
+
+  /// ios27: `line-height: 1.29rem` of items in inset groups, as a factor.
+  static const double itemLineHeight = 1.29;
+
+  /// `ion-list-header` min-height.
+  static const double listHeaderMinHeight = 40;
+
+  /// ios27 `ion-list-header ion-label`: 1rem, weight 600, line-height
+  /// 1.29rem, margin 8px 4px 4px.
+  static const double listHeaderFontSize = rem;
+
+  /// Label start of an inset `ion-list-header`: list margin 16 + header
+  /// padding-start 16 + label margin 4.
+  static const double listHeaderStart = 36;
+
+  /// ios27 `ion-list-header ion-note` / outer `ion-list > ion-note`:
+  /// 0.76rem, line-height 1.06rem.
+  static const double listNoteFontSize = 0.76 * rem;
+
+  /// `ion-note` in an item: `max(14px, 1rem)`.
+  static const double noteFontSize = rem;
+
+  /// `ion-label h2`: 1.0625rem.
+  static const double h2FontSize = 1.0625 * rem;
+
+  /// `ion-label h3` / `p`: 0.875rem.
+  static const double pFontSize = 0.875 * rem;
+
+  /// Item detail chevron: `--detail-icon-font-size: 1.25em` of the 17pt
+  /// item font.
+  static const double detailIconSize = 1.25 * rem;
+
+  /// The detail icon's `margin-inline-end: -6px`.
+  static const double detailIconMarginEnd = -6;
+
+  /// `ion-title size="large"`: `min(2.125rem, 61.2px)` = 36.125pt bold,
+  /// no letter spacing (Ionic core title.ios).
+  static const double largeTitleFontSize = 2.125 * rem;
+
+  /// `--ion-color-medium-tint` (Ionic 9 light).
+  static const Color mediumTint = Color(0xFF737478);
+
+  /// `--ion-color-medium`: Ionic 9 light #636469, the app's dark palette
+  /// #989aa2 (variables.scss attendix-dark-theme-body).
+  static Color medium(Brightness b) => b == Brightness.dark
+      ? const Color(0xFF989AA2)
+      : const Color(0xFF636469);
+
+  /// `--ion-color-medium-tint`: #737478, dark #a2a4ab.
+  static Color mediumTintOf(Brightness b) =>
+      b == Brightness.dark ? const Color(0xFFA2A4AB) : mediumTint;
+
+  /// ios27 `structured-list.colors(.75, .38)` (dark `(.93, .5)`): inset
+  /// `ion-list-header` label colour `rgba(medium, .75)`.
+  static Color listHeaderColor(Brightness b) => b == Brightness.dark
+      ? const Color(0xFF989AA2).withValues(alpha: 0.93)
+      : const Color(0xFF636469).withValues(alpha: 0.75);
+
+  /// ios27 item detail icon: `rgb(medium)` at `--detail-icon-opacity` .38
+  /// (dark .5).
+  static Color detailIconColor(Brightness b) => b == Brightness.dark
+      ? const Color(0xFF989AA2).withValues(alpha: 0.5)
+      : const Color(0xFF636469).withValues(alpha: 0.38);
+
+  /// ios27 `ion-list.ios { --ion-border-color: step-100 }`: item lines in
+  /// lists – #e8e8e8 (no light step colours), dark step-100 #1a1a1a.
+  static Color line(Brightness b) =>
+      b == Brightness.dark ? const Color(0xFF1A1A1A) : const Color(0xFFE8E8E8);
+
+  /// `ion-note` (`--ion-color-step-350`): #a6a6a6, dark #595959.
+  static Color note(Brightness b) =>
+      b == Brightness.dark ? const Color(0xFF595959) : const Color(0xFFA6A6A6);
+
+  /// `ion-label p` (Ionic 9 `--ion-color-step-400`): #999999, dark #666666.
+  static Color labelP(Brightness b) =>
+      b == Brightness.dark ? const Color(0xFF666666) : const Color(0xFF999999);
+
+  /// `ion-title size="large"`: 36.125pt bold.
   static const TextStyle largeTitle = TextStyle(
-    fontSize: 34,
+    fontSize: largeTitleFontSize,
     fontWeight: FontWeight.w700,
-    letterSpacing: 0.37,
     height: 1.2,
   );
+
+  /// ios27 inset `ion-list-header ion-label` text style.
+  static TextStyle listHeaderStyle(BuildContext context, {Color? color}) =>
+      TextStyle(
+        fontSize: listHeaderFontSize,
+        fontWeight: FontWeight.w600,
+        height: itemLineHeight,
+        color: color ?? listHeaderColor(Theme.of(context).brightness),
+      );
+}
+
+/// IOS27_SWEEP: the iOS item detail chevron (`detail="true"`): ionicons
+/// chevron-forward, 1.25em (21.25pt), `rgba(medium, .38)` / dark `.5`.
+class IonDetailChevron extends StatelessWidget {
+  const IonDetailChevron({super.key});
+
+  @override
+  Widget build(BuildContext context) => Icon(
+        CupertinoIcons.chevron_forward,
+        size: IonIos.detailIconSize,
+        color: IonIos.detailIconColor(Theme.of(context).brightness),
+      );
 }
 
 /// Ionic `ion-header collapse="condense"`: on iOS the page shows a large
@@ -288,13 +397,13 @@ class IonRefresher extends StatelessWidget {
 }
 
 /// PARITY_R5: search icon of an iOS `ion-searchbar` (ionic-theme-ios27):
-/// the outline magnifier (ionicons search-outline) 1.375rem wide – ≈22pt
-/// box, ≈20pt glyph – in the text colour (`--icon-color:
-/// var(--ion-text-color)`), not the grey 16pt system glyph.
+/// the outline magnifier (ionicons search-outline) 1.375rem wide – 23.4pt
+/// with the iPhone root font (IOS27_SWEEP) – in the text colour
+/// (`--icon-color: var(--ion-text-color)`), not the grey system glyph.
 class IonSearchIcon extends StatelessWidget {
   const IonSearchIcon({super.key});
 
-  static const double size = 22;
+  static const double size = 1.375 * IonIos.rem;
 
   @override
   Widget build(BuildContext context) => Icon(
@@ -359,7 +468,8 @@ class IonLargeTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     if (!enabled || !isIosLook(context)) return const SizedBox.shrink();
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 2, 16, 6),
+      // IOS27_SWEEP: toolbar padding 4/3 + title-large padding 12 / 2 / 4.
+      padding: const EdgeInsets.fromLTRB(16, 5, 16, 7),
       child: Text(
         title,
         maxLines: 2,
@@ -372,8 +482,11 @@ class IonLargeTitle extends StatelessWidget {
   }
 }
 
-/// Ionic `ion-searchbar`. iOS: rounded glass pill (44px, radius 20) with the
-/// search icon on the left; Material: the dense outlined text field.
+/// Ionic `ion-searchbar`. iOS (IOS27_SWEEP, ionic-theme-ios27): a 44pt
+/// glass pill (radius 22, [IonSearchbarGlass]), the 23.4pt magnifier 12pt
+/// from the start in the text colour, 18pt text (1.0625rem) with the
+/// placeholder at 40 % and – once there is text – the clear ✕ in its own
+/// 44pt glass circle 11pt to the right. Material: the dense outlined field.
 class IonSearchbar extends StatelessWidget {
   const IonSearchbar({
     super.key,
@@ -387,6 +500,12 @@ class IonSearchbar extends StatelessWidget {
   final String hintText;
   final ValueChanged<String> onChanged;
   final VoidCallback? onClear;
+
+  /// `.searchbar-input` min-height.
+  static const double height = 44;
+
+  /// `.searchbar-input` font size (1.0625rem).
+  static const double fontSize = 1.0625 * IonIos.rem;
 
   void _clear() {
     controller.clear();
@@ -418,42 +537,27 @@ class IonSearchbar extends StatelessWidget {
             onChanged: onChanged,
           );
         }
-        final dark = Theme.of(context).brightness == Brightness.dark;
-        final iconColor =
-            dark ? const Color(0x99EBEBF5) : const Color(0x993C3C43);
-        return Container(
-          height: 44,
-          decoration: BoxDecoration(
-            color:
-                dark
-                    ? const Color(0xFF1C1C1E)
-                    : Colors.white.withValues(alpha: 0.72),
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: dark ? const Color(0x22FFFFFF) : Colors.white,
-              width: 0.5,
-            ),
-            boxShadow:
-                dark
-                    ? null
-                    : const [
-                      BoxShadow(color: Color(0xD1DCDCDC), blurRadius: 10),
-                    ],
-          ),
+        final text = Theme.of(context).colorScheme.onSurface;
+        final field = IonSearchbarGlass(
           child: Row(
             children: [
               const SizedBox(width: 12),
               const IonSearchIcon(), // PARITY_R5
-              const SizedBox(width: 6),
+              // input padding-start 1.375rem + 17.67px
+              const SizedBox(width: 17.67 - 12),
               Expanded(
                 child: TextField(
                   controller: controller,
                   onChanged: onChanged,
-                  style: const TextStyle(fontSize: 17),
+                  style: TextStyle(fontSize: fontSize, color: text),
                   textAlignVertical: TextAlignVertical.center,
                   decoration: InputDecoration(
                     hintText: hintText,
-                    hintStyle: TextStyle(color: iconColor, fontSize: 17),
+                    // ios27 --placeholder-opacity: .4
+                    hintStyle: TextStyle(
+                      color: text.withValues(alpha: 0.4),
+                      fontSize: fontSize,
+                    ),
                     border: InputBorder.none,
                     enabledBorder: InputBorder.none,
                     focusedBorder: InputBorder.none,
@@ -463,16 +567,30 @@ class IonSearchbar extends StatelessWidget {
                   ),
                 ),
               ),
-              if (hasText)
-                GestureDetector(
-                  onTap: _clear,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: Icon(Icons.cancel, size: 18, color: iconColor),
+              const SizedBox(width: 8),
+            ],
+          ),
+        );
+        return SizedBox(
+          height: height,
+          child: Row(
+            children: [
+              Expanded(child: field),
+              if (hasText) ...[
+                // ios27: the clear button is its own 44pt glass circle,
+                // 11pt from the field.
+                const SizedBox(width: 11),
+                Semantics(
+                  button: true,
+                  child: GestureDetector(
+                    onTap: _clear,
+                    child: IonSearchbarGlass(
+                      width: height,
+                      child: Icon(Icons.close, size: 22, color: text),
+                    ),
                   ),
-                )
-              else
-                const SizedBox(width: 12),
+                ),
+              ],
             ],
           ),
         );
@@ -481,8 +599,61 @@ class IonSearchbar extends StatelessWidget {
   }
 }
 
+/// IOS27_SWEEP: the glass of the ios27 searchbar input and its clear /
+/// cancel circle (`searchbar-glass`): `rgba(glass, .52)`, a 0.5pt
+/// `rgba(text, .25)` ring, `0 3px 8px rgba(0,0,0,.035)`, radius 22.
+class IonSearchbarGlass extends StatelessWidget {
+  const IonSearchbarGlass({super.key, required this.child, this.width});
+
+  final Widget child;
+  final double? width;
+
+  static const BorderRadius radius = BorderRadius.all(Radius.circular(22));
+
+  /// `rgba(--ios26-glass-background-rgb, .52)`.
+  static Color background(Brightness b) =>
+      (b == Brightness.dark ? const Color(0xFF3E3E3E) : Colors.white)
+          .withValues(alpha: 0.52);
+
+  /// The 0.5pt ring `rgba(text, .25)`.
+  static Color ring(Brightness b) =>
+      (b == Brightness.dark ? Colors.white : Colors.black)
+          .withValues(alpha: 0.25);
+
+  @override
+  Widget build(BuildContext context) {
+    final b = Theme.of(context).brightness;
+    return CustomPaint(
+      painter: IosOuterShadowPainter(
+        borderRadius: radius,
+        shadows: [
+          BoxShadow(color: ring(b), spreadRadius: 0.5),
+          const BoxShadow(
+              color: Color(0x09000000), blurRadius: 8, offset: Offset(0, 3)),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: radius,
+        child: BackdropFilter(
+          filter: ui.ImageFilter.blur(sigmaX: 2, sigmaY: 2),
+          child: Container(
+            width: width,
+            height: IonSearchbar.height,
+            alignment: Alignment.center,
+            color: background(b),
+            child: child,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 /// Ionic `ion-list-header` inside an inset list.
-/// iOS (theme ios26): 0.9rem bold, medium tint, 20px from the screen edge.
+/// IOS27_SWEEP (ionic-theme-ios27 structured-list): label 1rem (17pt)
+/// semibold, line-height 1.29rem, `rgba(medium, .75)` (dark .93), margin
+/// 8 4 4 in a 40pt header – 36pt from the screen edge (list margin 16 +
+/// header padding 16 + label margin 4).
 class IonListHeader extends StatelessWidget {
   const IonListHeader(this.label, {super.key, this.trailing, this.color});
 
@@ -495,31 +666,37 @@ class IonListHeader extends StatelessWidget {
     final ios = isIosLook(context);
     final style =
         ios
-            ? TextStyle(
-              fontSize: 14.4,
-              fontWeight: FontWeight.w700,
-              color: color ?? IonIos.mediumTint,
-            )
+            ? IonIos.listHeaderStyle(context, color: color)
             : Theme.of(context).textTheme.labelLarge?.copyWith(
               color: color ?? AppColors.medium,
               fontWeight: FontWeight.w600,
             );
-    return Padding(
-      padding: EdgeInsets.fromLTRB(
-        20,
-        ios ? 12 : 16,
-        trailing == null ? 20 : 8,
-        4,
-      ),
-      child: Row(
-        children: [
-          Expanded(child: Text(label, style: style)),
-          // Ionic `ion-button fill="clear"` in the header: primary icons.
-          if (trailing != null)
-            _PrimaryIconButtons(
-              child: Row(mainAxisSize: MainAxisSize.min, children: trailing!),
-            ),
-        ],
+    final row = Row(
+      children: [
+        Expanded(child: Text(label, style: style)),
+        // Ionic `ion-button fill="clear"` in the header: primary icons.
+        if (trailing != null)
+          _PrimaryIconButtons(
+            child: Row(mainAxisSize: MainAxisSize.min, children: trailing!),
+          ),
+      ],
+    );
+    if (!ios) {
+      return Padding(
+        padding: EdgeInsets.fromLTRB(20, 16, trailing == null ? 20 : 8, 4),
+        child: row,
+      );
+    }
+    return ConstrainedBox(
+      constraints: const BoxConstraints(minHeight: IonIos.listHeaderMinHeight),
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(
+          IonIos.listHeaderStart,
+          8,
+          trailing == null ? 20 : 8,
+          4,
+        ),
+        child: Align(alignment: Alignment.centerLeft, child: row),
       ),
     );
   }
@@ -591,8 +768,10 @@ class IonInsetList extends StatelessWidget {
   }
 }
 
-/// Ionic `ion-item` row inside an [IonInsetList]: min height 52 on iOS,
-/// optional detail chevron (Ionic `detail` / button items on iOS).
+/// Ionic `ion-item` row inside an [IonInsetList]: IOS27_SWEEP – min height
+/// 52, 17pt label (line-height 1.29rem), 18pt end padding and the 21.25pt
+/// detail chevron 6pt further out (`margin-inline-end: -6px`) when
+/// [detail] (Ionic `detail` / button items on iOS).
 class IonItem extends StatelessWidget {
   const IonItem({
     super.key,
@@ -619,12 +798,21 @@ class IonItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final ios = isIosLook(context);
     final chevron = ios && detail && onTap != null;
+    final b = Theme.of(context).brightness;
     return InkWell(
       onTap: onTap,
       child: ConstrainedBox(
         constraints: BoxConstraints(minHeight: ios ? IonIos.itemMinHeight : 48),
         child: Padding(
-          padding: EdgeInsets.fromLTRB(16, 8, ios ? 18 : 16, 8),
+          padding: EdgeInsets.fromLTRB(
+            16,
+            8,
+            ios
+                ? IonIos.itemPaddingEnd +
+                    (chevron ? IonIos.detailIconMarginEnd : 0)
+                : 16,
+            8,
+          ),
           child: Row(
             children: [
               if (leading != null) ...[leading!, const SizedBox(width: 16)],
@@ -635,7 +823,8 @@ class IonItem extends StatelessWidget {
                   children: [
                     DefaultTextStyle.merge(
                       style: TextStyle(
-                        fontSize: ios ? 17 : 16,
+                        fontSize: ios ? IonIos.itemFontSize : 16,
+                        height: ios ? IonIos.itemLineHeight : null,
                         color: titleColor,
                       ),
                       child: title,
@@ -644,10 +833,16 @@ class IonItem extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.only(top: 2),
                         child: DefaultTextStyle.merge(
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: AppColors.medium,
-                          ),
+                          // ion-label p: .875rem, step-400
+                          style: ios
+                              ? TextStyle(
+                                  fontSize: IonIos.pFontSize,
+                                  color: IonIos.labelP(b),
+                                )
+                              : const TextStyle(
+                                  fontSize: 14,
+                                  color: AppColors.medium,
+                                ),
                           child: subtitle!,
                         ),
                       ),
@@ -657,11 +852,7 @@ class IonItem extends StatelessWidget {
               if (trailing != null) ...[const SizedBox(width: 8), trailing!],
               if (chevron) ...[
                 const SizedBox(width: 6),
-                Icon(
-                  Icons.chevron_right,
-                  size: 22,
-                  color: AppColors.medium.withValues(alpha: 0.6),
-                ),
+                const IonDetailChevron(),
               ],
             ],
           ),
@@ -695,7 +886,7 @@ class IonSheetHeader extends StatelessWidget {
       overflow: TextOverflow.ellipsis,
       textAlign: ios ? TextAlign.center : TextAlign.start,
       style: TextStyle(
-        fontSize: ios ? 17 : 20,
+        fontSize: ios ? kIonTitleFontSize : 20,
         fontWeight: ios ? FontWeight.w600 : FontWeight.w500,
         color: Theme.of(context).colorScheme.onSurface,
       ),

@@ -245,11 +245,15 @@ void main() {
     expect(tapped, 1);
   }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
 
-  test('AppTheme iOS: stadium buttons, round checkboxes, Ionic colours', () {
+  test('AppTheme iOS: 24pt button radius, round checkboxes, Ionic colours', () {
     final ios = AppTheme.forPlatform(Brightness.light, TargetPlatform.iOS);
     final md = AppTheme.forPlatform(Brightness.light, TargetPlatform.android);
-    expect(ios.filledButtonTheme.style!.shape!.resolve({}),
-        isA<StadiumBorder>());
+    // IOS27_SWEEP: ionic-theme-ios27 `ion-button { --border-radius: 24px }`
+    expect(
+        (ios.filledButtonTheme.style!.shape!.resolve({})!
+                as RoundedRectangleBorder)
+            .borderRadius,
+        BorderRadius.circular(AppTheme.iosButtonRadius));
     expect(md.filledButtonTheme.style!.shape!.resolve({}),
         isA<RoundedRectangleBorder>());
     expect(ios.checkboxTheme.shape, isA<CircleBorder>());

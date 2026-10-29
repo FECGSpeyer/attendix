@@ -318,7 +318,8 @@ class _FeedbackSheetState extends ConsumerState<_FeedbackSheet>
   // dark #000, settings.page.scss), margin-bottom 16 (global.scss).
   Widget _iosGroup(List<Widget> children, {bool square = false}) {
     final dark = Theme.of(context).brightness == Brightness.dark;
-    final line = dark ? const Color(0xFF404040) : const Color(0xFFC8C7CC);
+    // IOS27_SWEEP: ion-item lines inside ion-list (step-100).
+    final line = dark ? AppColors.iosListLineDark : AppColors.iosListLineLight;
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: ClipRRect(

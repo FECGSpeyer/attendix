@@ -94,12 +94,13 @@ class IonSegmentItem<T> {
 /// IOS_LOOK: `ion-segment` with a simple value API.
 ///
 /// IOS_THEME2: renders like Ionic in both modes –
-/// - iOS (ionic-theme-ios26): an uncoloured `ion-segment` is the neutral
-///   system control: grey track (`rgba(text, .06)`, dark
-///   `rgba(118,118,128,.24)`), white (dark #5a5a5f) selected pill, labels in
-///   the text colour (13pt medium), 31pt high. Ionic has no coloured
-///   segments; `neutral: false` gives `color="primary"` (primary 6.5 % track,
-///   same white pill and text-colour labels).
+/// - iOS (IOS27_SWEEP, ionic-theme-ios27): an uncoloured `ion-segment` is
+///   the flat system fill: track `rgba(medium, .11)` (dark
+///   `rgba(medium, .19)`), radius 16, 32pt high; 28pt buttons (2pt
+///   margin) with a pill indicator inset 2pt, white (dark
+///   `color-mix(medium 59%, #000)`), no shadow; labels in the text colour,
+///   0.81rem (13.77pt) medium. `neutral: false` gives `color="primary"`
+///   (primary 6.5 % track, same pill and text-colour labels).
 /// - md (desktop / Android): the Ionic md segment – tab style, UPPERCASE
 ///   14pt medium labels, 60 % text colour, the checked one primary with a
 ///   2pt primary underline, no box or pill.
@@ -135,8 +136,26 @@ class IonSegment<T> extends StatelessWidget {
   /// platform (Ionic songs categories, export, members Einteilung).
   final bool forceMd;
 
-  /// iOS height (ionic-theme-ios26 `min-height: 31px`).
-  static const double height = 31;
+  /// iOS height (ionic-theme-ios27 `min-height: 32px`).
+  static const double height = 32;
+
+  /// ios27 `ion-segment-button` font size (0.81rem).
+  static const double iosFontSize = 0.81 * 17;
+
+  /// ios27 track: `rgba(--ion-color-medium-rgb, .11)` (Ionic 9 medium
+  /// #636469); dark `rgba(152,154,162,.19)`.
+  static Color iosTrack(Brightness b) => b == Brightness.dark
+      ? const Color(0xFF989AA2).withValues(alpha: 0.19)
+      : const Color(0xFF636469).withValues(alpha: 0.11);
+
+  /// ios27 indicator: `--ion-background-color` (white); dark
+  /// `color-mix(in srgb, medium 59%, #000)`.
+  static Color iosIndicator(Brightness b) =>
+      b == Brightness.dark ? const Color(0xFF5A5B60) : Colors.white;
+
+  /// ios27 disabled segment buttons: opacity .2 (dark .15).
+  static double iosDisabledOpacity(Brightness b) =>
+      b == Brightness.dark ? 0.15 : 0.2;
 
   /// md `ion-segment-button` max-width.
   static const double mdButtonMaxWidth = 360;
@@ -148,12 +167,11 @@ class IonSegment<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     if (forceMd || !useIosLook(context)) return _buildMd(context);
     final theme = Theme.of(context);
-    final dark = theme.brightness == Brightness.dark;
     final labelColor = theme.colorScheme.onSurface;
     final trackColor = !neutral
         ? theme.colorScheme.primary.withValues(alpha: 0.065)
-        : (dark ? const Color(0x3D767680) : const Color(0x0F000000));
-    final pillColor = dark ? const Color(0xFF5A5A5F) : Colors.white;
+        : iosTrack(theme.brightness);
+    final pillColor = iosIndicator(theme.brightness);
 
     Widget segment(IonSegmentItem<T> item) {
       final checked = item.value == value;
@@ -163,7 +181,7 @@ class IonSegment<T> extends StatelessWidget {
         overflow: TextOverflow.ellipsis,
         textAlign: TextAlign.center,
         style: TextStyle(
-          fontSize: 13,
+          fontSize: iosFontSize,
           fontWeight: FontWeight.w500,
           color: labelColor,
         ),
@@ -175,27 +193,21 @@ class IonSegment<T> extends StatelessWidget {
       child = AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         curve: Curves.easeOut,
-        margin: const EdgeInsets.symmetric(vertical: 2),
-        padding: const EdgeInsets.symmetric(horizontal: 8),
-        constraints: const BoxConstraints(minWidth: 65),
+        // button margin 2px 0 + indicator padding-inline 2px
+        margin: const EdgeInsets.symmetric(vertical: 2, horizontal: 2),
+        padding: const EdgeInsets.symmetric(horizontal: 6),
+        constraints: const BoxConstraints(minWidth: 65 - 4),
         alignment: Alignment.center,
         decoration: BoxDecoration(
           color: checked ? pillColor : Colors.transparent,
           borderRadius: BorderRadius.circular(height),
-          boxShadow: checked && !dark
-              ? const [
-                  BoxShadow(
-                    color: Color(0x14000000),
-                    blurRadius: 4,
-                    offset: Offset(0, 1),
-                  ),
-                ]
-              : null,
         ),
         child: child,
       );
-      // ios26: disabled segment buttons opacity .2
-      child = Opacity(opacity: enabled ? 1 : 0.2, child: child);
+      child = Opacity(
+        opacity: enabled ? 1 : iosDisabledOpacity(theme.brightness),
+        child: child,
+      );
       child = GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: enabled && !checked
@@ -227,7 +239,6 @@ class IonSegment<T> extends StatelessWidget {
 
     final track = Container(
       height: height,
-      padding: const EdgeInsets.symmetric(horizontal: 2),
       decoration: BoxDecoration(
         color: trackColor,
         borderRadius: BorderRadius.circular(height / 2),

@@ -82,15 +82,17 @@ void main() {
     });
   });
 
-  group('ios26 inset list metrics', () {
-    test('settings, auth and shared use 20 / 28 / 53', () {
-      expect(shared.IonIos.insetMargin, 20);
+  // IOS27_SWEEP: ionic-theme-ios27 keeps the core 16px inset margin,
+  // 28px groups, 52pt rows (1rem = 17px) and 18px end padding.
+  group('ios27 inset list metrics', () {
+    test('settings, auth and shared use 16 / 28 / 52', () {
+      expect(shared.IonIos.insetMargin, 16);
       expect(shared.IonIos.groupRadius, 28);
-      expect(shared.IonIos.itemMinHeight, 53);
+      expect(shared.IonIos.itemMinHeight, 52);
       expect(IonIos.insetMargin, shared.IonIos.insetMargin);
       expect(IonIos.groupRadius, shared.IonIos.groupRadius);
       expect(IonIos.itemMinHeight, shared.IonIos.itemMinHeight);
-      expect(IonIos.itemPaddingEnd, 16);
+      expect(IonIos.itemPaddingEnd, 18);
     });
 
     testWidgets('auth helpers and settings margin agree on iOS', (tester) async {
@@ -104,19 +106,19 @@ void main() {
           return const SizedBox();
         }),
       ));
-      expect(authMargin, 20);
+      expect(authMargin, 16);
       expect(authRadius, 28);
-      expect(settingsMargin, 20);
+      expect(settingsMargin, 16);
     });
 
-    testWidgets('inset group rows are 53pt high on iOS', (tester) async {
+    testWidgets('inset group rows are 52pt high on iOS', (tester) async {
       await tester.pumpWidget(MaterialApp(
         theme: ThemeData(platform: TargetPlatform.iOS),
         home: const Scaffold(
           body: IonInsetGroup(children: [ListTile(title: Text('a'))]),
         ),
       ));
-      expect(tester.getSize(find.byType(ListTile)).height, 53);
+      expect(tester.getSize(find.byType(ListTile)).height, 52);
     });
   });
 

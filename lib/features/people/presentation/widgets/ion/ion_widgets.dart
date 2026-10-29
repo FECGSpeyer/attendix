@@ -1,11 +1,12 @@
 // UX_PEOPLE (wave 8): building blocks that render the Ionic components used
 // by the people pages the way Ionic draws them. On iOS (iPhone app and
 // Flutter web in iPhone Safari) they follow Ionic's iOS mode with the
-// @rdlabo/ionic-theme-ios26 theme the Ionic app loads in src/global.scss;
-// everywhere else they follow Ionic's md mode.
+// @rdlabo/ionic-theme-ios27 1.1.0 theme the Ionic app loads in
+// src/global.scss; everywhere else they follow Ionic's md mode.
 //
 // Values are taken from @ionic/core 9 (item/label/list-header/item-divider/
-// badge *.ios.css / *.md.css) and ionic-theme-ios26 (searchbar, fab).
+// badge *.ios.css / *.md.css; 1rem = 17px on the iPhone) and
+// ionic-theme-ios27 (lines, detail icon, searchbar, fab) – IOS27_SWEEP.
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -13,6 +14,10 @@ import '../../../../../core/theme/app_colors.dart';
 import 'package:attendix/shared/widgets/adaptive/app_toolbar.dart' show ToolbarButtonGroup; // IOS_SHELL2
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 import 'package:attendix/shared/widgets/display/avatar.dart' show IonAvatarPlaceholder; // PARITY_R5
+import 'package:attendix/shared/widgets/adaptive/adaptive_platform.dart'
+    show IosGlass; // IOS27_SWEEP
+import 'package:attendix/shared/widgets/layout/ionic_ios.dart' as ios27
+    show IonIos, IonDetailChevron, IonSearchbar; // IOS27_SWEEP
 
 /// True when the page should look like Ionic's iOS mode.
 bool ionIsIos(BuildContext context) =>
@@ -32,7 +37,8 @@ Color ionContentBackground(BuildContext context) {
 Color ionLineColor(BuildContext context) {
   final dark = _isDark(context);
   if (ionIsIos(context)) {
-    return dark ? const Color(0xFF404040) : const Color(0xFFC8C7CC);
+    // IOS27_SWEEP: ionic-theme-ios27 `ion-list` --ion-border-color step-100.
+    return ios27.IonIos.line(Theme.of(context).brightness);
   }
   return dark ? const Color(0xFF222222) : const Color(0x21000000);
 }
@@ -44,9 +50,9 @@ class IonText {
   static Color _textColor(BuildContext context) =>
       Theme.of(context).colorScheme.onSurface;
 
-  /// `<h2>`: iOS 17px, md 16px, normal weight.
+  /// `<h2>`: iOS 1.0625rem (18.06pt), md 16px, normal weight.
   static TextStyle h2(BuildContext context) => TextStyle(
-        fontSize: ionIsIos(context) ? 17 : 16,
+        fontSize: ionIsIos(context) ? ios27.IonIos.h2FontSize : 16,
         fontWeight: FontWeight.w400,
         color: _textColor(context),
         height: 1.2,
@@ -60,28 +66,41 @@ class IonText {
         height: 1.2,
       );
 
-  /// `<p>`: 14px, grey (iOS step-400 #999, md step-600 #666).
+  /// `<p>`: iOS .875rem (14.875pt) step-400 (#999, dark #666); md 14px
+  /// step-600.
   static TextStyle p(BuildContext context) {
     final dark = _isDark(context);
-    final Color color;
     if (ionIsIos(context)) {
-      color = dark ? const Color(0xFF666666) : const Color(0xFF999999);
-    } else {
-      color = dark ? const Color(0xFFA0A0A0) : const Color(0xFF666666);
+      return TextStyle(
+        fontSize: ios27.IonIos.pFontSize,
+        color: ios27.IonIos.labelP(Theme.of(context).brightness),
+        height: 1.25,
+      );
     }
+    final color = dark ? const Color(0xFFA0A0A0) : const Color(0xFF666666);
     return TextStyle(fontSize: 14, color: color, height: 1.25);
   }
 
-  /// `ion-note`: iOS 16px #a6a6a6, md 14px.
-  static TextStyle note(BuildContext context) => TextStyle(
-        fontSize: ionIsIos(context) ? 16 : 14,
-        color: _isDark(context)
-            ? const Color(0xFF8C8C8C)
-            : const Color(0xFFA6A6A6),
+  /// `ion-note`: iOS max(16px, 1rem) = 17pt step-350 (#a6a6a6, dark
+  /// #595959), md 14px.
+  static TextStyle note(BuildContext context) {
+    if (ionIsIos(context)) {
+      return TextStyle(
+        fontSize: ios27.IonIos.noteFontSize,
+        color: ios27.IonIos.note(Theme.of(context).brightness),
       );
+    }
+    return TextStyle(
+      fontSize: 14,
+      color: _isDark(context)
+          ? const Color(0xFF8C8C8C)
+          : const Color(0xFFA6A6A6),
+    );
+  }
 }
 
-/// `ion-list-header` with an `ion-label` (iOS: 22px bold title, md: 14px).
+/// `ion-list-header` with an `ion-label` in a plain list (iOS:
+/// min(1.375rem, 56.1px) = 23.375pt bold, label margin 29 / 6; md: 14px).
 class IonListHeader extends StatelessWidget {
   const IonListHeader({super.key, required this.text, this.trailing});
 
@@ -93,7 +112,7 @@ class IonListHeader extends StatelessWidget {
     final ios = ionIsIos(context);
     final style = ios
         ? TextStyle(
-            fontSize: 22,
+            fontSize: 1.375 * ios27.IonIos.rem,
             fontWeight: FontWeight.w700,
             color: _isDark(context)
                 ? const Color(0xFFD9D9D9)
@@ -149,7 +168,8 @@ class IonItemDivider extends StatelessWidget {
       child: Text(
         text,
         style: TextStyle(
-          fontSize: ios ? 17 : 14,
+          // ion-item-divider (ios): min(1.0625rem, 20.4px) = 18.06pt
+          fontSize: ios ? 1.0625 * ios27.IonIos.rem : 14,
           fontWeight: ios ? FontWeight.w600 : FontWeight.w400,
           color: textColor,
         ),
@@ -189,7 +209,8 @@ class IonBadge extends StatelessWidget {
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
         style: TextStyle(
-          fontSize: 13,
+          // ion-badge (ios): max(13px, .8125rem) = 13.81pt
+          fontSize: ios ? 0.8125 * ios27.IonIos.rem : 13,
           height: 1,
           fontWeight: FontWeight.w700,
           color: textColor ?? AppColors.getContrastColor(color),
@@ -262,11 +283,14 @@ class IonItem extends StatelessWidget {
           ],
           if (detail) ...[
             const SizedBox(width: 8),
-            Icon(
-              ios ? CupertinoIcons.chevron_forward : Icons.chevron_right,
-              size: ios ? 20 : 22,
-              color: AppColors.medium.withValues(alpha: ios ? 0.6 : 0.8),
-            ),
+            if (ios)
+              const ios27.IonDetailChevron()
+            else
+              Icon(
+                Icons.chevron_right,
+                size: 22,
+                color: AppColors.medium.withValues(alpha: 0.8),
+              ),
           ],
         ],
       ),
@@ -328,8 +352,9 @@ class IonAvatar extends StatelessWidget {
   }
 }
 
-/// `ion-searchbar`. iOS: ios26 "glass" pill (56pt host, 44pt field, radius
-/// 22, 17px text). md: Ionic md searchbar look (white, shadow, radius 2).
+/// `ion-searchbar`. iOS: the shared ionic-theme-ios27 glass searchbar
+/// ([ios27.IonSearchbar]: 8pt host padding, 44pt field, radius 22,
+/// 18.06pt text). md: Ionic md searchbar look (white, shadow, radius 2).
 class IonSearchbar extends StatelessWidget {
   const IonSearchbar({
     super.key,
@@ -352,30 +377,18 @@ class IonSearchbar extends StatelessWidget {
     final dark = _isDark(context);
     final textColor = Theme.of(context).colorScheme.onSurface;
 
-    final BoxDecoration decoration;
     if (ios) {
-      decoration = BoxDecoration(
-        color: dark
-            ? const Color(0xFF3E3E3E).withValues(alpha: 0.3)
-            : Colors.white.withValues(alpha: 0.72),
-        borderRadius: BorderRadius.circular(22),
-        border: dark
-            ? Border.all(
-                color: const Color(0xFF444444).withValues(alpha: 0.58),
-                width: 0.5,
-              )
-            : null,
-        boxShadow: dark
-            ? null
-            : const [
-                BoxShadow(
-                  color: Color(0xADDCDCDC),
-                  offset: Offset(0, 2),
-                  blurRadius: 4,
-                ),
-              ],
+      return Padding(
+        padding: padding ?? const EdgeInsets.all(8),
+        child: ios27.IonSearchbar(
+          controller: controller,
+          hintText: placeholder,
+          onChanged: onChanged,
+        ),
       );
-    } else {
+    }
+    final BoxDecoration decoration;
+    {
       decoration = BoxDecoration(
         color: dark ? const Color(0xFF1E1E1E) : Colors.white,
         borderRadius: BorderRadius.circular(2),
@@ -448,8 +461,9 @@ class IonSearchbar extends StatelessWidget {
   }
 }
 
-/// `ion-fab` button (vertical bottom, horizontal end). iOS: ios26 glass
-/// button (62pt, text-colored icon); md: primary FloatingActionButton.
+/// `ion-fab` button (vertical bottom, horizontal end). iOS: ionic-theme-ios27
+/// glass button (61pt, `rgba(glass, .72)` – dark `.5` – with the light rim
+/// ring, text-coloured icon); md: primary FloatingActionButton.
 class IonFabButton extends StatelessWidget {
   const IonFabButton({
     super.key,
@@ -475,29 +489,15 @@ class IonFabButton extends StatelessWidget {
       );
     }
     final dark = _isDark(context);
+    final b = Theme.of(context).brightness;
     final button = Container(
-      width: 62,
-      height: 62,
+      width: 61,
+      height: 61,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: dark
-            ? const Color(0xFF3E3E3E).withValues(alpha: 0.6)
-            : Colors.white.withValues(alpha: 0.92),
-        border: Border.all(
-          color: dark
-              ? const Color(0xFF444444).withValues(alpha: 0.58)
-              : Colors.white,
-          width: 0.5,
-        ),
-        boxShadow: dark
-            ? null
-            : const [
-                BoxShadow(
-                  color: Color(0xADDCDCDC),
-                  offset: Offset(0, 8),
-                  blurRadius: 28,
-                ),
-              ],
+        color: IosGlass.background(b, dark ? 0.5 : 0.72),
+        border: Border.all(color: IosGlass.border(b), width: 0.5),
+        boxShadow: IosGlass.shadow(b),
       ),
       child: Material(
         type: MaterialType.transparency,
@@ -699,10 +699,12 @@ class IonAccordion extends StatelessWidget {
                   AnimatedRotation(
                     turns: expanded ? 0.5 : 0,
                     duration: const Duration(milliseconds: 300),
+                    // IOS27_SWEEP: ion-item (ios) `::slotted(ion-icon)
+                    // { font-size: 1.6em }` in the item colour.
                     child: Icon(
                       ios ? CupertinoIcons.chevron_down : Icons.expand_more,
-                      size: ios ? 20 : 24,
-                      color: headerColor != null ? fg : AppColors.medium,
+                      size: ios ? 1.6 * ios27.IonIos.rem : 24,
+                      color: headerColor != null || ios ? fg : AppColors.medium,
                     ),
                   ),
                 ],
@@ -817,11 +819,13 @@ class IonFieldRow extends StatelessWidget {
                 ),
                 if (trailing != null) trailing!,
                 if (tap != null && trailing == null && !editable)
-                  Icon(
-                    ios ? CupertinoIcons.chevron_forward : Icons.chevron_right,
-                    size: 18,
-                    color: AppColors.medium.withValues(alpha: 0.6),
-                  ),
+                  ios
+                      ? const ios27.IonDetailChevron()
+                      : Icon(
+                          Icons.chevron_right,
+                          size: 18,
+                          color: AppColors.medium.withValues(alpha: 0.6),
+                        ),
               ],
             ),
           ),

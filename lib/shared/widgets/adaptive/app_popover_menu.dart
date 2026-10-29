@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../l10n/l10n.dart';
+import '../layout/ionic_ios.dart' show IonIos, IonDetailChevron; // IOS27_SWEEP
 import 'adaptive_platform.dart';
 
 /// PARITY_R5: top offset (below the safe area) of an iOS nested popover
@@ -396,11 +397,10 @@ class _PopoverCard extends StatelessWidget {
       );
     }
     if (ios) {
-      return IosGlassSurface(
-        // IOS_THEME2: ionic-theme-ios26 popover radius 24.
-        borderRadius: const BorderRadius.all(Radius.circular(24)),
-        opacity: 0.9,
-        blur: 20,
+      // IOS27_SWEEP: ionic-theme-ios27 popover – radius 34, rgba(glass,
+      // .42) over blur(12px) brightness(1.35).
+      return IosGlassSurface.popover(
+        brightness: Theme.of(context).brightness,
         child: Material(type: MaterialType.transparency, child: list),
       );
     }
@@ -469,7 +469,7 @@ class _PopoverRow extends StatelessWidget {
       // No ripple on iOS, grey press highlight; nothing highlighted
       // initially (no focus / initial value).
       splashFactory: ios ? NoSplash.splashFactory : null,
-      highlightColor: ios ? IosGlass.overlayButton(theme.brightness) : null,
+      highlightColor: ios ? IosGlass.itemActivated(theme.brightness) : null,
       canRequestFocus: false,
       onTap: onTap,
       child: ConstrainedBox(
@@ -487,16 +487,18 @@ class _PopoverRow extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(label, style: TextStyle(fontSize: 16, color: fg)),
+                    // IOS27_SWEEP: ion-item 1rem = 17pt on the iPhone
+                    Text(label,
+                        style: TextStyle(fontSize: ios ? 17 : 16, color: fg)),
                     if (subtitle != null)
                       Padding(
                         padding: const EdgeInsets.only(top: 2),
                         child: Text(
                           subtitle!,
                           style: TextStyle(
-                            fontSize: ios ? 13 : 14,
+                            fontSize: ios ? IonIos.pFontSize : 14,
                             color: ios
-                                ? AppColors.medium
+                                ? IonIos.labelP(theme.brightness)
                                 : (theme.brightness == Brightness.dark
                                     ? const Color(0xFF999999)
                                     : const Color(0xFF666666)),
@@ -508,14 +510,15 @@ class _PopoverRow extends StatelessWidget {
               ),
               if (chevron) ...[
                 const SizedBox(width: 6),
-                Icon(
-                  Icons.chevron_right,
-                  size: ios ? 22 : 20,
-                  // Ionic detail icon: iOS medium; md text colour at .25.
-                  color: ios
-                      ? AppColors.medium.withValues(alpha: 0.6)
-                      : onSurface.withValues(alpha: 0.25),
-                ),
+                if (ios)
+                  const IonDetailChevron()
+                else
+                  Icon(
+                    Icons.chevron_right,
+                    size: 20,
+                    // Ionic md detail icon: text colour at .25.
+                    color: onSurface.withValues(alpha: 0.25),
+                  ),
               ],
             ],
           ),

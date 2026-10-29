@@ -5,12 +5,14 @@ import 'adaptive_platform.dart';
 import 'app_segmented_button.dart';
 
 /// IOS_ATT_PAGES: `ion-segment` inside an `ion-toolbar` (header) without a
-/// colour, as Ionic renders it in iOS mode (ionic-theme-ios26 `.in-toolbar`):
-/// neutral grey track (`rgba(text, .065)`), white selected pill with a soft
-/// shadow, black 15 pt labels, 48 pt high, as wide as its labels (equal
-/// segment widths, 13 pt label padding, min 70 pt each) and centred in the
-/// 74 pt segment toolbar (theme `--min-height: 68px` + 3 pt toolbar padding
-/// above and below) – IOS_R4.
+/// colour, as Ionic renders it in iOS mode (IOS27_SWEEP, ionic-theme-ios27
+/// `.in-toolbar`): the flat `rgba(medium, .11)` track (dark `.19`) with
+/// radius 24, 48 pt high, 44 pt buttons (2 pt margin) with the pill
+/// indicator inset 2 pt (white, dark `color-mix(medium 59%, #000)`, no
+/// shadow), 0.94rem (15.98 pt) medium labels in the text colour; as wide as
+/// its labels (equal segment widths, 8 pt label padding, min 65 pt each) and
+/// centred in the 74 pt segment toolbar (theme `--min-height: 68px` + 3 pt
+/// toolbar padding above and below) – IOS_R4.
 ///
 /// Outside iOS it falls back to the full-width [IonSegment] (Material).
 class IonToolbarSegment<T> extends StatelessWidget {
@@ -31,8 +33,11 @@ class IonToolbarSegment<T> extends StatelessWidget {
 
   static const double _height = 48;
 
-  /// ion-segment-button (ios): `min-width: 70px`.
-  static const double _minSegmentWidth = 70;
+  /// ion-segment-button (ios27): `min-width: 65px`.
+  static const double _minSegmentWidth = 65;
+
+  /// ios27 `.in-toolbar { --border-radius: 24px }`.
+  static const double _radius = 24;
 
   @override
   Widget build(BuildContext context) {
@@ -47,12 +52,9 @@ class IonToolbarSegment<T> extends StatelessWidget {
     }
 
     final theme = Theme.of(context);
-    final dark = theme.brightness == Brightness.dark;
     final text = theme.colorScheme.onSurface;
-    // IOS_THEME2: ionic-theme-ios26 track rgba(text, .06) / dark
-    // rgba(118,118,128,.24), indicator background / dark #5a5a5f.
-    final track = dark ? const Color(0x3D767680) : const Color(0x0F000000);
-    final pill = dark ? const Color(0xFF5A5A5F) : Colors.white;
+    final track = IonSegment.iosTrack(theme.brightness);
+    final pill = IonSegment.iosIndicator(theme.brightness);
 
     Widget segment(IonSegmentItem<T> item) {
       final checked = item.value == value;
@@ -60,20 +62,16 @@ class IonToolbarSegment<T> extends StatelessWidget {
       Widget child = AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         curve: Curves.easeOut,
-        constraints: const BoxConstraints(minWidth: _minSegmentWidth),
-        margin: const EdgeInsets.symmetric(vertical: 2),
-        // ion-segment-button (ios) --padding-start/end: 13px
-        padding: const EdgeInsets.symmetric(horizontal: 13),
+        constraints: const BoxConstraints(minWidth: _minSegmentWidth - 4),
+        // button margin 2px 0 + indicator padding-inline 2px
+        margin: const EdgeInsets.symmetric(vertical: 2, horizontal: 2),
+        // ios27 ion-segment-button --padding-start/end: 8px
+        padding: const EdgeInsets.symmetric(horizontal: 6),
         alignment: Alignment.center,
         decoration: BoxDecoration(
           color: checked ? pill : Colors.transparent,
-          borderRadius: BorderRadius.circular(_height / 2),
-          boxShadow: checked && !dark
-              ? const [
-                  BoxShadow(color: Color(0x0F000000), blurRadius: 5, offset: Offset(0, 2)),
-                  BoxShadow(color: Color(0x0F000000), spreadRadius: 0.5),
-                ]
-              : null,
+          // 44pt pill inset 2pt in the 24pt-radius track
+          borderRadius: BorderRadius.circular(_radius - 2),
         ),
         child: DefaultTextStyle.merge(
           maxLines: 1,
@@ -82,7 +80,7 @@ class IonToolbarSegment<T> extends StatelessWidget {
           textAlign: TextAlign.center,
           style: TextStyle(
             // ios27 `.in-toolbar ion-segment-button { font-size: .94rem }`
-            fontSize: 15,
+            fontSize: 0.94 * 17,
             fontWeight: FontWeight.w500,
             color: text,
           ),
@@ -92,7 +90,10 @@ class IonToolbarSegment<T> extends StatelessWidget {
           ),
         ),
       );
-      child = Opacity(opacity: enabled ? 1 : 0.2, child: child);
+      child = Opacity(
+        opacity: enabled ? 1 : IonSegment.iosDisabledOpacity(theme.brightness),
+        child: child,
+      );
       child = GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: enabled && !checked
@@ -116,10 +117,9 @@ class IonToolbarSegment<T> extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Container(
           height: _height,
-          padding: const EdgeInsets.symmetric(horizontal: 2),
           decoration: BoxDecoration(
             color: track,
-            borderRadius: BorderRadius.circular(_height / 2),
+            borderRadius: BorderRadius.circular(_radius),
           ),
           // Equal segment widths, sized by the widest label.
           child: IntrinsicWidth(

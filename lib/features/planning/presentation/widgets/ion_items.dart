@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -6,7 +5,9 @@ import '../../../../core/theme/app_colors.dart';
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 import '../../../../shared/widgets/layout/ionic_ios.dart'
-    show IonSearchIcon, IonTranslucentAppBar, IonContentTopInset; // PARITY_R5, IOS_R6
+    show IonTranslucentAppBar, IonContentTopInset; // PARITY_R5, IOS_R6
+import '../../../../shared/widgets/layout/ionic_ios.dart' as ios27
+    show IonIos, IonDetailChevron, IonSearchbar, IonLargeTitle; // IOS27_SWEEP
 
 // UX_PLANNING (wave 8): page-structure building blocks that mirror the Ionic
 // components as rendered in iOS mode (the app on an iPhone). They are used by
@@ -18,8 +19,11 @@ import '../../../../shared/widgets/layout/ionic_ios.dart'
 /// content is the shared adaptive [IonSegment].
 bool isIonIos(BuildContext context) => useIosLook(context);
 
-/// Ionic `ion-list-header`: bold label (22pt in iOS mode) with optional
-/// trailing note/button.
+/// Ionic `ion-list-header` with optional trailing note/button. iOS
+/// (IOS27_SWEEP): in a plain list the core header – min(1.375rem, 56.1px)
+/// = 23.375pt bold in step-850 (#262626, dark #d9d9d9); in an inset list
+/// ([inset], ionic-theme-ios27 structured list) the 17pt semibold label in
+/// `rgba(medium, .75)` with margin 8 / 4 / 4.
 class IonListHeader extends StatelessWidget {
   const IonListHeader({
     super.key,
@@ -28,6 +32,7 @@ class IonListHeader extends StatelessWidget {
     this.trailing,
     this.color,
     this.padding = const EdgeInsets.fromLTRB(16, 0, 4, 6),
+    this.inset = false,
   });
 
   final String title;
@@ -40,16 +45,29 @@ class IonListHeader extends StatelessWidget {
   final Color? color;
   final EdgeInsetsGeometry padding;
 
+  /// Header of an `ion-list [inset]="true"` (see [IonInsetList]).
+  final bool inset;
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final style = isIonIos(context)
-        ? TextStyle(fontSize: 22, fontWeight: FontWeight.w700, color: color ?? theme.colorScheme.onSurface)
+    final ios = isIonIos(context);
+    final dark = theme.brightness == Brightness.dark;
+    final style = ios
+        ? (inset
+            ? ios27.IonIos.listHeaderStyle(context, color: color)
+            : TextStyle(
+                fontSize: 1.375 * ios27.IonIos.rem,
+                fontWeight: FontWeight.w700,
+                color: color ?? (dark ? const Color(0xFFD9D9D9) : const Color(0xFF262626)),
+              ))
         : theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, color: color);
     return ConstrainedBox(
       constraints: const BoxConstraints(minHeight: 40),
       child: Padding(
-        padding: padding,
+        // ios27 inset header: 16pt header padding + 4pt label margin
+        // inside the 16pt list margin; label margin 8 / 4.
+        padding: ios && inset ? const EdgeInsets.fromLTRB(20, 8, 4, 4) : padding,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
@@ -97,7 +115,9 @@ class IonInsetList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final head = headerWidget ??
-        (header != null ? IonListHeader(title: header!, trailing: headerTrailing, color: headerColor) : null);
+        (header != null
+            ? IonListHeader(title: header!, trailing: headerTrailing, color: headerColor, inset: true)
+            : null);
     return Padding(
       padding: margin,
       child: Column(
@@ -127,8 +147,9 @@ class IonInsetList extends StatelessWidget {
   }
 }
 
-/// Ionic `ion-badge` (iOS: 13px bold, radius 10). Text uses the color's
-/// contrast (black on warning, white otherwise).
+/// Ionic `ion-badge` (iOS: max(13px, .8125rem) = 13.81pt bold, line-height
+/// 1, radius 10). Text uses the color's contrast (black on warning, white
+/// otherwise).
 class IonBadge extends StatelessWidget {
   const IonBadge({super.key, required this.label, required this.color, this.textColor});
 
@@ -145,12 +166,20 @@ class IonBadge extends StatelessWidget {
         decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(10)),
         child: Text(
           label,
-          style: TextStyle(color: textColor ?? contrastOf(color), fontSize: 13, fontWeight: FontWeight.w600, height: 1.1),
+          style: isIonIos(context)
+              ? TextStyle(
+                  color: textColor ?? contrastOf(color),
+                  fontSize: 0.8125 * ios27.IonIos.rem,
+                  fontWeight: FontWeight.w700,
+                  height: 1,
+                )
+              : TextStyle(color: textColor ?? contrastOf(color), fontSize: 13, fontWeight: FontWeight.w600, height: 1.1),
         ),
       );
 }
 
-/// Ionic `ion-note` in an item end slot: grey text.
+/// Ionic `ion-note` in an item end slot: grey text (iOS: max(16px, 1rem)
+/// = 17pt step-350, #a6a6a6 / dark #595959).
 class IonNote extends StatelessWidget {
   const IonNote(this.text, {super.key, this.style});
 
@@ -160,7 +189,13 @@ class IonNote extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Text(
         text,
-        style: const TextStyle(color: AppColors.medium, fontSize: 15).merge(style),
+        style: (isIonIos(context)
+                ? TextStyle(
+                    color: ios27.IonIos.note(Theme.of(context).brightness),
+                    fontSize: ios27.IonIos.noteFontSize,
+                  )
+                : const TextStyle(color: AppColors.medium, fontSize: 15))
+            .merge(style),
       );
 }
 
@@ -170,7 +205,7 @@ class IonDetailIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => isIonIos(context)
-      ? const Icon(CupertinoIcons.chevron_forward, size: 18, color: Color(0xFFC4C4C7))
+      ? const ios27.IonDetailChevron() // IOS27_SWEEP
       : const Icon(Icons.chevron_right, color: AppColors.medium);
 }
 
@@ -236,7 +271,7 @@ class IonSearchbar extends StatefulWidget {
     required this.placeholder,
     required this.onChanged,
     this.controller,
-    this.padding = const EdgeInsets.fromLTRB(12, 8, 12, 4),
+    this.padding,
   });
 
   final String placeholder;
@@ -244,7 +279,9 @@ class IonSearchbar extends StatefulWidget {
   /// Optional external controller (e.g. to clear the search programmatically).
   final TextEditingController? controller;
   final ValueChanged<String> onChanged;
-  final EdgeInsetsGeometry padding;
+
+  /// Defaults to the ios27 host padding 8 (iOS) / 12, 8, 12, 4 (md).
+  final EdgeInsetsGeometry? padding;
 
   @override
   State<IonSearchbar> createState() => _IonSearchbarState();
@@ -263,16 +300,16 @@ class _IonSearchbarState extends State<IonSearchbar> {
 
   @override
   Widget build(BuildContext context) {
+    final ios = isIonIos(context);
     return Padding(
-      padding: widget.padding,
-      child: isIonIos(context)
-          ? CupertinoSearchTextField(
+      padding: widget.padding ??
+          (ios ? const EdgeInsets.all(8) : const EdgeInsets.fromLTRB(12, 8, 12, 4)),
+      child: ios
+          // IOS27_SWEEP: the shared ios27 glass searchbar
+          ? ios27.IonSearchbar(
               controller: _controller,
-              placeholder: widget.placeholder,
+              hintText: widget.placeholder,
               onChanged: widget.onChanged,
-              // PARITY_R5: ios27 icons in the text colour, 22pt magnifier
-              itemColor: Theme.of(context).colorScheme.onSurface,
-              itemSize: IonSearchIcon.size,
             )
           : TextField(
               controller: _controller,
@@ -676,18 +713,8 @@ class _IonCondenseScaffoldState extends State<IonCondenseScaffold> {
                   children: [
                     // IOS_R6: room for the translucent toolbar
                     const IonContentTopInset(),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
-                      child: Text(
-                        widget.title,
-                        style: TextStyle(
-                          fontSize: 34,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 0.37,
-                          color: Theme.of(context).colorScheme.onSurface,
-                        ),
-                      ),
-                    ),
+                    // IOS27_SWEEP: ios27 large title (36.125pt bold)
+                    ios27.IonLargeTitle(widget.title),
                   ],
                 ),
               ),
@@ -717,6 +744,8 @@ Future<T?> showIonPopover<T>(
 }
 
 /// Ionic `ion-chip` (filled tint or outline, 0.5 opacity when disabled).
+/// iOS (IOS27_SWEEP, core ios chip): coloured fill 8 %, outline border
+/// 32 %, 14.875pt (.875rem), disabled .4.
 class IonChip extends StatelessWidget {
   const IonChip({
     super.key,
@@ -738,17 +767,18 @@ class IonChip extends StatelessWidget {
     final shape = StadiumBorder(
       side: outline ? BorderSide(color: color.withValues(alpha: 0.32)) : BorderSide.none,
     );
+    final ios = isIonIos(context);
     return Opacity(
-      opacity: disabled ? 0.5 : 1,
+      opacity: disabled ? (ios ? 0.4 : 0.5) : 1,
       child: Material(
-        color: outline ? Colors.transparent : color.withValues(alpha: 0.12),
+        color: outline ? Colors.transparent : color.withValues(alpha: ios ? 0.08 : 0.12),
         shape: shape,
         child: InkWell(
           customBorder: shape,
           onTap: disabled ? null : onTap,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            child: Text(label, style: TextStyle(fontSize: 14, color: color)),
+            child: Text(label, style: TextStyle(fontSize: ios ? 0.875 * ios27.IonIos.rem : 14, color: color)),
           ),
         ),
       ),

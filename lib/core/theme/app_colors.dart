@@ -93,6 +93,16 @@ class AppColors {
   static const Color iosNoteLight = Color(0xFF737373);
   static const Color iosNoteDark = Color(0xFF8C8C8C);
   static const Color iosMediumDark = Color(0xFF989AA2);
+  // IOS27_SWEEP: Ionic 9 light `--ion-color-medium` (#636469; the md look
+  // keeps [medium]).
+  static const Color iosMediumLight = Color(0xFF636469);
+  // IOS27_SWEEP: ionic-theme-ios27 `ion-list.ios { --ion-border-color:
+  // var(--ion-color-step-100, …, #e8e8e8) }` – item lines in lists.
+  static const Color iosListLineLight = Color(0xFFE8E8E8);
+  static const Color iosListLineDark = Color(0xFF1A1A1A);
+  // IOS27_SWEEP: Ionic 9 `ion-label p` (`--ion-color-step-400`).
+  static const Color iosLabelPLight = Color(0xFF999999);
+  static const Color iosLabelPDark = Color(0xFF666666);
   // ion-button[disabled] in the iOS 26 theme: step-200 grey, white label.
   static const Color iosDisabledButton = Color(0xFFCCCCCC);
 
