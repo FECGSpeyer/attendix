@@ -18,6 +18,7 @@ import '../../../data/providers/rd_today_providers.dart';
 import '../rd_widgets.dart';
 import 'rd_player_today.dart';
 import 'rd_today_common.dart';
+import 'rd_duty_section.dart';
 
 /// REDESIGN: "Heute" of Dirigent, Verantwortlich, Beobachter and Helfer
 /// (canvas D1, R3): next Termin with its answers, what needs attention,
@@ -83,6 +84,7 @@ class RdLeaderToday extends ConsumerWidget {
         if (role.canSeeSelfServiceTab) ...[
           const SizedBox(height: 24),
           const RdOwnAnswerSection(),
+          const RdDutySection(),
         ],
         const SizedBox(height: 24),
         RdSectionHeader(

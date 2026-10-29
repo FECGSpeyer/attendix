@@ -17,6 +17,7 @@ import '../../../data/providers/rd_today_providers.dart' show rdSignoutDataProvi
 import '../event/rd_signout_sheet.dart';
 import '../rd_widgets.dart';
 import 'rd_today_common.dart';
+import 'rd_duty_section.dart';
 
 /// REDESIGN: "Heute" of Spieler and Stimmführer (canvas S1, R1): the own
 /// answer for the next Termin in one tap, Abmelden with a reason in two,
@@ -66,6 +67,8 @@ class RdPlayerToday extends ConsumerWidget {
                 ),
             ],
           ),
+        // "Bitte bestätigen" and "Offene Dienste" (Dienstplan of "Meine Termine").
+        const RdDutySection(),
         if (role.canSeeVoiceLeaderSettings) ...[
           const SizedBox(height: 24),
           RdGroupedList(

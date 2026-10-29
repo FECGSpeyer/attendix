@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:attendix/core/constants/enums.dart';
+import 'package:attendix/core/providers/duty_providers.dart';
 import 'package:attendix/core/providers/player_absence_providers.dart';
 import 'package:attendix/core/providers/redesign_providers.dart';
 import 'package:attendix/core/providers/self_service_providers.dart';
@@ -9,11 +10,13 @@ import 'package:attendix/core/providers/tenant_providers.dart';
 import 'package:attendix/core/theme/redesign/rd_palette.dart';
 import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/data/models/attendance/attendance.dart';
+import 'package:attendix/data/repositories/duty_repository.dart';
 import 'package:attendix/data/repositories/sign_in_out_repository.dart';
 import 'package:attendix/features/redesign/data/providers/rd_today_providers.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_own_event_page.dart';
 import 'package:attendix/features/redesign/presentation/widgets/event/rd_absence_sheet.dart';
 import 'package:attendix/features/redesign/presentation/widgets/event/rd_signout_sheet.dart';
+import 'package:attendix/features/redesign/presentation/widgets/today/rd_duty_section.dart';
 import 'package:attendix/features/self_service/presentation/widgets/self_service_event_actions.dart';
 import 'package:attendix/l10n/l10n.dart';
 import 'package:flutter/material.dart';
@@ -169,6 +172,63 @@ void main() {
       final data = await container.read(rdSignoutDataProvider.future);
       expect(data.allUpcoming.map((a) => a.id), ['8', '9']);
       expect(data.past, isEmpty);
+    });
+
+    testWidgets('duties: confirm own ones, take over open ones in the existing sheet', (tester) async {
+      tester.view.physicalSize = const Size(393, 1200);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      final type = TestFactories.createAttendanceType(id: 'd', name: 'Dienst').copyWith(dutyMode: true);
+      final termin = DutyTermin(
+        attendance: TestFactories.createAttendance(id: 40, tenantId: 7, date: _day(5), typeId: 'd', typeInfo: 'Ordnerdienst'),
+        type: type,
+        required: 3,
+        occupied: 1,
+        persons: const [],
+      );
+      final overview = MyDutyOverview(
+        person: TestFactories.createPerson(id: 3, tenantId: 7),
+        termine: [termin],
+        requests: [(termin: termin, pa: TestFactories.createPersonAttendance(id: 'pa-40', attendanceId: 40, personId: 3))],
+        openDuties: [termin],
+      );
+      await tester.pumpWidget(ProviderScope(
+        overrides: [myDutyOverviewProvider.overrideWith((ref) async => overview)],
+        child: _themed(const SingleChildScrollView(child: RdDutySection())),
+      ));
+      await _settle(tester);
+
+      expect(find.text('Bitte bestätigen'), findsOneWidget);
+      expect(find.text('Ordnerdienst'), findsOneWidget);
+      expect(find.text('Du bist eingeteilt'), findsOneWidget);
+      expect(find.text('Bestätigen'), findsOneWidget);
+      expect(find.text('Kann nicht'), findsOneWidget);
+      expect(find.text('1 offen'), findsOneWidget);
+
+      await tester.tap(find.text('Offene Dienste'));
+      await _settle(tester);
+      // The existing "Offene Dienste" sheet (duty_take with its checks).
+      expect(find.text('Offene Dienste'), findsNWidgets(2));
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('no duty circle, nothing to confirm: no duty section', (tester) async {
+      await tester.pumpWidget(ProviderScope(
+        overrides: [myDutyOverviewProvider.overrideWith((ref) async => const MyDutyOverview())],
+        child: _themed(const RdDutySection()),
+      ));
+      await _settle(tester);
+      expect(find.text('Offene Dienste'), findsNothing);
+    });
+
+    test('Heute, Termine and the leader Heute show the duty section', () {
+      for (final path in [
+        'lib/features/redesign/presentation/pages/rd_events_page.dart',
+        'lib/features/redesign/presentation/widgets/today/rd_player_today.dart',
+        'lib/features/redesign/presentation/widgets/today/rd_leader_today.dart',
+      ]) {
+        expect(File(path).readAsStringSync(), contains('RdDutySection()'), reason: path);
+      }
     });
 
     test('every list of the new design uses the filtered Termine', () {

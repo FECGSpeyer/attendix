@@ -27,6 +27,7 @@ import '../widgets/rd_split_view.dart';
 import '../widgets/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart';
 import '../../data/rd_dates.dart';
+import '../widgets/today/rd_duty_section.dart';
 
 /// REDESIGN: tab "Termine" (canvas D2 for Dirigent/Helfer/Beobachter, S2
 /// for Spieler). Kommend / Vergangen, filters, and for Spieler the answer
@@ -334,6 +335,9 @@ class _RdEventsPageState extends ConsumerState<RdEventsPage> {
         _swipe(Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            // "Bitte bestätigen" and "Offene Dienste": unassigned duties are
+            // taken over there, not answered in this list.
+            if (!_past) const RdDutySection(),
             if (!_past && openCount > 0) ...[
               const SizedBox(height: 12),
               _WaitingBanner(
