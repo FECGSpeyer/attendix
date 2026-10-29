@@ -306,20 +306,24 @@ void main() {
     });
 
     test('dirty and title baseline are reset only after a successful write', () {
-      final body = RegExp(r'Future<bool> _writeOpenPlan\(\) async \{[\s\S]+?\n  \}').firstMatch(src)!.group(0)!;
+      final body = RegExp(r'Future<bool> _writeOpenPlan\(int attId\) async \{[\s\S]+?\n  \}').firstMatch(src)!.group(0)!;
       final write = body.indexOf('updateAttendancePlanFields');
       expect(body.indexOf('_dirty = false'), greaterThan(write));
       expect(body.indexOf('_savedTitle = title'), greaterThan(write));
       expect(body, contains('if (editGen == _editGen) _dirty = false;'));
       // SOL_FIX26: `_markWritten` sets `_hasChanges` (and the cache flag).
-      expect(body.indexOf('_markWritten(att.id!)'), greaterThan(write));
+      expect(body.indexOf('_markWritten(att.id!, saved)'), greaterThan(write));
     });
 
     test('all attendance writes of the editor go through the chain', () {
       // SOL_FIX25: + the write of pending edits queued by dispose().
       expect(RegExp(r'updateAttendancePlanFields\(').allMatches(src), hasLength(4));
       // SOL_FIX26: + the cache invalidation queued by dispose().
-      expect(RegExp(r'_serialised\(').allMatches(src), hasLength(5));
+      // SOL_FIX27: the write queued by dispose() runs on the process-wide
+      // chain directly; `_serialised` is that chain too.
+      expect(RegExp(r'_serialised\(').allMatches(src), hasLength(4));
+      expect(RegExp(r'PlanningWriteSync\.run\(').allMatches(src), hasLength(2));
+      expect(src, isNot(contains('_writeChain')));
     });
   });
 }

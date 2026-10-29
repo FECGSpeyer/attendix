@@ -4,7 +4,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../core/providers/attendance_detail_providers.dart';
 import '../../../../core/providers/debug_providers.dart';
@@ -38,6 +37,9 @@ import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 import 'package:attendix/shared/widgets/layout/route_leave_guard.dart'; // SOL_FIX25
 import '../../../../data/repositories/plan_repository.dart'; // SOL_FIX25
 import '../../../../core/services/offline_queue_service.dart' show rootScaffoldMessengerKey; // SOL_FIX26
+import '../../../../core/config/supabase_config.dart' show currentAuthUserIdProvider; // SOL_FIX27
+import '../../../../core/services/planning_draft_store.dart'; // SOL_FIX27
+import '../../data/planning_write_sync.dart'; // SOL_FIX27
 
 /// Provider for songs list (for adding to plan)
 final planSongsProvider = FutureProvider<List<Song>>((ref) async {
@@ -95,7 +97,14 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   /// SOL_FIX23: every write of the attendance row runs only after the
   /// previous one finished, so an older editor state or an older copy of
   /// `extra_plans` can never be written last.
-  Future<void> _writeChain = Future<void>.value();
+  /// SOL_FIX27: the chain is process-wide per (tenant, Termin)
+  /// ([PlanningWriteSync]), shared by every editor instance.
+  final int _instanceNo = PlanningWriteSync.newInstance();
+
+  /// SOL_FIX27: per Termin the commit sequence number this editor knows
+  /// (its load, then its own last commit). A write queued by [dispose] is
+  /// skipped when a later editor committed after it.
+  final Map<int, int> _knownSeq = {};
 
   /// SOL_FIX23: bumped on every edit; a finished write only clears `_dirty`
   /// when nothing was edited since its snapshot.
@@ -134,8 +143,12 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   /// SOL_FIX26: tenant of the local drafts (captured with [_disposeRepo]).
   int? _tenantId;
 
+  /// SOL_FIX27: signed-in account the editor (and its drafts) belong to.
+  String? _userId;
+
   /// SOL_FIX26: draft restored into the editor; removed once it is stored.
-  String? _restoredDraftKey;
+  /// SOL_FIX27: only while it still holds the restored revision.
+  ({String key, int? rev})? _restoredDraft;
 
   /// SOL_FIX26: captured while mounted, so a failed write queued by
   /// [dispose] can still show a toast.
@@ -151,6 +164,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     _container = ProviderScope.containerOf(context, listen: false);
     _disposeRepo = ref.read(planRepositoryWithTenantProvider);
     _tenantId = ref.read(currentTenantIdProvider);
+    _userId = ref.read(currentAuthUserIdProvider); // SOL_FIX27
   }
 
   @override
@@ -168,7 +182,12 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     _flushOnDispose();
     // SOL_FIX26: after every queued write (also the one above), refresh the
     // caches when anything was stored, even without pending edits.
-    unawaited(_serialised(() async => _invalidateCaches()));
+    final attId = _attId;
+    if (attId == null) {
+      _invalidateCaches();
+    } else {
+      unawaited(_serialised(attId, () async => _invalidateCaches()));
+    }
     _titleController.dispose();
     super.dispose();
   }
@@ -194,6 +213,12 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   /// link, browser back, tenant switch): queue the pending edits behind the
   /// running writes instead of dropping them. Uses only what was captured
   /// while mounted. Like Ionic `saveOpenPlan`, an invalid plan is not stored.
+  ///
+  /// SOL_FIX27: the write is queued on the process-wide chain of the Termin
+  /// and only runs for the account that made the edit. When an editor opened
+  /// later has stored the Termin meanwhile, this older snapshot is not
+  /// written (the later editor's write wins, see [PlanningWriteSync]); its
+  /// draft stays only if it differs from what the later editor stored.
   void _flushOnDispose() {
     final attId = _attId;
     final repo = _disposeRepo;
@@ -203,21 +228,39 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     final title = _titleController.text.trim();
     final planIndex = _planIndex;
     if (PlanUtils.validate(time, fields) != PlanValidation.ok) return;
+    // SOL_FIX27: signed out or another account meanwhile: neither a write
+    // nor a draft (the edit belongs to the previous account). Without a
+    // signed-in user there is no draft ([_draftKey] is null).
+    final userId = _userId;
+    if (_authUserId() != userId) return;
+    final syncKey = PlanningWriteSync.keyFor(_tenantId, attId);
+    final knownSeq = _knownSeq[attId] ?? 0;
     // SOL_FIX26: the editor is gone, so the edit is kept as a local draft
     // until the write is confirmed; a failed write shows a toast and the
     // draft is restored the next time this plan is opened.
-    final draftKey = _draftKey(attId, _planKeyOf(_att, planIndex));
-    final draftSaved = _writeDraft(draftKey, time: time, fields: fields, title: title);
-    unawaited(_serialised(() async {
-      await draftSaved;
+    final planKey = _planKeyOf(_att, planIndex);
+    final draftKey = _draftKey(attId, planKey, userId);
+    final draft = _draftData(time: time, fields: fields, title: title);
+    final draftRev = PlanningDraftStore.write(draftKey, draft, allowed: () => _authUserId() == userId);
+    unawaited(PlanningWriteSync.run(syncKey, () async {
+      final rev = await draftRev;
+      if (_authUserId() != userId) return;
+      final newer = PlanningWriteSync.newerCommit(syncKey, _instanceNo, knownSeq);
+      if (newer != null) {
+        final stored = _planByKey(newer, planKey);
+        if (stored != null && _sameDraft(_draftOfPlan(stored), draft)) {
+          await PlanningDraftStore.removeIfRevision(draftKey, rev);
+        }
+        return;
+      }
       // Built when the write starts: `_att` is the latest persisted row (it
       // is still replaced after every write that finishes after dispose).
       final att = _att;
       if (att?.id != attId) return;
-      await repo.updateAttendancePlanFields(
+      final saved = await repo.updateAttendancePlanFields(
           attId, _planUpdate(att!, planIndex, time: time, fields: fields, title: title));
-      _markWritten(attId);
-      await _removeDraft(draftKey);
+      _markWritten(attId, saved);
+      await PlanningDraftStore.removeIfRevision(draftKey, rev);
     }).catchError((Object _) {
       _showDetachedError(l10nWithoutContext.planningFlutterDraftSavedLocally);
     }));
@@ -227,6 +270,15 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   // SOL_FIX26: local drafts of edits whose write failed after leaving
   // ---------------------------------------------------------------------------
 
+  /// SOL_FIX27: signed-in account right now (null when signed out).
+  String? _authUserId() {
+    try {
+      return _container.read(currentAuthUserIdProvider);
+    } catch (_) {
+      return null;
+    }
+  }
+
   /// Stable part of a plan in the draft key: its id, else its position.
   static String _planKeyOf(PlanAttendance? att, int planIndex) {
     final plans = PlanUtils.allPlans(att);
@@ -234,12 +286,20 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     return (id?.isNotEmpty ?? false) ? id! : 'i$planIndex';
   }
 
-  /// Tenant-scoped SharedPreferences key of a plan draft (null without tenant).
-  String? _draftKey(int attId, String planKey) {
-    final tenantId = _tenantId;
-    if (tenantId == null) return null;
-    return 'planning_draft_${tenantId}_${attId}_$planKey';
+  /// SOL_FIX27: plan of [att] that [planKey] ([_planKeyOf]) names.
+  static Plan? _planByKey(PlanAttendance att, String planKey) {
+    final plans = PlanUtils.allPlans(att);
+    final byId = plans.where((p) => p.id == planKey).firstOrNull;
+    if (byId != null) return byId;
+    final index = RegExp(r'^i(\d+)$').firstMatch(planKey)?.group(1);
+    final i = index == null ? null : int.tryParse(index);
+    return i != null && i < plans.length ? plans[i] : null;
   }
+
+  /// SOL_FIX27: draft key of the account [userId] in the editor's tenant
+  /// (null without user or tenant: no draft).
+  String? _draftKey(int attId, String planKey, String? userId) =>
+      PlanningDraftStore.keyFor(userId: userId, tenantId: _tenantId, attId: attId, planKey: planKey);
 
   static Map<String, dynamic> _draftData(
           {required String time, required List<PlanField> fields, required String title}) =>
@@ -249,43 +309,29 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
         'fields': [for (final f in fields) f.toJson()],
       })) as Map<String, dynamic>;
 
-  static Future<void> _writeDraft(String? key,
-      {required String time, required List<PlanField> fields, required String title}) async {
-    if (key == null) return;
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString(key, jsonEncode(_draftData(time: time, fields: fields, title: title)));
-    } catch (_) {
-      // Drafts are a safety net only.
-    }
-  }
+  static Map<String, dynamic> _draftOfPlan(Plan plan) =>
+      _draftData(time: PlanUtils.formatTime(plan.time), fields: plan.fields, title: plan.title ?? '');
 
-  static Future<void> _removeDraft(String? key) async {
-    if (key == null) return;
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.remove(key);
-    } catch (_) {}
-  }
+  static bool _sameDraft(Map<String, dynamic> a, Map<String, dynamic> b) => jsonEncode(a) == jsonEncode(b);
 
   /// Restores the draft of the plan that was just loaded, when one exists
   /// and differs from it: the editor takes it over as a pending (dirty)
   /// change, so it is saved again by the autosave.
+  ///
+  /// SOL_FIX27: only the signed-in account's own draft, and only while that
+  /// account is still signed in when the draft was read.
   Future<void> _restoreDraft(int attId, int planIndex) async {
-    final key = _draftKey(attId, _planKeyOf(_att, planIndex));
+    final userId = _authUserId();
+    final key = _draftKey(attId, _planKeyOf(_att, planIndex), userId);
     if (key == null) return;
     final loadGen = _loadGen;
     final editGen = _editGen;
-    final String? raw;
-    try {
-      raw = (await SharedPreferences.getInstance()).getString(key);
-    } catch (_) {
-      return;
-    }
+    final stored = await PlanningDraftStore.read(key);
     // Another plan was loaded or the user already edited: keep the draft.
-    if (raw == null || !mounted || loadGen != _loadGen || editGen != _editGen) return;
+    if (stored == null || !mounted || loadGen != _loadGen || editGen != _editGen) return;
+    if (_authUserId() != userId) return;
     try {
-      final draft = jsonDecode(raw) as Map<String, dynamic>;
+      final draft = stored.data;
       final fields = [
         for (final f in draft['fields'] as List) PlanField.fromJson(Map<String, dynamic>.from(f as Map)),
       ];
@@ -294,8 +340,8 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       final title = draft['title'] as String? ?? '';
       final restored = _draftData(time: time, fields: fields, title: title);
       final loaded = _draftData(time: _time, fields: _fields, title: _titleController.text.trim());
-      if (jsonEncode(restored) == jsonEncode(loaded)) {
-        await _removeDraft(key);
+      if (_sameDraft(restored, loaded)) {
+        await PlanningDraftStore.removeIfRevision(key, stored.rev);
         return;
       }
       setState(() {
@@ -303,11 +349,11 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
         _fields = fields;
         _titleController.text = title;
       });
-      _restoredDraftKey = key;
+      _restoredDraft = (key: key, rev: stored.rev);
       _changed();
       ToastHelper.showInfo(context, context.l10n.planningFlutterDraftRestored);
     } catch (_) {
-      await _removeDraft(key);
+      await PlanningDraftStore.removeIfRevision(key, stored.rev);
     }
   }
 
@@ -379,6 +425,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     // SOL_FIX25: the repository (tenant) the Termine were loaded with.
     _disposeRepo = ref.read(planRepositoryWithTenantProvider);
     _tenantId = ref.read(currentTenantIdProvider); // SOL_FIX26
+    _userId = ref.read(currentAuthUserIdProvider); // SOL_FIX27
     PlanAttendance? att;
     final requestedId = widget.attendanceId;
     if (requestedId != null) {
@@ -443,6 +490,8 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   }
 
   void _loadAttendance(PlanAttendance att, {int? planIndex}) {
+    // SOL_FIX27: the commits this editor has seen of the Termin.
+    if (att.id != null) _knownSeq[att.id!] = PlanningWriteSync.seq(PlanningWriteSync.keyFor(_tenantId, att.id!));
     final plans = PlanUtils.allPlans(att);
     // SOL_FIX22: `?plan=-1` (or too large) falls back to the first plan.
     final index = PlanUtils.validPlanIndex(planIndex, plans.length) ?? 0;
@@ -473,7 +522,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       // Ionic `onAttChange` → `calculateEnd` → `updateAttendance` stores the
       // default plan of a Termin without plan; keep it as a pending change.
       _dirty = true;
-      _restoredDraftKey = null;
+      _restoredDraft = null;
       if (att.id != null) unawaited(_restoreDraft(att.id!, index)); // SOL_FIX26
     }
   }
@@ -484,7 +533,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     _loadGen++;
     _loadEditGen = _editGen;
     _dirty = false;
-    _restoredDraftKey = null;
+    _restoredDraft = null;
     setState(() {
       _titleController.text = plan.title ?? _defaultTitle(att);
       final t = PlanUtils.formatTime(plan.time);
@@ -511,7 +560,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     _loadGen++;
     _loadEditGen = _editGen;
     _dirty = false;
-    _restoredDraftKey = null;
+    _restoredDraft = null;
     setState(() {
       _planIndex = 0;
       _titleController.text = _defaultTitle(att);
@@ -587,13 +636,13 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   /// SOL_FIX22: true while the editor holds changes that are not stored yet.
   bool get _hasPendingChanges => _dirty || _titleController.text.trim() != _savedTitle;
 
-  /// SOL_FIX23: runs [task] after every write queued before it (one chain
-  /// per editor, i.e. per Termin). Errors reach the caller, never the chain.
-  Future<T> _serialised<T>(Future<T> Function() task) {
-    final result = _writeChain.then((_) => task());
-    _writeChain = result.then<void>((_) {}, onError: (Object _) {});
-    return result;
-  }
+  /// SOL_FIX23: runs [task] after every write queued before it. Errors
+  /// reach the caller, never the chain.
+  /// SOL_FIX27: on the process-wide chain of Termin [attId], shared with
+  /// every other editor instance (e.g. one that was just left and still
+  /// writes).
+  Future<T> _serialised<T>(int attId, Future<T> Function() task) =>
+      PlanningWriteSync.run(PlanningWriteSync.keyFor(_tenantId, attId), task);
 
   /// Ionic `saveOpenPlan`: queues a write of the open plan (when it holds
   /// valid pending changes) behind all running writes.
@@ -602,7 +651,9 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   /// changes and dirty state and the Ionic error toast is shown.
   Future<bool> _save() {
     _saveTimer?.cancel();
-    return _serialised(_writeOpenPlan);
+    final attId = _attId;
+    if (attId == null) return Future.value(true);
+    return _serialised(attId, () => _writeOpenPlan(attId));
   }
 
   /// SOL_FIX24: the user edited the open plan since it was loaded.
@@ -643,12 +694,14 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     }
   }
 
-  Future<bool> _writeOpenPlan() async {
+  Future<bool> _writeOpenPlan(int attId) async {
     if (!mounted || !_hasPendingChanges) return true;
     // Built when the write starts: `_att` is the latest persisted row (it is
     // replaced after every write), plus the current editor state.
     final att = _att;
-    if (att?.id == null || !_validate()) return true;
+    // SOL_FIX27: queued on the chain of [attId]; another Termin opened
+    // meanwhile is written by its own queued save.
+    if (att?.id != attId || !_validate()) return true;
     final loadGen = _loadGen;
     final editGen = _editGen;
     final title = _titleController.text.trim();
@@ -656,17 +709,18 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     try {
       final saved = await ref.read(planRepositoryWithTenantProvider).updateAttendancePlanFields(att.id!, update);
       // SOL_FIX23: every successful write is a change (caches on close).
-      _markWritten(att.id!);
+      _markWritten(att.id!, saved);
       _replaceAtt(saved);
       // Baseline / dirty only for the snapshot that was really stored.
       if (loadGen == _loadGen) {
         _savedTitle = title;
         if (editGen == _editGen) _dirty = false;
         // SOL_FIX26: the restored draft is stored now.
-        final draftKey = _restoredDraftKey;
-        if (draftKey != null) {
-          _restoredDraftKey = null;
-          await _removeDraft(draftKey);
+        // SOL_FIX27: removed only while it still holds the restored revision.
+        final draft = _restoredDraft;
+        if (draft != null) {
+          _restoredDraft = null;
+          await PlanningDraftStore.removeIfRevision(draft.key, draft.rev);
         }
       }
       return true;
@@ -677,10 +731,10 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   }
 
   Future<void> _savePlans(PlanAttendance att, List<Plan> plans) async {
-    final saved = await _serialised(() => ref
+    final saved = await _serialised(att.id!, () => ref
         .read(planRepositoryWithTenantProvider)
         .updateAttendancePlanFields(att.id!, PlanUtils.splitPlans(plans)));
-    _markWritten(att.id!);
+    _markWritten(att.id!, saved);
     _replaceAtt(saved);
   }
 
@@ -699,16 +753,19 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     final att = _att;
     if (att?.id == null) return;
     final saved = await _serialised(
-        () => ref.read(planRepositoryWithTenantProvider).updateAttendancePlanFields(att!.id!, updates));
-    _markWritten(att!.id!);
+        att!.id!, () => ref.read(planRepositoryWithTenantProvider).updateAttendancePlanFields(att.id!, updates));
+    _markWritten(att.id!, saved);
     _replaceAtt(saved);
   }
 
   /// SOL_FIX26: a write of Termin [attId] succeeded.
-  void _markWritten(int attId) {
+  /// SOL_FIX27: [saved] (the stored row) is recorded as a commit of this
+  /// editor on the process-wide chain ([PlanningWriteSync]).
+  void _markWritten(int attId, PlanAttendance saved) {
     _hasChanges = true;
     _needsInvalidate = true;
     _writtenAttIds.add(attId);
+    _knownSeq[attId] = PlanningWriteSync.commit(PlanningWriteSync.keyFor(_tenantId, attId), _instanceNo, saved);
   }
 
   /// SOL_FIX26: refreshes the caches of every Termin written since the last
@@ -1267,9 +1324,10 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     if (saved == null || !mounted) return;
     try {
       final plan = Plan.fromJson(saved);
-      _replaceAtt(att.copyWith(plan: plan));
+      final stored = att.copyWith(plan: plan);
+      _replaceAtt(stored);
       _loadPlan(att, plan);
-      _markWritten(att.id!);
+      _markWritten(att.id!, stored);
       ref.invalidate(planAttendanceByIdProvider(att.id!));
     } catch (_) {}
   }

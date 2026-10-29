@@ -59,32 +59,74 @@ enum EchoKind {
 /// from the echo of the newest one and from a foreign change. Values are
 /// compared as canonical JSON (sorted keys, nulls dropped), so the echo of a
 /// write matches no matter how the database orders the jsonb keys.
+///
+/// SOL_FIX27: the tables carry no server revision (`attendance` and
+/// `shared_plans` have no `updated_at`), so echoes are matched by content,
+/// but each own write suppresses at most ONE matching echo: a matching echo
+/// consumes its write. A write that completed more than [window] ago no
+/// longer matches. Once the echo of a write arrived (or its window
+/// expired), that write and every older one are dropped. So after the own
+/// edits 30 → 40 → 50 and their echoes, another editor setting the state
+/// back to 40 is a foreign change and is applied.
 class OwnWriteLog {
-  OwnWriteLog({this.capacity = 10});
+  OwnWriteLog({this.capacity = 10, this.window = const Duration(seconds: 15), DateTime Function()? clock})
+      : _clock = clock ?? DateTime.now;
 
   final int capacity;
-  final _writes = <({int id, Map<String, String> columns})>[];
+
+  /// How long after a write completed its echo is expected.
+  final Duration window;
+  final DateTime Function() _clock;
+  final _writes = <_OwnWrite>[];
   int _nextId = 0;
 
   /// Records a write of [columns] (call before sending it); returns its id.
   int record(Map<String, dynamic> columns) {
     final id = _nextId++;
-    _writes.add((id: id, columns: {for (final e in columns.entries) e.key: canonicalJson(e.value)}));
+    _writes.add(_OwnWrite(id, {for (final e in columns.entries) e.key: canonicalJson(e.value)}));
     if (_writes.length > capacity) _writes.removeAt(0);
     return id;
+  }
+
+  /// SOL_FIX27: the write [id] was stored; its echo window starts now.
+  void complete(int id) {
+    for (final w in _writes) {
+      if (w.id == id) w.completedAt = _clock();
+    }
   }
 
   /// Forgets a write that failed (it is not the stored state).
   void forget(int id) => _writes.removeWhere((w) => w.id == id);
 
-  /// Classifies an incoming [row]: the newest matching own write decides.
+  /// Classifies an incoming [row]: the newest matching own write that has
+  /// not been echoed yet decides, and is consumed by it.
   EchoKind classify(Map<String, dynamic> row) {
+    _prune();
     for (var i = _writes.length - 1; i >= 0; i--) {
       final w = _writes[i];
+      if (w.echoed) continue;
       final matches = w.columns.entries.every((c) => row.containsKey(c.key) && canonicalJson(row[c.key]) == c.value);
-      if (matches) return i == _writes.length - 1 ? EchoKind.latestOwn : EchoKind.olderOwn;
+      if (!matches) continue;
+      final kind = i == _writes.length - 1 ? EchoKind.latestOwn : EchoKind.olderOwn;
+      w.echoed = true;
+      _prune();
+      return kind;
     }
     return EchoKind.foreign;
+  }
+
+  /// Drops the newest write that was echoed or whose window expired, and
+  /// every older write.
+  void _prune() {
+    final now = _clock();
+    for (var i = _writes.length - 1; i >= 0; i--) {
+      final w = _writes[i];
+      final done = w.completedAt;
+      if (w.echoed || (done != null && now.difference(done) > window)) {
+        _writes.removeRange(0, i + 1);
+        return;
+      }
+    }
   }
 
   /// Canonical JSON of [value]: map keys sorted, null values dropped,
@@ -105,6 +147,19 @@ class OwnWriteLog {
 
     return jsonEncode(norm(jsonDecode(jsonEncode(value))));
   }
+}
+
+class _OwnWrite {
+  _OwnWrite(this.id, this.columns);
+
+  final int id;
+  final Map<String, String> columns;
+
+  /// Set once the write was stored (null while it runs: no expiry yet).
+  DateTime? completedAt;
+
+  /// Its echo arrived (it suppresses no further row).
+  bool echoed = false;
 }
 
 class SharedPlanPage extends ConsumerStatefulWidget {
@@ -547,6 +602,7 @@ class _SharedPlanPageState extends ConsumerState<SharedPlanPage> {
         }
         writeId = _ownWrites.record(update);
         await _repo.updateSharedAttendancePlan(att!.id!, key, editKey, update);
+        _ownWrites.complete(writeId); // SOL_FIX27: echo window starts
         // The stored row; other fields of `_att` may have changed meanwhile
         // (realtime), the plan columns are exactly what was written.
         _att = PlanAttendance.fromJson({...(_att ?? att).toJson(), ...update});
@@ -555,6 +611,7 @@ class _SharedPlanPageState extends ConsumerState<SharedPlanPage> {
         writeId = _ownWrites.record(PublicPlanRepository.sharedPlanUpdateData(
             fields: _fields, title: _title, time: _time, endTime: _end));
         await _repo.updateSharedPlan(key, editKey, fields: _fields, title: _title, time: _time, endTime: _end);
+        _ownWrites.complete(writeId); // SOL_FIX27: echo window starts
       }
       if (editGen == _editGen) _dirty = false;
       return true;

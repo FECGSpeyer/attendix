@@ -126,11 +126,6 @@ void main() {
     await tester.pumpAndSettle();
     expect(minutesOnScreen(tester), '50');
 
-    // Echo of write 1 arriving late (after write 2's echo) is ignored too.
-    repo.onUpdate!(repo.storedRows[0]);
-    await tester.pumpAndSettle();
-    expect(minutesOnScreen(tester), '50');
-
     // A follow-up edit persists on top of write 2.
     await tester.enterText(minutesFields().last, '9');
     await tester.pumpAndSettle();
@@ -186,10 +181,9 @@ void main() {
     final log = OwnWriteLog(capacity: 3);
     log.record({'plan': {'time': '18:00', 'title': null}});
     log.record({'plan': {'time': '19:00'}});
-    expect(log.classify({'plan': {'time': '18:00'}, 'x': 1}), EchoKind.olderOwn);
-    expect(log.classify({'plan': {'time': '19:00'}}), EchoKind.latestOwn);
     expect(log.classify({'plan': {'time': '20:00'}}), EchoKind.foreign);
     expect(log.classify({'other': 1}), EchoKind.foreign);
+    expect(log.classify({'plan': {'time': '18:00'}, 'x': 1}), EchoKind.olderOwn);
     final failed = log.record({'plan': {'time': '21:00'}});
     log.forget(failed);
     expect(log.classify({'plan': {'time': '19:00'}}), EchoKind.latestOwn);
