@@ -55,6 +55,50 @@ Future<void> showStatisticsModal(BuildContext context) {
   );
 }
 
+/// Sections of the statistics page below "Zeitraum", in Ionic
+/// stats.page.html order.
+enum StatsSection {
+  overview,
+  trend,
+  statusDistribution,
+  top20,
+  perInstrument,
+  unexcused,
+
+  /// Flutter empty / loading / error state for the Termin-dependent part.
+  noData,
+  members,
+  ageDistribution,
+  avgAgeInstrument,
+  organisation,
+}
+
+/// ASTRA_TEACH_STATS: Ionic shows the attendance overview (with 0 Termine
+/// and 0 %), members, demography and organisation regardless of the period;
+/// only the attendance charts depend on Termine. Without Termine those
+/// charts are replaced by the empty state, the rest keeps Ionic's order.
+/// While the Termine are still loading (or failed), the overview is replaced
+/// by the spinner / error as well, so no misleading "0" flashes.
+List<StatsSection> statsSectionsFor({
+  required bool hasAttendances,
+  bool loaded = true,
+}) =>
+    [
+      if (loaded) StatsSection.overview,
+      if (hasAttendances) ...const [
+        StatsSection.trend,
+        StatsSection.statusDistribution,
+        StatsSection.top20,
+        StatsSection.perInstrument,
+        StatsSection.unexcused,
+      ] else
+        StatsSection.noData,
+      StatsSection.members,
+      StatsSection.ageDistribution,
+      StatsSection.avgAgeInstrument,
+      StatsSection.organisation,
+    ];
+
 class StatisticsPage extends ConsumerStatefulWidget {
   const StatisticsPage({super.key, this.asModal = false});
 
@@ -145,83 +189,16 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> {
                     ref.read(statisticsDateRangeProvider.notifier).setRange(start, end),
               ),
               const SizedBox(height: AppDimensions.paddingL),
-              ...attendancesAsync.when(
-                loading: () => const [
-                  Padding(
-                    padding: EdgeInsets.all(AppDimensions.paddingXL),
-                    child: Center(child: AppSpinner()),
-                  ),
-                ],
-                error: (error, stack) => [Center(child: Text(context.l10n.attendanceFlutterErrorWith(friendlyErrorMessage(error))))],
-                data: (attendances) {
-                  if (attendances.isEmpty) {
-                    return [
-                      Padding(
-                        padding: const EdgeInsets.all(AppDimensions.paddingXL),
-                        child: Center(
-                          child: Column(
-                            children: [
-                              const Icon(Icons.bar_chart, size: 64, color: AppColors.medium),
-                              const SizedBox(height: 16),
-                              Text(context.l10n.statsFlutterNoDataInPeriod),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ];
-                  }
-                  return [
-                    _buildSectionTitle(context.l10n.statsOverview),
-                    const SizedBox(height: AppDimensions.paddingS),
-                    _OverviewList(statistics: statistics),
-                    const SizedBox(height: AppDimensions.paddingL),
-
-                    _buildSectionTitle(context.l10n.statsTrend),
-                    const SizedBox(height: AppDimensions.paddingS),
-                    const _TrendLineChart(),
-                    const SizedBox(height: AppDimensions.paddingL),
-
-                    _buildSectionTitle(context.l10n.statsStatusDistribution),
-                    const SizedBox(height: AppDimensions.paddingS),
-                    const _StatusPieChart(),
-                    const SizedBox(height: AppDimensions.paddingL),
-
-                    _buildSectionTitle(context.l10n.statsTop20),
-                    const SizedBox(height: AppDimensions.paddingS),
-                    const _TopPlayersChart(),
-                    const SizedBox(height: AppDimensions.paddingL),
-
-                    _buildSectionTitle(context.l10n.statsPerInstrument),
-                    const SizedBox(height: AppDimensions.paddingS),
-                    const _InstrumentBarChart(),
-                    const SizedBox(height: AppDimensions.paddingL),
-
-                    _buildSectionTitle(context.l10n.statsUnexcused),
-                    const SizedBox(height: AppDimensions.paddingS),
-                    const _DivaIndexChart(),
-                    const SizedBox(height: AppDimensions.paddingL),
-
-                    _buildSectionTitle(context.l10n.statsMembers),
-                    const SizedBox(height: AppDimensions.paddingS),
-                    const _MembersOverview(),
-                    const SizedBox(height: AppDimensions.paddingL),
-
-                    _buildSectionTitle(context.l10n.statsAgeDistribution),
-                    const SizedBox(height: AppDimensions.paddingS),
-                    const _AgeDistributionChart(),
-                    const SizedBox(height: AppDimensions.paddingL),
-
-                    _buildSectionTitle(context.l10n.statsAvgAgeInstrument),
-                    const SizedBox(height: AppDimensions.paddingS),
-                    const _AvgAgePerInstrumentChart(),
-                    const SizedBox(height: AppDimensions.paddingL),
-
-                    // Organisation statistics (only shown if tenant has an org)
-                    const _OrganisationStatsSection(),
-                    const SizedBox(height: AppDimensions.paddingXL),
-                  ];
-                },
-              ),
+              // ASTRA_TEACH_STATS: only the Termin-dependent sections are
+              // replaced by the loading / error / empty state; members, age
+              // charts and the organisation are always shown (Ionic
+              // stats.page.html renders them independently of the period).
+              for (final section in statsSectionsFor(
+                hasAttendances:
+                    attendancesAsync.valueOrNull?.isNotEmpty ?? false,
+                loaded: attendancesAsync.hasValue,
+              ))
+                ..._buildSection(context, section, attendancesAsync, statistics),
             ],
           ),
         ),
@@ -231,6 +208,71 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> {
   }
 
   Widget _buildSectionTitle(String title) => _StatsSectionTitle(title);
+
+  List<Widget> _titled(String title, Widget child) => [
+        _buildSectionTitle(title),
+        const SizedBox(height: AppDimensions.paddingS),
+        child,
+        const SizedBox(height: AppDimensions.paddingL),
+      ];
+
+  List<Widget> _buildSection(
+    BuildContext context,
+    StatsSection section,
+    AsyncValue<List<Attendance>> attendancesAsync,
+    AttendanceStatistics statistics,
+  ) {
+    final l10n = context.l10n;
+    switch (section) {
+      case StatsSection.overview:
+        return _titled(l10n.statsOverview, _OverviewList(statistics: statistics));
+      case StatsSection.trend:
+        return _titled(l10n.statsTrend, const _TrendLineChart());
+      case StatsSection.statusDistribution:
+        return _titled(l10n.statsStatusDistribution, const _StatusPieChart());
+      case StatsSection.top20:
+        return _titled(l10n.statsTop20, const _TopPlayersChart());
+      case StatsSection.perInstrument:
+        return _titled(l10n.statsPerInstrument, const _InstrumentBarChart());
+      case StatsSection.unexcused:
+        return _titled(l10n.statsUnexcused, const _DivaIndexChart());
+      case StatsSection.noData:
+        return [
+          Padding(
+            padding: const EdgeInsets.all(AppDimensions.paddingXL),
+            child: Center(
+              child: attendancesAsync.when(
+                loading: () => const AppSpinner(),
+                error: (error, stack) => Text(l10n.attendanceFlutterErrorWith(
+                    friendlyErrorMessage(error))),
+                data: (_) => Column(
+                  children: [
+                    const Icon(Icons.bar_chart,
+                        size: 64, color: AppColors.medium),
+                    const SizedBox(height: 16),
+                    Text(l10n.statsFlutterNoDataInPeriod),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: AppDimensions.paddingL),
+        ];
+      case StatsSection.members:
+        return _titled(l10n.statsMembers, const _MembersOverview());
+      case StatsSection.ageDistribution:
+        return _titled(l10n.statsAgeDistribution, const _AgeDistributionChart());
+      case StatsSection.avgAgeInstrument:
+        return _titled(
+            l10n.statsAvgAgeInstrument, const _AvgAgePerInstrumentChart());
+      case StatsSection.organisation:
+        // Organisation statistics (only shown if tenant has an org)
+        return const [
+          _OrganisationStatsSection(),
+          SizedBox(height: AppDimensions.paddingXL),
+        ];
+    }
+  }
 
 }
 
