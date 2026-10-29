@@ -120,6 +120,8 @@ class _SelfServiceOverviewPageState
             ],
             value: _groupingMode,
             onChanged: (value) => setState(() => _groupingMode = value),
+            // ATT_SPACING: overview.page.scss `ion-segment { padding: 8px }`
+            trackPadding: 8,
           ),
         ),
       ),
@@ -197,6 +199,20 @@ class _SelfServiceOverviewPageState
     );
   }
 
+  /// Ionic `p.ev-empty`: margin 12 20, `--ion-color-medium`, the inherited
+  /// 1rem (ATT_SPACING: 17pt #636469 on iOS, not 14pt light grey).
+  Widget _empty(String text) => Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        child: Text(
+          text,
+          style: TextStyle(
+            color: EvMetrics.medium(context),
+            fontSize: useIosLook(context) ? EvMetrics.rem(context, 1) : null,
+            height: EvMetrics.lineHeight(context),
+          ),
+        ),
+      );
+
   Widget _tenantLine(CrossTenantPersonAttendance att) {
     return Padding(
       padding: const EdgeInsets.only(top: 2),
@@ -214,7 +230,15 @@ class _SelfServiceOverviewPageState
           Flexible(
             child: Text(
               att.tenantName,
-              style: const TextStyle(color: AppColors.medium, fontSize: 12),
+              // ATT_SPACING: `<p class="tenant-line">` – an ion-label p
+              // (.875rem, line-height normal), not a 12pt caption.
+              style: TextStyle(
+                color: useIosLook(context)
+                    ? IonIos.labelP(Theme.of(context).brightness)
+                    : AppColors.medium,
+                fontSize: EvMetrics.rem(context, 0.875),
+                height: EvMetrics.lineHeight(context),
+              ),
               overflow: TextOverflow.ellipsis,
             ),
           ),
@@ -285,12 +309,7 @@ class _SelfServiceOverviewPageState
         ]),
       ],
       // Ionic `.ev-empty`: margin 12 20, medium
-      if (upcoming.isEmpty)
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-          child: Text(context.l10n.selfServiceNoUpcoming,
-              style: const TextStyle(color: AppColors.medium)),
-        ),
+      if (upcoming.isEmpty) _empty(context.l10n.selfServiceNoUpcoming),
       if (past.isNotEmpty) ...[
         EventSectionHeader(title: context.l10n.signoutPast, count: past.length),
         EventListCard(plain: true, children: [
@@ -314,13 +333,7 @@ class _SelfServiceOverviewPageState
     // Ionic groupByTenant
     final groups = groupOverviewByTenant(attendances);
     if (groups.isEmpty) {
-      return [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-          child: Text(context.l10n.selfServiceNoEvents,
-              style: const TextStyle(color: AppColors.medium)),
-        ),
-      ];
+      return [_empty(context.l10n.selfServiceNoEvents)];
     }
 
     final widgets = <Widget>[];
