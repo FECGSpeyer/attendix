@@ -136,6 +136,41 @@ SignoutData buildSignoutData({
   );
 }
 
+/// ASTRA_SIGNOUT_TOPICS: Ionic `isUnassignedDuty` – duty Termine only show up
+/// for persons who were assigned; open ones live behind the duty tile.
+bool isUnassignedDutyAttendance(CrossTenantPersonAttendance att) =>
+    att.isDutyType && (att.dutyState ?? '').isEmpty;
+
+/// ASTRA_SIGNOUT_TOPICS: Ionic `isDutyPa` – own assigned duty.
+bool isDutyPaAttendance(CrossTenantPersonAttendance att) =>
+    att.isDutyType && (att.dutyState ?? '').isNotEmpty;
+
+/// ASTRA_SIGNOUT_TOPICS: what "Meine Termine" lists (Ionic `applyDutyView`
+/// and `applyDutyLayout`).
+/// * Unassigned duty Termine are dropped from the upcoming and past lists
+///   (percentage and late count stay as computed before, like Ionic).
+/// * In the Dienstplan view ([useDutyView]) own duties live in "Nächster
+///   Dienst" / "Meine Dienste", so "Weitere Termine" (current + upcoming)
+///   only keeps the Termine that are not own duties.
+SignoutData applySignoutDutyView(SignoutData data, {required bool useDutyView}) {
+  var upcoming = data.allUpcoming.where((a) => !isUnassignedDutyAttendance(a)).toList();
+  if (useDutyView) {
+    upcoming = upcoming.where((a) => !isDutyPaAttendance(a)).toList();
+  }
+  return SignoutData(
+    current: upcoming.isNotEmpty ? upcoming.first : null,
+    upcoming: upcoming.length > 1 ? upcoming.sublist(1) : const [],
+    past: data.past.where((a) => !isUnassignedDutyAttendance(a)).toList(),
+    percentage: data.percentage,
+    lateCount: data.lateCount,
+  );
+}
+
+/// ASTRA_SIGNOUT_TOPICS: Ionic `otherTermineNames` – distinct titles of the
+/// "Weitere Termine", at most two.
+String otherTermineNames(SignoutData data) =>
+    {for (final att in data.allUpcoming) att.eventTitle}.take(2).join(', ');
+
 /// Termine of the current user in the current tenant.
 ///
 /// With the tenant setting `show_all_attendances` all upcoming Termine of the

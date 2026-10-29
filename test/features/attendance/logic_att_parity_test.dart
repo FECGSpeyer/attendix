@@ -110,8 +110,12 @@ void main() {
   group('source parity', () {
     final create = File('lib/features/attendance/presentation/pages/attendance_create_page.dart')
         .readAsStringSync();
+    // ASTRA_SIGNOUT_TOPICS: the date change of the Termin page is shared
+    // with the Teamorganisation (attendance_date_change.dart).
     final detail = File('lib/features/attendance/presentation/pages/attendance_detail_page.dart')
-        .readAsStringSync();
+            .readAsStringSync() +
+        File('lib/features/attendance/presentation/widgets/attendance_date_change.dart')
+            .readAsStringSync();
     final repo = File('lib/data/repositories/attendance_repository.dart').readAsStringSync();
 
     test('create: paused NULL counts as not paused, absences + shifts applied', () {

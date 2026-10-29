@@ -141,8 +141,12 @@ void main() {
   });
 
   group('offline queue on the Termin page', () {
+    // ASTRA_SIGNOUT_TOPICS: the date change of the Termin page is shared
+    // with the Teamorganisation (attendance_date_change.dart).
     final page = File('lib/features/attendance/presentation/pages/attendance_detail_page.dart')
-        .readAsStringSync();
+            .readAsStringSync() +
+        File('lib/features/attendance/presentation/widgets/attendance_date_change.dart')
+            .readAsStringSync();
 
     test('date-change status resets are queued while offline', () {
       final start = page.indexOf('final updates = dateChangeStatusUpdates(');

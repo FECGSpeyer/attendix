@@ -18,9 +18,7 @@ import '../../../../core/providers/team_org_providers.dart' show protocolTypeByI
 import '../../../../core/providers/profile_providers.dart'; // ATT_DETAIL
 import '../../../../core/utils/shift_utils.dart'; // ATT_DETAIL
 import '../../../../core/providers/shift_providers.dart'; // LOGIC_ATT
-import '../../../../core/providers/player_absence_providers.dart'; // LOGIC_ATT
 import '../../../../core/utils/attendance_logic_utils.dart'; // LOGIC_ATT
-import '../../../../data/models/player_absence/player_absence.dart'; // LOGIC_ATT
 import '../../../../data/models/shift/shift_plan.dart'; // LOGIC_ATT
 import '../../../../shared/widgets/sheets/church_overview_sheet.dart'; // ATT_DETAIL
 import '../widgets/attendance_detail/ad_hoc_reminder_sheet.dart'; // ATT_DETAIL
@@ -65,6 +63,8 @@ import '../../../../core/utils/error_message.dart';
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 import '../../../../shared/widgets/display/ion_badge_text.dart'; // PARITY_R8
+import '../widgets/attendance_date_change.dart'; // ASTRA_SIGNOUT_TOPICS
+export '../widgets/attendance_date_change.dart' show calendarDayDifference, shiftByCalendarDays; // ASTRA_SIGNOUT_TOPICS
 
 /// Attendance detail/taking page
 class AttendanceDetailPage extends ConsumerStatefulWidget {
@@ -2194,121 +2194,16 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     await _saveSongEntries();
   }
 
-  /// "Datum ändern" (Ionic promptAttendanceDateChange / changeAttendanceDate).
+  /// "Datum ändern" (Ionic promptAttendanceDateChange / changeAttendanceDate),
+  /// shared with the Teamorganisation (ASTRA_SIGNOUT_TOPICS).
   Future<void> _changeDate() async {
-    final repo = ref.read(attendanceRepositoryWithTenantProvider);
-    // SOL_FIX13: session of the acting user, captured before the first await.
-    final offlineQueue = ref.read(offlineQueueNotifierProvider.notifier);
-    final writeSession = offlineQueue.captureWriteSession();
-    final playerAbsenceRepo = ref.read(playerAbsenceRepositoryWithTenantProvider);
-    final attendance = ref.read(attendanceDetailProvider(widget.attendanceId)).valueOrNull;
-    if (attendance == null) return;
-    final current = DateTime.tryParse(attendance.date)?.toLocal() ?? DateTime.now();
-    final picked = await showAppDatePicker(
-      context: context,
-      initialDate: current,
-      firstDate: DateTime(current.year - 5),
-      lastDate: DateTime(current.year + 5),
-      helpText: context.l10n.dateDialogMoveTo,
+    final moved = await promptAttendanceDateChange(
+      context,
+      ref,
+      widget.attendanceId,
+      currentStatuses: _localStatuses.values.toList(),
     );
-    if (picked == null || !mounted) return;
-    if (DateUtils.isSameDay(picked, current)) return;
-
-    final type = ref.read(attendanceTypeForAttendanceProvider(widget.attendanceId)).valueOrNull;
-    var reset = false;
-    if (type != null && _localStatuses.values.any((s) => s != type.defaultStatus)) {
-      final choice = await showAppDialog<String>(
-        context: context,
-        builder: (ctx) => AppAlertDialog(
-          title: Text(context.l10n.dateDialogResetStatus),
-          content: Text(
-            context.l10n.dateDialogResetStatusMessage(ionicStatusLabel(type.defaultStatus)),
-          ),
-          actions: [
-            TextButton(onPressed: () => Navigator.pop(ctx), child: Text(context.l10n.commonCancel)),
-            TextButton(onPressed: () => Navigator.pop(ctx, 'keep'), child: Text(context.l10n.dateDialogKeep)),
-            FilledButton(onPressed: () => Navigator.pop(ctx, 'reset'), child: Text(context.l10n.dateDialogReset)),
-          ],
-        ),
-      );
-      if (choice == null || !mounted) return;
-      reset = choice == 'reset';
-    }
-
-    try {
-      if (!repo.hasTenantId) return;
-      final normalized = DateTime(picked.year, picked.month, picked.day, 12);
-      final days = calendarDayDifference(current, normalized);
-      final normalizedIso = normalized.toUtc().toIso8601String();
-
-      // Deadline and checklist due dates move along with the Termin.
-      String? shift(String? value) {
-        if (value == null || value.isEmpty) return value;
-        final d = DateTime.tryParse(value);
-        return d == null ? value : shiftByCalendarDays(d, days).toIso8601String();
-      }
-
-      final checklist = attendance.checklist
-          ?.map((item) => item.copyWith(dueDate: shift(item.dueDate)).toJson())
-          .toList();
-      await repo.updateAttendance(widget.attendanceId, {
-        'date': normalizedIso,
-        if (attendance.deadline != null) 'deadline': shift(attendance.deadline),
-        if (checklist != null) 'checklist': checklist,
-      });
-      await repo.updateHistoryDatesForAttendance(widget.attendanceId, normalizedIso);
-      if (type != null) {
-        // LOGIC_ATT: Ionic changeAttendanceDate – absences on the new day
-        // excuse persons still on the default status (or everyone when
-        // reset), reset the rest, then re-run the shift computation.
-        final rows = await ref.refresh(personAttendancesForAttendanceProvider(widget.attendanceId).future);
-        List<PlayerAbsence> absences;
-        try {
-          absences = await playerAbsenceRepo.getAbsencesForTenant();
-        } catch (_) {
-          absences = const []; // non-fatal — proceed without absence check
-        }
-        final updates = dateChangeStatusUpdates(
-          rows: [
-            for (final r in rows)
-              if (r.id != null && r.personId != null)
-                (id: r.id!, personId: r.personId!, status: r.status, notes: r.notes),
-          ],
-          absences: absences,
-          newDay: normalized,
-          defaultStatus: type.defaultStatus,
-          resetStatuses: reset,
-        );
-        // LEFTOVERS: like every Ionic updatePersonAttendance, queued while offline
-        for (final u in updates) {
-          final payload = {'status': u.status.value, 'notes': u.notes};
-          if (await offlineQueue.enqueueIfOffline(u.id, payload,
-              attendanceId: widget.attendanceId, session: writeSession)) {
-            continue;
-          }
-          // SOL_FIX13: guarded by the session captured when the user acted.
-          await repo.updatePersonAttendance(
-            u.id,
-            payload,
-            isSessionCurrent: writeSession.isCurrent,
-            actingUserId: writeSession.userId,
-          );
-        }
-        await repo.updateShiftAssignmentsForAttendance(widget.attendanceId);
-      }
-
-      if (mounted) setState(() => _checklistLoaded = false);
-      ref.invalidate(attendanceDetailProvider(widget.attendanceId));
-      ref.invalidate(personAttendancesForAttendanceProvider(widget.attendanceId));
-      if (mounted) {
-        ToastHelper.showSuccess(
-          context,
-          context.l10n.dateDialogMoved(DateFormat('EE, ${dateFmt()}', currentIntlLocale()).format(normalized)),
-        );
-      }
-    } catch (e) {
-      if (mounted) ToastHelper.showError(context, context.l10n.dateDialogChangeFailed);
-    }
+    if (moved && mounted) setState(() => _checklistLoaded = false);
   }
 
   Future<void> _updateAttendanceField(Map<String, dynamic> updates) async {
@@ -2800,19 +2695,3 @@ bool realtimeDutyStateChanged(Map<String, dynamic> newRecord, List<PersonAttenda
   return (incoming ?? '') != (row.dutyState ?? '');
 }
 
-/// SOL_FIX35: whole calendar days between the local dates of [from] and
-/// [to]. Computed on UTC date values, so a DST change in between (e.g.
-/// 29.03.→30.03.2026 in Europe/Berlin, only 23 hours) still counts 1.
-int calendarDayDifference(DateTime from, DateTime to) {
-  final a = from.isUtc ? from.toLocal() : from;
-  final b = to.isUtc ? to.toLocal() : to;
-  return DateTime.utc(b.year, b.month, b.day).difference(DateTime.utc(a.year, a.month, a.day)).inDays;
-}
-
-/// SOL_FIX35: moves [value] by [days] calendar days keeping its local wall
-/// time across DST changes; a UTC value stays UTC.
-DateTime shiftByCalendarDays(DateTime value, int days) {
-  final l = value.isUtc ? value.toLocal() : value;
-  final moved = DateTime(l.year, l.month, l.day + days, l.hour, l.minute, l.second, l.millisecond, l.microsecond);
-  return value.isUtc ? moved.toUtc() : moved;
-}
