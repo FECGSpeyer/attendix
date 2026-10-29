@@ -145,11 +145,14 @@ class DashboardSettingsNotifier extends Notifier<DashboardSettings> {
     final tenantId = _tenantId;
     if (tenantId == null) return;
     final previous = state;
-    state = state.copyWith(showTab: value);
+    final optimistic = state.copyWith(showTab: value);
+    state = optimistic;
     try {
       await _save('showDashboardTab_$tenantId', value);
     } catch (e) {
-      state = previous;
+      // SOL_FIX21: only roll back our own change – not after a tenant /
+      // account switch (rebuilt state) or a newer edit.
+      if (identical(state, optimistic)) state = previous;
       rethrow;
     }
   }
@@ -159,14 +162,16 @@ class DashboardSettingsNotifier extends Notifier<DashboardSettings> {
     final tenantId = _tenantId;
     if (tenantId == null) return;
     final previous = state;
-    state = state.copyWith(cards: cards);
+    final optimistic = state.copyWith(cards: cards);
+    state = optimistic;
     try {
       await _save(
         'dashboardCards_$tenantId',
         cards.map((c) => {'id': c.id, 'visible': c.visible}).toList(),
       );
     } catch (e) {
-      state = previous;
+      // SOL_FIX21: see setShowTab.
+      if (identical(state, optimistic)) state = previous;
       rethrow;
     }
   }

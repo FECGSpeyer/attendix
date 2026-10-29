@@ -54,7 +54,9 @@ class OptionalTabsNotifier extends Notifier<OptionalTabs> {
       // GoTrue merges `data` into user_metadata, so only our key is sent.
       await ref.read(supabaseAuthProvider).updateUser(UserAttributes(data: {key: value}));
     } catch (e) {
-      state = previous;
+      // SOL_FIX21: only roll back our own change – not after a tenant /
+      // account switch (rebuilt state) or a newer edit.
+      if (identical(state, next)) state = previous;
       rethrow;
     }
   }
