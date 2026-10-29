@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.16.1",
+      "date": "29.10.2026",
+      "changes": [
+        "🐛 Neues Design (Beta): Die Statusleiste zeigt wieder farbig, wie viele zugesagt, entschuldigt und offen sind"
+      ]
+    },
+    {
       "version": "0.16.0",
       "date": "29.10.2026",
       "changes": [

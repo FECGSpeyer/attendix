@@ -557,16 +557,21 @@ class RdStatusBar extends StatelessWidget {
               return Stack(
                 children: [
                   Positioned.fill(child: ColoredBox(color: p.track)),
+                  // Positioned.fill + stretch: a non-positioned Row gets
+                  // loose constraints and its segments would be 0 px high.
                   if (total > 0)
-                    Row(
-                      children: [
-                        for (final s in segments)
-                          if (s.value > 0)
-                            SizedBox(
-                              width: width * s.value / total,
-                              child: ColoredBox(color: s.color),
-                            ),
-                      ],
+                    Positioned.fill(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          for (final s in segments)
+                            if (s.value > 0)
+                              SizedBox(
+                                width: width * s.value / total,
+                                child: ColoredBox(color: s.color),
+                              ),
+                        ],
+                      ),
                     ),
                 ],
               );

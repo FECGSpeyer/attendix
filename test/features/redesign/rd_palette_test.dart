@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:attendix/core/theme/redesign/rd_palette.dart';
+import 'package:attendix/features/redesign/presentation/widgets/rd_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -66,5 +67,32 @@ void main() {
   test('swatches: primary, soft, background', () {
     final p = rdPalette(RdFarbwelt.petrol, Brightness.light);
     expect(rdSwatches(RdFarbwelt.petrol), [p.primary, p.soft, p.bg]);
+  });
+
+  testWidgets('status bar segments fill the bar height', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: SizedBox(
+            width: 200,
+            child: RdStatusBar(
+              total: 4,
+              semanticLabel: 'bar',
+              segments: const [
+                RdBarSegment(3, Colors.green),
+                RdBarSegment(1, Colors.orange),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+    final boxes = tester
+        .widgetList<ColoredBox>(find.descendant(of: find.byType(RdStatusBar), matching: find.byType(ColoredBox)))
+        .toList();
+    final green = find.byWidget(boxes.firstWhere((b) => b.color == Colors.green));
+    final orange = find.byWidget(boxes.firstWhere((b) => b.color == Colors.orange));
+    expect(tester.getSize(green), const Size(150, 8));
+    expect(tester.getSize(orange), const Size(50, 8));
   });
 }
