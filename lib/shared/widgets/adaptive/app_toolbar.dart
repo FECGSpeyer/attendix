@@ -207,6 +207,55 @@ class IonModalHeader extends StatelessWidget implements PreferredSizeWidget {
     final theme = Theme.of(context);
     final end = trailing ??
         (showClose ? IonCloseButton(onPressed: onClose) : null);
+    // MD_SWEEP: md modal toolbar = md ion-toolbar: 56px, start-aligned
+    // 20px medium title (toolbar colour, .0125em tracking) 20px in, buttons
+    // 4px from the edges, the md header shadow instead of a hairline.
+    if (!useIosLook(context)) {
+      final b = theme.brightness;
+      return Container(
+        height: 56,
+        decoration: BoxDecoration(
+          color: theme.appBarTheme.backgroundColor,
+          boxShadow: showDivider
+              ? const [
+                  BoxShadow(
+                      color: Color(0x33000000),
+                      offset: Offset(0, 2),
+                      blurRadius: 4,
+                      spreadRadius: -1),
+                  BoxShadow(
+                      color: Color(0x24000000),
+                      offset: Offset(0, 4),
+                      blurRadius: 5),
+                  BoxShadow(
+                      color: Color(0x1F000000),
+                      offset: Offset(0, 1),
+                      blurRadius: 10),
+                ]
+              : null,
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 4),
+        child: NavigationToolbar(
+          leading: leading,
+          trailing: end,
+          middle: DefaultTextStyle.merge(
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w500,
+              letterSpacing: 0.25,
+              color: b == Brightness.dark
+                  ? Colors.white
+                  : const Color(0xFF424242),
+            ),
+            child: title,
+          ),
+          centerMiddle: false,
+          middleSpacing: leading == null ? 16 : 20,
+        ),
+      );
+    }
     return Container(
       height: kIonModalToolbarHeight,
       decoration: BoxDecoration(

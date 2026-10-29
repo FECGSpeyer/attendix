@@ -142,11 +142,14 @@ void main() {
     }, variant: TargetPlatformVariant.only(platform));
   }
 
-  test('md dark page is #121212 (Ionic md dark)', () {
+  // MD_SWEEP: most Ionic pages are `ion-content color="light"`, which in
+  // the md dark palette is --ion-color-light #222428; plain pages use
+  // --ion-background-color #121212 via ionPlainContentBackground.
+  test('md dark page is #222428 (ion-content color="light", md dark)', () {
     expect(
       AppTheme.forPlatform(Brightness.dark, TargetPlatform.android)
           .scaffoldBackgroundColor,
-      const Color(0xFF121212),
+      const Color(0xFF222428),
     );
   });
 

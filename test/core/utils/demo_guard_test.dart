@@ -1,5 +1,6 @@
 import 'package:attendix/core/config/supabase_config.dart';
 import 'package:attendix/core/providers/demo_providers.dart';
+import 'package:attendix/core/theme/app_colors.dart';
 import 'package:attendix/core/services/offline_queue_service.dart'
     show rootScaffoldMessengerKey;
 import 'package:attendix/core/utils/demo_guard.dart';
@@ -163,7 +164,12 @@ void main() {
       ToastHelper.showError(ctx, 'Fehler: $kDemoRestrictedMessage');
       await tester.pump();
       expect(find.text(kDemoRestrictedMessage), findsOneWidget);
-      expect(find.byIcon(Icons.warning), findsOneWidget);
+      // MD_SWEEP: the md toast is the Ionic md ion-toast (color="warning",
+      // no icon), not a SnackBar with a warning icon.
+      expect(
+          find.byWidgetPredicate(
+              (w) => w is Material && w.color == AppColors.warning),
+          findsOneWidget);
     });
   });
 }

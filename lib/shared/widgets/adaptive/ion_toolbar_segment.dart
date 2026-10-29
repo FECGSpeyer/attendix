@@ -34,8 +34,9 @@ class IonToolbarSegment<T> extends StatelessWidget {
   final double trackPadding;
 
   /// Height of the toolbar row that holds the segment.
+  /// MD_SWEEP: md `ion-toolbar` 56px with the 48px segment centred.
   static double toolbarHeight(BuildContext context) =>
-      useIosLook(context) ? 74 : 52;
+      useIosLook(context) ? 74 : 56;
 
   static const double _height = 48;
 
@@ -48,10 +49,12 @@ class IonToolbarSegment<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (!useIosLook(context)) {
-      return Padding(
-        padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
-        child: SizedBox(
-          width: double.infinity,
+      // MD_SWEEP: md ion-segment in a 56px toolbar (no toolbar padding),
+      // the 48px buttons centred vertically.
+      return SizedBox(
+        height: toolbarHeight(context),
+        width: double.infinity,
+        child: Center(
           child: IonSegment<T>(items: items, value: value, onChanged: onChanged),
         ),
       );
