@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -90,6 +91,13 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
 
   /// Pultmodus: big tiles instead of the list (rd_pult_view.dart).
   bool _pult = false;
+
+  // Keyboard (canvas "Desktop"): the row the keys act on, the rows shown
+  // and their keys for scrolling.
+  int? _kbIndex;
+  List<RdMember> _kbRows = const [];
+  List<AttendanceStatus> _kbAvailable = const [];
+  final Map<int, GlobalKey> _rowKeys = {};
   final _search = TextEditingController();
 
   int get _id => widget.attendanceId;
@@ -451,10 +459,14 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
       },
       child: Stack(
         children: [
-          RdPage(
-            onRefresh: () async => _reload(),
-            padding: EdgeInsets.fromLTRB(20, 12, 20, _toast == null ? 32 : 96),
-            children: children,
+          Focus(
+            autofocus: true,
+            onKeyEvent: _onKey,
+            child: RdPage(
+              onRefresh: () async => _reload(),
+              padding: EdgeInsets.fromLTRB(20, 12, 20, _toast == null ? 32 : 96),
+              children: children,
+            ),
           ),
           if (_toast != null)
             Positioned(
@@ -477,6 +489,64 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
         ],
       ),
     );
+  }
+
+  /// Keys of the Anwesenheit tab: A anwesend, V verspätet, F fehlt (then
+  /// the next person), ↑/↓ moves, ⌘Z / Strg+Z = Rückgängig. Typing in the
+  /// search field is left alone.
+  KeyEventResult _onKey(FocusNode node, KeyEvent event) {
+    if (event is! KeyDownEvent && event is! KeyRepeatEvent) return KeyEventResult.ignored;
+    if (_tab != RdEventTab.record || _pult) return KeyEventResult.ignored;
+    final primary = FocusManager.instance.primaryFocus;
+    if (primary != null &&
+        primary != node &&
+        primary.context?.findAncestorWidgetOfExactType<EditableText>() != null) {
+      return KeyEventResult.ignored;
+    }
+    final key = event.logicalKey;
+    final keys = HardwareKeyboard.instance;
+    if (key == LogicalKeyboardKey.keyZ && (keys.isMetaPressed || keys.isControlPressed)) {
+      if (_undo == null || _bulkWrites > 0) return KeyEventResult.ignored;
+      _runUndo();
+      return KeyEventResult.handled;
+    }
+    final rows = _kbRows;
+    if (rows.isEmpty) return KeyEventResult.ignored;
+    if (key == LogicalKeyboardKey.arrowDown || key == LogicalKeyboardKey.arrowUp) {
+      final current = _kbIndex;
+      final next = current == null
+          ? 0
+          : (current + (key == LogicalKeyboardKey.arrowDown ? 1 : -1)).clamp(0, rows.length - 1);
+      _focusRow(next);
+      return KeyEventResult.handled;
+    }
+    final status = switch (key) {
+      LogicalKeyboardKey.keyA => AttendanceStatus.present,
+      LogicalKeyboardKey.keyV => AttendanceStatus.late,
+      LogicalKeyboardKey.keyF => AttendanceStatus.absent,
+      _ => null,
+    };
+    if (status == null || keys.isMetaPressed || keys.isControlPressed || keys.isAltPressed) {
+      return KeyEventResult.ignored;
+    }
+    if (!_kbAvailable.contains(status)) return KeyEventResult.handled;
+    final index = (_kbIndex ?? 0).clamp(0, rows.length - 1);
+    final member = rows[index];
+    _setStatus(member, rdToggleTarget(member.status, status, initial: _initial[member.id]));
+    _focusRow((index + 1).clamp(0, rows.length - 1));
+    return KeyEventResult.handled;
+  }
+
+  void _focusRow(int index) {
+    setState(() => _kbIndex = index);
+    final id = _kbRows[index].id;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final rowContext = _rowKeys[id]?.currentContext;
+      if (rowContext != null && rowContext.mounted) {
+        Scrollable.ensureVisible(rowContext, alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtEnd);
+        Scrollable.ensureVisible(rowContext, alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtStart);
+      }
+    });
   }
 
   /// Pultmodus: the same state, writes and "Rückgängig", drawn as tiles.
@@ -575,6 +645,9 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
     final open = members.where((m) => m.isOpen).toList();
     final busy = _bulkWrites > 0;
     final visible = members.where((m) => rdMemberMatches(m, _query)).toList();
+    _kbRows = visible;
+    _kbAvailable = available;
+    final kbIndex = _kbIndex == null || visible.isEmpty ? null : _kbIndex!.clamp(0, visible.length - 1);
 
     // Group headers like the Termin page ("Holz · 4").
     final rows = <Widget>[];
@@ -590,8 +663,11 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
         ));
         first = false;
       }
+      final focused = kbIndex != null && visible[kbIndex].id == m.id;
       rows.add(RdCard(
+        key: _rowKeys.putIfAbsent(m.id, GlobalKey.new),
         padding: EdgeInsets.zero,
+        border: focused ? Border.all(color: p.primary, width: 2) : null,
         child: RdRecordRow(
           key: ValueKey('rd-record-${m.id}'),
           member: m,
@@ -655,6 +731,11 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
       const SizedBox(height: 16),
       if (visible.isEmpty) RdInfoCard(text: l10n.redesignEventNoMatch, icon: Icons.search_off),
       ...rows,
+      // Tablets with a keyboard and desktops.
+      if (MediaQuery.sizeOf(context).width >= 840 && visible.isNotEmpty) ...[
+        const SizedBox(height: 10),
+        Text(l10n.redesignEventKeyboardHint, textAlign: TextAlign.center, style: RdType.meta(p, size: 13)),
+      ],
     ];
   }
 }

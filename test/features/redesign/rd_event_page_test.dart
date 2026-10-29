@@ -22,6 +22,7 @@ import 'package:attendix/features/redesign/presentation/widgets/event/rd_pult_vi
 import 'package:attendix/features/redesign/presentation/widgets/rd_split_view.dart';
 import 'package:attendix/l10n/l10n.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -489,6 +490,62 @@ void main() {
       await openPult(tester, h, const Size(320, 640));
       expect(find.text('Gesamtprobe · Pultmodus'), findsOneWidget);
       expect(tester.takeException(), isNull);
+    });
+  });
+
+  group('keyboard (desktop)', () {
+    testWidgets('A, V, F set the status and move on; Ctrl+Z undoes', (tester) async {
+      _size(tester, const Size(1280, 900));
+      final h = _Harness();
+      await tester.pumpWidget(h.app(tab: RdEventTab.record));
+      await _settle(tester);
+      expect(find.textContaining('Tastatur: A anwesend'), findsOneWidget);
+
+      // First row: Anna Berg (Holz, sorted by last name).
+      await tester.sendKeyEvent(LogicalKeyboardKey.keyA);
+      await _settle(tester);
+      expect(h.writes, ['pa-2 {status: 1}']);
+
+      // Then Sophie Lang (Verspätet entschuldigt).
+      await tester.sendKeyEvent(LogicalKeyboardKey.keyF);
+      await _settle(tester);
+      expect(h.writes.last, 'pa-1 {status: 4}');
+
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+      await tester.sendKeyEvent(LogicalKeyboardKey.keyZ);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+      await _settle(tester);
+      expect(h.writes.last, 'pa-1 {status: 5}');
+
+      // ↑↑ goes back to Anna, V sets her late.
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowUp);
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowUp);
+      await tester.sendKeyEvent(LogicalKeyboardKey.keyV);
+      await _settle(tester);
+      expect(h.writes.last, 'pa-2 {status: 3}');
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('typing in the search does not set a status', (tester) async {
+      _size(tester, const Size(1280, 900));
+      final h = _Harness();
+      await tester.pumpWidget(h.app(tab: RdEventTab.record));
+      await _settle(tester);
+
+      await tester.tap(find.bySemanticsLabel('Person suchen'));
+      await _settle(tester);
+      await tester.tap(find.byType(TextField));
+      await tester.sendKeyEvent(LogicalKeyboardKey.keyA);
+      await tester.sendKeyEvent(LogicalKeyboardKey.keyF);
+      await _settle(tester);
+      expect(h.writes, isEmpty);
+    });
+
+    testWidgets('no keyboard hint on phones', (tester) async {
+      _size(tester, const Size(393, 852));
+      await tester.pumpWidget(_Harness().app(tab: RdEventTab.record));
+      await _settle(tester);
+      expect(find.textContaining('Tastatur:'), findsNothing);
     });
   });
 
