@@ -371,8 +371,8 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
             *,
             attendance:attendance_id(
               id, date, type, typeInfo, start_time, end_time, deadline, tenantId,
-              type_id, plan, share_plan, duration_days, place, description,
-              attachment_url, attachment_name
+              type_id, plan, extra_plans, share_plan, duration_days, place,
+              description, attachment_url, attachment_name
             )
           ''')
           .inFilter('person_id', personIds)

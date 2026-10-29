@@ -383,11 +383,22 @@ Future<void> showPlanViewerSheet(
   required CrossTenantPersonAttendance attendance,
   int? playerInstrumentId,
   List<Map<String, dynamic>> songs = const [],
+  // ASTRA_PARENTS: Ionic `attendance.extra_plans` + `duration_days`. With
+  // further plans the viewer shows the day/plan chips (Ionic PlanViewer
+  // `allPlans`, preselecting today's plan) instead of a single plan.
+  List<Map<String, dynamic>>? extraPlans,
+  int? durationDays,
 }) {
   Plan? plan;
   try {
     if (attendance.plan != null) plan = Plan.fromJson(attendance.plan!);
   } catch (_) {}
+  final extra = <Plan>[];
+  for (final p in extraPlans ?? const <Map<String, dynamic>>[]) {
+    try {
+      extra.add(Plan.fromJson(p));
+    } catch (_) {}
+  }
   bool missing(int? songId) {
     if (songId == null || playerInstrumentId == null || songs.isEmpty) return false;
     final song = songs.firstWhere((s) => s['id'] == songId, orElse: () => <String, dynamic>{});
@@ -403,10 +414,14 @@ Future<void> showPlanViewerSheet(
       id: attendance.attendanceId,
       tenantId: attendance.tenantId,
       date: date,
+      durationDays: durationDays,
       plan: plan,
+      extraPlans: extra.isEmpty ? null : extra,
       typeInfo: attendance.typeInfo,
     ),
-    plan: plan,
+    // An explicit plan disables the chips (Ionic: only when it differs from
+    // attendance.plan), so leave it out when there are further plans.
+    plan: extra.isEmpty ? plan : null,
     title: (attendance.typeInfo?.isNotEmpty ?? false) ? attendance.typeInfo : context.l10n.signoutRunSheet,
     defaultLive: isToday,
     fieldWarning: (f) => missing(f.songId) ? l10nWithoutContext.planningNoScoresInstrument : null,

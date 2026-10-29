@@ -39,6 +39,9 @@ class ChildPersonAttendance {
   final String? endTime;
   final String? deadline;
   final Map<String, dynamic>? plan;
+  /// ASTRA_PARENTS: Ionic `attendance.extra_plans` (further plans, e.g. one
+  /// per day of a multi-day Termin) for the plan viewer's day selection.
+  final List<Map<String, dynamic>>? extraPlans;
   final bool sharePlan;
   final String? typeId;
   final int childId;
@@ -64,6 +67,7 @@ class ChildPersonAttendance {
     this.endTime,
     this.deadline,
     this.plan,
+    this.extraPlans,
     this.sharePlan = false,
     this.typeId,
     required this.childId,
@@ -132,6 +136,8 @@ class ParentAttendanceGroup {
   final String? endTime;
   final String? deadline;
   final Map<String, dynamic>? plan;
+  /// ASTRA_PARENTS: Ionic `attendance.extra_plans`.
+  final List<Map<String, dynamic>>? extraPlans;
   final bool sharePlan;
   final List<ChildPersonAttendance> childAttendances;
   // ATTENDANCE_SIGNOUT: card layout fields
@@ -151,6 +157,7 @@ class ParentAttendanceGroup {
     this.endTime,
     this.deadline,
     this.plan,
+    this.extraPlans,
     this.sharePlan = false,
     required this.childAttendances,
     this.typeId,
@@ -261,6 +268,7 @@ final childrenAttendancesProvider =
       endTime: attendance?['end_time'] as String?,
       deadline: attendance?['deadline'] as String?,
       plan: attendance?['plan'] as Map<String, dynamic>?,
+      extraPlans: parseExtraPlans(attendance?['extra_plans']),
       sharePlan: attendance?['share_plan'] == true,
       typeId: attendance?['type_id']?.toString(),
       childId: personId ?? 0,
@@ -305,6 +313,7 @@ final parentAttendanceGroupsProvider =
       endTime: first.endTime,
       deadline: first.deadline,
       plan: first.plan,
+      extraPlans: first.extraPlans,
       sharePlan: first.sharePlan,
       childAttendances: childAtts,
       typeId: first.typeId,
@@ -411,6 +420,30 @@ class ParentSignInOutNotifier extends Notifier<AsyncValue<void>> {
     }
   }
 
+  /// ASTRA_PARENTS: Ionic ParentsPage.signin — signs in the selected
+  /// children one after another and stops at the first failure (Ionic's
+  /// loop awaits each `db.signin`, a thrown error aborts the rest).
+  ///
+  /// Returns true only when every entry was signed in; the state is the
+  /// first error otherwise, so a later success can never hide a failure.
+  /// The list is refreshed in both cases (entries before the failure are
+  /// already saved).
+  Future<bool> signInAll(List<(String, SignInType)> entries) async {
+    state = const AsyncValue.loading();
+    try {
+      for (final (id, type) in entries) {
+        await _repo.signIn(id, type);
+      }
+      state = const AsyncValue.data(null);
+      return true;
+    } catch (e, stack) {
+      state = AsyncValue.error(e, stack);
+      return false;
+    } finally {
+      ref.invalidate(childrenAttendancesProvider);
+    }
+  }
+
   /// Sign out a child from attendance
   Future<void> signOut(
     List<String> personAttendanceIds,
@@ -445,6 +478,17 @@ final parentSignInOutNotifierProvider =
     NotifierProvider<ParentSignInOutNotifier, AsyncValue<void>>(() {
   return ParentSignInOutNotifier();
 });
+
+/// ASTRA_PARENTS: `attendance.extra_plans` (JSON array of plan objects) as
+/// plain maps; anything else yields null.
+List<Map<String, dynamic>>? parseExtraPlans(dynamic raw) {
+  if (raw is! List) return null;
+  final plans = [
+    for (final p in raw)
+      if (p is Map) Map<String, dynamic>.from(p),
+  ];
+  return plans.isEmpty ? null : plans;
+}
 
 // Helper function to parse status
 AttendanceStatus _parseStatus(dynamic status) {
