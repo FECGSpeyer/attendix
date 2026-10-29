@@ -17,6 +17,8 @@ import '../../../../shared/widgets/adaptive/app_toolbar.dart'; // IOS_SHELL
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 import '../../../../shared/widgets/layout/ionic_ios.dart';
 import '../../../../shared/widgets/adaptive/ion_button_label.dart'; // IOS_R6
+import '../../../../shared/widgets/tenant/tenant_switcher_title.dart'; // P10_SELF_PLAN
+import '../../../../shared/widgets/adaptive/adaptive_platform.dart'; // P10_SELF_PLAN
 
 /// Home dashboard tab (Ionic `home-dashboard`): configurable set of cards in a
 /// masonry-like grid (1 / 2 / 3 columns depending on width).
@@ -39,7 +41,7 @@ class HomeDashboardPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final cards = ref.watch(visibleDashboardCardsProvider);
     final tenants = ref.watch(userTenantsProvider).valueOrNull ?? const <Tenant>[];
-    final tenant = ref.watch(currentTenantProvider);
+    final ios = useIosLook(context);
     final widgets = cards.map((c) => cardFor(c.id)).whereType<Widget>().toList();
     // IOS_R6: Ionic `ion-header collapse="condense"` only with one tenant
     // (the tenant switcher has no large title).
@@ -61,23 +63,42 @@ class HomeDashboardPage extends ConsumerWidget {
       appBar: IonTranslucentAppBar(
         condensed: condensed,
         child: AppBar(
+        // P10_SELF_PLAN: shared Ionic tenant switcher (ion-buttons slot="start").
         title: tenants.length > 1
-            ? _TenantSwitcher(tenants: tenants, current: tenant)
+            ? TenantSwitcherTitle(
+                fallbackTitle: context.l10n.tabsDashboard,
+                onSelected: (t) => _switchDashboardTenant(context, ref, t),
+              )
             : CondenseTitle(
                 condensed: condensed, child: Text(context.l10n.tabsDashboard)),
+        centerTitle: tenants.length > 1 ? false : null,
         // IOS_SHELL: iOS → one glass capsule (ion-buttons slot="end")
         actions: [
           ToolbarButtonGroup(children: [
-            IconButton(
-              tooltip: context.l10n.homeDashboardConfigure,
-              icon: const Icon(Icons.settings_outlined),
-              onPressed: () => context.push('/settings/dashboard'),
-            ),
+            // P10_SELF_PLAN: Ionic `@if (!isIos)` – on iOS the settings
+            // button is the ion-fab below.
+            if (!ios)
+              IconButton(
+                tooltip: context.l10n.homeDashboardConfigure,
+                icon: const Icon(Icons.settings_outlined),
+                onPressed: () => context.push('/settings/dashboard'),
+              ),
             const NotificationBell(), // INTEGRATION (Ionic app-notification-bell)
           ]),
         ],
       ),
       ),
+      // P10_SELF_PLAN: Ionic `@if (isIos)` ion-fab (settings-outline).
+      floatingActionButton: ios
+          ? TabBarFab(
+              child: FloatingActionButton(
+                heroTag: 'homeDashboardSettingsFab',
+                tooltip: context.l10n.homeDashboardConfigure,
+                onPressed: () => context.push('/settings/dashboard'),
+                child: const Icon(Icons.settings_outlined),
+              ),
+            )
+          : null,
       body: IonRefresher( // IOS_R6
         onRefresh: () async => refreshDashboardCards(ref),
         child: widgets.isEmpty
@@ -151,65 +172,15 @@ class HomeDashboardPage extends ConsumerWidget {
   }
 }
 
-/// Tenant switcher in the app bar (Ionic popover "tenant-switcher-dashboard").
-class _TenantSwitcher extends ConsumerWidget {
-  const _TenantSwitcher({required this.tenants, required this.current});
-
-  final List<Tenant> tenants;
-  final Tenant? current;
-
-  Future<void> _switch(BuildContext context, WidgetRef ref, Tenant t) async {
-    if (t.id == current?.id) return;
-    final router = GoRouter.of(context);
-    final notifier = ref.read(currentTenantProvider.notifier);
-    await notifier.setTenant(t);
-    await ref.read(currentTenantUserProvider.future);
-    final role = ref.read(currentRoleProvider);
-    final metadata = ref.read(supabaseAuthProvider).currentUser?.userMetadata;
-    router.go(homeRouteFor(role, t.id, metadata));
-  }
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return PopupMenuButton<Tenant>(
-      tooltip: context.l10n.settingsSwitchTenant,
-      onSelected: (t) => _switch(context, ref, t),
-      itemBuilder: (context) => [
-        for (final t in tenants)
-          PopupMenuItem<Tenant>(
-            value: t,
-            child: Row(
-              children: [
-                Expanded(child: Text(t.longName)),
-                if (t.id == current?.id)
-                  Container(
-                    margin: const EdgeInsets.only(left: 8),
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                    decoration: BoxDecoration(
-                      color: AppColors.primary,
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    child: Text(
-                      context.l10n.homeDashboardCurrent,
-                      style: const TextStyle(color: Colors.white, fontSize: 11),
-                    ),
-                  ),
-              ],
-            ),
-          ),
-      ],
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Flexible(
-            child: Text(
-              current?.longName ?? context.l10n.tabsDashboard,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-          const Icon(Icons.keyboard_arrow_down),
-        ],
-      ),
-    );
-  }
+/// Tenant switch of the dashboard (Ionic `onTenantChange`: set the tenant
+/// and open the role's start page, `Utils.getUrl`).
+Future<void> _switchDashboardTenant(BuildContext context, WidgetRef ref, Tenant t) async {
+  if (t.id == null || t.id == ref.read(currentTenantProvider)?.id) return;
+  final router = GoRouter.of(context);
+  final notifier = ref.read(currentTenantProvider.notifier);
+  await notifier.setTenant(t);
+  await ref.read(currentTenantUserProvider.future);
+  final role = ref.read(currentRoleProvider);
+  final metadata = ref.read(supabaseAuthProvider).currentUser?.userMetadata;
+  router.go(homeRouteFor(role, t.id, metadata));
 }

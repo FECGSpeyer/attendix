@@ -118,11 +118,15 @@ class _PlanViewerPageState extends ConsumerState<PlanViewerPage> {
       );
       return;
     }
+    // P10_SELF_PLAN: Ionic plan-viewer export sheet (no image entry).
     await showPlanExportSheet(
       context,
       ref,
       pages: () => [_page(_index)],
       fileName: _fileName,
+      pdfLabel: context.l10n.planningExportPdf,
+      pdf2xLabel: context.l10n.planningExportPdfA5,
+      withImage: false,
     );
   }
 

@@ -49,6 +49,7 @@ class _SelfServiceOverviewPageState
       absenceReasons: EventListUtils.absenceReasonsOf(tenant?.absenceReasons),
       lateReasons: EventListUtils.lateReasonsOf(tenant?.lateReasons),
       supportsRegistrationFields: false,
+      overviewMode: true, // P10_SELF_PLAN
       signIn: (att, note) async {
         await notifier.signIn(att.id!, SignInType.fromStatus(att.status), notes: note);
         return done();

@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/providers/duty_providers.dart';
+import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/duty_utils.dart';
+import '../../../../core/utils/event_list_utils.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../shared/widgets/event_list/excuse_reason_sheet.dart';
 
 /// Shared UI actions of the Dienstplan (confirm / decline / take).
 
@@ -113,6 +116,37 @@ Future<bool> declineDutyAction(
   if (!context.mounted) return ok;
   if (ok) {
     ToastHelper.showSuccess(context, context.l10n.dutyDeclinedToast);
+  } else {
+    ToastHelper.showError(context, context.l10n.dutyFlutterDeclineFailed);
+  }
+  return ok;
+}
+
+/// P10_SELF_PLAN: "Kann nicht" / "Kann doch nicht" on "Meine Termine"
+/// (Ionic signout `declineDuty` = `quickSignout(att, false)`): the excuse
+/// reason picker of the instance, sign-out of the duty and the
+/// `understaffed` notice, toast "Danke fürs Abmelden".
+Future<bool> selfServiceDeclineDutyAction(
+  BuildContext context,
+  WidgetRef ref,
+  String personAttendanceId,
+  DutyTermin termin,
+) async {
+  final attendanceId = termin.attendance.id;
+  if (attendanceId == null) return false;
+  final tenant = ref.read(currentTenantProvider);
+  final reason = await showExcuseReasonSheet(
+    context,
+    isLate: false,
+    isToday: EventListUtils.isRunning(termin.attendance.date, termin.attendance.durationDays),
+    absenceReasons: EventListUtils.absenceReasonsOf(tenant?.absenceReasons),
+    lateReasons: EventListUtils.lateReasonsOf(tenant?.lateReasons),
+  );
+  if (reason == null || !context.mounted) return false;
+  final ok = await ref.read(dutyNotifierProvider.notifier).decline(personAttendanceId, attendanceId, reason);
+  if (!context.mounted) return ok;
+  if (ok) {
+    ToastHelper.showSuccess(context, context.l10n.signoutThanksSignout);
   } else {
     ToastHelper.showError(context, context.l10n.dutyFlutterDeclineFailed);
   }

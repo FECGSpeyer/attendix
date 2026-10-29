@@ -42,8 +42,19 @@ Future<void> showPlanExportSheet(
   bool includeBranding = true,
   bool showExports = true,
   bool Function()? beforeExport,
+  String? pdfLabel,
+  String? pdf2xLabel,
+  bool withTelegram = true,
+  List<PlanSheetAction<String>> afterPdfActions = const [],
+  List<PlanSheetAction<String>> trailingActions = const [],
 }) async {
-  final chatId = planTelegramChatId(ref);
+  // P10_SELF_PLAN: [pdfLabel] / [pdf2xLabel] carry the Ionic wording of the
+  // sheet ("PDF exportieren" on the Ablaufplan editor and viewer, "PDF (A4)"
+  // on the public planner), [afterPdfActions] sit right after the A4 entry
+  // ("PDF exportieren (alle Pläne)") and [trailingActions] after the
+  // Telegram entries ("Registerprobenplan erstellen"); [withTelegram] false
+  // for the sheets without Telegram (geteilter Plan, Org-Pläne).
+  final chatId = withTelegram ? planTelegramChatId(ref) : null;
   final l10n = context.l10n;
   final action = await showPlanActionSheet<String>(
     context,
@@ -51,8 +62,9 @@ Future<void> showPlanExportSheet(
     actions: [
       ...extraActions,
       if (showExports) ...[
-        PlanSheetAction('pdf', l10n.planningFlutterPdfA4, icon: Icons.picture_as_pdf_outlined),
-        PlanSheetAction('pdf2x', l10n.planningFlutterPdf2xA5, icon: Icons.content_copy_outlined),
+        PlanSheetAction('pdf', pdfLabel ?? l10n.planningFlutterPdfA4, icon: Icons.picture_as_pdf_outlined),
+        ...afterPdfActions,
+        PlanSheetAction('pdf2x', pdf2xLabel ?? l10n.planningFlutterPdf2xA5, icon: Icons.content_copy_outlined),
         if (withImage) PlanSheetAction('image', l10n.plansImageA4, icon: Icons.image_outlined),
       ],
       if (showExports && chatId != null) ...[
@@ -60,10 +72,11 @@ Future<void> showPlanExportSheet(
         PlanSheetAction('telegram2x', l10n.planningFlutterTelegramPdf2x, icon: Icons.send_outlined),
         PlanSheetAction('telegramImage', l10n.attendanceTelegramImage, icon: Icons.send_outlined),
       ],
+      ...trailingActions,
     ],
   );
   if (action == null || !context.mounted) return;
-  if (extraActions.any((a) => a.value == action)) {
+  if ([...extraActions, ...afterPdfActions, ...trailingActions].any((a) => a.value == action)) {
     await onExtraAction?.call(action);
     return;
   }

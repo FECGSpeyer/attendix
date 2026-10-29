@@ -180,6 +180,7 @@ class _OrgPlanPublicPageState extends ConsumerState<OrgPlanPublicPage> {
       context,
       ref,
       withImage: false,
+      withTelegram: false, // P10_SELF_PLAN: Ionic offers only PDF (A4) / (2x A5)
       pages: () => [
         PlanExportPage(
           title: e.title,
