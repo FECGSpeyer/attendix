@@ -61,8 +61,9 @@ void main() {
     });
 
     test('_save only writes pending changes', () {
-      final save = RegExp(r'Future<void> _save\(\) async \{[\s\S]+?\n  \}').firstMatch(src)!.group(0)!;
-      expect(save, contains('if (!_hasPendingChanges) return;'));
+      // SOL_FIX23: the write itself runs in `_writeOpenPlan` (serialised).
+      final save = RegExp(r'Future<bool> _writeOpenPlan\(\) async \{[\s\S]+?\n  \}').firstMatch(src)!.group(0)!;
+      expect(save, contains('if (!mounted || !_hasPendingChanges) return true;'));
       expect(save.indexOf('_hasPendingChanges'), lessThan(save.indexOf('updateAttendancePlanFields')));
     });
 

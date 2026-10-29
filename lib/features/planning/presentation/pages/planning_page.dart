@@ -87,6 +87,22 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   String _savedTitle = '';
   Timer? _saveTimer;
 
+  /// SOL_FIX23: every write of the attendance row runs only after the
+  /// previous one finished, so an older editor state or an older copy of
+  /// `extra_plans` can never be written last.
+  Future<void> _writeChain = Future<void>.value();
+
+  /// SOL_FIX23: bumped on every edit; a finished write only clears `_dirty`
+  /// when nothing was edited since its snapshot.
+  int _editGen = 0;
+
+  /// SOL_FIX23: bumped whenever the editor loads another plan / Termin; a
+  /// finished write never touches the baseline of a newly loaded plan.
+  int _loadGen = 0;
+
+  /// SOL_FIX23: a close is waiting for the pending writes.
+  bool _closing = false;
+
   @override
   void dispose() {
     _saveTimer?.cancel();
@@ -187,6 +203,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     if (plans.isNotEmpty) {
       _loadPlan(att, plans[index]);
     } else {
+      _loadGen++;
       final tenant = ref.read(currentTenantProvider);
       final isPractice = att.type == 'uebung';
       final start = (att.startTime?.isNotEmpty ?? false)
@@ -209,6 +226,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   void _loadPlan(PlanAttendance att, Plan plan) {
     final history = _history;
     _saveTimer?.cancel();
+    _loadGen++;
     _dirty = false;
     setState(() {
       _titleController.text = plan.title ?? _defaultTitle(att);
@@ -232,6 +250,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   /// kept) and holds no pending change, so closing writes nothing back.
   void _clearEditor(PlanAttendance att) {
     _saveTimer?.cancel();
+    _loadGen++;
     _dirty = false;
     setState(() {
       _planIndex = 0;
@@ -281,6 +300,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     _fields = PlanUtils.normalizeGroups(_fields);
     _hasChanges = true;
     _dirty = true;
+    _editGen++;
     _saveTimer?.cancel();
     _saveTimer = Timer(const Duration(milliseconds: 400), _save);
   }
@@ -307,11 +327,43 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   /// SOL_FIX22: true while the editor holds changes that are not stored yet.
   bool get _hasPendingChanges => _dirty || _titleController.text.trim() != _savedTitle;
 
-  Future<void> _save() async {
+  /// SOL_FIX23: runs [task] after every write queued before it (one chain
+  /// per editor, i.e. per Termin). Errors reach the caller, never the chain.
+  Future<T> _serialised<T>(Future<T> Function() task) {
+    final result = _writeChain.then((_) => task());
+    _writeChain = result.then<void>((_) {}, onError: (Object _) {});
+    return result;
+  }
+
+  /// Ionic `saveOpenPlan`: queues a write of the open plan (when it holds
+  /// valid pending changes) behind all running writes.
+  ///
+  /// SOL_FIX23: false only when the write failed; the editor then keeps its
+  /// changes and dirty state and the Ionic error toast is shown.
+  Future<bool> _save() {
     _saveTimer?.cancel();
+    return _serialised(_writeOpenPlan);
+  }
+
+  /// SOL_FIX23: waits for running writes and stores everything still pending
+  /// (also edits made while a write ran). Plan / Termin switches and close
+  /// only continue when this returns true.
+  Future<bool> _flushSaves() async {
+    do {
+      if (!await _save()) return false;
+      if (!mounted) return true;
+    } while (_hasPendingChanges && _att?.id != null && _validate());
+    return true;
+  }
+
+  Future<bool> _writeOpenPlan() async {
+    if (!mounted || !_hasPendingChanges) return true;
+    // Built when the write starts: `_att` is the latest persisted row (it is
+    // replaced after every write), plus the current editor state.
     final att = _att;
-    if (!_hasPendingChanges) return;
-    if (att?.id == null || !_validate()) return;
+    if (att?.id == null || !_validate()) return true;
+    final loadGen = _loadGen;
+    final editGen = _editGen;
     final plans = PlanUtils.allPlans(att);
     final title = _titleController.text.trim();
     final base = _planIndex < plans.length ? plans[_planIndex] : const Plan();
@@ -328,26 +380,29 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       plans[_planIndex] = current;
       update = PlanUtils.splitPlans(plans);
     }
-    // Changes made while the request runs set `_dirty` again.
-    _dirty = false;
-    final savedTitle = _savedTitle;
-    _savedTitle = title;
     try {
       final saved = await ref.read(planRepositoryWithTenantProvider).updateAttendancePlanFields(att!.id!, update);
+      // SOL_FIX23: every successful write is a change (caches on close).
+      _hasChanges = true;
       _replaceAtt(saved);
-    } catch (e) {
-      _dirty = true;
-      _savedTitle = savedTitle;
-      if (mounted) ToastHelper.showError(context, context.l10n.planningFlutterSaveFailedWith(friendlyErrorMessage(e)));
+      // Baseline / dirty only for the snapshot that was really stored.
+      if (loadGen == _loadGen) {
+        _savedTitle = title;
+        if (editGen == _editGen) _dirty = false;
+      }
+      return true;
+    } catch (_) {
+      if (mounted) ToastHelper.showError(context, context.l10n.svcUpdateAttendanceFailed);
+      return false;
     }
   }
 
   Future<void> _savePlans(PlanAttendance att, List<Plan> plans) async {
-    final saved = await ref
+    final saved = await _serialised(() => ref
         .read(planRepositoryWithTenantProvider)
-        .updateAttendancePlanFields(att.id!, PlanUtils.splitPlans(plans));
-    _replaceAtt(saved);
+        .updateAttendancePlanFields(att.id!, PlanUtils.splitPlans(plans)));
     _hasChanges = true;
+    _replaceAtt(saved);
   }
 
   void _replaceAtt(PlanAttendance saved) {
@@ -360,9 +415,10 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   Future<void> _updateFlags(Map<String, dynamic> updates) async {
     final att = _att;
     if (att?.id == null) return;
-    final saved = await ref.read(planRepositoryWithTenantProvider).updateAttendancePlanFields(att!.id!, updates);
-    _replaceAtt(saved);
+    final saved = await _serialised(
+        () => ref.read(planRepositoryWithTenantProvider).updateAttendancePlanFields(att!.id!, updates));
     _hasChanges = true;
+    _replaceAtt(saved);
   }
 
   void _invalidateOnExit() {
@@ -381,7 +437,12 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
 
   Future<void> _selectAttendance(int? id) async {
     if (id == null || id == _attId) return;
-    await _save();
+    // SOL_FIX23: a failed write keeps the open Termin (and its changes).
+    if (!await _flushSaves()) {
+      if (mounted) setState(() {});
+      return;
+    }
+    if (!mounted) return;
     final att = _attendances.where((a) => a.id == id).firstOrNull;
     if (att != null) _loadAttendance(att);
   }
@@ -417,7 +478,8 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
 
   Future<void> _selectPlan(int index) async {
     if (_att == null || index == _planIndex) return;
-    await _save();
+    // SOL_FIX23: wait for running writes; a failed write keeps the plan open.
+    if (!await _flushSaves() || !mounted) return;
     final updated = _att!;
     setState(() => _planIndex = index);
     _loadPlan(updated, PlanUtils.allPlans(updated)[index]);
@@ -432,8 +494,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       ToastHelper.showWarning(context, context.l10n.planningCreateRunSheetFirst);
       return;
     }
-    await _save();
-    if (!mounted) return;
+    if (!await _flushSaves() || !mounted) return;
     final choice = await showAppDialog<String>(
       context: context,
       builder: (ctx) => AppAlertDialog(
@@ -493,8 +554,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       ],
     );
     if (action == null || !mounted) return;
-    await _save();
-    if (!mounted) return;
+    if (!await _flushSaves() || !mounted) return;
     final current = _att!;
     final list = PlanUtils.withDays(current, PlanUtils.allPlans(current));
     try {
@@ -867,8 +927,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     final protocolRepo = ref.read(protocolRepositoryWithTenantProvider);
     final att = _att;
     if (att?.id == null) return;
-    if (_validate()) await _save();
-    if (!mounted) return;
+    if (!await _flushSaves() || !mounted) return;
     ProtocolAttendance? protocolAtt;
     try {
       protocolAtt = await protocolRepo.getAttendance(att!.id!);
@@ -906,8 +965,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       ToastHelper.showWarning(context, context.l10n.planningChooseEventFirst);
       return;
     }
-    await _save();
-    if (!mounted) return;
+    if (!await _flushSaves() || !mounted) return;
     final action = await showPlanActionSheet<String>(
       context,
       title: context.l10n.planningShareLink,
@@ -980,7 +1038,8 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   /// Ionic `showOptions`: export entries only with fields (validated on
   /// click), the Registerprobenplan always for choir / orchestra.
   Future<void> _showOptions() async {
-    if (_validate()) await _save();
+    // Exports use the editor state, so they also work when the write failed.
+    await _flushSaves();
     if (!mounted) return;
     final att = _att;
     final tenant = ref.read(currentTenantProvider);
@@ -1087,8 +1146,13 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, _) async {
-        if (didPop) return;
-        await _save();
+        if (didPop || _closing) return;
+        // SOL_FIX23: close waits for running writes and stays open when a
+        // write failed (toast shown, changes kept for a retry).
+        _closing = true;
+        final ok = await _flushSaves();
+        _closing = false;
+        if (!ok || !mounted) return;
         _invalidateOnExit();
         if (context.mounted) Navigator.of(context).pop(_hasChanges);
       },
