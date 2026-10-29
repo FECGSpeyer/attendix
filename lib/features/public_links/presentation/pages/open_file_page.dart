@@ -3,7 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/config/supabase_config.dart';
+import '../../../../core/providers/role_permission_providers.dart'; // ASTRA_FILES
 import '../../../../core/providers/tenant_providers.dart';
+import '../../../../core/utils/dashboard_logic.dart'; // ASTRA_FILES
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
@@ -89,16 +91,25 @@ class _OpenFilePageState extends ConsumerState<OpenFilePage> {
       if (!mounted) return;
       if (target == null) {
         ToastHelper.showError(context, context.l10n.openFileNoTenantAccess);
-        context.go('/tenants');
+        // ASTRA_FILES: Ionic routeAfterAuth(undefined, current tenant).
+        context.go(current == null ? '/tenants' : _homeRoute(current.id));
         return;
       }
       await ref.read(currentTenantProvider.notifier).setTenant(target);
-      // Wait until the role of the new tenant is loaded so the router
-      // does not bounce the navigation to the tenant selection.
-      for (var i = 0; i < 50 && ref.read(isRoleLoadingProvider); i++) {
-        await Future<void>.delayed(const Duration(milliseconds: 100));
-      }
-      if (!mounted) return;
+    }
+    // Wait until the role of the (new) tenant is loaded so the router
+    // does not bounce the navigation to the tenant selection.
+    for (var i = 0; i < 50 && ref.read(isRoleLoadingProvider); i++) {
+      await Future<void>.delayed(const Duration(milliseconds: 100));
+    }
+    if (!mounted) return;
+
+    // ASTRA_FILES: Ionic `if (!db.canAccessFiles())` after the switch ->
+    // toast files.noAccess + routeAfterAuth(undefined, tenantId).
+    if (!ref.read(canAccessFilesProvider)) {
+      ToastHelper.showError(context, context.l10n.filesNoAccess);
+      context.go(_homeRoute(tenantId));
+      return;
     }
 
     final segments = widget.path.split('/').where((s) => s.isNotEmpty).toList();
@@ -112,6 +123,13 @@ class _OpenFilePageState extends ConsumerState<OpenFilePage> {
     }).query;
     context.go('/settings/files?$query');
   }
+
+  /// Ionic `routeAfterAuth(undefined, tenantId)` – the role's start page.
+  String _homeRoute(int? tenantId) => homeRouteFor(
+        ref.read(currentRoleProvider),
+        tenantId,
+        ref.read(supabaseClientProvider).auth.currentUser?.userMetadata,
+      );
 
   @override
   Widget build(BuildContext context) {

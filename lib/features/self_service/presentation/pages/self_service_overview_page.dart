@@ -5,6 +5,7 @@ import '../../../../core/providers/self_service_providers.dart';
 import '../../../../core/providers/role_permission_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../data/models/tenant/tenant.dart'; // ASTRA_FILES
 import '../../../../core/utils/color_utils.dart';
 import '../../../../core/utils/event_list_utils.dart';
 import '../../../../shared/widgets/event_list/event_list_widgets.dart';
@@ -38,6 +39,9 @@ class _SelfServiceOverviewPageState
     final notifier = ref.read(signInOutNotifierProvider.notifier);
     final canAccessFiles = ref.read(canAccessFilesProvider);
     final currentTenantId = tenant?.id;
+    // ASTRA_FILES: role + files_shared of the other instances come from the
+    // already loaded tenantUsers/tenants rows (no extra query).
+    final userTenants = ref.read(userTenantsProvider).valueOrNull ?? const <Tenant>[];
 
     Future<bool> done() async => !ref.read(signInOutNotifierProvider).hasError;
 
@@ -58,8 +62,15 @@ class _SelfServiceOverviewPageState
         return done();
       },
       openPlan: (att) => showPlanViewerSheet(context, attendance: att),
-      // Files of other tenants are only reachable after switching the tenant.
-      canAccessFiles: (att) => canAccessFiles && att.tenantId == currentTenantId,
+      // ASTRA_FILES: Ionic hasFilesFolder → canAccessFiles(att.tenantId), the
+      // permission in the Termin's own instance; opening switches to it.
+      canAccessFiles: (att) => canAccessFilesInTenant(
+        tenantId: att.tenantId,
+        currentTenantId: currentTenantId,
+        currentTenantAccess: canAccessFiles,
+        userTenants: userTenants,
+      ),
+      currentTenantId: currentTenantId,
     );
   }
 
@@ -75,6 +86,7 @@ class _SelfServiceOverviewPageState
     final upcomingAll = ref.watch(upcomingAttendancesAcrossTenantsProvider);
     final past = ref.watch(pastAttendancesAcrossTenantsProvider);
     ref.watch(canAccessFilesProvider);
+    ref.watch(userTenantsProvider); // ASTRA_FILES
     final actions = _actions();
 
     // UX_SONGS_SELF: Ionic condensed large title + segment toolbar.
@@ -268,7 +280,7 @@ class _SelfServiceOverviewPageState
           IconButton(
             icon: const Icon(Icons.folder_open_outlined),
             tooltip: context.l10n.signoutOpenFiles,
-            onPressed: () => openFilesFolderRoute(context, att.filesFolder!),
+            onPressed: () => actions.openFilesFolder(context, att),
           ),
         EventPill.status(att.status, past: past),
       ],
