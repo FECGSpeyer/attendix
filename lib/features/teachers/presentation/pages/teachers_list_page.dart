@@ -88,7 +88,10 @@ class TeachersListPage extends ConsumerWidget {
                 final teacher = teachers[index];
                 return _TeacherTile(
                   teacher: teacher,
-                  onTap: () => _openTeacherPage(context, ref, teacher),
+                  // Ionic openModal: `if (!this.isAdmin) return;`
+                  onTap: isAdmin
+                      ? () => _openTeacherPage(context, ref, teacher)
+                      : null,
                   onDelete: isAdmin
                       ? () => _deleteTeacher(context, ref, teacher)
                       : null,
@@ -106,7 +109,10 @@ class TeachersListPage extends ConsumerWidget {
 
   /// Ionic "Lehrer hinzufügen" sheet (breakpoint 0.7).
   Future<void> _showAddSheet(BuildContext context, WidgetRef ref) async {
-    final groups = ref.read(groupsProvider).valueOrNull ?? [];
+    // Ionic teachers.page: instruments without the main group
+    final groups = (ref.read(groupsProvider).valueOrNull ?? [])
+        .where((g) => g.maingroup != true)
+        .toList();
     final result = await showModalBottomSheet<Teacher>(
       context: context,
       useRootNavigator: true, // IOS_SHELL2: above the tab bar

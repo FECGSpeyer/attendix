@@ -18,7 +18,6 @@ import '../../../../core/providers/user_registration_providers.dart'; // AUTH
 import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/models/person/person.dart';
-import '../../../../data/models/tenant/tenant.dart';
 import '../../../../data/services/auth_service.dart';
 import '../widgets/planned_absences.dart';
 import '../../../duty/presentation/pages/unavailability_page.dart';
@@ -37,6 +36,7 @@ import '../../../../core/services/tracking/tracking_service.dart';
 import '../../../../core/utils/demo_guard.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
+import '../../person_stats.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 import '../../../../core/utils/people_shift_status.dart' show shiftAssignmentChanged; // SOL_FIX4
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
@@ -67,117 +67,47 @@ final personProvider =
   return person.copyWith(groupName: groupName);
 });
 
-/// Provider for person attendance statistics
+/// Provider for person attendance statistics (Ionic person.page
+/// getHistoryInfo: average over `include_in_average` types of the current
+/// season, late counts since the last "Gespräch geführt").
 final personAttendanceStatsProvider =
     FutureProvider.family<Map<String, dynamic>, int>((ref, personId) async {
   ref.watch(currentAuthUserIdProvider); // SOL_FIX15: reload per account
   final supabase = ref.watch(supabaseClientProvider);
   final tenant = ref.watch(currentTenantProvider);
+  final person = await ref.watch(personProvider(personId).future);
 
   final tenantId = tenant?.id;
-  if (tenantId == null) {
+  if (tenantId == null || person == null) {
     return {
       'total': 0,
       'attended': 0,
       'percentage': 0,
       'lateCount': 0,
-      'lateStatuses': <int>[3],
+      'lateCountExcused': 0,
     };
   }
 
-  // Get late rule from CriticalRules - find first rule that includes status 3 (late)
-  List<int> lateStatuses = [3, 5]; // Fallback: both late statuses
-  CriticalRulePeriodType? latePeriodType;
-  int? latePeriodDays;
-
-  final criticalRules = tenant?.criticalRules;
-  if (criticalRules != null) {
-    for (final rule in criticalRules) {
-      // DB_REVIEW_REST (M3): Ionic ignores any `enabled` flag.
-      if (rule.statuses.contains(3)) {
-        lateStatuses = rule.statuses;
-        latePeriodType = rule.periodType;
-        latePeriodDays = rule.periodDays;
-        break;
-      }
-    }
-  }
-
+  // Tenant filter via the inner-joined attendance (person_attendances has no
+  // tenantId column).
   final response = await supabase
       .from('person_attendances')
-      .select('status, notes, attendance:attendance_id!inner(id, date, tenantId)')
+      .select('status, notes, duty_state, '
+          'attendance:attendance_id!inner(id, date, tenantId, '
+          'attType:type_id(include_in_average, duty_mode))')
       .eq('person_id', personId)
       .eq('attendance.tenantId', tenantId);
 
-  final attendances = response as List;
-  final now = DateTime.now();
-  final seasonStartStr = tenant?.seasonStart;
-  final seasonStart = seasonStartStr != null
-      ? DateTime.tryParse(seasonStartStr)
-      : null;
-
-  final pastAttendances = attendances.where((a) {
-    final attendance = a['attendance'] as Map<String, dynamic>?;
-    final date = DateTime.tryParse(attendance?['date'] ?? '');
-    if (date == null || !date.isBefore(now)) return false;
-    // Only count attendances from the current season
-    if (seasonStart != null && date.isBefore(seasonStart)) return false;
-    return true;
-  }).toList();
-
-  final total = pastAttendances.length;
-  final attended = pastAttendances.where((a) {
-    final status = a['status'];
-    if (status is int) {
-      // SETTINGS2: shift_excused_as_present (Ionic getPersonAttendances)
-      return AttendanceStatus.fromValue(status).countsAsAttended(
-        notes: a['notes'] as String?,
-        shiftExcusedAsPresent: tenant?.shiftExcusedAsPresent ?? false,
-      );
-    }
-    return false;
-  }).length;
-  final percentage = total > 0 ? (attended / total * 100).round() : 0;
-
-  // Determine the start date for counting late based on periodType
-  DateTime? lateCountStartDate;
-  if (latePeriodType == CriticalRulePeriodType.season) {
-    // Use tenant's seasonStart
-    if (seasonStartStr != null) {
-      lateCountStartDate = DateTime.tryParse(seasonStartStr);
-    }
-  } else if (latePeriodType == CriticalRulePeriodType.days) {
-    // Use last X days
-    lateCountStartDate = now.subtract(Duration(days: latePeriodDays ?? 30));
-  }
-  // For allTime or null, lateCountStartDate remains null (count all)
-
-  // Count late based on CriticalRule statuses AND periodType
-  final lateCount = pastAttendances.where((a) {
-    final status = a['status'];
-    if (status is! int || !lateStatuses.contains(status)) {
-      return false;
-    }
-
-    // If we have a start date filter, apply it
-    if (lateCountStartDate != null) {
-      final attendance = a['attendance'] as Map<String, dynamic>?;
-      final date = DateTime.tryParse(attendance?['date'] ?? '');
-      if (date == null || date.isBefore(lateCountStartDate)) {
-        return false;
-      }
-    }
-
-    return true;
-  }).length;
-
-  return {
-    'total': total,
-    'attended': attended,
-    'percentage': percentage,
-    'lateCount': lateCount,
-    'lateStatuses': lateStatuses,
-  };
+  return computePersonAttendanceStats(
+    List<Map<String, dynamic>>.from(response as List),
+    now: DateTime.now(),
+    windowStart: personAttendanceWindowStart(
+      seasonStart: tenant?.seasonStart,
+      hasLeft: person.left != null,
+    ),
+    lastSolve: person.lastSolve,
+    shiftExcusedAsPresent: tenant?.shiftExcusedAsPresent ?? false,
+  );
 });
 
 /// Provider for person history (attendance + player history combined)
@@ -271,7 +201,12 @@ final personHistoryProvider =
     };
   }).toList();
 
-  final playerHistory = person.history.map((h) {
+  // Ionic getHistoryInfo: non-admins only see group changes and pauses.
+  final role = ref.watch(currentRoleProvider);
+  final isAdmin = role.isAdmin || role.isResponsible;
+  final playerHistory = person.history
+      .where((h) => isAdmin || visibleHistoryTypesForMembers.contains(h.type))
+      .map((h) {
     return {
       'date': h.date,
       'title': h.typeLabel,
@@ -288,7 +223,8 @@ final personHistoryProvider =
     return dateB.compareTo(dateA);
   });
 
-  return allHistory.take(100).toList();
+  // Ionic shows the complete history (no limit).
+  return allHistory;
 });
 
 /// Person detail page - with inline editing
@@ -1267,7 +1203,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e))), backgroundColor: AppColors.danger),
+          SnackBar(content: Text(context.l10n.personResetFailed), backgroundColor: AppColors.danger),
         );
       }
     }
@@ -1472,8 +1408,11 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
             {bool destructive = false}) =>
         AppActionSheetAction(value: onTap, label: text, destructive: destructive);
 
+    // Ionic: header "Aktionen", "Abbrechen" with role destructive.
     final action = await showAppActionSheet<VoidCallback>(
       context,
+      title: context.l10n.personActions,
+      cancelDestructive: true,
       actions: [
         if (widget.person.appId == null && isAdmin)
           option(context.l10n.personAssignMyUser, _assignMyAccount),
@@ -1505,6 +1444,43 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     if (result == true && mounted) {
       ref.invalidate(personProvider(widget.personId));
       ref.invalidate(realtimePlayersProvider);
+      // Ionic transferPerson: a transfer (not a copy) closes the person page.
+      // The sheet can switch between copy and transfer, so look at the
+      // result: a transferred person is archived (`left` set).
+      final updated = await ref.read(personProvider(widget.personId).future);
+      if (mounted && (updated == null || updated.left != null)) context.pop();
+    }
+  }
+
+  /// Ionic person.page activate(): "Person reaktivieren" for archived
+  /// persons → db.activatePlayer, close the page, toast "reaktiviert".
+  Future<void> _activatePerson() async {
+    final confirmed = await showAppDialog<bool>(
+      context: context,
+      builder: (ctx) => AppAlertDialog(
+        title: Text(ctx.l10n.personReactivatePerson),
+        content: Text(ctx.l10n.personReactivateConfirm),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(ctx.l10n.commonCancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: Text(ctx.l10n.commonYes),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+    try {
+      await ref.read(playerNotifierProvider.notifier).reactivatePlayer(widget.person);
+      ref.invalidate(realtimePlayersProvider);
+      if (!mounted) return;
+      ToastHelper.showSuccess(context, context.l10n.personReactivated);
+      context.pop();
+    } catch (e) {
+      if (mounted) ToastHelper.showError(context, context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e)));
     }
   }
 
@@ -1754,7 +1730,13 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     final person = _draft;
     final statsAsync = ref.watch(personAttendanceStatsProvider(widget.personId));
     final historyAsync = ref.watch(personHistoryProvider(widget.personId));
-    final canEdit = ref.watch(currentRoleProvider).canEdit;
+    // Ionic person.page: readOnly = !isAdmin (Admin / Verantwortlicher);
+    // archived persons (settings "Ausgetretene", `hasLeft`) are read-only and
+    // only offer "Person reaktivieren".
+    final role = ref.watch(currentRoleProvider);
+    final isAdmin = role.isAdmin || role.isResponsible;
+    final hasLeft = widget.person.left != null;
+    final canEdit = isAdmin && !hasLeft;
     final openSection = _currentSection(canEdit);
 
     AllgemeinAccordion allgemein(AllgemeinPart part, String key) =>
@@ -1789,7 +1771,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
             content: Text(context.l10n.personDiscardChangesMessage),
             actions: [
               TextButton(onPressed: () => Navigator.pop(context, false), child: Text(context.l10n.commonCancel)),
-              FilledButton(onPressed: () => Navigator.pop(context, true), child: Text(context.l10n.rolePermDiscard)),
+              TextButton(onPressed: () => Navigator.pop(context, true), child: Text(context.l10n.commonYes)), // Ionic: Abbrechen / Ja
             ],
           ),
         );
@@ -1863,8 +1845,9 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
             // Ionic: "Notizen" textarea (existingPlayer && isAdmin)
             if (canEdit) allgemein(AllgemeinPart.notes, 'notes'),
 
-            // Problem Person Accordion
-            ProblemfallAccordion(
+            // Problem Person Accordion (Ionic: !readOnly && isCritical)
+            if (canEdit)
+              ProblemfallAccordion(
               person: person,
               isExpanded: _showProblemfall,
               onToggle: () => setState(() => _showProblemfall = !_showProblemfall),
@@ -1875,8 +1858,10 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
               onResolveProblem: _resolveProblem,
             ),
 
-            // Late Warning Card
-            LateWarningCard(
+            // Late Warning Card (Ionic: !readOnly && isAdmin && lateCount >=
+            // lateThreshold)
+            if (canEdit)
+              LateWarningCard(
               person: person,
               statsAsync: statsAsync,
               onResetLateCount: _resetLateCount,
@@ -1924,6 +1909,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
               statsAsync: statsAsync,
               personId: widget.personId,
               canEdit: canEdit,
+              hasLeft: hasLeft,
             ),
 
             // Upcoming Appointments Accordion
@@ -1959,7 +1945,15 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
         ),
         // Ionic FAB: save (changes) / approve sheet (pending) / key (create
         // account when e-mail but no account) / "..." more menu.
-        floatingActionButton: TabBarFab.wrap(_hasChanges
+        floatingActionButton: TabBarFab.wrap(hasLeft
+            ? (isAdmin
+                ? IonFabButton(
+                    onPressed: _activatePerson,
+                    tooltip: context.l10n.personReactivatePerson,
+                    icon: Icons.undo,
+                  )
+                : null)
+            : _hasChanges
             ? IonFabButton(
                 onPressed: _isSaving ? null : _saveChanges,
                 tooltip: context.l10n.commonSave,
