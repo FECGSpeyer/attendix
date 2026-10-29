@@ -1,0 +1,29 @@
+<ion-content class="ion-padding">
+  <div *ngIf="loading" class="center">
+    <ion-spinner></ion-spinner>
+  </div>
+
+  <div *ngIf="notInTeams && !loading" class="center">
+    <p>{{ 'teams.onlyInTeams' | transloco }}</p>
+  </div>
+
+  <div *ngIf="!loading && !notInTeams">
+    <h2>{{ 'teams.setup' | transloco }}</h2>
+
+    <p *ngIf="tenants.length === 0">
+      {{ 'teams.noAccount' | transloco }}
+    </p>
+
+    <ion-list *ngIf="tenants.length > 0">
+      <ion-radio-group [(ngModel)]="selectedTenantId" (ionChange)="onTenantChange()">
+        <ion-item *ngFor="let tenant of tenants">
+          <ion-radio [value]="tenant.id">{{ tenant.longName || tenant.shortName }}</ion-radio>
+        </ion-item>
+      </ion-radio-group>
+    </ion-list>
+
+    <p class="hint" *ngIf="tenants.length > 0">
+      {{ 'teams.choose' | transloco }}
+    </p>
+  </div>
+</ion-content>

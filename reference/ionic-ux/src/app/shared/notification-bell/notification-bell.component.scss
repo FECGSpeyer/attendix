@@ -1,0 +1,83 @@
+:host {
+  position: relative;
+  display: inline-flex;
+  overflow: visible;
+}
+
+// Toolbar-icon-styled trigger without ion-button, so there is no native
+// circular background to paint over the badge on iOS.
+.bell-trigger {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  overflow: visible;
+  color: currentColor;
+
+  ion-icon {
+    font-size: 24px;
+  }
+}
+
+.bell-badge {
+  position: absolute;
+  top: 4px;
+  inset-inline-end: 4px;
+  font-size: 10px;
+  padding: 1px 4px;
+  border-radius: 10px;
+  min-width: 16px;
+  height: 16px;
+  line-height: 14px;
+  text-align: center;
+  pointer-events: none;
+}
+
+.unread-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--ion-color-danger);
+  margin-inline-end: 4px;
+}
+
+ion-item.unread h2 {
+  font-weight: 600;
+}
+
+// Tenant tag shown in the "Alle" view so each row's instance is identifiable.
+.tenant-tag {
+  display: block;
+  font-weight: 600;
+}
+
+// Timestamp: smaller than the message body.
+.date-note {
+  display: block;
+  font-size: 11px;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 16px;
+  color: var(--ion-color-medium);
+
+  ion-icon {
+    font-size: 48px;
+    margin-bottom: 12px;
+  }
+
+  p {
+    margin: 0;
+  }
+}

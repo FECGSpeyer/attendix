@@ -1,0 +1,7 @@
+<div *ngIf="content() === null && !error()" class="ion-text-center">
+  <ion-spinner></ion-spinner>
+</div>
+
+<div *ngIf="content() as html" [innerHTML]="html"></div>
+
+<p *ngIf="error()">{{ 'legal.loadFailed' | transloco }}</p>

@@ -1,0 +1,379 @@
+import { currentLanguage, dateFmt } from '../i18n/languages';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { ActionSheetController, AlertController } from '@ionic/angular/lazy';
+import { isPlatform } from '@ionic/angular';
+import { Browser } from '@capacitor/browser';
+import { RealtimeChannel, RealtimePostgresChangesPayload } from '@supabase/supabase-js';
+import dayjs from 'dayjs';
+import 'dayjs/locale/de';
+import { FieldSelection, SharedPlan } from '../utilities/interfaces';
+import { getSupabase } from '../services/base/supabase';
+import { Utils } from '../utilities/Utils';
+import { environment } from 'src/environments/environment';
+import { translate } from '@jsverse/transloco';
+
+interface OrgPlanEntry {
+  kind: 'attendance';
+  id: number;
+  date: string;
+  tenantName: string;
+  title: string;
+  time: string;
+  end: string;
+  fields: FieldSelection[];
+  liveMode: boolean;
+  activeFieldIndex: number;
+  liveInterval: any;
+}
+
+interface AdHocEntry {
+  kind: 'adhoc';
+  id: string;
+  date: string;
+  title: string;
+  time: string;
+  end: string;
+  fields: FieldSelection[];
+  liveMode: boolean;
+  activeFieldIndex: number;
+  liveInterval: any;
+}
+
+type PlanEntry = OrgPlanEntry | AdHocEntry;
+
+@Component({
+  selector: 'app-org-plan-public',
+  templateUrl: './org-plan-public.page.html',
+  styleUrls: ['./org-plan-public.page.scss'],
+  standalone: false,
+})
+export class OrgPlanPublicPage implements OnInit, OnDestroy {
+  public loading = true;
+  public notFound = false;
+  public orgName = '';
+  public plans: PlanEntry[] = [];
+  public upcomingPlans: PlanEntry[] = [];
+  public pastPlans: PlanEntry[] = [];
+  public showHistory = false;
+  public publicKey: string | null = null;
+  private channels: RealtimeChannel[] = [];
+  private orgId: number | null = null;
+  private nameById: Record<number, string> = {};
+  private tenantIds: number[] = [];
+
+  constructor(private route: ActivatedRoute, private actionSheetController: ActionSheetController, private alertController: AlertController) {}
+
+  async ngOnInit() {
+    const key = this.route.snapshot.queryParamMap.get('key');
+    if (!key) { this.notFound = true; this.loading = false; return; }
+    this.publicKey = key;
+
+    const { data: org } = await getSupabase()
+      .from('tenant_groups')
+      .select('id, name')
+      .eq('public_plan_key', key)
+      .single();
+
+    if (!org) { this.notFound = true; this.loading = false; return; }
+
+    this.orgName = org.name;
+    this.orgId = org.id;
+
+    const { data: tgts } = await getSupabase()
+      .from('tenant_group_tenants')
+      .select('tenant_id, tenant:tenant_id(longName)')
+      .eq('tenant_group', org.id);
+
+    this.tenantIds = (tgts ?? []).map((t: any) => t.tenant_id);
+    this.nameById = {};
+    for (const t of (tgts ?? []) as any[]) {
+      this.nameById[t.tenant_id] = t.tenant?.longName ?? '';
+    }
+
+    await this.loadPlans();
+  }
+
+  async handleRefresh(event: any) {
+    await this.loadPlans();
+    event.target.complete();
+  }
+
+  async loadPlans() {
+    if (!this.orgId) { return; }
+    this.loading = true;
+
+    for (const ch of this.channels) { ch.unsubscribe(); }
+    this.channels = [];
+
+    const [attRows, adhocRows] = await Promise.all([
+      this.tenantIds.length
+        ? getSupabase()
+            .from('attendance')
+            .select('id, date, plan, typeInfo, tenantId')
+            .in('tenantId', this.tenantIds)
+            .eq('is_org_plan', true)
+            .not('plan', 'is', null)
+            .order('date', { ascending: true })
+        : Promise.resolve({ data: [] }),
+      getSupabase()
+        .from('shared_plans')
+        .select('*')
+        .eq('org_id', this.orgId)
+        .order('date', { ascending: true }),
+    ]);
+
+    const attEntries: OrgPlanEntry[] = ((attRows.data ?? []) as any[]).map(row => {
+      const plan = row.plan as any;
+      return {
+        kind: 'attendance',
+        id: row.id,
+        date: row.date,
+        tenantName: this.nameById[row.tenantId] ?? '',
+        title: plan.title || row.typeInfo || translate('plans.plan'),
+        time: plan.time || '',
+        end: plan.end || '',
+        fields: plan.fields || [],
+        liveMode: false,
+        activeFieldIndex: -1,
+        liveInterval: null,
+      };
+    });
+
+    const adhocEntries: AdHocEntry[] = ((adhocRows.data ?? []) as SharedPlan[]).map(row => ({
+      kind: 'adhoc',
+      id: row.id,
+      date: row.date ?? '',
+      title: row.plan_title || translate('plans.plan'),
+      time: row.time ?? '',
+      end: row.end_time ?? '',
+      fields: (row.fields as unknown as FieldSelection[]) ?? [],
+      liveMode: false,
+      activeFieldIndex: -1,
+      liveInterval: null,
+    }));
+
+    this.plans = [...attEntries, ...adhocEntries].sort((a, b) =>
+      dayjs(a.date).isBefore(dayjs(b.date)) ? -1 : 1
+    );
+
+    const today = dayjs().startOf('day');
+    this.upcomingPlans = this.plans.filter(e => !dayjs(e.date).isBefore(today));
+    this.pastPlans = this.plans.filter(e => dayjs(e.date).isBefore(today)).reverse();
+
+    this.loading = false;
+
+    for (const entry of this.plans) {
+      if (this.isLiveNow(entry)) { this.toggleLive(entry); }
+      if (!dayjs(entry.date).isBefore(dayjs().startOf('day'))) {
+        this.subscribeRealtime(entry);
+      }
+    }
+  }
+
+  ngOnDestroy() {
+    for (const entry of this.plans) { this.stopLive(entry); }
+    for (const ch of this.channels) { ch.unsubscribe(); }
+  }
+
+  private subscribeRealtime(entry: PlanEntry) {
+    if (entry.kind === 'attendance') {
+      const ch = getSupabase()
+        .channel(`org-att-${entry.id}`)
+        .on('postgres_changes',
+          { event: 'UPDATE', schema: 'public', table: 'attendance', filter: `id=eq.${entry.id}` },
+          (payload: RealtimePostgresChangesPayload<any>) => {
+            const plan = payload.new?.plan;
+            if (plan) {
+              entry.time = plan.time || entry.time;
+              entry.end = plan.end || entry.end;
+              entry.fields = plan.fields || entry.fields;
+              entry.title = plan.title || entry.title;
+              if (entry.liveMode) { this.updateActiveIndex(entry); }
+            }
+          })
+        .subscribe();
+      this.channels.push(ch);
+    } else {
+      const ch = getSupabase()
+        .channel(`org-adhoc-${entry.id}`)
+        .on('postgres_changes',
+          { event: 'UPDATE', schema: 'public', table: 'shared_plans', filter: `id=eq.${entry.id}` },
+          (payload: RealtimePostgresChangesPayload<any>) => {
+            const d = payload.new;
+            if (d) {
+              entry.title = d.plan_title || entry.title;
+              entry.time = d.time || entry.time;
+              entry.end = d.end_time || entry.end;
+              entry.fields = (d.fields as FieldSelection[]) || entry.fields;
+              if (entry.liveMode) { this.updateActiveIndex(entry); }
+            }
+          })
+        .subscribe();
+      this.channels.push(ch);
+    }
+  }
+
+  getDateFormatted(entry: PlanEntry): string {
+    return entry.date ? dayjs(entry.date).locale(currentLanguage()).format(`dddd, ${dateFmt()}`) : entry.title;
+  }
+
+  getStartTime(entry: PlanEntry): string {
+    if (!entry.time) { return ''; }
+    const t = dayjs(entry.time).isValid()
+      ? dayjs(entry.time)
+      : dayjs().hour(Number(entry.time.substring(0, 2))).minute(Number(entry.time.substring(3, 5)));
+    return t.format('HH:mm');
+  }
+
+  getEndTime(entry: PlanEntry): string {
+    if (!entry.end) { return ''; }
+    const t = dayjs(entry.end).isValid()
+      ? dayjs(entry.end)
+      : dayjs().hour(Number(entry.end.substring(0, 2))).minute(Number(entry.end.substring(3, 5)));
+    return t.format('HH:mm');
+  }
+
+  calculateTime(entry: PlanEntry, field: FieldSelection, index: number): string {
+    let mins = 0;
+    for (let i = 0; i < index; i++) { mins += Number(entry.fields[i].time) || 0; }
+    const t = dayjs(entry.time).isValid()
+      ? dayjs(entry.time)
+      : dayjs().hour(Number(entry.time.substring(0, 2))).minute(Number(entry.time.substring(3, 5)));
+    const result = t.add(mins, 'minute').format('HH:mm');
+    return field.conductor ? `${result} | ${field.conductor}` : result;
+  }
+
+  getActiveCountdown(entry: PlanEntry): string {
+    if (!entry.liveMode || entry.activeFieldIndex < 0 || !entry.fields.length || !entry.time || !entry.date) { return ''; }
+    const startBase = dayjs(entry.time).isValid()
+      ? dayjs(entry.time)
+      : dayjs().hour(Number(entry.time.substring(0, 2))).minute(Number(entry.time.substring(3, 5)));
+    let t = dayjs(entry.date).hour(startBase.hour()).minute(startBase.minute()).second(0);
+    for (let i = 0; i <= entry.activeFieldIndex; i++) {
+      t = t.add(Number(entry.fields[i].time) || 0, 'minute');
+    }
+    const remaining = Math.max(0, t.diff(dayjs(), 'second'));
+    const h = Math.floor(remaining / 3600);
+    const m = Math.floor((remaining % 3600) / 60);
+    const s = remaining % 60;
+    return h > 0
+      ? `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
+      : `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+  }
+
+  isLiveNow(entry: PlanEntry): boolean {
+    if (!entry.date || !entry.time || !entry.fields.length) { return false; }
+    const now = dayjs();
+    if (!now.isSame(dayjs(entry.date), 'day')) { return false; }
+    const startBase = dayjs(entry.time).isValid()
+      ? dayjs(entry.time)
+      : dayjs().hour(Number(entry.time.substring(0, 2))).minute(Number(entry.time.substring(3, 5)));
+    const start = dayjs(entry.date).hour(startBase.hour()).minute(startBase.minute()).second(0);
+    const total = entry.fields.reduce((s, f) => s + (Number(f.time) || 0), 0);
+    return now.isAfter(start.subtract(5, 'minute')) && now.isBefore(start.add(total + 15, 'minute'));
+  }
+
+  toggleLive(entry: PlanEntry) {
+    entry.liveMode = !entry.liveMode;
+    if (entry.liveMode) {
+      this.updateActiveIndex(entry);
+      entry.liveInterval = setInterval(() => this.updateActiveIndex(entry), 1000);
+    } else {
+      this.stopLive(entry);
+    }
+  }
+
+  private stopLive(entry: PlanEntry) {
+    if (entry.liveInterval) { clearInterval(entry.liveInterval); entry.liveInterval = null; }
+    entry.activeFieldIndex = -1;
+  }
+
+  updateActiveIndex(entry: PlanEntry) {
+    if (!entry.fields.length || !entry.time || !entry.date) { entry.activeFieldIndex = -1; return; }
+    const now = dayjs();
+    const startBase = dayjs(entry.time).isValid()
+      ? dayjs(entry.time)
+      : dayjs().hour(Number(entry.time.substring(0, 2))).minute(Number(entry.time.substring(3, 5)));
+    let t = dayjs(entry.date).hour(startBase.hour()).minute(startBase.minute()).second(0);
+    for (let i = 0; i < entry.fields.length; i++) {
+      t = t.add(Number(entry.fields[i].time) || 0, 'minute');
+      if (now.isBefore(t)) { entry.activeFieldIndex = i; this.scrollToActive(entry.id); return; }
+    }
+    entry.activeFieldIndex = entry.fields.length - 1;
+    this.scrollToActive(entry.id);
+  }
+
+  private autoScrolledEntries = new Set<string | number>();
+
+  private scrollToActive(entryId: string | number) {
+    if (this.autoScrolledEntries.has(entryId)) { return; }
+    setTimeout(() => {
+      const el = document.getElementById(`active-slot-${entryId}`);
+      if (!el) { return; }
+      this.autoScrolledEntries.add(entryId);
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 50);
+  }
+
+  async subscribeCalendar() {
+    if (!this.publicKey) return;
+    const lang = currentLanguage() !== 'de' ? `&lang=${currentLanguage()}` : '';
+    const base = `${environment.apiUrl}/functions/v1/ical-org-plans?key=${this.publicKey}${lang}`;
+    const sheet = await this.actionSheetController.create({
+      header: translate('plans.subscribeCalendar'),
+      buttons: [
+        {
+          text: translate('plans.simpleCalendar'),
+          handler: () => this.showCalendarAlert(base),
+        },
+        {
+          text: translate('plans.detailedCalendar'),
+          handler: () => this.showCalendarAlert(`${base}&detailed=true`),
+        },
+        { text: translate('common.cancel'), role: 'cancel' },
+      ],
+    });
+    await sheet.present();
+  }
+
+  private async showCalendarAlert(link: string) {
+    const alert = await this.alertController.create({
+      header: translate('plans.subscribeCalendar'),
+      message: translate('plans.calendarLinkMessage', { link }),
+      buttons: [
+        {
+          text: translate('plans.copyLink'),
+          handler: () => {
+            navigator.clipboard.writeText(link);
+            Utils.showToast(translate('plans.linkCopied'), 'success');
+            return false;
+          },
+        },
+        {
+          text: translate('plans.openGuide'),
+          handler: () => {
+            Browser.open({ url: isPlatform('ios') ? 'https://support.apple.com/de-de/102301' : 'https://support.google.com/calendar/answer/37100?hl=de&co=GENIE.Platform%3DAndroid' });
+          },
+        },
+        { text: translate('common.close'), role: 'cancel' },
+      ],
+    });
+    await alert.present();
+  }
+
+  async exportPlan(entry: PlanEntry) {
+    const sheet = await this.actionSheetController.create({
+      header: translate('planning.export'),
+      buttons: [
+        { text: 'PDF (A4)',    handler: () => void Utils.createPlanExport({ time: entry.time, end: entry.end, fields: entry.fields }, entry.title) },
+        { text: 'PDF (2x A5)', handler: () => void Utils.createPlanExport({ time: entry.time, end: entry.end, fields: entry.fields, sideBySide: true }, entry.title) },
+        { text: translate('common.cancel'), role: 'cancel' },
+      ],
+    });
+    await sheet.present();
+  }
+
+  trackByPlan = (_: number, e: PlanEntry) => `${e.kind}-${e.id}`;
+  trackByField = (_: number, f: FieldSelection) => f.id;
+}

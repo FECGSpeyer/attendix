@@ -1,0 +1,106 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button text="" [defaultHref]="backHref"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ 'messages.message' | transloco }}</ion-title>
+    @if (isManager && message) {
+      <ion-buttons slot="end">
+        <ion-button color="danger" (click)="remove()" [attr.aria-label]="'messages.deleteMessage' | transloco">
+          <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    }
+  </ion-toolbar>
+</ion-header>
+
+<ion-content color="light">
+  @if (isManager) {
+    <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+      <ion-refresher-content></ion-refresher-content>
+    </ion-refresher>
+  }
+
+  @if (loading) {
+    <div class="noDataContainer"><ion-spinner></ion-spinner></div>
+  } @else if (!message) {
+    <div class="noDataContainer">
+      <ion-icon name="megaphone-outline" size="large"></ion-icon>
+      <p>{{ 'messages.notAvailable' | transloco }}</p>
+    </div>
+  } @else {
+    @if (isManager) {
+      <ion-list [inset]="true">
+        <ion-item button detail="false" (click)="showContent = !showContent">
+          <ion-label class="ion-text-wrap">
+            <h2 class="title">{{ message.title }}</h2>
+            <p>{{ message.created_at | date: ('common.ngDate' | transloco) + ', HH:mm' }}{{ message.sender_name ? ' · ' + message.sender_name : '' }} · {{ showContent ? 'Nachricht ausblenden' : 'Nachricht anzeigen' }}</p>
+          </ion-label>
+          <ion-icon slot="end" [name]="showContent ? 'chevron-up-outline' : 'chevron-down-outline'" color="medium"></ion-icon>
+        </ion-item>
+      </ion-list>
+    }
+
+    @if (showContent) {
+      <div class="message-card">
+        @if (!isManager) {
+          <h1>{{ message.title }}</h1>
+          <p class="from">{{ 'messages.from' | transloco: { name: message.sender_name || ('common.unknown' | transloco), date: (message.created_at | date: ('common.ngDate' | transloco) + ', HH:mm') } }}</p>
+        }
+        <div class="message-body" [innerHTML]="message.body_html" (click)="onBodyClick($event)"></div>
+      </div>
+    }
+
+    @if (isManager) {
+      @if (message.status === 'sending') {
+        <p class="hint">{{ 'messages.stillSending' | transloco }}</p>
+      }
+      <ion-list-header><ion-label>{{ 'messages.overview' | transloco }}</ion-label></ion-list-header>
+      <div class="tiles">
+        <div class="tile"><b>{{ stats.read }} / {{ stats.total }}</b><small>{{ 'messages.readInApp' | transloco }}</small></div>
+        <div class="tile"><b>{{ stats.pushDelivered }} / {{ stats.pushTotal }}</b><small>{{ 'messages.pushDelivered' | transloco }}</small></div>
+        <div class="tile"><b>{{ stats.emailDelivered }} / {{ stats.emailTotal }}</b><small>{{ 'messages.emailDelivered' | transloco }}</small></div>
+        <div class="tile"><b>≈ {{ stats.emailOpened }}</b><small>{{ 'messages.emailOpenedApprox' | transloco }}</small></div>
+      </div>
+      <p class="hint">{{ 'messages.openedEstimate' | transloco }}</p>
+
+      <ion-segment class="filter" [value]="filter" (ionChange)="onFilterChange($any($event.detail.value))">
+        <ion-segment-button value="all"><ion-label>{{ 'messages.allCount' | transloco: { count: stats.total } }}</ion-label></ion-segment-button>
+        <ion-segment-button value="read"><ion-label>{{ 'messages.readCount' | transloco: { count: stats.readAny } }}</ion-label></ion-segment-button>
+        <ion-segment-button value="open"><ion-label>{{ 'messages.openCount' | transloco: { count: stats.open } }}</ion-label></ion-segment-button>
+        <ion-segment-button value="problems"><ion-label>{{ 'messages.problemsCount' | transloco: { count: stats.problems } }}</ion-label></ion-segment-button>
+      </ion-segment>
+
+      @if (filtered.length === 0) {
+        <p class="hint">{{ 'messages.noPeopleView' | transloco }}</p>
+      } @else {
+        <ion-list [inset]="true">
+          @for (r of filtered; track r.id) {
+            <ion-item>
+              <ion-label class="ion-text-wrap">
+                <h3>{{ r.name || 'Unbekannt' }} @if (r.groupName) {<small>{{ r.groupName }}</small>}</h3>
+                <div class="chips">
+                  @for (c of r.chips; track c.text) {
+                    <span [class]="'chip ' + c.tone">{{ c.text }}</span>
+                  }
+                </div>
+              </ion-label>
+            </ion-item>
+          }
+        </ion-list>
+      }
+    } @else if (earlier.length > 0) {
+      <ion-list-header><ion-label>{{ 'messages.earlier' | transloco }}</ion-label></ion-list-header>
+      <ion-list [inset]="true">
+        @for (m of earlier; track m.id) {
+          <ion-item button detail="true" (click)="openMessage(m)">
+            <ion-label>
+              {{ m.title }}
+              <p>{{ m.created_at | date: ('common.ngDate' | transloco) }}</p>
+            </ion-label>
+          </ion-item>
+        }
+      </ion-list>
+    }
+  }
+</ion-content>

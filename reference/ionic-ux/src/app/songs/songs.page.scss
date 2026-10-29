@@ -1,0 +1,21 @@
+.flex {
+    display: flex;
+    align-items: center;
+}
+
+.ios #filter-trigger-songs {
+    margin-right: 1rem;
+}
+
+ion-select::part(text) {
+    width: 11rem;
+}
+
+ion-popover {
+    --width: 18rem;
+}
+
+ion-segment {
+    padding: 0.5rem 0;
+    margin: 0.5rem 0;
+}

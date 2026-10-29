@@ -1,0 +1,232 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()">
+        <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>{{ 'files.title' | transloco }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button fill="clear" (click)="filesMenuPopover.present($event)">
+        <ion-icon slot="icon-only" name="ellipsis-vertical"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-popover #filesMenuPopover>
+  <ng-template>
+    <ion-list>
+      @if (canEditEntries) {
+      <ion-item button detail="false" (click)="filesMenuPopover.dismiss(); triggerUpload()">
+        <ion-icon name="cloud-upload-outline" slot="start"></ion-icon>
+        {{ 'files.upload' | transloco }}
+      </ion-item>
+      <ion-item button detail="false" (click)="filesMenuPopover.dismiss(); createFolder()">
+        <ion-icon name="folder-open-outline" slot="start"></ion-icon>
+        {{ 'files.createFolder' | transloco }}
+      </ion-item>
+      }
+      <ion-item button detail="false" (click)="filesMenuPopover.dismiss(); shareEntry()">
+        <ion-icon name="share-social-outline" slot="start"></ion-icon>
+        {{ currentPath ? 'Link zu diesem Ordner teilen' : 'Link zur Dateiablage teilen' }}
+      </ion-item>
+      <ion-item lines="none">
+        <ion-label>
+          <h3>{{ 'files.sorting' | transloco }}</h3>
+          <p>{{ sortLabel }}</p>
+        </ion-label>
+      </ion-item>
+      <ion-item button detail="false" (click)="setSort('name', filesMenuPopover)">
+        <ion-icon name="text-outline" slot="start"></ion-icon>
+        {{ 'files.name' | transloco }}
+      </ion-item>
+      <ion-item button detail="false" (click)="setSort('updatedAt', filesMenuPopover)">
+        <ion-icon name="calendar-outline" slot="start"></ion-icon>
+        {{ 'files.modified' | transloco }}
+      </ion-item>
+      <ion-item button detail="false" (click)="setSort('size', filesMenuPopover)">
+        <ion-icon name="resize-outline" slot="start"></ion-icon>
+        {{ 'files.size' | transloco }}
+      </ion-item>
+      <ion-item button detail="false" lines="none" (click)="toggleSortDirection(filesMenuPopover)">
+        <ion-icon [name]="sortDirection === 'asc' ? 'arrow-up-outline' : 'arrow-down-outline'" slot="start"></ion-icon>
+        {{ sortDirection === 'asc' ? 'Aufsteigend' : 'Absteigend' }}
+      </ion-item>
+    </ion-list>
+  </ng-template>
+</ion-popover>
+
+<ion-content color="light" class="files-content">
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <input #fileInput type="file" multiple hidden (change)="onFileSelected($event)" />
+
+  <div class="breadcrumbs-container">
+    <ion-breadcrumbs>
+      <ion-breadcrumb href="#" (click)="$event.preventDefault(); openRoot()">{{ 'files.root' | transloco }}</ion-breadcrumb>
+      @if (pathSegments.length) {
+      @for (segment of pathSegments; track segment; let i = $index) {
+      <ion-breadcrumb href="#" (click)="$event.preventDefault(); openSegment(i)">{{ segment }}</ion-breadcrumb>
+      }
+      }
+    </ion-breadcrumbs>
+  </div>
+
+  @if (canEditEntries && usedBytes !== null) {
+  <div class="storage-usage">
+    <ion-note>
+      @if (maxBytes !== null) { {{ 'files.storageUsedOf' | transloco: { used: formatFileSize(usedBytes), max: formatFileSize(maxBytes) } }} } @else { {{ 'files.storageUsed' | transloco: { used: formatFileSize(usedBytes) } }} }{{ storageStatusLabel }}
+    </ion-note>
+    @if (maxBytes !== null) {
+    <ion-progress-bar [value]="usedBytes / maxBytes" [color]="usedBytes >= maxBytes * 0.9 ? 'danger' : 'primary'"></ion-progress-bar>
+    }
+    @if (isStorageAlmostFull) {
+    <ion-button size="small" fill="clear" class="storage-request" (click)="requestMoreStorage()">
+      <ion-icon slot="start" name="add-circle-outline"></ion-icon>
+      {{ 'files.requestMore' | transloco }}
+    </ion-button>
+    }
+  </div>
+  }
+
+  <div class="search-block">
+    <div class="search-row">
+      <ion-searchbar class="files-search" [(ngModel)]="searchTerm" [placeholder]="'files.searchPlaceholder' | transloco">
+      </ion-searchbar>
+
+      <ion-button id="files-search-help-trigger" class="search-help-button" fill="clear" color="medium">
+        <ion-icon name="help-circle-outline"></ion-icon>
+      </ion-button>
+    </div>
+
+    <ion-popover trigger="files-search-help-trigger" triggerAction="click">
+      <ng-template>
+        <ion-list>
+          <ion-item lines="none">
+            <ion-label>
+              <h3>{{ 'files.search' | transloco }}</h3>
+              <p>{{ 'files.searchHelp' | transloco }}</p>
+            </ion-label>
+          </ion-item>
+          <ion-item lines="none">
+            <ion-label>
+              <p [innerHTML]="'files.searchType' | transloco"></p>
+              <p [innerHTML]="'files.searchDate' | transloco"></p>
+              <p [innerHTML]="'files.searchCombine' | transloco"></p>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+      </ng-template>
+    </ion-popover>
+
+    @if (hasSearchTerm) {
+    <ion-button class="clear-search-button" size="small" fill="clear" (click)="clearSearch()">
+      {{ 'files.resetSearch' | transloco }}
+    </ion-button>
+    }
+  </div>
+
+  @if (isLoading) {
+  <div class="loading-spinner">
+    <ion-spinner name="crescent"></ion-spinner>
+  </div>
+  } @else {
+  @if (!entries.length) {
+  <ion-card>
+    <ion-card-content class="ion-text-center ion-padding">
+      <ion-icon name="folder-open-outline" class="empty-icon"></ion-icon>
+      <p>{{ 'files.folderEmpty' | transloco }}</p>
+    </ion-card-content>
+  </ion-card>
+  } @else if (!filteredEntries.length) {
+  <ion-card>
+    <ion-card-content class="ion-text-center ion-padding">
+      <ion-icon name="search-outline" class="empty-icon"></ion-icon>
+      <p>{{ 'files.noHits' | transloco: { term: searchTerm } }}</p>
+    </ion-card-content>
+  </ion-card>
+  } @else {
+  <ion-list [inset]="true">
+    @for (entry of filteredEntries; track entry.path; let last = $last; let i = $index) {
+    <ion-item [lines]="last ? 'none' : 'inset'" button (click)="openFolder(entry)">
+      @if (isImageEntry(entry) && getImagePreviewUrl(entry)) {
+      <ion-thumbnail slot="start" class="file-thumb">
+        <img [src]="getImagePreviewUrl(entry)" [alt]="entry.name" />
+      </ion-thumbnail>
+      } @else {
+      <ion-icon slot="start" [name]="entry.isFolder ? 'folder-outline' : 'document-outline'"></ion-icon>
+      }
+      <ion-label>
+        <h2>{{ entry.name }}</h2>
+        @if (!entry.isFolder && entry.size !== undefined) {
+        <p>
+          {{ formatFileSize(entry.size) }}
+          @if (entry.updatedAt) {
+          {{ 'files.changedAt' | transloco: { date: formatUpdatedAt(entry.updatedAt) } }}
+          }
+        </p>
+        }
+      </ion-label>
+      <ion-button slot="end" fill="clear" color="medium" [id]="'file-actions-trigger-' + i"
+        (click)="$event.stopPropagation()">
+        <ion-icon slot="icon-only" name="ellipsis-horizontal"></ion-icon>
+      </ion-button>
+
+      <ion-popover #actionPopover [trigger]="'file-actions-trigger-' + i" triggerAction="click">
+        <ng-template>
+          <ion-list>
+            <ion-item button (click)="handleEntryAction('open', entry, actionPopover)">
+              <ion-icon [name]="isAudioEntry(entry) ? 'play-circle-outline' : 'open-outline'" slot="start"></ion-icon>
+              {{ entry.isFolder ? 'Ordner öffnen' : isAudioEntry(entry) ? 'Aufnahme abspielen' : 'Datei öffnen/downloaden' }}
+            </ion-item>
+            @if (!entry.isFolder) {
+            <ion-item button (click)="handleEntryAction('download', entry, actionPopover)">
+              <ion-icon name="download-outline" slot="start"></ion-icon>
+              {{ 'files.download' | transloco }}
+            </ion-item>
+            }
+            <ion-item button (click)="handleEntryAction('share', entry, actionPopover)">
+              <ion-icon name="link-outline" slot="start"></ion-icon>
+              {{ 'files.shareLink' | transloco }}
+            </ion-item>
+            @if (!entry.isFolder) {
+            @if (db.tenantUser()?.telegram_chat_id) {
+            <ion-item button (click)="handleEntryAction('telegram', entry, actionPopover)">
+              <ion-icon name="paper-plane-outline" slot="start"></ion-icon>
+              {{ 'files.sendTelegram' | transloco }}
+            </ion-item>
+            }
+            }
+            @if (canEditEntries) {
+            <ion-item button (click)="handleEntryAction('rename', entry, actionPopover)">
+              <ion-icon name="create-outline" slot="start"></ion-icon>
+              {{ 'files.rename' | transloco }}
+            </ion-item>
+            <ion-item button (click)="handleEntryAction('move', entry, actionPopover)">
+              <ion-icon name="swap-horizontal-outline" slot="start"></ion-icon>
+              {{ 'files.move' | transloco }}
+            </ion-item>
+            <ion-item button (click)="handleEntryAction('delete', entry, actionPopover)">
+              <ion-icon name="trash-outline" slot="start"></ion-icon>
+              {{ 'common.delete' | transloco }}
+            </ion-item>
+            }
+          </ion-list>
+        </ng-template>
+      </ion-popover>
+    </ion-item>
+    }
+  </ion-list>
+  }
+  }
+
+  <ion-modal class="image-viewer-modal" [isOpen]="isImagePreviewOpen" (ionModalDidDismiss)="closeImagePreview()">
+    <ng-template>
+      <app-image-viewer [src]="selectedImageUrl" [title]="selectedImageName || 'Bildvorschau'"
+        (closed)="closeImagePreview()"></app-image-viewer>
+    </ng-template>
+  </ion-modal>
+</ion-content>

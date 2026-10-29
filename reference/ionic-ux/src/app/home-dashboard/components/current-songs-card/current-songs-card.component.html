@@ -1,0 +1,38 @@
+<ion-card class="dashboard-card">
+  <div class="card-header-strip strip-songs">
+    <ion-icon name="musical-notes-outline"></ion-icon>
+    <div>
+      <div class="card-title">{{ 'homeDashboard.currentSongs' | transloco }}</div>
+      <div class="card-subtitle">{{ 'homeDashboard.plannedSongs' | transloco }}</div>
+    </div>
+  </div>
+  <ion-card-content class="card-body">
+    @if (loading) {
+      <div class="loading-center">
+        <ion-spinner name="crescent"></ion-spinner>
+      </div>
+    } @else if (entries.length === 0) {
+      <div class="empty-row">
+        <ion-icon name="musical-notes-outline" color="medium"></ion-icon>
+        <span>{{ 'homeDashboard.noPlannedSongs' | transloco }}</span>
+      </div>
+    } @else {
+      <ion-list lines="full" class="card-list">
+        @for (entry of entries; track entry.songId) {
+          <ion-item button [detail]="false" class="dash-row" (click)="openSong(entry.songId)">
+            <div class="icon-tile tile-purple" slot="start">
+              <span class="tile-main" [class.tile-small]="numberLabel(entry).length > 3">{{ numberLabel(entry) }}</span>
+            </div>
+            <ion-label>
+              <h3>{{ entry.name }}</h3>
+              <p>{{ songSubtitle(entry) }}</p>
+            </ion-label>
+            @if (entry.date) {
+              <span slot="end" class="row-meta">{{ relativeDays(entry.date) }}</span>
+            }
+          </ion-item>
+        }
+      </ion-list>
+    }
+  </ion-card-content>
+</ion-card>

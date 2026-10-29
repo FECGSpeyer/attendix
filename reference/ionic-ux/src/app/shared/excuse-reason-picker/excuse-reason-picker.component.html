@@ -1,0 +1,42 @@
+﻿<ion-modal #modal handle-behavior="none" [breakpoints]="[0, 0.6, 1]" [initialBreakpoint]="0.6" (didDismiss)="onDidDismiss()">
+  <ng-template>
+    <ion-header>
+      <ion-toolbar>
+        <ion-buttons slot="start">
+          <ion-button (click)="dismiss()" [attr.aria-label]="'common.cancel' | transloco">
+            <ion-icon slot="icon-only" name="close"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+        <ion-title>{{ (isLate ? 'excuse.late' : 'excuse.signOut') | transloco }}</ion-title>
+        <ion-buttons slot="end">
+          <ion-button strong="true" [disabled]="!isConfirmable()" (click)="onConfirm()" [attr.aria-label]="'common.confirm' | transloco">
+            <ion-icon slot="icon-only" name="checkmark"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content class="ion-padding" #content>
+      <ion-radio-group [(ngModel)]="reasonSelection" (ionChange)="onReasonChange()">
+        <ion-list lines="full">
+          @for (reason of reasons; track reason) {
+          <ion-item>
+            <ion-radio justify="start" labelPlacement="end" [value]="reason">{{ reason }}</ion-radio>
+          </ion-item>
+          }
+          <ion-item>
+            <ion-radio justify="start" labelPlacement="end" [value]="customReasonValue">{{ 'excuse.customOption' | transloco }}</ion-radio>
+          </ion-item>
+        </ion-list>
+      </ion-radio-group>
+
+      @if (reasonSelection === customReasonValue) {
+      <ion-item class="custom-reason" #customReasonField>
+        <ion-label position="stacked">{{ 'excuse.reason' | transloco }}</ion-label>
+        <ion-textarea autocapitalize="sentences" [(ngModel)]="customReason" [placeholder]="'excuse.minChars' | transloco"
+          autoGrow="true" (ionFocus)="onCustomReasonFocus()"></ion-textarea>
+      </ion-item>
+      <div class="keyboard-spacer"></div>
+      }
+    </ion-content>
+  </ng-template>
+</ion-modal>

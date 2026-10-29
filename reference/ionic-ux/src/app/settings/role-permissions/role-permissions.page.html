@@ -1,0 +1,112 @@
+<ion-header translucent="true">
+  <ion-toolbar color="light">
+    <ion-buttons slot="start">
+      <ion-button (click)="navigateBack()">
+        <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>{{ 'rolePerm.title' | transloco }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content color="light" [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar color="light">
+      <ion-title size="large">{{ 'rolePerm.title' | transloco }}</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-list [inset]="true">
+    <ion-list-header><ion-label>{{ 'rolePerm.files' | transloco }}</ion-label></ion-list-header>
+    <ion-item-group>
+      <ion-item>
+        <ion-toggle
+          [helperText]="'rolePerm.filesHelper' | transloco"
+          [disabled]="!canEditFilesShared"
+          [(ngModel)]="filesShared">
+          {{ 'rolePerm.filesForAll' | transloco }}
+        </ion-toggle>
+      </ion-item>
+    </ion-item-group>
+  </ion-list>
+
+  @if (roleSections.length) {
+    <ion-accordion-group [multiple]="true">
+      @for (section of roleSections; track section.role) {
+        @if (section.permission && hasAnyToggle(section.role)) {
+          <ion-accordion [value]="section.role">
+            <ion-item slot="header" color="light">
+              <ion-label>{{ section.label }}</ion-label>
+            </ion-item>
+            <div slot="content">
+              <ion-list [inset]="true">
+                <ion-item-group>
+                  @if (showAttendanceToggle(section.role)) {
+                    <ion-item>
+                      <ion-toggle
+                        [helperText]="'rolePerm.allGroupsHelper' | transloco"
+                        [(ngModel)]="section.permission.attendance_all_groups">
+                        {{ 'rolePerm.allGroups' | transloco }}
+                      </ion-toggle>
+                    </ion-item>
+                  }
+                  @if (showAttendanceCreateToggle(section.role)) {
+                    <ion-item>
+                      <ion-toggle
+                        [helperText]="'rolePerm.createHelper' | transloco"
+                        [(ngModel)]="section.permission.attendance_create">
+                        {{ 'rolePerm.createAttendance' | transloco }}
+                      </ion-toggle>
+                    </ion-item>
+                  }
+                  @if (showNotesToggle(section.role)) {
+                    <ion-item>
+                      <ion-toggle
+                        [helperText]="'rolePerm.notesHelper' | transloco"
+                        [(ngModel)]="section.permission.player_notes_view">
+                        {{ 'rolePerm.seeNotes' | transloco }}
+                      </ion-toggle>
+                    </ion-item>
+                  }
+                  @if (showChecklistToggle(section.role)) {
+                    <ion-item>
+                      <ion-toggle
+                        [helperText]="'rolePerm.checklistHelper' | transloco"
+                        [(ngModel)]="section.permission.checklist_view">
+                        {{ 'rolePerm.seeChecklist' | transloco }}
+                      </ion-toggle>
+                    </ion-item>
+                  }
+                  @if (showSelfPauseToggle(section.role)) {
+                    <ion-item>
+                      <ion-toggle
+                        [helperText]="'rolePerm.pauseHelper' | transloco"
+                        [(ngModel)]="section.permission.player_self_pause">
+                        {{ 'rolePerm.allowPause' | transloco }}
+                      </ion-toggle>
+                    </ion-item>
+                  }
+                  @if (showPlannedAbsenceToggle(section.role)) {
+                    <ion-item>
+                      <ion-toggle
+                        [helperText]="'rolePerm.absencesHelper' | transloco"
+                        [(ngModel)]="section.permission.player_planned_absence">
+                        {{ 'rolePerm.enterAbsences' | transloco }}
+                      </ion-toggle>
+                    </ion-item>
+                  }
+                </ion-item-group>
+              </ion-list>
+            </div>
+          </ion-accordion>
+        }
+      }
+    </ion-accordion-group>
+  }
+
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="save()">
+      <ion-icon name="save-outline"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>

@@ -1,0 +1,36 @@
+<ion-header translucent="true">
+  <ion-toolbar color="light">
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()">
+        <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>{{ 'handover.title' | transloco }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content color="light" [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar color="light">
+      <ion-title size="large">{{ 'handover.title' | transloco }}</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-list [inset]="true">
+    <ion-list-header><ion-label>{{ 'handover.groupMapping' | transloco }}</ion-label></ion-list-header>
+    <ion-item-group>
+      @for (person of handoverData.persons; track trackByPersonId($index, person)) {
+        <ion-item button detail="false" (click)="changeGroup(person)">
+          <ion-label>{{ person.firstName }} {{ person.lastName }}</ion-label>
+          <ion-note slot="end">{{ person.groupName }} -> {{ getInsName(groupMapping[person.id]) }}</ion-note>
+        </ion-item>
+      }
+    </ion-item-group>
+  </ion-list>
+
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="confirmProceed()">
+      <ion-icon name="walk-outline"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>

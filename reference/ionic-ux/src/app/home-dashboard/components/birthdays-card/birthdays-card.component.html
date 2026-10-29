@@ -1,0 +1,52 @@
+<ion-card class="dashboard-card">
+  <div class="card-header-strip strip-birthday">
+    <ion-icon name="gift-outline"></ion-icon>
+    <div>
+      <div class="card-title">{{ 'homeDashboard.birthdays' | transloco }}</div>
+      <div class="card-subtitle">{{ 'homeDashboard.birthdayRange' | transloco }}</div>
+    </div>
+  </div>
+  <ion-card-content class="card-body">
+    @if (loading) {
+      <div class="loading-center">
+        <ion-spinner name="crescent"></ion-spinner>
+      </div>
+    } @else if (entries.length === 0) {
+      <div class="empty-row">
+        <ion-icon name="happy-outline" color="medium"></ion-icon>
+        <span>{{ 'homeDashboard.noBirthdays' | transloco }}</span>
+      </div>
+    } @else {
+      <ion-list lines="full" class="card-list">
+        @for (entry of upcoming; track entry.birthday + entry.firstName) {
+          <ng-container *ngTemplateOutlet="row; context: { $implicit: entry }"></ng-container>
+        }
+        @if (past.length) {
+          <ion-item-divider>{{ 'homeDashboard.recently' | transloco }}</ion-item-divider>
+          @for (entry of past; track entry.birthday + entry.firstName) {
+            <ng-container *ngTemplateOutlet="row; context: { $implicit: entry }"></ng-container>
+          }
+        }
+      </ion-list>
+    }
+  </ion-card-content>
+</ion-card>
+
+<ng-template #row let-entry>
+  <ion-item button [detail]="false" (click)="openPerson(entry.player)"
+    class="dash-row" [class.row-highlight]="entry.daysOffset === 0" [class.row-dim]="entry.daysOffset < 0">
+    <div class="date-tile" slot="start" [class]="entry.daysOffset < 0 ? 'tile-muted' : 'tile-pink'" [class.tile-solid]="entry.daysOffset === 0">
+      <span class="tile-main">{{ entry.day }}</span>
+      <span class="tile-sub">{{ entry.month }}</span>
+    </div>
+    <ion-label>
+      <h3>{{ entry.firstName }} {{ entry.lastName }}</h3>
+      <p>{{ entry.weekday }} · {{ ageText(entry) }}</p>
+    </ion-label>
+    @if (entry.daysOffset === 0) {
+      <span slot="end" class="soft-chip chip-solid tile-pink"><ion-icon name="sparkles"></ion-icon>{{ 'teamOrg.todayCap' | transloco }}</span>
+    } @else {
+      <span slot="end" class="row-meta">{{ formatDaysOffset(entry.daysOffset) }}</span>
+    }
+  </ion-item>
+</ng-template>

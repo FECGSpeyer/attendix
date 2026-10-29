@@ -1,0 +1,1095 @@
+import { dateFmt } from '../../i18n/languages';
+import { Component, OnDestroy, OnInit, effect } from '@angular/core';
+import { Haptics, ImpactStyle } from '@capacitor/haptics';
+import { ActionSheetController, AlertController, IonItemSliding, IonModal, IonRouterOutlet, ModalController } from '@ionic/angular/lazy';
+import dayjs from 'dayjs';
+import { DbService } from 'src/app/services/db.service';
+import { Attendance, ExtraField, Group, Person, Player, PlayerHistoryEntry, Teacher, Tenant } from 'src/app/utilities/interfaces';
+import { PersonPage } from '../person/person.page';
+import { BulkEditPage } from '../bulk-edit/bulk-edit.page';
+import { ImportPage } from '../import/import.page';
+import { ChurchOverviewComponent } from 'src/app/shared/church-overview/church-overview.component';
+import { DefaultAttendanceType, PlayerHistoryType, Role } from 'src/app/utilities/constants';
+import { Storage } from '@ionic/storage-angular';
+import { Utils } from 'src/app/utilities/Utils';
+import { RealtimeChannel } from '@supabase/supabase-js';
+import { Router } from '@angular/router';
+import { translate } from '@jsverse/transloco';
+
+@Component({
+  selector: 'app-list',
+  templateUrl: './list.page.html',
+  styleUrls: ['./list.page.scss'],
+  standalone: false
+})
+export class ListPage implements OnInit, OnDestroy {
+  public players: Player[] = [];
+  public conductors: Person[] = [];
+  public playersFiltered: Player[] = [];
+  public todaysBirthdays: Player[] = [];
+  public instruments: Group[] = [];
+  public playerToArchive: Player;
+  public searchTerm = '';
+  public filterOpt = 'all';
+  public sortOpt = 'instrument';
+  public viewOpts: string[] = ['instrument'];
+  public isVoS: boolean;
+  public showNotes = false;
+  public showCritical = false;
+  public showLeader = false;
+  public showPaused = false;
+  public showNew = false;
+  public showImg = true;
+  public showExaminee = false;
+  public showAttendance = false;
+  public showTeachers = false;
+  public showInstruments = false;
+  public isArchiveModalOpen = false;
+  public archiveDate: string = dayjs().format('YYYY-MM-DD');
+  public archiveNote = '';
+  public isPauseModalOpen = false;
+  public pauseReason = '';
+  public pauseFrom = '';
+  public pauseUntil = '';
+  public minPauseDate: string = dayjs().format('YYYY-MM-DD');
+  public playerToPause: Player | null = null;
+  public sliderToPause: IonItemSliding | null = null;
+  public isAdmin = false;
+  public isChoir = false;
+  public isGeneral = false;
+  public isReordering = false;
+  public mainGroup: number | undefined;
+  public attendances: Attendance[] = [];
+  public teachers: Teacher[] = [];
+  public linkedTenants: Tenant[] = [];
+  public tenantName = '';
+  public loaded = false;
+  public prevFilterValue = '';
+  private initialized = false;
+  private currentTenantId: number | undefined;
+  private sub: RealtimeChannel | undefined;
+
+  constructor(
+    private modalController: ModalController,
+    private routerOutlet: IonRouterOutlet,
+    public db: DbService,
+    private actionSheetController: ActionSheetController,
+    private alertController: AlertController,
+    private storage: Storage,
+    private router: Router
+  ) {
+    effect(async () => {
+      const tenantId = this.db.tenant()?.id;
+      // Skip if not initialized yet (ngOnInit will handle first load)
+      // or if tenant hasn't actually changed
+      if (!this.initialized || tenantId === this.currentTenantId) {
+        return;
+      }
+
+      // Tenant has changed - reload data
+      this.currentTenantId = tenantId;
+      await this.initializeData();
+    });
+  }
+
+  async onTenantChange(tenantId: number): Promise<void> {
+    if (this.db.tenant().id === tenantId) { return; }
+    const loading = await Utils.getLoadingElement();
+    await loading.present();
+    await this.db.setTenant(tenantId);
+    await this.router.navigateByUrl(Utils.getUrl(this.db.tenantUser().role));
+    await loading.dismiss();
+  }
+
+  async ngOnInit() {
+    this.currentTenantId = this.db.tenant()?.id;
+    await this.initializeData();
+    // The tenant may have been switched (e.g. by a push notification handler)
+    // while initializeData() was awaiting. The effect above skipped that
+    // change because `initialized` was still false; reconcile here so the
+    // list reflects whatever tenant is now active.
+    while (this.db.tenant()?.id !== this.currentTenantId) {
+      this.currentTenantId = this.db.tenant()?.id;
+      await this.initializeData();
+    }
+    this.initialized = true;
+  }
+
+  /**
+   * Shared initialization logic for ngOnInit and tenant change effect
+   */
+  private async initializeData(): Promise<void> {
+    this.loaded = false;
+    this.players = [];
+    this.playersFiltered = [];
+
+    if (this.db.tenant().maintainTeachers) {
+      this.teachers = await this.db.getTeachers();
+    }
+
+    this.viewOpts = JSON.parse(await this.storage.get(`viewOpts${this.db.tenant().id}`) || JSON.stringify(['instrument', 'leader', 'attendance', 'critical', 'paused']));
+    this.isAdmin = this.db.tenantUser().role === Role.ADMIN || this.db.tenantUser().role === Role.RESPONSIBLE;
+    this.isChoir = this.db.tenant().type === DefaultAttendanceType.CHOIR;
+    this.isGeneral = this.db.tenant().type === DefaultAttendanceType.GENERAL;
+    this.isVoS = this.db.tenant().shortName === 'VoS';
+    this.filterOpt = (await this.storage.get(`filterOpt${this.db.tenant().id}`)) || 'all';
+    this.sortOpt = (await this.storage.get(`sortOpt${this.db.tenant().id}`)) || 'instrument';
+    if (this.sortOpt === 'groupJoined') { this.sortOpt = 'instrument'; }
+    this.mainGroup = this.db.getMainGroup()?.id;
+
+    if (this.isAdmin) {
+      await this.showReleaseNotesAlert();
+      await this.db.checkAndUnpausePlayers();
+    }
+
+    await this.getPlayers();
+    this.linkedTenants = await this.db.getLinkedTenants();
+    this.subscribe();
+  }
+
+  async showReleaseNotesAlert() {
+    const hasSeen = await this.storage.get(`seenReleaseNotes_v3_5_0`);
+    if (hasSeen || true) { // TODO: remove "|| true" to enable alert again
+      return;
+    }
+
+    const alert = await this.alertController.create({
+      header: 'Neu in Version 3.5.0',
+      message: 'Schichtpläne sind da! Automatisiere die Planung und Verwaltung deiner Schichten für mehr Effizienz. Auch neu: Anmeldefristen. Setze Anmeldefristen für Termine fest, um eine bessere Organisation zu gewährleisten.',
+      buttons: [{
+        text: 'Zu den Schichtplänen',
+        handler: () => {
+          this.modalController.dismiss();
+          this.router.navigate(['/tabs/settings/general/shifts']);
+        }
+      }, 'OK']
+    });
+
+    await alert.present();
+    await this.storage.set(`seenReleaseNotes_v3_5_0`, true);
+  }
+
+  subscribe() {
+    this.sub?.unsubscribe();
+
+    this.sub = this.db.getSupabase()
+      .channel('player-changes').on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'player' },
+        (event: any) => {
+          if (!this.isReordering && (event.new?.tenantId === this.db.tenant().id || event.old?.id)) {
+            this.getPlayers();
+          }
+        })
+      .subscribe();
+  }
+
+  async getPlayers(): Promise<void> {
+    this.players = await this.db.getPlayers();
+    await this.db.hydrateSharedPersonFieldValues(this.players);
+    this.attendances = await this.db.getAttendance();
+    this.players = Utils.getModifiedPlayersForList(
+      this.players,
+      this.db.groups(),
+      this.attendances,
+      this.db.attendanceTypes(),
+      this.mainGroup,
+      this.db.getPersonExtraFields(),
+      this.db.churches(),
+      this.db.tenant()?.shift_excused_as_present,
+    );
+    this.searchTerm = '';
+    this.onViewChanged();
+    this.initializeItems();
+    this.onSortChanged();
+    this.computeTodaysBirthdays();
+
+    this.loaded = true;
+  }
+
+  private computeTodaysBirthdays(): void {
+    const today = dayjs().format('MM-DD');
+    this.todaysBirthdays = this.players.filter(
+      p => p.birthday && p.correctBirthday && dayjs(p.birthday).format('MM-DD') === today,
+    );
+  }
+
+  getBirthdayAge(player: Player): number {
+    return Utils.calculateAge(new Date(player.birthday));
+  }
+
+  userById(_: number, person: Person): string {
+    return String(person.id);
+  }
+
+  async handleRefresh(event: any): Promise<void> {
+    await this.getPlayers();
+    event.target.complete();
+  }
+
+  async openModal(player?: Player | Person): Promise<void> {
+    // await this.updateImages();
+
+    const modal: HTMLIonModalElement = await this.modalController.create({
+      component: PersonPage,
+      presentingElement: this.routerOutlet.nativeEl,
+      componentProps: {
+        existingPlayer: player ? { ...player } : undefined,
+        readOnly: !this.isAdmin,
+      },
+      backdropDismiss: false,
+    });
+
+    await modal.present();
+
+    const { data } = await modal.onWillDismiss();
+  }
+
+  onSortChanged() {
+    this.storage.set(`sortOpt${this.db.tenant().id}`, this.sortOpt);
+
+    if (this.sortOpt === 'vorname') {
+      this.playersFiltered = this.playersFiltered.sort((a: Player, b: Player) => a.firstName.localeCompare(b.firstName));
+      return;
+    }
+
+    if (this.sortOpt === 'nachname') {
+      this.playersFiltered = this.playersFiltered.sort((a: Player, b: Player) => a.lastName.localeCompare(b.lastName));
+      return;
+    }
+
+    if (this.sortOpt === 'birthdayAsc') {
+      this.playersFiltered = this.playersFiltered.sort((a: Player, b: Player) => new Date(a.birthday).getTime() - new Date(b.birthday).getTime());
+      return;
+    }
+
+    if (this.sortOpt === 'birthdayDesc') {
+      this.playersFiltered = this.playersFiltered.sort((a: Player, b: Player) => new Date(b.birthday).getTime() - new Date(a.birthday).getTime());
+      return;
+    }
+
+    if (this.sortOpt === 'joinedAsc') {
+      this.playersFiltered = this.playersFiltered.sort((a: Player, b: Player) => new Date(a.joined).getTime() - new Date(b.joined).getTime());
+      return;
+    }
+
+    if (this.sortOpt === 'joinedDesc') {
+      this.playersFiltered = this.playersFiltered.sort((a: Player, b: Player) => new Date(b.joined).getTime() - new Date(a.joined).getTime());
+      return;
+    }
+
+    if (this.sortOpt === 'attAsc') {
+      this.playersFiltered = this.playersFiltered.sort((a: Player, b: Player) => ((a.percentage || 0) - (b.percentage || 0)));
+      return;
+    }
+
+    if (this.sortOpt === 'attDesc') {
+      this.playersFiltered = this.playersFiltered.sort((a: Player, b: Player) => ((b.percentage || 0) - (a.percentage || 0)));
+      return;
+    }
+
+    if (this.sortOpt === 'nextBirthday') {
+      // Sort by next birthday but ignore the year
+      this.playersFiltered = this.playersFiltered.sort((a: Player, b: Player) => {
+        const aBirthday = new Date(a.birthday);
+        const bBirthday = new Date(b.birthday);
+        const aNextBirthday = new Date(new Date().getFullYear(), aBirthday.getMonth(), aBirthday.getDate());
+        const bNextBirthday = new Date(new Date().getFullYear(), bBirthday.getMonth(), bBirthday.getDate());
+        if (aNextBirthday < new Date()) {
+          aNextBirthday.setFullYear(aNextBirthday.getFullYear() + 1);
+        }
+        if (bNextBirthday < new Date()) {
+          bNextBirthday.setFullYear(bNextBirthday.getFullYear() + 1);
+        }
+        return aNextBirthday.getTime() - bNextBirthday.getTime();
+      });
+      return;
+    }
+
+    if (this.sortOpt === 'test') {
+      this.playersFiltered = this.playersFiltered.sort((a: Player, b: Player) => (a.testResult ? Number(a.testResult.replace('%', '')) : 0) - (b.testResult ? Number(b.testResult.replace('%', '')) : 0)).reverse();
+      return;
+    }
+
+    if (this.sortOpt === 'instrument') {
+      this.initializeItems();
+      this.onFilterChanged(true);
+    }
+  }
+
+  onFilterFocused() {
+    this.prevFilterValue = this.filterOpt;
+  }
+
+  toggleReorderMode(popover?: any): void {
+    popover?.dismiss();
+    if (this.isReordering) {
+      this.savePlayerOrder().finally(() => { this.isReordering = false; });
+    } else {
+      this.isReordering = true;
+    }
+  }
+
+  get playerGroups(): { groupId: number; groupName: string; players: Player[] }[] {
+    const seen = new Map<number, { groupId: number; groupName: string; players: Player[] }>();
+    for (const p of this.playersFiltered) {
+      if (!seen.has(p.instrument)) {
+        seen.set(p.instrument, { groupId: p.instrument, groupName: p.groupName || '', players: [] });
+      }
+      seen.get(p.instrument).players.push(p);
+    }
+    return Array.from(seen.values());
+  }
+
+  handleReorder(event: any, groupId: number): void {
+    const from = event.detail.from;
+    const to = event.detail.to;
+    event.detail.complete(true);
+
+    if (from === to) { return; }
+
+    const group = this.playerGroups.find(g => g.groupId === groupId);
+    if (!group) { return; }
+
+    const groupPlayers = [...group.players];
+    const [moved] = groupPlayers.splice(from, 1);
+    groupPlayers.splice(to, 0, moved);
+
+    groupPlayers.forEach((p, i) => { p.sort_order = i + 1; });
+
+    // Write back into playersFiltered
+    let gi = 0;
+    for (let i = 0; i < this.playersFiltered.length; i++) {
+      if (this.playersFiltered[i].instrument === groupId) {
+        this.playersFiltered[i] = groupPlayers[gi++];
+      }
+    }
+    this.playersFiltered = [...this.playersFiltered];
+
+    // Sync into this.players for savePlayerOrder
+    const orderMap = new Map(groupPlayers.map(p => [p.id, p.sort_order]));
+    this.players.forEach(p => {
+      if (orderMap.has(p.id)) { p.sort_order = orderMap.get(p.id); }
+    });
+  }
+
+  private async savePlayerOrder(): Promise<void> {
+    const loading = await Utils.getLoadingElement(5000, translate('people.savingOrder'));
+    await loading.present();
+    try {
+      const sb = this.db.getSupabase();
+      for (const player of this.players) {
+        if (player.sort_order != null) {
+          await sb.from('player').update({ sort_order: player.sort_order }).eq('id', player.id);
+        }
+      }
+      await loading.dismiss();
+      Utils.showToast(translate('people.orderSaved'), 'success');
+    } catch {
+      await loading.dismiss();
+      Utils.showToast(translate('people.orderSaveFailed'), 'danger');
+    }
+  }
+
+  async clearFilters() {
+    await this.storage.set(`filterOptAdd${this.db.tenant().id}`, '');
+    this.initializeItems();
+  }
+
+  onFilterDismissed() {
+    if (
+      this.prevFilterValue === this.filterOpt &&
+      (this.filterOpt === 'otherInstance' || (this.db.tenant().additional_fields?.find(field => (field.type === 'select' || field.type === 'number' || field.type === 'boolean') && this.filterOpt === field.id)))) {
+      this.onFilterChanged();
+    }
+  }
+
+  async onFilterChanged(implicit = false) {
+    this.searchTerm = '';
+
+    if (this.filterOpt === 'all') {
+      this.initializeItems();
+      await this.storage.set(`filterOpt${this.db.tenant().id}`, this.filterOpt);
+      await this.storage.set(`filterOptAdd${this.db.tenant().id}`, '');
+      return;
+    }
+
+    if (this.filterOpt === 'otherInstance') {
+      const option = await this.storage.get(`filterOptAdd${this.db.tenant().id}`);
+
+      if (!this.linkedTenants.length) {
+        this.filterOpt = 'all';
+        this.onFilterChanged();
+        return;
+      }
+
+      if (implicit) {
+        if (option) {
+          const usersPerTenant = await this.db.getUsersFromTenant(this.linkedTenants.find((t) => t.longName === option)?.id || 0);
+          this.playersFiltered = Utils.getModifiedPlayersForList(this.players.filter((player: Player) => usersPerTenant.find((u) => u.userId === player.appId)), this.db.groups(), this.attendances, this.db.attendanceTypes(), this.mainGroup, this.db.tenant().additional_fields, this.db.churches(), this.db.tenant()?.shift_excused_as_present);
+          this.tenantName = option;
+          await this.storage.set(`filterOpt${this.db.tenant().id}`, this.filterOpt);
+          await this.storage.set(`filterOptAdd${this.db.tenant().id}`, this.tenantName);
+        }
+        return;
+      }
+
+      const alert = await this.alertController.create({
+        header: translate('people.chooseInstance'),
+        inputs: this.linkedTenants.map((t) => ({
+          type: 'radio',
+          label: t.longName,
+          value: t.id,
+          selected: t.longName === option,
+        })),
+        buttons: [
+          {
+            text: translate('common.cancel'),
+            role: 'destructive',
+            handler: () => {
+              this.filterOpt = 'all';
+              this.onFilterChanged();
+            }
+          },
+          {
+            text: translate('people.filter'),
+            handler: async (value) => {
+              if (!value) {
+                this.filterOpt = 'all';
+                this.onFilterChanged();
+                return;
+              }
+
+              const usersPerTenant = await this.db.getUsersFromTenant(value);
+              this.playersFiltered = Utils.getModifiedPlayersForList(this.players.filter((player: Player) => usersPerTenant.find((u) => u.userId === player.appId)), this.db.groups(), this.attendances, this.db.attendanceTypes(), this.mainGroup, this.db.tenant().additional_fields, this.db.churches(), this.db.tenant()?.shift_excused_as_present);
+              this.tenantName = this.linkedTenants.find((t) => t.id === value)?.longName || '';
+              await this.storage.set(`filterOpt${this.db.tenant().id}`, this.filterOpt);
+              await this.storage.set(`filterOptAdd${this.db.tenant().id}`, this.tenantName);
+            }
+          }
+        ]
+      });
+      await alert.present();
+      return;
+    } else if (this.db.tenant().additional_fields?.find(field => field.type === 'number' && this.filterOpt === field.id)) {
+      const extraField = this.db.tenant().additional_fields.find(field => field.type === 'number' && this.filterOpt === field.id);
+      const option = await this.storage.get(`filterOptAdd${this.db.tenant().id}`);
+
+      if (implicit) {
+        if (option !== null && option !== '') {
+          this.playersFiltered = Utils.getModifiedPlayersForList(
+            this.players.filter((player: Player) => String(player.additional_fields?.[this.filterOpt]) === String(option)),
+            this.db.groups(), this.attendances, this.db.attendanceTypes(), this.mainGroup,
+            this.db.tenant().additional_fields, this.db.churches(), this.db.tenant()?.shift_excused_as_present);
+          await this.storage.set(`filterOpt${this.db.tenant().id}`, this.filterOpt);
+        }
+        return;
+      }
+
+      const alert = await this.alertController.create({
+        header: extraField.name,
+        inputs: [{ type: 'number', placeholder: translate('people.enterValue'), value: option ?? '' }],
+        buttons: [
+          {
+            text: translate('common.cancel'),
+            role: 'destructive',
+            handler: () => { this.filterOpt = 'all'; this.onFilterChanged(); }
+          },
+          {
+            text: translate('people.filter'),
+            handler: async (data) => {
+              const value = data[0];
+              if (value === '' || value === null || value === undefined) {
+                this.filterOpt = 'all';
+                this.onFilterChanged();
+                return;
+              }
+              this.playersFiltered = Utils.getModifiedPlayersForList(
+                this.players.filter((player: Player) => String(player.additional_fields?.[this.filterOpt]) === String(value)),
+                this.db.groups(), this.attendances, this.db.attendanceTypes(), this.mainGroup,
+                this.db.tenant().additional_fields, this.db.churches(), this.db.tenant()?.shift_excused_as_present);
+              await this.storage.set(`filterOpt${this.db.tenant().id}`, this.filterOpt);
+              await this.storage.set(`filterOptAdd${this.db.tenant().id}`, String(value));
+            }
+          }
+        ]
+      });
+      await alert.present();
+      return;
+    } else if (this.db.tenant().additional_fields?.find(field => field.type === 'boolean' && this.filterOpt === field.id)) {
+      const extraField = this.db.tenant().additional_fields.find(field => field.type === 'boolean' && this.filterOpt === field.id);
+      const option = await this.storage.get(`filterOptAdd${this.db.tenant().id}`);
+
+      if (implicit) {
+        if (option !== null && option !== '') {
+          const filterValue = option === 'true';
+          this.playersFiltered = Utils.getModifiedPlayersForList(
+            this.players.filter((player: Player) => {
+              const val = player.additional_fields?.[this.filterOpt] ?? Utils.getFieldTypeDefaultValue(extraField.type, extraField.defaultValue, extraField.options, this.db.churches());
+              return val === filterValue;
+            }),
+            this.db.groups(), this.attendances, this.db.attendanceTypes(), this.mainGroup,
+            this.db.tenant().additional_fields, this.db.churches(), this.db.tenant()?.shift_excused_as_present);
+          await this.storage.set(`filterOpt${this.db.tenant().id}`, this.filterOpt);
+        }
+        return;
+      }
+
+      const alert = await this.alertController.create({
+        header: extraField.name,
+        inputs: [
+          { type: 'radio', label: translate('common.yes'), value: 'true', checked: option !== 'false' },
+          { type: 'radio', label: translate('common.no'), value: 'false', checked: option === 'false' },
+        ],
+        buttons: [
+          {
+            text: translate('common.cancel'),
+            role: 'destructive',
+            handler: () => { this.filterOpt = 'all'; this.onFilterChanged(); }
+          },
+          {
+            text: translate('people.filter'),
+            handler: async (value: string) => {
+              if (!value) {
+                this.filterOpt = 'all';
+                this.onFilterChanged();
+                return;
+              }
+              const filterValue = value === 'true';
+              this.playersFiltered = Utils.getModifiedPlayersForList(
+                this.players.filter((player: Player) => {
+                  const val = player.additional_fields?.[this.filterOpt] ?? Utils.getFieldTypeDefaultValue(extraField.type, extraField.defaultValue, extraField.options, this.db.churches());
+                  return val === filterValue;
+                }),
+                this.db.groups(), this.attendances, this.db.attendanceTypes(), this.mainGroup,
+                this.db.tenant().additional_fields, this.db.churches(), this.db.tenant()?.shift_excused_as_present);
+              await this.storage.set(`filterOpt${this.db.tenant().id}`, this.filterOpt);
+              await this.storage.set(`filterOptAdd${this.db.tenant().id}`, value);
+            }
+          }
+        ]
+      });
+      await alert.present();
+      return;
+    } else if (this.db.tenant().additional_fields?.find(field => (field.type === 'select' || field.type === 'bfecg_church') && this.filterOpt === field.id)) {
+      const extraField = this.db.tenant().additional_fields?.find(field => (field.type === 'select' || field.type === 'bfecg_church') && this.filterOpt === field.id);
+      const option = await this.storage.get(`filterOptAdd${this.db.tenant().id}`);
+
+      if (implicit) {
+        if (option) {
+          this.playersFiltered = Utils.getModifiedPlayersForList(this.players.filter((player: Player) => player.additional_fields?.[this.filterOpt] === option), this.db.groups(), this.attendances, this.db.attendanceTypes(), this.mainGroup, this.db.tenant().additional_fields, this.db.churches(), this.db.tenant()?.shift_excused_as_present);
+          await this.storage.set(`filterOpt${this.db.tenant().id}`, this.filterOpt);
+          await this.storage.set(`filterOptAdd${this.db.tenant().id}`, option);
+        }
+        return;
+      }
+
+      const options = extraField.type === 'bfecg_church' ? this.db.churches().map(c => c.name) : extraField.options;
+
+      const alert = await this.alertController.create({
+        header: extraField.name,
+        inputs: options.map((t, index) => ({
+          type: 'radio',
+          label: t,
+          value: t,
+          selected: option ? t === option : index === 0,
+        })),
+        buttons: [
+          {
+            text: translate('common.cancel'),
+            role: 'destructive',
+            handler: () => {
+              this.filterOpt = 'all';
+              this.onFilterChanged();
+            }
+          },
+          {
+            text: translate('people.filter'),
+            handler: async (value) => {
+              if (!value) {
+                this.filterOpt = 'all';
+                this.onFilterChanged();
+                return;
+              }
+
+              this.playersFiltered = Utils.getModifiedPlayersForList(this.players.filter((player: Player) => {
+                if (extraField.type === 'bfecg_church') {
+                  const church = this.db.churches().find(c => c.name === value);
+                  return player.additional_fields?.[this.filterOpt] === church?.id;
+                }
+
+                return player.additional_fields?.[this.filterOpt] === value;
+              }), this.db.groups(), this.attendances, this.db.attendanceTypes(), this.mainGroup, this.db.tenant().additional_fields, this.db.churches(), this.db.tenant()?.shift_excused_as_present);
+
+              await this.storage.set(`filterOpt${this.db.tenant().id}`, this.filterOpt);
+              await this.storage.set(`filterOptAdd${this.db.tenant().id}`, value);
+            }
+          }
+        ]
+      });
+      await alert.present();
+      return;
+    }
+
+    this.playersFiltered = Utils.getModifiedPlayersForList(this.players.filter((player: Player) => {
+      if (this.filterOpt === 'criticals') {
+        return player.isCritical;
+      } else if (this.filterOpt === 'new') {
+        return player.isNew;
+      } else if (this.filterOpt === 'examinee') {
+        return player.examinee;
+      } else if (this.filterOpt === 'active') {
+        return !player.paused;
+      } else if (this.filterOpt === 'withoutTeacher') {
+        return !player.hasTeacher;
+      } else if (this.filterOpt === 'withoutAccount') {
+        return !player.appId;
+      } else if (this.filterOpt === 'withoutTest') {
+        return !player.testResult;
+      } else if (this.filterOpt === 'leaders') {
+        return player.isLeader;
+      }
+
+      if (this.db.tenant().additional_fields) {
+        for (const field of this.db.tenant().additional_fields) {
+          if (field.type === 'boolean' && this.filterOpt === field.id) {
+            return true; // handled above via dialog
+          }
+        }
+      }
+
+      return true;
+    }), this.db.groups(), this.attendances, this.db.attendanceTypes(), this.mainGroup, this.db.tenant().additional_fields, this.db.churches(), this.db.tenant()?.shift_excused_as_present);
+
+    await this.storage.set(`filterOpt${this.db.tenant().id}`, this.filterOpt);
+    await this.storage.set(`filterOptAdd${this.db.tenant().id}`, '');
+  }
+
+  onViewChanged() {
+    this.players = this.players.map((p: Player) => ({
+        ...p,
+        text: this.getSubText(p),
+      }));
+    this.playersFiltered = this.playersFiltered.map((p: Player) => ({
+        ...p,
+        text: this.getSubText(p),
+      }));
+    this.showLeader = this.viewOpts.includes('leader');
+    this.showCritical = this.viewOpts.includes('critical');
+    this.showNew = this.viewOpts.includes('new');
+    this.showExaminee = this.viewOpts.includes('examinee');
+    this.showPaused = this.viewOpts.includes('paused');
+    this.showNotes = this.viewOpts.includes('notes');
+    this.showImg = this.viewOpts.includes('img');
+    this.showInstruments = this.viewOpts.includes('instrument');
+    this.showAttendance = this.viewOpts.includes('attendance');
+    this.showTeachers = this.viewOpts.includes('teachers') && this.db.tenant().maintainTeachers;
+
+    this.storage.set(`viewOpts${this.db.tenant().id}`, JSON.stringify(this.viewOpts));
+  }
+
+  getSubText(player: Player): string {
+    const props: string[] = [];
+    if (this.viewOpts.includes('instrument')) {
+      props.push(player.groupName);
+    }
+    if (this.viewOpts.includes('birthday')) {
+      props.push(translate('people.ageShort', { date: dayjs(player.birthday).format(dateFmt()), age: Utils.calculateAge(new Date(player.birthday)) }));
+    }
+    if (this.viewOpts.includes('test')) {
+      props.push(player.testResult || translate('people.noResult'));
+    }
+    if (this.viewOpts.includes('instruments') && player.instruments) {
+      props.push(player.instruments);
+    }
+    if (this.viewOpts.includes('exercises')) {
+      if (player.otherExercise) {
+        props.push(player.otherExercise);
+      }
+    }
+
+    return props.join(' | ');
+  }
+
+  async search(event: any) {
+    if (this.players) {
+      this.searchTerm = '';
+      this.initializeItems();
+
+      this.searchTerm = event.srcElement.value;
+
+      if (!this.searchTerm) {
+        return;
+      }
+
+      this.playersFiltered = this.filter();
+      this.playersFiltered = Utils.getModifiedPlayersForList(
+        this.playersFiltered,
+        this.db.groups(),
+        this.attendances,
+        this.db.attendanceTypes(),
+        this.mainGroup,
+        this.db.tenant().additional_fields,
+        this.db.churches(),
+        this.db.tenant()?.shift_excused_as_present,
+      );
+    }
+  }
+
+  filter(): Player[] {
+    if (this.searchTerm === '') {
+      return this.players;
+    } else {
+      const term = this.searchTerm.toLowerCase();
+      const searchableFields = this.db.tenant().additional_fields?.filter(f => f.type === 'number' || f.type === 'text') ?? [];
+      return this.players.filter((player: Player) => {
+        if (player.firstName.toLowerCase().indexOf(term) > -1 ||
+          player.lastName.toLowerCase().indexOf(term) > -1 ||
+          player.groupName.toString().toLowerCase().indexOf(term) > -1) {
+          return true;
+        }
+        for (const field of searchableFields) {
+          const val = player.additional_fields?.[field.id];
+          if (val !== undefined && val !== null && String(val).toLowerCase().indexOf(term) > -1) {
+            return true;
+          }
+        }
+        return false;
+      });
+    }
+  }
+
+  initializeItems(): void {
+    this.playersFiltered = [...this.players];
+  }
+
+  async remove(player: Person, slider: IonItemSliding): Promise<void> {
+    if (player.appId && player.appId === this.db.tenantUser().userId) {
+      Utils.showToast(translate('people.cannotRemoveSelf'), 'danger');
+      slider.close();
+      return;
+    }
+
+    const sheet: HTMLIonActionSheetElement = await this.actionSheetController.create({
+      buttons: [{
+        text: translate('people.archive'),
+        handler: (): void => {
+          this.playerToArchive = player as Player;
+          this.isArchiveModalOpen = true;
+          slider.close();
+        },
+      }, {
+        text: translate('common.remove'),
+        handler: (): void => {
+          this.removePlayer(player);
+          slider.close();
+        },
+      }, {
+        role: 'cancel',
+        text: translate('common.cancel'),
+        handler: () => {
+          slider.close();
+        }
+      }],
+    });
+
+    await sheet.present();
+  }
+
+  async archivePlayer(): Promise<void> {
+    await this.db.archivePlayer(this.playerToArchive, dayjs(this.archiveDate).toISOString(), this.archiveNote);
+    this.dismissArchiveModal();
+  }
+
+  dismissArchiveModal(): void {
+    this.archiveNote = '';
+    this.playerToArchive = undefined;
+    this.isArchiveModalOpen = false;
+  }
+
+  async removePlayer(player: Person): Promise<void> {
+    try { await Haptics.impact({ style: ImpactStyle.Medium }); } catch { /* Haptics not available in PWA */ }
+    const alert = await this.alertController.create({
+      header: translate('people.removeConfirm'),
+      message: translate('people.cannotUndoExcl'),
+      buttons: [{
+        text: translate('common.cancel'),
+        role: 'cancel',
+      }, {
+        text: translate('common.remove'),
+        handler: async () => {
+          const loading = await Utils.getLoadingElement(5000, translate('people.removing'));
+          await loading.present();
+          try {
+            await this.db.removePlayer(player);
+            Utils.showToast(translate('people.removed'), 'success');
+            await loading.dismiss();
+          } catch (error) {
+            Utils.showToast(error, 'danger');
+            await loading.dismiss();
+          }
+        }
+      }]
+    });
+
+    await alert.present();
+  }
+
+  async pausePlayer(player: Player, slider: IonItemSliding) {
+    try { await Haptics.impact({ style: ImpactStyle.Light }); } catch { /* Haptics not available in PWA */ }
+    this.playerToPause = player;
+    this.sliderToPause = slider;
+    this.pauseReason = '';
+    this.pauseFrom = '';
+    this.pauseUntil = '';
+    this.isPauseModalOpen = true;
+  }
+
+  async confirmPause() {
+    if (!this.pauseReason) {
+      Utils.showToast(translate('signout.giveReason'), 'warning');
+      return;
+    }
+
+    const segments: string[] = [];
+    if (this.pauseFrom) {
+      segments.push(`ab ${dayjs(this.pauseFrom).format('DD.MM.YYYY')}`);
+    }
+    if (this.pauseUntil) {
+      segments.push(`bis ${dayjs(this.pauseUntil).format('DD.MM.YYYY')}`);
+    }
+    const pauseText = segments.length
+      ? `${this.pauseReason} (${segments.join(' ')})`
+      : this.pauseReason;
+
+    const history: PlayerHistoryEntry[] = [...this.playerToPause.history];
+    history.push({
+      date: new Date().toISOString(),
+      text: pauseText,
+      type: PlayerHistoryType.PAUSED,
+    });
+
+    const loading = await Utils.getLoadingElement(5000, translate('people.pausing'));
+    await loading.present();
+    try {
+      await this.db.updatePlayer({
+        ...this.playerToPause,
+        paused: true,
+        paused_until: this.pauseUntil || null,
+        history,
+      }, true, undefined, undefined, undefined, this.pauseFrom || undefined);
+    } catch (error) {
+      await loading.dismiss();
+      Utils.showToast(error, 'danger');
+      return;
+    }
+    await loading.dismiss();
+
+    const pausedPlayer = this.playerToPause;
+    const pauseUntil = this.pauseUntil;
+    const pauseFrom = this.pauseFrom;
+    this.dismissPauseModal();
+
+    if (pausedPlayer.appId) {
+      const otherTenants = await this.db.getTenantsFromUser(pausedPlayer.appId);
+      if (otherTenants.length) {
+        await this.askPauseInOtherTenants(pausedPlayer, pauseUntil, pauseFrom, history, otherTenants);
+      }
+    }
+  }
+
+  private async askPauseInOtherTenants(
+    player: Player,
+    pauseUntil: string,
+    pauseFrom: string,
+    history: PlayerHistoryEntry[],
+    otherTenants: Tenant[]
+  ): Promise<void> {
+    await new Promise<void>(async (resolve) => {
+      const alert = await this.alertController.create({
+        header: translate('people.pauseOthers'),
+        message: translate('people.pauseOthersMessage', { name: `${player.firstName} ${player.lastName}` }),
+        inputs: otherTenants.map((t) => ({
+          type: 'checkbox' as const,
+          label: t.longName || t.shortName,
+          value: t,
+          checked: false,
+        })),
+        buttons: [
+          { text: translate('people.skip'), role: 'cancel', handler: () => resolve() },
+          {
+            text: translate('people.pause'),
+            handler: async (selected: Tenant[]) => {
+              for (const tenant of selected) {
+                try {
+                  const personRef = await this.db.getPersonIdFromTenant(player.appId, tenant.id);
+                  if (personRef) {
+                    await this.db.pausePlayerInOtherTenant(personRef.id, tenant.id, true, pauseUntil || null, history, pauseFrom || undefined);
+                  }
+                } catch (error) {
+                  Utils.showToast(translate('people.errorAt', { tenant: tenant.shortName, error: String(error) }), 'danger');
+                }
+              }
+              resolve();
+            },
+          },
+        ],
+      });
+      await alert.present();
+    });
+  }
+
+  dismissPauseModal() {
+    this.isPauseModalOpen = false;
+    this.sliderToPause?.close();
+    this.playerToPause = null;
+    this.sliderToPause = null;
+    this.pauseReason = '';
+    this.pauseFrom = '';
+    this.pauseUntil = '';
+  }
+
+  async unpausePlayer(player: Player, slider: IonItemSliding) {
+    const alert = await this.alertController.create({
+      header: translate('people.reactivateConfirm'),
+      buttons: [{
+        text: translate('common.cancel'),
+        handler: () => {
+          slider.close();
+        }
+      }, {
+        text: translate('people.activate'),
+        handler: async () => {
+          const history: PlayerHistoryEntry[] = player.history;
+          history.push({
+            date: new Date().toISOString(),
+            text: translate('people.activeAgain'),
+            type: PlayerHistoryType.UNPAUSED,
+          });
+          const loading = await Utils.getLoadingElement(5000, translate('people.activating'));
+          await loading.present();
+          try {
+            await this.db.updatePlayer({
+              ...player,
+              paused: false,
+              paused_until: null,
+              history,
+            }, true);
+          } catch (error) {
+            Utils.showToast(error, 'danger');
+          }
+          await loading.dismiss();
+          slider.close();
+        }
+      }]
+    });
+
+    await alert.present();
+  }
+
+  getTeacherName(teacherId?: number): string {
+    const teacher = this.teachers.find(t => t.id === teacherId);
+    return teacher ? teacher.name : translate('common.unknown');
+  }
+
+  getChurchName(churchId?: string): string {
+    const church = this.db.churches().find(c => c.id === churchId);
+    return church ? church.name : translate('common.unknown');
+  }
+
+  // async updateImages() {
+  //   for (const player of this.players) {
+  //     if (player.img.startsWith("data:image")) {
+  //       await this.db.updateImage(player.id, this.dataURItoBlob(player.img), player.appId);
+  //     }
+  //   }
+  // }
+
+  // dataURItoBlob(dataURI) {
+  //   // convert base64 to raw binary data held in a string
+  //   // doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this
+  //   var byteString = atob(dataURI.split(',')[1]);
+
+  //   // separate out the mime component
+  //   var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+
+  //   // write the bytes of the string to an ArrayBuffer
+  //   var ab = new ArrayBuffer(byteString.length);
+  //   var ia = new Uint8Array(ab);
+  //   for (var i = 0; i < byteString.length; i++) {
+  //     ia[i] = byteString.charCodeAt(i);
+  //   }
+
+  //   //Old Code
+  //   //write the ArrayBuffer to a blob, and you're done
+  //   //var bb = new BlobBuilder();
+  //   //bb.append(ab);
+  //   //return bb.getBlob(mimeString);
+
+  //   //New Code
+  //   return new Blob([ab], { type: mimeString });
+
+
+  // }
+
+  async openBulkEditModal() {
+    const modal = await this.modalController.create({
+      component: BulkEditPage,
+      presentingElement: this.routerOutlet.nativeEl,
+      componentProps: {
+        players: [...this.playersFiltered],
+      },
+      backdropDismiss: false,
+    });
+
+    await modal.present();
+
+    const { data } = await modal.onWillDismiss();
+    if (data?.updated) {
+      await this.getPlayers();
+    }
+  }
+
+  get churchField(): ExtraField | undefined {
+    return this.db.getPersonExtraFields().find(field => field.type === 'bfecg_church');
+  }
+
+  async showChurchOverview(popover?: any) {
+    const field = this.churchField;
+    if (!field) { return; }
+    await popover?.dismiss();
+
+    const modal = await this.modalController.create({
+      component: ChurchOverviewComponent,
+      componentProps: {
+        churchIds: this.playersFiltered.map(p => (p.additional_fields ?? {})[field.id] as string | null),
+        churches: this.db.churches() ?? [],
+        subtitle: translate('common.people'),
+      },
+      breakpoints: [0, 0.5, 0.75, 1],
+      initialBreakpoint: 0.5,
+      handleBehavior: 'none',
+    });
+
+    await modal.present();
+  }
+
+  async openImportModal() {
+    const modal = await this.modalController.create({
+      component: ImportPage,
+      presentingElement: this.routerOutlet.nativeEl,
+      backdropDismiss: false,
+    });
+
+    await modal.present();
+
+    const { data } = await modal.onWillDismiss();
+    if (data?.imported) {
+      await this.getPlayers();
+    }
+  }
+
+  async ngOnDestroy() {
+    await this.sub?.unsubscribe();
+  }
+}

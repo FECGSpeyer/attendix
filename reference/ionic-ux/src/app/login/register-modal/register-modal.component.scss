@@ -1,0 +1,97 @@
+ion-content {
+  --background: var(--ion-background-color);
+}
+
+.intro {
+  margin-bottom: 1rem;
+
+  h2 {
+    margin: 0 0 0.5rem;
+    font-size: 1.25rem;
+  }
+
+  p {
+    margin: 0 0 0.5rem;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    color: var(--ion-color-medium-shade);
+  }
+
+  .hint {
+    font-size: 0.85rem;
+    color: var(--ion-color-medium);
+  }
+}
+
+.register-list {
+  background: transparent;
+  margin-bottom: 1rem;
+}
+
+// Auth-method switcher (Passwort / Code per E-Mail) at the top of the form.
+.mode-segment {
+  --background: rgba(var(--ion-color-primary-rgb), 0.1);
+  border-radius: 0.75rem;
+  padding: 3px;
+  margin-bottom: 1rem;
+
+  ion-segment-button {
+    // Dark-teal checked label reads in both Ionic modes.
+    --color: rgba(var(--ion-color-primary-rgb), 0.6);
+    --color-checked: var(--ion-color-primary);
+    --background-checked: rgba(var(--ion-color-primary-rgb), 0.18);
+    --indicator-color: rgba(var(--ion-color-primary-rgb), 0.18);
+    --border-radius: 0.6rem;
+    --indicator-box-shadow: none;
+    --indicator-height: 100%;
+    min-height: 34px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  // iOS renders its own native filled pill — adding --background-checked on top
+  // produces a double background with mismatched border-radii.
+  .ios & ion-segment-button {
+    --border-radius: 25px;
+    --indicator-color: transparent;
+    --indicator-height: 0%;
+  }
+}
+
+.privacy-item {
+  --padding-start: 0;
+  --inner-padding-end: 0;
+  margin: 0.5rem 0 1rem;
+
+  ion-checkbox {
+    margin-right: 0.75rem;
+  }
+}
+
+.privacy-label {
+  font-size: 0.9rem;
+  line-height: 1.4;
+
+  a {
+    color: var(--ion-color-primary);
+    text-decoration: underline;
+    cursor: pointer;
+  }
+}
+
+.actions {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+// Keep the 6 OTP boxes within the modal on narrow screens.
+ion-input-otp {
+  --min-width: 0;
+  --width: clamp(32px, 12vw, 44px);
+  --height: clamp(38px, 13vw, 48px);
+  margin-inline: auto;
+}

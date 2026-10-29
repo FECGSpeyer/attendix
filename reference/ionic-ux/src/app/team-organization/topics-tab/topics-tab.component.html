@@ -1,0 +1,256 @@
+@if (loading) {
+  <ion-list [inset]="true">
+    @for (i of [1, 2, 3]; track i) {
+      <ion-item>
+        <ion-label>
+          <h2><ion-skeleton-text [animated]="true" style="width: 70%"></ion-skeleton-text></h2>
+          <p><ion-skeleton-text [animated]="true" style="width: 40%"></ion-skeleton-text></p>
+        </ion-label>
+      </ion-item>
+    }
+  </ion-list>
+} @else if (isLeader) {
+  <!-- Neue Vorschläge -->
+  @if (pending.length) {
+    <ion-list [inset]="true" class="proposal-banner">
+      <ion-item lines="none" button detail="false" (click)="isReviewOpen = true">
+        <ion-icon name="bulb-outline" slot="start" color="warning"></ion-icon>
+        <ion-label>
+          <h2>{{ pending.length === 1 ? '1 neuer Vorschlag' : pending.length + ' neue Vorschläge' }}</h2>
+          <p>{{ 'teamOrg.submittedByMembers' | transloco }}</p>
+        </ion-label>
+        <ion-button slot="end" size="small" (click)="isReviewOpen = true; $event.stopPropagation()">{{ 'teamOrg.review' | transloco }}</ion-button>
+      </ion-item>
+    </ion-list>
+  }
+
+  <!-- Nächster Termin -->
+  @if (nextAttendance) {
+    <ion-list [inset]="true">
+      <ion-list-header>
+        <ion-label>{{ nextHeader }}</ion-label>
+        <ion-button size="small" (click)="changeAttendance()">{{ 'teamOrg.change' | transloco }}</ion-button>
+      </ion-list-header>
+      <ion-item button detail="true" (click)="openNextAttendance()">
+        <ion-icon name="calendar-outline" slot="start" color="primary"></ion-icon>
+        <ion-label>
+          <h2>{{ nextTitle }}</h2>
+        </ion-label>
+        @if (nextTopMinutes) {
+          <ion-note slot="end">{{ 'teamOrg.minutes' | transloco: { min: nextTopMinutes } }}</ion-note>
+        }
+      </ion-item>
+      @for (top of nextTops; track top.id) {
+        <ion-item button detail="false" (click)="topAction(top)">
+          <ion-label class="ion-text-wrap">
+            <h3>{{ 'teamOrg.topName' | transloco: { n: topNumber(top), name: top.name } }}</h3>
+            @if (top.conductor) {
+              <p>{{ top.conductor }}</p>
+            }
+          </ion-label>
+          <ion-note slot="end">{{ 'teamOrg.minutes' | transloco: { min: top.time } }}</ion-note>
+        </ion-item>
+      } @empty {
+        <ion-item>
+          <ion-label color="medium" class="ion-text-wrap">{{ 'teamOrg.noTopsYet' | transloco }}</ion-label>
+        </ion-item>
+      }
+      <ion-item button detail="false" lines="none" (click)="openPicker()">
+        <ion-icon name="add-circle-outline" slot="start" color="primary"></ion-icon>
+        <ion-label color="primary">{{ 'teamOrg.addTopics' | transloco }}</ion-label>
+      </ion-item>
+    </ion-list>
+  } @else {
+    <ion-list [inset]="true">
+      <ion-list-header>
+        <ion-label>{{ 'teamOrg.nextEvent' | transloco }}</ion-label>
+      </ion-list-header>
+      <ion-item>
+        <ion-label color="medium" class="ion-text-wrap">{{ 'teamOrg.noProtocolEvent' | transloco }}</ion-label>
+      </ion-item>
+      <ion-item button detail="false" lines="none" [disabled]="creatingAttendance" (click)="createAttendance()">
+        <ion-icon name="add-circle-outline" slot="start" color="primary"></ion-icon>
+        <ion-label color="primary">{{ 'teamOrg.createEvent' | transloco }}</ion-label>
+      </ion-item>
+    </ion-list>
+  }
+
+  <!-- Themenspeicher -->
+  <ion-list [inset]="true">
+    <ion-list-header>
+      <ion-label>{{ 'agenda.topicStore' | transloco }}</ion-label>
+      <ion-note class="header-note">{{ 'teamOrg.openCount' | transloco: { count: openTopics.length } }}</ion-note>
+    </ion-list-header>
+    @for (item of openTopics; track item.id) {
+      <ion-item button detail="false" (click)="openTopic(item.id)">
+        <ion-label class="ion-text-wrap">
+          <h2>{{ item.title }}</h2>
+          <p>
+            @if (postponed.has(item.id)) {
+              <ion-badge color="warning" class="inline-badge">{{ 'teamOrg.postponedLower' | transloco }}</ion-badge>
+            }
+            @if (isInNextPlan(item)) {
+              <ion-badge color="primary" class="inline-badge">{{ 'teamOrg.plannedLower' | transloco }}</ion-badge>
+            }
+            {{ topicSubtitle(item) }}
+          </p>
+        </ion-label>
+        <ion-badge slot="end" [color]="priorityColors[item.priority]">{{ priorityLabels[item.priority] }}</ion-badge>
+      </ion-item>
+    } @empty {
+      <ion-item lines="none">
+        <ion-label color="medium" class="ion-text-wrap">{{ 'teamOrg.noOpenTopics' | transloco }}</ion-label>
+      </ion-item>
+    }
+  </ion-list>
+
+  @if (doneTopics.length) {
+    <ion-list [inset]="true">
+      <ion-item [lines]="showDone ? 'full' : 'none'">
+        <ion-toggle [(ngModel)]="showDone">{{ 'teamOrg.showDone' | transloco: { count: doneTopics.length } }}</ion-toggle>
+      </ion-item>
+      @if (showDone) {
+        @for (item of doneTopics; track item.id; let last = $last) {
+          <ion-item button detail="false" [lines]="last ? 'none' : 'full'" (click)="openTopic(item.id)" class="is-done">
+            <ion-label class="ion-text-wrap">
+              <h2>{{ item.title }}</h2>
+              <p>{{ (item.status === 'dropped' ? 'agenda.statusDropped' : 'agenda.statusDone') | transloco }}{{ item.responsible_person ? ' · ' + personName(item.responsible_person) : '' }}</p>
+            </ion-label>
+          </ion-item>
+        }
+      }
+    </ion-list>
+  }
+
+  <div class="topic-fab-spacer"></div>
+  <ion-fab class="topic-fab" vertical="bottom" horizontal="end">
+    <ion-fab-button (click)="addTopic()" [attr.aria-label]="'teamOrg.createTopic' | transloco">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+  <!-- Sheet: Vorschläge prüfen -->
+  <ion-modal [isOpen]="isReviewOpen" (didDismiss)="isReviewOpen = false" [breakpoints]="[0, 1]" [initialBreakpoint]="1">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-buttons slot="start">
+            <ion-button (click)="isReviewOpen = false" [attr.aria-label]="'common.close' | transloco">
+              <ion-icon slot="icon-only" name="close"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+          <ion-title>{{ 'teamOrg.suggestions' | transloco }}</ion-title>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content color="light">
+        <p class="sheet-hint">{{ 'teamOrg.suggestionsHint' | transloco }}</p>
+        @for (item of pending; track item.id) {
+          <ion-list [inset]="true">
+            <ion-item lines="none">
+              <ion-avatar slot="start" class="initials">{{ initials(item.proposer) || '?' }}</ion-avatar>
+              <ion-label>
+                <h3>{{ personName(item.proposer) || 'Mitglied' }}</h3>
+                <p>{{ relativeDay(item.created_at) }}</p>
+              </ion-label>
+            </ion-item>
+            <ion-item lines="none">
+              <ion-label class="ion-text-wrap">
+                <h2 class="proposal-title">{{ item.title }}</h2>
+                @if (item.description) {
+                  <p class="proposal-description">{{ item.description }}</p>
+                }
+              </ion-label>
+            </ion-item>
+            <div class="proposal-actions">
+              <ion-button fill="outline" color="medium" [disabled]="isDeciding(item)" (click)="reject(item)">{{ 'teamOrg.reject' | transloco }}</ion-button>
+              <ion-button [disabled]="isDeciding(item)" (click)="accept(item)">{{ 'common.apply' | transloco }}</ion-button>
+            </div>
+          </ion-list>
+        } @empty {
+          <p class="sheet-hint">{{ 'teamOrg.allDecided' | transloco }}</p>
+        }
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+} @else if (inCircle) {
+  <!-- Mitglieder: Thema vorschlagen + Meine Vorschläge -->
+  <ion-list [inset]="true">
+    <ion-item lines="none">
+      <ion-label class="ion-text-wrap">
+        <h2>{{ 'teamOrg.suggestTopic' | transloco }}</h2>
+        <p>{{ 'teamOrg.suggestHint' | transloco }}</p>
+      </ion-label>
+    </ion-item>
+    <div class="ion-padding-horizontal ion-padding-bottom">
+      <ion-button expand="block" (click)="openSuggest()">
+        <ion-icon name="bulb-outline" slot="start"></ion-icon>
+        {{ 'teamOrg.suggestTopic' | transloco }}
+      </ion-button>
+    </div>
+  </ion-list>
+
+  <ion-list [inset]="true">
+    <ion-list-header>
+      <ion-label>{{ 'teamOrg.mySuggestions' | transloco }}</ion-label>
+    </ion-list-header>
+    @for (item of items; track item.id) {
+      <ion-item>
+        <ion-label class="ion-text-wrap">
+          <h2>{{ item.title }}</h2>
+          <p>
+            @if (item.proposal_status === 'accepted') {
+              {{ 'teamOrg.acceptedByLeaders' | transloco }}
+            } @else {
+              {{ 'teamOrg.submittedOn' | transloco: { date: (item.created_at | date: ('common.ngDate' | transloco)) } }}
+            }
+          </p>
+          @if (item.proposal_status === 'rejected' && item.decision_note) {
+            <p class="decision-note">„{{ item.decision_note }}“</p>
+          }
+        </ion-label>
+        <ion-badge slot="end" [color]="suggestionStatus(item).color">{{ suggestionStatus(item).label }}</ion-badge>
+      </ion-item>
+    } @empty {
+      <ion-item lines="none">
+        <ion-label color="medium" class="ion-text-wrap">{{ 'teamOrg.nothingSuggested' | transloco }}</ion-label>
+      </ion-item>
+    }
+  </ion-list>
+
+  <!-- Sheet: Vorschlag schreiben -->
+  <ion-modal [isOpen]="isSuggestOpen" (didDismiss)="isSuggestOpen = false" [breakpoints]="[0, 1]" [initialBreakpoint]="1">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-buttons slot="start">
+            <ion-button (click)="isSuggestOpen = false">{{ 'common.cancel' | transloco }}</ion-button>
+          </ion-buttons>
+          <ion-title>{{ 'teamOrg.suggestTopic' | transloco }}</ion-title>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content color="light">
+        <p class="sheet-hint">{{ 'teamOrg.suggestHint' | transloco }}</p>
+        <ion-list [inset]="true">
+          <ion-item>
+            <ion-input [label]="'tasks.title' | transloco" labelPlacement="stacked" [(ngModel)]="suggestTitle"
+              [placeholder]="'teamOrg.titlePlaceholder' | transloco" autocapitalize="sentences"></ion-input>
+          </ion-item>
+          <ion-item lines="none">
+            <ion-textarea [label]="'tasks.description' | transloco" labelPlacement="stacked" [(ngModel)]="suggestDescription"
+              [placeholder]="'teamOrg.descPlaceholder' | transloco" [autoGrow]="true" rows="4" autocapitalize="sentences"></ion-textarea>
+          </ion-item>
+        </ion-list>
+        <div class="ion-padding-horizontal">
+          <ion-button expand="block" [disabled]="!suggestTitle.trim() || sending" (click)="sendSuggestion()">
+            {{ 'teamOrg.sendSuggestion' | transloco }}
+          </ion-button>
+        </div>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+} @else {
+  <div class="topic-empty">
+    <ion-icon name="chatbubbles-outline"></ion-icon>
+    <p>{{ 'teamOrg.leadersPlan' | transloco }}</p>
+  </div>
+}

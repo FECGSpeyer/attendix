@@ -1,0 +1,154 @@
+<ion-header translucent="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button text="" defaultHref="tabs/settings"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ 'notif.title' | transloco }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">{{ 'notif.title' | transloco }}</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  @if (notificationConfig) {
+  <ion-list>
+    <ion-card class="top-card">
+      <ion-item>
+        <ion-label>{{ 'notif.enable' | transloco }}</ion-label>
+        <ion-toggle (ionChange)="updateNotificationConfig()" [(ngModel)]="notificationConfig.enabled" slot="end"
+          [attr.label]="'notif.enable' | transloco"></ion-toggle>
+      </ion-item>
+      @if (!notificationConfig.telegram_chat_id) {
+      <ion-item>
+        <ion-label position="stacked">{{ 'notif.userId' | transloco }}</ion-label>
+        <ion-input autocapitalize="sentences" type="text" readonly="true" [(ngModel)]="notificationConfig.id"></ion-input>
+      </ion-item>
+      }
+      <ion-item>
+        <ion-label>
+          <h2>{{ 'notif.telegram' | transloco }}</h2>
+          @if (notificationConfig.telegram_chat_id) {
+          <ion-note color="success">{{ 'notif.linked' | transloco }}</ion-note>
+          }
+        </ion-label>
+        @if (!notificationConfig.telegram_chat_id) {
+        <ion-button (click)="connectTelegram()">{{ 'notif.connect' | transloco }}</ion-button>
+        }
+        @if (notificationConfig.telegram_chat_id) {
+        <ion-button color="danger" (click)="disconnectTelegram()">{{ 'notif.disconnect' | transloco }}</ion-button>
+        }
+      </ion-item>
+      @if (isNative) {
+      <ion-item lines="none">
+        <ion-toggle [(ngModel)]="notificationConfig.push_enabled" (ionChange)="togglePush()"
+          [attr.label]="'notif.push' | transloco">{{ 'notif.push' | transloco }}</ion-toggle>
+      </ion-item>
+      }
+      @if (hasLiveActivity) {
+      <ion-item lines="none">
+        <ion-toggle [checked]="notificationConfig.live_activity !== false" (ionChange)="toggleLiveActivity($event.detail.checked)"
+          [attr.label]="'notif.liveActivity' | transloco"
+          [helperText]="(isIos ? 'notif.liveActivityHelperIos' : 'notif.liveActivityHelper') | transloco">
+          {{ 'notif.liveActivity' | transloco }}
+        </ion-toggle>
+      </ion-item>
+      }
+      @if (notificationConfig.push_enabled && notificationConfig.telegram_chat_id) {
+      <ion-item lines="none">
+        <ion-toggle
+          [(ngModel)]="notificationConfig.push_and_telegram"
+          (ionChange)="updateNotificationConfig()"
+          [attr.label]="'notif.bothChannels' | transloco"
+          [helperText]="'notif.bothChannelsHelper' | transloco">
+          {{ 'notif.bothChannels' | transloco }}
+        </ion-toggle>
+      </ion-item>
+      @if (!notificationConfig.push_and_telegram) {
+      <ion-item lines="none">
+        <ion-note color="medium" class="ion-text-wrap" style="font-size: 12px; padding: 8px 0;">
+          {{ 'notif.pushPreferred' | transloco }}
+        </ion-note>
+      </ion-item>
+      }
+      }
+    </ion-card>
+    @if (notificationConfig.enabled) {
+    <ion-card-subtitle>{{ 'notif.title' | transloco }}</ion-card-subtitle>
+    <ion-card>
+      <ion-item>
+        <ion-toggle [(ngModel)]="notificationConfig.updates" (ionChange)="updateNotificationConfig()"
+          [attr.label]="'notif.appUpdates' | transloco"
+          [helperText]="'notif.appUpdatesHelper' | transloco">{{ 'notif.appUpdates' | transloco }}</ion-toggle>
+      </ion-item>
+      <ion-item>
+        <ion-toggle [helperText]="'notif.birthdaysHelper' | transloco"
+          (ionChange)="updateNotificationConfig()" [(ngModel)]="notificationConfig.birthdays"
+          [attr.label]="'notif.birthdays' | transloco">{{ 'notif.birthdays' | transloco }}</ion-toggle>
+      </ion-item>
+      <ion-item>
+        <ion-toggle [helperText]="'notif.announcementsHelper' | transloco"
+          (ionChange)="updateNotificationConfig()" [(ngModel)]="notificationConfig.messages"
+          [attr.label]="'notif.announcements' | transloco">{{ 'notif.announcements' | transloco }}</ion-toggle>
+      </ion-item>
+      <ion-item>
+          <ion-toggle (ionChange)="updateNotificationConfig()" [(ngModel)]="notificationConfig.reminders"
+          [attr.label]="'notif.eventReminders' | transloco">{{ 'notif.eventReminders' | transloco }}</ion-toggle>
+      </ion-item>
+      @if (hasDutyTypes) {
+      <ion-item>
+          <ion-toggle [helperText]="'notif.dutiesHelper' | transloco"
+          [checked]="notificationConfig.duties !== false"
+          (ionChange)="notificationConfig.duties = $event.detail.checked; updateNotificationConfig()"
+          [attr.label]="'notif.duties' | transloco">{{ 'notif.duties' | transloco }}</ion-toggle>
+      </ion-item>
+      }
+      <ion-item>
+          <ion-toggle [helperText]="'notif.checklistHelper' | transloco"
+          (ionChange)="updateNotificationConfig()" [(ngModel)]="notificationConfig.checklist"
+          [attr.label]="'notif.checklist' | transloco">{{ 'notif.checklist' | transloco }}</ion-toggle>
+      </ion-item>
+      <ion-item>
+          <ion-toggle [helperText]="'notif.tasksHelper' | transloco"
+          (ionChange)="updateNotificationConfig()" [(ngModel)]="notificationConfig.tasks"
+          [attr.label]="'notif.tasks' | transloco">{{ 'notif.tasks' | transloco }}</ion-toggle>
+      </ion-item>
+      <ion-item>
+        <ion-toggle [helperText]="'notif.responsibleOnly' | transloco"
+          (ionChange)="updateNotificationConfig()" [(ngModel)]="notificationConfig.signins"
+          [attr.label]="'notif.signIns' | transloco">{{ 'notif.signIns' | transloco }}</ion-toggle>
+      </ion-item>
+      <ion-item>
+        <ion-toggle [helperText]="'notif.responsibleOnly' | transloco"
+          (ionChange)="updateNotificationConfig()" [(ngModel)]="notificationConfig.signouts"
+          [attr.label]="'notif.signOuts' | transloco">{{ 'notif.signOuts' | transloco }}</ion-toggle>
+      </ion-item>
+      <ion-item>
+        <ion-toggle [helperText]="'notif.responsibleOnly' | transloco"
+          (ionChange)="updateNotificationConfig()" [(ngModel)]="notificationConfig.criticals" [attr.label]="'notif.signOuts' | transloco">{{ 'notif.newProblemCases' | transloco }}</ion-toggle>
+      </ion-item>
+      <ion-item lines="none">
+        <ion-toggle [helperText]="'notif.responsibleOnly' | transloco"
+          (ionChange)="updateNotificationConfig()" [(ngModel)]="notificationConfig.registrations"
+          [attr.label]="'notif.signOuts' | transloco">{{ 'notif.newRegistrations' | transloco }}</ion-toggle>
+      </ion-item>
+    </ion-card>
+    @if (db.tenants().length) {
+    <ion-card-subtitle>{{ 'notif.tenantSettings' | transloco }}</ion-card-subtitle>
+    <ion-card>
+      @for (tenant of db.tenants(); track tenant.id; let idx = $index) {
+      <ion-item [lines]="(idx + 1) === db.tenants().length ? 'none' : ''">
+        <ion-label>{{ tenant.longName }}</ion-label>
+        <ion-toggle (ionChange)="toggleTenant(tenant.id)"
+          [checked]="isTenantEnabled(tenant.id)" slot="end"></ion-toggle>
+      </ion-item>
+      }
+    </ion-card>
+    }
+    }
+  </ion-list>
+  }
+</ion-content>

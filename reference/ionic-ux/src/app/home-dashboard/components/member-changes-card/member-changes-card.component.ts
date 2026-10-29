@@ -1,0 +1,79 @@
+import { Component, effect } from '@angular/core';
+import dayjs from 'dayjs';
+import { ModalController } from '@ionic/angular/lazy';
+import { DbService } from '../../../services/db.service';
+import { Player } from '../../../utilities/interfaces';
+import { PersonPage } from '../../../people/person/person.page';
+import { Role } from '../../../utilities/constants';
+import { tileDay, tileMonth, relativeDays } from '../shared/dashboard-date';
+
+interface MemberChange {
+  player: Player;
+  firstName: string;
+  lastName: string;
+  date: string;
+  type: 'joined' | 'left';
+}
+
+@Component({
+  selector: 'app-member-changes-card',
+  templateUrl: './member-changes-card.component.html',
+  styleUrls: ['./member-changes-card.component.scss'],
+  standalone: false,
+})
+export class MemberChangesCardComponent {
+  public changes: MemberChange[] = [];
+  public loading = true;
+  private loadDone = false;
+  private readonly DAYS = 60;
+
+  constructor(
+    public db: DbService,
+    private modalController: ModalController,
+  ) {
+    effect(() => {
+      if (this.db.tenant() && !this.loadDone) {
+        this.loadDone = true;
+        this.load();
+      }
+    });
+  }
+
+  async load() {
+    this.loadDone = false;
+    this.loading = true;
+    try {
+      const cutoff = dayjs().subtract(this.DAYS, 'day');
+      const all: Player[] = await this.db.getPlayers(true);
+
+      const joined: MemberChange[] = all
+        .filter(p => p.joined && dayjs(p.joined).isAfter(cutoff))
+        .map(p => ({ player: p, firstName: p.firstName, lastName: p.lastName, date: p.joined, type: 'joined' as const }));
+
+      const left: MemberChange[] = all
+        .filter(p => p.left && dayjs(p.left).isAfter(cutoff))
+        .map(p => ({ player: p, firstName: p.firstName, lastName: p.lastName, date: p.left!, type: 'left' as const }));
+
+      this.changes = [...joined, ...left]
+        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+        .slice(0, 5);
+    } finally {
+      this.loading = false;
+    }
+  }
+
+  async openPerson(player: Player) {
+    const isAdmin = [Role.ADMIN, Role.RESPONSIBLE].includes(this.db.tenantUser()?.role);
+    const modal = await this.modalController.create({
+      component: PersonPage,
+      presentingElement: document.querySelector('ion-router-outlet'),
+      componentProps: { existingPlayer: { ...player }, readOnly: !isAdmin },
+      backdropDismiss: false,
+    });
+    await modal.present();
+  }
+
+  tileDay = tileDay;
+  tileMonth = tileMonth;
+  relativeDays = relativeDays;
+}

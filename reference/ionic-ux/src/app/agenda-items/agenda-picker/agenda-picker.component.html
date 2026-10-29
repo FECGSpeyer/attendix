@@ -1,0 +1,95 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="dismiss()" [attr.aria-label]="'common.close' | transloco">
+        <ion-icon slot="icon-only" name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>{{ 'attendance.addTopics' | transloco }}</ion-title>
+  </ion-toolbar>
+  <ion-toolbar>
+    <ion-searchbar [(ngModel)]="search" [placeholder]="'agenda.searchOrCreate' | transloco" [debounce]="0"></ion-searchbar>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content color="light">
+  @if (loading) {
+    <div class="ion-text-center ion-padding">
+      <ion-spinner></ion-spinner>
+    </div>
+  } @else {
+    @if (canCreateFromSearch) {
+      <ion-list [inset]="true">
+        <ion-item button detail="false" (click)="createFromSearch()" lines="none">
+          <ion-icon name="add-circle-outline" slot="start" color="primary"></ion-icon>
+          <ion-label color="primary" class="ion-text-wrap">{{ 'agenda.createAsNew' | transloco: { name: search.trim() } }}</ion-label>
+        </ion-item>
+      </ion-list>
+    }
+
+    @if (visiblePostponed.length) {
+      <ion-list [inset]="true">
+        <ion-list-header>
+          <ion-label>{{ 'agenda.postponedFromLast' | transloco }}</ion-label>
+        </ion-list-header>
+        @for (row of visiblePostponed; track row.item.id; let last = $last) {
+          <ng-container *ngTemplateOutlet="rowTpl; context: { $implicit: row, last }"></ng-container>
+        }
+      </ion-list>
+    }
+
+    <ion-list [inset]="true">
+      <ion-list-header>
+        <ion-label>{{ 'agenda.topicStore' | transloco }}</ion-label>
+      </ion-list-header>
+      @for (row of visibleOthers; track row.item.id; let last = $last) {
+        <ng-container *ngTemplateOutlet="rowTpl; context: { $implicit: row, last }"></ng-container>
+      } @empty {
+        <ion-item lines="none">
+          <ion-label color="medium" class="ion-text-wrap">
+            {{ search.trim() ? 'Kein passendes Thema gefunden.' : 'Keine offenen Themen. Lege oben ein neues an.' }}
+          </ion-label>
+        </ion-item>
+      }
+    </ion-list>
+  }
+
+  <ng-template #rowTpl let-row let-last="last">
+    <ion-item [lines]="last ? 'none' : 'full'" button detail="false" (click)="toggle(row)">
+      <ion-icon slot="start" [name]="row.selected ? 'checkmark-circle' : 'ellipse-outline'" [color]="row.selected ? 'primary' : 'medium'"
+        role="checkbox" [attr.aria-checked]="row.selected"></ion-icon>
+      <ion-label class="ion-text-wrap">
+        <h2>{{ row.item.title }}</h2>
+        <p>
+          @if (row.postponedOn !== undefined) {
+            <ion-badge color="warning" class="postponed-badge">{{ row.postponedOn ? ('agenda.postponedOn' | transloco: { date: (row.postponedOn | date: ('common.ngDayMonth' | transloco)) }) : ('agenda.postponed' | transloco) }}</ion-badge>
+          }
+          {{ subtitle(row) }}
+        </p>
+      </ion-label>
+      @if (row.selected && !row.inPlan) {
+        <div slot="end" class="stepper" (click)="$event.stopPropagation()">
+          <ion-button fill="clear" size="small" (click)="changeDuration(row, -5, $event)" [attr.aria-label]="'agenda.shorter' | transloco">−</ion-button>
+          <span>{{ 'planning.minShort' | transloco: { min: row.duration } }}</span>
+          <ion-button fill="clear" size="small" (click)="changeDuration(row, 5, $event)" [attr.aria-label]="'agenda.longer' | transloco">+</ion-button>
+        </div>
+      } @else {
+        <ion-note slot="end">{{ 'planning.minShort' | transloco: { min: row.duration } }}</ion-note>
+      }
+    </ion-item>
+  </ng-template>
+</ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <div class="footer-content">
+      <p class="insert-hint">{{ insertHint }}</p>
+      <ion-button expand="block" [disabled]="!hasChanges || saving" (click)="confirm()">
+        @if (saving) {
+          <ion-spinner name="crescent" slot="start"></ion-spinner>
+        }
+        {{ confirmLabel }}
+      </ion-button>
+    </div>
+  </ion-toolbar>
+</ion-footer>

@@ -1,0 +1,82 @@
+﻿<ion-header translucent="true">
+  <ion-toolbar color="light">
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()">
+        <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>{{ 'shifts.plans' | transloco }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content color="light" [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar color="light">
+      <ion-title size="large">{{ 'shifts.plans' | transloco }}</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-icon class="headerIcon" name="time-outline"></ion-icon>
+    </ion-card-header>
+    <ion-card-content>
+      {{ 'shifts.intro' | transloco }}<br><br>
+      <ion-label color="warning">{{ 'shifts.important' | transloco }}</ion-label>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-list [inset]="true">
+    <ion-list-header><ion-label>{{ 'shifts.plans' | transloco }}</ion-label></ion-list-header>
+    <ion-item-group>
+      @if (db.shifts() && db.shifts().length > 0) {
+        @for (shift of db.shifts(); track trackByShiftId($index, shift)) {
+          <ion-item [routerLink]="['/tabs/settings/general/shifts', shift.id]">
+            <ion-label>{{ shift.name }}</ion-label>
+          </ion-item>
+        }
+      } @else {
+        <ion-item>{{ 'shifts.none' | transloco }}</ion-item>
+      }
+    </ion-item-group>
+
+    <!-- <ion-item-group>
+    <ion-item button>
+      {{ 'shifts.copyFromOther' | transloco }}
+    </ion-item>
+  </ion-item-group> -->
+</ion-list>
+
+<ion-fab vertical="bottom" horizontal="end" slot="fixed">
+  <ion-fab-button id="add-shift-button">
+    <ion-icon name="add"></ion-icon>
+  </ion-fab-button>
+
+  <ion-modal #addShiftModal handle-behavior="none" [breakpoints]="[0, 0.7]" [initialBreakpoint]="0.7" trigger="add-shift-button">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar color="light">
+          <ion-title>{{ 'shifts.create' | transloco }}</ion-title>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content color="light">
+        <ion-list [inset]="true">
+          <ion-item-group>
+            <ion-item>
+              <ion-label position="stacked">{{ 'typeSettings.name' | transloco }}</ion-label>
+              <ion-input autocapitalize="sentences" [(ngModel)]="newShiftName"></ion-input>
+            </ion-item>
+            <ion-item>
+              <ion-label position="stacked">{{ 'tasks.description' | transloco }}</ion-label>
+              <ion-input autocapitalize="sentences" [(ngModel)]="newShiftDescription"></ion-input>
+            </ion-item>
+          </ion-item-group>
+
+          <ion-button [style]="{'margin-top': '10px'}" expand="block" (click)="createShift(addShiftModal)">{{ 'files.create' | transloco }}</ion-button>
+        </ion-list>
+
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+</ion-fab>
+</ion-content>

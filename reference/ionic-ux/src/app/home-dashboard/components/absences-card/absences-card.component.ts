@@ -1,0 +1,123 @@
+import { Component, effect } from '@angular/core';
+import dayjs from 'dayjs';
+import { ModalController } from '@ionic/angular/lazy';
+import { DbService } from '../../../services/db.service';
+import { Player, PlayerAbsence, PlayerHistoryEntry } from '../../../utilities/interfaces';
+import { PlayerHistoryType, Role } from '../../../utilities/constants';
+import { PersonPage } from '../../../people/person/person.page';
+import { tileDay, tileMonth, shortDate } from '../shared/dashboard-date';
+
+interface AbsenceEntry {
+  player: Player;
+  firstName: string;
+  lastName: string;
+  fromDate: string;
+  untilDate: string;
+  reason: string;
+  type: 'absence' | 'pause';
+}
+
+@Component({
+  selector: 'app-absences-card',
+  templateUrl: './absences-card.component.html',
+  styleUrls: ['./absences-card.component.scss'],
+  standalone: false,
+})
+export class AbsencesCardComponent {
+  public entries: AbsenceEntry[] = [];
+  public loading = true;
+  private loadDone = false;
+  private readonly WEEKS = 4;
+
+  constructor(
+    public db: DbService,
+    private modalController: ModalController,
+  ) {
+    effect(() => {
+      if (this.db.tenant() && !this.loadDone) {
+        this.loadDone = true;
+        this.load();
+      }
+    });
+  }
+
+  async load() {
+    this.loadDone = false;
+    this.loading = true;
+    try {
+      const cutoff = dayjs().subtract(this.WEEKS, 'week');
+      const [absences, players]: [PlayerAbsence[], Player[]] = await Promise.all([
+        this.db.getPlayerAbsencesForTenant(),
+        this.db.getPlayers(true),
+      ]);
+
+      const playerMap = new Map<number, Player>(players.map(p => [p.id!, p]));
+
+      const absenceEntries: AbsenceEntry[] = absences
+        .filter(a => dayjs(a.from_date).isAfter(cutoff) || dayjs(a.until_date).isAfter(cutoff))
+        .map(a => {
+          const p = playerMap.get(a.person_id);
+          return {
+            player: p,
+            firstName: p?.firstName ?? '?',
+            lastName: p?.lastName ?? '',
+            fromDate: a.from_date,
+            untilDate: a.until_date,
+            reason: a.reason,
+            type: 'absence' as const,
+          };
+        });
+
+      const pauseEntries: AbsenceEntry[] = players
+        .filter(p => p.paused && !p.left)
+        .map(p => {
+          const lastPaused = (p.history ?? [])
+            .filter((h: PlayerHistoryEntry) => h.type === PlayerHistoryType.PAUSED)
+            .sort((a: PlayerHistoryEntry, b: PlayerHistoryEntry) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
+
+          return {
+            player: p,
+            firstName: p.firstName,
+            lastName: p.lastName,
+            fromDate: lastPaused?.date ?? p.paused_until ?? '',
+            untilDate: p.paused_until ?? '',
+            reason: lastPaused?.text ?? 'Pausiert',
+            type: 'pause' as const,
+          };
+        });
+
+      this.entries = [...absenceEntries, ...pauseEntries]
+        .sort((a, b) => new Date(b.fromDate).getTime() - new Date(a.fromDate).getTime());
+    } finally {
+      this.loading = false;
+    }
+  }
+
+  async openPerson(player: Player) {
+    if (!player) return;
+    const isAdmin = [Role.ADMIN, Role.RESPONSIBLE].includes(this.db.tenantUser()?.role);
+    const modal = await this.modalController.create({
+      component: PersonPage,
+      presentingElement: document.querySelector('ion-router-outlet'),
+      componentProps: { existingPlayer: { ...player }, readOnly: !isAdmin },
+      backdropDismiss: false,
+    });
+    await modal.present();
+  }
+
+  tileDay = tileDay;
+  tileMonth = tileMonth;
+
+  subtitle(e: AbsenceEntry): string {
+    const reason = e.reason && e.reason !== 'Pausiert' ? e.reason : '';
+    let range: string;
+    if (e.type === 'pause') {
+      range = e.untilDate ? `bis ${shortDate(e.untilDate)}` : 'pausiert';
+    } else {
+      range = e.untilDate && e.untilDate !== e.fromDate
+        ? `${shortDate(e.fromDate)} – ${shortDate(e.untilDate)}`
+        : shortDate(e.fromDate);
+    }
+    return reason ? `${range} · ${reason}` : range;
+  }
+}

@@ -1,0 +1,40 @@
+.live-badge {
+  margin-left: auto;
+}
+
+.field-index {
+  min-width: 22px;
+  margin-inline-start: 14px;
+  margin-inline-end: 12px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.conductor {
+  color: var(--ion-color-medium);
+  font-size: 0.9em;
+}
+
+.field-past {
+  opacity: 0.4;
+}
+
+.field-active {
+  --background: rgba(0, 131, 143, 0.08);
+
+  ion-note, ion-label {
+    font-weight: 600;
+    color: var(--ion-color-medium-shade);
+  }
+}
+
+// Programmblöcke: bold head, indented Unterpunkte.
+.field-group ion-label {
+  font-weight: 700;
+}
+
+.field-child .field-index {
+  margin-inline-start: 26px;
+  font-size: 0.85em;
+}

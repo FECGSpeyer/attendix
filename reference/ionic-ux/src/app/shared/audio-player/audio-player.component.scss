@@ -1,0 +1,130 @@
+.audio-player-bar {
+  position: fixed;
+  // Matches the floating iOS tab bar offset (max(10px, safe-area - 12px)) + 54px bar height + gap,
+  // so the player also clears the tab bar in mobile Safari where the safe area is 0.
+  bottom: calc(max(10px, var(--ion-safe-area-bottom, 0px) - 12px) + 68px);
+  left: 17px;
+  right: 17px;
+  z-index: 999;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px 6px;
+  border-radius: 29px;
+  background: rgba(var(--ion-background-color-rgb, 255, 255, 255), 0.75);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+}
+
+:host-context(.md) .audio-player-bar {
+  bottom: calc(var(--ion-safe-area-bottom, 0px) + 64px);
+  border-radius: 19px;
+  left: 8px;
+  right: 8px;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.skip-btn {
+  font-size: 22px;
+  color: var(--ion-color-primary);
+  cursor: pointer;
+  flex-shrink: 0;
+
+  &.disabled {
+    opacity: 0.35;
+    pointer-events: none;
+  }
+}
+
+.queue-position {
+  font-size: 10px;
+  color: var(--ion-color-medium);
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.play-btn {
+  font-size: 36px;
+  color: var(--ion-color-primary);
+  cursor: pointer;
+  flex-shrink: 0;
+  align-self: center;
+}
+
+.right-section {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.top-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 22px;
+}
+
+.bottom-row {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.close-icon {
+  font-size: 18px;
+  color: var(--ion-color-medium);
+  margin-left: auto;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.track-name {
+  flex: 1;
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--ion-text-color);
+}
+
+.time-label {
+  font-size: 10px;
+  color: var(--ion-color-medium);
+  flex-shrink: 0;
+  min-width: 30px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.seek-slider {
+  flex: 1;
+  min-width: 0;
+  --bar-height: 3px;
+  --bar-border-radius: 2px;
+  --knob-size: 10px;
+  --bar-background: rgba(var(--ion-color-medium-rgb, 146, 148, 156), 0.25);
+  --bar-background-active: var(--ion-color-primary);
+  --knob-background: var(--ion-color-primary);
+  --height: 16px;
+  --padding-start: 6px;
+  --padding-end: 6px;
+  padding: 0;
+  margin: 0 -2px;
+}
+
+ion-range.ios:not(.ios26-disabled)::part(knob) {
+    width: 20px;
+}

@@ -1,0 +1,64 @@
+import { Component, effect } from '@angular/core';
+import { ModalController } from '@ionic/angular/lazy';
+import { DbService } from '../../../services/db.service';
+import { Player } from '../../../utilities/interfaces';
+import { PersonPage } from '../../../people/person/person.page';
+import { Role } from '../../../utilities/constants';
+import { Utils } from '../../../utilities/Utils';
+
+
+@Component({
+  selector: 'app-critical-persons-card',
+  templateUrl: './critical-persons-card.component.html',
+  styleUrls: ['./critical-persons-card.component.scss'],
+  standalone: false,
+})
+export class CriticalPersonsCardComponent {
+  public loading = true;
+  public criticalPersons: Player[] = [];
+  private loadDone = false;
+
+  constructor(
+    public db: DbService,
+    private modalController: ModalController,
+  ) {
+    effect(() => {
+      if (this.db.tenant() && !this.loadDone) {
+        this.loadDone = true;
+        this.load();
+      }
+    });
+  }
+
+  async load(silent = false) {
+    this.loadDone = false;
+    if (!silent) this.loading = true;
+    const players = await this.db.getPlayers(true);
+    this.criticalPersons = players.filter(p => p.isCritical);
+    this.loading = false;
+  }
+
+  getReasonText(player: Player): string {
+    if (player.criticalReasonText) return player.criticalReasonText;
+    if (player.criticalReason != null) return Utils.getPlayerHistoryTypeText(player.criticalReason);
+    return '';
+  }
+
+  async openPerson(player: Player) {
+    const isAdmin = [Role.ADMIN, Role.RESPONSIBLE].includes(this.db.tenantUser()?.role);
+    const modal = await this.modalController.create({
+      component: PersonPage,
+      presentingElement: document.querySelector('ion-router-outlet'),
+      componentProps: { existingPlayer: { ...player }, readOnly: !isAdmin },
+      backdropDismiss: false,
+    });
+    await modal.present();
+    await modal.onWillDismiss();
+    // Problemfall kann im Modal gelöst oder die Person geändert worden sein
+    await this.load(true);
+  }
+
+  initials(player: Player): string {
+    return `${player.firstName?.[0] ?? ''}${player.lastName?.[0] ?? ''}`.toUpperCase();
+  }
+}

@@ -1,0 +1,67 @@
+<ion-header translucent="true">
+  <ion-toolbar color="light">
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()">
+        <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>{{ 'typeSettings.types' | transloco }}</ion-title>
+    <ion-buttons slot="end">
+      @if (!reorder) {
+        <ion-button (click)="reorder = true">
+          <ion-icon slot="icon-only" name="repeat-outline"></ion-icon>
+        </ion-button>
+      }
+      @if (reorder) {
+        <ion-button (click)="saveOrder()">
+          <ion-icon slot="icon-only" name="checkmark-outline"></ion-icon>
+        </ion-button>
+      }
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content color="light" [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar color="light">
+      <ion-title size="large">{{ 'typeSettings.types' | transloco }}</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-icon class="headerIcon" name="list-outline"></ion-icon>
+    </ion-card-header>
+    <ion-card-content>
+      {{ 'typeSettings.typesIntro' | transloco }}
+    </ion-card-content>
+  </ion-card>
+
+  <ion-list [inset]="true">
+    <ion-list-header><ion-label>{{ 'typeSettings.attendanceTypes' | transloco }}</ion-label></ion-list-header>
+    <ion-item-group>
+      @if (!reorder) {
+        @for (type of db.attendanceTypes(); track type) {
+          <ion-item [routerLink]="['/tabs/settings/general/types', type.id]">
+            <ion-label>{{ type.name }}</ion-label>
+          </ion-item>
+        }
+      } @else {
+        <ion-reorder-group disabled="false" (ionItemReorder)="onReorderAttendanceTypes($event)">
+          @for (type of db.attendanceTypes(); track type) {
+            <ion-item>
+              <ion-label>{{ type.name }}</ion-label>
+              <ion-reorder slot="end"></ion-reorder>
+            </ion-item>
+          }
+        </ion-reorder-group>
+      }
+    </ion-item-group>
+  </ion-list>
+
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="openTypeModal()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>

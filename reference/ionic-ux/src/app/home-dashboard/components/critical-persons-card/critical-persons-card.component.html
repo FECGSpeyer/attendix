@@ -1,0 +1,35 @@
+<ion-card class="dashboard-card">
+  <div class="card-header-strip strip-critical">
+    <ion-icon name="warning-outline"></ion-icon>
+    <div>
+      <div class="card-title">{{ 'homeDashboard.problemCases' | transloco }}</div>
+      <div class="card-subtitle">{{ 'homeDashboard.currentProblemCases' | transloco }}</div>
+    </div>
+  </div>
+  <ion-card-content class="card-body">
+    @if (loading) {
+      <div class="loading-center">
+        <ion-spinner name="crescent"></ion-spinner>
+      </div>
+    } @else if (criticalPersons.length === 0) {
+      <div class="empty-row">
+        <ion-icon name="checkmark-circle-outline" color="success"></ion-icon>
+        <span>{{ 'homeDashboard.noProblemCases' | transloco }}</span>
+      </div>
+    } @else {
+      <ion-list lines="full" class="card-list">
+        @for (person of criticalPersons; track person.id) {
+          <ion-item button [detail]="false" class="dash-row" (click)="openPerson(person)">
+            <div class="icon-tile tile-red" slot="start">
+              <span class="tile-main tile-small">{{ initials(person) }}</span>
+            </div>
+            <ion-label>
+              <h3>{{ person.firstName }} {{ person.lastName }}</h3>
+              <p>{{ getReasonText(person) || 'Problemfall' }}</p>
+            </ion-label>
+          </ion-item>
+        }
+      </ion-list>
+    }
+  </ion-card-content>
+</ion-card>

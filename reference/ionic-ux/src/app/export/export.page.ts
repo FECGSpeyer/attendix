@@ -1,0 +1,500 @@
+import { dateFmt } from '../i18n/languages';
+import { Component, OnInit } from '@angular/core';
+import { AlertController, IonItemSliding, ItemReorderEventDetail, ModalController } from '@ionic/angular/lazy';
+import { Capacitor } from '@capacitor/core';
+import dayjs from 'dayjs';
+// jsPDF and xlsx are lazy-loaded for better initial bundle size
+import { DbService } from '../services/db.service';
+import { TrackingEvent, TrackingService } from '../services/tracking/tracking.service';
+import { Attendance, ExtraField, Player } from '../utilities/interfaces';
+import { FieldType } from '../utilities/constants';
+import { Utils } from '../utilities/Utils';
+import { translate } from '@jsverse/transloco';
+
+const PLAYER_STANDARD_FIELDS = ['Vorname', 'Nachname', 'Geburtsdatum', 'Gruppe', 'E-Mail', 'Telefon', 'Eingetreten', 'Notizen', 'Anwesenheit %'];
+const ATT_STANDARD_FIELDS = ['Vorname', 'Nachname', 'Gruppe', 'E-Mail', 'Telefon'];
+const DEFAULT_PLAYER_FIELDS = ['Vorname', 'Nachname', 'Geburtsdatum', 'Gruppe'];
+const DEFAULT_ATT_FIELDS = ['Vorname', 'Nachname', 'Gruppe'];
+// The standard fields are identified by their German name; only the label is translated.
+const FIELD_LABEL_KEYS: Record<string, string> = {
+  'Vorname': 'people.firstName',
+  'Nachname': 'people.lastName',
+  'Geburtsdatum': 'people.birthday',
+  'Gruppe': 'people.group',
+  'E-Mail': 'people.email',
+  'Telefon': 'people.phone',
+  'Eingetreten': 'people.joined',
+  'Notizen': 'people.notes',
+  'Anwesenheit %': 'export.attendancePercent',
+};
+
+@Component({
+    selector: 'app-export',
+    templateUrl: './export.page.html',
+    styleUrls: ['./export.page.scss'],
+    standalone: false
+})
+
+export class ExportPage implements OnInit {
+  public type = 'pdf';
+  public players: Player[] = [];
+  private allPlayers: Player[] = [];
+  public content = 'player';
+  public attendance: Attendance[] = [];
+  public selectedFields: string[] = DEFAULT_PLAYER_FIELDS;
+  public fields: string[] = [];
+  public additionalFields: ExtraField[] = [];
+  public sortField = 'gruppe';
+  public sortDirection: 'asc' | 'desc' = 'asc';
+  public sortableFields: { value: string; label: string }[] = [];
+
+  constructor(
+    private modalController: ModalController,
+    private db: DbService,
+    private alertController: AlertController,
+    private tracking: TrackingService,
+  ) { }
+
+  async ngOnInit() {
+    this.attendance = (await this.db.getAttendance(false, true)).filter((att: Attendance) => dayjs(att.date).isBefore(dayjs().startOf('day')));
+    const players = await this.db.getPlayers();
+    await this.db.hydrateSharedPersonFieldValues(players);
+    this.additionalFields = this.db.getPersonExtraFields();
+    this.allPlayers = Utils.getModifiedPlayersForList(
+      players,
+      this.db.groups(),
+      await this.db.getAttendance(),
+      this.db.attendanceTypes(),
+      this.db.getMainGroup()?.id,
+      this.additionalFields,
+      this.db.churches()
+    );
+    this.updateFields();
+    this.updateSortableFields();
+    this.applySort();
+  }
+
+  updateFields() {
+    const standardFields = this.content === 'player' ? PLAYER_STANDARD_FIELDS : ATT_STANDARD_FIELDS;
+    const extraFieldNames = this.additionalFields.map(f => f.name);
+    this.fields = [...standardFields, ...extraFieldNames];
+  }
+
+  updateSortableFields() {
+    const standard = this.content === 'player'
+      ? [
+          { value: 'nachname', label: this.fieldLabel('Nachname') },
+          { value: 'vorname', label: this.fieldLabel('Vorname') },
+          { value: 'gruppe', label: this.fieldLabel('Gruppe') },
+          { value: 'geburtsdatum', label: this.fieldLabel('Geburtsdatum') },
+          { value: 'eingetreten', label: this.fieldLabel('Eingetreten') },
+          { value: 'anwesenheit', label: this.fieldLabel('Anwesenheit %') },
+        ]
+      : [
+          { value: 'nachname', label: this.fieldLabel('Nachname') },
+          { value: 'vorname', label: this.fieldLabel('Vorname') },
+          { value: 'gruppe', label: this.fieldLabel('Gruppe') },
+        ];
+    const extra = this.additionalFields.map(f => ({ value: `extra_${f.id}`, label: f.name }));
+    this.sortableFields = [...standard, ...extra];
+  }
+
+  fieldLabel(field: string): string {
+    const key = FIELD_LABEL_KEYS[field];
+    return key ? translate(key) : field;
+  }
+
+  applySort() {
+    const dir = this.sortDirection === 'asc' ? 1 : -1;
+    this.players = [...this.allPlayers].sort((a, b) => {
+      let aVal: any;
+      let bVal: any;
+
+      if (this.sortField.startsWith('extra_')) {
+        const fieldId = this.sortField.slice(6);
+        aVal = a.additional_fields?.[fieldId] ?? '';
+        bVal = b.additional_fields?.[fieldId] ?? '';
+      } else {
+        switch (this.sortField) {
+          case 'nachname':   aVal = a.lastName  || ''; bVal = b.lastName  || ''; break;
+          case 'vorname':    aVal = a.firstName || ''; bVal = b.firstName || ''; break;
+          case 'gruppe':     aVal = a.groupName || ''; bVal = b.groupName || ''; break;
+          case 'geburtsdatum': aVal = a.birthday || ''; bVal = b.birthday || ''; break;
+          case 'eingetreten':  aVal = a.joined   || ''; bVal = b.joined   || ''; break;
+          case 'anwesenheit':  aVal = a.percentage ?? 0; bVal = b.percentage ?? 0; break;
+          default:           aVal = ''; bVal = ''; break;
+        }
+      }
+
+      if (typeof aVal === 'number' && typeof bVal === 'number') {
+        return (aVal - bVal) * dir;
+      }
+      return String(aVal).localeCompare(String(bVal)) * dir;
+    });
+  }
+
+  dismiss() {
+    this.modalController.dismiss();
+  }
+
+  onSegmentChange() {
+    this.updateFields();
+    this.updateSortableFields();
+    this.sortField = 'gruppe';
+    this.sortDirection = 'asc';
+    this.selectedFields = this.content === 'player' ? [...DEFAULT_PLAYER_FIELDS] : [...DEFAULT_ATT_FIELDS];
+    this.applySort();
+  }
+
+  handleReorder(ev: CustomEvent<ItemReorderEventDetail>) {
+    ev.detail.complete(this.selectedFields);
+  }
+
+  removeField(index: number, slider: IonItemSliding) {
+    this.selectedFields.splice(index, 1);
+    slider.close();
+  }
+
+  async addExtraField() {
+    const alert = await this.alertController.create({
+      header: translate('export.addField'),
+      inputs: [{
+        type: 'text',
+        name: 'field'
+      }],
+      buttons: [{
+        text: translate('common.cancel')
+      }, {
+        text: translate('attendance.add'),
+        handler: (evt: any) => {
+          this.selectedFields.push(evt.field);
+        }
+      }]
+    });
+
+    await alert.present();
+  }
+
+  export() {
+    const shortName: string = this.db.tenant().shortName;
+    if (this.content === 'player') {
+      this.type === 'pdf' ? this.exportPlayerPDF(shortName) : this.exportPlayerExcel(shortName);
+    } else {
+      this.exportType(shortName);
+    }
+  }
+
+  async exportPlayerExcel(shortName: string) {
+    this.tracking.track(TrackingEvent.ReportExported, { format: 'xlsx', kind: 'player' });
+    const { utils } = await import('xlsx');
+    let row = 1;
+
+    const date: string = dayjs().format(dateFmt());
+    const data = [['', ...this.selectedFields.map(f => this.fieldLabel(f))]];
+
+    for (const user of this.players) {
+      data.push([row.toString(), ...this.getFieldValues(user)]);
+      row++;
+    }
+
+    const ws = utils.aoa_to_sheet(data);
+    const wb = utils.book_new();
+    utils.book_append_sheet(wb, ws, translate('export.attendance'));
+
+    await Utils.saveWorkbook(wb, `${translate('export.playerListFile', { name: shortName, date })}.xlsx`);
+  }
+
+  async exportPlayerPDF(shortName: string) {
+    this.tracking.track(TrackingEvent.ReportExported, { format: 'pdf', kind: 'player' });
+    const { jsPDF } = await import('jspdf');
+    await import('jspdf-autotable');
+    let row = 1;
+
+    const date: string = dayjs().format(dateFmt());
+    const data = [];
+
+    for (const user of this.players) {
+      data.push([row.toString(), ...this.getFieldValues(user)]);
+      row++;
+    }
+
+    const branding = await Utils.buildTenantBranding(this.db.getBrandingSource());
+    const headerOpts = {
+      title: translate('export.playerListTitle', { name: shortName }),
+      subtitle: translate('planning.asOf', { date }),
+    };
+
+    const buildTable = (doc: any, styles: any, headStyles: any) => {
+      const contentTop = Utils.addBrandingHeader(doc, branding, headerOpts);
+      (doc as any).autoTable({
+        head: [['', ...this.selectedFields.map(f => this.fieldLabel(f))]],
+        body: data,
+        margin: { top: contentTop, bottom: 14 },
+        theme: 'plain',
+        styles,
+        headStyles,
+        bodyStyles: { fillColor: false },
+        alternateRowStyles: { fillColor: [245, 245, 245] },
+        didDrawPage: () => { Utils.addBrandingHeader(doc, branding, headerOpts); },
+      });
+    };
+
+    const defaultStyles = { font: Utils.EXPORT_FONT, fontSize: 11, cellPadding: 3.5, textColor: [30, 30, 30], lineColor: [180, 180, 180], lineWidth: 0 };
+    const defaultHeadStyles = { fillColor: false, textColor: [50, 50, 50], fontStyle: 'bold', lineWidth: { bottom: 0.5 }, lineColor: [100, 100, 100] };
+
+    // Dry-run to detect overflow; adjust cell padding or font size if needed.
+    const probe = new jsPDF({ compress: true });
+    await Utils.registerExportFont(probe);
+    buildTable(probe, defaultStyles, defaultHeadStyles);
+    const pages = probe.getNumberOfPages();
+
+    let styles = defaultStyles as any;
+    let headStyles = defaultHeadStyles as any;
+    if (pages > 1) {
+      styles = { ...defaultStyles, cellPadding: 2 };
+
+      // Second probe with reduced padding.
+      const probe2 = new jsPDF({ compress: true });
+      await Utils.registerExportFont(probe2);
+      buildTable(probe2, styles, headStyles);
+      if (probe2.getNumberOfPages() > 1) {
+        styles = { ...styles, fontSize: 9 };
+
+        // Third probe: smaller font.
+        const probe3 = new jsPDF({ compress: true });
+        await Utils.registerExportFont(probe3);
+        buildTable(probe3, styles, headStyles);
+        if (probe3.getNumberOfPages() > 1) {
+          styles = { ...styles, fontSize: 8, cellPadding: 1.5 };
+        }
+      }
+    }
+
+    const doc = new jsPDF({ compress: true });
+    await Utils.registerExportFont(doc);
+    buildTable(doc, styles, headStyles);
+
+    const fileName = `${translate('export.playerListFile', { name: shortName, date })}.pdf`;
+    await Utils.downloadFileNative(doc.output('blob'), fileName);
+  }
+
+  async exportType(shortName: string) {
+    let row = 1;
+
+    const attendance: Attendance[] = [...this.attendance].filter((att: Attendance) => Boolean(Object.keys(att.persons).length));
+    if (attendance.length > 8 && this.type === 'pdf') {
+      attendance.length = 8;
+    }
+    const attDates: string[] = [];
+    const attPerc: string[] = [];
+    const data = [];
+
+    for (const att of attendance) {
+      attDates.push(dayjs(att.date).format(dateFmt('short')));
+      attPerc.push(String(att.percentage ? `${att.percentage}%` : ''));
+    }
+
+    for (const player of this.players) {
+      const attInfo: string[] = [];
+
+      for (const att of attendance) {
+        if (att.persons.find((p) => p.person_id === player.id)) {
+          attInfo.push(Utils.getAttText(att.persons.find((p) => p.person_id === player.id)));
+        } else {
+          attInfo.push('');
+        }
+      }
+
+      data.push([row.toString(), ...this.getFieldValues(player), ...attInfo.reverse()]);
+      row++;
+    }
+
+    const header: string[] = ['', ...this.selectedFields.map(f => this.fieldLabel(f)), ...attDates.reverse()];
+
+    if (this.type === 'excel') {
+      data.unshift(header);
+      await this.exportAttExcel(data, shortName);
+    } else {
+      await this.exportAttPDF(data, header, shortName);
+    }
+  }
+
+  async exportAttExcel(data: any[], shortName: string) {
+    this.tracking.track(TrackingEvent.ReportExported, { format: 'xlsx', kind: 'attendance' });
+    const { utils } = await import('xlsx');
+    const date: string = dayjs().format(dateFmt());
+
+    /* generate worksheet */
+    const ws = utils.aoa_to_sheet(data);
+
+    /* generate workbook and add the worksheet */
+    const wb = utils.book_new();
+    utils.book_append_sheet(wb, ws, translate('export.attendance'));
+
+    /* save to file */
+    await Utils.saveWorkbook(wb, `${translate('export.attendanceFileAsOf', { name: shortName, date })}.xlsx`);
+  }
+
+  async exportAttPDF(data: any[], header: string[], shortName: string) {
+    this.tracking.track(TrackingEvent.ReportExported, { format: 'pdf', kind: 'attendance' });
+    const { jsPDF } = await import('jspdf');
+    await import('jspdf-autotable');
+    const date: string = dayjs().format(dateFmt());
+
+    const branding = await Utils.buildTenantBranding(this.db.getBrandingSource());
+    const headerOpts = {
+      title: translate('export.attendanceTitle', { name: shortName }),
+      subtitle: translate('planning.asOf', { date }),
+    };
+
+    const didParseCell = (cellData: any) => {
+      if (cellData.cell.raw === 'A') {
+        cellData.cell.styles.fillColor = [178, 34, 34];
+        cellData.cell.styles.textColor = [255, 255, 255];
+        cellData.cell.styles.halign = 'center';
+      } else if (cellData.cell.raw === 'X') {
+        cellData.cell.styles.fillColor = [50, 205, 50];
+        cellData.cell.styles.textColor = [255, 255, 255];
+        cellData.cell.styles.halign = 'center';
+      } else if (cellData.cell.raw === 'E') {
+        cellData.cell.styles.fillColor = [255, 196, 9];
+        cellData.cell.styles.textColor = [255, 255, 255];
+        cellData.cell.styles.halign = 'center';
+      } else if (cellData.cell.raw === 'L') {
+        cellData.cell.styles.fillColor = [0, 191, 255];
+        cellData.cell.styles.textColor = [255, 255, 255];
+        cellData.cell.styles.halign = 'center';
+      } else if (cellData.cell.raw === 'N') {
+        cellData.cell.styles.fillColor = [220, 220, 220];
+        cellData.cell.styles.textColor = [255, 255, 255];
+        cellData.cell.styles.halign = 'center';
+      } else if (cellData.cell.raw?.toString().includes('%')) {
+        cellData.cell.styles.halign = 'center';
+      }
+    };
+
+    const buildTable = (doc: any, styles: any, headStyles: any, bodyStyles: any) => {
+      const contentTop = Utils.addBrandingHeader(doc, branding, headerOpts);
+      (doc as any).autoTable({
+        head: [header],
+        body: data,
+        margin: { top: contentTop, bottom: 14 },
+        theme: 'plain',
+        styles,
+        headStyles,
+        bodyStyles,
+        alternateRowStyles: { fillColor: [245, 245, 245] },
+        didDrawPage: () => { Utils.addBrandingHeader(doc, branding, headerOpts); },
+        didParseCell,
+      });
+    };
+
+    const defaultStyles = { font: Utils.EXPORT_FONT, cellPadding: 2, textColor: [30, 30, 30], lineColor: [180, 180, 180], lineWidth: 0 };
+    const defaultHeadStyles = { fontSize: 8, fillColor: false, textColor: [50, 50, 50], fontStyle: 'bold', lineWidth: { bottom: 0.5 }, lineColor: [100, 100, 100] };
+    const defaultBodyStyles = { fontSize: 8, fillColor: false };
+
+    // Dry-run to detect overflow; adjust cell padding or font size if needed.
+    const probe = new jsPDF({ compress: true });
+    await Utils.registerExportFont(probe);
+    buildTable(probe, defaultStyles, defaultHeadStyles, defaultBodyStyles);
+    const pages = probe.getNumberOfPages();
+
+    let styles = defaultStyles as any;
+    let headStyles = defaultHeadStyles as any;
+    let bodyStyles = defaultBodyStyles as any;
+    if (pages > 1) {
+      styles = { ...defaultStyles, cellPadding: { top: 1.5, bottom: 1.5, left: 2, right: 2 } };
+
+      // Second probe with reduced padding.
+      const probe2 = new jsPDF({ compress: true });
+      await Utils.registerExportFont(probe2);
+      buildTable(probe2, styles, headStyles, bodyStyles);
+      if (probe2.getNumberOfPages() > 1) {
+        headStyles = { ...headStyles, fontSize: 7 };
+        bodyStyles = { ...bodyStyles, fontSize: 7 };
+
+        // Third probe: minimal padding + smaller font.
+        const probe3 = new jsPDF({ compress: true });
+        await Utils.registerExportFont(probe3);
+        buildTable(probe3, styles, headStyles, bodyStyles);
+        if (probe3.getNumberOfPages() > 1) {
+          styles = { ...styles, cellPadding: { top: 0.5, bottom: 0.5, left: 1, right: 1 }, fontSize: 6 };
+          headStyles = { ...headStyles, fontSize: 6 };
+          bodyStyles = { ...bodyStyles, fontSize: 6 };
+        }
+      }
+    }
+
+    const doc = new jsPDF({ compress: true });
+    await Utils.registerExportFont(doc);
+    buildTable(doc, styles, headStyles, bodyStyles);
+
+    const attFileName = `${translate('export.attendanceFileAsOf', { name: shortName, date })}.pdf`;
+    await Utils.downloadFileNative(doc.output('blob'), attFileName);
+  }
+
+  getFieldValues(player: Player) {
+    const values: string[] = [];
+
+    for (const field of this.selectedFields) {
+      const extraField = this.additionalFields.find(f => f.name === field);
+      if (extraField) {
+        values.push(this.formatAdditionalFieldValue(player, extraField));
+        continue;
+      }
+
+      switch (field) {
+        case 'Vorname':
+          values.push(player.firstName);
+          break;
+        case 'Nachname':
+          values.push(player.lastName);
+          break;
+        case 'Geburtsdatum':
+          values.push(player.birthday ? dayjs(player.birthday).format(dateFmt()) : '');
+          break;
+        case 'Gruppe':
+          values.push(player.groupName || '');
+          break;
+        case 'E-Mail':
+          values.push(player.email || '');
+          break;
+        case 'Telefon':
+          values.push(player.phone || '');
+          break;
+        case 'Eingetreten':
+          values.push(player.joined ? dayjs(player.joined).format(dateFmt()) : '');
+          break;
+        case 'Notizen':
+          values.push(player.notes || '');
+          break;
+        case 'Anwesenheit %':
+          values.push(player.percentage != null ? `${player.percentage}%` : '');
+          break;
+        default:
+          values.push('');
+          break;
+      }
+    }
+
+    return values;
+  }
+
+  private formatAdditionalFieldValue(player: Player, field: ExtraField): string {
+    const value = player.additional_fields?.[field.id];
+    if (value === undefined || value === null) {return '';}
+
+    switch (field.type) {
+      case FieldType.BOOLEAN:
+        return value ? translate('common.yes') : translate('common.no');
+      case FieldType.DATE:
+        return value ? dayjs(value).format(dateFmt()) : '';
+      case FieldType.BFECG_CHURCH:
+        const church = this.db.churches()?.find(c => c.id === value);
+        return church?.name || String(value);
+      default:
+        return String(value);
+    }
+  }
+
+}

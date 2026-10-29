@@ -1,0 +1,769 @@
+<ion-header translucent="true">
+  <ion-toolbar>
+    @if ((db.tenants()?.length ?? 0) > 1) {
+      <ion-buttons slot="start">
+        <ion-button id="tenant-switcher-signout">
+          {{ db.tenant()?.longName }}
+          <ion-icon slot="end" name="chevron-down-outline"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+      <ion-popover trigger="tenant-switcher-signout" triggerAction="click" dismissOnSelect="true" style="--width: 220px">
+        <ng-template>
+          <ion-list lines="none">
+            @for (tenant of db.tenants(); track tenant.id) {
+              <ion-item button detail="false" (click)="onTenantChange(tenant.id)">
+                <ion-label>{{ tenant.longName }}</ion-label>
+                @if (tenant.id === db.tenant()?.id) {
+                  <ion-badge slot="end" color="primary">{{ 'signout.current' | transloco }}</ion-badge>
+                }
+              </ion-item>
+            }
+          </ion-list>
+        </ng-template>
+      </ion-popover>
+    } @else {
+      <ion-title>{{ db.tenant()?.shortName }}</ion-title>
+    }
+    <ion-buttons slot="end">
+      @if (canSelfPause && player) {
+        @if (!player.paused) {
+          <ion-button (click)="openPauseModal()">
+            <ion-icon slot="icon-only" name="pause-circle-outline"></ion-icon>
+          </ion-button>
+        }
+        @if (player.paused) {
+          <ion-button (click)="confirmUnpause()">
+            <ion-icon slot="icon-only" name="play-circle-outline"></ion-icon>
+          </ion-button>
+        }
+      }
+      <ion-button id="legend-button">
+        <ion-icon slot="icon-only" name="information-outline"></ion-icon>
+      </ion-button>
+      <ion-modal handle-behavior="none" [breakpoints]="[0, 0.5, 1]" [initialBreakpoint]="0.5" trigger="legend-button">
+        <ng-template>
+          <ion-content color="light">
+            <ion-list [inset]="true">
+              <ion-list-header>
+                <ion-label>{{ 'signout.legend' | transloco }}</ion-label>
+              </ion-list-header>
+              <ion-item-group>
+                <ion-item lines="none">
+                  <span slot="start" class="ev-pill ion-color-success">{{ 'signout.legendAccepted' | transloco }}</span>
+                  <ion-label>{{ 'signout.legendAcceptedPresent' | transloco }}</ion-label>
+                </ion-item>
+                <ion-item lines="none">
+                  <span slot="start" class="ev-pill ion-color-warning">{{ 'common.status.excused' | transloco }}</span>
+                  <ion-label>{{ 'common.status.excused' | transloco }}</ion-label>
+                </ion-item>
+                <ion-item lines="none">
+                  <span slot="start" class="ev-pill ion-color-danger">{{ 'common.status.absent' | transloco }}</span>
+                  <ion-label>{{ 'common.status.absent' | transloco }}</ion-label>
+                </ion-item>
+                <ion-item lines="none">
+                  <span slot="start" class="ev-pill ion-color-tertiary">{{ 'signout.legendLate' | transloco }}</span>
+                  <ion-label>{{ 'common.status.late' | transloco }}</ion-label>
+                </ion-item>
+                <ion-item lines="none">
+                  <span slot="start" class="ev-pill ion-color-rosa">{{ 'signout.legendLateReported' | transloco }}</span>
+                  <ion-label>{{ 'signout.legendLateReportedExcused' | transloco }}</ion-label>
+                </ion-item>
+                <ion-item lines="none">
+                  <span slot="start" class="ev-pill ion-color-medium">{{ 'common.status.neutral' | transloco }}</span>
+                  <ion-label>{{ 'common.status.neutral' | transloco }}</ion-label>
+                </ion-item>
+              </ion-item-group>
+            </ion-list>
+          </ion-content>
+        </ng-template>
+      </ion-modal>
+      <app-notification-bell></app-notification-bell>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+@if (isApplicant) {
+<ion-content fullscreen="true">
+  <ion-card>
+    <ion-card-content>
+      @if (player) {
+      <h1 class="title">{{ 'signout.greeting' | transloco: { name: player?.firstName } }}</h1>
+      }
+      {{ 'signout.registrationSubmitted' | transloco }}
+    </ion-card-content>
+  </ion-card>
+</ion-content>
+} @else {
+<ion-content fullscreen="true">
+  @if (player) {
+  @if ((db.tenants()?.length ?? 0) <= 1) {
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">{{ db.tenant()?.shortName }}</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  }
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <div class="greet">
+    <ion-avatar class="greet__avatar">
+      <img [src]="player.img || 'assets/icon/avatar-placeholder.svg'"
+           (error)="$event.target.src='assets/icon/avatar-placeholder.svg'" />
+    </ion-avatar>
+    <div class="greet__text">
+      <h1>{{ 'signout.greeting' | transloco: { name: player.firstName } }}</h1>
+      <p>
+        @if (player.paused) {
+          <span class="greet__paused"><ion-icon name="pause-circle-outline"></ion-icon> {{ 'signout.paused' | transloco }}</span>
+        }
+        @if (useDutyView) {
+          <span>{{ 'signout.yourDutyRoster' | transloco }}</span>
+        } @else if (perc) {
+          <span class="greet__perc" [ngClass]="'ion-color-' + percColor(perc)">{{ 'signout.attendancePercent' | transloco: { perc: perc } }}</span>
+        }
+        @if (lateCount) {
+          <span>{{ 'signout.lateCount' | transloco: { count: lateCount } }}</span>
+        }
+      </p>
+    </div>
+  </div>
+
+  @if (useDutyView) {
+  <div class="duty-stats">
+    <button class="duty-stat" (click)="scrollToSection('duty-mine')">
+      <b>{{ dutiesThisMonth }}</b><span>{{ 'signout.dutiesThisMonth' | transloco: { count: dutiesThisMonth } }}</span>
+    </button>
+    <button class="duty-stat" [class.duty-stat--warn]="dutyRequests.length > 0" (click)="scrollToSection('duty-requests')">
+      <b>{{ dutyRequests.length }}</b><span>{{ 'signout.toConfirm' | transloco }}</span>
+    </button>
+    <button class="duty-stat" (click)="scrollToSection('duty-open')">
+      <b>{{ openDuties.length }}</b><span>{{ 'signout.openInTeam' | transloco }}</span>
+    </button>
+  </div>
+  } @else if (upcomingSongs.length > 0 || canPlannedAbsence || inDutyCircle) {
+  <div class="greet-tiles">
+    @if (upcomingSongs.length > 0) {
+      <button class="greet-tile" (click)="songsModalOpen = true">
+        <span class="greet-tile__icon"><ion-icon name="musical-notes-outline"></ion-icon></span>
+        <span>
+          <span class="greet-tile__title">{{ 'signout.currentSongs' | transloco }}</span>
+          <span class="greet-tile__sub">{{ upcomingSongs.length === 1 ? 'Nächster Termin' : upcomingSongs.length + ' Termine' }}</span>
+        </span>
+      </button>
+    }
+    @if (canPlannedAbsence) {
+      <button class="greet-tile" (click)="isAbsenceModalOpen = true">
+        <span class="greet-tile__icon"><ion-icon name="calendar-outline"></ion-icon></span>
+        <span>
+          <span class="greet-tile__title">{{ 'signout.absenceTileTitle' | transloco }}</span>
+          <span class="greet-tile__sub">{{ 'signout.absenceTileSub' | transloco }}</span>
+        </span>
+      </button>
+    }
+    @if (inDutyCircle) {
+      <button class="greet-tile" (click)="isOpenDutiesModalOpen = true">
+        <span class="greet-tile__icon"><ion-icon name="headset-outline"></ion-icon></span>
+        <span>
+          <span class="greet-tile__title">{{ 'signout.openDuties' | transloco }}</span>
+          <span class="greet-tile__sub">{{ openDuties.length === 0 ? 'alles besetzt' : openDuties.length === 1 ? '1 offen' : openDuties.length + ' offen' }}</span>
+        </span>
+      </button>
+    }
+  </div>
+  }
+
+  @if (dutyRequests.length) {
+    <div class="ev-section" id="duty-requests">
+      <h2>{{ 'signout.pleaseConfirm' | transloco }}</h2>
+      <span class="ev-section__count">{{ dutyRequests.length }}</span>
+    </div>
+    @for (att of dutyRequests; track att.attendance_id ?? att.id) {
+      <div class="ev-today ev-today--static duty-request">
+        <div class="ev-today__head">
+          <div class="ev-tile">
+            <span class="ev-tile__wd">{{ weekday(att.date) }}</span>
+            <span class="ev-tile__day">{{ day(att.date) }}</span>
+          </div>
+          <div>
+            <div class="ev-today__title" lang="de">{{ getEventTitle(att) }}</div>
+            <div class="ev-today__meta">{{ getEventMeta(att, true, false) }}</div>
+            <span class="ev-pill ev-today__status ion-color-warning">{{ 'signout.youAreAssigned' | transloco }}</span>
+          </div>
+        </div>
+        <div class="ev-today__actions">
+          <ion-button color="success" (click)="confirmDuty(att)">{{ 'common.confirm' | transloco }}</ion-button>
+          <ion-button fill="outline" color="primary" (click)="declineDuty(att)">{{ 'signout.cannot' | transloco }}</ion-button>
+        </div>
+      </div>
+    }
+  }
+
+  <ion-modal [isOpen]="isOpenDutiesModalOpen" (ionModalDidDismiss)="isOpenDutiesModalOpen = false"
+    handle-behavior="none" [initialBreakpoint]="0.75" [breakpoints]="[0, 0.75, 1]">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>{{ 'signout.openDuties' | transloco }}</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="isOpenDutiesModalOpen = false">{{ 'common.close' | transloco }}</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content>
+        @if (openDuties.length) {
+          <ion-list [inset]="true">
+            @for (t of openDuties; track t.attendance.id) {
+              <ion-item>
+                <ion-label>
+                  <h2>{{ dutyTitle(t) }}</h2>
+                  <p>{{ dutyMeta(t) }}</p>
+                </ion-label>
+                <ion-button slot="end" (click)="takeDuty(t)">{{ 'signout.illTakeIt' | transloco }}</ion-button>
+              </ion-item>
+            }
+          </ion-list>
+        } @else {
+          <p class="ion-padding ion-text-center">{{ 'signout.allDutiesFilled' | transloco }}</p>
+        }
+        <ion-list [inset]="true">
+          <ion-item button detail="true" (click)="openUnavailability()">
+            <ion-icon slot="start" name="calendar-clear-outline"></ion-icon>
+            <ion-label>
+              <h2>{{ 'signout.regularlyUnavailable' | transloco }}</h2>
+              <p>{{ 'signout.regularlyUnavailableHint' | transloco }}</p>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+  <ion-modal class="songsModal" [isOpen]="songsModalOpen" (ionModalDidDismiss)="songsModalOpen = false" #songsModal
+    [initialBreakpoint]="upcomingSongs.length > 1 ? 0.8 : 0.6"
+    handle-behavior="none"
+    [breakpoints]="upcomingSongs.length > 1 ? [0, 0.8, 1] : [0, 0.6, 1]">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-buttons slot="start">
+            <ion-button (click)="songsModalOpen = false">
+              <ion-icon name="close"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+          <ion-title>{{ 'signout.currentSongs' | transloco }}</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="printAllCurrentFiles()">
+              <ion-icon name="print-outline"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content color="light">
+        @for (group of upcomingSongs; track group.date) {
+        <ion-list [inset]="true">
+          <ion-list-header>
+            <ion-label>
+              <h2>{{ group.date }}</h2>
+            </ion-label>
+          </ion-list-header>
+          <ion-item-group>
+            @for (his of group.history; track trackByHistoryId($index, his)) {
+            <ion-item [color]="hasSongNotesForPlayer(his.song) ? '' : 'danger'" button
+              (click)="openSongOptions(his.song)">
+              @if (his.song) {
+              <ion-label>
+                <h2>{{ his.song.number }}. {{ his.song.name }}</h2>
+                <h3>{{ 'signout.conductor' | transloco: { name: his.conductorName } }}</h3>
+              </ion-label>
+              }
+              @if (his.song.link) {
+              <ion-button fill="clear" size="small" (click)="openSongLink(his.song.link)">
+                <ion-icon name="download-outline"></ion-icon>
+              </ion-button>
+              }
+            </ion-item>
+            }
+          </ion-item-group>
+        </ion-list>
+        }
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+  @if (db.teamOrgEnabled()) {
+  <app-my-tasks></app-my-tasks>
+  }
+
+  @if (canPlannedAbsence && playerAbsences.length) {
+  <ion-list [inset]="true">
+    <ion-list-header>
+      <ion-label>{{ 'signout.plannedAbsences' | transloco }}</ion-label>
+    </ion-list-header>
+    @for (absence of playerAbsences; track absence.id) {
+    <ion-item>
+      <ion-label>
+        <h2>{{ absence.from_date | date: ('common.ngDate' | transloco) }} – {{ absence.until_date | date: ('common.ngDate' | transloco) }}</h2>
+        <p>{{ absence.reason }}</p>
+      </ion-label>
+      <ion-button fill="clear" slot="end" color="danger" (click)="deleteAbsence(absence)">
+        <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+      </ion-button>
+    </ion-item>
+    }
+  </ion-list>
+  }
+
+  <app-excuse-reason-picker #excusePicker [absenceReasons]="absenceReasons" [lateReasons]="lateReasons"
+    (confirm)="onExcuseConfirm($event)"></app-excuse-reason-picker>
+
+  <ion-modal #descriptionModal [initialBreakpoint]="0.6" handle-behavior="none" [breakpoints]="[0, 0.6, 1]">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>{{ 'signout.description' | transloco }}</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="descriptionModal.dismiss()">
+              <ion-icon slot="icon-only" name="close"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <quill-view [content]="selectedDescription"></quill-view>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+  <ng-template #eventChips let-att>
+    @if (showDeadlineInfo(att) || att.notes || att.attendance?.description || att.attendance?.attachment_url || hasFilesFolder(att) || hasPlan(att) || att.attendance?.place) {
+      <div class="ev-chips">
+        @if (showDeadlineInfo(att)) {
+          <span class="ev-chip ev-chip--danger">{{ getDeadlineText(att) }}</span>
+        }
+        @if (att.notes) {
+          <span class="ev-chip">{{ 'signout.noteChip' | transloco: { note: att.notes } }}</span>
+        }
+        @if (hasPlan(att)) {
+          <button class="ev-chip" (click)="$event.stopPropagation(); openPlanViewer(att)"><ion-icon name="document-text-outline"></ion-icon> {{ 'signout.runSheet' | transloco }}</button>
+        }
+        @if (att.attendance?.description) {
+          <button class="ev-chip" (click)="$event.stopPropagation(); openDescription(att)"><ion-icon name="information-circle-outline"></ion-icon> {{ 'signout.infos' | transloco }}</button>
+        }
+        @if (att.attendance?.attachment_url) {
+          <button class="ev-chip" (click)="$event.stopPropagation(); openAttachment(att.attendance)"><ion-icon name="attach-outline"></ion-icon> {{ att.attendance?.attachment_name || 'Anhang' }}</button>
+        }
+        @if (hasFilesFolder(att)) {
+          <button class="ev-chip" (click)="$event.stopPropagation(); openFilesFolder(att)"><ion-icon name="folder-outline"></ion-icon> {{ 'signout.files' | transloco }}</button>
+        }
+        @if (att.attendance?.place) {
+          <button class="ev-chip" (click)="$event.stopPropagation(); openRoute(att)"><ion-icon name="navigate-outline"></ion-icon> {{ 'signout.route' | transloco }}</button>
+        }
+      </div>
+    }
+  </ng-template>
+
+  @if (useDutyView) {
+    @if (nextDuty) {
+      <div class="ev-month">{{ 'signout.nextDuty' | transloco }}</div>
+      <div class="ev-today ev-today--static">
+        <div class="ev-today__head">
+          <div class="ev-tile">
+            <span class="ev-tile__wd">{{ weekday(nextDuty.date) }}</span>
+            <span class="ev-tile__day">{{ day(nextDuty.date) }}</span>
+          </div>
+          <div>
+            <div class="ev-today__title" lang="de">{{ getEventTitle(nextDuty) }}</div>
+            <div class="ev-today__meta">{{ getEventMeta(nextDuty, true, false) }}</div>
+            <div class="duty-team">
+              <span class="duty-chip duty-chip--me">{{ 'signout.you' | transloco }}</span>
+              @for (name of dutyTeam(nextDuty); track name) {
+                <span class="duty-chip">{{ name }}</span>
+              }
+            </div>
+          </div>
+        </div>
+        <ng-container *ngTemplateOutlet="eventChips; context: { $implicit: nextDuty }"></ng-container>
+        <div class="ev-today__actions">
+          <ion-button fill="outline" color="primary" (click)="declineDuty(nextDuty)">{{ 'signout.cannotAfterAll' | transloco }}</ion-button>
+        </div>
+      </div>
+    }
+
+    <div class="ev-section" id="duty-open">
+      <h2>{{ 'signout.openDuties' | transloco }}</h2>
+      @if (openDuties.length > 3) {
+        <button class="ev-more-link duty-all" (click)="isOpenDutiesModalOpen = true">{{ 'signout.allCount' | transloco: { count: openDuties.length } }}</button>
+      }
+    </div>
+    <ion-list [inset]="true" class="ev-list">
+      @for (t of openDutiesPreview; track t.attendance.id) {
+        <ion-item>
+          <div slot="start" class="ev-tile">
+            <span class="ev-tile__wd">{{ weekday(t.attendance.date) }}</span>
+            <span class="ev-tile__day">{{ day(t.attendance.date) }}</span>
+          </div>
+          <ion-label>
+            <h2>{{ dutyTitle(t) }}</h2>
+            <p>
+              @if (isUrgentDuty(t)) {
+                <span class="duty-urgent">{{ 'signout.urgent' | transloco }}</span> ·
+              }
+              {{ dutyMeta(t) }}
+            </p>
+          </ion-label>
+          <ion-button slot="end" size="small" (click)="takeDuty(t)">{{ 'common.apply' | transloco }}</ion-button>
+        </ion-item>
+      } @empty {
+        <ion-item lines="none">
+          <ion-label color="medium">{{ 'signout.allDutiesFilled' | transloco }}</ion-label>
+        </ion-item>
+      }
+    </ion-list>
+
+    @if (myDuties.length) {
+      <div class="ev-section" id="duty-mine">
+        <h2>{{ 'signout.myDuties' | transloco }}</h2>
+        <span class="ev-section__count">{{ myDuties.length }}</span>
+      </div>
+      <ion-list [inset]="true" class="ev-list">
+        @for (att of myDuties; track att.attendance_id ?? att.id) {
+          <ion-item button detail="false" (click)="presentActionSheetForChoice(att)">
+            <div slot="start" class="ev-tile">
+              <span class="ev-tile__wd">{{ weekday(att.date) }}</span>
+              <span class="ev-tile__day">{{ day(att.date) }}</span>
+            </div>
+            <ion-label>
+              <h2>{{ getEventTitle(att) }}</h2>
+              <p>{{ getEventMeta(att) }}@if (dutyTeam(att).length) {{{ 'signout.withTeam' | transloco: { names: dutyTeam(att).join(', ') } }}}</p>
+            </ion-label>
+            <span slot="end" class="ev-pill ion-color-success">{{ 'signout.confirmed' | transloco }}</span>
+          </ion-item>
+        }
+      </ion-list>
+    } @else if (!nextDuty) {
+      <div id="duty-mine"></div>
+    }
+
+    <ion-list [inset]="true" class="ev-list">
+      @if (otherTermineCount) {
+        <ion-item button detail="false" (click)="showOtherTermine = !showOtherTermine">
+          <ion-label>
+            <h2>{{ 'signout.moreEvents' | transloco }}</h2>
+            <p>{{ otherTermineCount }} · {{ otherTermineNames }}</p>
+          </ion-label>
+          <ion-icon slot="end" [name]="showOtherTermine ? 'chevron-up-outline' : 'chevron-down-outline'"></ion-icon>
+        </ion-item>
+      }
+      <ion-item button detail="true" (click)="openUnavailability()">
+        <ion-icon slot="start" name="calendar-clear-outline"></ion-icon>
+        <ion-label>{{ 'signout.regularlyUnavailable' | transloco }}</ion-label>
+      </ion-item>
+      @if (canPlannedAbsence) {
+        <ion-item button detail="true" (click)="isAbsenceModalOpen = true">
+          <ion-icon slot="start" name="calendar-outline"></ion-icon>
+          <ion-label>{{ 'signout.reportAbsence' | transloco }}</ion-label>
+        </ion-item>
+      }
+    </ion-list>
+  }
+
+  @if (!useDutyView || showOtherTermine) {
+  @if (currentAttendance) {
+    <div class="ev-month">{{ isAttToday(currentAttendance) ? 'Heute' : 'Nächster Termin' }}</div>
+    <div class="ev-today ev-today--static" [class.not-member]="showAllAttendances && !currentAttendance.isMember">
+      <div class="ev-today__head">
+        <div class="ev-tile">
+          <span class="ev-tile__wd">{{ weekday(currentAttendance.date) }}</span>
+          <span class="ev-tile__day">{{ day(currentAttendance.date) }}</span>
+        </div>
+        <div>
+          <div class="ev-today__title" lang="de">{{ getEventTitle(currentAttendance) }}</div>
+          <div class="ev-today__meta">{{ getEventMeta(currentAttendance, true, false) }}</div>
+          @if (isOwnAttendance(currentAttendance)) {
+            <span class="ev-pill ev-today__status" [ngClass]="'ion-color-' + statusColorOf(currentAttendance)">{{ statusLabelOf(currentAttendance) }}</span>
+          }
+        </div>
+      </div>
+      @if (currentAttendance.attendance?.place) {
+        <div class="ev-today__place"><ion-icon name="location-outline"></ion-icon><span>{{ currentAttendance.attendance?.place }}</span></div>
+      }
+      @if (showAllAttendances && !currentAttendance.isMember) {
+        <p class="all-attendances-info-text">{{ showAllAttendancesInfoText }}</p>
+      }
+      <ng-container *ngTemplateOutlet="eventChips; context: { $implicit: currentAttendance }"></ng-container>
+      @if (quickActions(currentAttendance); as qa) {
+        <div class="ev-today__actions">
+          <ion-button [fill]="qa.present ? 'solid' : 'outline'" [color]="qa.present ? 'success' : 'primary'" [disabled]="!qa.canSignin"
+            (click)="handleSigninWithFields(currentAttendance)">{{ 'signout.accept' | transloco }}</ion-button>
+          @if (qa.allowLate) {
+            <ion-button [fill]="qa.late ? 'solid' : 'outline'" [color]="qa.late ? 'rosa' : 'primary'" [disabled]="qa.blocked"
+              (click)="quickSignout(currentAttendance, true)">{{ 'signout.lateButton' | transloco }}</ion-button>
+          }
+          @if (qa.allowExcuse) {
+            <ion-button [fill]="qa.excused ? 'solid' : 'outline'" [color]="qa.excused ? 'warning' : 'primary'" [disabled]="qa.blocked"
+              (click)="quickSignout(currentAttendance, false)">{{ 'signout.decline' | transloco }}</ion-button>
+          }
+        </div>
+        <button class="ev-more-link" (click)="presentActionSheetForChoice(currentAttendance, true)">{{ 'signout.moreOptions' | transloco }}</button>
+      }
+    </div>
+  }
+
+  @if (actualAttendances?.length) {
+    <div class="ev-section">
+      <h2>{{ 'signout.upcoming' | transloco }}</h2>
+      <span class="ev-section__count">{{ actualAttendances.length }}</span>
+    </div>
+    @for (group of upcomingGroups; track group.key) {
+      <div class="ev-month">{{ group.label }}</div>
+      <ion-list [inset]="true" class="ev-list">
+        @for (att of group.items; track att.attendance_id) {
+          <ion-item button detail="false" (click)="presentActionSheetForChoice(att)"
+            [class.not-member]="showAllAttendances && !att.isMember">
+            <div slot="start" class="ev-tile" [class.ev-tile--hl]="att.highlight">
+              <span class="ev-tile__wd">{{ weekday(att.date) }}</span>
+              <span class="ev-tile__day">{{ day(att.date) }}</span>
+            </div>
+            <ion-label>
+              <h2>{{ getEventTitle(att) }}@if (isDutyPa(att)) { <span class="ev-chip duty-tag"><ion-icon name="headset-outline"></ion-icon> {{ 'signout.duty' | transloco }}</span>}</h2>
+              @if (getEventMeta(att); as meta) {
+                <p>{{ meta }}</p>
+              }
+              @if (showAllAttendances && !att.isMember) {
+                <p class="all-attendances-info-text">{{ showAllAttendancesInfoText }}</p>
+              }
+              <ng-container *ngTemplateOutlet="eventChips; context: { $implicit: att }"></ng-container>
+            </ion-label>
+            @if (isOwnAttendance(att)) {
+              <span slot="end" class="ev-pill" [ngClass]="'ion-color-' + statusColorOf(att)">{{ statusLabelOf(att) }}</span>
+            }
+          </ion-item>
+        }
+      </ion-list>
+    }
+  }
+
+  }
+
+  @if (pastAttendances.length) {
+    <div class="ev-section">
+      <h2>{{ 'signout.past' | transloco }}</h2>
+      <span class="ev-section__count">{{ pastAttendances.length }}</span>
+    </div>
+    <ion-list [inset]="true" class="ev-list">
+      <div class="ev-summary">
+        <span class="ev-summary__main"><span class="ev-summary__value">{{ perc }}%</span><span class="ev-summary__label">{{ 'signout.attendance' | transloco }}</span></span>
+        @if (lateCount) {
+          <span class="ev-summary__label">{{ 'signout.lateCount' | transloco: { count: lateCount } }}</span>
+        }
+      </div>
+      <div class="ev-dots" [attr.aria-label]="'signout.lastEventsStatus' | transloco">
+        @for (att of pastAttendances.slice(0, 12); track att.attendance_id) {
+          <span [ngClass]="'ion-color-' + statusColorOf(att)" [title]="getReadableDate(att.date, att.typeId) + ': ' + statusLabelOf(att, true)"></span>
+        }
+      </div>
+      @for (att of pastPreview; track att.attendance_id) {
+        <ion-item [button]="isExcusedStatus(att)" [detail]="false"
+          (click)="isExcusedStatus(att) && presentActionSheetForChoice(att)">
+          <div slot="start" class="ev-tile ev-tile--past" [class.ev-tile--hl]="att.highlight">
+            <span class="ev-tile__wd">{{ weekday(att.date) }}</span>
+            <span class="ev-tile__day">{{ day(att.date) }}</span>
+          </div>
+          <ion-label>
+            <h2>{{ getEventTitle(att) }}</h2>
+            <p>{{ getReadableDate(att.date, att.typeId) }}</p>
+          </ion-label>
+          @if (hasFilesFolder(att)) {
+            <ion-button slot="end" fill="clear" (click)="openFilesFolder(att); $event.stopPropagation()" [attr.aria-label]="'signout.openFiles' | transloco">
+              <ion-icon slot="icon-only" name="folder-open-outline"></ion-icon>
+            </ion-button>
+          }
+          <span slot="end" class="ev-pill" [ngClass]="'ion-color-' + statusColorOf(att)">{{ statusLabelOf(att, true) }}</span>
+        </ion-item>
+      }
+      @if (pastAttendances.length > pastPreviewCount) {
+        <button class="ev-more-link" (click)="showAllPast = !showAllPast">
+          {{ showAllPast ? 'Weniger anzeigen' : 'Alle ' + pastAttendances.length + ' anzeigen' }}
+        </button>
+      }
+    </ion-list>
+  }
+  }
+
+  <ion-modal handle-behavior="none" [breakpoints]="[0, 0.75, 1]" [initialBreakpoint]="0.75" backdropDismiss="true" [isOpen]="isPauseModalOpen" (ionModalDidDismiss)="dismissPauseModal()">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>{{ 'signout.pause' | transloco }}</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="dismissPauseModal()">
+              <ion-icon slot="icon-only" name="close"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <ion-item>
+          <ion-textarea autocapitalize="sentences" [label]="'excuse.reason' | transloco" labelPlacement="stacked" [(ngModel)]="pauseReason"
+            [placeholder]="'signout.pauseReasonPlaceholder' | transloco" rows="3"></ion-textarea>
+        </ion-item>
+        <ion-accordion-group>
+          <ion-accordion value="date">
+            <ion-item slot="header" color="light">
+              <ion-label>
+                <h3>{{ 'signout.pausedUntil' | transloco }}</h3>
+                @if (pauseUntil) {
+                  <p>{{ pauseUntil | date: ('common.ngDate' | transloco) }}</p>
+                } @else {
+                  <p>{{ 'signout.noEndDate' | transloco }}</p>
+                }
+              </ion-label>
+              @if (pauseUntil) {
+                <ion-button fill="clear" slot="end" (click)="pauseUntil = ''; $event.stopPropagation()">
+                  <ion-icon slot="icon-only" name="close-circle-outline" color="medium"></ion-icon>
+                </ion-button>
+              }
+            </ion-item>
+            <div slot="content">
+              <ion-datetime
+                [locale]="'common.intlLocale' | transloco"
+                [firstDayOfWeek]="1"
+                [(ngModel)]="pauseUntil"
+                presentation="date"
+                size="cover">
+              </ion-datetime>
+            </div>
+          </ion-accordion>
+        </ion-accordion-group>
+        <ion-button expand="block" color="warning" class="ion-margin-top" (click)="confirmPause()">
+          {{ 'signout.confirmPause' | transloco }}
+        </ion-button>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+  <ion-modal handle-behavior="none" [breakpoints]="[0, 0.92, 1]" [initialBreakpoint]="0.92" backdropDismiss="true" [isOpen]="isAbsenceModalOpen"
+    (ionModalDidDismiss)="dismissAbsenceModal()">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>{{ 'signout.reportAbsence' | transloco }}</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="dismissAbsenceModal()">
+              <ion-icon slot="icon-only" name="close"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content>
+        <ion-list [inset]="true" style="margin-top: 12px;">
+          <ion-item>
+            <ion-label position="stacked">{{ 'signout.reasonRequired' | transloco }}</ion-label>
+            <ion-textarea autocapitalize="sentences" [(ngModel)]="absenceReason"
+              [placeholder]="'signout.reasonPlaceholder' | transloco" [autoGrow]="true"></ion-textarea>
+          </ion-item>
+        </ion-list>
+
+        <div class="range-picker-header">
+          @if (!absenceFrom) {
+            <span class="range-hint"><ion-icon name="calendar-outline"></ion-icon> {{ 'signout.chooseStart' | transloco }}</span>
+          } @else if (!absenceUntil) {
+            <span class="range-hint"><ion-icon name="calendar-outline"></ion-icon> {{ 'signout.chooseEnd' | transloco }}</span>
+          } @else {
+            <span class="range-selected">
+              <ion-icon name="calendar-outline"></ion-icon>
+              {{ absenceFrom | date: ('common.ngDayMonth' | transloco) }} – {{ absenceUntil | date: ('common.ngDate' | transloco) }}
+            </span>
+            <ion-button fill="clear" size="small" color="medium" (click)="resetAbsenceRange()">
+              <ion-icon slot="icon-only" name="close-circle-outline"></ion-icon>
+            </ion-button>
+          }
+        </div>
+
+        <ion-datetime [locale]="'common.intlLocale' | transloco" [firstDayOfWeek]="1" presentation="date" size="cover"
+          [highlightedDates]="absenceHighlightedDates"
+          [value]="absenceFrom || null"
+          (ionChange)="onAbsenceDatePick($event)">
+        </ion-datetime>
+
+        @if (canSelfPause) {
+        <ion-note class="ion-padding" color="warning" style="display: block; margin-top: 8px;">
+          {{ 'signout.longAbsenceHint' | transloco }}
+        </ion-note>
+        }
+
+        <ion-button expand="block" style="margin: 8px 16px 16px;" (click)="confirmAbsence()"
+          [disabled]="!absenceReason || !absenceFrom || !absenceUntil">
+          <ion-icon slot="start" name="calendar-outline"></ion-icon>
+          {{ 'signout.enterAbsence' | transloco }}
+        </ion-button>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+  <!-- Anmeldefelder modal (2+ fields) -->
+  <ion-modal [isOpen]="isRegFieldsModalOpen" handle-behavior="none"
+    [breakpoints]="[0, 0.85, 1]" [initialBreakpoint]="0.85"
+    [backdropDismiss]="false">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>{{ regFieldsMode === 'edit' ? 'Anmeldefelder' : 'Anmeldung' }}</ion-title>
+          @if (regFieldsMode === 'edit') {
+            <ion-buttons slot="end">
+              <ion-button (click)="cancelRegFieldsEdit()">{{ 'common.cancel' | transloco }}</ion-button>
+            </ion-buttons>
+          }
+        </ion-toolbar>
+      </ion-header>
+      <ion-content color="light">
+        @if (pendingSigninAttendance) {
+          <ion-list [inset]="true">
+            @for (field of getRegistrationFields(pendingSigninAttendance); track field.id) {
+              @if (field.type === 'text') {
+                <ion-item>
+                  <ion-input [label]="field.label" labelPlacement="stacked"
+                    [(ngModel)]="regFieldAnswers[field.id]" placeholder="..."></ion-input>
+                </ion-item>
+              } @else if (field.type === 'boolean') {
+                <ion-item>
+                  <ion-label>{{ field.label }}</ion-label>
+                  <ion-toggle slot="end" [(ngModel)]="regFieldAnswers[field.id]"></ion-toggle>
+                </ion-item>
+              } @else if (field.type === 'select') {
+                <ion-item>
+                  <ion-select [label]="field.label" labelPlacement="stacked"
+                    [(ngModel)]="regFieldAnswers[field.id]">
+                    @for (opt of field.options; track opt) {
+                      <ion-select-option [value]="opt">{{ opt }}</ion-select-option>
+                    }
+                  </ion-select>
+                </ion-item>
+              } @else if (field.type === 'multi_select') {
+                <ion-item lines="none">
+                  <ion-label position="stacked">{{ field.label }}</ion-label>
+                </ion-item>
+                @for (opt of field.options; track opt) {
+                  <ion-item button detail="false" (click)="toggleMultiSelectOption(field.id, opt)">
+                    <ion-checkbox slot="start" [checked]="regFieldAnswers[field.id]?.includes(opt)"
+                      style="pointer-events:none"></ion-checkbox>
+                    <ion-label>{{ opt }}</ion-label>
+                  </ion-item>
+                }
+              }
+            }
+          </ion-list>
+          <div class="ion-padding">
+            <ion-button expand="block" (click)="confirmRegistrationAnswers(regFieldAnswers)">
+              <ion-icon slot="start" name="checkmark-circle-outline"></ion-icon>
+              {{ regFieldsMode === 'edit' ? 'Speichern' : 'Anmelden' }}
+            </ion-button>
+          </div>
+        }
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+</ion-content>
+}
