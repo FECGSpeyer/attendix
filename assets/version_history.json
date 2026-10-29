@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.12.2",
+      "date": "29.10.2026",
+      "changes": [
+        "🐛 Abwesenheiten werden auch bei sehr vielen Einträgen vollständig geladen (Termine anlegen, Datum ändern, Startseite)"
+      ]
+    },
+    {
       "version": "0.12.1",
       "date": "29.10.2026",
       "changes": [
