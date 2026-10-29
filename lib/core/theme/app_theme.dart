@@ -36,11 +36,19 @@ class AppTheme {
   /// IOS27_SWEEP: ion-fab-button 61 × 61 (60px + 0.5px rim on each side).
   static const double iosFabSize = 61;
 
+  /// WEB_MODE_FIX: look chosen by `?mode=ios|md` on the web. Kept here
+  /// instead of `debugDefaultTargetPlatformOverride`, whose setter throws
+  /// in release builds (white screen on the preview).
+  static TargetPlatform? webLookOverride;
+
+  /// Platform that decides the look (iOS vs. Material).
+  static TargetPlatform get lookPlatform => webLookOverride ?? defaultTargetPlatform;
+
   /// Light theme
-  static ThemeData get light => forPlatform(Brightness.light, defaultTargetPlatform);
+  static ThemeData get light => forPlatform(Brightness.light, lookPlatform);
 
   /// Dark theme
-  static ThemeData get dark => forPlatform(Brightness.dark, defaultTargetPlatform);
+  static ThemeData get dark => forPlatform(Brightness.dark, lookPlatform);
 
   /// WEB_FONTS: font family of the bundled Roboto (400/500/600/700 + 400
   /// italic, see pubspec.yaml / assets/fonts/Roboto-OFL.txt).
@@ -53,7 +61,10 @@ class AppTheme {
     TargetPlatform platform, {
     bool web = kIsWeb,
   }) =>
-      _build(brightness, ios: platform == TargetPlatform.iOS, web: web);
+      // WEB_MODE_FIX: the theme carries the look's platform, so
+      // `Theme.of(context).platform` (useIosLook) follows `?mode=` too.
+      _build(brightness, ios: platform == TargetPlatform.iOS, web: web)
+          .copyWith(platform: platform);
 
   static ThemeData _build(
     Brightness brightness, {

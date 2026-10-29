@@ -216,7 +216,9 @@ TargetPlatform? webModeOverride(Uri uri) {
   };
 }
 
+/// WEB_MODE_FIX: only the look follows the override (release-safe);
+/// `debugDefaultTargetPlatformOverride` throws outside debug builds.
 void applyWebModeOverride(Uri uri) {
   final platform = webModeOverride(uri);
-  if (platform != null) debugDefaultTargetPlatformOverride = platform;
+  if (platform != null) AppTheme.webLookOverride = platform;
 }
