@@ -11,6 +11,8 @@ import '../../../../data/models/team_org/team_org.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../planning/presentation/widgets/ion_items.dart';
 import '../../team_org_utils.dart';
+import '../../../attendance/presentation/widgets/attendance_date_change.dart'; // ASTRA_SIGNOUT_TOPICS
+import '../../../../core/providers/attendance_providers.dart' show attendancesProvider, upcomingAttendancesProvider; // ASTRA_SIGNOUT_TOPICS
 import 'agenda_picker_sheet.dart';
 import 'quick_create_attendance.dart';
 import 'tasks_tab.dart' show TeamOrgBadge, TeamOrgListSkeleton, priorityColor;
@@ -92,12 +94,20 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
     if (choice is int) {
       setState(() => _chosenAttendanceId = choice);
     } else if (choice == 'date' && current != null) {
-      // Date changes happen on the attendance page.
-      await context.push('/attendance/${current.id}');
-      ref.invalidate(upcomingProtocolAttendancesProvider);
+      await _changeDate(current);
     } else if (choice == 'new') {
       await _createAttendance();
     }
+  }
+
+  /// "Datum ändern" (Ionic `changeDate`): moves the shown Termin to another
+  /// day with the shared date dialog; it stays selected.
+  Future<void> _changeDate(ProtocolAttendance current) async {
+    final container = ProviderScope.containerOf(context, listen: false);
+    final moved = await promptAttendanceDateChange(context, ref, current.id);
+    if (!moved) return;
+    if (mounted) setState(() => _chosenAttendanceId = current.id);
+    refreshAfterTopicsDateChange(container);
   }
 
   /// "Termin anlegen" (Ionic `createAttendance`): quick-create and select it.
@@ -727,4 +737,14 @@ class _SuggestSheetState extends ConsumerState<_SuggestSheet> {
       ),
     );
   }
+}
+
+/// ASTRA_SIGNOUT_TOPICS: caches refreshed after "Datum ändern" in the
+/// Themen tab (Ionic `loadLeader` reloads the upcoming Termine).
+void refreshAfterTopicsDateChange(ProviderContainer container) {
+  container.invalidate(upcomingProtocolAttendancesProvider);
+  container.invalidate(planAttendancesProvider);
+  container.invalidate(orgPlansProvider);
+  container.invalidate(attendancesProvider);
+  container.invalidate(upcomingAttendancesProvider);
 }
