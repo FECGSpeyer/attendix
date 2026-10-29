@@ -6,6 +6,8 @@ import '../../core/config/supabase_config.dart';
 import '../../data/models/tenant/tenant.dart';
 import '../constants/enums.dart';
 import 'user_preferences_provider.dart';
+import '../utils/demo_guard.dart';
+import '../../l10n/l10n.dart';
 
 const _tenantIdKey = 'current_tenant_id';
 
@@ -30,6 +32,10 @@ class CurrentTenantNotifier extends StateNotifier<Tenant?> {
   }
 
   final Ref ref;
+
+  /// LINKS_STARTUP: set once a tenant was chosen explicitly (selection,
+  /// deep link). The async restore below must not override that choice.
+  bool _explicitlySet = false;
 
   /// Initialize tenant from local cache and sync with server
   Future<void> _initializeTenant() async {
@@ -71,6 +77,7 @@ class CurrentTenantNotifier extends StateNotifier<Tenant?> {
           .eq('userId', userId)
           .maybeSingle();
 
+      if (_explicitlySet) return; // LINKS_STARTUP
       // User no longer has access to this tenant
       if (tenantUserResponse == null) {
         debugPrint('User no longer has access to tenant $tenantId');
@@ -85,6 +92,7 @@ class CurrentTenantNotifier extends StateNotifier<Tenant?> {
           .eq('id', tenantId)
           .maybeSingle();
 
+      if (_explicitlySet) return; // LINKS_STARTUP
       if (response != null) {
         state = Tenant.fromJson(response);
       } else {
@@ -104,6 +112,7 @@ class CurrentTenantNotifier extends StateNotifier<Tenant?> {
   /// Use this for navigation scenarios where auth events would interrupt navigation.
   /// After navigation completes, call updateCurrentTenantId separately.
   Future<void> setTenantLocal(Tenant? tenant) async {
+    _explicitlySet = true; // LINKS_STARTUP
     state = tenant;
 
     final prefs = await SharedPreferences.getInstance();
@@ -114,6 +123,24 @@ class CurrentTenantNotifier extends StateNotifier<Tenant?> {
       await prefs.remove(_tenantIdKey);
     }
     // NOTE: Does NOT call updateCurrentTenantId to avoid auth events
+  }
+
+  /// SOL_FIX19: applies a setting that was just saved for [tenantId] to the
+  /// local tenant state – only while [tenantId] is still the current
+  /// tenant. A save that finishes after a switch to another tenant must not
+  /// copy its value into that tenant (or switch back). [update] gets the
+  /// CURRENT state, not a copy taken before the save. Returns whether the
+  /// state was updated.
+  Future<bool> updateTenantLocalIfCurrent(
+    int? tenantId,
+    Tenant Function(Tenant current) update,
+  ) async {
+    final current = state;
+    if (tenantId == null || current == null || current.id != tenantId) {
+      return false;
+    }
+    await setTenantLocal(update(current));
+    return true;
   }
 
   /// Set the current tenant and persist to both storages
@@ -148,7 +175,8 @@ class CurrentTenantNotifier extends StateNotifier<Tenant?> {
 /// Provider for user's tenants list (sorted: favorites first)
 final userTenantsProvider = FutureProvider<List<Tenant>>((ref) async {
   final supabase = ref.watch(supabaseClientProvider);
-  final userId = supabase.auth.currentUser?.id;
+  // SOL_FIX14: per-user data – reload when the account changes.
+  final userId = ref.watch(currentAuthUserIdProvider);
 
   if (userId == null) return [];
 
@@ -189,22 +217,32 @@ final userTenantsProvider = FutureProvider<List<Tenant>>((ref) async {
     ));
   }
 
-  // Sort: favorites first, then alphabetically
+  // Sort like Ionic getTenants(): `.order('longName')`, then favorites
+  // first. IOS_R4: by longName (not the short name) – the order of the
+  // header tenant popover and the Mehr instance list.
   tenants.sort((a, b) {
     final aFav = a.favorite == true ? 0 : 1;
     final bFav = b.favorite == true ? 0 : 1;
     if (aFav != bFav) return aFav.compareTo(bFav);
-    return a.name.compareTo(b.name);
+    return compareTenantLongNames(a, b);
   });
 
   return tenants;
 });
 
+/// Ionic orders the tenants by `longName` in Postgres (case-insensitive
+/// collation); ties fall back to the code-unit order.
+int compareTenantLongNames(Tenant a, Tenant b) {
+  final byName = a.longName.toLowerCase().compareTo(b.longName.toLowerCase());
+  return byName != 0 ? byName : a.longName.compareTo(b.longName);
+}
+
 /// Provider for current user's TenantUser record in the selected tenant
 final currentTenantUserProvider = FutureProvider<TenantUser?>((ref) async {
   final supabase = ref.watch(supabaseClientProvider);
   final tenant = ref.watch(currentTenantProvider);
-  final userId = supabase.auth.currentUser?.id;
+  // SOL_FIX14: per-user data – reload when the account changes.
+  final userId = ref.watch(currentAuthUserIdProvider);
 
   if (tenant == null || userId == null) return null;
 
@@ -225,6 +263,11 @@ final currentRoleProvider = Provider<Role>((ref) {
   final tenantUserAsync = ref.watch(currentTenantUserProvider);
   final tenantUser = tenantUserAsync.valueOrNull;
   if (tenantUser == null) return Role.none;
+  // SOL_FIX14: while reloading after an account switch the previous
+  // account's row is still the AsyncValue's value – never use its role.
+  if (tenantUser.userId != ref.watch(currentAuthUserIdProvider)) {
+    return Role.none;
+  }
   return tenantUser.roleEnum;
 });
 
@@ -256,9 +299,10 @@ Future<void> toggleTenantFavorite(WidgetRef ref, int tenantId, bool favorite) as
 
 /// Delete a tenant (admin-only, cascading)
 Future<void> deleteTenant(WidgetRef ref, int tenantId) async {
+  DemoGuard.checkCurrent('deleteInstance'); // DEMO_GUARD
   final supabase = ref.read(supabaseClientProvider);
   final userId = supabase.auth.currentUser?.id;
-  if (userId == null) throw Exception('Nicht eingeloggt');
+  if (userId == null) throw Exception(l10nWithoutContext.coreFlutterNotLoggedIn);
 
   // Verify user is admin of this tenant before deleting
   final tenantUser = await supabase
@@ -269,7 +313,7 @@ Future<void> deleteTenant(WidgetRef ref, int tenantId) async {
       .maybeSingle();
 
   if (tenantUser == null || tenantUser['role'] != Role.admin.value) {
-    throw Exception('Keine Berechtigung zum Löschen');
+    throw Exception(l10nWithoutContext.svcNoDeletePermission);
   }
 
   // Delete the tenant — Supabase cascading handles related records
@@ -286,6 +330,7 @@ Future<void> deleteTenant(WidgetRef ref, int tenantId) async {
 
 /// Provider for member count of a specific tenant
 final tenantMemberCountProvider = FutureProvider.family<int, int>((ref, tenantId) async {
+  ref.watch(currentAuthUserIdProvider); // SOL_FIX15: reload per account
   final supabase = ref.watch(supabaseClientProvider);
 
   final response = await supabase

@@ -1,4 +1,5 @@
 // Shared widgets barrel export
+export 'adaptive/adaptive.dart'; // IOS_LOOK
 export 'animations/animations.dart';
 export 'common/common.dart';
 export 'display/display.dart';

@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../../core/config/supabase_config.dart';
-import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/constants/enums.dart';
 import '../../../../../core/providers/tenant_providers.dart';
 import '../../../../../core/theme/app_colors.dart';
+import '../../../../../l10n/l10n.dart';
+import '../ion/ion_widgets.dart';
 
 /// Provider for other tenants where this person has an account.
 /// Note: Cross-tenant queries are intentional here (same pattern as handover
@@ -13,6 +14,7 @@ import '../../../../../core/theme/app_colors.dart';
 final otherTenantsProvider =
     FutureProvider.family<List<Map<String, dynamic>>, String>(
         (ref, appId) async {
+  ref.watch(currentAuthUserIdProvider); // SOL_FIX15: reload per account
   final supabase = ref.watch(supabaseClientProvider);
   final currentTenant = ref.watch(currentTenantProvider);
 
@@ -41,7 +43,7 @@ final otherTenantsProvider =
     final tenantId = tenant['id'] as int;
     final tenantName = tenant['longName']?.toString() ??
         tenant['shortName']?.toString() ??
-        'Unbekannt';
+        l10nWithoutContext.commonUnknown;
     final role = tu['role'] as int? ?? 99;
 
     // Find the player record in that tenant
@@ -91,22 +93,22 @@ final otherTenantsProvider =
     String roleText;
     switch (role) {
       case 1:
-        roleText = 'Admin';
+        roleText = l10nWithoutContext.commonRolesAdmin;
         break;
       case 2:
-        roleText = 'Spieler';
+        roleText = l10nWithoutContext.commonRolesMember;
         break;
       case 3:
-        roleText = 'Betrachter';
+        roleText = l10nWithoutContext.commonRolesViewer;
         break;
       case 4:
-        roleText = 'Helfer';
+        roleText = l10nWithoutContext.commonRolesHelper;
         break;
       case 5:
-        roleText = 'Verantwortlich';
+        roleText = l10nWithoutContext.commonRolesResponsible;
         break;
       default:
-        roleText = 'Mitglied';
+        roleText = l10nWithoutContext.commonRolesMember;
     }
 
     results.add({
@@ -124,9 +126,16 @@ class AndereInstanzenAccordion extends ConsumerWidget {
   const AndereInstanzenAccordion({
     super.key,
     required this.appId,
+    this.isExpanded,
+    this.onToggle,
   });
 
   final String appId;
+
+  /// UX_PEOPLE: expansion controlled by the page (Ionic accordion group with
+  /// Allgemein/Account/Zusatzfelder: only one open at a time).
+  final bool? isExpanded;
+  final VoidCallback? onToggle;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -138,16 +147,26 @@ class AndereInstanzenAccordion extends ConsumerWidget {
       data: (tenants) {
         if (tenants.isEmpty) return const SizedBox.shrink();
 
-        return _AndereInstanzenCard(tenants: tenants);
+        return _AndereInstanzenCard(
+          tenants: tenants,
+          isExpanded: isExpanded,
+          onToggle: onToggle,
+        );
       },
     );
   }
 }
 
 class _AndereInstanzenCard extends StatefulWidget {
-  const _AndereInstanzenCard({required this.tenants});
+  const _AndereInstanzenCard({
+    required this.tenants,
+    this.isExpanded,
+    this.onToggle,
+  });
 
   final List<Map<String, dynamic>> tenants;
+  final bool? isExpanded;
+  final VoidCallback? onToggle;
 
   @override
   State<_AndereInstanzenCard> createState() => _AndereInstanzenCardState();
@@ -158,42 +177,23 @@ class _AndereInstanzenCardState extends State<_AndereInstanzenCard> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.symmetric(
-        horizontal: AppDimensions.paddingM,
-        vertical: AppDimensions.paddingXS,
-      ),
-      child: Column(
-        children: [
-          ListTile(
-            title: Text(
-              'Andere Instanzen (${widget.tenants.length})',
-              style: const TextStyle(fontWeight: FontWeight.w600),
-            ),
-            trailing:
-                Icon(_isExpanded ? Icons.expand_less : Icons.expand_more),
-            onTap: () => setState(() => _isExpanded = !_isExpanded),
-          ),
-          if (_isExpanded)
-            Padding(
-              padding: const EdgeInsets.fromLTRB(
-                AppDimensions.paddingM,
-                0,
-                AppDimensions.paddingM,
-                AppDimensions.paddingM,
-              ),
+    return IonAccordion(
+      // Ionic: 'person.otherInstances'
+      title: context.l10n.personOtherInstances,
+      expanded: widget.isExpanded ?? _isExpanded,
+      onToggle: widget.onToggle ?? () => setState(() => _isExpanded = !_isExpanded),
+      child: Padding(
+              padding: EdgeInsets.zero,
               child: Column(
                 children: widget.tenants
-                    .map((tenant) => _buildTenantItem(tenant))
+                    .map((tenant) => _buildTenantItem(context, tenant))
                     .toList(),
               ),
             ),
-        ],
-      ),
     );
   }
 
-  Widget _buildTenantItem(Map<String, dynamic> tenant) {
+  Widget _buildTenantItem(BuildContext context, Map<String, dynamic> tenant) {
     final tenantName = tenant['tenantName'] as String;
     final role = tenant['role'] as String;
     final percentage = tenant['percentage'] as int?;
@@ -209,46 +209,20 @@ class _AndereInstanzenCardState extends State<_AndereInstanzenCard> {
       badgeText = '$percentage%';
     } else {
       badgeColor = AppColors.medium;
-      badgeText = 'N/A';
+      badgeText = 'n/a';
     }
 
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: AppDimensions.paddingM),
-      decoration: BoxDecoration(
-        border: Border(bottom: BorderSide(color: Colors.grey.shade100)),
-      ),
-      child: Row(
+    // Ionic: ion-item lines="none" with h2 name, p role, badge
+    return IonItem(
+      lines: false,
+      end: [IonBadge(text: badgeText, color: badgeColor)],
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(tenantName, style: const TextStyle(fontSize: 15)),
-                Padding(
-                  padding: const EdgeInsets.only(top: 2),
-                  child: Text(
-                    role,
-                    style:
-                        TextStyle(fontSize: 12, color: Colors.grey.shade600),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-            decoration: BoxDecoration(
-              color: badgeColor,
-              borderRadius: BorderRadius.circular(4),
-            ),
-            child: Text(
-              badgeText,
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 14,
-              ),
-            ),
+          Text(tenantName, style: IonText.h2(context)),
+          Padding(
+            padding: const EdgeInsets.only(top: 2),
+            child: Text(role, style: IonText.p(context)),
           ),
         ],
       ),

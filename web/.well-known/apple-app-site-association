@@ -1,0 +1,40 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "MXM3YWAKPL.io.stephanus.attendix",
+        "paths": [
+          "/register/*",
+          "/tabs/*",
+          "/login",
+          "NOT /assets/*",
+          "NOT /svg/*",
+          "*"
+        ]
+      },
+      {
+        "appID": "WJ62LFJT38.de.attendix.attendix",
+        "paths": [
+          "/register/*",
+          "/tabs/*",
+          "/login",
+          "NOT /assets/*",
+          "NOT /svg/*",
+          "*"
+        ]
+      },
+      {
+        "appID": "MXM3YWAKPL.de.attendix.attendix",
+        "paths": [
+          "/register/*",
+          "/tabs/*",
+          "/login",
+          "NOT /assets/*",
+          "NOT /svg/*",
+          "*"
+        ]
+      }
+    ]
+  }
+}

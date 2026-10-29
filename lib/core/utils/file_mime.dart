@@ -1,0 +1,91 @@
+/// MIME type of a file by extension, matching what browsers report as
+/// `File.type` (Ionic stores / tracks `file.type`). Null for unknown
+/// extensions (the browser reports an empty type then).
+String? songFileMimeType(String extension) {
+  switch (extension.toLowerCase()) {
+    case 'pdf':
+      return 'application/pdf';
+    case 'png':
+      return 'image/png';
+    case 'jpg':
+    case 'jpeg':
+      return 'image/jpeg';
+    case 'gif':
+      return 'image/gif';
+    case 'webp':
+      return 'image/webp';
+    case 'svg':
+      return 'image/svg+xml';
+    case 'heic':
+      return 'image/heic';
+    case 'tif':
+    case 'tiff':
+      return 'image/tiff';
+    case 'bmp':
+      return 'image/bmp';
+    case 'mp3':
+      return 'audio/mpeg';
+    case 'wav':
+      return 'audio/wav';
+    case 'ogg':
+    case 'oga':
+      return 'audio/ogg';
+    case 'opus':
+      return 'audio/opus';
+    case 'm4a':
+      return 'audio/mp4';
+    case 'aac':
+      return 'audio/aac';
+    case 'flac':
+      return 'audio/flac';
+    case 'aif':
+    case 'aiff':
+      return 'audio/aiff';
+    case 'mid':
+    case 'midi':
+      return 'audio/midi';
+    case 'weba':
+      return 'audio/webm';
+    case 'mp4':
+    case 'm4v':
+      return 'video/mp4';
+    case 'mov':
+      return 'video/quicktime';
+    case 'webm':
+      return 'video/webm';
+    case 'avi':
+      return 'video/x-msvideo';
+    case 'mkv':
+      return 'video/x-matroska';
+    case 'musicxml':
+      return 'application/vnd.recordare.musicxml+xml';
+    case 'mxl':
+      return 'application/vnd.recordare.musicxml';
+    case 'xml':
+      return 'text/xml';
+    case 'doc':
+      return 'application/msword';
+    case 'docx':
+      return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+    case 'xls':
+      return 'application/vnd.ms-excel';
+    case 'xlsx':
+      return 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+    case 'ppt':
+      return 'application/vnd.ms-powerpoint';
+    case 'pptx':
+      return 'application/vnd.openxmlformats-officedocument.presentationml.presentation';
+    case 'odt':
+      return 'application/vnd.oasis.opendocument.text';
+    case 'rtf':
+      return 'application/rtf';
+    case 'txt':
+      return 'text/plain';
+    case 'csv':
+      return 'text/csv';
+    case 'zip':
+      return 'application/zip';
+    default:
+      return null;
+  }
+}

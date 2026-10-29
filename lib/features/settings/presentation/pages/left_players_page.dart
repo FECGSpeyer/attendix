@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/player_providers.dart';
+import '../../../../core/providers/realtime_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/person/person.dart';
-import '../../../people/presentation/pages/people_list_page.dart';
+import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../widgets/settings_list.dart';
+import '../widgets/settings_sheet.dart'; // IOS_SETTINGS2
 
 /// Provider for left (archived) players using repository
 final leftPlayersProvider = FutureProvider<List<Person>>((ref) async {
@@ -16,70 +22,88 @@ final leftPlayersProvider = FutureProvider<List<Person>>((ref) async {
   return repository.getArchivedPlayers();
 });
 
+/// IOS_SETTINGS2: Ionic settings `trigger="archive-button"` sheet
+/// (`[breakpoints]="[0, 0.5, 1]"`, initial 0.5, toolbar with the title).
+Future<void> showArchiveSheet(BuildContext context) => showSettingsSheet<void>(
+      context,
+      initialBreakpoint: 0.5,
+      builder: (_) => const LeftPlayersPage(sheet: true),
+    );
+
 /// Left Players Page - shows archived/former members
 class LeftPlayersPage extends ConsumerWidget {
-  const LeftPlayersPage({super.key});
+  const LeftPlayersPage({super.key, this.sheet = false});
+
+  /// Presented as the Ionic sheet (no back button) instead of a route.
+  final bool sheet;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final playersAsync = ref.watch(leftPlayersProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Ehemalige Mitglieder'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.pop(),
-        ),
-      ),
+      // Ionic archive modal: plain `ion-content` (not "light").
+      backgroundColor: sheet ? IonIos.itemBackground(context) : null,
+      appBar: sheet
+          ? settingsSheetBar(context, title: context.l10n.settingsArchive)
+          : AppBar(
+              title: Text(context.l10n.settingsArchive),
+              leading: IconButton(
+                icon: const BackButtonIcon(),
+                onPressed: () => context.pop(),
+              ),
+            ),
       body: playersAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => const Center(child: AppSpinner()),
         error: (e, _) => Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Icon(Icons.error_outline, size: 64, color: AppColors.danger),
               const SizedBox(height: AppDimensions.paddingM),
-              Text('Fehler: $e'),
+              Text(context.l10n.settingsFlutterErrorDetail(friendlyErrorMessage(e))),
               const SizedBox(height: AppDimensions.paddingM),
               ElevatedButton(
                 onPressed: () => ref.invalidate(leftPlayersProvider),
-                child: const Text('Erneut versuchen'),
+                child: IonButtonLabel(context.l10n.messagesRetry),
               ),
             ],
           ),
         ),
         data: (players) {
+          // Ionic: one item with the centred grey "Keine archivierten
+          // Personen" text when the archive is empty.
           if (players.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.history_outlined, size: 80, color: AppColors.medium),
-                  const SizedBox(height: AppDimensions.paddingL),
-                  Text(
-                    'Keine ehemaligen Mitglieder',
-                    style: Theme.of(context).textTheme.titleLarge,
+            return ListView(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(AppDimensions.paddingM),
+                  child: Text(
+                    context.l10n.settingsNoArchived,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(color: AppColors.medium),
                   ),
-                  const SizedBox(height: AppDimensions.paddingS),
-                  Text(
-                    'Hier erscheinen archivierte Mitglieder',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppColors.medium),
-                  ),
-                ],
-              ),
+                ),
+              ],
             );
           }
 
-          return RefreshIndicator(
+          return RefreshIndicator.adaptive(
             // FN-010: await provider.future to show spinner until data loads
             onRefresh: () async {
               ref.invalidate(leftPlayersProvider);
               await ref.read(leftPlayersProvider.future);
             },
-            child: ListView.builder(
-              padding: const EdgeInsets.all(AppDimensions.paddingM),
+            // Ionic: plain `ion-list` (full width rows, no cards).
+            child: ListView.separated(
+              physics: const AlwaysScrollableScrollPhysics(),
               itemCount: players.length,
+              separatorBuilder: (context, _) => Divider(
+                height: 0.5,
+                thickness: 0.5,
+                indent: IonIos.itemPaddingStart,
+                color: ionIsIos(context) ? IonIos.line(context) : null,
+              ),
               itemBuilder: (context, index) {
                 final player = players[index];
                 return _LeftPlayerItem(
@@ -96,19 +120,20 @@ class LeftPlayersPage extends ConsumerWidget {
   }
 
   Future<void> _reactivatePlayer(BuildContext context, WidgetRef ref, Person player) async {
-    final confirmed = await showDialog<bool>(
+    final repository = ref.read(playerRepositoryWithTenantProvider);
+    final confirmed = await showAppDialog<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Mitglied reaktivieren?'),
-        content: Text('Möchtest du ${player.fullName} wieder aktivieren?'),
+      builder: (ctx) => AppAlertDialog(
+        title: Text(ctx.l10n.peopleReactivateConfirm),
+        content: Text(ctx.l10n.settingsFlutterReactivateMessage(player.fullName)),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Abbrechen'),
+            child: Text(ctx.l10n.commonCancel),
           ),
           ElevatedButton(
             onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('Reaktivieren'),
+            child: Text(ctx.l10n.signoutReactivate),
           ),
         ],
       ),
@@ -116,18 +141,18 @@ class LeftPlayersPage extends ConsumerWidget {
 
     if (confirmed == true && context.mounted) {
       try {
-        final repository = ref.read(playerRepositoryWithTenantProvider);
         await repository.reactivatePlayer(player);
 
         ref.invalidate(leftPlayersProvider);
-        ref.invalidate(peopleListProvider);
+        ref.invalidate(realtimePlayersProvider);
+        ref.invalidate(playersProvider);
 
         if (context.mounted) {
-          ToastHelper.showSuccess(context, '${player.fullName} wurde reaktiviert');
+          ToastHelper.showSuccess(context, context.l10n.settingsFlutterReactivated(player.fullName));
         }
       } catch (e) {
         if (context.mounted) {
-          ToastHelper.showError(context, 'Fehler: $e');
+          ToastHelper.showError(context, context.l10n.settingsFlutterErrorDetail(friendlyErrorMessage(e)));
         }
       }
     }
@@ -147,44 +172,20 @@ class _LeftPlayerItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: AppDimensions.paddingS),
-      child: ListTile(
-        onTap: onViewDetails,
-        leading: CircleAvatar(
-          backgroundColor: AppColors.medium.withValues(alpha: 0.2),
-          child: Text(
-            player.initials,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              color: AppColors.medium,
-            ),
-          ),
-        ),
-        title: Text(
-          player.fullName,
-          style: const TextStyle(fontWeight: FontWeight.w500),
-        ),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (player.groupName != null)
-              Text(
-                player.groupName!,
-                style: const TextStyle(fontSize: 12, color: AppColors.medium),
-              ),
-            if (player.left != null)
-              Text(
-                'Ausgetreten: ${_formatDate(player.left!)}',
-                style: TextStyle(fontSize: 12, color: AppColors.warning),
-              ),
-          ],
-        ),
-        trailing: IconButton(
-          icon: const Icon(Icons.restore, color: AppColors.success),
-          tooltip: 'Reaktivieren',
-          onPressed: onReactivate,
-        ),
+    // IOS_SETTINGS2: Ionic `ion-item button`: h2 "Vorname Nachname (Gruppe)",
+    // h3 "Ausgetreten am …". Flutter keeps the restore button at the end
+    // because its person page has no "reaktivieren" for archived persons.
+    final group = player.groupName;
+    return ListTile(
+      onTap: onViewDetails,
+      title: Text(group == null ? player.fullName : '${player.fullName} ($group)'),
+      subtitle: player.left == null
+          ? null
+          : Text(context.l10n.settingsLeftOn(_formatDate(player.left!))),
+      trailing: IconButton(
+        icon: const Icon(Icons.restore, color: AppColors.success),
+        tooltip: context.l10n.signoutReactivate,
+        onPressed: onReactivate,
       ),
     );
   }
@@ -192,6 +193,6 @@ class _LeftPlayerItem extends StatelessWidget {
   String _formatDate(String dateStr) {
     final date = DateTime.tryParse(dateStr);
     if (date == null) return dateStr;
-    return '${date.day.toString().padLeft(2, '0')}.${date.month.toString().padLeft(2, '0')}.${date.year}';
+    return DateFormat(dateFmt()).format(date);
   }
 }

@@ -1,3 +1,5 @@
+import '../../l10n/l10n.dart';
+
 /// Utility class for matching filenames to instruments
 /// Based on Ionic's instrument-matcher.ts
 class InstrumentMatcher {
@@ -224,10 +226,10 @@ class InstrumentMatcher {
 
     // Check special IDs
     if (instrumentId == recordingId) {
-      return 'Aufnahme';
+      return l10nWithoutContext.songsRecording;
     }
     if (instrumentId == lyricsId) {
-      return 'Liedtext';
+      return l10nWithoutContext.songsLyrics;
     }
 
     // Find instrument name
@@ -238,7 +240,7 @@ class InstrumentMatcher {
       }
     }
 
-    return 'Sonstige';
+    return l10nWithoutContext.songsOther;
   }
 }
 

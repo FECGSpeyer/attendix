@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/constants/enums.dart';
+import '../../../core/theme/app_colors.dart'; // IOS_THEME2
+import '../../../l10n/l10n.dart';
 
 /// Badge variant styles
 enum StatusBadgeVariant {
@@ -41,7 +43,9 @@ class StatusBadge extends StatelessWidget {
   @Deprecated('Use size instead')
   final bool compact;
 
-  Color get _color => status.color;
+  // IOS_THEME2: Ionic dark palette in dark mode.
+  Color _colorOf(BuildContext context) =>
+      AppColors.adaptive(context, status.color);
 
   String get _shortText {
     switch (status) {
@@ -61,19 +65,20 @@ class StatusBadge extends StatelessWidget {
   }
 
   String get _label {
+    final l10n = l10nWithoutContext;
     switch (status) {
       case AttendanceStatus.present:
-        return 'Anwesend';
+        return l10n.commonStatusPresent;
       case AttendanceStatus.absent:
-        return 'Abwesend';
+        return l10n.commonStatusAbsent;
       case AttendanceStatus.excused:
-        return 'Entschuldigt';
+        return l10n.commonStatusExcused;
       case AttendanceStatus.late:
-        return 'Verspätet';
+        return l10n.commonStatusLateShort;
       case AttendanceStatus.lateExcused:
-        return 'Versp. entsch.';
+        return l10n.commonStatusLateExcusedShort;
       case AttendanceStatus.neutral:
-        return 'Neutral';
+        return l10n.commonStatusNeutral;
     }
   }
 
@@ -114,21 +119,21 @@ class StatusBadge extends StatelessWidget {
     switch (variant) {
       case StatusBadgeVariant.filled:
         return _FilledBadge(
-          color: _color,
+          color: _colorOf(context),
           text: displayText,
           padding: _padding,
           fontSize: _fontSize,
         );
       case StatusBadgeVariant.outlined:
         return _OutlinedBadge(
-          color: _color,
+          color: _colorOf(context),
           text: displayText,
           padding: _padding,
           fontSize: _fontSize,
         );
       case StatusBadgeVariant.subtle:
         return _SubtleBadge(
-          color: _color,
+          color: _colorOf(context),
           text: displayText,
           padding: _padding,
           fontSize: _fontSize,
@@ -252,7 +257,9 @@ class StatusChip extends StatelessWidget {
   final bool isSelected;
   final StatusBadgeSize size;
 
-  Color get _color => status.color;
+  // IOS_THEME2: Ionic dark palette in dark mode.
+  Color _colorOf(BuildContext context) =>
+      AppColors.adaptive(context, status.color);
 
   IconData get _icon {
     switch (status) {
@@ -304,17 +311,17 @@ class StatusChip extends StatelessWidget {
           duration: AppDurations.fast,
           padding: _padding,
           decoration: BoxDecoration(
-            color: isSelected ? _color.withValues(alpha: 0.2) : _color.withValues(alpha: 0.1),
+            color: isSelected ? _colorOf(context).withValues(alpha: 0.2) : _colorOf(context).withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(AppDimensions.borderRadiusS),
             border: Border.all(
-              color: isSelected ? _color : _color.withValues(alpha: 0.3),
+              color: isSelected ? _colorOf(context) : _colorOf(context).withValues(alpha: 0.3),
               width: isSelected ? 2 : 1,
             ),
           ),
           child: Icon(
             _icon,
             size: _iconSize,
-            color: _color,
+            color: _colorOf(context),
           ),
         ),
       ),

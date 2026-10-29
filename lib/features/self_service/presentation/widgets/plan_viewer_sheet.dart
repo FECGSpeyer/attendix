@@ -4,7 +4,10 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../data/models/plan/plan.dart'; // ORG_PLANS
 import '../../../../data/repositories/sign_in_out_repository.dart';
+import '../../../../l10n/l10n.dart';
+import '../../../planning/presentation/pages/plan_viewer_page.dart'; // ORG_PLANS
 
 /// Plan viewer bottom sheet for displaying attendance plans
 ///
@@ -27,10 +30,10 @@ class PlanViewerSheet extends ConsumerWidget {
     final fields = (plan?['fields'] as List?)?.cast<Map<String, dynamic>>() ?? [];
 
     if (fields.isEmpty) {
-      return const SizedBox(
+      return SizedBox(
         height: 200,
         child: Center(
-          child: Text('Kein Ablaufplan verfügbar'),
+          child: Text(context.l10n.planningNoPlanAvailable),
         ),
       );
     }
@@ -72,7 +75,7 @@ class PlanViewerSheet extends ConsumerWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Ablaufplan',
+                            context.l10n.signoutRunSheet,
                             style: Theme.of(context).textTheme.titleMedium?.copyWith(
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -103,7 +106,7 @@ class PlanViewerSheet extends ConsumerWidget {
                   children: [
                     // Start time
                     _PlanTimeRow(
-                      label: 'Beginn',
+                      label: context.l10n.attendanceStart,
                       time: _getStartTime(),
                       isStart: true,
                     ),
@@ -129,7 +132,7 @@ class PlanViewerSheet extends ConsumerWidget {
                     const Divider(),
                     // End time
                     _PlanTimeRow(
-                      label: 'Ende',
+                      label: context.l10n.attendanceEnd,
                       time: _getEndTime(),
                       isStart: false,
                     ),
@@ -148,7 +151,7 @@ class PlanViewerSheet extends ConsumerWidget {
     if (date == null) return '';
     final dateObj = DateTime.tryParse(date);
     if (dateObj == null) return date;
-    return DateFormat('dd.MM.yyyy').format(dateObj);
+    return DateFormat(dateFmt()).format(dateObj);
   }
 
   String _getStartTime() {
@@ -335,7 +338,7 @@ class _PlanFieldRow extends StatelessWidget {
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
-                        '$duration min',
+                        context.l10n.planningMinShort(duration),
                         style: const TextStyle(
                           fontSize: 11,
                           color: AppColors.medium,
@@ -370,21 +373,57 @@ class _PlanFieldRow extends StatelessWidget {
   }
 }
 
-/// Shows the plan viewer as a bottom sheet
+/// Shows the plan viewer of a Termin.
+///
+/// ORG_PLANS: delegates to the shared [showPlanViewer] (Programmblöcke,
+/// Notizen, live mode with countdown, export incl. Telegram). Rows of Werke
+/// without parts for [playerInstrumentId] show "Keine Noten für dein Instrument".
 Future<void> showPlanViewerSheet(
   BuildContext context, {
   required CrossTenantPersonAttendance attendance,
   int? playerInstrumentId,
   List<Map<String, dynamic>> songs = const [],
+  // ASTRA_PARENTS: Ionic `attendance.extra_plans` + `duration_days`. With
+  // further plans the viewer shows the day/plan chips (Ionic PlanViewer
+  // `allPlans`, preselecting today's plan) instead of a single plan.
+  List<Map<String, dynamic>>? extraPlans,
+  int? durationDays,
 }) {
-  return showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    backgroundColor: Colors.transparent,
-    builder: (context) => PlanViewerSheet(
-      attendance: attendance,
-      playerInstrumentId: playerInstrumentId,
-      songs: songs,
+  Plan? plan;
+  try {
+    if (attendance.plan != null) plan = Plan.fromJson(attendance.plan!);
+  } catch (_) {}
+  final extra = <Plan>[];
+  for (final p in extraPlans ?? const <Map<String, dynamic>>[]) {
+    try {
+      extra.add(Plan.fromJson(p));
+    } catch (_) {}
+  }
+  bool missing(int? songId) {
+    if (songId == null || playerInstrumentId == null || songs.isEmpty) return false;
+    final song = songs.firstWhere((s) => s['id'] == songId, orElse: () => <String, dynamic>{});
+    final ids = song['instrument_ids'] as List?;
+    return ids != null && ids.isNotEmpty && !ids.contains(playerInstrumentId);
+  }
+
+  final date = attendance.date ?? '';
+  final isToday = DateUtils.isSameDay(DateTime.tryParse(date), DateTime.now());
+  return showPlanViewer(
+    context,
+    attendance: PlanAttendance(
+      id: attendance.attendanceId,
+      tenantId: attendance.tenantId,
+      date: date,
+      durationDays: durationDays,
+      plan: plan,
+      extraPlans: extra.isEmpty ? null : extra,
+      typeInfo: attendance.typeInfo,
     ),
+    // An explicit plan disables the chips (Ionic: only when it differs from
+    // attendance.plan), so leave it out when there are further plans.
+    plan: extra.isEmpty ? plan : null,
+    title: (attendance.typeInfo?.isNotEmpty ?? false) ? attendance.typeInfo : context.l10n.signoutRunSheet,
+    defaultLive: isToday,
+    fieldWarning: (f) => missing(f.songId) ? l10nWithoutContext.planningNoScoresInstrument : null,
   );
 }

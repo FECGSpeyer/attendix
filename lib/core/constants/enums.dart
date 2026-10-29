@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../theme/app_colors.dart';
+import '../../l10n/l10n.dart';
 
 /// Player history type enumeration
 enum PlayerHistoryType {
@@ -136,7 +137,7 @@ enum Role {
   String get defaultRoute {
     if (isConductor) return '/people';
     if (isParent) return '/parents';
-    return '/overview';
+    return '/signout';
   }
 }
 
@@ -172,11 +173,20 @@ enum AttendanceStatus {
       this == AttendanceStatus.late ||
       this == AttendanceStatus.lateExcused;
 
+  /// SETTINGS2: Ionic `Utils.getPercentage` — like [countsAsPresent], but with
+  /// the tenant flag `shift_excused_as_present` a shift-/work-excused absence
+  /// ("Schichtbedingt"/"Arbeitsbedingt" in the notes) also counts as attended.
+  bool countsAsAttended({String? notes, bool shiftExcusedAsPresent = false}) =>
+      countsAsPresent ||
+      (shiftExcusedAsPresent &&
+          this == AttendanceStatus.excused &&
+          isWorkExcusedNote(notes));
+
   /// UI color for this status — single source of truth for all attendance colors
   Color get color => switch (this) {
     AttendanceStatus.present => AppColors.success,
     AttendanceStatus.absent => AppColors.danger,
-    AttendanceStatus.excused => AppColors.info,
+    AttendanceStatus.excused => AppColors.statusExcused,
     AttendanceStatus.late => AppColors.statusLate,
     AttendanceStatus.lateExcused => AppColors.statusLateExcused,
     AttendanceStatus.neutral => AppColors.medium,
@@ -192,14 +202,15 @@ enum AttendanceStatus {
     AttendanceStatus.neutral => Icons.help_outline,
   };
 
-  /// Localized label for this status
+  /// Localized label for this status (follows the active UI language).
   String get label => switch (this) {
-    AttendanceStatus.present => 'Anwesend',
-    AttendanceStatus.absent => 'Abwesend',
-    AttendanceStatus.excused => 'Entschuldigt',
-    AttendanceStatus.late => 'Verspätet',
-    AttendanceStatus.lateExcused => 'Verspätet (entsch.)',
-    AttendanceStatus.neutral => 'Nicht erfasst',
+    AttendanceStatus.present => l10nWithoutContext.commonStatusPresent,
+    AttendanceStatus.absent => l10nWithoutContext.commonStatusAbsent,
+    AttendanceStatus.excused => l10nWithoutContext.commonStatusExcused,
+    AttendanceStatus.late => l10nWithoutContext.commonStatusLateShort,
+    AttendanceStatus.lateExcused =>
+      l10nWithoutContext.attendanceLateExcusedParen,
+    AttendanceStatus.neutral => l10nWithoutContext.commonStatusNeutral,
   };
 }
 
@@ -261,3 +272,10 @@ enum FieldType {
     );
   }
 }
+
+/// SETTINGS2: Ionic `Utils.isWorkExcused` — absence note marks a shift- or
+/// work-related excuse ("Schichtbedingt" / "Arbeitsbedingt"). Single
+/// implementation (REVIEW_FIX3).
+bool isWorkExcusedNote(String? notes) =>
+    notes != null &&
+    (notes.contains('Schichtbedingt') || notes.contains('Arbeitsbedingt'));

@@ -1,27 +1,77 @@
+import 'dart:typed_data';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' show FileOptions;
 
 import '../../core/constants/enums.dart';
+import '../../core/utils/duty_utils.dart';
+import '../../core/utils/paged_query.dart';
+import '../../core/utils/shift_utils.dart';
 import '../models/attendance/attendance.dart';
+import '../models/shift/shift_plan.dart';
+import '../../core/config/supabase_config.dart'
+    show AccountScopeKey, currentAuthUserIdProvider;
 import 'base_repository.dart';
+import '../../l10n/l10n.dart';
 
 /// Provider for AttendanceRepository
 final attendanceRepositoryProvider = Provider<AttendanceRepository>((ref) {
   return AttendanceRepository(ref);
 });
 
+/// SOL_FIX1: one immutable repository instance per tenant (see
+/// playerRepositoryForTenantProvider).
+///
+/// SOL_FIX15: the instance also follows the signed-in account, so every
+/// provider built on it reloads on an account switch (RLS results and
+/// role-dependent data never outlive the account that loaded them).
+final attendanceRepositoryForTenantProvider =
+    Provider.family<AttendanceRepository, int?>((ref, tenantId) {
+  final userId = ref.watch(currentAuthUserIdProvider);
+  return ref.watch(
+      _attendanceRepositoryForAccountProvider((tenantId: tenantId, userId: userId)));
+});
+
+final _attendanceRepositoryForAccountProvider =
+    Provider.family<AttendanceRepository, AccountScopeKey>((ref, key) {
+  final repo = AttendanceRepository(ref);
+  if (key.tenantId != null) repo.bindTenantId(key.tenantId!);
+  return repo;
+});
+
+/// SOL_FIX11: thrown by a guarded (offline queue) write when the auth
+/// session changed before the mutation; nothing was written.
+class OfflineSessionChangedException implements Exception {
+  const OfflineSessionChangedException();
+
+  @override
+  String toString() => 'OfflineSessionChangedException: auth session changed';
+}
+
 /// Repository for attendance operations
 class AttendanceRepository extends BaseRepository with TenantAwareRepository {
   AttendanceRepository(super.ref);
 
-  /// Get all attendances for the current tenant
+  /// Ionic `getCurrentAttDate()`: the tenant's season start, fallback
+  /// 2023-01-01 (lower bound of `getAttendance(false, ...)`).
+  static DateTime currentAttDate(String? seasonStart) =>
+      (seasonStart != null ? DateTime.tryParse(seasonStart) : null) ??
+      DateTime(2023, 1, 1);
+
+  /// Ionic `getAttendance(all, withPersonAttendance)`: all attendances of the
+  /// current tenant after [since] (default 2020-01-01 = Ionic `all`), newest
+  /// first, without a row limit.
+  ///
+  /// PARITY_A (R1): no default limit / 180-day window any more; all pages are
+  /// loaded (PostgREST max-rows). [limit] is only applied when given.
   Future<List<Attendance>> getAttendances({
     DateTime? since,
     bool withPersonAttendances = false,
-    int limit = 50,
+    int? limit,
   }) async {
     try {
-      final sinceDate = since ?? DateTime.now().subtract(const Duration(days: 180));
-      
+      final sinceDate = since ?? DateTime(2020, 1, 1);
+
       String selectQuery = '*';
       if (withPersonAttendances) {
         selectQuery = '''*, persons:person_attendances(
@@ -31,16 +81,32 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
         )''';
       }
 
-      final response = await supabase
-          .from('attendance')
-          .select(selectQuery)
-          .eq('tenantId', currentTenantId)
-          .gt('date', sinceDate.toIso8601String())
-          .order('date', ascending: false)
-          .limit(limit);
+      final List<Map<String, dynamic>> rows;
+      if (limit != null) {
+        final response = await supabase
+            .from('attendance')
+            .select(selectQuery)
+            .eq('tenantId', currentTenantId)
+            .gt('date', sinceDate.toIso8601String())
+            .order('date', ascending: false)
+            .limit(limit);
+        rows = (response as List).cast<Map<String, dynamic>>();
+      } else {
+        rows = await fetchAllPages<Map<String, dynamic>>((from, to) async {
+          final page = await supabase
+              .from('attendance')
+              .select(selectQuery)
+              .eq('tenantId', currentTenantId)
+              .gt('date', sinceDate.toIso8601String())
+              .order('date', ascending: false)
+              .order('id', ascending: true)
+              .range(from, to);
+          return (page as List).cast<Map<String, dynamic>>();
+        });
+      }
 
-      return (response as List)
-          .map((e) => _parseAttendance(e as Map<String, dynamic>, withPersonAttendances))
+      return rows
+          .map((e) => _parseAttendance(e, withPersonAttendances))
           .toList();
     } catch (e, stack) {
       handleError(e, stack, 'getAttendances');
@@ -96,9 +162,51 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
     }
   }
 
+  /// DB_FIX: `attendance` columns an insert may set. Attendance.toJson also
+  /// holds client-only keys (percentage, lateExcused — no `attendance`
+  /// columns → PGRST204), id and created_at.
+  static const Set<String> insertColumns = {
+    'created_by',
+    'date',
+    'type',
+    'type_id',
+    'save_in_history',
+    'excused',
+    'typeInfo',
+    'notes',
+    'img',
+    'plan',
+    'songs',
+    'criticalPlayers',
+    'playerNotes',
+    'start_time',
+    'end_time',
+    'deadline',
+    'duration_days',
+    'checklist',
+    'conductors',
+    'players',
+    'share_plan',
+    'place',
+    'files_folder',
+    'description',
+    'attachment_url',
+    'attachment_name',
+    'duty_required',
+  };
+
+  /// DB_FIX: insert payload of [createAttendance] (without tenantId): only
+  /// [insertColumns]; null values are not sent so DB defaults apply (Ionic
+  /// inserts only the keys it set).
+  static Map<String, dynamic> buildInsertData(Attendance attendance) => {
+        for (final e in attendance.toJson().entries)
+          if (insertColumns.contains(e.key) && e.value != null) e.key: e.value,
+      };
+
   /// Create a new attendance
   /// BL-002: Checks for duplicate attendances on the same date
   Future<Attendance> createAttendance(Attendance attendance) async {
+    ensureNotDemo('createAttendance'); // DEMO_GUARD
     try {
       // BL-002: Check for existing attendance on the same date
       final existing = await supabase
@@ -110,16 +218,14 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
 
       if (existing != null) {
         throw DuplicateAttendanceException(
-          message: 'Ein Termin an diesem Datum existiert bereits',
+          message: l10nWithoutContext.coreFlutterRepoEventExistsOnDate,
           existingId: existing['id'] as int,
           date: attendance.date,
         );
       }
 
-      final data = attendance.toJson();
+      final data = buildInsertData(attendance);
       data['tenantId'] = currentTenantId;
-      // Remove computed fields
-      data.remove('persons');
 
       final response = await supabase
           .from('attendance')
@@ -138,6 +244,7 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
 
   /// Update an existing attendance
   Future<Attendance> updateAttendance(int id, Map<String, dynamic> updates) async {
+    ensureNotDemo('updateAttendance'); // DEMO_GUARD
     try {
       // Remove read-only fields
       updates.remove('id');
@@ -170,6 +277,7 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
 
   /// Delete an attendance
   Future<void> deleteAttendance(int id) async {
+    ensureNotDemo('deleteAttendance'); // DEMO_GUARD
     try {
       await supabase
           .from('attendance')
@@ -263,7 +371,8 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
             *,
             attendance:attendance_id(
               id, date, type, typeInfo, start_time, end_time, deadline, tenantId,
-              type_id, plan, share_plan
+              type_id, plan, extra_plans, share_plan, duration_days, place,
+              description, attachment_url, attachment_name
             )
           ''')
           .inFilter('person_id', personIds)
@@ -279,55 +388,83 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
     }
   }
 
-  /// Ensure PersonAttendance rows exist for every active player in the tenant
-  /// for the given attendance. Validates that the attendance belongs to the
-  /// current tenant, then upserts one row per active (non-paused, non-left)
-  /// player with the supplied [defaultStatusValue] (e.g. neutral).
-  ///
-  /// Upsert with `ignoreDuplicates` prevents duplicates from concurrent
-  /// devices (TOCTOU race).
-  Future<void> ensurePersonAttendances(
-    int attendanceId,
-    int defaultStatusValue,
-  ) async {
+  /// Ionic `DbService.updateShiftAssignmentsForAttendance`: after the date or
+  /// time window of a Termin changed, re-run the shift computation for every
+  /// person of the Termin (see [ShiftUtils.shiftUpdatesForAttendance]).
+  /// Skips past Termine and all-day types.
+  Future<void> updateShiftAssignmentsForAttendance(int attendanceId) async {
     try {
-      // Validate attendance belongs to current tenant before inserting
-      final attendanceCheck = await supabase
+      final att = await supabase
           .from('attendance')
-          .select('id')
+          .select('id, date, start_time, end_time, '
+              'attType:type_id(start_time, end_time, all_day, default_status)')
           .eq('id', attendanceId)
           .eq('tenantId', currentTenantId)
           .maybeSingle();
+      if (att == null) return;
+      final type = att['attType'] as Map<String, dynamic>?;
+      if (type == null) return;
+      final typeModel = AttendanceType.fromJson({
+        'name': '',
+        ...type,
+      });
 
-      if (attendanceCheck == null) return;
+      // person_attendances has no tenantId: the Termin was validated above.
+      final paRows = await supabase
+          .from('person_attendances')
+          .select('id, person_id, status, notes')
+          .eq('attendance_id', attendanceId);
+      final rows = [
+        for (final r in (paRows as List).cast<Map<String, dynamic>>())
+          if (r['person_id'] != null)
+            ShiftAttendanceRow(
+              id: r['id'].toString(),
+              personId: (r['person_id'] as num).toInt(),
+              status: _parseStatus(r['status']),
+              notes: r['notes'] as String?,
+            ),
+      ];
+      if (rows.isEmpty) return;
 
       final players = await supabase
           .from('player')
-          .select('id')
+          .select('id, shift_id, shift_start, shift_name')
           .eq('tenantId', currentTenantId)
-          .isFilter('left', null)
-          .eq('paused', false);
+          .inFilter('id', rows.map((r) => r.personId).toSet().toList());
+      final persons = {
+        for (final p in (players as List).cast<Map<String, dynamic>>())
+          (p['id'] as num).toInt(): ShiftPerson(
+            shiftId: p['shift_id']?.toString(),
+            shiftStart: p['shift_start']?.toString(),
+            shiftName: p['shift_name']?.toString(),
+          ),
+      };
 
-      final playerList = players as List;
-      if (playerList.isEmpty) return;
+      final shiftRows = await supabase
+          .from(SupabaseTable.shiftPlans.tableName)
+          .select('*')
+          .eq('tenant_id', currentTenantId);
+      final shifts = [
+        for (final s in (shiftRows as List).cast<Map<String, dynamic>>()) ShiftPlan.fromJson(s),
+      ];
 
-      final records = playerList
-          .map((p) => {
-                'attendance_id': attendanceId,
-                'person_id': p['id'],
-                'status': defaultStatusValue,
-              })
-          .toList();
-
-      await supabase
-          .from('person_attendances')
-          .upsert(
-            records,
-            onConflict: 'attendance_id,person_id',
-            ignoreDuplicates: true,
-          );
+      final updates = ShiftUtils.shiftUpdatesForAttendance(
+        attendanceDate: att['date'] as String,
+        attendanceStart: att['start_time'] as String?,
+        attendanceEnd: att['end_time'] as String?,
+        typeStart: typeModel.startTime,
+        typeEnd: typeModel.endTime,
+        typeAllDay: typeModel.allDay,
+        defaultStatus: typeModel.defaultStatus,
+        rows: rows,
+        persons: persons,
+        shifts: shifts,
+      );
+      for (final u in updates) {
+        await updatePersonAttendance(u.id, {'status': u.status.value, 'notes': u.notes});
+      }
     } catch (e, stack) {
-      handleError(e, stack, 'ensurePersonAttendances');
+      handleError(e, stack, 'updateShiftAssignmentsForAttendance');
       rethrow;
     }
   }
@@ -456,23 +593,57 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
 
   /// Update a single person attendance
   /// SEC-012: Added tenant validation before update
+  ///
+  /// SOL_FIX11: offline queue replays pass [isSessionCurrent] and
+  /// [actingUserId]. The session is checked again AFTER the async
+  /// validation, immediately before the mutation (no await in between); if
+  /// it changed (sign-out / account switch during validation) nothing is
+  /// written and [OfflineSessionChangedException] is thrown so the queue
+  /// keeps the entry. `changed_by` / duty `assigned_by` then use
+  /// [actingUserId] (the author of the queued write), never a re-read user.
   Future<PersonAttendance> updatePersonAttendance(
     String id,
-    Map<String, dynamic> updates,
-  ) async {
+    Map<String, dynamic> updates, {
+    bool Function()? isSessionCurrent,
+    String? actingUserId,
+  }) async {
     try {
       // Validate that personAttendance belongs to current tenant
+      // DUTY: also load duty_state + the type's duty_mode for syncDutyWithStatus
       final validation = await supabase
           .from('person_attendances')
-          .select('id, attendance:attendance_id(tenantId)')
+          .select('id, duty_state, attendance:attendance_id(tenantId, type_id, attType:type_id(duty_mode))')
           .eq('id', id)
           .maybeSingle();
+
+      // SOL_FIX11: session guard right after the async validation and
+      // before any mutation (no await until the update below).
+      if (isSessionCurrent != null && !isSessionCurrent()) {
+        throw const OfflineSessionChangedException();
+      }
+      final changedBy = actingUserId ?? supabase.auth.currentUser?.id;
 
       if (validation == null) {
         throw RepositoryException(
           message: 'PersonAttendance not found',
           operation: 'updatePersonAttendance',
         );
+      }
+
+      // DUTY: keep assignment and status in sync for Termine of duty types
+      // (Ionic syncDutyWithStatus). Explicit duty changes are left alone.
+      final isDutyTermin = validation['attendance']?['attType']?['duty_mode'] == true;
+      if (isDutyTermin && updates.containsKey('status') && !updates.containsKey('duty_state')) {
+        final rawStatus = updates['status'];
+        final newStatus = rawStatus is AttendanceStatus
+            ? rawStatus
+            : AttendanceStatus.fromValue((rawStatus as num?)?.toInt() ?? 0);
+        updates.addAll(dutySyncFieldsForStatus(
+          isDutyTermin: true,
+          currentDutyState: validation['duty_state'] as String?,
+          newStatus: newStatus,
+          userId: changedBy,
+        ));
       }
 
       final attendanceTenantId = validation['attendance']?['tenantId'];
@@ -494,8 +665,8 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
       updates.remove('attendance');
 
       // Add changed metadata
-      updates['changed_at'] = DateTime.now().toIso8601String();
-      updates['changed_by'] = supabase.auth.currentUser?.id;
+      updates['changed_at'] = DateTime.now().toUtc().toIso8601String();
+      updates['changed_by'] = changedBy;
 
       final response = await supabase
           .from('person_attendances')
@@ -513,6 +684,8 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
       }
 
       return PersonAttendance.fromJson(response);
+    } on OfflineSessionChangedException {
+      rethrow; // SOL_FIX11: not an error – the queue keeps the write.
     } catch (e, stack) {
       handleError(e, stack, 'updatePersonAttendance');
       rethrow;
@@ -574,40 +747,12 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
           .from('person_attendances')
           .update({
             'status': newStatus.value,
-            'changed_at': DateTime.now().toIso8601String(),
+            'changed_at': DateTime.now().toUtc().toIso8601String(),
             'changed_by': supabase.auth.currentUser?.id,
           })
           .inFilter('id', validIds);
     } catch (e, stack) {
       handleError(e, stack, 'batchUpdatePersonAttendances');
-      rethrow;
-    }
-  }
-
-  /// Update start_time/end_time on all future attendances of a given type
-  Future<void> updateFutureAttendanceTimes(
-    String typeId, {
-    String? startTime,
-    String? endTime,
-  }) async {
-    try {
-      final today = DateTime.now();
-      final startOfDay = DateTime(today.year, today.month, today.day);
-
-      final updates = <String, dynamic>{};
-      if (startTime != null) updates['start_time'] = startTime;
-      if (endTime != null) updates['end_time'] = endTime;
-
-      if (updates.isEmpty) return;
-
-      await supabase
-          .from('attendance')
-          .update(updates)
-          .eq('tenantId', currentTenantId)
-          .eq('type_id', typeId)
-          .gte('date', startOfDay.toIso8601String());
-    } catch (e, stack) {
-      handleError(e, stack, 'updateFutureAttendanceTimes');
       rethrow;
     }
   }
@@ -635,52 +780,45 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
     }
   }
 
-  /// Calculate percentage for an attendance
-  /// SEC-015: Added tenant validation before percentage calculation
-  Future<void> recalculatePercentage(int attendanceId) async {
+  // Helper to parse attendance with optional person attendances
+  // STATS_PEOPLE_FIXES
+  /// Load person_attendances for the given attendance ids (export).
+  ///
+  /// Multi-tenant safety: `person_attendances` has no `tenantId` column, so
+  /// the inner join filters by `attendance.tenantId = currentTenantId`.
+  /// Paginated to bypass the PostgREST 1000-row default limit.
+  Future<List<PersonAttendance>> getPersonAttendancesForAttendances(
+    List<int> attendanceIds,
+  ) async {
+    if (attendanceIds.isEmpty) return [];
     try {
-      // Validate attendance belongs to current tenant
-      final attendanceCheck = await supabase
-          .from('attendance')
-          .select('id')
-          .eq('id', attendanceId)
-          .eq('tenantId', currentTenantId)
-          .maybeSingle();
-
-      if (attendanceCheck == null) {
-        // Attendance doesn't belong to current tenant, skip silently
-        return;
+      const batchSize = 1000;
+      final result = <PersonAttendance>[];
+      var offset = 0;
+      while (true) {
+        final response = await supabase
+            .from('person_attendances')
+            .select('id, attendance_id, person_id, status, notes, '
+                'attendance:attendance_id!inner(tenantId)')
+            .inFilter('attendance_id', attendanceIds)
+            .eq('attendance.tenantId', currentTenantId)
+            .order('id') // stable paging
+            .range(offset, offset + batchSize - 1);
+        final rows = response as List;
+        for (final e in rows) {
+          final row = Map<String, dynamic>.from(e as Map)..remove('attendance');
+          result.add(PersonAttendance.fromJson(row));
+        }
+        if (rows.length < batchSize) break;
+        offset += batchSize;
       }
-
-      final response = await supabase
-          .from('person_attendances')
-          .select('status')
-          .eq('attendance_id', attendanceId);
-
-      final statusList = (response as List).map((e) => e['status']).toList();
-
-      if (statusList.isEmpty) {
-        await updateAttendance(attendanceId, {'percentage': null});
-        return;
-      }
-
-      final presentCount = statusList.where((s) {
-        final status = _parseStatus(s);
-        return status == AttendanceStatus.present ||
-               status == AttendanceStatus.late ||
-               status == AttendanceStatus.lateExcused;
-      }).length;
-
-      final percentage = (presentCount / statusList.length * 100).round();
-
-      await updateAttendance(attendanceId, {'percentage': percentage.toDouble()});
+      return result;
     } catch (e, stack) {
-      handleError(e, stack, 'recalculatePercentage');
+      handleError(e, stack, 'getPersonAttendancesForAttendances');
       rethrow;
     }
   }
 
-  // Helper to parse attendance with optional person attendances
   Attendance _parseAttendance(Map<String, dynamic> data, bool withPersons) {
     // RT-020: Removed unused persons parsing - the Attendance model
     // doesn't have a persons field yet. When needed, add the field to
@@ -701,6 +839,267 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
       title: attendanceData?['typeInfo'],
     );
   }
+
+  // ATTENDANCE_SIGNOUT: history + date-change helpers (Ionic parity)
+
+  /// Song history rows of one Termin (song, conductor person_id / otherConductor).
+  Future<List<Map<String, dynamic>>> getHistoryForAttendance(int attendanceId) async {
+    try {
+      final response = await supabase
+          .from('history')
+          .select('id, songId, person_id, otherConductor, date')
+          .eq('attendance_id', attendanceId)
+          .eq('tenantId', currentTenantId)
+          .order('id', ascending: true);
+      return List<Map<String, dynamic>>.from(response as List);
+    } catch (e, stack) {
+      handleError(e, stack, 'getHistoryForAttendance');
+      rethrow;
+    }
+  }
+
+  /// LOGIC_ATT: Ionic addSongsToHistory – inserts song history rows of a
+  /// Termin. `tenantId` is always forced to the current tenant.
+  Future<void> addHistoryEntries(List<Map<String, dynamic>> rows) async {
+    if (rows.isEmpty) return;
+    try {
+      await supabase
+          .from('history')
+          .insert([for (final r in rows) {...r, 'tenantId': currentTenantId}]);
+    } catch (e, stack) {
+      handleError(e, stack, 'addHistoryEntries');
+      rethrow;
+    }
+  }
+
+  /// LOGIC_ATT: Ionic updateHistoryEntry (e.g. conductor change).
+  Future<void> updateHistoryEntry(int id, Map<String, dynamic> updates) async {
+    ensureNotDemo('updateHistoryEntry'); // DEMO_GUARD
+    try {
+      await supabase
+          .from('history')
+          .update(updates)
+          .eq('id', id)
+          .eq('tenantId', currentTenantId);
+    } catch (e, stack) {
+      handleError(e, stack, 'updateHistoryEntry');
+      rethrow;
+    }
+  }
+
+  /// LOGIC_ATT: Ionic removeHistoryEntry.
+  Future<void> deleteHistoryEntry(int id) async {
+    ensureNotDemo('deleteHistoryEntry'); // DEMO_GUARD
+    try {
+      await supabase
+          .from('history')
+          .delete()
+          .eq('id', id)
+          .eq('tenantId', currentTenantId);
+    } catch (e, stack) {
+      handleError(e, stack, 'deleteHistoryEntry');
+      rethrow;
+    }
+  }
+
+  /// Moves the song history of a Termin to its new date.
+  Future<void> updateHistoryDatesForAttendance(int attendanceId, String date) async {
+    ensureNotDemo('updateHistoryDatesForAttendance'); // DEMO_GUARD
+    try {
+      await supabase
+          .from('history')
+          .update({'date': date})
+          .eq('attendance_id', attendanceId)
+          .eq('tenantId', currentTenantId);
+    } catch (e, stack) {
+      handleError(e, stack, 'updateHistoryDatesForAttendance');
+      rethrow;
+    }
+  }
+
+  /// Sets every person of a Termin back to [status] and clears their notes
+  /// ("Status zurücksetzen" when moving a Termin).
+  ///
+  /// person_attendances has no tenantId column: the owning attendance is
+  /// verified against the current tenant first, then rows are filtered by
+  /// that attendance_id.
+  Future<void> resetPersonAttendancesForAttendance(
+    int attendanceId,
+    AttendanceStatus status,
+  ) async {
+    try {
+      final owner = await supabase
+          .from('attendance')
+          .select('id')
+          .eq('id', attendanceId)
+          .eq('tenantId', currentTenantId)
+          .maybeSingle();
+      if (owner == null) {
+        throw RepositoryException(
+          message: 'Attendance not found or belongs to different tenant',
+          operation: 'resetPersonAttendancesForAttendance',
+        );
+      }
+      await supabase
+          .from('person_attendances')
+          .update({
+            'status': status.value,
+            'notes': '',
+            'changed_at': DateTime.now().toUtc().toIso8601String(),
+            'changed_by': supabase.auth.currentUser?.id,
+          })
+          .eq('attendance_id', attendanceId);
+    } catch (e, stack) {
+      handleError(e, stack, 'resetPersonAttendancesForAttendance');
+      rethrow;
+    }
+  }
+
+  // ATT_DETAIL: ad-hoc reminder, description attachment
+
+  /// Throws when [attendanceId] does not belong to the current tenant.
+  Future<void> _assertAttendanceInTenant(int attendanceId, String operation) async {
+    final check = await supabase
+        .from('attendance')
+        .select('id')
+        .eq('id', attendanceId)
+        .eq('tenantId', currentTenantId)
+        .maybeSingle();
+    if (check == null) {
+      throw RepositoryException(
+        message: 'Attendance not found or belongs to different tenant',
+        operation: operation,
+      );
+    }
+  }
+
+  /// Sends an ad-hoc reminder (push + e-mail) through the
+  /// `send-ad-hoc-reminder` Edge Function (Ionic sendAdHocReminder).
+  /// [playerAppId] targets one person, [playerAppIds] a subset
+  /// ("nur Personen ohne Rückmeldung"); both null = everyone in the Termin.
+  Future<void> sendAdHocReminder({
+    required int attendanceId,
+    String? title,
+    String? message,
+    String? playerAppId,
+    List<String>? playerAppIds,
+  }) async {
+    try {
+      await _assertAttendanceInTenant(attendanceId, 'sendAdHocReminder');
+      await supabase.functions.invoke('send-ad-hoc-reminder', body: {
+        'attendanceId': attendanceId,
+        'tenantId': currentTenantId,
+        if (title != null && title.isNotEmpty) 'title': title,
+        if (message != null && message.isNotEmpty) 'message': message,
+        if (playerAppId != null && playerAppId.isNotEmpty) 'playerAppId': playerAppId,
+        if (playerAppIds != null) 'playerAppIds': playerAppIds,
+      });
+    } catch (e, stack) {
+      handleError(e, stack, 'sendAdHocReminder');
+      rethrow;
+    }
+  }
+
+  /// Storage path of the description attachment (Ionic onAttachmentSelect).
+  static String attachmentPath(int attendanceId, String fileName) {
+    final safeName = fileName.replaceAll(RegExp(r'[^a-zA-Z0-9._-]'), '_');
+    return '$attendanceId/attachment/$safeName';
+  }
+
+  /// Uploads the single attachment of a Termin to the public `attendances`
+  /// bucket and stores url + name on the attendance row.
+  Future<({String url, String name})> uploadAttachment(
+    int attendanceId,
+    Uint8List bytes,
+    String fileName, {
+    String? previousFileName,
+  }) async {
+    ensureNotDemo('uploadAttachment'); // DEMO_GUARD
+    try {
+      await _assertAttendanceInTenant(attendanceId, 'uploadAttachment');
+      // Only one attachment per Termin: drop a previous file with another
+      // name so it does not stay orphaned in storage.
+      if (previousFileName != null &&
+          previousFileName.isNotEmpty &&
+          previousFileName != fileName) {
+        try {
+          await supabase.storage
+              .from('attendances')
+              .remove([attachmentPath(attendanceId, previousFileName)]);
+        } catch (_) {
+          // Old file may already be gone.
+        }
+      }
+      final path = attachmentPath(attendanceId, fileName);
+      await supabase.storage
+          .from('attendances')
+          .uploadBinary(path, bytes, fileOptions: const FileOptions(upsert: true));
+      final url = supabase.storage.from('attendances').getPublicUrl(path);
+      await supabase
+          .from('attendance')
+          .update({'attachment_url': url, 'attachment_name': fileName})
+          .eq('id', attendanceId)
+          .eq('tenantId', currentTenantId);
+      return (url: url, name: fileName);
+    } catch (e, stack) {
+      handleError(e, stack, 'uploadAttachment');
+      rethrow;
+    }
+  }
+
+  // DB_REVIEW_REST (H4): Termin-Foto like Ionic image.service
+  // updateAttendanceImage: bucket `attendances`, key `<attendanceId>`, upsert.
+  static String attendanceImagePath(int attendanceId) => '$attendanceId';
+
+  /// Uploads the Termin photo and stores its public URL in `attendance.img`.
+  Future<String> uploadAttendanceImage(int attendanceId, Uint8List bytes) async {
+    ensureNotDemo('uploadAttendanceImage'); // DEMO_GUARD
+    try {
+      await _assertAttendanceInTenant(attendanceId, 'uploadAttendanceImage');
+      final path = attendanceImagePath(attendanceId);
+      await supabase.storage.from('attendances').uploadBinary(
+            path,
+            bytes,
+            fileOptions: const FileOptions(upsert: true),
+          );
+      final url = supabase.storage.from('attendances').getPublicUrl(path);
+      await supabase
+          .from('attendance')
+          .update({'img': url})
+          .eq('id', attendanceId)
+          .eq('tenantId', currentTenantId);
+      return url;
+    } catch (e, stack) {
+      handleError(e, stack, 'uploadAttendanceImage');
+      rethrow;
+    }
+  }
+
+  /// Removes the attachment file and clears url + name on the attendance row.
+  Future<void> removeAttachment(int attendanceId, String? fileName) async {
+    ensureNotDemo('removeAttachment'); // DEMO_GUARD
+    try {
+      await _assertAttendanceInTenant(attendanceId, 'removeAttachment');
+      if (fileName != null && fileName.isNotEmpty) {
+        try {
+          await supabase.storage
+              .from('attendances')
+              .remove([attachmentPath(attendanceId, fileName)]);
+        } catch (_) {
+          // File may already be gone – still clear the reference.
+        }
+      }
+      await supabase
+          .from('attendance')
+          .update({'attachment_url': null, 'attachment_name': null})
+          .eq('id', attendanceId)
+          .eq('tenantId', currentTenantId);
+    } catch (e, stack) {
+      handleError(e, stack, 'removeAttachment');
+      rethrow;
+    }
+  }
+  // END ATT_DETAIL
 
   AttendanceStatus _parseStatus(dynamic status) {
     if (status == null) return AttendanceStatus.neutral;

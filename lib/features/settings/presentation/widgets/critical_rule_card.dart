@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/tenant/tenant.dart';
+import '../../../../l10n/l10n.dart';
+import 'settings_list.dart';
 
 /// Card widget for displaying a critical rule
 class CriticalRuleCard extends StatelessWidget {
@@ -19,82 +20,30 @@ class CriticalRuleCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: AppDimensions.paddingS),
-      child: ListTile(
-        leading: Icon(
-          Icons.warning_amber_rounded,
-          color: AppColors.warning,
-        ),
-        title: Text(
-          rule.displayName,
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-        ),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (rule.name != null)
-              Text(
-                rule.description,
-                style: const TextStyle(fontSize: 12),
-              ),
-            const SizedBox(height: 4),
-            Row(
-              children: [
-                _buildOperatorChip(),
-                const SizedBox(width: 8),
-                if (!rule.enabled)
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 6,
-                      vertical: 2,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.medium.withValues(alpha: 0.2),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: const Text(
-                      'Deaktiviert',
-                      style: TextStyle(fontSize: 10),
-                    ),
-                  ),
-              ],
-            ),
-          ],
-        ),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            IconButton(
-              icon: const Icon(Icons.edit, size: 20),
-              onPressed: onEdit,
-            ),
-            IconButton(
-              icon: Icon(Icons.delete, size: 20, color: AppColors.danger),
-              onPressed: onDelete,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildOperatorChip() {
+    // UX_SETTINGS (WAVE 8): Ionic rule row inside the "Problemfall-Regeln"
+    // group — wrapped description (h2), operator ion-badge (AND primary /
+    // OR secondary) and a red trash button. Tap edits (Flutter extra).
     final isAnd = rule.operator == CriticalRuleOperator.and;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-      decoration: BoxDecoration(
-        color: isAnd ? AppColors.info.withValues(alpha: 0.2) : AppColors.warning.withValues(alpha: 0.2),
-        borderRadius: BorderRadius.circular(4),
-      ),
-      child: Text(
-        isAnd ? 'UND' : 'ODER',
-        style: TextStyle(
-          fontSize: 10,
-          fontWeight: FontWeight.bold,
-          color: isAnd ? AppColors.info : AppColors.warning,
+    final text = rule.name != null && rule.name!.isNotEmpty
+        ? '${rule.name}: ${rule.description}'
+        : rule.description;
+    return ListTile(
+      onTap: onEdit,
+      title: Text(text),
+      subtitle: Padding(
+        padding: const EdgeInsets.only(top: 4),
+        child: Align(
+          alignment: Alignment.centerLeft,
+          child: IonBadge(
+            text: isAnd ? 'AND' : 'OR',
+            color: isAnd ? AppColors.primary : AppColors.secondary,
+          ),
         ),
+      ),
+      trailing: IconButton(
+        icon: const Icon(Icons.delete_outline, color: AppColors.danger),
+        tooltip: context.l10n.commonDelete,
+        onPressed: onDelete,
       ),
     );
   }

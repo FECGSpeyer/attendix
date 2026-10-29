@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'enums.dart';
@@ -8,23 +7,27 @@ class AppConstants {
   AppConstants._();
 
   static const String appName = 'Attendix';
-  static const String appVersion = '0.2.1';
+  static const String appVersion = '0.12.0';
 
-  /// Demo credentials from environment (for development only)
-  /// SEC-009: Only expose in debug mode
-  static String get demoMail {
-    if (!kDebugMode) return '';
-    try {
-      return dotenv.env['DEMO_EMAIL'] ?? '';
-    } catch (_) {
-      return '';
-    }
-  }
+  /// Demo credentials from environment (Ionic `environment.demoMail` /
+  /// `environment.demoPassword`).
+  ///
+  /// DEMO_GUARD: Ionic offers "Demo starten" in production too, and the
+  /// `.env` asset is bundled into every build anyway, so the former
+  /// debug-only gate (SEC-009) hid the link without protecting anything.
+  /// The demo account is now write-protected via [DemoGuard]
+  /// (lib/core/utils/demo_guard.dart). Leave DEMO_EMAIL/DEMO_PASSWORD
+  /// unset to hide the link.
+  static String get demoMail => _env('DEMO_EMAIL');
 
-  static String get demoPassword {
-    if (!kDebugMode) return '';
+  static String get demoPassword => _env('DEMO_PASSWORD');
+
+  /// E-mail used to detect the demo account for the write protection.
+  static String get demoMailForGuard => demoMail;
+
+  static String _env(String key) {
     try {
-      return dotenv.env['DEMO_PASSWORD'] ?? '';
+      return dotenv.env[key] ?? '';
     } catch (_) {
       return '';
     }

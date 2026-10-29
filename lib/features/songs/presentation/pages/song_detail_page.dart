@@ -1,1614 +1,1359 @@
-import 'dart:io';
+import 'dart:io' show Platform;
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:path_provider/path_provider.dart';
 
 import '../../../../core/constants/app_constants.dart';
-import '../../../../core/providers/group_providers.dart';
+import '../../../../core/providers/organisation_providers.dart';
+import '../../../../core/providers/player_providers.dart';
 import '../../../../core/providers/song_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
+import '../../../../core/services/audio_player/audio_player_service.dart';
 import '../../../../core/services/song_file_service.dart';
 import '../../../../core/services/telegram_service.dart';
 import '../../../../core/services/zip_service.dart';
+import '../../../../core/services/zip_service_stub.dart'
+    if (dart.library.io) '../../../../core/services/zip_service_io.dart'
+    if (dart.library.html) '../../../../core/services/zip_service_web.dart'
+    as file_saver;
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/dialog_helper.dart';
-import '../../../../core/utils/instrument_matcher.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/models/song/song.dart';
+import '../../../../data/models/song/song_additional_field.dart';
 import '../../../../data/models/tenant/tenant.dart';
-import '../../../../shared/widgets/sheets/image_viewer_sheet.dart';
+import '../../../../shared/widgets/audio_player/audio_player_widget.dart';
+import '../../../../shared/widgets/layout/ionic_ios.dart';
+import '../../data/song_print_service.dart';
+import '../utils/song_utils.dart';
 import '../widgets/copy_to_tenant_sheet.dart';
+import '../widgets/file_drop/file_drop_target.dart';
 import '../widgets/file_upload_sheet.dart';
-import '../widgets/pdf_viewer_sheet.dart';
-import '../widgets/smart_print_dialog.dart';
+import '../widgets/single_file_upload_sheet.dart';
+import '../widgets/song_file_opener.dart';
+import '../../../../core/services/tracking/tracking_event.dart';
+import '../../../../core/services/tracking/tracking_service.dart';
+import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
+import '../../../../shared/widgets/common/error_state_view.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 
-/// Song Detail Page - with inline editing like Ionic
+/// Song detail page (Ionic `songs/song`): inline editing for admins and
+/// responsibles, read-only view for everybody else and for the public share
+/// link `/<song_sharing_id>/<songId>` ([songSharingId] set, no login needed).
 class SongDetailPage extends ConsumerStatefulWidget {
   final String songId;
+  final String? songSharingId;
 
-  const SongDetailPage({super.key, required this.songId});
+  const SongDetailPage({super.key, required this.songId, this.songSharingId});
 
   @override
   ConsumerState<SongDetailPage> createState() => _SongDetailPageState();
 }
 
 class _SongDetailPageState extends ConsumerState<SongDetailPage> {
-  // Edit state
-  late TextEditingController _prefixController;
-  late TextEditingController _numberController;
-  late TextEditingController _nameController;
-  late TextEditingController _linkController;
+  final _prefix = TextEditingController();
+  final _number = TextEditingController();
+  final _name = TextEditingController();
+  final _link = TextEditingController();
+  final Map<String, TextEditingController> _fieldControllers = {};
 
-  bool _initialized = false;
-  bool _isSaving = false;
-
-  // Local state for toggles and selects
+  int? _initializedFor;
   bool _withChoir = false;
   bool _withSolo = false;
   int? _difficulty;
-  String? _category;
-  List<int> _selectedInstrumentIds = [];
+  List<int> _instrumentIds = [];
+  List<String> _categoryIds = [];
+  Map<String, dynamic> _additional = {};
+  bool _saving = false;
 
-  @override
-  void initState() {
-    super.initState();
-    _prefixController = TextEditingController();
-    _numberController = TextEditingController();
-    _nameController = TextEditingController();
-    _linkController = TextEditingController();
-  }
+  int? get _songId => int.tryParse(widget.songId);
+
+  SongDetailParams get _params =>
+      (songId: _songId ?? 0, sharingId: widget.songSharingId);
 
   @override
   void dispose() {
-    _prefixController.dispose();
-    _numberController.dispose();
-    _nameController.dispose();
-    _linkController.dispose();
+    _prefix.dispose();
+    _number.dispose();
+    _name.dispose();
+    _link.dispose();
+    for (final c in _fieldControllers.values) {
+      c.dispose();
+    }
     super.dispose();
   }
 
-  void _initializeFromSong(Song song) {
-    if (_initialized) return;
-    _prefixController.text = song.prefix ?? '';
-    _numberController.text = song.number?.toString() ?? '';
-    _nameController.text = song.name;
-    _linkController.text = song.link ?? '';
+  void _init(SongDetailData data) {
+    final song = data.song;
+    if (_initializedFor == song.id) return;
+    _initializedFor = song.id;
+    _prefix.text = song.prefix ?? '';
+    _number.text = song.number?.toString() ?? '';
+    _name.text = song.name;
+    _link.text = song.link ?? '';
     _withChoir = song.withChoir;
     _withSolo = song.withSolo;
     _difficulty = song.difficulty;
-    _category = song.category;
-    _selectedInstrumentIds = List.from(song.instrumentIds ?? []);
-    _initialized = true;
+    _instrumentIds = {...?song.instrumentIds, ..._idsFromFiles(song)}.toList();
+    _categoryIds = [...?song.categoryIds];
+    _additional = {...?song.additionalFields};
+    for (final field in data.additionalFields) {
+      if (_additional[field.id] == null) {
+        _additional[field.id] = field.effectiveDefault;
+      }
+      if (!field.isBoolean && !field.isSelect) {
+        _fieldControllers[field.id] =
+            TextEditingController(text: _additional[field.id]?.toString() ?? '');
+      }
+    }
+  }
+
+  /// Ionic `instrumentIdsFromFiles`: groups that have files (id > 2)
+  List<int> _idsFromFiles(Song song) => {
+        for (final f in song.files ?? const <SongFile>[])
+          if (f.instrumentId != null && f.instrumentId! > 2) f.instrumentId!,
+      }.toList();
+
+  /// Ionic `update()`: save the whole form
+  Future<void> _update(SongDetailData data) async {
+    if (data.readOnly || _saving) return;
+    final id = data.song.id;
+    if (id == null) return;
+    final merged = {..._instrumentIds, ..._idsFromFiles(data.song)}.toList();
+    _instrumentIds = merged;
+    for (final field in data.additionalFields) {
+      final c = _fieldControllers[field.id];
+      if (c == null) continue;
+      _additional[field.id] = field.isNumber ? num.tryParse(c.text) ?? 0 : c.text;
+    }
+
+    setState(() => _saving = true);
+    final result = await ref.read(songNotifierProvider.notifier).updateSong(id, {
+      'prefix': _prefix.text.trim(),
+      'number': int.tryParse(_number.text.trim()),
+      'name': _name.text.trim(),
+      'link': _link.text.trim().isEmpty ? null : _link.text.trim(),
+      'difficulty': _difficulty,
+      'withChoir': _withChoir,
+      'withSolo': _withSolo,
+      'instrument_ids': merged,
+      'category_ids': _categoryIds,
+      'additional_fields': _additional,
+    });
+    if (!mounted) return;
+    setState(() => _saving = false);
+    if (result == null) {
+      ToastHelper.showError(context, context.l10n.extraFieldsSaveFailed);
+    }
+  }
+
+  void _refresh() {
+    ref.invalidate(songDetailDataProvider(_params));
+    if (widget.songSharingId == null && _songId != null) {
+      ref.invalidate(songByIdProvider(_songId!));
+      ref.invalidate(songsProvider);
+    }
+  }
+
+  void _copyShareLink(String sharingId, int songId) {
+    Clipboard.setData(ClipboardData(text: SongUtils.shareLink(sharingId, songId)));
+    ref.read(trackingServiceProvider).track(TrackingEvent.songShared);
+    ToastHelper.showSuccess(context, context.l10n.songsLinkCopied);
+  }
+
+  Future<void> _confirmDelete(SongDetailData data) async {
+    List<String> names;
+    try {
+      names = await ref.read(songSyncedTenantNamesProvider.future);
+    } catch (_) {
+      names = const [];
+    }
+    if (!mounted) return;
+    final confirmed = await DialogHelper.showConfirmation(
+      context,
+      title: context.l10n.songsDeleteSong,
+      message: names.isNotEmpty
+          ? context.l10n.songsDeleteSyncedMessage(names.join(', '))
+          : context.l10n.songsDeleteConfirm,
+      confirmText: context.l10n.commonDelete,
+      isDestructive: true,
+    );
+    if (!confirmed || !mounted) return;
+    final ok = await ref.read(songNotifierProvider.notifier).deleteSong(data.song.id!);
+    if (!mounted) return;
+    if (ok) {
+      context.go('/settings/songs');
+    } else {
+      ToastHelper.showError(context, context.l10n.songsFlutterDeleteFailed);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final songId = int.tryParse(widget.songId);
-    if (songId == null) {
+    if (_songId == null) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Werk')),
-        body: const Center(child: Text('Ungültige Song-ID')),
+        appBar: AppBar(title: Text(context.l10n.songsFlutterSong)),
+        body: Center(child: Text(context.l10n.songsFlutterInvalidId)),
+      );
+    }
+    final dataAsync = ref.watch(songDetailDataProvider(_params));
+    final data = dataAsync.valueOrNull;
+
+    if (data == null) {
+      final sharingId = widget.songSharingId;
+      return Scaffold(
+        appBar: AppBar(
+          title: Text(context.l10n.songsFlutterSong),
+          // Ionic: back button with defaultHref = the share link's list.
+          leading: sharingId != null
+              ? BackButton(
+                  onPressed: () => context.canPop()
+                      ? context.pop()
+                      : context.go('/$sharingId'),
+                )
+              : null,
+        ),
+        body: dataAsync.isLoading
+            ? const Center(child: AppSpinner())
+            : dataAsync.hasError
+                ? ErrorStateView(
+                    error: dataAsync.error,
+                    onRetry: () => ref.invalidate(songDetailDataProvider(_params)),
+                  )
+                : ErrorStateView(
+                    icon: Icons.link_off,
+                    message: widget.songSharingId != null
+                        ? context.l10n.songsInvalidShareLink
+                        : context.l10n.songsFlutterNotFound,
+                  ),
       );
     }
 
-    final songAsync = ref.watch(songByIdProvider(songId));
-    final role = ref.watch(currentRoleProvider);
-    final tenant = ref.watch(currentTenantProvider);
-    final isOrchestra = tenant?.type == 'orchestra';
+    _init(data);
+    final song = data.song;
+    final sharingId = data.songSharingId;
+    final aufnahme = song.files
+        ?.where((f) => f.instrumentId == 1 && SongUtils.isAudio(f))
+        .firstOrNull;
 
-    // ReadOnly mode: only admin/responsible can edit
-    final readOnly = !(role.isAdmin || role.isResponsible);
-
-    return songAsync.when(
-      loading: () => Scaffold(
-        appBar: AppBar(title: const Text('Werk')),
-        body: const Center(child: CircularProgressIndicator()),
-      ),
-      error: (error, _) => Scaffold(
-        appBar: AppBar(title: const Text('Werk')),
-        body: Center(child: Text('Fehler: $error')),
-      ),
-      data: (song) {
-        if (song == null) {
-          return Scaffold(
-            appBar: AppBar(title: const Text('Werk')),
-            body: const Center(child: Text('Werk nicht gefunden')),
-          );
-        }
-
-        _initializeFromSong(song);
-
-        return Scaffold(
-          appBar: AppBar(
-            title: Text(readOnly ? song.displayName : 'Werk bearbeiten'),
-            actions: [
-              // Share link button
-              if (tenant?.songSharingId != null)
+    final title = data.readOnly
+        ? '${song.number ?? ''} ${song.name}'.trim()
+        : context.l10n.songsEditSong;
+    // UX_SONGS_SELF: Ionic `ion-header collapse="condense"` (large title on iOS)
+    return CondenseHeader(
+      builder: (context, condensed) => Scaffold(
+      // IOS_R6: Ionic `ion-content fullscreen` under the translucent header
+      extendBodyBehindAppBar: isIosLook(context),
+      // IOS_R6: `ion-header [translucent]` (blur once condensed)
+      appBar: IonTranslucentAppBar(
+        condensed: condensed,
+        child: AppBar(
+        title: CondenseTitle(condensed: condensed, child: Text(title)),
+        // IOS_FORMS2: iOS → the end ion-buttons share one glass capsule
+        actions: [
+          if ((sharingId != null && sharingId.isNotEmpty) || !data.readOnly)
+            ToolbarButtonGroup(children: [
+              if (sharingId != null && sharingId.isNotEmpty)
                 IconButton(
+                  tooltip: context.l10n.songsCopyLink,
                   icon: const Icon(Icons.link),
-                  tooltip: 'Link kopieren',
-                  onPressed: () => _copyShareLink(context, song.id!, tenant!.songSharingId!),
+                  onPressed: () => _copyShareLink(sharingId, song.id!),
                 ),
-              // Delete button (only for non-readOnly)
-              if (!readOnly)
+              if (!data.readOnly)
                 IconButton(
+                  tooltip: context.l10n.songsDeleteSong,
                   icon: const Icon(Icons.delete_outline),
-                  onPressed: () => _deleteSong(context, song),
+                  onPressed: () => _confirmDelete(data),
                 ),
-            ],
-          ),
-          body: ListView(
-            padding: const EdgeInsets.all(AppDimensions.paddingM),
-            children: [
-              // Editable fields section (only shown in edit mode)
-              if (!readOnly) ...[
-                _EditableFieldsCard(
-                  prefixController: _prefixController,
-                  numberController: _numberController,
-                  nameController: _nameController,
-                  linkController: _linkController,
-                  withChoir: _withChoir,
-                  withSolo: _withSolo,
-                  difficulty: _difficulty,
-                  category: _category,
-                  selectedInstrumentIds: _selectedInstrumentIds,
-                  isOrchestra: isOrchestra,
-                  isSaving: _isSaving,
-                  onWithChoirChanged: (v) => _updateAndSave(song.id!, () => _withChoir = v),
-                  onWithSoloChanged: (v) => _updateAndSave(song.id!, () => _withSolo = v),
-                  onDifficultyChanged: (v) => _updateAndSave(song.id!, () => _difficulty = v),
-                  onCategoryChanged: (v) => _updateAndSave(song.id!, () => _category = v),
-                  onInstrumentIdsChanged: (v) => _updateAndSave(song.id!, () => _selectedInstrumentIds = v),
-                  onFieldBlur: () => _saveChanges(song.id!),
-                ),
-                const SizedBox(height: AppDimensions.paddingM),
-              ],
-
-              // Read-only header card (shown in readOnly mode)
-              if (readOnly) ...[
-                _ReadOnlyHeaderCard(song: song),
-                const SizedBox(height: AppDimensions.paddingM),
-              ],
-
-              // Category chip (read-only mode)
-              if (readOnly && song.category != null) ...[
-                _SectionHeader(title: 'Kategorie'),
-                Wrap(
-                  children: [
-                    Chip(
-                      label: Text(song.category!),
-                      backgroundColor: AppColors.secondary.withAlpha(30),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: AppDimensions.paddingM),
-              ],
-
-              // Besetzungs-Chips section (read-only mode with green/red logic)
-              if (readOnly && (song.withChoir || song.withSolo || (isOrchestra && song.instrumentIds?.isNotEmpty == true)))
-                _BesetzungsSection(
-                  song: song,
-                  isOrchestra: isOrchestra,
-                ),
-
-              // Instruments section (edit mode - multi-select already in _EditableFieldsCard)
-              // Files section
-              _FilesSection(
-                files: song.files ?? [],
-                songId: song.id!,
-                songName: song.displayName,
-                readOnly: readOnly,
-                onFileAdded: () => ref.invalidate(songByIdProvider(songId)),
-              ),
-
-              // External link (read-only mode)
-              if (readOnly && song.link != null && song.link!.isNotEmpty) ...[
-                const SizedBox(height: AppDimensions.paddingM),
-                Card(
-                  child: ListTile(
-                    leading: const Icon(Icons.link, color: AppColors.primary),
-                    title: const Text('Externen Noten-Link öffnen'),
-                    trailing: const Icon(Icons.open_in_new),
-                    onTap: () => _openLink(song.link!),
-                  ),
-                ),
-              ],
-
-              // Copy to other instance (only for admin/responsible)
-              if (!readOnly) ...[
-                const SizedBox(height: AppDimensions.paddingM),
-                _CopyToTenantButton(song: song),
-              ],
-
-              // Last sung
-              if (song.lastSung != null) ...[
-                const SizedBox(height: AppDimensions.paddingM),
-                Card(
-                  child: ListTile(
-                    leading: const Icon(Icons.history),
-                    title: const Text('Zuletzt gespielt'),
-                    subtitle: Text(song.lastSung!),
-                  ),
-                ),
-              ],
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  Future<void> _updateAndSave(int songId, VoidCallback update) async {
-    setState(update);
-    await _saveChanges(songId);
-  }
-
-  Future<void> _saveChanges(int songId) async {
-    if (_isSaving) return;
-
-    setState(() => _isSaving = true);
-
-    try {
-      final notifier = ref.read(songNotifierProvider.notifier);
-
-      final updates = <String, dynamic>{
-        'name': _nameController.text.trim(),
-        'number': int.tryParse(_numberController.text.trim()),
-        'prefix': _prefixController.text.trim().isNotEmpty
-            ? _prefixController.text.trim()
-            : null,
-        'link': _linkController.text.trim().isNotEmpty
-            ? _linkController.text.trim()
-            : null,
-        'withChoir': _withChoir,
-        'withSolo': _withSolo,
-        'difficulty': _difficulty,
-        'category': _category,
-        'instrument_ids':
-            _selectedInstrumentIds.isNotEmpty ? _selectedInstrumentIds : null,
-      };
-
-      await notifier.updateSong(songId, updates);
-    } catch (e) {
-      if (mounted) {
-        ToastHelper.showError(context, 'Fehler beim Speichern: $e');
-      }
-    } finally {
-      if (mounted) {
-        setState(() => _isSaving = false);
-      }
-    }
-  }
-
-  void _copyShareLink(BuildContext context, int songId, String sharingId) {
-    final link = '${Uri.base.origin}/$sharingId/$songId';
-    Clipboard.setData(ClipboardData(text: link));
-    ToastHelper.showSuccess(context, 'Link in Zwischenablage kopiert');
-  }
-
-  Future<void> _openLink(String url) async {
-    final uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    }
-  }
-
-  Future<void> _deleteSong(BuildContext context, Song song) async {
-    final confirmed = await DialogHelper.showConfirmation(
-      context,
-      title: 'Werk löschen',
-      message: 'Möchtest du "${song.name}" wirklich löschen?',
-      confirmText: 'Löschen',
-      cancelText: 'Abbrechen',
-    );
-
-    if (!confirmed) return;
-
-    try {
-      final success =
-          await ref.read(songNotifierProvider.notifier).deleteSong(song.id!);
-
-      if (mounted && success) {
-        ToastHelper.showSuccess(context, 'Werk gelöscht');
-        context.pop();
-      }
-    } catch (e) {
-      if (mounted) {
-        ToastHelper.showError(context, 'Fehler: $e');
-      }
-    }
-  }
-}
-
-/// Section header widget
-class _SectionHeader extends StatelessWidget {
-  final String title;
-
-  const _SectionHeader({required this.title});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: Text(
-        title,
-        style: const TextStyle(
-          fontWeight: FontWeight.w600,
-          color: AppColors.medium,
-        ),
+            ]),
+        ],
       ),
-    );
-  }
-}
-
-/// Editable fields card for edit mode
-class _EditableFieldsCard extends ConsumerWidget {
-  final TextEditingController prefixController;
-  final TextEditingController numberController;
-  final TextEditingController nameController;
-  final TextEditingController linkController;
-  final bool withChoir;
-  final bool withSolo;
-  final int? difficulty;
-  final String? category;
-  final List<int> selectedInstrumentIds;
-  final bool isOrchestra;
-  final bool isSaving;
-  final ValueChanged<bool> onWithChoirChanged;
-  final ValueChanged<bool> onWithSoloChanged;
-  final ValueChanged<int?> onDifficultyChanged;
-  final ValueChanged<String?> onCategoryChanged;
-  final ValueChanged<List<int>> onInstrumentIdsChanged;
-  final VoidCallback onFieldBlur;
-
-  const _EditableFieldsCard({
-    required this.prefixController,
-    required this.numberController,
-    required this.nameController,
-    required this.linkController,
-    required this.withChoir,
-    required this.withSolo,
-    required this.difficulty,
-    required this.category,
-    required this.selectedInstrumentIds,
-    required this.isOrchestra,
-    required this.isSaving,
-    required this.onWithChoirChanged,
-    required this.onWithSoloChanged,
-    required this.onDifficultyChanged,
-    required this.onCategoryChanged,
-    required this.onInstrumentIdsChanged,
-    required this.onFieldBlur,
-  });
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final groupsAsync = ref.watch(groupsProvider);
-    final categoriesAsync = ref.watch(songCategoriesProvider);
-
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(AppDimensions.paddingM),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+      ),
+      floatingActionButton: TabBarFab.wrap(aufnahme == null
+          ? null
+          : FloatingActionButton(
+              tooltip: context.l10n.songsPlayRecording,
+              onPressed: () => ref
+                  .read(audioPlayerServiceProvider.notifier)
+                  .playFromUrl(aufnahme.url, aufnahme.fileName, song.name),
+              child: const Icon(Icons.play_arrow),
+            )),
+      bottomNavigationBar: data.isPublic ? const AudioPlayerWidget() : null,
+      body: IonRefresher( // IOS_R6
+        onRefresh: () async {
+          _refresh();
+          await ref.read(songDetailDataProvider(_params).future);
+        },
+        // Ionic: one `ion-list inset` with item groups and list headers.
+        child: ListView(
+          padding: EdgeInsets.fromLTRB(0, AppDimensions.paddingS, 0, scrollEndPadding(context, base: 16, fabRoom: 80)),
           children: [
-            // Saving indicator
-            if (isSaving)
-              const LinearProgressIndicator(),
-
-            // Prefix input
-            TextFormField(
-              controller: prefixController,
-              decoration: const InputDecoration(
-                labelText: 'Präfix (optional)',
-                helperText: 'z.B. W für Weihnachten → W1',
-              ),
-              onEditingComplete: onFieldBlur,
-            ),
-            const SizedBox(height: AppDimensions.paddingS),
-
-            // Number input
-            TextFormField(
-              controller: numberController,
-              decoration: const InputDecoration(
-                labelText: 'Nummer',
-              ),
-              keyboardType: TextInputType.number,
-              onEditingComplete: onFieldBlur,
-            ),
-            const SizedBox(height: AppDimensions.paddingS),
-
-            // Name input
-            TextFormField(
-              controller: nameController,
-              decoration: const InputDecoration(
-                labelText: 'Name',
-              ),
-              onEditingComplete: onFieldBlur,
+            const IonContentTopInset(), // IOS_R6
+            IonLargeTitle(title),
+            if (_saving) const LinearProgressIndicator(minHeight: 2),
+            if (!data.readOnly) _buildEditForm(data),
+            if (data.readOnly && (song.categoryIds?.isNotEmpty ?? false)) ...[
+              IonListHeader(context.l10n.songsCategories),
+              IonInsetList(children: [
+                Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Wrap(
+                    spacing: 4,
+                    runSpacing: 4,
+                    children: [
+                      for (final id in song.categoryIds!)
+                        _IonChip(
+                          label: data.categories.where((c) => c.id == id).firstOrNull?.name ??
+                              context.l10n.songsUnknownCategory,
+                          color: AppColors.secondary,
+                        ),
+                    ],
+                  ),
+                ),
+              ]),
+            ],
+            if (data.readOnly &&
+                (song.withChoir ||
+                    song.withSolo ||
+                    (data.isOrchestra && (song.instrumentIds?.isNotEmpty ?? false))))
+              _buildReadOnlyInstrumentation(data),
+            if (data.additionalFields.isNotEmpty) _buildAdditionalFields(data),
+            if (data.history.isNotEmpty) _buildHistory(data),
+            _FilesSection(
+              data: data,
+              onChanged: _refresh,
             ),
             const SizedBox(height: AppDimensions.paddingM),
+            if (data.readOnly && (song.link?.isNotEmpty ?? false))
+              IonInsetList(children: [
+                IonItem(
+                  title: Text(context.l10n.songsOpenExternalLink),
+                  titleColor: AppColors.primary,
+                  detail: true,
+                  onTap: () => launchUrl(Uri.parse(song.link!),
+                      mode: LaunchMode.externalApplication),
+                ),
+              ]),
+            if (!data.readOnly)
+              IonInsetList(children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                  child: Focus(
+                    onFocusChange: (has) {
+                      if (!has) _update(data);
+                    },
+                    child: TextField(
+                      controller: _link,
+                      minLines: 1,
+                      maxLines: 5,
+                      keyboardType: TextInputType.url,
+                      decoration: ionInputDecoration(context, label: context.l10n.songsLink),
+                    ),
+                  ),
+                ),
+              ]),
+            if (!data.isPublic) _CopyToOtherInstance(song: song),
+          ],
+        ),
+      ),
+      ),
+    );
+  }
 
-            // Difficulty dropdown
-            DropdownButtonFormField<int?>(
-              value: difficulty,
-              decoration: const InputDecoration(
-                labelText: 'Schwierigkeitsgrad',
+  Widget _blurSaver(SongDetailData data, Widget child) => Focus(
+        onFocusChange: (has) {
+          if (!has) _update(data);
+        },
+        child: child,
+      );
+
+  Widget _buildEditForm(SongDetailData data) {
+    final fileIds = _idsFromFiles(data.song);
+    return IonInsetList(children: [
+      Padding(
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            _blurSaver(
+              data,
+              TextField(
+                controller: _prefix,
+                textCapitalization: TextCapitalization.sentences,
+                decoration: ionInputDecoration(
+                  context,
+                  label: context.l10n.songsPrefixOptional,
+                  helperText: context.l10n.songsPrefixHelper,
+                ),
               ),
-              items: const [
-                DropdownMenuItem(value: null, child: Text('Nicht definiert')),
-                DropdownMenuItem(value: 1, child: Text('1 - Leicht')),
-                DropdownMenuItem(value: 2, child: Text('2 - Mittel')),
-                DropdownMenuItem(value: 3, child: Text('3 - Schwer')),
-              ],
-              onChanged: onDifficultyChanged,
             ),
             const SizedBox(height: AppDimensions.paddingS),
-
-            // Toggles
-            SwitchListTile(
-              title: const Text('Chor & Orchester'),
-              value: withChoir,
-              onChanged: onWithChoirChanged,
-              contentPadding: EdgeInsets.zero,
+            _blurSaver(
+              data,
+              TextField(
+                controller: _number,
+                keyboardType: TextInputType.number,
+                decoration: ionInputDecoration(context, label: context.l10n.songsNumber),
+              ),
             ),
-            SwitchListTile(
-              title: const Text('Mit Solo-Gesang'),
-              value: withSolo,
-              onChanged: onWithSoloChanged,
-              contentPadding: EdgeInsets.zero,
+            const SizedBox(height: AppDimensions.paddingS),
+            _blurSaver(
+              data,
+              TextField(
+                controller: _name,
+                textCapitalization: TextCapitalization.sentences,
+                decoration: ionInputDecoration(context, label: context.l10n.songsName),
+              ),
             ),
-
-            // Instruments multi-select (Orchestra only)
-            if (isOrchestra)
-              groupsAsync.when(
-                loading: () => const LinearProgressIndicator(),
-                error: (_, __) => const SizedBox.shrink(),
-                data: (groups) {
-                  final instruments = groups.where((g) => g.maingroup != true).toList();
-                  if (instruments.isEmpty) return const SizedBox.shrink();
-
-                  return _InstrumentMultiSelect(
-                    instruments: instruments,
-                    selectedIds: selectedInstrumentIds,
-                    onChanged: onInstrumentIdsChanged,
-                  );
+            // IOS_PAGES3: Ionic `ion-select [label]` (popover): label at
+            // the start, value + toggle icon at the end, item line below.
+            _InlineSelect<int?>(
+              label: context.l10n.songsDifficulty,
+              value: _difficulty,
+              items: [
+                DropdownMenuItem(value: null, child: Text(context.l10n.songsNotDefined)),
+                DropdownMenuItem(value: 1, child: Text(context.l10n.songsEasy)),
+                DropdownMenuItem(value: 2, child: Text(context.l10n.songsMedium)),
+                DropdownMenuItem(value: 3, child: Text(context.l10n.songsHard)),
+              ],
+              onChanged: (v) {
+                setState(() => _difficulty = v);
+                _update(data);
+              },
+            ),
+            const Divider(height: 0.5, thickness: 0.5),
+            SwitchListTile.adaptive(
+              contentPadding: EdgeInsets.zero,
+              title: Text(context.l10n.songsChoirOrchestra),
+              value: _withChoir,
+              onChanged: (v) {
+                setState(() => _withChoir = v);
+                _update(data);
+              },
+            ),
+            const Divider(height: 0.5, thickness: 0.5),
+            SwitchListTile.adaptive(
+              contentPadding: EdgeInsets.zero,
+              title: Text(context.l10n.songsWithSoloSinging),
+              value: _withSolo,
+              onChanged: (v) {
+                setState(() => _withSolo = v);
+                _update(data);
+              },
+            ),
+            const Divider(height: 0.5, thickness: 0.5),
+            if (data.isOrchestra) ...[
+              _MultiSelectTile<int>(
+                title: context.l10n.songsInstrumentation,
+                options: [
+                  for (final g in data.instruments)
+                    if (g.id != null) (g.id!, g.name, fileIds.contains(g.id)),
+                ],
+                selected: _instrumentIds,
+                onChanged: (v) {
+                  setState(() => _instrumentIds = v);
+                  _update(data);
                 },
               ),
-
-            const SizedBox(height: AppDimensions.paddingS),
-
-            // Category dropdown
-            categoriesAsync.when(
-              loading: () => const LinearProgressIndicator(),
-              error: (_, __) => const SizedBox.shrink(),
-              data: (categories) => categories.isNotEmpty
-                  ? DropdownButtonFormField<String?>(
-                      value: category,
-                      decoration: const InputDecoration(
-                        labelText: 'Kategorie',
-                      ),
-                      items: [
-                        const DropdownMenuItem(value: null, child: Text('Keine Kategorie')),
-                        ...categories.map((c) => DropdownMenuItem(
-                              value: c.name,
-                              child: Text(c.name),
-                            )),
-                      ],
-                      onChanged: onCategoryChanged,
-                    )
-                  : const SizedBox.shrink(),
-            ),
-
-            const SizedBox(height: AppDimensions.paddingS),
-
-            // Link textarea
-            TextFormField(
-              controller: linkController,
-              decoration: const InputDecoration(
-                labelText: 'Link',
-              ),
-              maxLines: 2,
-              onEditingComplete: onFieldBlur,
+              const Divider(height: 0.5, thickness: 0.5),
+            ],
+            _MultiSelectTile<String>(
+              title: context.l10n.songsCategories,
+              options: [
+                for (final c in data.categories)
+                  if (c.id != null) (c.id!, c.name, false),
+              ],
+              selected: _categoryIds,
+              onChanged: (v) {
+                setState(() => _categoryIds = v);
+                _update(data);
+              },
             ),
           ],
         ),
       ),
+    ]);
+  }
+
+  Widget _buildReadOnlyInstrumentation(SongDetailData data) {
+    final song = data.song;
+    // Ionic: list header + item group with ion-chips (primary; groups in
+    // success / danger).
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        IonListHeader(context.l10n.songsInstrumentation),
+        IonInsetList(children: [
+          Padding(
+            padding: const EdgeInsets.all(10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (song.withChoir || song.withSolo)
+                  Wrap(
+                    spacing: 4,
+                    runSpacing: 4,
+                    children: [
+                      if (song.withChoir)
+                        _IonChip(label: context.l10n.songsChoirOrchestra, color: AppColors.primary),
+                      if (song.withSolo)
+                        _IonChip(label: context.l10n.songsWithSoloSinging, color: AppColors.primary),
+                    ],
+                  ),
+                if (data.isOrchestra && (song.instrumentIds?.isNotEmpty ?? false))
+                  Padding(
+                    padding: EdgeInsets.only(top: song.withChoir || song.withSolo ? 4 : 0),
+                    child: Wrap(
+                      spacing: 4,
+                      runSpacing: 4,
+                      children: [
+                        for (final g in data.instruments)
+                          _IonChip(
+                            label: g.name,
+                            color: song.instrumentIds!.contains(g.id)
+                                ? AppColors.success
+                                : AppColors.danger,
+                          ),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ]),
+      ],
+    );
+  }
+
+  Widget _buildAdditionalFields(SongDetailData data) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        IonListHeader(context.l10n.peopleExtraFields),
+        IonInsetList(children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM),
+            child: Column(
+              children: [
+                // IOS_PAGES3: one ion-item per field, item lines between
+                for (var i = 0; i < data.additionalFields.length; i++) ...[
+                  if (i > 0 &&
+                      (data.additionalFields[i - 1].isBoolean ||
+                          data.additionalFields[i - 1].isSelect))
+                    const Divider(height: 0.5, thickness: 0.5),
+                  _buildField(data, data.additionalFields[i]),
+                ],
+              ],
+            ),
+          ),
+        ]),
+      ],
+    );
+  }
+
+  Widget _buildField(SongDetailData data, SongAdditionalField field) {
+    final value = _additional[field.id];
+    if (field.isBoolean) {
+      return SwitchListTile.adaptive(
+        contentPadding: EdgeInsets.zero,
+        title: Text(field.name),
+        value: value == true,
+        onChanged: data.readOnly
+            ? null
+            : (v) {
+                setState(() => _additional[field.id] = v);
+                _update(data);
+              },
+      );
+    }
+    if (field.isSelect) {
+      final current = field.options.contains(value) ? value as String : null;
+      // IOS_PAGES3: Ionic `ion-select interface="popover" [label]`
+      return _InlineSelect<String>(
+        label: field.name,
+        value: current,
+        items: [
+          for (final o in field.options) DropdownMenuItem(value: o, child: Text(o)),
+        ],
+        onChanged: data.readOnly
+            ? null
+            : (v) {
+                setState(() => _additional[field.id] = v);
+                _update(data);
+              },
+      );
+    }
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: _blurSaver(
+        data,
+        TextField(
+          controller: _fieldControllers[field.id],
+          readOnly: data.readOnly,
+          keyboardType: field.isNumber ? TextInputType.number : TextInputType.text,
+          decoration: ionInputDecoration(context, label: field.name),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHistory(SongDetailData data) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        IonListHeader(context.l10n.songsHistoryCount(data.history.length)),
+        // Ionic: h3 date · title (14px), p conductor (grey)
+        IonInsetList(
+          children: [
+            for (final entry in data.history)
+              IonItem(
+                title: Text(
+                  '${SongUtils.formatDate(entry.attendanceDate ?? entry.date)}'
+                  '${(entry.typeTitle?.isNotEmpty ?? false) ? ' · ${entry.typeTitle}' : ''}',
+                  style: const TextStyle(fontSize: 14),
+                ),
+                subtitle: (entry.conductorName?.isNotEmpty ?? false)
+                    ? Text(entry.conductorName!)
+                    : null,
+              ),
+          ],
+        ),
+      ],
     );
   }
 }
 
-/// Multi-select for instruments with modal interface
-class _InstrumentMultiSelect extends StatelessWidget {
-  final List<Group> instruments;
-  final List<int> selectedIds;
-  final ValueChanged<List<int>> onChanged;
+/// Ionic `ion-chip [color]`: tinted pill (iOS 32px high, radius 16).
+class _IonChip extends StatelessWidget {
+  const _IonChip({required this.label, required this.color});
 
-  const _InstrumentMultiSelect({
-    required this.instruments,
-    required this.selectedIds,
+  final String label;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 32,
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Text(label, style: TextStyle(color: color, fontSize: 14)),
+    );
+  }
+}
+
+/// IOS_PAGES3: Ionic `ion-select [label]` inside an `ion-item`: label at
+/// the start, the selected value (medium) with the toggle icon at the end.
+class _InlineSelect<T> extends StatelessWidget {
+  const _InlineSelect({
+    required this.label,
+    required this.value,
+    required this.items,
     required this.onChanged,
   });
 
+  final String label;
+  final T? value;
+  final List<DropdownMenuItem<T>> items;
+  final ValueChanged<T?>? onChanged;
+
   @override
   Widget build(BuildContext context) {
+    return ConstrainedBox(
+      constraints: BoxConstraints(minHeight: isIosLook(context) ? 52 : 48),
+      child: Row(
+        children: [
+          Text(label, style: Theme.of(context).textTheme.bodyLarge),
+          const SizedBox(width: 16),
+          Expanded(
+            child: DropdownButtonHideUnderline(
+              child: AppDropdownButton<T>(
+                value: value,
+                isExpanded: true,
+                alignment: AlignmentDirectional.centerEnd,
+                items: items,
+                selectedItemBuilder: (context) => [
+                  for (final it in items)
+                    Align(
+                      alignment: AlignmentDirectional.centerEnd,
+                      child: DefaultTextStyle.merge(
+                        style: const TextStyle(color: AppColors.medium),
+                        overflow: TextOverflow.ellipsis,
+                        child: it.child,
+                      ),
+                    ),
+                ],
+                onChanged: onChanged,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Multi select (Ionic `ion-select multiple interface="modal"`).
+/// Options: (value, label, disabled).
+class _MultiSelectTile<T> extends StatelessWidget {
+  const _MultiSelectTile({
+    required this.title,
+    required this.options,
+    required this.selected,
+    required this.onChanged,
+  });
+
+  final String title;
+  final List<(T, String, bool)> options;
+  final List<T> selected;
+  final ValueChanged<List<T>> onChanged;
+
+  Future<void> _open(BuildContext context) async {
+    final selection = [...selected];
+    final result = await showAppDialog<List<T>>(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setLocal) => AppAlertDialog(
+          title: Text(title),
+          content: SizedBox(
+            width: double.maxFinite,
+            child: ListView(
+              shrinkWrap: true,
+              children: [
+                for (final o in options)
+                  CheckboxListTile(
+                    title: Text(o.$2),
+                    value: selection.contains(o.$1),
+                    onChanged: o.$3
+                        ? null
+                        : (v) => setLocal(() {
+                              v == true ? selection.add(o.$1) : selection.remove(o.$1);
+                            }),
+                  ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: Text(context.l10n.commonCancel),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.pop(ctx, selection),
+              child: Text(context.l10n.commonOk),
+            ),
+          ],
+        ),
+      ),
+    );
+    if (result != null) onChanged(result);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final names = options
+        .where((o) => selected.contains(o.$1))
+        .map((o) => o.$2)
+        .join(', ');
+    // IOS_PAGES3: Ionic `ion-select multiple [label]`: label at the
+    // start, the selected names (ellipsised) and the toggle icon at the end.
     return ListTile(
       contentPadding: EdgeInsets.zero,
-      title: const Text('Besetzung'),
-      subtitle: Text(
-        selectedIds.isEmpty
-            ? 'Keine Instrumente ausgewählt'
-            : '${selectedIds.length} Instrumente ausgewählt',
-      ),
-      trailing: const Icon(Icons.arrow_drop_down),
-      onTap: () => _showSelectionDialog(context),
-    );
-  }
-
-  Future<void> _showSelectionDialog(BuildContext context) async {
-    final result = await showDialog<List<int>>(
-      context: context,
-      builder: (context) => _InstrumentSelectionDialog(
-        instruments: instruments,
-        initialSelection: selectedIds,
-      ),
-    );
-
-    if (result != null) {
-      onChanged(result);
-    }
-  }
-}
-
-/// Dialog for instrument multi-selection
-class _InstrumentSelectionDialog extends StatefulWidget {
-  final List<Group> instruments;
-  final List<int> initialSelection;
-
-  const _InstrumentSelectionDialog({
-    required this.instruments,
-    required this.initialSelection,
-  });
-
-  @override
-  State<_InstrumentSelectionDialog> createState() => _InstrumentSelectionDialogState();
-}
-
-class _InstrumentSelectionDialogState extends State<_InstrumentSelectionDialog> {
-  late List<int> _selection;
-
-  @override
-  void initState() {
-    super.initState();
-    _selection = List.from(widget.initialSelection);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: const Text('Besetzung'),
-      content: SizedBox(
-        width: double.maxFinite,
-        child: ListView.builder(
-          shrinkWrap: true,
-          itemCount: widget.instruments.length,
-          itemBuilder: (context, index) {
-            final instrument = widget.instruments[index];
-            final isSelected = _selection.contains(instrument.id);
-
-            return CheckboxListTile(
-              title: Text(instrument.name),
-              value: isSelected,
-              onChanged: (checked) {
-                setState(() {
-                  if (checked == true && instrument.id != null) {
-                    _selection.add(instrument.id!);
-                  } else {
-                    _selection.remove(instrument.id);
-                  }
-                });
-              },
-            );
-          },
-        ),
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text('Abbrechen'),
-        ),
-        ElevatedButton(
-          onPressed: () => Navigator.pop(context, _selection),
-          child: const Text('Speichern'),
-        ),
-      ],
-    );
-  }
-}
-
-/// Read-only header card showing song info
-class _ReadOnlyHeaderCard extends StatelessWidget {
-  final Song song;
-
-  const _ReadOnlyHeaderCard({required this.song});
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(AppDimensions.paddingM),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (song.fullNumber.isNotEmpty)
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                decoration: BoxDecoration(
-                  color: AppColors.primary.withAlpha(20),
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                child: Text(
-                  song.fullNumber,
-                  style: const TextStyle(
-                    color: AppColors.primary,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                  ),
-                ),
-              ),
-            const SizedBox(height: 8),
-            Text(
-              song.name,
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+      title: Text(title),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: MediaQuery.sizeOf(context).width * 0.4,
             ),
-            if (song.conductor != null) ...[
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  const Icon(Icons.person, size: 16, color: AppColors.medium),
-                  const SizedBox(width: 4),
-                  Text(
-                    song.conductor!,
-                    style: const TextStyle(color: AppColors.medium),
-                  ),
-                ],
-              ),
-            ],
-            if (song.difficultyLabel != null) ...[
-              const SizedBox(height: 8),
-              Chip(
-                label: Text(song.difficultyLabel!),
-                avatar: const Icon(Icons.speed, size: 16),
-                visualDensity: VisualDensity.compact,
-              ),
-            ],
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-/// Besetzungs-Chips section with green/red color logic
-class _BesetzungsSection extends ConsumerWidget {
-  final Song song;
-  final bool isOrchestra;
-
-  const _BesetzungsSection({
-    required this.song,
-    required this.isOrchestra,
-  });
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final groupsAsync = ref.watch(groupsProvider);
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const _SectionHeader(title: 'Besetzung'),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: [
-            if (song.withChoir)
-              const Chip(
-                label: Text('Chor & Orchester'),
-                backgroundColor: Color(0xFFE3F2FD), // Light blue
-              ),
-            if (song.withSolo)
-              const Chip(
-                label: Text('Mit Solo-Gesang'),
-                backgroundColor: Color(0xFFE3F2FD), // Light blue
-              ),
-          ],
-        ),
-        if (isOrchestra && song.instrumentIds?.isNotEmpty == true)
-          groupsAsync.when(
-            loading: () => const SizedBox.shrink(),
-            error: (_, __) => const SizedBox.shrink(),
-            data: (groups) {
-              // Filter to only instruments (not main groups)
-              final instruments = groups.where((g) => g.maingroup != true).toList();
-
-              return Padding(
-                padding: const EdgeInsets.only(top: 8),
-                child: Wrap(
-                  spacing: 6,
-                  runSpacing: 6,
-                  children: instruments.map((instrument) {
-                    // Green if song has this instrument, red if not
-                    final hasInstrument = song.instrumentIds!.contains(instrument.id);
-                    final color = hasInstrument ? AppColors.success : AppColors.danger;
-
-                    return Chip(
-                      label: Text(
-                        instrument.name,
-                        style: TextStyle(
-                          color: color,
-                          fontSize: 12,
-                        ),
-                      ),
-                      backgroundColor: color.withAlpha(30),
-                      side: BorderSide(color: color.withAlpha(80)),
-                      visualDensity: VisualDensity.compact,
-                      padding: const EdgeInsets.symmetric(horizontal: 4),
-                    );
-                  }).toList(),
-                ),
-              );
-            },
+            child: Text(
+              names,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(color: AppColors.medium),
+            ),
           ),
-        const SizedBox(height: AppDimensions.paddingM),
-      ],
-    );
-  }
-}
-
-/// Copy to Tenant button
-class _CopyToTenantButton extends ConsumerWidget {
-  final Song song;
-
-  const _CopyToTenantButton({required this.song});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final tenantsAsync = ref.watch(userTenantsProvider);
-    final currentTenantId = ref.watch(currentTenantIdProvider);
-
-    return tenantsAsync.when(
-      loading: () => const SizedBox.shrink(),
-      error: (_, __) => const SizedBox.shrink(),
-      data: (tenants) {
-        // Filter out current tenant
-        final otherTenants = tenants.where((t) => t.id != currentTenantId).toList();
-        if (otherTenants.isEmpty) return const SizedBox.shrink();
-
-        return Card(
-          child: ListTile(
-            leading: const Icon(Icons.copy),
-            title: const Text('Werk in andere Instanz kopieren'),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () => _showCopySheet(context, otherTenants),
-          ),
-        );
-      },
-    );
-  }
-
-  Future<void> _showCopySheet(BuildContext context, List<Tenant> tenants) async {
-    await showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      useSafeArea: true,
-      builder: (context) => CopyToTenantSheet(
-        song: song,
-        availableTenants: tenants,
+          const SizedBox(width: 4),
+          isIosLook(context)
+              ? const IonSelectIcon()
+              : const Icon(Icons.arrow_drop_down),
+        ],
       ),
+      onTap: options.isEmpty ? null : () => _open(context),
     );
   }
 }
 
 // ============================================================================
-// FILES SECTION
+// Copy to other instance
+// ============================================================================
+
+/// Ionic: available to any logged-in user, limited to other instances of the
+/// organisation where the user is admin or responsible.
+class _CopyToOtherInstance extends ConsumerWidget {
+  const _CopyToOtherInstance({required this.song});
+
+  final Song song;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final linked = ref.watch(linkedTenantsProvider).valueOrNull ?? const <Tenant>[];
+    final mine = ref.watch(userTenantsProvider).valueOrNull ?? const <Tenant>[];
+    final currentId = ref.watch(currentTenantIdProvider);
+    final allowed = linked.where((t) {
+      if (t.id == null || t.id == currentId) return false;
+      final role = mine.where((m) => m.id == t.id).firstOrNull?.role;
+      return role == 1 || role == 5;
+    }).toList();
+    if (allowed.isEmpty) return const SizedBox.shrink();
+
+    return IonInsetList(
+      margin: const EdgeInsets.fromLTRB(16, 16, 16, 4),
+      children: [
+        IonItem(
+          leading: const Icon(Icons.copy_outlined, color: AppColors.medium),
+          title: Text(context.l10n.songsCopyToOther),
+          onTap: () => showModalBottomSheet(
+            context: context,
+            useRootNavigator: true, // IOS_SHELL2: above the tab bar
+            isScrollControlled: true,
+            useSafeArea: true,
+            builder: (_) => CopyToTenantSheet(song: song, availableTenants: allowed),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// ============================================================================
+// Files
 // ============================================================================
 
 class _FilesSection extends ConsumerStatefulWidget {
-  final List<SongFile> files;
-  final int songId;
-  final String songName;
-  final bool readOnly;
-  final VoidCallback onFileAdded;
+  const _FilesSection({required this.data, required this.onChanged});
 
-  const _FilesSection({
-    required this.files,
-    required this.songId,
-    required this.songName,
-    required this.readOnly,
-    required this.onFileAdded,
-  });
+  final SongDetailData data;
+  final VoidCallback onChanged;
 
   @override
   ConsumerState<_FilesSection> createState() => _FilesSectionState();
 }
 
 class _FilesSectionState extends ConsumerState<_FilesSection> {
-  bool _isDownloadingAll = false;
-  bool _isDeletingAll = false;
+  bool _busy = false;
+
+  SongDetailData get data => widget.data;
+  Song get song => data.song;
+  List<SongFile> get files => song.files ?? const [];
+
+  bool get _isIos => !kIsWeb && Platform.isIOS;
+
+  Future<void> _run(Future<void> Function() action) async {
+    setState(() => _busy = true);
+    try {
+      await action();
+    } catch (e) {
+      if (mounted) ToastHelper.showError(context, context.l10n.songsFlutterErrorWith(friendlyErrorMessage(e)));
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  Future<void> _upload([List<PlatformFile> initialFiles = const []]) async {
+    final result = await showModalBottomSheet<bool>(
+      context: context,
+      useRootNavigator: true, // IOS_SHELL2: above the tab bar
+      isScrollControlled: true,
+      useSafeArea: true,
+      isDismissible: false,
+      builder: (_) => FileUploadSheet(
+        songId: song.id!,
+        groups: data.instruments,
+        existingFiles: files,
+        mainGroupId: data.mainGroupId,
+        isChoir: data.isChoir,
+        initialFiles: initialFiles,
+      ),
+    );
+    if (result == true) widget.onChanged();
+  }
+
+  /// Ionic `handlePageDrop`: one file -> single-file modal, several files ->
+  /// upload modal with the files preselected.
+  Future<void> _onFilesDropped(List<PlatformFile> dropped) async {
+    if (dropped.isEmpty || _busy) return;
+    if (dropped.length > 1) return _upload(dropped);
+    final file = dropped.first;
+    if (file.size > 20 * 1024 * 1024) {
+      ToastHelper.showError(context, context.l10n.songsFileTooLarge(file.name));
+      return;
+    }
+    final result = await showModalBottomSheet<SingleFileUploadResult>(
+      context: context,
+      useRootNavigator: true, // IOS_SHELL2: above the tab bar
+      isScrollControlled: true,
+      useSafeArea: true,
+      builder: (_) => SingleFileUploadSheet(
+        songId: song.id!,
+        file: file,
+        groups: data.instruments,
+        existingFiles: files,
+        mainGroupId: data.mainGroupId,
+        isChoir: data.isChoir,
+      ),
+    );
+    if (!mounted) return;
+    switch (result) {
+      case SingleFileUploadResult.uploaded:
+        widget.onChanged();
+      case SingleFileUploadResult.openUploadSheet:
+        await _upload(dropped);
+      case null:
+        break;
+    }
+  }
+
+  Future<void> _downloadAll() => _run(() async {
+        await ref.read(zipServiceProvider).downloadSongFilesAsZip(
+              files: files,
+              songName: song.name.isEmpty ? 'songs' : song.name,
+            );
+      });
+
+  Future<void> _deleteAll() async {
+    final ok = await DialogHelper.showConfirmation(
+      context,
+      title: context.l10n.songsDeleteAll,
+      message: context.l10n.songsDeleteAllConfirm,
+      confirmText: context.l10n.commonDelete,
+      isDestructive: true,
+    );
+    if (!ok) return;
+    await _run(() async {
+      await (await ref.read(readySongFileServiceProvider.future)).deleteAllFiles(songId: song.id!);
+      await ref
+          .read(songNotifierProvider.notifier)
+          .updateSong(song.id!, {'instrument_ids': <int>[]});
+      widget.onChanged();
+    });
+  }
+
+  /// Ionic `printSongFiles`: group PDFs with copies per player count
+  Future<void> _printGroupPdfs() async {
+    final groupPdfs = files
+        .where((f) => f.instrumentId != null && f.instrumentId! > 2 && SongUtils.isPdf(f))
+        .toList();
+    if (groupPdfs.isEmpty) {
+      ToastHelper.showWarning(context, context.l10n.songsNoGroupPdfs);
+      return;
+    }
+    final counts = await ref.read(playerCountByInstrumentProvider.future);
+    if (!mounted) return;
+    final withPlayers =
+        groupPdfs.where((f) => (counts[f.instrumentId] ?? 0) > 0).toList();
+    if (withPlayers.isEmpty) {
+      ToastHelper.showWarning(context, context.l10n.songsNoGroupsWithPeople);
+      return;
+    }
+
+    final ratio = await showAppDialog<int>(
+      context: context,
+      builder: (ctx) => _RatioDialog(),
+    );
+    if (ratio == null || !mounted) return;
+
+    final entries = [
+      for (final f in withPlayers)
+        SongPrintEntry(
+          song: song,
+          file: f,
+          copies: ratio == 0 ? 1 : ((counts[f.instrumentId] ?? 0) / ratio).ceil(),
+        ),
+    ];
+    final result = await ref
+        .read(songPrintServiceProvider)
+        .printEntries(entries, '${song.name.isEmpty ? 'song' : song.name}_print.pdf');
+    if (!mounted || result == null || result.pageCount == 0) return;
+    final summary = entries
+        .where((e) => e.copies > 0)
+        .map((e) => '${SongUtils.fileLabel(e.file, data.instruments)}: ${e.copies}x')
+        .join(', ');
+    ToastHelper.showSuccess(context, context.l10n.songsPrintPrepared(summary));
+  }
 
   @override
   Widget build(BuildContext context) {
-    final groupsAsync = ref.watch(groupsProvider);
-
-    return groupsAsync.when(
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (_, __) => _buildContent(context, []),
-      data: (groups) => _buildContent(context, groups),
-    );
-  }
-
-  Widget _buildContent(BuildContext context, List<Group> groups) {
+    final sorted = SongUtils.sortedFiles(files, data.instruments);
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Dateien (${widget.files.length})',
-                style: const TextStyle(
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.medium,
-                ),
+        IonListHeader(
+          context.l10n.songsFiles,
+          trailing: [
+            if (data.readOnly && files.isNotEmpty)
+              IconButton(
+                tooltip: context.l10n.songsDownloadAll,
+                icon: const Icon(Icons.download_outlined),
+                onPressed: _busy ? null : _downloadAll,
               ),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // Popover menu for bulk actions
-                  PopupMenuButton<String>(
-                    icon: const Icon(Icons.more_vert, size: 20),
-                    tooltip: 'Mehr Aktionen',
-                    onSelected: (value) => _handleBulkAction(context, value),
-                    itemBuilder: (context) => [
-                      if (_hasPdfFiles() && !widget.readOnly)
-                        const PopupMenuItem(
-                          value: 'print_group',
-                          child: Row(
-                            children: [
-                              Icon(Icons.print),
-                              SizedBox(width: 8),
-                              Text('Gruppen-PDFs drucken'),
-                            ],
-                          ),
-                        ),
-                      if (widget.files.length > 1)
-                        const PopupMenuItem(
-                          value: 'download_all',
-                          child: Row(
-                            children: [
-                              Icon(Icons.download),
-                              SizedBox(width: 8),
-                              Text('Alle herunterladen (ZIP)'),
-                            ],
-                          ),
-                        ),
-                      if (!widget.readOnly)
-                        const PopupMenuItem(
-                          value: 'upload',
-                          child: Row(
-                            children: [
-                              Icon(Icons.cloud_upload),
-                              SizedBox(width: 8),
-                              Text('Dateien hochladen'),
-                            ],
-                          ),
-                        ),
-                      if (widget.files.isNotEmpty && !widget.readOnly) ...[
-                        const PopupMenuDivider(),
-                        const PopupMenuItem(
-                          value: 'delete_all',
-                          child: Row(
-                            children: [
-                              Icon(Icons.delete_sweep, color: AppColors.danger),
-                              SizedBox(width: 8),
-                              Text('Alle löschen',
-                                  style: TextStyle(color: AppColors.danger)),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
-                  // Quick upload button (only for non-readOnly)
-                  if (!widget.readOnly)
-                    IconButton(
-                      icon: const Icon(Icons.add, size: 20),
-                      onPressed: () => _showUploadSheet(context, groups),
-                      tooltip: 'Dateien hinzufügen',
+            if (!data.readOnly)
+              IconButton(
+                tooltip: context.l10n.songsUploadFiles,
+                icon: const Icon(Icons.cloud_upload_outlined),
+                onPressed: _busy ? null : () => _upload(),
+              ),
+            if (!data.readOnly && files.isNotEmpty)
+              PopupMenuButton<String>(
+                icon: const Icon(Icons.more_horiz),
+                onSelected: (v) {
+                  switch (v) {
+                    case 'print':
+                      _printGroupPdfs();
+                    case 'download':
+                      _downloadAll();
+                    case 'delete':
+                      _deleteAll();
+                  }
+                },
+                itemBuilder: (_) => [
+                  PopupMenuItem(
+                    value: 'print',
+                    child: ListTile(
+                      leading: const Icon(Icons.print_outlined),
+                      title: Text(context.l10n.songsPrintGroupPdfs),
+                      contentPadding: EdgeInsets.zero,
                     ),
+                  ),
+                  PopupMenuItem(
+                    value: 'download',
+                    child: ListTile(
+                      leading: const Icon(Icons.download_outlined),
+                      title: Text(context.l10n.songsDownloadAll),
+                      contentPadding: EdgeInsets.zero,
+                    ),
+                  ),
+                  PopupMenuItem(
+                    value: 'delete',
+                    child: ListTile(
+                      leading: const Icon(Icons.delete_outline),
+                      title: Text(context.l10n.songsDeleteAll),
+                      contentPadding: EdgeInsets.zero,
+                    ),
+                  ),
                 ],
               ),
-            ],
+          ],
+        ),
+        if (_busy) const LinearProgressIndicator(minHeight: 2),
+        // Ionic `.files-drop-area`: drop files from the desktop onto the list
+        FileDropTarget(
+          enabled: !data.readOnly && !_busy,
+          onFiles: _onFilesDropped,
+          builder: (context, hovering) => _FilesGroup(
+            border: hovering ? Border.all(color: AppColors.primary, width: 2) : null,
+            color: hovering
+                ? Color.alphaBlend(
+                    AppColors.primary.withAlpha(13), Theme.of(context).colorScheme.surface)
+                : null,
+            children: files.isEmpty
+                ? [IonItem(title: Text(context.l10n.songsNoFiles))]
+                : [
+                    for (final file in sorted)
+                      IonItem(
+                        title: Text(file.fileName),
+                        trailing: SongBadge(
+                          color: SongUtils.fileBadgeColor(file),
+                          label: SongUtils.fileLabel(file, data.instruments),
+                        ),
+                        onTap: () => _openActions(file),
+                      ),
+                  ],
           ),
         ),
-        if (_isDeletingAll || _isDownloadingAll)
-          const LinearProgressIndicator(),
-        if (widget.files.isEmpty)
-          const Card(
-            child: ListTile(
-              leading:
-                  Icon(Icons.insert_drive_file_outlined, color: AppColors.medium),
-              title: Text('Keine Dateien'),
-              subtitle: Text('Füge Notenblätter oder andere Dateien hinzu'),
-            ),
-          )
-        else
-          Card(
-            child: Column(
-              children: widget.files
-                  .map((file) => _FileTile(
-                        file: file,
-                        songId: widget.songId,
-                        songName: widget.songName,
-                        groups: groups,
-                        readOnly: widget.readOnly,
-                        onDeleted: widget.onFileAdded,
-                      ))
-                  .toList(),
-            ),
-          ),
       ],
     );
   }
 
-  bool _hasPdfFiles() {
-    return widget.files.any((f) => f.fileType.toLowerCase() == 'pdf');
-  }
+  Future<void> _openActions(SongFile file) async {
+    final isAudio = SongUtils.isAudio(file) ||
+        AudioPlayerService.isAudioFile(file.fileName);
+    final telegramChatId = data.isPublic
+        ? null
+        : ref.read(currentTenantUserProvider).valueOrNull?.telegramChatId;
 
-  Future<void> _handleBulkAction(BuildContext context, String action) async {
+    final action = await showAppActionSheet<String>(
+      context,
+      title: context.l10n.songsFileActions,
+      actions: [
+        AppActionSheetAction(value: 'open', icon: isAudio ? Icons.play_circle_outline : Icons.open_in_new, label: isAudio ? context.l10n.songsPlayRecording : context.l10n.songsOpenFile),
+        if (!isAudio) AppActionSheetAction(value: 'print', icon: Icons.print_outlined, label: context.l10n.songsPrintFile),
+        if (!_isIos || isAudio) AppActionSheetAction(value: 'download', icon: Icons.download_outlined, label: isAudio ? context.l10n.songsDownloadRecording : context.l10n.songsDownloadFile),
+        if (!data.readOnly) AppActionSheetAction(value: 'category', icon: Icons.swap_horiz, label: context.l10n.songsChangeCategory),
+        if (telegramChatId != null && telegramChatId.isNotEmpty) AppActionSheetAction(value: 'telegram', icon: Icons.send_outlined, label: context.l10n.songsSendTelegram),
+        if (!data.readOnly) AppActionSheetAction(value: 'delete', icon: Icons.delete_outline, label: context.l10n.songsDeleteFile, destructive: true),
+      ],
+    );
+    if (!mounted || action == null) return;
+
     switch (action) {
-      case 'print_group':
-        await _printGroupPdfs(context);
-        break;
-      case 'download_all':
-        await _downloadAllFiles(context);
-        break;
-      case 'upload':
-        final groupsAsync = ref.read(groupsProvider);
-        final groups = groupsAsync.valueOrNull ?? [];
-        await _showUploadSheet(context, groups);
-        break;
-      case 'delete_all':
-        await _deleteAllFiles(context);
-        break;
-    }
-  }
-
-  Future<void> _printGroupPdfs(BuildContext context) async {
-    final pdfFiles = widget.files.where((f) => f.fileType.toLowerCase() == 'pdf').toList();
-    if (pdfFiles.isEmpty) return;
-
-    if (pdfFiles.length == 1) {
-      // Single PDF — print directly
-      await showSmartPrintDialog(
-        context,
-        ref: ref,
-        url: pdfFiles.first.url,
-        fileName: pdfFiles.first.fileName,
-        instrumentId: pdfFiles.first.instrumentId,
-      );
-    } else {
-      // Multiple PDFs — let user select which to print
-      final groups = ref.read(groupsProvider).valueOrNull ?? [];
-      if (!context.mounted) return;
-      final selected = await showModalBottomSheet<SongFile>(
-        context: context,
-        builder: (ctx) => SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const ListTile(
-                title: Text('PDF zum Drucken auswählen', style: TextStyle(fontWeight: FontWeight.bold)),
-              ),
-              const Divider(),
-              ...pdfFiles.map((file) {
-                final groupName = groups.where((g) => g.id == file.instrumentId).firstOrNull?.name;
-                return ListTile(
-                  leading: const Icon(Icons.picture_as_pdf),
-                  title: Text(file.fileName),
-                  subtitle: groupName != null ? Text(groupName) : null,
-                  onTap: () => Navigator.pop(ctx, file),
-                );
-              }),
-              const SizedBox(height: 8),
-            ],
-          ),
-        ),
-      );
-      if (selected != null && context.mounted) {
-        await showSmartPrintDialog(
-          context,
-          ref: ref,
-          url: selected.url,
-          fileName: selected.fileName,
-          instrumentId: selected.instrumentId,
-        );
-      }
-    }
-  }
-
-  Future<void> _downloadAllFiles(BuildContext context) async {
-    setState(() => _isDownloadingAll = true);
-
-    try {
-      final zipService = ref.read(zipServiceProvider);
-      await zipService.downloadSongFilesAsZip(
-        files: widget.files,
-        songName: widget.songName,
-      );
-
-      if (context.mounted) {
-        ToastHelper.showSuccess(context, 'ZIP-Download gestartet');
-      }
-    } catch (e) {
-      if (context.mounted) {
-        ToastHelper.showError(context, 'Fehler beim Erstellen der ZIP: $e');
-      }
-    } finally {
-      if (mounted) {
-        setState(() => _isDownloadingAll = false);
-      }
-    }
-  }
-
-  Future<void> _deleteAllFiles(BuildContext context) async {
-    final confirmed = await DialogHelper.showConfirmation(
-      context,
-      title: 'Alle Dateien löschen',
-      message:
-          'Möchtest du wirklich alle ${widget.files.length} Dateien löschen? Diese Aktion kann nicht rückgängig gemacht werden.',
-      confirmText: 'Alle löschen',
-      cancelText: 'Abbrechen',
-    );
-
-    if (!confirmed) return;
-
-    setState(() => _isDeletingAll = true);
-
-    try {
-      final songFileService = ref.read(songFileServiceProvider);
-      await songFileService.deleteAllFiles(songId: widget.songId);
-
-      if (context.mounted) {
-        ToastHelper.showSuccess(context, 'Alle Dateien gelöscht');
-        widget.onFileAdded();
-      }
-    } catch (e) {
-      if (context.mounted) {
-        ToastHelper.showError(context, 'Fehler beim Löschen: $e');
-      }
-    } finally {
-      if (mounted) {
-        setState(() => _isDeletingAll = false);
-      }
-    }
-  }
-
-  Future<void> _showUploadSheet(BuildContext context, List<Group> groups) async {
-    final result = await showModalBottomSheet<bool>(
-      context: context,
-      isScrollControlled: true,
-      useSafeArea: true,
-      builder: (context) => FileUploadSheet(
-        songId: widget.songId,
-        groups: groups,
-      ),
-    );
-
-    if (result == true) {
-      widget.onFileAdded();
-    }
-  }
-}
-
-class _FileTile extends ConsumerWidget {
-  final SongFile file;
-  final int songId;
-  final String songName;
-  final List<Group> groups;
-  final bool readOnly;
-  final VoidCallback onDeleted;
-
-  const _FileTile({
-    required this.file,
-    required this.songId,
-    required this.songName,
-    required this.groups,
-    required this.readOnly,
-    required this.onDeleted,
-  });
-
-  bool get _isPdf => file.fileType.toLowerCase() == 'pdf';
-  bool get _isImage => ['png', 'jpg', 'jpeg'].contains(file.fileType.toLowerCase());
-  bool get _canDownload => !kIsWeb && !(Platform.isIOS);
-
-  String _getInstrumentLabel() {
-    final instruments = groups
-        .map((g) => InstrumentInfo(id: g.id!, name: g.name))
-        .toList();
-
-    return InstrumentMatcher.getFileLabel(
-      instrumentId: file.instrumentId,
-      note: file.note,
-      instruments: instruments,
-    );
-  }
-
-  Color _getBadgeColor() {
-    if (file.instrumentId == InstrumentMatcher.recordingId) {
-      return AppColors.primary;
-    }
-    if (file.instrumentId == InstrumentMatcher.lyricsId) {
-      return AppColors.success;
-    }
-    if (file.instrumentId != null) {
-      return AppColors.secondary;
-    }
-    return AppColors.medium;
-  }
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final label = _getInstrumentLabel();
-    final badgeColor = _getBadgeColor();
-
-    return ListTile(
-      leading: Icon(
-        _getFileIcon(file.fileType),
-        color: AppColors.primary,
-      ),
-      title: Row(
-        children: [
-          Expanded(
-            child: Text(
-              file.fileName,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-          const SizedBox(width: 8),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-            decoration: BoxDecoration(
-              color: badgeColor.withAlpha(30),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: badgeColor.withAlpha(80)),
-            ),
-            child: Text(
-              label,
-              style: TextStyle(
-                fontSize: 11,
-                fontWeight: FontWeight.w500,
-                color: badgeColor,
-              ),
-            ),
-          ),
-        ],
-      ),
-      trailing: PopupMenuButton<String>(
-        onSelected: (value) => _handleMenuAction(context, ref, value),
-        itemBuilder: (context) => [
-          const PopupMenuItem(
-            value: 'view',
-            child: Row(
-              children: [
-                Icon(Icons.visibility),
-                SizedBox(width: 8),
-                Text('Ansehen'),
-              ],
-            ),
-          ),
-          const PopupMenuItem(
-            value: 'open_external',
-            child: Row(
-              children: [
-                Icon(Icons.open_in_new),
-                SizedBox(width: 8),
-                Text('Extern öffnen'),
-              ],
-            ),
-          ),
-          if (_isPdf)
-            const PopupMenuItem(
-              value: 'print',
-              child: Row(
-                children: [
-                  Icon(Icons.print),
-                  SizedBox(width: 8),
-                  Text('Drucken'),
-                ],
-              ),
-            ),
-          if (_canDownload)
-            const PopupMenuItem(
-              value: 'download',
-              child: Row(
-                children: [
-                  Icon(Icons.download),
-                  SizedBox(width: 8),
-                  Text('Herunterladen'),
-                ],
-              ),
-            ),
-          const PopupMenuItem(
-            value: 'telegram',
-            child: Row(
-              children: [
-                Icon(Icons.send),
-                SizedBox(width: 8),
-                Text('Per Telegram senden'),
-              ],
-            ),
-          ),
-          if (!readOnly) ...[
-            const PopupMenuDivider(),
-            const PopupMenuItem(
-              value: 'change_category',
-              child: Row(
-                children: [
-                  Icon(Icons.category),
-                  SizedBox(width: 8),
-                  Text('Kategorie ändern'),
-                ],
-              ),
-            ),
-            const PopupMenuDivider(),
-            const PopupMenuItem(
-              value: 'delete',
-              child: Row(
-                children: [
-                  Icon(Icons.delete, color: AppColors.danger),
-                  SizedBox(width: 8),
-                  Text('Löschen', style: TextStyle(color: AppColors.danger)),
-                ],
-              ),
-            ),
-          ],
-        ],
-      ),
-      onTap: () => _openInAppViewer(context),
-    );
-  }
-
-  Future<void> _handleMenuAction(
-      BuildContext context, WidgetRef ref, String value) async {
-    switch (value) {
-      case 'view':
-        await _openInAppViewer(context);
-        break;
-      case 'open_external':
-        await _openExternally(context);
-        break;
-      case 'print':
-        await _showPrintDialog(context, ref);
-        break;
-      case 'download':
-        await _downloadFile(context, ref);
-        break;
-      case 'telegram':
-        await _sendViaTelegram(context, ref);
-        break;
-      case 'change_category':
-        await _changeCategory(context, ref);
-        break;
-      case 'delete':
-        await _deleteFile(context, ref);
-        break;
-    }
-  }
-
-  IconData _getFileIcon(String fileType) {
-    switch (fileType.toLowerCase()) {
-      case 'pdf':
-        return Icons.picture_as_pdf;
-      case 'png':
-      case 'jpg':
-      case 'jpeg':
-        return Icons.image;
-      default:
-        return Icons.insert_drive_file;
-    }
-  }
-
-  Future<void> _openInAppViewer(BuildContext context) async {
-    if (file.url.isEmpty) return;
-
-    if (_isPdf) {
-      await showPdfViewerSheet(
-        context,
-        url: file.url,
-        fileName: file.fileName,
-      );
-    } else if (_isImage) {
-      await showImageViewerSheet(
-        context,
-        url: file.url,
-        fileName: file.fileName,
-      );
-    } else {
-      // For other file types, open externally
-      await _openExternally(context);
-    }
-  }
-
-  Future<void> _openExternally(BuildContext context) async {
-    if (file.url.isEmpty) return;
-
-    final uri = Uri.parse(file.url);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    } else {
-      if (context.mounted) {
-        ToastHelper.showError(context, 'Konnte Datei nicht öffnen');
-      }
-    }
-  }
-
-  Future<void> _showPrintDialog(BuildContext context, WidgetRef ref) async {
-    if (!_isPdf) {
-      ToastHelper.showError(context, 'Nur PDF-Dateien können gedruckt werden');
-      return;
-    }
-
-    await showSmartPrintDialog(
-      context,
-      ref: ref,
-      url: file.url,
-      fileName: file.fileName,
-      instrumentId: file.instrumentId,
-    );
-  }
-
-  Future<void> _sendViaTelegram(BuildContext context, WidgetRef ref) async {
-    final telegramService = ref.read(telegramServiceProvider);
-    final notificationConfig = await ref.read(notificationConfigProvider.future);
-
-    if (notificationConfig == null || !notificationConfig.isConnected) {
-      if (context.mounted) {
-        ToastHelper.showError(
-          context,
-          'Telegram nicht verbunden. Bitte zuerst in den Einstellungen verbinden.',
-        );
-      }
-      return;
-    }
-
-    try {
-      await telegramService.sendDocumentPerTelegram(
-        url: file.url,
-        chatId: notificationConfig.telegramChatId!,
-      );
-
-      if (context.mounted) {
-        ToastHelper.showSuccess(context, 'Datei per Telegram gesendet');
-      }
-    } catch (e) {
-      if (context.mounted) {
-        ToastHelper.showError(context, 'Fehler beim Senden: $e');
-      }
-    }
-  }
-
-  Future<void> _downloadFile(BuildContext context, WidgetRef ref) async {
-    try {
-      final songFileService = ref.read(songFileServiceProvider);
-      final bytes = await songFileService.downloadFileBytes(file.url);
-
-      if (bytes == null) {
-        if (context.mounted) {
-          ToastHelper.showError(context, 'Datei konnte nicht heruntergeladen werden');
+      case 'open':
+        if (isAudio) {
+          await ref
+              .read(audioPlayerServiceProvider.notifier)
+              .playFromUrl(file.url, file.fileName, song.name);
+        } else {
+          await openSongFile(context, file);
         }
-        return;
-      }
-
-      // Save to temp directory and share
-      final tempDir = await getTemporaryDirectory();
-      final tempFile = File('${tempDir.path}/${file.fileName}');
-      await tempFile.writeAsBytes(bytes);
-
-      await Share.shareXFiles(
-        [XFile(tempFile.path)],
-        subject: file.fileName,
-      );
-
-      if (context.mounted) {
-        ToastHelper.showSuccess(context, 'Datei heruntergeladen');
-      }
-    } catch (e) {
-      if (context.mounted) {
-        ToastHelper.showError(context, 'Fehler beim Herunterladen: $e');
-      }
+      case 'print':
+        final baseName = (file.fileName.isNotEmpty ? file.fileName : song.name)
+            .replaceAll(RegExp(r'\.[^.]+$'), '');
+        final result = await ref
+            .read(songPrintServiceProvider)
+            .printEntries([SongPrintEntry(song: song, file: file)], '$baseName.pdf');
+        if (mounted && result != null && result.pageCount == 0) {
+          ToastHelper.showWarning(context, context.l10n.songsFlutterPrintFileFailed);
+        }
+      case 'download':
+        await _run(() async {
+          final bytes = await ref.read(songFileServiceProvider).downloadFileBytes(file.url);
+          if (bytes == null) throw Exception(l10nWithoutContext.songsFlutterDownloadFileFailed);
+          await file_saver.saveZipFile(bytes, file.fileName);
+        });
+      case 'category':
+        await _changeCategory(file);
+      case 'telegram':
+        await _run(() async {
+          await ref
+              .read(telegramServiceProvider)
+              .sendDocumentPerTelegram(url: file.url, chatId: telegramChatId!);
+          if (mounted) ToastHelper.showSuccess(context, context.l10n.songsFlutterTelegramSent);
+        });
+      case 'delete':
+        final ok = await DialogHelper.showConfirmation(
+          context,
+          title: context.l10n.songsDeleteFile,
+          message: context.l10n.songsDeleteFileConfirm(file.fileName),
+          confirmText: context.l10n.commonDelete,
+          isDestructive: true,
+        );
+        if (!ok) return;
+        await _run(() async {
+          await (await ref.read(readySongFileServiceProvider.future)).deleteFile(
+                songId: song.id!,
+                url: file.url,
+                storageName: file.storageName,
+                fileName: file.fileName,
+                mainGroupId: data.mainGroupId,
+              );
+          widget.onChanged();
+        });
     }
   }
 
-  Future<void> _changeCategory(BuildContext context, WidgetRef ref) async {
-    // Build category options
-    final categories = <_CategoryOption>[
-      _CategoryOption(
-        id: InstrumentMatcher.recordingId,
-        name: 'Aufnahme',
-        icon: Icons.audiotrack,
-      ),
-      _CategoryOption(
-        id: InstrumentMatcher.lyricsId,
-        name: 'Liedtext',
-        icon: Icons.text_snippet,
-      ),
-      ...groups.map((g) => _CategoryOption(
-            id: g.id!,
-            name: g.name,
-            icon: Icons.music_note,
-          )),
-      _CategoryOption(
-        id: null,
-        name: 'Sonstige',
-        icon: Icons.more_horiz,
-      ),
-    ];
-
-    // Show selection dialog
-    final selectedId = await showDialog<int?>(
+  /// Ionic category modal: Sonstige (Freitext) / Aufnahme / Liedtext / groups
+  Future<void> _changeCategory(SongFile file) async {
+    final result = await showAppDialog<({int? instrumentId, String? note})>(
       context: context,
-      builder: (context) => _CategorySelectionDialog(
-        categories: categories,
-        currentId: file.instrumentId,
+      builder: (_) => FileCategoryDialog(
+        instruments: data.instruments,
+        initialInstrumentId: file.instrumentId,
+        initialNote: file.note ??
+            (file.instrumentId == null && data.isChoir ? 'Chor' : ''),
       ),
     );
-
-    // User cancelled
-    if (selectedId == -1) return;
-
-    try {
-      final songFileService = ref.read(songFileServiceProvider);
-      await songFileService.updateFileCategory(
-        songId: songId,
-        storageName: file.storageName ?? '',
-        instrumentId: selectedId,
-        note: null, // Clear note when changing category
-      );
-
-      if (context.mounted) {
-        ToastHelper.showSuccess(context, 'Kategorie geändert');
-        onDeleted(); // Refresh the list
-      }
-    } catch (e) {
-      if (context.mounted) {
-        ToastHelper.showError(context, 'Fehler beim Ändern: $e');
-      }
-    }
+    if (result == null) return;
+    await _run(() async {
+      await (await ref.read(readySongFileServiceProvider.future)).updateFileCategory(
+            songId: song.id!,
+            url: file.url,
+            storageName: file.storageName,
+            instrumentId: result.instrumentId,
+            note: result.instrumentId == null ? result.note : null,
+            mainGroupId: data.mainGroupId,
+          );
+      widget.onChanged();
+    });
   }
+}
 
-  Future<void> _deleteFile(BuildContext context, WidgetRef ref) async {
-    final confirmed = await DialogHelper.showConfirmation(
-      context,
-      title: 'Datei löschen',
-      message: 'Möchtest du "${file.fileName}" wirklich löschen?',
-      confirmText: 'Löschen',
-      cancelText: 'Abbrechen',
+class _RatioDialog extends StatefulWidget {
+  @override
+  State<_RatioDialog> createState() => _RatioDialogState();
+}
+
+class _RatioDialogState extends State<_RatioDialog> {
+  int _ratio = 1;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final options = [
+      (1, l10n.songsPerPerson),
+      (2, l10n.songsEvery2),
+      (3, l10n.songsEvery3),
+      (4, l10n.songsEvery4),
+      (0, l10n.songsPerGroup),
+    ];
+    return AppAlertDialog(
+      title: Text(l10n.songsPrintOptions),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(l10n.songsCopiesPerGroup),
+          for (final o in options)
+            RadioListTile<int>(
+              contentPadding: EdgeInsets.zero,
+              value: o.$1,
+              groupValue: _ratio,
+              title: Text(o.$2),
+              onChanged: (v) => setState(() => _ratio = v ?? 1),
+            ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: Text(l10n.commonCancel),
+        ),
+        ElevatedButton(
+          onPressed: () => Navigator.pop(context, _ratio),
+          child: Text(l10n.songsPrint),
+        ),
+      ],
     );
-
-    if (!confirmed) return;
-
-    try {
-      final songFileService = ref.read(songFileServiceProvider);
-      await songFileService.deleteFile(
-        songId: songId,
-        storageName: file.storageName ?? '',
-      );
-
-      if (context.mounted) {
-        ToastHelper.showSuccess(context, 'Datei gelöscht');
-        onDeleted();
-      }
-    } catch (e) {
-      if (context.mounted) {
-        ToastHelper.showError(context, 'Fehler beim Löschen: $e');
-      }
-    }
   }
 }
 
-/// Category option for selection dialog
-class _CategoryOption {
-  final int? id;
-  final String name;
-  final IconData icon;
-
-  const _CategoryOption({
-    required this.id,
-    required this.name,
-    required this.icon,
-  });
-}
-
-/// Dialog for selecting file category
-class _CategorySelectionDialog extends StatefulWidget {
-  final List<_CategoryOption> categories;
-  final int? currentId;
-
-  const _CategorySelectionDialog({
-    required this.categories,
-    required this.currentId,
+/// Category picker for a song file (also used by the upload sheet).
+class FileCategoryDialog extends StatefulWidget {
+  const FileCategoryDialog({
+    super.key,
+    required this.instruments,
+    required this.initialInstrumentId,
+    required this.initialNote,
   });
 
+  final List<Group> instruments;
+  final int? initialInstrumentId;
+  final String initialNote;
+
   @override
-  State<_CategorySelectionDialog> createState() => _CategorySelectionDialogState();
+  State<FileCategoryDialog> createState() => _FileCategoryDialogState();
 }
 
-class _CategorySelectionDialogState extends State<_CategorySelectionDialog> {
-  late int? _selectedId;
+class _FileCategoryDialogState extends State<FileCategoryDialog> {
+  late int? _id = widget.initialInstrumentId;
+  late final _note = TextEditingController(text: widget.initialNote);
 
   @override
-  void initState() {
-    super.initState();
-    _selectedId = widget.currentId;
+  void dispose() {
+    _note.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      title: const Text('Kategorie wählen'),
+    final options = <(int?, String)>[
+      (null, context.l10n.songsOtherFreeText),
+      (1, context.l10n.songsRecording),
+      (2, context.l10n.songsLyrics),
+      for (final g in widget.instruments) (g.id, g.name),
+    ];
+    return AppAlertDialog(
+      title: Text(context.l10n.songsChangeCategory),
       content: SizedBox(
         width: double.maxFinite,
-        child: ListView.builder(
+        child: ListView(
           shrinkWrap: true,
-          itemCount: widget.categories.length,
-          itemBuilder: (context, index) {
-            final category = widget.categories[index];
-            final isSelected = category.id == _selectedId;
-
-            return RadioListTile<int?>(
-              value: category.id,
-              groupValue: _selectedId,
-              onChanged: (value) {
-                setState(() => _selectedId = value);
-              },
-              title: Row(
-                children: [
-                  Icon(
-                    category.icon,
-                    size: 20,
-                    color: isSelected ? AppColors.primary : AppColors.medium,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(category.name),
-                ],
+          children: [
+            for (final o in options)
+              RadioListTile<int?>(
+                dense: true,
+                value: o.$1,
+                groupValue: _id,
+                title: Text(o.$2),
+                onChanged: (v) => setState(() => _id = v),
               ),
-              activeColor: AppColors.primary,
-              dense: true,
-            );
-          },
+            if (_id == null)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: TextField(
+                  controller: _note,
+                  decoration: InputDecoration(
+                    labelText: context.l10n.songsFreeText,
+                    hintText: context.l10n.songsEnterCategory,
+                  ),
+                ),
+              ),
+          ],
         ),
       ),
       actions: [
         TextButton(
-          onPressed: () => Navigator.pop(context, -1),
-          child: const Text('Abbrechen'),
+          onPressed: () => Navigator.pop(context),
+          child: Text(context.l10n.commonCancel),
         ),
         ElevatedButton(
-          onPressed: () => Navigator.pop(context, _selectedId),
-          child: const Text('Speichern'),
+          onPressed: () => Navigator.pop(
+            context,
+            (instrumentId: _id, note: _id == null ? _note.text.trim() : null),
+          ),
+          child: Text(context.l10n.commonSave),
         ),
       ],
+    );
+  }
+}
+
+/// IOS_FORMS2: the files `ion-item-group` sits inside Ionic's
+/// `.files-drop-area` div, so the iOS theme's rounded group corners do not
+/// apply: on iOS the rows ("Keine Dateien vorhanden." / the files) form a
+/// plain full-width block with square corners. Material keeps the inset card.
+class _FilesGroup extends StatelessWidget {
+  const _FilesGroup({required this.children, this.color, this.border});
+
+  final List<Widget> children;
+  final Color? color;
+  final BoxBorder? border;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!isIosLook(context)) {
+      return IonInsetList(color: color, border: border, children: children);
+    }
+    final rows = <Widget>[];
+    for (var i = 0; i < children.length; i++) {
+      if (i > 0) rows.add(const Divider(height: 0.5, thickness: 0.5, indent: 16));
+      rows.add(children[i]);
+    }
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      decoration: BoxDecoration(
+        color: color ?? Theme.of(context).colorScheme.surface,
+        border: border,
+      ),
+      child: Material(
+        type: MaterialType.transparency,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: rows,
+        ),
+      ),
     );
   }
 }

@@ -1,15 +1,27 @@
 import 'package:flutter/material.dart';
-
-import '../../../../../core/utils/haptic_helper.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
-import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/constants/enums.dart';
+import '../../../../../core/providers/tenant_providers.dart';
 import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/utils/event_list_utils.dart';
+import '../../../../../core/utils/haptic_helper.dart';
+import '../../../../../core/utils/toast_helper.dart';
 import '../../../../../data/models/person/person.dart';
+import 'attendance_detail_sheets.dart';
+import 'attendance_grid.dart' show collapseHtmlWhitespace;
 import 'status_chip.dart';
+import '../../../../../l10n/l10n.dart';
+import '../../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../../shared/widgets/display/avatar.dart' show IonAvatarPlaceholder; // PARITY_R5
 
-/// Tile displaying a person with their attendance status and actions
+/// Person row of the attendance detail page.
+///
+/// UX_ATT: mirrors the Ionic `ion-item-sliding` row: optional avatar, name,
+/// note, registration summary / sort line; on the right the status badge
+/// (tap cycles the status) or, with "Explizite Statusauswahl", a status
+/// dropdown. Swiping left reveals "Mehr" (grey) and "Notiz" (yellow).
 class AttendancePersonTile extends StatelessWidget {
   const AttendancePersonTile({
     super.key,
@@ -21,7 +33,13 @@ class AttendancePersonTile extends StatelessWidget {
     required this.onNoteChanged,
     required this.onShowModifierInfo,
     required this.onRemoveFromAttendance,
-    this.clickMode = false,
+    this.clickMode = true,
+    this.registrationSummary,
+    this.onEditRegistrationFields,
+    this.showAvatar = true,
+    this.extraLine,
+    this.onSendReminder,
+    this.showModifierInfo = true,
   });
 
   final Person person;
@@ -32,190 +50,214 @@ class AttendancePersonTile extends StatelessWidget {
   final void Function(String?) onNoteChanged;
   final VoidCallback onShowModifierInfo;
   final VoidCallback onRemoveFromAttendance;
+
+  /// Ionic AttendanceViewMode.CLICK (tap cycles) vs. SELECT (dropdown).
   final bool clickMode;
+
+  /// Summary of the registration answers ("Feld: Wert · ...").
+  final String? registrationSummary;
+
+  /// "Anmeldefelder bearbeiten" – only when the type has registration fields.
+  final VoidCallback? onEditRegistrationFields;
+
+  /// "Bilder anzeigen" view option.
+  final bool showAvatar;
+
+  /// Extra line under the name (active sort value · group).
+  final String? extraLine;
+
+  /// "Erinnerung senden" for this person (null = not available).
+  final VoidCallback? onSendReminder;
+
+  /// Leaders only (not Helfer): "Wer hat geändert?" and "Person entfernen".
+  final bool showModifierInfo;
 
   @override
   Widget build(BuildContext context) {
     final hasNotes = notes?.isNotEmpty == true;
+    final medium = Theme.of(
+      context,
+    ).textTheme.bodySmall?.copyWith(color: AppColors.medium, fontSize: 12.5);
+
+    // UX_ATT: Ionic iOS ion-item: 16 px start padding, 36 px avatar with
+    // 16 px gap, h2 17 px name, h3 15 px note, 0.78rem medium extra lines.
+    final content = ConstrainedBox(
+      constraints: const BoxConstraints(minHeight: 52),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        child: Row(
+          children: [
+            if (showAvatar) ...[
+              // PARITY_R5: Ionic `ion-avatar` – the picture without a fill,
+              // otherwise assets/icon/avatar-placeholder.svg.
+              if (person.img != null && person.img!.isNotEmpty)
+                CircleAvatar(
+                  radius: 18,
+                  backgroundColor: Colors.transparent,
+                  backgroundImage: NetworkImage(person.img!),
+                )
+              else
+                const IonAvatarPlaceholder(size: 36),
+              const SizedBox(width: 16),
+            ],
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // IOS_DETAIL: whitespace collapsed like HTML
+                  Text(collapseHtmlWhitespace(person.fullName), style: const TextStyle(fontSize: 17)),
+                  if (hasNotes)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 2),
+                      child: Text(
+                        collapseHtmlWhitespace(notes!),
+                        style: const TextStyle(fontSize: 15),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  if (registrationSummary?.isNotEmpty == true)
+                    Text(
+                      registrationSummary!,
+                      style: medium,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  if (extraLine?.isNotEmpty == true)
+                    Text(
+                      extraLine!,
+                      style: medium,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            if (clickMode)
+              AttendanceStatusBadge(status: status)
+            else
+              _StatusSelect(
+                status: status,
+                options: ionicSelectableStatuses(availableStatuses),
+                onChanged: _onStatusChangedWithHaptic,
+              ),
+          ],
+        ),
+      ),
+    );
 
     return Slidable(
       key: ValueKey(person.id),
-      startActionPane: ActionPane(
-        motion: const ScrollMotion(),
-        extentRatio: 0.25,
-        children: [
-          SlidableAction(
-            onPressed: (_) => onRemoveFromAttendance(),
-            backgroundColor: AppColors.danger,
-            foregroundColor: Colors.white,
-            icon: Icons.person_remove,
-            label: 'Entfernen',
-          ),
-        ],
-      ),
       endActionPane: ActionPane(
         motion: const ScrollMotion(),
-        extentRatio: status != AttendanceStatus.neutral && status != AttendanceStatus.lateExcused
-            ? 0.65 // 4 actions
-            : status != AttendanceStatus.neutral
-                ? 0.5  // 3 actions (no neutral)
-                : status != AttendanceStatus.lateExcused
-                    ? 0.5  // 3 actions (no lateExcused)
-                    : 0.4, // 2 actions (both excluded)
+        extentRatio: 0.36,
+        // UX_ATT: the Notiz option is `expandable` in Ionic: a full swipe
+        // opens the note sheet (ionSwipe → addNote).
+        dismissible: DismissiblePane(
+          closeOnCancel: true,
+          confirmDismiss: () async {
+            await _showNoteDialog(context);
+            return false;
+          },
+          onDismissed: () {},
+        ),
         children: [
-          // Neutral status swipe action (if not already neutral)
-          if (status != AttendanceStatus.neutral)
-            SlidableAction(
-              onPressed: (_) => _onStatusChangedWithHaptic(AttendanceStatus.neutral),
-              backgroundColor: AppColors.medium,
-              foregroundColor: Colors.white,
-              icon: Icons.remove_circle_outline,
-              label: 'Neutral',
-            ),
-          // LateExcused status swipe action (if not already lateExcused)
-          if (status != AttendanceStatus.lateExcused)
-            SlidableAction(
-              onPressed: (_) => _onStatusChangedWithHaptic(AttendanceStatus.lateExcused),
-              backgroundColor: AppColors.warning,
-              foregroundColor: Colors.white,
-              icon: Icons.watch_later,
-              label: 'Versp.(E)',
-            ),
           SlidableAction(
-            onPressed: (_) => _showNoteDialog(context),
-            backgroundColor: AppColors.info,
+            onPressed: (_) => _showMoreSheet(context),
+            backgroundColor: AppColors.medium,
             foregroundColor: Colors.white,
-            icon: hasNotes ? Icons.edit_note : Icons.note_add,
-            label: 'Notiz',
+            icon: Icons.more_horiz,
           ),
           SlidableAction(
-            onPressed: (_) => onShowModifierInfo(),
-            backgroundColor: AppColors.tertiary,
-            foregroundColor: Colors.white,
-            icon: Icons.info_outline,
-            label: 'Info',
+            onPressed: (_) => _showNoteDialog(context),
+            backgroundColor: AppColors.warning,
+            foregroundColor: Colors.black,
+            icon: Icons.edit,
           ),
         ],
       ),
-      child: Card(
-        margin: const EdgeInsets.only(bottom: AppDimensions.paddingXS),
-        child: InkWell(
-          onTap: clickMode ? _cycleStatus : () => _showStatusPicker(context),
-          onLongPress: clickMode ? () => _showStatusPicker(context) : null,
-          borderRadius: BorderRadius.circular(AppDimensions.borderRadiusM),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppDimensions.paddingM,
-              vertical: AppDimensions.paddingS,
-            ),
-            child: Row(
-              children: [
-                // Avatar
-                CircleAvatar(
-                  radius: 20,
-                  backgroundColor: status.color.withValues(alpha: 0.2),
-                  backgroundImage: person.img != null ? NetworkImage(person.img!) : null,
-                  child: person.img == null
-                      ? Text(
-                          person.initials,
-                          style: TextStyle(
-                            color: status.color,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        )
-                      : null,
-                ),
-                const SizedBox(width: AppDimensions.paddingM),
-
-                // Name and notes
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        person.fullName,
-                        style: const TextStyle(fontWeight: FontWeight.w500),
-                      ),
-                      if (hasNotes)
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.sticky_note_2,
-                              size: 12,
-                              color: AppColors.medium,
-                            ),
-                            const SizedBox(width: 4),
-                            Expanded(
-                              child: Text(
-                                notes!,
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  fontStyle: FontStyle.italic,
-                                  color: AppColors.medium,
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
-                        ),
-                    ],
-                  ),
-                ),
-
-                // Status indicator
-                StatusChip(
-                  status: status,
-                  onTap: clickMode ? _cycleStatus : () => _showStatusPicker(context),
-                ),
-              ],
-            ),
-          ),
-        ),
+      child: Material(
+        color: Theme.of(context).colorScheme.surface,
+        child:
+            clickMode
+                ? InkWell(onTap: () => _cycleStatus(context), child: content)
+                : content,
       ),
     );
   }
 
-  void _showNoteDialog(BuildContext context) {
-    final controller = TextEditingController(text: notes);
+  /// Note action sheet with the tenant's absence reasons (Ionic `addNote`).
+  Future<void> _showNoteDialog(BuildContext context) async {
+    final tenant = ProviderScope.containerOf(
+      context,
+      listen: false,
+    ).read(currentTenantProvider);
+    final result = await showPersonNoteSheet(
+      context,
+      currentNote: notes,
+      presetReasons: EventListUtils.absenceReasonsOf(tenant?.absenceReasons),
+    );
+    if (result == null) return;
+    onNoteChanged(result.isEmpty ? null : result);
+  }
 
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text('Notiz für ${person.fullName}'),
-        content: TextField(
-          controller: controller,
-          maxLines: 4,
-          decoration: const InputDecoration(
-            hintText: 'Notiz eingeben...',
-            border: OutlineInputBorder(),
+  /// Person action sheet (Ionic openMoreSheet, same option order).
+  Future<void> _showMoreSheet(BuildContext context) async {
+    final canLateExcused =
+        clickMode && availableStatuses.contains(AttendanceStatus.late);
+    // IOS_LOOK: Ionic action sheet (adaptive).
+    AppActionSheetAction<VoidCallback> option(
+      String label,
+      IconData icon,
+      VoidCallback onTap, {
+      bool destructive = false,
+    }) =>
+        AppActionSheetAction(value: onTap, label: label, icon: icon, destructive: destructive);
+    final action = await showAppActionSheet<VoidCallback>(
+      context,
+      title: collapseHtmlWhitespace(person.fullName),
+      actions: [
+        if (status != AttendanceStatus.neutral)
+          option(
+            context.l10n.attendanceSetNeutral,
+            Icons.remove_circle_outline,
+            () => _onStatusChangedWithHaptic(AttendanceStatus.neutral),
           ),
-          autofocus: true,
-        ),
-        actions: [
-          if (notes?.isNotEmpty == true)
-            TextButton(
-              onPressed: () {
-                onNoteChanged(null);
-                Navigator.of(ctx).pop();
-              },
-              child: const Text('Löschen', style: TextStyle(color: AppColors.danger)),
-            ),
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('Abbrechen'),
+        if (canLateExcused)
+          option(
+            context.l10n.commonStatusLateExcused,
+            Icons.schedule,
+            () => _onStatusChangedWithHaptic(AttendanceStatus.lateExcused),
           ),
-          FilledButton(
-            onPressed: () {
-              final newNotes = controller.text.trim();
-              onNoteChanged(newNotes.isEmpty ? null : newNotes);
-              Navigator.of(ctx).pop();
-            },
-            child: const Text('Speichern'),
+        if (onEditRegistrationFields != null)
+          option(
+            context.l10n.attendanceEditRegFields,
+            Icons.edit_outlined,
+            onEditRegistrationFields!,
+          ),
+        if (showModifierInfo) ...[
+          option(
+            context.l10n.attendanceWhoChanged,
+            Icons.info_outline,
+            onShowModifierInfo,
+          ),
+          option(
+            context.l10n.attendanceRemovePerson,
+            Icons.delete_outline,
+            onRemoveFromAttendance,
+            destructive: true,
           ),
         ],
-      ),
+        if (onSendReminder != null)
+          option(
+            context.l10n.attendanceSendReminderShort,
+            Icons.notifications_outlined,
+            onSendReminder!,
+          ),
+      ],
     );
+    action?.call();
   }
 
   /// Trigger haptic feedback and change status
@@ -224,43 +266,45 @@ class AttendancePersonTile extends StatelessWidget {
     onStatusChanged(newStatus);
   }
 
-  /// Cycle through available statuses
-  void _cycleStatus() {
-    final currentIndex = availableStatuses.indexOf(status);
-    final nextIndex = (currentIndex + 1) % availableStatuses.length;
-    _onStatusChangedWithHaptic(availableStatuses[nextIndex]);
+  /// Ionic onAttChange: tap moves to the next status of the type's mapping.
+  void _cycleStatus(BuildContext context) {
+    final next = nextClickStatus(status, availableStatuses);
+    if (next == null) {
+      ToastHelper.showError(context, context.l10n.attendanceStatusChangeFailed);
+      return;
+    }
+    if (next == status) return; // LOGIC_ATT: not in the mapping → no change
+    _onStatusChangedWithHaptic(next);
   }
+}
 
-  void _showStatusPicker(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      builder: (context) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              title: Text(
-                person.fullName,
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-              subtitle: const Text('Status auswählen'),
-            ),
-            const Divider(),
-            ...availableStatuses.map((s) => ListTile(
-              leading: Icon(
-                s.icon,
-                color: s.color,
-              ),
-              title: Text(s.label),
-              selected: s == status,
-              onTap: () {
-                _onStatusChangedWithHaptic(s);
-                Navigator.pop(context);
-              },
-            )),
-            const SizedBox(height: AppDimensions.paddingM),
-          ],
-        ),
+/// Ionic `ion-select interface="popover"` with the status labels.
+class _StatusSelect extends StatelessWidget {
+  const _StatusSelect({
+    required this.status,
+    required this.options,
+    required this.onChanged,
+  });
+
+  final AttendanceStatus status;
+  final List<AttendanceStatus> options;
+  final ValueChanged<AttendanceStatus> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final items = options.contains(status) ? options : [status, ...options];
+    return DropdownButtonHideUnderline(
+      child: AppDropdownButton<AttendanceStatus>(
+        value: status,
+        isDense: true,
+        alignment: AlignmentDirectional.centerEnd,
+        items: [
+          for (final s in items)
+            DropdownMenuItem(value: s, child: Text(ionicStatusLabel(s))),
+        ],
+        onChanged: (s) {
+          if (s != null && s != status) onChanged(s);
+        },
       ),
     );
   }

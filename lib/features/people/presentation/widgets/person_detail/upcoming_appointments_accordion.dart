@@ -3,9 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../../core/config/supabase_config.dart';
-import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/providers/tenant_providers.dart';
 import '../../../../../core/theme/app_colors.dart';
+import '../../../../../l10n/l10n.dart';
+import '../ion/ion_widgets.dart';
 
 /// Provider for upcoming attendances (future dates) for a person.
 final upcomingAttendancesProvider =
@@ -13,6 +14,8 @@ final upcomingAttendancesProvider =
         (ref, personId) async {
   final supabase = ref.watch(supabaseClientProvider);
   final tenant = ref.watch(currentTenantProvider);
+  // SOL_FIX15: reload on an account switch.
+  ref.watch(currentAuthUserIdProvider);
 
   if (tenant == null) return [];
 
@@ -120,38 +123,18 @@ class _UpcomingAppointmentsCardState extends State<_UpcomingAppointmentsCard> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.symmetric(
-        horizontal: AppDimensions.paddingM,
-        vertical: AppDimensions.paddingXS,
-      ),
-      child: Column(
-        children: [
-          ListTile(
-            title: Text(
-              'Anstehende Termine (${widget.appointments.length})',
-              style: const TextStyle(fontWeight: FontWeight.w600),
-            ),
-            trailing:
-                Icon(_isExpanded ? Icons.expand_less : Icons.expand_more),
-            onTap: () => setState(() => _isExpanded = !_isExpanded),
-          ),
-          if (_isExpanded)
-            Padding(
-              padding: const EdgeInsets.fromLTRB(
-                AppDimensions.paddingM,
-                0,
-                AppDimensions.paddingM,
-                AppDimensions.paddingM,
-              ),
+    return IonAccordion(
+      title: context.l10n.personUpcomingEvents(widget.appointments.length),
+      expanded: _isExpanded,
+      onToggle: () => setState(() => _isExpanded = !_isExpanded),
+      child: Padding(
+              padding: EdgeInsets.zero,
               child: Column(
                 children: widget.appointments
                     .map((item) => _buildAppointmentItem(item))
                     .toList(),
               ),
             ),
-        ],
-      ),
     );
   }
 
@@ -161,7 +144,7 @@ class _UpcomingAppointmentsCardState extends State<_UpcomingAppointmentsCard> {
     final status = item['status'] as int? ?? 0;
     final notes = item['notes']?.toString();
 
-    final dateStr = date != null ? DateFormat('dd.MM.yyyy').format(date) : '';
+    final dateStr = date != null ? DateFormat(dateFmt()).format(date) : '';
     final titleStr =
         meetingName.isNotEmpty ? '$dateStr | $meetingName' : dateStr;
 
@@ -192,48 +175,18 @@ class _UpcomingAppointmentsCardState extends State<_UpcomingAppointmentsCard> {
         badgeColor = AppColors.medium;
     }
 
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: AppDimensions.paddingM),
-      decoration: BoxDecoration(
-        border: Border(bottom: BorderSide(color: Colors.grey.shade100)),
-      ),
-      child: Row(
+    // Ionic: ion-item h2 "date | title", h3 notes, ion-badge slot="end"
+    return IonItem(
+      end: [IonBadge(text: badgeText, color: badgeColor)],
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(titleStr, style: const TextStyle(fontSize: 15)),
-                if (notes != null && notes.isNotEmpty)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 2),
-                    child: Text(
-                      notes,
-                      style:
-                          TextStyle(fontSize: 12, color: Colors.grey.shade600),
-                    ),
-                  ),
-              ],
+          Text(titleStr, style: IonText.h2(context)),
+          if (notes != null && notes.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(top: 2),
+              child: Text(notes, style: IonText.h3(context)),
             ),
-          ),
-          Container(
-            width: 32,
-            height: 32,
-            decoration: BoxDecoration(
-              color: badgeColor,
-              borderRadius: BorderRadius.circular(4),
-            ),
-            child: Center(
-              child: Text(
-                badgeText,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                ),
-              ),
-            ),
-          ),
         ],
       ),
     );

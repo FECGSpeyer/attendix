@@ -4,14 +4,22 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../config/supabase_config.dart';
-import '../constants/enums.dart';
+import '../services/attendance_list_cache.dart';
+import '../services/attendance_detail_cache.dart'
+    show
+        OfflineReadCacheGuard,
+        isOfflineFallbackError,
+        purgeOfflineCachesOnAuthError; // SOL_FIX7, SOL_FIX8, SOL_FIX9, SOL_FIX10
+import '../services/offline_queue_service.dart'
+    show connectivityCheckProvider, offlineQueueUserIdProvider;
+import '../utils/attendance_percentage_utils.dart';
 import '../../data/models/attendance/attendance.dart';
 import '../../data/models/person/person.dart';
-import '../../data/models/song/song.dart';
+import 'attendance_type_providers.dart';
 import 'player_providers.dart';
-import 'song_providers.dart';
 import 'tenant_providers.dart';
 import 'group_providers.dart';
+import '../utils/paged_query.dart'; // SOL_FIX1
 
 // Keep alive counter: incrementing forces providers watching it to refetch.
 final attendanceRefetchCounter = StateProvider<int>((ref) => 0);
@@ -49,6 +57,22 @@ final realtimePlayersProvider = StreamProvider.autoDispose<List<Person>>((ref) a
 
   // Create a stream controller to manage updates
   final controller = StreamController<List<Person>>();
+  var knownIds = initialData.map((p) => p.id).whereType<int>().toSet();
+
+  Future<void> refetchPlayers() async {
+    // Fetch fresh data when changes occur
+    try {
+      final freshData = await playerRepo.getPlayers();
+      knownIds = freshData.map((p) => p.id).whereType<int>().toSet();
+      if (!controller.isClosed) {
+        controller.add(enrichPlayers(freshData));
+      }
+    } catch (e) {
+      if (!controller.isClosed) {
+        controller.addError(e);
+      }
+    }
+  }
 
   // Setup realtime channel
   final channel = supabase
@@ -62,18 +86,17 @@ final realtimePlayersProvider = StreamProvider.autoDispose<List<Person>>((ref) a
           column: 'tenantId',
           value: tenantId,
         ),
-        callback: (payload) async {
-          // Fetch fresh data when changes occur
-          try {
-            final freshData = await playerRepo.getPlayers();
-            if (!controller.isClosed) {
-              controller.add(enrichPlayers(freshData));
-            }
-          } catch (e) {
-            if (!controller.isClosed) {
-              controller.addError(e);
-            }
-          }
+        callback: (payload) => refetchPlayers(),
+      )
+      // Supabase does not apply column filters to DELETE events, so deletes
+      // are received unfiltered and matched by id (Ionic list.page: old.id).
+      .onPostgresChanges(
+        event: PostgresChangeEvent.delete,
+        schema: 'public',
+        table: 'player',
+        callback: (payload) {
+          final id = (payload.oldRecord['id'] as num?)?.toInt();
+          if (id != null && knownIds.contains(id)) refetchPlayers();
         },
       )
       .subscribe();
@@ -90,9 +113,39 @@ final realtimePlayersProvider = StreamProvider.autoDispose<List<Person>>((ref) a
   }
 });
 
+/// Ids of the attendances currently loaded by [realtimeAttendanceListProvider].
+///
+/// A plain mutable holder (no notifications): the list writes it after each
+/// load, the realtime subscription reads it to drop DELETE events of other
+/// tenants. The subscription cannot read the list provider itself because
+/// the list watches the subscription (circular dependency).
+class LoadedAttendanceIds {
+  Set<int>? ids;
+}
+
+final loadedAttendanceIdsProvider =
+    Provider<LoadedAttendanceIds>((ref) => LoadedAttendanceIds());
+
+/// Whether an unfiltered attendance DELETE event concerns the loaded list.
+/// Supabase delivers DELETE events without column filters, so events of other
+/// tenants arrive too; only ids of the loaded list trigger a refetch.
+/// [knownIds] null (list not loaded yet) → relevant.
+bool isRelevantAttendanceDelete(
+    Map<String, dynamic> oldRecord, Set<int>? knownIds) {
+  final id = (oldRecord['id'] as num?)?.toInt();
+  if (id == null) return false;
+  if (knownIds == null) return true;
+  return knownIds.contains(id);
+}
+
 /// Attendance list with client-side calculated percentages.
 /// Watches the realtime subscription to auto-refresh on DB changes.
 final realtimeAttendanceListProvider = FutureProvider.autoDispose<List<Attendance>>((ref) async {
+  // SOL_FIX16: the list belongs to the signed-in account. Watched directly
+  // (before the first await): the subscription below is a Provider<void>,
+  // whose rebuild yields an unchanged `null` and never notifies this list,
+  // and the offline path returns before attendanceTypesProvider is watched.
+  final authUserId = ref.watch(currentAuthUserIdProvider);
   // Watch the realtime subscription so it stays alive while this provider is active.
   ref.watch(_attendanceRealtimeSubscriptionProvider);
   // Watch the refetch counter so manual invalidation triggers a refetch.
@@ -102,34 +155,107 @@ final realtimeAttendanceListProvider = FutureProvider.autoDispose<List<Attendanc
   final tenant = ref.watch(currentTenantProvider);
   if (tenant?.id == null) return [];
 
-  final response = await supabase
-      .from('attendance')
-      .select('*, person_attendances(status)')
-      .eq('tenantId', tenant!.id!)
-      .order('date', ascending: false)
-      .limit(50);
+  final tenantId = tenant!.id!;
+  const cache = AttendanceListCache();
+  // SOL_FIX7: the offline copy belongs to the signed-in user + tenant; no
+  // user → no cache.
+  final cacheUserId = ref.read(offlineQueueUserIdProvider)();
+  // SOL_FIX9: cache session captured before the load; a result arriving
+  // after sign-out / account switch is not stored.
+  final cacheGuard = cacheUserId == null
+      ? null
+      : OfflineReadCacheGuard.capture(
+          userId: cacheUserId,
+          currentUserId: ref.read(offlineQueueUserIdProvider),
+        );
 
-  return (response as List).map((e) {
+  // SOL_FIX16: a cached list is only returned while the session it was
+  // loaded for is still current (same account as watched above, no
+  // sign-out / account switch during the load).
+  Future<List<Attendance>?> loadCached() async {
+    if (cacheUserId == null || cacheGuard == null) return null;
+    if (authUserId != null && authUserId != cacheUserId) return null;
+    final cached = await cache.load(cacheUserId, tenantId);
+    if (cached == null || !cacheGuard.isCurrent) return null;
+    return cached;
+  }
+
+  // LOGIC_SELF: Ionic att-list getAttendance — offline the cached list is
+  // shown (offline_att_list_v1_<tenant>).
+  final online = await ref.read(connectivityCheckProvider)();
+  if (!online) {
+    final cached = await loadCached();
+    if (cached != null) return cached;
+  }
+
+  // LOGIC_SELF: Ionic db.getAttendance — everything since the season start
+  // (getCurrentAttDate), no row limit.
+  final List<dynamic> response;
+  final List<AttendanceType> types;
+  try {
+    // SOL_FIX10: the whole load (attendances AND attendance types) runs
+    // inside the auth-error cleanup.
+    (response, types) = await purgeOfflineCachesOnAuthError(
+      cacheUserId,
+      tenantId,
+      () async {
+        // P3: attendance types load in parallel with the list (Ionic needs
+        // a single request here; sequential loads delayed the first paint).
+        final typesFuture = ref.watch(attendanceTypesProvider.future);
+        // Its error is rethrown by the await below; this listener only keeps
+        // an early failure from being reported as unhandled meanwhile.
+        typesFuture.then<void>((_) {}, onError: (Object _) {});
+        // SOL_FIX1: paged (PostgREST max-rows 1000), stable order date+id.
+        final rows = await fetchAllPages<dynamic>((from, to) async => await supabase
+            .from('attendance')
+            .select('*, person_attendances(status, notes, duty_state)')
+            .eq('tenantId', tenantId)
+            .gt('date', attendanceListStartDate(tenant.seasonStart))
+            .order('date', ascending: false)
+            .order('id', ascending: false)
+            .range(from, to) as List);
+        final loadedTypes = await typesFuture;
+        return (rows, loadedTypes);
+      },
+    );
+  } catch (e) {
+    // SOL_FIX7: only network failures fall back to the offline copy;
+    // auth/permission errors (revoked access) are shown.
+    if (cacheUserId == null || !isOfflineFallbackError(e)) rethrow;
+    final cached = await loadCached();
+    if (cached != null) return cached;
+    rethrow;
+  }
+
+  final typesById = {for (final t in types) t.id: t};
+
+  final attendances = response.map((e) {
     final attendance = Attendance.fromJson(e as Map<String, dynamic>);
-    final personAttendances = e['person_attendances'] as List?;
-    if (personAttendances != null && personAttendances.isNotEmpty) {
-      final total = personAttendances.length;
-      final present = personAttendances.where((pa) {
-        final status = AttendanceStatus.fromValue(pa['status'] as int? ?? 0);
-        return status.countsAsPresent;
-      }).length;
-      return attendance.copyWith(
-        percentage: (present / total * 100).roundToDouble(),
-      );
-    }
-    return attendance;
+    final rows = ((e['person_attendances'] as List?) ?? const [])
+        .whereType<Map<String, dynamic>>()
+        .toList();
+    // LOGIC_SELF: Ionic getPercentage(averagePersons(...), shift_excused_as_present)
+    return attendance.copyWith(
+      percentage: attendanceListPercentage(
+        rows,
+        typesById[attendance.typeId],
+        shiftExcusedAsPresent: tenant.shiftExcusedAsPresent,
+      ),
+    );
   }).toList();
+  ref.read(loadedAttendanceIdsProvider).ids =
+      attendances.map((a) => a.id).whereType<int>().toSet();
+  if (cacheUserId != null) {
+    await cache.save(cacheUserId, tenantId, attendances, guard: cacheGuard);
+  }
+  return attendances;
 });
 
 /// Internal: manages Supabase realtime subscription for the attendance table.
 /// Bumps the refetch counter when attendance or person_attendances rows change,
 /// triggering a refetch of the list with fresh percentages.
 final _attendanceRealtimeSubscriptionProvider = Provider.autoDispose<void>((ref) {
+  ref.watch(currentAuthUserIdProvider); // SOL_FIX15: reload per account
   final supabase = ref.watch(supabaseClientProvider);
   final tenant = ref.watch(currentTenantProvider);
   if (tenant?.id == null) return;
@@ -151,6 +277,22 @@ final _attendanceRealtimeSubscriptionProvider = Provider.autoDispose<void>((ref)
         ),
         callback: onChanged,
       )
+      // DELETE events are not filtered by Supabase (old record = id only):
+      // listen unfiltered and only refetch when the deleted id is in the
+      // loaded list (same pattern as players / isRelevantSongDelete).
+      .onPostgresChanges(
+        event: PostgresChangeEvent.delete,
+        schema: 'public',
+        table: 'attendance',
+        callback: (payload) {
+          if (isRelevantAttendanceDelete(
+            payload.oldRecord,
+            ref.read(loadedAttendanceIdsProvider).ids,
+          )) {
+            onChanged(payload);
+          }
+        },
+      )
       .onPostgresChanges(
         event: PostgresChangeEvent.update,
         schema: 'public',
@@ -163,64 +305,6 @@ final _attendanceRealtimeSubscriptionProvider = Provider.autoDispose<void>((ref)
       .subscribe();
 
   ref.onDispose(() => channel.unsubscribe());
-});
-
-/// Provider for realtime song changes subscription
-///
-/// Subscribes to the songs table and invalidates the list
-/// when changes occur
-final realtimeSongsProvider = StreamProvider.autoDispose<List<Song>>((ref) async* {
-  final supabase = ref.watch(supabaseClientProvider);
-  final tenantId = ref.watch(currentTenantIdProvider);
-  final songRepo = ref.watch(songRepositoryWithTenantProvider);
-
-  if (tenantId == null) {
-    yield [];
-    return;
-  }
-
-  // Initial data
-  final initialData = await songRepo.getSongs();
-  yield initialData;
-
-  // Create a stream controller
-  final controller = StreamController<List<Song>>();
-
-  // Setup realtime channel
-  final channel = supabase
-      .channel('song_changes_$tenantId')
-      .onPostgresChanges(
-        event: PostgresChangeEvent.all,
-        schema: 'public',
-        table: 'songs',
-        filter: PostgresChangeFilter(
-          type: PostgresChangeFilterType.eq,
-          column: 'tenantId',
-          value: tenantId,
-        ),
-        callback: (payload) async {
-          try {
-            final freshData = await songRepo.getSongs();
-            if (!controller.isClosed) {
-              controller.add(freshData);
-            }
-          } catch (e) {
-            if (!controller.isClosed) {
-              controller.addError(e);
-            }
-          }
-        },
-      )
-      .subscribe();
-
-  ref.onDispose(() {
-    channel.unsubscribe();
-    controller.close();
-  });
-
-  await for (final data in controller.stream) {
-    yield data;
-  }
 });
 
 /// Provider for realtime pending player changes subscription
@@ -243,6 +327,21 @@ final realtimePendingPlayersProvider = StreamProvider.autoDispose<List<Person>>(
 
   // Create a stream controller
   final controller = StreamController<List<Person>>();
+  var pendingIds = initialData.map((p) => p.id).whereType<int>().toSet();
+
+  Future<void> refetchPending() async {
+    try {
+      final freshData = await playerRepo.getPendingPlayers();
+      pendingIds = freshData.map((p) => p.id).whereType<int>().toSet();
+      if (!controller.isClosed) {
+        controller.add(freshData);
+      }
+    } catch (e) {
+      if (!controller.isClosed) {
+        controller.addError(e);
+      }
+    }
+  }
 
   // Setup realtime channel — listen for all player changes (pending flag changes)
   final channel = supabase
@@ -256,17 +355,24 @@ final realtimePendingPlayersProvider = StreamProvider.autoDispose<List<Person>>(
           column: 'tenantId',
           value: tenantId,
         ),
-        callback: (payload) async {
-          try {
-            final freshData = await playerRepo.getPendingPlayers();
-            if (!controller.isClosed) {
-              controller.add(freshData);
-            }
-          } catch (e) {
-            if (!controller.isClosed) {
-              controller.addError(e);
-            }
-          }
+        callback: (payload) {
+          // MEDIA_REALTIME: like Ionic settings.page.ts — refetch for new
+          // pending registrations and for any update/delete (old.id set).
+          final isPendingInsert = payload.newRecord['pending'] == true;
+          final hasOld = payload.oldRecord['id'] != null;
+          if (!isPendingInsert && !hasOld) return;
+          refetchPending();
+        },
+      )
+      // DELETE events arrive only without a column filter; refetch when a
+      // known pending person was deleted (e.g. registration declined).
+      .onPostgresChanges(
+        event: PostgresChangeEvent.delete,
+        schema: 'public',
+        table: 'player',
+        callback: (payload) {
+          final id = (payload.oldRecord['id'] as num?)?.toInt();
+          if (id != null && pendingIds.contains(id)) refetchPending();
         },
       )
       .subscribe();
@@ -279,79 +385,4 @@ final realtimePendingPlayersProvider = StreamProvider.autoDispose<List<Person>>(
   await for (final data in controller.stream) {
     yield data;
   }
-});
-
-/// Manager class for handling multiple realtime subscriptions
-///
-/// Use this to manually manage subscriptions if needed
-class RealtimeManager {
-  final SupabaseClient _supabase;
-  final Map<String, RealtimeChannel> _channels = {};
-
-  RealtimeManager(this._supabase);
-
-  /// Subscribe to a table with a callback
-  RealtimeChannel subscribe({
-    required String channelName,
-    required String table,
-    PostgresChangeFilter? filter,
-    required void Function(PostgresChangePayload) callback,
-  }) {
-    // Unsubscribe existing channel if any
-    _channels[channelName]?.unsubscribe();
-
-    final channel = _supabase.channel(channelName);
-
-    if (filter != null) {
-      channel.onPostgresChanges(
-        event: PostgresChangeEvent.all,
-        schema: 'public',
-        table: table,
-        filter: filter,
-        callback: callback,
-      );
-    } else {
-      channel.onPostgresChanges(
-        event: PostgresChangeEvent.all,
-        schema: 'public',
-        table: table,
-        callback: callback,
-      );
-    }
-
-    channel.subscribe();
-    _channels[channelName] = channel;
-
-    return channel;
-  }
-
-  /// Unsubscribe from a specific channel
-  void unsubscribe(String channelName) {
-    _channels[channelName]?.unsubscribe();
-    _channels.remove(channelName);
-  }
-
-  /// Unsubscribe from all channels
-  void unsubscribeAll() {
-    for (final channel in _channels.values) {
-      channel.unsubscribe();
-    }
-    _channels.clear();
-  }
-
-  /// Get all active channel names
-  List<String> get activeChannels => _channels.keys.toList();
-}
-
-/// Provider for RealtimeManager
-final realtimeManagerProvider = Provider<RealtimeManager>((ref) {
-  final supabase = ref.watch(supabaseClientProvider);
-  final manager = RealtimeManager(supabase);
-
-  // Clean up on dispose
-  ref.onDispose(() {
-    manager.unsubscribeAll();
-  });
-
-  return manager;
 });

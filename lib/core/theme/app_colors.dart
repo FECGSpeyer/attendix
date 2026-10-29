@@ -4,10 +4,11 @@ import 'package:flutter/material.dart';
 class AppColors {
   AppColors._();
 
-  // Primary colors (based on Ionic's default blue)
-  static const Color primary = Color(0xFF3880FF);
-  static const Color primaryLight = Color(0xFF5A9AFF);
-  static const Color primaryDark = Color(0xFF1A5CCC);
+  // Primary colors (Ionic src/theme/variables.scss: --ion-color-primary
+  // #438e96, tint #5699a1, shade #3b7d84)
+  static const Color primary = Color(0xFF438E96);
+  static const Color primaryLight = Color(0xFF5699A1);
+  static const Color primaryDark = Color(0xFF3B7D84);
 
   // Secondary colors
   static const Color secondary = Color(0xFF3DC2FF);
@@ -19,20 +20,26 @@ class AppColors {
   static const Color tertiaryLight = Color(0xFF7A85FF);
   static const Color tertiaryDark = Color(0xFF2A3ACC);
 
-  // Success
-  static const Color success = Color(0xFF2DD36F);
-  static const Color successLight = Color(0xFF5AE08F);
-  static const Color successDark = Color(0xFF1AA055);
+  // Success (Ionic variables.scss: #00815E)
+  static const Color success = Color(0xFF00815E);
+  static const Color successLight = Color(0xFF3BB96D);
+  static const Color successDark = Color(0xFF219C52);
 
   // Warning
   static const Color warning = Color(0xFFFFC409);
-  static const Color warningLight = Color(0xFFFFD339);
-  static const Color warningDark = Color(0xFFCC9A00);
+  static const Color warningLight = Color(0xFFFFCA22);
+  static const Color warningDark = Color(0xFFE0AC08);
 
-  // Danger/Error
-  static const Color danger = Color(0xFFEB445A);
-  static const Color dangerLight = Color(0xFFEF6B7A);
-  static const Color dangerDark = Color(0xFFBB2A3E);
+  // Danger/Error (Ionic variables.scss: #b95b5b)
+  static const Color danger = Color(0xFFB95B5B);
+  static const Color dangerLight = Color(0xFFC06B6B);
+  static const Color dangerDark = Color(0xFFA35050);
+
+  // Custom Ionic colors (variables.scss: rosa, mint, orange, holiday)
+  static const Color rosa = Color(0xFFBE72C0);
+  static const Color mint = Color(0xFF36C2C4);
+  static const Color orange = Color(0xFFEC8D09);
+  static const Color holiday = Color(0xFF9F6073);
 
   // Info (cyan blue)
   static const Color info = Color(0xFF3DC2FF);
@@ -44,11 +51,100 @@ class AppColors {
   static const Color medium = Color(0xFF92949C);
   static const Color light = Color(0xFFF4F5F8);
 
-  // Background colors
-  static const Color backgroundLight = Color(0xFFFFFFFF);
-  static const Color backgroundDark = Color(0xFF1E1E1E);
-  static const Color surfaceLight = Color(0xFFF4F5F8);
-  static const Color surfaceDark = Color(0xFF2D2D2D);
+  // Background colors. Ionic runs the iOS theme with inset lists: grouped
+  // light-grey page background, white cards/lists; dark: black page with
+  // #1c1c1d cards (variables.scss attendix-dark-theme-ios-body).
+  static const Color backgroundLight = Color(0xFFF4F5F8); // ion-color-light
+  static const Color backgroundDark = Color(0xFF000000);
+  static const Color surfaceLight = Color(0xFFFFFFFF);
+  static const Color surfaceDark = Color(0xFF1C1C1D);
+  // Toolbar / tab bar (iOS translucent bars)
+  static const Color barLight = Color(0xFFF7F7F7);
+  static const Color barDark = Color(0xFF161617);
+  // Input fill on white cards
+  static const Color inputFillLight = Color(0xFFF4F5F8);
+  static const Color inputFillDark = Color(0xFF2C2C2E);
+
+  // IOS_LOOK: Ionic iOS mode colours (variables.scss + Ionic iOS defaults).
+  // Light: ion-content color="light" (#f4f5f8), white items, toolbar
+  // #f7f7f7 with a rgba(0,0,0,.2) hairline, text #000.
+  // Dark (attendix-dark-theme-body/-ios-body): color="light" is #222428,
+  // items #000, cards #1c1c1d, toolbar step-50 #0d0d0d, border step-150,
+  // modals step-100 #1a1a1a.
+  static const Color iosPageLight = Color(0xFFF4F5F8);
+  // IOS_R4: the scaffold default is the `ion-content color="light"` page
+  // (most Ionic pages, incl. Mehr and its sub pages) – #f4f5f8 in light and
+  // --ion-color-light #222428 in dark – with `ion-item-group`s / items in
+  // --ion-item-background (white / #000). Plain pages (ion-content without
+  // colour: Termine, Personen, Benachrichtigungen) set black explicitly
+  // ([iosPlainPageDark]); ion-cards keep --ion-card-background #1c1c1d.
+  static const Color iosPageDark = Color(0xFF222428);
+  static const Color iosItemDark = Color(0xFF1C1C1D);
+  static const Color iosPlainPageDark = Color(0xFF000000);
+  static const Color iosInsetItemDark = Color(0xFF000000);
+  static const Color iosToolbarLight = Color(0xFFF7F7F7);
+  static const Color iosToolbarDark = Color(0xFF0D0D0D);
+  static const Color iosToolbarBorderLight = Color(0x33000000);
+  static const Color iosToolbarBorderDark = Color(0xFF262626);
+  static const Color iosItemBorderLight = Color(0xFFC8C7CC);
+  static const Color iosItemBorderDark = Color(0xFF404040);
+  static const Color iosModalDark = Color(0xFF1A1A1A);
+  static const Color iosTextLight = Color(0xFF000000);
+  static const Color iosNoteLight = Color(0xFF737373);
+  static const Color iosNoteDark = Color(0xFF8C8C8C);
+  static const Color iosMediumDark = Color(0xFF989AA2);
+  // IOS27_SWEEP: Ionic 9 light `--ion-color-medium` (#636469; the md look
+  // keeps [medium]).
+  static const Color iosMediumLight = Color(0xFF636469);
+  // IOS27_SWEEP: ionic-theme-ios27 `ion-list.ios { --ion-border-color:
+  // var(--ion-color-step-100, …, #e8e8e8) }` – item lines in lists.
+  static const Color iosListLineLight = Color(0xFFE8E8E8);
+  static const Color iosListLineDark = Color(0xFF1A1A1A);
+  // IOS27_SWEEP: Ionic 9 `ion-label p` (`--ion-color-step-400`).
+  static const Color iosLabelPLight = Color(0xFF999999);
+  static const Color iosLabelPDark = Color(0xFF666666);
+  // ion-button[disabled] in the iOS 26 theme: step-200 grey, white label.
+  static const Color iosDisabledButton = Color(0xFFCCCCCC);
+
+  // IOS_THEME2: Ionic md dark (variables.scss attendix-dark-theme-md-body):
+  // page #121212, items / cards #1e1e1e, toolbar + tab bar #1f1f1f,
+  // border #222222.
+  static const Color mdPageDark = Color(0xFF121212);
+  static const Color mdItemDark = Color(0xFF1E1E1E);
+  static const Color mdToolbarDark = Color(0xFF1F1F1F);
+  static const Color mdBorderDark = Color(0xFF222222);
+
+  // IOS_THEME2: Ionic dark palette (variables.scss attendix-dark-theme-body,
+  // both modes): brighter colours on dark backgrounds.
+  static const Color successOnDark = Color(0xFF25B15D);
+  static const Color warningOnDark = Color(0xFFFFD534);
+  static const Color dangerOnDark = Color(0xFFFF4961);
+  static const Color tertiaryOnDark = Color(0xFF6A64FF);
+  static const Color secondaryOnDark = Color(0xFF50C8FF);
+  static const Color mediumOnDark = Color(0xFF989AA2);
+  static const Color darkOnDark = Color(0xFFF4F5F8);
+  static const Color lightOnDark = Color(0xFF222428);
+
+  /// The Ionic dark-mode variant of a palette colour (identity for other
+  /// colours and in light mode). Use for status / theme colours drawn on
+  /// the page so they brighten like Ionic in dark mode.
+  static Color forBrightness(Color color, Brightness brightness) {
+    if (brightness != Brightness.dark) return color;
+    final v = color.toARGB32();
+    if (v == success.toARGB32()) return successOnDark;
+    if (v == warning.toARGB32()) return warningOnDark;
+    if (v == danger.toARGB32()) return dangerOnDark;
+    if (v == tertiary.toARGB32()) return tertiaryOnDark;
+    if (v == secondary.toARGB32()) return secondaryOnDark;
+    if (v == medium.toARGB32()) return mediumOnDark;
+    if (v == dark.toARGB32()) return darkOnDark;
+    if (v == light.toARGB32()) return lightOnDark;
+    return color;
+  }
+
+  /// [forBrightness] with the brightness of [context]'s theme.
+  static Color adaptive(BuildContext context, Color color) =>
+      forBrightness(color, Theme.of(context).brightness);
 
   // Text colors
   static const Color textPrimaryLight = Color(0xFF222428);
@@ -56,17 +152,19 @@ class AppColors {
   static const Color textPrimaryDark = Color(0xFFFFFFFF);
   static const Color textSecondaryDark = Color(0xFFB0B0B0);
 
-  // Attendance status colors
+  // Attendance status colors (Ionic status-info.component getStatusColor /
+  // utilities/event-list statusColor): present=success, absent=danger,
+  // excused=warning, late=tertiary, lateExcused=rosa, neutral=medium.
   static const Color statusPresent = success;
   static const Color statusAbsent = danger;
-  static const Color statusExcused = info;
-  static const Color statusLate = Color(0xFFFF9500);
+  static const Color statusExcused = warning;
+  static const Color statusLate = tertiary;
   static const Color statusNeutral = medium;
-  static const Color statusLateExcused = warning;
+  static const Color statusLateExcused = rosa;
 
   // Divider
-  static const Color dividerLight = Color(0xFFE0E0E0);
-  static const Color dividerDark = Color(0xFF3D3D3D);
+  static const Color dividerLight = Color(0xFFC8C7CC);
+  static const Color dividerDark = Color(0xFF38383A);
 
   // Shadow
   static const Color shadowLight = Color(0x1A000000);

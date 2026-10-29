@@ -1,18 +1,37 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../config/supabase_config.dart'
+    show AccountScopeKey, currentAuthUserIdProvider;
+
 import '../../data/models/meeting/meeting.dart';
 import '../../data/repositories/meeting_repository.dart';
 import 'tenant_providers.dart';
 
 /// Initialized meeting repository with tenant context
 final meetingRepositoryWithTenantProvider = Provider<MeetingRepository>((ref) {
-  final repo = ref.watch(meetingRepositoryProvider);
   final tenant = ref.watch(currentTenantIdProvider);
+  return ref.watch(meetingRepositoryForTenantProvider(tenant));
+});
 
-  if (tenant != null) {
-    repo.setTenantId(tenant);
-  }
+/// TENANT_BIND: one immutable [MeetingRepository] per tenant (`bindTenantId`),
+/// so a tenant switch never changes the tenant of a running flow and
+/// cross-tenant work uses its own bound instance. `null` (no tenant)
+/// yields an unbound instance with `hasTenantId == false`.
+///
+/// SOL_FIX15: the instance also follows the signed-in account, so every
+/// provider built on it reloads on an account switch (RLS results and
+/// role-dependent data never outlive the account that loaded them).
+final meetingRepositoryForTenantProvider =
+    Provider.family<MeetingRepository, int?>((ref, tenantId) {
+  final userId = ref.watch(currentAuthUserIdProvider);
+  return ref.watch(
+      _meetingRepositoryForAccountProvider((tenantId: tenantId, userId: userId)));
+});
 
+final _meetingRepositoryForAccountProvider =
+    Provider.family<MeetingRepository, AccountScopeKey>((ref, key) {
+  final repo = MeetingRepository(ref);
+  if (key.tenantId != null) repo.bindTenantId(key.tenantId!);
   return repo;
 });
 

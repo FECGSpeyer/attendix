@@ -6,6 +6,11 @@ import 'package:flutter/services.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/models/version_history.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../l10n/l10n.dart';
+import '../../../core/utils/error_message.dart';
+import '../adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../features/auth/presentation/widgets/ion_form_list.dart'; // IOS_FORMS1
+import '../layout/ion_modal_handle.dart'; // IOS_FORMS1
 
 /// Bottom sheet showing version history (What's New)
 class VersionHistorySheet extends StatefulWidget {
@@ -40,77 +45,70 @@ class _VersionHistorySheetState extends State<VersionHistorySheet> {
     } catch (e) {
       if (mounted) {
         setState(() {
-          _error = e.toString();
+          _error = friendlyErrorMessage(e);
           _isLoading = false;
         });
       }
     }
   }
 
+  // IOS_FORMS1: Ionic "What's New" modal – sheet with breakpoints
+  // [0, .5, 1] (initial .5), `ion-content color="light"`, a light toolbar
+  // with only the title (centred on iOS, no close button) and an inset list:
+  // one grey `ion-list-header` "Version x (date)" + one white item group
+  // with a row per change for every version.
   @override
   Widget build(BuildContext context) {
+    final ios = useIosLook(context);
     return DraggableScrollableSheet(
-      initialChildSize: 0.6,
-      minChildSize: 0.4,
-      maxChildSize: 0.95,
+      initialChildSize: 0.5,
+      minChildSize: 0.25,
+      maxChildSize: 1,
+      snap: true,
+      snapSizes: const [0.5],
       expand: false,
       builder: (context, scrollController) {
-        return Container(
+        final sheet = Container(
           decoration: BoxDecoration(
             color: Theme.of(context).scaffoldBackgroundColor,
             borderRadius: const BorderRadius.vertical(
               top: Radius.circular(AppDimensions.borderRadiusL),
             ),
           ),
+          clipBehavior: Clip.antiAlias,
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Handle bar
-              Container(
-                margin: const EdgeInsets.only(top: 12),
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: AppColors.medium.withValues(alpha: 0.3),
-                  borderRadius: BorderRadius.circular(2),
+              if (ios)
+                IonModalHeader(
+                  title: Text(context.l10n.settingsWhatsNew),
+                  showClose: false,
+                )
+              else ...[
+                const SizedBox(height: 16),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
+                  child: Text(
+                    context.l10n.settingsWhatsNew,
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
                 ),
-              ),
-              // Header
-              Padding(
-                padding: const EdgeInsets.all(AppDimensions.paddingM),
-                child: Row(
-                  children: [
-                    const Icon(Icons.auto_awesome, color: AppColors.warning),
-                    const SizedBox(width: AppDimensions.paddingS),
-                    Expanded(
-                      child: Text(
-                        'Was ist neu?',
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
-                      ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.close),
-                      onPressed: () => Navigator.of(context).pop(),
-                    ),
-                  ],
-                ),
-              ),
-              const Divider(height: 1),
-              // Content
+                const Divider(height: 1),
+              ],
               Expanded(
                 child: _buildContent(scrollController),
               ),
             ],
           ),
         );
+        return ios ? IonModalHandleOverlay(child: sheet) : sheet;
       },
     );
   }
 
   Widget _buildContent(ScrollController scrollController) {
     if (_isLoading) {
-      return const Center(child: CircularProgressIndicator());
+      return const Center(child: AppSpinner());
     }
 
     if (_error != null) {
@@ -120,7 +118,7 @@ class _VersionHistorySheetState extends State<VersionHistorySheet> {
           children: [
             const Icon(Icons.error_outline, size: 48, color: AppColors.danger),
             const SizedBox(height: AppDimensions.paddingM),
-            Text('Fehler: $_error'),
+            Text(context.l10n.coreFlutterErrorWith('$_error')),
           ],
         ),
       );
@@ -129,13 +127,13 @@ class _VersionHistorySheetState extends State<VersionHistorySheet> {
     final versions = _versionHistory?.versions ?? [];
 
     if (versions.isEmpty) {
-      return const Center(
+      return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.history, size: 48, color: AppColors.medium),
-            SizedBox(height: AppDimensions.paddingM),
-            Text('Keine Versionshistorie verfügbar'),
+            const Icon(Icons.history, size: 48, color: AppColors.medium),
+            const SizedBox(height: AppDimensions.paddingM),
+            Text(context.l10n.coreFlutterNoVersionHistory),
           ],
         ),
       );
@@ -143,103 +141,44 @@ class _VersionHistorySheetState extends State<VersionHistorySheet> {
 
     return ListView.builder(
       controller: scrollController,
-      padding: const EdgeInsets.all(AppDimensions.paddingM),
+      padding: EdgeInsets.only(
+        top: 8,
+        bottom: 16 + MediaQuery.paddingOf(context).bottom,
+      ),
       itemCount: versions.length,
       itemBuilder: (context, index) {
-        final version = versions[index];
-        return _VersionSection(version: version, isFirst: index == 0);
+        return _VersionSection(version: versions[index]);
       },
     );
   }
 }
 
-/// Section showing a single version with its changes
+/// One version: `ion-list-header` "Version x (date)" and an
+/// `ion-item-group` with one `ion-item` per change.
 class _VersionSection extends StatelessWidget {
-  const _VersionSection({
-    required this.version,
-    this.isFirst = false,
-  });
+  const _VersionSection({required this.version});
 
   final VersionEntry version;
-  final bool isFirst;
 
   @override
   Widget build(BuildContext context) {
+    final header = version.date != null
+        ? '${context.l10n.loginVersion(version.version)} (${version.date})'
+        : context.l10n.loginVersion(version.version);
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        // Version header
-        Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppDimensions.paddingS,
-            vertical: AppDimensions.paddingS,
-          ),
-          decoration: BoxDecoration(
-            color: isFirst
-                ? AppColors.primary.withValues(alpha: 0.1)
-                : AppColors.medium.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(AppDimensions.borderRadiusS),
-          ),
-          child: Row(
-            children: [
-              Icon(
-                isFirst ? Icons.new_releases : Icons.history,
-                size: 16,
-                color: isFirst ? AppColors.primary : AppColors.medium,
+        IonListHeader(header),
+        IonInsetGroup(
+          children: [
+            // AUTH_R5: the Ionic app (screenshot audit) shows every change
+            // in full, wrapped over several lines – no truncation.
+            for (final change in version.changes)
+              IonItem(
+                title: Text(change, softWrap: true),
               ),
-              const SizedBox(width: AppDimensions.paddingS),
-              Expanded(
-                child: Text(
-                  version.date != null
-                      ? 'Version ${version.version} (${version.date})'
-                      : 'Version ${version.version}',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                    color: isFirst ? AppColors.primary : null,
-                  ),
-                ),
-              ),
-              if (isFirst)
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: AppColors.primary,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: const Text(
-                    'Aktuell',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-            ],
-          ),
+          ],
         ),
-        const SizedBox(height: AppDimensions.paddingS),
-        // Changes list
-        ...version.changes.map((change) => Padding(
-              padding: const EdgeInsets.only(
-                left: AppDimensions.paddingS,
-                bottom: AppDimensions.paddingXS,
-              ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('•  ', style: TextStyle(color: AppColors.medium)),
-                  Expanded(
-                    child: Text(
-                      change,
-                      style: const TextStyle(fontSize: 14),
-                    ),
-                  ),
-                ],
-              ),
-            )),
-        const SizedBox(height: AppDimensions.paddingM),
       ],
     );
   }
@@ -249,7 +188,9 @@ class _VersionSection extends StatelessWidget {
 Future<void> showVersionHistorySheet(BuildContext context) {
   return showModalBottomSheet(
     context: context,
+    useRootNavigator: true, // IOS_SHELL2: above the tab bar
     isScrollControlled: true,
+    useSafeArea: true,
     backgroundColor: Colors.transparent,
     builder: (context) => const VersionHistorySheet(),
   );

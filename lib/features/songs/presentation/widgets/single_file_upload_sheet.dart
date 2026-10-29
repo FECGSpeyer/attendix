@@ -1,0 +1,270 @@
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../../../core/services/song_file_service.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/utils/instrument_matcher.dart';
+import '../../../../core/utils/toast_helper.dart';
+import '../../../../data/models/instrument/instrument.dart';
+import '../../../../data/models/song/song.dart';
+import '../utils/song_utils.dart';
+import 'file_upload_sheet.dart';
+import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
+import '../../../../shared/widgets/adaptive/ion_button_label.dart';
+
+/// Result of [SingleFileUploadSheet].
+enum SingleFileUploadResult {
+  /// The file was uploaded.
+  uploaded,
+
+  /// "Hinzufügen" with conflicts: continue in the multi-file upload sheet.
+  openUploadSheet,
+}
+
+/// Ionic single-file modal ("Datei hochladen") that opens when exactly one
+/// file is dropped onto the file list of a song: category radio list,
+/// replacement of existing files of that category, direct upload.
+class SingleFileUploadSheet extends ConsumerStatefulWidget {
+  const SingleFileUploadSheet({
+    super.key,
+    required this.songId,
+    required this.file,
+    required this.groups,
+    required this.existingFiles,
+    this.mainGroupId,
+    this.isChoir = false,
+  });
+
+  final int songId;
+  final PlatformFile file;
+  final List<Group> groups;
+  final List<SongFile> existingFiles;
+  final int? mainGroupId;
+  final bool isChoir;
+
+  @override
+  ConsumerState<SingleFileUploadSheet> createState() => _SingleFileUploadSheetState();
+}
+
+class _SingleFileUploadSheetState extends ConsumerState<SingleFileUploadSheet> {
+  int? _instrumentId;
+  final _note = TextEditingController();
+  List<SongFile> _conflicts = const [];
+  Set<String> _toReplace = {};
+  bool _uploading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    final cat = detectFileCategory(
+      widget.file.name,
+      instruments: [
+        for (final g in widget.groups)
+          if (g.id != null) InstrumentInfo(id: g.id!, name: g.name),
+      ],
+      isChoir: widget.isChoir,
+    );
+    _instrumentId = cat.instrumentId;
+    _note.text = cat.note ?? '';
+    _refreshConflicts();
+  }
+
+  @override
+  void dispose() {
+    _note.dispose();
+    super.dispose();
+  }
+
+  String? get _effectiveNote => _instrumentId == null ? _note.text.trim() : null;
+
+  /// Ionic `refreshSingleFileConflicts`
+  void _refreshConflicts() {
+    _conflicts = findConflictingFiles(widget.existingFiles, _instrumentId, _effectiveNote);
+    _toReplace = defaultReplaceSelection(_conflicts, widget.file.name);
+  }
+
+  /// Ionic `performDirectUpload`
+  Future<void> _upload({required bool replace}) async {
+    setState(() => _uploading = true);
+    final service = await ref.read(readySongFileServiceProvider.future);
+    try {
+      if (replace) {
+        for (final c in _conflicts.where((c) => _toReplace.contains(c.url))) {
+          await service.deleteFile(
+            songId: widget.songId,
+            url: c.url,
+            storageName: c.storageName,
+            fileName: c.fileName,
+            mainGroupId: widget.mainGroupId,
+          );
+        }
+      }
+      await service.uploadFile(
+        songId: widget.songId,
+        file: widget.file,
+        instrumentId: _instrumentId,
+        note: _effectiveNote,
+        mainGroupId: widget.mainGroupId,
+      );
+      if (mounted) Navigator.pop(context, SingleFileUploadResult.uploaded);
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _uploading = false);
+      ToastHelper.showError(context, context.l10n.songsFlutterUploadFailedWith(friendlyErrorMessage(e)));
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final options = <(int?, String)>[
+      (null, context.l10n.songsOtherFreeText),
+      (1, context.l10n.songsRecording),
+      (2, context.l10n.songsLyrics),
+      for (final g in widget.groups)
+        if (g.id != null) (g.id, g.name),
+    ];
+    return PopScope(
+      canPop: !_uploading,
+      child: Padding(
+        padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.95),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        context.l10n.songsUploadFile,
+                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.close),
+                      onPressed: _uploading ? null : () => Navigator.pop(context),
+                    ),
+                  ],
+                ),
+              ),
+              if (_uploading)
+                const LinearProgressIndicator(minHeight: 2)
+              else
+                const Divider(height: 1),
+              Flexible(
+                child: ListView(
+                  shrinkWrap: true,
+                  children: [
+                    ListTile(
+                      leading: const Icon(Icons.description_outlined),
+                      title: Text(widget.file.name),
+                    ),
+                    const Divider(height: 1),
+                    for (final o in options)
+                      RadioListTile<int?>(
+                        dense: true,
+                        value: o.$1,
+                        groupValue: _instrumentId,
+                        title: Text(o.$2),
+                        onChanged: _uploading
+                            ? null
+                            : (v) => setState(() {
+                                  _instrumentId = v;
+                                  _refreshConflicts();
+                                }),
+                      ),
+                    if (_instrumentId == null) ...[
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+                        child: Text(
+                          context.l10n.songsFreeText,
+                          style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.medium),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: TextField(
+                          controller: _note,
+                          decoration: InputDecoration(hintText: context.l10n.songsEnterCategory),
+                          onChanged: (_) => setState(_refreshConflicts),
+                        ),
+                      ),
+                    ],
+                    if (_conflicts.isNotEmpty)
+                      Container(
+                        margin: const EdgeInsets.only(top: 12),
+                        color: AppColors.warning.withAlpha(60),
+                        child: ListTile(
+                          leading: const Icon(Icons.warning_amber_rounded),
+                          title: Text(_conflicts.length == 1
+                              ? context.l10n.songsReplaces(_conflicts.first.fileName)
+                              : context.l10n.songsWhichReplace),
+                        ),
+                      ),
+                    if (_conflicts.length > 1)
+                      for (final c in _conflicts)
+                        CheckboxListTile(
+                          dense: true,
+                          controlAffinity: ListTileControlAffinity.leading,
+                          value: _toReplace.contains(c.url),
+                          title: Text(c.fileName),
+                          secondary: SongBadge(
+                            color: SongUtils.fileBadgeColor(c),
+                            label: SongUtils.fileLabel(c, widget.groups),
+                          ),
+                          onChanged: (_) => setState(() {
+                            _toReplace.contains(c.url)
+                                ? _toReplace.remove(c.url)
+                                : _toReplace.add(c.url);
+                          }),
+                        ),
+                  ],
+                ),
+              ),
+              // Ionic footer toolbar
+              const Divider(height: 1),
+              SafeArea(
+                top: false,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  child: Row(
+                    children: [
+                      TextButton(
+                        onPressed: _uploading ? null : () => Navigator.pop(context),
+                        child: IonButtonLabel(context.l10n.commonCancel),
+                      ),
+                      const Spacer(),
+                      if (_conflicts.isNotEmpty) ...[
+                        TextButton(
+                          onPressed: _uploading
+                              ? null
+                              : () => Navigator.pop(
+                                  context, SingleFileUploadResult.openUploadSheet),
+                          child: IonButtonLabel(context.l10n.attendanceAdd),
+                        ),
+                        TextButton(
+                          style: TextButton.styleFrom(foregroundColor: AppColors.danger),
+                          onPressed: _uploading ? null : () => _upload(replace: true),
+                          child: IonButtonLabel(context.l10n.personReplace),
+                        ),
+                      ] else
+                        TextButton(
+                          onPressed: _uploading ? null : () => _upload(replace: false),
+                          child: IonButtonLabel(context.l10n.songsUpload),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

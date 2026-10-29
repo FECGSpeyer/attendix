@@ -51,6 +51,7 @@ class ShiftRepository extends BaseRepository with TenantAwareRepository {
 
   /// Create a new shift plan
   Future<ShiftPlan> createShift(ShiftPlan plan) async {
+    ensureNotDemo('createShift'); // DEMO_GUARD
     try {
       final data = plan.toJson();
       // Remove read-only fields
@@ -74,6 +75,7 @@ class ShiftRepository extends BaseRepository with TenantAwareRepository {
 
   /// Update a shift plan
   Future<ShiftPlan> updateShift(ShiftPlan plan) async {
+    ensureNotDemo('updateShift'); // DEMO_GUARD
     try {
       if (plan.id == null) {
         throw RepositoryException(
@@ -105,6 +107,7 @@ class ShiftRepository extends BaseRepository with TenantAwareRepository {
 
   /// Delete a shift plan
   Future<void> deleteShift(String id) async {
+    ensureNotDemo('deleteShift'); // DEMO_GUARD
     try {
       await supabase
           .from(SupabaseTable.shiftPlans.tableName)

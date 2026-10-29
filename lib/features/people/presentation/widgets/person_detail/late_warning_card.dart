@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/providers/tenant_providers.dart';
 import '../../../../../data/models/person/person.dart';
+import '../../../../../l10n/l10n.dart';
+import '../../../../../shared/widgets/adaptive/ion_button_label.dart';
 
 /// Card showing late warning with threshold information and reset button.
 class LateWarningCard extends ConsumerWidget {
@@ -46,7 +48,6 @@ class LateWarningCard extends ConsumerWidget {
         // Dynamic text based on which statuses are counted
         // If only status 3 (late) is counted, say "unentschuldigt"
         // If status 5 (lateExcused) is also counted, just say "zu spät"
-        final lateTypeText = lateStatuses.contains(5) ? 'zu spät' : 'unentschuldigt zu spät';
 
         return Card(
           margin: const EdgeInsets.all(AppDimensions.paddingM),
@@ -60,17 +61,19 @@ class LateWarningCard extends ConsumerWidget {
               ),
               child: const Icon(Icons.schedule, color: Colors.orange),
             ),
-            title: const Text(
-              'Häufige Verspätungen',
-              style: TextStyle(fontWeight: FontWeight.w600),
+            title: Text(
+              context.l10n.personFlutterFrequentLate,
+              style: const TextStyle(fontWeight: FontWeight.w600),
             ),
             subtitle: Text(
-              '$lateCount× $lateTypeText (Schwelle: $threshold)',
+              lateStatuses.contains(5)
+                  ? context.l10n.personFlutterLateCount(lateCount, threshold)
+                  : context.l10n.personFlutterLateUnexcusedCount(lateCount, threshold),
               style: TextStyle(color: Colors.orange.shade800),
             ),
             trailing: FilledButton.tonal(
               onPressed: onResetLateCount,
-              child: const Text('Zurücksetzen'),
+              child: IonButtonLabel(context.l10n.dateDialogReset),
             ),
           ),
         );

@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import '../../../l10n/l10n.dart';
 
 part 'song.freezed.dart';
 part 'song.g.dart';
@@ -14,14 +15,24 @@ class Song with _$Song {
     String? prefix,
     @Default(false) bool withChoir,
     @Default(false) bool withSolo,
-    String? lastSung,
+    /// Computed client-side from history (last past entry). Not a DB column.
+    @JsonKey(includeToJson: false) String? lastSung,
+    /// Computed client-side: next planned (future) history entry. Not a DB column.
+    @JsonKey(includeToJson: false) String? nextPlanned,
     String? link,
-    String? conductor,
+    /// Computed client-side: conductor of [lastSung]. Not a DB column.
+    @JsonKey(includeToJson: false) String? conductor,
+    String? composer,
     int? legacyId,
     @JsonKey(name: 'instrument_ids') List<int>? instrumentIds,
     List<SongFile>? files,
     int? difficulty,
+    /// Legacy single category (superseded by [categoryIds])
     String? category,
+    /// Song category ids (uuid[] column `category_ids`)
+    @JsonKey(name: 'category_ids') List<String>? categoryIds,
+    /// Values of the tenant's `song_additional_fields`
+    @JsonKey(name: 'additional_fields') Map<String, dynamic>? additionalFields,
     @JsonKey(name: 'created_at') DateTime? createdAt,
   }) = _Song;
 
@@ -51,14 +62,22 @@ class SongHistory with _$SongHistory {
   const factory SongHistory({
     int? id,
     int? tenantId,
-    @JsonKey(name: 'song_id') int? songId,
+    /// DB column is `songId` (camelCase, see Ionic pickHistoryFields)
+    @JsonKey(name: 'songId') int? songId,
     @JsonKey(name: 'attendance_id') int? attendanceId,
+    @JsonKey(name: 'person_id') int? personId,
     String? date,
-    String? conductorName,
+    /// Computed client-side (conductor person name or otherConductor). Not a DB column.
+    @JsonKey(includeToJson: false) String? conductorName,
     String? otherConductor,
     int? count,
+    bool? visible,
     @JsonKey(name: 'created_at') DateTime? createdAt,
-    Song? song,
+    /// Computed client-side: attendance typeInfo or type name. Not a DB column.
+    @JsonKey(includeToJson: false) String? typeTitle,
+    /// Computed client-side: date of the linked attendance. Not a DB column.
+    @JsonKey(includeToJson: false) String? attendanceDate,
+    @JsonKey(includeToJson: false) Song? song,
   }) = _SongHistory;
 
   factory SongHistory.fromJson(Map<String, dynamic> json) =>
@@ -100,10 +119,10 @@ extension SongExtension on Song {
   String? get difficultyLabel {
     if (difficulty == null) return null;
     switch (difficulty!) {
-      case 1: return 'Leicht';
-      case 2: return 'Mittel';
-      case 3: return 'Schwer';
-      case 4: return 'Sehr schwer';
+      case 1: return l10nWithoutContext.coreFlutterDifficultyEasy;
+      case 2: return l10nWithoutContext.coreFlutterDifficultyMedium;
+      case 3: return l10nWithoutContext.coreFlutterDifficultyHard;
+      case 4: return l10nWithoutContext.coreFlutterDifficultyVeryHard;
       default: return null;
     }
   }

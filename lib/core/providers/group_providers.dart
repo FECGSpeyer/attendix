@@ -1,18 +1,39 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../config/supabase_config.dart'
+    show AccountScopeKey, currentAuthUserIdProvider;
+
 import '../../data/models/instrument/instrument.dart';
 import '../../data/repositories/repositories.dart';
 import 'tenant_providers.dart';
+import '../services/tracking/tracking_event.dart';
+import '../services/tracking/tracking_service.dart';
 
 /// Initialized group repository with tenant context
 final groupRepositoryWithTenantProvider = Provider<GroupRepository>((ref) {
-  final repo = ref.watch(groupRepositoryProvider);
   final tenant = ref.watch(currentTenantIdProvider);
-  
-  if (tenant != null) {
-    repo.setTenantId(tenant);
-  }
-  
+  return ref.watch(groupRepositoryForTenantProvider(tenant));
+});
+
+/// TENANT_BIND: one immutable [GroupRepository] per tenant (`bindTenantId`),
+/// so a tenant switch never changes the tenant of a running flow and
+/// cross-tenant work uses its own bound instance. `null` (no tenant)
+/// yields an unbound instance with `hasTenantId == false`.
+///
+/// SOL_FIX15: the instance also follows the signed-in account, so every
+/// provider built on it reloads on an account switch (RLS results and
+/// role-dependent data never outlive the account that loaded them).
+final groupRepositoryForTenantProvider =
+    Provider.family<GroupRepository, int?>((ref, tenantId) {
+  final userId = ref.watch(currentAuthUserIdProvider);
+  return ref.watch(
+      _groupRepositoryForAccountProvider((tenantId: tenantId, userId: userId)));
+});
+
+final _groupRepositoryForAccountProvider =
+    Provider.family<GroupRepository, AccountScopeKey>((ref, key) {
+  final repo = GroupRepository(ref);
+  if (key.tenantId != null) repo.bindTenantId(key.tenantId!);
   return repo;
 });
 
@@ -82,6 +103,7 @@ class GroupNotifier extends Notifier<AsyncValue<void>> {
     state = const AsyncValue.loading();
     try {
       final result = await _repo.createGroup(data);
+      ref.read(trackingServiceProvider).track(TrackingEvent.instrumentAdded, properties: {'maingroup': data['maingroup'] ?? false});
       state = const AsyncValue.data(null);
       ref.invalidate(groupsProvider);
       ref.invalidate(groupsMapProvider);
@@ -96,6 +118,7 @@ class GroupNotifier extends Notifier<AsyncValue<void>> {
     state = const AsyncValue.loading();
     try {
       final result = await _repo.updateGroup(id, updates);
+      ref.read(trackingServiceProvider).track(TrackingEvent.instrumentUpdated);
       state = const AsyncValue.data(null);
       ref.invalidate(groupsProvider);
       ref.invalidate(groupsMapProvider);
@@ -110,6 +133,7 @@ class GroupNotifier extends Notifier<AsyncValue<void>> {
     state = const AsyncValue.loading();
     try {
       await _repo.deleteGroup(id);
+      ref.read(trackingServiceProvider).track(TrackingEvent.instrumentRemoved);
       state = const AsyncValue.data(null);
       ref.invalidate(groupsProvider);
       ref.invalidate(groupsMapProvider);
@@ -141,6 +165,42 @@ class GroupNotifier extends Notifier<AsyncValue<void>> {
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
       return null;
+    }
+  }
+
+  /// Save instrument order (id -> sort_order)
+  Future<bool> saveGroupOrder(Map<int, int> sortOrders) async {
+    state = const AsyncValue.loading();
+    try {
+      await _repo.updateGroupSortOrders(sortOrders);
+      state = const AsyncValue.data(null);
+      ref.invalidate(groupsProvider);
+      return true;
+    } catch (e, stack) {
+      state = AsyncValue.error(e, stack);
+      return false;
+    }
+  }
+
+  /// Save category order and the resulting global instrument order
+  Future<bool> saveCategoryOrder(
+    Map<int, int> categorySortOrders, {
+    Map<int, int> groupSortOrders = const {},
+  }) async {
+    final repo = _repo; // SOL_FIX4: bind the tenant repository before the first await.
+    state = const AsyncValue.loading();
+    try {
+      await repo.updateGroupCategorySortOrders(categorySortOrders);
+      if (groupSortOrders.isNotEmpty) {
+        await repo.updateGroupSortOrders(groupSortOrders);
+      }
+      state = const AsyncValue.data(null);
+      ref.invalidate(groupCategoriesProvider);
+      ref.invalidate(groupsProvider);
+      return true;
+    } catch (e, stack) {
+      state = AsyncValue.error(e, stack);
+      return false;
     }
   }
 

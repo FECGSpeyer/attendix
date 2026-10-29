@@ -5,17 +5,27 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../../../core/utils/event_list_utils.dart'; // ATTENDANCE_SIGNOUT
+import '../widgets/reasons_list_editor.dart'; // ATTENDANCE_SIGNOUT
 import '../../../../core/config/supabase_config.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/attendance_type_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../core/providers/tenant_providers.dart';
-import '../../../../core/providers/organisation_providers.dart';
+import '../../../../core/providers/duty_providers.dart';
+import '../../../../core/providers/group_providers.dart'; // SETTINGS2
 import '../../../../data/models/tenant/tenant.dart';
-import '../../../../data/models/organisation/organisation.dart';
 import '../widgets/critical_rule_card.dart';
 import '../widgets/critical_rule_sheet.dart';
+import '../../../../core/utils/demo_guard.dart';
+import '../../../../core/utils/page_reload.dart'; // LOGIC_SETTINGS
+import '../widgets/settings_list.dart'; // UX_SETTINGS
+import '../widgets/ion_condense.dart'; // UX_SETTINGS (WAVE 8)
+import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
+import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset; // IOS_R6
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// German holiday regions
 const _holidayRegions = [
@@ -61,10 +71,17 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
   DateTime? _seasonStart;
   String _selectedRegion = '';
   bool _maintainTeachers = false;
-  bool _withExcuses = true;
   bool _parents = false;
   bool _showMembersList = false;
   bool _showHolidays = false;
+  bool _dutyView = false; // DUTY: "Meine Termine" als Dienstplan-Ansicht
+  bool _shiftExcusedAsPresent = false; // SETTINGS2
+
+  // ATTENDANCE_SIGNOUT: show all Termine + absence/late reasons
+  bool _showAllAttendances = false;
+  final _showAllInfoTextController = TextEditingController();
+  List<String> _absenceReasons = [];
+  List<String> _lateReasons = [];
 
   // Sharing
   bool _songSharingEnabled = false;
@@ -73,10 +90,6 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
   String? _registerId;
   bool _autoApproveRegistrations = false;
   List<String> _selectedRegistrationFields = [];
-
-  // Extra fields
-  List<ExtraField> _extraFields = [];
-  Set<String> _originalExtraFieldIds = {};
 
   // Critical rules
   List<CriticalRule> _criticalRules = [];
@@ -97,6 +110,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
     _longNameController.dispose();
     _practiceStartController.dispose();
     _practiceEndController.dispose();
+    _showAllInfoTextController.dispose(); // ATTENDANCE_SIGNOUT
     super.dispose();
   }
 
@@ -116,10 +130,16 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
       _seasonStart = tenant.seasonStart != null ? DateTime.tryParse(tenant.seasonStart!) : null;
       _selectedRegion = tenant.region ?? '';
       _maintainTeachers = tenant.maintainTeachers;
-      _withExcuses = tenant.withExcuses;
       _parents = tenant.parents ?? false;
       _showMembersList = tenant.showMembersList;
       _showHolidays = tenant.showHolidays;
+      // ATTENDANCE_SIGNOUT
+      _showAllAttendances = tenant.showAllAttendances;
+      _showAllInfoTextController.text = tenant.showAllAttendancesInfoText ?? '';
+      _absenceReasons = EventListUtils.absenceReasonsOf(tenant.absenceReasons);
+      _lateReasons = EventListUtils.lateReasonsOf(tenant.lateReasons);
+      _dutyView = tenant.dutyView; // DUTY
+      _shiftExcusedAsPresent = tenant.shiftExcusedAsPresent; // SETTINGS2
       _songSharingEnabled = tenant.songSharingId != null && tenant.songSharingId!.isNotEmpty;
       _songSharingId = tenant.songSharingId;
       _registrationEnabled = tenant.registerId != null && tenant.registerId!.isNotEmpty;
@@ -134,13 +154,11 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
           _selectedRegistrationFields.add(required);
         }
       }
-      _extraFields = List.from(tenant.additionalFields ?? []);
-      _originalExtraFieldIds = _extraFields.map((f) => f.id).toSet();
       _criticalRules = List.from(tenant.criticalRules ?? []);
 
     } catch (e) {
       if (mounted) {
-        ToastHelper.showError(context, 'Fehler beim Laden: $e');
+        ToastHelper.showError(context, context.l10n.settingsFlutterLoadFailed(friendlyErrorMessage(e)));
       }
     } finally {
       if (mounted) {
@@ -152,8 +170,34 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
     }
   }
 
+  /// SETTINGS2: Ionic `hasSelectableGroups` — at least one non-main group.
+  bool get _hasSelectableGroups =>
+      (ref.read(groupsProvider).valueOrNull ?? const []).any((g) => g.maingroup != true);
+
   Future<void> _saveSettings() async {
+    final defaultInfoText = context.l10n.defaultsShowAllInfoText; // LOGIC_SETTINGS
+    // SETTINGS2: Ionic saveGeneralSettings validation toasts
+    if (_longNameController.text.trim().isEmpty) {
+      ToastHelper.showError(context, context.l10n.generalSettingsGroupNameEmpty);
+      return;
+    }
+    if (_shortNameController.text.trim().isEmpty) {
+      ToastHelper.showError(context, context.l10n.generalSettingsShortNameEmpty);
+      return;
+    }
+    if (_registrationEnabled) {
+      final groups = await ref.read(groupsProvider.future);
+      if (!mounted) return;
+      if (!groups.any((g) => g.maingroup != true)) {
+        ToastHelper.showError(
+          context,
+          context.l10n.generalSettingsRegisterNoGroups,
+        );
+        return;
+      }
+    }
     if (!_formKey.currentState!.validate()) return;
+    if (DemoGuard.blocked()) return; // DEMO_GUARD
 
     setState(() => _isSaving = true);
 
@@ -178,20 +222,30 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
         'region': _selectedRegion.isNotEmpty ? _selectedRegion : null,
         'showHolidays': _showHolidays,
         'maintainTeachers': _maintainTeachers,
-        'withExcuses': _withExcuses,
         'parents': _parents,
-        'show_members_list': _showMembersList,
+        'showMembersList': _showMembersList, // DB_FIX: column is camelCase
+        'shift_excused_as_present': _shiftExcusedAsPresent, // SETTINGS2
+        // ATTENDANCE_SIGNOUT
+        'show_all_attendances': _showAllAttendances,
+        // LOGIC_SETTINGS: Ionic — null when off, otherwise trimmed or default
+        'show_all_attendances_info_text': normalizeShowAllInfoText(
+          enabled: _showAllAttendances,
+          text: _showAllInfoTextController.text,
+          defaultText: defaultInfoText,
+        ),
+        // LOGIC_SETTINGS: Ionic filters empty reasons; empty list -> null
+        'absence_reasons': normalizeReasons(_absenceReasons),
+        'late_reasons': normalizeReasons(_lateReasons),
+        // DUTY: only sent when the tenant uses the Dienstplan at all
+        if (ref.read(hasDutyTypesProvider)) 'duty_view': _dutyView,
         'song_sharing_id': _songSharingEnabled ? (_songSharingId ?? const Uuid().v4()) : null,
         'register_id': _registrationEnabled ? (_registerId ?? const Uuid().v4()) : null,
-        'auto_approve_registrations': _autoApproveRegistrations,
-        'registration_fields': _registrationEnabled ? _selectedRegistrationFields : null,
-        'additional_fields': _extraFields.map((f) => {
-          'id': f.id,
-          'name': f.name,
-          'type': f.type,
-          'defaultValue': f.defaultValue,
-          if (f.options != null) 'options': f.options,
-        }).toList(),
+        // Ionic general.page: registration off → no auto approve, no fields
+        'auto_approve_registrations':
+            _registrationEnabled ? _autoApproveRegistrations : false,
+        'registration_fields':
+            _registrationEnabled ? _selectedRegistrationFields : <String>[],
+        // SETTINGS_EXT: additional_fields werden auf der Seite "Zusatzfelder" gepflegt
         'critical_rules': _criticalRules.map((r) => {
           'id': r.id,
           if (r.name != null) 'name': r.name,
@@ -202,38 +256,46 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
           if (r.periodType != null) 'period_type': r.periodType!.name == 'allTime' ? 'all' : r.periodType!.name,
           if (r.periodDays != null) 'period_days': r.periodDays,
           'operator': r.operator == CriticalRuleOperator.and ? 'AND' : 'OR',
-          'enabled': r.enabled,
         }).toList(),
       }).eq('id', tenantId);
+
+      // SETTINGS2: Ionic re-evaluates the Problemfall rules right away
+      try {
+        await supabase.functions.invoke('evaluate-critical-rules');
+      } catch (e) {
+        debugPrint('Could not trigger critical rules evaluation: $e');
+      }
 
       // Refresh tenant data
       ref.invalidate(currentTenantProvider);
       ref.invalidate(userTenantsProvider);
 
-      // B7-017: Sanitize player additional_fields for removed fields
-      final currentFieldIds = _extraFields.map((f) => f.id).toSet();
-      final removedFieldIds = _originalExtraFieldIds.difference(currentFieldIds);
-      if (removedFieldIds.isNotEmpty) {
-        await _sanitizePlayerFields(removedFieldIds, tenantId);
-        _originalExtraFieldIds = currentFieldIds;
-      }
-
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text('Einstellungen gespeichert. Lade die App neu, damit alle Änderungen wirksam werden.'),
-            duration: const Duration(seconds: 5),
-            action: SnackBarAction(
-              label: 'OK',
-              onPressed: () {},
-            ),
+        setState(() => _hasChanges = false);
+        // LOGIC_SETTINGS: Ionic success toast + alert with "Neu laden"
+        ToastHelper.showSuccess(context, context.l10n.generalSettingsSaved);
+        final reload = await showAppDialog<bool>(
+          context: context,
+          builder: (dialogContext) => AppAlertDialog(
+            title: Text(dialogContext.l10n.generalSettingsSaved),
+            content: Text(dialogContext.l10n.generalSettingsSavedReload),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(dialogContext).pop(false),
+                child: Text(dialogContext.l10n.commonCancel),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(dialogContext).pop(true),
+                child: Text(dialogContext.l10n.generalSettingsReload),
+              ),
+            ],
           ),
         );
-        setState(() => _hasChanges = false);
+        if (reload == true) reloadPage();
       }
     } catch (e) {
       if (mounted) {
-        ToastHelper.showError(context, 'Fehler: $e');
+        ToastHelper.showError(context, context.l10n.generalSettingsSaveFailed);
       }
     } finally {
       if (mounted) {
@@ -249,7 +311,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
   }
 
   Future<void> _selectSeasonStart() async {
-    final picked = await showDatePicker(
+    final picked = await showAppDatePicker(
       context: context,
       initialDate: _seasonStart ?? DateTime.now(),
       firstDate: DateTime(2020),
@@ -267,7 +329,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
 
   Future<void> _selectTime(TextEditingController controller) async {
     final initialTime = _parseTime(controller.text) ?? const TimeOfDay(hour: 19, minute: 0);
-    final picked = await showTimePicker(
+    final picked = await showAppTimePicker(
       context: context,
       initialTime: initialTime,
     );
@@ -290,16 +352,16 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
   List<Widget> _buildRegistrationFieldChips() {
     // Base fields: firstName and lastName are always required (disabled)
     final baseFields = [
-      (key: 'firstName', label: 'Vorname', required: true),
-      (key: 'lastName', label: 'Nachname', required: true),
-      (key: 'group', label: 'Gruppe', required: true),
-      (key: 'picture', label: 'Passbild', required: false),
-      (key: 'birthDate', label: 'Geburtsdatum', required: false),
-      (key: 'phone', label: 'Handynummer', required: false),
+      (key: 'firstName', label: context.l10n.peopleFirstName, required: true),
+      (key: 'lastName', label: context.l10n.peopleLastName, required: true),
+      (key: 'group', label: context.l10n.peopleGroup, required: true),
+      (key: 'picture', label: context.l10n.settingsPassPhoto, required: false),
+      (key: 'birthDate', label: context.l10n.peopleBirthday, required: false),
+      (key: 'phone', label: context.l10n.settingsMobile, required: false),
     ];
 
     // Add any extra fields defined for the tenant
-    final extraFieldChips = _extraFields.map((f) =>
+    final extraFieldChips = (ref.watch(currentTenantProvider)?.additionalFields ?? const []).map((f) =>
       (key: f.id, label: f.name, required: false),
     );
 
@@ -329,9 +391,14 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
   Future<void> _copyLink(String baseUrl, String? id) async {
     if (id == null) return;
     final link = '$baseUrl$id';
-    await Clipboard.setData(ClipboardData(text: link));
+    try {
+      await Clipboard.setData(ClipboardData(text: link));
+    } catch (_) {
+      if (mounted) ToastHelper.showError(context, context.l10n.settingsFlutterCopyLinkFailed);
+      return;
+    }
     if (mounted) {
-      ToastHelper.showSuccess(context, 'Link kopiert');
+      ToastHelper.showSuccess(context, context.l10n.settingsLinkCopied);
     }
   }
 
@@ -342,9 +409,13 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
       onPopInvokedWithResult: (didPop, _) {
         if (!didPop) _showUnsavedChangesDialog();
       },
-      child: Scaffold(
-      appBar: AppBar(
-        title: const Text('Allgemeine Einstellungen'),
+      // UX_SETTINGS (WAVE 8): ion-header collapse="condense" + arrow-back
+      child: IonCondense(builder: (context, collapsed) => Scaffold(
+      // IOS_R6: Ionic `ion-content fullscreen` under the translucent header
+      extendBodyBehindAppBar: ionIsIos(context),
+      // IOS_R6: `ion-header translucent` (blur once condensed)
+      appBar: IonTranslucentAppBar(condensed: collapsed, child: AppBar(
+        title: IonCondenseTitle(context.l10n.settingsSettings, collapsed: collapsed),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -355,1094 +426,376 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
             }
           },
         ),
-        actions: [
-          if (_hasChanges)
-            TextButton(
+      )),
+      // UX_SETTINGS: Ionic saves via FAB (save-outline)
+      floatingActionButton: _isLoading
+          ? null
+          : FloatingActionButton(
               onPressed: _isSaving ? null : _saveSettings,
+              tooltip: context.l10n.commonSave,
               child: _isSaving
-                  ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
-                  : const Text('Speichern'),
+                  ? const SizedBox(
+                      width: 22,
+                      height: 22,
+                      child: AppSpinner(strokeWidth: 2, color: Colors.white),
+                    )
+                  : const Icon(Icons.save_outlined),
             ),
-        ],
-      ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(child: AppSpinner())
           : Form(
               key: _formKey,
               child: ListView(
-                padding: const EdgeInsets.all(AppDimensions.paddingM),
+                padding: EdgeInsets.fromLTRB(
+                  ionListMargin(context),
+                  ionIsIos(context) ? 0 : AppDimensions.paddingM,
+                  ionListMargin(context),
+                  96,
+                ),
                 children: [
-                  // Basic info section
-                  _buildSectionHeader('Grunddaten'),
-                  TextFormField(
-                    controller: _shortNameController,
-                    decoration: const InputDecoration(
-                      labelText: 'Kurzname *',
-                      helperText: 'Wird in der Navigation angezeigt',
-                    ),
-                    validator: (v) => v?.trim().isEmpty ?? true ? 'Erforderlich' : null,
-                    onChanged: (_) => _markChanged(),
-                  ),
-                  const SizedBox(height: AppDimensions.paddingM),
-                  TextFormField(
-                    controller: _longNameController,
-                    decoration: const InputDecoration(
-                      labelText: 'Vollständiger Name',
-                    ),
-                    onChanged: (_) => _markChanged(),
-                  ),
-
-                  const SizedBox(height: AppDimensions.paddingXL),
-
-                  // Season section
-                  _buildSectionHeader('Saison'),
-                  ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    title: const Text('Saisonstart'),
-                    subtitle: Text(
-                      _seasonStart != null
-                          ? DateFormat('dd.MM.yyyy').format(_seasonStart!)
-                          : 'Nicht festgelegt',
-                    ),
-                    trailing: const Icon(Icons.calendar_today),
-                    onTap: _selectSeasonStart,
-                  ),
-
-                  const SizedBox(height: AppDimensions.paddingXL),
-
-                  // Practice times section
-                  _buildSectionHeader('Probenzeiten'),
-                  Row(
+                  const IonContentTopInset(), // IOS_R6
+                  IonLargeTitle(context.l10n.settingsSettings, padding: const EdgeInsets.only(bottom: 4)),
+                  if (ionIsIos(context)) const SizedBox(height: 16),
+                  // UX_SETTINGS: sections in Ionic order (general.page.html)
+                  // ============ ALLGEMEIN ============
+                  SettingsListSection(
+                    title: context.l10n.generalSettingsGeneral,
+                    icons: false,
                     children: [
-                      Expanded(
-                        child: TextFormField(
+                      IonStackedField(
+                        label: context.l10n.generalSettingsTenantName,
+                        builder: (decoration) => TextFormField(
+                          controller: _longNameController,
+                          textCapitalization: TextCapitalization.words,
+                          decoration: decoration,
+                          onChanged: (_) => _markChanged(),
+                        ),
+                      ),
+                      IonStackedField(
+                        label: context.l10n.generalSettingsTenantShort,
+                        helper: context.l10n.generalSettingsShortNameHelper,
+                        builder: (decoration) => TextFormField(
+                          controller: _shortNameController,
+                          decoration: decoration,
+                          validator: (v) => v?.trim().isEmpty ?? true ? context.l10n.generalSettingsShortNameEmpty : null,
+                          onChanged: (_) => _markChanged(),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  // ============ ANWESENHEITEN ============
+                  SettingsListSection(
+                    title: context.l10n.generalSettingsAttendance,
+                    icons: false,
+                    children: [
+                      IonStackedValue(
+                        label: context.l10n.generalSettingsSeasonStart,
+                        value: _seasonStart != null
+                            ? DateFormat(dateFmt()).format(_seasonStart!)
+                            : context.l10n.personNotSet,
+                        helper: context.l10n.generalSettingsSeasonHelper,
+                        trailing: ionIsIos(context) ? null : const Icon(Icons.calendar_today_outlined),
+                        onTap: _selectSeasonStart,
+                      ),
+                      // Flutter: Probenzeiten (Standardzeiten für neue Termine)
+                      IonStackedField(
+                        label: context.l10n.generalSettingsFlutterPracticeStart,
+                        hint: '19:00',
+                        builder: (decoration) => TextFormField(
                           controller: _practiceStartController,
-                          decoration: const InputDecoration(
-                            labelText: 'Beginn',
-                            hintText: '19:00',
-                          ),
+                          decoration: decoration,
                           readOnly: true,
                           onTap: () => _selectTime(_practiceStartController),
                         ),
                       ),
-                      const SizedBox(width: AppDimensions.paddingM),
-                      Expanded(
-                        child: TextFormField(
+                      IonStackedField(
+                        label: context.l10n.generalSettingsFlutterPracticeEnd,
+                        hint: '21:30',
+                        builder: (decoration) => TextFormField(
                           controller: _practiceEndController,
-                          decoration: const InputDecoration(
-                            labelText: 'Ende',
-                            hintText: '21:30',
-                          ),
+                          decoration: decoration,
                           readOnly: true,
                           onTap: () => _selectTime(_practiceEndController),
                         ),
                       ),
+                      SettingsListTile(
+                        title: context.l10n.generalSettingsAttTypes,
+                        onTap: () => context.push('/settings/types'),
+                      ),
+                      SettingsListTile(
+                        title: context.l10n.generalSettingsShiftPlans,
+                        onTap: () => context.push('/settings/shifts'),
+                      ),
+                      SettingsListTile(
+                        title: context.l10n.generalSettingsBranding,
+                        onTap: () => context.push('/settings/general/branding'),
+                      ),
+                      _toggle(
+                        context.l10n.generalSettingsShiftPresent,
+                        context.l10n.generalSettingsShiftPresentHelper,
+                        _shiftExcusedAsPresent,
+                        (v) => _shiftExcusedAsPresent = v,
+                      ),
+                      _toggle(
+                        context.l10n.generalSettingsAllEvents,
+                        context.l10n.generalSettingsAllEventsHelper,
+                        _showAllAttendances,
+                        (v) => _showAllAttendances = v,
+                      ),
+                      // DUTY: Dienstplan-Ansicht (only when a type uses Dienst-Modus)
+                      if (ref.watch(hasDutyTypesProvider))
+                        _toggle(
+                          context.l10n.generalSettingsDutyView,
+                          context.l10n.generalSettingsDutyViewHelper,
+                          _dutyView,
+                          (v) => _dutyView = v,
+                        ),
+                      if (_showAllAttendances)
+                        IonStackedField(
+                          label: context.l10n.generalSettingsForeignInfo,
+                          hint: context.l10n.generalSettingsForeignInfoPh,
+                          builder: (decoration) => TextFormField(
+                            controller: _showAllInfoTextController,
+                            decoration: decoration,
+                            onChanged: (_) => _markChanged(),
+                          ),
+                        ),
                     ],
                   ),
 
-                  const SizedBox(height: AppDimensions.paddingXL),
-
-                  // Holidays section
-                  _buildSectionHeader('Feiertage'),
-                  SwitchListTile(
-                    contentPadding: EdgeInsets.zero,
-                    title: const Text('Feiertage im Kalender anzeigen'),
-                    subtitle: const Text('Feiertage werden im Kalender hervorgehoben'),
-                    value: _showHolidays,
-                    onChanged: (v) {
-                      setState(() => _showHolidays = v);
-                      _markChanged();
-                    },
-                  ),
-                  if (_showHolidays)
-                    DropdownButtonFormField<String>(
-                      value: _selectedRegion,
-                      decoration: const InputDecoration(
-                        labelText: 'Bundesland',
+                  // ============ ABWESENHEITS- & VERSPÄTUNGSGRÜNDE ============
+                  SettingsListSection(
+                    title: context.l10n.generalSettingsReasons,
+                    icons: false,
+                    children: [
+                      ReasonsListEditor(
+                        title: context.l10n.generalSettingsAbsenceReasons,
+                        reasons: _absenceReasons,
+                        defaults: EventListUtils.defaultAbsenceReasons,
+                        onChanged: (list) {
+                          setState(() => _absenceReasons = list);
+                          _markChanged();
+                        },
                       ),
-                      items: _holidayRegions.map((r) => DropdownMenuItem(
-                        value: r.$1,
-                        child: Text(r.$2),
-                      )).toList(),
-                      onChanged: (v) {
-                        setState(() => _selectedRegion = v ?? '');
-                        _markChanged();
-                      },
-                    ),
-
-                  const SizedBox(height: AppDimensions.paddingXL),
-
-                  // Features section
-                  _buildSectionHeader('Funktionen'),
-                  SwitchListTile(
-                    contentPadding: EdgeInsets.zero,
-                    title: const Text('Entschuldigungen'),
-                    subtitle: const Text('Erlaubt "Entschuldigt" als Status'),
-                    value: _withExcuses,
-                    onChanged: (v) {
-                      setState(() => _withExcuses = v);
-                      _markChanged();
-                    },
-                  ),
-                  SwitchListTile(
-                    contentPadding: EdgeInsets.zero,
-                    title: const Text('Dirigenten verwalten'),
-                    subtitle: const Text('Separate Dirigenten-Liste führen'),
-                    value: _maintainTeachers,
-                    onChanged: (v) {
-                      setState(() => _maintainTeachers = v);
-                      _markChanged();
-                    },
-                  ),
-                  SwitchListTile(
-                    contentPadding: EdgeInsets.zero,
-                    title: const Text('Eltern-Modus'),
-                    subtitle: const Text('Erlaubt Eltern ihre Kinder an-/abzumelden'),
-                    value: _parents,
-                    onChanged: (v) {
-                      setState(() => _parents = v);
-                      _markChanged();
-                    },
-                  ),
-                  SwitchListTile(
-                    contentPadding: EdgeInsets.zero,
-                    title: const Text('Mitgliederliste für alle'),
-                    subtitle: const Text('Aktivieren, um Mitgliedern (Spieler, Helfer, Stimmführer) eine Übersicht aller Personen anzuzeigen'),
-                    value: _showMembersList,
-                    onChanged: (v) {
-                      setState(() => _showMembersList = v);
-                      _markChanged();
-                    },
-                  ),
-
-                  const SizedBox(height: AppDimensions.paddingXL),
-
-                  // Song sharing section
-                  _buildSectionHeader('Lied-Teilen'),
-                  SwitchListTile(
-                    contentPadding: EdgeInsets.zero,
-                    title: const Text('Aktiviert'),
-                    subtitle: const Text('Lieder öffentlich über Link teilen'),
-                    value: _songSharingEnabled,
-                    onChanged: (v) {
-                      setState(() {
-                        _songSharingEnabled = v;
-                        if (v && _songSharingId == null) {
-                          _songSharingId = const Uuid().v4();
-                        }
-                      });
-                      _markChanged();
-                    },
-                  ),
-                  if (_songSharingEnabled && _songSharingId != null)
-                    ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      title: const Text('Sharing-Link'),
-                      subtitle: Text(
-                        'https://attendix.de/songs/$_songSharingId',
-                        style: const TextStyle(fontSize: 12),
+                      ReasonsListEditor(
+                        title: context.l10n.generalSettingsLateReasons,
+                        reasons: _lateReasons,
+                        defaults: EventListUtils.defaultLateReasons,
+                        onChanged: (list) {
+                          setState(() => _lateReasons = list);
+                          _markChanged();
+                        },
                       ),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.copy),
-                        onPressed: () => _copyLink('https://attendix.de/songs/', _songSharingId),
-                      ),
-                    ),
-
-                  const SizedBox(height: AppDimensions.paddingXL),
-
-                  // Self-registration section
-                  _buildSectionHeader('Selbst-Registrierung'),
-                  SwitchListTile(
-                    contentPadding: EdgeInsets.zero,
-                    title: const Text('Aktiviert'),
-                    subtitle: const Text('Neue Mitglieder können sich selbst registrieren'),
-                    value: _registrationEnabled,
-                    onChanged: (v) {
-                      setState(() {
-                        _registrationEnabled = v;
-                        if (v && _registerId == null) {
-                          _registerId = const Uuid().v4();
-                        }
-                      });
-                      _markChanged();
-                    },
+                    ],
                   ),
-                  if (_registrationEnabled) ...[
-                    ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      title: const Text('Registrierungs-Link'),
-                      subtitle: Text(
-                        'https://attendix.de/register/$_registerId',
-                        style: const TextStyle(fontSize: 12),
-                      ),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.copy),
-                        onPressed: () => _copyLink('https://attendix.de/register/', _registerId),
-                      ),
-                    ),
-                    SwitchListTile(
-                      contentPadding: EdgeInsets.zero,
-                      title: const Text('Automatisch genehmigen'),
-                      subtitle: const Text('Neue Registrierungen sofort freischalten'),
-                      value: _autoApproveRegistrations,
-                      onChanged: (v) {
-                        setState(() => _autoApproveRegistrations = v);
-                        _markChanged();
-                      },
-                    ),
-                    const SizedBox(height: AppDimensions.paddingM),
-                    const Text(
-                      'Registrierungsfelder',
-                      style: TextStyle(fontWeight: FontWeight.w600),
-                    ),
-                    const SizedBox(height: AppDimensions.paddingXS),
-                    Text(
-                      'Alle ausgewählten Felder sind Pflichtfelder bei der Registrierung.',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: AppColors.medium,
-                      ),
-                    ),
-                    const SizedBox(height: AppDimensions.paddingS),
-                    Wrap(
-                      spacing: AppDimensions.paddingS,
-                      runSpacing: AppDimensions.paddingXS,
-                      children: _buildRegistrationFieldChips(),
-                    ),
-                  ],
 
-                  const SizedBox(height: AppDimensions.paddingXL),
-
-                  // Extra fields section
-                  _buildSectionHeader('Zusatzfelder für Personen'),
-                  Text(
-                    'Definiere zusätzliche Felder für Personendaten.',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: AppColors.medium,
-                    ),
-                  ),
-                  const SizedBox(height: AppDimensions.paddingM),
-
-                  // List of extra fields
-                  if (_extraFields.isNotEmpty) ...[
-                    ...List.generate(_extraFields.length, (index) {
-                      final field = _extraFields[index];
-                      return Card(
-                        margin: const EdgeInsets.only(bottom: AppDimensions.paddingS),
-                        child: ListTile(
-                          leading: Icon(_getFieldTypeIcon(field.type)),
-                          title: Text(field.name),
-                          subtitle: Text(
-                            field.type == 'select' && field.options != null
-                                ? '${_getFieldTypeLabel(field.type)} (${field.options!.length} Optionen)'
-                                : _getFieldTypeLabel(field.type),
-                          ),
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              IconButton(
-                                icon: const Icon(Icons.edit),
-                                onPressed: () => _showEditExtraFieldDialog(index),
-                              ),
-                              IconButton(
-                                icon: const Icon(Icons.delete, color: AppColors.danger),
-                                onPressed: () => _confirmDeleteExtraField(index),
-                              ),
-                            ],
+                  // ============ REGISTRIERUNG ============
+                  SettingsListSection(
+                    title: context.l10n.generalSettingsRegistration,
+                    icons: false,
+                    children: [
+                      _toggle(
+                        context.l10n.generalSettingsAllowRegister,
+                        context.l10n.generalSettingsRegisterHelper,
+                        _registrationEnabled,
+                        (v) {
+                          _registrationEnabled = v;
+                          if (v && _registerId == null) _registerId = const Uuid().v4();
+                        },
+                      ),
+                      // SETTINGS2: Ionic noGroupsYet hint
+                      if (_registrationEnabled &&
+                          ref.watch(groupsProvider).hasValue &&
+                          !_hasSelectableGroups)
+                        Container(
+                          color: AppColors.warning,
+                          child: ListTile(
+                            leading: const Icon(Icons.warning_amber_outlined, color: Colors.black87),
+                            title: Text(
+                              context.l10n.generalSettingsNoGroupsYet,
+                              style: TextStyle(color: Colors.black87),
+                            ),
                           ),
                         ),
-                      );
-                    }),
-                  ],
-
-                  // Add field button
-                  OutlinedButton.icon(
-                    onPressed: _showAddExtraFieldDialog,
-                    icon: const Icon(Icons.add),
-                    label: const Text('Feld hinzufügen'),
+                      // Ionic: link only once saved (tenant.register_id)
+                      if (_registrationEnabled &&
+                          (ref.watch(currentTenantProvider)?.registerId ?? '').isNotEmpty)
+                        ListTile(
+                          title: Text(context.l10n.settingsCopyLink, style: const TextStyle(color: AppColors.primary)),
+                          onTap: () => _copyLink('https://attendix.de/register/', _registerId),
+                        ),
+                      if (_registrationEnabled) ...[
+                        _toggle(
+                          context.l10n.generalSettingsAutoApprove,
+                          context.l10n.generalSettingsAutoApproveHelper,
+                          _autoApproveRegistrations,
+                          (v) => _autoApproveRegistrations = v,
+                        ),
+                        _padded(Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              context.l10n.generalSettingsRegisterFields,
+                              style: ionIsIos(context)
+                                  ? const TextStyle(fontSize: 14)
+                                  : const TextStyle(fontWeight: FontWeight.w600),
+                            ),
+                            const SizedBox(height: AppDimensions.paddingS),
+                            Wrap(
+                              spacing: AppDimensions.paddingS,
+                              runSpacing: AppDimensions.paddingXS,
+                              children: _buildRegistrationFieldChips(),
+                            ),
+                            const SizedBox(height: AppDimensions.paddingS),
+                            Text(
+                              context.l10n.generalSettingsRegisterFieldsHint,
+                              style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.medium),
+                            ),
+                          ],
+                        )),
+                      ],
+                    ],
                   ),
 
-                  const SizedBox(height: AppDimensions.paddingXL),
+                  // ============ WERK-DATENBANK ============
+                  SettingsListSection(
+                    title: context.l10n.generalSettingsSongDb,
+                    icons: false,
+                    children: [
+                      _toggle(
+                        context.l10n.generalSettingsShareSongs,
+                        context.l10n.generalSettingsShareSongsHelper,
+                        _songSharingEnabled,
+                        (v) {
+                          _songSharingEnabled = v;
+                          if (v && _songSharingId == null) _songSharingId = const Uuid().v4();
+                        },
+                      ),
+                      if ((ref.watch(currentTenantProvider)?.songSharingId ?? '').isNotEmpty)
+                        ListTile(
+                          title: Text(context.l10n.settingsCopyLink, style: const TextStyle(color: AppColors.primary)),
+                          onTap: () => _copyLink('https://attendix.de/', _songSharingId),
+                        ),
+                    ],
+                  ),
 
-                  // Critical rules section
-                  _buildSectionHeader('Problemfall-Regeln'),
-                  Text(
-                    'Definiere Regeln, wann Personen als Problemfall markiert werden.',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: AppColors.medium,
+                  // ============ SONSTIGES ============
+                  SettingsListSection(
+                    title: context.l10n.generalSettingsOther,
+                    icons: false,
+                    children: [
+                      Builder(builder: (context) {
+                        final t = ref.watch(currentTenantProvider);
+                        final total = (t?.additionalFields?.length ?? 0) + (t?.songAdditionalFields?.length ?? 0);
+                        return SettingsListTile(
+                          title: context.l10n.settingsExtraFields,
+                          trailing: IonNote(
+                            total == 0 ? context.l10n.generalSettingsNone : context.l10n.generalSettingsFlutterFieldsCount(total),
+                          ),
+                          onTap: () => context.push('/settings/general/extra-fields'),
+                        );
+                      }),
+                      // SETTINGS2: Ionic "Lehrer pflegen" (only for orchestras)
+                      if (ref.watch(currentTenantProvider)?.type == 'orchestra')
+                        _toggle(
+                          context.l10n.generalSettingsMaintainTeachers,
+                          context.l10n.generalSettingsTeachersHelper,
+                          _maintainTeachers,
+                          (v) => _maintainTeachers = v,
+                        ),
+                      _toggle(
+                        context.l10n.generalSettingsParentsFeature,
+                        context.l10n.generalSettingsParentsHelper,
+                        _parents,
+                        (v) => _parents = v,
+                      ),
+                      _toggle(
+                        context.l10n.generalSettingsMembersList,
+                        context.l10n.generalSettingsMembersListHelper,
+                        _showMembersList,
+                        (v) => _showMembersList = v,
+                      ),
+                      _toggle(
+                        context.l10n.generalSettingsShowHolidays,
+                        context.l10n.generalSettingsHolidaysHelper,
+                        _showHolidays,
+                        (v) => _showHolidays = v,
+                      ),
+                      if (_showHolidays)
+                        IonStackedField(
+                          label: context.l10n.generalSettingsHolidayState,
+                          builder: (decoration) => AppDropdownFormField<String>(
+                            iosInterface: AppSelectInterface.alert, // IOS_THEME2
+                          value: _selectedRegion,
+                          decoration: decoration,
+                          items: _holidayRegions
+                              .map((r) => DropdownMenuItem(
+                                  value: r.$1,
+                                  child: Text(r.$1.isEmpty ? context.l10n.generalSettingsFlutterNoHolidays : r.$2)))
+                              .toList(),
+                          onChanged: (v) {
+                            setState(() => _selectedRegion = v ?? '');
+                            _markChanged();
+                          },
+                        )),
+                    ],
+                  ),
+
+                  // ============ PROBLEMFALL-REGELN ============
+                  SettingsListSection(
+                    title: context.l10n.generalSettingsCriticalRules,
+                    icons: false,
+                    headerAction: IconButton(
+                      icon: const Icon(Icons.add, color: AppColors.primary),
+                      tooltip: context.l10n.generalSettingsNewRule,
+                      onPressed: _showAddCriticalRuleSheet,
                     ),
+                    children: [
+                      if (_criticalRules.isEmpty)
+                        ListTile(
+                          // Ionic: <ion-label><p> (grey 14px)
+                          title: Text(
+                            context.l10n.generalSettingsNoRules,
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: ionIsIos(context) ? IonIos.labelP(context) : AppColors.medium,
+                            ),
+                          ),
+                        ),
+                      for (var index = 0; index < _criticalRules.length; index++)
+                        CriticalRuleCard(
+                          rule: _criticalRules[index],
+                          onEdit: () => _showEditCriticalRuleSheet(index),
+                          onDelete: () => _confirmDeleteCriticalRule(index),
+                        ),
+                    ],
                   ),
-                  const SizedBox(height: AppDimensions.paddingM),
-
-                  // List of critical rules
-                  if (_criticalRules.isNotEmpty) ...[
-                    ...List.generate(_criticalRules.length, (index) {
-                      final rule = _criticalRules[index];
-                      return CriticalRuleCard(
-                        rule: rule,
-                        onEdit: () => _showEditCriticalRuleSheet(index),
-                        onDelete: () => _confirmDeleteCriticalRule(index),
-                      );
-                    }),
-                  ],
-
-                  // Add rule button
-                  OutlinedButton.icon(
-                    onPressed: _showAddCriticalRuleSheet,
-                    icon: const Icon(Icons.add),
-                    label: const Text('Regel hinzufügen'),
-                  ),
-
-                  const SizedBox(height: AppDimensions.paddingXL),
-
-                  // Organisation section
-                  _buildSectionHeader('Organisation'),
-                  _buildOrganisationSection(),
-
-                  const SizedBox(height: AppDimensions.paddingXL),
                 ],
               ),
             ),
-    ),
+    )),
     );
   }
 
-  Widget _buildSectionHeader(String title) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: AppDimensions.paddingS),
-      child: Text(
-        title,
-        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-          fontWeight: FontWeight.bold,
-          color: AppColors.primary,
+  Widget _padded(Widget child) => Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppDimensions.paddingM,
+          vertical: AppDimensions.paddingS,
         ),
-      ),
-    );
-  }
-
-  Widget _buildOrganisationSection() {
-    final currentOrgAsync = ref.watch(currentOrganisationProvider);
-
-    return currentOrgAsync.when(
-      loading: () => const Card(
-        child: ListTile(
-          leading: CircularProgressIndicator(),
-          title: Text('Lade Organisation...'),
-        ),
-      ),
-      error: (e, _) => Card(
-        child: ListTile(
-          leading: const Icon(Icons.error, color: AppColors.danger),
-          title: const Text('Fehler beim Laden'),
-          subtitle: Text('$e'),
-        ),
-      ),
-      data: (organisation) => Card(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: Icon(
-                Icons.corporate_fare,
-                color: organisation != null ? AppColors.primary : AppColors.medium,
-              ),
-              title: Text(organisation?.name ?? 'Keine Organisation'),
-              subtitle: Text(
-                organisation != null
-                    ? 'Verknüpft mit Organisation'
-                    : 'Verknüpfe diesen Mandanten mit einer Organisation, um ihn mit anderen Mandanten zu gruppieren.',
-              ),
-              trailing: organisation != null
-                  ? IconButton(
-                      icon: Icon(Icons.link_off, color: AppColors.danger),
-                      onPressed: () => _unlinkOrganisation(organisation),
-                    )
-                  : null,
-            ),
-            Padding(
-              padding: const EdgeInsets.only(
-                left: AppDimensions.paddingM,
-                right: AppDimensions.paddingM,
-                bottom: AppDimensions.paddingM,
-              ),
-              child: SizedBox(
-                width: double.infinity,
-                child: OutlinedButton.icon(
-                  onPressed: () => _showOrganisationDialog(organisation),
-                  icon: Icon(organisation != null ? Icons.swap_horiz : Icons.add_link),
-                  label: Text(organisation != null ? 'Organisation wechseln' : 'Mit Organisation verknüpfen'),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Future<void> _showOrganisationDialog(Organisation? currentOrg) async {
-    final userOrgsAsync = ref.read(userOrganisationsProvider);
-
-    final organisations = await userOrgsAsync.when(
-      data: (orgs) async => orgs,
-      loading: () async => <Organisation>[],
-      error: (_, __) async => <Organisation>[],
-    );
-
-    if (!mounted) return;
-
-    final selectedOrgId = await showDialog<int?>(
-      context: context,
-      builder: (ctx) {
-        int? selected = currentOrg?.id;
-        return StatefulBuilder(
-          builder: (ctx, setDialogState) => AlertDialog(
-            title: const Text('Organisation auswählen'),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (organisations.isEmpty)
-                  const Text('Keine existierenden Organisationen gefunden. Erstelle eine neue.')
-                else ...[
-                  ...organisations.map((org) => RadioListTile<int?>(
-                    value: org.id,
-                    groupValue: selected,
-                    title: Text(org.name),
-                    onChanged: (v) => setDialogState(() => selected = v),
-                  )),
-                  const Divider(),
-                ],
-                ListTile(
-                  leading: const Icon(Icons.add),
-                  title: const Text('Neue Organisation erstellen'),
-                  onTap: () {
-                    Navigator.of(ctx).pop(-1); // Special value for "create new"
-                  },
-                ),
-              ],
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(ctx).pop(null),
-                child: const Text('Abbrechen'),
-              ),
-              if (organisations.isNotEmpty)
-                ElevatedButton(
-                  onPressed: selected != null && selected != currentOrg?.id
-                      ? () => Navigator.of(ctx).pop(selected)
-                      : null,
-                  child: const Text('Verknüpfen'),
-                ),
-            ],
-          ),
-        );
-      },
-    );
-
-    if (!mounted) return;
-
-    if (selectedOrgId == -1) {
-      // Create new organisation
-      await _showCreateOrganisationDialog();
-    } else if (selectedOrgId != null) {
-      // Link to existing organisation
-      final notifier = ref.read(organisationNotifierProvider.notifier);
-      final success = await notifier.linkCurrentTenant(selectedOrgId);
-      if (mounted) {
-        if (success) {
-          ToastHelper.showSuccess(context, 'Organisation verknüpft');
-        } else {
-          ToastHelper.showError(context, 'Fehler beim Verknüpfen');
-        }
-      }
-    }
-  }
-
-  Future<void> _showCreateOrganisationDialog() async {
-    final nameController = TextEditingController();
-
-    try {
-      final result = await showDialog<bool>(
-        context: context,
-        builder: (ctx) => AlertDialog(
-          title: const Text('Neue Organisation'),
-          content: TextField(
-            controller: nameController,
-            decoration: const InputDecoration(
-              labelText: 'Name der Organisation',
-              hintText: 'z.B. Musikverein Musterstadt',
-            ),
-            autofocus: true,
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(ctx).pop(false),
-              child: const Text('Abbrechen'),
-            ),
-            ElevatedButton(
-              onPressed: () => Navigator.of(ctx).pop(true),
-              child: const Text('Erstellen & Verknüpfen'),
-            ),
-          ],
-        ),
+        child: child,
       );
 
-      if (result == true && mounted) {
-        final name = nameController.text.trim();
-        if (name.isEmpty) {
-          ToastHelper.showError(context, 'Name ist erforderlich');
-          return;
-        }
-
-        final notifier = ref.read(organisationNotifierProvider.notifier);
-        final org = await notifier.create(name);
-        if (org != null && mounted) {
-          await notifier.linkCurrentTenant(org.id!);
-          if (mounted) {
-            ToastHelper.showSuccess(
-                context, 'Organisation erstellt und verknüpft');
-          }
-        }
-      }
-    } finally {
-      // FN-001: Dispose controller
-      nameController.dispose();
-    }
-  }
-
-  Future<void> _unlinkOrganisation(Organisation organisation) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Verknüpfung aufheben?'),
-        content: Text(
-          'Möchtest du die Verknüpfung mit "${organisation.name}" aufheben?\n\n'
-          'Wenn keine anderen Mandanten mehr in dieser Organisation sind, '
-          'wird die Organisation automatisch gelöscht.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Abbrechen'),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: AppColors.danger),
-            onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('Aufheben'),
-          ),
-        ],
-      ),
-    );
-
-    if (confirmed == true && mounted) {
-      final notifier = ref.read(organisationNotifierProvider.notifier);
-      final success = await notifier.unlinkCurrentTenant(organisation.id!);
-      if (mounted) {
-        if (success) {
-          ToastHelper.showSuccess(context, 'Verknüpfung aufgehoben');
-        } else {
-          ToastHelper.showError(context, 'Fehler beim Aufheben');
-        }
-      }
-    }
-  }
-
-  // Extra field helper methods
-  IconData _getFieldTypeIcon(String type) {
-    switch (type) {
-      case 'text':
-        return Icons.text_fields;
-      case 'textarea':
-        return Icons.notes;
-      case 'number':
-        return Icons.numbers;
-      case 'date':
-        return Icons.calendar_today;
-      case 'boolean':
-        return Icons.toggle_on;
-      case 'select':
-        return Icons.list;
-      default:
-        return Icons.text_fields;
-    }
-  }
-
-  String _getFieldTypeLabel(String type) {
-    switch (type) {
-      case 'text':
-        return 'Text';
-      case 'textarea':
-        return 'Mehrzeiliger Text';
-      case 'number':
-        return 'Zahl';
-      case 'date':
-        return 'Datum';
-      case 'boolean':
-        return 'Ja/Nein';
-      case 'select':
-        return 'Auswahl';
-      default:
-        return type;
-    }
-  }
-
-  String _generateFieldId(String name) {
-    // Generate base ID from name (Issue #10)
-    String baseId = name.trim()
-        .toLowerCase()
-        .replaceAll(RegExp(r'\s+'), '_')
-        .replaceAll(RegExp(r'[^a-z0-9_]'), '');
-
-    // Handle empty base ID
-    if (baseId.isEmpty) baseId = 'field';
-
-    // Add counter if collision exists
-    String finalId = baseId;
-    int counter = 1;
-    while (_extraFields.any((f) => f.id == finalId)) {
-      finalId = '${baseId}_$counter';
-      counter++;
-    }
-    return finalId;
-  }
-
-  Future<void> _showAddExtraFieldDialog() async {
-    String selectedType = 'text';
-    final nameController = TextEditingController();
-    List<String> options = [];
-    final optionController = TextEditingController();
-
-    await showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (ctx) => StatefulBuilder(
-        builder: (ctx, setSheetState) => Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(ctx).viewInsets.bottom,
-            left: AppDimensions.paddingM,
-            right: AppDimensions.paddingM,
-            top: AppDimensions.paddingM,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Neues Zusatzfeld',
-                    style: Theme.of(ctx).textTheme.titleLarge,
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: () => Navigator.of(ctx).pop(),
-                  ),
-                ],
-              ),
-              const SizedBox(height: AppDimensions.paddingM),
-
-              // Type selector
-              DropdownButtonFormField<String>(
-                value: selectedType,
-                decoration: const InputDecoration(
-                  labelText: 'Feldtyp',
-                ),
-                items: const [
-                  DropdownMenuItem(value: 'text', child: Text('Text')),
-                  DropdownMenuItem(value: 'textarea', child: Text('Mehrzeiliger Text')),
-                  DropdownMenuItem(value: 'number', child: Text('Zahl')),
-                  DropdownMenuItem(value: 'date', child: Text('Datum')),
-                  DropdownMenuItem(value: 'boolean', child: Text('Ja/Nein')),
-                  DropdownMenuItem(value: 'select', child: Text('Auswahl')),
-                ],
-                onChanged: (v) {
-                  setSheetState(() {
-                    selectedType = v ?? 'text';
-                    options = [];
-                  });
-                },
-              ),
-              const SizedBox(height: AppDimensions.paddingM),
-
-              // Name input
-              TextField(
-                controller: nameController,
-                decoration: const InputDecoration(
-                  labelText: 'Feldname *',
-                  hintText: 'z.B. Mitgliedsnummer',
-                ),
-                autofocus: true,
-              ),
-              const SizedBox(height: AppDimensions.paddingM),
-
-              // Options for select type
-              if (selectedType == 'select') ...[
-                Text(
-                  'Optionen',
-                  style: Theme.of(ctx).textTheme.titleSmall,
-                ),
-                const SizedBox(height: AppDimensions.paddingS),
-                ...options.asMap().entries.map((entry) => Padding(
-                  padding: const EdgeInsets.only(bottom: AppDimensions.paddingXS),
-                  child: Row(
-                    children: [
-                      Expanded(child: Text(entry.value)),
-                      IconButton(
-                        icon: const Icon(Icons.delete, size: 18),
-                        onPressed: () {
-                          setSheetState(() => options.removeAt(entry.key));
-                        },
-                      ),
-                    ],
-                  ),
-                )),
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        controller: optionController,
-                        decoration: const InputDecoration(
-                          hintText: 'Neue Option',
-                          isDense: true,
-                        ),
-                        onSubmitted: (value) {
-                          if (value.trim().isNotEmpty) {
-                            setSheetState(() {
-                              options.add(value.trim());
-                              optionController.clear();
-                            });
-                          }
-                        },
-                      ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.add),
-                      onPressed: () {
-                        if (optionController.text.trim().isNotEmpty) {
-                          setSheetState(() {
-                            options.add(optionController.text.trim());
-                            optionController.clear();
-                          });
-                        }
-                      },
-                    ),
-                  ],
-                ),
-                const SizedBox(height: AppDimensions.paddingM),
-              ],
-
-              // Save button
-              SizedBox(
-                width: double.infinity,
-                child: FilledButton(
-                  onPressed: () {
-                    final name = nameController.text.trim();
-                    if (name.isEmpty) {
-                      ToastHelper.showError(ctx, 'Bitte gib einen Namen ein');
-                      return;
-                    }
-
-                    final id = _generateFieldId(name);
-                    if (_extraFields.any((f) => f.id == id)) {
-                      ToastHelper.showError(ctx, 'Ein Feld mit dieser ID existiert bereits');
-                      return;
-                    }
-
-                    if (selectedType == 'select' && options.isEmpty) {
-                      ToastHelper.showError(ctx, 'Bitte füge mindestens eine Option hinzu');
-                      return;
-                    }
-
-                    dynamic defaultValue;
-                    switch (selectedType) {
-                      case 'text':
-                      case 'textarea':
-                        defaultValue = '';
-                        break;
-                      case 'number':
-                        defaultValue = 0;
-                        break;
-                      case 'boolean':
-                        defaultValue = false;
-                        break;
-                      case 'date':
-                        defaultValue = DateTime.now().toIso8601String().split('T')[0];
-                        break;
-                      case 'select':
-                        // Safe access with guard (Issue #7)
-                        defaultValue = options.isNotEmpty ? options.first : '';
-                        break;
-                    }
-
-                    setState(() {
-                      _extraFields.add(ExtraField(
-                        id: id,
-                        name: name,
-                        type: selectedType,
-                        defaultValue: defaultValue,
-                        options: selectedType == 'select' ? options : null,
-                      ));
-                      _markChanged();
-                    });
-
-                    Navigator.of(ctx).pop();
-                    if (context.mounted) {
-                      ToastHelper.showSuccess(context, 'Feld hinzugefügt');
-                    }
-                  },
-                  child: const Text('Feld hinzufügen'),
-                ),
-              ),
-              const SizedBox(height: AppDimensions.paddingM),
-            ],
-          ),
-        ),
-      ),
-    ).whenComplete(() {
-      // Dispose controllers to prevent memory leak (Issue #22)
-      nameController.dispose();
-      optionController.dispose();
-    });
-  }
-
-  Future<void> _showEditExtraFieldDialog(int index) async {
-    final field = _extraFields[index];
-    final nameController = TextEditingController(text: field.name);
-    List<String> options = List.from(field.options ?? []);
-    final optionController = TextEditingController();
-
-    await showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (ctx) => StatefulBuilder(
-        builder: (ctx, setSheetState) => Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(ctx).viewInsets.bottom,
-            left: AppDimensions.paddingM,
-            right: AppDimensions.paddingM,
-            top: AppDimensions.paddingM,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Zusatzfeld bearbeiten',
-                    style: Theme.of(ctx).textTheme.titleLarge,
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: () => Navigator.of(ctx).pop(),
-                  ),
-                ],
-              ),
-              const SizedBox(height: AppDimensions.paddingM),
-
-              // Type (read-only)
-              InputDecorator(
-                decoration: const InputDecoration(
-                  labelText: 'Feldtyp',
-                ),
-                child: Row(
-                  children: [
-                    Icon(_getFieldTypeIcon(field.type), size: 20),
-                    const SizedBox(width: AppDimensions.paddingS),
-                    Text(_getFieldTypeLabel(field.type)),
-                  ],
-                ),
-              ),
-              const SizedBox(height: AppDimensions.paddingM),
-
-              // Name input
-              TextField(
-                controller: nameController,
-                decoration: const InputDecoration(
-                  labelText: 'Feldname *',
-                ),
-              ),
-              const SizedBox(height: AppDimensions.paddingM),
-
-              // Options for select type
-              if (field.type == 'select') ...[
-                Text(
-                  'Optionen',
-                  style: Theme.of(ctx).textTheme.titleSmall,
-                ),
-                const SizedBox(height: AppDimensions.paddingS),
-                ...options.asMap().entries.map((entry) => Padding(
-                  padding: const EdgeInsets.only(bottom: AppDimensions.paddingXS),
-                  child: Row(
-                    children: [
-                      Expanded(child: Text(entry.value)),
-                      IconButton(
-                        icon: const Icon(Icons.delete, size: 18),
-                        onPressed: options.length > 1 ? () {
-                          setSheetState(() => options.removeAt(entry.key));
-                        } : null,
-                      ),
-                    ],
-                  ),
-                )),
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        controller: optionController,
-                        decoration: const InputDecoration(
-                          hintText: 'Neue Option',
-                          isDense: true,
-                        ),
-                        onSubmitted: (value) {
-                          if (value.trim().isNotEmpty) {
-                            setSheetState(() {
-                              options.add(value.trim());
-                              optionController.clear();
-                            });
-                          }
-                        },
-                      ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.add),
-                      onPressed: () {
-                        if (optionController.text.trim().isNotEmpty) {
-                          setSheetState(() {
-                            options.add(optionController.text.trim());
-                            optionController.clear();
-                          });
-                        }
-                      },
-                    ),
-                  ],
-                ),
-                const SizedBox(height: AppDimensions.paddingM),
-              ],
-
-              // Save button
-              SizedBox(
-                width: double.infinity,
-                child: FilledButton(
-                  onPressed: () {
-                    final name = nameController.text.trim();
-                    if (name.isEmpty) {
-                      ToastHelper.showError(ctx, 'Bitte gib einen Namen ein');
-                      return;
-                    }
-
-                    if (field.type == 'select' && options.isEmpty) {
-                      ToastHelper.showError(ctx, 'Mindestens eine Option erforderlich');
-                      return;
-                    }
-
-                    setState(() {
-                      _extraFields[index] = ExtraField(
-                        id: field.id, // Keep original ID
-                        name: name,
-                        type: field.type,
-                        // Safe access with guard (Issue #7)
-                        defaultValue: field.type == 'select' && options.isNotEmpty
-                            ? options.first
-                            : field.defaultValue,
-                        options: field.type == 'select' ? options : null,
-                      );
-                      _markChanged();
-                    });
-
-                    Navigator.of(ctx).pop();
-                    if (context.mounted) {
-                      ToastHelper.showSuccess(context, 'Feld aktualisiert');
-                    }
-                  },
-                  child: const Text('Speichern'),
-                ),
-              ),
-              const SizedBox(height: AppDimensions.paddingM),
-            ],
-          ),
-        ),
-      ),
-    ).whenComplete(() {
-      // Dispose controllers to prevent memory leak (Issue #22)
-      nameController.dispose();
-      optionController.dispose();
-    });
-  }
-
-  Future<void> _confirmDeleteExtraField(int index) async {
-    final field = _extraFields[index];
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Zusatzfeld löschen?'),
-        content: Text('Möchtest du das Feld "${field.name}" wirklich löschen? '
-            'Die Werte dieses Feldes werden bei allen Personen entfernt.'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Abbrechen'),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.danger,
-            ),
-            onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('Löschen'),
-          ),
-        ],
-      ),
-    );
-
-    if (confirmed == true) {
-      setState(() {
-        _extraFields.removeAt(index);
-        _markChanged();
-      });
-      if (mounted) {
-        ToastHelper.showSuccess(context, 'Feld gelöscht');
-      }
-    }
-  }
-
-  /// B7-017: Remove stale field keys from all player additional_fields
-  Future<void> _sanitizePlayerFields(Set<String> removedFieldIds, int tenantId) async {
-    try {
-      final supabase = ref.read(supabaseClientProvider);
-      // Fetch all players with non-null additional_fields
-      final response = await supabase
-          .from('player')
-          .select('id, additional_fields')
-          .eq('tenantId', tenantId)
-          .not('additional_fields', 'is', null);
-
-      final players = response as List;
-      for (final player in players) {
-        final fields = player['additional_fields'] as Map<String, dynamic>?;
-        if (fields == null) continue;
-
-        final cleaned = Map<String, dynamic>.from(fields);
-        var changed = false;
-        for (final removedId in removedFieldIds) {
-          if (cleaned.containsKey(removedId)) {
-            cleaned.remove(removedId);
-            changed = true;
-          }
-        }
-
-        if (changed) {
-          await supabase
-              .from('player')
-              .update({'additional_fields': cleaned.isEmpty ? null : cleaned})
-              .eq('id', player['id'])
-              .eq('tenantId', tenantId);
-        }
-      }
-    } catch (e) {
-      debugPrint('Error sanitizing player fields: $e');
-    }
-  }
+  /// Ionic `ion-toggle` with `helperText`.
+  Widget _toggle(String title, String helper, bool value, void Function(bool) apply) => IonToggleItem(
+        title: title,
+        helper: helper,
+        value: value,
+        onChanged: (v) {
+          setState(() => apply(v));
+          _markChanged();
+        },
+      );
 
   // Critical rule methods
   Future<void> _showAddCriticalRuleSheet() async {
@@ -1451,7 +804,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
 
     if (attendanceTypes.isEmpty) {
       if (mounted) {
-        ToastHelper.showError(context, 'Keine Terminarten vorhanden');
+        ToastHelper.showError(context, context.l10n.generalSettingsFlutterNoTypes);
       }
       return;
     }
@@ -1460,6 +813,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
 
     await showModalBottomSheet(
       context: context,
+      useRootNavigator: true, // IOS_SHELL2: above the tab bar
       isScrollControlled: true,
       builder: (ctx) => CriticalRuleSheet(
         attendanceTypes: attendanceTypes,
@@ -1468,7 +822,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
             _criticalRules.add(rule);
             _markChanged();
           });
-          ToastHelper.showSuccess(context, 'Regel hinzugefügt');
+          ToastHelper.showSuccess(context, context.l10n.generalSettingsFlutterRuleAdded);
         },
       ),
     );
@@ -1483,6 +837,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
 
     await showModalBottomSheet(
       context: context,
+      useRootNavigator: true, // IOS_SHELL2: above the tab bar
       isScrollControlled: true,
       builder: (ctx) => CriticalRuleSheet(
         rule: rule,
@@ -1492,7 +847,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
             _criticalRules[index] = updatedRule;
             _markChanged();
           });
-          ToastHelper.showSuccess(context, 'Regel aktualisiert');
+          ToastHelper.showSuccess(context, context.l10n.generalSettingsFlutterRuleUpdated);
         },
       ),
     );
@@ -1501,24 +856,24 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
   Future<void> _confirmDeleteCriticalRule(int index) async {
     final rule = _criticalRules[index];
     final ruleName = rule.displayName;
-    final confirmed = await showDialog<bool>(
+    final confirmed = await showAppDialog<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Regel löschen?'),
+      builder: (ctx) => AppAlertDialog(
+        title: Text(context.l10n.generalSettingsDeleteRule),
         content: Text(
-          'Möchtest du die Regel "$ruleName" wirklich löschen?',
+          context.l10n.generalSettingsFlutterDeleteRuleNamed(ruleName),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Abbrechen'),
+            child: Text(context.l10n.commonCancel),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.danger,
             ),
             onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('Löschen'),
+            child: Text(context.l10n.commonDelete),
           ),
         ],
       ),
@@ -1530,30 +885,30 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
         _markChanged();
       });
       if (mounted) {
-        ToastHelper.showSuccess(context, 'Regel gelöscht');
+        ToastHelper.showSuccess(context, context.l10n.generalSettingsFlutterRuleDeleted);
       }
     }
   }
 
   Future<void> _showUnsavedChangesDialog() async {
-    final result = await showDialog<String>(
+    final result = await showAppDialog<String>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Ungespeicherte Änderungen'),
-        content: const Text('Du hast ungespeicherte Änderungen. Was möchtest du tun?'),
+      builder: (ctx) => AppAlertDialog(
+        title: Text(context.l10n.rolePermUnsaved),
+        content: Text(context.l10n.rolePermUnsavedMessage),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop('cancel'),
-            child: const Text('Abbrechen'),
+            child: Text(context.l10n.commonCancel),
           ),
           TextButton(
             onPressed: () => Navigator.of(ctx).pop('discard'),
             style: TextButton.styleFrom(foregroundColor: AppColors.danger),
-            child: const Text('Verwerfen'),
+            child: Text(context.l10n.rolePermDiscard),
           ),
           ElevatedButton(
             onPressed: () => Navigator.of(ctx).pop('save'),
-            child: const Text('Speichern'),
+            child: Text(context.l10n.commonSave),
           ),
         ],
       ),
@@ -1566,4 +921,23 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
       context.pop();
     }
   }
+}
+
+/// LOGIC_SETTINGS: Ionic saveGeneralSettings — empty/blank reasons are
+/// filtered out; an empty result is stored as null.
+List<String>? normalizeReasons(List<String> reasons) {
+  final filtered = reasons.where((r) => r.trim().isNotEmpty).toList();
+  return filtered.isEmpty ? null : filtered;
+}
+
+/// LOGIC_SETTINGS: Ionic saveGeneralSettings — `show_all_attendances_info_text`
+/// is null when the feature is off, otherwise the trimmed text or the default.
+String? normalizeShowAllInfoText({
+  required bool enabled,
+  required String text,
+  required String defaultText,
+}) {
+  if (!enabled) return null;
+  final trimmed = text.trim();
+  return trimmed.isNotEmpty ? trimmed : defaultText;
 }

@@ -1,75 +1,85 @@
-import 'package:attendix/core/router/tracking_observer.dart';
-import 'package:attendix/core/services/tracking/tracking_event.dart';
-import 'package:attendix/core/services/tracking/tracking_service.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_test/flutter_test.dart';
-import 'package:mocktail/mocktail.dart';
+import 'dart:io';
 
-class _MockTrackingService extends Mock implements TrackingService {}
+import 'package:attendix/core/router/tracking_observer.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  setUpAll(() {
-    registerFallbackValue(TrackingEvent.pageView);
+  group('pageViewUrlToTrack (Ionic trackPageViews)', () {
+    test('tracks the url', () {
+      expect(pageViewUrlToTrack('/people', null), '/people');
+      expect(pageViewUrlToTrack('/attendance/42', '/people'),
+          '/attendance/42');
+    });
+
+    test('skips urls containing /login or /legal', () {
+      expect(pageViewUrlToTrack('/login', null), isNull);
+      expect(pageViewUrlToTrack('/login?redirect=/people', null), isNull);
+      expect(pageViewUrlToTrack('/legal', null), isNull);
+      expect(pageViewUrlToTrack('/settings/legal', null), isNull);
+    });
+
+    test('does not track the same url twice in a row', () {
+      expect(pageViewUrlToTrack('/people', '/people'), isNull);
+      expect(pageViewUrlToTrack('', null), isNull);
+    });
   });
 
-  group('TrackingObserver', () {
-    late _MockTrackingService tracking;
-    late TrackingObserver observer;
+  group('SOL_FIX14: no secrets in usage_events', () {
+    test('strips query parameters and fragments (share / edit keys)', () {
+      expect(pageViewUrlToTrack('/plan?id=5&key=s3cr3t&edit=ed1t', null),
+          '/plan');
+      expect(pageViewUrlToTrack('/planung?id=abc&edit=ed1t', null), '/planung');
+      expect(pageViewUrlToTrack('/org-plan?key=s3cr3t', null), '/org-plan');
+      expect(pageViewUrlToTrack('/attendance/42?tab=1#top', null),
+          '/attendance/42');
+      expect(sanitizePageViewUrl('/people#x'), '/people');
+      expect(sanitizePageViewUrl('?key=s3cr3t'), '/');
+    });
 
-    setUp(() {
-      tracking = _MockTrackingService();
-      final container = ProviderContainer(
-        overrides: [
-          trackingServiceProvider.overrideWithValue(tracking),
-        ],
+    test('tracks only the pattern for routes with secret path parameters', () {
+      expect(
+        pageViewUrlToTrack('/AbCdEf123', null, routePattern: '/:songSharingId'),
+        '/:songSharingId',
       );
-      addTearDown(container.dispose);
-      observer = TrackingObserver(container);
-    });
-
-    PageRoute<void> route(String? name) {
-      return PageRouteBuilder<void>(
-        settings: RouteSettings(name: name),
-        pageBuilder: (_, __, ___) => const SizedBox.shrink(),
+      expect(
+        pageViewUrlToTrack('/AbCdEf123/7', null,
+            routePattern: '/:songSharingId/:songId'),
+        '/:songSharingId/:songId',
       );
-    }
-
-    test('fires page_view on didPush with the route name', () {
-      observer.didPush(route('/people'), null);
-
-      verify(() => tracking.track(
-            TrackingEvent.pageView,
-            properties: {'route': '/people'},
-          )).called(1);
-    });
-
-    test('fires page_view on didReplace with the new route name', () {
-      observer.didReplace(
-        newRoute: route('/attendance/42'),
-        oldRoute: route('/attendance'),
+      expect(
+        pageViewUrlToTrack('/register/inv-123', null,
+            routePattern: '/register/:id'),
+        '/register/:id',
       );
-
-      verify(() => tracking.track(
-            TrackingEvent.pageView,
-            properties: {'route': '/attendance/42'},
-          )).called(1);
+      expect(
+        pageViewUrlToTrack('/attendance/42', null,
+            routePattern: '/attendance/:id'),
+        '/attendance/42',
+      );
     });
 
-    test('skips routes starting with /login', () {
-      observer.didPush(route('/login'), null);
-      verifyNever(() => tracking.track(any(), properties: any(named: 'properties')));
+    test('another plan of the same route is tracked again', () {
+      // dedup compares the raw url; the tracked value is the sanitized one
+      expect(pageViewUrlToTrack('/plan?id=2&key=b', '/plan?id=1&key=a'),
+          '/plan');
+      expect(pageViewUrlToTrack('/plan?id=1&key=a', '/plan?id=1&key=a'),
+          isNull);
     });
 
-    test('skips routes starting with /legal', () {
-      observer.didPush(route('/legal'), null);
-      observer.didPush(route('/legal/datenschutz'), null);
-      verifyNever(() => tracking.track(any(), properties: any(named: 'properties')));
+    test('the tracker passes the route pattern and never the raw uri', () {
+      final tracker =
+          File('lib/core/router/tracking_observer.dart').readAsStringSync();
+      expect(tracker, contains('routePattern = config.fullPath'));
+      expect(tracker, contains("properties: {'url': toTrack}"));
+      expect(tracker, isNot(contains("{'url': url}")));
     });
+  });
 
-    test('does not fire when route name is null', () {
-      observer.didPush(route(null), null);
-      verifyNever(() => tracking.track(any(), properties: any(named: 'properties')));
-    });
+  test('tracker sends {url} and is attached to the router, not only the root navigator', () {
+    final tracker = File('lib/core/router/tracking_observer.dart').readAsStringSync();
+    expect(tracker, contains("properties: {'url': toTrack}"));
+    expect(tracker, isNot(contains("'route':")));
+    final router = File('lib/core/router/app_router.dart').readAsStringSync();
+    expect(router, contains('PageViewTracker(ref.container, router)'));
   });
 }

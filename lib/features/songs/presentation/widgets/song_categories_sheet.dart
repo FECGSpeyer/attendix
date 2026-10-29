@@ -4,7 +4,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/song_providers.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/song/song.dart';
+import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/layout/ionic_ios.dart';
+import '../../../../core/utils/error_message.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Bottom sheet for managing song categories (CRUD)
 class SongCategoriesSheet extends ConsumerStatefulWidget {
@@ -33,58 +38,28 @@ class _SongCategoriesSheetState extends ConsumerState<SongCategoriesSheet> {
           decoration: BoxDecoration(
             color: Theme.of(context).scaffoldBackgroundColor,
             borderRadius: const BorderRadius.vertical(
-              top: Radius.circular(AppDimensions.borderRadiusL),
+              top: Radius.circular(16),
             ),
           ),
           child: Column(
             children: [
-              // Handle bar
-              Container(
-                margin: const EdgeInsets.only(top: 12),
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: AppColors.medium.withValues(alpha: 0.3),
-                  borderRadius: BorderRadius.circular(2),
-                ),
+              // UX_SONGS_SELF: Ionic categoriesModal toolbar (title + add)
+              IonSheetHeader(
+                title: context.l10n.songsSongCategories,
+                end: [
+                  IconButton(
+                    icon: const Icon(Icons.add),
+                    onPressed: () => _showAddCategoryDialog(context),
+                    tooltip: context.l10n.songsAddCategory,
+                  ),
+                ],
               ),
-              // Header
-              Padding(
-                padding: const EdgeInsets.all(AppDimensions.paddingM),
-                child: Row(
-                  children: [
-                    const Icon(Icons.category, color: AppColors.primary),
-                    const SizedBox(width: AppDimensions.paddingS),
-                    Expanded(
-                      child: Text(
-                        'Kategorien verwalten',
-                        style:
-                            Theme.of(context).textTheme.titleMedium?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                      ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.add),
-                      onPressed: () => _showAddCategoryDialog(context),
-                      tooltip: 'Neue Kategorie',
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.close),
-                      onPressed: () => Navigator.of(context).pop(),
-                    ),
-                  ],
-                ),
-              ),
-              if (notifierState.isLoading)
-                const LinearProgressIndicator()
-              else
-                const Divider(height: 1),
+              if (notifierState.isLoading) const LinearProgressIndicator(),
               // Content
               Expanded(
                 child: categoriesAsync.when(
                   loading: () => const Center(
-                    child: CircularProgressIndicator(),
+                    child: AppSpinner(),
                   ),
                   error: (error, _) => Center(
                     child: Column(
@@ -93,12 +68,12 @@ class _SongCategoriesSheetState extends ConsumerState<SongCategoriesSheet> {
                         const Icon(Icons.error_outline,
                             size: 48, color: AppColors.danger),
                         const SizedBox(height: AppDimensions.paddingM),
-                        Text('Fehler: $error'),
+                        Text(context.l10n.songsFlutterErrorWith(friendlyErrorMessage(error))),
                         const SizedBox(height: AppDimensions.paddingM),
                         ElevatedButton(
                           onPressed: () =>
                               ref.invalidate(songCategoriesProvider),
-                          child: const Text('Erneut versuchen'),
+                          child: IonButtonLabel(context.l10n.messagesRetry),
                         ),
                       ],
                     ),
@@ -109,31 +84,21 @@ class _SongCategoriesSheetState extends ConsumerState<SongCategoriesSheet> {
 
                     if (displayCategories.isEmpty) {
                       return Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(
-                              Icons.category_outlined,
-                              size: 64,
-                              color: AppColors.medium,
-                            ),
-                            const SizedBox(height: AppDimensions.paddingM),
-                            Text(
-                              'Keine Kategorien',
-                              style: Theme.of(context).textTheme.titleMedium,
-                            ),
-                            const SizedBox(height: AppDimensions.paddingS),
-                            const Text(
-                              'Tippe + um eine Kategorie zu erstellen',
-                              style: TextStyle(color: AppColors.medium),
-                            ),
-                          ],
+                        // Ionic: plain centred text
+                        child: Padding(
+                          padding: const EdgeInsets.all(AppDimensions.paddingM),
+                          child: Text(
+                            context.l10n.songsNoCategories,
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
                         ),
                       );
                     }
 
                     return ReorderableListView.builder(
                       scrollController: scrollController,
+                      buildDefaultDragHandles: false,
                       padding: const EdgeInsets.all(AppDimensions.paddingM),
                       itemCount: displayCategories.length,
                       onReorder: (oldIndex, newIndex) {
@@ -152,6 +117,9 @@ class _SongCategoriesSheetState extends ConsumerState<SongCategoriesSheet> {
                         final category = displayCategories[index];
                         return _CategoryTile(
                           key: ValueKey(category.id ?? index),
+                          index: index,
+                          isFirst: index == 0,
+                          isLast: index == displayCategories.length - 1,
                           category: category,
                           onEdit: () =>
                               _showEditCategoryDialog(context, category),
@@ -163,16 +131,8 @@ class _SongCategoriesSheetState extends ConsumerState<SongCategoriesSheet> {
                   },
                 ),
               ),
-              // Hint
-              Padding(
-                padding: const EdgeInsets.all(AppDimensions.paddingM),
-                child: Text(
-                  'Ziehe Kategorien um sie neu zu sortieren',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: AppColors.medium,
-                      ),
-                ),
-              ),
+              // IOS_PAGES3: no footer hint – Ionic shows only the reorder
+              // handles in the list.
             ],
           ),
         );
@@ -191,15 +151,14 @@ class _SongCategoriesSheetState extends ConsumerState<SongCategoriesSheet> {
   Future<void> _showAddCategoryDialog(BuildContext context) async {
     final controller = TextEditingController();
 
-    final result = await showDialog<String>(
+    final result = await showAppDialog<String>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Neue Kategorie'),
+      builder: (context) => AppAlertDialog(
+        title: Text(context.l10n.songsAddCategory),
         content: TextField(
           controller: controller,
-          decoration: const InputDecoration(
-            labelText: 'Name',
-            hintText: 'z.B. Weihnachten',
+          decoration: InputDecoration(
+            hintText: context.l10n.songsCategoryName,
           ),
           autofocus: true,
           textCapitalization: TextCapitalization.sentences,
@@ -207,7 +166,7 @@ class _SongCategoriesSheetState extends ConsumerState<SongCategoriesSheet> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Abbrechen'),
+            child: Text(context.l10n.commonCancel),
           ),
           FilledButton(
             onPressed: () {
@@ -216,14 +175,17 @@ class _SongCategoriesSheetState extends ConsumerState<SongCategoriesSheet> {
                 Navigator.of(context).pop(name);
               }
             },
-            child: const Text('Erstellen'),
+            child: Text(context.l10n.attendanceAdd),
           ),
         ],
       ),
     );
 
     if (result != null && mounted) {
-      await ref.read(songCategoryNotifierProvider.notifier).add(result);
+      final created = await ref.read(songCategoryNotifierProvider.notifier).add(result);
+      if (created != null && context.mounted) {
+        ToastHelper.showSuccess(context, context.l10n.songsCategoryAdded);
+      }
     }
   }
 
@@ -231,14 +193,14 @@ class _SongCategoriesSheetState extends ConsumerState<SongCategoriesSheet> {
       BuildContext context, SongCategory category) async {
     final controller = TextEditingController(text: category.name);
 
-    final result = await showDialog<String>(
+    final result = await showAppDialog<String>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Kategorie bearbeiten'),
+      builder: (context) => AppAlertDialog(
+        title: Text(context.l10n.songsEditCategory),
         content: TextField(
           controller: controller,
-          decoration: const InputDecoration(
-            labelText: 'Name',
+          decoration: InputDecoration(
+            hintText: context.l10n.songsCategoryName,
           ),
           autofocus: true,
           textCapitalization: TextCapitalization.sentences,
@@ -246,7 +208,7 @@ class _SongCategoriesSheetState extends ConsumerState<SongCategoriesSheet> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Abbrechen'),
+            child: Text(context.l10n.commonCancel),
           ),
           FilledButton(
             onPressed: () {
@@ -255,85 +217,111 @@ class _SongCategoriesSheetState extends ConsumerState<SongCategoriesSheet> {
                 Navigator.of(context).pop(name);
               }
             },
-            child: const Text('Speichern'),
+            child: Text(context.l10n.commonSave),
           ),
         ],
       ),
     );
 
     if (result != null && category.id != null && mounted) {
-      await ref
+      final ok = await ref
           .read(songCategoryNotifierProvider.notifier)
           .update(category.id!, result);
+      if (ok && context.mounted) ToastHelper.showSuccess(context, context.l10n.songsCategorySaved);
     }
   }
 
   Future<void> _showDeleteConfirmation(
       BuildContext context, SongCategory category) async {
-    final confirmed = await showDialog<bool>(
+    final confirmed = await showAppDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Kategorie löschen?'),
-        content: Text(
-            'Möchtest du die Kategorie "${category.name}" wirklich löschen?'),
+      builder: (context) => AppAlertDialog(
+        title: Text(context.l10n.songsDeleteCategory),
+        content: Text(context.l10n.songsDeleteCategoryMessage),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Abbrechen'),
+            child: Text(context.l10n.commonCancel),
           ),
           FilledButton(
             style: FilledButton.styleFrom(
               backgroundColor: AppColors.danger,
             ),
             onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Löschen'),
+            child: Text(context.l10n.commonDelete),
           ),
         ],
       ),
     );
 
     if (confirmed == true && category.id != null && mounted) {
-      await ref
+      final ok = await ref
           .read(songCategoryNotifierProvider.notifier)
           .delete(category.id!);
+      if (ok && context.mounted) ToastHelper.showSuccess(context, context.l10n.songsCategoryDeleted);
     }
   }
 }
 
+/// Ionic: `ion-item` in an inset list: name, pencil (warning), trash
+/// (danger) and the reorder handle at the end.
 class _CategoryTile extends StatelessWidget {
   final SongCategory category;
+  final int index;
+  final bool isFirst;
+  final bool isLast;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
 
   const _CategoryTile({
     super.key,
     required this.category,
+    required this.index,
+    required this.isFirst,
+    required this.isLast,
     required this.onEdit,
     required this.onDelete,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: AppDimensions.paddingS),
-      child: ListTile(
-        leading: const Icon(Icons.drag_handle),
-        title: Text(category.name),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            IconButton(
-              icon: const Icon(Icons.edit, size: 20),
-              onPressed: onEdit,
-              tooltip: 'Bearbeiten',
-            ),
-            IconButton(
-              icon: const Icon(Icons.delete, size: 20, color: AppColors.danger),
-              onPressed: onDelete,
-              tooltip: 'Löschen',
-            ),
-          ],
+    final radius = Radius.circular(IonInsetList.radiusOf(context));
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: BorderRadius.vertical(
+          top: isFirst ? radius : Radius.zero,
+          bottom: isLast ? radius : Radius.zero,
         ),
+        border: isLast
+            ? null
+            : Border(
+                bottom: BorderSide(color: Theme.of(context).dividerColor, width: 0.5),
+              ),
+      ),
+      padding: const EdgeInsets.only(left: 16, right: 8),
+      constraints: const BoxConstraints(minHeight: 52),
+      child: Row(
+        children: [
+          Expanded(child: Text(category.name, style: const TextStyle(fontSize: 16))),
+          IconButton(
+            icon: const Icon(Icons.edit, size: 20, color: AppColors.warning),
+            onPressed: onEdit,
+            tooltip: context.l10n.commonEdit,
+          ),
+          IconButton(
+            icon: const Icon(Icons.delete, size: 20, color: AppColors.danger),
+            onPressed: onDelete,
+            tooltip: context.l10n.commonDelete,
+          ),
+          ReorderableDragStartListener(
+            index: index,
+            child: const Padding(
+              padding: EdgeInsets.all(8),
+              child: Icon(Icons.reorder, color: AppColors.medium),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -343,6 +331,7 @@ class _CategoryTile extends StatelessWidget {
 Future<void> showSongCategoriesSheet(BuildContext context) {
   return showModalBottomSheet(
     context: context,
+    useRootNavigator: true, // IOS_SHELL2: above the tab bar
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
     builder: (context) => const SongCategoriesSheet(),

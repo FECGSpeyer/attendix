@@ -57,12 +57,14 @@ void main() {
     });
 
     group('Repository Integration', () {
-      test('groupRepositoryWithTenantProvider sets tenant', () {
+      test('groupRepositoryWithTenantProvider binds tenant', () {
         expect(
           groupProvidersSource,
-          contains('repo.setTenantId(tenant)'),
-          reason: 'groupRepositoryWithTenantProvider must set tenantId',
+          contains('groupRepositoryForTenantProvider(tenant)'),
+          reason: 'groupRepositoryWithTenantProvider must use a bound '
+              'per-tenant instance',
         );
+        expect(groupProvidersSource, contains('repo.bindTenantId(key.tenantId!)'));
       });
 
       test('groupRepositoryWithTenantProvider watches currentTenantIdProvider',

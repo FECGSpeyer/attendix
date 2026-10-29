@@ -17,10 +17,10 @@ void main() {
 
   group('AttendanceTypeEditPage - Time Input', () {
     test('uses showTimePicker for time selection', () {
-      // Should have a method that calls showTimePicker
+      // Should have a method that calls the (adaptive, IOS_LOOK) time picker
       expect(
         pageSource,
-        contains('showTimePicker'),
+        contains('showAppTimePicker'),
         reason: 'Time selection should use showTimePicker instead of TextFormField',
       );
     });
@@ -37,7 +37,8 @@ void main() {
     test('time section uses tappable widgets, not TextFormField', () {
       // Find the Time Settings section
       final timeSectionMatch = RegExp(
-        r"title:\s*'Zeiten'[^}]*child:\s*Row\([^;]+",
+        // UX_SETTINGS: Beginn/Ende tiles inside "Optionen" (Ionic order)
+        r"title:\s*Text\(context\.l10n\.typeSettingsStart\).*?_pickTime\(isStart: false\)",
         dotAll: true,
       ).firstMatch(pageSource);
 

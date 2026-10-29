@@ -4,6 +4,9 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../data/models/attendance/attendance.dart';
+import '../../../../../l10n/l10n.dart';
+import 'attendance_accordion.dart';
+import '../../../../../shared/widgets/display/ion_badge_text.dart'; // PARITY_R8
 
 /// Deadline status for checklist items
 enum DeadlineStatus { normal, warning, overdue }
@@ -35,43 +38,36 @@ class ChecklistAccordion extends StatelessWidget {
     final totalCount = checklist.length;
     final progress = totalCount > 0 ? completedCount / totalCount : 0.0;
 
-    return Card(
-      margin: const EdgeInsets.symmetric(
-        horizontal: AppDimensions.paddingM,
-        vertical: AppDimensions.paddingXS,
-      ),
-      child: ExpansionTile(
-        leading: const Icon(Icons.checklist, color: AppColors.primary),
+    // IOS_DETAIL: shared accordion (iOS header look, Ionic state reset)
+    return AttendanceAccordion(
+        clipBehavior: Clip.none,
+        // UX_ATT: Ionic header: label + solid `ion-badge slot="end"`
+        // (success when everything is done, else primary).
         title: Row(
           children: [
-            const Text('Checkliste'),
+            Expanded(child: Text(context.l10n.attendanceChecklist)),
             const SizedBox(width: 8),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
               decoration: BoxDecoration(
-                color: progress == 1.0
-                    ? AppColors.success.withValues(alpha: 0.2)
-                    : AppColors.primary.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(12),
+                color: progress == 1.0 ? AppColors.success : AppColors.primary,
+                borderRadius: BorderRadius.circular(10),
               ),
               child: Text(
                 '$completedCount/$totalCount',
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: progress == 1.0 ? AppColors.success : AppColors.primary,
-                ),
+                // PARITY_R8: real bold (700) also on the web
+                style: ionBadgeTextStyle(color: Colors.white, height: null),
               ),
             ),
           ],
         ),
         children: [
           if (checklist.isEmpty)
-            const Padding(
-              padding: EdgeInsets.all(AppDimensions.paddingM),
+            Padding(
+              padding: const EdgeInsets.all(AppDimensions.paddingM),
               child: Text(
-                'Keine To-Dos vorhanden',
-                style: TextStyle(color: AppColors.medium),
+                context.l10n.attendanceFlutterNoTodos,
+                style: const TextStyle(color: AppColors.medium),
               ),
             )
           else
@@ -100,8 +96,7 @@ class ChecklistAccordion extends StatelessWidget {
                       onPressed: (_) => onRemove(index),
                       backgroundColor: AppColors.danger,
                       foregroundColor: Colors.white,
-                      icon: Icons.delete,
-                      label: 'Löschen',
+                      icon: Icons.delete_outline,
                     ),
                   ],
                 ),
@@ -138,27 +133,15 @@ class ChecklistAccordion extends StatelessWidget {
                 ),
               );
             }),
-          const Divider(height: 1),
-          Padding(
-            padding: const EdgeInsets.all(AppDimensions.paddingS),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                TextButton.icon(
-                  onPressed: onAdd,
-                  icon: const Icon(Icons.add, size: 18),
-                  label: const Text('To-Do hinzufügen'),
-                ),
-                TextButton.icon(
-                  onPressed: onRestore,
-                  icon: const Icon(Icons.restore, size: 18),
-                  label: const Text('Wiederherstellen'),
-                ),
-              ],
-            ),
+          // UX_ATT: Ionic "To-Do hinzufügen" row (primary, add-circle icon)
+          ListTile(
+            dense: true,
+            leading: const Icon(Icons.add_circle_outline, color: AppColors.primary),
+            title: Text(context.l10n.attendanceAddTodo, style: const TextStyle(color: AppColors.primary)),
+            onTap: onAdd,
           ),
+          // UX_ATT: "Checkliste zurücksetzen" lives in the header menu (Ionic)
         ],
-      ),
     );
   }
 }

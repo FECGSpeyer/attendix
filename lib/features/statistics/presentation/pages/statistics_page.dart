@@ -1,19 +1,30 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/attendance_type_providers.dart';
 import '../../../../core/providers/organisation_providers.dart';
+import '../../../../core/providers/player_providers.dart'; // UX_SETTINGS
 import '../../../../core/providers/statistics_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/date_helper.dart';
+import '../../../../core/utils/dialog_helper.dart'; // IOS_PAGES3
+import '../../../../core/utils/person_matcher.dart';
 import '../../../../data/models/attendance/attendance.dart';
 import '../../../../data/models/organisation/organisation.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../data/models/tenant/tenant.dart';
+import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../shared/widgets/layout/ionic_ios.dart' show IonIos, IonSheetHeader, ionItemBackground; // IOS_PAGES3
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
+import '../../../../shared/widgets/dialogs/ion_modal.dart' show showIonModal; // PARITY_R5
+import '../../../../shared/widgets/display/ion_badge_text.dart'; // PARITY_R8
 
 /// Statistics Page with Charts
 ///
@@ -25,8 +36,74 @@ import '../../../../data/models/tenant/tenant.dart';
 /// - Age distribution chart
 /// - Average age per instrument chart
 /// - "Diva Index" (unexcused absences) chart
+/// PARITY_R5: Ionic settings `openStats()` presents the StatsPage with
+/// `modalController.create({ component, presentingElement })`: on iOS a
+/// card modal ([showIosCardModal]), in md mode a regular `ion-modal`
+/// ([showIonModal]: full screen on phones, centred card on desktop).
+Future<void> showStatisticsModal(BuildContext context) {
+  final dark = Theme.of(context).brightness == Brightness.dark;
+  if (useIosLook(context)) {
+    return showIosCardModal<void>(
+      context,
+      backgroundColor: dark ? null : AppColors.light,
+      builder: (_) => const StatisticsPage(asModal: true),
+    );
+  }
+  return showIonModal<void>(
+    context,
+    builder: (_) => const StatisticsPage(asModal: true),
+  );
+}
+
+/// Sections of the statistics page below "Zeitraum", in Ionic
+/// stats.page.html order.
+enum StatsSection {
+  overview,
+  trend,
+  statusDistribution,
+  top20,
+  perInstrument,
+  unexcused,
+
+  /// Flutter empty / loading / error state for the Termin-dependent part.
+  noData,
+  members,
+  ageDistribution,
+  avgAgeInstrument,
+  organisation,
+}
+
+/// ASTRA_TEACH_STATS: Ionic shows the attendance overview (with 0 Termine
+/// and 0 %), members, demography and organisation regardless of the period;
+/// only the attendance charts depend on Termine. Without Termine those
+/// charts are replaced by the empty state, the rest keeps Ionic's order.
+/// While the Termine are still loading (or failed), the overview is replaced
+/// by the spinner / error as well, so no misleading "0" flashes.
+List<StatsSection> statsSectionsFor({
+  required bool hasAttendances,
+  bool loaded = true,
+}) =>
+    [
+      if (loaded) StatsSection.overview,
+      if (hasAttendances) ...const [
+        StatsSection.trend,
+        StatsSection.statusDistribution,
+        StatsSection.top20,
+        StatsSection.perInstrument,
+        StatsSection.unexcused,
+      ] else
+        StatsSection.noData,
+      StatsSection.members,
+      StatsSection.ageDistribution,
+      StatsSection.avgAgeInstrument,
+      StatsSection.organisation,
+    ];
+
 class StatisticsPage extends ConsumerStatefulWidget {
-  const StatisticsPage({super.key});
+  const StatisticsPage({super.key, this.asModal = false});
+
+  /// Presented by [showStatisticsModal]: the ✕ closes the modal.
+  final bool asModal;
 
   @override
   ConsumerState<StatisticsPage> createState() => _StatisticsPageState();
@@ -53,451 +130,373 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> {
       }
     }
 
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    // UX_ATT: Ionic opens the Statistik as a modal: light toolbar and page,
+    // title + close (X) at the end, no back button.
     return Scaffold(
+      backgroundColor: dark ? null : AppColors.light,
       appBar: AppBar(
-        title: const Text('Statistiken'),
+        title: Text(context.l10n.statsTitle),
+        automaticallyImplyLeading: false,
+        backgroundColor: dark ? null : AppColors.light,
+        // IOS_PAGES3: iOS → ✕ in a Liquid Glass circle (ion-buttons end)
         actions: [
-          IconButton(
-            icon: const Icon(Icons.date_range),
-            tooltip: 'Zeitraum wählen',
-            onPressed: () => _selectDateRange(context, dateRange),
-          ),
+          ToolbarButtonGroup(children: [
+            IconButton(
+              icon: const Icon(Icons.close),
+              tooltip: context.l10n.commonClose,
+              onPressed: () => widget.asModal
+                  ? Navigator.of(context).pop()
+                  : (context.canPop() ? context.pop() : context.go('/settings')),
+            ),
+          ]),
         ],
       ),
-      body: attendancesAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => Center(child: Text('Fehler: $error')),
-        data: (attendances) {
-          if (attendances.isEmpty) {
-            return const Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.bar_chart, size: 64, color: AppColors.medium),
-                  SizedBox(height: 16),
-                  Text('Keine Daten im ausgewählten Zeitraum'),
-                ],
+      // UX_SETTINGS: sections in Ionic order (stats.page.html); the period
+      // ("📅 Zeitraum") is always visible so it can be changed when empty.
+      body: RefreshIndicator.adaptive(
+        onRefresh: () async {
+          ref.invalidate(filteredAttendancesForStatsProvider);
+          ref.invalidate(activePlayersForStatsProvider);
+          await ref.read(filteredAttendancesForStatsProvider.future);
+        },
+        // IOS_PAGES3: every section is an Ionic `ion-list inset` >
+        // `ion-item-group` (stats.page.scss: white / black groups): iOS
+        // radius 28, md (md-ion-list-inset) radius 16, no shadow.
+        child: Theme(
+          data: Theme.of(context).copyWith(
+            cardTheme: Theme.of(context).cardTheme.copyWith(
+                  color: ionItemBackground(context),
+                  elevation: 0,
+                  clipBehavior: Clip.antiAlias,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(
+                        useIosLook(context) ? IonIos.groupRadius : 16),
+                  ),
+                ),
+          ),
+          child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: EdgeInsets.fromLTRB(AppDimensions.paddingM, AppDimensions.paddingM, AppDimensions.paddingM, scrollEndPadding(context, base: AppDimensions.paddingM)),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildSectionTitle(context.l10n.statsPeriod),
+              const SizedBox(height: AppDimensions.paddingS),
+              _PeriodSection(
+                dateRange: dateRange,
+                onPick: (start, end) =>
+                    ref.read(statisticsDateRangeProvider.notifier).setRange(start, end),
               ),
-            );
-          }
+              const SizedBox(height: AppDimensions.paddingL),
+              // ASTRA_TEACH_STATS: only the Termin-dependent sections are
+              // replaced by the loading / error / empty state; members, age
+              // charts and the organisation are always shown (Ionic
+              // stats.page.html renders them independently of the period).
+              for (final section in statsSectionsFor(
+                hasAttendances:
+                    attendancesAsync.valueOrNull?.isNotEmpty ?? false,
+                loaded: attendancesAsync.hasValue,
+              ))
+                ..._buildSection(context, section, attendancesAsync, statistics),
+            ],
+          ),
+        ),
+        ),
+      ),
+    );
+  }
 
-          return RefreshIndicator(
-            onRefresh: () async {
-              ref.invalidate(filteredAttendancesForStatsProvider);
-              ref.invalidate(activePlayersForStatsProvider);
-              await ref.read(filteredAttendancesForStatsProvider.future);
-            },
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(AppDimensions.paddingM),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Date range info
-                  _DateRangeInfo(dateRange: dateRange),
-                  const SizedBox(height: AppDimensions.paddingM),
+  Widget _buildSectionTitle(String title) => _StatsSectionTitle(title);
 
-                  // Summary cards
-                  _SummaryCards(statistics: statistics),
-                  const SizedBox(height: AppDimensions.paddingL),
+  List<Widget> _titled(String title, Widget child) => [
+        _buildSectionTitle(title),
+        const SizedBox(height: AppDimensions.paddingS),
+        child,
+        const SizedBox(height: AppDimensions.paddingL),
+      ];
 
-                  // Members overview
-                  _buildSectionTitle('Mitglieder-Übersicht'),
-                  const SizedBox(height: AppDimensions.paddingS),
-                  const _MembersOverview(),
-                  const SizedBox(height: AppDimensions.paddingL),
-
-                  // Events per type
-                  _buildSectionTitle('Termine pro Veranstaltungstyp'),
-                  const SizedBox(height: AppDimensions.paddingS),
-                  const _EventTypeOverview(),
-                  const SizedBox(height: AppDimensions.paddingL),
-
-                  // Trend chart
-                  _buildSectionTitle('Anwesenheitsverlauf'),
-                  const SizedBox(height: AppDimensions.paddingS),
-                  const _TrendLineChart(),
-                  const SizedBox(height: AppDimensions.paddingL),
-
-                  // Status distribution
-                  _buildSectionTitle('Statusverteilung'),
-                  const SizedBox(height: AppDimensions.paddingS),
-                  const _StatusPieChart(),
-                  const SizedBox(height: AppDimensions.paddingL),
-
-                  // Instrument bar chart
-                  _buildSectionTitle('Anwesenheit pro Instrument'),
-                  const SizedBox(height: AppDimensions.paddingS),
-                  const _InstrumentBarChart(),
-                  const SizedBox(height: AppDimensions.paddingL),
-
-                  // Top 20 players
-                  _buildSectionTitle('Top 20 - Anwesenheits-Elite 🏆'),
-                  const SizedBox(height: AppDimensions.paddingS),
-                  const _TopPlayersChart(),
-                  const SizedBox(height: AppDimensions.paddingL),
-
-                  // Age distribution
-                  _buildSectionTitle('Altersverteilung 🎂'),
-                  const SizedBox(height: AppDimensions.paddingS),
-                  const _AgeDistributionChart(),
-                  const SizedBox(height: AppDimensions.paddingL),
-
-                  // Average age per instrument
-                  _buildSectionTitle('Durchschnittsalter pro Instrument'),
-                  const SizedBox(height: AppDimensions.paddingS),
-                  const _AvgAgePerInstrumentChart(),
-                  const SizedBox(height: AppDimensions.paddingL),
-
-                  // Diva index
-                  _buildSectionTitle('Unentschuldigte Abwesenheiten'),
-                  const SizedBox(height: AppDimensions.paddingS),
-                  const _DivaIndexChart(),
-                  const SizedBox(height: AppDimensions.paddingL),
-
-                  // Organisation statistics (only shown if tenant has an org)
-                  const _OrganisationStatsSection(),
-
-                  const SizedBox(height: AppDimensions.paddingXL),
-                ],
+  List<Widget> _buildSection(
+    BuildContext context,
+    StatsSection section,
+    AsyncValue<List<Attendance>> attendancesAsync,
+    AttendanceStatistics statistics,
+  ) {
+    final l10n = context.l10n;
+    switch (section) {
+      case StatsSection.overview:
+        return _titled(l10n.statsOverview, _OverviewList(statistics: statistics));
+      case StatsSection.trend:
+        return _titled(l10n.statsTrend, const _TrendLineChart());
+      case StatsSection.statusDistribution:
+        return _titled(l10n.statsStatusDistribution, const _StatusPieChart());
+      case StatsSection.top20:
+        return _titled(l10n.statsTop20, const _TopPlayersChart());
+      case StatsSection.perInstrument:
+        return _titled(l10n.statsPerInstrument, const _InstrumentBarChart());
+      case StatsSection.unexcused:
+        return _titled(l10n.statsUnexcused, const _DivaIndexChart());
+      case StatsSection.noData:
+        return [
+          Padding(
+            padding: const EdgeInsets.all(AppDimensions.paddingXL),
+            child: Center(
+              child: attendancesAsync.when(
+                loading: () => const AppSpinner(),
+                error: (error, stack) => Text(l10n.attendanceFlutterErrorWith(
+                    friendlyErrorMessage(error))),
+                data: (_) => Column(
+                  children: [
+                    const Icon(Icons.bar_chart,
+                        size: 64, color: AppColors.medium),
+                    const SizedBox(height: 16),
+                    Text(l10n.statsFlutterNoDataInPeriod),
+                  ],
+                ),
               ),
             ),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _buildSectionTitle(String title) {
-    return Text(
-      title,
-      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
           ),
-    );
-  }
-
-  Future<void> _selectDateRange(
-    BuildContext context,
-    StatisticsDateRange currentRange,
-  ) async {
-    final picked = await showDateRangePicker(
-      context: context,
-      firstDate: DateTime(2020),
-      lastDate: DateTime.now(),
-      initialDateRange: DateTimeRange(
-        start: currentRange.start,
-        end: currentRange.end,
-      ),
-      locale: const Locale('de', 'DE'),
-      helpText: 'Zeitraum für Statistiken wählen',
-      cancelText: 'Abbrechen',
-      confirmText: 'Anwenden',
-    );
-
-    if (picked != null) {
-      ref.read(statisticsDateRangeProvider.notifier).setFromDateTimeRange(picked);
+          const SizedBox(height: AppDimensions.paddingL),
+        ];
+      case StatsSection.members:
+        return _titled(l10n.statsMembers, const _MembersOverview());
+      case StatsSection.ageDistribution:
+        return _titled(l10n.statsAgeDistribution, const _AgeDistributionChart());
+      case StatsSection.avgAgeInstrument:
+        return _titled(
+            l10n.statsAvgAgeInstrument, const _AvgAgePerInstrumentChart());
+      case StatsSection.organisation:
+        // Organisation statistics (only shown if tenant has an org)
+        return const [
+          _OrganisationStatsSection(),
+          SizedBox(height: AppDimensions.paddingXL),
+        ];
     }
   }
+
 }
 
-class _DateRangeInfo extends StatelessWidget {
-  final StatisticsDateRange dateRange;
+/// Ionic `ion-list-header` with plain text (no ion-label): iOS 22pt,
+/// md 14pt; stats.page.scss sets font-weight 600 (IOS_PAGES3).
+class _StatsSectionTitle extends StatelessWidget {
+  const _StatsSectionTitle(this.title);
 
-  const _DateRangeInfo({required this.dateRange});
+  final String title;
 
   @override
   Widget build(BuildContext context) {
+    final ios = useIosLook(context);
+    return Padding(
+      padding: const EdgeInsets.only(left: 4),
+      child: Text(
+        title,
+        style: TextStyle(fontSize: ios ? 22 : 14, fontWeight: FontWeight.w600),
+      ),
+    );
+  }
+}
+
+/// IOS_PAGES3: rows of an Ionic item group separated by inset hairlines.
+List<Widget> _withInsetDividers(List<Widget> rows) => [
+      for (var i = 0; i < rows.length; i++) ...[
+        if (i > 0) const Divider(height: 0.5, thickness: 0.5, indent: 16),
+        rows[i],
+      ],
+    ];
+
+/// Ionic "📅 Zeitraum": items "Von" / "Bis" with a date button each.
+class _PeriodSection extends StatelessWidget {
+  final StatisticsDateRange dateRange;
+  final void Function(DateTime start, DateTime end) onPick;
+
+  const _PeriodSection({required this.dateRange, required this.onPick});
+
+  Future<void> _pick(BuildContext context, {required bool start}) async {
+    final initial = start ? dateRange.start : dateRange.end;
+    // Von ≤ Bis: "Von" ends at the current "Bis", "Bis" starts at "Von".
+    final maxDate = DateTime.now().add(const Duration(days: 365 * 2));
+    final upper = dateRange.end.isAfter(maxDate) ? dateRange.end : maxDate;
+    final lower = DateTime(2000).isAfter(dateRange.start)
+        ? dateRange.start
+        : DateTime(2000);
+    final picked = await showAppDatePicker(
+      context: context,
+      initialDate: initial,
+      firstDate: start ? lower : dateRange.start,
+      lastDate: start ? dateRange.end : upper,
+      locale: Locale(currentLanguage()),
+    );
+    if (picked == null) return;
+    start ? onPick(picked, dateRange.end) : onPick(dateRange.start, picked);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // UX_ATT: `ion-datetime-button`: grey rounded value button
+    Widget item(String label, DateTime date, bool start) => ListTile(
+          title: Text(label),
+          trailing: _IonDatetimeButton(
+            label: DateHelper.getShortDate(date),
+            onTap: () => _pick(context, start: start),
+          ),
+        );
     return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(AppDimensions.paddingM),
-        child: Row(
-          children: [
-            const Icon(Icons.calendar_today, color: AppColors.primary),
-            const SizedBox(width: AppDimensions.paddingM),
-            Text(
-              '${DateHelper.getShortDate(dateRange.start)} - ${DateHelper.getShortDate(dateRange.end)}',
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    fontWeight: FontWeight.w500,
-                  ),
-            ),
-          ],
+      margin: EdgeInsets.zero,
+      child: Column(
+        children: [
+          item(context.l10n.dutyFrom, dateRange.start, true),
+          const Divider(height: 0.5, thickness: 0.5, indent: 16),
+          item(context.l10n.dutyTo, dateRange.end, false),
+        ],
+      ),
+    );
+  }
+}
+
+/// UX_ATT: Ionic `ion-badge` (iOS: radius 10, 3/8 padding, 13 px bold).
+class _IonBadge extends StatelessWidget {
+  const _IonBadge(this.text, {this.color = AppColors.primary});
+
+  final String text;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(10)),
+      child: Text(
+        text,
+        // PARITY_R8: real bold (700) also on the web
+        style: ionBadgeTextStyle(
+          color: color == AppColors.warning ? Colors.black : Colors.white,
+          height: null,
         ),
       ),
     );
   }
 }
 
-class _SummaryCards extends StatelessWidget {
-  final AttendanceStatistics statistics;
+/// UX_ATT: Ionic `ion-datetime-button`.
+class _IonDatetimeButton extends StatelessWidget {
+  const _IonDatetimeButton({required this.label, required this.onTap});
 
-  const _SummaryCards({required this.statistics});
+  final String label;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    final avgColor = statistics.averagePercentage >= 80
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    return Material(
+      color: dark ? const Color(0xFF2C2C2E) : const Color(0xFFEDEEF0),
+      borderRadius: BorderRadius.circular(8),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(8),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          child: Text(label, style: const TextStyle(fontSize: 17)),
+        ),
+      ),
+    );
+  }
+}
+
+/// UX_ATT: Ionic "Übersicht" list: Termine im Zeitraum, one row per Termintyp
+/// (type order, only types with Terminen), Ø Anwesenheit (≥70 success,
+/// ≥50 warning, else danger), Beste / Schlechteste with date and %.
+class _OverviewList extends ConsumerWidget {
+  final AttendanceStatistics statistics;
+
+  const _OverviewList({required this.statistics});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final attendances = ref.watch(filteredAttendancesForStatsProvider).valueOrNull ?? const <Attendance>[];
+    final types = ref.watch(attendanceTypesProvider).valueOrNull ?? const <AttendanceType>[];
+    final avg = statistics.averagePercentage;
+    final avgColor = avg >= 70
         ? AppColors.success
-        : statistics.averagePercentage >= 50
+        : avg >= 50
             ? AppColors.warning
             : AppColors.danger;
 
-    return Column(
-      children: [
-        Row(
-          children: [
-            Expanded(
-              child: _StatCard(
-                title: 'Ø Anwesenheit',
-                value: '${statistics.averagePercentage}%',
-                color: avgColor,
-                icon: Icons.trending_up,
-              ),
-            ),
-            const SizedBox(width: AppDimensions.paddingM),
-            Expanded(
-              child: _StatCard(
-                title: 'Termine',
-                value: '${statistics.totalAttendances}',
-                color: AppColors.primary,
-                icon: Icons.event,
-              ),
-            ),
-          ],
-        ),
-        if (statistics.bestAttendance != null ||
-            statistics.worstAttendance != null) ...[
-          const SizedBox(height: AppDimensions.paddingM),
-          Row(
-            children: [
-              Expanded(
-                child: _StatCard(
-                  title: 'Beste Probe',
-                  value: '${statistics.bestAttendance?.percentage?.round() ?? 0}%',
-                  color: AppColors.success,
-                  icon: Icons.emoji_events,
-                  subtitle: statistics.bestAttendance?.formattedDate,
-                ),
-              ),
-              const SizedBox(width: AppDimensions.paddingM),
-              Expanded(
-                child: _StatCard(
-                  title: 'Schlechteste Probe',
-                  value: '${statistics.worstAttendance?.percentage?.round() ?? 0}%',
-                  color: AppColors.danger,
-                  icon: Icons.trending_down,
-                  subtitle: statistics.worstAttendance?.formattedDate,
-                ),
-              ),
-            ],
+    final rows = <Widget>[
+      ListTile(
+        title: Text(context.l10n.statsEventsInPeriod),
+        trailing: _IonBadge('${attendances.length}'),
+      ),
+      for (final type in types)
+        if (attendances.where((a) => a.typeId == type.id).isNotEmpty)
+          ListTile(
+            title: Text(type.name),
+            trailing: _IonBadge('${attendances.where((a) => a.typeId == type.id).length}'),
           ),
-        ],
-      ],
-    );
-  }
-}
-
-class _StatCard extends StatelessWidget {
-  final String title;
-  final String value;
-  final Color color;
-  final IconData icon;
-  final String? subtitle;
-
-  const _StatCard({
-    required this.title,
-    required this.value,
-    required this.color,
-    required this.icon,
-    this.subtitle,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(AppDimensions.paddingM),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(icon, color: color, size: 20),
-                const SizedBox(width: 8),
-                Text(
-                  value,
-                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        color: color,
-                        fontWeight: FontWeight.bold,
-                      ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 4),
-            Text(
-              title,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: AppColors.medium,
-                  ),
-            ),
-            if (subtitle != null) ...[
-              const SizedBox(height: 2),
-              Text(
-                subtitle!,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: AppColors.medium,
-                      fontSize: 10,
-                    ),
-              ),
-            ],
-          ],
+      ListTile(
+        title: Text(context.l10n.statsAvgAttendance),
+        trailing: _IonBadge('$avg%', color: avgColor),
+      ),
+      if (statistics.bestAttendance != null)
+        ListTile(
+          title: Text(context.l10n.statsBest,
+              style: const TextStyle(fontSize: 14, color: AppColors.medium)),
+          subtitle: Text(statistics.bestAttendance!.formattedDate,
+              style: TextStyle(fontSize: 17, color: Theme.of(context).colorScheme.onSurface)),
+          trailing: _IonBadge('${statistics.bestAttendance!.percentage?.round() ?? 0}%',
+              color: AppColors.success),
         ),
+      if (statistics.worstAttendance != null)
+        ListTile(
+          title: Text(context.l10n.statsWorst,
+              style: const TextStyle(fontSize: 14, color: AppColors.medium)),
+          subtitle: Text(statistics.worstAttendance!.formattedDate,
+              style: TextStyle(fontSize: 17, color: Theme.of(context).colorScheme.onSurface)),
+          trailing: _IonBadge('${statistics.worstAttendance!.percentage?.round() ?? 0}%',
+              color: AppColors.danger),
+        ),
+    ];
+    return Card(
+      margin: EdgeInsets.zero,
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        children: [
+          for (var i = 0; i < rows.length; i++) ...[
+            if (i > 0) const Divider(height: 0.5, thickness: 0.5, indent: 16),
+            rows[i],
+          ],
+        ],
       ),
     );
   }
 }
 
+/// Ionic "👥 Mitglieder": Aktive Mitglieder / Pausierend / Ausgetreten / Gesamt.
 class _MembersOverview extends ConsumerWidget {
   const _MembersOverview();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final playersAsync = ref.watch(activePlayersForStatsProvider);
+    final current = (ref.watch(playersProvider).valueOrNull ?? const <Person>[])
+        .where((p) => p.left == null || p.left!.isEmpty)
+        .toList();
+    final left = ref.watch(archivedPlayersProvider).valueOrNull ?? const <Person>[];
+    final active = current.where((p) => !p.paused).length;
+    final paused = current.where((p) => p.paused).length;
 
-    return playersAsync.when(
-      loading: () => const Card(
-        child: Padding(
-          padding: EdgeInsets.all(AppDimensions.paddingM),
-          child: Center(child: CircularProgressIndicator()),
-        ),
-      ),
-      error: (_, __) => const SizedBox.shrink(),
-      data: (players) {
-        if (players.isEmpty) return const _EmptyChartPlaceholder();
-
-        // Count per group
-        final Map<String, int> groupCounts = {};
-        for (final p in players) {
-          final group = p.groupName ?? 'Ohne Gruppe';
-          groupCounts[group] = (groupCounts[group] ?? 0) + 1;
-        }
-        final sorted = groupCounts.entries.toList()
-          ..sort((a, b) => b.value.compareTo(a.value));
-
-        return Card(
-          child: Padding(
-            padding: const EdgeInsets.all(AppDimensions.paddingM),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    const Icon(Icons.people, color: AppColors.primary, size: 20),
-                    const SizedBox(width: 8),
-                    Text(
-                      '${players.length} aktive Mitglieder',
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                    ),
-                  ],
-                ),
-                if (sorted.isNotEmpty) ...[
-                  const SizedBox(height: AppDimensions.paddingS),
-                  Wrap(
-                    spacing: 6,
-                    runSpacing: 4,
-                    children: sorted.map((e) {
-                      return Chip(
-                        label: Text('${e.key} (${e.value})'),
-                        visualDensity: VisualDensity.compact,
-                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      );
-                    }).toList(),
-                  ),
-                ],
-              ],
-            ),
-          ),
+    Widget row(String label, int count, Color color, {bool bold = false}) => ListTile(
+          title: Text(label, style: bold ? const TextStyle(fontWeight: FontWeight.bold) : null),
+          trailing: _IonBadge('$count', color: color),
         );
-      },
-    );
-  }
-}
-
-class _EventTypeOverview extends ConsumerWidget {
-  const _EventTypeOverview();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final attendancesAsync = ref.watch(filteredAttendancesForStatsProvider);
-    final typesAsync = ref.watch(attendanceTypesProvider);
-
-    final attendances = attendancesAsync.valueOrNull ?? [];
-    final types = typesAsync.valueOrNull ?? [];
-
-    if (attendances.isEmpty) return const _EmptyChartPlaceholder();
-
-    // Group by typeId
-    final Map<String, int> typeCounts = {};
-    for (final a in attendances) {
-      final typeId = a.typeId;
-      if (typeId != null) {
-        typeCounts[typeId] = (typeCounts[typeId] ?? 0) + 1;
-      }
-    }
-
-    if (typeCounts.isEmpty) return const _EmptyChartPlaceholder();
-
-    // Map typeId to name
-    final typeNameMap = {for (final t in types) if (t.id != null) t.id!: t.name};
-    final sorted = typeCounts.entries.toList()
-      ..sort((a, b) => b.value.compareTo(a.value));
 
     return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(AppDimensions.paddingM),
-        child: Column(
-          children: sorted.map((e) {
-            final name = typeNameMap[e.key] ?? 'Unbekannt';
-            final count = e.value;
-            final fraction = count / attendances.length;
-            return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 3),
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: 100,
-                    child: Text(
-                      name,
-                      style: Theme.of(context).textTheme.bodySmall,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: LinearProgressIndicator(
-                      value: fraction,
-                      backgroundColor: AppColors.light,
-                      color: AppColors.primary,
-                      minHeight: 14,
-                      borderRadius: BorderRadius.circular(7),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  SizedBox(
-                    width: 24,
-                    child: Text(
-                      '$count',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                      textAlign: TextAlign.end,
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }).toList(),
-        ),
+      margin: EdgeInsets.zero,
+      child: Column(
+        children: _withInsetDividers([
+          row(context.l10n.statsActiveMembers, active, AppColors.success),
+          row(context.l10n.statsPausing, paused, AppColors.warning),
+          row(context.l10n.statsLeft, left.length, AppColors.medium),
+          row(context.l10n.churchOverviewTotal, current.length + left.length, AppColors.primary, bold: true),
+        ]),
       ),
     );
   }
@@ -675,10 +674,10 @@ class _StatusPieChart extends ConsumerWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _LegendItem(color: AttendanceStatus.present.color, label: 'Anwesend'),
-                    _LegendItem(color: AttendanceStatus.excused.color, label: 'Entschuldigt'),
-                    _LegendItem(color: AttendanceStatus.late.color, label: 'Verspätet'),
-                    _LegendItem(color: AttendanceStatus.absent.color, label: 'Abwesend'),
+                    _LegendItem(color: AttendanceStatus.present.color, label: context.l10n.commonStatusPresent),
+                    _LegendItem(color: AttendanceStatus.excused.color, label: context.l10n.commonStatusExcused),
+                    _LegendItem(color: AttendanceStatus.late.color, label: context.l10n.commonStatusLateShort),
+                    _LegendItem(color: AttendanceStatus.absent.color, label: context.l10n.commonStatusAbsent),
                   ],
                 ),
               ),
@@ -912,7 +911,7 @@ class _AgeDistributionChart extends ConsumerWidget {
     final data = ref.watch(ageDistributionProvider);
 
     if (data.isEmpty) {
-      return const _EmptyChartPlaceholder(message: 'Keine Geburtsdaten vorhanden');
+      return _EmptyChartPlaceholder(message: context.l10n.statsFlutterNoBirthdays);
     }
 
     // BL-006: Use fold instead of reduce for safety
@@ -932,7 +931,7 @@ class _AgeDistributionChart extends ConsumerWidget {
                 touchTooltipData: BarTouchTooltipData(
                   getTooltipItem: (group, groupIndex, rod, rodIndex) {
                     return BarTooltipItem(
-                      '${data[groupIndex].label} Jahre\n${rod.toY.toInt()} Personen',
+                      '${data[groupIndex].label} ${context.l10n.statsYears}\n${context.l10n.commonPersons(rod.toY.toInt())}',
                       const TextStyle(color: Colors.white, fontSize: 12),
                     );
                   },
@@ -1003,7 +1002,7 @@ class _AvgAgePerInstrumentChart extends ConsumerWidget {
     final data = ref.watch(avgAgePerInstrumentProvider);
 
     if (data.isEmpty) {
-      return const _EmptyChartPlaceholder(message: 'Keine Geburtsdaten vorhanden');
+      return _EmptyChartPlaceholder(message: context.l10n.statsFlutterNoBirthdays);
     }
 
     // BL-006: Use fold instead of reduce for safety
@@ -1024,7 +1023,7 @@ class _AvgAgePerInstrumentChart extends ConsumerWidget {
                 touchTooltipData: BarTouchTooltipData(
                   getTooltipItem: (group, groupIndex, rod, rodIndex) {
                     return BarTooltipItem(
-                      '${data[groupIndex].name}\nØ ${rod.toY.round()} Jahre',
+                      '${data[groupIndex].name}\nØ ${rod.toY.round()} ${context.l10n.statsYears}',
                       const TextStyle(color: Colors.white, fontSize: 12),
                     );
                   },
@@ -1095,7 +1094,7 @@ class _DivaIndexChart extends ConsumerWidget {
     final data = ref.watch(divaIndexChartDataProvider);
 
     if (data.isEmpty) {
-      return const _EmptyChartPlaceholder(message: 'Keine unentschuldigten Abwesenheiten');
+      return _EmptyChartPlaceholder(message: context.l10n.statsFlutterNoUnexcused);
     }
 
     // BL-006: Use fold instead of reduce for safety
@@ -1116,7 +1115,7 @@ class _DivaIndexChart extends ConsumerWidget {
                 touchTooltipData: BarTouchTooltipData(
                   getTooltipItem: (group, groupIndex, rod, rodIndex) {
                     return BarTooltipItem(
-                      '${data[groupIndex].name}\n${rod.toY.toInt()} Fehlzeiten',
+                      '${data[groupIndex].name}\n${context.l10n.statsFlutterAbsencesCount(rod.toY.toInt())}',
                       const TextStyle(color: Colors.white, fontSize: 12),
                     );
                   },
@@ -1181,9 +1180,9 @@ class _DivaIndexChart extends ConsumerWidget {
 }
 
 class _EmptyChartPlaceholder extends StatelessWidget {
-  final String message;
+  final String? message;
 
-  const _EmptyChartPlaceholder({this.message = 'Keine Daten verfügbar'});
+  const _EmptyChartPlaceholder({this.message});
 
   @override
   Widget build(BuildContext context) {
@@ -1197,7 +1196,7 @@ class _EmptyChartPlaceholder extends StatelessWidget {
             const Icon(Icons.show_chart, size: 32, color: AppColors.medium),
             const SizedBox(height: 8),
             Text(
-              message,
+              message ?? context.l10n.statsFlutterNoData,
               style: TextStyle(color: AppColors.medium),
             ),
           ],
@@ -1219,8 +1218,8 @@ class _OrganisationStatsSection extends ConsumerStatefulWidget {
 
 class _OrganisationStatsSectionState
     extends ConsumerState<_OrganisationStatsSection> {
+  /// Ionic `selectedInstances`: empty = all instances.
   Set<int> _selectedTenantIds = {};
-  bool _filterInitialized = false;
 
   @override
   Widget build(BuildContext context) {
@@ -1236,104 +1235,122 @@ class _OrganisationStatsSectionState
     );
   }
 
+  /// Ionic `ion-select multiple interface="modal"` "Instanzen filtern".
+  Future<void> _pickTenants(List<Tenant> tenants) async {
+    final selection = {..._selectedTenantIds};
+    final result = await showAppDialog<Set<int>>(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setLocal) => AppAlertDialog(
+          title: Text(ctx.l10n.statsFilterTenants),
+          content: SizedBox(
+            width: double.maxFinite,
+            child: ListView(
+              shrinkWrap: true,
+              children: [
+                for (final t in tenants)
+                  if (t.id != null)
+                    CheckboxListTile(
+                      title: Text(t.longName),
+                      value: selection.contains(t.id),
+                      onChanged: (v) => setLocal(() {
+                        v == true ? selection.add(t.id!) : selection.remove(t.id);
+                      }),
+                    ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: Text(ctx.l10n.commonCancel),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.pop(ctx, selection),
+              child: Text(ctx.l10n.commonOk),
+            ),
+          ],
+        ),
+      ),
+    );
+    if (result != null && mounted) setState(() => _selectedTenantIds = result);
+  }
+
   Widget _buildOrgSection(Organisation organisation) {
     final tenantsAsync =
         ref.watch(organisationTenantsProvider(organisation.id!));
 
     return tenantsAsync.when(
-      loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () => const Center(child: AppSpinner()),
       error: (_, __) => const SizedBox.shrink(),
       data: (tenants) {
-        // Initialize filter with all tenants selected
-        if (!_filterInitialized && tenants.isNotEmpty) {
-          _selectedTenantIds =
-              tenants.map((t) => t.id!).whereType<int>().toSet();
-          _filterInitialized = true;
-        }
-
-        final filteredTenants = tenants
-            .where((t) => t.id != null && _selectedTenantIds.contains(t.id))
+        final l10n = context.l10n;
+        // IOS_PAGES3: load all persons once (stable family key = the
+        // provider's tenant list) and filter locally like Ionic
+        // `filterInstances()`.
+        final personsAsync = ref.watch(organisationPersonsProvider(tenants));
+        final selected = _selectedTenantIds;
+        final persons = (personsAsync.valueOrNull ?? const <Person>[])
+            .where((p) => selected.isEmpty || selected.contains(p.tenantId))
             .toList();
-
-        final personsAsync =
-            ref.watch(organisationPersonsProvider(filteredTenants));
+        final uniquePersons = _deduplicatePersons(persons, tenants);
+        final selectedNames = [
+          for (final t in tenants)
+            if (selected.contains(t.id)) t.longName,
+        ].join(', ');
 
         return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Divider(height: 32),
-            Text(
-              'Organisation: ${organisation.name}',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-            ),
+            // UX_ATT: Ionic list header "🏢 {name}"
+            _StatsSectionTitle('🏢 ${organisation.name}'),
             const SizedBox(height: AppDimensions.paddingS),
-
-            // Tenant filter chips
-            Wrap(
-              spacing: AppDimensions.paddingS,
-              runSpacing: AppDimensions.paddingXS,
-              children: tenants.map((t) {
-                final isSelected = _selectedTenantIds.contains(t.id);
-                return FilterChip(
-                  label: Text(t.shortName),
-                  selected: isSelected,
-                  onSelected: (selected) {
-                    setState(() {
-                      if (selected) {
-                        _selectedTenantIds.add(t.id!);
-                      } else if (_selectedTenantIds.length > 1) {
-                        _selectedTenantIds.remove(t.id);
-                      }
-                    });
-                  },
-                );
-              }).toList(),
-            ),
-            const SizedBox(height: AppDimensions.paddingS),
-            Text(
-              _selectedTenantIds.length == tenants.length
-                  ? 'Alle (${tenants.length})'
-                  : '${_selectedTenantIds.length} von ${tenants.length} ausgewählt',
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: AppColors.medium,
-                  ),
-            ),
-            const SizedBox(height: AppDimensions.paddingM),
-
-            // Persons count + modal
-            personsAsync.when(
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (e, _) => Text('Fehler: $e'),
-              data: (persons) {
-                final uniquePersons =
-                    _deduplicatePersons(persons, filteredTenants);
-
-                return Card(
-                  child: ListTile(
-                    leading: const Icon(Icons.people, color: AppColors.primary),
-                    title: const Text('Personen über alle Instanzen'),
-                    trailing: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: AppColors.primary,
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Text(
-                        '${uniquePersons.length}',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+            Card(
+              margin: EdgeInsets.zero,
+              child: Column(
+                children: _withInsetDividers([
+                  ListTile(
+                    title: Text(l10n.statsFilterTenants),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (selectedNames.isNotEmpty)
+                          ConstrainedBox(
+                            constraints: BoxConstraints(
+                              maxWidth: MediaQuery.sizeOf(context).width * 0.4,
+                            ),
+                            child: Text(
+                              selectedNames,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        const SizedBox(width: 4),
+                        const IonSelectIcon(),
+                      ],
                     ),
-                    onTap: () =>
-                        _showPersonsModal(uniquePersons, filteredTenants),
+                    onTap: () => _pickTenants(tenants),
                   ),
-                );
-              },
+                  ListTile(
+                    title: Text(l10n.statsTenants),
+                    trailing: _IonBadge(selected.isEmpty
+                        ? l10n.statsAllCount(tenants.length)
+                        : '${selected.length}'),
+                    onTap: () => DialogHelper.showAlert(
+                      context,
+                      title: l10n.statsOrgTenants,
+                      message: tenants.map((t) => t.longName).join(', '),
+                    ),
+                  ),
+                  ListTile(
+                    title: Text(l10n.statsPersonsAllTenants),
+                    trailing: personsAsync.isLoading && !personsAsync.hasValue
+                        ? const SizedBox(width: 18, height: 18, child: AppSpinner(strokeWidth: 2))
+                        : _IonBadge('${uniquePersons.length}'),
+                    onTap: () => _showPersonsModal(uniquePersons),
+                  ),
+                ]),
+              ),
             ),
           ],
         );
@@ -1341,44 +1358,36 @@ class _OrganisationStatsSectionState
     );
   }
 
-  /// De-duplicate persons across tenants
-  /// Matches by appId (if exists) or by firstName+lastName+birthday
+  /// De-duplicate persons across tenants (Ionic getOrganizationStats):
+  /// key is global_person_id -> appId -> normalized name + birthday.
   List<_UniqueOrgPerson> _deduplicatePersons(
       List<Person> allPersons, List<Tenant> tenants) {
     final tenantMap = {for (final t in tenants) t.id: t};
-    final byAppId = <String, _UniqueOrgPerson>{};
-    final byNameBday = <String, _UniqueOrgPerson>{};
+    final byKey = <String, _UniqueOrgPerson>{};
 
     for (final person in allPersons) {
+      // Ionic persons modal: one `<p>` per instance with its long name.
       final tenantName =
-          tenantMap[person.tenantId]?.shortName ?? 'Unbekannt';
-
-      if (person.appId != null && person.appId!.isNotEmpty) {
-        final existing = byAppId[person.appId!];
-        if (existing != null) {
-          existing.tenantNames.add(tenantName);
-        } else {
-          byAppId[person.appId!] = _UniqueOrgPerson(
-            person: person,
-            tenantNames: {tenantName},
-          );
-        }
+          tenantMap[person.tenantId]?.longName ?? context.l10n.commonUnknown;
+      final key = personIdentityKey(
+        globalPersonId: person.globalPersonId,
+        appId: person.appId,
+        firstName: person.firstName,
+        lastName: person.lastName,
+        birthday: person.birthday,
+      );
+      final existing = byKey[key];
+      if (existing != null) {
+        existing.tenantNames.add(tenantName);
       } else {
-        final key =
-            '${person.firstName.toLowerCase()}|${person.lastName.toLowerCase()}|${person.birthday ?? ''}';
-        final existing = byNameBday[key];
-        if (existing != null) {
-          existing.tenantNames.add(tenantName);
-        } else {
-          byNameBday[key] = _UniqueOrgPerson(
-            person: person,
-            tenantNames: {tenantName},
-          );
-        }
+        byKey[key] = _UniqueOrgPerson(
+          person: person,
+          tenantNames: {tenantName},
+        );
       }
     }
 
-    final all = [...byAppId.values, ...byNameBday.values];
+    final all = byKey.values.toList();
     // Sort: most tenants first, then by name
     all.sort((a, b) {
       final cmp = b.tenantNames.length.compareTo(a.tenantNames.length);
@@ -1388,77 +1397,52 @@ class _OrganisationStatsSectionState
     return all;
   }
 
-  void _showPersonsModal(
-      List<_UniqueOrgPerson> persons, List<Tenant> tenants) {
+  /// Ionic persons modal (sheet, breakpoint 1): toolbar "Personen (n)",
+  /// inset list with the name, one line per instance and a badge with the
+  /// number of instances.
+  void _showPersonsModal(List<_UniqueOrgPerson> persons) {
     showModalBottomSheet(
       context: context,
+      useRootNavigator: true, // IOS_SHELL2: above the tab bar
       isScrollControlled: true,
-      builder: (context) => DraggableScrollableSheet(
-        initialChildSize: 0.7,
-        minChildSize: 0.4,
-        maxChildSize: 0.95,
-        expand: false,
-        builder: (context, scrollController) => SafeArea(
-          child: Column(
-            children: [
-              ListTile(
-                title: Text(
-                  'Personen (${persons.length})',
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-                subtitle: Text(
-                    '${tenants.length} Instanzen'),
-                trailing: IconButton(
-                  icon: const Icon(Icons.close),
-                  onPressed: () => Navigator.pop(context),
-                ),
-              ),
-              const Divider(),
-              Expanded(
-                child: ListView.builder(
-                  controller: scrollController,
-                  itemCount: persons.length,
-                  itemBuilder: (context, index) {
-                    final p = persons[index];
-                    return ListTile(
-                      leading: CircleAvatar(
-                        backgroundColor:
-                            AppColors.primary.withValues(alpha: 0.1),
-                        child: Text(
-                          p.person.initials,
-                          style: const TextStyle(
-                            color: AppColors.primary,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 12,
-                          ),
+      useSafeArea: true,
+      builder: (context) => FractionallySizedBox(
+        heightFactor: 1,
+        child: Column(
+          children: [
+            IonSheetHeader(title: context.l10n.statsPersonsCount(persons.length)),
+            Expanded(
+              child: ColoredBox(
+                color: Theme.of(context).scaffoldBackgroundColor,
+                child: ListView(
+                  padding: const EdgeInsets.all(AppDimensions.paddingM),
+                  children: [
+                    if (persons.isNotEmpty)
+                      Card(
+                        margin: EdgeInsets.zero,
+                        color: ionItemBackground(context),
+                        elevation: 0,
+                        clipBehavior: Clip.antiAlias,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                              useIosLook(context) ? IonIos.listRadius : 16),
+                        ),
+                        child: Column(
+                          children: _withInsetDividers([
+                            for (final p in persons)
+                              ListTile(
+                                title: Text(p.person.fullName),
+                                subtitle: Text(p.tenantNames.join('\n')),
+                                trailing: _IonBadge('${p.tenantNames.length}'),
+                              ),
+                          ]),
                         ),
                       ),
-                      title: Text(p.person.fullName),
-                      subtitle: Text(p.tenantNames.join(', ')),
-                      trailing: p.tenantNames.length > 1
-                          ? Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 2),
-                              decoration: BoxDecoration(
-                                color: AppColors.primary.withValues(alpha: 0.1),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Text(
-                                '${p.tenantNames.length}',
-                                style: const TextStyle(
-                                  color: AppColors.primary,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            )
-                          : null,
-                    );
-                  },
+                  ],
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

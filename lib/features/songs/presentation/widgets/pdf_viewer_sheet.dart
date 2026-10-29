@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:pdfx/pdfx.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Bottom sheet for viewing PDF files in-app
 class PdfViewerSheet extends StatefulWidget {
@@ -60,7 +64,7 @@ class _PdfViewerSheetState extends State<PdfViewerSheet> {
     } catch (e) {
       if (mounted) {
         setState(() {
-          _error = e.toString();
+          _error = friendlyErrorMessage(e);
           _isLoading = false;
         });
       }
@@ -144,7 +148,7 @@ class _PdfViewerSheetState extends State<PdfViewerSheet> {
                       IconButton(
                         icon: const Icon(Icons.fullscreen),
                         onPressed: _openFullscreen,
-                        tooltip: 'Vollbild',
+                        tooltip: context.l10n.songsFlutterFullscreen,
                       ),
                     IconButton(
                       icon: const Icon(Icons.close),
@@ -170,13 +174,13 @@ class _PdfViewerSheetState extends State<PdfViewerSheet> {
 
   Widget _buildContent() {
     if (_isLoading) {
-      return const Center(
+      return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CircularProgressIndicator(),
-            SizedBox(height: AppDimensions.paddingM),
-            Text('PDF wird geladen...'),
+            const AppSpinner(),
+            const SizedBox(height: AppDimensions.paddingM),
+            Text(context.l10n.songsFlutterPdfLoading),
           ],
         ),
       );
@@ -192,7 +196,7 @@ class _PdfViewerSheetState extends State<PdfViewerSheet> {
               const Icon(Icons.error_outline, size: 64, color: AppColors.danger),
               const SizedBox(height: AppDimensions.paddingM),
               Text(
-                'PDF konnte nicht geladen werden',
+                context.l10n.songsFlutterPdfLoadFailed,
                 style: Theme.of(context).textTheme.titleMedium,
                 textAlign: TextAlign.center,
               ),
@@ -212,7 +216,18 @@ class _PdfViewerSheetState extends State<PdfViewerSheet> {
                   _loadPdf();
                 },
                 icon: const Icon(Icons.refresh),
-                label: const Text('Erneut versuchen'),
+                label: IonButtonLabel(context.l10n.messagesRetry),
+              ),
+              // Fallback when the in-app viewer is unavailable (e.g. pdf.js
+              // blocked on web): open the file in the browser / system viewer.
+              const SizedBox(height: AppDimensions.paddingS),
+              TextButton.icon(
+                onPressed: () => launchUrl(
+                  Uri.parse(widget.url),
+                  mode: LaunchMode.externalApplication,
+                ),
+                icon: const Icon(Icons.open_in_new),
+                label: IonButtonLabel(context.l10n.coreFlutterOpenExternally),
               ),
             ],
           ),
@@ -228,13 +243,13 @@ class _PdfViewerSheetState extends State<PdfViewerSheet> {
       builders: PdfViewPinchBuilders<DefaultBuilderOptions>(
         options: const DefaultBuilderOptions(),
         documentLoaderBuilder: (_) => const Center(
-          child: CircularProgressIndicator(),
+          child: AppSpinner(),
         ),
         pageLoaderBuilder: (_) => const Center(
-          child: CircularProgressIndicator(),
+          child: AppSpinner(),
         ),
         errorBuilder: (_, error) => Center(
-          child: Text('Fehler: $error'),
+          child: Text(context.l10n.songsFlutterErrorWith(friendlyErrorMessage(error))),
         ),
       ),
     );
@@ -262,18 +277,18 @@ class _PdfViewerSheetState extends State<PdfViewerSheet> {
           IconButton(
             icon: const Icon(Icons.first_page),
             onPressed: _currentPage > 1 ? () => _goToPage(1) : null,
-            tooltip: 'Erste Seite',
+            tooltip: context.l10n.songsFlutterFirstPage,
           ),
           IconButton(
             icon: const Icon(Icons.chevron_left),
             onPressed:
                 _currentPage > 1 ? () => _goToPage(_currentPage - 1) : null,
-            tooltip: 'Vorherige Seite',
+            tooltip: context.l10n.songsFlutterPreviousPage,
           ),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Text(
-              'Seite $_currentPage von $_totalPages',
+              context.l10n.protocolPage(_currentPage, _totalPages),
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w500,
                   ),
@@ -284,13 +299,13 @@ class _PdfViewerSheetState extends State<PdfViewerSheet> {
             onPressed: _currentPage < _totalPages
                 ? () => _goToPage(_currentPage + 1)
                 : null,
-            tooltip: 'Nächste Seite',
+            tooltip: context.l10n.songsFlutterNextPage,
           ),
           IconButton(
             icon: const Icon(Icons.last_page),
             onPressed:
                 _currentPage < _totalPages ? () => _goToPage(_totalPages) : null,
-            tooltip: 'Letzte Seite',
+            tooltip: context.l10n.songsFlutterLastPage,
           ),
         ],
       ),
@@ -350,10 +365,10 @@ class _FullscreenPdfViewerState extends State<_FullscreenPdfViewer> {
               builders: PdfViewPinchBuilders<DefaultBuilderOptions>(
                 options: const DefaultBuilderOptions(),
                 documentLoaderBuilder: (_) => const Center(
-                  child: CircularProgressIndicator(color: Colors.white),
+                  child: AppSpinner(color: Colors.white),
                 ),
                 pageLoaderBuilder: (_) => const Center(
-                  child: CircularProgressIndicator(color: Colors.white),
+                  child: AppSpinner(color: Colors.white),
                 ),
               ),
             ),
@@ -483,6 +498,7 @@ Future<void> showPdfViewerSheet(
 }) {
   return showModalBottomSheet(
     context: context,
+    useRootNavigator: true, // IOS_SHELL2: above the tab bar
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
     builder: (context) => PdfViewerSheet(

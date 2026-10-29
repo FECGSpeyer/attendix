@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../data/models/person/person.dart';
+import '../../../../../l10n/l10n.dart';
+import '../ion/ion_widgets.dart';
+import '../../../../../shared/widgets/adaptive/ion_button_label.dart';
 
 /// Accordion section for problem person management.
 class ProblemfallAccordion extends StatelessWidget {
@@ -31,23 +34,11 @@ class ProblemfallAccordion extends StatelessWidget {
   Widget build(BuildContext context) {
     if (!person.isCritical) return const SizedBox.shrink();
 
-    return Card(
-      margin: const EdgeInsets.symmetric(
-        horizontal: AppDimensions.paddingM,
-        vertical: AppDimensions.paddingXS,
-      ),
-      child: Column(
-        children: [
-          ListTile(
-            title: const Text(
-              'Problemfall',
-              style: TextStyle(fontWeight: FontWeight.w600),
-            ),
-            trailing: Icon(isExpanded ? Icons.expand_less : Icons.expand_more),
-            onTap: onToggle,
-          ),
-          if (isExpanded)
-            Padding(
+    return IonAccordion(
+      title: context.l10n.peopleProblemCase,
+      expanded: isExpanded,
+      onToggle: onToggle,
+      child: Padding(
               padding: const EdgeInsets.fromLTRB(
                 AppDimensions.paddingM,
                 0,
@@ -56,8 +47,6 @@ class ProblemfallAccordion extends StatelessWidget {
               ),
               child: _buildContent(context),
             ),
-        ],
-      ),
     );
   }
 
@@ -77,9 +66,9 @@ class ProblemfallAccordion extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Grund',
-                  style: TextStyle(
+                Text(
+                  context.l10n.excuseReason,
+                  style: const TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                     color: AppColors.danger,
@@ -97,10 +86,10 @@ class ProblemfallAccordion extends StatelessWidget {
         ],
 
         // Problem solved toggle
-        SwitchListTile(
+        SwitchListTile.adaptive(
           contentPadding: EdgeInsets.zero,
-          title: const Text('Mit Person gesprochen'),
-          subtitle: const Text('Bestätigen, dass das Problem besprochen wurde'),
+          title: Text(context.l10n.personTalkedTo),
+          subtitle: Text(context.l10n.personFlutterTalkedToHint),
           value: problemSolved,
           onChanged: onProblemSolvedChanged,
           activeColor: AppColors.success,
@@ -110,10 +99,10 @@ class ProblemfallAccordion extends StatelessWidget {
         if (problemSolved) ...[
           const SizedBox(height: AppDimensions.paddingM),
           TextField(
-            decoration: const InputDecoration(
-              labelText: 'Anmerkungen (optional)',
-              hintText: 'Was wurde besprochen?',
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              labelText: context.l10n.personRemarks,
+              hintText: context.l10n.personFlutterRemarksHint,
+              border: const OutlineInputBorder(),
             ),
             maxLines: 3,
             onChanged: onProblemNotesChanged,
@@ -124,7 +113,7 @@ class ProblemfallAccordion extends StatelessWidget {
             child: FilledButton.icon(
               onPressed: onResolveProblem,
               icon: const Icon(Icons.check_circle),
-              label: const Text('Problem als gelöst markieren'),
+              label: IonButtonLabel(context.l10n.personResetTalked),
               style: FilledButton.styleFrom(
                 backgroundColor: AppColors.success,
               ),

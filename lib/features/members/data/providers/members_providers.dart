@@ -2,7 +2,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/player_providers.dart';
+import '../../../../core/providers/profile_providers.dart';
 import '../../../../data/models/person/person.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Model for a grouped member list
 class MembersGroup {
@@ -64,6 +66,14 @@ final membersGroupedProvider = FutureProvider<List<MembersGroup>>((ref) async {
     }
   }
 
+  // Ionic recalculateGroupHeaders: players without a (known) group are shown
+  // under "Ohne Gruppe" instead of being dropped.
+  final knownIds = sortedGroups.map((g) => g.id).whereType<int>().toSet();
+  final ungrouped = players.where((p) => !knownIds.contains(p.instrument)).toList();
+  if (ungrouped.isNotEmpty) {
+    result.add(MembersGroup(groupId: -1, groupName: l10nWithoutContext.peopleNoGroupAssigned, members: ungrouped));
+  }
+
   return result;
 });
 
@@ -81,14 +91,45 @@ final membersSearchTermProvider = StateProvider<String>((ref) => '');
 /// Provider for group filter (null = show all groups)
 final membersGroupFilterProvider = StateProvider<int?>((ref) => null);
 
+/// Ionic members page: segment filter on the "einteilung" person extra field
+/// ('all' = no filter).
+final membersEinteilungFilterProvider = StateProvider<String>((ref) => 'all');
+
+/// Options of the "einteilung" select extra field (empty = no segment).
+final membersEinteilungOptionsProvider = Provider<List<String>>((ref) {
+  final fields = ref.watch(personExtraFieldsProvider).valueOrNull ?? const [];
+  for (final f in fields) {
+    if (f.id == 'einteilung' && f.type == 'select') {
+      return f.options.where((o) => o != '-').toList();
+    }
+  }
+  return const [];
+});
+
 /// Provider for filtered members
 final filteredMembersGroupedProvider = Provider<AsyncValue<List<MembersGroup>>>((ref) {
   final groupsAsync = ref.watch(membersGroupedProvider);
   final searchTerm = ref.watch(membersSearchTermProvider).toLowerCase();
   final groupFilter = ref.watch(membersGroupFilterProvider);
+  final einteilung = ref.watch(membersEinteilungFilterProvider);
+  final hasEinteilung = ref.watch(membersEinteilungOptionsProvider).isNotEmpty;
 
   return groupsAsync.whenData((groups) {
     var filtered = groups;
+
+    // Einteilung filter (Ionic applyFilters)
+    if (hasEinteilung && einteilung != 'all') {
+      filtered = [
+        for (final g in filtered)
+          MembersGroup(
+            groupId: g.groupId,
+            groupName: g.groupName,
+            members: g.members
+                .where((p) => p.additionalFields?['einteilung']?.toString() == einteilung)
+                .toList(),
+          ),
+      ].where((g) => g.members.isNotEmpty).toList();
+    }
 
     // Apply group filter
     if (groupFilter != null) {

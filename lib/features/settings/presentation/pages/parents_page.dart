@@ -1,96 +1,98 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:uuid/uuid.dart';
 
 import '../../../../core/constants/app_constants.dart';
+import '../../../../data/repositories/user_registration_repository.dart'
+    show AccountFlowException;
 import '../../../../core/providers/parent_providers.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../widgets/settings_list.dart'; // UX_SETTINGS
+import '../widgets/settings_sheet.dart'; // IOS_SETTINGS2
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/parent/parent_model.dart';
+import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/error_message.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Parents Page - manage parents of players
+/// IOS_SETTINGS2: Ionic settings "parents-button" opens the "Eltern" sheet
+/// (`[breakpoints]="[0, 1]"`, initial 1, toolbar with the title only).
+Future<void> showParentsSheet(BuildContext context) => showSettingsSheet<void>(
+      context,
+      builder: (_) => const ParentsPage(sheet: true),
+    );
+
 class ParentsPage extends ConsumerWidget {
-  const ParentsPage({super.key});
+  const ParentsPage({super.key, this.sheet = false});
+
+  /// Presented as the Ionic sheet (no back button) instead of a route.
+  final bool sheet;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final parentsAsync = ref.watch(parentsProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Elternteile'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.pop(),
-        ),
-      ),
+      appBar: sheet
+          ? settingsSheetBar(context, title: context.l10n.settingsParents)
+          : AppBar(
+              title: Text(context.l10n.settingsParents),
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () => context.pop(),
+              ),
+            ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showAddParentDialog(context, ref),
         child: const Icon(Icons.add),
       ),
       body: parentsAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => const Center(child: AppSpinner()),
         error: (e, _) => Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Icon(Icons.error_outline, size: 64, color: AppColors.danger),
               const SizedBox(height: AppDimensions.paddingM),
-              Text('Fehler: $e'),
+              Text(context.l10n.settingsFlutterErrorDetail(friendlyErrorMessage(e))),
               const SizedBox(height: AppDimensions.paddingM),
               ElevatedButton(
                 onPressed: () => ref.invalidate(parentsProvider),
-                child: const Text('Erneut versuchen'),
+                child: IonButtonLabel(context.l10n.messagesRetry),
               ),
             ],
           ),
         ),
+        // UX_SETTINGS: Ionic modal layout — hint card on top, then the list
         data: (parents) {
-          if (parents.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.family_restroom_outlined, size: 80, color: AppColors.medium),
-                  const SizedBox(height: AppDimensions.paddingL),
-                  Text(
-                    'Keine Elternteile',
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                  const SizedBox(height: AppDimensions.paddingS),
-                  Text(
-                    'Elternteile können die Anwesenheit\nihrer Kinder einsehen.',
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppColors.medium),
-                  ),
-                  const SizedBox(height: AppDimensions.paddingL),
-                  ElevatedButton.icon(
-                    onPressed: () => _showAddParentDialog(context, ref),
-                    icon: const Icon(Icons.add),
-                    label: const Text('Elternteil hinzufügen'),
-                  ),
-                ],
-              ),
-            );
-          }
-
-          return RefreshIndicator(
-            // FN-012: await provider.future to show spinner until data loads
+          return RefreshIndicator.adaptive(
             onRefresh: () async {
               ref.invalidate(parentsProvider);
               await ref.read(parentsProvider.future);
             },
-            child: ListView.builder(
-              padding: const EdgeInsets.all(AppDimensions.paddingM),
-              itemCount: parents.length,
-              itemBuilder: (context, index) {
-                final parent = parents[index];
-                return _ParentItem(
-                  parent: parent,
-                  onDelete: () => _deleteParent(context, ref, parent),
-                );
-              },
+            // UX_SETTINGS (WAVE 8): hint card, then one inset list with
+            // h2 name / h3 e-mail; tapping an item asks to remove it.
+            child: ListView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: EdgeInsets.fromLTRB(
+                ionListMargin(context), AppDimensions.paddingM, ionListMargin(context), 88),
+              children: [
+                SettingsHintCard(
+                  icon: Icons.favorite_border,
+                  text: context.l10n.settingsParentsHint,
+                ),
+                SettingsListSection(
+                  icons: false,
+                  children: [
+                    for (final item in parents)
+                      _ParentItem(
+                        parent: item,
+                        onDelete: () => _deleteParent(context, ref, item),
+                      ),
+                  ],
+                ),
+              ],
             ),
           );
         },
@@ -104,10 +106,10 @@ class ParentsPage extends ConsumerWidget {
     final lastNameController = TextEditingController();
     final formKey = GlobalKey<FormState>();
 
-    final result = await showDialog<bool>(
+    final result = await showAppDialog<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Elternteil hinzufügen'),
+      builder: (ctx) => AppAlertDialog(
+        title: Text(context.l10n.settingsAddParent),
         content: Form(
           key: formKey,
           child: Column(
@@ -115,17 +117,17 @@ class ParentsPage extends ConsumerWidget {
             children: [
               TextFormField(
                 controller: emailController,
-                decoration: const InputDecoration(
-                  labelText: 'E-Mail',
-                  prefixIcon: Icon(Icons.email),
+                decoration: InputDecoration(
+                  labelText: context.l10n.settingsEmailAddress,
+                  prefixIcon: const Icon(Icons.email),
                 ),
                 keyboardType: TextInputType.emailAddress,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'E-Mail ist erforderlich';
+                    return context.l10n.settingsFlutterEmailRequired;
                   }
                   if (!value.contains('@')) {
-                    return 'Ungültige E-Mail-Adresse';
+                    return context.l10n.registerModalInvalidEmail;
                   }
                   return null;
                 },
@@ -133,13 +135,13 @@ class ParentsPage extends ConsumerWidget {
               const SizedBox(height: AppDimensions.paddingM),
               TextFormField(
                 controller: firstNameController,
-                decoration: const InputDecoration(
-                  labelText: 'Vorname',
-                  prefixIcon: Icon(Icons.person),
+                decoration: InputDecoration(
+                  labelText: context.l10n.peopleFirstName,
+                  prefixIcon: const Icon(Icons.person),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Vorname ist erforderlich';
+                    return context.l10n.settingsFlutterFirstNameRequired;
                   }
                   return null;
                 },
@@ -147,13 +149,13 @@ class ParentsPage extends ConsumerWidget {
               const SizedBox(height: AppDimensions.paddingM),
               TextFormField(
                 controller: lastNameController,
-                decoration: const InputDecoration(
-                  labelText: 'Nachname',
-                  prefixIcon: Icon(Icons.person_outline),
+                decoration: InputDecoration(
+                  labelText: context.l10n.peopleLastName,
+                  prefixIcon: const Icon(Icons.person_outline),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Nachname ist erforderlich';
+                    return context.l10n.settingsFlutterLastNameRequired;
                   }
                   return null;
                 },
@@ -164,7 +166,7 @@ class ParentsPage extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Abbrechen'),
+            child: Text(context.l10n.commonCancel),
           ),
           ElevatedButton(
             onPressed: () {
@@ -172,7 +174,7 @@ class ParentsPage extends ConsumerWidget {
                 Navigator.of(ctx).pop(true);
               }
             },
-            child: const Text('Hinzufügen'),
+            child: Text(context.l10n.settingsInvite),
           ),
         ],
       ),
@@ -180,42 +182,40 @@ class ParentsPage extends ConsumerWidget {
 
     if (result == true && context.mounted) {
       try {
-        final notifier = ref.read(parentNotifierProvider.notifier);
-        final parent = ParentModel(
-          appId: const Uuid().v4(),
-          email: emailController.text.trim(),
-          firstName: firstNameController.text.trim(),
-          lastName: lastNameController.text.trim(),
-        );
-
-        await notifier.createParent(parent);
-
+        // REVIEW_FIX3: shared invite flow (Ionic db.createParent).
+        await ref.read(parentNotifierProvider.notifier).invite(
+              email: emailController.text,
+              firstName: firstNameController.text,
+              lastName: lastNameController.text,
+            );
         if (context.mounted) {
-          ToastHelper.showSuccess(context, 'Elternteil hinzugefügt');
+          ToastHelper.showSuccess(context, context.l10n.settingsUserCreated);
         }
+      } on AccountFlowException catch (e) {
+        if (context.mounted) ToastHelper.showError(context, e.message);
       } catch (e) {
         if (context.mounted) {
-          ToastHelper.showError(context, 'Fehler: $e');
+          ToastHelper.showError(context, context.l10n.settingsFlutterErrorDetail(friendlyErrorMessage(e)));
         }
       }
     }
   }
 
   Future<void> _deleteParent(BuildContext context, WidgetRef ref, ParentModel parent) async {
-    final confirmed = await showDialog<bool>(
+    final confirmed = await showAppDialog<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Elternteil entfernen?'),
-        content: Text('Möchtest du ${parent.fullName} als Elternteil entfernen?'),
+      builder: (ctx) => AppAlertDialog(
+        title: Text(context.l10n.settingsRemoveParent),
+        content: Text(context.l10n.settingsRemoveMessage(parent.firstName)),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Abbrechen'),
+            child: Text(context.l10n.commonCancel),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: AppColors.danger),
             onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('Entfernen'),
+            child: Text(context.l10n.commonYes),
           ),
         ],
       ),
@@ -224,14 +224,14 @@ class ParentsPage extends ConsumerWidget {
     if (confirmed == true && context.mounted) {
       try {
         final notifier = ref.read(parentNotifierProvider.notifier);
-        await notifier.deleteParent(parent.id!);
+        await notifier.deleteParent(parent.id!, appId: parent.appId);
 
         if (context.mounted) {
-          ToastHelper.showSuccess(context, 'Elternteil entfernt');
+          ToastHelper.showSuccess(context, context.l10n.settingsFlutterParentRemoved);
         }
       } catch (e) {
         if (context.mounted) {
-          ToastHelper.showError(context, 'Fehler: $e');
+          ToastHelper.showError(context, context.l10n.settingsFlutterErrorDetail(friendlyErrorMessage(e)));
         }
       }
     }
@@ -249,29 +249,14 @@ class _ParentItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: AppDimensions.paddingS),
-      child: ListTile(
-        leading: CircleAvatar(
-          backgroundColor: AppColors.success.withValues(alpha: 0.1),
-          child: Text(
-            parent.initials,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: AppColors.success,
-            ),
-          ),
-        ),
-        title: Text(
-          parent.fullName,
-          style: const TextStyle(fontWeight: FontWeight.w600),
-        ),
-        subtitle: Text(parent.email),
-        trailing: IconButton(
-          icon: Icon(Icons.delete_outline, color: AppColors.danger),
-          onPressed: onDelete,
-        ),
+    final ios = ionIsIos(context);
+    return ListTile(
+      title: Text(parent.fullName),
+      subtitle: Text(
+        parent.email,
+        style: ios ? TextStyle(fontSize: 14, color: IonIos.text(context)) : null,
       ),
+      onTap: onDelete,
     );
   }
 }

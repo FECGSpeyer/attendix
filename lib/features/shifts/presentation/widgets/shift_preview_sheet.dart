@@ -1,314 +1,149 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import '../../../../core/constants/app_constants.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../data/models/shift/shift_definition.dart';
 import '../../../../data/models/shift/shift_instance.dart';
 import '../../../../data/models/shift/shift_plan.dart';
+import '../../../../l10n/l10n.dart';
+import '../../../planning/presentation/widgets/ion_items.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart'; // PARITY_R5
 
-/// Shows a preview sheet with calculated shifts for the next 30 days
+/// Shows the Ionic "calculate shifts" modal (full height sheet, close button
+/// at the end, plain list "Berechnete Schichten").
 void showShiftPreviewSheet(BuildContext context, ShiftPlan plan, {ShiftInstance? startInstance}) {
   showModalBottomSheet(
     context: context,
+    useRootNavigator: true, // IOS_SHELL2: above the tab bar
     isScrollControlled: true,
-    builder: (context) => DraggableScrollableSheet(
-      initialChildSize: 0.7,
-      minChildSize: 0.4,
-      maxChildSize: 0.9,
-      expand: false,
-      builder: (context, scrollController) => ShiftPreviewSheet(
-        plan: plan,
-        scrollController: scrollController,
-        startInstance: startInstance,
-      ),
+    useSafeArea: true,
+    builder: (context) => FractionallySizedBox(
+      heightFactor: 1,
+      child: ShiftPreviewSheet(plan: plan, startInstance: startInstance),
     ),
   );
 }
 
-/// Preview sheet showing shift calculations
+/// One computed day of the preview.
+class ComputedShift {
+  const ComputedShift({
+    required this.date,
+    required this.free,
+    required this.startTime,
+    required this.endTime,
+    required this.duration,
+  });
+
+  final DateTime date;
+  final bool free;
+  final String startTime;
+  final String endTime;
+  final double duration;
+}
+
+/// Mirrors Ionic `ShiftPage.calculateShifts`: starts at the fixed shift's
+/// date (or Monday of next week) and walks the definition cycle day by day.
+List<ComputedShift> computeShiftPreview(ShiftPlan plan, {ShiftInstance? startInstance, DateTime? now}) {
+  final defs = plan.definition;
+  if (defs.isEmpty) return const [];
+
+  DateTime start;
+  final instanceDate = startInstance?.dateTime;
+  if (instanceDate != null) {
+    start = DateTime(instanceDate.year, instanceDate.month, instanceDate.day);
+  } else {
+    final base = now ?? DateTime.now();
+    final nextWeek = DateTime(base.year, base.month, base.day + 7);
+    // dayjs().day(1): Monday of that (Sunday based) week.
+    start = DateTime(nextWeek.year, nextWeek.month, nextWeek.day + 1 - nextWeek.weekday % 7);
+  }
+  final end = DateTime(start.year, start.month, start.day + 30);
+
+  final result = <ComputedShift>[];
+  var current = start;
+  var day = 0;
+  while (current.isBefore(end)) {
+    for (final def in defs) {
+      for (var i = 0; i < def.repeatCount; i++) {
+        final date = DateTime(start.year, start.month, start.day + day);
+        final parts = def.startTime.split(':');
+        final startAt = DateTime(date.year, date.month, date.day,
+            int.tryParse(parts.isNotEmpty ? parts[0] : '') ?? 0,
+            int.tryParse(parts.length > 1 ? parts[1] : '') ?? 0);
+        final endAt = startAt.add(Duration(minutes: (def.duration * 60).round()));
+        final sameDay = endAt.year == date.year && endAt.month == date.month && endAt.day == date.day;
+        final endText = DateFormat('HH:mm').format(endAt);
+        result.add(ComputedShift(
+          date: date,
+          free: def.free,
+          startTime: def.startTime,
+          endTime: sameDay ? endText : '$endText (+1)',
+          duration: def.duration,
+        ));
+        day++;
+      }
+    }
+    current = DateTime(current.year, current.month, current.day + defs.length);
+  }
+  return result;
+}
+
+/// Preview content of the computed shifts.
 class ShiftPreviewSheet extends StatelessWidget {
   final ShiftPlan plan;
-  final ScrollController scrollController;
   final ShiftInstance? startInstance;
 
   const ShiftPreviewSheet({
     super.key,
     required this.plan,
-    required this.scrollController,
     this.startInstance,
   });
 
+  String _hours(double value) =>
+      value == value.roundToDouble() ? value.toInt().toString() : value.toString();
+
   @override
   Widget build(BuildContext context) {
-    final today = DateTime.now();
-    final startDate = startInstance?.dateTime ?? today;
-    final dateFormat = DateFormat('E, d. MMM', 'de_DE');
-    // RT-011: Extract name once for null-safe access
-    final startInstanceName = startInstance?.name;
-    final hasCustomStart = startInstanceName != null;
+    final shifts = computeShiftPreview(plan, startInstance: startInstance);
+    final dateFormat = DateFormat('EEE, ${dateFmt()}', currentIntlLocale());
 
     return Column(
       children: [
-        // Handle bar
-        Container(
-          margin: const EdgeInsets.symmetric(vertical: AppDimensions.paddingM),
-          width: 40,
-          height: 4,
-          decoration: BoxDecoration(
-            color: AppColors.medium.withValues(alpha: 0.3),
-            borderRadius: BorderRadius.circular(2),
-          ),
-        ),
-
-        // Title
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM),
-          child: Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      hasCustomStart
-                          ? 'Vorschau: $startInstanceName'
-                          : 'Beispiel-Rechnung',
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                    ),
-                    Text(
-                      hasCustomStart
-                          ? 'Nächste 30 Tage ab ${dateFormat.format(startDate)}'
-                          : 'Nächste 30 Tage ab heute',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: AppColors.medium,
-                          ),
-                    ),
-                  ],
-                ),
-              ),
-              IconButton(
-                icon: const Icon(Icons.close),
-                onPressed: () => Navigator.pop(context),
-              ),
-            ],
-          ),
-        ),
-
-        const Divider(),
-
-        // Info card
-        Padding(
-          padding: const EdgeInsets.all(AppDimensions.paddingM),
-          child: Card(
-            color: AppColors.info.withValues(alpha: 0.1),
-            child: Padding(
-              padding: const EdgeInsets.all(AppDimensions.paddingM),
-              child: Row(
-                children: [
-                  Icon(Icons.info_outline, color: AppColors.info),
-                  const SizedBox(width: AppDimensions.paddingM),
-                  Expanded(
-                    child: Text(
-                      hasCustomStart
-                          ? 'Startdatum: ${dateFormat.format(startDate)} ($startInstanceName)\n'
-                              'Zyklus: ${plan.cycleLengthDays} Tage'
-                          : 'Startdatum: Heute (${dateFormat.format(today)})\n'
-                              'Zyklus: ${plan.cycleLengthDays} Tage',
-                      style: Theme.of(context).textTheme.bodySmall,
-                    ),
-                  ),
-                ],
-              ),
+        AppBar(
+          toolbarHeight: ionModalToolbarHeight(context), // PARITY_R5
+          automaticallyImplyLeading: false,
+          primary: false,
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.close),
+              tooltip: context.l10n.commonClose,
+              onPressed: () => Navigator.pop(context),
             ),
-          ),
+          ],
         ),
-
-        // List of days
         Expanded(
-          child: plan.definition.isEmpty
-              ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.timeline_outlined,
-                          size: 48, color: AppColors.medium),
-                      const SizedBox(height: AppDimensions.paddingM),
-                      const Text(
-                        'Keine Definition vorhanden',
-                        style: TextStyle(color: AppColors.medium),
-                      ),
-                      const SizedBox(height: AppDimensions.paddingS),
-                      Text(
-                        'Füge Segmente hinzu, um die Vorschau zu sehen',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: AppColors.medium,
-                            ),
-                      ),
-                    ],
-                  ),
-                )
-              : ListView.builder(
-                  controller: scrollController,
-                  itemCount: 30,
-                  itemBuilder: (context, index) {
-                    final date = startDate.add(Duration(days: index));
-                    final dayInCycle = plan.getDayInCycle(date, startDate);
-                    final segment = plan.getSegmentForDay(dayInCycle);
-                    final isStartDate = index == 0;
-                    final isTodayDate = date.year == today.year &&
-                        date.month == today.month &&
-                        date.day == today.day;
-
-                    return _DayPreviewTile(
-                      date: date,
-                      dateFormat: dateFormat,
-                      dayInCycle: dayInCycle,
-                      segment: segment,
-                      isToday: isTodayDate,
-                      isStartDate: isStartDate && hasCustomStart,
-                      startInstanceName: startInstanceName,
-                    );
-                  },
+          child: ListView.separated(
+            padding: const EdgeInsets.only(bottom: 16),
+            itemCount: shifts.length + 1,
+            separatorBuilder: (_, i) => i == 0 ? const SizedBox.shrink() : const Divider(height: 1, indent: 16),
+            itemBuilder: (context, index) {
+              if (index == 0) {
+                return IonListHeader(
+                  title: context.l10n.shiftsComputed,
+                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 6),
+                );
+              }
+              final cs = shifts[index - 1];
+              return ListTile(
+                title: Text(dateFormat.format(cs.date)),
+                subtitle: Text(
+                  cs.free
+                      ? context.l10n.shiftsFree
+                      : context.l10n.shiftsComputedLine(cs.startTime, cs.endTime, _hours(cs.duration)),
                 ),
+              );
+            },
+          ),
         ),
       ],
     );
-  }
-}
-
-class _DayPreviewTile extends StatelessWidget {
-  final DateTime date;
-  final DateFormat dateFormat;
-  final int dayInCycle;
-  final ShiftDefinition? segment;
-  final bool isToday;
-  final bool isStartDate;
-  final String? startInstanceName;
-
-  const _DayPreviewTile({
-    required this.date,
-    required this.dateFormat,
-    required this.dayInCycle,
-    required this.segment,
-    required this.isToday,
-    this.isStartDate = false,
-    this.startInstanceName,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final isFree = segment?.free ?? true;
-    final isWeekend = date.weekday == DateTime.saturday || date.weekday == DateTime.sunday;
-    final isHighlighted = isToday || isStartDate;
-
-    return Container(
-      decoration: BoxDecoration(
-        color: isHighlighted ? AppColors.primary.withValues(alpha: 0.05) : null,
-        border: Border(
-          bottom: BorderSide(
-            color: AppColors.medium.withValues(alpha: 0.1),
-          ),
-        ),
-      ),
-      child: ListTile(
-        leading: Container(
-          width: 40,
-          height: 40,
-          decoration: BoxDecoration(
-            color: isFree
-                ? AppColors.success.withValues(alpha: 0.2)
-                : AppColors.warning.withValues(alpha: 0.2),
-            borderRadius: BorderRadius.circular(8),
-            border: isHighlighted
-                ? Border.all(color: AppColors.primary, width: 2)
-                : null,
-          ),
-          child: Center(
-            child: Text(
-              '${date.day}',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: isFree ? AppColors.success : AppColors.warning,
-              ),
-            ),
-          ),
-        ),
-        title: Row(
-          children: [
-            Text(
-              dateFormat.format(date),
-              style: TextStyle(
-                fontWeight: isHighlighted ? FontWeight.bold : FontWeight.w500,
-                color: isWeekend ? AppColors.medium : null,
-              ),
-            ),
-            if (isToday) ...[
-              const SizedBox(width: AppDimensions.paddingS),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                decoration: BoxDecoration(
-                  color: AppColors.primary,
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                child: const Text(
-                  'Heute',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 10,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-            ],
-            if (isStartDate) ...[
-              const SizedBox(width: AppDimensions.paddingS),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                decoration: BoxDecoration(
-                  color: AppColors.secondary,
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                child: const Text(
-                  'Start',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 10,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-            ],
-          ],
-        ),
-        subtitle: Text(
-          _getSubtitle(),
-          style: TextStyle(
-            color: isFree ? AppColors.success : AppColors.warning,
-            fontSize: 12,
-          ),
-        ),
-        trailing: Text(
-          'Tag ${dayInCycle + 1}',
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: AppColors.medium,
-              ),
-        ),
-      ),
-    );
-  }
-
-  String _getSubtitle() {
-    if (segment == null) {
-      return 'Keine Definition';
-    }
-
-    if (segment!.free) {
-      return 'Frei';
-    }
-
-    return '${segment!.startTime} - ${segment!.endTime} (${segment!.duration}h)';
   }
 }

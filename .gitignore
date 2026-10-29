@@ -46,6 +46,7 @@ app.*.map.json
 
 # Environment files (contain secrets)
 .env
+.env.app
 *.env.local
 
 # Claude Code worktrees (für parallele Entwicklung)
@@ -55,3 +56,7 @@ app.*.map.json
 # MCP server config (contains secrets)
 .mcp.json
 .worktrees/
+
+# PUSH: Firebase config files (not committed, like Ionic; see docs/push-setup.md)
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
