@@ -110,10 +110,10 @@ class OrgPlanEntry {
       if (t != null && t.isNotEmpty) return t;
       final info = attendance!.typeInfo;
       if (info != null && info.isNotEmpty) return info;
-      return 'Plan';
+      return l10nWithoutContext.plansPlan; // P10_SELF_PLAN: Ionic plans.plan
     }
     final t = sharedPlan?.planTitle;
-    return (t != null && t.isNotEmpty) ? t : 'Plan';
+    return (t != null && t.isNotEmpty) ? t : l10nWithoutContext.plansPlan;
   }
 
   String get tenantLabel =>

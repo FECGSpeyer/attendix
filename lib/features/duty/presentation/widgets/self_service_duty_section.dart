@@ -30,7 +30,17 @@ class SelfServiceDutySection extends ConsumerWidget {
     this.otherTermineNames = '',
     this.onToggleOtherTermine,
     this.onReportAbsence,
+    this.onOpenDuty,
+    this.chipsFor,
   });
+
+  /// P10_SELF_PLAN: tap on a row of "Meine Dienste" (Ionic
+  /// presentActionSheetForChoice of that Termin).
+  final void Function(int attendanceId)? onOpenDuty;
+
+  /// P10_SELF_PLAN: chips (Ablaufplan, Infos, Anhang, Dateien, Route) of
+  /// the "Nächster Dienst" card.
+  final List<Widget> Function(int attendanceId)? chipsFor;
 
   final SelfServiceDutyPart part;
   final bool showOtherTermine;
@@ -96,7 +106,7 @@ class SelfServiceDutySection extends ConsumerWidget {
                     ),
                     const SizedBox(width: AppDimensions.paddingS),
                     OutlinedButton(
-                      onPressed: () => declineDutyAction(context, ref, r.pa.id!, r.termin.attendance.id!),
+                      onPressed: () => selfServiceDeclineDutyAction(context, ref, r.pa.id!, r.termin),
                       child: IonButtonLabel(context.l10n.signoutCannot),
                     ),
                   ],
@@ -132,9 +142,12 @@ class SelfServiceDutySection extends ConsumerWidget {
                     for (final name in overview.teamOf(next.termin)) DutyPill(text: name, color: AppColors.medium),
                   ],
                 ),
+                // P10_SELF_PLAN: Ionic `eventChips` of the next duty
+                if (chipsFor != null && next.termin.attendance.id != null)
+                  ...chipsFor!(next.termin.attendance.id!),
                 const SizedBox(height: AppDimensions.paddingS),
                 OutlinedButton(
-                  onPressed: () => declineDutyAction(context, ref, next.pa.id!, next.termin.attendance.id!),
+                  onPressed: () => selfServiceDeclineDutyAction(context, ref, next.pa.id!, next.termin),
                   child: IonButtonLabel(context.l10n.signoutCannotAfterAll),
                 ),
               ],
@@ -192,7 +205,10 @@ class SelfServiceDutySection extends ConsumerWidget {
                     '${overview.teamOf(d.termin).isNotEmpty ? context.l10n.signoutWithTeam(overview.teamOf(d.termin).join(', ')) : ''}',
                   ),
                   trailing: DutyPill(text: context.l10n.signoutConfirmed, color: AppColors.successDark),
-                  onLongPress: () => declineDutyAction(context, ref, d.pa.id!, d.termin.attendance.id!),
+                  // P10_SELF_PLAN: Ionic opens the Termin action sheet.
+                  onTap: onOpenDuty == null || d.termin.attendance.id == null
+                      ? null
+                      : () => onOpenDuty!(d.termin.attendance.id!),
                 ),
             ],
           ),

@@ -1018,6 +1018,15 @@ final routerProvider = Provider<GoRouter>((ref) {
               child: const OrgPlansPage(),
               state: state,
             ),
+            // P10_SELF_PLAN: Ionic /tabs/org-plans/planung (stays in the tab)
+            routes: [
+              GoRoute(
+                path: 'planung',
+                name: 'orgPlansTabPlanning',
+                builder: (context, state) =>
+                    const PublicPlanningPage(inApp: true, fromOrgPlans: true),
+              ),
+            ],
           ),
           // END SETTINGS2
         ],
