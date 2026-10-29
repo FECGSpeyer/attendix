@@ -9,6 +9,7 @@ import '../../../l10n/l10n.dart';
 import '../adaptive/adaptive.dart'; // IOS_LOOK
 import '../layout/ion_modal_handle.dart'; // IOS_SHEETS
 import '../layout/ionic_ios.dart'; // IOS_SHEETS
+import '../display/ion_badge_text.dart'; // PARITY_R8
 
 /// Card layout building blocks of the Terminlisten (Ionic `ev-*` classes):
 /// date tile, pills, chips, section and month headers, the "Heute" card and
@@ -142,12 +143,13 @@ class EventPill extends StatelessWidget {
         label,
         maxLines: 1,
         softWrap: false,
-        style: TextStyle(
+        // PARITY_R8: real bold (700) also on the web
+        style: ionBadgeFont(TextStyle(
           color: Theme.of(context).colorScheme.onSurface,
           fontSize: 12.8,
           fontWeight: FontWeight.w700,
           fontFeatures: const [FontFeature.tabularFigures()],
-        ),
+        )),
       ),
     );
   }

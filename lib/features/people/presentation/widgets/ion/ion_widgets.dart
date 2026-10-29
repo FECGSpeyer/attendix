@@ -18,6 +18,7 @@ import 'package:attendix/shared/widgets/adaptive/adaptive_platform.dart'
     show IosGlass; // IOS27_SWEEP
 import 'package:attendix/shared/widgets/layout/ionic_ios.dart' as ios27
     show IonIos, IonDetailChevron, IonSearchbar; // IOS27_SWEEP
+import '../../../../../shared/widgets/display/ion_badge_text.dart'; // PARITY_R8
 
 /// True when the page should look like Ionic's iOS mode.
 bool ionIsIos(BuildContext context) =>
@@ -208,11 +209,10 @@ class IonBadge extends StatelessWidget {
         text,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
-        style: TextStyle(
-          // ion-badge (ios): max(13px, .8125rem) = 13.81pt
+        // ion-badge (ios): max(13px, .8125rem) = 13.81pt; PARITY_R8:
+        // real bold (700) also on the web
+        style: ionBadgeTextStyle(
           fontSize: ios ? 0.8125 * ios27.IonIos.rem : 13,
-          height: 1,
-          fontWeight: FontWeight.w700,
           color: textColor ?? AppColors.getContrastColor(color),
         ),
       ),

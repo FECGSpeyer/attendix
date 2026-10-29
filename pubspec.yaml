@@ -123,6 +123,16 @@ flutter:
     - assets/certificates/urkunde-vorkurs.jpg
     - .env.app
 
+  # PARITY_R8: real bold glyphs for ion-badge labels on the web. CanvasKit
+  # only ships Roboto Regular and fakes bold (renders ≈500 instead of
+  # Ionic's 700). Roboto Bold (Apache 2.0, assets/fonts/IonBadge-Bold.LICENSE.txt),
+  # subset to Latin; used on the web only (see ionBadgeTextStyle).
+  fonts:
+    - family: IonBadge
+      fonts:
+        - asset: assets/fonts/IonBadge-Bold.ttf
+          weight: 700
+
 # App Icon Configuration
 flutter_launcher_icons:
   android: true

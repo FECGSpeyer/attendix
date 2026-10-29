@@ -7,10 +7,12 @@ import '../../../l10n/l10n.dart';
 import '../layout/ionic_ios.dart' show IonIos, IonDetailChevron; // IOS27_SWEEP
 import 'adaptive_platform.dart';
 
-/// AUDIT_R4: vertical offset of an iOS nested popover below the top of
-/// its trigger row (ionic-theme-utils 0.1.1 `calculateWindowAdjustment`:
-/// `top = triggerTop + POPOVER_IOS_BODY_MARGIN`).
-const double kIosNestedPopoverTop = 8;
+/// PARITY_R8 (restores PARITY_R5): top offset below the safe area of an
+/// iOS nested popover that does not fit to the left of its parent. The
+/// Ionic iPhone screenshots show it at the top right (x 181–381 on a 393pt
+/// screen, y = safe area + 12), right-aligned with the parent menu, whose
+/// lower entries (Übersicht, Legende) stay readable below it.
+const double kIosNestedPopoverTop = 12;
 
 /// One entry of [showAppPopoverMenu] (an `ion-item button` inside the
 /// `ion-list lines="none"` of an `ion-popover`).
@@ -182,6 +184,7 @@ class _PopoverRoute<T> extends PopupRoute<T> {
         child: _PopoverLayer<T>(
           route: this,
           animation: animation,
+          topPadding: MediaQuery.of(context).padding.top,
           bottomPadding: MediaQuery.of(context).padding.bottom,
         ),
       ),
@@ -193,11 +196,15 @@ class _PopoverLayer<T> extends StatefulWidget {
   const _PopoverLayer({
     required this.route,
     required this.animation,
+    required this.topPadding,
     required this.bottomPadding,
   });
 
   final _PopoverRoute<T> route;
   final Animation<double> animation;
+
+  /// Safe area top (the layer itself runs without padding).
+  final double topPadding;
   final double bottomPadding;
 
   @override
@@ -283,6 +290,10 @@ class _PopoverLayerState<T> extends State<_PopoverLayer<T>> {
               constraints: BoxConstraints(maxHeight: maxHeight),
               child: _PopoverCard(
                 ios: ios,
+                // PARITY_R8: while a nested popover is open the parent
+                // stays a plain opaque card – no glass smear of the page
+                // behind its labels.
+                opaque: ios && _openIndex != null,
                 // Ionic: a tap inside the parent (not on the trigger)
                 // dismisses the nested popover.
                 onBackgroundTap: _openIndex == null
@@ -328,15 +339,13 @@ class _PopoverLayerState<T> extends State<_PopoverLayer<T>> {
           .toDouble();
       var subTop = rowRect.top;
       if (ios && left - sw < _margin) {
-        // AUDIT_R4: no room on the left (phone). ionic-theme-utils 0.1.1
-        // (`calculateWindowAdjustment`, side="start") then puts the nested
-        // popover at the trigger row's left edge, 8pt below the row top:
-        // it overlays only the upper part of the parent, whose lower
-        // entries stay readable (the parent keeps its width and labels).
-        subLeft = rowRect.left
-            .clamp(_margin, math.max(_margin, size.width - sw - _margin))
-            .toDouble();
-        subTop = rowRect.top + kIosNestedPopoverTop;
+        // PARITY_R8 (PARITY_R5 placement): no room on the left (phone) –
+        // Ionic iOS lays the nested popover over the parent, right-aligned
+        // with it, at the top of the screen (iPhone screenshots: x 181–381,
+        // y = safe area + 12 on 393pt). The parent's lower entries stay
+        // visible below it.
+        subLeft = math.max(_margin, left + w - sw);
+        subTop = widget.topPadding + kIosNestedPopoverTop;
       }
       children.add(
         Positioned(
@@ -382,11 +391,17 @@ class _PopoverCard extends StatelessWidget {
     required this.ios,
     required this.children,
     this.onBackgroundTap,
+    this.opaque = false,
   });
 
   final bool ios;
   final List<Widget> children;
   final VoidCallback? onBackgroundTap;
+
+  /// PARITY_R8: iOS only – an opaque surface (item background) instead of
+  /// the translucent glass, used for the parent while a nested popover is
+  /// open.
+  final bool opaque;
 
   @override
   Widget build(BuildContext context) {
@@ -403,6 +418,36 @@ class _PopoverCard extends StatelessWidget {
         behavior: HitTestBehavior.translucent,
         onTap: onBackgroundTap,
         child: list,
+      );
+    }
+    if (ios && opaque) {
+      // PARITY_R8: same shape (radius 34), border and shadow as the glass
+      // popover, filled with the item background (white / dark card) and
+      // without backdrop blur, so the labels stay crisp.
+      final brightness = Theme.of(context).brightness;
+      const radius = BorderRadius.all(Radius.circular(34));
+      return CustomPaint(
+        painter: const IosOuterShadowPainter(
+          borderRadius: radius,
+          shadows: [
+            BoxShadow(
+                color: Color(0x1F000000), blurRadius: 16, offset: Offset(0, 4)),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: radius,
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              color: brightness == Brightness.dark
+                  ? const Color(0xFF1C1C1D)
+                  : Colors.white,
+              borderRadius: radius,
+              border: Border.all(
+                  color: IosGlass.overlayBorder(brightness), width: 0.5),
+            ),
+            child: Material(type: MaterialType.transparency, child: list),
+          ),
+        ),
       );
     }
     if (ios) {
