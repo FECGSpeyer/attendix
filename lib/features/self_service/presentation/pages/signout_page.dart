@@ -268,7 +268,10 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
             ],
           ),
         ),
-        data: (data) => Builder(builder: (body) => RefreshIndicator.adaptive(
+        data: (raw) {
+          // ASTRA_SIGNOUT_TOPICS: Ionic applyDutyView / applyDutyLayout
+          final data = applySignoutDutyView(raw, useDutyView: useDutyView);
+          return Builder(builder: (body) => RefreshIndicator.adaptive(
           onRefresh: _refresh,
           edgeOffset: ionTranslucentTopPadding(body, isIosLook(context)),
           child: ListView(
@@ -304,8 +307,8 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
                 SelfServiceDutySection(
                   part: SelfServiceDutyPart.dutyView,
                   showOtherTermine: _showOtherTermine,
-                  otherTermineCount: data.upcoming.length + (data.current != null ? 1 : 0),
-                  otherTermineNames: _otherTermineNames(data),
+                  otherTermineCount: data.allUpcoming.length,
+                  otherTermineNames: otherTermineNames(data),
                   onToggleOtherTermine: () =>
                       setState(() => _showOtherTermine = !_showOtherTermine),
                   onReportAbsence: ref.watch(canSelfReportAbsenceProvider)
@@ -316,9 +319,11 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
               if (!useDutyView || _showOtherTermine) ...[
                 ..._buildCurrent(data, actions, tenant),
                 ..._buildUpcoming(data, actions),
-                ..._buildPast(data, actions),
               ],
+              // Ionic: "Vergangene" stays visible in the Dienstplan view.
+              ..._buildPast(data, actions),
               if (player != null &&
+                  !useDutyView &&
                   data.current == null &&
                   data.upcoming.isEmpty &&
                   data.past.isEmpty)
@@ -332,19 +337,11 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
                 ),
             ],
           ),
-        )),
+        ));
+        },
       ),
       ),
     );
-  }
-
-  /// Names of the other Termine for the collapsed "Weitere Termine" row.
-  String _otherTermineNames(SignoutData data) {
-    final names = <String>{
-      for (final att in [if (data.current != null) data.current!, ...data.upcoming])
-        att.eventTitle,
-    };
-    return names.take(3).join(', ');
   }
 
   /// Ionic `.greet`: 48px avatar, h1 1.35rem bold, meta line .875rem
@@ -532,6 +529,10 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
               EventRow(
                 date: att.date,
                 title: att.eventTitle,
+                // ASTRA_SIGNOUT_TOPICS: Ionic `ev-chip duty-tag` on own duties
+                titleSuffix: isDutyPaAttendance(att)
+                    ? EventChip(label: context.l10n.signoutDuty, icon: Icons.headset_mic_outlined)
+                    : null,
                 subtitle: att.eventMeta(),
                 highlight: att.highlight,
                 dimmed: actions.showAllAttendances && !att.isMember,

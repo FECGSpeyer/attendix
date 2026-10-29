@@ -1,11 +1,24 @@
 {
   "versions": [
     {
-      "version": "0.12.0",
+      "version": "0.13.0",
       "date": "29.10.2026",
       "changes": [
         "✨ Personen direkt per WhatsApp oder Telegram anschreiben: neue Knöpfe Anrufen, WhatsApp, Telegram und E-Mail bei der Person und auf der Stimmführer-Seite",
         "🐛 Ohne Bearbeitungsrechte startet Tippen auf die Telefonnummer jetzt den Anruf"
+      ]
+    },
+    {
+      "version": "0.12.0",
+      "date": "29.10.2026",
+      "changes": [
+        "✨ Person anlegen: Passbild schon beim Anlegen auswählen",
+        "✨ Übersicht: Dateien von Terminen anderer Instanzen öffnen (mit Instanzwechsel)",
+        "✨ PDF-Export von Personen- und Anwesenheitslisten mit Briefkopf und Logo",
+        "🎨 Termine, Eltern, Statistik, Dienstplan und Themen verhalten sich wie in der bisherigen App",
+        "🔒 Beobachter sehen die Terminliste wie bisher und können nichts löschen; Besetzung zeigt Helfern nur ihre Gruppe",
+        "🐛 Termine über Mitternacht lassen sich anlegen; Fristen verschieben sich auch über die Zeitumstellung richtig",
+        "🐛 Web: ?mode=ios/md lädt wieder, Zurück nach dem Login führt nicht mehr zur Instanzwahl"
       ]
     },
     {
