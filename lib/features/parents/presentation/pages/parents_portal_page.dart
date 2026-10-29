@@ -419,13 +419,20 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
   }
 
   Future<void> _signIn(ParentAttendanceGroup group, List<String> ids, ChildPersonAttendance? child) async {
-    final notifier = ref.read(parentSignInOutNotifierProvider.notifier);
-    for (final id in ids) {
-      final c = group.childAttendances.firstWhere((c) => c.id == id, orElse: () => child ?? group.childAttendances.first);
-      await notifier.signIn(id, SignInType.fromStatus(c.status));
-    }
+    // ASTRA_PARENTS: one call for all children; a failure of any child is
+    // reported (Ionic aborts the loop at the first error, no success toast).
+    final entries = [
+      for (final id in ids)
+        (
+          id,
+          SignInType.fromStatus(group.childAttendances
+              .firstWhere((c) => c.id == id, orElse: () => child ?? group.childAttendances.first)
+              .status),
+        ),
+    ];
+    final ok = await ref.read(parentSignInOutNotifierProvider.notifier).signInAll(entries);
     if (!mounted) return;
-    if (ref.read(parentSignInOutNotifierProvider).hasError) {
+    if (!ok) {
       ToastHelper.showError(context, context.l10n.signoutFlutterSigninFailed);
     } else {
       ref.read(trackingServiceProvider).track(TrackingEvent.parentSignIn, properties: {'count': ids.length});
@@ -478,7 +485,12 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
       tenantName: '',
       tenantColor: '#000000',
     );
-    await showPlanViewerSheet(context, attendance: crossTenant);
+    await showPlanViewerSheet(
+      context,
+      attendance: crossTenant,
+      extraPlans: group.extraPlans,
+      durationDays: group.durationDays,
+    );
   }
 }
 
