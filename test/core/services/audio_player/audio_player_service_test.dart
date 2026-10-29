@@ -102,6 +102,14 @@ class _FailingSetUrlFake extends _FakeAudioPlayer {
   }
 }
 
+/// Records the playback speed (REDESIGN "0,8×").
+class _SpeedFake extends _FakeAudioPlayer {
+  final speeds = <double>[];
+
+  @override
+  Future<void> setSpeed(double speed) async => speeds.add(speed);
+}
+
 void main() {
   group('AudioPlayerService.isAudioFile', () {
     test('matches all 9 supported extensions, case-insensitive', () {
@@ -359,6 +367,34 @@ void main() {
       await svc.stop();
       expect(c.read(audioQueueInfoProvider).length, 0);
       expect(c.read(audioPlayerServiceProvider).hasFile, isFalse);
+    });
+  });
+
+  group('AudioPlayerService speed', () {
+    test('speed applies to the playing track and the following ones', () async {
+      final players = <_SpeedFake>[];
+      final c = ProviderContainer(
+        overrides: [
+          audioPlayerFactoryProvider.overrideWithValue(() {
+            final p = _SpeedFake();
+            players.add(p);
+            return p;
+          }),
+        ],
+      );
+      addTearDown(c.dispose);
+      final svc = c.read(audioPlayerServiceProvider.notifier);
+
+      // Normal speed: never touched.
+      await svc.playFromUrl('https://example.com/a.mp3', 'a.mp3', 'A');
+      expect(players.single.speeds, isEmpty);
+
+      await svc.setSpeed(0.8);
+      expect(svc.speed, 0.8);
+      expect(players.single.speeds, [0.8]);
+
+      await svc.playFromUrl('https://example.com/b.mp3', 'b.mp3', 'B');
+      expect(players.last.speeds, [0.8]);
     });
   });
 }

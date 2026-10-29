@@ -53,7 +53,7 @@ class RdPersonPage extends ConsumerWidget {
           ),
         ),
         if (person != null && role.canEdit)
-          _TextLink(label: l10n.redesignPersonEdit, onTap: () => context.push('/people/$personId')),
+          RdTextLink(label: l10n.redesignPersonEdit, onTap: () => context.push('/people/$personId')),
       ],
     );
 
@@ -138,35 +138,6 @@ class RdPersonPage extends ConsumerWidget {
           _Actions(person: person),
         ],
       ],
-    );
-  }
-}
-
-class _TextLink extends StatelessWidget {
-  const _TextLink({required this.label, required this.onTap});
-
-  final String label;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final p = context.rd;
-    return Semantics(
-      button: true,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(10),
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(minHeight: 44),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: Center(
-              widthFactor: 1,
-              child: Text(label, style: TextStyle(fontSize: 17, color: p.link)),
-            ),
-          ),
-        ),
-      ),
     );
   }
 }

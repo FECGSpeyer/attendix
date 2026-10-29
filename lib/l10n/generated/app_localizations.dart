@@ -15347,6 +15347,240 @@ abstract class AppLocalizations {
   /// **'Deine Zusage'**
   String get redesignTodayYourAnswer;
 
+  /// redesign.work.allFiles
+  ///
+  /// In de, this message translates to:
+  /// **'Alle Dateien'**
+  String get redesignWorkAllFiles;
+
+  /// redesign.work.allParts
+  ///
+  /// In de, this message translates to:
+  /// **'Alle Stimmen'**
+  String get redesignWorkAllParts;
+
+  /// redesign.work.edit
+  ///
+  /// In de, this message translates to:
+  /// **'Bearbeiten'**
+  String get redesignWorkEdit;
+
+  /// redesign.work.fileCount
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Datei} other {{count} Dateien}}'**
+  String redesignWorkFileCount(num count);
+
+  /// redesign.work.lastPlayed
+  ///
+  /// In de, this message translates to:
+  /// **'Zuletzt gespielt'**
+  String get redesignWorkLastPlayed;
+
+  /// redesign.work.lastSung
+  ///
+  /// In de, this message translates to:
+  /// **'Zuletzt gesungen'**
+  String get redesignWorkLastSung;
+
+  /// redesign.work.link
+  ///
+  /// In de, this message translates to:
+  /// **'Link'**
+  String get redesignWorkLink;
+
+  /// redesign.work.lyrics
+  ///
+  /// In de, this message translates to:
+  /// **'Liedtext'**
+  String get redesignWorkLyrics;
+
+  /// redesign.work.never
+  ///
+  /// In de, this message translates to:
+  /// **'Noch nie'**
+  String get redesignWorkNever;
+
+  /// redesign.work.noFiles
+  ///
+  /// In de, this message translates to:
+  /// **'Zu diesem Werk gibt es noch keine Dateien.'**
+  String get redesignWorkNoFiles;
+
+  /// redesign.work.noPart
+  ///
+  /// In de, this message translates to:
+  /// **'Für deine Stimme gibt es noch keine Noten.'**
+  String get redesignWorkNoPart;
+
+  /// redesign.work.normalSpeed
+  ///
+  /// In de, this message translates to:
+  /// **'Normal abspielen'**
+  String get redesignWorkNormalSpeed;
+
+  /// redesign.work.notFound
+  ///
+  /// In de, this message translates to:
+  /// **'Dieses Werk gibt es hier nicht mehr.'**
+  String get redesignWorkNotFound;
+
+  /// redesign.work.number
+  ///
+  /// In de, this message translates to:
+  /// **'Nr. {number}'**
+  String redesignWorkNumber(Object number);
+
+  /// redesign.work.open
+  ///
+  /// In de, this message translates to:
+  /// **'Öffnen'**
+  String get redesignWorkOpen;
+
+  /// redesign.work.pause
+  ///
+  /// In de, this message translates to:
+  /// **'Anhalten'**
+  String get redesignWorkPause;
+
+  /// redesign.work.planned
+  ///
+  /// In de, this message translates to:
+  /// **'Geplant'**
+  String get redesignWorkPlanned;
+
+  /// redesign.work.play
+  ///
+  /// In de, this message translates to:
+  /// **'Abspielen'**
+  String get redesignWorkPlay;
+
+  /// redesign.work.recording
+  ///
+  /// In de, this message translates to:
+  /// **'Aufnahme'**
+  String get redesignWorkRecording;
+
+  /// redesign.work.recordingFrom
+  ///
+  /// In de, this message translates to:
+  /// **'Aufnahme vom {date}'**
+  String redesignWorkRecordingFrom(Object date);
+
+  /// redesign.work.score
+  ///
+  /// In de, this message translates to:
+  /// **'Partitur'**
+  String get redesignWorkScore;
+
+  /// redesign.work.share
+  ///
+  /// In de, this message translates to:
+  /// **'Link kopieren'**
+  String get redesignWorkShare;
+
+  /// redesign.work.slower
+  ///
+  /// In de, this message translates to:
+  /// **'Langsamer abspielen'**
+  String get redesignWorkSlower;
+
+  /// redesign.work.yourPart
+  ///
+  /// In de, this message translates to:
+  /// **'Deine Stimme'**
+  String get redesignWorkYourPart;
+
+  /// redesign.works.add
+  ///
+  /// In de, this message translates to:
+  /// **'Werk hinzufügen'**
+  String get redesignWorksAdd;
+
+  /// redesign.works.all
+  ///
+  /// In de, this message translates to:
+  /// **'Alle · {count}'**
+  String redesignWorksAll(Object count);
+
+  /// redesign.works.audio
+  ///
+  /// In de, this message translates to:
+  /// **'Audio'**
+  String get redesignWorksAudio;
+
+  /// redesign.works.current
+  ///
+  /// In de, this message translates to:
+  /// **'Gerade geprobt'**
+  String get redesignWorksCurrent;
+
+  /// redesign.works.empty
+  ///
+  /// In de, this message translates to:
+  /// **'Noch keine Werke.'**
+  String get redesignWorksEmpty;
+
+  /// redesign.works.files
+  ///
+  /// In de, this message translates to:
+  /// **'Dateien'**
+  String get redesignWorksFiles;
+
+  /// redesign.works.filesLabel
+  ///
+  /// In de, this message translates to:
+  /// **'Dateien der Gruppe'**
+  String get redesignWorksFilesLabel;
+
+  /// redesign.works.filter
+  ///
+  /// In de, this message translates to:
+  /// **'Filter & Ansicht'**
+  String get redesignWorksFilter;
+
+  /// redesign.works.filterActive
+  ///
+  /// In de, this message translates to:
+  /// **'Filter aktiv'**
+  String get redesignWorksFilterActive;
+
+  /// redesign.works.more
+  ///
+  /// In de, this message translates to:
+  /// **'Mehr'**
+  String get redesignWorksMore;
+
+  /// redesign.works.noMatch
+  ///
+  /// In de, this message translates to:
+  /// **'Kein Werk passt zur Suche.'**
+  String get redesignWorksNoMatch;
+
+  /// redesign.works.pdf
+  ///
+  /// In de, this message translates to:
+  /// **'PDF'**
+  String get redesignWorksPdf;
+
+  /// redesign.works.resetFilter
+  ///
+  /// In de, this message translates to:
+  /// **'Filter zurücksetzen'**
+  String get redesignWorksResetFilter;
+
+  /// redesign.works.search
+  ///
+  /// In de, this message translates to:
+  /// **'Titel, Komponist, Nummer'**
+  String get redesignWorksSearch;
+
+  /// redesign.works.searchLabel
+  ///
+  /// In de, this message translates to:
+  /// **'Werke suchen'**
+  String get redesignWorksSearchLabel;
+
   /// register.create
   ///
   /// In de, this message translates to:

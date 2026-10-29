@@ -49,6 +49,12 @@ void main() {
       expect(_tabs(Role.applicant), [RdTab.today, RdTab.me]);
     });
 
+    test('Werke: the new works list wherever the tab is allowed', () {
+      for (final role in [Role.admin, Role.viewer, Role.helper, Role.player, Role.voiceLeader]) {
+        expect(_route(role, RdTab.works), '/werke', reason: role.name);
+      }
+    });
+
     test('no Werke tab in general groups', () {
       expect(_tabs(Role.admin, type: 'general'), isNot(contains(RdTab.works)));
     });
@@ -73,6 +79,7 @@ void main() {
       expect(rdTabForLocation('/mitglieder/3'), RdTab.members);
       expect(rdTabForLocation('/members'), RdTab.members);
       expect(rdTabForLocation('/songs-tab'), RdTab.works);
+      expect(rdTabForLocation('/werke/12'), RdTab.works);
       expect(rdTabForLocation('/settings/songs/4'), RdTab.works);
       expect(rdTabForLocation('/ich/darstellung'), RdTab.me);
       expect(rdTabForLocation('/settings/notifications'), RdTab.me);

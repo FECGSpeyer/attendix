@@ -8894,6 +8894,137 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignTodayYourAnswer => 'Deine Zusage';
 
   @override
+  String get redesignWorkAllFiles => 'Alle Dateien';
+
+  @override
+  String get redesignWorkAllParts => 'Alle Stimmen';
+
+  @override
+  String get redesignWorkEdit => 'Bearbeiten';
+
+  @override
+  String redesignWorkFileCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Dateien',
+      one: '1 Datei',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignWorkLastPlayed => 'Zuletzt gespielt';
+
+  @override
+  String get redesignWorkLastSung => 'Zuletzt gesungen';
+
+  @override
+  String get redesignWorkLink => 'Link';
+
+  @override
+  String get redesignWorkLyrics => 'Liedtext';
+
+  @override
+  String get redesignWorkNever => 'Noch nie';
+
+  @override
+  String get redesignWorkNoFiles => 'Zu diesem Werk gibt es noch keine Dateien.';
+
+  @override
+  String get redesignWorkNoPart => 'Für deine Stimme gibt es noch keine Noten.';
+
+  @override
+  String get redesignWorkNormalSpeed => 'Normal abspielen';
+
+  @override
+  String get redesignWorkNotFound => 'Dieses Werk gibt es hier nicht mehr.';
+
+  @override
+  String redesignWorkNumber(Object number) {
+    return 'Nr. $number';
+  }
+
+  @override
+  String get redesignWorkOpen => 'Öffnen';
+
+  @override
+  String get redesignWorkPause => 'Anhalten';
+
+  @override
+  String get redesignWorkPlanned => 'Geplant';
+
+  @override
+  String get redesignWorkPlay => 'Abspielen';
+
+  @override
+  String get redesignWorkRecording => 'Aufnahme';
+
+  @override
+  String redesignWorkRecordingFrom(Object date) {
+    return 'Aufnahme vom $date';
+  }
+
+  @override
+  String get redesignWorkScore => 'Partitur';
+
+  @override
+  String get redesignWorkShare => 'Link kopieren';
+
+  @override
+  String get redesignWorkSlower => 'Langsamer abspielen';
+
+  @override
+  String get redesignWorkYourPart => 'Deine Stimme';
+
+  @override
+  String get redesignWorksAdd => 'Werk hinzufügen';
+
+  @override
+  String redesignWorksAll(Object count) {
+    return 'Alle · $count';
+  }
+
+  @override
+  String get redesignWorksAudio => 'Audio';
+
+  @override
+  String get redesignWorksCurrent => 'Gerade geprobt';
+
+  @override
+  String get redesignWorksEmpty => 'Noch keine Werke.';
+
+  @override
+  String get redesignWorksFiles => 'Dateien';
+
+  @override
+  String get redesignWorksFilesLabel => 'Dateien der Gruppe';
+
+  @override
+  String get redesignWorksFilter => 'Filter & Ansicht';
+
+  @override
+  String get redesignWorksFilterActive => 'Filter aktiv';
+
+  @override
+  String get redesignWorksMore => 'Mehr';
+
+  @override
+  String get redesignWorksNoMatch => 'Kein Werk passt zur Suche.';
+
+  @override
+  String get redesignWorksPdf => 'PDF';
+
+  @override
+  String get redesignWorksResetFilter => 'Filter zurücksetzen';
+
+  @override
+  String get redesignWorksSearch => 'Titel, Komponist, Nummer';
+
+  @override
+  String get redesignWorksSearchLabel => 'Werke suchen';
+
+  @override
   String get registerCreate => 'Instanz jetzt erstellen';
 
   @override

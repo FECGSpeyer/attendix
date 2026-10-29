@@ -1,4 +1,5 @@
 import '../constants/enums.dart';
+import 'route_access.dart' show canOpenSongsTab;
 
 // REDESIGN: routes of the new design (Beta) and the switch the router and
 // the start-page logic read. The Beta flag is stored on the device only
@@ -33,6 +34,12 @@ class RedesignRoutes {
   /// A person of the new design.
   static String person(int id) => '$members/$id';
 
+  /// Tab "Werke" of the new design.
+  static const String works = '/werke';
+
+  /// A work of the new design.
+  static String work(int id) => '$works/$id';
+
   /// Tab "Ich".
   static const String me = '/ich';
 
@@ -48,10 +55,12 @@ class RedesignRoutes {
       location == today ||
       location == events ||
       location == members ||
+      location == works ||
       location == me ||
       location.startsWith('$today/') ||
       location.startsWith('$events/') ||
       location.startsWith('$members/') ||
+      location.startsWith('$works/') ||
       location.startsWith('$me/');
 
   /// Role checks of the new design's routes (the router runs them after the
@@ -63,9 +72,13 @@ class RedesignRoutes {
   ///   (`/termine/meine/…`) for everyone else too.
   /// * Mitglieder and its persons only for roles with the old people tab
   ///   (`Role.canSeePeopleTab`, like `/people`).
+  /// * Werke like `/songs-tab` (not for parents and applicants).
   static String? roleRedirect(String location, Role role) {
     if (location == members || location.startsWith('$members/')) {
       return role.canSeePeopleTab ? null : today;
+    }
+    if (location == works || location.startsWith('$works/')) {
+      return canOpenSongsTab(role) ? null : today;
     }
     final isEvents = location == events || location.startsWith('$events/');
     if (!isEvents) return null;

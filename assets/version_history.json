@@ -1,6 +1,15 @@
 {
   "versions": [
     {
+      "version": "0.18.0",
+      "date": "29.10.2026",
+      "changes": [
+        "✨ Neues Design (Beta): Tab „Werke“ mit Suche nach Titel, Komponist und Nummer, „Gerade geprobt“ und Kategorien",
+        "✨ Neues Design (Beta): Werk-Seite mit deiner Stimme zum Öffnen, allen Stimmen, Partitur und „Zuletzt gespielt“",
+        "✨ Neues Design (Beta): Aufnahme direkt auf der Werk-Seite abspielen, auch langsamer mit 0,8×"
+      ]
+    },
+    {
       "version": "0.17.1",
       "date": "29.10.2026",
       "changes": [

@@ -113,6 +113,8 @@ import '../providers/redesign_providers.dart';
 import 'redesign_routes.dart';
 import '../../features/redesign/presentation/shell/rd_shell.dart';
 import '../../features/redesign/presentation/pages/rd_today_page.dart';
+import '../../features/redesign/presentation/pages/rd_work_page.dart';
+import '../../features/redesign/presentation/pages/rd_works_page.dart';
 import '../../features/redesign/presentation/pages/rd_event_create_page.dart';
 import '../../features/redesign/presentation/pages/rd_event_page.dart';
 import '../../features/redesign/presentation/pages/rd_events_page.dart';
@@ -560,7 +562,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         // REDESIGN: the new shell (fixed tabs) while the Beta is on.
         builder: (context, state, child) => _AppShell(child: child),
         routes: [
-          // REDESIGN: "Heute", "Termine", "Mitglieder", "Ich" and "Ich › Darstellung" (Beta)
+          // REDESIGN: "Heute", "Termine", "Mitglieder", "Werke", "Ich" and "Ich › Darstellung" (Beta)
           GoRoute(
             path: RedesignRoutes.today,
             name: 'redesignToday',
@@ -621,6 +623,25 @@ final routerProvider = Provider<GoRouter>((ref) {
                   final id = int.tryParse(state.pathParameters['id'] ?? '');
                   if (id == null) return const RdMembersPage();
                   return RdPersonPage(key: ValueKey('rd-person-$id'), personId: id);
+                },
+              ),
+            ],
+          ),
+          GoRoute(
+            path: RedesignRoutes.works,
+            name: 'redesignWorks',
+            pageBuilder: (context, state) => AppPageTransitions.none(
+              child: const RdWorksPage(),
+              state: state,
+            ),
+            routes: [
+              GoRoute(
+                path: ':id',
+                name: 'redesignWork',
+                builder: (context, state) {
+                  final id = int.tryParse(state.pathParameters['id'] ?? '');
+                  if (id == null) return const RdWorksPage();
+                  return RdWorkPage(key: ValueKey('rd-work-$id'), songId: id);
                 },
               ),
             ],

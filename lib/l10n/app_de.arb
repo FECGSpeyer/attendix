@@ -11665,6 +11665,176 @@
   "@redesignTodayYourAnswer": {
     "description": "redesign.today.yourAnswer"
   },
+  "redesignWorkAllFiles": "Alle Dateien",
+  "@redesignWorkAllFiles": {
+    "description": "redesign.work.allFiles"
+  },
+  "redesignWorkAllParts": "Alle Stimmen",
+  "@redesignWorkAllParts": {
+    "description": "redesign.work.allParts"
+  },
+  "redesignWorkEdit": "Bearbeiten",
+  "@redesignWorkEdit": {
+    "description": "redesign.work.edit"
+  },
+  "redesignWorkFileCount": "{count, plural, one {1 Datei} other {{count} Dateien}}",
+  "@redesignWorkFileCount": {
+    "description": "redesign.work.fileCount",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignWorkLastPlayed": "Zuletzt gespielt",
+  "@redesignWorkLastPlayed": {
+    "description": "redesign.work.lastPlayed"
+  },
+  "redesignWorkLastSung": "Zuletzt gesungen",
+  "@redesignWorkLastSung": {
+    "description": "redesign.work.lastSung"
+  },
+  "redesignWorkLink": "Link",
+  "@redesignWorkLink": {
+    "description": "redesign.work.link"
+  },
+  "redesignWorkLyrics": "Liedtext",
+  "@redesignWorkLyrics": {
+    "description": "redesign.work.lyrics"
+  },
+  "redesignWorkNever": "Noch nie",
+  "@redesignWorkNever": {
+    "description": "redesign.work.never"
+  },
+  "redesignWorkNoFiles": "Zu diesem Werk gibt es noch keine Dateien.",
+  "@redesignWorkNoFiles": {
+    "description": "redesign.work.noFiles"
+  },
+  "redesignWorkNoPart": "Für deine Stimme gibt es noch keine Noten.",
+  "@redesignWorkNoPart": {
+    "description": "redesign.work.noPart"
+  },
+  "redesignWorkNormalSpeed": "Normal abspielen",
+  "@redesignWorkNormalSpeed": {
+    "description": "redesign.work.normalSpeed"
+  },
+  "redesignWorkNotFound": "Dieses Werk gibt es hier nicht mehr.",
+  "@redesignWorkNotFound": {
+    "description": "redesign.work.notFound"
+  },
+  "redesignWorkNumber": "Nr. {number}",
+  "@redesignWorkNumber": {
+    "description": "redesign.work.number",
+    "placeholders": {
+      "number": {}
+    }
+  },
+  "redesignWorkOpen": "Öffnen",
+  "@redesignWorkOpen": {
+    "description": "redesign.work.open"
+  },
+  "redesignWorkPause": "Anhalten",
+  "@redesignWorkPause": {
+    "description": "redesign.work.pause"
+  },
+  "redesignWorkPlanned": "Geplant",
+  "@redesignWorkPlanned": {
+    "description": "redesign.work.planned"
+  },
+  "redesignWorkPlay": "Abspielen",
+  "@redesignWorkPlay": {
+    "description": "redesign.work.play"
+  },
+  "redesignWorkRecording": "Aufnahme",
+  "@redesignWorkRecording": {
+    "description": "redesign.work.recording"
+  },
+  "redesignWorkRecordingFrom": "Aufnahme vom {date}",
+  "@redesignWorkRecordingFrom": {
+    "description": "redesign.work.recordingFrom",
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "redesignWorkScore": "Partitur",
+  "@redesignWorkScore": {
+    "description": "redesign.work.score"
+  },
+  "redesignWorkShare": "Link kopieren",
+  "@redesignWorkShare": {
+    "description": "redesign.work.share"
+  },
+  "redesignWorkSlower": "Langsamer abspielen",
+  "@redesignWorkSlower": {
+    "description": "redesign.work.slower"
+  },
+  "redesignWorkYourPart": "Deine Stimme",
+  "@redesignWorkYourPart": {
+    "description": "redesign.work.yourPart"
+  },
+  "redesignWorksAdd": "Werk hinzufügen",
+  "@redesignWorksAdd": {
+    "description": "redesign.works.add"
+  },
+  "redesignWorksAll": "Alle · {count}",
+  "@redesignWorksAll": {
+    "description": "redesign.works.all",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignWorksAudio": "Audio",
+  "@redesignWorksAudio": {
+    "description": "redesign.works.audio"
+  },
+  "redesignWorksCurrent": "Gerade geprobt",
+  "@redesignWorksCurrent": {
+    "description": "redesign.works.current"
+  },
+  "redesignWorksEmpty": "Noch keine Werke.",
+  "@redesignWorksEmpty": {
+    "description": "redesign.works.empty"
+  },
+  "redesignWorksFiles": "Dateien",
+  "@redesignWorksFiles": {
+    "description": "redesign.works.files"
+  },
+  "redesignWorksFilesLabel": "Dateien der Gruppe",
+  "@redesignWorksFilesLabel": {
+    "description": "redesign.works.filesLabel"
+  },
+  "redesignWorksFilter": "Filter & Ansicht",
+  "@redesignWorksFilter": {
+    "description": "redesign.works.filter"
+  },
+  "redesignWorksFilterActive": "Filter aktiv",
+  "@redesignWorksFilterActive": {
+    "description": "redesign.works.filterActive"
+  },
+  "redesignWorksMore": "Mehr",
+  "@redesignWorksMore": {
+    "description": "redesign.works.more"
+  },
+  "redesignWorksNoMatch": "Kein Werk passt zur Suche.",
+  "@redesignWorksNoMatch": {
+    "description": "redesign.works.noMatch"
+  },
+  "redesignWorksPdf": "PDF",
+  "@redesignWorksPdf": {
+    "description": "redesign.works.pdf"
+  },
+  "redesignWorksResetFilter": "Filter zurücksetzen",
+  "@redesignWorksResetFilter": {
+    "description": "redesign.works.resetFilter"
+  },
+  "redesignWorksSearch": "Titel, Komponist, Nummer",
+  "@redesignWorksSearch": {
+    "description": "redesign.works.search"
+  },
+  "redesignWorksSearchLabel": "Werke suchen",
+  "@redesignWorksSearchLabel": {
+    "description": "redesign.works.searchLabel"
+  },
   "registerCreate": "Instanz jetzt erstellen",
   "@registerCreate": {
     "description": "register.create"

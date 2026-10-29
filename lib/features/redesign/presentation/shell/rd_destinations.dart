@@ -85,7 +85,7 @@ List<RdDestination> rdDestinationsFor(
     if (showWorks)
       const RdDestination(
         tab: RdTab.works,
-        route: '/songs-tab',
+        route: RedesignRoutes.works,
         icon: Icons.music_note_outlined,
         selectedIcon: Icons.music_note,
       ),
@@ -107,7 +107,10 @@ RdTab rdTabForLocation(String location) {
     return RdTab.events;
   }
   if (under(RedesignRoutes.members) || under('/people') || under('/members')) return RdTab.members;
-  if (under('/songs-tab') || under('/settings/songs') || under('/settings/files')) {
+  if (under(RedesignRoutes.works) ||
+      under('/songs-tab') ||
+      under('/settings/songs') ||
+      under('/settings/files')) {
     return RdTab.works;
   }
   return RdTab.me;

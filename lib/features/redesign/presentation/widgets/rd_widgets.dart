@@ -1056,6 +1056,80 @@ class RdPage extends StatelessWidget {
   }
 }
 
+/// White pill with icon and label ("Abwesend", "Dateien").
+class RdPillButton extends StatelessWidget {
+  const RdPillButton({super.key, required this.icon, required this.label, required this.onPressed, this.semanticLabel});
+
+  final IconData icon;
+  final String label;
+  final VoidCallback onPressed;
+
+  /// Longer label for screen readers ("Dateien der Gruppe").
+  final String? semanticLabel;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.rd;
+    return Semantics(
+      button: true,
+      label: semanticLabel,
+      excludeSemantics: semanticLabel != null,
+      child: Material(
+        color: p.surface,
+        shape: const StadiumBorder(),
+        child: InkWell(
+          customBorder: const StadiumBorder(),
+          onTap: onPressed,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 44),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(icon, size: 18, color: p.link),
+                  const SizedBox(width: 6),
+                  Text(label, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: p.link)),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Text action in the top bar ("Bearbeiten").
+class RdTextLink extends StatelessWidget {
+  const RdTextLink({super.key, required this.label, required this.onTap});
+
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.rd;
+    return Semantics(
+      button: true,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(10),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 44),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Center(
+              widthFactor: 1,
+              child: Text(label, style: TextStyle(fontSize: 17, color: p.link)),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 /// Back link of a sub page ("‹ Ich").
 class RdBackLink extends StatelessWidget {
   const RdBackLink({super.key, required this.label, required this.onTap});

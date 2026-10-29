@@ -78,7 +78,7 @@ Widget _app(Role role, {bool canCreate = true, List<AttendanceType> types = cons
               ),
             ],
           ),
-          for (final path in ['/heute', '/people', '/mitglieder', '/members', '/songs-tab', '/ich'])
+          for (final path in ['/heute', '/people', '/mitglieder', '/members', '/songs-tab', '/werke', '/ich'])
             GoRoute(path: path, builder: (_, __) => Scaffold(body: Text('page $path'))),
         ],
       ),

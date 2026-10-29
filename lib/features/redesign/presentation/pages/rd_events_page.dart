@@ -98,7 +98,7 @@ class _RdEventsPageState extends ConsumerState<RdEventsPage> {
               ),
             ),
             if (canReportAbsence) ...[
-              _PillButton(
+              RdPillButton(
                 icon: Icons.event_busy_outlined,
                 label: l10n.redesignEventsAbsent,
                 onPressed: () => showRdAbsenceSheet(
@@ -701,42 +701,6 @@ class _WaitingBanner extends StatelessWidget {
                   Icon(active ? Icons.close : Icons.chevron_right, size: 18, color: p.late),
                 ],
               ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// Small rounded button in the header ("Abwesend …").
-class _PillButton extends StatelessWidget {
-  const _PillButton({required this.icon, required this.label, required this.onPressed});
-
-  final IconData icon;
-  final String label;
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    final p = context.rd;
-    return Material(
-      color: p.surface,
-      shape: const StadiumBorder(),
-      child: InkWell(
-        customBorder: const StadiumBorder(),
-        onTap: onPressed,
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(minHeight: 44),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(icon, size: 18, color: p.link),
-                const SizedBox(width: 6),
-                Text(label, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: p.link)),
-              ],
             ),
           ),
         ),

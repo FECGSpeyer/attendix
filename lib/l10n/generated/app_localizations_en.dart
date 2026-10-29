@@ -8900,6 +8900,137 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignTodayYourAnswer => 'Your answer';
 
   @override
+  String get redesignWorkAllFiles => 'All files';
+
+  @override
+  String get redesignWorkAllParts => 'All parts';
+
+  @override
+  String get redesignWorkEdit => 'Edit';
+
+  @override
+  String redesignWorkFileCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count files',
+      one: '1 file',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignWorkLastPlayed => 'Last played';
+
+  @override
+  String get redesignWorkLastSung => 'Last sung';
+
+  @override
+  String get redesignWorkLink => 'Link';
+
+  @override
+  String get redesignWorkLyrics => 'Lyrics';
+
+  @override
+  String get redesignWorkNever => 'Never';
+
+  @override
+  String get redesignWorkNoFiles => 'There are no files for this work yet.';
+
+  @override
+  String get redesignWorkNoPart => 'There is no sheet music for your part yet.';
+
+  @override
+  String get redesignWorkNormalSpeed => 'Play at normal speed';
+
+  @override
+  String get redesignWorkNotFound => 'This work no longer exists here.';
+
+  @override
+  String redesignWorkNumber(Object number) {
+    return 'No. $number';
+  }
+
+  @override
+  String get redesignWorkOpen => 'Open';
+
+  @override
+  String get redesignWorkPause => 'Pause';
+
+  @override
+  String get redesignWorkPlanned => 'Planned';
+
+  @override
+  String get redesignWorkPlay => 'Play';
+
+  @override
+  String get redesignWorkRecording => 'Recording';
+
+  @override
+  String redesignWorkRecordingFrom(Object date) {
+    return 'Recording from $date';
+  }
+
+  @override
+  String get redesignWorkScore => 'Score';
+
+  @override
+  String get redesignWorkShare => 'Copy link';
+
+  @override
+  String get redesignWorkSlower => 'Play slower';
+
+  @override
+  String get redesignWorkYourPart => 'Your part';
+
+  @override
+  String get redesignWorksAdd => 'Add work';
+
+  @override
+  String redesignWorksAll(Object count) {
+    return 'All · $count';
+  }
+
+  @override
+  String get redesignWorksAudio => 'Audio';
+
+  @override
+  String get redesignWorksCurrent => 'In rehearsal';
+
+  @override
+  String get redesignWorksEmpty => 'No works yet.';
+
+  @override
+  String get redesignWorksFiles => 'Files';
+
+  @override
+  String get redesignWorksFilesLabel => 'Files of the group';
+
+  @override
+  String get redesignWorksFilter => 'Filter & view';
+
+  @override
+  String get redesignWorksFilterActive => 'Filter active';
+
+  @override
+  String get redesignWorksMore => 'More';
+
+  @override
+  String get redesignWorksNoMatch => 'No work matches the search.';
+
+  @override
+  String get redesignWorksPdf => 'PDF';
+
+  @override
+  String get redesignWorksResetFilter => 'Reset filter';
+
+  @override
+  String get redesignWorksSearch => 'Title, composer, number';
+
+  @override
+  String get redesignWorksSearchLabel => 'Search works';
+
+  @override
   String get registerCreate => 'Create instance now';
 
   @override
