@@ -103,6 +103,7 @@ import '../../features/deep_links/presentation/pages/open_link_page.dart';
 import '../../shared/widgets/dialogs/native_app_ad.dart';
 import 'legacy_routes.dart';
 import 'attendance_detail_guard.dart'; // LEFTOVERS
+import 'route_access.dart'; // PARITY_R7
 import '../../l10n/l10n.dart';
 
 /// Listenable that notifies when auth state changes
@@ -127,8 +128,10 @@ typedef RoleCheck = bool Function(Role role);
 const Map<String, RoleCheck> _protectedRoutes = {
   // Admin-only routes
   '/settings/users': _isAdmin,
-  '/settings/viewers': _isAdmin,
-  '/settings/parents': _isAdmin,
+  // PARITY_R7: Ionic "Benutzer & Rollen" (Beobachter, Eltern) is shown for
+  // isAdmin = ADMIN || RESPONSIBLE; only "Admins" is ADMIN-only.
+  '/settings/viewers': _isAdminOrResponsible,
+  '/settings/parents': _isAdminOrResponsible,
 
   // Admin or Responsible
   '/settings/general': _isAdminOrResponsible,
@@ -155,11 +158,10 @@ const Map<String, RoleCheck> _protectedRoutes = {
   // Conductor routes (Admin, Responsible, Viewer)
   '/settings/teachers': _isConductor,
   '/people': _canSeePeopleTab,
-  // SEC-017: Analytics and export routes require conductor role
-  '/statistics': _isConductor,
-  '/planning': _canEditPlans, // ORG_PLANS: observers must not see the plan
-  '/history': _canSeeSongHistory, // SETTINGS2: Ionic admin/responsible/helper
-  '/export': _isConductor,
+  // SEC-017 / PARITY_R7: Statistik + Export (Ionic settings `isAdmin`:
+  // ADMIN/RESPONSIBLE, not VIEWER). /planning and /history: route_access.dart.
+  '/statistics': _isAdminOrResponsible,
+  '/export': _isAdminOrResponsible,
 
   // Attendance management
   '/attendance': _canSeeAttendanceTab,
@@ -174,14 +176,48 @@ const Map<String, RoleCheck> _protectedRoutes = {
 bool _isAdmin(Role role) => role.isAdmin;
 bool _isAdminOrResponsible(Role role) => role.isAdmin || role.isResponsible;
 bool _isConductor(Role role) => role.isConductor;
-// SETTINGS2: Werke-Historie (Ionic settings: isAdmin || isHelper)
-bool _canSeeSongHistory(Role role) => role.isConductor || role.isHelperRole;
 bool _canSeePeopleTab(Role role) => role.canSeePeopleTab;
 bool _canSeeAttendanceTab(Role role) => role.canSeeAttendanceTab;
-// ORG_PLANS: Ablaufplan editing (Role.isConductor includes observers/viewers)
-bool _canEditPlans(Role role) => role.isAdmin || role.isResponsible || role.isHelper;
 /// ORG_PLANS: public plan routes reachable without login (share keys)
 const Set<String> _publicPlanRoutes = {'/plan', '/planung', '/org-plan'};
+
+/// PARITY_R7: role-based access of a logged-in user with a loaded role
+/// (Ionic AuthGuard + TabsPage `Utils.isUrlAccessAllowed`/`getUrl`).
+/// Returns the redirect target (the role's start page) or `null`.
+@visibleForTesting
+String? roleRouteRedirect(
+  String location,
+  Uri uri,
+  Role role, {
+  required bool canCreateAttendance,
+  RouteAccessTenant tenant = const RouteAccessTenant(),
+}) {
+  // LEFTOVERS: typed /attendance/:id only for roles that may open a
+  // Termin in Ionic (canAddAttendance); must run before the generic
+  // '/attendance' prefix entry below (first match wins).
+  final attendanceDetailTarget = attendanceDetailRedirect(
+    location,
+    role,
+    canCreate: canCreateAttendance, // SOL_FIX2
+  );
+  if (attendanceDetailTarget != null) return attendanceDetailTarget;
+  // END LEFTOVERS
+
+  // PARITY_R7: role + tenant gates (parents, signout, overview, members,
+  // songs-tab, voice-leader, history, planning, song create/edit).
+  final accessTarget = routeAccessRedirect(location, uri, role, tenant);
+  if (accessTarget != null) return accessTarget;
+
+  // Check if route (or parent route) is protected
+  for (final entry in _protectedRoutes.entries) {
+    if (location == entry.key || location.startsWith('${entry.key}/')) {
+      // PARITY_R7: the role's start page (Ionic Utils.getUrl(role));
+      // parents land on /parents instead of the blocked /signout.
+      return entry.value(role) ? null : role.defaultRoute;
+    }
+  }
+  return null;
+}
 
 /// Provider for the auth change notifier
 final authChangeNotifierProvider = Provider<AuthChangeNotifier>((ref) {
@@ -327,39 +363,26 @@ final routerProvider = Provider<GoRouter>((ref) {
               return '/tenants';
             }
           }
+          if (isRoleGatedRoute(location)) return '/tenants'; // PARITY_R7
         }
 
         final role = ref.read(currentRoleProvider);
         final location = state.matchedLocation;
 
-        // LEFTOVERS: typed /attendance/:id only for roles that may open a
-        // Termin in Ionic (canAddAttendance); must run before the generic
-        // '/attendance' prefix entry below (first match wins).
-        final attendanceDetailTarget = attendanceDetailRedirect(
+        // PARITY_R7: all role/tenant checks in one pure function (tested).
+        final tenant = ref.read(currentTenantProvider);
+        final roleTarget = roleRouteRedirect(
           location,
+          state.uri,
           role,
-          canCreate: ref.read(canCreateAttendanceProvider), // SOL_FIX2
+          canCreateAttendance: ref.read(canCreateAttendanceProvider), // SOL_FIX2
+          tenant: RouteAccessTenant(
+            type: tenant?.type,
+            showMembersList: tenant?.showMembersList,
+            tenantCount: ref.read(userTenantsProvider).valueOrNull?.length,
+          ),
         );
-        if (attendanceDetailTarget != null) return attendanceDetailTarget;
-        // END LEFTOVERS
-
-        // Check if route (or parent route) is protected
-        for (final entry in _protectedRoutes.entries) {
-          if (location == entry.key || location.startsWith('${entry.key}/')) {
-            final hasAccess = entry.value(role);
-            if (!hasAccess) {
-              // Redirect to appropriate default route based on role
-              if (role.canSeePeopleTab) {
-                return '/people';
-              } else if (role.canSeeAttendanceTab) {
-                return '/attendance';
-              } else {
-                return '/signout';
-              }
-            }
-            break;
-          }
-        }
+        if (roleTarget != null) return roleTarget;
       }
 
       return null;
