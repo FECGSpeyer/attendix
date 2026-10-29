@@ -275,7 +275,7 @@ class _MessagesEmptyState extends StatelessWidget {
             style: ElevatedButton.styleFrom(shape: const StadiumBorder()),
             onPressed: onCompose,
             icon: const Icon(Icons.edit_note),
-            label: Text(l10n.messagesWriteFirst),
+            label: IonButtonLabel(l10n.messagesWriteFirst),
           ),
         ],
       ),

@@ -8,7 +8,8 @@ import '../../../../../core/utils/date_helper.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../../shared/widgets/adaptive/adaptive_platform.dart';
 import 'attendance_accordion.dart';
-import '../../../../../shared/widgets/display/ion_badge_text.dart'; // PARITY_R8
+import '../../../../../shared/widgets/display/ion_badge_text.dart';
+import '../../../../../shared/widgets/adaptive/ion_button_label.dart'; // PARITY_R8
 
 /// Accordion widget for displaying and editing general attendance info
 /// Uses StatefulWidget to properly manage TextEditingController lifecycle
@@ -319,7 +320,7 @@ class _GeneralInfoAccordionState extends State<GeneralInfoAccordion> {
                         padding: const EdgeInsets.symmetric(horizontal: 8),
                         minimumSize: const Size(0, 32),
                       ),
-                      child: Text(context.l10n.attendanceChoose),
+                      child: IonButtonLabel(context.l10n.attendanceChoose),
                     ),
                 ],
               ),
@@ -333,7 +334,7 @@ class _GeneralInfoAccordionState extends State<GeneralInfoAccordion> {
                   ? null
                   : TextButton(
                       onPressed: widget.onChooseFilesFolder,
-                      child: Text(context.l10n.attendanceChoose),
+                      child: IonButtonLabel(context.l10n.attendanceChoose),
                     ),
               dense: true,
             ),

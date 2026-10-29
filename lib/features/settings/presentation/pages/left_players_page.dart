@@ -65,7 +65,7 @@ class LeftPlayersPage extends ConsumerWidget {
               const SizedBox(height: AppDimensions.paddingM),
               ElevatedButton(
                 onPressed: () => ref.invalidate(leftPlayersProvider),
-                child: Text(context.l10n.messagesRetry),
+                child: IonButtonLabel(context.l10n.messagesRetry),
               ),
             ],
           ),

@@ -145,7 +145,7 @@ class _ExcuseReasonSheetState extends State<_ExcuseReasonSheet> {
                 padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                 child: FilledButton(
                   onPressed: _confirmable ? _confirm : null,
-                  child: Text(context.l10n.commonConfirm),
+                  child: IonButtonLabel(context.l10n.commonConfirm),
                 ),
               ),
             ],
@@ -393,7 +393,7 @@ class _RegistrationFieldsSheetState extends State<_RegistrationFieldsSheet> {
                 end: [
                   TextButton(
                     onPressed: () => Navigator.of(context).pop(),
-                    child: Text(context.l10n.commonCancel),
+                    child: IonButtonLabel(context.l10n.commonCancel),
                   ),
                 ],
               ),
@@ -408,7 +408,7 @@ class _RegistrationFieldsSheetState extends State<_RegistrationFieldsSheet> {
                 child: FilledButton.icon(
                   onPressed: _submit,
                   icon: const Icon(Icons.check_circle_outline),
-                  label: Text(widget.editMode
+                  label: IonButtonLabel(widget.editMode
                       ? context.l10n.commonSave
                       : context.l10n.signoutSignIn),
                 ),

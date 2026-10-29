@@ -232,20 +232,20 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
                 FilledButton.icon(
                   onPressed: _disabled ? null : () => _createPlan(),
                   icon: const Icon(Icons.description_outlined),
-                  label: Text(l10n.planningExport),
+                  label: IonButtonLabel(l10n.planningExport),
                 ),
                 if (chatId != null) ...[
                   const SizedBox(height: 8),
                   OutlinedButton.icon(
                     onPressed: _disabled ? null : () => _createPlan(perTelegram: true),
                     icon: const Icon(Icons.send_outlined),
-                    label: Text(l10n.planningTelegramPdfShort),
+                    label: IonButtonLabel(l10n.planningTelegramPdfShort),
                   ),
                   const SizedBox(height: 8),
                   OutlinedButton.icon(
                     onPressed: _disabled ? null : () => _createPlan(perTelegram: true, asImage: true),
                     icon: const Icon(Icons.image_outlined),
-                    label: Text(l10n.planningTelegramImageShort),
+                    label: IonButtonLabel(l10n.planningTelegramImageShort),
                   ),
                 ],
               ],

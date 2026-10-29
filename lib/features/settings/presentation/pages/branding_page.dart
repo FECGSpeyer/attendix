@@ -222,7 +222,7 @@ class _BrandingPageState extends ConsumerState<BrandingPage> {
                   ),
                   ElevatedButton(
                     onPressed: _busy ? null : _save,
-                    child: Text(context.l10n.commonSave),
+                    child: IonButtonLabel(context.l10n.commonSave),
                   ),
                 ],
               ),

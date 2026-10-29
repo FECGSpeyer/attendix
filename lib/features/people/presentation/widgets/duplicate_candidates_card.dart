@@ -141,7 +141,7 @@ class _DuplicateCandidatesCardState
               ].join(' · ')),
               trailing: TextButton(
                 onPressed: _merging ? null : () => _confirmMerge(m.candidate),
-                child: Text(context.l10n.personMerge),
+                child: IonButtonLabel(context.l10n.personMerge),
               ),
             ),
         ],

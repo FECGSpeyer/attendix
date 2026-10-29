@@ -440,7 +440,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                 OutlinedButton.icon(
                   onPressed: () => ref.invalidate(attendanceDetailProvider(widget.attendanceId)),
                   icon: const Icon(Icons.refresh),
-                  label: Text(context.l10n.attendanceReload),
+                  label: IonButtonLabel(context.l10n.attendanceReload),
                 ),
               ],
             ),
@@ -1463,7 +1463,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                 ref.invalidate(attendanceDetailProvider(widget.attendanceId));
               },
               icon: const Icon(Icons.refresh),
-              label: Text(context.l10n.attendanceReload),
+              label: IonButtonLabel(context.l10n.attendanceReload),
             ),
           ],
         ),

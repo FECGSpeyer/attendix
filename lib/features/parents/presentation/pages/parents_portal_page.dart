@@ -236,7 +236,7 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
                               padding: const EdgeInsets.only(top: 12),
                               child: OutlinedButton(
                                 onPressed: () => _showActions(current),
-                                child: Text(context.l10n.selfServiceAllKidsSignInOut),
+                                child: IonButtonLabel(context.l10n.selfServiceAllKidsSignInOut),
                               ),
                             ),
                         ],
@@ -260,7 +260,7 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
                                 if (children.length != 1)
                                   TextButton(
                                     onPressed: () => _showActions(g),
-                                    child: Text(context.l10n.commonAll),
+                                    child: IonButtonLabel(context.l10n.commonAll),
                                   ),
                               ],
                             ),
@@ -497,7 +497,7 @@ class _ErrorView extends StatelessWidget {
           const Icon(Icons.error_outline, size: 48, color: AppColors.danger),
           const SizedBox(height: 8),
           Text(context.l10n.signoutFlutterError(friendlyErrorMessage(error)), textAlign: TextAlign.center),
-          TextButton(onPressed: onRetry, child: Text(context.l10n.messagesRetry)),
+          TextButton(onPressed: onRetry, child: IonButtonLabel(context.l10n.messagesRetry)),
         ],
       ),
     );

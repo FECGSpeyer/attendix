@@ -637,7 +637,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         ),
                         onPressed: () => ref.read(appUpdateServiceProvider).applyUpdate(),
                         icon: const Icon(Icons.cloud_download_outlined, size: 18),
-                        label: Text(context.l10n.loginInstallUpdate),
+                        label: IonButtonLabel(context.l10n.loginInstallUpdate),
                       ),
                     ),
                   // Ionic always shows "Demo starten" (environment.demoMail);

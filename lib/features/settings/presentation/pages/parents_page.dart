@@ -59,7 +59,7 @@ class ParentsPage extends ConsumerWidget {
               const SizedBox(height: AppDimensions.paddingM),
               ElevatedButton(
                 onPressed: () => ref.invalidate(parentsProvider),
-                child: Text(context.l10n.messagesRetry),
+                child: IonButtonLabel(context.l10n.messagesRetry),
               ),
             ],
           ),

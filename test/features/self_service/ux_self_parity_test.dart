@@ -133,7 +133,8 @@ void main() {
     expect(find.text('Abwesenheit melden'), findsOneWidget);
     expect(find.text('Starttag wählen'), findsOneWidget);
     final button = find.ancestor(
-      of: find.text('Abwesenheit eintragen'),
+      // MD_BUTTONS: md ion-button labels are uppercase.
+      of: find.text('ABWESENHEIT EINTRAGEN'),
       matching: find.byWidgetPredicate((w) => w is FilledButton),
     );
     expect(tester.widget<FilledButton>(button).onPressed, isNull);

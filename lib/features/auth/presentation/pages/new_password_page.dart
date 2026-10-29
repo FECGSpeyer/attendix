@@ -98,12 +98,12 @@ class _NewPasswordPageState extends ConsumerState<NewPasswordPage> {
                             width: 20,
                             child: AppSpinner(strokeWidth: 2),
                           )
-                        : Text(context.l10n.appChangePassword),
+                        : IonButtonLabel(context.l10n.appChangePassword),
                   ),
                   const SizedBox(height: AppDimensions.paddingS),
                   TextButton(
                     onPressed: _isLoading ? null : () => context.go('/tenants'),
-                    child: Text(context.l10n.commonCancel),
+                    child: IonButtonLabel(context.l10n.commonCancel),
                   ),
                 ],
               ),

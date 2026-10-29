@@ -163,7 +163,7 @@ Future<CrossTenantPersonCandidate?> showEmailTakenDialog(
           alignment: Alignment.centerRight,
           child: TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: Text(context.l10n.commonCancel),
+            child: IonButtonLabel(context.l10n.commonCancel),
           ),
         ),
       ],

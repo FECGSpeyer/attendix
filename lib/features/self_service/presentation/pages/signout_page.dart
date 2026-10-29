@@ -262,7 +262,7 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
               const Icon(Icons.error_outline, size: 48, color: AppColors.danger),
               const SizedBox(height: 8),
               Text(context.l10n.signoutFlutterError(friendlyErrorMessage(e)), textAlign: TextAlign.center),
-              TextButton(onPressed: _refresh, child: Text(context.l10n.messagesRetry)),
+              TextButton(onPressed: _refresh, child: IonButtonLabel(context.l10n.messagesRetry)),
             ],
           ),
         ),

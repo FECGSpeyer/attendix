@@ -399,7 +399,7 @@ class _TeacherFormState extends State<_TeacherForm> {
           const SizedBox(height: AppDimensions.paddingL),
           FilledButton(
             onPressed: _submit,
-            child: Text(_isNew ? context.l10n.attendanceAdd : context.l10n.teachersUpdate),
+            child: IonButtonLabel(_isNew ? context.l10n.attendanceAdd : context.l10n.teachersUpdate),
           ),
         ],
       ),

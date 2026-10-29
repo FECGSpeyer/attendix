@@ -298,7 +298,7 @@ class _TaskFormSheetState extends ConsumerState<TaskFormSheet> {
                                 visualDensity: VisualDensity.compact,
                               ),
                               onPressed: _pickDate,
-                              child: Text(_dueDate != null ? formatLongDate(_dueDate) : l10n.tasksFlutterNoDate),
+                              child: IonButtonLabel(_dueDate != null ? formatLongDate(_dueDate) : l10n.tasksFlutterNoDate),
                             ),
                             if (_dueDate != null)
                               IconButton(
@@ -344,7 +344,7 @@ class _TaskFormSheetState extends ConsumerState<TaskFormSheet> {
                       textStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
                     ),
                     onPressed: _saving || _title.text.trim().isEmpty ? null : _save,
-                    child: Text(_isEdit ? l10n.commonSave : l10n.teamOrgCreateTask),
+                    child: IonButtonLabel(_isEdit ? l10n.commonSave : l10n.teamOrgCreateTask),
                   ),
                 ),
               ),
@@ -399,7 +399,7 @@ class _PersonPickerState extends State<_PersonPicker> {
             primary: false,
             title: Text(l10n.tasksResponsible),
             actions: [
-              TextButton(onPressed: () => Navigator.of(context).pop(), child: Text(l10n.personDone)),
+              TextButton(onPressed: () => Navigator.of(context).pop(), child: IonButtonLabel(l10n.personDone)),
             ],
           ),
           IonSearchbar(

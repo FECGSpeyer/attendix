@@ -233,7 +233,7 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
                         padding: const EdgeInsets.symmetric(horizontal: 12),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
                       ),
-                      child: Text(context.l10n.attListAddEvent),
+                      child: IonButtonLabel(context.l10n.attListAddEvent),
                     ),
                   ],
                 ],

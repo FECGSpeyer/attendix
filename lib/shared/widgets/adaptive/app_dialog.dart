@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../l10n/l10n.dart';
 import 'adaptive_platform.dart';
+import 'ion_button_label.dart';
 
 /// IOS_LOOK: [showDialog] with the Ionic overlay backdrop.
 ///
@@ -197,7 +198,12 @@ Widget iosAlertActionFrom(BuildContext context, Widget action) {
       onPressed: action.onPressed,
       destructive: destructive,
       // PARITY_R3: ionic-theme-ios27 (iPhone Safari 26): weight 600.
-      child: action.child ?? const SizedBox.shrink(),
+      // MD_BUTTONS: an [IonButtonLabel] becomes the plain [Text] the pill
+      // measures (iOS keeps the text as written).
+      child: switch (action.child) {
+        final IonButtonLabel l => l.toText(context),
+        final c => c ?? const SizedBox.shrink(),
+      },
     );
   }
   return action;
@@ -212,9 +218,12 @@ Widget mdAlertActionFrom(BuildContext context, Widget action) {
   if (action is! ButtonStyleButton) return action;
   final primary = Theme.of(context).colorScheme.primary;
   Widget child = action.child ?? const SizedBox.shrink();
-  if (child is Text && child.data != null) {
+  // MD_BUTTONS: an [IonButtonLabel] child is already uppercase in md.
+  if (child is IonButtonLabel) {
+    child = child.toText(context, textAlign: TextAlign.end);
+  } else if (child is Text && child.data != null) {
     child = Text(
-      child.data!.toUpperCase(),
+      ionUppercase(child.data!),
       key: child.key,
       style: child.style,
       textAlign: TextAlign.end,

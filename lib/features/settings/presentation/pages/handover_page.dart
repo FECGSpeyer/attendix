@@ -286,7 +286,7 @@ class _HandoverPageState extends ConsumerState<HandoverPage> {
                       ..clear()
                       ..addAll(filtered.where((p) => p.id != null).map((p) => p.id!));
                   }),
-                  child: Text(context.l10n.handoverSelectAll),
+                  child: IonButtonLabel(context.l10n.handoverSelectAll),
                 ),
               ],
             ),

@@ -75,7 +75,8 @@ void main() {
           ),
         );
 
-        expect(find.text('Hinzufügen'), findsOneWidget);
+        // MD_BUTTONS: md ion-button labels are uppercase.
+        expect(find.text('HINZUFÜGEN'), findsOneWidget);
         expect(find.byType(FilledButton), findsOneWidget);
       });
 
@@ -93,7 +94,7 @@ void main() {
           ),
         );
 
-        await tester.tap(find.text('Hinzufügen'));
+        await tester.tap(find.text('HINZUFÜGEN'));
         await tester.pump();
 
         expect(actionCalled, isTrue);
@@ -242,7 +243,7 @@ void main() {
         ),
       );
 
-      expect(find.text('Suche zurücksetzen'), findsOneWidget);
+      expect(find.text('SUCHE ZURÜCKSETZEN'), findsOneWidget);
       expect(find.byType(TextButton), findsOneWidget);
     });
 
@@ -258,7 +259,7 @@ void main() {
         ),
       );
 
-      await tester.tap(find.text('Suche zurücksetzen'));
+      await tester.tap(find.text('SUCHE ZURÜCKSETZEN'));
       await tester.pump();
 
       expect(actionCalled, isTrue);

@@ -218,7 +218,7 @@ class _DeleteAccountPageState extends ConsumerState<DeleteAccountPage> {
                         strokeWidth: 2, color: Colors.white),
                   )
                 : const Icon(Icons.delete_outline),
-            label: Text(
+            label: IonButtonLabel(
                 isDeleting ? context.l10n.deleteAccountDeleting : context.l10n.deleteAccountDeleteForever),
           ),
         ],

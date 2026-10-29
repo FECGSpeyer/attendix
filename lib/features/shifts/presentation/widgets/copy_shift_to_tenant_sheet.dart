@@ -259,7 +259,7 @@ class _CopyShiftToTenantSheetState
                               )
                             : const Icon(Icons.copy),
                         label:
-                            Text(_isCopying ? context.l10n.shiftsFlutterCopyingShort : context.l10n.songsCopy),
+                            IonButtonLabel(_isCopying ? context.l10n.shiftsFlutterCopyingShort : context.l10n.songsCopy),
                         style: ElevatedButton.styleFrom(
                           minimumSize: const Size(double.infinity, 48),
                         ),

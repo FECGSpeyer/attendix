@@ -321,7 +321,7 @@ class _AdministrationPageState extends ConsumerState<AdministrationPage> {
                                     side: const BorderSide(color: AppColors.warning),
                                   ),
                                   icon: const Icon(Icons.merge_type, size: 16),
-                                  label: Text(context.l10n.adminMerge),
+                                  label: IonButtonLabel(context.l10n.adminMerge),
                                   onPressed: saving
                                       ? null
                                       : () => _merge(

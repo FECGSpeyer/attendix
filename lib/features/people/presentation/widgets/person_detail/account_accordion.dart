@@ -102,7 +102,7 @@ class AccountAccordion extends ConsumerWidget {
             child: TextButton.icon(
               onPressed: onSearchOtherInstance,
               icon: const Icon(Icons.search, size: 18),
-              label: Text(context.l10n.personFlutterSearchOtherInstance),
+              label: IonButtonLabel(context.l10n.personFlutterSearchOtherInstance),
             ),
           ),
           ),
@@ -130,7 +130,7 @@ class AccountAccordion extends ConsumerWidget {
               child: OutlinedButton.icon(
                 onPressed: onUnlinkAccount,
                 icon: const Icon(Icons.link_off, color: AppColors.danger),
-                label: Text(context.l10n.personFlutterUnlinkAccount),
+                label: IonButtonLabel(context.l10n.personFlutterUnlinkAccount),
                 style: OutlinedButton.styleFrom(foregroundColor: AppColors.danger),
               ),
             ),
@@ -145,7 +145,7 @@ class AccountAccordion extends ConsumerWidget {
               child: FilledButton.icon(
                 onPressed: onCreateAccount,
                 icon: const Icon(Icons.person_add),
-                label: Text(context.l10n.personFlutterCreateAccount),
+                label: IonButtonLabel(context.l10n.personFlutterCreateAccount),
               ),
             ),
           if (!canEdit)
@@ -179,7 +179,7 @@ class AccountAccordion extends ConsumerWidget {
             child: TextButton.icon(
               onPressed: () => _showHelp(context),
               icon: const Icon(Icons.help_outline, size: 18),
-              label: Text(context.l10n.personHelp),
+              label: IonButtonLabel(context.l10n.personHelp),
             ),
           ),
 

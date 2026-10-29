@@ -228,7 +228,7 @@ class _CopyToTenantSheetState extends ConsumerState<CopyToTenantSheet> {
                             child: AppSpinner(strokeWidth: 2),
                           )
                         : const Icon(Icons.copy),
-                    label: Text(_isCopying ? context.l10n.shiftsFlutterCopyingShort : context.l10n.songsCopy),
+                    label: IonButtonLabel(_isCopying ? context.l10n.shiftsFlutterCopyingShort : context.l10n.songsCopy),
                     style: ElevatedButton.styleFrom(
                       minimumSize: const Size(double.infinity, 48),
                     ),

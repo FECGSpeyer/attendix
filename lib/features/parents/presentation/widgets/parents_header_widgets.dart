@@ -16,7 +16,8 @@ import '../../../../data/models/tenant/tenant.dart';
 import '../../data/providers/parents_providers.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
-import '../../../../shared/widgets/layout/ionic_ios.dart'; // IOS_PAGES3
+import '../../../../shared/widgets/layout/ionic_ios.dart';
+import '../../../../shared/widgets/adaptive/ion_button_label.dart'; // IOS_PAGES3
 
 /// App bar title of the parents page (Ionic: tenant switcher when the user
 /// has more than one tenant, otherwise the tenant's long name).
@@ -157,7 +158,7 @@ class ParentsWelcomeCard extends ConsumerWidget {
               const SizedBox(height: AppDimensions.paddingS),
               TextButton(
                 onPressed: () => showCurrentSongsSheet(context, songs),
-                child: Text(context.l10n.selfServiceShowCurrentSongs),
+                child: IonButtonLabel(context.l10n.selfServiceShowCurrentSongs),
               ),
             ],
           ],

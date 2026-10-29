@@ -204,7 +204,7 @@ class _UnavailabilityPageState extends ConsumerState<UnavailabilityPage> {
           leading: editing != null
               ? TextButton(
                   onPressed: () => setState(() => _editing = null),
-                  child: Text(context.l10n.commonBack),
+                  child: IonButtonLabel(context.l10n.commonBack),
                 )
               : IconButton(
                   icon: const Icon(Icons.close),
@@ -216,7 +216,7 @@ class _UnavailabilityPageState extends ConsumerState<UnavailabilityPage> {
             if (editing != null)
               TextButton(
                 onPressed: _saving ? null : _save,
-                child: Text(context.l10n.commonSave, style: const TextStyle(fontWeight: FontWeight.bold)),
+                child: IonButtonLabel(context.l10n.commonSave, style: const TextStyle(fontWeight: FontWeight.bold)),
               ),
           ],
         ),
@@ -275,7 +275,7 @@ class _UnavailabilityPageState extends ConsumerState<UnavailabilityPage> {
             child: FilledButton.icon(
               onPressed: _add,
               icon: const Icon(Icons.add),
-              label: Text(context.l10n.dutyAddRule),
+              label: IonButtonLabel(context.l10n.dutyAddRule),
             ),
           ),
         ],

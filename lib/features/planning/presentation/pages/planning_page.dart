@@ -1493,7 +1493,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
               child: TextButton.icon(
                 onPressed: () => _navigate(-1),
                 icon: const Icon(Icons.arrow_back, size: 18),
-                label: Text(context.l10n.planningPrevious),
+                label: IonButtonLabel(context.l10n.planningPrevious),
               ),
             ),
             Expanded(
@@ -1501,7 +1501,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
                 onPressed: () => _navigate(1),
                 iconAlignment: IconAlignment.end,
                 icon: const Icon(Icons.arrow_forward, size: 18),
-                label: Text(context.l10n.planningNext),
+                label: IonButtonLabel(context.l10n.planningNext),
               ),
             ),
           ],

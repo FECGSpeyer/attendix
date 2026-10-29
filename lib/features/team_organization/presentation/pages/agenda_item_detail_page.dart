@@ -252,7 +252,7 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage> {
                         child: FilledButton.icon(
                           onPressed: () => _planInto(item!),
                           icon: const Icon(Icons.calendar_today_outlined),
-                          label: Text(l10n.agendaPlanIn),
+                          label: IonButtonLabel(l10n.agendaPlanIn),
                         ),
                       ),
                     if (!_isNew && item != null) ...[

@@ -12,6 +12,7 @@ import '../utils/song_utils.dart';
 import 'file_upload_sheet.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
+import '../../../../shared/widgets/adaptive/ion_button_label.dart';
 
 /// Result of [SingleFileUploadSheet].
 enum SingleFileUploadResult {
@@ -235,7 +236,7 @@ class _SingleFileUploadSheetState extends ConsumerState<SingleFileUploadSheet> {
                     children: [
                       TextButton(
                         onPressed: _uploading ? null : () => Navigator.pop(context),
-                        child: Text(context.l10n.commonCancel),
+                        child: IonButtonLabel(context.l10n.commonCancel),
                       ),
                       const Spacer(),
                       if (_conflicts.isNotEmpty) ...[
@@ -244,17 +245,17 @@ class _SingleFileUploadSheetState extends ConsumerState<SingleFileUploadSheet> {
                               ? null
                               : () => Navigator.pop(
                                   context, SingleFileUploadResult.openUploadSheet),
-                          child: Text(context.l10n.attendanceAdd),
+                          child: IonButtonLabel(context.l10n.attendanceAdd),
                         ),
                         TextButton(
                           style: TextButton.styleFrom(foregroundColor: AppColors.danger),
                           onPressed: _uploading ? null : () => _upload(replace: true),
-                          child: Text(context.l10n.personReplace),
+                          child: IonButtonLabel(context.l10n.personReplace),
                         ),
                       ] else
                         TextButton(
                           onPressed: _uploading ? null : () => _upload(replace: false),
-                          child: Text(context.l10n.songsUpload),
+                          child: IonButtonLabel(context.l10n.songsUpload),
                         ),
                     ],
                   ),

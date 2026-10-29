@@ -260,7 +260,7 @@ class _ExportPageState extends ConsumerState<ExportPage> {
                   textStyle: const TextStyle(fontSize: 13),
                 ),
                 onPressed: _addCustomField,
-                child: Text(context.l10n.exportAddExtraField),
+                child: IonButtonLabel(context.l10n.exportAddExtraField),
               ),
             ),
           ),
@@ -301,7 +301,7 @@ class _ExportPageState extends ConsumerState<ExportPage> {
                       height: 20,
                       child: AppSpinner(strokeWidth: 2),
                     )
-                  : Text(context.l10n.exportExport),
+                  : IonButtonLabel(context.l10n.exportExport),
             ),
           ),
         ],

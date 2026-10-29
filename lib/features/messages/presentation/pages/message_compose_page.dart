@@ -250,7 +250,7 @@ class _MessageComposePageState extends ConsumerState<MessageComposePage> {
           child: ToolbarButtonGroup(children: [
             TextButton(
               onPressed: _sending ? null : () => Navigator.of(context).pop(),
-              child: Text(l10n.commonCancel),
+              child: IonButtonLabel(l10n.commonCancel),
             ),
           ]),
         ),
@@ -445,7 +445,7 @@ class _MessageComposePageState extends ConsumerState<MessageComposePage> {
               FilledButton.icon(
                 onPressed: _canSend ? _confirmSend : null,
                 icon: const Icon(Icons.send_outlined),
-                label: Text(l10n.messagesSend),
+                label: IonButtonLabel(l10n.messagesSend),
                 style: FilledButton.styleFrom(
                   minimumSize: const Size.fromHeight(48),
                 ),

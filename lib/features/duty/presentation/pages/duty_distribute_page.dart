@@ -304,7 +304,7 @@ class _DutyDistributePageState extends ConsumerState<DutyDistributePage> {
         leading: _preview
             ? TextButton(
                 onPressed: () => setState(() => _preview = false),
-                child: Text(context.l10n.commonBack),
+                child: IonButtonLabel(context.l10n.commonBack),
               )
             : IconButton(
                 icon: const Icon(Icons.close),
@@ -334,7 +334,7 @@ class _DutyDistributePageState extends ConsumerState<DutyDistributePage> {
                 padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM, vertical: 8),
                 child: FilledButton(
                   onPressed: _saving || _plannedTotal == 0 ? null : _save,
-                  child: Text(_plannedTotal > 0
+                  child: IonButtonLabel(_plannedTotal > 0
                       ? context.l10n.dutyFlutterSaveAssignments(_plannedTotal)
                       : context.l10n.dutyFlutterNothingToDistribute),
                 ),
@@ -426,7 +426,7 @@ class _DutyDistributePageState extends ConsumerState<DutyDistributePage> {
         _hint(context.l10n.dutyDistributeHint),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM),
-          child: FilledButton(onPressed: _calculate, child: Text(context.l10n.dutyCalculate)),
+          child: FilledButton(onPressed: _calculate, child: IonButtonLabel(context.l10n.dutyCalculate)),
         ),
       ],
     );

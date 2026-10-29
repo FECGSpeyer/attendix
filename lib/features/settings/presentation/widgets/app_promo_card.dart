@@ -9,6 +9,7 @@ import '../../../../core/providers/dashboard_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/services/teams/teams_service.dart'; // TEAMS
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/adaptive/ion_button_label.dart';
 
 /// SETTINGS2: Ionic settings "📱 Attendix als App" promo card.
 ///
@@ -113,7 +114,7 @@ class _AppPromoCardState extends ConsumerState<AppPromoCard> {
                 FilledButton.icon(
                   style: buttonStyle,
                   icon: Icon(isIos ? Icons.apple : Icons.shop),
-                  label: Text(isIos ? context.l10n.settingsAppStore : context.l10n.settingsGooglePlay),
+                  label: IonButtonLabel(isIos ? context.l10n.settingsAppStore : context.l10n.settingsGooglePlay),
                   onPressed: () =>
                       _open(isIos ? AppPromoCard.iosUrl : AppPromoCard.androidUrl),
                 )
@@ -121,14 +122,14 @@ class _AppPromoCardState extends ConsumerState<AppPromoCard> {
                 FilledButton.icon(
                   style: buttonStyle,
                   icon: const Icon(Icons.apple),
-                  label: Text(context.l10n.settingsAppStore),
+                  label: IonButtonLabel(context.l10n.settingsAppStore),
                   onPressed: () => _open(AppPromoCard.iosUrl),
                 ),
                 const SizedBox(height: 8),
                 FilledButton.icon(
                   style: buttonStyle,
                   icon: const Icon(Icons.shop),
-                  label: Text(context.l10n.settingsGooglePlay),
+                  label: IonButtonLabel(context.l10n.settingsGooglePlay),
                   onPressed: () => _open(AppPromoCard.androidUrl),
                 ),
               ],

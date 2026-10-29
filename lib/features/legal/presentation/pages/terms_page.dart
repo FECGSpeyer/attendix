@@ -189,7 +189,7 @@ class _TermsPageState extends ConsumerState<TermsPage> {
                           child: AppSpinner(strokeWidth: 2),
                         )
                       : const Icon(Icons.check_circle_outline),
-                  label: Text(context.l10n.termsAcceptContinue),
+                  label: IonButtonLabel(context.l10n.termsAcceptContinue),
                 ),
               ],
             ),

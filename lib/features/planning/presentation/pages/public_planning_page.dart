@@ -968,7 +968,7 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
                   child: FilledButton.icon(
                     onPressed: _showExportOptions,
                     icon: const Icon(Icons.ios_share),
-                    label: Text(context.l10n.planningExport),
+                    label: IonButtonLabel(context.l10n.planningExport),
                   ),
                 ),
               ],
@@ -989,7 +989,7 @@ class _MyPlansSheet extends ConsumerWidget {
         automaticallyImplyLeading: false,
         title: Text(context.l10n.plansMyPlans),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: Text(context.l10n.commonClose)),
+          TextButton(onPressed: () => Navigator.pop(context), child: IonButtonLabel(context.l10n.commonClose)),
         ],
       ),
       body: plansAsync.when(

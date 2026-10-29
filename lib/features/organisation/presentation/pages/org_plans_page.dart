@@ -285,7 +285,7 @@ class _OrgPlansPageState extends ConsumerState<OrgPlansPage> {
                           title: Text(context.l10n.plansPublicLinkActive),
                           trailing: TextButton(
                             onPressed: () => _managePublicLink(key),
-                            child: Text(context.l10n.plansManage),
+                            child: IonButtonLabel(context.l10n.plansManage),
                           ),
                         )]),
                   ];

@@ -156,7 +156,7 @@ class _ShiftsListPageState extends ConsumerState<ShiftsListPage> {
                             'name': nameController.text,
                             'description': descriptionController.text,
                           }),
-                          child: Text(sheetContext.l10n.filesCreate),
+                          child: IonButtonLabel(sheetContext.l10n.filesCreate),
                         ),
                       ),
                     ],

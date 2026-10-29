@@ -178,12 +178,12 @@ class _FieldEditorSheetState extends State<FieldEditorSheet> {
               children: [
                 TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: Text(widget.cancelText ?? context.l10n.commonCancel),
+                  child: IonButtonLabel(widget.cancelText ?? context.l10n.commonCancel),
                 ),
                 const SizedBox(width: AppDimensions.paddingS),
                 FilledButton(
                   onPressed: _submit,
-                  child: Text(widget.confirmText ?? context.l10n.commonSave),
+                  child: IonButtonLabel(widget.confirmText ?? context.l10n.commonSave),
                 ),
               ],
             ),

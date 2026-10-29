@@ -85,7 +85,7 @@ class _ChurchPickerState extends State<ChurchPicker> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text(context.l10n.commonClose),
+            child: IonButtonLabel(context.l10n.commonClose),
           ),
         ],
         // second toolbar: ion-searchbar

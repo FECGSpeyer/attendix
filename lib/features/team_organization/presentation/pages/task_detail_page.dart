@@ -106,7 +106,7 @@ class _TaskDetailPageState extends ConsumerState<TaskDetailPage> {
                       ),
                       onPressed: _savingStatus ? null : () => _setStatus(task, 'completed'),
                       icon: const Icon(Icons.check),
-                      label: Text(l10n.tasksMarkDone),
+                      label: IonButtonLabel(l10n.tasksMarkDone),
                     ),
                   ),
                 ),
@@ -121,7 +121,7 @@ class _TaskDetailPageState extends ConsumerState<TaskDetailPage> {
                   iconSize: 48,
                   padding: const EdgeInsets.symmetric(vertical: 64, horizontal: 32),
                   text: l10n.tasksNotAvailable,
-                  action: TextButton(onPressed: () => context.pop(), child: Text(l10n.commonBack)),
+                  action: TextButton(onPressed: () => context.pop(), child: IonButtonLabel(l10n.commonBack)),
                 )
               : RefreshIndicator.adaptive(
                   onRefresh: () async => ref.invalidate(taskByIdProvider(widget.taskId)),

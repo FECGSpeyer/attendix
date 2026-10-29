@@ -153,7 +153,7 @@ class _InstrumentCategoriesSheetState
                         ElevatedButton(
                           onPressed: () =>
                               ref.invalidate(groupCategoriesProvider),
-                          child: Text(context.l10n.messagesRetry),
+                          child: IonButtonLabel(context.l10n.messagesRetry),
                         ),
                       ],
                     ),

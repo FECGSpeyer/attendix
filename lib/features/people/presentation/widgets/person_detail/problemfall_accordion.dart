@@ -5,6 +5,7 @@ import '../../../../../core/theme/app_colors.dart';
 import '../../../../../data/models/person/person.dart';
 import '../../../../../l10n/l10n.dart';
 import '../ion/ion_widgets.dart';
+import '../../../../../shared/widgets/adaptive/ion_button_label.dart';
 
 /// Accordion section for problem person management.
 class ProblemfallAccordion extends StatelessWidget {
@@ -112,7 +113,7 @@ class ProblemfallAccordion extends StatelessWidget {
             child: FilledButton.icon(
               onPressed: onResolveProblem,
               icon: const Icon(Icons.check_circle),
-              label: Text(context.l10n.personResetTalked),
+              label: IonButtonLabel(context.l10n.personResetTalked),
               style: FilledButton.styleFrom(
                 backgroundColor: AppColors.success,
               ),

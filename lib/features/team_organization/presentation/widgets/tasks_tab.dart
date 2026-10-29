@@ -12,7 +12,8 @@ import '../../../../shared/widgets/loading/loading.dart';
 import '../../../planning/presentation/widgets/ion_items.dart';
 import '../../team_org_utils.dart';
 import 'task_form_sheet.dart';
-import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
+import '../../../../shared/widgets/adaptive/ion_button_label.dart'; // IOS_SHELL2
 
 /// Tab "Aufgaben": leadership sees all tasks with person filters and can add
 /// tasks; members see only their own tasks (RLS) and can complete them.
@@ -129,7 +130,7 @@ class _TasksTabState extends ConsumerState<TasksTab> {
                         ? TextButton.icon(
                             onPressed: _addTask,
                             icon: const Icon(Icons.add),
-                            label: Text(l10n.teamOrgCreateTask),
+                            label: IonButtonLabel(l10n.teamOrgCreateTask),
                           )
                         : null,
                   ),

@@ -127,7 +127,7 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
                         ElevatedButton(
                           onPressed:
                               () => ref.invalidate(performanceHistoryProvider),
-                          child: Text(context.l10n.messagesRetry),
+                          child: IonButtonLabel(context.l10n.messagesRetry),
                         ),
                       ],
                     ),
@@ -403,7 +403,7 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
                       }
                       Navigator.pop(sheetContext, true);
                     },
-                    child: Text(l10n.attendanceAdd),
+                    child: IonButtonLabel(l10n.attendanceAdd),
                   ),
                 ),
               ],

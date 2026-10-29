@@ -410,12 +410,12 @@ class MultiDateCalendarDialog extends StatelessWidget {
                 children: [
                   TextButton(
                     onPressed: () => Navigator.of(context).pop(),
-                    child: Text(context.l10n.commonCancel),
+                    child: IonButtonLabel(context.l10n.commonCancel),
                   ),
                   const SizedBox(width: 8),
                   FilledButton(
                     onPressed: () => Navigator.of(context).pop(selectedDates),
-                    child: Text(context.l10n.commonApply),
+                    child: IonButtonLabel(context.l10n.commonApply),
                   ),
                 ],
               ),

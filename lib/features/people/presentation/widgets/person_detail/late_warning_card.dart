@@ -5,6 +5,7 @@ import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/providers/tenant_providers.dart';
 import '../../../../../data/models/person/person.dart';
 import '../../../../../l10n/l10n.dart';
+import '../../../../../shared/widgets/adaptive/ion_button_label.dart';
 
 /// Card showing late warning with threshold information and reset button.
 class LateWarningCard extends ConsumerWidget {
@@ -72,7 +73,7 @@ class LateWarningCard extends ConsumerWidget {
             ),
             trailing: FilledButton.tonal(
               onPressed: onResetLateCount,
-              child: Text(context.l10n.dateDialogReset),
+              child: IonButtonLabel(context.l10n.dateDialogReset),
             ),
           ),
         );

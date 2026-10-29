@@ -212,9 +212,9 @@ class ImportBottomBar extends StatelessWidget {
         ),
         child: Row(
           children: [
-            TextButton(onPressed: onBack, child: Text(context.l10n.commonBack)),
+            TextButton(onPressed: onBack, child: IonButtonLabel(context.l10n.commonBack)),
             const Spacer(),
-            FilledButton(onPressed: onPrimary, child: Text(primaryLabel)),
+            FilledButton(onPressed: onPrimary, child: IonButtonLabel(primaryLabel)),
           ],
         ),
       ),

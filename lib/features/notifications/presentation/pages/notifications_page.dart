@@ -544,7 +544,7 @@ class _TelegramItem extends StatelessWidget {
                     foregroundColor: Colors.white,
                   )
                 : null,
-            child: Text(connected ? l10n.notifDisconnect : l10n.notifConnect),
+            child: IonButtonLabel(connected ? l10n.notifDisconnect : l10n.notifConnect),
           ),
         ],
       ),

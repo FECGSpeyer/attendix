@@ -424,7 +424,7 @@ class _AddGroupSheetState extends ConsumerState<_AddGroupSheet> {
           const SizedBox(height: AppDimensions.paddingL),
           FilledButton(
             onPressed: _add,
-            child: Text(context.l10n.attendanceAdd),
+            child: IonButtonLabel(context.l10n.attendanceAdd),
           ),
         ],
       ),
@@ -710,14 +710,14 @@ class _InstrumentEditDialogState extends ConsumerState<_InstrumentEditDialog> {
             const SizedBox(height: AppDimensions.paddingL),
             FilledButton(
               onPressed: _save,
-              child: Text(isEditing ? context.l10n.instrumentsUpdate : context.l10n.attendanceAdd),
+              child: IonButtonLabel(isEditing ? context.l10n.instrumentsUpdate : context.l10n.attendanceAdd),
             ),
             if (isEditing && !_isMain) ...[
               const SizedBox(height: AppDimensions.paddingS),
               FilledButton(
                 onPressed: () => _confirmDelete(context),
                 style: FilledButton.styleFrom(backgroundColor: AppColors.danger),
-                child: Text(context.l10n.commonRemove),
+                child: IonButtonLabel(context.l10n.commonRemove),
               ),
             ],
           ],
