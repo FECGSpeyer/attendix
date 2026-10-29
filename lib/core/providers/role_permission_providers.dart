@@ -4,6 +4,7 @@ import '../config/supabase_config.dart'
     show AccountScopeKey, currentAuthUserIdProvider;
 
 import '../../data/models/role_permission/tenant_role_permission.dart';
+import '../../data/models/tenant/tenant.dart'; // ASTRA_FILES
 import '../../data/repositories/role_permission_repository.dart';
 import '../constants/enums.dart';
 import 'debug_providers.dart';
@@ -112,6 +113,27 @@ bool canAccessFilesFor(Role role, {required bool filesShared}) {
   if (filesShared) return role != Role.applicant && role != Role.none;
   return role.isAdmin || role.isResponsible || role.isHelper || role.isVoiceLeaderHelper;
 }
+
+// ASTRA_FILES
+/// Pure Logik: Dateiablage lesen in einer beliebigen Instanz – Ionic
+/// `DbService.canAccessFiles(tenantId)`. Für die aktuelle Instanz zählt
+/// [currentTenantAccess] (canAccessFilesProvider), sonst die Rolle aus der
+/// eigenen tenantUsers-Zeile und `files_shared` der Instanz, beides aus den
+/// bereits geladenen [userTenants] (userTenantsProvider). Ohne Zeile/Rolle:
+/// kein Zugriff.
+bool canAccessFilesInTenant({
+  required int tenantId,
+  required int? currentTenantId,
+  required bool currentTenantAccess,
+  required Iterable<Tenant> userTenants,
+}) {
+  if (tenantId == currentTenantId) return currentTenantAccess;
+  final tenant = userTenants.where((t) => t.id == tenantId).firstOrNull;
+  final role = tenant?.role;
+  if (tenant == null || role == null) return false;
+  return canAccessFilesFor(Role.fromValue(role), filesShared: tenant.filesShared);
+}
+// END ASTRA_FILES
 
 /// Pure Logik: Dateiablage bearbeiten (nur Admin/Verantwortliche)
 bool canEditFilesFor(Role role) => role.isAdmin || role.isResponsible;

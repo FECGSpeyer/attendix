@@ -16,7 +16,21 @@ import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 const String kFilesRoute = '/settings/files';
 
 /// Opens the Dateiablage folder of a Termin (Ionic openFilesFolder).
-Future<void> openFilesFolderRoute(BuildContext context, String path) async {
+///
+/// ASTRA_FILES: with [switchToTenantId] (a Termin of another instance in the
+/// cross-tenant "Übersicht") it goes through `/open-file` like Ionic
+/// (`FilesService.getFolderOpenParams`): that route switches the instance
+/// first, checks the files access there and then opens the folder.
+Future<void> openFilesFolderRoute(BuildContext context, String path, {int? switchToTenantId}) async {
+  if (switchToTenantId != null) {
+    final uri = Uri(path: '/open-file', queryParameters: {
+      'tenantId': '$switchToTenantId',
+      'path': path,
+      'folder': '1',
+    });
+    GoRouter.of(context).go(uri.toString());
+    return;
+  }
   final uri = Uri(path: kFilesRoute, queryParameters: {'path': path});
   await GoRouter.of(context).push(uri.toString());
 }
@@ -54,6 +68,7 @@ class SelfServiceEventActions {
     this.saveRegistrationAnswers,
     this.openPlan,
     this.canAccessFiles,
+    this.currentTenantId,
     this.showAllAttendances = false,
     this.supportsRegistrationFields = true,
   });
@@ -69,6 +84,10 @@ class SelfServiceEventActions {
       saveRegistrationAnswers;
   final Future<void> Function(CrossTenantPersonAttendance att)? openPlan;
   final bool Function(CrossTenantPersonAttendance att)? canAccessFiles;
+
+  /// ASTRA_FILES: set in the cross-tenant "Übersicht" – files of a Termin
+  /// from another instance open after switching to that instance.
+  final int? currentTenantId;
   final bool showAllAttendances;
   final bool supportsRegistrationFields;
 
@@ -77,6 +96,18 @@ class SelfServiceEventActions {
 
   bool hasFilesFolder(CrossTenantPersonAttendance att) =>
       (att.filesFolder?.isNotEmpty ?? false) && (canAccessFiles?.call(att) ?? false);
+
+  /// Ionic openFilesFolder: guarded by [hasFilesFolder]; a Termin of another
+  /// instance switches the instance first (ASTRA_FILES).
+  Future<void> openFilesFolder(BuildContext context, CrossTenantPersonAttendance att) async {
+    if (!hasFilesFolder(att)) return;
+    final otherTenant = currentTenantId != null && att.tenantId != currentTenantId;
+    await openFilesFolderRoute(
+      context,
+      att.filesFolder!,
+      switchToTenantId: otherTenant ? att.tenantId : null,
+    );
+  }
 
   List<String> _availableStatusesValues(CrossTenantPersonAttendance att) =>
       att.attendanceType?.availableStatuses?.map((s) => s.name).toList() ?? const [];
@@ -162,7 +193,7 @@ class SelfServiceEventActions {
         EventChip(
           label: context.l10n.signoutFiles,
           icon: Icons.folder_outlined,
-          onTap: () => openFilesFolderRoute(context, att.filesFolder!),
+          onTap: () => openFilesFolder(context, att),
         ),
       if (att.place != null && att.place!.isNotEmpty)
         EventChip(
@@ -364,7 +395,7 @@ class SelfServiceEventActions {
       } else if (att.place?.isNotEmpty ?? false) {
         await openEventNavigation(context, att.place!);
       } else if (hasFilesFolder(att)) {
-        await openFilesFolderRoute(context, att.filesFolder!);
+        await openFilesFolder(context, att);
       }
       return;
     }
@@ -414,7 +445,7 @@ class SelfServiceEventActions {
       case SelfServiceActionType.openNavigation:
         await openEventNavigation(context, att.place!);
       case SelfServiceActionType.openFiles:
-        await openFilesFolderRoute(context, att.filesFolder!);
+        await openFilesFolder(context, att);
     }
   }
 }
