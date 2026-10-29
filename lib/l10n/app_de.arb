@@ -11390,6 +11390,49 @@
   "@redesignPersonTomorrow": {
     "description": "redesign.person.tomorrow"
   },
+  "redesignPultAllOpen": "Alle Offenen da",
+  "@redesignPultAllOpen": {
+    "description": "redesign.pult.allOpen"
+  },
+  "redesignPultBack": "Termin",
+  "@redesignPultBack": {
+    "description": "redesign.pult.back"
+  },
+  "redesignPultDone": "Fertig",
+  "@redesignPultDone": {
+    "description": "redesign.pult.done"
+  },
+  "redesignPultGroupCount": "{present} / {total} da",
+  "@redesignPultGroupCount": {
+    "description": "redesign.pult.groupCount",
+    "placeholders": {
+      "present": {},
+      "total": {}
+    }
+  },
+  "redesignPultHint": "Antippen = da · nochmal antippen = zurück · gedrückt halten = weitere Status",
+  "@redesignPultHint": {
+    "description": "redesign.pult.hint"
+  },
+  "redesignPultOpen": "Pultmodus",
+  "@redesignPultOpen": {
+    "description": "redesign.pult.open"
+  },
+  "redesignPultOpenHint": "Große Kacheln zum Antippen, gut für das Tablet am Pult",
+  "@redesignPultOpenHint": {
+    "description": "redesign.pult.openHint"
+  },
+  "redesignPultStatusOpen": "offen",
+  "@redesignPultStatusOpen": {
+    "description": "redesign.pult.statusOpen"
+  },
+  "redesignPultTitle": "{title} · Pultmodus",
+  "@redesignPultTitle": {
+    "description": "redesign.pult.title",
+    "placeholders": {
+      "title": {}
+    }
+  },
   "redesignSignoutCannot": "Ich kann nicht",
   "@redesignSignoutCannot": {
     "description": "redesign.signout.cannot"

@@ -8681,6 +8681,37 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignPersonTomorrow => 'tomorrow';
 
   @override
+  String get redesignPultAllOpen => 'All open present';
+
+  @override
+  String get redesignPultBack => 'Event';
+
+  @override
+  String get redesignPultDone => 'Done';
+
+  @override
+  String redesignPultGroupCount(Object present, Object total) {
+    return '$present / $total present';
+  }
+
+  @override
+  String get redesignPultHint => 'Tap = present · tap again = back · press and hold = more statuses';
+
+  @override
+  String get redesignPultOpen => 'Stand mode';
+
+  @override
+  String get redesignPultOpenHint => 'Big tiles to tap, made for the tablet on the stand';
+
+  @override
+  String get redesignPultStatusOpen => 'open';
+
+  @override
+  String redesignPultTitle(Object title) {
+    return '$title · Stand mode';
+  }
+
+  @override
   String get redesignSignoutCannot => 'I can\'t come';
 
   @override

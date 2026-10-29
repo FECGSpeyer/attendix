@@ -1,6 +1,15 @@
 {
   "versions": [
     {
+      "version": "0.20.0",
+      "date": "29.10.2026",
+      "changes": [
+        "✨ Neues Design (Beta): Pultmodus beim Erfassen mit großen Kacheln pro Register, antippen = da, nochmal antippen = zurück",
+        "✨ Neues Design (Beta): Im Pultmodus gedrückt halten für weitere Status und Notiz, „Alle Offenen da“ mit Rückgängig",
+        "✨ PDF-Ansicht: Auf dem Tablet startet sie seitenweise, auf dem Handy durchgehend"
+      ]
+    },
+    {
       "version": "0.19.0",
       "date": "29.10.2026",
       "changes": [

@@ -8675,6 +8675,37 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignPersonTomorrow => 'morgen';
 
   @override
+  String get redesignPultAllOpen => 'Alle Offenen da';
+
+  @override
+  String get redesignPultBack => 'Termin';
+
+  @override
+  String get redesignPultDone => 'Fertig';
+
+  @override
+  String redesignPultGroupCount(Object present, Object total) {
+    return '$present / $total da';
+  }
+
+  @override
+  String get redesignPultHint => 'Antippen = da · nochmal antippen = zurück · gedrückt halten = weitere Status';
+
+  @override
+  String get redesignPultOpen => 'Pultmodus';
+
+  @override
+  String get redesignPultOpenHint => 'Große Kacheln zum Antippen, gut für das Tablet am Pult';
+
+  @override
+  String get redesignPultStatusOpen => 'offen';
+
+  @override
+  String redesignPultTitle(Object title) {
+    return '$title · Pultmodus';
+  }
+
+  @override
   String get redesignSignoutCannot => 'Ich kann nicht';
 
   @override

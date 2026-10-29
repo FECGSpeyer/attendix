@@ -26,6 +26,7 @@ import '../../../attendance/presentation/widgets/attendance_detail/status_chip.d
     show ionicStatusLabel;
 import '../../data/providers/rd_today_providers.dart';
 import '../../data/rd_event_logic.dart';
+import '../widgets/event/rd_pult_view.dart';
 import '../widgets/event/rd_record_widgets.dart';
 import '../widgets/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart';
@@ -85,6 +86,9 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
 
   bool _searching = false;
   String _query = '';
+
+  /// Pultmodus: big tiles instead of the list (rd_pult_view.dart).
+  bool _pult = false;
   final _search = TextEditingController();
 
   int get _id => widget.attendanceId;
@@ -399,6 +403,10 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
     }
 
     final type = ref.watch(attendanceTypeForAttendanceProvider(_id)).valueOrNull;
+    final pultMembers = _pult ? _members() : null;
+    if (pultMembers != null && pultMembers.isNotEmpty) {
+      return _pultPage(attendance, pultMembers, type);
+    }
     children.addAll([
       const SizedBox(height: 4),
       _Header(attendance: attendance, type: type),
@@ -442,6 +450,60 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
             onRefresh: () async => _reload(),
             padding: EdgeInsets.fromLTRB(20, 12, 20, _toast == null ? 32 : 96),
             children: children,
+          ),
+          if (_toast != null)
+            Positioned(
+              left: 16,
+              right: 16,
+              bottom: 16,
+              child: SafeArea(
+                top: false,
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 560),
+                    child: RdUndoBar(
+                      text: _toast!,
+                      onUndo: _undo == null || busy ? null : _runUndo,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  /// Pultmodus: the same state, writes and "Rückgängig", drawn as tiles.
+  /// Back (gesture or button) returns to the list.
+  Widget _pultPage(Attendance attendance, List<RdMember> members, AttendanceType? type) {
+    final typeStatuses = type?.availableStatuses;
+    final available = (typeStatuses?.isNotEmpty ?? false) ? typeStatuses! : AttendanceStatus.values;
+    final canViewNotes = ref.watch(canViewAttendanceNotesProvider);
+    final busy = _bulkWrites > 0;
+    final title = rdEventInfo(attendance, type).title;
+    void leave() => setState(() => _pult = false);
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) leave();
+      },
+      child: Stack(
+        children: [
+          RdPultView(
+            title: title,
+            members: members,
+            available: available.toSet(),
+            showNote: canViewNotes,
+            busy: busy,
+            bottomPadding: _toast == null ? 24 : 88,
+            onToggle: (m) => _setStatus(
+              m,
+              rdToggleTarget(m.status, AttendanceStatus.present, initial: _initial[m.id]),
+            ),
+            onMore: (m) => _openStatusSheet(m, available, canViewNotes),
+            onAllOpenPresent: () => _allOpenPresent(members.where((m) => m.isOpen).toList()),
+            onDone: leave,
           ),
           if (_toast != null)
             Positioned(
@@ -539,6 +601,23 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
 
     return [
       RdRecordCounts(counts: counts),
+      const SizedBox(height: 12),
+      Align(
+        alignment: Alignment.centerLeft,
+        child: Tooltip(
+          message: l10n.redesignPultOpenHint,
+          child: RdPillButton(
+            icon: Icons.grid_view_rounded,
+            label: l10n.redesignPultOpen,
+            onPressed: () => setState(() {
+              _pult = true;
+              _searching = false;
+              _search.clear();
+              _query = '';
+            }),
+          ),
+        ),
+      ),
       if (available.contains(AttendanceStatus.present)) ...[
         const SizedBox(height: 12),
         RdOutlineButton(

@@ -15005,6 +15005,60 @@ abstract class AppLocalizations {
   /// **'morgen'**
   String get redesignPersonTomorrow;
 
+  /// redesign.pult.allOpen
+  ///
+  /// In de, this message translates to:
+  /// **'Alle Offenen da'**
+  String get redesignPultAllOpen;
+
+  /// redesign.pult.back
+  ///
+  /// In de, this message translates to:
+  /// **'Termin'**
+  String get redesignPultBack;
+
+  /// redesign.pult.done
+  ///
+  /// In de, this message translates to:
+  /// **'Fertig'**
+  String get redesignPultDone;
+
+  /// redesign.pult.groupCount
+  ///
+  /// In de, this message translates to:
+  /// **'{present} / {total} da'**
+  String redesignPultGroupCount(Object present, Object total);
+
+  /// redesign.pult.hint
+  ///
+  /// In de, this message translates to:
+  /// **'Antippen = da · nochmal antippen = zurück · gedrückt halten = weitere Status'**
+  String get redesignPultHint;
+
+  /// redesign.pult.open
+  ///
+  /// In de, this message translates to:
+  /// **'Pultmodus'**
+  String get redesignPultOpen;
+
+  /// redesign.pult.openHint
+  ///
+  /// In de, this message translates to:
+  /// **'Große Kacheln zum Antippen, gut für das Tablet am Pult'**
+  String get redesignPultOpenHint;
+
+  /// redesign.pult.statusOpen
+  ///
+  /// In de, this message translates to:
+  /// **'offen'**
+  String get redesignPultStatusOpen;
+
+  /// redesign.pult.title
+  ///
+  /// In de, this message translates to:
+  /// **'{title} · Pultmodus'**
+  String redesignPultTitle(Object title);
+
   /// redesign.signout.cannot
   ///
   /// In de, this message translates to:

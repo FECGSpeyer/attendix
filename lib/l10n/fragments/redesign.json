@@ -404,6 +404,17 @@
         "generalHint": "Name, Saison, Gründe, Anmeldung",
         "recent": "Zuletzt geöffnet",
         "missingHint": "Mitglieder mit E-Mail, aber ohne Zugang"
+      },
+      "pult": {
+        "open": "Pultmodus",
+        "openHint": "Große Kacheln zum Antippen, gut für das Tablet am Pult",
+        "title": "{title} · Pultmodus",
+        "back": "Termin",
+        "done": "Fertig",
+        "hint": "Antippen = da · nochmal antippen = zurück · gedrückt halten = weitere Status",
+        "groupCount": "{present} / {total} da",
+        "allOpen": "Alle Offenen da",
+        "statusOpen": "offen"
       }
     }
   },
@@ -812,6 +823,17 @@
         "generalHint": "Name, season, reasons, registration",
         "recent": "Recently opened",
         "missingHint": "Members with an e-mail but no access"
+      },
+      "pult": {
+        "open": "Stand mode",
+        "openHint": "Big tiles to tap, made for the tablet on the stand",
+        "title": "{title} · Stand mode",
+        "back": "Event",
+        "done": "Done",
+        "hint": "Tap = present · tap again = back · press and hold = more statuses",
+        "groupCount": "{present} / {total} present",
+        "allOpen": "All open present",
+        "statusOpen": "open"
       }
     }
   }

@@ -10,9 +10,10 @@ import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
-/// How the PDF viewer shows the pages (remembered on the device).
+/// How the PDF viewer shows the pages (remembered on the device; until
+/// switched, tablets start page by page and phones scroll).
 enum PdfViewMode {
-  /// All pages below each other, scrolled freely (default).
+  /// All pages below each other, scrolled freely.
   scroll,
 
   /// One page at a time, a vertical swipe snaps to the next page.
@@ -89,13 +90,14 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
     }
   }
 
-  static Future<PdfViewMode> _storedMode() async {
+  /// The mode chosen before on this device, null when never switched.
+  static Future<PdfViewMode?> _storedMode() async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final name = prefs.getString(pdfViewModeStorageKey);
-      return PdfViewMode.values.where((m) => m.name == name).firstOrNull ?? PdfViewMode.scroll;
+      return PdfViewMode.values.where((m) => m.name == name).firstOrNull;
     } catch (_) {
-      return PdfViewMode.scroll;
+      return null;
     }
   }
 
@@ -118,12 +120,15 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
       }
 
       final document = await PdfDocument.openData(response.bodyBytes);
-      final mode = await _storedMode();
+      final stored = await _storedMode();
 
       if (!mounted) {
         document.close();
         return;
       }
+      // Tablets (on the stand) start page by page, phones scroll.
+      final mode = stored ??
+          (MediaQuery.sizeOf(context).shortestSide >= 600 ? PdfViewMode.pages : PdfViewMode.scroll);
       setState(() {
         _document = document;
         _totalPages = document.pagesCount;

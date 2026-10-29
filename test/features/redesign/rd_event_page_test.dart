@@ -18,6 +18,7 @@ import 'package:attendix/data/models/attendance/attendance.dart';
 import 'package:attendix/data/models/person/person.dart';
 import 'package:attendix/features/redesign/data/rd_event_logic.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_event_page.dart';
+import 'package:attendix/features/redesign/presentation/widgets/event/rd_pult_view.dart';
 import 'package:attendix/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -390,6 +391,98 @@ void main() {
     await _settle(tester);
 
     expect(h.writes, ['pa-5 {status: 4}', 'pa-5 {notes: Nicht erschienen}']);
+  });
+
+  group('Pultmodus', () {
+    Future<void> openPult(WidgetTester tester, _Harness h, Size size) async {
+      _size(tester, size);
+      await tester.pumpWidget(h.app(tab: RdEventTab.record));
+      await _settle(tester);
+      await tester.tap(find.bySemanticsLabel('Pultmodus'));
+      await _settle(tester);
+    }
+
+    testWidgets('tiles per register: tap = present, tap again = back', (tester) async {
+      final h = _Harness();
+      await openPult(tester, h, const Size(1024, 768));
+
+      expect(find.text('Gesamtprobe · Pultmodus'), findsOneWidget);
+      expect(find.textContaining('Antippen = da'), findsOneWidget);
+      expect(find.text('Holz'), findsOneWidget);
+      expect(find.text('Trompete'), findsOneWidget);
+      expect(find.text('0 / 2 da'), findsNWidgets(2));
+      expect(find.text('2 offen'), findsOneWidget);
+
+      await tester.tap(find.byKey(const ValueKey('rd-pult-2')));
+      await _settle(tester);
+      expect(h.writes, ['pa-2 {status: 1}']);
+      expect(find.text('1 / 2 da'), findsOneWidget);
+      expect(find.text('1 da'), findsOneWidget);
+      expect(find.text('Anna Berg: Anwesend'), findsOneWidget);
+
+      await tester.tap(find.byKey(const ValueKey('rd-pult-2')));
+      await _settle(tester);
+      expect(h.writes.last, 'pa-2 {status: 0}');
+      expect(find.text('0 da'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('an excused person who comes anyway, and back', (tester) async {
+      final h = _Harness();
+      await openPult(tester, h, const Size(1024, 768));
+
+      expect(find.text('Entschuldigt · „Krank“'), findsOneWidget);
+      expect(find.text('Entschuldigt · „Arbeit“'), findsOneWidget);
+      await tester.tap(find.byKey(const ValueKey('rd-pult-3')));
+      await _settle(tester);
+      expect(h.writes, ['pa-3 {status: 1}']);
+      await tester.tap(find.byKey(const ValueKey('rd-pult-3')));
+      await _settle(tester);
+      expect(h.writes.last, 'pa-3 {status: 2}');
+    });
+
+    testWidgets('all open present with undo, long press for more', (tester) async {
+      final h = _Harness();
+      await openPult(tester, h, const Size(1024, 768));
+
+      await tester.tap(find.text('Alle Offenen da'));
+      await _settle(tester);
+      expect(h.writes.toSet(), {'pa-2 {status: 1}', 'pa-5 {status: 1}'});
+      await tester.tap(find.text('Rückgängig'));
+      await _settle(tester);
+      expect(h.writes.skip(2).toSet(), {'pa-2 {status: 0}', 'pa-5 {status: 0}'});
+
+      await tester.ensureVisible(find.byKey(const ValueKey('rd-pult-5')));
+      await tester.pump();
+      await tester.longPress(find.byKey(const ValueKey('rd-pult-5')));
+      await _settle(tester);
+      expect(find.text('NOTIZ FÜR DIESEN TERMIN'), findsOneWidget);
+    });
+
+    testWidgets('Fertig and the back gesture return to the list', (tester) async {
+      final h = _Harness();
+      await openPult(tester, h, const Size(1024, 768));
+      await tester.tap(find.text('Fertig'));
+      await _settle(tester);
+      expect(find.text('Alle Offenen als anwesend'), findsOneWidget);
+
+      await tester.tap(find.bySemanticsLabel('Pultmodus'));
+      await _settle(tester);
+      await tester.binding.handlePopRoute();
+      await _settle(tester);
+      expect(find.text('Alle Offenen als anwesend'), findsOneWidget);
+      expect(find.text('page termine'), findsNothing);
+    });
+
+    testWidgets('grid columns follow the width; fits a 320 px phone', (tester) async {
+      expect(RdPultView.columnsFor(300), 2);
+      expect(RdPultView.columnsFor(984), 5);
+      expect(RdPultView.columnsFor(3000), 8);
+      final h = _Harness();
+      await openPult(tester, h, const Size(320, 640));
+      expect(find.text('Gesamtprobe · Pultmodus'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
   });
 
   testWidgets('fits on a 320 px phone', (tester) async {
