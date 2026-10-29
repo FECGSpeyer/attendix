@@ -20,6 +20,7 @@ import '../../../people/presentation/widgets/planned_absences.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/layout/ionic_ios.dart';
 import '../../../../core/utils/error_message.dart';
+import '../../../../shared/widgets/adaptive/ion_button_label.dart';
 
 /// Self-service planned absences and self pause (Ionic signout page).
 ///
@@ -348,7 +349,7 @@ class _SelfServiceAbsenceSheetState extends State<SelfServiceAbsenceSheet> {
               child: FilledButton.icon(
                 onPressed: _valid ? _confirm : null,
                 icon: const Icon(Icons.calendar_today_outlined),
-                label: Text(context.l10n.signoutEnterAbsence),
+                label: IonButtonLabel(context.l10n.signoutEnterAbsence),
               ),
             ),
           ],
@@ -456,7 +457,7 @@ class _SelfPauseSheetState extends State<_SelfPauseSheet> {
                   foregroundColor: Colors.black,
                 ),
                 onPressed: _confirm,
-                child: Text(context.l10n.signoutConfirmPause),
+                child: IonButtonLabel(context.l10n.signoutConfirmPause),
               ),
             ),
           ],

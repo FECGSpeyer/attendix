@@ -664,7 +664,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
                           }
                         });
                       },
-                child: Text(churchLabel()),
+                child: IonButtonLabel(churchLabel()),
               ),
       ),
       if (isCustom)

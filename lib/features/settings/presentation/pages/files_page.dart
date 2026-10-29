@@ -1002,7 +1002,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
             TextButton.icon(
               onPressed: _requestMoreStorage,
               icon: const Icon(Icons.add_circle_outline),
-              label: Text(context.l10n.filesRequestMore),
+              label: IonButtonLabel(context.l10n.filesRequestMore),
             ),
         ],
       ),
@@ -1035,7 +1035,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
           if (_hasSearchTerm)
             Padding(
               padding: const EdgeInsets.only(left: 8),
-              child: TextButton(onPressed: _searchController.clear, child: Text(context.l10n.filesResetSearch)),
+              child: TextButton(onPressed: _searchController.clear, child: IonButtonLabel(context.l10n.filesResetSearch)),
             ),
         ],
       );
@@ -1067,7 +1067,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
             ],
           ),
           if (_hasSearchTerm)
-            TextButton(onPressed: _searchController.clear, child: Text(context.l10n.filesResetSearch)),
+            TextButton(onPressed: _searchController.clear, child: IonButtonLabel(context.l10n.filesResetSearch)),
         ],
       ),
     );

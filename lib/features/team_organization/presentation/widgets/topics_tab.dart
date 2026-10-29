@@ -286,14 +286,14 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
                                         side: const BorderSide(color: AppColors.medium),
                                       ),
                                       onPressed: _deciding.contains(item.id) ? null : () => _reject(item),
-                                      child: Text(ctx.l10n.teamOrgReject),
+                                      child: IonButtonLabel(ctx.l10n.teamOrgReject),
                                     ),
                                   ),
                                   const SizedBox(width: 8),
                                   Expanded(
                                     child: FilledButton(
                                       onPressed: _deciding.contains(item.id) ? null : () => _accept(item),
-                                      child: Text(ctx.l10n.commonApply),
+                                      child: IonButtonLabel(ctx.l10n.commonApply),
                                     ),
                                   ),
                                 ],
@@ -382,7 +382,7 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
                           visualDensity: VisualDensity.compact,
                         ),
                         onPressed: _openReview,
-                        child: Text(l10n.teamOrgReview),
+                        child: IonButtonLabel(l10n.teamOrgReview),
                       ),
                       onTap: _openReview,
                     ),
@@ -393,7 +393,7 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
                     header: next.id != upcoming.first.id ? l10n.teamOrgChosenEvent : l10n.teamOrgNextEvent,
                     headerTrailing: TextButton(
                       onPressed: () => _changeAttendance(upcoming, next, types),
-                      child: Text(l10n.teamOrgChange),
+                      child: IonButtonLabel(l10n.teamOrgChange),
                     ),
                     children: [
                       ListTile(
@@ -562,7 +562,7 @@ class _MemberTopics extends ConsumerWidget {
                 child: FilledButton.icon(
                   onPressed: () => _suggest(context, ref),
                   icon: const Icon(Icons.lightbulb_outline),
-                  label: Text(l10n.teamOrgSuggestTopic),
+                  label: IonButtonLabel(l10n.teamOrgSuggestTopic),
                 ),
               ),
             ],
@@ -678,7 +678,7 @@ class _SuggestSheetState extends ConsumerState<_SuggestSheet> {
           AppBar(
             toolbarHeight: ionModalToolbarHeight(context), // PARITY_R5
             automaticallyImplyLeading: false,
-            leading: TextButton(onPressed: () => Navigator.of(context).pop(), child: Text(l10n.commonCancel)),
+            leading: TextButton(onPressed: () => Navigator.of(context).pop(), child: IonButtonLabel(l10n.commonCancel)),
             leadingWidth: 100,
             title: Text(l10n.teamOrgSuggestTopic),
           ),
@@ -711,7 +711,7 @@ class _SuggestSheetState extends ConsumerState<_SuggestSheet> {
                 width: double.infinity,
                 child: FilledButton(
                   onPressed: _title.text.trim().isEmpty || _sending ? null : _send,
-                  child: Text(l10n.teamOrgSendSuggestion),
+                  child: IonButtonLabel(l10n.teamOrgSendSuggestion),
                 ),
               ),
             ),

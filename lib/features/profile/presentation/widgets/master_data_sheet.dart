@@ -400,7 +400,7 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
           label: field.name,
           end: TextButton(
             onPressed: () => _selectChurch(field, churches),
-            child: Text(_churchLabel(field, churches)),
+            child: IonButtonLabel(_churchLabel(field, churches)),
           ),
         );
       default:

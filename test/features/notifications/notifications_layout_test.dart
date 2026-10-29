@@ -107,11 +107,14 @@ void main() {
       // label may wrap once at 390pt – but never into a one-letter column
       // (the bug: ≈16pt wide, ≈380pt tall).
       final label = tester.getSize(find.text('Telegramverknüpfung'));
+      // MD_BUTTONS: md ion-button labels are uppercase.
+      final connect = find.text(
+          platform == TargetPlatform.iOS ? 'Verbinden' : 'VERBINDEN');
       expect(label.width, greaterThan(80));
       expect(label.height, lessThan(label.width));
 
       final button = tester.getSize(find.ancestor(
-        of: find.text('Verbinden'),
+        of: connect,
         matching: platform == TargetPlatform.iOS
             ? find.byType(IonSmallPillButton)
             : find.byType(ElevatedButton),
@@ -123,12 +126,12 @@ void main() {
         // (9 × 13pt test glyphs + 2 × 11pt padding).
         expect(button.height, lessThan(30));
         expect(button.width,
-            closeTo(tester.getSize(find.text('Verbinden')).width + 22, 1));
+            closeTo(tester.getSize(connect).width + 22, 1));
       }
       // Label and button share one row.
       expect(
         (tester.getCenter(find.text('Telegramverknüpfung')).dy -
-                tester.getCenter(find.text('Verbinden')).dy)
+                tester.getCenter(connect).dy)
             .abs(),
         lessThan(12),
       );

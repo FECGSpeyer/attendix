@@ -7,6 +7,7 @@ import '../../../../core/providers/song_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/song/song_filter.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/adaptive/ion_button_label.dart';
 
 /// Filter, sort and view options of the songs list (Ionic filter popover)
 class SongFilterSheet extends ConsumerWidget {
@@ -61,7 +62,7 @@ class SongFilterSheet extends ConsumerWidget {
                 if (filter.hasActiveFilters)
                   TextButton(
                     onPressed: notifier.reset,
-                    child: Text(l10n.dateDialogReset),
+                    child: IonButtonLabel(l10n.dateDialogReset),
                   ),
                 IconButton(
                   icon: const Icon(Icons.close),

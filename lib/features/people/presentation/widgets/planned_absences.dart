@@ -202,7 +202,7 @@ class _AbsenceInputSheetState extends State<_AbsenceInputSheet> {
               child: FilledButton.icon(
                 onPressed: _isValid ? _submit : null,
                 icon: const Icon(Icons.calendar_month),
-                label: Text(context.l10n.personEnterAbsence),
+                label: IonButtonLabel(context.l10n.personEnterAbsence),
               ),
             ),
           ],

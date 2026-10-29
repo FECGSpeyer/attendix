@@ -60,7 +60,7 @@ class PendingPlayersPage extends ConsumerWidget {
               const SizedBox(height: AppDimensions.paddingM),
               ElevatedButton(
                 onPressed: () => ref.invalidate(realtimePendingPlayersProvider),
-                child: Text(context.l10n.messagesRetry),
+                child: IonButtonLabel(context.l10n.messagesRetry),
               ),
             ],
           ),

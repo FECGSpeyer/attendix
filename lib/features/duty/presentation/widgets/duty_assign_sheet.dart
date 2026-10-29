@@ -205,7 +205,7 @@ class _DutyAssignSheetState extends State<_DutyAssignSheet> {
               child: FilledButton(
                 style: FilledButton.styleFrom(shape: const StadiumBorder()),
                 onPressed: _selected.isEmpty ? null : () => Navigator.of(context).pop(_selected.toList()),
-                child: Text(_confirmLabel),
+                child: IonButtonLabel(_confirmLabel),
               ),
             ),
           ),

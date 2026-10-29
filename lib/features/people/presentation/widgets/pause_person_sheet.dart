@@ -172,7 +172,7 @@ class _PauseSheetState extends State<_PauseSheet> {
                       )
                   : null,
               icon: const Icon(Icons.pause),
-              label: Text(context.l10n.peoplePause),
+              label: IonButtonLabel(context.l10n.peoplePause),
               style: FilledButton.styleFrom(
                 backgroundColor: AppColors.warning,
                 disabledBackgroundColor: AppColors.warning.withValues(alpha: 0.5),

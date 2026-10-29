@@ -15,7 +15,8 @@ import '../widgets/people_cards.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/app_toolbar.dart'; // IOS_SHELL
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
-import '../../../../shared/widgets/layout/ionic_ios.dart'; // IOS_R6
+import '../../../../shared/widgets/layout/ionic_ios.dart';
+import '../../../../shared/widgets/adaptive/ion_button_label.dart'; // IOS_R6
 
 /// Home dashboard tab (Ionic `home-dashboard`): configurable set of cards in a
 /// masonry-like grid (1 / 2 / 3 columns depending on width).
@@ -98,7 +99,7 @@ class HomeDashboardPage extends ConsumerWidget {
                         const SizedBox(height: 16),
                         OutlinedButton(
                           onPressed: () => context.push('/settings/dashboard'),
-                          child: Text(context.l10n.homeDashboardConfigure),
+                          child: IonButtonLabel(context.l10n.homeDashboardConfigure),
                         ),
                       ],
                     ),

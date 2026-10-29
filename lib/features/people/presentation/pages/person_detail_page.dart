@@ -318,7 +318,7 @@ class PersonDetailPage extends ConsumerWidget {
               const SizedBox(height: AppDimensions.paddingM),
               ElevatedButton(
                 onPressed: () => ref.refresh(personProvider(personId)),
-                child: Text(context.l10n.messagesRetry),
+                child: IonButtonLabel(context.l10n.messagesRetry),
               ),
             ],
           ),
@@ -1844,7 +1844,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
                 child: TextButton.icon(
                   onPressed: () => setState(() => _editingName = false),
                   icon: const Icon(Icons.check, size: 18),
-                  label: Text(context.l10n.personDone),
+                  label: IonButtonLabel(context.l10n.personDone),
                 ),
               ),
             ],

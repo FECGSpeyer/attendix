@@ -223,7 +223,7 @@ class _AddSongSheetState extends ConsumerState<AddSongSheet> {
                       height: 18,
                       child: AppSpinner(strokeWidth: 2),
                     )
-                  : Text(context.l10n.attendanceAdd),
+                  : IonButtonLabel(context.l10n.attendanceAdd),
             ),
           ],
         ),

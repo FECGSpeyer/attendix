@@ -556,7 +556,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
                 setState(() => _additionalFieldValues[field.id] = selected);
               }
             },
-            child: Text(churchLabel(_additionalFieldValues[field.id], churches)),
+            child: IonButtonLabel(churchLabel(_additionalFieldValues[field.id], churches)),
           ),
         );
 

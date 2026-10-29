@@ -19,7 +19,8 @@ import 'package:attendix/shared/widgets/adaptive/adaptive_platform.dart'
 import 'package:attendix/shared/widgets/layout/ionic_ios.dart' as ios27
     show IonIos, IonDetailChevron, IonSearchbar; // IOS27_SWEEP
 import '../../../../../shared/widgets/display/ion_badge_text.dart'; // PARITY_R8
-import 'package:attendix/shared/widgets/layout/ionic_md.dart'; // MD_SWEEP
+import 'package:attendix/shared/widgets/layout/ionic_md.dart';
+import '../../../../../shared/widgets/adaptive/ion_button_label.dart'; // MD_SWEEP
 
 /// True when the page should look like Ionic's iOS mode.
 bool ionIsIos(BuildContext context) =>
@@ -579,7 +580,7 @@ class IonNoData extends StatelessWidget {
                         ? const StadiumBorder()
                         : RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
                   ),
-                  child: Text(text),
+                  child: IonButtonLabel(text),
                 ),
               ),
           ],

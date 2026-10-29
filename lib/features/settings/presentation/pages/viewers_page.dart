@@ -59,7 +59,7 @@ class ViewersPage extends ConsumerWidget {
               const SizedBox(height: AppDimensions.paddingM),
               ElevatedButton(
                 onPressed: () => ref.invalidate(viewersProvider),
-                child: Text(context.l10n.messagesRetry),
+                child: IonButtonLabel(context.l10n.messagesRetry),
               ),
             ],
           ),

@@ -8,6 +8,7 @@ import '../../../../core/utils/duty_utils.dart';
 import '../pages/unavailability_page.dart';
 import 'duty_actions.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/adaptive/ion_button_label.dart';
 
 /// Dienstplan part of "Meine Termine" (self service): "Bitte bestätigen",
 /// and – when the tenant uses the Dienstplan view – "Nächster Dienst",
@@ -91,12 +92,12 @@ class SelfServiceDutySection extends ConsumerWidget {
                     FilledButton(
                       style: FilledButton.styleFrom(backgroundColor: AppColors.success),
                       onPressed: () => confirmDutyAction(context, ref, r.pa.id!, r.termin.attendance.id!),
-                      child: Text(context.l10n.commonConfirm),
+                      child: IonButtonLabel(context.l10n.commonConfirm),
                     ),
                     const SizedBox(width: AppDimensions.paddingS),
                     OutlinedButton(
                       onPressed: () => declineDutyAction(context, ref, r.pa.id!, r.termin.attendance.id!),
-                      child: Text(context.l10n.signoutCannot),
+                      child: IonButtonLabel(context.l10n.signoutCannot),
                     ),
                   ],
                 ),
@@ -134,7 +135,7 @@ class SelfServiceDutySection extends ConsumerWidget {
                 const SizedBox(height: AppDimensions.paddingS),
                 OutlinedButton(
                   onPressed: () => declineDutyAction(context, ref, next.pa.id!, next.termin.attendance.id!),
-                  child: Text(context.l10n.signoutCannotAfterAll),
+                  child: IonButtonLabel(context.l10n.signoutCannotAfterAll),
                 ),
               ],
             ),
@@ -168,7 +169,7 @@ class SelfServiceDutySection extends ConsumerWidget {
                 subtitle: Text('${_dateShort(t)}${isUrgentDuty(t) ? ' · ${context.l10n.signoutUrgent}' : ''} · ${_dutyMeta(t)}'),
                 trailing: FilledButton.tonal(
                   onPressed: () => takeDutyAction(context, ref, t.attendance.id!),
-                  child: Text(context.l10n.commonApply),
+                  child: IonButtonLabel(context.l10n.commonApply),
                 ),
               ),
           ],
@@ -275,7 +276,7 @@ Future<void> showOpenDutiesSheet(BuildContext context) {
             children: [
               ListTile(
                 title: Text(context.l10n.signoutOpenDuties, style: const TextStyle(fontWeight: FontWeight.w600)),
-                trailing: TextButton(onPressed: () => Navigator.of(ctx).pop(), child: Text(context.l10n.commonClose)),
+                trailing: TextButton(onPressed: () => Navigator.of(ctx).pop(), child: IonButtonLabel(context.l10n.commonClose)),
               ),
               const Divider(height: 1),
               if (open.isEmpty)
@@ -289,7 +290,7 @@ Future<void> showOpenDutiesSheet(BuildContext context) {
                   subtitle: Text('${_dateShort(t)} · ${_dutyMeta(t)}'),
                   trailing: FilledButton(
                     onPressed: () => takeDutyAction(ctx, ref, t.attendance.id!),
-                    child: Text(context.l10n.signoutIllTakeIt),
+                    child: IonButtonLabel(context.l10n.signoutIllTakeIt),
                   ),
                 ),
               const Divider(),

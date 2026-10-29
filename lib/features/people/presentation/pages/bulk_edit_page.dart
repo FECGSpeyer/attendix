@@ -349,7 +349,7 @@ class _BulkEditPageState extends ConsumerState<BulkEditPage> {
                     OutlinedButton.icon(
                       onPressed: _applyToAll,
                       icon: const Icon(Icons.done_all, size: 18),
-                      label: Text(context.l10n.peopleSetForAll),
+                      label: IonButtonLabel(context.l10n.peopleSetForAll),
                       style: OutlinedButton.styleFrom(
                         visualDensity: VisualDensity.compact,
                         shape: ionIsIos(context) ? const StadiumBorder() : null,
@@ -426,7 +426,7 @@ class _BulkEditPageState extends ConsumerState<BulkEditPage> {
                       : null,
                 ),
                 onPressed: _changedCount == 0 || _isSaving ? null : _save,
-                child: Text(
+                child: IonButtonLabel(
                   _isSaving
                       ? context.l10n.peopleSaving
                       : _changedCount > 0

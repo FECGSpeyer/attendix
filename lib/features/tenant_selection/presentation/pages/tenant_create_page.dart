@@ -454,7 +454,7 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
                         child: AppSpinner(strokeWidth: 2),
                       )
                     : const Icon(Icons.add_circle_outline),
-                label: Text(
+                label: IonButtonLabel(
                     _isLoading ? l10n.registerCreating : l10n.registerCreate),
               ),
             ),

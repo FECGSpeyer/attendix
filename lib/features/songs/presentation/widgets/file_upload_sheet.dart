@@ -412,12 +412,12 @@ class _FileUploadSheetState extends ConsumerState<FileUploadSheet> {
                           children: [
                             FilledButton(
                               onPressed: () => _upload(replace: true),
-                              child: Text(context.l10n.songsReplaceAndAdd),
+                              child: IonButtonLabel(context.l10n.songsReplaceAndAdd),
                             ),
                             const SizedBox(height: 8),
                             OutlinedButton(
                               onPressed: () => _upload(replace: false),
-                              child: Text(context.l10n.songsAddWithoutReplace),
+                              child: IonButtonLabel(context.l10n.songsAddWithoutReplace),
                             ),
                           ],
                         ),

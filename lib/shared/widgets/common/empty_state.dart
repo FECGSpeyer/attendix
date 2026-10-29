@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/constants/app_constants.dart';
+import '../adaptive/ion_button_label.dart';
 
 /// Empty state size variants
 enum EmptyStateSize {
@@ -240,7 +241,7 @@ class _EmptyStateWidgetState extends State<EmptyStateWidget>
               SizedBox(height: widget.size == EmptyStateSize.small ? 16 : 24),
               FilledButton.tonal(
                 onPressed: widget.onAction,
-                child: Text(widget.actionLabel ?? 'Action'),
+                child: IonButtonLabel(widget.actionLabel ?? 'Action'),
               ),
             ],
           ],
@@ -303,7 +304,7 @@ class InlineEmptyState extends StatelessWidget {
             const SizedBox(width: 12),
             TextButton(
               onPressed: onAction,
-              child: Text(actionLabel ?? 'Action'),
+              child: IonButtonLabel(actionLabel ?? 'Action'),
             ),
           ],
         ],

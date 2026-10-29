@@ -92,7 +92,7 @@ void main() {
       expect(find.text('Keine Internetverbindung vorhanden'), findsOneWidget);
       expect(find.textContaining('ClientException'), findsNothing);
       expect(find.textContaining('uri='), findsNothing);
-      await tester.tap(find.text('Erneut versuchen'));
+      await tester.tap(find.text('ERNEUT VERSUCHEN')); // MD_BUTTONS: md uppercase
       expect(retried, 1);
     });
   });

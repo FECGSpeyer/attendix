@@ -314,7 +314,7 @@ class _FilesFolderPickerState extends State<_FilesFolderPicker> {
                                 context,
                                 _path.isEmpty ? folder : '$_path/$folder',
                               ),
-                              child: Text(context.l10n.folderPickerChoose),
+                              child: IonButtonLabel(context.l10n.folderPickerChoose),
                             ),
                             onTap: () => _navigate(_path.isEmpty ? folder : '$_path/$folder'),
                           ),
@@ -335,7 +335,7 @@ class _FilesFolderPickerState extends State<_FilesFolderPicker> {
                 child: FilledButton.icon(
                   onPressed: () => Navigator.pop(context, _path),
                   icon: const Icon(Icons.check),
-                  label: Text(context.l10n.folderPickerChooseThis),
+                  label: IonButtonLabel(context.l10n.folderPickerChooseThis),
                 ),
               ),
           ],

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/team_org/team_org.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/adaptive/ion_button_label.dart';
 
 /// Protocol settings of an attendance type (Ionic type.page "Protokoll &
 /// Tagesordnung"): columns `enable_protocol`, `agenda_default_duration`,
@@ -159,7 +160,7 @@ class _TypeProtocolSettingsTilesState extends State<TypeProtocolSettingsTiles> {
                 ? null
                 : TextButton(
                     onPressed: widget.onInsertPlaceholder,
-                    child: Text(context.l10n.typeSettingsInsertPlaceholder),
+                    child: IonButtonLabel(context.l10n.typeSettingsInsertPlaceholder),
                   ),
           ),
         ],

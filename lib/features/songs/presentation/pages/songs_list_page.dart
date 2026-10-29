@@ -31,7 +31,8 @@ import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/common/error_state_view.dart';
 import '../../../../shared/widgets/adaptive/app_segmented_button.dart'; // PARITY_R3
 import '../../../../shared/widgets/adaptive/app_toolbar.dart'; // IOS_SHELL
-import '../../../../shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL
+import '../../../../shared/widgets/layout/ios_tab_bar.dart';
+import '../../../../shared/widgets/adaptive/ion_button_label.dart'; // IOS_SHELL
 
 /// Songs list (Ionic `songs.page`).
 ///
@@ -454,7 +455,7 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
                         TextButton.icon(
                           onPressed: filterNotifier.reset,
                           icon: const Icon(Icons.filter_list_off),
-                          label: Text(context.l10n.peopleResetFilter),
+                          label: IonButtonLabel(context.l10n.peopleResetFilter),
                         ),
                     ],
                   ),

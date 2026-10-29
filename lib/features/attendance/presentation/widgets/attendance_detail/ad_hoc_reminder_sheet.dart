@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/utils/date_helper.dart';
 import '../../../../../l10n/l10n.dart';
+import '../../../../../shared/widgets/adaptive/ion_button_label.dart';
 
 /// Result of the "Erinnerung versenden" sheet.
 class AdHocReminderResult {
@@ -172,7 +173,7 @@ class _AdHocReminderFormState extends State<_AdHocReminderForm> {
                       ))
                   : null,
               icon: const Icon(Icons.notifications_outlined),
-              label: Text(context.l10n.attendanceSend),
+              label: IonButtonLabel(context.l10n.attendanceSend),
             ),
           ],
         ),

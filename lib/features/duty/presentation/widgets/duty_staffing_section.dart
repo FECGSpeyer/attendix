@@ -17,6 +17,7 @@ import 'duty_actions.dart';
 import 'duty_assign_sheet.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
+import '../../../../shared/widgets/adaptive/ion_button_label.dart';
 
 /// "Besetzung" block on the attendance detail page for Termine of duty types.
 class DutyStaffingSection extends ConsumerStatefulWidget {
@@ -123,13 +124,13 @@ class _DutyStaffingSectionState extends ConsumerState<DutyStaffingSection> {
                     ),
                     OutlinedButton(
                       onPressed: () => declineDutyAction(context, ref, pa.id!, _attendanceId),
-                      child: Text(l10n.signoutCannot),
+                      child: IonButtonLabel(l10n.signoutCannot),
                     ),
                     const SizedBox(width: 8),
                     FilledButton(
                       style: FilledButton.styleFrom(backgroundColor: AppColors.success),
                       onPressed: () => confirmDutyAction(context, ref, pa.id!, _attendanceId),
-                      child: Text(l10n.commonConfirm),
+                      child: IonButtonLabel(l10n.commonConfirm),
                     ),
                   ],
                 ),
@@ -149,7 +150,7 @@ class _DutyStaffingSectionState extends ConsumerState<DutyStaffingSection> {
                 title: Text(pa.fullName),
                 trailing: OutlinedButton(
                   onPressed: _busy ? null : () => _assign([pa.id!]),
-                  child: Text(l10n.attendanceAssign),
+                  child: IonButtonLabel(l10n.attendanceAssign),
                 ),
               ),
           ],

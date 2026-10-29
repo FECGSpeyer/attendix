@@ -216,7 +216,7 @@ class _PdfViewerSheetState extends State<PdfViewerSheet> {
                   _loadPdf();
                 },
                 icon: const Icon(Icons.refresh),
-                label: Text(context.l10n.messagesRetry),
+                label: IonButtonLabel(context.l10n.messagesRetry),
               ),
               // Fallback when the in-app viewer is unavailable (e.g. pdf.js
               // blocked on web): open the file in the browser / system viewer.
@@ -227,7 +227,7 @@ class _PdfViewerSheetState extends State<PdfViewerSheet> {
                   mode: LaunchMode.externalApplication,
                 ),
                 icon: const Icon(Icons.open_in_new),
-                label: Text(context.l10n.coreFlutterOpenExternally),
+                label: IonButtonLabel(context.l10n.coreFlutterOpenExternally),
               ),
             ],
           ),

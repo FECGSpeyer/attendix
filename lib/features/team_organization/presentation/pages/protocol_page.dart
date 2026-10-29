@@ -821,7 +821,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
               AppBar(
                 toolbarHeight: ionModalToolbarHeight(context), // PARITY_R5
                 automaticallyImplyLeading: false,
-                leading: TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: Text(ctx.l10n.commonCancel)),
+                leading: TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: IonButtonLabel(ctx.l10n.commonCancel)),
                 leadingWidth: 100,
                 title: Text(ctx.l10n.protocolPublish),
               ),
@@ -907,11 +907,11 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                     FilledButton.icon(
                       onPressed: () => Navigator.of(ctx).pop(true),
                       icon: const Icon(Icons.send),
-                      label: Text(_isPublished ? ctx.l10n.protocolFlutterRepublishNotify : ctx.l10n.protocolFlutterPublishNotify),
+                      label: IonButtonLabel(_isPublished ? ctx.l10n.protocolFlutterRepublishNotify : ctx.l10n.protocolFlutterPublishNotify),
                     ),
                     TextButton(
                       onPressed: () => Navigator.of(ctx).pop(false),
-                      child: Text(_isPublished ? ctx.l10n.commonCancel : ctx.l10n.protocolFlutterKeepDraft),
+                      child: IonButtonLabel(_isPublished ? ctx.l10n.commonCancel : ctx.l10n.protocolFlutterKeepDraft),
                     ),
                   ],
                 ),
@@ -1066,14 +1066,14 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                                   backgroundColor: AppColors.primary,
                                   child: const Icon(Icons.description_outlined),
                                 ),
-                                label: Text(context.l10n.protocolNotes),
+                                label: IonButtonLabel(context.l10n.protocolNotes),
                               ),
                             ),
                             const SizedBox(width: AppDimensions.paddingS),
                             Expanded(
                               child: FilledButton(
                                 onPressed: _openPublish,
-                                child: Text(
+                                child: IonButtonLabel(
                                     _isPublished ? context.l10n.protocolRepublish : context.l10n.protocolPublishShort),
                               ),
                             ),
@@ -1095,7 +1095,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                         padding: const EdgeInsets.symmetric(vertical: 64, horizontal: 24),
                         title: context.l10n.protocolLoadFailed,
                         text: '',
-                        action: OutlinedButton(onPressed: _load, child: Text(context.l10n.protocolRetry)),
+                        action: OutlinedButton(onPressed: _load, child: IonButtonLabel(context.l10n.protocolRetry)),
                       )
                     : _isLeader
                         ? (wide ? _buildWideLayout(context) : _buildEditLayout(context))
@@ -1170,7 +1170,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
               toolbarHeight: ionModalToolbarHeight(context), // PARITY_R5
               automaticallyImplyLeading: false,
               title: Text(ctx.l10n.protocolParticipants),
-              actions: [TextButton(onPressed: () => Navigator.of(ctx).pop(), child: Text(ctx.l10n.personDone))],
+              actions: [TextButton(onPressed: () => Navigator.of(ctx).pop(), child: IonButtonLabel(ctx.l10n.personDone))],
             ),
             Expanded(
               child: ListView(
@@ -1232,7 +1232,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
               toolbarHeight: ionModalToolbarHeight(context), // PARITY_R5
               automaticallyImplyLeading: false,
               title: Text(ctx.l10n.protocolGeneralNotes),
-              actions: [TextButton(onPressed: () => Navigator.of(ctx).pop(), child: Text(ctx.l10n.personDone))],
+              actions: [TextButton(onPressed: () => Navigator.of(ctx).pop(), child: IonButtonLabel(ctx.l10n.personDone))],
             ),
             Expanded(
               child: ListView(
@@ -1252,7 +1252,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                         await _createTask(protocolGeneralSectionId);
                       },
                       icon: const Icon(Icons.add_circle_outline),
-                      label: Text(ctx.l10n.tasksTask),
+                      label: IonButtonLabel(ctx.l10n.tasksTask),
                     ),
                   ),
                 ],
@@ -1359,7 +1359,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
               trailing: hasNext
                   ? TextButton(
                       onPressed: () => setState(() => _activeId = _sections[activeIndex + 1].id),
-                      child: Text(context.l10n.protocolNextPoint),
+                      child: IonButtonLabel(context.l10n.protocolNextPoint),
                     )
                   : null,
             ),
@@ -1384,7 +1384,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
         TextButton.icon(
           onPressed: _addSpontaneousTopic,
           icon: const Icon(Icons.add),
-          label: Text(context.l10n.protocolPoint),
+          label: IonButtonLabel(context.l10n.protocolPoint),
         ),
         if (unassigned.isNotEmpty) ...[
           Text(context.l10n.protocolMoreTasks, style: Theme.of(context).textTheme.titleSmall),
@@ -1457,7 +1457,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                     child: TextButton.icon(
                       onPressed: () => _createTask(s.id),
                       icon: const Icon(Icons.add_circle_outline),
-                      label: Text(context.l10n.tasksTask),
+                      label: IonButtonLabel(context.l10n.tasksTask),
                     ),
                   ),
                 ],
@@ -1643,7 +1643,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
         dense: true,
         leading: const Icon(Icons.circle, color: AppColors.danger, size: 12),
         title: Text(l10n.protocolRunning(label, _live!.remainingMinutes)),
-        trailing: hasNext ? TextButton(onPressed: _nextSection, child: Text(l10n.protocolNextPoint)) : null,
+        trailing: hasNext ? TextButton(onPressed: _nextSection, child: IonButtonLabel(l10n.protocolNextPoint)) : null,
       ),
     );
   }
@@ -1729,7 +1729,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
         const SizedBox(height: AppDimensions.paddingM),
         FilledButton(
           onPressed: _openPublish,
-          child: Text(_isPublished ? context.l10n.protocolRepublish : context.l10n.protocolPublish),
+          child: IonButtonLabel(_isPublished ? context.l10n.protocolRepublish : context.l10n.protocolPublish),
         ),
       ],
     );
@@ -1788,7 +1788,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                   OutlinedButton.icon(
                     onPressed: () => _createTask(s.id),
                     icon: const Icon(Icons.add_circle_outline),
-                    label: Text(context.l10n.tasksTask),
+                    label: IonButtonLabel(context.l10n.tasksTask),
                   ),
                   const SizedBox(width: AppDimensions.paddingM),
                   Container(
@@ -1838,7 +1838,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
             Text(_sections.isNotEmpty ? context.l10n.protocolFlutterChooseLeft : context.l10n.protocolFlutterPlanEmptyShort,
                 style: theme.textTheme.titleMedium),
             const SizedBox(height: AppDimensions.paddingS),
-            OutlinedButton(onPressed: _addSpontaneousTopic, child: Text(context.l10n.protocolAddPoint)),
+            OutlinedButton(onPressed: _addSpontaneousTopic, child: IonButtonLabel(context.l10n.protocolAddPoint)),
           ],
         ),
       );
@@ -2028,7 +2028,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
         OutlinedButton.icon(
           onPressed: _sharePdf,
           icon: const Icon(Icons.ios_share),
-          label: Text(context.l10n.protocolSharePdf),
+          label: IonButtonLabel(context.l10n.protocolSharePdf),
         ),
       ],
     );

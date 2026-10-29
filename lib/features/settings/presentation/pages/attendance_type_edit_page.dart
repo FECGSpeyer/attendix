@@ -704,7 +704,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                   OutlinedButton.icon(
                     onPressed: _addChecklistItem,
                     icon: const Icon(Icons.add, size: 18),
-                    label: Text(context.l10n.typeSettingsAddTodo),
+                    label: IonButtonLabel(context.l10n.typeSettingsAddTodo),
                   ),
                 ],
               ),

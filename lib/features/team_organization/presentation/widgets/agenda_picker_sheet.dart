@@ -362,7 +362,7 @@ class _AgendaPickerSheetState extends ConsumerState<AgendaPickerSheet> {
                       width: double.infinity,
                       child: FilledButton(
                         onPressed: !_hasChanges || _saving ? null : _confirm,
-                        child: Text(_confirmLabel),
+                        child: IonButtonLabel(_confirmLabel),
                       ),
                     ),
                   ],

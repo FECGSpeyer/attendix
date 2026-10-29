@@ -564,7 +564,7 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
             // Ionic: ion-padding + expand="block" button
             ElevatedButton(
               onPressed: _saving ? null : _save,
-              child: Text(context.l10n.commonSave),
+              child: IonButtonLabel(context.l10n.commonSave),
             ),
           ],
             ),

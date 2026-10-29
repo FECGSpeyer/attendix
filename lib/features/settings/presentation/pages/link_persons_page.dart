@@ -241,9 +241,9 @@ class _LinkPersonsPageState extends ConsumerState<LinkPersonsPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                OutlinedButton(onPressed: () => _ignore(group), child: Text(context.l10n.linkPersonsIgnore)),
+                OutlinedButton(onPressed: () => _ignore(group), child: IonButtonLabel(context.l10n.linkPersonsIgnore)),
                 const SizedBox(width: AppDimensions.paddingS),
-                ElevatedButton(onPressed: () => _link(group), child: Text(context.l10n.linkPersonsLink)),
+                ElevatedButton(onPressed: () => _link(group), child: IonButtonLabel(context.l10n.linkPersonsLink)),
               ],
             ),
           ],

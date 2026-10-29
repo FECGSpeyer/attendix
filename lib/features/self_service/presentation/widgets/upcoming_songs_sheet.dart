@@ -101,7 +101,7 @@ class UpcomingSongsSheet extends ConsumerWidget {
                         Text(context.l10n.signoutFlutterError(friendlyErrorMessage(error))),
                         TextButton(
                           onPressed: () => ref.invalidate(upcomingSongsProvider),
-                          child: Text(context.l10n.messagesRetry),
+                          child: IonButtonLabel(context.l10n.messagesRetry),
                         ),
                       ],
                     ),

@@ -105,6 +105,7 @@ import 'legacy_routes.dart';
 import 'attendance_detail_guard.dart'; // LEFTOVERS
 import 'route_access.dart'; // PARITY_R7
 import '../../l10n/l10n.dart';
+import '../../shared/widgets/adaptive/ion_button_label.dart';
 
 /// Listenable that notifies when auth state changes
 /// Used by GoRouter to re-evaluate redirects without recreating the router
@@ -1047,7 +1048,7 @@ final routerProvider = Provider<GoRouter>((ref) {
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () => context.go('/people'),
-              child: Text(context.l10n.coreFlutterRouterGoHome),
+              child: IonButtonLabel(context.l10n.coreFlutterRouterGoHome),
             ),
           ],
         ),

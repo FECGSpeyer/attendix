@@ -6,7 +6,8 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/attendance/attendance.dart';
 import '../../../../shared/widgets/common/swipe_actions.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../../shared/widgets/adaptive/app_select.dart'; // IOS_THEME2
+import '../../../../shared/widgets/adaptive/app_select.dart';
+import '../../../../shared/widgets/adaptive/ion_button_label.dart'; // IOS_THEME2
 
 /// Editor for the "Anmeldefelder" of an attendance type
 /// (Ionic `type.page.html` registration_fields section).
@@ -139,7 +140,7 @@ class _RegistrationFieldsEditorState extends State<RegistrationFieldsEditor> {
         FilledButton.icon(
           onPressed: _add,
           icon: const Icon(Icons.add_circle_outline),
-          label: Text(context.l10n.typeSettingsAddField),
+          label: IonButtonLabel(context.l10n.typeSettingsAddField),
         ),
       ],
     );

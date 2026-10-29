@@ -195,7 +195,7 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
                             : Icon(_stayInInstance
                                 ? Icons.copy
                                 : Icons.swap_horiz),
-                        label: Text(_isTransferring
+                        label: IonButtonLabel(_isTransferring
                             ? context.l10n.peopleFlutterHandoverTransferring
                             : _stayInInstance
                                 ? context.l10n.peopleFlutterHandoverCopy

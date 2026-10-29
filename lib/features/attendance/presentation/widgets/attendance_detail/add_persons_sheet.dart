@@ -5,6 +5,7 @@ import '../../../../../data/models/attendance/attendance.dart';
 import '../../../../../data/models/instrument/instrument.dart';
 import '../../../../../data/models/person/person.dart';
 import '../../../../../l10n/l10n.dart';
+import '../../../../../shared/widgets/adaptive/ion_button_label.dart';
 
 /// Candidates for "Person hinzufügen" (Ionic openAddPersonModal).
 class AddPersonCandidates {
@@ -199,7 +200,7 @@ class _AddPersonsViewState extends State<_AddPersonsView> {
                 child: FilledButton.icon(
                   onPressed: count == 0 ? null : () => Navigator.of(context).pop(_selected.toList()),
                   icon: const Icon(Icons.person_add_alt_1),
-                  label: Text(count == 0
+                  label: IonButtonLabel(count == 0
                       ? context.l10n.attendanceChoosePeople
                       : context.l10n.attendanceAddPersonsCount(count)),
                 ),

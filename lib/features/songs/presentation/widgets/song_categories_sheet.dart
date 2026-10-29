@@ -73,7 +73,7 @@ class _SongCategoriesSheetState extends ConsumerState<SongCategoriesSheet> {
                         ElevatedButton(
                           onPressed: () =>
                               ref.invalidate(songCategoriesProvider),
-                          child: Text(context.l10n.messagesRetry),
+                          child: IonButtonLabel(context.l10n.messagesRetry),
                         ),
                       ],
                     ),
