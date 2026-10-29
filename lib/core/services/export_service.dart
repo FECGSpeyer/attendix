@@ -12,79 +12,100 @@ import '../../data/models/attendance/attendance.dart';
 import '../../data/models/person/person.dart';
 import '../../l10n/l10n.dart';
 import 'native/native_file_service.dart'; // NATIVE_MISC
+import 'pdf_branding.dart'; // ASTRA_EXPORT
+
+/// Font size (pt) and cell padding (mm) of one auto-fit step of the
+/// player / attendance list PDF (Ionic jspdf-autotable styles).
+class ExportTableStyle {
+  const ExportTableStyle(this.fontSize, this.paddingVerticalMm, this.paddingHorizontalMm);
+
+  final double fontSize;
+  final double paddingVerticalMm;
+  final double paddingHorizontalMm;
+}
 
 /// Export Service for generating PDF and Excel files
 ///
 /// Based on Ionic export.page.ts
 class ExportService {
-  /// Generate player list PDF
+  /// Ionic `exportPlayerPDF` auto-fit steps (font size / cell padding in mm):
+  /// default 11/3.5 → padding 2 → font 9 → font 8 + padding 1.5.
+  static const List<ExportTableStyle> playerListFitSteps = [
+    ExportTableStyle(11, 3.5, 3.5),
+    ExportTableStyle(11, 2, 2),
+    ExportTableStyle(9, 2, 2),
+    ExportTableStyle(8, 1.5, 1.5),
+  ];
+
+  /// Ionic `exportAttPDF` auto-fit steps: font 8 / padding 2 → vertical
+  /// padding 1.5 → font 7 → font 6 + padding 0.5/1.
+  static const List<ExportTableStyle> attendanceFitSteps = [
+    ExportTableStyle(8, 2, 2),
+    ExportTableStyle(8, 1.5, 2),
+    ExportTableStyle(7, 1.5, 2),
+    ExportTableStyle(6, 0.5, 1),
+  ];
+
+  /// Ionic jsPDF page: A4 portrait, letterhead 14 mm from the sides
+  /// (`addBrandingHeader` top row at 16 mm minus half the logo height),
+  /// table bottom margin 14 mm.
+  static const pw.EdgeInsets pdfMargin = pw.EdgeInsets.fromLTRB(
+    14 * PdfPageFormat.mm,
+    11 * PdfPageFormat.mm,
+    14 * PdfPageFormat.mm,
+    14 * PdfPageFormat.mm,
+  );
+
+  /// Player list PDF (Ionic `exportPlayerPDF`): saved as
+  /// "{name}_Spielerliste_Stand_{date}.pdf" like Ionic.
   Future<void> exportPlayerListPdf({
-    required BuildContext context,
     required List<Person> players,
     required List<String> fields,
     required String tenantName,
+    PdfBranding? branding,
+    String Function(Person player, String field)? valueOf,
+  }) async {
+    final date = DateFormat(dateFmt()).format(DateTime.now());
+    final bytes = await buildPlayerListPdf(
+      players: players,
+      fields: fields,
+      tenantName: tenantName,
+      branding: branding,
+      valueOf: valueOf,
+    );
+    await NativeFileService.saveBytes(
+        bytes, '${l10nWithoutContext.exportPlayerListFile(tenantName, date)}.pdf'); // NATIVE_MISC
+  }
+
+  /// Builds the player list PDF: tenant letterhead (logo + branding text,
+  /// "Erstellt am", title "{name} Spielerliste", "Stand: {date}", rule) on
+  /// every page via the shared [buildPdfBrandingHeader], then Ionic's plain
+  /// table shrunk step by step until it fits on one page.
+  Future<Uint8List> buildPlayerListPdf({
+    required List<Person> players,
+    required List<String> fields,
+    required String tenantName,
+    PdfBranding? branding,
     String Function(Person player, String field)? valueOf,
   }) async {
     final fieldValue = valueOf ?? _getPlayerFieldValue;
     final l10n = l10nWithoutContext;
     final date = DateFormat(dateFmt()).format(DateTime.now());
-    final pdf = pw.Document();
 
-    // Prepare data rows
     final data = <List<String>>[];
-    int row = 1;
-
+    var row = 1;
     for (final player in players) {
-      data.add([
-        row.toString(),
-        ...fields.map((f) => fieldValue(player, f)),
-      ]);
+      data.add([row.toString(), ...fields.map((f) => fieldValue(player, f))]);
       row++;
     }
 
-    pdf.addPage(
-      pw.MultiPage(
-        pageFormat: PdfPageFormat.a4,
-        margin: const pw.EdgeInsets.all(40),
-        header: (context) => pw.Container(
-          margin: const pw.EdgeInsets.only(bottom: 20),
-          child: pw.Text(
-            l10n.coreFlutterExportPlayerListHeader(tenantName, date),
-            style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold),
-          ),
-        ),
-        build: (context) => [
-          pw.TableHelper.fromTextArray(
-            headers: ['#', ...fields],
-            data: data,
-            cellStyle: const pw.TextStyle(fontSize: 10),
-            headerStyle: pw.TextStyle(
-              fontSize: 10,
-              fontWeight: pw.FontWeight.bold,
-              color: PdfColors.white,
-            ),
-            headerDecoration: const pw.BoxDecoration(
-              color: PdfColor.fromInt(0xFF005238), // Dark green
-            ),
-            cellAlignment: pw.Alignment.centerLeft,
-            headerAlignment: pw.Alignment.center,
-            border: pw.TableBorder.all(color: PdfColors.grey300),
-            cellPadding: const pw.EdgeInsets.all(4),
-          ),
-        ],
-        footer: (context) => pw.Container(
-          alignment: pw.Alignment.centerRight,
-          child: pw.Text(
-            l10n.protocolPage(context.pageNumber, context.pagesCount),
-            style: const pw.TextStyle(fontSize: 8),
-          ),
-        ),
-      ),
-    );
-
-    await Printing.layoutPdf(
-      onLayout: (format) async => pdf.save(),
-      name: '${tenantName}_${l10n.coreFlutterExportPlayerListSheet}_$date.pdf',
+    return _buildBrandedTablePdf(
+      branding: branding,
+      title: l10n.exportPlayerListTitle(tenantName),
+      subtitle: l10n.planningAsOf(date),
+      headers: ['', ...fields],
+      rows: data,
+      fitSteps: playerListFitSteps,
     );
   }
 
@@ -128,20 +149,45 @@ class ExportService {
     return Uint8List.fromList(excel.encode()!);
   }
 
-  /// Generate attendance list PDF with status codes
+  /// Attendance list PDF (Ionic `exportAttPDF`): saved as
+  /// "{name}_Anwesenheit_Stand_{date}.pdf" like Ionic.
   Future<void> exportAttendancePdf({
-    required BuildContext context,
     required List<Person> players,
     required List<Attendance> attendances,
     required List<PersonAttendance> personAttendances,
     required List<String> fields,
     required String tenantName,
+    PdfBranding? branding,
+    String Function(Person player, String field)? valueOf,
+  }) async {
+    final date = DateFormat(dateFmt()).format(DateTime.now());
+    final bytes = await buildAttendancePdf(
+      players: players,
+      attendances: attendances,
+      personAttendances: personAttendances,
+      fields: fields,
+      tenantName: tenantName,
+      branding: branding,
+      valueOf: valueOf,
+    );
+    await NativeFileService.saveBytes(
+        bytes, '${l10nWithoutContext.exportAttendanceFileAsOf(tenantName, date)}.pdf'); // NATIVE_MISC
+  }
+
+  /// Builds the attendance list PDF with the same letterhead as the player
+  /// list (title "{name} Anwesenheit") and Ionic's colored status cells.
+  Future<Uint8List> buildAttendancePdf({
+    required List<Person> players,
+    required List<Attendance> attendances,
+    required List<PersonAttendance> personAttendances,
+    required List<String> fields,
+    required String tenantName,
+    PdfBranding? branding,
     String Function(Person player, String field)? valueOf,
   }) async {
     final fieldValue = valueOf ?? _getPlayerFieldValue;
     final l10n = l10nWithoutContext;
     final date = DateFormat(dateFmt()).format(DateTime.now());
-    final pdf = pw.Document();
 
     // Limit to last 8 attendances for PDF
     final limitedAttendances = attendances.length > 8
@@ -158,7 +204,7 @@ class ExportService {
 
     // Build data rows
     final data = <List<String>>[];
-    int row = 1;
+    var row = 1;
 
     for (final player in players) {
       final attInfo = <String>[];
@@ -179,55 +225,113 @@ class ExportService {
       row++;
     }
 
-    // Headers
-    final headers = ['#', ...fields, ...attDates];
+    return _buildBrandedTablePdf(
+      branding: branding,
+      title: l10n.exportAttendanceTitle(tenantName),
+      subtitle: l10n.planningAsOf(date),
+      headers: ['', ...fields, ...attDates],
+      rows: data,
+      fitSteps: attendanceFitSteps,
+      statusColors: true,
+    );
+  }
 
-    pdf.addPage(
-      pw.MultiPage(
-        pageFormat: PdfPageFormat.a4.landscape,
-        margin: const pw.EdgeInsets.all(20),
-        header: (context) => pw.Container(
-          margin: const pw.EdgeInsets.only(bottom: 10),
-          child: pw.Text(
-            l10n.coreFlutterExportAttendanceHeader(tenantName, date),
-            style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold),
-          ),
+  /// Ionic dry-run auto-fit: renders with the first style of [fitSteps]
+  /// whose table fits on one page, else with the last (smallest) one.
+  Future<Uint8List> _buildBrandedTablePdf({
+    required PdfBranding? branding,
+    required String title,
+    required String subtitle,
+    required List<String> headers,
+    required List<List<String>> rows,
+    required List<ExportTableStyle> fitSteps,
+    bool statusColors = false,
+  }) async {
+    pw.Document build(ExportTableStyle style) {
+      final doc = pw.Document();
+      doc.addPage(pw.MultiPage(
+        pageFormat: PdfPageFormat.a4,
+        margin: pdfMargin,
+        // ASTRA_EXPORT: tenant/org letterhead (Ionic Utils.addBrandingHeader,
+        // drawn on every page via didDrawPage).
+        header: (_) => buildPdfBrandingHeader(
+          branding: branding,
+          title: title,
+          subtitle: subtitle,
         ),
-        build: (context) => [
-          pw.TableHelper.fromTextArray(
-            headers: headers,
-            data: data,
-            cellStyle: const pw.TextStyle(fontSize: 8),
-            headerStyle: pw.TextStyle(
-              fontSize: 8,
-              fontWeight: pw.FontWeight.bold,
-              color: PdfColors.white,
-            ),
-            headerDecoration: const pw.BoxDecoration(
-              color: PdfColor.fromInt(0xFF005238),
-            ),
-            cellAlignment: pw.Alignment.center,
-            border: pw.TableBorder.all(color: PdfColors.grey300),
-            cellPadding: const pw.EdgeInsets.all(2),
-            cellDecoration: (index, data, rowNum) {
-              if (rowNum == 0 || data == null) return const pw.BoxDecoration();
-              return _getStatusCellDecoration(data.toString());
-            },
-          ),
+        build: (_) => [
+          _ionicTable(headers: headers, rows: rows, style: style, statusColors: statusColors),
         ],
-        footer: (context) => pw.Container(
-          alignment: pw.Alignment.centerRight,
-          child: pw.Text(
-            l10n.protocolPage(context.pageNumber, context.pagesCount),
-            style: const pw.TextStyle(fontSize: 8),
-          ),
-        ),
-      ),
+      ));
+      return doc;
+    }
+
+    for (var i = 0; i < fitSteps.length - 1; i++) {
+      final probe = build(fitSteps[i]);
+      final bytes = await probe.save();
+      if (probe.document.pdfPageList.pages.length <= 1) return bytes;
+    }
+    return build(fitSteps.last).save();
+  }
+
+  /// Ionic jspdf-autotable `theme: 'plain'`: bold header with a bottom rule
+  /// (repeated on every page), zebra rows (245) and — for the attendance
+  /// list — colored, centered status cells with white text.
+  pw.Widget _ionicTable({
+    required List<String> headers,
+    required List<List<String>> rows,
+    required ExportTableStyle style,
+    bool statusColors = false,
+  }) {
+    const mm = PdfPageFormat.mm;
+    final padding = pw.EdgeInsets.symmetric(
+      vertical: style.paddingVerticalMm * mm,
+      horizontal: style.paddingHorizontalMm * mm,
     );
 
-    await Printing.layoutPdf(
-      onLayout: (format) async => pdf.save(),
-      name: '${tenantName}_${l10n.exportAttendance}_$date.pdf',
+    pw.Widget cell(String text, {bool header = false}) {
+      final fill = statusColors && !header ? statusCellColor(text) : null;
+      final centered = fill != null || (statusColors && text.contains('%'));
+      return pw.Container(
+        padding: padding,
+        color: fill,
+        alignment: centered ? pw.Alignment.center : pw.Alignment.centerLeft,
+        child: pw.Text(
+          text,
+          style: pw.TextStyle(
+            fontSize: style.fontSize,
+            fontWeight: header ? pw.FontWeight.bold : pw.FontWeight.normal,
+            color: header
+                ? const PdfColor.fromInt(0xFF323232)
+                : fill != null
+                    ? PdfColors.white
+                    : const PdfColor.fromInt(0xFF1E1E1E),
+          ),
+        ),
+      );
+    }
+
+    return pw.Table(
+      tableWidth: pw.TableWidth.max,
+      children: [
+        pw.TableRow(
+          repeat: true,
+          decoration: const pw.BoxDecoration(
+            border: pw.Border(
+              bottom: pw.BorderSide(width: 0.5 * mm, color: PdfColor.fromInt(0xFF646464)),
+            ),
+          ),
+          children: [for (final h in headers) cell(h, header: true)],
+        ),
+        for (var i = 0; i < rows.length; i++)
+          pw.TableRow(
+            verticalAlignment: pw.TableCellVerticalAlignment.full,
+            decoration: i.isOdd
+                ? const pw.BoxDecoration(color: PdfColor.fromInt(0xFFF5F5F5))
+                : null,
+            children: [for (final v in rows[i]) cell(v)],
+          ),
+      ],
     );
   }
 
@@ -327,22 +431,23 @@ class ExportService {
     }
   }
 
-  /// Get cell decoration based on status code
-  /// Colors match AttendanceStatus.color from enums.dart
-  pw.BoxDecoration _getStatusCellDecoration(String code) {
+  /// Status cell fill of the attendance PDF — Ionic `exportAttPDF`
+  /// `didParseCell` colors (A firebrick, X limegreen, E amber, L deepskyblue,
+  /// N light grey); null for every other cell.
+  static PdfColor? statusCellColor(String code) {
     switch (code) {
-      case 'X':
-        return const pw.BoxDecoration(color: PdfColor.fromInt(0xFF2DD36F)); // success
       case 'A':
-        return const pw.BoxDecoration(color: PdfColor.fromInt(0xFFEB445A)); // danger
+        return const PdfColor.fromInt(0xFFB22222);
+      case 'X':
+        return const PdfColor.fromInt(0xFF32CD32);
       case 'E':
-        return const pw.BoxDecoration(color: PdfColor.fromInt(0xFF3DC2FF)); // info (cyan)
+        return const PdfColor.fromInt(0xFFFFC409);
       case 'L':
-        return const pw.BoxDecoration(color: PdfColor.fromInt(0xFFFF9500)); // statusLate (orange)
+        return const PdfColor.fromInt(0xFF00BFFF);
       case 'N':
-        return const pw.BoxDecoration(color: PdfColor.fromInt(0xFF92949C)); // medium
+        return const PdfColor.fromInt(0xFFDCDCDC);
       default:
-        return const pw.BoxDecoration();
+        return null;
     }
   }
 

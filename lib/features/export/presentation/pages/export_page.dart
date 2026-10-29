@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/attendance_providers.dart';
+import '../../../../core/providers/branding_providers.dart'; // ASTRA_EXPORT
 import '../../../../core/providers/church_providers.dart';
 import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/player_providers.dart';
@@ -417,7 +418,7 @@ class _ExportPageState extends ConsumerState<ExportPage> {
         if (_exportType == 'pdf') {
           if (!mounted) return;
           await exportService.exportPlayerListPdf(
-            context: context,
+            branding: await resolvePdfBranding(ref), // ASTRA_EXPORT
             players: sortedPlayers,
             fields: headerFields,
             tenantName: tenantName,
@@ -462,7 +463,7 @@ class _ExportPageState extends ConsumerState<ExportPage> {
         if (_exportType == 'pdf') {
           if (!mounted) return;
           await exportService.exportAttendancePdf(
-            context: context,
+            branding: await resolvePdfBranding(ref), // ASTRA_EXPORT
             players: sortedPlayers,
             attendances: relevant,
             personAttendances: personAttendances,
