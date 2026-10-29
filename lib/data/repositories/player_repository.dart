@@ -908,16 +908,27 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
     final personId = person.id;
     if (personId == null) return;
     try {
-      final rows = await supabase
-          .from('person_attendances')
-          .select(
-              'id, status, notes, attendance:attendance_id!inner(id, date, type_id, start_time, end_time, tenantId)')
-          .eq('person_id', personId)
-          .eq('attendance.tenantId', currentTenantId);
-      final types = await _loadTypeFilters();
-      final shift = await _loadShiftPlan(person.shiftId);
       final today = DateTime.now();
       final todayStart = DateTime(today.year, today.month, today.day);
+      // SOL_FIX36: only (about) future Termine, filtered on the server and
+      // fully paged in a stable order – a long history must not push future
+      // entries past the PostgREST row limit. One day of slack; `isPast`
+      // below decides exactly.
+      final since = todayStart.subtract(const Duration(days: 1)).toUtc().toIso8601String();
+      final rows = await fetchAllPages<Map<String, dynamic>>((from, to) async {
+        final page = await supabase
+            .from('person_attendances')
+            .select(
+                'id, status, notes, attendance:attendance_id!inner(id, date, type_id, start_time, end_time, tenantId)')
+            .eq('person_id', personId)
+            .eq('attendance.tenantId', currentTenantId)
+            .gte('attendance.date', since)
+            .order('id', ascending: true)
+            .range(from, to);
+        return (page as List).cast<Map<String, dynamic>>();
+      });
+      final types = await _loadTypeFilters();
+      final shift = await _loadShiftPlan(person.shiftId);
 
       bool isPast(Map att) {
         final d = DateTime.tryParse(att['date']?.toString() ?? '');
@@ -925,8 +936,8 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
         return DateTime(d.year, d.month, d.day).isBefore(todayStart);
       }
 
-      final entries = (rows as List)
-          .map((r) => Map<String, dynamic>.from(r as Map))
+      final entries = rows
+          .map((r) => Map<String, dynamic>.from(r))
           .where((r) => r['attendance'] is Map && !isPast(r['attendance'] as Map))
           .toList();
 

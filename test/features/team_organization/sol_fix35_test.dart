@@ -67,4 +67,29 @@ void main() {
       expect(_src('lib/features/duty/presentation/widgets/duty_actions.dart'), contains('Future<bool> confirmDutyAction('));
     });
   });
+
+  group('SOL_FIX36 source checks', () {
+    test('overview sign-in/out refreshes Meine Termine and duty cards', () {
+      final s = _src('lib/core/providers/self_service_providers.dart');
+      final refresh = s.substring(s.indexOf('void _refresh()'), s.indexOf('/// Sign in to an attendance'));
+      for (final p in [
+        'signoutDataProvider',
+        'upcomingDutyTermineProvider',
+        'dutyTermineByIdProvider',
+        'myDutyOverviewProvider',
+      ]) {
+        expect(refresh, contains('ref.invalidate($p)'));
+      }
+    });
+
+    test('shift recomputation filters by date on the server and pages', () {
+      final s = _src('lib/data/repositories/player_repository.dart');
+      final start = s.indexOf('Future<void> updateShiftAssignmentsForPerson(');
+      final body = s.substring(start, s.indexOf('// Phase 1', start));
+      expect(body, contains('fetchAllPages'));
+      expect(body, contains(".gte('attendance.date', since)"));
+      expect(body, contains(".order('id', ascending: true)"));
+      expect(body, contains(".eq('attendance.tenantId', currentTenantId)"));
+    });
+  });
 }

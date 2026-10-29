@@ -5,6 +5,7 @@ import '../../core/constants/enums.dart';
 import '../../core/utils/event_list_utils.dart';
 import '../../data/models/person/person.dart';
 import '../../data/repositories/sign_in_out_repository.dart';
+import 'duty_providers.dart';
 import 'player_providers.dart';
 import 'signout_providers.dart';
 import 'tenant_providers.dart';
@@ -161,6 +162,16 @@ class SignInOutNotifier extends Notifier<AsyncValue<void>> {
   SignInOutRepository get _repo =>
       ref.read(signInOutRepositoryWithTenantProvider);
 
+  /// SOL_FIX36: same refresh as [SignoutNotifier] – "Meine Termine" and the
+  /// duty cards read the same person_attendances rows.
+  void _refresh() {
+    ref.invalidate(allPersonAttendancesAcrossTenantsProvider);
+    ref.invalidate(signoutDataProvider);
+    ref.invalidate(upcomingDutyTermineProvider);
+    ref.invalidate(dutyTermineByIdProvider);
+    ref.invalidate(myDutyOverviewProvider);
+  }
+
   /// Sign in to an attendance
   Future<void> signIn(
     String personAttendanceId,
@@ -172,7 +183,7 @@ class SignInOutNotifier extends Notifier<AsyncValue<void>> {
       await _repo.signIn(personAttendanceId, type,
           notes: notes, ownAcrossTenants: true);
       state = const AsyncValue.data(null);
-      ref.invalidate(allPersonAttendancesAcrossTenantsProvider);
+      _refresh();
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
     }
@@ -189,7 +200,7 @@ class SignInOutNotifier extends Notifier<AsyncValue<void>> {
       await _repo.signOut(personAttendanceIds, reason,
           isLateComing: isLateComing, ownAcrossTenants: true);
       state = const AsyncValue.data(null);
-      ref.invalidate(allPersonAttendancesAcrossTenantsProvider);
+      _refresh();
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
     }
@@ -202,7 +213,7 @@ class SignInOutNotifier extends Notifier<AsyncValue<void>> {
       await _repo.updateAttendanceNote(personAttendanceId, note,
           ownAcrossTenants: true);
       state = const AsyncValue.data(null);
-      ref.invalidate(allPersonAttendancesAcrossTenantsProvider);
+      _refresh();
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
     }
