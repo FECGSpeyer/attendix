@@ -254,7 +254,9 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     final planKey = _planKeyOf(_att, planIndex);
     final draftKey = _draftKey(attId, planKey, userId);
     final draft = _draftData(time: time, fields: fields, title: title);
-    final draftRev = PlanningDraftStore.write(draftKey, draft, allowed: () => _authUserId() == userId);
+    // SOL_FIX31: with the stored version it was made from ([_restoreDraft]).
+    final draftRev = PlanningDraftStore.write(draftKey, {...draft, 'base': _baseOf(_att, planIndex)},
+        allowed: () => _authUserId() == userId);
     unawaited(PlanningWriteSync.run(syncKey, () async {
       final rev = await draftRev;
       if (_authUserId() != userId) return;
@@ -395,10 +397,25 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     final latest =
         PlanningWriteSync.latestSince(PlanningWriteSync.keyFor(_tenantId, attId), _knownSeq[attId] ?? 0);
     if (latest == null || latest.id != attId) return (att: own, index: planIndex);
+    return (att: latest, index: _indexInLatest(latest, own, planIndex));
+  }
+
+  /// SOL_FIX31: plan-identity check shared by [_writeBase] and the flag
+  /// write ([_updateFlags]): position in [latest] of plan [planIndex] of the
+  /// editor's copy [own] ([_indexOfRef]), 0 when neither has a plan, else
+  /// null (a conflict).
+  static int? _indexInLatest(PlanAttendance latest, PlanAttendance? own, int planIndex) {
     final index = _indexOfRef(latest, _refOf(own, planIndex)); // SOL_FIX30
-    if (index != null) return (att: latest, index: index);
-    if (PlanUtils.allPlans(latest).isEmpty && PlanUtils.allPlans(own).isEmpty) return (att: latest, index: 0);
-    return (att: latest, index: null);
+    if (index != null) return index;
+    if (PlanUtils.allPlans(latest).isEmpty && PlanUtils.allPlans(own).isEmpty) return 0;
+    return null;
+  }
+
+  /// SOL_FIX31: the stored version of plan [planIndex] of [att] (JSON), the
+  /// base a draft of it was made from; null when there is no such plan.
+  static String? _baseOf(PlanAttendance? att, int planIndex) {
+    final plans = PlanUtils.allPlans(att);
+    return planIndex < plans.length ? jsonEncode(plans[planIndex].toJson()) : null;
   }
 
   /// SOL_FIX29: takes over [latest], the newest stored row of Termin [attId]
@@ -426,7 +443,11 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   ///
   /// SOL_FIX30: a plan without id can not be told apart from a changed one
   /// ([_indexOfRef]): the "changed meanwhile" texts are shown for it.
-  Future<void> _planDeletedMeanwhile(int attId, String planKey, Map<String, dynamic>? draft) async {
+  ///
+  /// SOL_FIX31: the draft is stored as a conflict draft (with [base], the
+  /// stored version it was made from): it is never restored automatically.
+  Future<void> _planDeletedMeanwhile(int attId, String planKey, Map<String, dynamic>? draft,
+      {String? base}) async {
     final changed = _isPositionalKey(planKey);
     if (draft == null) {
       if (mounted) {
@@ -436,7 +457,8 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       return;
     }
     final userId = _userId;
-    final rev = await PlanningDraftStore.write(_draftKey(attId, planKey, userId), draft,
+    final rev = await PlanningDraftStore.write(
+        _draftKey(attId, planKey, userId), {...draft, 'conflict': true, 'base': base},
         allowed: () => _authUserId() == userId);
     final l10n = l10nWithoutContext;
     final saved = changed ? l10n.planningFlutterPlanChangedDraftSaved : l10n.planningFlutterPlanDeletedDraftSaved;
@@ -471,8 +493,9 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       final draft = _hasPendingChanges
           ? _draftData(time: _time, fields: _fields, title: _titleController.text.trim())
           : null;
+      final base = _baseOf(own, _planIndex); // SOL_FIX31
       _reloadLatest(attId, latest);
-      unawaited(_planDeletedMeanwhile(attId, planKey, draft));
+      unawaited(_planDeletedMeanwhile(attId, planKey, draft, base: base));
       return false;
     }
     _knownSeq[attId] = PlanningWriteSync.seq(key);
@@ -529,6 +552,18 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
         await PlanningDraftStore.removeIfRevision(key, stored.rev);
         return;
       }
+      // SOL_FIX31: a conflict draft, or a draft whose base is no longer the
+      // stored plan, is never restored (and autosaved) on its own: the user
+      // decides; only "Entwurf übernehmen" loads it as a pending change.
+      final conflict = draft['conflict'] == true ||
+          (draft.containsKey('base') && draft['base'] != _baseOf(_att, planIndex));
+      if (conflict) {
+        final apply = await _askConflictDraft();
+        if (!mounted || loadGen != _loadGen || editGen != _editGen || _authUserId() != userId) return;
+        if (apply == false) await PlanningDraftStore.removeIfRevision(key, stored.rev);
+        if (apply != true) return;
+      }
+      if (!mounted) return;
       setState(() {
         _time = time;
         _fields = fields;
@@ -541,6 +576,22 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       await PlanningDraftStore.removeIfRevision(key, stored.rev);
     }
   }
+
+  /// SOL_FIX31: asks what happens with a conflict draft: true takes it over,
+  /// false discards it, null (dismissed) keeps it for later.
+  Future<bool?> _askConflictDraft() => showAppDialog<bool>(
+        context: context,
+        builder: (ctx) => AppAlertDialog(
+          title: Text(ctx.l10n.planningFlutterConflictDraftTitle),
+          content: Text(ctx.l10n.planningFlutterConflictDraftMessage),
+          actions: [
+            TextButton(
+                onPressed: () => Navigator.pop(ctx, false), child: Text(ctx.l10n.planningFlutterConflictDraftDiscard)),
+            FilledButton(
+                onPressed: () => Navigator.pop(ctx, true), child: Text(ctx.l10n.planningFlutterConflictDraftApply)),
+          ],
+        ),
+      );
 
   /// Toast without a mounted page (root overlay / messenger captured while
   /// mounted), like [ToastHelper.showError].
@@ -930,8 +981,9 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       // shows the newest stored row.
       final planKey = _planKeyOf(att, _planIndex);
       final draft = _draftData(time: _time, fields: _fields, title: title);
+      final draftBase = _baseOf(att, _planIndex); // SOL_FIX31
       _reloadLatest(attId, base.att);
-      await _planDeletedMeanwhile(attId, planKey, draft);
+      await _planDeletedMeanwhile(attId, planKey, draft, base: draftBase);
       return true;
     }
     final update = _planUpdate(base.att, baseIndex, time: _time, fields: _fields, title: title);
@@ -991,7 +1043,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
                     ? _draftData(time: _time, fields: _fields, title: _titleController.text.trim())
                     : null;
             _reloadLatest(attId, base);
-            await _planDeletedMeanwhile(attId, planRef.key, draft);
+            await _planDeletedMeanwhile(attId, planRef.key, draft, base: planRef.json); // SOL_FIX31
             return null;
           }
         }
@@ -1017,10 +1069,32 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   Future<void> _updateFlags(Map<String, dynamic> updates) async {
     final att = _att;
     if (att?.id == null) return;
-    final saved = await _serialised(
-        att!.id!, () => ref.read(planRepositoryWithTenantProvider).updateAttendancePlanFields(att.id!, updates));
-    _markWritten(att.id!, saved);
-    _replaceAtt(saved);
+    final attId = att!.id!;
+    final repo = ref.read(planRepositoryWithTenantProvider);
+    await _serialised(attId, () async {
+      final saved = await repo.updateAttendancePlanFields(attId, updates);
+      // SOL_FIX31: the stored row may hold plans another editor changed
+      // meanwhile. Before it becomes the editor's baseline, the open plan is
+      // checked like a plan write ([_writeBase]): when it is gone or no
+      // longer the same plan, the edits are kept as a draft and the editor
+      // shows the stored row (it never writes its old plan over another).
+      final own = _att;
+      final planIndex = _planIndex;
+      final index = own?.id == attId ? _indexInLatest(saved, own, planIndex) : planIndex;
+      _markWritten(attId, saved);
+      if (index == null) {
+        final planKey = _planKeyOf(own, planIndex);
+        final draft = mounted && _attId == attId && _hasPendingChanges
+            ? _draftData(time: _time, fields: _fields, title: _titleController.text.trim())
+            : null;
+        final base = _baseOf(own, planIndex);
+        _reloadLatest(attId, saved);
+        await _planDeletedMeanwhile(attId, planKey, draft, base: base);
+        return;
+      }
+      _replaceAtt(saved);
+      if (index != planIndex && mounted && _attId == attId) setState(() => _planIndex = index);
+    });
   }
 
   /// SOL_FIX26: a write of Termin [attId] succeeded.
@@ -1617,6 +1691,9 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     final att = _att;
     if (att?.id == null) return;
     if (!await _flushSaves() || !mounted) return;
+    // SOL_FIX31: identity of the main plan the picker inserts into (the
+    // stored version after the save above).
+    final mainRef = _refOf(_att, 0);
     // SOL_FIX24: no edits while the protocol row loads (the picker then
     // stores the editor state and the editor reloads the stored plan).
     var protocolAtt = await _whileBusy<ProtocolAttendance?>(() async {
@@ -1646,7 +1723,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     final saved = await showAgendaPickerSheet(context,
         attendance: pickerAtt,
         type: type,
-        save: (selections, removeIds) => _saveTopics(attId, pickerAtt, type, selections, removeIds));
+        save: (selections, removeIds) => _saveTopics(attId, pickerAtt, type, selections, removeIds, mainRef));
     if (saved == null || !mounted || _attId != attId) return;
     final stored = _att;
     final plans = PlanUtils.allPlans(stored);
@@ -1663,7 +1740,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   /// `plan` column is written and the full stored row is registered as the
   /// newest commit. Returns the stored main plan.
   Future<Map<String, dynamic>> _saveTopics(int attId, ProtocolAttendance protocolAtt, ProtocolType? type,
-      List<({AgendaItem item, int duration})> selections, List<String> removeIds) {
+      List<({AgendaItem item, int duration})> selections, List<String> removeIds, _PlanRef mainRef) {
     final repo = ref.read(planRepositoryWithTenantProvider);
     return _serialised(attId, () async {
       PlanAttendance? base;
@@ -1676,8 +1753,21 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
           PlanningWriteSync.latestSince(PlanningWriteSync.keyFor(_tenantId, attId), _knownSeq[attId] ?? 0) ?? _att;
       if (base == null || base.id != attId) throw StateError('Termin $attId not found');
       final mainPlan = base.plan;
-      final current = protocolAtt.copyWith(
-          plan: mainPlan == null ? null : jsonDecode(jsonEncode(mainPlan.toJson())) as Map<String, dynamic>);
+      // SOL_FIX31: the main plan the picker was opened for is gone or is no
+      // longer the same plan (another editor deleted / changed plans): a
+      // conflict, nothing is written (writing would restore a deleted plan).
+      // The editor shows the newest row and the user is told.
+      if (mainRef.json != null && _indexOfRef(base, mainRef) != 0) {
+        final latest = base;
+        if (mounted && _attId == attId) _reloadLatest(attId, latest);
+        await _planDeletedMeanwhile(attId, mainRef.key, null);
+        throw StateError('Plan of Termin $attId changed meanwhile');
+      }
+      // Without a main plan (none before either) the picker's row is used as
+      // is: `copyWith(plan: null)` would keep its old plan.
+      final current = mainPlan == null
+          ? protocolAtt
+          : protocolAtt.copyWith(plan: jsonDecode(jsonEncode(mainPlan.toJson())) as Map<String, dynamic>);
       final plan = planWithTopics(current, type, selections, removeIds: removeIds);
       final saved = await repo.updateAttendancePlanFields(attId, {'plan': plan});
       _markWritten(attId, saved);

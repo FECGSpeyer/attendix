@@ -8940,6 +8940,22 @@
       "min": {}
     }
   },
+  "planningFlutterConflictDraftApply": "Entwurf übernehmen",
+  "@planningFlutterConflictDraftApply": {
+    "description": "planning.flutter.conflictDraftApply"
+  },
+  "planningFlutterConflictDraftDiscard": "Verwerfen",
+  "@planningFlutterConflictDraftDiscard": {
+    "description": "planning.flutter.conflictDraftDiscard"
+  },
+  "planningFlutterConflictDraftMessage": "Ein älterer Entwurf wurde wegen eines Konflikts nicht übernommen.",
+  "@planningFlutterConflictDraftMessage": {
+    "description": "planning.flutter.conflictDraftMessage"
+  },
+  "planningFlutterConflictDraftTitle": "Entwurf nicht übernommen",
+  "@planningFlutterConflictDraftTitle": {
+    "description": "planning.flutter.conflictDraftTitle"
+  },
   "planningFlutterDraftLost": "Ablaufplan konnte nicht gespeichert werden – Änderungen gehen verloren",
   "@planningFlutterDraftLost": {
     "description": "planning.flutter.draftLost"
