@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
+import '../../../../core/providers/plan_providers.dart';
 import '../../../../core/providers/player_providers.dart';
 import '../../../../core/providers/team_org_providers.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -183,6 +184,10 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage> {
             [(item: item, duration: defaultTopicDuration(item, type))]);
         ref.invalidate(upcomingProtocolAttendancesProvider);
         ref.invalidate(agendaItemHistoryProvider(_itemId));
+        // P10_SONGS_ORG: plan caches follow every topic write (SOL_FIX33),
+        // so a planning editor opened afterwards shows the new TOP.
+        ref.invalidate(planAttendancesProvider);
+        ref.invalidate(orgPlansProvider);
         final d = DateTime.tryParse(choice.date)?.toLocal();
         if (mounted) {
           ToastHelper.showSuccess(
@@ -224,7 +229,8 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage> {
               child: const Icon(Icons.save_outlined),
             )
           : null),
-      body: itemAsync.isLoading
+      // P10_SONGS_ORG: keep the form while the item reloads after a save.
+      body: itemAsync.isLoading && !itemAsync.hasValue
           ? const Center(child: AppSpinner())
           : (!_isNew && item == null)
               ? Center(child: Text(l10n.agendaFlutterNotFound))

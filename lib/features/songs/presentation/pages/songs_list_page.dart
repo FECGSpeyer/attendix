@@ -57,6 +57,15 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
 
   bool get _isPublic => widget.songSharingId != null;
 
+  /// Ionic `isStandaloneTab`: the list is shown as the optional Werke tab.
+  bool get _isStandaloneTab {
+    try {
+      return GoRouterState.of(context).uri.path.startsWith('/songs-tab');
+    } catch (_) {
+      return false;
+    }
+  }
+
   @override
   void dispose() {
     _searchDebounce?.cancel();
@@ -99,6 +108,9 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
   void _openSong(int songId) {
     if (_isPublic) {
       context.push('/${widget.songSharingId}/$songId');
+    } else if (_isStandaloneTab) {
+      // P10_SONGS_ORG: Ionic isStandaloneTab → /tabs/songs-tab/:id
+      context.push('/songs-tab/$songId');
     } else {
       context.push('/settings/songs/$songId');
     }
