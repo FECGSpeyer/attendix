@@ -6783,6 +6783,12 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get planningFlutterDraftRestored => 'Nicht gespeicherte Änderungen wiederhergestellt';
+
+  @override
+  String get planningFlutterDraftSavedLocally => 'Ablaufplan konnte nicht gespeichert werden – Entwurf lokal gesichert';
+
+  @override
   String planningFlutterErrorWith(Object error) {
     return 'Fehler: $error';
   }

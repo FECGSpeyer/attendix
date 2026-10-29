@@ -11879,6 +11879,18 @@ abstract class AppLocalizations {
   /// **'Programmblock: {name} ({min} min)'**
   String planningFlutterBlockEntry(Object name, Object min);
 
+  /// planning.flutter.draftRestored
+  ///
+  /// In de, this message translates to:
+  /// **'Nicht gespeicherte Änderungen wiederhergestellt'**
+  String get planningFlutterDraftRestored;
+
+  /// planning.flutter.draftSavedLocally
+  ///
+  /// In de, this message translates to:
+  /// **'Ablaufplan konnte nicht gespeichert werden – Entwurf lokal gesichert'**
+  String get planningFlutterDraftSavedLocally;
+
   /// planning.flutter.errorWith
   ///
   /// In de, this message translates to:

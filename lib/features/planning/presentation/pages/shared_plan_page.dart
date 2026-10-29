@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -40,6 +41,71 @@ bool isAppVisible(AppLifecycleState? state) =>
           end: plan.endTime ?? '',
           fields: [...plan.fields],
         );
+
+/// SOL_FIX26: how a realtime row relates to the own writes of the page.
+enum EchoKind {
+  /// Echo of the newest own write (the state the editor already holds).
+  latestOwn,
+
+  /// Echo of an own write that a newer own write has replaced: stale.
+  olderOwn,
+
+  /// Not one of the remembered own writes (another editor, the app).
+  foreign,
+}
+
+/// SOL_FIX26: remembers the written columns of the last [capacity] own
+/// writes, so a delayed realtime echo of an older own write can be told apart
+/// from the echo of the newest one and from a foreign change. Values are
+/// compared as canonical JSON (sorted keys, nulls dropped), so the echo of a
+/// write matches no matter how the database orders the jsonb keys.
+class OwnWriteLog {
+  OwnWriteLog({this.capacity = 10});
+
+  final int capacity;
+  final _writes = <({int id, Map<String, String> columns})>[];
+  int _nextId = 0;
+
+  /// Records a write of [columns] (call before sending it); returns its id.
+  int record(Map<String, dynamic> columns) {
+    final id = _nextId++;
+    _writes.add((id: id, columns: {for (final e in columns.entries) e.key: canonicalJson(e.value)}));
+    if (_writes.length > capacity) _writes.removeAt(0);
+    return id;
+  }
+
+  /// Forgets a write that failed (it is not the stored state).
+  void forget(int id) => _writes.removeWhere((w) => w.id == id);
+
+  /// Classifies an incoming [row]: the newest matching own write decides.
+  EchoKind classify(Map<String, dynamic> row) {
+    for (var i = _writes.length - 1; i >= 0; i--) {
+      final w = _writes[i];
+      final matches = w.columns.entries.every((c) => row.containsKey(c.key) && canonicalJson(row[c.key]) == c.value);
+      if (matches) return i == _writes.length - 1 ? EchoKind.latestOwn : EchoKind.olderOwn;
+    }
+    return EchoKind.foreign;
+  }
+
+  /// Canonical JSON of [value]: map keys sorted, null values dropped,
+  /// integral doubles as ints (jsonb returns `1` for a written `1.0`).
+  static String canonicalJson(Object? value) {
+    Object? norm(Object? v) {
+      if (v is Map) {
+        final keys = v.keys.map((k) => k.toString()).toList()..sort();
+        return {
+          for (final k in keys)
+            if (v[k] != null) k: norm(v[k]),
+        };
+      }
+      if (v is List) return v.map(norm).toList();
+      if (v is double && v == v.truncateToDouble() && v.isFinite) return v.toInt();
+      return v;
+    }
+
+    return jsonEncode(norm(jsonDecode(jsonEncode(value))));
+  }
+}
 
 class SharedPlanPage extends ConsumerStatefulWidget {
   const SharedPlanPage({super.key, this.attendanceId, this.shareKey, this.editKey});
@@ -112,6 +178,10 @@ class _SharedPlanPageState extends ConsumerState<SharedPlanPage> {
 
   /// SOL_FIX25: a plan switch is waiting for the pending writes.
   bool _switching = false;
+
+  /// SOL_FIX26: the own writes, so delayed echoes of older own writes are
+  /// ignored even after every write finished.
+  final OwnWriteLog _ownWrites = OwnWriteLog();
 
   @override
   void initState() {
@@ -266,6 +336,9 @@ class _SharedPlanPageState extends ConsumerState<SharedPlanPage> {
   void _onAttendanceUpdate(Map<String, dynamic> row) {
     final att = _att;
     if (!mounted || att == null || row['plan'] == null) return;
+    // SOL_FIX26: a delayed echo of an older own write would re-apply an
+    // older state (and a follow-up save would store it): ignore it.
+    if (_ownWrites.classify(row) == EchoKind.olderOwn) return;
     try {
       final fresh = PlanAttendance.fromJson({
         ...att.toJson(),
@@ -346,6 +419,8 @@ class _SharedPlanPageState extends ConsumerState<SharedPlanPage> {
   /// subscribeSharedPlanRealtime: title/time only overwritten when set).
   void _onSharedUpdate(Map<String, dynamic> row) {
     if (!mounted) return;
+    // SOL_FIX26: see [_onAttendanceUpdate].
+    if (_ownWrites.classify(row) == EchoKind.olderOwn) return;
     try {
       final updated = SharedPlan.fromJson({..._shared!.toJson(), ...row});
       // SOL_FIX25: an echo of an older own write never resets pending edits.
@@ -451,6 +526,7 @@ class _SharedPlanPageState extends ConsumerState<SharedPlanPage> {
     final editKey = widget.editKey!;
     final editGen = _editGen;
     _recomputeEnd();
+    int? writeId;
     try {
       final att = _att;
       if (att?.id != null) {
@@ -469,17 +545,21 @@ class _SharedPlanPageState extends ConsumerState<SharedPlanPage> {
         } else {
           update = {'plan': edited.toJson()};
         }
+        writeId = _ownWrites.record(update);
         await _repo.updateSharedAttendancePlan(att!.id!, key, editKey, update);
         // The stored row; other fields of `_att` may have changed meanwhile
         // (realtime), the plan columns are exactly what was written.
         _att = PlanAttendance.fromJson({...(_att ?? att).toJson(), ...update});
       } else if (_shared != null) {
         // SOL_FIX12: the recomputed end is persisted together with time + fields.
+        writeId = _ownWrites.record(PublicPlanRepository.sharedPlanUpdateData(
+            fields: _fields, title: _title, time: _time, endTime: _end));
         await _repo.updateSharedPlan(key, editKey, fields: _fields, title: _title, time: _time, endTime: _end);
       }
       if (editGen == _editGen) _dirty = false;
       return true;
     } catch (_) {
+      if (writeId != null) _ownWrites.forget(writeId);
       if (mounted) ToastHelper.showError(context, context.l10n.plansSaveFailed);
       return false;
     }

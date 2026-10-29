@@ -6789,6 +6789,12 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get planningFlutterDraftRestored => 'Unsaved changes restored';
+
+  @override
+  String get planningFlutterDraftSavedLocally => 'Run sheet could not be saved – draft kept on this device';
+
+  @override
   String planningFlutterErrorWith(Object error) {
     return 'Error: $error';
   }

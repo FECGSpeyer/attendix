@@ -8940,6 +8940,14 @@
       "min": {}
     }
   },
+  "planningFlutterDraftRestored": "Nicht gespeicherte Änderungen wiederhergestellt",
+  "@planningFlutterDraftRestored": {
+    "description": "planning.flutter.draftRestored"
+  },
+  "planningFlutterDraftSavedLocally": "Ablaufplan konnte nicht gespeichert werden – Entwurf lokal gesichert",
+  "@planningFlutterDraftSavedLocally": {
+    "description": "planning.flutter.draftSavedLocally"
+  },
   "planningFlutterErrorWith": "Fehler: {error}",
   "@planningFlutterErrorWith": {
     "description": "planning.flutter.errorWith",
