@@ -109,7 +109,12 @@ class LeftPlayersPage extends ConsumerWidget {
                 return _LeftPlayerItem(
                   player: player,
                   onReactivate: () => _reactivatePlayer(context, ref, player),
-                  onViewDetails: () => context.push('/people/${player.id}'),
+                  // P10_PEOPLE: the person page can reactivate (Ionic
+                  // hasLeft modal) → reload the list afterwards.
+                  onViewDetails: () async {
+                    await context.push('/people/${player.id}');
+                    ref.invalidate(leftPlayersProvider);
+                  },
                 );
               },
             ),

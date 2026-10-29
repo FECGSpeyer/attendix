@@ -1,151 +1,130 @@
 import 'dart:io';
+
+import 'package:attendix/data/models/tenant/tenant.dart';
+import 'package:attendix/features/people/person_stats.dart';
+import 'package:attendix/features/people/presentation/widgets/person_detail/late_warning_card.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-/// Tests for personAttendanceStatsProvider
-///
-/// These tests verify that lateCount is calculated based on CriticalRule statuses
-/// AND periodType (season/days/allTime), not hardcoded values.
+/// P10_PEOPLE: person page statistics follow Ionic person.page
+/// getHistoryInfo (average over include_in_average types, late counts since
+/// lastSolve, lateThreshold from the first rule containing "Verspätet").
 void main() {
-  late String personDetailPageSource;
+  final now = DateTime(2026, 6, 1, 12);
+  final windowStart = DateTime(2025, 9, 1);
 
-  setUpAll(() {
-    final file = File('lib/features/people/presentation/pages/person_detail_page.dart');
-    personDetailPageSource = file.readAsStringSync();
-  });
+  Map<String, dynamic> row(
+    String date,
+    int status, {
+    bool include = true,
+    bool dutyMode = false,
+    String? dutyState,
+    String? notes,
+  }) =>
+      {
+        'status': status,
+        'notes': notes,
+        'duty_state': dutyState,
+        'attendance': {
+          'date': date,
+          'attType': {'include_in_average': include, 'duty_mode': dutyMode},
+        },
+      };
 
-  group('personAttendanceStatsProvider', () {
-    group('lateCount calculation', () {
-      test('should use CriticalRule statuses for lateCount, not hardcoded values', () {
-        // The lateCount calculation should NOT use hardcoded status == 3 || status == 5
-        // Instead it should use the statuses from the CriticalRule
-
-        // Check that there is NO hardcoded late status filter
-        final hardcodedLateFilter = RegExp(
-          r'status\s*==\s*3\s*\|\|\s*status\s*==\s*5',
-        );
-
-        // Find the lateCount calculation section
-        final lateCountMatch = RegExp(
-          r'lateCount\s*=\s*pastAttendances\.where',
-          multiLine: true,
-        ).firstMatch(personDetailPageSource);
-
-        expect(
-          lateCountMatch,
-          isNotNull,
-          reason: 'lateCount calculation should exist in personAttendanceStatsProvider',
-        );
-
-        // The lateCount section should NOT have hardcoded values
-        // Extract the where clause for lateCount
-        if (lateCountMatch != null) {
-          final startIndex = lateCountMatch.start;
-          final searchArea = personDetailPageSource.substring(startIndex, startIndex + 200);
-
-          expect(
-            hardcodedLateFilter.hasMatch(searchArea),
-            isFalse,
-            reason: 'lateCount should use dynamic CriticalRule statuses, not hardcoded status == 3 || status == 5',
-          );
-        }
-      });
-
-      test('should read lateStatuses from CriticalRule before calculating lateCount', () {
-        // The provider should extract statuses from CriticalRule
-        expect(
-          personDetailPageSource,
-          contains('criticalRules'),
-          reason: 'Provider should access tenant criticalRules to get the relevant statuses',
-        );
-
-        // And should use those statuses for filtering
-        expect(
-          personDetailPageSource,
-          anyOf([
-            contains('lateStatuses.contains'),
-            contains('rule.statuses'),
-          ]),
-          reason: 'Provider should use CriticalRule statuses for filtering, not hardcoded values',
-        );
-      });
-
-      test('should respect CriticalRule periodType when counting late', () {
-        // The provider should read periodType from the CriticalRule
-        expect(
-          personDetailPageSource,
-          contains('latePeriodType'),
-          reason: 'Provider should extract periodType from CriticalRule',
-        );
-
-        // Should handle season periodType with tenant.seasonStart
-        expect(
-          personDetailPageSource,
-          contains('CriticalRulePeriodType.season'),
-          reason: 'Provider should handle season periodType',
-        );
-
-        expect(
-          personDetailPageSource,
-          contains('seasonStart'),
-          reason: 'Provider should use tenant.seasonStart when periodType is season',
-        );
-
-        // Should handle days periodType
-        expect(
-          personDetailPageSource,
-          contains('CriticalRulePeriodType.days'),
-          reason: 'Provider should handle days periodType',
-        );
-
-        expect(
-          personDetailPageSource,
-          contains('latePeriodDays'),
-          reason: 'Provider should use periodDays from CriticalRule when periodType is days',
-        );
-      });
-
-      test('should filter attendances by date when periodType is set', () {
-        // When counting late, the filter should check the attendance date
-        // against the calculated start date (seasonStart or now - periodDays)
-        expect(
-          personDetailPageSource,
-          contains('lateCountStartDate'),
-          reason: 'Provider should calculate a start date based on periodType',
-        );
-
-        // Should filter out attendances before the start date
-        expect(
-          personDetailPageSource,
-          contains('isBefore(lateCountStartDate'),
-          reason: 'Provider should filter out attendances before the period start date',
-        );
-      });
-    });
-  });
-
-  group('LateWarningCard', () {
-    late String lateWarningCardSource;
-
-    setUpAll(() {
-      final file = File('lib/features/people/presentation/widgets/person_detail/late_warning_card.dart');
-      lateWarningCardSource = file.readAsStringSync();
-    });
-
-    test('should display dynamic text based on CriticalRule statuses', () {
-      // The subtitle should not always say "unentschuldigt" if the rule includes status 5 (lateExcused)
-      // It should be dynamic based on which statuses the rule includes
-
-      // Check for dynamic text based on statuses
-      final hasDynamicText = lateWarningCardSource.contains('lateStatuses.contains(5)') ||
-          lateWarningCardSource.contains('statuses.contains(5)') ||
-          !lateWarningCardSource.contains("'unentschuldigt zu spät'");
-
-      expect(
-        hasDynamicText,
-        isTrue,
-        reason: 'LateWarningCard should display dynamic text based on CriticalRule statuses, '
-            'not always show "unentschuldigt" when rule might include lateExcused (status 5)',
+  group('computePersonAttendanceStats', () {
+    test('averages only include_in_average types of the window', () {
+      final stats = computePersonAttendanceStats(
+        [
+          row('2026-01-10', 1), // present
+          row('2026-01-17', 4), // absent
+          row('2026-01-24', 1, include: false), // not counted
+          row('2025-05-01', 4), // before season start
+          row('2026-07-01', 4), // future
+          row('2026-02-01', 1, dutyMode: true), // duty, not assigned
+          row('2026-02-08', 1, dutyMode: true, dutyState: 'assigned'),
+        ],
+        now: now,
+        windowStart: windowStart,
       );
+      expect(stats['counted'], 3);
+      expect(stats['attended'], 2);
+      expect(stats['percentage'], 67);
     });
+
+    test('counts late (3) and late excused (5) only after lastSolve', () {
+      final stats = computePersonAttendanceStats(
+        [
+          row('2026-01-10', 3),
+          row('2026-03-10', 3),
+          row('2026-03-17', 3),
+          row('2026-03-24', 5),
+        ],
+        now: now,
+        windowStart: windowStart,
+        lastSolve: '2026-02-01T10:00:00Z',
+      );
+      expect(stats['lateCount'], 2);
+      expect(stats['lateCountExcused'], 1);
+    });
+
+    test('no counted attendances → 0 %', () {
+      final stats = computePersonAttendanceStats(const [],
+          now: now, windowStart: windowStart);
+      expect(stats['percentage'], 0);
+    });
+  });
+
+  group('personAttendanceWindowStart', () {
+    test('season start, fallback 2023-01-01, archived since 2020', () {
+      expect(personAttendanceWindowStart(seasonStart: '2025-09-01'),
+          DateTime(2025, 9, 1));
+      expect(personAttendanceWindowStart(), DateTime(2023, 1, 1));
+      expect(
+          personAttendanceWindowStart(seasonStart: '2025-09-01', hasLeft: true),
+          DateTime(2020, 1, 1));
+    });
+  });
+
+  group('lateWarningThreshold', () {
+    CriticalRule rule(List<int> statuses, int value) => CriticalRule.fromJson({
+          'id': 'r$value',
+          'attendance_type_ids': <String>[],
+          'operator': 'OR',
+          'statuses': statuses,
+          'threshold_type': 'count',
+          'threshold_value': value,
+        });
+
+    test('first rule with "Verspätet" wins, otherwise 999', () {
+      expect(lateWarningThreshold(null), 999);
+      expect(lateWarningThreshold([rule([4], 2)]), 999);
+      expect(lateWarningThreshold([rule([4], 2), rule([3, 5], 4)]), 4);
+    });
+  });
+
+  test('htmlStrongToSpan renders <strong> parts bold', () {
+    final span = htmlStrongToSpan('Diese Person ist <strong>3x</strong> zu spät.');
+    final children = span.children!.cast<TextSpan>();
+    expect(children.map((c) => c.text).join(), 'Diese Person ist 3x zu spät.');
+    expect(children[1].style?.fontWeight, FontWeight.bold);
+  });
+
+  test('history for non-admins: group changes and pauses only', () {
+    expect(visibleHistoryTypesForMembers, {7, 1, 6});
+    final source = File(
+            'lib/features/people/presentation/pages/person_detail_page.dart')
+        .readAsStringSync();
+    expect(source, contains('visibleHistoryTypesForMembers.contains(h.type)'));
+    expect(source, isNot(contains('allHistory.take(')));
+  });
+
+  test('person page is read-only for non-admins and archived persons', () {
+    final source = File(
+            'lib/features/people/presentation/pages/person_detail_page.dart')
+        .readAsStringSync();
+    expect(source, contains('final canEdit = isAdmin && !hasLeft;'));
+    expect(source, contains('onPressed: _activatePerson'));
+    // Stats query stays tenant-bound via the inner-joined attendance.
+    expect(source, contains(".eq('attendance.tenantId', tenantId)"));
   });
 }

@@ -147,6 +147,23 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
     final saved = prefs.getStringList('viewOpts_${tenant.id}');
     final savedSort = prefs.getString('sortOpt_${tenant.id}');
     if (savedSort != null && mounted) setState(() => _sortOption = savedSort);
+    // Ionic: filterOpt<tenantId> + filterOptAdd<tenantId> are remembered
+    final savedFilter = prefs.getString('filterOpt_${tenant.id}');
+    final savedFilterAdd = prefs.getString('filterOptAdd_${tenant.id}');
+    if (savedFilter != null && savedFilter != 'all' && mounted) {
+      if (savedFilter == 'otherInstance') {
+        await _restoreOtherInstanceFilter(savedFilterAdd);
+      } else if (savedFilter.startsWith('extra:')) {
+        if (savedFilterAdd != null && savedFilterAdd.isNotEmpty) {
+          setState(() {
+            _filterOption = savedFilter;
+            _extraFilterValue = savedFilterAdd;
+          });
+        }
+      } else {
+        setState(() => _filterOption = savedFilter);
+      }
+    }
     if (saved != null && mounted) {
       final opts = saved.toSet();
       // Attendance used to be always visible: keep it for old saved options
@@ -162,6 +179,52 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setStringList('viewOpts_${tenant.id}',
         [..._viewOptions, _viewOptionsVersionMarker]);
+  }
+
+  /// Ionic onFilterChanged: storage `filterOpt<tenantId>` and
+  /// `filterOptAdd<tenantId>` (value of extra-field / instance filters).
+  Future<void> _saveFilterOption() async {
+    final tenant = ref.read(currentTenantProvider);
+    if (tenant == null) return;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('filterOpt_${tenant.id}', _filterOption);
+      await prefs.setString(
+        'filterOptAdd_${tenant.id}',
+        _filterOption == 'otherInstance'
+            ? (_otherInstanceName ?? '')
+            : (_extraFilterValue ?? ''),
+      );
+    } catch (_) {
+      // Preferences are a convenience only
+    }
+  }
+
+  /// Re-applies a remembered "Mitglied anderer Instanz" filter (Ionic
+  /// onFilterChanged(implicit) with the stored instance name).
+  Future<void> _restoreOtherInstanceFilter(String? name) async {
+    if (name == null || name.isEmpty) return;
+    // Read the tenant-bound repository before the first await.
+    final crossTenantPersonRepo =
+        ref.read(crossTenantPersonRepositoryWithTenantProvider);
+    try {
+      final linked = await ref.read(allLinkedTenantsProvider.future);
+      final tenant = linked
+          .where((t) => t.longName == name || t.shortName == name)
+          .firstOrNull;
+      if (tenant?.id == null) return;
+      final linkedIds = await ref.read(linkedTenantIdsProvider.future);
+      final ids = await crossTenantPersonRepo
+          .getUserIdsInTenant(tenant!.id!, linkedTenantIds: linkedIds);
+      if (!mounted) return;
+      setState(() {
+        _filterOption = 'otherInstance';
+        _otherInstanceUserIds = ids;
+        _otherInstanceName = name;
+      });
+    } catch (_) {
+      // Keep "Alle anzeigen" when the instance cannot be resolved
+    }
   }
 
   Future<void> _saveSortOption() async {
@@ -725,10 +788,13 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
       await _selectOtherInstanceFilter();
       return;
     }
+    _searchController.clear();
     setState(() {
       _filterOption = value;
       _extraFilterValue = null;
+      _searchQuery = '';
     });
+    _saveFilterOption();
   }
 
   void _onSortSelected(String value) {
@@ -974,7 +1040,9 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
     }
 
     if (!mounted) return;
+    _searchController.clear();
     setState(() {
+      _searchQuery = '';
       if (value == null || value.isEmpty) {
         _filterOption = 'all';
         _extraFilterValue = null;
@@ -983,6 +1051,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
         _extraFilterValue = value;
       }
     });
+    _saveFilterOption();
   }
 
   // ---------------------------------------------------------------------
@@ -1025,13 +1094,16 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
       final ids = await crossTenantPersonRepo
           .getUserIdsInTenant(chosen.id!, linkedTenantIds: linkedIds);
       if (!mounted) return;
+      _searchController.clear();
       setState(() {
+        _searchQuery = '';
         _filterOption = 'otherInstance';
         _extraFilterValue = null;
         _otherInstanceUserIds = ids;
         _otherInstanceName =
             chosen.longName.isNotEmpty ? chosen.longName : chosen.shortName;
       });
+      _saveFilterOption();
     } catch (e) {
       if (mounted) ToastHelper.showError(context, context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e)));
     }
@@ -1163,6 +1235,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
       _otherInstanceUserIds = null;
       _otherInstanceName = null;
     });
+    _saveFilterOption();
   }
 
   void _enterSelectionMode() {
