@@ -136,7 +136,8 @@ void main() {
       expect(src, contains(".eq('tenant_id', tenant.id!)"));
       // SOL_FIX1: persons query uses the captured tenant id.
       expect(src, contains(".eq('attendance.tenantId', tenantId)"));
-      expect(src, contains('final tenantId = tenant.id!;'));
+      expect(src, contains('final tenantId = tenant?.id;'));
+      expect(src, contains('if (tenantId == null) return [];'));
     });
   });
 

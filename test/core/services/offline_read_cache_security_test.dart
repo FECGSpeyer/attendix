@@ -120,7 +120,7 @@ void main() {
       final detail = File('lib/core/providers/attendance_detail_providers.dart').readAsStringSync();
       expect(detail, isNot(contains('AttendanceDetailCache.keyFor(tenant')));
       expect(RegExp(r'_detailCacheKey\(ref,').allMatches(detail).length, 3);
-      expect(detail, contains('_playersCacheKey(ref, tenant.id!)'));
+      expect(detail, contains('_playersCacheKey(ref, tenantId)'));
     });
   });
 }

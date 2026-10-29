@@ -790,11 +790,7 @@ class CrossTenantPersonAttendance {
   String get text => isMember ? EventListUtils.attText(status) : '';
 
   /// Check if the person was present (attended)
-  bool get attended {
-    return status == AttendanceStatus.present ||
-        status == AttendanceStatus.late ||
-        status == AttendanceStatus.lateExcused;
-  }
+  bool get attended => status.countsAsPresent;
 
   bool get isExcusedStatus =>
       status == AttendanceStatus.excused ||
