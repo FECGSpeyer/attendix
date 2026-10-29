@@ -30,6 +30,7 @@ class HistorieAccordion extends ConsumerWidget {
     required this.statsAsync,
     required this.personId,
     required this.canEdit,
+    this.hasLeft = false,
   });
 
   final bool isExpanded;
@@ -38,6 +39,10 @@ class HistorieAccordion extends ConsumerWidget {
   final AsyncValue<Map<String, dynamic>> statsAsync;
   final int personId;
   final bool canEdit;
+
+  /// Archived person (Ionic getPersonAttendances(all = hasLeft)): the whole
+  /// history instead of the current season.
+  final bool hasLeft;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -76,7 +81,7 @@ class HistorieAccordion extends ConsumerWidget {
         }
 
         final tenant = ref.watch(currentTenantProvider);
-        final showAll = ref.watch(showAllHistoryProvider);
+        final showAll = hasLeft || ref.watch(showAllHistoryProvider);
         final seasonStart =
             tenant?.seasonStart != null
                 ? DateTime.tryParse(tenant!.seasonStart!)
@@ -97,7 +102,7 @@ class HistorieAccordion extends ConsumerWidget {
             _buildStatsRow(context),
 
             // Season filter toggle
-            if (seasonStart != null)
+            if (seasonStart != null && !hasLeft)
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
                 child: Row(
@@ -131,8 +136,8 @@ class HistorieAccordion extends ConsumerWidget {
               ),
 
             // History items
+            // Ionic lists the complete history (no limit).
             ...filteredHistory
-                .take(20)
                 .map((item) => _buildHistoryItem(context, ref, item)),
           ],
         );
@@ -393,9 +398,7 @@ String historyEntryBody(int? type, String text) {
     case 6:
     case 9:
       return '';
-    case 5:
-      return l10nWithoutContext.personOldNote(
-          text.isNotEmpty ? text : l10nWithoutContext.personFlutterNoNote);
+    case 5: // Ionic: <h3>{{ att.text }}</h3> (old note, details on tap)
     case 8:
     case 10:
     case 11:

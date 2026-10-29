@@ -8,6 +8,7 @@ import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/attendance_type_providers.dart';
 import '../../../../core/providers/dashboard_providers.dart';
 import '../../../../core/providers/debug_providers.dart';
+import '../../../../core/router/route_access.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/dashboard_utils.dart';
 import '../../../../data/models/attendance/attendance.dart';
@@ -301,7 +302,8 @@ class CurrentSongsCard extends ConsumerWidget {
           }
           return Column(
             children: [
-              for (final e in entries) _row(context, e),
+              for (final e in entries)
+                _row(context, e, canOpenSongsTab(ref.watch(effectiveRoleProvider))),
             ],
           );
         },
@@ -309,7 +311,7 @@ class CurrentSongsCard extends ConsumerWidget {
     );
   }
 
-  Widget _row(BuildContext context, DashboardSongEntry e) {
+  Widget _row(BuildContext context, DashboardSongEntry e, bool songsTab) {
     final number = e.number == null ? '' : '${e.prefix ?? ''}${e.number}';
     final date = DashboardUtils.parse(e.date);
     final parts = [e.conductorName, e.typeLabel]
@@ -320,7 +322,10 @@ class CurrentSongsCard extends ConsumerWidget {
         ? parts.join(' · ')
         : (date != null ? DashboardUtils.weekdayDayMonth(date) : e.dateLabel);
     return DashRow(
-      onTap: () => context.push('/settings/songs/${e.songId}'),
+      // P10: Ionic current-songs-card navigates to /tabs/songs-tab/:id.
+      onTap: () => context.push(songsTab
+          ? '/songs-tab/${e.songId}'
+          : '/settings/songs/${e.songId}'),
       leading: DashTile(
         tone: DashTone.purple,
         main: number,

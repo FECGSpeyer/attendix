@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../../core/constants/enums.dart';
+import '../../core/utils/paged_query.dart';
 import '../../core/utils/duty_utils.dart';
 import '../../core/utils/event_list_utils.dart';
 import '../models/player_absence/player_absence.dart';
@@ -43,14 +44,22 @@ class PlayerAbsenceRepository extends BaseRepository with TenantAwareRepository 
   }
 
   /// All absences of the current tenant.
+  ///
+  /// Loaded page by page with a stable order (#233): PostgREST caps a
+  /// response at max-rows, which would silently drop absences.
   Future<List<PlayerAbsence>> getAbsencesForTenant() async {
     try {
-      final response = await supabase
-          .from('player_absences')
-          .select('*')
-          .eq('tenant_id', currentTenantId);
+      final rows = await fetchAllPages<dynamic>((from, to) async {
+        final page = await supabase
+            .from('player_absences')
+            .select('*')
+            .eq('tenant_id', currentTenantId)
+            .order('id')
+            .range(from, to);
+        return page as List;
+      });
 
-      return (response as List)
+      return rows
           .map((e) => PlayerAbsence.fromJson(e as Map<String, dynamic>))
           .toList();
     } catch (e, stack) {

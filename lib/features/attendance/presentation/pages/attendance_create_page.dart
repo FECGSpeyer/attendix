@@ -5,8 +5,10 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/providers/attendance_type_providers.dart';
 import '../../../../core/providers/holiday_providers.dart';
+import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/color_utils.dart';
+import '../../../../core/utils/attendance_logic_utils.dart';
 import '../../../../core/providers/role_permission_providers.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/attendance/attendance.dart';
@@ -147,7 +149,8 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
   Widget build(BuildContext context) {
     final typesAsync = ref.watch(visibleAttendanceTypesProvider);
     final isAllDay = _selectedType?.allDay == true;
-    final showSongs = _selectedType?.manageSongs == true;
+    // P10_ATTENDANCE: Ionic showSongsSelection(): !isGeneral && manage_songs
+    final showSongs = showSongsForType(_selectedType, ref.watch(currentTenantProvider)?.type);
     final types = typesAsync.valueOrNull ?? const <AttendanceType>[];
     final ios = isIosLook(context); // IOS_FORMS2
 

@@ -121,7 +121,15 @@ class _TaskDetailPageState extends ConsumerState<TaskDetailPage> {
                   iconSize: 48,
                   padding: const EdgeInsets.symmetric(vertical: 64, horizontal: 32),
                   text: l10n.tasksNotAvailable,
-                  action: TextButton(onPressed: () => context.pop(), child: IonButtonLabel(l10n.commonBack)),
+                  // P10_SONGS_ORG: Ionic routerLink backHref (leadership →
+                  // Teamorganisation, members → Meine Termine); pop() alone
+                  // throws when the task was opened via a deep link.
+                  action: TextButton(
+                    onPressed: () => context.canPop()
+                        ? context.pop()
+                        : context.go(isLeader ? '/settings/team-organization' : '/signout'),
+                    child: IonButtonLabel(l10n.commonBack),
+                  ),
                 )
               : RefreshIndicator.adaptive(
                   onRefresh: () async => ref.invalidate(taskByIdProvider(widget.taskId)),

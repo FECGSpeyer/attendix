@@ -123,12 +123,18 @@ class DashboardRepository extends BaseRepository with TenantAwareRepository {
   /// NOTE: `player_absences` names its tenant column `tenant_id` (snake_case).
   Future<List<DashboardAbsence>> getAbsences() async {
     try {
-      final response = await supabase
-          .from('player_absences')
-          .select('*')
-          .eq('tenant_id', currentTenantId);
+      // #233: page through all rows with a stable order (PostgREST max-rows).
+      final rows = await fetchAllPages<dynamic>((from, to) async {
+        final page = await supabase
+            .from('player_absences')
+            .select('*')
+            .eq('tenant_id', currentTenantId)
+            .order('id')
+            .range(from, to);
+        return page as List;
+      });
 
-      return (response as List)
+      return rows
           .map((e) => DashboardAbsence.fromJson(e as Map<String, dynamic>))
           .toList();
     } catch (e, stack) {

@@ -121,8 +121,8 @@ class _UnavailabilityPageState extends ConsumerState<UnavailabilityPage> {
 
   Future<void> _offerApplyToFuture(PersonUnavailability rule) async {
     final repo = ref.read(dutyRepositoryWithTenantProvider);
-    final types = ref.read(attendanceTypesProvider).valueOrNull ?? const <AttendanceType>[];
-    final (:count, :dates) = await repo.countFutureMatches(rule, types);
+    // P10_SELF_PLAN: Ionic passes the visible types (`this.types`).
+    final (:count, :dates) = await repo.countFutureMatches(rule, _types);
     if (!mounted) return;
     if (count == 0) {
       ToastHelper.showSuccess(context, context.l10n.dutySaved);
@@ -130,7 +130,7 @@ class _UnavailabilityPageState extends ConsumerState<UnavailabilityPage> {
     }
     final preview = dates.take(4).map((d) {
           final date = DateTime.tryParse(d)?.toLocal();
-          return date == null ? d : '${date.day}.${date.month}.';
+          return date == null ? d : DateFormat(dateFmt(DateFmtKind.dayMonth)).format(date);
         }).join(', ') +
         (count > 4 ? ' …' : '');
     final l10n = context.l10n;

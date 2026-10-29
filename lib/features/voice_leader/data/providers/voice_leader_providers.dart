@@ -82,6 +82,7 @@ final voiceGroupMembersProvider =
   // Group absences by person_id, filtering past dates in Dart so the SQL
   // semantics stay identical to the previous implementation.
   final now = DateTime.now();
+  final startOfToday = DateTime(now.year, now.month, now.day);
   final absencesByPerson = <int, List<UpcomingAbsence>>{};
   for (final row in absencesRows) {
     final personId = row['person_id'] as int?;
@@ -91,20 +92,21 @@ final voiceGroupMembersProvider =
     final dateStr = attendance['date'] as String?;
     if (dateStr == null) continue;
     final date = DateTime.tryParse(dateStr);
-    if (date == null || date.isBefore(now)) continue;
+    // PARITY_R10: Ionic `dayjs(att.date).isAfter(dayjs().startOf('day'))`.
+    if (date == null || !date.isAfter(startOfToday)) continue;
 
-    final typeInfo = attendance['typeInfo'];
+    final title = voiceLeaderAbsenceTitle(attendance);
     absencesByPerson.putIfAbsent(personId, () => []).add(
           UpcomingAbsence(
             attendanceId: attendance['id'] as int,
             date: date,
             status: row['status'] as int,
-            typeName: typeInfo is Map ? typeInfo['short'] as String? : null,
+            typeName: title.isEmpty ? null : title,
           ),
         );
   }
 
-  return [
+  final members = [
     for (final player in players)
       VoiceGroupMember(
         person: player,
@@ -112,4 +114,31 @@ final voiceGroupMembersProvider =
           ..sort((a, b) => a.date.compareTo(b.date)),
       ),
   ];
+  // PARITY_R10: Ionic voice-leader.page sorts by last name, then first name.
+  members.sort(compareVoiceGroupMembers);
+  return members;
 });
+
+/// PARITY_R10: Ionic `Utils.getTypeTitle(attType, typeInfo)` for an
+/// absence badge: the event's `typeInfo`, otherwise the type name unless the
+/// type hides its name.
+String voiceLeaderAbsenceTitle(Map attendance) {
+  final typeInfo = attendance['typeInfo'];
+  if (typeInfo is String && typeInfo.isNotEmpty) return typeInfo;
+  final type = attendance['attType'];
+  if (type is Map) {
+    if (type['hide_name'] == true) return '';
+    final name = type['name'];
+    if (name is String) return name;
+  }
+  return '';
+}
+
+/// PARITY_R10: Ionic sort order (lastName, then firstName).
+int compareVoiceGroupMembers(VoiceGroupMember a, VoiceGroupMember b) {
+  // JS localeCompare ignores case; compare case-insensitively.
+  final byLast =
+      a.person.lastName.toLowerCase().compareTo(b.person.lastName.toLowerCase());
+  if (byLast != 0) return byLast;
+  return a.person.firstName.toLowerCase().compareTo(b.person.firstName.toLowerCase());
+}

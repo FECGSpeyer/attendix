@@ -72,6 +72,12 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
     });
   }
 
+  /// P10_SELF_PLAN: own Termin of a duty (Ionic `attendance_id ?? attId`).
+  CrossTenantPersonAttendance? _byAttendanceId(SignoutData data, int attendanceId) =>
+      [...data.allUpcoming, ...data.past]
+          .where((a) => a.attendanceId == attendanceId)
+          .firstOrNull;
+
   Future<void> _refresh() async {
     ref.invalidate(signoutDataProvider);
     ref.invalidate(currentSelfServicePlayerProvider);
@@ -287,6 +293,18 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
                       ? () => selfServiceReportAbsence(context, ref, player,
                           canSelfPause: ref.read(canSelfPauseProvider))
                       : null,
+                  // P10_SELF_PLAN: "Meine Dienste" rows open the Termin
+                  // action sheet, "Nächster Dienst" shows the Termin chips.
+                  onOpenDuty: (id) {
+                    final att = _byAttendanceId(raw, id);
+                    if (att != null) actions.presentActions(context, att);
+                  },
+                  chipsFor: (id) {
+                    final att = _byAttendanceId(raw, id);
+                    return att == null
+                        ? const []
+                        : [EventChips(chips: actions.chips(context, att))];
+                  },
                 ),
               if (!useDutyView || _showOtherTermine) ...[
                 ..._buildCurrent(data, actions, tenant),

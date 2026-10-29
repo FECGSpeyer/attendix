@@ -51,7 +51,7 @@ void main() {
       expect(historyEntryTitle(7, date), '04.03.2026');
     });
     test('bodies', () {
-      expect(historyEntryBody(5, 'alt'), 'Alte Notiz: alt');
+      expect(historyEntryBody(5, 'alt'), 'alt');
       expect(historyEntryBody(1, 'Urlaub'), 'Pausiert: Urlaub');
       expect(historyEntryBody(7, 'A -> B'), 'Wechsel: A -> B');
       expect(historyEntryBody(14, ''), 'Sonstiges: Keine Anmerkung');

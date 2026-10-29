@@ -1193,6 +1193,16 @@ final routerProvider = Provider<GoRouter>((ref) {
               child: const SongsListPage(),
               state: state,
             ),
+            // P10_SONGS_ORG: Ionic /tabs/songs-tab/:id keeps the Werke tab
+            // selected while a song is open.
+            routes: [
+              GoRoute(
+                path: ':id',
+                name: 'songsTabDetail',
+                builder: (context, state) =>
+                    SongDetailPage(songId: state.pathParameters['id'] ?? ''),
+              ),
+            ],
           ),
           GoRoute(
             path: '/org-plans-tab',
@@ -1201,6 +1211,15 @@ final routerProvider = Provider<GoRouter>((ref) {
               child: const OrgPlansPage(),
               state: state,
             ),
+            // P10_SELF_PLAN: Ionic /tabs/org-plans/planung (stays in the tab)
+            routes: [
+              GoRoute(
+                path: 'planung',
+                name: 'orgPlansTabPlanning',
+                builder: (context, state) =>
+                    const PublicPlanningPage(inApp: true, fromOrgPlans: true),
+              ),
+            ],
           ),
           // END SETTINGS2
         ],

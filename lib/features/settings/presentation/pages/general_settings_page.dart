@@ -125,9 +125,14 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
 
       _shortNameController.text = tenant.shortName;
       _longNameController.text = tenant.longName;
-      _practiceStartController.text = tenant.practiceStart ?? '';
-      _practiceEndController.text = tenant.practiceEnd ?? '';
-      _seasonStart = tenant.seasonStart != null ? DateTime.tryParse(tenant.seasonStart!) : null;
+      // PARITY_R10: Ionic general.page defaults (practice 18:00–20:00,
+      // season start db.getCurrentAttDate() → 2023-01-01) and the local date.
+      _practiceStartController.text = tenant.practiceStart ?? '18:00';
+      _practiceEndController.text = tenant.practiceEnd ?? '20:00';
+      _seasonStart = (tenant.seasonStart != null
+              ? DateTime.tryParse(tenant.seasonStart!)?.toLocal()
+              : null) ??
+          DateTime(2023, 1, 1);
       _selectedRegion = tenant.region ?? '';
       _maintainTeachers = tenant.maintainTeachers;
       _parents = tenant.parents ?? false;
@@ -145,9 +150,10 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
       _registrationEnabled = tenant.registerId != null && tenant.registerId!.isNotEmpty;
       _registerId = tenant.registerId;
       _autoApproveRegistrations = tenant.autoApproveRegistrations;
-      _selectedRegistrationFields = List.from(
-        tenant.registrationFields ?? ['firstName', 'lastName', 'birthDate', 'group'],
-      );
+      // PARITY_R10: Ionic — the stored fields, otherwise only the required
+      // ones (first/last name, group).
+      _selectedRegistrationFields =
+          initialRegistrationFields(tenant.registrationFields);
       // Ensure required fields are always included
       for (final required in ['firstName', 'lastName', 'group']) {
         if (!_selectedRegistrationFields.contains(required)) {
@@ -316,7 +322,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
       initialDate: _seasonStart ?? DateTime.now(),
       firstDate: DateTime(2020),
       lastDate: DateTime(2030),
-      locale: const Locale('de', 'DE'),
+      locale: Locale(currentLanguage()), // PARITY_R10: app language
     );
     if (picked != null) {
       // Fix double setState (Issue #13) - set both values in one setState
@@ -925,6 +931,13 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
 
 /// LOGIC_SETTINGS: Ionic saveGeneralSettings — empty/blank reasons are
 /// filtered out; an empty result is stored as null.
+/// PARITY_R10: Ionic general.page `selectedRegisterFields` — the stored
+/// fields, otherwise only the required ones (first/last name, group).
+List<String> initialRegistrationFields(List<String>? stored) =>
+    List<String>.from((stored?.isNotEmpty ?? false)
+        ? stored!
+        : const ['firstName', 'lastName', 'group']);
+
 List<String>? normalizeReasons(List<String> reasons) {
   final filtered = reasons.where((r) => r.trim().isNotEmpty).toList();
   return filtered.isEmpty ? null : filtered;

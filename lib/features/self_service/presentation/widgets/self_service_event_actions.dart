@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/enums.dart';
@@ -71,6 +72,7 @@ class SelfServiceEventActions {
     this.currentTenantId,
     this.showAllAttendances = false,
     this.supportsRegistrationFields = true,
+    this.overviewMode = false,
   });
 
   final List<String> absenceReasons;
@@ -90,6 +92,25 @@ class SelfServiceEventActions {
   final int? currentTenantId;
   final bool showAllAttendances;
   final bool supportsRegistrationFields;
+
+  /// P10_SELF_PLAN: cross-tenant "Übersicht" (Ionic OverviewPage): the
+  /// sheet has no "Abmeldung zurücknehmen", Ablaufplan or Route entries and
+  /// the deadline chip only shows within 3 days before the deadline
+  /// ("Anmeldefrist: …", `selfService.deadline`).
+  final bool overviewMode;
+
+  /// Deadline chip text, or null when no chip is shown.
+  String? deadlineChipText(CrossTenantPersonAttendance att, {DateTime? now}) {
+    final deadline = att.deadline;
+    if (deadline == null || deadline.isEmpty) return null;
+    if (!overviewMode) return EventListUtils.deadlineText(deadline, now: now);
+    // Ionic overview: dayjs(deadline) – the instant in local time.
+    final parsed = DateTime.tryParse(deadline)?.toLocal();
+    if (parsed == null) return null;
+    final current = now ?? DateTime.now();
+    if (!current.isBefore(parsed) || parsed.difference(current).inDays > 3) return null;
+    return l10nWithoutContext.selfServiceDeadline(DateFormat('${dateFmt()} HH:mm').format(parsed));
+  }
 
   /// In "alle Termine" mode the person may not be part of a Termin.
   bool isOwn(CrossTenantPersonAttendance att) => !showAllAttendances || att.isMember;
@@ -167,8 +188,8 @@ class SelfServiceEventActions {
     bool withPlan = true,
   }) {
     return [
-      if (att.deadline != null && att.deadline!.isNotEmpty)
-        EventChip(label: EventListUtils.deadlineText(att.deadline), danger: true),
+      if (deadlineChipText(att) case final deadline?)
+        EventChip(label: deadline, danger: true),
       if (att.notes != null && att.notes!.isNotEmpty)
         EventChip(label: context.l10n.signoutNoteChip(att.notes!)),
       if (withPlan && att.hasPlan && openPlan != null)
@@ -348,7 +369,7 @@ class SelfServiceEventActions {
 
     if (signInAllowed && qa == null) {
       actions.add(SelfServiceAction(
-        isExcused ? SelfServiceActionType.undoSignout : SelfServiceActionType.signIn,
+        isExcused && !overviewMode ? SelfServiceActionType.undoSignout : SelfServiceActionType.signIn,
       ));
     }
     if (signInAllowed && !isExcused) {
@@ -369,7 +390,7 @@ class SelfServiceEventActions {
     if (att.text == 'X') {
       actions.add(const SelfServiceAction(SelfServiceActionType.editNote));
     }
-    if (att.hasPlan && openPlan != null && !hideQuickActions) {
+    if (att.hasPlan && openPlan != null && !hideQuickActions && !overviewMode) {
       actions.add(const SelfServiceAction(SelfServiceActionType.showPlan));
     }
     if ((att.description?.isNotEmpty ?? false) && !hideQuickActions) {
@@ -378,7 +399,7 @@ class SelfServiceEventActions {
     if ((att.attachmentUrl?.isNotEmpty ?? false) && !hideQuickActions) {
       actions.add(const SelfServiceAction(SelfServiceActionType.openAttachment));
     }
-    if ((att.place?.isNotEmpty ?? false) && !hideQuickActions) {
+    if ((att.place?.isNotEmpty ?? false) && !hideQuickActions && !overviewMode) {
       actions.add(const SelfServiceAction(SelfServiceActionType.openNavigation));
     }
     if (hasFilesFolder(att) && !hideQuickActions) {

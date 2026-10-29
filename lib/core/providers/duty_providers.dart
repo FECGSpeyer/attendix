@@ -299,7 +299,10 @@ class DutyNotifier extends Notifier<AsyncValue<void>> {
   }
 
   Future<int> applyUnavailabilityToFuture(PersonUnavailability rule) async {
-    final types = ref.read(attendanceTypesProvider).valueOrNull ?? const [];
+    // P10_SELF_PLAN: Ionic UnavailabilityModal passes its visible types.
+    final types = (ref.read(attendanceTypesProvider).valueOrNull ?? const <AttendanceType>[])
+        .where((t) => t.visible)
+        .toList();
     try {
       final n = await _repo.applyUnavailabilityToFuture(rule, types);
       _invalidate();

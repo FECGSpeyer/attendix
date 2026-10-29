@@ -122,12 +122,12 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> {
     if (!_dateRangeInitialized) {
       _dateRangeInitialized = true;
       final tenant = ref.read(currentTenantProvider);
-      if (tenant?.seasonStart != null) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          ref.read(statisticsDateRangeProvider.notifier)
-              .resetToDefault(seasonStart: tenant!.seasonStart);
-        });
-      }
+      // P10_ATTENDANCE: always reset (Ionic falls back to 2023-01-01).
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        ref.read(statisticsDateRangeProvider.notifier)
+            .resetToDefault(seasonStart: tenant?.seasonStart);
+      });
     }
 
     final dark = Theme.of(context).brightness == Brightness.dark;

@@ -21,7 +21,7 @@ import '../../../settings/presentation/widgets/settings_list.dart'; // UX_SETTIN
 import '../../../../core/utils/error_message.dart';
 import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset, IonRefresher; // IOS_R6
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
-import '../../../../shared/widgets/layout/ios_tab_bar.dart' show scrollEndPadding; // PARITY_R7
+import '../../../../shared/widgets/layout/ios_tab_bar.dart' show scrollEndPadding, TabBarFab; // PARITY_R7
 
 /// Short date "Mo, 03.11.2026" (Ionic dayjs `dd, ${dateFmt()}`).
 String orgPlanDate(String date) {
@@ -223,6 +223,17 @@ class _OrgPlansPageState extends ConsumerState<OrgPlansPage> {
             ),
         ],
       )),
+      // P10_SELF_PLAN: Ionic `@if (isTabRoute && isIos)` ion-fab "+".
+      floatingActionButton: _isTabRoute(context) && ionIsIos(context)
+          ? TabBarFab(
+              child: FloatingActionButton(
+                heroTag: 'orgPlansTabFab',
+                tooltip: context.l10n.plansOpenPlanning,
+                onPressed: () => context.push(_planningRoute(context)),
+                child: const Icon(Icons.add),
+              ),
+            )
+          : null,
       body: IonRefresher(
         onRefresh: () async {
           ref.invalidate(orgPlansProvider);
@@ -270,7 +281,7 @@ class _OrgPlansPageState extends ConsumerState<OrgPlansPage> {
                             trailing: ionIsIos(context)
                                 ? const IonDetailChevron()
                                 : const Icon(Icons.chevron_right),
-                            onTap: () => context.push('/settings/org-plans/planung'),
+                            onTap: () => context.push(_planningRoute(context)),
                           ),
                           if (split.past.isNotEmpty)
                             ListTile(
@@ -297,6 +308,14 @@ class _OrgPlansPageState extends ConsumerState<OrgPlansPage> {
     ));
   }
 }
+
+/// P10_SELF_PLAN: Ionic `isTabRoute` – opened as the optional "Org" tab.
+bool _isTabRoute(BuildContext context) =>
+    GoRouterState.of(context).matchedLocation.startsWith('/org-plans-tab');
+
+/// Ionic: '/tabs/org-plans/planung' in the tab, otherwise the settings route.
+String _planningRoute(BuildContext context) =>
+    _isTabRoute(context) ? '/org-plans-tab/planung' : '/settings/org-plans/planung';
 
 /// Ionic `ion-list [inset]`: iOS item group with hairlines (margin 16);
 /// md: Material card (or the bare tiles when [bare]).

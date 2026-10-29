@@ -206,12 +206,9 @@ class AttendanceGrid extends StatelessWidget {
   }
 
   /// Ionic getAttendedPlayersForGroup: Anwesend, Verspätet, Verspätet entsch.
-  int _attendedCount(List<Person> persons) => persons.where((p) {
-        final s = localStatuses[p.id];
-        return s == AttendanceStatus.present ||
-            s == AttendanceStatus.late ||
-            s == AttendanceStatus.lateExcused;
-      }).length;
+  int _attendedCount(List<Person> persons) => persons
+      .where((p) => localStatuses[p.id]?.countsAsPresent ?? false)
+      .length;
 
   Widget _personsSliver(List<Person> list, {int? lastId, bool first = false}) {
     // UX_ATT: iOS inset lines start at the label (after the avatar)

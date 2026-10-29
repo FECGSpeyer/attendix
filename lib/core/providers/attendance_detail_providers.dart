@@ -97,12 +97,12 @@ final personAttendancesForAttendanceProvider = FutureProvider.autoDispose.family
   final supabase = ref.watch(supabaseClientProvider);
   final tenant = ref.watch(currentTenantProvider);
 
-  if (tenant == null) return [];
+  final tenantId = tenant?.id;
+  if (tenantId == null) return [];
 
   // Get all persons with their attendance status for this attendance
   // SEC-017: Use inner join with attendance to filter by tenant
   // LEFTOVERS: offline read cache (Ionic getAttendanceByIdRobust persons)
-  final tenantId = tenant.id!;
   final loaded = await const AttendanceDetailCache().fetchWithCache<List<dynamic>>(
         key: _detailCacheKey(ref, tenantId, attendanceId, 'persons'), // SOL_FIX7
         scope: _cacheScope(ref, tenantId), // SOL_FIX8
@@ -156,18 +156,19 @@ final allPersonsForAttendanceProvider = FutureProvider.autoDispose<List<Person>>
   final supabase = ref.watch(supabaseClientProvider);
   final tenant = ref.watch(currentTenantProvider);
 
-  if (tenant == null) return [];
+  final tenantId = tenant?.id;
+  if (tenantId == null) return [];
 
   // LEFTOVERS: offline read cache for the Termin page
   final response = await const AttendanceDetailCache().fetchWithCache<List<dynamic>>(
-        key: _playersCacheKey(ref, tenant.id!), // SOL_FIX7
-        scope: _cacheScope(ref, tenant.id!), // SOL_FIX8
+        key: _playersCacheKey(ref, tenantId), // SOL_FIX7
+        scope: _cacheScope(ref, tenantId), // SOL_FIX8
         currentUserId: ref.read(offlineQueueUserIdProvider), // SOL_FIX9
         isOnline: ref.read(connectivityCheckProvider),
         fetch: () => supabase
             .from('player')
             .select('*, instrument:instrument(id, name)')
-            .eq('tenantId', tenant.id!)
+            .eq('tenantId', tenantId)
             .order('lastName', ascending: true),
       ) ??
       const [];

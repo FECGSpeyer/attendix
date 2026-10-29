@@ -314,10 +314,22 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
             ),
       );
       if (confirmed != true || !mounted) return;
+      // PARITY_R10: Ionic db.deleteInstance — close the instances sheet and,
+      // when the open instance was deleted, open the next one (setTenant →
+      // its start page, or "Neue Instanz anlegen" when none is left).
+      final router = GoRouter.of(context);
+      final rootContext = router.routerDelegate.navigatorKey.currentContext;
+      final sheetNavigator = widget.sheet ? Navigator.of(context) : null;
+      final wasCurrent = tenant.id == ref.read(currentTenantProvider)?.id;
       await deleteTenant(ref, tenant.id!);
-      if (mounted) ToastHelper.showSuccess(context, context.l10n.tenantSelectFlutterDeleted);
+      sheetNavigator?.pop();
+      final toastContext = widget.sheet ? rootContext : (mounted ? context : null);
+      if (toastContext != null && toastContext.mounted) {
+        ToastHelper.showSuccess(toastContext, toastContext.l10n.dbInstanceDeleted);
+      }
+      if (wasCurrent) router.go('/tenants');
     } catch (_) {
-      if (mounted) ToastHelper.showError(context, context.l10n.svcDeleteFailed);
+      if (mounted) ToastHelper.showError(context, context.l10n.dbDeleteInstanceFailed);
     } finally {
       controller.dispose();
     }
