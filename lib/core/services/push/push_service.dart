@@ -107,10 +107,14 @@ class PushService {
   /// of them are deleted on logout, not only the last one.
   final Set<String> _sessionTokens = {};
 
-  /// SOL_FIX19: the last logout cleanup ([removeToken]). Every registration
-  /// awaits it before it touches FCM or device_tokens, so the cleanup's
-  /// token lookup, row delete and FCM `deleteToken` never overlap the next
-  /// session – that one gets a fresh token afterwards.
+  /// SOL_FIX19/SOL_FIX20: the tail of the logout cleanup chain
+  /// ([removeToken]). Cleanups never run in parallel: each new one is
+  /// chained after the previous tail, so an older cleanup's FCM
+  /// `deleteToken` always finishes before a newer one starts. Every
+  /// registration awaits the whole chain (the tail) before it touches FCM
+  /// or device_tokens, so no cleanup's token lookup, row delete or FCM
+  /// `deleteToken` overlaps the next session – that one gets a fresh token
+  /// afterwards.
   Future<void>? _cleanup;
 
   /// SOL_FIX19: set when a registration is requested after the last
@@ -118,13 +122,18 @@ class PushService {
   /// the logout button) joins the last cleanup instead of running again.
   bool _sessionSinceCleanup = false;
 
-  /// SOL_FIX19: waits for the last cleanup (never throws).
+  /// SOL_FIX19/SOL_FIX20: waits for the whole cleanup chain (never throws).
+  /// If another cleanup is appended while waiting, waits for the new tail
+  /// as well.
   Future<void> _awaitCleanup() async {
-    final cleanup = _cleanup;
-    if (cleanup == null) return;
-    try {
-      await cleanup;
-    } catch (_) {}
+    while (true) {
+      final tail = _cleanup;
+      if (tail == null) return;
+      try {
+        await tail;
+      } catch (_) {}
+      if (identical(tail, _cleanup)) return;
+    }
   }
 
   void _log(String message, [Object? error]) {
@@ -360,20 +369,32 @@ class PushService {
   /// start and only that account's rows are deleted, even when another
   /// account signs in meanwhile; that account's registration waits for
   /// this cleanup (see [_awaitCleanup]) and then gets a fresh token.
+  ///
+  /// SOL_FIX20: the session is ended synchronously (user captured,
+  /// generation bumped, tokens taken), but the cleanup work itself is
+  /// chained after the previous cleanup, so cleanups are fully serialised:
+  /// logout A → login B → logout B → login C can no longer let A's late
+  /// FCM `deleteToken` revoke C's freshly registered token.
   Future<void> removeToken() {
     if (!isNativePlatform) return Future.value();
     final last = _cleanup;
     if (last != null && !_sessionSinceCleanup) return last;
     _sessionSinceCleanup = false;
-    late final Future<void> run;
-    run = _removeToken().catchError((Object e) {
+    final session = _endSession();
+    final Future<void> previous = last ?? Future<void>.value();
+    final run = previous
+        .catchError((Object _) {})
+        .then((_) => _cleanupSession(session))
+        .catchError((Object e) {
       _log('logout cleanup failed', e);
     });
     _cleanup = run;
     return run;
   }
 
-  Future<void> _removeToken() async {
+  /// SOL_FIX20: the synchronous part of a logout – ends the push session
+  /// before any await so no running registration can write again.
+  _EndedSession _endSession() {
     // SOL_FIX19: the account this cleanup belongs to, read before any await.
     final userId = _currentUserId();
     _generation++;
@@ -381,14 +402,28 @@ class PushService {
     _promptGeneration = null;
     final refresh = _tokenRefreshSub;
     _tokenRefreshSub = null;
+    Future<void>? refreshCancel;
+    try {
+      refreshCancel = refresh?.cancel();
+    } catch (e) {
+      _log('token refresh cancel failed', e);
+    }
     final current = _currentToken;
     _currentToken = null;
     final toDelete = <String>{if (current != null) current, ..._sessionTokens};
     _sessionTokens.clear();
-    final inFlight = _pendingWrites.toList();
+    return _EndedSession(
+      userId: userId,
+      toDelete: toDelete,
+      inFlight: _pendingWrites.toList(),
+      refreshCancel: refreshCancel,
+    );
+  }
 
+  Future<void> _cleanupSession(_EndedSession session) async {
+    final toDelete = session.toDelete;
     try {
-      await refresh?.cancel();
+      await session.refreshCancel;
     } catch (e) {
       _log('token refresh cancel failed', e);
     }
@@ -399,11 +434,12 @@ class PushService {
     // registration, so those rows are deleted too.
     final resolved = await _resolveDeviceToken();
     if (resolved != null) toDelete.add(resolved);
-    if (inFlight.isNotEmpty) await Future.wait(inFlight);
+    if (session.inFlight.isNotEmpty) await Future.wait(session.inFlight);
 
     // Scoped by token value and the captured user
     // (DeviceTokenRepository.removeToken). Without a signed-in user (signed
     // out elsewhere) RLS would reject the delete anyway – nothing to do.
+    final userId = session.userId;
     if (userId != null) {
       for (final token in toDelete) {
         try {
@@ -473,4 +509,20 @@ class PushService {
       _log('Could not clear badge', e);
     }
   }
+}
+
+/// SOL_FIX20: what a logout captured synchronously for its (chained)
+/// cleanup.
+class _EndedSession {
+  _EndedSession({
+    required this.userId,
+    required this.toDelete,
+    required this.inFlight,
+    required this.refreshCancel,
+  });
+
+  final String? userId;
+  final Set<String> toDelete;
+  final List<Future<void>> inFlight;
+  final Future<void>? refreshCancel;
 }

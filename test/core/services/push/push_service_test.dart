@@ -61,10 +61,17 @@ class FakeClient implements PushMessagingClient {
   @override
   Future<void> deleteToken() async {
     deletes++;
+    // SOL_FIX20: a slow FCM delete (one-shot).
+    final gate = deleteGate;
+    deleteGate = null;
+    if (gate != null) await gate.future;
     log?.add('fcm-delete');
     // FCM hands out a new token after deleteToken.
     if (rotateOnDelete != null) token = rotateOnDelete;
   }
+
+  /// SOL_FIX20: when set, the next deleteToken waits for it (one-shot).
+  Completer<void>? deleteGate;
 
   /// SOL_FIX19: the token getToken returns after a deleteToken.
   String? rotateOnDelete;
@@ -109,6 +116,9 @@ class FakeTokens implements DeviceTokenStore {
     log.add('upsert:$token');
   }
 
+  /// SOL_FIX20: when true, removeToken throws.
+  bool throwOnRemove = false;
+
   /// SOL_FIX19: the signed-in user; the cleanup captures it at its start.
   String? userId = 'user-a';
   final removedFor = <String>[];
@@ -118,6 +128,7 @@ class FakeTokens implements DeviceTokenStore {
 
   @override
   Future<void> removeToken(String token, {required String userId}) async {
+    if (throwOnRemove) throw StateError('rls');
     removed.add(token);
     removedFor.add(userId);
     log.add('delete:$token');
@@ -681,6 +692,61 @@ void main() {
       await s.removeToken();
       expect(client.deletes, 2);
       expect(tokens.removedFor, ['user-a', 'user-b']);
+    });
+
+    // SOL_FIX20: logout A → login B → logout B → login C while A's FCM
+    // delete is still running. Before the fix B's cleanup ran in parallel,
+    // C only waited for B and A's late deleteToken revoked C's token.
+    test('cleanups are serialised: a late FCM delete of A never hits C', () async {
+      client.log = tokens.log;
+      final slowDelete = Completer<void>();
+      client.deleteGate = slowDelete; // A's FCM delete hangs
+      client.rotateOnDelete = 'tok-new';
+      final s = build(platform: 'ios');
+
+      final logoutA = s.removeToken(); // user A
+      await pumpEventQueue();
+      expect(client.deletes, 1, reason: "A's FCM delete is running");
+
+      tokens.userId = 'user-b';
+      final loginB = s.promptAndEnable();
+      await pumpEventQueue();
+      final logoutB = s.removeToken();
+      expect(identical(logoutA, logoutB), isFalse, reason: 'B needs its own cleanup');
+      await pumpEventQueue();
+      expect(client.deletes, 1, reason: "B's cleanup waits for A's");
+      expect(client.tokenCalls, 1, reason: "B's cleanup has not started");
+
+      tokens.userId = 'user-c';
+      final loginC = s.promptAndEnable();
+      await pumpEventQueue();
+      expect(tokens.saved, isEmpty, reason: 'C waits for the whole chain');
+
+      slowDelete.complete();
+      await Future.wait([logoutA, loginB, logoutB, loginC]);
+
+      expect(client.deletes, 2);
+      expect(tokens.removedFor, ['user-a', 'user-b']);
+      expect(tokens.saved, ['ios:tok-new']);
+      expect(s.currentToken, 'tok-new');
+      // Both FCM deletes land before C's registration.
+      expect(tokens.log.last, 'upsert:tok-new');
+      expect(tokens.log.where((e) => e == 'fcm-delete'), hasLength(2));
+      expect(
+        tokens.log.lastIndexOf('fcm-delete'),
+        lessThan(tokens.log.indexOf('upsert:tok-new')),
+      );
+    });
+
+    test('a failing cleanup does not break the chain', () async {
+      final s = build();
+      tokens.throwOnRemove = true;
+      final a = s.removeToken();
+      await s.promptAndEnable();
+      tokens.throwOnRemove = false;
+      final b = s.removeToken();
+      await Future.wait([a, b]);
+      expect(client.deletes, 2);
     });
   });
 }

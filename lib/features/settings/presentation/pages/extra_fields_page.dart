@@ -81,6 +81,10 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
   bool _saving = false;
   bool _hasChanges = false;
 
+  /// SOL_FIX20: bumped on every local edit. A save only marks the page as
+  /// saved when nothing changed since its snapshot.
+  int _revision = 0;
+
   @override
   void initState() {
     super.initState();
@@ -98,6 +102,7 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
       } else {
         _songFields = fields;
       }
+      _revision++;
       _hasChanges = true;
     });
   }
@@ -106,6 +111,7 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
       (ref.read(churchesProvider).valueOrNull ?? []).map((c) => c.id).whereType<String>().toList();
 
   Future<void> _addField(ExtraFieldTarget target) async {
+    if (_saving) return; // SOL_FIX20: no edits while saving
     final result = await _showFieldSheet(target: target);
     if (result == null) return;
     final fields = _fields(target);
@@ -124,6 +130,7 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
   }
 
   Future<void> _editField(ExtraFieldTarget target, int index) async {
+    if (_saving) return; // SOL_FIX20
     final fields = _fields(target);
     final result = await _showFieldSheet(target: target, existing: fields[index]);
     if (result == null) return;
@@ -133,6 +140,7 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
   }
 
   Future<void> _removeField(ExtraFieldTarget target, int index) async {
+    if (_saving) return; // SOL_FIX20
     final fields = _fields(target);
     final confirmed = await DialogHelper.showConfirmation(
       context,
@@ -146,6 +154,7 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
   }
 
   void _reorder(ExtraFieldTarget target, int oldIndex, int newIndex) {
+    if (_saving) return; // SOL_FIX20
     final fields = [..._fields(target)];
     if (newIndex > oldIndex) newIndex -= 1;
     final item = fields.removeAt(oldIndex);
@@ -154,7 +163,15 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
   }
 
   Future<void> _save() async {
-    final error = validateExtraFields([..._personFields, ..._songFields]);
+    if (_saving) return;
+    // SOL_FIX20: one immutable snapshot for every step of this save
+    // (definitions, value cleanup, local tenant state). Edits made later
+    // must not change what the cleanup keeps or deletes.
+    final personFields = List<ExtraField>.unmodifiable(_personFields);
+    final songFields = List<ExtraField>.unmodifiable(_songFields);
+    final churchIds = List<Object>.unmodifiable(_churchIds);
+    final revision = _revision;
+    final error = validateExtraFields([...personFields, ...songFields]);
     if (error != null) {
       ToastHelper.showError(context, error);
       return;
@@ -165,20 +182,23 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
     final tenantId = repo.currentTenantId;
     setState(() => _saving = true);
     try {
-      await repo.saveFields(personFields: _personFields, songFields: _songFields);
-      await repo.sanitizeValues(table: 'player', definitions: _personFields, churchIds: _churchIds);
-      await repo.sanitizeValues(table: 'songs', definitions: _songFields);
+      await repo.saveFields(personFields: personFields, songFields: songFields);
+      await repo.sanitizeValues(table: 'player', definitions: personFields, churchIds: churchIds);
+      await repo.sanitizeValues(table: 'songs', definitions: songFields);
 
       // SOL_FIX19: only into the local state of that same tenant.
       await ref.read(currentTenantProvider.notifier).updateTenantLocalIfCurrent(
             tenantId,
             (current) => current.copyWith(
-              additionalFields: _personFields,
-              songAdditionalFields: _songFields,
+              additionalFields: personFields,
+              songAdditionalFields: songFields,
             ),
           );
       if (!mounted) return;
-      setState(() => _hasChanges = false);
+      // SOL_FIX20: later edits stay unsaved.
+      setState(() {
+        if (_revision == revision) _hasChanges = false;
+      });
       ToastHelper.showSuccess(context, context.l10n.extraFieldsSaved);
     } catch (e) {
       if (mounted) ToastHelper.showError(context, context.l10n.extraFieldsSaveFailed);
@@ -500,9 +520,10 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
     ref.watch(churchesProvider);
 
     return PopScope(
-      canPop: !_hasChanges,
+      canPop: !_hasChanges && !_saving,
       onPopInvokedWithResult: (didPop, _) {
-        if (!didPop) _confirmLeave();
+        // SOL_FIX20: Ionic's loading overlay blocks leaving while saving.
+        if (!didPop && !_saving) _confirmLeave();
       },
       // UX_SETTINGS (WAVE 8): extra-fields.page.html — arrow-back, condense
       // title, checkmark save, inset groups with header "+" buttons.
@@ -525,7 +546,12 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
             ),
           ],
         )),
-        body: ListView(
+        // SOL_FIX20: Ionic shows a blocking loading overlay
+        // ("Felder werden gespeichert...") while saving – no edits meanwhile.
+        body: Stack(children: [
+          AbsorbPointer(
+            absorbing: _saving,
+            child: ListView(
           padding: EdgeInsets.fromLTRB(ionListMargin(context), ionIsIos(context) ? 0 : 16, ionListMargin(context), 16),
           children: [
             const IonContentTopInset(), // IOS_R6
@@ -541,8 +567,36 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
               child: Text(context.l10n.commonSave),
             ),
           ],
-        ),
+            ),
+          ),
+          if (_saving) _buildSavingOverlay(context),
+        ]),
       )),
+    );
+  }
+
+  /// SOL_FIX20: Ionic `Utils.getLoadingElement(…, extraFields.saving)`.
+  Widget _buildSavingOverlay(BuildContext context) {
+    return Positioned.fill(
+      key: const ValueKey('extra-fields-saving'),
+      child: ColoredBox(
+        color: Colors.black26,
+        child: Center(
+          child: Card(
+            child: Padding(
+              padding: const EdgeInsets.all(AppDimensions.paddingM),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const SizedBox(width: 20, height: 20, child: AppSpinner(strokeWidth: 2)),
+                  const SizedBox(width: AppDimensions.paddingM),
+                  Text(context.l10n.extraFieldsSaving),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 
