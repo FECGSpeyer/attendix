@@ -27,6 +27,15 @@ String calendarSubscriptionLink({
   return link;
 }
 
+/// Content width of the md calendar alert (alert width minus 2 × 24px
+/// padding): Ionic md `ion-alert` is 280px wide below 768px and grows to
+/// `min(100vw - 96px, 560px)` above, which the long feed link fills.
+double mdCalendarAlertContentWidth(double screenWidth) {
+  if (screenWidth < 768) return 224;
+  final alert = (screenWidth - 96).clamp(280.0, 560.0);
+  return alert - 48;
+}
+
 /// UX_SETTINGS: Ionic settings "Kalender abonnieren" alert.
 ///
 /// Admins/Responsibles get the tenant feed, everybody else the personal feed
@@ -82,10 +91,11 @@ Future<void> showCalendarSubscriptionDialog(BuildContext context, WidgetRef ref)
             // IOS_FORMS1 (md): message, then the checkbox group between two
             // hairlines (`.alert-checkbox-group` border-top/-bottom) on the
             // dialog background.
-            // PARITY_R3: Ionic md alert ≈272 wide (min 250, the long link
-            // wraps anywhere instead of widening the alert).
+            // PARITY_R3: Ionic md alert ≈272 wide on phones (`--max-width:
+            // 280px`, the long link wraps anywhere instead of widening the
+            // alert); from 768px `--max-width: min(100vw - 96px, 560px)`.
             : SizedBox(
-                width: 224,
+                width: mdCalendarAlertContentWidth(MediaQuery.sizeOf(ctx).width),
                 child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,

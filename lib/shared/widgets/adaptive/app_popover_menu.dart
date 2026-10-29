@@ -7,12 +7,12 @@ import '../../../l10n/l10n.dart';
 import '../layout/ionic_ios.dart' show IonIos, IonDetailChevron; // IOS27_SWEEP
 import 'adaptive_platform.dart';
 
-/// PARITY_R8 (restores PARITY_R5): top offset below the safe area of an
-/// iOS nested popover that does not fit to the left of its parent. The
-/// Ionic iPhone screenshots show it at the top right (x 181–381 on a 393pt
-/// screen, y = safe area + 12), right-aligned with the parent menu, whose
-/// lower entries (Übersicht, Legende) stay readable below it.
-const double kIosNestedPopoverTop = 12;
+/// iOS nested popovers (`side="start"`, iOS default `alignment="center"`)
+/// are centred on their trigger row and moved down by Ionic's
+/// `POPOVER_IOS_BODY_MARGIN` (ionic-theme-utils `calculateWindowAdjustment`).
+/// Ionic does not clamp them vertically: on a phone a tall submenu runs off
+/// the top of the screen, and the parent's lower rows stay readable below it.
+const double kIosNestedPopoverOffset = 8;
 
 /// One entry of [showAppPopoverMenu] (an `ion-item button` inside the
 /// `ion-list lines="none"` of an `ion-popover`).
@@ -344,27 +344,26 @@ class _PopoverLayerState<T> extends State<_PopoverLayer<T>> {
       var subLeft = (left - sw)
           .clamp(_margin, math.max(_margin, size.width - sw - _margin))
           .toDouble();
-      var subTop = rowRect.top;
       if (ios && left - sw < _margin) {
-        // PARITY_R8 (PARITY_R5 placement): no room on the left (phone) –
-        // Ionic iOS lays the nested popover over the parent, right-aligned
-        // with it, at the top of the screen (iPhone screenshots: x 181–381,
-        // y = safe area + 12 on 393pt). The parent's lower entries stay
-        // visible below it.
+        // No room on the left (phone): Ionic falls back to the trigger
+        // row's left edge, i.e. the nested popover lies over the parent.
         subLeft = math.max(_margin, left + w - sw);
-        subTop = widget.topPadding + kIosNestedPopoverTop;
       }
       children.add(
-        Positioned(
-          top: subTop,
-          left: subLeft,
-          width: sw,
-          child: ConstrainedBox(
-            constraints: BoxConstraints(
-              maxHeight: math.max(
-                120.0,
-                size.height - subTop - widget.bottomPadding - _margin,
-              ),
+        Positioned.fill(
+          child: CustomSingleChildLayout(
+            delegate: _NestedPopoverLayout(
+              left: subLeft,
+              width: sw,
+              // md (`alignment="start"`): top aligned with the row.
+              rowTop: rowRect.top,
+              rowCenter: ios ? rowRect.center.dy : null,
+              maxHeight: ios
+                  ? math.max(120.0, size.height - 2 * _margin)
+                  : math.max(
+                      120.0,
+                      size.height - rowRect.top - widget.bottomPadding - _margin,
+                    ),
             ),
             child: _PopoverCard(
               ios: ios,
@@ -391,6 +390,46 @@ class _PopoverLayerState<T> extends State<_PopoverLayer<T>> {
 
     return Stack(key: _stackKey, children: children);
   }
+}
+
+/// Places a nested popover: [left]/[width] fixed; vertically centred on
+/// [rowCenter] plus [kIosNestedPopoverOffset] (iOS, may leave the screen at
+/// the top like Ionic) or top-aligned with [rowTop] (md).
+class _NestedPopoverLayout extends SingleChildLayoutDelegate {
+  _NestedPopoverLayout({
+    required this.left,
+    required this.width,
+    required this.rowTop,
+    required this.rowCenter,
+    required this.maxHeight,
+  });
+
+  final double left;
+  final double width;
+  final double rowTop;
+  final double? rowCenter;
+  final double maxHeight;
+
+  @override
+  BoxConstraints getConstraintsForChild(BoxConstraints constraints) =>
+      BoxConstraints(minWidth: width, maxWidth: width, maxHeight: maxHeight);
+
+  @override
+  Offset getPositionForChild(Size size, Size childSize) {
+    final center = rowCenter;
+    final top = center == null
+        ? rowTop
+        : center - childSize.height / 2 + kIosNestedPopoverOffset;
+    return Offset(left, top);
+  }
+
+  @override
+  bool shouldRelayout(_NestedPopoverLayout old) =>
+      old.left != left ||
+      old.width != width ||
+      old.rowTop != rowTop ||
+      old.rowCenter != rowCenter ||
+      old.maxHeight != maxHeight;
 }
 
 class _PopoverCard extends StatelessWidget {

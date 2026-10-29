@@ -90,6 +90,9 @@ void main() {
     testWidgets('iOS nested popover ($trigger): top right, parent readable',
         (tester) async {
       final parent = await openMenu(tester);
+      final row = tester.getRect(find
+          .ancestor(of: find.text(trigger), matching: find.byType(InkWell))
+          .first);
       await tester.tap(find.text(trigger));
       await tester.pumpAndSettle();
 
@@ -103,10 +106,9 @@ void main() {
       // the parent's upper rows completely – no icon-only strip beside it.
       expect(parent.width, 200);
       expect(sub.left, closeTo(parent.left, 0.5));
-      expect(sub.top, closeTo(safeTop + kIosNestedPopoverTop, 0.5));
-      // PARITY_R9: the parent opens over its ⋮ trigger (ios27 "replace"
-      // popover), so the nested popover starts just below its top edge.
-      expect(sub.top, greaterThan(parent.top));
+      // Ionic iOS (`alignment="center"` + ionic-theme-utils body margin):
+      // centred on the trigger row, 8pt lower, not clamped at the top.
+      expect(sub.center.dy, closeTo(row.center.dy + kIosNestedPopoverOffset, 0.5));
 
       // The parent keeps its place and size; Übersicht and Legende stay
       // visible (hit-testable) below the nested popover.

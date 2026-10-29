@@ -114,7 +114,7 @@ void main() {
     });
   });
 
-  test('Werke: iOS header gap without quick links like Ionic (≈46pt)', () {
-    expect(kIosSongsHeaderGap, 6);
+  test('Werke: iOS header gap without quick links like Ionic (≈60pt)', () {
+    expect(kIosSongsHeaderGap, 35);
   });
 }
