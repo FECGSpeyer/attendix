@@ -134,6 +134,17 @@ Future<bool> promptAttendanceDateChange(
   }
 
   final l10n = context.l10n;
+  // SOL_FIX38: dependencies are loaded before the first write – a failed
+  // absence read aborts instead of resetting excused persons.
+  var absences = const <PlayerAbsence>[];
+  if (type != null) {
+    try {
+      absences = await playerAbsenceRepo.getAbsencesForTenant();
+    } catch (_) {
+      if (context.mounted) ToastHelper.showError(context, l10n.dateDialogLoadFailed);
+      return false;
+    }
+  }
   try {
     final normalized = DateTime(picked.year, picked.month, picked.day, 12);
     final days = calendarDayDifference(current, normalized);
@@ -149,11 +160,15 @@ Future<bool> promptAttendanceDateChange(
     final checklist = attendance.checklist
         ?.map((item) => item.copyWith(dueDate: shift(item.dueDate)).toJson())
         .toList();
+    // SOL_FIX38: every write step checks the session captured when the
+    // user acted (an account/tenant switch meanwhile stops the flow).
+    writeSession.ensureCurrent();
     await repo.updateAttendance(attendanceId, {
       'date': normalizedIso,
       if (attendance.deadline != null) 'deadline': shift(attendance.deadline),
       if (checklist != null) 'checklist': checklist,
     });
+    writeSession.ensureCurrent();
     await repo.updateHistoryDatesForAttendance(attendanceId, normalizedIso);
     if (type != null) {
       // LOGIC_ATT: Ionic changeAttendanceDate – absences on the new day
@@ -161,12 +176,6 @@ Future<bool> promptAttendanceDateChange(
       // reset), reset the rest, then re-run the shift computation.
       container.invalidate(personAttendancesForAttendanceProvider(attendanceId));
       final rows = await _readOnce(container, personAttendancesForAttendanceProvider(attendanceId).future);
-      List<PlayerAbsence> absences;
-      try {
-        absences = await playerAbsenceRepo.getAbsencesForTenant();
-      } catch (_) {
-        absences = const []; // non-fatal — proceed without absence check
-      }
       final updates = dateChangeStatusUpdates(
         rows: [
           for (final r in rows)
@@ -193,11 +202,10 @@ Future<bool> promptAttendanceDateChange(
           actingUserId: writeSession.userId,
         );
       }
+      writeSession.ensureCurrent();
       await repo.updateShiftAssignmentsForAttendance(attendanceId);
     }
 
-    container.invalidate(attendanceDetailProvider(attendanceId));
-    container.invalidate(personAttendancesForAttendanceProvider(attendanceId));
     if (context.mounted) {
       ToastHelper.showSuccess(
         context,
@@ -208,5 +216,9 @@ Future<bool> promptAttendanceDateChange(
   } catch (_) {
     if (context.mounted) ToastHelper.showError(context, l10n.dateDialogChangeFailed);
     return false;
+  } finally {
+    // SOL_FIX38: reload the actual state also after a partial failure.
+    container.invalidate(attendanceDetailProvider(attendanceId));
+    container.invalidate(personAttendancesForAttendanceProvider(attendanceId));
   }
 }
