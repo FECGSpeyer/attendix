@@ -9431,6 +9431,36 @@ abstract class AppLocalizations {
   /// **'{count} Person(en) aktualisiert'**
   String peopleFlutterBulkUpdated(Object count);
 
+  /// people.flutter.contact.call
+  ///
+  /// In de, this message translates to:
+  /// **'Anrufen'**
+  String get peopleFlutterContactCall;
+
+  /// people.flutter.contact.mail
+  ///
+  /// In de, this message translates to:
+  /// **'E-Mail'**
+  String get peopleFlutterContactMail;
+
+  /// people.flutter.contact.mailHint
+  ///
+  /// In de, this message translates to:
+  /// **'E-Mail schreiben'**
+  String get peopleFlutterContactMailHint;
+
+  /// people.flutter.contact.telegramHint
+  ///
+  /// In de, this message translates to:
+  /// **'Per Telegram schreiben'**
+  String get peopleFlutterContactTelegramHint;
+
+  /// people.flutter.contact.whatsAppHint
+  ///
+  /// In de, this message translates to:
+  /// **'Per WhatsApp schreiben'**
+  String get peopleFlutterContactWhatsAppHint;
+
   /// people.flutter.createAnyway
   ///
   /// In de, this message translates to:

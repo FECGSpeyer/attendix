@@ -7061,6 +7061,26 @@
       "count": {}
     }
   },
+  "peopleFlutterContactCall": "Anrufen",
+  "@peopleFlutterContactCall": {
+    "description": "people.flutter.contact.call"
+  },
+  "peopleFlutterContactMail": "E-Mail",
+  "@peopleFlutterContactMail": {
+    "description": "people.flutter.contact.mail"
+  },
+  "peopleFlutterContactMailHint": "E-Mail schreiben",
+  "@peopleFlutterContactMailHint": {
+    "description": "people.flutter.contact.mailHint"
+  },
+  "peopleFlutterContactTelegramHint": "Per Telegram schreiben",
+  "@peopleFlutterContactTelegramHint": {
+    "description": "people.flutter.contact.telegramHint"
+  },
+  "peopleFlutterContactWhatsAppHint": "Per WhatsApp schreiben",
+  "@peopleFlutterContactWhatsAppHint": {
+    "description": "people.flutter.contact.whatsAppHint"
+  },
   "peopleFlutterCreateAnyway": "Trotzdem erstellen",
   "@peopleFlutterCreateAnyway": {
     "description": "people.flutter.createAnyway"

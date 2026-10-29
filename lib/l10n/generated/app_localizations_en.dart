@@ -5391,6 +5391,21 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get peopleFlutterContactCall => 'Call';
+
+  @override
+  String get peopleFlutterContactMail => 'Email';
+
+  @override
+  String get peopleFlutterContactMailHint => 'Write an email';
+
+  @override
+  String get peopleFlutterContactTelegramHint => 'Message on Telegram';
+
+  @override
+  String get peopleFlutterContactWhatsAppHint => 'Message on WhatsApp';
+
+  @override
   String get peopleFlutterCreateAnyway => 'Create anyway';
 
   @override

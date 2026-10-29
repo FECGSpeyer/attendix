@@ -61,7 +61,14 @@
         "loadFailed": "Fehler beim Laden",
         "listLoadFailed": "Die Personenliste konnte nicht geladen werden.",
         "transferCount": "{count} übertragen",
-        "transferPeople": "Personen übertragen"
+        "transferPeople": "Personen übertragen",
+        "contact": {
+          "call": "Anrufen",
+          "mail": "E-Mail",
+          "whatsAppHint": "Per WhatsApp schreiben",
+          "telegramHint": "Per Telegram schreiben",
+          "mailHint": "E-Mail schreiben"
+        }
       }
     },
     "teachers": {
@@ -223,7 +230,14 @@
         "loadFailed": "Loading failed",
         "listLoadFailed": "The list of people could not be loaded.",
         "transferCount": "Transfer {count}",
-        "transferPeople": "Transfer people"
+        "transferPeople": "Transfer people",
+        "contact": {
+          "call": "Call",
+          "mail": "Email",
+          "whatsAppHint": "Message on WhatsApp",
+          "telegramHint": "Message on Telegram",
+          "mailHint": "Write an email"
+        }
       }
     },
     "teachers": {
