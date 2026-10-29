@@ -282,10 +282,12 @@ void main() {
       final row = newAttendanceRow(
           const AttendanceType(id: 't', name: 'P'), DateTime(2024));
       expect(row.containsKey('created_by'), isFalse);
-      final src = File(
-              'lib/features/attendance/presentation/pages/attendance_create_page.dart')
-          .readAsStringSync();
-      expect(src, isNot(contains("'created_by':")));
+      for (final path in const [
+        'lib/features/attendance/presentation/pages/attendance_create_page.dart',
+        'lib/features/attendance/presentation/attendance_create_writes.dart',
+      ]) {
+        expect(File(path).readAsStringSync(), isNot(contains("'created_by':")));
+      }
     });
 
     test('viewers / parents insert', () {

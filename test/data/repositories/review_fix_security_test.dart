@@ -156,7 +156,10 @@ void main() {
     test('typeInfo defaults to empty string (Ionic)', () {
       final source = read(
           'lib/features/attendance/presentation/pages/attendance_create_page.dart');
-      expect(source, contains("'typeInfo': _typeInfo ?? '',"));
+      final writes = read(
+          'lib/features/attendance/presentation/attendance_create_writes.dart');
+      expect(writes, contains("'typeInfo': input.typeInfo ?? '',"));
+      expect(source, contains('typeInfo: _typeInfo,'));
       expect(source, contains('shouldCloseOnMinExtent: !isSaving'));
       expect(source, contains('canPop: !_isLoading'));
     });

@@ -15,6 +15,9 @@ class RedesignRoutes {
   /// parents portal).
   static const String events = '/termine';
 
+  /// "Neuer Termin" of the new design.
+  static const String newEvent = '$events/neu';
+
   /// A Termin ("Überblick" / "Anwesenheit") of the new design.
   static String event(int id, {bool record = false}) =>
       record ? '$events/$id?tab=anwesenheit' : '$events/$id';

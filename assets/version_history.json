@@ -1,6 +1,15 @@
 {
   "versions": [
     {
+      "version": "0.16.0",
+      "date": "29.10.2026",
+      "changes": [
+        "✨ Neues Design (Beta): „Neuer Termin“ mit Vorlagen aus euren letzten Terminen, Ort-Vorschlägen und Abmeldeschluss",
+        "✨ Neues Design (Beta): Termine wöchentlich oder alle zwei Wochen anlegen, mit Vorschau und Ferien-Hinweis",
+        "♻️ Termine anlegen nutzt im alten und neuen Design denselben Speicherweg"
+      ]
+    },
+    {
       "version": "0.15.0",
       "date": "29.10.2026",
       "changes": [

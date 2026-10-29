@@ -115,47 +115,57 @@ class RdListRow extends StatelessWidget {
           constraints: const BoxConstraints(minHeight: 52),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-            child: Row(
-              children: [
-                if (leading != null) ...[leading!, const SizedBox(width: 12)],
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        title,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                          color: titleColor ?? p.text,
+            child: LayoutBuilder(
+              builder: (context, constraints) => Row(
+                children: [
+                  if (leading != null) ...[leading!, const SizedBox(width: 12)],
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          title,
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            color: titleColor ?? p.text,
+                          ),
                         ),
-                      ),
-                      if (subtitle != null && subtitle!.isNotEmpty)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 2),
-                          child: Text(subtitle!, style: RdType.meta(p, size: 13)),
-                        ),
-                    ],
-                  ),
-                ),
-                if (value != null) ...[
-                  const SizedBox(width: 8),
-                  Flexible(
-                    child: Text(
-                      value!,
-                      textAlign: TextAlign.end,
-                      overflow: TextOverflow.ellipsis,
-                      style: RdType.meta(p, size: 15),
+                        if (subtitle != null && subtitle!.isNotEmpty)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 2),
+                            child: Text(subtitle!, style: RdType.meta(p, size: 13)),
+                          ),
+                      ],
                     ),
                   ),
+                  if (value != null) ...[
+                    const SizedBox(width: 8),
+                    // Right-aligned next to the chevron; the title keeps at
+                    // least 40 % of the row.
+                    ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxWidth: constraints.maxWidth.isFinite
+                            ? constraints.maxWidth * 0.6
+                            : 240,
+                      ),
+                      child: Text(
+                        value!,
+                        textAlign: TextAlign.end,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: RdType.meta(p, size: 15),
+                      ),
+                    ),
+                  ],
+                  if (trailing != null) ...[const SizedBox(width: 8), trailing!],
+                  if (showChevron && onTap != null) ...[
+                    const SizedBox(width: 4),
+                    Icon(Icons.chevron_right, size: 20, color: p.text2),
+                  ],
                 ],
-                if (trailing != null) ...[const SizedBox(width: 8), trailing!],
-                if (showChevron && onTap != null) ...[
-                  const SizedBox(width: 4),
-                  Icon(Icons.chevron_right, size: 20, color: p.text2),
-                ],
-              ],
+              ),
             ),
           ),
         ),

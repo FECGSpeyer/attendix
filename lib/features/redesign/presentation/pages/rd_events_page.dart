@@ -81,7 +81,7 @@ class _RdEventsPageState extends ConsumerState<RdEventsPage> {
               backgroundColor: p.primary,
               foregroundColor: p.onPrimary,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
-              onPressed: () => context.push('/attendance/new'),
+              onPressed: () => context.push(RedesignRoutes.newEvent),
               child: const Icon(Icons.add, size: 28),
             )
           : null,
@@ -229,7 +229,7 @@ class _RdEventsPageState extends ConsumerState<RdEventsPage> {
                   ? RdPrimaryButton(
                       label: l10n.redesignEventsCreateFirst,
                       icon: Icons.add,
-                      onPressed: () => context.push('/attendance/new'),
+                      onPressed: () => context.push(RedesignRoutes.newEvent),
                     )
                   : null,
             ),

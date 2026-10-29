@@ -7869,6 +7869,274 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignCommonRetry => 'Try again';
 
   @override
+  String get redesignCreateChooseType => 'Choose type';
+
+  @override
+  String get redesignCreateDate => 'Date';
+
+  @override
+  String redesignCreateDays(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days',
+      one: '1 day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignCreateDeadline => 'Sign-out deadline';
+
+  @override
+  String get redesignCreateDeadline24h => '24 h before';
+
+  @override
+  String get redesignCreateDeadline2d => '2 days before';
+
+  @override
+  String get redesignCreateDeadlineHint => 'After that, members can no longer sign in or out themselves.';
+
+  @override
+  String get redesignCreateDeadlineNone => 'None';
+
+  @override
+  String get redesignCreateDeadlineWeek => '1 week before';
+
+  @override
+  String get redesignCreateDiscard => 'Discard';
+
+  @override
+  String get redesignCreateDiscardBody => 'Your input will be lost.';
+
+  @override
+  String get redesignCreateDiscardTitle => 'Discard event?';
+
+  @override
+  String get redesignCreateDuration => 'Duration';
+
+  @override
+  String redesignCreateDuty(Object weekday) {
+    return 'Needed on $weekday';
+  }
+
+  @override
+  String redesignCreateDutyCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count events',
+      one: '1 event',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignCreateEnd => 'End';
+
+  @override
+  String get redesignCreateFewer => 'Fewer';
+
+  @override
+  String get redesignCreateFewerDays => 'One day less';
+
+  @override
+  String redesignCreateHolidayHits(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count events fall on holidays',
+      one: '1 event falls on a holiday',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignCreateInvited => 'Who is invited?';
+
+  @override
+  String redesignCreateInvitedAll(Object count) {
+    return 'Everyone · $count';
+  }
+
+  @override
+  String redesignCreateInvitedGroups(Object groups, Object count) {
+    return '$groups · $count';
+  }
+
+  @override
+  String get redesignCreateInvitedHint => 'Set by the type';
+
+  @override
+  String get redesignCreateKeepEditing => 'Keep editing';
+
+  @override
+  String get redesignCreateLaterHint => 'Edit info text, attachment, checklist and schedule in the event afterwards.';
+
+  @override
+  String get redesignCreateMore => 'More';
+
+  @override
+  String get redesignCreateMoreDates => 'More dates';
+
+  @override
+  String get redesignCreateMoreDatesNone => 'None';
+
+  @override
+  String get redesignCreateMoreDays => 'One day more';
+
+  @override
+  String get redesignCreateNoPermission => 'You may not create events.';
+
+  @override
+  String get redesignCreateNoTypes => 'There is no event type yet. Create one in the settings first.';
+
+  @override
+  String get redesignCreatePlace => 'Place';
+
+  @override
+  String get redesignCreatePlaceHint => 'e.g. rehearsal room, 1 Main St';
+
+  @override
+  String redesignCreateRepeatBiweekly(Object date) {
+    return 'Every 2 weeks until $date';
+  }
+
+  @override
+  String get redesignCreateRepeatBiweeklyOption => 'Every 2 weeks';
+
+  @override
+  String redesignCreateRepeatCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count events',
+      one: '1 event',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String redesignCreateRepeatCustom(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count more days',
+      one: '1 more day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignCreateRepeatCustomOption => 'Single days';
+
+  @override
+  String get redesignCreateRepeatHoliday => 'Holiday';
+
+  @override
+  String redesignCreateRepeatMax(Object count) {
+    return 'At most $count events at once.';
+  }
+
+  @override
+  String get redesignCreateRepeatOnce => 'Once';
+
+  @override
+  String get redesignCreateRepeatPick => 'Pick days in the calendar';
+
+  @override
+  String get redesignCreateRepeatSkipHolidays => 'Skip holidays';
+
+  @override
+  String get redesignCreateRepeatUntil => 'Until';
+
+  @override
+  String redesignCreateRepeatWeekly(Object weekday, Object date) {
+    return 'Every $weekday until $date';
+  }
+
+  @override
+  String get redesignCreateRepeatWeeklyOption => 'Every week';
+
+  @override
+  String get redesignCreateSongs => 'Pieces';
+
+  @override
+  String redesignCreateSongsCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count pieces',
+      one: '1 piece',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignCreateSongsNone => 'None';
+
+  @override
+  String get redesignCreateStart => 'Start';
+
+  @override
+  String get redesignCreateSubmit => 'Create';
+
+  @override
+  String redesignCreateSubmitMany(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Create $count events',
+      one: 'Create event',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String redesignCreateSummaryBiweekly(Object weekday) {
+    return 'every 2 weeks on $weekday';
+  }
+
+  @override
+  String redesignCreateSummaryCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count events will be created',
+      one: '1 event will be created',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String redesignCreateSummaryRange(Object from, Object until) {
+    return '$from to $until';
+  }
+
+  @override
+  String redesignCreateSummaryWeekly(Object weekday) {
+    return 'every $weekday';
+  }
+
+  @override
+  String get redesignCreateTemplate => 'Template';
+
+  @override
+  String get redesignCreateTemplateHint => 'Fills in type, title, time and place. Everything stays editable.';
+
+  @override
+  String get redesignCreateTime => 'Time';
+
+  @override
+  String get redesignCreateTitle => 'New event';
+
+  @override
+  String get redesignCreateTitleLabel => 'Title';
+
+  @override
+  String get redesignCreateType => 'Type';
+
+  @override
   String redesignEventAllDone(num count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,

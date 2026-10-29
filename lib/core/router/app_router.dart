@@ -113,6 +113,7 @@ import '../providers/redesign_providers.dart';
 import 'redesign_routes.dart';
 import '../../features/redesign/presentation/shell/rd_shell.dart';
 import '../../features/redesign/presentation/pages/rd_today_page.dart';
+import '../../features/redesign/presentation/pages/rd_event_create_page.dart';
 import '../../features/redesign/presentation/pages/rd_event_page.dart';
 import '../../features/redesign/presentation/pages/rd_events_page.dart';
 import '../../features/redesign/presentation/pages/rd_me_page.dart';
@@ -574,6 +575,11 @@ final routerProvider = Provider<GoRouter>((ref) {
               state: state,
             ),
             routes: [
+              GoRoute(
+                path: 'neu',
+                name: 'redesignEventCreate',
+                builder: (context, state) => const RdEventCreatePage(),
+              ),
               GoRoute(
                 path: 'meine/:paId',
                 name: 'redesignOwnEvent',

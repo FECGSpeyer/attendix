@@ -10358,6 +10358,324 @@
   "@redesignCommonRetry": {
     "description": "redesign.common.retry"
   },
+  "redesignCreateChooseType": "Art wählen",
+  "@redesignCreateChooseType": {
+    "description": "redesign.create.chooseType"
+  },
+  "redesignCreateDate": "Datum",
+  "@redesignCreateDate": {
+    "description": "redesign.create.date"
+  },
+  "redesignCreateDays": "{count, plural, one {1 Tag} other {{count} Tage}}",
+  "@redesignCreateDays": {
+    "description": "redesign.create.days",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignCreateDeadline": "Abmeldeschluss",
+  "@redesignCreateDeadline": {
+    "description": "redesign.create.deadline"
+  },
+  "redesignCreateDeadline24h": "24 Std. vorher",
+  "@redesignCreateDeadline24h": {
+    "description": "redesign.create.deadline24h"
+  },
+  "redesignCreateDeadline2d": "2 Tage vorher",
+  "@redesignCreateDeadline2d": {
+    "description": "redesign.create.deadline2d"
+  },
+  "redesignCreateDeadlineHint": "Danach können sich Mitglieder nicht mehr selbst an- oder abmelden.",
+  "@redesignCreateDeadlineHint": {
+    "description": "redesign.create.deadlineHint"
+  },
+  "redesignCreateDeadlineNone": "Keiner",
+  "@redesignCreateDeadlineNone": {
+    "description": "redesign.create.deadlineNone"
+  },
+  "redesignCreateDeadlineWeek": "1 Woche vorher",
+  "@redesignCreateDeadlineWeek": {
+    "description": "redesign.create.deadlineWeek"
+  },
+  "redesignCreateDiscard": "Verwerfen",
+  "@redesignCreateDiscard": {
+    "description": "redesign.create.discard"
+  },
+  "redesignCreateDiscardBody": "Deine Eingaben gehen verloren.",
+  "@redesignCreateDiscardBody": {
+    "description": "redesign.create.discardBody"
+  },
+  "redesignCreateDiscardTitle": "Termin verwerfen?",
+  "@redesignCreateDiscardTitle": {
+    "description": "redesign.create.discardTitle"
+  },
+  "redesignCreateDuration": "Dauer",
+  "@redesignCreateDuration": {
+    "description": "redesign.create.duration"
+  },
+  "redesignCreateDuty": "Benötigt am {weekday}",
+  "@redesignCreateDuty": {
+    "description": "redesign.create.duty",
+    "placeholders": {
+      "weekday": {}
+    }
+  },
+  "redesignCreateDutyCount": "{count, plural, one {1 Termin} other {{count} Termine}}",
+  "@redesignCreateDutyCount": {
+    "description": "redesign.create.dutyCount",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignCreateEnd": "Ende",
+  "@redesignCreateEnd": {
+    "description": "redesign.create.end"
+  },
+  "redesignCreateFewer": "Weniger",
+  "@redesignCreateFewer": {
+    "description": "redesign.create.fewer"
+  },
+  "redesignCreateFewerDays": "Einen Tag weniger",
+  "@redesignCreateFewerDays": {
+    "description": "redesign.create.fewerDays"
+  },
+  "redesignCreateHolidayHits": "{count, plural, one {1 Termin fällt in Ferien oder auf einen Feiertag} other {{count} Termine fallen in Ferien oder auf Feiertage}}",
+  "@redesignCreateHolidayHits": {
+    "description": "redesign.create.holidayHits",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignCreateInvited": "Wer ist eingeladen?",
+  "@redesignCreateInvited": {
+    "description": "redesign.create.invited"
+  },
+  "redesignCreateInvitedAll": "Alle · {count}",
+  "@redesignCreateInvitedAll": {
+    "description": "redesign.create.invitedAll",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignCreateInvitedGroups": "{groups} · {count}",
+  "@redesignCreateInvitedGroups": {
+    "description": "redesign.create.invitedGroups",
+    "placeholders": {
+      "groups": {},
+      "count": {}
+    }
+  },
+  "redesignCreateInvitedHint": "Festgelegt durch die Art",
+  "@redesignCreateInvitedHint": {
+    "description": "redesign.create.invitedHint"
+  },
+  "redesignCreateKeepEditing": "Weiter bearbeiten",
+  "@redesignCreateKeepEditing": {
+    "description": "redesign.create.keepEditing"
+  },
+  "redesignCreateLaterHint": "Infotext, Anhang, Checkliste und Ablauf bearbeitest du danach im Termin.",
+  "@redesignCreateLaterHint": {
+    "description": "redesign.create.laterHint"
+  },
+  "redesignCreateMore": "Mehr",
+  "@redesignCreateMore": {
+    "description": "redesign.create.more"
+  },
+  "redesignCreateMoreDates": "Weitere Daten",
+  "@redesignCreateMoreDates": {
+    "description": "redesign.create.moreDates"
+  },
+  "redesignCreateMoreDatesNone": "Keine",
+  "@redesignCreateMoreDatesNone": {
+    "description": "redesign.create.moreDatesNone"
+  },
+  "redesignCreateMoreDays": "Einen Tag mehr",
+  "@redesignCreateMoreDays": {
+    "description": "redesign.create.moreDays"
+  },
+  "redesignCreateNoPermission": "Du darfst keine Termine anlegen.",
+  "@redesignCreateNoPermission": {
+    "description": "redesign.create.noPermission"
+  },
+  "redesignCreateNoTypes": "Es gibt noch keine Termin-Art. Lege zuerst eine in den Einstellungen an.",
+  "@redesignCreateNoTypes": {
+    "description": "redesign.create.noTypes"
+  },
+  "redesignCreatePlace": "Ort",
+  "@redesignCreatePlace": {
+    "description": "redesign.create.place"
+  },
+  "redesignCreatePlaceHint": "z. B. Probenraum, Musterstr. 1",
+  "@redesignCreatePlaceHint": {
+    "description": "redesign.create.placeHint"
+  },
+  "redesignCreateRepeatBiweekly": "Alle 2 Wochen bis {date}",
+  "@redesignCreateRepeatBiweekly": {
+    "description": "redesign.create.repeatBiweekly",
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "redesignCreateRepeatBiweeklyOption": "Alle 2 Wochen",
+  "@redesignCreateRepeatBiweeklyOption": {
+    "description": "redesign.create.repeatBiweeklyOption"
+  },
+  "redesignCreateRepeatCount": "{count, plural, one {1 Termin} other {{count} Termine}}",
+  "@redesignCreateRepeatCount": {
+    "description": "redesign.create.repeatCount",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignCreateRepeatCustom": "{count, plural, one {1 weiterer Tag} other {{count} weitere Tage}}",
+  "@redesignCreateRepeatCustom": {
+    "description": "redesign.create.repeatCustom",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignCreateRepeatCustomOption": "Einzelne Tage",
+  "@redesignCreateRepeatCustomOption": {
+    "description": "redesign.create.repeatCustomOption"
+  },
+  "redesignCreateRepeatHoliday": "Ferien oder Feiertag",
+  "@redesignCreateRepeatHoliday": {
+    "description": "redesign.create.repeatHoliday"
+  },
+  "redesignCreateRepeatMax": "Höchstens {count} Termine auf einmal.",
+  "@redesignCreateRepeatMax": {
+    "description": "redesign.create.repeatMax",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignCreateRepeatOnce": "Einmalig",
+  "@redesignCreateRepeatOnce": {
+    "description": "redesign.create.repeatOnce"
+  },
+  "redesignCreateRepeatPick": "Tage im Kalender wählen",
+  "@redesignCreateRepeatPick": {
+    "description": "redesign.create.repeatPick"
+  },
+  "redesignCreateRepeatSkipHolidays": "Ferien und Feiertage auslassen",
+  "@redesignCreateRepeatSkipHolidays": {
+    "description": "redesign.create.repeatSkipHolidays"
+  },
+  "redesignCreateRepeatUntil": "Bis",
+  "@redesignCreateRepeatUntil": {
+    "description": "redesign.create.repeatUntil"
+  },
+  "redesignCreateRepeatWeekly": "Jeden {weekday} bis {date}",
+  "@redesignCreateRepeatWeekly": {
+    "description": "redesign.create.repeatWeekly",
+    "placeholders": {
+      "weekday": {},
+      "date": {}
+    }
+  },
+  "redesignCreateRepeatWeeklyOption": "Jede Woche",
+  "@redesignCreateRepeatWeeklyOption": {
+    "description": "redesign.create.repeatWeeklyOption"
+  },
+  "redesignCreateSongs": "Werke",
+  "@redesignCreateSongs": {
+    "description": "redesign.create.songs"
+  },
+  "redesignCreateSongsCount": "{count, plural, one {1 Werk} other {{count} Werke}}",
+  "@redesignCreateSongsCount": {
+    "description": "redesign.create.songsCount",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignCreateSongsNone": "Keine",
+  "@redesignCreateSongsNone": {
+    "description": "redesign.create.songsNone"
+  },
+  "redesignCreateStart": "Beginn",
+  "@redesignCreateStart": {
+    "description": "redesign.create.start"
+  },
+  "redesignCreateSubmit": "Anlegen",
+  "@redesignCreateSubmit": {
+    "description": "redesign.create.submit"
+  },
+  "redesignCreateSubmitMany": "{count, plural, one {Termin anlegen} other {{count} Termine anlegen}}",
+  "@redesignCreateSubmitMany": {
+    "description": "redesign.create.submitMany",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignCreateSummaryBiweekly": "alle 2 Wochen am {weekday}",
+  "@redesignCreateSummaryBiweekly": {
+    "description": "redesign.create.summaryBiweekly",
+    "placeholders": {
+      "weekday": {}
+    }
+  },
+  "redesignCreateSummaryCount": "{count, plural, one {Es wird 1 Termin angelegt} other {Es werden {count} Termine angelegt}}",
+  "@redesignCreateSummaryCount": {
+    "description": "redesign.create.summaryCount",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignCreateSummaryRange": "{from} bis {until}",
+  "@redesignCreateSummaryRange": {
+    "description": "redesign.create.summaryRange",
+    "placeholders": {
+      "from": {},
+      "until": {}
+    }
+  },
+  "redesignCreateSummaryWeekly": "jeden {weekday}",
+  "@redesignCreateSummaryWeekly": {
+    "description": "redesign.create.summaryWeekly",
+    "placeholders": {
+      "weekday": {}
+    }
+  },
+  "redesignCreateTemplate": "Vorlage",
+  "@redesignCreateTemplate": {
+    "description": "redesign.create.template"
+  },
+  "redesignCreateTemplateHint": "Füllt Art, Titel, Zeit und Ort vor. Alles bleibt änderbar.",
+  "@redesignCreateTemplateHint": {
+    "description": "redesign.create.templateHint"
+  },
+  "redesignCreateTime": "Zeit",
+  "@redesignCreateTime": {
+    "description": "redesign.create.time"
+  },
+  "redesignCreateTitle": "Neuer Termin",
+  "@redesignCreateTitle": {
+    "description": "redesign.create.title"
+  },
+  "redesignCreateTitleLabel": "Titel",
+  "@redesignCreateTitleLabel": {
+    "description": "redesign.create.titleLabel"
+  },
+  "redesignCreateType": "Art",
+  "@redesignCreateType": {
+    "description": "redesign.create.type"
+  },
   "redesignEventAllDone": "{count, plural, one {1 Person als anwesend} other {{count} Personen als anwesend}}",
   "@redesignEventAllDone": {
     "description": "redesign.event.allDone",

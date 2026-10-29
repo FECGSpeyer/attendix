@@ -13757,6 +13757,378 @@ abstract class AppLocalizations {
   /// **'Erneut versuchen'**
   String get redesignCommonRetry;
 
+  /// redesign.create.chooseType
+  ///
+  /// In de, this message translates to:
+  /// **'Art wählen'**
+  String get redesignCreateChooseType;
+
+  /// redesign.create.date
+  ///
+  /// In de, this message translates to:
+  /// **'Datum'**
+  String get redesignCreateDate;
+
+  /// redesign.create.days
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Tag} other {{count} Tage}}'**
+  String redesignCreateDays(num count);
+
+  /// redesign.create.deadline
+  ///
+  /// In de, this message translates to:
+  /// **'Abmeldeschluss'**
+  String get redesignCreateDeadline;
+
+  /// redesign.create.deadline24h
+  ///
+  /// In de, this message translates to:
+  /// **'24 Std. vorher'**
+  String get redesignCreateDeadline24h;
+
+  /// redesign.create.deadline2d
+  ///
+  /// In de, this message translates to:
+  /// **'2 Tage vorher'**
+  String get redesignCreateDeadline2d;
+
+  /// redesign.create.deadlineHint
+  ///
+  /// In de, this message translates to:
+  /// **'Danach können sich Mitglieder nicht mehr selbst an- oder abmelden.'**
+  String get redesignCreateDeadlineHint;
+
+  /// redesign.create.deadlineNone
+  ///
+  /// In de, this message translates to:
+  /// **'Keiner'**
+  String get redesignCreateDeadlineNone;
+
+  /// redesign.create.deadlineWeek
+  ///
+  /// In de, this message translates to:
+  /// **'1 Woche vorher'**
+  String get redesignCreateDeadlineWeek;
+
+  /// redesign.create.discard
+  ///
+  /// In de, this message translates to:
+  /// **'Verwerfen'**
+  String get redesignCreateDiscard;
+
+  /// redesign.create.discardBody
+  ///
+  /// In de, this message translates to:
+  /// **'Deine Eingaben gehen verloren.'**
+  String get redesignCreateDiscardBody;
+
+  /// redesign.create.discardTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Termin verwerfen?'**
+  String get redesignCreateDiscardTitle;
+
+  /// redesign.create.duration
+  ///
+  /// In de, this message translates to:
+  /// **'Dauer'**
+  String get redesignCreateDuration;
+
+  /// redesign.create.duty
+  ///
+  /// In de, this message translates to:
+  /// **'Benötigt am {weekday}'**
+  String redesignCreateDuty(Object weekday);
+
+  /// redesign.create.dutyCount
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Termin} other {{count} Termine}}'**
+  String redesignCreateDutyCount(num count);
+
+  /// redesign.create.end
+  ///
+  /// In de, this message translates to:
+  /// **'Ende'**
+  String get redesignCreateEnd;
+
+  /// redesign.create.fewer
+  ///
+  /// In de, this message translates to:
+  /// **'Weniger'**
+  String get redesignCreateFewer;
+
+  /// redesign.create.fewerDays
+  ///
+  /// In de, this message translates to:
+  /// **'Einen Tag weniger'**
+  String get redesignCreateFewerDays;
+
+  /// redesign.create.holidayHits
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Termin fällt in Ferien oder auf einen Feiertag} other {{count} Termine fallen in Ferien oder auf Feiertage}}'**
+  String redesignCreateHolidayHits(num count);
+
+  /// redesign.create.invited
+  ///
+  /// In de, this message translates to:
+  /// **'Wer ist eingeladen?'**
+  String get redesignCreateInvited;
+
+  /// redesign.create.invitedAll
+  ///
+  /// In de, this message translates to:
+  /// **'Alle · {count}'**
+  String redesignCreateInvitedAll(Object count);
+
+  /// redesign.create.invitedGroups
+  ///
+  /// In de, this message translates to:
+  /// **'{groups} · {count}'**
+  String redesignCreateInvitedGroups(Object groups, Object count);
+
+  /// redesign.create.invitedHint
+  ///
+  /// In de, this message translates to:
+  /// **'Festgelegt durch die Art'**
+  String get redesignCreateInvitedHint;
+
+  /// redesign.create.keepEditing
+  ///
+  /// In de, this message translates to:
+  /// **'Weiter bearbeiten'**
+  String get redesignCreateKeepEditing;
+
+  /// redesign.create.laterHint
+  ///
+  /// In de, this message translates to:
+  /// **'Infotext, Anhang, Checkliste und Ablauf bearbeitest du danach im Termin.'**
+  String get redesignCreateLaterHint;
+
+  /// redesign.create.more
+  ///
+  /// In de, this message translates to:
+  /// **'Mehr'**
+  String get redesignCreateMore;
+
+  /// redesign.create.moreDates
+  ///
+  /// In de, this message translates to:
+  /// **'Weitere Daten'**
+  String get redesignCreateMoreDates;
+
+  /// redesign.create.moreDatesNone
+  ///
+  /// In de, this message translates to:
+  /// **'Keine'**
+  String get redesignCreateMoreDatesNone;
+
+  /// redesign.create.moreDays
+  ///
+  /// In de, this message translates to:
+  /// **'Einen Tag mehr'**
+  String get redesignCreateMoreDays;
+
+  /// redesign.create.noPermission
+  ///
+  /// In de, this message translates to:
+  /// **'Du darfst keine Termine anlegen.'**
+  String get redesignCreateNoPermission;
+
+  /// redesign.create.noTypes
+  ///
+  /// In de, this message translates to:
+  /// **'Es gibt noch keine Termin-Art. Lege zuerst eine in den Einstellungen an.'**
+  String get redesignCreateNoTypes;
+
+  /// redesign.create.place
+  ///
+  /// In de, this message translates to:
+  /// **'Ort'**
+  String get redesignCreatePlace;
+
+  /// redesign.create.placeHint
+  ///
+  /// In de, this message translates to:
+  /// **'z. B. Probenraum, Musterstr. 1'**
+  String get redesignCreatePlaceHint;
+
+  /// redesign.create.repeatBiweekly
+  ///
+  /// In de, this message translates to:
+  /// **'Alle 2 Wochen bis {date}'**
+  String redesignCreateRepeatBiweekly(Object date);
+
+  /// redesign.create.repeatBiweeklyOption
+  ///
+  /// In de, this message translates to:
+  /// **'Alle 2 Wochen'**
+  String get redesignCreateRepeatBiweeklyOption;
+
+  /// redesign.create.repeatCount
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Termin} other {{count} Termine}}'**
+  String redesignCreateRepeatCount(num count);
+
+  /// redesign.create.repeatCustom
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 weiterer Tag} other {{count} weitere Tage}}'**
+  String redesignCreateRepeatCustom(num count);
+
+  /// redesign.create.repeatCustomOption
+  ///
+  /// In de, this message translates to:
+  /// **'Einzelne Tage'**
+  String get redesignCreateRepeatCustomOption;
+
+  /// redesign.create.repeatHoliday
+  ///
+  /// In de, this message translates to:
+  /// **'Ferien oder Feiertag'**
+  String get redesignCreateRepeatHoliday;
+
+  /// redesign.create.repeatMax
+  ///
+  /// In de, this message translates to:
+  /// **'Höchstens {count} Termine auf einmal.'**
+  String redesignCreateRepeatMax(Object count);
+
+  /// redesign.create.repeatOnce
+  ///
+  /// In de, this message translates to:
+  /// **'Einmalig'**
+  String get redesignCreateRepeatOnce;
+
+  /// redesign.create.repeatPick
+  ///
+  /// In de, this message translates to:
+  /// **'Tage im Kalender wählen'**
+  String get redesignCreateRepeatPick;
+
+  /// redesign.create.repeatSkipHolidays
+  ///
+  /// In de, this message translates to:
+  /// **'Ferien und Feiertage auslassen'**
+  String get redesignCreateRepeatSkipHolidays;
+
+  /// redesign.create.repeatUntil
+  ///
+  /// In de, this message translates to:
+  /// **'Bis'**
+  String get redesignCreateRepeatUntil;
+
+  /// redesign.create.repeatWeekly
+  ///
+  /// In de, this message translates to:
+  /// **'Jeden {weekday} bis {date}'**
+  String redesignCreateRepeatWeekly(Object weekday, Object date);
+
+  /// redesign.create.repeatWeeklyOption
+  ///
+  /// In de, this message translates to:
+  /// **'Jede Woche'**
+  String get redesignCreateRepeatWeeklyOption;
+
+  /// redesign.create.songs
+  ///
+  /// In de, this message translates to:
+  /// **'Werke'**
+  String get redesignCreateSongs;
+
+  /// redesign.create.songsCount
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Werk} other {{count} Werke}}'**
+  String redesignCreateSongsCount(num count);
+
+  /// redesign.create.songsNone
+  ///
+  /// In de, this message translates to:
+  /// **'Keine'**
+  String get redesignCreateSongsNone;
+
+  /// redesign.create.start
+  ///
+  /// In de, this message translates to:
+  /// **'Beginn'**
+  String get redesignCreateStart;
+
+  /// redesign.create.submit
+  ///
+  /// In de, this message translates to:
+  /// **'Anlegen'**
+  String get redesignCreateSubmit;
+
+  /// redesign.create.submitMany
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {Termin anlegen} other {{count} Termine anlegen}}'**
+  String redesignCreateSubmitMany(num count);
+
+  /// redesign.create.summaryBiweekly
+  ///
+  /// In de, this message translates to:
+  /// **'alle 2 Wochen am {weekday}'**
+  String redesignCreateSummaryBiweekly(Object weekday);
+
+  /// redesign.create.summaryCount
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {Es wird 1 Termin angelegt} other {Es werden {count} Termine angelegt}}'**
+  String redesignCreateSummaryCount(num count);
+
+  /// redesign.create.summaryRange
+  ///
+  /// In de, this message translates to:
+  /// **'{from} bis {until}'**
+  String redesignCreateSummaryRange(Object from, Object until);
+
+  /// redesign.create.summaryWeekly
+  ///
+  /// In de, this message translates to:
+  /// **'jeden {weekday}'**
+  String redesignCreateSummaryWeekly(Object weekday);
+
+  /// redesign.create.template
+  ///
+  /// In de, this message translates to:
+  /// **'Vorlage'**
+  String get redesignCreateTemplate;
+
+  /// redesign.create.templateHint
+  ///
+  /// In de, this message translates to:
+  /// **'Füllt Art, Titel, Zeit und Ort vor. Alles bleibt änderbar.'**
+  String get redesignCreateTemplateHint;
+
+  /// redesign.create.time
+  ///
+  /// In de, this message translates to:
+  /// **'Zeit'**
+  String get redesignCreateTime;
+
+  /// redesign.create.title
+  ///
+  /// In de, this message translates to:
+  /// **'Neuer Termin'**
+  String get redesignCreateTitle;
+
+  /// redesign.create.titleLabel
+  ///
+  /// In de, this message translates to:
+  /// **'Titel'**
+  String get redesignCreateTitleLabel;
+
+  /// redesign.create.type
+  ///
+  /// In de, this message translates to:
+  /// **'Art'**
+  String get redesignCreateType;
+
   /// redesign.event.allDone
   ///
   /// In de, this message translates to:
